@@ -227,7 +227,6 @@ static_library("test_support") {
   sources = [
     "testing/fx_string_testhelpers.cpp",
     "testing/fx_string_testhelpers.h",
-    "testing/mock_ifx_renderdevicedriver.h",
     "testing/test_support.cpp",
     "testing/test_support.h",
     "testing/utils/path_service.cpp",

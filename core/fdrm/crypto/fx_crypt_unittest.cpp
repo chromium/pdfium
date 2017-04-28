@@ -11,34 +11,21 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_support.h"
 
 namespace {
 
-std::string CRYPT_ToBase16(const uint8_t* digest) {
-  static char const zEncode[] = "0123456789abcdef";
-  std::string ret;
-  ret.resize(32);
-  for (int i = 0, j = 0; i < 16; i++, j += 2) {
-    uint8_t a = digest[i];
-    ret[j] = zEncode[(a >> 4) & 0xf];
-    ret[j + 1] = zEncode[a & 0xf];
-  }
-  return ret;
-}
-
 std::string CRYPT_MD5String(const char* str) {
-  uint8_t digest[16];
-  CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(str), strlen(str), digest);
-  return CRYPT_ToBase16(digest);
+  return GenerateMD5Base16(reinterpret_cast<const uint8_t*>(str), strlen(str));
 }
 
 }  // namespace
 
-TEST(FXCRYPT, CRYPT_ToBase16) {
+TEST(FXCRYPT, CryptToBase16) {
   uint8_t data[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
                     0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e};
 
-  std::string actual = CRYPT_ToBase16(data);
+  std::string actual = CryptToBase16(data);
   std::string expected = "d41d8cd98f00b204e9800998ecf8427e";
 
   EXPECT_EQ(expected, actual);
@@ -194,7 +181,7 @@ TEST(FXCRYPT, ContextWithStringData) {
   uint8_t digest[16];
   CRYPT_MD5Finish(&ctx, digest);
 
-  std::string actual = CRYPT_ToBase16(digest);
+  std::string actual = CryptToBase16(digest);
   std::string expected = "900150983cd24fb0d6963f7d28e17f72";
   EXPECT_EQ(expected, actual);
 }

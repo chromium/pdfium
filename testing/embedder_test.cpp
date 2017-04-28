@@ -42,18 +42,6 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
 
-std::string CRYPT_ToBase16(const uint8_t* digest) {
-  static char const zEncode[] = "0123456789abcdef";
-  std::string ret;
-  ret.resize(32);
-  for (int i = 0, j = 0; i < 16; i++, j += 2) {
-    uint8_t a = digest[i];
-    ret[j] = zEncode[(a >> 4) & 0xf];
-    ret[j + 1] = zEncode[a & 0xf];
-  }
-  return ret;
-}
-
 }  // namespace
 
 EmbedderTest::EmbedderTest()
@@ -352,7 +340,7 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
   uint8_t digest[16];
   CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
                     expected_stride * expected_height, digest);
-  EXPECT_EQ(expected_md5sum, CRYPT_ToBase16(digest));
+  EXPECT_EQ(expected_md5sum, CryptToBase16(digest));
 }
 
 // Can't use gtest-provided main since we need to stash the path to the

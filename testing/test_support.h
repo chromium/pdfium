@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "core/fdrm/crypto/fx_crypt.h"
 #include "public/fpdf_save.h"
 #include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -75,6 +76,9 @@ std::wstring GetPlatformWString(const FPDF_WIDESTRING wstr);
 // Deals with differences between UTF16LE and wchar_t.
 std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
     const std::wstring& wstr);
+
+std::string CryptToBase16(const uint8_t* digest);
+std::string GenerateMD5Base16(const uint8_t* data, uint32_t size);
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA

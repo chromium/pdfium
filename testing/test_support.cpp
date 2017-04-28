@@ -150,6 +150,24 @@ std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
   return result;
 }
 
+std::string CryptToBase16(const uint8_t* digest) {
+  static char const zEncode[] = "0123456789abcdef";
+  std::string ret;
+  ret.resize(32);
+  for (int i = 0, j = 0; i < 16; i++, j += 2) {
+    uint8_t a = digest[i];
+    ret[j] = zEncode[(a >> 4) & 0xf];
+    ret[j + 1] = zEncode[a & 0xf];
+  }
+  return ret;
+}
+
+std::string GenerateMD5Base16(const uint8_t* data, uint32_t size) {
+  uint8_t digest[16];
+  CRYPT_MD5Generate(data, size, digest);
+  return CryptToBase16(digest);
+}
+
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
 bool InitializeV8ForPDFium(const std::string& exe_path,
