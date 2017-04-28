@@ -53,6 +53,8 @@ const uint8_t g_FXCRT_XML_ByteTypes[256] = {
     0x1A, 0x1A, 0x01, 0x01,
 };
 
+constexpr int kMaxDepth = 1024;
+
 bool g_FXCRT_XML_IsWhiteSpace(uint8_t ch) {
   return !!(g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_SpaceChar);
 }
@@ -369,6 +371,16 @@ void CXML_Parser::GetTagName(bool bStartTag,
 
 std::unique_ptr<CXML_Element> CXML_Parser::ParseElement(CXML_Element* pParent,
                                                         bool bStartTag) {
+  return ParseElementInternal(pParent, bStartTag, 0);
+}
+
+std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
+    CXML_Element* pParent,
+    bool bStartTag,
+    int nDepth) {
+  if (nDepth > kMaxDepth)
+    return nullptr;
+
   m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);
   if (IsEOF())
     return nullptr;
@@ -476,8 +488,8 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElement(CXML_Element* pParent,
             bCDATA = false;
             iState = 0;
             m_dwIndex--;
-            std::unique_ptr<CXML_Element> pSubElement(
-                ParseElement(pElement.get(), true));
+            std::unique_ptr<CXML_Element> pSubElement =
+                ParseElementInternal(pElement.get(), true, nDepth + 1);
             if (!pSubElement)
               break;
 
@@ -528,12 +540,4 @@ void CXML_Parser::InsertContentSegment(bool bCDATA,
   CXML_Content* pContent = new CXML_Content;
   pContent->Set(bCDATA, content);
   pElement->m_Children.push_back({CXML_Element::Content, pContent});
-}
-
-std::unique_ptr<CXML_Element> CXML_Element::Parse(const void* pBuffer,
-                                                  size_t size) {
-  CXML_Parser parser;
-  if (!parser.Init(static_cast<const uint8_t*>(pBuffer), size))
-    return nullptr;
-  return parser.ParseElement(nullptr, false);
 }

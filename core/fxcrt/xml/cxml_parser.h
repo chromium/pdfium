@@ -42,6 +42,10 @@ class CXML_Parser {
   void InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
 
  private:
+  std::unique_ptr<CXML_Element> ParseElementInternal(CXML_Element* pParent,
+                                                     bool bStartTag,
+                                                     int nDepth);
+
   std::unique_ptr<CXML_DataBufAcc> m_pDataAcc;
   FX_FILESIZE m_nOffset;
   const uint8_t* m_pBuffer;

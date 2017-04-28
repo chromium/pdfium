@@ -9,6 +9,15 @@
 #include "core/fxcrt/xml/cxml_content.h"
 #include "core/fxcrt/xml/cxml_parser.h"
 
+// static
+std::unique_ptr<CXML_Element> CXML_Element::Parse(const void* pBuffer,
+                                                  size_t size) {
+  CXML_Parser parser;
+  if (!parser.Init(static_cast<const uint8_t*>(pBuffer), size))
+    return nullptr;
+  return parser.ParseElement(nullptr, false);
+}
+
 CXML_Element::CXML_Element(const CXML_Element* pParent,
                            const CFX_ByteStringC& qSpace,
                            const CFX_ByteStringC& tagname)
