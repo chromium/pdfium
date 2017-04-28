@@ -153,28 +153,29 @@ CXFA_FMStringExpression::~CXFA_FMStringExpression() {}
 
 void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr(m_wsString);
-  if (tempStr.GetLength() > 2) {
-    javascript.AppendChar(L'\"');
-    wchar_t oneChar;
-    for (int16_t i = 1; i < tempStr.GetLength() - 1; i++) {
-      oneChar = tempStr[i];
-      switch (oneChar) {
-        case L'\"': {
-          i++;
-          javascript << L"\\\"";
-        } break;
-        case 0x0d:
-          break;
-        case 0x0a: {
-          javascript << L"\\n";
-        } break;
-        default: { javascript.AppendChar(oneChar); } break;
-      }
-    }
-    javascript.AppendChar(L'\"');
-  } else {
+  if (tempStr.GetLength() <= 2) {
     javascript << tempStr;
+    return;
   }
+  javascript.AppendChar(L'\"');
+  for (int32_t i = 1; i < tempStr.GetLength() - 1; i++) {
+    wchar_t oneChar = tempStr[i];
+    switch (oneChar) {
+      case L'\"':
+        i++;
+        javascript << L"\\\"";
+        break;
+      case 0x0d:
+        break;
+      case 0x0a:
+        javascript << L"\\n";
+        break;
+      default:
+        javascript.AppendChar(oneChar);
+        break;
+    }
+  }
+  javascript.AppendChar(L'\"');
 }
 
 CXFA_FMIdentifierExpression::CXFA_FMIdentifierExpression(
