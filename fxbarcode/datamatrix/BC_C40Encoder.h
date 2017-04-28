@@ -29,11 +29,13 @@ class CBC_C40Encoder : public CBC_Encoder {
   virtual int32_t encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e);
 
  private:
-  int32_t backtrackOneCharacter(CBC_EncoderContext& context,
-                                CFX_WideString& buffer,
-                                CFX_WideString& removed,
-                                int32_t lastCharSize,
-                                int32_t& e);
+  // Moves back by 1 position in |context| and adjusts |buffer| accordingly
+  // using |lastCharSize|. Returns the length of the current character in
+  // |context| after adjusting the position. If the character cannot be encoded,
+  // return -1.
+  int32_t BacktrackOneCharacter(CBC_EncoderContext* context,
+                                CFX_WideString* buffer,
+                                int32_t lastCharSize);
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_C40ENCODER_H_
