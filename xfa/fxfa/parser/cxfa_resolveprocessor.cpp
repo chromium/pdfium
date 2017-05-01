@@ -23,7 +23,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_ResolveProcessor::CXFA_ResolveProcessor()
-    : m_iCurStart(0), m_pNodeHelper(new CXFA_NodeHelper) {}
+    : m_iCurStart(0), m_pNodeHelper(pdfium::MakeUnique<CXFA_NodeHelper>()) {}
 
 CXFA_ResolveProcessor::~CXFA_ResolveProcessor() {}
 

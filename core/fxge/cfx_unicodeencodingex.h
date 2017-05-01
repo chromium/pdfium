@@ -30,8 +30,8 @@ class CFX_UnicodeEncodingEx : public CFX_UnicodeEncoding {
   uint32_t m_nEncodingID;
 };
 
-CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(
+std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
     CFX_Font* pFont,
-    uint32_t nEncodingID = FXFM_ENCODING_NONE);
+    uint32_t nEncodingID);
 
 #endif  // CORE_FXGE_CFX_UNICODEENCODINGEX_H_

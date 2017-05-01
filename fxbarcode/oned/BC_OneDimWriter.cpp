@@ -135,8 +135,8 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
                                     float geWidth,
                                     int32_t fontSize,
                                     float& charsLen) {
-  std::unique_ptr<CFX_UnicodeEncodingEx> encoding(
-      FX_CreateFontEncodingEx(cFont));
+  std::unique_ptr<CFX_UnicodeEncodingEx> encoding =
+      FX_CreateFontEncodingEx(cFont, FXFM_ENCODING_NONE);
 
   int32_t length = text.GetLength();
   uint32_t* pCharCode = FX_Alloc(uint32_t, text.GetLength());

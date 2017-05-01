@@ -6,9 +6,12 @@
 
 #include "core/fxge/cfx_unicodeencodingex.h"
 
+#include <memory>
+
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -22,11 +25,12 @@ const uint32_t g_EncodingID[] = {
     FXFM_ENCODING_APPLE_ROMAN,
 };
 
-CFX_UnicodeEncodingEx* FXFM_CreateFontEncoding(CFX_Font* pFont,
-                                               uint32_t nEncodingID) {
+std::unique_ptr<CFX_UnicodeEncodingEx> FXFM_CreateFontEncoding(
+    CFX_Font* pFont,
+    uint32_t nEncodingID) {
   if (FXFT_Select_Charmap(pFont->GetFace(), nEncodingID))
     return nullptr;
-  return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
+  return pdfium::MakeUnique<CFX_UnicodeEncodingEx>(pFont, nEncodingID);
 }
 
 }  // namespace
@@ -80,8 +84,9 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
   return CPDF_Font::kInvalidCharCode;
 }
 
-CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
-                                               uint32_t nEncodingID) {
+std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
+    CFX_Font* pFont,
+    uint32_t nEncodingID) {
   if (!pFont || !pFont->GetFace())
     return nullptr;
 
@@ -89,7 +94,7 @@ CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
     return FXFM_CreateFontEncoding(pFont, nEncodingID);
 
   for (size_t i = 0; i < FX_ArraySize(g_EncodingID); ++i) {
-    CFX_UnicodeEncodingEx* pFontEncoding =
+    std::unique_ptr<CFX_UnicodeEncodingEx> pFontEncoding =
         FXFM_CreateFontEncoding(pFont, g_EncodingID[i]);
     if (pFontEncoding)
       return pFontEncoding;

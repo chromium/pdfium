@@ -5,11 +5,13 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ifx_systemfontinfo.h"
+#include "third_party/base/ptr_util.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
 namespace {
@@ -145,14 +147,14 @@ bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
 
 std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     const char** pUserPaths) {
-  CFX_LinuxFontInfo* pInfo = new CFX_LinuxFontInfo;
+  auto pInfo = pdfium::MakeUnique<CFX_LinuxFontInfo>();
   if (!pInfo->ParseFontCfg(pUserPaths)) {
     pInfo->AddPath("/usr/share/fonts");
     pInfo->AddPath("/usr/share/X11/fonts/Type1");
     pInfo->AddPath("/usr/share/X11/fonts/TTF");
     pInfo->AddPath("/usr/local/share/fonts");
   }
-  return std::unique_ptr<IFX_SystemFontInfo>(pInfo);
+  return std::move(pInfo);
 }
 
 void CFX_GEModule::InitPlatform() {

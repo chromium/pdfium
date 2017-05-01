@@ -199,7 +199,7 @@ int32_t CFX_SAXReader::StartParse(
   m_bCharData = false;
   m_dwDataOffset = 0;
   m_dwParseMode = dwParseMode;
-  m_Stack.emplace(new CFX_SAXItem(++m_dwItemID));
+  m_Stack.push(pdfium::MakeUnique<CFX_SAXItem>(++m_dwItemID));
   return 0;
 }
 

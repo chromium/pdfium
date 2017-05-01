@@ -160,12 +160,11 @@ bool CFGAS_GEFont::InitFont() {
   if (!m_pFont)
     return false;
 
-  if (!m_pFontEncoding) {
-    m_pFontEncoding.reset(FX_CreateFontEncodingEx(m_pFont));
-    if (!m_pFontEncoding)
-      return false;
-  }
-  return true;
+  if (m_pFontEncoding)
+    return true;
+
+  m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont, FXFM_ENCODING_NONE);
+  return !!m_pFontEncoding;
 }
 
 CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::Derive(uint32_t dwFontStyles,

@@ -38,8 +38,10 @@ CFX_FaceCache* CFX_FontCache::GetCachedFace(const CFX_Font* pFont) {
 
   auto counted_face_cache = pdfium::MakeUnique<CountedFaceCache>();
   counted_face_cache->m_nCount = 2;
-  CFX_FaceCache* face_cache = new CFX_FaceCache(bExternal ? nullptr : face);
-  counted_face_cache->m_Obj.reset(face_cache);
+  auto new_cache =
+      pdfium::MakeUnique<CFX_FaceCache>(bExternal ? nullptr : face);
+  CFX_FaceCache* face_cache = new_cache.get();
+  counted_face_cache->m_Obj = std::move(new_cache);
   map[face] = std::move(counted_face_cache);
   return face_cache;
 }

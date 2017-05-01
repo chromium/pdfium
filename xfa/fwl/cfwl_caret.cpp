@@ -25,7 +25,7 @@ CFWL_Caret::CFWL_Caret(const CFWL_App* app,
                        std::unique_ptr<CFWL_WidgetProperties> properties,
                        CFWL_Widget* pOuter)
     : CFWL_Widget(app, std::move(properties), pOuter),
-      m_pTimer(new CFWL_Caret::Timer(this)),
+      m_pTimer(pdfium::MakeUnique<CFWL_Caret::Timer>(this)),
       m_pTimerInfo(nullptr) {
   SetStates(FWL_STATE_CAT_HightLight);
 }

@@ -396,8 +396,9 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
   CFX_SizeGlyphCache* pSizeCache;
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it == m_SizeMap.end()) {
-    pSizeCache = new CFX_SizeGlyphCache;
-    m_SizeMap[FaceGlyphsKey] = std::unique_ptr<CFX_SizeGlyphCache>(pSizeCache);
+    auto pNewCache = pdfium::MakeUnique<CFX_SizeGlyphCache>();
+    pSizeCache = pNewCache.get();
+    m_SizeMap[FaceGlyphsKey] = std::move(pNewCache);
   } else {
     pSizeCache = it->second.get();
   }
