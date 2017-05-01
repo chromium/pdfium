@@ -21,9 +21,12 @@
 
 #include "fxbarcode/cbc_codebase.h"
 
+#include <utility>
+
 #include "fxbarcode/BC_Writer.h"
 
-CBC_CodeBase::CBC_CodeBase(CBC_Writer* pWriter) : m_pBCWriter(pWriter) {}
+CBC_CodeBase::CBC_CodeBase(std::unique_ptr<CBC_Writer> pWriter)
+    : m_pBCWriter(std::move(pWriter)) {}
 
 CBC_CodeBase::~CBC_CodeBase() {}
 

@@ -24,8 +24,10 @@
 #include <memory>
 
 #include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
+#include "third_party/base/ptr_util.h"
 
-CBC_DataMatrix::CBC_DataMatrix() : CBC_CodeBase(new CBC_DataMatrixWriter) {}
+CBC_DataMatrix::CBC_DataMatrix()
+    : CBC_CodeBase(pdfium::MakeUnique<CBC_DataMatrixWriter>()) {}
 
 CBC_DataMatrix::~CBC_DataMatrix() {}
 

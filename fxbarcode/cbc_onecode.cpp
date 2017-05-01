@@ -21,9 +21,12 @@
 
 #include "fxbarcode/cbc_onecode.h"
 
+#include <utility>
+
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
-CBC_OneCode::CBC_OneCode(CBC_Writer* pWriter) : CBC_CodeBase(pWriter) {}
+CBC_OneCode::CBC_OneCode(std::unique_ptr<CBC_Writer> pWriter)
+    : CBC_CodeBase(std::move(pWriter)) {}
 
 CBC_OneCode::~CBC_OneCode() {}
 

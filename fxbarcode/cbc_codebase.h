@@ -21,7 +21,7 @@ class CFX_RenderDevice;
 
 class CBC_CodeBase {
  public:
-  explicit CBC_CodeBase(CBC_Writer* pWriter);
+  explicit CBC_CodeBase(std::unique_ptr<CBC_Writer> pWriter);
   virtual ~CBC_CodeBase();
 
   virtual BC_TYPE GetType() = 0;

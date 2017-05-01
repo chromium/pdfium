@@ -24,8 +24,10 @@
 #include <memory>
 
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
+#include "third_party/base/ptr_util.h"
 
-CBC_Codabar::CBC_Codabar() : CBC_OneCode(new CBC_OnedCodaBarWriter) {}
+CBC_Codabar::CBC_Codabar()
+    : CBC_OneCode(pdfium::MakeUnique<CBC_OnedCodaBarWriter>()) {}
 
 CBC_Codabar::~CBC_Codabar() {}
 

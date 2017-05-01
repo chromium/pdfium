@@ -24,8 +24,9 @@
 #include <memory>
 
 #include "fxbarcode/oned/BC_OnedUPCAWriter.h"
+#include "third_party/base/ptr_util.h"
 
-CBC_UPCA::CBC_UPCA() : CBC_OneCode(new CBC_OnedUPCAWriter) {}
+CBC_UPCA::CBC_UPCA() : CBC_OneCode(pdfium::MakeUnique<CBC_OnedUPCAWriter>()) {}
 
 CBC_UPCA::~CBC_UPCA() {}
 

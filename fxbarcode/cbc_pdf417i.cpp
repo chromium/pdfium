@@ -24,8 +24,10 @@
 #include <memory>
 
 #include "fxbarcode/pdf417/BC_PDF417Writer.h"
+#include "third_party/base/ptr_util.h"
 
-CBC_PDF417I::CBC_PDF417I() : CBC_CodeBase(new CBC_PDF417Writer) {}
+CBC_PDF417I::CBC_PDF417I()
+    : CBC_CodeBase(pdfium::MakeUnique<CBC_PDF417Writer>()) {}
 
 CBC_PDF417I::~CBC_PDF417I() {}
 

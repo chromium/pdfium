@@ -7,6 +7,8 @@
 #ifndef FXBARCODE_CBC_ONECODE_H_
 #define FXBARCODE_CBC_ONECODE_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/cbc_codebase.h"
@@ -16,7 +18,7 @@ class CFX_Font;
 
 class CBC_OneCode : public CBC_CodeBase {
  public:
-  explicit CBC_OneCode(CBC_Writer* pWriter);
+  explicit CBC_OneCode(std::unique_ptr<CBC_Writer> pWriter);
   ~CBC_OneCode() override;
 
   virtual bool CheckContentValidity(const CFX_WideStringC& contents);
