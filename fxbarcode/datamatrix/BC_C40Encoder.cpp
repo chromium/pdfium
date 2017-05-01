@@ -40,7 +40,7 @@ CFX_WideString EncodeToCodewords(const CFX_WideString& sb, int32_t startPos) {
   wchar_t cw[2];
   cw[0] = static_cast<wchar_t>(v / 256);
   cw[1] = static_cast<wchar_t>(v % 256);
-  return CFX_WideString(cw);
+  return CFX_WideString(cw, FX_ArraySize(cw));
 }
 
 }  // namespace
