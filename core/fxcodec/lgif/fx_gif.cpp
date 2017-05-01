@@ -61,10 +61,9 @@ void CGifLZWDecoder::ClearTable() {
 void CGifLZWDecoder::DecodeString(uint16_t code) {
   stack_size = 0;
   while (true) {
-    ASSERT(code <= code_next);
-    if (code < code_clear || code > code_next) {
+    if (code < code_clear || code > code_next)
       break;
-    }
+
     stack[GIF_MAX_LZW_CODE - 1 - stack_size++] = code_table[code].suffix;
     code = code_table[code].prefix;
   }
@@ -135,7 +134,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
       if (code == code_clear) {
         ClearTable();
         continue;
-      } else if (code >= code_end) {
+      } else if (code == code_end) {
         des_size = i;
         return 1;
       } else {
