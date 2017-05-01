@@ -22,11 +22,12 @@
 
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
+#include "third_party/base/ptr_util.h"
 
 CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {
   m_matrix.resize(height + 2);
-  for (size_t i = 0, matrixLength = m_matrix.size(); i < matrixLength; ++i)
-    m_matrix[i] = new CBC_BarcodeRow((width + 4) * 17 + 1);
+  for (size_t i = 0; i < m_matrix.size(); ++i)
+    m_matrix[i] = pdfium::MakeUnique<CBC_BarcodeRow>((width + 4) * 17 + 1);
 
   m_width = width * 17;
   m_height = height + 2;
@@ -35,10 +36,7 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {
   m_outWidth = 0;
 }
 
-CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {
-  for (size_t i = 0; i < m_matrix.size(); i++)
-    delete m_matrix[i];
-}
+CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {}
 
 void CBC_BarcodeMatrix::set(int32_t x, int32_t y, uint8_t value) {
   m_matrix[y]->set(x, value);
@@ -48,15 +46,6 @@ void CBC_BarcodeMatrix::setMatrix(int32_t x, int32_t y, bool black) {
 }
 void CBC_BarcodeMatrix::startRow() {
   ++m_currentRow;
-}
-CBC_BarcodeRow* CBC_BarcodeMatrix::getCurrentRow() {
-  return m_matrix[m_currentRow];
-}
-int32_t CBC_BarcodeMatrix::getWidth() {
-  return m_outWidth;
-}
-int32_t CBC_BarcodeMatrix::getHeight() {
-  return m_outHeight;
 }
 std::vector<uint8_t>& CBC_BarcodeMatrix::getMatrix() {
   return getScaledMatrix(1, 1);

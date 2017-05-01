@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfx_barcode.h"
 
+#include <memory>
+
 #include "fxbarcode/cbc_codabar.h"
 #include "fxbarcode/cbc_code128.h"
 #include "fxbarcode/cbc_code39.h"
@@ -17,33 +19,34 @@
 #include "fxbarcode/cbc_qrcode.h"
 #include "fxbarcode/cbc_upca.h"
 #include "fxbarcode/utils.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
-CBC_CodeBase* CreateBarCodeEngineObject(BC_TYPE type) {
+std::unique_ptr<CBC_CodeBase> CreateBarCodeEngineObject(BC_TYPE type) {
   switch (type) {
     case BC_CODE39:
-      return new CBC_Code39();
+      return pdfium::MakeUnique<CBC_Code39>();
     case BC_CODABAR:
-      return new CBC_Codabar();
+      return pdfium::MakeUnique<CBC_Codabar>();
     case BC_CODE128:
-      return new CBC_Code128(BC_CODE128_B);
+      return pdfium::MakeUnique<CBC_Code128>(BC_CODE128_B);
     case BC_CODE128_B:
-      return new CBC_Code128(BC_CODE128_B);
+      return pdfium::MakeUnique<CBC_Code128>(BC_CODE128_B);
     case BC_CODE128_C:
-      return new CBC_Code128(BC_CODE128_C);
+      return pdfium::MakeUnique<CBC_Code128>(BC_CODE128_C);
     case BC_EAN8:
-      return new CBC_EAN8();
+      return pdfium::MakeUnique<CBC_EAN8>();
     case BC_UPCA:
-      return new CBC_UPCA();
+      return pdfium::MakeUnique<CBC_UPCA>();
     case BC_EAN13:
-      return new CBC_EAN13();
+      return pdfium::MakeUnique<CBC_EAN13>();
     case BC_QR_CODE:
-      return new CBC_QRCode();
+      return pdfium::MakeUnique<CBC_QRCode>();
     case BC_PDF417:
-      return new CBC_PDF417I();
+      return pdfium::MakeUnique<CBC_PDF417I>();
     case BC_DATAMATRIX:
-      return new CBC_DataMatrix();
+      return pdfium::MakeUnique<CBC_DataMatrix>();
     case BC_UNKNOWN:
     default:
       return nullptr;
@@ -57,7 +60,7 @@ CFX_Barcode::CFX_Barcode() {}
 CFX_Barcode::~CFX_Barcode() {}
 
 bool CFX_Barcode::Create(BC_TYPE type) {
-  m_pBCEngine.reset(CreateBarCodeEngineObject(type));
+  m_pBCEngine = CreateBarCodeEngineObject(type);
   return !!m_pBCEngine;
 }
 

@@ -20,9 +20,11 @@
  * limitations under the License.
  */
 
-#include "fxbarcode/common/BC_CommonBitArray.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
+
+#include "fxbarcode/common/BC_CommonBitArray.h"
 #include "fxbarcode/utils.h"
+#include "third_party/base/ptr_util.h"
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() {}
 
@@ -53,10 +55,6 @@ bool CBC_CommonBitMatrix::Get(int32_t x, int32_t y) const {
   if (offset >= m_rowSize * m_height || offset < 0)
     return false;
   return ((((uint32_t)m_bits[offset]) >> (x & 0x1f)) & 1) != 0;
-}
-
-int32_t* CBC_CommonBitMatrix::GetBits() {
-  return m_bits;
 }
 
 void CBC_CommonBitMatrix::Set(int32_t x, int32_t y) {
@@ -95,20 +93,6 @@ bool CBC_CommonBitMatrix::SetRegion(int32_t left,
   return true;
 }
 
-CBC_CommonBitArray* CBC_CommonBitMatrix::GetRow(int32_t y,
-                                                CBC_CommonBitArray* row) {
-  CBC_CommonBitArray* rowArray = nullptr;
-  if (!row || static_cast<int32_t>(row->GetSize()) < m_width) {
-    rowArray = new CBC_CommonBitArray(m_width);
-  } else {
-    rowArray = new CBC_CommonBitArray(row);
-  }
-  int32_t offset = y * m_rowSize;
-  for (int32_t x = 0; x < m_rowSize; x++)
-    rowArray->SetBulk(x << 5, m_bits[offset + x]);
-  return rowArray;
-}
-
 void CBC_CommonBitMatrix::SetRow(int32_t y, CBC_CommonBitArray* row) {
   int32_t l = y * m_rowSize;
   for (int32_t i = 0; i < m_rowSize; i++) {
@@ -120,14 +104,4 @@ void CBC_CommonBitMatrix::SetRow(int32_t y, CBC_CommonBitArray* row) {
 void CBC_CommonBitMatrix::SetCol(int32_t y, CBC_CommonBitArray* col) {
   for (size_t i = 0; i < col->GetBits().size(); ++i)
     m_bits[i * m_rowSize + y] = col->GetBitArray()[i];
-}
-
-int32_t CBC_CommonBitMatrix::GetWidth() const {
-  return m_width;
-}
-int32_t CBC_CommonBitMatrix::GetHeight() const {
-  return m_height;
-}
-int32_t CBC_CommonBitMatrix::GetRowSize() const {
-  return m_rowSize;
 }
