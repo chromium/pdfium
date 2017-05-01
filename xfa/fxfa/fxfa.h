@@ -86,10 +86,6 @@ enum XFA_WidgetStatus {
   XFA_WidgetStatus_Visible = 1 << 9
 };
 
-enum XFA_WIDGETORDER {
-  XFA_WIDGETORDER_PreOrder,
-};
-
 enum XFA_WIDGETTYPE {
   XFA_WIDGETTYPE_Barcode,
   XFA_WIDGETTYPE_PushButton,

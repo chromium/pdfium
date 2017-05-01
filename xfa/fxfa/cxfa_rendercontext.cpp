@@ -41,8 +41,8 @@ int32_t CXFA_RenderContext::StartRender(CXFA_FFPageView* pPageView,
   uint32_t dwFilterType = XFA_WidgetStatus_Visible |
                           (m_options.m_bPrint ? XFA_WidgetStatus_Printable
                                               : XFA_WidgetStatus_Viewable);
-  m_pWidgetIterator.reset(
-      m_pPageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form, dwFilterType));
+  m_pWidgetIterator =
+      m_pPageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form, dwFilterType);
   m_pWidget = m_pWidgetIterator->MoveToNext();
   return XFA_RENDERSTATUS_Ready;
 }

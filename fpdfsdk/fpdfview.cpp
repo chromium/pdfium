@@ -140,9 +140,8 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
 
 class CPDF_CustomAccess final : public IFX_SeekableReadStream {
  public:
-  static CFX_RetainPtr<CPDF_CustomAccess> Create(FPDF_FILEACCESS* pFileAccess) {
-    return CFX_RetainPtr<CPDF_CustomAccess>(new CPDF_CustomAccess(pFileAccess));
-  }
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
@@ -180,9 +179,9 @@ bool CPDF_CustomAccess::ReadBlock(void* buffer,
 #ifdef PDF_ENABLE_XFA
 class CFPDF_FileStream : public IFX_SeekableStream {
  public:
-  static CFX_RetainPtr<CFPDF_FileStream> Create(FPDF_FILEHANDLER* pFS) {
-    return CFX_RetainPtr<CFPDF_FileStream>(new CFPDF_FileStream(pFS));
-  }
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   ~CFPDF_FileStream() override;
 
   // IFX_SeekableStream:
@@ -328,13 +327,13 @@ CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
 
 CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
     FPDF_FILEACCESS* pFileAccess) {
-  return CPDF_CustomAccess::Create(pFileAccess);
+  return pdfium::MakeRetain<CPDF_CustomAccess>(pFileAccess);
 }
 
 #ifdef PDF_ENABLE_XFA
 CFX_RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFilehandler) {
-  return CFPDF_FileStream::Create(pFilehandler);
+  return pdfium::MakeRetain<CFPDF_FileStream>(pFilehandler);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -594,8 +593,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
 DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
                         FPDF_BYTESTRING password) {
-  CFX_RetainPtr<CPDF_CustomAccess> pFile =
-      CPDF_CustomAccess::Create(pFileAccess);
+  auto pFile = pdfium::MakeRetain<CPDF_CustomAccess>(pFileAccess);
   auto pParser = pdfium::MakeUnique<CPDF_Parser>();
   pParser->SetPassword(password);
 

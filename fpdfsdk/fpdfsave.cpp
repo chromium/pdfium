@@ -240,8 +240,8 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator(
-      pXFADocView->CreateWidgetAccIterator());
+  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
+      pXFADocView->CreateWidgetAccIterator();
   while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PostSave;
@@ -264,8 +264,8 @@ bool SendPreSaveToXFADoc(
     return true;
 
   CXFA_FFWidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator(
-      pXFADocView->CreateWidgetAccIterator());
+  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
+      pXFADocView->CreateWidgetAccIterator();
   while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PreSave;

@@ -306,10 +306,12 @@ CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   return m_pWidgetHandler.get();
 }
 
-CXFA_WidgetAccIterator* CXFA_FFDocView::CreateWidgetAccIterator(
-    XFA_WIDGETORDER eOrder) {
+std::unique_ptr<CXFA_WidgetAccIterator>
+CXFA_FFDocView::CreateWidgetAccIterator() {
   CXFA_Node* pFormRoot = GetRootSubform();
-  return pFormRoot ? new CXFA_WidgetAccIterator(pFormRoot) : nullptr;
+  if (!pFormRoot)
+    return nullptr;
+  return pdfium::MakeUnique<CXFA_WidgetAccIterator>(pFormRoot);
 }
 
 CXFA_FFWidget* CXFA_FFDocView::GetFocusWidget() {

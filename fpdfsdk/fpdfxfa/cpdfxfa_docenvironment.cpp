@@ -624,8 +624,8 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
   if (!pWidgetHandler)
     return true;
 
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator(
-      m_pContext->GetXFADocView()->CreateWidgetAccIterator());
+  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
+      m_pContext->GetXFADocView()->CreateWidgetAccIterator();
   if (pWidgetAccIterator) {
     CXFA_EventParam Param;
     Param.m_eType = XFA_EVENT_PreSubmit;
@@ -633,8 +633,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       pWidgetHandler->ProcessEvent(pWidgetAcc, &Param);
   }
 
-  pWidgetAccIterator.reset(
-      m_pContext->GetXFADocView()->CreateWidgetAccIterator());
+  pWidgetAccIterator = m_pContext->GetXFADocView()->CreateWidgetAccIterator();
   if (!pWidgetAccIterator)
     return true;
 
@@ -676,8 +675,8 @@ void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
   if (!pWidgetHandler)
     return;
 
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator(
-      m_pContext->GetXFADocView()->CreateWidgetAccIterator());
+  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
+      m_pContext->GetXFADocView()->CreateWidgetAccIterator();
   if (!pWidgetAccIterator)
     return;
 

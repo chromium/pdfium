@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFPAGEVIEW_H_
 #define XFA_FXFA_CXFA_FFPAGEVIEW_H_
 
+#include <memory>
 #include <vector>
 
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
@@ -25,18 +26,17 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
   CXFA_FFDocView* GetDocView() const;
   CFX_RectF GetPageViewRect() const;
   CFX_Matrix GetDisplayMatrix(const CFX_Rect& rtDisp, int32_t iRotate) const;
-  IXFA_WidgetIterator* CreateWidgetIterator(
-      uint32_t dwTraverseWay = XFA_TRAVERSEWAY_Form,
-      uint32_t dwWidgetFilter = XFA_WidgetStatus_Visible |
-                                XFA_WidgetStatus_Viewable);
+  std::unique_ptr<IXFA_WidgetIterator> CreateWidgetIterator(
+      uint32_t dwTraverseWay,
+      uint32_t dwWidgetFilter);
 
  protected:
   CXFA_FFDocView* const m_pDocView;
 };
 
-typedef CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
-                                  CXFA_TraverseStrategy_LayoutItem>
-    CXFA_LayoutItemIterator;
+using CXFA_LayoutItemIterator =
+    CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
+                              CXFA_TraverseStrategy_LayoutItem>;
 
 class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
  public:
