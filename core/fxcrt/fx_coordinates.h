@@ -570,6 +570,7 @@ class CFX_FloatRect {
 // | a  b  0 |
 // | c  d  0 |
 // | e  f  1 |
+// See PDF spec 1.7 Section 4.2.3.
 //
 class CFX_Matrix {
  public:
