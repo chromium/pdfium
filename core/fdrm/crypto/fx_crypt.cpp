@@ -6,6 +6,8 @@
 
 #include "core/fdrm/crypto/fx_crypt.h"
 
+#include <utility>
+
 #define GET_UINT32(n, b, i)                            \
   {                                                    \
     (n) = (uint32_t)((uint8_t*)b)[(i)] |               \
@@ -139,22 +141,15 @@ void md5_process(CRYPT_md5_context* ctx, const uint8_t data[64]) {
 void CRYPT_ArcFourSetup(CRYPT_rc4_context* s,
                         const uint8_t* key,
                         uint32_t length) {
-  int i, j, k, *m, a;
   s->x = 0;
   s->y = 0;
-  m = s->m;
-  for (i = 0; i < 256; i++) {
-    m[i] = i;
-  }
-  j = k = 0;
-  for (i = 0; i < 256; i++) {
-    a = m[i];
-    j = (j + a + key[k]) & 0xFF;
-    m[i] = m[j];
-    m[j] = a;
-    if (++k >= (int)length) {
-      k = 0;
-    }
+  for (int i = 0; i < 256; ++i)
+    s->m[i] = i;
+
+  int j = 0;
+  for (int i = 0; i < 256; ++i) {
+    j = (j + s->m[i] + (length ? key[i % length] : 0)) & 0xFF;
+    std::swap(s->m[i], s->m[j]);
   }
 }
 
