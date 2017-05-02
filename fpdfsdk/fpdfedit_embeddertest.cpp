@@ -477,9 +477,9 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   const char md5_3[] = "40b3ef04f915ff4c4208948001763544";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5_3[] = "174f30c36c73adb265c0f6ddb3a61c87";
+  const char md5_3[] = "d69d419def35a098d9c10f8317d6709b";
 #else
-  const char md5_3[] = "abfa9246d60f821b5b7638efd32dfd92";
+  const char md5_3[] = "8b300d3c6dfc12fa9af97e12ed5bd80a";
 #endif
   CompareBitmap(page_bitmap, 612, 792, md5_3);
   FPDFBitmap_Destroy(page_bitmap);
