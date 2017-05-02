@@ -1611,24 +1611,16 @@ bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
 
   CPDF_Dest dest(destArray);
   const CPDF_Array* arrayObject = ToArray(dest.GetObject());
-
-  std::unique_ptr<float[]> scrollPositionArray;
-  int scrollPositionArraySize = 0;
-
+  std::vector<float> scrollPositionArray;
   if (arrayObject) {
-    scrollPositionArray.reset(new float[arrayObject->GetCount()]);
-    int j = 0;
     for (size_t i = 2; i < arrayObject->GetCount(); i++)
-      scrollPositionArray[j++] = arrayObject->GetFloatAt(i);
-    scrollPositionArraySize = j;
+      scrollPositionArray.push_back(arrayObject->GetFloatAt(i));
   }
-
   pRuntime->BeginBlock();
   m_pFormFillEnv->DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
-                               scrollPositionArray.get(),
-                               scrollPositionArraySize);
+                               scrollPositionArray.data(),
+                               scrollPositionArray.size());
   pRuntime->EndBlock();
-
   return true;
 }
 

@@ -748,12 +748,10 @@ bool app::response(CJS_Runtime* pRuntime,
     swLabel = newParams[4].ToCFXWideString(pRuntime);
 
   const int MAX_INPUT_BYTES = 2048;
-  std::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
-  memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
-
+  std::vector<uint8_t> pBuff(MAX_INPUT_BYTES + 2);
   int nLengthBytes = pRuntime->GetFormFillEnv()->JS_appResponse(
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
-      bPassword, pBuff.get(), MAX_INPUT_BYTES);
+      bPassword, pBuff.data(), MAX_INPUT_BYTES);
 
   if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAM_TOOLONG);
@@ -761,7 +759,7 @@ bool app::response(CJS_Runtime* pRuntime,
   }
 
   vRet = CJS_Value(pRuntime, CFX_WideString::FromUTF16LE(
-                                 reinterpret_cast<uint16_t*>(pBuff.get()),
+                                 reinterpret_cast<uint16_t*>(pBuff.data()),
                                  nLengthBytes / sizeof(uint16_t))
                                  .c_str());
 

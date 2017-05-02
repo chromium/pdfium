@@ -7,6 +7,7 @@
 #include "fpdfsdk/fsdk_actionhandler.h"
 
 #include <set>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -420,19 +421,13 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(
   int nPageIndex = MyDest.GetPageIndex(pPDFDocument);
   int nFitType = MyDest.GetZoomMode();
   const CPDF_Array* pMyArray = ToArray(MyDest.GetObject());
-  float* pPosAry = nullptr;
-  int sizeOfAry = 0;
+  std::vector<float> posArray;
   if (pMyArray) {
-    pPosAry = new float[pMyArray->GetCount()];
-    int j = 0;
-    for (size_t i = 2; i < pMyArray->GetCount(); i++) {
-      pPosAry[j++] = pMyArray->GetFloatAt(i);
-    }
-    sizeOfAry = j;
+    for (size_t i = 2; i < pMyArray->GetCount(); i++)
+      posArray.push_back(pMyArray->GetFloatAt(i));
   }
-
-  pFormFillEnv->DoGoToAction(nPageIndex, nFitType, pPosAry, sizeOfAry);
-  delete[] pPosAry;
+  pFormFillEnv->DoGoToAction(nPageIndex, nFitType, posArray.data(),
+                             posArray.size());
 }
 
 void CPDFSDK_ActionHandler::DoAction_GoToR(
