@@ -6,6 +6,7 @@
 #define PUBLIC_CPP_FPDF_DELETERS_H_
 
 #include "public/fpdf_dataavail.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
@@ -41,6 +42,10 @@ struct FPDFPageDeleter {
 
 struct FPDFStructTreeDeleter {
   inline void operator()(FPDF_STRUCTTREE tree) { FPDF_StructTree_Close(tree); }
+};
+
+struct FPDFFontDeleter {
+  inline void operator()(FPDF_FONT font) { FPDFFont_Close(font); }
 };
 
 #endif  // PUBLIC_CPP_FPDF_DELETERS_H_

@@ -8,6 +8,7 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_type1font.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -236,12 +237,20 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
-                                             FPDF_BYTESTRING text) {
+                                             FPDF_WIDESTRING text) {
   if (!text_object)
     return false;
 
   auto* pTextObj = reinterpret_cast<CPDF_TextObject*>(text_object);
-  pTextObj->SetText(CFX_ByteString(text));
+  FX_STRSIZE len = CFX_WideString::WStringLength(text);
+  CFX_WideString encodedText = CFX_WideString::FromUTF16LE(text, len);
+  CFX_ByteString byteText;
+  for (int i = 0; i < encodedText.GetLength(); ++i) {
+    uint32_t charcode =
+        pTextObj->GetFont()->CharCodeFromUnicode(encodedText[i]);
+    pTextObj->GetFont()->AppendChar(&byteText, charcode);
+  }
+  pTextObj->SetText(byteText);
   return true;
 }
 
@@ -266,4 +275,32 @@ DLLEXPORT FPDF_FONT STDCALL FPDFText_LoadFont(FPDF_DOCUMENT document,
 
   return cid ? LoadCompositeFont(pDoc, std::move(pFont), data, size, font_type)
              : LoadSimpleFont(pDoc, std::move(pFont), data, size, font_type);
+}
+
+DLLEXPORT void STDCALL FPDFFont_Close(FPDF_FONT font) {
+  if (!font)
+    return;
+
+  CPDF_Font* cpdf_font = reinterpret_cast<CPDF_Font*>(font);
+  CPDF_Document* pDoc = cpdf_font->m_pDocument;
+  CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
+  if (pPageData && !pPageData->IsForceClear())
+    pPageData->ReleaseFont(cpdf_font->GetFontDict());
+}
+
+DLLEXPORT FPDF_PAGEOBJECT STDCALL
+FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
+                          FPDF_FONT font,
+                          float font_size) {
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc || !font)
+    return nullptr;
+
+  CPDF_Font* pFont = reinterpret_cast<CPDF_Font*>(font);
+
+  auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
+  pTextObj->m_TextState.SetFont(pDoc->LoadFont(pFont->GetFontDict()));
+  pTextObj->m_TextState.SetFontSize(font_size);
+  pTextObj->DefaultStates();
+  return pTextObj.release();
 }

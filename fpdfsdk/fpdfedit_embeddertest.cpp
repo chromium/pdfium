@@ -14,6 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/fsdk_define.h"
+#include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -423,11 +424,14 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
 
   // Add some text to the page
-  FPDF_PAGEOBJECT text1 = FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
-  EXPECT_TRUE(text1);
-  EXPECT_TRUE(FPDFText_SetText(text1, "I'm at the bottom of the page"));
-  FPDFPageObj_Transform(text1, 1, 0, 0, 1, 20, 20);
-  FPDFPage_InsertObject(page, text1);
+  FPDF_PAGEOBJECT text_object1 =
+      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
+  EXPECT_TRUE(text_object1);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text1 =
+      GetFPDFWideString(L"I'm at the bottom of the page");
+  EXPECT_TRUE(FPDFText_SetText(text_object1, text1.get()));
+  FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
+  FPDFPage_InsertObject(page, text_object1);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   FPDF_BITMAP page_bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -439,12 +443,14 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFBitmap_Destroy(page_bitmap);
 
   // Try another font
-  FPDF_PAGEOBJECT text2 =
+  FPDF_PAGEOBJECT text_object2 =
       FPDFPageObj_NewTextObj(document(), "TimesNewRomanBold", 15.0f);
-  EXPECT_TRUE(text2);
-  EXPECT_TRUE(FPDFText_SetText(text2, "Hi, I'm Bold. Times New Roman Bold."));
-  FPDFPageObj_Transform(text2, 1, 0, 0, 1, 100, 600);
-  FPDFPage_InsertObject(page, text2);
+  EXPECT_TRUE(text_object2);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text2 =
+      GetFPDFWideString(L"Hi, I'm Bold. Times New Roman Bold.");
+  EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
+  FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 600);
+  FPDFPage_InsertObject(page, text_object2);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   page_bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -458,12 +464,14 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFBitmap_Destroy(page_bitmap);
 
   // And some randomly transformed text
-  FPDF_PAGEOBJECT text3 =
+  FPDF_PAGEOBJECT text_object3 =
       FPDFPageObj_NewTextObj(document(), "Courier-Bold", 20.0f);
-  EXPECT_TRUE(text3);
-  EXPECT_TRUE(FPDFText_SetText(text3, "Can you read me? <:)>"));
-  FPDFPageObj_Transform(text3, 1, 1.5, 2, 0.5, 200, 200);
-  FPDFPage_InsertObject(page, text3);
+  EXPECT_TRUE(text_object3);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text3 =
+      GetFPDFWideString(L"Can you read me? <:)>");
+  EXPECT_TRUE(FPDFText_SetText(text_object3, text3.get()));
+  FPDFPageObj_Transform(text_object3, 1, 1.5, 2, 0.5, 200, 200);
+  FPDFPage_InsertObject(page, text_object3);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   page_bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -522,10 +530,13 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   FPDFBitmap_Destroy(page_bitmap);
 
   // Add some text to the page
-  FPDF_PAGEOBJECT text = FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
-  EXPECT_TRUE(FPDFText_SetText(text, "Something something #text# something"));
-  FPDFPageObj_Transform(text, 1, 0, 0, 1, 300, 300);
-  FPDFPage_InsertObject(page, text);
+  FPDF_PAGEOBJECT text_object =
+      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+      GetFPDFWideString(L"Something something #text# something");
+  EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
+  FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 300, 300);
+  FPDFPage_InsertObject(page, text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   CPDF_Dictionary* font_dict = the_page->m_pResources->GetDictFor("Font");
   ASSERT_TRUE(font_dict);
@@ -545,10 +556,10 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Bold");
   const uint8_t* data = stock_font->m_Font.GetFontData();
   const uint32_t size = stock_font->m_Font.GetSize();
-  FPDF_FONT font =
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, false);
-  ASSERT_TRUE(font);
-  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font);
+  std::unique_ptr<void, FPDFFontDeleter> font(
+      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, false));
+  ASSERT_TRUE(font.get());
+  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font.get());
   EXPECT_TRUE(typed_font->IsType1Font());
 
   CPDF_Dictionary* font_dict = typed_font->GetFontDict();
@@ -574,10 +585,10 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Courier");
   const uint8_t* data = stock_font->m_Font.GetFontData();
   const uint32_t size = stock_font->m_Font.GetSize();
-  FPDF_FONT font =
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, false);
-  ASSERT_TRUE(font);
-  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font);
+  std::unique_ptr<void, FPDFFontDeleter> font(
+      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, false));
+  ASSERT_TRUE(font.get());
+  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font.get());
   EXPECT_TRUE(typed_font->IsTrueTypeFont());
 
   CPDF_Dictionary* font_dict = typed_font->GetFontDict();
@@ -604,10 +615,10 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Roman");
   const uint8_t* data = stock_font->m_Font.GetFontData();
   const uint32_t size = stock_font->m_Font.GetSize();
-  FPDF_FONT font =
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, 1);
-  ASSERT_TRUE(font);
-  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font);
+  std::unique_ptr<void, FPDFFontDeleter> font(
+      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, 1));
+  ASSERT_TRUE(font.get());
+  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
@@ -660,10 +671,10 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   const uint8_t* data = stock_font->m_Font.GetFontData();
   const uint32_t size = stock_font->m_Font.GetSize();
 
-  FPDF_FONT font =
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1);
-  ASSERT_TRUE(font);
-  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font);
+  std::unique_ptr<void, FPDFFontDeleter> font(
+      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
+  ASSERT_TRUE(font.get());
+  CPDF_Font* typed_font = reinterpret_cast<CPDF_Font*>(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
@@ -703,4 +714,75 @@ TEST_F(FPDFEditEmbeddertest, NormalizeNegativeRotation) {
 
   EXPECT_EQ(3, FPDFPage_GetRotation(page));
   UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
+  // Start with a blank page
+  FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
+  {
+    const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Arial");
+    const uint8_t* data = stock_font->m_Font.GetFontData();
+    const uint32_t size = stock_font->m_Font.GetSize();
+    std::unique_ptr<void, FPDFFontDeleter> font(
+        FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 0));
+    ASSERT_TRUE(font.get());
+
+    // Add some text to the page
+    FPDF_PAGEOBJECT text_object =
+        FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
+    EXPECT_TRUE(text_object);
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+        GetFPDFWideString(L"I am testing my loaded font, WEE.");
+    EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
+    FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
+    FPDFPage_InsertObject(page, text_object);
+    EXPECT_TRUE(FPDFPage_GenerateContent(page));
+    FPDF_BITMAP page_bitmap = RenderPage(page);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+    const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
+#else
+    const char md5[] = "28e5b10743660dcdfd1618db47b39d32";
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+    CompareBitmap(page_bitmap, 612, 792, md5);
+    FPDFBitmap_Destroy(page_bitmap);
+
+    // Add some more text, same font
+    FPDF_PAGEOBJECT text_object2 =
+        FPDFPageObj_CreateTextObj(document(), font.get(), 15.0f);
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text2 =
+        GetFPDFWideString(L"Bigger font size");
+    EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
+    FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 200, 200);
+    FPDFPage_InsertObject(page, text_object2);
+    EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  }
+  FPDF_BITMAP page_bitmap2 = RenderPage(page);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5_2[] = "8eded4193ff1f0f77b8b600a825e97ea";
+#else
+  const char md5_2[] = "a068eef4110d607f77c87ea8340fa2a5";
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  CompareBitmap(page_bitmap2, 612, 792, md5_2);
+  FPDFBitmap_Destroy(page_bitmap2);
+
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  FPDF_ClosePage(page);
+  std::string new_file = GetString();
+
+  // Render the saved result
+  FPDF_FILEACCESS file_access;
+  memset(&file_access, 0, sizeof(file_access));
+  file_access.m_FileLen = new_file.size();
+  file_access.m_GetBlock = GetBlockFromString;
+  file_access.m_Param = &new_file;
+  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ASSERT_NE(nullptr, new_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
+  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+  ASSERT_NE(nullptr, new_page);
+  FPDF_BITMAP new_bitmap = RenderPage(new_page);
+  CompareBitmap(new_bitmap, 612, 792, md5_2);
+  FPDFBitmap_Destroy(new_bitmap);
+  FPDF_ClosePage(new_page);
+  FPDF_CloseDocument(new_doc);
 }
