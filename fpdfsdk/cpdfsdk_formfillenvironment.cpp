@@ -114,14 +114,14 @@ CFX_WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
   if (nRequiredLen <= 0)
     return CFX_WideString();
 
-  std::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
-  memset(pBuff.get(), 0, nRequiredLen);
+  std::vector<uint8_t> pBuff(nRequiredLen);
   const int nActualLen = m_pInfo->m_pJsPlatform->Field_browse(
-      m_pInfo->m_pJsPlatform, pBuff.get(), nRequiredLen);
+      m_pInfo->m_pJsPlatform, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return CFX_WideString();
 
-  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff.get(), nActualLen));
+  pBuff.resize(nActualLen);
+  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff));
 }
 
 CFX_WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
@@ -134,14 +134,14 @@ CFX_WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
   if (nRequiredLen <= 0)
     return CFX_WideString();
 
-  std::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
-  memset(pBuff.get(), 0, nRequiredLen);
+  std::vector<uint8_t> pBuff(nRequiredLen);
   const int nActualLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
-      m_pInfo->m_pJsPlatform, pBuff.get(), nRequiredLen);
+      m_pInfo->m_pJsPlatform, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return CFX_WideString();
 
-  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff.get(), nActualLen));
+  pBuff.resize(nActualLen);
+  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff));
 }
 
 void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
@@ -368,25 +368,20 @@ void CPDFSDK_FormFillEnvironment::SetCurrentPage(FPDF_DOCUMENT document,
 
 CFX_WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
   if (!m_pInfo || !m_pInfo->FFI_GetPlatform)
-    return L"";
+    return CFX_WideString();
 
   int nRequiredLen = m_pInfo->FFI_GetPlatform(m_pInfo, nullptr, 0);
   if (nRequiredLen <= 0)
-    return L"";
+    return CFX_WideString();
 
-  char* pbuff = new char[nRequiredLen];
-  memset(pbuff, 0, nRequiredLen);
-  int nActualLen = m_pInfo->FFI_GetPlatform(m_pInfo, pbuff, nRequiredLen);
-  if (nActualLen <= 0 || nActualLen > nRequiredLen) {
-    delete[] pbuff;
-    return L"";
-  }
-  CFX_ByteString bsRet = CFX_ByteString(pbuff, nActualLen);
-  CFX_WideString wsRet = CFX_WideString::FromUTF16LE(
-      (unsigned short*)bsRet.GetBuffer(bsRet.GetLength()),
-      bsRet.GetLength() / sizeof(unsigned short));
-  delete[] pbuff;
-  return wsRet;
+  std::vector<uint8_t> pBuff(nRequiredLen);
+  int nActualLen =
+      m_pInfo->FFI_GetPlatform(m_pInfo, pBuff.data(), nRequiredLen);
+  if (nActualLen <= 0 || nActualLen > nRequiredLen)
+    return CFX_WideString();
+
+  return CFX_WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
+                                     nActualLen / sizeof(uint16_t));
 }
 
 void CPDFSDK_FormFillEnvironment::GotoURL(FPDF_DOCUMENT document,
@@ -533,25 +528,20 @@ FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(const wchar_t* wsURL,
 
 CFX_WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
   if (!m_pInfo || !m_pInfo->FFI_GetLanguage)
-    return L"";
+    return CFX_WideString();
 
   int nRequiredLen = m_pInfo->FFI_GetLanguage(m_pInfo, nullptr, 0);
   if (nRequiredLen <= 0)
-    return L"";
+    return CFX_WideString();
 
-  char* pbuff = new char[nRequiredLen];
-  memset(pbuff, 0, nRequiredLen);
-  int nActualLen = m_pInfo->FFI_GetLanguage(m_pInfo, pbuff, nRequiredLen);
-  if (nActualLen <= 0 || nActualLen > nRequiredLen) {
-    delete[] pbuff;
-    return L"";
-  }
-  CFX_ByteString bsRet = CFX_ByteString(pbuff, nActualLen);
-  CFX_WideString wsRet = CFX_WideString::FromUTF16LE(
-      (FPDF_WIDESTRING)bsRet.GetBuffer(bsRet.GetLength()),
-      bsRet.GetLength() / sizeof(FPDF_WIDESTRING));
-  delete[] pbuff;
-  return wsRet;
+  std::vector<uint8_t> pBuff(nRequiredLen);
+  int nActualLen =
+      m_pInfo->FFI_GetLanguage(m_pInfo, pBuff.data(), nRequiredLen);
+  if (nActualLen <= 0 || nActualLen > nRequiredLen)
+    return CFX_WideString();
+
+  return CFX_WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
+                                     nActualLen / sizeof(uint16_t));
 }
 
 void CPDFSDK_FormFillEnvironment::PageEvent(int iPageCount,

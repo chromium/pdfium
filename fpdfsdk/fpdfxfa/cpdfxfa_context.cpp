@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -307,25 +308,22 @@ CFX_WideString CPDFXFA_Context::Response(const CFX_WideString& wsQuestion,
                                          const CFX_WideString& wsTitle,
                                          const CFX_WideString& wsDefaultAnswer,
                                          bool bMark) {
-  CFX_WideString wsAnswer;
   if (!m_pFormFillEnv)
-    return wsAnswer;
+    return CFX_WideString();
 
   int nLength = 2048;
-  char* pBuff = new char[nLength];
+  std::vector<uint8_t> pBuff(nLength);
   nLength = m_pFormFillEnv->JS_appResponse(wsQuestion.c_str(), wsTitle.c_str(),
                                            wsDefaultAnswer.c_str(), nullptr,
-                                           bMark, pBuff, nLength);
-  if (nLength > 0) {
-    nLength = nLength > 2046 ? 2046 : nLength;
-    pBuff[nLength] = 0;
-    pBuff[nLength + 1] = 0;
-    wsAnswer = CFX_WideString::FromUTF16LE(
-        reinterpret_cast<const unsigned short*>(pBuff),
-        nLength / sizeof(unsigned short));
-  }
-  delete[] pBuff;
-  return wsAnswer;
+                                           bMark, pBuff.data(), nLength);
+  if (nLength <= 0)
+    return CFX_WideString();
+
+  nLength = std::min(2046, nLength);
+  pBuff[nLength] = 0;
+  pBuff[nLength + 1] = 0;
+  return CFX_WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
+                                     nLength / sizeof(uint16_t));
 }
 
 CFX_RetainPtr<IFX_SeekableReadStream> CPDFXFA_Context::DownloadURL(
