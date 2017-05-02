@@ -681,12 +681,6 @@ CFDE_TxtEdtParag* CFDE_TxtEdtEngine::GetParag(int32_t nParagIndex) const {
   return m_ParagPtrArray[nParagIndex].get();
 }
 
-IFX_CharIter* CFDE_TxtEdtEngine::CreateCharIter() {
-  if (!m_pTxtBuf)
-    return nullptr;
-  return new CFDE_TxtEdtBuf::Iterator(m_pTxtBuf.get());
-}
-
 int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
                                       int32_t nStartLineofParag,
                                       int32_t nLineIndex,

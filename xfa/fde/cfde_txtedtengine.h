@@ -73,7 +73,6 @@ class CFDE_TxtEdtEngine {
 
   int32_t CountParags() const;
   CFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const;
-  IFX_CharIter* CreateCharIter();
   CFDE_TxtEdtBuf* GetTextBuf() const;
   int32_t GetTextBufLength() const;
   CFX_TxtBreak* GetTextBreak() const;

@@ -626,8 +626,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
       pEventParam->m_eType == XFA_EVENT_Calculate) {
     pContext->SetNodesOfRunScript(&refNodes);
   }
-  std::unique_ptr<CFXJSE_Value> pTmpRetValue(
-      new CFXJSE_Value(pContext->GetRuntime()));
+  auto pTmpRetValue = pdfium::MakeUnique<CFXJSE_Value>(pContext->GetRuntime());
   ++m_nRecursionDepth;
   bool bRet = pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
                                   wsExpression.AsStringC(), pTmpRetValue.get(),
