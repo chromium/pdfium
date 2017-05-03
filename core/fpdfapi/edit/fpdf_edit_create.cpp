@@ -1424,13 +1424,15 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
     if ((m_dwFlags & FPDFCREATE_NO_ORIGINAL) == 0 && m_SavedOffset > 0) {
       CFX_RetainPtr<IFX_SeekableReadStream> pSrcFile =
           m_pParser->GetFileAccess();
-      uint8_t buffer[4096];  // TODO(tsepez): don't stack allocate.
+      std::vector<uint8_t> buffer(4096);
       FX_FILESIZE src_size = m_SavedOffset;
       while (src_size) {
         uint32_t block_size = src_size > 4096 ? 4096 : src_size;
-        if (!pSrcFile->ReadBlock(buffer, m_Offset - src_size, block_size))
+        if (!pSrcFile->ReadBlock(buffer.data(), m_Offset - src_size,
+                                 block_size)) {
           return -1;
-        if (m_File.AppendBlock(buffer, block_size) < 0)
+        }
+        if (m_File.AppendBlock(buffer.data(), block_size) < 0)
           return -1;
 
         src_size -= block_size;

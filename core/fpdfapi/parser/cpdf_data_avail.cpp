@@ -563,21 +563,20 @@ bool CPDF_DataAvail::CheckPages(DownloadHints* pHints) {
 bool CPDF_DataAvail::CheckHeader(DownloadHints* pHints) {
   ASSERT(m_dwFileLen >= 0);
   const uint32_t kReqSize = std::min(static_cast<uint32_t>(m_dwFileLen), 1024U);
-
   if (!m_pFileAvail->IsDataAvail(0, kReqSize)) {
     pHints->AddSegment(0, kReqSize);
     return false;
   }
-
-  uint8_t buffer[1024];
-  m_pFileRead->ReadBlock(buffer, 0, kReqSize);
-  if (IsLinearizedFile(buffer, kReqSize)) {
+  std::vector<uint8_t> buffer(kReqSize);
+  m_pFileRead->ReadBlock(buffer.data(), 0, kReqSize);
+  if (IsLinearizedFile(buffer.data(), kReqSize)) {
     m_docStatus = PDF_DATAAVAIL_FIRSTPAGE;
-  } else {
-    if (m_docStatus == PDF_DATAAVAIL_ERROR)
-      return false;
-    m_docStatus = PDF_DATAAVAIL_END;
+    return true;
   }
+  if (m_docStatus == PDF_DATAAVAIL_ERROR)
+    return false;
+
+  m_docStatus = PDF_DATAAVAIL_END;
   return true;
 }
 
@@ -701,9 +700,9 @@ CPDF_DataAvail::DocLinearizationStatus CPDF_DataAvail::IsLinearizedPDF() {
   if (dwSize < (FX_FILESIZE)kReqSize)
     return LinearizationUnknown;
 
-  uint8_t buffer[1024];
-  m_pFileRead->ReadBlock(buffer, 0, kReqSize);
-  if (IsLinearizedFile(buffer, kReqSize))
+  std::vector<uint8_t> buffer(kReqSize);
+  m_pFileRead->ReadBlock(buffer.data(), 0, kReqSize);
+  if (IsLinearizedFile(buffer.data(), kReqSize))
     return Linearized;
 
   return NotLinearized;
@@ -753,11 +752,11 @@ bool CPDF_DataAvail::CheckEnd(DownloadHints* pHints) {
     return false;
   }
 
-  uint8_t buffer[1024];
-  m_pFileRead->ReadBlock(buffer, req_pos, dwSize);
+  std::vector<uint8_t> buffer(dwSize);
+  m_pFileRead->ReadBlock(buffer.data(), req_pos, dwSize);
 
   auto file = pdfium::MakeRetain<CFX_MemoryStream>(
-      buffer, static_cast<size_t>(dwSize), false);
+      buffer.data(), static_cast<size_t>(dwSize), false);
   m_syntaxParser.InitParser(file, 0);
   m_syntaxParser.SetPos(dwSize - 1);
   if (!m_syntaxParser.BackwardsSearchToWord("startxref", dwSize)) {
@@ -772,13 +771,11 @@ bool CPDF_DataAvail::CheckEnd(DownloadHints* pHints) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
-
   m_dwXRefOffset = (FX_FILESIZE)FXSYS_atoi64(xrefpos_str.c_str());
   if (!m_dwXRefOffset || m_dwXRefOffset > m_dwFileLen) {
     m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
     return true;
   }
-
   m_dwLastXRefOffset = m_dwXRefOffset;
   SetStartOffset(m_dwXRefOffset);
   m_docStatus = PDF_DATAAVAIL_CROSSREF;
@@ -797,13 +794,11 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(DownloadHints* pHints,
   }
 
   int32_t iSize = (int32_t)(m_Pos + req_size - m_dwCurrentXRefSteam);
-  CFX_BinaryBuf buf(iSize);
-  uint8_t* pBuf = buf.GetBuffer();
-
-  m_pFileRead->ReadBlock(pBuf, m_dwCurrentXRefSteam, iSize);
+  std::vector<uint8_t> buf(iSize);
+  m_pFileRead->ReadBlock(buf.data(), m_dwCurrentXRefSteam, iSize);
 
   auto file = pdfium::MakeRetain<CFX_MemoryStream>(
-      pBuf, static_cast<size_t>(iSize), false);
+      buf.data(), static_cast<size_t>(iSize), false);
   m_parser.m_pSyntax->InitParser(file, 0);
 
   bool bNumber;
@@ -1037,18 +1032,12 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
   }
 
   int32_t iSize = (int32_t)(m_Pos + iTrailerSize - m_dwTrailerOffset);
-  CFX_BinaryBuf buf(iSize);
-  uint8_t* pBuf = buf.GetBuffer();
-  if (!pBuf) {
-    m_docStatus = PDF_DATAAVAIL_ERROR;
-    return false;
-  }
-
-  if (!m_pFileRead->ReadBlock(pBuf, m_dwTrailerOffset, iSize))
+  std::vector<uint8_t> buf(iSize);
+  if (!m_pFileRead->ReadBlock(buf.data(), m_dwTrailerOffset, iSize))
     return false;
 
   auto file = pdfium::MakeRetain<CFX_MemoryStream>(
-      pBuf, static_cast<size_t>(iSize), false);
+      buf.data(), static_cast<size_t>(iSize), false);
   m_syntaxParser.InitParser(file, 0);
 
   std::unique_ptr<CPDF_Object> pTrailer(
