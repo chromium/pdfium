@@ -122,16 +122,6 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#ifdef _NATIVE_WCHAR_T_DEFINED
-#define FXSYS_wfopen(f, m) _wfopen((const wchar_t*)(f), (const wchar_t*)(m))
-#else
-#define FXSYS_wfopen _wfopen
-#endif  // _NATIVE_WCHAR_T_DEFINED
-#else
-FILE* FXSYS_wfopen(const wchar_t* filename, const wchar_t* mode);
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-
 #ifdef __cplusplus
 }  // extern "C"
 
