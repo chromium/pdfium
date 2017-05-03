@@ -646,21 +646,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   // Check widths
   CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
-  // Note: widths can be described in different ways in the widths array. The
-  // following checks are specific to our current implementation.
-  EXPECT_EQ(32, widths_array->GetNumberAt(0));
-  CPDF_Array* arr = widths_array->GetArrayAt(1);
-  ASSERT_TRUE(arr);
-  // This font support chars 32 to 126
-  EXPECT_EQ(95U, arr->GetCount());
-  EXPECT_EQ(250, arr->GetNumberAt(0));
-  EXPECT_EQ(610, arr->GetNumberAt(44));
-  EXPECT_EQ(541, arr->GetNumberAt(94));
-  // Next range: 160 - 383
-  EXPECT_EQ(160, widths_array->GetNumberAt(2));
-  arr = widths_array->GetArrayAt(3);
-  ASSERT_TRUE(arr);
-
+  EXPECT_GT(widths_array->GetCount(), 1U);
   CheckCompositeFontWidths(widths_array, typed_font);
 }
 
@@ -786,3 +772,77 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
   FPDF_ClosePage(new_page);
   FPDF_CloseDocument(new_doc);
 }
+
+// TODO(npm): Add tests using Japanese fonts in other OS.
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
+  // Start with a blank page
+  FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
+  CFX_Font CIDfont;
+  {
+    // First, get the data from the font
+    CIDfont.LoadSubst("IPAGothic", 1, 0, 400, 0, 932, 0);
+    EXPECT_EQ("IPAGothic", CIDfont.GetFaceName());
+    const uint8_t* data = CIDfont.GetFontData();
+    const uint32_t size = CIDfont.GetSize();
+
+    // Load the data into a FPDF_Font.
+    std::unique_ptr<void, FPDFFontDeleter> font(
+        FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
+    ASSERT_TRUE(font.get());
+
+    // Add some text to the page
+    FPDF_PAGEOBJECT text_object =
+        FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
+    ASSERT_TRUE(text_object);
+    std::wstring wstr = L"ABCDEFGhijklmnop.";
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+        GetFPDFWideString(wstr);
+    EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
+    FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 200, 200);
+    FPDFPage_InsertObject(page, text_object);
+
+    // And add some Japanese characters
+    FPDF_PAGEOBJECT text_object2 =
+        FPDFPageObj_CreateTextObj(document(), font.get(), 18.0f);
+    ASSERT_TRUE(text_object2);
+    std::wstring wstr2 =
+        L"\u3053\u3093\u306B\u3061\u306f\u4e16\u754C\u3002\u3053\u3053\u306B1"
+        L"\u756A";
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text2 =
+        GetFPDFWideString(wstr2);
+    EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
+    FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 500);
+    FPDFPage_InsertObject(page, text_object2);
+  }
+
+  // Generate contents and check that the text renders properly.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  FPDF_BITMAP page_bitmap = RenderPage(page);
+  const char md5[] = "2bc6c1aaa2252e73246a75775ccf38c2";
+  CompareBitmap(page_bitmap, 612, 792, md5);
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Save the document, close the page.
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  FPDF_ClosePage(page);
+  std::string new_file = GetString();
+
+  // Render the saved result
+  FPDF_FILEACCESS file_access;
+  memset(&file_access, 0, sizeof(file_access));
+  file_access.m_FileLen = new_file.size();
+  file_access.m_GetBlock = GetBlockFromString;
+  file_access.m_Param = &new_file;
+  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ASSERT_NE(nullptr, new_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
+  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+  ASSERT_NE(nullptr, new_page);
+  FPDF_BITMAP new_bitmap = RenderPage(new_page);
+  CompareBitmap(new_bitmap, 612, 792, md5);
+  FPDFBitmap_Destroy(new_bitmap);
+  FPDF_ClosePage(new_page);
+  FPDF_CloseDocument(new_doc);
+}
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_

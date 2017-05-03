@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <map>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -74,6 +76,144 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   return fontDesc;
 }
 
+const char ToUnicodeStart[] =
+    "/CIDInit /ProcSet findresource begin\n"
+    "12 dict begin\n"
+    "begincmap\n"
+    "/CIDSystemInfo\n"
+    "<</Registry (Adobe)\n"
+    "/Ordering (Identity)\n"
+    "/Supplement 0\n"
+    ">> def\n"
+    "/CMapName /Adobe-Identity-H def\n"
+    "CMapType 2 def\n"
+    "1 begincodespacerange\n"
+    "<0000> <FFFFF>\n";
+
+const char hex[] = "0123456789ABCDEF";
+
+void AddNum(CFX_ByteTextBuf* pBuffer, uint32_t number) {
+  *pBuffer << "<";
+  char ans[4];
+  for (size_t i = 0; i < 4; ++i) {
+    ans[3 - i] = hex[number % 16];
+    number /= 16;
+  }
+  for (size_t i = 0; i < 4; ++i)
+    pBuffer->AppendChar(ans[i]);
+  *pBuffer << ">";
+}
+
+// Loads the charcode to unicode mapping into a stream
+CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
+                         const std::map<uint32_t, uint32_t>& to_unicode) {
+  CFX_ByteTextBuf buffer;
+  buffer << ToUnicodeStart;
+  // A map charcode->unicode
+  std::map<uint32_t, uint32_t> char_to_uni;
+  // A map <char_start, char_end> to vector v of unicode characters of size (end
+  // - start + 1). This abbreviates: start->v[0], start+1->v[1], etc. PDF spec
+  // 1.7 Section 5.9.2 says that only the last byte of the unicode may change.
+  std::map<std::pair<uint32_t, uint32_t>, std::vector<uint32_t>>
+      map_range_vector;
+  // A map <start, end> -> unicode
+  // This abbreviates: start->unicode, start+1->unicode+1, etc.
+  // PDF spec 1.7 Section 5.9.2 says that only the last byte of the unicode may
+  // change.
+  std::map<std::pair<uint32_t, uint32_t>, uint32_t> map_range;
+
+  // Calculate the maps
+  for (auto iter = to_unicode.begin(); iter != to_unicode.end(); ++iter) {
+    uint32_t firstCharcode = iter->first;
+    uint32_t firstUnicode = iter->second;
+    if (std::next(iter) == to_unicode.end() ||
+        firstCharcode + 1 != std::next(iter)->first) {
+      char_to_uni[firstCharcode] = firstUnicode;
+      continue;
+    }
+    ++iter;
+    uint32_t curCharcode = iter->first;
+    uint32_t curUnicode = iter->second;
+    if (curCharcode % 256 == 0) {
+      char_to_uni[firstCharcode] = firstUnicode;
+      char_to_uni[curCharcode] = curUnicode;
+      continue;
+    }
+    const size_t maxExtra = 255 - (curCharcode % 256);
+    auto next_it = std::next(iter);
+    if (firstUnicode + 1 != curUnicode) {
+      // Consecutive charcodes mapping to non-consecutive unicodes
+      std::vector<uint32_t> unicodes;
+      unicodes.push_back(firstUnicode);
+      unicodes.push_back(curUnicode);
+      for (size_t i = 0; i < maxExtra; ++i) {
+        if (next_it == to_unicode.end() || curCharcode + 1 != next_it->first)
+          break;
+        ++iter;
+        ++curCharcode;
+        unicodes.push_back(iter->second);
+        next_it = std::next(iter);
+      }
+      ASSERT(iter->first - firstCharcode + 1 == unicodes.size());
+      map_range_vector[std::make_pair(firstCharcode, iter->first)] = unicodes;
+      continue;
+    }
+    // Consecutive charcodes mapping to consecutive unicodes
+    for (size_t i = 0; i < maxExtra; ++i) {
+      if (next_it == to_unicode.end() || curCharcode + 1 != next_it->first ||
+          curUnicode + 1 != next_it->second) {
+        break;
+      }
+      ++iter;
+      ++curCharcode;
+      ++curUnicode;
+      next_it = std::next(iter);
+    }
+    map_range[std::make_pair(firstCharcode, curCharcode)] = firstUnicode;
+  }
+  // Add maps to buffer
+  buffer << static_cast<uint32_t>(char_to_uni.size()) << " beginbfchar\n";
+  for (auto iter : char_to_uni) {
+    AddNum(&buffer, iter.first);
+    buffer << " ";
+    AddNum(&buffer, iter.second);
+    buffer << "\n";
+  }
+  buffer << "endbfchar\n"
+         << static_cast<uint32_t>(map_range_vector.size() + map_range.size())
+         << " beginbfrange\n";
+  for (auto iter : map_range_vector) {
+    const std::pair<uint32_t, uint32_t>& charcodeRange = iter.first;
+    AddNum(&buffer, charcodeRange.first);
+    buffer << " ";
+    AddNum(&buffer, charcodeRange.second);
+    buffer << " [";
+    const std::vector<uint32_t>& unicodes = iter.second;
+    for (size_t i = 0; i < unicodes.size(); ++i) {
+      uint32_t uni = unicodes[i];
+      AddNum(&buffer, uni);
+      if (i != unicodes.size() - 1)
+        buffer << " ";
+    }
+    buffer << "]\n";
+  }
+  for (auto iter : map_range) {
+    const std::pair<uint32_t, uint32_t>& charcodeRange = iter.first;
+    AddNum(&buffer, charcodeRange.first);
+    buffer << " ";
+    AddNum(&buffer, charcodeRange.second);
+    buffer << " ";
+    AddNum(&buffer, iter.second);
+    buffer << "\n";
+  }
+  // TODO(npm): Encrypt / Compress?
+  uint32_t bufferSize = buffer.GetSize();
+  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
+  pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(bufferSize));
+  return pDoc->NewIndirect<CPDF_Stream>(buffer.DetachBuffer(), bufferSize,
+                                        std::move(pDict));
+}
+
 void* LoadSimpleFont(CPDF_Document* pDoc,
                      std::unique_ptr<CFX_Font> pFont,
                      const uint8_t* data,
@@ -93,8 +233,7 @@ void* LoadSimpleFont(CPDF_Document* pDoc,
   fontDict->SetNewFor<CPDF_Number>("FirstChar", currentChar);
   CPDF_Array* widthsArray = pDoc->NewIndirect<CPDF_Array>();
   while (true) {
-    int width = pFont->GetGlyphWidth(glyphIndex);
-    widthsArray->AddNew<CPDF_Number>(width);
+    widthsArray->AddNew<CPDF_Number>(pFont->GetGlyphWidth(glyphIndex));
     int nextChar =
         FXFT_Get_Next_Char(pFont->GetFace(), currentChar, &glyphIndex);
     // Simple fonts have 1-byte charcodes only.
@@ -154,57 +293,67 @@ void* LoadCompositeFont(CPDF_Document* pDoc,
 
   uint32_t glyphIndex;
   int currentChar = FXFT_Get_First_Char(pFont->GetFace(), &glyphIndex);
-  CPDF_Array* widthsArray = pDoc->NewIndirect<CPDF_Array>();
+  // If it doesn't have a single char, just fail
+  if (glyphIndex == 0)
+    return nullptr;
+
+  std::map<uint32_t, uint32_t> to_unicode;
+  std::map<uint32_t, uint32_t> widths;
   while (true) {
-    int width = pFont->GetGlyphWidth(glyphIndex);
-    int nextChar =
+    widths[glyphIndex] = pFont->GetGlyphWidth(glyphIndex);
+    to_unicode[glyphIndex] = currentChar;
+    currentChar =
         FXFT_Get_Next_Char(pFont->GetFace(), currentChar, &glyphIndex);
-    if (glyphIndex == 0) {
+    if (glyphIndex == 0)
+      break;
+  }
+  CPDF_Array* widthsArray = pDoc->NewIndirect<CPDF_Array>();
+  for (auto it = widths.begin(); it != widths.end(); ++it) {
+    int ch = it->first;
+    int w = it->second;
+    if (std::next(it) == widths.end()) {
       // Only one char left, use format c [w]
       auto oneW = pdfium::MakeUnique<CPDF_Array>();
-      oneW->AddNew<CPDF_Number>(width);
-      widthsArray->AddNew<CPDF_Number>(currentChar);
+      oneW->AddNew<CPDF_Number>(w);
+      widthsArray->AddNew<CPDF_Number>(ch);
       widthsArray->Add(std::move(oneW));
       break;
     }
-    int nextWidth = pFont->GetGlyphWidth(glyphIndex);
-    if (nextChar == currentChar + 1 && nextWidth == width) {
+    ++it;
+    int next_ch = it->first;
+    int next_w = it->second;
+    if (next_ch == ch + 1 && next_w == w) {
       // The array can have a group c_first c_last w: all CIDs in the range from
       // c_first to c_last will have width w
-      widthsArray->AddNew<CPDF_Number>(currentChar);
-      currentChar = nextChar;
+      widthsArray->AddNew<CPDF_Number>(ch);
+      ch = next_ch;
       while (true) {
-        nextChar =
-            FXFT_Get_Next_Char(pFont->GetFace(), currentChar, &glyphIndex);
-        if (glyphIndex == 0)
+        auto next_it = std::next(it);
+        if (next_it == widths.end() || next_it->first != it->first + 1 ||
+            next_it->second != it->second) {
           break;
-        nextWidth = pFont->GetGlyphWidth(glyphIndex);
-        if (nextChar != currentChar + 1 || nextWidth != width)
-          break;
-        currentChar = nextChar;
+        }
+        ++it;
+        ch = it->first;
       }
-      widthsArray->AddNew<CPDF_Number>(currentChar);
-      widthsArray->AddNew<CPDF_Number>(width);
-    } else {
-      // Otherwise we can have a group of the form c [w1 w2 ...]: c has width
-      // w1, c+1 has width w2, etc.
-      widthsArray->AddNew<CPDF_Number>(currentChar);
-      auto curWidthArray = pdfium::MakeUnique<CPDF_Array>();
-      curWidthArray->AddNew<CPDF_Number>(width);
-      while (nextChar == currentChar + 1) {
-        curWidthArray->AddNew<CPDF_Number>(nextWidth);
-        currentChar = nextChar;
-        nextChar =
-            FXFT_Get_Next_Char(pFont->GetFace(), currentChar, &glyphIndex);
-        if (glyphIndex == 0)
-          break;
-        nextWidth = pFont->GetGlyphWidth(glyphIndex);
-      }
-      widthsArray->Add(std::move(curWidthArray));
+      widthsArray->AddNew<CPDF_Number>(ch);
+      widthsArray->AddNew<CPDF_Number>(w);
+      continue;
     }
-    if (glyphIndex == 0)
-      break;
-    currentChar = nextChar;
+    // Otherwise we can have a group of the form c [w1 w2 ...]: c has width
+    // w1, c+1 has width w2, etc.
+    widthsArray->AddNew<CPDF_Number>(ch);
+    auto curWidthArray = pdfium::MakeUnique<CPDF_Array>();
+    curWidthArray->AddNew<CPDF_Number>(w);
+    curWidthArray->AddNew<CPDF_Number>(next_w);
+    while (true) {
+      auto next_it = std::next(it);
+      if (next_it == widths.end() || next_it->first != it->first + 1)
+        break;
+      ++it;
+      curWidthArray->AddNew<CPDF_Number>(static_cast<int>(it->second));
+    }
+    widthsArray->Add(std::move(curWidthArray));
   }
   pCIDFont->SetNewFor<CPDF_Reference>("W", pDoc, widthsArray->GetObjNum());
   // TODO(npm): Support vertical writing
@@ -212,7 +361,9 @@ void* LoadCompositeFont(CPDF_Document* pDoc,
   auto pDescendant = pdfium::MakeUnique<CPDF_Array>();
   pDescendant->AddNew<CPDF_Reference>(pDoc, pCIDFont->GetObjNum());
   fontDict->SetFor("DescendantFonts", std::move(pDescendant));
-  // TODO(npm): do we need a ToUnicode?
+  CPDF_Stream* toUnicodeStream = LoadUnicode(pDoc, to_unicode);
+  fontDict->SetNewFor<CPDF_Reference>("ToUnicode", pDoc,
+                                      toUnicodeStream->GetObjNum());
   return pDoc->LoadFont(fontDict);
 }
 
@@ -245,10 +396,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
   FX_STRSIZE len = CFX_WideString::WStringLength(text);
   CFX_WideString encodedText = CFX_WideString::FromUTF16LE(text, len);
   CFX_ByteString byteText;
-  for (int i = 0; i < encodedText.GetLength(); ++i) {
-    uint32_t charcode =
-        pTextObj->GetFont()->CharCodeFromUnicode(encodedText[i]);
-    pTextObj->GetFont()->AppendChar(&byteText, charcode);
+  for (wchar_t wc : encodedText) {
+    pTextObj->GetFont()->AppendChar(
+        &byteText, pTextObj->GetFont()->CharCodeFromUnicode(wc));
   }
   pTextObj->SetText(byteText);
   return true;
