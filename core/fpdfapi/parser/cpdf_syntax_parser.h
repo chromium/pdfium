@@ -46,11 +46,7 @@ class CPDF_SyntaxParser {
   CFX_ByteString GetKeyword();
   void ToNextLine();
   void ToNextWord();
-  bool SearchWord(const CFX_ByteStringC& word,
-                  bool bWholeWord,
-                  bool bForward,
-                  FX_FILESIZE limit);
-
+  bool BackwardsSearchToWord(const CFX_ByteStringC& word, FX_FILESIZE limit);
   FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
   void SetEncrypt(const CFX_RetainPtr<CPDF_CryptoHandler>& pCryptoHandler);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
@@ -68,7 +64,7 @@ class CPDF_SyntaxParser {
   uint32_t GetDirectNum();
   bool ReadChar(FX_FILESIZE read_pos, uint32_t read_size);
   bool GetNextChar(uint8_t& ch);
-  bool GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
+  bool GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch);
   void GetNextWordInternal(bool* bIsNumber);
   bool IsWholeWord(FX_FILESIZE startpos,
                    FX_FILESIZE limit,
