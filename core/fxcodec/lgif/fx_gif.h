@@ -115,6 +115,13 @@ typedef struct tagGifPlainText {
   CFX_ByteString* string_ptr;
 } GifPlainText;
 
+enum class GifDecodeStatus {
+  Error,
+  Success,
+  Unfinished,
+  InsufficientDestSize,  // Only used internally by CGifLZWDecoder::Decode()
+};
+
 class CGifLZWDecoder {
  public:
   struct tag_Table {
@@ -126,7 +133,7 @@ class CGifLZWDecoder {
   ~CGifLZWDecoder();
 
   void InitTable(uint8_t code_len);
-  int32_t Decode(uint8_t* des_buf, uint32_t* des_size);
+  GifDecodeStatus Decode(uint8_t* des_buf, uint32_t* des_size);
   void Input(uint8_t* src_buf, uint32_t src_size);
   uint32_t GetAvailInput();
 
@@ -209,10 +216,11 @@ struct tag_gif_decompress_struct {
 
 gif_decompress_struct_p gif_create_decompress();
 void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr);
-int32_t gif_read_header(gif_decompress_struct_p gif_ptr);
-int32_t gif_get_frame(gif_decompress_struct_p gif_ptr);
+GifDecodeStatus gif_read_header(gif_decompress_struct_p gif_ptr);
+GifDecodeStatus gif_get_frame(gif_decompress_struct_p gif_ptr);
 int32_t gif_get_frame_num(gif_decompress_struct_p gif_ptr);
-int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num);
+GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
+                               int32_t frame_num);
 void gif_input_buffer(gif_decompress_struct_p gif_ptr,
                       uint8_t* src_buf,
                       uint32_t src_size);

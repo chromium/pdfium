@@ -1194,10 +1194,10 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       m_offSet += size;
       pGifModule->Input(m_pGifContext, m_pSrcBuf, size);
       m_SrcComponents = 1;
-      int32_t readResult = pGifModule->ReadHeader(
+      GifDecodeStatus readResult = pGifModule->ReadHeader(
           m_pGifContext, &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
           (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
-      while (readResult == 2) {
+      while (readResult == GifDecodeStatus::Unfinished) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
         if (!GifReadMoreData(pGifModule, error_status)) {
           m_status = error_status;
@@ -1207,7 +1207,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
             m_pGifContext, &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
             (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
       }
-      if (readResult == 1) {
+      if (readResult == GifDecodeStatus::Success) {
         m_SrcBPC = 8;
         m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
         return true;
@@ -1805,9 +1805,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames,
         return m_status;
       }
       while (true) {
-        int32_t readResult =
+        GifDecodeStatus readResult =
             pGifModule->LoadFrameInfo(m_pGifContext, &m_FrameNumber);
-        while (readResult == 2) {
+        while (readResult == GifDecodeStatus::Unfinished) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_READ;
           if (!GifReadMoreData(pGifModule, error_status)) {
             return error_status;
@@ -1818,7 +1818,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames,
           }
           readResult = pGifModule->LoadFrameInfo(m_pGifContext, &m_FrameNumber);
         }
-        if (readResult == 1) {
+        if (readResult == GifDecodeStatus::Success) {
           frames = m_FrameNumber;
           m_status = FXCODEC_STATUS_DECODE_READY;
           return m_status;
@@ -2135,9 +2135,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         return m_status;
       }
       while (true) {
-        int32_t readRes =
+        GifDecodeStatus readRes =
             pGifModule->LoadFrame(m_pGifContext, m_FrameCur, nullptr);
-        while (readRes == 2) {
+        while (readRes == GifDecodeStatus::Unfinished) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
           if (!GifReadMoreData(pGifModule, error_status)) {
             m_pDeviceBitmap = nullptr;
@@ -2151,7 +2151,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           }
           readRes = pGifModule->LoadFrame(m_pGifContext, m_FrameCur, nullptr);
         }
-        if (readRes == 1) {
+        if (readRes == GifDecodeStatus::Success) {
           m_pDeviceBitmap = nullptr;
           m_pFile = nullptr;
           m_status = FXCODEC_STATUS_DECODE_FINISH;

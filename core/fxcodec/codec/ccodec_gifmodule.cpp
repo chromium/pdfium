@@ -115,18 +115,18 @@ void CCodec_GifModule::Finish(FXGIF_Context* ctx) {
   }
 }
 
-int32_t CCodec_GifModule::ReadHeader(FXGIF_Context* ctx,
-                                     int* width,
-                                     int* height,
-                                     int* pal_num,
-                                     void** pal_pp,
-                                     int* bg_index,
-                                     CFX_DIBAttribute* pAttribute) {
+GifDecodeStatus CCodec_GifModule::ReadHeader(FXGIF_Context* ctx,
+                                             int* width,
+                                             int* height,
+                                             int* pal_num,
+                                             void** pal_pp,
+                                             int* bg_index,
+                                             CFX_DIBAttribute* pAttribute) {
   if (setjmp(ctx->gif_ptr->jmpbuf))
-    return 0;
+    return GifDecodeStatus::Error;
 
-  int32_t ret = gif_read_header(ctx->gif_ptr);
-  if (ret != 1)
+  GifDecodeStatus ret = gif_read_header(ctx->gif_ptr);
+  if (ret != GifDecodeStatus::Success)
     return ret;
 
   *width = ctx->gif_ptr->width;
@@ -134,29 +134,30 @@ int32_t CCodec_GifModule::ReadHeader(FXGIF_Context* ctx,
   *pal_num = ctx->gif_ptr->global_pal_num;
   *pal_pp = ctx->gif_ptr->global_pal_ptr;
   *bg_index = ctx->gif_ptr->bc_index;
-  return 1;
+  return GifDecodeStatus::Success;
 }
 
-int32_t CCodec_GifModule::LoadFrameInfo(FXGIF_Context* ctx, int* frame_num) {
+GifDecodeStatus CCodec_GifModule::LoadFrameInfo(FXGIF_Context* ctx,
+                                                int* frame_num) {
   if (setjmp(ctx->gif_ptr->jmpbuf))
-    return 0;
+    return GifDecodeStatus::Error;
 
-  int32_t ret = gif_get_frame(ctx->gif_ptr);
-  if (ret != 1)
+  GifDecodeStatus ret = gif_get_frame(ctx->gif_ptr);
+  if (ret != GifDecodeStatus::Success)
     return ret;
 
   *frame_num = gif_get_frame_num(ctx->gif_ptr);
-  return 1;
+  return GifDecodeStatus::Success;
 }
 
-int32_t CCodec_GifModule::LoadFrame(FXGIF_Context* ctx,
-                                    int frame_num,
-                                    CFX_DIBAttribute* pAttribute) {
+GifDecodeStatus CCodec_GifModule::LoadFrame(FXGIF_Context* ctx,
+                                            int frame_num,
+                                            CFX_DIBAttribute* pAttribute) {
   if (setjmp(ctx->gif_ptr->jmpbuf))
-    return 0;
+    return GifDecodeStatus::Error;
 
-  int32_t ret = gif_load_frame(ctx->gif_ptr, frame_num);
-  if (ret == 1) {
+  GifDecodeStatus ret = gif_load_frame(ctx->gif_ptr, frame_num);
+  if (ret == GifDecodeStatus::Success) {
     if (pAttribute) {
       pAttribute->m_nGifLeft =
           (*ctx->gif_ptr->img_ptr_arr_ptr)[frame_num]->image_info_ptr->left;

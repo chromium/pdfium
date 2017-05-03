@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 
+#include "core/fxcodec/lgif/fx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -44,18 +45,18 @@ class CCodec_GifModule {
              const uint8_t* src_buf,
              uint32_t src_size);
 
-  int32_t ReadHeader(FXGIF_Context* pContext,
-                     int* width,
-                     int* height,
-                     int* pal_num,
-                     void** pal_pp,
-                     int* bg_index,
-                     CFX_DIBAttribute* pAttribute);
+  GifDecodeStatus ReadHeader(FXGIF_Context* pContext,
+                             int* width,
+                             int* height,
+                             int* pal_num,
+                             void** pal_pp,
+                             int* bg_index,
+                             CFX_DIBAttribute* pAttribute);
 
-  int32_t LoadFrameInfo(FXGIF_Context* pContext, int* frame_num);
-  int32_t LoadFrame(FXGIF_Context* pContext,
-                    int frame_num,
-                    CFX_DIBAttribute* pAttribute);
+  GifDecodeStatus LoadFrameInfo(FXGIF_Context* pContext, int* frame_num);
+  GifDecodeStatus LoadFrame(FXGIF_Context* pContext,
+                            int frame_num,
+                            CFX_DIBAttribute* pAttribute);
 
   Delegate* GetDelegate() const { return m_pDelegate; }
   void SetDelegate(Delegate* pDelegate) { m_pDelegate = pDelegate; }
