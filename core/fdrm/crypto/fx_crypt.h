@@ -9,37 +9,38 @@
 
 #include "core/fxcrt/fx_system.h"
 
-typedef struct {
+constexpr int32_t kRC4ContextPermutationLength = 256;
+struct CRYPT_rc4_context {
   int32_t x;
   int32_t y;
-  int32_t m[256];
-} CRYPT_rc4_context;
+  int32_t m[kRC4ContextPermutationLength];
+};
 
-typedef struct {
+struct CRYPT_md5_context {
   uint32_t total[2];
   uint32_t state[4];
   uint8_t buffer[64];
-} CRYPT_md5_context;
+};
 
-typedef struct {
+struct CRYPT_sha1_context {
   unsigned int h[5];
   unsigned char block[64];
   int blkused;
   unsigned int lenhi;
   unsigned int lenlo;
-} CRYPT_sha1_context;
+};
 
-typedef struct {
+struct CRYPT_sha256_context {
   uint32_t total[2];
   uint32_t state[8];
   uint8_t buffer[64];
-} CRYPT_sha256_context;
+};
 
-typedef struct {
+struct CRYPT_sha384_context {
   uint64_t total[2];
   uint64_t state[8];
   uint8_t buffer[128];
-} CRYPT_sha384_context;
+};
 
 void CRYPT_ArcFourCryptBlock(uint8_t* data,
                              uint32_t size,
