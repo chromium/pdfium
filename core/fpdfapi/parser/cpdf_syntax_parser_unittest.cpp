@@ -21,7 +21,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 0, false), 0);
     EXPECT_EQ("", parser.ReadHexString());
-    EXPECT_EQ(0, parser.SavePos());
+    EXPECT_EQ(0, parser.GetPos());
   }
 
   {
@@ -30,7 +30,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 2, false), 0);
     EXPECT_EQ("", parser.ReadHexString());
-    EXPECT_EQ(2, parser.SavePos());
+    EXPECT_EQ(2, parser.GetPos());
   }
 
   {
@@ -39,7 +39,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 4, false), 0);
     EXPECT_EQ("\x12\xb0", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
+    EXPECT_EQ(4, parser.GetPos());
   }
 
   {
@@ -48,7 +48,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 10, false), 0);
     EXPECT_EQ("\x10", parser.ReadHexString());
-    EXPECT_EQ(10, parser.SavePos());
+    EXPECT_EQ(10, parser.GetPos());
   }
 
   {
@@ -57,7 +57,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 4, false), 0);
     EXPECT_EQ("\xab", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
+    EXPECT_EQ(4, parser.GetPos());
   }
 
   {
@@ -66,7 +66,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 4, false), 0);
     EXPECT_EQ("\xab", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
+    EXPECT_EQ(4, parser.GetPos());
   }
 
   {
@@ -75,7 +75,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 9, false), 0);
     EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
-    EXPECT_EQ(5, parser.SavePos());
+    EXPECT_EQ(5, parser.GetPos());
   }
 
   {
@@ -83,20 +83,20 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     uint8_t data[] = "12ab>";
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 5, false), 0);
-    parser.RestorePos(5);
+    parser.SetPos(5);
     EXPECT_EQ("", parser.ReadHexString());
 
-    parser.RestorePos(6);
+    parser.SetPos(6);
     EXPECT_EQ("", parser.ReadHexString());
 
-    parser.RestorePos(-1);
+    parser.SetPos(-1);
     EXPECT_EQ("", parser.ReadHexString());
 
-    parser.RestorePos(std::numeric_limits<FX_FILESIZE>::max());
+    parser.SetPos(std::numeric_limits<FX_FILESIZE>::max());
     EXPECT_EQ("", parser.ReadHexString());
 
     // Check string still parses when set to 0.
-    parser.RestorePos(0);
+    parser.SetPos(0);
     EXPECT_EQ("\x12\xab", parser.ReadHexString());
   }
 
@@ -106,7 +106,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 4, false), 0);
     EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
+    EXPECT_EQ(4, parser.GetPos());
   }
 
   {
@@ -115,7 +115,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 5, false), 0);
     EXPECT_EQ("\x12\xab", parser.ReadHexString());
-    EXPECT_EQ(5, parser.SavePos());
+    EXPECT_EQ(5, parser.GetPos());
   }
 
   {
@@ -124,7 +124,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 8, false), 0);
     EXPECT_EQ("\x1a\x20", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
+    EXPECT_EQ(4, parser.GetPos());
   }
 
   {
@@ -133,7 +133,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 8, false), 0);
     EXPECT_EQ("\x1a\x2a\xdf", parser.ReadHexString());
-    EXPECT_EQ(8, parser.SavePos());
+    EXPECT_EQ(8, parser.GetPos());
   }
 
   {
@@ -142,7 +142,7 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     CPDF_SyntaxParser parser;
     parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 1, false), 0);
     EXPECT_EQ("", parser.ReadHexString());
-    EXPECT_EQ(1, parser.SavePos());
+    EXPECT_EQ(1, parser.GetPos());
   }
 }
 

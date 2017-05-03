@@ -661,8 +661,8 @@ std::unique_ptr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
     FX_FILESIZE pos,
     uint32_t objnum,
     CPDF_IndirectObjectHolder* pObjList) {
-  FX_FILESIZE SavedPos = m_syntaxParser.SavePos();
-  m_syntaxParser.RestorePos(pos);
+  FX_FILESIZE SavedPos = m_syntaxParser.GetPos();
+  m_syntaxParser.SetPos(pos);
 
   bool bIsNumber;
   CFX_ByteString word = m_syntaxParser.GetNextWord(&bIsNumber);
@@ -679,13 +679,13 @@ std::unique_ptr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
 
   uint32_t gennum = FXSYS_atoui(word.c_str());
   if (m_syntaxParser.GetKeyword() != "obj") {
-    m_syntaxParser.RestorePos(SavedPos);
+    m_syntaxParser.SetPos(SavedPos);
     return nullptr;
   }
 
   std::unique_ptr<CPDF_Object> pObj =
       m_syntaxParser.GetObject(pObjList, parser_objnum, gennum, true);
-  m_syntaxParser.RestorePos(SavedPos);
+  m_syntaxParser.SetPos(SavedPos);
   return pObj;
 }
 
@@ -727,7 +727,7 @@ bool CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
 
   m_dwHeaderOffset = offset;
   m_syntaxParser.InitParser(file, offset);
-  m_syntaxParser.RestorePos(m_syntaxParser.m_HeaderOffset + 9);
+  m_syntaxParser.SetPos(m_syntaxParser.m_HeaderOffset + 9);
 
   bool bNumber;
   CFX_ByteString wordObjNum = m_syntaxParser.GetNextWord(&bNumber);
@@ -760,7 +760,7 @@ bool CPDF_DataAvail::CheckEnd(DownloadHints* pHints) {
   auto file = pdfium::MakeRetain<CFX_MemoryStream>(
       buffer, static_cast<size_t>(dwSize), false);
   m_syntaxParser.InitParser(file, 0);
-  m_syntaxParser.RestorePos(dwSize - 1);
+  m_syntaxParser.SetPos(dwSize - 1);
 
   if (!m_syntaxParser.SearchWord("startxref", true, false, dwSize)) {
     m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
@@ -819,14 +819,14 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(DownloadHints* pHints,
       m_parser.ParseIndirectObjectAt(nullptr, 0, objNum);
 
   if (!pObj) {
-    m_Pos += m_parser.m_pSyntax->SavePos();
+    m_Pos += m_parser.m_pSyntax->GetPos();
     return 0;
   }
 
   CPDF_Dictionary* pDict = pObj->GetDict();
   CPDF_Name* pName = ToName(pDict ? pDict->GetObjectFor("Type") : nullptr);
   if (pName && pName->GetString() == "XRef") {
-    m_Pos += m_parser.m_pSyntax->SavePos();
+    m_Pos += m_parser.m_pSyntax->GetPos();
     xref_offset = pObj->GetDict()->GetIntegerFor("Prev");
     return 1;
   }
@@ -1012,7 +1012,7 @@ bool CPDF_DataAvail::CheckCrossRef(DownloadHints* pHints) {
 
 bool CPDF_DataAvail::CheckTrailerAppend(DownloadHints* pHints) {
   if (m_Pos < m_dwFileLen) {
-    FX_FILESIZE dwAppendPos = m_Pos + m_syntaxParser.SavePos();
+    FX_FILESIZE dwAppendPos = m_Pos + m_syntaxParser.GetPos();
     int32_t iSize = (int32_t)(
         dwAppendPos + 512 > m_dwFileLen ? m_dwFileLen - dwAppendPos : 512);
 
@@ -1057,7 +1057,7 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
   std::unique_ptr<CPDF_Object> pTrailer(
       m_syntaxParser.GetObject(nullptr, 0, 0, true));
   if (!pTrailer) {
-    m_Pos += m_syntaxParser.SavePos();
+    m_Pos += m_syntaxParser.GetPos();
     pHints->AddSegment(m_Pos, iTrailerSize);
     return false;
   }
