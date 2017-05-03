@@ -25,14 +25,6 @@ typedef CFindFileDataA FX_FileHandle;
 #include <sys/types.h>
 #include <unistd.h>
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif  // O_BINARY
-
-#ifndef O_LARGEFILE
-#define O_LARGEFILE 0
-#endif  // O_LARGEFILE
-
 typedef DIR FX_FileHandle;
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
