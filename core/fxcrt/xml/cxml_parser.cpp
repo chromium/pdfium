@@ -244,7 +244,7 @@ uint32_t CXML_Parser::GetCharRef() {
             break;
           }
           if (g_FXCRT_XML_IsDigital(ch))
-            code = code * 10 + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+            code = code * 10 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           break;
         case 4:
           m_dwIndex++;
@@ -256,8 +256,8 @@ uint32_t CXML_Parser::GetCharRef() {
               g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_HexChar;
           if (nHex) {
             if (nHex == FXCRTM_XML_CHARTYPE_HexDigital) {
-              code =
-                  (code << 4) + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+              code = (code << 4) +
+                     FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
             } else if (nHex == FXCRTM_XML_CHARTYPE_HexLowerLetter) {
               code = (code << 4) + ch - 87;
             } else {

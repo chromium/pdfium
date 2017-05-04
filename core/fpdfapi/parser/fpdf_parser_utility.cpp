@@ -97,8 +97,8 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
   char* pDest = pDestStart;
   for (int i = 0; i < size; i++) {
     if (bstr[i] == '#' && i < size - 2) {
-      *pDest++ =
-          FXSYS_toHexDigit(bstr[i + 1]) * 16 + FXSYS_toHexDigit(bstr[i + 2]);
+      *pDest++ = FXSYS_HexCharToInt(bstr[i + 1]) * 16 +
+                 FXSYS_HexCharToInt(bstr[i + 2]);
       i += 2;
     } else {
       *pDest++ = bstr[i];

@@ -500,7 +500,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         break;
       case 1:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+          iEscCode = FXSYS_DecimalCharToInt(static_cast<char>(ch));
           status = 2;
           break;
         }
@@ -526,7 +526,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
       case 2:
         if (ch >= '0' && ch <= '7') {
           iEscCode =
-              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+              iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<char>(ch));
           status = 3;
         } else {
           buf.AppendChar(iEscCode);
@@ -537,7 +537,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
       case 3:
         if (ch >= '0' && ch <= '7') {
           iEscCode =
-              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+              iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<char>(ch));
           buf.AppendChar(iEscCode);
           status = 0;
         } else {
@@ -583,7 +583,7 @@ CFX_ByteString CPDF_StreamParser::ReadHexString() {
     if (!std::isxdigit(ch))
       continue;
 
-    int val = FXSYS_toHexDigit(ch);
+    int val = FXSYS_HexCharToInt(ch);
     if (bFirst) {
       code = val * 16;
     } else {

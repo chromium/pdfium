@@ -146,7 +146,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   char ch;
   while (i < strLength && j < 4) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;
@@ -160,7 +160,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   k = 0;
   while (i < strLength && j < 2) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;
@@ -174,7 +174,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   k = 0;
   while (i < strLength && j < 2) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;
@@ -188,7 +188,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   k = 0;
   while (i < strLength && j < 2) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;
@@ -202,7 +202,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   k = 0;
   while (i < strLength && j < 2) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;
@@ -216,7 +216,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   k = 0;
   while (i < strLength && j < 2) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;
@@ -237,7 +237,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   k = 0;
   while (i < strLength && j < 2) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;
@@ -253,7 +253,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   k = 0;
   while (i < strLength && j < 2) {
     ch = dtStr[i];
-    k = k * 10 + FXSYS_toDecimalDigit(ch);
+    k = k * 10 + FXSYS_DecimalCharToInt(ch);
     j++;
     if (!std::isdigit(ch))
       break;

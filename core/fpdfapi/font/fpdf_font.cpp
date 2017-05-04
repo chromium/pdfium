@@ -142,12 +142,12 @@ uint32_t CPDF_ToUnicodeMap::StringToCode(const CFX_ByteStringC& str) {
   uint32_t result = 0;
   if (str[0] == '<') {
     for (int i = 1; i < len && std::isxdigit(str[i]); ++i)
-      result = result * 16 + FXSYS_toHexDigit(str.CharAt(i));
+      result = result * 16 + FXSYS_HexCharToInt(str.CharAt(i));
     return result;
   }
 
   for (int i = 0; i < len && std::isdigit(str[i]); ++i)
-    result = result * 10 + FXSYS_toDecimalDigit(str.CharAt(i));
+    result = result * 10 + FXSYS_DecimalCharToInt(str.CharAt(i));
 
   return result;
 }
@@ -183,7 +183,7 @@ CFX_WideString CPDF_ToUnicodeMap::StringToWideString(
     int byte_pos = 0;
     wchar_t ch = 0;
     for (int i = 1; i < len && std::isxdigit(str[i]); ++i) {
-      ch = ch * 16 + FXSYS_toHexDigit(str[i]);
+      ch = ch * 16 + FXSYS_HexCharToInt(str[i]);
       byte_pos++;
       if (byte_pos == 4) {
         result += ch;

@@ -53,7 +53,7 @@ inline bool FXSYS_isHexDigit(const char c) {
   return !((c & 0x80) || !std::isxdigit(c));
 }
 
-inline int FXSYS_toHexDigit(const char c) {
+inline int FXSYS_HexCharToInt(const char c) {
   if (!FXSYS_isHexDigit(c))
     return 0;
   char upchar = std::toupper(c);
@@ -68,11 +68,11 @@ inline bool FXSYS_isDecimalDigit(const wchar_t c) {
   return !!std::iswdigit(c);
 }
 
-inline int FXSYS_toDecimalDigit(const char c) {
+inline int FXSYS_DecimalCharToInt(const char c) {
   return FXSYS_isDecimalDigit(c) ? c - '0' : 0;
 }
 
-inline int FXSYS_toDecimalDigit(const wchar_t c) {
+inline int FXSYS_DecimalCharToInt(const wchar_t c) {
   return std::iswdigit(c) ? c - L'0' : 0;
 }
 

@@ -20,7 +20,7 @@
 namespace {
 
 uint8_t Hex2Dec(uint8_t hexHigh, uint8_t hexLow) {
-  return (FXSYS_toHexDigit(hexHigh) << 4) + FXSYS_toHexDigit(hexLow);
+  return (FXSYS_HexCharToInt(hexHigh) << 4) + FXSYS_HexCharToInt(hexLow);
 }
 
 bool ParseCSSNumber(const wchar_t* pszValue,

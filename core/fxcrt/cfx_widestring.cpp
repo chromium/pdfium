@@ -1025,7 +1025,7 @@ float FX_wtof(const wchar_t* str, int len) {
     if (str[cc] == '.') {
       break;
     }
-    integer = integer * 10 + FXSYS_toDecimalDigit(str[cc]);
+    integer = integer * 10 + FXSYS_DecimalCharToInt(str[cc]);
     cc++;
   }
   float fraction = 0;
@@ -1033,7 +1033,7 @@ float FX_wtof(const wchar_t* str, int len) {
     cc++;
     float scale = 0.1f;
     while (cc < len) {
-      fraction += scale * FXSYS_toDecimalDigit(str[cc]);
+      fraction += scale * FXSYS_DecimalCharToInt(str[cc]);
       scale *= 0.1f;
       cc++;
     }

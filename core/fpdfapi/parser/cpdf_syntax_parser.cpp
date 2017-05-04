@@ -225,7 +225,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         break;
       case ReadStatus::Backslash:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+          iEscCode = FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           status = ReadStatus::Octal;
           break;
         }
@@ -251,7 +251,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
       case ReadStatus::Octal:
         if (ch >= '0' && ch <= '7') {
           iEscCode =
-              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+              iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           status = ReadStatus::FinishOctal;
         } else {
           buf.AppendChar(iEscCode);
@@ -263,7 +263,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         status = ReadStatus::Normal;
         if (ch >= '0' && ch <= '7') {
           iEscCode =
-              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
+              iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           buf.AppendChar(iEscCode);
         } else {
           buf.AppendChar(iEscCode);
@@ -298,7 +298,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
       break;
 
     if (std::isxdigit(ch)) {
-      int val = FXSYS_toHexDigit(ch);
+      int val = FXSYS_HexCharToInt(ch);
       if (bFirst) {
         code = val * 16;
       } else {

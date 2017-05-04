@@ -174,7 +174,7 @@ uint32_t HexDecode(const uint8_t* src_buf,
     if (!std::isxdigit(ch))
       continue;
 
-    int digit = FXSYS_toHexDigit(ch);
+    int digit = FXSYS_HexCharToInt(ch);
     if (bFirst)
       dest_buf[dest_size] = digit * 16;
     else
