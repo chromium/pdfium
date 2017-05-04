@@ -1784,8 +1784,7 @@ void CCodec_ProgressiveDecoder::Resample(
   }
 }
 
-FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames,
-                                                    IFX_Pause* pPause) {
+FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames) {
   if (!(m_status == FXCODEC_STATUS_FRAME_READY ||
         m_status == FXCODEC_STATUS_FRAME_TOBECONTINUE)) {
     return FXCODEC_STATUS_ERROR;
@@ -1809,13 +1808,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames,
             pGifModule->LoadFrameInfo(m_pGifContext, &m_FrameNumber);
         while (readResult == GifDecodeStatus::Unfinished) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_READ;
-          if (!GifReadMoreData(pGifModule, error_status)) {
+          if (!GifReadMoreData(pGifModule, error_status))
             return error_status;
-          }
-          if (pPause && pPause->NeedToPauseNow()) {
-            m_status = FXCODEC_STATUS_FRAME_TOBECONTINUE;
-            return m_status;
-          }
+
           readResult = pGifModule->LoadFrameInfo(m_pGifContext, &m_FrameNumber);
         }
         if (readResult == GifDecodeStatus::Success) {
@@ -2043,7 +2038,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
   }
 }
 
-FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
+FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
   if (m_status != FXCODEC_STATUS_DECODE_TOBECONTINUE)
     return FXCODEC_STATUS_ERROR;
 
@@ -2074,10 +2069,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         }
         Resample(m_pDeviceBitmap, m_SrcRow, m_pDecodeBuf, m_SrcFormat);
         m_SrcRow++;
-        if (pPause && pPause->NeedToPauseNow()) {
-          m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-          return m_status;
-        }
       }
     }
     case FXCODEC_IMAGE_PNG: {
@@ -2122,10 +2113,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           m_status = FXCODEC_STATUS_ERROR;
           return m_status;
         }
-        if (pPause && pPause->NeedToPauseNow()) {
-          m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-          return m_status;
-        }
       }
     }
     case FXCODEC_IMAGE_GIF: {
@@ -2143,10 +2130,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
             m_pDeviceBitmap = nullptr;
             m_pFile = nullptr;
             m_status = error_status;
-            return m_status;
-          }
-          if (pPause && pPause->NeedToPauseNow()) {
-            m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
             return m_status;
           }
           readRes = pGifModule->LoadFrame(m_pGifContext, m_FrameCur, nullptr);
@@ -2177,10 +2160,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
             m_pDeviceBitmap = nullptr;
             m_pFile = nullptr;
             m_status = error_status;
-            return m_status;
-          }
-          if (pPause && pPause->NeedToPauseNow()) {
-            m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
             return m_status;
           }
           readRes = pBmpModule->LoadImage(m_pBmpContext);

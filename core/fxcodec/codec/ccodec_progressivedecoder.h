@@ -22,7 +22,6 @@ class CCodec_JpegModule;
 class CCodec_ModuleMgr;
 class CFX_DIBAttribute;
 class IFX_SeekableReadStream;
-class IFX_Pause;
 struct FXJPEG_Context;
 
 class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
@@ -57,7 +56,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   int32_t GetBPC() const { return m_SrcBPC; }
   void SetClipBox(FX_RECT* clip);
 
-  FXCODEC_STATUS GetFrames(int32_t& frames, IFX_Pause* pPause = nullptr);
+  FXCODEC_STATUS GetFrames(int32_t& frames);
   FXCODEC_STATUS StartDecode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
                              int start_x,
                              int start_y,
@@ -66,7 +65,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
                              int32_t frames = 0,
                              bool bInterpol = true);
 
-  FXCODEC_STATUS ContinueDecode(IFX_Pause* pPause = nullptr);
+  FXCODEC_STATUS ContinueDecode();
 
   struct PixelWeight {
     int m_SrcStart;

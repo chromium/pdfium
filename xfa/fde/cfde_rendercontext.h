@@ -18,28 +18,19 @@
 class CFDE_RenderDevice;
 class CFDE_TxtEdtTextSet;
 
-enum FDE_RENDERSTATUS {
-  FDE_RENDERSTATUS_Reset = 0,
-  FDE_RENDERSTATUS_Paused,
-  FDE_RENDERSTATUS_Done,
-  FDE_RENDERSTATUS_Failed,
-};
-
 class CFDE_RenderContext {
  public:
   CFDE_RenderContext();
   ~CFDE_RenderContext();
 
-  bool StartRender(CFDE_RenderDevice* pRenderDevice,
+  void StartRender(CFDE_RenderDevice* pRenderDevice,
                    CFDE_TxtEdtPage* pCanvasSet,
                    const CFX_Matrix& tmDoc2Device);
-  FDE_RENDERSTATUS GetStatus() const { return m_eStatus; }
-  FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
-  void StopRender();
+  void DoRender();
+
+ private:
   void RenderText(CFDE_TxtEdtTextSet* pTextSet, FDE_TEXTEDITPIECE* pText);
 
- protected:
-  FDE_RENDERSTATUS m_eStatus;
   CFDE_RenderDevice* m_pRenderDevice;
   CFX_Matrix m_Transform;
   std::vector<FXTEXT_CHARPOS> m_CharPos;

@@ -64,9 +64,7 @@ enum class XFA_DocType { PDF = 0, Dynamic = 1, Static = 2 };
 #define XFA_EVENTERROR_Disabled 2
 
 #define XFA_RENDERSTATUS_Ready 1
-#define XFA_RENDERSTATUS_ToBeContinued 2
 #define XFA_RENDERSTATUS_Done 3
-#define XFA_RENDERSTATUS_Failed -1
 
 #define XFA_TRAVERSEWAY_Tranvalse 0x0001
 #define XFA_TRAVERSEWAY_Form 0x0002

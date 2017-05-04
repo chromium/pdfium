@@ -15,42 +15,30 @@
 #define FDE_PATHRENDER_Fill 2
 
 CFDE_RenderContext::CFDE_RenderContext()
-    : m_eStatus(FDE_RENDERSTATUS_Reset),
-      m_pRenderDevice(nullptr),
-      m_Transform() {
+    : m_pRenderDevice(nullptr), m_Transform() {
   m_Transform.SetIdentity();
 }
 
-CFDE_RenderContext::~CFDE_RenderContext() {
-  StopRender();
-}
+CFDE_RenderContext::~CFDE_RenderContext() {}
 
-bool CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
+void CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
                                      CFDE_TxtEdtPage* pCanvasSet,
                                      const CFX_Matrix& tmDoc2Device) {
-  if (m_pRenderDevice)
-    return false;
-  if (!pRenderDevice)
-    return false;
-  if (!pCanvasSet)
-    return false;
+  if (m_pRenderDevice || !pRenderDevice || !pCanvasSet)
+    return;
 
-  m_eStatus = FDE_RENDERSTATUS_Paused;
   m_pRenderDevice = pRenderDevice;
   m_Transform = tmDoc2Device;
   if (!m_pIterator)
     m_pIterator = pdfium::MakeUnique<CFDE_VisualSetIterator>();
-
-  return m_pIterator->AttachCanvas(pCanvasSet) && m_pIterator->FilterObjects();
+  if (m_pIterator->AttachCanvas(pCanvasSet))
+    m_pIterator->FilterObjects();
 }
 
-FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
-  if (!m_pRenderDevice)
-    return FDE_RENDERSTATUS_Failed;
-  if (!m_pIterator)
-    return FDE_RENDERSTATUS_Failed;
+void CFDE_RenderContext::DoRender() {
+  if (!m_pRenderDevice || !m_pIterator)
+    return;
 
-  FDE_RENDERSTATUS eStatus = FDE_RENDERSTATUS_Paused;
   CFX_Matrix rm;
   rm.SetReverse(m_Transform);
   CFX_RectF rtDocClip = m_pRenderDevice->GetClipRect();
@@ -65,10 +53,8 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
   int32_t iCount = 0;
   while (true) {
     pPiece = m_pIterator->GetNext(pVisualSet);
-    if (!pPiece || !pVisualSet) {
-      eStatus = FDE_RENDERSTATUS_Done;
-      break;
-    }
+    if (!pPiece || !pVisualSet)
+      return;
     if (!rtDocClip.IntersectWith(pVisualSet->GetRect(*pPiece)))
       continue;
 
@@ -83,21 +69,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
       default:
         break;
     }
-    if (iCount >= 100 && pPause && pPause->NeedToPauseNow()) {
-      eStatus = FDE_RENDERSTATUS_Paused;
-      break;
-    }
   }
-  return m_eStatus = eStatus;
-}
-
-void CFDE_RenderContext::StopRender() {
-  m_eStatus = FDE_RENDERSTATUS_Reset;
-  m_pRenderDevice = nullptr;
-  m_Transform.SetIdentity();
-  m_pIterator.reset();
-  m_pBrush.reset();
-  m_CharPos.clear();
 }
 
 void CFDE_RenderContext::RenderText(CFDE_TxtEdtTextSet* pTextSet,
@@ -112,10 +84,8 @@ void CFDE_RenderContext::RenderText(CFDE_TxtEdtTextSet* pTextSet,
   int32_t iCount = pTextSet->GetDisplayPos(*pText, nullptr, false);
   if (iCount < 1)
     return;
-
   if (!m_pBrush)
     m_pBrush = pdfium::MakeUnique<CFDE_Brush>();
-
   if (m_CharPos.size() < static_cast<size_t>(iCount))
     m_CharPos.resize(iCount, FXTEXT_CHARPOS());
 

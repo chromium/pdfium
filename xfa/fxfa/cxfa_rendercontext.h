@@ -28,7 +28,7 @@ class CXFA_RenderContext {
                       CFX_Graphics* pGS,
                       const CFX_Matrix& matrix,
                       const CXFA_RenderOptions& options);
-  int32_t DoRender(IFX_Pause* pPause = nullptr);
+  int32_t DoRender();
   void StopRender();
 
  private:

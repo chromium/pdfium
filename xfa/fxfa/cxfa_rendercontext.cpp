@@ -10,12 +10,6 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-namespace {
-
-const int32_t kMaxCount = 30;
-
-}  // namsepace
-
 CXFA_RenderContext::CXFA_RenderContext()
     : m_pWidget(nullptr), m_pPageView(nullptr), m_pGS(nullptr), m_dwStatus(0) {
   m_matrix.SetIdentity();
@@ -47,7 +41,7 @@ int32_t CXFA_RenderContext::StartRender(CXFA_FFPageView* pPageView,
   return XFA_RENDERSTATUS_Ready;
 }
 
-int32_t CXFA_RenderContext::DoRender(IFX_Pause* pPause) {
+int32_t CXFA_RenderContext::DoRender() {
   int32_t iCount = 0;
   while (m_pWidget) {
     CXFA_FFWidget* pWidget = m_pWidget;
@@ -59,8 +53,6 @@ int32_t CXFA_RenderContext::DoRender(IFX_Pause* pPause) {
 
     m_pWidget = m_pWidgetIterator->MoveToNext();
     iCount++;
-    if (iCount > kMaxCount && pPause && pPause->NeedToPauseNow())
-      return XFA_RENDERSTATUS_ToBeContinued;
   }
   return XFA_RENDERSTATUS_Done;
 }

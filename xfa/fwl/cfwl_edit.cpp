@@ -570,7 +570,7 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
   auto pRenderContext = pdfium::MakeUnique<CFDE_RenderContext>();
   pRenderDevice->SetClipRect(rtClip);
   pRenderContext->StartRender(pRenderDevice.get(), pPage, mt);
-  pRenderContext->DoRender(nullptr);
+  pRenderContext->DoRender();
 
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->RestoreGraphState();
