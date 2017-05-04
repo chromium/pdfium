@@ -13,7 +13,7 @@
 #include <cwctype>
 
 #include "core/fxcrt/cfx_string_pool_template.h"
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_math.h"
@@ -29,22 +29,6 @@ template struct std::hash<CFX_WideString>;
 #define FORCE_INT64 0x40000
 
 namespace {
-
-#ifndef NDEBUG
-bool IsValidCodePage(uint16_t codepage) {
-  switch (codepage) {
-    case 0:
-    case 932:
-    case 936:
-    case 949:
-    case 950:
-      return true;
-
-    default:
-      return false;
-  }
-}
-#endif
 
 const wchar_t* FX_wcsstr(const wchar_t* haystack,
                          int haystack_len,
@@ -258,6 +242,38 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
   }
   nMaxLen += 32;  // Fudge factor.
   return nMaxLen;
+}
+
+#ifndef NDEBUG
+bool IsValidCodePage(uint16_t codepage) {
+  switch (codepage) {
+    case FX_CODEPAGE_DefANSI:
+    case FX_CODEPAGE_ShiftJIS:
+    case FX_CODEPAGE_ChineseSimplified:
+    case FX_CODEPAGE_Hangul:
+    case FX_CODEPAGE_ChineseTraditional:
+      return true;
+    default:
+      return false;
+  }
+}
+#endif
+
+CFX_WideString GetWideString(uint16_t codepage, const CFX_ByteStringC& bstr) {
+  ASSERT(IsValidCodePage(codepage));
+
+  int src_len = bstr.GetLength();
+  int dest_len =
+      FXSYS_MultiByteToWideChar(codepage, 0, bstr.c_str(), src_len, nullptr, 0);
+  if (!dest_len)
+    return CFX_WideString();
+
+  CFX_WideString wstr;
+  wchar_t* dest_buf = wstr.GetBuffer(dest_len);
+  FXSYS_MultiByteToWideChar(codepage, 0, bstr.c_str(), src_len, dest_buf,
+                            dest_len);
+  wstr.ReleaseBuffer(dest_len);
+  return wstr;
 }
 
 }  // namespace
@@ -849,7 +865,7 @@ CFX_WideString CFX_WideString::FromLocal(const CFX_ByteStringC& str) {
 // static
 CFX_WideString CFX_WideString::FromCodePage(const CFX_ByteStringC& str,
                                             uint16_t codepage) {
-  return CFX_CharMap::GetWideString(codepage, str);
+  return GetWideString(codepage, str);
 }
 
 // static
@@ -1032,38 +1048,4 @@ int CFX_WideString::GetInteger() const {
 
 float CFX_WideString::GetFloat() const {
   return m_pData ? FX_wtof(m_pData->m_String, m_pData->m_nDataLength) : 0.0f;
-}
-
-// static
-CFX_ByteString CFX_CharMap::GetByteString(uint16_t codepage,
-                                          const CFX_WideStringC& wstr) {
-  ASSERT(IsValidCodePage(codepage));
-  int src_len = wstr.GetLength();
-  int dest_len = FXSYS_WideCharToMultiByte(codepage, 0, wstr.c_str(), src_len,
-                                           nullptr, 0, nullptr, nullptr);
-  CFX_ByteString bstr;
-  if (dest_len) {
-    char* dest_buf = bstr.GetBuffer(dest_len);
-    FXSYS_WideCharToMultiByte(codepage, 0, wstr.c_str(), src_len, dest_buf,
-                              dest_len, nullptr, nullptr);
-    bstr.ReleaseBuffer(dest_len);
-  }
-  return bstr;
-}
-
-// static
-CFX_WideString CFX_CharMap::GetWideString(uint16_t codepage,
-                                          const CFX_ByteStringC& bstr) {
-  ASSERT(IsValidCodePage(codepage));
-  int src_len = bstr.GetLength();
-  int dest_len =
-      FXSYS_MultiByteToWideChar(codepage, 0, bstr.c_str(), src_len, nullptr, 0);
-  CFX_WideString wstr;
-  if (dest_len) {
-    wchar_t* dest_buf = wstr.GetBuffer(dest_len);
-    FXSYS_MultiByteToWideChar(codepage, 0, bstr.c_str(), src_len, dest_buf,
-                              dest_len);
-    wstr.ReleaseBuffer(dest_len);
-  }
-  return wstr;
 }
