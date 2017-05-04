@@ -1,0 +1,29 @@
+diff --git a/third_party/libopenjpeg20/pi.c b/third_party/libopenjpeg20/pi.c
+index 083674222..6af38d0ca 100644
+--- a/third_party/libopenjpeg20/pi.c
++++ b/third_party/libopenjpeg20/pi.c
+@@ -782,18 +782,18 @@ static void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
+                /* use custom size for precincts*/
+                l_level_no = l_tccp->numresolutions - 1;
+                for (resno = 0; resno < l_tccp->numresolutions; ++resno) {
+-                       OPJ_UINT32 l_dx, l_dy;
+-
+                        /* precinct width and height*/
+                        l_pdx = l_tccp->prcw[resno];
+                        l_pdy = l_tccp->prch[resno];
+                        *lResolutionPtr++ = l_pdx;
+                        *lResolutionPtr++ = l_pdy;
+-                       l_dx = l_img_comp->dx * (1u << (l_pdx + l_level_no));
+-                       l_dy = l_img_comp->dy * (1u << (l_pdy + l_level_no));
+                        /* take the minimum size for l_dx for each comp and resolution*/
+-                       *p_dx_min = (OPJ_UINT32)opj_int_min((OPJ_INT32)*p_dx_min, (OPJ_INT32)l_dx);
+-                       *p_dy_min = (OPJ_UINT32)opj_int_min((OPJ_INT32)*p_dy_min, (OPJ_INT32)l_dy);
++                       if (l_pdx + l_level_no < 32) {
++                               *p_dx_min = opj_uint_min(*p_dx_min, l_img_comp->dx * (1u << (l_pdx + l_level_no)));
++                       }
++                       if (l_pdy + l_level_no < 32) {
++                               *p_dy_min = opj_uint_min(*p_dy_min, l_img_comp->dy * (1u << (l_pdy + l_level_no)));
++                       }
+ 
+                        /* various calculations of extents*/
+                        l_rx0 = opj_int_ceildivpow2(l_tcx0, (OPJ_INT32)l_level_no);

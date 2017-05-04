@@ -39,4 +39,5 @@ Local Modifications:
 0027-undefined-shift-opj_t1_decode_cblk.patch: upstream fix for a ubsan bug.
 0028-upstream-check-size-in-opj_j2k_read_siz.patch: upstream patch in j2k.c.
 0029-avoid-division-by-0: fix some /0 and %0 in pi.c (caused by bad shifts).
+0030-undefined-shift-opj_get_all_encoding_parameters.patch: fix undefined shift in pi.c method.
 TODO(thestig): List all the other patches.
