@@ -57,8 +57,7 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
   return pDict.release();
 }
 
-CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
-                                               IFX_Pause* pPause) {
+CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream) {
   uint32_t GRAY;
   CJBig2_Image* BHDC = nullptr;
   auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>();
@@ -70,7 +69,7 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
-  pGRD->Start_decode_MMR(&BHDC, pStream, nullptr);
+  pGRD->Start_decode_MMR(&BHDC, pStream);
   if (!BHDC)
     return nullptr;
 

@@ -101,10 +101,8 @@ bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
 bool CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
   if (m_Status == 1)
     return m_Stretcher->Continue(pPause);
-
   if (m_Status != 2)
     return false;
-
   if (m_pTransformer->Continue(pPause))
     return true;
 

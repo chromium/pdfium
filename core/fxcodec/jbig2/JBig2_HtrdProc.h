@@ -21,7 +21,7 @@ class CJBig2_HTRDProc {
                              JBig2ArithCtx* gbContext,
                              IFX_Pause* pPause);
 
-  CJBig2_Image* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
+  CJBig2_Image* decode_MMR(CJBig2_BitStream* pStream);
 
  public:
   uint32_t HBW;

@@ -6,7 +6,9 @@
 
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 
+#include <algorithm>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
@@ -263,8 +265,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
 CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
     CJBig2_BitStream* pStream,
     std::vector<JBig2ArithCtx>* gbContext,
-    std::vector<JBig2ArithCtx>* grContext,
-    IFX_Pause* pPause) {
+    std::vector<JBig2ArithCtx>* grContext) {
   std::vector<std::unique_ptr<CJBig2_Image>> SDNEWSYMS;
   std::vector<uint32_t> SDNEWSYMWIDTHS;
   uint32_t HCHEIGHT, NSYMSDECODED;
@@ -488,7 +489,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
         pGRD->MMR = 1;
         pGRD->GBW = TOTWIDTH;
         pGRD->GBH = HCHEIGHT;
-        pGRD->Start_decode_MMR(&BHC, pStream, nullptr);
+        pGRD->Start_decode_MMR(&BHC, pStream);
         pStream->alignByte();
       }
       nTmp = 0;

@@ -336,7 +336,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
                                                    IFX_Pause* pPause) {
   switch (pSegment->m_cFlags.s.type) {
     case 0:
-      return parseSymbolDict(pSegment, pPause);
+      return parseSymbolDict(pSegment);
     case 4:
     case 6:
     case 7:
@@ -419,8 +419,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
-                                        IFX_Pause* pPause) {
+int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
   uint16_t wFlags;
   if (m_pStream->readShortInteger(&wFlags) != 0)
     return JBIG2_ERROR_TOO_SHORT;
@@ -612,7 +611,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       m_pStream->offset(2);
     } else {
       pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(
-          m_pStream.get(), &gbContext, &grContext, pPause);
+          m_pStream.get(), &gbContext, &grContext);
       if (!pSegment->m_Result.sd)
         return JBIG2_ERROR_FATAL;
       m_pStream->alignByte();
@@ -967,7 +966,7 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    pSegment->m_Result.pd = pPDD->decode_MMR(m_pStream.get(), pPause);
+    pSegment->m_Result.pd = pPDD->decode_MMR(m_pStream.get());
     if (!pSegment->m_Result.pd)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
@@ -1033,7 +1032,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    pSegment->m_Result.im = pHRD->decode_MMR(m_pStream.get(), pPause);
+    pSegment->m_Result.im = pHRD->decode_MMR(m_pStream.get());
     if (!pSegment->m_Result.im)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
@@ -1132,7 +1131,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       m_pStream->offset(2);
     }
   } else {
-    m_pGRD->Start_decode_MMR(&pSegment->m_Result.im, m_pStream.get(), pPause);
+    m_pGRD->Start_decode_MMR(&pSegment->m_Result.im, m_pStream.get());
     if (!pSegment->m_Result.im) {
       m_pGRD.reset();
       return JBIG2_ERROR_FATAL;

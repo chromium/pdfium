@@ -262,10 +262,8 @@ bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
 
   if (m_Status == 2)
     return m_Stretcher->Continue(pPause);
-
   if (m_Status != 3)
     return false;
-
   if (m_Stretcher->Continue(pPause))
     return true;
 

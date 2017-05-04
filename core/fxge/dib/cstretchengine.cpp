@@ -357,9 +357,9 @@ CStretchEngine::~CStretchEngine() {
 
 bool CStretchEngine::Continue(IFX_Pause* pPause) {
   while (m_State == 1) {
-    if (ContinueStretchHorz(pPause)) {
+    if (ContinueStretchHorz(pPause))
       return true;
-    }
+
     m_State = 2;
     StretchVert();
   }
@@ -401,7 +401,6 @@ bool CStretchEngine::StartStretchHorz() {
 bool CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
   if (!m_DestWidth)
     return false;
-
   if (m_pSource->SkipToScanline(m_CurRow, pPause))
     return true;
 

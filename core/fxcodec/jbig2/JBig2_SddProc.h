@@ -16,7 +16,6 @@ class CJBig2_BitStream;
 class CJBig2_HuffmanTable;
 class CJBig2_Image;
 class CJBig2_SymbolDict;
-class IFX_Pause;
 
 class CJBig2_SDDProc {
  public:
@@ -26,8 +25,7 @@ class CJBig2_SDDProc {
 
   CJBig2_SymbolDict* decode_Huffman(CJBig2_BitStream* pStream,
                                     std::vector<JBig2ArithCtx>* gbContext,
-                                    std::vector<JBig2ArithCtx>* grContext,
-                                    IFX_Pause* pPause);
+                                    std::vector<JBig2ArithCtx>* grContext);
 
   bool SDHUFF;
   bool SDREFAGG;

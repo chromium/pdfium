@@ -705,8 +705,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(CJBig2_Image** pImage,
-                                                CJBig2_BitStream* pStream,
-                                                IFX_Pause* pPause) {
+                                                CJBig2_BitStream* pStream) {
   int bitpos, i;
   *pImage = new CJBig2_Image(GBW, GBH);
   if (!(*pImage)->m_pData) {

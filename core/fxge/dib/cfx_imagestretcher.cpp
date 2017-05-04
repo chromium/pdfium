@@ -128,7 +128,6 @@ bool CFX_ImageStretcher::Start() {
 bool CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
   if (m_Flags & FXDIB_DOWNSAMPLE)
     return ContinueQuickStretch(pPause);
-
   return ContinueStretch(pPause);
 }
 

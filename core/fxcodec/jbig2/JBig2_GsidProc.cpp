@@ -68,8 +68,7 @@ uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   return GSVALS.release();
 }
 
-uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
-                                      IFX_Pause* pPause) {
+uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream) {
   auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = GSMMR;
   pGRD->GBW = GSW;
@@ -77,7 +76,7 @@ uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
 
   std::unique_ptr<CJBig2_Image*> GSPLANES(FX_Alloc(CJBig2_Image*, GSBPP));
   JBIG2_memset(GSPLANES.get(), 0, sizeof(CJBig2_Image*) * GSBPP);
-  pGRD->Start_decode_MMR(&GSPLANES.get()[GSBPP - 1], pStream, nullptr);
+  pGRD->Start_decode_MMR(&GSPLANES.get()[GSBPP - 1], pStream);
   if (!GSPLANES.get()[GSBPP - 1])
     return nullptr;
 
@@ -85,7 +84,7 @@ uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
   pStream->offset(3);
   int32_t J = GSBPP - 2;
   while (J >= 0) {
-    pGRD->Start_decode_MMR(&GSPLANES.get()[J], pStream, nullptr);
+    pGRD->Start_decode_MMR(&GSPLANES.get()[J], pStream);
     if (!GSPLANES.get()[J]) {
       for (int32_t K = GSBPP - 1; K > J; --K)
         delete GSPLANES.get()[K];

@@ -21,7 +21,7 @@ class CJBig2_GSIDProc {
                          JBig2ArithCtx* gbContext,
                          IFX_Pause* pPause);
 
-  uint32_t* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
+  uint32_t* decode_MMR(CJBig2_BitStream* pStream);
 
  public:
   bool GSMMR;

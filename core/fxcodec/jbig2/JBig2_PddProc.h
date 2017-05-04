@@ -21,7 +21,7 @@ class CJBig2_PDDProc {
                                    JBig2ArithCtx* gbContext,
                                    IFX_Pause* pPause);
 
-  CJBig2_PatternDict* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
+  CJBig2_PatternDict* decode_MMR(CJBig2_BitStream* pStream);
 
  public:
   bool HDMMR;

@@ -68,8 +68,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   return HTREG.release();
 }
 
-CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream,
-                                          IFX_Pause* pPause) {
+CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream) {
   uint32_t ng, mg;
   int32_t x, y;
   uint32_t* GI;
@@ -85,7 +84,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream,
   pGID->GSH = HGH;
   pGID->GSBPP = (uint8_t)HBPP;
   pGID->GSUSESKIP = 0;
-  GI = pGID->decode_MMR(pStream, pPause);
+  GI = pGID->decode_MMR(pStream);
   if (!GI)
     return nullptr;
 
