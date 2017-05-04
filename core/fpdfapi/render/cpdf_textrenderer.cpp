@@ -15,6 +15,14 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 
+namespace {
+
+CFX_Font* GetFont(CPDF_Font* pFont, int32_t position) {
+  return position == -1 ? pFont->GetFont() : pFont->GetFontFallback(position);
+}
+
+}  // namespace
+
 // static
 bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                      const std::vector<uint32_t>& charCodes,
@@ -40,9 +48,8 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
     int32_t curFontPosition = CharPosList.m_pCharPos[i].m_FallbackFontPosition;
     if (fontPosition == curFontPosition)
       continue;
-    auto* font = fontPosition == -1
-                     ? &pFont->m_Font
-                     : pFont->m_FontFallbacks[fontPosition].get();
+
+    CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawTextPath(i - startIndex,
                                CharPosList.m_pCharPos + startIndex, font,
                                font_size, pText2User, pUser2Device, pGraphState,
@@ -52,8 +59,7 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
     fontPosition = curFontPosition;
     startIndex = i;
   }
-  auto* font = fontPosition == -1 ? &pFont->m_Font
-                                  : pFont->m_FontFallbacks[fontPosition].get();
+  CFX_Font* font = GetFont(pFont, fontPosition);
   if (!pDevice->DrawTextPath(CharPosList.m_nChars - startIndex,
                              CharPosList.m_pCharPos + startIndex, font,
                              font_size, pText2User, pUser2Device, pGraphState,
@@ -145,9 +151,8 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
     int32_t curFontPosition = CharPosList.m_pCharPos[i].m_FallbackFontPosition;
     if (fontPosition == curFontPosition)
       continue;
-    auto* font = fontPosition == -1
-                     ? &pFont->m_Font
-                     : pFont->m_FontFallbacks[fontPosition].get();
+
+    CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawNormalText(
             i - startIndex, CharPosList.m_pCharPos + startIndex, font,
             font_size, pText2Device, fill_argb, FXGE_flags)) {
@@ -156,8 +161,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
     fontPosition = curFontPosition;
     startIndex = i;
   }
-  auto* font = fontPosition == -1 ? &pFont->m_Font
-                                  : pFont->m_FontFallbacks[fontPosition].get();
+  CFX_Font* font = GetFont(pFont, fontPosition);
   if (!pDevice->DrawNormalText(CharPosList.m_nChars - startIndex,
                                CharPosList.m_pCharPos + startIndex, font,
                                font_size, pText2Device, fill_argb,

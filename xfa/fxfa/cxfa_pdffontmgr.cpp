@@ -67,7 +67,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_PDFFontMgr::FindFont(
       *pDstPDFFont = pPDFFont;
       return nullptr;
     }
-    return CFGAS_GEFont::LoadFont(&pPDFFont->m_Font, pFDEFontMgr);
+    return CFGAS_GEFont::LoadFont(pPDFFont->GetFont(), pFDEFontMgr);
   }
   return nullptr;
 }

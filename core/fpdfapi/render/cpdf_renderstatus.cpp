@@ -66,7 +66,7 @@
 namespace {
 
 void ReleaseCachedType3(CPDF_Type3Font* pFont) {
-  CPDF_Document* pDoc = pFont->m_pDocument;
+  CPDF_Document* pDoc = pFont->GetDocument();
   if (!pDoc)
     return;
 
@@ -1799,7 +1799,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
 
 CFX_RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
     CPDF_Type3Font* pFont) {
-  CPDF_Document* pDoc = pFont->m_pDocument;
+  CPDF_Document* pDoc = pFont->GetDocument();
   if (!pDoc)
     return nullptr;
 
@@ -2000,10 +2000,9 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   CharPosList.Load(textobj->m_CharCodes, textobj->m_CharPos, pFont, font_size);
   for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
     FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
-    auto* font =
-        charpos.m_FallbackFontPosition == -1
-            ? &pFont->m_Font
-            : pFont->m_FontFallbacks[charpos.m_FallbackFontPosition].get();
+    auto* font = charpos.m_FallbackFontPosition == -1
+                     ? pFont->GetFont()
+                     : pFont->GetFontFallback(charpos.m_FallbackFontPosition);
     const CFX_PathData* pPath =
         font->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath)

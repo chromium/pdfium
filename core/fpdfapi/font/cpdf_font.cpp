@@ -290,6 +290,7 @@ int CPDF_Font::GetStringWidth(const char* pString, int size) {
   return width;
 }
 
+// static
 CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
                                    const CFX_ByteStringC& name) {
   CFX_ByteString fontname(name);
@@ -468,4 +469,10 @@ int CPDF_Font::FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode) {
     return -1;
 
   return glyph;
+}
+
+CFX_Font* CPDF_Font::GetFontFallback(int position) {
+  if (position < 0 || static_cast<size_t>(position) >= m_FontFallbacks.size())
+    return nullptr;
+  return m_FontFallbacks[position].get();
 }

@@ -134,7 +134,7 @@ void CPDF_TextState::TextData::SetFont(CPDF_Font* pFont) {
   if (pPageData && m_pFont && !pPageData->IsForceClear())
     pPageData->ReleaseFont(m_pFont->GetFontDict());
 
-  m_pDocument = pFont ? pFont->m_pDocument : nullptr;
+  m_pDocument = pFont ? pFont->GetDocument() : nullptr;
   m_pFont = pFont;
 }
 

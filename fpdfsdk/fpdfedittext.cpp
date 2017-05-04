@@ -432,7 +432,7 @@ DLLEXPORT void STDCALL FPDFFont_Close(FPDF_FONT font) {
     return;
 
   CPDF_Font* cpdf_font = reinterpret_cast<CPDF_Font*>(font);
-  CPDF_Document* pDoc = cpdf_font->m_pDocument;
+  CPDF_Document* pDoc = cpdf_font->GetDocument();
   CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
   if (pPageData && !pPageData->IsForceClear())
     pPageData->ReleaseFont(cpdf_font->GetFontDict());

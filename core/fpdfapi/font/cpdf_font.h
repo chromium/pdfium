@@ -78,9 +78,10 @@ class CPDF_Font {
   virtual int GetCharWidthF(uint32_t charcode) = 0;
   virtual FX_RECT GetCharBBox(uint32_t charcode) = 0;
 
-  CPDF_Document* m_pDocument;
-  CFX_Font m_Font;
-  std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
+  CPDF_Document* GetDocument() { return m_pDocument; }
+  CFX_Font* GetFont() { return &m_Font; }
+  const CFX_Font* GetFont() const { return &m_Font; }
+  CFX_Font* GetFontFallback(int position);
 
  protected:
   CPDF_Font();
@@ -100,6 +101,9 @@ class CPDF_Font {
                                const std::vector<CFX_ByteString>& charnames,
                                int charcode);
 
+  CPDF_Document* m_pDocument;
+  CFX_Font m_Font;
+  std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
   CFX_ByteString m_BaseFont;
   CFX_RetainPtr<CPDF_StreamAcc> m_pFontFile;
   CPDF_Dictionary* m_pFontDict;

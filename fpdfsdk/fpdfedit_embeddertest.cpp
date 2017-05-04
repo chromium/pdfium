@@ -554,8 +554,8 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
   // TODO(npm): use other fonts after disallowing loading any font as any type
   const CPDF_Font* stock_font =
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Bold");
-  const uint8_t* data = stock_font->m_Font.GetFontData();
-  const uint32_t size = stock_font->m_Font.GetSize();
+  const uint8_t* data = stock_font->GetFont()->GetFontData();
+  const uint32_t size = stock_font->GetFont()->GetSize();
   std::unique_ptr<void, FPDFFontDeleter> font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, false));
   ASSERT_TRUE(font.get());
@@ -583,8 +583,8 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
 TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   CreateNewDocument();
   const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Courier");
-  const uint8_t* data = stock_font->m_Font.GetFontData();
-  const uint32_t size = stock_font->m_Font.GetSize();
+  const uint8_t* data = stock_font->GetFont()->GetFontData();
+  const uint32_t size = stock_font->GetFont()->GetSize();
   std::unique_ptr<void, FPDFFontDeleter> font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, false));
   ASSERT_TRUE(font.get());
@@ -613,8 +613,8 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   CreateNewDocument();
   const CPDF_Font* stock_font =
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Roman");
-  const uint8_t* data = stock_font->m_Font.GetFontData();
-  const uint32_t size = stock_font->m_Font.GetSize();
+  const uint8_t* data = stock_font->GetFont()->GetFontData();
+  const uint32_t size = stock_font->GetFont()->GetSize();
   std::unique_ptr<void, FPDFFontDeleter> font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, 1));
   ASSERT_TRUE(font.get());
@@ -654,8 +654,8 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   CreateNewDocument();
   const CPDF_Font* stock_font =
       CPDF_Font::GetStockFont(cpdf_doc(), "Helvetica-Oblique");
-  const uint8_t* data = stock_font->m_Font.GetFontData();
-  const uint32_t size = stock_font->m_Font.GetSize();
+  const uint8_t* data = stock_font->GetFont()->GetFontData();
+  const uint32_t size = stock_font->GetFont()->GetSize();
 
   std::unique_ptr<void, FPDFFontDeleter> font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
@@ -707,8 +707,8 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
   {
     const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Arial");
-    const uint8_t* data = stock_font->m_Font.GetFontData();
-    const uint32_t size = stock_font->m_Font.GetSize();
+    const uint8_t* data = stock_font->GetFont()->GetFontData();
+    const uint32_t size = stock_font->GetFont()->GetSize();
     std::unique_ptr<void, FPDFFontDeleter> font(
         FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 0));
     ASSERT_TRUE(font.get());
