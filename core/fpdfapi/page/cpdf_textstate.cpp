@@ -115,25 +115,16 @@ CPDF_TextState::TextData::TextData(const TextData& that)
   for (int i = 0; i < 4; ++i)
     m_CTM[i] = that.m_CTM[i];
 
-  if (m_pDocument && m_pFont) {
+  if (m_pDocument && m_pFont)
     m_pFont = m_pDocument->GetPageData()->GetFont(m_pFont->GetFontDict());
-  }
 }
 
 CPDF_TextState::TextData::~TextData() {
-  if (m_pDocument && m_pFont) {
-    CPDF_DocPageData* pPageData = m_pDocument->GetPageData();
-    if (pPageData && !pPageData->IsForceClear())
-      pPageData->ReleaseFont(m_pFont->GetFontDict());
-  }
+  ReleaseFont();
 }
 
 void CPDF_TextState::TextData::SetFont(CPDF_Font* pFont) {
-  CPDF_Document* pDoc = m_pDocument;
-  CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
-  if (pPageData && m_pFont && !pPageData->IsForceClear())
-    pPageData->ReleaseFont(m_pFont->GetFontDict());
-
+  ReleaseFont();
   m_pDocument = pFont ? pFont->GetDocument() : nullptr;
   m_pFont = pFont;
 }
@@ -152,6 +143,15 @@ float CPDF_TextState::TextData::GetBaselineAngle() const {
 
 float CPDF_TextState::TextData::GetShearAngle() const {
   return GetBaselineAngle() + atan2(m_Matrix[1], m_Matrix[3]);
+}
+
+void CPDF_TextState::TextData::ReleaseFont() {
+  if (!m_pDocument || !m_pFont)
+    return;
+
+  CPDF_DocPageData* pPageData = m_pDocument->GetPageData();
+  if (pPageData && !pPageData->IsForceClear())
+    pPageData->ReleaseFont(m_pFont->GetFontDict());
 }
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode) {

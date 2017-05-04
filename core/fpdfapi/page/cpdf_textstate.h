@@ -79,6 +79,9 @@ class CPDF_TextState {
     TextRenderingMode m_TextMode;
     float m_Matrix[4];
     float m_CTM[4];
+
+   private:
+    void ReleaseFont();
   };
 
   CFX_SharedCopyOnWrite<TextData> m_Ref;

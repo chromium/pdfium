@@ -91,8 +91,7 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern, float* comps, int ncomps) {
   PatternValue* pvalue = (PatternValue*)m_pBuffer;
   if (pvalue->m_pPattern) {
     pDocPageData = pvalue->m_pPattern->document()->GetPageData();
-    if (pDocPageData)
-      pDocPageData->ReleasePattern(pvalue->m_pPattern->pattern_obj());
+    pDocPageData->ReleasePattern(pvalue->m_pPattern->pattern_obj());
   }
   pvalue->m_nComps = ncomps;
   pvalue->m_pPattern = pPattern;

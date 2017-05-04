@@ -58,6 +58,8 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* GetPage(int iPage);
   int GetPageIndex(uint32_t objnum);
   uint32_t GetUserPermissions() const;
+
+  // Returns a valid pointer, unless it is called during destruction.
   CPDF_DocPageData* GetPageData() const { return m_pDocPage.get(); }
 
   void SetPageObjNum(int iPage, uint32_t objNum);

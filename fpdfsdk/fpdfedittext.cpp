@@ -431,23 +431,28 @@ DLLEXPORT void STDCALL FPDFFont_Close(FPDF_FONT font) {
   if (!font)
     return;
 
-  CPDF_Font* cpdf_font = reinterpret_cast<CPDF_Font*>(font);
-  CPDF_Document* pDoc = cpdf_font->GetDocument();
-  CPDF_DocPageData* pPageData = pDoc ? pDoc->GetPageData() : nullptr;
-  if (pPageData && !pPageData->IsForceClear())
-    pPageData->ReleaseFont(cpdf_font->GetFontDict());
+  CPDF_Font* pFont = reinterpret_cast<CPDF_Font*>(font);
+  CPDF_Document* pDoc = pFont->GetDocument();
+  if (!pDoc)
+    return;
+
+  CPDF_DocPageData* pPageData = pDoc->GetPageData();
+  if (!pPageData->IsForceClear())
+    pPageData->ReleaseFont(pFont->GetFontDict());
 }
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           FPDF_FONT font,
                           float font_size) {
+  if (!font)
+    return nullptr;
+
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc || !font)
+  if (!pDoc)
     return nullptr;
 
   CPDF_Font* pFont = reinterpret_cast<CPDF_Font*>(font);
-
   auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
   pTextObj->m_TextState.SetFont(pDoc->LoadFont(pFont->GetFontDict()));
   pTextObj->m_TextState.SetFontSize(font_size);
