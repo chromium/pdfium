@@ -17,7 +17,6 @@
 CJBig2_GRDProc::CJBig2_GRDProc()
     : m_loopIndex(0),
       m_pLine(nullptr),
-      m_pPause(nullptr),
       m_DecodeType(0),
       m_LTP(0) {
   m_ReplaceRect.left = 0;
@@ -640,7 +639,6 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
     return FXCODEC_STATUS_DECODE_FINISH;
   }
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_READY;
-  m_pPause = pPause;
   if (!*pImage)
     *pImage = new CJBig2_Image(GBW, GBH);
   if (!(*pImage)->m_pData) {

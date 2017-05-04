@@ -111,7 +111,6 @@ class CJBig2_GRDProc {
 
   uint32_t m_loopIndex;
   uint8_t* m_pLine;
-  IFX_Pause* m_pPause;
   FXCODEC_STATUS m_ProssiveStatus;
   CJBig2_Image** m_pImage;
   CJBig2_ArithDecoder* m_pArithDecoder;
