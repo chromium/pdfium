@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
@@ -16,34 +17,16 @@
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
-class CPDF_CMap;
+class CPDF_CMapManager;
 class CPDF_Font;
 class CPDF_Stream;
+struct FXCMAP_CMap;
 
 using FXFT_Library = void*;
 
 int TT2PDF(int m, FXFT_Face face);
 bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
 CIDSet CharsetFromOrdering(const CFX_ByteStringC& ordering);
-
-class CPDF_CMapManager {
- public:
-  CPDF_CMapManager();
-  ~CPDF_CMapManager();
-
-  CFX_RetainPtr<CPDF_CMap> GetPredefinedCMap(const CFX_ByteString& name,
-                                             bool bPromptCJK);
-  CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
-
- private:
-  CFX_RetainPtr<CPDF_CMap> LoadPredefinedCMap(const CFX_ByteString& name,
-                                              bool bPromptCJK);
-  std::unique_ptr<CPDF_CID2UnicodeMap> LoadCID2UnicodeMap(CIDSet charset,
-                                                          bool bPromptCJK);
-
-  std::map<CFX_ByteString, CFX_RetainPtr<CPDF_CMap>> m_CMaps;
-  std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[6];
-};
 
 class CFX_StockFontArray {
  public:
@@ -56,64 +39,6 @@ class CFX_StockFontArray {
 
  private:
   std::unique_ptr<CPDF_Font> m_StockFonts[14];
-};
-
-class CPDF_FontGlobals {
- public:
-  CPDF_FontGlobals();
-  ~CPDF_FontGlobals();
-
-  void Clear(CPDF_Document* pDoc);
-  CPDF_Font* Find(CPDF_Document* pDoc, uint32_t index);
-
-  // Takes ownership of |pFont|, returns unowned pointer to it.
-  CPDF_Font* Set(CPDF_Document* key,
-                 uint32_t index,
-                 std::unique_ptr<CPDF_Font> pFont);
-
-  CPDF_CMapManager m_CMapManager;
-  struct {
-    const struct FXCMAP_CMap* m_pMapList;
-    uint32_t m_Count;
-  } m_EmbeddedCharsets[CIDSET_NUM_SETS];
-  struct {
-    const uint16_t* m_pMap;
-    uint32_t m_Count;
-  } m_EmbeddedToUnicodes[CIDSET_NUM_SETS];
-
- private:
-  std::map<CPDF_Document*, std::unique_ptr<CFX_StockFontArray>> m_StockMap;
-};
-
-struct CMap_CodeRange {
-  int m_CharSize;
-  uint8_t m_Lower[4];
-  uint8_t m_Upper[4];
-};
-
-class CPDF_CMapParser {
- public:
-  CPDF_CMapParser();
-  ~CPDF_CMapParser();
-  void Initialize(CPDF_CMap* pMap);
-  void ParseWord(const CFX_ByteStringC& str);
-  CFX_BinaryBuf m_AddMaps;
-
- private:
-  friend class fpdf_font_cid_CMap_GetCode_Test;
-  friend class fpdf_font_cid_CMap_GetCodeRange_Test;
-
-  static uint32_t CMap_GetCode(const CFX_ByteStringC& word);
-  static bool CMap_GetCodeRange(CMap_CodeRange& range,
-                                const CFX_ByteStringC& first,
-                                const CFX_ByteStringC& second);
-
-  CPDF_CMap* m_pCMap;
-  int m_Status;
-  int m_CodeSeq;
-  uint32_t m_CodePoints[4];
-  std::vector<CMap_CodeRange> m_CodeRanges;
-  CFX_ByteString m_LastWord;
 };
 
 enum CIDCoding : uint8_t {
@@ -134,6 +59,18 @@ class CPDF_CMap : public CFX_Retainable {
     TwoBytes,
     MixedTwoBytes,
     MixedFourBytes
+  };
+
+  struct CodeRange {
+    int m_CharSize;
+    uint8_t m_Lower[4];
+    uint8_t m_Upper[4];
+  };
+
+  struct CIDRange {
+    uint32_t m_StartCode;
+    uint32_t m_EndCode;
+    uint16_t m_StartCID;
   };
 
   template <typename T, typename... Args>
@@ -167,9 +104,57 @@ class CPDF_CMap : public CFX_Retainable {
   int m_nCodeRanges;
   uint8_t* m_pLeadingBytes;
   uint16_t* m_pMapping;
-  uint8_t* m_pAddMapping;
   bool m_bLoaded;
+  std::vector<CIDRange> m_AddMapping;
   const FXCMAP_CMap* m_pEmbedMap;
+};
+
+class CPDF_CMapManager {
+ public:
+  CPDF_CMapManager();
+  ~CPDF_CMapManager();
+
+  CFX_RetainPtr<CPDF_CMap> GetPredefinedCMap(const CFX_ByteString& name,
+                                             bool bPromptCJK);
+  CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
+
+ private:
+  CFX_RetainPtr<CPDF_CMap> LoadPredefinedCMap(const CFX_ByteString& name,
+                                              bool bPromptCJK);
+  std::unique_ptr<CPDF_CID2UnicodeMap> LoadCID2UnicodeMap(CIDSet charset,
+                                                          bool bPromptCJK);
+
+  std::map<CFX_ByteString, CFX_RetainPtr<CPDF_CMap>> m_CMaps;
+  std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[6];
+};
+
+class CPDF_CMapParser {
+ public:
+  explicit CPDF_CMapParser(CPDF_CMap* pMap);
+  ~CPDF_CMapParser();
+
+  void ParseWord(const CFX_ByteStringC& str);
+  bool HasAddMaps() const { return !m_AddMaps.empty(); }
+  std::vector<CPDF_CMap::CIDRange> TakeAddMaps() {
+    return std::move(m_AddMaps);
+  }
+
+ private:
+  friend class fpdf_font_cid_CMap_GetCode_Test;
+  friend class fpdf_font_cid_CMap_GetCodeRange_Test;
+
+  static uint32_t CMap_GetCode(const CFX_ByteStringC& word);
+  static bool CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
+                                const CFX_ByteStringC& first,
+                                const CFX_ByteStringC& second);
+
+  CPDF_CMap* const m_pCMap;
+  int m_Status;
+  int m_CodeSeq;
+  uint32_t m_CodePoints[4];
+  std::vector<CPDF_CMap::CodeRange> m_CodeRanges;
+  std::vector<CPDF_CMap::CIDRange> m_AddMaps;
+  CFX_ByteString m_LastWord;
 };
 
 class CPDF_CID2UnicodeMap {
@@ -209,6 +194,33 @@ class CPDF_ToUnicodeMap {
   std::map<uint32_t, uint32_t> m_Map;
   CPDF_CID2UnicodeMap* m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
+};
+
+class CPDF_FontGlobals {
+ public:
+  CPDF_FontGlobals();
+  ~CPDF_FontGlobals();
+
+  void Clear(CPDF_Document* pDoc);
+  CPDF_Font* Find(CPDF_Document* pDoc, uint32_t index);
+
+  // Takes ownership of |pFont|, returns unowned pointer to it.
+  CPDF_Font* Set(CPDF_Document* key,
+                 uint32_t index,
+                 std::unique_ptr<CPDF_Font> pFont);
+
+  CPDF_CMapManager m_CMapManager;
+  struct {
+    const FXCMAP_CMap* m_pMapList;
+    uint32_t m_Count;
+  } m_EmbeddedCharsets[CIDSET_NUM_SETS];
+  struct {
+    const uint16_t* m_pMap;
+    uint32_t m_Count;
+  } m_EmbeddedToUnicodes[CIDSET_NUM_SETS];
+
+ private:
+  std::map<CPDF_Document*, std::unique_ptr<CFX_StockFontArray>> m_StockMap;
 };
 
 #endif  // CORE_FPDFAPI_FONT_FONT_INT_H_

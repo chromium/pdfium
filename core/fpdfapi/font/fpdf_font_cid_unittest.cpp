@@ -36,7 +36,7 @@ TEST(fpdf_font_cid, CMap_GetCode) {
 }
 
 TEST(fpdf_font_cid, CMap_GetCodeRange) {
-  CMap_CodeRange range;
+  CPDF_CMap::CodeRange range;
 
   // Must start with a <
   EXPECT_FALSE(CPDF_CMapParser::CMap_GetCodeRange(range, "", ""));
