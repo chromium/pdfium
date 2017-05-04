@@ -34,7 +34,7 @@ class CPDF_Creator {
 
   void RemoveSecurity();
   bool Create(const CFX_RetainPtr<IFX_WriteStream>& pFile, uint32_t flags = 0);
-  int32_t Continue(IFX_Pause* pPause = nullptr);
+  int32_t Continue();
   bool SetFileVersion(int32_t fileVersion = 17);
 
  private:
@@ -50,14 +50,14 @@ class CPDF_Creator {
 
   int32_t AppendObjectNumberToXRef(uint32_t objnum);
 
-  int32_t WriteDoc_Stage1(IFX_Pause* pPause);
-  int32_t WriteDoc_Stage2(IFX_Pause* pPause);
-  int32_t WriteDoc_Stage3(IFX_Pause* pPause);
-  int32_t WriteDoc_Stage4(IFX_Pause* pPause);
+  int32_t WriteDoc_Stage1();
+  int32_t WriteDoc_Stage2();
+  int32_t WriteDoc_Stage3();
+  int32_t WriteDoc_Stage4();
 
   int32_t WriteOldIndirectObject(uint32_t objnum);
-  int32_t WriteOldObjs(IFX_Pause* pPause);
-  int32_t WriteNewObjs(bool bIncremental, IFX_Pause* pPause);
+  int32_t WriteOldObjs();
+  int32_t WriteNewObjs(bool bIncremental);
   int32_t WriteIndirectObj(const CPDF_Object* pObj);
   int32_t WriteDirectObj(uint32_t objnum,
                          const CPDF_Object* pObj,
