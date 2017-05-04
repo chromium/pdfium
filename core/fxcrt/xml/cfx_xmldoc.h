@@ -20,7 +20,7 @@ class CFX_XMLDoc {
   ~CFX_XMLDoc();
 
   bool LoadXML(std::unique_ptr<CFX_XMLParser> pXMLParser);
-  int32_t DoLoad(IFX_Pause* pPause);
+  int32_t DoLoad();
   void CloseXML();
 
   CFX_XMLNode* GetRoot() const { return m_pRoot.get(); }

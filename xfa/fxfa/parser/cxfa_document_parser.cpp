@@ -31,8 +31,8 @@ int32_t CXFA_DocumentParser::StartParse(
   return nRetStatus;
 }
 
-int32_t CXFA_DocumentParser::DoParse(IFX_Pause* pPause) {
-  int32_t nRetStatus = m_nodeParser.DoParse(pPause);
+int32_t CXFA_DocumentParser::DoParse() {
+  int32_t nRetStatus = m_nodeParser.DoParse();
   if (nRetStatus >= XFA_PARSESTATUS_Done) {
     ASSERT(m_pDocument);
     m_pDocument->SetRoot(m_nodeParser.GetRootNode());

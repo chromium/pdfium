@@ -1284,7 +1284,7 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
   auto pParser = pdfium::MakeUnique<CXFA_SimpleParser>(m_pDocument, false);
   if (!pParser)
     return;
-  CFX_XMLNode* pXMLNode = pParser->ParseXMLData(wsExpression, nullptr);
+  CFX_XMLNode* pXMLNode = pParser->ParseXMLData(wsExpression);
   if (!pXMLNode)
     return;
   if (bIgnoreRoot &&

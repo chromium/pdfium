@@ -16,7 +16,6 @@ class CXFA_Document;
 class CXFA_FFNotify;
 class CXFA_Notify;
 class IFX_SeekableStream;
-class IFX_Pause;
 
 class CXFA_DocumentParser {
  public:
@@ -25,7 +24,7 @@ class CXFA_DocumentParser {
 
   int32_t StartParse(const CFX_RetainPtr<IFX_SeekableStream>& pStream,
                      XFA_XDPPACKET ePacketID);
-  int32_t DoParse(IFX_Pause* pPause);
+  int32_t DoParse();
 
   CFX_XMLDoc* GetXMLDoc() const;
   CXFA_FFNotify* GetNotify() const;

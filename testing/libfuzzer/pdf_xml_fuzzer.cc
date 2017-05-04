@@ -58,7 +58,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!doc->LoadXML(pdfium::MakeUnique<CFX_XMLParser>(doc->GetRoot(), stream)))
     return 0;
 
-  if (doc->DoLoad(nullptr) < 100)
+  if (doc->DoLoad() < 100)
     return 0;
 
   (void)XFA_FDEExtension_GetDocumentNode(doc.get());

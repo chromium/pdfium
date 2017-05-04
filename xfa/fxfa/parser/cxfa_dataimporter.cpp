@@ -30,7 +30,7 @@ bool CXFA_DataImporter::ImportData(
       XFA_PARSESTATUS_Ready) {
     return false;
   }
-  if (pDataDocumentParser->DoParse(nullptr) < XFA_PARSESTATUS_Done)
+  if (pDataDocumentParser->DoParse() < XFA_PARSESTATUS_Done)
     return false;
 
   CXFA_Node* pImportDataRoot = pDataDocumentParser->GetRootNode();

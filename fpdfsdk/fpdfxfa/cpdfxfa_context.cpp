@@ -107,7 +107,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
   }
 
   m_pXFADoc->StartLoad();
-  int iStatus = m_pXFADoc->DoLoad(nullptr);
+  int iStatus = m_pXFADoc->DoLoad();
   if (iStatus != XFA_PARSESTATUS_Done) {
     CloseXFADoc();
     SetLastError(FPDF_ERR_XFALOAD);
@@ -128,7 +128,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
-  m_pXFADocView->DoLayout(nullptr);
+  m_pXFADocView->DoLayout();
   m_pXFADocView->StopLayout();
   m_nLoadStatus = FXFA_LOADSTATUS_LOADED;
 

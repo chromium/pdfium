@@ -622,7 +622,7 @@ int32_t CFDE_TxtEdtEngine::StartLayout() {
   return 0;
 }
 
-int32_t CFDE_TxtEdtEngine::DoLayout(IFX_Pause* pPause) {
+int32_t CFDE_TxtEdtEngine::DoLayout() {
   int32_t nCount = pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
   CFDE_TxtEdtParag* pParag = nullptr;
   int32_t nLineCount = 0;
@@ -630,10 +630,6 @@ int32_t CFDE_TxtEdtEngine::DoLayout(IFX_Pause* pPause) {
     pParag = m_ParagPtrArray[m_nLayoutPos].get();
     pParag->CalcLines();
     nLineCount += pParag->GetLineCount();
-    if (nLineCount > m_nPageLineCount && pPause && pPause->NeedToPauseNow()) {
-      m_nLineCount += nLineCount;
-      return (++m_nLayoutPos * 100) / nCount;
-    }
   }
   m_nLineCount += nLineCount;
   return 100;

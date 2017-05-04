@@ -53,7 +53,7 @@ class CXFA_FFDoc {
   XFA_DocType GetDocType() const { return m_dwDocType; }
 
   int32_t StartLoad();
-  int32_t DoLoad(IFX_Pause* pPause = nullptr);
+  int32_t DoLoad();
   void StopLoad();
 
   CXFA_FFDocView* CreateDocView();

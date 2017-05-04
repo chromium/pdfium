@@ -101,7 +101,7 @@ class CFX_SAXReader {
                      uint32_t dwStart = 0,
                      uint32_t dwLen = -1,
                      uint32_t dwParseMode = 0);
-  int32_t ContinueParse(IFX_Pause* pPause = nullptr);
+  int32_t ContinueParse();
   void SetHandler(HandlerIface* pHandler) { m_pHandler = pHandler; }
 
  private:

@@ -18,7 +18,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   }
 
   while (1) {
-    int32_t ret = reader.ContinueParse(nullptr);
+    int32_t ret = reader.ContinueParse();
     if (ret < 0 || ret > 99)
       break;
   }

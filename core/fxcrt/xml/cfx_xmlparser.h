@@ -17,7 +17,6 @@
 class CFX_XMLElement;
 class CFX_XMLNode;
 class CFX_SeekableStreamProxy;
-class IFX_Pause;
 
 class CFX_XMLParser {
  public:
@@ -25,7 +24,7 @@ class CFX_XMLParser {
                 const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFX_XMLParser();
 
-  int32_t DoParser(IFX_Pause* pPause);
+  int32_t DoParser();
 
   FX_FILESIZE m_nStart[2];
   size_t m_nSize[2];

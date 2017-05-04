@@ -36,9 +36,9 @@ bool CFX_XMLDoc::LoadXML(std::unique_ptr<CFX_XMLParser> pXMLParser) {
   return true;
 }
 
-int32_t CFX_XMLDoc::DoLoad(IFX_Pause* pPause) {
+int32_t CFX_XMLDoc::DoLoad() {
   if (m_iStatus < 100)
-    m_iStatus = m_pXMLParser->DoParser(pPause);
+    m_iStatus = m_pXMLParser->DoParser();
 
   return m_iStatus;
 }

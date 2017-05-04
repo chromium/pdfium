@@ -68,7 +68,7 @@ class CFDE_TxtEdtEngine {
   bool Undo(const IFDE_TxtEdtDoRecord* pRecord);
 
   int32_t StartLayout();
-  int32_t DoLayout(IFX_Pause* pPause);
+  int32_t DoLayout();
   void EndLayout();
 
   int32_t CountParags() const;

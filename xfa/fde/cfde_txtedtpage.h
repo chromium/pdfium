@@ -42,7 +42,7 @@ class CFDE_TxtEdtPage : public IFDE_VisualSet {
                         FXTEXT_CHARPOS*& pCharPos,
                         CFX_RectF* pBBox) const;
   bool IsLoaded(const CFX_RectF* pClipBox);
-  int32_t LoadPage(const CFX_RectF* pClipBox, IFX_Pause* pPause);
+  int32_t LoadPage(const CFX_RectF* pClipBox);
   void UnloadPage(const CFX_RectF* pClipBox);
   const CFX_RectF& GetContentsBox();
 

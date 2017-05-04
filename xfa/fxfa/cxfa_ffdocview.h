@@ -44,7 +44,7 @@ class CXFA_FFDocView {
 
   CXFA_FFDoc* GetDoc() { return m_pDoc; }
   int32_t StartLayout(int32_t iStartPage = 0);
-  int32_t DoLayout(IFX_Pause* pPause);
+  int32_t DoLayout();
   void StopLayout();
   int32_t GetLayoutStatus();
   void UpdateDocView();

@@ -122,7 +122,7 @@ bool CFX_ChecksumContext::UpdateChecksum(
               CFX_SaxParseMode_NotConvert_sharp) < 0) {
     return false;
   }
-  return m_pSAXReader->ContinueParse(nullptr) > 99;
+  return m_pSAXReader->ContinueParse() > 99;
 }
 
 void CFX_ChecksumContext::FinishChecksum() {

@@ -15,8 +15,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/ifx_chariter.h"
 
-class IFX_Pause;
-
 class CFDE_TxtEdtBuf {
  public:
   class Iterator : public IFX_CharIter {

@@ -61,7 +61,7 @@ class CFX_SAXReaderTest : public testing::Test {
   int32_t ContinueParse() {
     int32_t ret;
     do {
-      ret = reader_.ContinueParse(nullptr);
+      ret = reader_.ContinueParse();
     } while (ret >= 0 && ret < 100);
     return ret;
   }

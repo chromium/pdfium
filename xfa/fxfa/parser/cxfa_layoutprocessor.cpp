@@ -57,7 +57,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
   return 0;
 }
 
-int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
+int32_t CXFA_LayoutProcessor::DoLayout() {
   if (m_nProgressCounter < 1)
     return -1;
 
@@ -78,8 +78,7 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
       pLayoutItem->m_sPos = CFX_PointF(fPosX, fPosY);
 
     m_pLayoutPageMgr->SubmitContentItem(pLayoutItem, eStatus);
-  } while (eStatus != XFA_ItemLayoutProcessorResult::Done &&
-           (!pPause || !pPause->NeedToPauseNow()));
+  } while (eStatus != XFA_ItemLayoutProcessorResult::Done);
 
   if (eStatus == XFA_ItemLayoutProcessorResult::Done) {
     m_pLayoutPageMgr->FinishPaginatedPageSets();
@@ -96,7 +95,7 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
 bool CXFA_LayoutProcessor::IncrementLayout() {
   if (m_bNeedLayout) {
     StartLayout(true);
-    return DoLayout(nullptr) == 100;
+    return DoLayout() == 100;
   }
   for (CXFA_Node* pNode : m_rgChangedContainers) {
     CXFA_Node* pParentNode =

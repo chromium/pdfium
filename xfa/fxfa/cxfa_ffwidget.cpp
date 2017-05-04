@@ -568,7 +568,7 @@ class CXFA_ImageRenderer {
              const CFX_Matrix* pImage2Device,
              uint32_t flags,
              int blendType = FXDIB_BLEND_NORMAL);
-  bool Continue(IFX_Pause* pPause);
+  bool Continue();
 
  protected:
   bool StartDIBSource();
@@ -709,9 +709,9 @@ bool CXFA_ImageRenderer::StartDIBSource() {
   return false;
 }
 
-bool CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
+bool CXFA_ImageRenderer::Continue() {
   if (m_Status == 2) {
-    if (m_pTransformer->Continue(pPause))
+    if (m_pTransformer->Continue(nullptr))
       return true;
 
     CFX_RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
@@ -734,7 +734,7 @@ bool CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
     return false;
   }
   if (m_Status == 3)
-    return m_pDevice->ContinueDIBits(m_DeviceHandle.get(), pPause);
+    return m_pDevice->ContinueDIBits(m_DeviceHandle.get(), nullptr);
 
   return false;
 }
@@ -828,7 +828,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
                          &m_ImageMatrix, m_Flags)) {
     return;
   }
-  while (imageRender.Continue(nullptr))
+  while (imageRender.Continue())
     continue;
 }
 
@@ -901,7 +901,7 @@ void XFA_DrawImage(CFX_Graphics* pGS,
                          FXDIB_INTERPOL)) {
     return;
   }
-  while (imageRender.Continue(nullptr))
+  while (imageRender.Continue())
     continue;
 }
 

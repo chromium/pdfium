@@ -233,8 +233,8 @@ void XFA_XPDPacket_MergeRootNode(CXFA_Node* pOriginRoot, CXFA_Node* pNewRoot) {
   }
 }
 
-int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
-  int32_t iStatus = m_pDocumentParser->DoParse(pPause);
+int32_t CXFA_FFDoc::DoLoad() {
+  int32_t iStatus = m_pDocumentParser->DoParse();
   if (iStatus == XFA_PARSESTATUS_Done && !m_pPDFDoc)
     return XFA_PARSESTATUS_SyntaxErr;
   return iStatus;

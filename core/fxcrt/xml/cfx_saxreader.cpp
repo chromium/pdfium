@@ -203,10 +203,10 @@ int32_t CFX_SAXReader::StartParse(
   return 0;
 }
 
-int32_t CFX_SAXReader::ContinueParse(IFX_Pause* pPause) {
-  if (m_iState < 0 || m_iState > 99) {
+int32_t CFX_SAXReader::ContinueParse() {
+  if (m_iState < 0 || m_iState > 99)
     return m_iState;
-  }
+
   while (m_File.m_dwCur < m_File.m_dwEnd) {
     uint32_t& index = m_File.m_dwBufIndex;
     uint32_t size = m_File.m_dwBufSize;
@@ -219,17 +219,13 @@ int32_t CFX_SAXReader::ContinueParse(IFX_Pause* pPause) {
     m_File.m_dwCur += index;
     m_iState = (m_File.m_dwCur - m_File.m_dwStart) * 100 /
                (m_File.m_dwEnd - m_File.m_dwStart);
-    if (m_File.m_dwCur >= m_File.m_dwEnd) {
+    if (m_File.m_dwCur >= m_File.m_dwEnd)
       break;
-    }
     if (!m_File.ReadNextBlock()) {
       m_iState = -2;
       break;
     }
     m_dwDataOffset = 0;
-    if (pPause && pPause->NeedToPauseNow()) {
-      break;
-    }
   }
   return m_iState;
 }

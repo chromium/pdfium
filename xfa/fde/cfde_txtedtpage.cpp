@@ -226,18 +226,18 @@ bool CFDE_TxtEdtPage::IsLoaded(const CFX_RectF* pClipBox) {
   return m_bLoaded;
 }
 
-int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
-                                  IFX_Pause* pPause) {
+int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox) {
   if (m_nRefCount > 0) {
     m_nRefCount++;
     return m_nRefCount;
   }
+
   CFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParams = m_pEditEngine->GetEditParams();
   wchar_t wcAlias = 0;
-  if (pParams->dwMode & FDE_TEXTEDITMODE_Password) {
+  if (pParams->dwMode & FDE_TEXTEDITMODE_Password)
     wcAlias = m_pEditEngine->GetAliasChar();
-  }
+
   m_pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(
       static_cast<CFDE_TxtEdtBuf*>(pBuf), wcAlias);
   CFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();

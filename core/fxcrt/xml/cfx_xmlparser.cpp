@@ -31,7 +31,7 @@ CFX_XMLParser::CFX_XMLParser(
 
 CFX_XMLParser::~CFX_XMLParser() {}
 
-int32_t CFX_XMLParser::DoParser(IFX_Pause* pPause) {
+int32_t CFX_XMLParser::DoParser() {
   if (m_syntaxParserResult == FX_XmlSyntaxResult::Error)
     return -1;
   if (m_syntaxParserResult == FX_XmlSyntaxResult::EndOfString)
@@ -158,9 +158,6 @@ int32_t CFX_XMLParser::DoParser(IFX_Pause* pPause) {
     }
     if (m_syntaxParserResult == FX_XmlSyntaxResult::Error ||
         m_syntaxParserResult == FX_XmlSyntaxResult::EndOfString) {
-      break;
-    }
-    if (pPause && iCount > 500 && pPause->NeedToPauseNow()) {
       break;
     }
   }

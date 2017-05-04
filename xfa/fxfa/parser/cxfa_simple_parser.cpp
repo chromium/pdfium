@@ -293,11 +293,11 @@ int32_t CXFA_SimpleParser::StartParse(
   return XFA_PARSESTATUS_Ready;
 }
 
-int32_t CXFA_SimpleParser::DoParse(IFX_Pause* pPause) {
+int32_t CXFA_SimpleParser::DoParse() {
   if (!m_pXMLDoc || m_ePacketID == XFA_XDPPACKET_UNKNOWN)
     return XFA_PARSESTATUS_StatusErr;
 
-  int32_t iRet = m_pXMLDoc->DoLoad(pPause);
+  int32_t iRet = m_pXMLDoc->DoLoad();
   if (iRet < 0)
     return XFA_PARSESTATUS_SyntaxErr;
   if (iRet < 100)
@@ -313,8 +313,7 @@ int32_t CXFA_SimpleParser::DoParse(IFX_Pause* pPause) {
   return XFA_PARSESTATUS_Done;
 }
 
-CFX_XMLNode* CXFA_SimpleParser::ParseXMLData(const CFX_ByteString& wsXML,
-                                             IFX_Pause* pPause) {
+CFX_XMLNode* CXFA_SimpleParser::ParseXMLData(const CFX_ByteString& wsXML) {
   CloseParser();
   m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>();
 
@@ -326,7 +325,7 @@ CFX_XMLNode* CXFA_SimpleParser::ParseXMLData(const CFX_ByteString& wsXML,
   if (!m_pXMLDoc->LoadXML(std::move(pParser)))
     return nullptr;
 
-  int32_t iRet = m_pXMLDoc->DoLoad(pPause);
+  int32_t iRet = m_pXMLDoc->DoLoad();
   if (iRet < 0 || iRet >= 100)
     m_pXMLDoc->CloseXML();
   return iRet < 100 ? nullptr : GetDocumentNode(m_pXMLDoc.get());

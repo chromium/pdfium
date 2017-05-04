@@ -439,7 +439,7 @@ bool CFWL_Edit::OnPageLoad(int32_t nPageIndex) {
   if (!pPage)
     return false;
 
-  pPage->LoadPage(nullptr, nullptr);
+  pPage->LoadPage(nullptr);
   return true;
 }
 
@@ -698,11 +698,11 @@ void CFWL_Edit::UpdateEditLayout() {
     pPage->UnloadPage(nullptr);
 
   m_EdtEngine.StartLayout();
-  m_EdtEngine.DoLayout(nullptr);
+  m_EdtEngine.DoLayout();
   m_EdtEngine.EndLayout();
   pPage = m_EdtEngine.GetPage(0);
   if (pPage)
-    pPage->LoadPage(nullptr, nullptr);
+    pPage->LoadPage(nullptr);
 }
 
 bool CFWL_Edit::UpdateOffset() {

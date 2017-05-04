@@ -99,15 +99,17 @@ int32_t CXFA_FFDocView::StartLayout(int32_t iStartPage) {
   m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Start;
   return iStatus;
 }
-int32_t CXFA_FFDocView::DoLayout(IFX_Pause* pPause) {
+
+int32_t CXFA_FFDocView::DoLayout() {
   int32_t iStatus = 100;
-  iStatus = m_pXFADocLayout->DoLayout(pPause);
-  if (iStatus != 100) {
+  iStatus = m_pXFADocLayout->DoLayout();
+  if (iStatus != 100)
     return iStatus;
-  }
+
   m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Doing;
   return iStatus;
 }
+
 void CXFA_FFDocView::StopLayout() {
   CXFA_Node* pRootItem =
       ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form));

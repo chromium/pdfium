@@ -18,7 +18,6 @@ class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutItem;
 class CXFA_LayoutPageMgr;
 class CXFA_Node;
-class IFX_Pause;
 
 class CXFA_LayoutProcessor {
  public:
@@ -27,7 +26,7 @@ class CXFA_LayoutProcessor {
 
   CXFA_Document* GetDocument() const;
   int32_t StartLayout(bool bForceRestart = false);
-  int32_t DoLayout(IFX_Pause* pPause = nullptr);
+  int32_t DoLayout();
   bool IncrementLayout();
   int32_t CountPages() const;
   CXFA_ContainerLayoutItem* GetPage(int32_t index) const;
