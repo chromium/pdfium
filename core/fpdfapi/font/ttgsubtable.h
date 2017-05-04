@@ -17,18 +17,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 
-class CFX_GlyphMap {
- public:
-  CFX_GlyphMap();
-  ~CFX_GlyphMap();
-
-  void SetAt(int key, int value);
-  bool Lookup(int key, int& value);
-
- protected:
-  CFX_BinaryBuf m_Buffer;
-};
-
 class CFX_CTTGSUBTable {
  public:
   CFX_CTTGSUBTable();
@@ -154,7 +142,6 @@ class CFX_CTTGSUBTable {
     virtual ~TCoverageFormatBase() {}
 
     uint16_t CoverageFormat;
-    CFX_GlyphMap m_glyphMap;
 
    private:
     TCoverageFormatBase(const TCoverageFormatBase&);
