@@ -73,6 +73,7 @@ default. Also note that the XFA feature requires JavaScript.
 
 Configuration is done by executing `gn args <directory>` to configure the build.
 This will launch an editor in which you can set the following arguments.
+A typical `<directory>` name is `out/Debug`.
 
 ```
 use_goma = true  # Googlers only.
@@ -100,9 +101,9 @@ use\_sysroot as indicated above.
 
 ## Building the code
 
-You can build the sample program by:
-`ninja -C <directory>/pdfium_test` You can build the entire product (which
-includes a few unit tests) by: `ninja -C <directory>`.
+You can build the sample program by running: `ninja -C <directory> pdfium_test`
+You can build the entire product (which includes a few unit tests) by running:
+`ninja -C <directory> pdfium_all`.
 
 ## Running the sample program
 
