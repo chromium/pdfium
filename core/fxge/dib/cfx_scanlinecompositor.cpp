@@ -2814,151 +2814,12 @@ void CompositeRow_BitMask2Rgb_RgbByteOrder(uint8_t* dest_scan,
   }
 }
 
-bool ScanlineCompositor_InitSourceMask(FXDIB_Format dest_format,
-                                       int alpha_flag,
-                                       uint32_t mask_color,
-                                       int& mask_alpha,
-                                       int& mask_red,
-                                       int& mask_green,
-                                       int& mask_blue,
-                                       int& mask_black) {
-  if (alpha_flag >> 8) {
-    mask_alpha = alpha_flag & 0xff;
-    mask_red = FXSYS_GetCValue(mask_color);
-    mask_green = FXSYS_GetMValue(mask_color);
-    mask_blue = FXSYS_GetYValue(mask_color);
-    mask_black = FXSYS_GetKValue(mask_color);
-  } else {
-    mask_alpha = FXARGB_A(mask_color);
-    mask_red = FXARGB_R(mask_color);
-    mask_green = FXARGB_G(mask_color);
-    mask_blue = FXARGB_B(mask_color);
-  }
-  if (dest_format == FXDIB_8bppMask) {
-    return true;
-  }
-  if ((dest_format & 0xff) == 8) {
-    if (alpha_flag >> 8) {
-      uint8_t r, g, b;
-      AdobeCMYK_to_sRGB1(mask_red, mask_green, mask_blue, mask_black, r, g, b);
-      mask_red = FXRGB2GRAY(r, g, b);
-    } else {
-      mask_red = FXRGB2GRAY(mask_red, mask_green, mask_blue);
-    }
-    if (dest_format & 0x0400)
-      mask_red = FX_CCOLOR(mask_red);
-  } else {
-    uint8_t* mask_color_p = (uint8_t*)&mask_color;
-    mask_color =
-        (alpha_flag >> 8) ? FXCMYK_TODIB(mask_color) : FXARGB_TODIB(mask_color);
-    if (alpha_flag >> 8) {
-      AdobeCMYK_to_sRGB1(mask_color_p[0], mask_color_p[1], mask_color_p[2],
-                         mask_color_p[3], mask_color_p[2], mask_color_p[1],
-                         mask_color_p[0]);
-      mask_red = mask_color_p[2];
-      mask_green = mask_color_p[1];
-      mask_blue = mask_color_p[0];
-    }
-  }
-  return true;
-}
-
-void ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
-                                          FXDIB_Format dest_format,
-                                          uint32_t*& pDestPalette,
-                                          uint32_t* pSrcPalette) {
-  bool isSrcCmyk = !!(src_format & 0x0400);
-  bool isDstCmyk = !!(dest_format & 0x0400);
-  pDestPalette = nullptr;
-  if (pSrcPalette) {
-    if ((dest_format & 0xff) == 8) {
-      int pal_count = 1 << (src_format & 0xff);
-      uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
-      pDestPalette = (uint32_t*)gray_pal;
-      if (isSrcCmyk) {
-        for (int i = 0; i < pal_count; i++) {
-          FX_CMYK cmyk = pSrcPalette[i];
-          uint8_t r, g, b;
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                             FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g,
-                             b);
-          *gray_pal++ = FXRGB2GRAY(r, g, b);
-        }
-      } else {
-        for (int i = 0; i < pal_count; i++) {
-          FX_ARGB argb = pSrcPalette[i];
-          *gray_pal++ =
-              FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
-        }
-      }
-    } else {
-      int palsize = 1 << (src_format & 0xff);
-      pDestPalette = FX_Alloc(uint32_t, palsize);
-      if (isDstCmyk == isSrcCmyk) {
-        memcpy(pDestPalette, pSrcPalette, palsize * sizeof(uint32_t));
-      } else {
-        for (int i = 0; i < palsize; i++) {
-          FX_CMYK cmyk = pSrcPalette[i];
-          uint8_t r, g, b;
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                             FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g,
-                             b);
-          pDestPalette[i] = FXARGB_MAKE(0xff, r, g, b);
-        }
-      }
-    }
-  } else {
-    if ((dest_format & 0xff) == 8) {
-      int pal_count = 1 << (src_format & 0xff);
-      uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
-      if (pal_count == 2) {
-        gray_pal[0] = 0;
-        gray_pal[1] = 255;
-      } else {
-        for (int i = 0; i < pal_count; i++) {
-          gray_pal[i] = i;
-        }
-      }
-      pDestPalette = (uint32_t*)gray_pal;
-    } else {
-      int palsize = 1 << (src_format & 0xff);
-      pDestPalette = FX_Alloc(uint32_t, palsize);
-      if (palsize == 2) {
-        pDestPalette[0] = isSrcCmyk ? 255 : 0xff000000;
-        pDestPalette[1] = isSrcCmyk ? 0 : 0xffffffff;
-      } else {
-        for (int i = 0; i < palsize; i++) {
-          pDestPalette[i] = isSrcCmyk ? FX_CCOLOR(i) : (i * 0x10101);
-        }
-      }
-      if (isSrcCmyk != isDstCmyk) {
-        for (int i = 0; i < palsize; i++) {
-          FX_CMYK cmyk = pDestPalette[i];
-          uint8_t r, g, b;
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                             FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g,
-                             b);
-          pDestPalette[i] = FXARGB_MAKE(0xff, r, g, b);
-        }
-      }
-    }
-  }
-}
-
 }  // namespace
 
-CFX_ScanlineCompositor::CFX_ScanlineCompositor() {
-  m_pSrcPalette = nullptr;
-  m_pCacheScanline = nullptr;
-  m_CacheSize = 0;
-  m_bRgbByteOrder = false;
-  m_BlendType = FXDIB_BLEND_NORMAL;
-}
+CFX_ScanlineCompositor::CFX_ScanlineCompositor()
+    : m_BlendType(FXDIB_BLEND_NORMAL), m_bRgbByteOrder(false) {}
 
-CFX_ScanlineCompositor::~CFX_ScanlineCompositor() {
-  FX_Free(m_pSrcPalette);
-  FX_Free(m_pCacheScanline);
-}
+CFX_ScanlineCompositor::~CFX_ScanlineCompositor() {}
 
 bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
                                   FXDIB_Format src_format,
@@ -2976,9 +2837,8 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   if ((dest_format & 0xff) == 1)
     return false;
   if (m_SrcFormat == FXDIB_1bppMask || m_SrcFormat == FXDIB_8bppMask) {
-    return ScanlineCompositor_InitSourceMask(
-        dest_format, alpha_flag, mask_color, m_MaskAlpha, m_MaskRed,
-        m_MaskGreen, m_MaskBlue, m_MaskBlack);
+    InitSourceMask(alpha_flag, mask_color);
+    return true;
   }
   if ((~src_format & 0x0400) && (dest_format & 0x0400))
     return false;
@@ -2986,8 +2846,7 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
     if (dest_format == FXDIB_8bppMask)
       return true;
 
-    ScanlineCompositor_InitSourcePalette(src_format, dest_format, m_pSrcPalette,
-                                         pSrcPalette);
+    InitSourcePalette(src_format, dest_format, pSrcPalette);
     m_Transparency =
         (dest_format == FXDIB_Argb ? 1 : 0) + (dest_format & 0x0200 ? 2 : 0) +
         (dest_format & 0x0400 ? 4 : 0) + ((src_format & 0xff) == 1 ? 8 : 0);
@@ -2998,6 +2857,132 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
       (blend_type == FXDIB_BLEND_NORMAL ? 4 : 0) + (bClip ? 8 : 0) +
       (src_format & 0x0400 ? 16 : 0) + (dest_format & 0x0400 ? 32 : 0);
   return true;
+}
+
+void CFX_ScanlineCompositor::InitSourceMask(int alpha_flag,
+                                            uint32_t mask_color) {
+  int mask_black = 0;
+  if (alpha_flag >> 8) {
+    m_MaskAlpha = alpha_flag & 0xff;
+    m_MaskRed = FXSYS_GetCValue(mask_color);
+    m_MaskGreen = FXSYS_GetMValue(mask_color);
+    m_MaskBlue = FXSYS_GetYValue(mask_color);
+    mask_black = FXSYS_GetKValue(mask_color);
+  } else {
+    m_MaskAlpha = FXARGB_A(mask_color);
+    m_MaskRed = FXARGB_R(mask_color);
+    m_MaskGreen = FXARGB_G(mask_color);
+    m_MaskBlue = FXARGB_B(mask_color);
+  }
+  if (m_DestFormat == FXDIB_8bppMask)
+    return;
+
+  if ((m_DestFormat & 0xff) == 8) {
+    if (alpha_flag >> 8) {
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
+      AdobeCMYK_to_sRGB1(m_MaskRed, m_MaskGreen, m_MaskBlue, mask_black, r, g,
+                         b);
+      m_MaskRed = FXRGB2GRAY(r, g, b);
+    } else {
+      m_MaskRed = FXRGB2GRAY(m_MaskRed, m_MaskGreen, m_MaskBlue);
+    }
+    if (m_DestFormat & 0x0400)
+      m_MaskRed = FX_CCOLOR(m_MaskRed);
+    return;
+  }
+  uint8_t* mask_color_p = (uint8_t*)&mask_color;
+  mask_color =
+      (alpha_flag >> 8) ? FXCMYK_TODIB(mask_color) : FXARGB_TODIB(mask_color);
+  if (alpha_flag >> 8) {
+    AdobeCMYK_to_sRGB1(mask_color_p[0], mask_color_p[1], mask_color_p[2],
+                       mask_color_p[3], mask_color_p[2], mask_color_p[1],
+                       mask_color_p[0]);
+    m_MaskRed = mask_color_p[2];
+    m_MaskGreen = mask_color_p[1];
+    m_MaskBlue = mask_color_p[0];
+  }
+}
+
+void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
+                                               FXDIB_Format dest_format,
+                                               const uint32_t* pSrcPalette) {
+  bool isSrcCmyk = !!(src_format & 0x0400);
+  bool isDstCmyk = !!(dest_format & 0x0400);
+  m_pSrcPalette = nullptr;
+  if (pSrcPalette) {
+    if ((dest_format & 0xff) == 8) {
+      int pal_count = 1 << (src_format & 0xff);
+      uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
+      m_pSrcPalette.reset(reinterpret_cast<uint32_t*>(gray_pal));
+      if (isSrcCmyk) {
+        for (int i = 0; i < pal_count; ++i) {
+          FX_CMYK cmyk = pSrcPalette[i];
+          uint8_t r, g, b;
+          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
+                             FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g,
+                             b);
+          *gray_pal++ = FXRGB2GRAY(r, g, b);
+        }
+      } else {
+        for (int i = 0; i < pal_count; ++i) {
+          FX_ARGB argb = pSrcPalette[i];
+          *gray_pal++ =
+              FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
+        }
+      }
+      return;
+    }
+    int palsize = 1 << (src_format & 0xff);
+    m_pSrcPalette.reset(FX_Alloc(uint32_t, palsize));
+    uint32_t* pPalette = m_pSrcPalette.get();
+    if (isDstCmyk == isSrcCmyk) {
+      memcpy(pPalette, pSrcPalette, palsize * sizeof(uint32_t));
+    } else {
+      for (int i = 0; i < palsize; ++i) {
+        FX_CMYK cmyk = pSrcPalette[i];
+        uint8_t r, g, b;
+        AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
+                           FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g,
+                           b);
+        pPalette[i] = FXARGB_MAKE(0xff, r, g, b);
+      }
+    }
+    return;
+  }
+  if ((dest_format & 0xff) == 8) {
+    int pal_count = 1 << (src_format & 0xff);
+    uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
+    if (pal_count == 2) {
+      gray_pal[0] = 0;
+      gray_pal[1] = 255;
+    } else {
+      for (int i = 0; i < pal_count; ++i)
+        gray_pal[i] = i;
+    }
+    m_pSrcPalette.reset(reinterpret_cast<uint32_t*>(gray_pal));
+    return;
+  }
+  int palsize = 1 << (src_format & 0xff);
+  m_pSrcPalette.reset(FX_Alloc(uint32_t, palsize));
+  uint32_t* pPalette = m_pSrcPalette.get();
+  if (palsize == 2) {
+    pPalette[0] = isSrcCmyk ? 255 : 0xff000000;
+    pPalette[1] = isSrcCmyk ? 0 : 0xffffffff;
+  } else {
+    for (int i = 0; i < palsize; ++i)
+      pPalette[i] = isSrcCmyk ? FX_CCOLOR(i) : (i * 0x10101);
+  }
+  if (isSrcCmyk != isDstCmyk) {
+    for (int i = 0; i < palsize; ++i) {
+      FX_CMYK cmyk = pPalette[i];
+      uint8_t r, g, b;
+      AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
+                         FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g, b);
+      pPalette[i] = FXARGB_MAKE(0xff, r, g, b);
+    }
+  }
 }
 
 void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
@@ -3077,7 +3062,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     }
   } else if ((m_DestFormat & 0xff) == 8) {
     if (m_DestFormat & 0x0400) {
-      for (int i = 0; i < width; i++) {
+      for (int i = 0; i < width; ++i) {
         *dest_scan = ~*dest_scan;
         dest_scan++;
       }
@@ -3100,20 +3085,12 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       }
     }
     if (m_DestFormat & 0x0400) {
-      for (int i = 0; i < width; i++) {
+      for (int i = 0; i < width; ++i) {
         *dest_scan = ~*dest_scan;
         dest_scan++;
       }
     }
   } else {
-    int dest_Size = width * dest_Bpp + 4;
-    if (dest_Size > m_CacheSize) {
-      m_pCacheScanline = FX_Realloc(uint8_t, m_pCacheScanline, dest_Size);
-      if (!m_pCacheScanline) {
-        return;
-      }
-      m_CacheSize = dest_Size;
-    }
     switch (m_Transparency) {
       case 0:
       case 4:
@@ -3184,10 +3161,11 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
       }
       if (m_DestFormat == FXDIB_Argb) {
         CompositeRow_1bppRgb2Argb_NoBlend_RgbByteOrder(
-            dest_scan, src_scan, src_left, width, m_pSrcPalette, clip_scan);
+            dest_scan, src_scan, src_left, width, m_pSrcPalette.get(),
+            clip_scan);
       } else {
         CompositeRow_1bppRgb2Rgb_NoBlend_RgbByteOrder(
-            dest_scan, src_scan, src_left, m_pSrcPalette, width,
+            dest_scan, src_scan, src_left, m_pSrcPalette.get(), width,
             (m_DestFormat & 0xff) >> 3, clip_scan);
       }
     } else {
@@ -3196,10 +3174,10 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
       }
       if (m_DestFormat == FXDIB_Argb) {
         CompositeRow_8bppRgb2Argb_NoBlend_RgbByteOrder(
-            dest_scan, src_scan, width, m_pSrcPalette, clip_scan);
+            dest_scan, src_scan, width, m_pSrcPalette.get(), clip_scan);
       } else {
         CompositeRow_8bppRgb2Rgb_NoBlend_RgbByteOrder(
-            dest_scan, src_scan, m_pSrcPalette, width,
+            dest_scan, src_scan, m_pSrcPalette.get(), width,
             (m_DestFormat & 0xff) >> 3, clip_scan);
       }
     }
@@ -3212,53 +3190,57 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
   if ((m_DestFormat & 0xff) == 8) {
     if (m_Transparency & 8) {
       if (m_DestFormat & 0x0200) {
-        CompositeRow_1bppPal2Graya(dest_scan, src_scan, src_left,
-                                   (const uint8_t*)m_pSrcPalette, width,
-                                   m_BlendType, clip_scan, dst_extra_alpha);
+        CompositeRow_1bppPal2Graya(
+            dest_scan, src_scan, src_left,
+            reinterpret_cast<const uint8_t*>(m_pSrcPalette.get()), width,
+            m_BlendType, clip_scan, dst_extra_alpha);
       } else {
-        CompositeRow_1bppPal2Gray(dest_scan, src_scan, src_left,
-                                  (const uint8_t*)m_pSrcPalette, width,
-                                  m_BlendType, clip_scan);
+        CompositeRow_1bppPal2Gray(
+            dest_scan, src_scan, src_left,
+            reinterpret_cast<const uint8_t*>(m_pSrcPalette.get()), width,
+            m_BlendType, clip_scan);
       }
     } else {
       if (m_DestFormat & 0x0200)
         CompositeRow_8bppPal2Graya(
-            dest_scan, src_scan, (const uint8_t*)m_pSrcPalette, width,
+            dest_scan, src_scan,
+            reinterpret_cast<const uint8_t*>(m_pSrcPalette.get()), width,
             m_BlendType, clip_scan, dst_extra_alpha, src_extra_alpha);
       else
-        CompositeRow_8bppPal2Gray(dest_scan, src_scan,
-                                  (const uint8_t*)m_pSrcPalette, width,
-                                  m_BlendType, clip_scan, src_extra_alpha);
+        CompositeRow_8bppPal2Gray(
+            dest_scan, src_scan,
+            reinterpret_cast<const uint8_t*>(m_pSrcPalette.get()), width,
+            m_BlendType, clip_scan, src_extra_alpha);
     }
   } else {
     switch (m_Transparency) {
       case 1 + 2:
         CompositeRow_8bppRgb2Argb_NoBlend(dest_scan, src_scan, width,
-                                          m_pSrcPalette, clip_scan,
+                                          m_pSrcPalette.get(), clip_scan,
                                           src_extra_alpha);
         break;
       case 1 + 2 + 8:
         CompositeRow_1bppRgb2Argb_NoBlend(dest_scan, src_scan, src_left, width,
-                                          m_pSrcPalette, clip_scan);
+                                          m_pSrcPalette.get(), clip_scan);
         break;
       case 0:
-        CompositeRow_8bppRgb2Rgb_NoBlend(dest_scan, src_scan, m_pSrcPalette,
-                                         width, (m_DestFormat & 0xff) >> 3,
-                                         clip_scan, src_extra_alpha);
+        CompositeRow_8bppRgb2Rgb_NoBlend(
+            dest_scan, src_scan, m_pSrcPalette.get(), width,
+            (m_DestFormat & 0xff) >> 3, clip_scan, src_extra_alpha);
         break;
       case 0 + 8:
         CompositeRow_1bppRgb2Rgb_NoBlend(dest_scan, src_scan, src_left,
-                                         m_pSrcPalette, width,
+                                         m_pSrcPalette.get(), width,
                                          (m_DestFormat & 0xff) >> 3, clip_scan);
         break;
       case 0 + 2:
-        CompositeRow_8bppRgb2Rgb_NoBlend(dest_scan, src_scan, m_pSrcPalette,
-                                         width, (m_DestFormat & 0xff) >> 3,
-                                         clip_scan, src_extra_alpha);
+        CompositeRow_8bppRgb2Rgb_NoBlend(
+            dest_scan, src_scan, m_pSrcPalette.get(), width,
+            (m_DestFormat & 0xff) >> 3, clip_scan, src_extra_alpha);
         break;
       case 0 + 2 + 8:
         CompositeRow_1bppRgb2Rgba_NoBlend(dest_scan, src_scan, src_left, width,
-                                          m_pSrcPalette, clip_scan,
+                                          m_pSrcPalette.get(), clip_scan,
                                           dst_extra_alpha);
         break;
         break;

@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_DIB_CFX_SCANLINECOMPOSITOR_H_
 #define CORE_FXGE_DIB_CFX_SCANLINECOMPOSITOR_H_
 
+#include <memory>
+
 #include "core/fxge/dib/cfx_dibsource.h"
 
 class CFX_ScanlineCompositor {
@@ -22,50 +24,53 @@ class CFX_ScanlineCompositor {
             uint32_t mask_color,
             int blend_type,
             bool bClip,
-            bool bRgbByteOrder = false,
-            int alpha_flag = 0);
+            bool bRgbByteOrder,
+            int alpha_flag);
 
   void CompositeRgbBitmapLine(uint8_t* dest_scan,
                               const uint8_t* src_scan,
                               int width,
                               const uint8_t* clip_scan,
-                              const uint8_t* src_extra_alpha = nullptr,
-                              uint8_t* dst_extra_alpha = nullptr);
+                              const uint8_t* src_extra_alpha,
+                              uint8_t* dst_extra_alpha);
 
   void CompositePalBitmapLine(uint8_t* dest_scan,
                               const uint8_t* src_scan,
                               int src_left,
                               int width,
                               const uint8_t* clip_scan,
-                              const uint8_t* src_extra_alpha = nullptr,
-                              uint8_t* dst_extra_alpha = nullptr);
+                              const uint8_t* src_extra_alpha,
+                              uint8_t* dst_extra_alpha);
 
   void CompositeByteMaskLine(uint8_t* dest_scan,
                              const uint8_t* src_scan,
                              int width,
                              const uint8_t* clip_scan,
-                             uint8_t* dst_extra_alpha = nullptr);
+                             uint8_t* dst_extra_alpha);
 
   void CompositeBitMaskLine(uint8_t* dest_scan,
                             const uint8_t* src_scan,
                             int src_left,
                             int width,
                             const uint8_t* clip_scan,
-                            uint8_t* dst_extra_alpha = nullptr);
+                            uint8_t* dst_extra_alpha);
 
  private:
+  void InitSourcePalette(FXDIB_Format src_format,
+                         FXDIB_Format dest_format,
+                         const uint32_t* pSrcPalette);
+
+  void InitSourceMask(int alpha_flag, uint32_t mask_color);
+
   int m_Transparency;
   FXDIB_Format m_SrcFormat;
   FXDIB_Format m_DestFormat;
-  uint32_t* m_pSrcPalette;
+  std::unique_ptr<uint32_t, FxFreeDeleter> m_pSrcPalette;
   int m_MaskAlpha;
   int m_MaskRed;
   int m_MaskGreen;
   int m_MaskBlue;
-  int m_MaskBlack;
   int m_BlendType;
-  uint8_t* m_pCacheScanline;
-  int m_CacheSize;
   bool m_bRgbByteOrder;
 };
 
