@@ -10,53 +10,30 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-CXFA_RenderContext::CXFA_RenderContext()
-    : m_pWidget(nullptr), m_pPageView(nullptr), m_pGS(nullptr), m_dwStatus(0) {
-  m_matrix.SetIdentity();
-  m_rtClipRect.Reset();
+CXFA_RenderContext::CXFA_RenderContext(CXFA_FFPageView* pPageView,
+                                       const CFX_RectF& clipRect,
+                                       const CFX_Matrix& matrix)
+    : m_pWidget(nullptr), m_matrix(matrix), m_rtClipRect(clipRect) {
+  CFX_Matrix mtRes;
+  mtRes.SetReverse(matrix);
+  mtRes.TransformRect(m_rtClipRect);
+
+  m_pWidgetIterator = pPageView->CreateWidgetIterator(
+      XFA_TRAVERSEWAY_Form,
+      XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable);
+  m_pWidget = m_pWidgetIterator->MoveToNext();
 }
 
 CXFA_RenderContext::~CXFA_RenderContext() {}
 
-int32_t CXFA_RenderContext::StartRender(CXFA_FFPageView* pPageView,
-                                        CFX_Graphics* pGS,
-                                        const CFX_Matrix& matrix,
-                                        const CXFA_RenderOptions& options) {
-  m_pPageView = pPageView;
-  m_pGS = pGS;
-  m_matrix = matrix;
-  m_options = options;
-
-  CFX_Matrix mtRes;
-  mtRes.SetReverse(matrix);
-  m_rtClipRect = pGS->GetClipRect();
-  mtRes.TransformRect(m_rtClipRect);
-  m_dwStatus = m_options.m_bHighlight ? XFA_WidgetStatus_Highlight : 0;
-  uint32_t dwFilterType = XFA_WidgetStatus_Visible |
-                          (m_options.m_bPrint ? XFA_WidgetStatus_Printable
-                                              : XFA_WidgetStatus_Viewable);
-  m_pWidgetIterator =
-      m_pPageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form, dwFilterType);
-  m_pWidget = m_pWidgetIterator->MoveToNext();
-  return XFA_RENDERSTATUS_Ready;
-}
-
-int32_t CXFA_RenderContext::DoRender() {
-  int32_t iCount = 0;
+void CXFA_RenderContext::DoRender(CFX_Graphics* gs) {
   while (m_pWidget) {
-    CXFA_FFWidget* pWidget = m_pWidget;
-    CFX_RectF rtWidgetBox = pWidget->GetBBox(XFA_WidgetStatus_Visible);
+    CFX_RectF rtWidgetBox = m_pWidget->GetBBox(XFA_WidgetStatus_Visible);
     rtWidgetBox.width += 1;
     rtWidgetBox.height += 1;
     if (rtWidgetBox.IntersectWith(m_rtClipRect))
-      pWidget->RenderWidget(m_pGS, &m_matrix, m_dwStatus);
+      m_pWidget->RenderWidget(gs, &m_matrix, XFA_WidgetStatus_Highlight);
 
     m_pWidget = m_pWidgetIterator->MoveToNext();
-    iCount++;
   }
-  return XFA_RENDERSTATUS_Done;
-}
-
-void CXFA_RenderContext::StopRender() {
-  m_pWidgetIterator.reset();
 }

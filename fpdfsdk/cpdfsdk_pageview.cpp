@@ -95,18 +95,17 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
     return;
 
   if (pPage->GetContext()->GetDocType() == XFA_DocType::Dynamic) {
-    CFX_Graphics gs(pDevice);
     CFX_RectF rectClip(
         static_cast<float>(pClip.left), static_cast<float>(pClip.top),
         static_cast<float>(pClip.Width()), static_cast<float>(pClip.Height()));
+
+    CFX_Graphics gs(pDevice);
     gs.SetClipRect(rectClip);
-    auto pRenderContext = pdfium::MakeUnique<CXFA_RenderContext>();
-    CXFA_RenderOptions renderOptions;
-    renderOptions.m_bHighlight = true;
+
     CXFA_FFPageView* xfaView = pPage->GetXFAPageView();
-    pRenderContext->StartRender(xfaView, &gs, *pUser2Device, renderOptions);
-    pRenderContext->DoRender();
-    pRenderContext->StopRender();
+    CXFA_RenderContext renderContext(xfaView, rectClip, *pUser2Device);
+    renderContext.DoRender(&gs);
+
     CXFA_FFDocView* docView = xfaView->GetDocView();
     if (!docView)
       return;

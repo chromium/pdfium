@@ -11,34 +11,19 @@
 
 #include "xfa/fxfa/fxfa.h"
 
-class CXFA_RenderOptions {
- public:
-  CXFA_RenderOptions() : m_bPrint(false), m_bHighlight(true) {}
-
-  bool m_bPrint;
-  bool m_bHighlight;
-};
-
 class CXFA_RenderContext {
  public:
-  CXFA_RenderContext();
+  CXFA_RenderContext(CXFA_FFPageView* pPageView,
+                     const CFX_RectF& clipRect,
+                     const CFX_Matrix& matrix);
   ~CXFA_RenderContext();
 
-  int32_t StartRender(CXFA_FFPageView* pPageView,
-                      CFX_Graphics* pGS,
-                      const CFX_Matrix& matrix,
-                      const CXFA_RenderOptions& options);
-  int32_t DoRender();
-  void StopRender();
+  void DoRender(CFX_Graphics* gs);
 
  private:
   std::unique_ptr<IXFA_WidgetIterator> m_pWidgetIterator;
   CXFA_FFWidget* m_pWidget;
-  CXFA_FFPageView* m_pPageView;
-  CFX_Graphics* m_pGS;
   CFX_Matrix m_matrix;
-  CXFA_RenderOptions m_options;
-  uint32_t m_dwStatus;
   CFX_RectF m_rtClipRect;
 };
 
