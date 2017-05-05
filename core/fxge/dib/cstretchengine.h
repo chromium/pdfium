@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_DIB_CSTRETCHENGINE_H_
 #define CORE_FXGE_DIB_CSTRETCHENGINE_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/fx_dib.h"
 
@@ -48,7 +50,7 @@ class CStretchEngine {
    private:
     int m_DestMin;
     int m_ItemSize;
-    uint8_t* m_pWeightTables;
+    std::vector<uint8_t> m_WeightTables;
     size_t m_dwWeightTablesSize;
   };
 
@@ -57,10 +59,11 @@ class CStretchEngine {
   int m_SrcBpp;
   int m_bHasAlpha;
   IFX_ScanlineComposer* m_pDestBitmap;
-  int m_DestWidth, m_DestHeight;
+  int m_DestWidth;
+  int m_DestHeight;
   FX_RECT m_DestClip;
-  uint8_t* m_pDestScanline;
-  uint8_t* m_pDestMaskScanline;
+  std::vector<uint8_t> m_DestScanline;
+  std::vector<uint8_t> m_DestMaskScanline;
   FX_RECT m_SrcClip;
   CFX_RetainPtr<CFX_DIBSource> m_pSource;
   uint32_t* m_pSrcPalette;
@@ -69,8 +72,8 @@ class CStretchEngine {
   int m_SrcPitch;
   int m_InterPitch;
   int m_ExtraMaskPitch;
-  uint8_t* m_pInterBuf;
-  uint8_t* m_pExtraAlphaBuf;
+  std::vector<uint8_t> m_InterBuf;
+  std::vector<uint8_t> m_ExtraAlphaBuf;
   int m_TransMethod;
   int m_Flags;
   CWeightTable m_WeightTable;
