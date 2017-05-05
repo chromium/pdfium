@@ -33,7 +33,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "fxbarcode/BC_Writer.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "third_party/base/ptr_util.h"
 
 CBC_OneDimWriter::CBC_OneDimWriter() {
@@ -263,7 +262,7 @@ bool CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
 bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix,
                                           const CFX_WideStringC& contents) {
-  if (!m_output)
+  if (m_output.empty())
     return false;
 
   CFX_GraphStateData stateData;
@@ -272,33 +271,13 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                   static_cast<float>(m_Height));
   device->DrawPath(&path, matrix, &stateData, m_backgroundColor,
                    m_backgroundColor, FXFILL_ALTERNATE);
-  CFX_Matrix matri(m_outputHScale, 0.0, 0.0, static_cast<float>(m_Height), 0.0,
-                   0.0);
-  matri.Concat(*matrix);
-  for (int32_t x = 0; x < m_output->GetWidth(); x++) {
-    int32_t yStart = 0;
-    bool drawing = false;
-    for (int32_t y = 0; y < m_output->GetHeight(); y++) {
-      bool draw = m_output->Get(x, y);
-      if (!drawing) {
-        if (draw) {
-          drawing = true;
-          yStart = y;
-        }
-        continue;
-      }
-
-      if (draw && y != m_output->GetHeight() - 1)
-        continue;
-
-      drawing = false;
-      int32_t yEnd = draw ? y + 1 : y;
-      CFX_PathData rect;
-      rect.AppendRect(static_cast<float>(x), static_cast<float>(yStart),
-                      static_cast<float>((x + 1)), static_cast<float>(yEnd));
-      CFX_GraphStateData data;
-      device->DrawPath(&rect, &matri, &data, m_barColor, 0, FXFILL_WINDING);
-    }
+  CFX_Matrix scaledMatrix(m_outputHScale, 0.0, 0.0,
+                          static_cast<float>(m_Height), 0.0, 0.0);
+  scaledMatrix.Concat(*matrix);
+  for (auto& rect : m_output) {
+    CFX_GraphStateData data;
+    device->DrawPath(&rect, &scaledMatrix, &data, m_barColor, 0,
+                     FXFILL_WINDING);
   }
 
   return m_locTextLoc == BC_TEXT_LOC_NONE || contents.Find(' ') == -1 ||
@@ -343,24 +322,35 @@ bool CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   m_barWidth = m_Width;
   if (!isDevice)
     m_barWidth = codeLength * m_multiple;
-  m_output = pdfium::MakeUnique<CBC_CommonBitMatrix>();
-  m_output->Init(outputWidth, outputHeight);
-  int32_t outputX = leftPadding * m_multiple;
-  for (int32_t inputX = 0; inputX < codeOldLength; inputX++) {
-    if (code[inputX] == 1) {
-      if (outputX >= outputWidth)
-        return true;
 
-      if (outputX + m_multiple > outputWidth && outputWidth - outputX > 0) {
-        return m_output->SetRegion(outputX, 0, outputWidth - outputX,
-                                   outputHeight);
-      }
-      if (!m_output->SetRegion(outputX, 0, m_multiple, outputHeight))
-        return false;
+  m_output.clear();
+  for (int32_t inputX = 0, outputX = leftPadding * m_multiple;
+       inputX < codeOldLength; ++inputX, outputX += m_multiple) {
+    if (code[inputX] != 1)
+      continue;
+
+    if (outputX >= outputWidth)
+      return true;
+
+    if (outputX + m_multiple > outputWidth && outputWidth - outputX > 0) {
+      RenderVerticalBars(outputX, outputWidth - outputX, outputHeight);
+      return true;
     }
-    outputX += m_multiple;
+
+    RenderVerticalBars(outputX, m_multiple, outputHeight);
   }
   return true;
+}
+
+void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX,
+                                          int32_t width,
+                                          int32_t height) {
+  for (int i = 0; i < width; ++i) {
+    float x = outputX + i;
+    CFX_PathData rect;
+    rect.AppendRect(x, 0.0f, x + 1, static_cast<float>(height));
+    m_output.push_back(rect);
+  }
 }
 
 CFX_WideString CBC_OneDimWriter::RenderTextContents(

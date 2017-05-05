@@ -8,13 +8,14 @@
 #define FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxge/cfx_renderdevice.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/BC_Writer.h"
 
-class CBC_CommonBitMatrix;
 class CFX_Font;
+class CFX_PathData;
 class CFX_RenderDevice;
 
 class CBC_OneDimWriter : public CBC_Writer {
@@ -80,6 +81,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                                 int32_t& e);
 
   wchar_t Upper(wchar_t ch);
+  void RenderVerticalBars(int32_t outputX, int32_t width, int32_t height);
 
   bool m_bPrintChecksum;
   int32_t m_iDataLenth;
@@ -92,7 +94,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   int32_t m_iContentLen;
   bool m_bLeftPadding;
   bool m_bRightPadding;
-  std::unique_ptr<CBC_CommonBitMatrix> m_output;
+  std::vector<CFX_PathData> m_output;
   int32_t m_barWidth;
   int32_t m_multiple;
   float m_outputHScale;
