@@ -721,8 +721,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (!m_pStreamAcc) {
     if (m_bType1)
       return cid;
-
-    if (m_pFontFile && !m_pCMap->m_pMapping)
+    if (m_pFontFile && m_pCMap->m_DirectCharcodeToCIDTable.empty())
       return cid;
     if (m_pCMap->m_Coding == CIDCODING_UNKNOWN ||
         !FXFT_Get_Face_Charmap(m_Font.GetFace())) {

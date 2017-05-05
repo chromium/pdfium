@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -363,10 +364,12 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
     }
     if (EndCode < 0x10000) {
       for (uint32_t code = StartCode; code <= EndCode; code++) {
-        m_pCMap->m_pMapping[code] = (uint16_t)(StartCID + code - StartCode);
+        m_pCMap->m_DirectCharcodeToCIDTable[code] =
+            static_cast<uint16_t>(StartCID + code - StartCode);
       }
     } else {
-      m_AddMaps.push_back({StartCode, EndCode, StartCID});
+      m_AdditionalCharcodeToCIDMappings.push_back(
+          {StartCode, EndCode, StartCID});
     }
     m_CodeSeq = 0;
   } else if (m_Status == 3) {
@@ -470,20 +473,17 @@ bool CPDF_CMapParser::CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
   return true;
 }
 
-CPDF_CMap::CPDF_CMap() {
-  m_Charset = CIDSET_UNKNOWN;
-  m_Coding = CIDCODING_UNKNOWN;
-  m_CodingScheme = TwoBytes;
-  m_bVertical = false;
-  m_bLoaded = false;
-  m_pMapping = nullptr;
-  m_pLeadingBytes = nullptr;
-  m_pEmbedMap = nullptr;
-  m_nCodeRanges = 0;
-}
+CPDF_CMap::CPDF_CMap()
+    : m_bLoaded(false),
+      m_bVertical(false),
+      m_Charset(CIDSET_UNKNOWN),
+      m_CodingScheme(TwoBytes),
+      m_Coding(CIDCODING_UNKNOWN),
+      m_nCodeRanges(0),
+      m_pLeadingBytes(nullptr),
+      m_pEmbedMap(nullptr) {}
 
 CPDF_CMap::~CPDF_CMap() {
-  FX_Free(m_pMapping);
   FX_Free(m_pLeadingBytes);
 }
 
@@ -540,7 +540,7 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
 }
 
 void CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
-  m_pMapping = FX_Alloc(uint16_t, 65536);
+  m_DirectCharcodeToCIDTable = std::vector<uint16_t>(65536);
   CPDF_CMapParser parser(this);
   CPDF_SimpleParser syntax(pData, size);
   while (1) {
@@ -550,10 +550,11 @@ void CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
     }
     parser.ParseWord(word);
   }
-  if (m_CodingScheme == MixedFourBytes && parser.HasAddMaps()) {
-    m_AddMapping = parser.TakeAddMaps();
+  if (m_CodingScheme == MixedFourBytes && parser.HasAdditionalMappings()) {
+    m_AdditionalCharcodeToCIDMappings = parser.TakeAdditionalMappings();
     std::sort(
-        m_AddMapping.begin(), m_AddMapping.end(),
+        m_AdditionalCharcodeToCIDMappings.begin(),
+        m_AdditionalCharcodeToCIDMappings.end(),
         [](const CPDF_CMap::CIDRange& arg1, const CPDF_CMap::CIDRange& arg2) {
           return arg1.m_EndCode < arg2.m_EndCode;
         });
@@ -567,19 +568,21 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   if (m_pEmbedMap)
     return FPDFAPI_CIDFromCharCode(m_pEmbedMap, charcode);
 
-  if (!m_pMapping)
+  if (m_DirectCharcodeToCIDTable.empty())
     return static_cast<uint16_t>(charcode);
 
   if (charcode < 0x10000)
-    return m_pMapping[charcode];
+    return m_DirectCharcodeToCIDTable[charcode];
 
-  auto it = std::lower_bound(m_AddMapping.begin(), m_AddMapping.end(), charcode,
+  auto it = std::lower_bound(m_AdditionalCharcodeToCIDMappings.begin(),
+                             m_AdditionalCharcodeToCIDMappings.end(), charcode,
                              [](const CPDF_CMap::CIDRange& arg, uint32_t val) {
                                return arg.m_EndCode < val;
                              });
-  if (it == m_AddMapping.end() || it->m_StartCode > charcode)
+  if (it == m_AdditionalCharcodeToCIDMappings.end() ||
+      it->m_StartCode > charcode) {
     return 0;
-
+  }
   return it->m_StartCID + charcode - it->m_StartCode;
 }
 

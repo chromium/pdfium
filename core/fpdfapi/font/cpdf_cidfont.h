@@ -15,7 +15,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-enum CIDSet {
+enum CIDSet : uint8_t {
   CIDSET_UNKNOWN,
   CIDSET_GB1,
   CIDSET_CNS1,

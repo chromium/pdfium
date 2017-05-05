@@ -97,15 +97,15 @@ class CPDF_CMap : public CFX_Retainable {
   ~CPDF_CMap() override;
 
   CFX_ByteString m_PredefinedCMap;
+  bool m_bLoaded;
   bool m_bVertical;
   CIDSet m_Charset;
-  int m_Coding;
   CodingScheme m_CodingScheme;
+  int m_Coding;
   int m_nCodeRanges;
   uint8_t* m_pLeadingBytes;
-  uint16_t* m_pMapping;
-  bool m_bLoaded;
-  std::vector<CIDRange> m_AddMapping;
+  std::vector<uint16_t> m_DirectCharcodeToCIDTable;
+  std::vector<CIDRange> m_AdditionalCharcodeToCIDMappings;
   const FXCMAP_CMap* m_pEmbedMap;
 };
 
@@ -134,9 +134,11 @@ class CPDF_CMapParser {
   ~CPDF_CMapParser();
 
   void ParseWord(const CFX_ByteStringC& str);
-  bool HasAddMaps() const { return !m_AddMaps.empty(); }
-  std::vector<CPDF_CMap::CIDRange> TakeAddMaps() {
-    return std::move(m_AddMaps);
+  bool HasAdditionalMappings() const {
+    return !m_AdditionalCharcodeToCIDMappings.empty();
+  }
+  std::vector<CPDF_CMap::CIDRange> TakeAdditionalMappings() {
+    return std::move(m_AdditionalCharcodeToCIDMappings);
   }
 
  private:
@@ -153,7 +155,7 @@ class CPDF_CMapParser {
   int m_CodeSeq;
   uint32_t m_CodePoints[4];
   std::vector<CPDF_CMap::CodeRange> m_CodeRanges;
-  std::vector<CPDF_CMap::CIDRange> m_AddMaps;
+  std::vector<CPDF_CMap::CIDRange> m_AdditionalCharcodeToCIDMappings;
   CFX_ByteString m_LastWord;
 };
 
