@@ -52,4 +52,7 @@ declare_args() {
 
   # Enable coverage information
   use_coverage = false
+
+  # Don't build against bundled zlib.
+  use_system_zlib = false
 }
