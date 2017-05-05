@@ -81,8 +81,8 @@ class CPDF_CMap : public CFX_Retainable {
                       bool bPromptCJK);
   void LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
 
-  bool IsLoaded() const;
-  bool IsVertWriting() const;
+  bool IsLoaded() const { return m_bLoaded; }
+  bool IsVertWriting() const { return m_bVertical; }
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   int GetCharSize(uint32_t charcode) const;
   uint32_t GetNextChar(const char* pString, int nStrLen, int& offset) const;
@@ -102,8 +102,8 @@ class CPDF_CMap : public CFX_Retainable {
   CIDSet m_Charset;
   CodingScheme m_CodingScheme;
   int m_Coding;
-  int m_nCodeRanges;
-  uint8_t* m_pLeadingBytes;
+  std::vector<bool> m_MixedTwoByteLeadingBytes;
+  std::vector<CodeRange> m_MixedFourByteLeadingRanges;
   std::vector<uint16_t> m_DirectCharcodeToCIDTable;
   std::vector<CIDRange> m_AdditionalCharcodeToCIDMappings;
   const FXCMAP_CMap* m_pEmbedMap;
