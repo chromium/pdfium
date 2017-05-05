@@ -137,6 +137,31 @@ uint32_t FX_HashCode_GetW(const CFX_WideStringC& str, bool bIgnoreCase) {
   return dwHashCode;
 }
 
+void FXSYS_IntToTwoHexChars(uint8_t n, char* buf) {
+  static const char kHex[] = "0123456789ABCDEF";
+  buf[0] = kHex[n / 16];
+  buf[1] = kHex[n % 16];
+}
+
+void FXSYS_IntToFourHexChars(uint16_t n, char* buf) {
+  FXSYS_IntToTwoHexChars(n / 256, buf);
+  FXSYS_IntToTwoHexChars(n % 256, buf + 2);
+}
+
+size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf) {
+  ASSERT(unicode <= 0xD7FF || (unicode > 0xDFFF && unicode <= 0x10FFFF));
+  if (unicode <= 0xFFFF) {
+    FXSYS_IntToFourHexChars(unicode, buf);
+    return 4;
+  }
+  unicode -= 0x010000;
+  // High ten bits plus 0xD800
+  FXSYS_IntToFourHexChars(0xD800 + unicode / 0x400, buf);
+  // Low ten bits plus 0xDC00
+  FXSYS_IntToFourHexChars(0xDC00 + unicode % 0x400, buf + 4);
+  return 8;
+}
+
 void* FX_Random_MT_Start(uint32_t dwSeed) {
   FX_MTRANDOMCONTEXT* pContext = FX_Alloc(FX_MTRANDOMCONTEXT, 1);
   pContext->mt[0] = dwSeed;

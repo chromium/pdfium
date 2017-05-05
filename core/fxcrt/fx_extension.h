@@ -76,6 +76,12 @@ inline int FXSYS_DecimalCharToInt(const wchar_t c) {
   return std::iswdigit(c) ? c - L'0' : 0;
 }
 
+void FXSYS_IntToTwoHexChars(uint8_t c, char* buf);
+
+void FXSYS_IntToFourHexChars(uint16_t c, char* buf);
+
+size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
+
 float FXSYS_FractionalScale(size_t scale_factor, int value);
 int FXSYS_FractionalScaleCount();
 

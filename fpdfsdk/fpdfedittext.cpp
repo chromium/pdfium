@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/fsdk_define.h"
@@ -90,16 +91,23 @@ const char ToUnicodeStart[] =
     "1 begincodespacerange\n"
     "<0000> <FFFFF>\n";
 
-const char hex[] = "0123456789ABCDEF";
-
-void AddNum(CFX_ByteTextBuf* pBuffer, uint32_t number) {
+void AddCharcode(CFX_ByteTextBuf* pBuffer, uint32_t number) {
+  ASSERT(number <= 0xFFFF);
   *pBuffer << "<";
   char ans[4];
-  for (size_t i = 0; i < 4; ++i) {
-    ans[3 - i] = hex[number % 16];
-    number /= 16;
-  }
+  FXSYS_IntToFourHexChars(number, ans);
   for (size_t i = 0; i < 4; ++i)
+    pBuffer->AppendChar(ans[i]);
+  *pBuffer << ">";
+}
+
+// PDF spec 1.7 Section 5.9.2: "Unicode character sequences as expressed in
+// UTF-16BE encoding." See https://en.wikipedia.org/wiki/UTF-16#Description
+void AddUnicode(CFX_ByteTextBuf* pBuffer, uint32_t unicode) {
+  char ans[8];
+  *pBuffer << "<";
+  size_t numChars = FXSYS_ToUTF16BE(unicode, ans);
+  for (size_t i = 0; i < numChars; ++i)
     pBuffer->AppendChar(ans[i]);
   *pBuffer << ">";
 }
@@ -173,37 +181,37 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
   }
   // Add maps to buffer
   buffer << static_cast<uint32_t>(char_to_uni.size()) << " beginbfchar\n";
-  for (auto iter : char_to_uni) {
-    AddNum(&buffer, iter.first);
+  for (const auto& iter : char_to_uni) {
+    AddCharcode(&buffer, iter.first);
     buffer << " ";
-    AddNum(&buffer, iter.second);
+    AddUnicode(&buffer, iter.second);
     buffer << "\n";
   }
   buffer << "endbfchar\n"
          << static_cast<uint32_t>(map_range_vector.size() + map_range.size())
          << " beginbfrange\n";
-  for (auto iter : map_range_vector) {
+  for (const auto& iter : map_range_vector) {
     const std::pair<uint32_t, uint32_t>& charcodeRange = iter.first;
-    AddNum(&buffer, charcodeRange.first);
+    AddCharcode(&buffer, charcodeRange.first);
     buffer << " ";
-    AddNum(&buffer, charcodeRange.second);
+    AddCharcode(&buffer, charcodeRange.second);
     buffer << " [";
     const std::vector<uint32_t>& unicodes = iter.second;
     for (size_t i = 0; i < unicodes.size(); ++i) {
       uint32_t uni = unicodes[i];
-      AddNum(&buffer, uni);
+      AddUnicode(&buffer, uni);
       if (i != unicodes.size() - 1)
         buffer << " ";
     }
     buffer << "]\n";
   }
-  for (auto iter : map_range) {
+  for (const auto& iter : map_range) {
     const std::pair<uint32_t, uint32_t>& charcodeRange = iter.first;
-    AddNum(&buffer, charcodeRange.first);
+    AddCharcode(&buffer, charcodeRange.first);
     buffer << " ";
-    AddNum(&buffer, charcodeRange.second);
+    AddCharcode(&buffer, charcodeRange.second);
     buffer << " ";
-    AddNum(&buffer, iter.second);
+    AddUnicode(&buffer, iter.second);
     buffer << "\n";
   }
   // TODO(npm): Encrypt / Compress?
@@ -389,10 +397,10 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
                                              FPDF_WIDESTRING text) {
-  if (!text_object)
+  auto* pTextObj = static_cast<CPDF_TextObject*>(text_object);
+  if (!pTextObj)
     return false;
 
-  auto* pTextObj = reinterpret_cast<CPDF_TextObject*>(text_object);
   FX_STRSIZE len = CFX_WideString::WStringLength(text);
   CFX_WideString encodedText = CFX_WideString::FromUTF16LE(text, len);
   CFX_ByteString byteText;
@@ -428,10 +436,10 @@ DLLEXPORT FPDF_FONT STDCALL FPDFText_LoadFont(FPDF_DOCUMENT document,
 }
 
 DLLEXPORT void STDCALL FPDFFont_Close(FPDF_FONT font) {
-  if (!font)
+  CPDF_Font* pFont = static_cast<CPDF_Font*>(font);
+  if (!pFont)
     return;
 
-  CPDF_Font* pFont = reinterpret_cast<CPDF_Font*>(font);
   CPDF_Document* pDoc = pFont->GetDocument();
   if (!pDoc)
     return;
@@ -445,14 +453,11 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           FPDF_FONT font,
                           float font_size) {
-  if (!font)
-    return nullptr;
-
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  CPDF_Font* pFont = static_cast<CPDF_Font*>(font);
+  if (!pDoc || !pFont)
     return nullptr;
 
-  CPDF_Font* pFont = reinterpret_cast<CPDF_Font*>(font);
   auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
   pTextObj->m_TextState.SetFont(pDoc->LoadFont(pFont->GetFontDict()));
   pTextObj->m_TextState.SetFontSize(font_size);
