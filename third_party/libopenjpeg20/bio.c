@@ -162,6 +162,8 @@ OPJ_UINT32 opj_bio_read(opj_bio_t *bio, OPJ_UINT32 n) {
 	OPJ_UINT32 i;
     OPJ_UINT32 v;
 	v = 0;
+	if (n > 32)
+		n = 32;
 	for (i = n - 1; i < n; i--) {
 		v += opj_bio_getbit(bio) << i;
 	}
