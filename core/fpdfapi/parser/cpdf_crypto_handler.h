@@ -7,8 +7,12 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_
 
+#include <memory>
+
+#include "core/fdrm/crypto/fx_crypt.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -68,7 +72,7 @@ class CPDF_CryptoHandler : public CFX_Retainable {
   uint8_t m_EncryptKey[32];
   int m_KeyLen;
   int m_Cipher;
-  uint8_t* m_pAESContext;
+  std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> m_pAESContext;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_

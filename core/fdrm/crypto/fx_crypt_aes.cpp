@@ -6,9 +6,6 @@
 
 #include "core/fdrm/crypto/fx_crypt.h"
 
-#define MAX_NR 14
-#define MAX_NK 8
-#define MAX_NB 8
 #define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
 #define GET_32BIT_MSB_FIRST(cp)                    \
   (((unsigned long)(unsigned char)(cp)[3]) |       \
@@ -22,15 +19,6 @@
     (cp)[1] = (value) >> 16;           \
     (cp)[0] = (value) >> 24;           \
   } while (0)
-
-struct AESContext {
-  unsigned int keysched[(MAX_NR + 1) * MAX_NB];
-  unsigned int invkeysched[(MAX_NR + 1) * MAX_NB];
-  void (*encrypt)(AESContext* ctx, unsigned int* block);
-  void (*decrypt)(AESContext* ctx, unsigned int* block);
-  unsigned int iv[MAX_NB];
-  int Nb, Nr;
-};
 
 namespace {
 
@@ -462,7 +450,8 @@ const unsigned int D3[256] = {
                  (Sbox[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
                  (Sbox[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
                  (Sbox[(block[(i + C3) % Nb]) & 0xFF]))
-void aes_encrypt_nb_4(AESContext* ctx, unsigned int* block) {
+
+void aes_encrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   int i;
   const int C1 = 1, C2 = 2, C3 = 3, Nb = 4;
   unsigned int* keysched = ctx->keysched;
@@ -489,7 +478,8 @@ void aes_encrypt_nb_4(AESContext* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4;
 }
-void aes_encrypt_nb_6(AESContext* ctx, unsigned int* block) {
+
+void aes_encrypt_nb_6(CRYPT_aes_context* ctx, unsigned int* block) {
   int i;
   const int C1 = 1, C2 = 2, C3 = 3, Nb = 6;
   unsigned int* keysched = ctx->keysched;
@@ -524,7 +514,8 @@ void aes_encrypt_nb_6(AESContext* ctx, unsigned int* block) {
   MOVEWORD(5);
   ADD_ROUND_KEY_6;
 }
-void aes_encrypt_nb_8(AESContext* ctx, unsigned int* block) {
+
+void aes_encrypt_nb_8(CRYPT_aes_context* ctx, unsigned int* block) {
   int i;
   const int C1 = 1, C2 = 3, C3 = 4, Nb = 8;
   unsigned int* keysched = ctx->keysched;
@@ -579,7 +570,8 @@ void aes_encrypt_nb_8(AESContext* ctx, unsigned int* block) {
                  (Sboxinv[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
                  (Sboxinv[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
                  (Sboxinv[(block[(i + C3) % Nb]) & 0xFF]))
-void aes_decrypt_nb_4(AESContext* ctx, unsigned int* block) {
+
+void aes_decrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   int i;
   const int C1 = 4 - 1, C2 = 4 - 2, C3 = 4 - 3, Nb = 4;
   unsigned int* keysched = ctx->invkeysched;
@@ -606,7 +598,8 @@ void aes_decrypt_nb_4(AESContext* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4;
 }
-void aes_decrypt_nb_6(AESContext* ctx, unsigned int* block) {
+
+void aes_decrypt_nb_6(CRYPT_aes_context* ctx, unsigned int* block) {
   int i;
   const int C1 = 6 - 1, C2 = 6 - 2, C3 = 6 - 3, Nb = 6;
   unsigned int* keysched = ctx->invkeysched;
@@ -641,7 +634,8 @@ void aes_decrypt_nb_6(AESContext* ctx, unsigned int* block) {
   MOVEWORD(5);
   ADD_ROUND_KEY_6;
 }
-void aes_decrypt_nb_8(AESContext* ctx, unsigned int* block) {
+
+void aes_decrypt_nb_8(CRYPT_aes_context* ctx, unsigned int* block) {
   int i;
   const int C1 = 8 - 1, C2 = 8 - 3, C3 = 8 - 4, Nb = 8;
   unsigned int* keysched = ctx->invkeysched;
@@ -686,7 +680,7 @@ void aes_decrypt_nb_8(AESContext* ctx, unsigned int* block) {
 }
 #undef MAKEWORD
 #undef LASTWORD
-void aes_setup(AESContext* ctx,
+void aes_setup(CRYPT_aes_context* ctx,
                int blocklen,
                const unsigned char* key,
                int keylen) {
@@ -753,13 +747,13 @@ void aes_setup(AESContext* ctx,
     }
   }
 }
-void aes_decrypt(AESContext* ctx, unsigned int* block) {
+void aes_decrypt(CRYPT_aes_context* ctx, unsigned int* block) {
   ctx->decrypt(ctx, block);
 }
 void aes_decrypt_cbc(unsigned char* dest,
                      const unsigned char* src,
                      int len,
-                     AESContext* ctx) {
+                     CRYPT_aes_context* ctx) {
   unsigned int iv[4], x[4], ct[4];
   int i;
   ASSERT((len & 15) == 0);
@@ -779,13 +773,15 @@ void aes_decrypt_cbc(unsigned char* dest,
   }
   memcpy(ctx->iv, iv, sizeof(iv));
 }
-void aes_encrypt(AESContext* ctx, unsigned int* block) {
+
+void aes_encrypt(CRYPT_aes_context* ctx, unsigned int* block) {
   ctx->encrypt(ctx, block);
 }
+
 void aes_encrypt_cbc(unsigned char* dest,
                      const unsigned char* src,
                      int len,
-                     AESContext* ctx) {
+                     CRYPT_aes_context* ctx) {
   unsigned int iv[4];
   int i;
   ASSERT((len & 15) == 0);
@@ -807,28 +803,29 @@ void aes_encrypt_cbc(unsigned char* dest,
 
 }  // namespace
 
-void CRYPT_AESSetKey(void* context,
+void CRYPT_AESSetKey(CRYPT_aes_context* context,
                      uint32_t blocklen,
                      const uint8_t* key,
                      uint32_t keylen,
                      bool bEncrypt) {
-  aes_setup((AESContext*)context, blocklen, key, keylen);
+  aes_setup(context, blocklen, key, keylen);
 }
-void CRYPT_AESSetIV(void* context, const uint8_t* iv) {
-  int i;
-  for (i = 0; i < ((AESContext*)context)->Nb; i++) {
-    ((AESContext*)context)->iv[i] = GET_32BIT_MSB_FIRST(iv + 4 * i);
-  }
+
+void CRYPT_AESSetIV(CRYPT_aes_context* context, const uint8_t* iv) {
+  for (int i = 0; i < context->Nb; i++)
+    context->iv[i] = GET_32BIT_MSB_FIRST(iv + 4 * i);
 }
-void CRYPT_AESDecrypt(void* context,
+
+void CRYPT_AESDecrypt(CRYPT_aes_context* context,
                       uint8_t* dest,
                       const uint8_t* src,
                       uint32_t len) {
-  aes_decrypt_cbc(dest, src, len, (AESContext*)context);
+  aes_decrypt_cbc(dest, src, len, context);
 }
-void CRYPT_AESEncrypt(void* context,
+
+void CRYPT_AESEncrypt(CRYPT_aes_context* context,
                       uint8_t* dest,
                       const uint8_t* src,
                       uint32_t len) {
-  aes_encrypt_cbc(dest, src, len, (AESContext*)context);
+  aes_encrypt_cbc(dest, src, len, context);
 }

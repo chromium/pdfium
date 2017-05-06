@@ -144,7 +144,7 @@ void SHATransform(unsigned int* digest, unsigned int* block) {
   digest[4] += e;
 }
 
-void sha256_process(CRYPT_sha256_context* ctx, const uint8_t data[64]) {
+void sha256_process(CRYPT_sha2_context* ctx, const uint8_t data[64]) {
   uint32_t temp1, temp2, W[64];
   uint32_t A, B, C, D, E, F, G, H;
   GET_UINT32(W[0], data, 0);
@@ -289,7 +289,7 @@ uint64_t const constants[] = {
     0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL,
 };
 
-void sha384_process(CRYPT_sha384_context* ctx, const uint8_t data[128]) {
+void sha384_process(CRYPT_sha2_context* ctx, const uint8_t data[128]) {
   uint64_t temp1, temp2;
   uint64_t A, B, C, D, E, F, G, H;
   uint64_t W[80];
@@ -436,7 +436,7 @@ void CRYPT_SHA1Generate(const uint8_t* data,
   CRYPT_SHA1Update(&s, data, size);
   CRYPT_SHA1Finish(&s, digest);
 }
-void CRYPT_SHA256Start(CRYPT_sha256_context* ctx) {
+void CRYPT_SHA256Start(CRYPT_sha2_context* ctx) {
   ctx->total[0] = 0;
   ctx->total[1] = 0;
   ctx->state[0] = 0x6A09E667;
@@ -449,7 +449,7 @@ void CRYPT_SHA256Start(CRYPT_sha256_context* ctx) {
   ctx->state[7] = 0x5BE0CD19;
 }
 
-void CRYPT_SHA256Update(CRYPT_sha256_context* ctx,
+void CRYPT_SHA256Update(CRYPT_sha2_context* ctx,
                         const uint8_t* input,
                         uint32_t length) {
   if (!length)
@@ -478,7 +478,7 @@ void CRYPT_SHA256Update(CRYPT_sha256_context* ctx,
     memcpy(ctx->buffer + left, input, length);
 }
 
-void CRYPT_SHA256Finish(CRYPT_sha256_context* ctx, uint8_t digest[32]) {
+void CRYPT_SHA256Finish(CRYPT_sha2_context* ctx, uint8_t digest[32]) {
   uint32_t last, padn;
   uint32_t high, low;
   uint8_t msglen[8];
@@ -503,17 +503,17 @@ void CRYPT_SHA256Finish(CRYPT_sha256_context* ctx, uint8_t digest[32]) {
 void CRYPT_SHA256Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[32]) {
-  CRYPT_sha256_context ctx;
+  CRYPT_sha2_context ctx;
   CRYPT_SHA256Start(&ctx);
   CRYPT_SHA256Update(&ctx, data, size);
   CRYPT_SHA256Finish(&ctx, digest);
 }
 
-void CRYPT_SHA384Start(CRYPT_sha384_context* ctx) {
+void CRYPT_SHA384Start(CRYPT_sha2_context* ctx) {
   if (!ctx)
     return;
 
-  memset(ctx, 0, sizeof(CRYPT_sha384_context));
+  memset(ctx, 0, sizeof(CRYPT_sha2_context));
   ctx->state[0] = 0xcbbb9d5dc1059ed8ULL;
   ctx->state[1] = 0x629a292a367cd507ULL;
   ctx->state[2] = 0x9159015a3070dd17ULL;
@@ -524,7 +524,7 @@ void CRYPT_SHA384Start(CRYPT_sha384_context* ctx) {
   ctx->state[7] = 0x47b5481dbefa4fa4ULL;
 }
 
-void CRYPT_SHA384Update(CRYPT_sha384_context* ctx,
+void CRYPT_SHA384Update(CRYPT_sha2_context* ctx,
                         const uint8_t* input,
                         uint32_t length) {
   if (!length)
@@ -552,7 +552,7 @@ void CRYPT_SHA384Update(CRYPT_sha384_context* ctx,
     memcpy(ctx->buffer + left, input, length);
 }
 
-void CRYPT_SHA384Finish(CRYPT_sha384_context* ctx, uint8_t digest[48]) {
+void CRYPT_SHA384Finish(CRYPT_sha2_context* ctx, uint8_t digest[48]) {
   uint32_t last, padn;
   uint8_t msglen[16];
   memset(msglen, 0, 16);
@@ -576,18 +576,17 @@ void CRYPT_SHA384Finish(CRYPT_sha384_context* ctx, uint8_t digest[48]) {
 void CRYPT_SHA384Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]) {
-  CRYPT_sha384_context context;
+  CRYPT_sha2_context context;
   CRYPT_SHA384Start(&context);
   CRYPT_SHA384Update(&context, data, size);
   CRYPT_SHA384Finish(&context, digest);
 }
 
-void CRYPT_SHA512Start(void* context) {
-  if (!context)
+void CRYPT_SHA512Start(CRYPT_sha2_context* ctx) {
+  if (!ctx)
     return;
 
-  CRYPT_sha384_context* ctx = (CRYPT_sha384_context*)context;
-  memset(ctx, 0, sizeof(CRYPT_sha384_context));
+  memset(ctx, 0, sizeof(CRYPT_sha2_context));
   ctx->state[0] = 0xa09e667f3bcc908ULL;
   ctx->state[1] = 0xb67ae8584caa73bULL;
   ctx->state[2] = 0xc6ef372fe94f82bULL;
@@ -598,13 +597,13 @@ void CRYPT_SHA512Start(void* context) {
   ctx->state[7] = 0xbe0cd19137e2179ULL;
 }
 
-void CRYPT_SHA512Update(void* context, const uint8_t* data, uint32_t size) {
-  CRYPT_sha384_context* ctx = (CRYPT_sha384_context*)context;
+void CRYPT_SHA512Update(CRYPT_sha2_context* ctx,
+                        const uint8_t* data,
+                        uint32_t size) {
   CRYPT_SHA384Update(ctx, data, size);
 }
 
-void CRYPT_SHA512Finish(void* context, uint8_t digest[64]) {
-  CRYPT_sha384_context* ctx = (CRYPT_sha384_context*)context;
+void CRYPT_SHA512Finish(CRYPT_sha2_context* ctx, uint8_t digest[64]) {
   uint32_t last, padn;
   uint8_t msglen[16];
   memset(msglen, 0, 16);
@@ -630,7 +629,7 @@ void CRYPT_SHA512Finish(void* context, uint8_t digest[64]) {
 void CRYPT_SHA512Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]) {
-  CRYPT_sha384_context context;
+  CRYPT_sha2_context context;
   CRYPT_SHA512Start(&context);
   CRYPT_SHA512Update(&context, data, size);
   CRYPT_SHA512Finish(&context, digest);

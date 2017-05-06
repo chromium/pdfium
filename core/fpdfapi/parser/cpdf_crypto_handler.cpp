@@ -41,26 +41,29 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
     }
   }
   if (m_Cipher == FXCIPHER_AES) {
-    CRYPT_AESSetKey(m_pAESContext, 16, m_KeyLen == 32 ? m_EncryptKey : realkey,
-                    m_KeyLen, bEncrypt);
+    CRYPT_AESSetKey(m_pAESContext.get(), 16,
+                    m_KeyLen == 32 ? m_EncryptKey : realkey, m_KeyLen,
+                    bEncrypt);
     if (bEncrypt) {
       uint8_t iv[16];
       for (int i = 0; i < 16; i++) {
         iv[i] = (uint8_t)rand();
       }
-      CRYPT_AESSetIV(m_pAESContext, iv);
+      CRYPT_AESSetIV(m_pAESContext.get(), iv);
       memcpy(dest_buf, iv, 16);
       int nblocks = src_size / 16;
-      CRYPT_AESEncrypt(m_pAESContext, dest_buf + 16, src_buf, nblocks * 16);
+      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + 16, src_buf,
+                       nblocks * 16);
       uint8_t padding[16];
       memcpy(padding, src_buf + nblocks * 16, src_size % 16);
       memset(padding + src_size % 16, 16 - src_size % 16, 16 - src_size % 16);
-      CRYPT_AESEncrypt(m_pAESContext, dest_buf + nblocks * 16 + 16, padding,
-                       16);
+      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16,
+                       padding, 16);
       dest_size = 32 + nblocks * 16;
     } else {
-      CRYPT_AESSetIV(m_pAESContext, src_buf);
-      CRYPT_AESDecrypt(m_pAESContext, dest_buf, src_buf + 16, src_size - 16);
+      CRYPT_AESSetIV(m_pAESContext.get(), src_buf);
+      CRYPT_AESDecrypt(m_pAESContext.get(), dest_buf, src_buf + 16,
+                       src_size - 16);
       dest_size = src_size - 16;
       dest_size -= dest_buf[dest_size - 1];
     }
@@ -74,10 +77,10 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
 }
 
 struct AESCryptContext {
-  uint8_t m_Context[2048];
   bool m_bIV;
   uint8_t m_Block[16];
   uint32_t m_BlockOffset;
+  CRYPT_aes_context m_Context;
 };
 
 void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
@@ -90,12 +93,12 @@ void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->m_bIV = true;
     pContext->m_BlockOffset = 0;
-    CRYPT_AESSetKey(pContext->m_Context, 16, m_EncryptKey, 32, bEncrypt);
+    CRYPT_AESSetKey(&pContext->m_Context, 16, m_EncryptKey, 32, bEncrypt);
     if (bEncrypt) {
       for (int i = 0; i < 16; i++) {
         pContext->m_Block[i] = (uint8_t)rand();
       }
-      CRYPT_AESSetIV(pContext->m_Context, pContext->m_Block);
+      CRYPT_AESSetIV(&pContext->m_Context, pContext->m_Block);
     }
     return pContext;
   }
@@ -116,12 +119,12 @@ void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->m_bIV = true;
     pContext->m_BlockOffset = 0;
-    CRYPT_AESSetKey(pContext->m_Context, 16, realkey, 16, bEncrypt);
+    CRYPT_AESSetKey(&pContext->m_Context, 16, realkey, 16, bEncrypt);
     if (bEncrypt) {
       for (int i = 0; i < 16; i++) {
         pContext->m_Block[i] = (uint8_t)rand();
       }
-      CRYPT_AESSetIV(pContext->m_Context, pContext->m_Block);
+      CRYPT_AESSetIV(&pContext->m_Context, pContext->m_Block);
     }
     return pContext;
   }
@@ -168,16 +171,16 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
     pContext->m_BlockOffset += copy_size;
     if (pContext->m_BlockOffset == 16) {
       if (!bEncrypt && pContext->m_bIV) {
-        CRYPT_AESSetIV(pContext->m_Context, pContext->m_Block);
+        CRYPT_AESSetIV(&pContext->m_Context, pContext->m_Block);
         pContext->m_bIV = false;
         pContext->m_BlockOffset = 0;
       } else if (src_off < src_size) {
         uint8_t block_buf[16];
         if (bEncrypt) {
-          CRYPT_AESEncrypt(pContext->m_Context, block_buf, pContext->m_Block,
+          CRYPT_AESEncrypt(&pContext->m_Context, block_buf, pContext->m_Block,
                            16);
         } else {
-          CRYPT_AESDecrypt(pContext->m_Context, block_buf, pContext->m_Block,
+          CRYPT_AESDecrypt(&pContext->m_Context, block_buf, pContext->m_Block,
                            16);
         }
         dest_buf.AppendBlock(block_buf, 16);
@@ -207,18 +210,18 @@ bool CPDF_CryptoHandler::CryptFinish(void* context,
   if (bEncrypt) {
     uint8_t block_buf[16];
     if (pContext->m_BlockOffset == 16) {
-      CRYPT_AESEncrypt(pContext->m_Context, block_buf, pContext->m_Block, 16);
+      CRYPT_AESEncrypt(&pContext->m_Context, block_buf, pContext->m_Block, 16);
       dest_buf.AppendBlock(block_buf, 16);
       pContext->m_BlockOffset = 0;
     }
     memset(pContext->m_Block + pContext->m_BlockOffset,
            (uint8_t)(16 - pContext->m_BlockOffset),
            16 - pContext->m_BlockOffset);
-    CRYPT_AESEncrypt(pContext->m_Context, block_buf, pContext->m_Block, 16);
+    CRYPT_AESEncrypt(&pContext->m_Context, block_buf, pContext->m_Block, 16);
     dest_buf.AppendBlock(block_buf, 16);
   } else if (pContext->m_BlockOffset == 16) {
     uint8_t block_buf[16];
-    CRYPT_AESDecrypt(pContext->m_Context, block_buf, pContext->m_Block, 16);
+    CRYPT_AESDecrypt(&pContext->m_Context, block_buf, pContext->m_Block, 16);
     if (block_buf[15] <= 16) {
       dest_buf.AppendBlock(block_buf, 16 - block_buf[15]);
     }
@@ -247,18 +250,18 @@ uint32_t CPDF_CryptoHandler::DecryptGetSize(uint32_t src_size) {
 bool CPDF_CryptoHandler::Init(CPDF_Dictionary* pEncryptDict,
                               CPDF_SecurityHandler* pSecurityHandler) {
   const uint8_t* key;
-  if (!pSecurityHandler->GetCryptInfo(m_Cipher, key, m_KeyLen)) {
+  if (!pSecurityHandler->GetCryptInfo(m_Cipher, key, m_KeyLen))
     return false;
-  }
-  if (m_KeyLen > 32 || m_KeyLen < 0) {
+
+  if (m_KeyLen > 32 || m_KeyLen < 0)
     return false;
-  }
-  if (m_Cipher != FXCIPHER_NONE) {
+
+  if (m_Cipher != FXCIPHER_NONE)
     memcpy(m_EncryptKey, key, m_KeyLen);
-  }
-  if (m_Cipher == FXCIPHER_AES) {
-    m_pAESContext = FX_Alloc(uint8_t, 2048);
-  }
+
+  if (m_Cipher == FXCIPHER_AES)
+    m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
+
   return true;
 }
 
@@ -288,17 +291,19 @@ bool CPDF_CryptoHandler::Init(int cipher, const uint8_t* key, int keylen) {
   m_Cipher = cipher;
   m_KeyLen = keylen;
   memcpy(m_EncryptKey, key, keylen);
-  if (m_Cipher == FXCIPHER_AES) {
-    m_pAESContext = FX_Alloc(uint8_t, 2048);
-  }
+  if (m_Cipher == FXCIPHER_AES)
+    m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
+
   return true;
 }
+
 bool CPDF_CryptoHandler::DecryptStream(void* context,
                                        const uint8_t* src_buf,
                                        uint32_t src_size,
                                        CFX_BinaryBuf& dest_buf) {
   return CryptStream(context, src_buf, src_size, dest_buf, false);
 }
+
 bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {
   return CryptFinish(context, dest_buf, false);
 }
@@ -311,6 +316,7 @@ uint32_t CPDF_CryptoHandler::EncryptGetSize(uint32_t objnum,
   }
   return src_size;
 }
+
 bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                                         uint32_t gennum,
                                         const uint8_t* src_buf,
@@ -320,14 +326,11 @@ bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
   CryptBlock(true, objnum, gennum, src_buf, src_size, dest_buf, dest_size);
   return true;
 }
-CPDF_CryptoHandler::CPDF_CryptoHandler() {
-  m_pAESContext = nullptr;
-  m_Cipher = FXCIPHER_NONE;
-  m_KeyLen = 0;
-}
-CPDF_CryptoHandler::~CPDF_CryptoHandler() {
-  FX_Free(m_pAESContext);
-}
+
+CPDF_CryptoHandler::CPDF_CryptoHandler()
+    : m_KeyLen(0), m_Cipher(FXCIPHER_NONE) {}
+
+CPDF_CryptoHandler::~CPDF_CryptoHandler() {}
 
 void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
                                      uint32_t gennum,
