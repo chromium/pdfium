@@ -248,8 +248,7 @@ DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
 //                              All other values are invalid.
 // Return value:
 //          True if successful, false if unsucessful (typically invalid input).
-DLLEXPORT FPDF_BOOL STDCALL
-FPDF_SetPrintPostscriptLevel(FPDF_BOOL postscript_level);
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintPostscriptLevel(int postscript_level);
 #endif  // defined(_WIN32)
 
 // Function: FPDF_LoadDocument
