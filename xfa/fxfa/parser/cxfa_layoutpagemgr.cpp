@@ -1725,18 +1725,16 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           break;
         }
         case XFA_Element::PageArea: {
-          CXFA_ContainerLayoutItem* pFormLayout = pContainerItem;
+          CXFA_LayoutItem* pFormLayout = pContainerItem;
           CXFA_Node* pParentNode = pContainerItem->m_pParent->m_pFormNode;
           bool bIsExistForm = true;
           for (int32_t iLevel = 0; iLevel < 3; iLevel++) {
-            pFormLayout = static_cast<CXFA_ContainerLayoutItem*>(
-                pFormLayout->m_pFirstChild);
+            pFormLayout = pFormLayout->m_pFirstChild;
             if (iLevel == 2) {
               while (pFormLayout &&
                      !XFA_ItemLayoutProcessor_IsTakingSpace(
                          pFormLayout->m_pFormNode)) {
-                pFormLayout = static_cast<CXFA_ContainerLayoutItem*>(
-                    pFormLayout->m_pNextSibling);
+                pFormLayout = pFormLayout->m_pNextSibling;
               }
             }
             if (!pFormLayout) {
