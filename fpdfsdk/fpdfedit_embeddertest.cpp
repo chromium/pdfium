@@ -265,6 +265,9 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(100, 100, 40, 40);
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 128));
 
+  // Make sure the type of the rectangle is a path.
+  EXPECT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(green_rect));
+
   // Make sure we get back the same color we set previously.
   unsigned int R;
   unsigned int G;
