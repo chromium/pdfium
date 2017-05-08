@@ -20,12 +20,10 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
     pNode->m_pParent = nullptr;
-    pNotify->OnLayoutItemRemoving(pDocLayout,
-                                  static_cast<CXFA_LayoutItem*>(pNode));
+    pNotify->OnLayoutItemRemoving(pDocLayout, pNode);
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;
   }
-
   pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
   if (pLayoutItem->m_pFormNode->GetElementType() == XFA_Element::PageArea) {
     pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
