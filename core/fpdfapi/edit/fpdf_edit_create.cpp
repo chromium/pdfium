@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/edit/editint.h"
-
 #include <memory>
 #include <vector>
 
 #include "core/fpdfapi/edit/cpdf_creator.h"
+#include "core/fpdfapi/edit/cpdf_objectstream.h"
+#include "core/fpdfapi/edit/cpdf_xrefstream.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -420,7 +420,7 @@ int32_t CPDF_XRefStream::CompressIndirectObject(uint32_t dwObjNum,
       m_ObjStream.m_Buffer.GetLength() < kObjectStreamMaxLength) {
     return 1;
   }
-  return EndObjectStream(pCreator);
+  return EndObjectStream(pCreator, true);
 }
 
 int32_t CPDF_XRefStream::CompressIndirectObject(uint32_t dwObjNum,
@@ -436,7 +436,7 @@ int32_t CPDF_XRefStream::CompressIndirectObject(uint32_t dwObjNum,
       m_ObjStream.m_Buffer.GetLength() < kObjectStreamMaxLength) {
     return 1;
   }
-  return EndObjectStream(pCreator);
+  return EndObjectStream(pCreator, true);
 }
 
 int32_t CPDF_XRefStream::EndObjectStream(CPDF_Creator* pCreator, bool bEOF) {
@@ -728,7 +728,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
     return -1;
   if (!IsXRefNeedEnd())
     return 0;
-  if (!m_pXRefStream->End(this))
+  if (!m_pXRefStream->End(this, false))
     return -1;
   if (!m_pXRefStream->Start())
     return -1;
@@ -747,7 +747,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(uint32_t objnum,
     return iRet;
   if (!IsXRefNeedEnd())
     return 0;
-  if (!m_pXRefStream->End(this))
+  if (!m_pXRefStream->End(this, false))
     return -1;
   if (!m_pXRefStream->Start())
     return -1;
@@ -761,7 +761,7 @@ int32_t CPDF_Creator::AppendObjectNumberToXRef(uint32_t objnum) {
   m_pXRefStream->AddObjectNumberToIndexArray(objnum);
   if (!IsXRefNeedEnd())
     return 0;
-  if (!m_pXRefStream->End(this))
+  if (!m_pXRefStream->End(this, false))
     return -1;
   if (!m_pXRefStream->Start())
     return -1;
