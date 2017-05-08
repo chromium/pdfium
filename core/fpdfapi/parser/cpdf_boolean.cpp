@@ -44,3 +44,15 @@ CPDF_Boolean* CPDF_Boolean::AsBoolean() {
 const CPDF_Boolean* CPDF_Boolean::AsBoolean() const {
   return this;
 }
+
+bool CPDF_Boolean::WriteTo(CFX_FileBufferArchive* archive,
+                           FX_FILESIZE* offset) const {
+  if (archive->AppendString(" ") < 0)
+    return false;
+
+  int32_t len = archive->AppendString(GetString().AsStringC());
+  if (len < 0)
+    return false;
+  *offset += len + 1;
+  return true;
+}

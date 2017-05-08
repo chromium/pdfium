@@ -193,3 +193,32 @@ CPDF_Object* CPDF_Array::Add(std::unique_ptr<CPDF_Object> pObj) {
   m_Objects.push_back(std::move(pObj));
   return pRet;
 }
+
+bool CPDF_Array::WriteTo(CFX_FileBufferArchive* archive,
+                         FX_FILESIZE* offset) const {
+  if (archive->AppendString("[") < 0)
+    return false;
+  *offset += 1;
+
+  for (size_t i = 0; i < GetCount(); ++i) {
+    CPDF_Object* pElement = GetObjectAt(i);
+    if (!pElement->IsInline()) {
+      if (archive->AppendString(" ") < 0)
+        return false;
+
+      int32_t len = archive->AppendDWord(pElement->GetObjNum());
+      if (len < 0)
+        return false;
+      if (archive->AppendString(" 0 R") < 0)
+        return false;
+      *offset += len + 5;
+    } else {
+      if (!pElement->WriteTo(archive, offset))
+        return false;
+    }
+  }
+  if (archive->AppendString("]") < 0)
+    return false;
+  *offset += 1;
+  return true;
+}

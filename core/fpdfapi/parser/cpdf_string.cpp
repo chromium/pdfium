@@ -64,3 +64,14 @@ const CPDF_String* CPDF_String::AsString() const {
 CFX_WideString CPDF_String::GetUnicodeText() const {
   return PDF_DecodeText(m_String);
 }
+
+bool CPDF_String::WriteTo(CFX_FileBufferArchive* archive,
+                          FX_FILESIZE* offset) const {
+  CFX_ByteString str = GetString();
+  int32_t len =
+      archive->AppendString(PDF_EncodeString(str, IsHex()).AsStringC());
+  if (len < 0)
+    return false;
+  *offset += len;
+  return true;
+}

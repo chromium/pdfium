@@ -34,155 +34,6 @@ namespace {
 const uint32_t kXRefStreamMaxSize = 10000;
 const int kObjectStreamMaxLength = 256 * 1024;
 
-int32_t AppendObject(const CPDF_Object* pObj,
-                     CFX_FileBufferArchive* pFile,
-                     FX_FILESIZE& offset) {
-  int32_t len = 0;
-  if (!pObj) {
-    if (pFile->AppendString(" null") < 0)
-      return -1;
-
-    offset += 5;
-    return 1;
-  }
-  switch (pObj->GetType()) {
-    case CPDF_Object::NULLOBJ:
-      if (pFile->AppendString(" null") < 0)
-        return -1;
-
-      offset += 5;
-      break;
-    case CPDF_Object::BOOLEAN:
-    case CPDF_Object::NUMBER:
-      if (pFile->AppendString(" ") < 0)
-        return -1;
-      if ((len = pFile->AppendString(pObj->GetString().AsStringC())) < 0)
-        return -1;
-
-      offset += len + 1;
-      break;
-    case CPDF_Object::STRING: {
-      CFX_ByteString str = pObj->GetString();
-      bool bHex = pObj->AsString()->IsHex();
-      if ((len = pFile->AppendString(PDF_EncodeString(str, bHex).AsStringC())) <
-          0) {
-        return -1;
-      }
-      offset += len;
-      break;
-    }
-    case CPDF_Object::NAME: {
-      if (pFile->AppendString("/") < 0)
-        return -1;
-
-      CFX_ByteString str = pObj->GetString();
-      if ((len = pFile->AppendString(PDF_NameEncode(str).AsStringC())) < 0)
-        return -1;
-
-      offset += len + 1;
-      break;
-    }
-    case CPDF_Object::REFERENCE: {
-      if (pFile->AppendString(" ") < 0)
-        return -1;
-      if ((len = pFile->AppendDWord(pObj->AsReference()->GetRefObjNum())) < 0)
-        return -1;
-      if (pFile->AppendString(" 0 R ") < 0)
-        return -1;
-
-      offset += len + 6;
-      break;
-    }
-    case CPDF_Object::ARRAY: {
-      if (pFile->AppendString("[") < 0)
-        return -1;
-
-      offset += 1;
-      const CPDF_Array* p = pObj->AsArray();
-      for (size_t i = 0; i < p->GetCount(); i++) {
-        CPDF_Object* pElement = p->GetObjectAt(i);
-        if (!pElement->IsInline()) {
-          if (pFile->AppendString(" ") < 0)
-            return -1;
-          if ((len = pFile->AppendDWord(pElement->GetObjNum())) < 0)
-            return -1;
-          if (pFile->AppendString(" 0 R") < 0)
-            return -1;
-
-          offset += len + 5;
-        } else {
-          if (AppendObject(pElement, pFile, offset) < 0)
-            return -1;
-        }
-      }
-      if (pFile->AppendString("]") < 0)
-        return -1;
-
-      offset += 1;
-      break;
-    }
-    case CPDF_Object::DICTIONARY: {
-      if (pFile->AppendString("<<") < 0)
-        return -1;
-
-      offset += 2;
-      const CPDF_Dictionary* p = pObj->AsDictionary();
-      for (const auto& it : *p) {
-        const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second.get();
-        if (pFile->AppendString("/") < 0)
-          return -1;
-        if ((len = pFile->AppendString(PDF_NameEncode(key).AsStringC())) < 0)
-          return -1;
-
-        offset += len + 1;
-        if (!pValue->IsInline()) {
-          if (pFile->AppendString(" ") < 0)
-            return -1;
-          if ((len = pFile->AppendDWord(pValue->GetObjNum())) < 0)
-            return -1;
-          if (pFile->AppendString(" 0 R") < 0)
-            return -1;
-
-          offset += len + 5;
-        } else {
-          if (AppendObject(pValue, pFile, offset) < 0)
-            return -1;
-        }
-      }
-      if (pFile->AppendString(">>") < 0)
-        return -1;
-
-      offset += 2;
-      break;
-    }
-    case CPDF_Object::STREAM: {
-      const CPDF_Stream* p = pObj->AsStream();
-      if (AppendObject(p->GetDict(), pFile, offset) < 0)
-        return -1;
-      if (pFile->AppendString("stream\r\n") < 0)
-        return -1;
-
-      offset += 8;
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);
-      pAcc->LoadAllData(true);
-      if (pFile->AppendBlock(pAcc->GetData(), pAcc->GetSize()) < 0)
-        return -1;
-
-      offset += pAcc->GetSize();
-      if ((len = pFile->AppendString("\r\nendstream")) < 0)
-        return -1;
-
-      offset += len;
-      break;
-    }
-    default:
-      ASSERT(false);
-      break;
-  }
-  return 1;
-}
-
 int32_t WriteTrailer(CPDF_Document* pDocument,
                      CFX_FileBufferArchive* pFile,
                      CPDF_Array* pIDArray) {
@@ -217,7 +68,7 @@ int32_t WriteTrailer(CPDF_Document* pDocument,
 
         offset += len + 6;
       } else {
-        if (AppendObject(pValue, pFile, offset) < 0)
+        if (!pValue->WriteTo(pFile, &offset))
           return -1;
       }
     }
@@ -226,7 +77,7 @@ int32_t WriteTrailer(CPDF_Document* pDocument,
         return -1;
 
       offset += 3;
-      if (AppendObject(pIDArray, pFile, offset) < 0)
+      if (!pIDArray->WriteTo(pFile, &offset))
         return -1;
     }
     return offset;
@@ -254,7 +105,7 @@ int32_t WriteTrailer(CPDF_Document* pDocument,
       return -1;
 
     offset += 3;
-    if (AppendObject(pIDArray, pFile, offset) < 0)
+    if (!pIDArray->WriteTo(pFile, &offset))
       return -1;
   }
   return offset;
@@ -992,40 +843,22 @@ int32_t CPDF_Creator::WriteIndirectObj(const CPDF_Object* pObj) {
 int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
                                      const CPDF_Object* pObj,
                                      bool bEncrypt) {
-  int32_t len = 0;
-  if (!pObj) {
-    if (m_File.AppendString(" null") < 0)
-      return -1;
-
-    m_Offset += 5;
-    return 1;
-  }
-
   switch (pObj->GetType()) {
-    case CPDF_Object::NULLOBJ:
-      if (m_File.AppendString(" null") < 0)
-        return -1;
-
-      m_Offset += 5;
-      break;
     case CPDF_Object::BOOLEAN:
+    case CPDF_Object::NAME:
+    case CPDF_Object::NULLOBJ:
     case CPDF_Object::NUMBER:
-      if (m_File.AppendString(" ") < 0)
+    case CPDF_Object::REFERENCE:
+      if (!pObj->WriteTo(&m_File, &m_Offset))
         return -1;
-      if ((len = m_File.AppendString(pObj->GetString().AsStringC())) < 0)
-        return -1;
-
-      m_Offset += len + 1;
       break;
+
     case CPDF_Object::STRING: {
       CFX_ByteString str = pObj->GetString();
       bool bHex = pObj->AsString()->IsHex();
       if (!m_pCryptoHandler || !bEncrypt) {
-        CFX_ByteString content = PDF_EncodeString(str, bHex);
-        if ((len = m_File.AppendString(content.AsStringC())) < 0)
+        if (!pObj->WriteTo(&m_File, &m_Offset))
           return -1;
-
-        m_Offset += len;
         break;
       }
       CPDF_Encryptor encryptor(m_pCryptoHandler.Get(), objnum,
@@ -1033,7 +866,8 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       CFX_ByteString content = PDF_EncodeString(
           CFX_ByteString((const char*)encryptor.m_pData, encryptor.m_dwSize),
           bHex);
-      if ((len = m_File.AppendString(content.AsStringC())) < 0)
+      int32_t len = m_File.AppendString(content.AsStringC());
+      if (len < 0)
         return -1;
 
       m_Offset += len;
@@ -1052,7 +886,9 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       }
       if (WriteDirectObj(objnum, encoder.m_pDict.Get()) < 0)
         return -1;
-      if ((len = m_File.AppendString("stream\r\n")) < 0)
+
+      int32_t len = m_File.AppendString("stream\r\n");
+      if (len < 0)
         return -1;
 
       m_Offset += len;
@@ -1060,31 +896,11 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         return -1;
 
       m_Offset += encryptor.m_dwSize;
-      if ((len = m_File.AppendString("\r\nendstream")) < 0)
+      len = m_File.AppendString("\r\nendstream");
+      if (len < 0)
         return -1;
 
       m_Offset += len;
-      break;
-    }
-    case CPDF_Object::NAME: {
-      if (m_File.AppendString("/") < 0)
-        return -1;
-
-      CFX_ByteString str = pObj->GetString();
-      if ((len = m_File.AppendString(PDF_NameEncode(str).AsStringC())) < 0)
-        return -1;
-
-      m_Offset += len + 1;
-      break;
-    }
-    case CPDF_Object::REFERENCE: {
-      if (m_File.AppendString(" ") < 0)
-        return -1;
-      if ((len = m_File.AppendDWord(pObj->AsReference()->GetRefObjNum())) < 0)
-        return -1;
-      if (m_File.AppendString(" 0 R") < 0)
-        return -1;
-      m_Offset += len + 5;
       break;
     }
     case CPDF_Object::ARRAY: {
@@ -1098,7 +914,9 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         if (!pElement->IsInline()) {
           if (m_File.AppendString(" ") < 0)
             return -1;
-          if ((len = m_File.AppendDWord(pElement->GetObjNum())) < 0)
+
+          int32_t len = m_File.AppendDWord(pElement->GetObjNum());
+          if (len < 0)
             return -1;
           if (m_File.AppendString(" 0 R") < 0)
             return -1;
@@ -1116,8 +934,12 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       break;
     }
     case CPDF_Object::DICTIONARY: {
-      if (!m_pCryptoHandler || pObj == m_pEncryptDict)
-        return AppendObject(pObj, &m_File, m_Offset);
+      if (!m_pCryptoHandler || pObj == m_pEncryptDict) {
+        if (!pObj->WriteTo(&m_File, &m_Offset))
+          return -1;
+        break;
+      }
+
       if (m_File.AppendString("<<") < 0)
         return -1;
 
@@ -1130,7 +952,9 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         CPDF_Object* pValue = it.second.get();
         if (m_File.AppendString("/") < 0)
           return -1;
-        if ((len = m_File.AppendString(PDF_NameEncode(key).AsStringC())) < 0)
+
+        int32_t len = m_File.AppendString(PDF_NameEncode(key).AsStringC());
+        if (len < 0)
           return -1;
 
         m_Offset += len + 1;
@@ -1140,7 +964,9 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         if (!pValue->IsInline()) {
           if (m_File.AppendString(" ") < 0)
             return -1;
-          if ((len = m_File.AppendDWord(pValue->GetObjNum())) < 0)
+
+          len = m_File.AppendDWord(pValue->GetObjNum());
+          if (len < 0)
             return -1;
           if (m_File.AppendString(" 0 R ") < 0)
             return -1;
@@ -1574,7 +1400,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
             return -1;
         } else {
           FX_FILESIZE offset = 0;
-          if (AppendObject(pValue, &m_File, offset) < 0)
+          if (!pValue->WriteTo(&m_File, &offset))
             return -1;
         }
       }
@@ -1631,7 +1457,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
         return -1;
 
       FX_FILESIZE offset = 0;
-      if (AppendObject(m_pIDArray.get(), &m_File, offset) < 0)
+      if (!m_pIDArray->WriteTo(&m_File, &offset))
         return -1;
     }
     if (!bXRefStream) {

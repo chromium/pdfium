@@ -55,3 +55,15 @@ CFX_ByteString CPDF_Number::GetString() const {
   return m_bInteger ? CFX_ByteString::FormatInteger(m_Integer, FXFORMAT_SIGNED)
                     : CFX_ByteString::FormatFloat(m_Float);
 }
+
+bool CPDF_Number::WriteTo(CFX_FileBufferArchive* archive,
+                          FX_FILESIZE* offset) const {
+  if (archive->AppendString(" ") < 0)
+    return false;
+
+  int32_t len = archive->AppendString(GetString().AsStringC());
+  if (len < 0)
+    return false;
+  *offset += len + 1;
+  return true;
+}

@@ -11,6 +11,7 @@
 #include <set>
 #include <type_traits>
 
+#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -87,6 +88,9 @@ class CPDF_Object {
   virtual const CPDF_Stream* AsStream() const;
   virtual CPDF_String* AsString();
   virtual const CPDF_String* AsString() const;
+
+  virtual bool WriteTo(CFX_FileBufferArchive* archive,
+                       FX_FILESIZE* offset) const = 0;
 
  protected:
   friend class CPDF_Array;

@@ -27,6 +27,8 @@ class CPDF_Name : public CPDF_Object {
   bool IsName() const override;
   CPDF_Name* AsName() override;
   const CPDF_Name* AsName() const override;
+  bool WriteTo(CFX_FileBufferArchive* archive,
+               FX_FILESIZE* offset) const override;
 
  protected:
   CFX_ByteString m_Name;

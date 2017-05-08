@@ -16,3 +16,11 @@ CPDF_Object::Type CPDF_Null::GetType() const {
 std::unique_ptr<CPDF_Object> CPDF_Null::Clone() const {
   return pdfium::MakeUnique<CPDF_Null>();
 }
+
+bool CPDF_Null::WriteTo(CFX_FileBufferArchive* archive,
+                        FX_FILESIZE* offset) const {
+  if (archive->AppendString(" null") < 0)
+    return false;
+  *offset += 5;
+  return true;
+}

@@ -49,3 +49,16 @@ const CPDF_Name* CPDF_Name::AsName() const {
 CFX_WideString CPDF_Name::GetUnicodeText() const {
   return PDF_DecodeText(m_Name);
 }
+
+bool CPDF_Name::WriteTo(CFX_FileBufferArchive* archive,
+                        FX_FILESIZE* offset) const {
+  if (archive->AppendString("/") < 0)
+    return false;
+
+  CFX_ByteString str = GetString();
+  int32_t len = archive->AppendString(PDF_NameEncode(str).AsStringC());
+  if (len < 0)
+    return false;
+  *offset += len + 1;
+  return true;
+}

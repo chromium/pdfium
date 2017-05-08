@@ -18,6 +18,8 @@ class CPDF_Null : public CPDF_Object {
   // CPDF_Object.
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
+  bool WriteTo(CFX_FileBufferArchive* archive,
+               FX_FILESIZE* offset) const override;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_NULL_H_

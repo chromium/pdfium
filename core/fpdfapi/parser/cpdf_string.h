@@ -33,6 +33,8 @@ class CPDF_String : public CPDF_Object {
   bool IsString() const override;
   CPDF_String* AsString() override;
   const CPDF_String* AsString() const override;
+  bool WriteTo(CFX_FileBufferArchive* archive,
+               FX_FILESIZE* offset) const override;
 
   bool IsHex() const { return m_bHex; }
 
