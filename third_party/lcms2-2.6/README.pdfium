@@ -29,4 +29,6 @@ Local Modifications:
     from upstream https://github.com/mm2/Little-CMS/commit/4011a6e3
 0016-check-LUT-and-MPE.patch: check LUT consistency and sanitize MPE profiles.
 0017-upstream-integer-overflow-MPEmatrix_Read.patch: fix some integer overflows.
+0018-verify-size-before-reading.patch: fix OOM issue when there won't be enough
+    data to read anyway.
 TODO(ochang): List other patches.
