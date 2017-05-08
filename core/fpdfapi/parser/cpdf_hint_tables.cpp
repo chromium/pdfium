@@ -290,6 +290,11 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   // greatest and least length of a shared object group, in bytes.
   uint32_t dwDeltaGroupLen = hStream->GetBits(16);
 
+  // Trying to decode more than 32 bits isn't going to work when we write into
+  // a uint32_t.
+  if (dwDeltaGroupLen > 31)
+    return false;
+
   if (dwFirstSharedObjNum >= CPDF_Parser::kMaxObjectNumber ||
       m_nFirstPageSharedObjs >= CPDF_Parser::kMaxObjectNumber ||
       dwSharedObjTotal >= CPDF_Parser::kMaxObjectNumber) {
