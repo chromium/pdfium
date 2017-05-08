@@ -2299,7 +2299,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
         return m_status;
       }
       CFX_RetainPtr<CFX_DIBitmap> pStrechBitmap = pFormatBitmap->StretchTo(
-          m_sizeX, m_sizeY, m_bInterpol ? FXDIB_INTERPOL : FXDIB_DOWNSAMPLE);
+          m_sizeX, m_sizeY, m_bInterpol ? FXDIB_INTERPOL : FXDIB_DOWNSAMPLE,
+          nullptr);
       pFormatBitmap = nullptr;
       if (!pStrechBitmap) {
         m_pDeviceBitmap = nullptr;

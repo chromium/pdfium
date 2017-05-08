@@ -34,7 +34,7 @@ bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   CFX_RetainPtr<CFX_DIBSource> pSource =
       pPageObj->AsImage()->GetImage()->LoadDIBSource();
   if (pSource)
-    m_pBitmap = pSource->Clone();
+    m_pBitmap = pSource->Clone(nullptr);
   m_pForm.reset();
   return true;
 }

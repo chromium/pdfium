@@ -65,39 +65,29 @@ class CFX_DIBSource : public CFX_Retainable {
     return IsAlphaMask() ? 0 : (m_bpp == 1 ? 2 : (m_bpp == 8 ? 256 : 0));
   }
 
-  uint32_t GetPaletteEntry(int index) const;
-
-  void SetPaletteEntry(int index, uint32_t color);
-  uint32_t GetPaletteArgb(int index) const { return GetPaletteEntry(index); }
-  void SetPaletteArgb(int index, uint32_t color) {
-    SetPaletteEntry(index, color);
-  }
+  uint32_t GetPaletteArgb(int index) const;
+  void SetPaletteArgb(int index, uint32_t color);
 
   // Copies into internally-owned palette.
   void SetPalette(const uint32_t* pSrcPal);
 
-  CFX_RetainPtr<CFX_DIBitmap> Clone(const FX_RECT* pClip = nullptr) const;
+  CFX_RetainPtr<CFX_DIBitmap> Clone(const FX_RECT* pClip) const;
   CFX_RetainPtr<CFX_DIBitmap> CloneConvert(FXDIB_Format format);
   CFX_RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
                                         int dest_height,
-                                        uint32_t flags = 0,
-                                        const FX_RECT* pClip = nullptr);
+                                        uint32_t flags,
+                                        const FX_RECT* pClip);
   CFX_RetainPtr<CFX_DIBitmap> TransformTo(const CFX_Matrix* pMatrix,
-                                          int& left,
-                                          int& top,
-                                          uint32_t flags = 0,
-                                          const FX_RECT* pClip = nullptr);
-  CFX_RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip,
-                                     bool bYFlip,
-                                     const FX_RECT* pClip = nullptr) const;
+                                          int* left,
+                                          int* top);
+  CFX_RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip, bool bYFlip) const;
   CFX_RetainPtr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
 
-  CFX_RetainPtr<CFX_DIBitmap> CloneAlphaMask(
-      const FX_RECT* pClip = nullptr) const;
+  CFX_RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 
   // Copies into internally-owned mask.
   bool SetAlphaMask(const CFX_RetainPtr<CFX_DIBSource>& pAlphaMask,
-                    const FX_RECT* pClip = nullptr);
+                    const FX_RECT* pClip);
 
   void GetOverlapRect(int& dest_left,
                       int& dest_top,
@@ -110,7 +100,7 @@ class CFX_DIBSource : public CFX_Retainable {
                       const CFX_ClipRgn* pClipRgn);
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
-  void DebugVerifyBitmapIsPreMultiplied(void* buffer = nullptr) const;
+  void DebugVerifyBitmapIsPreMultiplied(void* buffer) const;
 #endif
 
   CFX_RetainPtr<CFX_DIBitmap> m_pAlphaMask;

@@ -86,13 +86,11 @@ CFX_RetainPtr<CFX_DIBitmap> _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
     temp_buf = nullptr;
   }
   if (pbmi->bmiHeader.biBitCount == 1) {
-    for (int i = 0; i < 2; i++) {
-      pBitmap->SetPaletteEntry(i, ((uint32_t*)pbmi->bmiColors)[i] | 0xff000000);
-    }
+    for (int i = 0; i < 2; i++)
+      pBitmap->SetPaletteArgb(i, ((uint32_t*)pbmi->bmiColors)[i] | 0xff000000);
   } else if (pbmi->bmiHeader.biBitCount == 8) {
-    for (int i = 0; i < 256; i++) {
-      pBitmap->SetPaletteEntry(i, ((uint32_t*)pbmi->bmiColors)[i] | 0xff000000);
-    }
+    for (int i = 0; i < 256; i++)
+      pBitmap->SetPaletteArgb(i, ((uint32_t*)pbmi->bmiColors)[i] | 0xff000000);
   }
   return pBitmap;
 }

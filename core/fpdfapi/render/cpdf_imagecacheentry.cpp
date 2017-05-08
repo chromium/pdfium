@@ -34,7 +34,7 @@ CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() {}
 void CPDF_ImageCacheEntry::Reset(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
   m_pCachedBitmap.Reset();
   if (pBitmap)
-    m_pCachedBitmap = pBitmap->Clone();
+    m_pCachedBitmap = pBitmap->Clone(nullptr);
   CalcSize();
 }
 
@@ -94,13 +94,13 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap() {
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
   if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() <
       FPDF_HUGE_IMAGE_SIZE) {
-    m_pCachedBitmap = m_pCurBitmap->Clone();
+    m_pCachedBitmap = m_pCurBitmap->Clone(nullptr);
     m_pCurBitmap.Reset();
   } else {
     m_pCachedBitmap = m_pCurBitmap;
   }
   if (m_pCurMask) {
-    m_pCachedMask = m_pCurMask->Clone();
+    m_pCachedMask = m_pCurMask->Clone(nullptr);
     m_pCurMask.Reset();
   }
   m_pCurBitmap = m_pCachedBitmap;

@@ -73,12 +73,12 @@ bool CFX_ImageStretcher::Start() {
     int r0;
     int g0;
     int b0;
-    std::tie(a0, r0, g0, b0) = ArgbDecode(m_pSource->GetPaletteEntry(0));
+    std::tie(a0, r0, g0, b0) = ArgbDecode(m_pSource->GetPaletteArgb(0));
     int a1;
     int r1;
     int g1;
     int b1;
-    std::tie(a1, r1, g1, b1) = ArgbDecode(m_pSource->GetPaletteEntry(1));
+    std::tie(a1, r1, g1, b1) = ArgbDecode(m_pSource->GetPaletteArgb(1));
     for (int i = 0; i < 256; ++i) {
       int a = a0 + (a1 - a0) * i / 255;
       int r = r0 + (r1 - r0) * i / 255;
@@ -97,12 +97,12 @@ bool CFX_ImageStretcher::Start() {
     int m0;
     int y0;
     int k0;
-    std::tie(c0, m0, y0, k0) = CmykDecode(m_pSource->GetPaletteEntry(0));
+    std::tie(c0, m0, y0, k0) = CmykDecode(m_pSource->GetPaletteArgb(0));
     int c1;
     int m1;
     int y1;
     int k1;
-    std::tie(c1, m1, y1, k1) = CmykDecode(m_pSource->GetPaletteEntry(1));
+    std::tie(c1, m1, y1, k1) = CmykDecode(m_pSource->GetPaletteArgb(1));
     for (int i = 0; i < 256; ++i) {
       int c = c0 + (c1 - c0) * i / 255;
       int m = m0 + (m1 - m0) * i / 255;

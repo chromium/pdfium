@@ -328,14 +328,15 @@ void CFX_Graphics::RenderDeviceStretchImage(
     m1.Concat(*matrix);
   }
   CFX_RetainPtr<CFX_DIBitmap> bmp1 =
-      source->StretchTo((int32_t)rect.Width(), (int32_t)rect.Height());
+      source->StretchTo(static_cast<int32_t>(rect.Width()),
+                        static_cast<int32_t>(rect.Height()), 0, nullptr);
   CFX_Matrix m2(rect.Width(), 0.0, 0.0, rect.Height(), rect.left, rect.top);
   m2.Concat(m1);
 
   int32_t left;
   int32_t top;
   CFX_RetainPtr<CFX_DIBitmap> bmp2 = bmp1->FlipImage(false, true);
-  CFX_RetainPtr<CFX_DIBitmap> bmp3 = bmp2->TransformTo(&m2, left, top);
+  CFX_RetainPtr<CFX_DIBitmap> bmp3 = bmp2->TransformTo(&m2, &left, &top);
   CFX_RectF r = GetClipRect();
   CFX_RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   bitmap->CompositeBitmap(FXSYS_round(r.left), FXSYS_round(r.top),
@@ -510,7 +511,7 @@ void CFX_Graphics::SetDIBitsWithMatrix(
     int32_t left;
     int32_t top;
     CFX_RetainPtr<CFX_DIBitmap> bmp1 = source->FlipImage(false, true);
-    CFX_RetainPtr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(&m, left, top);
+    CFX_RetainPtr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(&m, &left, &top);
     m_renderDevice->SetDIBits(bmp2, left, top);
   }
 }

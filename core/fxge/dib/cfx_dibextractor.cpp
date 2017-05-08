@@ -10,7 +10,7 @@
 
 CFX_DIBExtractor::CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
   if (!pSrc->GetBuffer()) {
-    m_pBitmap = pSrc->Clone();
+    m_pBitmap = pSrc->Clone(nullptr);
     return;
   }
   CFX_RetainPtr<CFX_DIBSource> pOldSrc(pSrc);
@@ -21,7 +21,7 @@ CFX_DIBExtractor::CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
     return;
   }
   m_pBitmap->SetPalette(pOldSrc->GetPalette());
-  m_pBitmap->SetAlphaMask(pOldSrc->m_pAlphaMask);
+  m_pBitmap->SetAlphaMask(pOldSrc->m_pAlphaMask, nullptr);
 }
 
 CFX_DIBExtractor::~CFX_DIBExtractor() {}

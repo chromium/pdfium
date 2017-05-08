@@ -344,7 +344,7 @@ void CCodec_TiffContext::SetPalette(
     uint32_t b = blue_orig[index] & 0xFF;
     uint32_t color = (uint32_t)b | ((uint32_t)g << 8) | ((uint32_t)r << 16) |
                      (((uint32)0xffL) << 24);
-    pDIBitmap->SetPaletteEntry(index, color);
+    pDIBitmap->SetPaletteArgb(index, color);
   }
 }
 

@@ -262,13 +262,13 @@ static void DebugValidate(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
   if (bitmap) {
     SkASSERT(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
     if (bitmap->GetBPP() == 32) {
-      bitmap->DebugVerifyBitmapIsPreMultiplied();
+      bitmap->DebugVerifyBitmapIsPreMultiplied(nullptr);
     }
   }
   if (device) {
     SkASSERT(device->GetBPP() == 8 || device->GetBPP() == 32);
     if (device->GetBPP() == 32) {
-      device->DebugVerifyBitmapIsPreMultiplied();
+      device->DebugVerifyBitmapIsPreMultiplied(nullptr);
     }
   }
 }
@@ -2224,7 +2224,7 @@ void CFX_DIBitmap::PreMultiply() {
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
   SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
   unpremultiplied.readPixels(premultiplied);
-  this->DebugVerifyBitmapIsPreMultiplied();
+  this->DebugVerifyBitmapIsPreMultiplied(nullptr);
 }
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -2238,7 +2238,7 @@ void CFX_DIBitmap::UnPreMultiply() {
   m_nFormat = Format::kUnPreMultiplied;
   if (priorFormat != Format::kPreMultiplied)
     return;
-  this->DebugVerifyBitmapIsPreMultiplied();
+  this->DebugVerifyBitmapIsPreMultiplied(nullptr);
   int height = this->GetHeight();
   int width = this->GetWidth();
   int rowBytes = this->GetPitch();
@@ -2327,7 +2327,7 @@ void CFX_SkiaDeviceDriver::Dump() const {
 #ifdef _SKIA_SUPPORT_
 void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
   if (m_pOriDevice)
-    m_pOriDevice->DebugVerifyBitmapIsPreMultiplied();
+    m_pOriDevice->DebugVerifyBitmapIsPreMultiplied(nullptr);
 }
 #endif  // _SKIA_SUPPORT_
 

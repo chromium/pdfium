@@ -852,7 +852,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
   if (m_DeviceClass == FXDC_PRINTER &&
       ((int64_t)pBitmap->GetWidth() * pBitmap->GetHeight() >
        (int64_t)abs(dest_width) * abs(dest_height))) {
-    pToStrechBitmap = pBitmap->StretchTo(dest_width, dest_height);
+    pToStrechBitmap = pBitmap->StretchTo(dest_width, dest_height, 0, nullptr);
   }
   CFX_ByteString toStrechBitmapInfo =
       CFX_WindowsDIB::GetBitmapInfo(pToStrechBitmap);

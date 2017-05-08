@@ -96,7 +96,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
           m_pImageObject->m_GeneralState.GetTransferFunc()->TranslateImage(
               m_Loader.m_pBitmap);
       if (m_Loader.m_bCached && m_Loader.m_pMask)
-        m_Loader.m_pMask = m_Loader.m_pMask->Clone();
+        m_Loader.m_pMask = m_Loader.m_pMask->Clone(nullptr);
       m_Loader.m_bCached = false;
     }
   }
@@ -112,7 +112,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
     }
     m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject);
   } else if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
-    m_pClone = m_pDIBSource->Clone();
+    m_pClone = m_pDIBSource->Clone(nullptr);
     m_pClone->ConvertColorScale(m_pRenderStatus->m_Options.m_BackColor,
                                 m_pRenderStatus->m_Options.m_ForeColor);
     m_pDIBSource = m_pClone;
@@ -403,7 +403,7 @@ bool CPDF_ImageRenderer::StartDIBSource() {
     }
   }
 #ifdef _SKIA_SUPPORT_
-  CFX_RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBSource->Clone();
+  CFX_RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBSource->Clone(nullptr);
   if (m_pDIBSource->HasAlpha())
     CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
   if (m_pRenderStatus->m_pDevice->StartDIBitsWithBlend(
@@ -511,7 +511,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
     int left;
     int top;
     CFX_RetainPtr<CFX_DIBitmap> pTransformed =
-        pAlphaMask->TransformTo(&m_ImageMatrix, left, top);
+        pAlphaMask->TransformTo(&m_ImageMatrix, &left, &top);
     if (!pTransformed)
       return true;
 

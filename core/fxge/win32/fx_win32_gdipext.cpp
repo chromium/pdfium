@@ -647,9 +647,8 @@ static void OutputImage(GpGraphics* pGraphics,
       UINT pal[258];
       pal[0] = 0;
       pal[1] = 256;
-      for (int i = 0; i < 256; i++) {
-        pal[i + 2] = pBitmap->GetPaletteEntry(i);
-      }
+      for (int i = 0; i < 256; i++)
+        pal[i + 2] = pBitmap->GetPaletteArgb(i);
       CallFunc(GdipSetImagePalette)(bitmap, (ColorPalette*)pal);
       break;
     }

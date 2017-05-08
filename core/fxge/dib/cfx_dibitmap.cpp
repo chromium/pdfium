@@ -94,7 +94,7 @@ bool CFX_DIBitmap::Copy(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
     return false;
 
   SetPalette(pSrc->GetPalette());
-  SetAlphaMask(pSrc->m_pAlphaMask);
+  SetAlphaMask(pSrc->m_pAlphaMask, nullptr);
   for (int row = 0; row < pSrc->GetHeight(); row++)
     memcpy(m_pBuffer.Get() + row * m_Pitch, pSrc->GetScanline(row), m_Pitch);
   return true;
@@ -317,7 +317,7 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
     if (pSrcClone->GetWidth() != m_Width ||
         pSrcClone->GetHeight() != m_Height) {
       if (pAlphaMask) {
-        pAlphaMask = pAlphaMask->StretchTo(m_Width, m_Height);
+        pAlphaMask = pAlphaMask->StretchTo(m_Width, m_Height, 0, nullptr);
         if (!pAlphaMask)
           return false;
       }
@@ -327,7 +327,7 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
   } else if (pSrcClone->GetWidth() != m_Width ||
              pSrcClone->GetHeight() != m_Height) {
     CFX_RetainPtr<CFX_DIBitmap> pSrcMatched =
-        pSrcClone->StretchTo(m_Width, m_Height);
+        pSrcClone->StretchTo(m_Width, m_Height, 0, nullptr);
     if (!pSrcMatched)
       return false;
 
@@ -426,7 +426,7 @@ bool CFX_DIBitmap::MultiplyAlpha(
   CFX_RetainPtr<CFX_DIBitmap> pSrcClone = pSrcBitmap.As<CFX_DIBitmap>();
   if (pSrcBitmap->GetWidth() != m_Width ||
       pSrcBitmap->GetHeight() != m_Height) {
-    pSrcClone = pSrcBitmap->StretchTo(m_Width, m_Height);
+    pSrcClone = pSrcBitmap->StretchTo(m_Width, m_Height, 0, nullptr);
     if (!pSrcClone)
       return false;
   }
