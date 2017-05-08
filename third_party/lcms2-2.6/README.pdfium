@@ -31,4 +31,5 @@ Local Modifications:
 0017-upstream-integer-overflow-MPEmatrix_Read.patch: fix some integer overflows.
 0018-verify-size-before-reading.patch: fix OOM issue when there won't be enough
     data to read anyway.
+0019-upstream-direct-leak-Type_MPE_Read.patch: fix leak in cmstypes.c.
 TODO(ochang): List other patches.
