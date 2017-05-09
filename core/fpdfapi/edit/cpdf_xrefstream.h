@@ -9,6 +9,9 @@
 
 #include <vector>
 
+#include "core/fpdfapi/edit/cpdf_objectstream.h"
+#include "core/fxcrt/fx_basic.h"
+
 class CPDF_Creator;
 class CPDF_Object;
 
@@ -34,14 +37,23 @@ class CPDF_XRefStream {
   void AddObjectNumberToIndexArray(uint32_t objnum);
   bool EndXRefStream(CPDF_Creator* pCreator);
 
-  std::vector<Index> m_IndexArray;
-  FX_FILESIZE m_PrevOffset;
-  uint32_t m_dwTempObjNum;
+  FX_FILESIZE GetPreviousOffset() const { return m_PrevOffset; }
+  void SetPreviousOffset(FX_FILESIZE offset) { m_PrevOffset = offset; }
 
- protected:
+  uint32_t CountIndexArrayItems() const {
+    uint32_t size = 0;
+    for (const auto& pair : m_IndexArray)
+      size += pair.count;
+    return size;
+  }
+
+ private:
   int32_t EndObjectStream(CPDF_Creator* pCreator, bool bEOF);
   bool GenerateXRefStream(CPDF_Creator* pCreator, bool bEOF);
 
+  std::vector<Index> m_IndexArray;
+  FX_FILESIZE m_PrevOffset;
+  uint32_t m_dwTempObjNum;
   size_t m_iSeg;
   CPDF_ObjectStream m_ObjStream;
   CFX_ByteTextBuf m_Buffer;
