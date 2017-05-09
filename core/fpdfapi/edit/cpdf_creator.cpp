@@ -56,7 +56,8 @@ int32_t OutputIndex(CFX_FileBufferArchive* pFile, FX_FILESIZE offset) {
 
 }  // namespace
 
-CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc)
+CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
+                           const CFX_RetainPtr<IFX_WriteStream>& pFile)
     : m_pDocument(pDoc),
       m_pParser(pDoc->GetParser()),
       m_bSecurityChanged(false),
@@ -73,7 +74,9 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc)
       m_CurObjNum(0),
       m_XrefStart(0),
       m_pIDArray(nullptr),
-      m_FileVersion(0) {}
+      m_FileVersion(0) {
+  m_File.AttachFile(pFile);
+}
 
 CPDF_Creator::~CPDF_Creator() {
   Clear();
@@ -909,12 +912,6 @@ void CPDF_Creator::Clear() {
   m_File.Clear();
   m_NewObjNumArray.clear();
   m_pIDArray.reset();
-}
-
-bool CPDF_Creator::Create(const CFX_RetainPtr<IFX_WriteStream>& pFile,
-                          uint32_t flags) {
-  m_File.AttachFile(pFile);
-  return Create(flags);
 }
 
 bool CPDF_Creator::Create(uint32_t flags) {

@@ -19,6 +19,7 @@
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/fsdk_filewriteadapter.h"
 #include "public/fpdf_edit.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -38,45 +39,6 @@
 #else
 #include <ctime>
 #endif
-
-class CFX_IFileWrite final : public IFX_WriteStream {
- public:
-  static CFX_RetainPtr<CFX_IFileWrite> Create();
-
-  bool Init(FPDF_FILEWRITE* pFileWriteStruct);
-  bool WriteBlock(const void* pData, size_t size) override;
-
- protected:
-  template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  CFX_IFileWrite();
-  ~CFX_IFileWrite() override {}
-
-  FPDF_FILEWRITE* m_pFileWriteStruct;
-};
-
-CFX_RetainPtr<CFX_IFileWrite> CFX_IFileWrite::Create() {
-  return pdfium::MakeRetain<CFX_IFileWrite>();
-}
-
-CFX_IFileWrite::CFX_IFileWrite() : m_pFileWriteStruct(nullptr) {}
-
-bool CFX_IFileWrite::Init(FPDF_FILEWRITE* pFileWriteStruct) {
-  if (!pFileWriteStruct)
-    return false;
-
-  m_pFileWriteStruct = pFileWriteStruct;
-  return true;
-}
-
-bool CFX_IFileWrite::WriteBlock(const void* pData, size_t size) {
-  if (!m_pFileWriteStruct)
-    return false;
-
-  m_pFileWriteStruct->WriteBlock(m_pFileWriteStruct, pData, size);
-  return true;
-}
 
 namespace {
 
@@ -294,17 +256,16 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY)
     flags = 0;
 
-  CPDF_Creator FileMaker(pPDFDoc);
+  CPDF_Creator fileMaker(pPDFDoc,
+                         pdfium::MakeRetain<FSDK_FileWriteAdapter>(pFileWrite));
   if (bSetVersion)
-    FileMaker.SetFileVersion(fileVerion);
+    fileMaker.SetFileVersion(fileVerion);
   if (flags == FPDF_REMOVE_SECURITY) {
     flags = 0;
-    FileMaker.RemoveSecurity();
+    fileMaker.RemoveSecurity();
   }
 
-  CFX_RetainPtr<CFX_IFileWrite> pStreamWrite = CFX_IFileWrite::Create();
-  pStreamWrite->Init(pFileWrite);
-  bool bRet = FileMaker.Create(pStreamWrite, flags);
+  bool bRet = fileMaker.Create(flags);
 #ifdef PDF_ENABLE_XFA
   SendPostSaveToXFADoc(pContext);
 #endif  // PDF_ENABLE_XFA

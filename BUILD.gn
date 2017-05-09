@@ -146,6 +146,8 @@ static_library("pdfium") {
     "fpdfsdk/fpdfview.cpp",
     "fpdfsdk/fsdk_actionhandler.cpp",
     "fpdfsdk/fsdk_actionhandler.h",
+    "fpdfsdk/fsdk_filewriteadapter.cpp",
+    "fpdfsdk/fsdk_filewriteadapter.h",
     "fpdfsdk/fsdk_pauseadapter.cpp",
     "fpdfsdk/fsdk_pauseadapter.h",
     "fpdfsdk/pdfsdk_fieldaction.cpp",

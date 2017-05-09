@@ -29,11 +29,12 @@ class CPDF_XRefStream;
 
 class CPDF_Creator {
  public:
-  explicit CPDF_Creator(CPDF_Document* pDoc);
+  explicit CPDF_Creator(CPDF_Document* pDoc,
+                        const CFX_RetainPtr<IFX_WriteStream>& pFile);
   ~CPDF_Creator();
 
   void RemoveSecurity();
-  bool Create(const CFX_RetainPtr<IFX_WriteStream>& pFile, uint32_t flags = 0);
+  bool Create(uint32_t flags = 0);
   int32_t Continue();
   bool SetFileVersion(int32_t fileVersion = 17);
 
@@ -60,7 +61,6 @@ class CPDF_Creator {
   bool IsIncremental() const { return !!(m_dwFlags & FPDFCREATE_INCREMENTAL); }
 
  private:
-  bool Create(uint32_t flags);
   void Clear();
 
   void InitOldObjNumOffsets();
