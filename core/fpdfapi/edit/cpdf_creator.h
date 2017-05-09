@@ -34,9 +34,9 @@ class CPDF_Creator {
   ~CPDF_Creator();
 
   void RemoveSecurity();
-  bool Create(uint32_t flags = 0);
+  bool Create(uint32_t flags);
   int32_t Continue();
-  bool SetFileVersion(int32_t fileVersion = 17);
+  bool SetFileVersion(int32_t fileVersion);
 
   CFX_FileBufferArchive* GetFile() { return &m_File; }
 
@@ -44,7 +44,6 @@ class CPDF_Creator {
   void IncrementOffset(FX_FILESIZE inc);
   uint32_t GetNextObjectNumber() { return ++m_dwLastObjNum; }
   uint32_t GetLastObjectNumber() const { return m_dwLastObjNum; }
-  int32_t GetObjectStreamSize() const { return m_ObjectStreamSize; }
   CPDF_CryptoHandler* GetCryptoHandler() { return m_pCryptoHandler.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument; }
   CPDF_Array* GetIDArray() const { return m_pIDArray.get(); }
@@ -65,7 +64,7 @@ class CPDF_Creator {
 
   void InitOldObjNumOffsets();
   void InitNewObjNumOffsets();
-  void InitID(bool bDefault = true);
+  void InitID();
 
   int32_t AppendObjectNumberToXRef(uint32_t objnum);
 
@@ -76,11 +75,11 @@ class CPDF_Creator {
 
   int32_t WriteOldIndirectObject(uint32_t objnum);
   int32_t WriteOldObjs();
-  int32_t WriteNewObjs(bool bIncremental);
+  int32_t WriteNewObjs();
   int32_t WriteIndirectObj(const CPDF_Object* pObj);
   int32_t WriteDirectObj(uint32_t objnum,
                          const CPDF_Object* pObj,
-                         bool bEncrypt = true);
+                         bool bEncrypt);
   int32_t WriteIndirectObjectToStream(const CPDF_Object* pObj);
   int32_t WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
   int32_t WriteIndirectObjectToStream(uint32_t objnum,
@@ -101,7 +100,6 @@ class CPDF_Creator {
   CFX_RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   CPDF_Object* m_pMetadata;
   std::unique_ptr<CPDF_XRefStream> m_pXRefStream;
-  int32_t m_ObjectStreamSize;
   uint32_t m_dwLastObjNum;
   CFX_FileBufferArchive m_File;
   FX_FILESIZE m_Offset;

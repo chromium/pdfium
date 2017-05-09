@@ -47,6 +47,7 @@ void CPDF_ObjectStream::CompressIndirectObject(uint32_t dwObjNum,
 
 FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
   ASSERT(pCreator);
+
   if (m_Items.empty())
     return 0;
 
@@ -62,32 +63,38 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
   int32_t len = pFile->AppendDWord(m_dwObjNum);
   if (len < 0)
     return -1;
-
   pCreator->IncrementOffset(len);
-  if ((len = pFile->AppendString(" 0 obj\r\n<</Type /ObjStm /N ")) < 0)
+
+  len = pFile->AppendString(" 0 obj\r\n<</Type /ObjStm /N ");
+  if (len < 0)
     return -1;
 
   pCreator->IncrementOffset(len);
   uint32_t iCount = pdfium::CollectionSize<uint32_t>(m_Items);
-  if ((len = pFile->AppendDWord(iCount)) < 0)
+  len = pFile->AppendDWord(iCount);
+  if (len < 0)
     return -1;
-
   pCreator->IncrementOffset(len);
+
   if (pFile->AppendString("/First ") < 0)
     return -1;
-  if ((len = pFile->AppendDWord((uint32_t)tempBuffer.GetLength())) < 0)
+
+  len = pFile->AppendDWord(static_cast<uint32_t>(tempBuffer.GetLength()));
+  if (len < 0)
     return -1;
   if (pFile->AppendString("/Length ") < 0)
     return -1;
-
   pCreator->IncrementOffset(len + 15);
 
   tempBuffer << m_Buffer;
+
   CPDF_FlateEncoder encoder(tempBuffer.GetBuffer(), tempBuffer.GetLength(),
                             true, false);
   CPDF_Encryptor encryptor(pCreator->GetCryptoHandler(), m_dwObjNum,
                            encoder.GetData(), encoder.GetSize());
-  if ((len = pFile->AppendDWord(encryptor.GetSize())) < 0)
+
+  len = pFile->AppendDWord(encryptor.GetSize());
+  if (len < 0)
     return -1;
 
   pCreator->IncrementOffset(len);
@@ -95,13 +102,15 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
     return -1;
 
   pCreator->IncrementOffset(20);
-  if ((len = pFile->AppendString(">>stream\r\n")) < 0)
+  len = pFile->AppendString(">>stream\r\n");
+  if (len < 0)
     return -1;
   if (pFile->AppendBlock(encryptor.GetData(), encryptor.GetSize()) < 0)
     return -1;
 
   pCreator->IncrementOffset(len + encryptor.GetSize());
-  if ((len = pFile->AppendString("\r\nendstream\r\nendobj\r\n")) < 0)
+  len = pFile->AppendString("\r\nendstream\r\nendobj\r\n");
+  if (len < 0)
     return -1;
 
   pCreator->IncrementOffset(len);

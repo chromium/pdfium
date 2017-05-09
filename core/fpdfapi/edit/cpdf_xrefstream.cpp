@@ -15,6 +15,8 @@
 
 namespace {
 
+const int32_t kObjectStreamMaxSize = 200;
+
 int32_t WriteTrailer(CPDF_Document* pDocument,
                      CFX_FileBufferArchive* pFile,
                      CPDF_Array* pIDArray) {
@@ -35,14 +37,18 @@ int32_t WriteTrailer(CPDF_Document* pDocument,
         continue;
       if (pFile->AppendString(("/")) < 0)
         return -1;
-      if ((len = pFile->AppendString(PDF_NameEncode(key).AsStringC())) < 0)
+
+      len = pFile->AppendString(PDF_NameEncode(key).AsStringC());
+      if (len < 0)
         return -1;
 
       offset += len + 1;
       if (!pValue->IsInline()) {
         if (pFile->AppendString(" ") < 0)
           return -1;
-        if ((len = pFile->AppendDWord(pValue->GetObjNum())) < 0)
+
+        len = pFile->AppendDWord(pValue->GetObjNum());
+        if (len < 0)
           return -1;
         if (pFile->AppendString(" 0 R ") < 0)
           return -1;
@@ -65,7 +71,9 @@ int32_t WriteTrailer(CPDF_Document* pDocument,
   }
   if (pFile->AppendString("\r\n/Root ") < 0)
     return -1;
-  if ((len = pFile->AppendDWord(pDocument->GetRoot()->GetObjNum())) < 0)
+
+  len = pFile->AppendDWord(pDocument->GetRoot()->GetObjNum());
+  if (len < 0)
     return -1;
   if (pFile->AppendString(" 0 R\r\n") < 0)
     return -1;
@@ -74,7 +82,9 @@ int32_t WriteTrailer(CPDF_Document* pDocument,
   if (pDocument->GetInfo()) {
     if (pFile->AppendString("/Info ") < 0)
       return -1;
-    if ((len = pFile->AppendDWord(pDocument->GetInfo()->GetObjNum())) < 0)
+
+    len = pFile->AppendDWord(pDocument->GetInfo()->GetObjNum());
+    if (len < 0)
       return -1;
     if (pFile->AppendString(" 0 R\r\n") < 0)
       return -1;
@@ -104,7 +114,9 @@ int32_t WriteEncryptDictObjectReference(uint32_t dwObjNum,
   offset += 8;
   if (pFile->AppendString(" ") < 0)
     return -1;
-  if ((len = pFile->AppendDWord(dwObjNum)) < 0)
+
+  len = pFile->AppendDWord(dwObjNum);
+  if (len < 0)
     return -1;
   if (pFile->AppendString(" 0 R ") < 0)
     return -1;
@@ -165,7 +177,7 @@ int32_t CPDF_XRefStream::CompressIndirectObject(uint32_t dwObjNum,
   ASSERT(pCreator);
 
   m_ObjStream.CompressIndirectObject(dwObjNum, pObj);
-  if (m_ObjStream.ItemCount() < pCreator->GetObjectStreamSize() &&
+  if (m_ObjStream.ItemCount() < kObjectStreamMaxSize &&
       m_ObjStream.IsNotFull()) {
     return 1;
   }
@@ -179,7 +191,7 @@ int32_t CPDF_XRefStream::CompressIndirectObject(uint32_t dwObjNum,
   ASSERT(pCreator);
 
   m_ObjStream.CompressIndirectObject(dwObjNum, pBuffer, dwSize);
-  if (m_ObjStream.ItemCount() < pCreator->GetObjectStreamSize() &&
+  if (m_ObjStream.ItemCount() < kObjectStreamMaxSize &&
       m_ObjStream.IsNotFull()) {
     return 1;
   }
@@ -227,6 +239,7 @@ int32_t CPDF_XRefStream::EndObjectStream(CPDF_Creator* pCreator, bool bEOF) {
 
     return 1;
   }
+
   for (auto it = m_IndexArray.begin() + m_iSeg; it != m_IndexArray.end();
        ++it) {
     for (uint32_t m = it->objnum; m < it->objnum + it->count; ++m) {
@@ -272,46 +285,51 @@ bool CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator, bool bEOF) {
   int32_t len = pFile->AppendDWord(objnum);
   if (len < 0)
     return false;
-
   pCreator->IncrementOffset(len);
-  if ((len = pFile->AppendString(" 0 obj\r\n<</Type /XRef/W[1 4 2]/Index[")) <
-      0) {
+
+  len = pFile->AppendString(" 0 obj\r\n<</Type /XRef/W[1 4 2]/Index[");
+  if (len < 0)
     return false;
-  }
   pCreator->IncrementOffset(len);
+
   if (!pCreator->IsIncremental()) {
-    if ((len = pFile->AppendDWord(0)) < 0)
-      return false;
-    if ((len = pFile->AppendString(" ")) < 0)
+    if (pFile->AppendDWord(0) < 0)
       return false;
 
+    len = pFile->AppendString(" ");
+    if (len < 0)
+      return false;
     pCreator->IncrementOffset(len + 1);
-    if ((len = pFile->AppendDWord(objnum + 1)) < 0)
-      return false;
 
+    len = pFile->AppendDWord(objnum + 1);
+    if (len < 0)
+      return false;
     pCreator->IncrementOffset(len);
   } else {
     for (const auto& pair : m_IndexArray) {
-      if ((len = pFile->AppendDWord(pair.objnum)) < 0)
+      len = pFile->AppendDWord(pair.objnum);
+      if (len < 0)
         return false;
       if (pFile->AppendString(" ") < 0)
         return false;
-
       pCreator->IncrementOffset(len + 1);
-      if ((len = pFile->AppendDWord(pair.count)) < 0)
+
+      len = pFile->AppendDWord(pair.count);
+      if (len < 0)
         return false;
       if (pFile->AppendString(" ") < 0)
         return false;
-
       pCreator->IncrementOffset(len + 1);
     }
   }
   if (pFile->AppendString("]/Size ") < 0)
     return false;
-  if ((len = pFile->AppendDWord(objnum + 1)) < 0)
-    return false;
 
+  len = pFile->AppendDWord(objnum + 1);
+  if (len < 0)
+    return false;
   pCreator->IncrementOffset(len + 7);
+
   if (m_PrevOffset > 0) {
     if (pFile->AppendString("/Prev ") < 0)
       return false;
@@ -330,46 +348,52 @@ bool CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator, bool bEOF) {
                             true);
   if (pFile->AppendString("/Filter /FlateDecode") < 0)
     return false;
-
   pCreator->IncrementOffset(20);
-  if ((len = pFile->AppendString("/DecodeParms<</Columns 7/Predictor 12>>")) <
-      0) {
-    return false;
-  }
 
+  len = pFile->AppendString("/DecodeParms<</Columns 7/Predictor 12>>");
+  if (len < 0)
+    return false;
   pCreator->IncrementOffset(len);
+
   if (pFile->AppendString("/Length ") < 0)
     return false;
-  if ((len = pFile->AppendDWord(encoder.GetSize())) < 0)
+
+  len = pFile->AppendDWord(encoder.GetSize());
+  if (len < 0)
     return false;
 
   pCreator->IncrementOffset(len + 8);
   if (bEOF) {
-    if ((len = WriteTrailer(pCreator->GetDocument(), pFile,
-                            pCreator->GetIDArray())) < 0) {
+    len = WriteTrailer(pCreator->GetDocument(), pFile, pCreator->GetIDArray());
+    if (len < 0)
       return false;
-    }
     pCreator->IncrementOffset(len);
 
     if (CPDF_Dictionary* encryptDict = pCreator->GetEncryptDict()) {
       uint32_t dwEncryptObjNum = encryptDict->GetObjNum();
       if (dwEncryptObjNum == 0)
         dwEncryptObjNum = pCreator->GetEncryptObjectNumber();
-      if ((len = WriteEncryptDictObjectReference(dwEncryptObjNum, pFile)) < 0)
+
+      len = WriteEncryptDictObjectReference(dwEncryptObjNum, pFile);
+      if (len < 0)
         return false;
       pCreator->IncrementOffset(len);
     }
   }
-  if ((len = pFile->AppendString(">>stream\r\n")) < 0)
-    return false;
 
+  len = pFile->AppendString(">>stream\r\n");
+  if (len < 0)
+    return false;
   pCreator->IncrementOffset(len);
+
   if (pFile->AppendBlock(encoder.GetData(), encoder.GetSize()) < 0)
     return false;
-  if ((len = pFile->AppendString("\r\nendstream\r\nendobj\r\n")) < 0)
-    return false;
 
+  len = pFile->AppendString("\r\nendstream\r\nendobj\r\n");
+  if (len < 0)
+    return false;
   pCreator->IncrementOffset(encoder.GetSize() + len);
+
   m_PrevOffset = offset_tmp;
   return true;
 }
