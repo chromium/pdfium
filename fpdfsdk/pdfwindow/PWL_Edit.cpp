@@ -13,6 +13,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/xml/cxml_content.h"
 #include "core/fxcrt/xml/cxml_element.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -55,30 +56,27 @@ void CPWL_Edit::SetText(const CFX_WideString& csText) {
     m_pEdit->SetText(swText);
     return;
   }
-
-  int32_t nCount = pXML->CountChildren();
-  bool bFirst = true;
-
   swText.clear();
 
+  bool bFirst = true;
+  int32_t nCount = pXML->CountChildren();
   for (int32_t i = 0; i < nCount; i++) {
-    CXML_Element* pSubElement = pXML->GetElement(i);
-    if (!pSubElement)
+    CXML_Element* pSubElement = ToElement(pXML->GetChild(i));
+    if (!pSubElement || !pSubElement->GetTagName().EqualNoCase("p"))
       continue;
 
-    CFX_ByteString tag = pSubElement->GetTagName();
-    if (tag.EqualNoCase("p")) {
-      int nChild = pSubElement->CountChildren();
-      CFX_WideString swSection;
-      for (int32_t j = 0; j < nChild; j++)
-        swSection += pSubElement->GetContent(j);
-
-      if (bFirst)
-        bFirst = false;
-      else
-        swText += FWL_VKEY_Return;
-      swText += swSection;
+    CFX_WideString swSection;
+    int nSubChild = pSubElement->CountChildren();
+    for (int32_t j = 0; j < nSubChild; j++) {
+      CXML_Content* pSubContent = ToContent(pSubElement->GetChild(j));
+      if (pSubContent)
+        swSection += pSubContent->m_Content;
     }
+    if (bFirst)
+      bFirst = false;
+    else
+      swText += FWL_VKEY_Return;
+    swText += swSection;
   }
 
   m_pEdit->SetText(swText);

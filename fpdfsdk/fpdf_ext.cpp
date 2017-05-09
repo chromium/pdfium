@@ -16,6 +16,7 @@
 #include "core/fpdfdoc/cpdf_metadata.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/xml/cxml_content.h"
 #include "core/fxcrt/xml/cxml_element.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
@@ -86,12 +87,13 @@ bool CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
     if (space == "xmlns" && name == "adhocwf" &&
         value == L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
       CXML_Element* pVersion =
-          pElement->GetElement("adhocwf", cbName.AsStringC());
+          pElement->GetElement("adhocwf", cbName.AsStringC(), 0);
       if (!pVersion)
         continue;
-      CFX_WideString wsContent = pVersion->GetContent(0);
-      int nType = wsContent.GetInteger();
-      switch (nType) {
+      CXML_Content* pContent = ToContent(pVersion->GetChild(0));
+      if (!pContent)
+        continue;
+      switch (pContent->m_Content.GetInteger()) {
         case 1:
           FPDF_UnSupportError(FPDF_UNSP_DOC_SHAREDFORM_ACROBAT);
           break;
@@ -107,12 +109,9 @@ bool CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
 
   uint32_t nCount = pElement->CountChildren();
   for (i = 0; i < (int)nCount; i++) {
-    CXML_Element::ChildType childType = pElement->GetChildType(i);
-    if (childType == CXML_Element::Element) {
-      CXML_Element* pChild = pElement->GetElement(i);
-      if (CheckSharedForm(pChild, cbName))
-        return true;
-    }
+    CXML_Element* pChild = ToElement(pElement->GetChild(i));
+    if (pChild && CheckSharedForm(pChild, cbName))
+      return true;
   }
   return false;
 }

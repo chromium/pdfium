@@ -12,19 +12,21 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/xml/cxml_attrmap.h"
+#include "core/fxcrt/xml/cxml_object.h"
 
-class CXML_Element {
+class CXML_Element : public CXML_Object {
  public:
-  enum ChildType { Invalid, Element, Content };
-
   static std::unique_ptr<CXML_Element> Parse(const void* pBuffer, size_t size);
 
   CXML_Element(const CXML_Element* pParent,
                const CFX_ByteStringC& qSpace,
                const CFX_ByteStringC& tagname);
-  ~CXML_Element();
+  ~CXML_Element() override;
 
-  void Empty();
+  // CXML_Object:
+  CXML_Element* AsElement() override;
+  const CXML_Element* AsElement() const override;
+
   CFX_ByteString GetTagName(bool bQualified = false) const;
   CFX_ByteString GetNamespace(bool bQualified = false) const;
   CFX_ByteString GetNamespaceURI(const CFX_ByteString& qName) const;
@@ -88,39 +90,25 @@ class CXML_Element {
   }
 
   uint32_t CountChildren() const { return m_Children.size(); }
-  ChildType GetChildType(uint32_t index) const;
-  CFX_WideString GetContent(uint32_t index) const;
-  CXML_Element* GetElement(uint32_t index) const;
-  CXML_Element* GetElement(const CFX_ByteStringC& space,
-                           const CFX_ByteStringC& tag) const {
-    return GetElement(space, tag, 0);
-  }
-
   uint32_t CountElements(const CFX_ByteStringC& space,
                          const CFX_ByteStringC& tag) const;
+  CXML_Object* GetChild(uint32_t index) const;
   CXML_Element* GetElement(const CFX_ByteStringC& space,
                            const CFX_ByteStringC& tag,
-                           int index) const;
-
-  uint32_t FindElement(CXML_Element* pChild) const;
+                           int nth) const;
+  uint32_t FindElement(CXML_Element* pElement) const;
   void SetTag(const CFX_ByteStringC& qTagName);
-  void RemoveChildren();
   void RemoveChild(uint32_t index);
 
  private:
   friend class CXML_Parser;
   friend class CXML_Composer;
 
-  struct ChildRecord {
-    ChildType type;
-    void* child;  // CXML_Element and CXML_Content lack a common ancestor.
-  };
-
   const CXML_Element* const m_pParent;
   CFX_ByteString m_QSpaceName;
   CFX_ByteString m_TagName;
   CXML_AttrMap m_AttrMap;
-  std::vector<ChildRecord> m_Children;
+  std::vector<std::unique_ptr<CXML_Object>> m_Children;
 };
 
 #endif  // CORE_FXCRT_XML_CXML_ELEMENT_H_

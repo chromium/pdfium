@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
@@ -493,8 +494,7 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
             if (!pSubElement)
               break;
 
-            pElement->m_Children.push_back(
-                {CXML_Element::Element, pSubElement.release()});
+            pElement->m_Children.push_back(std::move(pSubElement));
             SkipWhiteSpaces();
           }
           break;
@@ -537,7 +537,6 @@ void CXML_Parser::InsertContentSegment(bool bCDATA,
   if (content.IsEmpty())
     return;
 
-  CXML_Content* pContent = new CXML_Content;
-  pContent->Set(bCDATA, content);
-  pElement->m_Children.push_back({CXML_Element::Content, pContent});
+  pElement->m_Children.push_back(
+      pdfium::MakeUnique<CXML_Content>(bCDATA, content));
 }

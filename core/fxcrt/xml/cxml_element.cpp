@@ -23,25 +23,16 @@ CXML_Element::CXML_Element(const CXML_Element* pParent,
                            const CFX_ByteStringC& tagname)
     : m_pParent(pParent), m_QSpaceName(qSpace), m_TagName(tagname) {}
 
-CXML_Element::~CXML_Element() {
-  Empty();
+CXML_Element::~CXML_Element() {}
+
+CXML_Element* CXML_Element::AsElement() {
+  return this;
 }
 
-void CXML_Element::Empty() {
-  RemoveChildren();
+const CXML_Element* CXML_Element::AsElement() const {
+  return this;
 }
-void CXML_Element::RemoveChildren() {
-  for (const ChildRecord& record : m_Children) {
-    if (record.type == Content) {
-      delete static_cast<CXML_Content*>(record.child);
-    } else if (record.type == Element) {
-      CXML_Element* child = static_cast<CXML_Element*>(record.child);
-      child->RemoveChildren();
-      delete child;
-    }
-  }
-  m_Children.clear();
-}
+
 CFX_ByteString CXML_Element::GetTagName(bool bQualified) const {
   if (!bQualified || m_QSpaceName.IsEmpty()) {
     return m_TagName;
@@ -159,69 +150,47 @@ bool CXML_Element::GetAttrFloat(const CFX_ByteStringC& space,
   return true;
 }
 
-CXML_Element::ChildType CXML_Element::GetChildType(uint32_t index) const {
-  return index < m_Children.size() ? m_Children[index].type : Invalid;
-}
-
-CFX_WideString CXML_Element::GetContent(uint32_t index) const {
-  if (index < m_Children.size() && m_Children[index].type == Content) {
-    CXML_Content* pContent =
-        static_cast<CXML_Content*>(m_Children[index].child);
-    if (pContent)
-      return pContent->m_Content;
-  }
-  return CFX_WideString();
-}
-
-CXML_Element* CXML_Element::GetElement(uint32_t index) const {
-  if (index < m_Children.size() && m_Children[index].type == Element)
-    return static_cast<CXML_Element*>(m_Children[index].child);
-  return nullptr;
-}
-
 uint32_t CXML_Element::CountElements(const CFX_ByteStringC& space,
                                      const CFX_ByteStringC& tag) const {
   int count = 0;
-  for (const ChildRecord& record : m_Children) {
-    if (record.type != Element)
-      continue;
-
-    CXML_Element* pKid = static_cast<CXML_Element*>(record.child);
-    if ((space.IsEmpty() || pKid->m_QSpaceName == space) &&
-        pKid->m_TagName == tag) {
+  for (const auto& pChild : m_Children) {
+    const CXML_Element* pKid = pChild->AsElement();
+    if (pKid && pKid->m_TagName == tag &&
+        (space.IsEmpty() || pKid->m_QSpaceName == space)) {
       count++;
     }
   }
   return count;
 }
 
+CXML_Object* CXML_Element::GetChild(uint32_t index) const {
+  return index < m_Children.size() ? m_Children[index].get() : nullptr;
+}
+
 CXML_Element* CXML_Element::GetElement(const CFX_ByteStringC& space,
                                        const CFX_ByteStringC& tag,
-                                       int index) const {
-  if (index < 0)
+                                       int nth) const {
+  if (nth < 0)
     return nullptr;
 
-  for (const ChildRecord& record : m_Children) {
-    if (record.type != Element)
-      continue;
-
-    CXML_Element* pKid = static_cast<CXML_Element*>(record.child);
-    if ((space.IsEmpty() || pKid->m_QSpaceName == space) &&
-        pKid->m_TagName == tag) {
-      if (index-- == 0)
+  for (const auto& pChild : m_Children) {
+    CXML_Element* pKid = pChild->AsElement();
+    if (pKid && pKid->m_TagName == tag &&
+        (space.IsEmpty() || pKid->m_QSpaceName == space)) {
+      if (nth-- == 0)
         return pKid;
     }
   }
   return nullptr;
 }
 
-uint32_t CXML_Element::FindElement(CXML_Element* pChild) const {
+uint32_t CXML_Element::FindElement(CXML_Element* pElement) const {
   int index = 0;
-  for (const ChildRecord& record : m_Children) {
-    if (record.type == Element &&
-        static_cast<CXML_Element*>(record.child) == pChild) {
+  for (const auto& pChild : m_Children) {
+    CXML_Element* pKid = pChild->AsElement();
+    if (pKid && pKid == pElement)
       return index;
-    }
+
     ++index;
   }
   return 0xFFFFFFFF;
