@@ -9,6 +9,8 @@
 #include <utility>
 
 #include "core/fxcodec/lbmp/fx_bmp.h"
+#include "core/fxcodec/lgif/cgifdecompressor.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 static_assert(sizeof(GifImageInfo) == 9,
@@ -21,21 +23,13 @@ static_assert(sizeof(GifLSD) == 7, "GifLSD should have a size of 7");
 
 namespace {
 
-void gif_error(gif_decompress_struct_p gif_ptr, const char* err_msg) {
-  if (gif_ptr && gif_ptr->gif_error_fn)
-    gif_ptr->gif_error_fn(gif_ptr, err_msg);
-}
-
-void gif_warn(gif_decompress_struct_p gif_ptr, const char* err_msg) {}
-
-void gif_takeover_gce_ptr(gif_decompress_struct_p gif_ptr,
-                          GifGCE** gce_ptr_ptr) {
+void gif_takeover_gce_ptr(CGifDecompressor* gif_ptr, GifGCE** gce_ptr_ptr) {
   *gce_ptr_ptr = nullptr;
   if (gif_ptr->gce_ptr)
     std::swap(*gce_ptr_ptr, gif_ptr->gce_ptr);
 }
 
-uint8_t* gif_read_data(gif_decompress_struct_p gif_ptr,
+uint8_t* gif_read_data(CGifDecompressor* gif_ptr,
                        uint8_t** des_buf_pp,
                        uint32_t data_size) {
   if (!gif_ptr || gif_ptr->avail_in < gif_ptr->skip_size + data_size)
@@ -46,14 +40,14 @@ uint8_t* gif_read_data(gif_decompress_struct_p gif_ptr,
   return *des_buf_pp;
 }
 
-void gif_save_decoding_status(gif_decompress_struct_p gif_ptr, int32_t status) {
+void gif_save_decoding_status(CGifDecompressor* gif_ptr, int32_t status) {
   gif_ptr->decode_status = status;
   gif_ptr->next_in += gif_ptr->skip_size;
   gif_ptr->avail_in -= gif_ptr->skip_size;
   gif_ptr->skip_size = 0;
 }
 
-GifDecodeStatus gif_decode_extension(gif_decompress_struct_p gif_ptr) {
+GifDecodeStatus gif_decode_extension(CGifDecompressor* gif_ptr) {
   uint8_t* data_size_ptr = nullptr;
   uint8_t* data_ptr = nullptr;
   uint32_t skip_size_org = gif_ptr->skip_size;
@@ -160,9 +154,9 @@ GifDecodeStatus gif_decode_extension(gif_decompress_struct_p gif_ptr) {
   return GifDecodeStatus::Success;
 }
 
-GifDecodeStatus gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
+GifDecodeStatus gif_decode_image_info(CGifDecompressor* gif_ptr) {
   if (gif_ptr->width == 0 || gif_ptr->height == 0) {
-    gif_error(gif_ptr, "No Image Header Info");
+    gif_ptr->ErrorData("No Image Header Info");
     return GifDecodeStatus::Error;
   }
   uint32_t skip_size_org = gif_ptr->skip_size;
@@ -191,7 +185,7 @@ GifDecodeStatus gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
     FX_Free(gif_image_ptr->image_info_ptr);
     FX_Free(gif_image_ptr->image_row_buf);
     FX_Free(gif_image_ptr);
-    gif_error(gif_ptr, "Image Data Out Of LSD, The File May Be Corrupt");
+    gif_ptr->ErrorData("Image Data Out Of LSD, The File May Be Corrupt");
     return GifDecodeStatus::Error;
   }
   GifLF* gif_img_info_lf_ptr = (GifLF*)&gif_img_info_ptr->local_flag;
@@ -206,7 +200,7 @@ GifDecodeStatus gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
       return GifDecodeStatus::Unfinished;
     }
     gif_image_ptr->local_pal_ptr =
-        (GifPalette*)gif_ptr->gif_ask_buf_for_pal_fn(gif_ptr, loc_pal_size);
+        (GifPalette*)gif_ptr->AskBufForPal(loc_pal_size);
     if (gif_image_ptr->local_pal_ptr) {
       memcpy((uint8_t*)gif_image_ptr->local_pal_ptr, loc_pal_ptr, loc_pal_size);
     }
@@ -221,8 +215,7 @@ GifDecodeStatus gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
     return GifDecodeStatus::Unfinished;
   }
   gif_image_ptr->image_code_size = *code_size_ptr;
-  gif_ptr->gif_record_current_position_fn(gif_ptr,
-                                          &gif_image_ptr->image_data_pos);
+  gif_ptr->RecordCurrentPosition(&gif_image_ptr->image_data_pos);
   gif_image_ptr->image_data_pos += gif_ptr->skip_size;
   gif_takeover_gce_ptr(gif_ptr, &gif_image_ptr->image_gce_ptr);
   gif_ptr->img_ptr_arr_ptr->push_back(gif_image_ptr);
@@ -230,12 +223,12 @@ GifDecodeStatus gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
   return GifDecodeStatus::Success;
 }
 
-void gif_decoding_failure_at_tail_cleanup(gif_decompress_struct_p gif_ptr,
+void gif_decoding_failure_at_tail_cleanup(CGifDecompressor* gif_ptr,
                                           GifImage* gif_image_ptr) {
   FX_Free(gif_image_ptr->image_row_buf);
   gif_image_ptr->image_row_buf = nullptr;
   gif_save_decoding_status(gif_ptr, GIF_D_STATUS_TAIL);
-  gif_error(gif_ptr, "Decode Image Data Error");
+  gif_ptr->ErrorData("Decode Image Data Error");
 }
 
 }  // namespace
@@ -403,56 +396,7 @@ GifDecodeStatus CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t* des_size) {
   return GifDecodeStatus::Error;
 }
 
-gif_decompress_struct_p gif_create_decompress() {
-  gif_decompress_struct_p gif_ptr = FX_Alloc(gif_decompress_struct, 1);
-  memset(gif_ptr, 0, sizeof(gif_decompress_struct));
-  gif_ptr->decode_status = GIF_D_STATUS_SIG;
-  gif_ptr->img_ptr_arr_ptr = new std::vector<GifImage*>;
-  gif_ptr->cmt_data_ptr = new CFX_ByteString;
-  gif_ptr->pt_ptr_arr_ptr = new std::vector<GifPlainText*>;
-  return gif_ptr;
-}
-
-void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr) {
-  if (!gif_ptr_ptr || !*gif_ptr_ptr)
-    return;
-
-  gif_decompress_struct_p gif_ptr = *gif_ptr_ptr;
-  *gif_ptr_ptr = nullptr;
-  FX_Free(gif_ptr->global_pal_ptr);
-  delete gif_ptr->img_decoder_ptr;
-  if (gif_ptr->img_ptr_arr_ptr) {
-    size_t size_img_arr = gif_ptr->img_ptr_arr_ptr->size();
-    for (size_t i = 0; i < size_img_arr; i++) {
-      GifImage* p = (*gif_ptr->img_ptr_arr_ptr)[i];
-      FX_Free(p->image_info_ptr);
-      FX_Free(p->image_gce_ptr);
-      FX_Free(p->image_row_buf);
-      if (p->local_pal_ptr && p->local_pal_ptr != gif_ptr->global_pal_ptr)
-        FX_Free(p->local_pal_ptr);
-      FX_Free(p);
-    }
-    gif_ptr->img_ptr_arr_ptr->clear();
-    delete gif_ptr->img_ptr_arr_ptr;
-  }
-  delete gif_ptr->cmt_data_ptr;
-  FX_Free(gif_ptr->gce_ptr);
-  if (gif_ptr->pt_ptr_arr_ptr) {
-    size_t size_pt_arr = gif_ptr->pt_ptr_arr_ptr->size();
-    for (size_t i = 0; i < size_pt_arr; i++) {
-      GifPlainText* p = (*gif_ptr->pt_ptr_arr_ptr)[i];
-      FX_Free(p->gce_ptr);
-      FX_Free(p->pte_ptr);
-      delete p->string_ptr;
-      FX_Free(p);
-    }
-    gif_ptr->pt_ptr_arr_ptr->clear();
-    delete gif_ptr->pt_ptr_arr_ptr;
-  }
-  FX_Free(gif_ptr);
-}
-
-GifDecodeStatus gif_read_header(gif_decompress_struct_p gif_ptr) {
+GifDecodeStatus gif_read_header(CGifDecompressor* gif_ptr) {
   if (!gif_ptr)
     return GifDecodeStatus::Error;
 
@@ -463,7 +407,7 @@ GifDecodeStatus gif_read_header(gif_decompress_struct_p gif_ptr) {
 
   if (strncmp(gif_header_ptr->signature, GIF_SIGNATURE, 3) != 0 ||
       gif_header_ptr->version[0] != '8' || gif_header_ptr->version[2] != 'a') {
-    gif_error(gif_ptr, "Not A Gif Image");
+    gif_ptr->ErrorData("Not A Gif Image");
     return GifDecodeStatus::Error;
   }
   GifLSD* gif_lsd_ptr = nullptr;
@@ -483,9 +427,8 @@ GifDecodeStatus gif_read_header(gif_decompress_struct_p gif_ptr) {
     gif_ptr->global_sort_flag = ((GifGF*)&gif_lsd_ptr->global_flag)->sort_flag;
     gif_ptr->global_color_resolution =
         ((GifGF*)&gif_lsd_ptr->global_flag)->color_resolution;
-    FX_Free(gif_ptr->global_pal_ptr);
-    gif_ptr->global_pal_ptr = (GifPalette*)FX_Alloc(uint8_t, global_pal_size);
-    memcpy(gif_ptr->global_pal_ptr, global_pal_ptr, global_pal_size);
+    gif_ptr->m_GlobalPalette.resize(global_pal_size / 3);
+    memcpy(gif_ptr->m_GlobalPalette.data(), global_pal_ptr, global_pal_size);
   }
   gif_ptr->width = (int)GetWord_LSBFirst((uint8_t*)&gif_lsd_ptr->width);
   gif_ptr->height = (int)GetWord_LSBFirst((uint8_t*)&gif_lsd_ptr->height);
@@ -494,7 +437,7 @@ GifDecodeStatus gif_read_header(gif_decompress_struct_p gif_ptr) {
   return GifDecodeStatus::Success;
 }
 
-GifDecodeStatus gif_get_frame(gif_decompress_struct_p gif_ptr) {
+GifDecodeStatus gif_get_frame(CGifDecompressor* gif_ptr) {
   if (!gif_ptr)
     return GifDecodeStatus::Error;
 
@@ -520,11 +463,11 @@ GifDecodeStatus gif_get_frame(gif_decompress_struct_p gif_ptr) {
             return GifDecodeStatus::Success;
           default:
             if (gif_ptr->avail_in) {
-              gif_warn(gif_ptr, "The Gif File has non_standard Tag!");
+              // The Gif File has non_standard Tag!
               gif_save_decoding_status(gif_ptr, GIF_D_STATUS_SIG);
               continue;
             }
-            gif_warn(gif_ptr, "The Gif File Doesn't have Trailer Tag!");
+            // The Gif File Doesn't have Trailer Tag!
             return GifDecodeStatus::Success;
         }
       }
@@ -590,8 +533,7 @@ GifDecodeStatus gif_get_frame(gif_decompress_struct_p gif_ptr) {
   return GifDecodeStatus::Success;
 }
 
-GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
-                               int32_t frame_num) {
+GifDecodeStatus gif_load_frame(CGifDecompressor* gif_ptr, int32_t frame_num) {
   if (!gif_ptr || !pdfium::IndexInBounds(*gif_ptr->img_ptr_arr_ptr, frame_num))
     return GifDecodeStatus::Error;
 
@@ -601,7 +543,7 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
   GifImage* gif_image_ptr = (*gif_ptr->img_ptr_arr_ptr)[frame_num];
   uint32_t gif_img_row_bytes = gif_image_ptr->image_info_ptr->width;
   if (gif_img_row_bytes == 0) {
-    gif_error(gif_ptr, "Error Invalid Number of Row Bytes");
+    gif_ptr->ErrorData("Error Invalid Number of Row Bytes");
     return GifDecodeStatus::Error;
   }
   if (gif_ptr->decode_status == GIF_D_STATUS_TAIL) {
@@ -618,9 +560,8 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
             : 0;
     gif_ptr->avail_in = 0;
     if (!gif_img_gce_ptr) {
-      bool bRes = gif_ptr->gif_get_record_position_fn(
-          gif_ptr, gif_image_ptr->image_data_pos,
-          gif_image_ptr->image_info_ptr->left,
+      bool bRes = gif_ptr->GetRecordPosition(
+          gif_image_ptr->image_data_pos, gif_image_ptr->image_info_ptr->left,
           gif_image_ptr->image_info_ptr->top,
           gif_image_ptr->image_info_ptr->width,
           gif_image_ptr->image_info_ptr->height, loc_pal_num,
@@ -630,13 +571,12 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
       if (!bRes) {
         FX_Free(gif_image_ptr->image_row_buf);
         gif_image_ptr->image_row_buf = nullptr;
-        gif_error(gif_ptr, "Error Read Record Position Data");
+        gif_ptr->ErrorData("Error Read Record Position Data");
         return GifDecodeStatus::Error;
       }
     } else {
-      bool bRes = gif_ptr->gif_get_record_position_fn(
-          gif_ptr, gif_image_ptr->image_data_pos,
-          gif_image_ptr->image_info_ptr->left,
+      bool bRes = gif_ptr->GetRecordPosition(
+          gif_image_ptr->image_data_pos, gif_image_ptr->image_info_ptr->left,
           gif_image_ptr->image_info_ptr->top,
           gif_image_ptr->image_info_ptr->width,
           gif_image_ptr->image_info_ptr->height, loc_pal_num,
@@ -653,26 +593,27 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
       if (!bRes) {
         FX_Free(gif_image_ptr->image_row_buf);
         gif_image_ptr->image_row_buf = nullptr;
-        gif_error(gif_ptr, "Error Read Record Position Data");
+        gif_ptr->ErrorData("Error Read Record Position Data");
         return GifDecodeStatus::Error;
       }
     }
     if (gif_image_ptr->image_code_size >= 32) {
       FX_Free(gif_image_ptr->image_row_buf);
       gif_image_ptr->image_row_buf = nullptr;
-      gif_error(gif_ptr, "Error Invalid Code Size");
+      gif_ptr->ErrorData("Error Invalid Code Size");
       return GifDecodeStatus::Error;
     }
-    if (!gif_ptr->img_decoder_ptr)
-      gif_ptr->img_decoder_ptr = new CGifLZWDecoder(gif_ptr->err_ptr);
-    gif_ptr->img_decoder_ptr->InitTable(gif_image_ptr->image_code_size);
+    if (!gif_ptr->m_ImgDecoder.get())
+      gif_ptr->m_ImgDecoder =
+          pdfium::MakeUnique<CGifLZWDecoder>(gif_ptr->err_ptr);
+    gif_ptr->m_ImgDecoder->InitTable(gif_image_ptr->image_code_size);
     gif_ptr->img_row_offset = 0;
     gif_ptr->img_row_avail_size = 0;
     gif_ptr->img_pass_num = 0;
     gif_image_ptr->image_row_num = 0;
     gif_save_decoding_status(gif_ptr, GIF_D_STATUS_IMG_DATA);
   }
-  CGifLZWDecoder* img_decoder_ptr = gif_ptr->img_decoder_ptr;
+  CGifLZWDecoder* img_decoder_ptr = gif_ptr->m_ImgDecoder.get();
   if (gif_ptr->decode_status == GIF_D_STATUS_IMG_DATA) {
     if (!gif_read_data(gif_ptr, &data_size_ptr, 1))
       return GifDecodeStatus::Unfinished;
@@ -695,8 +636,8 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
       }
       while (ret != GifDecodeStatus::Error) {
         if (ret == GifDecodeStatus::Success) {
-          gif_ptr->gif_get_row_fn(gif_ptr, gif_image_ptr->image_row_num,
-                                  gif_image_ptr->image_row_buf);
+          gif_ptr->ReadScanline(gif_image_ptr->image_row_num,
+                                gif_image_ptr->image_row_buf);
           FX_Free(gif_image_ptr->image_row_buf);
           gif_image_ptr->image_row_buf = nullptr;
           gif_save_decoding_status(gif_ptr, GIF_D_STATUS_TAIL);
@@ -725,8 +666,8 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
         }
         if (ret == GifDecodeStatus::InsufficientDestSize) {
           if (((GifLF*)&gif_image_ptr->image_info_ptr->local_flag)->interlace) {
-            gif_ptr->gif_get_row_fn(gif_ptr, gif_image_ptr->image_row_num,
-                                    gif_image_ptr->image_row_buf);
+            gif_ptr->ReadScanline(gif_image_ptr->image_row_num,
+                                  gif_image_ptr->image_row_buf);
             gif_image_ptr->image_row_num +=
                 s_gif_interlace_step[gif_ptr->img_pass_num];
             if (gif_image_ptr->image_row_num >=
@@ -740,8 +681,8 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
                   s_gif_interlace_step[gif_ptr->img_pass_num] / 2;
             }
           } else {
-            gif_ptr->gif_get_row_fn(gif_ptr, gif_image_ptr->image_row_num++,
-                                    gif_image_ptr->image_row_buf);
+            gif_ptr->ReadScanline(gif_image_ptr->image_row_num++,
+                                  gif_image_ptr->image_row_buf);
           }
           gif_ptr->img_row_offset = 0;
           gif_ptr->img_row_avail_size = gif_img_row_bytes;
@@ -757,11 +698,11 @@ GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
     }
     gif_save_decoding_status(gif_ptr, GIF_D_STATUS_TAIL);
   }
-  gif_error(gif_ptr, "Decode Image Data Error");
+  gif_ptr->ErrorData("Decode Image Data Error");
   return GifDecodeStatus::Error;
 }
 
-void gif_input_buffer(gif_decompress_struct_p gif_ptr,
+void gif_input_buffer(CGifDecompressor* gif_ptr,
                       uint8_t* src_buf,
                       uint32_t src_size) {
   gif_ptr->next_in = src_buf;
@@ -769,7 +710,7 @@ void gif_input_buffer(gif_decompress_struct_p gif_ptr,
   gif_ptr->skip_size = 0;
 }
 
-uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
+uint32_t gif_get_avail_input(CGifDecompressor* gif_ptr,
                              uint8_t** avail_buf_ptr) {
   if (avail_buf_ptr) {
     *avail_buf_ptr = nullptr;
@@ -779,6 +720,6 @@ uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
   return gif_ptr->avail_in;
 }
 
-int32_t gif_get_frame_num(gif_decompress_struct_p gif_ptr) {
+int32_t gif_get_frame_num(CGifDecompressor* gif_ptr) {
   return pdfium::CollectionSize<int32_t>(*gif_ptr->img_ptr_arr_ptr);
 }

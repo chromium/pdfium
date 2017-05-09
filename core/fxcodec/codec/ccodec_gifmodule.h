@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBAttribute;
-struct FXGIF_Context;
+class FXGIF_Context;
 
 class CCodec_GifModule {
  public:

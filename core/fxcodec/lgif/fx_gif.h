@@ -12,6 +12,8 @@
 
 #include "core/fxcrt/fx_basic.h"
 
+class CGifDecompressor;
+
 #define GIF_SIGNATURE "GIF"
 #define GIF_SIG_EXTENSION 0x21
 #define GIF_SIG_IMAGE 0x2C
@@ -162,69 +164,16 @@ class CGifLZWDecoder {
   char* err_msg_ptr;
 };
 
-typedef struct tag_gif_decompress_struct gif_decompress_struct;
-typedef gif_decompress_struct* gif_decompress_struct_p;
-typedef gif_decompress_struct_p* gif_decompress_struct_pp;
 static const int32_t s_gif_interlace_step[4] = {8, 8, 4, 2};
-struct tag_gif_decompress_struct {
-  jmp_buf jmpbuf;
-  char* err_ptr;
-  void (*gif_error_fn)(gif_decompress_struct_p gif_ptr, const char* err_msg);
-  void* context_ptr;
-  int width;
-  int height;
-  GifPalette* global_pal_ptr;
-  int32_t global_pal_num;
-  uint8_t global_sort_flag;
-  uint8_t global_color_resolution;
 
-  uint8_t bc_index;
-  uint8_t pixel_aspect;
-  CGifLZWDecoder* img_decoder_ptr;
-  uint32_t img_row_offset;
-  uint32_t img_row_avail_size;
-  uint8_t img_pass_num;
-  std::vector<GifImage*>* img_ptr_arr_ptr;
-  uint8_t* (*gif_ask_buf_for_pal_fn)(gif_decompress_struct_p gif_ptr,
-                                     int32_t pal_size);
-  uint8_t* next_in;
-  uint32_t avail_in;
-  int32_t decode_status;
-  uint32_t skip_size;
-  void (*gif_record_current_position_fn)(gif_decompress_struct_p gif_ptr,
-                                         uint32_t* cur_pos_ptr);
-  void (*gif_get_row_fn)(gif_decompress_struct_p gif_ptr,
-                         int32_t row_num,
-                         uint8_t* row_buf);
-  bool (*gif_get_record_position_fn)(gif_decompress_struct_p gif_ptr,
-                                     uint32_t cur_pos,
-                                     int32_t left,
-                                     int32_t top,
-                                     int32_t width,
-                                     int32_t height,
-                                     int32_t pal_num,
-                                     void* pal_ptr,
-                                     int32_t delay_time,
-                                     bool user_input,
-                                     int32_t trans_index,
-                                     int32_t disposal_method,
-                                     bool interlace);
-  CFX_ByteString* cmt_data_ptr;
-  GifGCE* gce_ptr;
-  std::vector<GifPlainText*>* pt_ptr_arr_ptr;
-};
-
-gif_decompress_struct_p gif_create_decompress();
-void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr);
-GifDecodeStatus gif_read_header(gif_decompress_struct_p gif_ptr);
-GifDecodeStatus gif_get_frame(gif_decompress_struct_p gif_ptr);
-int32_t gif_get_frame_num(gif_decompress_struct_p gif_ptr);
-GifDecodeStatus gif_load_frame(gif_decompress_struct_p gif_ptr,
-                               int32_t frame_num);
-void gif_input_buffer(gif_decompress_struct_p gif_ptr,
+GifDecodeStatus gif_read_header(CGifDecompressor* gif_ptr);
+GifDecodeStatus gif_get_frame(CGifDecompressor* gif_ptr);
+int32_t gif_get_frame_num(CGifDecompressor* gif_ptr);
+GifDecodeStatus gif_load_frame(CGifDecompressor* gif_ptr, int32_t frame_num);
+void gif_input_buffer(CGifDecompressor* gif_ptr,
                       uint8_t* src_buf,
                       uint32_t src_size);
-uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
+uint32_t gif_get_avail_input(CGifDecompressor* gif_ptr,
                              uint8_t** avail_buf_ptr);
 
 #endif  // CORE_FXCODEC_LGIF_FX_GIF_H_
