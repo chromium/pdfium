@@ -53,11 +53,6 @@ FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
   return pImageObj.release();
 }
 
-DLLEXPORT FPDF_PAGEOBJECT STDCALL
-FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
-  return FPDFPageObj_NewImageObj(document);
-}
-
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
                           int nCount,
