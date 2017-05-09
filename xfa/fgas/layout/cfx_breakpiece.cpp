@@ -19,8 +19,7 @@ CFX_BreakPiece::CFX_BreakPiece()
       m_iVerticalScale(100),
       m_dwIdentity(0),
       m_dwCharStyles(0),
-      m_pChars(nullptr),
-      m_pUserData(nullptr) {}
+      m_pChars(nullptr) {}
 
 CFX_BreakPiece::CFX_BreakPiece(const CFX_BreakPiece& other) = default;
 

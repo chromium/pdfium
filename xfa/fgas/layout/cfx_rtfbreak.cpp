@@ -16,8 +16,7 @@
 CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
     : CFX_Break(dwLayoutStyles),
       m_bPagination(false),
-      m_iAlignment(CFX_RTFLineAlignment::Left),
-      m_pUserData(nullptr) {
+      m_iAlignment(CFX_RTFLineAlignment::Left) {
   SetBreakStatus();
   m_bPagination = !!(m_dwLayoutStyles & FX_LAYOUTSTYLE_Pagination);
 }
@@ -41,7 +40,8 @@ void CFX_RTFBreak::AddPositionedTab(float fTabPos) {
   m_PositionedTabs.insert(it, iTabPos);
 }
 
-void CFX_RTFBreak::SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData) {
+void CFX_RTFBreak::SetUserData(
+    const CFX_RetainPtr<CXFA_TextUserData>& pUserData) {
   if (m_pUserData == pUserData)
     return;
 
@@ -339,7 +339,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
       tp.m_iVerticalScale = pTC->m_iVerticalScale;
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData;
+      tp.m_pUserData = pTC->m_pUserData.As<CXFA_TextUserData>();
       j = i;
       bNew = false;
     }
@@ -412,7 +412,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       tp.m_iVerticalScale = pTC->m_iVerticalScale;
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData;
+      tp.m_pUserData = pTC->m_pUserData.As<CXFA_TextUserData>();
       tp.m_dwStatus = CFX_BreakType::Piece;
       ++i;
     } else if (iBidiLevel != pTC->m_iBidiLevel ||
