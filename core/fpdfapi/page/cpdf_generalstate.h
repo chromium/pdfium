@@ -22,7 +22,7 @@ class CPDF_GeneralState {
   ~CPDF_GeneralState();
 
   void Emplace() { m_Ref.Emplace(); }
-  explicit operator bool() const { return !!m_Ref; }
+  bool HasRef() const { return !!m_Ref; }
 
   void SetRenderIntent(const CFX_ByteString& ri);
 

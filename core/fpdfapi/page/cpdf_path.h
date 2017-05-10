@@ -22,7 +22,7 @@ class CPDF_Path {
   ~CPDF_Path();
 
   void Emplace() { m_Ref.Emplace(); }
-  explicit operator bool() const { return !!m_Ref; }
+  bool HasRef() const { return !!m_Ref; }
 
   const std::vector<FX_PATHPOINT>& GetPoints() const;
   void ClosePath();

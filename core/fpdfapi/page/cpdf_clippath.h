@@ -28,7 +28,7 @@ class CPDF_ClipPath {
   void Emplace() { m_Ref.Emplace(); }
   void SetNull() { m_Ref.SetNull(); }
 
-  explicit operator bool() const { return !!m_Ref; }
+  bool HasRef() const { return !!m_Ref; }
   bool operator==(const CPDF_ClipPath& that) const {
     return m_Ref == that.m_Ref;
   }

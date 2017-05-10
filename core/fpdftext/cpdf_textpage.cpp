@@ -800,7 +800,7 @@ void CPDF_TextPage::ProcessTextObject(
 
 FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
-  if (!pTextObj->m_ContentMark)
+  if (!pTextObj->m_ContentMark.HasRef())
     return FPDFText_MarkedContent::Pass;
 
   int nContentMark = pTextObj->m_ContentMark.CountItems();
@@ -825,7 +825,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   if (!bExist)
     return FPDFText_MarkedContent::Pass;
 
-  if (m_pPreTextObj && m_pPreTextObj->m_ContentMark &&
+  if (m_pPreTextObj && m_pPreTextObj->m_ContentMark.HasRef() &&
       m_pPreTextObj->m_ContentMark.CountItems() == n &&
       pDict == m_pPreTextObj->m_ContentMark.GetItem(n - 1).GetParam()) {
     return FPDFText_MarkedContent::Done;
@@ -863,7 +863,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
 
 void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
-  if (!pTextObj->m_ContentMark)
+  if (!pTextObj->m_ContentMark.HasRef())
     return;
 
   int nContentMark = pTextObj->m_ContentMark.CountItems();

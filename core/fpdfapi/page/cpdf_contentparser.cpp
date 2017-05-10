@@ -102,7 +102,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
       pParentMatrix, pForm, pResources, &form_bbox, pGraphicStates, level);
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
-  if (ClipPath) {
+  if (ClipPath.HasRef()) {
     m_pParser->GetCurStates()->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING,
                                                      true);
   }
@@ -195,7 +195,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
             FXSYS_round(m_pParser->GetType3Data()[5] * 1000);
       }
       for (auto& pObj : *m_pObjectHolder->GetPageObjectList()) {
-        if (!pObj->m_ClipPath)
+        if (!pObj->m_ClipPath.HasRef())
           continue;
         if (pObj->m_ClipPath.GetPathCount() != 1)
           continue;

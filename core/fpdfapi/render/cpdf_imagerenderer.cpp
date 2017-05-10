@@ -133,7 +133,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
   if (m_bPatternColor)
     return DrawPatternImage(m_pObj2Device);
 
-  if (m_BitmapAlpha != 255 || !state || !state.GetFillOP() ||
+  if (m_BitmapAlpha != 255 || !state.HasRef() || !state.GetFillOP() ||
       state.GetOPMode() != 0 || state.GetBlendType() != FXDIB_BLEND_NORMAL ||
       state.GetStrokeAlpha() != 1.0f || state.GetFillAlpha() != 1.0f) {
     return StartDIBSource();

@@ -1068,7 +1068,7 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
     return;
   }
   m_pCurObj = pObj;
-  if (m_Options.m_pOCContext && pObj->m_ContentMark) {
+  if (m_Options.m_pOCContext && pObj->m_ContentMark.HasRef()) {
     if (!m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
       return;
     }
@@ -1097,7 +1097,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
   }
 
   m_pCurObj = pObj;
-  if (m_Options.m_pOCContext && pObj->m_ContentMark &&
+  if (m_Options.m_pOCContext && pObj->m_ContentMark.HasRef() &&
       !m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
     return false;
   }
@@ -1315,10 +1315,10 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
   if (m_pType3Char && !bType3 &&
       (!m_pType3Char->m_bColored ||
        (m_pType3Char->m_bColored &&
-        (!*pColorState || pColorState->GetFillColor()->IsNull())))) {
+        (!pColorState->HasRef() || pColorState->GetFillColor()->IsNull())))) {
     return m_T3FillColor;
   }
-  if (!*pColorState || pColorState->GetFillColor()->IsNull())
+  if (!pColorState->HasRef() || pColorState->GetFillColor()->IsNull())
     pColorState = &m_InitialStates.m_ColorState;
 
   FX_COLORREF rgb = pColorState->GetFillRGB();
@@ -1343,10 +1343,10 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
   if (m_pType3Char &&
       (!m_pType3Char->m_bColored ||
        (m_pType3Char->m_bColored &&
-        (!*pColorState || pColorState->GetStrokeColor()->IsNull())))) {
+        (!pColorState->HasRef() || pColorState->GetStrokeColor()->IsNull())))) {
     return m_T3FillColor;
   }
-  if (!*pColorState || pColorState->GetStrokeColor()->IsNull())
+  if (!pColorState->HasRef() || pColorState->GetStrokeColor()->IsNull())
     pColorState = &m_InitialStates.m_ColorState;
 
   FX_COLORREF rgb = pColorState->GetStrokeRGB();
@@ -1368,8 +1368,8 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
 
 void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
                                         const CFX_Matrix* pObj2Device) {
-  if (!ClipPath) {
-    if (m_LastClipPath) {
+  if (!ClipPath.HasRef()) {
+    if (m_LastClipPath.HasRef()) {
       m_pDevice->RestoreState(true);
       m_LastClipPath.SetNull();
     }
@@ -1477,7 +1477,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     }
   }
   bool bTextClip =
-      (pPageObj->m_ClipPath && pPageObj->m_ClipPath.GetTextCount() &&
+      (pPageObj->m_ClipPath.HasRef() && pPageObj->m_ClipPath.GetTextCount() &&
        m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
   if ((m_Options.m_Flags & RENDER_OVERPRINT) && pPageObj->IsImage() &&

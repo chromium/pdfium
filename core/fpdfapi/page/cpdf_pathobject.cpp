@@ -32,7 +32,7 @@ const CPDF_PathObject* CPDF_PathObject::AsPath() const {
 }
 
 void CPDF_PathObject::CalcBoundingBox() {
-  if (!m_Path)
+  if (!m_Path.HasRef())
     return;
   CFX_FloatRect rect;
   float width = m_GraphState.GetLineWidth();

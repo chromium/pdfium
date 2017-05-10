@@ -44,7 +44,7 @@ class CPDF_ColorState {
   void SetFillPattern(CPDF_Pattern* pattern, float* pValue, uint32_t nValues);
   void SetStrokePattern(CPDF_Pattern* pattern, float* pValue, uint32_t nValues);
 
-  explicit operator bool() const { return !!m_Ref; }
+  bool HasRef() const { return !!m_Ref; }
 
  private:
   class ColorData {

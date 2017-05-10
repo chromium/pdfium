@@ -35,7 +35,7 @@ class CPDF_ContentMark {
                bool bDirect);
   void DeleteLastMark();
 
-  explicit operator bool() const { return !!m_Ref; }
+  bool HasRef() const { return !!m_Ref; }
 
  private:
   class MarkData {
