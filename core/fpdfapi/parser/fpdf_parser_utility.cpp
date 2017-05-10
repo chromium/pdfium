@@ -139,8 +139,8 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {
     if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
         PDFCharIsDelimiter(ch)) {
       dest_buf[dest_len++] = '#';
-      dest_buf[dest_len++] = "0123456789ABCDEF"[ch / 16];
-      dest_buf[dest_len++] = "0123456789ABCDEF"[ch % 16];
+      FXSYS_IntToTwoHexChars(ch, dest_buf + dest_len);
+      dest_len += 2;
     } else {
       dest_buf[dest_len++] = ch;
     }

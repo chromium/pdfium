@@ -517,8 +517,10 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, bool bHex) {
   if (bHex) {
     result.AppendChar('<');
     for (int i = 0; i < srclen; i++) {
-      result.AppendChar("0123456789ABCDEF"[src[i] / 16]);
-      result.AppendChar("0123456789ABCDEF"[src[i] % 16]);
+      char buf[2];
+      FXSYS_IntToTwoHexChars(src[i], buf);
+      result.AppendChar(buf[0]);
+      result.AppendChar(buf[1]);
     }
     result.AppendChar('>');
     return result.MakeString();
