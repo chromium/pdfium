@@ -84,6 +84,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
   void LoadJpxBitmap();
   void LoadPalette();
   int CreateDecoder();
+  bool CreateDCTDecoder(const uint8_t* src_data,
+                        uint32_t src_size,
+                        const CPDF_Dictionary* pParams);
   void TranslateScanline24bpp(uint8_t* dest_scan,
                               const uint8_t* src_scan) const;
   void ValidateDictParam();
