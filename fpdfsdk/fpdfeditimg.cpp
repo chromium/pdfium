@@ -20,16 +20,19 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
                     FPDF_PAGEOBJECT image_object,
                     FPDF_FILEACCESS* fileAccess,
                     bool inlineJpeg) {
-  if (!image_object || !fileAccess || !pages)
+  if (!image_object || !fileAccess)
     return false;
 
   CFX_RetainPtr<IFX_SeekableReadStream> pFile =
       MakeSeekableReadStream(fileAccess);
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
-  for (int index = 0; index < nCount; index++) {
-    CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
-    if (pPage)
-      pImgObj->GetImage()->ResetCache(pPage, nullptr);
+
+  if (pages) {
+    for (int index = 0; index < nCount; index++) {
+      CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
+      if (pPage)
+        pImgObj->GetImage()->ResetCache(pPage, nullptr);
+    }
   }
 
   if (inlineJpeg)
