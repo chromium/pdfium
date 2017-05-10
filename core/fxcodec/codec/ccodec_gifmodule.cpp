@@ -82,27 +82,18 @@ GifDecodeStatus CCodec_GifModule::LoadFrame(FXGIF_Context* ctx,
   if (ret == GifDecodeStatus::Success) {
     if (pAttribute) {
       pAttribute->m_nGifLeft =
-          (*ctx->m_Gif->img_ptr_arr_ptr)[frame_num]->image_info_ptr->left;
-      pAttribute->m_nGifTop =
-          (*ctx->m_Gif->img_ptr_arr_ptr)[frame_num]->image_info_ptr->top;
+          ctx->m_Gif->m_Images[frame_num]->m_ImageInfo.left;
+      pAttribute->m_nGifTop = ctx->m_Gif->m_Images[frame_num]->m_ImageInfo.top;
       pAttribute->m_fAspectRatio = ctx->m_Gif->pixel_aspect;
-      if (ctx->m_Gif->cmt_data_ptr) {
-        const uint8_t* buf =
-            (const uint8_t*)ctx->m_Gif->cmt_data_ptr->GetBuffer(0);
-        uint32_t len = ctx->m_Gif->cmt_data_ptr->GetLength();
-        if (len > 21) {
-          uint8_t size = *buf++;
-          if (size) {
-            pAttribute->m_strAuthor = CFX_ByteString(buf, size);
-          } else {
-            pAttribute->m_strAuthor.clear();
-          }
-          buf += size;
-          size = *buf++;
-          if (size == 20) {
-            memcpy(pAttribute->m_strTime, buf, size);
-          }
-        }
+      const uint8_t* buf =
+          reinterpret_cast<const uint8_t*>(ctx->m_Gif->cmt_data.GetBuffer(0));
+      uint32_t len = ctx->m_Gif->cmt_data.GetLength();
+      if (len > 21) {
+        uint8_t size = *buf++;
+        if (size != 0)
+          pAttribute->m_strAuthor = CFX_ByteString(buf, size);
+        else
+          pAttribute->m_strAuthor.clear();
       }
     }
   }

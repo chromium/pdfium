@@ -49,7 +49,6 @@ class CFX_DIBAttribute {
   float m_fAspectRatio;
   uint16_t m_wDPIUnit;
   CFX_ByteString m_strAuthor;
-  uint8_t m_strTime[20];
   int32_t m_nGifLeft;
   int32_t m_nGifTop;
   uint32_t* m_pGifLocalPalette;

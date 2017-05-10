@@ -252,9 +252,8 @@ CFX_DIBAttribute::CFX_DIBAttribute()
       m_nGifTop(0),
       m_pGifLocalPalette(nullptr),
       m_nGifLocalPalNum(0),
-      m_nBmpCompressType(0) {
-  memset(m_strTime, 0, sizeof(m_strTime));
-}
+      m_nBmpCompressType(0) {}
+
 CFX_DIBAttribute::~CFX_DIBAttribute() {
   for (const auto& pair : m_Exif)
     FX_Free(pair.second);

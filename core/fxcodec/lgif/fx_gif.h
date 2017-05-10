@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_LGIF_FX_GIF_H_
 
 #include <setjmp.h>
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
@@ -101,27 +102,26 @@ typedef struct tagGifAE {
 } GifAE;
 typedef struct tagGifPalette { uint8_t r, g, b; } GifPalette;
 #pragma pack()
-typedef struct tagGifImage {
-  GifGCE* image_gce_ptr;
-  GifPalette* local_pal_ptr;
-  GifImageInfo* image_info_ptr;
-  uint8_t image_code_size;
-  uint32_t image_data_pos;
-  uint8_t* image_row_buf;
-  int32_t image_row_num;
-} GifImage;
-
-typedef struct tagGifPlainText {
-  GifGCE* gce_ptr;
-  GifPTE* pte_ptr;
-  CFX_ByteString* string_ptr;
-} GifPlainText;
 
 enum class GifDecodeStatus {
   Error,
   Success,
   Unfinished,
   InsufficientDestSize,  // Only used internally by CGifLZWDecoder::Decode()
+};
+
+class GifImage {
+ public:
+  GifImage();
+  ~GifImage();
+
+  std::unique_ptr<GifGCE> m_ImageGCE;
+  std::vector<GifPalette> m_LocalPalettes;
+  std::vector<uint8_t> m_ImageRowBuf;
+  GifImageInfo m_ImageInfo;
+  uint8_t image_code_size;
+  uint32_t image_data_pos;
+  int32_t image_row_num;
 };
 
 class CGifLZWDecoder {

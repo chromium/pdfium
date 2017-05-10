@@ -32,7 +32,6 @@ class CGifDecompressor {
   ~CGifDecompressor();
 
   void ErrorData(const char* err_msg);
-  uint8_t* AskBufForPal(int32_t pal_size);
   void RecordCurrentPosition(uint32_t* cur_pos_ptr);
   void ReadScanline(int32_t row_num, uint8_t* row_buf);
   bool GetRecordPosition(uint32_t cur_pos,
@@ -41,7 +40,7 @@ class CGifDecompressor {
                          int32_t width,
                          int32_t height,
                          int32_t pal_num,
-                         void* pal_ptr,
+                         GifPalette* pal_ptr,
                          int32_t delay_time,
                          bool user_input,
                          int32_t trans_index,
@@ -58,12 +57,11 @@ class CGifDecompressor {
   uint32_t skip_size;
 
   char* err_ptr;
-  FXGIF_Context* context_ptr;
-  CFX_ByteString* cmt_data_ptr;
-  GifGCE* gce_ptr;
-  std::vector<GifPlainText*>* pt_ptr_arr_ptr;
+  FXGIF_Context* gif_context;
+  CFX_ByteString cmt_data;
+  std::unique_ptr<GifGCE> m_GifGCE;
   uint8_t* next_in;
-  std::vector<GifImage*>* img_ptr_arr_ptr;
+  std::vector<std::unique_ptr<GifImage>> m_Images;
   std::unique_ptr<CGifLZWDecoder> m_ImgDecoder;
 
   int width;

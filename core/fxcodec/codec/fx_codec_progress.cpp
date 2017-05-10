@@ -615,11 +615,6 @@ void CCodec_ProgressiveDecoder::GifRecordCurrentPosition(uint32_t& cur_pos) {
   cur_pos = m_offSet - remain_size;
 }
 
-uint8_t* CCodec_ProgressiveDecoder::GifAskLocalPaletteBuf(int32_t frame_num,
-                                                          int32_t pal_size) {
-  return FX_Alloc(uint8_t, pal_size);
-}
-
 bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
     uint32_t rcd_pos,
     const FX_RECT& img_rc,

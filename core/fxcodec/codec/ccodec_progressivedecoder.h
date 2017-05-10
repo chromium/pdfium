@@ -179,7 +179,6 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
 
   // CCodec_GifModule::Delegate
   void GifRecordCurrentPosition(uint32_t& cur_pos) override;
-  uint8_t* GifAskLocalPaletteBuf(int32_t frame_num, int32_t pal_size) override;
   bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                  const FX_RECT& img_rc,
                                  int32_t pal_num,
