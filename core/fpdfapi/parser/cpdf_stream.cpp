@@ -132,24 +132,12 @@ CFX_WideString CPDF_Stream::GetUnicodeText() const {
   return PDF_DecodeText(pAcc->GetData(), pAcc->GetSize());
 }
 
-bool CPDF_Stream::WriteTo(CFX_FileBufferArchive* archive,
-                          FX_FILESIZE* offset) const {
-  if (!GetDict()->WriteTo(archive, offset))
+bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive) const {
+  if (!GetDict()->WriteTo(archive) || !archive->WriteString("stream\r\n"))
     return false;
-  if (archive->AppendString("stream\r\n") < 0)
-    return false;
-  *offset += 8;
 
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
   pAcc->LoadAllData(true);
-  if (archive->AppendBlock(pAcc->GetData(), pAcc->GetSize()) < 0)
-    return false;
-  *offset += pAcc->GetSize();
-
-  int32_t len = archive->AppendString("\r\nendstream");
-  if (len < 0)
-    return false;
-
-  *offset += len;
-  return true;
+  return archive->WriteBlock(pAcc->GetData(), pAcc->GetSize()) &&
+         archive->WriteString("\r\nendstream");
 }

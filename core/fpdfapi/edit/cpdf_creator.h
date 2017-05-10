@@ -30,7 +30,7 @@ class CPDF_XRefStream;
 class CPDF_Creator {
  public:
   explicit CPDF_Creator(CPDF_Document* pDoc,
-                        const CFX_RetainPtr<IFX_WriteStream>& pFile);
+                        const CFX_RetainPtr<IFX_WriteStream>& archive);
   ~CPDF_Creator();
 
   void RemoveSecurity();
@@ -38,10 +38,8 @@ class CPDF_Creator {
   int32_t Continue();
   bool SetFileVersion(int32_t fileVersion);
 
-  CFX_FileBufferArchive* GetFile() { return &m_File; }
+  IFX_ArchiveStream* GetArchive() { return m_Archive.get(); }
 
-  FX_FILESIZE GetOffset() const { return m_Offset; }
-  void IncrementOffset(FX_FILESIZE inc);
   uint32_t GetNextObjectNumber() { return ++m_dwLastObjNum; }
   uint32_t GetLastObjectNumber() const { return m_dwLastObjNum; }
   CPDF_CryptoHandler* GetCryptoHandler() { return m_pCryptoHandler.Get(); }
@@ -102,8 +100,7 @@ class CPDF_Creator {
   CPDF_Object* m_pMetadata;
   std::unique_ptr<CPDF_XRefStream> m_pXRefStream;
   uint32_t m_dwLastObjNum;
-  CFX_FileBufferArchive m_File;
-  FX_FILESIZE m_Offset;
+  std::unique_ptr<IFX_ArchiveStream> m_Archive;
   FX_FILESIZE m_SavedOffset;
   int32_t m_iStage;
   uint32_t m_dwFlags;

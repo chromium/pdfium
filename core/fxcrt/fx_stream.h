@@ -44,6 +44,14 @@ class IFX_WriteStream : virtual public CFX_Retainable {
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
 };
 
+class IFX_ArchiveStream : public IFX_WriteStream {
+ public:
+  virtual bool WriteByte(uint8_t byte) = 0;
+  virtual bool WriteDWord(uint32_t i) = 0;
+  virtual bool WriteString(const CFX_ByteStringC& str) = 0;
+  virtual FX_FILESIZE CurrentOffset() const = 0;
+};
+
 class IFX_ReadStream : virtual public CFX_Retainable {
  public:
   virtual bool IsEOF() = 0;

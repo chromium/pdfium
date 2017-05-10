@@ -33,8 +33,7 @@ class CPDF_Stream : public CPDF_Object {
   bool IsStream() const override;
   CPDF_Stream* AsStream() override;
   const CPDF_Stream* AsStream() const override;
-  bool WriteTo(CFX_FileBufferArchive* archive,
-               FX_FILESIZE* offset) const override;
+  bool WriteTo(IFX_ArchiveStream* archive) const override;
 
   uint32_t GetRawSize() const { return m_dwSize; }
   uint8_t* GetRawData() const { return m_pDataBuf.get(); }

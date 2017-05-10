@@ -110,27 +110,6 @@ class CFX_WideTextBuf : public CFX_BinaryBuf {
   CFX_WideTextBuf& operator<<(const CFX_WideTextBuf& buf);
 };
 
-class CFX_FileBufferArchive {
- public:
-  CFX_FileBufferArchive();
-  ~CFX_FileBufferArchive();
-
-  void Clear();
-  bool Flush();
-  int32_t AppendBlock(const void* pBuf, size_t size);
-  int32_t AppendByte(uint8_t byte);
-  int32_t AppendDWord(uint32_t i);
-  int32_t AppendString(const CFX_ByteStringC& lpsz);
-  void AttachFile(const CFX_RetainPtr<IFX_WriteStream>& pFile);
-
- private:
-  static const size_t kBufSize = 32768;
-
-  size_t m_Length;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
-  CFX_RetainPtr<IFX_WriteStream> m_pFile;
-};
-
 class CFX_UTF8Decoder {
  public:
   CFX_UTF8Decoder() { m_PendingBytes = 0; }

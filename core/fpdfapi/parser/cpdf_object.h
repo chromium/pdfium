@@ -89,8 +89,7 @@ class CPDF_Object {
   virtual CPDF_String* AsString();
   virtual const CPDF_String* AsString() const;
 
-  virtual bool WriteTo(CFX_FileBufferArchive* archive,
-                       FX_FILESIZE* offset) const = 0;
+  virtual bool WriteTo(IFX_ArchiveStream* archive) const = 0;
 
  protected:
   friend class CPDF_Array;

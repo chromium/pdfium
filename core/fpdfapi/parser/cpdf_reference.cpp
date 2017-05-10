@@ -83,15 +83,7 @@ CPDF_Object* CPDF_Reference::GetDirect() const {
                     : nullptr;
 }
 
-bool CPDF_Reference::WriteTo(CFX_FileBufferArchive* archive,
-                             FX_FILESIZE* offset) const {
-  if (archive->AppendString(" ") < 0)
-    return false;
-  int32_t len = archive->AppendDWord(GetRefObjNum());
-  if (len < 0)
-    return false;
-  if (archive->AppendString(" 0 R ") < 0)
-    return false;
-  *offset += len + 6;
-  return true;
+bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive) const {
+  return archive->WriteString(" ") && archive->WriteDWord(GetRefObjNum()) &&
+         archive->WriteString(" 0 R ");
 }

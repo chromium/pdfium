@@ -239,40 +239,27 @@ CFX_ByteString CPDF_Dictionary::MaybeIntern(const CFX_ByteString& str) {
   return m_pPool ? m_pPool->Intern(str) : str;
 }
 
-bool CPDF_Dictionary::WriteTo(CFX_FileBufferArchive* archive,
-                              FX_FILESIZE* offset) const {
-  if (archive->AppendString("<<") < 0)
+bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive) const {
+  if (!archive->WriteString("<<"))
     return false;
-  *offset += 2;
 
   for (const auto& it : *this) {
     const CFX_ByteString& key = it.first;
     CPDF_Object* pValue = it.second.get();
-    if (archive->AppendString("/") < 0)
+    if (!archive->WriteString("/") ||
+        !archive->WriteString(PDF_NameEncode(key).AsStringC())) {
       return false;
-
-    int32_t len = archive->AppendString(PDF_NameEncode(key).AsStringC());
-    if (len < 0)
-      return false;
-    *offset += len + 1;
+    }
 
     if (!pValue->IsInline()) {
-      if (archive->AppendString(" ") < 0)
+      if (!archive->WriteString(" ") ||
+          !archive->WriteDWord(pValue->GetObjNum()) ||
+          !archive->WriteString(" 0 R")) {
         return false;
-
-      len = archive->AppendDWord(pValue->GetObjNum());
-      if (len < 0)
-        return false;
-      if (archive->AppendString(" 0 R") < 0)
-        return false;
-      *offset += len + 5;
-    } else {
-      if (!pValue->WriteTo(archive, offset))
-        return false;
+      }
+    } else if (!pValue->WriteTo(archive)) {
+      return false;
     }
   }
-  if (archive->AppendString(">>") < 0)
-    return false;
-  *offset += 2;
-  return true;
+  return archive->WriteString(">>");
 }
