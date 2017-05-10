@@ -153,10 +153,7 @@ bool CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
           m_pIsolate, m_JsContext.get(), m_pDocument);
     }
     CFX_WideTextBuf wsJavaScript;
-    CFX_WideString wsErrorInfo;
-    int32_t iFlags =
-        CXFA_FM2JSContext::Translate(wsScript, wsJavaScript, wsErrorInfo);
-    if (iFlags) {
+    if (CXFA_FM2JSContext::Translate(wsScript, &wsJavaScript)) {
       hRetValue->SetUndefined();
       return false;
     }

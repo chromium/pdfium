@@ -428,8 +428,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                               bool* ret);
 
   static int32_t Translate(const CFX_WideStringC& wsFormcalc,
-                           CFX_WideTextBuf& wsJavascript,
-                           CFX_WideString& wsError);
+                           CFX_WideTextBuf* wsJavascript);
 
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 
