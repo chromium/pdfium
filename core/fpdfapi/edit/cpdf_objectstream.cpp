@@ -68,10 +68,9 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
   len = pFile->AppendString(" 0 obj\r\n<</Type /ObjStm /N ");
   if (len < 0)
     return -1;
-
   pCreator->IncrementOffset(len);
-  uint32_t iCount = pdfium::CollectionSize<uint32_t>(m_Items);
-  len = pFile->AppendDWord(iCount);
+
+  len = pFile->AppendDWord(pdfium::CollectionSize<uint32_t>(m_Items));
   if (len < 0)
     return -1;
   pCreator->IncrementOffset(len);
@@ -80,9 +79,7 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
     return -1;
 
   len = pFile->AppendDWord(static_cast<uint32_t>(tempBuffer.GetLength()));
-  if (len < 0)
-    return -1;
-  if (pFile->AppendString("/Length ") < 0)
+  if (len < 0 || pFile->AppendString("/Length ") < 0)
     return -1;
   pCreator->IncrementOffset(len + 15);
 
@@ -96,23 +93,23 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
   len = pFile->AppendDWord(encryptor.GetSize());
   if (len < 0)
     return -1;
-
   pCreator->IncrementOffset(len);
+
   if (pFile->AppendString("/Filter /FlateDecode") < 0)
     return -1;
-
   pCreator->IncrementOffset(20);
-  len = pFile->AppendString(">>stream\r\n");
-  if (len < 0)
-    return -1;
-  if (pFile->AppendBlock(encryptor.GetData(), encryptor.GetSize()) < 0)
-    return -1;
 
+  len = pFile->AppendString(">>stream\r\n");
+  if (len < 0 ||
+      pFile->AppendBlock(encryptor.GetData(), encryptor.GetSize()) < 0) {
+    return -1;
+  }
   pCreator->IncrementOffset(len + encryptor.GetSize());
+
   len = pFile->AppendString("\r\nendstream\r\nendobj\r\n");
   if (len < 0)
     return -1;
-
   pCreator->IncrementOffset(len);
+
   return ObjOffset;
 }

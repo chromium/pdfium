@@ -58,6 +58,10 @@ class CPDF_Creator {
     m_ObjectOffsets[objnum] = offset;
   }
   bool IsIncremental() const { return !!(m_dwFlags & FPDFCREATE_INCREMENTAL); }
+  bool IsOriginal() const { return !(m_dwFlags & FPDFCREATE_NO_ORIGINAL); }
+  bool HasObjectStream() const {
+    return !!(m_dwFlags & FPDFCREATE_OBJECTSTREAM);
+  }
 
  private:
   void Clear();
@@ -66,29 +70,26 @@ class CPDF_Creator {
   void InitNewObjNumOffsets();
   void InitID();
 
-  int32_t AppendObjectNumberToXRef(uint32_t objnum);
+  bool AppendObjectNumberToXRef(uint32_t objnum);
 
   int32_t WriteDoc_Stage1();
   int32_t WriteDoc_Stage2();
   int32_t WriteDoc_Stage3();
   int32_t WriteDoc_Stage4();
 
-  int32_t WriteOldIndirectObject(uint32_t objnum);
-  int32_t WriteOldObjs();
-  int32_t WriteNewObjs();
-  int32_t WriteIndirectObj(const CPDF_Object* pObj);
-  int32_t WriteDirectObj(uint32_t objnum,
-                         const CPDF_Object* pObj,
-                         bool bEncrypt);
-  int32_t WriteIndirectObjectToStream(const CPDF_Object* pObj);
-  int32_t WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
-  int32_t WriteIndirectObjectToStream(uint32_t objnum,
-                                      const uint8_t* pBuffer,
-                                      uint32_t dwSize);
+  bool WriteOldIndirectObject(uint32_t objnum);
+  bool WriteOldObjs();
+  bool WriteNewObjs();
+  bool WriteIndirectObj(const CPDF_Object* pObj);
+  bool WriteDirectObj(uint32_t objnum, const CPDF_Object* pObj, bool bEncrypt);
+  bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
+  bool WriteIndirectObjectToStream(uint32_t objnum,
+                                   const uint8_t* pBuffer,
+                                   uint32_t dwSize);
 
-  int32_t WriteStream(const CPDF_Object* pStream,
-                      uint32_t objnum,
-                      CPDF_CryptoHandler* pCrypto);
+  bool WriteStream(const CPDF_Object* pStream,
+                   uint32_t objnum,
+                   CPDF_CryptoHandler* pCrypto);
 
   bool IsXRefNeedEnd();
 

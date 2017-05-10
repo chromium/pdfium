@@ -255,11 +255,9 @@ int32_t CFX_FileBufferArchive::AppendBlock(const void* pBuf, size_t size) {
     size_t buf_size = std::min(kBufSize - m_Length, temp_size);
     memcpy(m_pBuffer.get() + m_Length, buffer, buf_size);
     m_Length += buf_size;
-    if (m_Length == kBufSize) {
-      if (!Flush()) {
-        return -1;
-      }
-    }
+    if (m_Length == kBufSize && !Flush())
+      return -1;
+
     temp_size -= buf_size;
     buffer += buf_size;
   }

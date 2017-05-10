@@ -26,13 +26,13 @@ class CPDF_XRefStream {
   ~CPDF_XRefStream();
 
   bool Start();
-  int32_t CompressIndirectObject(uint32_t dwObjNum,
-                                 const CPDF_Object* pObj,
-                                 CPDF_Creator* pCreator);
-  int32_t CompressIndirectObject(uint32_t dwObjNum,
-                                 const uint8_t* pBuffer,
-                                 uint32_t dwSize,
-                                 CPDF_Creator* pCreator);
+  bool CompressIndirectObject(uint32_t dwObjNum,
+                              const CPDF_Object* pObj,
+                              CPDF_Creator* pCreator);
+  bool CompressIndirectObject(uint32_t dwObjNum,
+                              const uint8_t* pBuffer,
+                              uint32_t dwSize,
+                              CPDF_Creator* pCreator);
   bool End(CPDF_Creator* pCreator, bool bEOF);
   void AddObjectNumberToIndexArray(uint32_t objnum);
   bool EndXRefStream(CPDF_Creator* pCreator);
@@ -48,7 +48,7 @@ class CPDF_XRefStream {
   }
 
  private:
-  int32_t EndObjectStream(CPDF_Creator* pCreator, bool bEOF);
+  bool EndObjectStream(CPDF_Creator* pCreator, bool bEOF);
   bool GenerateXRefStream(CPDF_Creator* pCreator, bool bEOF);
 
   std::vector<Index> m_IndexArray;
