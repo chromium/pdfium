@@ -77,24 +77,20 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
   if (!m_Loader.m_pBitmap)
     return false;
 
-  m_BitmapAlpha =
-      FXSYS_round(255 * m_pImageObject->m_GeneralState.GetFillAlpha());
+  CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
+  m_BitmapAlpha = FXSYS_round(255 * state.GetFillAlpha());
   m_pDIBSource = m_Loader.m_pBitmap;
   if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_ALPHA &&
       !m_Loader.m_pMask) {
     return StartBitmapAlpha();
   }
-  if (m_pImageObject->m_GeneralState.GetTR()) {
-    if (!m_pImageObject->m_GeneralState.GetTransferFunc()) {
-      m_pImageObject->m_GeneralState.SetTransferFunc(
-          m_pRenderStatus->GetTransferFunc(
-              m_pImageObject->m_GeneralState.GetTR()));
-    }
-    if (m_pImageObject->m_GeneralState.GetTransferFunc() &&
-        !m_pImageObject->m_GeneralState.GetTransferFunc()->m_bIdentity) {
+  if (state.GetTR()) {
+    if (!state.GetTransferFunc())
+      state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(state.GetTR()));
+
+    if (state.GetTransferFunc() && !state.GetTransferFunc()->m_bIdentity) {
       m_pDIBSource = m_Loader.m_pBitmap =
-          m_pImageObject->m_GeneralState.GetTransferFunc()->TranslateImage(
-              m_Loader.m_pBitmap);
+          state.GetTransferFunc()->TranslateImage(m_Loader.m_pBitmap);
       if (m_Loader.m_bCached && m_Loader.m_pMask)
         m_Loader.m_pMask = m_Loader.m_pMask->Clone(nullptr);
       m_Loader.m_bCached = false;
@@ -122,48 +118,30 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
     m_Flags |= RENDER_FORCE_DOWNSAMPLE;
   else if (m_pRenderStatus->m_Options.m_Flags & RENDER_FORCE_HALFTONE)
     m_Flags |= RENDER_FORCE_HALFTONE;
-  if (m_pRenderStatus->m_pDevice->GetDeviceClass() != FXDC_DISPLAY) {
-    CPDF_Object* pFilters =
-        m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
-            "Filter");
-    if (pFilters) {
-      if (pFilters->IsName()) {
-        CFX_ByteString bsDecodeType = pFilters->GetString();
-        if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode")
-          m_Flags |= FXRENDER_IMAGE_LOSSY;
-      } else if (CPDF_Array* pArray = pFilters->AsArray()) {
-        for (size_t i = 0; i < pArray->GetCount(); i++) {
-          CFX_ByteString bsDecodeType = pArray->GetStringAt(i);
-          if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
-            m_Flags |= FXRENDER_IMAGE_LOSSY;
-            break;
-          }
-        }
-      }
-    }
-  }
+
+  if (m_pRenderStatus->m_pDevice->GetDeviceClass() != FXDC_DISPLAY)
+    HandleFilters();
+
   if (m_pRenderStatus->m_Options.m_Flags & RENDER_NOIMAGESMOOTH)
     m_Flags |= FXDIB_NOSMOOTH;
   else if (m_pImageObject->GetImage()->IsInterpol())
     m_Flags |= FXDIB_INTERPOL;
+
   if (m_Loader.m_pMask)
     return DrawMaskedImage();
 
   if (m_bPatternColor)
     return DrawPatternImage(m_pObj2Device);
 
-  if (m_BitmapAlpha != 255 || !m_pImageObject->m_GeneralState ||
-      !m_pImageObject->m_GeneralState.GetFillOP() ||
-      m_pImageObject->m_GeneralState.GetOPMode() != 0 ||
-      m_pImageObject->m_GeneralState.GetBlendType() != FXDIB_BLEND_NORMAL ||
-      m_pImageObject->m_GeneralState.GetStrokeAlpha() != 1.0f ||
-      m_pImageObject->m_GeneralState.GetFillAlpha() != 1.0f) {
+  if (m_BitmapAlpha != 255 || !state || !state.GetFillOP() ||
+      state.GetOPMode() != 0 || state.GetBlendType() != FXDIB_BLEND_NORMAL ||
+      state.GetStrokeAlpha() != 1.0f || state.GetFillAlpha() != 1.0f) {
     return StartDIBSource();
   }
   CPDF_Document* pDocument = nullptr;
   CPDF_Page* pPage = nullptr;
-  if (m_pRenderStatus->m_pContext->GetPageCache()) {
-    pPage = m_pRenderStatus->m_pContext->GetPageCache()->GetPage();
+  if (auto* pPageCache = m_pRenderStatus->m_pContext->GetPageCache()) {
+    pPage = pPageCache->GetPage();
     pDocument = pPage->m_pDocument;
   } else {
     pDocument = m_pImageObject->GetImage()->GetDocument();
@@ -570,4 +548,31 @@ bool CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
       return Continue(pPause);
   }
   return false;
+}
+
+void CPDF_ImageRenderer::HandleFilters() {
+  CPDF_Object* pFilters =
+      m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
+          "Filter");
+  if (!pFilters)
+    return;
+
+  if (pFilters->IsName()) {
+    CFX_ByteString bsDecodeType = pFilters->GetString();
+    if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode")
+      m_Flags |= FXRENDER_IMAGE_LOSSY;
+    return;
+  }
+
+  CPDF_Array* pArray = pFilters->AsArray();
+  if (!pArray)
+    return;
+
+  for (size_t i = 0; i < pArray->GetCount(); i++) {
+    CFX_ByteString bsDecodeType = pArray->GetStringAt(i);
+    if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
+      m_Flags |= FXRENDER_IMAGE_LOSSY;
+      break;
+    }
+  }
 }

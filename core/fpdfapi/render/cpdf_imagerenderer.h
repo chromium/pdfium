@@ -60,6 +60,7 @@ class CPDF_ImageRenderer {
                           const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
                           CFX_Matrix* pNewMatrix,
                           const FX_RECT& rect) const;
+  void HandleFilters();
 
   CPDF_RenderStatus* m_pRenderStatus;
   CPDF_ImageObject* m_pImageObject;
