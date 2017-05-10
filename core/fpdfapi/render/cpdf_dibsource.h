@@ -69,7 +69,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
                          uint32_t GroupFamily = 0,
                          bool bLoadMask = false);
   int ContinueLoadDIBSource(IFX_Pause* pPause);
-  int StratLoadMask();
+  int StartLoadMask();
   int StartLoadMaskDIB();
   int ContinueLoadMaskDIB(IFX_Pause* pPause);
   int ContinueToLoadMask();

@@ -343,14 +343,14 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
     }
   }
 
-  int stratPoint = 0;
+  int startPoint = 0;
   int next = 0;
   for (size_t i = 0; i < m_Points.size(); i++) {
     FXPT_TYPE point_type = m_Points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
-      stratPoint = i;
+      startPoint = i;
     } else if (point_type == FXPT_TYPE::LineTo) {
-      next = (i + 1 - stratPoint) % (m_Points.size() - stratPoint) + stratPoint;
+      next = (i + 1 - startPoint) % (m_Points.size() - startPoint) + startPoint;
       if (m_Points[next].m_Type != FXPT_TYPE::BezierTo &&
           m_Points[next].m_Type != FXPT_TYPE::MoveTo) {
         if ((m_Points[i - 1].m_Point.x == m_Points[i].m_Point.x &&

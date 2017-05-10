@@ -294,7 +294,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
       return 0;
     }
     if (m_bHasMask) {
-      StratLoadMask();
+      StartLoadMask();
     }
     return ret;
   }
@@ -302,7 +302,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
     return 0;
   }
   if (m_bHasMask) {
-    ret = StratLoadMask();
+    ret = StartLoadMask();
   }
   if (ret == 2) {
     return ret;
@@ -693,7 +693,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
   m_bpc = 8;
 }
 
-int CPDF_DIBSource::StratLoadMask() {
+int CPDF_DIBSource::StartLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
   m_pMaskStream = m_pDict->GetStreamFor("SMask");
   if (m_pMaskStream) {
