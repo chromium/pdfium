@@ -9,6 +9,7 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/path_service.h"
 
 TEST(fpdf, CApiTest) {
   EXPECT_TRUE(CheckPDFiumCApi());
@@ -377,4 +378,44 @@ TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
   FPDFBitmap_Destroy(bitmap);
 
   UnloadPage(page);
+}
+
+class UnSupRecordDelegate : public EmbedderTest::Delegate {
+ public:
+  UnSupRecordDelegate() : type_(-1) {}
+  ~UnSupRecordDelegate() override {}
+
+  void UnsupportedHandler(int type) override { type_ = type; }
+
+  int type_;
+};
+
+TEST_F(FPDFViewEmbeddertest, UnSupportedOperations_NotFound) {
+  UnSupRecordDelegate delegate;
+  SetDelegate(&delegate);
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_EQ(delegate.type_, -1);
+  SetDelegate(nullptr);
+}
+
+TEST_F(FPDFViewEmbeddertest, UnSupportedOperations_LoadCustomDocument) {
+  UnSupRecordDelegate delegate;
+  SetDelegate(&delegate);
+  ASSERT_TRUE(OpenDocument("unsupported_feature.pdf"));
+  EXPECT_EQ(FPDF_UNSP_DOC_PORTABLECOLLECTION, delegate.type_);
+  SetDelegate(nullptr);
+}
+
+TEST_F(FPDFViewEmbeddertest, UnSupportedOperations_LoadDocument) {
+  std::string file_path;
+  ASSERT_TRUE(
+      PathService::GetTestFilePath("unsupported_feature.pdf", &file_path));
+
+  UnSupRecordDelegate delegate;
+  SetDelegate(&delegate);
+  FPDF_DOCUMENT doc = FPDF_LoadDocument(file_path.c_str(), "");
+  EXPECT_TRUE(doc != nullptr);
+  EXPECT_EQ(FPDF_UNSP_DOC_PORTABLECOLLECTION, delegate.type_);
+  FPDF_CloseDocument(doc);
+  SetDelegate(nullptr);
 }
