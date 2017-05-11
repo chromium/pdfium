@@ -953,8 +953,10 @@ void CFX_Renderer::render(const Scanline& sl) {
   unsigned num_spans = sl.num_spans();
   typename Scanline::const_iterator span = sl.begin();
   while (1) {
+    if (span->len <= 0)
+      break;
+
     int x = span->x;
-    ASSERT(span->len > 0);
     uint8_t* dest_pos = nullptr;
     uint8_t* dest_extra_alpha_pos = nullptr;
     uint8_t* ori_pos = nullptr;
