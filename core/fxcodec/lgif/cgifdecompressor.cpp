@@ -18,7 +18,22 @@ FXGIF_Context::FXGIF_Context() {}
 FXGIF_Context::~FXGIF_Context() {}
 
 CGifDecompressor::CGifDecompressor(FXGIF_Context* p, char* error_string)
-    : decode_status(GIF_D_STATUS_SIG), err_ptr(error_string), gif_context(p) {}
+    : global_pal_num(0),
+      img_row_offset(0),
+      img_row_avail_size(0),
+      avail_in(0),
+      decode_status(GIF_D_STATUS_SIG),
+      skip_size(0),
+      err_ptr(error_string),
+      gif_context(p),
+      next_in(nullptr),
+      width(0),
+      height(0),
+      bc_index(0),
+      pixel_aspect(0),
+      global_sort_flag(0),
+      global_color_resolution(0),
+      img_pass_num(0) {}
 
 CGifDecompressor::~CGifDecompressor() {}
 

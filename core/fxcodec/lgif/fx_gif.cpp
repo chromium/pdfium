@@ -510,12 +510,15 @@ GifDecodeStatus gif_load_frame(CGifDecompressor* gif_ptr, int32_t frame_num) {
             ? (2 << ((GifLF*)&gif_image_ptr->m_ImageInfo.local_flag)->pal_bits)
             : 0;
     gif_ptr->avail_in = 0;
+    GifPalette* pLocalPalette = gif_image_ptr->m_LocalPalettes.empty()
+                                    ? nullptr
+                                    : gif_image_ptr->m_LocalPalettes.data();
     if (!gif_img_gce_ptr) {
       bool bRes = gif_ptr->GetRecordPosition(
           gif_image_ptr->image_data_pos, gif_image_ptr->m_ImageInfo.left,
           gif_image_ptr->m_ImageInfo.top, gif_image_ptr->m_ImageInfo.width,
-          gif_image_ptr->m_ImageInfo.height, loc_pal_num,
-          gif_image_ptr->m_LocalPalettes.data(), 0, 0, -1, 0,
+          gif_image_ptr->m_ImageInfo.height, loc_pal_num, pLocalPalette, 0, 0,
+          -1, 0,
           (bool)((GifLF*)&gif_image_ptr->m_ImageInfo.local_flag)->interlace);
       if (!bRes) {
         gif_image_ptr->m_ImageRowBuf.clear();
@@ -526,8 +529,7 @@ GifDecodeStatus gif_load_frame(CGifDecompressor* gif_ptr, int32_t frame_num) {
       bool bRes = gif_ptr->GetRecordPosition(
           gif_image_ptr->image_data_pos, gif_image_ptr->m_ImageInfo.left,
           gif_image_ptr->m_ImageInfo.top, gif_image_ptr->m_ImageInfo.width,
-          gif_image_ptr->m_ImageInfo.height, loc_pal_num,
-          gif_image_ptr->m_LocalPalettes.data(),
+          gif_image_ptr->m_ImageInfo.height, loc_pal_num, pLocalPalette,
           (int32_t)gif_image_ptr->m_ImageGCE->delay_time,
           (bool)((GifCEF*)&gif_image_ptr->m_ImageGCE->gce_flag)->user_input,
           ((GifCEF*)&gif_image_ptr->m_ImageGCE->gce_flag)->transparency

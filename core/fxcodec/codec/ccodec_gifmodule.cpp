@@ -54,7 +54,9 @@ GifDecodeStatus CCodec_GifModule::ReadHeader(FXGIF_Context* ctx,
   *width = ctx->m_Gif->width;
   *height = ctx->m_Gif->height;
   *pal_num = ctx->m_Gif->global_pal_num;
-  *pal_pp = ctx->m_Gif->m_GlobalPalette.data();
+  *pal_pp = ctx->m_Gif->m_GlobalPalette.empty()
+                ? nullptr
+                : ctx->m_Gif->m_GlobalPalette.data();
   *bg_index = ctx->m_Gif->bc_index;
   return GifDecodeStatus::Success;
 }
