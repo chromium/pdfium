@@ -35,15 +35,6 @@ namespace {
 
 constexpr uint32_t kInvalidGlyphIndex = static_cast<uint32_t>(-1);
 
-void GammaAdjust(uint8_t* pData,
-                 int nHeight,
-                 int src_pitch,
-                 const uint8_t* gammaTable) {
-  int count = nHeight * src_pitch;
-  for (int i = 0; i < count; i++)
-    pData[i] = gammaTable[pData[i]];
-}
-
 void ContrastAdjust(uint8_t* pDataIn,
                     uint8_t* pDataOut,
                     int nWidth,
@@ -227,8 +218,6 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
     } else {
       ContrastAdjust(pSrcBuf, pDestBuf, bmwidth, bmheight, src_pitch,
                      dest_pitch);
-      GammaAdjust(pDestBuf, bmheight, dest_pitch,
-                  CFX_GEModule::Get()->GetTextGammaTable());
     }
   }
   return pGlyphBitmap;

@@ -24,8 +24,6 @@ class CFX_GEModule {
   void Init(const char** pUserFontPaths);
   CFX_FontCache* GetFontCache();
   CFX_FontMgr* GetFontMgr() { return m_pFontMgr.get(); }
-  void SetTextGamma(float gammaValue);
-  const uint8_t* GetTextGammaTable() const;
 
   CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule.get(); }
   void* GetPlatformData() { return m_pPlatformData; }
@@ -37,7 +35,6 @@ class CFX_GEModule {
   void InitPlatform();
   void DestroyPlatform();
 
-  uint8_t m_GammaValue[256];
   std::unique_ptr<CFX_FontCache> m_pFontCache;
   std::unique_ptr<CFX_FontMgr> m_pFontMgr;
   std::unique_ptr<CCodec_ModuleMgr> m_pCodecModule;
