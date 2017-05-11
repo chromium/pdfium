@@ -48,7 +48,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -819,7 +819,7 @@ void DrawCoonPatchMeshes(
   ASSERT(type == kCoonsPatchMeshShading ||
          type == kTensorProductPatchMeshShading);
 
-  CFX_FxgeDevice device;
+  CFX_DefaultRenderDevice device;
   device.Attach(pBitmap, false, nullptr, false);
   CPDF_MeshStream stream(type, funcs, pShadingStream, pCS);
   if (!stream.Load())
@@ -904,7 +904,7 @@ CFX_RetainPtr<CFX_DIBitmap> DrawPatternBitmap(CPDF_Document* pDoc,
                        pPattern->colored() ? FXDIB_Argb : FXDIB_8bppMask)) {
     return nullptr;
   }
-  CFX_FxgeDevice bitmap_device;
+  CFX_DefaultRenderDevice bitmap_device;
   bitmap_device.Attach(pBitmap, false, nullptr, false);
   pBitmap->Clear(0);
   CFX_FloatRect cell_bbox = pPattern->bbox();
@@ -1538,7 +1538,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   float scaleY = fabs(deviceCTM.d);
   int width = FXSYS_round((float)rect.Width() * scaleX);
   int height = FXSYS_round((float)rect.Height() * scaleY);
-  CFX_FxgeDevice bitmap_device;
+  CFX_DefaultRenderDevice bitmap_device;
   CFX_RetainPtr<CFX_DIBitmap> oriDevice;
   if (!isolated && (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
     oriDevice = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -1563,7 +1563,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       return true;
 
     pTextMask->Clear(0);
-    CFX_FxgeDevice text_device;
+    CFX_DefaultRenderDevice text_device;
     text_device.Attach(pTextMask, false, nullptr, false);
     for (uint32_t i = 0; i < pPageObj->m_ClipPath.GetTextCount(); i++) {
       CPDF_TextObject* textobj = pPageObj->m_ClipPath.GetText(i);
@@ -1659,7 +1659,7 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   FinalMatrix.Scale(scaleX, scaleY);
   pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
 
-  CFX_FxgeDevice device;
+  CFX_DefaultRenderDevice device;
   device.Attach(pBackdrop, false, nullptr, false);
   m_pContext->Render(&device, pObj, &m_Options, &FinalMatrix);
   return pBackdrop;
@@ -1885,7 +1885,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         matrix.TransformRect(rect_f);
 
         FX_RECT rect = rect_f.GetOuterRect();
-        CFX_FxgeDevice bitmap_device;
+        CFX_DefaultRenderDevice bitmap_device;
         if (!bitmap_device.Create((int)(rect.Width() * sa),
                                   (int)(rect.Height() * sd), FXDIB_Argb,
                                   nullptr)) {
@@ -2537,7 +2537,7 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
                  pGroup);
   form.ParseContent(nullptr, nullptr, nullptr);
 
-  CFX_FxgeDevice bitmap_device;
+  CFX_DefaultRenderDevice bitmap_device;
   bool bLuminosity = pSMaskDict->GetStringFor("S") != "Alpha";
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;

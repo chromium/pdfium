@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/ptr_util.h"
 
@@ -44,7 +44,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     if (dpiv > max_dpi)
       m_Matrix.Scale(1.0f, (float)(max_dpi) / (float)dpiv);
   }
-  m_pBitmapDevice = pdfium::MakeUnique<CFX_FxgeDevice>();
+  m_pBitmapDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
   FXDIB_Format dibFormat = FXDIB_Rgb;
   int32_t bpp = 24;
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT) {

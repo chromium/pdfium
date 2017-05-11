@@ -15,7 +15,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_windowsdevice.h"
+#include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cstretchengine.h"
@@ -1358,14 +1358,14 @@ bool CGdiDisplayDriver::StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
   return false;
 }
 
-CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC) {
+CFX_WindowsRenderDevice::CFX_WindowsRenderDevice(HDC hDC) {
   SetDeviceDriver(pdfium::WrapUnique(CreateDriver(hDC)));
 }
 
-CFX_WindowsDevice::~CFX_WindowsDevice() {}
+CFX_WindowsRenderDevice::~CFX_WindowsRenderDevice() {}
 
 // static
-IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC) {
+IFX_RenderDeviceDriver* CFX_WindowsRenderDevice::CreateDriver(HDC hDC) {
   int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||

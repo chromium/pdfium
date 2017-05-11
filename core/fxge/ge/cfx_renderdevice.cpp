@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_facecache.h"
-#include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
@@ -626,7 +626,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
       return false;
     Backdrop->Copy(bitmap);
   }
-  CFX_FxgeDevice bitmap_device;
+  CFX_DefaultRenderDevice bitmap_device;
   bitmap_device.Attach(bitmap, false, Backdrop, true);
 
   CFX_Matrix matrix;

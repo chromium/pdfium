@@ -119,7 +119,7 @@ void CFDE_TextOut::SetDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIB) {
   ASSERT(pDIB);
 
   m_pRenderDevice.reset();
-  CFX_FxgeDevice* device = new CFX_FxgeDevice;
+  CFX_DefaultRenderDevice* device = new CFX_DefaultRenderDevice;
   device->Attach(pDIB, false, nullptr, false);
   m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(device, false);
 }

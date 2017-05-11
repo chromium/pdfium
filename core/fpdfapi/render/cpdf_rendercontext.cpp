@@ -35,7 +35,7 @@ void CPDF_RenderContext::GetBackground(
     const CPDF_PageObject* pObj,
     const CPDF_RenderOptions* pOptions,
     CFX_Matrix* pFinalMatrix) {
-  CFX_FxgeDevice device;
+  CFX_DefaultRenderDevice device;
   device.Attach(pBuffer, false, nullptr, false);
 
   FX_RECT rect(0, 0, device.GetWidth(), device.GetHeight());

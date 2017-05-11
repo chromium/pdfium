@@ -4,18 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_CFX_FXGEDEVICE_H_
-#define CORE_FXGE_CFX_FXGEDEVICE_H_
+#ifndef CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_
+#define CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_
 
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 
 class SkPictureRecorder;
 
-class CFX_FxgeDevice : public CFX_RenderDevice {
+class CFX_DefaultRenderDevice : public CFX_RenderDevice {
  public:
-  CFX_FxgeDevice();
-  ~CFX_FxgeDevice() override;
+  CFX_DefaultRenderDevice();
+  ~CFX_DefaultRenderDevice() override;
 
   bool Attach(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
               bool bRgbByteOrder,
@@ -40,4 +40,4 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
 #endif
 };
 
-#endif  // CORE_FXGE_CFX_FXGEDEVICE_H_
+#endif  // CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_

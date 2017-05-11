@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_CFX_WINDOWSDEVICE_H_
-#define CORE_FXGE_CFX_WINDOWSDEVICE_H_
+#ifndef CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_
+#define CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_
 
 #ifdef _WIN32
 #ifndef _WINDOWS_
@@ -27,14 +27,14 @@ extern PDFiumEnsureTypefaceCharactersAccessible
 #endif
 extern int g_pdfium_print_postscript_level;
 
-class CFX_WindowsDevice : public CFX_RenderDevice {
+class CFX_WindowsRenderDevice : public CFX_RenderDevice {
  public:
   static IFX_RenderDeviceDriver* CreateDriver(HDC hDC);
 
-  explicit CFX_WindowsDevice(HDC hDC);
-  ~CFX_WindowsDevice() override;
+  explicit CFX_WindowsRenderDevice(HDC hDC);
+  ~CFX_WindowsRenderDevice() override;
 };
 
 #endif  // _WIN32
 
-#endif  // CORE_FXGE_CFX_WINDOWSDEVICE_H_
+#endif  // CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_

@@ -27,7 +27,7 @@
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
@@ -222,8 +222,8 @@ CFX_Matrix CPDF_ImageRenderer::GetDrawMatrix(const FX_RECT& rect) const {
 }
 
 void CPDF_ImageRenderer::CalculateDrawImage(
-    CFX_FxgeDevice* pBitmapDevice1,
-    CFX_FxgeDevice* pBitmapDevice2,
+    CFX_DefaultRenderDevice* pBitmapDevice1,
+    CFX_DefaultRenderDevice* pBitmapDevice2,
     const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
     CFX_Matrix* pNewMatrix,
     const FX_RECT& rect) const {
@@ -273,7 +273,7 @@ bool CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
     return false;
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
-  CFX_FxgeDevice bitmap_device1;
+  CFX_DefaultRenderDevice bitmap_device1;
   if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Rgb32, nullptr))
     return true;
 
@@ -294,7 +294,7 @@ bool CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
                                      &patternDevice, false);
   }
 
-  CFX_FxgeDevice bitmap_device2;
+  CFX_DefaultRenderDevice bitmap_device2;
   if (!bitmap_device2.Create(rect.Width(), rect.Height(), FXDIB_8bppRgb,
                              nullptr)) {
     return true;
@@ -321,7 +321,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
     return false;
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
-  CFX_FxgeDevice bitmap_device1;
+  CFX_DefaultRenderDevice bitmap_device1;
   if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Rgb32, nullptr))
     return true;
 
@@ -339,7 +339,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
                          m_Flags, true, FXDIB_BLEND_NORMAL)) {
     image_render.Continue(nullptr);
   }
-  CFX_FxgeDevice bitmap_device2;
+  CFX_DefaultRenderDevice bitmap_device2;
   if (!bitmap_device2.Create(rect.Width(), rect.Height(), FXDIB_8bppRgb,
                              nullptr))
     return true;

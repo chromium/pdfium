@@ -28,7 +28,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -50,7 +50,7 @@
 #endif  // PDF_ENABLE_XFA
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#include "core/fxge/cfx_windowsdevice.h"
+#include "core/fxge/cfx_windowsrenderdevice.h"
 #endif
 
 namespace {
@@ -807,7 +807,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     pBitmap->Create(size_x, size_y, FXDIB_Argb);
     pBitmap->Clear(0x00ffffff);
-    CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
+    CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
     pContext->m_pDevice = pdfium::WrapUnique(pDevice);
     pDevice->Attach(pBitmap, false, nullptr, false);
     if (bHasMask) {
@@ -815,7 +815,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
       pContext->m_pOptions->m_Flags |= RENDER_BREAKFORMASKS;
     }
   } else {
-    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsDevice>(dc);
+    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc);
   }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
@@ -842,7 +842,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     // pause after each image mask.
     pPage->SetRenderContext(pdfium::MakeUnique<CPDF_PageRenderContext>());
     pContext = pPage->GetRenderContext();
-    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsDevice>(dc);
+    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc);
     pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
     pContext->m_pOptions->m_Flags |= RENDER_BREAKFORMASKS;
     FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
@@ -858,7 +858,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
       pContext->m_pRenderer->Continue(nullptr);
     }
   } else if (bNewBitmap) {
-    CFX_WindowsDevice WinDC(dc);
+    CFX_WindowsRenderDevice WinDC(dc);
     if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
       auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();
       int pitch = pBitmap->GetPitch();
@@ -894,7 +894,7 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
   pPage->SetRenderContext(pdfium::WrapUnique(pContext));
 
-  CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
+  CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
   pContext->m_pDevice.reset(pDevice);
 
   CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
@@ -924,7 +924,7 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
   pPage->SetRenderContext(pdfium::WrapUnique(pContext));
 
-  CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
+  CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
   pContext->m_pDevice.reset(pDevice);
 
   CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
@@ -959,7 +959,7 @@ DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
 
   CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
   pPage->SetRenderContext(pdfium::WrapUnique(pContext));
-  CFX_FxgeDevice* skDevice = new CFX_FxgeDevice;
+  CFX_DefaultRenderDevice* skDevice = new CFX_DefaultRenderDevice;
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice.reset(skDevice);
   FPDF_RenderPage_Retail(pContext, page, 0, 0, size_x, size_y, 0, 0, true,
@@ -1114,7 +1114,7 @@ DLLEXPORT void STDCALL FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   if (!bitmap)
     return;
 
-  CFX_FxgeDevice device;
+  CFX_DefaultRenderDevice device;
   CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
   device.Attach(pBitmap, false, nullptr, false);
   if (!pBitmap->HasAlpha())

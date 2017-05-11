@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 
 class CFX_RenderDevice;
 class CPDF_PageObject;
@@ -39,7 +39,7 @@ class CPDF_ScaledRenderBuffer {
   CPDF_RenderContext* m_pContext;
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
-  std::unique_ptr<CFX_FxgeDevice> m_pBitmapDevice;
+  std::unique_ptr<CFX_DefaultRenderDevice> m_pBitmapDevice;
   CFX_Matrix m_Matrix;
 };
 

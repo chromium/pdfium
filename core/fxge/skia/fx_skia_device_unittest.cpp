@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/skia/fx_skia_device.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/skia/fx_skia_device.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdfview.h"
 #include "testing/fx_string_testhelpers.h"
@@ -124,7 +124,7 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
   if (!bitmap)
     return;
   FPDFBitmap_FillRect(bitmap, 0, 0, w, h, 0x00000000);
-  CFX_FxgeDevice geDevice;
+  CFX_DefaultRenderDevice geDevice;
   CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
   geDevice.Attach(pBitmap, false, nullptr, false);
   CFX_SkiaDeviceDriver* driver =

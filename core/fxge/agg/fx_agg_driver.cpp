@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxge/cfx_fxgedevice.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -1561,14 +1561,15 @@ bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
 }
 
 #ifndef _SKIA_SUPPORT_
-CFX_FxgeDevice::CFX_FxgeDevice() {}
+CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
 
-CFX_FxgeDevice::~CFX_FxgeDevice() {}
+CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() {}
 
-bool CFX_FxgeDevice::Attach(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
-                            bool bRgbByteOrder,
-                            const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
-                            bool bGroupKnockout) {
+bool CFX_DefaultRenderDevice::Attach(
+    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    bool bRgbByteOrder,
+    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+    bool bGroupKnockout) {
   if (!pBitmap)
     return false;
 
@@ -1578,10 +1579,11 @@ bool CFX_FxgeDevice::Attach(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   return true;
 }
 
-bool CFX_FxgeDevice::Create(int width,
-                            int height,
-                            FXDIB_Format format,
-                            const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice) {
+bool CFX_DefaultRenderDevice::Create(
+    int width,
+    int height,
+    FXDIB_Format format,
+    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, format))
     return false;
