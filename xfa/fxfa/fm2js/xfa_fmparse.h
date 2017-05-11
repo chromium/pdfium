@@ -48,6 +48,8 @@ class CXFA_FMParse {
   std::unique_ptr<CXFA_FMSimpleExpression> ParseIndexExpression();
 
  private:
+  bool HasError() const;
+
   std::unique_ptr<CXFA_FMLexer> m_lexer;
   CXFA_FMToken* m_pToken;
   CXFA_FMErrorInfo* const m_pErrorInfo;

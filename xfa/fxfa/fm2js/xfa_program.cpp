@@ -33,7 +33,8 @@ int32_t CXFA_FMProgram::ParseProgram() {
 }
 
 int32_t CXFA_FMProgram::TranslateProgram(CFX_WideTextBuf& wsJavaScript) {
-  m_globalFunction->ToJavaScript(wsJavaScript);
+  if (!m_globalFunction->ToJavaScript(wsJavaScript))
+    return -1;
   wsJavaScript.AppendChar(0);
   return 0;
 }
