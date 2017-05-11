@@ -94,7 +94,6 @@ class IFX_RenderDeviceDriver {
                               const CFX_Matrix* pObject2Device,
                               float font_size,
                               uint32_t color);
-  virtual void* GetPlatformSurface() const;
   virtual int GetDriverType() const;
   virtual void ClearDriver();
   virtual bool DrawShading(const CPDF_ShadingPattern* pPattern,

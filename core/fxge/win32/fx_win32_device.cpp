@@ -929,10 +929,6 @@ bool CGdiDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return !!(::GetClipBox(m_hDC, (RECT*)pRect));
 }
 
-void* CGdiDeviceDriver::GetPlatformSurface() const {
-  return (void*)m_hDC;
-}
-
 void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
   if (!m_bMetafileDCType) {  // EMF drawing is not bound to the DC.
     int startOutOfBoundsFlag = (x1 < 0) | ((x1 > m_Width) << 1) |
@@ -1367,11 +1363,6 @@ CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC) {
 }
 
 CFX_WindowsDevice::~CFX_WindowsDevice() {}
-
-HDC CFX_WindowsDevice::GetDC() const {
-  IFX_RenderDeviceDriver* pRDD = GetDeviceDriver();
-  return pRDD ? reinterpret_cast<HDC>(pRDD->GetPlatformSurface()) : nullptr;
-}
 
 // static
 IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC) {

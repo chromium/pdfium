@@ -43,7 +43,6 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
   static CFX_RetainPtr<CFX_DIBitmap> LoadFromFile(const char* filename);
   static CFX_RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);
 
-  HDC GetDC() const { return m_hMemDC; }
   HBITMAP GetWindowsBitmap() const { return m_hBitmap; }
 
   void LoadFromDevice(HDC hDC, int left, int top);

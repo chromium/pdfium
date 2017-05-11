@@ -491,7 +491,3 @@ bool CPSPrinterDriver::DrawDeviceText(int nChars,
   return m_PSRenderer.DrawText(nChars, pCharPos, pFont, pObject2Device,
                                font_size, color);
 }
-
-void* CPSPrinterDriver::GetPlatformSurface() const {
-  return m_hDC;
-}

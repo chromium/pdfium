@@ -33,8 +33,6 @@ class CFX_WindowsDevice : public CFX_RenderDevice {
 
   explicit CFX_WindowsDevice(HDC hDC);
   ~CFX_WindowsDevice() override;
-
-  HDC GetDC() const;
 };
 
 #endif  // _WIN32

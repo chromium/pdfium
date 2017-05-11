@@ -156,7 +156,6 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
                         uint32_t color,
                         int blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
-  void* GetPlatformSurface() const override;
 
   void DrawLine(float x1, float y1, float x2, float y2);
 
@@ -322,7 +321,6 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
                       const CFX_Matrix* pObject2Device,
                       float font_size,
                       uint32_t color) override;
-  void* GetPlatformSurface() const override;
 
   HDC m_hDC;
   bool m_bCmykOutput;

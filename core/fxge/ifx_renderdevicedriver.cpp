@@ -73,10 +73,6 @@ bool IFX_RenderDeviceDriver::DrawDeviceText(int nChars,
   return false;
 }
 
-void* IFX_RenderDeviceDriver::GetPlatformSurface() const {
-  return nullptr;
-}
-
 int IFX_RenderDeviceDriver::GetDriverType() const {
   return 0;
 }
