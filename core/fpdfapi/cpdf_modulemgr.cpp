@@ -10,6 +10,22 @@
 #include "core/fxcodec/fx_codec.h"
 #include "third_party/base/ptr_util.h"
 
+#ifdef PDF_ENABLE_XFA_BMP
+#include "core/fxcodec/codec/ccodec_bmpmodule.h"
+#endif
+
+#ifdef PDF_ENABLE_XFA_GIF
+#include "core/fxcodec/codec/ccodec_gifmodule.h"
+#endif
+
+#ifdef PDF_ENABLE_XFA_PNG
+#include "core/fxcodec/codec/ccodec_pngmodule.h"
+#endif
+
+#ifdef PDF_ENABLE_XFA_TIFF
+#include "core/fxcodec/codec/ccodec_tiffmodule.h"
+#endif
+
 namespace {
 
 CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
@@ -32,6 +48,31 @@ void CPDF_ModuleMgr::Destroy() {
 CPDF_ModuleMgr::CPDF_ModuleMgr() : m_pCodecModule(nullptr) {}
 
 CPDF_ModuleMgr::~CPDF_ModuleMgr() {}
+
+void CPDF_ModuleMgr::LoadEmbeddedMaps() {
+  LoadEmbeddedGB1CMaps();
+  LoadEmbeddedJapan1CMaps();
+  LoadEmbeddedCNS1CMaps();
+  LoadEmbeddedKorea1CMaps();
+}
+
+void CPDF_ModuleMgr::LoadCodecModules() {
+#ifdef PDF_ENABLE_XFA_BMP
+  m_pCodecModule->SetBmpModule(pdfium::MakeUnique<CCodec_BmpModule>());
+#endif
+
+#ifdef PDF_ENABLE_XFA_GIF
+  m_pCodecModule->SetGifModule(pdfium::MakeUnique<CCodec_GifModule>());
+#endif
+
+#ifdef PDF_ENABLE_XFA_PNG
+  m_pCodecModule->SetPngModule(pdfium::MakeUnique<CCodec_PngModule>());
+#endif
+
+#ifdef PDF_ENABLE_XFA_TIFF
+  m_pCodecModule->SetTiffModule(pdfium::MakeUnique<CCodec_TiffModule>());
+#endif
+}
 
 void CPDF_ModuleMgr::InitPageModule() {
   m_pPageModule = pdfium::MakeUnique<CPDF_PageModule>();

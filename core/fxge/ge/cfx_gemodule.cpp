@@ -6,6 +6,7 @@
 
 #include "core/fxge/cfx_gemodule.h"
 
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
@@ -19,9 +20,8 @@ CFX_GEModule* g_pGEModule = nullptr;
 }  // namespace
 
 CFX_GEModule::CFX_GEModule()
-    : m_FTLibrary(nullptr),
-      m_pFontMgr(new CFX_FontMgr),
-      m_pCodecModule(nullptr),
+    : m_pFontMgr(pdfium::MakeUnique<CFX_FontMgr>()),
+      m_pCodecModule(pdfium::MakeUnique<CCodec_ModuleMgr>()),
       m_pPlatformData(nullptr),
       m_pUserFontPaths(nullptr) {}
 
@@ -43,10 +43,8 @@ void CFX_GEModule::Destroy() {
   g_pGEModule = nullptr;
 }
 
-void CFX_GEModule::Init(const char** userFontPaths,
-                        CCodec_ModuleMgr* pCodecModule) {
+void CFX_GEModule::Init(const char** userFontPaths) {
   ASSERT(g_pGEModule);
-  m_pCodecModule = pCodecModule;
   m_pUserFontPaths = userFontPaths;
   InitPlatform();
   SetTextGamma(2.2f);

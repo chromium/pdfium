@@ -49,30 +49,13 @@
 #include "public/fpdf_formfill.h"
 #endif  // PDF_ENABLE_XFA
 
-#ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
-#endif
-
-#ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
-#endif
-
-#ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/codec/ccodec_pngmodule.h"
-#endif
-
-#ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
-#endif
-
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include "core/fxge/cfx_windowsdevice.h"
 #endif
 
 namespace {
 
-// Also indicates whether library is currently initialized.
-CCodec_ModuleMgr* g_pCodecModule = nullptr;
+bool g_bLibraryInitialized = false;
 
 void RenderPageImpl(CPDF_PageRenderContext* pContext,
                     CPDF_Page* pPage,
@@ -368,42 +351,19 @@ DLLEXPORT void STDCALL FPDF_InitLibrary() {
 
 DLLEXPORT void STDCALL
 FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
-  if (g_pCodecModule)
+  if (g_bLibraryInitialized)
     return;
 
   FXMEM_InitializePartitionAlloc();
-  g_pCodecModule = new CCodec_ModuleMgr();
 
   CFX_GEModule* pModule = CFX_GEModule::Get();
-  pModule->Init(cfg ? cfg->m_pUserFontPaths : nullptr, g_pCodecModule);
+  pModule->Init(cfg ? cfg->m_pUserFontPaths : nullptr);
 
   CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
-  pModuleMgr->SetCodecModule(g_pCodecModule);
+  pModuleMgr->SetCodecModule(pModule->GetCodecModule());
   pModuleMgr->InitPageModule();
-  pModuleMgr->LoadEmbeddedGB1CMaps();
-  pModuleMgr->LoadEmbeddedJapan1CMaps();
-  pModuleMgr->LoadEmbeddedCNS1CMaps();
-  pModuleMgr->LoadEmbeddedKorea1CMaps();
-
-#ifdef PDF_ENABLE_XFA_BMP
-  pModuleMgr->GetCodecModule()->SetBmpModule(
-      pdfium::MakeUnique<CCodec_BmpModule>());
-#endif
-
-#ifdef PDF_ENABLE_XFA_GIF
-  pModuleMgr->GetCodecModule()->SetGifModule(
-      pdfium::MakeUnique<CCodec_GifModule>());
-#endif
-
-#ifdef PDF_ENABLE_XFA_PNG
-  pModuleMgr->GetCodecModule()->SetPngModule(
-      pdfium::MakeUnique<CCodec_PngModule>());
-#endif
-
-#ifdef PDF_ENABLE_XFA_TIFF
-  pModuleMgr->GetCodecModule()->SetTiffModule(
-      pdfium::MakeUnique<CCodec_TiffModule>());
-#endif
+  pModuleMgr->LoadEmbeddedMaps();
+  pModuleMgr->LoadCodecModules();
 
 #ifdef PDF_ENABLE_XFA
   FXJSE_Initialize();
@@ -411,10 +371,12 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
 #endif  // PDF_ENABLE_XFA
   if (cfg && cfg->version >= 2)
     IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
+
+  g_bLibraryInitialized = true;
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
-  if (!g_pCodecModule)
+  if (!g_bLibraryInitialized)
     return;
 
 #ifdef PDF_ENABLE_XFA
@@ -425,10 +387,9 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
   CPDF_ModuleMgr::Destroy();
   CFX_GEModule::Destroy();
 
-  delete g_pCodecModule;
-  g_pCodecModule = nullptr;
-
   IJS_Runtime::Destroy();
+
+  g_bLibraryInitialized = false;
 }
 
 #ifndef _WIN32

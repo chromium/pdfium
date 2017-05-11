@@ -21,16 +21,14 @@ class CFX_GEModule {
   static CFX_GEModule* Get();
   static void Destroy();
 
-  void Init(const char** pUserFontPaths, CCodec_ModuleMgr* pCodecModule);
+  void Init(const char** pUserFontPaths);
   CFX_FontCache* GetFontCache();
   CFX_FontMgr* GetFontMgr() { return m_pFontMgr.get(); }
   void SetTextGamma(float gammaValue);
   const uint8_t* GetTextGammaTable() const;
 
-  CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
+  CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule.get(); }
   void* GetPlatformData() { return m_pPlatformData; }
-
-  FXFT_Library m_FTLibrary;
 
  private:
   CFX_GEModule();
@@ -42,7 +40,7 @@ class CFX_GEModule {
   uint8_t m_GammaValue[256];
   std::unique_ptr<CFX_FontCache> m_pFontCache;
   std::unique_ptr<CFX_FontMgr> m_pFontMgr;
-  CCodec_ModuleMgr* m_pCodecModule;
+  std::unique_ptr<CCodec_ModuleMgr> m_pCodecModule;
   void* m_pPlatformData;
   const char** m_pUserFontPaths;
 };
