@@ -1399,8 +1399,7 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
                  m_pCompData[j].m_DecodeStep * component_value) *
                     255.0f +
                 0.5f);
-            extracted_components[j] =
-                color_value > 255 ? 255 : (color_value < 0 ? 0 : color_value);
+            extracted_components[j] = pdfium::clamp(color_value, 0, 255);
           }
           m_pColorSpace->TranslateImageLine(color, extracted_components, 1, 0,
                                             0, bTransMask);

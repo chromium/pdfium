@@ -57,7 +57,7 @@ uint8_t bicubic_interpol(const uint8_t* buf,
     s_result += a_result * v_w[i];
   }
   s_result >>= 16;
-  return (uint8_t)(s_result < 0 ? 0 : s_result > 255 ? 255 : s_result);
+  return static_cast<uint8_t>(pdfium::clamp(s_result, 0, 255));
 }
 
 void bicubic_get_pos_weight(int pos_pixel[],
