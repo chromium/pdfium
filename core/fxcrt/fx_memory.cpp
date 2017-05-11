@@ -11,7 +11,7 @@
 pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
 pdfium::base::PartitionAllocatorGeneric gStringPartitionAllocator;
 
-void FXMEM_InitalizePartitionAlloc() {
+void FXMEM_InitializePartitionAlloc() {
   static bool s_gPartitionAllocatorsInitialized = false;
   if (!s_gPartitionAllocatorsInitialized) {
     pdfium::base::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);

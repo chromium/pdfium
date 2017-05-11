@@ -371,7 +371,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   if (g_pCodecModule)
     return;
 
-  FXMEM_InitalizePartitionAlloc();
+  FXMEM_InitializePartitionAlloc();
   g_pCodecModule = new CCodec_ModuleMgr();
 
   CFX_GEModule* pModule = CFX_GEModule::Get();

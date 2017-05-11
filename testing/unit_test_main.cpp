@@ -9,7 +9,7 @@
 // Can't use gtest-provided main since we need to initialize partition
 // alloc before invoking any test.
 int main(int argc, char** argv) {
-  FXMEM_InitalizePartitionAlloc();
+  FXMEM_InitializePartitionAlloc();
   testing::InitGoogleTest(&argc, argv);
   testing::InitGoogleMock(&argc, argv);
   return RUN_ALL_TESTS();
