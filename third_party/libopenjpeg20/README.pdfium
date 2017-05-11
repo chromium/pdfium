@@ -42,4 +42,5 @@ Local Modifications:
 0030-undefined-shift-opj_get_all_encoding_parameters.patch: fix undefined shift in pi.c method.
 0031-undefined-shift-opj_bio_read.patch: fix undefined shift in bio.c method.
 0032-undefined-shift-opj_j2k_read_siz.patch: fix undefined shift in j2k.c method.
+0033-undefined-shift-opj_t1_dec_clnpass.patch: fix undefined shifts originated from opj_t1_decode_cblk.
 TODO(thestig): List all the other patches.
