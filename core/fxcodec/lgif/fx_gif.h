@@ -13,7 +13,7 @@
 
 #include "core/fxcrt/fx_basic.h"
 
-class CGifDecompressor;
+class CGifContext;
 
 #define GIF_SIGNATURE "GIF"
 #define GIF_SIG_EXTENSION 0x21
@@ -166,14 +166,13 @@ class CGifLZWDecoder {
 
 static const int32_t s_gif_interlace_step[4] = {8, 8, 4, 2};
 
-GifDecodeStatus gif_read_header(CGifDecompressor* gif_ptr);
-GifDecodeStatus gif_get_frame(CGifDecompressor* gif_ptr);
-int32_t gif_get_frame_num(CGifDecompressor* gif_ptr);
-GifDecodeStatus gif_load_frame(CGifDecompressor* gif_ptr, int32_t frame_num);
-void gif_input_buffer(CGifDecompressor* gif_ptr,
+GifDecodeStatus gif_read_header(CGifContext* gif_ptr);
+GifDecodeStatus gif_get_frame(CGifContext* gif_ptr);
+int32_t gif_get_frame_num(CGifContext* gif_ptr);
+GifDecodeStatus gif_load_frame(CGifContext* gif_ptr, int32_t frame_num);
+void gif_input_buffer(CGifContext* gif_ptr,
                       uint8_t* src_buf,
                       uint32_t src_size);
-uint32_t gif_get_avail_input(CGifDecompressor* gif_ptr,
-                             uint8_t** avail_buf_ptr);
+uint32_t gif_get_avail_input(CGifContext* gif_ptr, uint8_t** avail_buf_ptr);
 
 #endif  // CORE_FXCODEC_LGIF_FX_GIF_H_

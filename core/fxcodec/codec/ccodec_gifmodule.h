@@ -7,12 +7,13 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 
+#include <memory>
+
 #include "core/fxcodec/lgif/fx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBAttribute;
-class FXGIF_Context;
 
 class CCodec_GifModule {
  public:
@@ -34,16 +35,13 @@ class CCodec_GifModule {
   CCodec_GifModule();
   ~CCodec_GifModule();
 
-  FXGIF_Context* Start();
-  void Finish(FXGIF_Context* pContext);
-  uint32_t GetAvailInput(FXGIF_Context* pContext,
+  std::unique_ptr<CGifContext> Start();
+  uint32_t GetAvailInput(CGifContext* context,
                          uint8_t** avail_buf_ptr = nullptr);
 
-  void Input(FXGIF_Context* pContext,
-             const uint8_t* src_buf,
-             uint32_t src_size);
+  void Input(CGifContext* context, const uint8_t* src_buf, uint32_t src_size);
 
-  GifDecodeStatus ReadHeader(FXGIF_Context* pContext,
+  GifDecodeStatus ReadHeader(CGifContext* context,
                              int* width,
                              int* height,
                              int* pal_num,
@@ -51,8 +49,8 @@ class CCodec_GifModule {
                              int* bg_index,
                              CFX_DIBAttribute* pAttribute);
 
-  GifDecodeStatus LoadFrameInfo(FXGIF_Context* pContext, int* frame_num);
-  GifDecodeStatus LoadFrame(FXGIF_Context* pContext,
+  GifDecodeStatus LoadFrameInfo(CGifContext* context, int* frame_num);
+  GifDecodeStatus LoadFrame(CGifContext* context,
                             int frame_num,
                             CFX_DIBAttribute* pAttribute);
 

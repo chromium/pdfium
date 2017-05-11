@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
 #define CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
@@ -14,6 +15,7 @@
 #include "core/fxcodec/codec/ccodec_pngmodule.h"
 #include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
+#include "core/fxcodec/lgif/cgifcontext.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
@@ -128,7 +130,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   CCodec_ModuleMgr* m_pCodecMgr;
   FXJPEG_Context* m_pJpegContext;
   FXPNG_Context* m_pPngContext;
-  FXGIF_Context* m_pGifContext;
+  std::unique_ptr<CGifContext> m_pGifContext;
   FXBMP_Context* m_pBmpContext;
   CCodec_TiffContext* m_pTiffContext;
   FXCODEC_IMAGE_TYPE m_imagType;

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_LGIF_CGIFDECOMPRESSOR_H_
-#define CORE_FXCODEC_LGIF_CGIFDECOMPRESSOR_H_
+#ifndef CORE_FXCODEC_LGIF_CGIFCONTEXT_H_
+#define CORE_FXCODEC_LGIF_CGIFCONTEXT_H_
 
 #include <setjmp.h>
 #include <memory>
@@ -16,20 +16,10 @@
 
 class CCodec_GifModule;
 
-// TODO(npm): Get rid of this, maybe rename CGifDecompressor->GifContext
-class FXGIF_Context {
+class CGifContext {
  public:
-  FXGIF_Context();
-  ~FXGIF_Context();
-
-  std::unique_ptr<CGifDecompressor> m_Gif;
-  CCodec_GifModule* parent_ptr;
-};
-
-class CGifDecompressor {
- public:
-  CGifDecompressor(FXGIF_Context* p, char* error_string);
-  ~CGifDecompressor();
+  CGifContext(CCodec_GifModule* gif_module, char* error_string);
+  ~CGifContext();
 
   void ErrorData(const char* err_msg);
   void RecordCurrentPosition(uint32_t* cur_pos_ptr);
@@ -56,8 +46,8 @@ class CGifDecompressor {
   int32_t decode_status;
   uint32_t skip_size;
 
+  CCodec_GifModule* m_Module;
   char* err_ptr;
-  FXGIF_Context* gif_context;
   CFX_ByteString cmt_data;
   std::unique_ptr<GifGCE> m_GifGCE;
   uint8_t* next_in;
@@ -74,4 +64,4 @@ class CGifDecompressor {
   uint8_t img_pass_num;
 };
 
-#endif  // CORE_FXCODEC_LGIF_CGIFDECOMPRESSOR_H_
+#endif  // CORE_FXCODEC_LGIF_CGIFCONTEXT_H_

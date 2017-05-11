@@ -729,8 +729,8 @@ static_library("fxcodec") {
       "core/fxcodec/codec/fx_codec_progress.cpp",
       "core/fxcodec/lbmp/fx_bmp.cpp",
       "core/fxcodec/lbmp/fx_bmp.h",
-      "core/fxcodec/lgif/cgifdecompressor.cpp",
-      "core/fxcodec/lgif/cgifdecompressor.h",
+      "core/fxcodec/lgif/cgifcontext.cpp",
+      "core/fxcodec/lgif/cgifcontext.h",
       "core/fxcodec/lgif/fx_gif.cpp",
       "core/fxcodec/lgif/fx_gif.h",
     ]
