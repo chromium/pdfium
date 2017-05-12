@@ -42,13 +42,13 @@ wchar_t FX_GetFolderSeparator();
 class IFX_WriteStream : virtual public CFX_Retainable {
  public:
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
+  virtual bool WriteString(const CFX_ByteStringC& str) = 0;
 };
 
 class IFX_ArchiveStream : public IFX_WriteStream {
  public:
   virtual bool WriteByte(uint8_t byte) = 0;
   virtual bool WriteDWord(uint32_t i) = 0;
-  virtual bool WriteString(const CFX_ByteStringC& str) = 0;
   virtual FX_FILESIZE CurrentOffset() const = 0;
 };
 
@@ -108,6 +108,8 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
                   FX_FILESIZE offset,
                   size_t size) override = 0;
   bool WriteBlock(const void* buffer, size_t size) override;
+  bool WriteString(const CFX_ByteStringC& str) override;
+
   bool Flush() override = 0;
 };
 

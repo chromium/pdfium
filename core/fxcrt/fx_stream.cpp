@@ -93,3 +93,7 @@ size_t IFX_SeekableReadStream::ReadBlock(void* buffer, size_t size) {
 bool IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
   return WriteBlock(buffer, GetSize(), size);
 }
+
+bool IFX_SeekableStream::WriteString(const CFX_ByteStringC& str) {
+  return WriteBlock(str.c_str(), str.GetLength());
+}
