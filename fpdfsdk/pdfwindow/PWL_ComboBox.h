@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
 #define FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
 
+#include <memory>
+
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
@@ -47,9 +49,9 @@ class CPWL_CBButton : public CPWL_Wnd {
 class CPWL_ComboBox : public CPWL_Wnd {
  public:
   CPWL_ComboBox();
-  ~CPWL_ComboBox() override {}
+  ~CPWL_ComboBox() override;
 
-  CPWL_Edit* GetEdit() const { return m_pEdit; }
+  CPWL_Edit* GetEdit() const { return m_pEdit.get(); }
 
   // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
@@ -90,9 +92,9 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void CreateListBox(const PWL_CREATEPARAM& cp);
   void SetPopup(bool bPopup);
 
-  CPWL_CBEdit* m_pEdit;
-  CPWL_CBButton* m_pButton;
-  CPWL_CBListBox* m_pList;
+  std::unique_ptr<CPWL_CBEdit> m_pEdit;
+  std::unique_ptr<CPWL_CBButton> m_pButton;
+  std::unique_ptr<CPWL_CBListBox> m_pList;
   bool m_bPopup;
   CFX_FloatRect m_rcOldWindow;
   int32_t m_nPopupWhere;

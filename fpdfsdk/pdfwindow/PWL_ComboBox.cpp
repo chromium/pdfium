@@ -181,13 +181,12 @@ bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 }
 
 CPWL_ComboBox::CPWL_ComboBox()
-    : m_pEdit(nullptr),
-      m_pButton(nullptr),
-      m_pList(nullptr),
-      m_bPopup(false),
+    : m_bPopup(false),
       m_nPopupWhere(0),
       m_nSelectItem(-1),
       m_pFillerNotify(nullptr) {}
+
+CPWL_ComboBox::~CPWL_ComboBox() {}
 
 CFX_ByteString CPWL_ComboBox::GetClassName() const {
   return "CPWL_ComboBox";
@@ -262,72 +261,74 @@ void CPWL_ComboBox::CreateChildWnd(const PWL_CREATEPARAM& cp) {
 }
 
 void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
-  if (!m_pEdit) {
-    m_pEdit = new CPWL_CBEdit;
-    m_pEdit->AttachFFLData(m_pFormFiller);
+  if (m_pEdit)
+    return;
 
-    PWL_CREATEPARAM ecp = cp;
-    ecp.pParentWnd = this;
-    ecp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PES_CENTER |
-                  PES_AUTOSCROLL | PES_UNDO;
+  m_pEdit = pdfium::MakeUnique<CPWL_CBEdit>();
+  m_pEdit->AttachFFLData(m_pFormFiller);
 
-    if (HasFlag(PWS_AUTOFONTSIZE))
-      ecp.dwFlags |= PWS_AUTOFONTSIZE;
+  PWL_CREATEPARAM ecp = cp;
+  ecp.pParentWnd = this;
+  ecp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PES_CENTER |
+                PES_AUTOSCROLL | PES_UNDO;
 
-    if (!HasFlag(PCBS_ALLOWCUSTOMTEXT))
-      ecp.dwFlags |= PWS_READONLY;
+  if (HasFlag(PWS_AUTOFONTSIZE))
+    ecp.dwFlags |= PWS_AUTOFONTSIZE;
 
-    ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
-    ecp.dwBorderWidth = 0;
-    ecp.nBorderStyle = BorderStyle::SOLID;
+  if (!HasFlag(PCBS_ALLOWCUSTOMTEXT))
+    ecp.dwFlags |= PWS_READONLY;
 
-    m_pEdit->Create(ecp);
-  }
+  ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
+  ecp.dwBorderWidth = 0;
+  ecp.nBorderStyle = BorderStyle::SOLID;
+  m_pEdit->Create(ecp);
 }
 
 void CPWL_ComboBox::CreateButton(const PWL_CREATEPARAM& cp) {
-  if (!m_pButton) {
-    m_pButton = new CPWL_CBButton;
+  if (m_pButton)
+    return;
 
-    PWL_CREATEPARAM bcp = cp;
-    bcp.pParentWnd = this;
-    bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
-    bcp.sBackgroundColor = PWL_SCROLLBAR_BKCOLOR;
-    bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
-    bcp.dwBorderWidth = 2;
-    bcp.nBorderStyle = BorderStyle::BEVELED;
-    bcp.eCursorType = FXCT_ARROW;
+  m_pButton = pdfium::MakeUnique<CPWL_CBButton>();
 
-    m_pButton->Create(bcp);
-  }
+  PWL_CREATEPARAM bcp = cp;
+  bcp.pParentWnd = this;
+  bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
+  bcp.sBackgroundColor = PWL_SCROLLBAR_BKCOLOR;
+  bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
+  bcp.dwBorderWidth = 2;
+  bcp.nBorderStyle = BorderStyle::BEVELED;
+  bcp.eCursorType = FXCT_ARROW;
+  m_pButton->Create(bcp);
 }
 
 void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
-  if (!m_pList) {
-    m_pList = new CPWL_CBListBox;
-    m_pList->AttachFFLData(m_pFormFiller);
-    PWL_CREATEPARAM lcp = cp;
-    lcp.pParentWnd = this;
-    lcp.dwFlags =
-        PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
-    lcp.nBorderStyle = BorderStyle::SOLID;
-    lcp.dwBorderWidth = 1;
-    lcp.eCursorType = FXCT_ARROW;
-    lcp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
+  if (m_pList)
+    return;
 
-    if (cp.dwFlags & PWS_AUTOFONTSIZE)
-      lcp.fFontSize = PWLCB_DEFAULTFONTSIZE;
-    else
-      lcp.fFontSize = cp.fFontSize;
+  m_pList = pdfium::MakeUnique<CPWL_CBListBox>();
+  m_pList->AttachFFLData(m_pFormFiller);
 
-    if (cp.sBorderColor.nColorType == COLORTYPE_TRANSPARENT)
-      lcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
+  PWL_CREATEPARAM lcp = cp;
+  lcp.pParentWnd = this;
+  lcp.dwFlags =
+      PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
+  lcp.nBorderStyle = BorderStyle::SOLID;
+  lcp.dwBorderWidth = 1;
+  lcp.eCursorType = FXCT_ARROW;
+  lcp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
 
-    if (cp.sBackgroundColor.nColorType == COLORTYPE_TRANSPARENT)
-      lcp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
+  if (cp.dwFlags & PWS_AUTOFONTSIZE)
+    lcp.fFontSize = PWLCB_DEFAULTFONTSIZE;
+  else
+    lcp.fFontSize = cp.fFontSize;
 
-    m_pList->Create(lcp);
-  }
+  if (cp.sBorderColor.nColorType == COLORTYPE_TRANSPARENT)
+    lcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
+
+  if (cp.sBackgroundColor.nColorType == COLORTYPE_TRANSPARENT)
+    lcp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
+
+  m_pList->Create(lcp);
 }
 
 void CPWL_ComboBox::RePosChildWnd() {
@@ -584,14 +585,14 @@ void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd,
                              intptr_t lParam) {
   switch (msg) {
     case PNM_LBUTTONDOWN:
-      if (pWnd == m_pButton) {
+      if (pWnd == m_pButton.get()) {
         SetPopup(!m_bPopup);
         return;
       }
       break;
     case PNM_LBUTTONUP:
       if (m_pEdit && m_pList) {
-        if (pWnd == m_pList) {
+        if (pWnd == m_pList.get()) {
           SetSelectText();
           SelectAll();
           m_pEdit->SetFocus();
@@ -599,6 +600,7 @@ void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd,
           return;
         }
       }
+      break;
   }
 
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
