@@ -123,7 +123,7 @@ class CXFA_FMLexer {
   bool HasError() const;
 
  private:
-  CXFA_FMToken* Scan();
+  std::unique_ptr<CXFA_FMToken> Scan();
 
   const wchar_t* m_ptr;
   uint32_t m_uCurrentLine;

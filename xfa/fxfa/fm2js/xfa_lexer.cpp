@@ -7,6 +7,7 @@
 #include "xfa/fxfa/fm2js/xfa_lexer.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -132,13 +133,13 @@ CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc,
 CXFA_FMLexer::~CXFA_FMLexer() {}
 
 CXFA_FMToken* CXFA_FMLexer::NextToken() {
-  m_pToken.reset(Scan());
+  m_pToken = Scan();
   return m_pToken.get();
 }
 
-CXFA_FMToken* CXFA_FMLexer::Scan() {
+std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
   uint16_t ch = 0;
-  CXFA_FMToken* p = new CXFA_FMToken(m_uCurrentLine);
+  auto p = pdfium::MakeUnique<CXFA_FMToken>(m_uCurrentLine);
   if (!XFA_FMDChar::isValid(m_ptr)) {
     ch = XFA_FMDChar::get(m_ptr);
     Error(kFMErrUnsupportedChar, ch);
@@ -173,7 +174,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
       case '"': {
         const wchar_t* pTemp = 0;
         p->m_type = TOKstring;
-        iRet = String(p, m_ptr, pTemp);
+        iRet = String(p.get(), m_ptr, pTemp);
         m_ptr = pTemp;
         return p;
       }
@@ -189,7 +190,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
       case '9': {
         p->m_type = TOKnumber;
         const wchar_t* pTemp = 0;
-        iRet = Number(p, m_ptr, pTemp);
+        iRet = Number(p.get(), m_ptr, pTemp);
         m_ptr = pTemp;
         if (iRet)
           Error(kFMErrBadSuffixNumber);
@@ -317,7 +318,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
             p->m_type = TOKnumber;
             const wchar_t* pTemp = 0;
             XFA_FMDChar::dec(m_ptr);
-            iRet = Number(p, m_ptr, pTemp);
+            iRet = Number(p.get(), m_ptr, pTemp);
             m_ptr = pTemp;
             if (iRet)
               Error(kFMErrBadSuffixNumber);
@@ -337,7 +338,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
         break;
       default: {
         const wchar_t* pTemp = 0;
-        iRet = Identifiers(p, m_ptr, pTemp);
+        iRet = Identifiers(p.get(), m_ptr, pTemp);
         m_ptr = pTemp;
         if (!iRet)
           p->m_type = IsKeyword(p->m_wstring);
