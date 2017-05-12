@@ -21,7 +21,8 @@ class CGifContext {
   CGifContext(CCodec_GifModule* gif_module, char* error_string);
   ~CGifContext();
 
-  void ErrorData(const char* err_msg);
+  // TODO(npm): Remove longjmp from this method!!!
+  void ThrowError(const char* err_msg);
   void RecordCurrentPosition(uint32_t* cur_pos_ptr);
   void ReadScanline(int32_t row_num, uint8_t* row_buf);
   bool GetRecordPosition(uint32_t cur_pos,

@@ -33,7 +33,7 @@ CGifContext::CGifContext(CCodec_GifModule* gif_module, char* error_string)
 
 CGifContext::~CGifContext() {}
 
-void CGifContext::ErrorData(const char* err_msg) {
+void CGifContext::ThrowError(const char* err_msg) {
   strncpy(err_ptr, err_msg, GIF_MAX_ERROR_SIZE - 1);
   longjmp(jmpbuf, 1);
 }

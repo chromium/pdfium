@@ -1804,8 +1804,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames) {
           m_status = FXCODEC_STATUS_DECODE_READY;
           return m_status;
         }
-        if (m_pGifContext.get())
-          m_pGifContext = nullptr;
+        m_pGifContext = nullptr;
         m_status = FXCODEC_STATUS_ERROR;
         return m_status;
       }

@@ -11,6 +11,7 @@
 
 #include "core/fxcodec/lbmp/fx_bmp.h"
 #include "core/fxcodec/lgif/cgifcontext.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -118,7 +119,8 @@ GifDecodeStatus gif_decode_extension(CGifContext* context) {
 
 GifDecodeStatus gif_decode_image_info(CGifContext* context) {
   if (context->width == 0 || context->height == 0) {
-    context->ErrorData("No Image Header Info");
+    context->ThrowError("No Image Header Info");
+    NOTREACHED();
     return GifDecodeStatus::Error;
   }
   uint32_t skip_size_org = context->skip_size;
@@ -141,7 +143,9 @@ GifDecodeStatus gif_decode_image_info(CGifContext* context) {
           context->width ||
       gif_image->m_ImageInfo.top + gif_image->m_ImageInfo.height >
           context->height) {
-    context->ErrorData("Image Data Out Of LSD, The File May Be Corrupt");
+    gif_image = nullptr;
+    context->ThrowError("Image Data Out Of LSD, The File May Be Corrupt");
+    NOTREACHED();
     return GifDecodeStatus::Error;
   }
   GifLF* gif_img_info_lf_ptr = (GifLF*)&gif_img_info_ptr->local_flag;
@@ -178,7 +182,8 @@ void gif_decoding_failure_at_tail_cleanup(CGifContext* context,
                                           GifImage* gif_image_ptr) {
   gif_image_ptr->m_ImageRowBuf.clear();
   gif_save_decoding_status(context, GIF_D_STATUS_TAIL);
-  context->ErrorData("Decode Image Data Error");
+  context->ThrowError("Decode Image Data Error");
+  NOTREACHED();
 }
 
 }  // namespace
@@ -361,7 +366,8 @@ GifDecodeStatus gif_read_header(CGifContext* context) {
 
   if (strncmp(gif_header_ptr->signature, GIF_SIGNATURE, 3) != 0 ||
       gif_header_ptr->version[0] != '8' || gif_header_ptr->version[2] != 'a') {
-    context->ErrorData("Not A Gif Image");
+    context->ThrowError("Not A Gif Image");
+    NOTREACHED();
     return GifDecodeStatus::Error;
   }
   GifLSD* gif_lsd_ptr = nullptr;
@@ -499,7 +505,8 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
   GifImage* gif_image_ptr = context->m_Images[frame_num].get();
   uint32_t gif_img_row_bytes = gif_image_ptr->m_ImageInfo.width;
   if (gif_img_row_bytes == 0) {
-    context->ErrorData("Error Invalid Number of Row Bytes");
+    context->ThrowError("Error Invalid Number of Row Bytes");
+    NOTREACHED();
     return GifDecodeStatus::Error;
   }
   if (context->decode_status == GIF_D_STATUS_TAIL) {
@@ -522,7 +529,8 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
           (bool)((GifLF*)&gif_image_ptr->m_ImageInfo.local_flag)->interlace);
       if (!bRes) {
         gif_image_ptr->m_ImageRowBuf.clear();
-        context->ErrorData("Error Read Record Position Data");
+        context->ThrowError("Error Read Record Position Data");
+        NOTREACHED();
         return GifDecodeStatus::Error;
       }
     } else {
@@ -540,13 +548,15 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
           (bool)((GifLF*)&gif_image_ptr->m_ImageInfo.local_flag)->interlace);
       if (!bRes) {
         gif_image_ptr->m_ImageRowBuf.clear();
-        context->ErrorData("Error Read Record Position Data");
+        context->ThrowError("Error Read Record Position Data");
+        NOTREACHED();
         return GifDecodeStatus::Error;
       }
     }
     if (gif_image_ptr->image_code_size >= 32) {
       gif_image_ptr->m_ImageRowBuf.clear();
-      context->ErrorData("Error Invalid Code Size");
+      context->ThrowError("Error Invalid Code Size");
+      NOTREACHED();
       return GifDecodeStatus::Error;
     }
     if (!context->m_ImgDecoder.get())
@@ -643,7 +653,8 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
     }
     gif_save_decoding_status(context, GIF_D_STATUS_TAIL);
   }
-  context->ErrorData("Decode Image Data Error");
+  context->ThrowError("Decode Image Data Error");
+  NOTREACHED();
   return GifDecodeStatus::Error;
 }
 
