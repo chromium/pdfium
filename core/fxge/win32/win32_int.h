@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
@@ -329,7 +330,6 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
   int m_nBitsPerPixel;
   int m_HorzSize;
   int m_VertSize;
-  std::unique_ptr<CPSOutput> m_pPSOutput;
   CFX_PSRenderer m_PSRenderer;
 };
 

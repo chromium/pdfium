@@ -10,26 +10,17 @@
 
 #include "core/fxcrt/fx_system.h"
 
-CPSOutput::CPSOutput(HDC hDC) {
-  m_hDC = hDC;
-}
+CPSOutput::CPSOutput(HDC hDC) : m_hDC(hDC) {}
 
 CPSOutput::~CPSOutput() {}
 
-void CPSOutput::Release() {
-  delete this;
-}
-
-void CPSOutput::OutputPS(const char* str, int len) {
-  if (len < 0)
-    len = static_cast<int>(FXSYS_strlen(str));
-
+bool CPSOutput::WriteBlock(const void* str, size_t len) {
   int sent_len = 0;
   while (len > 0) {
     char buffer[1026];
-    int send_len = std::min(len, 1024);
+    size_t send_len = std::min(len, static_cast<size_t>(1024));
     *(reinterpret_cast<uint16_t*>(buffer)) = send_len;
-    memcpy(buffer + 2, str + sent_len, send_len);
+    memcpy(buffer + 2, static_cast<const char*>(str) + sent_len, send_len);
 
     // TODO(thestig/rbpotter): Do PASSTHROUGH for non-Chromium usage.
     // ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, buffer, 0, nullptr);
@@ -37,4 +28,9 @@ void CPSOutput::OutputPS(const char* str, int len) {
     sent_len += send_len;
     len -= send_len;
   }
+  return true;
+}
+
+bool CPSOutput::WriteString(const CFX_ByteStringC& str) {
+  return WriteBlock(str.c_str(), str.GetLength());
 }

@@ -10,10 +10,11 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/win32/cpsoutput.h"
 
 class CFX_DIBSource;
 class CFX_FaceCache;
@@ -29,7 +30,7 @@ class CFX_PSRenderer {
   CFX_PSRenderer();
   ~CFX_PSRenderer();
 
-  void Init(CPSOutput* pOutput,
+  void Init(const CFX_RetainPtr<IFX_WriteStream>& stream,
             int pslevel,
             int width,
             int height,
@@ -85,7 +86,7 @@ class CFX_PSRenderer {
                        int* ps_glyphindex);
   void WritePSBinary(const uint8_t* data, int len);
 
-  CPSOutput* m_pOutput;
+  CFX_RetainPtr<IFX_WriteStream> m_pStream;
   int m_PSLevel;
   CFX_GraphStateData m_CurGraphState;
   bool m_bGraphStateSet;

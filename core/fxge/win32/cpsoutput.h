@@ -9,17 +9,19 @@
 
 #include <windows.h>
 
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPSOutput {
+class CPSOutput : public IFX_WriteStream {
  public:
   explicit CPSOutput(HDC hDC);
-  ~CPSOutput();
+  ~CPSOutput() override;
 
-  // IFX_PSOutput
-  void Release();
-  void OutputPS(const char* str, int len);
+  // IFX_Writestream
+  bool WriteBlock(const void* str, size_t len) override;
+  bool WriteString(const CFX_ByteStringC& str) override;
 
+ private:
   HDC m_hDC;
 };
 
