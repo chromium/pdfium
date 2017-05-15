@@ -56,3 +56,7 @@ declare_args() {
   # Don't build against bundled zlib.
   use_system_zlib = false
 }
+
+if (pdf_use_skia && pdf_use_skia_paths) {
+  assert(false, "Enable at most ONE of pdf_use_skia and pdf_use_skia_paths")
+}
