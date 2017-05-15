@@ -220,7 +220,7 @@ CGifLZWDecoder::~CGifLZWDecoder() {}
 
 void CGifLZWDecoder::InitTable(uint8_t code_len) {
   code_size = code_len;
-  ASSERT(code_size < 32);
+  ASSERT(code_size < 13);
   code_clear = 1 << code_size;
   code_end = code_clear + 1;
   bits_left = 0;
@@ -244,10 +244,7 @@ void CGifLZWDecoder::ClearTable() {
 
 void CGifLZWDecoder::DecodeString(uint16_t code) {
   stack_size = 0;
-  while (true) {
-    if (code < code_clear || code > code_next)
-      break;
-
+  while (code >= code_clear && code <= code_next) {
     stack[GIF_MAX_LZW_CODE - 1 - stack_size++] = code_table[code].suffix;
     code = code_table[code].prefix;
   }
@@ -553,7 +550,7 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
         return GifDecodeStatus::Error;
       }
     }
-    if (gif_image_ptr->image_code_size >= 32) {
+    if (gif_image_ptr->image_code_size >= 13) {
       gif_image_ptr->m_ImageRowBuf.clear();
       context->ThrowError("Error Invalid Code Size");
       NOTREACHED();
