@@ -244,6 +244,12 @@ PackBitsDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 				    (unsigned long) ((tmsize_t)n - occ));
 				n = (long)occ;
 			}
+			if( cc == 0 )
+			{
+				TIFFWarningExt(tif->tif_clientdata, module,
+					       "Terminating PackBitsDecode due to lack of data.");
+				break;
+			}
 			occ -= n;
 			b = *bp++;
 			cc--;
