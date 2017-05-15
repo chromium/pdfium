@@ -10,8 +10,6 @@
 
 #include "core/fpdfapi/edit/cpdf_encryptor.h"
 #include "core/fpdfapi/edit/cpdf_flateencoder.h"
-#include "core/fpdfapi/edit/cpdf_objectstream.h"
-#include "core/fpdfapi/edit/cpdf_xrefstream.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -24,7 +22,6 @@
 
 namespace {
 
-const uint32_t kXRefStreamMaxSize = 10000;
 const size_t kArchiveBufferSize = 32768;
 
 class CFX_FileBufferArchive : public IFX_ArchiveStream {
@@ -161,40 +158,6 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
 
 CPDF_Creator::~CPDF_Creator() {}
 
-bool CPDF_Creator::IsXRefNeedEnd() {
-  if (!IsIncremental())
-    return false;
-  return m_pXRefStream->CountIndexArrayItems() >= kXRefStreamMaxSize;
-}
-
-bool CPDF_Creator::WriteIndirectObjectToStream(uint32_t objnum,
-                                               const uint8_t* pBuffer,
-                                               uint32_t dwSize) {
-  if (!m_pXRefStream)
-    return true;
-
-  m_pXRefStream->AddObjectNumberToIndexArray(objnum);
-  if (!m_pXRefStream->CompressIndirectObject(objnum, pBuffer, dwSize, this))
-    return false;
-  if (!IsXRefNeedEnd())
-    return true;
-  if (!m_pXRefStream->End(this, false) || !m_pXRefStream->Start())
-    return false;
-  return true;
-}
-
-bool CPDF_Creator::AppendObjectNumberToXRef(uint32_t objnum) {
-  if (!m_pXRefStream)
-    return true;
-
-  m_pXRefStream->AddObjectNumberToIndexArray(objnum);
-  if (!IsXRefNeedEnd())
-    return true;
-  if (!m_pXRefStream->End(this, false) || !m_pXRefStream->Start())
-    return false;
-  return true;
-}
-
 bool CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                                uint32_t objnum,
                                CPDF_CryptoHandler* pCrypto) {
@@ -231,41 +194,7 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
     return false;
   }
 
-  if (!m_Archive->WriteString("\r\nendobj\r\n") ||
-      !AppendObjectNumberToXRef(objnum)) {
-    return false;
-  }
-  return true;
-}
-
-bool CPDF_Creator::WriteIndirectObj(const CPDF_Object* pObj) {
-  uint32_t objnum = pObj->GetObjNum();
-  if (!m_pXRefStream || (m_pParser && m_pParser->GetObjectGenNum(objnum) > 0) ||
-      pObj->IsNumber()) {
-    return WriteIndirectObj(objnum, pObj);
-  }
-
-  CPDF_Dictionary* pDict = pObj->GetDict();
-  if (pObj->IsStream()) {
-    if (pDict && pDict->GetStringFor("Type") == "XRef")
-      return true;
-    return WriteIndirectObj(objnum, pObj);
-  }
-
-  if (pDict &&
-      (pDict == m_pDocument->GetRoot() || pDict == m_pEncryptDict ||
-       pDict->IsSignatureDict() || pDict->GetStringFor("Type") == "Page")) {
-    return WriteIndirectObj(objnum, pObj);
-  }
-
-  m_pXRefStream->AddObjectNumberToIndexArray(objnum);
-  if (!m_pXRefStream->CompressIndirectObject(objnum, pObj, this))
-    return false;
-  if (!IsXRefNeedEnd())
-    return true;
-  if (!m_pXRefStream->End(this, false) || !m_pXRefStream->Start())
-    return false;
-  return true;
+  return m_Archive->WriteString("\r\nendobj\r\n");
 }
 
 bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
@@ -388,13 +317,13 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
   bool bExistInMap = !!m_pDocument->GetIndirectObject(objnum);
   const uint8_t object_type = m_pParser->GetObjectType(objnum);
   if (m_pParser->IsVersionUpdated() || m_bSecurityChanged || bExistInMap ||
-      (object_type == 2 && m_pEncryptDict && !m_pXRefStream)) {
+      (object_type == 2 && m_pEncryptDict)) {
     CPDF_Object* pObj = m_pDocument->GetOrParseIndirectObject(objnum);
     if (!pObj) {
       m_ObjectOffsets.erase(objnum);
       return true;
     }
-    if (!WriteIndirectObj(pObj))
+    if (!WriteIndirectObj(pObj->GetObjNum(), pObj))
       return false;
     if (!bExistInMap)
       m_pDocument->DeleteIndirectObject(objnum);
@@ -405,24 +334,15 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
     if (!pBuffer)
       return true;
     if (object_type == 2) {
-      if (m_pXRefStream) {
-        if (!WriteIndirectObjectToStream(objnum, pBuffer, size)) {
-          FX_Free(pBuffer);
-          return false;
-        }
-      } else {
-        if (!m_Archive->WriteDWord(objnum) ||
-            !m_Archive->WriteString(" 0 obj ") ||
-            !m_Archive->WriteBlock(pBuffer, size) ||
-            !m_Archive->WriteString("\r\nendobj\r\n")) {
-          return false;
-        }
-      }
-    } else {
-      if (!m_Archive->WriteBlock(pBuffer, size) ||
-          !AppendObjectNumberToXRef(objnum)) {
+      if (!m_Archive->WriteDWord(objnum) ||
+          !m_Archive->WriteString(" 0 obj ") ||
+          !m_Archive->WriteBlock(pBuffer, size) ||
+          !m_Archive->WriteString("\r\nendobj\r\n")) {
         return false;
       }
+    } else {
+      if (!m_Archive->WriteBlock(pBuffer, size))
+        return false;
     }
     FX_Free(pBuffer);
   }
@@ -449,7 +369,7 @@ bool CPDF_Creator::WriteNewObjs() {
       continue;
 
     m_ObjectOffsets[objnum] = m_Archive->CurrentOffset();
-    if (!WriteIndirectObj(pObj))
+    if (!WriteIndirectObj(pObj->GetObjNum(), pObj))
       return false;
   }
   return true;
@@ -503,12 +423,6 @@ int32_t CPDF_Creator::WriteDoc_Stage1() {
 
     CPDF_Dictionary* pDict = m_pDocument->GetRoot();
     m_pMetadata = pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr;
-    if (HasObjectStream()) {
-      m_pXRefStream = pdfium::MakeUnique<CPDF_XRefStream>();
-      m_pXRefStream->Start();
-      if (IsIncremental() && m_pParser)
-        m_pXRefStream->SetPreviousOffset(m_pParser->GetLastXRefOffset());
-    }
     m_iStage = 10;
   }
   if (m_iStage == 10) {
@@ -561,12 +475,6 @@ int32_t CPDF_Creator::WriteDoc_Stage1() {
           continue;
 
         m_ObjectOffsets[num] = m_pParser->GetObjectPositionOrZero(num);
-        if (HasObjectStream())
-          m_pXRefStream->AddObjectNumberToIndexArray(num);
-      }
-      if (HasObjectStream()) {
-        m_pXRefStream->EndXRefStream(this);
-        m_pXRefStream->Start();
       }
     }
     m_iStage = 20;
@@ -624,11 +532,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3() {
   uint32_t dwLastObjNum = m_dwLastObjNum;
   if (m_iStage == 80) {
     m_XrefStart = m_Archive->CurrentOffset();
-    if (HasObjectStream()) {
-      m_pXRefStream->End(this, true);
-      m_XrefStart = m_pXRefStream->GetPreviousOffset();
-      m_iStage = 90;
-    } else if (!IsIncremental() || !m_pParser->IsXRefStream()) {
+    if (!IsIncremental() || !m_pParser->IsXRefStream()) {
       if (!IsIncremental() || m_pParser->GetLastXRefOffset() == 0) {
         CFX_ByteString str;
         str = pdfium::ContainsKey(m_ObjectOffsets, 1)
@@ -722,139 +626,135 @@ int32_t CPDF_Creator::WriteDoc_Stage3() {
 int32_t CPDF_Creator::WriteDoc_Stage4() {
   ASSERT(m_iStage >= 90);
 
-  if (!HasObjectStream()) {
-    bool bXRefStream = IsIncremental() && m_pParser->IsXRefStream();
-    if (!bXRefStream) {
-      if (!m_Archive->WriteString("trailer\r\n<<"))
+  bool bXRefStream = IsIncremental() && m_pParser->IsXRefStream();
+  if (!bXRefStream) {
+    if (!m_Archive->WriteString("trailer\r\n<<"))
+      return -1;
+  } else {
+    if (!m_Archive->WriteDWord(m_pDocument->GetLastObjNum() + 1) ||
+        !m_Archive->WriteString(" 0 obj <<")) {
+      return -1;
+    }
+  }
+
+  if (m_pParser) {
+    CPDF_Dictionary* p = m_pParser->GetTrailer();
+    for (const auto& it : *p) {
+      const CFX_ByteString& key = it.first;
+      CPDF_Object* pValue = it.second.get();
+      if (key == "Encrypt" || key == "Size" || key == "Filter" ||
+          key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
+          key == "XRefStm" || key == "ID") {
+        continue;
+      }
+      if (!m_Archive->WriteString(("/")) ||
+          !m_Archive->WriteString(PDF_NameEncode(key).AsStringC())) {
         return -1;
-    } else {
-      if (!m_Archive->WriteDWord(m_pDocument->GetLastObjNum() + 1) ||
-          !m_Archive->WriteString(" 0 obj <<")) {
+      }
+      if (!pValue->IsInline()) {
+        if (!m_Archive->WriteString(" ") ||
+            !m_Archive->WriteDWord(pValue->GetObjNum()) ||
+            !m_Archive->WriteString(" 0 R ")) {
+          return -1;
+        }
+      } else if (!pValue->WriteTo(m_Archive.get())) {
         return -1;
       }
     }
-
-    if (m_pParser) {
-      CPDF_Dictionary* p = m_pParser->GetTrailer();
-      for (const auto& it : *p) {
-        const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second.get();
-        // TODO(ochang): Consolidate with similar check in
-        // CPDF_XRefStream::WriteTrailer.
-        if (key == "Encrypt" || key == "Size" || key == "Filter" ||
-            key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
-            key == "XRefStm" || key == "ID") {
-          continue;
-        }
-        if (!m_Archive->WriteString(("/")) ||
-            !m_Archive->WriteString(PDF_NameEncode(key).AsStringC())) {
-          return -1;
-        }
-        if (!pValue->IsInline()) {
-          if (!m_Archive->WriteString(" ") ||
-              !m_Archive->WriteDWord(pValue->GetObjNum()) ||
-              !m_Archive->WriteString(" 0 R ")) {
-            return -1;
-          }
-        } else if (!pValue->WriteTo(m_Archive.get())) {
-          return -1;
-        }
-      }
-    } else {
-      if (!m_Archive->WriteString("\r\n/Root ") ||
-          !m_Archive->WriteDWord(m_pDocument->GetRoot()->GetObjNum()) ||
+  } else {
+    if (!m_Archive->WriteString("\r\n/Root ") ||
+        !m_Archive->WriteDWord(m_pDocument->GetRoot()->GetObjNum()) ||
+        !m_Archive->WriteString(" 0 R\r\n")) {
+      return -1;
+    }
+    if (m_pDocument->GetInfo()) {
+      if (!m_Archive->WriteString("/Info ") ||
+          !m_Archive->WriteDWord(m_pDocument->GetInfo()->GetObjNum()) ||
           !m_Archive->WriteString(" 0 R\r\n")) {
         return -1;
       }
-      if (m_pDocument->GetInfo()) {
-        if (!m_Archive->WriteString("/Info ") ||
-            !m_Archive->WriteDWord(m_pDocument->GetInfo()->GetObjNum()) ||
-            !m_Archive->WriteString(" 0 R\r\n")) {
-          return -1;
-        }
-      }
     }
-    if (m_pEncryptDict) {
-      if (!m_Archive->WriteString("/Encrypt"))
-        return -1;
+  }
+  if (m_pEncryptDict) {
+    if (!m_Archive->WriteString("/Encrypt"))
+      return -1;
 
-      uint32_t dwObjNum = m_pEncryptDict->GetObjNum();
-      if (dwObjNum == 0)
-        dwObjNum = m_pDocument->GetLastObjNum() + 1;
-      if (!m_Archive->WriteString(" ") || !m_Archive->WriteDWord(dwObjNum) ||
-          !m_Archive->WriteString(" 0 R ")) {
-        return -1;
-      }
-    }
-
-    if (!m_Archive->WriteString("/Size ") ||
-        !m_Archive->WriteDWord(m_dwLastObjNum + (bXRefStream ? 2 : 1))) {
+    uint32_t dwObjNum = m_pEncryptDict->GetObjNum();
+    if (dwObjNum == 0)
+      dwObjNum = m_pDocument->GetLastObjNum() + 1;
+    if (!m_Archive->WriteString(" ") || !m_Archive->WriteDWord(dwObjNum) ||
+        !m_Archive->WriteString(" 0 R ")) {
       return -1;
     }
-    if (IsIncremental()) {
-      FX_FILESIZE prev = m_pParser->GetLastXRefOffset();
-      if (prev) {
-        if (!m_Archive->WriteString("/Prev "))
-          return -1;
+  }
 
-        char offset_buf[20];
-        memset(offset_buf, 0, sizeof(offset_buf));
-        FXSYS_i64toa(prev, offset_buf, 10);
-        if (!m_Archive->WriteBlock(offset_buf, FXSYS_strlen(offset_buf)))
+  if (!m_Archive->WriteString("/Size ") ||
+      !m_Archive->WriteDWord(m_dwLastObjNum + (bXRefStream ? 2 : 1))) {
+    return -1;
+  }
+  if (IsIncremental()) {
+    FX_FILESIZE prev = m_pParser->GetLastXRefOffset();
+    if (prev) {
+      if (!m_Archive->WriteString("/Prev "))
+        return -1;
+
+      char offset_buf[20];
+      memset(offset_buf, 0, sizeof(offset_buf));
+      FXSYS_i64toa(prev, offset_buf, 10);
+      if (!m_Archive->WriteBlock(offset_buf, FXSYS_strlen(offset_buf)))
+        return -1;
+    }
+  }
+  if (m_pIDArray) {
+    if (!m_Archive->WriteString(("/ID")) ||
+        !m_pIDArray->WriteTo(m_Archive.get())) {
+      return -1;
+    }
+  }
+  if (!bXRefStream) {
+    if (!m_Archive->WriteString(">>"))
+      return -1;
+  } else {
+    if (!m_Archive->WriteString("/W[0 4 1]/Index["))
+      return -1;
+    if (IsIncremental() && m_pParser && m_pParser->GetLastXRefOffset() == 0) {
+      uint32_t i = 0;
+      for (i = 0; i < m_dwLastObjNum; i++) {
+        if (!pdfium::ContainsKey(m_ObjectOffsets, i))
+          continue;
+        if (!m_Archive->WriteDWord(i) || !m_Archive->WriteString(" 1 "))
           return -1;
       }
-    }
-    if (m_pIDArray) {
-      if (!m_Archive->WriteString(("/ID")) ||
-          !m_pIDArray->WriteTo(m_Archive.get())) {
+      if (!m_Archive->WriteString("]/Length ") ||
+          !m_Archive->WriteDWord(m_dwLastObjNum * 5) ||
+          !m_Archive->WriteString(">>stream\r\n")) {
         return -1;
       }
-    }
-    if (!bXRefStream) {
-      if (!m_Archive->WriteString(">>"))
-        return -1;
+      for (i = 0; i < m_dwLastObjNum; i++) {
+        auto it = m_ObjectOffsets.find(i);
+        if (it == m_ObjectOffsets.end())
+          continue;
+        OutputIndex(m_Archive.get(), it->second);
+      }
     } else {
-      if (!m_Archive->WriteString("/W[0 4 1]/Index["))
-        return -1;
-      if (IsIncremental() && m_pParser && m_pParser->GetLastXRefOffset() == 0) {
-        uint32_t i = 0;
-        for (i = 0; i < m_dwLastObjNum; i++) {
-          if (!pdfium::ContainsKey(m_ObjectOffsets, i))
-            continue;
-          if (!m_Archive->WriteDWord(i) || !m_Archive->WriteString(" 1 "))
-            return -1;
-        }
-        if (!m_Archive->WriteString("]/Length ") ||
-            !m_Archive->WriteDWord(m_dwLastObjNum * 5) ||
-            !m_Archive->WriteString(">>stream\r\n")) {
+      size_t count = m_NewObjNumArray.size();
+      size_t i = 0;
+      for (i = 0; i < count; i++) {
+        if (!m_Archive->WriteDWord(m_NewObjNumArray[i]) ||
+            !m_Archive->WriteString(" 1 ")) {
           return -1;
         }
-        for (i = 0; i < m_dwLastObjNum; i++) {
-          auto it = m_ObjectOffsets.find(i);
-          if (it == m_ObjectOffsets.end())
-            continue;
-          OutputIndex(m_Archive.get(), it->second);
-        }
-      } else {
-        size_t count = m_NewObjNumArray.size();
-        size_t i = 0;
-        for (i = 0; i < count; i++) {
-          if (!m_Archive->WriteDWord(m_NewObjNumArray[i]) ||
-              !m_Archive->WriteString(" 1 ")) {
-            return -1;
-          }
-        }
-        if (!m_Archive->WriteString("]/Length ") ||
-            !m_Archive->WriteDWord(count * 5) ||
-            !m_Archive->WriteString(">>stream\r\n")) {
-          return -1;
-        }
-        for (i = 0; i < count; ++i)
-          OutputIndex(m_Archive.get(), m_ObjectOffsets[m_NewObjNumArray[i]]);
       }
-      if (!m_Archive->WriteString("\r\nendstream"))
+      if (!m_Archive->WriteString("]/Length ") ||
+          !m_Archive->WriteDWord(count * 5) ||
+          !m_Archive->WriteString(">>stream\r\n")) {
         return -1;
+      }
+      for (i = 0; i < count; ++i)
+        OutputIndex(m_Archive.get(), m_ObjectOffsets[m_NewObjNumArray[i]]);
     }
+    if (!m_Archive->WriteString("\r\nendstream"))
+      return -1;
   }
 
   if (!m_Archive->WriteString("\r\nstartxref\r\n"))
@@ -880,8 +780,6 @@ bool CPDF_Creator::Create(uint32_t flags) {
   m_NewObjNumArray.clear();
 
   InitID();
-  if (flags & FPDFCREATE_PROGRESSIVE)
-    return true;
   return Continue() > -1;
 }
 

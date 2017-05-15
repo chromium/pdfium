@@ -20,12 +20,9 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Object;
 class CPDF_Parser;
-class CPDF_XRefStream;
 
 #define FPDFCREATE_INCREMENTAL 1
 #define FPDFCREATE_NO_ORIGINAL 2
-#define FPDFCREATE_PROGRESSIVE 4
-#define FPDFCREATE_OBJECTSTREAM 8
 
 class CPDF_Creator {
  public:
@@ -57,9 +54,6 @@ class CPDF_Creator {
   }
   bool IsIncremental() const { return !!(m_dwFlags & FPDFCREATE_INCREMENTAL); }
   bool IsOriginal() const { return !(m_dwFlags & FPDFCREATE_NO_ORIGINAL); }
-  bool HasObjectStream() const {
-    return !!(m_dwFlags & FPDFCREATE_OBJECTSTREAM);
-  }
 
  private:
   void Clear();
@@ -67,8 +61,6 @@ class CPDF_Creator {
   void InitOldObjNumOffsets();
   void InitNewObjNumOffsets();
   void InitID();
-
-  bool AppendObjectNumberToXRef(uint32_t objnum);
 
   int32_t WriteDoc_Stage1();
   int32_t WriteDoc_Stage2();
@@ -78,12 +70,8 @@ class CPDF_Creator {
   bool WriteOldIndirectObject(uint32_t objnum);
   bool WriteOldObjs();
   bool WriteNewObjs();
-  bool WriteIndirectObj(const CPDF_Object* pObj);
   bool WriteDirectObj(uint32_t objnum, const CPDF_Object* pObj, bool bEncrypt);
   bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
-  bool WriteIndirectObjectToStream(uint32_t objnum,
-                                   const uint8_t* pBuffer,
-                                   uint32_t dwSize);
 
   bool WriteStream(const CPDF_Object* pStream,
                    uint32_t objnum,
@@ -98,7 +86,6 @@ class CPDF_Creator {
   uint32_t m_dwEncryptObjNum;
   CFX_RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   CPDF_Object* m_pMetadata;
-  std::unique_ptr<CPDF_XRefStream> m_pXRefStream;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
   FX_FILESIZE m_SavedOffset;
