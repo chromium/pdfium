@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xfa/fxfa/fm2js/xfa_simpleexpression.h"
+#include "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.h"
 
 #include <memory>
 #include <utility>
@@ -11,7 +11,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxfa/fm2js/xfa_lexer.h"
+#include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
 TEST(FMCallExpressionTest, more_than_32_arguments) {
   // Use sign as it has 3 object parameters at positions 0, 5, and 6.

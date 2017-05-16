@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/fm2js/xfa_lexer.h"
+#include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"

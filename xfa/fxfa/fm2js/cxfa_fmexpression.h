@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_XFA_EXPRESSION_H_
-#define XFA_FXFA_FM2JS_XFA_EXPRESSION_H_
+#ifndef XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
+#define XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_
 
 #include <memory>
 #include <vector>
 
-#include "xfa/fxfa/fm2js/xfa_simpleexpression.h"
+#include "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.h"
 
 enum XFA_FM_EXPTYPE {
   XFA_FM_EXPTYPE_UNKNOWN,
@@ -211,4 +211,4 @@ class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
   std::unique_ptr<CXFA_FMExpression> m_pList;
 };
 
-#endif  // XFA_FXFA_FM2JS_XFA_EXPRESSION_H_
+#endif  // XFA_FXFA_FM2JS_CXFA_FMEXPRESSION_H_

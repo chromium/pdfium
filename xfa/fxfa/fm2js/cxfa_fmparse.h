@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_XFA_FMPARSE_H_
-#define XFA_FXFA_FM2JS_XFA_FMPARSE_H_
+#ifndef XFA_FXFA_FM2JS_CXFA_FMPARSE_H_
+#define XFA_FXFA_FM2JS_CXFA_FMPARSE_H_
 
 #include <memory>
 #include <vector>
 
-#include "xfa/fxfa/fm2js/xfa_expression.h"
-#include "xfa/fxfa/fm2js/xfa_lexer.h"
+#include "xfa/fxfa/fm2js/cxfa_fmexpression.h"
+#include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
 class CXFA_FMParse {
  public:
@@ -55,4 +55,4 @@ class CXFA_FMParse {
   CXFA_FMErrorInfo* const m_pErrorInfo;
 };
 
-#endif  // XFA_FXFA_FM2JS_XFA_FMPARSE_H_
+#endif  // XFA_FXFA_FM2JS_CXFA_FMPARSE_H_

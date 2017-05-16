@@ -8,7 +8,7 @@
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/fm2js/xfa_program.h"
+#include "xfa/fxfa/fm2js/cxfa_fmprogram.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FX_SAFE_STRSIZE safe_size = size;

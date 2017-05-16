@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_XFA_PROGRAM_H_
-#define XFA_FXFA_FM2JS_XFA_PROGRAM_H_
+#ifndef XFA_FXFA_FM2JS_CXFA_FMPROGRAM_H_
+#define XFA_FXFA_FM2JS_CXFA_FMPROGRAM_H_
 
 #include <memory>
 
-#include "xfa/fxfa/fm2js/xfa_error.h"
-#include "xfa/fxfa/fm2js/xfa_fmparse.h"
+#include "xfa/fxfa/fm2js/cxfa_fmerrorinfo.h"
+#include "xfa/fxfa/fm2js/cxfa_fmparse.h"
 
 class CXFA_FMProgram {
  public:
@@ -26,4 +26,4 @@ class CXFA_FMProgram {
   std::unique_ptr<CXFA_FMFunctionDefinition> m_globalFunction;
 };
 
-#endif  // XFA_FXFA_FM2JS_XFA_PROGRAM_H_
+#endif  // XFA_FXFA_FM2JS_CXFA_FMPROGRAM_H_

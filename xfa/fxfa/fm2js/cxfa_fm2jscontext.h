@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
-#define XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
+#ifndef XFA_FXFA_FM2JS_CXFA_FM2JSCONTEXT_H_
+#define XFA_FXFA_FM2JS_CXFA_FM2JSCONTEXT_H_
 
 #include <memory>
 #include <vector>
@@ -452,4 +452,4 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   CXFA_Document* const m_pDocument;
 };
 
-#endif  // XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
+#endif  // XFA_FXFA_FM2JS_CXFA_FM2JSCONTEXT_H_

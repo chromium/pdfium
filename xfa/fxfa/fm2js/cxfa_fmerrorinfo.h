@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_XFA_ERROR_H_
-#define XFA_FXFA_FM2JS_XFA_ERROR_H_
+#ifndef XFA_FXFA_FM2JS_CXFA_FMERRORINFO_H_
+#define XFA_FXFA_FM2JS_CXFA_FMERRORINFO_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -28,4 +28,4 @@ class CXFA_FMErrorInfo {
   CFX_WideString message;
 };
 
-#endif  // XFA_FXFA_FM2JS_XFA_ERROR_H_
+#endif  // XFA_FXFA_FM2JS_CXFA_FMERRORINFO_H_

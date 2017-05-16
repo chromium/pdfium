@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_XFA_SIMPLEEXPRESSION_H_
-#define XFA_FXFA_FM2JS_XFA_SIMPLEEXPRESSION_H_
+#ifndef XFA_FXFA_FM2JS_CXFA_FMSIMPLEEXPRESSION_H_
+#define XFA_FXFA_FM2JS_CXFA_FMSIMPLEEXPRESSION_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
-#include "xfa/fxfa/fm2js/xfa_lexer.h"
+#include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
 #define RUNTIMEFUNCTIONRETURNVALUE \
   (L"foxit_xfa_formcalc_runtime_func_return_value")
@@ -305,4 +305,4 @@ class CXFA_FMMethodCallExpression : public CXFA_FMBinExpression {
 
 bool CFXA_IsTooBig(const CFX_WideTextBuf& javascript);
 
-#endif  // XFA_FXFA_FM2JS_XFA_SIMPLEEXPRESSION_H_
+#endif  // XFA_FXFA_FM2JS_CXFA_FMSIMPLEEXPRESSION_H_

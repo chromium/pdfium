@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/fm2js/xfa_error.h"
+#include "xfa/fxfa/fm2js/cxfa_fmerrorinfo.h"
 
 const wchar_t kFMErrUnsupportedChar[] = L"unsupported char '%c'";
 const wchar_t kFMErrBadSuffixNumber[] = L"bad suffix on number";

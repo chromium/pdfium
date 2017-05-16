@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/fm2js/xfa_expression.h"
+#include "xfa/fxfa/fm2js/cxfa_fmexpression.h"
 
 #include <utility>
 

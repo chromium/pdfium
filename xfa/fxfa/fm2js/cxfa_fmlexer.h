@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_XFA_LEXER_H_
-#define XFA_FXFA_FM2JS_XFA_LEXER_H_
+#ifndef XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
+#define XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
 
 #include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/fm2js/xfa_error.h"
+#include "xfa/fxfa/fm2js/cxfa_fmerrorinfo.h"
 
 enum XFA_FM_TOKEN {
   TOKand,
@@ -134,4 +134,4 @@ class CXFA_FMLexer {
   CXFA_FMErrorInfo* m_pErrorInfo;
 };
 
-#endif  // XFA_FXFA_FM2JS_XFA_LEXER_H_
+#endif  // XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
