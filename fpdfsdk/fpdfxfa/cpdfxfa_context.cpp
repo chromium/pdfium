@@ -152,34 +152,30 @@ int CPDFXFA_Context::GetPageCount() const {
   }
 }
 
-CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(int page_index) {
+CFX_RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
   if (page_index < 0)
     return nullptr;
 
-  CPDFXFA_Page* pPage = nullptr;
-  int nCount = pdfium::CollectionSize<int>(m_XFAPageList);
-  if (nCount > 0 && page_index < nCount) {
-    pPage = m_XFAPageList[page_index];
-    if (pPage) {
-      pPage->Retain();
-      return pPage;
-    }
+  if (pdfium::IndexInBounds(m_XFAPageList, page_index)) {
+    if (m_XFAPageList[page_index])
+      return m_XFAPageList[page_index];
   } else {
     m_nPageCount = GetPageCount();
     m_XFAPageList.resize(m_nPageCount);
   }
 
-  pPage = new CPDFXFA_Page(this, page_index);
-  if (!pPage->LoadPage()) {
-    pPage->Release();
+  auto pPage = pdfium::MakeRetain<CPDFXFA_Page>(this, page_index);
+  if (!pPage->LoadPage())
     return nullptr;
-  }
+
   if (pdfium::IndexInBounds(m_XFAPageList, page_index))
     m_XFAPageList[page_index] = pPage;
+
   return pPage;
 }
 
-CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(CXFA_FFPageView* pPage) const {
+CFX_RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
+    CXFA_FFPageView* pPage) const {
   if (!pPage)
     return nullptr;
 
@@ -189,7 +185,7 @@ CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(CXFA_FFPageView* pPage) const {
   if (m_iDocType != XFA_DocType::Dynamic)
     return nullptr;
 
-  for (CPDFXFA_Page* pTempPage : m_XFAPageList) {
+  for (auto& pTempPage : m_XFAPageList) {
     if (pTempPage && pTempPage->GetXFAPageView() == pPage)
       return pTempPage;
   }
@@ -203,17 +199,8 @@ void CPDFXFA_Context::DeletePage(int page_index) {
   if (m_pPDFDoc)
     m_pPDFDoc->DeletePage(page_index);
 
-  if (!pdfium::IndexInBounds(m_XFAPageList, page_index))
-    return;
-
-  if (CPDFXFA_Page* pPage = m_XFAPageList[page_index])
-    pPage->Release();
-}
-
-void CPDFXFA_Context::RemovePage(CPDFXFA_Page* page) {
-  int page_index = page->GetPageIndex();
   if (pdfium::IndexInBounds(m_XFAPageList, page_index))
-    m_XFAPageList[page_index] = nullptr;
+    m_XFAPageList[page_index].Reset();
 }
 
 void CPDFXFA_Context::ClearChangeMark() {

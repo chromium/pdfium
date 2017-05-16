@@ -628,7 +628,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
     return nullptr;
 
 #ifdef PDF_ENABLE_XFA
-  return pDoc->GetXFAPage(page_index);
+  return pDoc->GetXFAPage(page_index).Leak();
 #else   // PDF_ENABLE_XFA
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
   if (!pDict)
@@ -974,7 +974,8 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
   if (!page)
     return;
 #ifdef PDF_ENABLE_XFA
-  pPage->Release();
+  // Take it back across the API and throw it away.
+  CFX_RetainPtr<CPDFXFA_Page>().Unleak(pPage);
 #else   // PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView =
       static_cast<CPDFSDK_PageView*>(pPage->GetView());
@@ -1176,7 +1177,7 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   int count = pDoc->GetPageCount();
   if (page_index < 0 || page_index >= count)
     return false;
-  CPDFXFA_Page* pPage = pDoc->GetXFAPage(page_index);
+  CFX_RetainPtr<CPDFXFA_Page> pPage = pDoc->GetXFAPage(page_index);
   if (!pPage)
     return false;
   *width = pPage->GetPageWidth();

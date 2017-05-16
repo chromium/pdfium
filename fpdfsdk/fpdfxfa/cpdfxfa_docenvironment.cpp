@@ -63,7 +63,7 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (m_pContext->GetDocType() != XFA_DocType::Dynamic)
     return;
 
-  CPDFXFA_Page* pPage = m_pContext->GetXFAPage(pPageView);
+  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pPageView);
   if (!pPage)
     return;
 
@@ -71,7 +71,7 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (!pFormFillEnv)
     return;
 
-  pFormFillEnv->Invalidate(static_cast<FPDF_PAGE>(pPage),
+  pFormFillEnv->Invalidate(static_cast<FPDF_PAGE>(pPage.Get()),
                            CFX_FloatRect::FromCFXRectF(rt).ToFxRect());
 }
 
@@ -94,7 +94,7 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CPDFXFA_Page* pPage = m_pContext->GetXFAPage(pPageView);
+  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pPageView);
   if (!pPage)
     return;
 
@@ -103,8 +103,9 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
     return;
 
   CFX_FloatRect rcCaret = CFX_FloatRect::FromCFXRectF(*pRtAnchor);
-  pFormFillEnv->DisplayCaret((FPDF_PAGE)pPage, bVisible, rcCaret.left,
-                             rcCaret.top, rcCaret.right, rcCaret.bottom);
+  pFormFillEnv->DisplayCaret(static_cast<FPDF_PAGE>(pPage.Get()), bVisible,
+                             rcCaret.left, rcCaret.top, rcCaret.right,
+                             rcCaret.bottom);
 }
 
 bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
@@ -119,22 +120,21 @@ bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
   if (!pXFAPageView)
     return false;
 
-  CPDFXFA_Page* pPage = m_pContext->GetXFAPage(pXFAPageView);
+  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pXFAPageView);
   if (!pPage)
     return false;
 
-  CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc();
-  int nRotate = pWidgetAcc->GetRotate();
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return false;
 
   FS_RECTF pageViewRect = {0.0f, 0.0f, 0.0f, 0.0f};
-  pFormFillEnv->GetPageViewRect(pPage, pageViewRect);
+  pFormFillEnv->GetPageViewRect(pPage.Get(), pageViewRect);
 
   int t1;
   int t2;
   CFX_FloatRect rcAnchor = CFX_FloatRect::FromCFXRectF(rtAnchor);
+  int nRotate = hWidget->GetDataAcc()->GetRotate();
   switch (nRotate) {
     case 90: {
       t1 = (int)(pageViewRect.right - rcAnchor.right);
@@ -232,7 +232,7 @@ bool CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   if (!pXFAPageView)
     return false;
 
-  CPDFXFA_Page* pPage = m_pContext->GetXFAPage(pXFAPageView);
+  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pXFAPageView);
   if (!pPage)
     return false;
 
@@ -254,7 +254,7 @@ bool CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   if (hWidget->CanSelectAll())
     menuFlag |= FXFA_MENU_SELECTALL;
 
-  return pFormFillEnv->PopupMenu(pPage, hWidget, menuFlag, ptPopup);
+  return pFormFillEnv->PopupMenu(pPage.Get(), hWidget, menuFlag, ptPopup);
 }
 
 void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
@@ -278,11 +278,12 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
 
   for (int iPageIter = 0; iPageIter < m_pContext->GetOriginalPageCount();
        iPageIter++) {
-    CPDFXFA_Page* pPage = (*m_pContext->GetXFAPageList())[iPageIter];
+    CFX_RetainPtr<CPDFXFA_Page> pPage =
+        (*m_pContext->GetXFAPageList())[iPageIter];
     if (!pPage)
       continue;
 
-    m_pContext->GetFormFillEnv()->RemovePageView(pPage);
+    m_pContext->GetFormFillEnv()->RemovePageView(pPage.Get());
     pPage->SetXFAPageView(pXFADocView->GetPageView(iPageIter));
   }
 
@@ -303,11 +304,13 @@ void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CPDFXFA_Page* pXFAPage = m_pContext->GetXFAPage(pPageView);
+  CFX_RetainPtr<CPDFXFA_Page> pXFAPage = m_pContext->GetXFAPage(pPageView);
   if (!pXFAPage)
     return;
 
-  m_pContext->GetFormFillEnv()->GetPageView(pXFAPage, true)->AddAnnot(hWidget);
+  m_pContext->GetFormFillEnv()
+      ->GetPageView(pXFAPage.Get(), true)
+      ->AddAnnot(hWidget);
 }
 
 void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget,
@@ -319,13 +322,14 @@ void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CPDFXFA_Page* pXFAPage = m_pContext->GetXFAPage(pPageView);
+  CFX_RetainPtr<CPDFXFA_Page> pXFAPage = m_pContext->GetXFAPage(pPageView);
   if (!pXFAPage)
     return;
 
   CPDFSDK_PageView* pSdkPageView =
-      m_pContext->GetFormFillEnv()->GetPageView(pXFAPage, true);
-  if (CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget))
+      m_pContext->GetFormFillEnv()->GetPageView(pXFAPage.Get(), true);
+  CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget);
+  if (pAnnot)
     pSdkPageView->DeleteAnnot(pAnnot);
 }
 

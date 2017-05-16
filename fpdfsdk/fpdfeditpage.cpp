@@ -118,15 +118,15 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
   pPageDict->SetNewFor<CPDF_Dictionary>("Resources");
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Page* pPage =
-      new CPDFXFA_Page(static_cast<CPDFXFA_Context*>(document), page_index);
-  pPage->LoadPDFPage(pPageDict);
+  auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(
+      static_cast<CPDFXFA_Context*>(document), page_index);
+  pXFAPage->LoadPDFPage(pPageDict);
+  return pXFAPage.Leak();
 #else   // PDF_ENABLE_XFA
   CPDF_Page* pPage = new CPDF_Page(pDoc, pPageDict, true);
   pPage->ParseContent();
-#endif  // PDF_ENABLE_XFA
-
   return pPage;
+#endif  // PDF_ENABLE_XFA
 }
 
 DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
