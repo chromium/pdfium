@@ -142,7 +142,7 @@ class CGifLZWDecoder {
  private:
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
-  void DecodeString(uint16_t code);
+  bool DecodeString(uint16_t code);
 
   uint8_t code_size;
   uint8_t code_size_cur;

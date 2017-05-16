@@ -242,14 +242,18 @@ void CGifLZWDecoder::ClearTable() {
     code_table[i].suffix = static_cast<uint8_t>(i);
 }
 
-void CGifLZWDecoder::DecodeString(uint16_t code) {
+bool CGifLZWDecoder::DecodeString(uint16_t code) {
   stack_size = 0;
   while (code >= code_clear && code <= code_next) {
+    if (code == code_table[code].prefix || stack_size == GIF_MAX_LZW_CODE - 1)
+      return false;
+
     stack[GIF_MAX_LZW_CODE - 1 - stack_size++] = code_table[code].suffix;
     code = code_table[code].prefix;
   }
   stack[GIF_MAX_LZW_CODE - 1 - stack_size++] = static_cast<uint8_t>(code);
   code_first = static_cast<uint8_t>(code);
+  return true;
 }
 
 void CGifLZWDecoder::AddCode(uint16_t prefix_code, uint8_t append_char) {
@@ -319,19 +323,30 @@ GifDecodeStatus CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t* des_size) {
         if (code_next < GIF_MAX_LZW_CODE) {
           if (code == code_next) {
             AddCode(code_old, code_first);
-            DecodeString(code);
+            if (!DecodeString(code)) {
+              strncpy(err_msg_ptr, "String Decoding Error",
+                      GIF_MAX_ERROR_SIZE - 1);
+              return GifDecodeStatus::Error;
+            }
           } else if (code > code_next) {
             strncpy(err_msg_ptr, "Decode Error, Out Of Range",
                     GIF_MAX_ERROR_SIZE - 1);
             return GifDecodeStatus::Error;
           } else {
-            DecodeString(code);
+            if (!DecodeString(code)) {
+              strncpy(err_msg_ptr, "String Decoding Error",
+                      GIF_MAX_ERROR_SIZE - 1);
+              return GifDecodeStatus::Error;
+            }
             uint8_t append_char = stack[GIF_MAX_LZW_CODE - stack_size];
             AddCode(code_old, append_char);
           }
         }
       } else {
-        DecodeString(code);
+        if (!DecodeString(code)) {
+          strncpy(err_msg_ptr, "String Decoding Error", GIF_MAX_ERROR_SIZE - 1);
+          return GifDecodeStatus::Error;
+        }
       }
       code_old = code;
       if (i + stack_size > *des_size) {
