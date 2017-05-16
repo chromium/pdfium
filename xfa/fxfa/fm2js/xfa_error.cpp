@@ -9,10 +9,10 @@
 const wchar_t kFMErrUnsupportedChar[] = L"unsupported char '%c'";
 const wchar_t kFMErrBadSuffixNumber[] = L"bad suffix on number";
 const wchar_t kFMErrExpectedIdentifier[] =
-    L"expected identifier instead of '%s'";
-const wchar_t kFMErrExpectedToken[] = L"expected '%s' instead of '%s'";
-const wchar_t kFMErrExpectedEndIf[] = L"expected 'endif' instead of '%s'";
-const wchar_t kFMErrUnexpectedExpression[] = L"unexpected expression '%s'";
+    L"expected identifier instead of '%.16s'";
+const wchar_t kFMErrExpectedToken[] = L"expected '%.16s' instead of '%.16s'";
+const wchar_t kFMErrExpectedEndIf[] = L"expected 'endif' instead of '%.16s'";
+const wchar_t kFMErrUnexpectedExpression[] = L"unexpected expression '%.16s'";
 const wchar_t kFMErrExpectedNonEmptyExpression[] =
     L"expected non-empty expression";
 const wchar_t kFMErrLongAssignmentChain[] =

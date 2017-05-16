@@ -45,7 +45,7 @@ void CXFA_Object::ThrowIndexOutOfBoundsException() const {
 
 void CXFA_Object::ThrowParamCountMismatchException(
     const CFX_WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '%s'.",
+  ThrowException(L"Incorrect number of parameters calling method '%.16s'.",
                  method.c_str());
 }
 
@@ -59,6 +59,7 @@ void CXFA_Object::ThrowException(const wchar_t* str, ...) const {
   va_start(arg_ptr, str);
   wsMessage.FormatV(str, arg_ptr);
   va_end(arg_ptr);
+  ASSERT(!wsMessage.IsEmpty());
   FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringC());
 }
 

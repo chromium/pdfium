@@ -23,7 +23,7 @@ class CXFA_FMParse {
 
  private:
   void Check(XFA_FM_TOKEN op);
-  void Error(uint32_t lineNum, const wchar_t* msg, ...);
+  void Error(const wchar_t* msg, ...);
   bool HasError() const;
   std::unique_ptr<CXFA_FMExpression> ParseFunction();
   std::unique_ptr<CXFA_FMExpression> ParseExpression();

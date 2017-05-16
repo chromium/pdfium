@@ -38,19 +38,19 @@ void CXFA_FMParse::NextToken() {
 
 void CXFA_FMParse::Check(XFA_FM_TOKEN op) {
   if (m_pToken->m_type != op) {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedToken, XFA_FM_KeywordToString(op),
-          ws_TempString.c_str());
+    Error(kFMErrExpectedToken, XFA_FM_KeywordToString(op),
+          m_pToken->m_wstring.c_str());
   }
   NextToken();
 }
 
-void CXFA_FMParse::Error(uint32_t lineNum, const wchar_t* msg, ...) {
-  m_pErrorInfo->linenum = lineNum;
+void CXFA_FMParse::Error(const wchar_t* msg, ...) {
+  m_pErrorInfo->linenum = m_pToken->m_uLinenum;
   va_list ap;
   va_start(ap, msg);
   m_pErrorInfo->message.FormatV(msg, ap);
   va_end(ap);
+  ASSERT(!m_pErrorInfo->message.IsEmpty());
 }
 
 std::vector<std::unique_ptr<CXFA_FMExpression>>
@@ -79,9 +79,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseFunction() {
   uint32_t line = m_pToken->m_uLinenum;
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
-          ws_TempString.c_str());
+    Error(kFMErrExpectedIdentifier, m_pToken->m_wstring.c_str());
   } else {
     ident = m_pToken->m_wstring;
     NextToken();
@@ -103,9 +101,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseFunction() {
         else
           Check(TOKrparen);
       } else {
-        CFX_WideString ws_TempString(m_pToken->m_wstring);
-        Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
-              ws_TempString.c_str());
+        Error(kFMErrExpectedIdentifier, m_pToken->m_wstring.c_str());
         NextToken();
       }
       break;
@@ -166,9 +162,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpression() {
       NextToken();
       break;
     default:
-      CFX_WideString ws_TempString(m_pToken->m_wstring);
-      Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
-            ws_TempString.c_str());
+      Error(kFMErrUnexpectedExpression, m_pToken->m_wstring.c_str());
       NextToken();
       break;
   }
@@ -180,9 +174,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseVarExpression() {
   uint32_t line = m_pToken->m_uLinenum;
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
-          ws_TempString.c_str());
+    Error(kFMErrExpectedIdentifier, m_pToken->m_wstring.c_str());
   } else {
     ident = m_pToken->m_wstring;
     NextToken();
@@ -206,7 +198,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseSimpleExpression() {
     NextToken();
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseLogicalOrExpression();
     if (level++ == kMaxAssignmentChainLength)
-      Error(m_pToken->m_uLinenum, kFMErrLongAssignmentChain);
+      Error(kFMErrLongAssignmentChain);
     if (m_pErrorInfo->message.IsEmpty()) {
       pExp1 = pdfium::MakeUnique<CXFA_FMAssignExpression>(
           line, TOKassign, std::move(pExp1), std::move(pExp2));
@@ -524,9 +516,7 @@ CXFA_FMParse::ParsePrimaryExpression() {
       expr = ParseParenExpression();
       break;
     default:
-      CFX_WideString ws_TempString(m_pToken->m_wstring);
-      Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
-            ws_TempString.c_str());
+      Error(kFMErrUnexpectedExpression, m_pToken->m_wstring.c_str());
       NextToken();
       break;
   }
@@ -557,9 +547,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
             }
           }
           if (m_pToken->m_type != TOKrparen) {
-            CFX_WideString ws_TempString(m_pToken->m_wstring);
-            Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
-                  XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
+            Error(kFMErrExpectedToken, XFA_FM_KeywordToString(TOKrparen),
+                  m_pToken->m_wstring.c_str());
           }
         }
         if (m_pErrorInfo->message.IsEmpty()) {
@@ -604,9 +593,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
                 }
               }
               if (m_pToken->m_type != TOKrparen) {
-                CFX_WideString ws_TempString(m_pToken->m_wstring);
-                Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
-                      XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
+                Error(kFMErrExpectedToken, XFA_FM_KeywordToString(TOKrparen),
+                      m_pToken->m_wstring.c_str());
               }
             }
             if (m_pErrorInfo->message.IsEmpty()) {
@@ -648,9 +636,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
             continue;
           }
         } else {
-          CFX_WideString ws_TempString(m_pToken->m_wstring);
-          Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
-                ws_TempString.c_str());
+          Error(kFMErrExpectedIdentifier, m_pToken->m_wstring.c_str());
           return expr;
         }
         break;
@@ -676,18 +662,14 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
             continue;
           }
         } else {
-          CFX_WideString ws_TempString(m_pToken->m_wstring);
-          Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
-                ws_TempString.c_str());
+          Error(kFMErrExpectedIdentifier, m_pToken->m_wstring.c_str());
           return expr;
         }
         break;
       case TOKdotscream: {
         NextToken();
         if (m_pToken->m_type != TOKidentifier) {
-          CFX_WideString ws_TempString(m_pToken->m_wstring);
-          Error(m_pToken->m_uLinenum, kFMErrExpectedIdentifier,
-                ws_TempString.c_str());
+          Error(kFMErrExpectedIdentifier, m_pToken->m_wstring.c_str());
           return expr;
         }
         CFX_WideStringC tempStr = m_pToken->m_wstring;
@@ -736,9 +718,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseIndexExpression() {
                                                       std::move(s), true);
     NextToken();
     if (m_pToken->m_type != TOKrbracket) {
-      CFX_WideString ws_TempString(m_pToken->m_wstring);
-      Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
-            XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
+      Error(kFMErrExpectedToken, XFA_FM_KeywordToString(TOKrparen),
+            m_pToken->m_wstring.c_str());
       pExp.reset();
     }
     return pExp;
@@ -752,9 +733,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseIndexExpression() {
   }
   s = ParseSimpleExpression();
   if (m_pToken->m_type != TOKrbracket) {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
-          XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
+    Error(kFMErrExpectedToken, XFA_FM_KeywordToString(TOKrparen),
+          m_pToken->m_wstring.c_str());
   } else {
     pExp = pdfium::MakeUnique<CXFA_FMIndexExpression>(line, accessorIndex,
                                                       std::move(s), false);
@@ -766,7 +746,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseParenExpression() {
   Check(TOKlparen);
 
   if (m_pToken->m_type == TOKrparen) {
-    Error(m_pToken->m_uLinenum, kFMErrExpectedNonEmptyExpression);
+    Error(kFMErrExpectedNonEmptyExpression);
     NextToken();
     return nullptr;
   }
@@ -779,7 +759,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseParenExpression() {
     NextToken();
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseLogicalOrExpression();
     if (level++ == kMaxAssignmentChainLength)
-      Error(m_pToken->m_uLinenum, kFMErrLongAssignmentChain);
+      Error(kFMErrLongAssignmentChain);
     if (m_pErrorInfo->message.IsEmpty()) {
       pExp1 = pdfium::MakeUnique<CXFA_FMAssignExpression>(
           line, TOKassign, std::move(pExp1), std::move(pExp2));
@@ -875,8 +855,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
       Check(TOKendif);
       break;
     default:
-      CFX_WideString ws_TempString(m_pToken->m_wstring);
-      Error(m_pToken->m_uLinenum, kFMErrExpectedEndIf, ws_TempString.c_str());
+      Error(kFMErrExpectedEndIf, m_pToken->m_wstring.c_str());
       NextToken();
       break;
   }
@@ -912,9 +891,7 @@ CXFA_FMParse::ParseSubassignmentInForExpression() {
       expr = ParseSimpleExpression();
       break;
     default:
-      CFX_WideString ws_TempString(m_pToken->m_wstring);
-      Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
-            ws_TempString.c_str());
+      Error(kFMErrUnexpectedExpression, m_pToken->m_wstring.c_str());
       NextToken();
       break;
   }
@@ -926,9 +903,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForExpression() {
   uint32_t line = m_pToken->m_uLinenum;
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
-          XFA_FM_KeywordToString(m_pToken->m_type), ws_TempString.c_str());
+    Error(kFMErrExpectedToken, XFA_FM_KeywordToString(m_pToken->m_type),
+          m_pToken->m_wstring.c_str());
   }
   wsVariant = m_pToken->m_wstring;
   NextToken();
@@ -937,9 +913,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForExpression() {
     NextToken();
     pAssignment = ParseSimpleExpression();
   } else {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
-          XFA_FM_KeywordToString(m_pToken->m_type), ws_TempString.c_str());
+    Error(kFMErrExpectedToken, XFA_FM_KeywordToString(m_pToken->m_type),
+          m_pToken->m_wstring.c_str());
   }
   int32_t iDirection = 0;
   if (m_pToken->m_type == TOKupto) {
@@ -947,9 +922,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForExpression() {
   } else if (m_pToken->m_type == TOKdownto) {
     iDirection = -1;
   } else {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedToken, L"upto or downto",
-          ws_TempString.c_str());
+    Error(kFMErrExpectedToken, L"upto or downto", m_pToken->m_wstring.c_str());
   }
   NextToken();
   std::unique_ptr<CXFA_FMSimpleExpression> pAccessor = ParseSimpleExpression();
@@ -978,18 +951,15 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForeachExpression() {
   uint32_t line = m_pToken->m_uLinenum;
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrExpectedToken,
-          XFA_FM_KeywordToString(m_pToken->m_type), ws_TempString.c_str());
+    Error(kFMErrExpectedToken, XFA_FM_KeywordToString(m_pToken->m_type),
+          m_pToken->m_wstring.c_str());
   }
   wsIdentifier = m_pToken->m_wstring;
   NextToken();
   Check(TOKin);
   Check(TOKlparen);
   if (m_pToken->m_type == TOKrparen) {
-    CFX_WideString ws_TempString(m_pToken->m_wstring);
-    Error(m_pToken->m_uLinenum, kFMErrUnexpectedExpression,
-          ws_TempString.c_str());
+    Error(kFMErrUnexpectedExpression, m_pToken->m_wstring.c_str());
     NextToken();
   } else {
     while (m_pToken->m_type != TOKrparen) {

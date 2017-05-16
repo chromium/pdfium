@@ -6144,7 +6144,7 @@ void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
 
 void CXFA_FM2JSContext::ThrowNoDefaultPropertyException(
     const CFX_ByteStringC& name) const {
-  ThrowException(L"%s doesn't have a default property.", name.c_str());
+  ThrowException(L"%.16s doesn't have a default property.", name.c_str());
 }
 
 void CXFA_FM2JSContext::ThrowCompilerErrorException() const {
@@ -6163,14 +6163,14 @@ void CXFA_FM2JSContext::ThrowPropertyNotInObjectException(
     const CFX_WideString& name,
     const CFX_WideString& exp) const {
   ThrowException(
-      L"An attempt was made to reference property '%s' of a non-object "
-      L"in SOM expression %s.",
+      L"An attempt was made to reference property '%.16s' of a non-object "
+      L"in SOM expression %.16s.",
       name.c_str(), exp.c_str());
 }
 
 void CXFA_FM2JSContext::ThrowParamCountMismatchException(
     const CFX_WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '%s'.",
+  ThrowException(L"Incorrect number of parameters calling method '%.16s'.",
                  method.c_str());
 }
 
@@ -6184,5 +6184,6 @@ void CXFA_FM2JSContext::ThrowException(const wchar_t* str, ...) const {
   va_start(arg_ptr, str);
   wsMessage.FormatV(str, arg_ptr);
   va_end(arg_ptr);
+  ASSERT(!wsMessage.IsEmpty());
   FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringC());
 }

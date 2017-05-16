@@ -493,6 +493,7 @@ void CXFA_FMLexer::Error(const wchar_t* msg, ...) {
   va_start(ap, msg);
   m_pErrorInfo->message.FormatV(msg, ap);
   va_end(ap);
+  ASSERT(!m_pErrorInfo->message.IsEmpty());
 }
 
 bool CXFA_FMLexer::HasError() const {
