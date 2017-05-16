@@ -545,8 +545,9 @@ CFX_FaceCache* CFX_Font::GetFaceCache() const {
 void CFX_Font::ClearFaceCache() {
   if (!m_FaceCache)
     return;
-  CFX_GEModule::Get()->GetFontCache()->ReleaseCachedFace(this);
+
   m_FaceCache = nullptr;
+  CFX_GEModule::Get()->GetFontCache()->ReleaseCachedFace(this);
 }
 
 int CFX_Font::GetULPos() const {

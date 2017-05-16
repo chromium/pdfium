@@ -67,9 +67,10 @@ CPDFXFA_Context::~CPDFXFA_Context() {
 void CPDFXFA_Context::CloseXFADoc() {
   if (!m_pXFADoc)
     return;
+
+  m_pXFADocView = nullptr;
   m_pXFADoc->CloseDoc();
   m_pXFADoc.reset();
-  m_pXFADocView = nullptr;
 }
 
 void CPDFXFA_Context::SetFormFillEnv(

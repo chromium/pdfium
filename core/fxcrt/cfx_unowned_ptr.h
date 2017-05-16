@@ -26,17 +26,20 @@ class CFX_UnownedPtr {
   CFX_UnownedPtr(std::nullptr_t ptr) {}
 
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
-  ~CFX_UnownedPtr() {
-    if (m_pObj)
-      reinterpret_cast<volatile uint8_t*>(m_pObj)[0];
-  }
+  ~CFX_UnownedPtr() { Probe(); }
 #endif
 
   CFX_UnownedPtr& operator=(T* that) {
+#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+    Probe();
+#endif
     m_pObj = that;
     return *this;
   }
   CFX_UnownedPtr& operator=(const CFX_UnownedPtr& that) {
+#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+    Probe();
+#endif
     if (*this != that)
       m_pObj = that.Get();
     return *this;
@@ -58,6 +61,13 @@ class CFX_UnownedPtr {
   T* operator->() const { return m_pObj; }
 
  private:
+#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+  void Probe() {
+    if (m_pObj)
+      reinterpret_cast<volatile uint8_t*>(m_pObj)[0];
+  }
+#endif
+
   T* m_pObj = nullptr;
 };
 
