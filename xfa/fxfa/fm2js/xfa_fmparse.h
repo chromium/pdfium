@@ -19,9 +19,12 @@ class CXFA_FMParse {
   ~CXFA_FMParse();
 
   void NextToken();
+  std::vector<std::unique_ptr<CXFA_FMExpression>> ParseTopExpression();
+
+ private:
   void Check(XFA_FM_TOKEN op);
   void Error(uint32_t lineNum, const wchar_t* msg, ...);
-  std::vector<std::unique_ptr<CXFA_FMExpression>> ParseTopExpression();
+  bool HasError() const;
   std::unique_ptr<CXFA_FMExpression> ParseFunction();
   std::unique_ptr<CXFA_FMExpression> ParseExpression();
   std::unique_ptr<CXFA_FMExpression> ParseVarExpression();
@@ -46,9 +49,6 @@ class CXFA_FMParse {
   std::unique_ptr<CXFA_FMSimpleExpression> ParsePostExpression(
       std::unique_ptr<CXFA_FMSimpleExpression> e);
   std::unique_ptr<CXFA_FMSimpleExpression> ParseIndexExpression();
-
- private:
-  bool HasError() const;
 
   std::unique_ptr<CXFA_FMLexer> m_lexer;
   CXFA_FMToken* m_pToken;

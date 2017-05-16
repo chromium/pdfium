@@ -17,8 +17,8 @@ class CXFA_FMProgram {
   explicit CXFA_FMProgram(const CFX_WideStringC& wsFormcalc);
   ~CXFA_FMProgram();
 
-  int32_t ParseProgram();
-  int32_t TranslateProgram(CFX_WideTextBuf& wsJavaScript);
+  bool ParseProgram();
+  bool TranslateProgram(CFX_WideTextBuf& wsJavaScript);
 
  private:
   CXFA_FMErrorInfo m_pErrorInfo;

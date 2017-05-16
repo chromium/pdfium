@@ -16,25 +16,25 @@ CXFA_FMProgram::CXFA_FMProgram(const CFX_WideStringC& wsFormcalc)
 
 CXFA_FMProgram::~CXFA_FMProgram() {}
 
-int32_t CXFA_FMProgram::ParseProgram() {
+bool CXFA_FMProgram::ParseProgram() {
   m_parse.NextToken();
   if (!m_pErrorInfo.message.IsEmpty())
-    return -1;
+    return false;
 
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions =
       m_parse.ParseTopExpression();
   if (!m_pErrorInfo.message.IsEmpty())
-    return -1;
+    return false;
 
   std::vector<CFX_WideStringC> arguments;
   m_globalFunction = pdfium::MakeUnique<CXFA_FMFunctionDefinition>(
       1, true, L"", std::move(arguments), std::move(expressions));
-  return 0;
+  return true;
 }
 
-int32_t CXFA_FMProgram::TranslateProgram(CFX_WideTextBuf& wsJavaScript) {
+bool CXFA_FMProgram::TranslateProgram(CFX_WideTextBuf& wsJavaScript) {
   if (!m_globalFunction->ToJavaScript(wsJavaScript))
-    return -1;
+    return false;
   wsJavaScript.AppendChar(0);
-  return 0;
+  return true;
 }

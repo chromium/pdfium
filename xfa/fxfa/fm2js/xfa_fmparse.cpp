@@ -833,7 +833,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseBlockExpression() {
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
   uint32_t line = m_pToken->m_uLinenum;
-  const wchar_t* pStartPos = m_lexer->SavePos();
+  const wchar_t* pStartPos = m_lexer->GetPos();
   NextToken();
   Check(TOKlparen);
   std::unique_ptr<CXFA_FMSimpleExpression> pExpression;
@@ -851,7 +851,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
     m_pToken->m_type = TOKidentifier;
     m_pToken->m_wstring = L"if";
     m_lexer->SetToken(std::move(pNewToken));
-    m_lexer->RestorePos(pStartPos);
+    m_lexer->SetPos(pStartPos);
     return ParseExpExpression();
   }
   Check(TOKthen);
