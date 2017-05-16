@@ -17,3 +17,4 @@ const wchar_t kFMErrExpectedNonEmptyExpression[] =
     L"expected non-empty expression";
 const wchar_t kFMErrLongAssignmentChain[] =
     L"long assignment chains are unsupported";
+const wchar_t kFMErrEndOfInput[] = L"unexpected end of input";

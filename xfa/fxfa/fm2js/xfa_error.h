@@ -18,6 +18,7 @@ extern const wchar_t kFMErrExpectedEndIf[];
 extern const wchar_t kFMErrUnexpectedExpression[];
 extern const wchar_t kFMErrExpectedNonEmptyExpression[];
 extern const wchar_t kFMErrLongAssignmentChain[];
+extern const wchar_t kFMErrEndOfInput[];
 
 class CXFA_FMErrorInfo {
  public:

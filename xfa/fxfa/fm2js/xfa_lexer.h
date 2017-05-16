@@ -126,6 +126,7 @@ class CXFA_FMLexer {
   std::unique_ptr<CXFA_FMToken> Scan();
 
   const wchar_t* m_ptr;
+  const wchar_t* const m_end;
   uint32_t m_uCurrentLine;
   std::unique_ptr<CXFA_FMToken> m_pToken;
   CXFA_FMErrorInfo* m_pErrorInfo;
