@@ -11,41 +11,9 @@
 
 namespace {
 
-struct XFA_FMDChar {
-  static const wchar_t* inc(const wchar_t*& p) {
-    ++p;
-    return p;
-  }
-  static const wchar_t* dec(const wchar_t*& p) {
-    --p;
-    return p;
-  }
-  static uint16_t get(const wchar_t* p) { return *p; }
-  static bool isValid(const wchar_t* p);
-  static void string2number(const wchar_t* s,
-                            double* pValue,
-                            const wchar_t*& pEnd);
-  static bool isUnicodeAlpha(uint16_t ch);
-};
-
-bool XFA_FMDChar::isValid(const wchar_t* p) {
+bool IsValid(const wchar_t* p) {
   return *p == 0 || (*p >= 0x09 && *p <= 0x0D) ||
          (*p >= 0x20 && *p <= 0xd7FF) || (*p >= 0xE000 && *p <= 0xFFFD);
-}
-
-void XFA_FMDChar::string2number(const wchar_t* s,
-                                double* pValue,
-                                const wchar_t*& pEnd) {
-  if (s)
-    *pValue = wcstod(const_cast<wchar_t*>(s), const_cast<wchar_t**>(&pEnd));
-}
-
-inline bool XFA_FMDChar::isUnicodeAlpha(uint16_t ch) {
-  return !(ch == 0 || ch == 0x0A || ch == 0x0D || ch == 0x09 || ch == 0x0B ||
-           ch == 0x0C || ch == 0x20 || ch == '.' || ch == ';' || ch == '"' ||
-           ch == '=' || ch == '<' || ch == '>' || ch == ',' || ch == '(' ||
-           ch == ')' || ch == ']' || ch == '[' || ch == '&' || ch == '|' ||
-           ch == '+' || ch == '-' || ch == '*' || ch == '/');
 }
 
 const XFA_FMKeyword keyWords[] = {
@@ -140,19 +108,19 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
 std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
   uint16_t ch = 0;
   auto p = pdfium::MakeUnique<CXFA_FMToken>(m_uCurrentLine);
-  if (!XFA_FMDChar::isValid(m_ptr)) {
-    ch = XFA_FMDChar::get(m_ptr);
+  if (!IsValid(m_ptr)) {
+    ch = *m_ptr;
     Error(kFMErrUnsupportedChar, ch);
     return p;
   }
-  int iRet = 0;
+
   while (1) {
-    if (!XFA_FMDChar::isValid(m_ptr)) {
-      ch = XFA_FMDChar::get(m_ptr);
+    ch = *m_ptr;
+    if (!IsValid(m_ptr)) {
       Error(kFMErrUnsupportedChar, ch);
       return p;
     }
-    ch = XFA_FMDChar::get(m_ptr);
+
     switch (ch) {
       case 0:
         p->m_type = TOKeof;
@@ -160,22 +128,18 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case 0x0A:
         ++m_uCurrentLine;
         p->m_uLinenum = m_uCurrentLine;
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         break;
       case 0x0D:
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         break;
       case ';': {
-        const wchar_t* pTemp = 0;
-        Comment(m_ptr, pTemp);
-        m_ptr = pTemp;
+        m_ptr = Comment(m_ptr);
         break;
       }
       case '"': {
-        const wchar_t* pTemp = 0;
         p->m_type = TOKstring;
-        iRet = String(p.get(), m_ptr, pTemp);
-        m_ptr = pTemp;
+        m_ptr = String(p.get(), m_ptr);
         return p;
       }
       case '0':
@@ -189,144 +153,134 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case '8':
       case '9': {
         p->m_type = TOKnumber;
-        const wchar_t* pTemp = 0;
-        iRet = Number(p.get(), m_ptr, pTemp);
-        m_ptr = pTemp;
-        if (iRet)
-          Error(kFMErrBadSuffixNumber);
+        m_ptr = Number(p.get(), m_ptr);
         return p;
       }
       case '=':
-        XFA_FMDChar::inc(m_ptr);
-        if (XFA_FMDChar::isValid(m_ptr)) {
-          ch = XFA_FMDChar::get(m_ptr);
+        ++m_ptr;
+        if (IsValid(m_ptr)) {
+          ch = *m_ptr;
           if (ch == '=') {
             p->m_type = TOKeq;
-            XFA_FMDChar::inc(m_ptr);
+            ++m_ptr;
           } else {
             p->m_type = TOKassign;
           }
         } else {
-          ch = XFA_FMDChar::get(m_ptr);
+          ch = *m_ptr;
           Error(kFMErrUnsupportedChar, ch);
         }
         return p;
       case '<':
-        XFA_FMDChar::inc(m_ptr);
-        if (XFA_FMDChar::isValid(m_ptr)) {
-          ch = XFA_FMDChar::get(m_ptr);
+        ++m_ptr;
+        if (IsValid(m_ptr)) {
+          ch = *m_ptr;
           if (ch == '=') {
             p->m_type = TOKle;
-            XFA_FMDChar::inc(m_ptr);
+            ++m_ptr;
           } else if (ch == '>') {
             p->m_type = TOKne;
-            XFA_FMDChar::inc(m_ptr);
+            ++m_ptr;
           } else {
             p->m_type = TOKlt;
           }
         } else {
-          ch = XFA_FMDChar::get(m_ptr);
+          ch = *m_ptr;
           Error(kFMErrUnsupportedChar, ch);
         }
         return p;
       case '>':
-        XFA_FMDChar::inc(m_ptr);
-        if (XFA_FMDChar::isValid(m_ptr)) {
-          ch = XFA_FMDChar::get(m_ptr);
+        ++m_ptr;
+        if (IsValid(m_ptr)) {
+          ch = *m_ptr;
           if (ch == '=') {
             p->m_type = TOKge;
-            XFA_FMDChar::inc(m_ptr);
+            ++m_ptr;
           } else {
             p->m_type = TOKgt;
           }
         } else {
-          ch = XFA_FMDChar::get(m_ptr);
+          ch = *m_ptr;
           Error(kFMErrUnsupportedChar, ch);
         }
         return p;
       case ',':
         p->m_type = TOKcomma;
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         return p;
       case '(':
         p->m_type = TOKlparen;
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         return p;
       case ')':
         p->m_type = TOKrparen;
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         return p;
       case '[':
         p->m_type = TOKlbracket;
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         return p;
       case ']':
         p->m_type = TOKrbracket;
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         return p;
       case '&':
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         p->m_type = TOKand;
         return p;
       case '|':
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         p->m_type = TOKor;
         return p;
       case '+':
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         p->m_type = TOKplus;
         return p;
       case '-':
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         p->m_type = TOKminus;
         return p;
       case '*':
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         p->m_type = TOKmul;
         return p;
       case '/': {
-        XFA_FMDChar::inc(m_ptr);
-        if (!XFA_FMDChar::isValid(m_ptr)) {
-          ch = XFA_FMDChar::get(m_ptr);
+        ++m_ptr;
+        if (!IsValid(m_ptr)) {
+          ch = *m_ptr;
           Error(kFMErrUnsupportedChar, ch);
           return p;
         }
-        ch = XFA_FMDChar::get(m_ptr);
+        ch = *m_ptr;
         if (ch != '/') {
           p->m_type = TOKdiv;
           return p;
         }
-        const wchar_t* pTemp = 0;
-        Comment(m_ptr, pTemp);
-        m_ptr = pTemp;
+        m_ptr = Comment(m_ptr);
         break;
       }
       case '.':
-        XFA_FMDChar::inc(m_ptr);
-        if (XFA_FMDChar::isValid(m_ptr)) {
-          ch = XFA_FMDChar::get(m_ptr);
+        ++m_ptr;
+        if (IsValid(m_ptr)) {
+          ch = *m_ptr;
           if (ch == '.') {
             p->m_type = TOKdotdot;
-            XFA_FMDChar::inc(m_ptr);
+            ++m_ptr;
           } else if (ch == '*') {
             p->m_type = TOKdotstar;
-            XFA_FMDChar::inc(m_ptr);
+            ++m_ptr;
           } else if (ch == '#') {
             p->m_type = TOKdotscream;
-            XFA_FMDChar::inc(m_ptr);
+            ++m_ptr;
           } else if (ch <= '9' && ch >= '0') {
             p->m_type = TOKnumber;
-            const wchar_t* pTemp = 0;
-            XFA_FMDChar::dec(m_ptr);
-            iRet = Number(p.get(), m_ptr, pTemp);
-            m_ptr = pTemp;
-            if (iRet)
-              Error(kFMErrBadSuffixNumber);
+            --m_ptr;
+            m_ptr = Number(p.get(), m_ptr);
           } else {
             p->m_type = TOKdot;
           }
         } else {
-          ch = XFA_FMDChar::get(m_ptr);
+          ch = *m_ptr;
           Error(kFMErrUnsupportedChar, ch);
         }
         return p;
@@ -334,127 +288,116 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case 0x0B:
       case 0x0C:
       case 0x20:
-        XFA_FMDChar::inc(m_ptr);
+        ++m_ptr;
         break;
       default: {
-        const wchar_t* pTemp = 0;
-        iRet = Identifiers(p.get(), m_ptr, pTemp);
-        m_ptr = pTemp;
-        if (!iRet)
-          p->m_type = IsKeyword(p->m_wstring);
+        m_ptr = Identifiers(p.get(), m_ptr);
         return p;
       }
     }
   }
 }
 
-uint32_t CXFA_FMLexer::Number(CXFA_FMToken* t,
-                              const wchar_t* p,
-                              const wchar_t*& pEnd) {
-  double number = 0;
-  XFA_FMDChar::string2number(p, &number, pEnd);
-  if (pEnd && FXSYS_iswalpha(*pEnd))
-    return 1;
+const wchar_t* CXFA_FMLexer::Number(CXFA_FMToken* t, const wchar_t* p) {
+  // This will set pEnd to the character after the end of the number.
+  wchar_t* pEnd = nullptr;
+  if (p)
+    wcstod(const_cast<wchar_t*>(p), &pEnd);
+  if (pEnd && FXSYS_iswalpha(*pEnd)) {
+    Error(kFMErrBadSuffixNumber);
+    return pEnd;
+  }
 
   t->m_wstring = CFX_WideStringC(p, (pEnd - p));
-  return 0;
+  return pEnd;
 }
 
-uint32_t CXFA_FMLexer::String(CXFA_FMToken* t,
-                              const wchar_t* p,
-                              const wchar_t*& pEnd) {
+const wchar_t* CXFA_FMLexer::String(CXFA_FMToken* t, const wchar_t* p) {
   const wchar_t* pStart = p;
-  uint16_t ch = 0;
-  XFA_FMDChar::inc(p);
-  ch = XFA_FMDChar::get(p);
+
+  ++p;
+  uint16_t ch = *p;
   while (ch) {
-    if (!XFA_FMDChar::isValid(p)) {
-      ch = XFA_FMDChar::get(p);
-      pEnd = p;
-      t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
+    if (!IsValid(p)) {
+      ch = *p;
+      t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
       Error(kFMErrUnsupportedChar, ch);
-      return 1;
+      return p;
     }
     if (ch != '"') {
-      XFA_FMDChar::inc(p);
-      ch = XFA_FMDChar::get(p);
+      ++p;
+      ch = *p;
       continue;
     }
 
-    XFA_FMDChar::inc(p);
-    if (!XFA_FMDChar::isValid(p)) {
-      ch = XFA_FMDChar::get(p);
-      pEnd = p;
-      t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
+    ++p;
+    if (!IsValid(p)) {
+      ch = *p;
+      t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
       Error(kFMErrUnsupportedChar, ch);
-      return 1;
+      return p;
     }
-    ch = XFA_FMDChar::get(p);
+    ch = *p;
     if (ch != '"')
       break;
 
-    XFA_FMDChar::inc(p);
-    ch = XFA_FMDChar::get(p);
+    ++p;
+    ch = *p;
   }
-  pEnd = p;
-  t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
-  return 0;
+  t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
+  return p;
 }
 
-uint32_t CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
-                                   const wchar_t* p,
-                                   const wchar_t*& pEnd) {
+const wchar_t* CXFA_FMLexer::Identifiers(CXFA_FMToken* t, const wchar_t* p) {
   const wchar_t* pStart = p;
-  uint16_t ch = 0;
-  ch = XFA_FMDChar::get(p);
-  XFA_FMDChar::inc(p);
-  if (!XFA_FMDChar::isValid(p)) {
-    pEnd = p;
-    t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
+  uint16_t ch = *p;
+  ++p;
+  if (!IsValid(p)) {
+    t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
     Error(kFMErrUnsupportedChar, ch);
-    return 1;
+    return p;
   }
-  ch = XFA_FMDChar::get(p);
+
+  ch = *p;
   while (ch) {
-    if (!XFA_FMDChar::isValid(p)) {
-      pEnd = p;
-      t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
+    if (!IsValid(p)) {
+      t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
       Error(kFMErrUnsupportedChar, ch);
-      return 1;
+      return p;
     }
-    ch = XFA_FMDChar::get(p);
-    if (!XFA_FMDChar::isUnicodeAlpha(ch)) {
-      pEnd = p;
-      t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
-      return 0;
+
+    ch = *p;
+    if (ch == 0 || ch == 0x0A || ch == 0x0D || ch == 0x09 || ch == 0x0B ||
+        ch == 0x0C || ch == 0x20 || ch == '.' || ch == ';' || ch == '"' ||
+        ch == '=' || ch == '<' || ch == '>' || ch == ',' || ch == '(' ||
+        ch == ')' || ch == ']' || ch == '[' || ch == '&' || ch == '|' ||
+        ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+      break;
     }
-    XFA_FMDChar::inc(p);
+    ++p;
   }
-  pEnd = p;
-  t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
-  return 0;
+  t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
+  t->m_type = IsKeyword(t->m_wstring);
+  return p;
 }
 
-void CXFA_FMLexer::Comment(const wchar_t* p, const wchar_t*& pEnd) {
-  unsigned ch = 0;
-  XFA_FMDChar::inc(p);
-  ch = XFA_FMDChar::get(p);
+const wchar_t* CXFA_FMLexer::Comment(const wchar_t* p) {
+  ++p;
+  unsigned ch = *p;
   while (ch) {
     if (ch == 0x0D) {
-      XFA_FMDChar::inc(p);
-      pEnd = p;
-      return;
+      ++p;
+      return p;
     }
     if (ch == 0x0A) {
       ++m_uCurrentLine;
-      XFA_FMDChar::inc(p);
-      pEnd = p;
-      return;
+      ++p;
+      return p;
     }
-    XFA_FMDChar::inc(p);
-    ch = XFA_FMDChar::get(p);
+    ++p;
+    ch = *p;
   }
-  pEnd = p;
+  return p;
 }
 
 XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
