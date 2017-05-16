@@ -263,14 +263,14 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     return pDocument->GetFormFillEnv();
 #endif
 
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      new CPDFSDK_FormFillEnvironment(pDocument, formInfo);
+  auto pFormFillEnv =
+      pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
-  pDocument->SetFormFillEnv(pFormFillEnv);
+  pDocument->SetFormFillEnv(pFormFillEnv.get());
 #endif  // PDF_ENABLE_XFA
 
-  return pFormFillEnv;
+  return pFormFillEnv.release();  // Caller takes ownership.
 }
 
 DLLEXPORT void STDCALL
@@ -575,18 +575,20 @@ FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  auto* pContext = static_cast<CPDFXFA_Context*>(document);
   if (pContext->GetDocType() != XFA_DocType::Dynamic &&
       pContext->GetDocType() != XFA_DocType::Static)
     return;
 
-  std::vector<CFX_ByteString>* sSuggestWords = new std::vector<CFX_ByteString>;
   CFX_PointF ptPopup;
   ptPopup.x = x;
   ptPopup.y = y;
-  static_cast<CXFA_FFWidget*>(hWidget)
-      ->GetSuggestWords(ptPopup, *sSuggestWords);
-  *stringHandle = ToFPDFStringHandle(sSuggestWords);
+  auto sSuggestWords = pdfium::MakeUnique<std::vector<CFX_ByteString>>();
+  static_cast<CXFA_FFWidget*>(hWidget)->GetSuggestWords(ptPopup,
+                                                        sSuggestWords.get());
+
+  // Caller takes ownership.
+  *stringHandle = ToFPDFStringHandle(sSuggestWords.release());
 }
 
 DLLEXPORT int STDCALL FPDF_StringHandleCounts(FPDF_STRINGHANDLE sHandle) {

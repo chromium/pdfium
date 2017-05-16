@@ -333,10 +333,11 @@ void CXFA_FFWidget::Delete() {}
 
 void CXFA_FFWidget::DeSelect() {}
 
-bool CXFA_FFWidget::GetSuggestWords(CFX_PointF pointf,
-                                    std::vector<CFX_ByteString>& sSuggest) {
-  return false;
+void CXFA_FFWidget::GetSuggestWords(CFX_PointF pointf,
+                                    std::vector<CFX_ByteString>* pWords) {
+  pWords->clear();
 }
+
 bool CXFA_FFWidget::ReplaceSpellCheckWord(CFX_PointF pointf,
                                           const CFX_ByteStringC& bsReplace) {
   return false;

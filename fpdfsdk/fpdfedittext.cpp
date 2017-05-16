@@ -388,11 +388,11 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
   if (!pFont)
     return nullptr;
 
-  CPDF_TextObject* pTextObj = new CPDF_TextObject;
+  auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
   pTextObj->m_TextState.SetFont(pFont);
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
-  return pTextObj;
+  return pTextObj.release();  // Caller takes ownership.
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,

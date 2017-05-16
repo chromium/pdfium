@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_
 #define FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
@@ -56,7 +58,7 @@ class CFFL_ComboBox : public CFFL_FormFiller, public IPWL_FocusHandler {
  private:
   CFX_WideString GetSelectExportText();
 
-  CBA_FontMap* m_pFontMap;
+  std::unique_ptr<CBA_FontMap> m_pFontMap;
   FFL_ComboBoxState m_State;
 };
 

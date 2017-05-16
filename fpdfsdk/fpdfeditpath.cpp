@@ -7,22 +7,23 @@
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/ptr_util.h"
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewPath(float x, float y) {
-  CPDF_PathObject* pPathObj = new CPDF_PathObject;
+  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
   pPathObj->DefaultStates();
-  return pPathObj;
+  return pPathObj.release();  // Caller takes ownership.
 }
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewRect(float x,
                                                             float y,
                                                             float w,
                                                             float h) {
-  CPDF_PathObject* pPathObj = new CPDF_PathObject;
+  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendRect(x, y, x + w, y + h);
   pPathObj->DefaultStates();
-  return pPathObj;
+  return pPathObj.release();  // Caller takes ownership.
 }
 
 DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
@@ -33,9 +34,9 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
   if (!path || R > 255 || G > 255 || B > 255 || A > 255)
     return false;
 
+  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
   auto* pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
   pPathObj->m_GeneralState.SetStrokeAlpha(A / 255.f);
-  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
   pPathObj->m_ColorState.SetStrokeColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
   return true;
@@ -58,9 +59,9 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
   if (!path || R > 255 || G > 255 || B > 255 || A > 255)
     return false;
 
+  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
   auto* pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
   pPathObj->m_GeneralState.SetFillAlpha(A / 255.f);
-  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
   pPathObj->m_ColorState.SetFillColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
   return true;

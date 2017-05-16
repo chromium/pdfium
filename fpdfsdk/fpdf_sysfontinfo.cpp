@@ -15,6 +15,7 @@
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
+#include "third_party/base/ptr_util.h"
 
 static_assert(FXFONT_ANSI_CHARSET == FX_CHARSET_ANSI, "Charset must match");
 static_assert(FXFONT_DEFAULT_CHARSET == FX_CHARSET_Default,
@@ -114,8 +115,7 @@ DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
     return;
 
   CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
-      std::unique_ptr<IFX_SystemFontInfo>(
-          new CFX_ExternalFontInfo(pFontInfoExt)));
+      pdfium::MakeUnique<CFX_ExternalFontInfo>(pFontInfoExt));
 }
 
 DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap() {

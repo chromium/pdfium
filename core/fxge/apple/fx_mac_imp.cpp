@@ -5,12 +5,14 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/apple/apple_int.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ifx_systemfontinfo.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -122,11 +124,11 @@ void* CFX_MacFontInfo::MapFont(int weight,
 
 std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     const char** pUnused) {
-  CFX_MacFontInfo* pInfo(new CFX_MacFontInfo);
+  auto pInfo = pdfium::MakeUnique<CFX_MacFontInfo>();
   pInfo->AddPath("~/Library/Fonts");
   pInfo->AddPath("/Library/Fonts");
   pInfo->AddPath("/System/Library/Fonts");
-  return std::unique_ptr<CFX_MacFontInfo>(pInfo);
+  return std::move(pInfo);
 }
 
 void CFX_GEModule::InitPlatform() {

@@ -1687,15 +1687,16 @@ FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
 /**
  * Function: FPDF_Widget_GetSpellCheckWords
  *          This method will implement the spell check feature for the specified
- *xfa field.
+ *          xfa field.
  * Parameters:
- *          document        -   Handle to document. Returned by
- *FPDF_LoadDocument function.
+ *          document        -   Handle to document as returned by
+ *                              FPDF_LoadDocument function.
  *          hWidget         -   Handle to the xfa field.
  *          x               -   The x value of the specified point.
  *          y               -   The y value of the specified point.
  *          stringHandle    -   Pointer to FPDF_STRINGHANDLE to receive the
- *speck check text buffer, in UTF-16LE format.
+ *                              speck check text buffer, in UTF-16LE format.
+ *                              Caller must free using FPDF_StringHandleRelease.
  * Return Value:
  *          None.
  **/

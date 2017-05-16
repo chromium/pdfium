@@ -6,6 +6,7 @@
 
 #include "public/fpdf_transformpage.h"
 
+#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
@@ -222,13 +223,14 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
   CPDF_Path Path;
   Path.AppendRect(left, bottom, right, top);
 
-  CPDF_ClipPath* pNewClipPath = new CPDF_ClipPath();
+  auto pNewClipPath = pdfium::MakeUnique<CPDF_ClipPath>();
   pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, false);
-  return pNewClipPath;
+  return pNewClipPath.release();  // Caller takes ownership.
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
-  delete (CPDF_ClipPath*)clipPath;
+  // Take ownership back from caller and destroy.
+  std::unique_ptr<CPDF_ClipPath>(static_cast<CPDF_ClipPath*>(clipPath));
 }
 
 void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {

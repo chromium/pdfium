@@ -63,14 +63,13 @@ bool IsPageObject(CPDF_Page* pPage) {
 }  // namespace
 
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
-  CPDF_Document* pDoc = new CPDF_Document(nullptr);
+  auto pDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
   pDoc->CreateNewDoc();
+
   time_t currentTime;
-
   CFX_ByteString DateStr;
-
   if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
-    if (-1 != time(&currentTime)) {
+    if (time(&currentTime) != -1) {
       tm* pTM = localtime(&currentTime);
       if (pTM) {
         DateStr.Format("D:%04d%02d%02d%02d%02d%02d", pTM->tm_year + 1900,
@@ -80,15 +79,15 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
     }
   }
 
-  CPDF_Dictionary* pInfoDict = nullptr;
-  pInfoDict = pDoc->GetInfo();
+  CPDF_Dictionary* pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
     if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
       pInfoDict->SetNewFor<CPDF_String>("CreationDate", DateStr, false);
     pInfoDict->SetNewFor<CPDF_String>("Creator", L"PDFium");
   }
 
-  return FPDFDocumentFromCPDFDocument(pDoc);
+  // Caller takes ownership of pDoc.
+  return FPDFDocumentFromCPDFDocument(pDoc.release());
 }
 
 DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index) {
@@ -121,19 +120,17 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
   auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(
       static_cast<CPDFXFA_Context*>(document), page_index);
   pXFAPage->LoadPDFPage(pPageDict);
-  return pXFAPage.Leak();
+  return pXFAPage.Leak();  // Caller takes ownership.
 #else   // PDF_ENABLE_XFA
-  CPDF_Page* pPage = new CPDF_Page(pDoc, pPageDict, true);
+  auto pPage = pdfium::MakeUnique<CPDF_Page>(pDoc, pPageDict, true);
   pPage->ParseContent();
-  return pPage;
+  return pPage.release();  // Caller takes ownership.
 #endif  // PDF_ENABLE_XFA
 }
 
 DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!IsPageObject(pPage))
-    return -1;
-  return pPage->GetPageRotation();
+  return IsPageObject(pPage) ? pPage->GetPageRotation() : -1;
 }
 
 DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,

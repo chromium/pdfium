@@ -17,6 +17,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widgethandler.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/cpdfsdk_xfawidgethandler.h"
@@ -27,10 +28,11 @@
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
     CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pBAAnnotHandler(new CPDFSDK_BAAnnotHandler()),
-      m_pWidgetHandler(new CPDFSDK_WidgetHandler(pFormFillEnv)),
+    : m_pBAAnnotHandler(pdfium::MakeUnique<CPDFSDK_BAAnnotHandler>()),
+      m_pWidgetHandler(pdfium::MakeUnique<CPDFSDK_WidgetHandler>(pFormFillEnv)),
 #ifdef PDF_ENABLE_XFA
-      m_pXFAWidgetHandler(new CPDFSDK_XFAWidgetHandler(pFormFillEnv)),
+      m_pXFAWidgetHandler(
+          pdfium::MakeUnique<CPDFSDK_XFAWidgetHandler>(pFormFillEnv)),
 #endif  // PDF_ENABLE_XFA
       m_pFormFillEnv(pFormFillEnv) {
   m_pWidgetHandler->SetFormFiller(m_pFormFillEnv->GetInteractiveFormFiller());

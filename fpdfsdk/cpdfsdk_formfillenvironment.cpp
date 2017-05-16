@@ -7,6 +7,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_docjsactions.h"
@@ -568,8 +569,10 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
   if (!renew)
     return nullptr;
 
-  CPDFSDK_PageView* pPageView = new CPDFSDK_PageView(this, pUnderlyingPage);
-  m_PageMap[pUnderlyingPage].reset(pPageView);
+  auto pNew = pdfium::MakeUnique<CPDFSDK_PageView>(this, pUnderlyingPage);
+  CPDFSDK_PageView* pPageView = pNew.get();
+  m_PageMap[pUnderlyingPage] = std::move(pNew);
+
   // Delay to load all the annotations, to avoid endless loop.
   pPageView->LoadFXAnnots();
   return pPageView;

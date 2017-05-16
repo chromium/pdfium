@@ -13,10 +13,11 @@
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/fsdk_common.h"
 #include "fpdfsdk/pdfwindow/PWL_ComboBox.h"
+#include "third_party/base/ptr_util.h"
 
 CFFL_ComboBox::CFFL_ComboBox(CPDFSDK_FormFillEnvironment* pApp,
                              CPDFSDK_Annot* pAnnot)
-    : CFFL_FormFiller(pApp, pAnnot), m_pFontMap(nullptr) {
+    : CFFL_FormFiller(pApp, pAnnot) {
   m_State.nIndex = 0;
   m_State.nStart = 0;
   m_State.nEnd = 0;
@@ -30,22 +31,17 @@ CFFL_ComboBox::~CFFL_ComboBox() {
   // The font map should be stored somewhere more appropriate so it will live
   // until the PWL_Edit is done with it. pdfium:566
   DestroyWindows();
-  delete m_pFontMap;
 }
 
 PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam() {
   PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
-
-  int nFlags = m_pWidget->GetFieldFlags();
-  if (nFlags & FIELDFLAG_EDIT) {
+  if (m_pWidget->GetFieldFlags() & FIELDFLAG_EDIT)
     cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
-  }
 
   if (!m_pFontMap)
-    m_pFontMap = new CBA_FontMap(m_pWidget, GetSystemHandler());
-  cp.pFontMap = m_pFontMap;
+    m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(m_pWidget, GetSystemHandler());
+  cp.pFontMap = m_pFontMap.get();
   cp.pFocusHandler = this;
-
   return cp;
 }
 

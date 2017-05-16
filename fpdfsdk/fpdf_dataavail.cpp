@@ -118,16 +118,17 @@ CFPDF_DataAvail* CFPDFDataAvailFromFPDFAvail(FPDF_AVAIL avail) {
 
 DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                               FPDF_FILEACCESS* file) {
-  CFPDF_DataAvail* pAvail = new CFPDF_DataAvail;
+  auto pAvail = pdfium::MakeUnique<CFPDF_DataAvail>();
   pAvail->m_FileAvail->Set(file_avail);
   pAvail->m_FileRead->Set(file);
   pAvail->m_pDataAvail = pdfium::MakeUnique<CPDF_DataAvail>(
       pAvail->m_FileAvail.get(), pAvail->m_FileRead, true);
-  return pAvail;
+  return pAvail.release();  // Caller takes ownership.
 }
 
 DLLEXPORT void STDCALL FPDFAvail_Destroy(FPDF_AVAIL avail) {
-  delete (CFPDF_DataAvail*)avail;
+  // Take ownership back from caller and destroy.
+  std::unique_ptr<CFPDF_DataAvail>(static_cast<CFPDF_DataAvail*>(avail));
 }
 
 DLLEXPORT int STDCALL FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
