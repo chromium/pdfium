@@ -7,6 +7,7 @@
 #include "xfa/fde/cfde_textout.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
@@ -117,16 +118,16 @@ void CFDE_TextOut::SetLineSpace(float fLineSpace) {
 
 void CFDE_TextOut::SetDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIB) {
   ASSERT(pDIB);
-
   m_pRenderDevice.reset();
-  CFX_DefaultRenderDevice* device = new CFX_DefaultRenderDevice;
-  device->Attach(pDIB, false, nullptr, false);
-  m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(device, false);
+  m_pDefaultRenderDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
+  m_pDefaultRenderDevice->Attach(pDIB, false, nullptr, false);
+  m_pRenderDevice =
+      pdfium::MakeUnique<CFDE_RenderDevice>(m_pDefaultRenderDevice.get());
 }
 
 void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
   ASSERT(pDevice);
-  m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pDevice, false);
+  m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pDevice);
 }
 
 void CFDE_TextOut::SetClipRect(const CFX_Rect& rtClip) {

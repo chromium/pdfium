@@ -559,7 +559,7 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   if (!pFxDevice)
     return false;
 
-  auto pDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pFxDevice, false);
+  auto pDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pFxDevice);
   pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
 

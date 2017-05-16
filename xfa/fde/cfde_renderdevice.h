@@ -19,7 +19,7 @@ class CFX_GraphStateData;
 
 class CFDE_RenderDevice {
  public:
-  CFDE_RenderDevice(CFX_RenderDevice* pDevice, bool bOwnerDevice);
+  explicit CFDE_RenderDevice(CFX_RenderDevice* pDevice);
   ~CFDE_RenderDevice();
 
   int32_t GetWidth() const;
@@ -120,7 +120,6 @@ class CFDE_RenderDevice {
 
   CFX_RenderDevice* const m_pDevice;
   CFX_RectF m_rtClip;
-  bool m_bOwnerDevice;
   int32_t m_iCharCount;
 };
 

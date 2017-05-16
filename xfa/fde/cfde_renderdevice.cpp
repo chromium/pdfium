@@ -22,9 +22,8 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
-CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,
-                                     bool bOwnerDevice)
-    : m_pDevice(pDevice), m_bOwnerDevice(bOwnerDevice), m_iCharCount(0) {
+CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice)
+    : m_pDevice(pDevice), m_iCharCount(0) {
   ASSERT(pDevice);
 
   FX_RECT rt = m_pDevice->GetClipBox();
@@ -33,10 +32,7 @@ CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,
                        static_cast<float>(rt.Height()));
 }
 
-CFDE_RenderDevice::~CFDE_RenderDevice() {
-  if (m_bOwnerDevice)
-    delete m_pDevice;
-}
+CFDE_RenderDevice::~CFDE_RenderDevice() {}
 
 int32_t CFDE_RenderDevice::GetWidth() const {
   return m_pDevice->GetWidth();

@@ -104,7 +104,7 @@ class CFX_Graphics {
   void SetDIBitsWithMatrix(const CFX_RetainPtr<CFX_DIBSource>& source,
                            CFX_Matrix* matrix);
 
-  CFX_RenderDevice* m_renderDevice;
+  CFX_RenderDevice* const m_renderDevice;  // Not owned.
   std::vector<std::unique_ptr<TInfo>> m_infoStack;
 };
 

@@ -167,6 +167,8 @@ class CFDE_TextOut {
   int32_t m_iCurPiece;
   int32_t m_iTotalLines;
   std::vector<FXTEXT_CHARPOS> m_CharPos;
+  // NOTE: m_pDefaultRenderDevice must outlive m_pRenderDevice.
+  std::unique_ptr<CFX_DefaultRenderDevice> m_pDefaultRenderDevice;
   std::unique_ptr<CFDE_RenderDevice> m_pRenderDevice;
   std::vector<int32_t> m_HotKeys;
   std::vector<CFX_RectF> m_rectArray;
