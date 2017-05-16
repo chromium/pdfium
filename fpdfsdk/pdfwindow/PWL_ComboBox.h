@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
@@ -100,7 +101,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   int32_t m_nPopupWhere;
   int32_t m_nSelectItem;
   IPWL_Filler_Notify* m_pFillerNotify;
-  CFFL_FormFiller* m_pFormFiller;  // Not owned.
+  CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_

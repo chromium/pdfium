@@ -88,7 +88,7 @@ CFX_RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
     if (!pFuncs[0])
       return nullptr;
   }
-  auto pTransfer = pdfium::MakeRetain<CPDF_TransferFunc>(m_pPDFDoc);
+  auto pTransfer = pdfium::MakeRetain<CPDF_TransferFunc>(m_pPDFDoc.Get());
   m_TransferFuncMap[pObj] = pTransfer;
 
   float input;

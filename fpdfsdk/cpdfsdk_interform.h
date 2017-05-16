@@ -13,6 +13,7 @@
 
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/ipdf_formnotify.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxge/fx_dib.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -35,7 +36,9 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   ~CPDFSDK_InterForm() override;
 
   CPDF_InterForm* GetInterForm() const { return m_pInterForm.get(); }
-  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
+    return m_pFormFillEnv.Get();
+  }
 
   bool HighlightWidgets();
 
@@ -121,7 +124,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
 
   using CPDFSDK_WidgetMap = std::map<CPDF_FormControl*, CPDFSDK_Widget*>;
 
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // Not owned.
+  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   std::unique_ptr<CPDF_InterForm> m_pInterForm;
   CPDFSDK_WidgetMap m_Map;
 #ifdef PDF_ENABLE_XFA

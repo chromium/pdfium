@@ -103,7 +103,7 @@ int32_t CXFA_ResolveProcessor::ResolveAnyChild(CXFA_ResolveNodesData& rnd) {
     return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
   }
   std::vector<CXFA_Node*> tempNodes;
-  for (CXFA_Object* pObject : rnd.m_Objects)
+  for (auto* pObject : rnd.m_Objects)
     tempNodes.push_back(pObject->AsNode());
   m_pNodeHelper->CountSiblings(findNode, XFA_LOGIC_Transparent, &tempNodes,
                                bClassName);

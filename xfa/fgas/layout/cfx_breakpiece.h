@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/app/cxfa_textuserdata.h"
 
@@ -39,7 +40,7 @@ class CFX_BreakPiece {
   int32_t m_iVerticalScale;
   uint32_t m_dwIdentity;
   uint32_t m_dwCharStyles;
-  std::vector<CFX_Char>* m_pChars;  // not owned.
+  CFX_UnownedPtr<std::vector<CFX_Char>> m_pChars;
   CFX_RetainPtr<CXFA_TextUserData> m_pUserData;
 };
 

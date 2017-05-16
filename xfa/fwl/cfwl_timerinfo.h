@@ -7,21 +7,20 @@
 #ifndef XFA_FWL_CFWL_TIMERINFO_H_
 #define XFA_FWL_CFWL_TIMERINFO_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class IFWL_AdapterTimerMgr;
 
 class CFWL_TimerInfo {
  public:
-  explicit CFWL_TimerInfo(IFWL_AdapterTimerMgr* mgr) : m_pMgr(mgr) {
-    ASSERT(mgr);
-  }
-  virtual ~CFWL_TimerInfo() {}
+  explicit CFWL_TimerInfo(IFWL_AdapterTimerMgr* mgr);
+  virtual ~CFWL_TimerInfo();
 
   void StopTimer();
 
  private:
-  IFWL_AdapterTimerMgr* m_pMgr;  // Not owned.
+  CFX_UnownedPtr<IFWL_AdapterTimerMgr> m_pMgr;
 };
 
 #endif  // XFA_FWL_CFWL_TIMERINFO_H_

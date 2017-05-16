@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
 #define FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -165,7 +166,7 @@ class CJS_EventHandler {
   JS_EVENT_T EventType() { return m_eEventType; }
 
  public:
-  CJS_EventContext* const m_pJSEventContext;  // Not Owned.
+  CFX_UnownedPtr<CJS_EventContext> const m_pJSEventContext;
   JS_EVENT_T m_eEventType;
   bool m_bValid;
 

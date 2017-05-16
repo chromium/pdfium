@@ -46,7 +46,7 @@ CPDFXFA_DocEnvironment::CPDFXFA_DocEnvironment(CPDFXFA_Context* pContext)
 CPDFXFA_DocEnvironment::~CPDFXFA_DocEnvironment() {
   if (m_pJSEventContext && m_pContext->GetFormFillEnv()) {
     m_pContext->GetFormFillEnv()->GetJSRuntime()->ReleaseEventContext(
-        m_pJSEventContext);
+        m_pJSEventContext.Get());
   }
 }
 

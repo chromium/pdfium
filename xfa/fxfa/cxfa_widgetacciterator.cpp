@@ -19,7 +19,7 @@ CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
   while (pItem) {
     m_pCurWidgetAcc = static_cast<CXFA_WidgetAcc*>(pItem->GetWidgetData());
     if (m_pCurWidgetAcc)
-      return m_pCurWidgetAcc;
+      return m_pCurWidgetAcc.Get();
     pItem = m_ContentIterator.MoveToNext();
   }
   return nullptr;

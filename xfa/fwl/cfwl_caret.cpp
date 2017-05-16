@@ -97,7 +97,7 @@ void CFWL_Caret::OnDrawWidget(CFX_Graphics* pGraphics,
 CFWL_Caret::Timer::Timer(CFWL_Caret* pCaret) : CFWL_Timer(pCaret) {}
 
 void CFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
-  CFWL_Caret* pCaret = static_cast<CFWL_Caret*>(m_pWidget);
+  CFWL_Caret* pCaret = static_cast<CFWL_Caret*>(m_pWidget.Get());
   if (!(pCaret->GetStates() & FWL_STATE_CAT_HightLight))
     pCaret->SetStates(FWL_STATE_CAT_HightLight);
   else

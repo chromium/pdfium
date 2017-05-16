@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
@@ -36,12 +38,14 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   bool LoadXFADoc();
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
-  CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
+  CXFA_FFDocView* GetXFADocView() { return m_pXFADocView.Get(); }
   XFA_DocType GetDocType() const { return m_iDocType; }
   v8::Isolate* GetJSERuntime() const;
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
-  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
+    return m_pFormFillEnv.Get();
+  }
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   void DeletePage(int page_index);
@@ -102,8 +106,8 @@ class CPDFXFA_Context : public IXFA_AppProvider {
 
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // not owned.
-  CXFA_FFDocView* m_pXFADocView;                // not owned.
+  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
+  CFX_UnownedPtr<CXFA_FFDocView> m_pXFADocView;
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   std::unique_ptr<CJS_Runtime> m_pRuntime;
   std::vector<CPDFXFA_Page*> m_XFAPageList;

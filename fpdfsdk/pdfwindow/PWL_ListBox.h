@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
@@ -111,7 +112,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   IPWL_Filler_Notify* m_pFillerNotify;
 
  private:
-  CFFL_FormFiller* m_pFormFiller;  // Not owned.
+  CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_

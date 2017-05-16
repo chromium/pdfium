@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
@@ -136,7 +137,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   IPWL_Filler_Notify* m_pFillerNotify;
   bool m_bFocus;
   CFX_FloatRect m_rcOldWindow;
-  CFFL_FormFiller* m_pFormFiller;  // Not owned.
+  CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_EDIT_H_

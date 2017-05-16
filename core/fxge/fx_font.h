@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -172,7 +173,7 @@ class CFX_Font {
   void ClearFaceCache();
 
   FXFT_Face m_Face;
-  mutable CFX_FaceCache* m_FaceCache;  // not owned.
+  mutable CFX_UnownedPtr<CFX_FaceCache> m_FaceCache;
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;
   std::vector<uint8_t> m_pFontDataAllocation;
   uint8_t* m_pFontData;

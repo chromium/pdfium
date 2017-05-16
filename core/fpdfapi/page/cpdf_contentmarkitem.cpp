@@ -26,7 +26,7 @@ CPDF_ContentMarkItem::~CPDF_ContentMarkItem() {}
 CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
   switch (m_ParamType) {
     case PropertiesDict:
-      return m_pPropertiesDict;
+      return m_pPropertiesDict.Get();
     case DirectDict:
       return m_pDirectDict.get();
     case None:

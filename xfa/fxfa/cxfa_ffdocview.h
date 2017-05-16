@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
@@ -56,7 +57,7 @@ class CXFA_FFDocView {
                              CXFA_WidgetAcc* pWidgetAcc);
   CXFA_FFWidgetHandler* GetWidgetHandler();
   std::unique_ptr<CXFA_WidgetAccIterator> CreateWidgetAccIterator();
-  CXFA_FFWidget* GetFocusWidget();
+  CXFA_FFWidget* GetFocusWidget() const;
   void KillFocus();
   bool SetFocus(CXFA_FFWidget* hWidget);
   CXFA_FFWidget* GetWidgetByName(const CFX_WideString& wsName,
@@ -117,10 +118,10 @@ class CXFA_FFDocView {
 
   CXFA_FFDoc* const m_pDoc;
   std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
-  CXFA_LayoutProcessor* m_pXFADocLayout;  // not owned.
-  CXFA_WidgetAcc* m_pFocusAcc;            // not owned.
-  CXFA_FFWidget* m_pFocusWidget;          // not owned.
-  CXFA_FFWidget* m_pOldFocusWidget;       // not owned.
+  CXFA_LayoutProcessor* m_pXFADocLayout;  // Not owned.
+  CFX_UnownedPtr<CXFA_WidgetAcc> m_pFocusAcc;
+  CFX_UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
+  CFX_UnownedPtr<CXFA_FFWidget> m_pOldFocusWidget;
   std::map<CXFA_FFPageView*, std::unique_ptr<CFX_RectF>> m_mapPageInvalidate;
   std::vector<CXFA_WidgetAcc*> m_ValidateAccs;
   std::vector<CXFA_WidgetAcc*> m_CalculateAccs;

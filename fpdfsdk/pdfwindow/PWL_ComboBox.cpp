@@ -265,7 +265,7 @@ void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
     return;
 
   m_pEdit = pdfium::MakeUnique<CPWL_CBEdit>();
-  m_pEdit->AttachFFLData(m_pFormFiller);
+  m_pEdit->AttachFFLData(m_pFormFiller.Get());
 
   PWL_CREATEPARAM ecp = cp;
   ecp.pParentWnd = this;
@@ -306,7 +306,7 @@ void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
     return;
 
   m_pList = pdfium::MakeUnique<CPWL_CBListBox>();
-  m_pList->AttachFFLData(m_pFormFiller);
+  m_pList->AttachFFLData(m_pFormFiller.Get());
 
   PWL_CREATEPARAM lcp = cp;
   lcp.pParentWnd = this;

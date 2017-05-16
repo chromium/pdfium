@@ -537,10 +537,9 @@ int CFX_Font::GetMaxAdvanceWidth() const {
 }
 
 CFX_FaceCache* CFX_Font::GetFaceCache() const {
-  if (!m_FaceCache) {
+  if (!m_FaceCache)
     m_FaceCache = CFX_GEModule::Get()->GetFontCache()->GetCachedFace(this);
-  }
-  return m_FaceCache;
+  return m_FaceCache.Get();
 }
 
 void CFX_Font::ClearFaceCache() {

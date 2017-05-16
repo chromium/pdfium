@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
@@ -101,7 +102,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;
   std::map<wchar_t, CFX_Rect> m_BBoxMap;
-  CXFA_PDFFontMgr* m_pProvider;  // not owned.
+  CFX_UnownedPtr<CXFA_PDFFontMgr> m_pProvider;
   std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_SubstFonts;
   std::map<wchar_t, CFX_RetainPtr<CFGAS_GEFont>> m_FontMapper;
 };

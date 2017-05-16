@@ -8,6 +8,12 @@
 
 #include "xfa/fwl/ifwl_adaptertimermgr.h"
 
+CFWL_TimerInfo::CFWL_TimerInfo(IFWL_AdapterTimerMgr* mgr) : m_pMgr(mgr) {
+  ASSERT(mgr);
+}
+
+CFWL_TimerInfo::~CFWL_TimerInfo() {}
+
 void CFWL_TimerInfo::StopTimer() {
   m_pMgr->Stop(this);
 }

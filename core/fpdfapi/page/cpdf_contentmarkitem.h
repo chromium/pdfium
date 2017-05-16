@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -37,7 +38,7 @@ class CPDF_ContentMarkItem {
  private:
   CFX_ByteString m_MarkName;
   ParamType m_ParamType;
-  CPDF_Dictionary* m_pPropertiesDict;  // not owned.
+  CFX_UnownedPtr<CPDF_Dictionary> m_pPropertiesDict;
   std::unique_ptr<CPDF_Dictionary> m_pDirectDict;
 };
 

@@ -358,6 +358,6 @@ bool CPDFXFA_Context::PutRequestURL(const CFX_WideString& wsURL,
 IFWL_AdapterTimerMgr* CPDFXFA_Context::GetTimerMgr() {
   CXFA_FWLAdapterTimerMgr* pAdapter = nullptr;
   if (m_pFormFillEnv)
-    pAdapter = new CXFA_FWLAdapterTimerMgr(m_pFormFillEnv);
+    pAdapter = new CXFA_FWLAdapterTimerMgr(m_pFormFillEnv.Get());
   return pAdapter;
 }

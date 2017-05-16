@@ -336,7 +336,6 @@ void CFWL_SpinButton::OnKeyDown(CFWL_MessageKey* pMsg) {
 
   CFWL_Event wmPosChanged(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmPosChanged);
-
   RepaintRect(bUpEnable ? m_rtUpButton : m_rtDnButton);
 }
 
@@ -344,8 +343,7 @@ CFWL_SpinButton::Timer::Timer(CFWL_SpinButton* pToolTip)
     : CFWL_Timer(pToolTip) {}
 
 void CFWL_SpinButton::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
-  CFWL_SpinButton* pButton = static_cast<CFWL_SpinButton*>(m_pWidget);
-
+  CFWL_SpinButton* pButton = static_cast<CFWL_SpinButton*>(m_pWidget.Get());
   if (!pButton->m_pTimerInfo)
     return;
 

@@ -6,8 +6,10 @@
 
 #ifndef XFA_FWL_CFWL_WIDGET_H_
 #define XFA_FWL_CFWL_WIDGET_H_
+
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/cfwl_event.h"
@@ -96,10 +98,10 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
 
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
   IFWL_WidgetDelegate* GetDelegate() {
-    return m_pDelegate ? m_pDelegate : this;
+    return m_pDelegate ? m_pDelegate.Get() : this;
   }
   const IFWL_WidgetDelegate* GetDelegate() const {
-    return m_pDelegate ? m_pDelegate : this;
+    return m_pDelegate ? m_pDelegate.Get() : this;
   }
 
   const CFWL_App* GetOwnerApp() const { return m_pOwnerApp; }
@@ -182,7 +184,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
 
   CXFA_FFWidget* m_pLayoutItem;
   uint32_t m_nEventKey;
-  IFWL_WidgetDelegate* m_pDelegate;  // Not owned.
+  CFX_UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };
 
 #endif  // XFA_FWL_CFWL_WIDGET_H_

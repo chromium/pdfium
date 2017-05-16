@@ -321,21 +321,20 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   return true;
 }
 
-bool CXFA_FFDoc::CloseDoc() {
-  if (m_DocView)
+void CXFA_FFDoc::CloseDoc() {
+  if (m_DocView) {
     m_DocView->RunDocClose();
-
+    m_DocView.reset();
+  }
   CXFA_Document* doc =
       m_pDocumentParser ? m_pDocumentParser->GetDocument() : nullptr;
   if (doc)
     doc->ClearLayoutData();
 
-  m_DocView.reset();
-  m_pNotify.reset(nullptr);
+  m_pNotify.reset();
   m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
   m_HashToDibDpiMap.clear();
   m_pApp->ClearEventTargets();
-  return true;
 }
 
 CPDF_Document* CXFA_FFDoc::GetPDFDoc() {

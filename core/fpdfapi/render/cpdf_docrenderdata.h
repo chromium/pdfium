@@ -11,6 +11,8 @@
 
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Document;
 class CPDF_Font;
@@ -32,7 +34,7 @@ class CPDF_DocRenderData {
   void Clear(bool bRelease);
 
  private:
-  CPDF_Document* m_pPDFDoc;  // Not Owned
+  CFX_UnownedPtr<CPDF_Document> m_pPDFDoc;
   std::map<CPDF_Font*, CFX_RetainPtr<CPDF_Type3Cache>> m_Type3FaceMap;
   std::map<CPDF_Object*, CFX_RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
 };

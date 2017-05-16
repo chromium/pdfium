@@ -351,8 +351,8 @@ bool CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
   fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
-  pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::KeyStroke,
-                                           m_pFormFillEnv, pFormField, fa);
+  pActionHandler->DoAction_FieldJavaScript(
+      action, CPDF_AAction::KeyStroke, m_pFormFillEnv.Get(), pFormField, fa);
   return fa.bRC;
 }
 
@@ -371,8 +371,8 @@ bool CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
   fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
   fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
   fa.sValue = csValue;
-  pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::Validate,
-                                           m_pFormFillEnv, pFormField, fa);
+  pActionHandler->DoAction_FieldJavaScript(
+      action, CPDF_AAction::Validate, m_pFormFillEnv.Get(), pFormField, fa);
   return fa.bRC;
 }
 

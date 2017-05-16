@@ -51,7 +51,7 @@ class CFWL_Caret : public CFWL_Widget {
                    const CFX_Matrix* pMatrix);
 
   std::unique_ptr<CFWL_Caret::Timer> m_pTimer;
-  CFWL_TimerInfo* m_pTimerInfo;  // not owned.
+  CFX_UnownedPtr<CFWL_TimerInfo> m_pTimerInfo;
 };
 
 #endif  // XFA_FWL_CFWL_CARET_H_
