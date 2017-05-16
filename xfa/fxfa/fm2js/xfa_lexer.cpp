@@ -124,9 +124,13 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
   }
 
   while (1) {
-    // Make sure we don't walk off the end of the string.
-    if (m_ptr > m_end)
+    // Make sure we don't walk off the end of the string. If we don't currently
+    // have a token type then mark it EOF.
+    if (m_ptr > m_end) {
+      if (p->m_type == TOKreserver)
+        p->m_type = TOKeof;
       return p;
+    }
 
     ch = *m_ptr;
     if (!IsValid(m_ptr)) {
@@ -172,7 +176,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case '=':
         ++m_ptr;
         if (m_ptr > m_end) {
-          Error(kFMErrEndOfInput);
+          p->m_type = TOKassign;
           return p;
         }
 
@@ -192,7 +196,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case '<':
         ++m_ptr;
         if (m_ptr > m_end) {
-          Error(kFMErrEndOfInput);
+          p->m_type = TOKlt;
           return p;
         }
 
@@ -215,7 +219,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case '>':
         ++m_ptr;
         if (m_ptr > m_end) {
-          Error(kFMErrEndOfInput);
+          p->m_type = TOKgt;
           return p;
         }
 
@@ -275,7 +279,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case '/': {
         ++m_ptr;
         if (m_ptr > m_end) {
-          Error(kFMErrEndOfInput);
+          p->m_type = TOKdiv;
           return p;
         }
 
@@ -295,7 +299,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
       case '.':
         ++m_ptr;
         if (m_ptr > m_end) {
-          Error(kFMErrEndOfInput);
+          p->m_type = TOKdot;
           return p;
         }
 
@@ -369,15 +373,18 @@ const wchar_t* CXFA_FMLexer::String(CXFA_FMToken* t, const wchar_t* p) {
     }
 
     ++p;
-    if (p > m_end) {
-      Error(kFMErrEndOfInput);
-      return p;
-    }
-
     if (ch != '"') {
+      // We've hit the end of the input, return the string.
+      if (p > m_end) {
+        Error(kFMErrEndOfInput);
+        return p;
+      }
       ch = *p;
       continue;
     }
+    // We've hit the end of the input, return the string.
+    if (p > m_end)
+      break;
 
     if (!IsValid(p)) {
       ch = *p;
@@ -405,7 +412,8 @@ const wchar_t* CXFA_FMLexer::Identifiers(CXFA_FMToken* t, const wchar_t* p) {
   uint16_t ch = *p;
   ++p;
   if (p > m_end) {
-    Error(kFMErrEndOfInput);
+    t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
+    t->m_type = IsKeyword(t->m_wstring);
     return p;
   }
 
@@ -432,10 +440,8 @@ const wchar_t* CXFA_FMLexer::Identifiers(CXFA_FMToken* t, const wchar_t* p) {
       break;
     }
     ++p;
-    if (p > m_end) {
-      Error(kFMErrEndOfInput);
-      return p;
-    }
+    if (p > m_end)
+      break;
   }
   t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
   t->m_type = IsKeyword(t->m_wstring);
@@ -445,29 +451,20 @@ const wchar_t* CXFA_FMLexer::Identifiers(CXFA_FMToken* t, const wchar_t* p) {
 const wchar_t* CXFA_FMLexer::Comment(const wchar_t* p) {
   ++p;
 
-  if (p > m_end) {
-    Error(kFMErrEndOfInput);
+  if (p > m_end)
     return p;
-  }
 
   unsigned ch = *p;
   while (ch) {
-    if (ch == L'\r') {
-      ++p;
-      if (p > m_end)
-        Error(kFMErrEndOfInput);
-      return p;
-    }
-
     ++p;
-    if (p > m_end) {
-      Error(kFMErrEndOfInput);
+    if (ch == L'\r')
       return p;
-    }
     if (ch == L'\n') {
       ++m_uCurrentLine;
       return p;
     }
+    if (p > m_end)
+      return p;
     ch = *p;
   }
   return p;

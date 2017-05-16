@@ -1908,6 +1908,7 @@ test("pdfium_unittests") {
       "xfa/fxfa/app/cxfa_textparser_unittest.cpp",
       "xfa/fxfa/app/xfa_ffbarcode_unittest.cpp",
       "xfa/fxfa/cxfa_ffapp_unittest.cpp",
+      "xfa/fxfa/fm2js/xfa_lexer_unittest.cpp",
       "xfa/fxfa/fm2js/xfa_simpleexpression_unittest.cpp",
       "xfa/fxfa/parser/xfa_utils_unittest.cpp",
     ]
