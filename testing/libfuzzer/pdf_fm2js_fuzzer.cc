@@ -8,20 +8,16 @@
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/fm2js/cxfa_fmprogram.h"
+#include "xfa/fxfa/fm2js/cxfa_fm2jscontext.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FX_SAFE_STRSIZE safe_size = size;
   if (!safe_size.IsValid())
     return 0;
 
+  CFX_WideTextBuf js;
   CFX_WideString input =
       CFX_WideString::FromUTF8(CFX_ByteStringC(data, safe_size.ValueOrDie()));
-  CXFA_FMProgram program(input.AsStringC());
-  if (!program.ParseProgram())
-    return 0;
-
-  CFX_WideTextBuf js;
-  program.TranslateProgram(js);
+  CXFA_FM2JSContext::Translate(input.AsStringC(), &js);
   return 0;
 }

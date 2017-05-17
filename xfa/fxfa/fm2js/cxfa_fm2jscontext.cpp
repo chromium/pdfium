@@ -18,7 +18,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
-#include "xfa/fxfa/fm2js/cxfa_fmprogram.h"
+#include "xfa/fxfa/fm2js/cxfa_fmparse.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -6119,8 +6119,18 @@ bool CXFA_FM2JSContext::Translate(const CFX_WideStringC& wsFormcalc,
     return true;
   }
 
-  CXFA_FMProgram program(wsFormcalc);
-  return program.ParseProgram() && program.TranslateProgram(*wsJavascript);
+  CXFA_FMErrorInfo errorInfo;
+  CXFA_FMParse parser(wsFormcalc, &errorInfo);
+
+  std::unique_ptr<CXFA_FMFunctionDefinition> func = parser.Parse();
+  if (!errorInfo.message.IsEmpty())
+    return false;
+
+  if (!func->ToJavaScript(*wsJavascript))
+    return false;
+
+  wsJavascript->AppendChar(0);
+  return true;
 }
 
 CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,

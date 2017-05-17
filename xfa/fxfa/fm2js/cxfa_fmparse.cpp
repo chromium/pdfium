@@ -26,6 +26,20 @@ CXFA_FMParse::CXFA_FMParse(const CFX_WideStringC& wsFormcalc,
 
 CXFA_FMParse::~CXFA_FMParse() {}
 
+std::unique_ptr<CXFA_FMFunctionDefinition> CXFA_FMParse::Parse() {
+  NextToken();
+  if (HasError())
+    return nullptr;
+
+  auto expressions = ParseTopExpression();
+  if (HasError())
+    return nullptr;
+
+  std::vector<CFX_WideStringC> arguments;
+  return pdfium::MakeUnique<CXFA_FMFunctionDefinition>(
+      1, true, L"", std::move(arguments), std::move(expressions));
+}
+
 void CXFA_FMParse::NextToken() {
   m_pToken = m_lexer->NextToken();
   while (m_pToken->m_type == TOKreserver) {

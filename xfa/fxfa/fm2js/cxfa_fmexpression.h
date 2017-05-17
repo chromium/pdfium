@@ -28,6 +28,7 @@ class CXFA_FMExpression {
   explicit CXFA_FMExpression(uint32_t line);
   CXFA_FMExpression(uint32_t line, XFA_FM_EXPTYPE type);
   virtual ~CXFA_FMExpression() {}
+
   virtual bool ToJavaScript(CFX_WideTextBuf& javascript);
   virtual bool ToImpliedReturnJS(CFX_WideTextBuf&);
   uint32_t GetLine() { return m_line; }
