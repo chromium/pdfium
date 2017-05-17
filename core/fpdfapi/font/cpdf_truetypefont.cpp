@@ -125,28 +125,24 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           }
         }
       }
-      if ((m_GlyphIndex[charcode] == 0 || m_GlyphIndex[charcode] == 0xffff) &&
-          name) {
-        if (name[0] == '.' && strcmp(name, ".notdef") == 0) {
-          m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.GetFace(), 32);
-        } else {
-          m_GlyphIndex[charcode] =
-              FXFT_Get_Name_Index(m_Font.GetFace(), (char*)name);
-          if (m_GlyphIndex[charcode] == 0) {
-            if (bToUnicode) {
-              CFX_WideString wsUnicode = UnicodeFromCharCode(charcode);
-              if (!wsUnicode.IsEmpty()) {
-                m_GlyphIndex[charcode] =
-                    FXFT_Get_Char_Index(m_Font.GetFace(), wsUnicode[0]);
-                m_Encoding.m_Unicodes[charcode] = wsUnicode[0];
-              }
-            }
-            if (m_GlyphIndex[charcode] == 0) {
-              m_GlyphIndex[charcode] =
-                  FXFT_Get_Char_Index(m_Font.GetFace(), charcode);
-            }
-          }
-        }
+      if ((m_GlyphIndex[charcode] != 0 && m_GlyphIndex[charcode] != 0xffff) ||
+          !name) {
+        continue;
+      }
+      if (strcmp(name, ".notdef") == 0) {
+        m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.GetFace(), 32);
+        continue;
+      }
+      m_GlyphIndex[charcode] =
+          FXFT_Get_Name_Index(m_Font.GetFace(), (char*)name);
+      if (m_GlyphIndex[charcode] != 0 || !bToUnicode)
+        continue;
+
+      CFX_WideString wsUnicode = UnicodeFromCharCode(charcode);
+      if (!wsUnicode.IsEmpty()) {
+        m_GlyphIndex[charcode] =
+            FXFT_Get_Char_Index(m_Font.GetFace(), wsUnicode[0]);
+        m_Encoding.m_Unicodes[charcode] = wsUnicode[0];
       }
     }
     return;
