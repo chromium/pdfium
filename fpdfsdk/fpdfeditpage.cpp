@@ -135,7 +135,7 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
 
 DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
                                              FPDF_PAGEOBJECT page_obj) {
-  CPDF_PageObject* pPageObj = reinterpret_cast<CPDF_PageObject*>(page_obj);
+  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(page_obj);
   if (!pPageObj)
     return;
 
@@ -201,7 +201,7 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
     return false;
 
-  CPDF_PageObject* pPageObj = reinterpret_cast<CPDF_PageObject*>(pageObject);
+  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(pageObject);
   int blend_type = pPageObj->m_GeneralState.GetBlendType();
   if (blend_type != FXDIB_BLEND_NORMAL)
     return true;
@@ -234,7 +234,7 @@ DLLEXPORT int STDCALL FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
     return FPDF_PAGEOBJ_UNKNOWN;
 
-  CPDF_PageObject* pPageObj = reinterpret_cast<CPDF_PageObject*>(pageObject);
+  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(pageObject);
   return pPageObj->GetType();
 }
 
@@ -255,7 +255,7 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
                                              double d,
                                              double e,
                                              double f) {
-  CPDF_PageObject* pPageObj = reinterpret_cast<CPDF_PageObject*>(page_object);
+  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(page_object);
   if (!pPageObj)
     return;
 

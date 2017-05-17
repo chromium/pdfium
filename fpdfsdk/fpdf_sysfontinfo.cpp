@@ -106,7 +106,7 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
 DLLEXPORT void STDCALL FPDF_AddInstalledFont(void* mapper,
                                              const char* name,
                                              int charset) {
-  CFX_FontMapper* pMapper = reinterpret_cast<CFX_FontMapper*>(mapper);
+  CFX_FontMapper* pMapper = static_cast<CFX_FontMapper*>(mapper);
   pMapper->AddInstalledFont(name, charset);
 }
 

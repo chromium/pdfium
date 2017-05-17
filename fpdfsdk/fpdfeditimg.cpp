@@ -25,7 +25,7 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
 
   CFX_RetainPtr<IFX_SeekableReadStream> pFile =
       MakeSeekableReadStream(fileAccess);
-  CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
+  CPDF_ImageObject* pImgObj = static_cast<CPDF_ImageObject*>(image_object);
 
   if (pages) {
     for (int index = 0; index < nCount; index++) {
@@ -82,7 +82,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
   if (!image_object)
     return false;
 
-  CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
+  CPDF_ImageObject* pImgObj = static_cast<CPDF_ImageObject*>(image_object);
   pImgObj->set_matrix(CFX_Matrix(static_cast<float>(a), static_cast<float>(b),
                                  static_cast<float>(c), static_cast<float>(d),
                                  static_cast<float>(e), static_cast<float>(f)));
@@ -97,7 +97,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   if (!image_object || !bitmap || !pages)
     return false;
 
-  CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
+  CPDF_ImageObject* pImgObj = static_cast<CPDF_ImageObject*>(image_object);
   for (int index = 0; index < nCount; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (pPage)

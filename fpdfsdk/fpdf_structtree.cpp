@@ -15,11 +15,11 @@
 namespace {
 
 CPDF_StructTree* ToStructTree(FPDF_STRUCTTREE struct_tree) {
-  return reinterpret_cast<CPDF_StructTree*>(struct_tree);
+  return static_cast<CPDF_StructTree*>(struct_tree);
 }
 
 CPDF_StructElement* ToStructTreeElement(FPDF_STRUCTELEMENT struct_element) {
-  return reinterpret_cast<CPDF_StructElement*>(struct_element);
+  return static_cast<CPDF_StructElement*>(struct_element);
 }
 
 unsigned long WideStringToBuffer(const CFX_WideString& str,

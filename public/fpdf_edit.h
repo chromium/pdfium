@@ -434,7 +434,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
                                              FPDF_WIDESTRING text);
 
 // Returns a font object loaded from a stream of data. The font is loaded
-// into the document. The caller does not need to free the returned object.
+// into the document.
 //
 // document   - handle to the document.
 // data       - the stream of data, which will be copied by the font object.

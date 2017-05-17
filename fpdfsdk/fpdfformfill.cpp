@@ -67,11 +67,11 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
 
 #ifdef PDF_ENABLE_XFA
 std::vector<CFX_ByteString>* FromFPDFStringHandle(FPDF_STRINGHANDLE handle) {
-  return reinterpret_cast<std::vector<CFX_ByteString>*>(handle);
+  return static_cast<std::vector<CFX_ByteString>*>(handle);
 }
 
 FPDF_STRINGHANDLE ToFPDFStringHandle(std::vector<CFX_ByteString>* strings) {
-  return reinterpret_cast<FPDF_STRINGHANDLE>(strings);
+  return static_cast<FPDF_STRINGHANDLE>(strings);
 }
 #endif  // PDF_ENABLE_XFA
 

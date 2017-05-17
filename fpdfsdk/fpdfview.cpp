@@ -156,7 +156,7 @@ bool CPDF_CustomAccess::ReadBlock(void* buffer,
     return false;
   }
   return !!m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,
-                                   reinterpret_cast<uint8_t*>(buffer), size);
+                                   static_cast<uint8_t*>(buffer), size);
 }
 
 #ifdef PDF_ENABLE_XFA
