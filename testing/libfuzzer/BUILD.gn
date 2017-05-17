@@ -29,6 +29,7 @@ group("libfuzzer") {
     ":pdf_codec_icc_fuzzer",
     ":pdf_codec_jbig2_fuzzer",
     ":pdf_codec_rle_fuzzer",
+    ":pdf_font_fuzzer",
     ":pdf_hint_table_fuzzer",
     ":pdf_jpx_fuzzer",
     ":pdf_psengine_fuzzer",
@@ -165,6 +166,12 @@ pdfium_fuzzer("pdf_codec_jbig2_fuzzer") {
 pdfium_fuzzer("pdf_codec_rle_fuzzer") {
   sources = [
     "pdf_codec_rle_fuzzer.cc",
+  ]
+}
+
+pdfium_fuzzer("pdf_font_fuzzer") {
+  sources = [
+    "pdf_font_fuzzer.cc",
   ]
 }
 
