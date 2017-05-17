@@ -38,6 +38,13 @@ TEST(CXFA_FMParseTest, CommentOnlyIsError) {
 }
 
 TEST(CXFA_FMParseTest, CommentThenValue) {
+  const wchar_t ret[] =
+      L"(\nfunction ()\n{\n"
+      L"var pfm_ret = null;\n"
+      L"pfm_ret = 12;\n"
+      L"return pfm_rt.get_val(pfm_ret);\n"
+      L"}\n).call(this);\n";
+
   CXFA_FMErrorInfo errorInfo;
   auto parser =
       pdfium::MakeUnique<CXFA_FMParse>(L"; Just comment\n12", &errorInfo);
@@ -47,15 +54,7 @@ TEST(CXFA_FMParseTest, CommentThenValue) {
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
-  EXPECT_EQ(L"(\n"
-      L"function ()\n"
-      L"{\n"
-        L"var foxit_xfa_formcalc_runtime_func_return_value = null;\n"
-        L"foxit_xfa_formcalc_runtime_func_return_value = 12;\n"
-        L"return foxit_xfa_formcalc_runtime.get_fm_value("
-          L"foxit_xfa_formcalc_runtime_func_return_value);\n"
-      L"}\n"
-      L").call(this);\n", buf.AsStringC());
+  EXPECT_EQ(ret, buf.AsStringC());
 }
 
 TEST(CXFA_FMParseTest, Parse) {
@@ -70,6 +69,38 @@ TEST(CXFA_FMParseTest, Parse) {
       L"\n"
       L"$";
 
+  const wchar_t ret[] =
+      L"(\nfunction ()\n{\n"
+      L"var pfm_ret = null;\n"
+      L"if (pfm_rt.is_obj(this))\n{\n"
+        L"pfm_rt.asgn_val_op(this, pfm_rt.Avg(pfm_rt.neg_op(3), 5, "
+          L"pfm_rt.neg_op(6), 12, pfm_rt.neg_op(13)));\n"
+      L"}\n"
+      L"if (pfm_rt.is_obj(this))\n{\n"
+        L"pfm_rt.asgn_val_op(this, pfm_rt.Avg(pfm_rt.dot_acc(pfm_rt.dotdot_acc("
+          L"Table2, \"Table2\", \"Row\", 1), \"\", \"Cell1\", 0, 0)));\n"
+      L"}\n"
+      L"if (pfm_rt.get_val(pfm_rt.neq_op(this, pfm_rt.neg_op(1))))\n{\n"
+        L"if (pfm_rt.is_obj(pfm_rt.dot_acc(pfm_rt.dot_acc(pfm_rt.dot_acc("
+          L"border, \"border\", \"fill\", 0, 0), \"\", \"color\", 0, 0), \"\", "
+          L"\"value\", 0, 0)))\n{\n"
+            L"pfm_rt.asgn_val_op(pfm_rt.dot_acc(pfm_rt.dot_acc("
+              L"pfm_rt.dot_acc(border, \"border\", \"fill\", 0, 0), \"\", "
+                L"\"color\", 0, 0), \"\", \"value\", 0, 0), \"255,64,64\");\n"
+        L"}\n"
+      L"}\nelse\n{\n"
+        L"if (pfm_rt.is_obj(pfm_rt.dot_acc(pfm_rt.dot_acc(pfm_rt.dot_acc("
+          L"border, \"border\", \"fill\", 0, 0), \"\", \"color\", 0, 0), \"\", "
+          L"\"value\", 0, 0)))\n{\n"
+            L"pfm_rt.asgn_val_op(pfm_rt.dot_acc(pfm_rt.dot_acc("
+              L"pfm_rt.dot_acc(border, \"border\", \"fill\", 0, 0), \"\", "
+                L"\"color\", 0, 0), \"\", \"value\", 0, 0), \"20,170,13\");\n"
+        L"}\n"
+      L"}\n"
+      L"pfm_ret = this;\n"
+      L"return pfm_rt.get_val(pfm_ret);\n"
+      L"}\n).call(this);\n";
+
   CXFA_FMErrorInfo errorInfo;
   auto parser = pdfium::MakeUnique<CXFA_FMParse>(input, &errorInfo);
   std::unique_ptr<CXFA_FMFunctionDefinition> ast = parser->Parse();
@@ -78,58 +109,5 @@ TEST(CXFA_FMParseTest, Parse) {
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
-  EXPECT_EQ(
-      L"(\nfunction ()\n{\n"
-      L"var foxit_xfa_formcalc_runtime_func_return_value = null;\n"
-      L"if (foxit_xfa_formcalc_runtime.is_fm_object(this))\n{\n"
-        L"foxit_xfa_formcalc_runtime.assign_value_operator(this, "
-          L"foxit_xfa_formcalc_runtime.Avg("
-            L"foxit_xfa_formcalc_runtime.negative_operator(3), 5, "
-              L"foxit_xfa_formcalc_runtime.negative_operator(6), 12, "
-                L"foxit_xfa_formcalc_runtime.negative_operator(13)));\n"
-      L"}\n"
-      L"if (foxit_xfa_formcalc_runtime.is_fm_object(this))\n{\n"
-        L"foxit_xfa_formcalc_runtime.assign_value_operator(this, "
-          L"foxit_xfa_formcalc_runtime.Avg("
-            L"foxit_xfa_formcalc_runtime.dot_accessor("
-              L"foxit_xfa_formcalc_runtime.dotdot_accessor(Table2, \"Table2\", "
-                L"\"Row\", 1), \"\", \"Cell1\", 0, 0)));\n"
-      L"}\n"
-      L"if (foxit_xfa_formcalc_runtime.get_fm_value("
-        L"foxit_xfa_formcalc_runtime.notequality_operator(this, "
-          L"foxit_xfa_formcalc_runtime.negative_operator(1))))\n{\n"
-            L"if (foxit_xfa_formcalc_runtime.is_fm_object("
-              L"foxit_xfa_formcalc_runtime.dot_accessor("
-                L"foxit_xfa_formcalc_runtime.dot_accessor("
-                  L"foxit_xfa_formcalc_runtime.dot_accessor(border, "
-                    L"\"border\", \"fill\", 0, 0), \"\", \"color\", 0, 0), "
-                    L"\"\", \"value\", 0, 0)))\n{\n"
-                      L"foxit_xfa_formcalc_runtime.assign_value_operator("
-                        L"foxit_xfa_formcalc_runtime.dot_accessor("
-                          L"foxit_xfa_formcalc_runtime.dot_accessor("
-                            L"foxit_xfa_formcalc_runtime.dot_accessor("
-                              L"border, \"border\", \"fill\", 0, 0), \"\", "
-                              L"\"color\", 0, 0), \"\", \"value\", 0, 0), "
-                              L"\"255,64,64\");\n"
-            L"}\n"
-      L"}\nelse\n{\n"
-        L"if (foxit_xfa_formcalc_runtime.is_fm_object("
-          L"foxit_xfa_formcalc_runtime.dot_accessor("
-            L"foxit_xfa_formcalc_runtime.dot_accessor("
-              L"foxit_xfa_formcalc_runtime.dot_accessor("
-                L"border, \"border\", \"fill\", 0, 0), \"\", \"color\", "
-                L"0, 0), \"\", \"value\", 0, 0)))\n{\n"
-                  L"foxit_xfa_formcalc_runtime.assign_value_operator("
-                    L"foxit_xfa_formcalc_runtime.dot_accessor("
-                      L"foxit_xfa_formcalc_runtime.dot_accessor("
-                        L"foxit_xfa_formcalc_runtime.dot_accessor("
-                          L"border, \"border\", \"fill\", 0, 0), \"\", "
-                          L"\"color\", 0, 0), \"\", \"value\", 0, 0), "
-                          L"\"20,170,13\");\n"
-        L"}\n"
-      L"}\n"
-      L"foxit_xfa_formcalc_runtime_func_return_value = this;\n"
-      L"return foxit_xfa_formcalc_runtime.get_fm_value("
-        L"foxit_xfa_formcalc_runtime_func_return_value);\n"
-      L"}\n).call(this);\n", buf.AsStringC());
+  EXPECT_EQ(ret, buf.AsStringC());
 }

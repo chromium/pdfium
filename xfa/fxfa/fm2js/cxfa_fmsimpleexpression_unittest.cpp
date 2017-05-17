@@ -31,12 +31,12 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
     if (i > 0)
       result += L", ";
 
-    result += L"foxit_xfa_formcalc_runtime.get_fm_";
+    result += L"pfm_rt.get_";
     // Object positions for sign() method.
     if (i == 0 || i == 5 || i == 6)
       result += L"jsobj()";
     else
-      result += L"value()";
+      result += L"val()";
   }
   result += L")";
 

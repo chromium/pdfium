@@ -12,11 +12,9 @@
 
 namespace {
 
-const wchar_t RUNTIMEBLOCKTEMPARRAY[] =
-    L"foxit_xfa_formcalc_runtime_block_temp_array";
+const wchar_t RUNTIMEBLOCKTEMPARRAY[] = L"pfm_ary";
 
-const wchar_t RUNTIMEBLOCKTEMPARRAYINDEX[] =
-    L"foxit_xfa_formcalc_runtime_block_temp_array_index";
+const wchar_t RUNTIMEBLOCKTEMPARRAYINDEX[] = L"pfm_ary_idx";
 
 const wchar_t kLessEqual[] = L" <= ";
 const wchar_t kGreaterEqual[] = L" >= ";

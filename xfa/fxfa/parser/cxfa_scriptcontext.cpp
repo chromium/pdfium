@@ -72,7 +72,7 @@ const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor = {
     CXFA_ScriptContext::NormalMethodCall,
 };
 
-const char kFormCalcRuntime[] = "foxit_xfa_formcalc_runtime";
+const char kFormCalcRuntime[] = "pfm_rt";
 
 CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
   return static_cast<CXFA_ThisProxy*>(pValue->ToHostObject(pClass));
