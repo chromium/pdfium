@@ -89,7 +89,14 @@ const char ToUnicodeStart[] =
     "/CMapName /Adobe-Identity-H def\n"
     "CMapType 2 def\n"
     "1 begincodespacerange\n"
-    "<0000> <FFFFF>\n";
+    "<0000> <FFFFF>\n"
+    "endcodespacerange\n";
+
+const char ToUnicodeEnd[] =
+    "endcmap\n"
+    "CMapName currentdict /CMap defineresource pop\n"
+    "end\n"
+    "end\n";
 
 void AddCharcode(CFX_ByteTextBuf* pBuffer, uint32_t number) {
   ASSERT(number <= 0xFFFF);
@@ -115,8 +122,6 @@ void AddUnicode(CFX_ByteTextBuf* pBuffer, uint32_t unicode) {
 // Loads the charcode to unicode mapping into a stream
 CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
                          const std::map<uint32_t, uint32_t>& to_unicode) {
-  CFX_ByteTextBuf buffer;
-  buffer << ToUnicodeStart;
   // A map charcode->unicode
   std::map<uint32_t, uint32_t> char_to_uni;
   // A map <char_start, char_end> to vector v of unicode characters of size (end
@@ -179,6 +184,8 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
     }
     map_range[std::make_pair(firstCharcode, curCharcode)] = firstUnicode;
   }
+  CFX_ByteTextBuf buffer;
+  buffer << ToUnicodeStart;
   // Add maps to buffer
   buffer << static_cast<uint32_t>(char_to_uni.size()) << " beginbfchar\n";
   for (const auto& iter : char_to_uni) {
@@ -214,6 +221,8 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
     AddUnicode(&buffer, iter.second);
     buffer << "\n";
   }
+  buffer << "endbfrange\n";
+  buffer << ToUnicodeEnd;
   // TODO(npm): Encrypt / Compress?
   uint32_t bufferSize = buffer.GetSize();
   auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
