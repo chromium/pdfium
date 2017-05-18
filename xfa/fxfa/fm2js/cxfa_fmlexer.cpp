@@ -94,6 +94,8 @@ CXFA_FMToken::CXFA_FMToken() : m_type(TOKreserver), m_uLinenum(1) {}
 CXFA_FMToken::CXFA_FMToken(uint32_t uLineNum)
     : m_type(TOKreserver), m_uLinenum(uLineNum) {}
 
+CXFA_FMToken::~CXFA_FMToken() {}
+
 CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc)
     : m_ptr(wsFormCalc.c_str()),
       m_end(m_ptr + wsFormCalc.GetLength() - 1),

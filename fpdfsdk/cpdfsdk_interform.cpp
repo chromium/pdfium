@@ -502,9 +502,8 @@ bool CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
-  std::unique_ptr<CFDF_Document> pFDF =
-      m_pInterForm->ExportToFDF(m_pFormFillEnv->JS_docGetFilePath().AsStringC(),
-                                fields, bIncludeOrExclude, false);
+  std::unique_ptr<CFDF_Document> pFDF = m_pInterForm->ExportToFDF(
+      m_pFormFillEnv->JS_docGetFilePath(), fields, bIncludeOrExclude, false);
   return pFDF ? pFDF->WriteBuf(textBuf) : false;
 }
 
@@ -521,8 +520,8 @@ bool CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
   if (!m_pFormFillEnv || !m_pInterForm)
     return false;
 
-  std::unique_ptr<CFDF_Document> pFDFDoc = m_pInterForm->ExportToFDF(
-      m_pFormFillEnv->JS_docGetFilePath().AsStringC(), false);
+  std::unique_ptr<CFDF_Document> pFDFDoc =
+      m_pInterForm->ExportToFDF(m_pFormFillEnv->JS_docGetFilePath(), false);
   if (!pFDFDoc)
     return false;
 
@@ -543,8 +542,8 @@ bool CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 }
 
 bool CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
-  std::unique_ptr<CFDF_Document> pFDF = m_pInterForm->ExportToFDF(
-      m_pFormFillEnv->JS_docGetFilePath().AsStringC(), false);
+  std::unique_ptr<CFDF_Document> pFDF =
+      m_pInterForm->ExportToFDF(m_pFormFillEnv->JS_docGetFilePath(), false);
   return pFDF && pFDF->WriteBuf(textBuf);
 }
 

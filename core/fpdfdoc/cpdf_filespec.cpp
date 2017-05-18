@@ -50,7 +50,7 @@ CFX_WideString ChangeSlashToPDF(const wchar_t* str) {
 
 }  // namespace
 
-CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideStringC& filepath) {
+CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideString& filepath) {
   if (filepath.GetLength() <= 1)
     return CFX_WideString();
 
@@ -108,7 +108,7 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   } else {
     return false;
   }
-  *csFileName = DecodeFileName(csFileName->AsStringC());
+  *csFileName = DecodeFileName(*csFileName);
   return true;
 }
 
@@ -116,7 +116,7 @@ CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {}
 
 CPDF_FileSpec::~CPDF_FileSpec() {}
 
-CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
+CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideString& filepath) {
   if (filepath.GetLength() <= 1)
     return CFX_WideString();
 
@@ -145,7 +145,7 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
 #endif
 }
 
-void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName) {
+void CPDF_FileSpec::SetFileName(const CFX_WideString& wsFileName) {
   if (!m_pObj)
     return;
 

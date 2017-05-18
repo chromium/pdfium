@@ -95,6 +95,7 @@ class CXFA_FMToken {
  public:
   CXFA_FMToken();
   explicit CXFA_FMToken(uint32_t uLineNum);
+  ~CXFA_FMToken();
 
   CFX_WideStringC m_wstring;
   XFA_FM_TOKEN m_type;
