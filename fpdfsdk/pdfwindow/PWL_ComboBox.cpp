@@ -181,7 +181,10 @@ bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 }
 
 CPWL_ComboBox::CPWL_ComboBox()
-    : m_bPopup(false),
+    : m_pEdit(nullptr),
+      m_pButton(nullptr),
+      m_pList(nullptr),
+      m_bPopup(false),
       m_nPopupWhere(0),
       m_nSelectItem(-1),
       m_pFillerNotify(nullptr) {}
@@ -264,7 +267,7 @@ void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
   if (m_pEdit)
     return;
 
-  m_pEdit = pdfium::MakeUnique<CPWL_CBEdit>();
+  m_pEdit = new CPWL_CBEdit();
   m_pEdit->AttachFFLData(m_pFormFiller.Get());
 
   PWL_CREATEPARAM ecp = cp;
@@ -288,7 +291,7 @@ void CPWL_ComboBox::CreateButton(const PWL_CREATEPARAM& cp) {
   if (m_pButton)
     return;
 
-  m_pButton = pdfium::MakeUnique<CPWL_CBButton>();
+  m_pButton = new CPWL_CBButton;
 
   PWL_CREATEPARAM bcp = cp;
   bcp.pParentWnd = this;
@@ -305,7 +308,7 @@ void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
   if (m_pList)
     return;
 
-  m_pList = pdfium::MakeUnique<CPWL_CBListBox>();
+  m_pList = new CPWL_CBListBox();
   m_pList->AttachFFLData(m_pFormFiller.Get());
 
   PWL_CREATEPARAM lcp = cp;
@@ -585,14 +588,14 @@ void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd,
                              intptr_t lParam) {
   switch (msg) {
     case PNM_LBUTTONDOWN:
-      if (pWnd == m_pButton.get()) {
+      if (pWnd == m_pButton) {
         SetPopup(!m_bPopup);
         return;
       }
       break;
     case PNM_LBUTTONUP:
       if (m_pEdit && m_pList) {
-        if (pWnd == m_pList.get()) {
+        if (pWnd == m_pList) {
           SetSelectText();
           SelectAll();
           m_pEdit->SetFocus();

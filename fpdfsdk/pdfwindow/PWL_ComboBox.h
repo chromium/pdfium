@@ -52,7 +52,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CPWL_ComboBox();
   ~CPWL_ComboBox() override;
 
-  CPWL_Edit* GetEdit() const { return m_pEdit.get(); }
+  CPWL_Edit* GetEdit() const { return m_pEdit; }
 
   // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
@@ -93,9 +93,9 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void CreateListBox(const PWL_CREATEPARAM& cp);
   void SetPopup(bool bPopup);
 
-  std::unique_ptr<CPWL_CBEdit> m_pEdit;
-  std::unique_ptr<CPWL_CBButton> m_pButton;
-  std::unique_ptr<CPWL_CBListBox> m_pList;
+  CPWL_CBEdit* m_pEdit;
+  CPWL_CBButton* m_pButton;
+  CPWL_CBListBox* m_pList;
   bool m_bPopup;
   CFX_FloatRect m_rcOldWindow;
   int32_t m_nPopupWhere;
