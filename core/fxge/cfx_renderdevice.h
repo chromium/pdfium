@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_font.h"
 

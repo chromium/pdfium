@@ -11,9 +11,9 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/xml/cxml_element.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodelocale.h"
@@ -1056,23 +1056,17 @@ static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
                                                            int nBufLen) {
   if (!pBuf || nBufLen <= 0)
     return nullptr;
-  CFX_GEModule* pGeModule = CFX_GEModule::Get();
-  if (!pGeModule)
-    return nullptr;
 
-  CCodec_ModuleMgr* pCodecMgr = pGeModule->GetCodecModule();
-  if (!pCodecMgr)
-    return nullptr;
-
-  std::unique_ptr<CXML_Element> pLocale;
   uint8_t* pOut = nullptr;
   uint32_t dwSize;
+  CCodec_ModuleMgr* pCodecMgr = CPDF_ModuleMgr::Get()->GetCodecModule();
   pCodecMgr->GetFlateModule()->FlateOrLZWDecode(false, pBuf, nBufLen, true, 0,
                                                 0, 0, 0, 0, pOut, dwSize);
-  if (pOut) {
-    pLocale = CXML_Element::Parse(pOut, dwSize);
-    FX_Free(pOut);
-  }
+  if (!pOut)
+    return nullptr;
+
+  std::unique_ptr<CXML_Element> pLocale = CXML_Element::Parse(pOut, dwSize);
+  FX_Free(pOut);
   return pLocale ? pdfium::MakeUnique<CXFA_XMLLocale>(std::move(pLocale))
                  : nullptr;
 }

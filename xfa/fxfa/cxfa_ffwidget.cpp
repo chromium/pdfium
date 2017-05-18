@@ -10,12 +10,12 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/cfx_memorystream.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
@@ -1120,18 +1120,11 @@ CFX_RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     FXCODEC_IMAGE_TYPE type,
     int32_t& iImageXDpi,
     int32_t& iImageYDpi) {
-  CFX_GEModule* pGeModule = CFX_GEModule::Get();
-  if (!pGeModule)
-    return nullptr;
-
-  CCodec_ModuleMgr* pCodecMgr = pGeModule->GetCodecModule();
-  if (!pCodecMgr)
-    return nullptr;
-
-  CFX_DIBAttribute dibAttr;
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap;
+  CCodec_ModuleMgr* pCodecMgr = CPDF_ModuleMgr::Get()->GetCodecModule();
   std::unique_ptr<CCodec_ProgressiveDecoder> pProgressiveDecoder =
       pCodecMgr->CreateProgressiveDecoder();
+
+  CFX_DIBAttribute dibAttr;
   pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr, false);
   switch (dibAttr.m_wDPIUnit) {
     case FXCODEC_RESUNIT_CENTIMETER:
@@ -1147,24 +1140,26 @@ CFX_RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   }
   iImageXDpi = dibAttr.m_nXDPI > 1 ? dibAttr.m_nXDPI : (96);
   iImageYDpi = dibAttr.m_nYDPI > 1 ? dibAttr.m_nYDPI : (96);
-  if (pProgressiveDecoder->GetWidth() > 0 &&
-      pProgressiveDecoder->GetHeight() > 0) {
-    type = pProgressiveDecoder->GetType();
-    int32_t iComponents = pProgressiveDecoder->GetNumComponents();
-    int32_t iBpc = pProgressiveDecoder->GetBPC();
-    FXDIB_Format dibFormat = XFA_GetDIBFormat(type, iComponents, iBpc);
-    pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    pBitmap->Create(pProgressiveDecoder->GetWidth(),
-                    pProgressiveDecoder->GetHeight(), dibFormat);
-    pBitmap->Clear(0xffffffff);
-    int32_t nFrames;
-    if ((pProgressiveDecoder->GetFrames(nFrames) ==
-         FXCODEC_STATUS_DECODE_READY) &&
-        (nFrames > 0)) {
-      pProgressiveDecoder->StartDecode(pBitmap, 0, 0, pBitmap->GetWidth(),
-                                       pBitmap->GetHeight());
-      pProgressiveDecoder->ContinueDecode();
-    }
+  if (pProgressiveDecoder->GetWidth() <= 0 ||
+      pProgressiveDecoder->GetHeight() <= 0) {
+    return nullptr;
+  }
+
+  type = pProgressiveDecoder->GetType();
+  int32_t iComponents = pProgressiveDecoder->GetNumComponents();
+  int32_t iBpc = pProgressiveDecoder->GetBPC();
+  FXDIB_Format dibFormat = XFA_GetDIBFormat(type, iComponents, iBpc);
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  pBitmap->Create(pProgressiveDecoder->GetWidth(),
+                  pProgressiveDecoder->GetHeight(), dibFormat);
+  pBitmap->Clear(0xffffffff);
+  int32_t nFrames;
+  if ((pProgressiveDecoder->GetFrames(nFrames) ==
+       FXCODEC_STATUS_DECODE_READY) &&
+      (nFrames > 0)) {
+    pProgressiveDecoder->StartDecode(pBitmap, 0, 0, pBitmap->GetWidth(),
+                                     pBitmap->GetHeight());
+    pProgressiveDecoder->ContinueDecode();
   }
   return pBitmap;
 }

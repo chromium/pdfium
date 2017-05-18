@@ -58,10 +58,7 @@ class PDFDocTest : public testing::Test {
   };
 
   void SetUp() override {
-    // We don't need page module or render module, but
-    // initialize them to keep the code sane.
-    CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
-    module_mgr->InitPageModule();
+    CPDF_ModuleMgr::Get()->Init();
 
     m_pDoc = pdfium::MakeUnique<CPDF_TestPdfDocument>();
     m_pIndirectObjs = m_pDoc->GetHolder();

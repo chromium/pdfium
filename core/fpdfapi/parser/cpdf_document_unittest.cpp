@@ -153,10 +153,7 @@ class CPDF_TestDocPagesWithoutKids : public CPDF_Document {
 
 class cpdf_document_test : public testing::Test {
  public:
-  void SetUp() override {
-    CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
-    module_mgr->InitPageModule();
-  }
+  void SetUp() override { CPDF_ModuleMgr::Get()->Init(); }
   void TearDown() override { CPDF_ModuleMgr::Destroy(); }
 };
 

@@ -12,7 +12,6 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"
 
-class CCodec_ModuleMgr;
 class CFX_FontCache;
 class CFX_FontMgr;
 
@@ -25,7 +24,6 @@ class CFX_GEModule {
   CFX_FontCache* GetFontCache();
   CFX_FontMgr* GetFontMgr() { return m_pFontMgr.get(); }
 
-  CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule.get(); }
   void* GetPlatformData() { return m_pPlatformData; }
 
  private:
@@ -37,7 +35,6 @@ class CFX_GEModule {
 
   std::unique_ptr<CFX_FontCache> m_pFontCache;
   std::unique_ptr<CFX_FontMgr> m_pFontMgr;
-  std::unique_ptr<CCodec_ModuleMgr> m_pCodecModule;
   void* m_pPlatformData;
   const char** m_pUserFontPaths;
 };

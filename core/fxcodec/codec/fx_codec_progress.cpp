@@ -1068,10 +1068,6 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
     }
     case FXCODEC_IMAGE_JPG: {
       CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-      if (!pJpegModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return false;
-      }
       m_pJpegContext = pJpegModule->Start();
       if (!m_pJpegContext) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
@@ -1873,9 +1869,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
   }
   switch (m_imagType) {
     case FXCODEC_IMAGE_JPG: {
-      CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
       int down_scale = 1;
       GetDownScale(down_scale);
+      CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
       bool bStart = pJpegModule->StartScanline(m_pJpegContext, down_scale);
       while (!bStart) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;

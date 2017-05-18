@@ -28,7 +28,6 @@
 #include <vector>
 
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"

@@ -360,10 +360,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   pModule->Init(cfg ? cfg->m_pUserFontPaths : nullptr);
 
   CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
-  pModuleMgr->SetCodecModule(pModule->GetCodecModule());
-  pModuleMgr->InitPageModule();
-  pModuleMgr->LoadEmbeddedMaps();
-  pModuleMgr->LoadCodecModules();
+  pModuleMgr->Init();
 
 #ifdef PDF_ENABLE_XFA
   FXJSE_Initialize();

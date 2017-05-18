@@ -8,10 +8,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 class PDFEditTest : public testing::Test {
-  void SetUp() override {
-    CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
-    module_mgr->InitPageModule();
-  }
+  void SetUp() override { CPDF_ModuleMgr::Get()->Init(); }
 
   void TearDown() override { CPDF_ModuleMgr::Destroy(); }
 };

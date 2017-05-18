@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxge/cfx_gemodule.h"
 
 #define FX_CCOLOR(val) (255 - (val))
 #define FXDIB_ALPHA_UNION(dest, src) ((dest) + (src) - (dest) * (src) / 255)

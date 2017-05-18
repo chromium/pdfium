@@ -19,9 +19,7 @@
 
 class CPDF_PageContentGeneratorTest : public testing::Test {
  protected:
-  void SetUp() override {
-    CPDF_ModuleMgr::Get()->InitPageModule();
-  }
+  void SetUp() override { CPDF_ModuleMgr::Get()->Init(); }
 
   void TearDown() override {
     CPDF_ModuleMgr::Destroy();

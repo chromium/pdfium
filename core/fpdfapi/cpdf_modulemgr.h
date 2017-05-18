@@ -38,11 +38,7 @@ class CPDF_ModuleMgr {
   static void Destroy();
   static const int kFileBufSize = 512;
 
-  void SetCodecModule(CCodec_ModuleMgr* pModule) { m_pCodecModule = pModule; }
-  CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
-
-  void InitPageModule();
-  CPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
+  void Init();
 
   void SetUnsupportInfoAdapter(
       std::unique_ptr<CFSDK_UnsupportInfo_Adapter> pAdapter) {
@@ -52,8 +48,8 @@ class CPDF_ModuleMgr {
     return m_pUnsupportInfoAdapter.get();
   }
 
-  void LoadEmbeddedMaps();
-  void LoadCodecModules();
+  CCodec_ModuleMgr* GetCodecModule() const { return m_pCodecModule.get(); }
+  CPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
 
   CCodec_FaxModule* GetFaxModule();
   CCodec_JpegModule* GetJpegModule();
@@ -66,12 +62,17 @@ class CPDF_ModuleMgr {
   CPDF_ModuleMgr();
   ~CPDF_ModuleMgr();
 
+  void InitCodecModule();
+  void InitPageModule();
+  void LoadEmbeddedMaps();
+  void LoadCodecModules();
+
   void LoadEmbeddedGB1CMaps();
   void LoadEmbeddedCNS1CMaps();
   void LoadEmbeddedJapan1CMaps();
   void LoadEmbeddedKorea1CMaps();
 
-  CCodec_ModuleMgr* m_pCodecModule;
+  std::unique_ptr<CCodec_ModuleMgr> m_pCodecModule;
   std::unique_ptr<CPDF_PageModule> m_pPageModule;
   std::unique_ptr<CFSDK_UnsupportInfo_Adapter> m_pUnsupportInfoAdapter;
 };

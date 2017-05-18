@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "core/fxge/cfx_gemodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"

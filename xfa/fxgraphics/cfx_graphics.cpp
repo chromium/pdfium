@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "third_party/base/ptr_util.h"

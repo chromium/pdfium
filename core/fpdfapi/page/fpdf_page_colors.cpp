@@ -226,13 +226,11 @@ CPDF_IccProfile::CPDF_IccProfile(CPDF_Stream* pStream,
     m_nSrcComponents = 3;
     return;
   }
+  uint32_t nSrcComps = 0;
   auto* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
-  if (pIccModule) {
-    uint32_t nSrcComps = 0;
-    m_pTransform = pIccModule->CreateTransform_sRGB(pData, dwSize, nSrcComps);
-    if (m_pTransform)
-      m_nSrcComponents = nSrcComps;
-  }
+  m_pTransform = pIccModule->CreateTransform_sRGB(pData, dwSize, nSrcComps);
+  if (m_pTransform)
+    m_nSrcComponents = nSrcComps;
 }
 
 CPDF_IccProfile::~CPDF_IccProfile() {

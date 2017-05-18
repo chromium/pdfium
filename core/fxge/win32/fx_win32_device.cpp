@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"

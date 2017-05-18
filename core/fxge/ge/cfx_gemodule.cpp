@@ -6,7 +6,6 @@
 
 #include "core/fxge/cfx_gemodule.h"
 
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
@@ -21,7 +20,6 @@ CFX_GEModule* g_pGEModule = nullptr;
 
 CFX_GEModule::CFX_GEModule()
     : m_pFontMgr(pdfium::MakeUnique<CFX_FontMgr>()),
-      m_pCodecModule(pdfium::MakeUnique<CCodec_ModuleMgr>()),
       m_pPlatformData(nullptr),
       m_pUserFontPaths(nullptr) {}
 

@@ -45,9 +45,16 @@ void CPDF_ModuleMgr::Destroy() {
   g_pDefaultMgr = nullptr;
 }
 
-CPDF_ModuleMgr::CPDF_ModuleMgr() : m_pCodecModule(nullptr) {}
+CPDF_ModuleMgr::CPDF_ModuleMgr() {}
 
 CPDF_ModuleMgr::~CPDF_ModuleMgr() {}
+
+void CPDF_ModuleMgr::Init() {
+  InitCodecModule();
+  InitPageModule();
+  LoadEmbeddedMaps();
+  LoadCodecModules();
+}
 
 void CPDF_ModuleMgr::LoadEmbeddedMaps() {
   LoadEmbeddedGB1CMaps();
@@ -74,30 +81,34 @@ void CPDF_ModuleMgr::LoadCodecModules() {
 #endif
 }
 
+void CPDF_ModuleMgr::InitCodecModule() {
+  m_pCodecModule = pdfium::MakeUnique<CCodec_ModuleMgr>();
+}
+
 void CPDF_ModuleMgr::InitPageModule() {
   m_pPageModule = pdfium::MakeUnique<CPDF_PageModule>();
 }
 
 CCodec_FaxModule* CPDF_ModuleMgr::GetFaxModule() {
-  return m_pCodecModule ? m_pCodecModule->GetFaxModule() : nullptr;
+  return m_pCodecModule->GetFaxModule();
 }
 
 CCodec_JpegModule* CPDF_ModuleMgr::GetJpegModule() {
-  return m_pCodecModule ? m_pCodecModule->GetJpegModule() : nullptr;
+  return m_pCodecModule->GetJpegModule();
 }
 
 CCodec_JpxModule* CPDF_ModuleMgr::GetJpxModule() {
-  return m_pCodecModule ? m_pCodecModule->GetJpxModule() : nullptr;
+  return m_pCodecModule->GetJpxModule();
 }
 
 CCodec_Jbig2Module* CPDF_ModuleMgr::GetJbig2Module() {
-  return m_pCodecModule ? m_pCodecModule->GetJbig2Module() : nullptr;
+  return m_pCodecModule->GetJbig2Module();
 }
 
 CCodec_IccModule* CPDF_ModuleMgr::GetIccModule() {
-  return m_pCodecModule ? m_pCodecModule->GetIccModule() : nullptr;
+  return m_pCodecModule->GetIccModule();
 }
 
 CCodec_FlateModule* CPDF_ModuleMgr::GetFlateModule() {
-  return m_pCodecModule ? m_pCodecModule->GetFlateModule() : nullptr;
+  return m_pCodecModule->GetFlateModule();
 }

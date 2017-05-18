@@ -11,7 +11,6 @@
 #endif
 
 #include "core/fxcrt/fx_memory.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"

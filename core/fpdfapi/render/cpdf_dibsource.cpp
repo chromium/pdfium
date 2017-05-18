@@ -531,11 +531,9 @@ int CPDF_DIBSource::CreateDecoder() {
     m_pDecoder = FPDFAPI_CreateFlateDecoder(
         src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams);
   } else if (decoder == "RunLengthDecode") {
-    m_pDecoder = CPDF_ModuleMgr::Get()
-                     ->GetCodecModule()
-                     ->GetBasicModule()
-                     ->CreateRunLengthDecoder(src_data, src_size, m_Width,
-                                              m_Height, m_nComponents, m_bpc);
+    CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
+    m_pDecoder = pEncoders->GetBasicModule()->CreateRunLengthDecoder(
+        src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
     if (!CreateDCTDecoder(src_data, src_size, pParams))
       return 0;
@@ -559,7 +557,8 @@ int CPDF_DIBSource::CreateDecoder() {
 bool CPDF_DIBSource::CreateDCTDecoder(const uint8_t* src_data,
                                       uint32_t src_size,
                                       const CPDF_Dictionary* pParams) {
-  m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
+  CCodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
+  m_pDecoder = pJpegModule->CreateDecoder(
       src_data, src_size, m_Width, m_Height, m_nComponents,
       !pParams || pParams->GetIntegerFor("ColorTransform", 1));
   if (m_pDecoder)
@@ -568,7 +567,6 @@ bool CPDF_DIBSource::CreateDCTDecoder(const uint8_t* src_data,
   bool bTransform = false;
   int comps;
   int bpc;
-  CCodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
   if (!pJpegModule->LoadInfo(src_data, src_size, &m_Width, &m_Height, &comps,
                              &bpc, &bTransform)) {
     return false;
@@ -576,7 +574,7 @@ bool CPDF_DIBSource::CreateDCTDecoder(const uint8_t* src_data,
 
   if (m_nComponents == static_cast<uint32_t>(comps)) {
     m_bpc = bpc;
-    m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
+    m_pDecoder = pJpegModule->CreateDecoder(
         src_data, src_size, m_Width, m_Height, m_nComponents, bTransform);
     return true;
   }
@@ -624,16 +622,13 @@ bool CPDF_DIBSource::CreateDCTDecoder(const uint8_t* src_data,
     return false;
 
   m_bpc = bpc;
-  m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
-      src_data, src_size, m_Width, m_Height, m_nComponents, bTransform);
+  m_pDecoder = pJpegModule->CreateDecoder(src_data, src_size, m_Width, m_Height,
+                                          m_nComponents, bTransform);
   return true;
 }
 
 void CPDF_DIBSource::LoadJpxBitmap() {
   CCodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
-  if (!pJpxModule)
-    return;
-
   auto context = pdfium::MakeUnique<JpxBitMapContext>(pJpxModule);
   context->set_decoder(pJpxModule->CreateDecoder(
       m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(), m_pColorSpace));

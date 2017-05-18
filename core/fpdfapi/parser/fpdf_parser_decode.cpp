@@ -549,8 +549,7 @@ bool FlateEncode(const uint8_t* src_buf,
                  uint8_t** dest_buf,
                  uint32_t* dest_size) {
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
-  return pEncoders &&
-         pEncoders->GetFlateModule()->Encode(src_buf, src_size, dest_buf,
+  return pEncoders->GetFlateModule()->Encode(src_buf, src_size, dest_buf,
                                              dest_size);
 }
 
@@ -559,8 +558,7 @@ bool PngEncode(const uint8_t* src_buf,
                uint8_t** dest_buf,
                uint32_t* dest_size) {
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
-  return pEncoders &&
-         pEncoders->GetFlateModule()->PngEncode(src_buf, src_size, dest_buf,
+  return pEncoders->GetFlateModule()->PngEncode(src_buf, src_size, dest_buf,
                                                 dest_size);
 }
 
@@ -569,9 +567,6 @@ uint32_t FlateDecode(const uint8_t* src_buf,
                      uint8_t*& dest_buf,
                      uint32_t& dest_size) {
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
-  if (pEncoders) {
-    return pEncoders->GetFlateModule()->FlateOrLZWDecode(
-        false, src_buf, src_size, false, 0, 0, 0, 0, 0, dest_buf, dest_size);
-  }
-  return 0;
+  return pEncoders->GetFlateModule()->FlateOrLZWDecode(
+      false, src_buf, src_size, false, 0, 0, 0, 0, 0, dest_buf, dest_size);
 }
