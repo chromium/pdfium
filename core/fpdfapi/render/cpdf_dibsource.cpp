@@ -1361,7 +1361,7 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
     if (src_x == last_src_x) {
       argb = last_argb;
     } else {
-      CFX_FixedBufGrow<uint8_t, 128> extracted_components(m_nComponents);
+      CFX_FixedBufGrow<uint8_t, 16> extracted_components(m_nComponents);
       const uint8_t* pSrcPixel = nullptr;
       if (m_bpc % 8 != 0) {
         // No need to check for 32-bit overflow, as |src_x| is bounded by
@@ -1388,12 +1388,9 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
       if (m_pColorSpace) {
         uint8_t color[4];
         const bool bTransMask = TransMask();
-        if (m_bDefaultDecode) {
-          m_pColorSpace->TranslateImageLine(color, pSrcPixel, 1, 0, 0,
-                                            bTransMask);
-        } else {
+        if (!m_bDefaultDecode) {
           for (uint32_t j = 0; j < m_nComponents; ++j) {
-            float component_value = static_cast<float>(extracted_components[j]);
+            float component_value = static_cast<float>(pSrcPixel[j]);
             int color_value = static_cast<int>(
                 (m_pCompData[j].m_DecodeMin +
                  m_pCompData[j].m_DecodeStep * component_value) *
@@ -1401,9 +1398,10 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
                 0.5f);
             extracted_components[j] = pdfium::clamp(color_value, 0, 255);
           }
-          m_pColorSpace->TranslateImageLine(color, extracted_components, 1, 0,
-                                            0, bTransMask);
         }
+        const uint8_t* pSrc =
+            m_bDefaultDecode ? pSrcPixel : extracted_components;
+        m_pColorSpace->TranslateImageLine(color, pSrc, 1, 0, 0, bTransMask);
         argb = FXARGB_MAKE(0xFF, color[2], color[1], color[0]);
       } else {
         argb = FXARGB_MAKE(0xFF, pSrcPixel[2], pSrcPixel[1], pSrcPixel[0]);
