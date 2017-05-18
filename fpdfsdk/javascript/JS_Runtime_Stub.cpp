@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/javascript/ijs_event_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/ptr_util.h"
@@ -133,7 +134,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   void ReleaseEventContext(IJS_EventContext* pContext) override {}
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override {
-    return m_pFormFillEnv;
+    return m_pFormFillEnv.Get();
   }
 
 #ifdef PDF_ENABLE_XFA
@@ -152,7 +153,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   }
 
  protected:
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
+  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   std::unique_ptr<CJS_EventContextStub> m_pContext;
 };
 

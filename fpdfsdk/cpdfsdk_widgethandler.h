@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_CPDFSDK_WIDGETHANDLER_H_
 #define FPDFSDK_CPDFSDK_WIDGETHANDLER_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
@@ -102,7 +103,7 @@ class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
   CFFL_InteractiveFormFiller* GetFormFiller() { return m_pFormFiller; }
 
  private:
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
+  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   CFFL_InteractiveFormFiller* m_pFormFiller;
 };
 

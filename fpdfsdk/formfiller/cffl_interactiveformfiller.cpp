@@ -483,22 +483,22 @@ CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
   CFFL_FormFiller* pFormFiller;
   switch (nFieldType) {
     case FIELDTYPE_PUSHBUTTON:
-      pFormFiller = new CFFL_PushButton(m_pFormFillEnv, pWidget);
+      pFormFiller = new CFFL_PushButton(m_pFormFillEnv.Get(), pWidget);
       break;
     case FIELDTYPE_CHECKBOX:
-      pFormFiller = new CFFL_CheckBox(m_pFormFillEnv, pWidget);
+      pFormFiller = new CFFL_CheckBox(m_pFormFillEnv.Get(), pWidget);
       break;
     case FIELDTYPE_RADIOBUTTON:
-      pFormFiller = new CFFL_RadioButton(m_pFormFillEnv, pWidget);
+      pFormFiller = new CFFL_RadioButton(m_pFormFillEnv.Get(), pWidget);
       break;
     case FIELDTYPE_TEXTFIELD:
-      pFormFiller = new CFFL_TextField(m_pFormFillEnv, pWidget);
+      pFormFiller = new CFFL_TextField(m_pFormFillEnv.Get(), pWidget);
       break;
     case FIELDTYPE_LISTBOX:
-      pFormFiller = new CFFL_ListBox(m_pFormFillEnv, pWidget);
+      pFormFiller = new CFFL_ListBox(m_pFormFillEnv.Get(), pWidget);
       break;
     case FIELDTYPE_COMBOBOX:
-      pFormFiller = new CFFL_ComboBox(m_pFormFillEnv, pWidget);
+      pFormFiller = new CFFL_ComboBox(m_pFormFillEnv.Get(), pWidget);
       break;
     case FIELDTYPE_UNKNOWN:
     default:

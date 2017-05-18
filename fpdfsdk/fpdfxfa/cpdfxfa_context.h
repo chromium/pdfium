@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
@@ -103,7 +104,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   XFA_DocType m_iDocType;
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
-  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
+  CFX_Observable<CPDFSDK_FormFillEnvironment>::ObservedPtr m_pFormFillEnv;
   CFX_UnownedPtr<CXFA_FFDocView> m_pXFADocView;
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   std::unique_ptr<CJS_Runtime> m_pRuntime;

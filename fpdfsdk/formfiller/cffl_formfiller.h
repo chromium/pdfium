@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pdfsdk_fieldaction.h"
@@ -152,7 +153,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   // until the PWL_Edit is done with it. pdfium:566
   void DestroyWindows();
 
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
+  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   CPDFSDK_Widget* m_pWidget;
   CPDFSDK_Annot* m_pAnnot;
   bool m_bValid;

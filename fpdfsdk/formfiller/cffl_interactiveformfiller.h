@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
@@ -161,7 +162,7 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
-  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;
+  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   CFFL_Widget2Filler m_Maps;
   bool m_bNotifying;
 };

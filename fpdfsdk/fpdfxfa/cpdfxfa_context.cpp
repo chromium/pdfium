@@ -58,7 +58,7 @@ CPDFXFA_Context::~CPDFXFA_Context() {
     // Once we're deleted the FormFillEnvironment will point at a bad underlying
     // doc so we need to reset it ...
     m_pFormFillEnv->ResetXFADocument();
-    m_pFormFillEnv = nullptr;
+    m_pFormFillEnv.Reset();
   }
 
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSED;
@@ -81,7 +81,7 @@ void CPDFXFA_Context::SetFormFillEnv(
   if (m_pXFADoc && m_pXFADoc->GetXFADoc())
     m_pXFADoc->GetXFADoc()->ClearLayoutData();
 
-  m_pFormFillEnv = pFormFillEnv;
+  m_pFormFillEnv.Reset(pFormFillEnv);
 }
 
 bool CPDFXFA_Context::LoadXFADoc() {

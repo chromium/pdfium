@@ -35,6 +35,11 @@ int CharSet2CP(int charset) {
 
 }  // namespace
 
+CFX_SystemHandler::CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+    : m_pFormFillEnv(pFormFillEnv) {}
+
+CFX_SystemHandler::~CFX_SystemHandler() {}
+
 void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect) {
   CPDFSDK_PageView* pPageView = widget->GetPageView();
   UnderlyingPageType* pPage = widget->GetUnderlyingPage();

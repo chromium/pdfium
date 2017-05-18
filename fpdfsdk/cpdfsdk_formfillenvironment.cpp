@@ -580,13 +580,13 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
   UnderlyingPageType* pPage =
-      UnderlyingFromFPDFPage(GetCurrentPage(m_pUnderlyingDoc));
+      UnderlyingFromFPDFPage(GetCurrentPage(m_pUnderlyingDoc.Get()));
   return pPage ? GetPageView(pPage, true) : nullptr;
 }
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
   UnderlyingPageType* pTempPage =
-      UnderlyingFromFPDFPage(GetPage(m_pUnderlyingDoc, nIndex));
+      UnderlyingFromFPDFPage(GetPage(m_pUnderlyingDoc.Get(), nIndex));
   if (!pTempPage)
     return nullptr;
 
@@ -665,7 +665,7 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(
 }
 
 UnderlyingPageType* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
-  return UnderlyingFromFPDFPage(GetPage(m_pUnderlyingDoc, nIndex));
+  return UnderlyingFromFPDFPage(GetPage(m_pUnderlyingDoc.Get(), nIndex));
 }
 
 CPDFSDK_InterForm* CPDFSDK_FormFillEnvironment::GetInterForm() {

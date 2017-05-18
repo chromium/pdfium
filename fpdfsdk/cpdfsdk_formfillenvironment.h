@@ -29,6 +29,17 @@ class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class IJS_Runtime;
 
+// The CPDFSDK_FormFillEnvironment is "owned" by the embedder across the
+// C API as a FPDF_FormHandle, and may pop out of existence at any time,
+// so long as the associated embedder-owned FPDF_Document outlives it.
+// Pointers from objects in the FPDF_Document ownership hierarchy should
+// be ObservedPtr<> so as to clear themselves when the embedder "exits"
+// the form fill environment.  Pointers from objects in this ownership
+// heirarcy to objects in the FPDF_Document ownership hierarcy should be
+// UnownedPtr<>, as should pointers from objects in this ownership
+// hierarcy back to the form fill environment itself, so as to flag any
+// lingering lifetime issues via the memory tools.
+
 class CPDFSDK_FormFillEnvironment
     : public CFX_Observable<CPDFSDK_FormFillEnvironment> {
  public:
@@ -95,7 +106,7 @@ class CPDFSDK_FormFillEnvironment
                     int sizeOfArray);
 
   UnderlyingDocumentType* GetUnderlyingDocument() const {
-    return m_pUnderlyingDoc;
+    return m_pUnderlyingDoc.Get();
   }
 
 #ifdef PDF_ENABLE_XFA
@@ -103,7 +114,7 @@ class CPDFSDK_FormFillEnvironment
     return m_pUnderlyingDoc ? m_pUnderlyingDoc->GetPDFDoc() : nullptr;
   }
 
-  CPDFXFA_Context* GetXFAContext() const { return m_pUnderlyingDoc; }
+  CPDFXFA_Context* GetXFAContext() const { return m_pUnderlyingDoc.Get(); }
   void ResetXFADocument() { m_pUnderlyingDoc = nullptr; }
 
   int GetPageViewCount() const { return m_PageMap.size(); }
@@ -154,7 +165,7 @@ class CPDFSDK_FormFillEnvironment
 
   void PageEvent(int iPageCount, uint32_t dwEventType) const;
 #else   // PDF_ENABLE_XFA
-  CPDF_Document* GetPDFDocument() const { return m_pUnderlyingDoc; }
+  CPDF_Document* GetPDFDocument() const { return m_pUnderlyingDoc.Get(); }
 #endif  // PDF_ENABLE_XFA
 
   int JS_appAlert(const wchar_t* Msg,
@@ -203,14 +214,14 @@ class CPDFSDK_FormFillEnvironment
   CPDFSDK_InterForm* GetInterForm();              // Creates if not present.
 
  private:
+  FPDF_FORMFILLINFO* const m_pInfo;
   std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   std::unique_ptr<IJS_Runtime> m_pJSRuntime;
-  FPDF_FORMFILLINFO* const m_pInfo;
   std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
-  UnderlyingDocumentType* m_pUnderlyingDoc;
+  CFX_UnownedPtr<UnderlyingDocumentType> m_pUnderlyingDoc;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
   bool m_bChangeMask;

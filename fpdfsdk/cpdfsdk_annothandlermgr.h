@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
@@ -112,7 +113,7 @@ class CPDFSDK_AnnotHandlerMgr {
   std::unique_ptr<CPDFSDK_XFAWidgetHandler> m_pXFAWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
+  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
 };
 
 #endif  // FPDFSDK_CPDFSDK_ANNOTHANDLERMGR_H_

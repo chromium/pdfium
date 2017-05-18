@@ -29,6 +29,12 @@ class CFWL_FWLAdapterTimerInfo : public CFWL_TimerInfo {
 
 std::vector<CFWL_TimerInfo*>* CXFA_FWLAdapterTimerMgr::s_TimerArray = nullptr;
 
+CXFA_FWLAdapterTimerMgr::CXFA_FWLAdapterTimerMgr(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv)
+    : m_pFormFillEnv(pFormFillEnv) {}
+
+CXFA_FWLAdapterTimerMgr::~CXFA_FWLAdapterTimerMgr() {}
+
 void CXFA_FWLAdapterTimerMgr::Start(CFWL_Timer* pTimer,
                                     uint32_t dwElapse,
                                     bool bImmediately,
