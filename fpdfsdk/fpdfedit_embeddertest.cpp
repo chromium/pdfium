@@ -26,7 +26,7 @@ class FPDFEditEmbeddertest : public EmbedderTest, public TestSaver {
  protected:
   FPDF_DOCUMENT CreateNewDocument() {
     document_ = FPDF_CreateNewDocument();
-    cpdf_doc_ = static_cast<CPDF_Document*>(document_);
+    cpdf_doc_ = CPDFDocumentFromFPDFDocument(document_);
     return document_;
   }
 
