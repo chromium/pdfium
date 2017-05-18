@@ -39,16 +39,11 @@
 #define FXFA_XFA_ALL 0x01111111
 
 CPDFXFA_DocEnvironment::CPDFXFA_DocEnvironment(CPDFXFA_Context* pContext)
-    : m_pContext(pContext), m_pJSEventContext(nullptr) {
+    : m_pContext(pContext) {
   ASSERT(m_pContext);
 }
 
-CPDFXFA_DocEnvironment::~CPDFXFA_DocEnvironment() {
-  if (m_pJSEventContext && m_pContext->GetFormFillEnv()) {
-    m_pContext->GetFormFillEnv()->GetJSRuntime()->ReleaseEventContext(
-        m_pJSEventContext.Get());
-  }
-}
+CPDFXFA_DocEnvironment::~CPDFXFA_DocEnvironment() {}
 
 void CPDFXFA_DocEnvironment::SetChangeMark(CXFA_FFDoc* hDoc) {
   if (hDoc == m_pContext->GetXFADoc() && m_pContext->GetFormFillEnv())
@@ -1006,13 +1001,15 @@ bool CPDFXFA_DocEnvironment::SetGlobalProperty(
     CFXJSE_Value* pValue) {
   if (hDoc != m_pContext->GetXFADoc())
     return false;
-
-  if (m_pContext->GetFormFillEnv() &&
-      m_pContext->GetFormFillEnv()->GetJSRuntime()) {
-    return m_pContext->GetFormFillEnv()->GetJSRuntime()->SetValueByName(
-        szPropName, pValue);
+  if (!m_pContext->GetFormFillEnv() ||
+      !m_pContext->GetFormFillEnv()->GetJSRuntime()) {
+    return false;
   }
-  return false;
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
+  IJS_EventContext* pContext = pFormFillEnv->GetJSRuntime()->NewEventContext();
+  bool bRet = pFormFillEnv->GetJSRuntime()->SetValueByName(szPropName, pValue);
+  pFormFillEnv->GetJSRuntime()->ReleaseEventContext(pContext);
+  return bRet;
 }
 
 bool CPDFXFA_DocEnvironment::GetGlobalProperty(
@@ -1025,10 +1022,9 @@ bool CPDFXFA_DocEnvironment::GetGlobalProperty(
       !m_pContext->GetFormFillEnv()->GetJSRuntime()) {
     return false;
   }
-
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  if (!m_pJSEventContext)
-    m_pJSEventContext = pFormFillEnv->GetJSRuntime()->NewEventContext();
-
-  return pFormFillEnv->GetJSRuntime()->GetValueByName(szPropName, pValue);
+  IJS_EventContext* pContext = pFormFillEnv->GetJSRuntime()->NewEventContext();
+  bool bRet = pFormFillEnv->GetJSRuntime()->GetValueByName(szPropName, pValue);
+  pFormFillEnv->GetJSRuntime()->ReleaseEventContext(pContext);
+  return bRet;
 }

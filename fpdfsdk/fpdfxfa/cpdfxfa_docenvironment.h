@@ -107,7 +107,6 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
   void ToXFAContentFlags(CFX_WideString csSrcContent, FPDF_DWORD& flag);
 
   CFX_UnownedPtr<CPDFXFA_Context> const m_pContext;
-  CFX_UnownedPtr<IJS_EventContext> m_pJSEventContext;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
