@@ -179,6 +179,8 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
     }
   }
 
+  SetupFormFillEnvironment();
+
 #ifdef PDF_ENABLE_XFA
   int docType = DOCTYPE_PDF;
   if (FPDF_HasXFAField(document_, &docType)) {
@@ -188,7 +190,6 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
 #endif  // PDF_ENABLE_XFA
 
   (void)FPDF_GetDocPermissions(document_);
-  SetupFormFillEnvironment();
   return true;
 }
 
@@ -197,6 +198,7 @@ void EmbedderTest::SetupFormFillEnvironment() {
   memset(platform, 0, sizeof(IPDF_JSPLATFORM));
   platform->version = 2;
   platform->app_alert = AlertTrampoline;
+  platform->m_isolate = external_isolate_;
 
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
   memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));

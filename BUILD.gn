@@ -1957,7 +1957,6 @@ test("pdfium_embeddertests") {
     "testing/embedder_test.h",
     "testing/embedder_test_mock_delegate.h",
     "testing/embedder_test_timer_handling_delegate.h",
-    "xfa/fxfa/parser/cxfa_simple_parser_embeddertest.cpp",
   ]
   deps = [
     ":pdfium",
@@ -1977,6 +1976,14 @@ test("pdfium_embeddertests") {
     ]
     deps += [ ":fxjs" ]
     configs += [ "//v8:external_startup_data" ]
+  }
+  if (pdf_enable_xfa) {
+    sources += [
+      "testing/xfa_js_embedder_test.cpp",
+      "testing/xfa_js_embedder_test.h",
+      "xfa/fxfa/fm2js/cxfa_fm2jscontext_embeddertest.cpp",
+      "xfa/fxfa/parser/cxfa_simple_parser_embeddertest.cpp",
+    ]
   }
   if (is_android) {
     ignore_all_data_deps = true
