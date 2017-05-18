@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBitmap;
@@ -28,7 +29,7 @@ class CPDF_ImageCacheEntry {
   void Reset(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap);
   uint32_t EstimateSize() const { return m_dwCacheSize; }
   uint32_t GetTimeCount() const { return m_dwTimeCount; }
-  CPDF_Stream* GetStream() const { return m_pStream; }
+  CPDF_Stream* GetStream() const { return m_pStream.Get(); }
 
   int StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
                            CPDF_Dictionary* pPageResources,
@@ -38,7 +39,7 @@ class CPDF_ImageCacheEntry {
                            CPDF_RenderStatus* pRenderStatus,
                            int32_t downsampleWidth,
                            int32_t downsampleHeight);
-  int Continue(IFX_Pause* pPause);
+  int Continue(IFX_Pause* pPause, CPDF_RenderStatus* pRenderStatus);
   CFX_RetainPtr<CFX_DIBSource> DetachBitmap();
   CFX_RetainPtr<CFX_DIBSource> DetachMask();
 
@@ -46,12 +47,11 @@ class CPDF_ImageCacheEntry {
   uint32_t m_MatteColor;
 
  private:
-  void ContinueGetCachedBitmap();
+  void ContinueGetCachedBitmap(CPDF_RenderStatus* pRenderStatus);
   void CalcSize();
 
-  CPDF_RenderStatus* m_pRenderStatus;
-  CPDF_Document* m_pDocument;
-  CPDF_Stream* m_pStream;
+  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  CFX_UnownedPtr<CPDF_Stream> const m_pStream;
   CFX_RetainPtr<CFX_DIBSource> m_pCurBitmap;
   CFX_RetainPtr<CFX_DIBSource> m_pCurMask;
   CFX_RetainPtr<CFX_DIBSource> m_pCachedBitmap;

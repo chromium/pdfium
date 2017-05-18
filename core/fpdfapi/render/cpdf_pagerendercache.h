@@ -43,7 +43,7 @@ class CPDF_PageRenderCache {
                             int32_t downsampleWidth,
                             int32_t downsampleHeight);
 
-  bool Continue(IFX_Pause* pPause);
+  bool Continue(IFX_Pause* pPause, CPDF_RenderStatus* pRenderStatus);
 
  private:
   void ClearImageCacheEntry(CPDF_Stream* pStream);

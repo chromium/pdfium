@@ -29,7 +29,7 @@ class CPDF_ImageLoader {
              CPDF_RenderStatus* pRenderStatus,
              int32_t nDownsampleWidth,
              int32_t nDownsampleHeight);
-  bool Continue(IFX_Pause* pPause);
+  bool Continue(IFX_Pause* pPause, CPDF_RenderStatus* pRenderStatus);
 
   CFX_RetainPtr<CFX_DIBSource> m_pBitmap;
   CFX_RetainPtr<CFX_DIBSource> m_pMask;

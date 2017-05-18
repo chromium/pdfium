@@ -51,8 +51,9 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
   return ret;
 }
 
-bool CPDF_ImageLoader::Continue(IFX_Pause* pPause) {
-  bool ret = m_pCache ? m_pCache->Continue(pPause)
+bool CPDF_ImageLoader::Continue(IFX_Pause* pPause,
+                                CPDF_RenderStatus* pRenderStatus) {
+  bool ret = m_pCache ? m_pCache->Continue(pPause, pRenderStatus)
                       : m_pImage->GetImage()->Continue(pPause);
   if (!ret)
     HandleFailure();

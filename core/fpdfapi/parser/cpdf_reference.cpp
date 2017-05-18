@@ -65,7 +65,7 @@ std::unique_ptr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
                ? pDirect->CloneNonCyclic(true, pVisited)
                : nullptr;
   }
-  return pdfium::MakeUnique<CPDF_Reference>(m_pObjList, m_RefObjNum);
+  return pdfium::MakeUnique<CPDF_Reference>(m_pObjList.Get(), m_RefObjNum);
 }
 
 CPDF_Object* CPDF_Reference::SafeGetDirect() const {

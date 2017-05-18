@@ -541,7 +541,7 @@ bool CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
                                                       pPause);
 
   if (m_Status == 4) {
-    if (m_Loader.Continue(pPause))
+    if (m_Loader.Continue(pPause, m_pRenderStatus))
       return true;
 
     if (StartRenderDIBSource())

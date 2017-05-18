@@ -11,6 +11,7 @@
 #include <set>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 
 class CPDF_IndirectObjectHolder;
 
@@ -32,9 +33,8 @@ class CPDF_Reference : public CPDF_Object {
   const CPDF_Reference* AsReference() const override;
   bool WriteTo(IFX_ArchiveStream* archive) const override;
 
-  CPDF_IndirectObjectHolder* GetObjList() const { return m_pObjList; }
+  CPDF_IndirectObjectHolder* GetObjList() const { return m_pObjList.Get(); }
   uint32_t GetRefObjNum() const { return m_RefObjNum; }
-
   void SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
 
  protected:
@@ -43,7 +43,7 @@ class CPDF_Reference : public CPDF_Object {
       std::set<const CPDF_Object*>* pVisited) const override;
   CPDF_Object* SafeGetDirect() const;
 
-  CPDF_IndirectObjectHolder* m_pObjList;
+  CFX_UnownedPtr<CPDF_IndirectObjectHolder> m_pObjList;
   uint32_t m_RefObjNum;
 };
 

@@ -22,11 +22,8 @@ CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
                                            CPDF_Stream* pStream)
     : m_dwTimeCount(0),
       m_MatteColor(0),
-      m_pRenderStatus(nullptr),
       m_pDocument(pDoc),
       m_pStream(pStream),
-      m_pCurBitmap(nullptr),
-      m_pCurMask(nullptr),
       m_dwCacheSize(0) {}
 
 CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() {}
@@ -70,11 +67,10 @@ int CPDF_ImageCacheEntry::StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
   if (!pRenderStatus)
     return 0;
 
-  m_pRenderStatus = pRenderStatus;
   m_pCurBitmap = pdfium::MakeRetain<CPDF_DIBSource>();
   int ret = m_pCurBitmap.As<CPDF_DIBSource>()->StartLoadDIBSource(
-      m_pDocument, m_pStream, true, pFormResources, pPageResources, bStdCS,
-      GroupFamily, bLoadMask);
+      m_pDocument.Get(), m_pStream.Get(), true, pFormResources, pPageResources,
+      bStdCS, GroupFamily, bLoadMask);
   if (ret == 2)
     return ret;
 
@@ -82,14 +78,15 @@ int CPDF_ImageCacheEntry::StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
     m_pCurBitmap.Reset();
     return 0;
   }
-  ContinueGetCachedBitmap();
+  ContinueGetCachedBitmap(pRenderStatus);
   return 0;
 }
 
-void CPDF_ImageCacheEntry::ContinueGetCachedBitmap() {
+void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
+    CPDF_RenderStatus* pRenderStatus) {
   m_MatteColor = m_pCurBitmap.As<CPDF_DIBSource>()->GetMatteColor();
   m_pCurMask = m_pCurBitmap.As<CPDF_DIBSource>()->DetachMask();
-  CPDF_RenderContext* pContext = m_pRenderStatus->GetContext();
+  CPDF_RenderContext* pContext = pRenderStatus->GetContext();
   CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
   if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() <
@@ -108,7 +105,8 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap() {
   CalcSize();
 }
 
-int CPDF_ImageCacheEntry::Continue(IFX_Pause* pPause) {
+int CPDF_ImageCacheEntry::Continue(IFX_Pause* pPause,
+                                   CPDF_RenderStatus* pRenderStatus) {
   int ret = m_pCurBitmap.As<CPDF_DIBSource>()->ContinueLoadDIBSource(pPause);
   if (!ret) {
     m_pCurBitmap.Reset();
@@ -117,7 +115,7 @@ int CPDF_ImageCacheEntry::Continue(IFX_Pause* pPause) {
   if (ret == 2)
     return ret;
 
-  ContinueGetCachedBitmap();
+  ContinueGetCachedBitmap(pRenderStatus);
   return 0;
 }
 
