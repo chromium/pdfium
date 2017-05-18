@@ -390,7 +390,7 @@ bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   }
   if (m_Storer.GetBitmap()->IsAlphaMask()) {
     if (!(m_Flags & FXDIB_DOWNSAMPLE) && !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
-      CFX_BilinearMatrix result2stretch_fix(result2stretch, 16);
+      CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
       for (int row = 0; row < m_result.Height(); row++) {
         uint8_t* dest_scan = (uint8_t*)pTransformed->GetScanline(row);
         for (int col = 0; col < m_result.Width(); col++) {
