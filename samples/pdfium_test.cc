@@ -607,7 +607,14 @@ void SendPageEvents(const FPDF_FORMHANDLE& form,
     if (command[0].empty())
       continue;
     auto tokens = StringSplit(command[0], ',');
-    if (tokens[0] == "keycode") {
+    if (tokens[0] == "charcode") {
+      if (tokens.size() == 2) {
+        int keycode = atoi(tokens[1].c_str());
+        FORM_OnChar(form, page, keycode, 0);
+      } else {
+        fprintf(stderr, "charcode: bad args\n");
+      }
+    } else if (tokens[0] == "keycode") {
       if (tokens.size() == 2) {
         int keycode = atoi(tokens[1].c_str());
         FORM_OnKeyDown(form, page, keycode, 0);
