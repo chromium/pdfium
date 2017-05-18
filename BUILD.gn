@@ -1665,8 +1665,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_widgetacciterator.h",
       "xfa/fxfa/fm2js/cxfa_fm2jscontext.cpp",
       "xfa/fxfa/fm2js/cxfa_fm2jscontext.h",
-      "xfa/fxfa/fm2js/cxfa_fmerrorinfo.cpp",
-      "xfa/fxfa/fm2js/cxfa_fmerrorinfo.h",
       "xfa/fxfa/fm2js/cxfa_fmexpression.cpp",
       "xfa/fxfa/fm2js/cxfa_fmexpression.h",
       "xfa/fxfa/fm2js/cxfa_fmlexer.cpp",

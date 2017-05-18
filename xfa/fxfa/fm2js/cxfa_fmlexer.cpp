@@ -94,12 +94,11 @@ CXFA_FMToken::CXFA_FMToken() : m_type(TOKreserver), m_uLinenum(1) {}
 CXFA_FMToken::CXFA_FMToken(uint32_t uLineNum)
     : m_type(TOKreserver), m_uLinenum(uLineNum) {}
 
-CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc,
-                           CXFA_FMErrorInfo* pErrorInfo)
+CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc)
     : m_ptr(wsFormCalc.c_str()),
       m_end(m_ptr + wsFormCalc.GetLength() - 1),
       m_uCurrentLine(1),
-      m_pErrorInfo(pErrorInfo) {}
+      m_LexerError(false) {}
 
 CXFA_FMLexer::~CXFA_FMLexer() {}
 
@@ -119,7 +118,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
   auto p = pdfium::MakeUnique<CXFA_FMToken>(m_uCurrentLine);
   if (!IsValid(m_ptr)) {
     ch = *m_ptr;
-    Error(kFMErrUnsupportedChar, ch);
+    m_LexerError = true;
     return p;
   }
 
@@ -134,7 +133,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
 
     ch = *m_ptr;
     if (!IsValid(m_ptr)) {
-      Error(kFMErrUnsupportedChar, ch);
+      m_LexerError = true;
       return p;
     }
 
@@ -190,7 +189,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
           }
         } else {
           ch = *m_ptr;
-          Error(kFMErrUnsupportedChar, ch);
+          m_LexerError = true;
         }
         return p;
       case '<':
@@ -213,7 +212,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
           }
         } else {
           ch = *m_ptr;
-          Error(kFMErrUnsupportedChar, ch);
+          m_LexerError = true;
         }
         return p;
       case '>':
@@ -233,7 +232,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
           }
         } else {
           ch = *m_ptr;
-          Error(kFMErrUnsupportedChar, ch);
+          m_LexerError = true;
         }
         return p;
       case ',':
@@ -285,7 +284,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
 
         if (!IsValid(m_ptr)) {
           ch = *m_ptr;
-          Error(kFMErrUnsupportedChar, ch);
+          m_LexerError = true;
           return p;
         }
         ch = *m_ptr;
@@ -323,7 +322,7 @@ std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::Scan() {
           }
         } else {
           ch = *m_ptr;
-          Error(kFMErrUnsupportedChar, ch);
+          m_LexerError = true;
         }
         return p;
       case 0x09:
@@ -346,7 +345,7 @@ const wchar_t* CXFA_FMLexer::Number(CXFA_FMToken* t, const wchar_t* p) {
   if (p)
     wcstod(const_cast<wchar_t*>(p), &pEnd);
   if (pEnd && FXSYS_iswalpha(*pEnd)) {
-    Error(kFMErrBadSuffixNumber);
+    m_LexerError = true;
     return pEnd;
   }
 
@@ -359,7 +358,7 @@ const wchar_t* CXFA_FMLexer::String(CXFA_FMToken* t, const wchar_t* p) {
 
   ++p;
   if (p > m_end) {
-    Error(kFMErrEndOfInput);
+    m_LexerError = true;
     return p;
   }
 
@@ -368,7 +367,7 @@ const wchar_t* CXFA_FMLexer::String(CXFA_FMToken* t, const wchar_t* p) {
     if (!IsValid(p)) {
       ch = *p;
       t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
-      Error(kFMErrUnsupportedChar, ch);
+      m_LexerError = true;
       return p;
     }
 
@@ -376,7 +375,7 @@ const wchar_t* CXFA_FMLexer::String(CXFA_FMToken* t, const wchar_t* p) {
     if (ch != '"') {
       // We've hit the end of the input, return the string.
       if (p > m_end) {
-        Error(kFMErrEndOfInput);
+        m_LexerError = true;
         return p;
       }
       ch = *p;
@@ -389,7 +388,7 @@ const wchar_t* CXFA_FMLexer::String(CXFA_FMToken* t, const wchar_t* p) {
     if (!IsValid(p)) {
       ch = *p;
       t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
-      Error(kFMErrUnsupportedChar, ch);
+      m_LexerError = true;
       return p;
     }
     ch = *p;
@@ -398,7 +397,7 @@ const wchar_t* CXFA_FMLexer::String(CXFA_FMToken* t, const wchar_t* p) {
 
     ++p;
     if (p > m_end) {
-      Error(kFMErrEndOfInput);
+      m_LexerError = true;
       return p;
     }
     ch = *p;
@@ -419,7 +418,7 @@ const wchar_t* CXFA_FMLexer::Identifiers(CXFA_FMToken* t, const wchar_t* p) {
 
   if (!IsValid(p)) {
     t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
-    Error(kFMErrUnsupportedChar, ch);
+    m_LexerError = true;
     return p;
   }
 
@@ -427,7 +426,7 @@ const wchar_t* CXFA_FMLexer::Identifiers(CXFA_FMToken* t, const wchar_t* p) {
   while (ch) {
     if (!IsValid(p)) {
       t->m_wstring = CFX_WideStringC(pStart, (p - pStart));
-      Error(kFMErrUnsupportedChar, ch);
+      m_LexerError = true;
       return p;
     }
 
@@ -485,17 +484,4 @@ XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
       iStart = iMid + 1;
   } while (iStart <= iEnd);
   return TOKidentifier;
-}
-
-void CXFA_FMLexer::Error(const wchar_t* msg, ...) {
-  m_pErrorInfo->linenum = m_uCurrentLine;
-  va_list ap;
-  va_start(ap, msg);
-  m_pErrorInfo->message.FormatV(msg, ap);
-  va_end(ap);
-  ASSERT(!m_pErrorInfo->message.IsEmpty());
-}
-
-bool CXFA_FMLexer::HasError() const {
-  return !m_pErrorInfo->message.IsEmpty();
 }

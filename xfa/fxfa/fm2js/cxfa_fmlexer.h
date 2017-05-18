@@ -11,7 +11,6 @@
 #include <utility>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/fm2js/cxfa_fmerrorinfo.h"
 
 enum XFA_FM_TOKEN {
   TOKand,
@@ -104,11 +103,11 @@ class CXFA_FMToken {
 
 class CXFA_FMLexer {
  public:
-  CXFA_FMLexer(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo* pErrorInfo);
+  explicit CXFA_FMLexer(const CFX_WideStringC& wsFormcalc);
   ~CXFA_FMLexer();
 
   CXFA_FMToken* NextToken();
-  bool HasError() const;
+  bool HasError() const { return m_LexerError; }
 
   void SetCurrentLine(uint32_t line) { m_uCurrentLine = line; }
   void SetToken(std::unique_ptr<CXFA_FMToken> pToken) {
@@ -124,14 +123,13 @@ class CXFA_FMLexer {
   const wchar_t* Identifiers(CXFA_FMToken* t, const wchar_t* p);
   const wchar_t* Comment(const wchar_t* p);
   XFA_FM_TOKEN IsKeyword(const CFX_WideStringC& p);
-  void Error(const wchar_t* msg, ...);
   std::unique_ptr<CXFA_FMToken> Scan();
 
   const wchar_t* m_ptr;
   const wchar_t* const m_end;
   uint32_t m_uCurrentLine;
   std::unique_ptr<CXFA_FMToken> m_pToken;
-  CXFA_FMErrorInfo* m_pErrorInfo;
+  bool m_LexerError;
 };
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMLEXER_H_

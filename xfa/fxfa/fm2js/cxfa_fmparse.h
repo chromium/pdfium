@@ -15,16 +15,16 @@
 
 class CXFA_FMParse {
  public:
-  CXFA_FMParse(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo* pErrorInfo);
+  explicit CXFA_FMParse(const CFX_WideStringC& wsFormcalc);
   ~CXFA_FMParse();
 
   std::unique_ptr<CXFA_FMFunctionDefinition> Parse();
+  bool HasError() const;
 
  private:
   void NextToken();
   void Check(XFA_FM_TOKEN op);
-  void Error(const wchar_t* msg, ...);
-  bool HasError() const;
+
   std::vector<std::unique_ptr<CXFA_FMExpression>> ParseTopExpression();
   std::unique_ptr<CXFA_FMExpression> ParseFunction();
   std::unique_ptr<CXFA_FMExpression> ParseExpression();
@@ -53,7 +53,7 @@ class CXFA_FMParse {
 
   std::unique_ptr<CXFA_FMLexer> m_lexer;
   CXFA_FMToken* m_pToken;
-  CXFA_FMErrorInfo* const m_pErrorInfo;
+  bool m_ParserError;
 };
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMPARSE_H_

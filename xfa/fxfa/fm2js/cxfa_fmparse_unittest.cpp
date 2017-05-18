@@ -11,11 +11,10 @@
 #include "third_party/base/ptr_util.h"
 
 TEST(CXFA_FMParseTest, Empty) {
-  CXFA_FMErrorInfo errorInfo;
-  auto parser = pdfium::MakeUnique<CXFA_FMParse>(L"", &errorInfo);
+  auto parser = pdfium::MakeUnique<CXFA_FMParse>(L"");
   std::unique_ptr<CXFA_FMFunctionDefinition> ast = parser->Parse();
   ASSERT(ast != nullptr);
-  EXPECT_TRUE(errorInfo.message.IsEmpty());
+  EXPECT_FALSE(parser->HasError());
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
@@ -24,13 +23,12 @@ TEST(CXFA_FMParseTest, Empty) {
 }
 
 TEST(CXFA_FMParseTest, CommentOnlyIsError) {
-  CXFA_FMErrorInfo errorInfo;
-  auto parser = pdfium::MakeUnique<CXFA_FMParse>(L"; Just comment", &errorInfo);
+  auto parser = pdfium::MakeUnique<CXFA_FMParse>(L"; Just comment");
   std::unique_ptr<CXFA_FMFunctionDefinition> ast = parser->Parse();
   ASSERT(ast != nullptr);
   // TODO(dsinclair): This isn't allowed per the spec.
-  EXPECT_TRUE(errorInfo.message.IsEmpty());
-  // EXPECT_FALSE(errorInfo.message.IsEmpty());
+  EXPECT_FALSE(parser->HasError());
+  // EXPECT_TRUE(parser->HasError());
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
@@ -45,12 +43,10 @@ TEST(CXFA_FMParseTest, CommentThenValue) {
       L"return pfm_rt.get_val(pfm_ret);\n"
       L"}\n).call(this);\n";
 
-  CXFA_FMErrorInfo errorInfo;
-  auto parser =
-      pdfium::MakeUnique<CXFA_FMParse>(L"; Just comment\n12", &errorInfo);
+  auto parser = pdfium::MakeUnique<CXFA_FMParse>(L"; Just comment\n12");
   std::unique_ptr<CXFA_FMFunctionDefinition> ast = parser->Parse();
   ASSERT(ast != nullptr);
-  EXPECT_TRUE(errorInfo.message.IsEmpty());
+  EXPECT_FALSE(parser->HasError());
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
@@ -101,11 +97,10 @@ TEST(CXFA_FMParseTest, Parse) {
       L"return pfm_rt.get_val(pfm_ret);\n"
       L"}\n).call(this);\n";
 
-  CXFA_FMErrorInfo errorInfo;
-  auto parser = pdfium::MakeUnique<CXFA_FMParse>(input, &errorInfo);
+  auto parser = pdfium::MakeUnique<CXFA_FMParse>(input);
   std::unique_ptr<CXFA_FMFunctionDefinition> ast = parser->Parse();
   ASSERT(ast != nullptr);
-  EXPECT_TRUE(errorInfo.message.IsEmpty());
+  EXPECT_FALSE(parser->HasError());
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
