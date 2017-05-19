@@ -687,7 +687,7 @@ int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
           iSize = 1;
         str[iSize - 1] = (uint8_t)charcode;
         if (iSize > 1)
-          memset(str + 1, 0, iSize - 1);
+          memset(str, 0, iSize - 1);
         return iSize;
       }
       if (charcode < 0x10000) {
