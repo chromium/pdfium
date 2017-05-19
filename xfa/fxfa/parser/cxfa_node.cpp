@@ -4854,10 +4854,11 @@ void CXFA_Node::SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue) {
 bool CXFA_Node::GetMapModuleString(void* pKey, CFX_WideStringC& wsValue) {
   void* pValue;
   int32_t iBytes;
-  if (!GetMapModuleBuffer(pKey, pValue, iBytes)) {
+  if (!GetMapModuleBuffer(pKey, pValue, iBytes))
     return false;
-  }
-  wsValue = CFX_WideStringC((const wchar_t*)pValue, iBytes / sizeof(wchar_t));
+  // Defensive measure: no out-of-bounds pointers even if zero length.
+  int32_t iChars = iBytes / sizeof(wchar_t);
+  wsValue = CFX_WideStringC(iChars ? (const wchar_t*)pValue : nullptr, iChars);
   return true;
 }
 
