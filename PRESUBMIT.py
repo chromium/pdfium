@@ -249,6 +249,33 @@ def _CheckIncludeOrder(input_api, output_api):
                                                       warnings))
   return results
 
+def _CheckTestDuplicates(input_api, output_api):
+  """Checks that pixel and javascript tests don't contain duplicates.
+  We use .in and .pdf files, having both can cause race conditions on the bots,
+  which run the tests in parallel.
+  """
+  tests_added = []
+  results = []
+  for f in input_api.AffectedFiles():
+    if not f.LocalPath().startswith(('testing/resources/pixel/',
+        'testing/resources/javascript/')):
+      continue
+    end_len = 0
+    if f.LocalPath().endswith('.in'):
+      end_len = 3
+    elif f.LocalPath().endswith('.pdf'):
+      end_len = 4
+    else:
+      continue
+    path = f.LocalPath()[:-end_len];
+    if path in tests_added:
+      results.append(output_api.PresubmitError(
+          'Remove %s to prevent shadowing %s' % (path + '.pdf',
+            path + '.in')))
+    else:
+      tests_added.append(path)
+  return results
+
 
 def CheckChangeOnUpload(input_api, output_api):
   results = []
@@ -257,5 +284,6 @@ def CheckChangeOnUpload(input_api, output_api):
   results += input_api.canned_checks.CheckChangeLintsClean(
       input_api, output_api, None, LINT_FILTERS)
   results += _CheckIncludeOrder(input_api, output_api)
+  results += _CheckTestDuplicates(input_api, output_api)
 
   return results
