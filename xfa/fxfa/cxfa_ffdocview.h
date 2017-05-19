@@ -43,7 +43,7 @@ class CXFA_FFDocView {
   explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
   ~CXFA_FFDocView();
 
-  CXFA_FFDoc* GetDoc() { return m_pDoc; }
+  CXFA_FFDoc* GetDoc() { return m_pDoc.Get(); }
   int32_t StartLayout(int32_t iStartPage = 0);
   int32_t DoLayout();
   void StopLayout();
@@ -116,7 +116,7 @@ class CXFA_FFDocView {
   bool ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
   CXFA_Node* GetRootSubform();
 
-  CXFA_FFDoc* const m_pDoc;
+  CFX_UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
   CXFA_LayoutProcessor* m_pXFADocLayout;  // Not owned.
   CFX_UnownedPtr<CXFA_WidgetAcc> m_pFocusAcc;

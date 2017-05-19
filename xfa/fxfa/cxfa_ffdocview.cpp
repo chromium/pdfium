@@ -253,7 +253,7 @@ void CXFA_FFDocView::ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc) {
     }
   }
   if (bChanged) {
-    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc);
+    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
   }
 }
 int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
@@ -382,7 +382,8 @@ void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
   if (SetFocus(pNewFocus)) {
     m_pFocusAcc = pWidgetAcc;
     if (m_iStatus == XFA_DOCVIEW_LAYOUTSTATUS_End)
-      m_pDoc->GetDocEnvironment()->SetFocusWidget(m_pDoc, m_pFocusWidget.Get());
+      m_pDoc->GetDocEnvironment()->SetFocusWidget(m_pDoc.Get(),
+                                                  m_pFocusWidget.Get());
   }
 }
 
@@ -663,7 +664,7 @@ void CXFA_FFDocView::RunCalculateRecursive(int32_t& iIndex) {
 }
 
 int32_t CXFA_FFDocView::RunCalculateWidgets() {
-  if (!m_pDoc->GetDocEnvironment()->IsCalculationsEnabled(m_pDoc)) {
+  if (!m_pDoc->GetDocEnvironment()->IsCalculationsEnabled(m_pDoc.Get())) {
     return XFA_EVENTERROR_Disabled;
   }
   int32_t iCounts = pdfium::CollectionSize<int32_t>(m_CalculateAccs);
@@ -690,7 +691,7 @@ bool CXFA_FFDocView::InitCalculate(CXFA_Node* pNode) {
 }
 
 bool CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
-  if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc))
+  if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc.Get()))
     return false;
 
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Validate, false, true, nullptr);
@@ -699,7 +700,7 @@ bool CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
 }
 
 bool CXFA_FFDocView::RunValidate() {
-  if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc))
+  if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc.Get()))
     return false;
 
   for (CXFA_WidgetAcc* pAcc : m_ValidateAccs) {
@@ -783,16 +784,17 @@ void CXFA_FFDocView::RunBindItems() {
 }
 
 void CXFA_FFDocView::SetChangeMark() {
-  if (m_iStatus < XFA_DOCVIEW_LAYOUTSTATUS_End) {
+  if (m_iStatus < XFA_DOCVIEW_LAYOUTSTATUS_End)
     return;
-  }
-  m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc);
+
+  m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
 }
+
 CXFA_Node* CXFA_FFDocView::GetRootSubform() {
   CXFA_Node* pFormPacketNode =
       ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form));
-  if (!pFormPacketNode) {
+  if (!pFormPacketNode)
     return nullptr;
-  }
+
   return pFormPacketNode->GetFirstChildByClass(XFA_Element::Subform);
 }
