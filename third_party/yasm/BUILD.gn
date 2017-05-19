@@ -58,7 +58,7 @@ if (current_toolchain == host_toolchain) {
       "//build/config/compiler:no_chromium_code",
     ]
     deps = [
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
 
       # Default manifest on Windows (a no-op elsewhere).
       "//build/win:default_exe_manifest",
@@ -75,7 +75,7 @@ if (current_toolchain == host_toolchain) {
       "//build/config/compiler:no_chromium_code",
     ]
     deps = [
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
 
       # Default manifest on Windows (a no-op elsewhere).
       "//build/win:default_exe_manifest",
@@ -96,7 +96,7 @@ if (current_toolchain == host_toolchain) {
 
     deps = [
       ":yasm_utils",
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
 
       # Default manifest on Windows (a no-op elsewhere).
       "//build/win:default_exe_manifest",
@@ -128,7 +128,7 @@ if (current_toolchain == host_toolchain) {
       "//build/config/compiler:no_chromium_code",
     ]
     deps = [
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
 
       # Default manifest on Windows (a no-op elsewhere).
       "//build/win:default_exe_manifest",
@@ -145,7 +145,7 @@ if (current_toolchain == host_toolchain) {
       "//build/config/compiler:no_chromium_code",
     ]
     deps = [
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
 
       # Default manifest on Windows (a no-op elsewhere).
       "//build/win:default_exe_manifest",
@@ -189,7 +189,7 @@ if (current_toolchain == host_toolchain) {
       ":re2c_warnings",
     ]
     deps = [
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
 
       # Default manifest on Windows (a no-op elsewhere).
       "//build/win:default_exe_manifest",
@@ -338,7 +338,7 @@ if (current_toolchain == host_toolchain) {
       ":generate_module",
       ":generate_version",
       ":yasm_utils",
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
 
       # Default manifest on Windows (a no-op elsewhere).
       "//build/win:default_exe_manifest",

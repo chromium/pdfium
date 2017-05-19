@@ -53,7 +53,7 @@ executable("pdfium_test") {
   deps = [
     "../:pdfium",
     "../:test_support",
-    "//build/config/sanitizers:deps",
+    "//build/config:exe_and_shlib_deps",
     "//build/win:default_exe_manifest",
   ]
   if (!pdf_enable_xfa) {
@@ -82,7 +82,7 @@ executable("pdfium_diff") {
   ]
   deps = [
     "../:pdfium",
-    "//build/config/sanitizers:deps",
+    "//build/config:exe_and_shlib_deps",
     "//build/win:default_exe_manifest",
   ]
   if (!pdf_enable_xfa) {
