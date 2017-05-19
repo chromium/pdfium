@@ -19,7 +19,8 @@ struct CACHEINFO {
 
 extern "C" {
 static int compare(const void* data1, const void* data2) {
-  return ((CACHEINFO*)data1)->time - ((CACHEINFO*)data2)->time;
+  return reinterpret_cast<const CACHEINFO*>(data1)->time -
+         reinterpret_cast<const CACHEINFO*>(data2)->time;
 }
 }  // extern "C"
 
@@ -84,9 +85,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
     bool bStdCS,
     uint32_t GroupFamily,
     bool bLoadMask,
-    CPDF_RenderStatus* pRenderStatus,
-    int32_t downsampleWidth,
-    int32_t downsampleHeight) {
+    CPDF_RenderStatus* pRenderStatus) {
   const auto it = m_ImageCache.find(pStream);
   m_bCurFindCache = it != m_ImageCache.end();
   if (m_bCurFindCache) {
@@ -97,7 +96,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
   }
   int ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       pRenderStatus->m_pFormResource, m_pPage->m_pPageResources, bStdCS,
-      GroupFamily, bLoadMask, pRenderStatus, downsampleWidth, downsampleHeight);
+      GroupFamily, bLoadMask, pRenderStatus);
   if (ret == 2)
     return true;
 

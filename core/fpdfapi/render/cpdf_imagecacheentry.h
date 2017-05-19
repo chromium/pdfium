@@ -36,9 +36,7 @@ class CPDF_ImageCacheEntry {
                            bool bStdCS,
                            uint32_t GroupFamily,
                            bool bLoadMask,
-                           CPDF_RenderStatus* pRenderStatus,
-                           int32_t downsampleWidth,
-                           int32_t downsampleHeight);
+                           CPDF_RenderStatus* pRenderStatus);
   int Continue(IFX_Pause* pPause, CPDF_RenderStatus* pRenderStatus);
   CFX_RetainPtr<CFX_DIBSource> DetachBitmap();
   CFX_RetainPtr<CFX_DIBSource> DetachMask();

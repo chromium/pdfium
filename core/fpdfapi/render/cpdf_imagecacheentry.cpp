@@ -51,21 +51,20 @@ CFX_RetainPtr<CFX_DIBSource> CPDF_ImageCacheEntry::DetachMask() {
   return std::move(m_pCurMask);
 }
 
-int CPDF_ImageCacheEntry::StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
-                                               CPDF_Dictionary* pPageResources,
-                                               bool bStdCS,
-                                               uint32_t GroupFamily,
-                                               bool bLoadMask,
-                                               CPDF_RenderStatus* pRenderStatus,
-                                               int32_t downsampleWidth,
-                                               int32_t downsampleHeight) {
+int CPDF_ImageCacheEntry::StartGetCachedBitmap(
+    CPDF_Dictionary* pFormResources,
+    CPDF_Dictionary* pPageResources,
+    bool bStdCS,
+    uint32_t GroupFamily,
+    bool bLoadMask,
+    CPDF_RenderStatus* pRenderStatus) {
+  ASSERT(pRenderStatus);
+
   if (m_pCachedBitmap) {
     m_pCurBitmap = m_pCachedBitmap;
     m_pCurMask = m_pCachedMask;
     return 1;
   }
-  if (!pRenderStatus)
-    return 0;
 
   m_pCurBitmap = pdfium::MakeRetain<CPDF_DIBSource>();
   int ret = m_pCurBitmap.As<CPDF_DIBSource>()->StartLoadDIBSource(

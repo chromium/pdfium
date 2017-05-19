@@ -17,8 +17,6 @@
 CPDF_ImageLoader::CPDF_ImageLoader()
     : m_MatteColor(0),
       m_bCached(false),
-      m_nDownsampleWidth(0),
-      m_nDownsampleHeight(0),
       m_pCache(nullptr),
       m_pImage(nullptr) {}
 
@@ -29,18 +27,14 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
                              bool bStdCS,
                              uint32_t GroupFamily,
                              bool bLoadMask,
-                             CPDF_RenderStatus* pRenderStatus,
-                             int32_t nDownsampleWidth,
-                             int32_t nDownsampleHeight) {
-  m_nDownsampleWidth = nDownsampleWidth;
-  m_nDownsampleHeight = nDownsampleHeight;
+                             CPDF_RenderStatus* pRenderStatus) {
   m_pCache = pCache;
   m_pImage = const_cast<CPDF_ImageObject*>(pImage);
   bool ret;
   if (pCache) {
-    ret = pCache->StartGetCachedBitmap(
-        m_pImage->GetImage()->GetStream(), bStdCS, GroupFamily, bLoadMask,
-        pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
+    ret =
+        pCache->StartGetCachedBitmap(m_pImage->GetImage()->GetStream(), bStdCS,
+                                     GroupFamily, bLoadMask, pRenderStatus);
   } else {
     ret = m_pImage->GetImage()->StartLoadDIBSource(
         pRenderStatus->m_pFormResource, pRenderStatus->m_pPageResource, bStdCS,

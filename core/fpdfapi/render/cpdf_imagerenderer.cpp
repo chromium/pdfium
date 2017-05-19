@@ -59,14 +59,10 @@ bool CPDF_ImageRenderer::StartLoadDIBSource() {
   if (!image_rect.Valid())
     return false;
 
-  int dest_width =
-      m_ImageMatrix.a >= 0 ? image_rect.Width() : -image_rect.Width();
-  int dest_height =
-      m_ImageMatrix.d <= 0 ? image_rect.Height() : -image_rect.Height();
-  if (m_Loader.Start(
-          m_pImageObject, m_pRenderStatus->m_pContext->GetPageCache(), m_bStdCS,
-          m_pRenderStatus->m_GroupFamily, m_pRenderStatus->m_bLoadMask,
-          m_pRenderStatus, dest_width, dest_height)) {
+  if (m_Loader.Start(m_pImageObject,
+                     m_pRenderStatus->m_pContext->GetPageCache(), m_bStdCS,
+                     m_pRenderStatus->m_GroupFamily,
+                     m_pRenderStatus->m_bLoadMask, m_pRenderStatus)) {
     m_Status = 4;
     return true;
   }
@@ -284,7 +280,8 @@ bool CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
                            &m_pRenderStatus->m_Options, 0,
                            m_pRenderStatus->m_bDropObjects, nullptr, true);
   CFX_Matrix patternDevice = *pObj2Device;
-  patternDevice.Translate((float)-rect.left, (float)-rect.top);
+  patternDevice.Translate(static_cast<float>(-rect.left),
+                          static_cast<float>(-rect.top));
   if (CPDF_TilingPattern* pTilingPattern = m_pPattern->AsTilingPattern()) {
     bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject,
                                     &patternDevice, false);

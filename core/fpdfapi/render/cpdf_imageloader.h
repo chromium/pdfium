@@ -26,9 +26,7 @@ class CPDF_ImageLoader {
              bool bStdCS,
              uint32_t GroupFamily,
              bool bLoadMask,
-             CPDF_RenderStatus* pRenderStatus,
-             int32_t nDownsampleWidth,
-             int32_t nDownsampleHeight);
+             CPDF_RenderStatus* pRenderStatus);
   bool Continue(IFX_Pause* pPause, CPDF_RenderStatus* pRenderStatus);
 
   CFX_RetainPtr<CFX_DIBSource> m_pBitmap;
@@ -39,8 +37,6 @@ class CPDF_ImageLoader {
  private:
   void HandleFailure();
 
-  int32_t m_nDownsampleWidth;
-  int32_t m_nDownsampleHeight;
   CPDF_PageRenderCache* m_pCache;
   CPDF_ImageObject* m_pImage;
 };
