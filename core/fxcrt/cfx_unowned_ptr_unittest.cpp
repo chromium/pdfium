@@ -34,6 +34,15 @@ void AssignDangling() {
   delete ptr2;
 }
 
+void ReleaseDangling() {
+  Clink* ptr1 = new Clink();
+  Clink* ptr2 = new Clink();
+  ptr2->next_ = ptr1;
+  delete ptr1;
+  ptr2->next_.Release();
+  delete ptr2;
+}
+
 }  // namespace
 
 TEST(fxcrt, UnownedPtrOk) {
@@ -69,6 +78,23 @@ TEST(fxcrt, UnownedAssignNotOk) {
 #endif
 }
 
+TEST(fxcrt, UnownedReleaseOk) {
+  Clink* ptr1 = new Clink();
+  Clink* ptr2 = new Clink();
+  ptr2->next_ = ptr1;
+  ptr2->next_.Release();
+  delete ptr1;
+  delete ptr2;
+}
+
+TEST(fxcrt, UnownedReleaseNotOk) {
+#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+  EXPECT_DEATH(ReleaseDangling(), "");
+#else
+  ReleaseDangling();
+#endif
+}
+
 TEST(fxcrt, UnownedOperatorEQ) {
   int foo;
   CFX_UnownedPtr<int> ptr1;
@@ -78,6 +104,7 @@ TEST(fxcrt, UnownedOperatorEQ) {
   EXPECT_TRUE(ptr1 == ptr2);
 
   CFX_UnownedPtr<int> ptr3(&foo);
+  EXPECT_TRUE(&foo == ptr3);
   EXPECT_TRUE(ptr3 == &foo);
   EXPECT_FALSE(ptr1 == ptr3);
 
@@ -94,6 +121,7 @@ TEST(fxcrt, UnownedOperatorNE) {
   EXPECT_FALSE(ptr1 != ptr2);
 
   CFX_UnownedPtr<int> ptr3(&foo);
+  EXPECT_FALSE(&foo != ptr3);
   EXPECT_FALSE(ptr3 != &foo);
   EXPECT_TRUE(ptr1 != ptr3);
 

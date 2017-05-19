@@ -10,8 +10,6 @@
 #include <type_traits>
 #include <utility>
 
-#include "core/fxcrt/fx_memory.h"
-
 template <class T>
 class CFX_UnownedPtr {
  public:
@@ -25,21 +23,16 @@ class CFX_UnownedPtr {
   // NOLINTNEXTLINE(runtime/explicit)
   CFX_UnownedPtr(std::nullptr_t ptr) {}
 
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
   ~CFX_UnownedPtr() { Probe(); }
-#endif
 
   CFX_UnownedPtr& operator=(T* that) {
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
     Probe();
-#endif
     m_pObj = that;
     return *this;
   }
+
   CFX_UnownedPtr& operator=(const CFX_UnownedPtr& that) {
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
     Probe();
-#endif
     if (*this != that)
       m_pObj = that.Get();
     return *this;
@@ -48,27 +41,53 @@ class CFX_UnownedPtr {
   bool operator==(const CFX_UnownedPtr& that) const {
     return Get() == that.Get();
   }
-  bool operator==(const T* that) const { return Get() == that; }
   bool operator!=(const CFX_UnownedPtr& that) const { return !(*this == that); }
-  bool operator!=(const T* that) const { return !(*this == that); }
   bool operator<(const CFX_UnownedPtr& that) const {
     return std::less<T*>()(Get(), that.Get());
   }
 
+  template <typename U>
+  bool operator==(const U* that) const {
+    return Get() == that;
+  }
+
+  template <typename U>
+  bool operator!=(const U* that) const {
+    return !(*this == that);
+  }
+
   T* Get() const { return m_pObj; }
+
+  T* Release() {
+    Probe();
+    T* pTemp = nullptr;
+    std::swap(pTemp, m_pObj);
+    return pTemp;
+  }
+
   explicit operator bool() const { return !!m_pObj; }
   T& operator*() const { return *m_pObj; }
   T* operator->() const { return m_pObj; }
 
  private:
+  inline void Probe() {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
-  void Probe() {
     if (m_pObj)
       reinterpret_cast<const volatile uint8_t*>(m_pObj)[0];
-  }
 #endif
+  }
 
   T* m_pObj = nullptr;
 };
+
+template <typename T, typename U>
+inline bool operator==(const U* lhs, const CFX_UnownedPtr<T>& rhs) {
+  return rhs == lhs;
+}
+
+template <typename T, typename U>
+inline bool operator!=(const U* lhs, const CFX_UnownedPtr<T>& rhs) {
+  return rhs != lhs;
+}
 
 #endif  // CORE_FXCRT_CFX_UNOWNED_PTR_H_
