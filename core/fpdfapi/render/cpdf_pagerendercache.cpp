@@ -6,23 +6,23 @@
 
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 
+#include <algorithm>
+#include <vector>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 
 namespace {
 
-struct CACHEINFO {
+struct CacheInfo {
+  CacheInfo(uint32_t t, CPDF_Stream* stream) : time(t), pStream(stream) {}
+
   uint32_t time;
   CPDF_Stream* pStream;
-};
 
-extern "C" {
-static int compare(const void* data1, const void* data2) {
-  return reinterpret_cast<const CACHEINFO*>(data1)->time -
-         reinterpret_cast<const CACHEINFO*>(data2)->time;
-}
-}  // extern "C"
+  bool operator<(const CacheInfo& other) const { return time < other.time; }
+};
 
 }  // namespace
 
@@ -43,31 +43,27 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
     return;
 
   size_t nCount = m_ImageCache.size();
-  CACHEINFO* pCACHEINFO = FX_Alloc(CACHEINFO, nCount);
-  size_t i = 0;
-  for (const auto& it : m_ImageCache) {
-    pCACHEINFO[i].time = it.second->GetTimeCount();
-    pCACHEINFO[i++].pStream = it.second->GetStream();
-  }
-  qsort(pCACHEINFO, nCount, sizeof(CACHEINFO), compare);
-  uint32_t nTimeCount = m_nTimeCount;
+  std::vector<CacheInfo> cache_info;
+  cache_info.reserve(nCount);
+  for (const auto& it : m_ImageCache)
+    cache_info.emplace_back(it.second->GetTimeCount(), it.second->GetStream());
+  std::sort(cache_info.begin(), cache_info.end());
 
   // Check if time value is about to roll over and reset all entries.
   // The comparision is legal because uint32_t is an unsigned type.
+  uint32_t nTimeCount = m_nTimeCount;
   if (nTimeCount + 1 < nTimeCount) {
-    for (i = 0; i < nCount; i++)
-      m_ImageCache[pCACHEINFO[i].pStream]->m_dwTimeCount = i;
+    for (size_t i = 0; i < nCount; i++)
+      m_ImageCache[cache_info[i].pStream]->m_dwTimeCount = i;
     m_nTimeCount = nCount;
   }
 
-  i = 0;
+  size_t i = 0;
   while (i + 15 < nCount)
-    ClearImageCacheEntry(pCACHEINFO[i++].pStream);
+    ClearImageCacheEntry(cache_info[i++].pStream);
 
   while (i < nCount && m_nCacheSize > (uint32_t)dwLimitCacheSize)
-    ClearImageCacheEntry(pCACHEINFO[i++].pStream);
-
-  FX_Free(pCACHEINFO);
+    ClearImageCacheEntry(cache_info[i++].pStream);
 }
 
 void CPDF_PageRenderCache::ClearImageCacheEntry(CPDF_Stream* pStream) {

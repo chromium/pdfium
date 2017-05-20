@@ -17,7 +17,6 @@ class CPDF_ImageCacheEntry;
 class CPDF_Page;
 class CPDF_RenderStatus;
 class CFX_DIBitmap;
-class CFX_DIBSource;
 class IFX_Pause;
 
 class CPDF_PageRenderCache {
