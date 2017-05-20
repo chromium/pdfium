@@ -61,9 +61,8 @@ CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr)
       m_dwLogFontStyle(0),
 #endif
       m_pFont(nullptr),
-      m_pFontMgr(pFontMgr),
       m_bExternalFont(false),
-      m_pProvider(nullptr) {
+      m_pFontMgr(pFontMgr) {
 }
 
 CFGAS_GEFont::CFGAS_GEFont(const CFX_RetainPtr<CFGAS_GEFont>& src,
@@ -74,10 +73,9 @@ CFGAS_GEFont::CFGAS_GEFont(const CFX_RetainPtr<CFGAS_GEFont>& src,
       m_dwLogFontStyle(0),
 #endif
       m_pFont(nullptr),
-      m_pSrcFont(src),
-      m_pFontMgr(src->m_pFontMgr),
       m_bExternalFont(false),
-      m_pProvider(nullptr) {
+      m_pSrcFont(src),
+      m_pFontMgr(src->m_pFontMgr) {
   ASSERT(m_pSrcFont->m_pFont);
   m_pFont = new CFX_Font;
   m_pFont->LoadClone(m_pSrcFont->m_pFont);

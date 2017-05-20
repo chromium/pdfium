@@ -11,15 +11,16 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
+class CFGAS_GEFont;
 class CPDF_Font;
 class CXFA_FFDoc;
 
-class CXFA_PDFFontMgr {
+class CXFA_PDFFontMgr : public CFX_Observable<CXFA_PDFFontMgr> {
  public:
   explicit CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
   ~CXFA_PDFFontMgr();
