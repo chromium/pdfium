@@ -13,6 +13,54 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
+namespace {
+
+// Find the end of a web link starting from offset |start|.
+// The purpose of this function is to separate url from the surrounding context
+// characters, we do not intend to fully validate the url.
+// |str| contains lower case characters only.
+FX_STRSIZE FindWebLinkEnding(const CFX_WideString& str, FX_STRSIZE start) {
+  FX_STRSIZE end = str.GetLength() - 1;
+  if (str.Find(L'/', start) != -1) {
+    // When there is a path and query after '/', most ASCII chars are allowed.
+    // We don't sanitize in this case.
+    return end;
+  }
+
+  // When there is no path, it only has IP address or host name.
+  // Port is optional at the end.
+  if (str[start] == L'[') {
+    // IPv6 reference.
+    // Find the end of the reference.
+    end = str.Find(L']', start + 1);
+    if (end != -1 && end > start + 1) {  // Has content inside brackets.
+      FX_STRSIZE len = str.GetLength();
+      FX_STRSIZE off = end + 1;
+      if (off < len && str[off] == L':') {
+        off++;
+        while (off < len && str[off] >= L'0' && str[off] <= L'9')
+          off++;
+        if (off > end + 2 && off <= len)  // At least one digit in port number.
+          end = off - 1;  // |off| is offset of the first invalid char.
+      }
+    }
+    return end;
+  }
+
+  // According to RFC1123, host name only has alphanumeric chars, hyphens,
+  // and periods. Hyphen should not at the end though.
+  // Non-ASCII chars are ignored during checking.
+  while (end > start && str[end] < 0x80) {
+    if ((str[end] >= L'0' && str[end] <= L'9') ||
+        (str[end] >= L'a' && str[end] <= L'z') || str[end] == L'.')
+      break;
+    end--;
+  }
+  return end;
+}
+
+}  // namespace
+
 CPDF_LinkExtract::CPDF_LinkExtract(const CPDF_TextPage* pTextPage)
     : m_pTextPage(pTextPage) {}
 
@@ -71,6 +119,8 @@ void CPDF_LinkExtract::ParseLink() {
             break;
           }
         }
+        // Check for potential web URLs and email addresses.
+        // Ftp address, file system links, data, blob etc. are not checked.
         if (nCount > 5 &&
             (CheckWebLink(strBeCheck) || CheckMailLink(strBeCheck))) {
           m_LinkArray.push_back({start, nCount, strBeCheck});
@@ -87,28 +137,40 @@ void CPDF_LinkExtract::ParseLink() {
 }
 
 bool CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck) {
+  static const wchar_t kHttpScheme[] = L"http";
+  static const FX_STRSIZE kHttpSchemeLen = FXSYS_len(kHttpScheme);
+  static const wchar_t kWWWAddrStart[] = L"www.";
+  static const FX_STRSIZE kWWWAddrStartLen = FXSYS_len(kWWWAddrStart);
+
   CFX_WideString str = strBeCheck;
   str.MakeLower();
-  if (str.Find(L"http://www.") != -1) {
-    strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"http://www."));
-    return true;
+
+  FX_STRSIZE len = str.GetLength();
+  // First, try to find the scheme.
+  FX_STRSIZE start = str.Find(kHttpScheme);
+  if (start != -1) {
+    FX_STRSIZE off = start + kHttpSchemeLen;  // move after "http".
+    if (len > off + 4) {                      // At least "://<char>" follows.
+      if (str[off] == L's')                   // "https" scheme is accepted.
+        off++;
+      if (str[off] == L':' && str[off + 1] == L'/' && str[off + 2] == L'/') {
+        FX_STRSIZE end = FindWebLinkEnding(str, off + 3);
+        if (end > off + 3) {  // Non-empty host name.
+          strBeCheck = strBeCheck.Mid(start, end - start + 1);
+          return true;
+        }
+      }
+    }
   }
-  if (str.Find(L"http://") != -1) {
-    strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"http://"));
-    return true;
-  }
-  if (str.Find(L"https://www.") != -1) {
-    strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"https://www."));
-    return true;
-  }
-  if (str.Find(L"https://") != -1) {
-    strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"https://"));
-    return true;
-  }
-  if (str.Find(L"www.") != -1) {
-    strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"www."));
-    strBeCheck = L"http://" + strBeCheck;
-    return true;
+
+  // When there is no scheme, try to find url starting with "www.".
+  start = str.Find(kWWWAddrStart);
+  if (start != -1 && len > start + kWWWAddrStartLen) {
+    FX_STRSIZE end = FindWebLinkEnding(str, start);
+    if (end > start + kWWWAddrStartLen) {
+      strBeCheck = L"http://" + strBeCheck.Mid(start, end - start + 1);
+      return true;
+    }
   }
   return false;
 }

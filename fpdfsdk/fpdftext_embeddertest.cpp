@@ -382,7 +382,7 @@ TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLines) {
   EXPECT_TRUE(pagelink);
 
   static const char* const kExpectedUrls[] = {
-      "http://example.com?",          // from "http://www.example.com?\r\nfoo"
+      "http://example.com",           // from "http://www.example.com?\r\nfoo"
       "http://example.com/",          // from "http://www.example.com/\r\nfoo"
       "http://example.com/test-foo",  // from "http://example.com/test-\r\nfoo"
       "http://abc.com/test-foo",      // from "http://abc.com/test-\r\n\r\nfoo"
