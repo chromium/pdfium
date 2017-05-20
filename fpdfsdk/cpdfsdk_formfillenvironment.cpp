@@ -233,7 +233,7 @@ CPDFSDK_FormFillEnvironment::GetInteractiveFormFiller() {
   return m_pFormFiller.get();
 }
 
-void CPDFSDK_FormFillEnvironment::Invalidate(FPDF_PAGE page,
+void CPDFSDK_FormFillEnvironment::Invalidate(UnderlyingPageType* page,
                                              const FX_RECT& rect) {
   if (m_pInfo && m_pInfo->FFI_Invalidate) {
     m_pInfo->FFI_Invalidate(m_pInfo, page, rect.left, rect.top, rect.right,
@@ -242,7 +242,7 @@ void CPDFSDK_FormFillEnvironment::Invalidate(FPDF_PAGE page,
 }
 
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
-    FPDF_PAGE page,
+    UnderlyingPageType* page,
     const CFX_FloatRect& rect) {
   if (m_pInfo && m_pInfo->FFI_OutputSelectedRect) {
     m_pInfo->FFI_OutputSelectedRect(m_pInfo, page, rect.left, rect.top,
@@ -301,14 +301,15 @@ bool CPDFSDK_FormFillEnvironment::IsALTKeyDown(uint32_t nFlag) const {
   return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
 }
 
-FPDF_PAGE CPDFSDK_FormFillEnvironment::GetPage(FPDF_DOCUMENT document,
+FPDF_PAGE CPDFSDK_FormFillEnvironment::GetPage(UnderlyingDocumentType* document,
                                                int nPageIndex) {
   if (m_pInfo && m_pInfo->FFI_GetPage)
     return m_pInfo->FFI_GetPage(m_pInfo, document, nPageIndex);
   return nullptr;
 }
 
-FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage(FPDF_DOCUMENT document) {
+FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage(
+    UnderlyingDocumentType* document) {
   if (m_pInfo && m_pInfo->FFI_GetCurrentPage)
     return m_pInfo->FFI_GetCurrentPage(m_pInfo, document);
   return nullptr;
@@ -343,7 +344,7 @@ void CPDFSDK_FormFillEnvironment::DoGoToAction(int nPageIndex,
 }
 
 #ifdef PDF_ENABLE_XFA
-void CPDFSDK_FormFillEnvironment::DisplayCaret(FPDF_PAGE page,
+void CPDFSDK_FormFillEnvironment::DisplayCaret(CPDFXFA_Page* page,
                                                FPDF_BOOL bVisible,
                                                double left,
                                                double top,
@@ -355,13 +356,14 @@ void CPDFSDK_FormFillEnvironment::DisplayCaret(FPDF_PAGE page,
   }
 }
 
-int CPDFSDK_FormFillEnvironment::GetCurrentPageIndex(FPDF_DOCUMENT document) {
+int CPDFSDK_FormFillEnvironment::GetCurrentPageIndex(
+    CPDFXFA_Context* document) {
   if (!m_pInfo || !m_pInfo->FFI_GetCurrentPageIndex)
     return -1;
   return m_pInfo->FFI_GetCurrentPageIndex(m_pInfo, document);
 }
 
-void CPDFSDK_FormFillEnvironment::SetCurrentPage(FPDF_DOCUMENT document,
+void CPDFSDK_FormFillEnvironment::SetCurrentPage(CPDFXFA_Context* document,
                                                  int iCurPage) {
   if (m_pInfo && m_pInfo->FFI_SetCurrentPage)
     m_pInfo->FFI_SetCurrentPage(m_pInfo, document, iCurPage);
@@ -385,7 +387,7 @@ CFX_WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
                                      nActualLen / sizeof(uint16_t));
 }
 
-void CPDFSDK_FormFillEnvironment::GotoURL(FPDF_DOCUMENT document,
+void CPDFSDK_FormFillEnvironment::GotoURL(CPDFXFA_Context* document,
                                           const CFX_WideStringC& wsURL) {
   if (!m_pInfo || !m_pInfo->FFI_GotoURL)
     return;
@@ -396,7 +398,7 @@ void CPDFSDK_FormFillEnvironment::GotoURL(FPDF_DOCUMENT document,
   bsTo.ReleaseBuffer();
 }
 
-void CPDFSDK_FormFillEnvironment::GetPageViewRect(FPDF_PAGE page,
+void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
                                                   FS_RECTF& dstRect) {
   if (!m_pInfo || !m_pInfo->FFI_GetPageViewRect)
     return;
@@ -413,7 +415,7 @@ void CPDFSDK_FormFillEnvironment::GetPageViewRect(FPDF_PAGE page,
   dstRect.right = static_cast<float>(right);
 }
 
-bool CPDFSDK_FormFillEnvironment::PopupMenu(FPDF_PAGE page,
+bool CPDFSDK_FormFillEnvironment::PopupMenu(CPDFXFA_Page* page,
                                             FPDF_WIDGET hWidget,
                                             int menuFlag,
                                             CFX_PointF pt) {

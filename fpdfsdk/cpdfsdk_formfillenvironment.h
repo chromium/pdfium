@@ -79,8 +79,8 @@ class CPDFSDK_FormFillEnvironment
   void ProcJavascriptFun();
   bool ProcOpenAction();
 
-  void Invalidate(FPDF_PAGE page, const FX_RECT& rect);
-  void OutputSelectedRect(FPDF_PAGE page, const CFX_FloatRect& rect);
+  void Invalidate(UnderlyingPageType* page, const FX_RECT& rect);
+  void OutputSelectedRect(UnderlyingPageType* page, const CFX_FloatRect& rect);
 
   void SetCursor(int nCursorType);
   int SetTimer(int uElapse, TimerCallback lpTimerFunc);
@@ -92,8 +92,8 @@ class CPDFSDK_FormFillEnvironment
   bool IsCTRLKeyDown(uint32_t nFlag) const;
   bool IsALTKeyDown(uint32_t nFlag) const;
 
-  FPDF_PAGE GetPage(FPDF_DOCUMENT document, int nPageIndex);
-  FPDF_PAGE GetCurrentPage(FPDF_DOCUMENT document);
+  FPDF_PAGE GetPage(UnderlyingDocumentType* document, int nPageIndex);
+  FPDF_PAGE GetCurrentPage(UnderlyingDocumentType* document);
 
   void ExecuteNamedAction(const char* namedAction);
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
@@ -119,22 +119,22 @@ class CPDFSDK_FormFillEnvironment
 
   int GetPageViewCount() const { return m_PageMap.size(); }
 
-  void DisplayCaret(FPDF_PAGE page,
+  void DisplayCaret(CPDFXFA_Page* page,
                     FPDF_BOOL bVisible,
                     double left,
                     double top,
                     double right,
                     double bottom);
-  int GetCurrentPageIndex(FPDF_DOCUMENT document);
-  void SetCurrentPage(FPDF_DOCUMENT document, int iCurPage);
+  int GetCurrentPageIndex(CPDFXFA_Context* document);
+  void SetCurrentPage(CPDFXFA_Context* document, int iCurPage);
 
   // TODO(dsinclair): This should probably change to PDFium?
   CFX_WideString FFI_GetAppName() const { return CFX_WideString(L"Acrobat"); }
 
   CFX_WideString GetPlatform();
-  void GotoURL(FPDF_DOCUMENT document, const CFX_WideStringC& wsURL);
-  void GetPageViewRect(FPDF_PAGE page, FS_RECTF& dstRect);
-  bool PopupMenu(FPDF_PAGE page,
+  void GotoURL(CPDFXFA_Context* document, const CFX_WideStringC& wsURL);
+  void GetPageViewRect(CPDFXFA_Page* page, FS_RECTF& dstRect);
+  bool PopupMenu(CPDFXFA_Page* page,
                  FPDF_WIDGET hWidget,
                  int menuFlag,
                  CFX_PointF pt);

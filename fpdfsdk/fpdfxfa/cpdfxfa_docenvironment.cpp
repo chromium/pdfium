@@ -66,7 +66,7 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (!pFormFillEnv)
     return;
 
-  pFormFillEnv->Invalidate(static_cast<FPDF_PAGE>(pPage.Get()),
+  pFormFillEnv->Invalidate(pPage.Get(),
                            CFX_FloatRect::FromCFXRectF(rt).ToFxRect());
 }
 
@@ -98,9 +98,8 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
     return;
 
   CFX_FloatRect rcCaret = CFX_FloatRect::FromCFXRectF(*pRtAnchor);
-  pFormFillEnv->DisplayCaret(static_cast<FPDF_PAGE>(pPage.Get()), bVisible,
-                             rcCaret.left, rcCaret.top, rcCaret.right,
-                             rcCaret.bottom);
+  pFormFillEnv->DisplayCaret(pPage.Get(), bVisible, rcCaret.left, rcCaret.top,
+                             rcCaret.right, rcCaret.bottom);
 }
 
 bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
@@ -344,7 +343,7 @@ int32_t CPDFXFA_DocEnvironment::GetCurrentPage(CXFA_FFDoc* hDoc) {
   if (!pFormFillEnv)
     return -1;
 
-  return pFormFillEnv->GetCurrentPageIndex(this);
+  return pFormFillEnv->GetCurrentPageIndex(m_pContext.Get());
 }
 
 void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
@@ -358,7 +357,7 @@ void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return;
-  pFormFillEnv->SetCurrentPage(this, iCurPage);
+  pFormFillEnv->SetCurrentPage(m_pContext.Get(), iCurPage);
 }
 
 bool CPDFXFA_DocEnvironment::IsCalculationsEnabled(CXFA_FFDoc* hDoc) {
@@ -518,7 +517,7 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
     return;
 
   CFX_WideStringC str(bsURL.c_str());
-  pFormFillEnv->GotoURL(this, str);
+  pFormFillEnv->GotoURL(m_pContext.Get(), str);
 }
 
 bool CPDFXFA_DocEnvironment::IsValidationsEnabled(CXFA_FFDoc* hDoc) {
