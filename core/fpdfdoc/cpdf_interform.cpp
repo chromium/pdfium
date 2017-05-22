@@ -1048,7 +1048,7 @@ bool CPDF_InterForm::HasXFAForm() const {
 }
 
 void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
-  CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
+  CPDF_Dictionary* pPageDict = pPage->m_pFormDict.Get();
   if (!pPageDict)
     return;
 

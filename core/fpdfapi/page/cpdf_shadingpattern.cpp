@@ -93,7 +93,7 @@ bool CPDF_ShadingPattern::Load() {
   m_ShadingType = ToShadingType(pShadingDict->GetIntegerFor("ShadingType"));
 
   // We expect to have a stream if our shading type is a mesh.
-  if (IsMeshShading() && !ToStream(m_pShadingObj))
+  if (IsMeshShading() && !ToStream(m_pShadingObj.Get()))
     return false;
 
   return true;

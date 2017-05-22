@@ -206,7 +206,7 @@ CPDF_Document* CPDFSDK_PageView::GetPDFDocument() {
 #ifdef PDF_ENABLE_XFA
     return m_page->GetContext()->GetPDFDoc();
 #else   // PDF_ENABLE_XFA
-    return m_page->m_pDocument;
+    return m_page->m_pDocument.Get();
 #endif  // PDF_ENABLE_XFA
   }
   return nullptr;
@@ -484,7 +484,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {
 }
 
 int CPDFSDK_PageView::GetPageIndexForStaticPDF() const {
-  CPDF_Dictionary* pDict = GetPDFPage()->m_pFormDict;
+  CPDF_Dictionary* pDict = GetPDFPage()->m_pFormDict.Get();
   CPDF_Document* pDoc = m_pFormFillEnv->GetPDFDocument();
   return (pDoc && pDict) ? pDoc->GetPageIndex(pDict->GetObjNum()) : -1;
 }

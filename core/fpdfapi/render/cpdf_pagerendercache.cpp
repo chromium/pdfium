@@ -88,10 +88,10 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
     m_pCurImageCacheEntry = it->second;
   } else {
     m_pCurImageCacheEntry =
-        new CPDF_ImageCacheEntry(m_pPage->m_pDocument, pStream);
+        new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pStream);
   }
   int ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
-      pRenderStatus->m_pFormResource, m_pPage->m_pPageResources, bStdCS,
+      pRenderStatus->m_pFormResource, m_pPage->m_pPageResources.Get(), bStdCS,
       GroupFamily, bLoadMask, pRenderStatus);
   if (ret == 2)
     return true;
@@ -129,7 +129,7 @@ void CPDF_PageRenderCache::ResetBitmap(
     if (!pBitmap)
       return;
 
-    pEntry = new CPDF_ImageCacheEntry(m_pPage->m_pDocument, pStream);
+    pEntry = new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pStream);
     m_ImageCache[pStream] = pEntry;
   } else {
     pEntry = it->second;

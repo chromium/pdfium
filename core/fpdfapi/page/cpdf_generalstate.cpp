@@ -108,7 +108,7 @@ void CPDF_GeneralState::SetStrokeAlpha(float alpha) {
 
 CPDF_Object* CPDF_GeneralState::GetSoftMask() const {
   const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pSoftMask : nullptr;
+  return pData ? pData->m_pSoftMask.Get() : nullptr;
 }
 
 void CPDF_GeneralState::SetSoftMask(CPDF_Object* pObject) {
@@ -117,7 +117,7 @@ void CPDF_GeneralState::SetSoftMask(CPDF_Object* pObject) {
 
 CPDF_Object* CPDF_GeneralState::GetTR() const {
   const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pTR : nullptr;
+  return pData ? pData->m_pTR.Get() : nullptr;
 }
 
 void CPDF_GeneralState::SetTR(CPDF_Object* pObject) {
@@ -271,7 +271,7 @@ CPDF_GeneralState::StateData::StateData(const StateData& that)
     CPDF_DocRenderData* pDocCache =
         that.m_pTransferFunc->m_pPDFDoc->GetRenderData();
     if (pDocCache)
-      m_pTransferFunc = pDocCache->GetTransferFunc(m_pTR);
+      m_pTransferFunc = pDocCache->GetTransferFunc(m_pTR.Get());
   }
 }
 
@@ -280,7 +280,7 @@ CPDF_GeneralState::StateData::~StateData() {
     CPDF_DocRenderData* pDocCache = m_pTransferFunc->m_pPDFDoc->GetRenderData();
     if (pDocCache) {
       m_pTransferFunc.Reset();  // Give up our reference first.
-      pDocCache->MaybePurgeTransferFunc(m_pTR);
+      pDocCache->MaybePurgeTransferFunc(m_pTR.Get());
     }
   }
 }

@@ -300,7 +300,6 @@ DLLEXPORT void STDCALL FPDFPage_SetRotation(FPDF_PAGE page, int rotate) {
   if (!IsPageObject(pPage))
     return;
 
-  CPDF_Dictionary* pDict = pPage->m_pFormDict;
   rotate %= 4;
-  pDict->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
+  pPage->m_pFormDict->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
 }

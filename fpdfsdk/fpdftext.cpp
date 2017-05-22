@@ -53,7 +53,7 @@ DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
   CPDFXFA_Context* pContext = pPage->GetContext();
   CPDF_ViewerPreferences viewRef(pContext->GetPDFDoc());
 #else  // PDF_ENABLE_XFA
-  CPDF_ViewerPreferences viewRef(pPDFPage->m_pDocument);
+  CPDF_ViewerPreferences viewRef(pPDFPage->m_pDocument.Get());
 #endif  // PDF_ENABLE_XFA
 
   CPDF_TextPage* textpage = new CPDF_TextPage(

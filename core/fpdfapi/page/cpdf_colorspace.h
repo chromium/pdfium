@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -61,7 +62,7 @@ class CPDF_ColorSpace {
                                   int image_height,
                                   bool bTransMask) const;
 
-  CPDF_Array*& GetArray() { return m_pArray; }
+  CPDF_Array* GetArray() const { return m_pArray.Get(); }
   virtual CPDF_ColorSpace* GetBaseCS() const;
 
   virtual void EnableStdConversion(bool bEnabled);
@@ -82,7 +83,7 @@ class CPDF_ColorSpace {
 
   int m_Family;
   uint32_t m_nComponents;
-  CPDF_Array* m_pArray;
+  CFX_UnownedPtr<CPDF_Array> m_pArray;
   uint32_t m_dwStdConversion;
 };
 

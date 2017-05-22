@@ -119,7 +119,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
                  matrix->d, matrix->e, matrix->f);
   textBuf << bsMatix;
 
-  CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
+  CPDF_Dictionary* pPageDic = pPage->m_pFormDict.Get();
   CPDF_Object* pContentObj =
       pPageDic ? pPageDic->GetObjectFor("Contents") : nullptr;
   if (!pContentObj)
@@ -127,7 +127,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pContentObj)
     return false;
 
-  CPDF_Document* pDoc = pPage->m_pDocument;
+  CPDF_Document* pDoc = pPage->m_pDocument.Get();
   if (!pDoc)
     return false;
 
@@ -276,7 +276,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
+  CPDF_Dictionary* pPageDic = pPage->m_pFormDict.Get();
   CPDF_Object* pContentObj =
       pPageDic ? pPageDic->GetObjectFor("Contents") : nullptr;
   if (!pContentObj)
@@ -301,7 +301,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
         strClip << "W* n\n";
     }
   }
-  CPDF_Document* pDoc = pPage->m_pDocument;
+  CPDF_Document* pDoc = pPage->m_pDocument.Get();
   if (!pDoc)
     return;
 

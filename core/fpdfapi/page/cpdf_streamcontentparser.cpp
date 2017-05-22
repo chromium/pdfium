@@ -633,7 +633,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
-        pDict->SetNewFor<CPDF_Reference>(key, m_pDocument, dwObjNum);
+        pDict->SetNewFor<CPDF_Reference>(key, m_pDocument.Get(), dwObjNum);
       else
         pDict->SetFor(key, std::move(pObj));
     }
@@ -653,7 +653,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   }
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   std::unique_ptr<CPDF_Stream> pStream =
-      m_pSyntax->ReadInlineStream(m_pDocument, std::move(pDict), pCSObj);
+      m_pSyntax->ReadInlineStream(m_pDocument.Get(), std::move(pDict), pCSObj);
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::EndOfData) {
@@ -771,7 +771,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   auto pFormObj = pdfium::MakeUnique<CPDF_FormObject>();
   pFormObj->m_pForm = pdfium::MakeUnique<CPDF_Form>(
-      m_pDocument, m_pPageResources, pStream, m_pResources);
+      m_pDocument.Get(), m_pPageResources.Get(), pStream, m_pResources.Get());
   pFormObj->m_FormMatrix = m_pCurStates->m_CTM;
   pFormObj->m_FormMatrix.Concat(m_mtContentToUser);
   CPDF_AllStates status;
@@ -796,7 +796,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
 
   auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
   pImageObj->SetImage(
-      pdfium::MakeRetain<CPDF_Image>(m_pDocument, std::move(pStream)));
+      pdfium::MakeRetain<CPDF_Image>(m_pDocument.Get(), std::move(pStream)));
   return AddImageObject(std::move(pImageObj));
 }
 
@@ -1176,12 +1176,12 @@ CPDF_Font* CPDF_StreamContentParser::FindFont(const CFX_ByteString& name) {
   CPDF_Dictionary* pFontDict = ToDictionary(FindResourceObj("Font", name));
   if (!pFontDict) {
     m_bResourceMissing = true;
-    return CPDF_Font::GetStockFont(m_pDocument, "Helvetica");
+    return CPDF_Font::GetStockFont(m_pDocument.Get(), "Helvetica");
   }
 
   CPDF_Font* pFont = m_pDocument->LoadFont(pFontDict);
   if (pFont && pFont->IsType3Font()) {
-    pFont->AsType3Font()->SetPageResources(m_pResources);
+    pFont->AsType3Font()->SetPageResources(m_pResources.Get());
     pFont->AsType3Font()->CheckType3FontMetrics();
   }
   return pFont;
@@ -1255,7 +1255,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   {
     auto pText = pdfium::MakeUnique<CPDF_TextObject>();
     m_pLastTextObject = pText.get();
-    SetGraphicStates(m_pLastTextObject, true, true, true);
+    SetGraphicStates(m_pLastTextObject.Get(), true, true, true);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
       float* pCTM = pText->m_TextState.GetMutableCTM();
       pCTM[0] = m_pCurStates->m_CTM.a;

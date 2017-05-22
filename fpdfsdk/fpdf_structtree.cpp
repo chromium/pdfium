@@ -41,7 +41,8 @@ DLLEXPORT FPDF_STRUCTTREE STDCALL FPDF_StructTree_GetForPage(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return nullptr;
-  return CPDF_StructTree::LoadPage(pPage->m_pDocument, pPage->m_pFormDict)
+  return CPDF_StructTree::LoadPage(pPage->m_pDocument.Get(),
+                                   pPage->m_pFormDict.Get())
       .release();
 }
 

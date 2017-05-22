@@ -62,7 +62,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
 }  // namespace
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
-    : m_pDocument(pPage->m_pDocument) {
+    : m_pDocument(pPage->m_pDocument.Get()) {
   if (!pPage->m_pFormDict)
     return;
 

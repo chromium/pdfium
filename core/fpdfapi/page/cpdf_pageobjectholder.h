@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectlist.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -50,11 +51,11 @@ class CPDF_PageObjectHolder {
   void Transform(const CFX_Matrix& matrix);
   CFX_FloatRect CalcBoundingBox() const;
 
-  CPDF_Dictionary* m_pFormDict;
-  CPDF_Stream* m_pFormStream;
-  CPDF_Document* m_pDocument;
-  CPDF_Dictionary* m_pPageResources;
-  CPDF_Dictionary* m_pResources;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pFormDict;
+  CFX_UnownedPtr<CPDF_Stream> m_pFormStream;
+  CFX_UnownedPtr<CPDF_Document> m_pDocument;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResources;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pResources;
   CFX_FloatRect m_BBox;
   int m_Transparency;
 

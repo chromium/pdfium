@@ -98,8 +98,9 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
 
   CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDictFor("Resources");
   m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
-      pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources,
-      pParentMatrix, pForm, pResources, &form_bbox, pGraphicStates, level);
+      pForm->m_pDocument.Get(), pForm->m_pPageResources.Get(),
+      pForm->m_pResources.Get(), pParentMatrix, pForm, pResources, &form_bbox,
+      pGraphicStates, level);
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.HasRef()) {
@@ -114,7 +115,8 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
     pState->SetSoftMask(nullptr);
   }
   m_nStreams = 0;
-  m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pForm->m_pFormStream);
+  m_pSingleStream =
+      pdfium::MakeRetain<CPDF_StreamAcc>(pForm->m_pFormStream.Get());
   m_pSingleStream->LoadAllData(false);
   m_pData = (uint8_t*)m_pSingleStream->GetData();
   m_Size = m_pSingleStream->GetSize();
@@ -167,8 +169,9 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
     if (m_InternalStage == STAGE_PARSE) {
       if (!m_pParser) {
         m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
-            m_pObjectHolder->m_pDocument, m_pObjectHolder->m_pPageResources,
-            nullptr, nullptr, m_pObjectHolder, m_pObjectHolder->m_pResources,
+            m_pObjectHolder->m_pDocument.Get(),
+            m_pObjectHolder->m_pPageResources.Get(), nullptr, nullptr,
+            m_pObjectHolder.Get(), m_pObjectHolder->m_pResources.Get(),
             &m_pObjectHolder->m_BBox, nullptr, 0);
         m_pParser->GetCurStates()->m_ColorState.SetDefault();
       }

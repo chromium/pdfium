@@ -138,11 +138,12 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
   CPDF_Page* pPage = nullptr;
   if (auto* pPageCache = m_pRenderStatus->m_pContext->GetPageCache()) {
     pPage = pPageCache->GetPage();
-    pDocument = pPage->m_pDocument;
+    pDocument = pPage->m_pDocument.Get();
   } else {
     pDocument = m_pImageObject->GetImage()->GetDocument();
   }
-  CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : nullptr;
+  CPDF_Dictionary* pPageResources =
+      pPage ? pPage->m_pPageResources.Get() : nullptr;
   CPDF_Object* pCSObj =
       m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
           "ColorSpace");

@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 
 class CPDF_AllStates;
 class CPDF_Form;
@@ -45,9 +46,9 @@ class CPDF_ContentParser {
 
   ParseStatus m_Status;
   InternalStage m_InternalStage;
-  CPDF_PageObjectHolder* m_pObjectHolder;
+  CFX_UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
   bool m_bForm;
-  CPDF_Type3Char* m_pType3Char;
+  CFX_UnownedPtr<CPDF_Type3Char> m_pType3Char;
   uint32_t m_nStreams;
   CFX_RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<CFX_RetainPtr<CPDF_StreamAcc>> m_StreamArray;

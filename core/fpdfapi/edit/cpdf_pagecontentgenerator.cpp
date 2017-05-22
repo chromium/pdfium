@@ -49,7 +49,7 @@ bool GetColor(const CPDF_Color* pColor, float* rgb) {
 }  // namespace
 
 CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
-    : m_pPage(pPage), m_pDocument(m_pPage->m_pDocument) {
+    : m_pPage(pPage), m_pDocument(m_pPage->m_pDocument.Get()) {
   for (const auto& pObj : *pPage->GetPageObjectList()) {
     if (pObj)
       m_pageObjects.push_back(pObj.get());
@@ -68,7 +68,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
     else if (CPDF_TextObject* pTextObj = pPageObj->AsText())
       ProcessText(&buf, pTextObj);
   }
-  CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;
+  CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict.Get();
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetDirectObjectFor("Contents") : nullptr;
   if (pContent)

@@ -20,8 +20,8 @@
 #include "core/fxge/fx_dib.h"
 
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Page* pPage)
-    : m_pDocument(pPage->m_pDocument),
-      m_pPageResources(pPage->m_pPageResources),
+    : m_pDocument(pPage->m_pDocument.Get()),
+      m_pPageResources(pPage->m_pPageResources.Get()),
       m_pPageCache(pPage->GetRenderCache()) {}
 
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,

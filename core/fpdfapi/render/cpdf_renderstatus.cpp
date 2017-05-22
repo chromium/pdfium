@@ -1487,11 +1487,12 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     CPDF_Page* pPage = nullptr;
     if (m_pContext->GetPageCache()) {
       pPage = m_pContext->GetPageCache()->GetPage();
-      pDocument = pPage->m_pDocument;
+      pDocument = pPage->m_pDocument.Get();
     } else {
       pDocument = pPageObj->AsImage()->GetImage()->GetDocument();
     }
-    CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : nullptr;
+    CPDF_Dictionary* pPageResources =
+        pPage ? pPage->m_pPageResources.Get() : nullptr;
     CPDF_Object* pCSObj = pPageObj->AsImage()
                               ->GetImage()
                               ->GetStream()

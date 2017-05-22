@@ -43,7 +43,9 @@ class CPDF_StreamContentParser {
   ~CPDF_StreamContentParser();
 
   uint32_t Parse(const uint8_t* pData, uint32_t dwSize, uint32_t max_cost);
-  CPDF_PageObjectHolder* GetPageObjectHolder() const { return m_pObjectHolder; }
+  CPDF_PageObjectHolder* GetPageObjectHolder() const {
+    return m_pObjectHolder.Get();
+  }
   CPDF_AllStates* GetCurStates() const { return m_pCurStates.get(); }
   bool IsColored() const { return m_bColored; }
   const float* GetType3Data() const { return m_Type3Data; }
@@ -186,11 +188,11 @@ class CPDF_StreamContentParser {
   void Handle_NextLineShowText_Space();
   void Handle_Invalid();
 
-  CPDF_Document* const m_pDocument;
-  CPDF_Dictionary* m_pPageResources;
-  CPDF_Dictionary* m_pParentResources;
-  CPDF_Dictionary* m_pResources;
-  CPDF_PageObjectHolder* m_pObjectHolder;
+  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResources;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pParentResources;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pResources;
+  CFX_UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
   int m_Level;
   CFX_Matrix m_mtContentToUser;
   CFX_FloatRect m_BBox;
@@ -201,7 +203,7 @@ class CPDF_StreamContentParser {
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
   CPDF_ContentMark m_CurContentMark;
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
-  CPDF_TextObject* m_pLastTextObject;
+  CFX_UnownedPtr<CPDF_TextObject> m_pLastTextObject;
   float m_DefFontSize;
   std::vector<FX_PATHPOINT> m_PathPoints;
   float m_PathStartX;

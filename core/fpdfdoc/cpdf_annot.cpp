@@ -204,8 +204,8 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   if (it != m_APMap.end())
     return it->second.get();
 
-  auto pNewForm =
-      pdfium::MakeUnique<CPDF_Form>(m_pDocument, pPage->m_pResources, pStream);
+  auto pNewForm = pdfium::MakeUnique<CPDF_Form>(
+      m_pDocument, pPage->m_pResources.Get(), pStream);
   pNewForm->ParseContent(nullptr, nullptr, nullptr);
 
   CPDF_Form* pResult = pNewForm.get();

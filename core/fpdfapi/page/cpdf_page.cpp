@@ -103,7 +103,7 @@ void CPDF_Page::SetRenderContext(
 }
 
 CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteString& name) const {
-  CPDF_Dictionary* pPageDict = m_pFormDict;
+  CPDF_Dictionary* pPageDict = m_pFormDict.Get();
   std::set<CPDF_Dictionary*> visited;
   while (1) {
     visited.insert(pPageDict);
