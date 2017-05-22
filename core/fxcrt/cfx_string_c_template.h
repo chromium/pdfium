@@ -59,8 +59,8 @@ class CFX_StringCTemplate {
 
   // Any changes to |vec| invalidate the string.
   explicit CFX_StringCTemplate(const std::vector<UnsignedType>& vec) {
-    m_Ptr = vec.data();
     m_Length = pdfium::CollectionSize<FX_STRSIZE>(vec);
+    m_Ptr = m_Length ? vec.data() : nullptr;
   }
 
   CFX_StringCTemplate& operator=(const CharType* src) {

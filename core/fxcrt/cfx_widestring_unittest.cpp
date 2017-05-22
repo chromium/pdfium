@@ -702,6 +702,13 @@ TEST(fxcrt, WideStringCFromVector) {
   CFX_WideStringC lower_a_string(lower_a_vec);
   EXPECT_EQ(10, lower_a_string.GetLength());
   EXPECT_EQ(L"aaaaaaaaaa", lower_a_string);
+
+  std::vector<CFX_WideStringC::UnsignedType> cleared_vec;
+  cleared_vec.push_back(42);
+  cleared_vec.pop_back();
+  CFX_WideStringC cleared_string(cleared_vec);
+  EXPECT_EQ(0, cleared_string.GetLength());
+  EXPECT_EQ(nullptr, cleared_string.raw_str());
 }
 
 TEST(fxcrt, WideStringCOperatorSubscript) {
