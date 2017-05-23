@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 
 CXFA_FileRead::CXFA_FileRead(const std::vector<CPDF_Stream*>& streams) {
@@ -56,7 +57,7 @@ bool CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
 }
 
 size_t CXFA_FileRead::ReadBlock(void* buffer, size_t size) {
-  ASSERT(false);
+  NOTREACHED();
   return 0;
 }
 
@@ -69,13 +70,13 @@ bool CXFA_FileRead::IsEOF() {
 }
 
 bool CXFA_FileRead::Flush() {
-  ASSERT(false);
+  NOTREACHED();
   return false;
 }
 
 bool CXFA_FileRead::WriteBlock(const void* pData,
                                FX_FILESIZE offset,
                                size_t size) {
-  ASSERT(false);
+  NOTREACHED();
   return false;
 }

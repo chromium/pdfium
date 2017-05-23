@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
 extern "C" {
@@ -297,7 +298,7 @@ bool CCodec_JpegDecoder::v_Rewind() {
     return false;
   }
   if ((int)cinfo.output_width > m_OrigWidth) {
-    ASSERT(false);
+    NOTREACHED();
     return false;
   }
   m_bStarted = true;

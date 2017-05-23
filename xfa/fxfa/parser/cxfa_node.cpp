@@ -20,6 +20,7 @@
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
@@ -3174,7 +3175,7 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
         continue;
       }
       if (pRemoveInstance->GetElementType() == XFA_Element::InstanceManager) {
-        ASSERT(false);
+        NOTREACHED();
         break;
       }
       if (pRemoveInstance->GetNameHash() == dInstanceNameHash) {
@@ -4460,7 +4461,7 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
 bool CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   if (!pNode || pNode->m_pParent ||
       (pBeforeNode && pBeforeNode->m_pParent != this)) {
-    ASSERT(false);
+    NOTREACHED();
     return false;
   }
   bool ret = m_pDocument->RemovePurgeNode(pNode);
@@ -4519,7 +4520,7 @@ CXFA_Node* CXFA_Node::Deprecated_GetPrevSibling() {
 
 bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   if (!pNode || pNode->m_pParent != this) {
-    ASSERT(false);
+    NOTREACHED();
     return false;
   }
   if (m_pChild == pNode) {

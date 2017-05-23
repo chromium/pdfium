@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/logging.h"
 #include "xfa/fde/css/cfde_cssdeclaration.h"
 #include "xfa/fde/css/fde_cssdatatable.h"
 
@@ -182,7 +183,7 @@ FDE_CSSSyntaxStatus CFDE_CSSSyntaxParser::DoSyntaxParse() {
           m_TextPlane.MoveNext();
           break;
         default:
-          ASSERT(false);
+          NOTREACHED();
           break;
       }
     }

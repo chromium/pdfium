@@ -6,6 +6,7 @@
 
 #include "xfa/fde/cfde_rendercontext.h"
 
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_renderdevice.h"
@@ -64,7 +65,7 @@ void CFDE_RenderContext::DoRender() {
         iCount += 5;
         break;
       case FDE_VISUALOBJ_Canvas:
-        ASSERT(false);
+        NOTREACHED();
         break;
       default:
         break;

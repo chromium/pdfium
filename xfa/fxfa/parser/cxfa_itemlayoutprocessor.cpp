@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
@@ -73,7 +74,7 @@ void UpdateWidgetSize(CXFA_ContentLayoutItem* pLayoutItem,
       break;
     }
     default:
-      ASSERT(false);
+      NOTREACHED();
   }
 }
 

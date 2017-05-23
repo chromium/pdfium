@@ -12,6 +12,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
@@ -380,7 +381,7 @@ bool CCodec_ProgressiveDecoder::PngReadHeader(int width,
   switch (format) {
     case FXDIB_1bppMask:
     case FXDIB_1bppRgb:
-      ASSERT(false);
+      NOTREACHED();
       return false;
     case FXDIB_8bppMask:
     case FXDIB_8bppRgb:
@@ -394,7 +395,7 @@ bool CCodec_ProgressiveDecoder::PngReadHeader(int width,
       *color_type = 6;
       break;
     default:
-      ASSERT(false);
+      NOTREACHED();
       return false;
   }
   *gamma = kPngGamma;
@@ -404,7 +405,7 @@ bool CCodec_ProgressiveDecoder::PngReadHeader(int width,
 bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t*& src_buf) {
   CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   if (!pDIBitmap) {
-    ASSERT(false);
+    NOTREACHED();
     return false;
   }
   if (line >= m_clipBox.top && line < m_clipBox.bottom) {
@@ -427,7 +428,7 @@ bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t*& src_buf) {
       switch (pDIBitmap->GetFormat()) {
         case FXDIB_1bppMask:
         case FXDIB_1bppRgb:
-          ASSERT(false);
+          NOTREACHED();
           return false;
         case FXDIB_8bppMask:
         case FXDIB_8bppRgb: {
@@ -487,7 +488,7 @@ void CCodec_ProgressiveDecoder::PngOneOneMapResampleHorz(
     switch (pDeviceBitmap->GetFormat()) {
       case FXDIB_1bppMask:
       case FXDIB_1bppRgb:
-        ASSERT(false);
+        NOTREACHED();
         return;
       case FXDIB_8bppMask:
       case FXDIB_8bppRgb: {

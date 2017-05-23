@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/fx_codec.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -105,7 +106,7 @@ bool CPDF_DeviceCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
       }
       return true;
     default:
-      ASSERT(false);
+      NOTREACHED();
       return false;
   }
 }
@@ -141,7 +142,7 @@ bool CPDF_DeviceCS::SetRGB(float* pBuf, float R, float G, float B) const {
       sRGB_to_AdobeCMYK(R, G, B, pBuf[0], pBuf[1], pBuf[2], pBuf[3]);
       return true;
     default:
-      ASSERT(false);
+      NOTREACHED();
       return false;
   }
 }
@@ -164,7 +165,7 @@ bool CPDF_DeviceCS::v_SetCMYK(float* pBuf,
       pBuf[3] = k;
       return true;
     default:
-      ASSERT(false);
+      NOTREACHED();
       return false;
   }
 }
@@ -213,7 +214,7 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
       }
       break;
     default:
-      ASSERT(false);
+      NOTREACHED();
       break;
   }
 }

@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
 extern "C" {
@@ -119,7 +120,7 @@ tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
 }
 
 tsize_t tiff_write(thandle_t context, tdata_t buf, tsize_t length) {
-  ASSERT(false);
+  NOTREACHED();
   return 0;
 }
 

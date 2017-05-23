@@ -33,7 +33,7 @@ CPWL_Edit::CPWL_Edit()
     : m_pFillerNotify(nullptr), m_bFocus(false), m_pFormFiller(nullptr) {}
 
 CPWL_Edit::~CPWL_Edit() {
-  ASSERT(m_bFocus == false);
+  ASSERT(!m_bFocus);
 }
 
 CFX_ByteString CPWL_Edit::GetClassName() const {

@@ -26,6 +26,7 @@
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -170,7 +171,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
       break;
     }
     default: {
-      ASSERT(false);
+      NOTREACHED();
       break;
     }
   }

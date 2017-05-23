@@ -17,6 +17,7 @@
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/javascript/ijs_event_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 
 bool CPDFSDK_ActionHandler::DoAction_DocOpen(
@@ -387,7 +388,7 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
       DoAction_ImportData(action, pFormFillEnv);
       break;
     case CPDF_Action::JavaScript:
-      ASSERT(false);
+      NOTREACHED();
       break;
     case CPDF_Action::SetOCGState:
       DoAction_SetOCGState(pFormFillEnv, action);
@@ -504,7 +505,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
                                  data.sValue, data.bRC);
       break;
     default:
-      ASSERT(false);
+      NOTREACHED();
       break;
   }
 
@@ -567,7 +568,7 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
       pContext->OnPage_OutView(pFormFillEnv);
       break;
     default:
-      ASSERT(false);
+      NOTREACHED();
       break;
   }
 

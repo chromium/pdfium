@@ -22,13 +22,8 @@
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/skia/fx_skia_device.h"
-
-#ifdef _SKIA_SUPPORT_PATHS_
-#include "core/fxge/ge/cfx_cliprgn.h"
-#endif  // _SKIA_SUPPORT_PATHS_
-
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
-
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
 #include "third_party/skia/include/core/SkImage.h"
@@ -40,6 +35,10 @@
 #include "third_party/skia/include/effects/SkDashPathEffect.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
 #include "third_party/skia/include/pathops/SkPathOps.h"
+
+#ifdef _SKIA_SUPPORT_PATHS_
+#include "core/fxge/ge/cfx_cliprgn.h"
+#endif  // _SKIA_SUPPORT_PATHS_
 
 #ifdef _SKIA_SUPPORT_
 #include "third_party/skia/include/core/SkColorFilter.h"
@@ -112,7 +111,7 @@ void RgbByteOrderTransferBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
         }
       }
     } else {
-      ASSERT(false);
+      NOTREACHED();
     }
     return;
   }
@@ -147,7 +146,7 @@ void RgbByteOrderTransferBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
     return;
   }
 
-  ASSERT(false);
+  NOTREACHED();
 }
 
 #endif  // _SKIA_SUPPORT_PATHS_

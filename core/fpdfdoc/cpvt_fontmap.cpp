@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "third_party/base/logging.h"
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            CPDF_Dictionary* pResDict,
@@ -78,16 +79,16 @@ CFX_ByteString CPVT_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
 int32_t CPVT_FontMap::GetWordFontIndex(uint16_t word,
                                        int32_t charset,
                                        int32_t nFontIndex) {
-  ASSERT(false);
+  NOTREACHED();
   return 0;
 }
 
 int32_t CPVT_FontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
-  ASSERT(false);
+  NOTREACHED();
   return 0;
 }
 
 int32_t CPVT_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
-  ASSERT(false);
+  NOTREACHED();
   return FX_CHARSET_ANSI;
 }

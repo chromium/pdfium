@@ -36,6 +36,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -389,7 +390,7 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
   if (param.m_Type == ContentParam::OBJECT)
     return param.m_pObject.get();
 
-  ASSERT(false);
+  NOTREACHED();
   return nullptr;
 }
 

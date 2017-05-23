@@ -20,6 +20,7 @@
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -221,7 +222,7 @@ void ConvertXMLToPlainText(CFX_XMLElement* pRootXMLNode,
         break;
       }
       default:
-        ASSERT(false);
+        NOTREACHED();
         break;
     }
   }

@@ -25,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -434,7 +435,7 @@ const char* CPDF_Font::GetAdobeCharName(
     const std::vector<CFX_ByteString>& charnames,
     int charcode) {
   if (charcode < 0 || charcode >= 256) {
-    ASSERT(false);
+    NOTREACHED();
     return nullptr;
   }
 

@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/logging.h"
 
 CFX_ClipRgn::CFX_ClipRgn(int width, int height)
     : m_Type(RectI), m_Box(0, 0, width, height) {}
@@ -101,5 +102,5 @@ void CFX_ClipRgn::IntersectMaskF(int left,
     m_Mask = std::move(new_dib);
     return;
   }
-  ASSERT(false);
+  NOTREACHED();
 }

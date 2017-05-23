@@ -17,6 +17,7 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -1136,7 +1137,7 @@ bool CFX_DIBSource::ConvertBuffer(
     case FXDIB_1bppCmyk:
     case FXDIB_1bppMask:
     case FXDIB_1bppRgb:
-      ASSERT(false);
+      NOTREACHED();
       return false;
     case FXDIB_8bppMask: {
       if ((src_format & 0xff) == 1) {

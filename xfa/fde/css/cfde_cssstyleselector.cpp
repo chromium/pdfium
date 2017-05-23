@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/cfde_csscolorvalue.h"
 #include "xfa/fde/css/cfde_csscomputedstyle.h"
@@ -412,7 +413,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
       }
     }
   } else {
-    ASSERT(false);
+    NOTREACHED();
   }
 }
 

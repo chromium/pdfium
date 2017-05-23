@@ -162,7 +162,7 @@ CPDF_Object* CPDF_Array::SetAt(size_t i, std::unique_ptr<CPDF_Object> pObj) {
   ASSERT(IsArray());
   ASSERT(!pObj || pObj->IsInline());
   if (i >= m_Objects.size()) {
-    ASSERT(false);
+    NOTREACHED();
     return nullptr;
   }
   CPDF_Object* pRet = pObj.get();

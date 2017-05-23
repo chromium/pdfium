@@ -195,7 +195,7 @@ CPWL_Wnd::CPWL_Wnd()
       m_bEnabled(true) {}
 
 CPWL_Wnd::~CPWL_Wnd() {
-  ASSERT(m_bCreated == false);
+  ASSERT(!m_bCreated);
 }
 
 CFX_ByteString CPWL_Wnd::GetClassName() const {

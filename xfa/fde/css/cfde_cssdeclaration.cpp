@@ -7,6 +7,7 @@
 #include "xfa/fde/css/cfde_cssdeclaration.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/cfde_csscolorvalue.h"
 #include "xfa/fde/css/cfde_csscustomproperty.h"
@@ -265,7 +266,7 @@ void CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyTable* pTable,
       ParseValueListProperty(pTable, pszValue, iValueLen, bImportant);
       return;
     default:
-      ASSERT(false);
+      NOTREACHED();
       break;
   }
 }

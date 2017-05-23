@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -127,13 +128,13 @@ class CPDF_PSOP {
     if (m_op == PSOP_CONST)
       return m_value;
 
-    ASSERT(false);
+    NOTREACHED();
     return 0;
   }
   CPDF_PSProc* GetProc() const {
     if (m_op == PSOP_PROC)
       return m_proc.get();
-    ASSERT(false);
+    NOTREACHED();
     return nullptr;
   }
 
