@@ -118,11 +118,11 @@ CXFA_Para CXFA_TextProvider::GetParaNode() {
 
 CXFA_Font CXFA_TextProvider::GetFontNode() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
-    return m_pWidgetAcc->GetFont();
+    return m_pWidgetAcc->GetFont(false);
 
   CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
   pNode = pNode->GetChild(0, XFA_Element::Font);
-  return pNode ? CXFA_Font(pNode) : m_pWidgetAcc->GetFont();
+  return pNode ? CXFA_Font(pNode) : m_pWidgetAcc->GetFont(false);
 }
 
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {

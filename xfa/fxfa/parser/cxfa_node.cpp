@@ -1867,7 +1867,7 @@ void CXFA_Node::Script_Som_Message(CFXJSE_Value* pValue,
     return;
   }
   bool bNew = false;
-  CXFA_Validate validate = pWidgetData->GetValidate();
+  CXFA_Validate validate = pWidgetData->GetValidate(false);
   if (!validate) {
     validate = pWidgetData->GetValidate(true);
     bNew = true;
@@ -2349,7 +2349,7 @@ void CXFA_Node::Script_Field_SelectedIndex(CFXJSE_Value* pValue,
     }
     pWidgetData->SetItemState(iIndex, true, true, true, true);
   } else {
-    pValue->SetInteger(pWidgetData->GetSelectedItem());
+    pValue->SetInteger(pWidgetData->GetSelectedItem(0));
   }
 }
 
@@ -2358,7 +2358,7 @@ void CXFA_Node::Script_Field_ClearItems(CFXJSE_Arguments* pArguments) {
   if (!pWidgetData) {
     return;
   }
-  pWidgetData->DeleteItem(-1, true);
+  pWidgetData->DeleteItem(-1, true, false);
 }
 
 void CXFA_Node::Script_Field_ExecEvent(CFXJSE_Arguments* pArguments) {
@@ -2546,7 +2546,7 @@ void CXFA_Node::Script_Field_AddItem(CFXJSE_Arguments* pArguments) {
     CFX_ByteString bsValue = pArguments->GetUTF8String(1);
     wsValue = CFX_WideString::FromUTF8(bsValue.AsStringC());
   }
-  pWidgetData->InsertItem(wsLabel, wsValue, -1, true);
+  pWidgetData->InsertItem(wsLabel, wsValue, true);
 }
 
 void CXFA_Node::Script_Field_ExecValidate(CFXJSE_Arguments* pArguments) {

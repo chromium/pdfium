@@ -554,7 +554,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_Validate validate = GetValidate();
+  CXFA_Validate validate = GetValidate(false);
   if (!validate)
     return XFA_EVENTERROR_NotExist;
 
@@ -724,7 +724,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
     float fFontSize = 10.0f;
     if (CXFA_Font font = caption.GetFont())
       fFontSize = font.GetFontSize();
-    else if (CXFA_Font widgetfont = GetFont())
+    else if (CXFA_Font widgetfont = GetFont(false))
       fFontSize = widgetfont.GetFontSize();
 
     if (bVert) {
@@ -1495,7 +1495,7 @@ CXFA_WidgetLayoutData* CXFA_WidgetAcc::GetWidgetLayoutData() {
 CFX_RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
   CFX_WideStringC wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
-  if (CXFA_Font font = GetFont()) {
+  if (CXFA_Font font = GetFont(false)) {
     if (font.IsBold())
       dwFontStyle |= FX_FONTSTYLE_Bold;
     if (font.IsItalic())
@@ -1510,7 +1510,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
 
 float CXFA_WidgetAcc::GetFontSize() {
   float fFontSize = 10.0f;
-  if (CXFA_Font font = GetFont())
+  if (CXFA_Font font = GetFont(false))
     fFontSize = font.GetFontSize();
   return fFontSize < 0.1f ? 10.0f : fFontSize;
 }
@@ -1525,8 +1525,7 @@ float CXFA_WidgetAcc::GetLineHeight() {
 }
 
 FX_ARGB CXFA_WidgetAcc::GetTextColor() {
-  if (CXFA_Font font = GetFont()) {
+  if (CXFA_Font font = GetFont(false))
     return font.GetColor();
-  }
   return 0xFF000000;
 }

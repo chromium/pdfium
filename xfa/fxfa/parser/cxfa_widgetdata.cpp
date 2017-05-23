@@ -256,13 +256,7 @@ CFX_WideString CXFA_WidgetData::GetRawValue() {
   return m_pNode->GetContent();
 }
 
-int32_t CXFA_WidgetData::GetAccess(bool bTemplate) {
-  if (bTemplate) {
-    CXFA_Node* pNode = m_pNode->GetTemplateNode();
-    if (pNode)
-      return pNode->GetEnum(XFA_ATTRIBUTE_Access);
-    return XFA_ATTRIBUTEENUM_Open;
-  }
+int32_t CXFA_WidgetData::GetAccess() {
   CXFA_Node* pNode = m_pNode;
   while (pNode) {
     int32_t iAcc = pNode->GetEnum(XFA_ATTRIBUTE_Access);
@@ -289,20 +283,20 @@ CXFA_Border CXFA_WidgetData::GetBorder(bool bModified) {
   return CXFA_Border(m_pNode->GetProperty(0, XFA_Element::Border, bModified));
 }
 
-CXFA_Caption CXFA_WidgetData::GetCaption(bool bModified) {
-  return CXFA_Caption(m_pNode->GetProperty(0, XFA_Element::Caption, bModified));
+CXFA_Caption CXFA_WidgetData::GetCaption() {
+  return CXFA_Caption(m_pNode->GetProperty(0, XFA_Element::Caption, false));
 }
 
 CXFA_Font CXFA_WidgetData::GetFont(bool bModified) {
   return CXFA_Font(m_pNode->GetProperty(0, XFA_Element::Font, bModified));
 }
 
-CXFA_Margin CXFA_WidgetData::GetMargin(bool bModified) {
-  return CXFA_Margin(m_pNode->GetProperty(0, XFA_Element::Margin, bModified));
+CXFA_Margin CXFA_WidgetData::GetMargin() {
+  return CXFA_Margin(m_pNode->GetProperty(0, XFA_Element::Margin, false));
 }
 
-CXFA_Para CXFA_WidgetData::GetPara(bool bModified) {
-  return CXFA_Para(m_pNode->GetProperty(0, XFA_Element::Para, bModified));
+CXFA_Para CXFA_WidgetData::GetPara() {
+  return CXFA_Para(m_pNode->GetProperty(0, XFA_Element::Para, false));
 }
 
 std::vector<CXFA_Node*> CXFA_WidgetData::GetEventList() {
@@ -333,20 +327,18 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
   return events;
 }
 
-CXFA_Value CXFA_WidgetData::GetDefaultValue(bool bModified) {
+CXFA_Value CXFA_WidgetData::GetDefaultValue() {
   CXFA_Node* pTemNode = m_pNode->GetTemplateNode();
   return CXFA_Value(
-      pTemNode ? pTemNode->GetProperty(0, XFA_Element::Value, bModified)
-               : nullptr);
+      pTemNode ? pTemNode->GetProperty(0, XFA_Element::Value, false) : nullptr);
 }
 
-CXFA_Value CXFA_WidgetData::GetFormValue(bool bModified) {
-  return CXFA_Value(m_pNode->GetProperty(0, XFA_Element::Value, bModified));
+CXFA_Value CXFA_WidgetData::GetFormValue() {
+  return CXFA_Value(m_pNode->GetProperty(0, XFA_Element::Value, false));
 }
 
-CXFA_Calculate CXFA_WidgetData::GetCalculate(bool bModified) {
-  return CXFA_Calculate(
-      m_pNode->GetProperty(0, XFA_Element::Calculate, bModified));
+CXFA_Calculate CXFA_WidgetData::GetCalculate() {
+  return CXFA_Calculate(m_pNode->GetProperty(0, XFA_Element::Calculate, false));
 }
 
 CXFA_Validate CXFA_WidgetData::GetValidate(bool bModified) {
@@ -354,12 +346,12 @@ CXFA_Validate CXFA_WidgetData::GetValidate(bool bModified) {
       m_pNode->GetProperty(0, XFA_Element::Validate, bModified));
 }
 
-CXFA_Bind CXFA_WidgetData::GetBind(bool bModified) {
-  return CXFA_Bind(m_pNode->GetProperty(0, XFA_Element::Bind, bModified));
+CXFA_Bind CXFA_WidgetData::GetBind() {
+  return CXFA_Bind(m_pNode->GetProperty(0, XFA_Element::Bind, false));
 }
 
-CXFA_Assist CXFA_WidgetData::GetAssist(bool bModified) {
-  return CXFA_Assist(m_pNode->GetProperty(0, XFA_Element::Assist, bModified));
+CXFA_Assist CXFA_WidgetData::GetAssist() {
+  return CXFA_Assist(m_pNode->GetProperty(0, XFA_Element::Assist, false));
 }
 
 bool CXFA_WidgetData::GetWidth(float& fWidth) {
@@ -968,8 +960,8 @@ void CXFA_WidgetData::ClearAllSelections() {
 
 void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
                                  const CFX_WideString& wsValue,
-                                 int32_t nIndex,
                                  bool bNotify) {
+  int32_t nIndex = -1;
   CFX_WideString wsNewValue(wsValue);
   if (wsNewValue.IsEmpty())
     wsNewValue = wsLabel;
@@ -1114,8 +1106,7 @@ void CXFA_WidgetData::GetItemValue(const CFX_WideStringC& wsLabel,
 
 bool CXFA_WidgetData::DeleteItem(int32_t nIndex,
                                  bool bNotify,
-                                 bool bScriptModify,
-                                 bool bSyncData) {
+                                 bool bScriptModify) {
   bool bSetValue = false;
   CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -1128,7 +1119,7 @@ bool CXFA_WidgetData::DeleteItem(int32_t nIndex,
       }
     } else {
       if (!bSetValue && pItems->GetBoolean(XFA_ATTRIBUTE_Save)) {
-        SetItemState(nIndex, false, true, bScriptModify, bSyncData);
+        SetItemState(nIndex, false, true, bScriptModify, true);
         bSetValue = true;
       }
       int32_t i = 0;

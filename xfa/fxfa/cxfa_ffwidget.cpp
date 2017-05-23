@@ -116,7 +116,7 @@ void CXFA_FFWidget::RenderWidget(CFX_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Border border = m_pDataAcc->GetBorder();
+  CXFA_Border border = m_pDataAcc->GetBorder(false);
   if (!border)
     return;
 

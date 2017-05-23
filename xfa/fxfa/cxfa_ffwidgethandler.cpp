@@ -177,13 +177,14 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
       return calc && calc.GetScript();
     }
     case XFA_EVENT_Validate: {
-      CXFA_Validate val = pWidgetAcc->GetValidate();
+      CXFA_Validate val = pWidgetAcc->GetValidate(false);
       return val && val.GetScript();
     }
     default:
       break;
   }
-  return !pWidgetAcc->GetEventByActivity(gs_EventActivity[eEventType]).empty();
+  return !pWidgetAcc->GetEventByActivity(gs_EventActivity[eEventType], false)
+              .empty();
 }
 
 int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,

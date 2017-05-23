@@ -223,7 +223,7 @@ bool CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
   }
   pWidgetAcc->ResetData();
   pWidgetAcc->UpdateUIDisplay();
-  if (CXFA_Validate validate = pWidgetAcc->GetValidate()) {
+  if (CXFA_Validate validate = pWidgetAcc->GetValidate(false)) {
     AddValidateWidget(pWidgetAcc);
     validate.GetNode()->SetFlag(XFA_NodeFlag_NeedsInitApp, false);
   }
@@ -743,7 +743,7 @@ void CXFA_FFDocView::RunBindItems() {
                        XFA_RESOLVENODE_ALL;
     XFA_RESOLVENODE_RS rs;
     pScriptContext->ResolveObjects(pWidgetNode, wsRef, rs, dwStyle);
-    pAcc->DeleteItem(-1);
+    pAcc->DeleteItem(-1, false, false);
     if (rs.dwFlags != XFA_RESOVENODE_RSTYPE_Nodes || rs.objects.empty())
       continue;
 
@@ -777,7 +777,7 @@ void CXFA_FFDocView::RunBindItems() {
       } else {
         wsLabel = wsValue;
       }
-      pAcc->InsertItem(wsLabel, wsValue);
+      pAcc->InsertItem(wsLabel, wsValue, false);
     }
   }
   m_BindItems.clear();
