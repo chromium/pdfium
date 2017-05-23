@@ -317,6 +317,9 @@ void* LoadCompositeFont(CPDF_Document* pDoc,
   std::map<uint32_t, uint32_t> to_unicode;
   std::map<uint32_t, uint32_t> widths;
   while (true) {
+    if (currentChar > 0x10FFFF)
+      break;
+
     widths[glyphIndex] = pFont->GetGlyphWidth(glyphIndex);
     to_unicode[glyphIndex] = currentChar;
     currentChar =
