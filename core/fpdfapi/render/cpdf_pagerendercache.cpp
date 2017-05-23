@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
@@ -45,8 +46,10 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
   size_t nCount = m_ImageCache.size();
   std::vector<CacheInfo> cache_info;
   cache_info.reserve(nCount);
-  for (const auto& it : m_ImageCache)
-    cache_info.emplace_back(it.second->GetTimeCount(), it.second->GetStream());
+  for (const auto& it : m_ImageCache) {
+    cache_info.emplace_back(it.second->GetTimeCount(),
+                            it.second->GetImage()->GetStream());
+  }
   std::sort(cache_info.begin(), cache_info.end());
 
   // Check if time value is about to roll over and reset all entries.
@@ -77,18 +80,19 @@ void CPDF_PageRenderCache::ClearImageCacheEntry(CPDF_Stream* pStream) {
 }
 
 bool CPDF_PageRenderCache::StartGetCachedBitmap(
-    CPDF_Stream* pStream,
+    const CFX_RetainPtr<CPDF_Image>& pImage,
     bool bStdCS,
     uint32_t GroupFamily,
     bool bLoadMask,
     CPDF_RenderStatus* pRenderStatus) {
+  CPDF_Stream* pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
   m_bCurFindCache = it != m_ImageCache.end();
   if (m_bCurFindCache) {
     m_pCurImageCacheEntry = it->second;
   } else {
     m_pCurImageCacheEntry =
-        new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pStream);
+        new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pImage);
   }
   int ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       pRenderStatus->m_pFormResource, m_pPage->m_pPageResources.Get(), bStdCS,
@@ -113,23 +117,26 @@ bool CPDF_PageRenderCache::Continue(IFX_Pause* pPause,
     return true;
 
   m_nTimeCount++;
-  if (!m_bCurFindCache)
-    m_ImageCache[m_pCurImageCacheEntry->GetStream()] = m_pCurImageCacheEntry;
+  if (!m_bCurFindCache) {
+    m_ImageCache[m_pCurImageCacheEntry->GetImage()->GetStream()] =
+        m_pCurImageCacheEntry;
+  }
   if (!ret)
     m_nCacheSize += m_pCurImageCacheEntry->EstimateSize();
   return false;
 }
 
 void CPDF_PageRenderCache::ResetBitmap(
-    CPDF_Stream* pStream,
+    const CFX_RetainPtr<CPDF_Image>& pImage,
     const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
   CPDF_ImageCacheEntry* pEntry;
+  CPDF_Stream* pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
   if (it == m_ImageCache.end()) {
     if (!pBitmap)
       return;
 
-    pEntry = new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pStream);
+    pEntry = new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pImage);
     m_ImageCache[pStream] = pEntry;
   } else {
     pEntry = it->second;

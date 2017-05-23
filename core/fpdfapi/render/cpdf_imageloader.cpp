@@ -18,7 +18,7 @@ CPDF_ImageLoader::CPDF_ImageLoader()
     : m_MatteColor(0),
       m_bCached(false),
       m_pCache(nullptr),
-      m_pImage(nullptr) {}
+      m_pImageObject(nullptr) {}
 
 CPDF_ImageLoader::~CPDF_ImageLoader() {}
 
@@ -29,14 +29,13 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
                              bool bLoadMask,
                              CPDF_RenderStatus* pRenderStatus) {
   m_pCache = pCache;
-  m_pImage = const_cast<CPDF_ImageObject*>(pImage);
+  m_pImageObject = const_cast<CPDF_ImageObject*>(pImage);
   bool ret;
   if (pCache) {
-    ret =
-        pCache->StartGetCachedBitmap(m_pImage->GetImage()->GetStream(), bStdCS,
-                                     GroupFamily, bLoadMask, pRenderStatus);
+    ret = pCache->StartGetCachedBitmap(m_pImageObject->GetImage(), bStdCS,
+                                       GroupFamily, bLoadMask, pRenderStatus);
   } else {
-    ret = m_pImage->GetImage()->StartLoadDIBSource(
+    ret = m_pImageObject->GetImage()->StartLoadDIBSource(
         pRenderStatus->m_pFormResource, pRenderStatus->m_pPageResource, bStdCS,
         GroupFamily, bLoadMask);
   }
@@ -48,7 +47,7 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
 bool CPDF_ImageLoader::Continue(IFX_Pause* pPause,
                                 CPDF_RenderStatus* pRenderStatus) {
   bool ret = m_pCache ? m_pCache->Continue(pPause, pRenderStatus)
-                      : m_pImage->GetImage()->Continue(pPause);
+                      : m_pImageObject->GetImage()->Continue(pPause);
   if (!ret)
     HandleFailure();
   return ret;
@@ -63,7 +62,7 @@ void CPDF_ImageLoader::HandleFailure() {
     m_MatteColor = entry->m_MatteColor;
     return;
   }
-  CFX_RetainPtr<CPDF_Image> pImage = m_pImage->GetImage();
+  CFX_RetainPtr<CPDF_Image> pImage = m_pImageObject->GetImage();
   m_bCached = false;
   m_pBitmap = pImage->DetachBitmap();
   m_pMask = pImage->DetachMask();

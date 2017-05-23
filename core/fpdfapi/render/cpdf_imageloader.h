@@ -38,7 +38,7 @@ class CPDF_ImageLoader {
   void HandleFailure();
 
   CPDF_PageRenderCache* m_pCache;
-  CPDF_ImageObject* m_pImage;
+  CPDF_ImageObject* m_pImageObject;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_

@@ -18,12 +18,13 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 
-CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
-                                           CPDF_Stream* pStream)
+CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(
+    CPDF_Document* pDoc,
+    const CFX_RetainPtr<CPDF_Image>& pImage)
     : m_dwTimeCount(0),
       m_MatteColor(0),
       m_pDocument(pDoc),
-      m_pStream(pStream),
+      m_pImage(pImage),
       m_dwCacheSize(0) {}
 
 CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() {}
@@ -68,8 +69,8 @@ int CPDF_ImageCacheEntry::StartGetCachedBitmap(
 
   m_pCurBitmap = pdfium::MakeRetain<CPDF_DIBSource>();
   int ret = m_pCurBitmap.As<CPDF_DIBSource>()->StartLoadDIBSource(
-      m_pDocument.Get(), m_pStream.Get(), true, pFormResources, pPageResources,
-      bStdCS, GroupFamily, bLoadMask);
+      m_pDocument.Get(), m_pImage->GetStream(), true, pFormResources,
+      pPageResources, bStdCS, GroupFamily, bLoadMask);
   if (ret == 2)
     return ret;
 
