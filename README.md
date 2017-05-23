@@ -58,6 +58,12 @@ gclient sync
 cd pdfium
 ```
 
+Additional build dependencies need to be installed by running:
+
+```
+./build/install-build-deps.sh
+```
+
 ## Generate the build files
 
 We use GN to generate the build files and
@@ -76,7 +82,7 @@ This will launch an editor in which you can set the following arguments.
 A typical `<directory>` name is `out/Debug`.
 
 ```
-use_goma = true  # Googlers only.
+use_goma = true  # Googlers only. Make sure goma is installed and running first.
 is_debug = true  # Enable debugging features.
 
 pdf_use_skia = false  # Set true to enable experimental skia backend.
@@ -154,7 +160,10 @@ and add the "Cr-Internals-Plugins-PDF" label.
 
 For contributing code, we will follow
 [Chromium's process](http://dev.chromium.org/developers/contributing-code)
-as much as possible. The main exceptions is:
+as much as possible. The main exceptions are:
 
 1. Code has to conform to the existing style and not Chromium/Google style.
+2. PDFium uses a different tool for code reviews, and credentials for 
+the tool need to be generated before uploading a CL.
+
 
