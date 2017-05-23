@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -28,9 +29,9 @@ class CPDF_StructTree {
 
   int CountTopElements() const;
   CPDF_StructElement* GetTopElement(int i) const;
-  const CPDF_Dictionary* GetRoleMap() const { return m_pRoleMap; }
-  const CPDF_Dictionary* GetPage() const { return m_pPage; }
-  const CPDF_Dictionary* GetTreeRoot() const { return m_pTreeRoot; }
+  const CPDF_Dictionary* GetRoleMap() const { return m_pRoleMap.Get(); }
+  const CPDF_Dictionary* GetPage() const { return m_pPage.Get(); }
+  const CPDF_Dictionary* GetTreeRoot() const { return m_pTreeRoot.Get(); }
 
  private:
   void LoadPageTree(const CPDF_Dictionary* pPageDict);
@@ -41,9 +42,9 @@ class CPDF_StructTree {
   bool AddTopLevelNode(CPDF_Dictionary* pDict,
                        const CFX_RetainPtr<CPDF_StructElement>& pElement);
 
-  const CPDF_Dictionary* const m_pTreeRoot;
-  const CPDF_Dictionary* const m_pRoleMap;
-  const CPDF_Dictionary* m_pPage;
+  CFX_UnownedPtr<const CPDF_Dictionary> const m_pTreeRoot;
+  CFX_UnownedPtr<const CPDF_Dictionary> const m_pRoleMap;
+  CFX_UnownedPtr<const CPDF_Dictionary> m_pPage;
   std::vector<CFX_RetainPtr<CPDF_StructElement>> m_Kids;
 };
 

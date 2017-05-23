@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectlist.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
@@ -57,7 +58,7 @@ class FPDF_CHAR_INFO {
   float m_FontSize;
   CFX_PointF m_Origin;
   CFX_FloatRect m_CharBox;
-  CPDF_TextObject* m_pTextObj;
+  CFX_UnownedPtr<CPDF_TextObject> m_pTextObj;
   CFX_Matrix m_Matrix;
 };
 
@@ -78,7 +79,7 @@ class PAGECHAR_INFO {
   int32_t m_Flag;
   CFX_PointF m_Origin;
   CFX_FloatRect m_CharBox;
-  CPDF_TextObject* m_pTextObj;
+  CFX_UnownedPtr<CPDF_TextObject> m_pTextObj;
   CFX_Matrix m_Matrix;
 };
 
@@ -162,14 +163,14 @@ class CPDF_TextPage {
                      const CPDF_Font* pFont,
                      int nItems) const;
 
-  const CPDF_Page* const m_pPage;
+  CFX_UnownedPtr<const CPDF_Page> const m_pPage;
   std::vector<uint16_t> m_CharIndex;
   std::deque<PAGECHAR_INFO> m_CharList;
   std::deque<PAGECHAR_INFO> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
   CFX_WideTextBuf m_TempTextBuf;
   const FPDFText_Direction m_parserflag;
-  CPDF_TextObject* m_pPreTextObj;
+  CFX_UnownedPtr<CPDF_TextObject> m_pPreTextObj;
   CFX_Matrix m_perMatrix;
   bool m_bIsParsed;
   CFX_Matrix m_DisplayMatrix;

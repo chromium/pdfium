@@ -248,10 +248,10 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
       continue;
     }
     if (!pCurObj)
-      pCurObj = info_curchar.m_pTextObj;
+      pCurObj = info_curchar.m_pTextObj.Get();
     if (pCurObj != info_curchar.m_pTextObj) {
       rectArray.push_back(rect);
-      pCurObj = info_curchar.m_pTextObj;
+      pCurObj = info_curchar.m_pTextObj.Get();
       bFlagNewRect = true;
     }
     if (bFlagNewRect) {
@@ -1250,7 +1250,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   FindPreviousTextObject();
   TextOrientation WritingMode = GetTextObjectWritingMode(pObj);
   if (WritingMode == TextOrientation::Unknown)
-    WritingMode = GetTextObjectWritingMode(m_pPreTextObj);
+    WritingMode = GetTextObjectWritingMode(m_pPreTextObj.Get());
 
   CFX_FloatRect this_rect = pObj->GetRect();
   CFX_FloatRect prev_rect = m_pPreTextObj->GetRect();

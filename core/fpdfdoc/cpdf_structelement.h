@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_dib.h"
 
@@ -27,7 +28,7 @@ class CPDF_StructKid {
   enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
 
   CFX_RetainPtr<CPDF_StructElement> m_pElement;  // For Element.
-  CPDF_Dictionary* m_pDict;                      // For Element.
+  CFX_UnownedPtr<CPDF_Dictionary> m_pDict;       // For Element.
   uint32_t m_PageObjNum;  // For PageContent, StreamContent, Object.
   uint32_t m_RefObjNum;   // For StreamContent, Object.
   uint32_t m_ContentId;   // For PageContent, StreamContent.

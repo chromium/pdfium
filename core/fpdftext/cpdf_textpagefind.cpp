@@ -237,7 +237,7 @@ bool CPDF_TextPageFind::FindPrev() {
     m_IsFind = false;
     return m_IsFind;
   }
-  CPDF_TextPageFind findEngine(m_pTextPage);
+  CPDF_TextPageFind findEngine(m_pTextPage.Get());
   bool ret = findEngine.FindFirst(m_findWhat, m_flags);
   if (!ret) {
     m_IsFind = false;

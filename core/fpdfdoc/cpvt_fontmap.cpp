@@ -21,9 +21,7 @@ CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
     : m_pDocument(pDoc),
       m_pResDict(pResDict),
       m_pDefFont(pDefFont),
-      m_sDefFontAlias(sDefFontAlias),
-      m_pSysFont(nullptr),
-      m_sSysFontAlias() {}
+      m_sDefFontAlias(sDefFontAlias) {}
 
 CPVT_FontMap::~CPVT_FontMap() {}
 
@@ -49,13 +47,13 @@ CPDF_Font* CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
 CPDF_Font* CPVT_FontMap::GetPDFFont(int32_t nFontIndex) {
   switch (nFontIndex) {
     case 0:
-      return m_pDefFont;
+      return m_pDefFont.Get();
     case 1:
       if (!m_pSysFont) {
-        m_pSysFont =
-            GetAnnotSysPDFFont(m_pDocument, m_pResDict, &m_sSysFontAlias);
+        m_pSysFont = GetAnnotSysPDFFont(m_pDocument.Get(), m_pResDict.Get(),
+                                        &m_sSysFontAlias);
       }
-      return m_pSysFont;
+      return m_pSysFont.Get();
     default:
       return nullptr;
   }
@@ -67,8 +65,8 @@ CFX_ByteString CPVT_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
       return m_sDefFontAlias;
     case 1:
       if (!m_pSysFont) {
-        m_pSysFont =
-            GetAnnotSysPDFFont(m_pDocument, m_pResDict, &m_sSysFontAlias);
+        m_pSysFont = GetAnnotSysPDFFont(m_pDocument.Get(), m_pResDict.Get(),
+                                        &m_sSysFontAlias);
       }
       return m_sSysFontAlias;
     default:

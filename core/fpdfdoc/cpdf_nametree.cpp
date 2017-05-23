@@ -136,6 +136,8 @@ size_t CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
 
 }  // namespace
 
+CPDF_NameTree::CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
+
 CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc,
                              const CFX_ByteString& category)
     : m_pRoot(nullptr) {
@@ -150,8 +152,10 @@ CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc,
   m_pRoot = pNames->GetDictFor(category);
 }
 
+CPDF_NameTree::~CPDF_NameTree() {}
+
 size_t CPDF_NameTree::GetCount() const {
-  return m_pRoot ? ::CountNames(m_pRoot) : 0;
+  return m_pRoot ? ::CountNames(m_pRoot.Get()) : 0;
 }
 
 int CPDF_NameTree::GetIndex(const CFX_ByteString& csName) const {
@@ -159,7 +163,7 @@ int CPDF_NameTree::GetIndex(const CFX_ByteString& csName) const {
     return -1;
 
   size_t nIndex = 0;
-  if (!SearchNameNode(m_pRoot, csName, nIndex, nullptr))
+  if (!SearchNameNode(m_pRoot.Get(), csName, nIndex, nullptr))
     return -1;
   return nIndex;
 }
@@ -171,7 +175,7 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(int nIndex,
     return nullptr;
 
   size_t nCurIndex = 0;
-  return SearchNameNode(m_pRoot, nIndex, nCurIndex, csName, nullptr);
+  return SearchNameNode(m_pRoot.Get(), nIndex, nCurIndex, csName, nullptr);
 }
 
 CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const {
@@ -179,7 +183,7 @@ CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const {
     return nullptr;
 
   size_t nIndex = 0;
-  return SearchNameNode(m_pRoot, csName, nIndex, nullptr);
+  return SearchNameNode(m_pRoot.Get(), csName, nIndex, nullptr);
 }
 
 CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,

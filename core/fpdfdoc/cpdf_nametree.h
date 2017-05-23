@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFDOC_CPDF_NAMETREE_H_
 #define CORE_FPDFDOC_CPDF_NAMETREE_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 
 class CPDF_Array;
@@ -16,8 +17,9 @@ class CPDF_Object;
 
 class CPDF_NameTree {
  public:
-  explicit CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
+  explicit CPDF_NameTree(CPDF_Dictionary* pRoot);
   CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteString& category);
+  ~CPDF_NameTree();
 
   CPDF_Object* LookupValueAndName(int nIndex, CFX_ByteString* csName) const;
   CPDF_Object* LookupValue(const CFX_ByteString& csName) const;
@@ -25,10 +27,10 @@ class CPDF_NameTree {
 
   int GetIndex(const CFX_ByteString& csName) const;
   size_t GetCount() const;
-  CPDF_Dictionary* GetRoot() const { return m_pRoot; }
+  CPDF_Dictionary* GetRoot() const { return m_pRoot.Get(); }
 
  private:
-  CPDF_Dictionary* m_pRoot;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pRoot;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_NAMETREE_H_
