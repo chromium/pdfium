@@ -30,9 +30,6 @@ GifDecodeStatus CCodec_GifModule::ReadHeader(CGifContext* context,
                                              void** pal_pp,
                                              int* bg_index,
                                              CFX_DIBAttribute* pAttribute) {
-  if (setjmp(context->jmpbuf))
-    return GifDecodeStatus::Error;
-
   GifDecodeStatus ret = gif_read_header(context);
   if (ret != GifDecodeStatus::Success)
     return ret;
@@ -48,9 +45,6 @@ GifDecodeStatus CCodec_GifModule::ReadHeader(CGifContext* context,
 
 GifDecodeStatus CCodec_GifModule::LoadFrameInfo(CGifContext* context,
                                                 int* frame_num) {
-  if (setjmp(context->jmpbuf))
-    return GifDecodeStatus::Error;
-
   GifDecodeStatus ret = gif_get_frame(context);
   if (ret != GifDecodeStatus::Success)
     return ret;
@@ -62,28 +56,24 @@ GifDecodeStatus CCodec_GifModule::LoadFrameInfo(CGifContext* context,
 GifDecodeStatus CCodec_GifModule::LoadFrame(CGifContext* context,
                                             int frame_num,
                                             CFX_DIBAttribute* pAttribute) {
-  if (setjmp(context->jmpbuf))
-    return GifDecodeStatus::Error;
-
   GifDecodeStatus ret = gif_load_frame(context, frame_num);
-  if (ret == GifDecodeStatus::Success) {
-    if (pAttribute) {
-      pAttribute->m_nGifLeft = context->m_Images[frame_num]->m_ImageInfo.left;
-      pAttribute->m_nGifTop = context->m_Images[frame_num]->m_ImageInfo.top;
-      pAttribute->m_fAspectRatio = context->pixel_aspect;
-      const uint8_t* buf =
-          reinterpret_cast<const uint8_t*>(context->cmt_data.GetBuffer(0));
-      uint32_t len = context->cmt_data.GetLength();
-      if (len > 21) {
-        uint8_t size = *buf++;
-        if (size != 0)
-          pAttribute->m_strAuthor = CFX_ByteString(buf, size);
-        else
-          pAttribute->m_strAuthor.clear();
-      }
-    }
+  if (ret != GifDecodeStatus::Success || !pAttribute)
+    return ret;
+
+  pAttribute->m_nGifLeft = context->m_Images[frame_num]->m_ImageInfo.left;
+  pAttribute->m_nGifTop = context->m_Images[frame_num]->m_ImageInfo.top;
+  pAttribute->m_fAspectRatio = context->pixel_aspect;
+  const uint8_t* buf =
+      reinterpret_cast<const uint8_t*>(context->cmt_data.GetBuffer(0));
+  uint32_t len = context->cmt_data.GetLength();
+  if (len > 21) {
+    uint8_t size = *buf++;
+    if (size != 0)
+      pAttribute->m_strAuthor = CFX_ByteString(buf, size);
+    else
+      pAttribute->m_strAuthor.clear();
   }
-  return ret;
+  return GifDecodeStatus::Success;
 }
 
 uint32_t CCodec_GifModule::GetAvailInput(CGifContext* context,

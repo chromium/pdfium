@@ -7,7 +7,6 @@
 #ifndef CORE_FXCODEC_LGIF_CGIFCONTEXT_H_
 #define CORE_FXCODEC_LGIF_CGIFCONTEXT_H_
 
-#include <setjmp.h>
 #include <memory>
 #include <vector>
 
@@ -21,8 +20,7 @@ class CGifContext {
   CGifContext(CCodec_GifModule* gif_module, char* error_string);
   ~CGifContext();
 
-  // TODO(npm): Remove longjmp from this method!!!
-  void ThrowError(const char* err_msg);
+  void AddError(const char* err_msg);
   void RecordCurrentPosition(uint32_t* cur_pos_ptr);
   void ReadScanline(int32_t row_num, uint8_t* row_buf);
   bool GetRecordPosition(uint32_t cur_pos,
@@ -38,7 +36,6 @@ class CGifContext {
                          int32_t disposal_method,
                          bool interlace);
 
-  jmp_buf jmpbuf;
   std::vector<GifPalette> m_GlobalPalette;
   int32_t global_pal_num;
   uint32_t img_row_offset;

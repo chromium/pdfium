@@ -7,7 +7,6 @@
 #ifndef CORE_FXCODEC_LGIF_FX_GIF_H_
 #define CORE_FXCODEC_LGIF_FX_GIF_H_
 
-#include <setjmp.h>
 #include <memory>
 #include <vector>
 

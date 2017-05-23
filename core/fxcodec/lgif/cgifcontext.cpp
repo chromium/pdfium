@@ -33,9 +33,8 @@ CGifContext::CGifContext(CCodec_GifModule* gif_module, char* error_string)
 
 CGifContext::~CGifContext() {}
 
-void CGifContext::ThrowError(const char* err_msg) {
+void CGifContext::AddError(const char* err_msg) {
   strncpy(err_ptr, err_msg, GIF_MAX_ERROR_SIZE - 1);
-  longjmp(jmpbuf, 1);
 }
 
 void CGifContext::RecordCurrentPosition(uint32_t* cur_pos_ptr) {
