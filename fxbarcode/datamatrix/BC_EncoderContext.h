@@ -12,12 +12,12 @@
 
 class CBC_SymbolInfo;
 
-class CBC_EncoderContext : public CBC_SymbolShapeHint {
+class CBC_EncoderContext {
  public:
   CBC_EncoderContext(const CFX_WideString& msg,
                      const CFX_WideString& ecLevel,
                      int32_t& e);
-  ~CBC_EncoderContext() override;
+  ~CBC_EncoderContext();
 
   void setSymbolShape(SymbolShapeHint shape);
   void setSkipAtEnd(int32_t count);
@@ -34,7 +34,6 @@ class CBC_EncoderContext : public CBC_SymbolShapeHint {
   void updateSymbolInfo(int32_t len, int32_t& e);
   void resetSymbolInfo();
 
- public:
   CFX_WideString m_msg;
   CFX_WideString m_codewords;
   int32_t m_pos;
@@ -44,7 +43,6 @@ class CBC_EncoderContext : public CBC_SymbolShapeHint {
  private:
   int32_t getTotalMessageCharCount();
 
- private:
   SymbolShapeHint m_shape;
   int32_t m_skipAtEnd;
 };

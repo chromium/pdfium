@@ -7,16 +7,10 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_SYMBOLSHAPEHINT_H_
 #define FXBARCODE_DATAMATRIX_BC_SYMBOLSHAPEHINT_H_
 
-class CBC_SymbolShapeHint {
- public:
-  CBC_SymbolShapeHint();
-  virtual ~CBC_SymbolShapeHint();
-
-  enum SymbolShapeHint {
-    FORCE_NONE,
-    FORCE_SQUARE,
-    FORCE_RECTANGLE,
-  };
+enum SymbolShapeHint {
+  FORCE_NONE,
+  FORCE_SQUARE,
+  FORCE_RECTANGLE,
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_SYMBOLSHAPEHINT_H_

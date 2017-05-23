@@ -11,14 +11,14 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
-class CBC_SymbolInfo : public CBC_SymbolShapeHint {
+class CBC_SymbolInfo {
  public:
   CBC_SymbolInfo(int32_t dataCapacity,
                  int32_t errorCodewords,
                  int32_t matrixWidth,
                  int32_t matrixHeight,
                  int32_t dataRegions);
-  ~CBC_SymbolInfo() override;
+  virtual ~CBC_SymbolInfo();
 
   static void Initialize();
   static void Finalize();
@@ -41,7 +41,7 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
   int32_t getSymbolWidth() const;
   int32_t getSymbolHeight() const;
   int32_t getCodewordCount() const;
-  int32_t getInterleavedBlockCount() const;
+  virtual int32_t getInterleavedBlockCount() const;
   int32_t getDataLengthForInterleavedBlock(int32_t index) const;
   int32_t getErrorLengthForInterleavedBlock(int32_t index) const;
 

@@ -19,10 +19,10 @@
 #define EDIFACT_ENCODATION 4
 #define BASE256_ENCODATION 5
 
-class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
+class CBC_HighLevelEncoder {
  public:
   CBC_HighLevelEncoder();
-  ~CBC_HighLevelEncoder() override;
+  ~CBC_HighLevelEncoder();
 
   std::vector<uint8_t>& getBytesForMessage(CFX_WideString msg);
   static CFX_WideString encodeHighLevel(CFX_WideString msg,
