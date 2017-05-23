@@ -41,19 +41,19 @@
 #include "fxbarcode/utils.h"
 #include "third_party/base/ptr_util.h"
 
-wchar_t CBC_HighLevelEncoder::LATCH_TO_C40 = 230;
-wchar_t CBC_HighLevelEncoder::LATCH_TO_BASE256 = 231;
-wchar_t CBC_HighLevelEncoder::UPPER_SHIFT = 235;
-wchar_t CBC_HighLevelEncoder::LATCH_TO_ANSIX12 = 238;
-wchar_t CBC_HighLevelEncoder::LATCH_TO_TEXT = 239;
-wchar_t CBC_HighLevelEncoder::LATCH_TO_EDIFACT = 240;
-wchar_t CBC_HighLevelEncoder::C40_UNLATCH = 254;
-wchar_t CBC_HighLevelEncoder::X12_UNLATCH = 254;
-wchar_t CBC_HighLevelEncoder::PAD = 129;
-wchar_t CBC_HighLevelEncoder::MACRO_05 = 236;
-wchar_t CBC_HighLevelEncoder::MACRO_06 = 237;
-const wchar_t* CBC_HighLevelEncoder::MACRO_05_HEADER = L"[)>05";
-const wchar_t* CBC_HighLevelEncoder::MACRO_06_HEADER = L"[)>06";
+const wchar_t CBC_HighLevelEncoder::LATCH_TO_C40 = 230;
+const wchar_t CBC_HighLevelEncoder::LATCH_TO_BASE256 = 231;
+const wchar_t CBC_HighLevelEncoder::UPPER_SHIFT = 235;
+const wchar_t CBC_HighLevelEncoder::LATCH_TO_ANSIX12 = 238;
+const wchar_t CBC_HighLevelEncoder::LATCH_TO_TEXT = 239;
+const wchar_t CBC_HighLevelEncoder::LATCH_TO_EDIFACT = 240;
+const wchar_t CBC_HighLevelEncoder::C40_UNLATCH = 254;
+const wchar_t CBC_HighLevelEncoder::X12_UNLATCH = 254;
+const wchar_t CBC_HighLevelEncoder::PAD = 129;
+const wchar_t CBC_HighLevelEncoder::MACRO_05 = 236;
+const wchar_t CBC_HighLevelEncoder::MACRO_06 = 237;
+const wchar_t CBC_HighLevelEncoder::MACRO_05_HEADER[] = L"[)>05";
+const wchar_t CBC_HighLevelEncoder::MACRO_06_HEADER[] = L"[)>06";
 const wchar_t CBC_HighLevelEncoder::MACRO_TRAILER = 0x0004;
 
 CBC_HighLevelEncoder::CBC_HighLevelEncoder() {}
@@ -217,11 +217,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
     } else {
       charCounts[EDIFACT_ENCODATION] += 13.0f / 4.0f;
     }
-    if (isSpecialB256(c)) {
-      charCounts[BASE256_ENCODATION] += 4;
-    } else {
-      charCounts[BASE256_ENCODATION]++;
-    }
+    charCounts[BASE256_ENCODATION]++;
     if (charsProcessed >= 4) {
       std::vector<int32_t> intCharCounts(6);
       std::vector<uint8_t> mins(6);
@@ -349,7 +345,4 @@ bool CBC_HighLevelEncoder::isX12TermSep(wchar_t ch) {
 }
 bool CBC_HighLevelEncoder::isNativeEDIFACT(wchar_t ch) {
   return ch >= ' ' && ch <= '^';
-}
-bool CBC_HighLevelEncoder::isSpecialB256(wchar_t ch) {
-  return false;
 }

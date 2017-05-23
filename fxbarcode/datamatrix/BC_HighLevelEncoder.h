@@ -40,24 +40,14 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   static int32_t determineConsecutiveDigitCount(CFX_WideString msg,
                                                 int32_t startpos);
 
- public:
-  static wchar_t LATCH_TO_C40;
-  static wchar_t LATCH_TO_BASE256;
-  static wchar_t UPPER_SHIFT;
-  static wchar_t LATCH_TO_ANSIX12;
-  static wchar_t LATCH_TO_TEXT;
-  static wchar_t LATCH_TO_EDIFACT;
-  static wchar_t C40_UNLATCH;
-  static wchar_t X12_UNLATCH;
-
- private:
-  static wchar_t PAD;
-  static wchar_t MACRO_05;
-  static wchar_t MACRO_06;
-  static const wchar_t* MACRO_05_HEADER;
-  static const wchar_t* MACRO_06_HEADER;
-  static const wchar_t MACRO_TRAILER;
-  std::vector<uint8_t> m_bytearray;
+  static const wchar_t LATCH_TO_C40;
+  static const wchar_t LATCH_TO_BASE256;
+  static const wchar_t UPPER_SHIFT;
+  static const wchar_t LATCH_TO_ANSIX12;
+  static const wchar_t LATCH_TO_TEXT;
+  static const wchar_t LATCH_TO_EDIFACT;
+  static const wchar_t C40_UNLATCH;
+  static const wchar_t X12_UNLATCH;
 
  private:
   static wchar_t randomize253State(wchar_t ch, int32_t codewordPosition);
@@ -71,7 +61,15 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   static bool isNativeX12(wchar_t ch);
   static bool isX12TermSep(wchar_t ch);
   static bool isNativeEDIFACT(wchar_t ch);
-  static bool isSpecialB256(wchar_t ch);
+
+  static const wchar_t PAD;
+  static const wchar_t MACRO_05;
+  static const wchar_t MACRO_06;
+  static const wchar_t MACRO_05_HEADER[];
+  static const wchar_t MACRO_06_HEADER[];
+  static const wchar_t MACRO_TRAILER;
+
+  std::vector<uint8_t> m_bytearray;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_HIGHLEVELENCODER_H_
