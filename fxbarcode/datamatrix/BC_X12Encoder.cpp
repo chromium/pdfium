@@ -66,7 +66,7 @@ void CBC_X12Encoder::handleEOD(CBC_EncoderContext& context,
     return;
   }
   int32_t available =
-      context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
+      context.m_symbolInfo->dataCapacity() - context.getCodewordCount();
   int32_t count = buffer.GetLength();
   if (count == 2) {
     context.writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);

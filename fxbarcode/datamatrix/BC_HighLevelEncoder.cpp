@@ -114,7 +114,7 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
   if (e != BCExceptionNO)
     return L"";
 
-  int32_t capacity = context.m_symbolInfo->m_dataCapacity;
+  int32_t capacity = context.m_symbolInfo->dataCapacity();
   if (len < capacity) {
     if (encodingMode != ASCII_ENCODATION &&
         encodingMode != BASE256_ENCODATION) {

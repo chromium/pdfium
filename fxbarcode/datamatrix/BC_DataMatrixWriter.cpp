@@ -50,50 +50,45 @@ namespace {
 std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
     CBC_DefaultPlacement* placement,
     CBC_SymbolInfo* symbolInfo) {
-  int32_t e = BCExceptionNO;
-  int32_t symbolWidth = symbolInfo->getSymbolDataWidth(e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  int32_t symbolHeight = symbolInfo->getSymbolDataHeight(e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  int32_t width = symbolInfo->getSymbolWidth(e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  int32_t height = symbolInfo->getSymbolHeight(e);
-  if (e != BCExceptionNO)
-    return nullptr;
+  int32_t symbolWidth = symbolInfo->getSymbolDataWidth();
+  ASSERT(symbolWidth);
+  int32_t symbolHeight = symbolInfo->getSymbolDataHeight();
+  ASSERT(symbolHeight);
+  int32_t width = symbolInfo->getSymbolWidth();
+  ASSERT(width);
+  int32_t height = symbolInfo->getSymbolHeight();
+  ASSERT(height);
 
   auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(width, height);
   matrix->Init();
   int32_t matrixY = 0;
   for (int32_t y = 0; y < symbolHeight; y++) {
     int32_t matrixX;
-    if ((y % symbolInfo->m_matrixHeight) == 0) {
+    if ((y % symbolInfo->matrixHeight()) == 0) {
       matrixX = 0;
-      for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
-        matrix->Set(matrixX, matrixY, (x % 2) == 0);
+      for (int32_t x = 0; x < width; x++) {
+        matrix->Set(matrixX, matrixY, x % 2 == 0);
         matrixX++;
       }
       matrixY++;
     }
     matrixX = 0;
     for (int32_t x = 0; x < symbolWidth; x++) {
-      if ((x % symbolInfo->m_matrixWidth) == 0) {
+      if (x % symbolInfo->matrixWidth() == 0) {
         matrix->Set(matrixX, matrixY, true);
         matrixX++;
       }
       matrix->Set(matrixX, matrixY, placement->getBit(x, y));
       matrixX++;
-      if ((x % symbolInfo->m_matrixWidth) == symbolInfo->m_matrixWidth - 1) {
-        matrix->Set(matrixX, matrixY, (y % 2) == 0);
+      if (x % symbolInfo->matrixWidth() == symbolInfo->matrixWidth() - 1) {
+        matrix->Set(matrixX, matrixY, y % 2 == 0);
         matrixX++;
       }
     }
     matrixY++;
-    if ((y % symbolInfo->m_matrixHeight) == symbolInfo->m_matrixHeight - 1) {
+    if (y % symbolInfo->matrixHeight() == symbolInfo->matrixHeight() - 1) {
       matrixX = 0;
-      for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
+      for (int32_t x = 0; x < width; x++) {
         matrix->Set(matrixX, matrixY, true);
         matrixX++;
       }
@@ -106,7 +101,9 @@ std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
 }  // namespace
 
 CBC_DataMatrixWriter::CBC_DataMatrixWriter() {}
+
 CBC_DataMatrixWriter::~CBC_DataMatrixWriter() {}
+
 bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
   m_iCorrectLevel = level;
   return true;
@@ -135,13 +132,10 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
   if (e != BCExceptionNO)
     return nullptr;
 
-  int32_t width = symbolInfo->getSymbolDataWidth(e);
-  if (e != BCExceptionNO)
-    return nullptr;
-
-  int32_t height = symbolInfo->getSymbolDataHeight(e);
-  if (e != BCExceptionNO)
-    return nullptr;
+  int32_t width = symbolInfo->getSymbolDataWidth();
+  ASSERT(width);
+  int32_t height = symbolInfo->getSymbolDataHeight();
+  ASSERT(height);
 
   auto placement =
       pdfium::MakeUnique<CBC_DefaultPlacement>(codewords, width, height);

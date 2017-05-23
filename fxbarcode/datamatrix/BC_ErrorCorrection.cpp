@@ -123,7 +123,7 @@ CBC_ErrorCorrection::~CBC_ErrorCorrection() {}
 CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
                                                  CBC_SymbolInfo* symbolInfo,
                                                  int32_t& e) {
-  if (codewords.GetLength() != symbolInfo->m_dataCapacity) {
+  if (codewords.GetLength() != symbolInfo->dataCapacity()) {
     e = BCExceptionIllegalArgument;
     return CFX_WideString();
   }
@@ -132,7 +132,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
   int32_t blockCount = symbolInfo->getInterleavedBlockCount();
   if (blockCount == 1) {
     CFX_WideString ecc =
-        createECCBlock(codewords, symbolInfo->m_errorCodewords, e);
+        createECCBlock(codewords, symbolInfo->errorCodewords(), e);
     if (e != BCExceptionNO)
       return CFX_WideString();
     sb += ecc;
@@ -150,7 +150,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
     }
     for (int32_t block = 0; block < blockCount; block++) {
       CFX_WideString temp;
-      for (int32_t d = block; d < symbolInfo->m_dataCapacity; d += blockCount) {
+      for (int32_t d = block; d < symbolInfo->dataCapacity(); d += blockCount) {
         temp += (wchar_t)codewords.GetAt(d);
       }
       CFX_WideString ecc = createECCBlock(temp, errorSizes[block], e);
@@ -159,7 +159,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
       int32_t pos = 0;
       for (int32_t l = block; l < errorSizes[block] * blockCount;
            l += blockCount) {
-        sb.SetAt(symbolInfo->m_dataCapacity + l, ecc.GetAt(pos++));
+        sb.SetAt(symbolInfo->dataCapacity() + l, ecc.GetAt(pos++));
       }
     }
   }

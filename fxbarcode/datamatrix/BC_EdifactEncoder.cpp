@@ -66,7 +66,7 @@ bool HandleEOD(CBC_EncoderContext* context, const CFX_WideString& buffer) {
       return false;
 
     int32_t available =
-        context->m_symbolInfo->m_dataCapacity - context->getCodewordCount();
+        context->m_symbolInfo->dataCapacity() - context->getCodewordCount();
     int32_t remaining = context->getRemainingCharacters();
     if (remaining == 0 && available <= 2)
       return true;
@@ -86,7 +86,7 @@ bool HandleEOD(CBC_EncoderContext* context, const CFX_WideString& buffer) {
       return false;
 
     int32_t available =
-        context->m_symbolInfo->m_dataCapacity - context->getCodewordCount();
+        context->m_symbolInfo->dataCapacity() - context->getCodewordCount();
     if (available >= 3) {
       restInAscii = false;
       context->updateSymbolInfo(

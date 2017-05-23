@@ -76,7 +76,6 @@ enum BCFORMAT {
 #define BCExceptionInvalidateData 77
 #define BCExceptionCharactersOutsideISO88591Encoding 87
 #define BCExceptionIllegalDataCodewords 88
-#define BCExceptionCannotHandleThisNumberOfDataRegions 89
 #define BCExceptionIllegalStateUnexpectedCase 90
 #define BCExceptionIllegalStateMessageLengthInvalid 92
 #define BCExceptionIllegalArgumentNotGigits 93

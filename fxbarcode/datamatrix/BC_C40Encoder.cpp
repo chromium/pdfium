@@ -65,7 +65,7 @@ void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
     if (e != BCExceptionNO) {
       return;
     }
-    int32_t available = context.m_symbolInfo->m_dataCapacity - curCodewordCount;
+    int32_t available = context.m_symbolInfo->dataCapacity() - curCodewordCount;
     if (!context.hasMoreCharacters()) {
       if ((buffer.GetLength() % 3) == 2) {
         if (available < 2 || available > 2) {
@@ -113,7 +113,7 @@ void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
   if (e != BCExceptionNO) {
     return;
   }
-  int32_t available = context.m_symbolInfo->m_dataCapacity - curCodewordCount;
+  int32_t available = context.m_symbolInfo->dataCapacity() - curCodewordCount;
   if (rest == 2) {
     buffer += (wchar_t)'\0';
     while (buffer.GetLength() >= 3) {
