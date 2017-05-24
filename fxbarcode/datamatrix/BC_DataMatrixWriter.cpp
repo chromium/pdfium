@@ -123,7 +123,7 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
   if (e != BCExceptionNO)
     return nullptr;
   CBC_SymbolInfo* symbolInfo =
-      CBC_SymbolInfo::lookup(encoded.GetLength(), shape, true, e);
+      CBC_SymbolInfo::lookup(encoded.GetLength(), shape, e);
   if (e != BCExceptionNO)
     return nullptr;
   CFX_WideString codewords =

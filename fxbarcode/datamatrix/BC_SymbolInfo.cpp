@@ -111,27 +111,8 @@ CBC_SymbolInfo::CBC_SymbolInfo(int32_t dataCapacity,
 
 CBC_SymbolInfo::~CBC_SymbolInfo() {}
 
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords, int32_t& e) {
-  return lookup(dataCodewords, FORCE_NONE, true, e);
-}
-
 CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
                                        SymbolShapeHint shape,
-                                       int32_t& e) {
-  return lookup(dataCodewords, shape, true, e);
-}
-
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
-                                       bool allowRectangular,
-                                       bool fail,
-                                       int32_t& e) {
-  SymbolShapeHint shape = allowRectangular ? FORCE_NONE : FORCE_SQUARE;
-  return lookup(dataCodewords, shape, fail, e);
-}
-
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
-                                       SymbolShapeHint shape,
-                                       bool fail,
                                        int32_t& e) {
   for (size_t i = 0; i < kSymbolsCount; i++) {
     CBC_SymbolInfo* symbol = g_symbols[i];
@@ -142,8 +123,7 @@ CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
     if (dataCodewords <= symbol->dataCapacity())
       return symbol;
   }
-  if (fail)
-    e = BCExceptionIllegalDataCodewords;
+  e = BCExceptionIllegalDataCodewords;
   return nullptr;
 }
 

@@ -91,7 +91,7 @@ void CBC_EncoderContext::updateSymbolInfo(int32_t& e) {
 }
 void CBC_EncoderContext::updateSymbolInfo(int32_t len, int32_t& e) {
   if (!m_symbolInfo || len > m_symbolInfo->dataCapacity()) {
-    m_symbolInfo = CBC_SymbolInfo::lookup(len, m_shape, true, e);
+    m_symbolInfo = CBC_SymbolInfo::lookup(len, m_shape, e);
     if (e != BCExceptionNO)
       return;
   }
