@@ -97,8 +97,8 @@ class CPDF_SecurityHandler {
 
   int m_Version;
   int m_Revision;
-  CPDF_Parser* m_pParser;
-  CPDF_Dictionary* m_pEncryptDict;
+  CFX_UnownedPtr<CPDF_Parser> m_pParser;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   uint32_t m_Permissions;
   int m_Cipher;
   uint8_t m_EncryptKey[32];

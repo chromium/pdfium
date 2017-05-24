@@ -13,6 +13,7 @@
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -65,7 +66,7 @@ class CPDF_FormField {
   Type GetType() const { return m_Type; }
   uint32_t GetFlags() const { return m_Flags; }
 
-  CPDF_Dictionary* GetFieldDict() const { return m_pDict; }
+  CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
   void SetFieldDict(CPDF_Dictionary* pDict) { m_pDict = pDict; }
 
   bool ResetField(bool bNotify = false);
@@ -74,7 +75,9 @@ class CPDF_FormField {
     return pdfium::CollectionSize<int>(m_ControlList);
   }
 
-  CPDF_FormControl* GetControl(int index) const { return m_ControlList[index]; }
+  CPDF_FormControl* GetControl(int index) const {
+    return m_ControlList[index].Get();
+  }
 
   int GetControlIndex(const CPDF_FormControl* pControl) const;
   int GetFieldType() const;
@@ -133,13 +136,13 @@ class CPDF_FormField {
   float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont; }
 
-  const CPDF_Dictionary* GetDict() const { return m_pDict; }
-  const CPDF_InterForm* GetForm() const { return m_pForm; }
+  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  const CPDF_InterForm* GetForm() const { return m_pForm.Get(); }
 
   CFX_WideString GetCheckValue(bool bDefault) const;
 
   void AddFormControl(CPDF_FormControl* pFormControl) {
-    m_ControlList.push_back(pFormControl);
+    m_ControlList.emplace_back(pFormControl);
   }
 
   void SetOpt(std::unique_ptr<CPDF_Object> pOpt) {
@@ -168,9 +171,10 @@ class CPDF_FormField {
 
   CPDF_FormField::Type m_Type;
   uint32_t m_Flags;
-  CPDF_InterForm* const m_pForm;
-  CPDF_Dictionary* m_pDict;
-  std::vector<CPDF_FormControl*> m_ControlList;  // Owned by InterForm parent.
+  CFX_UnownedPtr<CPDF_InterForm> const m_pForm;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pDict;
+  // Owned by InterForm parent.
+  std::vector<CFX_UnownedPtr<CPDF_FormControl>> m_ControlList;
   float m_FontSize;
   CPDF_Font* m_pFont;
 };

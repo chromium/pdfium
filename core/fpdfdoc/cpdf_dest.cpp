@@ -18,8 +18,16 @@ const char* const g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",
 
 }  // namespace
 
+CPDF_Dest::CPDF_Dest() {}
+
+CPDF_Dest::CPDF_Dest(const CPDF_Dest& pObj) = default;
+
+CPDF_Dest::CPDF_Dest(CPDF_Object* pObj) : m_pObj(pObj) {}
+
+CPDF_Dest::~CPDF_Dest() {}
+
 int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
-  CPDF_Array* pArray = ToArray(m_pObj);
+  CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return 0;
 
@@ -34,7 +42,7 @@ int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
 }
 
 uint32_t CPDF_Dest::GetPageObjNum() {
-  CPDF_Array* pArray = ToArray(m_pObj);
+  CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return 0;
 
@@ -49,7 +57,7 @@ uint32_t CPDF_Dest::GetPageObjNum() {
 }
 
 int CPDF_Dest::GetZoomMode() {
-  CPDF_Array* pArray = ToArray(m_pObj);
+  CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return 0;
 
@@ -76,7 +84,7 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   *pHasY = false;
   *pHasZoom = false;
 
-  CPDF_Array* pArray = ToArray(m_pObj);
+  CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return false;
 
@@ -114,7 +122,7 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
 }
 
 float CPDF_Dest::GetParam(int index) {
-  CPDF_Array* pArray = ToArray(m_pObj);
+  CPDF_Array* pArray = ToArray(m_pObj.Get());
   return pArray ? pArray->GetNumberAt(2 + index) : 0;
 }
 

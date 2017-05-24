@@ -14,6 +14,14 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxge/fx_dib.h"
 
+CPDF_Bookmark::CPDF_Bookmark() {}
+
+CPDF_Bookmark::CPDF_Bookmark(const CPDF_Bookmark& that) = default;
+
+CPDF_Bookmark::CPDF_Bookmark(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+
+CPDF_Bookmark::~CPDF_Bookmark() {}
+
 uint32_t CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict)
     return FXSYS_RGB(0, 0, 0);

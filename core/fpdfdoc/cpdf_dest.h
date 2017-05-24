@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFDOC_CPDF_DEST_H_
 #define CORE_FPDFDOC_CPDF_DEST_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -15,10 +16,12 @@ class CPDF_Object;
 
 class CPDF_Dest {
  public:
-  CPDF_Dest() : m_pObj(nullptr) {}
-  explicit CPDF_Dest(CPDF_Object* pObj) : m_pObj(pObj) {}
+  CPDF_Dest();
+  CPDF_Dest(const CPDF_Dest& that);
+  explicit CPDF_Dest(CPDF_Object* pObj);
+  ~CPDF_Dest();
 
-  CPDF_Object* GetObject() const { return m_pObj; }
+  CPDF_Object* GetObject() const { return m_pObj.Get(); }
   CFX_ByteString GetRemoteName();
   int GetPageIndex(CPDF_Document* pDoc);
   uint32_t GetPageObjNum();
@@ -33,7 +36,7 @@ class CPDF_Dest {
               float* pZoom) const;
 
  private:
-  CPDF_Object* m_pObj;
+  CFX_UnownedPtr<CPDF_Object> m_pObj;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEST_H_

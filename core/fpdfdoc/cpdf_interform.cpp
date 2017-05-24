@@ -659,9 +659,7 @@ CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
     LoadField(pFields->GetDictAt(i), 0);
 }
 
-CPDF_InterForm::~CPDF_InterForm() {
-  m_ControlMap.clear();
-}
+CPDF_InterForm::~CPDF_InterForm() {}
 
 bool CPDF_InterForm::s_bUpdateAP = true;
 

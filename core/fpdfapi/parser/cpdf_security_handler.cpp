@@ -413,7 +413,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const uint8_t* password,
                                              bool bIgnoreEncryptMeta,
                                              uint8_t* key,
                                              int32_t key_len) {
-  CalcEncryptKey(m_pEncryptDict, password, pass_size, key, key_len,
+  CalcEncryptKey(m_pEncryptDict.Get(), password, pass_size, key, key_len,
                  bIgnoreEncryptMeta, m_pParser->GetIDArray());
   CFX_ByteString ukey =
       m_pEncryptDict ? m_pEncryptDict->GetStringFor("U") : CFX_ByteString();
@@ -578,8 +578,8 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
     pEncryptDict->SetNewFor<CPDF_String>("O", CFX_ByteString(passcode, 32),
                                          false);
   }
-  CalcEncryptKey(m_pEncryptDict, (uint8_t*)user_pass, user_size, m_EncryptKey,
-                 key_len, false, pIdArray);
+  CalcEncryptKey(m_pEncryptDict.Get(), (uint8_t*)user_pass, user_size,
+                 m_EncryptKey, key_len, false, pIdArray);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
     memcpy(tempbuf, defpasscode, 32);

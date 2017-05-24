@@ -245,12 +245,12 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
 
     std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler =
         pdfium::MakeUnique<CPDF_SecurityHandler>();
-    if (!pSecurityHandler->OnInit(this, m_pEncryptDict))
+    if (!pSecurityHandler->OnInit(this, m_pEncryptDict.Get()))
       return PASSWORD_ERROR;
 
     m_pSecurityHandler = std::move(pSecurityHandler);
     auto pCryptoHandler = pdfium::MakeRetain<CPDF_CryptoHandler>();
-    if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get()))
+    if (!pCryptoHandler->Init(m_pEncryptDict.Get(), m_pSecurityHandler.get()))
       return HANDLER_ERROR;
     m_pSyntax->SetEncrypt(pCryptoHandler);
   }
