@@ -58,8 +58,8 @@ void CBA_FontMap::Initialize() {
         else
           nCharset = FX_CHARSET_ANSI;
       }
-      AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
-      AddFontToAnnotDict(m_pDefaultFont, m_sDefaultFontName);
+      AddFontData(m_pDefaultFont.Get(), m_sDefaultFontName, nCharset);
+      AddFontToAnnotDict(m_pDefaultFont.Get(), m_sDefaultFontName);
     }
   }
 
@@ -80,7 +80,7 @@ void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
   int32_t nCharset = FX_CHARSET_Default;
   if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont())
     nCharset = pSubstFont->m_Charset;
-  AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
+  AddFontData(m_pDefaultFont.Get(), m_sDefaultFontName, nCharset);
 }
 
 CPDF_Font* CBA_FontMap::FindFontSameCharset(CFX_ByteString* sFontAlias,
@@ -105,7 +105,7 @@ CPDF_Font* CBA_FontMap::FindFontSameCharset(CFX_ByteString* sFontAlias,
 }
 
 CPDF_Document* CBA_FontMap::GetDocument() {
-  return m_pDocument;
+  return m_pDocument.Get();
 }
 
 CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
@@ -167,7 +167,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
   if (!pStream) {
     pStream = m_pDocument->NewIndirect<CPDF_Stream>();
-    pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument,
+    pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument.Get(),
                                        pStream->GetObjNum());
   }
 
@@ -185,12 +185,12 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
   if (!pStreamResFontList) {
     pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
-    pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument,
+    pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument.Get(),
                                               pStreamResFontList->GetObjNum());
   }
   if (!pStreamResFontList->KeyExist(sAlias)) {
     pStreamResFontList->SetNewFor<CPDF_Reference>(
-        sAlias, m_pDocument, pFont->GetFontDict()->GetObjNum());
+        sAlias, m_pDocument.Get(), pFont->GetFontDict()->GetObjNum());
   }
 }
 
@@ -203,7 +203,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString* sAlias) {
   }
 
   CFX_ByteString sDA;
-  CPDF_Object* pObj = FPDF_GetFieldAttr(m_pAnnotDict, "DA");
+  CPDF_Object* pObj = FPDF_GetFieldAttr(m_pAnnotDict.Get(), "DA");
   if (pObj)
     sDA = pObj->GetString();
 

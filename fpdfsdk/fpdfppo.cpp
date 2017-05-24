@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -137,8 +138,8 @@ class CPDF_PageOrganizer {
   bool UpdateReference(CPDF_Object* pObj, ObjectNumberMap* pObjNumberMap);
   uint32_t GetNewObjId(ObjectNumberMap* pObjNumberMap, CPDF_Reference* pRef);
 
-  CPDF_Document* m_pDestPDFDoc;
-  CPDF_Document* m_pSrcPDFDoc;
+  CFX_UnownedPtr<CPDF_Document> m_pDestPDFDoc;
+  CFX_UnownedPtr<CPDF_Document> m_pSrcPDFDoc;
 };
 
 CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* pDestPDFDoc,
@@ -170,7 +171,7 @@ bool CPDF_PageOrganizer::PDFDocInit() {
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
     pNewPages = m_pDestPDFDoc->NewIndirect<CPDF_Dictionary>();
-    pNewRoot->SetNewFor<CPDF_Reference>("Pages", m_pDestPDFDoc,
+    pNewRoot->SetNewFor<CPDF_Reference>("Pages", m_pDestPDFDoc.Get(),
                                         pNewPages->GetObjNum());
   }
 
@@ -181,7 +182,7 @@ bool CPDF_PageOrganizer::PDFDocInit() {
   if (!pNewPages->GetArrayFor("Kids")) {
     pNewPages->SetNewFor<CPDF_Number>("Count", 0);
     pNewPages->SetNewFor<CPDF_Reference>(
-        "Kids", m_pDestPDFDoc,
+        "Kids", m_pDestPDFDoc.Get(),
         m_pDestPDFDoc->NewIndirect<CPDF_Array>()->GetObjNum());
   }
 
@@ -260,7 +261,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       uint32_t newobjnum = GetNewObjId(pObjNumberMap, pReference);
       if (newobjnum == 0)
         return false;
-      pReference->SetRef(m_pDestPDFDoc, newobjnum);
+      pReference->SetRef(m_pDestPDFDoc.Get(), newobjnum);
       break;
     }
     case CPDF_Object::DICTIONARY: {

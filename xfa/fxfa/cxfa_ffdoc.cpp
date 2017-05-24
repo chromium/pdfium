@@ -337,10 +337,6 @@ void CXFA_FFDoc::CloseDoc() {
   m_pApp->ClearEventTargets();
 }
 
-CPDF_Document* CXFA_FFDoc::GetPDFDoc() {
-  return m_pPDFDoc;
-}
-
 CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
     const CFX_WideStringC& wsName,
     int32_t& iImageXDpi,

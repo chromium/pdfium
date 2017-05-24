@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFDOC_CPDF_VIEWERPREFERENCES_H_
 #define CORE_FPDFDOC_CPDF_VIEWERPREFERENCES_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -33,7 +34,7 @@ class CPDF_ViewerPreferences {
  private:
   CPDF_Dictionary* GetViewerPreferences() const;
 
-  CPDF_Document* const m_pDoc;
+  CFX_UnownedPtr<CPDF_Document> const m_pDoc;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_VIEWERPREFERENCES_H_

@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
 #define FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 
 class CPDF_Dictionary;
@@ -17,9 +18,8 @@ class CBA_FontMap : public CPWL_FontMap {
   CBA_FontMap(CPDFSDK_Annot* pAnnot, CFX_SystemHandler* pSystemHandler);
   ~CBA_FontMap() override;
 
-  void SetDefaultFont(CPDF_Font* pFont, const CFX_ByteString& sFontName);
-
   void Reset();
+  void SetDefaultFont(CPDF_Font* pFont, const CFX_ByteString& sFontName);
   void SetAPType(const CFX_ByteString& sAPType);
 
  private:
@@ -36,9 +36,9 @@ class CBA_FontMap : public CPWL_FontMap {
   CPDF_Font* GetAnnotDefaultFont(CFX_ByteString* csNameTag);
   void AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAlias);
 
-  CPDF_Document* m_pDocument;
-  CPDF_Dictionary* m_pAnnotDict;
-  CPDF_Font* m_pDefaultFont;
+  CFX_UnownedPtr<CPDF_Document> m_pDocument;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pAnnotDict;
+  CFX_UnownedPtr<CPDF_Font> m_pDefaultFont;
   CFX_ByteString m_sDefaultFontName;
   CFX_ByteString m_sAPType;
 };
