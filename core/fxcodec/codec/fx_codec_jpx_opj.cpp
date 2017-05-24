@@ -16,8 +16,13 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/lcms2-2.6/include/lcms2.h"
 #include "third_party/libopenjpeg20/openjpeg.h"
+
+#if defined(USE_SYSTEM_LCMS2)
+#include <lcms2.h>
+#else
+#include "third_party/lcms2-2.6/include/lcms2.h"
+#endif
 
 static void fx_error_callback(const char* msg, void* client_data) {
   (void)client_data;

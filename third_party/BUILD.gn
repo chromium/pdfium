@@ -336,6 +336,21 @@ group("zlib") {
   }
 }
 
+config("system_lcms2_config") {
+  libs = [ "lcms2" ]
+  defines = [ "USE_SYSTEM_LCMS2" ]
+}
+
+group("lcms2") {
+  if (use_system_lcms2) {
+    public_configs = [ ":system_lcms2_config" ]
+  } else {
+    public_deps = [
+      ":fx_lcms2",
+    ]
+  }
+}
+
 config("fx_libopenjpeg_warnings") {
   visibility = [ ":*" ]
   if (is_win) {

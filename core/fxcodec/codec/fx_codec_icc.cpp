@@ -6,7 +6,12 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
+
+#if defined(USE_SYSTEM_LCMS2)
+#include <lcms2.h>
+#else
 #include "third_party/lcms2-2.6/include/lcms2.h"
+#endif
 
 struct CLcmsCmm {
   cmsHTRANSFORM m_hTransform;
