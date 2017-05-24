@@ -11,6 +11,9 @@
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/fxjs_v8.h"
 #include "testing/embedder_test.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
 
 class CXFA_ScriptContext;
 
@@ -27,6 +30,7 @@ class XFAJSEmbedderTest : public EmbedderTest {
                     bool must_linearize = false) override;
 
   v8::Isolate* GetIsolate() const { return isolate_; }
+  CXFA_Document* GetXFADocument();
 
   bool Execute(const CFX_ByteStringC& input);
   CFXJSE_Value* GetValue() const { return value_.get(); }

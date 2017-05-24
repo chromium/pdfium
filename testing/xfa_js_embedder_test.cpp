@@ -38,16 +38,17 @@ void XFAJSEmbedderTest::TearDown() {
   isolate_ = nullptr;
 }
 
+CXFA_Document* XFAJSEmbedderTest::GetXFADocument() {
+  return UnderlyingFromFPDFDocument(document())->GetXFADoc()->GetXFADoc();
+}
+
 bool XFAJSEmbedderTest::OpenDocument(const std::string& filename,
                                      const char* password,
                                      bool must_linearize) {
   if (!EmbedderTest::OpenDocument(filename, password, must_linearize))
     return false;
 
-  script_context_ = UnderlyingFromFPDFDocument(document())
-                        ->GetXFADoc()
-                        ->GetXFADoc()
-                        ->GetScriptContext();
+  script_context_ = GetXFADocument()->GetScriptContext();
   return true;
 }
 
@@ -55,7 +56,7 @@ bool XFAJSEmbedderTest::Execute(const CFX_ByteStringC& input) {
   value_ = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
   if (script_context_->RunScript(XFA_SCRIPTLANGTYPE_Formcalc,
                                  CFX_WideString::FromUTF8(input).AsStringC(),
-                                 value_.get(), nullptr)) {
+                                 value_.get(), GetXFADocument()->GetRoot())) {
     return true;
   }
 
