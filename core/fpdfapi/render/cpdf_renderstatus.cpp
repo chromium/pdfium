@@ -673,6 +673,17 @@ struct Coon_Bezier {
   float Distance() { return x.Distance() + y.Distance(); }
 };
 
+int Interpolate(int p1, int p2, int delta1, int delta2, bool* overflow) {
+  pdfium::base::CheckedNumeric<int> p = p2;
+  p -= p1;
+  p *= delta1;
+  p /= delta2;
+  p += p1;
+  if (!p.IsValid())
+    *overflow = true;
+  return p.ValueOrDefault(0);
+}
+
 int BiInterpolImpl(int c0,
                    int c1,
                    int c2,
@@ -680,26 +691,30 @@ int BiInterpolImpl(int c0,
                    int x,
                    int y,
                    int x_scale,
-                   int y_scale) {
-  int x1 = c0 + (c3 - c0) * x / x_scale;
-  int x2 = c1 + (c2 - c1) * x / x_scale;
-  return x1 + (x2 - x1) * y / y_scale;
+                   int y_scale,
+                   bool* overflow) {
+  int x1 = Interpolate(c0, c3, x, x_scale, overflow);
+  int x2 = Interpolate(c1, c2, x, x_scale, overflow);
+  return Interpolate(x1, x2, y, y_scale, overflow);
 }
 
 struct Coon_Color {
   Coon_Color() { memset(comp, 0, sizeof(int) * 3); }
   int comp[3];
 
-  void BiInterpol(Coon_Color colors[4],
+  // Returns true if successful, false if overflow detected.
+  bool BiInterpol(Coon_Color colors[4],
                   int x,
                   int y,
                   int x_scale,
                   int y_scale) {
+    bool overflow = false;
     for (int i = 0; i < 3; i++) {
       comp[i] = BiInterpolImpl(colors[0].comp[i], colors[1].comp[i],
                                colors[2].comp[i], colors[3].comp[i], x, y,
-                               x_scale, y_scale);
+                               x_scale, y_scale, &overflow);
     }
+    return !overflow;
   }
 
   int Distance(Coon_Color& o) {
@@ -731,14 +746,23 @@ struct CPDF_PatchDrawer {
     int d_left = 0;
     int d_top = 0;
     int d_right = 0;
-    div_colors[0].BiInterpol(patch_colors, left, bottom, x_scale, y_scale);
+    if (!div_colors[0].BiInterpol(patch_colors, left, bottom, x_scale,
+                                  y_scale)) {
+      return;
+    }
     if (!bSmall) {
-      div_colors[1].BiInterpol(patch_colors, left, bottom + 1, x_scale,
-                               y_scale);
-      div_colors[2].BiInterpol(patch_colors, left + 1, bottom + 1, x_scale,
-                               y_scale);
-      div_colors[3].BiInterpol(patch_colors, left + 1, bottom, x_scale,
-                               y_scale);
+      if (!div_colors[1].BiInterpol(patch_colors, left, bottom + 1, x_scale,
+                                    y_scale)) {
+        return;
+      }
+      if (!div_colors[2].BiInterpol(patch_colors, left + 1, bottom + 1, x_scale,
+                                    y_scale)) {
+        return;
+      }
+      if (!div_colors[3].BiInterpol(patch_colors, left + 1, bottom, x_scale,
+                                    y_scale)) {
+        return;
+      }
       d_bottom = div_colors[3].Distance(div_colors[0]);
       d_left = div_colors[1].Distance(div_colors[0]);
       d_top = div_colors[1].Distance(div_colors[2]);
