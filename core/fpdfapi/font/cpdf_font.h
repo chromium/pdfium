@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
@@ -78,7 +79,7 @@ class CPDF_Font {
   virtual int GetCharWidthF(uint32_t charcode) = 0;
   virtual FX_RECT GetCharBBox(uint32_t charcode) = 0;
 
-  CPDF_Document* GetDocument() { return m_pDocument; }
+  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   CFX_Font* GetFont() { return &m_Font; }
   const CFX_Font* GetFont() const { return &m_Font; }
   CFX_Font* GetFontFallback(int position);
@@ -101,7 +102,7 @@ class CPDF_Font {
                                const std::vector<CFX_ByteString>& charnames,
                                int charcode);
 
-  CPDF_Document* m_pDocument;
+  CFX_UnownedPtr<CPDF_Document> m_pDocument;
   CFX_Font m_Font;
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
   CFX_ByteString m_BaseFont;

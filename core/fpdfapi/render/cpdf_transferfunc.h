@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_RENDER_CPDF_TRANSFERFUNC_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Document;
@@ -22,7 +23,7 @@ class CPDF_TransferFunc : public CFX_Retainable {
   CFX_RetainPtr<CFX_DIBSource> TranslateImage(
       const CFX_RetainPtr<CFX_DIBSource>& pSrc);
 
-  CPDF_Document* const m_pPDFDoc;
+  CFX_UnownedPtr<CPDF_Document> const m_pPDFDoc;
   bool m_bIdentity;
   uint8_t m_Samples[256 * 3];
 

@@ -8,6 +8,10 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 
+CPDF_BookmarkTree::CPDF_BookmarkTree(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
+
+CPDF_BookmarkTree::~CPDF_BookmarkTree() {}
+
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {
   CPDF_Dictionary* pParentDict = parent.GetDict();

@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_PAGE_CPDF_TEXTSTATE_H_
 
 #include "core/fxcrt/cfx_shared_copy_on_write.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_Document;
@@ -72,7 +73,7 @@ class CPDF_TextState {
     float GetShearAngle() const;
 
     CPDF_Font* m_pFont;
-    CPDF_Document* m_pDocument;
+    CFX_UnownedPtr<CPDF_Document> m_pDocument;
     float m_FontSize;
     float m_CharSpace;
     float m_WordSpace;
