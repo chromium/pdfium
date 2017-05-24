@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -36,9 +37,9 @@ class CPDF_PageContentGenerator {
   CFX_ByteString RealizeResource(uint32_t dwResourceObjNum,
                                  const CFX_ByteString& bsType);
 
-  CPDF_Page* const m_pPage;
-  CPDF_Document* const m_pDocument;
-  std::vector<CPDF_PageObject*> m_pageObjects;
+  CFX_UnownedPtr<CPDF_Page> const m_pPage;
+  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  std::vector<CFX_UnownedPtr<CPDF_PageObject>> m_pageObjects;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_

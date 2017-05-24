@@ -11,6 +11,7 @@
 #include <set>
 
 #include "core/fpdfapi/page/cpdf_countedobject.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 
@@ -66,8 +67,8 @@ class CPDF_DocPageData {
                                      const CPDF_Dictionary* pResources,
                                      std::set<CPDF_Object*>* pVisited);
 
-  CPDF_Document* const m_pPDFDoc;
   bool m_bForceClear;
+  CFX_UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::map<CFX_ByteString, CPDF_Stream*> m_HashProfileMap;
   std::map<const CPDF_Object*, CPDF_CountedColorSpace*> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, CFX_RetainPtr<CPDF_StreamAcc>> m_FontFileMap;

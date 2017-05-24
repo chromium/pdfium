@@ -52,7 +52,7 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
     : m_pPage(pPage), m_pDocument(m_pPage->m_pDocument.Get()) {
   for (const auto& pObj : *pPage->GetPageObjectList()) {
     if (pObj)
-      m_pageObjects.push_back(pObj.get());
+      m_pageObjects.emplace_back(pObj.get());
   }
 }
 
@@ -60,7 +60,7 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
 
 void CPDF_PageContentGenerator::GenerateContent() {
   CFX_ByteTextBuf buf;
-  for (CPDF_PageObject* pPageObj : m_pageObjects) {
+  for (auto& pPageObj : m_pageObjects) {
     if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
       ProcessImage(&buf, pImageObject);
     else if (CPDF_PathObject* pPathObj = pPageObj->AsPath())
@@ -76,7 +76,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
 
   CPDF_Stream* pStream = m_pDocument->NewIndirect<CPDF_Stream>();
   pStream->SetData(buf.GetBuffer(), buf.GetLength());
-  pPageDict->SetNewFor<CPDF_Reference>("Contents", m_pDocument,
+  pPageDict->SetNewFor<CPDF_Reference>("Contents", m_pDocument.Get(),
                                        pStream->GetObjNum());
 }
 
@@ -87,7 +87,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
   if (!m_pPage->m_pResources) {
     m_pPage->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
     m_pPage->m_pFormDict->SetNewFor<CPDF_Reference>(
-        "Resources", m_pDocument, m_pPage->m_pResources->GetObjNum());
+        "Resources", m_pDocument.Get(), m_pPage->m_pResources->GetObjNum());
   }
   CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictFor(bsType);
   if (!pResList)
@@ -102,7 +102,8 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     }
     idnum++;
   }
-  pResList->SetNewFor<CPDF_Reference>(name, m_pDocument, dwResourceObjNum);
+  pResList->SetNewFor<CPDF_Reference>(name, m_pDocument.Get(),
+                                      dwResourceObjNum);
   return name;
 }
 
@@ -246,7 +247,7 @@ void CPDF_PageContentGenerator::ProcessText(CFX_ByteTextBuf* buf,
   *buf << "BT " << pTextObj->GetTextMatrix() << " Tm ";
   CPDF_Font* pFont = pTextObj->GetFont();
   if (!pFont)
-    pFont = CPDF_Font::GetStockFont(m_pDocument, "Helvetica");
+    pFont = CPDF_Font::GetStockFont(m_pDocument.Get(), "Helvetica");
   FontData fontD;
   if (pFont->IsType1Font())
     fontD.type = "Type1";

@@ -61,13 +61,11 @@ class CPDF_ColorSpace {
                                   int image_width,
                                   int image_height,
                                   bool bTransMask) const;
-
-  CPDF_Array* GetArray() const { return m_pArray.Get(); }
   virtual CPDF_ColorSpace* GetBaseCS() const;
-
   virtual void EnableStdConversion(bool bEnabled);
 
-  CPDF_Document* const m_pDocument;
+  CPDF_Array* GetArray() const { return m_pArray.Get(); }
+  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
  protected:
   CPDF_ColorSpace(CPDF_Document* pDoc, int family, uint32_t nComponents);
@@ -81,6 +79,7 @@ class CPDF_ColorSpace {
                          float* k) const;
   virtual bool v_SetCMYK(float* pBuf, float c, float m, float y, float k) const;
 
+  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
   int m_Family;
   uint32_t m_nComponents;
   CFX_UnownedPtr<CPDF_Array> m_pArray;

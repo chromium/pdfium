@@ -234,8 +234,8 @@ void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
           pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
           std::move(pColorTable), iPalette * 3, std::move(pNewDict));
-      pCS->AddNew<CPDF_Reference>(m_pDocument, pCTS->GetObjNum());
-      pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument,
+      pCS->AddNew<CPDF_Reference>(m_pDocument.Get(), pCTS->GetObjNum());
+      pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument.Get(),
                                        pCS->GetObjNum());
     } else {
       pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
@@ -277,7 +277,7 @@ void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
     pMaskDict->SetNewFor<CPDF_Number>("Length", mask_size);
     CPDF_Stream* pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
         std::move(mask_buf), mask_size, std::move(pMaskDict));
-    pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,
+    pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument.Get(),
                                      pNewStream->GetObjNum());
   }
 
@@ -329,7 +329,7 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage,
 
 CFX_RetainPtr<CFX_DIBSource> CPDF_Image::LoadDIBSource() const {
   auto source = pdfium::MakeRetain<CPDF_DIBSource>();
-  if (!source->Load(m_pDocument, m_pStream.Get()))
+  if (!source->Load(m_pDocument.Get(), m_pStream.Get()))
     return nullptr;
 
   return source;
@@ -349,7 +349,7 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                                     uint32_t GroupFamily,
                                     bool bLoadMask) {
   auto source = pdfium::MakeRetain<CPDF_DIBSource>();
-  int ret = source->StartLoadDIBSource(m_pDocument, m_pStream.Get(), true,
+  int ret = source->StartLoadDIBSource(m_pDocument.Get(), m_pStream.Get(), true,
                                        pFormResource, pPageResource, bStdCS,
                                        GroupFamily, bLoadMask);
   if (!ret) {
