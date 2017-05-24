@@ -513,7 +513,7 @@ int32_t CPDF_Creator::WriteDoc_Stage2() {
     if (m_pEncryptDict && m_pEncryptDict->IsInline()) {
       m_dwLastObjNum += 1;
       FX_FILESIZE saveOffset = m_Archive->CurrentOffset();
-      if (!WriteIndirectObj(m_dwLastObjNum, m_pEncryptDict))
+      if (!WriteIndirectObj(m_dwLastObjNum, m_pEncryptDict.Get()))
         return -1;
 
       m_ObjectOffsets[m_dwLastObjNum] = saveOffset;
@@ -819,10 +819,10 @@ void CPDF_Creator::InitID() {
       CFX_ByteString user_pass = m_pParser->GetPassword();
       uint32_t flag = PDF_ENCRYPT_CONTENT;
       CPDF_SecurityHandler handler;
-      handler.OnCreate(m_pEncryptDict, m_pIDArray.get(), user_pass.raw_str(),
-                       user_pass.GetLength(), flag);
+      handler.OnCreate(m_pEncryptDict.Get(), m_pIDArray.get(),
+                       user_pass.raw_str(), user_pass.GetLength(), flag);
       m_pCryptoHandler = pdfium::MakeRetain<CPDF_CryptoHandler>();
-      m_pCryptoHandler->Init(m_pEncryptDict, &handler);
+      m_pCryptoHandler->Init(m_pEncryptDict.Get(), &handler);
       m_bSecurityChanged = true;
     }
   }

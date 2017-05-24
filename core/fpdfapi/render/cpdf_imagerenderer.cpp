@@ -59,10 +59,10 @@ bool CPDF_ImageRenderer::StartLoadDIBSource() {
   if (!image_rect.Valid())
     return false;
 
-  if (m_Loader.Start(m_pImageObject,
+  if (m_Loader.Start(m_pImageObject.Get(),
                      m_pRenderStatus->m_pContext->GetPageCache(), m_bStdCS,
                      m_pRenderStatus->m_GroupFamily,
-                     m_pRenderStatus->m_bLoadMask, m_pRenderStatus)) {
+                     m_pRenderStatus->m_bLoadMask, m_pRenderStatus.Get())) {
     m_Status = 4;
     return true;
   }
@@ -102,7 +102,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
       if (m_pPattern)
         m_bPatternColor = true;
     }
-    m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject);
+    m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject.Get());
   } else if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
     m_pClone = m_pDIBSource->Clone(nullptr);
     m_pClone->ConvertColorScale(m_pRenderStatus->m_Options.m_BackColor,
@@ -127,7 +127,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
     return DrawMaskedImage();
 
   if (m_bPatternColor)
-    return DrawPatternImage(m_pObj2Device);
+    return DrawPatternImage(m_pObj2Device.Get());
 
   if (m_BitmapAlpha != 255 || !state.HasRef() || !state.GetFillOP() ||
       state.GetOPMode() != 0 || state.GetBlendType() != FXDIB_BLEND_NORMAL ||
@@ -284,11 +284,11 @@ bool CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
   patternDevice.Translate(static_cast<float>(-rect.left),
                           static_cast<float>(-rect.top));
   if (CPDF_TilingPattern* pTilingPattern = m_pPattern->AsTilingPattern()) {
-    bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject,
+    bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject.Get(),
                                     &patternDevice, false);
   } else if (CPDF_ShadingPattern* pShadingPattern =
                  m_pPattern->AsShadingPattern()) {
-    bitmap_render.DrawShadingPattern(pShadingPattern, m_pImageObject,
+    bitmap_render.DrawShadingPattern(pShadingPattern, m_pImageObject.Get(),
                                      &patternDevice, false);
   }
 
@@ -539,7 +539,7 @@ bool CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
                                                       pPause);
 
   if (m_Status == 4) {
-    if (m_Loader.Continue(pPause, m_pRenderStatus))
+    if (m_Loader.Continue(pPause, m_pRenderStatus.Get()))
       return true;
 
     if (StartRenderDIBSource())

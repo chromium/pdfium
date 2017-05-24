@@ -62,10 +62,10 @@ class CPDF_ImageRenderer {
                           const FX_RECT& rect) const;
   void HandleFilters();
 
-  CPDF_RenderStatus* m_pRenderStatus;
-  CPDF_ImageObject* m_pImageObject;
+  CFX_UnownedPtr<CPDF_RenderStatus> m_pRenderStatus;
+  CFX_UnownedPtr<CPDF_ImageObject> m_pImageObject;
   int m_Status;
-  const CFX_Matrix* m_pObj2Device;
+  CFX_UnownedPtr<const CFX_Matrix> m_pObj2Device;
   CFX_Matrix m_ImageMatrix;
   CPDF_ImageLoader m_Loader;
   CFX_RetainPtr<CFX_DIBSource> m_pDIBSource;

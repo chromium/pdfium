@@ -752,8 +752,8 @@ CFX_RetainPtr<CPDF_DIBSource> CPDF_DIBSource::DetachMask() {
 
 int CPDF_DIBSource::StartLoadMaskDIB() {
   m_pMask = pdfium::MakeRetain<CPDF_DIBSource>();
-  int ret = m_pMask->StartLoadDIBSource(m_pDocument, m_pMaskStream, false,
-                                        nullptr, nullptr, true);
+  int ret = m_pMask->StartLoadDIBSource(m_pDocument.Get(), m_pMaskStream.Get(),
+                                        false, nullptr, nullptr, true);
   if (ret == 2) {
     if (m_Status == 0)
       m_Status = 2;

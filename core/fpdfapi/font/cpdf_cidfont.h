@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -73,7 +74,7 @@ class CPDF_CIDFont : public CPDF_Font {
   wchar_t GetUnicodeFromCharCode(uint32_t charcode) const;
 
   CFX_RetainPtr<CPDF_CMap> m_pCMap;
-  CPDF_CID2UnicodeMap* m_pCID2UnicodeMap;
+  CFX_UnownedPtr<CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
   CIDSet m_Charset;
   bool m_bType1;
   bool m_bCIDIsGID;
