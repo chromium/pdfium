@@ -251,6 +251,8 @@ TEST_F(FM2JSContextEmbedderTest, Min) {
     const char* program;
     int result;
   } tests[] = {{"Min(234, 15, 107)", 15},
+               // TODO(dsinclair): Verify with Reader; I believe this should
+               // have a return of 0.
                // {"Min(\"abc\", 15, \"Tony Blue\")", 15},
                {"Min(\"abc\")", 0}};
 
@@ -282,7 +284,7 @@ TEST_F(FM2JSContextEmbedderTest, Mod) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Round) {
+TEST_F(FM2JSContextEmbedderTest, Round) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {

@@ -957,9 +957,8 @@ void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
     uPrecision = static_cast<uint8_t>(pdfium::clamp(dPrecision, 0.0, 12.0));
   }
 
-  CFX_Decimal decimalValue((float)dValue, uPrecision);
-  CFX_WideString wsValue = decimalValue;
-  args.GetReturnValue()->SetString(wsValue.UTF8Encode().AsStringC());
+  CFX_Decimal decimalValue(static_cast<float>(dValue), uPrecision);
+  args.GetReturnValue()->SetDouble(decimalValue);
 }
 
 // static
