@@ -797,26 +797,27 @@ TEST_F(FM2JSContextEmbedderTest, Term) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Choose) {
+TEST_F(FM2JSContextEmbedderTest, Choose) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  EXPECT_TRUE(
-      Execute("Choose(3, \"Taxes\", \"Price\", \"Person\", \"Teller\")"));
-  CFXJSE_Value* value = GetValue();
-  EXPECT_TRUE(value->IsString());
-  EXPECT_STREQ("Person", value->ToString().c_str());
+  struct {
+    const char* program;
+    const char* result;
+  } tests[] = {
+      {"Choose(3, \"Taxes\", \"Price\", \"Person\", \"Teller\")", "Person"},
+      {"Choose(2, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)", "9"},
+      {"Choose(20/3, \"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\")",
+       "F"}};
 
-  EXPECT_TRUE(Execute("Choose(2, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)"));
-  value = GetValue();
-  EXPECT_TRUE(value->IsInteger());
-  EXPECT_EQ(9, value->ToInteger());
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    EXPECT_TRUE(Execute(tests[i].program));
 
-  EXPECT_TRUE(Execute(
-      "Choose(20/3, \"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\")"));
-  value = GetValue();
-  EXPECT_TRUE(value->IsString());
-  EXPECT_STREQ("F", value->ToString().c_str())
-      << " Result: '" << value->ToString().c_str() << "'";
+    CFXJSE_Value* value = GetValue();
+    EXPECT_TRUE(value->IsString());
+    EXPECT_STREQ(tests[i].result, value->ToString().c_str())
+        << "Program: " << tests[i].program << " Result: '"
+        << value->ToString().c_str() << "'";
+  }
 }
 
 TEST_F(FM2JSContextEmbedderTest, DISABLED_Exists) {
