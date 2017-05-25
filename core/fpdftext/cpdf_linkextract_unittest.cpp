@@ -14,11 +14,11 @@ class CPDF_TestLinkExtract : public CPDF_LinkExtract {
  private:
   // Add test cases as friends to access protected member functions.
   // Access CheckMailLink and CheckWebLink.
-  FRIEND_TEST(fpdf_text_int, CheckMailLink);
-  FRIEND_TEST(fpdf_text_int, CheckWebLink);
+  FRIEND_TEST(CPDF_LinkExtractTest, CheckMailLink);
+  FRIEND_TEST(CPDF_LinkExtractTest, CheckWebLink);
 };
 
-TEST(fpdf_text_int, CheckMailLink) {
+TEST(CPDF_LinkExtractTest, CheckMailLink) {
   CPDF_TestLinkExtract extractor;
   // Check cases that fail to extract valid mail link.
   const wchar_t* const invalid_strs[] = {
@@ -59,7 +59,7 @@ TEST(fpdf_text_int, CheckMailLink) {
   }
 }
 
-TEST(fpdf_text_int, CheckWebLink) {
+TEST(CPDF_LinkExtractTest, CheckWebLink) {
   CPDF_TestLinkExtract extractor;
   // Check cases that fail to extract valid web link.
   // The last few are legit web addresses that we don't handle now.
