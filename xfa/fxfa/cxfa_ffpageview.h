@@ -31,7 +31,7 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
       uint32_t dwWidgetFilter);
 
  protected:
-  CXFA_FFDocView* const m_pDocView;
+  CFX_UnownedPtr<CXFA_FFDocView> const m_pDocView;
 };
 
 using CXFA_LayoutItemIterator =
@@ -68,11 +68,11 @@ class CXFA_TabParam {
 
   void AppendTabParam(CXFA_TabParam* pParam);
   void ClearChildren();
-  CXFA_FFWidget* GetWidget() { return m_pWidget; }
+  CXFA_FFWidget* GetWidget() const { return m_pWidget.Get(); }
   const std::vector<CXFA_FFWidget*>& GetChildren() const { return m_Children; }
 
  private:
-  CXFA_FFWidget* const m_pWidget;
+  CFX_UnownedPtr<CXFA_FFWidget> const m_pWidget;
   std::vector<CXFA_FFWidget*> m_Children;
 };
 

@@ -30,7 +30,7 @@ class CXML_Element : public CXML_Object {
   CFX_ByteString GetTagName(bool bQualified = false) const;
   CFX_ByteString GetNamespace(bool bQualified = false) const;
   CFX_ByteString GetNamespaceURI(const CFX_ByteString& qName) const;
-  const CXML_Element* GetParent() const { return m_pParent; }
+  const CXML_Element* GetParent() const { return m_pParent.Get(); }
   uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }
   void GetAttrByIndex(int index,
                       CFX_ByteString* space,
@@ -104,7 +104,7 @@ class CXML_Element : public CXML_Object {
   friend class CXML_Parser;
   friend class CXML_Composer;
 
-  const CXML_Element* const m_pParent;
+  CFX_UnownedPtr<const CXML_Element> const m_pParent;
   CFX_ByteString m_QSpaceName;
   CFX_ByteString m_TagName;
   CXML_AttrMap m_AttrMap;

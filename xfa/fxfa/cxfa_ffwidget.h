@@ -185,7 +185,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
 
   CXFA_FFDocView* m_pDocView;
   CXFA_FFPageView* m_pPageView;
-  CXFA_WidgetAcc* const m_pDataAcc;
+  CFX_UnownedPtr<CXFA_WidgetAcc> const m_pDataAcc;
   mutable CFX_RectF m_rtWidget;
 };
 

@@ -639,14 +639,14 @@ bool CXFA_FFField::ProcessCommittedData() {
     return false;
 
   m_pDocView->SetChangeMark();
-  m_pDocView->AddValidateWidget(m_pDataAcc);
+  m_pDocView->AddValidateWidget(m_pDataAcc.Get());
   return true;
 }
 
 int32_t CXFA_FFField::CalculateOverride() {
   CXFA_WidgetAcc* pAcc = m_pDataAcc->GetExclGroup();
   if (!pAcc)
-    return CalculateWidgetAcc(m_pDataAcc);
+    return CalculateWidgetAcc(m_pDataAcc.Get());
   if (CalculateWidgetAcc(pAcc) == 0)
     return 0;
 
@@ -745,26 +745,26 @@ void CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {}
 void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::Mouse: {
-      CFWL_EventMouse* event = (CFWL_EventMouse*)pEvent;
+      CFWL_EventMouse* event = static_cast<CFWL_EventMouse*>(pEvent);
       if (event->m_dwCmd == FWL_MouseCommand::Enter) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseEnter;
-        eParam.m_pTarget = m_pDataAcc;
+        eParam.m_pTarget = m_pDataAcc.Get();
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_MouseEnter, &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::Leave) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseExit;
-        eParam.m_pTarget = m_pDataAcc;
+        eParam.m_pTarget = m_pDataAcc.Get();
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_MouseExit, &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonDown) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseDown;
-        eParam.m_pTarget = m_pDataAcc;
+        eParam.m_pTarget = m_pDataAcc.Get();
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_MouseDown, &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonUp) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseUp;
-        eParam.m_pTarget = m_pDataAcc;
+        eParam.m_pTarget = m_pDataAcc.Get();
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_MouseUp, &eParam);
       }
       break;
@@ -772,7 +772,7 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
     case CFWL_Event::Type::Click: {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Click;
-      eParam.m_pTarget = m_pDataAcc;
+      eParam.m_pTarget = m_pDataAcc.Get();
       m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Click, &eParam);
       break;
     }

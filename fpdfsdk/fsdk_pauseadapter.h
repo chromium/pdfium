@@ -19,7 +19,7 @@ class IFSDK_PAUSE_Adapter : public IFX_Pause {
   bool NeedToPauseNow() override;
 
  private:
-  IFSDK_PAUSE* const m_IPause;
+  CFX_UnownedPtr<IFSDK_PAUSE> const m_IPause;
 };
 
 #endif  // FPDFSDK_FSDK_PAUSEADAPTER_H_

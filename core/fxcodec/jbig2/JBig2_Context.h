@@ -95,7 +95,7 @@ class CJBig2_Context {
   bool m_bInPage;
   bool m_bBufSpecified;
   int32_t m_PauseStep;
-  IFX_Pause* const m_pPause;
+  CFX_UnownedPtr<IFX_Pause> const m_pPause;
   FXCODEC_STATUS m_ProcessingStatus;
   std::vector<JBig2ArithCtx> m_gbContext;
   std::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;

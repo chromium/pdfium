@@ -251,7 +251,7 @@ void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
 }
 
 CXFA_FFDoc* CXFA_FFNotify::GetHDOC() {
-  return m_pDoc;
+  return m_pDoc.Get();
 }
 
 IXFA_DocEnvironment* CXFA_FFNotify::GetDocEnvironment() const {
@@ -468,7 +468,7 @@ void CXFA_FFNotify::OnChildAdded(CXFA_Node* pSender) {
       !(pDocView->m_bInLayoutStatus) &&
       (pDocView->GetLayoutStatus() == XFA_DOCVIEW_LAYOUTSTATUS_End);
   if (bLayoutReady)
-    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc);
+    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
 }
 
 void CXFA_FFNotify::OnChildRemoved() {
@@ -480,7 +480,7 @@ void CXFA_FFNotify::OnChildRemoved() {
       !(pDocView->m_bInLayoutStatus) &&
       (pDocView->GetLayoutStatus() == XFA_DOCVIEW_LAYOUTSTATUS_End);
   if (bLayoutReady)
-    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc);
+    m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
 }
 
 void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,

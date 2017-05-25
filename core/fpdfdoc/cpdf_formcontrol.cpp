@@ -32,6 +32,8 @@ CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
       m_pWidgetDict(pWidgetDict),
       m_pForm(m_pField->GetForm()) {}
 
+CPDF_FormControl::~CPDF_FormControl() {}
+
 CFX_ByteString CPDF_FormControl::GetOnStateName() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
@@ -167,7 +169,7 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
   if (m_pWidgetDict->GetIntegerFor("F") & ANNOTFLAG_HIDDEN)
     return;
 
-  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(m_pWidgetDict, mode);
+  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(m_pWidgetDict.Get(), mode);
   if (!pStream)
     return;
 
@@ -178,7 +180,7 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
   CFX_Matrix matrix;
   matrix.MatchRect(arect, form_bbox);
   matrix.Concat(*pMatrix);
-  CPDF_Form form(m_pField->GetForm()->m_pDocument,
+  CPDF_Form form(m_pField->GetForm()->m_pDocument.Get(),
                  m_pField->GetForm()->m_pFormDict->GetDictFor("DR"), pStream);
   form.ParseContent(nullptr, nullptr, nullptr);
   CPDF_RenderContext context(pPage);
@@ -286,7 +288,7 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
   if (csFontNameTag.IsEmpty())
     return nullptr;
 
-  CPDF_Object* pObj = FPDF_GetFieldAttr(m_pWidgetDict, "DR");
+  CPDF_Object* pObj = FPDF_GetFieldAttr(m_pWidgetDict.Get(), "DR");
   if (CPDF_Dictionary* pDict = ToDictionary(pObj)) {
     CPDF_Dictionary* pFonts = pDict->GetDictFor("Font");
     if (pFonts) {

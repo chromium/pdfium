@@ -10,6 +10,12 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_string.h"
 
+CPDF_IconFit::CPDF_IconFit(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+
+CPDF_IconFit::CPDF_IconFit(const CPDF_IconFit& that) = default;
+
+CPDF_IconFit::~CPDF_IconFit() {}
+
 CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {
   if (!m_pDict)
     return Always;

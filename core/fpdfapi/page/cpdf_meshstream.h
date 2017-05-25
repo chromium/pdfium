@@ -67,8 +67,8 @@ class CPDF_MeshStream {
 
   const ShadingType m_type;
   const std::vector<std::unique_ptr<CPDF_Function>>& m_funcs;
-  CPDF_Stream* const m_pShadingStream;
-  CPDF_ColorSpace* const m_pCS;
+  CFX_UnownedPtr<CPDF_Stream> const m_pShadingStream;
+  CFX_UnownedPtr<CPDF_ColorSpace> const m_pCS;
   uint32_t m_nCoordBits;
   uint32_t m_nComponentBits;
   uint32_t m_nFlagBits;

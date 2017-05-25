@@ -89,7 +89,7 @@ class CJS_PropValue {
   void StartGetting() { m_bIsSetting = false; }
   bool IsSetting() const { return m_bIsSetting; }
   bool IsGetting() const { return !m_bIsSetting; }
-  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
+  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime.Get(); }
   CJS_Value* GetJSValue() { return &m_Value; }
 
   // These calls may re-enter JS (and hence invalidate objects).
@@ -118,7 +118,7 @@ class CJS_PropValue {
  private:
   bool m_bIsSetting;
   CJS_Value m_Value;
-  CJS_Runtime* const m_pJSRuntime;
+  CFX_UnownedPtr<CJS_Runtime> const m_pJSRuntime;
 };
 
 class CJS_Array {

@@ -14,6 +14,10 @@
 
 CPDF_ApSettings::CPDF_ApSettings(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
+CPDF_ApSettings::CPDF_ApSettings(const CPDF_ApSettings& that) = default;
+
+CPDF_ApSettings::~CPDF_ApSettings() {}
+
 bool CPDF_ApSettings::HasMKEntry(const CFX_ByteString& csEntry) const {
   return m_pDict && m_pDict->KeyExist(csEntry);
 }

@@ -47,6 +47,10 @@ CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
 
 }  // namespace
 
+CPDF_NumberTree::CPDF_NumberTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
+
+CPDF_NumberTree::~CPDF_NumberTree() {}
+
 CPDF_Object* CPDF_NumberTree::LookupValue(int num) const {
-  return SearchNumberNode(m_pRoot, num);
+  return SearchNumberNode(m_pRoot.Get(), num);
 }

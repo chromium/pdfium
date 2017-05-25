@@ -117,7 +117,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
                  PDFSDK_FieldAction& data,
                  CPDFSDK_PageView* pPageView);
 
-  CPDFSDK_InterForm* GetInterForm() const { return m_pInterForm; }
+  CPDFSDK_InterForm* GetInterForm() const { return m_pInterForm.Get(); }
   CPDF_FormField* GetFormField() const;
   CPDF_FormControl* GetFormControl() const;
   static CPDF_FormControl* GetFormControl(CPDF_InterForm* pInterForm,
@@ -160,7 +160,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void AddImageToAppearance(const CFX_ByteString& sAPType, CPDF_Stream* pImage);
   void RemoveAppearance(const CFX_ByteString& sAPType);
 
-  CPDFSDK_InterForm* const m_pInterForm;
+  CFX_UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
   bool m_bAppModified;
   int32_t m_nAppAge;
   int32_t m_nValueAge;

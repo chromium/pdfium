@@ -141,7 +141,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
   if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
     if (!m_pRollProvider) {
       m_pRollProvider = pdfium::MakeUnique<CXFA_TextProvider>(
-          m_pDataAcc, XFA_TEXTPROVIDERTYPE_Rollover);
+          m_pDataAcc.Get(), XFA_TEXTPROVIDERTYPE_Rollover);
     }
     m_pRolloverTextLayout =
         pdfium::MakeUnique<CXFA_TextLayout>(m_pRollProvider.get());
@@ -150,7 +150,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
   if (m_pDataAcc->GetButtonDown(wsDown, bRichText)) {
     if (!m_pDownProvider) {
       m_pDownProvider = pdfium::MakeUnique<CXFA_TextProvider>(
-          m_pDataAcc, XFA_TEXTPROVIDERTYPE_Down);
+          m_pDataAcc.Get(), XFA_TEXTPROVIDERTYPE_Down);
     }
     m_pDownTextLayout =
         pdfium::MakeUnique<CXFA_TextLayout>(m_pDownProvider.get());

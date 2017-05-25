@@ -150,7 +150,7 @@ bool CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   if (eScriptType == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (!m_FM2JSContext) {
       m_FM2JSContext = pdfium::MakeUnique<CXFA_FM2JSContext>(
-          m_pIsolate, m_JsContext.get(), m_pDocument);
+          m_pIsolate, m_JsContext.get(), m_pDocument.Get());
     }
     CFX_WideTextBuf wsJavaScript;
     if (!CXFA_FM2JSContext::Translate(wsScript, &wsJavaScript)) {

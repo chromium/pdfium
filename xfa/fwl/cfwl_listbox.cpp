@@ -630,8 +630,8 @@ void CFWL_ListBox::InitVerticalScrollBar() {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  m_pVertScrollBar =
-      pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp, std::move(prop), this);
+  m_pVertScrollBar = pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
+                                                        std::move(prop), this);
 }
 
 void CFWL_ListBox::InitHorizontalScrollBar() {
@@ -643,8 +643,8 @@ void CFWL_ListBox::InitHorizontalScrollBar() {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  m_pHorzScrollBar =
-      pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp, std::move(prop), this);
+  m_pHorzScrollBar = pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
+                                                        std::move(prop), this);
 }
 
 bool CFWL_ListBox::IsShowScrollBar(bool bVert) {

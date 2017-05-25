@@ -23,10 +23,10 @@ class CJS_EmbedObj {
   explicit CJS_EmbedObj(CJS_Object* pJSObject);
   virtual ~CJS_EmbedObj();
 
-  CJS_Object* GetJSObject() const { return m_pJSObject; }
+  CJS_Object* GetJSObject() const { return m_pJSObject.Get(); }
 
  protected:
-  CJS_Object* const m_pJSObject;
+  CFX_UnownedPtr<CJS_Object> const m_pJSObject;
 };
 
 class CJS_Object {

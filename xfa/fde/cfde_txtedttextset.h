@@ -34,7 +34,7 @@ class CFDE_TxtEdtTextSet : public IFDE_VisualSet {
                                       bool bBBox);
 
  private:
-  CFDE_TxtEdtPage* const m_pPage;
+  CFX_UnownedPtr<CFDE_TxtEdtPage> const m_pPage;
 };
 
 #endif  // XFA_FDE_CFDE_TXTEDTTEXTSET_H_

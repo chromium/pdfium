@@ -37,7 +37,7 @@ class CFX_ImageStretcher {
   bool ContinueQuickStretch(IFX_Pause* pPause);
   bool ContinueStretch(IFX_Pause* pPause);
 
-  IFX_ScanlineComposer* const m_pDest;
+  CFX_UnownedPtr<IFX_ScanlineComposer> const m_pDest;
   CFX_RetainPtr<CFX_DIBSource> m_pSource;
   std::unique_ptr<CStretchEngine> m_pStretchEngine;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanline;

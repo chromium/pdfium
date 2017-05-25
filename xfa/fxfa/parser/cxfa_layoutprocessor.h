@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CXFA_ContainerLayoutItem;
@@ -44,7 +45,7 @@ class CXFA_LayoutProcessor {
  private:
   bool IsNeedLayout();
 
-  CXFA_Document* const m_pDocument;
+  CFX_UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CXFA_ItemLayoutProcessor> m_pRootItemLayoutProcessor;
   std::unique_ptr<CXFA_LayoutPageMgr> m_pLayoutPageMgr;
   std::vector<CXFA_Node*> m_rgChangedContainers;

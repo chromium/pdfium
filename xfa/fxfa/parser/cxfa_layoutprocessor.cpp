@@ -24,7 +24,7 @@ CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)
 CXFA_LayoutProcessor::~CXFA_LayoutProcessor() {}
 
 CXFA_Document* CXFA_LayoutProcessor::GetDocument() const {
-  return m_pDocument;
+  return m_pDocument.Get();
 }
 
 int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {

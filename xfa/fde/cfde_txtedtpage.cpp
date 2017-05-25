@@ -38,7 +38,7 @@ CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
 CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {}
 
 CFDE_TxtEdtEngine* CFDE_TxtEdtPage::GetEngine() const {
-  return m_pEditEngine;
+  return m_pEditEngine.Get();
 }
 
 FDE_VISUALOBJTYPE CFDE_TxtEdtPage::GetType() {

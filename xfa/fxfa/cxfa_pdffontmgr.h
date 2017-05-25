@@ -50,7 +50,7 @@ class CXFA_PDFFontMgr : public CFX_Observable<CXFA_PDFFontMgr> {
                              const CFX_ByteString& bsDRFontName,
                              bool bStrictMatch);
 
-  CXFA_FFDoc* const m_pDoc;
+  CFX_UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::map<CFX_RetainPtr<CFGAS_GEFont>, CPDF_Font*> m_FDE2PDFFont;
   std::map<CFX_ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };

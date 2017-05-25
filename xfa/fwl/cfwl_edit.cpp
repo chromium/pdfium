@@ -1063,8 +1063,8 @@ void CFWL_Edit::InitVerticalScrollBar() {
   prop->m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pVertScrollBar =
-      pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp, std::move(prop), this);
+  m_pVertScrollBar = pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
+                                                        std::move(prop), this);
 }
 
 void CFWL_Edit::InitHorizontalScrollBar() {
@@ -1076,8 +1076,8 @@ void CFWL_Edit::InitHorizontalScrollBar() {
   prop->m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pHorzScrollBar =
-      pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp, std::move(prop), this);
+  m_pHorzScrollBar = pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
+                                                        std::move(prop), this);
 }
 
 void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {

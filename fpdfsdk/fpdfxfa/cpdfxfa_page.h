@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_Matrix;
@@ -25,7 +26,7 @@ class CPDFXFA_Page : public CFX_Retainable {
 
   bool LoadPage();
   bool LoadPDFPage(CPDF_Dictionary* pageDict);
-  CPDFXFA_Context* GetContext() const { return m_pContext; }
+  CPDFXFA_Context* GetContext() const { return m_pContext.Get(); }
   int GetPageIndex() const { return m_iPageIndex; }
   CPDF_Page* GetPDFPage() const { return m_pPDFPage.get(); }
   CXFA_FFPageView* GetXFAPageView() const { return m_pXFAPageView; }
@@ -73,7 +74,7 @@ class CPDFXFA_Page : public CFX_Retainable {
  private:
   std::unique_ptr<CPDF_Page> m_pPDFPage;
   CXFA_FFPageView* m_pXFAPageView;
-  CPDFXFA_Context* const m_pContext;
+  CFX_UnownedPtr<CPDFXFA_Context> const m_pContext;
   const int m_iPageIndex;
   int m_iRef;
 };

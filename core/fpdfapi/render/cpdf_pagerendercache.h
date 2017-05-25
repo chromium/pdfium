@@ -10,6 +10,7 @@
 #include <map>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBitmap;
@@ -29,7 +30,7 @@ class CPDF_PageRenderCache {
   uint32_t GetTimeCount() const { return m_nTimeCount; }
   void ResetBitmap(const CFX_RetainPtr<CPDF_Image>& pImage,
                    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap);
-  CPDF_Page* GetPage() const { return m_pPage; }
+  CPDF_Page* GetPage() const { return m_pPage.Get(); }
   CPDF_ImageCacheEntry* GetCurImageCacheEntry() const {
     return m_pCurImageCacheEntry;
   }
@@ -45,7 +46,7 @@ class CPDF_PageRenderCache {
  private:
   void ClearImageCacheEntry(CPDF_Stream* pStream);
 
-  CPDF_Page* const m_pPage;
+  CFX_UnownedPtr<CPDF_Page> const m_pPage;
   CPDF_ImageCacheEntry* m_pCurImageCacheEntry;
   std::map<CPDF_Stream*, CPDF_ImageCacheEntry*> m_ImageCache;
   uint32_t m_nTimeCount;

@@ -48,7 +48,7 @@ void CFDE_CSSStyleSelector::SetUAStyleSheet(
 
 void CFDE_CSSStyleSelector::UpdateStyleIndex() {
   m_UARules.Clear();
-  m_UARules.AddRulesFrom(m_UAStyles.get(), m_pFontMgr);
+  m_UARules.AddRulesFrom(m_UAStyles.get(), m_pFontMgr.Get());
 }
 
 std::vector<const CFDE_CSSDeclaration*>

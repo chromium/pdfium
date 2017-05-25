@@ -60,7 +60,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(const FDE_TEXTEDITPIECE& piece,
   CFX_TxtBreak* pBreak = pEngine->GetTextBreak();
   uint32_t dwLayoutStyle = pBreak->GetLayoutStyles();
   FX_TXTRUN tr;
-  tr.pAccess = m_pPage;
+  tr.pAccess = m_pPage.Get();
   tr.pIdentity = &piece;
   tr.iLength = nLength;
   tr.pFont = pTextParams->pFont;
@@ -82,7 +82,7 @@ std::vector<CFX_RectF> CFDE_TxtEdtTextSet::GetCharRects(
   const FDE_TXTEDTPARAMS* pTextParams = pEngine->GetEditParams();
   uint32_t dwLayoutStyle = pEngine->GetTextBreak()->GetLayoutStyles();
   FX_TXTRUN tr;
-  tr.pAccess = m_pPage;
+  tr.pAccess = m_pPage.Get();
   tr.pIdentity = pPiece;
   tr.iLength = pPiece->nCount;
   tr.pFont = pTextParams->pFont;

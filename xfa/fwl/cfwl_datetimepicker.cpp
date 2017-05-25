@@ -40,8 +40,8 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
   monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
   monthProp->m_pParent = this;
   monthProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pMonthCal.reset(
-      new CFWL_MonthCalendar(m_pOwnerApp, std::move(monthProp), this));
+  m_pMonthCal = pdfium::MakeUnique<CFWL_MonthCalendar>(
+      m_pOwnerApp.Get(), std::move(monthProp), this);
 
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
@@ -50,7 +50,7 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
   editProp->m_pParent = this;
   editProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit = pdfium::MakeUnique<CFWL_DateTimeEdit>(m_pOwnerApp,
+  m_pEdit = pdfium::MakeUnique<CFWL_DateTimeEdit>(m_pOwnerApp.Get(),
                                                   std::move(editProp), this);
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
@@ -332,8 +332,8 @@ void CFWL_DateTimePicker::InitProxyForm() {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pOwner = this;
 
-  m_pForm = pdfium::MakeUnique<CFWL_FormProxy>(m_pOwnerApp, std::move(prop),
-                                               m_pMonthCal.get());
+  m_pForm = pdfium::MakeUnique<CFWL_FormProxy>(
+      m_pOwnerApp.Get(), std::move(prop), m_pMonthCal.get());
   m_pMonthCal->SetParent(m_pForm.get());
 }
 

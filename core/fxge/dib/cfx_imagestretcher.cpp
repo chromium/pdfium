@@ -133,8 +133,8 @@ bool CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
 
 bool CFX_ImageStretcher::StartStretch() {
   m_pStretchEngine = pdfium::MakeUnique<CStretchEngine>(
-      m_pDest, m_DestFormat, m_DestWidth, m_DestHeight, m_ClipRect, m_pSource,
-      m_Flags);
+      m_pDest.Get(), m_DestFormat, m_DestWidth, m_DestHeight, m_ClipRect,
+      m_pSource, m_Flags);
   m_pStretchEngine->StartStretchHorz();
   if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
     m_pStretchEngine->Continue(nullptr);

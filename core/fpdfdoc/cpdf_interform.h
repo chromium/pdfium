@@ -108,7 +108,7 @@ class CPDF_InterForm {
 
   static bool s_bUpdateAP;
 
-  CPDF_Document* const m_pDocument;
+  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
   CPDF_Dictionary* m_pFormDict;
   std::map<const CPDF_Dictionary*, std::unique_ptr<CPDF_FormControl>>
       m_ControlMap;

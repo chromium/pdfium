@@ -37,15 +37,17 @@ class CPDF_AAction {
     DocumentPrinted
   };
 
-  CPDF_AAction() : m_pDict(nullptr) {}
-  explicit CPDF_AAction(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+  CPDF_AAction();
+  explicit CPDF_AAction(CPDF_Dictionary* pDict);
+  CPDF_AAction(const CPDF_AAction& that);
+  ~CPDF_AAction();
 
   bool ActionExist(AActionType eType) const;
   CPDF_Action GetAction(AActionType eType) const;
-  CPDF_Dictionary* GetDict() const { return m_pDict; }
+  CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
  private:
-  CPDF_Dictionary* const m_pDict;
+  CFX_UnownedPtr<CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_AACTION_H_

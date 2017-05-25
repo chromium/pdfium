@@ -104,7 +104,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
     return m_pDelegate ? m_pDelegate.Get() : this;
   }
 
-  const CFWL_App* GetOwnerApp() const { return m_pOwnerApp; }
+  const CFWL_App* GetOwnerApp() const { return m_pOwnerApp.Get(); }
   uint32_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint32_t key) { m_nEventKey = key; }
 
@@ -148,8 +148,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix);
 
-  const CFWL_App* const m_pOwnerApp;
-  CFWL_WidgetMgr* const m_pWidgetMgr;
+  CFX_UnownedPtr<const CFWL_App> const m_pOwnerApp;
+  CFX_UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
   CFWL_Widget* m_pOuter;
   int32_t m_iLock;

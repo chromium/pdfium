@@ -11,19 +11,22 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
+
 class CPDF_Action;
 class CPDF_Object;
 
 class CPDF_ActionFields {
  public:
-  explicit CPDF_ActionFields(const CPDF_Action* pAction) : m_pAction(pAction) {}
+  explicit CPDF_ActionFields(const CPDF_Action* pAction);
+  ~CPDF_ActionFields();
 
   size_t GetFieldsCount() const;
   std::vector<CPDF_Object*> GetAllFields() const;
   CPDF_Object* GetField(size_t iIndex) const;
 
  private:
-  const CPDF_Action* const m_pAction;
+  CFX_UnownedPtr<const CPDF_Action> const m_pAction;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ACTIONFIELDS_H_

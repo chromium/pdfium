@@ -33,7 +33,7 @@ class CFX_ImageTransformer {
 
  private:
   const CFX_RetainPtr<CFX_DIBSource> m_pSrc;
-  const CFX_Matrix* const m_pMatrix;
+  CFX_UnownedPtr<const CFX_Matrix> const m_pMatrix;
   const FX_RECT* const m_pClip;
   FX_RECT m_StretchClip;
   FX_RECT m_result;

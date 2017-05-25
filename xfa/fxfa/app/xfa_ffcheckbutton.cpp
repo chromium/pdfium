@@ -320,7 +320,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
           m_pDocView->AddCalculateWidgetAcc(pFFExclGroup);
           pFFExclGroup->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
         }
-        eParam.m_pTarget = m_pDataAcc;
+        eParam.m_pTarget = m_pDataAcc.Get();
         m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
       } else {
         SetFWLCheckState(m_pDataAcc->GetCheckState());
@@ -329,7 +329,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
         eParam.m_pTarget = pFFExclGroup;
         pFFExclGroup->ProcessEvent(XFA_ATTRIBUTEENUM_Click, &eParam);
       }
-      eParam.m_pTarget = m_pDataAcc;
+      eParam.m_pTarget = m_pDataAcc.Get();
       m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Click, &eParam);
       break;
     }

@@ -36,7 +36,7 @@ CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {}
 
 void CBC_ReedSolomonEncoder::Init() {
   m_cachedGenerators.push_back(
-      pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>(m_field, 1));
+      pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>(m_field.Get(), 1));
 }
 
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
@@ -46,7 +46,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
     for (size_t d = m_cachedGenerators.size(); d <= degree; ++d) {
       std::vector<int32_t> temp = {1, m_field->Exp(d - 1)};
       CBC_ReedSolomonGF256Poly temp_poly;
-      if (!temp_poly.Init(m_field, &temp))
+      if (!temp_poly.Init(m_field.Get(), &temp))
         return nullptr;
 
       auto nextGenerator = lastGenerator->Multiply(&temp_poly);
@@ -78,7 +78,7 @@ bool CBC_ReedSolomonEncoder::Encode(std::vector<int32_t>* toEncode,
     infoCoefficients[x] = (*toEncode)[x];
 
   CBC_ReedSolomonGF256Poly info;
-  if (!info.Init(m_field, &infoCoefficients))
+  if (!info.Init(m_field.Get(), &infoCoefficients))
     return false;
 
   auto infoTemp = info.MultiplyByMonomial(ecBytes, 1);

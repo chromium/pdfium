@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_DATAIMPORTER_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CXFA_Document;
@@ -16,11 +17,12 @@ class IFX_SeekableStream;
 class CXFA_DataImporter {
  public:
   explicit CXFA_DataImporter(CXFA_Document* pDocument);
+  ~CXFA_DataImporter();
 
   bool ImportData(const CFX_RetainPtr<IFX_SeekableStream>& pDataDocument);
 
  private:
-  CXFA_Document* const m_pDocument;
+  CFX_UnownedPtr<CXFA_Document> const m_pDocument;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATAIMPORTER_H_

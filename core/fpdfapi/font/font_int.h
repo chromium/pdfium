@@ -150,7 +150,7 @@ class CPDF_CMapParser {
                                 const CFX_ByteStringC& first,
                                 const CFX_ByteStringC& second);
 
-  CPDF_CMap* const m_pCMap;
+  CFX_UnownedPtr<CPDF_CMap> const m_pCMap;
   int m_Status;
   int m_CodeSeq;
   uint32_t m_CodePoints[4];

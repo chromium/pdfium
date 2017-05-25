@@ -37,10 +37,12 @@ class CPDF_Action {
     GoTo3DView
   };
 
-  CPDF_Action() : m_pDict(nullptr) {}
-  explicit CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+  CPDF_Action();
+  explicit CPDF_Action(CPDF_Dictionary* pDict);
+  CPDF_Action(const CPDF_Action& that);
+  ~CPDF_Action();
 
-  CPDF_Dictionary* GetDict() const { return m_pDict; }
+  CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   ActionType GetType() const;
   CPDF_Dest GetDest(CPDF_Document* pDoc) const;
   CFX_WideString GetFilePath() const;
@@ -53,7 +55,7 @@ class CPDF_Action {
   CPDF_Action GetSubAction(size_t iIndex) const;
 
  private:
-  CPDF_Dictionary* const m_pDict;
+  CFX_UnownedPtr<CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ACTION_H_

@@ -27,7 +27,7 @@ class CTypeset final {
   void OutputLines();
 
   CPVT_FloatRect m_rcRet;
-  CPDF_VariableText* const m_pVT;
+  CFX_UnownedPtr<CPDF_VariableText> const m_pVT;
   CSection* const m_pSection;
 };
 

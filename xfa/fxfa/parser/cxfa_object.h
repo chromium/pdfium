@@ -38,7 +38,7 @@ class CXFA_Object : public CFXJSE_HostObject {
               const CFX_WideStringC& elementName);
   ~CXFA_Object() override;
 
-  CXFA_Document* GetDocument() const { return m_pDocument; }
+  CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
   XFA_ObjectType GetObjectType() const { return m_objectType; }
 
   bool IsNode() const {
@@ -86,7 +86,7 @@ class CXFA_Object : public CFXJSE_HostObject {
  protected:
   void ThrowException(const wchar_t* str, ...) const;
 
-  CXFA_Document* const m_pDocument;
+  CFX_UnownedPtr<CXFA_Document> const m_pDocument;
   const XFA_ObjectType m_objectType;
   const XFA_Element m_elementType;
 

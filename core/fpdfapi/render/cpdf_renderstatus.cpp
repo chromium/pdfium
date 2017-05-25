@@ -82,11 +82,11 @@ class CPDF_RefType3Cache {
 
   ~CPDF_RefType3Cache() {
     while (m_dwCount--)
-      ReleaseCachedType3(m_pType3Font);
+      ReleaseCachedType3(m_pType3Font.Get());
   }
 
   uint32_t m_dwCount;
-  CPDF_Type3Font* const m_pType3Font;
+  CFX_UnownedPtr<CPDF_Type3Font> const m_pType3Font;
 };
 
 uint32_t CountOutputs(

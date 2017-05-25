@@ -26,7 +26,7 @@ class CBC_ReedSolomonEncoder {
  private:
   CBC_ReedSolomonGF256Poly* BuildGenerator(size_t degree);
 
-  CBC_ReedSolomonGF256* const m_field;
+  CFX_UnownedPtr<CBC_ReedSolomonGF256> const m_field;
   std::vector<std::unique_ptr<CBC_ReedSolomonGF256Poly>> m_cachedGenerators;
 };
 

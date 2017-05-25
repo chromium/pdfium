@@ -101,7 +101,7 @@ CPDF_OCContext::~CPDF_OCContext() {}
 bool CPDF_OCContext::LoadOCGStateFromConfig(
     const CFX_ByteString& csConfig,
     const CPDF_Dictionary* pOCGDict) const {
-  CPDF_Dictionary* pConfig = GetConfig(m_pDocument, pOCGDict);
+  CPDF_Dictionary* pConfig = GetConfig(m_pDocument.Get(), pOCGDict);
   if (!pConfig)
     return true;
 

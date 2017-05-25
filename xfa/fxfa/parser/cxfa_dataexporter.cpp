@@ -458,6 +458,8 @@ CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
   ASSERT(m_pDocument);
 }
 
+CXFA_DataExporter::~CXFA_DataExporter() {}
+
 bool CXFA_DataExporter::Export(
     const CFX_RetainPtr<IFX_SeekableStream>& pWrite) {
   return Export(pWrite, m_pDocument->GetRoot(), 0, nullptr);

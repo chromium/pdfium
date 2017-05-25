@@ -78,7 +78,7 @@ class CFDE_CSSStyleSelector {
   uint32_t ToTextDecoration(const CFX_RetainPtr<CFDE_CSSValueList>& pList);
   FDE_CSSFontVariant ToFontVariant(FDE_CSSPropertyValue eValue);
 
-  CFGAS_FontMgr* const m_pFontMgr;
+  CFX_UnownedPtr<CFGAS_FontMgr> const m_pFontMgr;
   float m_fDefFontSize;
   std::unique_ptr<CFDE_CSSStyleSheet> m_UAStyles;
   CFDE_CSSRuleCollection m_UARules;

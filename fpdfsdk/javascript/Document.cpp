@@ -1646,5 +1646,5 @@ void Document::DoFieldDelay(const CFX_WideString& sFieldName,
 }
 
 CJS_Document* Document::GetCJSDoc() const {
-  return static_cast<CJS_Document*>(m_pJSObject);
+  return static_cast<CJS_Document*>(m_pJSObject.Get());
 }

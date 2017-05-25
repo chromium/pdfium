@@ -199,107 +199,107 @@ CJS_PropValue::~CJS_PropValue() {}
 
 void CJS_PropValue::operator<<(int iValue) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, iValue);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), iValue);
 }
 
 void CJS_PropValue::operator>>(int& iValue) const {
   ASSERT(m_bIsSetting);
-  iValue = m_Value.ToInt(m_pJSRuntime);
+  iValue = m_Value.ToInt(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::operator<<(bool bValue) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, bValue);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), bValue);
 }
 
 void CJS_PropValue::operator>>(bool& bValue) const {
   ASSERT(m_bIsSetting);
-  bValue = m_Value.ToBool(m_pJSRuntime);
+  bValue = m_Value.ToBool(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::operator<<(double dValue) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, dValue);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), dValue);
 }
 
 void CJS_PropValue::operator>>(double& dValue) const {
   ASSERT(m_bIsSetting);
-  dValue = m_Value.ToDouble(m_pJSRuntime);
+  dValue = m_Value.ToDouble(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::operator<<(CJS_Object* pObj) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, pObj);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), pObj);
 }
 
 void CJS_PropValue::operator>>(CJS_Object*& ppObj) const {
   ASSERT(m_bIsSetting);
-  ppObj = m_Value.ToCJSObject(m_pJSRuntime);
+  ppObj = m_Value.ToCJSObject(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::operator<<(CJS_Document* pJsDoc) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, pJsDoc);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), pJsDoc);
 }
 
 void CJS_PropValue::operator>>(CJS_Document*& ppJsDoc) const {
   ASSERT(m_bIsSetting);
-  ppJsDoc = static_cast<CJS_Document*>(m_Value.ToCJSObject(m_pJSRuntime));
+  ppJsDoc = static_cast<CJS_Document*>(m_Value.ToCJSObject(m_pJSRuntime.Get()));
 }
 
 void CJS_PropValue::operator<<(v8::Local<v8::Object> pObj) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, pObj);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), pObj);
 }
 
 void CJS_PropValue::operator>>(v8::Local<v8::Object>& ppObj) const {
   ASSERT(m_bIsSetting);
-  ppObj = m_Value.ToV8Object(m_pJSRuntime);
+  ppObj = m_Value.ToV8Object(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::operator<<(CFX_ByteString str) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, str.c_str());
+  m_Value = CJS_Value(m_pJSRuntime.Get(), str.c_str());
 }
 
 void CJS_PropValue::operator>>(CFX_ByteString& str) const {
   ASSERT(m_bIsSetting);
-  str = m_Value.ToCFXByteString(m_pJSRuntime);
+  str = m_Value.ToCFXByteString(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::operator<<(const wchar_t* str) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, str);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), str);
 }
 
 void CJS_PropValue::operator>>(CFX_WideString& wide_string) const {
   ASSERT(m_bIsSetting);
-  wide_string = m_Value.ToCFXWideString(m_pJSRuntime);
+  wide_string = m_Value.ToCFXWideString(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::operator<<(CFX_WideString wide_string) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, wide_string.c_str());
+  m_Value = CJS_Value(m_pJSRuntime.Get(), wide_string.c_str());
 }
 
 void CJS_PropValue::operator>>(CJS_Array& array) const {
   ASSERT(m_bIsSetting);
-  m_Value.ConvertToArray(m_pJSRuntime, array);
+  m_Value.ConvertToArray(m_pJSRuntime.Get(), array);
 }
 
 void CJS_PropValue::operator<<(CJS_Array& array) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, array.ToV8Array(m_pJSRuntime));
+  m_Value = CJS_Value(m_pJSRuntime.Get(), array.ToV8Array(m_pJSRuntime.Get()));
 }
 
 void CJS_PropValue::operator>>(CJS_Date& date) const {
   ASSERT(m_bIsSetting);
-  m_Value.ConvertToDate(m_pJSRuntime, date);
+  m_Value.ConvertToDate(m_pJSRuntime.Get(), date);
 }
 
 void CJS_PropValue::operator<<(CJS_Date& date) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime, date);
+  m_Value = CJS_Value(m_pJSRuntime.Get(), date);
 }
 
 CJS_Array::CJS_Array() {}

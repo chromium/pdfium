@@ -27,7 +27,7 @@ class CPDF_StreamAcc : public CFX_Retainable {
                    uint32_t estimated_size = 0,
                    bool bImageAcc = false);
 
-  const CPDF_Stream* GetStream() const { return m_pStream; }
+  const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   CPDF_Dictionary* GetDict() const {
     return m_pStream ? m_pStream->GetDict() : nullptr;
   }
@@ -47,7 +47,7 @@ class CPDF_StreamAcc : public CFX_Retainable {
   bool m_bNewBuf;
   CFX_ByteString m_ImageDecoder;
   CPDF_Dictionary* m_pImageParam;
-  const CPDF_Stream* const m_pStream;
+  CFX_UnownedPtr<const CPDF_Stream> const m_pStream;
   uint8_t* m_pSrcData;
 };
 

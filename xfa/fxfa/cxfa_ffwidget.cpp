@@ -98,7 +98,7 @@ CFX_RectF CXFA_FFWidget::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
 }
 
 CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
-  return m_pDataAcc;
+  return m_pDataAcc.Get();
 }
 
 bool CXFA_FFWidget::GetToolTip(CFX_WideString& wsToolTip) {
@@ -238,7 +238,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   m_dwStatus |= XFA_WidgetStatus_Focused;
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
-  eParam.m_pTarget = m_pDataAcc;
+  eParam.m_pTarget = m_pDataAcc.Get();
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Enter, &eParam);
   return true;
 }
@@ -490,7 +490,7 @@ void CXFA_FFWidget::EventKillFocus() {
   }
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Exit;
-  eParam.m_pTarget = m_pDataAcc;
+  eParam.m_pTarget = m_pDataAcc.Get();
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Exit, &eParam);
 }
 bool CXFA_FFWidget::IsButtonDown() {

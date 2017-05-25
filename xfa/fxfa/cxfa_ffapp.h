@@ -40,7 +40,7 @@ class CXFA_FFApp {
   CFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
 
-  IXFA_AppProvider* GetAppProvider() const { return m_pProvider; }
+  IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   IFWL_AdapterTimerMgr* GetTimerMgr() const;
   CXFA_FontMgr* GetXFAFontMgr() const;
@@ -52,7 +52,7 @@ class CXFA_FFApp {
 
  private:
   std::unique_ptr<CXFA_FFDocHandler> m_pDocHandler;
-  IXFA_AppProvider* const m_pProvider;
+  CFX_UnownedPtr<IXFA_AppProvider> const m_pProvider;
 
   // The fonts stored in the font manager may have been created by the default
   // font manager. The GEFont::LoadFont call takes the manager as a param and

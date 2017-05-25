@@ -368,7 +368,8 @@ void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
   if (!pDocLayout)
     return;
 
-  auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(m_pDocument);
+  auto pArrayNodeList =
+      pdfium::MakeUnique<CXFA_ArrayNodeList>(m_pDocument.Get());
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
   pArguments->GetReturnValue()->SetObject(

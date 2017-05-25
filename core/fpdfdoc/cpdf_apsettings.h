@@ -8,6 +8,7 @@
 #define CORE_FPDFDOC_CPDF_APSETTINGS_H_
 
 #include "core/fpdfdoc/cpdf_iconfit.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
@@ -19,6 +20,8 @@ class CPDF_Stream;
 class CPDF_ApSettings {
  public:
   explicit CPDF_ApSettings(CPDF_Dictionary* pDict);
+  CPDF_ApSettings(const CPDF_ApSettings& that);
+  ~CPDF_ApSettings();
 
   bool HasMKEntry(const CFX_ByteString& csEntry) const;
   int GetRotation() const;
@@ -68,7 +71,7 @@ class CPDF_ApSettings {
   CFX_WideString GetCaption(const CFX_ByteString& csEntry) const;
   CPDF_Stream* GetIcon(const CFX_ByteString& csEntry) const;
 
-  CPDF_Dictionary* const m_pDict;
+  CFX_UnownedPtr<CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_APSETTINGS_H_

@@ -38,7 +38,7 @@ class CPDF_LinkExtract {
     CFX_WideString m_strUrl;
   };
 
-  const CPDF_TextPage* const m_pTextPage;
+  CFX_UnownedPtr<const CPDF_TextPage> const m_pTextPage;
   CFX_WideString m_strPageText;
   std::vector<Link> m_LinkArray;
 };

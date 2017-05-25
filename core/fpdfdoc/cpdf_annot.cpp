@@ -90,23 +90,23 @@ void CPDF_Annot::GenerateAPIfNeeded() {
   CPDF_Dictionary* pDict = m_pAnnotDict.Get();
   bool result = false;
   if (m_nSubtype == CPDF_Annot::Subtype::CIRCLE)
-    result = CPVT_GenerateAP::GenerateCircleAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateCircleAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
-    result = CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateHighlightAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::INK)
-    result = CPVT_GenerateAP::GenerateInkAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateInkAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::POPUP)
-    result = CPVT_GenerateAP::GeneratePopupAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GeneratePopupAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::SQUARE)
-    result = CPVT_GenerateAP::GenerateSquareAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateSquareAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::SQUIGGLY)
-    result = CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::STRIKEOUT)
-    result = CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::TEXT)
-    result = CPVT_GenerateAP::GenerateTextAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateTextAP(m_pDocument.Get(), pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::UNDERLINE)
-    result = CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, pDict);
+    result = CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument.Get(), pDict);
 
   if (result) {
     m_pAnnotDict->SetNewFor<CPDF_Boolean>(kPDFiumKey_HasGeneratedAP, result);
@@ -205,7 +205,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
     return it->second.get();
 
   auto pNewForm = pdfium::MakeUnique<CPDF_Form>(
-      m_pDocument, pPage->m_pResources.Get(), pStream);
+      m_pDocument.Get(), pPage->m_pResources.Get(), pStream);
   pNewForm->ParseContent(nullptr, nullptr, nullptr);
 
   CPDF_Form* pResult = pNewForm.get();

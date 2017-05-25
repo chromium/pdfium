@@ -10,6 +10,11 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_action.h"
 
+CPDF_ActionFields::CPDF_ActionFields(const CPDF_Action* pAction)
+    : m_pAction(pAction) {}
+
+CPDF_ActionFields::~CPDF_ActionFields() {}
+
 size_t CPDF_ActionFields::GetFieldsCount() const {
   if (!m_pAction)
     return 0;

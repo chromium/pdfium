@@ -47,7 +47,7 @@ class CXFA_NodeLocale : public IFX_Locale {
                                    int index,
                                    bool bAbbr) const;
 
-  CXFA_Node* const m_pLocale;
+  CFX_UnownedPtr<CXFA_Node> const m_pLocale;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODELOCALE_H_

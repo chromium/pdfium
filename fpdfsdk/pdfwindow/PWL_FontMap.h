@@ -90,7 +90,7 @@ class CPWL_FontMap : public IPVT_FontMap {
                            uint8_t nCharset);
 
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
-  CFX_SystemHandler* const m_pSystemHandler;
+  CFX_UnownedPtr<CFX_SystemHandler> const m_pSystemHandler;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_

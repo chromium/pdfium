@@ -80,7 +80,7 @@ class CFX_FontMapper {
   std::vector<FaceData> m_FaceArray;
   std::unique_ptr<IFX_SystemFontInfo> m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
-  CFX_FontMgr* const m_pFontMgr;
+  CFX_UnownedPtr<CFX_FontMgr> const m_pFontMgr;
 };
 
 #endif  // CORE_FXGE_CFX_FONTMAPPER_H_

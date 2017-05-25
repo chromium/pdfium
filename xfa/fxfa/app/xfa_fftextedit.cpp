@@ -307,7 +307,7 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_wsChange = wsChanged;
-  eParam.m_pTarget = m_pDataAcc;
+  eParam.m_pTarget = m_pDataAcc.Get();
   eParam.m_wsPrevText = wsPrevText;
   CFWL_Edit* pEdit = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
   if (m_pDataAcc->GetUIType() == XFA_Element::DateTimeEdit) {
@@ -328,7 +328,7 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
 void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
-  eParam.m_pTarget = m_pDataAcc;
+  eParam.m_pTarget = m_pDataAcc.Get();
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Full, &eParam);
 }
 
@@ -450,7 +450,7 @@ bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
   m_pDataAcc->GetFracDigits(iFracs);
 
   CFX_WideString wsFormat;
-  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pDataAcc);
+  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pDataAcc.Get());
   widgetValue.GetNumbericFormat(wsFormat, iLeads, iFracs);
   return widgetValue.ValidateNumericTemp(wsText, wsFormat,
                                          m_pDataAcc->GetLocal());
@@ -545,7 +545,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
     switch (value.GetChildValueClassID()) {
       case XFA_Element::Date: {
         if (!wsText.IsEmpty()) {
-          CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc);
+          CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc.Get());
           CFX_DateTime date = lcValue.GetDate();
           if (date.IsSet())
             pWidget->SetCurSel(date.GetYear(), date.GetMonth(), date.GetDay());
@@ -647,7 +647,7 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
   auto* normalWidget = static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
   normalWidget->SetEditText(wsText);
   if (IsFocused() && !wsText.IsEmpty()) {
-    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc);
+    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc.Get());
     CFX_DateTime date = lcValue.GetDate();
     if (lcValue.IsValid()) {
       if (date.IsSet())
@@ -690,7 +690,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
 
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
-  eParam.m_pTarget = m_pDataAcc;
+  eParam.m_pTarget = m_pDataAcc.Get();
   m_pDataAcc->GetValue(eParam.m_wsNewText, XFA_VALUEPICTURE_Raw);
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }

@@ -82,7 +82,7 @@ class CPDF_Annot {
   CPDF_Annot::Subtype GetSubtype() const;
   uint32_t GetFlags() const;
   CFX_FloatRect GetRect() const;
-  CPDF_Document* GetDocument() const { return m_pDocument; }
+  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
 
   bool DrawAppearance(CPDF_Page* pPage,
@@ -112,7 +112,7 @@ class CPDF_Annot {
   CFX_FloatRect RectForDrawing() const;
 
   CFX_MaybeOwned<CPDF_Dictionary> m_pAnnotDict;
-  CPDF_Document* const m_pDocument;
+  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
   // |m_bOpenState| is only set for popup annotations.

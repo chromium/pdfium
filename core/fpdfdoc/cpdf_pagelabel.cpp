@@ -75,6 +75,8 @@ CFX_WideString GetLabelNumPortion(int num, const CFX_ByteString& bsStyle) {
 CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
     : m_pDocument(pDocument) {}
 
+CPDF_PageLabel::~CPDF_PageLabel() {}
+
 bool CPDF_PageLabel::GetLabel(int nPage, CFX_WideString* wsLabel) const {
   if (!m_pDocument)
     return false;

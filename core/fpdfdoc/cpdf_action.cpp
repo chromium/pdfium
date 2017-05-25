@@ -21,6 +21,14 @@ const char* const g_sATypes[] = {
 
 }  // namespace
 
+CPDF_Action::CPDF_Action() {}
+
+CPDF_Action::CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+
+CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
+
+CPDF_Action::~CPDF_Action() {}
+
 CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (!m_pDict)
     return CPDF_Dest();

@@ -92,7 +92,7 @@ class CXFA_ScriptContext {
   bool IsStrictScopeInJavaScript();
   XFA_SCRIPTLANGTYPE GetType();
   std::vector<CXFA_Node*>* GetUpObjectArray() { return &m_upObjectArray; }
-  CXFA_Document* GetDocument() const { return m_pDocument; }
+  CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
   static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
 
@@ -103,7 +103,7 @@ class CXFA_ScriptContext {
   void DefineJsClass();
   void RemoveBuiltInObjs(CFXJSE_Context* pContext) const;
 
-  CXFA_Document* const m_pDocument;
+  CFX_UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CFXJSE_Context> m_JsContext;
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pJsClass;

@@ -1040,7 +1040,7 @@ void CXFA_Node::Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
     refNode = this;
   pScriptContext->ResolveObjects(refNode, wsExpression.AsStringC(),
                                  resoveNodeRS, dwFlag);
-  CXFA_ArrayNodeList* pNodeList = new CXFA_ArrayNodeList(m_pDocument);
+  CXFA_ArrayNodeList* pNodeList = new CXFA_ArrayNodeList(m_pDocument.Get());
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     for (CXFA_Object* pObject : resoveNodeRS.objects) {
       if (pObject->IsNode())
@@ -1083,7 +1083,8 @@ void CXFA_Node::Script_TreeClass_Nodes(CFXJSE_Value* pValue,
     CFX_WideString wsMessage = L"Unable to set ";
     FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringC());
   } else {
-    CXFA_AttachNodeList* pNodeList = new CXFA_AttachNodeList(m_pDocument, this);
+    CXFA_AttachNodeList* pNodeList =
+        new CXFA_AttachNodeList(m_pDocument.Get(), this);
     pValue->SetObject(pNodeList, pScriptContext->GetJseNormalClass());
   }
 }
@@ -1282,7 +1283,8 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     bIgnoreRoot = !!pArguments->GetInt32(1);
   if (iLength >= 3)
     bOverwrite = !!pArguments->GetInt32(2);
-  auto pParser = pdfium::MakeUnique<CXFA_SimpleParser>(m_pDocument, false);
+  auto pParser =
+      pdfium::MakeUnique<CXFA_SimpleParser>(m_pDocument.Get(), false);
   if (!pParser)
     return;
   CFX_XMLNode* pXMLNode = pParser->ParseXMLData(wsExpression);
@@ -1524,7 +1526,7 @@ void CXFA_Node::Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
 void CXFA_Node::Script_ContainerClass_GetDelta(CFXJSE_Arguments* pArguments) {}
 
 void CXFA_Node::Script_ContainerClass_GetDeltas(CFXJSE_Arguments* pArguments) {
-  CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(m_pDocument);
+  CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(m_pDocument.Get());
   pArguments->GetReturnValue()->SetObject(
       pFormNodes, m_pDocument->GetScriptContext()->GetJseNormalClass());
 }
@@ -3269,7 +3271,7 @@ void CXFA_Node::Script_Form_FormNodes(CFXJSE_Arguments* pArguments) {
   }
 
   std::vector<CXFA_Node*> formItems;
-  CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(m_pDocument);
+  CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(m_pDocument.Get());
   pFormNodes->SetArrayNodeList(formItems);
   pArguments->GetReturnValue()->SetObject(
       pFormNodes, m_pDocument->GetScriptContext()->GetJseNormalClass());

@@ -133,5 +133,5 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
   }
 
   pKid->m_pElement =
-      pdfium::MakeRetain<CPDF_StructElement>(m_pTree, this, pKidDict);
+      pdfium::MakeRetain<CPDF_StructElement>(m_pTree.Get(), this, pKidDict);
 }

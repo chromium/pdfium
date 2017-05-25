@@ -14,6 +14,14 @@ const char* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
 
 }  // namespace
 
+CPDF_AAction::CPDF_AAction() {}
+
+CPDF_AAction::CPDF_AAction(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+
+CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
+
+CPDF_AAction::~CPDF_AAction() {}
+
 bool CPDF_AAction::ActionExist(AActionType eType) const {
   return m_pDict && m_pDict->KeyExist(g_sAATypes[eType]);
 }

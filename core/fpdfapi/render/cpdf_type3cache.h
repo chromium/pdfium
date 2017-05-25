@@ -38,7 +38,7 @@ class CPDF_Type3Cache : public CFX_Retainable {
                                                float retinaScaleX,
                                                float retinaScaleY);
 
-  CPDF_Type3Font* const m_pFont;
+  CFX_UnownedPtr<CPDF_Type3Font> const m_pFont;
   std::map<CFX_ByteString, std::unique_ptr<CPDF_Type3Glyphs>> m_SizeMap;
 };
 

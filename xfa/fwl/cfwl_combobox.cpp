@@ -49,12 +49,12 @@ CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
   auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
   prop->m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
-  m_pListBox =
-      pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
+  m_pListBox = pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp.Get(),
+                                                  std::move(prop), this);
 
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
     m_pEdit = pdfium::MakeUnique<CFWL_ComboEdit>(
-        m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this);
+        m_pOwnerApp.Get(), pdfium::MakeUnique<CFWL_WidgetProperties>(), this);
     m_pEdit->SetOuter(this);
   }
   if (m_pEdit)
@@ -92,7 +92,8 @@ void CFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
   bool bRemoveDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   if (bAddDropDown && !m_pEdit) {
     m_pEdit = pdfium::MakeUnique<CFWL_ComboEdit>(
-        m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
+        m_pOwnerApp.Get(), pdfium::MakeUnique<CFWL_WidgetProperties>(),
+        nullptr);
     m_pEdit->SetOuter(this);
     m_pEdit->SetParent(this);
   } else if (bRemoveDropDown && m_pEdit) {
@@ -496,8 +497,8 @@ void CFWL_ComboBox::InitProxyForm() {
 
   // TODO(dsinclair): Does this leak? I don't see a delete, but I'm not sure
   // if the SetParent call is going to transfer ownership.
-  m_pComboBoxProxy = new CFWL_ComboBoxProxy(this, m_pOwnerApp, std::move(prop),
-                                            m_pListBox.get());
+  m_pComboBoxProxy = new CFWL_ComboBoxProxy(this, m_pOwnerApp.Get(),
+                                            std::move(prop), m_pListBox.get());
   m_pListBox->SetParent(m_pComboBoxProxy);
 }
 
@@ -510,8 +511,8 @@ void CFWL_ComboBox::DisForm_InitComboList() {
   prop->m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pListBox =
-      pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
+  m_pListBox = pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp.Get(),
+                                                  std::move(prop), this);
 }
 
 void CFWL_ComboBox::DisForm_InitComboEdit() {
@@ -522,8 +523,8 @@ void CFWL_ComboBox::DisForm_InitComboEdit() {
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit =
-      pdfium::MakeUnique<CFWL_ComboEdit>(m_pOwnerApp, std::move(prop), this);
+  m_pEdit = pdfium::MakeUnique<CFWL_ComboEdit>(m_pOwnerApp.Get(),
+                                               std::move(prop), this);
   m_pEdit->SetOuter(this);
 }
 

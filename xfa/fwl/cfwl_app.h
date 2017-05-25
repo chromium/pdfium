@@ -32,12 +32,12 @@ class CFWL_App {
   explicit CFWL_App(CXFA_FFApp* pAdapter);
   ~CFWL_App();
 
-  CXFA_FFApp* GetAdapterNative() const { return m_pAdapterNative; }
+  CXFA_FFApp* GetAdapterNative() const { return m_pAdapterNative.Get(); }
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.get(); }
   CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
 
  private:
-  CXFA_FFApp* const m_pAdapterNative;
+  CFX_UnownedPtr<CXFA_FFApp> const m_pAdapterNative;
   std::unique_ptr<CFWL_WidgetMgr> m_pWidgetMgr;
   std::unique_ptr<CFWL_NoteDriver> m_pNoteDriver;
 };
