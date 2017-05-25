@@ -334,7 +334,7 @@ const FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
     {"lt_op", CXFA_FM2JSContext::less_operator},
     {"le_op", CXFA_FM2JSContext::lessequal_operator},
     {"gt_op", CXFA_FM2JSContext::greater_operator},
-    {"gteq_op", CXFA_FM2JSContext::greaterequal_operator},
+    {"ge_op", CXFA_FM2JSContext::greaterequal_operator},
     {"plus_op", CXFA_FM2JSContext::plus_operator},
     {"minus_op", CXFA_FM2JSContext::minus_operator},
     {"mul_op", CXFA_FM2JSContext::multiple_operator},

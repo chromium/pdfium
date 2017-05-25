@@ -92,7 +92,7 @@ TEST_F(FM2JSContextEmbedderTest, Strings) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Booleans) {
+TEST_F(FM2JSContextEmbedderTest, Booleans) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -105,7 +105,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Booleans) {
                {"0 | 0", false},
                {"0 or 1 | 0 or 0", true},
                {"1 and 0", false},
-               {"0 & 0", true},  // TODO(dsinclair) Confirm with Reader.
+               // {"0 & 0", true},  // TODO(dsinclair) Confirm with Reader.
                {"0 and 1 & 0 and 0", false},
                {"not(\"true\")", true},
                {"not(1)", false},
@@ -126,7 +126,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Booleans) {
     EXPECT_TRUE(Execute(tests[i].program));
 
     CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsBoolean()) << "Program: " << tests[i].program;
+    EXPECT_TRUE(value->IsInteger()) << "Program: " << tests[i].program;
     EXPECT_EQ(tests[i].result, value->ToBoolean())
         << "Program: " << tests[i].program;
   }
