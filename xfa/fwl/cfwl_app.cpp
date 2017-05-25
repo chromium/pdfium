@@ -10,7 +10,7 @@
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
-#include "xfa/fxfa/app/xfa_fwladapter.h"
+#include "xfa/fxfa/app/cxfa_fwladapterwidgetmgr.h"
 
 CFWL_App::CFWL_App(CXFA_FFApp* pAdapter)
     : m_pAdapterNative(pAdapter),

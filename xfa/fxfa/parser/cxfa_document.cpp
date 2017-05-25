@@ -7,7 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 #include "core/fxcrt/fx_extension.h"
-#include "xfa/fxfa/app/xfa_ffnotify.h"
+#include "xfa/fxfa/app/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_datawindow.h"
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"

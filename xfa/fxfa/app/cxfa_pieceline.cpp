@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/app/cxfa_pieceline.h"
 
-#include "xfa/fxfa/app/xfa_textpiece.h"
+#include "xfa/fxfa/app/cxfa_textpiece.h"
 
 CXFA_PieceLine::CXFA_PieceLine() {}
 

@@ -29,7 +29,7 @@ class CXFA_Node;
 class CXFA_PieceLine;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
-class XFA_TextPiece;
+class CXFA_TextPiece;
 
 class CXFA_TextLayout {
  public:
@@ -112,10 +112,10 @@ class CXFA_TextLayout {
                   int32_t iPiece,
                   FXTEXT_CHARPOS* pCharPos,
                   const CFX_Matrix& tmDoc2Device);
-  int32_t GetDisplayPos(const XFA_TextPiece* pPiece,
+  int32_t GetDisplayPos(const CXFA_TextPiece* pPiece,
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode = false);
-  bool ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr);
+  bool ToRun(const CXFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr);
   void DoTabstops(CFDE_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;

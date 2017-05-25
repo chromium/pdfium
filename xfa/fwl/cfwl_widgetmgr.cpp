@@ -12,7 +12,7 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_form.h"
 #include "xfa/fwl/cfwl_notedriver.h"
-#include "xfa/fxfa/app/xfa_fwladapter.h"
+#include "xfa/fxfa/app/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 
 namespace {

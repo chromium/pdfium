@@ -14,7 +14,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fxfa/app/cxfa_textlayout.h"
-#include "xfa/fxfa/app/xfa_ffwidgetacc.h"
+#include "xfa/fxfa/app/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"

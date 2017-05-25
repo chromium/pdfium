@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/BC_Library.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fxfa/app/xfa_ffnotify.h"
+#include "xfa/fxfa/app/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_event.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"

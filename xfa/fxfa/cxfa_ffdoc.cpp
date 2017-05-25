@@ -22,7 +22,7 @@
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_notedriver.h"
-#include "xfa/fxfa/app/xfa_ffnotify.h"
+#include "xfa/fxfa/app/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"

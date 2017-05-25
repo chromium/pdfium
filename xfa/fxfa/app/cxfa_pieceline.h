@@ -12,14 +12,14 @@
 
 #include "core/fxcrt/fx_basic.h"
 
-class XFA_TextPiece;
+class CXFA_TextPiece;
 
 class CXFA_PieceLine {
  public:
   CXFA_PieceLine();
   ~CXFA_PieceLine();
 
-  std::vector<std::unique_ptr<XFA_TextPiece>> m_textPieces;
+  std::vector<std::unique_ptr<CXFA_TextPiece>> m_textPieces;
   std::vector<int32_t> m_charCounts;
 };
 

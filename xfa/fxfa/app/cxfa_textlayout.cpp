@@ -24,10 +24,10 @@
 #include "xfa/fxfa/app/cxfa_loadercontext.h"
 #include "xfa/fxfa/app/cxfa_pieceline.h"
 #include "xfa/fxfa/app/cxfa_textparsecontext.h"
+#include "xfa/fxfa/app/cxfa_textpiece.h"
+#include "xfa/fxfa/app/cxfa_textprovider.h"
 #include "xfa/fxfa/app/cxfa_texttabstopscontext.h"
 #include "xfa/fxfa/app/cxfa_textuserdata.h"
-#include "xfa/fxfa/app/xfa_ffwidgetacc.h"
-#include "xfa/fxfa/app/xfa_textpiece.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
@@ -594,7 +594,7 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
     int32_t iPieces = pdfium::CollectionSize<int32_t>(pPieceLine->m_textPieces);
     int32_t j = 0;
     for (j = 0; j < iPieces; j++) {
-      const XFA_TextPiece* pPiece = pPieceLine->m_textPieces[j].get();
+      const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[j].get();
       int32_t iChars = pPiece->iChars;
       if (iCharCount < iChars) {
         FX_Free(pCharPos);
@@ -964,7 +964,7 @@ void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
   if (iPieces == 0)
     return;
 
-  XFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPieces - 1].get();
+  CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPieces - 1].get();
   int32_t& iTabstopsIndex = m_pTabstopContext->m_iTabIndex;
   int32_t iCount = m_textParser.CountTabs(pStyle);
   if (!pdfium::IndexInBounds(m_pTabstopContext->m_tabstops, iTabstopsIndex))
@@ -975,7 +975,7 @@ void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
     m_pTabstopContext->m_bTabstops = true;
     float fRight = 0;
     if (iPieces > 1) {
-      XFA_TextPiece* p = pPieceLine->m_textPieces[iPieces - 2].get();
+      CXFA_TextPiece* p = pPieceLine->m_textPieces[iPieces - 2].get();
       fRight = p->rtPiece.right();
     }
     m_pTabstopContext->m_fTabWidth =
@@ -1032,7 +1032,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;
 
-      auto pTP = pdfium::MakeUnique<XFA_TextPiece>();
+      auto pTP = pdfium::MakeUnique<CXFA_TextPiece>();
       pTP->iChars = pPiece->m_iChars;
       pTP->szText = pPiece->GetString();
       pTP->Widths = pPiece->GetWidths();
@@ -1149,7 +1149,7 @@ void CXFA_TextLayout::RenderString(CFDE_RenderDevice* pDevice,
                                    int32_t iPiece,
                                    FXTEXT_CHARPOS* pCharPos,
                                    const CFX_Matrix& tmDoc2Device) {
-  const XFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
+  const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
   int32_t iCount = GetDisplayPos(pPiece, pCharPos);
   if (iCount > 0) {
     pBrush->SetColor(pPiece->dwColor);
@@ -1165,7 +1165,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
                                  int32_t iPiece,
                                  FXTEXT_CHARPOS* pCharPos,
                                  const CFX_Matrix& tmDoc2Device) {
-  XFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
+  CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
   bool bNoUnderline = pPiece->iUnderline < 1 || pPiece->iUnderline > 2;
   bool bNoLineThrough = pPiece->iLineThrough < 1 || pPiece->iLineThrough > 2;
   if (bNoUnderline && bNoLineThrough)
@@ -1273,7 +1273,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
   pDevice->DrawPath(pPen, 1, pPath.get(), &tmDoc2Device);
 }
 
-int32_t CXFA_TextLayout::GetDisplayPos(const XFA_TextPiece* pPiece,
+int32_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,
                                        FXTEXT_CHARPOS* pCharPos,
                                        bool bCharCode) {
   if (!pPiece)
@@ -1285,7 +1285,7 @@ int32_t CXFA_TextLayout::GetDisplayPos(const XFA_TextPiece* pPiece,
   return m_pBreak->GetDisplayPos(&tr, pCharPos, bCharCode);
 }
 
-bool CXFA_TextLayout::ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr) {
+bool CXFA_TextLayout::ToRun(const CXFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr) {
   int32_t iLength = pPiece->iChars;
   if (iLength < 1)
     return false;
