@@ -51,6 +51,9 @@ class CPDF_StreamContentParser {
   const float* GetType3Data() const { return m_Type3Data; }
   CPDF_Font* FindFont(const CFX_ByteString& name);
 
+  CFX_ByteStringC FindKeyAbbreviationForTesting(const CFX_ByteStringC& abbr);
+  CFX_ByteStringC FindValueAbbreviationForTesting(const CFX_ByteStringC& abbr);
+
  private:
   struct ContentParam {
     enum Type { OBJECT = 0, NUMBER, NAME };

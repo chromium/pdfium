@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -28,6 +29,14 @@
 class CPDF_Array;
 class CPDF_Document;
 class CPDF_Object;
+
+#define MAX_PATTERN_COLORCOMPS 16
+struct PatternValue {
+  CPDF_Pattern* m_pPattern;
+  CPDF_CountedPattern* m_pCountedPattern;
+  int m_nComps;
+  float m_Comps[MAX_PATTERN_COLORCOMPS];
+};
 
 class CPDF_ColorSpace {
  public:
@@ -85,6 +94,7 @@ class CPDF_ColorSpace {
   CFX_UnownedPtr<CPDF_Array> m_pArray;
   uint32_t m_dwStdConversion;
 };
+using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace>;
 
 namespace std {
 

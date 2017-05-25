@@ -7,7 +7,7 @@
 #include "core/fpdfapi/page/cpdf_meshstream.h"
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
-#include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 
 namespace {

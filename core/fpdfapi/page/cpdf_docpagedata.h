@@ -10,7 +10,7 @@
 #include <map>
 #include <set>
 
-#include "core/fpdfapi/page/cpdf_countedobject.h"
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
@@ -22,6 +22,7 @@ class CPDF_FontEncoding;
 class CPDF_IccProfile;
 class CPDF_Image;
 class CPDF_Object;
+class CPDF_Pattern;
 class CPDF_Stream;
 class CPDF_StreamAcc;
 

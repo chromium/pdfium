@@ -9,7 +9,8 @@
 
 #include "core/fpdfapi/font/font_int.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
-#include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/page/cpdf_devicecs.h"
+#include "core/fpdfapi/page/cpdf_patterncs.h"
 
 class CPDF_Document;
 

@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_
 
+#include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
@@ -44,5 +45,6 @@ class CPDF_Pattern {
   CFX_Matrix m_Pattern2Form;
   const CFX_Matrix m_ParentMatrix;
 };
+using CPDF_CountedPattern = CPDF_CountedObject<CPDF_Pattern>;
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_

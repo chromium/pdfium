@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/page/cpdf_devicecs.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CPDF_DeviceCSTest, GetRGBFromGray) {

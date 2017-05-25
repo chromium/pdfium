@@ -25,7 +25,6 @@
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/page/cpdf_streamparser.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
-#include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -235,15 +234,6 @@ void ReplaceAbbr(CPDF_Object* pObj) {
 }
 
 }  // namespace
-
-CFX_ByteStringC PDF_FindKeyAbbreviationForTesting(const CFX_ByteStringC& abbr) {
-  return FindFullName(InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), abbr);
-}
-
-CFX_ByteStringC PDF_FindValueAbbreviationForTesting(
-    const CFX_ByteStringC& abbr) {
-  return FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr), abbr);
-}
 
 CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Document* pDocument,
@@ -1625,6 +1615,16 @@ void CPDF_StreamContentParser::ParsePathObject() {
       return;
     }
   }
+}
+
+CFX_ByteStringC CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
+    const CFX_ByteStringC& abbr) {
+  return FindFullName(InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), abbr);
+}
+
+CFX_ByteStringC CPDF_StreamContentParser::FindValueAbbreviationForTesting(
+    const CFX_ByteStringC& abbr) {
+  return FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr), abbr);
 }
 
 CPDF_StreamContentParser::ContentParam::ContentParam() {}

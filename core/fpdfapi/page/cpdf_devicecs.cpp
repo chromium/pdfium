@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/page/cpdf_devicecs.h"
 
 #include <limits.h>
 
@@ -14,7 +14,6 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/fx_codec.h"
@@ -25,10 +24,6 @@ namespace {
 
 float NormalizeChannel(float fVal) {
   return pdfium::clamp(fVal, 0.0f, 1.0f);
-}
-
-bool DetectSRGB(const uint8_t* pData, uint32_t dwSize) {
-  return dwSize == 3144 && memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0;
 }
 
 }  // namespace
@@ -216,26 +211,5 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
     default:
       NOTREACHED();
       break;
-  }
-}
-
-CPDF_IccProfile::CPDF_IccProfile(CPDF_Stream* pStream,
-                                 const uint8_t* pData,
-                                 uint32_t dwSize)
-    : m_bsRGB(DetectSRGB(pData, dwSize)), m_pStream(pStream) {
-  if (m_bsRGB) {
-    m_nSrcComponents = 3;
-    return;
-  }
-  uint32_t nSrcComps = 0;
-  auto* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
-  m_pTransform = pIccModule->CreateTransform_sRGB(pData, dwSize, nSrcComps);
-  if (m_pTransform)
-    m_nSrcComponents = nSrcComps;
-}
-
-CPDF_IccProfile::~CPDF_IccProfile() {
-  if (m_pTransform) {
-    CPDF_ModuleMgr::Get()->GetIccModule()->DestroyTransform(m_pTransform);
   }
 }
