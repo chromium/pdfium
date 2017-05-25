@@ -820,12 +820,12 @@ TEST_F(FM2JSContextEmbedderTest, Choose) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Exists) {
+TEST_F(FM2JSContextEmbedderTest, Exists) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_TRUE(Execute("Exists(\"hello world\")"));
   CFXJSE_Value* value = GetValue();
-  EXPECT_TRUE(value->IsBoolean());
+  EXPECT_TRUE(value->IsInteger());
   EXPECT_FALSE(value->ToBoolean());
 }
 
