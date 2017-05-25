@@ -100,8 +100,7 @@ class CFX_Font {
 
 #ifdef PDF_ENABLE_XFA
   bool LoadFile(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
-                int nFaceIndex = 0,
-                int* pFaceCount = nullptr);
+                int nFaceIndex);
 
   bool LoadClone(const CFX_Font* pFont);
   void SetFace(FXFT_Face face);
@@ -135,10 +134,6 @@ class CFX_Font {
   CFX_ByteString GetFaceName() const;
   bool IsTTFont() const;
   bool GetBBox(FX_RECT& bbox);
-  int GetHeight() const;
-  int GetULPos() const;
-  int GetULthickness() const;
-  int GetMaxAdvanceWidth() const;
   bool IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData; }
   void SetSubData(uint8_t* data) { m_pGsubData = data; }
@@ -165,8 +160,7 @@ class CFX_Font {
 
  private:
   friend class CFX_FaceCache;
-  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
-                                  int dest_width = 0) const;
+  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index, int dest_width) const;
   CFX_FaceCache* GetFaceCache() const;
   void ReleasePlatformResource();
   void DeleteFace();
@@ -231,8 +225,8 @@ class FXTEXT_GLYPHPOS {
 
 FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
                            int anti_alias,
-                           float retinaScaleX = 1.0f,
-                           float retinaScaleY = 1.0f);
+                           float retinaScaleX,
+                           float retinaScaleY);
 
 CFX_ByteString GetNameFromTT(const uint8_t* name_table,
                              uint32_t name_table_size,

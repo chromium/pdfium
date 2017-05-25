@@ -961,7 +961,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   if (anti_alias < FXFT_RENDER_MODE_LCD && glyphs.size() > 1)
     AdjustGlyphSpace(&glyphs);
 
-  FX_RECT bmp_rect1 = FXGE_GetGlyphsBBox(glyphs, anti_alias);
+  FX_RECT bmp_rect1 = FXGE_GetGlyphsBBox(glyphs, anti_alias, 1.0f, 1.0f);
   if (scale_x > 1 && scale_y > 1) {
     bmp_rect1.left--;
     bmp_rect1.top--;
