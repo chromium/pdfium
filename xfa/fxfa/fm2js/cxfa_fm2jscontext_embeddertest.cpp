@@ -829,7 +829,7 @@ TEST_F(FM2JSContextEmbedderTest, Exists) {
   EXPECT_FALSE(value->ToBoolean());
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_HasValue) {
+TEST_F(FM2JSContextEmbedderTest, HasValue) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -841,13 +841,13 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_HasValue) {
     EXPECT_TRUE(Execute(tests[i].program));
 
     CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsBoolean()) << "Program: " << tests[i].program;
+    EXPECT_TRUE(value->IsInteger()) << "Program: " << tests[i].program;
     EXPECT_EQ(tests[i].result, value->ToBoolean())
         << "Program: " << tests[i].program;
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Oneof) {
+TEST_F(FM2JSContextEmbedderTest, Oneof) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -863,13 +863,13 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Oneof) {
     EXPECT_TRUE(Execute(tests[i].program));
 
     CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsBoolean()) << "Program: " << tests[i].program;
+    EXPECT_TRUE(value->IsInteger()) << "Program: " << tests[i].program;
     EXPECT_EQ(tests[i].result, value->ToBoolean())
         << "Program: " << tests[i].program;
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Within) {
+TEST_F(FM2JSContextEmbedderTest, Within) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -883,7 +883,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Within) {
     EXPECT_TRUE(Execute(tests[i].program));
 
     CFXJSE_Value* value = GetValue();
-    EXPECT_TRUE(value->IsBoolean()) << "Program: " << tests[i].program;
+    EXPECT_TRUE(value->IsInteger()) << "Program: " << tests[i].program;
     EXPECT_EQ(tests[i].result, value->ToBoolean())
         << "Program: " << tests[i].program;
   }
