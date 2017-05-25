@@ -49,13 +49,13 @@ extern const int16_t SDP_Table[513];
 #define FXDIB_INTERPOL 0x20
 #define FXDIB_BICUBIC_INTERPOL 0x80
 #define FXDIB_NOSMOOTH 0x100
+
 #define FXDIB_BLEND_NORMAL 0
 #define FXDIB_BLEND_MULTIPLY 1
 #define FXDIB_BLEND_SCREEN 2
 #define FXDIB_BLEND_OVERLAY 3
 #define FXDIB_BLEND_DARKEN 4
 #define FXDIB_BLEND_LIGHTEN 5
-
 #define FXDIB_BLEND_COLORDODGE 6
 #define FXDIB_BLEND_COLORBURN 7
 #define FXDIB_BLEND_HARDLIGHT 8
@@ -74,23 +74,26 @@ extern const int16_t SDP_Table[513];
 #define FXSYS_GetGValue(rgb) (((rgb) >> 8) & 0xff)
 #define FXSYS_GetBValue(rgb) (((rgb) >> 16) & 0xff)
 
-#define FXSYS_CMYK(c, m, y, k) (((c) << 24) | ((m) << 16) | ((y) << 8) | (k))
 #define FXSYS_GetCValue(cmyk) ((uint8_t)((cmyk) >> 24) & 0xff)
 #define FXSYS_GetMValue(cmyk) ((uint8_t)((cmyk) >> 16) & 0xff)
 #define FXSYS_GetYValue(cmyk) ((uint8_t)((cmyk) >> 8) & 0xff)
 #define FXSYS_GetKValue(cmyk) ((uint8_t)(cmyk)&0xff)
+
 inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
   return (c << 24) | (m << 16) | (y << 8) | k;
 }
 
 // Returns tuple a, r, g, b
 std::tuple<int, int, int, int> ArgbDecode(FX_ARGB argb);
+
 // Returns pair a, rgb
 std::pair<int, FX_COLORREF> ArgbToColorRef(FX_ARGB argb);
+
 inline FX_ARGB ArgbEncode(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
 }
 FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
+
 #define FXARGB_A(argb) ((uint8_t)((argb) >> 24))
 #define FXARGB_R(argb) ((uint8_t)((argb) >> 16))
 #define FXARGB_G(argb) ((uint8_t)((argb) >> 8))
@@ -123,8 +126,6 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
 #define FXARGB_TOBGRORDERDIB(argb)                       \
   ((uint8_t)(argb >> 16) | ((uint8_t)(argb >> 8)) << 8 | \
    ((uint8_t)(argb)) << 16 | ((uint8_t)(argb >> 24) << 24))
-#define FXGETFLAG_COLORTYPE(flag) (uint8_t)((flag) >> 8)
-#define FXGETFLAG_ALPHA_FILL(flag) (uint8_t)(flag)
 
 FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
                           int width,
