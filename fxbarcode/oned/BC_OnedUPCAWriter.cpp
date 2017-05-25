@@ -158,20 +158,20 @@ bool CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
   device->FillRect(&re, m_backgroundColor);
   strWidth = strWidth * m_outputHScale;
 
-  CalcTextInfo(tempStr, &charpos[1], m_pFont, strWidth, iFontSize, blank);
+  CalcTextInfo(tempStr, &charpos[1], m_pFont.Get(), strWidth, iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (float)leftPosition * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     if (matrix)
       affine_matrix1.Concat(*matrix);
-    device->DrawNormalText(iLen, &charpos[1], m_pFont,
+    device->DrawNormalText(iLen, &charpos[1], m_pFont.Get(),
                            static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
   tempStr = str.Mid(6, 5);
   iLen = tempStr.GetLength();
-  CalcTextInfo(tempStr, &charpos[6], m_pFont, strWidth, iFontSize, blank);
+  CalcTextInfo(tempStr, &charpos[6], m_pFont.Get(), strWidth, iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(
         1.0, 0.0, 0.0, -1.0,
@@ -179,7 +179,7 @@ bool CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
         (float)(m_Height - iTextHeight + iFontSize));
     if (matrix)
       affine_matrix1.Concat(*matrix);
-    device->DrawNormalText(iLen, &charpos[6], m_pFont,
+    device->DrawNormalText(iLen, &charpos[6], m_pFont.Get(),
                            static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
@@ -188,19 +188,21 @@ bool CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
   strWidth = (float)multiple * 7;
   strWidth = strWidth * m_outputHScale;
 
-  CalcTextInfo(tempStr, charpos.data(), m_pFont, strWidth, iFontSize, blank);
+  CalcTextInfo(tempStr, charpos.data(), m_pFont.Get(), strWidth, iFontSize,
+               blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0, 0,
                               (float)(m_Height - iTextHeight + iFontSize));
     if (matrix)
       affine_matrix1.Concat(*matrix);
-    device->DrawNormalText(iLen, charpos.data(), m_pFont,
+    device->DrawNormalText(iLen, charpos.data(), m_pFont.Get(),
                            static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
   tempStr = str.Mid(11, 1);
   iLen = tempStr.GetLength();
-  CalcTextInfo(tempStr, &charpos[11], m_pFont, strWidth, iFontSize, blank);
+  CalcTextInfo(tempStr, &charpos[11], m_pFont.Get(), strWidth, iFontSize,
+               blank);
   {
     CFX_Matrix affine_matrix1(
         1.0, 0.0, 0.0, -1.0,
@@ -208,7 +210,7 @@ bool CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
         (float)(m_Height - iTextHeight + iFontSize));
     if (matrix)
       affine_matrix1.Concat(*matrix);
-    device->DrawNormalText(iLen, &charpos[11], m_pFont,
+    device->DrawNormalText(iLen, &charpos[11], m_pFont.Get(),
                            static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }

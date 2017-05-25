@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxge/cfx_renderdevice.h"
 
 class CFX_PathData;
@@ -61,15 +62,15 @@ class CPDF_RenderStatus {
   bool ContinueSingleObject(CPDF_PageObject* pObj,
                             const CFX_Matrix* pObj2Device,
                             IFX_Pause* pPause);
-  CPDF_RenderContext* GetContext() { return m_pContext; }
+  CPDF_RenderContext* GetContext() const { return m_pContext.Get(); }
 
 #if defined _SKIA_SUPPORT_
   void DebugVerifyDeviceIsPreMultiplied() const;
 #endif
 
   CPDF_RenderOptions m_Options;
-  CPDF_Dictionary* m_pFormResource;
-  CPDF_Dictionary* m_pPageResource;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pFormResource;
+  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResource;
   std::vector<CPDF_Type3Font*> m_Type3FontCache;
 
  private:
@@ -157,7 +158,7 @@ class CPDF_RenderStatus {
   static const int kRenderMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
-  CPDF_RenderContext* m_pContext;
+  CFX_UnownedPtr<CPDF_RenderContext> m_pContext;
   bool m_bStopped;
   CFX_RenderDevice* m_pDevice;
   CFX_Matrix m_DeviceMatrix;
@@ -172,7 +173,7 @@ class CPDF_RenderStatus {
   bool m_bStdCS;
   uint32_t m_GroupFamily;
   bool m_bLoadMask;
-  CPDF_Type3Char* m_pType3Char;
+  CFX_UnownedPtr<CPDF_Type3Char> m_pType3Char;
   FX_ARGB m_T3FillColor;
   int m_curBlend;
 };

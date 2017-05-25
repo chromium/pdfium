@@ -302,7 +302,7 @@ CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
   if (m_pPngContext)
     m_pCodecMgr->GetPngModule()->Finish(m_pPngContext);
   if (m_pTiffContext)
-    m_pCodecMgr->GetTiffModule()->DestroyDecoder(m_pTiffContext);
+    m_pCodecMgr->GetTiffModule()->DestroyDecoder(m_pTiffContext.Get());
   FX_Free(m_pSrcBuf);
   FX_Free(m_pDecodeBuf);
   FX_Free(m_pSrcPalette);
@@ -1213,13 +1213,13 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         return false;
       }
       int32_t dummy_bpc;
-      bool ret = pTiffModule->LoadFrameInfo(m_pTiffContext, 0, &m_SrcWidth,
-                                            &m_SrcHeight, &m_SrcComponents,
-                                            &dummy_bpc, pAttribute);
+      bool ret = pTiffModule->LoadFrameInfo(
+          m_pTiffContext.Get(), 0, &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
+          &dummy_bpc, pAttribute);
       m_SrcComponents = 4;
       m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
       if (!ret) {
-        pTiffModule->DestroyDecoder(m_pTiffContext);
+        pTiffModule->DestroyDecoder(m_pTiffContext.Get());
         m_pTiffContext = nullptr;
         m_status = FXCODEC_STATUS_ERR_FORMAT;
         return false;
@@ -2170,7 +2170,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
           m_SrcHeight == m_sizeY && m_startX == 0 && m_startY == 0 &&
           m_clipBox.left == 0 && m_clipBox.top == 0 &&
           m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight) {
-        ret = pTiffModule->Decode(m_pTiffContext, m_pDeviceBitmap);
+        ret = pTiffModule->Decode(m_pTiffContext.Get(), m_pDeviceBitmap);
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
         if (!ret) {
@@ -2189,7 +2189,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
       }
-      ret = pTiffModule->Decode(m_pTiffContext, pDIBitmap);
+      ret = pTiffModule->Decode(m_pTiffContext.Get(), pDIBitmap);
       if (!ret) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;

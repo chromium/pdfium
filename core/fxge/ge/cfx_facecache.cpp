@@ -90,7 +90,7 @@ CFX_FaceCache::CFX_FaceCache(FXFT_Face face)
 
 CFX_FaceCache::~CFX_FaceCache() {
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
-  SkSafeUnref(m_pTypeface);
+  SkSafeUnref(m_pTypeface.Get());
 #endif
 }
 
@@ -370,7 +370,7 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
         new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()));
   }
 #endif
-  return m_pTypeface;
+  return m_pTypeface.Get();
 }
 #endif
 

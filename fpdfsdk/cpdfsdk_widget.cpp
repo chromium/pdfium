@@ -88,9 +88,8 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
           m_hMixXFAWidget = pDocView->GetWidgetByName(sName, nullptr);
       }
     }
-    return m_hMixXFAWidget;
+    return m_hMixXFAWidget.Get();
   }
-
   return nullptr;
 }
 
@@ -113,10 +112,11 @@ CXFA_FFWidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
     return nullptr;
 
   if (!m_pWidgetHandler) {
-    if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
+    CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+    if (pDocView)
       m_pWidgetHandler = pDocView->GetWidgetHandler();
   }
-  return m_pWidgetHandler;
+  return m_pWidgetHandler.Get();
 }
 
 static XFA_EVENTTYPE GetXFAEventType(PDFSDK_XFAAActionType eXFAAAT) {

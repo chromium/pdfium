@@ -13,6 +13,7 @@
 
 #include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
 
 class CFFL_FormFiller;
@@ -158,7 +159,7 @@ class CFXEU_InsertWord : public CFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_Edit* m_pEdit;
+  CFX_UnownedPtr<CFX_Edit> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -181,7 +182,7 @@ class CFXEU_InsertReturn : public CFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_Edit* m_pEdit;
+  CFX_UnownedPtr<CFX_Edit> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -205,7 +206,7 @@ class CFXEU_Backspace : public CFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_Edit* m_pEdit;
+  CFX_UnownedPtr<CFX_Edit> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -232,7 +233,7 @@ class CFXEU_Delete : public CFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_Edit* m_pEdit;
+  CFX_UnownedPtr<CFX_Edit> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -255,7 +256,7 @@ class CFXEU_Clear : public CFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_Edit* m_pEdit;
+  CFX_UnownedPtr<CFX_Edit> m_pEdit;
 
   CPVT_WordRange m_wrSel;
   CFX_WideString m_swText;
@@ -275,7 +276,7 @@ class CFXEU_InsertText : public CFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_Edit* m_pEdit;
+  CFX_UnownedPtr<CFX_Edit> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -449,8 +450,8 @@ class CFX_Edit {
 
  private:
   std::unique_ptr<CPDF_VariableText> m_pVT;
-  CPWL_EditCtrl* m_pNotify;
-  CPWL_Edit* m_pOprNotify;
+  CFX_UnownedPtr<CPWL_EditCtrl> m_pNotify;
+  CFX_UnownedPtr<CPWL_Edit> m_pOprNotify;
   std::unique_ptr<CFX_Edit_Provider> m_pVTProvider;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
@@ -485,7 +486,7 @@ class CFX_Edit_Iterator {
   const CPVT_WordPlace& GetAt() const;
 
  private:
-  CFX_Edit* m_pEdit;
+  CFX_UnownedPtr<CFX_Edit> m_pEdit;
   CPDF_VariableText::Iterator* m_pVTIterator;
 };
 
@@ -494,7 +495,7 @@ class CFX_Edit_Provider : public CPDF_VariableText::Provider {
   explicit CFX_Edit_Provider(IPVT_FontMap* pFontMap);
   ~CFX_Edit_Provider() override;
 
-  IPVT_FontMap* GetFontMap();
+  IPVT_FontMap* GetFontMap() const;
 
   // CPDF_VariableText::Provider:
   int32_t GetCharWidth(int32_t nFontIndex, uint16_t word) override;

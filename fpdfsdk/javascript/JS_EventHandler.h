@@ -172,7 +172,7 @@ class CJS_EventHandler {
 
   CFX_WideString m_strTargetName;
   CFX_WideString m_strSourceName;
-  CFX_WideString* m_pWideStrChange;
+  CFX_UnownedPtr<CFX_WideString> m_pWideStrChange;
   CFX_WideString m_WideStrChangeDu;
   CFX_WideString m_WideStrChangeEx;
   int m_nCommitKey;
@@ -184,12 +184,12 @@ class CJS_EventHandler {
   int* m_pISelStart;
   int m_nSelStartDu;
   bool m_bWillCommit;
-  CFX_WideString* m_pValue;
+  CFX_UnownedPtr<CFX_WideString> m_pValue;
   bool m_bFieldFull;
   bool* m_pbRc;
   bool m_bRcDu;
 
-  CPDF_Bookmark* m_pTargetBookMark;
+  CFX_UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pTargetFormFillEnv;
   CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;
 };

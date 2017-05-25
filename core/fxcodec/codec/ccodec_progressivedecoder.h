@@ -17,6 +17,7 @@
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcodec/lgif/cgifcontext.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
 
@@ -127,12 +128,12 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   };
 
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
-  CCodec_ModuleMgr* m_pCodecMgr;
+  CFX_UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
   FXJPEG_Context* m_pJpegContext;
   FXPNG_Context* m_pPngContext;
   std::unique_ptr<CGifContext> m_pGifContext;
   FXBMP_Context* m_pBmpContext;
-  CCodec_TiffContext* m_pTiffContext;
+  CFX_UnownedPtr<CCodec_TiffContext> m_pTiffContext;
   FXCODEC_IMAGE_TYPE m_imagType;
   uint32_t m_offSet;
   uint8_t* m_pSrcBuf;

@@ -12,6 +12,7 @@
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
@@ -166,8 +167,8 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   int32_t m_nValueAge;
 
 #ifdef PDF_ENABLE_XFA
-  mutable CXFA_FFWidget* m_hMixXFAWidget;
-  mutable CXFA_FFWidgetHandler* m_pWidgetHandler;
+  mutable CFX_UnownedPtr<CXFA_FFWidget> m_hMixXFAWidget;
+  mutable CFX_UnownedPtr<CXFA_FFWidgetHandler> m_pWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 };
 

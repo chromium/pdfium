@@ -122,14 +122,14 @@ bool CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
     m_pDevice->CompositeMask(
         m_pTransformer->result().left, m_pTransformer->result().top,
         pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-        m_BlendType, m_pClipRgn, m_bRgbByteOrder, m_AlphaFlag);
+        m_BlendType, m_pClipRgn.Get(), m_bRgbByteOrder, m_AlphaFlag);
   } else {
     if (m_BitmapAlpha != 255)
       pBitmap->MultiplyAlpha(m_BitmapAlpha);
     m_pDevice->CompositeBitmap(
         m_pTransformer->result().left, m_pTransformer->result().top,
         pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0, m_BlendType,
-        m_pClipRgn, m_bRgbByteOrder);
+        m_pClipRgn.Get(), m_bRgbByteOrder);
   }
   return false;
 }

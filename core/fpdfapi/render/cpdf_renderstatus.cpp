@@ -1235,7 +1235,8 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
     res = 0;
   }
   CPDF_ScaledRenderBuffer buffer;
-  if (!buffer.Initialize(m_pContext, m_pDevice, rect, pObj, &m_Options, res)) {
+  if (!buffer.Initialize(m_pContext.Get(), m_pDevice, rect, pObj, &m_Options,
+                         res)) {
     return;
   }
   CFX_Matrix matrix = *pObj2Device;
@@ -1249,8 +1250,8 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
     }
   }
   CPDF_RenderStatus status;
-  status.Initialize(m_pContext, buffer.GetDevice(), buffer.GetMatrix(), nullptr,
-                    nullptr, nullptr, &m_Options, m_Transparency,
+  status.Initialize(m_pContext.Get(), buffer.GetDevice(), buffer.GetMatrix(),
+                    nullptr, nullptr, nullptr, &m_Options, m_Transparency,
                     m_bDropObjects, pFormResource);
   status.RenderSingleObject(pObj, &matrix);
   buffer.OutputToDevice();
@@ -1273,9 +1274,9 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
     pResources = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
   }
   CPDF_RenderStatus status;
-  status.Initialize(m_pContext, m_pDevice, nullptr, m_pStopObj, this, pFormObj,
-                    &m_Options, m_Transparency, m_bDropObjects, pResources,
-                    false);
+  status.Initialize(m_pContext.Get(), m_pDevice, nullptr, m_pStopObj, this,
+                    pFormObj, &m_Options, m_Transparency, m_bDropObjects,
+                    pResources, false);
   status.m_curBlend = m_curBlend;
   {
     CFX_RenderDevice::StateRestorer restorer(m_pDevice);
@@ -1605,9 +1606,9 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     }
   }
   CPDF_RenderStatus bitmap_render;
-  bitmap_render.Initialize(m_pContext, &bitmap_device, nullptr, m_pStopObj,
-                           nullptr, nullptr, &m_Options, 0, m_bDropObjects,
-                           pFormResource, true);
+  bitmap_render.Initialize(m_pContext.Get(), &bitmap_device, nullptr,
+                           m_pStopObj, nullptr, nullptr, &m_Options, 0,
+                           m_bDropObjects, pFormResource, true);
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
 #if defined _SKIA_SUPPORT_PATHS_
   bitmap_device.Flush();
@@ -1871,7 +1872,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     matrix.e += iChar ? textobj->m_CharPos[iChar - 1] : 0;
     matrix.Concat(text_matrix);
     matrix.Concat(*pObj2Device);
-    if (!pType3Char->LoadBitmap(m_pContext)) {
+    if (!pType3Char->LoadBitmap(m_pContext.Get())) {
       if (!glyphs.empty()) {
         for (int i = 0; i < iChar; i++) {
           const FXTEXT_GLYPHPOS& glyph = glyphs[i];
@@ -1897,7 +1898,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       }
       if (fill_alpha == 255) {
         CPDF_RenderStatus status;
-        status.Initialize(m_pContext, m_pDevice, nullptr, nullptr, this,
+        status.Initialize(m_pContext.Get(), m_pDevice, nullptr, nullptr, this,
                           pStates.get(), &Options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
@@ -1919,8 +1920,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         }
         bitmap_device.GetBitmap()->Clear(0);
         CPDF_RenderStatus status;
-        status.Initialize(m_pContext, &bitmap_device, nullptr, nullptr, this,
-                          pStates.get(), &Options,
+        status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr,
+                          this, pStates.get(), &Options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
@@ -2093,7 +2094,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
     return;
   }
   CPDF_DeviceBuffer buffer;
-  buffer.Initialize(m_pContext, m_pDevice, &clip_rect, m_pCurObj, 150);
+  buffer.Initialize(m_pContext.Get(), m_pDevice, &clip_rect, m_pCurObj, 150);
   CFX_Matrix FinalMatrix = *pMatrix;
   FinalMatrix.Concat(*buffer.GetMatrix());
   CFX_RetainPtr<CFX_DIBitmap> pBitmap = buffer.GetBitmap();
@@ -2190,7 +2191,7 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
 
   CFX_Matrix matrix = pShadingObj->m_Matrix;
   matrix.Concat(*pObj2Device);
-  DrawShading(pShadingObj->m_pShading, &matrix, rect,
+  DrawShading(pShadingObj->m_pShading.Get(), &matrix, rect,
               FXSYS_round(255 * pShadingObj->m_GeneralState.GetFillAlpha()),
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
 }
@@ -2276,7 +2277,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                          original.y - mtPattern2Device.f);
         CFX_RenderDevice::StateRestorer restorer2(m_pDevice);
         CPDF_RenderStatus status;
-        status.Initialize(m_pContext, m_pDevice, nullptr, nullptr, this,
+        status.Initialize(m_pContext.Get(), m_pDevice, nullptr, nullptr, this,
                           pStates.get(), &m_Options,
                           pPattern->form()->m_Transparency, m_bDropObjects,
                           pFormResource);
@@ -2628,7 +2629,7 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   CPDF_RenderOptions options;
   options.m_ColorMode = bLuminosity ? RENDER_COLOR_NORMAL : RENDER_COLOR_ALPHA;
   CPDF_RenderStatus status;
-  status.Initialize(m_pContext, &bitmap_device, nullptr, nullptr, nullptr,
+  status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr, nullptr,
                     nullptr, &options, 0, m_bDropObjects, pFormResource, true,
                     nullptr, 0, color_space_family, bLuminosity);
   status.RenderObjectList(&form, &matrix);

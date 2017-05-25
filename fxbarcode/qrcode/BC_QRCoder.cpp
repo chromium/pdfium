@@ -42,11 +42,11 @@ CBC_QRCoder::CBC_QRCoder()
 CBC_QRCoder::~CBC_QRCoder() {}
 
 CBC_QRCoderMode* CBC_QRCoder::GetMode() const {
-  return m_mode;
+  return m_mode.Get();
 }
 
 const CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel() const {
-  return m_ecLevel;
+  return m_ecLevel.Get();
 }
 
 int32_t CBC_QRCoder::GetVersion() const {

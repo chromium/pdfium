@@ -123,13 +123,12 @@ DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap() {
 }
 
 struct FPDF_SYSFONTINFO_DEFAULT : public FPDF_SYSFONTINFO {
-  IFX_SystemFontInfo* m_pFontInfo;
+  CFX_UnownedPtr<IFX_SystemFontInfo> m_pFontInfo;
 };
 
 static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  // TODO(thestig): Should this be set to nullptr too?
-  delete pDefault->m_pFontInfo;
+  delete pDefault->m_pFontInfo.Release();
 }
 
 static void DefaultEnumFonts(struct _FPDF_SYSFONTINFO* pThis, void* pMapper) {

@@ -82,7 +82,7 @@ class PDFObjectsTest : public testing::Test {
     // All direct objects.
     CPDF_Object* objs[] = {boolean_false_obj, boolean_true_obj, number_int_obj,
                            number_float_obj,  str_reg_obj,      str_spec_obj,
-                           name_obj,          m_ArrayObj,       m_DictObj,
+                           name_obj,          m_ArrayObj.Get(), m_DictObj.Get(),
                            stream_obj,        null_obj};
     m_DirectObjTypes = {
         CPDF_Object::BOOLEAN, CPDF_Object::BOOLEAN, CPDF_Object::NUMBER,
@@ -179,9 +179,9 @@ class PDFObjectsTest : public testing::Test {
   std::vector<std::unique_ptr<CPDF_Object>> m_DirectObjs;
   std::vector<int> m_DirectObjTypes;
   std::vector<std::unique_ptr<CPDF_Object>> m_RefObjs;
-  CPDF_Dictionary* m_DictObj;
-  CPDF_Dictionary* m_StreamDictObj;
-  CPDF_Array* m_ArrayObj;
+  CFX_UnownedPtr<CPDF_Dictionary> m_DictObj;
+  CFX_UnownedPtr<CPDF_Dictionary> m_StreamDictObj;
+  CFX_UnownedPtr<CPDF_Array> m_ArrayObj;
   std::vector<CPDF_Object*> m_IndirectObjs;
 };
 
@@ -244,23 +244,29 @@ TEST_F(PDFObjectsTest, GetInteger) {
 
 TEST_F(PDFObjectsTest, GetDict) {
   const CPDF_Dictionary* const direct_obj_results[] = {
-      nullptr, nullptr, nullptr,   nullptr,         nullptr, nullptr,
-      nullptr, nullptr, m_DictObj, m_StreamDictObj, nullptr};
+      nullptr, nullptr, nullptr, nullptr,         nullptr,
+      nullptr, nullptr, nullptr, m_DictObj.Get(), m_StreamDictObj.Get(),
+      nullptr};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
     EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetDict());
 
   // Check indirect references.
-  const CPDF_Dictionary* const indirect_obj_results[] = {
-      nullptr, nullptr, nullptr, nullptr, nullptr, m_DictObj, m_StreamDictObj};
+  const CPDF_Dictionary* const indirect_obj_results[] = {nullptr,
+                                                         nullptr,
+                                                         nullptr,
+                                                         nullptr,
+                                                         nullptr,
+                                                         m_DictObj.Get(),
+                                                         m_StreamDictObj.Get()};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
     EXPECT_TRUE(Equal(indirect_obj_results[i], m_RefObjs[i]->GetDict()));
 }
 
 TEST_F(PDFObjectsTest, GetArray) {
   const CPDF_Array* const direct_obj_results[] = {
-      nullptr, nullptr,    nullptr, nullptr, nullptr, nullptr,
-      nullptr, m_ArrayObj, nullptr, nullptr, nullptr};
+      nullptr, nullptr,          nullptr, nullptr, nullptr, nullptr,
+      nullptr, m_ArrayObj.Get(), nullptr, nullptr, nullptr};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
     EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->AsArray());

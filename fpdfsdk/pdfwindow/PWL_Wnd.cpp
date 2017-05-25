@@ -180,9 +180,9 @@ class CPWL_MsgControl {
  private:
   std::vector<CPWL_Wnd*> m_aMousePath;
   std::vector<CPWL_Wnd*> m_aKeyboardPath;
-  CPWL_Wnd* m_pCreatedWnd;
-  CPWL_Wnd* m_pMainMouseWnd;
-  CPWL_Wnd* m_pMainKeyboardWnd;
+  CFX_UnownedPtr<CPWL_Wnd> m_pCreatedWnd;
+  CFX_UnownedPtr<CPWL_Wnd> m_pMainMouseWnd;
+  CFX_UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
 };
 
 CPWL_Wnd::CPWL_Wnd()
@@ -594,10 +594,7 @@ void* CPWL_Wnd::GetAttachedData() const {
 }
 
 CPWL_ScrollBar* CPWL_Wnd::GetVScrollBar() const {
-  if (HasFlag(PWS_VSCROLL))
-    return m_pVScrollBar;
-
-  return nullptr;
+  return HasFlag(PWS_VSCROLL) ? m_pVScrollBar.Get() : nullptr;
 }
 
 void CPWL_Wnd::CreateScrollBar(const PWL_CREATEPARAM& cp) {
@@ -885,7 +882,7 @@ void CPWL_Wnd::SetChildMatrix(const CFX_Matrix& mt) {
 
 const CPWL_Wnd* CPWL_Wnd::GetFocused() const {
   CPWL_MsgControl* pMsgCtrl = GetMsgControl();
-  return pMsgCtrl ? pMsgCtrl->m_pMainKeyboardWnd : nullptr;
+  return pMsgCtrl ? pMsgCtrl->m_pMainKeyboardWnd.Get() : nullptr;
 }
 
 void CPWL_Wnd::EnableWindow(bool bEnable) {

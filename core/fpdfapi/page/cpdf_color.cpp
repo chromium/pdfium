@@ -160,6 +160,6 @@ CPDF_Pattern* CPDF_Color::GetPattern() const {
   if (!m_pBuffer || m_pCS->GetFamily() != PDFCS_PATTERN)
     return nullptr;
 
-  PatternValue* pvalue = (PatternValue*)m_pBuffer;
+  PatternValue* pvalue = reinterpret_cast<PatternValue*>(m_pBuffer);
   return pvalue->m_pPattern;
 }

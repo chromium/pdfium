@@ -356,16 +356,14 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
     }
   } else {
     PWL_CREATEPARAM cp = GetCreateParam();
-    cp.pAttachedWidget.Reset(m_pWidget);
+    cp.pAttachedWidget.Reset(m_pWidget.Get());
 
     CFFL_PrivateData* pPrivateData = new CFFL_PrivateData;
-    pPrivateData->pWidget = m_pWidget;
+    pPrivateData->pWidget = m_pWidget.Get();
     pPrivateData->pPageView = pPageView;
     pPrivateData->nWidgetAge = m_pWidget->GetAppearanceAge();
     pPrivateData->nValueAge = 0;
-
     cp.pAttachedData = pPrivateData;
-
     pWnd = NewPDFWindow(cp, pPageView);
     m_Maps[pPageView] = pWnd;
   }
@@ -506,7 +504,7 @@ bool CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
     bool bExit = false;
     CFFL_InteractiveFormFiller* pFormFiller =
         m_pFormFillEnv->GetInteractiveFormFiller();
-    CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget);
+    CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget.Get());
     pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, bRC, bExit, nFlag);
     if (!pObserved || bExit)
       return true;
@@ -522,11 +520,11 @@ bool CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
       return true;
     }
     SaveData(pPageView);
-    pFormFiller->OnCalculate(m_pWidget, pPageView, bExit, nFlag);
+    pFormFiller->OnCalculate(m_pWidget.Get(), pPageView, bExit, nFlag);
     if (bExit)
       return true;
 
-    pFormFiller->OnFormat(m_pWidget, pPageView, bExit, nFlag);
+    pFormFiller->OnFormat(m_pWidget.Get(), pPageView, bExit, nFlag);
   }
   return true;
 }
@@ -582,7 +580,7 @@ void CFFL_FormFiller::EscapeFiller(CPDFSDK_PageView* pPageView,
                                    bool bDestroyPDFWindow) {
   m_bValid = false;
 
-  InvalidateRect(GetViewBBox(pPageView, m_pWidget));
+  InvalidateRect(GetViewBBox(pPageView, m_pWidget.Get()));
   if (bDestroyPDFWindow)
     DestroyPDFWindow(pPageView);
 }

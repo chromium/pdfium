@@ -1120,3 +1120,12 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
   }
   return true;
 }
+
+CFX_RenderDevice::StateRestorer::StateRestorer(CFX_RenderDevice* pDevice)
+    : m_pDevice(pDevice) {
+  m_pDevice->SaveState();
+}
+
+CFX_RenderDevice::StateRestorer::~StateRestorer() {
+  m_pDevice->RestoreState(false);
+}

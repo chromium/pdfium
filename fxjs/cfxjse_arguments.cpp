@@ -10,6 +10,13 @@
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 
+CFXJSE_Arguments::CFXJSE_Arguments(
+    const v8::FunctionCallbackInfo<v8::Value>* pInfo,
+    CFXJSE_Value* pRetValue)
+    : m_pInfo(pInfo), m_pRetValue(pRetValue) {}
+
+CFXJSE_Arguments::~CFXJSE_Arguments() {}
+
 int32_t CFXJSE_Arguments::GetLength() const {
   return m_pInfo->Length();
 }
@@ -47,6 +54,6 @@ CFXJSE_HostObject* CFXJSE_Arguments::GetObject(int32_t index,
   return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>(), pClass);
 }
 
-CFXJSE_Value* CFXJSE_Arguments::GetReturnValue() {
-  return m_pRetValue;
+CFXJSE_Value* CFXJSE_Arguments::GetReturnValue() const {
+  return m_pRetValue.Get();
 }

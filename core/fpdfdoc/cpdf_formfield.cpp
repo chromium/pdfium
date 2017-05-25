@@ -899,7 +899,7 @@ bool CPDF_FormField::ClearSelectedOptions(bool bNotify) {
 }
 
 void CPDF_FormField::LoadDA() {
-  CPDF_Dictionary* pFormDict = m_pForm->m_pFormDict;
+  CPDF_Dictionary* pFormDict = m_pForm->m_pFormDict.Get();
   if (!pFormDict)
     return;
 

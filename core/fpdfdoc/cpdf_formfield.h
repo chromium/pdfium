@@ -134,7 +134,7 @@ class CPDF_FormField {
 #endif  // PDF_ENABLE_XFA
 
   float GetFontSize() const { return m_FontSize; }
-  CPDF_Font* GetFont() const { return m_pFont; }
+  CPDF_Font* GetFont() const { return m_pFont.Get(); }
 
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   const CPDF_InterForm* GetForm() const { return m_pForm.Get(); }
@@ -176,7 +176,7 @@ class CPDF_FormField {
   // Owned by InterForm parent.
   std::vector<CFX_UnownedPtr<CPDF_FormControl>> m_ControlList;
   float m_FontSize;
-  CPDF_Font* m_pFont;
+  CFX_UnownedPtr<CPDF_Font> m_pFont;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMFIELD_H_

@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_ICON_H_
 #define FPDFSDK_PDFWINDOW_PWL_ICON_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
@@ -19,7 +20,7 @@ class CPWL_Image : public CPWL_Wnd {
 
   virtual void GetScale(float& fHScale, float& fVScale);
   virtual void GetImageOffset(float& x, float& y);
-  virtual CPDF_Stream* GetPDFStream();
+  virtual CPDF_Stream* GetPDFStream() const;
 
  public:
   void SetPDFStream(CPDF_Stream* pStream);
@@ -29,7 +30,7 @@ class CPWL_Image : public CPWL_Wnd {
   void SetImageAlias(const char* sImageAlias);
 
  protected:
-  CPDF_Stream* m_pPDFStream;
+  CFX_UnownedPtr<CPDF_Stream> m_pPDFStream;
   CFX_ByteString m_sImageAlias;
 };
 
@@ -38,7 +39,7 @@ class CPWL_Icon : public CPWL_Image {
   CPWL_Icon();
   ~CPWL_Icon() override;
 
-  virtual CPDF_IconFit* GetIconFit();
+  virtual CPDF_IconFit* GetIconFit() const;
 
   // CPWL_Image
   void GetScale(float& fHScale, float& fVScale) override;
@@ -51,7 +52,7 @@ class CPWL_Icon : public CPWL_Image {
   void SetIconFit(CPDF_IconFit* pIconFit) { m_pIconFit = pIconFit; }
 
  private:
-  CPDF_IconFit* m_pIconFit;
+  CFX_UnownedPtr<CPDF_IconFit> m_pIconFit;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_ICON_H_

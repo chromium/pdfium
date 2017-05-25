@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 #include "core/fxge/dib/ifx_scanlinecomposer.h"
@@ -56,7 +57,7 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
                         const uint8_t* scan_extra_alpha);
 
   CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
-  const CFX_ClipRgn* m_pClipRgn;
+  CFX_UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
   FXDIB_Format m_SrcFormat;
   int m_DestLeft;
   int m_DestTop;

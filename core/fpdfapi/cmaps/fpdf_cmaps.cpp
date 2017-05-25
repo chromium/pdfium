@@ -61,7 +61,7 @@ void FPDFAPI_FindEmbeddedCMap(const CFX_ByteString& bsName,
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
   const FXCMAP_CMap* pCMaps =
-      pFontGlobals->m_EmbeddedCharsets[charset].m_pMapList;
+      pFontGlobals->m_EmbeddedCharsets[charset].m_pMapList.Get();
   for (uint32_t i = 0; i < pFontGlobals->m_EmbeddedCharsets[charset].m_Count;
        i++) {
     if (bsName == pCMaps[i].m_Name) {

@@ -14,6 +14,7 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
@@ -194,7 +195,7 @@ class CPDF_ToUnicodeMap {
   uint32_t GetUnicode();
 
   std::map<uint32_t, uint32_t> m_Map;
-  CPDF_CID2UnicodeMap* m_pBaseMap;
+  CFX_UnownedPtr<CPDF_CID2UnicodeMap> m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
 };
 
@@ -213,7 +214,7 @@ class CPDF_FontGlobals {
 
   CPDF_CMapManager m_CMapManager;
   struct {
-    const FXCMAP_CMap* m_pMapList;
+    CFX_UnownedPtr<const FXCMAP_CMap> m_pMapList;
     uint32_t m_Count;
   } m_EmbeddedCharsets[CIDSET_NUM_SETS];
   struct {

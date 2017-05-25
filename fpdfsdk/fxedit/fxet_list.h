@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
 
@@ -263,7 +264,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void SetItemSelect(int32_t nItemIndex, bool bSelected);
   int32_t GetLastSelected() const;
 
-  CPWL_List_Notify* m_pNotify;
+  CFX_UnownedPtr<CPWL_List_Notify> m_pNotify;
   bool m_bNotifyFlag;
   CFX_PointF m_ptScrollPos;
   CPLST_Select m_aSelItems;  // for multiple
@@ -273,7 +274,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   int32_t m_nCaretIndex;     // for multiple
   std::vector<std::unique_ptr<CFX_ListItem>> m_ListItems;
   float m_fFontSize;
-  IPVT_FontMap* m_pFontMap;
+  CFX_UnownedPtr<IPVT_FontMap> m_pFontMap;
   bool m_bMultiple;
 };
 

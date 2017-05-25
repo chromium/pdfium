@@ -16,12 +16,14 @@ CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
       m_pInterForm(pInterForm),
       m_hXFAWidget(pAnnot) {}
 
+CPDFSDK_XFAWidget::~CPDFSDK_XFAWidget() {}
+
 bool CPDFSDK_XFAWidget::IsXFAField() {
   return true;
 }
 
 CXFA_FFWidget* CPDFSDK_XFAWidget::GetXFAWidget() const {
-  return m_hXFAWidget;
+  return m_hXFAWidget.Get();
 }
 
 CPDF_Annot::Subtype CPDFSDK_XFAWidget::GetAnnotSubtype() const {

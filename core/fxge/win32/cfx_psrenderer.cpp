@@ -76,7 +76,7 @@ void PSCompressData(int PSLevel,
 }  // namespace
 
 struct PSGlyph {
-  CFX_Font* m_pFont;
+  CFX_UnownedPtr<CFX_Font> m_pFont;
   uint32_t m_GlyphIndex;
   bool m_bGlyphAdjust;
   float m_AdjustMatrix[4];

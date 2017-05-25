@@ -25,12 +25,9 @@ CFFL_ListBox::~CFFL_ListBox() {}
 
 PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
   PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
-
   uint32_t dwFieldFlag = m_pWidget->GetFieldFlags();
-
-  if (dwFieldFlag & FIELDFLAG_MULTISELECT) {
+  if (dwFieldFlag & FIELDFLAG_MULTISELECT)
     cp.dwFlags |= PLBS_MULTIPLESEL;
-  }
 
   cp.dwFlags |= PWS_VSCROLL;
 
@@ -39,10 +36,9 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
 
   if (!m_pFontMap) {
     m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(
-        m_pWidget, m_pFormFillEnv->GetSysHandler());
+        m_pWidget.Get(), m_pFormFillEnv->GetSysHandler());
   }
   cp.pFontMap = m_pFontMap.get();
-
   return cp;
 }
 

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -38,7 +39,7 @@ class CFX_ImageRenderer {
 
  private:
   CFX_RetainPtr<CFX_DIBitmap> m_pDevice;
-  const CFX_ClipRgn* m_pClipRgn;
+  CFX_UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
   int m_BitmapAlpha;
   uint32_t m_MaskColor;
   CFX_Matrix m_Matrix;

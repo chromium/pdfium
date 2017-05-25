@@ -590,7 +590,7 @@ void CFX_ListCtrl::SetFontSize(float fFontSize) {
 
 void CFX_ListCtrl::AddItem(const CFX_WideString& str) {
   auto pListItem = pdfium::MakeUnique<CFX_ListItem>();
-  pListItem->SetFontMap(m_pFontMap);
+  pListItem->SetFontMap(m_pFontMap.Get());
   pListItem->SetFontSize(m_fFontSize);
   pListItem->SetText(str);
   m_ListItems.push_back(std::move(pListItem));

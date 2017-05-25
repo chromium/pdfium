@@ -40,7 +40,7 @@ class CBC_ReedSolomonGF256Poly final {
   std::unique_ptr<CBC_ReedSolomonGF256Poly> Clone() const;
 
  private:
-  CBC_ReedSolomonGF256* m_field;
+  CFX_UnownedPtr<CBC_ReedSolomonGF256> m_field;
   std::vector<int32_t> m_coefficients;
 };
 

@@ -7,6 +7,7 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
 #define FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/cfx_widestring.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
@@ -38,7 +39,7 @@ class CBC_EncoderContext {
   CFX_WideString m_codewords;
   int32_t m_pos;
   int32_t m_newEncoding;
-  CBC_SymbolInfo* m_symbolInfo;
+  CFX_UnownedPtr<CBC_SymbolInfo> m_symbolInfo;
 
  private:
   int32_t getTotalMessageCharCount();

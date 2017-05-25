@@ -55,8 +55,8 @@ void CPWL_Image::SetPDFStream(CPDF_Stream* pStream) {
   m_pPDFStream = pStream;
 }
 
-CPDF_Stream* CPWL_Image::GetPDFStream() {
-  return m_pPDFStream;
+CPDF_Stream* CPWL_Image::GetPDFStream() const {
+  return m_pPDFStream.Get();
 }
 
 void CPWL_Image::GetImageSize(float& fWidth, float& fHeight) {
@@ -114,8 +114,8 @@ CPWL_Icon::CPWL_Icon() : m_pIconFit(nullptr) {}
 
 CPWL_Icon::~CPWL_Icon() {}
 
-CPDF_IconFit* CPWL_Icon::GetIconFit() {
-  return m_pIconFit;
+CPDF_IconFit* CPWL_Icon::GetIconFit() const {
+  return m_pIconFit.Get();
 }
 
 int32_t CPWL_Icon::GetScaleMethod() {

@@ -961,7 +961,7 @@ int CPDF_InterForm::FindFieldInCalculationOrder(const CPDF_FormField* pField) {
 }
 
 CPDF_Font* CPDF_InterForm::GetFormFont(CFX_ByteString csNameTag) const {
-  return GetFont(m_pFormDict, m_pDocument.Get(), csNameTag);
+  return GetFont(m_pFormDict.Get(), m_pDocument.Get(), csNameTag);
 }
 
 CPDF_DefaultAppearance CPDF_InterForm::GetDefaultAppearance() const {

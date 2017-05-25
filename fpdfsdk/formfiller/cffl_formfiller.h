@@ -140,7 +140,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   void SetChangeMark();
 
   virtual void InvalidateRect(const FX_RECT& rect);
-  CPDFSDK_Annot* GetSDKAnnot() { return m_pAnnot; }
+  CPDFSDK_Annot* GetSDKAnnot() { return m_pAnnot.Get(); }
 
  protected:
   using CFFL_PageView2PDFWindow = std::map<CPDFSDK_PageView*, CPWL_Wnd*>;
@@ -154,8 +154,8 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   void DestroyWindows();
 
   CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  CPDFSDK_Widget* m_pWidget;
-  CPDFSDK_Annot* m_pAnnot;
+  CFX_UnownedPtr<CPDFSDK_Widget> m_pWidget;
+  CFX_UnownedPtr<CPDFSDK_Annot> m_pAnnot;
   bool m_bValid;
   CFFL_PageView2PDFWindow m_Maps;
   CFX_PointF m_ptOldPos;

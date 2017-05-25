@@ -95,8 +95,8 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
         new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pImage);
   }
   int ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
-      pRenderStatus->m_pFormResource, m_pPage->m_pPageResources.Get(), bStdCS,
-      GroupFamily, bLoadMask, pRenderStatus);
+      pRenderStatus->m_pFormResource.Get(), m_pPage->m_pPageResources.Get(),
+      bStdCS, GroupFamily, bLoadMask, pRenderStatus);
   if (ret == 2)
     return true;
 

@@ -11,6 +11,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/cfx_observable.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/fsdk_common.h"
@@ -52,13 +53,13 @@ class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
 #endif  // PDF_ENABLE_XFA
 
   void SetPage(CPDFSDK_PageView* pPageView);
-  CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
+  CPDFSDK_PageView* GetPageView() const { return m_pPageView.Get(); }
 
   bool IsSelected();
   void SetSelected(bool bSelected);
 
  protected:
-  CPDFSDK_PageView* m_pPageView;
+  CFX_UnownedPtr<CPDFSDK_PageView> m_pPageView;
   bool m_bSelected;
 };
 

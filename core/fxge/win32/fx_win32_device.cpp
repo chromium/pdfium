@@ -363,7 +363,7 @@ class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
   CFX_ByteString FindFont(const CFX_ByteString& name);
 
   HDC m_hDC;
-  CFX_FontMapper* m_pMapper;
+  CFX_UnownedPtr<CFX_FontMapper> m_pMapper;
   CFX_ByteString m_LastFamily;
   CFX_ByteString m_KaiTi, m_FangSong;
 };

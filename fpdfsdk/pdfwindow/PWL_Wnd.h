@@ -12,6 +12,7 @@
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxcrt/cfx_observable.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -224,8 +225,8 @@ class CPWL_Timer {
 
  private:
   int32_t m_nTimerID;
-  CPWL_TimerHandler* m_pAttached;
-  CFX_SystemHandler* m_pSystemHandler;
+  CFX_UnownedPtr<CPWL_TimerHandler> m_pAttached;
+  CFX_UnownedPtr<CFX_SystemHandler> m_pSystemHandler;
 };
 
 class CPWL_TimerHandler {
@@ -398,7 +399,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   std::vector<CPWL_Wnd*> m_Children;
   PWL_CREATEPARAM m_sPrivateParam;
-  CPWL_ScrollBar* m_pVScrollBar;
+  CFX_UnownedPtr<CPWL_ScrollBar> m_pVScrollBar;
   CFX_FloatRect m_rcWindow;
   CFX_FloatRect m_rcClip;
   bool m_bCreated;

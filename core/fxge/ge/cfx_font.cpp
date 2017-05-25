@@ -28,12 +28,12 @@
 
 namespace {
 
-typedef struct {
+struct OUTLINE_PARAMS {
   CFX_PathData* m_pPath;
   int m_CurX;
   int m_CurY;
   float m_CoordUnit;
-} OUTLINE_PARAMS;
+};
 
 #ifdef PDF_ENABLE_XFA
 

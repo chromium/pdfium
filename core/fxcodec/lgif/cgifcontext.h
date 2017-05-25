@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/lgif/fx_gif.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CCodec_GifModule;
@@ -44,7 +45,7 @@ class CGifContext {
   int32_t decode_status;
   uint32_t skip_size;
 
-  CCodec_GifModule* m_Module;
+  CFX_UnownedPtr<CCodec_GifModule> m_Module;
   char* err_ptr;
   CFX_ByteString cmt_data;
   std::unique_ptr<GifGCE> m_GifGCE;

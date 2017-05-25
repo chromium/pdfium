@@ -28,34 +28,25 @@ CFFL_TextField::~CFFL_TextField() {
 
 PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
   PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
-
   int nFlags = m_pWidget->GetFieldFlags();
-
-  if (nFlags & FIELDFLAG_PASSWORD) {
+  if (nFlags & FIELDFLAG_PASSWORD)
     cp.dwFlags |= PES_PASSWORD;
-  }
 
   if (nFlags & FIELDFLAG_MULTILINE) {
     cp.dwFlags |= PES_MULTILINE | PES_AUTORETURN | PES_TOP;
-
-    if (!(nFlags & FIELDFLAG_DONOTSCROLL)) {
+    if (!(nFlags & FIELDFLAG_DONOTSCROLL))
       cp.dwFlags |= PWS_VSCROLL | PES_AUTOSCROLL;
-    }
   } else {
     cp.dwFlags |= PES_CENTER;
-
-    if (!(nFlags & FIELDFLAG_DONOTSCROLL)) {
+    if (!(nFlags & FIELDFLAG_DONOTSCROLL))
       cp.dwFlags |= PES_AUTOSCROLL;
-    }
   }
 
-  if (nFlags & FIELDFLAG_COMB) {
+  if (nFlags & FIELDFLAG_COMB)
     cp.dwFlags |= PES_CHARARRAY;
-  }
 
-  if (nFlags & FIELDFLAG_RICHTEXT) {
+  if (nFlags & FIELDFLAG_RICHTEXT)
     cp.dwFlags |= PES_RICH;
-  }
 
   cp.dwFlags |= PES_UNDO;
 
@@ -71,14 +62,12 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
       cp.dwFlags |= PES_RIGHT;
       break;
   }
-
   if (!m_pFontMap) {
     m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(
-        m_pWidget, m_pFormFillEnv->GetSysHandler());
+        m_pWidget.Get(), m_pFormFillEnv->GetSysHandler());
   }
   cp.pFontMap = m_pFontMap.get();
   cp.pFocusHandler = this;
-
   return cp;
 }
 

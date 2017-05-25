@@ -72,12 +72,12 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       status.Initialize(this, pDevice, pLastMatrix, pStopObj, nullptr, nullptr,
                         pOptions, layer.m_pObjectHolder->m_Transparency, false,
                         nullptr);
-      status.RenderObjectList(layer.m_pObjectHolder, &FinalMatrix);
+      status.RenderObjectList(layer.m_pObjectHolder.Get(), &FinalMatrix);
     } else {
       status.Initialize(this, pDevice, nullptr, pStopObj, nullptr, nullptr,
                         pOptions, layer.m_pObjectHolder->m_Transparency, false,
                         nullptr);
-      status.RenderObjectList(layer.m_pObjectHolder, &layer.m_Matrix);
+      status.RenderObjectList(layer.m_pObjectHolder.Get(), &layer.m_Matrix);
     }
     if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE)
       m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
@@ -85,3 +85,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       break;
   }
 }
+
+CPDF_RenderContext::Layer::Layer() {}
+
+CPDF_RenderContext::Layer::Layer(const Layer& that) = default;
+
+CPDF_RenderContext::Layer::~Layer() {}

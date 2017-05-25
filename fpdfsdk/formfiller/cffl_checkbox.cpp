@@ -48,7 +48,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
 
       bool bReset = false;
       bool bExit = false;
-      CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget);
+      CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget.Get());
       m_pFormFillEnv->GetInteractiveFormFiller()->OnButtonUp(
           &pObserved, pPageView, bReset, bExit, nFlags);
       if (!pObserved) {

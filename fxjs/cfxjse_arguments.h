@@ -9,14 +9,15 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/fxjse.h"
 
 class CFXJSE_Arguments {
  public:
   CFXJSE_Arguments(const v8::FunctionCallbackInfo<v8::Value>* pInfo,
-                   CFXJSE_Value* pRetValue)
-      : m_pInfo(pInfo), m_pRetValue(pRetValue) {}
+                   CFXJSE_Value* pRetValue);
+  ~CFXJSE_Arguments();
 
   int32_t GetLength() const;
   std::unique_ptr<CFXJSE_Value> GetValue(int32_t index) const;
@@ -26,11 +27,11 @@ class CFXJSE_Arguments {
   CFX_ByteString GetUTF8String(int32_t index) const;
   CFXJSE_HostObject* GetObject(int32_t index,
                                CFXJSE_Class* pClass = nullptr) const;
-  CFXJSE_Value* GetReturnValue();
+  CFXJSE_Value* GetReturnValue() const;
 
  private:
   const v8::FunctionCallbackInfo<v8::Value>* m_pInfo;
-  CFXJSE_Value* m_pRetValue;
+  CFX_UnownedPtr<CFXJSE_Value> m_pRetValue;
 };
 
 #endif  // FXJS_CFXJSE_ARGUMENTS_H_

@@ -38,8 +38,10 @@ PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam() {
   if (m_pWidget->GetFieldFlags() & FIELDFLAG_EDIT)
     cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
 
-  if (!m_pFontMap)
-    m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(m_pWidget, GetSystemHandler());
+  if (!m_pFontMap) {
+    m_pFontMap =
+        pdfium::MakeUnique<CBA_FontMap>(m_pWidget.Get(), GetSystemHandler());
+  }
   cp.pFontMap = m_pFontMap.get();
   cp.pFocusHandler = this;
   return cp;

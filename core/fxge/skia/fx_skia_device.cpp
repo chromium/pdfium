@@ -822,7 +822,7 @@ class SkiaState {
     skPaint.setAntiAlias(true);
     skPaint.setColor(m_fillColor);
     if (m_pTypeFace) {  // exclude placeholder test fonts
-      sk_sp<SkTypeface> typeface(SkSafeRef(m_pTypeFace));
+      sk_sp<SkTypeface> typeface(SkSafeRef(m_pTypeFace.Get()));
       skPaint.setTypeface(typeface);
     }
     skPaint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
@@ -1266,8 +1266,8 @@ class SkiaState {
   CFX_GraphStateData m_clipState;
   CFX_GraphStateData m_drawState;
   CFX_Matrix m_clipMatrix;
-  CFX_SkiaDeviceDriver* m_pDriver;
-  CFX_TypeFace* m_pTypeFace;
+  CFX_UnownedPtr<CFX_SkiaDeviceDriver> m_pDriver;
+  CFX_UnownedPtr<CFX_TypeFace> m_pTypeFace;
   float m_fontSize;
   uint32_t m_fillColor;
   uint32_t m_strokeColor;

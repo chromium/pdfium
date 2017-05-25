@@ -36,7 +36,8 @@ void CPWL_List_Notify::IOnSetScrollInfoY(float fPlateMin,
   Info.fSmallStep = fSmallStep;
   Info.fBigStep = fBigStep;
 
-  m_pList->OnNotify(m_pList, PNM_SETSCROLLINFO, SBT_VSCROLL, (intptr_t)&Info);
+  m_pList->OnNotify(m_pList.Get(), PNM_SETSCROLLINFO, SBT_VSCROLL,
+                    reinterpret_cast<intptr_t>(&Info));
 
   if (CPWL_ScrollBar* pScroll = m_pList->GetVScrollBar()) {
     if (IsFloatBigger(Info.fPlateWidth, Info.fContentMax - Info.fContentMin) ||
@@ -55,7 +56,8 @@ void CPWL_List_Notify::IOnSetScrollInfoY(float fPlateMin,
 }
 
 void CPWL_List_Notify::IOnSetScrollPosY(float fy) {
-  m_pList->OnNotify(m_pList, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&fy);
+  m_pList->OnNotify(m_pList.Get(), PNM_SETSCROLLPOS, SBT_VSCROLL,
+                    reinterpret_cast<intptr_t>(&fy));
 }
 
 void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {

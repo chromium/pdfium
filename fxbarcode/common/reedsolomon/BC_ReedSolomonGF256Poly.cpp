@@ -106,7 +106,7 @@ int32_t CBC_ReedSolomonGF256Poly::EvaluateAt(int32_t a) {
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Clone()
     const {
   auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
-  if (!temp->Init(m_field, &m_coefficients))
+  if (!temp->Init(m_field.Get(), &m_coefficients))
     return nullptr;
   return temp;
 }
@@ -133,7 +133,7 @@ CBC_ReedSolomonGF256Poly::AddOrSubtract(const CBC_ReedSolomonGF256Poly* other) {
         smallerCoefficients[j - lengthDiff], largerCoefficients[j]);
   }
   auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
-  if (!temp->Init(m_field, &sumDiff))
+  if (!temp->Init(m_field.Get(), &sumDiff))
     return nullptr;
   return temp;
 }
@@ -156,7 +156,7 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
     }
   }
   auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
-  if (!temp->Init(m_field, &product))
+  if (!temp->Init(m_field.Get(), &product))
     return nullptr;
   return temp;
 }
@@ -174,7 +174,7 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
     product[i] = m_field->Multiply(m_coefficients[i], scalar);
 
   auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
-  if (!temp->Init(m_field, &product))
+  if (!temp->Init(m_field.Get(), &product))
     return nullptr;
   return temp;
 }
@@ -193,7 +193,7 @@ CBC_ReedSolomonGF256Poly::MultiplyByMonomial(int32_t degree,
     product[i] = m_field->Multiply(m_coefficients[i], coefficient);
 
   auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
-  if (!temp->Init(m_field, &product))
+  if (!temp->Init(m_field.Get(), &product))
     return nullptr;
   return temp;
 }

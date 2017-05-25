@@ -134,7 +134,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,
                                    bool bLatin,
                                    bool bArabic) const;
-  IPWL_Filler_Notify* m_pFillerNotify;
+  CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
   bool m_bFocus;
   CFX_FloatRect m_rcOldWindow;
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;

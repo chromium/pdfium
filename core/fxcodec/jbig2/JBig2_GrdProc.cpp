@@ -25,6 +25,8 @@ CJBig2_GRDProc::CJBig2_GRDProc()
   m_ReplaceRect.right = 0;
 }
 
+CJBig2_GRDProc::~CJBig2_GRDProc() {}
+
 bool CJBig2_GRDProc::UseTemplate0Opt3() const {
   return (GBAT[0] == 3) && (GBAT[1] == -1) && (GBAT[2] == -3) &&
          (GBAT[3] == -1) && (GBAT[4] == 2) && (GBAT[5] == -2) &&
@@ -663,35 +665,35 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
   CJBig2_Image* pImage = *m_pImage;
   if (GBTEMPLATE == 0) {
     if (UseTemplate0Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template0_opt3(pImage, m_pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template0_opt3(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template0_unopt(pImage, m_pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template0_unopt(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 1) {
     if (UseTemplate1Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template1_opt3(pImage, m_pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template1_opt3(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template1_unopt(pImage, m_pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template1_unopt(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 2) {
     if (UseTemplate23Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template2_opt3(pImage, m_pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template2_opt3(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template2_unopt(pImage, m_pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template2_unopt(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     }
   } else {
     if (UseTemplate23Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template3_opt3(pImage, m_pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template3_opt3(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template3_unopt(pImage, m_pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template3_unopt(
+          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
     }
   }
   m_ReplaceRect.left = 0;

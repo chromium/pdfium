@@ -41,7 +41,7 @@ class CPWL_List_Notify {
                    const CPVT_WordPlace& place);
 
  private:
-  CPWL_ListBox* m_pList;
+  CFX_UnownedPtr<CPWL_ListBox> m_pList;
 };
 
 class CPWL_ListBox : public CPWL_Wnd {
@@ -109,7 +109,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   std::unique_ptr<CPWL_List_Notify> m_pListNotify;
   bool m_bMouseDown;
   bool m_bHoverSel;
-  IPWL_Filler_Notify* m_pFillerNotify;
+  CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
 
  private:
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;

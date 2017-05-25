@@ -9,6 +9,14 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 
+CPDF_Link::CPDF_Link() {}
+
+CPDF_Link::CPDF_Link(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+
+CPDF_Link::CPDF_Link(const CPDF_Link& that) = default;
+
+CPDF_Link::~CPDF_Link() {}
+
 CFX_FloatRect CPDF_Link::GetRect() {
   return m_pDict->GetRectFor("Rect");
 }

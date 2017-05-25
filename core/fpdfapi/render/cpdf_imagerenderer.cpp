@@ -225,8 +225,8 @@ void CPDF_ImageRenderer::CalculateDrawImage(
     CFX_Matrix* pNewMatrix,
     const FX_RECT& rect) const {
   CPDF_RenderStatus bitmap_render;
-  bitmap_render.Initialize(m_pRenderStatus->m_pContext, pBitmapDevice2, nullptr,
-                           nullptr, nullptr, nullptr, nullptr, 0,
+  bitmap_render.Initialize(m_pRenderStatus->m_pContext.Get(), pBitmapDevice2,
+                           nullptr, nullptr, nullptr, nullptr, nullptr, 0,
                            m_pRenderStatus->m_bDropObjects, nullptr, true);
   CPDF_ImageRenderer image_render;
   if (image_render.Start(&bitmap_render, pDIBSource, 0xffffffff, 255,
@@ -276,7 +276,7 @@ bool CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
 
   bitmap_device1.GetBitmap()->Clear(0xffffff);
   CPDF_RenderStatus bitmap_render;
-  bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device1,
+  bitmap_render.Initialize(m_pRenderStatus->m_pContext.Get(), &bitmap_device1,
                            nullptr, nullptr, nullptr, nullptr,
                            &m_pRenderStatus->m_Options, 0,
                            m_pRenderStatus->m_bDropObjects, nullptr, true);
@@ -329,7 +329,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   bitmap_device1.GetBitmap()->Clear(0xffffff);
 #endif
   CPDF_RenderStatus bitmap_render;
-  bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device1,
+  bitmap_render.Initialize(m_pRenderStatus->m_pContext.Get(), &bitmap_device1,
                            nullptr, nullptr, nullptr, nullptr, nullptr, 0,
                            m_pRenderStatus->m_bDropObjects, nullptr, true);
   CPDF_ImageRenderer image_render;
