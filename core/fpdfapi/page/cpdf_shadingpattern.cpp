@@ -45,11 +45,13 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
 }
 
 CPDF_ShadingPattern::~CPDF_ShadingPattern() {
-  CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->get() : nullptr;
-  if (pCS) {
+  CPDF_ColorSpace* pCountedCS = m_pCountedCS ? m_pCountedCS->get() : nullptr;
+  if (pCountedCS) {
     auto* pPageData = document()->GetPageData();
-    if (pPageData)
-      pPageData->ReleaseColorSpace(pCS->GetArray());
+    if (pPageData) {
+      m_pCS.Release();  // Give up unowned reference first.
+      pPageData->ReleaseColorSpace(pCountedCS->GetArray());
+    }
   }
 }
 
