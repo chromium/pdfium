@@ -12,9 +12,11 @@
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/font/cfx_cttgsubtable.h"
+#include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
+#include "core/fpdfapi/font/cpdf_cmap.h"
+#include "core/fpdfapi/font/cpdf_cmapparser.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
-#include "core/fpdfapi/font/font_int.h"
-#include "core/fpdfapi/font/ttgsubtable.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -377,8 +379,8 @@ bool CPDF_CIDFont::Load() {
   if (m_Charset == CIDSET_UNKNOWN) {
     CPDF_Dictionary* pCIDInfo = pCIDFontDict->GetDictFor("CIDSystemInfo");
     if (pCIDInfo) {
-      m_Charset =
-          CharsetFromOrdering(pCIDInfo->GetStringFor("Ordering").AsStringC());
+      m_Charset = CPDF_CMapParser::CharsetFromOrdering(
+          pCIDInfo->GetStringFor("Ordering").AsStringC());
     }
   }
   if (m_Charset != CIDSET_UNKNOWN) {

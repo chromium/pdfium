@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/font/cpdf_tounicodemap.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
@@ -86,6 +87,9 @@ class CPDF_Font {
 
  protected:
   CPDF_Font();
+
+  static int TT2PDF(int m, FXFT_Face face);
+  static bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
 
   virtual bool Load() = 0;
 

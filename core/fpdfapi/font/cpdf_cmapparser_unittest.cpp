@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fpdfapi/font/font_int.h"
+#include "core/fpdfapi/font/cpdf_cmapparser.h"
+
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -17,7 +18,7 @@ bool uint_ranges_equal(uint8_t* a, uint8_t* b, size_t count) {
 
 }  // namespace
 
-TEST(fpdf_font_cid, CMap_GetCode) {
+TEST(cpdf_cmapparser, CMap_GetCode) {
   EXPECT_EQ(0u, CPDF_CMapParser::CMap_GetCode(""));
   EXPECT_EQ(0u, CPDF_CMapParser::CMap_GetCode("<"));
   EXPECT_EQ(194u, CPDF_CMapParser::CMap_GetCode("<c2"));
@@ -35,7 +36,7 @@ TEST(fpdf_font_cid, CMap_GetCode) {
   EXPECT_EQ(0u, CPDF_CMapParser::CMap_GetCode("<100000000"));
 }
 
-TEST(fpdf_font_cid, CMap_GetCodeRange) {
+TEST(cpdf_cmapparser, CMap_GetCodeRange) {
   CPDF_CMap::CodeRange range;
 
   // Must start with a <

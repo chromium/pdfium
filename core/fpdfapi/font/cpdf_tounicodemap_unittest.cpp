@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fpdfapi/font/font_int.h"
+#include "core/fpdfapi/font/cpdf_tounicodemap.h"
+
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(fpdf_font, StringToCode) {
+TEST(cpdf_tounicodemap, StringToCode) {
   EXPECT_EQ(0u, CPDF_ToUnicodeMap::StringToCode(""));
   EXPECT_EQ(194u, CPDF_ToUnicodeMap::StringToCode("<c2"));
   EXPECT_EQ(162u, CPDF_ToUnicodeMap::StringToCode("<A2"));
@@ -14,7 +15,7 @@ TEST(fpdf_font, StringToCode) {
   EXPECT_EQ(128u, CPDF_ToUnicodeMap::StringToCode("128"));
 }
 
-TEST(fpdf_font, StringToWideString) {
+TEST(cpdf_tounicodemap, StringToWideString) {
   EXPECT_EQ(L"", CPDF_ToUnicodeMap::StringToWideString(""));
   EXPECT_EQ(L"", CPDF_ToUnicodeMap::StringToWideString("1234"));
 

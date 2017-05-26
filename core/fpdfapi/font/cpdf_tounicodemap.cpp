@@ -1,99 +1,18 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/font/font_int.h"
-
-#include <memory>
-#include <utility>
+#include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
-#include "core/fpdfapi/parser/cpdf_array.h"
-#include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/parser/cpdf_name.h"
-#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/fx_freetype.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
-
-int TT2PDF(int m, FXFT_Face face) {
-  int upm = FXFT_Get_Face_UnitsPerEM(face);
-  if (upm == 0)
-    return m;
-  return pdfium::base::checked_cast<int>(
-      (static_cast<double>(m) * 1000 + upm / 2) / upm);
-}
-
-bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
-  auto** pCharMap = FXFT_Get_Face_Charmaps(face);
-  for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
-    if (FXFT_Get_Charmap_PlatformID(pCharMap[i]) == platform_id &&
-        FXFT_Get_Charmap_EncodingID(pCharMap[i]) == encoding_id) {
-      FXFT_Set_Charmap(face, pCharMap[i]);
-      return true;
-    }
-  }
-  return false;
-}
-
-CFX_StockFontArray::CFX_StockFontArray() {}
-
-CFX_StockFontArray::~CFX_StockFontArray() {
-  for (size_t i = 0; i < FX_ArraySize(m_StockFonts); ++i) {
-    if (m_StockFonts[i])
-      delete m_StockFonts[i]->GetFontDict();
-  }
-}
-
-CPDF_Font* CFX_StockFontArray::GetFont(uint32_t index) const {
-  if (index >= FX_ArraySize(m_StockFonts))
-    return nullptr;
-  return m_StockFonts[index].get();
-}
-
-CPDF_Font* CFX_StockFontArray::SetFont(uint32_t index,
-                                       std::unique_ptr<CPDF_Font> pFont) {
-  CPDF_Font* result = pFont.get();
-  if (index < FX_ArraySize(m_StockFonts))
-    m_StockFonts[index] = std::move(pFont);
-  return result;
-}
-
-CPDF_FontGlobals::CPDF_FontGlobals() {
-  memset(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
-  memset(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
-}
-
-CPDF_FontGlobals::~CPDF_FontGlobals() {}
-
-CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc, uint32_t index) {
-  auto it = m_StockMap.find(pDoc);
-  if (it == m_StockMap.end())
-    return nullptr;
-  return it->second ? it->second->GetFont(index) : nullptr;
-}
-
-CPDF_Font* CPDF_FontGlobals::Set(CPDF_Document* pDoc,
-                                 uint32_t index,
-                                 std::unique_ptr<CPDF_Font> pFont) {
-  if (!pdfium::ContainsKey(m_StockMap, pDoc))
-    m_StockMap[pDoc] = pdfium::MakeUnique<CFX_StockFontArray>();
-  return m_StockMap[pDoc]->SetFont(index, std::move(pFont));
-}
-
-void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {
-  m_StockMap.erase(pDoc);
-}
 
 CFX_WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   auto it = m_Map.find(charcode);

@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/font/font_int.h"
+#include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fxcrt/fx_basic.h"
 

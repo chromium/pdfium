@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_FONT_TTGSUBTABLE_H_
-#define CORE_FPDFAPI_FONT_TTGSUBTABLE_H_
+#ifndef CORE_FPDFAPI_FONT_CFX_CTTGSUBTABLE_H_
+#define CORE_FPDFAPI_FONT_CFX_CTTGSUBTABLE_H_
 
 #include <stdint.h>
 
@@ -295,4 +295,4 @@ class CFX_CTTGSUBTable {
   TLookupList LookupList;
 };
 
-#endif  // CORE_FPDFAPI_FONT_TTGSUBTABLE_H_
+#endif  // CORE_FPDFAPI_FONT_CFX_CTTGSUBTABLE_H_
