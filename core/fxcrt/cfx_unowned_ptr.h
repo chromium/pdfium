@@ -10,6 +10,30 @@
 #include <type_traits>
 #include <utility>
 
+// CFX_UnownedPtr is a smart pointer class that behaves very much like a
+// standard C-style pointer. The advantages of using it over raw
+// pointers are:
+//
+// 1. It documents the nature of the pointer with no need to add a comment
+//    explaining that is it // Not owned. Additionally, an attempt to delete
+//    an unowned ptr will fail to compile rather than silently succeeding,
+//    since it is a class and not a raw pointer.
+//
+// 2. When built for a memory tool like ASAN, the class provides a destructor
+//    which checks that the object being pointed to is still alive.
+//
+// Hence, when using UnownedPtr, no dangling pointers are ever permitted,
+// even if they are not de-referenced after becoming dangling. The style of
+// programming required is that the lifetime an object containing an
+// UnownedPtr must be strictly less than the object to which it points.
+//
+// The same checks are also performed at assignment time to prove that the
+// old value was not a dangling pointer, either.
+//
+// The array indexing operation [] is not supported on an unowned ptr,
+// because an unowned ptr expresses a one to one relationship with some
+// other heap object.
+
 template <class T>
 class CFX_UnownedPtr {
  public:
@@ -23,16 +47,16 @@ class CFX_UnownedPtr {
   // NOLINTNEXTLINE(runtime/explicit)
   CFX_UnownedPtr(std::nullptr_t ptr) {}
 
-  ~CFX_UnownedPtr() { Probe(); }
+  ~CFX_UnownedPtr() { ProbeForLowSeverityLifetimeIssue(); }
 
   CFX_UnownedPtr& operator=(T* that) {
-    Probe();
+    ProbeForLowSeverityLifetimeIssue();
     m_pObj = that;
     return *this;
   }
 
   CFX_UnownedPtr& operator=(const CFX_UnownedPtr& that) {
-    Probe();
+    ProbeForLowSeverityLifetimeIssue();
     if (*this != that)
       m_pObj = that.Get();
     return *this;
@@ -59,7 +83,7 @@ class CFX_UnownedPtr {
   T* Get() const { return m_pObj; }
 
   T* Release() {
-    Probe();
+    ProbeForLowSeverityLifetimeIssue();
     T* pTemp = nullptr;
     std::swap(pTemp, m_pObj);
     return pTemp;
@@ -70,7 +94,7 @@ class CFX_UnownedPtr {
   T* operator->() const { return m_pObj; }
 
  private:
-  inline void Probe() {
+  inline void ProbeForLowSeverityLifetimeIssue() {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
     if (m_pObj)
       reinterpret_cast<const volatile uint8_t*>(m_pObj)[0];
