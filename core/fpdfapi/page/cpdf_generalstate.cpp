@@ -78,6 +78,43 @@ CPDF_GeneralState::~CPDF_GeneralState() {}
 void CPDF_GeneralState::SetRenderIntent(const CFX_ByteString& ri) {
   m_Ref.GetPrivateCopy()->m_RenderIntent = RI_StringToId(ri);
 }
+CFX_ByteString CPDF_GeneralState::GetBlendMode() const {
+  switch (GetBlendType()) {
+    case FXDIB_BLEND_NORMAL:
+      return CFX_ByteString("Normal");
+    case FXDIB_BLEND_MULTIPLY:
+      return CFX_ByteString("Multiply");
+    case FXDIB_BLEND_SCREEN:
+      return CFX_ByteString("Screen");
+    case FXDIB_BLEND_OVERLAY:
+      return CFX_ByteString("Overlay");
+    case FXDIB_BLEND_DARKEN:
+      return CFX_ByteString("Darken");
+    case FXDIB_BLEND_LIGHTEN:
+      return CFX_ByteString("Lighten");
+    case FXDIB_BLEND_COLORDODGE:
+      return CFX_ByteString("ColorDodge");
+    case FXDIB_BLEND_COLORBURN:
+      return CFX_ByteString("ColorBurn");
+    case FXDIB_BLEND_HARDLIGHT:
+      return CFX_ByteString("HardLight");
+    case FXDIB_BLEND_SOFTLIGHT:
+      return CFX_ByteString("SoftLight");
+    case FXDIB_BLEND_DIFFERENCE:
+      return CFX_ByteString("Difference");
+    case FXDIB_BLEND_EXCLUSION:
+      return CFX_ByteString("Exclusion");
+    case FXDIB_BLEND_HUE:
+      return CFX_ByteString("Hue");
+    case FXDIB_BLEND_SATURATION:
+      return CFX_ByteString("Saturation");
+    case FXDIB_BLEND_COLOR:
+      return CFX_ByteString("Color");
+    case FXDIB_BLEND_LUMINOSITY:
+      return CFX_ByteString("Luminosity");
+  }
+  return CFX_ByteString("Normal");
+}
 
 int CPDF_GeneralState::GetBlendType() const {
   const StateData* pData = m_Ref.GetObject();

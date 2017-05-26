@@ -264,6 +264,15 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
   pPageObj->Transform(matrix);
 }
 
+DLLEXPORT void STDCALL FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
+                                                FPDF_BYTESTRING blend_mode) {
+  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(page_object);
+  if (!pPageObj)
+    return;
+
+  pPageObj->m_GeneralState.SetBlendMode(blend_mode);
+}
+
 DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
                                                 double a,
                                                 double b,

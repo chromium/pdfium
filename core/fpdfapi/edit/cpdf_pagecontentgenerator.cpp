@@ -225,8 +225,12 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
   GraphicsData graphD;
   graphD.fillAlpha = pPageObj->m_GeneralState.GetFillAlpha();
   graphD.strokeAlpha = pPageObj->m_GeneralState.GetStrokeAlpha();
-  if (graphD.fillAlpha == 1.0f && graphD.strokeAlpha == 1.0f)
+  int blend_type = pPageObj->m_GeneralState.GetBlendType();
+  if (graphD.fillAlpha == 1.0f && graphD.strokeAlpha == 1.0f &&
+      (blend_type == FXDIB_BLEND_UNSUPPORTED ||
+       blend_type == FXDIB_BLEND_NORMAL)) {
     return;
+  }
 
   CFX_ByteString name;
   auto it = m_pPage->m_GraphicsMap.find(graphD);
@@ -234,8 +238,17 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
     name = it->second;
   } else {
     auto gsDict = pdfium::MakeUnique<CPDF_Dictionary>();
-    gsDict->SetNewFor<CPDF_Number>("ca", graphD.fillAlpha);
-    gsDict->SetNewFor<CPDF_Number>("CA", graphD.strokeAlpha);
+    if (graphD.fillAlpha != 1.0f)
+      gsDict->SetNewFor<CPDF_Number>("ca", graphD.fillAlpha);
+
+    if (graphD.strokeAlpha != 1.0f)
+      gsDict->SetNewFor<CPDF_Number>("CA", graphD.strokeAlpha);
+
+    if (blend_type != FXDIB_BLEND_UNSUPPORTED &&
+        blend_type != FXDIB_BLEND_NORMAL) {
+      gsDict->SetNewFor<CPDF_Name>("BM",
+                                   pPageObj->m_GeneralState.GetBlendMode());
+    }
     CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(gsDict));
     uint32_t dwObjNum = pDict->GetObjNum();
     name = RealizeResource(dwObjNum, "ExtGState");
