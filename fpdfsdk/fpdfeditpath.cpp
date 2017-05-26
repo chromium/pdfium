@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fxcrt/fx_system.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewPath(float x, float y) {
@@ -56,15 +57,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
                                           unsigned int G,
                                           unsigned int B,
                                           unsigned int A) {
-  if (!path || R > 255 || G > 255 || B > 255 || A > 255)
-    return false;
-
-  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
-  auto* pPathObj = static_cast<CPDF_PathObject*>(path);
-  pPathObj->m_GeneralState.SetFillAlpha(A / 255.f);
-  pPathObj->m_ColorState.SetFillColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-  return true;
+  return FPDFPageObj_SetFillColor(path, R, G, B, A);
 }
 
 DLLEXPORT FPDF_BOOL FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,

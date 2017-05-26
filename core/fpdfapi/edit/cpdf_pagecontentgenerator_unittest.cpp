@@ -167,16 +167,46 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   CPDF_Font* pFont = CPDF_Font::GetStockFont(pDoc.get(), "Times-Roman");
   pTextObj->m_TextState.SetFont(pFont);
   pTextObj->m_TextState.SetFontSize(10.0f);
+  float rgb[3] = {0.5f, 0.7f, 0.35f};
+  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
+  pTextObj->m_ColorState.SetFillColor(pCS, rgb, 3);
+
+  float rgb2[3] = {1, 0.9f, 0};
+  pTextObj->m_ColorState.SetStrokeColor(pCS, rgb2, 3);
+  pTextObj->m_GeneralState.SetFillAlpha(0.5f);
+  pTextObj->m_GeneralState.SetStrokeAlpha(0.8f);
   pTextObj->Transform(CFX_Matrix(1, 0, 0, 1, 100, 100));
   pTextObj->SetText("Hello World");
   CFX_ByteTextBuf buf;
   TestProcessText(&generator, &buf, pTextObj.get());
   CFX_ByteString textString = buf.MakeString();
-  EXPECT_LT(61, textString.GetLength());
-  EXPECT_EQ("BT 1 0 0 1 100 100 Tm /", textString.Left(23));
-  EXPECT_EQ(" 10 Tf <48656C6C6F20576F726C64> Tj ET\n", textString.Right(38));
+  int firstResourceAt = textString.Find('/') + 1;
+  int secondResourceAt = textString.ReverseFind('/') + 1;
+  CFX_ByteString firstString = textString.Left(firstResourceAt);
+  CFX_ByteString midString =
+      textString.Mid(firstResourceAt, secondResourceAt - firstResourceAt);
+  CFX_ByteString lastString =
+      textString.Right(textString.GetLength() - secondResourceAt);
+  CFX_ByteString compareString1 = "BT 1 0 0 1 100 100 Tm /";
+  // Color RGB values used are integers divided by 255.
+  CFX_ByteString compareString2 =
+      " 10 Tf q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
+  CFX_ByteString compareString3 = " gs <48656C6C6F20576F726C64> Tj ET Q\n";
+  EXPECT_LT(compareString1.GetLength() + compareString2.GetLength() +
+                compareString3.GetLength(),
+            textString.GetLength());
+  EXPECT_EQ(compareString1, firstString.Left(compareString1.GetLength()));
+  EXPECT_EQ(compareString2, midString.Right(compareString2.GetLength()));
+  EXPECT_EQ(compareString3, lastString.Right(compareString3.GetLength()));
+  CPDF_Dictionary* externalGS = TestGetResource(
+      &generator, "ExtGState",
+      lastString.Left(lastString.GetLength() - compareString3.GetLength()));
+  ASSERT_TRUE(externalGS);
+  EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
+  EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
   CPDF_Dictionary* fontDict = TestGetResource(
-      &generator, "Font", textString.Mid(23, textString.GetLength() - 61));
+      &generator, "Font",
+      midString.Left(midString.GetLength() - compareString2.GetLength()));
   ASSERT_TRUE(fontDict);
   EXPECT_EQ("Font", fontDict->GetStringFor("Type"));
   EXPECT_EQ("Type1", fontDict->GetStringFor("Subtype"));
@@ -216,12 +246,22 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   }
 
   CFX_ByteString textString = buf.MakeString();
-  EXPECT_LT(63, textString.GetLength());
-  EXPECT_EQ("BT 1 0 0 1 0 0 Tm /", textString.Left(19));
-  EXPECT_EQ(" 15.5 Tf <4920616D20696E646972656374> Tj ET\n",
-            textString.Right(44));
+  int firstResourceAt = textString.Find('/') + 1;
+  CFX_ByteString firstString = textString.Left(firstResourceAt);
+  CFX_ByteString lastString =
+      textString.Right(textString.GetLength() - firstResourceAt);
+  CFX_ByteString compareString1 = "BT 1 0 0 1 0 0 Tm /";
+  CFX_ByteString compareString2 =
+      " 15.5 Tf q <4920616D20696E646972656374> Tj ET Q\n";
+  EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),
+            textString.GetLength());
+  EXPECT_EQ(compareString1, textString.Left(compareString1.GetLength()));
+  EXPECT_EQ(compareString2, textString.Right(compareString2.GetLength()));
   CPDF_Dictionary* fontDict = TestGetResource(
-      &generator, "Font", textString.Mid(19, textString.GetLength() - 63));
+      &generator, "Font",
+      textString.Mid(compareString1.GetLength(),
+                     textString.GetLength() - compareString1.GetLength() -
+                         compareString2.GetLength()));
   ASSERT_TRUE(fontDict);
   EXPECT_TRUE(fontDict->GetObjNum());
   EXPECT_EQ("Font", fontDict->GetStringFor("Type"));

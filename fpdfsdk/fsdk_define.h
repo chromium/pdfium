@@ -79,5 +79,10 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
 void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
 void ProcessParseError(CPDF_Parser::Error err);
+FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
+                                   unsigned int R,
+                                   unsigned int G,
+                                   unsigned int B,
+                                   unsigned int A);
 
 #endif  // FPDFSDK_FSDK_DEFINE_H_

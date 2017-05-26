@@ -469,6 +469,21 @@ DLLEXPORT FPDF_FONT STDCALL FPDFText_LoadFont(FPDF_DOCUMENT document,
                                               int font_type,
                                               FPDF_BOOL cid);
 
+// Set the fill RGBA of a text object. Range of values: 0 - 255.
+//
+// text_object  - handle to the text object.
+// R            - the red component for the path fill color.
+// G            - the green component for the path fill color.
+// B            - the blue component for the path fill color.
+// A            - the fill alpha for the path.
+//
+// Returns TRUE on success.
+DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetFillColor(FPDF_PAGEOBJECT text_object,
+                                                  unsigned int R,
+                                                  unsigned int G,
+                                                  unsigned int B,
+                                                  unsigned int A);
+
 // Close a loaded PDF font.
 //
 // font   - Handle to the loaded font.
