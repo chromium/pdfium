@@ -50,20 +50,18 @@ CJBig2_Context::CJBig2_Context(
     const CFX_RetainPtr<CPDF_StreamAcc>& pGlobalStream,
     const CFX_RetainPtr<CPDF_StreamAcc>& pSrcStream,
     std::list<CJBig2_CachePair>* pSymbolDictCache,
-    IFX_Pause* pPause,
     bool bIsGlobal)
     : m_nSegmentDecoded(0),
       m_bInPage(false),
       m_bBufSpecified(false),
       m_PauseStep(10),
-      m_pPause(pPause),
       m_ProcessingStatus(FXCODEC_STATUS_FRAME_READY),
       m_dwOffset(0),
       m_pSymbolDictCache(pSymbolDictCache),
       m_bIsGlobal(bIsGlobal) {
-  if (pGlobalStream && (pGlobalStream->GetSize() > 0)) {
+  if (pGlobalStream && pGlobalStream->GetSize() > 0) {
     m_pGlobalContext = pdfium::MakeUnique<CJBig2_Context>(
-        nullptr, pGlobalStream, pSymbolDictCache, pPause, true);
+        nullptr, pGlobalStream, pSymbolDictCache, true);
   }
   m_pStream = pdfium::MakeUnique<CJBig2_BitStream>(pSrcStream);
 }
@@ -131,7 +129,7 @@ int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
       break;
     }
     m_SegmentList.push_back(std::move(pSegment));
-    if (pPause && m_pPause && pPause->NeedToPauseNow()) {
+    if (pPause && pPause->NeedToPauseNow()) {
       m_PauseStep = 3;
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return JBIG2_SUCCESS;

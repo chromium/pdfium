@@ -43,7 +43,6 @@ class CJBig2_Context {
   CJBig2_Context(const CFX_RetainPtr<CPDF_StreamAcc>& pGlobalStream,
                  const CFX_RetainPtr<CPDF_StreamAcc>& pSrcStream,
                  std::list<CJBig2_CachePair>* pSymbolDictCache,
-                 IFX_Pause* pPause,
                  bool bIsGlobal);
   ~CJBig2_Context();
 
@@ -95,7 +94,6 @@ class CJBig2_Context {
   bool m_bInPage;
   bool m_bBufSpecified;
   int32_t m_PauseStep;
-  CFX_UnownedPtr<IFX_Pause> const m_pPause;
   FXCODEC_STATUS m_ProcessingStatus;
   std::vector<JBig2ArithCtx> m_gbContext;
   std::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
