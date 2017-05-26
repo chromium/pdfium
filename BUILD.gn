@@ -1318,7 +1318,6 @@ if (pdf_enable_xfa) {
       "fxbarcode/datamatrix/BC_HighLevelEncoder.h",
       "fxbarcode/datamatrix/BC_SymbolInfo.cpp",
       "fxbarcode/datamatrix/BC_SymbolInfo.h",
-      "fxbarcode/datamatrix/BC_SymbolShapeHint.h",
       "fxbarcode/datamatrix/BC_TextEncoder.cpp",
       "fxbarcode/datamatrix/BC_TextEncoder.h",
       "fxbarcode/datamatrix/BC_X12Encoder.cpp",

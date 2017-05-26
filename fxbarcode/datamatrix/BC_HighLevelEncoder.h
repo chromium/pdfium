@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_widestring.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
 #define ASCII_ENCODATION 0
 #define C40_ENCODATION 1
@@ -25,12 +24,10 @@ class CBC_HighLevelEncoder {
   ~CBC_HighLevelEncoder();
 
   std::vector<uint8_t>& getBytesForMessage(CFX_WideString msg);
+
   static CFX_WideString encodeHighLevel(CFX_WideString msg,
                                         CFX_WideString ecLevel,
-                                        int32_t& e);
-  static CFX_WideString encodeHighLevel(CFX_WideString msg,
-                                        CFX_WideString ecLevel,
-                                        SymbolShapeHint shape,
+                                        bool allowRectangular,
                                         int32_t& e);
   static int32_t lookAheadTest(CFX_WideString msg,
                                int32_t startpos,

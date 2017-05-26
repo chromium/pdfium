@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
 class CBC_SymbolInfo {
  public:
@@ -24,7 +23,7 @@ class CBC_SymbolInfo {
   static void Finalize();
   static void overrideSymbolSet(CBC_SymbolInfo* override);
   static CBC_SymbolInfo* lookup(int32_t dataCodewords,
-                                SymbolShapeHint shape,
+                                bool allowRectangular,
                                 int32_t& e);
 
   int32_t getSymbolDataWidth() const;

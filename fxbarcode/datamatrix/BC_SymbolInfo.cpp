@@ -25,7 +25,6 @@
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "fxbarcode/utils.h"
 
 namespace {
@@ -112,14 +111,13 @@ CBC_SymbolInfo::CBC_SymbolInfo(int32_t dataCapacity,
 CBC_SymbolInfo::~CBC_SymbolInfo() {}
 
 CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
-                                       SymbolShapeHint shape,
+                                       bool allowRectangular,
                                        int32_t& e) {
   for (size_t i = 0; i < kSymbolsCount; i++) {
     CBC_SymbolInfo* symbol = g_symbols[i];
-    if ((shape == FORCE_SQUARE && symbol->m_rectangular) ||
-        (shape == FORCE_RECTANGLE && !symbol->m_rectangular)) {
+    if (symbol->m_rectangular && !allowRectangular)
       continue;
-    }
+
     if (dataCodewords <= symbol->dataCapacity())
       return symbol;
   }

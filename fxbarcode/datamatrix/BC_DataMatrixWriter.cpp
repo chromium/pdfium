@@ -40,7 +40,6 @@
 #include "fxbarcode/datamatrix/BC_ErrorCorrection.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
 #include "third_party/base/ptr_util.h"
@@ -115,15 +114,14 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
   if (outWidth < 0 || outHeight < 0)
     return nullptr;
 
-  SymbolShapeHint shape = FORCE_SQUARE;
   CFX_WideString ecLevel;
   int32_t e = BCExceptionNO;
   CFX_WideString encoded =
-      CBC_HighLevelEncoder::encodeHighLevel(contents, ecLevel, shape, e);
+      CBC_HighLevelEncoder::encodeHighLevel(contents, ecLevel, false, e);
   if (e != BCExceptionNO)
     return nullptr;
   CBC_SymbolInfo* symbolInfo =
-      CBC_SymbolInfo::lookup(encoded.GetLength(), shape, e);
+      CBC_SymbolInfo::lookup(encoded.GetLength(), false, e);
   if (e != BCExceptionNO)
     return nullptr;
   CFX_WideString codewords =

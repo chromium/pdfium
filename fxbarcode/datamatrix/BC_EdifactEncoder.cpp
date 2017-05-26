@@ -29,7 +29,6 @@
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "fxbarcode/utils.h"
 
 namespace {

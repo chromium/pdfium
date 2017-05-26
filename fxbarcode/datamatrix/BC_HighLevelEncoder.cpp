@@ -35,7 +35,6 @@
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
 #include "fxbarcode/utils.h"
@@ -66,19 +65,17 @@ std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(
   m_bytearray.insert(m_bytearray.end(), bytestr.begin(), bytestr.end());
   return m_bytearray;
 }
+
+// static
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
                                                      CFX_WideString ecLevel,
-                                                     int32_t& e) {
-  return encodeHighLevel(msg, ecLevel, FORCE_NONE, e);
-}
-CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
-                                                     CFX_WideString ecLevel,
-                                                     SymbolShapeHint shape,
+                                                     bool allowRectangular,
                                                      int32_t& e) {
   CBC_EncoderContext context(msg, ecLevel, e);
   if (e != BCExceptionNO)
     return CFX_WideString();
-  context.setSymbolShape(shape);
+
+  context.setAllowRectangular(allowRectangular);
   if ((msg.Mid(0, 6) == MACRO_05_HEADER) &&
       (msg.Mid(msg.GetLength() - 1, 1) == MACRO_TRAILER)) {
     context.writeCodeword(MACRO_05);

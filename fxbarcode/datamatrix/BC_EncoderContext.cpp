@@ -26,7 +26,6 @@
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "fxbarcode/utils.h"
 
 CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString& msg,
@@ -44,16 +43,19 @@ CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString& msg,
     sb += ch;
   }
   m_msg = sb;
-  m_shape = FORCE_NONE;
+  m_allowRectangular = true;
   m_newEncoding = -1;
   m_pos = 0;
   m_symbolInfo = nullptr;
   m_skipAtEnd = 0;
 }
+
 CBC_EncoderContext::~CBC_EncoderContext() {}
-void CBC_EncoderContext::setSymbolShape(SymbolShapeHint shape) {
-  m_shape = shape;
+
+void CBC_EncoderContext::setAllowRectangular(bool allow) {
+  m_allowRectangular = allow;
 }
+
 void CBC_EncoderContext::setSkipAtEnd(int32_t count) {
   m_skipAtEnd = count;
 }
@@ -91,14 +93,16 @@ void CBC_EncoderContext::updateSymbolInfo(int32_t& e) {
 }
 void CBC_EncoderContext::updateSymbolInfo(int32_t len, int32_t& e) {
   if (!m_symbolInfo || len > m_symbolInfo->dataCapacity()) {
-    m_symbolInfo = CBC_SymbolInfo::lookup(len, m_shape, e);
+    m_symbolInfo = CBC_SymbolInfo::lookup(len, m_allowRectangular, e);
     if (e != BCExceptionNO)
       return;
   }
 }
+
 void CBC_EncoderContext::resetSymbolInfo() {
-  m_shape = FORCE_NONE;
+  m_allowRectangular = true;
 }
+
 int32_t CBC_EncoderContext::getTotalMessageCharCount() {
   return m_msg.GetLength() - m_skipAtEnd;
 }

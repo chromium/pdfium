@@ -23,7 +23,6 @@
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
 CBC_DataMatrixSymbolInfo144::CBC_DataMatrixSymbolInfo144()
     : CBC_SymbolInfo(1558, 620, 22, 22, 36, -1, 62) {}
