@@ -371,6 +371,7 @@ CFX_RenderDevice::CFX_RenderDevice()
       m_DeviceClass(0) {}
 
 CFX_RenderDevice::~CFX_RenderDevice() {
+  RestoreState(false);
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   Flush();
 #endif
@@ -407,13 +408,16 @@ void CFX_RenderDevice::SaveState() {
 }
 
 void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
-  m_pDeviceDriver->RestoreState(bKeepSaved);
-  UpdateClipBox();
+  if (m_pDeviceDriver) {
+    m_pDeviceDriver->RestoreState(bKeepSaved);
+    UpdateClipBox();
+  }
 }
 
 int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
   return m_pDeviceDriver->GetDeviceCaps(caps_id);
 }
+
 CFX_Matrix CFX_RenderDevice::GetCTM() const {
   return m_pDeviceDriver->GetCTM();
 }

@@ -88,13 +88,6 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
 
 DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
-    return;
-
-  CPDF_PageRenderContext* pContext = pPage->GetRenderContext();
-  if (!pContext)
-    return;
-
-  pContext->m_pDevice->RestoreState(false);
-  pPage->SetRenderContext(nullptr);
+  if (pPage)
+    pPage->SetRenderContext(nullptr);
 }

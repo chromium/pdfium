@@ -21,11 +21,12 @@ class CPDF_PageRenderContext {
   CPDF_PageRenderContext();
   ~CPDF_PageRenderContext();
 
+  // Specific destruction order required.
   std::unique_ptr<CPDF_AnnotList> m_pAnnots;
+  std::unique_ptr<CPDF_RenderOptions> m_pOptions;
   std::unique_ptr<CFX_RenderDevice> m_pDevice;
   std::unique_ptr<CPDF_RenderContext> m_pContext;
   std::unique_ptr<CPDF_ProgressiveRenderer> m_pRenderer;
-  std::unique_ptr<CPDF_RenderOptions> m_pOptions;
 };
 
 #endif  // CORE_FPDFAPI_CPDF_PAGERENDERCONTEXT_H_
