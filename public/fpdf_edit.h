@@ -319,6 +319,23 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
 // Returns TRUE on success
 DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
 
+// Set the line join of |pageObject|.
+//
+// pageObject - handle to a page object.
+// line_join - line join
+//
+// Line join can be one of following: Miter (0), Round (1), Bevel (2)
+DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page,
+                                            int line_join);
+
+// Set the line cap of |pageObject|.
+//
+// pageObject - handle to a page object.
+// line_cap - line cap
+//
+// Line cap can be one of following: Butt (0), Round (1), Projecting square (2)
+DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT page, int line_cap);
+
 // Set the fill RGBA of a path. Range of values: 0 - 255.
 //
 // path   - the handle to the path object.

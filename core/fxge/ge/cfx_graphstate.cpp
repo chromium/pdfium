@@ -36,14 +36,16 @@ void CFX_GraphState::SetLineWidth(float width) {
 }
 
 CFX_GraphStateData::LineCap CFX_GraphState::GetLineCap() const {
-  return m_Ref.GetObject()->m_LineCap;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->m_LineCap
+                           : CFX_GraphStateData::LineCapButt;
 }
 void CFX_GraphState::SetLineCap(CFX_GraphStateData::LineCap cap) {
   m_Ref.GetPrivateCopy()->m_LineCap = cap;
 }
 
 CFX_GraphStateData::LineJoin CFX_GraphState::GetLineJoin() const {
-  return m_Ref.GetObject()->m_LineJoin;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->m_LineJoin
+                           : CFX_GraphStateData::LineJoinMiter;
 }
 
 void CFX_GraphState::SetLineJoin(CFX_GraphStateData::LineJoin join) {

@@ -215,6 +215,12 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
   float lineWidth = pPageObj->m_GraphState.GetLineWidth();
   if (lineWidth != 1.0f)
     *buf << lineWidth << " w ";
+  CFX_GraphStateData::LineCap lineCap = pPageObj->m_GraphState.GetLineCap();
+  if (lineCap != CFX_GraphStateData::LineCapButt)
+    *buf << static_cast<int>(lineCap) << " J ";
+  CFX_GraphStateData::LineJoin lineJoin = pPageObj->m_GraphState.GetLineJoin();
+  if (lineJoin != CFX_GraphStateData::LineJoinMiter)
+    *buf << static_cast<int>(lineJoin) << " j ";
 
   GraphicsData graphD;
   graphD.fillAlpha = pPageObj->m_GeneralState.GetFillAlpha();
