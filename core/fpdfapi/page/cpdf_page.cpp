@@ -31,32 +31,24 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
   if (!pPageDict)
     return;
 
-  CPDF_Object* pageAttr = GetPageAttr("Resources");
-  m_pResources = pageAttr ? pageAttr->GetDict() : nullptr;
+  CPDF_Object* pPageAttr = GetPageAttr("Resources");
+  m_pResources = pPageAttr ? pPageAttr->GetDict() : nullptr;
   m_pPageResources = m_pResources;
-  int rotate = GetPageRotation();
 
-  CPDF_Array* pMediaBox = ToArray(GetPageAttr("MediaBox"));
-  CFX_FloatRect mediabox;
-  if (pMediaBox) {
-    mediabox = pMediaBox->GetRect();
-    mediabox.Normalize();
-  }
+  CFX_FloatRect mediabox = GetBox("MediaBox");
   if (mediabox.IsEmpty())
     mediabox = CFX_FloatRect(0, 0, 612, 792);
 
-  CPDF_Array* pCropBox = ToArray(GetPageAttr("CropBox"));
-  if (pCropBox) {
-    m_BBox = pCropBox->GetRect();
-    m_BBox.Normalize();
-  }
+  m_BBox = GetBox("CropBox");
   if (m_BBox.IsEmpty())
     m_BBox = mediabox;
   else
     m_BBox.Intersect(mediabox);
 
-  m_PageWidth = m_BBox.right - m_BBox.left;
-  m_PageHeight = m_BBox.top - m_BBox.bottom;
+  m_PageWidth = m_BBox.Width();
+  m_PageHeight = m_BBox.Height();
+
+  int rotate = GetPageRotation();
   if (rotate % 2)
     std::swap(m_PageWidth, m_PageHeight);
 
@@ -114,6 +106,16 @@ CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteString& name) const {
       break;
   }
   return nullptr;
+}
+
+CFX_FloatRect CPDF_Page::GetBox(const CFX_ByteString& name) const {
+  CFX_FloatRect box;
+  CPDF_Array* pBox = ToArray(GetPageAttr(name));
+  if (pBox) {
+    box = pBox->GetRect();
+    box.Normalize();
+  }
+  return box;
 }
 
 CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
