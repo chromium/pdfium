@@ -7,6 +7,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fxcrt/fx_extension.h"
 
@@ -26,70 +27,60 @@ void MatchFloatRange(float f1, float f2, int* i1, int* i2) {
 }  // namespace
 
 void FX_RECT::Normalize() {
-  if (left > right) {
-    int temp = left;
-    left = right;
-    right = temp;
-  }
-  if (top > bottom) {
-    int temp = top;
-    top = bottom;
-    bottom = temp;
-  }
+  if (left > right)
+    std::swap(left, right);
+  if (top > bottom)
+    std::swap(top, bottom);
 }
 
 void FX_RECT::Intersect(const FX_RECT& src) {
   FX_RECT src_n = src;
   src_n.Normalize();
   Normalize();
-  left = left > src_n.left ? left : src_n.left;
-  top = top > src_n.top ? top : src_n.top;
-  right = right < src_n.right ? right : src_n.right;
-  bottom = bottom < src_n.bottom ? bottom : src_n.bottom;
+  left = std::max(left, src_n.left);
+  top = std::max(top, src_n.top);
+  right = std::min(right, src_n.right);
+  bottom = std::min(bottom, src_n.bottom);
   if (left > right || top > bottom) {
     left = top = right = bottom = 0;
   }
 }
 
 CFX_FloatRect::CFX_FloatRect(const FX_RECT& rect) {
-  left = (float)(rect.left);
-  right = (float)(rect.right);
-  bottom = (float)(rect.top);
-  top = (float)(rect.bottom);
+  left = static_cast<float>(rect.left);
+  top = static_cast<float>(rect.bottom);
+  right = static_cast<float>(rect.right);
+  bottom = static_cast<float>(rect.top);
 }
+
 void CFX_FloatRect::Normalize() {
-  float temp;
-  if (left > right) {
-    temp = left;
-    left = right;
-    right = temp;
-  }
-  if (bottom > top) {
-    temp = top;
-    top = bottom;
-    bottom = temp;
-  }
+  if (left > right)
+    std::swap(left, right);
+  if (bottom > top)
+    std::swap(top, bottom);
 }
+
 void CFX_FloatRect::Intersect(const CFX_FloatRect& other_rect) {
   Normalize();
   CFX_FloatRect other = other_rect;
   other.Normalize();
-  left = left > other.left ? left : other.left;
-  right = right < other.right ? right : other.right;
-  bottom = bottom > other.bottom ? bottom : other.bottom;
-  top = top < other.top ? top : other.top;
+  left = std::max(left, other.left);
+  bottom = std::max(bottom, other.bottom);
+  right = std::min(right, other.right);
+  top = std::min(top, other.top);
   if (left > right || bottom > top) {
-    left = right = bottom = top = 0;
+    left = bottom = right = top = 0;
   }
 }
+
 void CFX_FloatRect::Union(const CFX_FloatRect& other_rect) {
   Normalize();
   CFX_FloatRect other = other_rect;
   other.Normalize();
-  left = left < other.left ? left : other.left;
-  right = right > other.right ? right : other.right;
-  bottom = bottom < other.bottom ? bottom : other.bottom;
-  top = top > other.top ? top : other.top;
+  left = std::min(left, other.left);
+  bottom = std::min(bottom, other.bottom);
+  right = std::max(right, other.right);
+  top = std::max(top, other.top);
 }
 
 int CFX_FloatRect::Substract4(CFX_FloatRect& s, CFX_FloatRect* pRects) {
@@ -99,35 +90,35 @@ int CFX_FloatRect::Substract4(CFX_FloatRect& s, CFX_FloatRect* pRects) {
   CFX_FloatRect rects[4];
   if (left < s.left) {
     rects[nRects].left = left;
-    rects[nRects].right = s.left;
     rects[nRects].bottom = bottom;
+    rects[nRects].right = s.left;
     rects[nRects].top = top;
     nRects++;
   }
   if (s.left < right && s.top < top) {
     rects[nRects].left = s.left;
-    rects[nRects].right = right;
     rects[nRects].bottom = s.top;
+    rects[nRects].right = right;
     rects[nRects].top = top;
     nRects++;
   }
   if (s.top > bottom && s.right < right) {
     rects[nRects].left = s.right;
-    rects[nRects].right = right;
     rects[nRects].bottom = bottom;
+    rects[nRects].right = right;
     rects[nRects].top = s.top;
     nRects++;
   }
   if (s.bottom > bottom) {
     rects[nRects].left = s.left;
-    rects[nRects].right = s.right;
     rects[nRects].bottom = bottom;
+    rects[nRects].right = s.right;
     rects[nRects].top = s.bottom;
     nRects++;
   }
-  if (nRects == 0) {
+  if (nRects == 0)
     return 0;
-  }
+
   for (int i = 0; i < nRects; i++) {
     pRects[i] = rects[i];
     pRects[i].Intersect(*this);
@@ -138,10 +129,10 @@ int CFX_FloatRect::Substract4(CFX_FloatRect& s, CFX_FloatRect* pRects) {
 FX_RECT CFX_FloatRect::GetOuterRect() const {
   CFX_FloatRect rect1 = *this;
   FX_RECT rect;
-  rect.left = (int)floor(rect1.left);
-  rect.right = (int)ceil(rect1.right);
-  rect.top = (int)floor(rect1.bottom);
-  rect.bottom = (int)ceil(rect1.top);
+  rect.left = static_cast<int>(floor(rect1.left));
+  rect.bottom = static_cast<int>(ceil(rect1.top));
+  rect.right = static_cast<int>(ceil(rect1.right));
+  rect.top = static_cast<int>(floor(rect1.bottom));
   rect.Normalize();
   return rect;
 }
@@ -149,10 +140,10 @@ FX_RECT CFX_FloatRect::GetOuterRect() const {
 FX_RECT CFX_FloatRect::GetInnerRect() const {
   CFX_FloatRect rect1 = *this;
   FX_RECT rect;
-  rect.left = (int)ceil(rect1.left);
-  rect.right = (int)floor(rect1.right);
-  rect.top = (int)ceil(rect1.bottom);
-  rect.bottom = (int)floor(rect1.top);
+  rect.left = static_cast<int>(ceil(rect1.left));
+  rect.bottom = static_cast<int>(floor(rect1.top));
+  rect.right = static_cast<int>(floor(rect1.right));
+  rect.top = static_cast<int>(ceil(rect1.bottom));
   rect.Normalize();
   return rect;
 }
@@ -184,8 +175,8 @@ bool CFX_FloatRect::Contains(const CFX_FloatRect& other_rect) const {
 
 void CFX_FloatRect::UpdateRect(float x, float y) {
   left = std::min(left, x);
-  right = std::max(right, x);
   bottom = std::min(bottom, y);
+  right = std::max(right, x);
   top = std::max(top, y);
 }
 
