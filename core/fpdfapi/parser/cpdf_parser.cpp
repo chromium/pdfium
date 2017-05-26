@@ -63,7 +63,6 @@ CPDF_Parser::CPDF_Parser()
 
 CPDF_Parser::~CPDF_Parser() {
   ReleaseEncryptHandler();
-  SetEncryptDictionary(nullptr);
 }
 
 uint32_t CPDF_Parser::GetLastObjNum() const {
@@ -222,8 +221,6 @@ CPDF_Parser::Error CPDF_Parser::StartParse(
 }
 CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
   ReleaseEncryptHandler();
-  SetEncryptDictionary(nullptr);
-
   if (!m_pTrailer)
     return FORMAT_ERROR;
 
@@ -260,6 +257,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
 void CPDF_Parser::ReleaseEncryptHandler() {
   m_pSyntax->m_pCryptoHandler.Reset();
   m_pSecurityHandler.reset();
+  SetEncryptDictionary(nullptr);
 }
 
 FX_FILESIZE CPDF_Parser::GetObjectOffset(uint32_t objnum) const {
