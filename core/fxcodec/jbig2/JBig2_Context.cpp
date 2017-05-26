@@ -1064,7 +1064,6 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     }
     if (m_ri.height < 0 || m_ri.width < 0)
       return JBIG2_FAILED;
-
     pGRD->GBW = m_ri.width;
     pGRD->GBH = m_ri.height;
     pGRD->MMR = cFlags & 0x01;
@@ -1073,15 +1072,13 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     if (pGRD->MMR == 0) {
       if (pGRD->GBTEMPLATE == 0) {
         for (int32_t i = 0; i < 8; ++i) {
-          if (m_pStream->read1Byte((uint8_t*)&pGRD->GBAT[i]) != 0) {
+          if (m_pStream->read1Byte((uint8_t*)&pGRD->GBAT[i]) != 0)
             return JBIG2_ERROR_TOO_SHORT;
-          }
         }
       } else {
         for (int32_t i = 0; i < 2; ++i) {
-          if (m_pStream->read1Byte((uint8_t*)&pGRD->GBAT[i]) != 0) {
+          if (m_pStream->read1Byte((uint8_t*)&pGRD->GBAT[i]) != 0)
             return JBIG2_ERROR_TOO_SHORT;
-          }
         }
       }
     }
@@ -1090,10 +1087,8 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
   }
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   if (m_pGRD->MMR == 0) {
-    if (m_gbContext.empty()) {
-      const size_t size = GetHuffContextSize(m_pGRD->GBTEMPLATE);
-      m_gbContext.resize(size);
-    }
+    if (m_gbContext.empty())
+      m_gbContext.resize(GetHuffContextSize(m_pGRD->GBTEMPLATE));
     if (!m_pArithDecoder) {
       m_pArithDecoder =
           pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
@@ -1101,7 +1096,8 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
                                                       m_pArithDecoder.get(),
                                                       &m_gbContext[0], pPause);
     } else {
-      m_ProcessingStatus = m_pGRD->Continue_decode(pPause);
+      m_ProcessingStatus =
+          m_pGRD->Continue_decode(pPause, m_pArithDecoder.get());
     }
     if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       if (pSegment->m_cFlags.s.type != 36) {
@@ -1119,17 +1115,16 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
                              (JBig2ComposeOp)(m_ri.flags & 0x03), &Rect);
       }
       return JBIG2_SUCCESS;
-    } else {
-      m_pArithDecoder.reset();
-      m_gbContext.clear();
-      if (!pSegment->m_Result.im) {
-        m_ProcessingStatus = FXCODEC_STATUS_ERROR;
-        m_pGRD.reset();
-        return JBIG2_ERROR_FATAL;
-      }
-      m_pStream->alignByte();
-      m_pStream->offset(2);
     }
+    m_pArithDecoder.reset();
+    m_gbContext.clear();
+    if (!pSegment->m_Result.im) {
+      m_ProcessingStatus = FXCODEC_STATUS_ERROR;
+      m_pGRD.reset();
+      return JBIG2_ERROR_FATAL;
+    }
+    m_pStream->alignByte();
+    m_pStream->offset(2);
   } else {
     m_pGRD->Start_decode_MMR(&pSegment->m_Result.im, m_pStream.get());
     if (!pSegment->m_Result.im) {

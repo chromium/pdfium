@@ -47,7 +47,7 @@ uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     FXCODEC_STATUS status =
         pGRD->Start_decode_Arith(&pImage, pArithDecoder, gbContext, nullptr);
     while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-      status = pGRD->Continue_decode(pPause);
+      status = pGRD->Continue_decode(pPause, pArithDecoder);
 
     if (!pImage)
       return nullptr;

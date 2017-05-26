@@ -652,57 +652,58 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
   m_DecodeType = 1;
   m_pImage = pImage;
   (*m_pImage)->fill(0);
-  m_pArithDecoder = pArithDecoder;
   m_gbContext = gbContext;
   m_LTP = 0;
   m_pLine = nullptr;
   m_loopIndex = 0;
-  return decode_Arith(pPause);
+  return decode_Arith(pPause, pArithDecoder);
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
+FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(
+    IFX_Pause* pPause,
+    CJBig2_ArithDecoder* pArithDecoder) {
   int iline = m_loopIndex;
   CJBig2_Image* pImage = *m_pImage;
   if (GBTEMPLATE == 0) {
     if (UseTemplate0Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template0_opt3(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template0_opt3(pImage, pArithDecoder,
+                                                     m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template0_unopt(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template0_unopt(pImage, pArithDecoder,
+                                                      m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 1) {
     if (UseTemplate1Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template1_opt3(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template1_opt3(pImage, pArithDecoder,
+                                                     m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template1_unopt(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template1_unopt(pImage, pArithDecoder,
+                                                      m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 2) {
     if (UseTemplate23Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template2_opt3(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template2_opt3(pImage, pArithDecoder,
+                                                     m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template2_unopt(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template2_unopt(pImage, pArithDecoder,
+                                                      m_gbContext, pPause);
     }
   } else {
     if (UseTemplate23Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template3_opt3(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template3_opt3(pImage, pArithDecoder,
+                                                     m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template3_unopt(
-          pImage, m_pArithDecoder.Get(), m_gbContext, pPause);
+      m_ProssiveStatus = decode_Arith_Template3_unopt(pImage, pArithDecoder,
+                                                      m_gbContext, pPause);
     }
   }
   m_ReplaceRect.left = 0;
   m_ReplaceRect.right = pImage->width();
   m_ReplaceRect.top = iline;
   m_ReplaceRect.bottom = m_loopIndex;
-  if (m_ProssiveStatus == FXCODEC_STATUS_DECODE_FINISH) {
+  if (m_ProssiveStatus == FXCODEC_STATUS_DECODE_FINISH)
     m_loopIndex = 0;
-  }
+
   return m_ProssiveStatus;
 }
 
@@ -727,7 +728,9 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(CJBig2_Image** pImage,
   return m_ProssiveStatus;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::Continue_decode(IFX_Pause* pPause) {
+FXCODEC_STATUS CJBig2_GRDProc::Continue_decode(
+    IFX_Pause* pPause,
+    CJBig2_ArithDecoder* pArithDecoder) {
   if (m_ProssiveStatus != FXCODEC_STATUS_DECODE_TOBECONTINUE)
     return m_ProssiveStatus;
 
@@ -735,8 +738,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Continue_decode(IFX_Pause* pPause) {
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return m_ProssiveStatus;
   }
-
-  return decode_Arith(pPause);
+  return decode_Arith(pPause, pArithDecoder);
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(

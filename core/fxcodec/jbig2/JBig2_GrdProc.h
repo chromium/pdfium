@@ -32,7 +32,8 @@ class CJBig2_GRDProc {
                                     IFX_Pause* pPause);
   FXCODEC_STATUS Start_decode_MMR(CJBig2_Image** pImage,
                                   CJBig2_BitStream* pStream);
-  FXCODEC_STATUS Continue_decode(IFX_Pause* pPause);
+  FXCODEC_STATUS Continue_decode(IFX_Pause* pPause,
+                                 CJBig2_ArithDecoder* pArithDecoder);
   FX_RECT GetReplaceRect() const { return m_ReplaceRect; }
 
   bool MMR;
@@ -49,7 +50,8 @@ class CJBig2_GRDProc {
   bool UseTemplate1Opt3() const;
   bool UseTemplate23Opt3() const;
 
-  FXCODEC_STATUS decode_Arith(IFX_Pause* pPause);
+  FXCODEC_STATUS decode_Arith(IFX_Pause* pPause,
+                              CJBig2_ArithDecoder* pArithDecoder);
   FXCODEC_STATUS decode_Arith_Template0_opt3(CJBig2_Image* pImage,
                                              CJBig2_ArithDecoder* pArithDecoder,
                                              JBig2ArithCtx* gbContext,
@@ -114,7 +116,6 @@ class CJBig2_GRDProc {
   uint8_t* m_pLine;
   FXCODEC_STATUS m_ProssiveStatus;
   CJBig2_Image** m_pImage;
-  CFX_UnownedPtr<CJBig2_ArithDecoder> m_pArithDecoder;
   JBig2ArithCtx* m_gbContext;
   uint16_t m_DecodeType;
   int m_LTP;

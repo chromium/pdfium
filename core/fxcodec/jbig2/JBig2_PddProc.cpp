@@ -44,7 +44,7 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
   FXCODEC_STATUS status =
       pGRD->Start_decode_Arith(&BHDC, pArithDecoder, gbContext, nullptr);
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-    status = pGRD->Continue_decode(pPause);
+    status = pGRD->Continue_decode(pPause, pArithDecoder);
   if (!BHDC)
     return nullptr;
 
