@@ -320,3 +320,20 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
   return true;
 }
+
+DLLEXPORT FPDF_BOOL STDCALL FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
+                                                  float* left,
+                                                  float* bottom,
+                                                  float* right,
+                                                  float* top) {
+  if (!pageObject)
+    return false;
+
+  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(pageObject);
+  CFX_FloatRect bbox = pPageObj->GetRect();
+  *left = bbox.left;
+  *bottom = bbox.bottom;
+  *right = bbox.right;
+  *top = bbox.top;
+  return true;
+}
