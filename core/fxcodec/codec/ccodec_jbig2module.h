@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CJBig2_Context;
@@ -30,7 +29,6 @@ class CCodec_Jbig2Context {
   CFX_RetainPtr<CPDF_StreamAcc> m_pSrcStream;
   uint8_t* m_dest_buf;
   uint32_t m_dest_pitch;
-  CFX_UnownedPtr<IFX_Pause> m_pPause;
   std::unique_ptr<CJBig2_Context> m_pContext;
 };
 

@@ -33,8 +33,7 @@ CCodec_Jbig2Context::CCodec_Jbig2Context()
       m_pGlobalStream(nullptr),
       m_pSrcStream(nullptr),
       m_dest_buf(0),
-      m_dest_pitch(0),
-      m_pPause(nullptr) {}
+      m_dest_pitch(0) {}
 
 CCodec_Jbig2Context::~CCodec_Jbig2Context() {}
 
@@ -61,7 +60,6 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
   pJbig2Context->m_pGlobalStream = global_stream;
   pJbig2Context->m_dest_buf = dest_buf;
   pJbig2Context->m_dest_pitch = dest_pitch;
-  pJbig2Context->m_pPause = pPause;
   memset(dest_buf, 0, height * dest_pitch);
   pJbig2Context->m_pContext = pdfium::MakeUnique<CJBig2_Context>(
       global_stream, src_stream, pJBig2DocumentContext->GetSymbolDictCache(),
