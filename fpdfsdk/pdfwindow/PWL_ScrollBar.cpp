@@ -575,6 +575,17 @@ void CPWL_ScrollBar::OnCreate(PWL_CREATEPARAM& cp) {
   cp.eCursorType = FXCT_ARROW;
 }
 
+void CPWL_ScrollBar::OnDestroy() {
+  // Until cleanup takes place in the virtual destructor for CPWL_Wnd
+  // subclasses, implement the virtual OnDestroy method that does the
+  // cleanup first, then invokes the superclass OnDestroy ... gee,
+  // like a dtor would.
+  m_pMinButton.Release();
+  m_pMaxButton.Release();
+  m_pPosButton.Release();
+  CPWL_Wnd::OnDestroy();
+}
+
 void CPWL_ScrollBar::RePosChildWnd() {
   CFX_FloatRect rcClient = GetClientRect();
   CFX_FloatRect rcMinButton, rcMaxButton;

@@ -124,6 +124,7 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   // CPWL_Wnd
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
+  void OnDestroy() override;
   void RePosChildWnd() override;
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
