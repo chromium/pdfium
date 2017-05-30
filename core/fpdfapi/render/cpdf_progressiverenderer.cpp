@@ -28,8 +28,10 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
       m_pCurrentLayer(nullptr) {}
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
-  if (m_pRenderStatus)
+  if (m_pRenderStatus) {
+    m_pRenderStatus.reset();  // Release first.
     m_pDevice->RestoreState(false);
+  }
 }
 
 void CPDF_ProgressiveRenderer::Start(IFX_Pause* pPause) {
