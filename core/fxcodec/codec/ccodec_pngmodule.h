@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBAttribute;
@@ -38,11 +39,11 @@ class CCodec_PngModule {
              uint32_t src_size,
              CFX_DIBAttribute* pAttribute);
 
-  Delegate* GetDelegate() const { return m_pDelegate; }
+  Delegate* GetDelegate() const { return m_pDelegate.Get(); }
   void SetDelegate(Delegate* delegate) { m_pDelegate = delegate; }
 
  protected:
-  Delegate* m_pDelegate;
+  CFX_UnownedPtr<Delegate> m_pDelegate;
   char m_szLastError[PNG_ERROR_SIZE];
 };
 

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcodec/lgif/fx_gif.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -54,11 +55,11 @@ class CCodec_GifModule {
                             int frame_num,
                             CFX_DIBAttribute* pAttribute);
 
-  Delegate* GetDelegate() const { return m_pDelegate; }
+  Delegate* GetDelegate() const { return m_pDelegate.Get(); }
   void SetDelegate(Delegate* pDelegate) { m_pDelegate = pDelegate; }
 
  protected:
-  Delegate* m_pDelegate;
+  CFX_UnownedPtr<Delegate> m_pDelegate;
   char m_szLastError[256];
 };
 
