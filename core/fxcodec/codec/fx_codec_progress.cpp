@@ -302,7 +302,7 @@ CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
   if (m_pPngContext)
     m_pCodecMgr->GetPngModule()->Finish(m_pPngContext);
   if (m_pTiffContext)
-    m_pCodecMgr->GetTiffModule()->DestroyDecoder(m_pTiffContext.Get());
+    m_pCodecMgr->GetTiffModule()->DestroyDecoder(m_pTiffContext.Release());
   FX_Free(m_pSrcBuf);
   FX_Free(m_pDecodeBuf);
   FX_Free(m_pSrcPalette);
@@ -1219,8 +1219,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       m_SrcComponents = 4;
       m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
       if (!ret) {
-        pTiffModule->DestroyDecoder(m_pTiffContext.Get());
-        m_pTiffContext = nullptr;
+        pTiffModule->DestroyDecoder(m_pTiffContext.Release());
         m_status = FXCODEC_STATUS_ERR_FORMAT;
         return false;
       }

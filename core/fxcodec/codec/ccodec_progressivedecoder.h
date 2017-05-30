@@ -129,6 +129,8 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
 
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
   CFX_UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
+
+  // TODO(tsepez): All these contexts probably should be unique_ptrs.
   FXJPEG_Context* m_pJpegContext;
   FXPNG_Context* m_pPngContext;
   std::unique_ptr<CGifContext> m_pGifContext;
