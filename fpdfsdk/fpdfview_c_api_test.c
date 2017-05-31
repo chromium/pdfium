@@ -79,7 +79,9 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_HasTransparency);
     CHK(FPDFPage_GenerateContent);
     CHK(FPDFPageObj_HasTransparency);
+    CHK(FPDFPageObj_GetBounds);
     CHK(FPDFPageObj_GetType);
+    CHK(FPDFPageObj_SetBlendMode);
     CHK(FPDFPageObj_Transform);
     CHK(FPDFPage_TransformAnnots);
     CHK(FPDFPageObj_NewImageObj);
@@ -98,8 +100,11 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_BezierTo);
     CHK(FPDFPath_Close);
     CHK(FPDFPath_SetDrawMode);
+    CHK(FPDFPath_SetLineCap);
+    CHK(FPDFPath_SetLineJoin);
     CHK(FPDFPageObj_NewTextObj);
     CHK(FPDFText_SetText);
+    CHK(FPDFText_SetFillColor);
     CHK(FPDFText_LoadFont);
     CHK(FPDFFont_Close);
     CHK(FPDFPageObj_CreateTextObj);
