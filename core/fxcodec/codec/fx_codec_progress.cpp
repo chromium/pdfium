@@ -300,7 +300,7 @@ CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
   if (m_pBmpContext)
     m_pCodecMgr->GetBmpModule()->Finish(m_pBmpContext);
   if (m_pPngContext)
-    m_pCodecMgr->GetPngModule()->Finish(m_pPngContext);
+    m_pCodecMgr->GetPngModule()->Finish(m_pPngContext.Release());
   if (m_pTiffContext)
     m_pCodecMgr->GetTiffModule()->DestroyDecoder(m_pTiffContext.Release());
   FX_Free(m_pSrcBuf);
@@ -1111,8 +1111,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
       }
-      pPngModule->SetDelegate(this);
-      m_pPngContext = pPngModule->Start();
+      m_pPngContext = pPngModule->Start(this);
       if (!m_pPngContext) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
@@ -1123,16 +1122,15 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         return false;
       }
       m_offSet += size;
-      bResult = pPngModule->Input(m_pPngContext, m_pSrcBuf, size, pAttribute);
+      bResult =
+          pPngModule->Input(m_pPngContext.Get(), m_pSrcBuf, size, pAttribute);
       while (bResult) {
         uint32_t remain_size = (uint32_t)m_pFile->GetSize() - m_offSet;
         uint32_t input_size =
             remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
         if (input_size == 0) {
-          if (m_pPngContext) {
-            pPngModule->Finish(m_pPngContext);
-          }
-          m_pPngContext = nullptr;
+          if (m_pPngContext)
+            pPngModule->Finish(m_pPngContext.Release());
           m_status = FXCODEC_STATUS_ERR_FORMAT;
           return false;
         }
@@ -1148,14 +1146,12 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
           return false;
         }
         m_offSet += input_size;
-        bResult =
-            pPngModule->Input(m_pPngContext, m_pSrcBuf, input_size, pAttribute);
+        bResult = pPngModule->Input(m_pPngContext.Get(), m_pSrcBuf, input_size,
+                                    pAttribute);
       }
       ASSERT(!bResult);
-      if (m_pPngContext) {
-        pPngModule->Finish(m_pPngContext);
-        m_pPngContext = nullptr;
-      }
+      if (m_pPngContext)
+        pPngModule->Finish(m_pPngContext.Release());
       if (m_SrcPassNumber == 0) {
         m_status = FXCODEC_STATUS_ERR_FORMAT;
         return false;
@@ -1913,11 +1909,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
       }
-      if (m_pPngContext) {
-        pPngModule->Finish(m_pPngContext);
-        m_pPngContext = nullptr;
-      }
-      m_pPngContext = pPngModule->Start();
+      if (m_pPngContext)
+        pPngModule->Finish(m_pPngContext.Release());
+      m_pPngContext = pPngModule->Start(this);
       if (!m_pPngContext) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
@@ -2060,10 +2054,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
         uint32_t input_size =
             remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
         if (input_size == 0) {
-          if (m_pPngContext) {
-            pPngModule->Finish(m_pPngContext);
-          }
-          m_pPngContext = nullptr;
+          if (m_pPngContext)
+            pPngModule->Finish(m_pPngContext.Release());
           m_pDeviceBitmap = nullptr;
           m_pFile = nullptr;
           m_status = FXCODEC_STATUS_DECODE_FINISH;
@@ -2083,8 +2075,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
           return m_status;
         }
         m_offSet += input_size;
-        bResult =
-            pPngModule->Input(m_pPngContext, m_pSrcBuf, input_size, nullptr);
+        bResult = pPngModule->Input(m_pPngContext.Get(), m_pSrcBuf, input_size,
+                                    nullptr);
         if (!bResult) {
           m_pDeviceBitmap = nullptr;
           m_pFile = nullptr;

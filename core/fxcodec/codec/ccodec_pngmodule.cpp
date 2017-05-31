@@ -10,20 +10,42 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/ptr_util.h"
 
 extern "C" {
 #undef FAR
 #include "third_party/libpng16/png.h"
-}
+}  // extern "C"
+
+#define PNG_ERROR_SIZE 256
+
+class CCodec_PngModule::Context {
+ public:
+  Context(CCodec_PngModule* pModule, Delegate* pDelegate);
+  ~Context();
+
+  png_structp m_pPng;
+  png_infop m_pInfo;
+  CFX_UnownedPtr<CCodec_PngModule> m_pModule;
+  CFX_UnownedPtr<Delegate> m_pDelegate;
+  void* (*m_AllocFunc)(unsigned int);
+  void (*m_FreeFunc)(void*);
+  char m_szLastError[PNG_ERROR_SIZE];
+};
+
+extern "C" {
 
 static void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
-  if (png_get_error_ptr(png_ptr)) {
+  if (png_get_error_ptr(png_ptr))
     strncpy((char*)png_get_error_ptr(png_ptr), error_msg, PNG_ERROR_SIZE - 1);
-  }
+
   longjmp(png_jmpbuf(png_ptr), 1);
 }
+
 static void _png_warning_data(png_structp png_ptr, png_const_charp error_msg) {}
+
 static void _png_load_bmp_attribute(png_structp png_ptr,
                                     png_infop info_ptr,
                                     CFX_DIBAttribute* pAttribute) {
@@ -72,61 +94,52 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
 #endif
   }
 }
-struct FXPNG_Context {
-  png_structp png_ptr;
-  png_infop info_ptr;
-  void* parent_ptr;
 
-  void* (*m_AllocFunc)(unsigned int);
-  void (*m_FreeFunc)(void*);
-};
-extern "C" {
 static void* _png_alloc_func(unsigned int size) {
   return FX_Alloc(char, size);
 }
+
 static void _png_free_func(void* p) {
   FX_Free(p);
 }
-};
+
 static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
-  FXPNG_Context* p = (FXPNG_Context*)png_get_progressive_ptr(png_ptr);
-  if (!p)
+  auto* pContext = reinterpret_cast<CCodec_PngModule::Context*>(
+      png_get_progressive_ptr(png_ptr));
+  if (!pContext)
     return;
 
-  CCodec_PngModule* pModule = (CCodec_PngModule*)p->parent_ptr;
-  if (!pModule)
-    return;
-
-  png_uint_32 width = 0, height = 0;
-  int bpc = 0, color_type = 0, color_type1 = 0, pass = 0;
-  double gamma = 1.0;
+  png_uint_32 width = 0;
+  png_uint_32 height = 0;
+  int bpc = 0;
+  int color_type = 0;
   png_get_IHDR(png_ptr, info_ptr, &width, &height, &bpc, &color_type, nullptr,
                nullptr, nullptr);
-  color_type1 = color_type;
-  if (bpc > 8) {
+  int color_type1 = color_type;
+  if (bpc > 8)
     png_set_strip_16(png_ptr);
-  } else if (bpc < 8) {
+  else if (bpc < 8)
     png_set_expand_gray_1_2_4_to_8(png_ptr);
-  }
+
   bpc = 8;
-  if (color_type == PNG_COLOR_TYPE_PALETTE) {
+  if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_palette_to_rgb(png_ptr);
-  }
-  pass = png_set_interlace_handling(png_ptr);
-  if (!pModule->GetDelegate()->PngReadHeader(width, height, bpc, pass,
-                                             &color_type, &gamma)) {
-    png_error(p->png_ptr, "Read Header Callback Error");
+
+  int pass = png_set_interlace_handling(png_ptr);
+  double gamma = 1.0;
+  if (!pContext->m_pDelegate->PngReadHeader(width, height, bpc, pass,
+                                            &color_type, &gamma)) {
+    png_error(pContext->m_pPng, "Read Header Callback Error");
   }
   int intent;
   if (png_get_sRGB(png_ptr, info_ptr, &intent)) {
     png_set_gamma(png_ptr, gamma, 0.45455);
   } else {
     double image_gamma;
-    if (png_get_gAMA(png_ptr, info_ptr, &image_gamma)) {
+    if (png_get_gAMA(png_ptr, info_ptr, &image_gamma))
       png_set_gamma(png_ptr, gamma, image_gamma);
-    } else {
+    else
       png_set_gamma(png_ptr, gamma, 0.45455);
-    }
   }
   switch (color_type) {
     case PNG_COLOR_TYPE_GRAY:
@@ -137,7 +150,7 @@ static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     } break;
     case PNG_COLOR_TYPE_PALETTE:
       if (color_type1 != PNG_COLOR_TYPE_PALETTE) {
-        png_error(p->png_ptr, "Not Support Output Palette Now");
+        png_error(pContext->m_pPng, "Not Support Output Palette Now");
       }
     case PNG_COLOR_TYPE_RGB:
     case PNG_COLOR_TYPE_RGB_ALPHA:
@@ -147,95 +160,91 @@ static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
       png_set_bgr(png_ptr);
       break;
   }
-  if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
+  if (!(color_type & PNG_COLOR_MASK_ALPHA))
     png_set_strip_alpha(png_ptr);
-  }
+
   if (color_type & PNG_COLOR_MASK_ALPHA &&
       !(color_type1 & PNG_COLOR_MASK_ALPHA)) {
     png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
   }
   png_read_update_info(png_ptr, info_ptr);
 }
+
 static void _png_get_end_func(png_structp png_ptr, png_infop info_ptr) {}
+
 static void _png_get_row_func(png_structp png_ptr,
                               png_bytep new_row,
                               png_uint_32 row_num,
                               int pass) {
-  FXPNG_Context* p = (FXPNG_Context*)png_get_progressive_ptr(png_ptr);
-  if (!p)
+  auto* pContext = reinterpret_cast<CCodec_PngModule::Context*>(
+      png_get_progressive_ptr(png_ptr));
+  if (!pContext)
     return;
 
-  CCodec_PngModule* pModule = (CCodec_PngModule*)p->parent_ptr;
   uint8_t* src_buf = nullptr;
-  if (!pModule->GetDelegate()->PngAskScanlineBuf(row_num, src_buf)) {
+  if (!pContext->m_pDelegate->PngAskScanlineBuf(row_num, src_buf))
     png_error(png_ptr, "Ask Scanline buffer Callback Error");
-  }
-  if (src_buf) {
+
+  if (src_buf)
     png_progressive_combine_row(png_ptr, src_buf, new_row);
-  }
-  pModule->GetDelegate()->PngFillScanlineBufCompleted(pass, row_num);
+
+  pContext->m_pDelegate->PngFillScanlineBufCompleted(pass, row_num);
 }
 
-CCodec_PngModule::CCodec_PngModule() {
+}  // extern "C"
+
+CCodec_PngModule::Context::Context(CCodec_PngModule* pModule,
+                                   Delegate* pDelegate)
+    : m_pPng(nullptr),
+      m_pInfo(nullptr),
+      m_pModule(pModule),
+      m_pDelegate(pDelegate),
+      m_AllocFunc(_png_alloc_func),
+      m_FreeFunc(_png_free_func) {
   memset(m_szLastError, 0, sizeof(m_szLastError));
 }
 
-CCodec_PngModule::~CCodec_PngModule() {}
+CCodec_PngModule::Context::~Context() {
+  png_destroy_read_struct(m_pPng ? &m_pPng : nullptr,
+                          m_pInfo ? &m_pInfo : nullptr, nullptr);
+}
 
-FXPNG_Context* CCodec_PngModule::Start() {
-  FXPNG_Context* p = FX_Alloc(FXPNG_Context, 1);
-  if (!p)
-    return nullptr;
-
-  p->m_AllocFunc = _png_alloc_func;
-  p->m_FreeFunc = _png_free_func;
-  p->png_ptr = nullptr;
-  p->info_ptr = nullptr;
-  p->parent_ptr = this;
-  p->png_ptr =
+CCodec_PngModule::Context* CCodec_PngModule::Start(Delegate* pDelegate) {
+  auto p = pdfium::MakeUnique<Context>(this, pDelegate);
+  p->m_pPng =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!p->png_ptr) {
-    FX_Free(p);
+  if (!p->m_pPng)
     return nullptr;
-  }
-  p->info_ptr = png_create_info_struct(p->png_ptr);
-  if (!p->info_ptr) {
-    png_destroy_read_struct(&(p->png_ptr), nullptr, nullptr);
-    FX_Free(p);
+
+  p->m_pInfo = png_create_info_struct(p->m_pPng);
+  if (!p->m_pInfo)
     return nullptr;
-  }
-  if (setjmp(png_jmpbuf(p->png_ptr))) {
-    if (p) {
-      png_destroy_read_struct(&(p->png_ptr), &(p->info_ptr), nullptr);
-      FX_Free(p);
-    }
+
+  if (setjmp(png_jmpbuf(p->m_pPng)))
     return nullptr;
-  }
-  png_set_progressive_read_fn(p->png_ptr, p, _png_get_header_func,
+
+  png_set_progressive_read_fn(p->m_pPng, p.get(), _png_get_header_func,
                               _png_get_row_func, _png_get_end_func);
-  png_set_error_fn(p->png_ptr, m_szLastError, (png_error_ptr)_png_error_data,
-                   (png_error_ptr)_png_warning_data);
-  return p;
+  png_set_error_fn(p->m_pPng, p->m_szLastError, _png_error_data,
+                   _png_warning_data);
+  return p.release();
 }
 
-void CCodec_PngModule::Finish(FXPNG_Context* ctx) {
-  if (ctx) {
-    png_destroy_read_struct(&(ctx->png_ptr), &(ctx->info_ptr), nullptr);
-    ctx->m_FreeFunc(ctx);
-  }
+void CCodec_PngModule::Finish(Context* ctx) {
+  delete ctx;
 }
 
-bool CCodec_PngModule::Input(FXPNG_Context* ctx,
+bool CCodec_PngModule::Input(Context* ctx,
                              const uint8_t* src_buf,
                              uint32_t src_size,
                              CFX_DIBAttribute* pAttribute) {
-  if (setjmp(png_jmpbuf(ctx->png_ptr))) {
+  if (setjmp(png_jmpbuf(ctx->m_pPng))) {
     if (pAttribute &&
-        0 == strcmp(m_szLastError, "Read Header Callback Error")) {
-      _png_load_bmp_attribute(ctx->png_ptr, ctx->info_ptr, pAttribute);
+        strcmp(ctx->m_szLastError, "Read Header Callback Error") == 0) {
+      _png_load_bmp_attribute(ctx->m_pPng, ctx->m_pInfo, pAttribute);
     }
     return false;
   }
-  png_process_data(ctx->png_ptr, ctx->info_ptr, (uint8_t*)src_buf, src_size);
+  png_process_data(ctx->m_pPng, ctx->m_pInfo, (uint8_t*)src_buf, src_size);
   return true;
 }
