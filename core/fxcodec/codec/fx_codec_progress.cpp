@@ -1020,8 +1020,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
       }
-      pBmpModule->SetDelegate(this);
-      m_pBmpContext = pBmpModule->Start();
+      m_pBmpContext = pBmpModule->Start(this);
       if (!m_pBmpContext) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
