@@ -17,6 +17,7 @@ CPDF_PageObject::Type CPDF_PathObject::GetType() const {
 void CPDF_PathObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();
+  SetDirty(true);
 }
 
 bool CPDF_PathObject::IsPath() const {

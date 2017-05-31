@@ -368,6 +368,90 @@ TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
+  // Load document with existing content
+  EXPECT_TRUE(OpenDocument("bug_717.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+
+  // Add a transparent rectangle on top of the existing content
+  FPDF_PAGEOBJECT red_rect2 = FPDFPageObj_CreateNewRect(90, 700, 25, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect2, 255, 0, 0, 100));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect2, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(page, red_rect2);
+
+  // Add an opaque rectangle on top of the existing content
+  FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(115, 700, 25, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(page, red_rect);
+
+  FPDF_BITMAP bitmap = RenderPage(page);
+  CompareBitmap(bitmap, 612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
+  FPDFBitmap_Destroy(bitmap);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+
+  // Now save the result, closing the page and document
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  FPDF_ClosePage(page);
+
+  // Render the saved result
+  std::string new_file = GetString();
+  FPDF_FILEACCESS file_access;
+  memset(&file_access, 0, sizeof(file_access));
+  file_access.m_FileLen = new_file.size();
+  file_access.m_GetBlock = GetBlockFromString;
+  file_access.m_Param = &new_file;
+  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ASSERT_NE(nullptr, new_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
+  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+  ASSERT_NE(nullptr, new_page);
+  FPDF_BITMAP new_bitmap = RenderPage(new_page);
+  CompareBitmap(new_bitmap, 612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
+  FPDFBitmap_Destroy(new_bitmap);
+
+  ClearString();
+  // Add another opaque rectangle on top of the existing content
+  FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(150, 700, 25, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(new_page, green_rect);
+
+  // Add another transparent rectangle on top of existing content
+  FPDF_PAGEOBJECT green_rect2 = FPDFPageObj_CreateNewRect(175, 700, 25, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(green_rect2, 0, 255, 0, 100));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(new_page, green_rect2);
+  new_bitmap = RenderPage(new_page);
+  CompareBitmap(new_bitmap, 612, 792, "4b5b00f824620f8c9b8801ebb98e1cdd");
+  FPDFBitmap_Destroy(new_bitmap);
+  EXPECT_TRUE(FPDFPage_GenerateContent(new_page));
+
+  // Now save the result, closing the page and document
+  EXPECT_TRUE(FPDF_SaveAsCopy(new_doc, this, 0));
+  FPDF_ClosePage(new_page);
+  FPDF_CloseDocument(new_doc);
+
+  // Render the saved result
+  new_file = GetString();
+  memset(&file_access, 0, sizeof(file_access));
+  file_access.m_FileLen = new_file.size();
+  file_access.m_GetBlock = GetBlockFromString;
+  file_access.m_Param = &new_file;
+  new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ASSERT_NE(nullptr, new_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
+  new_page = FPDF_LoadPage(new_doc, 0);
+  ASSERT_NE(nullptr, new_page);
+  new_bitmap = RenderPage(new_page);
+  CompareBitmap(new_bitmap, 612, 792, "4b5b00f824620f8c9b8801ebb98e1cdd");
+  FPDFBitmap_Destroy(new_bitmap);
+
+  FPDF_ClosePage(new_page);
+  FPDF_CloseDocument(new_doc);
+}
+
 TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);

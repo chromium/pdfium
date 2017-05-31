@@ -115,6 +115,7 @@ void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
   pTextMatrix[3] = text_matrix.d;
   m_Pos = CFX_PointF(text_matrix.e, text_matrix.f);
   CalcPositionData(0);
+  SetDirty(true);
 }
 
 bool CPDF_TextObject::IsText() const {
@@ -164,6 +165,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
 void CPDF_TextObject::SetText(const CFX_ByteString& str) {
   SetSegments(&str, nullptr, 1);
   RecalcPositionData();
+  SetDirty(true);
 }
 
 float CPDF_TextObject::GetCharWidth(uint32_t charcode) const {

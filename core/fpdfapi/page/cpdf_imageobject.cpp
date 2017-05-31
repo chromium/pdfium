@@ -25,6 +25,7 @@ CPDF_PageObject::Type CPDF_ImageObject::GetType() const {
 void CPDF_ImageObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();
+  SetDirty(true);
 }
 
 bool CPDF_ImageObject::IsImage() const {

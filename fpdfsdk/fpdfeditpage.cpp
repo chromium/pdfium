@@ -61,6 +61,38 @@ bool IsPageObject(CPDF_Page* pPage) {
   return pObject && !pObject->GetString().Compare("Page");
 }
 
+void CalcBoundingBox(CPDF_PageObject* pPageObj) {
+  switch (pPageObj->GetType()) {
+    case CPDF_PageObject::TEXT: {
+      break;
+    }
+    case CPDF_PageObject::PATH: {
+      CPDF_PathObject* pPathObj = pPageObj->AsPath();
+      pPathObj->CalcBoundingBox();
+      break;
+    }
+    case CPDF_PageObject::IMAGE: {
+      CPDF_ImageObject* pImageObj = pPageObj->AsImage();
+      pImageObj->CalcBoundingBox();
+      break;
+    }
+    case CPDF_PageObject::SHADING: {
+      CPDF_ShadingObject* pShadingObj = pPageObj->AsShading();
+      pShadingObj->CalcBoundingBox();
+      break;
+    }
+    case CPDF_PageObject::FORM: {
+      CPDF_FormObject* pFormObj = pPageObj->AsForm();
+      pFormObj->CalcBoundingBox();
+      break;
+    }
+    default: {
+      NOTREACHED();
+      break;
+    }
+  }
+}
+
 }  // namespace
 
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
@@ -144,37 +176,9 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))
     return;
-
+  pPageObj->SetDirty(true);
   pPage->GetPageObjectList()->push_back(std::move(pPageObjHolder));
-  switch (pPageObj->GetType()) {
-    case CPDF_PageObject::TEXT: {
-      break;
-    }
-    case CPDF_PageObject::PATH: {
-      CPDF_PathObject* pPathObj = pPageObj->AsPath();
-      pPathObj->CalcBoundingBox();
-      break;
-    }
-    case CPDF_PageObject::IMAGE: {
-      CPDF_ImageObject* pImageObj = pPageObj->AsImage();
-      pImageObj->CalcBoundingBox();
-      break;
-    }
-    case CPDF_PageObject::SHADING: {
-      CPDF_ShadingObject* pShadingObj = pPageObj->AsShading();
-      pShadingObj->CalcBoundingBox();
-      break;
-    }
-    case CPDF_PageObject::FORM: {
-      CPDF_FormObject* pFormObj = pPageObj->AsForm();
-      pFormObj->CalcBoundingBox();
-      break;
-    }
-    default: {
-      NOTREACHED();
-      break;
-    }
-  }
+  CalcBoundingBox(pPageObj);
 }
 
 DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page) {
@@ -271,6 +275,7 @@ DLLEXPORT void STDCALL FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
     return;
 
   pPageObj->m_GeneralState.SetBlendMode(blend_mode);
+  pPageObj->SetDirty(true);
 }
 
 DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
@@ -327,6 +332,7 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
   pPageObj->m_GeneralState.SetFillAlpha(A / 255.f);
   pPageObj->m_ColorState.SetFillColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
+  pPageObj->SetDirty(true);
   return true;
 }
 

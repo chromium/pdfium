@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 
-CPDF_PageObject::CPDF_PageObject() {}
+CPDF_PageObject::CPDF_PageObject() : m_bDirty(false) {}
 
 CPDF_PageObject::~CPDF_PageObject() {}
 
@@ -76,18 +76,21 @@ void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
   m_Right = pSrc->m_Right;
   m_Top = pSrc->m_Top;
   m_Bottom = pSrc->m_Bottom;
+  m_bDirty = true;
 }
 
 void CPDF_PageObject::TransformClipPath(CFX_Matrix& matrix) {
   if (!m_ClipPath.HasRef())
     return;
   m_ClipPath.Transform(matrix);
+  SetDirty(true);
 }
 
 void CPDF_PageObject::TransformGeneralState(CFX_Matrix& matrix) {
   if (!m_GeneralState.HasRef())
     return;
   m_GeneralState.GetMutableMatrix()->Concat(matrix);
+  SetDirty(true);
 }
 
 FX_RECT CPDF_PageObject::GetBBox(const CFX_Matrix* pMatrix) const {

@@ -40,6 +40,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
   pPathObj->m_GeneralState.SetStrokeAlpha(A / 255.f);
   pPathObj->m_ColorState.SetStrokeColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
+  pPathObj->SetDirty(true);
   return true;
 }
 
@@ -49,6 +50,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width) {
 
   auto* pPathObj = static_cast<CPDF_PathObject*>(path);
   pPathObj->m_GraphState.SetLineWidth(width);
+  pPathObj->SetDirty(true);
   return true;
 }
 
@@ -84,6 +86,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_MoveTo(FPDF_PAGEOBJECT path, float x, float y) {
 
   auto* pPathObj = static_cast<CPDF_PathObject*>(path);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
+  pPathObj->SetDirty(true);
   return true;
 }
 
@@ -93,6 +96,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_LineTo(FPDF_PAGEOBJECT path, float x, float y) {
 
   auto* pPathObj = static_cast<CPDF_PathObject*>(path);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::LineTo, false);
+  pPathObj->SetDirty(true);
   return true;
 }
 
@@ -110,6 +114,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
   pPathObj->m_Path.AppendPoint(CFX_PointF(x1, y1), FXPT_TYPE::BezierTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x2, y2), FXPT_TYPE::BezierTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x3, y3), FXPT_TYPE::BezierTo, false);
+  pPathObj->SetDirty(true);
   return true;
 }
 
@@ -122,6 +127,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_Close(FPDF_PAGEOBJECT path) {
     return false;
 
   pPathObj->m_Path.ClosePath();
+  pPathObj->SetDirty(true);
   return true;
 }
 
@@ -140,6 +146,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
   else
     pPathObj->m_FillType = 0;
   pPathObj->m_bStroke = stroke != 0;
+  pPathObj->SetDirty(true);
   return true;
 }
 
@@ -157,6 +164,7 @@ DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT path,
   CFX_GraphStateData::LineJoin lineJoin =
       static_cast<CFX_GraphStateData::LineJoin>(line_join);
   pPathObj->m_GraphState.SetLineJoin(lineJoin);
+  pPathObj->SetDirty(true);
 }
 
 DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT path, int line_cap) {
@@ -170,4 +178,5 @@ DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT path, int line_cap) {
   CFX_GraphStateData::LineCap lineCap =
       static_cast<CFX_GraphStateData::LineCap>(line_cap);
   pPathObj->m_GraphState.SetLineCap(lineCap);
+  pPathObj->SetDirty(true);
 }

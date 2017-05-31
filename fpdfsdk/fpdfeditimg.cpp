@@ -39,7 +39,7 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
     pImgObj->GetImage()->SetJpegImageInline(pFile);
   else
     pImgObj->GetImage()->SetJpegImage(pFile);
-
+  pImgObj->SetDirty(true);
   return true;
 }
 
@@ -87,6 +87,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
                                  static_cast<float>(c), static_cast<float>(d),
                                  static_cast<float>(e), static_cast<float>(f)));
   pImgObj->CalcBoundingBox();
+  pImgObj->SetDirty(true);
   return true;
 }
 
@@ -106,5 +107,6 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   CFX_RetainPtr<CFX_DIBitmap> holder(CFXBitmapFromFPDFBitmap(bitmap));
   pImgObj->GetImage()->SetImage(holder);
   pImgObj->CalcBoundingBox();
+  pImgObj->SetDirty(true);
   return true;
 }

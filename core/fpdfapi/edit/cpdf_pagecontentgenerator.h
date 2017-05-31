@@ -30,6 +30,7 @@ class CPDF_PageContentGenerator {
  private:
   friend class CPDF_PageContentGeneratorTest;
 
+  bool ProcessPageObjects(CFX_ByteTextBuf* buf);
   void ProcessPath(CFX_ByteTextBuf* buf, CPDF_PathObject* pPathObj);
   void ProcessImage(CFX_ByteTextBuf* buf, CPDF_ImageObject* pImageObj);
   void ProcessGraphics(CFX_ByteTextBuf* buf, CPDF_PageObject* pPageObj);
