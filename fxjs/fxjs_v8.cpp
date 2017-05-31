@@ -701,28 +701,40 @@ int CFXJS_Engine::ToInt32(v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return 0;
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
-  return pValue->ToInt32(context).ToLocalChecked()->Value();
+  v8::MaybeLocal<v8::Int32> maybe_int32 = pValue->ToInt32(context);
+  if (maybe_int32.IsEmpty())
+    return 0;
+  return maybe_int32.ToLocalChecked()->Value();
 }
 
 bool CFXJS_Engine::ToBoolean(v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return false;
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
-  return pValue->ToBoolean(context).ToLocalChecked()->Value();
+  v8::MaybeLocal<v8::Boolean> maybe_boolean = pValue->ToBoolean(context);
+  if (maybe_boolean.IsEmpty())
+    return false;
+  return maybe_boolean.ToLocalChecked()->Value();
 }
 
 double CFXJS_Engine::ToDouble(v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return 0.0;
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
-  return pValue->ToNumber(context).ToLocalChecked()->Value();
+  v8::MaybeLocal<v8::Number> maybe_number = pValue->ToNumber(context);
+  if (maybe_number.IsEmpty())
+    return 0.0;
+  return maybe_number.ToLocalChecked()->Value();
 }
 
 CFX_WideString CFXJS_Engine::ToWideString(v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return CFX_WideString();
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
-  v8::String::Utf8Value s(pValue->ToString(context).ToLocalChecked());
+  v8::MaybeLocal<v8::String> maybe_string = pValue->ToString(context);
+  if (maybe_string.IsEmpty())
+    return CFX_WideString();
+  v8::String::Utf8Value s(maybe_string.ToLocalChecked());
   return CFX_WideString::FromUTF8(CFX_ByteStringC(*s, s.length()));
 }
 
