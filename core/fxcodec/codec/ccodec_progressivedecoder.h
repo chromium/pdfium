@@ -12,6 +12,7 @@
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/codec/ccodec_pngmodule.h"
 #include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
@@ -21,11 +22,9 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
 
-class CCodec_JpegModule;
 class CCodec_ModuleMgr;
 class CFX_DIBAttribute;
 class IFX_SeekableReadStream;
-struct FXJPEG_Context;
 
 class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
                                   public CCodec_GifModule::Delegate,
@@ -131,7 +130,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   CFX_UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
 
   // TODO(tsepez): All these contexts probably should be unique_ptrs.
-  FXJPEG_Context* m_pJpegContext;
+  CFX_UnownedPtr<CCodec_JpegModule::Context> m_pJpegContext;
   CFX_UnownedPtr<CCodec_PngModule::Context> m_pPngContext;
   std::unique_ptr<CGifContext> m_pGifContext;
   CCodec_BmpModule::Context* m_pBmpContext;

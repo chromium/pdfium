@@ -296,7 +296,7 @@ CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
 CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
   m_pFile = nullptr;
   if (m_pJpegContext)
-    m_pCodecMgr->GetJpegModule()->Finish(m_pJpegContext);
+    m_pCodecMgr->GetJpegModule()->Finish(m_pJpegContext.Release());
   if (m_pBmpContext)
     m_pCodecMgr->GetBmpModule()->Finish(m_pBmpContext);
   if (m_pPngContext)
@@ -315,7 +315,7 @@ bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
     return false;
   }
   dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pJpegModule->GetAvailInput(m_pJpegContext, nullptr);
+  uint32_t dwAvail = pJpegModule->GetAvailInput(m_pJpegContext.Get(), nullptr);
   if (dwAvail == m_SrcSize) {
     if (dwSize > FXCODEC_BLOCK_SIZE) {
       dwSize = FXCODEC_BLOCK_SIZE;
@@ -341,7 +341,7 @@ bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
     return false;
   }
   m_offSet += dwSize;
-  pJpegModule->Input(m_pJpegContext, m_pSrcBuf, dwSize + dwAvail);
+  pJpegModule->Input(m_pJpegContext.Get(), m_pSrcBuf, dwSize + dwAvail);
   return true;
 }
 
@@ -1079,10 +1079,10 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         return false;
       }
       m_offSet += size;
-      pJpegModule->Input(m_pJpegContext, m_pSrcBuf, size);
+      pJpegModule->Input(m_pJpegContext.Get(), m_pSrcBuf, size);
       int32_t readResult =
-          pJpegModule->ReadHeader(m_pJpegContext, &m_SrcWidth, &m_SrcHeight,
-                                  &m_SrcComponents, pAttribute);
+          pJpegModule->ReadHeader(m_pJpegContext.Get(), &m_SrcWidth,
+                                  &m_SrcHeight, &m_SrcComponents, pAttribute);
       while (readResult == 2) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
         if (!JpegReadMoreData(pJpegModule, error_status)) {
@@ -1090,18 +1090,16 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
           return false;
         }
         readResult =
-            pJpegModule->ReadHeader(m_pJpegContext, &m_SrcWidth, &m_SrcHeight,
-                                    &m_SrcComponents, pAttribute);
+            pJpegModule->ReadHeader(m_pJpegContext.Get(), &m_SrcWidth,
+                                    &m_SrcHeight, &m_SrcComponents, pAttribute);
       }
       if (!readResult) {
         m_SrcBPC = 8;
         m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
         return true;
       }
-      if (m_pJpegContext) {
-        pJpegModule->Finish(m_pJpegContext);
-        m_pJpegContext = nullptr;
-      }
+      if (m_pJpegContext)
+        pJpegModule->Finish(m_pJpegContext.Release());
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return false;
     }
@@ -1867,7 +1865,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
       int down_scale = 1;
       GetDownScale(down_scale);
       CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-      bool bStart = pJpegModule->StartScanline(m_pJpegContext, down_scale);
+      bool bStart =
+          pJpegModule->StartScanline(m_pJpegContext.Get(), down_scale);
       while (!bStart) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
         if (!JpegReadMoreData(pJpegModule, error_status)) {
@@ -1876,7 +1875,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
           m_status = error_status;
           return m_status;
         }
-        bStart = pJpegModule->StartScanline(m_pJpegContext, down_scale);
+        bStart = pJpegModule->StartScanline(m_pJpegContext.Get(), down_scale);
       }
       int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
       scanline_size = (scanline_size * m_SrcComponents + 3) / 4 * 4;
@@ -2018,7 +2017,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
     case FXCODEC_IMAGE_JPG: {
       CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
       while (true) {
-        bool readRes = pJpegModule->ReadScanline(m_pJpegContext, m_pDecodeBuf);
+        bool readRes =
+            pJpegModule->ReadScanline(m_pJpegContext.Get(), m_pDecodeBuf);
         while (!readRes) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
           if (!JpegReadMoreData(pJpegModule, error_status)) {
@@ -2027,7 +2027,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
             m_status = error_status;
             return m_status;
           }
-          readRes = pJpegModule->ReadScanline(m_pJpegContext, m_pDecodeBuf);
+          readRes =
+              pJpegModule->ReadScanline(m_pJpegContext.Get(), m_pDecodeBuf);
         }
         if (m_SrcFormat == FXCodec_Rgb) {
           int src_Bpp = (m_SrcFormat & 0xff) >> 3;
