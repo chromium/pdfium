@@ -171,15 +171,16 @@ void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
   v8::Local<v8::Object> obj = value.Get(isolate);
   if (obj.IsEmpty())
     return;
-  CFXJS_Engine* pEngine = CFXJS_Engine::CurrentEngineFromIsolate(isolate);
-  int id = pEngine->GetObjDefnID(obj);
+  int id = CFXJS_Engine::GetObjDefnID(obj);
   if (id == -1)
     return;
   CFXJS_ObjDefinition* pObjDef = CFXJS_ObjDefinition::ForID(isolate, id);
   if (!pObjDef)
     return;
-  if (pObjDef->m_pDestructor)
-    pObjDef->m_pDestructor(pEngine, obj);
+  if (pObjDef->m_pDestructor) {
+    pObjDef->m_pDestructor(CFXJS_Engine::CurrentEngineFromIsolate(isolate),
+                           obj);
+  }
   CFXJS_Engine::FreeObjectPrivate(obj);
 }
 

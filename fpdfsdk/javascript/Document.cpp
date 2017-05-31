@@ -1211,7 +1211,7 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
   }
 
   v8::Local<v8::Object> pJSIcon = params[1].ToV8Object(pRuntime);
-  if (pRuntime->GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID) {
+  if (CFXJS_Engine::GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
   }
