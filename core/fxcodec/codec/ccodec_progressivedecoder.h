@@ -133,7 +133,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   CFX_UnownedPtr<CCodec_JpegModule::Context> m_pJpegContext;
   CFX_UnownedPtr<CCodec_PngModule::Context> m_pPngContext;
   std::unique_ptr<CGifContext> m_pGifContext;
-  CCodec_BmpModule::Context* m_pBmpContext;
+  CFX_UnownedPtr<CCodec_BmpModule::Context> m_pBmpContext;
   CFX_UnownedPtr<CCodec_TiffContext> m_pTiffContext;
   FXCODEC_IMAGE_TYPE m_imagType;
   uint32_t m_offSet;
