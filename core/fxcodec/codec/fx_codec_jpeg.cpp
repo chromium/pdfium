@@ -28,10 +28,10 @@ extern "C" {
 #endif
 }  // extern "C"
 
-class CCodec_JpegModule::Context {
+class CJpegContext : public CCodec_JpegModule::Context {
  public:
-  Context();
-  ~Context();
+  CJpegContext();
+  ~CJpegContext() override;
 
   jmp_buf m_JumpMark;
   jpeg_decompress_struct m_Info;
@@ -363,15 +363,13 @@ bool CCodec_JpegModule::LoadInfo(const uint8_t* src_buf,
 extern "C" {
 
 static void _error_fatal1(j_common_ptr cinfo) {
-  auto* pContext =
-      reinterpret_cast<CCodec_JpegModule::Context*>(cinfo->client_data);
+  auto* pContext = reinterpret_cast<CJpegContext*>(cinfo->client_data);
   longjmp(pContext->m_JumpMark, -1);
 }
 
 static void _src_skip_data1(struct jpeg_decompress_struct* cinfo, long num) {
   if (cinfo->src->bytes_in_buffer < (size_t)num) {
-    auto* pContext =
-        reinterpret_cast<CCodec_JpegModule::Context*>(cinfo->client_data);
+    auto* pContext = reinterpret_cast<CJpegContext*>(cinfo->client_data);
     pContext->m_SkipSize = (unsigned int)(num - cinfo->src->bytes_in_buffer);
     cinfo->src->bytes_in_buffer = 0;
   } else {
@@ -390,7 +388,7 @@ static void jpeg_free_func(void* p) {
 
 }  // extern "C"
 
-CCodec_JpegModule::Context::Context()
+CJpegContext::CJpegContext()
     : m_SkipSize(0), m_AllocFunc(jpeg_alloc_func), m_FreeFunc(jpeg_free_func) {
   memset(&m_Info, 0, sizeof(m_Info));
   m_Info.client_data = this;
@@ -411,28 +409,26 @@ CCodec_JpegModule::Context::Context()
   m_SrcMgr.resync_to_restart = _src_resync;
 }
 
-CCodec_JpegModule::Context::~Context() {
+CJpegContext::~CJpegContext() {
   jpeg_destroy_decompress(&m_Info);
 }
 
-CCodec_JpegModule::Context* CCodec_JpegModule::Start() {
-  auto* pContext = new CCodec_JpegModule::Context();
+std::unique_ptr<CCodec_JpegModule::Context> CCodec_JpegModule::Start() {
+  // Use ordinary pointer until past the fear of a longjump.
+  auto* pContext = new CJpegContext();
   if (setjmp(pContext->m_JumpMark) == -1)
     return nullptr;
 
   jpeg_create_decompress(&pContext->m_Info);
   pContext->m_Info.src = &pContext->m_SrcMgr;
   pContext->m_SkipSize = 0;
-  return pContext;
+  return pdfium::WrapUnique(pContext);
 }
 
-void CCodec_JpegModule::Finish(Context* ctx) {
-  delete ctx;
-}
-
-void CCodec_JpegModule::Input(Context* ctx,
+void CCodec_JpegModule::Input(Context* pContext,
                               const unsigned char* src_buf,
                               uint32_t src_size) {
+  auto* ctx = static_cast<CJpegContext*>(pContext);
   if (ctx->m_SkipSize) {
     if (ctx->m_SkipSize > src_size) {
       ctx->m_SrcMgr.bytes_in_buffer = 0;
@@ -448,17 +444,18 @@ void CCodec_JpegModule::Input(Context* ctx,
 }
 
 #ifdef PDF_ENABLE_XFA
-int CCodec_JpegModule::ReadHeader(Context* ctx,
+int CCodec_JpegModule::ReadHeader(Context* pContext,
                                   int* width,
                                   int* height,
                                   int* nComps,
                                   CFX_DIBAttribute* pAttribute) {
 #else   // PDF_ENABLE_XFA
-int CCodec_JpegModule::ReadHeader(Context* ctx,
+int CCodec_JpegModule::ReadHeader(Context* pContext,
                                   int* width,
                                   int* height,
                                   int* nComps) {
 #endif  // PDF_ENABLE_XFA
+  auto* ctx = static_cast<CJpegContext*>(pContext);
   if (setjmp(ctx->m_JumpMark) == -1)
     return 1;
 
@@ -477,7 +474,8 @@ int CCodec_JpegModule::ReadHeader(Context* ctx,
   return 0;
 }
 
-bool CCodec_JpegModule::StartScanline(Context* ctx, int down_scale) {
+bool CCodec_JpegModule::StartScanline(Context* pContext, int down_scale) {
+  auto* ctx = static_cast<CJpegContext*>(pContext);
   if (setjmp(ctx->m_JumpMark) == -1)
     return false;
 
@@ -485,7 +483,9 @@ bool CCodec_JpegModule::StartScanline(Context* ctx, int down_scale) {
   return !!jpeg_start_decompress(&ctx->m_Info);
 }
 
-bool CCodec_JpegModule::ReadScanline(Context* ctx, unsigned char* dest_buf) {
+bool CCodec_JpegModule::ReadScanline(Context* pContext,
+                                     unsigned char* dest_buf) {
+  auto* ctx = static_cast<CJpegContext*>(pContext);
   if (setjmp(ctx->m_JumpMark) == -1)
     return false;
 
@@ -493,8 +493,9 @@ bool CCodec_JpegModule::ReadScanline(Context* ctx, unsigned char* dest_buf) {
   return nlines == 1;
 }
 
-uint32_t CCodec_JpegModule::GetAvailInput(Context* ctx,
+uint32_t CCodec_JpegModule::GetAvailInput(Context* pContext,
                                           uint8_t** avail_buf_ptr) {
+  auto* ctx = static_cast<CJpegContext*>(pContext);
   if (avail_buf_ptr) {
     *avail_buf_ptr = nullptr;
     if (ctx->m_SrcMgr.bytes_in_buffer > 0) {

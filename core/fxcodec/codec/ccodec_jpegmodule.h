@@ -21,7 +21,10 @@ class CFX_DIBAttribute;
 
 class CCodec_JpegModule {
  public:
-  class Context;
+  class Context {
+   public:
+    virtual ~Context() {}
+  };
 
   std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(const uint8_t* src_buf,
                                                         uint32_t src_size,
@@ -36,8 +39,8 @@ class CCodec_JpegModule {
                 int* num_components,
                 int* bits_per_components,
                 bool* color_transform);
-  Context* Start();
-  void Finish(Context* pContext);
+
+  std::unique_ptr<Context> Start();
   void Input(Context* pContext, const uint8_t* src_buf, uint32_t src_size);
 
 #ifndef PDF_ENABLE_XFA

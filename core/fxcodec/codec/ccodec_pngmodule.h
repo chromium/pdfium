@@ -7,14 +7,19 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBAttribute;
 
 class CCodec_PngModule {
  public:
-  class Context;
+  class Context {
+   public:
+    virtual ~Context() {}
+  };
+
   class Delegate {
    public:
     virtual bool PngReadHeader(int width,
@@ -27,8 +32,7 @@ class CCodec_PngModule {
     virtual void PngFillScanlineBufCompleted(int pass, int line) = 0;
   };
 
-  Context* Start(Delegate* pDelegate);
-  void Finish(Context* pContext);
+  std::unique_ptr<Context> Start(Delegate* pDelegate);
   bool Input(Context* pContext,
              const uint8_t* src_buf,
              uint32_t src_size,

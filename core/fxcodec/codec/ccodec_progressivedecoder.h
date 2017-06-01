@@ -125,51 +125,6 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
     std::vector<uint8_t> m_pWeightTables;
   };
 
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
-  CFX_UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
-
-  // TODO(tsepez): All these contexts probably should be unique_ptrs.
-  CFX_UnownedPtr<CCodec_JpegModule::Context> m_pJpegContext;
-  CFX_UnownedPtr<CCodec_PngModule::Context> m_pPngContext;
-  std::unique_ptr<CCodec_GifModule::Context> m_pGifContext;
-  CFX_UnownedPtr<CCodec_BmpModule::Context> m_pBmpContext;
-  CFX_UnownedPtr<CCodec_TiffContext> m_pTiffContext;
-  FXCODEC_IMAGE_TYPE m_imagType;
-  uint32_t m_offSet;
-  uint8_t* m_pSrcBuf;
-  uint32_t m_SrcSize;
-  uint8_t* m_pDecodeBuf;
-  int m_ScanlineSize;
-  CFX_RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
-  bool m_bInterpol;
-  CFXCODEC_WeightTable m_WeightHorz;
-  CFXCODEC_VertTable m_WeightVert;
-  CFXCODEC_HorzTable m_WeightHorzOO;
-  int m_SrcWidth;
-  int m_SrcHeight;
-  int m_SrcComponents;
-  int m_SrcBPC;
-  FX_RECT m_clipBox;
-  int m_startX;
-  int m_startY;
-  int m_sizeX;
-  int m_sizeY;
-  int m_TransMethod;
-  FX_ARGB* m_pSrcPalette;
-  int m_SrcPaletteNumber;
-  int m_SrcRow;
-  FXCodec_Format m_SrcFormat;
-  int m_SrcPassNumber;
-  int m_FrameNumber;
-  int m_FrameCur;
-  int m_GifBgIndex;
-  uint8_t* m_pGifPalette;
-  int32_t m_GifPltNumber;
-  int m_GifTransIndex;
-  FX_RECT m_GifFrameRect;
-  bool m_BmpIsTopBottom;
-  FXCODEC_STATUS m_status;
-
   // CCodec_PngModule::Delegate
   bool PngReadHeader(int width,
                      int height,
@@ -197,7 +152,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
   void BmpReadScanline(int32_t row_num, uint8_t* row_buf) override;
 
- protected:
+ private:
   bool BmpReadMoreData(CCodec_BmpModule* pBmpModule,
                        FXCODEC_STATUS& err_status);
   bool GifReadMoreData(CCodec_GifModule* pGifModule,
@@ -231,6 +186,49 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   void ResampleVertBT(const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                       double scale_y,
                       int des_row);
+
+  CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
+  CFX_RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
+  CFX_UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
+  std::unique_ptr<CCodec_JpegModule::Context> m_pJpegContext;
+  std::unique_ptr<CCodec_PngModule::Context> m_pPngContext;
+  std::unique_ptr<CCodec_GifModule::Context> m_pGifContext;
+  std::unique_ptr<CCodec_BmpModule::Context> m_pBmpContext;
+  std::unique_ptr<CCodec_TiffModule::Context> m_pTiffContext;
+  FXCODEC_IMAGE_TYPE m_imagType;
+  uint32_t m_offSet;
+  uint8_t* m_pSrcBuf;
+  uint32_t m_SrcSize;
+  uint8_t* m_pDecodeBuf;
+  int m_ScanlineSize;
+  bool m_bInterpol;
+  CFXCODEC_WeightTable m_WeightHorz;
+  CFXCODEC_VertTable m_WeightVert;
+  CFXCODEC_HorzTable m_WeightHorzOO;
+  int m_SrcWidth;
+  int m_SrcHeight;
+  int m_SrcComponents;
+  int m_SrcBPC;
+  FX_RECT m_clipBox;
+  int m_startX;
+  int m_startY;
+  int m_sizeX;
+  int m_sizeY;
+  int m_TransMethod;
+  FX_ARGB* m_pSrcPalette;
+  int m_SrcPaletteNumber;
+  int m_SrcRow;
+  FXCodec_Format m_SrcFormat;
+  int m_SrcPassNumber;
+  int m_FrameNumber;
+  int m_FrameCur;
+  int m_GifBgIndex;
+  uint8_t* m_pGifPalette;
+  int32_t m_GifPltNumber;
+  int m_GifTransIndex;
+  FX_RECT m_GifFrameRect;
+  bool m_BmpIsTopBottom;
+  FXCODEC_STATUS m_status;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_

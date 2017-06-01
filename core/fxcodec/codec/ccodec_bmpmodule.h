@@ -7,6 +7,8 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
 
+#include <memory>
+
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -14,7 +16,11 @@ class CFX_DIBAttribute;
 
 class CCodec_BmpModule {
  public:
-  class Context;
+  class Context {
+   public:
+    virtual ~Context() {}
+  };
+
   class Delegate {
    public:
     virtual bool BmpInputImagePositionBuf(uint32_t rcd_pos) = 0;
@@ -24,8 +30,7 @@ class CCodec_BmpModule {
   CCodec_BmpModule();
   ~CCodec_BmpModule();
 
-  Context* Start(Delegate* pDelegate);
-  void Finish(Context* pContext);
+  std::unique_ptr<Context> Start(Delegate* pDelegate);
   uint32_t GetAvailInput(Context* pContext, uint8_t** avail_buf_ptr);
   void Input(Context* pContext, const uint8_t* src_buf, uint32_t src_size);
   int32_t ReadHeader(Context* pContext,

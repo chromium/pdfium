@@ -21,10 +21,10 @@ extern "C" {
 #include "third_party/libtiff/tiffiop.h"
 }
 
-class CCodec_TiffContext {
+class CTiffContext : public CCodec_TiffModule::Context {
  public:
-  CCodec_TiffContext();
-  ~CCodec_TiffContext();
+  CTiffContext();
+  ~CTiffContext() override;
 
   bool InitDecoder(const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr);
   bool LoadFrameInfo(int32_t frame,
@@ -101,8 +101,7 @@ TIFFErrorHandler _TIFFerrorHandler = nullptr;
 namespace {
 
 tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
-  CCodec_TiffContext* pTiffContext =
-      reinterpret_cast<CCodec_TiffContext*>(context);
+  CTiffContext* pTiffContext = reinterpret_cast<CTiffContext*>(context);
   FX_SAFE_UINT32 increment = pTiffContext->offset();
   increment += length;
   if (!increment.IsValid())
@@ -125,8 +124,7 @@ tsize_t tiff_write(thandle_t context, tdata_t buf, tsize_t length) {
 }
 
 toff_t tiff_seek(thandle_t context, toff_t offset, int whence) {
-  CCodec_TiffContext* pTiffContext =
-      reinterpret_cast<CCodec_TiffContext*>(context);
+  CTiffContext* pTiffContext = reinterpret_cast<CTiffContext*>(context);
   FX_SAFE_FILESIZE safe_offset = offset;
   if (!safe_offset.IsValid())
     return static_cast<toff_t>(-1);
@@ -163,8 +161,7 @@ int tiff_close(thandle_t context) {
 }
 
 toff_t tiff_get_size(thandle_t context) {
-  CCodec_TiffContext* pTiffContext =
-      reinterpret_cast<CCodec_TiffContext*>(context);
+  CTiffContext* pTiffContext = reinterpret_cast<CTiffContext*>(context);
   return static_cast<toff_t>(pTiffContext->io_in()->GetSize());
 }
 
@@ -221,27 +218,27 @@ void TiffBGRA2RGBA(uint8_t* pBuf, int32_t pixel, int32_t spp) {
 
 }  // namespace
 
-CCodec_TiffContext::CCodec_TiffContext()
+CTiffContext::CTiffContext()
     : m_io_in(nullptr), m_offset(0), m_tif_ctx(nullptr) {}
 
-CCodec_TiffContext::~CCodec_TiffContext() {
+CTiffContext::~CTiffContext() {
   if (m_tif_ctx)
     TIFFClose(m_tif_ctx);
 }
 
-bool CCodec_TiffContext::InitDecoder(
+bool CTiffContext::InitDecoder(
     const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   m_io_in = file_ptr;
   m_tif_ctx = tiff_open(this, "r");
   return !!m_tif_ctx;
 }
 
-bool CCodec_TiffContext::LoadFrameInfo(int32_t frame,
-                                       int32_t* width,
-                                       int32_t* height,
-                                       int32_t* comps,
-                                       int32_t* bpc,
-                                       CFX_DIBAttribute* pAttribute) {
+bool CTiffContext::LoadFrameInfo(int32_t frame,
+                                 int32_t* width,
+                                 int32_t* height,
+                                 int32_t* comps,
+                                 int32_t* bpc,
+                                 CFX_DIBAttribute* pAttribute) {
   if (!TIFFSetDirectory(m_tif_ctx, (uint16)frame))
     return false;
 
@@ -293,7 +290,7 @@ bool CCodec_TiffContext::LoadFrameInfo(int32_t frame,
   return true;
 }
 
-bool CCodec_TiffContext::IsSupport(
+bool CTiffContext::IsSupport(
     const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) const {
   if (TIFFIsTiled(m_tif_ctx))
     return false;
@@ -324,9 +321,8 @@ bool CCodec_TiffContext::IsSupport(
   return planarconfig != PLANARCONFIG_SEPARATE;
 }
 
-void CCodec_TiffContext::SetPalette(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
-    uint16_t bps) {
+void CTiffContext::SetPalette(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+                              uint16_t bps) {
   uint16_t* red_orig = nullptr;
   uint16_t* green_orig = nullptr;
   uint16_t* blue_orig = nullptr;
@@ -349,12 +345,11 @@ void CCodec_TiffContext::SetPalette(
   }
 }
 
-bool CCodec_TiffContext::Decode1bppRGB(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
-    int32_t height,
-    int32_t width,
-    uint16_t bps,
-    uint16_t spp) {
+bool CTiffContext::Decode1bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+                                 int32_t height,
+                                 int32_t width,
+                                 uint16_t bps,
+                                 uint16_t spp) {
   if (pDIBitmap->GetBPP() != 1 || spp != 1 || bps != 1 ||
       !IsSupport(pDIBitmap)) {
     return false;
@@ -378,12 +373,11 @@ bool CCodec_TiffContext::Decode1bppRGB(
   return true;
 }
 
-bool CCodec_TiffContext::Decode8bppRGB(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
-    int32_t height,
-    int32_t width,
-    uint16_t bps,
-    uint16_t spp) {
+bool CTiffContext::Decode8bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+                                 int32_t height,
+                                 int32_t width,
+                                 uint16_t bps,
+                                 uint16_t spp) {
   if (pDIBitmap->GetBPP() != 8 || spp != 1 || (bps != 4 && bps != 8) ||
       !IsSupport(pDIBitmap)) {
     return false;
@@ -415,12 +409,11 @@ bool CCodec_TiffContext::Decode8bppRGB(
   return true;
 }
 
-bool CCodec_TiffContext::Decode24bppRGB(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
-    int32_t height,
-    int32_t width,
-    uint16_t bps,
-    uint16_t spp) {
+bool CTiffContext::Decode24bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+                                  int32_t height,
+                                  int32_t width,
+                                  uint16_t bps,
+                                  uint16_t spp) {
   if (pDIBitmap->GetBPP() != 24 || !IsSupport(pDIBitmap))
     return false;
 
@@ -444,7 +437,7 @@ bool CCodec_TiffContext::Decode24bppRGB(
   return true;
 }
 
-bool CCodec_TiffContext::Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+bool CTiffContext::Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   uint32_t img_wid = pDIBitmap->GetWidth();
   uint32_t img_hei = pDIBitmap->GetHeight();
   uint32_t width = 0;
@@ -485,30 +478,28 @@ bool CCodec_TiffContext::Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   return false;
 }
 
-CCodec_TiffContext* CCodec_TiffModule::CreateDecoder(
+std::unique_ptr<CCodec_TiffModule::Context> CCodec_TiffModule::CreateDecoder(
     const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr) {
-  auto pDecoder = pdfium::MakeUnique<CCodec_TiffContext>();
+  auto pDecoder = pdfium::MakeUnique<CTiffContext>();
   if (!pDecoder->InitDecoder(file_ptr))
     return nullptr;
 
-  return pDecoder.release();
+  return pDecoder;
 }
 
-bool CCodec_TiffModule::LoadFrameInfo(CCodec_TiffContext* ctx,
+bool CCodec_TiffModule::LoadFrameInfo(Context* pContext,
                                       int32_t frame,
                                       int32_t* width,
                                       int32_t* height,
                                       int32_t* comps,
                                       int32_t* bpc,
                                       CFX_DIBAttribute* pAttribute) {
+  auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
 }
 
-bool CCodec_TiffModule::Decode(CCodec_TiffContext* ctx,
+bool CCodec_TiffModule::Decode(Context* pContext,
                                const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+  auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->Decode(pDIBitmap);
-}
-
-void CCodec_TiffModule::DestroyDecoder(CCodec_TiffContext* ctx) {
-  delete ctx;
 }

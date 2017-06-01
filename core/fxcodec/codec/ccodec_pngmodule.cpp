@@ -21,15 +21,15 @@ extern "C" {
 
 #define PNG_ERROR_SIZE 256
 
-class CCodec_PngModule::Context {
+class CPngContext : public CCodec_PngModule::Context {
  public:
-  Context(CCodec_PngModule* pModule, Delegate* pDelegate);
-  ~Context();
+  CPngContext(CCodec_PngModule* pModule, CCodec_PngModule::Delegate* pDelegate);
+  ~CPngContext() override;
 
   png_structp m_pPng;
   png_infop m_pInfo;
   CFX_UnownedPtr<CCodec_PngModule> m_pModule;
-  CFX_UnownedPtr<Delegate> m_pDelegate;
+  CFX_UnownedPtr<CCodec_PngModule::Delegate> m_pDelegate;
   void* (*m_AllocFunc)(unsigned int);
   void (*m_FreeFunc)(void*);
   char m_szLastError[PNG_ERROR_SIZE];
@@ -104,8 +104,8 @@ static void _png_free_func(void* p) {
 }
 
 static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
-  auto* pContext = reinterpret_cast<CCodec_PngModule::Context*>(
-      png_get_progressive_ptr(png_ptr));
+  auto* pContext =
+      reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
   if (!pContext)
     return;
 
@@ -176,8 +176,8 @@ static void _png_get_row_func(png_structp png_ptr,
                               png_bytep new_row,
                               png_uint_32 row_num,
                               int pass) {
-  auto* pContext = reinterpret_cast<CCodec_PngModule::Context*>(
-      png_get_progressive_ptr(png_ptr));
+  auto* pContext =
+      reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
   if (!pContext)
     return;
 
@@ -193,8 +193,8 @@ static void _png_get_row_func(png_structp png_ptr,
 
 }  // extern "C"
 
-CCodec_PngModule::Context::Context(CCodec_PngModule* pModule,
-                                   Delegate* pDelegate)
+CPngContext::CPngContext(CCodec_PngModule* pModule,
+                         CCodec_PngModule::Delegate* pDelegate)
     : m_pPng(nullptr),
       m_pInfo(nullptr),
       m_pModule(pModule),
@@ -204,13 +204,14 @@ CCodec_PngModule::Context::Context(CCodec_PngModule* pModule,
   memset(m_szLastError, 0, sizeof(m_szLastError));
 }
 
-CCodec_PngModule::Context::~Context() {
+CPngContext::~CPngContext() {
   png_destroy_read_struct(m_pPng ? &m_pPng : nullptr,
                           m_pInfo ? &m_pInfo : nullptr, nullptr);
 }
 
-CCodec_PngModule::Context* CCodec_PngModule::Start(Delegate* pDelegate) {
-  auto p = pdfium::MakeUnique<Context>(this, pDelegate);
+std::unique_ptr<CCodec_PngModule::Context> CCodec_PngModule::Start(
+    Delegate* pDelegate) {
+  auto p = pdfium::MakeUnique<CPngContext>(this, pDelegate);
   p->m_pPng =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!p->m_pPng)
@@ -227,17 +228,14 @@ CCodec_PngModule::Context* CCodec_PngModule::Start(Delegate* pDelegate) {
                               _png_get_row_func, _png_get_end_func);
   png_set_error_fn(p->m_pPng, p->m_szLastError, _png_error_data,
                    _png_warning_data);
-  return p.release();
+  return p;
 }
 
-void CCodec_PngModule::Finish(Context* ctx) {
-  delete ctx;
-}
-
-bool CCodec_PngModule::Input(Context* ctx,
+bool CCodec_PngModule::Input(Context* pContext,
                              const uint8_t* src_buf,
                              uint32_t src_size,
                              CFX_DIBAttribute* pAttribute) {
+  auto* ctx = static_cast<CPngContext*>(pContext);
   if (setjmp(png_jmpbuf(ctx->m_pPng))) {
     if (pAttribute &&
         strcmp(ctx->m_szLastError, "Read Header Callback Error") == 0) {
