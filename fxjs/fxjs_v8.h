@@ -182,12 +182,12 @@ class CFXJS_Engine {
 
   v8::Local<v8::Value> NewNull();
   v8::Local<v8::Array> NewArray();
-  v8::Local<v8::Value> NewNumber(int number);
-  v8::Local<v8::Value> NewNumber(double number);
-  v8::Local<v8::Value> NewNumber(float number);
-  v8::Local<v8::Value> NewBoolean(bool b);
-  v8::Local<v8::Value> NewString(const CFX_ByteStringC& str);
-  v8::Local<v8::Value> NewString(const CFX_WideStringC& str);
+  v8::Local<v8::Number> NewNumber(int number);
+  v8::Local<v8::Number> NewNumber(double number);
+  v8::Local<v8::Number> NewNumber(float number);
+  v8::Local<v8::Boolean> NewBoolean(bool b);
+  v8::Local<v8::String> NewString(const CFX_ByteStringC& str);
+  v8::Local<v8::String> NewString(const CFX_WideStringC& str);
   v8::Local<v8::Date> NewDate(double d);
   v8::Local<v8::Object> NewFxDynamicObj(int nObjDefnID, bool bStatic = false);
 
