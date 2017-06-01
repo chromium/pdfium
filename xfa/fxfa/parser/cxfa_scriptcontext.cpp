@@ -115,7 +115,10 @@ const XFA_METHODINFO* GetMethodByName(XFA_Element eElement,
 // static.
 CXFA_Object* CXFA_ScriptContext::ToObject(CFXJSE_Value* pValue,
                                           CFXJSE_Class* pClass) {
-  return static_cast<CXFA_Object*>(pValue->ToHostObject(pClass));
+  CFXJSE_HostObject* pHostObj = pValue->ToHostObject(pClass);
+  if (!pHostObj || pHostObj->type() != CFXJSE_HostObject::kXFA)
+    return nullptr;
+  return static_cast<CXFA_Object*>(pHostObj);
 }
 
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)

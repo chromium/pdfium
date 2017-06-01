@@ -501,7 +501,10 @@ bool PatternStringType(const CFX_ByteStringC& szPattern,
 }
 
 CXFA_FM2JSContext* ToJSContext(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
-  return static_cast<CXFA_FM2JSContext*>(pValue->ToHostObject(pClass));
+  CFXJSE_HostObject* pHostObj = pValue->ToHostObject(pClass);
+  if (!pHostObj || pHostObj->type() != CFXJSE_HostObject::kFM2JS)
+    return nullptr;
+  return static_cast<CXFA_FM2JSContext*>(pHostObj);
 }
 
 bool IsWhitespace(char c) {
@@ -6133,13 +6136,13 @@ bool CXFA_FM2JSContext::Translate(const CFX_WideStringC& wsFormcalc,
 CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
                                      CFXJSE_Context* pScriptContext,
                                      CXFA_Document* pDoc)
-    : m_pIsolate(pScriptIsolate),
+    : CFXJSE_HostObject(kFM2JS),
+      m_pIsolate(pScriptIsolate),
       m_pFMClass(CFXJSE_Class::Create(pScriptContext,
                                       &formcalc_fm2js_descriptor,
                                       false)),
       m_pValue(pdfium::MakeUnique<CFXJSE_Value>(pScriptIsolate)),
       m_pDocument(pDoc) {
-  m_pValue.get()->SetNull();
   m_pValue.get()->SetObject(this, m_pFMClass);
 }
 
