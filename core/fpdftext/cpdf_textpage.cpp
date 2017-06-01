@@ -590,7 +590,7 @@ void CPDF_TextPage::ProcessObject() {
         CFX_Matrix matrix;
         ProcessTextObject(pObj->AsText(), matrix, pObjList, it);
       } else if (pObj->IsForm()) {
-        CFX_Matrix formMatrix(1, 0, 0, 1, 0, 0);
+        CFX_Matrix formMatrix;
         ProcessFormObject(pObj->AsForm(), formMatrix);
       }
     }

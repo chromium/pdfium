@@ -618,7 +618,7 @@ FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(const CFX_PointF& point) {
 void CFWL_ComboBox::DisForm_DrawWidget(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  CFX_Matrix mtOrg(1, 0, 0, 1, 0, 0);
+  CFX_Matrix mtOrg;
   if (pMatrix)
     mtOrg = *pMatrix;
 

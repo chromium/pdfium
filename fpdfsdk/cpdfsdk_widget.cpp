@@ -1723,9 +1723,8 @@ CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
   float fHeight = rcAnnot.top - rcAnnot.bottom;
 
   switch (abs(pControl->GetRotation() % 360)) {
-    case 0:
     default:
-      mt = CFX_Matrix(1, 0, 0, 1, 0, 0);
+    case 0:
       break;
     case 90:
       mt = CFX_Matrix(0, 1, -1, 0, fWidth, 0);

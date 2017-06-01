@@ -263,7 +263,7 @@ void CFWL_CheckBoxTP::InitCheckPath(float fCheckLen) {
     m_pCheckPath->BezierTo(pt5 + p1, pt1 + p2, pt1);
 
     float fScale = fCheckLen / kSignPath;
-    CFX_Matrix mt(1, 0, 0, 1, 0, 0);
+    CFX_Matrix mt;
     mt.Scale(fScale, fScale);
 
     m_pCheckPath->TransformBy(mt);

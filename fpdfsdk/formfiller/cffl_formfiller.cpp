@@ -386,29 +386,24 @@ void CFFL_FormFiller::DestroyPDFWindow(CPDFSDK_PageView* pPageView) {
 }
 
 CFX_Matrix CFFL_FormFiller::GetWindowMatrix(void* pAttachedData) {
-  if (CFFL_PrivateData* pPrivateData = (CFFL_PrivateData*)pAttachedData) {
-    if (pPrivateData->pPageView) {
-      CFX_Matrix mtPageView;
-      pPrivateData->pPageView->GetCurrentMatrix(mtPageView);
+  CFX_Matrix mt;
+  auto* pPrivateData = reinterpret_cast<CFFL_PrivateData*>(pAttachedData);
+  if (!pAttachedData || !pPrivateData->pPageView)
+    return mt;
 
-      CFX_Matrix mt = GetCurMatrix();
-      mt.Concat(mtPageView);
-
-      return mt;
-    }
-  }
-  return CFX_Matrix(1, 0, 0, 1, 0, 0);
+  CFX_Matrix mtPageView;
+  pPrivateData->pPageView->GetCurrentMatrix(mtPageView);
+  mt = GetCurMatrix();
+  mt.Concat(mtPageView);
+  return mt;
 }
 
 CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
   CFX_Matrix mt;
-
   CFX_FloatRect rcDA = m_pWidget->GetPDFAnnot()->GetRect();
-
   switch (m_pWidget->GetRotate()) {
     default:
     case 0:
-      mt = CFX_Matrix(1, 0, 0, 1, 0, 0);
       break;
     case 90:
       mt = CFX_Matrix(0, 1, -1, 0, rcDA.right - rcDA.left, 0);
