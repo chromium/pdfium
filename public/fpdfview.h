@@ -22,6 +22,7 @@
 
 // PDF types
 typedef void* FPDF_ACTION;
+typedef void* FPDF_ANNOTATION;
 typedef void* FPDF_BITMAP;
 typedef void* FPDF_BOOKMARK;
 typedef void* FPDF_CLIPPATH;
@@ -121,6 +122,9 @@ typedef struct _FS_RECTF_ {
 
 // Const Pointer to FS_RECTF structure.
 typedef const FS_RECTF* FS_LPCRECTF;
+
+// Annotation subtype.
+typedef int FPDF_ANNOTATION_SUBTYPE;
 
 #if defined(_WIN32) && defined(FPDFSDK_EXPORTS)
 // On Windows system, functions are exported in a DLL

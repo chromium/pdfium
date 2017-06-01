@@ -9,6 +9,7 @@
 
 #include "fpdfsdk/fpdfview_c_api_test.h"
 
+#include "public/fpdf_annot.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_edit.h"
@@ -33,6 +34,15 @@ fnptr g_c_api_test_fnptr = NULL;  // Extern, so can't know it doesn't change.
 
 // Function to call from gtest harness to ensure linker resolution.
 int CheckPDFiumCApi() {
+    //fpdf_annot.h
+    CHK(FPDFPage_GetAnnotCount);
+    CHK(FPDFPage_GetAnnot);
+    CHK(FPDFAnnot_GetSubtype);
+    CHK(FPDFAnnot_GetColor);
+    CHK(FPDFAnnot_GetAttachmentPoints);
+    CHK(FPDFAnnot_GetRect);
+    CHK(FPDFAnnot_GetText);
+
     // fpdf_dataavail.h
     CHK(FPDFAvail_Create);
     CHK(FPDFAvail_Destroy);
