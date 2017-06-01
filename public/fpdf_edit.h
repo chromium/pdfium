@@ -34,6 +34,14 @@
 #define FPDF_FONT_TYPE1 1
 #define FPDF_FONT_TRUETYPE 2
 
+#define FPDF_LINECAP_BUTT 0
+#define FPDF_LINECAP_ROUND 1
+#define FPDF_LINECAP_PROJECTING_SQUARE 2
+
+#define FPDF_LINEJOIN_MITER 0
+#define FPDF_LINEJOIN_ROUND 1
+#define FPDF_LINEJOIN_BEVEL 2
+
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
@@ -350,7 +358,8 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
 // pageObject - handle to a page object.
 // line_join - line join
 //
-// Line join can be one of following: Miter (0), Round (1), Bevel (2)
+// Line join can be one of following: FPDF_LINEJOIN_MITER, FPDF_LINEJOIN_ROUND,
+// FPDF_LINEJOIN_BEVEL
 DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page,
                                             int line_join);
 
@@ -359,7 +368,8 @@ DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page,
 // pageObject - handle to a page object.
 // line_cap - line cap
 //
-// Line cap can be one of following: Butt (0), Round (1), Projecting square (2)
+// Line cap can be one of following: FPDF_LINECAP_BUTT, FPDF_LINECAP_ROUND,
+// FPDF_LINECAP_PROJECTING_SQUARE
 DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT page, int line_cap);
 
 // Set the fill RGBA of a path. Range of values: 0 - 255.
