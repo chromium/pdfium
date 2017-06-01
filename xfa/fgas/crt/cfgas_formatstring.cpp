@@ -1158,27 +1158,6 @@ FX_LOCALECATEGORY CFGAS_FormatString::GetCategory(
   return eCategory;
 }
 
-CFX_WideString CFGAS_FormatString::GetLocaleName(
-    const CFX_WideString& wsPattern) {
-  int32_t ccf = 0;
-  int32_t iLenf = wsPattern.GetLength();
-  const wchar_t* pStr = wsPattern.c_str();
-  while (ccf < iLenf) {
-    if (pStr[ccf] == '\'') {
-      GetLiteralText(pStr, ccf, iLenf);
-    } else if (pStr[ccf] == '(') {
-      ccf++;
-      CFX_WideString wsLCID;
-      while (ccf < iLenf && pStr[ccf] != ')') {
-        wsLCID += pStr[ccf++];
-      }
-      return wsLCID;
-    }
-    ccf++;
-  }
-  return CFX_WideString();
-}
-
 IFX_Locale* CFGAS_FormatString::GetTextFormat(const CFX_WideString& wsPattern,
                                               const CFX_WideStringC& wsCategory,
                                               CFX_WideString& wsPurgePattern) {

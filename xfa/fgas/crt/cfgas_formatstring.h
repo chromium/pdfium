@@ -25,7 +25,6 @@ class CFGAS_FormatString {
   void SplitFormatString(const CFX_WideString& wsFormatString,
                          std::vector<CFX_WideString>& wsPatterns);
   FX_LOCALECATEGORY GetCategory(const CFX_WideString& wsPattern);
-  CFX_WideString GetLocaleName(const CFX_WideString& wsPattern);
   bool ParseText(const CFX_WideString& wsSrcText,
                  const CFX_WideString& wsPattern,
                  CFX_WideString& wsValue);
