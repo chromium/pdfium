@@ -22,11 +22,13 @@ class IFX_Edit_UndoItem;
 class IPWL_Filler_Notify {
  public:
   virtual ~IPWL_Filler_Notify() {}
+
+  // Must write to |bBottom| and |fPopupRet|.
   virtual void QueryWherePopup(void* pPrivateData,
                                float fPopupMin,
                                float fPopupMax,
-                               int32_t& nRet,
-                               float& fPopupRet) = 0;  // nRet: (0:bottom 1:top)
+                               bool* bBottom,
+                               float* fPopupRet) = 0;
   virtual void OnBeforeKeyStroke(void* pPrivateData,
                                  CFX_WideString& strChange,
                                  const CFX_WideString& strChangeEx,

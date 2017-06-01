@@ -96,9 +96,9 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CFX_UnownedPtr<CPWL_CBEdit> m_pEdit;
   CFX_UnownedPtr<CPWL_CBButton> m_pButton;
   CFX_UnownedPtr<CPWL_CBListBox> m_pList;
-  bool m_bPopup;
   CFX_FloatRect m_rcOldWindow;
-  int32_t m_nPopupWhere;
+  bool m_bPopup;
+  bool m_bBottom;
   int32_t m_nSelectItem;
   CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
