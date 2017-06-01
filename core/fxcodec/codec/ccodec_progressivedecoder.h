@@ -16,7 +16,6 @@
 #include "core/fxcodec/codec/ccodec_pngmodule.h"
 #include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcodec/lgif/cgifcontext.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
@@ -132,7 +131,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   // TODO(tsepez): All these contexts probably should be unique_ptrs.
   CFX_UnownedPtr<CCodec_JpegModule::Context> m_pJpegContext;
   CFX_UnownedPtr<CCodec_PngModule::Context> m_pPngContext;
-  std::unique_ptr<CGifContext> m_pGifContext;
+  std::unique_ptr<CCodec_GifModule::Context> m_pGifContext;
   CFX_UnownedPtr<CCodec_BmpModule::Context> m_pBmpContext;
   CFX_UnownedPtr<CCodec_TiffContext> m_pTiffContext;
   FXCODEC_IMAGE_TYPE m_imagType;

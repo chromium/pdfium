@@ -10,16 +10,16 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcodec/codec/ccodec_gifmodule.h"
 #include "core/fxcodec/lgif/fx_gif.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
-class CCodec_GifModule;
-
-class CGifContext {
+class CGifContext : public CCodec_GifModule::Context {
  public:
-  CGifContext(CCodec_GifModule* gif_module, char* error_string);
-  ~CGifContext();
+  CGifContext(CCodec_GifModule* gif_module,
+              CCodec_GifModule::Delegate* pDelegate);
+  ~CGifContext() override;
 
   void AddError(const char* err_msg);
   void RecordCurrentPosition(uint32_t* cur_pos_ptr);
@@ -37,6 +37,8 @@ class CGifContext {
                          int32_t disposal_method,
                          bool interlace);
 
+  CFX_UnownedPtr<CCodec_GifModule> m_pModule;
+  CFX_UnownedPtr<CCodec_GifModule::Delegate> m_pDelegate;
   std::vector<GifPalette> m_GlobalPalette;
   int32_t global_pal_num;
   uint32_t img_row_offset;
@@ -44,23 +46,19 @@ class CGifContext {
   uint32_t avail_in;
   int32_t decode_status;
   uint32_t skip_size;
-
-  CFX_UnownedPtr<CCodec_GifModule> m_Module;
-  char* err_ptr;
   CFX_ByteString cmt_data;
   std::unique_ptr<GifGCE> m_GifGCE;
   uint8_t* next_in;
   std::vector<std::unique_ptr<GifImage>> m_Images;
   std::unique_ptr<CGifLZWDecoder> m_ImgDecoder;
-
   int width;
   int height;
-
   uint8_t bc_index;
   uint8_t pixel_aspect;
   uint8_t global_sort_flag;
   uint8_t global_color_resolution;
   uint8_t img_pass_num;
+  char m_szLastError[GIF_MAX_ERROR_SIZE];
 };
 
 #endif  // CORE_FXCODEC_LGIF_CGIFCONTEXT_H_

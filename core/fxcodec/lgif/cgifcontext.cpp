@@ -13,15 +13,16 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CGifContext::CGifContext(CCodec_GifModule* gif_module, char* error_string)
-    : global_pal_num(0),
+CGifContext::CGifContext(CCodec_GifModule* gif_module,
+                         CCodec_GifModule::Delegate* pDelegate)
+    : m_pModule(gif_module),
+      m_pDelegate(pDelegate),
+      global_pal_num(0),
       img_row_offset(0),
       img_row_avail_size(0),
       avail_in(0),
       decode_status(GIF_D_STATUS_SIG),
       skip_size(0),
-      m_Module(gif_module),
-      err_ptr(error_string),
       next_in(nullptr),
       width(0),
       height(0),
@@ -29,20 +30,22 @@ CGifContext::CGifContext(CCodec_GifModule* gif_module, char* error_string)
       pixel_aspect(0),
       global_sort_flag(0),
       global_color_resolution(0),
-      img_pass_num(0) {}
+      img_pass_num(0) {
+  memset(m_szLastError, 0, sizeof(m_szLastError));
+}
 
 CGifContext::~CGifContext() {}
 
 void CGifContext::AddError(const char* err_msg) {
-  strncpy(err_ptr, err_msg, GIF_MAX_ERROR_SIZE - 1);
+  strncpy(m_szLastError, err_msg, GIF_MAX_ERROR_SIZE - 1);
 }
 
 void CGifContext::RecordCurrentPosition(uint32_t* cur_pos_ptr) {
-  m_Module->GetDelegate()->GifRecordCurrentPosition(*cur_pos_ptr);
+  m_pDelegate->GifRecordCurrentPosition(*cur_pos_ptr);
 }
 
 void CGifContext::ReadScanline(int32_t row_num, uint8_t* row_buf) {
-  m_Module->GetDelegate()->GifReadScanline(row_num, row_buf);
+  m_pDelegate->GifReadScanline(row_num, row_buf);
 }
 
 bool CGifContext::GetRecordPosition(uint32_t cur_pos,
@@ -57,7 +60,7 @@ bool CGifContext::GetRecordPosition(uint32_t cur_pos,
                                     int32_t trans_index,
                                     int32_t disposal_method,
                                     bool interlace) {
-  return m_Module->GetDelegate()->GifInputRecordPositionBuf(
+  return m_pDelegate->GifInputRecordPositionBuf(
       cur_pos, FX_RECT(left, top, left + width, top + height), pal_num, pal_ptr,
       delay_time, user_input, trans_index, disposal_method, interlace);
 }

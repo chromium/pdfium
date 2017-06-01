@@ -13,23 +13,23 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
-CCodec_GifModule::CCodec_GifModule() {
-  memset(m_szLastError, 0, sizeof(m_szLastError));
-}
+CCodec_GifModule::CCodec_GifModule() {}
 
 CCodec_GifModule::~CCodec_GifModule() {}
 
-std::unique_ptr<CGifContext> CCodec_GifModule::Start() {
-  return pdfium::MakeUnique<CGifContext>(this, m_szLastError);
+std::unique_ptr<CCodec_GifModule::Context> CCodec_GifModule::Start(
+    Delegate* pDelegate) {
+  return pdfium::MakeUnique<CGifContext>(this, pDelegate);
 }
 
-GifDecodeStatus CCodec_GifModule::ReadHeader(CGifContext* context,
+GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
                                              int* width,
                                              int* height,
                                              int* pal_num,
                                              void** pal_pp,
                                              int* bg_index,
                                              CFX_DIBAttribute* pAttribute) {
+  auto* context = static_cast<CGifContext*>(pContext);
   GifDecodeStatus ret = gif_read_header(context);
   if (ret != GifDecodeStatus::Success)
     return ret;
@@ -43,8 +43,9 @@ GifDecodeStatus CCodec_GifModule::ReadHeader(CGifContext* context,
   return GifDecodeStatus::Success;
 }
 
-GifDecodeStatus CCodec_GifModule::LoadFrameInfo(CGifContext* context,
+GifDecodeStatus CCodec_GifModule::LoadFrameInfo(Context* pContext,
                                                 int* frame_num) {
+  auto* context = static_cast<CGifContext*>(pContext);
   GifDecodeStatus ret = gif_get_frame(context);
   if (ret != GifDecodeStatus::Success)
     return ret;
@@ -53,9 +54,10 @@ GifDecodeStatus CCodec_GifModule::LoadFrameInfo(CGifContext* context,
   return GifDecodeStatus::Success;
 }
 
-GifDecodeStatus CCodec_GifModule::LoadFrame(CGifContext* context,
+GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
                                             int frame_num,
                                             CFX_DIBAttribute* pAttribute) {
+  auto* context = static_cast<CGifContext*>(pContext);
   GifDecodeStatus ret = gif_load_frame(context, frame_num);
   if (ret != GifDecodeStatus::Success || !pAttribute)
     return ret;
@@ -76,13 +78,15 @@ GifDecodeStatus CCodec_GifModule::LoadFrame(CGifContext* context,
   return GifDecodeStatus::Success;
 }
 
-uint32_t CCodec_GifModule::GetAvailInput(CGifContext* context,
+uint32_t CCodec_GifModule::GetAvailInput(Context* pContext,
                                          uint8_t** avail_buf_ptr) {
+  auto* context = static_cast<CGifContext*>(pContext);
   return gif_get_avail_input(context, avail_buf_ptr);
 }
 
-void CCodec_GifModule::Input(CGifContext* context,
+void CCodec_GifModule::Input(Context* pContext,
                              const uint8_t* src_buf,
                              uint32_t src_size) {
+  auto* context = static_cast<CGifContext*>(pContext);
   gif_input_buffer(context, (uint8_t*)src_buf, src_size);
 }

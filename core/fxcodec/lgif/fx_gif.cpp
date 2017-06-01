@@ -565,7 +565,7 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
     }
     if (!context->m_ImgDecoder.get())
       context->m_ImgDecoder =
-          pdfium::MakeUnique<CGifLZWDecoder>(context->err_ptr);
+          pdfium::MakeUnique<CGifLZWDecoder>(context->m_szLastError);
     context->m_ImgDecoder->InitTable(gif_image_ptr->image_code_size);
     context->img_row_offset = 0;
     context->img_row_avail_size = 0;

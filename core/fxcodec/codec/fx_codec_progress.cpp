@@ -1160,8 +1160,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
       }
-      pGifModule->SetDelegate(this);
-      m_pGifContext = pGifModule->Start();
+      m_pGifContext = pGifModule->Start(this);
       bool bResult = m_pFile->ReadBlock(m_pSrcBuf, 0, size);
       if (!bResult) {
         m_status = FXCODEC_STATUS_ERR_READ;
