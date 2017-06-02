@@ -1779,9 +1779,6 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
   int32_t iPos = 0;
   int32_t iIndex = 0;
   while (iIndex < iZone) {
-    if (iIndex >= iZone)
-      break;
-
     if (!std::isdigit(pData[iIndex]))
       return false;
 
@@ -1818,43 +1815,44 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
       iIndex += 2;
     }
   }
-  if (pData[iIndex] == '.') {
+
+  if (iIndex < iLength && pData[iIndex] == '.') {
+    constexpr int kSubSecondLength = 3;
+    if (iIndex + kSubSecondLength >= iLength)
+      return false;
+
     ++iIndex;
-    char strSec[4];
-    strSec[3] = '\0';
-    if (!std::isdigit(pData[iIndex]))
-      return false;
+    char strSec[kSubSecondLength + 1];
+    for (int i = 0; i < kSubSecondLength; ++i) {
+      char c = pData[iIndex + i];
+      if (!std::isdigit(c))
+        return false;
+      strSec[i] = c;
+    }
+    strSec[kSubSecondLength] = '\0';
 
-    strSec[0] = pData[iIndex];
-    if (!std::isdigit(pData[iIndex + 1]))
-      return false;
-
-    strSec[1] = pData[iIndex + 1];
-    if (!std::isdigit(pData[iIndex + 2]))
-      return false;
-
-    strSec[2] = pData[iIndex + 2];
     iMilliSecond = FXSYS_atoi(strSec);
     if (iMilliSecond > 100) {
       iMilliSecond = 0;
       return false;
     }
-    iIndex += 3;
+    iIndex += kSubSecondLength;
   }
-  if (pData[iIndex] == 'z' || pData[iIndex] == 'Z')
+
+  if (iIndex < iLength && FXSYS_tolower(pData[iIndex]) == 'z')
     return true;
 
   int32_t iSign = 1;
-  if (pData[iIndex] == '+') {
-    ++iIndex;
-  } else if (pData[iIndex] == '-') {
-    iSign = -1;
-    ++iIndex;
+  if (iIndex < iLength) {
+    if (pData[iIndex] == '+') {
+      ++iIndex;
+    } else if (pData[iIndex] == '-') {
+      iSign = -1;
+      ++iIndex;
+    }
   }
   iPos = 0;
   while (iIndex < iLength) {
-    if (iIndex >= iLength)
-      return false;
     if (!std::isdigit(pData[iIndex]))
       return false;
 
@@ -1932,12 +1930,8 @@ bool CXFA_FM2JSContext::IsIsoDateTimeFormat(const char* pData,
       (iLength - iIndex != 15)) {
     return true;
   }
-  if (!IsIsoTimeFormat(pData + iIndex, iLength - iIndex, iHour, iMinute,
-                       iSecond, iMillionSecond, iZoneHour, iZoneMinute)) {
-    return false;
-  }
-
-  return true;
+  return IsIsoTimeFormat(pData + iIndex, iLength - iIndex, iHour, iMinute,
+                         iSecond, iMillionSecond, iZoneHour, iZoneMinute);
 }
 
 // static
