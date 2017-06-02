@@ -47,8 +47,7 @@ PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam() {
   return cp;
 }
 
-CPWL_Wnd* CFFL_ComboBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
-                                      CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_ComboBox::NewPDFWindow(const PWL_CREATEPARAM& cp) {
   CPWL_ComboBox* pWnd = new CPWL_ComboBox();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);

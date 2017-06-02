@@ -71,8 +71,7 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
   return cp;
 }
 
-CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp,
-                                       CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp) {
   CPWL_Edit* pWnd = new CPWL_Edit();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);

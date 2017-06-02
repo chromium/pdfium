@@ -129,8 +129,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   void EscapeFiller(CPDFSDK_PageView* pPageView, bool bDestroyPDFWindow);
 
   virtual PWL_CREATEPARAM GetCreateParam();
-  virtual CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp,
-                                 CPDFSDK_PageView* pPageView) = 0;
+  virtual CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp) = 0;
   virtual CFX_FloatRect GetFocusBox(CPDFSDK_PageView* pPageView);
 
   bool IsValid() const;

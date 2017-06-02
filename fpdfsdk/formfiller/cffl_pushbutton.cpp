@@ -15,8 +15,7 @@ CFFL_PushButton::CFFL_PushButton(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_PushButton::~CFFL_PushButton() {}
 
-CPWL_Wnd* CFFL_PushButton::NewPDFWindow(const PWL_CREATEPARAM& cp,
-                                        CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_PushButton::NewPDFWindow(const PWL_CREATEPARAM& cp) {
   CPWL_PushButton* pWnd = new CPWL_PushButton();
   pWnd->Create(cp);
 

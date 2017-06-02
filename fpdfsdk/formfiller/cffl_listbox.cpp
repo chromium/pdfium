@@ -42,8 +42,7 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
   return cp;
 }
 
-CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
-                                     CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp) {
   CPWL_ListBox* pWnd = new CPWL_ListBox();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);

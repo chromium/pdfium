@@ -18,8 +18,7 @@ CFFL_CheckBox::CFFL_CheckBox(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_CheckBox::~CFFL_CheckBox() {}
 
-CPWL_Wnd* CFFL_CheckBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
-                                      CPDFSDK_PageView* pPageView) {
+CPWL_Wnd* CFFL_CheckBox::NewPDFWindow(const PWL_CREATEPARAM& cp) {
   CPWL_CheckBox* pWnd = new CPWL_CheckBox();
   pWnd->Create(cp);
   pWnd->SetCheck(m_pWidget->IsChecked());

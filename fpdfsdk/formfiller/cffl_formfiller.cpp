@@ -364,7 +364,7 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
     pPrivateData->nWidgetAge = m_pWidget->GetAppearanceAge();
     pPrivateData->nValueAge = 0;
     cp.pAttachedData = pPrivateData;
-    pWnd = NewPDFWindow(cp, pPageView);
+    pWnd = NewPDFWindow(cp);
     m_Maps[pPageView] = pWnd;
   }
 
