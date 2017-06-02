@@ -1997,6 +1997,7 @@ test("pdfium_embeddertests") {
     "fpdfsdk/fpdfview_c_api_test.h",
     "fpdfsdk/fpdfview_embeddertest.cpp",
     "fpdfsdk/fsdk_baseform_embeddertest.cpp",
+    "fpdfsdk/pdfwindow/cpwl_edit_embeddertest.cpp",
     "testing/embedder_test.cpp",
     "testing/embedder_test.h",
     "testing/embedder_test_mock_delegate.h",
