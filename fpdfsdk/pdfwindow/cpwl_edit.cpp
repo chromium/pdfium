@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit.h"
 
 #include <algorithm>
 #include <memory>
@@ -20,12 +20,12 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
-#include "fpdfsdk/pdfwindow/PWL_Caret.h"
-#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
-#include "fpdfsdk/pdfwindow/PWL_FontMap.h"
-#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
-#include "fpdfsdk/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_caret.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
+#include "fpdfsdk/pdfwindow/cpwl_font_map.h"
+#include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
+#include "fpdfsdk/pdfwindow/cpwl_utils.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/stl_util.h"
 
@@ -637,10 +637,10 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
 }
 
 /**
-*In case of implementation swallow the OnKeyDown event.
-*If the event is swallowed, implementation may do other unexpected things, which
-*is not the control means to do.
-*/
+ *In case of implementation swallow the OnKeyDown event.
+ *If the event is swallowed, implementation may do other unexpected things,
+ *which is not the control means to do.
+ */
 bool CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag) {
   bool bCtrl = IsCTRLpressed(nFlag);
   bool bAlt = IsALTpressed(nFlag);

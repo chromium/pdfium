@@ -13,7 +13,7 @@
 #include "core/fxcrt/cfx_observable.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"  // For CPWL_Color.
 
 class CPDFSDK_Widget;
 class Document;

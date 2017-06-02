@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_utils.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 PWL_FLOATRANGE::PWL_FLOATRANGE() {
   Default();

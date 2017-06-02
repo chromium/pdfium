@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
 
 #include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
-#include "fpdfsdk/pdfwindow/PWL_Caret.h"
-#include "fpdfsdk/pdfwindow/PWL_FontMap.h"
-#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
-#include "fpdfsdk/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_caret.h"
+#include "fpdfsdk/pdfwindow/cpwl_font_map.h"
+#include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
+#include "fpdfsdk/pdfwindow/cpwl_utils.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 
 CPWL_EditCtrl::CPWL_EditCtrl()

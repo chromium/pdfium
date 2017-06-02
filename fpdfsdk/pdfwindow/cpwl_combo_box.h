@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
-#define FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
+#ifndef FPDFSDK_PDFWINDOW_CPWL_COMBO_BOX_H_
+#define FPDFSDK_PDFWINDOW_CPWL_COMBO_BOX_H_
 
 #include <memory>
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "fpdfsdk/pdfwindow/PWL_Edit.h"
-#include "fpdfsdk/pdfwindow/PWL_ListBox.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit.h"
+#include "fpdfsdk/pdfwindow/cpwl_list_box.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 class CPWL_CBEdit : public CPWL_Edit {
  public:
@@ -104,4 +104,4 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
-#endif  // FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
+#endif  // FPDFSDK_PDFWINDOW_CPWL_COMBO_BOX_H_

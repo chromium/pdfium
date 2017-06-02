@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFWINDOW_PWL_SCROLLBAR_H_
-#define FPDFSDK_PDFWINDOW_PWL_SCROLLBAR_H_
+#ifndef FPDFSDK_PDFWINDOW_CPWL_SCROLL_BAR_H_
+#define FPDFSDK_PDFWINDOW_CPWL_SCROLL_BAR_H_
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 class CPWL_SBButton;
 class CPWL_ScrollBar;
@@ -182,4 +182,4 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   float m_fOldPosButton;
 };
 
-#endif  // FPDFSDK_PDFWINDOW_PWL_SCROLLBAR_H_
+#endif  // FPDFSDK_PDFWINDOW_CPWL_SCROLL_BAR_H_

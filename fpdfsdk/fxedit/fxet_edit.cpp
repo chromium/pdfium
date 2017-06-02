@@ -27,8 +27,8 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
-#include "fpdfsdk/pdfwindow/PWL_Edit.h"
-#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 

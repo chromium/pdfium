@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/cpwl_utils.h"
 
 #include <algorithm>
 #include <memory>
@@ -14,8 +14,8 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
-#include "fpdfsdk/pdfwindow/PWL_Icon.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_icon.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 CFX_FloatRect CPWL_Utils::OffsetRect(const CFX_FloatRect& rect,
                                      float x,
@@ -703,7 +703,9 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
       case BorderStyle::UNDERLINE: {
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fWidth << " w\n" << sColor
+          sAppStream << "q\n"
+                     << fWidth << " w\n"
+                     << sColor
                      << CPWL_Utils::GetAP_Circle(
                             CPWL_Utils::DeflateRect(rect, fWidth / 2.0f))
                      << " S\nQ\n";
@@ -712,9 +714,11 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
       case BorderStyle::DASH: {
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fWidth << " w\n"
+          sAppStream << "q\n"
+                     << fWidth << " w\n"
                      << "[" << dash.nDash << " " << dash.nGap << "] "
-                     << dash.nPhase << " d\n" << sColor
+                     << dash.nPhase << " d\n"
+                     << sColor
                      << CPWL_Utils::GetAP_Circle(
                             CPWL_Utils::DeflateRect(rect, fWidth / 2.0f))
                      << " S\nQ\n";
@@ -725,13 +729,16 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
 
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
-                     << CPWL_Utils::GetAP_Circle(rect) << " S\nQ\n";
+          sAppStream << "q\n"
+                     << fHalfWidth << " w\n"
+                     << sColor << CPWL_Utils::GetAP_Circle(rect) << " S\nQ\n";
         }
 
         sColor = CPWL_Utils::GetColorAppStream(crLeftTop, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
+          sAppStream << "q\n"
+                     << fHalfWidth << " w\n"
+                     << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
                             FX_PI / 4.0f)
@@ -740,7 +747,9 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
 
         sColor = CPWL_Utils::GetColorAppStream(crRightBottom, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
+          sAppStream << "q\n"
+                     << fHalfWidth << " w\n"
+                     << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
                             FX_PI * 5 / 4.0f)
@@ -752,13 +761,16 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
 
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
-                     << CPWL_Utils::GetAP_Circle(rect) << " S\nQ\n";
+          sAppStream << "q\n"
+                     << fHalfWidth << " w\n"
+                     << sColor << CPWL_Utils::GetAP_Circle(rect) << " S\nQ\n";
         }
 
         sColor = CPWL_Utils::GetColorAppStream(crLeftTop, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
+          sAppStream << "q\n"
+                     << fHalfWidth << " w\n"
+                     << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
                             FX_PI / 4.0f)
@@ -767,7 +779,9 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
 
         sColor = CPWL_Utils::GetColorAppStream(crRightBottom, false);
         if (sColor.GetLength() > 0) {
-          sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
+          sAppStream << "q\n"
+                     << fHalfWidth << " w\n"
+                     << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
                             FX_PI * 5 / 4.0f)
@@ -1152,4 +1166,3 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
     }
   }
 }
-

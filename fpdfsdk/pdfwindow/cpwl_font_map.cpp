@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/pdfwindow/PWL_FontMap.h"
+#include "fpdfsdk/pdfwindow/cpwl_font_map.h"
 
 #include <utility>
 
@@ -15,7 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 

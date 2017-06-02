@@ -12,7 +12,7 @@
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
-#include "fpdfsdk/pdfwindow/PWL_ListBox.h"
+#include "fpdfsdk/pdfwindow/cpwl_list_box.h"
 #include "third_party/base/stl_util.h"
 
 CFX_ListItem::CFX_ListItem()

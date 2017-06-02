@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
-#define FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
+#ifndef FPDFSDK_PDFWINDOW_CPWL_LIST_BOX_H_
+#define FPDFSDK_PDFWINDOW_CPWL_LIST_BOX_H_
 
 #include <memory>
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 class CFX_ListCtrl;
 class CPWL_List_Notify;
@@ -115,4 +115,4 @@ class CPWL_ListBox : public CPWL_Wnd {
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
-#endif  // FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
+#endif  // FPDFSDK_PDFWINDOW_CPWL_LIST_BOX_H_

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFWINDOW_PWL_EDIT_H_
-#define FPDFSDK_PDFWINDOW_PWL_EDIT_H_
+#ifndef FPDFSDK_PDFWINDOW_CPWL_EDIT_H_
+#define FPDFSDK_PDFWINDOW_CPWL_EDIT_H_
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
-#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
 
 class IPWL_Filler_Notify {
  public:
@@ -136,4 +136,4 @@ class CPWL_Edit : public CPWL_EditCtrl {
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
-#endif  // FPDFSDK_PDFWINDOW_PWL_EDIT_H_
+#endif  // FPDFSDK_PDFWINDOW_CPWL_EDIT_H_

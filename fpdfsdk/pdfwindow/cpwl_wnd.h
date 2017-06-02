@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFWINDOW_PWL_WND_H_
-#define FPDFSDK_PDFWINDOW_PWL_WND_H_
+#ifndef FPDFSDK_PDFWINDOW_CPWL_WND_H_
+#define FPDFSDK_PDFWINDOW_CPWL_WND_H_
 
 #include <memory>
 #include <vector>
@@ -180,26 +180,26 @@ struct PWL_CREATEPARAM {
     mtChild.SetIdentity();
   }
 
-  CFX_FloatRect rcRectWnd;            // required
-  CFX_SystemHandler* pSystemHandler;  // required
-  IPVT_FontMap* pFontMap;             // required
-  IPWL_Provider::ObservedPtr pProvider;  // required
-  IPWL_FocusHandler* pFocusHandler;   // optional
-  uint32_t dwFlags;                   // optional
-  CPWL_Color sBackgroundColor;        // optional
+  CFX_FloatRect rcRectWnd;                      // required
+  CFX_SystemHandler* pSystemHandler;            // required
+  IPVT_FontMap* pFontMap;                       // required
+  IPWL_Provider::ObservedPtr pProvider;         // required
+  IPWL_FocusHandler* pFocusHandler;             // optional
+  uint32_t dwFlags;                             // optional
+  CPWL_Color sBackgroundColor;                  // optional
   CPDFSDK_Widget::ObservedPtr pAttachedWidget;  // required
-  BorderStyle nBorderStyle;           // optional
-  int32_t dwBorderWidth;              // optional
-  CPWL_Color sBorderColor;            // optional
-  CPWL_Color sTextColor;              // optional
-  int32_t nTransparency;              // optional
-  float fFontSize;                    // optional
-  CPWL_Dash sDash;                    // optional
-  void* pAttachedData;                // optional
-  CPWL_Wnd* pParentWnd;               // ignore
-  CPWL_MsgControl* pMsgControl;       // ignore
-  int32_t eCursorType;                // ignore
-  CFX_Matrix mtChild;                 // ignore
+  BorderStyle nBorderStyle;                     // optional
+  int32_t dwBorderWidth;                        // optional
+  CPWL_Color sBorderColor;                      // optional
+  CPWL_Color sTextColor;                        // optional
+  int32_t nTransparency;                        // optional
+  float fFontSize;                              // optional
+  CPWL_Dash sDash;                              // optional
+  void* pAttachedData;                          // optional
+  CPWL_Wnd* pParentWnd;                         // ignore
+  CPWL_MsgControl* pMsgControl;                 // ignore
+  int32_t eCursorType;                          // ignore
+  CFX_Matrix mtChild;                           // ignore
 };
 
 class CPWL_Wnd : public CPWL_TimerHandler {
@@ -367,4 +367,4 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   bool m_bEnabled;
 };
 
-#endif  // FPDFSDK_PDFWINDOW_PWL_WND_H_
+#endif  // FPDFSDK_PDFWINDOW_CPWL_WND_H_

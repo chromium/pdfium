@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFWINDOW_PWL_UTILS_H_
-#define FPDFSDK_PDFWINDOW_PWL_UTILS_H_
+#ifndef FPDFSDK_PDFWINDOW_CPWL_UTILS_H_
+#define FPDFSDK_PDFWINDOW_CPWL_UTILS_H_
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 class CFX_Edit;
 struct CPWL_Color;
@@ -159,4 +159,4 @@ class CPWL_Utils {
                                          float fRotate);
 };
 
-#endif  // FPDFSDK_PDFWINDOW_PWL_UTILS_H_
+#endif  // FPDFSDK_PDFWINDOW_CPWL_UTILS_H_
