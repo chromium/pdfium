@@ -22,9 +22,9 @@
 #define FFL_HINT_ELAPSE 800
 
 CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                 CPDFSDK_Annot* pAnnot)
-    : m_pFormFillEnv(pFormFillEnv), m_pAnnot(pAnnot), m_bValid(false) {
-  m_pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
+                                 CPDFSDK_Widget* pWidget)
+    : m_pFormFillEnv(pFormFillEnv), m_pWidget(pWidget), m_bValid(false) {
+  ASSERT(m_pFormFillEnv);
 }
 
 CFFL_FormFiller::~CFFL_FormFiller() {
@@ -282,8 +282,6 @@ bool CFFL_FormFiller::IsValid() const {
 }
 
 PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
-  ASSERT(m_pFormFillEnv);
-
   PWL_CREATEPARAM cp;
   cp.pParentWnd = nullptr;
   cp.pProvider.Reset(this);
@@ -422,12 +420,6 @@ CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
   return mt;
 }
 
-CFX_WideString CFFL_FormFiller::LoadPopupMenuString(int nIndex) {
-  ASSERT(m_pFormFillEnv);
-
-  return L"";
-}
-
 CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
   CFX_FloatRect rectAnnot = m_pWidget->GetPDFAnnot()->GetRect();
 
@@ -440,8 +432,8 @@ CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
 }
 
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView(bool renew) {
-  UnderlyingPageType* pPage = m_pAnnot->GetUnderlyingPage();
-  return m_pFormFillEnv ? m_pFormFillEnv->GetPageView(pPage, renew) : nullptr;
+  UnderlyingPageType* pPage = m_pWidget->GetUnderlyingPage();
+  return m_pFormFillEnv->GetPageView(pPage, renew);
 }
 
 CFX_FloatRect CFFL_FormFiller::GetFocusBox(CPDFSDK_PageView* pPageView) {
@@ -585,7 +577,7 @@ void CFFL_FormFiller::InvalidateRect(const FX_RECT& rect) {
 }
 
 CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pApp,
-                         CPDFSDK_Annot* pWidget)
+                         CPDFSDK_Widget* pWidget)
     : CFFL_FormFiller(pApp, pWidget), m_bMouseIn(false), m_bMouseDown(false) {}
 
 CFFL_Button::~CFFL_Button() {}
@@ -636,7 +628,6 @@ bool CFFL_Button::OnMouseMove(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               uint32_t nFlags,
                               const CFX_PointF& point) {
-  ASSERT(m_pFormFillEnv);
   return true;
 }
 

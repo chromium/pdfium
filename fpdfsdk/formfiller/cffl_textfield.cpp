@@ -13,8 +13,8 @@
 #include "third_party/base/ptr_util.h"
 
 CFFL_TextField::CFFL_TextField(CPDFSDK_FormFillEnvironment* pApp,
-                               CPDFSDK_Annot* pAnnot)
-    : CFFL_FormFiller(pApp, pAnnot) {}
+                               CPDFSDK_Widget* pWidget)
+    : CFFL_FormFiller(pApp, pWidget) {}
 
 CFFL_TextField::~CFFL_TextField() {
   for (const auto& it : m_Maps)
@@ -258,7 +258,6 @@ bool CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pFormFillEnv);
   if (pWnd->GetClassName() != PWL_CLASSNAME_EDIT)
     return;
 

@@ -16,8 +16,8 @@
 #include "third_party/base/ptr_util.h"
 
 CFFL_ComboBox::CFFL_ComboBox(CPDFSDK_FormFillEnvironment* pApp,
-                             CPDFSDK_Annot* pAnnot)
-    : CFFL_FormFiller(pApp, pAnnot) {
+                             CPDFSDK_Widget* pWidget)
+    : CFFL_FormFiller(pApp, pWidget) {
   m_State.nIndex = 0;
   m_State.nStart = 0;
   m_State.nEnd = 0;
@@ -258,8 +258,6 @@ bool CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pFormFillEnv);
-
   if (pWnd->GetClassName() != PWL_CLASSNAME_EDIT)
     return;
 

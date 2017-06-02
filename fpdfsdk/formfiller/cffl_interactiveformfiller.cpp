@@ -478,7 +478,8 @@ CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
   if (!bRegister)
     return nullptr;
 
-  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+  // TODO(thestig): How do we know |pAnnot| is a CPDFSDK_Widget?
+  CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
   int nFieldType = pWidget->GetFieldType();
   CFFL_FormFiller* pFormFiller;
   switch (nFieldType) {

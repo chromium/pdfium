@@ -18,7 +18,7 @@
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
 
 CFFL_ListBox::CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp,
-                           CPDFSDK_Annot* pWidget)
+                           CPDFSDK_Widget* pWidget)
     : CFFL_FormFiller(pApp, pWidget) {}
 
 CFFL_ListBox::~CFFL_ListBox() {}

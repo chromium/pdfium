@@ -145,17 +145,6 @@ class IPWL_Provider : public CFX_Observable<IPWL_Provider> {
 
   // get a matrix which map user space to CWnd client space
   virtual CFX_Matrix GetWindowMatrix(void* pAttachedData) = 0;
-
-  /*
-  0 L"&Undo\tCtrl+Z"
-  1 L"&Redo\tCtrl+Shift+Z"
-  2 L"Cu&t\tCtrl+X"
-  3 L"&Copy\tCtrl+C"
-  4 L"&Paste\tCtrl+V"
-  5 L"&Delete"
-  6  L"&Select All\tCtrl+A"
-  */
-  virtual CFX_WideString LoadPopupMenuString(int32_t nIndex) = 0;
 };
 
 class IPWL_FocusHandler {

@@ -22,7 +22,7 @@ class CPDFSDK_Widget;
 class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
  public:
   CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                  CPDFSDK_Annot* pAnnot);
+                  CPDFSDK_Widget* pWidget);
   ~CFFL_FormFiller() override;
 
   virtual FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView,
@@ -83,7 +83,6 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 
   // IPWL_Provider
   CFX_Matrix GetWindowMatrix(void* pAttachedData) override;
-  CFX_WideString LoadPopupMenuString(int nIndex) override;
 
   virtual void GetActionData(CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
@@ -139,7 +138,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   void SetChangeMark();
 
   virtual void InvalidateRect(const FX_RECT& rect);
-  CPDFSDK_Annot* GetSDKAnnot() { return m_pAnnot.Get(); }
+  CPDFSDK_Annot* GetSDKAnnot() { return m_pWidget.Get(); }
 
  protected:
   using CFFL_PageView2PDFWindow = std::map<CPDFSDK_PageView*, CPWL_Wnd*>;
@@ -154,7 +153,6 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 
   CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   CFX_UnownedPtr<CPDFSDK_Widget> m_pWidget;
-  CFX_UnownedPtr<CPDFSDK_Annot> m_pAnnot;
   bool m_bValid;
   CFFL_PageView2PDFWindow m_Maps;
   CFX_PointF m_ptOldPos;
@@ -163,7 +161,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 class CFFL_Button : public CFFL_FormFiller {
  public:
   CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-              CPDFSDK_Annot* pWidget);
+              CPDFSDK_Widget* pWidget);
   ~CFFL_Button() override;
 
   // CFFL_FormFiller

@@ -10,8 +10,8 @@
 #include "fpdfsdk/pdfwindow/PWL_SpecialButton.h"
 
 CFFL_PushButton::CFFL_PushButton(CPDFSDK_FormFillEnvironment* pApp,
-                                 CPDFSDK_Annot* pAnnot)
-    : CFFL_Button(pApp, pAnnot) {}
+                                 CPDFSDK_Widget* pWidget)
+    : CFFL_Button(pApp, pWidget) {}
 
 CFFL_PushButton::~CFFL_PushButton() {}
 

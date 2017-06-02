@@ -13,7 +13,7 @@
 #include "public/fpdf_fwlevent.h"
 
 CFFL_RadioButton::CFFL_RadioButton(CPDFSDK_FormFillEnvironment* pApp,
-                                   CPDFSDK_Annot* pWidget)
+                                   CPDFSDK_Widget* pWidget)
     : CFFL_Button(pApp, pWidget) {}
 
 CFFL_RadioButton::~CFFL_RadioButton() {}

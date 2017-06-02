@@ -17,7 +17,7 @@ class CBA_FontMap;
 
 class CFFL_ListBox : public CFFL_FormFiller {
  public:
-  CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Annot* pWidget);
+  CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
   ~CFFL_ListBox() override;
 
   // CFFL_FormFiller
