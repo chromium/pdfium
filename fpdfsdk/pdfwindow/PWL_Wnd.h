@@ -14,14 +14,13 @@
 #include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
-#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/pdfwindow/cpwl_color.h"
+#include "fpdfsdk/pdfwindow/cpwl_timer.h"
+#include "fpdfsdk/pdfwindow/cpwl_timer_handler.h"
 
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
-class CPWL_Timer;
-class CPWL_TimerHandler;
 class CPWL_Wnd;
 class CFX_SystemHandler;
 class IPVT_FontMap;
@@ -201,35 +200,6 @@ struct PWL_CREATEPARAM {
   CPWL_MsgControl* pMsgControl;       // ignore
   int32_t eCursorType;                // ignore
   CFX_Matrix mtChild;                 // ignore
-};
-
-class CPWL_Timer {
- public:
-  CPWL_Timer(CPWL_TimerHandler* pAttached, CFX_SystemHandler* pSystemHandler);
-  virtual ~CPWL_Timer();
-
-  int32_t SetPWLTimer(int32_t nElapse);
-  void KillPWLTimer();
-  static void TimerProc(int32_t idEvent);
-
- private:
-  int32_t m_nTimerID;
-  CFX_UnownedPtr<CPWL_TimerHandler> m_pAttached;
-  CFX_UnownedPtr<CFX_SystemHandler> m_pSystemHandler;
-};
-
-class CPWL_TimerHandler {
- public:
-  CPWL_TimerHandler();
-  virtual ~CPWL_TimerHandler();
-
-  void BeginTimer(int32_t nElapse);
-  void EndTimer();
-  virtual void TimerProc();
-  virtual CFX_SystemHandler* GetSystemHandler() const = 0;
-
- private:
-  std::unique_ptr<CPWL_Timer> m_pTimer;
 };
 
 class CPWL_Wnd : public CPWL_TimerHandler {

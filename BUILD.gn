@@ -1104,6 +1104,10 @@ static_library("pdfwindow") {
     "fpdfsdk/pdfwindow/PWL_Wnd.h",
     "fpdfsdk/pdfwindow/cpwl_color.cpp",
     "fpdfsdk/pdfwindow/cpwl_color.h",
+    "fpdfsdk/pdfwindow/cpwl_timer.cpp",
+    "fpdfsdk/pdfwindow/cpwl_timer.h",
+    "fpdfsdk/pdfwindow/cpwl_timer_handler.cpp",
+    "fpdfsdk/pdfwindow/cpwl_timer_handler.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [
