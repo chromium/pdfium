@@ -40,11 +40,7 @@ class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
   virtual CPDF_Annot::Subtype GetAnnotSubtype() const;
   virtual bool IsSignatureWidget() const;
   virtual CFX_FloatRect GetRect() const;
-
   virtual void SetRect(const CFX_FloatRect& rect);
-  virtual void Annot_OnDraw(CFX_RenderDevice* pDevice,
-                            CFX_Matrix* pUser2Device,
-                            CPDF_RenderOptions* pOptions);
 
   UnderlyingPageType* GetUnderlyingPage();
   CPDF_Page* GetPDFPage();
@@ -52,15 +48,10 @@ class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
   CPDFXFA_Page* GetPDFXFAPage();
 #endif  // PDF_ENABLE_XFA
 
-  void SetPage(CPDFSDK_PageView* pPageView);
   CPDFSDK_PageView* GetPageView() const { return m_pPageView.Get(); }
 
-  bool IsSelected();
-  void SetSelected(bool bSelected);
-
  protected:
-  CFX_UnownedPtr<CPDFSDK_PageView> m_pPageView;
-  bool m_bSelected;
+  CFX_UnownedPtr<CPDFSDK_PageView> const m_pPageView;
 };
 
 #endif  // FPDFSDK_CPDFSDK_ANNOT_H_

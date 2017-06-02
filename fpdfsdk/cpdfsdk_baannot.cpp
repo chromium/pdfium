@@ -386,14 +386,6 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
   return CPDF_Action();
 }
 
-void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
-                                   CFX_Matrix* pUser2Device,
-                                   CPDF_RenderOptions* pOptions) {
-  m_pAnnot->GetAPForm(m_pPageView->GetPDFPage(), CPDF_Annot::Normal);
-  m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device,
-                           CPDF_Annot::Normal, nullptr);
-}
-
 void CPDFSDK_BAAnnot::SetOpenState(bool bOpenState) {
   if (CPDF_Annot* pAnnot = m_pAnnot->GetPopupAnnot())
     pAnnot->SetOpenState(bOpenState);

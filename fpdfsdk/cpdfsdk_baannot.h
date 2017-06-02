@@ -32,9 +32,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void SetRect(const CFX_FloatRect& rect) override;
   CFX_FloatRect GetRect() const override;
   CPDF_Annot* GetPDFAnnot() const override;
-  void Annot_OnDraw(CFX_RenderDevice* pDevice,
-                    CFX_Matrix* pUser2Device,
-                    CPDF_RenderOptions* pOptions) override;
 
   CPDF_Dictionary* GetAnnotDict() const;
   CPDF_Annot* GetPDFPopupAnnot() const;
