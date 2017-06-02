@@ -29,8 +29,7 @@
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/stl_util.h"
 
-CPWL_Edit::CPWL_Edit()
-    : m_pFillerNotify(nullptr), m_bFocus(false), m_pFormFiller(nullptr) {}
+CPWL_Edit::CPWL_Edit() : m_bFocus(false) {}
 
 CPWL_Edit::~CPWL_Edit() {
   ASSERT(!m_bFocus);

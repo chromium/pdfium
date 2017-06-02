@@ -7,17 +7,10 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_EDIT_H_
 #define FPDFSDK_PDFWINDOW_PWL_EDIT_H_
 
-#include <vector>
-
+#include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
-#include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
-#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
-
-class CPDF_PageObjectHolder;
-class CPDF_TextObject;
-class IFX_Edit_UndoItem;
 
 class IPWL_Filler_Notify {
  public:
@@ -136,9 +129,10 @@ class CPWL_Edit : public CPWL_EditCtrl {
   CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,
                                    bool bLatin,
                                    bool bArabic) const;
-  CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
+
   bool m_bFocus;
   CFX_FloatRect m_rcOldWindow;
+  CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 

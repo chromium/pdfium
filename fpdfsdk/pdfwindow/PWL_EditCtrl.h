@@ -10,25 +10,17 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
-#include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CFX_Edit;
 class CPWL_Caret;
-class CPWL_Edit;
-class CPWL_EditCtrl;
-struct CPVT_SecProps;
 struct CPVT_WordPlace;
-struct CPVT_WordProps;
-struct CPVT_WordRange;
 
 enum PWL_EDIT_ALIGNFORMAT_H { PEAH_LEFT = 0, PEAH_MIDDLE, PEAH_RIGHT };
 
 enum PWL_EDIT_ALIGNFORMAT_V { PEAV_TOP = 0, PEAV_CENTER, PEAV_BOTTOM };
 
 class CPWL_EditCtrl : public CPWL_Wnd {
-  friend class CPWL_Edit_Notify;
-
  public:
   CPWL_EditCtrl();
   ~CPWL_EditCtrl() override;
