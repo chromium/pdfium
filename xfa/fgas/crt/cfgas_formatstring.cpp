@@ -732,7 +732,7 @@ bool DateFormat(const CFX_WideString& wsDatePattern,
       wsWeekDay.Format(L"%d", wWeekDay ? wWeekDay : 7);
       wsResult += wsWeekDay;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'G', '1')) {
-      wsResult += pLocale->GetEraName(year < 0);
+      wsResult += pLocale->GetEraName(year > 0);
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'Y', '2')) {
       CFX_WideString wsYear;
       wsYear.Format(L"%02d", year % 100);
@@ -760,8 +760,6 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
                 IFX_Locale* pLocale,
                 const CFX_DateTime& datetime,
                 CFX_WideString& wsResult) {
-  bool bGMT = false;
-  bool bRet = true;
   uint8_t hour = datetime.GetHour();
   uint8_t minute = datetime.GetMinute();
   uint8_t second = datetime.GetSecond();
@@ -864,7 +862,7 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'Z', '1')) {
       wsResult += L"GMT";
       FX_TIMEZONE tz = pLocale->GetTimeZone();
-      if (!bGMT && (tz.tzHour != 0 || tz.tzMinute != 0)) {
+      if (tz.tzHour != 0 || tz.tzMinute != 0) {
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
 
         CFX_WideString wsTimezone;
@@ -873,7 +871,7 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'z', '1')) {
       FX_TIMEZONE tz = pLocale->GetTimeZone();
-      if (!bGMT && tz.tzHour != 0 && tz.tzMinute != 0) {
+      if (tz.tzHour != 0 && tz.tzMinute != 0) {
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
 
         CFX_WideString wsTimezone;
@@ -882,7 +880,7 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
       }
     }
   }
-  return bRet;
+  return true;
 }
 
 bool FormatDateTimeInternal(const CFX_DateTime& dt,
@@ -892,9 +890,11 @@ bool FormatDateTimeInternal(const CFX_DateTime& dt,
                             IFX_Locale* pLocale,
                             CFX_WideString& wsOutput) {
   bool bRet = true;
-  CFX_WideString wsDateOut, wsTimeOut;
+  CFX_WideString wsDateOut;
   if (!wsDatePattern.IsEmpty())
     bRet &= DateFormat(wsDatePattern, pLocale, dt, wsDateOut);
+
+  CFX_WideString wsTimeOut;
   if (!wsTimePattern.IsEmpty())
     bRet &= TimeFormat(wsTimePattern, pLocale, dt, wsTimeOut);
 
@@ -926,6 +926,7 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate,
   year = wYear;
   if (cc < 4 || wYear < 1900)
     return false;
+
   if (cc < len) {
     if (str[cc] == '-')
       cc++;
@@ -1010,41 +1011,45 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
     }
     if (cc == cc_start + 1 || minute >= 60)
       return false;
+
     if (cc < len) {
       if (str[cc] == ':')
         cc++;
 
-      cc_start = cc;
-      while (cc < len && cc < cc_start + 2) {
-        if (!FXSYS_isDecimalDigit(str[cc]))
-          return false;
-
-        second = second * 10 + str[cc++] - '0';
-      }
-      if (cc == cc_start + 1 || second >= 60)
-        return false;
-      if (cc < len) {
-        if (str[cc] == '.') {
-          cc++;
-          cc_start = cc;
-          while (cc < len && cc < cc_start + 3) {
-            if (!FXSYS_isDecimalDigit(str[cc]))
-              return false;
-
-            millisecond = millisecond * 10 + str[cc++] - '0';
-          }
-          if (cc < cc_start + 3)
+      if (str[cc] != 'Z') {
+        cc_start = cc;
+        while (cc < len && cc < cc_start + 2) {
+          if (!FXSYS_isDecimalDigit(str[cc]))
             return false;
-        }
-        if (cc < len) {
-          FX_TIMEZONE tzDiff;
-          tzDiff.tzHour = 0;
-          tzDiff.tzMinute = 0;
-          if (str[cc] != 'Z')
-            cc += ParseTimeZone(str + cc, len - cc, &tzDiff);
 
-          ResolveZone(hour, minute, tzDiff, pLocale);
+          second = second * 10 + str[cc++] - '0';
         }
+        if (cc == cc_start + 1 || second >= 60)
+          return false;
+        if (cc < len) {
+          if (str[cc] == '.') {
+            cc++;
+            cc_start = cc;
+            while (cc < len && cc < cc_start + 3) {
+              if (!FXSYS_isDecimalDigit(str[cc]))
+                return false;
+
+              millisecond = millisecond * 10 + str[cc++] - '0';
+            }
+            if (cc < cc_start + 3)
+              return false;
+          }
+        }
+      }
+
+      if (cc < len) {
+        FX_TIMEZONE tzDiff;
+        tzDiff.tzHour = 0;
+        tzDiff.tzMinute = 0;
+        if (str[cc] != 'Z')
+          cc += ParseTimeZone(str + cc, len - cc, &tzDiff);
+
+        ResolveZone(hour, minute, tzDiff, pLocale);
       }
     }
   }
@@ -2628,7 +2633,6 @@ bool CFGAS_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
                               wsSrcDateTime.GetLength() - iT - 1);
     if (wsSrcDate.IsEmpty() || wsSrcTime.IsEmpty())
       return false;
-
     if (FX_DateFromCanonical(wsSrcDate, &dt) &&
         FX_TimeFromCanonical(wsSrcTime, &dt, pLocale)) {
       return FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern,

@@ -36,6 +36,13 @@
 #define FX_LANG_es_LA 0x080a
 #define FX_LANG_es_ES 0x0c0a
 
+// These arrays are the hex encoded XML strings which define the locale.
+// <locale name="en_US" desc="English(America)">
+//   <calendarSymbols name="gregorian">
+//     <monthNames>
+//       <month>January</month>
+//       <month>February</month>
+//   ...
 const uint8_t g_enUS_Locale[] = {
     0x78, 0x9C, 0x95, 0x56, 0xD1, 0x6E, 0x9B, 0x30, 0x14, 0x7D, 0x9F, 0xB4,
     0x7F, 0x40, 0xD6, 0x2A, 0xB5, 0x52, 0x56, 0x6F, 0x8F, 0xA9, 0x88, 0xA5,
