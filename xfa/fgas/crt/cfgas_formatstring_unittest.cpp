@@ -20,13 +20,7 @@
 class CFGAS_FormatStringTest : public testing::Test {
  public:
   CFGAS_FormatStringTest() {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    _putenv_s("TZ", "UTC");
-    _tzset();
-#else
-    setenv("TZ", "UTC", 1);
-    tzset();
-#endif
+    SetTZ("UTC");
     CPDF_ModuleMgr::Get()->Init();
   }
 
@@ -35,6 +29,16 @@ class CFGAS_FormatStringTest : public testing::Test {
   void TearDown() override {
     fmt_.reset();
     mgr_.reset();
+  }
+
+  void SetTZ(const char* tz) {
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+    _putenv_s("TZ", tz);
+    _tzset();
+#else
+    setenv("TZ", tz, 1);
+    tzset();
+#endif
   }
 
   // Note, this re-creates the fmt on each call. If you need to multiple
@@ -93,24 +97,10 @@ TEST_F(CFGAS_FormatStringTest, DateFormat) {
       // {L"ja", L"2003-11-03", L"gY/M/D", L"H15/11/3"},
       // {L"ja", L"1989-01-08", L"ggY-M-D", L"\u5e731-1-8"},
       // {L"ja", L"1989-11-03", L"gggYY/MM/DD", L"\u5e73\u621089/11/03"},
-
-      // Full width D == U+FF24
-      // I don't actually know what ideograpic numeric value for 25 is.
-      // {L"ja", L"2002-20-25", L"\uff24\uff24\uff24", L" .... "},
-      // {L"ja", L"2002-20-25", L"\uff24\uff24\uff24\uff24", L" ... "},
-      // Full width M == U+FF2D
-      // {L"ja", L"2002-20-25", L"\uff2d\uff2d\uff2d", L" ... "},
-      // {L"ja", L"2002-20-25", L"\uff2d\uff2d\uff2d\uff2d", L" ... "},
-      // Full width E == U+FF25
-      // {L"ja", L"2002-20-25", L"\uff25", L" ... "},
-      // Full width e == U+FF45
-      // {L"ja", L"2002-20-25", L"\uff45", L" ... "},
-      // Full width g == U+FF47
-      // {L"ja", L"1989-01-08", L"\uff47\uff47YY/MM/DD", L"\u337b89/01/08"}
-      // Full width Y == U+FF39
-      // {L"ja", L"2002-20-25", L"\uff39\uff39\uff39", L" ... "},
-      // {L"ja", L"2002-20-25", L"\uff39\uff39\uff39\uff39\uff39", L" ... "}
   };
+  // Note, none of the full width date symbols are listed here
+  // as they are not supported. In theory there are the full width versions
+  // of DDD, DDDD, MMM, MMMM, E, e, gg, YYY, YYYYY.
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
@@ -127,11 +117,35 @@ TEST_F(CFGAS_FormatStringTest, TimeFormat) {
     const wchar_t* input;
     const wchar_t* pattern;
     const wchar_t* output;
-  } tests[] = {{L"en", L"11:11:11", L"h:MM A", L"11:11 AM"},
+  } tests[] = {{L"en", L"01:01:11", L"h:M A", L"1:1 AM"},
+               {L"en", L"01:01:11", L"hh:MM:SS A", L"01:01:11 AM"},
+               {L"en", L"01:01:11", L"hh:MM:SS A Z", L"01:01:11 AM GMT-02:00"},
+               {L"en", L"01:01:11", L"hh:MM:SS A z", L"01:01:11 AM -02:00"},
+               // {L"en", L"01:01:11", L"hh:MM:SS A zz", L"01:01:11 AM GMT"},
+               // Should change ?*+ into ' ' when formatting.
+               // {L"en", L"01:01:11", L"hh:MM:SS?*+A", L"01:01:11   AM"},
+               {L"en", L"12:01:01", L"k:MM:SS", L"12:01:01"},
+               {L"en", L"12:01:11", L"kk:MM", L"12:01"},
+               {L"en", L"12:01:11 +04:30", L"kk:MM", L"05:31"},
+               {L"en", L"12:01:11", L"kk:MM A", L"12:01 PM"},
+               {L"en", L"00:01:01", L"H:M:S", L"0:1:1"},
+               {L"en", L"13:02:11", L"H:M:S", L"13:2:11"},
+               {L"en", L"00:01:11.001", L"HH:M:S.FFF", L"00:1:11.001"},
+               {L"en", L"13:02:11", L"HH:M", L"13:2"},
+               {L"en", L"00:01:11", L"K:M", L"24:1"},
+               {L"en", L"00:02:11", L"KK:M", L"24:2"},
                {L"en", L"11:11:11", L"HH:MM:SS 'o''clock' A Z",
-                L"11:11:11 o'clock AM GMT"},
+                L"11:11:11 o'clock AM GMT-02:00"},
                {L"en", L"14:30:59", L"h:MM A", L"2:30 PM"},
-               {L"en", L"14:30:59", L"HH:MM:SS A Z", L"14:30:59 PM GMT"}};
+               {L"en", L"14:30:59", L"HH:MM:SS A Z", L"14:30:59 PM GMT-02:00"}};
+  // Note, none of the full width time symbols are listed here
+  // as they are not supported. In theory there are the full
+  // width versions of kkk, kkkk, HHH, HHHH, KKK, KKKK, MMM, MMMM,
+  // SSS, SSSS plus 2 more that the spec apparently forgot to
+  // list the symbol.
+
+  // The z modifier only appends if the TZ is outside of +0
+  SetTZ("UTC+2");
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
@@ -140,6 +154,8 @@ TEST_F(CFGAS_FormatStringTest, TimeFormat) {
                                      FX_DATETIMETYPE_Time));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
+
+  SetTZ("UTC");
 }
 
 TEST_F(CFGAS_FormatStringTest, DateTimeFormat) {
@@ -191,29 +207,10 @@ TEST_F(CFGAS_FormatStringTest, DateParse) {
       //  CFX_DateTime(1989, 11, 3, 0, 0, 0, 0)},
       // {L"ja", L"u337b99/01/08", L"\u0067\u0067YY/MM/DD",
       //  CFX_DateTime(1999, 1, 8, 0, 0, 0, 0)}
-      // Full width D == U+FF24
-      // I don't actually know what ideograpic numeric value for 25 is.
-      // {L"ja", L"...", L"\uff24\uff24\uff24",
-      //  CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)},
-      // {L"ja", L"...", L"\uff24\uff24\uff24\uff24",
-      //  CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)},
-      // Full width M == U+FF2D
-      // {L"ja", L"...", L"\uff2d\uff2d\uff2d",
-      //  CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)},
-      // {L"ja", L"...", L"\uff2d\uff2d\uff2d\uff2d",
-      //  CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)},
-      // Full width E == U+FF25
-      // {L"ja", L"...", L"\uff25", CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)},
-      // Full width e == U+FF45
-      // {L"ja", L"...", L"\uff45", CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)},
-      // Full width g == U+FF47
-      // {L"ja", L"1989-01-08", L"\uff47\uff47YY/MM/DD", L"\u337b89/01/08"}
-      // Full width Y == U+FF39
-      // {L"ja", L"...", L"\uff39\uff39\uff39",
-      //  CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)},
-      // {L"ja", L"...", L"\uff39\uff39\uff39\uff39\uff39",
-      //  CFX_DateTime(2002, 20, 25, 0, 0, 0, 0)}
   };
+  // Note, none of the full width date symbols are listed here as they are
+  // not supported. In theory there are the full width versions of DDD,
+  // DDDD, MMM, MMMM, E, e, gg, YYY, YYYYY.
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_DateTime result;
@@ -223,6 +220,33 @@ TEST_F(CFGAS_FormatStringTest, DateParse) {
     EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
+
+// TODO(dsinclair): GetDateTimeFormat is broken and doesn't allow just returning
+// a parsed Time. It will assume it's a Date. The method needs to be re-written.
+// TEST_F(CFGAS_FormatStringTest, TimeParse) {
+//   struct {
+//     const wchar_t* locale;
+//     const wchar_t* input;
+//     const wchar_t* pattern;
+//     CFX_DateTime output;
+//   } tests[] = {
+//       {L"en", L"18:00", L"HH:MM", CFX_DateTime(0, 0, 0, 18, 0, 0, 0)},
+//       {L"en", L"12.59 Uhr", L"H.MM 'Uhr'", CFX_DateTime(0, 0, 0, 12, 59, 0,
+//       0)}, {L"en", L"1:05:10 PM PST", L"h:MM:SS A Z",
+//        CFX_DateTime(0, 0, 0, 17, 05, 10, 0)}};
+//   // Note, none of the full width date symbols are listed here as they are
+//   // not supported. In theory there are the full width versions of kkk,
+//   // kkkk, HHH, HHHH, KKK, KKKK, MMM, MMMM, SSS, SSSS plus 2 more that the
+//   // spec apparently forgot to list the symbol.
+
+//   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+//     CFX_DateTime result;
+//     EXPECT_TRUE(fmt(tests[i].locale)
+//                     ->ParseDateTime(tests[i].input, tests[i].pattern,
+//                                     FX_DATETIMETYPE_Time, &result));
+//     EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
+//   }
+// }
 
 TEST_F(CFGAS_FormatStringTest, SplitFormatString) {
   std::vector<CFX_WideString> results;

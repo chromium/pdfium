@@ -448,9 +448,9 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
         dwSymbol == FXBSTR_ID(0, 0, 'H', '1') ||
         dwSymbol == FXBSTR_ID(0, 0, 'h', '1') ||
         dwSymbol == FXBSTR_ID(0, 0, 'K', '1')) {
-      if (!FXSYS_isDecimalDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc]))
         return false;
-      }
+
       hour = str[cc++] - '0';
       if (cc < len && FXSYS_isDecimalDigit(str[cc]))
         hour = hour * 10 + str[cc++] - '0';
@@ -871,7 +871,7 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'z', '1')) {
       FX_TIMEZONE tz = pLocale->GetTimeZone();
-      if (tz.tzHour != 0 && tz.tzMinute != 0) {
+      if (tz.tzHour != 0 || tz.tzMinute != 0) {
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
 
         CFX_WideString wsTimezone;
@@ -996,6 +996,7 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
 
     hour = hour * 10 + str[cc++] - '0';
   }
+
   if (cc < 2 || hour >= 24)
     return false;
   if (cc < len) {
@@ -1040,6 +1041,23 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
               return false;
           }
         }
+      }
+
+      while (cc < len) {
+        // Skip until we find a + or - for the time zone.
+        if (str[cc] != '+' && str[cc] != '-') {
+          ++cc;
+          continue;
+        }
+
+        FX_TIMEZONE tzDiff;
+        tzDiff.tzHour = 0;
+        tzDiff.tzMinute = 0;
+        if (str[cc] != 'Z')
+          cc += ParseTimeZone(str + cc, len - cc, &tzDiff);
+
+        ResolveZone(hour, minute, tzDiff, pLocale);
+        break;
       }
 
       if (cc < len) {
@@ -1992,7 +2010,8 @@ bool CFGAS_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
   if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty())
     return false;
 
-  CFX_WideString wsDatePattern, wsTimePattern;
+  CFX_WideString wsDatePattern;
+  CFX_WideString wsTimePattern;
   IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
