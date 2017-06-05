@@ -409,7 +409,8 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
       return XFA_EVENTERROR_NotExist;
 
     CXFA_LocaleValue lcValue = XFA_GetLocaleValue(this);
-    if (!lcValue.ValidateValue(lcValue.GetValue(), wsPicture, pLocale)) {
+    if (!lcValue.ValidateValue(lcValue.GetValue(), wsPicture, pLocale,
+                               nullptr)) {
       IXFA_AppProvider* pAppProvider = GetAppProvider();
       if (!pAppProvider)
         return XFA_EVENTERROR_NotExist;

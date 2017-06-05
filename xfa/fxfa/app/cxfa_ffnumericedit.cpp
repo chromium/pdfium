@@ -91,7 +91,7 @@ bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
 
   CFX_WideString wsFormat;
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pDataAcc.Get());
-  widgetValue.GetNumbericFormat(wsFormat, iLeads, iFracs);
+  widgetValue.GetNumericFormat(wsFormat, iLeads, iFracs);
   return widgetValue.ValidateNumericTemp(wsText, wsFormat,
                                          m_pDataAcc->GetLocal());
 }

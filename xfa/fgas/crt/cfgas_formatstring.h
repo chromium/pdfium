@@ -53,9 +53,9 @@ class CFGAS_FormatString {
   bool FormatNull(const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
 
  private:
-  IFX_Locale* GetTextFormat(const CFX_WideString& wsPattern,
-                            const CFX_WideStringC& wsCategory,
-                            CFX_WideString& wsPurgePattern);
+  void GetTextFormat(const CFX_WideString& wsPattern,
+                     const CFX_WideStringC& wsCategory,
+                     CFX_WideString& wsPurgePattern);
   IFX_Locale* GetNumericFormat(const CFX_WideString& wsPattern,
                                int32_t& iDotIndex,
                                uint32_t& dwStyle,
@@ -67,7 +67,6 @@ class CFGAS_FormatString {
                                     IFX_Locale*& pLocale,
                                     CFX_WideString& wsDatePattern,
                                     CFX_WideString& wsTimePattern);
-  IFX_Locale* GetPatternLocale(const CFX_WideString& wsLocale);
 
   CXFA_LocaleMgr* m_pLocaleMgr;
 };
