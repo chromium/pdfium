@@ -127,3 +127,9 @@ int32_t CFX_DateTime::GetDayOfWeek() const {
     v += 7;
   return v;
 }
+
+bool CFX_DateTime::operator==(const CFX_DateTime& other) const {
+  return year_ == other.year_ && month_ == other.month_ && day_ == other.day_ &&
+         hour_ == other.hour_ && minute_ == other.minute_ &&
+         second_ == other.second_ && millisecond_ == other.millisecond_;
+}

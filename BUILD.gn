@@ -1944,6 +1944,7 @@ test("pdfium_unittests") {
       "xfa/fde/css/cfde_cssdeclaration_unittest.cpp",
       "xfa/fde/css/cfde_cssstylesheet_unittest.cpp",
       "xfa/fde/css/cfde_cssvaluelistparser_unittest.cpp",
+      "xfa/fgas/crt/cfgas_formatstring_unittest.cpp",
       "xfa/fgas/layout/cfx_rtfbreak_unittest.cpp",
       "xfa/fwl/cfx_barcode_unittest.cpp",
       "xfa/fxfa/app/cxfa_ffbarcode_unittest.cpp",
