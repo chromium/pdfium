@@ -62,10 +62,9 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
 void CPDF_PageContentGenerator::GenerateContent() {
   CPDF_Document* pDoc = m_pDocument.Get();
   CFX_ByteTextBuf buf;
-  if (!m_pageObjects.empty()) {
-    if (!ProcessPageObjects(&buf))
-      return;
-  }
+  if (!ProcessPageObjects(&buf))
+    return;
+
   CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict.Get();
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetObjectFor("Contents") : nullptr;
