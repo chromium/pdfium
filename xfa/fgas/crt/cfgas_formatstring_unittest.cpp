@@ -105,8 +105,8 @@ TEST_F(CFGAS_FormatStringTest, DateFormat) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatDateTime(tests[i].input, tests[i].pattern, result,
-                                     FX_DATETIMETYPE_Date));
+                    ->FormatDateTime(tests[i].input, tests[i].pattern,
+                                     FX_DATETIMETYPE_Date, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -150,8 +150,8 @@ TEST_F(CFGAS_FormatStringTest, TimeFormat) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatDateTime(tests[i].input, tests[i].pattern, result,
-                                     FX_DATETIMETYPE_Time));
+                    ->FormatDateTime(tests[i].input, tests[i].pattern,
+                                     FX_DATETIMETYPE_Time, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 
@@ -177,8 +177,8 @@ TEST_F(CFGAS_FormatStringTest, DateTimeFormat) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatDateTime(tests[i].input, tests[i].pattern, result,
-                                     FX_DATETIMETYPE_TimeDate));
+                    ->FormatDateTime(tests[i].input, tests[i].pattern,
+                                     FX_DATETIMETYPE_TimeDate, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -252,7 +252,7 @@ TEST_F(CFGAS_FormatStringTest, SplitFormatString) {
   std::vector<CFX_WideString> results;
   fmt(L"en")->SplitFormatString(
       L"null{'No data'} | null{} | text{999*9999} | text{999*999*9999}",
-      results);
+      &results);
   EXPECT_EQ(4UL, results.size());
 
   const wchar_t* patterns[] = {L"null{'No data'} ", L" null{} ",
@@ -287,7 +287,7 @@ TEST_F(CFGAS_FormatStringTest, NumParse) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
-                    ->ParseNum(tests[i].input, tests[i].pattern, result));
+                    ->ParseNum(tests[i].input, tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -343,7 +343,7 @@ TEST_F(CFGAS_FormatStringTest, NumFormat) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatNum(tests[i].input, tests[i].pattern, result));
+                    ->FormatNum(tests[i].input, tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -365,7 +365,7 @@ TEST_F(CFGAS_FormatStringTest, TextParse) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
-                    ->ParseText(tests[i].input, tests[i].pattern, result));
+                    ->ParseText(tests[i].input, tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -373,7 +373,7 @@ TEST_F(CFGAS_FormatStringTest, TextParse) {
 TEST_F(CFGAS_FormatStringTest, InvalidTextParse) {
   // Input does not match mask.
   CFX_WideString result;
-  EXPECT_FALSE(fmt(L"en")->ParseText(L"123-4567-8", L"AAA-9999-X", result));
+  EXPECT_FALSE(fmt(L"en")->ParseText(L"123-4567-8", L"AAA-9999-X", &result));
 }
 
 TEST_F(CFGAS_FormatStringTest, TextFormat) {
@@ -390,7 +390,7 @@ TEST_F(CFGAS_FormatStringTest, TextFormat) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatText(tests[i].input, tests[i].pattern, result));
+                    ->FormatText(tests[i].input, tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -420,7 +420,7 @@ TEST_F(CFGAS_FormatStringTest, NullFormat) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)->FormatNull(tests[i].pattern, result));
+    EXPECT_TRUE(fmt(tests[i].locale)->FormatNull(tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -458,7 +458,7 @@ TEST_F(CFGAS_FormatStringTest, ZeroFormat) {
     CFX_WideString result;
     EXPECT_TRUE(
         fmt(tests[i].locale)
-            ->FormatZero(/* tests[i].input,*/ tests[i].pattern, result));
+            ->FormatZero(/* tests[i].input,*/ tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }

@@ -114,7 +114,7 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
 
   auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr);
   std::vector<CFX_WideString> wsPatterns;
-  pFormat->SplitFormatString(wsPattern, wsPatterns);
+  pFormat->SplitFormatString(wsPattern, &wsPatterns);
 
   bool bRet = false;
   int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
@@ -134,16 +134,16 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
         break;
       case FX_LOCALECATEGORY_Num: {
         CFX_WideString fNum;
-        bRet = pFormat->ParseNum(wsValue, wsFormat, fNum);
+        bRet = pFormat->ParseNum(wsValue, wsFormat, &fNum);
         if (!bRet)
-          bRet = pFormat->FormatNum(wsValue, wsFormat, wsOutput);
+          bRet = pFormat->FormatNum(wsValue, wsFormat, &wsOutput);
         break;
       }
       case FX_LOCALECATEGORY_Text:
-        bRet = pFormat->ParseText(wsValue, wsFormat, wsOutput);
+        bRet = pFormat->ParseText(wsValue, wsFormat, &wsOutput);
         wsOutput.clear();
         if (!bRet)
-          bRet = pFormat->FormatText(wsValue, wsFormat, wsOutput);
+          bRet = pFormat->FormatText(wsValue, wsFormat, &wsOutput);
         break;
       case FX_LOCALECATEGORY_Date: {
         CFX_DateTime dt;
@@ -152,8 +152,8 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
           bRet = pFormat->ParseDateTime(wsValue, wsFormat, FX_DATETIMETYPE_Date,
                                         &dt);
           if (!bRet) {
-            bRet = pFormat->FormatDateTime(wsValue, wsFormat, wsOutput,
-                                           FX_DATETIMETYPE_Date);
+            bRet = pFormat->FormatDateTime(wsValue, wsFormat,
+                                           FX_DATETIMETYPE_Date, &wsOutput);
           }
         }
         break;
@@ -163,8 +163,8 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
         bRet = pFormat->ParseDateTime(wsValue, wsFormat, FX_DATETIMETYPE_Time,
                                       &dt);
         if (!bRet) {
-          bRet = pFormat->FormatDateTime(wsValue, wsFormat, wsOutput,
-                                         FX_DATETIMETYPE_Time);
+          bRet = pFormat->FormatDateTime(wsValue, wsFormat,
+                                         FX_DATETIMETYPE_Time, &wsOutput);
         }
         break;
       }
@@ -173,8 +173,8 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
         bRet = pFormat->ParseDateTime(wsValue, wsFormat,
                                       FX_DATETIMETYPE_DateTime, &dt);
         if (!bRet) {
-          bRet = pFormat->FormatDateTime(wsValue, wsFormat, wsOutput,
-                                         FX_DATETIMETYPE_DateTime);
+          bRet = pFormat->FormatDateTime(wsValue, wsFormat,
+                                         FX_DATETIMETYPE_DateTime, &wsOutput);
         }
         break;
       }
@@ -327,7 +327,7 @@ bool CXFA_LocaleValue::FormatPatterns(CFX_WideString& wsResult,
                                       XFA_VALUEPICTURE eValueType) const {
   auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr);
   std::vector<CFX_WideString> wsPatterns;
-  pFormat->SplitFormatString(wsFormat, wsPatterns);
+  pFormat->SplitFormatString(wsFormat, &wsPatterns);
   wsResult.clear();
   int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
   for (int32_t i = 0; i < iCount; i++) {
@@ -353,29 +353,29 @@ bool CXFA_LocaleValue::FormatSinglePattern(CFX_WideString& wsResult,
   switch (eCategory) {
     case FX_LOCALECATEGORY_Null:
       if (m_wsValue.IsEmpty())
-        bRet = pFormat->FormatNull(wsFormat, wsResult);
+        bRet = pFormat->FormatNull(wsFormat, &wsResult);
       break;
     case FX_LOCALECATEGORY_Zero:
       if (m_wsValue == L"0")
-        bRet = pFormat->FormatZero(wsFormat, wsResult);
+        bRet = pFormat->FormatZero(wsFormat, &wsResult);
       break;
     case FX_LOCALECATEGORY_Num:
-      bRet = pFormat->FormatNum(m_wsValue, wsFormat, wsResult);
+      bRet = pFormat->FormatNum(m_wsValue, wsFormat, &wsResult);
       break;
     case FX_LOCALECATEGORY_Text:
-      bRet = pFormat->FormatText(m_wsValue, wsFormat, wsResult);
+      bRet = pFormat->FormatText(m_wsValue, wsFormat, &wsResult);
       break;
     case FX_LOCALECATEGORY_Date:
-      bRet = pFormat->FormatDateTime(m_wsValue, wsFormat, wsResult,
-                                     FX_DATETIMETYPE_Date);
+      bRet = pFormat->FormatDateTime(m_wsValue, wsFormat, FX_DATETIMETYPE_Date,
+                                     &wsResult);
       break;
     case FX_LOCALECATEGORY_Time:
-      bRet = pFormat->FormatDateTime(m_wsValue, wsFormat, wsResult,
-                                     FX_DATETIMETYPE_Time);
+      bRet = pFormat->FormatDateTime(m_wsValue, wsFormat, FX_DATETIMETYPE_Time,
+                                     &wsResult);
       break;
     case FX_LOCALECATEGORY_DateTime:
-      bRet = pFormat->FormatDateTime(m_wsValue, wsFormat, wsResult,
-                                     FX_DATETIMETYPE_DateTime);
+      bRet = pFormat->FormatDateTime(m_wsValue, wsFormat,
+                                     FX_DATETIMETYPE_DateTime, &wsResult);
       break;
     default:
       wsResult = m_wsValue;
@@ -619,7 +619,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
 
   auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr);
   std::vector<CFX_WideString> wsPatterns;
-  pFormat->SplitFormatString(wsPattern, wsPatterns);
+  pFormat->SplitFormatString(wsPattern, &wsPatterns);
   bool bRet = false;
   int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
   for (int32_t i = 0; i < iCount && !bRet; i++) {
@@ -637,13 +637,13 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
         break;
       case FX_LOCALECATEGORY_Num: {
         CFX_WideString fNum;
-        bRet = pFormat->ParseNum(wsValue, wsFormat, fNum);
+        bRet = pFormat->ParseNum(wsValue, wsFormat, &fNum);
         if (bRet)
           m_wsValue = fNum;
         break;
       }
       case FX_LOCALECATEGORY_Text:
-        bRet = pFormat->ParseText(wsValue, wsFormat, m_wsValue);
+        bRet = pFormat->ParseText(wsValue, wsFormat, &m_wsValue);
         break;
       case FX_LOCALECATEGORY_Date: {
         CFX_DateTime dt;
