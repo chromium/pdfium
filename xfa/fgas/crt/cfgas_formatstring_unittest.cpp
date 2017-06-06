@@ -263,46 +263,137 @@ TEST_F(CFGAS_FormatStringTest, SplitFormatString) {
   }
 }
 
-// TODO(dsinclair): Numeric parsing fails when encountering a .
-// TEST_F(CFGAS_FormatStringTest, NumParse) {
-//   struct {
-//     const wchar_t* locale;
-//     const wchar_t* input;
-//     const wchar_t* pattern;
-//     const wchar_t* output;
-//   } tests[] = {
-//       // {L"en", L"€100.00", L"num(en_GB){$z,zz9.99}", L"100"},
-//   };
+TEST_F(CFGAS_FormatStringTest, NumParse) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* input;
+    const wchar_t* pattern;
+    const wchar_t* output;
+  } tests[] = {
+      // TODO(dsinclair): Numeric parsing fails when encountering a .
+      // {L"en", L"€100.00", L"num(en_GB){$z,zz9.99}", L"100"},
+      // {L"en", L"1050", L"99V99", L"10.50"},
+      // {L"en", L"3125", L"99V99", L"31.25"},
+      // {L"en", L"12.345E3", L"99.999E", L"12345"},
+      // {L"en", L"12.345E-2", L"99.999E", L".12345"},
+      {L"en", L"150", L"z999", L"150"},
+      // {L"en", L"0150", L"z999", L"150"},
+      {L"en", L"10.50", L"z,zz9.99", L"10.50"},
+      {L"en", L"3,125.00", L"z,zz9.99", L"3125.00"},
+      {L"en", L"$1,234.00", L"$z,zz9.99DB", L"1234.00"},
+      // {L"en", L"$,1234.00DB", L"$z,zz9.99DB", L"-1234.00"}
+  };
 
-//   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-//     CFX_WideString result;
-//     EXPECT_TRUE(fmt(tests[i].locale)
-//                     ->ParseNum(tests[i].input, tests[i].pattern, result));
-//     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
-//   }
-// }
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    CFX_WideString result;
+    EXPECT_TRUE(fmt(tests[i].locale)
+                    ->ParseNum(tests[i].input, tests[i].pattern, result));
+    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+  }
+}
 
-// TODO(dsinclair) Text parsing is missing support for the global modifiers:
-//  ? - wildcard
-//  * - zero or more whitespace
-//  + - one or more whitespace
-// TEST_F(CFGAS_FormatStringTest, TextParse) {
-//   struct {
-//     const wchar_t* locale;
-//     const wchar_t* input;
-//     const wchar_t* pattern;
-//     const wchar_t* output;
-//   } tests[] = {
-//       // {L"en", L"555-1212", L"text(th_TH){999*9999}", L"5551212"},
-//   };
+TEST_F(CFGAS_FormatStringTest, NumFormat) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* input;
+    const wchar_t* pattern;
+    const wchar_t* output;
+  } tests[] = {{L"en", L"1.234", L"zz9.zzz", L"1.234"},
+               {L"en", L"1.234", L"ZZ9.ZZZ", L"  1.234"},
+               {L"en", L"12.345", L"zz9.zzz", L"12.345"},
+               {L"en", L"12.345", L"ZZ9.ZZZ", L" 12.345"},
+               {L"en", L"123.456", L"zz9.zzz", L"123.456"},
+               {L"en", L"123.456", L"ZZ9.ZZZ", L"123.456"},
+               {L"en", L"123", L"zz9.zzz", L"123"},
+               // {L"en", L"123", L"ZZ9.ZZZ", L"123."},
+               {L"en", L"123.", L"zz9.zzz", L"123."},
+               // {L"en", L"123.", L"ZZ9.ZZZ", L"123."},
+               // {L"en", L"123.0", L"zz9.zzz", L"123.0"},
+               // {L"en", L"123.0", L"ZZ9.ZZZ", L"123.0"},
+               // {L"en", L"123.000", L"zz9.zzz", L"123.000"},
+               {L"en", L"123.000", L"ZZ9.ZZZ", L"123.000"},
+               // {L"en", L"12345.67", L"zzz,zz9.88888888", L"12,345.67"},
+               // {L"en", L"12345.0000", L"zzz,zz9.88888888", L"12,345.0000"},
+               // {L"en", L"12345.6789", L"zzz,zz9.8", L"12,345.6789"},
+               // {L"en", L"12345.", L"zzz,zz9.8", L"12,345"},
+               // {L"en", L"123456.000", L"zzz,zz9.8888", L"123,456.000"},
+               // {L"en", L"123456.0", L"zzz,zz9.8888", L"123,456.0"},
+               {L"en", L"123456", L"zzz,zz9.8888", L"123,456"},
+               {L"en", L"123456", L"ZZZ,ZZ9.88", L"123,456"},
+               // {L"en", L"12345.67", L"zzz,zz9.88888888", L"12,345.67"},
+               // {L"en", L"12345.0000", L"zzz,zz9.88888888", L"12,345.0000"},
+               // {L"en", L"12345.6789", L"zzz,zz9.8", L"12,345.6789"},
+               // {L"en", L"12345.", L"zzz,zz9.8", L"12,345"},
+               // {L"en", L"12%%", L"zz9.%%", L"12%%"},
+               // {L"en", L"1,234.5%%", L"zzz,zz9.99%%", L"1,234.50%%"},
+               {L"en", L"-1.23", L"S999v99", L"-00123"},
+               {L"en", L"1.23", L"S999V99", L" 001.23"},
+               {L"en", L"123", L"S999V99", L" 123.00"},
+               {L"en", L"12.3", L"SZZ9.99", L"  12.30"},
+               {L"en", L"-12.3", L"SZ99.99", L"- 12.30"},
+               {L"en", L"123", L"szz9.99", L"123.00"},
+               {L"en", L"-123", L"szz9.99", L"-123.00"},
+               // {L"en", L"1234", L"$ZZ,ZZ9.99CR", L"$  1,234.00  "},
+               // {L"en", L"-1234", L"$ZZ,ZZ9.99CR", L"$  1,234.00CR"},
+               // {L"en", L"1234", L"$z,zz9.99DB", L"$1,234.00"},
+               {L"en", L"-1234", L"$z,zz9.99DB", L"$1,234.00DB"},
+               {L"en", L"12345", L"99.999E", L"12.345E+3"},
+               {L"en", L".12345", L"99.999E", L"12.345E-2"}};
 
-//   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-//     CFX_WideString result;
-//     EXPECT_TRUE(fmt(tests[i].locale)
-//                     ->ParseText(tests[i].input, tests[i].pattern, result));
-//     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
-//   }
-// }
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    CFX_WideString result;
+    EXPECT_TRUE(fmt(tests[i].locale)
+                    ->FormatNum(tests[i].input, tests[i].pattern, result));
+    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+  }
+}
+
+TEST_F(CFGAS_FormatStringTest, TextParse) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* input;
+    const wchar_t* pattern;
+    const wchar_t* output;
+  } tests[] = {// TODO(dsinclair) Missing support for the global modifiers:
+               //  ? - wildcard
+               //  * - zero or more whitespace
+               //  + - one or more whitespace
+               // {L"en", L"555-1212", L"text(th_TH){999*9999}", L"5551212"},
+               {L"en", L"ABC-1234-5", L"AAA-9999-X", L"ABC12345"},
+               {L"en", L"ABC-1234-D", L"AAA-9999-X", L"ABC1234D"}};
+
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    CFX_WideString result;
+    EXPECT_TRUE(fmt(tests[i].locale)
+                    ->ParseText(tests[i].input, tests[i].pattern, result));
+    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+  }
+}
+
+TEST_F(CFGAS_FormatStringTest, InvalidTextParse) {
+  // Input does not match mask.
+  CFX_WideString result;
+  EXPECT_FALSE(fmt(L"en")->ParseText(L"123-4567-8", L"AAA-9999-X", result));
+}
+
+TEST_F(CFGAS_FormatStringTest, TextFormat) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* input;
+    const wchar_t* pattern;
+    const wchar_t* output;
+  } tests[] = {
+      {L"en", L"K1S5K2", L"A9A 9A9", L"K1S 5K2"},
+      {L"en", L"6135551212", L"'+1 ('999') '999-9999", L"+1 (613) 555-1212"},
+      {L"en", L"6135551212", L"999.999.9999", L"613.555.1212"}};
+
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    CFX_WideString result;
+    EXPECT_TRUE(fmt(tests[i].locale)
+                    ->FormatText(tests[i].input, tests[i].pattern, result));
+    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+  }
+}
 
 TEST_F(CFGAS_FormatStringTest, NullParse) {
   struct {
@@ -317,5 +408,57 @@ TEST_F(CFGAS_FormatStringTest, NullParse) {
     EXPECT_TRUE(
         fmt(tests[i].locale)->ParseNull(tests[i].input, tests[i].pattern))
         << " TEST: " << i;
+  }
+}
+
+TEST_F(CFGAS_FormatStringTest, NullFormat) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* pattern;
+    const wchar_t* output;
+  } tests[] = {{L"en", L"null{'n/a'}", L"n/a"}, {L"en", L"null{}", L""}};
+
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    CFX_WideString result;
+    EXPECT_TRUE(fmt(tests[i].locale)->FormatNull(tests[i].pattern, result));
+    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+  }
+}
+
+TEST_F(CFGAS_FormatStringTest, ZeroParse) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* input;
+    const wchar_t* pattern;
+  } tests[] = {
+      {L"en", L"", L"zero{}"}, {L"en", L"9", L"zero{9}"},
+  };
+
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    EXPECT_TRUE(
+        fmt(tests[i].locale)->ParseZero(tests[i].input, tests[i].pattern))
+        << " TEST: " << i;
+  }
+}
+
+TEST_F(CFGAS_FormatStringTest, ZeroFormat) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* input;
+    const wchar_t* pattern;
+    const wchar_t* output;
+  } tests[] = {// TODO(dsinclair): The zero format can take a number specifier
+               // which we don't take into account.
+               // {L"en", L"", L"zero {9}", L""},
+               // {L"en", L"0", L"zero {9}", L"0"},
+               // {L"en", L"0.0", L"zero{9}", L"0"},
+               {L"en", L"0", L"zero{}", L""}};
+
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    CFX_WideString result;
+    EXPECT_TRUE(
+        fmt(tests[i].locale)
+            ->FormatZero(/* tests[i].input,*/ tests[i].pattern, result));
+    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
