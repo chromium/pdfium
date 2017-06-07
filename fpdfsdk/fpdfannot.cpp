@@ -6,9 +6,15 @@
 
 #include "public/fpdf_annot.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
@@ -92,10 +98,45 @@ static_assert(static_cast<int>(CPDF_Annot::Subtype::XFAWIDGET) ==
                   FPDF_ANNOT_XFAWIDGET,
               "CPDF_Annot::XFAWIDGET value mismatch");
 
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFAnnot_IsSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype) {
+  return subtype == FPDF_ANNOT_CIRCLE || subtype == FPDF_ANNOT_HIGHLIGHT ||
+         subtype == FPDF_ANNOT_INK || subtype == FPDF_ANNOT_POPUP ||
+         subtype == FPDF_ANNOT_SQUARE || subtype == FPDF_ANNOT_SQUIGGLY ||
+         subtype == FPDF_ANNOT_STRIKEOUT || subtype == FPDF_ANNOT_TEXT ||
+         subtype == FPDF_ANNOT_UNDERLINE;
+}
+
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFPage_CreateAnnot(FPDF_PAGE page,
+                     FPDF_ANNOTATION_SUBTYPE subtype,
+                     FPDF_ANNOTATION* annot) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage || !FPDFAnnot_IsSupportedSubtype(subtype))
+    return false;
+
+  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(
+      pPage->m_pDocument->GetByteStringPool());
+  pDict->SetNewFor<CPDF_Name>("Type", "Annot");
+  pDict->SetNewFor<CPDF_Name>("Subtype",
+                              CPDF_Annot::AnnotSubtypeToString(
+                                  static_cast<CPDF_Annot::Subtype>(subtype)));
+  if (annot)
+    *annot = FPDFAnnotationFromCPDFDictionary(pDict.get());
+
+  CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArrayFor("Annots");
+  if (!pAnnotList)
+    pAnnotList = pPage->m_pFormDict->SetNewFor<CPDF_Array>("Annots");
+
+  pAnnotList->Add(std::move(pDict));
+  return true;
+}
+
 DLLEXPORT int STDCALL FPDFPage_GetAnnotCount(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict)
     return 0;
+
   CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
   return pAnnots ? pAnnots->GetCount() : 0;
 }
@@ -106,6 +147,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetAnnot(FPDF_PAGE page,
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || index < 0 || !annot)
     return false;
+
   CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->GetCount())
     return false;
@@ -120,8 +162,37 @@ FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot) {
   CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
   if (!pAnnotDict)
     return FPDF_ANNOT_UNKNOWN;
+
   return static_cast<FPDF_ANNOTATION_SUBTYPE>(
       CPDF_Annot::StringToAnnotSubtype(pAnnotDict->GetStringFor("Subtype")));
+}
+
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
+                                               FPDFANNOT_COLORTYPE type,
+                                               unsigned int R,
+                                               unsigned int G,
+                                               unsigned int B,
+                                               unsigned int A) {
+  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
+  if (!pAnnotDict || R > 255 || G > 255 || B > 255 || A > 255)
+    return false;
+
+  // Set the opacity of the annotation.
+  pAnnotDict->SetNewFor<CPDF_Number>("CA", A / 255.f);
+
+  // Set the color of the annotation.
+  CFX_ByteString key = type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C";
+  CPDF_Array* pColor = pAnnotDict->GetArrayFor(key);
+  if (pColor)
+    pColor->RemoveAt(0, pColor->GetCount());
+  else
+    pColor = pAnnotDict->SetNewFor<CPDF_Array>(key);
+
+  pColor->AddNew<CPDF_Number>(R / 255.f);
+  pColor->AddNew<CPDF_Number>(G / 255.f);
+  pColor->AddNew<CPDF_Number>(B / 255.f);
+
+  return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
@@ -183,6 +254,7 @@ DLLEXPORT FPDF_BOOL STDCALL
 FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot) {
   if (!annot)
     return false;
+
   FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
   return subtype == FPDF_ANNOT_LINK || subtype == FPDF_ANNOT_HIGHLIGHT ||
          subtype == FPDF_ANNOT_UNDERLINE || subtype == FPDF_ANNOT_SQUIGGLY ||
@@ -190,14 +262,40 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot) {
 }
 
 DLLEXPORT FPDF_BOOL STDCALL
+FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
+                              FS_QUADPOINTSF quadPoints) {
+  if (!annot || !FPDFAnnot_HasAttachmentPoints(annot))
+    return false;
+
+  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
+  CPDF_Array* pQuadPoints = pAnnotDict->GetArrayFor("QuadPoints");
+  if (pQuadPoints)
+    pQuadPoints->RemoveAt(0, pQuadPoints->GetCount());
+  else
+    pQuadPoints = pAnnotDict->SetNewFor<CPDF_Array>("QuadPoints");
+
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x1);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y1);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x2);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y2);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x3);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y3);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x4);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y4);
+  return true;
+}
+
+DLLEXPORT FPDF_BOOL STDCALL
 FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
                               FS_QUADPOINTSF* quadPoints) {
   if (!annot || !quadPoints || !FPDFAnnot_HasAttachmentPoints(annot))
     return false;
+
   CPDF_Array* pArray =
       CPDFDictionaryFromFPDFAnnotation(annot)->GetArrayFor("QuadPoints");
   if (!pArray)
     return false;
+
   quadPoints->x1 = pArray->GetNumberAt(0);
   quadPoints->y1 = pArray->GetNumberAt(1);
   quadPoints->x2 = pArray->GetNumberAt(2);
@@ -209,16 +307,53 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
   return true;
 }
 
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
+                                              FS_RECTF rect) {
+  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
+  if (!pAnnotDict)
+    return false;
+
+  CPDF_Array* pRect = pAnnotDict->GetArrayFor("Rect");
+  if (pRect)
+    pRect->RemoveAt(0, pRect->GetCount());
+  else
+    pRect = pAnnotDict->SetNewFor<CPDF_Array>("Rect");
+
+  pRect->AddNew<CPDF_Number>(rect.left);
+  pRect->AddNew<CPDF_Number>(rect.bottom);
+  pRect->AddNew<CPDF_Number>(rect.right);
+  pRect->AddNew<CPDF_Number>(rect.top);
+  return true;
+}
+
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
                                               FS_RECTF* rect) {
   CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
   if (!rect || !pAnnotDict)
     return false;
+
   CFX_FloatRect rt = pAnnotDict->GetRectFor("Rect");
+  if (rt.IsEmpty())
+    return false;
+
   rect->left = rt.left;
   rect->bottom = rt.bottom;
   rect->right = rt.right;
   rect->top = rt.top;
+  return true;
+}
+
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetText(FPDF_ANNOTATION annot,
+                                              FPDFANNOT_TEXTTYPE type,
+                                              FPDF_WIDESTRING text) {
+  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
+  if (!pAnnotDict)
+    return false;
+
+  CFX_ByteString key = type == FPDFANNOT_TEXTTYPE_Author ? "T" : "Contents";
+  FX_STRSIZE len = CFX_WideString::WStringLength(text);
+  CFX_WideString encodedText = CFX_WideString::FromUTF16LE(text, len);
+  pAnnotDict->SetNewFor<CPDF_String>(key, encodedText.UTF8Encode(), false);
   return true;
 }
 
@@ -229,10 +364,12 @@ DLLEXPORT unsigned long STDCALL FPDFAnnot_GetText(FPDF_ANNOTATION annot,
   CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
   if (!pAnnotDict)
     return 0;
+
   CFX_ByteString key = type == FPDFANNOT_TEXTTYPE_Author ? "T" : "Contents";
   CFX_ByteString contents = pAnnotDict->GetUnicodeTextFor(key).UTF16LE_Encode();
   unsigned long len = contents.GetLength();
   if (buffer && buflen >= len)
     memcpy(buffer, contents.c_str(), len);
+
   return len;
 }
