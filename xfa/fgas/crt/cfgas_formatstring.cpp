@@ -1040,21 +1040,11 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
         }
       }
 
+      // Skip until we find a + or - for the time zone.
       while (cc < len) {
-        // Skip until we find a + or - for the time zone.
-        if (str[cc] != '+' && str[cc] != '-') {
-          ++cc;
-          continue;
-        }
-
-        FX_TIMEZONE tzDiff;
-        tzDiff.tzHour = 0;
-        tzDiff.tzMinute = 0;
-        if (str[cc] != 'Z')
-          cc += ParseTimeZone(str + cc, len - cc, &tzDiff);
-
-        ResolveZone(tzDiff, pLocale, &hour, &minute);
-        break;
+        if (str[cc] == '+' || str[cc] == '-')
+          break;
+        ++cc;
       }
 
       if (cc < len) {
@@ -1183,9 +1173,9 @@ CFX_WideString CFGAS_FormatString::GetTextFormat(
       while (ccf < iLenf) {
         if (pStr[ccf] == '(') {
           ccf++;
-          CFX_WideString wsLCID;
+          // Skip over the encoding name.
           while (ccf < iLenf && pStr[ccf] != ')')
-            wsLCID += pStr[ccf++];
+            ccf++;
         } else if (pStr[ccf] == '{') {
           bBrackOpen = true;
           break;
@@ -1410,11 +1400,22 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   bool bNeg = false;
   bool bReverseParse = false;
   int32_t dot_index = 0;
+
+  // If we're looking for a '.', 'V' or 'v' and the input string does not
+  // have a dot index for one of those, then we disable parsing the decimal.
   if (!GetNumericDotIndex(wsSrcNum, wsDotSymbol, &dot_index) &&
       (dwFormatStyle & FX_NUMSTYLE_DotVorv)) {
     bReverseParse = true;
   }
-  bReverseParse = false;
+
+  // This parse is broken into two parts based on the '.' in the number
+  // (or 'V' or 'v'). |dot_index_f| is the location of the dot in the format and
+  // |dot_index| is the location of the dot in the number.
+  //
+  // This first while() starts at the '.' and walks backwards to the start of
+  // the number. The second while() walks from the dot forwards to the end of
+  // the decimal.
+
   int ccf = dot_index_f - 1;
   int cc = dot_index - 1;
   while (ccf >= 0 && cc >= 0) {
@@ -1483,9 +1484,6 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         ccf--;
         break;
       case 'E': {
-        if (cc >= dot_index)
-          return false;
-
         bool bExpSign = false;
         while (cc >= 0) {
           if (str[cc] == 'E' || str[cc] == 'e')
@@ -1539,7 +1537,7 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case 'R':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'C') {
           if (str[cc] == ' ') {
-            cc++;
+            cc -= 2;
           } else if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
             bNeg = true;
             cc -= 2;
@@ -1563,7 +1561,7 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case 'B':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'D') {
           if (str[cc] == ' ') {
-            cc++;
+            cc -= 2;
           } else if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
             bNeg = true;
             cc -= 2;

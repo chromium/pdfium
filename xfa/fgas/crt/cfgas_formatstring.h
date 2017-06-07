@@ -25,6 +25,7 @@ class CFGAS_FormatString {
   void SplitFormatString(const CFX_WideString& wsFormatString,
                          std::vector<CFX_WideString>* wsPatterns);
   FX_LOCALECATEGORY GetCategory(const CFX_WideString& wsPattern);
+
   bool ParseText(const CFX_WideString& wsSrcText,
                  const CFX_WideString& wsPattern,
                  CFX_WideString* wsValue);
@@ -39,6 +40,7 @@ class CFGAS_FormatString {
                  const CFX_WideString& wsPattern);
   bool ParseNull(const CFX_WideString& wsSrcText,
                  const CFX_WideString& wsPattern);
+
   bool FormatText(const CFX_WideString& wsSrcText,
                   const CFX_WideString& wsPattern,
                   CFX_WideString* wsOutput);
