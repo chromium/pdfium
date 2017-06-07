@@ -391,9 +391,9 @@ void ResolveZone(FX_TIMEZONE tzDiff,
                  (tzLocale.tzHour < 0 ? -tzLocale.tzMinute : tzLocale.tzMinute);
   iMinuteDiff -= tzDiff.tzHour * 60 +
                  (tzDiff.tzHour < 0 ? -tzDiff.tzMinute : tzDiff.tzMinute);
-  while (iMinuteDiff > 1440)
-    iMinuteDiff -= 1440;
-  while (iMinuteDiff < 0)
+
+  iMinuteDiff %= 1440;
+  if (iMinuteDiff < 0)
     iMinuteDiff += 1440;
 
   *wHour = iMinuteDiff / 60;
@@ -604,19 +604,20 @@ int32_t GetNumTrailingLimit(const CFX_WideString& wsFormat,
   return iTreading;
 }
 
+// |month| is 1-based. e.g. 1 means January.
 uint16_t GetSolarMonthDays(uint16_t year, uint16_t month) {
-  if (month % 2)
-    return 31;
   if (month == 2)
     return FX_IsLeapYear(year) ? 29 : 28;
-  return 30;
+  if (month == 4 || month == 6 || month == 9 || month == 11)
+    return 30;
+  return 31;
 }
 
 uint16_t GetWeekDay(uint16_t year, uint16_t month, uint16_t day) {
-  uint16_t g_month_day[] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
+  static const uint16_t month_day[] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
   uint16_t nDays =
       (year - 1) % 7 + (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400;
-  nDays += g_month_day[month - 1] + day;
+  nDays += month_day[month - 1] + day;
   if (FX_IsLeapYear(year) && month > 2)
     nDays++;
   return nDays % 7;
