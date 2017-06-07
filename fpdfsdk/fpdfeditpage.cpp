@@ -298,13 +298,15 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
     matrix.TransformRect(rect);
 
     CPDF_Array* pRectArray = pAnnot->GetAnnotDict()->GetArrayFor("Rect");
-    if (!pRectArray)
+    if (pRectArray)
+      pRectArray->RemoveAt(0, pRectArray->GetCount());
+    else
       pRectArray = pAnnot->GetAnnotDict()->SetNewFor<CPDF_Array>("Rect");
 
-    pRectArray->SetNewAt<CPDF_Number>(0, rect.left);
-    pRectArray->SetNewAt<CPDF_Number>(1, rect.bottom);
-    pRectArray->SetNewAt<CPDF_Number>(2, rect.right);
-    pRectArray->SetNewAt<CPDF_Number>(3, rect.top);
+    pRectArray->AddNew<CPDF_Number>(rect.left);
+    pRectArray->AddNew<CPDF_Number>(rect.bottom);
+    pRectArray->AddNew<CPDF_Number>(rect.right);
+    pRectArray->AddNew<CPDF_Number>(rect.top);
 
     // TODO(unknown): Transform AP's rectangle
   }

@@ -153,7 +153,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   ASSERT_TRUE(page);
   EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
 
-  // Add an underline annotation to the page.
+  // Add a text annotation to the page.
   FPDF_ANNOTATION annot;
   ASSERT_TRUE(FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT, &annot));
 

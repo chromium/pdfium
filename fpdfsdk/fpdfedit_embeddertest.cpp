@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/cpp/fpdf_deleters.h"
+#include "public/fpdf_annot.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -836,6 +837,23 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
   FPDFBitmap_Destroy(new_bitmap);
   FPDF_ClosePage(new_page);
   FPDF_CloseDocument(new_doc);
+}
+
+TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
+  // Open a file with one annotation and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // Add an underline annotation to the page without specifying its rectangle.
+  FPDF_ANNOTATION annot;
+  ASSERT_TRUE(FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE, &annot));
+
+  // FPDFPage_TransformAnnots() should run without errors when modifying
+  // annotation rectangles.
+  FPDFPage_TransformAnnots(page, 1, 2, 3, 4, 5, 6);
+
+  UnloadPage(page);
 }
 
 // TODO(npm): Add tests using Japanese fonts in other OS.
