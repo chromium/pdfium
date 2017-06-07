@@ -241,19 +241,12 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
     while (ccf < lenf && strf[ccf] == symbol[0])
       symbol += strf[ccf++];
 
-    if (symbol == L"D") {
+    if (symbol == L"D" || symbol == L"DD") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       day = str[(*cc)++] - '0';
-      if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
-        day = day * 10 + str[(*cc)++] - '0';
-    } else if (symbol == L"DD") {
-      if (!FXSYS_isDecimalDigit(str[*cc]))
-        return false;
-
-      day = str[(*cc)++] - '0';
-      if (*cc < len)
+      if (*cc < len && (symbol == L"DD" || FXSYS_isDecimalDigit(str[*cc])))
         day = day * 10 + str[(*cc)++] - '0';
     } else if (symbol == L"J") {
       int i = 0;
@@ -261,115 +254,56 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
         (*cc)++;
         i++;
       }
-    } else if (symbol == L"JJJ") {
-      *cc += 3;
-    } else if (symbol == L"M") {
+    } else if (symbol == L"M" || symbol == L"MM") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       month = str[(*cc)++] - '0';
-      if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
+      if (*cc < len && (symbol == L"MM" || FXSYS_isDecimalDigit(str[*cc])))
         month = month * 10 + str[(*cc)++] - '0';
-    } else if (symbol == L"MM") {
-      if (!FXSYS_isDecimalDigit(str[*cc]))
-        return false;
-
-      month = str[(*cc)++] - '0';
-      if (*cc < len)
-        month = month * 10 + str[(*cc)++] - '0';
-    } else if (symbol == L"MMM") {
-      CFX_WideString wsMonthNameAbbr;
-      uint16_t i = 0;
-      for (; i < 12; i++) {
-        wsMonthNameAbbr = pLocale->GetMonthName(i, true);
-        if (wsMonthNameAbbr.IsEmpty())
-          continue;
-        if (!wcsncmp(wsMonthNameAbbr.c_str(), str + *cc,
-                     wsMonthNameAbbr.GetLength())) {
-          break;
-        }
-      }
-      if (i < 12) {
-        *cc += wsMonthNameAbbr.GetLength();
-        month = i + 1;
-      }
-    } else if (symbol == L"MMMM") {
-      CFX_WideString wsMonthName;
-      uint16_t i = 0;
-      for (; i < 12; i++) {
-        wsMonthName = pLocale->GetMonthName(i, false);
+    } else if (symbol == L"MMM" || symbol == L"MMMM") {
+      for (uint16_t i = 0; i < 12; i++) {
+        CFX_WideString wsMonthName = pLocale->GetMonthName(i, symbol == L"MMM");
         if (wsMonthName.IsEmpty())
           continue;
-        if (!wcsncmp(wsMonthName.c_str(), str + *cc, wsMonthName.GetLength()))
-          break;
-      }
-      if (i < 12) {
-        *cc += wsMonthName.GetLength();
-        month = i + 1;
-      }
-    } else if (symbol == L"E") {
-      *cc += 1;
-    } else if (symbol == L"EEE") {
-      CFX_WideString wsDayNameAbbr;
-      uint16_t i = 0;
-      for (; i < 7; i++) {
-        wsDayNameAbbr = pLocale->GetDayName(i, true);
-        if (wsDayNameAbbr.IsEmpty())
-          continue;
-        if (!wcsncmp(wsDayNameAbbr.c_str(), str + *cc,
-                     wsDayNameAbbr.GetLength())) {
+        if (!wcsncmp(wsMonthName.c_str(), str + *cc, wsMonthName.GetLength())) {
+          *cc += wsMonthName.GetLength();
+          month = i + 1;
           break;
         }
       }
-      if (i < 12)
-        *cc += wsDayNameAbbr.GetLength();
-    } else if (symbol == L"EEEE") {
-      CFX_WideString wsDayName;
-      int32_t i = 0;
-      for (; i < 7; i++) {
-        wsDayName = pLocale->GetDayName(i, false);
-        if (wsDayName == L"")
+    } else if (symbol == L"EEE" || symbol == L"EEEE") {
+      for (uint16_t i = 0; i < 7; i++) {
+        CFX_WideString wsDayName = pLocale->GetDayName(i, symbol == L"EEE");
+        if (wsDayName.IsEmpty())
           continue;
-        if (!wcsncmp(wsDayName.c_str(), str + *cc, wsDayName.GetLength()))
+        if (!wcsncmp(wsDayName.c_str(), str + *cc, wsDayName.GetLength())) {
+          *cc += wsDayName.GetLength();
           break;
+        }
       }
-      if (i < 12)
-        *cc += wsDayName.GetLength();
-    } else if (symbol == L"e") {
-      *cc += 1;
-    } else if (symbol == L"G") {
-      *cc += 2;
-    } else if (symbol == L"YY") {
-      if (*cc + 2 > len || !FXSYS_isDecimalDigit(str[*cc]))
+    } else if (symbol == L"YY" || symbol == L"YYYY") {
+      if (*cc + symbol.GetLength() > len)
         return false;
 
-      year = str[(*cc)++] - '0';
-      if (*cc >= len || !FXSYS_isDecimalDigit(str[*cc]))
-        return false;
-
-      year = year * 10 + str[(*cc)++] - '0';
-      if (year <= 29)
-        year += 2000;
-      else
-        year += 1900;
-    } else if (symbol == L"YYYY") {
-      int i = 0;
       year = 0;
-      if (*cc + 4 > len)
-        return false;
-
-      while (i < 4) {
+      for (int i = 0; i < symbol.GetLength(); ++i) {
         if (!FXSYS_isDecimalDigit(str[*cc]))
           return false;
-
-        year = year * 10 + str[*cc] - '0';
-        (*cc)++;
-        i++;
+        year = year * 10 + str[(*cc)++] - '0';
       }
-    } else if (symbol == L"w") {
-      *cc += 1;
-    } else if (symbol == L"WW") {
+
+      if (symbol == L"YY") {
+        if (year <= 29)
+          year += 2000;
+        else
+          year += 1900;
+      }
+    } else if (symbol == L"G") {
       *cc += 2;
+    } else if (symbol == L"JJJ" || symbol == L"E" || symbol == L"e" ||
+               symbol == L"w" || symbol == L"WW") {
+      *cc += symbol.GetLength();
     }
   }
   if (*cc < len)
@@ -666,80 +600,52 @@ CFX_WideString DateFormat(const CFX_WideString& wsDatePattern,
     while (ccf < lenf && strf[ccf] == symbol[0])
       symbol += strf[ccf++];
 
-    if (symbol == L"D") {
+    if (symbol == L"D" || symbol == L"DD") {
       CFX_WideString wsDay;
-      wsDay.Format(L"%d", day);
+      wsDay.Format(symbol == L"D" ? L"%d" : L"%02d", day);
       wsResult += wsDay;
-    } else if (symbol == L"DD") {
-      CFX_WideString wsDay;
-      wsDay.Format(L"%02d", day);
-      wsResult += wsDay;
-    } else if (symbol == L"J") {
+    } else if (symbol == L"J" || symbol == L"JJJ") {
       uint16_t nDays = 0;
       for (int i = 1; i < month; i++)
         nDays += GetSolarMonthDays(year, i);
-
       nDays += day;
-      CFX_WideString wsDays;
-      wsDays.Format(L"%d", nDays);
-      wsResult += wsDays;
-    } else if (symbol == L"JJJ") {
-      uint16_t nDays = 0;
-      for (int i = 1; i < month; i++)
-        nDays += GetSolarMonthDays(year, i);
 
-      nDays += day;
       CFX_WideString wsDays;
-      wsDays.Format(L"%03d", nDays);
+      wsDays.Format(symbol == L"J" ? L"%d" : L"%03d", nDays);
       wsResult += wsDays;
-    } else if (symbol == L"M") {
+    } else if (symbol == L"M" || symbol == L"MM") {
       CFX_WideString wsMonth;
-      wsMonth.Format(L"%d", month);
+      wsMonth.Format(symbol == L"M" ? L"%d" : L"%02d", month);
       wsResult += wsMonth;
-    } else if (symbol == L"MM") {
-      CFX_WideString wsMonth;
-      wsMonth.Format(L"%02d", month);
-      wsResult += wsMonth;
-    } else if (symbol == L"MMM") {
-      wsResult += pLocale->GetMonthName(month - 1, true);
-    } else if (symbol == L"MMMM") {
-      wsResult += pLocale->GetMonthName(month - 1, false);
-    } else if (symbol == L"E") {
+    } else if (symbol == L"MMM" || symbol == L"MMMM") {
+      wsResult += pLocale->GetMonthName(month - 1, symbol == L"MMM");
+    } else if (symbol == L"E" || symbol == L"e") {
       uint16_t wWeekDay = GetWeekDay(year, month, day);
       CFX_WideString wsWeekDay;
-      wsWeekDay.Format(L"%d", wWeekDay + 1);
+      if (symbol == L"E")
+        wsWeekDay.Format(L"%d", wWeekDay + 1);
+      else
+        wsWeekDay.Format(L"%d", wWeekDay ? wWeekDay : 7);
       wsResult += wsWeekDay;
-    } else if (symbol == L"EEE") {
-      uint16_t wWeekDay = GetWeekDay(year, month, day);
-      wsResult += pLocale->GetDayName(wWeekDay, true);
-    } else if (symbol == L"EEEE") {
-      uint16_t wWeekDay = GetWeekDay(year, month, day);
-      if (pLocale)
-        wsResult += pLocale->GetDayName(wWeekDay, false);
-    } else if (symbol == L"e") {
-      uint16_t wWeekDay = GetWeekDay(year, month, day);
-      CFX_WideString wsWeekDay;
-      wsWeekDay.Format(L"%d", wWeekDay ? wWeekDay : 7);
-      wsResult += wsWeekDay;
+    } else if (symbol == L"EEE" || symbol == L"EEEE") {
+      wsResult +=
+          pLocale->GetDayName(GetWeekDay(year, month, day), symbol == L"EEE");
     } else if (symbol == L"G") {
       wsResult += pLocale->GetEraName(year > 0);
-    } else if (symbol == L"YY") {
+    } else if (symbol == L"YY" || symbol == L"YYYY") {
       CFX_WideString wsYear;
-      wsYear.Format(L"%02d", year % 100);
-      wsResult += wsYear;
-    } else if (symbol == L"YYYY") {
-      CFX_WideString wsYear;
-      wsYear.Format(L"%d", year);
+      if (symbol == L"YY")
+        wsYear.Format(L"%02d", year % 100);
+      else
+        wsYear.Format(L"%d", year);
       wsResult += wsYear;
     } else if (symbol == L"w") {
-      uint16_t week_index = GetWeekOfMonth(year, month, day);
       CFX_WideString wsWeekInMonth;
-      wsWeekInMonth.Format(L"%d", week_index);
+      wsWeekInMonth.Format(L"%d", GetWeekOfMonth(year, month, day));
       wsResult += wsWeekInMonth;
     } else if (symbol == L"WW") {
-      uint16_t week_index = GetWeekOfYear(year, month, day);
       CFX_WideString wsWeekInYear;
-      wsWeekInYear.Format(L"%02d", week_index);
+      wsWeekInYear.Format(L"%02d", GetWeekOfYear(year, month, day));
       wsResult += wsWeekInYear;
     }
   }
@@ -782,65 +688,35 @@ CFX_WideString TimeFormat(const CFX_WideString& wsTimePattern,
     while (ccf < lenf && strf[ccf] == symbol[0])
       symbol += strf[ccf++];
 
-    if (symbol == L"h") {
+    if (symbol == L"h" || symbol == L"hh") {
       if (wHour > 12)
         wHour -= 12;
 
       CFX_WideString wsHour;
-      wsHour.Format(L"%d", wHour == 0 ? 12 : wHour);
+      wsHour.Format(symbol == L"h" ? L"%d" : L"%02d", wHour == 0 ? 12 : wHour);
       wsResult += wsHour;
-    } else if (symbol == L"hh") {
+    } else if (symbol == L"K" || symbol == L"KK") {
+      CFX_WideString wsHour;
+      wsHour.Format(symbol == L"K" ? L"%d" : L"%02d", wHour == 0 ? 24 : wHour);
+      wsResult += wsHour;
+    } else if (symbol == L"k" || symbol == L"kk") {
       if (wHour > 12)
         wHour -= 12;
 
       CFX_WideString wsHour;
-      wsHour.Format(L"%02d", wHour == 0 ? 12 : wHour);
+      wsHour.Format(symbol == L"k" ? L"%d" : L"%02d", wHour);
       wsResult += wsHour;
-    } else if (symbol == L"K") {
+    } else if (symbol == L"H" || symbol == L"HH") {
       CFX_WideString wsHour;
-      wsHour.Format(L"%d", wHour == 0 ? 24 : wHour);
+      wsHour.Format(symbol == L"H" ? L"%d" : L"%02d", wHour);
       wsResult += wsHour;
-    } else if (symbol == L"KK") {
-      CFX_WideString wsHour;
-      wsHour.Format(L"%02d", wHour == 0 ? 24 : wHour);
-      wsResult += wsHour;
-    } else if (symbol == L"k") {
-      if (wHour > 12)
-        wHour -= 12;
-
-      CFX_WideString wsHour;
-      wsHour.Format(L"%d", wHour);
-      wsResult += wsHour;
-    } else if (symbol == L"H") {
-      CFX_WideString wsHour;
-      wsHour.Format(L"%d", wHour);
-      wsResult += wsHour;
-    } else if (symbol == L"kk") {
-      if (wHour > 12)
-        wHour -= 12;
-
-      CFX_WideString wsHour;
-      wsHour.Format(L"%02d", wHour);
-      wsResult += wsHour;
-    } else if (symbol == L"HH") {
-      CFX_WideString wsHour;
-      wsHour.Format(L"%02d", wHour);
-      wsResult += wsHour;
-    } else if (symbol == L"M") {
+    } else if (symbol == L"M" || symbol == L"MM") {
       CFX_WideString wsMinute;
-      wsMinute.Format(L"%d", minute);
+      wsMinute.Format(symbol == L"M" ? L"%d" : L"%02d", minute);
       wsResult += wsMinute;
-    } else if (symbol == L"MM") {
-      CFX_WideString wsMinute;
-      wsMinute.Format(L"%02d", minute);
-      wsResult += wsMinute;
-    } else if (symbol == L"S") {
+    } else if (symbol == L"S" || symbol == L"SS") {
       CFX_WideString wsSecond;
-      wsSecond.Format(L"%d", second);
-      wsResult += wsSecond;
-    } else if (symbol == L"SS") {
-      CFX_WideString wsSecond;
-      wsSecond.Format(L"%02d", second);
+      wsSecond.Format(symbol == L"S" ? L"%d" : L"%02d", second);
       wsResult += wsSecond;
     } else if (symbol == L"FFF") {
       CFX_WideString wsMilliseconds;
@@ -848,17 +724,10 @@ CFX_WideString TimeFormat(const CFX_WideString& wsTimePattern,
       wsResult += wsMilliseconds;
     } else if (symbol == L"A") {
       wsResult += pLocale->GetMeridiemName(!bPM);
-    } else if (symbol == L"Z") {
-      wsResult += L"GMT";
-      FX_TIMEZONE tz = pLocale->GetTimeZone();
-      if (tz.tzHour != 0 || tz.tzMinute != 0) {
-        wsResult += tz.tzHour < 0 ? L"-" : L"+";
+    } else if (symbol == L"Z" || symbol == L"z") {
+      if (symbol == L"Z")
+        wsResult += L"GMT";
 
-        CFX_WideString wsTimezone;
-        wsTimezone.Format(L"%02d:%02d", abs(tz.tzHour), tz.tzMinute);
-        wsResult += wsTimezone;
-      }
-    } else if (symbol == L"z") {
       FX_TIMEZONE tz = pLocale->GetTimeZone();
       if (tz.tzHour != 0 || tz.tzMinute != 0) {
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
