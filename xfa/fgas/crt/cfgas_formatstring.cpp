@@ -1441,14 +1441,8 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         ccf--;
         break;
       case 'z':
-        if (FXSYS_isDecimalDigit(str[cc])) {
-          wsValue->Insert(0, str[cc]);
-          cc--;
-        }
-        ccf--;
-        break;
       case 'Z':
-        if (str[cc] != ' ') {
+        if (strf[ccf] == 'z' || str[cc] != ' ') {
           if (FXSYS_isDecimalDigit(str[cc])) {
             wsValue->Insert(0, str[cc]);
             cc--;
@@ -1459,20 +1453,8 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         ccf--;
         break;
       case 'S':
-        if (str[cc] == '+' || str[cc] == ' ') {
-          cc--;
-        } else {
-          cc -= iMinusLen - 1;
-          if (cc < 0 || wcsncmp(str + cc, wsMinus.c_str(), iMinusLen))
-            return false;
-
-          cc--;
-          bNeg = true;
-        }
-        ccf--;
-        break;
       case 's':
-        if (str[cc] == '+') {
+        if (str[cc] == '+' || (strf[ccf] == 'S' && str[cc] == ' ')) {
           cc--;
         } else {
           cc -= iMinusLen - 1;
@@ -1525,19 +1507,10 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         break;
       }
       case 'r':
-        if (ccf - 1 >= 0 && strf[ccf - 1] == 'c') {
-          if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
-            bNeg = true;
-            cc -= 2;
-          }
-          ccf -= 2;
-        } else {
-          ccf--;
-        }
-        break;
       case 'R':
-        if (ccf - 1 >= 0 && strf[ccf - 1] == 'C') {
-          if (str[cc] == ' ') {
+        if (ccf - 1 >= 0 && ((strf[ccf] == 'R' && strf[ccf - 1] == 'C') ||
+                             (strf[ccf] == 'r' && strf[ccf - 1] == 'c'))) {
+          if (strf[ccf] == 'R' && str[cc] == ' ') {
             cc -= 2;
           } else if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
             bNeg = true;
@@ -1549,19 +1522,10 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         }
         break;
       case 'b':
-        if (ccf - 1 >= 0 && strf[ccf - 1] == 'd') {
-          if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
-            bNeg = true;
-            cc -= 2;
-          }
-          ccf -= 2;
-        } else {
-          ccf--;
-        }
-        break;
       case 'B':
-        if (ccf - 1 >= 0 && strf[ccf - 1] == 'D') {
-          if (str[cc] == ' ') {
+        if (ccf - 1 >= 0 && ((strf[ccf] == 'B' && strf[ccf - 1] == 'D') ||
+                             (strf[ccf] == 'b' && strf[ccf - 1] == 'd'))) {
+          if (strf[ccf] == 'B' && str[cc] == ' ') {
             cc -= 2;
           } else if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
             bNeg = true;
@@ -1572,10 +1536,6 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           ccf--;
         }
         break;
-      case '.':
-      case 'V':
-      case 'v':
-        return false;
       case '%': {
         CFX_WideString wsSymbol =
             pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent);
@@ -1589,6 +1549,9 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         bHavePercentSymbol = true;
         break;
       }
+      case '.':
+      case 'V':
+      case 'v':
       case '8':
         return false;
       case ',': {
@@ -1605,16 +1568,8 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         break;
       }
       case '(':
-        if (str[cc] == L'(')
-          bNeg = true;
-        else if (str[cc] != L' ')
-          return false;
-
-        cc--;
-        ccf--;
-        break;
       case ')':
-        if (str[cc] == L')')
+        if (str[cc] == strf[ccf])
           bNeg = true;
         else if (str[cc] != L' ')
           return false;
@@ -1665,14 +1620,8 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           ccf++;
           break;
         case 'z':
-          if (FXSYS_isDecimalDigit(str[cc])) {
-            *wsValue += str[cc];
-            cc++;
-          }
-          ccf++;
-          break;
         case 'Z':
-          if (str[cc] != ' ') {
+          if (strf[ccf] == 'z' || str[cc] != ' ') {
             if (FXSYS_isDecimalDigit(str[cc])) {
               *wsValue += str[cc];
               cc++;
@@ -1683,20 +1632,8 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           ccf++;
           break;
         case 'S':
-          if (str[cc] == '+' || str[cc] == ' ') {
-            cc++;
-          } else {
-            if (cc + iMinusLen > len ||
-                wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-              return false;
-            }
-            bNeg = true;
-            cc += iMinusLen;
-          }
-          ccf++;
-          break;
         case 's':
-          if (str[cc] == '+') {
+          if (str[cc] == '+' || (strf[ccf] == 'S' && str[cc] == ' ')) {
             cc++;
           } else {
             if (cc + iMinusLen > len ||
@@ -1746,17 +1683,10 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           break;
         }
         case 'c':
-          if (ccf + 1 < lenf && strf[ccf + 1] == 'r') {
-            if (str[cc] == 'C' && cc + 1 < len && str[cc + 1] == 'R') {
-              bNeg = true;
-              cc += 2;
-            }
-            ccf += 2;
-          }
-          break;
         case 'C':
-          if (ccf + 1 < lenf && strf[ccf + 1] == 'R') {
-            if (str[cc] == ' ') {
+          if (ccf + 1 < lenf && ((strf[ccf] == 'C' && strf[ccf + 1] == 'R') ||
+                                 (strf[ccf] == 'c' && strf[ccf + 1] == 'r'))) {
+            if (strf[ccf] == 'C' && str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'C' && cc + 1 < len && str[cc + 1] == 'R') {
               bNeg = true;
@@ -1766,17 +1696,10 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           }
           break;
         case 'd':
-          if (ccf + 1 < lenf && strf[ccf + 1] == 'b') {
-            if (str[cc] == 'D' && cc + 1 < len && str[cc + 1] == 'B') {
-              bNeg = true;
-              cc += 2;
-            }
-            ccf += 2;
-          }
-          break;
         case 'D':
-          if (ccf + 1 < lenf && strf[ccf + 1] == 'B') {
-            if (str[cc] == ' ') {
+          if (ccf + 1 < lenf && ((strf[ccf] == 'D' && strf[ccf + 1] == 'B') ||
+                                 (strf[ccf] == 'd' && strf[ccf + 1] == 'b'))) {
+            if (strf[ccf] == 'D' && str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'D' && cc + 1 < len && str[cc + 1] == 'B') {
               bNeg = true;
@@ -1818,16 +1741,8 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           break;
         }
         case '(':
-          if (str[cc] == L'(')
-            bNeg = true;
-          else if (str[cc] != L' ')
-            return false;
-
-          cc++;
-          ccf++;
-          break;
         case ')':
-          if (str[cc] == L')')
+          if (str[cc] == strf[ccf])
             bNeg = true;
           else if (str[cc] != L' ')
             return false;
