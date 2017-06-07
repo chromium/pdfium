@@ -53,16 +53,14 @@ const int32_t g_iFXLocaleNumSubCatCount =
     sizeof(g_FXLocaleNumSubCatData) / sizeof(FX_LOCALESUBCATEGORYINFO);
 
 struct FX_LOCALETIMEZONEINFO {
-  uint32_t uHash;
+  const wchar_t* name;
   int16_t iHour;
   int16_t iMinute;
 };
 
 const FX_LOCALETIMEZONEINFO g_FXLocaleTimeZoneData[] = {
-    {FXBSTR_ID(0, 'C', 'D', 'T'), -5, 0}, {FXBSTR_ID(0, 'C', 'S', 'T'), -6, 0},
-    {FXBSTR_ID(0, 'E', 'D', 'T'), -4, 0}, {FXBSTR_ID(0, 'E', 'S', 'T'), -5, 0},
-    {FXBSTR_ID(0, 'M', 'D', 'T'), -6, 0}, {FXBSTR_ID(0, 'M', 'S', 'T'), -7, 0},
-    {FXBSTR_ID(0, 'P', 'D', 'T'), -7, 0}, {FXBSTR_ID(0, 'P', 'S', 'T'), -8, 0},
+    {L"CDT", -5, 0}, {L"CST", -6, 0}, {L"EDT", -4, 0}, {L"EST", -5, 0},
+    {L"MDT", -6, 0}, {L"MST", -7, 0}, {L"PDT", -7, 0}, {L"PST", -8, 0},
 };
 
 const wchar_t gs_wsTimeSymbols[] = L"hHkKMSFAzZ";
@@ -236,50 +234,50 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       ccf++;
       continue;
     }
-    uint32_t dwSymbolNum = 1;
-    wchar_t dwCharSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
-      ccf++;
-      dwSymbolNum++;
-    }
-    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
-    if (dwSymbol == FXBSTR_ID(0, 0, 'D', '1')) {
+
+    CFX_WideString symbol;
+    symbol.Reserve(4);
+    symbol += strf[ccf++];
+    while (ccf < lenf && strf[ccf] == symbol[0])
+      symbol += strf[ccf++];
+
+    if (symbol == L"D") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       day = str[(*cc)++] - '0';
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
         day = day * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'D', '2')) {
+    } else if (symbol == L"DD") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       day = str[(*cc)++] - '0';
       if (*cc < len)
         day = day * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '1')) {
+    } else if (symbol == L"J") {
       int i = 0;
       while (*cc < len && i < 3 && FXSYS_isDecimalDigit(str[*cc])) {
         (*cc)++;
         i++;
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '3')) {
+    } else if (symbol == L"JJJ") {
       *cc += 3;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
+    } else if (symbol == L"M") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       month = str[(*cc)++] - '0';
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
         month = month * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
+    } else if (symbol == L"MM") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       month = str[(*cc)++] - '0';
       if (*cc < len)
         month = month * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '3')) {
+    } else if (symbol == L"MMM") {
       CFX_WideString wsMonthNameAbbr;
       uint16_t i = 0;
       for (; i < 12; i++) {
@@ -295,7 +293,7 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
         *cc += wsMonthNameAbbr.GetLength();
         month = i + 1;
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '4')) {
+    } else if (symbol == L"MMMM") {
       CFX_WideString wsMonthName;
       uint16_t i = 0;
       for (; i < 12; i++) {
@@ -309,9 +307,9 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
         *cc += wsMonthName.GetLength();
         month = i + 1;
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '1')) {
+    } else if (symbol == L"E") {
       *cc += 1;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '3')) {
+    } else if (symbol == L"EEE") {
       CFX_WideString wsDayNameAbbr;
       uint16_t i = 0;
       for (; i < 7; i++) {
@@ -325,7 +323,7 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       }
       if (i < 12)
         *cc += wsDayNameAbbr.GetLength();
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '4')) {
+    } else if (symbol == L"EEEE") {
       CFX_WideString wsDayName;
       int32_t i = 0;
       for (; i < 7; i++) {
@@ -337,11 +335,11 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       }
       if (i < 12)
         *cc += wsDayName.GetLength();
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'e', '1')) {
+    } else if (symbol == L"e") {
       *cc += 1;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'G', '1')) {
+    } else if (symbol == L"G") {
       *cc += 2;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'Y', '2')) {
+    } else if (symbol == L"YY") {
       if (*cc + 2 > len || !FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
@@ -354,7 +352,7 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
         year += 2000;
       else
         year += 1900;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'Y', '4')) {
+    } else if (symbol == L"YYYY") {
       int i = 0;
       year = 0;
       if (*cc + 4 > len)
@@ -368,9 +366,9 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
         (*cc)++;
         i++;
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'w', '1')) {
+    } else if (symbol == L"w") {
       *cc += 1;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'W', '2')) {
+    } else if (symbol == L"WW") {
       *cc += 2;
     }
   }
@@ -437,30 +435,23 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
       continue;
     }
 
-    uint32_t dwSymbolNum = 1;
-    wchar_t dwCharSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
-      ccf++;
-      dwSymbolNum++;
-    }
+    CFX_WideString symbol;
+    symbol.Reserve(4);
+    symbol += strf[ccf++];
+    while (ccf < lenf && strf[ccf] == symbol[0])
+      symbol += strf[ccf++];
 
-    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
-    if (dwSymbol == FXBSTR_ID(0, 0, 'k', '1') ||
-        dwSymbol == FXBSTR_ID(0, 0, 'H', '1') ||
-        dwSymbol == FXBSTR_ID(0, 0, 'h', '1') ||
-        dwSymbol == FXBSTR_ID(0, 0, 'K', '1')) {
+    if (symbol == L"k" || symbol == L"K" || symbol == L"h" || symbol == L"H") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       hour = str[(*cc)++] - '0';
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
         hour = hour * 10 + str[(*cc)++] - '0';
-      if (dwSymbol == FXBSTR_ID(0, 0, 'K', '1') && hour == 24)
+      if (symbol == L"K" && hour == 24)
         hour = 0;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'k', '2') ||
-               dwSymbol == FXBSTR_ID(0, 0, 'H', '2') ||
-               dwSymbol == FXBSTR_ID(0, 0, 'h', '2') ||
-               dwSymbol == FXBSTR_ID(0, 0, 'K', '2')) {
+    } else if (symbol == L"kk" || symbol == L"KK" || symbol == L"hh" ||
+               symbol == L"HH") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
@@ -471,16 +462,16 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
         return false;
 
       hour = hour * 10 + str[(*cc)++] - '0';
-      if (dwSymbol == FXBSTR_ID(0, 0, 'K', '2') && hour == 24)
+      if (symbol == L"KK" && hour == 24)
         hour = 0;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
+    } else if (symbol == L"M") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       minute = str[(*cc)++] - '0';
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
         minute = minute * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
+    } else if (symbol == L"MM") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
@@ -491,14 +482,14 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
         return false;
 
       minute = minute * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '1')) {
+    } else if (symbol == L"S") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
       second = str[(*cc)++] - '0';
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
         second = second * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '2')) {
+    } else if (symbol == L"SS") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
@@ -509,7 +500,7 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
         return false;
 
       second = second * 10 + str[(*cc)++] - '0';
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'F', '3')) {
+    } else if (symbol == L"FFF") {
       if (*cc + 3 >= len)
         return false;
 
@@ -521,7 +512,7 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
         millisecond = millisecond * 10 + str[(*cc)++] - '0';
         i++;
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'A', '1')) {
+    } else if (symbol == L"A") {
       CFX_WideString wsAM = pLocale->GetMeridiemName(true);
       CFX_WideString wsPM = pLocale->GetMeridiemName(false);
       if ((*cc + wsAM.GetLength() <= len) &&
@@ -534,14 +525,14 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
         bHasA = true;
         bPM = true;
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'Z', '1')) {
+    } else if (symbol == L"Z") {
       if (*cc + 3 > len)
         continue;
 
-      uint32_t dwHash = str[(*cc)++];
-      dwHash = (dwHash << 8) | str[(*cc)++];
-      dwHash = (dwHash << 8) | str[(*cc)++];
-      if (dwHash == FXBSTR_ID(0, 'G', 'M', 'T')) {
+      CFX_WideString tz(str[(*cc)++]);
+      tz += str[(*cc)++];
+      tz += str[(*cc)++];
+      if (tz == L"GMT") {
         FX_TIMEZONE tzDiff;
         tzDiff.tzHour = 0;
         tzDiff.tzMinute = 0;
@@ -550,19 +541,18 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
 
         ResolveZone(tzDiff, pLocale, &hour, &minute);
       } else {
-        const FX_LOCALETIMEZONEINFO* pEnd =
-            g_FXLocaleTimeZoneData + FX_ArraySize(g_FXLocaleTimeZoneData);
-        const FX_LOCALETIMEZONEINFO* pTimeZoneInfo =
-            std::lower_bound(g_FXLocaleTimeZoneData, pEnd, dwHash,
-                             [](const FX_LOCALETIMEZONEINFO& info,
-                                uint32_t hash) { return info.uHash < hash; });
-        if (pTimeZoneInfo < pEnd && dwHash == pTimeZoneInfo->uHash) {
-          hour += pTimeZoneInfo->iHour;
-          minute += pTimeZoneInfo->iHour > 0 ? pTimeZoneInfo->iMinute
-                                             : -pTimeZoneInfo->iMinute;
+        // Search the timezone list. There are only 8 of them, so linear scan.
+        for (size_t i = 0; i < FX_ArraySize(g_FXLocaleTimeZoneData); ++i) {
+          const FX_LOCALETIMEZONEINFO& info = g_FXLocaleTimeZoneData[i];
+          if (tz != info.name)
+            continue;
+
+          hour += info.iHour;
+          minute += info.iHour > 0 ? info.iMinute : -info.iMinute;
+          break;
         }
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'z', '1')) {
+    } else if (symbol == L"z") {
       if (str[*cc] != 'Z') {
         FX_TIMEZONE tzDiff;
         *cc += ParseTimeZone(str + *cc, len - *cc, &tzDiff);
@@ -670,22 +660,21 @@ CFX_WideString DateFormat(const CFX_WideString& wsDatePattern,
       continue;
     }
 
-    uint32_t dwSymbolNum = 1;
-    wchar_t dwCharSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
-      ccf++;
-      dwSymbolNum++;
-    }
-    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
-    if (dwSymbol == FXBSTR_ID(0, 0, 'D', '1')) {
+    CFX_WideString symbol;
+    symbol.Reserve(4);
+    symbol += strf[ccf++];
+    while (ccf < lenf && strf[ccf] == symbol[0])
+      symbol += strf[ccf++];
+
+    if (symbol == L"D") {
       CFX_WideString wsDay;
       wsDay.Format(L"%d", day);
       wsResult += wsDay;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'D', '2')) {
+    } else if (symbol == L"DD") {
       CFX_WideString wsDay;
       wsDay.Format(L"%02d", day);
       wsResult += wsDay;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '1')) {
+    } else if (symbol == L"J") {
       uint16_t nDays = 0;
       for (int i = 1; i < month; i++)
         nDays += GetSolarMonthDays(year, i);
@@ -694,7 +683,7 @@ CFX_WideString DateFormat(const CFX_WideString& wsDatePattern,
       CFX_WideString wsDays;
       wsDays.Format(L"%d", nDays);
       wsResult += wsDays;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '3')) {
+    } else if (symbol == L"JJJ") {
       uint16_t nDays = 0;
       for (int i = 1; i < month; i++)
         nDays += GetSolarMonthDays(year, i);
@@ -703,51 +692,51 @@ CFX_WideString DateFormat(const CFX_WideString& wsDatePattern,
       CFX_WideString wsDays;
       wsDays.Format(L"%03d", nDays);
       wsResult += wsDays;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
+    } else if (symbol == L"M") {
       CFX_WideString wsMonth;
       wsMonth.Format(L"%d", month);
       wsResult += wsMonth;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
+    } else if (symbol == L"MM") {
       CFX_WideString wsMonth;
       wsMonth.Format(L"%02d", month);
       wsResult += wsMonth;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '3')) {
+    } else if (symbol == L"MMM") {
       wsResult += pLocale->GetMonthName(month - 1, true);
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '4')) {
+    } else if (symbol == L"MMMM") {
       wsResult += pLocale->GetMonthName(month - 1, false);
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '1')) {
+    } else if (symbol == L"E") {
       uint16_t wWeekDay = GetWeekDay(year, month, day);
       CFX_WideString wsWeekDay;
       wsWeekDay.Format(L"%d", wWeekDay + 1);
       wsResult += wsWeekDay;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '3')) {
+    } else if (symbol == L"EEE") {
       uint16_t wWeekDay = GetWeekDay(year, month, day);
       wsResult += pLocale->GetDayName(wWeekDay, true);
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '4')) {
+    } else if (symbol == L"EEEE") {
       uint16_t wWeekDay = GetWeekDay(year, month, day);
       if (pLocale)
         wsResult += pLocale->GetDayName(wWeekDay, false);
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'e', '1')) {
+    } else if (symbol == L"e") {
       uint16_t wWeekDay = GetWeekDay(year, month, day);
       CFX_WideString wsWeekDay;
       wsWeekDay.Format(L"%d", wWeekDay ? wWeekDay : 7);
       wsResult += wsWeekDay;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'G', '1')) {
+    } else if (symbol == L"G") {
       wsResult += pLocale->GetEraName(year > 0);
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'Y', '2')) {
+    } else if (symbol == L"YY") {
       CFX_WideString wsYear;
       wsYear.Format(L"%02d", year % 100);
       wsResult += wsYear;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'Y', '4')) {
+    } else if (symbol == L"YYYY") {
       CFX_WideString wsYear;
       wsYear.Format(L"%d", year);
       wsResult += wsYear;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'w', '1')) {
+    } else if (symbol == L"w") {
       uint16_t week_index = GetWeekOfMonth(year, month, day);
       CFX_WideString wsWeekInMonth;
       wsWeekInMonth.Format(L"%d", week_index);
       wsResult += wsWeekInMonth;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'W', '2')) {
+    } else if (symbol == L"WW") {
       uint16_t week_index = GetWeekOfYear(year, month, day);
       CFX_WideString wsWeekInYear;
       wsWeekInYear.Format(L"%02d", week_index);
@@ -787,80 +776,79 @@ CFX_WideString TimeFormat(const CFX_WideString& wsTimePattern,
       continue;
     }
 
-    uint32_t dwSymbolNum = 1;
-    wchar_t dwCharSymbol = strf[ccf++];
-    while (ccf < lenf && strf[ccf] == dwCharSymbol) {
-      ccf++;
-      dwSymbolNum++;
-    }
-    uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
-    if (dwSymbol == FXBSTR_ID(0, 0, 'h', '1')) {
+    CFX_WideString symbol;
+    symbol.Reserve(4);
+    symbol += strf[ccf++];
+    while (ccf < lenf && strf[ccf] == symbol[0])
+      symbol += strf[ccf++];
+
+    if (symbol == L"h") {
       if (wHour > 12)
         wHour -= 12;
 
       CFX_WideString wsHour;
       wsHour.Format(L"%d", wHour == 0 ? 12 : wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'h', '2')) {
+    } else if (symbol == L"hh") {
       if (wHour > 12)
         wHour -= 12;
 
       CFX_WideString wsHour;
       wsHour.Format(L"%02d", wHour == 0 ? 12 : wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'K', '1')) {
+    } else if (symbol == L"K") {
       CFX_WideString wsHour;
       wsHour.Format(L"%d", wHour == 0 ? 24 : wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'K', '2')) {
+    } else if (symbol == L"KK") {
       CFX_WideString wsHour;
       wsHour.Format(L"%02d", wHour == 0 ? 24 : wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'k', '1')) {
+    } else if (symbol == L"k") {
       if (wHour > 12)
         wHour -= 12;
 
       CFX_WideString wsHour;
       wsHour.Format(L"%d", wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'H', '1')) {
+    } else if (symbol == L"H") {
       CFX_WideString wsHour;
       wsHour.Format(L"%d", wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'k', '2')) {
+    } else if (symbol == L"kk") {
       if (wHour > 12)
         wHour -= 12;
 
       CFX_WideString wsHour;
       wsHour.Format(L"%02d", wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'H', '2')) {
+    } else if (symbol == L"HH") {
       CFX_WideString wsHour;
       wsHour.Format(L"%02d", wHour);
       wsResult += wsHour;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
+    } else if (symbol == L"M") {
       CFX_WideString wsMinute;
       wsMinute.Format(L"%d", minute);
       wsResult += wsMinute;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
+    } else if (symbol == L"MM") {
       CFX_WideString wsMinute;
       wsMinute.Format(L"%02d", minute);
       wsResult += wsMinute;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '1')) {
+    } else if (symbol == L"S") {
       CFX_WideString wsSecond;
       wsSecond.Format(L"%d", second);
       wsResult += wsSecond;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '2')) {
+    } else if (symbol == L"SS") {
       CFX_WideString wsSecond;
       wsSecond.Format(L"%02d", second);
       wsResult += wsSecond;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'F', '3')) {
+    } else if (symbol == L"FFF") {
       CFX_WideString wsMilliseconds;
       wsMilliseconds.Format(L"%03d", millisecond);
       wsResult += wsMilliseconds;
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'A', '1')) {
+    } else if (symbol == L"A") {
       wsResult += pLocale->GetMeridiemName(!bPM);
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'Z', '1')) {
+    } else if (symbol == L"Z") {
       wsResult += L"GMT";
       FX_TIMEZONE tz = pLocale->GetTimeZone();
       if (tz.tzHour != 0 || tz.tzMinute != 0) {
@@ -870,7 +858,7 @@ CFX_WideString TimeFormat(const CFX_WideString& wsTimePattern,
         wsTimezone.Format(L"%02d:%02d", abs(tz.tzHour), tz.tzMinute);
         wsResult += wsTimezone;
       }
-    } else if (dwSymbol == FXBSTR_ID(0, 0, 'z', '1')) {
+    } else if (symbol == L"z") {
       FX_TIMEZONE tz = pLocale->GetTimeZone();
       if (tz.tzHour != 0 || tz.tzMinute != 0) {
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
