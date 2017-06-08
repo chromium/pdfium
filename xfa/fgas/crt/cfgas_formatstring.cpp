@@ -76,14 +76,14 @@ int32_t ParseTimeZone(const wchar_t* pStr, int32_t iLen, FX_TIMEZONE* tz) {
   int32_t iStart = 1;
   int32_t iEnd = iStart + 2;
   while (iStart < iLen && iStart < iEnd)
-    tz->tzHour = tz->tzHour * 10 + pStr[iStart++] - '0';
+    tz->tzHour = tz->tzHour * 10 + FXSYS_DecimalCharToInt(pStr[iStart++]);
 
   if (iStart < iLen && pStr[iStart] == ':')
     iStart++;
 
   iEnd = iStart + 2;
   while (iStart < iLen && iStart < iEnd)
-    tz->tzMinute = tz->tzMinute * 10 + pStr[iStart++] - '0';
+    tz->tzMinute = tz->tzMinute * 10 + FXSYS_DecimalCharToInt(pStr[iStart++]);
 
   if (pStr[0] == '-')
     tz->tzHour = -tz->tzHour;
@@ -92,12 +92,8 @@ int32_t ParseTimeZone(const wchar_t* pStr, int32_t iLen, FX_TIMEZONE* tz) {
 }
 
 int32_t ConvertHex(int32_t iKeyValue, wchar_t ch) {
-  if (std::iswdigit(ch))
-    return iKeyValue * 16 + ch - '0';
-  if (FXSYS_islower(ch))
-    return iKeyValue * 16 + ch - 'a' + 10;
-  if (FXSYS_isupper(ch))
-    return iKeyValue * 16 + ch - 'A' + 10;
+  if (FXSYS_isHexDigit(ch))
+    return iKeyValue * 16 + FXSYS_HexCharToInt(ch);
   return iKeyValue;
 }
 
@@ -245,9 +241,9 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      day = str[(*cc)++] - '0';
+      day = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc < len && (symbol == L"DD" || FXSYS_isDecimalDigit(str[*cc])))
-        day = day * 10 + str[(*cc)++] - '0';
+        day = day * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
     } else if (symbol == L"J") {
       int i = 0;
       while (*cc < len && i < 3 && FXSYS_isDecimalDigit(str[*cc])) {
@@ -258,9 +254,9 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      month = str[(*cc)++] - '0';
+      month = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc < len && (symbol == L"MM" || FXSYS_isDecimalDigit(str[*cc])))
-        month = month * 10 + str[(*cc)++] - '0';
+        month = month * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
     } else if (symbol == L"MMM" || symbol == L"MMMM") {
       for (uint16_t i = 0; i < 12; i++) {
         CFX_WideString wsMonthName = pLocale->GetMonthName(i, symbol == L"MMM");
@@ -290,7 +286,7 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       for (int i = 0; i < symbol.GetLength(); ++i) {
         if (!FXSYS_isDecimalDigit(str[*cc]))
           return false;
-        year = year * 10 + str[(*cc)++] - '0';
+        year = year * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
       }
 
       if (symbol == L"YY") {
@@ -379,9 +375,9 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      hour = str[(*cc)++] - '0';
+      hour = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
-        hour = hour * 10 + str[(*cc)++] - '0';
+        hour = hour * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (symbol == L"K" && hour == 24)
         hour = 0;
     } else if (symbol == L"kk" || symbol == L"KK" || symbol == L"hh" ||
@@ -389,51 +385,51 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      hour = str[(*cc)++] - '0';
+      hour = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc >= len)
         return false;
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      hour = hour * 10 + str[(*cc)++] - '0';
+      hour = hour * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (symbol == L"KK" && hour == 24)
         hour = 0;
     } else if (symbol == L"M") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      minute = str[(*cc)++] - '0';
+      minute = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
-        minute = minute * 10 + str[(*cc)++] - '0';
+        minute = minute * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
     } else if (symbol == L"MM") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      minute = str[(*cc)++] - '0';
+      minute = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc >= len)
         return false;
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      minute = minute * 10 + str[(*cc)++] - '0';
+      minute = minute * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
     } else if (symbol == L"S") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      second = str[(*cc)++] - '0';
+      second = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc < len && FXSYS_isDecimalDigit(str[*cc]))
-        second = second * 10 + str[(*cc)++] - '0';
+        second = second * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
     } else if (symbol == L"SS") {
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      second = str[(*cc)++] - '0';
+      second = FXSYS_DecimalCharToInt(str[(*cc)++]);
       if (*cc >= len)
         return false;
       if (!FXSYS_isDecimalDigit(str[*cc]))
         return false;
 
-      second = second * 10 + str[(*cc)++] - '0';
+      second = second * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
     } else if (symbol == L"FFF") {
       if (*cc + 3 >= len)
         return false;
@@ -443,7 +439,7 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
         if (!FXSYS_isDecimalDigit(str[*cc]))
           return false;
 
-        millisecond = millisecond * 10 + str[(*cc)++] - '0';
+        millisecond = millisecond * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
         i++;
       }
     } else if (symbol == L"A") {
@@ -748,7 +744,7 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate,
     if (!FXSYS_isDecimalDigit(str[cc]))
       return false;
 
-    wYear = wYear * 10 + str[cc++] - '0';
+    wYear = wYear * 10 + FXSYS_DecimalCharToInt(str[cc++]);
   }
   year = wYear;
   if (cc < 4 || wYear < 1900)
@@ -764,7 +760,7 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate,
       if (!FXSYS_isDecimalDigit(str[cc]))
         return false;
 
-      tmpM = tmpM * 10 + str[cc++] - '0';
+      tmpM = tmpM * 10 + FXSYS_DecimalCharToInt(str[cc++]);
     }
     month = tmpM;
     if (cc == cc_start + 1 || tmpM > 12 || tmpM < 1)
@@ -779,7 +775,7 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate,
         if (!FXSYS_isDecimalDigit(str[cc]))
           return false;
 
-        tmpD = tmpD * 10 + str[cc++] - '0';
+        tmpD = tmpD * 10 + FXSYS_DecimalCharToInt(str[cc++]);
       }
       day = tmpD;
       if (tmpD < 1)
@@ -821,7 +817,7 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
     if (!FXSYS_isDecimalDigit(str[cc]))
       return false;
 
-    hour = hour * 10 + str[cc++] - '0';
+    hour = hour * 10 + FXSYS_DecimalCharToInt(str[cc++]);
   }
 
   if (cc < 2 || hour >= 24)
@@ -835,7 +831,7 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
       if (!FXSYS_isDecimalDigit(str[cc]))
         return false;
 
-      minute = minute * 10 + str[cc++] - '0';
+      minute = minute * 10 + FXSYS_DecimalCharToInt(str[cc++]);
     }
     if (cc == cc_start + 1 || minute >= 60)
       return false;
@@ -850,7 +846,7 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
           if (!FXSYS_isDecimalDigit(str[cc]))
             return false;
 
-          second = second * 10 + str[cc++] - '0';
+          second = second * 10 + FXSYS_DecimalCharToInt(str[cc++]);
         }
         if (cc == cc_start + 1 || second >= 60)
           return false;
@@ -862,7 +858,8 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
               if (!FXSYS_isDecimalDigit(str[cc]))
                 return false;
 
-              millisecond = millisecond * 10 + str[cc++] - '0';
+              millisecond =
+                  millisecond * 10 + FXSYS_DecimalCharToInt(str[cc++]);
             }
             if (cc < cc_start + 3)
               return false;
@@ -1301,7 +1298,7 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           if (str[cc] == 'E' || str[cc] == 'e')
             break;
           if (FXSYS_isDecimalDigit(str[cc])) {
-            iExponent = iExponent + (str[cc] - '0') * 10;
+            iExponent = iExponent + FXSYS_DecimalCharToInt(str[cc]) * 10;
             cc--;
             continue;
           }
@@ -1492,7 +1489,7 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (!FXSYS_isDecimalDigit(str[cc]))
               break;
 
-            iExponent = iExponent * 10 + str[cc] - '0';
+            iExponent = iExponent * 10 + FXSYS_DecimalCharToInt(str[cc]);
             cc++;
           }
           iExponent = bExpSign ? -iExponent : iExponent;
