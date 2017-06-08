@@ -121,9 +121,15 @@ void CPDF_LinkExtract::ParseLink() {
         }
         // Check for potential web URLs and email addresses.
         // Ftp address, file system links, data, blob etc. are not checked.
-        if (nCount > 5 &&
-            (CheckWebLink(strBeCheck) || CheckMailLink(strBeCheck))) {
-          m_LinkArray.push_back({start, nCount, strBeCheck});
+        if (nCount > 5) {
+          int32_t nStartOffset;
+          int32_t nCountOverload;
+          if (CheckWebLink(&strBeCheck, &nStartOffset, &nCountOverload)) {
+            m_LinkArray.push_back(
+                {start + nStartOffset, nCountOverload, strBeCheck});
+          } else if (CheckMailLink(&strBeCheck)) {
+            m_LinkArray.push_back({start, nCount, strBeCheck});
+          }
         }
       }
       start = ++pos;
@@ -136,13 +142,15 @@ void CPDF_LinkExtract::ParseLink() {
   }
 }
 
-bool CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck) {
+bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
+                                    int32_t* nStart,
+                                    int32_t* nCount) {
   static const wchar_t kHttpScheme[] = L"http";
   static const FX_STRSIZE kHttpSchemeLen = FXSYS_len(kHttpScheme);
   static const wchar_t kWWWAddrStart[] = L"www.";
   static const FX_STRSIZE kWWWAddrStartLen = FXSYS_len(kWWWAddrStart);
 
-  CFX_WideString str = strBeCheck;
+  CFX_WideString str = *strBeCheck;
   str.MakeLower();
 
   FX_STRSIZE len = str.GetLength();
@@ -156,7 +164,9 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck) {
       if (str[off] == L':' && str[off + 1] == L'/' && str[off + 2] == L'/') {
         FX_STRSIZE end = FindWebLinkEnding(str, off + 3);
         if (end > off + 3) {  // Non-empty host name.
-          strBeCheck = strBeCheck.Mid(start, end - start + 1);
+          *nStart = start;
+          *nCount = end - start + 1;
+          *strBeCheck = strBeCheck->Mid(*nStart, *nCount);
           return true;
         }
       }
@@ -168,15 +178,17 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck) {
   if (start != -1 && len > start + kWWWAddrStartLen) {
     FX_STRSIZE end = FindWebLinkEnding(str, start);
     if (end > start + kWWWAddrStartLen) {
-      strBeCheck = L"http://" + strBeCheck.Mid(start, end - start + 1);
+      *nStart = start;
+      *nCount = end - start + 1;
+      *strBeCheck = L"http://" + strBeCheck->Mid(*nStart, *nCount);
       return true;
     }
   }
   return false;
 }
 
-bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
-  int aPos = str.Find(L'@');
+bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
+  int aPos = str->Find(L'@');
   // Invalid when no '@'.
   if (aPos < 1)
     return false;
@@ -184,7 +196,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
   // Check the local part.
   int pPos = aPos;  // Used to track the position of '@' or '.'.
   for (int i = aPos - 1; i >= 0; i--) {
-    wchar_t ch = str.GetAt(i);
+    wchar_t ch = str->GetAt(i);
     if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch))
       continue;
 
@@ -196,7 +208,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
       // End extracting for other invalid chars, '.' at the beginning, or
       // consecutive '.'.
       int removed_len = i == pPos - 1 ? i + 2 : i + 1;
-      str = str.Right(str.GetLength() - removed_len);
+      *str = str->Right(str->GetLength() - removed_len);
       break;
     }
     // Found a valid '.'.
@@ -204,23 +216,23 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
   }
 
   // Check the domain name part.
-  aPos = str.Find(L'@');
+  aPos = str->Find(L'@');
   if (aPos < 1)
     return false;
 
-  str.TrimRight(L'.');
+  str->TrimRight(L'.');
   // At least one '.' in domain name, but not at the beginning.
   // TODO(weili): RFC5322 allows domain names to be a local name without '.'.
   // Check whether we should remove this check.
-  int ePos = str.Find(L'.', aPos + 1);
+  int ePos = str->Find(L'.', aPos + 1);
   if (ePos == -1 || ePos == aPos + 1)
     return false;
 
   // Validate all other chars in domain name.
-  int nLen = str.GetLength();
+  int nLen = str->GetLength();
   pPos = 0;  // Used to track the position of '.'.
   for (int i = aPos + 1; i < nLen; i++) {
-    wchar_t wch = str.GetAt(i);
+    wchar_t wch = str->GetAt(i);
     if (wch == L'-' || FXSYS_iswalnum(wch))
       continue;
 
@@ -229,7 +241,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
       int host_end = i == pPos + 1 ? i - 2 : i - 1;
       if (pPos > 0 && host_end - aPos >= 3) {
         // Trim the ending invalid chars if there is at least one '.' and name.
-        str = str.Left(host_end + 1);
+        *str = str->Left(host_end + 1);
         break;
       }
       return false;
@@ -237,8 +249,8 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
     pPos = i;
   }
 
-  if (str.Find(L"mailto:") == -1)
-    str = L"mailto:" + str;
+  if (str->Find(L"mailto:") == -1)
+    *str = L"mailto:" + *str;
 
   return true;
 }
