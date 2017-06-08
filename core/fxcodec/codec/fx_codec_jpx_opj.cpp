@@ -162,6 +162,9 @@ static void sycc_to_rgb(int offset,
 
 static void sycc444_to_rgb(opj_image_t* img) {
   int prec = img->comps[0].prec;
+  // If we shift 31 we're going to go negative, then things go bad.
+  if (prec > 30)
+    return;
   int offset = 1 << (prec - 1);
   int upb = (1 << prec) - 1;
   OPJ_UINT32 maxw =
