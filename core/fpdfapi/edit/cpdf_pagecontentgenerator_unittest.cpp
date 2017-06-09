@@ -26,7 +26,7 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
   }
 
   void TestProcessPath(CPDF_PageContentGenerator* pGen,
-                       CFX_ByteTextBuf* buf,
+                       std::ostringstream* buf,
                        CPDF_PathObject* pPathObj) {
     pGen->ProcessPath(buf, pPathObj);
   }
@@ -38,7 +38,7 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
   }
 
   void TestProcessText(CPDF_PageContentGenerator* pGen,
-                       CFX_ByteTextBuf* buf,
+                       std::ostringstream* buf,
                        CPDF_TextObject* pTextObj) {
     pGen->ProcessText(buf, pTextObj);
   }
@@ -52,9 +52,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
 
   auto pTestPage = pdfium::MakeUnique<CPDF_Page>(nullptr, nullptr, false);
   CPDF_PageContentGenerator generator(pTestPage.get());
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
-  EXPECT_EQ("q 10 5 3 25 re B* Q\n", buf.MakeString());
+  EXPECT_EQ("q 10 5 3 25 re B* Q\n", CFX_ByteString(buf));
 
   pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendPoint(CFX_PointF(0, 0), FXPT_TYPE::MoveTo, false);
@@ -64,10 +64,10 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   pPathObj->m_Path.AppendPoint(CFX_PointF(0, 3.78f), FXPT_TYPE::LineTo, true);
   pPathObj->m_FillType = 0;
   pPathObj->m_bStroke = false;
-  buf.Clear();
+  buf.str("");
 
   TestProcessPath(&generator, &buf, pPathObj.get());
-  EXPECT_EQ("q 0 0 5.2 3.78 re n Q\n", buf.MakeString());
+  EXPECT_EQ("q 0 0 5.2 3.78 re n Q\n", CFX_ByteString(buf));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
@@ -96,12 +96,12 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
 
   auto pTestPage = pdfium::MakeUnique<CPDF_Page>(nullptr, nullptr, false);
   CPDF_PageContentGenerator generator(pTestPage.get());
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ(
       "q 3.102 4.67 m 5.45 0.29 l 4.24 3.15 4.65 2.98 3.456 0.24 c 10.6 11.15 "
       "l 11 12.5 l 11.46 12.67 11.84 12.96 12 13.64 c h f Q\n",
-      buf.MakeString());
+      CFX_ByteString(buf));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
@@ -126,9 +126,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
   auto pTestPage = pdfium::MakeUnique<CPDF_Page>(pDoc.get(), pPageDict, false);
   CPDF_PageContentGenerator generator(pTestPage.get());
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
-  CFX_ByteString pathString = buf.MakeString();
+  CFX_ByteString pathString(buf);
 
   // Color RGB values used are integers divided by 255.
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /",
@@ -143,9 +143,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
 
   // Same path, now with a stroke.
   pPathObj->m_GraphState.SetLineWidth(10.5f);
-  buf.Clear();
+  buf.str("");
   TestProcessPath(&generator, &buf, pPathObj.get());
-  CFX_ByteString pathString2 = buf.MakeString();
+  CFX_ByteString pathString2(buf);
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
             pathString2.Left(55));
   EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", pathString2.Right(28));
@@ -177,9 +177,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   pTextObj->m_GeneralState.SetStrokeAlpha(0.8f);
   pTextObj->Transform(CFX_Matrix(1, 0, 0, 1, 100, 100));
   pTextObj->SetText("Hello World");
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   TestProcessText(&generator, &buf, pTextObj.get());
-  CFX_ByteString textString = buf.MakeString();
+  CFX_ByteString textString(buf);
   int firstResourceAt = textString.Find('/') + 1;
   int secondResourceAt = textString.ReverseFind('/') + 1;
   CFX_ByteString firstString = textString.Left(firstResourceAt);
@@ -221,7 +221,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   auto pTestPage = pdfium::MakeUnique<CPDF_Page>(pDoc.get(), pPageDict, false);
   CPDF_PageContentGenerator generator(pTestPage.get());
 
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   {
     // Set the text object font and text
     auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
@@ -245,7 +245,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     TestProcessText(&generator, &buf, pTextObj.get());
   }
 
-  CFX_ByteString textString = buf.MakeString();
+  CFX_ByteString textString(buf);
   int firstResourceAt = textString.Find('/') + 1;
   CFX_ByteString firstString = textString.Left(firstResourceAt);
   CFX_ByteString lastString =

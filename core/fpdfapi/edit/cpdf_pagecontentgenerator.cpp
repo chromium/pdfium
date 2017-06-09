@@ -28,7 +28,7 @@
 
 namespace {
 
-CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, const CFX_Matrix& matrix) {
+std::ostream& operator<<(std::ostream& ar, const CFX_Matrix& matrix) {
   ar << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " "
      << matrix.e << " " << matrix.f;
   return ar;
@@ -61,7 +61,7 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
 
 void CPDF_PageContentGenerator::GenerateContent() {
   CPDF_Document* pDoc = m_pDocument.Get();
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   if (!ProcessPageObjects(&buf))
     return;
 
@@ -69,7 +69,8 @@ void CPDF_PageContentGenerator::GenerateContent() {
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetObjectFor("Contents") : nullptr;
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
-  pStream->SetData(buf.GetBuffer(), buf.GetLength());
+  pStream->SetData(reinterpret_cast<const uint8_t*>(buf.str().c_str()),
+                   buf.tellp());
   if (pContent) {
     CPDF_Array* pArray = ToArray(pContent);
     if (pArray) {
@@ -133,7 +134,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
   return name;
 }
 
-bool CPDF_PageContentGenerator::ProcessPageObjects(CFX_ByteTextBuf* buf) {
+bool CPDF_PageContentGenerator::ProcessPageObjects(std::ostringstream* buf) {
   bool bDirty = false;
   for (auto& pPageObj : m_pageObjects) {
     if (!pPageObj->IsDirty())
@@ -150,7 +151,7 @@ bool CPDF_PageContentGenerator::ProcessPageObjects(CFX_ByteTextBuf* buf) {
   return bDirty;
 }
 
-void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
+void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
                                              CPDF_ImageObject* pImageObj) {
   if ((pImageObj->matrix().a == 0 && pImageObj->matrix().b == 0) ||
       (pImageObj->matrix().c == 0 && pImageObj->matrix().d == 0)) {
@@ -175,7 +176,7 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
   if (bWasInline)
     pImageObj->SetImage(m_pDocument->GetPageData()->GetImage(dwObjNum));
 
-  *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
+  *buf << "/" << PDF_NameEncode(name).c_str() << " Do Q\n";
 }
 
 // Processing path with operators from Tables 4.9 and 4.10 of PDF spec 1.7:
@@ -189,7 +190,7 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
 // Path painting operators: "S", "n", "B", "f", "B*", "f*", depending on
 // the filling mode and whether we want stroking the path or not.
 // "Q" restores the graphics state imposed by the ProcessGraphics method.
-void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
+void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
   auto& pPoints = pPathObj->m_Path.GetPoints();
@@ -242,7 +243,7 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
 // "w" sets the stroke line width.
 // "ca" sets the fill alpha, "CA" sets the stroke alpha.
 // "q" saves the graphics state, so that the settings can later be reversed
-void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
+void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
                                                 CPDF_PageObject* pPageObj) {
   *buf << "q ";
   float fillColor[3];
@@ -297,14 +298,14 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
     name = RealizeResource(dwObjNum, "ExtGState");
     m_pPage->m_GraphicsMap[graphD] = name;
   }
-  *buf << "/" << PDF_NameEncode(name) << " gs ";
+  *buf << "/" << PDF_NameEncode(name).c_str() << " gs ";
 }
 
 // This method adds text to the buffer, BT begins the text object, ET ends it.
 // Tm sets the text matrix (allows positioning and transforming text).
 // Tf sets the font name (from Font in Resources) and font size.
 // Tj sets the actual text, <####...> is used when specifying charcodes.
-void CPDF_PageContentGenerator::ProcessText(CFX_ByteTextBuf* buf,
+void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
                                             CPDF_TextObject* pTextObj) {
   *buf << "BT " << pTextObj->GetTextMatrix() << " Tm ";
   CPDF_Font* pFont = pTextObj->GetFont();
@@ -338,14 +339,14 @@ void CPDF_PageContentGenerator::ProcessText(CFX_ByteTextBuf* buf,
     dictName = RealizeResource(dwObjNum, "Font");
     m_pPage->m_FontsMap[fontD] = dictName;
   }
-  *buf << "/" << PDF_NameEncode(dictName) << " " << pTextObj->GetFontSize()
-       << " Tf ";
+  *buf << "/" << PDF_NameEncode(dictName).c_str() << " "
+       << pTextObj->GetFontSize() << " Tf ";
   CFX_ByteString text;
   for (uint32_t charcode : pTextObj->m_CharCodes) {
     if (charcode != CPDF_Font::kInvalidCharCode)
       pFont->AppendChar(&text, charcode);
   }
   ProcessGraphics(buf, pTextObj);
-  *buf << PDF_EncodeString(text, true) << " Tj ET";
+  *buf << PDF_EncodeString(text, true).c_str() << " Tj ET";
   *buf << " Q\n";
 }
