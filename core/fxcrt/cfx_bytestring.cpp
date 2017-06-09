@@ -189,6 +189,10 @@ CFX_ByteString::CFX_ByteString(
   }
 }
 
+CFX_ByteString::CFX_ByteString(std::ostringstream& outStream)
+    : CFX_ByteString(outStream.str().c_str(),
+                     static_cast<int>(outStream.tellp())) {}
+
 CFX_ByteString::~CFX_ByteString() {}
 
 const CFX_ByteString& CFX_ByteString::operator=(const char* pStr) {
