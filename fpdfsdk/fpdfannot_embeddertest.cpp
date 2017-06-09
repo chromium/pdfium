@@ -146,7 +146,9 @@ TEST_F(FPDFAnnotEmbeddertest, AddIllegalSubtypeAnnotation) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
+// TODO(janeliulwq): Re-enable this test once FPDFAnnot_SetColor() stops
+// failing flakily on win_xfa_clang.
+TEST_F(FPDFAnnotEmbeddertest, DISABLED_AddFirstTextAnnotation) {
   // Open a file with no annotation and load its first page.
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
