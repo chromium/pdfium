@@ -31,8 +31,9 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
       L"fan@g..com"       // Domain name should not have consecutive '.'
   };
   for (size_t i = 0; i < FX_ArraySize(invalid_strs); ++i) {
-    CFX_WideString text_str(invalid_strs[i]);
-    EXPECT_FALSE(extractor.CheckMailLink(&text_str)) << text_str.c_str();
+    const wchar_t* const input = invalid_strs[i];
+    CFX_WideString text_str(input);
+    EXPECT_FALSE(extractor.CheckMailLink(&text_str)) << input;
   }
 
   // Check cases that can extract valid mail link.
@@ -51,10 +52,11 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
       {L"CAP.cap@Gmail.Com", L"CAP.cap@Gmail.Com"},  // Keep the original case.
   };
   for (size_t i = 0; i < FX_ArraySize(valid_strs); ++i) {
-    CFX_WideString text_str(valid_strs[i][0]);
+    const wchar_t* const input = valid_strs[i][0];
+    CFX_WideString text_str(input);
     CFX_WideString expected_str(L"mailto:");
     expected_str += valid_strs[i][1];
-    EXPECT_TRUE(extractor.CheckMailLink(&text_str)) << text_str.c_str();
+    EXPECT_TRUE(extractor.CheckMailLink(&text_str)) << input;
     EXPECT_STREQ(expected_str.c_str(), text_str.c_str());
   }
 }
@@ -77,13 +79,14 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
   };
   const int32_t DEFAULT_VALUE = -42;
   for (size_t i = 0; i < FX_ArraySize(invalid_cases); ++i) {
-    CFX_WideString text_str(invalid_cases[i]);
+    const wchar_t* const input = invalid_cases[i];
+    CFX_WideString text_str(input);
     int32_t start_offset = DEFAULT_VALUE;
     int32_t count = DEFAULT_VALUE;
     EXPECT_FALSE(extractor.CheckWebLink(&text_str, &start_offset, &count))
-        << text_str.c_str();
-    EXPECT_EQ(DEFAULT_VALUE, start_offset) << text_str.c_str();
-    EXPECT_EQ(DEFAULT_VALUE, count) << text_str.c_str();
+        << input;
+    EXPECT_EQ(DEFAULT_VALUE, start_offset) << input;
+    EXPECT_EQ(DEFAULT_VALUE, count) << input;
   }
 
   // Check cases that can extract valid web link.
@@ -119,7 +122,23 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
       {L"www.example.com;(", L"http://www.example.com", 0,
        15},  // Trim ending invalid chars.
       {L"test:www.abc.com", L"http://www.abc.com", 5,
-       11},                                            // Trim chars before URL.
+       11},  // Trim chars before URL.
+      {L"(http://www.abc.com)", L"http://www.abc.com", 1,
+       18},  // Trim external brackets.
+      {L"0(http://www.abc.com)0", L"http://www.abc.com", 2,
+       18},  // Trim chars outside brackets as well.
+      {L"0(www.abc.com)0", L"http://www.abc.com", 2,
+       11},  // Links without http should also have brackets trimmed.
+      {L"http://www.abc.com)0", L"http://www.abc.com)0", 0,
+       20},  // Do not trim brackets that were not opened.
+      {L"{(<http://www.abc.com>)}", L"http://www.abc.com", 3,
+       18},  // Trim chars with multiple levels of brackets.
+      {L"[http://www.abc.com/z(1)]", L"http://www.abc.com/z(1)", 1,
+       23},  // Brackets opened inside the URL should not be trimmed.
+      {L"(http://www.abc.com/z(1))", L"http://www.abc.com/z(1)", 1,
+       23},  // Brackets opened inside the URL should not be trimmed.
+      {L"\"http://www.abc.com\"", L"http://www.abc.com", 1,
+       18},  // External quotes can also be escaped
       {L"www.g.com..", L"http://www.g.com..", 0, 11},  // Leave ending periods.
 
       // Web links can contain IP addresses too.
@@ -155,13 +174,14 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
       {L"www.测试.net；", L"http://www.测试.net；", 0, 11},
   };
   for (size_t i = 0; i < FX_ArraySize(valid_cases); ++i) {
-    CFX_WideString text_str(valid_cases[i].input_string);
+    const wchar_t* const input = valid_cases[i].input_string;
+    CFX_WideString text_str(input);
     int32_t start_offset = DEFAULT_VALUE;
     int32_t count = DEFAULT_VALUE;
     EXPECT_TRUE(extractor.CheckWebLink(&text_str, &start_offset, &count))
-        << text_str.c_str();
+        << input;
     EXPECT_STREQ(valid_cases[i].url_extracted, text_str.c_str());
-    EXPECT_EQ(valid_cases[i].start_offset, start_offset) << text_str.c_str();
-    EXPECT_EQ(valid_cases[i].count, count) << text_str.c_str();
+    EXPECT_EQ(valid_cases[i].start_offset, start_offset) << input;
+    EXPECT_EQ(valid_cases[i].count, count) << input;
   }
 }
