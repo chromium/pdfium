@@ -297,11 +297,12 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
                       (float)f);
     matrix.TransformRect(rect);
 
-    CPDF_Array* pRectArray = pAnnot->GetAnnotDict()->GetArrayFor("Rect");
+    CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
+    CPDF_Array* pRectArray = pAnnotDict->GetArrayFor("Rect");
     if (pRectArray)
-      pRectArray->RemoveAt(0, pRectArray->GetCount());
+      pRectArray->Clear();
     else
-      pRectArray = pAnnot->GetAnnotDict()->SetNewFor<CPDF_Array>("Rect");
+      pRectArray = pAnnotDict->SetNewFor<CPDF_Array>("Rect");
 
     pRectArray->AddNew<CPDF_Number>(rect.left);
     pRectArray->AddNew<CPDF_Number>(rect.bottom);

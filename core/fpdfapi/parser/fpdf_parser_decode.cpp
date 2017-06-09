@@ -400,7 +400,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
       dest_buf = last_buf;
       dest_size = last_size;
       if (CPDF_Array* pDecoders = pDecoder->AsArray())
-        pDecoders->RemoveAt(i + 1, pDecoders->GetCount() - i - 1);
+        pDecoders->Truncate(i + 1);
       return true;
     }
     if (last_buf != src_buf) {

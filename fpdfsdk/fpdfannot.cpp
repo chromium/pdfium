@@ -184,7 +184,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
   CFX_ByteString key = type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C";
   CPDF_Array* pColor = pAnnotDict->GetArrayFor(key);
   if (pColor)
-    pColor->RemoveAt(0, pColor->GetCount());
+    pColor->Clear();
   else
     pColor = pAnnotDict->SetNewFor<CPDF_Array>(key);
 
@@ -270,7 +270,7 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
   CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
   CPDF_Array* pQuadPoints = pAnnotDict->GetArrayFor("QuadPoints");
   if (pQuadPoints)
-    pQuadPoints->RemoveAt(0, pQuadPoints->GetCount());
+    pQuadPoints->Clear();
   else
     pQuadPoints = pAnnotDict->SetNewFor<CPDF_Array>("QuadPoints");
 
@@ -315,7 +315,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
 
   CPDF_Array* pRect = pAnnotDict->GetArrayFor("Rect");
   if (pRect)
-    pRect->RemoveAt(0, pRect->GetCount());
+    pRect->Clear();
   else
     pRect = pAnnotDict->SetNewFor<CPDF_Array>("Rect");
 
