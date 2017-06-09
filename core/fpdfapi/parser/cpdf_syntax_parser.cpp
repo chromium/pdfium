@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 
 #include <algorithm>
+#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -204,7 +205,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
   if (!GetNextChar(ch))
     return CFX_ByteString();
 
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   int32_t parlevel = 0;
   ReadStatus status = ReadStatus::Normal;
   int32_t iEscCode = 0;
@@ -213,7 +214,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
       case ReadStatus::Normal:
         if (ch == ')') {
           if (parlevel == 0)
-            return buf.MakeString();
+            return CFX_ByteString(buf);
           parlevel--;
         } else if (ch == '(') {
           parlevel++;
@@ -221,7 +222,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         if (ch == '\\')
           status = ReadStatus::Backslash;
         else
-          buf.AppendChar(ch);
+          buf << static_cast<char>(ch);
         break;
       case ReadStatus::Backslash:
         if (ch >= '0' && ch <= '7') {
@@ -231,20 +232,20 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         }
 
         if (ch == 'n') {
-          buf.AppendChar('\n');
+          buf << '\n';
         } else if (ch == 'r') {
-          buf.AppendChar('\r');
+          buf << '\r';
         } else if (ch == 't') {
-          buf.AppendChar('\t');
+          buf << '\t';
         } else if (ch == 'b') {
-          buf.AppendChar('\b');
+          buf << '\b';
         } else if (ch == 'f') {
-          buf.AppendChar('\f');
+          buf << '\f';
         } else if (ch == '\r') {
           status = ReadStatus::CarriageReturn;
           break;
         } else if (ch != '\n') {
-          buf.AppendChar(ch);
+          buf << static_cast<char>(ch);
         }
         status = ReadStatus::Normal;
         break;
@@ -254,7 +255,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           status = ReadStatus::FinishOctal;
         } else {
-          buf.AppendChar(iEscCode);
+          buf << static_cast<char>(iEscCode);
           status = ReadStatus::Normal;
           continue;
         }
@@ -264,9 +265,9 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         if (ch >= '0' && ch <= '7') {
           iEscCode =
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
-          buf.AppendChar(iEscCode);
+          buf << static_cast<char>(iEscCode);
         } else {
-          buf.AppendChar(iEscCode);
+          buf << static_cast<char>(iEscCode);
           continue;
         }
         break;
@@ -282,7 +283,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
   }
 
   GetNextChar(ch);
-  return buf.MakeString();
+  return CFX_ByteString(buf);
 }
 
 CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
@@ -290,7 +291,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
   if (!GetNextChar(ch))
     return CFX_ByteString();
 
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   bool bFirst = true;
   uint8_t code = 0;
   while (1) {
@@ -303,7 +304,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
         code = val * 16;
       } else {
         code += val;
-        buf.AppendByte(code);
+        buf << static_cast<char>(code);
       }
       bFirst = !bFirst;
     }
@@ -312,9 +313,9 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
       break;
   }
   if (!bFirst)
-    buf.AppendByte(code);
+    buf << static_cast<char>(code);
 
-  return buf.MakeString();
+  return CFX_ByteString(buf);
 }
 
 void CPDF_SyntaxParser::ToNextLine() {
