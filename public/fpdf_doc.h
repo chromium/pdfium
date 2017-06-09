@@ -138,10 +138,10 @@ DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document,
 //   buffer - a buffer for output the path string. May be NULL.
 //   buflen - the length of the buffer, in bytes. May be 0.
 //
-// Returns the number of bytes in the file path, including the trailing UTF16
-// NUL character.
+// Returns the number of bytes in the file path, including the trailing NUL
+// character.
 //
-// Regardless of the platform, the |buffer| is always in UTF-16LE encoding.
+// Regardless of the platform, the |buffer| is always in UTF-8 encoding.
 // If |buflen| is less than the returned length, or |buffer| is NULL, |buffer|
 // will not be modified.
 DLLEXPORT unsigned long STDCALL
