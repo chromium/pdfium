@@ -57,6 +57,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
+  void OnDestroy() override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
@@ -97,9 +98,9 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CFX_UnownedPtr<CPWL_CBButton> m_pButton;
   CFX_UnownedPtr<CPWL_CBListBox> m_pList;
   CFX_FloatRect m_rcOldWindow;
-  bool m_bPopup;
-  bool m_bBottom;
-  int32_t m_nSelectItem;
+  bool m_bPopup = false;
+  bool m_bBottom = true;
+  int32_t m_nSelectItem = -1;
   CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
   CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };

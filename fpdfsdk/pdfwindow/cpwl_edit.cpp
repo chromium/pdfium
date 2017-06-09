@@ -39,8 +39,6 @@ CFX_ByteString CPWL_Edit::GetClassName() const {
   return PWL_CLASSNAME_EDIT;
 }
 
-void CPWL_Edit::OnDestroy() {}
-
 void CPWL_Edit::SetText(const CFX_WideString& csText) {
   CFX_WideString swText = csText;
   if (!HasFlag(PES_RICH)) {

@@ -182,14 +182,7 @@ bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-CPWL_ComboBox::CPWL_ComboBox()
-    : m_pEdit(nullptr),
-      m_pButton(nullptr),
-      m_pList(nullptr),
-      m_bPopup(false),
-      m_bBottom(true),
-      m_nSelectItem(-1),
-      m_pFillerNotify(nullptr) {}
+CPWL_ComboBox::CPWL_ComboBox() {}
 
 CPWL_ComboBox::~CPWL_ComboBox() {}
 
@@ -200,6 +193,17 @@ CFX_ByteString CPWL_ComboBox::GetClassName() const {
 void CPWL_ComboBox::OnCreate(PWL_CREATEPARAM& cp) {
   cp.dwFlags &= ~PWS_HSCROLL;
   cp.dwFlags &= ~PWS_VSCROLL;
+}
+
+void CPWL_ComboBox::OnDestroy() {
+  // Until cleanup takes place in the virtual destructor for CPWL_Wnd
+  // subclasses, implement the virtual OnDestroy method that does the
+  // cleanup first, then invokes the superclass OnDestroy ... gee,
+  // like a dtor would.
+  m_pList.Release();
+  m_pButton.Release();
+  m_pEdit.Release();
+  CPWL_Wnd::OnDestroy();
 }
 
 void CPWL_ComboBox::SetFocus() {
