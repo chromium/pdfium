@@ -35,12 +35,19 @@ fnptr g_c_api_test_fnptr = NULL;  // Extern, so can't know it doesn't change.
 // Function to call from gtest harness to ensure linker resolution.
 int CheckPDFiumCApi() {
     //fpdf_annot.h
+    CHK(FPDFAnnot_IsSupportedSubtype);
+    CHK(FPDFPage_CreateAnnot);
     CHK(FPDFPage_GetAnnotCount);
     CHK(FPDFPage_GetAnnot);
     CHK(FPDFAnnot_GetSubtype);
+    CHK(FPDFAnnot_SetColor);
     CHK(FPDFAnnot_GetColor);
+    CHK(FPDFAnnot_HasAttachmentPoints);
+    CHK(FPDFAnnot_SetAttachmentPoints);
     CHK(FPDFAnnot_GetAttachmentPoints);
+    CHK(FPDFAnnot_SetRect);
     CHK(FPDFAnnot_GetRect);
+    CHK(FPDFAnnot_SetText);
     CHK(FPDFAnnot_GetText);
 
     // fpdf_dataavail.h

@@ -359,7 +359,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetText(FPDF_ANNOTATION annot,
 
 DLLEXPORT unsigned long STDCALL FPDFAnnot_GetText(FPDF_ANNOTATION annot,
                                                   FPDFANNOT_TEXTTYPE type,
-                                                  char* buffer,
+                                                  void* buffer,
                                                   unsigned long buflen) {
   CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFAnnotation(annot);
   if (!pAnnotDict)
