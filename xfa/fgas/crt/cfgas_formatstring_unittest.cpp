@@ -177,15 +177,18 @@ TEST_F(CFGAS_FormatStringTest, DateTimeFormat) {
     const wchar_t* input;
     const wchar_t* pattern;
     const wchar_t* output;
-  } tests[] = {{L"en", L"1999-07-16T10:30Z",
-                L"'At' time{HH:MM Z} 'on' date{MMM DD, YYYY}",
-                L"At 10:30 GMT on Jul 16, 1999"},
-               {L"en", L"1999-07-16T10:30Z",
-                L"time{'At' HH:MM Z} date{'on' MMM DD, YYYY}",
-                L"At 10:30 GMT on Jul 16, 1999"},
-               {L"en", L"1999-07-16T10:30Z",
-                L"time{'At 'HH:MM Z}date{' on 'MMM DD, YYYY}",
-                L"At 10:30 GMT on Jul 16, 1999"}};
+  } tests[] = {
+      {L"en", L"1999-07-16T10:30Z",
+       L"'At' time{HH:MM Z} 'on' date{MMM DD, YYYY}",
+       L"At 10:30 GMT on Jul 16, 1999"},
+      {L"en", L"1999-07-16T10:30", L"'At' time{HH:MM} 'on' date{MMM DD, YYYY}",
+       L"At 10:30 on Jul 16, 1999"},
+      {L"en", L"1999-07-16T10:30Z",
+       L"time{'At' HH:MM Z} date{'on' MMM DD, YYYY}",
+       L"At 10:30 GMT on Jul 16, 1999"},
+      {L"en", L"1999-07-16T10:30Z",
+       L"time{'At 'HH:MM Z}date{' on 'MMM DD, YYYY}",
+       L"At 10:30 GMT on Jul 16, 1999"}};
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_WideString result;
