@@ -229,7 +229,11 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
   int nFieldType = pWidget->GetFieldType();
   if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX) {
     bool bFormatted = false;
+    CPDFSDK_Annot::ObservedPtr pObserved(pWidget);
     CFX_WideString sValue = pWidget->OnFormat(bFormatted);
+    if (!pObserved)
+      return;
+
     if (bFormatted && nFieldType == FIELDTYPE_COMBOBOX)
       pWidget->ResetAppearance(&sValue, false);
   }
