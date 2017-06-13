@@ -6148,7 +6148,7 @@ void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
 
 void CXFA_FM2JSContext::ThrowNoDefaultPropertyException(
     const CFX_ByteStringC& name) const {
-  ThrowException(L"%.16s doesn't have a default property.", name.c_str());
+  ThrowException(L"%.16S doesn't have a default property.", name.c_str());
 }
 
 void CXFA_FM2JSContext::ThrowCompilerErrorException() const {
