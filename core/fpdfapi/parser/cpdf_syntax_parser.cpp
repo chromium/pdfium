@@ -725,10 +725,11 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     }
     m_Pos = streamStartPos;
   }
-
-  // Read up to the end of the buffer.
+  // Read up to the end of the buffer. Note, we allow zero length streams as
+  // we need to pass them through when we are importing pages into a new
+  // document.
   len = std::min(len, m_FileLen - m_Pos - m_HeaderOffset);
-  if (len <= 0)
+  if (len < 0)
     return nullptr;
 
   std::unique_ptr<uint8_t, FxFreeDeleter> pData;
@@ -746,7 +747,6 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       pData = dest_buf.DetachBuffer();
     }
   }
-
   auto pStream =
       pdfium::MakeUnique<CPDF_Stream>(std::move(pData), len, std::move(pDict));
   streamStartPos = m_Pos;
