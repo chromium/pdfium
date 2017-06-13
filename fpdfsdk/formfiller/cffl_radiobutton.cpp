@@ -60,8 +60,7 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
       if (CPWL_RadioButton* pWnd =
               (CPWL_RadioButton*)GetPDFWindow(pPageView, true))
         pWnd->SetCheck(true);
-      CommitData(pPageView, nFlags);
-      return true;
+      return CommitData(pPageView, nFlags);
     }
     default:
       return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
@@ -79,8 +78,7 @@ bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
             (CPWL_RadioButton*)GetPDFWindow(pPageView, true))
       pWnd->SetCheck(true);
 
-    if (!CommitData(pPageView, nFlags))
-      return false;
+    return CommitData(pPageView, nFlags);
   }
 
   return true;

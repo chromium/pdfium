@@ -425,6 +425,9 @@ bool CFFL_InteractiveFormFiller::OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot->Get(), false)) {
     pFormFiller->KillFocusForAnnot(pAnnot->Get(), nFlag);
+    if (!(*pAnnot))
+      return false;
+
     if (!m_bNotifying) {
       CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
       if (pWidget->GetAAction(CPDF_AAction::LoseFocus).GetDict()) {

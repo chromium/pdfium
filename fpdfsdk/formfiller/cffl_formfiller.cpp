@@ -258,7 +258,8 @@ void CFFL_FormFiller::KillFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   if (!pPageView)
     return;
 
-  CommitData(pPageView, nFlag);
+  if (!CommitData(pPageView, nFlag))
+    return;
 
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false))
     pWnd->KillFocus();
@@ -493,25 +494,37 @@ bool CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
         m_pFormFillEnv->GetInteractiveFormFiller();
     CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget.Get());
     pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, bRC, bExit, nFlag);
-    if (!pObserved || bExit)
+    if (!pObserved)
+      return false;
+    if (bExit)
       return true;
     if (!bRC) {
       ResetPDFWindow(pPageView, false);
       return true;
     }
+
     pFormFiller->OnValidate(&pObserved, pPageView, bRC, bExit, nFlag);
-    if (!pObserved || bExit)
+    if (!pObserved)
+      return false;
+    if (bExit)
       return true;
     if (!bRC) {
       ResetPDFWindow(pPageView, false);
       return true;
     }
+
     SaveData(pPageView);
     pFormFiller->OnCalculate(m_pWidget.Get(), pPageView, bExit, nFlag);
+    if (!pObserved)
+      return false;
     if (bExit)
       return true;
 
     pFormFiller->OnFormat(m_pWidget.Get(), pPageView, bExit, nFlag);
+    if (!pObserved)
+      return false;
+    if (bExit)
+      return true;
   }
   return true;
 }

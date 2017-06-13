@@ -61,8 +61,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
       if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, true))
         pWnd->SetCheck(!pWnd->IsChecked());
 
-      CommitData(pPageView, nFlags);
-      return true;
+      return CommitData(pPageView, nFlags);
     }
     default:
       return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
@@ -81,8 +80,7 @@ bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
       pWnd->SetCheck(!pWidget->IsChecked());
     }
 
-    if (!CommitData(pPageView, nFlags))
-      return false;
+    return CommitData(pPageView, nFlags);
   }
 
   return true;
