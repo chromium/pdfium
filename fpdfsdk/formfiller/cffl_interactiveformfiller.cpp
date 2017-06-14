@@ -532,19 +532,16 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(void* pPrivateData,
                                                  float fPopupMax,
                                                  bool* bBottom,
                                                  float* fPopupRet) {
-  CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
+  CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
+  CPDFSDK_Widget* pWidget = pData->pWidget;
+  auto* pPage = pWidget->GetPDFPage();
 
-  CFX_FloatRect rcPageView(0, 0, 0, 0);
-  rcPageView.right = pData->pWidget->GetPDFPage()->GetPageWidth();
-  rcPageView.bottom = pData->pWidget->GetPDFPage()->GetPageHeight();
+  CFX_FloatRect rcPageView(0, pPage->GetPageHeight(), pPage->GetPageWidth(), 0);
   rcPageView.Normalize();
 
-  CFX_FloatRect rcAnnot = pData->pWidget->GetRect();
-
+  CFX_FloatRect rcAnnot = pWidget->GetRect();
   float fTop = 0.0f;
   float fBottom = 0.0f;
-
-  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pData->pWidget;
   switch (pWidget->GetRotate() / 90) {
     default:
     case 0:
@@ -763,7 +760,7 @@ void CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Widget* pWidget,
 void CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
                                                 bool& bExit,
                                                 uint32_t nFlag) {
-  CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
+  CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
@@ -777,7 +774,7 @@ void CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
 void CFFL_InteractiveFormFiller::OnPopupPostOpen(void* pPrivateData,
                                                  bool& bExit,
                                                  uint32_t nFlag) {
-  CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
+  CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
@@ -874,7 +871,7 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     bool& bRC,
     bool& bExit,
     uint32_t nFlag) {
-  CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
+  CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
   ASSERT(pData->pWidget);
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(pData->pWidget, false);
@@ -927,7 +924,7 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
         if (nAge != pData->pWidget->GetAppearanceAge()) {
           CPWL_Wnd* pWnd = pFormFiller->ResetPDFWindow(
               pData->pPageView, nValueAge == pData->pWidget->GetValueAge());
-          pData = (CFFL_PrivateData*)pWnd->GetAttachedData();
+          pData = reinterpret_cast<CFFL_PrivateData*>(pWnd->GetAttachedData());
           bExit = true;
         }
 
