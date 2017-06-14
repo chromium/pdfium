@@ -9,6 +9,7 @@
 
 #include <setjmp.h>
 
+#include "core/fxcodec/codec/ccodec_bmpmodule.h"
 #include "core/fxcrt/fx_basic.h"
 
 #define BMP_WIDTHBYTES(width, bitCount) ((width * bitCount) + 31) / 32 * 4
@@ -65,13 +66,16 @@ typedef struct tagBmpInfoHeader {
 } BmpInfoHeader, *BmpInfoHeaderPtr;
 #pragma pack()
 
-typedef struct tag_bmp_decompress_struct bmp_decompress_struct;
-typedef bmp_decompress_struct* bmp_decompress_struct_p;
-typedef bmp_decompress_struct_p* bmp_decompress_struct_pp;
-struct tag_bmp_decompress_struct {
+class BMPDecompressor {
+ public:
+  void Error(const char* err_msg);
+  int32_t DecodeImage();
+  int32_t ReadHeader();
+  void SetInputBuffer(uint8_t* src_buf, uint32_t src_size);
+  uint32_t GetAvailInput(uint8_t** avail_buf);
+
   jmp_buf jmpbuf;
   char* err_ptr;
-  void (*bmp_error_fn)(bmp_decompress_struct_p gif_ptr, const char* err_msg);
 
   void* context_ptr;
 
@@ -101,33 +105,39 @@ struct tag_bmp_decompress_struct {
   uint32_t mask_green;
   uint32_t mask_blue;
 
-  bool (*bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr,
-                                   uint32_t cur_pos);
-  void (*bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr,
-                         int32_t row_num,
-                         uint8_t* row_buf);
   uint8_t* next_in;
   uint32_t avail_in;
   uint32_t skip_size;
   int32_t decode_status;
+
+ private:
+  bool GetDataPosition(uint32_t cur_pos);
+  void ReadScanline(int32_t row_num, uint8_t* row_buf);
+  int32_t DecodeRGB();
+  int32_t DecodeRLE8();
+  int32_t DecodeRLE4();
+  uint8_t* ReadData(uint8_t** des_buf, uint32_t data_size);
+  void SaveDecodingStatus(int32_t status);
+  bool ValidateColorIndex(uint8_t val);
+  bool ValidateFlag() const;
 };
-void bmp_error(bmp_decompress_struct_p bmp_ptr, const char* err_msg);
-bmp_decompress_struct_p bmp_create_decompress();
-void bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr);
-int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr);
-int32_t bmp_decode_image(bmp_decompress_struct_p bmp_ptr);
-int32_t bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr);
-int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr);
-int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr);
-uint8_t* bmp_read_data(bmp_decompress_struct_p bmp_ptr,
-                       uint8_t** des_buf_pp,
-                       uint32_t data_size);
-void bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr, int32_t status);
-void bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
-                      uint8_t* src_buf,
-                      uint32_t src_size);
-uint32_t bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
-                             uint8_t** avail_buf_ptr);
+
+BMPDecompressor* bmp_create_decompress();
+void bmp_destroy_decompress(BMPDecompressor** bmp_ptr_ptr);
+
+class CBmpContext : public CCodec_BmpModule::Context {
+ public:
+  CBmpContext(BMPDecompressor* pBmp,
+              CCodec_BmpModule* pModule,
+              CCodec_BmpModule::Delegate* pDelegate);
+  ~CBmpContext() override;
+
+  BMPDecompressor* m_pBmp;
+  CFX_UnownedPtr<CCodec_BmpModule> const m_pModule;
+  CFX_UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
+  char m_szLastError[256];
+};
+
 typedef struct tag_bmp_compress_struct bmp_compress_struct;
 typedef bmp_compress_struct* bmp_compress_struct_p;
 typedef bmp_compress_struct_p* bmp_compress_struct_pp;
