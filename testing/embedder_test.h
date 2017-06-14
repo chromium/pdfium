@@ -108,6 +108,11 @@ class EmbedderTest : public ::testing::Test,
  protected:
   void SetupFormFillEnvironment();
 
+  // Return the hash of |bitmap|.
+  static std::string HashBitmap(FPDF_BITMAP bitmap,
+                                int expected_width,
+                                int expected_height);
+
   // Check |bitmap| to make sure it has the right dimensions and content.
   static void CompareBitmap(FPDF_BITMAP bitmap,
                             int expected_width,
