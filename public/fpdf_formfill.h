@@ -1399,15 +1399,6 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                                                    double page_y);
 
 /**
- * Function: FPDPage_HasFormFieldAtPoint
- *     DEPRECATED. Please use FPDFPage_HasFormFieldAtPoint.
- **/
-DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
-                                                  FPDF_PAGE page,
-                                                  double page_x,
-                                                  double page_y);
-
-/**
  * Function: FPDFPage_FormFieldZOrderAtPoint
  *     Get the form field z-order by point.
  * Parameters:

@@ -212,13 +212,6 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   return -1;
 }
 
-DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
-                                                  FPDF_PAGE page,
-                                                  double page_x,
-                                                  double page_y) {
-  return FPDFPage_HasFormFieldAtPoint(hHandle, page, page_x, page_y);
-}
-
 DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
                                                       FPDF_PAGE page,
                                                       double page_x,
