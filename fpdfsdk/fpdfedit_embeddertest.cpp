@@ -593,13 +593,12 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
 
   // Add a path that should reuse graphics
-  // TODO(npm): This causes a crash on Windows.
-  /*FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
+  FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
   FPDFPageObj_SetBlendMode(path, "Darken");
   EXPECT_TRUE(FPDFPath_SetFillColor(path, 200, 200, 100, 150));
   FPDFPage_InsertObject(page.get(), path);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));*/
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
 
   // Add a rect increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT rect2 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);

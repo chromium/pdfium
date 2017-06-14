@@ -240,6 +240,9 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(float line_width,
   bool bJoin;
   while (iPoint < m_Points.size()) {
     if (m_Points[iPoint].IsTypeAndOpen(FXPT_TYPE::MoveTo)) {
+      if (iPoint + 1 == m_Points.size())
+        break;
+
       iStartPoint = iPoint + 1;
       iEndPoint = iPoint;
       bJoin = false;
