@@ -183,7 +183,9 @@ int CPDF_Page::GetPageRotation() const {
 bool GraphicsData::operator<(const GraphicsData& other) const {
   if (fillAlpha != other.fillAlpha)
     return fillAlpha < other.fillAlpha;
-  return strokeAlpha < other.strokeAlpha;
+  if (strokeAlpha != other.strokeAlpha)
+    return strokeAlpha < other.strokeAlpha;
+  return blendType < other.blendType;
 }
 
 bool FontData::operator<(const FontData& other) const {

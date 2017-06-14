@@ -556,6 +556,61 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDF_ClosePage(page);
 }
 
+TEST_F(FPDFEditEmbeddertest, GraphicsData) {
+  // New page
+  std::unique_ptr<void, FPDFPageDeleter> page(
+      FPDFPage_New(CreateNewDocument(), 0, 612, 792));
+
+  // Create a rect with nontrivial graphics
+  FPDF_PAGEOBJECT rect1 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
+  FPDFPageObj_SetBlendMode(rect1, "Color");
+  FPDFPage_InsertObject(page.get(), rect1);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  // Check that the ExtGState was created
+  CPDF_Page* the_page = CPDFPageFromFPDFPage(page.get());
+  CPDF_Dictionary* graphics_dict =
+      the_page->m_pResources->GetDictFor("ExtGState");
+  ASSERT_TRUE(graphics_dict);
+  EXPECT_EQ(1, static_cast<int>(graphics_dict->GetCount()));
+
+  // Add a text object causing no change to the graphics dictionary
+  FPDF_PAGEOBJECT text1 = FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
+  // Only alpha, the last component, matters for the graphics dictionary. And
+  // the default value is 255.
+  EXPECT_TRUE(FPDFText_SetFillColor(text1, 100, 100, 100, 255));
+  FPDFPage_InsertObject(page.get(), text1);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_EQ(1, static_cast<int>(graphics_dict->GetCount()));
+
+  // Add a text object increasing the size of the graphics dictionary
+  FPDF_PAGEOBJECT text2 =
+      FPDFPageObj_NewTextObj(document(), "Times-Roman", 12.0f);
+  FPDFPage_InsertObject(page.get(), text2);
+  FPDFPageObj_SetBlendMode(text2, "Darken");
+  EXPECT_TRUE(FPDFText_SetFillColor(text2, 0, 0, 255, 150));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+
+  // Add a path that should reuse graphics
+  // TODO(npm): This causes a crash on Windows.
+  /*FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
+  FPDFPageObj_SetBlendMode(path, "Darken");
+  EXPECT_TRUE(FPDFPath_SetFillColor(path, 200, 200, 100, 150));
+  FPDFPage_InsertObject(page.get(), path);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));*/
+
+  // Add a rect increasing the size of the graphics dictionary
+  FPDF_PAGEOBJECT rect2 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
+  FPDFPageObj_SetBlendMode(rect2, "Darken");
+  EXPECT_TRUE(FPDFPath_SetFillColor(rect2, 0, 0, 255, 150));
+  EXPECT_TRUE(FPDFPath_SetStrokeColor(rect2, 0, 0, 0, 200));
+  FPDFPage_InsertObject(page.get(), rect2);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
+}
+
 TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);

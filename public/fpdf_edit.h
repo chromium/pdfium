@@ -136,23 +136,23 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page);
 // |FPDFPage_GenerateContent| or any changes to |page| will be lost.
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page);
 
-// Checks if |pageObject| contains transparency.
+// Checks if |page_object| contains transparency.
 //
-//   pageObject - handle to a page object.
+//   page_object - handle to a page object.
 //
 // Returns TRUE if |pageObject| contains transparency.
 DLLEXPORT FPDF_BOOL STDCALL
-FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject);
+FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object);
 
-// Get type of |pageObject|.
+// Get type of |page_object|.
 //
-//   pageObject - handle to a page object.
+//   page_object - handle to a page object.
 //
 // Returns one of the FPDF_PAGEOBJ_* values on success, FPDF_PAGEOBJ_UNKNOWN on
 // error.
-DLLEXPORT int STDCALL FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject);
+DLLEXPORT int STDCALL FPDFPageObj_GetType(FPDF_PAGEOBJECT page_object);
 
-// Transform |pageObject| by the given matrix.
+// Transform |page_object| by the given matrix.
 //
 //   page_object - handle to a page object.
 //   a           - matrix value.
@@ -304,30 +304,30 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewRect(float x,
                                                             float w,
                                                             float h);
 
-// Get the bounding box of |pageObject|.
+// Get the bounding box of |page_object|.
 //
-// pageObject - handle to a page object.
-// left       - pointer where the left coordinate will be stored
-// bottom     - pointer where the bottom coordinate will be stored
-// right      - pointer where the right coordinate will be stored
-// top        - pointer where the top coordinate will be stored
+// page_object  - handle to a page object.
+// left         - pointer where the left coordinate will be stored
+// bottom       - pointer where the bottom coordinate will be stored
+// right        - pointer where the right coordinate will be stored
+// top          - pointer where the top coordinate will be stored
 //
 // Returns TRUE on success.
-DLLEXPORT FPDF_BOOL STDCALL FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
+DLLEXPORT FPDF_BOOL STDCALL FPDFPageObj_GetBounds(FPDF_PAGEOBJECT page_object,
                                                   float* left,
                                                   float* bottom,
                                                   float* right,
                                                   float* top);
 
-// Set the blend mode of |pageObject|.
+// Set the blend mode of |page_object|.
 //
-// pageObject - handle to a page object.
-// blend_mode - string containing the blend mode.
+// page_object  - handle to a page object.
+// blend_mode   - string containing the blend mode.
 //
 // Blend mode can be one of following: Color, ColorBurn, ColorDodge, Darken,
 // Difference, Exclusion, HardLight, Hue, Lighten, Luminosity, Multiply, Normal,
 // Overlay, Saturation, Screen, SoftLight
-DLLEXPORT void STDCALL FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page,
+DLLEXPORT void STDCALL FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
                                                 FPDF_BYTESTRING blend_mode);
 
 // Set the stroke RGBA of a path. Range of values: 0 - 255.
@@ -353,24 +353,25 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
 // Returns TRUE on success
 DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
 
-// Set the line join of |pageObject|.
+// Set the line join of |page_object|.
 //
-// pageObject - handle to a page object.
-// line_join - line join
+// page_object  - handle to a page object.
+// line_join    - line join
 //
 // Line join can be one of following: FPDF_LINEJOIN_MITER, FPDF_LINEJOIN_ROUND,
 // FPDF_LINEJOIN_BEVEL
-DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page,
+DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page_object,
                                             int line_join);
 
-// Set the line cap of |pageObject|.
+// Set the line cap of |page_object|.
 //
-// pageObject - handle to a page object.
-// line_cap - line cap
+// page_object - handle to a page object.
+// line_cap    - line cap
 //
 // Line cap can be one of following: FPDF_LINECAP_BUTT, FPDF_LINECAP_ROUND,
 // FPDF_LINECAP_PROJECTING_SQUARE
-DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT page, int line_cap);
+DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT page_object,
+                                           int line_cap);
 
 // Set the fill RGBA of a path. Range of values: 0 - 255.
 //

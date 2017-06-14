@@ -26,6 +26,7 @@ class CPDF_PageRenderContext;
 struct GraphicsData {
   float fillAlpha;
   float strokeAlpha;
+  int blendType;
   bool operator<(const GraphicsData& other) const;
 };
 
