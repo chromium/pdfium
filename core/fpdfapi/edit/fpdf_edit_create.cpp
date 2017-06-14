@@ -182,12 +182,15 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
         return -1;
       }
       offset += 8;
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);
-      pAcc->LoadAllData(true);
-      if (pFile->AppendBlock(pAcc->GetData(), pAcc->GetSize()) < 0) {
-        return -1;
+      if (p->GetRawSize() > 0) {
+        auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);
+        pAcc->LoadAllData(true);
+
+        if (pFile->AppendBlock(pAcc->GetData(), pAcc->GetSize()) < 0) {
+          return -1;
+        }
+        offset += pAcc->GetSize();
       }
-      offset += pAcc->GetSize();
       if ((len = pFile->AppendString("\r\nendstream")) < 0) {
         return -1;
       }

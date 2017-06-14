@@ -336,6 +336,15 @@ FPDF_PAGE EmbedderTest::GetPageTrampoline(FPDF_FORMFILLINFO* info,
                                                               page_index);
 }
 
+std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap,
+                                     int expected_width,
+                                     int expected_height) {
+  uint8_t digest[16];
+  CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
+                    expected_width * 4 * expected_height, digest);
+  return CRYPT_ToBase16(digest);
+}
+
 // static
 void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
                                  int expected_width,
@@ -349,10 +358,8 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
   if (!expected_md5sum)
     return;
 
-  uint8_t digest[16];
-  CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
-                    expected_stride * expected_height, digest);
-  EXPECT_EQ(expected_md5sum, CRYPT_ToBase16(digest));
+  EXPECT_EQ(expected_md5sum,
+            HashBitmap(bitmap, expected_width, expected_height));
 }
 
 // Can't use gtest-provided main since we need to stash the path to the
