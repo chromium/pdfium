@@ -92,42 +92,42 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
                          bool& bRC,
                          bool& bExit,
                          uint32_t nFlag);
-  void OnValidate(CPDFSDK_Annot::ObservedPtr* pWidget,
+  void OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,
                   bool& bRC,
                   bool& bExit,
                   uint32_t nFlag);
 
-  void OnCalculate(CPDFSDK_Widget* pWidget,
+  void OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
                    CPDFSDK_PageView* pPageView,
                    bool& bExit,
                    uint32_t nFlag);
-  void OnFormat(CPDFSDK_Widget* pWidget,
+  void OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
                 CPDFSDK_PageView* pPageView,
                 bool& bExit,
                 uint32_t nFlag);
-  void OnButtonUp(CPDFSDK_Annot::ObservedPtr* pWidget,
+  void OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,
                   bool& bReset,
                   bool& bExit,
                   uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA
-  void OnClick(CPDFSDK_Widget* pWidget,
+  void OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
                CPDFSDK_PageView* pPageView,
                bool& bReset,
                bool& bExit,
                uint32_t nFlag);
-  void OnFull(CPDFSDK_Widget* pWidget,
+  void OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
               CPDFSDK_PageView* pPageView,
               bool& bReset,
               bool& bExit,
               uint32_t nFlag);
-  void OnPreOpen(CPDFSDK_Widget* pWidget,
+  void OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
                  CPDFSDK_PageView* pPageView,
                  bool& bReset,
                  bool& bExit,
                  uint32_t nFlag);
-  void OnPostOpen(CPDFSDK_Widget* pWidget,
+  void OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,
                   bool& bReset,
                   bool& bExit,

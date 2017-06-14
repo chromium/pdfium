@@ -514,13 +514,13 @@ bool CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
     }
 
     SaveData(pPageView);
-    pFormFiller->OnCalculate(m_pWidget.Get(), pPageView, bExit, nFlag);
+    pFormFiller->OnCalculate(&pObserved, pPageView, bExit, nFlag);
     if (!pObserved)
       return false;
     if (bExit)
       return true;
 
-    pFormFiller->OnFormat(m_pWidget.Get(), pPageView, bExit, nFlag);
+    pFormFiller->OnFormat(&pObserved, pPageView, bExit, nFlag);
     if (!pObserved)
       return false;
     if (bExit)
