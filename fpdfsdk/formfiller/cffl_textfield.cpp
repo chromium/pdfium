@@ -97,26 +97,28 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
                             uint32_t nChar,
                             uint32_t nFlags) {
   switch (nChar) {
-    case FWL_VKEY_Return:
-      if (!(m_pWidget->GetFieldFlags() & FIELDFLAG_MULTILINE)) {
-        CPDFSDK_PageView* pPageView = GetCurPageView(true);
-        ASSERT(pPageView);
-        m_bValid = !m_bValid;
-        m_pFormFillEnv->Invalidate(pAnnot->GetUnderlyingPage(),
-                                   pAnnot->GetRect().ToFxRect());
+    case FWL_VKEY_Return: {
+      if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTILINE)
+        break;
 
-        if (m_bValid) {
-          if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true))
-            pWnd->SetFocus();
-        } else {
-          if (CommitData(pPageView, nFlags)) {
-            DestroyPDFWindow(pPageView);
-            return true;
-          }
-          return false;
-        }
+      CPDFSDK_PageView* pPageView = GetCurPageView(true);
+      ASSERT(pPageView);
+      m_bValid = !m_bValid;
+      m_pFormFillEnv->Invalidate(pAnnot->GetUnderlyingPage(),
+                                 pAnnot->GetRect().ToFxRect());
+
+      if (m_bValid) {
+        if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true))
+          pWnd->SetFocus();
+        break;
       }
-      break;
+
+      if (!CommitData(pPageView, nFlags))
+        return false;
+
+      DestroyPDFWindow(pPageView);
+      return true;
+    }
     case FWL_VKEY_Escape: {
       CPDFSDK_PageView* pPageView = GetCurPageView(true);
       ASSERT(pPageView);
@@ -129,22 +131,22 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
 }
 
 bool CFFL_TextField::IsDataChanged(CPDFSDK_PageView* pPageView) {
-  if (CPWL_Edit* pEdit = (CPWL_Edit*)GetPDFWindow(pPageView, false))
-    return pEdit->GetText() != m_pWidget->GetValue();
-
-  return false;
+  CPWL_Edit* pEdit = GetEdit(pPageView, false);
+  return pEdit && pEdit->GetText() != m_pWidget->GetValue();
 }
 
 void CFFL_TextField::SaveData(CPDFSDK_PageView* pPageView) {
-  if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, false)) {
-    CFX_WideString sOldValue = m_pWidget->GetValue();
-    CFX_WideString sNewValue = pWnd->GetText();
+  CPWL_Edit* pWnd = GetEdit(pPageView, false);
+  if (!pWnd)
+    return;
 
-    m_pWidget->SetValue(sNewValue, false);
-    m_pWidget->ResetFieldAppearance(true);
-    m_pWidget->UpdateField();
-    SetChangeMark();
-  }
+  CFX_WideString sOldValue = m_pWidget->GetValue();
+  CFX_WideString sNewValue = pWnd->GetText();
+
+  m_pWidget->SetValue(sNewValue, false);
+  m_pWidget->ResetFieldAppearance(true);
+  m_pWidget->UpdateField();
+  SetChangeMark();
 }
 
 void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
@@ -152,7 +154,7 @@ void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
                                    PDFSDK_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::KeyStroke:
-      if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, false)) {
+      if (CPWL_Edit* pWnd = GetEdit(pPageView, false)) {
         fa.bFieldFull = pWnd->IsTextFull();
 
         fa.sValue = pWnd->GetText();
@@ -164,7 +166,7 @@ void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
       }
       break;
     case CPDF_AAction::Validate:
-      if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, false)) {
+      if (CPWL_Edit* pWnd = GetEdit(pPageView, false)) {
         fa.sValue = pWnd->GetText();
       }
       break;
@@ -182,7 +184,7 @@ void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
                                    const PDFSDK_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::KeyStroke:
-      if (CPWL_Edit* pEdit = (CPWL_Edit*)GetPDFWindow(pPageView, false)) {
+      if (CPWL_Edit* pEdit = GetEdit(pPageView, false)) {
         pEdit->SetFocus();
         pEdit->SetSel(fa.nSelStart, fa.nSelEnd);
         pEdit->ReplaceSel(fa.sChange);
@@ -211,19 +213,23 @@ bool CFFL_TextField::IsActionDataChanged(CPDF_AAction::AActionType type,
 void CFFL_TextField::SaveState(CPDFSDK_PageView* pPageView) {
   ASSERT(pPageView);
 
-  if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, false)) {
-    pWnd->GetSel(m_State.nStart, m_State.nEnd);
-    m_State.sValue = pWnd->GetText();
-  }
+  CPWL_Edit* pWnd = GetEdit(pPageView, false);
+  if (!pWnd)
+    return;
+
+  pWnd->GetSel(m_State.nStart, m_State.nEnd);
+  m_State.sValue = pWnd->GetText();
 }
 
 void CFFL_TextField::RestoreState(CPDFSDK_PageView* pPageView) {
   ASSERT(pPageView);
 
-  if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, true)) {
-    pWnd->SetText(m_State.sValue);
-    pWnd->SetSel(m_State.nStart, m_State.nEnd);
-  }
+  CPWL_Edit* pWnd = GetEdit(pPageView, true);
+  if (!pWnd)
+    return;
+
+  pWnd->SetText(m_State.sValue);
+  pWnd->SetSel(m_State.nStart, m_State.nEnd);
 }
 
 CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView,
@@ -235,25 +241,17 @@ CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView,
 
   CPWL_Wnd* pRet = nullptr;
 
-  if (bRestoreValue) {
+  if (bRestoreValue)
     RestoreState(pPageView);
-    pRet = GetPDFWindow(pPageView, false);
-  } else {
-    pRet = GetPDFWindow(pPageView, true);
-  }
-
+  pRet = GetPDFWindow(pPageView, !bRestoreValue);
   m_pWidget->UpdateField();
-
   return pRet;
 }
 
 #ifdef PDF_ENABLE_XFA
 bool CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
-  if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, false)) {
-    return pWnd->IsTextFull();
-  }
-
-  return false;
+  CPWL_Edit* pWnd = GetEdit(pPageView, false);
+  return pWnd && pWnd->IsTextFull();
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -270,4 +268,8 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
   CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
   auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
   m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, true);
+}
+
+CPWL_Edit* CFFL_TextField::GetEdit(CPDFSDK_PageView* pPageView, bool bNew) {
+  return static_cast<CPWL_Edit*>(GetPDFWindow(pPageView, bNew));
 }

@@ -16,6 +16,7 @@
 #define BF_ALIGN_RIGHT 2
 
 class CBA_FontMap;
+class CPWL_Edit;
 
 struct FFL_TextFieldState {
   FFL_TextFieldState() : nStart(0), nEnd(0) {}
@@ -59,6 +60,8 @@ class CFFL_TextField : public CFFL_FormFiller, public IPWL_FocusHandler {
 #endif  // PDF_ENABLE_XFA
 
  private:
+  CPWL_Edit* GetEdit(CPDFSDK_PageView* pPageView, bool bNew);
+
   std::unique_ptr<CBA_FontMap> m_pFontMap;
   FFL_TextFieldState m_State;
 };

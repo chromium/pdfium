@@ -58,7 +58,8 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
         return true;
 
       CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
-      if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, true))
+      CPWL_CheckBox* pWnd = GetCheckBox(pPageView, true);
+      if (pWnd)
         pWnd->SetCheck(!pWnd->IsChecked());
 
       return CommitData(pPageView, nFlags);
@@ -74,40 +75,46 @@ bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                 const CFX_PointF& point) {
   CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
 
-  if (IsValid()) {
-    if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, true)) {
-      CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-      pWnd->SetCheck(!pWidget->IsChecked());
-    }
+  if (!IsValid())
+    return true;
 
-    return CommitData(pPageView, nFlags);
+  CPWL_CheckBox* pWnd = GetCheckBox(pPageView, true);
+  if (pWnd) {
+    CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
+    pWnd->SetCheck(!pWidget->IsChecked());
   }
 
-  return true;
+  return CommitData(pPageView, nFlags);
 }
 
 bool CFFL_CheckBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
-  CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, false);
+  CPWL_CheckBox* pWnd = GetCheckBox(pPageView, false);
   return pWnd && pWnd->IsChecked() != m_pWidget->IsChecked();
 }
 
 void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView) {
-  if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, false)) {
-    bool bNewChecked = pWnd->IsChecked();
+  CPWL_CheckBox* pWnd = GetCheckBox(pPageView, false);
+  if (!pWnd)
+    return;
 
-    if (bNewChecked) {
-      CPDF_FormField* pField = m_pWidget->GetFormField();
-      for (int32_t i = 0, sz = pField->CountControls(); i < sz; i++) {
-        if (CPDF_FormControl* pCtrl = pField->GetControl(i)) {
-          if (pCtrl->IsChecked()) {
-            break;
-          }
+  bool bNewChecked = pWnd->IsChecked();
+  if (bNewChecked) {
+    CPDF_FormField* pField = m_pWidget->GetFormField();
+    for (int32_t i = 0, sz = pField->CountControls(); i < sz; i++) {
+      if (CPDF_FormControl* pCtrl = pField->GetControl(i)) {
+        if (pCtrl->IsChecked()) {
+          break;
         }
       }
     }
-
-    m_pWidget->SetCheck(bNewChecked, false);
-    m_pWidget->UpdateField();
-    SetChangeMark();
   }
+
+  m_pWidget->SetCheck(bNewChecked, false);
+  m_pWidget->UpdateField();
+  SetChangeMark();
+}
+
+CPWL_CheckBox* CFFL_CheckBox::GetCheckBox(CPDFSDK_PageView* pPageView,
+                                          bool bNew) {
+  return static_cast<CPWL_CheckBox*>(GetPDFWindow(pPageView, bNew));
 }
