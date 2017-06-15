@@ -138,30 +138,6 @@ class CBmpContext : public CCodec_BmpModule::Context {
   char m_szLastError[256];
 };
 
-typedef struct tag_bmp_compress_struct bmp_compress_struct;
-typedef bmp_compress_struct* bmp_compress_struct_p;
-typedef bmp_compress_struct_p* bmp_compress_struct_pp;
-struct tag_bmp_compress_struct {
-  BmpFileHeader file_header;
-  BmpInfoHeader info_header;
-  uint8_t* src_buf;
-  uint32_t src_pitch;
-  uint32_t src_row;
-  uint8_t src_bpp;
-  uint32_t src_width;
-  bool src_free;
-  uint32_t* pal_ptr;
-  uint16_t pal_num;
-  uint8_t bit_type;
-};
-
-bmp_compress_struct_p bmp_create_compress();
-void bmp_destroy_compress(bmp_compress_struct_p bmp_ptr);
-bool bmp_encode_image(bmp_compress_struct_p bmp_ptr,
-                      uint8_t*& dst_buf,
-                      uint32_t& dst_size);
-
 uint16_t GetWord_LSBFirst(uint8_t* p);
-void SetWord_LSBFirst(uint8_t* p, uint16_t v);
 
 #endif  // CORE_FXCODEC_LBMP_FX_BMP_H_
