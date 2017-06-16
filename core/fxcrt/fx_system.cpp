@@ -24,7 +24,7 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
                       const struct tm* timeptr) {
   // Avoid tripping an invalid parameter handler and crashing process.
   // Note: leap seconds may cause tm_sec == 60.
-  if (timeptr->tm_year < 0 || timeptr->tm_mon < 0 || timeptr->tm_mon > 11 ||
+  if (timeptr->tm_year < -1900 || timeptr->tm_mon < 0 || timeptr->tm_mon > 11 ||
       timeptr->tm_mday < 1 || timeptr->tm_mday > 31 || timeptr->tm_hour < 0 ||
       timeptr->tm_hour > 23 || timeptr->tm_min < 0 || timeptr->tm_min > 59 ||
       timeptr->tm_sec < 0 || timeptr->tm_sec > 60 || timeptr->tm_wday < 0 ||

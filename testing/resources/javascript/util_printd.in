@@ -94,6 +94,38 @@ TestOneFormat({"clams": 3}, d1);
 TestOneFormat(["clams", 3], d1);
 TestOneXFAFormat("mm", d1, false);
 TestOneXFAFormat("mm", d1, true);
+
+// Date with year 0.
+// TODO(thestig): Why is the output different from Acrobat?
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(0, 06, 04, 15, 59, 58));
+// Date with month 20.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 20, 04, 15, 59, 58));
+// Date with day 100.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 20, 100, 15, 59, 58));
+// Date with hour 50
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 06, 04, 50, 59, 58));
+// Date with minute 1234.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 06, 04, 15, 1234, 58));
+// Date with second 65.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 06, 04, 15, 59, 65));
+// Date with April 31th.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 03, 31, 15, 59, 58));
+// Date with February 30th.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 01, 30, 15, 59, 58));
+// Date with negative year.
+// Acrobat prints out "07/04/-001 15:59:58" but handling this rarely used case
+// outside of FXSYS_wcsftime() is a lot of work.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(-1, 06, 04, 15, 59, 58));
+// Date with negative month.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, -1, 30, 15, 59, 58));
+// Date with negative day.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 06, -1, 15, 59, 58));
+// Date with negative hour.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 06, 04, -1, 59, 58));
+// Date with negative minute.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 06, 04, 15, -1, 58));
+// Date with negative second.
+TestOneFormat("mm/dd/yyyy HH:MM:ss", new Date(2014, 06, 04, 15, 59, -1));
 endstream
 endobj
 {{xref}}

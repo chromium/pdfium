@@ -250,6 +250,11 @@ bool util::printd(CJS_Runtime* pRuntime,
     }
 
     int iYear = jsDate.GetYear(pRuntime);
+    if (iYear < 0) {
+      sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
+      return false;
+    }
+
     int iMonth = jsDate.GetMonth(pRuntime);
     int iDay = jsDate.GetDay(pRuntime);
     int iHour = jsDate.GetHours(pRuntime);
@@ -290,7 +295,7 @@ bool util::printd(CJS_Runtime* pRuntime,
     time.tm_sec = iSec;
 
     wchar_t buf[64] = {};
-    wcsftime(buf, 64, cFormat.c_str(), &time);
+    FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
     cFormat = buf;
     vRet = CJS_Value(pRuntime, cFormat.c_str());
     return true;

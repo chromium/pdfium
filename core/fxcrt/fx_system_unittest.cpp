@@ -173,7 +173,21 @@ TEST(fxcrt, FXSYS_wcsftime) {
   wchar_t buf[100] = {};
   EXPECT_EQ(19u, FXSYS_wcsftime(buf, FX_ArraySize(buf), L"%Y-%m-%dT%H:%M:%S",
                                 &good_time));
-  EXPECT_EQ(std::wstring(L"1974-08-09T11:59:59"), buf);
+  EXPECT_STREQ(L"1974-08-09T11:59:59", buf);
+
+  // Ensure wcsftime handles a wide range of years without crashing.
+  struct tm year_time = {};
+  year_time.tm_mon = 7;   // 0-based.
+  year_time.tm_mday = 9;  // 1-based.
+  year_time.tm_hour = 11;
+  year_time.tm_min = 59;
+  year_time.tm_sec = 59;
+
+  for (int year = -2500; year <= 2500; ++year) {
+    year_time.tm_year = year;
+    wchar_t buf[100] = {};
+    FXSYS_wcsftime(buf, FX_ArraySize(buf), L"%Y-%m-%dT%H:%M:%S", &year_time);
+  }
 
   // Ensure wcsftime handles bad years, etc. without crashing.
   struct tm bad_time = {};

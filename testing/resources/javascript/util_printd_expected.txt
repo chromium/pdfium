@@ -38,3 +38,17 @@ Alert: [object Object]: Caught error: util.printd: Incorrect parameter type.
 Alert: clams,3: Caught error: util.printd: Incorrect parameter type.
 Alert: mm: 07
 Alert: mm: Caught error: util.printd: Operation not supported.
+Alert: mm/dd/yyyy HH:MM:ss: 07/03/1900 14:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 09/04/2015 15:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 12/09/2015 15:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 07/06/2014 02:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 07/05/2014 11:34:58
+Alert: mm/dd/yyyy HH:MM:ss: 07/04/2014 16:00:05
+Alert: mm/dd/yyyy HH:MM:ss: 05/01/2014 15:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 03/02/2014 15:59:58
+Alert: mm/dd/yyyy HH:MM:ss: Caught error: util.printd: Incorrect parameter value.
+Alert: mm/dd/yyyy HH:MM:ss: 12/30/2013 15:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 06/29/2014 15:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 07/03/2014 23:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 07/04/2014 14:59:58
+Alert: mm/dd/yyyy HH:MM:ss: 07/04/2014 15:58:59
