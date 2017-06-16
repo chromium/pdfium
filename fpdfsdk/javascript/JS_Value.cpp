@@ -31,6 +31,166 @@ MakeDate(int year, int mon, int day, int hour, int min, int sec, int ms) {
                      JS_MakeTime(hour, min, sec, ms));
 }
 
+double GetLocalTZA() {
+  if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
+    return 0;
+  time_t t = 0;
+  time(&t);
+  localtime(&t);
+#if _MSC_VER >= 1900
+  // In gcc and in Visual Studio prior to VS 2015 'timezone' is a global
+  // variable declared in time.h. That variable was deprecated and in VS 2015
+  // is removed, with _get_timezone replacing it.
+  long timezone = 0;
+  _get_timezone(&timezone);
+#endif
+  return (double)(-(timezone * 1000));
+}
+
+int GetDaylightSavingTA(double d) {
+  if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
+    return 0;
+  time_t t = (time_t)(d / 1000);
+  struct tm* tmp = localtime(&t);
+  if (!tmp)
+    return 0;
+  if (tmp->tm_isdst > 0)
+    // One hour.
+    return (int)60 * 60 * 1000;
+  return 0;
+}
+
+double Mod(double x, double y) {
+  double r = fmod(x, y);
+  if (r < 0)
+    r += y;
+  return r;
+}
+
+int IsFinite(double v) {
+#if _MSC_VER
+  return ::_finite(v);
+#else
+  return std::fabs(v) < std::numeric_limits<double>::max();
+#endif
+}
+
+double ToInteger(double n) {
+  return (n >= 0) ? floor(n) : -floor(-n);
+}
+
+bool IsLeapYear(int year) {
+  return (year % 4 == 0) && ((year % 100 != 0) || (year % 400 != 0));
+}
+
+int DayFromYear(int y) {
+  return (int)(365 * (y - 1970.0) + floor((y - 1969.0) / 4) -
+               floor((y - 1901.0) / 100) + floor((y - 1601.0) / 400));
+}
+
+double TimeFromYear(int y) {
+  return 86400000.0 * DayFromYear(y);
+}
+
+static const uint16_t daysMonth[12] = {0,   31,  59,  90,  120, 151,
+                                       181, 212, 243, 273, 304, 334};
+static const uint16_t leapDaysMonth[12] = {0,   31,  60,  91,  121, 152,
+                                           182, 213, 244, 274, 305, 335};
+
+double TimeFromYearMonth(int y, int m) {
+  const uint16_t* pMonth = IsLeapYear(y) ? leapDaysMonth : daysMonth;
+  return TimeFromYear(y) + ((double)pMonth[m]) * 86400000;
+}
+
+int Day(double t) {
+  return (int)floor(t / 86400000);
+}
+
+int YearFromTime(double t) {
+  // estimate the time.
+  int y = 1970 + static_cast<int>(t / (365.2425 * 86400000));
+  if (TimeFromYear(y) <= t) {
+    while (TimeFromYear(y + 1) <= t)
+      y++;
+  } else {
+    while (TimeFromYear(y) > t)
+      y--;
+  }
+  return y;
+}
+
+int DayWithinYear(double t) {
+  int year = YearFromTime(t);
+  int day = Day(t);
+  return day - DayFromYear(year);
+}
+
+int MonthFromTime(double t) {
+  int day = DayWithinYear(t);
+  int year = YearFromTime(t);
+  if (0 <= day && day < 31)
+    return 0;
+  if (31 <= day && day < 59 + IsLeapYear(year))
+    return 1;
+  if ((59 + IsLeapYear(year)) <= day && day < (90 + IsLeapYear(year)))
+    return 2;
+  if ((90 + IsLeapYear(year)) <= day && day < (120 + IsLeapYear(year)))
+    return 3;
+  if ((120 + IsLeapYear(year)) <= day && day < (151 + IsLeapYear(year)))
+    return 4;
+  if ((151 + IsLeapYear(year)) <= day && day < (181 + IsLeapYear(year)))
+    return 5;
+  if ((181 + IsLeapYear(year)) <= day && day < (212 + IsLeapYear(year)))
+    return 6;
+  if ((212 + IsLeapYear(year)) <= day && day < (243 + IsLeapYear(year)))
+    return 7;
+  if ((243 + IsLeapYear(year)) <= day && day < (273 + IsLeapYear(year)))
+    return 8;
+  if ((273 + IsLeapYear(year)) <= day && day < (304 + IsLeapYear(year)))
+    return 9;
+  if ((304 + IsLeapYear(year)) <= day && day < (334 + IsLeapYear(year)))
+    return 10;
+  if ((334 + IsLeapYear(year)) <= day && day < (365 + IsLeapYear(year)))
+    return 11;
+
+  return -1;
+}
+
+int DateFromTime(double t) {
+  int day = DayWithinYear(t);
+  int year = YearFromTime(t);
+  int leap = IsLeapYear(year);
+  int month = MonthFromTime(t);
+  switch (month) {
+    case 0:
+      return day + 1;
+    case 1:
+      return day - 30;
+    case 2:
+      return day - 58 - leap;
+    case 3:
+      return day - 89 - leap;
+    case 4:
+      return day - 119 - leap;
+    case 5:
+      return day - 150 - leap;
+    case 6:
+      return day - 180 - leap;
+    case 7:
+      return day - 211 - leap;
+    case 8:
+      return day - 242 - leap;
+    case 9:
+      return day - 272 - leap;
+    case 10:
+      return day - 303 - leap;
+    case 11:
+      return day - 333 - leap;
+    default:
+      return 0;
+  }
+}
+
 }  // namespace
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime) {}
@@ -456,166 +616,6 @@ v8::Local<v8::Date> CJS_Date::ToV8Date(CJS_Runtime* pRuntime) const {
   return m_pDate;
 }
 
-double _getLocalTZA() {
-  if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
-    return 0;
-  time_t t = 0;
-  time(&t);
-  localtime(&t);
-#if _MSC_VER >= 1900
-  // In gcc and in Visual Studio prior to VS 2015 'timezone' is a global
-  // variable declared in time.h. That variable was deprecated and in VS 2015
-  // is removed, with _get_timezone replacing it.
-  long timezone = 0;
-  _get_timezone(&timezone);
-#endif
-  return (double)(-(timezone * 1000));
-}
-
-int _getDaylightSavingTA(double d) {
-  if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
-    return 0;
-  time_t t = (time_t)(d / 1000);
-  struct tm* tmp = localtime(&t);
-  if (!tmp)
-    return 0;
-  if (tmp->tm_isdst > 0)
-    // One hour.
-    return (int)60 * 60 * 1000;
-  return 0;
-}
-
-double _Mod(double x, double y) {
-  double r = fmod(x, y);
-  if (r < 0)
-    r += y;
-  return r;
-}
-
-int _isfinite(double v) {
-#if _MSC_VER
-  return ::_finite(v);
-#else
-  return std::fabs(v) < std::numeric_limits<double>::max();
-#endif
-}
-
-double _toInteger(double n) {
-  return (n >= 0) ? floor(n) : -floor(-n);
-}
-
-bool _isLeapYear(int year) {
-  return (year % 4 == 0) && ((year % 100 != 0) || (year % 400 != 0));
-}
-
-int _DayFromYear(int y) {
-  return (int)(365 * (y - 1970.0) + floor((y - 1969.0) / 4) -
-               floor((y - 1901.0) / 100) + floor((y - 1601.0) / 400));
-}
-
-double _TimeFromYear(int y) {
-  return 86400000.0 * _DayFromYear(y);
-}
-
-static const uint16_t daysMonth[12] = {0,   31,  59,  90,  120, 151,
-                                       181, 212, 243, 273, 304, 334};
-static const uint16_t leapDaysMonth[12] = {0,   31,  60,  91,  121, 152,
-                                           182, 213, 244, 274, 305, 335};
-
-double _TimeFromYearMonth(int y, int m) {
-  const uint16_t* pMonth = _isLeapYear(y) ? leapDaysMonth : daysMonth;
-  return _TimeFromYear(y) + ((double)pMonth[m]) * 86400000;
-}
-
-int _Day(double t) {
-  return (int)floor(t / 86400000);
-}
-
-int _YearFromTime(double t) {
-  // estimate the time.
-  int y = 1970 + static_cast<int>(t / (365.2425 * 86400000));
-  if (_TimeFromYear(y) <= t) {
-    while (_TimeFromYear(y + 1) <= t)
-      y++;
-  } else {
-    while (_TimeFromYear(y) > t)
-      y--;
-  }
-  return y;
-}
-
-int _DayWithinYear(double t) {
-  int year = _YearFromTime(t);
-  int day = _Day(t);
-  return day - _DayFromYear(year);
-}
-
-int _MonthFromTime(double t) {
-  int day = _DayWithinYear(t);
-  int year = _YearFromTime(t);
-  if (0 <= day && day < 31)
-    return 0;
-  if (31 <= day && day < 59 + _isLeapYear(year))
-    return 1;
-  if ((59 + _isLeapYear(year)) <= day && day < (90 + _isLeapYear(year)))
-    return 2;
-  if ((90 + _isLeapYear(year)) <= day && day < (120 + _isLeapYear(year)))
-    return 3;
-  if ((120 + _isLeapYear(year)) <= day && day < (151 + _isLeapYear(year)))
-    return 4;
-  if ((151 + _isLeapYear(year)) <= day && day < (181 + _isLeapYear(year)))
-    return 5;
-  if ((181 + _isLeapYear(year)) <= day && day < (212 + _isLeapYear(year)))
-    return 6;
-  if ((212 + _isLeapYear(year)) <= day && day < (243 + _isLeapYear(year)))
-    return 7;
-  if ((243 + _isLeapYear(year)) <= day && day < (273 + _isLeapYear(year)))
-    return 8;
-  if ((273 + _isLeapYear(year)) <= day && day < (304 + _isLeapYear(year)))
-    return 9;
-  if ((304 + _isLeapYear(year)) <= day && day < (334 + _isLeapYear(year)))
-    return 10;
-  if ((334 + _isLeapYear(year)) <= day && day < (365 + _isLeapYear(year)))
-    return 11;
-
-  return -1;
-}
-
-int _DateFromTime(double t) {
-  int day = _DayWithinYear(t);
-  int year = _YearFromTime(t);
-  int leap = _isLeapYear(year);
-  int month = _MonthFromTime(t);
-  switch (month) {
-    case 0:
-      return day + 1;
-    case 1:
-      return day - 30;
-    case 2:
-      return day - 58 - leap;
-    case 3:
-      return day - 89 - leap;
-    case 4:
-      return day - 119 - leap;
-    case 5:
-      return day - 150 - leap;
-    case 6:
-      return day - 180 - leap;
-    case 7:
-      return day - 211 - leap;
-    case 8:
-      return day - 242 - leap;
-    case 9:
-      return day - 272 - leap;
-    case 10:
-      return day - 303 - leap;
-    case 11:
-      return day - 333 - leap;
-    default:
-      return 0;
-  }
-}
-
 double JS_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
@@ -623,34 +623,34 @@ double JS_GetDateTime() {
   struct tm* pTm = localtime(&t);
 
   int year = pTm->tm_year + 1900;
-  double t1 = _TimeFromYear(year);
+  double t1 = TimeFromYear(year);
 
   return t1 + pTm->tm_yday * 86400000.0 + pTm->tm_hour * 3600000.0 +
          pTm->tm_min * 60000.0 + pTm->tm_sec * 1000.0;
 }
 
 int JS_GetYearFromTime(double dt) {
-  return _YearFromTime(dt);
+  return YearFromTime(dt);
 }
 
 int JS_GetMonthFromTime(double dt) {
-  return _MonthFromTime(dt);
+  return MonthFromTime(dt);
 }
 
 int JS_GetDayFromTime(double dt) {
-  return _DateFromTime(dt);
+  return DateFromTime(dt);
 }
 
 int JS_GetHourFromTime(double dt) {
-  return (int)_Mod(floor(dt / (60 * 60 * 1000)), 24);
+  return (int)Mod(floor(dt / (60 * 60 * 1000)), 24);
 }
 
 int JS_GetMinFromTime(double dt) {
-  return (int)_Mod(floor(dt / (60 * 1000)), 60);
+  return (int)Mod(floor(dt / (60 * 1000)), 60);
 }
 
 int JS_GetSecFromTime(double dt) {
-  return (int)_Mod(floor(dt / 1000), 60);
+  return (int)Mod(floor(dt / 1000), 60);
 }
 
 double JS_DateParse(const CFX_WideString& str) {
@@ -683,7 +683,7 @@ double JS_DateParse(const CFX_WideString& str) {
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {
         double date = v->ToNumber(context).ToLocalChecked()->Value();
-        if (!_isfinite(date))
+        if (!IsFinite(date))
           return date;
         return JS_LocalTime(date);
       }
@@ -693,37 +693,35 @@ double JS_DateParse(const CFX_WideString& str) {
 }
 
 double JS_MakeDay(int nYear, int nMonth, int nDate) {
-  if (!_isfinite(nYear) || !_isfinite(nMonth) || !_isfinite(nDate))
+  if (!IsFinite(nYear) || !IsFinite(nMonth) || !IsFinite(nDate))
     return GetNan();
-  double y = _toInteger(nYear);
-  double m = _toInteger(nMonth);
-  double dt = _toInteger(nDate);
+  double y = ToInteger(nYear);
+  double m = ToInteger(nMonth);
+  double dt = ToInteger(nDate);
   double ym = y + floor((double)m / 12);
-  double mn = _Mod(m, 12);
+  double mn = Mod(m, 12);
 
-  double t = _TimeFromYearMonth((int)ym, (int)mn);
+  double t = TimeFromYearMonth((int)ym, (int)mn);
 
-  if (_YearFromTime(t) != ym || _MonthFromTime(t) != mn ||
-      _DateFromTime(t) != 1)
+  if (YearFromTime(t) != ym || MonthFromTime(t) != mn || DateFromTime(t) != 1)
     return GetNan();
-  return _Day(t) + dt - 1;
+  return Day(t) + dt - 1;
 }
 
 double JS_MakeTime(int nHour, int nMin, int nSec, int nMs) {
-  if (!_isfinite(nHour) || !_isfinite(nMin) || !_isfinite(nSec) ||
-      !_isfinite(nMs))
+  if (!IsFinite(nHour) || !IsFinite(nMin) || !IsFinite(nSec) || !IsFinite(nMs))
     return GetNan();
 
-  double h = _toInteger(nHour);
-  double m = _toInteger(nMin);
-  double s = _toInteger(nSec);
-  double milli = _toInteger(nMs);
+  double h = ToInteger(nHour);
+  double m = ToInteger(nMin);
+  double s = ToInteger(nSec);
+  double milli = ToInteger(nMs);
 
   return h * 3600000 + m * 60000 + s * 1000 + milli;
 }
 
 double JS_MakeDate(double day, double time) {
-  if (!_isfinite(day) || !_isfinite(time))
+  if (!IsFinite(day) || !IsFinite(time))
     return GetNan();
 
   return day * 86400000 + time;
@@ -734,7 +732,7 @@ bool JS_PortIsNan(double d) {
 }
 
 double JS_LocalTime(double d) {
-  return d + _getLocalTZA() + _getDaylightSavingTA(d);
+  return d + GetLocalTZA() + GetDaylightSavingTA(d);
 }
 
 std::vector<CJS_Value> JS_ExpandKeywordParams(
