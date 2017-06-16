@@ -6,6 +6,8 @@
 
 #include <algorithm>
 #include <memory>
+#include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -140,16 +142,15 @@ void CXML_Parser::GetName(CFX_ByteString* space, CFX_ByteString* name) {
   if (IsEOF())
     return;
 
-  CFX_ByteTextBuf buf;
-  uint8_t ch;
+  std::ostringstream buf;
   do {
     while (m_dwIndex < m_dwBufferSize) {
-      ch = m_pBuffer[m_dwIndex];
+      uint8_t ch = m_pBuffer[m_dwIndex];
       if (ch == ':') {
-        *space = buf.AsStringC();
-        buf.Clear();
+        *space = CFX_ByteString(buf);
+        buf.str("");
       } else if (g_FXCRT_XML_IsNameChar(ch)) {
-        buf.AppendChar(ch);
+        buf << static_cast<char>(ch);
       } else {
         break;
       }
@@ -159,7 +160,7 @@ void CXML_Parser::GetName(CFX_ByteString* space, CFX_ByteString* name) {
     if (m_dwIndex < m_dwBufferSize || IsEOF())
       break;
   } while (ReadNextBlock());
-  *name = buf.AsStringC();
+  *name = CFX_ByteString(buf);
 }
 
 void CXML_Parser::SkipLiterals(const CFX_ByteStringC& str) {
@@ -199,7 +200,7 @@ uint32_t CXML_Parser::GetCharRef() {
 
   uint8_t ch;
   int32_t iState = 0;
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   uint32_t code = 0;
   do {
     while (m_dwIndex < m_dwBufferSize) {
@@ -215,7 +216,7 @@ uint32_t CXML_Parser::GetCharRef() {
         case 1:
           m_dwIndex++;
           if (ch == ';') {
-            CFX_ByteStringC ref = buf.AsStringC();
+            std::string ref = buf.str();
             if (ref == "gt")
               code = '>';
             else if (ref == "lt")
@@ -229,7 +230,7 @@ uint32_t CXML_Parser::GetCharRef() {
             iState = 10;
             break;
           }
-          buf.AppendByte(ch);
+          buf << static_cast<char>(ch);
           break;
         case 2:
           if (ch == 'x') {
