@@ -165,7 +165,7 @@ bool util::printf(CJS_Runtime* pRuntime,
         strSegment.Format(L"%S", c_strFormat.c_str());
         break;
     }
-    c_strResult += strSegment.GetBuffer(strSegment.GetLength() + 1);
+    c_strResult += strSegment.c_str();
   }
 
   c_strResult.erase(c_strResult.begin());
@@ -256,18 +256,15 @@ bool util::printd(CJS_Runtime* pRuntime,
     int iMin = jsDate.GetMinutes(pRuntime);
     int iSec = jsDate.GetSeconds(pRuntime);
 
-    TbConvertAdditional cTableAd[] = {
+    static const TbConvertAdditional cTableAd[] = {
         {L"m", iMonth + 1}, {L"d", iDay},
         {L"H", iHour},      {L"h", iHour > 12 ? iHour - 12 : iHour},
         {L"M", iMin},       {L"s", iSec},
     };
 
     for (size_t i = 0; i < FX_ArraySize(cTableAd); ++i) {
-      wchar_t tszValue[16];
       CFX_WideString sValue;
       sValue.Format(L"%d", cTableAd[i].iValue);
-      memcpy(tszValue, (wchar_t*)sValue.GetBuffer(sValue.GetLength() + 1),
-             (sValue.GetLength() + 1) * sizeof(wchar_t));
 
       int iStart = 0;
       int iEnd;
@@ -278,7 +275,8 @@ bool util::printd(CJS_Runtime* pRuntime,
             continue;
           }
         }
-        cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[i].lpszJSMark), tszValue);
+        cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[i].lpszJSMark),
+                        sValue.c_str());
         iStart = iEnd;
       }
     }
