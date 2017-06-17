@@ -67,8 +67,8 @@ class CPDFSDK_FormFillEnvironment
                     const CPDF_Document* pSrcDoc,
                     const std::vector<uint16_t>& arrSrcPages);
 
-  int GetPageCount() { return m_pUnderlyingDoc->GetPageCount(); }
-  bool GetPermissions(int nFlag);
+  int GetPageCount() const { return m_pUnderlyingDoc->GetPageCount(); }
+  bool GetPermissions(int nFlag) const;
 
   bool GetChangeMark() const { return m_bChangeMask; }
   void SetChangeMark() { m_bChangeMask = true; }

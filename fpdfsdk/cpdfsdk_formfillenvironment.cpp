@@ -749,6 +749,6 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
   return false;
 }
 
-bool CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) {
+bool CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) const {
   return !!(GetPDFDocument()->GetUserPermissions() & nFlag);
 }
