@@ -70,7 +70,7 @@ std::vector<std::string> StringSplit(const std::string& str, char delimiter);
 
 // Converts a FPDF_WIDESTRING to a std::wstring.
 // Deals with differences between UTF16LE and wchar_t.
-std::wstring GetPlatformWString(const FPDF_WIDESTRING wstr);
+std::wstring GetPlatformWString(FPDF_WIDESTRING wstr);
 
 // Returns a newly allocated FPDF_WIDESTRING.
 // Deals with differences between UTF16LE and wchar_t.

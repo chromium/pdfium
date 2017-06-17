@@ -755,8 +755,8 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* avail, size_t offset, size_t size) {
 
 void Add_Segment(FX_DOWNLOADHINTS* hints, size_t offset, size_t size) {}
 
-void SendPageEvents(const FPDF_FORMHANDLE& form,
-                    const FPDF_PAGE& page,
+void SendPageEvents(FPDF_FORMHANDLE form,
+                    FPDF_PAGE page,
                     const std::string& events) {
   auto lines = StringSplit(events, '\n');
   for (auto line : lines) {
