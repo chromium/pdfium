@@ -7,6 +7,7 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 
 #include <memory>
+#include <sstream>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -1346,7 +1347,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
 void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   CPDF_FormControl* pControl = GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
-  CFX_ByteTextBuf sBody, sLines;
+  std::ostringstream sBody;
 
   CFX_FloatRect rcClient = GetClientRect();
   CFX_FloatRect rcButton = rcClient;
@@ -1399,14 +1400,15 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
 
     CPWL_Color crText = GetTextPWLColor();
     sBody << "BT\n"
-          << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n"
+          << CPWL_Utils::GetColorAppStream(crText).c_str() << sEdit.c_str()
+          << "ET\n"
           << "Q\nEMC\n";
   }
 
-  sBody << CPWL_Utils::GetDropButtonAppStream(rcButton);
+  sBody << CPWL_Utils::GetDropButtonAppStream(rcButton).c_str();
 
-  CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
-                       sLines.AsStringC() + sBody.AsStringC();
+  CFX_ByteString sAP =
+      GetBackgroundAppStream() + GetBorderAppStream() + CFX_ByteString(sBody);
 
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
@@ -1415,7 +1417,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   CPDF_FormControl* pControl = GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   CFX_FloatRect rcClient = GetClientRect();
-  CFX_ByteTextBuf sBody, sLines;
+  std::ostringstream sBody;
 
   auto pEdit = pdfium::MakeUnique<CFX_Edit>();
   pEdit->EnableRefresh(false);
@@ -1431,7 +1433,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
 
   pEdit->Initialize();
 
-  CFX_ByteTextBuf sList;
+  std::ostringstream sList;
   float fy = rcClient.top;
 
   int32_t nTop = pField->GetTopVisibleIndex();
@@ -1460,6 +1462,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
                    CPWL_Color(COLORTYPE_RGB, 0, 51.0f / 255.0f,
                               113.0f / 255.0f),
                    true)
+                   .c_str()
             << rcItem.left << " " << rcItem.bottom << " " << rcItem.Width()
             << " " << rcItem.Height() << " re f\n"
             << "Q\n";
@@ -1467,29 +1470,32 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
       sList << "BT\n"
             << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY, 1),
                                              true)
+                   .c_str()
             << CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, fy))
+                   .c_str()
             << "ET\n";
     } else {
       CPWL_Color crText = GetTextPWLColor();
       sList << "BT\n"
-            << CPWL_Utils::GetColorAppStream(crText, true)
+            << CPWL_Utils::GetColorAppStream(crText, true).c_str()
             << CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, fy))
+                   .c_str()
             << "ET\n";
     }
 
     fy -= fItemHeight;
   }
 
-  if (sList.GetSize() > 0) {
+  if (sList.tellp() > 0) {
     sBody << "/Tx BMC\n"
           << "q\n"
           << rcClient.left << " " << rcClient.bottom << " " << rcClient.Width()
           << " " << rcClient.Height() << " re\nW\nn\n";
-    sBody << sList << "Q\nEMC\n";
+    sBody << sList.str() << "Q\nEMC\n";
   }
 
-  CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
-                       sLines.AsStringC() + sBody.AsStringC();
+  CFX_ByteString sAP =
+      GetBackgroundAppStream() + GetBorderAppStream() + CFX_ByteString(sBody);
 
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
@@ -1497,7 +1503,8 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
 void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
   CPDF_FormControl* pControl = GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
-  CFX_ByteTextBuf sBody, sLines;
+  std::ostringstream sBody;
+  std::ostringstream sLines;
 
   auto pEdit = pdfium::MakeUnique<CFX_Edit>();
   pEdit->EnableRefresh(false);
@@ -1574,7 +1581,8 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
     }
     CPWL_Color crText = GetTextPWLColor();
     sBody << "BT\n"
-          << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n"
+          << CPWL_Utils::GetColorAppStream(crText).c_str() << sEdit.c_str()
+          << "ET\n"
           << "Q\nEMC\n";
   }
 
@@ -1587,6 +1595,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
           sLines << "q\n"
                  << GetBorderWidth() << " w\n"
                  << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(), false)
+                        .c_str()
                  << " 2 J 0 j\n";
 
           for (int32_t i = 1; i < nMaxLen; ++i) {
@@ -1611,6 +1620,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
           sLines << "q\n"
                  << GetBorderWidth() << " w\n"
                  << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(), false)
+                        .c_str()
                  << "[" << dsBorder.nDash << " " << dsBorder.nGap << "] "
                  << dsBorder.nPhase << " d\n";
 
@@ -1633,7 +1643,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
   }
 
   CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
-                       sLines.AsStringC() + sBody.AsStringC();
+                       CFX_ByteString(sLines) + CFX_ByteString(sBody);
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
 
