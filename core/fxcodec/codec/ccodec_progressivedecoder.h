@@ -150,7 +150,8 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
 
   // CCodec_BmpModule::Delegate
   bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
-  void BmpReadScanline(int32_t row_num, uint8_t* row_buf) override;
+  void BmpReadScanline(uint32_t row_num,
+                       const std::vector<uint8_t>& row_buf) override;
 
  private:
   bool BmpReadMoreData(CCodec_BmpModule* pBmpModule,

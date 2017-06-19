@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
@@ -24,7 +25,8 @@ class CCodec_BmpModule {
   class Delegate {
    public:
     virtual bool BmpInputImagePositionBuf(uint32_t rcd_pos) = 0;
-    virtual void BmpReadScanline(int32_t row_num, uint8_t* row_buf) = 0;
+    virtual void BmpReadScanline(uint32_t row_num,
+                                 const std::vector<uint8_t>& row_buf) = 0;
   };
 
   CCodec_BmpModule();

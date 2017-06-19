@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_LBMP_FX_BMP_H_
 
 #include <setjmp.h>
+#include <vector>
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
 #include "core/fxcrt/fx_basic.h"
@@ -68,6 +69,9 @@ typedef struct tagBmpInfoHeader {
 
 class BMPDecompressor {
  public:
+  BMPDecompressor();
+  ~BMPDecompressor();
+
   void Error(const char* err_msg);
   int32_t DecodeImage();
   int32_t ReadHeader();
@@ -81,24 +85,24 @@ class BMPDecompressor {
 
   BmpFileHeaderPtr bmp_header_ptr;
   BmpInfoHeaderPtr bmp_infoheader_ptr;
-  int32_t width;
-  int32_t height;
+  std::vector<uint8_t> out_row_buffer;
+
+  uint32_t width;
+  uint32_t height;
   uint32_t compress_flag;
   int32_t components;
-  int32_t src_row_bytes;
-  int32_t out_row_bytes;
-  uint8_t* out_row_buffer;
+  size_t src_row_bytes;
+  size_t out_row_bytes;
   uint16_t bitCounts;
   uint32_t color_used;
-  bool imgTB_flag;
   int32_t pal_num;
   int32_t pal_type;
   uint32_t* pal_ptr;
   uint32_t data_size;
   uint32_t img_data_offset;
   uint32_t img_ifh_size;
-  int32_t row_num;
-  int32_t col_num;
+  size_t row_num;
+  size_t col_num;
   int32_t dpi_x;
   int32_t dpi_y;
   uint32_t mask_red;
@@ -112,7 +116,7 @@ class BMPDecompressor {
 
  private:
   bool GetDataPosition(uint32_t cur_pos);
-  void ReadScanline(int32_t row_num, uint8_t* row_buf);
+  void ReadScanline(uint32_t row_num, const std::vector<uint8_t>& row_buf);
   int32_t DecodeRGB();
   int32_t DecodeRLE8();
   int32_t DecodeRLE4();
@@ -122,17 +126,12 @@ class BMPDecompressor {
   bool ValidateFlag() const;
 };
 
-BMPDecompressor* bmp_create_decompress();
-void bmp_destroy_decompress(BMPDecompressor** bmp_ptr_ptr);
-
 class CBmpContext : public CCodec_BmpModule::Context {
  public:
-  CBmpContext(BMPDecompressor* pBmp,
-              CCodec_BmpModule* pModule,
-              CCodec_BmpModule::Delegate* pDelegate);
+  CBmpContext(CCodec_BmpModule* pModule, CCodec_BmpModule::Delegate* pDelegate);
   ~CBmpContext() override;
 
-  BMPDecompressor* m_pBmp;
+  BMPDecompressor m_Bmp;
   CFX_UnownedPtr<CCodec_BmpModule> const m_pModule;
   CFX_UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
   char m_szLastError[256];
