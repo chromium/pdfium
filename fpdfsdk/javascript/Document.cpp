@@ -273,11 +273,6 @@ bool Document::exportAsXFDF(CJS_Runtime* pRuntime,
   return true;
 }
 
-// Maps a field object in PDF document to a JavaScript variable
-// comment:
-// note: the paremter cName, this is clue how to treat if the cName is not a
-// valiable filed name in this document
-
 bool Document::getField(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
