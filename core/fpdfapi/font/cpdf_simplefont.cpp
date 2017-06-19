@@ -212,3 +212,7 @@ uint32_t CPDF_SimpleFont::CharCodeFromUnicode(wchar_t unicode) const {
     return ret;
   return m_Encoding.CharCodeFromUnicode(unicode);
 }
+
+bool CPDF_SimpleFont::HasFontWidths() const {
+  return !m_bUseFontWidth;
+}

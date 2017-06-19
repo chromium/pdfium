@@ -29,6 +29,8 @@ class CPDF_SimpleFont : public CPDF_Font {
 
   CPDF_FontEncoding* GetEncoding() { return &m_Encoding; }
 
+  bool HasFontWidths() const override;
+
  protected:
   virtual void LoadGlyphMap() = 0;
 

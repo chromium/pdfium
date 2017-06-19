@@ -44,13 +44,16 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
     charpos.m_ExtGID = pFont->GlyphFromCharCodeExt(CharCode);
     GlyphID = charpos.m_ExtGID;
 #endif
+    CFX_Font* pCurrentFont;
     if (GlyphID != static_cast<uint32_t>(-1)) {
       charpos.m_FallbackFontPosition = -1;
+      pCurrentFont = pFont->GetFont();
     } else {
       charpos.m_FallbackFontPosition =
           pFont->FallbackFontFromCharcode(CharCode);
       charpos.m_GlyphIndex = pFont->FallbackGlyphFromCharcode(
           charpos.m_FallbackFontPosition, CharCode);
+      pCurrentFont = pFont->GetFontFallback(charpos.m_FallbackFontPosition);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
       charpos.m_ExtGID = charpos.m_GlyphIndex;
 #endif
@@ -63,6 +66,29 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
 
     charpos.m_Origin = CFX_PointF(iChar ? charPos[iChar - 1] : 0, 0);
     charpos.m_bGlyphAdjust = false;
+
+    float scalingFactor = 1.0f;
+    if (!pFont->IsEmbedded() && pFont->HasFontWidths() && !bVertWriting &&
+        !(pCurrentFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_MM)) {
+      int pdfGlyphWidth = pFont->GetCharWidthF(CharCode);
+      int ftGlyphWidth =
+          pCurrentFont ? pCurrentFont->GetGlyphWidth(charpos.m_GlyphIndex) : 0;
+      if (ftGlyphWidth && pdfGlyphWidth > ftGlyphWidth + 1) {
+        // Move the initial x position by half of the excess (transformed to
+        // text space coordinates).
+        charpos.m_Origin.x +=
+            (pdfGlyphWidth - ftGlyphWidth) * FontSize / 2000.0f;
+      } else if (pdfGlyphWidth && ftGlyphWidth &&
+                 pdfGlyphWidth < ftGlyphWidth) {
+        scalingFactor = static_cast<float>(pdfGlyphWidth) / ftGlyphWidth;
+        ASSERT(scalingFactor >= 0.0f);
+        charpos.m_AdjustMatrix[0] = scalingFactor;
+        charpos.m_AdjustMatrix[1] = 0.0f;
+        charpos.m_AdjustMatrix[2] = 0.0f;
+        charpos.m_AdjustMatrix[3] = 1.0f;
+        charpos.m_bGlyphAdjust = true;
+      }
+    }
     if (!pCIDFont)
       continue;
 
@@ -79,9 +105,11 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
 
     const uint8_t* pTransform = pCIDFont->GetCIDTransform(CID);
     if (pTransform && !bVert) {
-      charpos.m_AdjustMatrix[0] = pCIDFont->CIDTransformToFloat(pTransform[0]);
+      charpos.m_AdjustMatrix[0] =
+          pCIDFont->CIDTransformToFloat(pTransform[0]) * scalingFactor;
+      charpos.m_AdjustMatrix[1] =
+          pCIDFont->CIDTransformToFloat(pTransform[1]) * scalingFactor;
       charpos.m_AdjustMatrix[2] = pCIDFont->CIDTransformToFloat(pTransform[2]);
-      charpos.m_AdjustMatrix[1] = pCIDFont->CIDTransformToFloat(pTransform[1]);
       charpos.m_AdjustMatrix[3] = pCIDFont->CIDTransformToFloat(pTransform[3]);
       charpos.m_Origin.x +=
           pCIDFont->CIDTransformToFloat(pTransform[4]) * FontSize;

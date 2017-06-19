@@ -159,6 +159,10 @@ uint32_t CPDF_Font::CharCodeFromUnicode(wchar_t unicode) const {
   return m_pToUnicodeMap ? m_pToUnicodeMap->ReverseLookup(unicode) : 0;
 }
 
+bool CPDF_Font::HasFontWidths() const {
+  return true;
+}
+
 void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
   m_Flags = pFontDesc->GetIntegerFor("Flags", FXFONT_NONSYMBOLIC);
   int ItalicAngle = 0;
