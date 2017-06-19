@@ -109,6 +109,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObj_CreateNewPath);
     CHK(FPDFPageObj_CreateNewRect);
     CHK(FPDFPath_SetStrokeColor);
+    CHK(FPDFPath_GetStrokeColor);
     CHK(FPDFPath_SetStrokeWidth);
     CHK(FPDFPath_SetFillColor);
     CHK(FPDFPath_GetFillColor);

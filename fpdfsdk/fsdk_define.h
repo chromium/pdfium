@@ -24,6 +24,7 @@
 class CPDF_Annot;
 class CPDF_Page;
 class CPDF_PageRenderContext;
+class CPDF_PathObject;
 class IFSDK_PAUSE_Adapter;
 
 // Layering prevents fxcrt from knowing about FPDF_FILEACCESS, so this can't
@@ -63,6 +64,9 @@ CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page);
 
 FPDF_ANNOTATION FPDFAnnotationFromCPDFDictionary(CPDF_Dictionary* pDict);
 CPDF_Dictionary* CPDFDictionaryFromFPDFAnnotation(FPDF_ANNOTATION annot);
+
+CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
+
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);

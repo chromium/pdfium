@@ -345,6 +345,21 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
                                             unsigned int B,
                                             unsigned int A);
 
+// Get the stroke RGBA of a path. Range of values: 0 - 255.
+//
+// path   - the handle to the path object.
+// R      - the red component of the path stroke color.
+// G      - the green component of the path stroke color.
+// B      - the blue component of the path stroke color.
+// A      - the stroke alpha of the path.
+//
+// Returns TRUE on success.
+DLLEXPORT FPDF_BOOL FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
+                                            unsigned int* R,
+                                            unsigned int* G,
+                                            unsigned int* B,
+                                            unsigned int* A);
+
 // Set the stroke width of a path.
 //
 // path   - the handle to the path object.

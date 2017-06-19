@@ -16,6 +16,7 @@
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
+#include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -310,6 +311,10 @@ FPDF_ANNOTATION FPDFAnnotationFromCPDFDictionary(CPDF_Dictionary* pDict) {
 
 CPDF_Dictionary* CPDFDictionaryFromFPDFAnnotation(FPDF_ANNOTATION annot) {
   return static_cast<CPDF_Dictionary*>(annot);
+}
+
+CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
+  return static_cast<CPDF_PathObject*>(page_object);
 }
 
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
