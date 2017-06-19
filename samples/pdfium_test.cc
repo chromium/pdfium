@@ -74,12 +74,14 @@ enum OutputFormat {
 struct Options {
   Options()
       : show_config(false),
+        show_metadata(false),
         send_events(false),
         pages(false),
         md5(false),
         output_format(OUTPUT_NONE) {}
 
   bool show_config;
+  bool show_metadata;
   bool send_events;
   bool pages;
   bool md5;
@@ -625,6 +627,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     const std::string& cur_arg = args[cur_idx];
     if (cur_arg == "--show-config") {
       options->show_config = true;
+    } else if (cur_arg == "--show-metadata") {
+      options->show_metadata = true;
     } else if (cur_arg == "--send-events") {
       options->send_events = true;
     } else if (cur_arg == "--ppm") {
@@ -1107,6 +1111,19 @@ void RenderPdf(const std::string& name,
   }
 
   (void)FPDF_GetDocPermissions(doc.get());
+
+  if (options.show_metadata) {
+    const char* metaTags[] = {"Title",   "Author",   "Subject",      "Keywords",
+                              "Creator", "Producer", "CreationDate", "ModDate"};
+    for (const char* metaTag : metaTags) {
+      char metaBuffer[4096];
+      int len = FPDF_GetMetaText(doc.get(), metaTag, metaBuffer, 4096);
+      printf("%-12s = %ls (%d bytes)\n", metaTag,
+             GetPlatformWString(reinterpret_cast<unsigned short*>(metaBuffer))
+                 .c_str(),
+             len);
+    }
+  }
 
   std::unique_ptr<void, FPDFFormHandleDeleter> form(
       FPDFDOC_InitFormFillEnvironment(doc.get(), &form_callbacks));

@@ -360,6 +360,9 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
   if (!LoadLinearizedCrossRefV4(xrefpos, dwObjCount))
     return false;
 
+  if (m_pTrailer)
+    m_Trailers.push_back(std::move(m_pTrailer));
+
   m_pTrailer = LoadTrailerV4();
   if (!m_pTrailer)
     return false;
@@ -1084,7 +1087,18 @@ uint32_t CPDF_Parser::GetRootObjNum() {
 uint32_t CPDF_Parser::GetInfoObjNum() {
   CPDF_Reference* pRef =
       ToReference(m_pTrailer ? m_pTrailer->GetObjectFor("Info") : nullptr);
-  return pRef ? pRef->GetRefObjNum() : 0;
+  if (pRef)
+    return pRef->GetRefObjNum();
+
+  // Search trailers array from latest to earliest revision, as we want the
+  // most recent Info object number.
+  // See PDF 1.7 spec, section 3.4.5 - Incremental Updates.
+  for (auto it = m_Trailers.rbegin(); it != m_Trailers.rend(); ++it) {
+    pRef = ToReference(it->get()->GetObjectFor("Info"));
+    if (pRef)
+      return pRef->GetRefObjNum();
+  }
+  return 0;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
@@ -1545,7 +1559,8 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
 CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   uint32_t dwSaveMetadataObjnum = m_pSyntax->m_MetadataObjnum;
   m_pSyntax->m_MetadataObjnum = 0;
-  m_pTrailer.reset();
+  if (m_pTrailer)
+    m_Trailers.push_back(std::move(m_pTrailer));
   m_pSyntax->SetPos(m_LastXRefOffset - m_pSyntax->m_HeaderOffset);
 
   uint8_t ch = 0;
