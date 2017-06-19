@@ -95,6 +95,7 @@ class BMPDecompressor {
   size_t out_row_bytes;
   uint16_t bitCounts;
   uint32_t color_used;
+  bool imgTB_flag;
   int32_t pal_num;
   int32_t pal_type;
   uint32_t* pal_ptr;

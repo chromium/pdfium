@@ -51,7 +51,7 @@ int32_t CCodec_BmpModule::ReadHeader(Context* pContext,
 
   *width = ctx->m_Bmp.width;
   *height = ctx->m_Bmp.height;
-  *tb_flag = false;
+  *tb_flag = ctx->m_Bmp.imgTB_flag;
   *components = ctx->m_Bmp.components;
   *pal_num = ctx->m_Bmp.pal_num;
   *pal_pp = ctx->m_Bmp.pal_ptr;

@@ -43,6 +43,7 @@ BMPDecompressor::BMPDecompressor()
       out_row_bytes(0),
       bitCounts(0),
       color_used(0),
+      imgTB_flag(false),
       pal_num(0),
       pal_type(0),
       pal_ptr(nullptr),
@@ -125,6 +126,7 @@ int32_t BMPDecompressor::ReadHeader() {
         bitCounts = GetWord_LSBFirst(
             reinterpret_cast<uint8_t*>(&bmp_core_header_ptr->bcBitCount));
         compress_flag = BMP_RGB;
+        imgTB_flag = false;
       } break;
       case kBmpInfoHeaderSize: {
         BmpInfoHeaderPtr bmp_info_header_ptr = nullptr;
@@ -133,7 +135,8 @@ int32_t BMPDecompressor::ReadHeader() {
           return 2;
         }
         width = GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
-        height = GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
+        int32_t signed_height =
+            GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
         bitCounts =
             GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
         compress_flag =
@@ -144,6 +147,16 @@ int32_t BMPDecompressor::ReadHeader() {
             (uint8_t*)&bmp_info_header_ptr->biXPelsPerMeter);
         dpi_y = (int32_t)GetDWord_LSBFirst(
             (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
+        if (signed_height < 0) {
+          if (signed_height == std::numeric_limits<int>::min()) {
+            Error("Unsupported height");
+            NOTREACHED();
+          }
+          height = -signed_height;
+          imgTB_flag = true;
+        } else {
+          height = signed_height;
+        }
       } break;
       default: {
         if (img_ifh_size >
@@ -155,7 +168,8 @@ int32_t BMPDecompressor::ReadHeader() {
           }
           uint16_t biPlanes;
           width = GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
-          height = GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
+          int32_t signed_height =
+              GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
           bitCounts =
               GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
           compress_flag =
@@ -167,6 +181,16 @@ int32_t BMPDecompressor::ReadHeader() {
               (uint8_t*)&bmp_info_header_ptr->biXPelsPerMeter);
           dpi_y = GetDWord_LSBFirst(
               (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
+          if (signed_height < 0) {
+            if (signed_height == std::numeric_limits<int>::min()) {
+              Error("Unsupported height");
+              NOTREACHED();
+            }
+            height = -signed_height;
+            imgTB_flag = true;
+          } else {
+            height = signed_height;
+          }
           if (compress_flag == BMP_RGB && biPlanes == 1 && color_used == 0)
             break;
         }
@@ -402,7 +426,8 @@ int32_t BMPDecompressor::DecodeRGB() {
       if (!ValidateColorIndex(byte))
         return 0;
     }
-    ReadScanline(height - 1 - row_num++, out_row_buffer);
+    ReadScanline(imgTB_flag ? row_num++ : (height - 1 - row_num++),
+                 out_row_buffer);
   }
   SaveDecodingStatus(BMP_D_STATUS_TAIL);
   return 1;
@@ -430,7 +455,8 @@ int32_t BMPDecompressor::DecodeRLE8() {
               Error("The Bmp File Is Corrupt");
               NOTREACHED();
             }
-            ReadScanline(height - 1 - row_num++, out_row_buffer);
+            ReadScanline(imgTB_flag ? row_num++ : (height - 1 - row_num++),
+                         out_row_buffer);
             col_num = 0;
             std::fill(out_row_buffer.begin(), out_row_buffer.end(), 0);
             SaveDecodingStatus(BMP_D_STATUS_DATA);
@@ -438,7 +464,8 @@ int32_t BMPDecompressor::DecodeRLE8() {
           }
           case RLE_EOI: {
             if (row_num < height) {
-              ReadScanline(height - 1 - row_num++, out_row_buffer);
+              ReadScanline(imgTB_flag ? row_num++ : (height - 1 - row_num++),
+                           out_row_buffer);
             }
             SaveDecodingStatus(BMP_D_STATUS_TAIL);
             return 1;
@@ -457,7 +484,8 @@ int32_t BMPDecompressor::DecodeRLE8() {
             }
             while (row_num < bmp_row_num_next) {
               std::fill(out_row_buffer.begin(), out_row_buffer.end(), 0);
-              ReadScanline(height - 1 - row_num++, out_row_buffer);
+              ReadScanline(imgTB_flag ? row_num++ : (height - 1 - row_num++),
+                           out_row_buffer);
             }
           } break;
           default: {
@@ -528,7 +556,8 @@ int32_t BMPDecompressor::DecodeRLE4() {
               Error("The Bmp File Is Corrupt");
               NOTREACHED();
             }
-            ReadScanline(height - 1 - row_num++, out_row_buffer);
+            ReadScanline(imgTB_flag ? row_num++ : (height - 1 - row_num++),
+                         out_row_buffer);
             col_num = 0;
             std::fill(out_row_buffer.begin(), out_row_buffer.end(), 0);
             SaveDecodingStatus(BMP_D_STATUS_DATA);
@@ -536,7 +565,8 @@ int32_t BMPDecompressor::DecodeRLE4() {
           }
           case RLE_EOI: {
             if (row_num < height) {
-              ReadScanline(height - 1 - row_num++, out_row_buffer);
+              ReadScanline(imgTB_flag ? row_num++ : (height - 1 - row_num++),
+                           out_row_buffer);
             }
             SaveDecodingStatus(BMP_D_STATUS_TAIL);
             return 1;
@@ -555,7 +585,8 @@ int32_t BMPDecompressor::DecodeRLE4() {
             }
             while (row_num < bmp_row_num_next) {
               std::fill(out_row_buffer.begin(), out_row_buffer.end(), 0);
-              ReadScanline(height - 1 - row_num++, out_row_buffer);
+              ReadScanline(imgTB_flag ? row_num++ : (height - 1 - row_num++),
+                           out_row_buffer);
             }
           } break;
           default: {
