@@ -97,6 +97,13 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetAnnot(FPDF_PAGE page,
                                               int index,
                                               FPDF_ANNOTATION* annot);
 
+// Close an annotation. Must be called when the annotation returned by
+// FPDFPage_CreateAnnot() or FPDFPage_GetAnnot() is no longer needed. This
+// function does not remove the annotation from the document.
+//
+//   annot  - handle to an annotation.
+DLLEXPORT void STDCALL FPDFPage_CloseAnnot(FPDF_ANNOTATION annot);
+
 // Get the subtype of an annotation.
 //
 //   annot  - handle to an annotation.

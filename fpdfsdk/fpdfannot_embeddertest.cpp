@@ -88,6 +88,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
   EXPECT_EQ(157.211182f, quadpoints.x4);
   EXPECT_EQ(706.264465f, quadpoints.y4);
 
+  FPDFPage_CloseAnnot(annot);
   UnloadPage(page);
 }
 
@@ -130,6 +131,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
   EXPECT_EQ(475.336090f, rect.right);
   EXPECT_EQ(681.535034f, rect.top);
 
+  FPDFPage_CloseAnnot(annot);
   UnloadPage(page);
 }
 
@@ -162,6 +164,8 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
 
   // Check that the subtype of the annotation is correct.
   EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot));
+  FPDFPage_CloseAnnot(annot);
+
   ASSERT_TRUE(FPDFPage_GetAnnot(page, 0, &annot));
   EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot));
 
@@ -222,6 +226,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
                GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
                    .c_str());
 
+  FPDFPage_CloseAnnot(annot);
   UnloadPage(page);
 }
 
@@ -242,12 +247,14 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   EXPECT_EQ(718.913940f, quadpoints.y1);
   EXPECT_EQ(157.211182f, quadpoints.x4);
   EXPECT_EQ(706.264465f, quadpoints.y4);
+  FPDFPage_CloseAnnot(annot);
 
   // Add an underline annotation to the page and set its quadpoints.
   ASSERT_TRUE(FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE, &annot));
   quadpoints.x1 = 140.802643f;
   quadpoints.x3 = 140.802643f;
   ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, quadpoints));
+  FPDFPage_CloseAnnot(annot);
 
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -280,6 +287,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   EXPECT_NEAR(quadpoints.x4, new_quadpoints.x4, 0.001f);
   EXPECT_NEAR(quadpoints.y4, new_quadpoints.y4, 0.001f);
 
+  FPDFPage_CloseAnnot(new_annot);
   FPDF_ClosePage(new_page);
   FPDF_CloseDocument(new_doc);
 }

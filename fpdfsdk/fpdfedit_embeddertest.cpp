@@ -900,8 +900,7 @@ TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
   ASSERT_TRUE(page);
 
   // Add an underline annotation to the page without specifying its rectangle.
-  FPDF_ANNOTATION annot;
-  ASSERT_TRUE(FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE, &annot));
+  ASSERT_TRUE(FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE, nullptr));
 
   // FPDFPage_TransformAnnots() should run without errors when modifying
   // annotation rectangles.

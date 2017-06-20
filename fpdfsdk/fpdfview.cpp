@@ -305,14 +305,6 @@ CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
 #endif  // PDF_ENABLE_XFA
 }
 
-FPDF_ANNOTATION FPDFAnnotationFromCPDFDictionary(CPDF_Dictionary* pDict) {
-  return static_cast<FPDF_ANNOTATION>(pDict);
-}
-
-CPDF_Dictionary* CPDFDictionaryFromFPDFAnnotation(FPDF_ANNOTATION annot) {
-  return static_cast<CPDF_Dictionary*>(annot);
-}
-
 CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
   return static_cast<CPDF_PathObject*>(page_object);
 }
