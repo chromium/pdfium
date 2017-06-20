@@ -42,9 +42,9 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
   if (!m_pStream->HasFilter() || bRawAccess) {
     m_pData = pSrcData;
     m_dwSize = dwSrcSize;
-  } else if (!PDF_DataDecode(pSrcData, dwSrcSize, m_pStream->GetDict(), m_pData,
-                             m_dwSize, &m_ImageDecoder, m_pImageParam,
-                             estimated_size, bImageAcc)) {
+  } else if (!PDF_DataDecode(pSrcData, dwSrcSize, m_pStream->GetDict(),
+                             estimated_size, bImageAcc, &m_pData, &m_dwSize,
+                             &m_ImageDecoder, &m_pImageParam)) {
     m_pData = pSrcData;
     m_dwSize = dwSrcSize;
   }

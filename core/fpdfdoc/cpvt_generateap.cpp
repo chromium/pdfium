@@ -1348,7 +1348,7 @@ CFX_ByteString CPVT_GenerateAP::GetPDFWordString(IPVT_FontMap* pFontMap,
 CFX_ByteString CPVT_GenerateAP::GetWordRenderString(
     const CFX_ByteString& strWords) {
   if (strWords.GetLength() > 0)
-    return PDF_EncodeString(strWords) + " Tj\n";
+    return PDF_EncodeString(strWords, false) + " Tj\n";
   return "";
 }
 

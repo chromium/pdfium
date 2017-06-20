@@ -75,7 +75,7 @@ TEST(fxcodec, RLETestNormalInputs) {
       pEncoders->RunLengthEncode(src_buf_1, src_size, &dest_buf, &dest_size));
   uint8_t* decoded_buf = nullptr;
   uint32_t decoded_size = 0;
-  RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
+  RunLengthDecode(dest_buf, dest_size, &decoded_buf, &decoded_size);
   ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
     EXPECT_EQ(src_buf_1[i], decoded_buf[i]) << " at " << i;
@@ -89,7 +89,7 @@ TEST(fxcodec, RLETestNormalInputs) {
       pEncoders->RunLengthEncode(src_buf_2, src_size, &dest_buf, &dest_size));
   decoded_buf = nullptr;
   decoded_size = 0;
-  RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
+  RunLengthDecode(dest_buf, dest_size, &decoded_buf, &decoded_size);
   ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
     EXPECT_EQ(src_buf_2[i], decoded_buf[i]) << " at " << i;
@@ -103,7 +103,7 @@ TEST(fxcodec, RLETestNormalInputs) {
       pEncoders->RunLengthEncode(src_buf_3, src_size, &dest_buf, &dest_size));
   decoded_buf = nullptr;
   decoded_size = 0;
-  RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
+  RunLengthDecode(dest_buf, dest_size, &decoded_buf, &decoded_size);
   ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
     EXPECT_EQ(src_buf_3[i], decoded_buf[i]) << " at " << i;
@@ -144,7 +144,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
       pEncoders->RunLengthEncode(src_buf_1, src_size, &dest_buf, &dest_size));
   uint8_t* decoded_buf = nullptr;
   uint32_t decoded_size = 0;
-  RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
+  RunLengthDecode(dest_buf, dest_size, &decoded_buf, &decoded_size);
   ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
     EXPECT_EQ(src_buf_1[i], decoded_buf[i]) << " at " << i;
@@ -158,7 +158,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
       pEncoders->RunLengthEncode(src_buf_2, src_size, &dest_buf, &dest_size));
   decoded_buf = nullptr;
   decoded_size = 0;
-  RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
+  RunLengthDecode(dest_buf, dest_size, &decoded_buf, &decoded_size);
   ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
     EXPECT_EQ(src_buf_2[i], decoded_buf[i]) << " at " << i;
@@ -172,7 +172,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
       pEncoders->RunLengthEncode(src_buf_3, src_size, &dest_buf, &dest_size));
   decoded_buf = nullptr;
   decoded_size = 0;
-  RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
+  RunLengthDecode(dest_buf, dest_size, &decoded_buf, &decoded_size);
   ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
     EXPECT_EQ(src_buf_3[i], decoded_buf[i]) << " at " << i;
@@ -186,7 +186,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
       pEncoders->RunLengthEncode(src_buf_4, src_size, &dest_buf, &dest_size));
   decoded_buf = nullptr;
   decoded_size = 0;
-  RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
+  RunLengthDecode(dest_buf, dest_size, &decoded_buf, &decoded_size);
   ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
     EXPECT_EQ(src_buf_4[i], decoded_buf[i]) << " at " << i;

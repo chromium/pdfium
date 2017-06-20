@@ -38,7 +38,7 @@ const int kEditUndoMaxItems = 10000;
 
 CFX_ByteString GetWordRenderString(const CFX_ByteString& strWords) {
   if (strWords.GetLength() > 0)
-    return PDF_EncodeString(strWords) + " Tj\n";
+    return PDF_EncodeString(strWords, false) + " Tj\n";
   return CFX_ByteString();
 }
 

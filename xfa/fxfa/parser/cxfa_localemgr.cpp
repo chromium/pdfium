@@ -1068,7 +1068,7 @@ static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
   uint32_t dwSize;
   CCodec_ModuleMgr* pCodecMgr = CPDF_ModuleMgr::Get()->GetCodecModule();
   pCodecMgr->GetFlateModule()->FlateOrLZWDecode(false, pBuf, nBufLen, true, 0,
-                                                0, 0, 0, 0, pOut, dwSize);
+                                                0, 0, 0, 0, &pOut, &dwSize);
   if (!pOut)
     return nullptr;
 

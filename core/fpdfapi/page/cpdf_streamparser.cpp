@@ -36,8 +36,8 @@ const uint32_t kMaxWordBuffer = 256;
 const FX_STRSIZE kMaxStringLength = 32767;
 
 uint32_t DecodeAllScanlines(std::unique_ptr<CCodec_ScanlineDecoder> pDecoder,
-                            uint8_t*& dest_buf,
-                            uint32_t& dest_size) {
+                            uint8_t** dest_buf,
+                            uint32_t* dest_size) {
   if (!pDecoder)
     return FX_INVALID_OFFSET;
   int ncomps = pDecoder->CountComps();
@@ -48,14 +48,14 @@ uint32_t DecodeAllScanlines(std::unique_ptr<CCodec_ScanlineDecoder> pDecoder,
   if (height == 0 || pitch > (1 << 30) / height)
     return FX_INVALID_OFFSET;
 
-  dest_buf = FX_Alloc2D(uint8_t, pitch, height);
-  dest_size = pitch * height;  // Safe since checked alloc returned.
-  for (int row = 0; row < height; row++) {
+  *dest_buf = FX_Alloc2D(uint8_t, pitch, height);
+  *dest_size = pitch * height;  // Safe since checked alloc returned.
+  for (int row = 0; row < height; ++row) {
     const uint8_t* pLine = pDecoder->GetScanline(row);
     if (!pLine)
       break;
 
-    memcpy(dest_buf + row * pitch, pLine, pitch);
+    memcpy(*dest_buf + row * pitch, pLine, pitch);
   }
   return pDecoder->GetSrcOffset();
 }
@@ -66,8 +66,8 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
                                 int height,
                                 const CFX_ByteString& decoder,
                                 CPDF_Dictionary* pParam,
-                                uint8_t*& dest_buf,
-                                uint32_t& dest_size) {
+                                uint8_t** dest_buf,
+                                uint32_t* dest_size) {
   if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
         FPDFAPI_CreateFaxDecoder(src_buf, limit, width, height, pParam);
@@ -78,7 +78,7 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
   if (decoder == "ASCIIHexDecode" || decoder == "AHx")
     return HexDecode(src_buf, limit, dest_buf, dest_size);
   if (decoder == "FlateDecode" || decoder == "Fl") {
-    return FPDFAPI_FlateOrLZWDecode(false, src_buf, limit, pParam, dest_size,
+    return FPDFAPI_FlateOrLZWDecode(false, src_buf, limit, pParam, *dest_size,
                                     dest_buf, dest_size);
   }
   if (decoder == "LZWDecode" || decoder == "LZW") {
@@ -94,8 +94,8 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
   }
   if (decoder == "RunLengthDecode" || decoder == "RL")
     return RunLengthDecode(src_buf, limit, dest_buf, dest_size);
-  dest_size = 0;
-  dest_buf = 0;
+  *dest_size = 0;
+  *dest_buf = 0;
   return 0xFFFFFFFF;
 }
 
@@ -194,7 +194,7 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     uint32_t dwDestSize = OrigSize;
     dwStreamSize =
         PDF_DecodeInlineStream(m_pBuf + m_Pos, m_Size - m_Pos, width, height,
-                               Decoder, pParam, pIgnore, dwDestSize);
+                               Decoder, pParam, &pIgnore, &dwDestSize);
     FX_Free(pIgnore);
     if (static_cast<int>(dwStreamSize) < 0)
       return nullptr;

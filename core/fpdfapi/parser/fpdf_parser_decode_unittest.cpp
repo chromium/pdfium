@@ -31,7 +31,7 @@ TEST(fpdf_parser_decode, A85Decode) {
     uint8_t* result = nullptr;
     uint32_t result_size = 0;
     EXPECT_EQ(ptr->processed_size,
-              A85Decode(ptr->input, ptr->input_size, result, result_size))
+              A85Decode(ptr->input, ptr->input_size, &result, &result_size))
         << "for case " << i;
     ASSERT_EQ(ptr->expected_size, result_size);
     for (size_t j = 0; j < result_size; ++j) {
@@ -66,7 +66,7 @@ TEST(fpdf_parser_decode, HexDecode) {
     uint8_t* result = nullptr;
     uint32_t result_size = 0;
     EXPECT_EQ(ptr->processed_size,
-              HexDecode(ptr->input, ptr->input_size, result, result_size))
+              HexDecode(ptr->input, ptr->input_size, &result, &result_size))
         << "for case " << i;
     ASSERT_EQ(ptr->expected_size, result_size);
     for (size_t j = 0; j < result_size; ++j) {

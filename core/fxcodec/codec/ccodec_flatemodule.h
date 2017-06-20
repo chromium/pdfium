@@ -34,12 +34,14 @@ class CCodec_FlateModule {
                             int BitsPerComponent,
                             int Columns,
                             uint32_t estimated_size,
-                            uint8_t*& dest_buf,
-                            uint32_t& dest_size);
+                            uint8_t** dest_buf,
+                            uint32_t* dest_size);
+
   bool Encode(const uint8_t* src_buf,
               uint32_t src_size,
               uint8_t** dest_buf,
               uint32_t* dest_size);
+
   bool PngEncode(const uint8_t* src_buf,
                  uint32_t src_size,
                  uint8_t** dest_buf,

@@ -76,7 +76,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
     unsigned char* result = nullptr;
     unsigned int result_size;
     EXPECT_EQ(data.processed_size,
-              FlateDecode(data.input, data.input_size, result, result_size))
+              FlateDecode(data.input, data.input_size, &result, &result_size))
         << " for case " << i;
     ASSERT_TRUE(result);
     EXPECT_EQ(std::string((const char*)data.expected, data.expected_size),

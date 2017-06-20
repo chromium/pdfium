@@ -766,48 +766,44 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
                                               int BitsPerComponent,
                                               int Columns,
                                               uint32_t estimated_size,
-                                              uint8_t*& dest_buf,
-                                              uint32_t& dest_size) {
-  dest_buf = nullptr;
+                                              uint8_t** dest_buf,
+                                              uint32_t* dest_size) {
+  *dest_buf = nullptr;
   uint32_t offset = 0;
   int predictor_type = 0;
   if (predictor) {
-    if (predictor >= 10) {
+    if (predictor >= 10)
       predictor_type = 2;
-    } else if (predictor == 2) {
+    else if (predictor == 2)
       predictor_type = 1;
-    }
   }
   if (bLZW) {
-    {
-      auto decoder = pdfium::MakeUnique<CLZWDecoder>();
-      dest_size = 0xFFFFFFFF;
-      offset = src_size;
-      int err =
-          decoder->Decode(nullptr, dest_size, src_buf, offset, bEarlyChange);
-      if (err || dest_size == 0 || dest_size + 1 < dest_size) {
-        return FX_INVALID_OFFSET;
-      }
-    }
-    {
-      auto decoder = pdfium::MakeUnique<CLZWDecoder>();
-      dest_buf = FX_Alloc(uint8_t, dest_size + 1);
-      dest_buf[dest_size] = '\0';
-      decoder->Decode(dest_buf, dest_size, src_buf, offset, bEarlyChange);
-    }
+    auto decoder = pdfium::MakeUnique<CLZWDecoder>();
+    *dest_size = 0xFFFFFFFF;
+    offset = src_size;
+    int err =
+        decoder->Decode(nullptr, *dest_size, src_buf, offset, bEarlyChange);
+    if (err || *dest_size == 0 || *dest_size + 1 < *dest_size)
+      return FX_INVALID_OFFSET;
+
+    decoder = pdfium::MakeUnique<CLZWDecoder>();
+    *dest_buf = FX_Alloc(uint8_t, *dest_size + 1);
+    (*dest_buf)[*dest_size] = '\0';
+    decoder->Decode(*dest_buf, *dest_size, src_buf, offset, bEarlyChange);
   } else {
-    FlateUncompress(src_buf, src_size, estimated_size, dest_buf, dest_size,
+    FlateUncompress(src_buf, src_size, estimated_size, *dest_buf, *dest_size,
                     offset);
   }
-  if (predictor_type == 0) {
+  if (predictor_type == 0)
     return offset;
-  }
+
   bool ret = true;
   if (predictor_type == 2) {
-    ret = PNG_Predictor(dest_buf, dest_size, Colors, BitsPerComponent, Columns);
-  } else if (predictor_type == 1) {
     ret =
-        TIFF_Predictor(dest_buf, dest_size, Colors, BitsPerComponent, Columns);
+        PNG_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent, Columns);
+  } else if (predictor_type == 1) {
+    ret = TIFF_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent,
+                         Columns);
   }
   return ret ? offset : FX_INVALID_OFFSET;
 }
