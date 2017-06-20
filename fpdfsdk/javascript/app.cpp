@@ -234,11 +234,10 @@ bool app::calculate(CJS_Runtime* pRuntime,
   if (vp.IsSetting()) {
     bool bVP;
     vp >> bVP;
-    m_bCalculate = (bool)bVP;
-    pRuntime->GetFormFillEnv()->GetInterForm()->EnableCalculate(
-        (bool)m_bCalculate);
+    m_bCalculate = bVP;
+    pRuntime->GetFormFillEnv()->GetInterForm()->EnableCalculate(m_bCalculate);
   } else {
-    vp << (bool)m_bCalculate;
+    vp << m_bCalculate;
   }
   return true;
 }

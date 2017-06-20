@@ -408,10 +408,12 @@ void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
   double right;
   double bottom;
   m_pInfo->FFI_GetPageViewRect(m_pInfo, page, &left, &top, &right, &bottom);
+  if (top < bottom)
+    std::swap(top, bottom);
 
   dstRect.left = static_cast<float>(left);
-  dstRect.top = static_cast<float>(top < bottom ? bottom : top);
-  dstRect.bottom = static_cast<float>(top < bottom ? top : bottom);
+  dstRect.top = static_cast<float>(top);
+  dstRect.bottom = static_cast<float>(bottom);
   dstRect.right = static_cast<float>(right);
 }
 
@@ -600,15 +602,11 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
   CPDF_Document* pPDFDoc = GetPDFDocument();
   CPDF_DocJSActions docJS(pPDFDoc);
   int iCount = docJS.CountJSActions();
-  if (iCount < 1)
-    return;
   for (int i = 0; i < iCount; i++) {
     CFX_ByteString csJSName;
     CPDF_Action jsAction = docJS.GetJSActionAndName(i, &csJSName);
-    if (GetActionHander()) {
-      GetActionHander()->DoAction_JavaScript(
-          jsAction, CFX_WideString::FromLocal(csJSName.AsStringC()), this);
-    }
+    GetActionHander()->DoAction_JavaScript(
+        jsAction, CFX_WideString::FromLocal(csJSName.AsStringC()), this);
   }
 }
 
@@ -623,20 +621,19 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   CPDF_Object* pOpenAction = pRoot->GetDictFor("OpenAction");
   if (!pOpenAction)
     pOpenAction = pRoot->GetArrayFor("OpenAction");
-
   if (!pOpenAction)
     return false;
 
   if (pOpenAction->IsArray())
     return true;
 
-  if (CPDF_Dictionary* pDict = pOpenAction->AsDictionary()) {
-    CPDF_Action action(pDict);
-    if (GetActionHander())
-      GetActionHander()->DoAction_DocOpen(action, this);
-    return true;
-  }
-  return false;
+  CPDF_Dictionary* pDict = pOpenAction->AsDictionary();
+  if (!pDict)
+    return false;
+
+  CPDF_Action action(pDict);
+  GetActionHander()->DoAction_DocOpen(action, this);
+  return true;
 }
 
 void CPDFSDK_FormFillEnvironment::RemovePageView(
@@ -696,57 +693,55 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   if (!*pAnnot)
     return false;
 
+  CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();
+  if (!pPageView || !pPageView->IsValid())
+    return false;
+
+  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
+  if (m_pFocusAnnot)
+    return false;
+
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_Annot::ObservedPtr pLastFocusAnnot(m_pFocusAnnot.Get());
+  if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, &pLastFocusAnnot))
+    return false;
 #endif  // PDF_ENABLE_XFA
-  CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();
-  if (pPageView && pPageView->IsValid()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
-    if (!m_pFocusAnnot) {
-#ifdef PDF_ENABLE_XFA
-      if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, &pLastFocusAnnot))
-        return false;
-#endif  // PDF_ENABLE_XFA
-      if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, 0))
-        return false;
-      if (!m_pFocusAnnot) {
-        m_pFocusAnnot.Reset(pAnnot->Get());
-        return true;
-      }
-    }
-  }
-  return false;
+  if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, 0))
+    return false;
+  if (m_pFocusAnnot)
+    return false;
+
+  m_pFocusAnnot.Reset(pAnnot->Get());
+  return true;
 }
 
 bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
-  if (m_pFocusAnnot) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
-    CPDFSDK_Annot::ObservedPtr pFocusAnnot(m_pFocusAnnot.Get());
-    m_pFocusAnnot.Reset();
+  if (!m_pFocusAnnot)
+    return false;
+
+  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
+  CPDFSDK_Annot::ObservedPtr pFocusAnnot(m_pFocusAnnot.Get());
+  m_pFocusAnnot.Reset();
 
 #ifdef PDF_ENABLE_XFA
-    CPDFSDK_Annot::ObservedPtr pNull;
-    if (!pAnnotHandler->Annot_OnChangeFocus(&pNull, &pFocusAnnot))
-      return false;
+  CPDFSDK_Annot::ObservedPtr pNull;
+  if (!pAnnotHandler->Annot_OnChangeFocus(&pNull, &pFocusAnnot))
+    return false;
 #endif  // PDF_ENABLE_XFA
 
-    if (pAnnotHandler->Annot_OnKillFocus(&pFocusAnnot, nFlag)) {
-      if (pFocusAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET) {
-        CPDFSDK_Widget* pWidget =
-            static_cast<CPDFSDK_Widget*>(pFocusAnnot.Get());
-        int nFieldType = pWidget->GetFieldType();
-        if (FIELDTYPE_TEXTFIELD == nFieldType ||
-            FIELDTYPE_COMBOBOX == nFieldType) {
-          OnSetFieldInputFocus(nullptr, 0, false);
-        }
-      }
-      if (!m_pFocusAnnot)
-        return true;
-    } else {
-      m_pFocusAnnot.Reset(pFocusAnnot.Get());
+  if (!pAnnotHandler->Annot_OnKillFocus(&pFocusAnnot, nFlag)) {
+    m_pFocusAnnot.Reset(pFocusAnnot.Get());
+    return false;
+  }
+
+  if (pFocusAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET) {
+    CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pFocusAnnot.Get());
+    int nFieldType = pWidget->GetFieldType();
+    if (FIELDTYPE_TEXTFIELD == nFieldType || FIELDTYPE_COMBOBOX == nFieldType) {
+      OnSetFieldInputFocus(nullptr, 0, false);
     }
   }
-  return false;
+  return !m_pFocusAnnot;
 }
 
 bool CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) const {

@@ -43,16 +43,12 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       m_bLocked(false),
       m_bBeingDestroyed(false) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-  if (pInterForm) {
-    CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
+  CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
 #ifdef PDF_ENABLE_XFA
-    if (page->GetPDFPage())
-      pPDFInterForm->FixPageFields(page->GetPDFPage());
+  if (page->GetPDFPage())
+    pPDFInterForm->FixPageFields(page->GetPDFPage());
 #else   // PDF_ENABLE_XFA
-    pPDFInterForm->FixPageFields(page);
-#endif  // PDF_ENABLE_XFA
-  }
-#ifndef PDF_ENABLE_XFA
+  pPDFInterForm->FixPageFields(page);
   m_page->SetView(this);
 #endif  // PDF_ENABLE_XFA
 }
@@ -358,8 +354,8 @@ bool CPDFSDK_PageView::OnMouseWheel(double deltaX,
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
-  return pAnnotHandlerMgr->Annot_OnMouseWheel(this, &pAnnot, nFlag, (int)deltaY,
-                                              point);
+  return pAnnotHandlerMgr->Annot_OnMouseWheel(this, &pAnnot, nFlag,
+                                              static_cast<int>(deltaY), point);
 }
 
 bool CPDFSDK_PageView::OnChar(int nChar, uint32_t nFlag) {
