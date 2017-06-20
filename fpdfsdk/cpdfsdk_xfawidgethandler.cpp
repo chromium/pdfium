@@ -97,6 +97,11 @@ CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   return rcWidget;
 }
 
+CFX_WideString CPDFSDK_XFAWidgetHandler::GetSelectedText(
+    CPDFSDK_Annot* pAnnot) {
+  return CFX_WideString();
+}
+
 bool CPDFSDK_XFAWidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot,
                                        const CFX_PointF& point) {

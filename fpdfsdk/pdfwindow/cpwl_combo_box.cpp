@@ -216,6 +216,13 @@ void CPWL_ComboBox::KillFocus() {
   CPWL_Wnd::KillFocus();
 }
 
+CFX_WideString CPWL_ComboBox::GetSelectedText() {
+  if (m_pEdit)
+    return m_pEdit->GetSelectedText();
+
+  return CFX_WideString();
+}
+
 CFX_WideString CPWL_ComboBox::GetText() const {
   if (m_pEdit) {
     return m_pEdit->GetText();

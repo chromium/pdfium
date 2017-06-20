@@ -74,6 +74,8 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
                          uint32_t nFlags);
   virtual bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
 
+  CFX_WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
+
   void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
   void KillFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
 

@@ -61,6 +61,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;
   void SetCursor() override;
+  CFX_WideString GetSelectedText() override;
 
   void IOnSetScrollInfoY(float fPlateMin,
                          float fPlateMax,

@@ -36,6 +36,7 @@ class IPDFSDK_AnnotHandler {
   virtual void ReleaseAnnot(CPDFSDK_Annot* pAnnot) = 0;
   virtual CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot) = 0;
+  virtual CFX_WideString GetSelectedText(CPDFSDK_Annot* pAnnot) = 0;
   virtual bool HitTest(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot* pAnnot,
                        const CFX_PointF& point) = 0;

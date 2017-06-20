@@ -4,10 +4,13 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_formfill.h"
+#include "public/fpdf_fwlevent.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_mock_delegate.h"
 #include "testing/embedder_test_timer_handling_delegate.h"
@@ -17,7 +20,78 @@
 using testing::_;
 using testing::Return;
 
-class FPDFFormFillEmbeddertest : public EmbedderTest, public TestSaver {};
+class FPDFFormFillEmbeddertest : public EmbedderTest, public TestSaver {
+ protected:
+  void TypeTextIntoTextfield(FPDF_PAGE page, int num_chars) {
+    // Click on the textfield in text_form.pdf.
+    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
+              FPDFPage_HasFormFieldAtPoint(form_handle(), page, 120.0, 120.0));
+    FORM_OnMouseMove(form_handle(), page, 0, 120.0, 120.0);
+    FORM_OnLButtonDown(form_handle(), page, 0, 120.0, 120.0);
+    FORM_OnLButtonUp(form_handle(), page, 0, 120.0, 120.0);
+
+    // Type text starting with 'A' to as many chars as specified by |num_chars|.
+    for (int i = 0; i < num_chars; ++i) {
+      FORM_OnChar(form_handle(), page, 'A' + i, 0);
+    }
+  }
+
+  // Navigates to form text field using the mouse and then selects text via the
+  // shift and specfied left or right arrow key.
+  void SelectTextWithKeyboard(FPDF_PAGE page,
+                              int num_chars,
+                              int arrow_key,
+                              double x,
+                              double y) {
+    // Navigate to starting position for selection.
+    FORM_OnMouseMove(form_handle(), page, 0, x, y);
+    FORM_OnLButtonDown(form_handle(), page, 0, x, y);
+    FORM_OnLButtonUp(form_handle(), page, 0, x, y);
+
+    // Hold down shift (and don't release until entire text is selected).
+    FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Shift, 0);
+
+    // Select text char by char via left or right arrow key.
+    for (int i = 0; i < num_chars; ++i) {
+      FORM_OnKeyDown(form_handle(), page, arrow_key, FWL_EVENTFLAG_ShiftKey);
+      FORM_OnKeyUp(form_handle(), page, arrow_key, FWL_EVENTFLAG_ShiftKey);
+    }
+    FORM_OnKeyUp(form_handle(), page, FWL_VKEY_Shift, 0);
+  }
+
+  // Uses the mouse to navigate to form text field and select text.
+  void SelectTextWithMouse(FPDF_PAGE page,
+                           double start_x,
+                           double end_x,
+                           double y) {
+    // Navigate to starting position and click mouse.
+    FORM_OnMouseMove(form_handle(), page, 0, start_x, y);
+    FORM_OnLButtonDown(form_handle(), page, 0, start_x, y);
+
+    // Hold down mouse until reach end of desired selection.
+    FORM_OnMouseMove(form_handle(), page, 0, end_x, y);
+    FORM_OnLButtonUp(form_handle(), page, 0, end_x, y);
+  }
+
+  void CheckSelection(FPDF_PAGE page, const CFX_WideString& expected_string) {
+    // Calculate expected length for selected text.
+    int num_chars = expected_string.GetLength();
+
+    // Check actual selection against expected selection.
+    const unsigned long expected_length =
+        sizeof(unsigned short) * (num_chars + 1);
+    unsigned long sel_text_len =
+        FORM_GetSelectedText(form_handle(), page, nullptr, 0);
+    ASSERT_EQ(expected_length, sel_text_len);
+
+    std::vector<unsigned short> buf(sel_text_len);
+    EXPECT_EQ(expected_length, FORM_GetSelectedText(form_handle(), page,
+                                                    buf.data(), sel_text_len));
+
+    EXPECT_EQ(expected_string,
+              CFX_WideString::FromUTF16LE(buf.data(), num_chars));
+  }
+};
 
 TEST_F(FPDFFormFillEmbeddertest, FirstTest) {
   EmbedderTestMockDelegate mock;
@@ -281,4 +355,101 @@ TEST_F(FPDFFormFillEmbeddertest, FormText) {
   std::unique_ptr<void, FPDFBitmapDeleter> new_bitmap(
       RenderPage(new_page.get()));
   CompareBitmap(new_bitmap.get(), 300, 300, md5_3);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicKeyboard) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Test empty selection.
+  CheckSelection(page, CFX_WideString(L""));
+
+  // Test basic selection.
+  TypeTextIntoTextfield(page, 3);
+  SelectTextWithKeyboard(page, 3, FWL_VKEY_Left, 123.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABC"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicMouse) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Test empty selection.
+  CheckSelection(page, CFX_WideString(L""));
+
+  // Test basic selection.
+  TypeTextIntoTextfield(page, 3);
+  SelectTextWithMouse(page, 125.0, 102.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABC"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsKeyBoard) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TypeTextIntoTextfield(page, 12);
+
+  // Test selecting first character in forward direction.
+  // Navigate to starting position and click mouse.
+  SelectTextWithKeyboard(page, 1, FWL_VKEY_Right, 102.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"A"));
+
+  // Test selecting entire long string in backwards direction.
+  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJKL"));
+
+  // Test selecting middle section in backwards direction.
+  SelectTextWithKeyboard(page, 6, FWL_VKEY_Left, 170.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"DEFGHI"));
+
+  // Test selecting middle selection in forward direction.
+  SelectTextWithKeyboard(page, 6, FWL_VKEY_Right, 125.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"DEFGHI"));
+
+  // Test selecting last character in backwards direction.
+  SelectTextWithKeyboard(page, 1, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"L"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsMouse) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TypeTextIntoTextfield(page, 12);
+
+  // Test selecting first character in forward direction.
+  SelectTextWithMouse(page, 102.0, 106.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"A"));
+
+  // Test selecting entire long string in backwards direction.
+  SelectTextWithMouse(page, 191.0, 102.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJKL"));
+
+  // Test selecting middle section in backwards direction.
+  SelectTextWithMouse(page, 170.0, 125.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"DEFGHI"));
+
+  // Test selecting middle selection in forward direction.
+  SelectTextWithMouse(page, 125.0, 170.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"DEFGHI"));
+
+  // Test selecting last character in backwards direction.
+  SelectTextWithMouse(page, 191.0, 186.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"L"));
+
+  UnloadPage(page);
 }

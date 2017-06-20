@@ -76,6 +76,11 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {
   GetAnnotHandler(pAnnot)->OnLoad(pAnnot);
 }
 
+CFX_WideString CPDFSDK_AnnotHandlerMgr::Annot_GetSelectedText(
+    CPDFSDK_Annot* pAnnot) {
+  return GetAnnotHandler(pAnnot)->GetSelectedText(pAnnot);
+}
+
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
     CPDFSDK_Annot* pAnnot) const {
   return GetAnnotHandler(pAnnot->GetAnnotSubtype());

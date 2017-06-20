@@ -82,6 +82,8 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, bool bRegister);
   void RemoveFormFiller(CPDFSDK_Annot* pAnnot);
 
+  CFX_WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
+
   static bool IsVisible(CPDFSDK_Widget* pWidget);
   static bool IsReadOnly(CPDFSDK_Widget* pWidget);
   static bool IsFillingAllowed(CPDFSDK_Widget* pWidget);

@@ -43,6 +43,8 @@ class CPDFSDK_AnnotHandlerMgr {
   void Annot_OnCreate(CPDFSDK_Annot* pAnnot);
   void Annot_OnLoad(CPDFSDK_Annot* pAnnot);
 
+  CFX_WideString Annot_GetSelectedText(CPDFSDK_Annot* pAnnot);
+
   IPDFSDK_AnnotHandler* GetAnnotHandler(CPDFSDK_Annot* pAnnot) const;
   void Annot_OnDraw(CPDFSDK_PageView* pPageView,
                     CPDFSDK_Annot* pAnnot,

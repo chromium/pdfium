@@ -60,6 +60,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
     return m_pFormFillEnv.Get();
   }
 
+  CFX_WideString GetSelectedText();
+
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag);
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA

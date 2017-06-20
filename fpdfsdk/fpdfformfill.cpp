@@ -369,6 +369,24 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnChar(FPDF_FORMHANDLE hHandle,
   return pPageView->OnChar(nChar, modifier);
 }
 
+DLLEXPORT unsigned long STDCALL FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
+                                                     FPDF_PAGE page,
+                                                     void* buffer,
+                                                     unsigned long buflen) {
+  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
+  if (!pPageView)
+    return 0;
+
+  CFX_WideString wide_str_form_text = pPageView->GetSelectedText();
+  CFX_ByteString encoded_form_text = wide_str_form_text.UTF16LE_Encode();
+  unsigned long form_text_len = encoded_form_text.GetLength();
+
+  if (buffer && buflen >= form_text_len)
+    memcpy(buffer, encoded_form_text.c_str(), form_text_len);
+
+  return form_text_len;
+}
+
 DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);

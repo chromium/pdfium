@@ -229,6 +229,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void SetFontSize(float fFontSize);
   virtual float GetFontSize() const;
 
+  virtual CFX_WideString GetSelectedText();
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 

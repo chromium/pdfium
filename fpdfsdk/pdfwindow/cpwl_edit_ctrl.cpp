@@ -53,6 +53,13 @@ void CPWL_EditCtrl::SetCursor() {
   }
 }
 
+CFX_WideString CPWL_EditCtrl::GetSelectedText() {
+  if (m_pEdit)
+    return m_pEdit->GetSelText();
+
+  return CFX_WideString();
+}
+
 void CPWL_EditCtrl::RePosChildWnd() {
   m_pEdit->SetPlateRect(GetClientRect());
 }
