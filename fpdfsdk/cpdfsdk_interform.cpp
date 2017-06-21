@@ -346,7 +346,7 @@ bool CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   if (!action.GetDict())
     return true;
 
-  CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHander();
+  CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHandler();
   PDFSDK_FieldAction fa;
   fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
   fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
@@ -366,7 +366,7 @@ bool CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
   if (!action.GetDict())
     return true;
 
-  CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHander();
+  CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHandler();
   PDFSDK_FieldAction fa;
   fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
   fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);

@@ -210,7 +210,7 @@ class CPDFSDK_FormFillEnvironment
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
   CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Creates if not present.
   IJS_Runtime* GetJSRuntime();                    // Creates if not present.
-  CPDFSDK_ActionHandler* GetActionHander();       // Creates if not present.
+  CPDFSDK_ActionHandler* GetActionHandler();      // Creates if not present.
   CPDFSDK_InterForm* GetInterForm();              // Creates if not present.
 
  private:

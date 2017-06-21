@@ -391,16 +391,16 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   CFX_RetainPtr<CPDFXFA_Page> protector(m_page);
   if (m_pFormFillEnv->GetXFAContext()->GetDocType() == XFA_DocType::Dynamic) {
     CXFA_FFPageView* pageView = m_page->GetXFAPageView();
-    std::unique_ptr<IXFA_WidgetIterator> pWidgetHander(
+    std::unique_ptr<IXFA_WidgetIterator> pWidgetHandler(
         pageView->CreateWidgetIterator(
             XFA_TRAVERSEWAY_Form,
             XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable));
-    if (!pWidgetHander) {
+    if (!pWidgetHandler) {
       SetLock(false);
       return;
     }
 
-    while (CXFA_FFWidget* pXFAAnnot = pWidgetHander->MoveToNext()) {
+    while (CXFA_FFWidget* pXFAAnnot = pWidgetHandler->MoveToNext()) {
       CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pXFAAnnot, this);
       if (!pAnnot)
         continue;

@@ -220,7 +220,7 @@ CPDFSDK_AnnotHandlerMgr* CPDFSDK_FormFillEnvironment::GetAnnotHandlerMgr() {
   return m_pAnnotHandlerMgr.get();
 }
 
-CPDFSDK_ActionHandler* CPDFSDK_FormFillEnvironment::GetActionHander() {
+CPDFSDK_ActionHandler* CPDFSDK_FormFillEnvironment::GetActionHandler() {
   if (!m_pActionHandler)
     m_pActionHandler = pdfium::MakeUnique<CPDFSDK_ActionHandler>();
   return m_pActionHandler.get();
@@ -605,7 +605,7 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
   for (int i = 0; i < iCount; i++) {
     CFX_ByteString csJSName;
     CPDF_Action jsAction = docJS.GetJSActionAndName(i, &csJSName);
-    GetActionHander()->DoAction_JavaScript(
+    GetActionHandler()->DoAction_JavaScript(
         jsAction, CFX_WideString::FromLocal(csJSName.AsStringC()), this);
   }
 }
@@ -632,7 +632,7 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
     return false;
 
   CPDF_Action action(pDict);
-  GetActionHander()->DoAction_DocOpen(action, this);
+  GetActionHandler()->DoAction_DocOpen(action, this);
   return true;
 }
 

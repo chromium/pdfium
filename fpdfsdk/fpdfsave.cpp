@@ -201,13 +201,13 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
   if (!pXFADocView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
   std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
       pXFADocView->CreateWidgetAccIterator();
   while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PostSave;
-    pWidgetHander->ProcessEvent(pWidgetAcc, &preParam);
+    pWidgetHandler->ProcessEvent(pWidgetAcc, &preParam);
   }
   pXFADocView->UpdateDocView();
   pContext->ClearChangeMark();
@@ -225,13 +225,13 @@ bool SendPreSaveToXFADoc(
   if (!pXFADocView)
     return true;
 
-  CXFA_FFWidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
   std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
       pXFADocView->CreateWidgetAccIterator();
   while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PreSave;
-    pWidgetHander->ProcessEvent(pWidgetAcc, &preParam);
+    pWidgetHandler->ProcessEvent(pWidgetAcc, &preParam);
   }
   pXFADocView->UpdateDocView();
   return SaveXFADocumentData(pContext, fileList);
