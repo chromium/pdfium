@@ -254,18 +254,25 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) {
     return true;
 
   bool bState = (csP == "AllOn" || csP == "AllOff");
+  // At least one entry of OCGs needs to be a valid dictionary for it to be
+  // considered present. See "OCGs" in table 4.49 in the PDF 1.7 spec.
+  bool bValidEntrySeen = false;
   for (size_t i = 0; i < pArray->GetCount(); i++) {
     bool bItem = true;
     CPDF_Dictionary* pItemDict = pArray->GetDictAt(i);
-    if (pItemDict)
-      bItem = GetOCGVisible(pItemDict);
+    if (!pItemDict)
+      continue;
+
+    bValidEntrySeen = true;
+    bItem = GetOCGVisible(pItemDict);
 
     if ((csP == "AnyOn" && bItem) || (csP == "AnyOff" && !bItem))
       return true;
     if ((csP == "AllOn" && !bItem) || (csP == "AllOff" && bItem))
       return false;
   }
-  return bState;
+
+  return !bValidEntrySeen || bState;
 }
 
 bool CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary* pOCGDict) {
