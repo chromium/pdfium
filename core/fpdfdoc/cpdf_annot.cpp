@@ -34,9 +34,10 @@ bool IsTextMarkupAnnotation(CPDF_Annot::Subtype type) {
 }
 
 bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists, we use the appearance defined in the
-  // existing AP dictionary.
-  if (pAnnotDict->KeyExist("AP"))
+  // If AP dictionary exists and defines an appearance for normal mode, we use
+  // the appearance defined in the existing AP dictionary.
+  CPDF_Dictionary* pAP = pAnnotDict->GetDictFor("AP");
+  if (pAP && pAP->GetDictFor("N"))
     return false;
 
   return !CPDF_Annot::IsAnnotationHidden(pAnnotDict);

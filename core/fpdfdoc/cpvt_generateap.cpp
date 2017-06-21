@@ -602,7 +602,10 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   CPDF_Stream* pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
   pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize());
 
-  CPDF_Dictionary* pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor("AP");
+  if (!pAPDict)
+    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+
   pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
 
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();

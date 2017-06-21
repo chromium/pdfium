@@ -266,7 +266,7 @@ FPDF_BITMAP EmbedderTest::RenderPageWithFlags(FPDF_PAGE page, int flags) {
   FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
   FPDFBitmap_FillRect(bitmap, 0, 0, width, height, fill_color);
   FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, flags);
-  FPDF_FFLDraw(form_handle_, bitmap, page, 0, 0, width, height, 0, 0);
+  FPDF_FFLDraw(form_handle_, bitmap, page, 0, 0, width, height, 0, flags);
   return bitmap;
 }
 

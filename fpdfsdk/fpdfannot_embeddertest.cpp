@@ -13,6 +13,23 @@
 
 class FPDFAnnotEmbeddertest : public EmbedderTest, public TestSaver {};
 
+TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
+  // Open a file with one annotation and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // This annotation has a malformed appearance stream, which does not have its
+  // normal appearance defined, only its rollover appearance. In this case, its
+  // normal appearance should be generated, allowing the highlight annotation to
+  // still display.
+  FPDF_BITMAP bitmap = RenderPageWithFlags(page, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
+  FPDFBitmap_Destroy(bitmap);
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
