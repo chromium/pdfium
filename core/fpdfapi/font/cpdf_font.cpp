@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -486,8 +487,11 @@ int CPDF_Font::TT2PDF(int m, FXFT_Face face) {
   int upm = FXFT_Get_Face_UnitsPerEM(face);
   if (upm == 0)
     return m;
-  return pdfium::base::checked_cast<int>(
-      (static_cast<double>(m) * 1000 + upm / 2) / upm);
+
+  return static_cast<int>(
+      pdfium::clamp((m * 1000.0 + upm / 2) / upm,
+                    static_cast<double>(std::numeric_limits<int>::min()),
+                    static_cast<double>(std::numeric_limits<int>::max())));
 }
 
 // static
