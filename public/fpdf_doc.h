@@ -296,6 +296,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot,
 // The |buffer| is always encoded in UTF-16LE. The |buffer| is followed by two
 // bytes of zeros indicating the end of the string.  If |buflen| is less than
 // the returned length, or |buffer| is NULL, |buffer| will not be modified.
+//
+// For linearized files, FPDFAvail_IsFormAvail must be called before this, and
+// it must have returned PDF_FORM_AVAIL or PDF_FORM_NOTEXIST. Before that, there
+// is no guarantee the metadata has been loaded.
 DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT document,
                                                  FPDF_BYTESTRING tag,
                                                  void* buffer,
