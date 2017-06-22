@@ -1027,10 +1027,10 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       }
       m_offSet += size;
       pBmpModule->Input(m_pBmpContext.get(), m_pSrcBuf, size);
-      uint32_t* pPalette = nullptr;
+      std::vector<uint32_t> palette;
       int32_t readResult = pBmpModule->ReadHeader(
           m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
-          &m_SrcComponents, &m_SrcPaletteNumber, &pPalette, pAttribute);
+          &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
       while (readResult == 2) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
         if (!BmpReadMoreData(pBmpModule, error_status)) {
@@ -1039,7 +1039,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         }
         readResult = pBmpModule->ReadHeader(
             m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
-            &m_SrcComponents, &m_SrcPaletteNumber, &pPalette, pAttribute);
+            &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
       }
       if (readResult == 1) {
         m_SrcBPC = 8;
@@ -1047,7 +1047,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
         FX_Free(m_pSrcPalette);
         if (m_SrcPaletteNumber) {
           m_pSrcPalette = FX_Alloc(FX_ARGB, m_SrcPaletteNumber);
-          memcpy(m_pSrcPalette, pPalette,
+          memcpy(m_pSrcPalette, palette.data(),
                  m_SrcPaletteNumber * sizeof(uint32_t));
         } else {
           m_pSrcPalette = nullptr;

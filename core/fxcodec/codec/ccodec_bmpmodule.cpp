@@ -39,7 +39,7 @@ int32_t CCodec_BmpModule::ReadHeader(Context* pContext,
                                      bool* tb_flag,
                                      int32_t* components,
                                      int32_t* pal_num,
-                                     uint32_t** pal_pp,
+                                     std::vector<uint32_t>* palette,
                                      CFX_DIBAttribute* pAttribute) {
   auto* ctx = static_cast<CBmpContext*>(pContext);
   if (setjmp(ctx->m_Bmp.jmpbuf))
@@ -54,7 +54,7 @@ int32_t CCodec_BmpModule::ReadHeader(Context* pContext,
   *tb_flag = ctx->m_Bmp.imgTB_flag;
   *components = ctx->m_Bmp.components;
   *pal_num = ctx->m_Bmp.pal_num;
-  *pal_pp = ctx->m_Bmp.pal_ptr;
+  *palette = ctx->m_Bmp.palette;
   if (pAttribute) {
     pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_METER;
     pAttribute->m_nXDPI = ctx->m_Bmp.dpi_x;

@@ -41,7 +41,7 @@ class CCodec_BmpModule {
                      bool* tb_flag,
                      int32_t* components,
                      int32_t* pal_num,
-                     uint32_t** pal_pp,
+                     std::vector<uint32_t>* palette,
                      CFX_DIBAttribute* pAttribute);
   int32_t LoadImage(Context* pContext);
 };

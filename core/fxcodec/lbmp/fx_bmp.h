@@ -8,6 +8,8 @@
 #define CORE_FXCODEC_LBMP_FX_BMP_H_
 
 #include <setjmp.h>
+
+#include <memory>
 #include <vector>
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
@@ -44,14 +46,14 @@ typedef struct tagBmpFileHeader {
   uint16_t bfReserved1;
   uint16_t bfReserved2;
   uint32_t bfOffBits;
-} BmpFileHeader, *BmpFileHeaderPtr;
+} BmpFileHeader;
 typedef struct tagBmpCoreHeader {
   uint32_t bcSize;
   uint16_t bcWidth;
   uint16_t bcHeight;
   uint16_t bcPlanes;
   uint16_t bcBitCount;
-} BmpCoreHeader, *BmpCoreHeaderPtr;
+} BmpCoreHeader;
 typedef struct tagBmpInfoHeader {
   uint32_t biSize;
   int32_t biWidth;
@@ -64,7 +66,7 @@ typedef struct tagBmpInfoHeader {
   int32_t biYPelsPerMeter;
   uint32_t biClrUsed;
   uint32_t biClrImportant;
-} BmpInfoHeader, *BmpInfoHeaderPtr;
+} BmpInfoHeader;
 #pragma pack()
 
 class BMPDecompressor {
@@ -83,10 +85,11 @@ class BMPDecompressor {
 
   void* context_ptr;
 
-  BmpFileHeaderPtr bmp_header_ptr;
-  BmpInfoHeaderPtr bmp_infoheader_ptr;
   std::vector<uint8_t> out_row_buffer;
+  std::vector<uint32_t> palette;
+  uint8_t* next_in;
 
+  uint32_t header_offset;
   uint32_t width;
   uint32_t height;
   uint32_t compress_flag;
@@ -98,7 +101,6 @@ class BMPDecompressor {
   bool imgTB_flag;
   int32_t pal_num;
   int32_t pal_type;
-  uint32_t* pal_ptr;
   uint32_t data_size;
   uint32_t img_data_offset;
   uint32_t img_ifh_size;
@@ -110,7 +112,6 @@ class BMPDecompressor {
   uint32_t mask_green;
   uint32_t mask_blue;
 
-  uint8_t* next_in;
   uint32_t avail_in;
   uint32_t skip_size;
   int32_t decode_status;
@@ -125,6 +126,7 @@ class BMPDecompressor {
   void SaveDecodingStatus(int32_t status);
   bool ValidateColorIndex(uint8_t val);
   bool ValidateFlag() const;
+  void SetHeight(int32_t signed_height);
 };
 
 class CBmpContext : public CCodec_BmpModule::Context {
