@@ -86,7 +86,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
     m_AnnotList.push_back(pdfium::MakeUnique<CPDF_Annot>(pDict, m_pDocument));
     if (bRegenerateAP && subtype == "Widget" &&
-        CPDF_InterForm::IsUpdateAPEnabled()) {
+        CPDF_InterForm::IsUpdateAPEnabled() && !pDict->GetDictFor("AP")) {
       FPDF_GenerateAP(m_pDocument, pDict);
     }
   }
