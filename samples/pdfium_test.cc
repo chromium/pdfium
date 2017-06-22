@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <iterator>
 #include <map>
 #include <sstream>
 #include <string>

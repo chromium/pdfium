@@ -7,13 +7,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <string>
-
+#include "core/fdrm/crypto/fx_crypt.h"
 #include "core/fxcrt/fx_memory.h"
 #include "testing/utils/path_service.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
+#include "v8/include/v8.h"
 #endif
 
 namespace {
