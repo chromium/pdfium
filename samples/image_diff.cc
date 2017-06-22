@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include "core/fxcrt/fx_memory.h"
 #include "samples/image_diff_png.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -312,6 +313,8 @@ int DiffImages(const std::string& file1,
 }
 
 int main(int argc, const char* argv[]) {
+  FXMEM_InitializePartitionAlloc();
+
   bool histograms = false;
   bool produce_diff_image = false;
   std::string filename1;

@@ -5,10 +5,12 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_safe_types.h"
 
 #include <stdlib.h>  // For abort().
 
 pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
+pdfium::base::PartitionAllocatorGeneric gGeneralPartitionAllocator;
 pdfium::base::PartitionAllocatorGeneric gStringPartitionAllocator;
 
 void FXMEM_InitializePartitionAlloc() {
@@ -16,25 +18,31 @@ void FXMEM_InitializePartitionAlloc() {
   if (!s_gPartitionAllocatorsInitialized) {
     pdfium::base::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);
     gArrayBufferPartitionAllocator.init();
+    gGeneralPartitionAllocator.init();
     gStringPartitionAllocator.init();
     s_gPartitionAllocatorsInitialized = true;
   }
 }
 
+// TODO(palmer): Remove the |flags| argument.
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags) {
-  return (void*)malloc(byte_size);
+  return pdfium::base::PartitionAllocGeneric(gGeneralPartitionAllocator.root(),
+                                             byte_size, "GeneralPartition");
 }
 
 void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
-  return calloc(num_elems, byte_size);
+  return FX_SafeAlloc(num_elems, byte_size);
 }
 
+// TODO(palmer): Remove the |flags| argument.
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size, int flags) {
-  return realloc(pointer, new_size);
+  return pdfium::base::PartitionReallocGeneric(
+      gGeneralPartitionAllocator.root(), pointer, new_size, "GeneralPartition");
 }
 
+// TODO(palmer): Remove the |flags| argument.
 void FXMEM_DefaultFree(void* pointer, int flags) {
-  free(pointer);
+  pdfium::base::PartitionFree(pointer);
 }
 
 NEVER_INLINE void FX_OutOfMemoryTerminate() {

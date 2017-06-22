@@ -940,7 +940,12 @@ FXFT_Face CFGAS_FontMgr::LoadFace(
   if (!library)
     return nullptr;
 
-  FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
+  // TODO(palmer): This memory will be freed with |ft_free| (which is |free|).
+  // Ultimately, we want to change this to:
+  //   FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
+  // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
+  FXFT_Stream ftStream =
+      static_cast<FXFT_Stream>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
   memset(ftStream, 0, sizeof(FXFT_StreamRec));
   ftStream->base = nullptr;
   ftStream->descriptor.pointer = static_cast<void*>(pFontStream.Get());
@@ -956,7 +961,7 @@ FXFT_Face CFGAS_FontMgr::LoadFace(
 
   FXFT_Face pFace = nullptr;
   if (FXFT_Open_Face(library, &ftArgs, iFaceIndex, &pFace)) {
-    FX_Free(ftStream);
+    ft_sfree(ftStream);
     return nullptr;
   }
 
