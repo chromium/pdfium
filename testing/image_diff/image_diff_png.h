@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SAMPLES_IMAGE_DIFF_PNG_H_
-#define SAMPLES_IMAGE_DIFF_PNG_H_
+#ifndef TESTING_IMAGE_DIFF_IMAGE_DIFF_PNG_H_
+#define TESTING_IMAGE_DIFF_IMAGE_DIFF_PNG_H_
 
 #include <stdlib.h>  // for size_t.
 
@@ -35,4 +35,4 @@ bool EncodeBGRAPNG(const unsigned char* input,
 
 }  // namespace image_diff_png
 
-#endif  // SAMPLES_IMAGE_DIFF_PNG_H_
+#endif  // TESTING_IMAGE_DIFF_IMAGE_DIFF_PNG_H_

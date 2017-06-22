@@ -260,6 +260,18 @@ static_library("test_support") {
   configs += [ ":pdfium_core_config" ]
 }
 
+static_library("image_diff") {
+  testonly = true
+  sources = [
+    "testing/image_diff/image_diff_png.cpp",
+    "testing/image_diff/image_diff_png.h",
+  ]
+  deps = []
+  if (!pdf_enable_xfa) {
+    deps += [ "third_party:fx_lpng" ]
+  }
+}
+
 # Targets below this are only visible within this file (and to the
 # top-level gn_visibility target used to help gn_all build everything).
 visibility = [
@@ -2045,6 +2057,22 @@ if (pdf_is_standalone) {
       "//samples",
     ]
   }
+
+  executable("pdfium_diff") {
+    testonly = true
+    sources = [
+      "testing/image_diff/image_diff.cpp",
+    ]
+    deps = [
+      ":image_diff",
+      ":pdfium",
+      "//build/config:exe_and_shlib_deps",
+      "//build/win:default_exe_manifest",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+  }
+
   group("fuzzers") {
     testonly = true
     deps = [
@@ -2062,6 +2090,7 @@ group("pdfium_all") {
   if (pdf_is_standalone) {
     deps += [
       ":fuzzers",
+      ":pdfium_diff",
       ":samples",
     ]
   }

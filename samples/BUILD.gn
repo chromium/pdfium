@@ -8,7 +8,6 @@ import("../pdfium.gni")
 group("samples") {
   testonly = true
   deps = [
-    ":pdfium_diff",
     ":pdfium_test",
   ]
 }
@@ -46,19 +45,15 @@ config("pdfium_samples_config") {
 executable("pdfium_test") {
   testonly = true
   sources = [
-    "image_diff_png.cc",
-    "image_diff_png.h",
     "pdfium_test.cc",
   ]
   deps = [
+    "../:image_diff",
     "../:pdfium",
     "../:test_support",
     "//build/config:exe_and_shlib_deps",
     "//build/win:default_exe_manifest",
   ]
-  if (!pdf_enable_xfa) {
-    deps += [ "../third_party:fx_lpng" ]
-  }
   if (pdf_enable_v8) {
     deps += [ "//v8:v8_libplatform" ]
     include_dirs = [
@@ -71,26 +66,4 @@ executable("pdfium_test") {
     deps += [ "//skia" ]
   }
   configs += [ ":pdfium_samples_config" ]
-}
-
-executable("pdfium_diff") {
-  testonly = true
-  sources = [
-    "image_diff.cc",
-    "image_diff_png.cc",
-    "image_diff_png.h",
-  ]
-  deps = [
-    "../:pdfium",
-    "//build/config:exe_and_shlib_deps",
-    "//build/win:default_exe_manifest",
-  ]
-  if (!pdf_enable_xfa) {
-    deps += [ "../third_party:fx_lpng" ]
-  }
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_samples_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
 }

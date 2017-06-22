@@ -1,9 +1,5 @@
 include_rules = [
   '+public',
-  '+third_party/libpng16',
   '+third_party/skia/include',
-  '+third_party/zlib',
   '+v8',
-  '+core/fdrm/crypto/fx_crypt.h',
-  '+core/fxcrt/fx_memory.h',
 ]

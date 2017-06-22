@@ -9,7 +9,7 @@
 // This is a duplicate of ui/gfx/codec/png_codec.cc, after removing code related
 // to Skia, that we can use when running layout tests with minimal dependencies.
 
-#include "samples/image_diff_png.h"
+#include "testing/image_diff/image_diff_png.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -44,8 +44,10 @@ struct Comment {
 };
 
 // Converts BGRA->RGBA and RGBA->BGRA.
-void ConvertBetweenBGRAandRGBA(const unsigned char* input, int pixel_width,
-                               unsigned char* output, bool* is_opaque) {
+void ConvertBetweenBGRAandRGBA(const unsigned char* input,
+                               int pixel_width,
+                               unsigned char* output,
+                               bool* is_opaque) {
   for (int x = 0; x < pixel_width; x++) {
     const unsigned char* pixel_in = &input[x * 4];
     unsigned char* pixel_out = &output[x * 4];
@@ -56,8 +58,10 @@ void ConvertBetweenBGRAandRGBA(const unsigned char* input, int pixel_width,
   }
 }
 
-void ConvertRGBAtoRGB(const unsigned char* rgba, int pixel_width,
-                      unsigned char* rgb, bool* is_opaque) {
+void ConvertRGBAtoRGB(const unsigned char* rgba,
+                      int pixel_width,
+                      unsigned char* rgb,
+                      bool* is_opaque) {
   for (int x = 0; x < pixel_width; x++) {
     const unsigned char* pixel_in = &rgba[x * 4];
     unsigned char* pixel_out = &rgb[x * 3];
@@ -92,8 +96,7 @@ class PngDecoderState {
         row_converter(NULL),
         width(0),
         height(0),
-        done(false) {
-  }
+        done(false) {}
 
   ColorFormat output_format;
   int output_channels;
@@ -107,7 +110,9 @@ class PngDecoderState {
 
   // Called to convert a row from the library to the correct output format.
   // When NULL, no conversion is necessary.
-  void (*row_converter)(const unsigned char* in, int w, unsigned char* out,
+  void (*row_converter)(const unsigned char* in,
+                        int w,
+                        unsigned char* out,
                         bool* is_opaque);
 
   // Size of the image, set in the info callback.
@@ -118,8 +123,10 @@ class PngDecoderState {
   bool done;
 };
 
-void ConvertRGBtoRGBA(const unsigned char* rgb, int pixel_width,
-                      unsigned char* rgba, bool* is_opaque) {
+void ConvertRGBtoRGBA(const unsigned char* rgb,
+                      int pixel_width,
+                      unsigned char* rgba,
+                      bool* is_opaque) {
   for (int x = 0; x < pixel_width; x++) {
     const unsigned char* pixel_in = &rgb[x * 3];
     unsigned char* pixel_out = &rgba[x * 4];
@@ -130,8 +137,10 @@ void ConvertRGBtoRGBA(const unsigned char* rgb, int pixel_width,
   }
 }
 
-void ConvertRGBtoBGRA(const unsigned char* rgb, int pixel_width,
-                      unsigned char* bgra, bool* is_opaque) {
+void ConvertRGBtoBGRA(const unsigned char* rgb,
+                      int pixel_width,
+                      unsigned char* bgra,
+                      bool* is_opaque) {
   for (int x = 0; x < pixel_width; x++) {
     const unsigned char* pixel_in = &rgb[x * 3];
     unsigned char* pixel_out = &bgra[x * 4];
@@ -145,8 +154,8 @@ void ConvertRGBtoBGRA(const unsigned char* rgb, int pixel_width,
 // Called when the png header has been read. This code is based on the WebKit
 // PNGImageDecoder
 void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
-  PngDecoderState* state = static_cast<PngDecoderState*>(
-      png_get_progressive_ptr(png_ptr));
+  PngDecoderState* state =
+      static_cast<PngDecoderState*>(png_get_progressive_ptr(png_ptr));
 
   int bit_depth, color_type, interlace_type, compression_type;
   int filter_type, channels;
@@ -246,14 +255,15 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
     longjmp(png_jmpbuf(png_ptr), 1);
   }
 
-  state->output->resize(
-      state->width * state->output_channels * state->height);
+  state->output->resize(state->width * state->output_channels * state->height);
 }
 
-void DecodeRowCallback(png_struct* png_ptr, png_byte* new_row,
-                       png_uint_32 row_num, int pass) {
-  PngDecoderState* state = static_cast<PngDecoderState*>(
-      png_get_progressive_ptr(png_ptr));
+void DecodeRowCallback(png_struct* png_ptr,
+                       png_byte* new_row,
+                       png_uint_32 row_num,
+                       int pass) {
+  PngDecoderState* state =
+      static_cast<PngDecoderState*>(png_get_progressive_ptr(png_ptr));
 
   if (static_cast<int>(row_num) > state->height) {
     NOTREACHED();
@@ -271,8 +281,8 @@ void DecodeRowCallback(png_struct* png_ptr, png_byte* new_row,
 }
 
 void DecodeEndCallback(png_struct* png_ptr, png_info* info) {
-  PngDecoderState* state = static_cast<PngDecoderState*>(
-      png_get_progressive_ptr(png_ptr));
+  PngDecoderState* state =
+      static_cast<PngDecoderState*>(png_get_progressive_ptr(png_ptr));
 
   // Mark the image as complete, this will tell the Decode function that we
   // have successfully found the end of the data.
@@ -283,18 +293,18 @@ void DecodeEndCallback(png_struct* png_ptr, png_info* info) {
 // cleanup and error handling code cleaner.
 class PngReadStructDestroyer {
  public:
-  PngReadStructDestroyer(png_struct** ps, png_info** pi) : ps_(ps), pi_(pi) {
-  }
-  ~PngReadStructDestroyer() {
-    png_destroy_read_struct(ps_, pi_, NULL);
-  }
+  PngReadStructDestroyer(png_struct** ps, png_info** pi) : ps_(ps), pi_(pi) {}
+  ~PngReadStructDestroyer() { png_destroy_read_struct(ps_, pi_, NULL); }
+
  private:
   png_struct** ps_;
   png_info** pi_;
 };
 
-bool BuildPNGStruct(const unsigned char* input, size_t input_size,
-                    png_struct** png_ptr, png_info** info_ptr) {
+bool BuildPNGStruct(const unsigned char* input,
+                    size_t input_size,
+                    png_struct** png_ptr,
+                    png_info** info_ptr) {
   if (input_size < 8)
     return false;  // Input data too small to be a png
 
@@ -318,9 +328,12 @@ bool BuildPNGStruct(const unsigned char* input, size_t input_size,
 }  // namespace
 
 // static
-bool Decode(const unsigned char* input, size_t input_size,
-                      ColorFormat format, std::vector<unsigned char>* output,
-                      int* w, int* h) {
+bool Decode(const unsigned char* input,
+            size_t input_size,
+            ColorFormat format,
+            std::vector<unsigned char>* output,
+            int* w,
+            int* h) {
   png_struct* png_ptr = NULL;
   png_info* info_ptr = NULL;
   if (!BuildPNGStruct(input, input_size, &png_ptr, &info_ptr))
@@ -338,9 +351,7 @@ bool Decode(const unsigned char* input, size_t input_size,
 
   png_set_progressive_read_fn(png_ptr, &state, &DecodeInfoCallback,
                               &DecodeRowCallback, &DecodeEndCallback);
-  png_process_data(png_ptr,
-                   info_ptr,
-                   const_cast<unsigned char*>(input),
+  png_process_data(png_ptr, info_ptr, const_cast<unsigned char*>(input),
                    input_size);
 
   if (!state.done) {
@@ -382,8 +393,10 @@ void FakeFlushCallback(png_structp png) {
   // we're required to provide this function by libpng.
 }
 
-void ConvertBGRAtoRGB(const unsigned char* bgra, int pixel_width,
-                      unsigned char* rgb, bool* is_opaque) {
+void ConvertBGRAtoRGB(const unsigned char* bgra,
+                      int pixel_width,
+                      unsigned char* rgb,
+                      bool* is_opaque) {
   for (int x = 0; x < pixel_width; x++) {
     const unsigned char* pixel_in = &bgra[x * 4];
     unsigned char* pixel_out = &rgb[x * 3];
@@ -406,8 +419,7 @@ inline char* strdup(const char* str) {
 class CommentWriter {
  public:
   explicit CommentWriter(const std::vector<Comment>& comments)
-      : comments_(comments),
-        png_text_(new png_text[comments.size()]) {
+      : comments_(comments), png_text_(new png_text[comments.size()]) {
     for (size_t i = 0; i < comments.size(); ++i)
       AddComment(i, comments[i]);
   }
@@ -417,20 +429,14 @@ class CommentWriter {
       free(png_text_[i].key);
       free(png_text_[i].text);
     }
-    delete [] png_text_;
+    delete[] png_text_;
   }
 
-  bool HasComments() {
-    return !comments_.empty();
-  }
+  bool HasComments() { return !comments_.empty(); }
 
-  png_text* get_png_text() {
-    return png_text_;
-  }
+  png_text* get_png_text() { return png_text_; }
 
-  int size() {
-    return static_cast<int>(comments_.size());
-  }
+  int size() { return static_cast<int>(comments_.size()); }
 
  private:
   void AddComment(size_t pos, const Comment& comment) {
@@ -454,18 +460,25 @@ class CommentWriter {
 #endif  // PNG_TEXT_SUPPORTED
 
 // The type of functions usable for converting between pixel formats.
-typedef void (*FormatConverter)(const unsigned char* in, int w,
-                                unsigned char* out, bool* is_opaque);
+typedef void (*FormatConverter)(const unsigned char* in,
+                                int w,
+                                unsigned char* out,
+                                bool* is_opaque);
 
 // libpng uses a wacky setjmp-based API, which makes the compiler nervous.
 // We constrain all of the calls we make to libpng where the setjmp() is in
 // place to this function.
 // Returns true on success.
-bool DoLibpngWrite(png_struct* png_ptr, png_info* info_ptr,
+bool DoLibpngWrite(png_struct* png_ptr,
+                   png_info* info_ptr,
                    PngEncoderState* state,
-                   int width, int height, int row_byte_width,
-                   const unsigned char* input, int compression_level,
-                   int png_output_color_type, int output_color_components,
+                   int width,
+                   int height,
+                   int row_byte_width,
+                   const unsigned char* input,
+                   int compression_level,
+                   int png_output_color_type,
+                   int output_color_components,
                    FormatConverter converter,
                    const std::vector<Comment>& comments) {
 #ifdef PNG_TEXT_SUPPORTED
@@ -501,14 +514,14 @@ bool DoLibpngWrite(png_struct* png_ptr, png_info* info_ptr,
 
   if (!converter) {
     // No conversion needed, give the data directly to libpng.
-    for (int y = 0; y < height; y ++) {
+    for (int y = 0; y < height; y++) {
       png_write_row(png_ptr,
                     const_cast<unsigned char*>(&input[y * row_byte_width]));
     }
   } else {
     // Needs conversion using a separate buffer.
     row_buffer = new unsigned char[width * output_color_components];
-    for (int y = 0; y < height; y ++) {
+    for (int y = 0; y < height; y++) {
       converter(&input[y * row_byte_width], width, row_buffer, NULL);
       png_write_row(png_ptr, row_buffer);
     }
@@ -522,8 +535,10 @@ bool DoLibpngWrite(png_struct* png_ptr, png_info* info_ptr,
 }  // namespace
 
 // static
-bool EncodeWithCompressionLevel(const unsigned char* input, ColorFormat format,
-                                const int width, const int height,
+bool EncodeWithCompressionLevel(const unsigned char* input,
+                                ColorFormat format,
+                                const int width,
+                                const int height,
                                 int row_byte_width,
                                 bool discard_transparency,
                                 const std::vector<Comment>& comments,
@@ -578,8 +593,8 @@ bool EncodeWithCompressionLevel(const unsigned char* input, ColorFormat format,
   if (input_color_components * width < row_byte_width)
     return false;
 
-  png_struct* png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                                NULL, NULL, NULL);
+  png_struct* png_ptr =
+      png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (!png_ptr)
     return false;
   png_info* info_ptr = png_create_info_struct(png_ptr);
@@ -589,32 +604,35 @@ bool EncodeWithCompressionLevel(const unsigned char* input, ColorFormat format,
   }
 
   PngEncoderState state(output);
-  bool success = DoLibpngWrite(png_ptr, info_ptr, &state,
-                               width, height, row_byte_width,
-                               input, compression_level, png_output_color_type,
-                               output_color_components, converter, comments);
+  bool success =
+      DoLibpngWrite(png_ptr, info_ptr, &state, width, height, row_byte_width,
+                    input, compression_level, png_output_color_type,
+                    output_color_components, converter, comments);
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
   return success;
 }
 
 // static
-bool Encode(const unsigned char* input, ColorFormat format,
-            const int width, const int height, int row_byte_width,
+bool Encode(const unsigned char* input,
+            ColorFormat format,
+            const int width,
+            const int height,
+            int row_byte_width,
             bool discard_transparency,
             const std::vector<Comment>& comments,
             std::vector<unsigned char>* output) {
   return EncodeWithCompressionLevel(input, format, width, height,
-                                    row_byte_width,
-                                    discard_transparency,
-                                    comments, Z_DEFAULT_COMPRESSION,
-                                    output);
+                                    row_byte_width, discard_transparency,
+                                    comments, Z_DEFAULT_COMPRESSION, output);
 }
 
 // Decode a PNG into an RGBA pixel array.
-bool DecodePNG(const unsigned char* input, size_t input_size,
+bool DecodePNG(const unsigned char* input,
+               size_t input_size,
                std::vector<unsigned char>* output,
-               int* width, int* height) {
+               int* width,
+               int* height) {
   return Decode(input, input_size, FORMAT_RGBA, output, width, height);
 }
 
@@ -624,9 +642,8 @@ bool EncodeRGBAPNG(const unsigned char* input,
                    int height,
                    int row_byte_width,
                    std::vector<unsigned char>* output) {
-  return Encode(input, FORMAT_RGBA,
-      width, height, row_byte_width, false,
-      std::vector<Comment>(), output);
+  return Encode(input, FORMAT_RGBA, width, height, row_byte_width, false,
+                std::vector<Comment>(), output);
 }
 
 // Encode an BGRA pixel array into a PNG.
@@ -636,9 +653,8 @@ bool EncodeBGRAPNG(const unsigned char* input,
                    int row_byte_width,
                    bool discard_transparency,
                    std::vector<unsigned char>* output) {
-  return Encode(input, FORMAT_BGRA,
-      width, height, row_byte_width, discard_transparency,
-      std::vector<Comment>(), output);
+  return Encode(input, FORMAT_BGRA, width, height, row_byte_width,
+                discard_transparency, std::vector<Comment>(), output);
 }
 
 }  // namespace image_diff_png

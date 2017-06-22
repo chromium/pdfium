@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"
-#include "samples/image_diff_png.h"
+#include "testing/image_diff/image_diff_png.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -39,30 +39,13 @@ static const uint32_t RGBA_ALPHA = 0xff000000;
 
 class Image {
  public:
-  Image() : w_(0), h_(0) {
-  }
+  Image() : w_(0), h_(0) {}
+  Image(const Image& image) : w_(image.w_), h_(image.h_), data_(image.data_) {}
 
-  Image(const Image& image)
-      : w_(image.w_),
-        h_(image.h_),
-        data_(image.data_) {
-  }
-
-  bool has_image() const {
-    return w_ > 0 && h_ > 0;
-  }
-
-  int w() const {
-    return w_;
-  }
-
-  int h() const {
-    return h_;
-  }
-
-  const unsigned char* data() const {
-    return &data_.front();
-  }
+  bool has_image() const { return w_ > 0 && h_ > 0; }
+  int w() const { return w_; }
+  int h() const { return h_; }
+  const unsigned char* data() const { return &data_.front(); }
 
   // Creates the image from the given filename on disk, and returns true on
   // success.
@@ -202,15 +185,16 @@ float HistogramPercentageDifferent(const Image& baseline, const Image& actual) {
 }
 
 void PrintHelp() {
-  fprintf(stderr,
-    "Usage:\n"
-    "  image_diff [--histogram] <compare file> <reference file>\n"
-    "    Compares two files on disk, returning 0 when they are the same;\n"
-    "    passing \"--histogram\" additionally calculates a diff of the\n"
-    "    RGBA value histograms (which is resistant to shifts in layout)\n"
-    "  image_diff --diff <compare file> <reference file> <output file>\n"
-    "    Compares two files on disk, outputs an image that visualizes the\n"
-    "    difference to <output file>\n");
+  fprintf(
+      stderr,
+      "Usage:\n"
+      "  image_diff [--histogram] <compare file> <reference file>\n"
+      "    Compares two files on disk, returning 0 when they are the same;\n"
+      "    passing \"--histogram\" additionally calculates a diff of the\n"
+      "    RGBA value histograms (which is resistant to shifts in layout)\n"
+      "  image_diff --diff <compare file> <reference file> <output file>\n"
+      "    Compares two files on disk, outputs an image that visualizes the\n"
+      "    difference to <output file>\n");
 }
 
 int CompareImages(const std::string& file1,
@@ -296,9 +280,9 @@ int DiffImages(const std::string& file1,
     return kStatusSame;
 
   std::vector<unsigned char> png_encoding;
-  image_diff_png::EncodeRGBAPNG(
-      diff_image.data(), diff_image.w(), diff_image.h(),
-      diff_image.w() * 4, &png_encoding);
+  image_diff_png::EncodeRGBAPNG(diff_image.data(), diff_image.w(),
+                                diff_image.h(), diff_image.w() * 4,
+                                &png_encoding);
 
   FILE* f = fopen(out_file.c_str(), "wb");
   if (!f)

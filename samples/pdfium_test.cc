@@ -18,7 +18,6 @@
 #define _SKIA_SUPPORT_
 #endif
 
-#include "core/fdrm/crypto/fx_crypt.h"
 #include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_dataavail.h"
@@ -28,7 +27,7 @@
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
-#include "samples/image_diff_png.h"
+#include "testing/image_diff/image_diff_png.h"
 #include "testing/test_support.h"
 #include "third_party/base/logging.h"
 
@@ -121,12 +120,9 @@ static bool CheckDimensions(int stride, int width, int height) {
 
 static void OutputMD5Hash(const char* file_name, const char* buffer, int len) {
   // Get the MD5 hash and write it to stdout.
-  uint8_t digest[16];
-  CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(buffer), len, digest);
-  printf("MD5:%s:", file_name);
-  for (int i = 0; i < 16; i++)
-    printf("%02x", digest[i]);
-  printf("\n");
+  std::string hash =
+      GenerateMD5Base16(reinterpret_cast<const uint8_t*>(buffer), len);
+  printf("MD5:%s:%s\n", file_name, hash.c_str());
 }
 
 static std::string WritePpm(const char* pdf_name,
