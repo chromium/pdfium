@@ -10,7 +10,6 @@
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

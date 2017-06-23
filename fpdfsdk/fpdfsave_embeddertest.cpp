@@ -11,7 +11,6 @@
 #include "public/fpdf_ppo.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
@@ -31,7 +30,6 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
   EXPECT_EQ(843u, GetString().length());
 }
-
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, -1));

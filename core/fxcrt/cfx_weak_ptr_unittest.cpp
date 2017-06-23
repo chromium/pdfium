@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "core/fxcrt/fx_memory.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {

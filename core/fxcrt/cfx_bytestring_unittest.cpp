@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 #include "core/fxcrt/cfx_bytestring.h"
+#include "core/fxcrt/fx_string.h"
 
 #include <algorithm>
 #include <vector>
 
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 

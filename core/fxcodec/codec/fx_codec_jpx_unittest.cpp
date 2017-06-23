@@ -7,7 +7,6 @@
 #include <limits>
 
 #include "core/fxcodec/codec/codec_int.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 static const OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);

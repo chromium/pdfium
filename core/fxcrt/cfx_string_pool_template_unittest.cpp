@@ -4,7 +4,6 @@
 
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/fx_string.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcrt, ByteStringPool) {

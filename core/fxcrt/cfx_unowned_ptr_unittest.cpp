@@ -7,7 +7,6 @@
 #include <utility>
 #include <vector>
 
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {

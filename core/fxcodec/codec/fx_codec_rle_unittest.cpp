@@ -9,7 +9,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
 #include "core/fxcodec/fx_codec.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, RLETestBadInputs) {

@@ -9,7 +9,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdfview.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 

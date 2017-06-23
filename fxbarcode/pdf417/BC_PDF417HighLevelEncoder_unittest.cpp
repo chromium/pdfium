@@ -4,7 +4,6 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(PDF417HighLevelEncoder, EncodeHighLevel) {
