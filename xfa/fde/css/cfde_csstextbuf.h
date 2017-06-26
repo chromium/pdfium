@@ -17,24 +17,14 @@ class CFDE_CSSTextBuf {
   CFDE_CSSTextBuf();
   ~CFDE_CSSTextBuf();
 
-  bool AttachBuffer(const wchar_t* pBuffer, int32_t iBufLen);
+  void AttachBuffer(const wchar_t* pBuffer, int32_t iBufLen);
   bool EstimateSize(int32_t iAllocSize);
-  bool AppendChar(wchar_t wch) {
-    if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2))
-      return false;
-    m_pBuffer[m_iDatLen++] = wch;
-    return true;
-  }
+  bool AppendChar(wchar_t wch);
 
   void Clear() { m_iDatPos = m_iDatLen = 0; }
   void Reset();
 
-  int32_t TrimEnd() {
-    while (m_iDatLen > 0 && m_pBuffer[m_iDatLen - 1] <= ' ')
-      --m_iDatLen;
-    AppendChar(0);
-    return --m_iDatLen;
-  }
+  int32_t TrimEnd();
 
   void Subtract(int32_t iStart, int32_t iLength);
   bool IsEOF() const { return m_iDatPos >= m_iDatLen; }

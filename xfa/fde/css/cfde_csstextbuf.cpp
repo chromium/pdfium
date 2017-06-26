@@ -19,19 +19,11 @@ CFDE_CSSTextBuf::~CFDE_CSSTextBuf() {
   Reset();
 }
 
-void CFDE_CSSTextBuf::Reset() {
-  if (!m_bExtBuf) {
-    FX_Free(m_pBuffer);
-    m_pBuffer = nullptr;
-  }
-  m_iDatPos = m_iDatLen = m_iBufLen;
-}
-
-bool CFDE_CSSTextBuf::AttachBuffer(const wchar_t* pBuffer, int32_t iBufLen) {
+void CFDE_CSSTextBuf::AttachBuffer(const wchar_t* pBuffer, int32_t iBufLen) {
   Reset();
   m_pBuffer = const_cast<wchar_t*>(pBuffer);
   m_iDatLen = m_iBufLen = iBufLen;
-  return m_bExtBuf = true;
+  m_bExtBuf = true;
 }
 
 bool CFDE_CSSTextBuf::EstimateSize(int32_t iAllocSize) {
@@ -41,20 +33,40 @@ bool CFDE_CSSTextBuf::EstimateSize(int32_t iAllocSize) {
   return ExpandBuf(iAllocSize);
 }
 
+bool CFDE_CSSTextBuf::AppendChar(wchar_t wch) {
+  if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2))
+    return false;
+  m_pBuffer[m_iDatLen++] = wch;
+  return true;
+}
+
+void CFDE_CSSTextBuf::Reset() {
+  if (!m_bExtBuf) {
+    FX_Free(m_pBuffer);
+    m_pBuffer = nullptr;
+  }
+  m_iDatPos = m_iDatLen = m_iBufLen;
+}
+
+int32_t CFDE_CSSTextBuf::TrimEnd() {
+  while (m_iDatLen > 0 && m_pBuffer[m_iDatLen - 1] <= ' ')
+    --m_iDatLen;
+  AppendChar(0);
+  return --m_iDatLen;
+}
+
 bool CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
   if (m_bExtBuf)
     return false;
-  if (!m_pBuffer)
-    m_pBuffer = FX_Alloc(wchar_t, iDesiredSize);
-  else if (m_iBufLen != iDesiredSize)
-    m_pBuffer = FX_Realloc(wchar_t, m_pBuffer, iDesiredSize);
-  else
+
+  if (m_pBuffer && m_iBufLen == iDesiredSize)
     return true;
 
-  if (!m_pBuffer) {
-    m_iBufLen = 0;
-    return false;
-  }
+  if (m_pBuffer)
+    m_pBuffer = FX_Realloc(wchar_t, m_pBuffer, iDesiredSize);
+  else
+    m_pBuffer = FX_Alloc(wchar_t, iDesiredSize);
+
   m_iBufLen = iDesiredSize;
   return true;
 }

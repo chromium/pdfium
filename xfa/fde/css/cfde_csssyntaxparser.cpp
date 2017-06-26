@@ -41,7 +41,8 @@ bool CFDE_CSSSyntaxParser::Init(const wchar_t* pBuffer,
   Reset(bOnlyDeclaration);
   if (!m_TextData.EstimateSize(iTextDatSize))
     return false;
-  return m_TextPlane.AttachBuffer(pBuffer, iBufferSize);
+  m_TextPlane.AttachBuffer(pBuffer, iBufferSize);
+  return true;
 }
 
 void CFDE_CSSSyntaxParser::Reset(bool bOnlyDeclaration) {
