@@ -18,9 +18,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (input.GetLength() == 0)
     return 0;
 
-  CFDE_CSSSyntaxParser parser;
-  parser.Init(input.c_str(), input.GetLength());
-
+  CFDE_CSSSyntaxParser parser(input.c_str(), input.GetLength());
   FDE_CSSSyntaxStatus status;
   do {
     status = parser.DoSyntaxParse();

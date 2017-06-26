@@ -22,38 +22,25 @@ bool IsSelectorStart(wchar_t wch) {
 
 }  // namespace
 
-CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
+CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser(const wchar_t* pBuffer,
+                                           int32_t iBufferSize)
+    : CFDE_CSSSyntaxParser(pBuffer, iBufferSize, 32, false) {}
+
+CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser(const wchar_t* pBuffer,
+                                           int32_t iBufferSize,
+                                           int32_t iTextDatSize,
+                                           bool bOnlyDeclaration)
     : m_iTextDataLen(0),
       m_dwCheck(0xFFFFFFFF),
-      m_eMode(FDE_CSSSyntaxMode::RuleSet),
-      m_eStatus(FDE_CSSSyntaxStatus::None) {}
-
-CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser() {
-  m_TextData.Reset();
-  m_TextPlane.Reset();
-}
-
-bool CFDE_CSSSyntaxParser::Init(const wchar_t* pBuffer,
-                                int32_t iBufferSize,
-                                int32_t iTextDatSize,
-                                bool bOnlyDeclaration) {
+      m_eStatus(FDE_CSSSyntaxStatus::None) {
   ASSERT(pBuffer && iBufferSize > 0 && iTextDatSize > 0);
-  Reset(bOnlyDeclaration);
-  if (!m_TextData.EstimateSize(iTextDatSize))
-    return false;
-  m_TextPlane.AttachBuffer(pBuffer, iBufferSize);
-  return true;
-}
-
-void CFDE_CSSSyntaxParser::Reset(bool bOnlyDeclaration) {
-  m_TextPlane.Reset();
-  m_TextData.Reset();
-  m_iTextDataLen = 0;
-  m_dwCheck = 0xFFFFFFFF;
-  m_eStatus = FDE_CSSSyntaxStatus::None;
   m_eMode = bOnlyDeclaration ? FDE_CSSSyntaxMode::PropertyName
                              : FDE_CSSSyntaxMode::RuleSet;
+  m_TextData.InitWithSize(iTextDatSize);
+  m_TextPlane.AttachBuffer(pBuffer, iBufferSize);
 }
+
+CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser() {}
 
 FDE_CSSSyntaxStatus CFDE_CSSSyntaxParser::DoSyntaxParse() {
   while (m_eStatus >= FDE_CSSSyntaxStatus::None) {
@@ -171,7 +158,7 @@ FDE_CSSSyntaxStatus CFDE_CSSSyntaxParser::DoSyntaxParse() {
           break;
         case FDE_CSSSyntaxMode::Comment:
           if (wch == '/' && m_TextData.GetLength() > 0 &&
-              m_TextData.GetAt(m_TextData.GetLength() - 1) == '*') {
+              m_TextData.GetBuffer()[m_TextData.GetLength() - 1] == '*') {
             RestoreMode();
           } else {
             m_TextData.AppendChar(wch);

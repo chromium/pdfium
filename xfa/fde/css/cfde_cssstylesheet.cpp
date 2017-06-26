@@ -35,12 +35,10 @@ CFDE_CSSStyleRule* CFDE_CSSStyleSheet::GetRule(int32_t index) const {
 }
 
 bool CFDE_CSSStyleSheet::LoadBuffer(const wchar_t* pBuffer, int32_t iBufSize) {
-  ASSERT(pBuffer && iBufSize > 0);
+  ASSERT(pBuffer);
+  ASSERT(iBufSize > 0);
 
-  auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>();
-  if (!pSyntax->Init(pBuffer, iBufSize))
-    return false;
-
+  auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>(pBuffer, iBufSize);
   Reset();
   FDE_CSSSyntaxStatus eStatus;
   do {

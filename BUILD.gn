@@ -1451,6 +1451,8 @@ if (pdf_enable_xfa) {
       "xfa/fde/css/cfde_cssdeclaration.h",
       "xfa/fde/css/cfde_cssenumvalue.cpp",
       "xfa/fde/css/cfde_cssenumvalue.h",
+      "xfa/fde/css/cfde_cssexttextbuf.cpp",
+      "xfa/fde/css/cfde_cssexttextbuf.h",
       "xfa/fde/css/cfde_cssnumbervalue.cpp",
       "xfa/fde/css/cfde_cssnumbervalue.h",
       "xfa/fde/css/cfde_csspropertyholder.cpp",

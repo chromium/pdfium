@@ -9,6 +9,8 @@
 
 #include <stack>
 
+#include "core/fxcrt/fx_string.h"
+#include "xfa/fde/css/cfde_cssexttextbuf.h"
 #include "xfa/fde/css/cfde_csstextbuf.h"
 
 #define FDE_CSSSYNTAXCHECK_AllowCharset 1
@@ -37,18 +39,17 @@ enum class FDE_CSSSyntaxStatus : uint8_t {
 
 class CFDE_CSSSyntaxParser {
  public:
-  CFDE_CSSSyntaxParser();
+  CFDE_CSSSyntaxParser(const wchar_t* pBuffer, int32_t iBufferSize);
+  CFDE_CSSSyntaxParser(const wchar_t* pBuffer,
+                       int32_t iBufferSize,
+                       int32_t iTextDatSize,
+                       bool bOnlyDeclaration);
   ~CFDE_CSSSyntaxParser();
 
-  bool Init(const wchar_t* pBuffer,
-            int32_t iBufferSize,
-            int32_t iTextDatSize = 32,
-            bool bOnlyDeclaration = false);
   FDE_CSSSyntaxStatus DoSyntaxParse();
   CFX_WideStringC GetCurrentString() const;
 
  protected:
-  void Reset(bool bOnlyDeclaration);
   void SwitchMode(FDE_CSSSyntaxMode eMode);
   int32_t SwitchToComment();
 
@@ -63,7 +64,7 @@ class CFDE_CSSSyntaxParser {
   void DisableImport() { m_dwCheck = 0; }
 
   CFDE_CSSTextBuf m_TextData;
-  CFDE_CSSTextBuf m_TextPlane;
+  CFDE_CSSExtTextBuf m_TextPlane;
   int32_t m_iTextDataLen;
   uint32_t m_dwCheck;
   FDE_CSSSyntaxMode m_eMode;
