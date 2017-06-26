@@ -4,6 +4,7 @@
   /Pages 2 0 R
   /PageMode /UseOutlines
 >>
+endobj
 {{object 2 0}} <<
   /Type /Pages
   /MediaBox [ 0 0 200 200 ]
@@ -49,9 +50,6 @@ ET
 endstream
 endobj
 {{xref}}
-trailer <<
-  /Size 6
-  /Root 1 0 R
->>
+{{trailer}}
 {{startxref}}
 %%EOF

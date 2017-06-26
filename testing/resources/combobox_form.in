@@ -31,6 +31,7 @@ endobj
   /Subtype /Type1
   /BaseFont /Helvetica
 >>
+endobj
 {{object 7 0}}
 << /Length 51 >>
 stream
@@ -66,6 +67,7 @@ endobj
   /Opt [(Apple) (Banana) (Cherry)]
   /V (Banana)
 >>
+endobj
 {{object 10 0}}
 <<
   /Type /Annot
@@ -79,6 +81,6 @@ endobj
 >>
 endobj
 {{xref}}
-trailer<< /Size 10 /Root 1 0 R >>
+{{trailer}}
 {{startxref}}
 %%EOF

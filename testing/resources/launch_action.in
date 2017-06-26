@@ -3,6 +3,7 @@
   /Type /Catalog
   /Pages 2 0 R
 >>
+endobj
 {{object 2 0}} <<
   /Type /Pages
   /MediaBox [ 0 0 200 200 ]
@@ -40,15 +41,13 @@ endobj
   /F 6 0 R
   /S /Launch
 >>
+endobj
 {{object 6 0}} <<
   /F (test.pdf)
   /Type / Filespec
 >>
 endobj
 {{xref}}
-trailer <<
-  /Size 6
-  /Root 1 0 R
->>
+{{trailer}}
 {{startxref}}
 %%EOF

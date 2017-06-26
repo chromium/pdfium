@@ -40,6 +40,7 @@ endobj
   /Subtype /Type1
   /BaseFont /Helvetica
 >>
+endobj
 {{object 8 0}}
 << /Length 51 >>
 stream
@@ -52,6 +53,6 @@ ET
 endstream
 endobj
 {{xref}}
-trailer<< /Size 8 /Root 1 0 R >>
+{{trailer}}
 {{startxref}}
 %%EOF

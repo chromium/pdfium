@@ -115,10 +115,7 @@ xref
 0000000000 65535 f 
 0000000924 00000 n 
 0000001034 00000 n 
-trailer <<
-  /Size 6
-  /Root 1 0 R
->>
+trailer<< /Root 1 0 R /Size 23 >>
 startxref
 1122
 %%EOF

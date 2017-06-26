@@ -10,8 +10,10 @@ script replaces {{name}}-style variables in the input with calculated results
 
   {{header}}     - expands to the header comment required for PDF files.
   {{xref}}       - expands to a generated xref table, noting the offset.
+  {{trailer}}    - expands to a standard trailer with "1 0 R" as the /Root.
   {{startxref}   - expands to a startxref directive followed by correct offset.
-  {{object x y}} - expands to |x y obj| declaration, noting the offset."""
+  {{object x y}} - expands to |x y obj| declaration, noting the offset.
+"""
 
 import optparse
 import os
@@ -19,15 +21,19 @@ import re
 import sys
 
 class TemplateProcessor:
-  HEADER_TOKEN =  '{{header}}'
+  HEADER_TOKEN = '{{header}}'
   HEADER_REPLACEMENT = '%PDF-1.7\n%\xa0\xf2\xa4\xf4'
 
   XREF_TOKEN = '{{xref}}'
   XREF_REPLACEMENT = 'xref\n%d %d\n'
 
-  # XREF rows must be exactly 20 bytes - space required.
   XREF_REPLACEMENT_N = '%010d %05d n \n'
   XREF_REPLACEMENT_F = '0000000000 65535 f \n'
+  # XREF rows must be exactly 20 bytes - space required.
+  assert(len(XREF_REPLACEMENT_F) == 20)
+
+  TRAILER_TOKEN = '{{trailer}}'
+  TRAILER_REPLACEMENT = 'trailer<< /Root 1 0 R /Size %d >>'
 
   STARTXREF_TOKEN= '{{startxref}}'
   STARTXREF_REPLACEMENT = 'startxref\n%d'
@@ -60,6 +66,9 @@ class TemplateProcessor:
     if self.XREF_TOKEN in line:
       self.xref_offset = self.offset
       line = self.generate_xref_table()
+    if self.TRAILER_TOKEN in line:
+      replacement = self.TRAILER_REPLACEMENT % (self.max_object_number + 1)
+      line = line.replace(self.TRAILER_TOKEN, replacement)
     if self.STARTXREF_TOKEN in line:
       replacement = self.STARTXREF_REPLACEMENT % self.xref_offset
       line = line.replace(self.STARTXREF_TOKEN, replacement)

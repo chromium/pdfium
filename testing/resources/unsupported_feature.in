@@ -9,12 +9,12 @@ endobj
   /Type /Pages
   /Count 3
   /Kids [
-    10 0 R
+    3 0 R
   ]
 >>
 endobj
 % Page number 0.
-{{object 10 0}} <<
+{{object 3 0}} <<
   /Type /Page
   /Parent 2 0 R
   /Resources <<
@@ -25,8 +25,6 @@ endobj
 >>
 endobj
 {{xref}}
-trailer <<
-  /Root 1 0 R
->>
+{{trailer}}
 {{startxref}}
 %%EOF
