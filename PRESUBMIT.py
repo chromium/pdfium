@@ -267,7 +267,7 @@ def _CheckTestDuplicates(input_api, output_api):
       end_len = 4
     else:
       continue
-    path = f.LocalPath()[:-end_len];
+    path = f.LocalPath()[:-end_len]
     if path in tests_added:
       results.append(output_api.PresubmitError(
           'Remove %s to prevent shadowing %s' % (path + '.pdf',
@@ -276,6 +276,21 @@ def _CheckTestDuplicates(input_api, output_api):
       tests_added.append(path)
   return results
 
+def _CheckPNGFormat(input_api, output_api):
+  """Checks that .png files have a format that will be considered valid by our
+  test runners. If a file ends with .png, then it must be of the form
+  NAME_expected{,mac,win}.pdf.#.png"""
+  expected_pattern = input_api.re.compile(
+      r'.*_expected(_(mac|win))?\.pdf\..*\.png')
+  results = []
+  for f in input_api.AffectedFiles():
+    if not f.LocalPath().endswith('.png'):
+      continue
+    if expected_pattern.match(f.LocalPath()):
+      continue
+    results.append(output_api.PresubmitError(
+        'PNG file %s does not have the correct format' % f.LocalPath()))
+  return results
 
 def CheckChangeOnUpload(input_api, output_api):
   results = []
@@ -285,5 +300,6 @@ def CheckChangeOnUpload(input_api, output_api):
       input_api, output_api, None, LINT_FILTERS)
   results += _CheckIncludeOrder(input_api, output_api)
   results += _CheckTestDuplicates(input_api, output_api)
+  results += _CheckPNGFormat(input_api, output_api)
 
   return results
