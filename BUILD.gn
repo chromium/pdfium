@@ -266,6 +266,7 @@ static_library("image_diff") {
     "testing/image_diff/image_diff_png.cpp",
     "testing/image_diff/image_diff_png.h",
   ]
+  configs += [ ":pdfium_core_config" ]
   deps = []
   if (!pdf_enable_xfa) {
     deps += [ "third_party:fx_lpng" ]
