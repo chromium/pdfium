@@ -71,13 +71,10 @@ FPDFAnnot_IsSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype);
 //
 //   page      - handle to a page.
 //   subtype   - the subtype of the new annotation.
-//   annot     - receives the newly created annotation.
 //
-// Returns true if successful, false otherwise.
-DLLEXPORT FPDF_BOOL STDCALL
-FPDFPage_CreateAnnot(FPDF_PAGE page,
-                     FPDF_ANNOTATION_SUBTYPE subtype,
-                     FPDF_ANNOTATION* annot);
+// Returns a handle to the new annotation object, or NULL on failure.
+DLLEXPORT FPDF_ANNOTATION STDCALL
+FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype);
 
 // Get the number of annotations in |page|.
 //
@@ -90,12 +87,9 @@ DLLEXPORT int STDCALL FPDFPage_GetAnnotCount(FPDF_PAGE page);
 //
 //   page  - handle to a page.
 //   index - the index of the annotation.
-//   annot - receives the annotation.
 //
-// Returns true if successful, false otherwise.
-DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetAnnot(FPDF_PAGE page,
-                                              int index,
-                                              FPDF_ANNOTATION* annot);
+// Returns a handle to the annotation object, or NULL on failure.
+DLLEXPORT FPDF_ANNOTATION STDCALL FPDFPage_GetAnnot(FPDF_PAGE page, int index);
 
 // Close an annotation. Must be called when the annotation returned by
 // FPDFPage_CreateAnnot() or FPDFPage_GetAnnot() is no longer needed. This
@@ -169,12 +163,10 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot, FS_QUADPOINTSF quadPoints);
 // Get the attachment points (i.e. quadpoints) of an annotation.
 //
 //   annot      - handle to an annotation.
-//   quadPoints - receives the attachment points.
 //
-// Returns true if successful, false otherwise.
-DLLEXPORT FPDF_BOOL STDCALL
-FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
-                              FS_QUADPOINTSF* quadPoints);
+// Returns a quadpoints object, or an empty set of quadpoints on failure.
+DLLEXPORT FS_QUADPOINTSF STDCALL
+FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot);
 
 // Set the annotation rectangle defining the location of the annotation.
 //
@@ -188,11 +180,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
 // Get the annotation rectangle defining the location of the annotation.
 //
 //   annot  - handle to an annotation.
-//   rect   - receives the annotation rectangle.
 //
-// Returns true if successful, false otherwise.
-DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
-                                              FS_RECTF* rect);
+// Returns a rectangle object, or an empty rectangle on failure.
+DLLEXPORT FS_RECTF STDCALL FPDFAnnot_GetRect(FPDF_ANNOTATION annot);
 
 // Set the contents of an annotation.
 //

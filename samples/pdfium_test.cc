@@ -277,8 +277,8 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
   for (int i = 0; i < annot_count; i++) {
     // Retrieve the annotation object and its subtype.
     fprintf(fp, "Annotation #%d:\n", i + 1);
-    FPDF_ANNOTATION annot;
-    if (!FPDFPage_GetAnnot(page, i, &annot)) {
+    FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, i);
+    if (!annot) {
       fprintf(fp, "Failed to retrieve annotation!\n\n");
       continue;
     }
@@ -319,25 +319,17 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
                 .c_str());
 
     // Retrieve the annotation's quadpoints if it is a markup annotation.
-    FS_QUADPOINTSF quadpoints;
     if (FPDFAnnot_HasAttachmentPoints(annot)) {
-      if (!FPDFAnnot_GetAttachmentPoints(annot, &quadpoints)) {
-        fprintf(fp, "Failed to retrieve quadpoints.\n");
-      } else {
-        fprintf(fp, "Quadpoints: (%f, %f), (%f, %f), (%f, %f), (%f, %f)\n",
-                quadpoints.x1, quadpoints.y1, quadpoints.x2, quadpoints.y2,
-                quadpoints.x3, quadpoints.y3, quadpoints.x4, quadpoints.y4);
-      }
+      FS_QUADPOINTSF quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+      fprintf(fp, "Quadpoints: (%f, %f), (%f, %f), (%f, %f), (%f, %f)\n",
+              quadpoints.x1, quadpoints.y1, quadpoints.x2, quadpoints.y2,
+              quadpoints.x3, quadpoints.y3, quadpoints.x4, quadpoints.y4);
     }
 
     // Retrieve the annotation's rectangle coordinates.
-    FS_RECTF rect;
-    if (!FPDFAnnot_GetRect(annot, &rect)) {
-      fprintf(fp, "Failed to retrieve rectangle.\n\n");
-    } else {
-      fprintf(fp, "Rectangle: l - %f, b - %f, r - %f, t - %f\n\n", rect.left,
-              rect.bottom, rect.right, rect.top);
-    }
+    FS_RECTF rect = FPDFAnnot_GetRect(annot);
+    fprintf(fp, "Rectangle: l - %f, b - %f, r - %f, t - %f\n\n", rect.left,
+            rect.bottom, rect.right, rect.top);
   }
 
   (void)fclose(fp);
