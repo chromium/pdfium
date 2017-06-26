@@ -49,9 +49,10 @@ bool GetColor(const CPDF_Color* pColor, float* rgb) {
 
 }  // namespace
 
-CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
-    : m_pPage(pPage), m_pDocument(m_pPage->m_pDocument.Get()) {
-  for (const auto& pObj : *pPage->GetPageObjectList()) {
+CPDF_PageContentGenerator::CPDF_PageContentGenerator(
+    CPDF_PageObjectHolder* pObjHolder)
+    : m_pObjHolder(pObjHolder), m_pDocument(pObjHolder->m_pDocument.Get()) {
+  for (const auto& pObj : *pObjHolder->GetPageObjectList()) {
     if (pObj)
       m_pageObjects.emplace_back(pObj.get());
   }
@@ -60,12 +61,14 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
 CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
 
 void CPDF_PageContentGenerator::GenerateContent() {
+  ASSERT(m_pObjHolder->IsPage());
+
   CPDF_Document* pDoc = m_pDocument.Get();
   std::ostringstream buf;
   if (!ProcessPageObjects(&buf))
     return;
 
-  CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict.Get();
+  CPDF_Dictionary* pPageDict = m_pObjHolder->m_pFormDict.Get();
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetObjectFor("Contents") : nullptr;
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
@@ -111,14 +114,15 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     uint32_t dwResourceObjNum,
     const CFX_ByteString& bsType) {
   ASSERT(dwResourceObjNum);
-  if (!m_pPage->m_pResources) {
-    m_pPage->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
-    m_pPage->m_pFormDict->SetNewFor<CPDF_Reference>(
-        "Resources", m_pDocument.Get(), m_pPage->m_pResources->GetObjNum());
+  if (!m_pObjHolder->m_pResources) {
+    m_pObjHolder->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
+    m_pObjHolder->m_pFormDict->SetNewFor<CPDF_Reference>(
+        "Resources", m_pDocument.Get(),
+        m_pObjHolder->m_pResources->GetObjNum());
   }
-  CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictFor(bsType);
+  CPDF_Dictionary* pResList = m_pObjHolder->m_pResources->GetDictFor(bsType);
   if (!pResList)
-    pResList = m_pPage->m_pResources->SetNewFor<CPDF_Dictionary>(bsType);
+    pResList = m_pObjHolder->m_pResources->SetNewFor<CPDF_Dictionary>(bsType);
 
   CFX_ByteString name;
   int idnum = 1;
@@ -137,7 +141,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
 bool CPDF_PageContentGenerator::ProcessPageObjects(std::ostringstream* buf) {
   bool bDirty = false;
   for (auto& pPageObj : m_pageObjects) {
-    if (!pPageObj->IsDirty())
+    if (m_pObjHolder->IsPage() && !pPageObj->IsDirty())
       continue;
     bDirty = true;
     if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
@@ -277,8 +281,8 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
   }
 
   CFX_ByteString name;
-  auto it = m_pPage->m_GraphicsMap.find(graphD);
-  if (it != m_pPage->m_GraphicsMap.end()) {
+  auto it = m_pObjHolder->m_GraphicsMap.find(graphD);
+  if (it != m_pObjHolder->m_GraphicsMap.end()) {
     name = it->second;
   } else {
     auto gsDict = pdfium::MakeUnique<CPDF_Dictionary>();
@@ -296,7 +300,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
     CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(gsDict));
     uint32_t dwObjNum = pDict->GetObjNum();
     name = RealizeResource(dwObjNum, "ExtGState");
-    m_pPage->m_GraphicsMap[graphD] = name;
+    m_pObjHolder->m_GraphicsMap[graphD] = name;
   }
   *buf << "/" << PDF_NameEncode(name).c_str() << " gs ";
 }
@@ -321,9 +325,9 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
   else
     return;
   fontD.baseFont = pFont->GetBaseFont();
-  auto it = m_pPage->m_FontsMap.find(fontD);
+  auto it = m_pObjHolder->m_FontsMap.find(fontD);
   CFX_ByteString dictName;
-  if (it != m_pPage->m_FontsMap.end()) {
+  if (it != m_pObjHolder->m_FontsMap.end()) {
     dictName = it->second;
   } else {
     uint32_t dwObjNum = pFont->GetFontDict()->GetObjNum();
@@ -337,7 +341,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
       dwObjNum = pDict->GetObjNum();
     }
     dictName = RealizeResource(dwObjNum, "Font");
-    m_pPage->m_FontsMap[fontD] = dictName;
+    m_pObjHolder->m_FontsMap[fontD] = dictName;
   }
   *buf << "/" << PDF_NameEncode(dictName).c_str() << " "
        << pTextObj->GetFontSize() << " Tf ";

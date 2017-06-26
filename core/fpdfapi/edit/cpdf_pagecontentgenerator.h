@@ -16,22 +16,22 @@
 
 class CPDF_Document;
 class CPDF_ImageObject;
-class CPDF_Page;
 class CPDF_PageObject;
+class CPDF_PageObjectHolder;
 class CPDF_PathObject;
 class CPDF_TextObject;
 
 class CPDF_PageContentGenerator {
  public:
-  explicit CPDF_PageContentGenerator(CPDF_Page* pPage);
+  explicit CPDF_PageContentGenerator(CPDF_PageObjectHolder* pObjHolder);
   ~CPDF_PageContentGenerator();
 
   void GenerateContent();
+  bool ProcessPageObjects(std::ostringstream* buf);
 
  private:
   friend class CPDF_PageContentGeneratorTest;
 
-  bool ProcessPageObjects(std::ostringstream* buf);
   void ProcessPath(std::ostringstream* buf, CPDF_PathObject* pPathObj);
   void ProcessImage(std::ostringstream* buf, CPDF_ImageObject* pImageObj);
   void ProcessGraphics(std::ostringstream* buf, CPDF_PageObject* pPageObj);
@@ -39,7 +39,7 @@ class CPDF_PageContentGenerator {
   CFX_ByteString RealizeResource(uint32_t dwResourceObjNum,
                                  const CFX_ByteString& bsType);
 
-  CFX_UnownedPtr<CPDF_Page> const m_pPage;
+  CFX_UnownedPtr<CPDF_PageObjectHolder> const m_pObjHolder;
   CFX_UnownedPtr<CPDF_Document> const m_pDocument;
   std::vector<CFX_UnownedPtr<CPDF_PageObject>> m_pageObjects;
 };

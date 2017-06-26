@@ -74,6 +74,10 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
 
 CPDF_Page::~CPDF_Page() {}
 
+bool CPDF_Page::IsPage() const {
+  return true;
+}
+
 void CPDF_Page::StartParse() {
   if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING)
     return;

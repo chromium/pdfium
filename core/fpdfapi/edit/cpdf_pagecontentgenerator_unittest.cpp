@@ -4,8 +4,12 @@
 
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
@@ -34,7 +38,7 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
   CPDF_Dictionary* TestGetResource(CPDF_PageContentGenerator* pGen,
                                    const CFX_ByteString& type,
                                    const CFX_ByteString& name) {
-    return pGen->m_pPage->m_pResources->GetDictFor(type)->GetDictFor(name);
+    return pGen->m_pObjHolder->m_pResources->GetDictFor(type)->GetDictFor(name);
   }
 
   void TestProcessText(CPDF_PageContentGenerator* pGen,
@@ -272,4 +276,48 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   EXPECT_TRUE(fontDesc->GetObjNum());
   EXPECT_EQ("FontDescriptor", fontDesc->GetStringFor("Type"));
   EXPECT_EQ("Helvetica", fontDesc->GetStringFor("FontName"));
+}
+
+TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
+  auto pDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
+  pDoc->CreateNewDoc();
+  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
+  auto pStream = pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, std::move(pDict));
+
+  // Create an empty form.
+  auto pTestForm =
+      pdfium::MakeUnique<CPDF_Form>(pDoc.get(), nullptr, pStream.get());
+  pTestForm->ParseContent(nullptr, nullptr, nullptr);
+  ASSERT_TRUE(pTestForm->IsParsed());
+
+  // The generated stream for the empty form should be an empty string.
+  CPDF_PageContentGenerator generator(pTestForm.get());
+  std::ostringstream buf;
+  generator.ProcessPageObjects(&buf);
+  EXPECT_EQ("", CFX_ByteString(buf));
+}
+
+TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
+  auto pDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
+  pDoc->CreateNewDoc();
+  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
+  const char content[] =
+      "q 3.102 4.67 m 5.45 0.29 l 4.24 3.15 4.65 2.98 3.456 0.24 c 3.102 4.67 "
+      "l h f Q\n";
+  size_t buf_len = FX_ArraySize(content);
+  std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_len));
+  memcpy(buf.get(), content, buf_len);
+  auto pStream = pdfium::MakeUnique<CPDF_Stream>(std::move(buf), buf_len,
+                                                 std::move(pDict));
+
+  // Create a form with a non-empty stream.
+  auto pTestForm =
+      pdfium::MakeUnique<CPDF_Form>(pDoc.get(), nullptr, pStream.get());
+  pTestForm->ParseContent(nullptr, nullptr, nullptr);
+  ASSERT_TRUE(pTestForm->IsParsed());
+
+  CPDF_PageContentGenerator generator(pTestForm.get());
+  std::ostringstream process_buf;
+  generator.ProcessPageObjects(&process_buf);
+  EXPECT_EQ(content, CFX_ByteString(process_buf));
 }
