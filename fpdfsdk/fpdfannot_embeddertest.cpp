@@ -218,7 +218,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   rect.bottom = 150;
   rect.right = 53;
   rect.top = 165;
-  ASSERT_TRUE(FPDFAnnot_SetRect(annot, rect));
+  ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
   // Check that the annotation rectangle has been set correctly.
   rect = FPDFAnnot_GetRect(annot);
   EXPECT_EQ(35.f, rect.left);
@@ -269,7 +269,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   ASSERT_TRUE(annot);
   quadpoints.x1 = 140.802643f;
   quadpoints.x3 = 140.802643f;
-  ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, quadpoints));
+  ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
   FPDFPage_CloseAnnot(annot);
 
   // Save the document, closing the page and document.
@@ -305,4 +305,90 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   FPDFPage_CloseAnnot(new_annot);
   FPDF_ClosePage(new_page);
   FPDF_CloseDocument(new_doc);
+}
+
+TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
+  // Open a file with four annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(4, FPDFPage_GetAnnotCount(page));
+
+  // Retrieve the highlight annotation which has its AP stream already defined.
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  ASSERT_TRUE(annot);
+  EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot));
+
+  // Check that color cannot be set when an AP stream is defined already.
+  EXPECT_FALSE(
+      FPDFAnnot_SetColor(annot, FPDFANNOT_COLORTYPE_Color, 51, 102, 153, 204));
+
+  // Check that when getting the attachment points, bounding box points are
+  // returned since this is a markup annotation with AP defined.
+  FS_QUADPOINTSF quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  EXPECT_NEAR(0.f, quadpoints.x1, 0.001f);
+  EXPECT_NEAR(16.9955f, quadpoints.y1, 0.001f);
+  EXPECT_NEAR(68.5953f, quadpoints.x4, 0.001f);
+  EXPECT_NEAR(0.f, quadpoints.y4, 0.001f);
+
+  // Check that when new attachment points define a smaller bounding box, the
+  // bounding box does not get updated.
+  quadpoints.x1 = 1.0f;
+  quadpoints.x3 = 1.0f;
+  ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
+  FS_QUADPOINTSF new_quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  EXPECT_NE(quadpoints.x1, new_quadpoints.x1);
+
+  // Check that the bounding box gets updated successfully when valid attachment
+  // points are set.
+  quadpoints.x1 = 0.f;
+  quadpoints.y1 = 721.792f;
+  quadpoints.x2 = 133.055f;
+  quadpoints.y2 = 721.792f;
+  quadpoints.x3 = 0.f;
+  quadpoints.x4 = 133.055f;
+  ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
+  new_quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  EXPECT_EQ(quadpoints.x1, new_quadpoints.x1);
+  EXPECT_EQ(quadpoints.y1, new_quadpoints.y1);
+  EXPECT_EQ(quadpoints.x4, new_quadpoints.x4);
+  EXPECT_EQ(quadpoints.y4, new_quadpoints.y4);
+
+  // Check that when getting the annotation rectangle, rectangle points are
+  // returned, but not bounding box points.
+  FS_RECTF rect = FPDFAnnot_GetRect(annot);
+  EXPECT_NEAR(67.7299f, rect.left, 0.001f);
+  EXPECT_NEAR(704.296f, rect.bottom, 0.001f);
+  EXPECT_NEAR(136.325f, rect.right, 0.001f);
+  EXPECT_NEAR(721.292f, rect.top, 0.001f);
+
+  // Check that the rectangle gets updated successfully when a valid rectangle
+  // is set, and that the bounding box is not modified.
+  rect.left = 0.f;
+  rect.bottom = 0.f;
+  rect.right = 134.055f;
+  rect.top = 722.792f;
+  ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
+  FS_RECTF new_rect = FPDFAnnot_GetRect(annot);
+  EXPECT_EQ(rect.right, new_rect.right);
+  new_quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  EXPECT_NE(rect.right, new_quadpoints.x2);
+
+  FPDFPage_CloseAnnot(annot);
+
+  // Retrieve the square annotation which has its AP stream already defined.
+  annot = FPDFPage_GetAnnot(page, 2);
+  ASSERT_TRUE(annot);
+  EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot));
+
+  // Check that the rectangle and the bounding box get updated successfully when
+  // a valid rectangle is set, since this is not a markup annotation.
+  rect = FPDFAnnot_GetRect(annot);
+  rect.right += 1.f;
+  ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
+  new_rect = FPDFAnnot_GetRect(annot);
+  EXPECT_EQ(rect.right, new_rect.right);
+
+  FPDFPage_CloseAnnot(annot);
+  UnloadPage(page);
 }

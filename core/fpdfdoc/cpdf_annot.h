@@ -124,7 +124,7 @@ class CPDF_Annot {
   CPDF_Annot* m_pPopupAnnot = nullptr;
 };
 
-CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
+CPDF_Stream* FPDFDOC_GetAnnotAP(const CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode mode);
 
 #endif  // CORE_FPDFDOC_CPDF_ANNOT_H_

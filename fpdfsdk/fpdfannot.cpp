@@ -136,6 +136,10 @@ CPDF_AnnotContext* CPDFAnnotContextFromFPDFAnnotation(FPDF_ANNOTATION annot) {
   return static_cast<CPDF_AnnotContext*>(annot);
 }
 
+bool HasAPStream(const CPDF_Dictionary* pAnnotDict) {
+  return !!FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+}
+
 }  // namespace
 
 DLLEXPORT FPDF_BOOL STDCALL
@@ -225,6 +229,12 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
+  // For annotations with their appearance streams already defined, the path
+  // stream's own color definitions take priority over the annotation color
+  // definitions set by this method, hence this method will simply fail.
+  if (HasAPStream(pAnnotDict))
+    return false;
+
   // Set the opacity of the annotation.
   pAnnotDict->SetNewFor<CPDF_Number>("CA", A / 255.f);
 
@@ -255,6 +265,12 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   if (!pAnnotDict)
+    return false;
+
+  // For annotations with their appearance streams already defined, the path
+  // stream's own color definitions take priority over the annotation color
+  // definitions retrieved by this method, hence this method will simply fail.
+  if (HasAPStream(pAnnotDict))
     return false;
 
   CPDF_Array* pColor = pAnnotDict->GetArrayFor(
@@ -315,8 +331,8 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot) {
 
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
-                              FS_QUADPOINTSF quadPoints) {
-  if (!annot || !FPDFAnnot_HasAttachmentPoints(annot))
+                              const FS_QUADPOINTSF* quadPoints) {
+  if (!annot || !quadPoints || !FPDFAnnot_HasAttachmentPoints(annot))
     return false;
 
   CPDF_Dictionary* pAnnotDict =
@@ -324,20 +340,33 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
+  // Update the "QuadPoints" entry in the annotation dictionary.
   CPDF_Array* pQuadPoints = pAnnotDict->GetArrayFor("QuadPoints");
   if (pQuadPoints)
     pQuadPoints->Clear();
   else
     pQuadPoints = pAnnotDict->SetNewFor<CPDF_Array>("QuadPoints");
 
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x1);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y1);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x2);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y2);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x3);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y3);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.x4);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints.y4);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x1);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y1);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x2);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y2);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x3);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y3);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x4);
+  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y4);
+
+  // If the annotation's appearance stream is defined, and the new quadpoints
+  // defines a bigger bounding box than the appearance stream currently
+  // specifies, then update the "BBox" entry in the AP dictionary too, since it
+  // comes from annotation dictionary's "QuadPoints" entry.
+  CPDF_Stream* pStream =
+      FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+  if (pStream) {
+    CFX_FloatRect newRect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
+    if (newRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
+      pStream->GetDict()->SetRectFor("BBox", newRect);
+  }
   return true;
 }
 
@@ -351,25 +380,52 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot) {
   if (!pAnnotDict)
     return FS_QUADPOINTSF();
 
-  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  if (!pArray)
-    return FS_QUADPOINTSF();
-
+  // If the annotation's appearance stream is defined, then retrieve the
+  // quadpoints defined by the "BBox" entry in the AP dictionary, since its
+  // "BBox" entry comes from annotation dictionary's "QuadPoints" entry, but
+  // takes priority over "QuadPoints" when rendering. Otherwise, retrieve
+  // the "Quadpoints" entry from the annotation dictionary.
+  CPDF_Array* pArray;
   FS_QUADPOINTSF quadPoints;
-  quadPoints.x1 = pArray->GetNumberAt(0);
-  quadPoints.y1 = pArray->GetNumberAt(1);
-  quadPoints.x2 = pArray->GetNumberAt(2);
-  quadPoints.y2 = pArray->GetNumberAt(3);
-  quadPoints.x3 = pArray->GetNumberAt(4);
-  quadPoints.y3 = pArray->GetNumberAt(5);
-  quadPoints.x4 = pArray->GetNumberAt(6);
-  quadPoints.y4 = pArray->GetNumberAt(7);
+  CPDF_Stream* pStream =
+      FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+  if (pStream) {
+    pArray = pStream->GetDict()->GetArrayFor("BBox");
+    if (!pArray)
+      return FS_QUADPOINTSF();
+
+    // Convert the BBox array into quadpoint coordinates. BBox array follows the
+    // order of a rectangle array: (left, bottom, right, up); and quadpoints
+    // follows the following order: (top-left vertex, top-right vertex, bottom-
+    // left vertex, bottom-right vertex).
+    quadPoints.x1 = pArray->GetNumberAt(0);
+    quadPoints.y1 = pArray->GetNumberAt(3);
+    quadPoints.x2 = pArray->GetNumberAt(2);
+    quadPoints.y2 = pArray->GetNumberAt(3);
+    quadPoints.x3 = pArray->GetNumberAt(0);
+    quadPoints.y3 = pArray->GetNumberAt(1);
+    quadPoints.x4 = pArray->GetNumberAt(2);
+    quadPoints.y4 = pArray->GetNumberAt(1);
+  } else {
+    pArray = pAnnotDict->GetArrayFor("QuadPoints");
+    if (!pArray)
+      return FS_QUADPOINTSF();
+
+    quadPoints.x1 = pArray->GetNumberAt(0);
+    quadPoints.y1 = pArray->GetNumberAt(1);
+    quadPoints.x2 = pArray->GetNumberAt(2);
+    quadPoints.y2 = pArray->GetNumberAt(3);
+    quadPoints.x3 = pArray->GetNumberAt(4);
+    quadPoints.y3 = pArray->GetNumberAt(5);
+    quadPoints.x4 = pArray->GetNumberAt(6);
+    quadPoints.y4 = pArray->GetNumberAt(7);
+  }
   return quadPoints;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
-                                              FS_RECTF rect) {
-  if (!annot)
+                                              const FS_RECTF* rect) {
+  if (!annot || !rect)
     return false;
 
   CPDF_Dictionary* pAnnotDict =
@@ -377,16 +433,23 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  CPDF_Array* pRect = pAnnotDict->GetArrayFor("Rect");
-  if (pRect)
-    pRect->Clear();
-  else
-    pRect = pAnnotDict->SetNewFor<CPDF_Array>("Rect");
+  CFX_FloatRect newRect(rect->left, rect->bottom, rect->right, rect->top);
 
-  pRect->AddNew<CPDF_Number>(rect.left);
-  pRect->AddNew<CPDF_Number>(rect.bottom);
-  pRect->AddNew<CPDF_Number>(rect.right);
-  pRect->AddNew<CPDF_Number>(rect.top);
+  // Update the "Rect" entry in the annotation dictionary.
+  pAnnotDict->SetRectFor("Rect", newRect);
+
+  // If the annotation's appearance stream is defined, the annotation is of a
+  // type that does not have quadpoints, and the new rectangle is bigger than
+  // the current bounding box, then update the "BBox" entry in the AP
+  // dictionary too, since its "BBox" entry comes from annotation dictionary's
+  // "Rect" entry.
+  if (FPDFAnnot_HasAttachmentPoints(annot))
+    return true;
+
+  CPDF_Stream* pStream =
+      FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+  if (pStream && newRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
+    pStream->GetDict()->SetRectFor("BBox", newRect);
   return true;
 }
 
@@ -399,9 +462,19 @@ DLLEXPORT FS_RECTF STDCALL FPDFAnnot_GetRect(FPDF_ANNOTATION annot) {
   if (!pAnnotDict)
     return FS_RECTF();
 
-  CFX_FloatRect rt = pAnnotDict->GetRectFor("Rect");
-  if (rt.IsEmpty())
-    return FS_RECTF();
+  // If the annotation's appearance stream is defined and the annotation is of
+  // a type that does not have quadpoints, then retrieve the rectangle defined
+  // by the "BBox" entry in the AP dictionary, since its "BBox" entry comes
+  // from annotation dictionary's "Rect" entry, but takes priority over "Rect"
+  // when rendering. Otherwise, retrieve the "Rect" entry from the annotation
+  // dictionary.
+  CFX_FloatRect rt;
+  CPDF_Stream* pStream =
+      FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+  if (!pStream || FPDFAnnot_HasAttachmentPoints(annot))
+    rt = pAnnotDict->GetRectFor("Rect");
+  else
+    rt = pStream->GetDict()->GetRectFor("BBox");
 
   FS_RECTF rect;
   rect.left = rt.left;

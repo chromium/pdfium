@@ -106,7 +106,9 @@ DLLEXPORT void STDCALL FPDFPage_CloseAnnot(FPDF_ANNOTATION annot);
 DLLEXPORT FPDF_ANNOTATION_SUBTYPE STDCALL
 FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot);
 
-// Set the color of an annotation.
+// Set the color of an annotation. Fails when called on annotations with
+// appearance streams already defined; instead use
+// FPDFPath_Set{Stroke|Fill}Color().
 //
 //   annot    - handle to an annotation.
 //   type     - type of the color to be set.
@@ -122,7 +124,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
                                                unsigned int A);
 
 // Get the color of an annotation. If no color is specified, default to yellow
-// for highlight annotation, black for all else.
+// for highlight annotation, black for all else. Fails when called on
+// annotations with appearance streams already defined; instead use
+// FPDFPath_Get{Stroke|Fill}Color().
 //
 //   annot    - handle to an annotation.
 //   type     - type of the color requested.
@@ -151,16 +155,21 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot);
 
-// Set the attachment points (i.e. quadpoints) of an annotation.
+// Set the attachment points (i.e. quadpoints) of an annotation. If the
+// annotation's appearance stream is defined and this annotation is of a type
+// with quadpoints, then update the bounding box too.
 //
 //   annot      - handle to an annotation.
 //   quadPoints - the quadpoints to be set.
 //
 // Returns true if successful, false otherwise.
 DLLEXPORT FPDF_BOOL STDCALL
-FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot, FS_QUADPOINTSF quadPoints);
+FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
+                              const FS_QUADPOINTSF* quadPoints);
 
-// Get the attachment points (i.e. quadpoints) of an annotation.
+// Get the attachment points (i.e. quadpoints) of an annotation. If the
+// annotation's appearance stream is defined and this annotation is of a type
+// with quadpoints, then return the bounding box it specifies instead.
 //
 //   annot      - handle to an annotation.
 //
@@ -168,16 +177,20 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot, FS_QUADPOINTSF quadPoints);
 DLLEXPORT FS_QUADPOINTSF STDCALL
 FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot);
 
-// Set the annotation rectangle defining the location of the annotation.
+// Set the annotation rectangle defining the location of the annotation. If the
+// annotation's appearance stream is defined and this annotation is of a type
+// without quadpoints, then update the bounding box too.
 //
 //   annot  - handle to an annotation.
 //   rect   - the annotation rectangle to be set.
 //
 // Returns true if successful, false otherwise.
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
-                                              FS_RECTF rect);
+                                              const FS_RECTF* rect);
 
-// Get the annotation rectangle defining the location of the annotation.
+// Get the annotation rectangle defining the location of the annotation. If the
+// annotation's appearance stream is defined and this annotation is of a type
+// without quadpoints, then return the bounding box it specifies instead.
 //
 //   annot  - handle to an annotation.
 //

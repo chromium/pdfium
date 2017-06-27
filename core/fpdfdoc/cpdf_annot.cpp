@@ -158,7 +158,7 @@ uint32_t CPDF_Annot::GetFlags() const {
   return m_pAnnotDict->GetIntegerFor("F");
 }
 
-CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
+CPDF_Stream* FPDFDOC_GetAnnotAP(const CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode mode) {
   CPDF_Dictionary* pAP = pAnnotDict->GetDictFor("AP");
   if (!pAP) {
