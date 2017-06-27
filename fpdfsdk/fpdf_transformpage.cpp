@@ -7,6 +7,7 @@
 #include "public/fpdf_transformpage.h"
 
 #include <memory>
+#include <sstream>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
@@ -104,7 +105,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pPage)
     return false;
 
-  CFX_ByteTextBuf textBuf;
+  std::ostringstream textBuf;
   textBuf << "q ";
   CFX_FloatRect rect(clipRect->left, clipRect->bottom, clipRect->right,
                      clipRect->top);
@@ -134,7 +135,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(
       nullptr, 0,
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
-  pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize());
+  pStream->SetData(&textBuf);
 
   CPDF_Stream* pEndStream = pDoc->NewIndirect<CPDF_Stream>(
       nullptr, 0,
@@ -233,7 +234,7 @@ DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
   std::unique_ptr<CPDF_ClipPath>(static_cast<CPDF_ClipPath*>(clipPath));
 }
 
-void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
+void OutputPath(std::ostringstream& buf, CPDF_Path path) {
   const CFX_PathData* pPathData = path.GetObject();
   if (!pPathData)
     return;
@@ -284,7 +285,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pContentObj)
     return;
 
-  CFX_ByteTextBuf strClip;
+  std::ostringstream strClip;
   CPDF_ClipPath* pClipPath = (CPDF_ClipPath*)clipPath;
   uint32_t i;
   for (i = 0; i < pClipPath->GetPathCount(); i++) {
@@ -308,7 +309,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(
       nullptr, 0,
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
-  pStream->SetData(strClip.GetBuffer(), strClip.GetSize());
+  pStream->SetData(&strClip);
 
   CPDF_Array* pArray = ToArray(pContentObj);
   if (pArray) {
