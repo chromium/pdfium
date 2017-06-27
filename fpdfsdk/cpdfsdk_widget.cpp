@@ -1400,12 +1400,11 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
 
     CPWL_Color crText = GetTextPWLColor();
     sBody << "BT\n"
-          << CPWL_Utils::GetColorAppStream(crText).c_str() << sEdit.c_str()
-          << "ET\n"
+          << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n"
           << "Q\nEMC\n";
   }
 
-  sBody << CPWL_Utils::GetDropButtonAppStream(rcButton).c_str();
+  sBody << CPWL_Utils::GetDropButtonAppStream(rcButton);
 
   CFX_ByteString sAP =
       GetBackgroundAppStream() + GetBorderAppStream() + CFX_ByteString(sBody);
@@ -1462,7 +1461,6 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
                    CPWL_Color(COLORTYPE_RGB, 0, 51.0f / 255.0f,
                               113.0f / 255.0f),
                    true)
-                   .c_str()
             << rcItem.left << " " << rcItem.bottom << " " << rcItem.Width()
             << " " << rcItem.Height() << " re f\n"
             << "Q\n";
@@ -1470,16 +1468,13 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
       sList << "BT\n"
             << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY, 1),
                                              true)
-                   .c_str()
             << CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, fy))
-                   .c_str()
             << "ET\n";
     } else {
       CPWL_Color crText = GetTextPWLColor();
       sList << "BT\n"
-            << CPWL_Utils::GetColorAppStream(crText, true).c_str()
+            << CPWL_Utils::GetColorAppStream(crText, true)
             << CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, fy))
-                   .c_str()
             << "ET\n";
     }
 
@@ -1581,8 +1576,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
     }
     CPWL_Color crText = GetTextPWLColor();
     sBody << "BT\n"
-          << CPWL_Utils::GetColorAppStream(crText).c_str() << sEdit.c_str()
-          << "ET\n"
+          << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n"
           << "Q\nEMC\n";
   }
 
@@ -1595,7 +1589,6 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
           sLines << "q\n"
                  << GetBorderWidth() << " w\n"
                  << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(), false)
-                        .c_str()
                  << " 2 J 0 j\n";
 
           for (int32_t i = 1; i < nMaxLen; ++i) {
@@ -1620,7 +1613,6 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
           sLines << "q\n"
                  << GetBorderWidth() << " w\n"
                  << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(), false)
-                        .c_str()
                  << "[" << dsBorder.nDash << " " << dsBorder.nGap << "] "
                  << dsBorder.nPhase << " d\n";
 
