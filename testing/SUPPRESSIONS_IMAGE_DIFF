@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 #
-# List of tests to have pixel diff tests skipped, one per line.
+# List of tests to have image diff tests skipped, one per line.
 # There are four space-separated columns per line
 # Each column (except column 0) can contain a comma-separated list of values.
 #

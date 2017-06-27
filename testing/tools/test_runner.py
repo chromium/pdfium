@@ -83,7 +83,7 @@ class TestRunner:
         return False, results
     else:
       if (self.enforce_expected_images
-          and not self.test_suppressor.IsPixelDiffSuppressed(input_filename)):
+          and not self.test_suppressor.IsImageDiffSuppressed(input_filename)):
         print 'FAILURE: %s; Missing expected images' % input_filename
         return False, results
 

@@ -13,8 +13,9 @@ class Suppressor:
     self.has_v8 = "V8" in feature_vector
     self.has_xfa = "XFA" in feature_vector
     self.suppression_set = self._LoadSuppressedSet('SUPPRESSIONS', finder)
-    self.pixel_suppression_set = self._LoadSuppressedSet('SUPPRESSIONS_PIXEL',
-                                                         finder)
+    self.image_suppression_set = self._LoadSuppressedSet(
+        'SUPPRESSIONS_IMAGE_DIFF',
+        finder)
 
   def _LoadSuppressedSet(self, suppressions_filename, finder):
     v8_option = "v8" if self.has_v8 else "nov8"
@@ -52,8 +53,8 @@ class Suppressor:
       return True
     return False
 
-  def IsPixelDiffSuppressed(self, input_filename):
-    if input_filename in self.pixel_suppression_set:
-      print "%s is pixel suppressed" % input_filename
+  def IsImageDiffSuppressed(self, input_filename):
+    if input_filename in self.image_suppression_set:
+      print "%s image diff comparison is suppressed" % input_filename
       return True
     return False
