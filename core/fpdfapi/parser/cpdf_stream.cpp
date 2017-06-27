@@ -110,6 +110,11 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
   m_pDict->RemoveFor("DecodeParms");
 }
 
+void CPDF_Stream::SetData(std::ostringstream* stream) {
+  SetData(reinterpret_cast<const uint8_t*>(stream->str().c_str()),
+          stream->tellp());
+}
+
 bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                               uint8_t* buf,
                               uint32_t size) const {
