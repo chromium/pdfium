@@ -1261,9 +1261,16 @@ TEST(fxcrt, EqualNoCase) {
 }
 
 TEST(fxcrt, OStreamByteStringOverload) {
-  // Basic case
   std::ostringstream stream;
-  CFX_ByteString str("def");
+
+  // Basic case, empty string
+  CFX_ByteString str;
+  stream << str;
+  EXPECT_EQ("", stream.str());
+
+  // Basic case, non-empty string
+  str = "def";
+  stream.str("");
   stream << "abc" << str << "ghi";
   EXPECT_EQ("abcdefghi", stream.str());
 
