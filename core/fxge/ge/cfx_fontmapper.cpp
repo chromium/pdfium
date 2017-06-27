@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -225,16 +226,16 @@ CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
 }
 
 CFX_ByteString ParseStyle(const char* pStyle, int iLen, int iIndex) {
-  CFX_ByteTextBuf buf;
+  std::ostringstream buf;
   if (!iLen || iLen <= iIndex)
-    return buf.MakeString();
+    return CFX_ByteString(buf);
   while (iIndex < iLen) {
     if (pStyle[iIndex] == ',')
       break;
-    buf.AppendChar(pStyle[iIndex]);
+    buf << pStyle[iIndex];
     ++iIndex;
   }
-  return buf.MakeString();
+  return CFX_ByteString(buf);
 }
 
 int32_t GetStyleType(const CFX_ByteString& bsStyle, bool bReverse) {
