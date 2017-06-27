@@ -72,8 +72,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetObjectFor("Contents") : nullptr;
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
-  pStream->SetData(reinterpret_cast<const uint8_t*>(buf.str().c_str()),
-                   buf.tellp());
+  pStream->SetData(&buf);
   if (pContent) {
     CPDF_Array* pArray = ToArray(pContent);
     if (pArray) {
@@ -180,7 +179,7 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
   if (bWasInline)
     pImageObj->SetImage(m_pDocument->GetPageData()->GetImage(dwObjNum));
 
-  *buf << "/" << PDF_NameEncode(name).c_str() << " Do Q\n";
+  *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 
 // Processing path with operators from Tables 4.9 and 4.10 of PDF spec 1.7:
@@ -302,7 +301,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
     name = RealizeResource(dwObjNum, "ExtGState");
     m_pObjHolder->m_GraphicsMap[graphD] = name;
   }
-  *buf << "/" << PDF_NameEncode(name).c_str() << " gs ";
+  *buf << "/" << PDF_NameEncode(name) << " gs ";
 }
 
 // This method adds text to the buffer, BT begins the text object, ET ends it.
@@ -343,14 +342,14 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
     dictName = RealizeResource(dwObjNum, "Font");
     m_pObjHolder->m_FontsMap[fontD] = dictName;
   }
-  *buf << "/" << PDF_NameEncode(dictName).c_str() << " "
-       << pTextObj->GetFontSize() << " Tf ";
+  *buf << "/" << PDF_NameEncode(dictName) << " " << pTextObj->GetFontSize()
+       << " Tf ";
   CFX_ByteString text;
   for (uint32_t charcode : pTextObj->m_CharCodes) {
     if (charcode != CPDF_Font::kInvalidCharCode)
       pFont->AppendChar(&text, charcode);
   }
   ProcessGraphics(buf, pTextObj);
-  *buf << PDF_EncodeString(text, true).c_str() << " Tj ET";
+  *buf << PDF_EncodeString(text, true) << " Tj ET";
   *buf << " Q\n";
 }
