@@ -202,7 +202,7 @@ class TestRunner:
 
     self.test_cases = []
     self.execution_suppressed_cases = []
-    input_file_re = re.compile('^[a-zA-Z0-9_.]+[.](in|pdf)$')
+    input_file_re = re.compile('^.+[.](in|pdf)$')
     if args:
       for file_name in args:
         file_name.replace('.pdf', '.in')

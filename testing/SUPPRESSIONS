@@ -291,6 +291,16 @@ bug_679643.in * * noxfa
 bug_679642.in * * noxfa
 
 #
+# TODO(hnakashima): These might never have been run. Go over them and fix.
+#
+FRC_8.5_E&X.pdf * * *
+FRC_8.5_O&PO_GoToE.pdf * * *
+FRC_8.5_OpenAction&O_URI.pdf * * *
+FRC_8.5_PC&C_GoToE_T_T.pdf * * *
+FRC_8.5_PC_GoToE_T_R&P&A.pdf * * *
+FRC_8.5_PO_GoToE_T_R&N.pdf * * *
+
+#
 # xfa_specific
 #
 Choose.pdf * * *
