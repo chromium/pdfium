@@ -1058,3 +1058,12 @@ std::ostream& operator<<(std::ostream& os, const CFX_WideString& str) {
   os << str.UTF8Encode();
   return os;
 }
+
+std::wostream& operator<<(std::wostream& os, const CFX_WideStringC& str) {
+  return os.write(str.c_str(), str.GetLength());
+}
+
+std::ostream& operator<<(std::ostream& os, const CFX_WideStringC& str) {
+  os << FX_UTF8Encode(str);
+  return os;
+}

@@ -1210,3 +1210,159 @@ TEST(fxcrt, WideOStreamWideStringOverload) {
   stream << str1 << str2;
   EXPECT_EQ(L"abcdef", stream.str());
 }
+
+TEST(fxcrt, OStreamWideStringCOverload) {
+  // Basic case, empty string
+  {
+    std::ostringstream stream;
+    CFX_WideStringC str;
+    stream << str;
+    EXPECT_EQ("", stream.str());
+  }
+
+  // Basic case, non-empty string
+  {
+    std::ostringstream stream;
+    CFX_WideStringC str(L"def");
+    stream << "abc" << str << "ghi";
+    EXPECT_EQ("abcdefghi", stream.str());
+  }
+
+  // Basic case, wide character
+  {
+    std::ostringstream stream;
+    CFX_WideStringC str(L"\u20AC");
+    stream << str;
+    EXPECT_EQ("\u20AC", stream.str());
+  }
+
+  // Changing the CFX_WideStringC does not change the stream it was written to.
+  {
+    std::ostringstream stream;
+    CFX_WideStringC str(L"abc");
+    stream << str;
+    str = L"123";
+    EXPECT_EQ("abc", stream.str());
+  }
+
+  // Writing it again to the stream will use the latest value.
+  {
+    std::ostringstream stream;
+    CFX_WideStringC str(L"abc");
+    stream << str;
+    stream.str("");
+    str = L"123";
+    stream << str;
+    EXPECT_EQ("123", stream.str());
+  }
+
+  // Writing a CFX_WideStringC with nulls and no specified length treats it as
+  // a C-style null-terminated string.
+  {
+    wchar_t stringWithNulls[]{'x', 'y', '\0', 'z'};
+    std::ostringstream stream;
+    CFX_WideStringC str(stringWithNulls);
+    EXPECT_EQ(2, str.GetLength());
+    stream << str;
+    EXPECT_EQ(2u, stream.tellp());
+    str = L"";
+  }
+
+  // Writing a CFX_WideStringC with nulls but specifying its length treats it as
+  // a C++-style string.
+  {
+    wchar_t stringWithNulls[]{'x', 'y', '\0', 'z'};
+    std::ostringstream stream;
+    CFX_WideStringC str(stringWithNulls, 4);
+    EXPECT_EQ(4, str.GetLength());
+    stream << str;
+    EXPECT_EQ(4u, stream.tellp());
+    str = L"";
+  }
+
+  // << operators can be chained.
+  {
+    std::ostringstream stream;
+    CFX_WideStringC str1(L"abc");
+    CFX_WideStringC str2(L"def");
+    stream << str1 << str2;
+    EXPECT_EQ("abcdef", stream.str());
+  }
+}
+
+TEST(fxcrt, WideOStreamWideStringCOverload) {
+  // Basic case, empty string
+  {
+    std::wostringstream stream;
+    CFX_WideStringC str;
+    stream << str;
+    EXPECT_EQ(L"", stream.str());
+  }
+
+  // Basic case, non-empty string
+  {
+    std::wostringstream stream;
+    CFX_WideStringC str(L"def");
+    stream << "abc" << str << "ghi";
+    EXPECT_EQ(L"abcdefghi", stream.str());
+  }
+
+  // Basic case, wide character
+  {
+    std::wostringstream stream;
+    CFX_WideStringC str(L"\u20AC");
+    stream << str;
+    EXPECT_EQ(L"\u20AC", stream.str());
+  }
+
+  // Changing the CFX_WideStringC does not change the stream it was written to.
+  {
+    std::wostringstream stream;
+    CFX_WideStringC str(L"abc");
+    stream << str;
+    str = L"123";
+    EXPECT_EQ(L"abc", stream.str());
+  }
+
+  // Writing it again to the stream will use the latest value.
+  {
+    std::wostringstream stream;
+    CFX_WideStringC str(L"abc");
+    stream << str;
+    stream.str(L"");
+    str = L"123";
+    stream << str;
+    EXPECT_EQ(L"123", stream.str());
+  }
+
+  // Writing a CFX_WideStringC with nulls and no specified length treats it as
+  // a C-style null-terminated string.
+  {
+    wchar_t stringWithNulls[]{'x', 'y', '\0', 'z'};
+    std::wostringstream stream;
+    CFX_WideStringC str(stringWithNulls);
+    EXPECT_EQ(2, str.GetLength());
+    stream << str;
+    EXPECT_EQ(2u, stream.tellp());
+  }
+
+  // Writing a CFX_WideStringC with nulls but specifying its length treats it as
+  // a C++-style string.
+  {
+    wchar_t stringWithNulls[]{'x', 'y', '\0', 'z'};
+    std::wostringstream stream;
+    CFX_WideStringC str(stringWithNulls, 4);
+    EXPECT_EQ(4, str.GetLength());
+    stream << str;
+    EXPECT_EQ(4u, stream.tellp());
+  }
+
+  // << operators can be chained.
+  {
+    std::wostringstream stream;
+    CFX_WideStringC str1(L"abc");
+    CFX_WideStringC str2(L"def");
+    stream << str1 << str2;
+    EXPECT_EQ(L"abcdef", stream.str());
+  }
+}

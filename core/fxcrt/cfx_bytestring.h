@@ -234,6 +234,7 @@ inline CFX_ByteString operator+(const CFX_ByteStringC& str1,
 uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase);
 
 std::ostream& operator<<(std::ostream& os, const CFX_ByteString& str);
+std::ostream& operator<<(std::ostream& os, const CFX_ByteStringC& str);
 
 namespace std {
 

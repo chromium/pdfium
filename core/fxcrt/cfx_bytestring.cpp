@@ -877,3 +877,7 @@ CFX_ByteString CFX_ByteString::FormatFloat(float d, int precision) {
 std::ostream& operator<<(std::ostream& os, const CFX_ByteString& str) {
   return os.write(str.c_str(), str.GetLength());
 }
+
+std::ostream& operator<<(std::ostream& os, const CFX_ByteStringC& str) {
+  return os.write(str.c_str(), str.GetLength());
+}
