@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_PARSER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_PARSER_H_
 
+#include <limits>
 #include <map>
 #include <memory>
 #include <set>
@@ -41,6 +42,8 @@ class CPDF_Parser {
   // are higher, but this may be large enough in practice.
   static const uint32_t kMaxObjectNumber = 1048576;
 
+  static const size_t kInvalidPos = std::numeric_limits<size_t>::max();
+
   CPDF_Parser();
   ~CPDF_Parser();
 
@@ -51,7 +54,10 @@ class CPDF_Parser {
 
   void SetPassword(const char* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }
-  CPDF_Dictionary* GetTrailer() const { return m_pTrailer.get(); }
+  CPDF_Dictionary* GetTrailer() const {
+    return m_TrailerPos == kInvalidPos ? nullptr
+                                       : m_Trailers[m_TrailerPos].get();
+  }
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
 
   uint32_t GetPermissions() const;
@@ -161,8 +167,8 @@ class CPDF_Parser {
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   CFX_ByteString m_Password;
   std::set<FX_FILESIZE> m_SortedOffset;
-  std::unique_ptr<CPDF_Dictionary> m_pTrailer;
   std::vector<std::unique_ptr<CPDF_Dictionary>> m_Trailers;
+  size_t m_TrailerPos;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   uint32_t m_dwXrefStartObjNum;
 
