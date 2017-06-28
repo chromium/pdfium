@@ -19,7 +19,7 @@ vars = {
   'jinja2_revision': 'd34383206fa42d52faa10bb9931d6d538f3a57e0',
   'jpeg_turbo_revision': '7260e4d8b8e1e40b17f03fafdf1cd83296900f76',
   'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
-  'pdfium_tests_revision': '02153bfe3350a56d43401bcefe0a38a6778f67dd',
+  'pdfium_tests_revision': '8560b223b91206f375bb91907c5dca9da6d08a14',
   'skia_revision': 'bb581ce30f55360fd3a12e7f5aa1fe324b16d085',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '06294c8a4a6f744ef284cd63cfe54dbf61eea290',
