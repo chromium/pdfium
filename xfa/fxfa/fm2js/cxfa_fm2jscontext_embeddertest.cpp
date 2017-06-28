@@ -859,7 +859,10 @@ TEST_F(FM2JSContextEmbedderTest, Oneof) {
       {"Oneof(3, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)", true},
       {"Oneof(\"John\", \"Bill\", \"Gary\", \"Joan\", \"John\", \"Lisa\")",
        true},
-      {"Oneof(3, 1, 25)", false}};
+      {"Oneof(3, 1, 25)", false},
+      {"Oneof(3, 3, null)", true},
+      {"Oneof(3, null, null)", false},
+  };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     EXPECT_TRUE(Execute(tests[i].program));
