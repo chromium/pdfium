@@ -65,9 +65,24 @@ void CPDF_PageContentGenerator::GenerateContent() {
 
   CPDF_Document* pDoc = m_pDocument.Get();
   std::ostringstream buf;
+
+  // Set the default graphic state values
+  buf << "q\n";
+  if (!m_pObjHolder->GetLastCTM().IsIdentity()) {
+    CFX_Matrix reverse;
+    reverse.SetReverse(m_pObjHolder->GetLastCTM());
+    buf << reverse << " cm\n";
+  }
+  ProcessDefaultGraphics(&buf);
+
+  // Process the page objects
   if (!ProcessPageObjects(&buf))
     return;
 
+  // Return graphics to original state
+  buf << "Q\n";
+
+  // Add buffer to a stream in page's 'Contents'
   CPDF_Dictionary* pPageDict = m_pObjHolder->m_pFormDict.Get();
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetObjectFor("Contents") : nullptr;
@@ -142,6 +157,7 @@ bool CPDF_PageContentGenerator::ProcessPageObjects(std::ostringstream* buf) {
   for (auto& pPageObj : m_pageObjects) {
     if (m_pObjHolder->IsPage() && !pPageObj->IsDirty())
       continue;
+
     bDirty = true;
     if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
       ProcessImage(buf, pImageObject);
@@ -302,6 +318,32 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
     m_pObjHolder->m_GraphicsMap[graphD] = name;
   }
   *buf << "/" << PDF_NameEncode(name) << " gs ";
+}
+
+void CPDF_PageContentGenerator::ProcessDefaultGraphics(
+    std::ostringstream* buf) {
+  *buf << "0 0 0 RG 0 0 0 rg 1 w "
+       << static_cast<int>(CFX_GraphStateData::LineCapButt) << " J "
+       << static_cast<int>(CFX_GraphStateData::LineJoinMiter) << " j\n";
+  GraphicsData defaultGraphics;
+  defaultGraphics.fillAlpha = 1.0f;
+  defaultGraphics.strokeAlpha = 1.0f;
+  defaultGraphics.blendType = FXDIB_BLEND_NORMAL;
+  auto it = m_pObjHolder->m_GraphicsMap.find(defaultGraphics);
+  CFX_ByteString name;
+  if (it != m_pObjHolder->m_GraphicsMap.end()) {
+    name = it->second;
+  } else {
+    auto gsDict = pdfium::MakeUnique<CPDF_Dictionary>();
+    gsDict->SetNewFor<CPDF_Number>("ca", defaultGraphics.fillAlpha);
+    gsDict->SetNewFor<CPDF_Number>("CA", defaultGraphics.strokeAlpha);
+    gsDict->SetNewFor<CPDF_Name>("BM", "Normal");
+    CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(gsDict));
+    uint32_t dwObjNum = pDict->GetObjNum();
+    name = RealizeResource(dwObjNum, "ExtGState");
+    m_pObjHolder->m_GraphicsMap[defaultGraphics] = name;
+  }
+  *buf << "/" << PDF_NameEncode(name).c_str() << " gs ";
 }
 
 // This method adds text to the buffer, BT begins the text object, ET ends it.

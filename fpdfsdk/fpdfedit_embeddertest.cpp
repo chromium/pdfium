@@ -139,24 +139,29 @@ const char kExpectedPDF[] =
     "<</CreationDate\\(D:.*\\)/Creator\\(PDFium\\)>>\r\n"
     "endobj\r\n"
     "4 0 obj\r\n"
-    "<</MediaBox\\[ 0 0 640 480\\]/Parent 2 0 R /Resources<<>>"
+    "<</MediaBox\\[ 0 0 640 480\\]/Parent 2 0 R "
+    "/Resources<</ExtGState<</FXE1 5 0 R >>>>"
     "/Rotate 0/Type/Page"
     ">>\r\n"
     "endobj\r\n"
+    "5 0 obj\r\n"
+    "<</BM/Normal/CA 1/ca 1>>\r\n"
+    "endobj\r\n"
     "xref\r\n"
-    "0 5\r\n"
+    "0 6\r\n"
     "0000000000 65535 f\r\n"
     "0000000017 00000 n\r\n"
     "0000000066 00000 n\r\n"
     "0000000122 00000 n\r\n"
     "0000000192 00000 n\r\n"
+    "0000000311 00000 n\r\n"
     "trailer\r\n"
     "<<\r\n"
     "/Root 1 0 R\r\n"
     "/Info 3 0 R\r\n"
-    "/Size 5/ID\\[<.*><.*>\\]>>\r\n"
+    "/Size 6/ID\\[<.*><.*>\\]>>\r\n"
     "startxref\r\n"
-    "285\r\n"
+    "354\r\n"
     "%%EOF\r\n";
 
 }  // namespace
@@ -572,7 +577,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   CPDF_Dictionary* graphics_dict =
       the_page->m_pResources->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
-  EXPECT_EQ(1, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
 
   // Add a text object causing no change to the graphics dictionary
   FPDF_PAGEOBJECT text1 = FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
@@ -581,7 +586,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   EXPECT_TRUE(FPDFText_SetFillColor(text1, 100, 100, 100, 255));
   FPDFPage_InsertObject(page.get(), text1);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(1, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
 
   // Add a text object increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT text2 =
@@ -590,7 +595,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   FPDFPageObj_SetBlendMode(text2, "Darken");
   EXPECT_TRUE(FPDFText_SetFillColor(text2, 0, 0, 255, 150));
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
 
   // Add a path that should reuse graphics
   FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
@@ -598,7 +603,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   EXPECT_TRUE(FPDFPath_SetFillColor(path, 200, 200, 100, 150));
   FPDFPage_InsertObject(page.get(), path);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
 
   // Add a rect increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT rect2 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
@@ -607,7 +612,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   EXPECT_TRUE(FPDFPath_SetStrokeColor(rect2, 0, 0, 0, 200));
   FPDFPage_InsertObject(page.get(), rect2);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(4, static_cast<int>(graphics_dict->GetCount()));
 }
 
 TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
@@ -626,7 +631,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   CPDF_Dictionary* graphics_dict =
       the_page->m_pResources->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
-  EXPECT_EQ(1, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
 
   // Check the bitmap
   FPDF_BITMAP page_bitmap = RenderPage(page);
@@ -636,7 +641,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   // Never mind, my new favorite color is blue, increase alpha
   EXPECT_TRUE(FPDFPath_SetFillColor(rect, 0, 0, 255, 180));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
 
   // Check that bitmap displays changed content
   page_bitmap = RenderPage(page);
@@ -645,7 +650,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
 
   // And now generate, without changes
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
   page_bitmap = RenderPage(page);
   CompareBitmap(page_bitmap, 612, 792, "2e51656f5073b0bee611d9cd086aa09c");
   FPDFBitmap_Destroy(page_bitmap);
@@ -665,7 +670,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
 
   // Generate yet again, check dicts are reasonably sized
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
   EXPECT_EQ(1, static_cast<int>(font_dict->GetCount()));
   FPDF_ClosePage(page);
 }
@@ -984,3 +989,51 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   FPDF_CloseDocument(new_doc);
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+
+TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
+  const char embMD5[] = "3c20472b0552c0c22b88ab1ed8c6202b";
+  {
+    EXPECT_TRUE(OpenDocument("bug_779.pdf"));
+    FPDF_PAGE page = LoadPage(0);
+    ASSERT_NE(nullptr, page);
+
+    // Now add a more complex blue path.
+    FPDF_PAGEOBJECT green_path = FPDFPageObj_CreateNewPath(20, 20);
+    EXPECT_TRUE(FPDFPath_SetFillColor(green_path, 0, 255, 0, 200));
+    // TODO(npm): stroking will cause the MD5s to differ.
+    EXPECT_TRUE(FPDFPath_SetDrawMode(green_path, FPDF_FILLMODE_WINDING, 0));
+    EXPECT_TRUE(FPDFPath_LineTo(green_path, 20, 63));
+    EXPECT_TRUE(FPDFPath_BezierTo(green_path, 55, 55, 78, 78, 90, 90));
+    EXPECT_TRUE(FPDFPath_LineTo(green_path, 133, 133));
+    EXPECT_TRUE(FPDFPath_LineTo(green_path, 133, 33));
+    EXPECT_TRUE(FPDFPath_BezierTo(green_path, 38, 33, 39, 36, 40, 40));
+    EXPECT_TRUE(FPDFPath_Close(green_path));
+    FPDFPage_InsertObject(page, green_path);
+    FPDF_BITMAP page_bitmap = RenderPage(page);
+    CompareBitmap(page_bitmap, 612, 792, embMD5);
+    FPDFBitmap_Destroy(page_bitmap);
+
+    // Now save the result, closing the page and document
+    EXPECT_TRUE(FPDFPage_GenerateContent(page));
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    UnloadPage(page);
+  }
+
+  // Render the saved result
+  std::string new_file = GetString();
+  FPDF_FILEACCESS file_access;
+  memset(&file_access, 0, sizeof(file_access));
+  file_access.m_FileLen = new_file.size();
+  file_access.m_GetBlock = GetBlockFromString;
+  file_access.m_Param = &new_file;
+  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ASSERT_NE(nullptr, new_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
+  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+  ASSERT_NE(nullptr, new_page);
+  FPDF_BITMAP new_bitmap = RenderPage(new_page);
+  CompareBitmap(new_bitmap, 612, 792, embMD5);
+  FPDFBitmap_Destroy(new_bitmap);
+  FPDF_ClosePage(new_page);
+  FPDF_CloseDocument(new_doc);
+}

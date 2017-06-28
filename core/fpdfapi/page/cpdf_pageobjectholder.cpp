@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fpdfapi/page/cpdf_allstates.h"
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -38,6 +39,8 @@ void CPDF_PageObjectHolder::ContinueParse(IFX_Pause* pPause) {
     return;
 
   m_ParseState = CONTENT_PARSED;
+  if (m_pParser->GetParser() && m_pParser->GetParser()->GetCurStates())
+    m_LastCTM = m_pParser->GetParser()->GetCurStates()->m_CTM;
   m_pParser.reset();
 }
 

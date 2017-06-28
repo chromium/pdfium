@@ -55,6 +55,7 @@ class CPDF_PageObjectHolder {
   const CPDF_PageObjectList* GetPageObjectList() const {
     return &m_PageObjectList;
   }
+  const CFX_Matrix& GetLastCTM() const { return m_LastCTM; }
 
   bool BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
   void SetBackgroundAlphaNeeded(bool needed) {
@@ -89,6 +90,7 @@ class CPDF_PageObjectHolder {
   ParseState m_ParseState;
   std::unique_ptr<CPDF_ContentParser> m_pParser;
   CPDF_PageObjectList m_PageObjectList;
+  CFX_Matrix m_LastCTM;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECTHOLDER_H_
