@@ -33,6 +33,8 @@ class XFAJSEmbedderTest : public EmbedderTest {
   CXFA_Document* GetXFADocument();
 
   bool Execute(const CFX_ByteStringC& input);
+  bool ExecuteSilenceFailure(const CFX_ByteStringC& input);
+
   CFXJSE_Value* GetValue() const { return value_.get(); }
 
  private:
@@ -40,6 +42,8 @@ class XFAJSEmbedderTest : public EmbedderTest {
   std::unique_ptr<CFXJSE_Value> value_;
   v8::Isolate* isolate_;
   CXFA_ScriptContext* script_context_;
+
+  bool ExecuteHelper(const CFX_ByteStringC& input);
 };
 
 #endif  // TESTING_XFA_JS_EMBEDDER_TEST_H_
