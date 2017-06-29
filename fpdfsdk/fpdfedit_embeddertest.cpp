@@ -120,6 +120,26 @@ class FPDFEditEmbeddertest : public EmbedderTest, public TestSaver {
   }
   CPDF_Document* cpdf_doc() { return cpdf_doc_; }
 
+  void TestSaved(int width, int height, const char* md5) {
+    std::string new_file = GetString();
+    // Read |new_file| in, and verify its rendered bitmap.
+    FPDF_FILEACCESS file_access;
+    memset(&file_access, 0, sizeof(file_access));
+    file_access.m_FileLen = new_file.size();
+    file_access.m_GetBlock = GetBlockFromString;
+    file_access.m_Param = &new_file;
+
+    FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+    EXPECT_EQ(1, FPDF_GetPageCount(document_));
+    FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+    EXPECT_NE(nullptr, new_page);
+    FPDF_BITMAP new_bitmap = RenderPage(new_page);
+    CompareBitmap(new_bitmap, width, height, md5);
+    FPDFBitmap_Destroy(new_bitmap);
+    FPDF_ClosePage(new_page);
+    FPDF_CloseDocument(new_doc);
+  }
+
  private:
   CPDF_Document* cpdf_doc_;
 };
@@ -214,27 +234,8 @@ TEST_F(FPDFEditEmbeddertest, RasterizePDF) {
 
   // Get the generated content. Make sure it is at least as big as the original
   // PDF.
-  std::string new_file = GetString();
-  EXPECT_GT(new_file.size(), 923U);
-
-  // Read |new_file| in, and verify its rendered bitmap.
-  {
-    FPDF_FILEACCESS file_access;
-    memset(&file_access, 0, sizeof(file_access));
-    file_access.m_FileLen = new_file.size();
-    file_access.m_GetBlock = GetBlockFromString;
-    file_access.m_Param = &new_file;
-
-    FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-    EXPECT_EQ(1, FPDF_GetPageCount(document_));
-    FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-    EXPECT_NE(nullptr, new_page);
-    FPDF_BITMAP new_bitmap = RenderPage(new_page);
-    CompareBitmap(new_bitmap, 612, 792, kAllBlackMd5sum);
-    FPDF_ClosePage(new_page);
-    FPDF_CloseDocument(new_doc);
-    FPDFBitmap_Destroy(new_bitmap);
-  }
+  EXPECT_GT(GetString().size(), 923U);
+  TestSaved(612, 792, kAllBlackMd5sum);
 }
 
 TEST_F(FPDFEditEmbeddertest, AddPaths) {
@@ -304,31 +305,17 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_TRUE(FPDFPath_Close(blue_path));
   FPDFPage_InsertObject(page, blue_path);
   page_bitmap = RenderPage(page);
-  CompareBitmap(page_bitmap, 612, 792, "9823e1a21bd9b72b6a442ba4f12af946");
+  const char last_md5[] = "9823e1a21bd9b72b6a442ba4f12af946";
+  CompareBitmap(page_bitmap, 612, 792, last_md5);
   FPDFBitmap_Destroy(page_bitmap);
 
   // Now save the result, closing the page and document
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
-  std::string new_file = GetString();
 
   // Render the saved result
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_NE(nullptr, new_doc);
-  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_NE(nullptr, new_page);
-  FPDF_BITMAP new_bitmap = RenderPage(new_page);
-  CompareBitmap(new_bitmap, 612, 792, "9823e1a21bd9b72b6a442ba4f12af946");
-  FPDFBitmap_Destroy(new_bitmap);
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  TestSaved(612, 792, last_md5);
 }
 
 TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
@@ -391,7 +378,8 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
-  // Render the saved result
+  // Render the saved result. Not calling TestSaved because we don't want to
+  // close the page and document yet.
   std::string new_file = GetString();
   FPDF_FILEACCESS file_access;
   memset(&file_access, 0, sizeof(file_access));
@@ -420,7 +408,8 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(new_page, green_rect2);
   new_bitmap = RenderPage(new_page);
-  CompareBitmap(new_bitmap, 612, 792, "4b5b00f824620f8c9b8801ebb98e1cdd");
+  const char last_md5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
+  CompareBitmap(new_bitmap, 612, 792, last_md5);
   FPDFBitmap_Destroy(new_bitmap);
   EXPECT_TRUE(FPDFPage_GenerateContent(new_page));
 
@@ -430,22 +419,7 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   FPDF_CloseDocument(new_doc);
 
   // Render the saved result
-  new_file = GetString();
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_NE(nullptr, new_doc);
-  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
-  new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_NE(nullptr, new_page);
-  new_bitmap = RenderPage(new_page);
-  CompareBitmap(new_bitmap, 612, 792, "4b5b00f824620f8c9b8801ebb98e1cdd");
-  FPDFBitmap_Destroy(new_bitmap);
-
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  TestSaved(612, 792, last_md5);
 }
 
 TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
@@ -878,24 +852,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
-  std::string new_file = GetString();
-
-  // Render the saved result
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_NE(nullptr, new_doc);
-  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_NE(nullptr, new_page);
-  FPDF_BITMAP new_bitmap = RenderPage(new_page);
-  CompareBitmap(new_bitmap, 612, 792, md5_2);
-  FPDFBitmap_Destroy(new_bitmap);
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  TestSaved(612, 792, md5_2);
 }
 
 TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
@@ -969,29 +926,12 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
-  std::string new_file = GetString();
-
-  // Render the saved result
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_NE(nullptr, new_doc);
-  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_NE(nullptr, new_page);
-  FPDF_BITMAP new_bitmap = RenderPage(new_page);
-  CompareBitmap(new_bitmap, 612, 792, md5);
-  FPDFBitmap_Destroy(new_bitmap);
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  TestSaved(612, 792, md5);
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
 
 TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
-  const char embMD5[] = "3c20472b0552c0c22b88ab1ed8c6202b";
+  const char md5[] = "3c20472b0552c0c22b88ab1ed8c6202b";
   {
     EXPECT_TRUE(OpenDocument("bug_779.pdf"));
     FPDF_PAGE page = LoadPage(0);
@@ -1010,7 +950,7 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
     EXPECT_TRUE(FPDFPath_Close(green_path));
     FPDFPage_InsertObject(page, green_path);
     FPDF_BITMAP page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap, 612, 792, embMD5);
+    CompareBitmap(page_bitmap, 612, 792, md5);
     FPDFBitmap_Destroy(page_bitmap);
 
     // Now save the result, closing the page and document
@@ -1018,22 +958,5 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
     UnloadPage(page);
   }
-
-  // Render the saved result
-  std::string new_file = GetString();
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_NE(nullptr, new_doc);
-  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_NE(nullptr, new_page);
-  FPDF_BITMAP new_bitmap = RenderPage(new_page);
-  CompareBitmap(new_bitmap, 612, 792, embMD5);
-  FPDFBitmap_Destroy(new_bitmap);
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  TestSaved(612, 792, md5);
 }
