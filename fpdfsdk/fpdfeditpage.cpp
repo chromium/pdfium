@@ -168,7 +168,7 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
 
 DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
                                              FPDF_PAGEOBJECT page_obj) {
-  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(page_obj);
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_obj);
   if (!pPageObj)
     return;
 
@@ -206,7 +206,7 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
     return false;
 
-  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(pageObject);
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(pageObject);
   int blend_type = pPageObj->m_GeneralState.GetBlendType();
   if (blend_type != FXDIB_BLEND_NORMAL)
     return true;
@@ -239,7 +239,7 @@ DLLEXPORT int STDCALL FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
     return FPDF_PAGEOBJ_UNKNOWN;
 
-  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(pageObject);
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(pageObject);
   return pPageObj->GetType();
 }
 
@@ -260,7 +260,7 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
                                              double d,
                                              double e,
                                              double f) {
-  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(page_object);
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return;
 
@@ -270,7 +270,7 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
 
 DLLEXPORT void STDCALL FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
                                                 FPDF_BYTESTRING blend_mode) {
-  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(page_object);
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return;
 
@@ -331,7 +331,7 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
     return false;
 
   float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
-  auto* pPageObj = static_cast<CPDF_PageObject*>(page_object);
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   pPageObj->m_GeneralState.SetFillAlpha(A / 255.f);
   pPageObj->m_ColorState.SetFillColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
@@ -347,7 +347,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
   if (!pageObject)
     return false;
 
-  CPDF_PageObject* pPageObj = static_cast<CPDF_PageObject*>(pageObject);
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(pageObject);
   CFX_FloatRect bbox = pPageObj->GetRect();
   *left = bbox.left;
   *bottom = bbox.bottom;
