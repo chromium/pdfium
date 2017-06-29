@@ -62,7 +62,7 @@ typedef enum FPDFANNOT_TEXTTYPE {
 //
 //   subtype   - the subtype to be checked.
 //
-// Returns true if this subtype supported, false otherwise.
+// Returns true if this subtype supported.
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFAnnot_IsSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype);
 
@@ -98,6 +98,14 @@ DLLEXPORT FPDF_ANNOTATION STDCALL FPDFPage_GetAnnot(FPDF_PAGE page, int index);
 //   annot  - handle to an annotation.
 DLLEXPORT void STDCALL FPDFPage_CloseAnnot(FPDF_ANNOTATION annot);
 
+// Remove the annotation in |page| at |index|.
+//
+//   page  - handle to a page.
+//   index - the index of the annotation.
+//
+// Returns true if successful.
+DLLEXPORT FPDF_BOOL STDCALL FPDFPage_RemoveAnnot(FPDF_PAGE page, int index);
+
 // Get the subtype of an annotation.
 //
 //   annot  - handle to an annotation.
@@ -115,7 +123,7 @@ FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot);
 //   R, G, B  - buffer to hold the RGB value of the color. Ranges from 0 to 255.
 //   A        - buffer to hold the opacity. Ranges from 0 to 255.
 //
-// Returns true if successful, false otherwise.
+// Returns true if successful.
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
                                                FPDFANNOT_COLORTYPE type,
                                                unsigned int R,
@@ -133,7 +141,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
 //   R, G, B  - buffer to hold the RGB value of the color. Ranges from 0 to 255.
 //   A        - buffer to hold the opacity. Ranges from 0 to 255.
 //
-// Returns true if successful, false otherwise.
+// Returns true if successful.
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
                                                FPDFANNOT_COLORTYPE type,
                                                unsigned int* R,
@@ -162,7 +170,7 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot);
 //   annot      - handle to an annotation.
 //   quadPoints - the quadpoints to be set.
 //
-// Returns true if successful, false otherwise.
+// Returns true if successful.
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
                               const FS_QUADPOINTSF* quadPoints);
@@ -184,7 +192,7 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot);
 //   annot  - handle to an annotation.
 //   rect   - the annotation rectangle to be set.
 //
-// Returns true if successful, false otherwise.
+// Returns true if successful.
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
                                               const FS_RECTF* rect);
 
@@ -203,7 +211,7 @@ DLLEXPORT FS_RECTF STDCALL FPDFAnnot_GetRect(FPDF_ANNOTATION annot);
 //   type   - type of the text to be set.
 //   text   - the text to be set.
 //
-// Returns true if successful, false otherwise.
+// Returns true if successful.
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetText(FPDF_ANNOTATION annot,
                                               FPDFANNOT_TEXTTYPE type,
                                               FPDF_WIDESTRING text);

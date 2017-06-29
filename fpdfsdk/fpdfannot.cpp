@@ -201,6 +201,19 @@ DLLEXPORT void STDCALL FPDFPage_CloseAnnot(FPDF_ANNOTATION annot) {
   delete CPDFAnnotContextFromFPDFAnnotation(annot);
 }
 
+DLLEXPORT FPDF_BOOL STDCALL FPDFPage_RemoveAnnot(FPDF_PAGE page, int index) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage || !pPage->m_pFormDict || index < 0)
+    return false;
+
+  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
+  if (!pAnnots || static_cast<size_t>(index) >= pAnnots->GetCount())
+    return false;
+
+  pAnnots->RemoveAt(index);
+  return true;
+}
+
 DLLEXPORT FPDF_ANNOTATION_SUBTYPE STDCALL
 FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot) {
   if (!annot)

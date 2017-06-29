@@ -40,6 +40,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_GetAnnotCount);
     CHK(FPDFPage_GetAnnot);
     CHK(FPDFPage_CloseAnnot);
+    CHK(FPDFPage_RemoveAnnot);
     CHK(FPDFAnnot_GetSubtype);
     CHK(FPDFAnnot_SetColor);
     CHK(FPDFAnnot_GetColor);
