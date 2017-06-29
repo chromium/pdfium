@@ -13,39 +13,30 @@
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "third_party/base/ptr_util.h"
 
-CFX_ImageRenderer::CFX_ImageRenderer()
-    : m_Status(0),
-      m_bRgbByteOrder(false),
-      m_BlendType(FXDIB_BLEND_NORMAL) {}
-
-CFX_ImageRenderer::~CFX_ImageRenderer() {}
-
-bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
-                              const CFX_ClipRgn* pClipRgn,
-                              const CFX_RetainPtr<CFX_DIBSource>& pSource,
-                              int bitmap_alpha,
-                              uint32_t mask_color,
-                              const CFX_Matrix* pMatrix,
-                              uint32_t dib_flags,
-                              bool bRgbByteOrder) {
-  m_Matrix = *pMatrix;
-  CFX_FloatRect image_rect_f = m_Matrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOuterRect();
+CFX_ImageRenderer::CFX_ImageRenderer(
+    const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
+    const CFX_ClipRgn* pClipRgn,
+    const CFX_RetainPtr<CFX_DIBSource>& pSource,
+    int bitmap_alpha,
+    uint32_t mask_color,
+    const CFX_Matrix* pMatrix,
+    uint32_t dib_flags,
+    bool bRgbByteOrder)
+    : m_pDevice(pDevice),
+      m_pClipRgn(pClipRgn),
+      m_Matrix(*pMatrix),
+      m_BitmapAlpha(bitmap_alpha),
+      m_BlendType(FXDIB_BLEND_NORMAL),
+      m_bRgbByteOrder(bRgbByteOrder),
+      m_MaskColor(mask_color),
+      m_Status(0),
+      m_AlphaFlag(0) {
+  FX_RECT image_rect = m_Matrix.GetUnitRect().GetOuterRect();
   m_ClipBox = pClipRgn ? pClipRgn->GetBox() : FX_RECT(0, 0, pDevice->GetWidth(),
                                                       pDevice->GetHeight());
   m_ClipBox.Intersect(image_rect);
   if (m_ClipBox.IsEmpty())
-    return false;
-
-  m_pDevice = pDevice;
-  m_pClipRgn = pClipRgn;
-  m_MaskColor = mask_color;
-  m_BitmapAlpha = bitmap_alpha;
-  m_Matrix = *pMatrix;
-  m_Flags = dib_flags;
-  m_AlphaFlag = 0;
-  m_bRgbByteOrder = bRgbByteOrder;
-  m_BlendType = FXDIB_BLEND_NORMAL;
+    return;
 
   if ((fabs(m_Matrix.b) >= 0.5f || m_Matrix.a == 0) ||
       (fabs(m_Matrix.c) >= 0.5f || m_Matrix.d == 0)) {
@@ -64,17 +55,14 @@ bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
       m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
           &m_Composer, pSource, dest_height, dest_width, bitmap_clip,
           dib_flags);
-      if (!m_Stretcher->Start())
-        return false;
-
-      m_Status = 1;
-      return true;
+      if (m_Stretcher->Start())
+        m_Status = 1;
+      return;
     }
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
         pSource, &m_Matrix, dib_flags, &m_ClipBox);
-    m_pTransformer->Start();
-    return true;
+    return;
   }
 
   int dest_width = image_rect.Width();
@@ -86,7 +74,7 @@ bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
     dest_height = -dest_height;
 
   if (dest_width == 0 || dest_height == 0)
-    return false;
+    return;
 
   FX_RECT bitmap_clip = m_ClipBox;
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
@@ -95,8 +83,10 @@ bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
   m_Status = 1;
   m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
       &m_Composer, pSource, dest_width, dest_height, bitmap_clip, dib_flags);
-  return m_Stretcher->Start();
+  m_Stretcher->Start();
 }
+
+CFX_ImageRenderer::~CFX_ImageRenderer() {}
 
 bool CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
   if (m_Status == 1)

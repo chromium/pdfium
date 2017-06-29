@@ -2174,9 +2174,9 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   if (!m_pBitmap->GetBuffer())
     return true;
   m_pBitmap->UnPreMultiply();
-  *handle = pdfium::MakeUnique<CFX_ImageRenderer>();
-  (*handle)->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
-                   pMatrix, render_flags, m_bRgbByteOrder);
+  *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
+      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, pMatrix,
+      render_flags, m_bRgbByteOrder);
 #endif  // _SKIA_SUPPORT_PATHS_
   return true;
 }

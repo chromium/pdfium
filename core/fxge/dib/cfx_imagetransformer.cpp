@@ -186,19 +186,14 @@ CFX_ImageTransformer::CFX_ImageTransformer(
       m_pMatrix(pMatrix),
       m_pClip(pClip),
       m_Flags(flags),
-      m_Status(0) {}
-
-CFX_ImageTransformer::~CFX_ImageTransformer() {}
-
-bool CFX_ImageTransformer::Start() {
-  CFX_FloatRect unit_rect = m_pMatrix->GetUnitRect();
-  FX_RECT result_rect = unit_rect.GetClosestRect();
+      m_Status(0) {
+  FX_RECT result_rect = m_pMatrix->GetUnitRect().GetClosestRect();
   FX_RECT result_clip = result_rect;
   if (m_pClip)
     result_clip.Intersect(*m_pClip);
 
   if (result_clip.IsEmpty())
-    return false;
+    return;
 
   m_result = result_clip;
   if (fabs(m_pMatrix->a) < fabs(m_pMatrix->b) / 20 &&
@@ -213,29 +208,29 @@ bool CFX_ImageTransformer::Start() {
         &m_Storer, m_pSrc, dest_height, dest_width, result_clip, m_Flags);
     m_Stretcher->Start();
     m_Status = 1;
-    return true;
+    return;
   }
   if (fabs(m_pMatrix->b) < FIX16_005 && fabs(m_pMatrix->c) < FIX16_005) {
-    int dest_width =
-        m_pMatrix->a > 0 ? (int)ceil(m_pMatrix->a) : (int)floor(m_pMatrix->a);
-    int dest_height =
-        m_pMatrix->d > 0 ? (int)-ceil(m_pMatrix->d) : (int)-floor(m_pMatrix->d);
+    int dest_width = static_cast<int>(m_pMatrix->a > 0 ? ceil(m_pMatrix->a)
+                                                       : floor(m_pMatrix->a));
+    int dest_height = static_cast<int>(m_pMatrix->d > 0 ? -ceil(m_pMatrix->d)
+                                                        : -floor(m_pMatrix->d));
     result_clip.Offset(-result_rect.left, -result_rect.top);
     m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip, m_Flags);
     m_Stretcher->Start();
     m_Status = 2;
-    return true;
+    return;
   }
-  int stretch_width = (int)ceil(FXSYS_sqrt2(m_pMatrix->a, m_pMatrix->b));
-  int stretch_height = (int)ceil(FXSYS_sqrt2(m_pMatrix->c, m_pMatrix->d));
-  CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-                          (float)(stretch_height));
+  int stretch_width =
+      static_cast<int>(ceil(FXSYS_sqrt2(m_pMatrix->a, m_pMatrix->b)));
+  int stretch_height =
+      static_cast<int>(ceil(FXSYS_sqrt2(m_pMatrix->c, m_pMatrix->d)));
+  CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, stretch_height);
   stretch2dest.Concat(
       CFX_Matrix(m_pMatrix->a / stretch_width, m_pMatrix->b / stretch_width,
                  m_pMatrix->c / stretch_height, m_pMatrix->d / stretch_height,
                  m_pMatrix->e, m_pMatrix->f));
-  ASSERT(m_dest2stretch.IsIdentity());
   m_dest2stretch = stretch2dest.GetInverse();
 
   CFX_FloatRect clip_rect_f(result_clip);
@@ -246,8 +241,9 @@ bool CFX_ImageTransformer::Start() {
       &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip, m_Flags);
   m_Stretcher->Start();
   m_Status = 3;
-  return true;
 }
+
+CFX_ImageTransformer::~CFX_ImageTransformer() {}
 
 bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   if (m_Status == 1) {

@@ -660,15 +660,12 @@ bool CXFA_ImageRenderer::StartDIBSource() {
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
         pDib, &m_ImageMatrix, m_Flags, &clip_box);
-    m_pTransformer->Start();
     return true;
   }
-  if (m_ImageMatrix.a < 0) {
+  if (m_ImageMatrix.a < 0)
     dest_width = -dest_width;
-  }
-  if (m_ImageMatrix.d > 0) {
+  if (m_ImageMatrix.d > 0)
     dest_height = -dest_height;
-  }
   int dest_left, dest_top;
   dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
   dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;

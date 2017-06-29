@@ -1089,7 +1089,6 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::TransformTo(
     int* result_top) {
   CFX_RetainPtr<CFX_DIBSource> holder(this);
   CFX_ImageTransformer transformer(holder, pDestMatrix, 0, nullptr);
-  transformer.Start();
   transformer.Continue(nullptr);
   *result_left = transformer.result().left;
   *result_top = transformer.result().top;

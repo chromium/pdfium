@@ -25,7 +25,6 @@ class CFX_ImageTransformer {
                        const FX_RECT* pClip);
   ~CFX_ImageTransformer();
 
-  bool Start();
   bool Continue(IFX_Pause* pPause);
 
   const FX_RECT& result() const { return m_result; }
