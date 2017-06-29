@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
 
+#include <sstream>
+
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pdfwindow/cpwl_utils.h"
@@ -122,20 +124,17 @@ void CPWL_SBButton::OnCreate(PWL_CREATEPARAM& cp) {
   cp.eCursorType = FXCT_ARROW;
 }
 
-void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
-  CPWL_Wnd::GetThisAppearanceStream(sAppStream);
+void CPWL_SBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
+  CPWL_Wnd::GetThisAppearanceStream(psAppStream);
 
   if (!IsVisible())
     return;
 
-  CFX_ByteTextBuf sButton;
-
   CFX_FloatRect rectWnd = GetWindowRect();
-
   if (rectWnd.IsEmpty())
     return;
 
-  sAppStream << "q\n";
+  *psAppStream << "q\n";
 
   CFX_PointF ptCenter = GetCenterPoint();
 
@@ -151,13 +150,11 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
-            sButton << "0 g\n";
-            sButton << pt1.x << " " << pt1.y << " m\n";
-            sButton << pt2.x << " " << pt2.y << " l\n";
-            sButton << pt3.x << " " << pt3.y << " l\n";
-            sButton << pt1.x << " " << pt1.y << " l f\n";
-
-            sAppStream << sButton;
+            *psAppStream << "0 g\n"
+                         << pt1.x << " " << pt1.y << " m\n"
+                         << pt2.x << " " << pt2.y << " l\n"
+                         << pt3.x << " " << pt3.y << " l\n"
+                         << pt1.x << " " << pt1.y << " l f\n";
           }
         } break;
         case PSBT_MAX: {
@@ -169,13 +166,11 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
-            sButton << "0 g\n";
-            sButton << pt1.x << " " << pt1.y << " m\n";
-            sButton << pt2.x << " " << pt2.y << " l\n";
-            sButton << pt3.x << " " << pt3.y << " l\n";
-            sButton << pt1.x << " " << pt1.y << " l f\n";
-
-            sAppStream << sButton;
+            *psAppStream << "0 g\n"
+                         << pt1.x << " " << pt1.y << " m\n"
+                         << pt2.x << " " << pt2.y << " l\n"
+                         << pt3.x << " " << pt3.y << " l\n"
+                         << pt1.x << " " << pt1.y << " l f\n";
           }
         } break;
         default:
@@ -193,13 +188,11 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
-            sButton << "0 g\n";
-            sButton << pt1.x << " " << pt1.y << " m\n";
-            sButton << pt2.x << " " << pt2.y << " l\n";
-            sButton << pt3.x << " " << pt3.y << " l\n";
-            sButton << pt1.x << " " << pt1.y << " l f\n";
-
-            sAppStream << sButton;
+            *psAppStream << "0 g\n"
+                         << pt1.x << " " << pt1.y << " m\n"
+                         << pt2.x << " " << pt2.y << " l\n"
+                         << pt3.x << " " << pt3.y << " l\n"
+                         << pt1.x << " " << pt1.y << " l f\n";
           }
         } break;
         case PSBT_MAX: {
@@ -211,13 +204,11 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
-            sButton << "0 g\n";
-            sButton << pt1.x << " " << pt1.y << " m\n";
-            sButton << pt2.x << " " << pt2.y << " l\n";
-            sButton << pt3.x << " " << pt3.y << " l\n";
-            sButton << pt1.x << " " << pt1.y << " l f\n";
-
-            sAppStream << sButton;
+            *psAppStream << "0 g\n"
+                         << pt1.x << " " << pt1.y << " m\n"
+                         << pt2.x << " " << pt2.y << " l\n"
+                         << pt3.x << " " << pt3.y << " l\n"
+                         << pt1.x << " " << pt1.y << " l f\n";
           }
         } break;
         default:
@@ -228,7 +219,7 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
       break;
   }
 
-  sAppStream << "Q\n";
+  *psAppStream << "Q\n";
 }
 
 void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -652,22 +643,18 @@ void CPWL_ScrollBar::RePosChildWnd() {
   MovePosButton(false);
 }
 
-void CPWL_ScrollBar::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
+void CPWL_ScrollBar::GetThisAppearanceStream(std::ostringstream* psAppStream) {
   CFX_FloatRect rectWnd = GetWindowRect();
 
-  if (IsVisible() && !rectWnd.IsEmpty()) {
-    CFX_ByteTextBuf sButton;
+  if (!IsVisible() || rectWnd.IsEmpty())
+    return;
 
-    sButton << "q\n";
-    sButton << "0 w\n"
-            << CPWL_Utils::GetColorAppStream(GetBackgroundColor(), true)
-                   .AsStringC();
-    sButton << rectWnd.left << " " << rectWnd.bottom << " "
-            << rectWnd.right - rectWnd.left << " "
-            << rectWnd.top - rectWnd.bottom << " re b Q\n";
-
-    sAppStream << sButton;
-  }
+  *psAppStream << "q\n"
+               << "0 w\n"
+               << CPWL_Utils::GetColorAppStream(GetBackgroundColor(), true)
+               << rectWnd.left << " " << rectWnd.bottom << " "
+               << rectWnd.right - rectWnd.left << " "
+               << rectWnd.top - rectWnd.bottom << " re b Q\n";
 }
 
 void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,

@@ -7,6 +7,7 @@
 #include "fpdfsdk/pdfwindow/cpwl_combo_box.h"
 
 #include <algorithm>
+#include <sstream>
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -96,35 +97,33 @@ bool CPWL_CBListBox::OnCharWithExit(uint16_t nChar,
   return true;
 }
 
-void CPWL_CBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
-  CPWL_Wnd::GetThisAppearanceStream(sAppStream);
+void CPWL_CBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
+  CPWL_Wnd::GetThisAppearanceStream(psAppStream);
 
   CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
 
-  if (IsVisible() && !rectWnd.IsEmpty()) {
-    CFX_ByteTextBuf sButton;
+  if (!IsVisible() || rectWnd.IsEmpty())
+    return;
 
-    CFX_PointF ptCenter = GetCenterPoint();
+  CFX_PointF ptCenter = GetCenterPoint();
 
-    CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt3(ptCenter.x,
-                   ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF pt3(ptCenter.x, ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 
-    if (IsFloatBigger(rectWnd.right - rectWnd.left,
-                      PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
-        IsFloatBigger(rectWnd.top - rectWnd.bottom,
-                      PWL_CBBUTTON_TRIANGLE_HALFLEN)) {
-      sButton << "0 g\n";
-      sButton << pt1.x << " " << pt1.y << " m\n";
-      sButton << pt2.x << " " << pt2.y << " l\n";
-      sButton << pt3.x << " " << pt3.y << " l\n";
-      sButton << pt1.x << " " << pt1.y << " l f\n";
-
-      sAppStream << "q\n" << sButton << "Q\n";
-    }
+  if (IsFloatBigger(rectWnd.right - rectWnd.left,
+                    PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
+      IsFloatBigger(rectWnd.top - rectWnd.bottom,
+                    PWL_CBBUTTON_TRIANGLE_HALFLEN)) {
+    *psAppStream << "q\n"
+                 << "0 g\n"
+                 << pt1.x << " " << pt1.y << " m\n"
+                 << pt2.x << " " << pt2.y << " l\n"
+                 << pt3.x << " " << pt3.y << " l\n"
+                 << pt1.x << " " << pt1.y << " l f\n"
+                 << "Q\n";
   }
 }
 
@@ -134,30 +133,30 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
 
-  if (IsVisible() && !rectWnd.IsEmpty()) {
-    CFX_PointF ptCenter = GetCenterPoint();
+  if (!IsVisible() || rectWnd.IsEmpty())
+    return;
 
-    CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt3(ptCenter.x,
-                   ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF ptCenter = GetCenterPoint();
 
-    if (IsFloatBigger(rectWnd.right - rectWnd.left,
-                      PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
-        IsFloatBigger(rectWnd.top - rectWnd.bottom,
-                      PWL_CBBUTTON_TRIANGLE_HALFLEN)) {
-      CFX_PathData path;
-      path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
-      path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
-      path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
-      path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
+  CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF pt3(ptCenter.x, ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 
-      pDevice->DrawPath(&path, pUser2Device, nullptr,
-                        PWL_DEFAULT_BLACKCOLOR.ToFXColor(GetTransparency()), 0,
-                        FXFILL_ALTERNATE);
-    }
+  if (IsFloatBigger(rectWnd.right - rectWnd.left,
+                    PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
+      IsFloatBigger(rectWnd.top - rectWnd.bottom,
+                    PWL_CBBUTTON_TRIANGLE_HALFLEN)) {
+    CFX_PathData path;
+    path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
+    path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
+    path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
+    path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
+
+    pDevice->DrawPath(&path, pUser2Device, nullptr,
+                      PWL_DEFAULT_BLACKCOLOR.ToFXColor(GetTransparency()), 0,
+                      FXFILL_ALTERNATE);
   }
 }
 

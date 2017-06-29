@@ -7,6 +7,7 @@
 #include "fpdfsdk/pdfwindow/cpwl_icon.h"
 
 #include <algorithm>
+#include <sstream>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -18,7 +19,7 @@ CPWL_Image::CPWL_Image() : m_pPDFStream(nullptr) {}
 CPWL_Image::~CPWL_Image() {}
 
 CFX_ByteString CPWL_Image::GetImageAppStream() {
-  CFX_ByteTextBuf sAppStream;
+  std::ostringstream sAppStream;
 
   CFX_ByteString sAlias = GetImageAlias();
   CFX_FloatRect rcPlate = GetClientRect();
@@ -44,11 +45,11 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
     sAppStream << mt.a << " " << mt.b << " " << mt.c << " " << mt.d << " "
                << mt.e << " " << mt.f << " cm\n";
 
-    sAppStream << "0 g 0 G 1 w /" << sAlias.AsStringC() << " Do\n"
+    sAppStream << "0 g 0 G 1 w /" << sAlias << " Do\n"
                << "Q\n";
   }
 
-  return sAppStream.MakeString();
+  return CFX_ByteString(sAppStream);
 }
 
 void CPWL_Image::SetPDFStream(CPDF_Stream* pStream) {

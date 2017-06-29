@@ -51,7 +51,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void OnCreated() override;
   void RePosChildWnd() override;
   CFX_FloatRect GetClientRect() const override;
-  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void GetThisAppearanceStream(std::ostringstream* psAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;

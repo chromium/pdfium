@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/pdfwindow/cpwl_caret.h"
 
+#include <sstream>
+
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -24,70 +26,68 @@ CFX_ByteString CPWL_Caret::GetClassName() const {
   return "CPWL_Caret";
 }
 
-void CPWL_Caret::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
-  GetCaretApp(sAppStream, CFX_PointF());
+void CPWL_Caret::GetThisAppearanceStream(std::ostringstream* psAppStream) {
+  GetCaretApp(CFX_PointF(), psAppStream);
 }
 
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                     CFX_Matrix* pUser2Device) {
-  if (IsVisible() && m_bFlash) {
-    CFX_FloatRect rcRect = GetCaretRect();
-    CFX_FloatRect rcClip = GetClipRect();
-    CFX_PathData path;
+  if (!IsVisible() || !m_bFlash)
+    return;
 
-    float fCaretX = rcRect.left + m_fWidth * 0.5f;
-    float fCaretTop = rcRect.top;
-    float fCaretBottom = rcRect.bottom;
-    if (!rcClip.IsEmpty()) {
-      rcRect.Intersect(rcClip);
-      if (rcRect.IsEmpty())
-        return;
+  CFX_FloatRect rcRect = GetCaretRect();
+  CFX_FloatRect rcClip = GetClipRect();
+  CFX_PathData path;
 
-      fCaretTop = rcRect.top;
-      fCaretBottom = rcRect.bottom;
-    }
+  float fCaretX = rcRect.left + m_fWidth * 0.5f;
+  float fCaretTop = rcRect.top;
+  float fCaretBottom = rcRect.bottom;
+  if (!rcClip.IsEmpty()) {
+    rcRect.Intersect(rcClip);
+    if (rcRect.IsEmpty())
+      return;
 
-    path.AppendPoint(CFX_PointF(fCaretX, fCaretBottom), FXPT_TYPE::MoveTo,
-                     false);
-    path.AppendPoint(CFX_PointF(fCaretX, fCaretTop), FXPT_TYPE::LineTo, false);
-
-    CFX_GraphStateData gsd;
-    gsd.m_LineWidth = m_fWidth;
-    pDevice->DrawPath(&path, pUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
-                      FXFILL_ALTERNATE);
+    fCaretTop = rcRect.top;
+    fCaretBottom = rcRect.bottom;
   }
+
+  path.AppendPoint(CFX_PointF(fCaretX, fCaretBottom), FXPT_TYPE::MoveTo, false);
+  path.AppendPoint(CFX_PointF(fCaretX, fCaretTop), FXPT_TYPE::LineTo, false);
+
+  CFX_GraphStateData gsd;
+  gsd.m_LineWidth = m_fWidth;
+  pDevice->DrawPath(&path, pUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
+                    FXFILL_ALTERNATE);
 }
 
-void CPWL_Caret::GetCaretApp(CFX_ByteTextBuf& sAppStream,
-                             const CFX_PointF& ptOffset) {
-  if (IsVisible() && m_bFlash) {
-    CFX_ByteTextBuf sCaret;
+void CPWL_Caret::GetCaretApp(const CFX_PointF& ptOffset,
+                             std::ostringstream* psAppStream) {
+  if (!IsVisible() || !m_bFlash)
+    return;
 
-    CFX_FloatRect rcRect = GetCaretRect();
-    CFX_FloatRect rcClip = GetClipRect();
+  CFX_FloatRect rcRect = GetCaretRect();
+  CFX_FloatRect rcClip = GetClipRect();
 
-    rcRect = CPWL_Utils::OffsetRect(rcRect, ptOffset.x, ptOffset.y);
-    rcClip = CPWL_Utils::OffsetRect(rcClip, ptOffset.x, ptOffset.y);
+  rcRect = CPWL_Utils::OffsetRect(rcRect, ptOffset.x, ptOffset.y);
+  rcClip = CPWL_Utils::OffsetRect(rcClip, ptOffset.x, ptOffset.y);
 
-    sCaret << "q\n";
-    if (!rcClip.IsEmpty()) {
-      sCaret << rcClip.left << " " << rcClip.bottom + 2.5f << " "
-             << rcClip.right - rcClip.left << " "
-             << rcClip.top - rcClip.bottom - 4.5f << " re W n\n";
-    }
-    sCaret << m_fWidth << " w\n0 G\n";
-    sCaret << rcRect.left + m_fWidth / 2 << " " << rcRect.bottom << " m\n";
-    sCaret << rcRect.left + m_fWidth / 2 << " " << rcRect.top << " l S\nQ\n";
-
-    sAppStream << sCaret;
+  *psAppStream << "q\n";
+  if (!rcClip.IsEmpty()) {
+    *psAppStream << rcClip.left << " " << rcClip.bottom + 2.5f << " "
+                 << rcClip.right - rcClip.left << " "
+                 << rcClip.top - rcClip.bottom - 4.5f << " re W n\n";
   }
+  *psAppStream << m_fWidth << " w\n0 G\n"
+               << rcRect.left + m_fWidth / 2 << " " << rcRect.bottom << " m\n"
+               << rcRect.left + m_fWidth / 2 << " " << rcRect.top
+               << " l S\nQ\n";
 }
 
 CFX_ByteString CPWL_Caret::GetCaretAppearanceStream(
     const CFX_PointF& ptOffset) {
-  CFX_ByteTextBuf sCaret;
-  GetCaretApp(sCaret, ptOffset);
-  return sCaret.MakeString();
+  std::ostringstream sCaret;
+  GetCaretApp(ptOffset, &sCaret);
+  return CFX_ByteString(sCaret);
 }
 
 void CPWL_Caret::TimerProc() {
