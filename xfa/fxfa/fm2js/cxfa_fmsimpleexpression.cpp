@@ -7,7 +7,6 @@
 #include "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.h"
 
 #include <algorithm>
-#include <iostream>
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
@@ -15,6 +14,7 @@
 
 namespace {
 
+// Indexed by XFA_FM_SimpleExpressionType
 const wchar_t* const gs_lpStrExpFuncName[] = {
     L"pfm_rt.asgn_val_op", L"pfm_rt.log_or_op",  L"pfm_rt.log_and_op",
     L"pfm_rt.eq_op",       L"pfm_rt.neq_op",     L"pfm_rt.lt_op",
@@ -50,32 +50,32 @@ const wchar_t* const g_BuiltInFuncs[] = {
 const FX_STRSIZE g_BuiltInFuncsMaxLen = 12;
 
 struct XFA_FMSOMMethod {
-  uint32_t m_uHash;
   const wchar_t* m_wsSomMethodName;
   uint32_t m_dParameters;
 };
+
 const XFA_FMSOMMethod gs_FMSomMethods[] = {
-    {0x00000068, L"h", 0x01},
-    {0x00000077, L"w", 0x01},
-    {0x00000078, L"x", 0x01},
-    {0x00000079, L"y", 0x01},
-    {0x05eb5b0f, L"pageSpan", 0x01},
-    {0x10f1b1bd, L"page", 0x01},
-    {0x3bf1c2a5, L"absPageSpan", 0x01},
-    {0x3c752495, L"verify", 0x0d},
-    {0x44c352ad, L"formNodes", 0x01},
-    {0x5775c2cc, L"absPageInBatch", 0x01},
-    {0x5ee00996, L"setElement", 0x01},
-    {0x7033bfd5, L"insert", 0x03},
-    {0x8c5feb32, L"sheetInBatch", 0x01},
-    {0x8f3a8379, L"sheet", 0x01},
-    {0x92dada4f, L"saveFilteredXML", 0x01},
-    {0x9cab7cae, L"remove", 0x01},
-    {0xa68635f1, L"sign", 0x61},
-    {0xaac241c8, L"isRecordGroup", 0x01},
-    {0xd8ed1467, L"clear", 0x01},
-    {0xda12e518, L"append", 0x01},
-    {0xe74f0653, L"absPage", 0x01},
+    {L"absPage", 0x01},
+    {L"absPageInBatch", 0x01},
+    {L"absPageSpan", 0x01},
+    {L"append", 0x01},
+    {L"clear", 0x01},
+    {L"formNodes", 0x01},
+    {L"h", 0x01},
+    {L"insert", 0x03},
+    {L"isRecordGroup", 0x01},
+    {L"page", 0x01},
+    {L"pageSpan", 0x01},
+    {L"remove", 0x01},
+    {L"saveFilteredXML", 0x01},
+    {L"setElement", 0x01},
+    {L"sheet", 0x01},
+    {L"sheetInBatch", 0x01},
+    {L"sign", 0x61},
+    {L"verify", 0x0d},
+    {L"w", 0x01},
+    {L"x", 0x01},
+    {L"y", 0x01},
 };
 
 }  // namespace
@@ -536,26 +536,17 @@ bool CXFA_FMCallExpression::IsBuiltInFunc(CFX_WideTextBuf* funcName) {
 }
 
 uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
-    const CFX_WideStringC& methodName) {
-  uint32_t uHash = FX_HashCode_GetW(methodName, false);
-  XFA_FMSOMMethod somMethodWithObjPara;
-  uint32_t parameters = 0x00;
-  int32_t iStart = 0,
-          iEnd = (sizeof(gs_FMSomMethods) / sizeof(gs_FMSomMethods[0])) - 1;
-  int32_t iMid = (iStart + iEnd) / 2;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    somMethodWithObjPara = gs_FMSomMethods[iMid];
-    if (uHash == somMethodWithObjPara.m_uHash) {
-      parameters = somMethodWithObjPara.m_dParameters;
-      break;
-    } else if (uHash < somMethodWithObjPara.m_uHash) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  return parameters;
+    const CFX_WideString& methodName) {
+  const XFA_FMSOMMethod* result = std::lower_bound(
+      std::begin(gs_FMSomMethods), std::end(gs_FMSomMethods), methodName,
+      [](const XFA_FMSOMMethod iter, const CFX_WideString& val) {
+        return val.Compare(iter.m_wsSomMethodName) > 0;
+      });
+  if (result != std::end(gs_FMSomMethods) &&
+      !methodName.Compare(result->m_wsSomMethodName)) {
+    return result->m_dParameters;
+  }
+  return 0;
 }
 
 bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
@@ -565,7 +556,7 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   if (m_bIsSomMethod) {
     javascript << funcName;
     javascript << L"(";
-    uint32_t methodPara = IsMethodWithObjParam(funcName.AsStringC());
+    uint32_t methodPara = IsMethodWithObjParam(funcName.MakeString());
     if (methodPara > 0) {
       for (size_t i = 0; i < m_Arguments.size(); ++i) {
         // Currently none of our expressions use objects for a parameter over
