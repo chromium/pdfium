@@ -49,8 +49,7 @@ void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect) {
   CFX_Matrix page2device;
   pPageView->GetCurrentMatrix(page2device);
 
-  CFX_Matrix device2page;
-  device2page.SetReverse(page2device);
+  CFX_Matrix device2page = page2device.GetInverse();
 
   CFX_PointF left_top = device2page.Transform(
       CFX_PointF(static_cast<float>(rect.left), static_cast<float>(rect.top)));

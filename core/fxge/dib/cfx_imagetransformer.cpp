@@ -235,7 +235,8 @@ bool CFX_ImageTransformer::Start() {
       CFX_Matrix(m_pMatrix->a / stretch_width, m_pMatrix->b / stretch_width,
                  m_pMatrix->c / stretch_height, m_pMatrix->d / stretch_height,
                  m_pMatrix->e, m_pMatrix->f));
-  m_dest2stretch.SetReverse(stretch2dest);
+  ASSERT(m_dest2stretch.IsIdentity());
+  m_dest2stretch = stretch2dest.GetInverse();
 
   CFX_FloatRect clip_rect_f(result_clip);
   m_dest2stretch.TransformRect(clip_rect_f);

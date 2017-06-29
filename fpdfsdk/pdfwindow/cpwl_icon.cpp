@@ -23,8 +23,7 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
 
   CFX_ByteString sAlias = GetImageAlias();
   CFX_FloatRect rcPlate = GetClientRect();
-  CFX_Matrix mt;
-  mt.SetReverse(GetImageMatrix());
+  CFX_Matrix mt = GetImageMatrix().GetInverse();
 
   float fHScale = 1.0f;
   float fVScale = 1.0f;

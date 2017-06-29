@@ -197,18 +197,20 @@ CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_PointF* pPoints, int nPoints) {
   return CFX_FloatRect(min_x, min_y, max_x, max_y);
 }
 
-void CFX_Matrix::SetReverse(const CFX_Matrix& m) {
-  float i = m.a * m.d - m.b * m.c;
+CFX_Matrix CFX_Matrix::GetInverse() const {
+  CFX_Matrix inverse;
+  float i = a * d - b * c;
   if (fabs(i) == 0)
-    return;
+    return inverse;
 
   float j = -i;
-  a = m.d / i;
-  b = m.b / j;
-  c = m.c / j;
-  d = m.a / i;
-  e = (m.c * m.f - m.d * m.e) / i;
-  f = (m.a * m.f - m.b * m.e) / j;
+  inverse.a = d / i;
+  inverse.b = b / j;
+  inverse.c = c / j;
+  inverse.d = a / i;
+  inverse.e = (c * f - d * e) / i;
+  inverse.f = (a * f - b * e) / j;
+  return inverse;
 }
 
 void CFX_Matrix::Concat(const CFX_Matrix& m, bool bPrepended) {
@@ -216,9 +218,7 @@ void CFX_Matrix::Concat(const CFX_Matrix& m, bool bPrepended) {
 }
 
 void CFX_Matrix::ConcatInverse(const CFX_Matrix& src, bool bPrepended) {
-  CFX_Matrix m;
-  m.SetReverse(src);
-  Concat(m, bPrepended);
+  Concat(src.GetInverse(), bPrepended);
 }
 
 bool CFX_Matrix::Is90Rotated() const {

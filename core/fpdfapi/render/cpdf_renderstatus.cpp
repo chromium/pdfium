@@ -133,8 +133,6 @@ void DrawAxialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   float x_span = end_x - start_x;
   float y_span = end_y - start_y;
   float axis_len_square = (x_span * x_span) + (y_span * y_span);
-  CFX_Matrix matrix;
-  matrix.SetReverse(*pObject2Bitmap);
   uint32_t total_results =
       std::max(CountOutputs(funcs), pCS->CountComponents());
   CFX_FixedBufGrow<float, 16> result_array(total_results);
@@ -160,6 +158,7 @@ void DrawAxialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                                  FXSYS_round(G * 255), FXSYS_round(B * 255)));
   }
   int pitch = pBitmap->GetPitch();
+  CFX_Matrix matrix = pObject2Bitmap->GetInverse();
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
@@ -202,8 +201,6 @@ void DrawRadialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   float end_x = pCoords->GetNumberAt(3);
   float end_y = pCoords->GetNumberAt(4);
   float end_r = pCoords->GetNumberAt(5);
-  CFX_Matrix matrix;
-  matrix.SetReverse(*pObject2Bitmap);
   float t_min = 0;
   float t_max = 1.0f;
   CPDF_Array* pArray = pDict->GetArrayFor("Domain");
@@ -256,6 +253,7 @@ void DrawRadialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
       bDecreasing = true;
     }
   }
+  CFX_Matrix matrix = pObject2Bitmap->GetInverse();
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
@@ -334,12 +332,8 @@ void DrawFuncShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
     ymax = pDomain->GetNumberAt(3);
   }
   CFX_Matrix mtDomain2Target = pDict->GetMatrixFor("Matrix");
-  CFX_Matrix matrix;
-  matrix.SetReverse(*pObject2Bitmap);
-
-  CFX_Matrix reverse_matrix;
-  reverse_matrix.SetReverse(mtDomain2Target);
-  matrix.Concat(reverse_matrix);
+  CFX_Matrix matrix = pObject2Bitmap->GetInverse();
+  matrix.Concat(mtDomain2Target.GetInverse());
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
@@ -1056,9 +1050,7 @@ void CPDF_RenderStatus::RenderObjectList(
   DebugVerifyDeviceIsPreMultiplied();
 #endif
   CFX_FloatRect clip_rect(m_pDevice->GetClipBox());
-  CFX_Matrix device2object;
-  device2object.SetReverse(*pObj2Device);
-  device2object.TransformRect(clip_rect);
+  pObj2Device->GetInverse().TransformRect(clip_rect);
 
   for (const auto& pCurObj : *pObjectHolder->GetPageObjectList()) {
     if (pCurObj.get() == m_pStopObj) {
@@ -2243,11 +2235,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   if (height == 0)
     height = 1;
 
-  CFX_Matrix mtDevice2Pattern;
-  mtDevice2Pattern.SetReverse(mtPattern2Device);
-
   CFX_FloatRect clip_box_p(clip_box);
-  mtDevice2Pattern.TransformRect(clip_box_p);
+  mtPattern2Device.GetInverse().TransformRect(clip_box_p);
 
   int min_col = (int)ceil((clip_box_p.left - pPattern->bbox().right) /
                           pPattern->x_step());

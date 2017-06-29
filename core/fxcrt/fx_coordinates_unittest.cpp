@@ -8,10 +8,9 @@
 
 TEST(CFX_Matrix, ReverseIdentity) {
   CFX_Matrix m;
-  CFX_Matrix rev;
-
   m.SetIdentity();
-  rev.SetReverse(m);
+  CFX_Matrix rev = m.GetInverse();
+
   EXPECT_FLOAT_EQ(1.0, rev.a);
   EXPECT_FLOAT_EQ(0.0, rev.b);
   EXPECT_FLOAT_EQ(0.0, rev.c);
@@ -28,9 +27,8 @@ TEST(CFX_Matrix, ReverseIdentity) {
 TEST(CFX_Matrix, Reverse) {
   float data[6] = {3, 0, 2, 3, 1, 4};
   CFX_Matrix m(data);
-  CFX_Matrix rev;
+  CFX_Matrix rev = m.GetInverse();
 
-  rev.SetReverse(m);
   EXPECT_FLOAT_EQ(0.33333334f, rev.a);
   EXPECT_FLOAT_EQ(0.0f, rev.b);
   EXPECT_FLOAT_EQ(-0.22222222f, rev.c);
@@ -50,9 +48,8 @@ TEST(CFX_Matrix, ReverseCR702041) {
   float data[6] = {0.947368443f, -0.108947366f, -0.923076928f,
                    0.106153846f, 18.0f,         787.929993f};
   CFX_Matrix m(data);
-  CFX_Matrix rev;
+  CFX_Matrix rev = m.GetInverse();
 
-  rev.SetReverse(m);
   EXPECT_FLOAT_EQ(14247728.0f, rev.a);
   EXPECT_FLOAT_EQ(14622668.0f, rev.b);
   EXPECT_FLOAT_EQ(1.2389329e+08f, rev.c);
@@ -71,9 +68,8 @@ TEST(CFX_Matrix, ReverseCR714187) {
   // The determinate is < std::numeric_limits<float>::epsilon()
   float data[6] = {0.000037f, 0.0f, 0.0f, -0.000037f, 182.413101f, 136.977646f};
   CFX_Matrix m(data);
-  CFX_Matrix rev;
+  CFX_Matrix rev = m.GetInverse();
 
-  rev.SetReverse(m);
   EXPECT_FLOAT_EQ(27027.025f, rev.a);
   EXPECT_FLOAT_EQ(0.0f, rev.b);
   EXPECT_FLOAT_EQ(0.0f, rev.c);

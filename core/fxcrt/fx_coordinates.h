@@ -608,7 +608,7 @@ class CFX_Matrix {
     f = 0;
   }
 
-  void SetReverse(const CFX_Matrix& m);
+  CFX_Matrix GetInverse() const;
 
   void Concat(const CFX_Matrix& m, bool bPrepended = false);
   void ConcatInverse(const CFX_Matrix& m, bool bPrepended = false);

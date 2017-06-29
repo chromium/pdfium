@@ -40,15 +40,13 @@ void CFDE_RenderContext::DoRender() {
   if (!m_pRenderDevice || !m_pIterator)
     return;
 
-  CFX_Matrix rm;
-  rm.SetReverse(m_Transform);
   CFX_RectF rtDocClip = m_pRenderDevice->GetClipRect();
   if (rtDocClip.IsEmpty()) {
     rtDocClip.left = rtDocClip.top = 0;
     rtDocClip.width = (float)m_pRenderDevice->GetWidth();
     rtDocClip.height = (float)m_pRenderDevice->GetHeight();
   }
-  rm.TransformRect(rtDocClip);
+  m_Transform.GetInverse().TransformRect(rtDocClip);
   IFDE_VisualSet* pVisualSet;
   FDE_TEXTEDITPIECE* pPiece;
   int32_t iCount = 0;

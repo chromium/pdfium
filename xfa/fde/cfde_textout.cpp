@@ -294,9 +294,7 @@ void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
                             int32_t iLength,
                             const CFX_RectF& rect) {
   CFX_RectF rtText(rect.left, rect.top, rect.width, rect.height);
-  CFX_Matrix rm;
-  rm.SetReverse(m_Matrix);
-  rm.TransformRect(rtText);
+  m_Matrix.GetInverse().TransformRect(rtText);
   DrawText(pwsStr, iLength, rtText, m_rtClip);
 }
 

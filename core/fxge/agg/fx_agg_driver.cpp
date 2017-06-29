@@ -1349,10 +1349,8 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
         pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
         pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d, 0, 0);
 
-    CFX_Matrix mtRervese;
-    mtRervese.SetReverse(matrix2);
     matrix1 = *pObject2Device;
-    matrix1.Concat(mtRervese);
+    matrix1.Concat(matrix2.GetInverse());
   }
 
   CAgg_PathData path_data;
