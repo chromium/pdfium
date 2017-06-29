@@ -22,13 +22,21 @@ using testing::Return;
 
 class FPDFFormFillEmbeddertest : public EmbedderTest, public TestSaver {
  protected:
-  void TypeTextIntoTextfield(FPDF_PAGE page, int num_chars) {
-    // Click on the textfield in text_form.pdf.
-    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
-              FPDFPage_HasFormFieldAtPoint(form_handle(), page, 120.0, 120.0));
-    FORM_OnMouseMove(form_handle(), page, 0, 120.0, 120.0);
-    FORM_OnLButtonDown(form_handle(), page, 0, 120.0, 120.0);
-    FORM_OnLButtonUp(form_handle(), page, 0, 120.0, 120.0);
+  void TypeTextIntoTextfield(FPDF_PAGE page,
+                             int num_chars,
+                             int form_type,
+                             double x,
+                             double y) {
+    ASSERT(form_type == FPDF_FORMFIELD_COMBOBOX ||
+           form_type == FPDF_FORMFIELD_TEXTFIELD);
+    EXPECT_EQ(form_type,
+              FPDFPage_HasFormFieldAtPoint(form_handle(), page, x, y));
+
+    // Click on the textfield or combobox text field as specified by
+    // coordinates.
+    FORM_OnMouseMove(form_handle(), page, 0, x, y);
+    FORM_OnLButtonDown(form_handle(), page, 0, x, y);
+    FORM_OnLButtonUp(form_handle(), page, 0, x, y);
 
     // Type text starting with 'A' to as many chars as specified by |num_chars|.
     for (int i = 0; i < num_chars; ++i) {
@@ -36,7 +44,7 @@ class FPDFFormFillEmbeddertest : public EmbedderTest, public TestSaver {
     }
   }
 
-  // Navigates to form text field using the mouse and then selects text via the
+  // Navigates to text field using the mouse and then selects text via the
   // shift and specfied left or right arrow key.
   void SelectTextWithKeyboard(FPDF_PAGE page,
                               int num_chars,
@@ -59,7 +67,7 @@ class FPDFFormFillEmbeddertest : public EmbedderTest, public TestSaver {
     FORM_OnKeyUp(form_handle(), page, FWL_VKEY_Shift, 0);
   }
 
-  // Uses the mouse to navigate to form text field and select text.
+  // Uses the mouse to navigate to text field and select text.
   void SelectTextWithMouse(FPDF_PAGE page,
                            double start_x,
                            double end_x,
@@ -90,6 +98,29 @@ class FPDFFormFillEmbeddertest : public EmbedderTest, public TestSaver {
 
     EXPECT_EQ(expected_string,
               CFX_WideString::FromUTF16LE(buf.data(), num_chars));
+  }
+
+  // Selects one of the pre-selected values from a combobox with three options.
+  // Options are specified by |item_index|, which is 0-based.
+  void SelectOption(FPDF_PAGE page, int32_t item_index, double x, double y) {
+    // Only relevant for comboboxes with three choices and the same dimensions
+    // as those in combobox_form.pdf.
+    ASSERT(item_index >= 0);
+    ASSERT(item_index < 3);
+
+    // Navigate to button for drop down and click mouse to reveal options.
+    FORM_OnMouseMove(form_handle(), page, 0, x, y);
+    FORM_OnLButtonDown(form_handle(), page, 0, x, y);
+    FORM_OnLButtonUp(form_handle(), page, 0, x, y);
+
+    // Y coordinate of dropdown option to be selected.
+    constexpr double kChoiceHeight = 15;
+    double option_y = y - kChoiceHeight * (item_index + 1);
+
+    // Navigate to option and click mouse to select it.
+    FORM_OnMouseMove(form_handle(), page, 0, x, option_y);
+    FORM_OnLButtonDown(form_handle(), page, 0, x, option_y);
+    FORM_OnLButtonUp(form_handle(), page, 0, x, option_y);
   }
 };
 
@@ -367,7 +398,7 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicKeyboard) {
   CheckSelection(page, CFX_WideString(L""));
 
   // Test basic selection.
-  TypeTextIntoTextfield(page, 3);
+  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
   SelectTextWithKeyboard(page, 3, FWL_VKEY_Left, 123.0, 115.5);
   CheckSelection(page, CFX_WideString(L"ABC"));
 
@@ -384,7 +415,7 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicMouse) {
   CheckSelection(page, CFX_WideString(L""));
 
   // Test basic selection.
-  TypeTextIntoTextfield(page, 3);
+  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
   SelectTextWithMouse(page, 125.0, 102.0, 115.5);
   CheckSelection(page, CFX_WideString(L"ABC"));
 
@@ -397,10 +428,9 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsKeyBoard) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  TypeTextIntoTextfield(page, 12);
+  TypeTextIntoTextfield(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
-  // Navigate to starting position and click mouse.
   SelectTextWithKeyboard(page, 1, FWL_VKEY_Right, 102.0, 115.5);
   CheckSelection(page, CFX_WideString(L"A"));
 
@@ -429,7 +459,7 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsMouse) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  TypeTextIntoTextfield(page, 12);
+  TypeTextIntoTextfield(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithMouse(page, 102.0, 106.0, 115.5);
@@ -450,6 +480,184 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsMouse) {
   // Test selecting last character in backwards direction.
   SelectTextWithMouse(page, 191.0, 186.0, 115.5);
   CheckSelection(page, CFX_WideString(L"L"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicNormalComboBox) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Test empty selection.
+  CheckSelection(page, CFX_WideString(L""));
+
+  // Test basic selection of text within normal, non-editable combobox.
+  // Click on normal combobox text field.
+  EXPECT_EQ(FPDF_FORMFIELD_COMBOBOX,
+            FPDFPage_HasFormFieldAtPoint(form_handle(), page, 102.0, 113.0));
+
+  // Non-editable comboboxes don't allow selection with keyboard.
+  SelectTextWithMouse(page, 102.0, 142.0, 113.0);
+  CheckSelection(page, CFX_WideString(L"Banana"));
+
+  // Select other another provided option.
+  SelectOption(page, 0, 192.0, 110.0);
+  CheckSelection(page, CFX_WideString(L"Apple"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest,
+       GetSelectedTextEmptyAndBasicEditableComboBoxKeyboard) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Test empty selection.
+  CheckSelection(page, CFX_WideString(L""));
+
+  // Test basic selection of text within user editable combobox using keyboard.
+  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithKeyboard(page, 3, FWL_VKEY_Left, 128.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABC"));
+
+  // Select a provided option.
+  SelectOption(page, 1, 192.0, 60.0);
+  CheckSelection(page, CFX_WideString(L"Bar"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest,
+       GetSelectedTextEmptyAndBasicEditableComboBoxMouse) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Test empty selection.
+  CheckSelection(page, CFX_WideString(L""));
+
+  // Test basic selection of text within user editable combobox using mouse.
+  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(page, 128.0, 103.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABC"));
+
+  // Select a provided option.
+  SelectOption(page, 2, 192.0, 60.0);
+  CheckSelection(page, CFX_WideString(L"Qux"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsNormalComboBox) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Click on normal combobox text field.
+  EXPECT_EQ(FPDF_FORMFIELD_COMBOBOX,
+            FPDFPage_HasFormFieldAtPoint(form_handle(), page, 102.0, 113.0));
+
+  // Test selecting first character in forward direction.
+  SelectTextWithMouse(page, 102.0, 107.0, 113.0);
+  CheckSelection(page, CFX_WideString(L"B"));
+
+  // Test selecting entire string in backwards direction.
+  SelectTextWithMouse(page, 142.0, 102.0, 113.0);
+  CheckSelection(page, CFX_WideString(L"Banana"));
+
+  // Test selecting middle section in backwards direction.
+  SelectTextWithMouse(page, 135.0, 117.0, 113.0);
+  CheckSelection(page, CFX_WideString(L"nan"));
+
+  // Test selecting middle section in forward direction.
+  SelectTextWithMouse(page, 117.0, 135.0, 113.0);
+  CheckSelection(page, CFX_WideString(L"nan"));
+
+  // Test selecting last character in backwards direction.
+  SelectTextWithMouse(page, 142.0, 138.0, 113.0);
+  CheckSelection(page, CFX_WideString(L"a"));
+
+  // Select another option and then reset selection as first three chars.
+  SelectOption(page, 2, 192.0, 110.0);
+  CheckSelection(page, CFX_WideString(L"Cherry"));
+  SelectTextWithMouse(page, 102.0, 122.0, 113.0);
+  CheckSelection(page, CFX_WideString(L"Che"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest,
+       GetSelectedTextFragmentsEditableComboBoxKeyboard) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TypeTextIntoTextfield(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+
+  // Test selecting first character in forward direction.
+  SelectTextWithKeyboard(page, 1, FWL_VKEY_Right, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"A"));
+
+  // Test selecting entire long string in backwards direction.
+  SelectTextWithKeyboard(page, 10, FWL_VKEY_Left, 178.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJ"));
+
+  // Test selecting middle section in backwards direction.
+  SelectTextWithKeyboard(page, 5, FWL_VKEY_Left, 168.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"DEFGH"));
+
+  // Test selecting middle selection in forward direction.
+  SelectTextWithKeyboard(page, 5, FWL_VKEY_Right, 127.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"DEFGH"));
+
+  // Test selecting last character in backwards direction.
+  SelectTextWithKeyboard(page, 1, FWL_VKEY_Left, 178.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"J"));
+
+  // Select a provided option and then reset selection as first two chars.
+  SelectOption(page, 0, 192.0, 60.0);
+  CheckSelection(page, CFX_WideString(L"Foo"));
+  SelectTextWithKeyboard(page, 2, FWL_VKEY_Right, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"Fo"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest,
+       GetSelectedTextFragmentsEditableComboBoxMouse) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TypeTextIntoTextfield(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+
+  // Test selecting first character in forward direction.
+  SelectTextWithMouse(page, 102.0, 107.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"A"));
+
+  // Test selecting entire long string in backwards direction.
+  SelectTextWithMouse(page, 178.0, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJ"));
+
+  // Test selecting middle section in backwards direction.
+  SelectTextWithMouse(page, 168.0, 127.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"DEFGH"));
+
+  // Test selecting middle selection in forward direction.
+  SelectTextWithMouse(page, 127.0, 168.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"DEFGH"));
+
+  // Test selecting last character in backwards direction.
+  SelectTextWithMouse(page, 178.0, 174.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"J"));
 
   UnloadPage(page);
 }
