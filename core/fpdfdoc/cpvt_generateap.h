@@ -60,6 +60,20 @@ class CPVT_GenerateAP {
                                          const CPVT_Dash& dash);
   static CFX_ByteString GenerateColorAP(const CPVT_Color& color,
                                         PaintOperation nOperation);
+  static std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
+      const CPDF_Dictionary& pAnnotDict,
+      const CFX_ByteString& sExtGSDictName,
+      const CFX_ByteString& sBlendMode);
+  static std::unique_ptr<CPDF_Dictionary> GenerateResourceDict(
+      CPDF_Document* pDoc,
+      std::unique_ptr<CPDF_Dictionary> pExtGStateDict,
+      std::unique_ptr<CPDF_Dictionary> pResourceFontDict);
+  static void GenerateAndSetAPDict(
+      CPDF_Document* pDoc,
+      CPDF_Dictionary* pAnnotDict,
+      std::ostringstream* psAppStream,
+      std::unique_ptr<CPDF_Dictionary> pResourceDict,
+      bool bIsTextMarkupAnnotation);
 
   static CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                          int32_t nFontIndex,

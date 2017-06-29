@@ -23,6 +23,7 @@
 
 class CPDF_Annot;
 class CPDF_Page;
+class CPDF_PageObject;
 class CPDF_PageRenderContext;
 class CPDF_PathObject;
 class IFSDK_PAUSE_Adapter;
@@ -63,6 +64,8 @@ FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page);
 
 CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
+
+CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
 
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 

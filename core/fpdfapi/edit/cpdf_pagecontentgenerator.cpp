@@ -209,6 +209,9 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
 void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
+
+  *buf << pPathObj->m_Matrix << " cm ";
+
   auto& pPoints = pPathObj->m_Path.GetPoints();
   if (pPathObj->m_Path.IsRect()) {
     CFX_PointF diff = pPoints[2].m_Point - pPoints[0].m_Point;

@@ -545,27 +545,6 @@ CFX_ByteString GetPopupContentsString(CPDF_Document* pDoc,
   return CFX_ByteString(sAppStream);
 }
 
-std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
-    const CPDF_Dictionary& pAnnotDict,
-    const CFX_ByteString& sExtGSDictName,
-    const CFX_ByteString& sBlendMode) {
-  auto pGSDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
-  pGSDict->SetNewFor<CPDF_String>("Type", "ExtGState", false);
-
-  float fOpacity =
-      pAnnotDict.KeyExist("CA") ? pAnnotDict.GetNumberFor("CA") : 1;
-  pGSDict->SetNewFor<CPDF_Number>("CA", fOpacity);
-  pGSDict->SetNewFor<CPDF_Number>("ca", fOpacity);
-  pGSDict->SetNewFor<CPDF_Boolean>("AIS", false);
-  pGSDict->SetNewFor<CPDF_String>("BM", sBlendMode, false);
-
-  auto pExtGStateDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
-  pExtGStateDict->SetFor(sExtGSDictName, std::move(pGSDict));
-  return pExtGStateDict;
-}
-
 std::unique_ptr<CPDF_Dictionary> GenerateResourceFontDict(
     CPDF_Document* pDoc,
     const CFX_ByteString& sFontDictName) {
@@ -580,45 +559,6 @@ std::unique_ptr<CPDF_Dictionary> GenerateResourceFontDict(
   pResourceFontDict->SetNewFor<CPDF_Reference>(sFontDictName, pDoc,
                                                pFontDict->GetObjNum());
   return pResourceFontDict;
-}
-
-std::unique_ptr<CPDF_Dictionary> GenerateResourceDict(
-    CPDF_Document* pDoc,
-    std::unique_ptr<CPDF_Dictionary> pExtGStateDict,
-    std::unique_ptr<CPDF_Dictionary> pResourceFontDict) {
-  auto pResourceDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-  if (pExtGStateDict)
-    pResourceDict->SetFor("ExtGState", std::move(pExtGStateDict));
-  if (pResourceFontDict)
-    pResourceDict->SetFor("Font", std::move(pResourceFontDict));
-  return pResourceDict;
-}
-
-void GenerateAndSetAPDict(CPDF_Document* pDoc,
-                          CPDF_Dictionary* pAnnotDict,
-                          std::ostringstream* psAppStream,
-                          std::unique_ptr<CPDF_Dictionary> pResourceDict,
-                          bool bIsTextMarkupAnnotation) {
-  CPDF_Stream* pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
-  pNormalStream->SetData(psAppStream);
-
-  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor("AP");
-  if (!pAPDict)
-    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
-
-  pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
-
-  CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
-  pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
-  pStreamDict->SetNewFor<CPDF_String>("Subtype", "Form", false);
-  pStreamDict->SetMatrixFor("Matrix", CFX_Matrix());
-
-  CFX_FloatRect rect = bIsTextMarkupAnnotation
-                           ? CPDF_Annot::RectFromQuadPoints(pAnnotDict)
-                           : pAnnotDict->GetRectFor("Rect");
-  pStreamDict->SetRectFor("BBox", rect);
-  pStreamDict->SetFor("Resources", std::move(pResourceDict));
 }
 
 CFX_ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
@@ -1319,6 +1259,70 @@ CFX_ByteString CPVT_GenerateAP::GenerateColorAP(const CPVT_Color& color,
       break;
   }
   return CFX_ByteString(sColorStream);
+}
+
+// Static.
+std::unique_ptr<CPDF_Dictionary> CPVT_GenerateAP::GenerateExtGStateDict(
+    const CPDF_Dictionary& pAnnotDict,
+    const CFX_ByteString& sExtGSDictName,
+    const CFX_ByteString& sBlendMode) {
+  auto pGSDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
+  pGSDict->SetNewFor<CPDF_String>("Type", "ExtGState", false);
+
+  float fOpacity =
+      pAnnotDict.KeyExist("CA") ? pAnnotDict.GetNumberFor("CA") : 1;
+  pGSDict->SetNewFor<CPDF_Number>("CA", fOpacity);
+  pGSDict->SetNewFor<CPDF_Number>("ca", fOpacity);
+  pGSDict->SetNewFor<CPDF_Boolean>("AIS", false);
+  pGSDict->SetNewFor<CPDF_String>("BM", sBlendMode, false);
+
+  auto pExtGStateDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
+  pExtGStateDict->SetFor(sExtGSDictName, std::move(pGSDict));
+  return pExtGStateDict;
+}
+
+// Static.
+std::unique_ptr<CPDF_Dictionary> CPVT_GenerateAP::GenerateResourceDict(
+    CPDF_Document* pDoc,
+    std::unique_ptr<CPDF_Dictionary> pExtGStateDict,
+    std::unique_ptr<CPDF_Dictionary> pResourceFontDict) {
+  auto pResourceDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+  if (pExtGStateDict)
+    pResourceDict->SetFor("ExtGState", std::move(pExtGStateDict));
+  if (pResourceFontDict)
+    pResourceDict->SetFor("Font", std::move(pResourceFontDict));
+  return pResourceDict;
+}
+
+// Static.
+void CPVT_GenerateAP::GenerateAndSetAPDict(
+    CPDF_Document* pDoc,
+    CPDF_Dictionary* pAnnotDict,
+    std::ostringstream* psAppStream,
+    std::unique_ptr<CPDF_Dictionary> pResourceDict,
+    bool bIsTextMarkupAnnotation) {
+  CPDF_Stream* pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
+  pNormalStream->SetData(psAppStream);
+
+  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor("AP");
+  if (!pAPDict)
+    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+
+  pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
+
+  CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
+  pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
+  pStreamDict->SetNewFor<CPDF_String>("Subtype", "Form", false);
+  pStreamDict->SetMatrixFor("Matrix", CFX_Matrix());
+
+  CFX_FloatRect rect = bIsTextMarkupAnnotation
+                           ? CPDF_Annot::RectFromQuadPoints(pAnnotDict)
+                           : pAnnotDict->GetRectFor("Rect");
+  pStreamDict->SetRectFor("BBox", rect);
+  pStreamDict->SetFor("Resources", std::move(pResourceDict));
 }
 
 // Static.

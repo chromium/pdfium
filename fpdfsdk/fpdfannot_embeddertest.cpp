@@ -6,7 +6,9 @@
 #include <string>
 #include <vector>
 
+#include "core/fxcrt/fx_system.h"
 #include "public/fpdf_annot.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -23,7 +25,7 @@ TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
   // normal appearance defined, only its rollover appearance. In this case, its
   // normal appearance should be generated, allowing the highlight annotation to
   // still display.
-  FPDF_BITMAP bitmap = RenderPageWithFlags(page, FPDF_ANNOT);
+  FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
   CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
   FPDFBitmap_Destroy(bitmap);
 
@@ -457,7 +459,122 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   rect = FPDFAnnot_GetRect(annot);
   EXPECT_NEAR(351.8204f, rect.left, 0.001f);
   FPDFPage_CloseAnnot(annot);
+  FPDF_ClosePage(new_page);
+  FPDF_CloseDocument(new_doc);
+}
 
+TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5[] = "c35408717759562d1f8bf33d317483d2";
+  const char md5_2[] = "cf3cea74bd46497520ff6c4d1ea228c8";
+  const char md5_3[] = "ee5372b31fede117fc83b9384598aa25";
+#elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+  const char md5[] = "bdf96279ab82d9f484874db3f0c03429";
+  const char md5_2[] = "5f2b32b7aa93bc1e62a7a7971f54bdd7";
+  const char md5_3[] = "272661f3e5c9516aac4b5beb3ae1b36a";
+#else
+  const char md5[] = "07d4168715553b4294525f840c40aa1c";
+  const char md5_2[] = "dd5ba8996af67d0e5add418195e4d61b";
+  const char md5_3[] = "c60c2cc2c4e7b13be90bd77cc4502f97";
+#endif
+
+  // Open a file with two annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+
+  // Check that the page renders correctly.
+  FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 595, 842, md5);
+  FPDFBitmap_Destroy(bitmap);
+
+  // Retrieve the stamp annotation which has its AP stream already defined.
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  ASSERT_TRUE(annot);
+
+  // Check that this annotation has one path object and retrieve it.
+  EXPECT_EQ(1, FPDFAnnot_GetPathObjectCount(annot));
+  FPDF_PAGEOBJECT path = FPDFAnnot_GetPathObject(annot, 1);
+  EXPECT_FALSE(path);
+  path = FPDFAnnot_GetPathObject(annot, 0);
+  EXPECT_TRUE(path);
+
+  // Modify the color of the path object.
+  EXPECT_TRUE(FPDFPath_SetStrokeColor(path, 0, 0, 0, 255));
+  EXPECT_TRUE(FPDFAnnot_UpdatePathObject(annot, path));
+  FPDFPage_CloseAnnot(annot);
+
+  // Check that the page with the modified annotation renders correctly.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 595, 842, md5_2);
+  FPDFBitmap_Destroy(bitmap);
+
+  // Create another stamp annotation and set its annotation rectangle.
+  annot = FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP);
+  ASSERT_TRUE(annot);
+  FS_RECTF rect;
+  rect.left = 200.f;
+  rect.bottom = 400.f;
+  rect.right = 500.f;
+  rect.top = 600.f;
+  EXPECT_TRUE(FPDFAnnot_SetRect(annot, &rect));
+
+  // Add a new path to the annotation.
+  FPDF_PAGEOBJECT check = FPDFPageObj_CreateNewPath(200, 500);
+  EXPECT_TRUE(FPDFPath_LineTo(check, 300, 400));
+  EXPECT_TRUE(FPDFPath_LineTo(check, 500, 600));
+  EXPECT_TRUE(FPDFPath_MoveTo(check, 350, 550));
+  EXPECT_TRUE(FPDFPath_LineTo(check, 450, 450));
+  EXPECT_TRUE(FPDFPath_SetStrokeColor(check, 0, 255, 255, 180));
+  EXPECT_TRUE(FPDFPath_SetStrokeWidth(check, 8.35f));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
+  EXPECT_TRUE(FPDFAnnot_AppendPathObject(annot, check));
+  EXPECT_EQ(1, FPDFAnnot_GetPathObjectCount(annot));
+
+  // Check that the annotation's bounding box came from its rectangle.
+  FS_RECTF new_rect = FPDFAnnot_GetRect(annot);
+  EXPECT_EQ(rect.left, new_rect.left);
+  EXPECT_EQ(rect.bottom, new_rect.bottom);
+  EXPECT_EQ(rect.right, new_rect.right);
+  EXPECT_EQ(rect.top, new_rect.top);
+
+  // Save the document, closing the page and document.
+  FPDFPage_CloseAnnot(annot);
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  FPDF_ClosePage(page);
+
+  // Open the saved document.
+  std::string new_file = GetString();
+  FPDF_FILEACCESS file_access;
+  memset(&file_access, 0, sizeof(file_access));
+  file_access.m_FileLen = new_file.size();
+  file_access.m_GetBlock = GetBlockFromString;
+  file_access.m_Param = &new_file;
+  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ASSERT_TRUE(new_doc);
+  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+  ASSERT_TRUE(new_page);
+
+  // Check that the saved document has a correct count of annotations and paths.
+  EXPECT_EQ(3, FPDFPage_GetAnnotCount(new_page));
+  annot = FPDFPage_GetAnnot(new_page, 2);
+  ASSERT_TRUE(annot);
+  EXPECT_EQ(1, FPDFAnnot_GetPathObjectCount(annot));
+
+  // Check that the new annotation's rectangle is as defined.
+  new_rect = FPDFAnnot_GetRect(annot);
+  EXPECT_EQ(rect.left, new_rect.left);
+  EXPECT_EQ(rect.bottom, new_rect.bottom);
+  EXPECT_EQ(rect.right, new_rect.right);
+  EXPECT_EQ(rect.top, new_rect.top);
+
+  // Check that the saved page renders correctly.
+  bitmap = RenderPageWithFlags(new_page, nullptr, FPDF_ANNOT);
+  CompareBitmap(bitmap, 595, 842, md5_3);
+  FPDFBitmap_Destroy(bitmap);
+
+  FPDFPage_CloseAnnot(annot);
   FPDF_ClosePage(new_page);
   FPDF_CloseDocument(new_doc);
 }

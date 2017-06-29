@@ -103,7 +103,9 @@ class EmbedderTest : public ::testing::Test,
 
   // Convert a loaded page into a bitmap with page rendering flags specified.
   // See public/fpdfview.h for a list of page rendering flags.
-  virtual FPDF_BITMAP RenderPageWithFlags(FPDF_PAGE page, int flags);
+  virtual FPDF_BITMAP RenderPageWithFlags(FPDF_PAGE page,
+                                          FPDF_FORMHANDLE handle,
+                                          int flags);
 
   // Relese the resources obtained from LoadPage(). Further use of |page|
   // is prohibited after this call is made.
