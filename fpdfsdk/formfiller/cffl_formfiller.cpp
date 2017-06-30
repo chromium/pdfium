@@ -120,17 +120,16 @@ bool CFFL_FormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     uint32_t nFlags,
                                     const CFX_PointF& point) {
-  if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true)) {
-    m_bValid = true;
-    FX_RECT rect = GetViewBBox(pPageView, pAnnot);
-    InvalidateRect(rect);
-    if (!rect.Contains(static_cast<int>(point.x), static_cast<int>(point.y)))
-      return false;
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true);
+  if (!pWnd)
+    return false;
 
-    return pWnd->OnLButtonDown(WndtoPWL(pPageView, point), nFlags);
-  }
-
-  return false;
+  m_bValid = true;
+  FX_RECT rect = GetViewBBox(pPageView, pAnnot);
+  InvalidateRect(rect);
+  if (!rect.Contains(static_cast<int>(point.x), static_cast<int>(point.y)))
+    return false;
+  return pWnd->OnLButtonDown(WndtoPWL(pPageView, point), nFlags);
 }
 
 bool CFFL_FormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
@@ -212,31 +211,27 @@ bool CFFL_FormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
 bool CFFL_FormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                 uint32_t nKeyCode,
                                 uint32_t nFlags) {
-  if (IsValid()) {
-    CPDFSDK_PageView* pPageView = GetCurPageView(true);
-    ASSERT(pPageView);
+  if (!IsValid())
+    return false;
 
-    if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false)) {
-      return pWnd->OnKeyDown(nKeyCode, nFlags);
-    }
-  }
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
 
-  return false;
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  return pWnd && pWnd->OnKeyDown(nKeyCode, nFlags);
 }
 
 bool CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
                              uint32_t nChar,
                              uint32_t nFlags) {
-  if (IsValid()) {
-    CPDFSDK_PageView* pPageView = GetCurPageView(true);
-    ASSERT(pPageView);
+  if (!IsValid())
+    return false;
 
-    if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false)) {
-      return pWnd->OnChar(nChar, nFlags);
-    }
-  }
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
 
-  return false;
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  return pWnd && pWnd->OnChar(nChar, nFlags);
 }
 
 CFX_WideString CFFL_FormFiller::GetSelectedText(CPDFSDK_Annot* pAnnot) {
@@ -358,13 +353,7 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
   if (!bNew)
     return pWnd;
 
-  if (found) {
-    CFFL_PrivateData* pPrivateData = (CFFL_PrivateData*)pWnd->GetAttachedData();
-    if (pPrivateData->nWidgetAge != m_pWidget->GetAppearanceAge()) {
-      return ResetPDFWindow(
-          pPageView, m_pWidget->GetValueAge() == pPrivateData->nValueAge);
-    }
-  } else {
+  if (!found) {
     PWL_CREATEPARAM cp = GetCreateParam();
     cp.pAttachedWidget.Reset(m_pWidget.Get());
 
@@ -374,11 +363,17 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
     pPrivateData->nWidgetAge = m_pWidget->GetAppearanceAge();
     pPrivateData->nValueAge = 0;
     cp.pAttachedData = pPrivateData;
-    pWnd = NewPDFWindow(cp);
-    m_Maps[pPageView] = pWnd;
+    CPWL_Wnd* pNewWnd = NewPDFWindow(cp);
+    m_Maps[pPageView] = pNewWnd;
+    return pNewWnd;
   }
 
-  return pWnd;
+  auto* pPrivateData = static_cast<CFFL_PrivateData*>(pWnd->GetAttachedData());
+  if (pPrivateData->nWidgetAge == m_pWidget->GetAppearanceAge())
+    return pWnd;
+
+  return ResetPDFWindow(pPageView,
+                        m_pWidget->GetValueAge() == pPrivateData->nValueAge);
 }
 
 void CFFL_FormFiller::DestroyPDFWindow(CPDFSDK_PageView* pPageView) {
