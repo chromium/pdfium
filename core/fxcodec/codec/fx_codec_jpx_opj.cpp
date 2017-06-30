@@ -769,7 +769,10 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     color_sycc_to_rgb(image);
   }
   if (image->icc_profile_buf) {
-    FX_Free(image->icc_profile_buf);
+    // TODO(crbug.com/737033): Using |free| here resolves the crash described in
+    // chromium:737033, but ultimately we need to harmonize the memory
+    // allocation strategy across OpenJPEG and its PDFium callers.
+    free(image->icc_profile_buf);
     image->icc_profile_buf = nullptr;
     image->icc_profile_len = 0;
   }
