@@ -179,7 +179,7 @@ void CPWL_Edit::SetParamByFlag() {
   m_pEdit->EnableUndo(HasFlag(PES_UNDO));
 
   if (HasFlag(PES_TEXTOVERFLOW)) {
-    SetClipRect(CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f));
+    SetClipRect(CFX_FloatRect());
     m_pEdit->SetTextOverflow(true, false);
   } else {
     if (m_pEditCaret) {

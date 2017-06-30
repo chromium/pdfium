@@ -122,7 +122,7 @@ void CPWL_EditCtrl::CreateEditCaret(const PWL_CREATEPARAM& cp) {
   ecp.dwFlags = PWS_CHILD | PWS_NOREFRESHCLIP;
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;
-  ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
+  ecp.rcRectWnd = CFX_FloatRect();
 
   m_pEditCaret->Create(ecp);
 }

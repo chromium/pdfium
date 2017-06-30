@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -54,8 +56,7 @@ CFX_FloatRect CFFL_FormFiller::GetWindowRect(CPDFSDK_PageView* pPageView) {
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false)) {
     return pWnd->GetWindowRect();
   }
-
-  return CFX_FloatRect(0, 0, 0, 0);
+  return CFX_FloatRect();
 }
 
 FX_RECT CFFL_FormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
@@ -433,8 +434,7 @@ CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
   float fWidth = rectAnnot.right - rectAnnot.left;
   float fHeight = rectAnnot.top - rectAnnot.bottom;
   if ((m_pWidget->GetRotate() / 90) & 0x01)
-    return CFX_FloatRect(0, 0, fHeight, fWidth);
-
+    std::swap(fWidth, fHeight);
   return CFX_FloatRect(0, 0, fWidth, fHeight);
 }
 
@@ -450,7 +450,7 @@ CFX_FloatRect CFFL_FormFiller::GetFocusBox(CPDFSDK_PageView* pPageView) {
     if (rcPage.Contains(rcFocus))
       return rcFocus;
   }
-  return CFX_FloatRect(0, 0, 0, 0);
+  return CFX_FloatRect();
 }
 
 CFX_FloatRect CFFL_FormFiller::FFLtoPWL(const CFX_FloatRect& rect) {

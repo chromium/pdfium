@@ -293,7 +293,7 @@ void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
   if (!HasFlag(PCBS_ALLOWCUSTOMTEXT))
     ecp.dwFlags |= PWS_READONLY;
 
-  ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
+  ecp.rcRectWnd = CFX_FloatRect();
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;
   m_pEdit->Create(ecp);
@@ -330,7 +330,7 @@ void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
   lcp.nBorderStyle = BorderStyle::SOLID;
   lcp.dwBorderWidth = 1;
   lcp.eCursorType = FXCT_ARROW;
-  lcp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
+  lcp.rcRectWnd = CFX_FloatRect();
 
   if (cp.dwFlags & PWS_AUTOFONTSIZE)
     lcp.fFontSize = PWLCB_DEFAULTFONTSIZE;

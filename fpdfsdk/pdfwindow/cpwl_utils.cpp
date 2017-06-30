@@ -353,22 +353,19 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   Icon.SetIconFit(&IconFit);
   Icon.SetPDFStream(pIconStream);
 
-  CFX_FloatRect rcLabel = CFX_FloatRect(0, 0, 0, 0);
-  CFX_FloatRect rcIcon = CFX_FloatRect(0, 0, 0, 0);
+  CFX_FloatRect rcLabel;
+  CFX_FloatRect rcIcon;
   float fWidth = 0.0f;
   float fHeight = 0.0f;
 
   switch (nLayOut) {
     case PPBL_LABEL:
       rcLabel = rcBBox;
-      rcIcon = CFX_FloatRect(0, 0, 0, 0);
       break;
     case PPBL_ICON:
       rcIcon = rcBBox;
-      rcLabel = CFX_FloatRect(0, 0, 0, 0);
       break;
     case PPBL_ICONTOPLABELBOTTOM:
-
       if (pIconStream) {
         if (IsFloatZero(fFontSize)) {
           fHeight = rcBBox.top - rcBBox.bottom;
@@ -380,7 +377,6 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
           fHeight = rcLabelContent.Height();
 
           if (rcBBox.bottom + fHeight > rcBBox.top) {
-            rcIcon = CFX_FloatRect(0, 0, 0, 0);
             rcLabel = rcBBox;
           } else {
             rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
@@ -391,12 +387,9 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
         }
       } else {
         rcLabel = rcBBox;
-        rcIcon = CFX_FloatRect(0, 0, 0, 0);
       }
-
       break;
     case PPBL_LABELTOPICONBOTTOM:
-
       if (pIconStream) {
         if (IsFloatZero(fFontSize)) {
           fHeight = rcBBox.top - rcBBox.bottom;
@@ -409,7 +402,6 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
           fHeight = rcLabelContent.Height();
 
           if (rcBBox.bottom + fHeight > rcBBox.top) {
-            rcIcon = CFX_FloatRect(0, 0, 0, 0);
             rcLabel = rcBBox;
           } else {
             rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.top - fHeight,
@@ -420,21 +412,17 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
         }
       } else {
         rcLabel = rcBBox;
-        rcIcon = CFX_FloatRect(0, 0, 0, 0);
       }
-
       break;
     case PPBL_ICONLEFTLABELRIGHT:
-
       if (pIconStream) {
         if (IsFloatZero(fFontSize)) {
           fWidth = rcBBox.right - rcBBox.left;
-          rcLabel = CFX_FloatRect(rcBBox.right - fWidth * fAutoFontScale,
-                                  rcBBox.bottom, rcBBox.right, rcBBox.top);
-          rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
-                                 rcBBox.top);
-
           if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
+            rcLabel = CFX_FloatRect(rcBBox.right - fWidth * fAutoFontScale,
+                                    rcBBox.bottom, rcBBox.right, rcBBox.top);
+            rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
+                                   rcBBox.top);
           } else {
             if (rcLabelContent.Width() < fWidth) {
               rcLabel = CFX_FloatRect(rcBBox.right - rcLabelContent.Width(),
@@ -443,15 +431,12 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                      rcBBox.top);
             } else {
               rcLabel = rcBBox;
-              rcIcon = CFX_FloatRect(0, 0, 0, 0);
             }
           }
         } else {
           fWidth = rcLabelContent.Width();
-
           if (rcBBox.left + fWidth > rcBBox.right) {
             rcLabel = rcBBox;
-            rcIcon = CFX_FloatRect(0, 0, 0, 0);
           } else {
             rcLabel = CFX_FloatRect(rcBBox.right - fWidth, rcBBox.bottom,
                                     rcBBox.right, rcBBox.top);
@@ -461,22 +446,18 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
         }
       } else {
         rcLabel = rcBBox;
-        rcIcon = CFX_FloatRect(0, 0, 0, 0);
       }
-
       break;
     case PPBL_LABELLEFTICONRIGHT:
-
       if (pIconStream) {
         if (IsFloatZero(fFontSize)) {
           fWidth = rcBBox.right - rcBBox.left;
-          rcLabel =
-              CFX_FloatRect(rcBBox.left, rcBBox.bottom,
-                            rcBBox.left + fWidth * fAutoFontScale, rcBBox.top);
-          rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
-                                 rcBBox.top);
-
           if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
+            rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
+                                    rcBBox.left + fWidth * fAutoFontScale,
+                                    rcBBox.top);
+            rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
+                                   rcBBox.top);
           } else {
             if (rcLabelContent.Width() < fWidth) {
               rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
@@ -486,15 +467,12 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                      rcBBox.top);
             } else {
               rcLabel = rcBBox;
-              rcIcon = CFX_FloatRect(0, 0, 0, 0);
             }
           }
         } else {
           fWidth = rcLabelContent.Width();
-
           if (rcBBox.left + fWidth > rcBBox.right) {
             rcLabel = rcBBox;
-            rcIcon = CFX_FloatRect(0, 0, 0, 0);
           } else {
             rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
                                     rcBBox.left + fWidth, rcBBox.top);
@@ -504,9 +482,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
         }
       } else {
         rcLabel = rcBBox;
-        rcIcon = CFX_FloatRect(0, 0, 0, 0);
       }
-
       break;
     case PPBL_LABELOVERICON:
       rcLabel = rcBBox;

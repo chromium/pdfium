@@ -276,8 +276,7 @@ CFX_FloatRect CPDFSDK_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot) {
   if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return CFX_FloatRect(m_pFormFiller->GetViewBBox(pPageView, pAnnot));
-
-  return CFX_FloatRect(0, 0, 0, 0);
+  return CFX_FloatRect();
 }
 
 CFX_WideString CPDFSDK_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {

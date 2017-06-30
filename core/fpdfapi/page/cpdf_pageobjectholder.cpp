@@ -55,7 +55,7 @@ void CPDF_PageObjectHolder::Transform(const CFX_Matrix& matrix) {
 
 CFX_FloatRect CPDF_PageObjectHolder::CalcBoundingBox() const {
   if (m_PageObjectList.empty())
-    return CFX_FloatRect(0, 0, 0, 0);
+    return CFX_FloatRect();
 
   float left = 1000000.0f;
   float right = -1000000.0f;
