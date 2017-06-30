@@ -240,7 +240,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static void EncodeXML(const CFX_ByteStringC& szXMLString,
                         CFX_ByteTextBuf& szResultBuf);
   static bool HTMLSTR2Code(const CFX_WideStringC& pData, uint32_t& iCode);
-  static bool HTMLCode2STR(uint32_t iCode, CFX_WideString& wsHTMLReserve);
+  static bool HTMLCode2STR(uint32_t iCode, CFX_WideString* wsHTMLReserve);
   static void Format(CFXJSE_Value* pThis,
                      const CFX_ByteStringC& szFuncName,
                      CFXJSE_Arguments& args);
