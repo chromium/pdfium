@@ -249,6 +249,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   if (!m_pNormalWidget)
     return false;
 
+  CFWL_Edit* pEdit = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
   XFA_VALUEPICTURE eType = XFA_VALUEPICTURE_Display;
   if (IsFocused())
     eType = XFA_VALUEPICTURE_Edit;
@@ -260,28 +261,24 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     int32_t iMaxChars = m_pDataAcc->GetMaxChars(elementType);
     if (elementType == XFA_Element::ExData)
       iMaxChars = eType == XFA_VALUEPICTURE_Edit ? iMaxChars : 0;
-    if (static_cast<CFWL_Edit*>(m_pNormalWidget.get())->GetLimit() !=
-        iMaxChars) {
-      static_cast<CFWL_Edit*>(m_pNormalWidget.get())->SetLimit(iMaxChars);
+    if (pEdit->GetLimit() != iMaxChars) {
+      pEdit->SetLimit(iMaxChars);
       bUpdate = true;
     }
-  }
-
-  if (m_pDataAcc->GetUIType() == XFA_Element::Barcode) {
+  } else if (m_pDataAcc->GetUIType() == XFA_Element::Barcode) {
     int32_t nDataLen = 0;
     if (eType == XFA_VALUEPICTURE_Edit)
       m_pDataAcc->GetBarcodeAttribute_DataLength(&nDataLen);
-    static_cast<CFWL_Edit*>(m_pNormalWidget.get())->SetLimit(nDataLen);
+    pEdit->SetLimit(nDataLen);
     bUpdate = true;
   }
 
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, eType);
 
-  CFX_WideString wsOldText =
-      static_cast<CFWL_Edit*>(m_pNormalWidget.get())->GetText();
+  CFX_WideString wsOldText = pEdit->GetText();
   if (wsText != wsOldText || (eType == XFA_VALUEPICTURE_Edit && bUpdate)) {
-    static_cast<CFWL_Edit*>(m_pNormalWidget.get())->SetText(wsText);
+    pEdit->SetText(wsText);
     bUpdate = true;
   }
   if (bUpdate)
@@ -323,9 +320,7 @@ void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
 }
 
 bool CXFA_FFTextEdit::CheckWord(const CFX_ByteStringC& sWord) {
-  if (sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_Element::TextEdit)
-    return true;
-  return false;
+  return sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_Element::TextEdit;
 }
 
 void CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {

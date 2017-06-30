@@ -1140,34 +1140,24 @@ bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {
     return true;
 
   CFX_WideString wsText = m_EdtEngine.GetText(0, -1);
-  if (wsText.IsEmpty()) {
-    if (cNum == L'0')
-      return false;
-    return true;
-  }
+  if (wsText.IsEmpty())
+    return cNum != L'0';
+
+  if (CountSelRanges() != 0)
+    return wsText.GetInteger() <= m_iMax;
 
   int32_t caretPos = m_EdtEngine.GetCaretPos();
-  if (CountSelRanges() == 0) {
-    if (cNum == L'0' && caretPos == 0)
-      return false;
-
-    int32_t nLen = wsText.GetLength();
-    CFX_WideString l = wsText.Mid(0, caretPos);
-    CFX_WideString r = wsText.Mid(caretPos, nLen - caretPos);
-    CFX_WideString wsNew = l + cNum + r;
-    if (wsNew.GetInteger() <= m_iMax)
-      return true;
+  if (cNum == L'0' && caretPos == 0)
     return false;
-  }
 
-  if (wsText.GetInteger() <= m_iMax)
-    return true;
-  return false;
+  int32_t nLen = wsText.GetLength();
+  CFX_WideString l = wsText.Mid(0, caretPos);
+  CFX_WideString r = wsText.Mid(caretPos, nLen - caretPos);
+  CFX_WideString wsNew = l + cNum + r;
+  return wsNew.GetInteger() <= m_iMax;
 }
 
 void CFWL_Edit::InitCaret() {
-  if (!m_pCaret)
-    return;
   m_pCaret.reset();
 }
 
@@ -1233,9 +1223,7 @@ void CFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
-  if (!pEvent)
-    return;
-  if (pEvent->GetType() != CFWL_Event::Type::Scroll)
+  if (!pEvent || pEvent->GetType() != CFWL_Event::Type::Scroll)
     return;
 
   CFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
@@ -1261,10 +1249,8 @@ void CFWL_Edit::DoButtonDown(CFWL_MessageMouse* pMsg) {
     return;
 
   bool bBefore = true;
-  int32_t nIndex = pPage->GetCharIndex(DeviceToEngine(pMsg->m_pos), bBefore);
-  if (nIndex < 0)
-    nIndex = 0;
-
+  int32_t nIndex =
+      std::max(0, pPage->GetCharIndex(DeviceToEngine(pMsg->m_pos), bBefore));
   m_EdtEngine.SetCaretPos(nIndex, bBefore);
 }
 

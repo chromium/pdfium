@@ -184,10 +184,6 @@ bool CXFA_FFWidget::GetCaptionText(CFX_WideString& wsCap) {
   return true;
 }
 
-bool CXFA_FFWidget::IsFocused() {
-  return !!(m_dwStatus & XFA_WidgetStatus_Focused);
-}
-
 bool CXFA_FFWidget::OnMouseEnter() {
   return false;
 }

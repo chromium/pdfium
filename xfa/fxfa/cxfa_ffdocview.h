@@ -49,8 +49,8 @@ class CXFA_FFDocView {
   void StopLayout();
   int32_t GetLayoutStatus();
   void UpdateDocView();
-  int32_t CountPageViews();
-  CXFA_FFPageView* GetPageView(int32_t nIndex);
+  int32_t CountPageViews() const;
+  CXFA_FFPageView* GetPageView(int32_t nIndex) const;
 
   void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc);
   int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
@@ -111,7 +111,7 @@ class CXFA_FFDocView {
   void RunBindItems();
   bool InitCalculate(CXFA_Node* pNode);
   void InitLayout(CXFA_Node* pNode);
-  void RunCalculateRecursive(int32_t& iIndex);
+  size_t RunCalculateRecursive(size_t index);
   void ShowNullTestMsg();
   bool ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
   CXFA_Node* GetRootSubform();

@@ -490,16 +490,10 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
     return false;
   if (wYear < 1900 || wYear > 2029)
     return false;
-  if (wMonth < 1 || wMonth > 12) {
-    if (wMonth == 0 && nLen == wCountY)
-      return true;
-    return false;
-  }
-  if (wDay < 1) {
-    if (wDay == 0 && (nLen == wCountY + wCountM))
-      return true;
-    return false;
-  }
+  if (wMonth < 1 || wMonth > 12)
+    return wMonth == 0 && nLen == wCountY;
+  if (wDay < 1)
+    return wDay == 0 && (nLen == wCountY + wCountM);
   if (wMonth == 2) {
     if (wYear % 400 == 0 || (wYear % 100 != 0 && wYear % 4 == 0)) {
       if (wDay > 29)
