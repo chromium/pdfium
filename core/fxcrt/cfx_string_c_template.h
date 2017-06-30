@@ -167,6 +167,13 @@ class CFX_StringCTemplate {
     return result < 0 || (result == 0 && m_Length < that.m_Length);
   }
 
+  bool operator>(const CFX_StringCTemplate& that) const {
+    int result = FXSYS_cmp(reinterpret_cast<const CharType*>(m_Ptr.Get()),
+                           reinterpret_cast<const CharType*>(that.m_Ptr.Get()),
+                           std::min(m_Length, that.m_Length));
+    return result > 0 || (result == 0 && m_Length > that.m_Length);
+  }
+
  protected:
   CFX_UnownedPtr<const UnsignedType> m_Ptr;
   FX_STRSIZE m_Length;

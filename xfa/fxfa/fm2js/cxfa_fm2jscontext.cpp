@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <iostream>
 
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_extension.h"
@@ -35,140 +36,95 @@ struct XFA_FMHtmlReserveCode {
   const wchar_t* m_htmlReserve;
 };
 
-struct XFA_FMHtmlHashedReserveCode {
-  uint32_t m_uHash;
-  uint32_t m_uCode;
+// Sorted by m_htmlReserve
+XFA_FMHtmlReserveCode reservesForDecode[] = {
+    {198, L"AElig"},   {193, L"Aacute"},   {194, L"Acirc"},
+    {192, L"Agrave"},  {913, L"Alpha"},    {197, L"Aring"},
+    {195, L"Atilde"},  {196, L"Auml"},     {914, L"Beta"},
+    {199, L"Ccedil"},  {935, L"Chi"},      {8225, L"Dagger"},
+    {916, L"Delta"},   {208, L"ETH"},      {201, L"Eacute"},
+    {202, L"Ecirc"},   {200, L"Egrave"},   {917, L"Epsilon"},
+    {919, L"Eta"},     {203, L"Euml"},     {915, L"Gamma"},
+    {922, L"Kappa"},   {923, L"Lambda"},   {924, L"Mu"},
+    {209, L"Ntilde"},  {925, L"Nu"},       {338, L"OElig"},
+    {211, L"Oacute"},  {212, L"Ocirc"},    {210, L"Ograve"},
+    {937, L"Omega"},   {927, L"Omicron"},  {216, L"Oslash"},
+    {213, L"Otilde"},  {214, L"Ouml"},     {934, L"Phi"},
+    {928, L"Pi"},      {936, L"Psi"},      {929, L"Rho"},
+    {352, L"Scaron"},  {931, L"Sigma"},    {222, L"THORN"},
+    {932, L"Tau"},     {920, L"Theta"},    {218, L"Uacute"},
+    {219, L"Ucirc"},   {217, L"Ugrave"},   {933, L"Upsilon"},
+    {220, L"Uuml"},    {926, L"Xi"},       {221, L"Yacute"},
+    {376, L"Yuml"},    {918, L"Zeta"},     {225, L"aacute"},
+    {226, L"acirc"},   {180, L"acute"},    {230, L"aelig"},
+    {224, L"agrave"},  {8501, L"alefsym"}, {945, L"alpha"},
+    {38, L"amp"},      {8743, L"and"},     {8736, L"ang"},
+    {39, L"apos"},     {229, L"aring"},    {8776, L"asymp"},
+    {227, L"atilde"},  {228, L"auml"},     {8222, L"bdquo"},
+    {946, L"beta"},    {166, L"brvbar"},   {8226, L"bull"},
+    {8745, L"cap"},    {231, L"ccedil"},   {184, L"cedil"},
+    {162, L"cent"},    {967, L"chi"},      {710, L"circ"},
+    {9827, L"clubs"},  {8773, L"cong"},    {169, L"copy"},
+    {8629, L"crarr"},  {8746, L"cup"},     {164, L"current"},
+    {8659, L"dArr"},   {8224, L"dagger"},  {8595, L"darr"},
+    {176, L"deg"},     {948, L"delta"},    {9830, L"diams"},
+    {247, L"divide"},  {233, L"eacute"},   {234, L"ecirc"},
+    {232, L"egrave"},  {8709, L"empty"},   {8195, L"emsp"},
+    {8194, L"ensp"},   {949, L"epsilon"},  {8801, L"equiv"},
+    {951, L"eta"},     {240, L"eth"},      {235, L"euml"},
+    {8364, L"euro"},   {8707, L"exist"},   {402, L"fnof"},
+    {8704, L"forall"}, {189, L"frac12"},   {188, L"frac14"},
+    {190, L"frac34"},  {8260, L"frasl"},   {947, L"gamma"},
+    {8805, L"ge"},     {62, L"gt"},        {8660, L"hArr"},
+    {8596, L"harr"},   {9829, L"hearts"},  {8230, L"hellip"},
+    {237, L"iacute"},  {238, L"icirc"},    {161, L"iexcl"},
+    {236, L"igrave"},  {8465, L"image"},   {8734, L"infin"},
+    {8747, L"int"},    {953, L"iota"},     {191, L"iquest"},
+    {8712, L"isin"},   {239, L"iuml"},     {954, L"kappa"},
+    {8656, L"lArr"},   {205, L"lacute"},   {955, L"lambda"},
+    {9001, L"lang"},   {171, L"laquo"},    {8592, L"larr"},
+    {8968, L"lceil"},  {206, L"lcirc"},    {8220, L"ldquo"},
+    {8804, L"le"},     {8970, L"lfloor"},  {204, L"lgrave"},
+    {921, L"lota"},    {8727, L"lowast"},  {9674, L"loz"},
+    {8206, L"lrm"},    {8249, L"lsaquo"},  {8216, L"lsquo"},
+    {60, L"lt"},       {207, L"luml"},     {175, L"macr"},
+    {8212, L"mdash"},  {181, L"micro"},    {183, L"middot"},
+    {8722, L"minus"},  {956, L"mu"},       {8711, L"nabla"},
+    {160, L"nbsp"},    {8211, L"ndash"},   {8800, L"ne"},
+    {8715, L"ni"},     {172, L"not"},      {8713, L"notin"},
+    {8836, L"nsub"},   {241, L"ntilde"},   {957, L"nu"},
+    {243, L"oacute"},  {244, L"ocirc"},    {339, L"oelig"},
+    {242, L"ograve"},  {8254, L"oline"},   {969, L"omega"},
+    {959, L"omicron"}, {8853, L"oplus"},   {8744, L"or"},
+    {170, L"ordf"},    {186, L"ordm"},     {248, L"oslash"},
+    {245, L"otilde"},  {8855, L"otimes"},  {246, L"ouml"},
+    {182, L"para"},    {8706, L"part"},    {8240, L"permil"},
+    {8869, L"perp"},   {966, L"phi"},      {960, L"pi"},
+    {982, L"piv"},     {177, L"plusmn"},   {8242, L"prime"},
+    {8719, L"prod"},   {8733, L"prop"},    {968, L"psi"},
+    {163, L"pund"},    {34, L"quot"},      {8658, L"rArr"},
+    {8730, L"radic"},  {9002, L"rang"},    {187, L"raquo"},
+    {8594, L"rarr"},   {8969, L"rceil"},   {8476, L"real"},
+    {174, L"reg"},     {8971, L"rfloor"},  {961, L"rho"},
+    {8207, L"rlm"},    {8250, L"rsaquo"},  {8217, L"rsquo"},
+    {353, L"saron"},   {8218, L"sbquo"},   {8901, L"sdot"},
+    {167, L"sect"},    {173, L"shy"},      {963, L"sigma"},
+    {962, L"sigmaf"},  {8764, L"sim"},     {9824, L"spades"},
+    {8834, L"sub"},    {8838, L"sube"},    {8721, L"sum"},
+    {8835, L"sup"},    {185, L"sup1"},     {178, L"sup2"},
+    {179, L"sup3"},    {8839, L"supe"},    {223, L"szlig"},
+    {964, L"tau"},     {8221, L"tdquo"},   {8756, L"there4"},
+    {952, L"theta"},   {977, L"thetasym"}, {8201, L"thinsp"},
+    {254, L"thorn"},   {732, L"tilde"},    {215, L"times"},
+    {8482, L"trade"},  {8657, L"uArr"},    {250, L"uacute"},
+    {8593, L"uarr"},   {251, L"ucirc"},    {249, L"ugrave"},
+    {168, L"uml"},     {978, L"upsih"},    {965, L"upsilon"},
+    {252, L"uuml"},    {8472, L"weierp"},  {958, L"xi"},
+    {253, L"yacute"},  {165, L"yen"},      {255, L"yuml"},
+    {950, L"zeta"},    {8205, L"zwj"},     {8204, L"zwnj"},
 };
 
-const XFA_FMHtmlHashedReserveCode reservesForDecode[] = {
-    {0x00018b62, /*L"Mu",*/ 924},       {0x00019083, /*L"Nu",*/ 925},
-    {0x00019ab9, /*L"Pi",*/ 928},       {0x0001c3c1, /*L"Xi",*/ 926},
-    {0x000210ac, /*L"ge",*/ 8805},      {0x000210bb, /*L"gt",*/ 62},
-    {0x00022a51, /*L"le",*/ 8804},      {0x00022a60, /*L"lt",*/ 60},
-    {0x00022f82, /*L"mu",*/ 956},       {0x00023493, /*L"ne",*/ 8800},
-    {0x00023497, /*L"ni",*/ 8715},      {0x000234a3, /*L"nu",*/ 957},
-    {0x000239c1, /*L"or",*/ 8744},      {0x00023ed9, /*L"pi",*/ 960},
-    {0x000267e1, /*L"xi",*/ 958},       {0x00c41789, /*L"lceil",*/ 8968},
-    {0x00eef34f, /*L"thetasym",*/ 977}, {0x012d7ead, /*L"lcirc",*/ 206},
-    {0x01637b56, /*L"agrave",*/ 224},   {0x020856da, /*L"crarr",*/ 8629},
-    {0x022188c3, /*L"gamma",*/ 947},    {0x033586d3, /*L"nbsp",*/ 160},
-    {0x04f4c358, /*L"nsub",*/ 8836},    {0x0581466a, /*L"dagger",*/ 8224},
-    {0x06b1f790, /*L"oelig",*/ 339},    {0x06e490d4, /*L"Chi",*/ 935},
-    {0x0718c6a1, /*L"ETH",*/ 208},      {0x07196ada, /*L"Eta",*/ 919},
-    {0x07f667ca, /*L"Ugrave",*/ 217},   {0x083a8a21, /*L"Phi",*/ 934},
-    {0x083ac28c, /*L"Psi",*/ 936},      {0x086f26a9, /*L"Rho",*/ 929},
-    {0x089b5b51, /*L"aring",*/ 229},    {0x08a39f4a, /*L"Tau",*/ 932},
-    {0x08b6188b, /*L"THORN",*/ 222},    {0x09ce792a, /*L"icirc",*/ 238},
-    {0x09f9d61e, /*L"amp",*/ 38},       {0x09f9db33, /*L"and",*/ 8743},
-    {0x09f9db36, /*L"ang",*/ 8736},     {0x0a2e3514, /*L"cap",*/ 8745},
-    {0x0a2e58f4, /*L"chi",*/ 967},      {0x0a2e9ba8, /*L"cup",*/ 8746},
-    {0x0a4897d0, /*L"deg",*/ 176},      {0x0a6332fa, /*L"eta",*/ 951},
-    {0x0a633301, /*L"eth",*/ 240},      {0x0acc4d4b, /*L"int",*/ 8747},
-    {0x0b1b3d35, /*L"loz",*/ 9674},     {0x0b1b4c8b, /*L"lrm",*/ 8206},
-    {0x0b4fd9b1, /*L"not",*/ 172},      {0x0b845241, /*L"phi",*/ 966},
-    {0x0b84576f, /*L"piv",*/ 982},      {0x0b848aac, /*L"psi",*/ 968},
-    {0x0bb8df5e, /*L"reg",*/ 174},      {0x0bb8eec9, /*L"rho",*/ 961},
-    {0x0bb9034b, /*L"rlm",*/ 8207},     {0x0bd33d14, /*L"shy",*/ 173},
-    {0x0bd34229, /*L"sim",*/ 8764},     {0x0bd37faa, /*L"sub",*/ 8834},
-    {0x0bd37fb5, /*L"sum",*/ 8721},     {0x0bd37fb8, /*L"sup",*/ 8835},
-    {0x0bed676a, /*L"tau",*/ 964},      {0x0c07f32e, /*L"uml",*/ 168},
-    {0x0c71032c, /*L"yen",*/ 165},      {0x0c7f2889, /*L"szlig",*/ 223},
-    {0x0c8badbb, /*L"zwj",*/ 8205},     {0x10ba4dba, /*L"Egrave",*/ 200},
-    {0x10f1ea24, /*L"para",*/ 182},     {0x10f1ea37, /*L"part",*/ 8706},
-    {0x115b2337, /*L"perp",*/ 8869},    {0x12b10d15, /*L"prod",*/ 8719},
-    {0x12b10d21, /*L"prop",*/ 8733},    {0x12dfa9f4, /*L"rfloor",*/ 8971},
-    {0x12eb4736, /*L"Agrave",*/ 192},   {0x12fff2b7, /*L"pund",*/ 163},
-    {0x13fda9f2, /*L"tilde",*/ 732},    {0x1417fd62, /*L"times",*/ 215},
-    {0x154fc726, /*L"ecirc",*/ 234},    {0x165aa451, /*L"sigma",*/ 963},
-    {0x1709124a, /*L"Dagger",*/ 8225},  {0x192f78d5, /*L"iexcl",*/ 161},
-    {0x1b7ed8d7, /*L"rArr",*/ 8658},    {0x1ec88c68, /*L"rang",*/ 9002},
-    {0x1ec8a0f7, /*L"rarr",*/ 8594},    {0x1eda07f3, /*L"atilde",*/ 227},
-    {0x1f3182c4, /*L"real",*/ 8476},    {0x1fc34f8b, /*L"yacute",*/ 253},
-    {0x20d11522, /*L"acirc",*/ 226},    {0x21933a9b, /*L"rsaquo",*/ 8250},
-    {0x21f44907, /*L"uacute",*/ 250},   {0x220cca72, /*L"acute",*/ 180},
-    {0x242cded1, /*L"alefsym",*/ 8501}, {0x2655c66a, /*L"delta",*/ 948},
-    {0x269e4b4d, /*L"exist",*/ 8707},   {0x273379fa, /*L"micro",*/ 181},
-    {0x27a37440, /*L"forall",*/ 8704},  {0x2854e62c, /*L"minus",*/ 8722},
-    {0x28636f81, /*L"cedil",*/ 184},    {0x2887357b, /*L"iacute",*/ 237},
-    {0x2994d5ff, /*L"frac12",*/ 189},   {0x2994d601, /*L"frac14",*/ 188},
-    {0x2994e043, /*L"frac34",*/ 190},   {0x2a1feb41, /*L"lambda",*/ 955},
-    {0x2ab215f3, /*L"apos",*/ 39},      {0x2ab82ef7, /*L"eacute",*/ 233},
-    {0x2b3592ef, /*L"auml",*/ 228},     {0x2ce92873, /*L"aacute",*/ 225},
-    {0x2daff48a, /*L"oslash",*/ 248},   {0x2ef68882, /*L"aelig",*/ 230},
-    {0x3061d3d3, /*L"Atilde",*/ 195},   {0x314b1b6b, /*L"Yacute",*/ 221},
-    {0x337c14e7, /*L"Uacute",*/ 218},   {0x37676aca, /*L"cent",*/ 162},
-    {0x37d0b841, /*L"circ",*/ 710},     {0x386e7947, /*L"cong",*/ 8773},
-    {0x386e839b, /*L"copy",*/ 169},     {0x3a0e225a, /*L"Epsilon",*/ 917},
-    {0x3ba7b721, /*L"Lambda",*/ 923},   {0x3bd9abe6, /*L"Alpha",*/ 913},
-    {0x3c3ffad7, /*L"Eacute",*/ 201},   {0x3cfaf69f, /*L"brvbar",*/ 166},
-    {0x3d54a489, /*L"omega",*/ 969},    {0x3e70f453, /*L"Aacute",*/ 193},
-    {0x3f37c06a, /*L"Oslash",*/ 216},   {0x40e1b34e, /*L"diams",*/ 9830},
-    {0x416596df, /*L"plusmn",*/ 177},   {0x4354ff16, /*L"Ucirc",*/ 219},
-    {0x454fce6a, /*L"Upsilon",*/ 933},  {0x4610ad35, /*L"emsp",*/ 8195},
-    {0x462afb76, /*L"ensp",*/ 8194},    {0x46e30073, /*L"euml",*/ 235},
-    {0x46e31a1b, /*L"euro",*/ 8364},    {0x46f2eada, /*L"lowast",*/ 8727},
-    {0x4dca26cf, /*L"Auml",*/ 196},     {0x4e2d6083, /*L"image",*/ 8465},
-    {0x4f964ee8, /*L"notin",*/ 8713},   {0x50917a7a, /*L"epsilon",*/ 949},
-    {0x52f9a4cd, /*L"Kappa",*/ 922},    {0x5496f410, /*L"Ocirc",*/ 212},
-    {0x568cbf34, /*L"zeta",*/ 950},     {0x57badd20, /*L"ntilde",*/ 241},
-    {0x58662109, /*L"zwnj",*/ 8204},    {0x5b39870f, /*L"empty",*/ 8709},
-    {0x5bd3268a, /*L"upsilon",*/ 965},  {0x5e2bf8a3, /*L"Gamma",*/ 915},
-    {0x5f73c13a, /*L"rsquo",*/ 8217},   {0x61f2bc4d, /*L"iota",*/ 953},
-    {0x625bbcf3, /*L"isin",*/ 8712},    {0x62906df7, /*L"iuml",*/ 239},
-    {0x64a5cb31, /*L"Aring",*/ 197},    {0x66f25c4a, /*L"sbquo",*/ 8218},
-    {0x6851ab60, /*L"spades",*/ 9824},  {0x6942a900, /*L"Ntilde",*/ 209},
-    {0x69779453, /*L"Euml",*/ 203},     {0x6cda6e23, /*L"current",*/ 164},
-    {0x70b5b634, /*L"lsquo",*/ 8216},   {0x715a3706, /*L"Ecirc",*/ 202},
-    {0x71e8bf8d, /*L"tdquo",*/ 8221},   {0x72651431, /*L"Sigma",*/ 931},
-    {0x7569813b, /*L"iquest",*/ 191},   {0x776a436a, /*L"equiv",*/ 8801},
-    {0x79215314, /*L"Zeta",*/ 918},     {0x79b81224, /*L"ograve",*/ 242},
-    {0x7c2f8b23, /*L"macr",*/ 175},     {0x7cdb8502, /*L"Acirc",*/ 194},
-    {0x8185c62e, /*L"ndash",*/ 8211},   {0x8260364a, /*L"Delta",*/ 916},
-    {0x846619ad, /*L"mdash",*/ 8212},   {0x8550fb50, /*L"OElig",*/ 338},
-    {0x88eb5b85, /*L"ldquo",*/ 8220},   {0x8b3fde04, /*L"Ograve",*/ 210},
-    {0x8bc5794b, /*L"ordf",*/ 170},     {0x8bc57952, /*L"ordm",*/ 186},
-    {0x8c14923d, /*L"ouml",*/ 246},     {0x8c5a7cd6, /*L"theta",*/ 952},
-    {0x8d61812b, /*L"thorn",*/ 254},    {0x912b95aa, /*L"asymp",*/ 8776},
-    {0x947faf81, /*L"middot",*/ 183},   {0x9629202e, /*L"lfloor",*/ 8970},
-    {0x972e9ec1, /*L"otilde",*/ 245},   {0x9748f231, /*L"otimes",*/ 8855},
-    {0x995f1469, /*L"Omega",*/ 937},    {0x99eb5349, /*L"quot",*/ 34},
-    {0x9aeb639e, /*L"hellip",*/ 8230},  {0xa0ae2f86, /*L"Scaron",*/ 352},
-    {0xa4dcb0d5, /*L"lsaquo",*/ 8249},  {0xa53dbf41, /*L"oacute",*/ 243},
-    {0xa5ae9e7b, /*L"bdquo",*/ 8222},   {0xa602d7ba, /*L"sdot",*/ 8901},
-    {0xa61ce86f, /*L"sect",*/ 167},     {0xa6e4c3d7, /*L"sigmaf",*/ 962},
-    {0xa7c1c74f, /*L"sube",*/ 8838},    {0xa7c20ee9, /*L"sup1",*/ 185},
-    {0xa7c20eea, /*L"sup2",*/ 178},     {0xa7c20eeb, /*L"sup3",*/ 179},
-    {0xa7c20f1d, /*L"supe",*/ 8839},    {0xa8b66aa1, /*L"Otilde",*/ 213},
-    {0xad958c42, /*L"AElig",*/ 198},    {0xaea9261d, /*L"Ouml",*/ 214},
-    {0xb040eafa, /*L"uArr",*/ 8657},    {0xb07c2e1c, /*L"beta",*/ 946},
-    {0xb220e92f, /*L"bull",*/ 8226},    {0xb22750c4, /*L"ccedil",*/ 231},
-    {0xb38ab31a, /*L"uarr",*/ 8593},    {0xb598b683, /*L"uuml",*/ 252},
-    {0xb6c58b21, /*L"Oacute",*/ 211},   {0xb6d2a617, /*L"oline",*/ 8254},
-    {0xba9fd989, /*L"dArr",*/ 8659},    {0xbb5ccd41, /*L"lgrave",*/ 204},
-    {0xbd39b44c, /*L"weierp",*/ 8472},  {0xbde9a1a9, /*L"darr",*/ 8595},
-    {0xc027e329, /*L"permil",*/ 8240},  {0xc2451389, /*L"upsih",*/ 978},
-    {0xc3af1ca4, /*L"Ccedil",*/ 199},   {0xcd164249, /*L"fnof",*/ 402},
-    {0xcf6c8467, /*L"hearts",*/ 9829},  {0xd1228390, /*L"trade",*/ 8482},
-    {0xd1462407, /*L"yuml",*/ 255},     {0xd2cf2253, /*L"oplus",*/ 8853},
-    {0xd310c1fc, /*L"Beta",*/ 914},     {0xd59c4d74, /*L"infin",*/ 8734},
-    {0xd64d470d, /*L"hArr",*/ 8660},    {0xd67d9c75, /*L"divide",*/ 247},
-    {0xd698dd37, /*L"Omicron",*/ 927},  {0xd82d4a63, /*L"Uuml",*/ 220},
-    {0xd9970f2d, /*L"harr",*/ 8596},    {0xda91fd99, /*L"clubs",*/ 9827},
-    {0xdbe5bdcc, /*L"there4",*/ 8756},  {0xdd7671bd, /*L"prime",*/ 8242},
-    {0xdfcf3c06, /*L"alpha",*/ 945},    {0xe0213063, /*L"saron",*/ 353},
-    {0xe1911d83, /*L"radic",*/ 8730},   {0xe2e75468, /*L"raquo",*/ 187},
-    {0xe6e27a5e, /*L"lacute",*/ 205},   {0xe74a8f36, /*L"ucirc",*/ 251},
-    {0xe864ecb6, /*L"Theta",*/ 920},    {0xecddde5e, /*L"nabla",*/ 8711},
-    {0xed1c3557, /*L"omicron",*/ 959},  {0xef82228f, /*L"rceil",*/ 8969},
-    {0xf1fab491, /*L"lArr",*/ 8656},    {0xf3dab7e7, /*L"Yuml",*/ 376},
-    {0xf4294962, /*L"laquo",*/ 171},    {0xf5446822, /*L"lang",*/ 9001},
-    {0xf5447cb1, /*L"larr",*/ 8592},    {0xf66e9bea, /*L"ugrave",*/ 249},
-    {0xf6b4ce70, /*L"lota",*/ 921},     {0xf6ef34ed, /*L"kappa",*/ 954},
-    {0xf72a3a56, /*L"thinsp",*/ 8201},  {0xf752801a, /*L"luml",*/ 207},
-    {0xf88c8430, /*L"ocirc",*/ 244},    {0xf9676178, /*L"frasl",*/ 8260},
-    {0xfd01885e, /*L"igrave",*/ 236},   {0xff3281da, /*L"egrave",*/ 232},
-};
-
+// Sorted by m_uCode
 const XFA_FMHtmlReserveCode reservesForEncode[] = {
     {34, L"quot"},     {38, L"amp"},      {39, L"apos"},
     {60, L"lt"},       {62, L"gt"},       {160, L"nbsp"},
@@ -3298,7 +3254,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
       strString[iStrIndex] = 0;
     }
     uint32_t iData = 0;
-    if (HTMLSTR2Code(strString, iData)) {
+    if (HTMLSTR2Code(strString, &iData)) {
       wsResultBuf.AppendChar((wchar_t)iData);
     } else {
       wsResultBuf.AppendChar(iCode);
@@ -3679,34 +3635,31 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
 
 // static
 bool CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
-                                     uint32_t& iCode) {
-  uint32_t uHash = FX_HashCode_GetW(pData, false);
-  int32_t iStart = 0;
-  int32_t iEnd = FX_ArraySize(reservesForDecode) - 1;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    XFA_FMHtmlHashedReserveCode htmlhashedreservecode = reservesForDecode[iMid];
-    if (uHash == htmlhashedreservecode.m_uHash) {
-      iCode = htmlhashedreservecode.m_uCode;
-      return true;
-    }
-
-    if (uHash < htmlhashedreservecode.m_uHash)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
+                                     uint32_t* iCode) {
+  auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter,
+                    const CFX_WideStringC& val) {
+    return wcscmp(val.c_str(), iter.m_htmlReserve) > 0;
+  };
+  const XFA_FMHtmlReserveCode* result =
+      std::lower_bound(std::begin(reservesForDecode),
+                       std::end(reservesForDecode), pData, cmpFunc);
+  if (result != std::end(reservesForEncode) &&
+      !wcscmp(pData.c_str(), result->m_htmlReserve)) {
+    *iCode = result->m_uCode;
+    return true;
+  }
   return false;
 }
 
 // static
 bool CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
                                      CFX_WideString* wsHTMLReserve) {
-  const XFA_FMHtmlReserveCode* result = std::lower_bound(
-      std::begin(reservesForEncode), std::end(reservesForEncode), iCode,
-      [](const XFA_FMHtmlReserveCode iter, const uint32_t& val) {
-        return iter.m_uCode < val;
-      });
+  auto cmpFunc = [](const XFA_FMHtmlReserveCode iter, const uint32_t& val) {
+    return iter.m_uCode < val;
+  };
+  const XFA_FMHtmlReserveCode* result =
+      std::lower_bound(std::begin(reservesForEncode),
+                       std::end(reservesForEncode), iCode, cmpFunc);
   if (result != std::end(reservesForEncode) && result->m_uCode == iCode) {
     *wsHTMLReserve = result->m_htmlReserve;
     return true;
