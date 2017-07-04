@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
+#include <algorithm>
+
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"
 
@@ -472,18 +474,15 @@ const wchar_t* CXFA_FMLexer::Comment(const wchar_t* p) {
 }
 
 XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
-  uint32_t uHash = FX_HashCode_GetW(str, true);
-  int32_t iStart = KEYWORD_START;
-  int32_t iEnd = KEYWORD_END;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    XFA_FMKeyword keyword = keyWords[iMid];
-    if (uHash == keyword.m_uHash)
-      return keyword.m_type;
-    if (uHash < keyword.m_uHash)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
+  uint32_t key = FX_HashCode_GetW(str, true);
+  auto cmpFunc = [](const XFA_FMKeyword& iter, const uint32_t& val) {
+    return iter.m_uHash < val;
+  };
+
+  const XFA_FMKeyword* result = std::lower_bound(
+      std::begin(keyWords) + KEYWORD_START, std::end(keyWords), key, cmpFunc);
+  if (result <= keyWords + KEYWORD_END && result->m_uHash == key) {
+    return result->m_type;
+  }
   return TOKidentifier;
 }
