@@ -73,8 +73,6 @@ class IPWL_Provider;
 #define PRES_TEXTOVERFLOW 0x0400L
 
 // notification messages
-#define PNM_ADDCHILD 0
-#define PNM_REMOVECHILD 1
 #define PNM_SETSCROLLINFO 2
 #define PNM_SETSCROLLPOS 3
 #define PNM_SCROLLWINDOW 4

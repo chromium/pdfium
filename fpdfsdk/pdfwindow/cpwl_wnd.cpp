@@ -152,7 +152,7 @@ void CPWL_Wnd::Create(const PWL_CREATEPARAM& cp) {
   CreateMsgControl();
 
   if (m_sPrivateParam.pParentWnd)
-    m_sPrivateParam.pParentWnd->OnNotify(this, PNM_ADDCHILD);
+    m_sPrivateParam.pParentWnd->AddChild(this);
 
   PWL_CREATEPARAM ccp = m_sPrivateParam;
 
@@ -196,7 +196,7 @@ void CPWL_Wnd::Destroy() {
       }
     }
     if (m_sPrivateParam.pParentWnd)
-      m_sPrivateParam.pParentWnd->OnNotify(this, PNM_REMOVECHILD);
+      m_sPrivateParam.pParentWnd->RemoveChild(this);
 
     m_bCreated = false;
   }
@@ -425,18 +425,7 @@ void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
 void CPWL_Wnd::OnNotify(CPWL_Wnd* pWnd,
                         uint32_t msg,
                         intptr_t wParam,
-                        intptr_t lParam) {
-  switch (msg) {
-    case PNM_ADDCHILD:
-      AddChild(pWnd);
-      break;
-    case PNM_REMOVECHILD:
-      RemoveChild(pWnd);
-      break;
-    default:
-      break;
-  }
-}
+                        intptr_t lParam) {}
 
 bool CPWL_Wnd::IsValid() const {
   return m_bCreated;
