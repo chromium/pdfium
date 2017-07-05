@@ -861,12 +861,29 @@ class SkiaState {
     if (m_debugDisable)
       return false;
     Dump(__func__);
-    SkPath skClipPath = BuildPath(pPathData);
-    skClipPath.setFillType((fill_mode & 3) == FXFILL_ALTERNATE
-                               ? SkPath::kEvenOdd_FillType
-                               : SkPath::kWinding_FillType);
-    SkMatrix skMatrix = ToSkMatrix(*pMatrix);
-    skClipPath.transform(skMatrix);
+    SkPath skClipPath;
+    if (pPathData->GetPoints().size() == 5 ||
+        pPathData->GetPoints().size() == 4) {
+      CFX_FloatRect rectf;
+      if (pPathData->IsRect(pMatrix, &rectf)) {
+        rectf.Intersect(CFX_FloatRect(
+            0, 0,
+            static_cast<float>(m_pDriver->GetDeviceCaps(FXDC_PIXEL_WIDTH)),
+            static_cast<float>(m_pDriver->GetDeviceCaps(FXDC_PIXEL_HEIGHT))));
+        FX_RECT outer = rectf.GetOuterRect();
+        // note that PDF's y-axis goes up; Skia's y-axis goes down
+        skClipPath.addRect({(float)outer.left, (float)outer.bottom,
+                            (float)outer.right, (float)outer.top});
+      }
+    }
+    if (skClipPath.isEmpty()) {
+      skClipPath = BuildPath(pPathData);
+      skClipPath.setFillType((fill_mode & 3) == FXFILL_ALTERNATE
+                                 ? SkPath::kEvenOdd_FillType
+                                 : SkPath::kWinding_FillType);
+      SkMatrix skMatrix = ToSkMatrix(*pMatrix);
+      skClipPath.transform(skMatrix);
+    }
     return SetClip(skClipPath);
   }
 
