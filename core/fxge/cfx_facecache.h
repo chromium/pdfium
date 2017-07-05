@@ -14,6 +14,10 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 
+#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
+#include "third_party/skia/include/core/SkTypeface.h"
+#endif
+
 class CFX_FaceCache {
  public:
   explicit CFX_FaceCache(FXFT_Face face);
@@ -60,7 +64,7 @@ class CFX_FaceCache {
   std::map<CFX_ByteString, std::unique_ptr<CFX_SizeGlyphCache>> m_SizeMap;
   std::map<uint32_t, std::unique_ptr<CFX_PathData>> m_PathMap;
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
-  CFX_UnownedPtr<CFX_TypeFace> m_pTypeface;
+  sk_sp<SkTypeface> m_pTypeface;
 #endif
 };
 

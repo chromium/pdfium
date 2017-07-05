@@ -89,9 +89,6 @@ CFX_FaceCache::CFX_FaceCache(FXFT_Face face)
 }
 
 CFX_FaceCache::~CFX_FaceCache() {
-#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
-  SkSafeUnref(m_pTypeface.Get());
-#endif
 }
 
 std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
@@ -358,19 +355,17 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
   if (!m_pTypeface) {
-    m_pTypeface =
-        SkTypeface::MakeFromStream(
-            new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()))
-            .release();
+    m_pTypeface = SkTypeface::MakeFromStream(
+        new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()));
   }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   if (!m_pTypeface) {
     sk_sp<SkFontMgr> customMgr(SkFontMgr_New_Custom_Empty());
-    m_pTypeface = customMgr->createFromStream(
-        new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()));
+    m_pTypeface.reset(customMgr->createFromStream(
+        new SkMemoryStream(pFont->GetFontData(), pFont->GetSize())));
   }
 #endif
-  return m_pTypeface.Get();
+  return m_pTypeface.get();
 }
 #endif
 
