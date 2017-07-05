@@ -520,14 +520,14 @@ bool CXFA_FMCallExpression::IsBuiltInFunc(CFX_WideTextBuf* funcName) {
   if (funcName->GetLength() > g_BuiltInFuncsMaxLen)
     return false;
 
+  auto cmpFunc = [](const wchar_t* iter, const CFX_WideString& val) -> bool {
+    return val.CompareNoCase(iter) > 0;
+  };
   CFX_WideString str = funcName->MakeString();
-  const wchar_t* const* pEnd = g_BuiltInFuncs + FX_ArraySize(g_BuiltInFuncs);
   const wchar_t* const* pMatchResult = std::lower_bound(
-      g_BuiltInFuncs, pEnd, str,
-      [](const wchar_t* iter, const CFX_WideString& val) -> bool {
-        return val.CompareNoCase(iter) > 0;
-      });
-  if (pMatchResult < pEnd && !str.CompareNoCase(*pMatchResult)) {
+      std::begin(g_BuiltInFuncs), std::end(g_BuiltInFuncs), str, cmpFunc);
+  if (pMatchResult != std::end(g_BuiltInFuncs) &&
+      !str.CompareNoCase(*pMatchResult)) {
     funcName->Clear();
     *funcName << *pMatchResult;
     return true;
@@ -537,11 +537,12 @@ bool CXFA_FMCallExpression::IsBuiltInFunc(CFX_WideTextBuf* funcName) {
 
 uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
     const CFX_WideString& methodName) {
-  const XFA_FMSOMMethod* result = std::lower_bound(
-      std::begin(gs_FMSomMethods), std::end(gs_FMSomMethods), methodName,
-      [](const XFA_FMSOMMethod iter, const CFX_WideString& val) {
-        return val.Compare(iter.m_wsSomMethodName) > 0;
-      });
+  auto cmpFunc = [](const XFA_FMSOMMethod iter, const CFX_WideString& val) {
+    return val.Compare(iter.m_wsSomMethodName) > 0;
+  };
+  const XFA_FMSOMMethod* result =
+      std::lower_bound(std::begin(gs_FMSomMethods), std::end(gs_FMSomMethods),
+                       methodName, cmpFunc);
   if (result != std::end(gs_FMSomMethods) &&
       !methodName.Compare(result->m_wsSomMethodName)) {
     return result->m_dParameters;
