@@ -31,15 +31,12 @@ void CPWL_List_Notify::IOnSetScrollInfoY(float fPlateMin,
                                          float fSmallStep,
                                          float fBigStep) {
   PWL_SCROLL_INFO Info;
-
   Info.fPlateWidth = fPlateMax - fPlateMin;
   Info.fContentMin = fContentMin;
   Info.fContentMax = fContentMax;
   Info.fSmallStep = fSmallStep;
   Info.fBigStep = fBigStep;
-
-  m_pList->OnNotify(m_pList.Get(), PNM_SETSCROLLINFO, SBT_VSCROLL,
-                    reinterpret_cast<intptr_t>(&Info));
+  m_pList->SetScrollInfo(Info);
 
   if (CPWL_ScrollBar* pScroll = m_pList->GetVScrollBar()) {
     if (IsFloatBigger(Info.fPlateWidth, Info.fContentMax - Info.fContentMin) ||
@@ -288,6 +285,11 @@ bool CPWL_ListBox::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
+void CPWL_ListBox::SetScrollInfo(const PWL_SCROLL_INFO& info) {
+  if (CPWL_Wnd* pChild = GetVScrollBar())
+    pChild->SetScrollInfo(info);
+}
+
 void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
                             uint32_t msg,
                             intptr_t wParam,
@@ -297,15 +299,6 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
   float fPos;
 
   switch (msg) {
-    case PNM_SETSCROLLINFO:
-      switch (wParam) {
-        case SBT_VSCROLL:
-          if (CPWL_Wnd* pChild = GetVScrollBar()) {
-            pChild->OnNotify(pWnd, PNM_SETSCROLLINFO, wParam, lParam);
-          }
-          break;
-      }
-      break;
     case PNM_SETSCROLLPOS:
       switch (wParam) {
         case SBT_VSCROLL:

@@ -25,6 +25,7 @@ class CPWL_Wnd;
 class CFX_SystemHandler;
 class IPVT_FontMap;
 class IPWL_Provider;
+struct PWL_SCROLL_INFO;
 
 // window styles
 #define PWS_CHILD 0x80000000L
@@ -73,7 +74,6 @@ class IPWL_Provider;
 #define PRES_TEXTOVERFLOW 0x0400L
 
 // notification messages
-#define PNM_SETSCROLLINFO 2
 #define PNM_SETSCROLLPOS 3
 #define PNM_SCROLLWINDOW 4
 #define PNM_LBUTTONDOWN 5
@@ -220,6 +220,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
                         uint32_t msg,
                         intptr_t wParam = 0,
                         intptr_t lParam = 0);
+  virtual void SetScrollInfo(const PWL_SCROLL_INFO& info);
   virtual void SetFocus();
   virtual void KillFocus();
   virtual void SetCursor();

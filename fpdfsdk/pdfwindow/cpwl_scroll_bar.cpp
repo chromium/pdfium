@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
 
+#include <algorithm>
 #include <sstream>
 
 #include "core/fxge/cfx_pathdata.h"
@@ -750,6 +751,17 @@ bool CPWL_ScrollBar::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
+void CPWL_ScrollBar::SetScrollInfo(const PWL_SCROLL_INFO& info) {
+  if (info == m_OriginInfo)
+    return;
+
+  m_OriginInfo = info;
+  float fMax =
+      std::max(0.0f, info.fContentMax - info.fContentMin - info.fPlateWidth);
+  SetScrollRange(0, fMax, info.fPlateWidth);
+  SetScrollStep(info.fBigStep, info.fSmallStep);
+}
+
 void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
                               uint32_t msg,
                               intptr_t wParam,
@@ -796,17 +808,6 @@ void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
         OnPosButtonMouseMove(*(CFX_PointF*)lParam);
       }
       break;
-    case PNM_SETSCROLLINFO: {
-      PWL_SCROLL_INFO* pInfo = reinterpret_cast<PWL_SCROLL_INFO*>(lParam);
-      if (pInfo && *pInfo != m_OriginInfo) {
-        m_OriginInfo = *pInfo;
-        float fMax =
-            pInfo->fContentMax - pInfo->fContentMin - pInfo->fPlateWidth;
-        fMax = fMax > 0.0f ? fMax : 0.0f;
-        SetScrollRange(0, fMax, pInfo->fPlateWidth);
-        SetScrollStep(pInfo->fBigStep, pInfo->fSmallStep);
-      }
-    } break;
     case PNM_SETSCROLLPOS: {
       float fPos = *(float*)lParam;
       switch (m_sbType) {

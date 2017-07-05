@@ -64,6 +64,11 @@ void CPWL_EditCtrl::RePosChildWnd() {
   m_pEdit->SetPlateRect(GetClientRect());
 }
 
+void CPWL_EditCtrl::SetScrollInfo(const PWL_SCROLL_INFO& info) {
+  if (CPWL_Wnd* pChild = GetVScrollBar())
+    pChild->SetScrollInfo(info);
+}
+
 void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
                              uint32_t msg,
                              intptr_t wParam,
@@ -71,15 +76,6 @@ void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
 
   switch (msg) {
-    case PNM_SETSCROLLINFO:
-      switch (wParam) {
-        case SBT_VSCROLL:
-          if (CPWL_Wnd* pChild = GetVScrollBar()) {
-            pChild->OnNotify(pWnd, PNM_SETSCROLLINFO, wParam, lParam);
-          }
-          break;
-      }
-      break;
     case PNM_SETSCROLLPOS:
       switch (wParam) {
         case SBT_VSCROLL:
@@ -441,14 +437,12 @@ void CPWL_EditCtrl::IOnSetScrollInfoY(float fPlateMin,
                                       float fSmallStep,
                                       float fBigStep) {
   PWL_SCROLL_INFO Info;
-
   Info.fPlateWidth = fPlateMax - fPlateMin;
   Info.fContentMin = fContentMin;
   Info.fContentMax = fContentMax;
   Info.fSmallStep = fSmallStep;
   Info.fBigStep = fBigStep;
-
-  OnNotify(this, PNM_SETSCROLLINFO, SBT_VSCROLL, (intptr_t)&Info);
+  SetScrollInfo(Info);
 
   if (IsFloatBigger(Info.fPlateWidth, Info.fContentMax - Info.fContentMin) ||
       IsFloatEqual(Info.fPlateWidth, Info.fContentMax - Info.fContentMin)) {

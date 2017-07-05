@@ -427,6 +427,8 @@ void CPWL_Wnd::OnNotify(CPWL_Wnd* pWnd,
                         intptr_t wParam,
                         intptr_t lParam) {}
 
+void CPWL_Wnd::SetScrollInfo(const PWL_SCROLL_INFO& info) {}
+
 bool CPWL_Wnd::IsValid() const {
   return m_bCreated;
 }
