@@ -1051,19 +1051,12 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
 }
 
 void CPWL_ScrollBar::NotifyScrollWindow() {
-  if (CPWL_Wnd* pParent = GetParentWindow()) {
-    float fPos;
-    switch (m_sbType) {
-      case SBT_HSCROLL:
-        fPos = m_OriginInfo.fContentMin + m_sData.fScrollPos;
-        break;
-      case SBT_VSCROLL:
-        fPos = m_OriginInfo.fContentMax - m_sData.fScrollPos;
-        break;
-    }
-    pParent->OnNotify(this, PNM_SCROLLWINDOW, (intptr_t)m_sbType,
-                      (intptr_t)&fPos);
-  }
+  CPWL_Wnd* pParent = GetParentWindow();
+  if (!pParent || m_sbType != SBT_VSCROLL)
+    return;
+
+  pParent->ScrollWindowVertically(m_OriginInfo.fContentMax -
+                                  m_sData.fScrollPos);
 }
 
 CFX_FloatRect CPWL_ScrollBar::GetScrollArea() const {

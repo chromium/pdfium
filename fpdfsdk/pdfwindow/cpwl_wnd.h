@@ -74,7 +74,6 @@ struct PWL_SCROLL_INFO;
 #define PRES_TEXTOVERFLOW 0x0400L
 
 // notification messages
-#define PNM_SCROLLWINDOW 4
 #define PNM_LBUTTONDOWN 5
 #define PNM_LBUTTONUP 6
 #define PNM_MOUSEMOVE 7
@@ -221,6 +220,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
                         intptr_t lParam = 0);
   virtual void SetScrollInfo(const PWL_SCROLL_INFO& info);
   virtual void SetScrollPosition(float pos);
+  virtual void ScrollWindowVertically(float pos);
   virtual void SetFocus();
   virtual void KillFocus();
   virtual void SetCursor();

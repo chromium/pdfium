@@ -294,24 +294,8 @@ void CPWL_ListBox::SetScrollPosition(float pos) {
     pChild->SetScrollPosition(pos);
 }
 
-void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
-                            uint32_t msg,
-                            intptr_t wParam,
-                            intptr_t lParam) {
-  CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
-
-  float fPos;
-
-  switch (msg) {
-    case PNM_SCROLLWINDOW:
-      fPos = *(float*)lParam;
-      switch (wParam) {
-        case SBT_VSCROLL:
-          m_pList->SetScrollPos(CFX_PointF(0, fPos));
-          break;
-      }
-      break;
-  }
+void CPWL_ListBox::ScrollWindowVertically(float pos) {
+  m_pList->SetScrollPos(CFX_PointF(0, pos));
 }
 
 void CPWL_ListBox::KillFocus() {

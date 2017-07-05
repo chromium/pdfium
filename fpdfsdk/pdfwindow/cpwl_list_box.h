@@ -65,12 +65,9 @@ class CPWL_ListBox : public CPWL_Wnd {
                     const CFX_PointF& point,
                     uint32_t nFlag) override;
   void KillFocus() override;
-  void OnNotify(CPWL_Wnd* pWnd,
-                uint32_t msg,
-                intptr_t wParam = 0,
-                intptr_t lParam = 0) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
+  void ScrollWindowVertically(float pos) override;
   void RePosChildWnd() override;
   CFX_FloatRect GetFocusRect() const override;
   void SetFontSize(float fFontSize) override;

@@ -431,6 +431,8 @@ void CPWL_Wnd::SetScrollInfo(const PWL_SCROLL_INFO& info) {}
 
 void CPWL_Wnd::SetScrollPosition(float pos) {}
 
+void CPWL_Wnd::ScrollWindowVertically(float pos) {}
+
 bool CPWL_Wnd::IsValid() const {
   return m_bCreated;
 }
