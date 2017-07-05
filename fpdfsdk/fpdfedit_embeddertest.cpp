@@ -23,7 +23,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-class FPDFEditEmbeddertest : public EmbedderTest, public TestSaver {
+class FPDFEditEmbeddertest : public EmbedderTest {
  protected:
   FPDF_DOCUMENT CreateNewDocument() {
     document_ = FPDF_CreateNewDocument();
@@ -120,26 +120,6 @@ class FPDFEditEmbeddertest : public EmbedderTest, public TestSaver {
   }
   CPDF_Document* cpdf_doc() { return cpdf_doc_; }
 
-  void TestSaved(int width, int height, const char* md5) {
-    std::string new_file = GetString();
-    // Read |new_file| in, and verify its rendered bitmap.
-    FPDF_FILEACCESS file_access;
-    memset(&file_access, 0, sizeof(file_access));
-    file_access.m_FileLen = new_file.size();
-    file_access.m_GetBlock = GetBlockFromString;
-    file_access.m_Param = &new_file;
-
-    FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-    EXPECT_EQ(1, FPDF_GetPageCount(document_));
-    FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-    EXPECT_NE(nullptr, new_page);
-    FPDF_BITMAP new_bitmap = RenderPage(new_page);
-    CompareBitmap(new_bitmap, width, height, md5);
-    FPDFBitmap_Destroy(new_bitmap);
-    FPDF_ClosePage(new_page);
-    FPDF_CloseDocument(new_doc);
-  }
-
  private:
   CPDF_Document* cpdf_doc_;
 };
@@ -235,7 +215,7 @@ TEST_F(FPDFEditEmbeddertest, RasterizePDF) {
   // Get the generated content. Make sure it is at least as big as the original
   // PDF.
   EXPECT_GT(GetString().size(), 923U);
-  TestSaved(612, 792, kAllBlackMd5sum);
+  TestAndCloseSaved(612, 792, kAllBlackMd5sum);
 }
 
 TEST_F(FPDFEditEmbeddertest, AddPaths) {
@@ -315,7 +295,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   FPDF_ClosePage(page);
 
   // Render the saved result
-  TestSaved(612, 792, last_md5);
+  TestAndCloseSaved(612, 792, last_md5);
 }
 
 TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
@@ -376,50 +356,35 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
 
   // Now save the result, closing the page and document
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 
-  // Render the saved result. Not calling TestSaved because we don't want to
-  // close the page and document yet.
-  std::string new_file = GetString();
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_NE(nullptr, new_doc);
-  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_NE(nullptr, new_page);
-  FPDF_BITMAP new_bitmap = RenderPage(new_page);
-  CompareBitmap(new_bitmap, 612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
-  FPDFBitmap_Destroy(new_bitmap);
+  // Render the saved result without closing the page and document
+  TestSaved(612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
 
   ClearString();
   // Add another opaque rectangle on top of the existing content
   FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(150, 700, 25, 50);
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_ALTERNATE, 0));
-  FPDFPage_InsertObject(new_page, green_rect);
+  FPDFPage_InsertObject(m_SavedPage, green_rect);
 
   // Add another transparent rectangle on top of existing content
   FPDF_PAGEOBJECT green_rect2 = FPDFPageObj_CreateNewRect(175, 700, 25, 50);
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect2, 0, 255, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
-  FPDFPage_InsertObject(new_page, green_rect2);
-  new_bitmap = RenderPage(new_page);
+  FPDFPage_InsertObject(m_SavedPage, green_rect2);
+  FPDF_BITMAP new_bitmap = RenderPageWithFlags(m_SavedPage, m_SavedForm, 0);
   const char last_md5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
   CompareBitmap(new_bitmap, 612, 792, last_md5);
   FPDFBitmap_Destroy(new_bitmap);
-  EXPECT_TRUE(FPDFPage_GenerateContent(new_page));
+  EXPECT_TRUE(FPDFPage_GenerateContent(m_SavedPage));
 
   // Now save the result, closing the page and document
-  EXPECT_TRUE(FPDF_SaveAsCopy(new_doc, this, 0));
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  EXPECT_TRUE(FPDF_SaveAsCopy(m_SavedDocument, this, 0));
+  CloseSaved();
 
   // Render the saved result
-  TestSaved(612, 792, last_md5);
+  TestAndCloseSaved(612, 792, last_md5);
 }
 
 TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
@@ -852,7 +817,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
-  TestSaved(612, 792, md5_2);
+  TestAndCloseSaved(612, 792, md5_2);
 }
 
 TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
@@ -926,7 +891,7 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
-  TestSaved(612, 792, md5);
+  TestAndCloseSaved(612, 792, md5);
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
 
@@ -958,5 +923,5 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
     UnloadPage(page);
   }
-  TestSaved(612, 792, md5);
+  TestAndCloseSaved(612, 792, md5);
 }

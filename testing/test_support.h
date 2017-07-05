@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 
-#include "public/fpdf_save.h"
 #include "public/fpdfview.h"
 
 namespace pdfium {
@@ -105,27 +104,6 @@ class TestLoader {
  private:
   const char* const m_pBuf;
   const size_t m_Len;
-};
-
-class TestSaver : public FPDF_FILEWRITE {
- public:
-  TestSaver();
-
-  void ClearString();
-  const std::string& GetString() const { return m_String; }
-
- protected:
-  static int GetBlockFromString(void* param,
-                                unsigned long pos,
-                                unsigned char* buf,
-                                unsigned long size);
-
- private:
-  static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
-                                const void* data,
-                                unsigned long size);
-
-  std::string m_String;
 };
 
 #endif  // TESTING_TEST_SUPPORT_H_

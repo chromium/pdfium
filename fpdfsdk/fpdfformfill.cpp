@@ -278,7 +278,6 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   if (pFormFillEnv->GetXFAContext())
     pFormFillEnv->GetXFAContext()->SetFormFillEnv(nullptr);
 #endif  // PDF_ENABLE_XFA
-
   delete pFormFillEnv;
 }
 

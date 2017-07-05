@@ -13,7 +13,7 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FPDFAnnotEmbeddertest : public EmbedderTest, public TestSaver {};
+class FPDFAnnotEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
   // Open a file with one annotation and load its first page.
@@ -25,7 +25,7 @@ TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
   // normal appearance defined, only its rollover appearance. In this case, its
   // normal appearance should be generated, allowing the highlight annotation to
   // still display.
-  FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle(), FPDF_ANNOT);
   CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
   FPDFBitmap_Destroy(bitmap);
 
@@ -279,23 +279,15 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   FPDF_ClosePage(page);
 
   // Open the saved document.
-  std::string new_file = GetString();
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_TRUE(new_doc);
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_TRUE(new_page);
+  const char md5[] = "184b67b322edaee27994b3232544b8b3";
+  TestSaved(612, 792, md5);
 
   // Check that the saved document has 2 annotations on the first page
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(new_page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(m_SavedPage));
 
   // Check that the second annotation is an underline annotation and verify
   // its quadpoints.
-  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(new_page, 1);
+  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 1);
   ASSERT_TRUE(new_annot);
   EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot));
   FS_QUADPOINTSF new_quadpoints = FPDFAnnot_GetAttachmentPoints(new_annot);
@@ -305,8 +297,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   EXPECT_NEAR(quadpoints.y4, new_quadpoints.y4, 0.001f);
 
   FPDFPage_CloseAnnot(new_annot);
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  CloseSaved();
 }
 
 TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
@@ -433,6 +424,7 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
+  // TODO(npm): TestSaved changes annot rect dimensions by 1??
   // Open the saved document.
   std::string new_file = GetString();
   FPDF_FILEACCESS file_access;
@@ -545,20 +537,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   FPDF_ClosePage(page);
 
   // Open the saved document.
-  std::string new_file = GetString();
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
-  file_access.m_FileLen = new_file.size();
-  file_access.m_GetBlock = GetBlockFromString;
-  file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  ASSERT_TRUE(new_doc);
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
-  ASSERT_TRUE(new_page);
+  TestSaved(595, 842, md5_3);
 
   // Check that the saved document has a correct count of annotations and paths.
-  EXPECT_EQ(3, FPDFPage_GetAnnotCount(new_page));
-  annot = FPDFPage_GetAnnot(new_page, 2);
+  EXPECT_EQ(3, FPDFPage_GetAnnotCount(m_SavedPage));
+  annot = FPDFPage_GetAnnot(m_SavedPage, 2);
   ASSERT_TRUE(annot);
   EXPECT_EQ(1, FPDFAnnot_GetPathObjectCount(annot));
 
@@ -569,12 +552,6 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   EXPECT_EQ(rect.right, new_rect.right);
   EXPECT_EQ(rect.top, new_rect.top);
 
-  // Check that the saved page renders correctly.
-  bitmap = RenderPageWithFlags(new_page, nullptr, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_3);
-  FPDFBitmap_Destroy(bitmap);
-
   FPDFPage_CloseAnnot(annot);
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
+  CloseSaved();
 }

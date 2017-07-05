@@ -7,7 +7,7 @@
 #include "testing/embedder_test.h"
 #include "testing/test_support.h"
 
-class FPDFStructTreeEmbeddertest : public EmbedderTest, public TestSaver {};
+class FPDFStructTreeEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFStructTreeEmbeddertest, GetAltText) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));

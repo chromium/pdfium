@@ -12,6 +12,7 @@
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
+#include "public/fpdf_save.h"
 #include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
@@ -27,7 +28,8 @@ class TestLoader;
 class EmbedderTest : public ::testing::Test,
                      public UNSUPPORT_INFO,
                      public IPDF_JSPLATFORM,
-                     public FPDF_FORMFILLINFO {
+                     public FPDF_FORMFILLINFO,
+                     public FPDF_FILEWRITE {
  public:
   class Delegate {
    public:
@@ -112,7 +114,7 @@ class EmbedderTest : public ::testing::Test,
   virtual void UnloadPage(FPDF_PAGE page);
 
  protected:
-  void SetupFormFillEnvironment();
+  FPDF_FORMHANDLE SetupFormFillEnvironment(FPDF_DOCUMENT doc);
 
   // Return the hash of |bitmap|.
   static std::string HashBitmap(FPDF_BITMAP bitmap,
@@ -124,6 +126,18 @@ class EmbedderTest : public ::testing::Test,
                             int expected_width,
                             int expected_height,
                             const char* expected_md5sum);
+
+  void ClearString() { m_String.clear(); }
+  const std::string& GetString() const { return m_String; }
+
+  static int GetBlockFromString(void* param,
+                                unsigned long pos,
+                                unsigned char* buf,
+                                unsigned long size);
+
+  void TestSaved(int width, int height, const char* md5);
+  void CloseSaved();
+  void TestAndCloseSaved(int width, int height, const char* md5);
 
   Delegate* delegate_;
   std::unique_ptr<Delegate> default_delegate_;
@@ -142,6 +156,9 @@ class EmbedderTest : public ::testing::Test,
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   std::map<int, FPDF_PAGE> page_map_;
   std::map<FPDF_PAGE, int> page_reverse_map_;
+  FPDF_DOCUMENT m_SavedDocument;
+  FPDF_PAGE m_SavedPage;
+  FPDF_FORMHANDLE m_SavedForm;
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);
@@ -157,6 +174,11 @@ class EmbedderTest : public ::testing::Test,
   static FPDF_PAGE GetPageTrampoline(FPDF_FORMFILLINFO* info,
                                      FPDF_DOCUMENT document,
                                      int page_index);
+  static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
+                                const void* data,
+                                unsigned long size);
+
+  std::string m_String;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_H_

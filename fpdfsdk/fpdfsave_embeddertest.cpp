@@ -15,7 +15,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-class FPDFSaveEmbedderTest : public EmbedderTest, public TestSaver {};
+class FPDFSaveEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDoc) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));

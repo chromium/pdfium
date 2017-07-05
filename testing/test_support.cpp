@@ -211,38 +211,3 @@ int TestLoader::GetBlock(void* param,
   memcpy(pBuf, pLoader->m_pBuf + pos, size);
   return 1;
 }
-
-TestSaver::TestSaver() {
-  FPDF_FILEWRITE::version = 1;
-  FPDF_FILEWRITE::WriteBlock = WriteBlockCallback;
-}
-
-void TestSaver::ClearString() {
-  m_String.clear();
-}
-
-// static
-int TestSaver::WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
-                                  const void* data,
-                                  unsigned long size) {
-  TestSaver* pThis = static_cast<TestSaver*>(pFileWrite);
-  pThis->m_String.append(static_cast<const char*>(data), size);
-  return 1;
-}
-
-// static
-int TestSaver::GetBlockFromString(void* param,
-                                  unsigned long pos,
-                                  unsigned char* buf,
-                                  unsigned long size) {
-  std::string* new_file = static_cast<std::string*>(param);
-  if (!new_file || pos + size < pos)
-    return 0;
-
-  unsigned long file_size = new_file->size();
-  if (pos + size > file_size)
-    return 0;
-
-  memcpy(buf, new_file->data() + pos, size);
-  return 1;
-}
