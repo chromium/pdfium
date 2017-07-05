@@ -19,7 +19,12 @@
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 
-#define PWLCB_DEFAULTFONTSIZE 12.0f
+namespace {
+
+constexpr float kDefaultFontSize = 12.0f;
+constexpr float kTriangleHalfLength = 3.0f;
+
+}  // namespace
 
 bool CPWL_CBListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
@@ -107,16 +112,14 @@ void CPWL_CBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
 
   CFX_PointF ptCenter = GetCenterPoint();
 
-  CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-  CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-  CFX_PointF pt3(ptCenter.x, ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
+                 ptCenter.y + kTriangleHalfLength * 0.5f);
+  CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
+                 ptCenter.y + kTriangleHalfLength * 0.5f);
+  CFX_PointF pt3(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
 
-  if (IsFloatBigger(rectWnd.right - rectWnd.left,
-                    PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
-      IsFloatBigger(rectWnd.top - rectWnd.bottom,
-                    PWL_CBBUTTON_TRIANGLE_HALFLEN)) {
+  if (IsFloatBigger(rectWnd.right - rectWnd.left, kTriangleHalfLength * 2) &&
+      IsFloatBigger(rectWnd.top - rectWnd.bottom, kTriangleHalfLength)) {
     *psAppStream << "q\n"
                  << "0 g\n"
                  << pt1.x << " " << pt1.y << " m\n"
@@ -138,16 +141,14 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_PointF ptCenter = GetCenterPoint();
 
-  CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-  CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                 ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-  CFX_PointF pt3(ptCenter.x, ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+  CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
+                 ptCenter.y + kTriangleHalfLength * 0.5f);
+  CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
+                 ptCenter.y + kTriangleHalfLength * 0.5f);
+  CFX_PointF pt3(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
 
-  if (IsFloatBigger(rectWnd.right - rectWnd.left,
-                    PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
-      IsFloatBigger(rectWnd.top - rectWnd.bottom,
-                    PWL_CBBUTTON_TRIANGLE_HALFLEN)) {
+  if (IsFloatBigger(rectWnd.right - rectWnd.left, kTriangleHalfLength * 2) &&
+      IsFloatBigger(rectWnd.top - rectWnd.bottom, kTriangleHalfLength)) {
     CFX_PathData path;
     path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
     path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
@@ -306,7 +307,8 @@ void CPWL_ComboBox::CreateButton(const PWL_CREATEPARAM& cp) {
   PWL_CREATEPARAM bcp = cp;
   bcp.pParentWnd = this;
   bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
-  bcp.sBackgroundColor = PWL_SCROLLBAR_BKCOLOR;
+  bcp.sBackgroundColor = CPWL_Color(COLORTYPE_RGB, 220.0f / 255.0f,
+                                    220.0f / 255.0f, 220.0f / 255.0f);
   bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
   bcp.dwBorderWidth = 2;
   bcp.nBorderStyle = BorderStyle::BEVELED;
@@ -331,7 +333,7 @@ void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
   lcp.rcRectWnd = CFX_FloatRect();
 
   if (cp.dwFlags & PWS_AUTOFONTSIZE)
-    lcp.fFontSize = PWLCB_DEFAULTFONTSIZE;
+    lcp.fFontSize = kDefaultFontSize;
   else
     lcp.fFontSize = cp.fFontSize;
 

@@ -15,6 +15,13 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
+namespace {
+
+constexpr float kDefaultFontSize = 9.0f;
+constexpr int kInvalidationInflate = 2;
+
+}  // namespace
+
 PWL_CREATEPARAM::PWL_CREATEPARAM()
     : rcRectWnd(0, 0, 0, 0),
       pSystemHandler(nullptr),
@@ -29,7 +36,7 @@ PWL_CREATEPARAM::PWL_CREATEPARAM()
       sBorderColor(),
       sTextColor(),
       nTransparency(255),
-      fFontSize(PWL_DEFAULT_FONTSIZE),
+      fFontSize(kDefaultFontSize),
       sDash(3, 0, 0),
       pAttachedData(nullptr),
       pParentWnd(nullptr),
@@ -326,10 +333,10 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
   }
 
   FX_RECT rcWin = PWLtoWnd(rcRefresh);
-  rcWin.left -= PWL_INVALIDATE_INFLATE;
-  rcWin.top -= PWL_INVALIDATE_INFLATE;
-  rcWin.right += PWL_INVALIDATE_INFLATE;
-  rcWin.bottom += PWL_INVALIDATE_INFLATE;
+  rcWin.left -= kInvalidationInflate;
+  rcWin.top -= kInvalidationInflate;
+  rcWin.right += kInvalidationInflate;
+  rcWin.bottom += kInvalidationInflate;
 
   if (CFX_SystemHandler* pSH = GetSystemHandler()) {
     if (CPDFSDK_Widget* widget = static_cast<CPDFSDK_Widget*>(

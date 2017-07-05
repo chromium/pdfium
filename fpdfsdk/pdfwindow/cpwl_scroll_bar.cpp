@@ -14,6 +14,16 @@
 #include "fpdfsdk/pdfwindow/cpwl_utils.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
+namespace {
+
+constexpr float kButtonWidth = 9.0f;
+constexpr float kPosButtonMinWidth = 2.0f;
+constexpr float kTriangleHalfLength = 2.0f;
+
+}  // namespace
+
+#define PWL_DEFAULT_HEAVYGRAYCOLOR CPWL_Color(COLORTYPE_GRAY, 0.50)
+
 PWL_FLOATRANGE::PWL_FLOATRANGE() {
   Default();
 }
@@ -143,14 +153,14 @@ void CPWL_SBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
     case SBT_HSCROLL:
       switch (m_eSBButtonType) {
         case PSBT_MIN: {
-          CFX_PointF pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_PointF pt3(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
+          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength * 0.5f,
+                         ptCenter.y + kTriangleHalfLength);
+          CFX_PointF pt3(ptCenter.x + kTriangleHalfLength * 0.5f,
+                         ptCenter.y - kTriangleHalfLength);
 
-          if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
-              rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
+          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
             *psAppStream << "0 g\n"
                          << pt1.x << " " << pt1.y << " m\n"
                          << pt2.x << " " << pt2.y << " l\n"
@@ -159,14 +169,14 @@ void CPWL_SBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
           }
         } break;
         case PSBT_MAX: {
-          CFX_PointF pt1(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_PointF pt3(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CFX_PointF pt1(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
+          CFX_PointF pt2(ptCenter.x - kTriangleHalfLength * 0.5f,
+                         ptCenter.y + kTriangleHalfLength);
+          CFX_PointF pt3(ptCenter.x - kTriangleHalfLength * 0.5f,
+                         ptCenter.y - kTriangleHalfLength);
 
-          if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
-              rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
+          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
             *psAppStream << "0 g\n"
                          << pt1.x << " " << pt1.y << " m\n"
                          << pt2.x << " " << pt2.y << " l\n"
@@ -181,14 +191,14 @@ void CPWL_SBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
     case SBT_VSCROLL:
       switch (m_eSBButtonType) {
         case PSBT_MIN: {
-          CFX_PointF pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN,
-                         ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_PointF pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN,
-                         ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_PointF pt3(ptCenter.x, ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
+          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
+                         ptCenter.y - kTriangleHalfLength * 0.5f);
+          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
+                         ptCenter.y - kTriangleHalfLength * 0.5f);
+          CFX_PointF pt3(ptCenter.x, ptCenter.y + kTriangleHalfLength * 0.5f);
 
-          if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
-              rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
+          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
             *psAppStream << "0 g\n"
                          << pt1.x << " " << pt1.y << " m\n"
                          << pt2.x << " " << pt2.y << " l\n"
@@ -197,14 +207,14 @@ void CPWL_SBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
           }
         } break;
         case PSBT_MAX: {
-          CFX_PointF pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN,
-                         ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_PointF pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN,
-                         ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_PointF pt3(ptCenter.x, ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
+          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
+                         ptCenter.y + kTriangleHalfLength * 0.5f);
+          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
+                         ptCenter.y + kTriangleHalfLength * 0.5f);
+          CFX_PointF pt3(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
 
-          if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
-              rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
+          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
             *psAppStream << "0 g\n"
                          << pt1.x << " " << pt1.y << " m\n"
                          << pt2.x << " " << pt2.y << " l\n"
@@ -240,14 +250,14 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
       switch (m_eSBButtonType) {
         case PSBT_MIN: {
-          CFX_PointF pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_PointF pt3(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
+          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength * 0.5f,
+                         ptCenter.y + kTriangleHalfLength);
+          CFX_PointF pt3(ptCenter.x + kTriangleHalfLength * 0.5f,
+                         ptCenter.y - kTriangleHalfLength);
 
-          if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
-              rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
+          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
             CFX_PathData path;
             path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
             path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
@@ -260,14 +270,14 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           }
         } break;
         case PSBT_MAX: {
-          CFX_PointF pt1(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_PointF pt3(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CFX_PointF pt1(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
+          CFX_PointF pt2(ptCenter.x - kTriangleHalfLength * 0.5f,
+                         ptCenter.y + kTriangleHalfLength);
+          CFX_PointF pt3(ptCenter.x - kTriangleHalfLength * 0.5f,
+                         ptCenter.y - kTriangleHalfLength);
 
-          if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
-              rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
+          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
             CFX_PathData path;
             path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
             path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
@@ -585,18 +595,14 @@ void CPWL_ScrollBar::RePosChildWnd() {
   switch (m_sbType) {
     case SBT_HSCROLL:
       if (rcClient.right - rcClient.left >
-          PWL_SCROLLBAR_BUTTON_WIDTH * 2 + PWL_SCROLLBAR_POSBUTTON_MINWIDTH +
-              2) {
+          kButtonWidth * 2 + kPosButtonMinWidth + 2) {
         rcMinButton = CFX_FloatRect(rcClient.left, rcClient.bottom,
-                                    rcClient.left + PWL_SCROLLBAR_BUTTON_WIDTH,
-                                    rcClient.top);
+                                    rcClient.left + kButtonWidth, rcClient.top);
         rcMaxButton =
-            CFX_FloatRect(rcClient.right - PWL_SCROLLBAR_BUTTON_WIDTH,
-                          rcClient.bottom, rcClient.right, rcClient.top);
+            CFX_FloatRect(rcClient.right - kButtonWidth, rcClient.bottom,
+                          rcClient.right, rcClient.top);
       } else {
-        fBWidth = (rcClient.right - rcClient.left -
-                   PWL_SCROLLBAR_POSBUTTON_MINWIDTH - 2) /
-                  2;
+        fBWidth = (rcClient.right - rcClient.left - kPosButtonMinWidth - 2) / 2;
 
         if (fBWidth > 0) {
           rcMinButton = CFX_FloatRect(rcClient.left, rcClient.bottom,
@@ -610,18 +616,14 @@ void CPWL_ScrollBar::RePosChildWnd() {
       break;
     case SBT_VSCROLL:
       if (IsFloatBigger(rcClient.top - rcClient.bottom,
-                        PWL_SCROLLBAR_BUTTON_WIDTH * 2 +
-                            PWL_SCROLLBAR_POSBUTTON_MINWIDTH + 2)) {
-        rcMinButton = CFX_FloatRect(rcClient.left,
-                                    rcClient.top - PWL_SCROLLBAR_BUTTON_WIDTH,
+                        kButtonWidth * 2 + kPosButtonMinWidth + 2)) {
+        rcMinButton = CFX_FloatRect(rcClient.left, rcClient.top - kButtonWidth,
                                     rcClient.right, rcClient.top);
         rcMaxButton =
             CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
-                          rcClient.bottom + PWL_SCROLLBAR_BUTTON_WIDTH);
+                          rcClient.bottom + kButtonWidth);
       } else {
-        fBWidth = (rcClient.top - rcClient.bottom -
-                   PWL_SCROLLBAR_POSBUTTON_MINWIDTH - 2) /
-                  2;
+        fBWidth = (rcClient.top - rcClient.bottom - kPosButtonMinWidth - 2) / 2;
 
         if (IsFloatBigger(fBWidth, 0)) {
           rcMinButton = CFX_FloatRect(rcClient.left, rcClient.top - fBWidth,
@@ -697,20 +699,16 @@ bool CPWL_ScrollBar::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
 
     switch (m_sbType) {
       case SBT_HSCROLL:
-        rcMinArea =
-            CFX_FloatRect(rcClient.left + PWL_SCROLLBAR_BUTTON_WIDTH,
-                          rcClient.bottom, rcPosButton.left, rcClient.top);
+        rcMinArea = CFX_FloatRect(rcClient.left + kButtonWidth, rcClient.bottom,
+                                  rcPosButton.left, rcClient.top);
         rcMaxArea = CFX_FloatRect(rcPosButton.right, rcClient.bottom,
-                                  rcClient.right - PWL_SCROLLBAR_BUTTON_WIDTH,
-                                  rcClient.top);
+                                  rcClient.right - kButtonWidth, rcClient.top);
 
         break;
       case SBT_VSCROLL:
-        rcMinArea =
-            CFX_FloatRect(rcClient.left, rcPosButton.top, rcClient.right,
-                          rcClient.top - PWL_SCROLLBAR_BUTTON_WIDTH);
-        rcMaxArea = CFX_FloatRect(rcClient.left,
-                                  rcClient.bottom + PWL_SCROLLBAR_BUTTON_WIDTH,
+        rcMinArea = CFX_FloatRect(rcClient.left, rcPosButton.top,
+                                  rcClient.right, rcClient.top - kButtonWidth);
+        rcMaxArea = CFX_FloatRect(rcClient.left, rcClient.bottom + kButtonWidth,
                                   rcClient.right, rcPosButton.bottom);
         break;
     }
@@ -879,12 +877,12 @@ void CPWL_ScrollBar::MovePosButton(bool bRefresh) {
         fLeft = TrueToFace(m_sData.fScrollPos);
         fRight = TrueToFace(m_sData.fScrollPos + m_sData.fClientWidth);
 
-        if (fRight - fLeft < PWL_SCROLLBAR_POSBUTTON_MINWIDTH)
-          fRight = fLeft + PWL_SCROLLBAR_POSBUTTON_MINWIDTH;
+        if (fRight - fLeft < kPosButtonMinWidth)
+          fRight = fLeft + kPosButtonMinWidth;
 
         if (fRight > rcPosArea.right) {
           fRight = rcPosArea.right;
-          fLeft = fRight - PWL_SCROLLBAR_POSBUTTON_MINWIDTH;
+          fLeft = fRight - kPosButtonMinWidth;
         }
 
         rcPosButton =
@@ -895,12 +893,12 @@ void CPWL_ScrollBar::MovePosButton(bool bRefresh) {
         fBottom = TrueToFace(m_sData.fScrollPos + m_sData.fClientWidth);
         fTop = TrueToFace(m_sData.fScrollPos);
 
-        if (IsFloatSmaller(fTop - fBottom, PWL_SCROLLBAR_POSBUTTON_MINWIDTH))
-          fBottom = fTop - PWL_SCROLLBAR_POSBUTTON_MINWIDTH;
+        if (IsFloatSmaller(fTop - fBottom, kPosButtonMinWidth))
+          fBottom = fTop - kPosButtonMinWidth;
 
         if (IsFloatSmaller(fBottom, rcPosArea.bottom)) {
           fBottom = rcPosArea.bottom;
-          fTop = fBottom + PWL_SCROLLBAR_POSBUTTON_MINWIDTH;
+          fTop = fBottom + kPosButtonMinWidth;
         }
 
         rcPosButton =
