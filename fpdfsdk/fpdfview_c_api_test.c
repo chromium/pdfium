@@ -55,6 +55,8 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetRect);
     CHK(FPDFAnnot_SetText);
     CHK(FPDFAnnot_GetText);
+    CHK(FPDFAnnot_GetFlags);
+    CHK(FPDFAnnot_SetFlags);
 
     // fpdf_dataavail.h
     CHK(FPDFAvail_Create);

@@ -555,3 +555,53 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   FPDFPage_CloseAnnot(annot);
   CloseSaved();
 }
+
+TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
+  // Open a file with an annotation and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // Check that the page renders correctly.
+  FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
+  FPDFBitmap_Destroy(bitmap);
+
+  // Retrieve the annotation.
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  ASSERT_TRUE(annot);
+
+  // Check that the original flag values are as expected.
+  int flags = FPDFAnnot_GetFlags(annot);
+  EXPECT_FALSE(flags & FPDF_ANNOT_FLAG_HIDDEN);
+  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
+
+  // Set the HIDDEN flag.
+  flags |= FPDF_ANNOT_FLAG_HIDDEN;
+  EXPECT_TRUE(FPDFAnnot_SetFlags(annot, flags));
+  flags = FPDFAnnot_GetFlags(annot);
+  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_HIDDEN);
+  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
+
+  // Check that the page renders correctly without rendering the annotation.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
+  FPDFBitmap_Destroy(bitmap);
+
+  // Unset the HIDDEN flag.
+  EXPECT_TRUE(FPDFAnnot_SetFlags(annot, FPDF_ANNOT_FLAG_NONE));
+  EXPECT_FALSE(FPDFAnnot_GetFlags(annot));
+  flags &= ~FPDF_ANNOT_FLAG_HIDDEN;
+  EXPECT_TRUE(FPDFAnnot_SetFlags(annot, flags));
+  flags = FPDFAnnot_GetFlags(annot);
+  EXPECT_FALSE(flags & FPDF_ANNOT_FLAG_HIDDEN);
+  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
+
+  // Check that the page renders correctly as before.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
+  FPDFBitmap_Destroy(bitmap);
+
+  FPDFPage_CloseAnnot(annot);
+  UnloadPage(page);
+}
