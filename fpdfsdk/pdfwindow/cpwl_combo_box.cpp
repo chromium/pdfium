@@ -33,7 +33,7 @@ bool CPWL_CBListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (!ClientHitTest(point))
     return true;
   if (CPWL_Wnd* pParent = GetParentWindow())
-    pParent->OnNotify(this, PNM_LBUTTONUP, 0, PWL_MAKEDWORD(point.x, point.y));
+    pParent->NotifyLButtonUp(this, point);
 
   bool bExit = false;
   OnNotifySelChanged(false, bExit, nFlag);
@@ -165,10 +165,8 @@ bool CPWL_CBButton::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
 
   SetCapture();
 
-  if (CPWL_Wnd* pParent = GetParentWindow()) {
-    pParent->OnNotify(this, PNM_LBUTTONDOWN, 0,
-                      PWL_MAKEDWORD(point.x, point.y));
-  }
+  if (CPWL_Wnd* pParent = GetParentWindow())
+    pParent->NotifyLButtonDown(this, point);
 
   return true;
 }
@@ -548,31 +546,19 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   return m_pList->OnCharWithExit(nChar, bExit, nFlag) ? bExit : false;
 }
 
-void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd,
-                             uint32_t msg,
-                             intptr_t wParam,
-                             intptr_t lParam) {
-  switch (msg) {
-    case PNM_LBUTTONDOWN:
-      if (pWnd == m_pButton) {
-        SetPopup(!m_bPopup);
-        return;
-      }
-      break;
-    case PNM_LBUTTONUP:
-      if (m_pEdit && m_pList) {
-        if (pWnd == m_pList) {
-          SetSelectText();
-          SelectAll();
-          m_pEdit->SetFocus();
-          SetPopup(false);
-          return;
-        }
-      }
-      break;
-  }
+void CPWL_ComboBox::NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) {
+  if (child == m_pButton)
+    SetPopup(!m_bPopup);
+}
 
-  CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
+void CPWL_ComboBox::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {
+  if (!m_pEdit || !m_pList || child != m_pList)
+    return;
+
+  SetSelectText();
+  SelectAll();
+  m_pEdit->SetFocus();
+  SetPopup(false);
 }
 
 bool CPWL_ComboBox::IsPopup() const {

@@ -73,11 +73,6 @@ struct PWL_SCROLL_INFO;
 #define PRES_MULTIPAGES 0x0200L
 #define PRES_TEXTOVERFLOW 0x0400L
 
-// notification messages
-#define PNM_LBUTTONDOWN 5
-#define PNM_LBUTTONUP 6
-#define PNM_MOUSEMOVE 7
-
 #define PWL_CLASSNAME_EDIT "CPWL_Edit"
 
 struct CPWL_Dash {
@@ -213,13 +208,12 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual bool OnMouseWheel(short zDelta,
                             const CFX_PointF& point,
                             uint32_t nFlag);
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        uint32_t msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
   virtual void SetScrollInfo(const PWL_SCROLL_INFO& info);
   virtual void SetScrollPosition(float pos);
   virtual void ScrollWindowVertically(float pos);
+  virtual void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos);
+  virtual void NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos);
+  virtual void NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos);
   virtual void SetFocus();
   virtual void KillFocus();
   virtual void SetCursor();

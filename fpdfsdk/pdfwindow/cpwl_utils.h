@@ -13,9 +13,6 @@
 class CFX_Edit;
 struct CPWL_Color;
 
-#define PWL_MAKEDWORD(low, high) \
-  ((uint32_t)((uint16_t)(low) | (uint32_t)(((uint16_t)(high)) << 16)))
-
 // checkbox & radiobutton style
 #define PCS_CHECK 0
 #define PCS_CIRCLE 1

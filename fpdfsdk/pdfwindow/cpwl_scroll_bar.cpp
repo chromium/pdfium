@@ -518,7 +518,7 @@ bool CPWL_SBButton::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
-    pParent->OnNotify(this, PNM_LBUTTONDOWN, 0, (intptr_t)&point);
+    pParent->NotifyLButtonDown(this, point);
 
   m_bMouseDown = true;
   SetCapture();
@@ -530,7 +530,7 @@ bool CPWL_SBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
-    pParent->OnNotify(this, PNM_LBUTTONUP, 0, (intptr_t)&point);
+    pParent->NotifyLButtonUp(this, point);
 
   m_bMouseDown = false;
   ReleaseCapture();
@@ -541,9 +541,8 @@ bool CPWL_SBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 bool CPWL_SBButton::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
-  if (CPWL_Wnd* pParent = GetParentWindow()) {
-    pParent->OnNotify(this, PNM_MOUSEMOVE, 0, (intptr_t)&point);
-  }
+  if (CPWL_Wnd* pParent = GetParentWindow())
+    pParent->NotifyMouseMove(this, point);
 
   return true;
 }
@@ -774,53 +773,31 @@ void CPWL_ScrollBar::SetScrollPosition(float pos) {
   SetScrollPos(pos);
 }
 
-void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
-                              uint32_t msg,
-                              intptr_t wParam,
-                              intptr_t lParam) {
-  CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
+void CPWL_ScrollBar::NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) {
+  if (child == m_pMinButton)
+    OnMinButtonLBDown(pos);
+  else if (child == m_pMaxButton)
+    OnMaxButtonLBDown(pos);
+  else if (child == m_pPosButton)
+    OnPosButtonLBDown(pos);
+}
 
-  switch (msg) {
-    case PNM_LBUTTONDOWN:
-      if (pWnd == m_pMinButton) {
-        OnMinButtonLBDown(*(CFX_PointF*)lParam);
-      }
+void CPWL_ScrollBar::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {
+  if (child == m_pMinButton)
+    OnMinButtonLBUp(pos);
+  else if (child == m_pMaxButton)
+    OnMaxButtonLBUp(pos);
+  else if (child == m_pPosButton)
+    OnPosButtonLBUp(pos);
+}
 
-      if (pWnd == m_pMaxButton) {
-        OnMaxButtonLBDown(*(CFX_PointF*)lParam);
-      }
-
-      if (pWnd == m_pPosButton) {
-        OnPosButtonLBDown(*(CFX_PointF*)lParam);
-      }
-      break;
-    case PNM_LBUTTONUP:
-      if (pWnd == m_pMinButton) {
-        OnMinButtonLBUp(*(CFX_PointF*)lParam);
-      }
-
-      if (pWnd == m_pMaxButton) {
-        OnMaxButtonLBUp(*(CFX_PointF*)lParam);
-      }
-
-      if (pWnd == m_pPosButton) {
-        OnPosButtonLBUp(*(CFX_PointF*)lParam);
-      }
-      break;
-    case PNM_MOUSEMOVE:
-      if (pWnd == m_pMinButton) {
-        OnMinButtonMouseMove(*(CFX_PointF*)lParam);
-      }
-
-      if (pWnd == m_pMaxButton) {
-        OnMaxButtonMouseMove(*(CFX_PointF*)lParam);
-      }
-
-      if (pWnd == m_pPosButton) {
-        OnPosButtonMouseMove(*(CFX_PointF*)lParam);
-      }
-      break;
-  }
+void CPWL_ScrollBar::NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos) {
+  if (child == m_pMinButton)
+    OnMinButtonMouseMove(pos);
+  else if (child == m_pMaxButton)
+    OnMaxButtonMouseMove(pos);
+  else if (child == m_pPosButton)
+    OnPosButtonMouseMove(pos);
 }
 
 void CPWL_ScrollBar::CreateButtons(const PWL_CREATEPARAM& cp) {

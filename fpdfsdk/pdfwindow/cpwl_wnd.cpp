@@ -422,16 +422,17 @@ void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
   }
 }
 
-void CPWL_Wnd::OnNotify(CPWL_Wnd* pWnd,
-                        uint32_t msg,
-                        intptr_t wParam,
-                        intptr_t lParam) {}
-
 void CPWL_Wnd::SetScrollInfo(const PWL_SCROLL_INFO& info) {}
 
 void CPWL_Wnd::SetScrollPosition(float pos) {}
 
 void CPWL_Wnd::ScrollWindowVertically(float pos) {}
+
+void CPWL_Wnd::NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) {}
+
+void CPWL_Wnd::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {}
+
+void CPWL_Wnd::NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos) {}
 
 bool CPWL_Wnd::IsValid() const {
   return m_bCreated;
