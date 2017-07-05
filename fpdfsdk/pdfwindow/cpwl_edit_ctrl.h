@@ -62,24 +62,14 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void SetCursor() override;
   CFX_WideString GetSelectedText() override;
 
-  void IOnSetScrollInfoY(float fPlateMin,
-                         float fPlateMax,
-                         float fContentMin,
-                         float fContentMax,
-                         float fSmallStep,
-                         float fBigStep);
-  void IOnSetScrollPosY(float fy);
-  void IOnSetCaret(bool bVisible,
-                   const CFX_PointF& ptHead,
-                   const CFX_PointF& ptFoot,
-                   const CPVT_WordPlace& place);
-  void IOnInvalidateRect(CFX_FloatRect* pRect);
+  void SetCaret(bool bVisible,
+                const CFX_PointF& ptHead,
+                const CFX_PointF& ptFoot);
 
  protected:
   void CopyText();
   void PasteText();
   void CutText();
-  void ShowVScrollBar(bool bShow);
   void InsertWord(uint16_t word, int32_t nCharset);
   void InsertReturn();
 
@@ -89,9 +79,6 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void Backspace();
 
   void GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const;
-  void SetCaret(bool bVisible,
-                const CFX_PointF& ptHead,
-                const CFX_PointF& ptFoot);
 
   void SetEditCaret(bool bVisible);
 

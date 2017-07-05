@@ -451,7 +451,12 @@ void CPWL_Edit::OnSetFocus() {
 }
 
 void CPWL_Edit::OnKillFocus() {
-  ShowVScrollBar(false);
+  CPWL_ScrollBar* pScroll = GetVScrollBar();
+  if (pScroll && pScroll->IsVisible()) {
+    pScroll->SetVisible(false);
+    Move(m_rcOldWindow, true, true);
+  }
+
   m_pEdit->SelectNone();
   SetCaret(false, CFX_PointF(), CFX_PointF());
   SetCharSet(FX_CHARSET_ANSI);
@@ -569,30 +574,9 @@ CFX_FloatRect CPWL_Edit::GetFocusRect() const {
   return CFX_FloatRect();
 }
 
-void CPWL_Edit::ShowVScrollBar(bool bShow) {
-  if (CPWL_ScrollBar* pScroll = GetVScrollBar()) {
-    if (bShow) {
-      if (!pScroll->IsVisible()) {
-        pScroll->SetVisible(true);
-        CFX_FloatRect rcWindow = GetWindowRect();
-        m_rcOldWindow = rcWindow;
-        rcWindow.right += PWL_SCROLLBAR_WIDTH;
-        Move(rcWindow, true, true);
-      }
-    } else {
-      if (pScroll->IsVisible()) {
-        pScroll->SetVisible(false);
-        Move(m_rcOldWindow, true, true);
-      }
-    }
-  }
-}
-
 bool CPWL_Edit::IsVScrollBarVisible() const {
-  if (CPWL_ScrollBar* pScroll = GetVScrollBar()) {
+  if (CPWL_ScrollBar* pScroll = GetVScrollBar())
     return pScroll->IsVisible();
-  }
-
   return false;
 }
 

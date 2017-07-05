@@ -278,7 +278,7 @@ void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
   if (m_pEdit)
     return;
 
-  m_pEdit = new CPWL_CBEdit();
+  m_pEdit = new CPWL_Edit();
   m_pEdit->AttachFFLData(m_pFormFiller.Get());
 
   PWL_CREATEPARAM ecp = cp;

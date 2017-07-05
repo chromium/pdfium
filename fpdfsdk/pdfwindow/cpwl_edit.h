@@ -113,7 +113,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
  private:
   CPVT_WordRange GetSelectWordRange() const;
-  virtual void ShowVScrollBar(bool bShow);
   bool IsVScrollBarVisible() const;
   void SetParamByFlag();
 

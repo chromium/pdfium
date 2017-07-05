@@ -299,8 +299,7 @@ void CPWL_EditCtrl::SetEditCaret(bool bVisible) {
   if (bVisible)
     GetCaretInfo(&ptHead, &ptFoot);
 
-  CPVT_WordPlace wpTemp = m_pEdit->GetCaretWordPlace();
-  IOnSetCaret(bVisible, ptHead, ptFoot, wpTemp);
+  SetCaret(bVisible, ptHead, ptFoot);
 }
 
 void CPWL_EditCtrl::GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const {
@@ -367,8 +366,6 @@ void CPWL_EditCtrl::PasteText() {}
 
 void CPWL_EditCtrl::CutText() {}
 
-void CPWL_EditCtrl::ShowVScrollBar(bool bShow) {}
-
 void CPWL_EditCtrl::InsertWord(uint16_t word, int32_t nCharset) {
   if (!IsReadOnly())
     m_pEdit->InsertWord(word, nCharset);
@@ -405,43 +402,6 @@ void CPWL_EditCtrl::Redo() {
 void CPWL_EditCtrl::Undo() {
   if (CanUndo())
     m_pEdit->Undo();
-}
-
-void CPWL_EditCtrl::IOnSetScrollInfoY(float fPlateMin,
-                                      float fPlateMax,
-                                      float fContentMin,
-                                      float fContentMax,
-                                      float fSmallStep,
-                                      float fBigStep) {
-  PWL_SCROLL_INFO Info;
-  Info.fPlateWidth = fPlateMax - fPlateMin;
-  Info.fContentMin = fContentMin;
-  Info.fContentMax = fContentMax;
-  Info.fSmallStep = fSmallStep;
-  Info.fBigStep = fBigStep;
-  SetScrollInfo(Info);
-
-  if (IsFloatBigger(Info.fPlateWidth, Info.fContentMax - Info.fContentMin) ||
-      IsFloatEqual(Info.fPlateWidth, Info.fContentMax - Info.fContentMin)) {
-    ShowVScrollBar(false);
-  } else {
-    ShowVScrollBar(true);
-  }
-}
-
-void CPWL_EditCtrl::IOnSetScrollPosY(float fy) {
-  SetScrollPosition(fy);
-}
-
-void CPWL_EditCtrl::IOnSetCaret(bool bVisible,
-                                const CFX_PointF& ptHead,
-                                const CFX_PointF& ptFoot,
-                                const CPVT_WordPlace& place) {
-  SetCaret(bVisible, ptHead, ptFoot);
-}
-
-void CPWL_EditCtrl::IOnInvalidateRect(CFX_FloatRect* pRect) {
-  InvalidateRect(pRect);
 }
 
 int32_t CPWL_EditCtrl::GetCharSet() const {

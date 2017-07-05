@@ -35,11 +35,6 @@ class CPWL_List_Notify {
   void IOnSetScrollPosY(float fy);
   void IOnInvalidateRect(CFX_FloatRect* pRect);
 
-  void IOnSetCaret(bool bVisible,
-                   const CFX_PointF& ptHead,
-                   const CFX_PointF& ptFoot,
-                   const CPVT_WordPlace& place);
-
  private:
   CFX_UnownedPtr<CPWL_ListBox> m_pList;
 };

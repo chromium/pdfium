@@ -14,12 +14,6 @@
 #include "fpdfsdk/pdfwindow/cpwl_list_box.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
-class CPWL_CBEdit : public CPWL_Edit {
- public:
-  CPWL_CBEdit() {}
-  ~CPWL_CBEdit() override {}
-};
-
 class CPWL_CBListBox : public CPWL_ListBox {
  public:
   CPWL_CBListBox() {}
@@ -93,7 +87,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void CreateListBox(const PWL_CREATEPARAM& cp);
   void SetPopup(bool bPopup);
 
-  CFX_UnownedPtr<CPWL_CBEdit> m_pEdit;
+  CFX_UnownedPtr<CPWL_Edit> m_pEdit;
   CFX_UnownedPtr<CPWL_CBButton> m_pButton;
   CFX_UnownedPtr<CPWL_CBListBox> m_pList;
   CFX_FloatRect m_rcOldWindow;
