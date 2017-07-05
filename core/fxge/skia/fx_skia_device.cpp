@@ -523,8 +523,8 @@ void ClipAngledGradient(const SkPoint pts[2],
       maxBounds = i;
     }
   }
-  ASSERT(minBounds >= 0);
-  ASSERT(maxBounds >= 0);
+  if (minBounds < 0 || maxBounds < 0)
+    return;
   if (minBounds == maxBounds)
     return;
   // construct a clip parallel to the gradient that goes through
