@@ -762,6 +762,18 @@ void CPWL_ScrollBar::SetScrollInfo(const PWL_SCROLL_INFO& info) {
   SetScrollStep(info.fBigStep, info.fSmallStep);
 }
 
+void CPWL_ScrollBar::SetScrollPosition(float pos) {
+  switch (m_sbType) {
+    case SBT_HSCROLL:
+      pos = pos - m_OriginInfo.fContentMin;
+      break;
+    case SBT_VSCROLL:
+      pos = m_OriginInfo.fContentMax - pos;
+      break;
+  }
+  SetScrollPos(pos);
+}
+
 void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
                               uint32_t msg,
                               intptr_t wParam,
@@ -808,18 +820,6 @@ void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
         OnPosButtonMouseMove(*(CFX_PointF*)lParam);
       }
       break;
-    case PNM_SETSCROLLPOS: {
-      float fPos = *(float*)lParam;
-      switch (m_sbType) {
-        case SBT_HSCROLL:
-          fPos = fPos - m_OriginInfo.fContentMin;
-          break;
-        case SBT_VSCROLL:
-          fPos = m_OriginInfo.fContentMax - fPos;
-          break;
-      }
-      SetScrollPos(fPos);
-    } break;
   }
 }
 
@@ -874,9 +874,7 @@ void CPWL_ScrollBar::SetScrollRange(float fMin,
 
 void CPWL_ScrollBar::SetScrollPos(float fPos) {
   float fOldPos = m_sData.fScrollPos;
-
   m_sData.SetPos(fPos);
-
   if (!IsFloatEqual(m_sData.fScrollPos, fOldPos))
     MovePosButton(true);
 }

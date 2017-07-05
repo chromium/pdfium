@@ -429,6 +429,8 @@ void CPWL_Wnd::OnNotify(CPWL_Wnd* pWnd,
 
 void CPWL_Wnd::SetScrollInfo(const PWL_SCROLL_INFO& info) {}
 
+void CPWL_Wnd::SetScrollPosition(float pos) {}
+
 bool CPWL_Wnd::IsValid() const {
   return m_bCreated;
 }

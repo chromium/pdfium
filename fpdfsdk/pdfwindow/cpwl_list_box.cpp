@@ -55,8 +55,7 @@ void CPWL_List_Notify::IOnSetScrollInfoY(float fPlateMin,
 }
 
 void CPWL_List_Notify::IOnSetScrollPosY(float fy) {
-  m_pList->OnNotify(m_pList.Get(), PNM_SETSCROLLPOS, SBT_VSCROLL,
-                    reinterpret_cast<intptr_t>(&fy));
+  m_pList->SetScrollPosition(fy);
 }
 
 void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {
@@ -290,6 +289,11 @@ void CPWL_ListBox::SetScrollInfo(const PWL_SCROLL_INFO& info) {
     pChild->SetScrollInfo(info);
 }
 
+void CPWL_ListBox::SetScrollPosition(float pos) {
+  if (CPWL_Wnd* pChild = GetVScrollBar())
+    pChild->SetScrollPosition(pos);
+}
+
 void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
                             uint32_t msg,
                             intptr_t wParam,
@@ -299,15 +303,6 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
   float fPos;
 
   switch (msg) {
-    case PNM_SETSCROLLPOS:
-      switch (wParam) {
-        case SBT_VSCROLL:
-          if (CPWL_Wnd* pChild = GetVScrollBar()) {
-            pChild->OnNotify(pWnd, PNM_SETSCROLLPOS, wParam, lParam);
-          }
-          break;
-      }
-      break;
     case PNM_SCROLLWINDOW:
       fPos = *(float*)lParam;
       switch (wParam) {

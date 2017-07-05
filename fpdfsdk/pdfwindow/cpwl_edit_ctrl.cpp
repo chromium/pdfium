@@ -69,6 +69,11 @@ void CPWL_EditCtrl::SetScrollInfo(const PWL_SCROLL_INFO& info) {
     pChild->SetScrollInfo(info);
 }
 
+void CPWL_EditCtrl::SetScrollPosition(float pos) {
+  if (CPWL_Wnd* pChild = GetVScrollBar())
+    pChild->SetScrollPosition(pos);
+}
+
 void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
                              uint32_t msg,
                              intptr_t wParam,
@@ -76,15 +81,6 @@ void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
 
   switch (msg) {
-    case PNM_SETSCROLLPOS:
-      switch (wParam) {
-        case SBT_VSCROLL:
-          if (CPWL_Wnd* pChild = GetVScrollBar()) {
-            pChild->OnNotify(pWnd, PNM_SETSCROLLPOS, wParam, lParam);
-          }
-          break;
-      }
-      break;
     case PNM_SCROLLWINDOW: {
       float fPos = *(float*)lParam;
       switch (wParam) {
@@ -453,7 +449,7 @@ void CPWL_EditCtrl::IOnSetScrollInfoY(float fPlateMin,
 }
 
 void CPWL_EditCtrl::IOnSetScrollPosY(float fy) {
-  OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&fy);
+  SetScrollPosition(fy);
 }
 
 void CPWL_EditCtrl::IOnSetCaret(bool bVisible,
