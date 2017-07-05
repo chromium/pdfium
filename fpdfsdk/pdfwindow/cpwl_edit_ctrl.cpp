@@ -78,21 +78,6 @@ void CPWL_EditCtrl::ScrollWindowVertically(float pos) {
   m_pEdit->SetScrollPos(CFX_PointF(m_pEdit->GetScrollPos().x, pos));
 }
 
-void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
-                             uint32_t msg,
-                             intptr_t wParam,
-                             intptr_t lParam) {
-  CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
-
-  switch (msg) {
-    case PNM_SETCARETINFO: {
-      if (PWL_CARET_INFO* pCaretInfo = (PWL_CARET_INFO*)wParam) {
-        SetCaret(pCaretInfo->bVisible, pCaretInfo->ptHead, pCaretInfo->ptFoot);
-      }
-    } break;
-  }
-}
-
 void CPWL_EditCtrl::CreateChildWnd(const PWL_CREATEPARAM& cp) {
   if (!IsReadOnly())
     CreateEditCaret(cp);
@@ -452,12 +437,7 @@ void CPWL_EditCtrl::IOnSetCaret(bool bVisible,
                                 const CFX_PointF& ptHead,
                                 const CFX_PointF& ptFoot,
                                 const CPVT_WordPlace& place) {
-  PWL_CARET_INFO cInfo;
-  cInfo.bVisible = bVisible;
-  cInfo.ptHead = ptHead;
-  cInfo.ptFoot = ptFoot;
-
-  OnNotify(this, PNM_SETCARETINFO, (intptr_t)&cInfo, (intptr_t) nullptr);
+  SetCaret(bVisible, ptHead, ptFoot);
 }
 
 void CPWL_EditCtrl::IOnInvalidateRect(CFX_FloatRect* pRect) {

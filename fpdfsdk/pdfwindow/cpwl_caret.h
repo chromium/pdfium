@@ -9,15 +9,6 @@
 
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
-struct PWL_CARET_INFO {
- public:
-  PWL_CARET_INFO();
-
-  bool bVisible;
-  CFX_PointF ptHead;
-  CFX_PointF ptFoot;
-};
-
 class CPWL_Caret : public CPWL_Wnd {
  public:
   CPWL_Caret();

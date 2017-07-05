@@ -16,8 +16,6 @@
 
 #define PWL_CARET_FLASHINTERVAL 500
 
-PWL_CARET_INFO::PWL_CARET_INFO() : bVisible(false) {}
-
 CPWL_Caret::CPWL_Caret() : m_bFlash(false), m_fWidth(0.4f), m_nDelay(0) {}
 
 CPWL_Caret::~CPWL_Caret() {}

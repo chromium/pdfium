@@ -52,10 +52,6 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag) override;
-  void OnNotify(CPWL_Wnd* pWnd,
-                uint32_t msg,
-                intptr_t wParam = 0,
-                intptr_t lParam = 0) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void ScrollWindowVertically(float pos) override;
