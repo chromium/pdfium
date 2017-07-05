@@ -98,24 +98,24 @@ const char ToUnicodeEnd[] =
     "end\n"
     "end\n";
 
-void AddCharcode(CFX_ByteTextBuf* pBuffer, uint32_t number) {
+void AddCharcode(std::ostringstream* pBuffer, uint32_t number) {
   ASSERT(number <= 0xFFFF);
   *pBuffer << "<";
   char ans[4];
   FXSYS_IntToFourHexChars(number, ans);
   for (size_t i = 0; i < 4; ++i)
-    pBuffer->AppendChar(ans[i]);
+    *pBuffer << ans[i];
   *pBuffer << ">";
 }
 
 // PDF spec 1.7 Section 5.9.2: "Unicode character sequences as expressed in
 // UTF-16BE encoding." See https://en.wikipedia.org/wiki/UTF-16#Description
-void AddUnicode(CFX_ByteTextBuf* pBuffer, uint32_t unicode) {
+void AddUnicode(std::ostringstream* pBuffer, uint32_t unicode) {
   char ans[8];
   *pBuffer << "<";
   size_t numChars = FXSYS_ToUTF16BE(unicode, ans);
   for (size_t i = 0; i < numChars; ++i)
-    pBuffer->AppendChar(ans[i]);
+    *pBuffer << ans[i];
   *pBuffer << ">";
 }
 
@@ -184,7 +184,7 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
     }
     map_range[std::make_pair(firstCharcode, curCharcode)] = firstUnicode;
   }
-  CFX_ByteTextBuf buffer;
+  std::ostringstream buffer;
   buffer << ToUnicodeStart;
   // Add maps to buffer
   buffer << static_cast<uint32_t>(char_to_uni.size()) << " beginbfchar\n";
@@ -224,11 +224,9 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
   buffer << "endbfrange\n";
   buffer << ToUnicodeEnd;
   // TODO(npm): Encrypt / Compress?
-  uint32_t bufferSize = buffer.GetSize();
-  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(bufferSize));
-  return pDoc->NewIndirect<CPDF_Stream>(buffer.DetachBuffer(), bufferSize,
-                                        std::move(pDict));
+  CPDF_Stream* stream = pDoc->NewIndirect<CPDF_Stream>();
+  stream->SetData(&buffer);
+  return stream;
 }
 
 const uint32_t kMaxSimpleFontChar = 0xFF;
