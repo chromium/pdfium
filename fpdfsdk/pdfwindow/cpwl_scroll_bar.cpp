@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <vector>
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -145,91 +146,51 @@ void CPWL_SBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
   if (rectWnd.IsEmpty())
     return;
 
-  *psAppStream << "q\n";
-
   CFX_PointF ptCenter = GetCenterPoint();
-
-  switch (m_eScrollBarType) {
-    case SBT_HSCROLL:
-      switch (m_eSBButtonType) {
-        case PSBT_MIN: {
-          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength * 0.5f,
-                         ptCenter.y + kTriangleHalfLength);
-          CFX_PointF pt3(ptCenter.x + kTriangleHalfLength * 0.5f,
-                         ptCenter.y - kTriangleHalfLength);
-
-          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
-            *psAppStream << "0 g\n"
-                         << pt1.x << " " << pt1.y << " m\n"
-                         << pt2.x << " " << pt2.y << " l\n"
-                         << pt3.x << " " << pt3.y << " l\n"
-                         << pt1.x << " " << pt1.y << " l f\n";
-          }
-        } break;
-        case PSBT_MAX: {
-          CFX_PointF pt1(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x - kTriangleHalfLength * 0.5f,
-                         ptCenter.y + kTriangleHalfLength);
-          CFX_PointF pt3(ptCenter.x - kTriangleHalfLength * 0.5f,
-                         ptCenter.y - kTriangleHalfLength);
-
-          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
-            *psAppStream << "0 g\n"
-                         << pt1.x << " " << pt1.y << " m\n"
-                         << pt2.x << " " << pt2.y << " l\n"
-                         << pt3.x << " " << pt3.y << " l\n"
-                         << pt1.x << " " << pt1.y << " l f\n";
-          }
-        } break;
-        default:
-          break;
-      }
-      break;
-    case SBT_VSCROLL:
-      switch (m_eSBButtonType) {
-        case PSBT_MIN: {
-          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
-                         ptCenter.y - kTriangleHalfLength * 0.5f);
-          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
-                         ptCenter.y - kTriangleHalfLength * 0.5f);
-          CFX_PointF pt3(ptCenter.x, ptCenter.y + kTriangleHalfLength * 0.5f);
-
-          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
-            *psAppStream << "0 g\n"
-                         << pt1.x << " " << pt1.y << " m\n"
-                         << pt2.x << " " << pt2.y << " l\n"
-                         << pt3.x << " " << pt3.y << " l\n"
-                         << pt1.x << " " << pt1.y << " l f\n";
-          }
-        } break;
-        case PSBT_MAX: {
-          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
-                         ptCenter.y + kTriangleHalfLength * 0.5f);
-          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
-                         ptCenter.y + kTriangleHalfLength * 0.5f);
-          CFX_PointF pt3(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
-
-          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
-            *psAppStream << "0 g\n"
-                         << pt1.x << " " << pt1.y << " m\n"
-                         << pt2.x << " " << pt2.y << " l\n"
-                         << pt3.x << " " << pt3.y << " l\n"
-                         << pt1.x << " " << pt1.y << " l f\n";
-          }
-        } break;
-        default:
-          break;
-      }
-      break;
-    default:
-      break;
+  CFX_PointF pt1;
+  CFX_PointF pt2;
+  CFX_PointF pt3;
+  if (m_eScrollBarType == SBT_HSCROLL) {
+    if (m_eSBButtonType == PSBT_MIN) {
+      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
+      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
+                       ptCenter.y + kTriangleHalfLength);
+      pt3 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
+                       ptCenter.y - kTriangleHalfLength);
+    } else if (m_eSBButtonType == PSBT_MAX) {
+      pt1 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
+      pt2 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
+                       ptCenter.y + kTriangleHalfLength);
+      pt3 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
+                       ptCenter.y - kTriangleHalfLength);
+    }
+  } else {
+    if (m_eSBButtonType == PSBT_MIN) {
+      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength,
+                       ptCenter.y - kTriangleHalfLength * 0.5f);
+      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength,
+                       ptCenter.y - kTriangleHalfLength * 0.5f);
+      pt3 = CFX_PointF(ptCenter.x, ptCenter.y + kTriangleHalfLength * 0.5f);
+    } else if (m_eSBButtonType == PSBT_MAX) {
+      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength,
+                       ptCenter.y + kTriangleHalfLength * 0.5f);
+      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength,
+                       ptCenter.y + kTriangleHalfLength * 0.5f);
+      pt3 = CFX_PointF(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
+    }
   }
 
+  *psAppStream << "q\n";
+  if (m_eSBButtonType != PSBT_POS) {
+    if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+        rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
+      *psAppStream << "0 g\n"
+                   << pt1.x << " " << pt1.y << " m\n"
+                   << pt2.x << " " << pt2.y << " l\n"
+                   << pt3.x << " " << pt3.y << " l\n"
+                   << pt1.x << " " << pt1.y << " l f\n";
+    }
+  }
   *psAppStream << "Q\n";
 }
 
@@ -245,282 +206,144 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CFX_PointF ptCenter = GetCenterPoint();
   int32_t nTransparency = GetTransparency();
 
-  switch (m_eScrollBarType) {
-    case SBT_HSCROLL:
-      CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
-      switch (m_eSBButtonType) {
-        case PSBT_MIN: {
-          CFX_PointF pt1(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x + kTriangleHalfLength * 0.5f,
-                         ptCenter.y + kTriangleHalfLength);
-          CFX_PointF pt3(ptCenter.x + kTriangleHalfLength * 0.5f,
-                         ptCenter.y - kTriangleHalfLength);
+  if (m_eScrollBarType == SBT_HSCROLL) {
+    CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
-          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
-            CFX_PathData path;
-            path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
-            path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
+    CFX_PointF pt1;
+    CFX_PointF pt2;
+    CFX_PointF pt3;
+    if (m_eSBButtonType == PSBT_MIN) {
+      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
+      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
+                       ptCenter.y + kTriangleHalfLength);
+      pt3 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
+                       ptCenter.y - kTriangleHalfLength);
+    } else if (m_eSBButtonType == PSBT_MAX) {
+      pt1 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
+      pt2 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
+                       ptCenter.y + kTriangleHalfLength);
+      pt3 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
+                       ptCenter.y - kTriangleHalfLength);
+    }
 
-            pDevice->DrawPath(&path, pUser2Device, nullptr,
-                              PWL_DEFAULT_BLACKCOLOR.ToFXColor(nTransparency),
-                              0, FXFILL_ALTERNATE);
-          }
-        } break;
-        case PSBT_MAX: {
-          CFX_PointF pt1(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
-          CFX_PointF pt2(ptCenter.x - kTriangleHalfLength * 0.5f,
-                         ptCenter.y + kTriangleHalfLength);
-          CFX_PointF pt3(ptCenter.x - kTriangleHalfLength * 0.5f,
-                         ptCenter.y - kTriangleHalfLength);
+    if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
+        rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
+      CFX_PathData path;
+      path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
+      path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
+      path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
+      path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
 
-          if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-              rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
-            CFX_PathData path;
-            path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
-            path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
+      pDevice->DrawPath(&path, pUser2Device, nullptr,
+                        PWL_DEFAULT_BLACKCOLOR.ToFXColor(nTransparency), 0,
+                        FXFILL_ALTERNATE);
+    }
+    return;
+  }
 
-            pDevice->DrawPath(&path, pUser2Device, nullptr,
-                              PWL_DEFAULT_BLACKCOLOR.ToFXColor(nTransparency),
-                              0, FXFILL_ALTERNATE);
-          }
-        } break;
-        default:
-          break;
+  // draw border
+  CFX_FloatRect rcDraw = rectWnd;
+  CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
+                             ArgbEncode(nTransparency, 100, 100, 100), 0.0f);
+
+  // draw inner border
+  rcDraw = CPWL_Utils::DeflateRect(rectWnd, 0.5f);
+  CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
+                             ArgbEncode(nTransparency, 255, 255, 255), 1.0f);
+
+  if (m_eSBButtonType != PSBT_POS) {
+    // draw background
+    rcDraw = CPWL_Utils::DeflateRect(rectWnd, 1.0f);
+
+    if (IsEnabled()) {
+      CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false, rcDraw,
+                             nTransparency, 80, 220);
+    } else {
+      CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
+                               ArgbEncode(255, 255, 255, 255));
+    }
+
+    // draw arrow
+    if (rectWnd.top - rectWnd.bottom > 6.0f) {
+      float fX = rectWnd.left + 1.5f;
+      float fY = rectWnd.bottom;
+      std::vector<CFX_PointF> pts;
+      if (m_eSBButtonType == PSBT_MIN) {
+        pts.push_back(CFX_PointF(fX + 2.5f, fY + 4.0f));
+        pts.push_back(CFX_PointF(fX + 2.5f, fY + 3.0f));
+        pts.push_back(CFX_PointF(fX + 4.5f, fY + 5.0f));
+        pts.push_back(CFX_PointF(fX + 6.5f, fY + 3.0f));
+        pts.push_back(CFX_PointF(fX + 6.5f, fY + 4.0f));
+        pts.push_back(CFX_PointF(fX + 4.5f, fY + 6.0f));
+        pts.push_back(CFX_PointF(fX + 2.5f, fY + 4.0f));
+      } else {
+        pts.push_back(CFX_PointF(fX + 2.5f, fY + 5.0f));
+        pts.push_back(CFX_PointF(fX + 2.5f, fY + 6.0f));
+        pts.push_back(CFX_PointF(fX + 4.5f, fY + 4.0f));
+        pts.push_back(CFX_PointF(fX + 6.5f, fY + 6.0f));
+        pts.push_back(CFX_PointF(fX + 6.5f, fY + 5.0f));
+        pts.push_back(CFX_PointF(fX + 4.5f, fY + 3.0f));
+        pts.push_back(CFX_PointF(fX + 2.5f, fY + 5.0f));
       }
-      break;
-    case SBT_VSCROLL:
-      switch (m_eSBButtonType) {
-        case PSBT_MIN: {
-          // draw border
-          CFX_FloatRect rcDraw = rectWnd;
-          CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(nTransparency, 100, 100, 100),
-                                     0.0f);
+      CPWL_Utils::DrawFillArea(pDevice, pUser2Device, pts.data(), 7,
+                               IsEnabled()
+                                   ? ArgbEncode(nTransparency, 255, 255, 255)
+                                   : PWL_DEFAULT_HEAVYGRAYCOLOR.ToFXColor(255));
+    }
+    return;
+  }
 
-          // draw inner border
-          rcDraw = CPWL_Utils::DeflateRect(rectWnd, 0.5f);
-          CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(nTransparency, 255, 255, 255),
-                                     1.0f);
+  if (IsEnabled()) {
+    // draw shadow effect
+    CFX_PointF ptTop = CFX_PointF(rectWnd.left, rectWnd.top - 1.0f);
+    CFX_PointF ptBottom = CFX_PointF(rectWnd.left, rectWnd.bottom + 1.0f);
 
-          // draw background
+    ptTop.x += 1.5f;
+    ptBottom.x += 1.5f;
 
-          rcDraw = CPWL_Utils::DeflateRect(rectWnd, 1.0f);
+    const FX_COLORREF refs[] = {ArgbEncode(nTransparency, 210, 210, 210),
+                                ArgbEncode(nTransparency, 220, 220, 220),
+                                ArgbEncode(nTransparency, 240, 240, 240),
+                                ArgbEncode(nTransparency, 240, 240, 240),
+                                ArgbEncode(nTransparency, 210, 210, 210),
+                                ArgbEncode(nTransparency, 180, 180, 180),
+                                ArgbEncode(nTransparency, 150, 150, 150),
+                                ArgbEncode(nTransparency, 150, 150, 150),
+                                ArgbEncode(nTransparency, 180, 180, 180),
+                                ArgbEncode(nTransparency, 210, 210, 210)};
+    for (auto* it = std::begin(refs); it < std::end(refs); ++it) {
+      CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom, *it,
+                                 1.0f);
 
-          if (IsEnabled())
-            CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false, rcDraw,
-                                   nTransparency, 80, 220);
-          else
-            CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(255, 255, 255, 255));
+      ptTop.x += 1.0f;
+      ptBottom.x += 1.0f;
+    }
+  } else {
+    CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
+                             ArgbEncode(255, 255, 255, 255));
+  }
 
-          // draw arrow
+  // draw friction
+  if (rectWnd.Height() <= 8.0f)
+    return;
 
-          if (rectWnd.top - rectWnd.bottom > 6.0f) {
-            float fX = rectWnd.left + 1.5f;
-            float fY = rectWnd.bottom;
-            CFX_PointF pts[7] = {CFX_PointF(fX + 2.5f, fY + 4.0f),
-                                 CFX_PointF(fX + 2.5f, fY + 3.0f),
-                                 CFX_PointF(fX + 4.5f, fY + 5.0f),
-                                 CFX_PointF(fX + 6.5f, fY + 3.0f),
-                                 CFX_PointF(fX + 6.5f, fY + 4.0f),
-                                 CFX_PointF(fX + 4.5f, fY + 6.0f),
-                                 CFX_PointF(fX + 2.5f, fY + 4.0f)};
+  FX_COLORREF crStroke = ArgbEncode(nTransparency, 120, 120, 120);
+  if (!IsEnabled())
+    crStroke = PWL_DEFAULT_HEAVYGRAYCOLOR.ToFXColor(255);
 
-            if (IsEnabled())
-              CPWL_Utils::DrawFillArea(
-                  pDevice, pUser2Device, pts, 7,
-                  ArgbEncode(nTransparency, 255, 255, 255));
-            else
-              CPWL_Utils::DrawFillArea(
-                  pDevice, pUser2Device, pts, 7,
-                  PWL_DEFAULT_HEAVYGRAYCOLOR.ToFXColor(255));
-          }
-        } break;
-        case PSBT_MAX: {
-          // draw border
-          CFX_FloatRect rcDraw = rectWnd;
-          CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(nTransparency, 100, 100, 100),
-                                     0.0f);
+  float nFrictionWidth = 5.0f;
+  float nFrictionHeight = 5.5f;
 
-          // draw inner border
-          rcDraw = CPWL_Utils::DeflateRect(rectWnd, 0.5f);
-          CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(nTransparency, 255, 255, 255),
-                                     1.0f);
+  CFX_PointF ptLeft = CFX_PointF(ptCenter.x - nFrictionWidth / 2.0f,
+                                 ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
+  CFX_PointF ptRight = CFX_PointF(ptCenter.x + nFrictionWidth / 2.0f,
+                                  ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
 
-          // draw background
-          rcDraw = CPWL_Utils::DeflateRect(rectWnd, 1.0f);
-          if (IsEnabled())
-            CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false, rcDraw,
-                                   nTransparency, 80, 220);
-          else
-            CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(255, 255, 255, 255));
-
-          // draw arrow
-
-          if (rectWnd.top - rectWnd.bottom > 6.0f) {
-            float fX = rectWnd.left + 1.5f;
-            float fY = rectWnd.bottom;
-
-            CFX_PointF pts[7] = {CFX_PointF(fX + 2.5f, fY + 5.0f),
-                                 CFX_PointF(fX + 2.5f, fY + 6.0f),
-                                 CFX_PointF(fX + 4.5f, fY + 4.0f),
-                                 CFX_PointF(fX + 6.5f, fY + 6.0f),
-                                 CFX_PointF(fX + 6.5f, fY + 5.0f),
-                                 CFX_PointF(fX + 4.5f, fY + 3.0f),
-                                 CFX_PointF(fX + 2.5f, fY + 5.0f)};
-
-            if (IsEnabled())
-              CPWL_Utils::DrawFillArea(
-                  pDevice, pUser2Device, pts, 7,
-                  ArgbEncode(nTransparency, 255, 255, 255));
-            else
-              CPWL_Utils::DrawFillArea(
-                  pDevice, pUser2Device, pts, 7,
-                  PWL_DEFAULT_HEAVYGRAYCOLOR.ToFXColor(255));
-          }
-        } break;
-        case PSBT_POS: {
-          // draw border
-          CFX_FloatRect rcDraw = rectWnd;
-          CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(nTransparency, 100, 100, 100),
-                                     0.0f);
-
-          // draw inner border
-          rcDraw = CPWL_Utils::DeflateRect(rectWnd, 0.5f);
-          CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(nTransparency, 255, 255, 255),
-                                     1.0f);
-
-          if (IsEnabled()) {
-            // draw shadow effect
-
-            CFX_PointF ptTop = CFX_PointF(rectWnd.left, rectWnd.top - 1.0f);
-            CFX_PointF ptBottom =
-                CFX_PointF(rectWnd.left, rectWnd.bottom + 1.0f);
-
-            ptTop.x += 1.5f;
-            ptBottom.x += 1.5f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 210, 210, 210),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 220, 220, 220),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 240, 240, 240),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 240, 240, 240),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 210, 210, 210),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 180, 180, 180),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 150, 150, 150),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 150, 150, 150),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 180, 180, 180),
-                                       1.0f);
-
-            ptTop.x += 1.0f;
-            ptBottom.x += 1.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptTop, ptBottom,
-                                       ArgbEncode(nTransparency, 210, 210, 210),
-                                       1.0f);
-          } else {
-            CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
-                                     ArgbEncode(255, 255, 255, 255));
-          }
-
-          // draw friction
-
-          if (rectWnd.Height() > 8.0f) {
-            FX_COLORREF crStroke = ArgbEncode(nTransparency, 120, 120, 120);
-            if (!IsEnabled())
-              crStroke = PWL_DEFAULT_HEAVYGRAYCOLOR.ToFXColor(255);
-
-            float nFrictionWidth = 5.0f;
-            float nFrictionHeight = 5.5f;
-
-            CFX_PointF ptLeft =
-                CFX_PointF(ptCenter.x - nFrictionWidth / 2.0f,
-                           ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
-            CFX_PointF ptRight =
-                CFX_PointF(ptCenter.x + nFrictionWidth / 2.0f,
-                           ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptLeft, ptRight,
-                                       crStroke, 1.0f);
-
-            ptLeft.y += 2.0f;
-            ptRight.y += 2.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptLeft, ptRight,
-                                       crStroke, 1.0f);
-
-            ptLeft.y += 2.0f;
-            ptRight.y += 2.0f;
-
-            CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptLeft, ptRight,
-                                       crStroke, 1.0f);
-          }
-        } break;
-        default:
-          break;
-      }
-      break;
-    default:
-      break;
+  for (size_t i = 0; i < 3; ++i) {
+    CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptLeft, ptRight, crStroke,
+                               1.0f);
+    ptLeft.y += 2.0f;
+    ptRight.y += 2.0f;
   }
 }
 
