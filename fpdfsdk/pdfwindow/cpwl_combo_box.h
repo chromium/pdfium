@@ -22,7 +22,8 @@ class CPWL_CBListBox : public CPWL_ListBox {
   // CPWL_ListBox
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
 
-  bool OnKeyDownWithExit(uint16_t nChar, bool& bExit, uint32_t nFlag);
+  bool IsMovementKey(uint16_t nChar) const;
+  bool OnMovementKeyDown(uint16_t nChar, uint32_t nFlag);
   bool OnCharWithExit(uint16_t nChar, bool& bExit, uint32_t nFlag);
 };
 

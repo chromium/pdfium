@@ -46,9 +46,7 @@ bool CPWL_CBListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   return !bExit;
 }
 
-bool CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
-                                       bool& bExit,
-                                       uint32_t nFlag) {
+bool CPWL_CBListBox::IsMovementKey(uint16_t nChar) const {
   switch (nChar) {
     case FWL_VKEY_Up:
     case FWL_VKEY_Down:
@@ -56,10 +54,14 @@ bool CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
     case FWL_VKEY_Left:
     case FWL_VKEY_End:
     case FWL_VKEY_Right:
-      break;
+      return true;
     default:
       return false;
   }
+}
+
+bool CPWL_CBListBox::OnMovementKeyDown(uint16_t nChar, uint32_t nFlag) {
+  ASSERT(IsMovementKey(nChar));
 
   switch (nChar) {
     case FWL_VKEY_Up:
@@ -80,13 +82,11 @@ bool CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
     case FWL_VKEY_Right:
       m_pList->OnVK_RIGHT(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
       break;
-    case FWL_VKEY_Delete:
-      break;
   }
 
+  bool bExit = false;
   OnNotifySelChanged(true, bExit, nFlag);
-
-  return true;
+  return bExit;
 }
 
 bool CPWL_CBListBox::OnCharWithExit(uint16_t nChar,
@@ -479,9 +479,8 @@ bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
             return false;
         }
 #endif  // PDF_ENABLE_XFA
-        bool bExit = false;
-        if (m_pList->OnKeyDownWithExit(nChar, bExit, nFlag)) {
-          if (bExit)
+        if (m_pList->IsMovementKey(nChar)) {
+          if (m_pList->OnMovementKeyDown(nChar, nFlag))
             return false;
           SetSelectText();
         }
@@ -497,9 +496,8 @@ bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
             return false;
         }
 #endif  // PDF_ENABLE_XFA
-        bool bExit = false;
-        if (m_pList->OnKeyDownWithExit(nChar, bExit, nFlag)) {
-          if (bExit)
+        if (m_pList->IsMovementKey(nChar)) {
+          if (m_pList->OnMovementKeyDown(nChar, nFlag))
             return false;
           SetSelectText();
         }
