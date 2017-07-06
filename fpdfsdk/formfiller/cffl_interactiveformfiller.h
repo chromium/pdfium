@@ -141,10 +141,8 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
                          bool& bExit,
                          uint32_t nFlag) override;
 #ifdef PDF_ENABLE_XFA
-  void OnPopupPreOpen(void* pPrivateData, bool& bExit, uint32_t nFlag) override;
-  void OnPopupPostOpen(void* pPrivateData,
-                       bool& bExit,
-                       uint32_t nFlag) override;
+  bool OnPopupPreOpen(void* pPrivateData, uint32_t nFlag) override;
+  bool OnPopupPostOpen(void* pPrivateData, uint32_t nFlag) override;
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, bool bSameField, bool bNext);
 #endif  // PDF_ENABLE_XFA
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);

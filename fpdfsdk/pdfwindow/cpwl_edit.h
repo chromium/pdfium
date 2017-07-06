@@ -32,12 +32,8 @@ class IPWL_Filler_Notify {
                                  bool& bExit,
                                  uint32_t nFlag) = 0;
 #ifdef PDF_ENABLE_XFA
-  virtual void OnPopupPreOpen(void* pPrivateData,
-                              bool& bExit,
-                              uint32_t nFlag) = 0;
-  virtual void OnPopupPostOpen(void* pPrivateData,
-                               bool& bExit,
-                               uint32_t nFlag) = 0;
+  virtual bool OnPopupPreOpen(void* pPrivateData, uint32_t nFlag) = 0;
+  virtual bool OnPopupPostOpen(void* pPrivateData, uint32_t nFlag) = 0;
 #endif  // PDF_ENABLE_XFA
 };
 

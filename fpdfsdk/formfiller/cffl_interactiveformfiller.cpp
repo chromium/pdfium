@@ -759,28 +759,24 @@ bool CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
   return true;
 }
 
-void CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
-                                                bool& bExit,
+bool CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
                                                 uint32_t nFlag) {
   CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
   CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
-  if (OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved)
-    bExit = true;
+  return OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
 }
 
-void CFFL_InteractiveFormFiller::OnPopupPostOpen(void* pPrivateData,
-                                                 bool& bExit,
+bool CFFL_InteractiveFormFiller::OnPopupPostOpen(void* pPrivateData,
                                                  uint32_t nFlag) {
   CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
   CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
-  if (OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved)
-    bExit = true;
+  return OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
 }
 
 bool CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
