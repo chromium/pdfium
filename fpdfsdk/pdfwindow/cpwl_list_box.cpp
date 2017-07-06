@@ -223,7 +223,7 @@ bool CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
     case FWL_VKEY_Delete:
       break;
   }
-  OnNotifySelChanged(true, nFlag);
+  OnNotifySelectionChanged(true, nFlag);
   return true;
 }
 
@@ -233,7 +233,7 @@ bool CPWL_ListBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (!m_pList->OnChar(nChar, IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag)))
     return false;
 
-  OnNotifySelChanged(true, nFlag);
+  OnNotifySelectionChanged(true, nFlag);
   return true;
 }
 
@@ -258,7 +258,7 @@ bool CPWL_ListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
     ReleaseCapture();
     m_bMouseDown = false;
   }
-  OnNotifySelChanged(false, nFlag);
+  OnNotifySelectionChanged(false, nFlag);
   return true;
 }
 
@@ -301,7 +301,7 @@ void CPWL_ListBox::RePosChildWnd() {
   m_pList->SetPlateRect(GetListRect());
 }
 
-bool CPWL_ListBox::OnNotifySelChanged(bool bKeyDown, uint32_t nFlag) {
+bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag) {
   if (!m_pFillerNotify)
     return false;
 
@@ -417,6 +417,6 @@ bool CPWL_ListBox::OnMouseWheel(short zDelta,
   else
     m_pList->OnVK_UP(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
 
-  OnNotifySelChanged(false, nFlag);
+  OnNotifySelectionChanged(false, nFlag);
   return true;
 }

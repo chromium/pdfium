@@ -70,7 +70,7 @@ class CPWL_ListBox : public CPWL_Wnd {
 
   virtual CFX_WideString GetText() const;
 
-  bool OnNotifySelChanged(bool bKeyDown, uint32_t nFlag);
+  bool OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag);
 
   void AddString(const CFX_WideString& str);
   void SetTopVisibleIndex(int32_t nItemIndex);

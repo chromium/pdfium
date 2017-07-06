@@ -40,7 +40,7 @@ bool CPWL_CBListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (CPWL_Wnd* pParent = GetParentWindow())
     pParent->NotifyLButtonUp(this, point);
 
-  return !OnNotifySelChanged(false, nFlag);
+  return !OnNotifySelectionChanged(false, nFlag);
 }
 
 bool CPWL_CBListBox::IsMovementKey(uint16_t nChar) const {
@@ -80,7 +80,7 @@ bool CPWL_CBListBox::OnMovementKeyDown(uint16_t nChar, uint32_t nFlag) {
       m_pList->OnVK_RIGHT(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
       break;
   }
-  return OnNotifySelChanged(true, nFlag);
+  return OnNotifySelectionChanged(true, nFlag);
 }
 
 bool CPWL_CBListBox::IsChar(uint16_t nChar, uint32_t nFlag) const {
@@ -91,7 +91,7 @@ bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {
   if (CPWL_ComboBox* pComboBox = (CPWL_ComboBox*)GetParentWindow())
     pComboBox->SetSelectText();
 
-  return OnNotifySelChanged(true, nFlag);
+  return OnNotifySelectionChanged(true, nFlag);
 }
 
 void CPWL_CBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
