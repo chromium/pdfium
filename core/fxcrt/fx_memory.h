@@ -89,15 +89,18 @@ inline void* FX_ReallocOrDie(void* ptr,
 }
 
 // These never return nullptr.
-#define FX_Alloc(type, size) (type*)FX_AllocOrDie(size, sizeof(type))
-#define FX_Alloc2D(type, w, h) (type*)FX_AllocOrDie2D(w, h, sizeof(type))
+#define FX_Alloc(type, size) \
+  static_cast<type*>(FX_AllocOrDie(size, sizeof(type)))
+#define FX_Alloc2D(type, w, h) \
+  static_cast<type*>(FX_AllocOrDie2D(w, h, sizeof(type)))
 #define FX_Realloc(type, ptr, size) \
-  (type*)FX_ReallocOrDie(ptr, size, sizeof(type))
+  static_cast<type*>(FX_ReallocOrDie(ptr, size, sizeof(type)))
 
 // May return nullptr.
-#define FX_TryAlloc(type, size) (type*)FX_SafeAlloc(size, sizeof(type))
+#define FX_TryAlloc(type, size) \
+  static_cast<type*>(FX_SafeAlloc(size, sizeof(type)))
 #define FX_TryRealloc(type, ptr, size) \
-  (type*)FX_SafeRealloc(ptr, size, sizeof(type))
+  static_cast<type*>(FX_SafeRealloc(ptr, size, sizeof(type)))
 
 inline void FX_Free(void* ptr) {
   // TODO(palmer): Removing this check exposes crashes when PDFium callers
