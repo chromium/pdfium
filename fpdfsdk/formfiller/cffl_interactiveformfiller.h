@@ -101,10 +101,8 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
   void OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
                 CPDFSDK_PageView* pPageView,
                 uint32_t nFlag);
-  void OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,
-                  bool& bReset,
-                  bool& bExit,
                   uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA
   bool OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,

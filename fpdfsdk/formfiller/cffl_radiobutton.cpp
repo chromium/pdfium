@@ -48,13 +48,12 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
       CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
       ASSERT(pPageView);
 
-      bool bReset = false;
-      bool bExit = false;
       CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget.Get());
-      m_pFormFillEnv->GetInteractiveFormFiller()->OnButtonUp(
-          &pObserved, pPageView, bReset, bExit, nFlags);
-      if (!pObserved || bReset || bExit)
+      if (m_pFormFillEnv->GetInteractiveFormFiller()->OnButtonUp(
+              &pObserved, pPageView, nFlags) ||
+          !pObserved) {
         return true;
+      }
 
       CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
       CPWL_RadioButton* pWnd = GetRadioButton(pPageView, true);

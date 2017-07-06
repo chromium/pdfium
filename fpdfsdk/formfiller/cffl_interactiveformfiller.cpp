@@ -244,11 +244,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
               pFormFiller->OnLButtonUp(pPageView, pAnnot->Get(), nFlags, point);
   if (m_pFormFillEnv->GetFocusAnnot() != pAnnot->Get())
     return bRet;
-
-  bool bExit = false;
-  bool bReset = false;
-  OnButtonUp(pAnnot, pPageView, bReset, bExit, nFlags);
-  if (!pAnnot || bExit)
+  if (OnButtonUp(pAnnot, pPageView, nFlags) || !pAnnot)
     return true;
 #ifdef PDF_ENABLE_XFA
   if (OnClick(pAnnot, pPageView, nFlags) || !pAnnot)
@@ -257,17 +253,15 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
   return bRet;
 }
 
-void CFFL_InteractiveFormFiller::OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                             CPDFSDK_PageView* pPageView,
-                                            bool& bReset,
-                                            bool& bExit,
                                             uint32_t nFlag) {
   if (m_bNotifying)
-    return;
+    return false;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
   if (!pWidget->GetAAction(CPDF_AAction::ButtonUp).GetDict())
-    return;
+    return false;
 
   m_bNotifying = true;
 
@@ -280,17 +274,15 @@ void CFFL_InteractiveFormFiller::OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
   fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
   pWidget->OnAAction(CPDF_AAction::ButtonUp, fa, pPageView);
   m_bNotifying = false;
-  if (!(*pAnnot) || !IsValidAnnot(pPageView, pWidget)) {
-    bExit = true;
-    return;
-  }
+  if (!(*pAnnot) || !IsValidAnnot(pPageView, pWidget))
+    return true;
   if (nAge == pWidget->GetAppearanceAge())
-    return;
+    return false;
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false);
   if (pFormFiller)
     pFormFiller->ResetPDFWindow(pPageView, nValueAge == pWidget->GetValueAge());
-  bReset = true;
+  return true;
 }
 
 bool CFFL_InteractiveFormFiller::OnLButtonDblClk(
