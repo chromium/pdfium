@@ -24,7 +24,8 @@ class CPWL_CBListBox : public CPWL_ListBox {
 
   bool IsMovementKey(uint16_t nChar) const;
   bool OnMovementKeyDown(uint16_t nChar, uint32_t nFlag);
-  bool OnCharWithExit(uint16_t nChar, bool& bExit, uint32_t nFlag);
+  bool IsChar(uint16_t nChar, uint32_t nFlag) const;
+  bool OnCharNotify(uint16_t nChar, uint32_t nFlag);
 };
 
 #define PWL_COMBOBOX_BUTTON_WIDTH 13

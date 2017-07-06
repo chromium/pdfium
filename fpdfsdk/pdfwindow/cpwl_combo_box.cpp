@@ -89,17 +89,17 @@ bool CPWL_CBListBox::OnMovementKeyDown(uint16_t nChar, uint32_t nFlag) {
   return bExit;
 }
 
-bool CPWL_CBListBox::OnCharWithExit(uint16_t nChar,
-                                    bool& bExit,
-                                    uint32_t nFlag) {
-  if (!m_pList->OnChar(nChar, IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag)))
-    return false;
+bool CPWL_CBListBox::IsChar(uint16_t nChar, uint32_t nFlag) const {
+  return m_pList->OnChar(nChar, IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
+}
+
+bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {
   if (CPWL_ComboBox* pComboBox = (CPWL_ComboBox*)GetParentWindow())
     pComboBox->SetSelectText();
 
+  bool bExit = false;
   OnNotifySelChanged(true, bExit, nFlag);
-
-  return true;
+  return bExit;
 }
 
 void CPWL_CBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
@@ -530,8 +530,9 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, uint32_t nFlag) {
       return false;
   }
 #endif  // PDF_ENABLE_XFA
-  bool bExit = false;
-  return m_pList->OnCharWithExit(nChar, bExit, nFlag) ? bExit : false;
+  if (!m_pList->IsChar(nChar, nFlag))
+    return false;
+  return m_pList->OnCharNotify(nChar, nFlag);
 }
 
 void CPWL_ComboBox::NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) {
