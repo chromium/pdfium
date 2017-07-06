@@ -236,12 +236,11 @@ FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot) {
       CPDF_Annot::StringToAnnotSubtype(pAnnotDict->GetStringFor("Subtype")));
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdatePathObject(FPDF_ANNOTATION annot,
-                                                       FPDF_PAGEOBJECT path) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot,
+                                                   FPDF_PAGEOBJECT obj) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  CPDF_PageObject* pPathObj = CPDFPageObjectFromFPDFPageObject(path);
-  if (!pAnnot || !pAnnot->GetAnnotDict() || !pAnnot->HasForm() || !pPathObj ||
-      !pPathObj->IsPath())
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(obj);
+  if (!pAnnot || !pAnnot->GetAnnotDict() || !pAnnot->HasForm() || !pObj)
     return false;
 
   // Check that the annotation type is supported by this method.
@@ -250,19 +249,19 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdatePathObject(FPDF_ANNOTATION annot,
     return false;
 
   // Check that the annotation already has an appearance stream, since an
-  // existing path object is to be updated.
+  // existing object is to be updated.
   CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(pAnnot->GetAnnotDict(),
                                             CPDF_Annot::AppearanceMode::Normal);
   if (!pStream)
     return false;
 
-  // Check that the path object is already in this annotation's object list.
+  // Check that the object is already in this annotation's object list.
   CPDF_PageObjectList* pObjList = pAnnot->GetForm()->GetPageObjectList();
-  auto it = std::find_if(
-      pObjList->begin(), pObjList->end(),
-      [pPathObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
-        return candidate.get() == pPathObj;
-      });
+  auto it =
+      std::find_if(pObjList->begin(), pObjList->end(),
+                   [pObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
+                     return candidate.get() == pObj;
+                   });
   if (it == pObjList->end())
     return false;
 
@@ -275,11 +274,11 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdatePathObject(FPDF_ANNOTATION annot,
   return true;
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_AppendPathObject(FPDF_ANNOTATION annot,
-                                                       FPDF_PAGEOBJECT path) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_AppendObject(FPDF_ANNOTATION annot,
+                                                   FPDF_PAGEOBJECT obj) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  CPDF_PageObject* pPathObj = CPDFPageObjectFromFPDFPageObject(path);
-  if (!pAnnot || !pPathObj || !pPathObj->IsPath())
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(obj);
+  if (!pAnnot || !pObj)
     return false;
 
   CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
@@ -316,22 +315,22 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_AppendPathObject(FPDF_ANNOTATION annot,
 
   CPDF_Form* pForm = pAnnot->GetForm();
 
-  // Check that the path object did not come from the same annotation. If this
-  // check succeeds, then it is assumed that the path object came from
-  // FPDFPageObj_CreateNewPath(). Note that a path object that came from a
-  // different annotation must not be passed here, since a path object cannot
-  // belong to more than one annotation.
+  // Check that the object did not come from the same annotation. If this check
+  // succeeds, then it is assumed that the object came from
+  // FPDFPageObj_CreateNew{Path|Rect}() or FPDFPageObj_New{Text|Image}Obj().
+  // Note that an object that came from a different annotation must not be
+  // passed here, since an object cannot belong to more than one annotation.
   CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
-  auto it = std::find_if(
-      pObjList->begin(), pObjList->end(),
-      [pPathObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
-        return candidate.get() == pPathObj;
-      });
+  auto it =
+      std::find_if(pObjList->begin(), pObjList->end(),
+                   [pObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
+                     return candidate.get() == pObj;
+                   });
   if (it != pObjList->end())
     return false;
 
-  // Append the path object to the object list.
-  std::unique_ptr<CPDF_PageObject> pPageObjHolder(pPathObj);
+  // Append the object to the object list.
+  std::unique_ptr<CPDF_PageObject> pPageObjHolder(pObj);
   pObjList->push_back(std::move(pPageObjHolder));
 
   // Set the content stream data in the annotation's AP stream.
@@ -343,9 +342,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_AppendPathObject(FPDF_ANNOTATION annot,
   return true;
 }
 
-DLLEXPORT int STDCALL FPDFAnnot_GetPathObjectCount(FPDF_ANNOTATION annot) {
+DLLEXPORT int STDCALL FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  if (!pAnnot)
+  if (!pAnnot || !pAnnot->GetAnnotDict())
     return 0;
 
   if (!pAnnot->HasForm()) {
@@ -356,19 +355,13 @@ DLLEXPORT int STDCALL FPDFAnnot_GetPathObjectCount(FPDF_ANNOTATION annot) {
 
     pAnnot->SetForm(pStream);
   }
-
-  int pathCount = 0;
-  for (const auto& pObj : *pAnnot->GetForm()->GetPageObjectList()) {
-    if (pObj && pObj->IsPath())
-      ++pathCount;
-  }
-  return pathCount;
+  return pAnnot->GetForm()->GetPageObjectList()->size();
 }
 
-DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFAnnot_GetPathObject(FPDF_ANNOTATION annot,
-                                                          int index) {
+DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFAnnot_GetObject(FPDF_ANNOTATION annot,
+                                                      int index) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  if (!pAnnot || index < 0)
+  if (!pAnnot || !pAnnot->GetAnnotDict() || index < 0)
     return nullptr;
 
   if (!pAnnot->HasForm()) {
@@ -380,22 +373,7 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFAnnot_GetPathObject(FPDF_ANNOTATION annot,
     pAnnot->SetForm(pStream);
   }
 
-  const CPDF_PageObjectList* pObjList = pAnnot->GetForm()->GetPageObjectList();
-  if (static_cast<size_t>(index) >= pObjList->size())
-    return nullptr;
-
-  // Retrieve the path object located at |index| in the list of path objects.
-  // Note that the list of path objects is a sublist of the page object list,
-  // consisting of only path objects specifically.
-  int pathCount = -1;
-  for (const auto& pObj : *pObjList) {
-    if (pObj && pObj->IsPath()) {
-      ++pathCount;
-      if (pathCount == index)
-        return pObj.get();
-    }
-  }
-  return nullptr;
+  return pAnnot->GetForm()->GetPageObjectList()->GetPageObjectByIndex(index);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
