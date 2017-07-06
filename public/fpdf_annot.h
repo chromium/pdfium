@@ -57,15 +57,21 @@ extern "C" {
 #define FPDF_ANNOT_FLAG_LOCKED (1 << 7)
 #define FPDF_ANNOT_FLAG_TOGGLENOVIEW (1 << 8)
 
+#define FPDF_OBJECT_UNKNOWN 0
+#define FPDF_OBJECT_BOOLEAN 1
+#define FPDF_OBJECT_NUMBER 2
+#define FPDF_OBJECT_STRING 3
+#define FPDF_OBJECT_NAME 4
+#define FPDF_OBJECT_ARRAY 5
+#define FPDF_OBJECT_DICTIONARY 6
+#define FPDF_OBJECT_STREAM 7
+#define FPDF_OBJECT_NULLOBJ 8
+#define FPDF_OBJECT_REFERENCE 9
+
 typedef enum FPDFANNOT_COLORTYPE {
   FPDFANNOT_COLORTYPE_Color = 0,
   FPDFANNOT_COLORTYPE_InteriorColor
 } FPDFANNOT_COLORTYPE;
-
-typedef enum FPDFANNOT_TEXTTYPE {
-  FPDFANNOT_TEXTTYPE_Contents = 0,
-  FPDFANNOT_TEXTTYPE_Author
-} FPDFANNOT_TEXTTYPE;
 
 // Experimental API.
 // Check if an annotation subtype is currently supported for creation.
@@ -281,31 +287,58 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
 DLLEXPORT FS_RECTF STDCALL FPDFAnnot_GetRect(FPDF_ANNOTATION annot);
 
 // Experimental API.
-// Set the contents of an annotation.
+// Check if |annot|'s dictionary has |key| as a key.
 //
 //   annot  - handle to an annotation.
-//   type   - type of the text to be set.
-//   text   - the text to be set.
+//   key    - the key to look for.
 //
-// Returns true if successful.
-DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetText(FPDF_ANNOTATION annot,
-                                              FPDFANNOT_TEXTTYPE type,
-                                              FPDF_WIDESTRING text);
+// Returns true if |key| exists.
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
+                                             FPDF_WIDESTRING key);
 
 // Experimental API.
-// Get the contents of an annotation. |buffer| is only modified if |buflen|
-// is longer than the length of contents.
+// Get the type of the value corresponding to |key| in |annot|'s dictioanry.
 //
 //   annot  - handle to an annotation.
-//   type   - type of the text requested.
-//   buffer - buffer for holding the contents string, encoded in UTF16-LE.
+//   key    - the key to look for.
+//
+// Returns the type of the dictionary value.
+DLLEXPORT FPDF_OBJECT_TYPE STDCALL FPDFAnnot_GetValueType(FPDF_ANNOTATION annot,
+                                                          FPDF_WIDESTRING key);
+
+// Experimental API.
+// Set the string value corresponding to |key| in |annot|'s dictionary,
+// overwriting the existing value if any. The value type would be
+// FPDF_OBJECT_STRING after this function call.
+//
+//   annot  - handle to an annotation.
+//   key    - the key to the dictionary entry to be set, encoded in UTF16-LE.
+//   value  - the string value to be set, encoded in UTF16-LE.
+//
+// Returns true if successful.
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
+                                                     FPDF_WIDESTRING key,
+                                                     FPDF_WIDESTRING value);
+
+// Experimental API.
+// Get the string value corresponding to |key| in |annot|'s dictionary. |buffer|
+// is only modified if |buflen| is longer than the length of contents. Note that
+// if |key| does not exist in the dictionary or if |key|'s corresponding value
+// in the dictionary is not a string (i.e. the value is not of type
+// FPDF_OBJECT_STRING or FPDF_OBJECT_NAME), then an empty string would be copied
+// to |buffer| and the return value would be 2. On other errors, nothing would
+// be added to |buffer| and the return value would be 0.
+//
+//   annot  - handle to an annotation.
+//   key    - the key to the requested dictionary entry.
+//   buffer - buffer for holding the value string, encoded in UTF16-LE.
 //   buflen - length of the buffer.
 //
-// Returns the length of the contents.
-DLLEXPORT unsigned long STDCALL FPDFAnnot_GetText(FPDF_ANNOTATION annot,
-                                                  FPDFANNOT_TEXTTYPE type,
-                                                  void* buffer,
-                                                  unsigned long buflen);
+// Returns the length of the string value.
+DLLEXPORT unsigned long STDCALL FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
+                                                         FPDF_WIDESTRING key,
+                                                         void* buffer,
+                                                         unsigned long buflen);
 
 // Experimental API.
 // Get the annotation flags of |annot|.

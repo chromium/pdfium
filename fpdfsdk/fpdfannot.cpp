@@ -104,6 +104,31 @@ static_assert(static_cast<int>(CPDF_Annot::Subtype::XFAWIDGET) ==
                   FPDF_ANNOT_XFAWIDGET,
               "CPDF_Annot::XFAWIDGET value mismatch");
 
+// These checks ensure the consistency of dictionary value types across core/
+// and public/.
+static_assert(static_cast<int>(CPDF_Object::Type::BOOLEAN) ==
+                  FPDF_OBJECT_BOOLEAN,
+              "CPDF_Object::BOOLEAN value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::NUMBER) == FPDF_OBJECT_NUMBER,
+              "CPDF_Object::NUMBER value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::STRING) == FPDF_OBJECT_STRING,
+              "CPDF_Object::STRING value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::NAME) == FPDF_OBJECT_NAME,
+              "CPDF_Object::NAME value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::ARRAY) == FPDF_OBJECT_ARRAY,
+              "CPDF_Object::ARRAY value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::DICTIONARY) ==
+                  FPDF_OBJECT_DICTIONARY,
+              "CPDF_Object::DICTIONARY value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::STREAM) == FPDF_OBJECT_STREAM,
+              "CPDF_Object::STREAM value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::NULLOBJ) ==
+                  FPDF_OBJECT_NULLOBJ,
+              "CPDF_Object::NULLOBJ value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::REFERENCE) ==
+                  FPDF_OBJECT_REFERENCE,
+              "CPDF_Object::REFERENCE value mismatch");
+
 class CPDF_AnnotContext {
  public:
   CPDF_AnnotContext(CPDF_Dictionary* pAnnotDict,
@@ -145,6 +170,11 @@ CPDF_AnnotContext* CPDFAnnotContextFromFPDFAnnotation(FPDF_ANNOTATION annot) {
 
 bool HasAPStream(const CPDF_Dictionary* pAnnotDict) {
   return !!FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+}
+
+CFX_ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING text) {
+  return CFX_WideString::FromUTF16LE(text, CFX_WideString::WStringLength(text))
+      .UTF8Encode();
 }
 
 }  // namespace
@@ -645,9 +675,8 @@ DLLEXPORT FS_RECTF STDCALL FPDFAnnot_GetRect(FPDF_ANNOTATION annot) {
   return rect;
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetText(FPDF_ANNOTATION annot,
-                                              FPDFANNOT_TEXTTYPE type,
-                                              FPDF_WIDESTRING text) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
+                                             FPDF_WIDESTRING key) {
   if (!annot)
     return false;
 
@@ -656,17 +685,44 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetText(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  CFX_ByteString key = type == FPDFANNOT_TEXTTYPE_Author ? "T" : "Contents";
-  FX_STRSIZE len = CFX_WideString::WStringLength(text);
-  CFX_WideString encodedText = CFX_WideString::FromUTF16LE(text, len);
-  pAnnotDict->SetNewFor<CPDF_String>(key, encodedText.UTF8Encode(), false);
+  return pAnnotDict->KeyExist(CFXByteStringFromFPDFWideString(key));
+}
+
+DLLEXPORT FPDF_OBJECT_TYPE STDCALL FPDFAnnot_GetValueType(FPDF_ANNOTATION annot,
+                                                          FPDF_WIDESTRING key) {
+  if (!FPDFAnnot_HasKey(annot, key))
+    return FPDF_OBJECT_UNKNOWN;
+
+  CPDF_Object* pObj =
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict()->GetObjectFor(
+          CFXByteStringFromFPDFWideString(key));
+  if (!pObj)
+    return FPDF_OBJECT_UNKNOWN;
+
+  return pObj->GetType();
+}
+
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
+                                                     FPDF_WIDESTRING key,
+                                                     FPDF_WIDESTRING value) {
+  if (!annot)
+    return false;
+
+  CPDF_Dictionary* pAnnotDict =
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
+  if (!pAnnotDict)
+    return false;
+
+  pAnnotDict->SetNewFor<CPDF_String>(CFXByteStringFromFPDFWideString(key),
+                                     CFXByteStringFromFPDFWideString(value),
+                                     false);
   return true;
 }
 
-DLLEXPORT unsigned long STDCALL FPDFAnnot_GetText(FPDF_ANNOTATION annot,
-                                                  FPDFANNOT_TEXTTYPE type,
-                                                  void* buffer,
-                                                  unsigned long buflen) {
+DLLEXPORT unsigned long STDCALL FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
+                                                         FPDF_WIDESTRING key,
+                                                         void* buffer,
+                                                         unsigned long buflen) {
   if (!annot)
     return 0;
 
@@ -675,8 +731,9 @@ DLLEXPORT unsigned long STDCALL FPDFAnnot_GetText(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return 0;
 
-  CFX_ByteString key = type == FPDFANNOT_TEXTTYPE_Author ? "T" : "Contents";
-  CFX_ByteString contents = pAnnotDict->GetUnicodeTextFor(key).UTF16LE_Encode();
+  CFX_ByteString contents =
+      pAnnotDict->GetUnicodeTextFor(CFXByteStringFromFPDFWideString(key))
+          .UTF16LE_Encode();
   unsigned long len = contents.GetLength();
   if (buffer && buflen >= len)
     memcpy(buffer, contents.c_str(), len);

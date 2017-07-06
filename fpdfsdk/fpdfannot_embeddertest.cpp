@@ -59,21 +59,29 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
   EXPECT_EQ(255u, A);
 
   // Check that the author is correct.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> author_key =
+      GetFPDFWideString(L"T");
+  EXPECT_EQ(FPDF_OBJECT_STRING,
+            FPDFAnnot_GetValueType(annot, author_key.get()));
   unsigned long len =
-      FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Author, nullptr, 0);
+      FPDFAnnot_GetStringValue(annot, author_key.get(), nullptr, 0);
   std::vector<char> buf(len);
-  EXPECT_EQ(28u, FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Author, buf.data(),
-                                   len));
+  EXPECT_EQ(28u,
+            FPDFAnnot_GetStringValue(annot, author_key.get(), buf.data(), len));
   EXPECT_STREQ(L"Jae Hyun Park",
                GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
                    .c_str());
 
   // Check that the content is correct.
-  len = FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Contents, nullptr, 0);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> contents_key =
+      GetFPDFWideString(L"Contents");
+  EXPECT_EQ(FPDF_OBJECT_STRING,
+            FPDFAnnot_GetValueType(annot, contents_key.get()));
+  len = FPDFAnnot_GetStringValue(annot, contents_key.get(), nullptr, 0);
   buf.clear();
   buf.resize(len);
-  EXPECT_EQ(2690u, FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Contents,
-                                     buf.data(), len));
+  EXPECT_EQ(2690u, FPDFAnnot_GetStringValue(annot, contents_key.get(),
+                                            buf.data(), len));
   const wchar_t contents[] =
       L"This is a note for that highlight annotation. Very long highlight "
       "annotation. Long long long Long long longLong long longLong long "
@@ -137,8 +145,10 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
   EXPECT_EQ(76u, A);
 
   // Check that there is no content.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> contents_key =
+      GetFPDFWideString(L"Contents");
   EXPECT_EQ(2u,
-            FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Contents, nullptr, 0));
+            FPDFAnnot_GetStringValue(annot, contents_key.get(), nullptr, 0));
 
   // Check that the rectange coordinates are correct.
   // Note that upon rendering, the rectangle coordinates will be adjusted.
@@ -229,17 +239,18 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   EXPECT_EQ(165.f, rect.top);
 
   // Set the content of the annotation.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> contents_key =
+      GetFPDFWideString(L"Contents");
   const wchar_t contents[] = L"Hello! This is a customized content.";
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
       GetFPDFWideString(contents);
-  ASSERT_TRUE(
-      FPDFAnnot_SetText(annot, FPDFANNOT_TEXTTYPE_Contents, text.get()));
+  ASSERT_TRUE(FPDFAnnot_SetStringValue(annot, contents_key.get(), text.get()));
   // Check that the content has been set correctly.
   unsigned long len =
-      FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Contents, nullptr, 0);
+      FPDFAnnot_GetStringValue(annot, contents_key.get(), nullptr, 0);
   std::vector<char> buf(len);
-  EXPECT_EQ(74u, FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Contents,
-                                   buf.data(), len));
+  EXPECT_EQ(74u, FPDFAnnot_GetStringValue(annot, contents_key.get(), buf.data(),
+                                          len));
   EXPECT_STREQ(contents,
                GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
                    .c_str());
@@ -765,4 +776,88 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   FPDFBitmap_Destroy(bitmap);
 
   UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
+  // Open a file with four annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // Retrieve the first annotation.
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  ASSERT_TRUE(annot);
+
+  // Check that a non-existent key does not exist.
+  EXPECT_FALSE(FPDFAnnot_HasKey(annot, GetFPDFWideString(L"none").get()));
+
+  // Check that the string value of a non-string dictionary entry is empty.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> ap_key =
+      GetFPDFWideString(L"AP");
+  EXPECT_TRUE(FPDFAnnot_HasKey(annot, ap_key.get()));
+  EXPECT_EQ(FPDF_OBJECT_REFERENCE, FPDFAnnot_GetValueType(annot, ap_key.get()));
+  EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot, ap_key.get(), nullptr, 0));
+
+  // Check that the string value of the hash is correct.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> hash_key =
+      GetFPDFWideString(L"AAPL:Hash");
+  EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot, hash_key.get()));
+  unsigned long len =
+      FPDFAnnot_GetStringValue(annot, hash_key.get(), nullptr, 0);
+  std::vector<char> buf(len);
+  EXPECT_EQ(66u,
+            FPDFAnnot_GetStringValue(annot, hash_key.get(), buf.data(), len));
+  EXPECT_STREQ(L"395fbcb98d558681742f30683a62a2ad",
+               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
+                   .c_str());
+
+  // Check that the string value of the modified date is correct.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> date_key =
+      GetFPDFWideString(L"M");
+  EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot, hash_key.get()));
+  len = FPDFAnnot_GetStringValue(annot, date_key.get(), nullptr, 0);
+  buf.clear();
+  buf.resize(len);
+  EXPECT_EQ(44u,
+            FPDFAnnot_GetStringValue(annot, date_key.get(), buf.data(), len));
+  EXPECT_STREQ(L"D:201706071721Z00'00'",
+               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
+                   .c_str());
+
+  // Update the date entry for the annotation.
+  const wchar_t new_date[] = L"D:201706282359Z00'00'";
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+      GetFPDFWideString(new_date);
+  EXPECT_TRUE(FPDFAnnot_SetStringValue(annot, date_key.get(), text.get()));
+
+  // Save the document, closing the page and document.
+  FPDFPage_CloseAnnot(annot);
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  FPDF_ClosePage(page);
+
+  // Open the saved annotation.
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5[] = "c35408717759562d1f8bf33d317483d2";
+#elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+  const char md5[] = "bdf96279ab82d9f484874db3f0c03429";
+#else
+  const char md5[] = "07d4168715553b4294525f840c40aa1c";
+#endif
+  TestSaved(595, 842, md5);
+  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 0);
+
+  // Check that the string value of the modified date is the newly-set value.
+  EXPECT_EQ(FPDF_OBJECT_STRING,
+            FPDFAnnot_GetValueType(new_annot, date_key.get()));
+  len = FPDFAnnot_GetStringValue(new_annot, date_key.get(), nullptr, 0);
+  buf.clear();
+  buf.resize(len);
+  EXPECT_EQ(44u, FPDFAnnot_GetStringValue(new_annot, date_key.get(), buf.data(),
+                                          len));
+  EXPECT_STREQ(new_date,
+               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
+                   .c_str());
+
+  FPDFPage_CloseAnnot(new_annot);
+  CloseSaved();
 }

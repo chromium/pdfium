@@ -303,17 +303,21 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
     }
 
     // Retrieve the annotation's contents and author.
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> contents_key =
+        GetFPDFWideString(L"Contents");
     unsigned long len =
-        FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Contents, nullptr, 0);
+        FPDFAnnot_GetStringValue(annot, contents_key.get(), nullptr, 0);
     std::vector<char> buf(len);
-    FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Contents, buf.data(), len);
+    FPDFAnnot_GetStringValue(annot, contents_key.get(), buf.data(), len);
     fprintf(fp, "Content: %ls\n",
             GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
                 .c_str());
-    len = FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Author, nullptr, 0);
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> author_key =
+        GetFPDFWideString(L"T");
+    len = FPDFAnnot_GetStringValue(annot, author_key.get(), nullptr, 0);
     buf.clear();
     buf.resize(len);
-    FPDFAnnot_GetText(annot, FPDFANNOT_TEXTTYPE_Author, buf.data(), len);
+    FPDFAnnot_GetStringValue(annot, author_key.get(), buf.data(), len);
     fprintf(fp, "Author: %ls\n",
             GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
                 .c_str());
