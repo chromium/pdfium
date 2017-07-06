@@ -89,24 +89,17 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
   static bool IsFillingAllowed(CPDFSDK_Widget* pWidget);
   static bool IsValidAnnot(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
 
-  void OnKeyStrokeCommit(CPDFSDK_Annot::ObservedPtr* pWidget,
+  bool OnKeyStrokeCommit(CPDFSDK_Annot::ObservedPtr* pWidget,
                          CPDFSDK_PageView* pPageView,
-                         bool& bRC,
-                         bool& bExit,
                          uint32_t nFlag);
-  void OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,
-                  bool& bRC,
-                  bool& bExit,
                   uint32_t nFlag);
-
   void OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
                    CPDFSDK_PageView* pPageView,
-                   bool& bExit,
                    uint32_t nFlag);
   void OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
                 CPDFSDK_PageView* pPageView,
-                bool& bExit,
                 uint32_t nFlag);
   void OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,

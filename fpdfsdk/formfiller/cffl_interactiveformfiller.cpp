@@ -597,18 +597,16 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(void* pPrivateData,
   }
 }
 
-void CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
+bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     CPDFSDK_PageView* pPageView,
-    bool& bRC,
-    bool& bExit,
     uint32_t nFlag) {
   if (m_bNotifying)
-    return;
+    return true;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
   if (!pWidget->GetAAction(CPDF_AAction::KeyStroke).GetDict())
-    return;
+    return true;
 
   ASSERT(pPageView);
   m_bNotifying = true;
@@ -626,23 +624,21 @@ void CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
   pFormFiller->SaveState(pPageView);
   pWidget->OnAAction(CPDF_AAction::KeyStroke, fa, pPageView);
   if (!(*pAnnot))
-    return;
+    return true;
 
-  bRC = fa.bRC;
   m_bNotifying = false;
+  return fa.bRC;
 }
 
-void CFFL_InteractiveFormFiller::OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                             CPDFSDK_PageView* pPageView,
-                                            bool& bRC,
-                                            bool& bExit,
                                             uint32_t nFlag) {
   if (m_bNotifying)
-    return;
+    return true;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
   if (!pWidget->GetAAction(CPDF_AAction::Validate).GetDict())
-    return;
+    return true;
 
   ASSERT(pPageView);
   m_bNotifying = true;
@@ -659,15 +655,14 @@ void CFFL_InteractiveFormFiller::OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
   pFormFiller->SaveState(pPageView);
   pWidget->OnAAction(CPDF_AAction::Validate, fa, pPageView);
   if (!(*pAnnot))
-    return;
+    return true;
 
-  bRC = fa.bRC;
   m_bNotifying = false;
+  return fa.bRC;
 }
 
 void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                              CPDFSDK_PageView* pPageView,
-                                             bool& bExit,
                                              uint32_t nFlag) {
   if (m_bNotifying)
     return;
@@ -681,7 +676,6 @@ void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
 void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                           CPDFSDK_PageView* pPageView,
-                                          bool& bExit,
                                           uint32_t nFlag) {
   if (m_bNotifying)
     return;
@@ -694,8 +688,6 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
   CFX_WideString sValue =
       pInterForm->OnFormat(pWidget->GetFormField(), bFormatted);
   if (!(*pAnnot))
-    return;
-  if (bExit)
     return;
 
   if (bFormatted) {

@@ -485,43 +485,36 @@ CFX_FloatRect CFFL_FormFiller::FFLtoWnd(CPDFSDK_PageView* pPageView,
 
 bool CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
   if (IsDataChanged(pPageView)) {
-    bool bRC = true;
-    bool bExit = false;
     CFFL_InteractiveFormFiller* pFormFiller =
         m_pFormFillEnv->GetInteractiveFormFiller();
     CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget.Get());
-    pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, bRC, bExit, nFlag);
-    if (!pObserved)
-      return false;
-    if (bExit)
-      return true;
-    if (!bRC) {
-      ResetPDFWindow(pPageView, false);
-      return true;
-    }
 
-    pFormFiller->OnValidate(&pObserved, pPageView, bRC, bExit, nFlag);
-    if (!pObserved)
-      return false;
-    if (bExit)
-      return true;
-    if (!bRC) {
+    if (!pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, nFlag)) {
+      if (!pObserved)
+        return false;
       ResetPDFWindow(pPageView, false);
       return true;
     }
+    if (!pObserved)
+      return false;
+
+    if (!pFormFiller->OnValidate(&pObserved, pPageView, nFlag)) {
+      if (!pObserved)
+        return false;
+      ResetPDFWindow(pPageView, false);
+      return true;
+    }
+    if (!pObserved)
+      return false;
 
     SaveData(pPageView);
-    pFormFiller->OnCalculate(&pObserved, pPageView, bExit, nFlag);
+    pFormFiller->OnCalculate(&pObserved, pPageView, nFlag);
     if (!pObserved)
       return false;
-    if (bExit)
-      return true;
 
-    pFormFiller->OnFormat(&pObserved, pPageView, bExit, nFlag);
+    pFormFiller->OnFormat(&pObserved, pPageView, nFlag);
     if (!pObserved)
       return false;
-    if (bExit)
-      return true;
   }
   return true;
 }
