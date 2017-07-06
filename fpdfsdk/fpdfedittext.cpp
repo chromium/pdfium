@@ -111,6 +111,9 @@ void AddCharcode(std::ostringstream* pBuffer, uint32_t number) {
 // PDF spec 1.7 Section 5.9.2: "Unicode character sequences as expressed in
 // UTF-16BE encoding." See https://en.wikipedia.org/wiki/UTF-16#Description
 void AddUnicode(std::ostringstream* pBuffer, uint32_t unicode) {
+  if (unicode >= 0xD800 && unicode <= 0xDFFF)
+    unicode = 0;
+
   char ans[8];
   *pBuffer << "<";
   size_t numChars = FXSYS_ToUTF16BE(unicode, ans);
