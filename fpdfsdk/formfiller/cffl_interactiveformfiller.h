@@ -107,25 +107,17 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
                   bool& bExit,
                   uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA
-  void OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
                CPDFSDK_PageView* pPageView,
-               bool& bReset,
-               bool& bExit,
                uint32_t nFlag);
-  void OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
               CPDFSDK_PageView* pPageView,
-              bool& bReset,
-              bool& bExit,
               uint32_t nFlag);
-  void OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
                  CPDFSDK_PageView* pPageView,
-                 bool& bReset,
-                 bool& bExit,
                  uint32_t nFlag);
-  void OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,
-                  bool& bReset,
-                  bool& bExit,
                   uint32_t nFlag);
 #endif  // PDF_ENABLE_XFA
 

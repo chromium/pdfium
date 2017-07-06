@@ -251,8 +251,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
   if (!pAnnot || bExit)
     return true;
 #ifdef PDF_ENABLE_XFA
-  OnClick(pAnnot, pPageView, bReset, bExit, nFlags);
-  if (!pAnnot || bExit)
+  if (OnClick(pAnnot, pPageView, nFlags) || !pAnnot)
     return true;
 #endif  // PDF_ENABLE_XFA
   return bRet;
@@ -699,17 +698,15 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
 }
 
 #ifdef PDF_ENABLE_XFA
-void CFFL_InteractiveFormFiller::OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                          CPDFSDK_PageView* pPageView,
-                                         bool& bReset,
-                                         bool& bExit,
                                          uint32_t nFlag) {
   if (m_bNotifying)
-    return;
+    return false;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
   if (!pWidget->HasXFAAAction(PDFSDK_XFA_Click))
-    return;
+    return false;
 
   m_bNotifying = true;
   int nAge = pWidget->GetAppearanceAge();
@@ -721,37 +718,25 @@ void CFFL_InteractiveFormFiller::OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
   pWidget->OnXFAAAction(PDFSDK_XFA_Click, fa, pPageView);
   m_bNotifying = false;
-  if (!(*pAnnot)) {
-    bExit = true;
-    return;
-  }
-
-  if (!IsValidAnnot(pPageView, pWidget)) {
-    bExit = true;
-    return;
-  }
-
+  if (!(*pAnnot) || !IsValidAnnot(pPageView, pWidget))
+    return true;
   if (nAge == pWidget->GetAppearanceAge())
-    return;
+    return false;
 
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false)) {
+  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false))
     pFormFiller->ResetPDFWindow(pPageView, nValueAge == pWidget->GetValueAge());
-  }
-
-  bReset = true;
+  return false;
 }
 
-void CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                         CPDFSDK_PageView* pPageView,
-                                        bool& bReset,
-                                        bool& bExit,
                                         uint32_t nFlag) {
   if (m_bNotifying)
-    return;
+    return false;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
   if (!pWidget->HasXFAAAction(PDFSDK_XFA_Full))
-    return;
+    return false;
 
   m_bNotifying = true;
   int nAge = pWidget->GetAppearanceAge();
@@ -763,24 +748,15 @@ void CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
   pWidget->OnXFAAAction(PDFSDK_XFA_Full, fa, pPageView);
   m_bNotifying = false;
-  if (!(*pAnnot)) {
-    bExit = true;
-    return;
-  }
-
-  if (!IsValidAnnot(pPageView, pWidget)) {
-    bExit = true;
-    return;
-  }
-
+  if (!(*pAnnot) || !IsValidAnnot(pPageView, pWidget))
+    return true;
   if (nAge == pWidget->GetAppearanceAge())
-    return;
+    return false;
 
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false)) {
+  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false))
     pFormFiller->ResetPDFWindow(pPageView, nValueAge == pWidget->GetValueAge());
-  }
 
-  bReset = true;
+  return true;
 }
 
 void CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
@@ -790,11 +766,8 @@ void CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
-  bool bTempReset = false;
-  bool bTempExit = false;
   CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
-  OnPreOpen(&pObserved, pData->pPageView, bTempReset, bTempExit, nFlag);
-  if (!pObserved || bTempReset || bTempExit)
+  if (OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved)
     bExit = true;
 }
 
@@ -805,25 +778,20 @@ void CFFL_InteractiveFormFiller::OnPopupPostOpen(void* pPrivateData,
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
-  bool bTempReset = false;
-  bool bTempExit = false;
   CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
-  OnPostOpen(&pObserved, pData->pPageView, bTempReset, bTempExit, nFlag);
-  if (!pObserved || bTempReset || bTempExit)
+  if (OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved)
     bExit = true;
 }
 
-void CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                            CPDFSDK_PageView* pPageView,
-                                           bool& bReset,
-                                           bool& bExit,
                                            uint32_t nFlag) {
   if (m_bNotifying)
-    return;
+    return false;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
   if (!pWidget->HasXFAAAction(PDFSDK_XFA_PreOpen))
-    return;
+    return false;
 
   m_bNotifying = true;
   int nAge = pWidget->GetAppearanceAge();
@@ -835,37 +803,26 @@ void CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
   pWidget->OnXFAAAction(PDFSDK_XFA_PreOpen, fa, pPageView);
   m_bNotifying = false;
-  if (!(*pAnnot)) {
-    bExit = true;
-    return;
-  }
-
-  if (!IsValidAnnot(pPageView, pWidget)) {
-    bExit = true;
-    return;
-  }
-
+  if (!(*pAnnot) || !IsValidAnnot(pPageView, pWidget))
+    return true;
   if (nAge == pWidget->GetAppearanceAge())
-    return;
+    return false;
 
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false)) {
+  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false))
     pFormFiller->ResetPDFWindow(pPageView, nValueAge == pWidget->GetValueAge());
-  }
 
-  bReset = true;
+  return true;
 }
 
-void CFFL_InteractiveFormFiller::OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                             CPDFSDK_PageView* pPageView,
-                                            bool& bReset,
-                                            bool& bExit,
                                             uint32_t nFlag) {
   if (m_bNotifying)
-    return;
+    return false;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
   if (!pWidget->HasXFAAAction(PDFSDK_XFA_PostOpen))
-    return;
+    return false;
 
   m_bNotifying = true;
   int nAge = pWidget->GetAppearanceAge();
@@ -877,24 +834,15 @@ void CFFL_InteractiveFormFiller::OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
   pWidget->OnXFAAAction(PDFSDK_XFA_PostOpen, fa, pPageView);
   m_bNotifying = false;
-  if (!(*pAnnot)) {
-    bExit = true;
-    return;
-  }
-
-  if (!IsValidAnnot(pPageView, pWidget)) {
-    bExit = true;
-    return;
-  }
-
+  if (!(*pAnnot) || !IsValidAnnot(pPageView, pWidget))
+    return true;
   if (nAge == pWidget->GetAppearanceAge())
-    return;
+    return false;
 
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false)) {
+  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, false))
     pFormFiller->ResetPDFWindow(pPageView, nValueAge == pWidget->GetValueAge());
-  }
 
-  bReset = true;
+  return true;
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -920,11 +868,8 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 
 #ifdef PDF_ENABLE_XFA
   if (pFormFiller->IsFieldFull(pData->pPageView)) {
-    bool bFullExit = false;
-    bool bFullReset = false;
     CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
-    OnFull(&pObserved, pData->pPageView, bFullReset, bFullExit, nFlag);
-    if (!pObserved || bFullReset || bFullExit) {
+    if (OnFull(&pObserved, pData->pPageView, nFlag) || !pObserved) {
       bExit = true;
       return;
     }
