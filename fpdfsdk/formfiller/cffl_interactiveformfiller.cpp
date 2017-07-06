@@ -839,16 +839,16 @@ bool CFFL_InteractiveFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
   return pPageView && pPageView->IsValidAnnot(pAnnot->GetPDFAnnot());
 }
 
-void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
+std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     void* pPrivateData,
     CFX_WideString& strChange,
     const CFX_WideString& strChangeEx,
     int nSelStart,
     int nSelEnd,
     bool bKeyDown,
-    bool& bRC,
-    bool& bExit,
     uint32_t nFlag) {
+  bool bRC = true;
+  bool bExit = false;
   CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
   ASSERT(pData->pWidget);
 
@@ -857,18 +857,15 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 #ifdef PDF_ENABLE_XFA
   if (pFormFiller->IsFieldFull(pData->pPageView)) {
     CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
-    if (OnFull(&pObserved, pData->pPageView, nFlag) || !pObserved) {
-      bExit = true;
-      return;
-    }
+    if (OnFull(&pObserved, pData->pPageView, nFlag) || !pObserved)
+      return {bRC, true};
   }
 #endif  // PDF_ENABLE_XFA
 
-  if (m_bNotifying)
-    return;
-
-  if (!pData->pWidget->GetAAction(CPDF_AAction::KeyStroke).GetDict())
-    return;
+  if (m_bNotifying ||
+      !pData->pWidget->GetAAction(CPDF_AAction::KeyStroke).GetDict()) {
+    return {bRC, bExit};
+  }
 
   CFX_AutoRestorer<bool> restorer(&m_bNotifying);
   m_bNotifying = true;
@@ -897,13 +894,11 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
                                  pData->pPageView)) {
     if (!IsValidAnnot(pData->pPageView, pData->pWidget))
       bExit = true;
-    return;
+    return {bRC, bExit};
   }
 
-  if (!pObserved || !IsValidAnnot(pData->pPageView, pData->pWidget)) {
-    bExit = true;
-    return;
-  }
+  if (!pObserved || !IsValidAnnot(pData->pPageView, pData->pWidget))
+    return {bRC, true};
 
   if (nAge != pData->pWidget->GetAppearanceAge()) {
     CPWL_Wnd* pWnd = pFormFiller->ResetPDFWindow(
@@ -919,8 +914,8 @@ void CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   bRC = false;
 
   if (pFormFillEnv->GetFocusAnnot() == pData->pWidget)
-    return;
+    return {bRC, bExit};
 
   pFormFiller->CommitData(pData->pPageView, nFlag);
-  bExit = true;
+  return {bRC, true};
 }

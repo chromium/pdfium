@@ -305,15 +305,15 @@ bool CPWL_ListBox::OnNotifySelChanged(bool bKeyDown, uint32_t nFlag) {
   if (!m_pFillerNotify)
     return false;
 
-  bool bRC = true;
-  bool bExit = false;
   CFX_WideString swChange = GetText();
   CFX_WideString strChangeEx;
   int nSelStart = 0;
   int nSelEnd = swChange.GetLength();
-  m_pFillerNotify->OnBeforeKeyStroke(GetAttachedData(), swChange, strChangeEx,
-                                     nSelStart, nSelEnd, bKeyDown, bRC, bExit,
-                                     nFlag);
+  bool bRC;
+  bool bExit;
+  std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
+      GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, bKeyDown,
+      nFlag);
   return bExit;
 }
 

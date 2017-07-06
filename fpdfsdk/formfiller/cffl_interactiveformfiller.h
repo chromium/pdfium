@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
@@ -129,15 +130,14 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
                        float fPopupMax,
                        bool* bBottom,
                        float* fPopupRet) override;
-  void OnBeforeKeyStroke(void* pPrivateData,
-                         CFX_WideString& strChange,
-                         const CFX_WideString& strChangeEx,
-                         int nSelStart,
-                         int nSelEnd,
-                         bool bKeyDown,
-                         bool& bRC,
-                         bool& bExit,
-                         uint32_t nFlag) override;
+  // Returns {bRC, bExit}.
+  std::pair<bool, bool> OnBeforeKeyStroke(void* pPrivateData,
+                                          CFX_WideString& strChange,
+                                          const CFX_WideString& strChangeEx,
+                                          int nSelStart,
+                                          int nSelEnd,
+                                          bool bKeyDown,
+                                          uint32_t nFlag) override;
 #ifdef PDF_ENABLE_XFA
   bool OnPopupPreOpen(void* pPrivateData, uint32_t nFlag) override;
   bool OnPopupPostOpen(void* pPrivateData, uint32_t nFlag) override;
