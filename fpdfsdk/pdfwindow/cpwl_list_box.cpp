@@ -223,10 +223,7 @@ bool CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
     case FWL_VKEY_Delete:
       break;
   }
-
-  bool bExit = false;
-  OnNotifySelChanged(true, bExit, nFlag);
-
+  OnNotifySelChanged(true, nFlag);
   return true;
 }
 
@@ -236,9 +233,7 @@ bool CPWL_ListBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (!m_pList->OnChar(nChar, IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag)))
     return false;
 
-  bool bExit = false;
-  OnNotifySelChanged(true, bExit, nFlag);
-
+  OnNotifySelChanged(true, nFlag);
   return true;
 }
 
@@ -263,10 +258,7 @@ bool CPWL_ListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
     ReleaseCapture();
     m_bMouseDown = false;
   }
-
-  bool bExit = false;
-  OnNotifySelChanged(false, bExit, nFlag);
-
+  OnNotifySelChanged(false, nFlag);
   return true;
 }
 
@@ -309,13 +301,12 @@ void CPWL_ListBox::RePosChildWnd() {
   m_pList->SetPlateRect(GetListRect());
 }
 
-void CPWL_ListBox::OnNotifySelChanged(bool bKeyDown,
-                                      bool& bExit,
-                                      uint32_t nFlag) {
+bool CPWL_ListBox::OnNotifySelChanged(bool bKeyDown, uint32_t nFlag) {
   if (!m_pFillerNotify)
-    return;
+    return false;
 
   bool bRC = true;
+  bool bExit = false;
   CFX_WideString swChange = GetText();
   CFX_WideString strChangeEx;
   int nSelStart = 0;
@@ -323,6 +314,7 @@ void CPWL_ListBox::OnNotifySelChanged(bool bKeyDown,
   m_pFillerNotify->OnBeforeKeyStroke(GetAttachedData(), swChange, strChangeEx,
                                      nSelStart, nSelEnd, bKeyDown, bRC, bExit,
                                      nFlag);
+  return bExit;
 }
 
 CFX_FloatRect CPWL_ListBox::GetFocusRect() const {
@@ -425,7 +417,6 @@ bool CPWL_ListBox::OnMouseWheel(short zDelta,
   else
     m_pList->OnVK_UP(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
 
-  bool bExit = false;
-  OnNotifySelChanged(false, bExit, nFlag);
+  OnNotifySelChanged(false, nFlag);
   return true;
 }
