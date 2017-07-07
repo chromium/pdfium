@@ -34,36 +34,32 @@ bool CFX_DIBitmap::Create(int width,
                           int height,
                           FXDIB_Format format,
                           uint8_t* pBuffer,
-                          int pitch) {
+                          uint32_t pitch) {
   m_pBuffer = nullptr;
   m_bpp = static_cast<uint8_t>(format);
   m_AlphaFlag = static_cast<uint8_t>(format >> 8);
-  m_Width = m_Height = m_Pitch = 0;
-  if (width <= 0 || height <= 0 || pitch < 0)
-    return false;
+  m_Width = 0;
+  m_Height = 0;
+  m_Pitch = 0;
 
-  if ((INT_MAX - 31) / width < (format & 0xff))
-    return false;
-
-  if (!pitch)
-    pitch = (width * (format & 0xff) + 31) / 32 * 4;
-
-  if ((1 << 30) / pitch < height)
+  uint32_t calculatedSize;
+  if (!CFX_DIBitmap::CalculatePitchAndSize(height, width, format, &pitch,
+                                           &calculatedSize))
     return false;
 
   if (pBuffer) {
     m_pBuffer.Reset(pBuffer);
   } else {
-    int size = pitch * height + 4;
-    int oomlimit = MAX_OOM_LIMIT;
-    if (oomlimit >= 0 && size >= oomlimit) {
-      m_pBuffer =
-          std::unique_ptr<uint8_t, FxFreeDeleter>(FX_TryAlloc(uint8_t, size));
+    size_t bufferSize = calculatedSize + 4;
+    size_t oomlimit = MAX_OOM_LIMIT;
+    if (bufferSize >= oomlimit) {
+      m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
+          FX_TryAlloc(uint8_t, bufferSize));
       if (!m_pBuffer)
         return false;
     } else {
-      m_pBuffer =
-          std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Alloc(uint8_t, size));
+      m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
+          FX_Alloc(uint8_t, bufferSize));
     }
   }
   m_Width = width;
@@ -813,6 +809,27 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
     ConvertCMYKColorScale(forecolor, backcolor);
   else
     ConvertRGBColorScale(forecolor, backcolor);
+  return true;
+}
+
+bool CFX_DIBitmap::CalculatePitchAndSize(int height,
+                                         int width,
+                                         FXDIB_Format format,
+                                         uint32_t* pitch,
+                                         uint32_t* size) {
+  if (width <= 0 || height <= 0)
+    return false;
+
+  if ((INT_MAX - 31) / width < (format & 0xFF))
+    return false;
+
+  if (!*pitch)
+    *pitch = static_cast<uint32_t>((width * (format & 0xff) + 31) / 32 * 4);
+
+  if ((1 << 30) / *pitch < static_cast<uint32_t>(height))
+    return false;
+
+  *size = *pitch * static_cast<uint32_t>(height);
   return true;
 }
 
