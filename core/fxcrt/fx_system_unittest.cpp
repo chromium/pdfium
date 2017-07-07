@@ -184,8 +184,9 @@ TEST(fxcrt, FXSYS_wcsftime) {
 
   for (int year = -2500; year <= 2500; ++year) {
     year_time.tm_year = year;
-    wchar_t buf[100] = {};
-    FXSYS_wcsftime(buf, FX_ArraySize(buf), L"%Y-%m-%dT%H:%M:%S", &year_time);
+    wchar_t year_buf[100] = {};
+    FXSYS_wcsftime(year_buf, FX_ArraySize(year_buf), L"%Y-%m-%dT%H:%M:%S",
+                   &year_time);
   }
 
   // Ensure wcsftime handles bad years, etc. without crashing.
