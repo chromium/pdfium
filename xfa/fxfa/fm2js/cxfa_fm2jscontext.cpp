@@ -9,7 +9,6 @@
 #include <time.h>
 
 #include <algorithm>
-#include <iostream>
 
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_extension.h"
