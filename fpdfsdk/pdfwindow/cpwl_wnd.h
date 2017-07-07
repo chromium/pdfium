@@ -19,6 +19,7 @@
 #include "fpdfsdk/pdfwindow/cpwl_timer.h"
 #include "fpdfsdk/pdfwindow/cpwl_timer_handler.h"
 
+class CPWL_Edit;
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
 class CPWL_Wnd;
@@ -114,7 +115,7 @@ class IPWL_Provider : public CFX_Observable<IPWL_Provider> {
 class IPWL_FocusHandler {
  public:
   virtual ~IPWL_FocusHandler() {}
-  virtual void OnSetFocus(CPWL_Wnd* pWnd) = 0;
+  virtual void OnSetFocus(CPWL_Edit* pEdit) = 0;
 };
 
 struct PWL_CREATEPARAM {

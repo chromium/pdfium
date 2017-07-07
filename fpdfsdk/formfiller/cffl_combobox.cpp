@@ -257,11 +257,7 @@ bool CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
 }
 #endif  // PDF_ENABLE_XFA
 
-void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
-  if (pWnd->GetClassName() != PWL_CLASSNAME_EDIT)
-    return;
-
-  CPWL_Edit* pEdit = (CPWL_Edit*)pWnd;
+void CFFL_ComboBox::OnSetFocus(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_CHARSET_ChineseSimplified);
   pEdit->SetReadyToInput();
 

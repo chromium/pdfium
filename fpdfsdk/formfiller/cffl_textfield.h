@@ -52,7 +52,7 @@ class CFFL_TextField : public CFFL_FormFiller, public IPWL_FocusHandler {
                            bool bRestoreValue) override;
 
   // IPWL_FocusHandler:
-  void OnSetFocus(CPWL_Wnd* pWnd) override;
+  void OnSetFocus(CPWL_Edit* pEdit) override;
 
 #ifdef PDF_ENABLE_XFA
   // CFFL_FormFiller:
