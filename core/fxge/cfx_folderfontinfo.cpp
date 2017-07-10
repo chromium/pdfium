@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/ge/cfx_folderfontinfo.h"
+#include "core/fxge/cfx_folderfontinfo.h"
 
 #include <limits>
 #include <utility>

@@ -6,10 +6,10 @@
 
 #include "core/fxge/cfx_gemodule.h"
 
+#include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_fontmgr.h"
-#include "core/fxge/ge/cfx_folderfontinfo.h"
-#include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/fx_text_int.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

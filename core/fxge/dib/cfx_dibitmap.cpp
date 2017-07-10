@@ -11,8 +11,8 @@
 #include <utility>
 
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
-#include "core/fxge/ge/cfx_cliprgn.h"
 #include "third_party/base/ptr_util.h"
 
 #define MAX_OOM_LIMIT 12000000

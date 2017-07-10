@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_GE_FX_TEXT_INT_H_
-#define CORE_FXGE_GE_FX_TEXT_INT_H_
+#ifndef CORE_FXGE_FX_TEXT_INT_H_
+#define CORE_FXGE_FX_TEXT_INT_H_
 
 #include <map>
 #include <memory>
@@ -28,4 +28,4 @@ class CFX_SizeGlyphCache {
   std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>> m_GlyphMap;
 };
 
-#endif  // CORE_FXGE_GE_FX_TEXT_INT_H_
+#endif  // CORE_FXGE_FX_TEXT_INT_H_

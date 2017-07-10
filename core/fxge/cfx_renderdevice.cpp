@@ -427,16 +427,16 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
     int width,
     int height) const {
   if (m_RenderCaps & FXRC_CMYK_OUTPUT) {
-    return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT
-                                           ? FXDIB_Cmyka
-                                           : FXDIB_Cmyk);
+    return pDIB->Create(
+        width, height,
+        m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Cmyka : FXDIB_Cmyk);
   }
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
     return pDIB->Create(width, height, FXDIB_8bppMask);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_PATHS_
-  return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT
-                                         ? FXDIB_Argb
-                                         : FXDIB_Rgb32);
+  return pDIB->Create(
+      width, height,
+      m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb32);
 #else
   return pDIB->Create(
       width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb);

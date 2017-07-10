@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_GE_CFX_FOLDERFONTINFO_H_
-#define CORE_FXGE_GE_CFX_FOLDERFONTINFO_H_
+#ifndef CORE_FXGE_CFX_FOLDERFONTINFO_H_
+#define CORE_FXGE_CFX_FOLDERFONTINFO_H_
 
 #include <map>
 #include <memory>
@@ -66,4 +66,4 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
   CFX_UnownedPtr<CFX_FontMapper> m_pMapper;
 };
 
-#endif  // CORE_FXGE_GE_CFX_FOLDERFONTINFO_H_
+#endif  // CORE_FXGE_CFX_FOLDERFONTINFO_H_

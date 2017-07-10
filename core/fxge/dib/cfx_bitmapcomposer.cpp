@@ -7,8 +7,8 @@
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/ge/cfx_cliprgn.h"
 
 CFX_BitmapComposer::CFX_BitmapComposer()
     : m_bRgbByteOrder(false), m_BlendType(FXDIB_BLEND_NORMAL) {}

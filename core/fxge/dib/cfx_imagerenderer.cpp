@@ -8,9 +8,9 @@
 
 #include <memory>
 
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
-#include "core/fxge/ge/cfx_cliprgn.h"
 #include "third_party/base/ptr_util.h"
 
 CFX_ImageRenderer::CFX_ImageRenderer(

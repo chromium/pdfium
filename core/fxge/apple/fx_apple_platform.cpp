@@ -13,12 +13,12 @@
 #endif
 
 #include "core/fxge/apple/apple_int.h"
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_freetype.h"
-#include "core/fxge/ge/cfx_cliprgn.h"
-#include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/fx_text_int.h"
 
 #ifndef _SKIA_SUPPORT_
 

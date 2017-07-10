@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_GE_CTTFONTDESC_H_
-#define CORE_FXGE_GE_CTTFONTDESC_H_
+#ifndef CORE_FXGE_CTTFONTDESC_H_
+#define CORE_FXGE_CTTFONTDESC_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
@@ -37,4 +37,4 @@ class CTTFontDesc {
   int m_RefCount;
 };
 
-#endif  // CORE_FXGE_GE_CTTFONTDESC_H_
+#endif  // CORE_FXGE_CTTFONTDESC_H_

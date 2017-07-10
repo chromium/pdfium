@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/fx_freetype.h"
-#include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/fx_text_int.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 
 namespace {

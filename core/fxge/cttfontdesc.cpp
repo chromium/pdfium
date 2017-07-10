@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/ge/cttfontdesc.h"
+#include "core/fxge/cttfontdesc.h"
 
 #include "core/fxge/fx_freetype.h"
 

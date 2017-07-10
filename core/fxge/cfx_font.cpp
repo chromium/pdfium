@@ -21,7 +21,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_freetype.h"
-#include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/fx_text_int.h"
 #include "third_party/base/ptr_util.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
@@ -560,9 +560,8 @@ void CFX_Font::AdjustMMParams(int glyph_index,
       FXFT_Free(m_Face, pMasters);
       return;
     }
-    int param = min_param +
-                (max_param - min_param) * (dest_width - min_width) /
-                    (max_width - min_width);
+    int param = min_param + (max_param - min_param) * (dest_width - min_width) /
+                                (max_width - min_width);
     coords[1] = param;
   }
   FXFT_Free(m_Face, pMasters);

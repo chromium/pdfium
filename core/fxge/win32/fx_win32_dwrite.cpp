@@ -7,7 +7,7 @@
 #include <dwrite.h>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/ge/cfx_cliprgn.h"
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/win32/dwrite_int.h"
 
 typedef HRESULT(__stdcall* FuncType_DWriteCreateFactory)(

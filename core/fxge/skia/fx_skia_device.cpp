@@ -40,7 +40,7 @@
 #include "third_party/skia/include/pathops/SkPathOps.h"
 
 #ifdef _SKIA_SUPPORT_PATHS_
-#include "core/fxge/ge/cfx_cliprgn.h"
+#include "core/fxge/cfx_cliprgn.h"
 #endif  // _SKIA_SUPPORT_PATHS_
 
 #ifdef _SKIA_SUPPORT_
