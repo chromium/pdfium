@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_
 #define FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_
 
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_button.h"
 
 class CFFL_PushButton : public CFFL_Button {
  public:

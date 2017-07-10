@@ -1196,6 +1196,8 @@ static_library("formfiller") {
   sources = [
     "fpdfsdk/formfiller/cba_fontmap.cpp",
     "fpdfsdk/formfiller/cba_fontmap.h",
+    "fpdfsdk/formfiller/cffl_button.cpp",
+    "fpdfsdk/formfiller/cffl_button.h",
     "fpdfsdk/formfiller/cffl_checkbox.cpp",
     "fpdfsdk/formfiller/cffl_checkbox.h",
     "fpdfsdk/formfiller/cffl_combobox.cpp",

@@ -8,8 +8,12 @@
 #define FPDFSDK_PDFWINDOW_CPWL_COLOR_H_
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fxge/fx_dib.h"
 
 struct CPWL_Color {
+  explicit CPWL_Color(FX_COLORREF ref)
+      : CPWL_Color(FXARGB_R(ref), FXARGB_G(ref), FXARGB_B(ref)) {}
+
   CPWL_Color(int32_t type = COLORTYPE_TRANSPARENT,
              float color1 = 0.0f,
              float color2 = 0.0f,
