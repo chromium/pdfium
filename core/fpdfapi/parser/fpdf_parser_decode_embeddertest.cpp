@@ -116,9 +116,9 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_455199) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   const char kExpectedMd5sum[] = "b90475ca64d1348c3bf5e2b77ad9187a";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char kExpectedMd5sum[] = "5db84ceda153acc4420c2062b182191b";
+  const char kExpectedMd5sum[] = "9a2637b73fd5265309bfddd9c69476cd";
 #else
-  const char kExpectedMd5sum[] = "f24438fe53948941200fd43da37908bc";
+  const char kExpectedMd5sum[] = "f7e129d97c58e91adeace32a4327b925";
 #endif
   CompareBitmap(bitmap, 200, 200, kExpectedMd5sum);
   FPDFBitmap_Destroy(bitmap);

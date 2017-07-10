@@ -472,13 +472,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   const char md5_2[] = "cf3cea74bd46497520ff6c4d1ea228c8";
   const char md5_3[] = "ee5372b31fede117fc83b9384598aa25";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "bdf96279ab82d9f484874db3f0c03429";
-  const char md5_2[] = "5f2b32b7aa93bc1e62a7a7971f54bdd7";
-  const char md5_3[] = "272661f3e5c9516aac4b5beb3ae1b36a";
+  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
+  const char md5_2[] = "681f0d0738dded0722e146f6c219bfac";
+  const char md5_3[] = "262187984451bae2fe826067d68623ff";
 #else
-  const char md5[] = "07d4168715553b4294525f840c40aa1c";
-  const char md5_2[] = "dd5ba8996af67d0e5add418195e4d61b";
-  const char md5_3[] = "c60c2cc2c4e7b13be90bd77cc4502f97";
+  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
+  const char md5_2[] = "87a78cbacd8509b961a67be56b5665a2";
+  const char md5_3[] = "c95de7a9a1f61faca03d953961a319b9";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -624,13 +624,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   const char md5_2[] = "ff012f5697436dfcaec25b32d1333596";
   const char md5_3[] = "86cf8cb2755a7a2046a543e66d9c1e61";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "bdf96279ab82d9f484874db3f0c03429";
-  const char md5_2[] = "048a9af8b6239b59a19dacd8e1688e0a";
-  const char md5_3[] = "3be8aa2ebc927e32060e7116dd937a14";
+  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
+  const char md5_2[] = "6fb176c20996cc554d0210d8c8b6138f";
+  const char md5_3[] = "546959714dfb0dcd7e7b00259e8d178c";
 #else
-  const char md5[] = "07d4168715553b4294525f840c40aa1c";
-  const char md5_2[] = "9685b2a0cf11ee730125f88ab10ff1d0";
-  const char md5_3[] = "0763407baf3656b8061bbbe698e9fd89";
+  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
+  const char md5_2[] = "e7658232abd8977cdc3367dd02aee04a";
+  const char md5_3[] = "f393432b9a9b452ea69022f46c8b3f75";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -703,13 +703,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   const char md5_2[] = "e5680ed048c2cfd9a1d27212cdf41286";
   const char md5_3[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "bdf96279ab82d9f484874db3f0c03429";
-  const char md5_2[] = "fa5709c115d4ebd502df91841b44b3ef";
-  const char md5_3[] = "9f6fa52dc477ccf52be4184d8589ef3f";
+  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
+  const char md5_2[] = "998abae4962f8f41e094e7612d8339fc";
+  const char md5_3[] = "e89b82ca4589b8f0b45fff42ca3a96a4";
 #else
-  const char md5[] = "07d4168715553b4294525f840c40aa1c";
-  const char md5_2[] = "40a4c5e0561b062882b47253be3393ef";
-  const char md5_3[] = "f8ce0682add01f6d273890ac64d90fa6";
+  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
+  const char md5_2[] = "3fbbaec4d846ccf2be89e09daae0273d";
+  const char md5_3[] = "2ad0acaf2d8990bcdf48e1d12e6c44ad";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -839,9 +839,9 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   const char md5[] = "c35408717759562d1f8bf33d317483d2";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "bdf96279ab82d9f484874db3f0c03429";
+  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
 #else
-  const char md5[] = "07d4168715553b4294525f840c40aa1c";
+  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
 #endif
   TestSaved(595, 842, md5);
   FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 0);
