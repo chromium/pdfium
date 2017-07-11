@@ -142,18 +142,9 @@ class CFX_RenderDevice {
                          uint32_t stroke_color,
                          int fill_mode,
                          int blend_type);
-  bool SetPixel(int x, int y, uint32_t color);
   bool FillRect(const FX_RECT* pRect, uint32_t color) {
     return FillRectWithBlend(pRect, color, FXDIB_BLEND_NORMAL);
   }
-  bool FillRectWithBlend(const FX_RECT* pRect, uint32_t color, int blend_type);
-  bool DrawCosmeticLine(float x1,
-                        float y1,
-                        float x2,
-                        float y2,
-                        uint32_t color,
-                        int fill_mode,
-                        int blend_type);
 
   CFX_RetainPtr<CFX_DIBitmap> GetBackDrop();
   bool GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap, int left, int top);
@@ -259,6 +250,14 @@ class CFX_RenderDevice {
                           uint32_t stroke_color,
                           int fill_mode,
                           int blend_type);
+  bool DrawCosmeticLine(float x1,
+                        float y1,
+                        float x2,
+                        float y2,
+                        uint32_t color,
+                        int fill_mode,
+                        int blend_type);
+  bool FillRectWithBlend(const FX_RECT* pRect, uint32_t color, int blend_type);
 
   CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
   int m_Width;

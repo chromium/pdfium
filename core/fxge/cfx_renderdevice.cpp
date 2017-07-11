@@ -121,6 +121,12 @@ uint8_t CalculateDestAlpha(uint8_t back_alpha, int src_alpha) {
   return back_alpha + src_alpha - back_alpha * src_alpha / 255;
 }
 
+void ApplyAlpha(uint8_t* dest, int b, int g, int r, int alpha) {
+  dest[0] = FXDIB_ALPHA_MERGE(dest[0], b, alpha);
+  dest[1] = FXDIB_ALPHA_MERGE(dest[1], g, alpha);
+  dest[2] = FXDIB_ALPHA_MERGE(dest[2], r, alpha);
+}
+
 void ApplyDestAlpha(uint8_t back_alpha,
                     int src_alpha,
                     int r,
@@ -128,18 +134,12 @@ void ApplyDestAlpha(uint8_t back_alpha,
                     int b,
                     uint8_t* dest) {
   uint8_t dest_alpha = CalculateDestAlpha(back_alpha, src_alpha);
-  int alpha_ratio = src_alpha * 255 / dest_alpha;
-  dest[0] = FXDIB_ALPHA_MERGE(dest[0], b, alpha_ratio);
-  dest[1] = FXDIB_ALPHA_MERGE(dest[1], g, alpha_ratio);
-  dest[2] = FXDIB_ALPHA_MERGE(dest[2], r, alpha_ratio);
+  ApplyAlpha(dest, b, g, r, src_alpha * 255 / dest_alpha);
   dest[3] = dest_alpha;
 }
 
 void NormalizeRgbDst(int src_value, int r, int g, int b, int a, uint8_t* dest) {
-  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
-  dest[0] = FXDIB_ALPHA_MERGE(dest[0], b, src_alpha);
-  dest[1] = FXDIB_ALPHA_MERGE(dest[1], g, src_alpha);
-  dest[2] = FXDIB_ALPHA_MERGE(dest[2], r, src_alpha);
+  ApplyAlpha(dest, b, g, r, CalcAlpha(TextGammaAdjust(src_value), a));
 }
 
 void NormalizeRgbSrc(int src_value, int r, int g, int b, int a, uint8_t* dest) {
@@ -147,9 +147,21 @@ void NormalizeRgbSrc(int src_value, int r, int g, int b, int a, uint8_t* dest) {
   if (src_alpha == 0)
     return;
 
-  dest[0] = FXDIB_ALPHA_MERGE(dest[0], b, src_alpha);
-  dest[1] = FXDIB_ALPHA_MERGE(dest[1], g, src_alpha);
-  dest[2] = FXDIB_ALPHA_MERGE(dest[2], r, src_alpha);
+  ApplyAlpha(dest, b, g, r, src_alpha);
+}
+
+void NormalizeArgb(int src_value,
+                   int r,
+                   int g,
+                   int b,
+                   int a,
+                   uint8_t* dest,
+                   int src_alpha) {
+  uint8_t back_alpha = dest[3];
+  if (back_alpha == 0)
+    FXARGB_SETDIB(dest, FXARGB_MAKE(src_alpha, r, g, b));
+  else if (src_alpha != 0)
+    ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
 }
 
 void NormalizeArgbDest(int src_value,
@@ -158,13 +170,8 @@ void NormalizeArgbDest(int src_value,
                        int b,
                        int a,
                        uint8_t* dest) {
-  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
-  uint8_t back_alpha = dest[3];
-  if (back_alpha == 0) {
-    FXARGB_SETDIB(dest, FXARGB_MAKE(src_alpha, r, g, b));
-  } else if (src_alpha != 0) {
-    ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
-  }
+  NormalizeArgb(src_value, r, g, b, a, dest,
+                CalcAlpha(TextGammaAdjust(src_value), a));
 }
 
 void NormalizeArgbSrc(int src_value,
@@ -174,15 +181,8 @@ void NormalizeArgbSrc(int src_value,
                       int a,
                       uint8_t* dest) {
   int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
-  if (src_alpha == 0)
-    return;
-
-  uint8_t back_alpha = dest[3];
-  if (back_alpha == 0) {
-    FXARGB_SETDIB(dest, FXARGB_MAKE(src_alpha, r, g, b));
-  } else {
-    ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
-  }
+  if (src_alpha != 0)
+    NormalizeArgb(src_value, r, g, b, a, dest, src_alpha);
 }
 
 void NextPixel(uint8_t** src_scan, uint8_t** dst_scan, int bpp) {
@@ -220,7 +220,7 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
   auto* pNormalizeDstFunc = has_alpha ? &NormalizeArgbDest : &NormalizeRgbSrc;
   auto* pSetAlpha = has_alpha ? &SetAlpha : &SetAlphaDoNothing;
 
-  for (int row = 0; row < nrows; row++) {
+  for (int row = 0; row < nrows; ++row) {
     int dest_row = row + top;
     if (dest_row < 0 || dest_row >= bitmap->GetHeight())
       continue;
@@ -240,92 +240,96 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
           pSetAlpha(dest_scan);
           NextPixel(&src_scan, &dest_scan, Bpp);
         }
-      } else if (x_subpixel == 1) {
+        continue;
+      }
+      if (x_subpixel == 1) {
         MergeGammaAdjust(src_scan[1], r, a, &dest_scan[2]);
         MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
         if (start_col > left)
           MergeGammaAdjust(src_scan[-1], b, a, &dest_scan[0]);
         pSetAlpha(dest_scan);
         NextPixel(&src_scan, &dest_scan, Bpp);
-        for (int col = start_col + 1; col < end_col - 1; col++) {
+        for (int col = start_col + 1; col < end_col - 1; ++col) {
           MergeGammaAdjustBgr(&src_scan[-1], r, g, b, a, &dest_scan[0]);
           pSetAlpha(dest_scan);
           NextPixel(&src_scan, &dest_scan, Bpp);
         }
-      } else {
-        MergeGammaAdjust(src_scan[0], r, a, &dest_scan[2]);
-        if (start_col > left) {
-          MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
-          MergeGammaAdjust(src_scan[-2], b, a, &dest_scan[0]);
-        }
+        continue;
+      }
+      MergeGammaAdjust(src_scan[0], r, a, &dest_scan[2]);
+      if (start_col > left) {
+        MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
+        MergeGammaAdjust(src_scan[-2], b, a, &dest_scan[0]);
+      }
+      pSetAlpha(dest_scan);
+      NextPixel(&src_scan, &dest_scan, Bpp);
+      for (int col = start_col + 1; col < end_col - 1; ++col) {
+        MergeGammaAdjustBgr(&src_scan[-2], r, g, b, a, &dest_scan[0]);
         pSetAlpha(dest_scan);
         NextPixel(&src_scan, &dest_scan, Bpp);
-        for (int col = start_col + 1; col < end_col - 1; col++) {
-          MergeGammaAdjustBgr(&src_scan[-2], r, g, b, a, &dest_scan[0]);
-          pSetAlpha(dest_scan);
-          NextPixel(&src_scan, &dest_scan, Bpp);
-        }
       }
-    } else {
-      if (x_subpixel == 0) {
-        for (int col = start_col; col < end_col; col++) {
-          if (bNormal) {
-            int src_value = AverageRgb(&src_scan[0]);
-            pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
-          } else {
-            MergeGammaAdjustRgb(&src_scan[0], r, g, b, a, &dest_scan[0]);
-            pSetAlpha(dest_scan);
-          }
-          NextPixel(&src_scan, &dest_scan, Bpp);
-        }
-      } else if (x_subpixel == 1) {
+      continue;
+    }
+    if (x_subpixel == 0) {
+      for (int col = start_col; col < end_col; ++col) {
         if (bNormal) {
-          int src_value = start_col > left ? AverageRgb(&src_scan[-1])
-                                           : (src_scan[0] + src_scan[1]) / 3;
-          pNormalizeSrcFunc(src_value, r, g, b, a, dest_scan);
+          int src_value = AverageRgb(&src_scan[0]);
+          pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
         } else {
-          if (start_col > left)
-            MergeGammaAdjust(src_scan[-1], r, a, &dest_scan[2]);
-          MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
-          MergeGammaAdjust(src_scan[1], b, a, &dest_scan[0]);
+          MergeGammaAdjustRgb(&src_scan[0], r, g, b, a, &dest_scan[0]);
           pSetAlpha(dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
-        for (int col = start_col + 1; col < end_col; col++) {
-          if (bNormal) {
-            int src_value = AverageRgb(&src_scan[-1]);
-            pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
-          } else {
-            MergeGammaAdjustRgb(&src_scan[-1], r, g, b, a, &dest_scan[0]);
-            pSetAlpha(dest_scan);
-          }
-          NextPixel(&src_scan, &dest_scan, Bpp);
-        }
+      }
+      continue;
+    }
+    if (x_subpixel == 1) {
+      if (bNormal) {
+        int src_value = start_col > left ? AverageRgb(&src_scan[-1])
+                                         : (src_scan[0] + src_scan[1]) / 3;
+        pNormalizeSrcFunc(src_value, r, g, b, a, dest_scan);
       } else {
+        if (start_col > left)
+          MergeGammaAdjust(src_scan[-1], r, a, &dest_scan[2]);
+        MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
+        MergeGammaAdjust(src_scan[1], b, a, &dest_scan[0]);
+        pSetAlpha(dest_scan);
+      }
+      NextPixel(&src_scan, &dest_scan, Bpp);
+      for (int col = start_col + 1; col < end_col; ++col) {
         if (bNormal) {
-          int src_value =
-              start_col > left ? AverageRgb(&src_scan[-2]) : src_scan[0] / 3;
-          pNormalizeSrcFunc(src_value, r, g, b, a, dest_scan);
+          int src_value = AverageRgb(&src_scan[-1]);
+          pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
         } else {
-          if (start_col > left) {
-            MergeGammaAdjust(src_scan[-2], r, a, &dest_scan[2]);
-            MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
-          }
-          MergeGammaAdjust(src_scan[0], b, a, &dest_scan[0]);
+          MergeGammaAdjustRgb(&src_scan[-1], r, g, b, a, &dest_scan[0]);
           pSetAlpha(dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
-        for (int col = start_col + 1; col < end_col; col++) {
-          if (bNormal) {
-            int src_value = AverageRgb(&src_scan[-2]);
-            pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
-          } else {
-            MergeGammaAdjustRgb(&src_scan[-2], r, g, b, a, &dest_scan[0]);
-            pSetAlpha(dest_scan);
-          }
-          NextPixel(&src_scan, &dest_scan, Bpp);
-        }
       }
+      continue;
+    }
+    if (bNormal) {
+      int src_value =
+          start_col > left ? AverageRgb(&src_scan[-2]) : src_scan[0] / 3;
+      pNormalizeSrcFunc(src_value, r, g, b, a, dest_scan);
+    } else {
+      if (start_col > left) {
+        MergeGammaAdjust(src_scan[-2], r, a, &dest_scan[2]);
+        MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
+      }
+      MergeGammaAdjust(src_scan[0], b, a, &dest_scan[0]);
+      pSetAlpha(dest_scan);
+    }
+    NextPixel(&src_scan, &dest_scan, Bpp);
+    for (int col = start_col + 1; col < end_col; ++col) {
+      if (bNormal) {
+        int src_value = AverageRgb(&src_scan[-2]);
+        pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
+      } else {
+        MergeGammaAdjustRgb(&src_scan[-2], r, g, b, a, &dest_scan[0]);
+        pSetAlpha(dest_scan);
+      }
+      NextPixel(&src_scan, &dest_scan, Bpp);
     }
   }
 }
@@ -520,32 +524,32 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
       if (!rect_i.Valid())
         return false;
 
-      int width = (int)ceil(rect_f.right - rect_f.left);
+      int width = static_cast<int>(ceil(rect_f.right - rect_f.left));
       if (width < 1) {
         width = 1;
         if (rect_i.left == rect_i.right)
-          rect_i.right++;
+          ++rect_i.right;
       }
-      int height = (int)ceil(rect_f.top - rect_f.bottom);
+      int height = static_cast<int>(ceil(rect_f.top - rect_f.bottom));
       if (height < 1) {
         height = 1;
         if (rect_i.bottom == rect_i.top)
-          rect_i.bottom++;
+          ++rect_i.bottom;
       }
       if (rect_i.Width() >= width + 1) {
-        if (rect_f.left - (float)(rect_i.left) >
-            (float)(rect_i.right) - rect_f.right) {
-          rect_i.left++;
+        if (rect_f.left - static_cast<float>(rect_i.left) >
+            static_cast<float>(rect_i.right) - rect_f.right) {
+          ++rect_i.left;
         } else {
-          rect_i.right--;
+          --rect_i.right;
         }
       }
       if (rect_i.Height() >= height + 1) {
-        if (rect_f.top - (float)(rect_i.top) >
-            (float)(rect_i.bottom) - rect_f.bottom) {
-          rect_i.top++;
+        if (rect_f.top - static_cast<float>(rect_i.top) >
+            static_cast<float>(rect_i.bottom) - rect_f.bottom) {
+          ++rect_i.top;
         } else {
-          rect_i.bottom--;
+          --rect_i.bottom;
         }
       }
       if (FillRectWithBlend(&rect_i, fill_color, blend_type))
@@ -654,14 +658,6 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
                                     FXDIB_BLEND_NORMAL);
 }
 
-bool CFX_RenderDevice::SetPixel(int x, int y, uint32_t color) {
-  if (m_pDeviceDriver->SetPixel(x, y, color))
-    return true;
-
-  FX_RECT rect(x, y, x + 1, y + 1);
-  return FillRectWithBlend(&rect, color, FXDIB_BLEND_NORMAL);
-}
-
 bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT* pRect,
                                          uint32_t fill_color,
                                          int blend_type) {
@@ -710,9 +706,8 @@ bool CFX_RenderDevice::DrawCosmeticLine(float x1,
 bool CFX_RenderDevice::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                                  int left,
                                  int top) {
-  if (!(m_RenderCaps & FXRC_GET_BITS))
-    return false;
-  return m_pDeviceDriver->GetDIBits(pBitmap, left, top);
+  return (m_RenderCaps & FXRC_GET_BITS) &&
+         m_pDeviceDriver->GetDIBits(pBitmap, left, top);
 }
 
 CFX_RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() {
@@ -742,34 +737,33 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
   src_rect.top = FXSYS_round(src_rect.top * fScaleY);
   src_rect.right = FXSYS_round(src_rect.right * fScaleX);
   src_rect.bottom = FXSYS_round(src_rect.bottom * fScaleY);
-  if ((blend_mode != FXDIB_BLEND_NORMAL && !(m_RenderCaps & FXRC_BLEND_MODE)) ||
-      (pBitmap->HasAlpha() && !(m_RenderCaps & FXRC_ALPHA_IMAGE))) {
-    if (!(m_RenderCaps & FXRC_GET_BITS))
-      return false;
-
-    int bg_pixel_width = FXSYS_round(dest_rect.Width() * fScaleX);
-    int bg_pixel_height = FXSYS_round(dest_rect.Height() * fScaleY);
-    auto background = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!background->Create(
-            bg_pixel_width, bg_pixel_height,
-            (m_RenderCaps & FXRC_CMYK_OUTPUT) ? FXDIB_Cmyk : FXDIB_Rgb32)) {
-      return false;
-    }
-    if (!m_pDeviceDriver->GetDIBits(background, dest_rect.left,
-                                    dest_rect.top)) {
-      return false;
-    }
-    if (!background->CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
-                                     pBitmap, src_rect.left, src_rect.top,
-                                     blend_mode, nullptr, false)) {
-      return false;
-    }
-    FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);
-    return m_pDeviceDriver->SetDIBits(background, 0, &rect, dest_rect.left,
-                                      dest_rect.top, FXDIB_BLEND_NORMAL);
+  if ((blend_mode == FXDIB_BLEND_NORMAL || (m_RenderCaps & FXRC_BLEND_MODE)) &&
+      (!pBitmap->HasAlpha() || (m_RenderCaps & FXRC_ALPHA_IMAGE))) {
+    return m_pDeviceDriver->SetDIBits(pBitmap, 0, &src_rect, dest_rect.left,
+                                      dest_rect.top, blend_mode);
   }
-  return m_pDeviceDriver->SetDIBits(pBitmap, 0, &src_rect, dest_rect.left,
-                                    dest_rect.top, blend_mode);
+  if (!(m_RenderCaps & FXRC_GET_BITS))
+    return false;
+
+  int bg_pixel_width = FXSYS_round(dest_rect.Width() * fScaleX);
+  int bg_pixel_height = FXSYS_round(dest_rect.Height() * fScaleY);
+  auto background = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!background->Create(
+          bg_pixel_width, bg_pixel_height,
+          (m_RenderCaps & FXRC_CMYK_OUTPUT) ? FXDIB_Cmyk : FXDIB_Rgb32)) {
+    return false;
+  }
+  if (!m_pDeviceDriver->GetDIBits(background, dest_rect.left, dest_rect.top)) {
+    return false;
+  }
+  if (!background->CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
+                                   pBitmap, src_rect.left, src_rect.top,
+                                   blend_mode, nullptr, false)) {
+    return false;
+  }
+  FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);
+  return m_pDeviceDriver->SetDIBits(background, 0, &rect, dest_rect.left,
+                                    dest_rect.top, FXDIB_BLEND_NORMAL);
 }
 
 bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
@@ -783,11 +777,9 @@ bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
   FX_RECT clip_box = m_ClipBox;
   clip_box.Intersect(dest_rect);
-  if (clip_box.IsEmpty())
-    return true;
-  return m_pDeviceDriver->StretchDIBits(pBitmap, 0, left, top, dest_width,
-                                        dest_height, &clip_box, flags,
-                                        blend_mode);
+  return clip_box.IsEmpty() || m_pDeviceDriver->StretchDIBits(
+                                   pBitmap, 0, left, top, dest_width,
+                                   dest_height, &clip_box, flags, blend_mode);
 }
 
 bool CFX_RenderDevice::SetBitMask(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
@@ -968,10 +960,10 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
 
   FX_RECT bmp_rect1 = FXGE_GetGlyphsBBox(glyphs, anti_alias, 1.0f, 1.0f);
   if (scale_x > 1 && scale_y > 1) {
-    bmp_rect1.left--;
-    bmp_rect1.top--;
-    bmp_rect1.right++;
-    bmp_rect1.bottom++;
+    --bmp_rect1.left;
+    --bmp_rect1.top;
+    ++bmp_rect1.right;
+    ++bmp_rect1.bottom;
   }
   FX_RECT bmp_rect(FXSYS_round((float)(bmp_rect1.left) / scale_x),
                    FXSYS_round((float)(bmp_rect1.top) / scale_y),
@@ -1090,7 +1082,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
                                     FX_ARGB stroke_color,
                                     CFX_PathData* pClippingPath,
                                     int nFlag) {
-  for (int iChar = 0; iChar < nChars; iChar++) {
+  for (int iChar = 0; iChar < nChars; ++iChar) {
     const FXTEXT_CHARPOS& charpos = pCharPos[iChar];
     CFX_Matrix matrix;
     if (charpos.m_bGlyphAdjust) {
