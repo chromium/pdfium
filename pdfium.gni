@@ -50,6 +50,9 @@ declare_args() {
   # Build a complete static library
   pdf_is_complete_lib = false
 
+  # Enable callgrind for performance profiling
+  enable_callgrind = false
+
   # Enable coverage information
   use_coverage = false
 

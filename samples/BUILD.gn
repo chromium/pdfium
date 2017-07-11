@@ -32,6 +32,11 @@ config("pdfium_samples_config") {
   if (is_asan) {
     defines += [ "PDF_ENABLE_ASAN" ]
   }
+
+  if (enable_callgrind) {
+    defines += [ "ENABLE_CALLGRIND" ]
+  }
+
   if (use_coverage && is_clang) {
     cflags += [
       "--coverage",

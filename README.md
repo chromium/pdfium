@@ -163,7 +163,7 @@ For contributing code, we will follow
 as much as possible. The main exceptions are:
 
 1. Code has to conform to the existing style and not Chromium/Google style.
-2. PDFium uses a different tool for code reviews, and credentials for 
+2. PDFium uses a different tool for code reviews, and credentials for
 the tool need to be generated before uploading a CL.
 
 
