@@ -1137,9 +1137,9 @@ void RenderPdf(const std::string& name,
 
 #if _WIN32
   if (options.output_format == OUTPUT_PS2)
-    FPDF_SetPrintPostscriptLevel(2);
+    FPDF_SetPrintMode(2);
   else if (options.output_format == OUTPUT_PS3)
-    FPDF_SetPrintPostscriptLevel(3);
+    FPDF_SetPrintMode(3);
 #endif
 
   int page_count = FPDF_GetPageCount(doc.get());

@@ -492,3 +492,159 @@ bool CPSPrinterDriver::DrawDeviceText(int nChars,
   return m_PSRenderer.DrawText(nChars, pCharPos, pFont, pObject2Device,
                                font_size, color);
 }
+
+CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
+    : m_hDC(hDC),
+      m_Width(INT_MAX),
+      m_Height(INT_MAX),
+      m_HorzSize(INT_MAX),
+      m_VertSize(INT_MAX),
+      m_OriginY(0.0f),
+      m_SetOrigin(false) {
+  m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
+}
+
+CTextOnlyPrinterDriver::~CTextOnlyPrinterDriver() {
+  EndRendering();
+}
+
+int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
+  switch (caps_id) {
+    case FXDC_DEVICE_CLASS:
+      return FXDC_PRINTER;
+    case FXDC_PIXEL_WIDTH:
+      return m_Width;
+    case FXDC_PIXEL_HEIGHT:
+      return m_Height;
+    case FXDC_BITS_PIXEL:
+      return m_nBitsPerPixel;
+    case FXDC_RENDER_CAPS:
+      return 0;
+    case FXDC_HORZ_SIZE:
+      return m_HorzSize;
+    case FXDC_VERT_SIZE:
+      return m_VertSize;
+  }
+  return 0;
+}
+
+bool CTextOnlyPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData,
+                                              const CFX_Matrix* pObject2Device,
+                                              int fill_mode) {
+  return true;
+}
+
+bool CTextOnlyPrinterDriver::SetClip_PathStroke(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_GraphStateData* pGraphState) {
+  return false;
+}
+
+bool CTextOnlyPrinterDriver::DrawPath(const CFX_PathData* pPathData,
+                                      const CFX_Matrix* pObject2Device,
+                                      const CFX_GraphStateData* pGraphState,
+                                      uint32_t fill_color,
+                                      uint32_t stroke_color,
+                                      int fill_mode,
+                                      int blend_type) {
+  return false;
+}
+
+bool CTextOnlyPrinterDriver::SetDIBits(
+    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    uint32_t color,
+    const FX_RECT* pSrcRect,
+    int left,
+    int top,
+    int blend_type) {
+  return false;
+}
+
+bool CTextOnlyPrinterDriver::GetClipBox(FX_RECT* pRect) {
+  pRect->left = 0;
+  pRect->right = m_Width;
+  pRect->top = 0;
+  pRect->bottom = m_Height;
+  return true;
+}
+
+bool CTextOnlyPrinterDriver::StretchDIBits(
+    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    uint32_t color,
+    int dest_left,
+    int dest_top,
+    int dest_width,
+    int dest_height,
+    const FX_RECT* pClipRect,
+    uint32_t flags,
+    int blend_type) {
+  return false;
+}
+
+bool CTextOnlyPrinterDriver::StartDIBits(
+    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    int bitmap_alpha,
+    uint32_t color,
+    const CFX_Matrix* pMatrix,
+    uint32_t render_flags,
+    std::unique_ptr<CFX_ImageRenderer>* handle,
+    int blend_type) {
+  return false;
+}
+
+bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
+                                            const FXTEXT_CHARPOS* pCharPos,
+                                            CFX_Font* pFont,
+                                            const CFX_Matrix* pObject2Device,
+                                            float font_size,
+                                            uint32_t color) {
+  if (g_pdfium_print_mode != 1)
+    return false;
+  if (nChars < 1 || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
+    return false;
+
+  // Scale factor used to minimize the kerning problems caused by rounding
+  // errors below. Value chosen based on the title of https://crbug.com/18383
+  const double kScaleFactor = 10;
+
+  CFX_WideString wsText;
+  int totalLength = nChars;
+
+  // Detect new lines and add a space. Was likely removed by SkPDF if this is
+  // just text, and spaces seem to be ignored by label printers that use this
+  // driver.
+  if (m_SetOrigin &&
+      FXSYS_round(m_OriginY) != FXSYS_round(pObject2Device->f * kScaleFactor)) {
+    wsText += L" ";
+    totalLength++;
+  }
+  m_OriginY = pObject2Device->f * kScaleFactor;
+  m_SetOrigin = true;
+
+  // Text
+  for (int i = 0; i < nChars; ++i) {
+    // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
+    // values from PDFs.
+    const FXTEXT_CHARPOS& charpos = pCharPos[i];
+    ASSERT(charpos.m_AdjustMatrix[0] == 0);
+    ASSERT(charpos.m_AdjustMatrix[1] == 0);
+    ASSERT(charpos.m_AdjustMatrix[2] == 0);
+    ASSERT(charpos.m_AdjustMatrix[3] == 0);
+    ASSERT(charpos.m_Origin.y == 0);
+
+    wsText += charpos.m_Unicode;
+  }
+  size_t len = totalLength;
+  CFX_ByteString text = CFX_ByteString::FromUnicode(wsText);
+  while (len > 0) {
+    char buffer[1026];
+    size_t send_len = std::min(len, static_cast<size_t>(1024));
+    *(reinterpret_cast<uint16_t*>(buffer)) = send_len;
+    memcpy(buffer + 2, text.c_str(), send_len);
+    ::GdiComment(m_hDC, send_len + 2, reinterpret_cast<const BYTE*>(buffer));
+    len -= send_len;
+    text.Right(len);
+  }
+  return true;
+}

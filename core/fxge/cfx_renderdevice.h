@@ -71,6 +71,7 @@ class FXTEXT_CHARPOS {
 
   float m_AdjustMatrix[4];
   CFX_PointF m_Origin;
+  uint32_t m_Unicode;
   uint32_t m_GlyphIndex;
   int32_t m_FontCharWidth;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

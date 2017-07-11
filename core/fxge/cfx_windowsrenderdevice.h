@@ -14,6 +14,13 @@
 
 #include "core/fxge/cfx_renderdevice.h"
 
+enum WindowsPrintMode {
+  kModeEmf = 0,
+  kModeTextOnly = 1,
+  kModePostScript2 = 2,
+  kModePostScript3 = 3,
+};
+
 class IFX_RenderDeviceDriver;
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
@@ -25,7 +32,7 @@ extern bool g_pdfium_print_text_with_gdi;
 extern PDFiumEnsureTypefaceCharactersAccessible
     g_pdfium_typeface_accessible_func;
 #endif
-extern int g_pdfium_print_postscript_level;
+extern int g_pdfium_print_mode;
 
 class CFX_WindowsRenderDevice : public CFX_RenderDevice {
  public:

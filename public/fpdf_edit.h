@@ -42,6 +42,11 @@
 #define FPDF_LINEJOIN_ROUND 1
 #define FPDF_LINEJOIN_BEVEL 2
 
+#define FPDF_PRINTMODE_EMF 0
+#define FPDF_PRINTMODE_TEXTONLY 1
+#define FPDF_PRINTMODE_POSTSCRIPT2 2
+#define FPDF_PRINTMODE_POSTSCRIPT3 3
+
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus

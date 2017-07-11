@@ -689,7 +689,7 @@ bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int* charset) {
 
 }  // namespace
 
-int g_pdfium_print_postscript_level = 0;
+int g_pdfium_print_mode = WindowsPrintMode::kModeEmf;
 
 std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     const char** pUnused) {
@@ -1370,14 +1370,20 @@ IFX_RenderDeviceDriver* CFX_WindowsRenderDevice::CreateDriver(HDC hDC) {
   int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||
-                     device_type == DT_PLOTTER || obj_type == OBJ_ENHMETADC;
+                     device_type == DT_PLOTTER ||
+                     device_type == DT_CHARSTREAM || obj_type == OBJ_ENHMETADC;
 
   if (!use_printer)
     return new CGdiDisplayDriver(hDC);
 
-  if (g_pdfium_print_postscript_level == 2 ||
-      g_pdfium_print_postscript_level == 3) {
-    return new CPSPrinterDriver(hDC, g_pdfium_print_postscript_level, false);
-  }
-  return new CGdiPrinterDriver(hDC);
+  if (g_pdfium_print_mode == WindowsPrintMode::kModeEmf)
+    return new CGdiPrinterDriver(hDC);
+
+  if (g_pdfium_print_mode == WindowsPrintMode::kModeTextOnly)
+    return new CTextOnlyPrinterDriver(hDC);
+
+  // Should be PostScript
+  ASSERT(g_pdfium_print_mode == WindowsPrintMode::kModePostScript2 ||
+         g_pdfium_print_mode == WindowsPrintMode::kModePostScript3);
+  return new CPSPrinterDriver(hDC, g_pdfium_print_mode, false);
 }

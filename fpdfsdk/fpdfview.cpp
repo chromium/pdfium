@@ -37,6 +37,7 @@
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fsdk_pauseadapter.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_progressive.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
@@ -53,6 +54,16 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include "core/fxge/cfx_windowsrenderdevice.h"
+
+// These checks are here because core/ and public/ cannot depend on each other.
+static_assert(WindowsPrintMode::kModeEmf == FPDF_PRINTMODE_EMF,
+              "WindowsPrintMode::kModeEmf value mismatch");
+static_assert(WindowsPrintMode::kModeTextOnly == FPDF_PRINTMODE_TEXTONLY,
+              "WindowsPrintMode::kModeTextOnly value mismatch");
+static_assert(WindowsPrintMode::kModePostScript2 == FPDF_PRINTMODE_POSTSCRIPT2,
+              "WindowsPrintMode::kModePostScript2 value mismatch");
+static_assert(WindowsPrintMode::kModePostScript3 == FPDF_PRINTMODE_POSTSCRIPT3,
+              "WindowsPrintMode::kModePostScript3 value mismatch");
 #endif
 
 namespace {
@@ -449,10 +460,10 @@ DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
 }
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
-DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintPostscriptLevel(int postscript_level) {
-  if (postscript_level != 0 && postscript_level != 2 && postscript_level != 3)
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintMode(int mode) {
+  if (mode < FPDF_PRINTMODE_EMF || mode > FPDF_PRINTMODE_POSTSCRIPT3)
     return FALSE;
-  g_pdfium_print_postscript_level = postscript_level;
+  g_pdfium_print_mode = mode;
   return TRUE;
 }
 #endif  // defined(_WIN32)
