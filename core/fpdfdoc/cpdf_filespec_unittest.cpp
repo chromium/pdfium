@@ -3,10 +3,13 @@
 // found in the LICENSE file.
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -160,4 +163,99 @@ TEST(cpdf_filespec, SetFileName) {
   // Check we can get the file name back.
   EXPECT_TRUE(file_spec2.GetFileName(&file_name));
   EXPECT_TRUE(file_name == test_data.input);
+}
+
+TEST(cpdf_filespec, GetFileStream) {
+  {
+    // Invalid object.
+    auto name_obj = pdfium::MakeUnique<CPDF_Name>(nullptr, "test.pdf");
+    CPDF_FileSpec file_spec(name_obj.get());
+    EXPECT_FALSE(file_spec.GetFileStream());
+  }
+  {
+    // Dictionary object missing its embedded files dictionary.
+    auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
+    CPDF_FileSpec file_spec(dict_obj.get());
+    EXPECT_FALSE(file_spec.GetFileStream());
+  }
+  {
+    // Dictionary object with an empty embedded files dictionary.
+    auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
+    dict_obj->SetNewFor<CPDF_Dictionary>("EF");
+    CPDF_FileSpec file_spec(dict_obj.get());
+    EXPECT_FALSE(file_spec.GetFileStream());
+  }
+  {
+    // Dictionary object with a non-empty embedded files dictionary.
+    auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
+    dict_obj->SetNewFor<CPDF_Dictionary>("EF");
+    CPDF_FileSpec file_spec(dict_obj.get());
+
+    const char* const keys[5] = {"Unix", "Mac", "DOS", "F", "UF"};
+    const wchar_t file_name[] = L"test.pdf";
+    const char* const stream[5] = {"test1", "test2", "test3", "test4", "test5"};
+    CPDF_Dictionary* file_dict =
+        file_spec.GetObj()->AsDictionary()->GetDictFor("EF");
+
+    // Keys in reverse order of precedence to retrieve the file content stream.
+    for (size_t i = 0; i < FX_ArraySize(keys); ++i) {
+      // Set the file name.
+      dict_obj->SetNewFor<CPDF_String>(keys[i], file_name);
+
+      // Set the file stream.
+      auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
+      size_t buf_len = strlen(stream[i]) + 1;
+      std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_len));
+      memcpy(buf.get(), stream[i], buf_len);
+      file_dict->SetNewFor<CPDF_Stream>(keys[i], std::move(buf), buf_len,
+                                        std::move(pDict));
+
+      // Check that the file content stream is as expected.
+      EXPECT_STREQ(
+          stream[i],
+          file_spec.GetFileStream()->GetUnicodeText().UTF8Encode().c_str());
+
+      if (i == 2) {
+        dict_obj->SetNewFor<CPDF_String>("FS", "URL", false);
+        EXPECT_FALSE(file_spec.GetFileStream());
+      }
+    }
+  }
+}
+
+TEST(cpdf_filespec, GetParamsDict) {
+  {
+    // Invalid object.
+    auto name_obj = pdfium::MakeUnique<CPDF_Name>(nullptr, "test.pdf");
+    CPDF_FileSpec file_spec(name_obj.get());
+    EXPECT_FALSE(file_spec.GetParamsDict());
+  }
+  {
+    // Dictionary object.
+    auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
+    dict_obj->SetNewFor<CPDF_Dictionary>("EF");
+    dict_obj->SetNewFor<CPDF_String>("UF", L"test.pdf");
+    CPDF_FileSpec file_spec(dict_obj.get());
+    EXPECT_FALSE(file_spec.GetParamsDict());
+
+    // Add a file stream to the embedded files dictionary.
+    CPDF_Dictionary* file_dict =
+        file_spec.GetObj()->AsDictionary()->GetDictFor("EF");
+    auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
+    std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, 6));
+    memcpy(buf.get(), "hello", 6);
+    file_dict->SetNewFor<CPDF_Stream>("UF", std::move(buf), 6,
+                                      std::move(pDict));
+
+    // Add a params dictionary to the file stream.
+    CPDF_Stream* stream = file_dict->GetStreamFor("UF");
+    CPDF_Dictionary* stream_dict = stream->GetDict();
+    stream_dict->SetNewFor<CPDF_Dictionary>("Params");
+    EXPECT_TRUE(file_spec.GetParamsDict());
+
+    // Add a parameter to the params dictionary.
+    CPDF_Dictionary* params_dict = stream_dict->GetDictFor("Params");
+    params_dict->SetNewFor<CPDF_Number>("Size", 6);
+    EXPECT_EQ(6, file_spec.GetParamsDict()->GetIntegerFor("Size"));
+  }
 }

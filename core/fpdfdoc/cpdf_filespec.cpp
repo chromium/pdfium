@@ -6,9 +6,12 @@
 
 #include "core/fpdfdoc/cpdf_filespec.h"
 
+#include <vector>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_system.h"
@@ -49,6 +52,12 @@ CFX_WideString ChangeSlashToPDF(const wchar_t* str) {
 #endif  // _FXM_PLATFORM_APPLE_ || _FXM_PLATFORM_WINDOWS_
 
 }  // namespace
+
+CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {
+  ASSERT(m_pObj);
+}
+
+CPDF_FileSpec::~CPDF_FileSpec() {}
 
 CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideString& filepath) {
   if (filepath.GetLength() <= 1)
@@ -112,9 +121,42 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   return true;
 }
 
-CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {}
+CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
+  CPDF_Dictionary* pDict = m_pObj->AsDictionary();
+  if (!pDict)
+    return nullptr;
 
-CPDF_FileSpec::~CPDF_FileSpec() {}
+  // Get the embedded files dictionary.
+  CPDF_Dictionary* pFiles = pDict->GetDictFor("EF");
+  if (!pFiles)
+    return nullptr;
+
+  // Get the file stream of the highest precedence with its file specification
+  // string available. Follows the same precedence order as GetFileName().
+  constexpr const char* keys[] = {"UF", "F", "DOS", "Mac", "Unix"};
+  size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(keys);
+  for (size_t i = 0; i < end; ++i) {
+    const CFX_ByteString& key = keys[i];
+    if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
+      CPDF_Stream* pStream = pFiles->GetStreamFor(key);
+      if (pStream)
+        return pStream;
+    }
+  }
+  return nullptr;
+}
+
+CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
+  CPDF_Stream* pStream = GetFileStream();
+  if (!pStream)
+    return nullptr;
+
+  CPDF_Dictionary* pDict = pStream->GetDict();
+  if (!pDict)
+    return nullptr;
+
+  return pDict->GetDictFor("Params");
+}
 
 CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideString& filepath) {
   if (filepath.GetLength() <= 1)
@@ -146,9 +188,6 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideString& filepath) {
 }
 
 void CPDF_FileSpec::SetFileName(const CFX_WideString& wsFileName) {
-  if (!m_pObj)
-    return;
-
   CFX_WideString wsStr = EncodeFileName(wsFileName);
   if (m_pObj->IsString()) {
     m_pObj->SetString(CFX_ByteString::FromUnicode(wsStr));

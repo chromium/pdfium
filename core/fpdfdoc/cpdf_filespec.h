@@ -12,7 +12,9 @@
 #include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_string.h"
 
+class CPDF_Dictionary;
 class CPDF_Object;
+class CPDF_Stream;
 
 class CPDF_FileSpec {
  public:
@@ -27,6 +29,8 @@ class CPDF_FileSpec {
 
   CPDF_Object* GetObj() const { return m_pObj.Get(); }
   bool GetFileName(CFX_WideString* wsFileName) const;
+  CPDF_Stream* GetFileStream() const;
+  CPDF_Dictionary* GetParamsDict() const;
 
   // Set this file spec to refer to a file name (not a url).
   void SetFileName(const CFX_WideString& wsFileName);
