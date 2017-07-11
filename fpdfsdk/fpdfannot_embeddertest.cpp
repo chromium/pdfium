@@ -468,17 +468,20 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
 
 TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  const char md5[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_2[] = "cf3cea74bd46497520ff6c4d1ea228c8";
-  const char md5_3[] = "ee5372b31fede117fc83b9384598aa25";
+  const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
+  const char md5_modified_path[] = "cf3cea74bd46497520ff6c4d1ea228c8";
+  const char md5_two_paths[] = "e8994452fc4385337bae5522354e10ff";
+  const char md5_new_annot[] = "ee5372b31fede117fc83b9384598aa25";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_2[] = "681f0d0738dded0722e146f6c219bfac";
-  const char md5_3[] = "262187984451bae2fe826067d68623ff";
+  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
+  const char md5_modified_path[] = "681f0d0738dded0722e146f6c219bfac";
+  const char md5_two_paths[] = "67c7e90fc3b64e20f6b69a1744f7f4f0";
+  const char md5_new_annot[] = "262187984451bae2fe826067d68623ff";
 #else
-  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
-  const char md5_2[] = "87a78cbacd8509b961a67be56b5665a2";
-  const char md5_3[] = "c95de7a9a1f61faca03d953961a319b9";
+  const char md5_original[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
+  const char md5_modified_path[] = "87a78cbacd8509b961a67be56b5665a2";
+  const char md5_two_paths[] = "76e985c18b73ceacf409f77f978176d4";
+  const char md5_new_annot[] = "c95de7a9a1f61faca03d953961a319b9";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -489,7 +492,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   // Check that the page renders correctly.
   FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5);
+  CompareBitmap(bitmap, 595, 842, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
   // Retrieve the stamp annotation which has its AP stream already defined.
@@ -507,11 +510,34 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   // Modify the color of the path object.
   EXPECT_TRUE(FPDFPath_SetStrokeColor(path, 0, 0, 0, 255));
   EXPECT_TRUE(FPDFAnnot_UpdateObject(annot, path));
-  FPDFPage_CloseAnnot(annot);
 
   // Check that the page with the modified annotation renders correctly.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_2);
+  CompareBitmap(bitmap, 595, 842, md5_modified_path);
+  FPDFBitmap_Destroy(bitmap);
+
+  // Add a second path object to the same annotation.
+  FPDF_PAGEOBJECT dot = FPDFPageObj_CreateNewPath(7, 84);
+  EXPECT_TRUE(FPDFPath_BezierTo(dot, 9, 86, 10, 87, 11, 88));
+  EXPECT_TRUE(FPDFPath_SetStrokeColor(dot, 255, 0, 0, 100));
+  EXPECT_TRUE(FPDFPath_SetStrokeWidth(dot, 14));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(dot, 0, 1));
+  EXPECT_TRUE(FPDFAnnot_AppendObject(annot, dot));
+  EXPECT_EQ(2, FPDFAnnot_GetObjectCount(annot));
+
+  // Check that the page with an annotation with two paths renders correctly.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 595, 842, md5_two_paths);
+  FPDFBitmap_Destroy(bitmap);
+
+  // Delete the newly added path object.
+  EXPECT_TRUE(FPDFAnnot_RemoveObject(annot, 1));
+  EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
+  FPDFPage_CloseAnnot(annot);
+
+  // Check that the page renders the same as before.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 595, 842, md5_modified_path);
   FPDFBitmap_Destroy(bitmap);
 
   // Create another stamp annotation and set its annotation rectangle.
@@ -549,7 +575,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   FPDF_ClosePage(page);
 
   // Open the saved document.
-  TestSaved(595, 842, md5_3);
+  TestSaved(595, 842, md5_new_annot);
 
   // Check that the document has a correct count of annotations and objects.
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(m_SavedPage));
@@ -620,17 +646,17 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
 
 TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  const char md5[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_2[] = "ff012f5697436dfcaec25b32d1333596";
-  const char md5_3[] = "86cf8cb2755a7a2046a543e66d9c1e61";
+  const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
+  const char md5_new_image[] = "ff012f5697436dfcaec25b32d1333596";
+  const char md5_modified_image[] = "86cf8cb2755a7a2046a543e66d9c1e61";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_2[] = "6fb176c20996cc554d0210d8c8b6138f";
-  const char md5_3[] = "546959714dfb0dcd7e7b00259e8d178c";
+  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
+  const char md5_new_image[] = "6fb176c20996cc554d0210d8c8b6138f";
+  const char md5_modified_image[] = "546959714dfb0dcd7e7b00259e8d178c";
 #else
-  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
-  const char md5_2[] = "e7658232abd8977cdc3367dd02aee04a";
-  const char md5_3[] = "f393432b9a9b452ea69022f46c8b3f75";
+  const char md5_original[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
+  const char md5_new_image[] = "e7658232abd8977cdc3367dd02aee04a";
+  const char md5_modified_image[] = "f393432b9a9b452ea69022f46c8b3f75";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -641,7 +667,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
   // Check that the page renders correctly.
   FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5);
+  CompareBitmap(bitmap, 595, 842, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
   // Create a stamp annotation and set its annotation rectangle.
@@ -670,7 +696,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
   // Check that the page renders correctly with the new image object.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_2);
+  CompareBitmap(bitmap, 595, 842, md5_new_image);
   FPDFBitmap_Destroy(bitmap);
 
   // Retrieve the newly added stamp annotation and its image object.
@@ -691,7 +717,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   FPDF_ClosePage(page);
 
   // Test that the saved document renders the modified image object correctly.
-  TestSaved(595, 842, md5_3);
+  TestSaved(595, 842, md5_modified_image);
 
   FPDFBitmap_Destroy(image_bitmap);
   CloseSaved();
@@ -699,17 +725,17 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
 TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  const char md5[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_2[] = "e5680ed048c2cfd9a1d27212cdf41286";
-  const char md5_3[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
+  const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
+  const char md5_new_text[] = "e5680ed048c2cfd9a1d27212cdf41286";
+  const char md5_modified_text[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_2[] = "998abae4962f8f41e094e7612d8339fc";
-  const char md5_3[] = "e89b82ca4589b8f0b45fff42ca3a96a4";
+  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
+  const char md5_new_text[] = "998abae4962f8f41e094e7612d8339fc";
+  const char md5_modified_text[] = "e89b82ca4589b8f0b45fff42ca3a96a4";
 #else
-  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
-  const char md5_2[] = "3fbbaec4d846ccf2be89e09daae0273d";
-  const char md5_3[] = "2ad0acaf2d8990bcdf48e1d12e6c44ad";
+  const char md5_original[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
+  const char md5_new_text[] = "3fbbaec4d846ccf2be89e09daae0273d";
+  const char md5_modified_text[] = "2ad0acaf2d8990bcdf48e1d12e6c44ad";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -720,7 +746,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 
   // Check that the page renders correctly.
   FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5);
+  CompareBitmap(bitmap, 595, 842, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
   // Create a stamp annotation and set its annotation rectangle.
@@ -747,7 +773,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 
   // Check that the page renders correctly with the new text object.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_2);
+  CompareBitmap(bitmap, 595, 842, md5_new_text);
   FPDFBitmap_Destroy(bitmap);
 
   // Retrieve the newly added stamp annotation and its text object.
@@ -766,13 +792,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 
   // Check that the page renders correctly with the modified text object.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_3);
+  CompareBitmap(bitmap, 595, 842, md5_modified_text);
   FPDFBitmap_Destroy(bitmap);
 
   // Remove the new annotation, and check that the page renders as before.
   EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 2));
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5);
+  CompareBitmap(bitmap, 595, 842, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
   UnloadPage(page);

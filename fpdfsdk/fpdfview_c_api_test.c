@@ -42,10 +42,12 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_CloseAnnot);
     CHK(FPDFPage_RemoveAnnot);
     CHK(FPDFAnnot_GetSubtype);
+    CHK(FPDFAnnot_IsObjectSupportedSubtype);
     CHK(FPDFAnnot_UpdateObject);
     CHK(FPDFAnnot_AppendObject);
     CHK(FPDFAnnot_GetObjectCount);
     CHK(FPDFAnnot_GetObject);
+    CHK(FPDFAnnot_RemoveObject);
     CHK(FPDFAnnot_SetColor);
     CHK(FPDFAnnot_GetColor);
     CHK(FPDFAnnot_HasAttachmentPoints);

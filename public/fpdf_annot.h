@@ -142,6 +142,17 @@ DLLEXPORT FPDF_ANNOTATION_SUBTYPE STDCALL
 FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot);
 
 // Experimental API.
+// Check if an annotation subtype is currently supported for object extraction,
+// update, and removal.
+// Currently supported subtypes: ink and stamp.
+//
+//   subtype   - the subtype to be checked.
+//
+// Returns true if this subtype supported.
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFAnnot_IsObjectSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype);
+
+// Experimental API.
 // Update |obj| in |annot|. |obj| must be in |annot| already and must have
 // been retrieved by FPDFAnnot_GetObject(). Currently, only ink and stamp
 // annotations are supported by this API. Also note that only path, image, and
@@ -187,6 +198,16 @@ DLLEXPORT int STDCALL FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot);
 // Return a handle to the object, or NULL on failure.
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFAnnot_GetObject(FPDF_ANNOTATION annot,
                                                       int index);
+
+// Experimental API.
+// Remove the object in |annot| at |index|.
+//
+//   annot  - handle to an annotation.
+//   index  - the index of the object to be removed.
+//
+// Return true if successful.
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_RemoveObject(FPDF_ANNOTATION annot,
+                                                   int index);
 
 // Experimental API.
 // Set the color of an annotation. Fails when called on annotations with

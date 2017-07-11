@@ -176,6 +176,15 @@ CFX_ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING text) {
   return CFX_WideString::FromUTF16LE(text, CFX_WideString::WStringLength(text))
       .UTF8Encode();
 }
+void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
+  ASSERT(pForm);
+  ASSERT(pStream);
+
+  CPDF_PageContentGenerator generator(pForm);
+  std::ostringstream buf;
+  generator.ProcessPageObjects(&buf);
+  pStream->SetData(&buf);
+}
 
 }  // namespace
 
@@ -266,6 +275,12 @@ FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot) {
       CPDF_Annot::StringToAnnotSubtype(pAnnotDict->GetStringFor("Subtype")));
 }
 
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFAnnot_IsObjectSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype) {
+  // The supported subtypes must also be communicated in the user doc.
+  return subtype == FPDF_ANNOT_INK || subtype == FPDF_ANNOT_STAMP;
+}
+
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot,
                                                    FPDF_PAGEOBJECT obj) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
@@ -274,8 +289,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot,
     return false;
 
   // Check that the annotation type is supported by this method.
-  FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
-  if (subtype != FPDF_ANNOT_INK && subtype != FPDF_ANNOT_STAMP)
+  if (!FPDFAnnot_IsObjectSupportedSubtype(FPDFAnnot_GetSubtype(annot)))
     return false;
 
   // Check that the annotation already has an appearance stream, since an
@@ -286,7 +300,8 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot,
     return false;
 
   // Check that the object is already in this annotation's object list.
-  CPDF_PageObjectList* pObjList = pAnnot->GetForm()->GetPageObjectList();
+  CPDF_Form* pForm = pAnnot->GetForm();
+  CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
   auto it =
       std::find_if(pObjList->begin(), pObjList->end(),
                    [pObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
@@ -296,11 +311,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot,
     return false;
 
   // Update the content stream data in the annotation's AP stream.
-  CPDF_PageContentGenerator generator(pAnnot->GetForm());
-  std::ostringstream buf;
-  generator.ProcessPageObjects(&buf);
-  pStream->SetData(reinterpret_cast<const uint8_t*>(buf.str().c_str()),
-                   buf.tellp());
+  UpdateContentStream(pForm, pStream);
   return true;
 }
 
@@ -317,8 +328,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_AppendObject(FPDF_ANNOTATION annot,
     return false;
 
   // Check that the annotation type is supported by this method.
-  FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
-  if (subtype != FPDF_ANNOT_INK && subtype != FPDF_ANNOT_STAMP)
+  if (!FPDFAnnot_IsObjectSupportedSubtype(FPDFAnnot_GetSubtype(annot)))
     return false;
 
   // If the annotation does not have an AP stream yet, generate and set it.
@@ -343,13 +353,12 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_AppendObject(FPDF_ANNOTATION annot,
   if (!pAnnot->HasForm())
     pAnnot->SetForm(pStream);
 
-  CPDF_Form* pForm = pAnnot->GetForm();
-
   // Check that the object did not come from the same annotation. If this check
   // succeeds, then it is assumed that the object came from
   // FPDFPageObj_CreateNew{Path|Rect}() or FPDFPageObj_New{Text|Image}Obj().
   // Note that an object that came from a different annotation must not be
   // passed here, since an object cannot belong to more than one annotation.
+  CPDF_Form* pForm = pAnnot->GetForm();
   CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
   auto it =
       std::find_if(pObjList->begin(), pObjList->end(),
@@ -364,11 +373,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_AppendObject(FPDF_ANNOTATION annot,
   pObjList->push_back(std::move(pPageObjHolder));
 
   // Set the content stream data in the annotation's AP stream.
-  CPDF_PageContentGenerator generator(pForm);
-  std::ostringstream buf;
-  generator.ProcessPageObjects(&buf);
-  pStream->SetData(reinterpret_cast<const uint8_t*>(buf.str().c_str()),
-                   buf.tellp());
+  UpdateContentStream(pForm, pStream);
   return true;
 }
 
@@ -404,6 +409,32 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFAnnot_GetObject(FPDF_ANNOTATION annot,
   }
 
   return pAnnot->GetForm()->GetPageObjectList()->GetPageObjectByIndex(index);
+}
+
+DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_RemoveObject(FPDF_ANNOTATION annot,
+                                                   int index) {
+  CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
+  if (!pAnnot || !pAnnot->GetAnnotDict() || !pAnnot->HasForm() || index < 0)
+    return false;
+
+  // Check that the annotation type is supported by this method.
+  if (!FPDFAnnot_IsObjectSupportedSubtype(FPDFAnnot_GetSubtype(annot)))
+    return false;
+
+  // Check that the annotation already has an appearance stream, since an
+  // existing object is to be deleted.
+  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(pAnnot->GetAnnotDict(),
+                                            CPDF_Annot::AppearanceMode::Normal);
+  if (!pStream)
+    return false;
+
+  CPDF_PageObjectList* pObjList = pAnnot->GetForm()->GetPageObjectList();
+  if (static_cast<size_t>(index) >= pObjList->size())
+    return false;
+
+  pObjList->erase(pObjList->begin() + index);
+  UpdateContentStream(pAnnot->GetForm(), pStream);
+  return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
