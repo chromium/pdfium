@@ -16,17 +16,6 @@ class CPDF_DeviceCS : public CPDF_ColorSpace {
 
   // CPDF_ColorSpace:
   bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
-  bool SetRGB(float* pBuf, float R, float G, float B) const override;
-  bool v_GetCMYK(float* pBuf,
-                 float* c,
-                 float* m,
-                 float* y,
-                 float* k) const override;
-  bool v_SetCMYK(float* pBuf,
-                 float c,
-                 float m,
-                 float y,
-                 float k) const override;
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
                           int pixels,

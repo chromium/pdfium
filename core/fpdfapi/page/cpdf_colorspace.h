@@ -57,12 +57,7 @@ class CPDF_ColorSpace {
                                float* min,
                                float* max) const;
 
-  bool sRGB() const;
   virtual bool GetRGB(float* pBuf, float* R, float* G, float* B) const = 0;
-  virtual bool SetRGB(float* pBuf, float R, float G, float B) const;
-
-  bool GetCMYK(float* pBuf, float* c, float* m, float* y, float* k) const;
-  bool SetCMYK(float* pBuf, float c, float m, float y, float k) const;
 
   virtual void TranslateImageLine(uint8_t* dest_buf,
                                   const uint8_t* src_buf,
@@ -70,7 +65,6 @@ class CPDF_ColorSpace {
                                   int image_width,
                                   int image_height,
                                   bool bTransMask) const;
-  virtual CPDF_ColorSpace* GetBaseCS() const;
   virtual void EnableStdConversion(bool bEnabled);
 
   CPDF_Array* GetArray() const { return m_pArray.Get(); }
@@ -81,12 +75,6 @@ class CPDF_ColorSpace {
   virtual ~CPDF_ColorSpace();
 
   virtual bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
-  virtual bool v_GetCMYK(float* pBuf,
-                         float* c,
-                         float* m,
-                         float* y,
-                         float* k) const;
-  virtual bool v_SetCMYK(float* pBuf, float c, float m, float y, float k) const;
 
   CFX_UnownedPtr<CPDF_Document> const m_pDocument;
   int m_Family;

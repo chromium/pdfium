@@ -56,7 +56,3 @@ bool CPDF_PatternCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   *B = 0.75f;
   return false;
 }
-
-CPDF_ColorSpace* CPDF_PatternCS::GetBaseCS() const {
-  return m_pBaseCS;
-}

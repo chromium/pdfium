@@ -76,7 +76,6 @@ class CPDF_CalGray : public CPDF_ColorSpace {
   // CPDF_ColorSpace:
   bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
   bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
-  bool SetRGB(float* pBuf, float R, float G, float B) const override;
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
                           int pixels,
@@ -98,7 +97,6 @@ class CPDF_CalRGB : public CPDF_ColorSpace {
   bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
 
   bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
-  bool SetRGB(float* pBuf, float R, float G, float B) const override;
 
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
@@ -148,11 +146,6 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
   // CPDF_ColorSpace:
   bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
   bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
-  bool v_GetCMYK(float* pBuf,
-                 float* c,
-                 float* m,
-                 float* y,
-                 float* k) const override;
   void EnableStdConversion(bool bEnabled) override;
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
@@ -185,7 +178,6 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
   bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
 
   bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
-  CPDF_ColorSpace* GetBaseCS() const override;
 
   void EnableStdConversion(bool bEnabled) override;
 
@@ -469,54 +461,6 @@ float* CPDF_ColorSpace::CreateBuf() {
   return (float*)pBuf;
 }
 
-bool CPDF_ColorSpace::sRGB() const {
-  if (m_Family == PDFCS_DEVICERGB)
-    return true;
-
-  if (m_Family != PDFCS_ICCBASED)
-    return false;
-
-  const CPDF_ICCBasedCS* pCS = static_cast<const CPDF_ICCBasedCS*>(this);
-  return pCS->IsSRGB();
-}
-
-bool CPDF_ColorSpace::SetRGB(float* pBuf, float R, float G, float B) const {
-  return false;
-}
-
-bool CPDF_ColorSpace::GetCMYK(float* pBuf,
-                              float* c,
-                              float* m,
-                              float* y,
-                              float* k) const {
-  if (v_GetCMYK(pBuf, c, m, y, k))
-    return true;
-
-  float R;
-  float G;
-  float B;
-  if (!GetRGB(pBuf, &R, &G, &B))
-    return false;
-
-  sRGB_to_AdobeCMYK(R, G, B, *c, *m, *y, *k);
-  return true;
-}
-
-bool CPDF_ColorSpace::SetCMYK(float* pBuf,
-                              float c,
-                              float m,
-                              float y,
-                              float k) const {
-  if (v_SetCMYK(pBuf, c, m, y, k))
-    return true;
-
-  float R;
-  float G;
-  float B;
-  std::tie(R, G, B) = AdobeCMYK_to_sRGB(c, m, y, k);
-  return SetRGB(pBuf, R, G, B);
-}
-
 void CPDF_ColorSpace::GetDefaultColor(float* buf) const {
   if (!buf || m_Family == PDFCS_PATTERN)
     return;
@@ -562,10 +506,6 @@ void CPDF_ColorSpace::TranslateImageLine(uint8_t* dest_buf,
   }
 }
 
-CPDF_ColorSpace* CPDF_ColorSpace::GetBaseCS() const {
-  return nullptr;
-}
-
 void CPDF_ColorSpace::EnableStdConversion(bool bEnabled) {
   if (bEnabled)
     m_dwStdConversion++;
@@ -586,22 +526,6 @@ CPDF_ColorSpace::~CPDF_ColorSpace() {}
 
 bool CPDF_ColorSpace::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   return true;
-}
-
-bool CPDF_ColorSpace::v_GetCMYK(float* pBuf,
-                                float* c,
-                                float* m,
-                                float* y,
-                                float* k) const {
-  return false;
-}
-
-bool CPDF_ColorSpace::v_SetCMYK(float* pBuf,
-                                float c,
-                                float m,
-                                float y,
-                                float k) const {
-  return false;
 }
 
 CPDF_CalGray::CPDF_CalGray(CPDF_Document* pDoc)
@@ -632,14 +556,6 @@ bool CPDF_CalGray::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   *G = *pBuf;
   *B = *pBuf;
   return true;
-}
-
-bool CPDF_CalGray::SetRGB(float* pBuf, float R, float G, float B) const {
-  if (R == G && R == B) {
-    *pBuf = R;
-    return true;
-  }
-  return false;
 }
 
 void CPDF_CalGray::TranslateImageLine(uint8_t* pDestBuf,
@@ -716,13 +632,6 @@ bool CPDF_CalRGB::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   }
   XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
                          m_WhitePoint[2], R, G, B);
-  return true;
-}
-
-bool CPDF_CalRGB::SetRGB(float* pBuf, float R, float G, float B) const {
-  pBuf[0] = R;
-  pBuf[1] = G;
-  pBuf[2] = B;
   return true;
 }
 
@@ -930,21 +839,6 @@ bool CPDF_ICCBasedCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   return true;
 }
 
-bool CPDF_ICCBasedCS::v_GetCMYK(float* pBuf,
-                                float* c,
-                                float* m,
-                                float* y,
-                                float* k) const {
-  if (m_nComponents != 4)
-    return false;
-
-  *c = pBuf[0];
-  *m = pBuf[1];
-  *y = pBuf[2];
-  *k = pBuf[3];
-  return true;
-}
-
 void CPDF_ICCBasedCS::EnableStdConversion(bool bEnabled) {
   CPDF_ColorSpace::EnableStdConversion(bEnabled);
   if (m_pAlterCS)
@@ -1122,10 +1016,6 @@ bool CPDF_IndexedCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
         m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
   }
   return m_pBaseCS->GetRGB(comps, R, G, B);
-}
-
-CPDF_ColorSpace* CPDF_IndexedCS::GetBaseCS() const {
-  return m_pBaseCS;
 }
 
 void CPDF_IndexedCS::EnableStdConversion(bool bEnabled) {

@@ -106,65 +106,6 @@ bool CPDF_DeviceCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   }
 }
 
-bool CPDF_DeviceCS::v_GetCMYK(float* pBuf,
-                              float* c,
-                              float* m,
-                              float* y,
-                              float* k) const {
-  if (m_Family != PDFCS_DEVICECMYK)
-    return false;
-
-  *c = pBuf[0];
-  *m = pBuf[1];
-  *y = pBuf[2];
-  *k = pBuf[3];
-  return true;
-}
-
-bool CPDF_DeviceCS::SetRGB(float* pBuf, float R, float G, float B) const {
-  switch (m_Family) {
-    case PDFCS_DEVICEGRAY:
-      if (R != G || R != B)
-        return false;
-      *pBuf = R;
-      return true;
-    case PDFCS_DEVICERGB:
-      pBuf[0] = R;
-      pBuf[1] = G;
-      pBuf[2] = B;
-      return true;
-    case PDFCS_DEVICECMYK:
-      sRGB_to_AdobeCMYK(R, G, B, pBuf[0], pBuf[1], pBuf[2], pBuf[3]);
-      return true;
-    default:
-      NOTREACHED();
-      return false;
-  }
-}
-
-bool CPDF_DeviceCS::v_SetCMYK(float* pBuf,
-                              float c,
-                              float m,
-                              float y,
-                              float k) const {
-  switch (m_Family) {
-    case PDFCS_DEVICEGRAY:
-      return false;
-    case PDFCS_DEVICERGB:
-      std::tie(pBuf[0], pBuf[1], pBuf[2]) = AdobeCMYK_to_sRGB(c, m, y, k);
-      return true;
-    case PDFCS_DEVICECMYK:
-      pBuf[0] = c;
-      pBuf[1] = m;
-      pBuf[2] = y;
-      pBuf[3] = k;
-      return true;
-    default:
-      NOTREACHED();
-      return false;
-  }
-}
-
 void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
                                        const uint8_t* pSrcBuf,
                                        int pixels,
