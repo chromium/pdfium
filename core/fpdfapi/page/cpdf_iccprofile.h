@@ -7,6 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_ICCPROFILE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_ICCPROFILE_H_
 
+#include <memory>
+
+#include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 
@@ -20,8 +23,8 @@ class CPDF_IccProfile : public CFX_Retainable {
   CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   bool IsValid() const { return IsSRGB() || IsSupported(); }
   bool IsSRGB() const { return m_bsRGB; }
-  bool IsSupported() const { return !!m_pTransform; }
-  void* transform() { return m_pTransform; }
+  bool IsSupported() const { return !!m_Transform; }
+  CLcmsCmm* transform() { return m_Transform.get(); }
   uint32_t GetComponents() const { return m_nSrcComponents; }
 
  private:
@@ -30,7 +33,7 @@ class CPDF_IccProfile : public CFX_Retainable {
 
   const bool m_bsRGB;
   CFX_UnownedPtr<CPDF_Stream> const m_pStream;
-  void* m_pTransform = nullptr;
+  std::unique_ptr<CLcmsCmm> m_Transform;
   uint32_t m_nSrcComponents = 0;
 };
 

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 
@@ -13,70 +15,51 @@
 #include "third_party/lcms2-2.6/include/lcms2.h"
 #endif
 
-struct CLcmsCmm {
-  cmsHTRANSFORM m_hTransform;
-  int m_nSrcComponents;
-  int m_nDstComponents;
-  bool m_bLab;
-};
-bool CheckComponents(cmsColorSpaceSignature cs, int nComponents, bool bDst) {
-  if (nComponents <= 0 || nComponents > 15) {
-    return false;
-  }
+namespace {
+
+bool Check3Components(cmsColorSpaceSignature cs, bool bDst) {
   switch (cs) {
-    case cmsSigLabData:
-      if (nComponents < 3) {
-        return false;
-      }
-      break;
     case cmsSigGrayData:
-      if (bDst && nComponents != 1) {
-        return false;
-      }
-      if (!bDst && nComponents > 2) {
-        return false;
-      }
-      break;
-    case cmsSigRgbData:
-      if (bDst && nComponents != 3) {
-        return false;
-      }
-      break;
+      return false;
     case cmsSigCmykData:
-      if (bDst && nComponents != 4) {
+      if (bDst)
         return false;
-      }
       break;
+    case cmsSigLabData:
+    case cmsSigRgbData:
     default:
-      if (nComponents != 3) {
-        return false;
-      }
       break;
   }
   return true;
 }
 
-void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
-                             uint32_t dwSrcProfileSize,
-                             uint32_t& nSrcComponents,
-                             const unsigned char* pDstProfileData,
-                             uint32_t dwDstProfileSize,
-                             int32_t nDstComponents,
-                             int intent,
-                             uint32_t dwSrcFormat = Icc_FORMAT_DEFAULT,
-                             uint32_t dwDstFormat = Icc_FORMAT_DEFAULT) {
-  nSrcComponents = 0;
+}  // namespace
+
+CLcmsCmm::CLcmsCmm(int srcComponents, cmsHTRANSFORM hTransform, bool isLab)
+    : m_hTransform(hTransform),
+      m_nSrcComponents(srcComponents),
+      m_bLab(isLab) {}
+
+CLcmsCmm::~CLcmsCmm() {
+  cmsDeleteTransform(m_hTransform);
+}
+
+CCodec_IccModule::CCodec_IccModule() : m_nComponents(0) {}
+
+CCodec_IccModule::~CCodec_IccModule() {}
+
+std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
+    const unsigned char* pSrcProfileData,
+    uint32_t dwSrcProfileSize,
+    uint32_t* nSrcComponents) {
+  *nSrcComponents = 0;
   cmsHPROFILE srcProfile =
       cmsOpenProfileFromMem(pSrcProfileData, dwSrcProfileSize);
   if (!srcProfile)
     return nullptr;
 
   cmsHPROFILE dstProfile;
-  if (!pDstProfileData && dwDstProfileSize == 0 && nDstComponents == 3) {
-    dstProfile = cmsCreate_sRGBProfile();
-  } else {
-    dstProfile = cmsOpenProfileFromMem(pDstProfileData, dwDstProfileSize);
-  }
+  dstProfile = cmsCreate_sRGBProfile();
   if (!dstProfile) {
     cmsCloseProfile(srcProfile);
     return nullptr;
@@ -85,9 +68,9 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
   bool bLab = false;
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile);
 
-  nSrcComponents = cmsChannelsOf(srcCS);
+  *nSrcComponents = cmsChannelsOf(srcCS);
   // According to PDF spec, number of components must be 1, 3, or 4.
-  if (nSrcComponents != 1 && nSrcComponents != 3 && nSrcComponents != 4) {
+  if (*nSrcComponents != 1 && *nSrcComponents != 3 && *nSrcComponents != 4) {
     cmsCloseProfile(srcProfile);
     cmsCloseProfile(dstProfile);
     return nullptr;
@@ -95,23 +78,24 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
 
   if (srcCS == cmsSigLabData) {
     srcFormat =
-        COLORSPACE_SH(PT_Lab) | CHANNELS_SH(nSrcComponents) | BYTES_SH(0);
+        COLORSPACE_SH(PT_Lab) | CHANNELS_SH(*nSrcComponents) | BYTES_SH(0);
     bLab = true;
   } else {
     srcFormat =
-        COLORSPACE_SH(PT_ANY) | CHANNELS_SH(nSrcComponents) | BYTES_SH(1);
-    if (srcCS == cmsSigRgbData && T_DOSWAP(dwSrcFormat)) {
+        COLORSPACE_SH(PT_ANY) | CHANNELS_SH(*nSrcComponents) | BYTES_SH(1);
+    if (srcCS == cmsSigRgbData && T_DOSWAP(Icc_FORMAT_DEFAULT)) {
       srcFormat |= DOSWAP_SH(1);
     }
   }
   cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile);
-  if (!CheckComponents(dstCS, nDstComponents, true)) {
+  if (!Check3Components(dstCS, true)) {
     cmsCloseProfile(srcProfile);
     cmsCloseProfile(dstProfile);
     return nullptr;
   }
 
   cmsHTRANSFORM hTransform = nullptr;
+  int intent = 0;
   switch (dstCS) {
     case cmsSigGrayData:
       hTransform = cmsCreateTransform(srcProfile, srcFormat, dstProfile,
@@ -124,7 +108,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
     case cmsSigCmykData:
       hTransform = cmsCreateTransform(
           srcProfile, srcFormat, dstProfile,
-          T_DOSWAP(dwDstFormat) ? TYPE_KYMC_8 : TYPE_CMYK_8, intent, 0);
+          T_DOSWAP(Icc_FORMAT_DEFAULT) ? TYPE_KYMC_8 : TYPE_CMYK_8, intent, 0);
       break;
     default:
       break;
@@ -134,114 +118,46 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
     cmsCloseProfile(dstProfile);
     return nullptr;
   }
-  CLcmsCmm* pCmm = new CLcmsCmm;
-  pCmm->m_nSrcComponents = nSrcComponents;
-  pCmm->m_nDstComponents = nDstComponents;
-  pCmm->m_hTransform = hTransform;
-  pCmm->m_bLab = bLab;
+  auto pCmm = pdfium::MakeUnique<CLcmsCmm>(*nSrcComponents, hTransform, bLab);
   cmsCloseProfile(srcProfile);
   cmsCloseProfile(dstProfile);
   return pCmm;
 }
-void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData,
-                                  uint32_t dwProfileSize,
-                                  uint32_t& nComponents,
-                                  int32_t intent,
-                                  uint32_t dwSrcFormat) {
-  return IccLib_CreateTransform(pProfileData, dwProfileSize, nComponents,
-                                nullptr, 0, 3, intent, dwSrcFormat);
-}
-void IccLib_DestroyTransform(void* pTransform) {
-  if (!pTransform) {
-    return;
-  }
-  cmsDeleteTransform(((CLcmsCmm*)pTransform)->m_hTransform);
-  delete (CLcmsCmm*)pTransform;
-}
 
-void IccLib_Translate(void* pTransform,
-                      uint32_t nSrcComponents,
-                      const float* pSrcValues,
-                      float* pDestValues) {
+void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
+                                 const float* pSrcValues,
+                                 float* pDestValues) {
   if (!pTransform)
     return;
 
-  CLcmsCmm* p = (CLcmsCmm*)pTransform;
+  uint32_t nSrcComponents = m_nComponents;
   uint8_t output[4];
-  if (p->m_bLab) {
+  if (pTransform->m_bLab) {
     CFX_FixedBufGrow<double, 16> inputs(nSrcComponents);
     double* input = inputs;
-    for (uint32_t i = 0; i < nSrcComponents; i++)
+    for (uint32_t i = 0; i < nSrcComponents; ++i)
       input[i] = pSrcValues[i];
-    cmsDoTransform(p->m_hTransform, input, output, 1);
+    cmsDoTransform(pTransform->m_hTransform, input, output, 1);
   } else {
     CFX_FixedBufGrow<uint8_t, 16> inputs(nSrcComponents);
     uint8_t* input = inputs;
-    for (uint32_t i = 0; i < nSrcComponents; i++) {
-      if (pSrcValues[i] > 1.0f)
-        input[i] = 255;
-      else if (pSrcValues[i] < 0)
-        input[i] = 0;
-      else
-        input[i] = static_cast<int>(pSrcValues[i] * 255.0f);
+    for (uint32_t i = 0; i < nSrcComponents; ++i) {
+      input[i] =
+          pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
     }
-    cmsDoTransform(p->m_hTransform, input, output, 1);
+    cmsDoTransform(pTransform->m_hTransform, input, output, 1);
   }
-  switch (p->m_nDstComponents) {
-    case 1:
-      pDestValues[0] = output[0] / 255.0f;
-      break;
-    case 3:
-      pDestValues[0] = output[2] / 255.0f;
-      pDestValues[1] = output[1] / 255.0f;
-      pDestValues[2] = output[0] / 255.0f;
-      break;
-    case 4:
-      pDestValues[0] = output[0] / 255.0f;
-      pDestValues[1] = output[1] / 255.0f;
-      pDestValues[2] = output[2] / 255.0f;
-      pDestValues[3] = output[3] / 255.0f;
-      break;
-  }
+  pDestValues[0] = output[2] / 255.0f;
+  pDestValues[1] = output[1] / 255.0f;
+  pDestValues[2] = output[0] / 255.0f;
 }
 
-void IccLib_TranslateImage(void* pTransform,
-                           unsigned char* pDest,
-                           const unsigned char* pSrc,
-                           int32_t pixels) {
-  if (!pTransform)
-    return;
-  cmsDoTransform(((CLcmsCmm*)pTransform)->m_hTransform, pSrc, pDest, pixels);
-}
-
-CCodec_IccModule::CCodec_IccModule() : m_nComponents(0) {}
-
-CCodec_IccModule::~CCodec_IccModule() {
-}
-void* CCodec_IccModule::CreateTransform_sRGB(const uint8_t* pProfileData,
-                                             uint32_t dwProfileSize,
-                                             uint32_t& nComponents,
-                                             int32_t intent,
-                                             uint32_t dwSrcFormat) {
-  return IccLib_CreateTransform_sRGB(pProfileData, dwProfileSize, nComponents,
-                                     intent, dwSrcFormat);
-}
-
-void CCodec_IccModule::DestroyTransform(void* pTransform) {
-  IccLib_DestroyTransform(pTransform);
-}
-
-void CCodec_IccModule::Translate(void* pTransform,
-                                 const float* pSrcValues,
-                                 float* pDestValues) {
-  IccLib_Translate(pTransform, m_nComponents, pSrcValues, pDestValues);
-}
-
-void CCodec_IccModule::TranslateScanline(void* pTransform,
-                                         uint8_t* pDest,
-                                         const uint8_t* pSrc,
+void CCodec_IccModule::TranslateScanline(CLcmsCmm* pTransform,
+                                         unsigned char* pDest,
+                                         const unsigned char* pSrc,
                                          int32_t pixels) {
-  IccLib_TranslateImage(pTransform, pDest, pSrc, pixels);
+  if (pTransform)
+    cmsDoTransform(pTransform->m_hTransform, pSrc, pDest, pixels);
 }
 
 const uint8_t g_CMYKSamples[81 * 81 * 3] = {

@@ -9,7 +9,8 @@
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CCodec_IccModule icc_module;
   uint32_t nComponent = 0;
-  void* transform = icc_module.CreateTransform_sRGB(data, size, nComponent);
+  std::unique_ptr<CLcmsCmm> transform =
+      icc_module.CreateTransform_sRGB(data, size, &nComponent);
 
   if (transform) {
     float src[4];
@@ -17,8 +18,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     for (int i = 0; i < 4; i++)
       src[i] = 0.5f;
     icc_module.SetComponents(nComponent);
-    icc_module.Translate(transform, src, dst);
-    icc_module.DestroyTransform(transform);
+    icc_module.Translate(transform.get(), src, dst);
   }
 
   return 0;

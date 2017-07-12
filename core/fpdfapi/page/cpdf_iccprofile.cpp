@@ -8,7 +8,6 @@
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcodec/codec/ccodec_iccmodule.h"
 
 namespace {
 
@@ -29,12 +28,9 @@ CPDF_IccProfile::CPDF_IccProfile(CPDF_Stream* pStream,
 
   uint32_t nSrcComps = 0;
   auto* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
-  m_pTransform = pIccModule->CreateTransform_sRGB(pData, dwSize, nSrcComps);
-  if (m_pTransform)
+  m_Transform = pIccModule->CreateTransform_sRGB(pData, dwSize, &nSrcComps);
+  if (m_Transform)
     m_nSrcComponents = nSrcComps;
 }
 
-CPDF_IccProfile::~CPDF_IccProfile() {
-  if (m_pTransform)
-    CPDF_ModuleMgr::Get()->GetIccModule()->DestroyTransform(m_pTransform);
-}
+CPDF_IccProfile::~CPDF_IccProfile() {}
