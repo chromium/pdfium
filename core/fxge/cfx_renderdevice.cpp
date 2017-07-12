@@ -138,18 +138,6 @@ void ApplyDestAlpha(uint8_t back_alpha,
   dest[3] = dest_alpha;
 }
 
-void NormalizeRgbDst(int src_value, int r, int g, int b, int a, uint8_t* dest) {
-  ApplyAlpha(dest, b, g, r, CalcAlpha(TextGammaAdjust(src_value), a));
-}
-
-void NormalizeRgbSrc(int src_value, int r, int g, int b, int a, uint8_t* dest) {
-  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
-  if (src_alpha == 0)
-    return;
-
-  ApplyAlpha(dest, b, g, r, src_alpha);
-}
-
 void NormalizeArgb(int src_value,
                    int r,
                    int g,
@@ -164,22 +152,36 @@ void NormalizeArgb(int src_value,
     ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
 }
 
-void NormalizeArgbDest(int src_value,
-                       int r,
-                       int g,
-                       int b,
-                       int a,
-                       uint8_t* dest) {
-  NormalizeArgb(src_value, r, g, b, a, dest,
-                CalcAlpha(TextGammaAdjust(src_value), a));
+void NormalizeDest(bool has_alpha,
+                   int src_value,
+                   int r,
+                   int g,
+                   int b,
+                   int a,
+                   uint8_t* dest) {
+  if (has_alpha) {
+    NormalizeArgb(src_value, r, g, b, a, dest,
+                  CalcAlpha(TextGammaAdjust(src_value), a));
+    return;
+  }
+  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
+  if (src_alpha == 0)
+    return;
+
+  ApplyAlpha(dest, b, g, r, src_alpha);
 }
 
-void NormalizeArgbSrc(int src_value,
-                      int r,
-                      int g,
-                      int b,
-                      int a,
-                      uint8_t* dest) {
+void NormalizeSrc(bool has_alpha,
+                  int src_value,
+                  int r,
+                  int g,
+                  int b,
+                  int a,
+                  uint8_t* dest) {
+  if (!has_alpha) {
+    ApplyAlpha(dest, b, g, r, CalcAlpha(TextGammaAdjust(src_value), a));
+    return;
+  }
   int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
   if (src_alpha != 0)
     NormalizeArgb(src_value, r, g, b, a, dest, src_alpha);
@@ -190,11 +192,10 @@ void NextPixel(uint8_t** src_scan, uint8_t** dst_scan, int bpp) {
   *dst_scan += bpp;
 }
 
-void SetAlpha(uint8_t* alpha) {
-  alpha[3] = 255;
+void SetAlpha(bool has_alpha, uint8_t* alpha) {
+  if (has_alpha)
+    alpha[3] = 255;
 }
-
-void SetAlphaDoNothing(uint8_t* alpha) {}
 
 void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
                           const CFX_RetainPtr<CFX_DIBitmap>& pGlyph,
@@ -216,10 +217,6 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
   uint8_t* dest_buf = bitmap->GetBuffer();
   int dest_pitch = bitmap->GetPitch();
   const int Bpp = has_alpha ? 4 : bitmap->GetBPP() / 8;
-  auto* pNormalizeSrcFunc = has_alpha ? &NormalizeArgbSrc : &NormalizeRgbDst;
-  auto* pNormalizeDstFunc = has_alpha ? &NormalizeArgbDest : &NormalizeRgbSrc;
-  auto* pSetAlpha = has_alpha ? &SetAlpha : &SetAlphaDoNothing;
-
   for (int row = 0; row < nrows; ++row) {
     int dest_row = row + top;
     if (dest_row < 0 || dest_row >= bitmap->GetHeight())
@@ -229,7 +226,7 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
     uint8_t* dest_scan = dest_buf + dest_row * dest_pitch + start_col * Bpp;
     if (bBGRStripe) {
       if (x_subpixel == 0) {
-        for (int col = start_col; col < end_col; col++) {
+        for (int col = start_col; col < end_col; ++col) {
           if (has_alpha) {
             Merge(src_scan[2], r, a, &dest_scan[2]);
             Merge(src_scan[1], g, a, &dest_scan[1]);
@@ -237,7 +234,7 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
           } else {
             MergeGammaAdjustBgr(&src_scan[0], r, g, b, a, &dest_scan[0]);
           }
-          pSetAlpha(dest_scan);
+          SetAlpha(has_alpha, dest_scan);
           NextPixel(&src_scan, &dest_scan, Bpp);
         }
         continue;
@@ -247,11 +244,11 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
         MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
         if (start_col > left)
           MergeGammaAdjust(src_scan[-1], b, a, &dest_scan[0]);
-        pSetAlpha(dest_scan);
+        SetAlpha(has_alpha, dest_scan);
         NextPixel(&src_scan, &dest_scan, Bpp);
         for (int col = start_col + 1; col < end_col - 1; ++col) {
           MergeGammaAdjustBgr(&src_scan[-1], r, g, b, a, &dest_scan[0]);
-          pSetAlpha(dest_scan);
+          SetAlpha(has_alpha, dest_scan);
           NextPixel(&src_scan, &dest_scan, Bpp);
         }
         continue;
@@ -261,11 +258,11 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
         MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
         MergeGammaAdjust(src_scan[-2], b, a, &dest_scan[0]);
       }
-      pSetAlpha(dest_scan);
+      SetAlpha(has_alpha, dest_scan);
       NextPixel(&src_scan, &dest_scan, Bpp);
       for (int col = start_col + 1; col < end_col - 1; ++col) {
         MergeGammaAdjustBgr(&src_scan[-2], r, g, b, a, &dest_scan[0]);
-        pSetAlpha(dest_scan);
+        SetAlpha(has_alpha, dest_scan);
         NextPixel(&src_scan, &dest_scan, Bpp);
       }
       continue;
@@ -274,10 +271,10 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
       for (int col = start_col; col < end_col; ++col) {
         if (bNormal) {
           int src_value = AverageRgb(&src_scan[0]);
-          pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
+          NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
         } else {
           MergeGammaAdjustRgb(&src_scan[0], r, g, b, a, &dest_scan[0]);
-          pSetAlpha(dest_scan);
+          SetAlpha(has_alpha, dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
       }
@@ -287,22 +284,22 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
       if (bNormal) {
         int src_value = start_col > left ? AverageRgb(&src_scan[-1])
                                          : (src_scan[0] + src_scan[1]) / 3;
-        pNormalizeSrcFunc(src_value, r, g, b, a, dest_scan);
+        NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
       } else {
         if (start_col > left)
           MergeGammaAdjust(src_scan[-1], r, a, &dest_scan[2]);
         MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
         MergeGammaAdjust(src_scan[1], b, a, &dest_scan[0]);
-        pSetAlpha(dest_scan);
+        SetAlpha(has_alpha, dest_scan);
       }
       NextPixel(&src_scan, &dest_scan, Bpp);
       for (int col = start_col + 1; col < end_col; ++col) {
         if (bNormal) {
           int src_value = AverageRgb(&src_scan[-1]);
-          pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
+          NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
         } else {
           MergeGammaAdjustRgb(&src_scan[-1], r, g, b, a, &dest_scan[0]);
-          pSetAlpha(dest_scan);
+          SetAlpha(has_alpha, dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
       }
@@ -311,23 +308,23 @@ void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
     if (bNormal) {
       int src_value =
           start_col > left ? AverageRgb(&src_scan[-2]) : src_scan[0] / 3;
-      pNormalizeSrcFunc(src_value, r, g, b, a, dest_scan);
+      NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
     } else {
       if (start_col > left) {
         MergeGammaAdjust(src_scan[-2], r, a, &dest_scan[2]);
         MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
       }
       MergeGammaAdjust(src_scan[0], b, a, &dest_scan[0]);
-      pSetAlpha(dest_scan);
+      SetAlpha(has_alpha, dest_scan);
     }
     NextPixel(&src_scan, &dest_scan, Bpp);
     for (int col = start_col + 1; col < end_col; ++col) {
       if (bNormal) {
         int src_value = AverageRgb(&src_scan[-2]);
-        pNormalizeDstFunc(src_value, r, g, b, a, dest_scan);
+        NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
       } else {
         MergeGammaAdjustRgb(&src_scan[-2], r, g, b, a, &dest_scan[0]);
-        pSetAlpha(dest_scan);
+        SetAlpha(has_alpha, dest_scan);
       }
       NextPixel(&src_scan, &dest_scan, Bpp);
     }

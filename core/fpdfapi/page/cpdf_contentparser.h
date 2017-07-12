@@ -29,7 +29,9 @@ class CPDF_ContentParser {
   ~CPDF_ContentParser();
 
   ParseStatus GetStatus() const { return m_Status; }
-  CPDF_StreamContentParser* GetParser() const { return m_pParser.get(); }
+  const CPDF_AllStates* GetCurStates() const {
+    return m_pParser ? m_pParser->GetCurStates() : nullptr;
+  }
   void Start(CPDF_Page* pPage);
   void Start(CPDF_Form* pForm,
              CPDF_AllStates* pGraphicStates,
