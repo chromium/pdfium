@@ -1513,10 +1513,12 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           const uint8_t* src_pixel = src_scan + j * src_Bpp;
-          uint8_t src_b = 0, src_g = 0, src_r = 0;
-          AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
-                             255 - src_pixel[2], 255 - src_pixel[3], src_r,
-                             src_g, src_b);
+          uint8_t src_b = 0;
+          uint8_t src_g = 0;
+          uint8_t src_r = 0;
+          std::tie(src_r, src_g, src_b) =
+              AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
+                                 255 - src_pixel[2], 255 - src_pixel[3]);
           des_b += pixel_weight * src_b;
           des_g += pixel_weight * src_g;
           des_r += pixel_weight * src_r;
@@ -1610,10 +1612,12 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           const uint8_t* src_pixel = src_scan + j * src_Bpp;
-          uint8_t src_b = 0, src_g = 0, src_r = 0;
-          AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
-                             255 - src_pixel[2], 255 - src_pixel[3], src_r,
-                             src_g, src_b);
+          uint8_t src_b = 0;
+          uint8_t src_g = 0;
+          uint8_t src_r = 0;
+          std::tie(src_r, src_g, src_b) =
+              AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
+                                 255 - src_pixel[2], 255 - src_pixel[3]);
           des_b += pixel_weight * src_b;
           des_g += pixel_weight * src_g;
           des_r += pixel_weight * src_r;

@@ -95,9 +95,9 @@ bool CPDF_DeviceCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
         *G = 1.0f - std::min(1.0f, pBuf[1] + k);
         *B = 1.0f - std::min(1.0f, pBuf[2] + k);
       } else {
-        AdobeCMYK_to_sRGB(NormalizeChannel(pBuf[0]), NormalizeChannel(pBuf[1]),
-                          NormalizeChannel(pBuf[2]), NormalizeChannel(pBuf[3]),
-                          *R, *G, *B);
+        std::tie(*R, *G, *B) = AdobeCMYK_to_sRGB(
+            NormalizeChannel(pBuf[0]), NormalizeChannel(pBuf[1]),
+            NormalizeChannel(pBuf[2]), NormalizeChannel(pBuf[3]));
       }
       return true;
     default:
@@ -151,7 +151,7 @@ bool CPDF_DeviceCS::v_SetCMYK(float* pBuf,
     case PDFCS_DEVICEGRAY:
       return false;
     case PDFCS_DEVICERGB:
-      AdobeCMYK_to_sRGB(c, m, y, k, pBuf[0], pBuf[1], pBuf[2]);
+      std::tie(pBuf[0], pBuf[1], pBuf[2]) = AdobeCMYK_to_sRGB(c, m, y, k);
       return true;
     case PDFCS_DEVICECMYK:
       pBuf[0] = c;
@@ -200,8 +200,9 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
             pDestBuf[1] = 255 - std::min(255, pSrcBuf[1] + k);
             pDestBuf[0] = 255 - std::min(255, pSrcBuf[2] + k);
           } else {
-            AdobeCMYK_to_sRGB1(pSrcBuf[0], pSrcBuf[1], pSrcBuf[2], pSrcBuf[3],
-                               pDestBuf[2], pDestBuf[1], pDestBuf[0]);
+            std::tie(pDestBuf[2], pDestBuf[1], pDestBuf[0]) =
+                AdobeCMYK_to_sRGB1(pSrcBuf[0], pSrcBuf[1], pSrcBuf[2],
+                                   pSrcBuf[3]);
           }
           pSrcBuf += 4;
           pDestBuf += 3;

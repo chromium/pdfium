@@ -513,7 +513,7 @@ bool CPDF_ColorSpace::SetCMYK(float* pBuf,
   float R;
   float G;
   float B;
-  AdobeCMYK_to_sRGB(c, m, y, k, R, G, B);
+  std::tie(R, G, B) = AdobeCMYK_to_sRGB(c, m, y, k);
   return SetRGB(pBuf, R, G, B);
 }
 

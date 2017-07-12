@@ -153,12 +153,12 @@ bool ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
   uint8_t set_g;
   uint8_t set_b;
   if (pSrcBitmap->IsCmykImage()) {
-    AdobeCMYK_to_sRGB1(FXSYS_GetCValue(src_plt[0]), FXSYS_GetMValue(src_plt[0]),
-                       FXSYS_GetYValue(src_plt[0]), FXSYS_GetKValue(src_plt[0]),
-                       reset_r, reset_g, reset_b);
-    AdobeCMYK_to_sRGB1(FXSYS_GetCValue(src_plt[1]), FXSYS_GetMValue(src_plt[1]),
-                       FXSYS_GetYValue(src_plt[1]), FXSYS_GetKValue(src_plt[1]),
-                       set_r, set_g, set_b);
+    std::tie(reset_r, reset_g, reset_b) = AdobeCMYK_to_sRGB1(
+        FXSYS_GetCValue(src_plt[0]), FXSYS_GetMValue(src_plt[0]),
+        FXSYS_GetYValue(src_plt[0]), FXSYS_GetKValue(src_plt[0]));
+    std::tie(set_r, set_g, set_b) = AdobeCMYK_to_sRGB1(
+        FXSYS_GetCValue(src_plt[1]), FXSYS_GetMValue(src_plt[1]),
+        FXSYS_GetYValue(src_plt[1]), FXSYS_GetKValue(src_plt[1]));
   } else {
     reset_r = FXARGB_R(src_plt[0]);
     reset_g = FXARGB_G(src_plt[0]);
@@ -198,9 +198,9 @@ bool ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
     uint8_t g;
     uint8_t b;
     for (size_t i = 0; i < FX_ArraySize(gray); i++) {
-      AdobeCMYK_to_sRGB1(
+      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
           FXSYS_GetCValue(src_plt[i]), FXSYS_GetMValue(src_plt[i]),
-          FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]), r, g, b);
+          FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]));
       gray[i] = FXRGB2GRAY(r, g, b);
     }
   } else {
@@ -235,12 +235,14 @@ bool ConvertBuffer_RgbOrCmyk2Gray(
       const uint8_t* src_scan =
           pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
       for (int col = 0; col < width; col++) {
-        uint8_t r, g, b;
-        AdobeCMYK_to_sRGB1(FXSYS_GetCValue(static_cast<uint32_t>(src_scan[0])),
-                           FXSYS_GetMValue(static_cast<uint32_t>(src_scan[1])),
-                           FXSYS_GetYValue(static_cast<uint32_t>(src_scan[2])),
-                           FXSYS_GetKValue(static_cast<uint32_t>(src_scan[3])),
-                           r, g, b);
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
+            FXSYS_GetCValue(static_cast<uint32_t>(src_scan[0])),
+            FXSYS_GetMValue(static_cast<uint32_t>(src_scan[1])),
+            FXSYS_GetYValue(static_cast<uint32_t>(src_scan[2])),
+            FXSYS_GetKValue(static_cast<uint32_t>(src_scan[3])));
         *dest_scan++ = FXRGB2GRAY(r, g, b);
         src_scan += 4;
       }
@@ -305,9 +307,9 @@ bool ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
       uint8_t r;
       uint8_t g;
       uint8_t b;
-      AdobeCMYK_to_sRGB1(
+      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
           FXSYS_GetCValue(src_plt[i]), FXSYS_GetMValue(src_plt[i]),
-          FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]), r, g, b);
+          FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]));
       dst_plt[i] = FXARGB_MAKE(0xff, r, g, b);
     }
   } else {
@@ -458,12 +460,12 @@ bool ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format,
   }
 
   if (pSrcBitmap->IsCmykImage()) {
-    AdobeCMYK_to_sRGB1(FXSYS_GetCValue(src_plt[0]), FXSYS_GetMValue(src_plt[0]),
-                       FXSYS_GetYValue(src_plt[0]), FXSYS_GetKValue(src_plt[0]),
-                       bgr_ptr[2], bgr_ptr[1], bgr_ptr[0]);
-    AdobeCMYK_to_sRGB1(FXSYS_GetCValue(src_plt[1]), FXSYS_GetMValue(src_plt[1]),
-                       FXSYS_GetYValue(src_plt[1]), FXSYS_GetKValue(src_plt[1]),
-                       bgr_ptr[5], bgr_ptr[4], bgr_ptr[3]);
+    std::tie(bgr_ptr[2], bgr_ptr[1], bgr_ptr[0]) = AdobeCMYK_to_sRGB1(
+        FXSYS_GetCValue(src_plt[0]), FXSYS_GetMValue(src_plt[0]),
+        FXSYS_GetYValue(src_plt[0]), FXSYS_GetKValue(src_plt[0]));
+    std::tie(bgr_ptr[5], bgr_ptr[4], bgr_ptr[3]) = AdobeCMYK_to_sRGB1(
+        FXSYS_GetCValue(src_plt[1]), FXSYS_GetMValue(src_plt[1]),
+        FXSYS_GetYValue(src_plt[1]), FXSYS_GetKValue(src_plt[1]));
   }
 
   for (int row = 0; row < height; row++) {
@@ -508,10 +510,9 @@ bool ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format,
 
   if (pSrcBitmap->IsCmykImage()) {
     for (int i = 0; i < 256; i++) {
-      AdobeCMYK_to_sRGB1(
+      std::tie(bgr_ptr[2], bgr_ptr[1], bgr_ptr[0]) = AdobeCMYK_to_sRGB1(
           FXSYS_GetCValue(src_plt[i]), FXSYS_GetMValue(src_plt[i]),
-          FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]), bgr_ptr[2],
-          bgr_ptr[1], bgr_ptr[0]);
+          FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]));
       bgr_ptr += 3;
     }
     bgr_ptr = reinterpret_cast<uint8_t*>(plt);
@@ -606,8 +607,8 @@ bool ConvertBuffer_32bppCmyk2Rgb32(
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
     for (int col = 0; col < width; col++) {
-      AdobeCMYK_to_sRGB1(src_scan[0], src_scan[1], src_scan[2], src_scan[3],
-                         dest_scan[2], dest_scan[1], dest_scan[0]);
+      std::tie(dest_scan[2], dest_scan[1], dest_scan[0]) = AdobeCMYK_to_sRGB1(
+          src_scan[0], src_scan[1], src_scan[2], src_scan[3]);
       dest_scan += 4;
       src_scan += 4;
     }

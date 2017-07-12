@@ -755,10 +755,11 @@ void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
       uint8_t r;
       uint8_t g;
       uint8_t b;
-      AdobeCMYK_to_sRGB1(FXSYS_GetCValue(m_pPalette.get()[i]),
-                         FXSYS_GetMValue(m_pPalette.get()[i]),
-                         FXSYS_GetYValue(m_pPalette.get()[i]),
-                         FXSYS_GetKValue(m_pPalette.get()[i]), r, g, b);
+      std::tie(r, g, b) =
+          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(m_pPalette.get()[i]),
+                             FXSYS_GetMValue(m_pPalette.get()[i]),
+                             FXSYS_GetYValue(m_pPalette.get()[i]),
+                             FXSYS_GetKValue(m_pPalette.get()[i]));
       int gray = 255 - FXRGB2GRAY(r, g, b);
       m_pPalette.get()[i] =
           CmykEncode(bc + (fc - bc) * gray / 255, bm + (fm - bm) * gray / 255,
@@ -773,8 +774,8 @@ void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
         uint8_t r;
         uint8_t g;
         uint8_t b;
-        AdobeCMYK_to_sRGB1(scanline[0], scanline[1], scanline[2], scanline[3],
-                           r, g, b);
+        std::tie(r, g, b) = AdobeCMYK_to_sRGB1(scanline[0], scanline[1],
+                                               scanline[2], scanline[3]);
         *scanline++ = 0;
         *scanline++ = 0;
         *scanline++ = 0;
@@ -789,8 +790,8 @@ void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
       uint8_t r;
       uint8_t g;
       uint8_t b;
-      AdobeCMYK_to_sRGB1(scanline[0], scanline[1], scanline[2], scanline[3], r,
-                         g, b);
+      std::tie(r, g, b) = AdobeCMYK_to_sRGB1(scanline[0], scanline[1],
+                                             scanline[2], scanline[3]);
       int gray = 255 - FXRGB2GRAY(r, g, b);
       *scanline++ = bc + (fc - bc) * gray / 255;
       *scanline++ = bm + (fm - bm) * gray / 255;
@@ -1007,8 +1008,8 @@ bool CFX_DIBitmap::CompositeRect(int left,
         uint8_t r;
         uint8_t g;
         uint8_t b;
-        AdobeCMYK_to_sRGB1(color_p[0], color_p[1], color_p[2], color_p[3], r, g,
-                           b);
+        std::tie(r, g, b) =
+            AdobeCMYK_to_sRGB1(color_p[0], color_p[1], color_p[2], color_p[3]);
         gray = FXRGB2GRAY(r, g, b);
       } else {
         gray = (uint8_t)FXRGB2GRAY((int)color_p[2], color_p[1], color_p[0]);
@@ -1074,9 +1075,9 @@ bool CFX_DIBitmap::CompositeRect(int left,
   if (m_bpp < 24 || (!(alpha_flag >> 8) && IsCmykImage()))
     return false;
   if (alpha_flag >> 8 && !IsCmykImage()) {
-    AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
-                       FXSYS_GetYValue(color), FXSYS_GetKValue(color),
-                       color_p[2], color_p[1], color_p[0]);
+    std::tie(color_p[2], color_p[1], color_p[0]) =
+        AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
+                           FXSYS_GetYValue(color), FXSYS_GetKValue(color));
   }
   if (!IsCmykImage())
     color_p[3] = static_cast<uint8_t>(src_alpha);

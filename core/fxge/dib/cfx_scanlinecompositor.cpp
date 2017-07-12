@@ -2881,8 +2881,8 @@ void CFX_ScanlineCompositor::InitSourceMask(int alpha_flag,
       uint8_t r;
       uint8_t g;
       uint8_t b;
-      AdobeCMYK_to_sRGB1(m_MaskRed, m_MaskGreen, m_MaskBlue, mask_black, r, g,
-                         b);
+      std::tie(r, g, b) =
+          AdobeCMYK_to_sRGB1(m_MaskRed, m_MaskGreen, m_MaskBlue, mask_black);
       m_MaskRed = FXRGB2GRAY(r, g, b);
     } else {
       m_MaskRed = FXRGB2GRAY(m_MaskRed, m_MaskGreen, m_MaskBlue);
@@ -2895,9 +2895,9 @@ void CFX_ScanlineCompositor::InitSourceMask(int alpha_flag,
   mask_color =
       (alpha_flag >> 8) ? FXCMYK_TODIB(mask_color) : FXARGB_TODIB(mask_color);
   if (alpha_flag >> 8) {
-    AdobeCMYK_to_sRGB1(mask_color_p[0], mask_color_p[1], mask_color_p[2],
-                       mask_color_p[3], mask_color_p[2], mask_color_p[1],
-                       mask_color_p[0]);
+    std::tie(mask_color_p[2], mask_color_p[1], mask_color_p[0]) =
+        AdobeCMYK_to_sRGB1(mask_color_p[0], mask_color_p[1], mask_color_p[2],
+                           mask_color_p[3]);
     m_MaskRed = mask_color_p[2];
     m_MaskGreen = mask_color_p[1];
     m_MaskBlue = mask_color_p[0];
@@ -2918,10 +2918,12 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
       if (isSrcCmyk) {
         for (int i = 0; i < pal_count; ++i) {
           FX_CMYK cmyk = pSrcPalette[i];
-          uint8_t r, g, b;
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                             FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g,
-                             b);
+          uint8_t r;
+          uint8_t g;
+          uint8_t b;
+          std::tie(r, g, b) =
+              AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
+                                 FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
           *gray_pal++ = FXRGB2GRAY(r, g, b);
         }
       } else {
@@ -2941,10 +2943,12 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
     } else {
       for (int i = 0; i < palsize; ++i) {
         FX_CMYK cmyk = pSrcPalette[i];
-        uint8_t r, g, b;
-        AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                           FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g,
-                           b);
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        std::tie(r, g, b) =
+            AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
+                               FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
         pPalette[i] = FXARGB_MAKE(0xff, r, g, b);
       }
     }
@@ -2976,9 +2980,12 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
   if (isSrcCmyk != isDstCmyk) {
     for (int i = 0; i < palsize; ++i) {
       FX_CMYK cmyk = pPalette[i];
-      uint8_t r, g, b;
-      AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                         FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g, b);
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
+      std::tie(r, g, b) =
+          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
+                             FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
       pPalette[i] = FXARGB_MAKE(0xff, r, g, b);
     }
   }

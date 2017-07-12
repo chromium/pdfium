@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -118,20 +119,14 @@ void sRGB_to_AdobeCMYK(float R,
                        float& m,
                        float& y,
                        float& k);
-void AdobeCMYK_to_sRGB(float c,
-                       float m,
-                       float y,
-                       float k,
-                       float& R,
-                       float& G,
-                       float& B);
-void AdobeCMYK_to_sRGB1(uint8_t c,
-                        uint8_t m,
-                        uint8_t y,
-                        uint8_t k,
-                        uint8_t& R,
-                        uint8_t& G,
-                        uint8_t& B);
+std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
+                                                  float m,
+                                                  float y,
+                                                  float k);
+std::tuple<uint8_t, uint8_t, uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
+                                                         uint8_t m,
+                                                         uint8_t y,
+                                                         uint8_t k);
 void FaxG4Decode(const uint8_t* src_buf,
                  uint32_t src_size,
                  int* pbitpos,
