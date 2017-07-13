@@ -2080,6 +2080,7 @@ if (pdf_is_standalone) {
     ]
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [ "//build/config/compiler:no_chromium_code" ]
+    configs += [ ":pdfium_core_config" ]
   }
 
   group("fuzzers") {
