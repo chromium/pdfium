@@ -131,7 +131,6 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
       options.m_ForeColor = 0;
       options.m_BackColor = 0xffffff;
     }
-    options.m_AddFlags = flags >> 8;
     options.m_bDrawAnnots = flags & FPDF_ANNOT;
 
 #ifdef PDF_ENABLE_XFA

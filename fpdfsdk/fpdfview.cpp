@@ -109,7 +109,6 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
 
   const CPDF_OCContext::UsageType usage =
       (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;
-  pContext->m_pOptions->m_AddFlags = flags >> 8;
   pContext->m_pOptions->m_pOCContext =
       pdfium::MakeRetain<CPDF_OCContext>(pPage->m_pDocument.Get(), usage);
 

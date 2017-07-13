@@ -46,10 +46,7 @@ class CPDF_RenderOptions {
   FX_COLORREF m_BackColor;
   FX_COLORREF m_ForeColor;
   uint32_t m_Flags;
-  int m_Interpolation;
-  uint32_t m_AddFlags;
   uint32_t m_dwLimitCacheSize;
-  int m_HalftoneLimit;
   bool m_bDrawAnnots;
   CFX_RetainPtr<CPDF_OCContext> m_pOCContext;
 };
