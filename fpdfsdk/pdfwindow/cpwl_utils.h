@@ -36,8 +36,6 @@ class CPWL_Utils {
                                          const CPVT_WordRange& wr2);
   static CFX_FloatRect GetCenterSquare(const CFX_FloatRect& rect);
 
-  static CFX_FloatRect OffsetRect(const CFX_FloatRect& rect, float x, float y);
-
   static CFX_ByteString GetColorAppStream(const CPWL_Color& color,
                                           const bool& bFillOrStroke = true);
   static CFX_ByteString GetBorderAppStream(const CFX_FloatRect& rect,

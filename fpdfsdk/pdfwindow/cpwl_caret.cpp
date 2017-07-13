@@ -66,8 +66,8 @@ void CPWL_Caret::GetCaretApp(const CFX_PointF& ptOffset,
   CFX_FloatRect rcRect = GetCaretRect();
   CFX_FloatRect rcClip = GetClipRect();
 
-  rcRect = CPWL_Utils::OffsetRect(rcRect, ptOffset.x, ptOffset.y);
-  rcClip = CPWL_Utils::OffsetRect(rcClip, ptOffset.x, ptOffset.y);
+  rcRect.Translate(ptOffset.x, ptOffset.y);
+  rcClip.Translate(ptOffset.x, ptOffset.y);
 
   *psAppStream << "q\n";
   if (!rcClip.IsEmpty()) {

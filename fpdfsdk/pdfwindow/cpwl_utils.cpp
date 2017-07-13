@@ -18,13 +18,6 @@
 #include "fpdfsdk/pdfwindow/cpwl_icon.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
-CFX_FloatRect CPWL_Utils::OffsetRect(const CFX_FloatRect& rect,
-                                     float x,
-                                     float y) {
-  return CFX_FloatRect(rect.left + x, rect.bottom + y, rect.right + x,
-                       rect.top + y);
-}
-
 CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
                                             const CPVT_WordRange& wr2) {
   if (wr2.EndPos < wr1.BeginPos || wr2.BeginPos > wr1.EndPos ||
