@@ -114,6 +114,15 @@ class EmbedderTest : public ::testing::Test,
   virtual void UnloadPage(FPDF_PAGE page);
 
  protected:
+  bool OpenDocumentHelper(const char* password,
+                          bool must_linearize,
+                          FX_FILEAVAIL* file_avail,
+                          FX_DOWNLOADHINTS* hints,
+                          FPDF_FILEACCESS* file_access,
+                          FPDF_DOCUMENT* document,
+                          FPDF_AVAIL* avail,
+                          FPDF_FORMHANDLE* form_handle);
+
   FPDF_FORMHANDLE SetupFormFillEnvironment(FPDF_DOCUMENT doc);
 
   // Return the hash of |bitmap|.
@@ -135,7 +144,10 @@ class EmbedderTest : public ::testing::Test,
                                 unsigned char* buf,
                                 unsigned long size);
 
-  void TestSaved(int width, int height, const char* md5);
+  void TestSaved(int width,
+                 int height,
+                 const char* md5,
+                 const char* password = nullptr);
   void CloseSaved();
   void TestAndCloseSaved(int width, int height, const char* md5);
 
@@ -159,6 +171,7 @@ class EmbedderTest : public ::testing::Test,
   FPDF_DOCUMENT m_SavedDocument;
   FPDF_PAGE m_SavedPage;
   FPDF_FORMHANDLE m_SavedForm;
+  FPDF_AVAIL m_SavedAvail;
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);

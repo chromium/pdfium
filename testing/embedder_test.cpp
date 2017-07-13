@@ -135,59 +135,67 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
   file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
   file_access_.m_GetBlock = TestLoader::GetBlock;
   file_access_.m_Param = loader_;
+  return OpenDocumentHelper(password, must_linearize, &file_avail_, &hints_,
+                            &file_access_, &document_, &avail_, &form_handle_);
+}
 
-  file_avail_.version = 1;
-  file_avail_.IsDataAvail = Is_Data_Avail;
+bool EmbedderTest::OpenDocumentHelper(const char* password,
+                                      bool must_linearize,
+                                      FX_FILEAVAIL* file_avail,
+                                      FX_DOWNLOADHINTS* hints,
+                                      FPDF_FILEACCESS* file_access,
+                                      FPDF_DOCUMENT* document,
+                                      FPDF_AVAIL* avail,
+                                      FPDF_FORMHANDLE* form_handle) {
+  file_avail->version = 1;
+  file_avail->IsDataAvail = Is_Data_Avail;
 
-  hints_.version = 1;
-  hints_.AddSegment = Add_Segment;
+  hints->version = 1;
+  hints->AddSegment = Add_Segment;
 
-  avail_ = FPDFAvail_Create(&file_avail_, &file_access_);
+  *avail = FPDFAvail_Create(file_avail, file_access);
 
-  if (FPDFAvail_IsLinearized(avail_) == PDF_LINEARIZED) {
-    document_ = FPDFAvail_GetDocument(avail_, password);
-    if (!document_) {
+  if (FPDFAvail_IsLinearized(*avail) == PDF_LINEARIZED) {
+    *document = FPDFAvail_GetDocument(*avail, password);
+    if (!*document)
       return false;
-    }
+
     int32_t nRet = PDF_DATA_NOTAVAIL;
-    while (nRet == PDF_DATA_NOTAVAIL) {
-      nRet = FPDFAvail_IsDocAvail(avail_, &hints_);
-    }
-    if (nRet == PDF_DATA_ERROR) {
+    while (nRet == PDF_DATA_NOTAVAIL)
+      nRet = FPDFAvail_IsDocAvail(*avail, hints);
+    if (nRet == PDF_DATA_ERROR)
       return false;
-    }
-    nRet = FPDFAvail_IsFormAvail(avail_, &hints_);
-    if (nRet == PDF_FORM_ERROR || nRet == PDF_FORM_NOTAVAIL) {
+
+    nRet = FPDFAvail_IsFormAvail(*avail, hints);
+    if (nRet == PDF_FORM_ERROR || nRet == PDF_FORM_NOTAVAIL)
       return false;
-    }
-    int page_count = FPDF_GetPageCount(document_);
+
+    int page_count = FPDF_GetPageCount(*document);
     for (int i = 0; i < page_count; ++i) {
       nRet = PDF_DATA_NOTAVAIL;
-      while (nRet == PDF_DATA_NOTAVAIL) {
-        nRet = FPDFAvail_IsPageAvail(avail_, i, &hints_);
-      }
-      if (nRet == PDF_DATA_ERROR) {
+      while (nRet == PDF_DATA_NOTAVAIL)
+        nRet = FPDFAvail_IsPageAvail(*avail, i, hints);
+
+      if (nRet == PDF_DATA_ERROR)
         return false;
-      }
     }
   } else {
-    if (must_linearize) {
+    if (must_linearize)
       return false;
-    }
-    document_ = FPDF_LoadCustomDocument(&file_access_, password);
-    if (!document_) {
+
+    *document = FPDF_LoadCustomDocument(file_access, password);
+    if (!*document)
       return false;
-    }
   }
-  form_handle_ = SetupFormFillEnvironment(document_);
+  *form_handle = SetupFormFillEnvironment(*document);
 #ifdef PDF_ENABLE_XFA
   int docType = DOCTYPE_PDF;
-  if (FPDF_HasXFAField(document_, &docType)) {
+  if (FPDF_HasXFAField(*document, &docType)) {
     if (docType != DOCTYPE_PDF)
-      (void)FPDF_LoadXFA(document_);
+      (void)FPDF_LoadXFA(*document);
   }
 #endif  // PDF_ENABLE_XFA
-  (void)FPDF_GetDocPermissions(document_);
+  (void)FPDF_GetDocPermissions(*document);
   return true;
 }
 
@@ -286,16 +294,21 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   page_reverse_map_.erase(it);
 }
 
-void EmbedderTest::TestSaved(int width, int height, const char* md5) {
+void EmbedderTest::TestSaved(int width,
+                             int height,
+                             const char* md5,
+                             const char* password) {
   FPDF_FILEACCESS file_access;
   memset(&file_access, 0, sizeof(file_access));
   file_access.m_FileLen = m_String.size();
   file_access.m_GetBlock = GetBlockFromString;
   file_access.m_Param = &m_String;
+  FX_FILEAVAIL file_avail;
+  FX_DOWNLOADHINTS hints;
 
-  m_SavedDocument = FPDF_LoadCustomDocument(&file_access, nullptr);
-  m_SavedForm = SetupFormFillEnvironment(m_SavedDocument);
-  ASSERT_TRUE(m_SavedDocument);
+  ASSERT_TRUE(OpenDocumentHelper(password, false, &file_avail, &hints,
+                                 &file_access, &m_SavedDocument, &m_SavedAvail,
+                                 &m_SavedForm));
   EXPECT_EQ(1, FPDF_GetPageCount(m_SavedDocument));
   m_SavedPage = FPDF_LoadPage(m_SavedDocument, 0);
   ASSERT_TRUE(m_SavedPage);
@@ -309,6 +322,7 @@ void EmbedderTest::CloseSaved() {
   FPDF_ClosePage(m_SavedPage);
   FPDFDOC_ExitFormFillEnvironment(m_SavedForm);
   FPDF_CloseDocument(m_SavedDocument);
+  FPDFAvail_Destroy(m_SavedAvail);
 }
 
 void EmbedderTest::TestAndCloseSaved(int width, int height, const char* md5) {
