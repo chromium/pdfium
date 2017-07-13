@@ -150,9 +150,28 @@ bool util::printf(CJS_Runtime* pRuntime,
 
     CFX_WideString strSegment;
     switch (ParseDataType(&c_strFormat)) {
-      case UTIL_INT:
+      case UTIL_INT: {
+        int dot = c_strFormat.find(L".", 0);
+        if (dot != -1) {
+          size_t len = 0;
+          for (size_t i = dot + 1; i < c_strFormat.length(); ++i) {
+            wchar_t c = c_strFormat[i];
+            if (std::iswdigit(c)) {
+              ++len;
+              continue;
+            }
+            break;
+          }
+
+          // Windows has a max of ~261 characters in the format string of
+          // the form %0.261x. We're just going to bail out if the format
+          // would be over 3 or more characters long.
+          if (len > 2)
+            return false;
+        }
         strSegment.Format(c_strFormat.c_str(), params[iIndex].ToInt(pRuntime));
         break;
+      }
       case UTIL_DOUBLE:
         strSegment.Format(c_strFormat.c_str(),
                           params[iIndex].ToDouble(pRuntime));
