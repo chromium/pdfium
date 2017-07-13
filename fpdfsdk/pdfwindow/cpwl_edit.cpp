@@ -89,16 +89,26 @@ void CPWL_Edit::RePosChildWnd() {
     pVSB->Move(rcVScroll, true, false);
   }
 
-  if (m_pEditCaret && !HasFlag(PES_TEXTOVERFLOW))
-    m_pEditCaret->SetClipRect(CPWL_Utils::InflateRect(
-        GetClientRect(), 1.0f));  // +1 for caret beside border
+  if (m_pEditCaret && !HasFlag(PES_TEXTOVERFLOW)) {
+    CFX_FloatRect rect = GetClientRect();
+    if (!rect.IsEmpty()) {
+      // +1 for caret beside border
+      rect.Inflate(1.0f, 1.0f);
+      rect.Normalize();
+    }
+    m_pEditCaret->SetClipRect(rect);
+  }
 
   CPWL_EditCtrl::RePosChildWnd();
 }
 
 CFX_FloatRect CPWL_Edit::GetClientRect() const {
-  CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(
-      GetWindowRect(), (float)(GetBorderWidth() + GetInnerBorderWidth()));
+  CFX_FloatRect rcClient = GetWindowRect();
+  if (!rcClient.IsEmpty()) {
+    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+    rcClient.Deflate(width, width);
+    rcClient.Normalize();
+  }
 
   if (CPWL_ScrollBar* pVSB = GetVScrollBar()) {
     if (pVSB->IsVisible()) {
@@ -183,8 +193,13 @@ void CPWL_Edit::SetParamByFlag() {
     m_pEdit->SetTextOverflow(true, false);
   } else {
     if (m_pEditCaret) {
-      m_pEditCaret->SetClipRect(CPWL_Utils::InflateRect(
-          GetClientRect(), 1.0f));  // +1 for caret beside border
+      CFX_FloatRect rect = GetClientRect();
+      if (!rect.IsEmpty()) {
+        // +1 for caret beside border
+        rect.Inflate(1.0f, 1.0f);
+        rect.Normalize();
+      }
+      m_pEditCaret->SetClipRect(rect);
     }
   }
 }

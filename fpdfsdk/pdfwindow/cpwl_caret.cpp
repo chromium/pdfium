@@ -135,7 +135,11 @@ void CPWL_Caret::SetCaret(bool bVisible,
 
 void CPWL_Caret::InvalidateRect(CFX_FloatRect* pRect) {
   if (pRect) {
-    CFX_FloatRect rcRefresh = CPWL_Utils::InflateRect(*pRect, 0.5f);
+    CFX_FloatRect rcRefresh = *pRect;
+    if (!rcRefresh.IsEmpty()) {
+      rcRefresh.Inflate(0.5f, 0.5f);
+      rcRefresh.Normalize();
+    }
     rcRefresh.top += 1;
     rcRefresh.bottom -= 1;
     CPWL_Wnd::InvalidateRect(&rcRefresh);

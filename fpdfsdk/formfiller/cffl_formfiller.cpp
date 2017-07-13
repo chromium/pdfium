@@ -73,7 +73,11 @@ FX_RECT CFFL_FormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
   if (!rcFocus.IsEmpty())
     rcWin.Union(rcFocus);
 
-  return CPWL_Utils::InflateRect(rcWin, 1).GetOuterRect();
+  if (!rcWin.IsEmpty()) {
+    rcWin.Inflate(1, 1);
+    rcWin.Normalize();
+  }
+  return rcWin.GetOuterRect();
 }
 
 void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,

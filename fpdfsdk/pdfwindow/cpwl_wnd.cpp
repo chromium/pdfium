@@ -155,7 +155,11 @@ void CPWL_Wnd::Create(const PWL_CREATEPARAM& cp) {
 
   m_sPrivateParam.rcRectWnd.Normalize();
   m_rcWindow = m_sPrivateParam.rcRectWnd;
-  m_rcClip = CPWL_Utils::InflateRect(m_rcWindow, 1.0f);
+  m_rcClip = m_rcWindow;
+  if (!m_rcClip.IsEmpty()) {
+    m_rcClip.Inflate(1.0f, 1.0f);
+    m_rcClip.Normalize();
+  }
   CreateMsgControl();
 
   if (m_sPrivateParam.pParentWnd)
@@ -288,8 +292,13 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
     return;
 
   if (HasFlag(PWS_BACKGROUND)) {
-    CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(
-        rectWnd, (float)(GetBorderWidth() + GetInnerBorderWidth()));
+    CFX_FloatRect rcClient = rectWnd;
+    if (!rcClient.IsEmpty()) {
+      float width =
+          static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+      rcClient.Deflate(width, width);
+      rcClient.Normalize();
+    }
     CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient,
                              GetBackgroundColor(), GetTransparency());
   }
@@ -459,8 +468,13 @@ CFX_FloatRect CPWL_Wnd::GetWindowRect() const {
 
 CFX_FloatRect CPWL_Wnd::GetClientRect() const {
   CFX_FloatRect rcWindow = GetWindowRect();
-  CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(
-      rcWindow, (float)(GetBorderWidth() + GetInnerBorderWidth()));
+  CFX_FloatRect rcClient = rcWindow;
+  if (!rcClient.IsEmpty()) {
+    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+    rcClient.Deflate(width, width);
+    rcClient.Normalize();
+  }
+
   if (CPWL_ScrollBar* pVSB = GetVScrollBar())
     rcClient.right -= pVSB->GetScrollBarWidth();
 
@@ -633,8 +647,12 @@ void CPWL_Wnd::RePosChildWnd() {
   if (!pVSB)
     return;
 
-  CFX_FloatRect rcContent = CPWL_Utils::DeflateRect(
-      GetWindowRect(), (float)(GetBorderWidth() + GetInnerBorderWidth()));
+  CFX_FloatRect rcContent = GetWindowRect();
+  if (!rcContent.IsEmpty()) {
+    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+    rcContent.Deflate(width, width);
+    rcContent.Normalize();
+  }
   CFX_FloatRect rcVScroll =
       CFX_FloatRect(rcContent.right - PWL_SCROLLBAR_WIDTH, rcContent.bottom,
                     rcContent.right - 1.0f, rcContent.top);
@@ -687,7 +705,12 @@ bool CPWL_Wnd::IsFocused() const {
 }
 
 CFX_FloatRect CPWL_Wnd::GetFocusRect() const {
-  return CPWL_Utils::InflateRect(GetWindowRect(), 1);
+  CFX_FloatRect rect = GetWindowRect();
+  if (!rect.IsEmpty()) {
+    rect.Inflate(1.0f, 1.0f);
+    rect.Normalize();
+  }
+  return rect;
 }
 
 float CPWL_Wnd::GetFontSize() const {

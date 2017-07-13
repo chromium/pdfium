@@ -236,28 +236,6 @@ CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CFX_FloatRect& crBBox,
   return CFX_ByteString(csAP);
 }
 
-CFX_FloatRect CPWL_Utils::InflateRect(const CFX_FloatRect& rcRect,
-                                      float fSize) {
-  if (rcRect.IsEmpty())
-    return rcRect;
-
-  CFX_FloatRect rcNew(rcRect.left - fSize, rcRect.bottom - fSize,
-                      rcRect.right + fSize, rcRect.top + fSize);
-  rcNew.Normalize();
-  return rcNew;
-}
-
-CFX_FloatRect CPWL_Utils::DeflateRect(const CFX_FloatRect& rcRect,
-                                      float fSize) {
-  if (rcRect.IsEmpty())
-    return rcRect;
-
-  CFX_FloatRect rcNew(rcRect.left + fSize, rcRect.bottom + fSize,
-                      rcRect.right - fSize, rcRect.top - fSize);
-  rcNew.Normalize();
-  return rcNew;
-}
-
 CFX_FloatRect CPWL_Utils::ScaleRect(const CFX_FloatRect& rcRect, float fScale) {
   float fHalfWidth = (rcRect.right - rcRect.left) / 2.0f;
   float fHalfHeight = (rcRect.top - rcRect.bottom) / 2.0f;
@@ -675,6 +653,20 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
   if (fWidth > 0.0f) {
     sAppStream << "q\n";
 
+    float fHalfWidth = fWidth / 2.0f;
+
+    CFX_FloatRect rect_by_2 = rect;
+    CFX_FloatRect rect_by_75 = rect;
+    if (!rect.IsEmpty()) {
+      float div = fWidth / 2.0f;
+      rect_by_2.Deflate(div, div);
+      rect_by_2.Normalize();
+
+      div = fHalfWidth * 0.75f;
+      rect_by_75.Deflate(div, div);
+      rect_by_75.Normalize();
+    }
+
     switch (nStyle) {
       default:
       case BorderStyle::SOLID:
@@ -683,9 +675,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
         if (sColor.GetLength() > 0) {
           sAppStream << "q\n"
                      << fWidth << " w\n"
-                     << sColor
-                     << CPWL_Utils::GetAP_Circle(
-                            CPWL_Utils::DeflateRect(rect, fWidth / 2.0f))
+                     << sColor << CPWL_Utils::GetAP_Circle(rect_by_2)
                      << " S\nQ\n";
         }
       } break;
@@ -696,15 +686,11 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
                      << fWidth << " w\n"
                      << "[" << dash.nDash << " " << dash.nGap << "] "
                      << dash.nPhase << " d\n"
-                     << sColor
-                     << CPWL_Utils::GetAP_Circle(
-                            CPWL_Utils::DeflateRect(rect, fWidth / 2.0f))
+                     << sColor << CPWL_Utils::GetAP_Circle(rect_by_2)
                      << " S\nQ\n";
         }
       } break;
       case BorderStyle::BEVELED: {
-        float fHalfWidth = fWidth / 2.0f;
-
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           sAppStream << "q\n"
@@ -717,9 +703,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n"
                      << fHalfWidth << " w\n"
                      << sColor
-                     << CPWL_Utils::GetAP_HalfCircle(
-                            CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            FX_PI / 4.0f)
+                     << CPWL_Utils::GetAP_HalfCircle(rect_by_75, FX_PI / 4.0f)
                      << " S\nQ\n";
         }
 
@@ -728,15 +712,12 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n"
                      << fHalfWidth << " w\n"
                      << sColor
-                     << CPWL_Utils::GetAP_HalfCircle(
-                            CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            FX_PI * 5 / 4.0f)
+                     << CPWL_Utils::GetAP_HalfCircle(rect_by_75,
+                                                     FX_PI * 5 / 4.0f)
                      << " S\nQ\n";
         }
       } break;
       case BorderStyle::INSET: {
-        float fHalfWidth = fWidth / 2.0f;
-
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           sAppStream << "q\n"
@@ -749,9 +730,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n"
                      << fHalfWidth << " w\n"
                      << sColor
-                     << CPWL_Utils::GetAP_HalfCircle(
-                            CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            FX_PI / 4.0f)
+                     << CPWL_Utils::GetAP_HalfCircle(rect_by_75, FX_PI / 4.0f)
                      << " S\nQ\n";
         }
 
@@ -760,9 +739,8 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n"
                      << fHalfWidth << " w\n"
                      << sColor
-                     << CPWL_Utils::GetAP_HalfCircle(
-                            CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            FX_PI * 5 / 4.0f)
+                     << CPWL_Utils::GetAP_HalfCircle(rect_by_75,
+                                                     FX_PI * 5 / 4.0f)
                      << " S\nQ\n";
         }
       } break;

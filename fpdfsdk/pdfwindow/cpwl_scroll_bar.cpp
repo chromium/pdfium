@@ -247,14 +247,21 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                              ArgbEncode(nTransparency, 100, 100, 100), 0.0f);
 
   // draw inner border
-  rcDraw = CPWL_Utils::DeflateRect(rectWnd, 0.5f);
+  rcDraw = rectWnd;
+  if (!rcDraw.IsEmpty()) {
+    rcDraw.Deflate(0.5f, 0.5f);
+    rcDraw.Normalize();
+  }
   CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
                              ArgbEncode(nTransparency, 255, 255, 255), 1.0f);
 
   if (m_eSBButtonType != PSBT_POS) {
     // draw background
-    rcDraw = CPWL_Utils::DeflateRect(rectWnd, 1.0f);
-
+    rcDraw = rectWnd;
+    if (!rcDraw.IsEmpty()) {
+      rcDraw.Deflate(1.0f, 1.0f);
+      rcDraw.Normalize();
+    }
     if (IsEnabled()) {
       CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false, rcDraw,
                              nTransparency, 80, 220);

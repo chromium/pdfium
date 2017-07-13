@@ -32,9 +32,6 @@ struct CPWL_Color;
 
 class CPWL_Utils {
  public:
-  static CFX_FloatRect InflateRect(const CFX_FloatRect& rcRect, float fSize);
-  static CFX_FloatRect DeflateRect(const CFX_FloatRect& rcRect, float fSize);
-
   static CPVT_WordRange OverlapWordRange(const CPVT_WordRange& wr1,
                                          const CPVT_WordRange& wr2);
   static CFX_FloatRect GetCenterSquare(const CFX_FloatRect& rect);
