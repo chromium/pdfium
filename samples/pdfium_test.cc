@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <bitset>
 #include <iterator>
 #include <map>
 #include <sstream>
@@ -265,6 +266,44 @@ std::string AnnotSubtypeToString(FPDF_ANNOTATION_SUBTYPE subtype) {
   return "";
 }
 
+std::string AnnotFlagsToString(int flags) {
+  std::string str = "";
+  if (flags & FPDF_ANNOT_FLAG_INVISIBLE)
+    str += "Invisible";
+  if (flags & FPDF_ANNOT_FLAG_HIDDEN)
+    str += std::string(str.empty() ? "" : ", ") + "Hidden";
+  if (flags & FPDF_ANNOT_FLAG_PRINT)
+    str += std::string(str.empty() ? "" : ", ") + "Print";
+  if (flags & FPDF_ANNOT_FLAG_NOZOOM)
+    str += std::string(str.empty() ? "" : ", ") + "NoZoom";
+  if (flags & FPDF_ANNOT_FLAG_NOROTATE)
+    str += std::string(str.empty() ? "" : ", ") + "NoRotate";
+  if (flags & FPDF_ANNOT_FLAG_NOVIEW)
+    str += std::string(str.empty() ? "" : ", ") + "NoView";
+  if (flags & FPDF_ANNOT_FLAG_READONLY)
+    str += std::string(str.empty() ? "" : ", ") + "ReadOnly";
+  if (flags & FPDF_ANNOT_FLAG_LOCKED)
+    str += std::string(str.empty() ? "" : ", ") + "Locked";
+  if (flags & FPDF_ANNOT_FLAG_TOGGLENOVIEW)
+    str += std::string(str.empty() ? "" : ", ") + "ToggleNoView";
+  return str;
+}
+
+std::string PageObjectTypeToString(int type) {
+  if (type == FPDF_PAGEOBJ_TEXT)
+    return "Text";
+  if (type == FPDF_PAGEOBJ_PATH)
+    return "Path";
+  if (type == FPDF_PAGEOBJ_IMAGE)
+    return "Image";
+  if (type == FPDF_PAGEOBJ_SHADING)
+    return "Shading";
+  if (type == FPDF_PAGEOBJ_FORM)
+    return "Form";
+  NOTREACHED();
+  return "";
+}
+
 void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
   // Open the output text file.
   char filename[256];
@@ -285,7 +324,7 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
   fprintf(fp, "Number of annotations: %d\n\n", annot_count);
 
   // Iterate through all annotations on this page.
-  for (int i = 0; i < annot_count; i++) {
+  for (int i = 0; i < annot_count; ++i) {
     // Retrieve the annotation object and its subtype.
     fprintf(fp, "Annotation #%d:\n", i + 1);
     FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, i);
@@ -295,6 +334,24 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
     }
     FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
     fprintf(fp, "Subtype: %s\n", AnnotSubtypeToString(subtype).c_str());
+
+    // Retrieve the annotation flags.
+    fprintf(fp, "Flags set: %s\n",
+            AnnotFlagsToString(FPDFAnnot_GetFlags(annot)).c_str());
+
+    // Retrieve the annotation's object count and object types.
+    const int obj_count = FPDFAnnot_GetObjectCount(annot);
+    fprintf(fp, "Number of objects: %d\n", obj_count);
+    if (obj_count > 0) {
+      fprintf(fp, "Object types: ");
+      for (int j = 0; j < obj_count; ++j) {
+        fprintf(fp, "%s  ",
+                PageObjectTypeToString(
+                    FPDFPageObj_GetType(FPDFAnnot_GetObject(annot, j)))
+                    .c_str());
+      }
+      fprintf(fp, "\n");
+    }
 
     // Retrieve the annotation's color and interior color.
     unsigned int R;
@@ -336,15 +393,19 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
     // Retrieve the annotation's quadpoints if it is a markup annotation.
     if (FPDFAnnot_HasAttachmentPoints(annot)) {
       FS_QUADPOINTSF quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
-      fprintf(fp, "Quadpoints: (%f, %f), (%f, %f), (%f, %f), (%f, %f)\n",
+      fprintf(fp,
+              "Quadpoints: (%.3f, %.3f), (%.3f, %.3f), (%.3f, %.3f), (%.3f, "
+              "%.3f)\n",
               quadpoints.x1, quadpoints.y1, quadpoints.x2, quadpoints.y2,
               quadpoints.x3, quadpoints.y3, quadpoints.x4, quadpoints.y4);
     }
 
     // Retrieve the annotation's rectangle coordinates.
     FS_RECTF rect = FPDFAnnot_GetRect(annot);
-    fprintf(fp, "Rectangle: l - %f, b - %f, r - %f, t - %f\n\n", rect.left,
-            rect.bottom, rect.right, rect.top);
+    fprintf(fp, "Rectangle: l - %.3f, b - %.3f, r - %.3f, t - %.3f\n\n",
+            rect.left, rect.bottom, rect.right, rect.top);
+
+    FPDFPage_CloseAnnot(annot);
   }
 
   (void)fclose(fp);
@@ -1227,18 +1288,21 @@ static const char kUsageString[] =
     "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
     "  --pages=<number>(-<number>) - only render the given 0-based page(s)\n"
 #ifdef _WIN32
-    "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
-    "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
-    "  --ps2 - write page raw PostScript (Lvl 2) <pdf-name>.<page-number>.ps\n"
-    "  --ps3 - write page raw PostScript (Lvl 3) <pdf-name>.<page-number>.ps\n"
+    "  --bmp   - write page images <pdf-name>.<page-number>.bmp\n"
+    "  --emf   - write page meta files <pdf-name>.<page-number>.emf\n"
+    "  --ps2   - write page raw PostScript (Lvl 2) "
+    "<pdf-name>.<page-number>.ps\n"
+    "  --ps3   - write page raw PostScript (Lvl 3) "
+    "<pdf-name>.<page-number>.ps\n"
 #endif  // _WIN32
-    "  --txt - write page text in UTF32-LE <pdf-name>.<page-number>.txt\n"
-    "  --png - write page images <pdf-name>.<page-number>.png\n"
-    "  --ppm - write page images <pdf-name>.<page-number>.ppm\n"
+    "  --txt   - write page text in UTF32-LE <pdf-name>.<page-number>.txt\n"
+    "  --png   - write page images <pdf-name>.<page-number>.png\n"
+    "  --ppm   - write page images <pdf-name>.<page-number>.ppm\n"
+    "  --annot - write annotation info <pdf-name>.<page-number>.annot.txt\n"
 #ifdef PDF_ENABLE_SKIA
-    "  --skp - write page images <pdf-name>.<page-number>.skp\n"
+    "  --skp   - write page images <pdf-name>.<page-number>.skp\n"
 #endif
-    "  --md5 - write output image paths and their md5 hashes to stdout.\n"
+    "  --md5   - write output image paths and their md5 hashes to stdout.\n"
     "";
 
 int main(int argc, const char* argv[]) {

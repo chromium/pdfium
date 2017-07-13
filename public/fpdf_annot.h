@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
-
 #ifndef PUBLIC_FPDF_ANNOT_H_
 #define PUBLIC_FPDF_ANNOT_H_
 
@@ -318,7 +316,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
                                              FPDF_WIDESTRING key);
 
 // Experimental API.
-// Get the type of the value corresponding to |key| in |annot|'s dictioanry.
+// Get the type of the value corresponding to |key| in |annot|'s dictionary.
 //
 //   annot  - handle to an annotation.
 //   key    - the key to look for.
@@ -330,7 +328,7 @@ DLLEXPORT FPDF_OBJECT_TYPE STDCALL FPDFAnnot_GetValueType(FPDF_ANNOTATION annot,
 // Experimental API.
 // Set the string value corresponding to |key| in |annot|'s dictionary,
 // overwriting the existing value if any. The value type would be
-// FPDF_OBJECT_STRING after this function call.
+// FPDF_OBJECT_STRING after this function call succeeds.
 //
 //   annot  - handle to an annotation.
 //   key    - the key to the dictionary entry to be set, encoded in UTF16-LE.

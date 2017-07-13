@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
-
 #include "public/fpdf_annot.h"
 
 #include <memory>
@@ -390,7 +388,7 @@ DLLEXPORT int STDCALL FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
 
     pAnnot->SetForm(pStream);
   }
-  return pAnnot->GetForm()->GetPageObjectList()->size();
+  return pdfium::CollectionSize<int>(*pAnnot->GetForm()->GetPageObjectList());
 }
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFAnnot_GetObject(FPDF_ANNOTATION annot,
