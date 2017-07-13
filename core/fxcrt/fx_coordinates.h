@@ -482,6 +482,7 @@ class CFX_FloatRect {
   FX_RECT GetInnerRect() const;
   FX_RECT GetOuterRect() const;
   FX_RECT GetClosestRect() const;
+  CFX_FloatRect GetCenterSquare() const;
 
   int Substract4(CFX_FloatRect& substract_rect, CFX_FloatRect* pRects);
 

@@ -1273,7 +1273,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
 
   CFX_ByteString csAP_N_ON;
 
-  CFX_FloatRect rcCenter = CPWL_Utils::GetCenterSquare(rcWindow);
+  CFX_FloatRect rcCenter = rcWindow.GetCenterSquare();
   if (!rcCenter.IsEmpty()) {
     rcCenter.Deflate(1.0f, 1.0f);
     rcCenter.Normalize();

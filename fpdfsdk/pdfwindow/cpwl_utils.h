@@ -34,7 +34,6 @@ class CPWL_Utils {
  public:
   static CPVT_WordRange OverlapWordRange(const CPVT_WordRange& wr1,
                                          const CPVT_WordRange& wr2);
-  static CFX_FloatRect GetCenterSquare(const CFX_FloatRect& rect);
 
   static CFX_ByteString GetColorAppStream(const CPWL_Color& color,
                                           const bool& bFillOrStroke = true);

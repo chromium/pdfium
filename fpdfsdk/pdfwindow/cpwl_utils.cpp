@@ -264,19 +264,6 @@ CFX_ByteString CPWL_Utils::GetCircleFillAppStream(const CFX_FloatRect& rect,
   return CFX_ByteString(sAppStream);
 }
 
-CFX_FloatRect CPWL_Utils::GetCenterSquare(const CFX_FloatRect& rect) {
-  float fWidth = rect.right - rect.left;
-  float fHeight = rect.top - rect.bottom;
-
-  float fCenterX = (rect.left + rect.right) / 2.0f;
-  float fCenterY = (rect.top + rect.bottom) / 2.0f;
-
-  float fRadius = (fWidth > fHeight) ? fHeight / 2 : fWidth / 2;
-
-  return CFX_FloatRect(fCenterX - fRadius, fCenterY - fRadius,
-                       fCenterX + fRadius, fCenterY + fRadius);
-}
-
 CFX_ByteString CPWL_Utils::GetEditAppStream(CFX_Edit* pEdit,
                                             const CFX_PointF& ptOffset,
                                             const CPVT_WordRange* pRange,
@@ -802,7 +789,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Star(const CFX_FloatRect& rcBBox,
 CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
                                                 int32_t nStyle,
                                                 const CPWL_Color& crText) {
-  CFX_FloatRect rcCenter = GetCenterSquare(rcBBox);
+  CFX_FloatRect rcCenter = rcBBox.GetCenterSquare();
   switch (nStyle) {
     default:
     case PCS_CHECK:
@@ -823,7 +810,7 @@ CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
 CFX_ByteString CPWL_Utils::GetRadioButtonAppStream(const CFX_FloatRect& rcBBox,
                                                    int32_t nStyle,
                                                    const CPWL_Color& crText) {
-  CFX_FloatRect rcCenter = GetCenterSquare(rcBBox);
+  CFX_FloatRect rcCenter = rcBBox.GetCenterSquare();
   switch (nStyle) {
     default:
     case PCS_CHECK:

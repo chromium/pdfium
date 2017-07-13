@@ -157,6 +157,17 @@ FX_RECT CFX_FloatRect::GetClosestRect() const {
   return rect;
 }
 
+CFX_FloatRect CFX_FloatRect::GetCenterSquare() const {
+  float fWidth = right - left;
+  float fHeight = top - bottom;
+  float fHalfWidth = (fWidth > fHeight) ? fHeight / 2 : fWidth / 2;
+
+  float fCenterX = (left + right) / 2.0f;
+  float fCenterY = (top + bottom) / 2.0f;
+  return CFX_FloatRect(fCenterX - fHalfWidth, fCenterY - fHalfWidth,
+                       fCenterX + fHalfWidth, fCenterY + fHalfWidth);
+}
+
 bool CFX_FloatRect::Contains(const CFX_PointF& point) const {
   CFX_FloatRect n1(*this);
   n1.Normalize();
