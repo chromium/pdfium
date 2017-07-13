@@ -550,6 +550,19 @@ class CFX_FloatRect {
     bottom += f;
   }
 
+  void Scale(float fScale) {
+    float fHalfWidth = (right - left) / 2.0f;
+    float fHalfHeight = (top - bottom) / 2.0f;
+
+    float center_x = (left + right) / 2;
+    float center_y = (top + bottom) / 2;
+
+    left = center_x - fHalfWidth * fScale;
+    bottom = center_y - fHalfHeight * fScale;
+    right = center_x + fHalfWidth * fScale;
+    top = center_y + fHalfHeight * fScale;
+  }
+
   static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
 
   FX_RECT ToFxRect() const {

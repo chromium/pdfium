@@ -122,8 +122,6 @@ class CPWL_Utils {
                          int32_t nEndGray);
 
  private:
-  static CFX_FloatRect ScaleRect(const CFX_FloatRect& rcRect, float fScale);
-
   static CFX_ByteString GetAppStream_Check(const CFX_FloatRect& rcBBox,
                                            const CPWL_Color& crText);
   static CFX_ByteString GetAppStream_Circle(const CFX_FloatRect& rcBBox,
