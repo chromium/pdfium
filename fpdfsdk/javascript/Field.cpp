@@ -1436,7 +1436,7 @@ bool Field::fillColor(CJS_Runtime* pRuntime,
 
     vp >> crArray;
 
-    CPWL_Color color;
+    CFX_Color color;
     color::ConvertArrayToPWLColor(pRuntime, crArray, &color);
     if (m_bDelay) {
       AddDelay_Color(FP_FILLCOLOR, color);
@@ -1455,23 +1455,23 @@ bool Field::fillColor(CJS_Runtime* pRuntime,
   int iColorType;
   pFormControl->GetBackgroundColor(iColorType);
 
-  CPWL_Color color;
+  CFX_Color color;
   if (iColorType == COLORTYPE_TRANSPARENT) {
-    color = CPWL_Color(COLORTYPE_TRANSPARENT);
+    color = CFX_Color(COLORTYPE_TRANSPARENT);
   } else if (iColorType == COLORTYPE_GRAY) {
     color =
-        CPWL_Color(COLORTYPE_GRAY, pFormControl->GetOriginalBackgroundColor(0));
+        CFX_Color(COLORTYPE_GRAY, pFormControl->GetOriginalBackgroundColor(0));
   } else if (iColorType == COLORTYPE_RGB) {
     color =
-        CPWL_Color(COLORTYPE_RGB, pFormControl->GetOriginalBackgroundColor(0),
-                   pFormControl->GetOriginalBackgroundColor(1),
-                   pFormControl->GetOriginalBackgroundColor(2));
+        CFX_Color(COLORTYPE_RGB, pFormControl->GetOriginalBackgroundColor(0),
+                  pFormControl->GetOriginalBackgroundColor(1),
+                  pFormControl->GetOriginalBackgroundColor(2));
   } else if (iColorType == COLORTYPE_CMYK) {
     color =
-        CPWL_Color(COLORTYPE_CMYK, pFormControl->GetOriginalBackgroundColor(0),
-                   pFormControl->GetOriginalBackgroundColor(1),
-                   pFormControl->GetOriginalBackgroundColor(2),
-                   pFormControl->GetOriginalBackgroundColor(3));
+        CFX_Color(COLORTYPE_CMYK, pFormControl->GetOriginalBackgroundColor(0),
+                  pFormControl->GetOriginalBackgroundColor(1),
+                  pFormControl->GetOriginalBackgroundColor(2),
+                  pFormControl->GetOriginalBackgroundColor(3));
   } else {
     return false;
   }
@@ -1483,7 +1483,7 @@ bool Field::fillColor(CJS_Runtime* pRuntime,
 void Field::SetFillColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          const CFX_WideString& swFieldName,
                          int nControlIndex,
-                         const CPWL_Color& color) {
+                         const CFX_Color& color) {
   // Not supported.
 }
 
@@ -2213,7 +2213,7 @@ bool Field::strokeColor(CJS_Runtime* pRuntime,
 
     vp >> crArray;
 
-    CPWL_Color color;
+    CFX_Color color;
     color::ConvertArrayToPWLColor(pRuntime, crArray, &color);
     if (m_bDelay) {
       AddDelay_Color(FP_STROKECOLOR, color);
@@ -2235,20 +2235,20 @@ bool Field::strokeColor(CJS_Runtime* pRuntime,
   int iColorType;
   pFormControl->GetBorderColor(iColorType);
 
-  CPWL_Color color;
+  CFX_Color color;
   if (iColorType == COLORTYPE_TRANSPARENT) {
-    color = CPWL_Color(COLORTYPE_TRANSPARENT);
+    color = CFX_Color(COLORTYPE_TRANSPARENT);
   } else if (iColorType == COLORTYPE_GRAY) {
-    color = CPWL_Color(COLORTYPE_GRAY, pFormControl->GetOriginalBorderColor(0));
+    color = CFX_Color(COLORTYPE_GRAY, pFormControl->GetOriginalBorderColor(0));
   } else if (iColorType == COLORTYPE_RGB) {
-    color = CPWL_Color(COLORTYPE_RGB, pFormControl->GetOriginalBorderColor(0),
-                       pFormControl->GetOriginalBorderColor(1),
-                       pFormControl->GetOriginalBorderColor(2));
+    color = CFX_Color(COLORTYPE_RGB, pFormControl->GetOriginalBorderColor(0),
+                      pFormControl->GetOriginalBorderColor(1),
+                      pFormControl->GetOriginalBorderColor(2));
   } else if (iColorType == COLORTYPE_CMYK) {
-    color = CPWL_Color(COLORTYPE_CMYK, pFormControl->GetOriginalBorderColor(0),
-                       pFormControl->GetOriginalBorderColor(1),
-                       pFormControl->GetOriginalBorderColor(2),
-                       pFormControl->GetOriginalBorderColor(3));
+    color = CFX_Color(COLORTYPE_CMYK, pFormControl->GetOriginalBorderColor(0),
+                      pFormControl->GetOriginalBorderColor(1),
+                      pFormControl->GetOriginalBorderColor(2),
+                      pFormControl->GetOriginalBorderColor(3));
   } else {
     return false;
   }
@@ -2261,7 +2261,7 @@ bool Field::strokeColor(CJS_Runtime* pRuntime,
 void Field::SetStrokeColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
-                           const CPWL_Color& color) {
+                           const CFX_Color& color) {
   // Not supported.
 }
 
@@ -2353,7 +2353,7 @@ bool Field::textColor(CJS_Runtime* pRuntime,
 
     vp >> crArray;
 
-    CPWL_Color color;
+    CFX_Color color;
     color::ConvertArrayToPWLColor(pRuntime, crArray, &color);
     if (m_bDelay) {
       AddDelay_Color(FP_TEXTCOLOR, color);
@@ -2383,11 +2383,11 @@ bool Field::textColor(CJS_Runtime* pRuntime,
   int32_t b;
   std::tie(a, r, g, b) = ArgbDecode(color);
 
-  CPWL_Color crRet =
-      CPWL_Color(COLORTYPE_RGB, r / 255.0f, g / 255.0f, b / 255.0f);
+  CFX_Color crRet =
+      CFX_Color(COLORTYPE_RGB, r / 255.0f, g / 255.0f, b / 255.0f);
 
   if (iColorType == COLORTYPE_TRANSPARENT)
-    crRet = CPWL_Color(COLORTYPE_TRANSPARENT);
+    crRet = CFX_Color(COLORTYPE_TRANSPARENT);
 
   color::ConvertPWLColorToArray(pRuntime, crRet, &crArray);
   vp << crArray;
@@ -2397,7 +2397,7 @@ bool Field::textColor(CJS_Runtime* pRuntime,
 void Field::SetTextColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          const CFX_WideString& swFieldName,
                          int nControlIndex,
-                         const CPWL_Color& color) {
+                         const CFX_Color& color) {
   // Not supported.
 }
 
@@ -3231,7 +3231,7 @@ void Field::AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect) {
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_Color(FIELD_PROP prop, const CPWL_Color& color) {
+void Field::AddDelay_Color(FIELD_PROP prop, const CFX_Color& color) {
   CJS_DelayData* pNewData =
       new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->color = color;

@@ -500,15 +500,15 @@ void CPWL_Wnd::AddFlag(uint32_t dwFlags) {
   m_sPrivateParam.dwFlags |= dwFlags;
 }
 
-CPWL_Color CPWL_Wnd::GetBackgroundColor() const {
+CFX_Color CPWL_Wnd::GetBackgroundColor() const {
   return m_sPrivateParam.sBackgroundColor;
 }
 
-void CPWL_Wnd::SetBackgroundColor(const CPWL_Color& color) {
+void CPWL_Wnd::SetBackgroundColor(const CFX_Color& color) {
   m_sPrivateParam.sBackgroundColor = color;
 }
 
-CPWL_Color CPWL_Wnd::GetTextColor() const {
+CFX_Color CPWL_Wnd::GetTextColor() const {
   return m_sPrivateParam.sTextColor;
 }
 
@@ -529,8 +529,8 @@ int32_t CPWL_Wnd::GetInnerBorderWidth() const {
   return 0;
 }
 
-CPWL_Color CPWL_Wnd::GetBorderColor() const {
-  return HasFlag(PWS_BORDER) ? m_sPrivateParam.sBorderColor : CPWL_Color();
+CFX_Color CPWL_Wnd::GetBorderColor() const {
+  return HasFlag(PWS_BORDER) ? m_sPrivateParam.sBorderColor : CFX_Color();
 }
 
 const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
@@ -737,25 +737,25 @@ IPVT_FontMap* CPWL_Wnd::GetFontMap() const {
   return m_sPrivateParam.pFontMap;
 }
 
-CPWL_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
+CFX_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
     case BorderStyle::BEVELED:
-      return CPWL_Color(COLORTYPE_GRAY, 1);
+      return CFX_Color(COLORTYPE_GRAY, 1);
     case BorderStyle::INSET:
-      return CPWL_Color(COLORTYPE_GRAY, 0.5f);
+      return CFX_Color(COLORTYPE_GRAY, 0.5f);
     default:
-      return CPWL_Color();
+      return CFX_Color();
   }
 }
 
-CPWL_Color CPWL_Wnd::GetBorderRightBottomColor(BorderStyle nBorderStyle) const {
+CFX_Color CPWL_Wnd::GetBorderRightBottomColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
     case BorderStyle::BEVELED:
       return GetBackgroundColor() / 2.0f;
     case BorderStyle::INSET:
-      return CPWL_Color(COLORTYPE_GRAY, 0.75f);
+      return CFX_Color(COLORTYPE_GRAY, 0.75f);
     default:
-      return CPWL_Color();
+      return CFX_Color();
   }
 }
 

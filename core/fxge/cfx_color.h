@@ -4,38 +4,38 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFWINDOW_CPWL_COLOR_H_
-#define FPDFSDK_PDFWINDOW_CPWL_COLOR_H_
+#ifndef CORE_FXGE_CFX_COLOR_H_
+#define CORE_FXGE_CFX_COLOR_H_
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxge/fx_dib.h"
 
-struct CPWL_Color {
-  explicit CPWL_Color(FX_COLORREF ref)
-      : CPWL_Color(FXARGB_R(ref), FXARGB_G(ref), FXARGB_B(ref)) {}
+struct CFX_Color {
+  explicit CFX_Color(FX_COLORREF ref)
+      : CFX_Color(FXARGB_R(ref), FXARGB_G(ref), FXARGB_B(ref)) {}
 
-  CPWL_Color(int32_t type = COLORTYPE_TRANSPARENT,
-             float color1 = 0.0f,
-             float color2 = 0.0f,
-             float color3 = 0.0f,
-             float color4 = 0.0f)
+  CFX_Color(int32_t type = COLORTYPE_TRANSPARENT,
+            float color1 = 0.0f,
+            float color2 = 0.0f,
+            float color3 = 0.0f,
+            float color4 = 0.0f)
       : nColorType(type),
         fColor1(color1),
         fColor2(color2),
         fColor3(color3),
         fColor4(color4) {}
 
-  CPWL_Color(int32_t r, int32_t g, int32_t b)
+  CFX_Color(int32_t r, int32_t g, int32_t b)
       : nColorType(COLORTYPE_RGB),
         fColor1(r / 255.0f),
         fColor2(g / 255.0f),
         fColor3(b / 255.0f),
         fColor4(0) {}
 
-  CPWL_Color operator/(float fColorDivide) const;
-  CPWL_Color operator-(float fColorSub) const;
+  CFX_Color operator/(float fColorDivide) const;
+  CFX_Color operator-(float fColorSub) const;
 
-  CPWL_Color ConvertColorType(int32_t other_nColorType) const;
+  CFX_Color ConvertColorType(int32_t other_nColorType) const;
 
   FX_COLORREF ToFXColor(int32_t nTransparency) const;
 
@@ -54,4 +54,4 @@ struct CPWL_Color {
   float fColor4;
 };
 
-#endif  // FPDFSDK_PDFWINDOW_CPWL_COLOR_H_
+#endif  // CORE_FXGE_CFX_COLOR_H_

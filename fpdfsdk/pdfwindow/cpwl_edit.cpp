@@ -295,7 +295,7 @@ void CPWL_Edit::GetThisAppearanceStream(std::ostringstream* psAppStream) {
 
   if (sEditMid.GetLength() > 0)
     sText << "BT\n"
-          << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY, 1))
+          << CPWL_Utils::GetColorAppStream(CFX_Color(COLORTYPE_GRAY, 1))
           << sEditMid << "ET\n";
 
   wrTemp = wrVisible.Intersect(wrSelAfter);

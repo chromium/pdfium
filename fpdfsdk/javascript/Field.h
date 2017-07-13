@@ -11,9 +11,9 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_observable.h"
+#include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/pdfwindow/cpwl_wnd.h"  // For CPWL_Color.
 
 class CPDFSDK_Widget;
 class Document;
@@ -67,7 +67,7 @@ struct CJS_DelayData {
   CFX_ByteString string;
   CFX_WideString widestring;
   CFX_FloatRect rect;
-  CPWL_Color color;
+  CFX_Color color;
   std::vector<uint32_t> wordarray;
   std::vector<CFX_WideString> widestringarray;
 };
@@ -385,7 +385,7 @@ class Field : public CJS_EmbedObj {
   static void SetFillColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
-                           const CPWL_Color& color);
+                           const CFX_Color& color);
   static void SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                         const CFX_WideString& swFieldName,
                         int nControlIndex,
@@ -421,7 +421,7 @@ class Field : public CJS_EmbedObj {
   static void SetStrokeColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                              const CFX_WideString& swFieldName,
                              int nControlIndex,
-                             const CPWL_Color& color);
+                             const CFX_Color& color);
   static void SetStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        const CFX_WideString& swFieldName,
                        int nControlIndex,
@@ -429,7 +429,7 @@ class Field : public CJS_EmbedObj {
   static void SetTextColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
-                           const CPWL_Color& color);
+                           const CFX_Color& color);
   static void SetTextFont(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,
@@ -490,7 +490,7 @@ class Field : public CJS_EmbedObj {
   void AddDelay_String(FIELD_PROP prop, const CFX_ByteString& string);
   void AddDelay_WideString(FIELD_PROP prop, const CFX_WideString& string);
   void AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect);
-  void AddDelay_Color(FIELD_PROP prop, const CPWL_Color& color);
+  void AddDelay_Color(FIELD_PROP prop, const CFX_Color& color);
   void AddDelay_WordArray(FIELD_PROP prop, const std::vector<uint32_t>& array);
   void AddDelay_WideStringArray(FIELD_PROP prop,
                                 const std::vector<CFX_WideString>& array);

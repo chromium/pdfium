@@ -14,8 +14,8 @@
 #include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_basic.h"
+#include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "fpdfsdk/pdfwindow/cpwl_color.h"
 #include "fpdfsdk/pdfwindow/cpwl_timer.h"
 #include "fpdfsdk/pdfwindow/cpwl_timer_handler.h"
 
@@ -83,7 +83,7 @@ struct CPWL_Dash {
   int32_t nPhase;
 };
 
-inline bool operator==(const CPWL_Color& c1, const CPWL_Color& c2) {
+inline bool operator==(const CFX_Color& c1, const CFX_Color& c2) {
   return c1.nColorType == c2.nColorType && c1.fColor1 - c2.fColor1 < 0.0001 &&
          c1.fColor1 - c2.fColor1 > -0.0001 &&
          c1.fColor2 - c2.fColor2 < 0.0001 &&
@@ -93,16 +93,16 @@ inline bool operator==(const CPWL_Color& c1, const CPWL_Color& c2) {
          c1.fColor4 - c2.fColor4 < 0.0001 && c1.fColor4 - c2.fColor4 > -0.0001;
 }
 
-inline bool operator!=(const CPWL_Color& c1, const CPWL_Color& c2) {
+inline bool operator!=(const CFX_Color& c1, const CFX_Color& c2) {
   return !(c1 == c2);
 }
 
 #define PWL_SCROLLBAR_WIDTH 12.0f
 #define PWL_SCROLLBAR_TRANSPARENCY 150
 #define PWL_DEFAULT_SELBACKCOLOR \
-  CPWL_Color(COLORTYPE_RGB, 0, 51.0f / 255.0f, 113.0f / 255.0f)
-#define PWL_DEFAULT_BLACKCOLOR CPWL_Color(COLORTYPE_GRAY, 0)
-#define PWL_DEFAULT_WHITECOLOR CPWL_Color(COLORTYPE_GRAY, 1)
+  CFX_Color(COLORTYPE_RGB, 0, 51.0f / 255.0f, 113.0f / 255.0f)
+#define PWL_DEFAULT_BLACKCOLOR CFX_Color(COLORTYPE_GRAY, 0)
+#define PWL_DEFAULT_WHITECOLOR CFX_Color(COLORTYPE_GRAY, 1)
 
 class IPWL_Provider : public CFX_Observable<IPWL_Provider> {
  public:
@@ -152,12 +152,12 @@ struct PWL_CREATEPARAM {
   IPWL_Provider::ObservedPtr pProvider;         // required
   IPWL_FocusHandler* pFocusHandler;             // optional
   uint32_t dwFlags;                             // optional
-  CPWL_Color sBackgroundColor;                  // optional
+  CFX_Color sBackgroundColor;                   // optional
   CPDFSDK_Widget::ObservedPtr pAttachedWidget;  // required
   BorderStyle nBorderStyle;                     // optional
   int32_t dwBorderWidth;                        // optional
-  CPWL_Color sBorderColor;                      // optional
-  CPWL_Color sTextColor;                        // optional
+  CFX_Color sBorderColor;                       // optional
+  CFX_Color sTextColor;                         // optional
   int32_t nTransparency;                        // optional
   float fFontSize;                              // optional
   CPWL_Dash sDash;                              // optional
@@ -215,13 +215,13 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 
-  CPWL_Color GetBackgroundColor() const;
-  void SetBackgroundColor(const CPWL_Color& color);
-  CPWL_Color GetBorderColor() const;
-  CPWL_Color GetTextColor() const;
-  void SetTextColor(const CPWL_Color& color);
-  CPWL_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
-  CPWL_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
+  CFX_Color GetBackgroundColor() const;
+  void SetBackgroundColor(const CFX_Color& color);
+  CFX_Color GetBorderColor() const;
+  CFX_Color GetTextColor() const;
+  void SetTextColor(const CFX_Color& color);
+  CFX_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
+  CFX_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
 
   void SetBorderStyle(BorderStyle eBorderStyle);
   BorderStyle GetBorderStyle() const;

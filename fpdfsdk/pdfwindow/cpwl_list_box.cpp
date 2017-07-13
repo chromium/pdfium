@@ -114,7 +114,7 @@ void CPWL_ListBox::GetThisAppearanceStream(std::ostringstream* psAppStream) {
       if (sItem.GetLength() > 0) {
         sListItems << "BT\n"
                    << CPWL_Utils::GetColorAppStream(
-                          CPWL_Color(COLORTYPE_RGB, 1, 1, 1))
+                          CFX_Color(COLORTYPE_RGB, 1, 1, 1))
                    << sItem << "ET\n";
       }
     } else {

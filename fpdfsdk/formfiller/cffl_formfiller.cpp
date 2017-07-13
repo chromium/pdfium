@@ -298,14 +298,14 @@ PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
 
   FX_COLORREF color;
   if (m_pWidget->GetFillColor(color))
-    cp.sBackgroundColor = CPWL_Color(color);
+    cp.sBackgroundColor = CFX_Color(color);
   if (m_pWidget->GetBorderColor(color))
-    cp.sBorderColor = CPWL_Color(color);
+    cp.sBorderColor = CFX_Color(color);
 
-  cp.sTextColor = CPWL_Color(COLORTYPE_GRAY, 0);
+  cp.sTextColor = CFX_Color(COLORTYPE_GRAY, 0);
 
   if (m_pWidget->GetTextColor(color))
-    cp.sTextColor = CPWL_Color(color);
+    cp.sTextColor = CFX_Color(color);
 
   cp.fFontSize = m_pWidget->GetFontSize();
   cp.dwBorderWidth = m_pWidget->GetBorderWidth();

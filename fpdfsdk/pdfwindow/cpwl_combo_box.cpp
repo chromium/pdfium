@@ -299,8 +299,8 @@ void CPWL_ComboBox::CreateButton(const PWL_CREATEPARAM& cp) {
   PWL_CREATEPARAM bcp = cp;
   bcp.pParentWnd = this;
   bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
-  bcp.sBackgroundColor = CPWL_Color(COLORTYPE_RGB, 220.0f / 255.0f,
-                                    220.0f / 255.0f, 220.0f / 255.0f);
+  bcp.sBackgroundColor = CFX_Color(COLORTYPE_RGB, 220.0f / 255.0f,
+                                   220.0f / 255.0f, 220.0f / 255.0f);
   bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
   bcp.dwBorderWidth = 2;
   bcp.nBorderStyle = BorderStyle::BEVELED;
