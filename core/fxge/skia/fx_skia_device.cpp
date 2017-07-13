@@ -599,10 +599,27 @@ bool Upsample(const CFX_RetainPtr<CFX_DIBSource>& pSource,
       break;
     }
     case 8:
+      // we upscale ctables to 32bit.
       if (pSource->GetPalette()) {
-        *ctPtr =
-            new SkColorTable(pSource->GetPalette(), pSource->GetPaletteSize());
-        colorType = SkColorType::kIndex_8_SkColorType;
+        dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
+        SkPMColor* dst32Pixels = dst32Storage.get();
+        const SkPMColor* ctable = pSource->GetPalette();
+        const unsigned ctableSize = pSource->GetPaletteSize();
+        for (int y = 0; y < height; ++y) {
+          const uint8_t* srcRow =
+              static_cast<const uint8_t*>(buffer) + y * rowBytes;
+          uint32_t* dstRow = dst32Pixels + y * width;
+          for (int x = 0; x < width; ++x) {
+            unsigned index = srcRow[x];
+            if (index >= ctableSize) {
+              index = 0;
+            }
+            dstRow[x] = ctable[index];
+          }
+        }
+        buffer = dst32Storage.get();
+        rowBytes = width * sizeof(uint32_t);
+        colorType = SkColorType::kN32_SkColorType;
       }
       break;
     case 24: {
