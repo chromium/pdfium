@@ -6,15 +6,14 @@
 
 #include "core/fxcodec/jbig2/JBig2_HtrdProc.h"
 
-#include <memory>
-
 #include "core/fxcodec/jbig2/JBig2_GsidProc.h"
 #include "core/fxcrt/fx_basic.h"
 #include "third_party/base/ptr_util.h"
 
-CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
-                                            JBig2ArithCtx* gbContext,
-                                            IFX_Pause* pPause) {
+std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_Arith(
+    CJBig2_ArithDecoder* pArithDecoder,
+    JBig2ArithCtx* gbContext,
+    IFX_Pause* pPause) {
   uint32_t ng, mg;
   int32_t x, y;
   uint32_t HBPP;
@@ -65,10 +64,11 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     }
   }
   FX_Free(GI);
-  return HTREG.release();
+  return HTREG;
 }
 
-CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream) {
+std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_MMR(
+    CJBig2_BitStream* pStream) {
   uint32_t ng, mg;
   int32_t x, y;
   uint32_t* GI;
@@ -100,5 +100,5 @@ CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream) {
     }
   }
   FX_Free(GI);
-  return HTREG.release();
+  return HTREG;
 }

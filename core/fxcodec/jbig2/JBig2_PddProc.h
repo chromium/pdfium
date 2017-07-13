@@ -7,6 +7,8 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_PDDPROC_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_PDDPROC_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 
 class CJBig2_ArithDecoder;
@@ -17,11 +19,12 @@ struct JBig2ArithCtx;
 
 class CJBig2_PDDProc {
  public:
-  CJBig2_PatternDict* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
-                                   JBig2ArithCtx* gbContext,
-                                   IFX_Pause* pPause);
+  std::unique_ptr<CJBig2_PatternDict> decode_Arith(
+      CJBig2_ArithDecoder* pArithDecoder,
+      JBig2ArithCtx* gbContext,
+      IFX_Pause* pPause);
 
-  CJBig2_PatternDict* decode_MMR(CJBig2_BitStream* pStream);
+  std::unique_ptr<CJBig2_PatternDict> decode_MMR(CJBig2_BitStream* pStream);
 
  public:
   bool HDMMR;

@@ -14,8 +14,9 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 #include "third_party/base/ptr_util.h"
 
-CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
-                                             JBig2ArithCtx* grContext) {
+std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
+    CJBig2_BitStream* pStream,
+    JBig2ArithCtx* grContext) {
   auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
   auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
   SBREG->fill(SBDEFPIXEL);
@@ -48,20 +49,19 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       } else {
         int32_t IDS;
         int32_t nVal = pHuffmanDecoder->decodeAValue(SBHUFFDS, &IDS);
-        if (nVal == JBIG2_OOB) {
+        if (nVal == JBIG2_OOB)
           break;
-        } else if (nVal != 0) {
+
+        if (nVal != 0)
           return nullptr;
-        } else {
-          CURS = CURS + IDS + SBDSOFFSET;
-        }
+
+        CURS = CURS + IDS + SBDSOFFSET;
       }
       uint8_t CURT = 0;
       if (SBSTRIPS != 1) {
         uint32_t nTmp = 1;
-        while ((uint32_t)(1 << nTmp) < SBSTRIPS) {
-          nTmp++;
-        }
+        while (static_cast<uint32_t>(1 << nTmp) < SBSTRIPS)
+          ++nTmp;
         int32_t nVal;
         if (pStream->readNBits(nTmp, &nVal) != 0)
           return nullptr;
@@ -89,14 +89,12 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
             break;
           }
         }
-        if (IDI < SBNUMSYMS) {
+        if (IDI < SBNUMSYMS)
           break;
-        }
       }
       bool RI = 0;
-      if (SBREFINE != 0 && pStream->read1Bit(&RI) != 0) {
+      if (SBREFINE != 0 && pStream->read1Bit(&RI) != 0)
         return nullptr;
-      }
       CJBig2_Image* IBI = nullptr;
       if (RI == 0) {
         IBI = SBSYMS[IDI];
@@ -137,12 +135,10 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
 
-        {
-          auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(pStream);
-          IBI = pGRRD->decode(pArithDecoder.get(), grContext);
-          if (!IBI)
-            return nullptr;
-        }
+        auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(pStream);
+        IBI = pGRRD->decode(pArithDecoder.get(), grContext).release();
+        if (!IBI)
+          return nullptr;
 
         pStream->alignByte();
         pStream->offset(2);
@@ -151,9 +147,9 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
           return nullptr;
         }
       }
-      if (!IBI) {
+      if (!IBI)
         continue;
-      }
+
       uint32_t WI = IBI->width();
       uint32_t HI = IBI->height();
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
@@ -208,12 +204,13 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       NINSTANCES = NINSTANCES + 1;
     }
   }
-  return SBREG.release();
+  return SBREG;
 }
 
-CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* grContext,
-                                           JBig2IntDecoderState* pIDS) {
+std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
+    CJBig2_ArithDecoder* pArithDecoder,
+    JBig2ArithCtx* grContext,
+    JBig2IntDecoderState* pIDS) {
   std::unique_ptr<CJBig2_ArithIntDecoder> IADT;
   std::unique_ptr<CJBig2_ArithIntDecoder> IAFS;
   std::unique_ptr<CJBig2_ArithIntDecoder> IADS;
@@ -350,7 +347,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
-        IBI.reset(pGRRD->decode(pArithDecoder, grContext));
+        IBI = pGRRD->decode(pArithDecoder, grContext);
         pIBI = IBI.get();
       }
       if (!pIBI)
@@ -407,5 +404,5 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
       ++NINSTANCES;
     }
   }
-  return SBREG.release();
+  return SBREG;
 }

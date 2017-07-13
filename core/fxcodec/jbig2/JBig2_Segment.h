@@ -7,6 +7,8 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_SEGMENT_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_SEGMENT_H_
 
+#include <memory>
+
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
@@ -54,13 +56,10 @@ class CJBig2_Segment {
   uint32_t m_dwDataOffset;
   JBig2_SegmentState m_State;
   JBig2_ResultType m_nResultType;
-  union {
-    CJBig2_SymbolDict* sd;
-    CJBig2_PatternDict* pd;
-    CJBig2_Image* im;
-    CJBig2_HuffmanTable* ht;
-    void* vd;
-  } m_Result;
+  std::unique_ptr<CJBig2_SymbolDict> m_SymbolDict;
+  std::unique_ptr<CJBig2_PatternDict> m_PatternDict;
+  std::unique_ptr<CJBig2_Image> m_Image;
+  std::unique_ptr<CJBig2_HuffmanTable> m_HuffmanTable;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_SEGMENT_H_

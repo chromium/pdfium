@@ -22,7 +22,7 @@
 #include "core/fxcrt/fx_basic.h"
 #include "third_party/base/ptr_util.h"
 
-CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
+std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     std::vector<JBig2ArithCtx>* gbContext,
     std::vector<JBig2ArithCtx>* grContext) {
@@ -31,7 +31,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   int32_t HCDH;
   uint32_t SYMWIDTH, TOTWIDTH;
   int32_t DW;
-  CJBig2_Image* BS;
   uint32_t I, J, REFAGGNINST;
   std::vector<bool> EXFLAGS;
   uint32_t EXINDEX;
@@ -69,7 +68,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   HCHEIGHT = 0;
   NSYMSDECODED = 0;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
-    BS = nullptr;
+    std::unique_ptr<CJBig2_Image> BS;
     IADH->decode(pArithDecoder, &HCDH);
     HCHEIGHT = HCHEIGHT + HCDH;
     if ((int)HCHEIGHT < 0 || (int)HCHEIGHT > JBIG2_MAX_IMAGE_SIZE)
@@ -218,8 +217,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
             return nullptr;
         }
       }
-      SDNEWSYMS[NSYMSDECODED] = pdfium::WrapUnique<CJBig2_Image>(BS);
-      BS = nullptr;
+      SDNEWSYMS[NSYMSDECODED] = std::move(BS);
       NSYMSDECODED = NSYMSDECODED + 1;
     }
   }
@@ -259,10 +257,10 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     }
     ++J;
   }
-  return pDict.release();
+  return pDict;
 }
 
-CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
+std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Huffman(
     CJBig2_BitStream* pStream,
     std::vector<JBig2ArithCtx>* gbContext,
     std::vector<JBig2ArithCtx>* grContext) {
@@ -272,7 +270,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   int32_t HCDH;
   uint32_t SYMWIDTH, TOTWIDTH, HCFIRSTSYM;
   int32_t DW;
-  CJBig2_Image *BS, *BHC;
   uint32_t I, J, REFAGGNINST;
   std::vector<bool> EXFLAGS;
   uint32_t EXINDEX;
@@ -292,7 +289,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   std::vector<CJBig2_Image*> SBSYMS;
   auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
   SDNEWSYMS.resize(SDNUMNEWSYMS);
-  BHC = nullptr;
   if (SDREFAGG == 0)
     SDNEWSYMWIDTHS.resize(SDNUMNEWSYMS);
   auto pDict = pdfium::MakeUnique<CJBig2_SymbolDict>();
@@ -300,7 +296,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
 
   HCHEIGHT = 0;
   NSYMSDECODED = 0;
-  BS = nullptr;
+  std::unique_ptr<CJBig2_Image> BS;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     if (pHuffmanDecoder->decodeAValue(SDHUFFDH, &HCDH) != 0)
       return nullptr;
@@ -456,12 +452,10 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
 
           pStream->alignByte();
           pStream->offset(2);
-          if ((uint32_t)nVal != (pStream->getOffset() - nTmp)) {
-            delete BS;
+          if ((uint32_t)nVal != (pStream->getOffset() - nTmp))
             return nullptr;
-          }
         }
-        SDNEWSYMS[NSYMSDECODED] = pdfium::WrapUnique<CJBig2_Image>(BS);
+        SDNEWSYMS[NSYMSDECODED] = std::move(BS);
       }
       if (SDREFAGG == 0)
         SDNEWSYMWIDTHS[NSYMSDECODED] = SYMWIDTH;
@@ -472,10 +466,11 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
         return nullptr;
 
       pStream->alignByte();
+      std::unique_ptr<CJBig2_Image> BHC;
       if (BMSIZE == 0) {
         stride = (TOTWIDTH + 7) >> 3;
         if (pStream->getByteLeft() >= stride * HCHEIGHT) {
-          BHC = new CJBig2_Image(TOTWIDTH, HCHEIGHT);
+          BHC = pdfium::MakeUnique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
           for (I = 0; I < HCHEIGHT; I++) {
             JBIG2_memcpy(BHC->m_pData + I * BHC->stride(),
                          pStream->getPointer(), stride);
@@ -493,16 +488,14 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
         pStream->alignByte();
       }
       nTmp = 0;
-      if (!BHC) {
+      if (!BHC)
         continue;
-      }
+
       for (I = HCFIRSTSYM; I < NSYMSDECODED; I++) {
         SDNEWSYMS[I] = pdfium::WrapUnique<CJBig2_Image>(
             BHC->subImage(nTmp, 0, SDNEWSYMWIDTHS[I], HCHEIGHT));
         nTmp += SDNEWSYMWIDTHS[I];
       }
-      delete BHC;
-      BHC = nullptr;
     }
   }
   EXINDEX = 0;
@@ -545,5 +538,5 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
     }
     ++J;
   }
-  return pDict.release();
+  return pDict;
 }

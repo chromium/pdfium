@@ -462,7 +462,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     CJBig2_Segment* pSeg =
         findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_Result.sd->NumImages();
+      pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_SymbolDict->NumImages();
       pLRSeg = pSeg;
     }
   }
@@ -475,7 +475,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
-        const CJBig2_SymbolDict& dict = *pSeg->m_Result.sd;
+        const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict.get();
         for (size_t j = 0; j < dict.NumImages(); ++j)
           SDINSYMS.get()[dwTemp + j] = dict.GetImage(j);
         dwTemp += dict.NumImages();
@@ -507,7 +507,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pSymbolDictDecoder->SDHUFFDH = pSeg->m_Result.ht;
+      pSymbolDictDecoder->SDHUFFDH = pSeg->m_HuffmanTable.get();
     }
     if (cSDHUFFDW == 0) {
       Table_B2 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
@@ -522,7 +522,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pSymbolDictDecoder->SDHUFFDW = pSeg->m_Result.ht;
+      pSymbolDictDecoder->SDHUFFDW = pSeg->m_HuffmanTable.get();
     }
     if (cSDHUFFBMSIZE == 0) {
       Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
@@ -533,7 +533,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->m_Result.ht;
+      pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->m_HuffmanTable.get();
     }
     if (pSymbolDictDecoder->SDREFAGG == 1) {
       if (cSDHUFFAGGINST == 0) {
@@ -547,7 +547,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
             findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
         if (!pSeg)
           return JBIG2_ERROR_FATAL;
-        pSymbolDictDecoder->SDHUFFAGGINST = pSeg->m_Result.ht;
+        pSymbolDictDecoder->SDHUFFAGGINST = pSeg->m_HuffmanTable.get();
       }
     }
   }
@@ -562,12 +562,12 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
   std::vector<JBig2ArithCtx> grContext;
   if ((wFlags & 0x0100) && pLRSeg) {
     if (bUseGbContext) {
-      gbContext = pLRSeg->m_Result.sd->GbContext();
+      gbContext = pLRSeg->m_SymbolDict->GbContext();
       if (gbContext.size() != gbContextSize)
         return JBIG2_ERROR_FATAL;
     }
     if (bUseGrContext) {
-      grContext = pLRSeg->m_Result.sd->GrContext();
+      grContext = pLRSeg->m_SymbolDict->GrContext();
       if (grContext.size() != grContextSize)
         return JBIG2_ERROR_FATAL;
     }
@@ -586,8 +586,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     for (auto it = m_pSymbolDictCache->begin(); it != m_pSymbolDictCache->end();
          ++it) {
       if (it->first == key) {
-        std::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
-        pSegment->m_Result.sd = copy.release();
+        pSegment->m_SymbolDict = it->second->DeepCopy();
         m_pSymbolDictCache->push_front(
             CJBig2_CachePair(key, std::move(it->second)));
         m_pSymbolDictCache->erase(it);
@@ -600,23 +599,23 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     if (bUseGbContext) {
       auto pArithDecoder =
           pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
-      pSegment->m_Result.sd = pSymbolDictDecoder->decode_Arith(
+      pSegment->m_SymbolDict = pSymbolDictDecoder->decode_Arith(
           pArithDecoder.get(), &gbContext, &grContext);
-      if (!pSegment->m_Result.sd)
+      if (!pSegment->m_SymbolDict)
         return JBIG2_ERROR_FATAL;
 
       m_pStream->alignByte();
       m_pStream->offset(2);
     } else {
-      pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(
+      pSegment->m_SymbolDict = pSymbolDictDecoder->decode_Huffman(
           m_pStream.get(), &gbContext, &grContext);
-      if (!pSegment->m_Result.sd)
+      if (!pSegment->m_SymbolDict)
         return JBIG2_ERROR_FATAL;
       m_pStream->alignByte();
     }
     if (m_bIsGlobal) {
       std::unique_ptr<CJBig2_SymbolDict> value =
-          pSegment->m_Result.sd->DeepCopy();
+          pSegment->m_SymbolDict->DeepCopy();
       int size = pdfium::CollectionSize<int>(*m_pSymbolDictCache);
       while (size >= kSymbolDictCacheMaxSize) {
         m_pSymbolDictCache->pop_back();
@@ -627,9 +626,9 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
   }
   if (wFlags & 0x0200) {
     if (bUseGbContext)
-      pSegment->m_Result.sd->SetGbContext(gbContext);
+      pSegment->m_SymbolDict->SetGbContext(gbContext);
     if (bUseGrContext)
-      pSegment->m_Result.sd->SetGrContext(grContext);
+      pSegment->m_SymbolDict->SetGrContext(grContext);
   }
   return JBIG2_SUCCESS;
 }
@@ -699,7 +698,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     CJBig2_Segment* pSeg =
         findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pTRD->SBNUMSYMS += pSeg->m_Result.sd->NumImages();
+      pTRD->SBNUMSYMS += pSeg->m_SymbolDict->NumImages();
     }
   }
 
@@ -711,7 +710,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
-        const CJBig2_SymbolDict& dict = *pSeg->m_Result.sd;
+        const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict.get();
         for (size_t j = 0; j < dict.NumImages(); ++j)
           SBSYMS.get()[dwTemp + j] = dict.GetImage(j);
         dwTemp += dict.NumImages();
@@ -769,7 +768,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFFS = pSeg->m_Result.ht;
+      pTRD->SBHUFFFS = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFDS == 0) {
       Table_B8 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
@@ -788,7 +787,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFDS = pSeg->m_Result.ht;
+      pTRD->SBHUFFDS = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFDT == 0) {
       Table_B11 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
@@ -807,7 +806,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFDT = pSeg->m_Result.ht;
+      pTRD->SBHUFFDT = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDW == 0) {
       Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
@@ -822,7 +821,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFRDW = pSeg->m_Result.ht;
+      pTRD->SBHUFFRDW = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDH == 0) {
       if (!Table_B14) {
@@ -841,7 +840,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFRDH = pSeg->m_Result.ht;
+      pTRD->SBHUFFRDH = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDX == 0) {
       if (!Table_B14) {
@@ -860,7 +859,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFRDX = pSeg->m_Result.ht;
+      pTRD->SBHUFFRDX = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDY == 0) {
       if (!Table_B14) {
@@ -879,7 +878,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFRDY = pSeg->m_Result.ht;
+      pTRD->SBHUFFRDY = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRSIZE == 0) {
       Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
@@ -890,7 +889,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
           findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
-      pTRD->SBHUFFRSIZE = pSeg->m_Result.ht;
+      pTRD->SBHUFFRSIZE = pSeg->m_HuffmanTable.get();
     }
   }
   std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> grContext;
@@ -903,17 +902,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     auto pArithDecoder =
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
-    pSegment->m_Result.im =
+    pSegment->m_Image =
         pTRD->decode_Arith(pArithDecoder.get(), grContext.get(), nullptr);
-    if (!pSegment->m_Result.im)
+    if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
-    pSegment->m_Result.im =
-        pTRD->decode_Huffman(m_pStream.get(), grContext.get());
-    if (!pSegment->m_Result.im)
+    pSegment->m_Image = pTRD->decode_Huffman(m_pStream.get(), grContext.get());
+    if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
   }
@@ -925,10 +923,9 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
-    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Result.im,
+    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Image.get(),
                          (JBig2ComposeOp)(ri.flags & 0x03));
-    delete pSegment->m_Result.im;
-    pSegment->m_Result.im = nullptr;
+    pSegment->m_Image.reset();
   }
   return JBIG2_SUCCESS;
 }
@@ -956,16 +953,16 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
     JBIG2_memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
     auto pArithDecoder =
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
-    pSegment->m_Result.pd =
+    pSegment->m_PatternDict =
         pPDD->decode_Arith(pArithDecoder.get(), gbContext.get(), pPause);
-    if (!pSegment->m_Result.pd)
+    if (!pSegment->m_PatternDict)
       return JBIG2_ERROR_FATAL;
 
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    pSegment->m_Result.pd = pPDD->decode_MMR(m_pStream.get());
-    if (!pSegment->m_Result.pd)
+    pSegment->m_PatternDict = pPDD->decode_MMR(m_pStream.get());
+    if (!pSegment->m_PatternDict)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
   }
@@ -1006,7 +1003,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
   if (!pSeg || (pSeg->m_cFlags.s.type != 16))
     return JBIG2_ERROR_FATAL;
 
-  CJBig2_PatternDict* pPatternDict = pSeg->m_Result.pd;
+  const CJBig2_PatternDict* pPatternDict = pSeg->m_PatternDict.get();
   if (!pPatternDict || (pPatternDict->NUMPATS == 0))
     return JBIG2_ERROR_FATAL;
 
@@ -1022,16 +1019,16 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     JBIG2_memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
     auto pArithDecoder =
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
-    pSegment->m_Result.im =
+    pSegment->m_Image =
         pHRD->decode_Arith(pArithDecoder.get(), gbContext.get(), pPause);
-    if (!pSegment->m_Result.im)
+    if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
 
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    pSegment->m_Result.im = pHRD->decode_MMR(m_pStream.get());
-    if (!pSegment->m_Result.im)
+    pSegment->m_Image = pHRD->decode_MMR(m_pStream.get());
+    if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
   }
@@ -1043,10 +1040,9 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
-    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Result.im,
+    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Image.get(),
                          (JBig2ComposeOp)(ri.flags & 0x03));
-    delete pSegment->m_Result.im;
-    pSegment->m_Result.im = nullptr;
+    pSegment->m_Image.reset();
   }
   return JBIG2_SUCCESS;
 }
@@ -1090,9 +1086,8 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     if (!m_pArithDecoder) {
       m_pArithDecoder =
           pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
-      m_ProcessingStatus = m_pGRD->Start_decode_Arith(&pSegment->m_Result.im,
-                                                      m_pArithDecoder.get(),
-                                                      &m_gbContext[0], pPause);
+      m_ProcessingStatus = m_pGRD->Start_decode_Arith(
+          &pSegment->m_Image, m_pArithDecoder.get(), &m_gbContext[0], pPause);
     } else {
       m_ProcessingStatus =
           m_pGRD->Continue_decode(pPause, m_pArithDecoder.get());
@@ -1109,14 +1104,14 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
         }
         FX_RECT Rect = m_pGRD->GetReplaceRect();
         m_pPage->composeFrom(m_ri.x + Rect.left, m_ri.y + Rect.top,
-                             pSegment->m_Result.im,
+                             pSegment->m_Image.get(),
                              (JBig2ComposeOp)(m_ri.flags & 0x03), &Rect);
       }
       return JBIG2_SUCCESS;
     }
     m_pArithDecoder.reset();
     m_gbContext.clear();
-    if (!pSegment->m_Result.im) {
+    if (!pSegment->m_Image) {
       m_ProcessingStatus = FXCODEC_STATUS_ERROR;
       m_pGRD.reset();
       return JBIG2_ERROR_FATAL;
@@ -1124,8 +1119,8 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    m_pGRD->Start_decode_MMR(&pSegment->m_Result.im, m_pStream.get());
-    if (!pSegment->m_Result.im) {
+    m_pGRD->Start_decode_MMR(&pSegment->m_Image, m_pStream.get());
+    if (!pSegment->m_Image) {
       m_pGRD.reset();
       return JBIG2_ERROR_FATAL;
     }
@@ -1142,10 +1137,9 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     }
     FX_RECT Rect = m_pGRD->GetReplaceRect();
     m_pPage->composeFrom(m_ri.x + Rect.left, m_ri.y + Rect.top,
-                         pSegment->m_Result.im,
+                         pSegment->m_Image.get(),
                          (JBig2ComposeOp)(m_ri.flags & 0x03), &Rect);
-    delete pSegment->m_Result.im;
-    pSegment->m_Result.im = nullptr;
+    pSegment->m_Image.reset();
   }
   m_pGRD.reset();
   return JBIG2_SUCCESS;
@@ -1185,7 +1179,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
     if (i >= pSegment->m_nReferred_to_segment_count)
       return JBIG2_ERROR_FATAL;
 
-    pGRRD->GRREFERENCE = pSeg->m_Result.im;
+    pGRRD->GRREFERENCE = pSeg->m_Image.get();
   } else {
     pGRRD->GRREFERENCE = m_pPage.get();
   }
@@ -1197,8 +1191,8 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
   auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
-  pSegment->m_Result.im = pGRRD->decode(pArithDecoder.get(), grContext.get());
-  if (!pSegment->m_Result.im)
+  pSegment->m_Image = pGRRD->decode(pArithDecoder.get(), grContext.get());
+  if (!pSegment->m_Image)
     return JBIG2_ERROR_FATAL;
 
   m_pStream->alignByte();
@@ -1211,22 +1205,21 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
-    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Result.im,
+    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Image.get(),
                          (JBig2ComposeOp)(ri.flags & 0x03));
-    delete pSegment->m_Result.im;
-    pSegment->m_Result.im = nullptr;
+    pSegment->m_Image.reset();
   }
   return JBIG2_SUCCESS;
 }
 
 int32_t CJBig2_Context::parseTable(CJBig2_Segment* pSegment) {
   pSegment->m_nResultType = JBIG2_HUFFMAN_TABLE_POINTER;
-  pSegment->m_Result.ht = nullptr;
+  pSegment->m_HuffmanTable.reset();
   auto pHuff = pdfium::MakeUnique<CJBig2_HuffmanTable>(m_pStream.get());
   if (!pHuff->IsOK())
     return JBIG2_ERROR_FATAL;
 
-  pSegment->m_Result.ht = pHuff.release();
+  pSegment->m_HuffmanTable = std::move(pHuff);
   m_pStream->alignByte();
   return JBIG2_SUCCESS;
 }

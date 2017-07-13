@@ -13,10 +13,11 @@
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "third_party/base/ptr_util.h"
 
-CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
-                                      JBig2ArithCtx* grContext) {
+std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode(
+    CJBig2_ArithDecoder* pArithDecoder,
+    JBig2ArithCtx* grContext) {
   if (GRW == 0 || GRH == 0)
-    return new CJBig2_Image(GRW, GRH);
+    return pdfium::MakeUnique<CJBig2_Image>(GRW, GRH);
 
   if (!GRTEMPLATE) {
     if ((GRAT[0] == -1) && (GRAT[1] == -1) && (GRAT[2] == -1) &&
@@ -29,10 +30,11 @@ CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
 
   if ((GRREFERENCEDX == 0) && (GRW == (uint32_t)GRREFERENCE->width()))
     return decode_Template1_opt(pArithDecoder, grContext);
+
   return decode_Template1_unopt(pArithDecoder, grContext);
 }
 
-CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   int LTP = 0;
@@ -145,10 +147,10 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
       }
     }
   }
-  return GRREG.release();
+  return GRREG;
 }
 
-CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode_Template0_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   if (!GRREFERENCE->m_pData)
@@ -273,14 +275,13 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
       }
     }
     pLine += nStride;
-    if (h < GRHR + GRREFERENCEDY) {
+    if (h < GRHR + GRREFERENCEDY)
       pLineR += nStrideR;
-    }
   }
-  return GRREG.release();
+  return GRREG;
 }
 
-CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   int LTP = 0;
@@ -379,10 +380,10 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
       }
     }
   }
-  return GRREG.release();
+  return GRREG;
 }
 
-CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode_Template1_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   if (!GRREFERENCE->m_pData)
@@ -496,9 +497,8 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
       }
     }
     pLine += nStride;
-    if (h < GRHR + GRREFERENCEDY) {
+    if (h < GRHR + GRREFERENCEDY)
       pLineR += nStrideR;
-    }
   }
-  return GRREG.release();
+  return GRREG;
 }

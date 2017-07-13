@@ -20,25 +20,8 @@ CJBig2_Segment::CJBig2_Segment() {
   m_dwDataOffset = 0;
   m_State = JBIG2_SEGMENT_HEADER_UNPARSED;
   m_nResultType = JBIG2_VOID_POINTER;
-  m_Result.vd = nullptr;
 }
+
 CJBig2_Segment::~CJBig2_Segment() {
   FX_Free(m_pReferred_to_segment_numbers);
-
-  switch (m_nResultType) {
-    case JBIG2_IMAGE_POINTER:
-      delete m_Result.im;
-      break;
-    case JBIG2_SYMBOL_DICT_POINTER:
-      delete m_Result.sd;
-      break;
-    case JBIG2_PATTERN_DICT_POINTER:
-      delete m_Result.pd;
-      break;
-    case JBIG2_HUFFMAN_TABLE_POINTER:
-      delete m_Result.ht;
-      break;
-    default:
-      FX_Free(m_Result.vd);
-  }
 }

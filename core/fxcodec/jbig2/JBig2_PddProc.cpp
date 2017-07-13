@@ -13,12 +13,12 @@
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
 #include "third_party/base/ptr_util.h"
 
-CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
+std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   uint32_t GRAY;
-  CJBig2_Image* BHDC = nullptr;
+  std::unique_ptr<CJBig2_Image> BHDC;
   auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>();
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
@@ -53,13 +53,13 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     pDict->HDPATS[GRAY] = BHDC->subImage(HDPW * GRAY, 0, HDPW, HDPH);
     GRAY = GRAY + 1;
   }
-  delete BHDC;
-  return pDict.release();
+  return pDict;
 }
 
-CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream) {
+std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_MMR(
+    CJBig2_BitStream* pStream) {
   uint32_t GRAY;
-  CJBig2_Image* BHDC = nullptr;
+  std::unique_ptr<CJBig2_Image> BHDC;
   auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>();
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
@@ -78,6 +78,5 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream) {
     pDict->HDPATS[GRAY] = BHDC->subImage(HDPW * GRAY, 0, HDPW, HDPH);
     GRAY = GRAY + 1;
   }
-  delete BHDC;
-  return pDict.release();
+  return pDict;
 }
