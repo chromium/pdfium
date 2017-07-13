@@ -13,8 +13,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 namespace {
 
@@ -67,7 +67,7 @@ void CFWL_CheckBoxTP::DrawSignCheck(CFX_Graphics* pGraphics,
   mt.SetIdentity();
   mt.Translate(pRtSign->left, pRtSign->top);
   mt.Concat(*pMatrix);
-  CFX_Color crFill(argbFill);
+  CXFA_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(&crFill);
   pGraphics->FillPath(m_pCheckPath.get(), FXFILL_WINDING, &mt);
@@ -80,7 +80,7 @@ void CFWL_CheckBoxTP::DrawSignCircle(CFX_Graphics* pGraphics,
                                      CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.AddEllipse(*pRtSign);
-  CFX_Color crFill(argbFill);
+  CXFA_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(&crFill);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
@@ -98,7 +98,7 @@ void CFWL_CheckBoxTP::DrawSignCross(CFX_Graphics* pGraphics,
   path.AddLine(CFX_PointF(pRtSign->left, fBottom),
                CFX_PointF(fRight, pRtSign->top));
 
-  CFX_Color crFill(argbFill);
+  CXFA_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetStrokeColor(&crFill);
   pGraphics->SetLineWidth(1.0f);
@@ -120,7 +120,7 @@ void CFWL_CheckBoxTP::DrawSignDiamond(CFX_Graphics* pGraphics,
   path.LineTo(CFX_PointF(pRtSign->right(), pRtSign->top + fHeight / 2));
   path.LineTo(CFX_PointF(pRtSign->left + fWidth / 2, pRtSign->top));
 
-  CFX_Color crFill(argbFill);
+  CXFA_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(&crFill);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
@@ -134,7 +134,7 @@ void CFWL_CheckBoxTP::DrawSignSquare(CFX_Graphics* pGraphics,
   CFX_Path path;
   path.AddRectangle(pRtSign->left, pRtSign->top, pRtSign->width,
                     pRtSign->height);
-  CFX_Color crFill(argbFill);
+  CXFA_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(&crFill);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
@@ -171,7 +171,7 @@ void CFWL_CheckBoxTP::DrawSignStar(CFX_Graphics* pGraphics,
     path.LineTo(points[nNext]);
   }
 
-  CFX_Color crFill(argbFill);
+  CXFA_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(&crFill);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);

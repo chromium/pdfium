@@ -19,9 +19,9 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_shading.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 CFWL_WidgetTP::CFWL_WidgetTP()
     : m_dwRefCount(1), m_pFDEFont(nullptr), m_pColorData(nullptr) {}
@@ -108,7 +108,7 @@ void CFWL_WidgetTP::DrawBorder(CFX_Graphics* pGraphics,
   path.AddRectangle(pRect->left + 1, pRect->top + 1, pRect->width - 2,
                     pRect->height - 2);
   pGraphics->SaveGraphState();
-  CFX_Color crFill(ArgbEncode(255, 0, 0, 0));
+  CXFA_Color crFill(ArgbEncode(255, 0, 0, 0));
   pGraphics->SetFillColor(&crFill);
   pGraphics->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
   pGraphics->RestoreGraphState();
@@ -129,7 +129,7 @@ void CFWL_WidgetTP::FillSoildRect(CFX_Graphics* pGraphics,
   if (!pRect)
     return;
   pGraphics->SaveGraphState();
-  CFX_Color crFill(fillColor);
+  CXFA_Color crFill(fillColor);
   pGraphics->SetFillColor(&crFill);
   CFX_Path path;
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
@@ -154,7 +154,7 @@ void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
   CFX_PointF endPoint(fx2, fy2);
   CFX_Shading shading(begPoint, endPoint, false, false, beginColor, endColor);
   pGraphics->SaveGraphState();
-  CFX_Color color1(&shading);
+  CXFA_Color color1(&shading);
   pGraphics->SetFillColor(&color1);
   pGraphics->FillPath(path, fillMode, pMatrix);
   pGraphics->RestoreGraphState();
@@ -168,7 +168,7 @@ void CFWL_WidgetTP::DrawFocus(CFX_Graphics* pGraphics,
   if (!pRect)
     return;
   pGraphics->SaveGraphState();
-  CFX_Color cr(0xFF000000);
+  CXFA_Color cr(0xFF000000);
   pGraphics->SetStrokeColor(&cr);
   float DashPattern[2] = {1, 1};
   pGraphics->SetLineDash(0.0f, DashPattern, 2);
@@ -228,7 +228,7 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
       break;
     }
   }
-  CFX_Color cr(argSign);
+  CXFA_Color cr(argSign);
   pGraphics->SetFillColor(&cr);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
 }
@@ -248,7 +248,7 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
                    m_pColorData->clrEnd[eState - 1], &path, FXFILL_WINDING,
                    pMatrix);
 
-  CFX_Color rcStroke;
+  CXFA_Color rcStroke;
   rcStroke.Set(m_pColorData->clrBorder[eState - 1]);
   pGraphics->SetStrokeColor(&rcStroke);
   pGraphics->StrokePath(&path, pMatrix);

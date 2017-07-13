@@ -12,10 +12,10 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_pattern.h"
 #include "xfa/fxgraphics/cfx_shading.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 namespace {
 
@@ -165,7 +165,7 @@ void CFX_Graphics::SetLineWidth(float lineWidth, bool isActOnDash) {
   }
 }
 
-void CFX_Graphics::SetStrokeColor(CFX_Color* color) {
+void CFX_Graphics::SetStrokeColor(CXFA_Color* color) {
   if (!color)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
@@ -173,7 +173,7 @@ void CFX_Graphics::SetStrokeColor(CFX_Color* color) {
   }
 }
 
-void CFX_Graphics::SetFillColor(CFX_Color* color) {
+void CFX_Graphics::SetFillColor(CXFA_Color* color) {
   if (!color)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {

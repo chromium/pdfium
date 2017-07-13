@@ -10,8 +10,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 namespace {
 
@@ -92,7 +92,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
                      m_pThemeData->clrBtnBK[eState - 1][0],
                      m_pThemeData->clrBtnBK[eState - 1][1], &path,
                      FXFILL_WINDING, pMatrix);
-    CFX_Color rcStroke;
+    CXFA_Color rcStroke;
     rcStroke.Set(m_pThemeData->clrBtnBorder[eState - 1]);
     pGraphics->SaveGraphState();
     pGraphics->SetStrokeColor(&rcStroke);
@@ -108,7 +108,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
                      m_pThemeData->clrBtnBK[eState - 1][0],
                      m_pThemeData->clrBtnBK[eState - 1][1], &path,
                      FXFILL_WINDING, pMatrix);
-    CFX_Color rcStroke;
+    CXFA_Color rcStroke;
     rcStroke.Set(m_pThemeData->clrBtnBorder[eState - 1]);
     pGraphics->SaveGraphState();
     pGraphics->SetStrokeColor(&rcStroke);
@@ -140,7 +140,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
     path.MoveTo(CFX_PointF(fX, fY + 2));
     path.LineTo(CFX_PointF(fX + fPawLen, fY + 2));
 
-    CFX_Color clrLight(m_pThemeData->clrPawColorLight[eState - 1]);
+    CXFA_Color clrLight(m_pThemeData->clrPawColorLight[eState - 1]);
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(&clrLight);
     pGraphics->StrokePath(&path);
@@ -156,7 +156,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
     path.MoveTo(CFX_PointF(fX, fY + 3));
     path.LineTo(CFX_PointF(fX + fPawLen, fY + 3));
 
-    CFX_Color clrDark(m_pThemeData->clrPawColorDark[eState - 1]);
+    CXFA_Color clrDark(m_pThemeData->clrPawColorDark[eState - 1]);
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(&clrDark);
     pGraphics->StrokePath(&path, pMatrix);
@@ -177,7 +177,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
     path.MoveTo(CFX_PointF(fX + 2, fY));
     path.LineTo(CFX_PointF(fX + 2, fY + fPawLen));
 
-    CFX_Color clrLight(m_pThemeData->clrPawColorLight[eState - 1]);
+    CXFA_Color clrLight(m_pThemeData->clrPawColorLight[eState - 1]);
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(&clrLight);
     pGraphics->StrokePath(&path, pMatrix);
@@ -193,7 +193,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
     path.MoveTo(CFX_PointF(fX + 3, fY));
     path.LineTo(CFX_PointF(fX + 3, fY + fPawLen));
 
-    CFX_Color clrDark(m_pThemeData->clrPawColorDark[eState - 1]);
+    CXFA_Color clrDark(m_pThemeData->clrPawColorDark[eState - 1]);
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(&clrDark);
     pGraphics->StrokePath(&path, pMatrix);
@@ -210,7 +210,7 @@ void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
     return;
 
   pGraphics->SaveGraphState();
-  CFX_Color colorLine(ArgbEncode(255, 238, 237, 229));
+  CXFA_Color colorLine(ArgbEncode(255, 238, 237, 229));
   CFX_Path path;
   float fRight = pRect->right();
   float fBottom = pRect->bottom();

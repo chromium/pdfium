@@ -23,8 +23,8 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 namespace {
 
@@ -93,7 +93,7 @@ void CXFA_FFField::DrawHighlight(CFX_Graphics* pGS,
   }
 
   CXFA_FFDoc* pDoc = GetDoc();
-  CFX_Color crHighlight(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc));
+  CXFA_Color crHighlight(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc));
   pGS->SetFillColor(&crHighlight);
   CFX_Path path;
   if (bEllipse)
@@ -108,7 +108,7 @@ void CXFA_FFField::DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
   if (!(m_dwStatus & XFA_WidgetStatus_Focused))
     return;
 
-  CFX_Color cr(0xFF000000);
+  CXFA_Color cr(0xFF000000);
   pGS->SetStrokeColor(&cr);
 
   float DashPattern[2] = {1, 1};

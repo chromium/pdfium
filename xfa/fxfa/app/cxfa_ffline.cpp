@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/app/cxfa_ffline.h"
 
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 #include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 
@@ -88,7 +88,7 @@ void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
   else
     linePath.AddLine(rtLine.TopLeft(), rtLine.BottomRight());
 
-  CFX_Color color(lineColor);
+  CXFA_Color color(lineColor);
   pGS->SaveGraphState();
   pGS->SetLineWidth(fLineWidth, true);
   XFA_StrokeTypeSetLineDash(pGS, iStrokeType, iCap);

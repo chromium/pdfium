@@ -18,8 +18,8 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 CXFA_FFPushButton::CXFA_FFPushButton(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
@@ -213,7 +213,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
       CFX_RectF rtFill(0, 0, m_pNormalWidget->GetWidgetRect().Size());
       float fLineWith = GetLineWidth();
       rtFill.Deflate(fLineWith, fLineWith);
-      CFX_Color cr(FXARGB_MAKE(128, 128, 255, 255));
+      CXFA_Color cr(FXARGB_MAKE(128, 128, 255, 255));
       pGraphics->SetFillColor(&cr);
 
       CFX_Path path;
@@ -227,7 +227,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
       float fLineWidth = GetLineWidth();
-      CFX_Color cr(FXARGB_MAKE(255, 128, 255, 255));
+      CXFA_Color cr(FXARGB_MAKE(255, 128, 255, 255));
       pGraphics->SetStrokeColor(&cr);
       pGraphics->SetLineWidth(fLineWidth);
 

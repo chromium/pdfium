@@ -11,8 +11,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxfa/app/cxfa_fwltheme.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 CFWL_EditTP::CFWL_EditTP() {}
 
@@ -30,7 +30,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
         fWidth = edge.GetThickness();
       }
     }
-    CFX_Color crLine(cr);
+    CXFA_Color crLine(cr);
     pParams->m_pGraphics->SetStrokeColor(&crLine);
     pParams->m_pGraphics->SetLineWidth(fWidth);
     pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);
@@ -46,7 +46,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       if (pParams->m_pPath) {
         CFX_Graphics* pGraphics = pParams->m_pGraphics;
         pGraphics->SaveGraphState();
-        CFX_Color crSelected(FWLTHEME_COLOR_BKSelected);
+        CXFA_Color crSelected(FWLTHEME_COLOR_BKSelected);
         pGraphics->SetFillColor(&crSelected);
         pGraphics->FillPath(pParams->m_pPath, FXFILL_WINDING,
                             &pParams->m_matrix);
@@ -55,7 +55,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
         CFX_Path path;
         path.AddRectangle(pParams->m_rtPart.left, pParams->m_rtPart.top,
                           pParams->m_rtPart.width, pParams->m_rtPart.height);
-        CFX_Color cr(FWLTHEME_COLOR_Background);
+        CXFA_Color cr(FWLTHEME_COLOR_Background);
         if (!pParams->m_bStaticBackground) {
           if (pParams->m_dwStates & CFWL_PartState_Disabled)
             cr.Set(FWLTHEME_COLOR_EDGERB1);
@@ -75,7 +75,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     case CFWL_Part::CombTextLine: {
       FX_ARGB cr = 0xFF000000;
       float fWidth = 1.0f;
-      CFX_Color crLine(cr);
+      CXFA_Color crLine(cr);
       pParams->m_pGraphics->SetStrokeColor(&crLine);
       pParams->m_pGraphics->SetLineWidth(fWidth);
       pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);

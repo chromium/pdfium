@@ -30,11 +30,11 @@
 #include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_pattern.h"
 #include "xfa/fxgraphics/cfx_shading.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 CXFA_FFWidget::CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc)
     : CXFA_ContentLayoutItem(pDataAcc->GetNode()),
@@ -1541,7 +1541,7 @@ static void XFA_BOX_Fill_Radial(CXFA_Box box,
                            rtFill.Height() * rtFill.Height()) /
                           2,
                       true, true, crStart, crEnd);
-  CFX_Color cr(&shading);
+  CXFA_Color cr(&shading);
   pGS->SetFillColor(&cr);
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
 }
@@ -1576,7 +1576,7 @@ static void XFA_BOX_Fill_Pattern(CXFA_Box box,
   }
 
   CFX_Pattern pattern(iHatch, crEnd, crStart);
-  CFX_Color cr(&pattern, 0x0);
+  CXFA_Color cr(&pattern, 0x0);
   pGS->SetFillColor(&cr);
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
 }
@@ -1612,7 +1612,7 @@ static void XFA_BOX_Fill_Linear(CXFA_Box box,
       break;
   }
   CFX_Shading shading(ptStart, ptEnd, false, false, crStart, crEnd);
-  CFX_Color cr(&shading);
+  CXFA_Color cr(&shading);
   pGS->SetFillColor(&cr);
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
 }
@@ -1655,7 +1655,7 @@ static void XFA_BOX_Fill(CXFA_Box box,
       } else {
         cr = fill.GetColor();
       }
-      CFX_Color fillColor(cr);
+      CXFA_Color fillColor(cr);
       pGS->SetFillColor(&fillColor);
       pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
     } break;
@@ -1681,7 +1681,7 @@ static void XFA_BOX_StrokePath(CXFA_Stroke stroke,
   pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
   XFA_StrokeTypeSetLineDash(pGS, stroke.GetStrokeType(),
                             XFA_ATTRIBUTEENUM_Butt);
-  CFX_Color fxColor(stroke.GetColor());
+  CXFA_Color fxColor(stroke.GetColor());
   pGS->SetStrokeColor(&fxColor);
   pGS->StrokePath(pPath, pMatrix);
   pGS->RestoreGraphState();
@@ -1748,7 +1748,7 @@ static void XFA_BOX_StrokeArc(CXFA_Box box,
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
                  FX_PI);
 
-  CFX_Color cr(0xFF808080);
+  CXFA_Color cr(0xFF808080);
   pGS->SetStrokeColor(&cr);
   pGS->StrokePath(&arcPath, pMatrix);
   arcPath.Clear();
@@ -1781,7 +1781,7 @@ static void XFA_Draw3DRect(CFX_Graphics* pGraphic,
                            CFX_Matrix* pMatrix,
                            FX_ARGB argbTopLeft,
                            FX_ARGB argbBottomRight) {
-  CFX_Color crLT(argbTopLeft);
+  CXFA_Color crLT(argbTopLeft);
   pGraphic->SetFillColor(&crLT);
   float fBottom = rt.bottom();
   float fRight = rt.right();
@@ -1795,7 +1795,7 @@ static void XFA_Draw3DRect(CFX_Graphics* pGraphic,
   pathLT.LineTo(CFX_PointF(rt.left, fBottom));
   pGraphic->FillPath(&pathLT, FXFILL_WINDING, pMatrix);
 
-  CFX_Color crRB(argbBottomRight);
+  CXFA_Color crRB(argbBottomRight);
   pGraphic->SetFillColor(&crRB);
 
   CFX_Path pathRB;
@@ -1815,7 +1815,7 @@ static void XFA_BOX_Stroke_3DRect_Lowered(CFX_Graphics* pGS,
   float fHalfWidth = fThickness / 2.0f;
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
-  CFX_Color cr(0xFF000000);
+  CXFA_Color cr(0xFF000000);
   pGS->SetFillColor(&cr);
   CFX_Path path;
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
@@ -1830,7 +1830,7 @@ static void XFA_BOX_Stroke_3DRect_Raised(CFX_Graphics* pGS,
   float fHalfWidth = fThickness / 2.0f;
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
-  CFX_Color cr(0xFF000000);
+  CXFA_Color cr(0xFF000000);
   pGS->SetFillColor(&cr);
   CFX_Path path;
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);

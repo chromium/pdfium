@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_CFX_COLOR_H_
-#define XFA_FXGRAPHICS_CFX_COLOR_H_
+#ifndef XFA_FXGRAPHICS_CXFA_COLOR_H_
+#define XFA_FXGRAPHICS_CXFA_COLOR_H_
 
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
@@ -15,13 +15,13 @@ class CFX_Shading;
 
 enum { FX_COLOR_None = 0, FX_COLOR_Solid, FX_COLOR_Pattern, FX_COLOR_Shading };
 
-class CFX_Color {
+class CXFA_Color {
  public:
-  CFX_Color();
-  explicit CFX_Color(const FX_ARGB argb);
-  explicit CFX_Color(CFX_Shading* shading);
-  CFX_Color(CFX_Pattern* pattern, const FX_ARGB argb);
-  virtual ~CFX_Color();
+  CXFA_Color();
+  explicit CXFA_Color(const FX_ARGB argb);
+  explicit CXFA_Color(CFX_Shading* shading);
+  CXFA_Color(CFX_Pattern* pattern, const FX_ARGB argb);
+  virtual ~CXFA_Color();
 
   void Set(const FX_ARGB argb);
   void Set(CFX_Pattern* pattern, const FX_ARGB argb);
@@ -40,4 +40,4 @@ class CFX_Color {
   };
 };
 
-#endif  // XFA_FXGRAPHICS_CFX_COLOR_H_
+#endif  // XFA_FXGRAPHICS_CXFA_COLOR_H_

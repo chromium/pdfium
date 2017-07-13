@@ -1876,8 +1876,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/xfa_resolvenode_rs.h",
       "xfa/fxfa/parser/xfa_utils.cpp",
       "xfa/fxfa/parser/xfa_utils.h",
-      "xfa/fxgraphics/cfx_color.cpp",
-      "xfa/fxgraphics/cfx_color.h",
       "xfa/fxgraphics/cfx_graphics.cpp",
       "xfa/fxgraphics/cfx_graphics.h",
       "xfa/fxgraphics/cfx_path.cpp",
@@ -1886,6 +1884,8 @@ if (pdf_enable_xfa) {
       "xfa/fxgraphics/cfx_pattern.h",
       "xfa/fxgraphics/cfx_shading.cpp",
       "xfa/fxgraphics/cfx_shading.h",
+      "xfa/fxgraphics/cxfa_color.cpp",
+      "xfa/fxgraphics/cxfa_color.h",
     ]
     include_dirs = [ "." ]
     deps = [

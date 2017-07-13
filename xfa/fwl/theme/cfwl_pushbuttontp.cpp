@@ -10,8 +10,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
 #define PUSHBUTTON_SIZE_Corner 2
 
@@ -67,7 +67,7 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                        m_pThemeData->clrEnd[iColor], &fillPath,
                        FXFILL_ALTERNATE, &pParams->m_matrix);
 
-      CFX_Color crStroke(m_pThemeData->clrBorder[iColor]);
+      CXFA_Color crStroke(m_pThemeData->clrBorder[iColor]);
       pGraphics->SetStrokeColor(&crStroke);
       pGraphics->StrokePath(&strokePath, &pParams->m_matrix);
 
@@ -75,7 +75,7 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
-      CFX_Color crFill(m_pThemeData->clrFill[iColor]);
+      CXFA_Color crFill(m_pThemeData->clrFill[iColor]);
       pGraphics->SetFillColor(&crFill);
       pGraphics->FillPath(&fillPath, FXFILL_WINDING, &pParams->m_matrix);
       if (pParams->m_dwStates & CFWL_PartState_Focused) {

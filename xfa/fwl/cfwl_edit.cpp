@@ -190,7 +190,7 @@ void CFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
   if (pMatrix)
     pGraphics->ConcatMatrix(const_cast<CFX_Matrix*>(pMatrix));
 
-  CFX_Color crLine(0xFFFF0000);
+  CXFA_Color crLine(0xFFFF0000);
   CFWL_EventCheckWord checkWordEvent(this);
   CFX_ByteString sLatinWord;
   CFX_Path pathSpell;
