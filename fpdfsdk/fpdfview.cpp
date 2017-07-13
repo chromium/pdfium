@@ -456,6 +456,10 @@ DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
 }
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintPostscriptLevel(int postscript_level) {
+  return postscript_level != 1 && FPDF_SetPrintMode(postscript_level);
+}
+
 DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintMode(int mode) {
   if (mode < FPDF_PRINTMODE_EMF || mode > FPDF_PRINTMODE_POSTSCRIPT3)
     return FALSE;

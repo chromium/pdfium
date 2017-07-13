@@ -245,6 +245,18 @@ FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func);
 DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
+// Function: FPDF_SetPrintPostscriptLevel
+//          Set postscript printing level when printing on Windows.
+//          Experimental API.
+// Parameters:
+//          postscript_level- 0 to disable postscript printing,
+//                            2 to print with postscript level 2,
+//                            3 to print with postscript level 3.
+//                            All other values are invalid.
+// Return value:
+//          True if successful, false if unsuccessful (typically invalid input).
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintPostscriptLevel(int postscript_level);
+
 // Function: FPDF_SetPrintMode
 //          Set printing mode when printing on Windows.
 //          Experimental API.
