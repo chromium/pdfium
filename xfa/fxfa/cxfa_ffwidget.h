@@ -35,11 +35,11 @@ enum XFA_WIDGETITEM {
   XFA_WIDGETITEM_PrevSibling,
 };
 
-int32_t XFA_StrokeTypeSetLineDash(CFX_Graphics* pGraphics,
+int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
                                   int32_t iStrokeType,
                                   int32_t iCapType);
 CFX_GraphStateData::LineCap XFA_LineCapToFXGE(int32_t iLineCap);
-void XFA_DrawImage(CFX_Graphics* pGS,
+void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    CFX_Matrix* pMatrix,
                    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
@@ -71,7 +71,7 @@ bool XFA_IsCreateWidget(XFA_Element iType);
 #define XFA_DRAWBOX_ForceRound 1
 #define XFA_DRAWBOX_Lowered3D 2
 void XFA_DrawBox(CXFA_Box box,
-                 CFX_Graphics* pGS,
+                 CXFA_Graphics* pGS,
                  const CFX_RectF& rtWidget,
                  CFX_Matrix* pMatrix,
                  uint32_t dwFlags = 0);
@@ -91,7 +91,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   ~CXFA_FFWidget() override;
 
   virtual CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false);
-  virtual void RenderWidget(CFX_Graphics* pGS,
+  virtual void RenderWidget(CXFA_Graphics* pGS,
                             CFX_Matrix* pMatrix,
                             uint32_t dwStatus);
   virtual bool IsLoaded();
@@ -171,7 +171,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
  protected:
   virtual bool PtInActiveRect(const CFX_PointF& point);
 
-  void DrawBorder(CFX_Graphics* pGS,
+  void DrawBorder(CXFA_Graphics* pGS,
                   CXFA_Box box,
                   const CFX_RectF& rtBorder,
                   CFX_Matrix* pMatrix,

@@ -15,7 +15,7 @@ class CXFA_FFImage : public CXFA_FFDraw {
   ~CXFA_FFImage() override;
 
   // CXFA_FFWidget
-  void RenderWidget(CFX_Graphics* pGS,
+  void RenderWidget(CXFA_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
   bool IsLoaded() override;

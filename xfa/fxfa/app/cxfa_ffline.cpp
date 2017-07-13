@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/app/cxfa_ffline.h"
 
-#include "xfa/fxgraphics/cfx_graphics.h"
-#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
+#include "xfa/fxgraphics/cxfa_path.h"
 
 CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 
@@ -47,7 +47,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
   }
 }
 
-void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
                                CFX_Matrix* pMatrix,
                                uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
@@ -82,7 +82,7 @@ void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
     XFA_RectWidthoutMargin(rtLine, mgWidget);
 
   GetRectFromHand(rtLine, lineObj.GetHand(), fLineWidth);
-  CFX_Path linePath;
+  CXFA_Path linePath;
   if (lineObj.GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
     linePath.AddLine(rtLine.TopRight(), rtLine.BottomLeft());
   else

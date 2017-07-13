@@ -38,9 +38,9 @@ class CFWL_Form : public CFWL_Widget {
   CFX_RectF GetClientRect() override;
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
-  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
+  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   CFWL_Widget* DoModal();
@@ -50,7 +50,7 @@ class CFWL_Form : public CFWL_Widget {
   void SetSubFocus(CFWL_Widget* pWidget) { m_pSubFocus = pWidget; }
 
  private:
-  void DrawBackground(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
+  void DrawBackground(CXFA_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
   CFX_RectF GetEdgeRect();
   void SetWorkAreaRect();
   void Layout();

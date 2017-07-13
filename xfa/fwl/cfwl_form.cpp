@@ -75,7 +75,8 @@ FWL_WidgetHit CFWL_Form::HitTest(const CFX_PointF& point) {
                                : FWL_WidgetHit::Client;
 }
 
-void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
+void CFWL_Form::DrawWidget(CXFA_Graphics* pGraphics,
+                           const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -147,7 +148,7 @@ void CFWL_Form::EndDoModal() {
 #endif
 }
 
-void CFWL_Form::DrawBackground(CFX_Graphics* pGraphics,
+void CFWL_Form::DrawBackground(CXFA_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -238,7 +239,7 @@ void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
 #endif  // FWL_UseMacSystemBorder
 }
 
-void CFWL_Form::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_Form::OnDrawWidget(CXFA_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 CXFA_RenderContext::CXFA_RenderContext(CXFA_FFPageView* pPageView,
                                        const CFX_RectF& clipRect,
@@ -24,7 +24,7 @@ CXFA_RenderContext::CXFA_RenderContext(CXFA_FFPageView* pPageView,
 
 CXFA_RenderContext::~CXFA_RenderContext() {}
 
-void CXFA_RenderContext::DoRender(CFX_Graphics* gs) {
+void CXFA_RenderContext::DoRender(CXFA_Graphics* gs) {
   while (m_pWidget) {
     CFX_RectF rtWidgetBox = m_pWidget->GetBBox(XFA_WidgetStatus_Visible);
     rtWidgetBox.width += 1;

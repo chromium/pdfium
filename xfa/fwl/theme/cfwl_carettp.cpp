@@ -9,8 +9,8 @@
 #include "xfa/fwl/cfwl_caret.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_path.h"
 
 CFWL_CaretTP::CFWL_CaretTP() {}
 CFWL_CaretTP::~CFWL_CaretTP() {}
@@ -34,12 +34,12 @@ void CFWL_CaretTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
 }
 
-void CFWL_CaretTP::DrawCaretBK(CFX_Graphics* pGraphics,
+void CFWL_CaretTP::DrawCaretBK(CXFA_Graphics* pGraphics,
                                uint32_t dwStates,
                                const CFX_RectF* pRect,
                                CXFA_Color* crFill,
                                CFX_Matrix* pMatrix) {
-  CFX_Path path;
+  CXFA_Path path;
   CFX_RectF rect = *pRect;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   if (crFill) {

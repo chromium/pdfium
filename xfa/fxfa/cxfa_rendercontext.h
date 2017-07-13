@@ -18,7 +18,7 @@ class CXFA_RenderContext {
                      const CFX_Matrix& matrix);
   ~CXFA_RenderContext();
 
-  void DoRender(CFX_Graphics* gs);
+  void DoRender(CXFA_Graphics* gs);
 
  private:
   std::unique_ptr<IXFA_WidgetIterator> m_pWidgetIterator;

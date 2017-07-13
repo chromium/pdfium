@@ -24,7 +24,7 @@ class CXFA_FFPushButton : public CXFA_FFField {
   ~CXFA_FFPushButton() override;
 
   // CXFA_FFField
-  void RenderWidget(CFX_Graphics* pGS,
+  void RenderWidget(CXFA_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
   bool LoadWidget() override;
@@ -33,13 +33,13 @@ class CXFA_FFPushButton : public CXFA_FFField {
   void UpdateWidgetProperty() override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
  private:
   void LoadHighlightCaption();
   void LayoutHighlightCaption();
-  void RenderHighlightCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
+  void RenderHighlightCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
   float GetLineWidth();
   FX_ARGB GetLineColor();
   FX_ARGB GetFillColor();

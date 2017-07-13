@@ -29,24 +29,24 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
     FX_ARGB clrTrackBKEnd;
   };
 
-  void DrawThumbBtn(CFX_Graphics* pGraphics,
+  void DrawThumbBtn(CXFA_Graphics* pGraphics,
                     const CFX_RectF* pRect,
                     bool bVert,
                     FWLTHEME_STATE eState,
                     bool bPawButton = true,
                     CFX_Matrix* pMatrix = nullptr);
-  void DrawTrack(CFX_Graphics* pGraphics,
+  void DrawTrack(CXFA_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  bool bVert,
                  FWLTHEME_STATE eState,
                  bool bLowerTrack,
                  CFX_Matrix* pMatrix = nullptr);
-  void DrawMaxMinBtn(CFX_Graphics* pGraphics,
+  void DrawMaxMinBtn(CXFA_Graphics* pGraphics,
                      const CFX_RectF* pRect,
                      FWLTHEME_DIRECTION eDict,
                      FWLTHEME_STATE eState,
                      CFX_Matrix* pMatrix = nullptr);
-  void DrawPaw(CFX_Graphics* pGraphics,
+  void DrawPaw(CXFA_Graphics* pGraphics,
                const CFX_RectF* pRect,
                bool bVert,
                FWLTHEME_STATE eState,

@@ -13,7 +13,7 @@
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 
-class CFX_Graphics;
+class CXFA_Graphics;
 class CFWL_Widget;
 
 class CFWL_Event {

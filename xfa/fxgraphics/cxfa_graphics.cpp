@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 #include <memory>
 
@@ -12,10 +12,10 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxgraphics/cfx_path.h"
-#include "xfa/fxgraphics/cfx_pattern.h"
-#include "xfa/fxgraphics/cfx_shading.h"
 #include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_pattern.h"
+#include "xfa/fxgraphics/cxfa_shading.h"
 
 namespace {
 
@@ -97,16 +97,16 @@ const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
 
 }  // namespace
 
-CFX_Graphics::CFX_Graphics(CFX_RenderDevice* renderDevice)
+CXFA_Graphics::CXFA_Graphics(CFX_RenderDevice* renderDevice)
     : m_type(FX_CONTEXT_None), m_renderDevice(renderDevice) {
   if (!renderDevice)
     return;
   m_type = FX_CONTEXT_Device;
 }
 
-CFX_Graphics::~CFX_Graphics() {}
+CXFA_Graphics::~CXFA_Graphics() {}
 
-void CFX_Graphics::SaveGraphState() {
+void CXFA_Graphics::SaveGraphState() {
   if (m_type != FX_CONTEXT_Device || !m_renderDevice)
     return;
 
@@ -114,7 +114,7 @@ void CFX_Graphics::SaveGraphState() {
   m_infoStack.push_back(pdfium::MakeUnique<TInfo>(m_info));
 }
 
-void CFX_Graphics::RestoreGraphState() {
+void CXFA_Graphics::RestoreGraphState() {
   if (m_type != FX_CONTEXT_Device || !m_renderDevice)
     return;
 
@@ -127,15 +127,15 @@ void CFX_Graphics::RestoreGraphState() {
   return;
 }
 
-void CFX_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
+void CXFA_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     m_info.graphState.m_LineCap = lineCap;
   }
 }
 
-void CFX_Graphics::SetLineDash(float dashPhase,
-                               float* dashArray,
-                               int32_t dashCount) {
+void CXFA_Graphics::SetLineDash(float dashPhase,
+                                float* dashArray,
+                                int32_t dashCount) {
   if (dashCount > 0 && !dashArray)
     return;
 
@@ -153,19 +153,19 @@ void CFX_Graphics::SetLineDash(float dashPhase,
   }
 }
 
-void CFX_Graphics::SetLineDash(FX_DashStyle dashStyle) {
+void CXFA_Graphics::SetLineDash(FX_DashStyle dashStyle) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     RenderDeviceSetLineDash(dashStyle);
 }
 
-void CFX_Graphics::SetLineWidth(float lineWidth, bool isActOnDash) {
+void CXFA_Graphics::SetLineWidth(float lineWidth, bool isActOnDash) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     m_info.graphState.m_LineWidth = lineWidth;
     m_info.isActOnDash = isActOnDash;
   }
 }
 
-void CFX_Graphics::SetStrokeColor(CXFA_Color* color) {
+void CXFA_Graphics::SetStrokeColor(CXFA_Color* color) {
   if (!color)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
@@ -173,7 +173,7 @@ void CFX_Graphics::SetStrokeColor(CXFA_Color* color) {
   }
 }
 
-void CFX_Graphics::SetFillColor(CXFA_Color* color) {
+void CXFA_Graphics::SetFillColor(CXFA_Color* color) {
   if (!color)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
@@ -181,32 +181,32 @@ void CFX_Graphics::SetFillColor(CXFA_Color* color) {
   }
 }
 
-void CFX_Graphics::StrokePath(CFX_Path* path, CFX_Matrix* matrix) {
+void CXFA_Graphics::StrokePath(CXFA_Path* path, CFX_Matrix* matrix) {
   if (!path)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     RenderDeviceStrokePath(path, matrix);
 }
 
-void CFX_Graphics::FillPath(CFX_Path* path,
-                            FX_FillMode fillMode,
-                            CFX_Matrix* matrix) {
+void CXFA_Graphics::FillPath(CXFA_Path* path,
+                             FX_FillMode fillMode,
+                             CFX_Matrix* matrix) {
   if (!path)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     RenderDeviceFillPath(path, fillMode, matrix);
 }
 
-void CFX_Graphics::StretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
-                                const CFX_RectF& rect,
-                                CFX_Matrix* matrix) {
+void CXFA_Graphics::StretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
+                                 const CFX_RectF& rect,
+                                 CFX_Matrix* matrix) {
   if (!source)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     RenderDeviceStretchImage(source, rect, matrix);
 }
 
-void CFX_Graphics::ConcatMatrix(const CFX_Matrix* matrix) {
+void CXFA_Graphics::ConcatMatrix(const CFX_Matrix* matrix) {
   if (!matrix)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
@@ -214,13 +214,13 @@ void CFX_Graphics::ConcatMatrix(const CFX_Matrix* matrix) {
   }
 }
 
-CFX_Matrix* CFX_Graphics::GetMatrix() {
+CFX_Matrix* CXFA_Graphics::GetMatrix() {
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     return &m_info.CTM;
   return nullptr;
 }
 
-CFX_RectF CFX_Graphics::GetClipRect() const {
+CFX_RectF CXFA_Graphics::GetClipRect() const {
   if (m_type != FX_CONTEXT_Device || !m_renderDevice)
     return CFX_RectF();
 
@@ -228,7 +228,7 @@ CFX_RectF CFX_Graphics::GetClipRect() const {
   return CFX_Rect(r.left, r.top, r.Width(), r.Height()).As<float>();
 }
 
-void CFX_Graphics::SetClipRect(const CFX_RectF& rect) {
+void CXFA_Graphics::SetClipRect(const CFX_RectF& rect) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     m_renderDevice->SetClip_Rect(
         FX_RECT(FXSYS_round(rect.left), FXSYS_round(rect.top),
@@ -236,11 +236,11 @@ void CFX_Graphics::SetClipRect(const CFX_RectF& rect) {
   }
 }
 
-CFX_RenderDevice* CFX_Graphics::GetRenderDevice() {
+CFX_RenderDevice* CXFA_Graphics::GetRenderDevice() {
   return m_renderDevice;
 }
 
-void CFX_Graphics::RenderDeviceSetLineDash(FX_DashStyle dashStyle) {
+void CXFA_Graphics::RenderDeviceSetLineDash(FX_DashStyle dashStyle) {
   switch (dashStyle) {
     case FX_DASHSTYLE_Solid: {
       m_info.graphState.SetDashCount(0);
@@ -271,7 +271,8 @@ void CFX_Graphics::RenderDeviceSetLineDash(FX_DashStyle dashStyle) {
   }
 }
 
-void CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path, CFX_Matrix* matrix) {
+void CXFA_Graphics::RenderDeviceStrokePath(CXFA_Path* path,
+                                           CFX_Matrix* matrix) {
   if (!m_info.strokeColor)
     return;
   CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
@@ -290,9 +291,9 @@ void CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path, CFX_Matrix* matrix) {
   }
 }
 
-void CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
-                                        FX_FillMode fillMode,
-                                        CFX_Matrix* matrix) {
+void CXFA_Graphics::RenderDeviceFillPath(CXFA_Path* path,
+                                         FX_FillMode fillMode,
+                                         CFX_Matrix* matrix) {
   if (!m_info.fillColor)
     return;
   CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
@@ -317,7 +318,7 @@ void CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
   }
 }
 
-void CFX_Graphics::RenderDeviceStretchImage(
+void CXFA_Graphics::RenderDeviceStretchImage(
     const CFX_RetainPtr<CFX_DIBSource>& source,
     const CFX_RectF& rect,
     CFX_Matrix* matrix) {
@@ -343,10 +344,10 @@ void CFX_Graphics::RenderDeviceStretchImage(
                           FXSYS_round(r.left - left), FXSYS_round(r.top - top));
 }
 
-void CFX_Graphics::FillPathWithPattern(CFX_Path* path,
-                                       FX_FillMode fillMode,
-                                       CFX_Matrix* matrix) {
-  CFX_Pattern* pattern = m_info.fillColor->m_info.pattern;
+void CXFA_Graphics::FillPathWithPattern(CXFA_Path* path,
+                                        FX_FillMode fillMode,
+                                        CFX_Matrix* matrix) {
+  CXFA_Pattern* pattern = m_info.fillColor->m_info.pattern;
   CFX_RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
@@ -380,9 +381,9 @@ void CFX_Graphics::FillPathWithPattern(CFX_Path* path,
   SetDIBitsWithMatrix(bmp, &pattern->m_matrix);
 }
 
-void CFX_Graphics::FillPathWithShading(CFX_Path* path,
-                                       FX_FillMode fillMode,
-                                       CFX_Matrix* matrix) {
+void CXFA_Graphics::FillPathWithShading(CXFA_Path* path,
+                                        FX_FillMode fillMode,
+                                        CFX_Matrix* matrix) {
   CFX_RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
@@ -498,7 +499,7 @@ void CFX_Graphics::FillPathWithShading(CFX_Path* path,
   }
 }
 
-void CFX_Graphics::SetDIBitsWithMatrix(
+void CXFA_Graphics::SetDIBitsWithMatrix(
     const CFX_RetainPtr<CFX_DIBSource>& source,
     CFX_Matrix* matrix) {
   if (matrix->IsIdentity()) {
@@ -515,17 +516,17 @@ void CFX_Graphics::SetDIBitsWithMatrix(
   }
 }
 
-CFX_Graphics::TInfo::TInfo()
+CXFA_Graphics::TInfo::TInfo()
     : isActOnDash(false), strokeColor(nullptr), fillColor(nullptr) {}
 
-CFX_Graphics::TInfo::TInfo(const TInfo& info)
+CXFA_Graphics::TInfo::TInfo(const TInfo& info)
     : graphState(info.graphState),
       CTM(info.CTM),
       isActOnDash(info.isActOnDash),
       strokeColor(info.strokeColor),
       fillColor(info.fillColor) {}
 
-CFX_Graphics::TInfo& CFX_Graphics::TInfo::operator=(const TInfo& other) {
+CXFA_Graphics::TInfo& CXFA_Graphics::TInfo::operator=(const TInfo& other) {
   graphState.Copy(other.graphState);
   CTM = other.CTM;
   isActOnDash = other.isActOnDash;

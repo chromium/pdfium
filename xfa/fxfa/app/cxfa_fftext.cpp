@@ -17,13 +17,13 @@
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 CXFA_FFText::CXFA_FFText(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 
 CXFA_FFText::~CXFA_FFText() {}
 
-void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
                                CFX_Matrix* pMatrix,
                                uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))

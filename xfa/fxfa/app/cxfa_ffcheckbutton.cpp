@@ -222,7 +222,7 @@ void CXFA_FFCheckButton::AddUIMargin(int32_t iCapPlacement) {
   }
 }
 
-void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
                                       CFX_Matrix* pMatrix,
                                       uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
@@ -339,7 +339,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
   m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
-void CXFA_FFCheckButton::OnDrawWidget(CFX_Graphics* pGraphics,
+void CXFA_FFCheckButton::OnDrawWidget(CXFA_Graphics* pGraphics,
                                       const CFX_Matrix* pMatrix) {
   m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }

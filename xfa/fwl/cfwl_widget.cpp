@@ -518,7 +518,7 @@ void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {
   m_pWidgetMgr->RepaintWidget(this, pRect);
 }
 
-void CFWL_Widget::DrawBackground(CFX_Graphics* pGraphics,
+void CFWL_Widget::DrawBackground(CXFA_Graphics* pGraphics,
                                  CFWL_Part iPartBk,
                                  IFWL_ThemeProvider* pTheme,
                                  const CFX_Matrix* pMatrix) {
@@ -532,7 +532,7 @@ void CFWL_Widget::DrawBackground(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void CFWL_Widget::DrawBorder(CFX_Graphics* pGraphics,
+void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
                              CFWL_Part iPartBorder,
                              IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix* pMatrix) {
@@ -610,5 +610,5 @@ void CFWL_Widget::OnProcessMessage(CFWL_Message* pMessage) {
 
 void CFWL_Widget::OnProcessEvent(CFWL_Event* pEvent) {}
 
-void CFWL_Widget::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_Widget::OnDrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix) {}

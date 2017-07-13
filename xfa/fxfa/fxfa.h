@@ -14,7 +14,7 @@
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFGAS_GEFont;
-class CFX_Graphics;
+class CXFA_Graphics;
 class CPDF_Document;
 class CXFA_FFPageView;
 class CXFA_Node;

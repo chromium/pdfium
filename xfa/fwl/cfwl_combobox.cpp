@@ -125,7 +125,7 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
   return CFWL_Widget::HitTest(point);
 }
 
-void CFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     DisForm_DrawWidget(pGraphics, pMatrix);
@@ -288,7 +288,7 @@ void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
     m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
-void CFWL_ComboBox::DrawStretchHandler(CFX_Graphics* pGraphics,
+void CFWL_ComboBox::DrawStretchHandler(CXFA_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
   param.m_pGraphics = pGraphics;
@@ -615,7 +615,7 @@ FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_ComboBox::DisForm_DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ComboBox::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   CFX_Matrix mtOrg;
@@ -756,7 +756,7 @@ void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   }
 }
 
-void CFWL_ComboBox::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ComboBox::OnDrawWidget(CXFA_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

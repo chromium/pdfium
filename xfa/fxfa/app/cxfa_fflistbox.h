@@ -19,7 +19,7 @@ class CXFA_FFListBox : public CXFA_FFField {
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
   void OnSelectChanged(CFWL_Widget* pWidget);

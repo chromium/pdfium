@@ -23,8 +23,8 @@ class CFWL_PictureBox : public CFWL_Widget {
   // CFWL_Widget
   FWL_Type GetClassID() const override;
   void Update() override;
-  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
  private:

@@ -14,7 +14,7 @@
 
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFWL_EventTarget;
 class CFWL_NoteLoop;

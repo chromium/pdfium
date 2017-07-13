@@ -13,8 +13,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_path.h"
 
 namespace {
 
@@ -56,7 +56,7 @@ void CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
   CFWL_WidgetTP::DrawText(pParams);
 }
 
-void CFWL_CheckBoxTP::DrawSignCheck(CFX_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignCheck(CXFA_Graphics* pGraphics,
                                     const CFX_RectF* pRtSign,
                                     FX_ARGB argbFill,
                                     CFX_Matrix* pMatrix) {
@@ -74,11 +74,11 @@ void CFWL_CheckBoxTP::DrawSignCheck(CFX_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignCircle(CFX_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignCircle(CXFA_Graphics* pGraphics,
                                      const CFX_RectF* pRtSign,
                                      FX_ARGB argbFill,
                                      CFX_Matrix* pMatrix) {
-  CFX_Path path;
+  CXFA_Path path;
   path.AddEllipse(*pRtSign);
   CXFA_Color crFill(argbFill);
   pGraphics->SaveGraphState();
@@ -87,11 +87,11 @@ void CFWL_CheckBoxTP::DrawSignCircle(CFX_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignCross(CFX_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignCross(CXFA_Graphics* pGraphics,
                                     const CFX_RectF* pRtSign,
                                     FX_ARGB argbFill,
                                     CFX_Matrix* pMatrix) {
-  CFX_Path path;
+  CXFA_Path path;
   float fRight = pRtSign->right();
   float fBottom = pRtSign->bottom();
   path.AddLine(pRtSign->TopLeft(), CFX_PointF(fRight, fBottom));
@@ -106,11 +106,11 @@ void CFWL_CheckBoxTP::DrawSignCross(CFX_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignDiamond(CFX_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignDiamond(CXFA_Graphics* pGraphics,
                                       const CFX_RectF* pRtSign,
                                       FX_ARGB argbFill,
                                       CFX_Matrix* pMatrix) {
-  CFX_Path path;
+  CXFA_Path path;
   float fWidth = pRtSign->width;
   float fHeight = pRtSign->height;
   float fBottom = pRtSign->bottom();
@@ -127,11 +127,11 @@ void CFWL_CheckBoxTP::DrawSignDiamond(CFX_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignSquare(CFX_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignSquare(CXFA_Graphics* pGraphics,
                                      const CFX_RectF* pRtSign,
                                      FX_ARGB argbFill,
                                      CFX_Matrix* pMatrix) {
-  CFX_Path path;
+  CXFA_Path path;
   path.AddRectangle(pRtSign->left, pRtSign->top, pRtSign->width,
                     pRtSign->height);
   CXFA_Color crFill(argbFill);
@@ -141,11 +141,11 @@ void CFWL_CheckBoxTP::DrawSignSquare(CFX_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_CheckBoxTP::DrawSignStar(CFX_Graphics* pGraphics,
+void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
                                    const CFX_RectF* pRtSign,
                                    FX_ARGB argbFill,
                                    CFX_Matrix* pMatrix) {
-  CFX_Path path;
+  CXFA_Path path;
   float fBottom = pRtSign->bottom();
   float fRadius =
       (pRtSign->top - fBottom) / (1 + static_cast<float>(cos(FX_PI / 5.0f)));
@@ -218,7 +218,7 @@ void CFWL_CheckBoxTP::SetThemeData() {
 
 void CFWL_CheckBoxTP::InitCheckPath(float fCheckLen) {
   if (!m_pCheckPath) {
-    m_pCheckPath = pdfium::MakeUnique<CFX_Path>();
+    m_pCheckPath = pdfium::MakeUnique<CXFA_Path>();
 
     float fWidth = kSignPath;
     float fHeight = -kSignPath;
@@ -282,7 +282,7 @@ void CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
 }
 
 void CFWL_CheckBoxTP::DrawCheckSign(CFWL_Widget* pWidget,
-                                    CFX_Graphics* pGraphics,
+                                    CXFA_Graphics* pGraphics,
                                     const CFX_RectF& pRtBox,
                                     int32_t iState,
                                     CFX_Matrix* pMatrix) {

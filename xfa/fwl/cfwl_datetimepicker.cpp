@@ -114,7 +114,7 @@ FWL_WidgetHit CFWL_DateTimePicker::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_DateTimePicker::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_DateTimePicker::DrawWidget(CXFA_Graphics* pGraphics,
                                      const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -195,7 +195,7 @@ void CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
   m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
-void CFWL_DateTimePicker::DrawDropDownButton(CFX_Graphics* pGraphics,
+void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
                                              IFWL_ThemeProvider* pTheme,
                                              const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
@@ -443,7 +443,7 @@ CFX_RectF CFWL_DateTimePicker::DisForm_GetBBox() const {
   return rect;
 }
 
-void CFWL_DateTimePicker::DisForm_DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_DateTimePicker::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
                                              const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -510,7 +510,7 @@ void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_DateTimePicker::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_DateTimePicker::OnDrawWidget(CXFA_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

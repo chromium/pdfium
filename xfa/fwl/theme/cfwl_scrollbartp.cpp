@@ -10,8 +10,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_path.h"
 
 namespace {
 
@@ -38,7 +38,7 @@ void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   else if (pParams->m_dwStates & CFWL_PartState_Disabled)
     eState = FWLTHEME_STATE_Disable;
 
-  CFX_Graphics* pGraphics = pParams->m_pGraphics;
+  CXFA_Graphics* pGraphics = pParams->m_pGraphics;
   CFX_RectF* pRect = &pParams->m_rtPart;
   bool bVert = !!pWidget->GetStylesEx();
   switch (pParams->m_iPart) {
@@ -71,7 +71,7 @@ void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
 }
 
-void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
                                     const CFX_RectF* pRect,
                                     bool bVert,
                                     FWLTHEME_STATE eState,
@@ -80,7 +80,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
   if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
     return;
 
-  CFX_Path path;
+  CXFA_Path path;
   CFX_RectF rect(*pRect);
   if (bVert) {
     rect.Deflate(1, 0);
@@ -117,12 +117,12 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
   }
 }
 
-void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
                                const CFX_RectF* pRect,
                                bool bVert,
                                FWLTHEME_STATE eState,
                                CFX_Matrix* pMatrix) {
-  CFX_Path path;
+  CXFA_Path path;
   if (bVert) {
     float fPawLen = kPawLength;
     if (pRect->width / 2 <= fPawLen) {
@@ -200,7 +200,7 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
   }
 }
 
-void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
                                  const CFX_RectF* pRect,
                                  bool bVert,
                                  FWLTHEME_STATE eState,
@@ -211,7 +211,7 @@ void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
 
   pGraphics->SaveGraphState();
   CXFA_Color colorLine(ArgbEncode(255, 238, 237, 229));
-  CFX_Path path;
+  CXFA_Path path;
   float fRight = pRect->right();
   float fBottom = pRect->bottom();
   if (bVert) {
@@ -235,7 +235,7 @@ void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
                    m_pThemeData->clrTrackBKEnd, &path, FXFILL_WINDING, pMatrix);
 }
 
-void CFWL_ScrollBarTP::DrawMaxMinBtn(CFX_Graphics* pGraphics,
+void CFWL_ScrollBarTP::DrawMaxMinBtn(CXFA_Graphics* pGraphics,
                                      const CFX_RectF* pRect,
                                      FWLTHEME_DIRECTION eDict,
                                      FWLTHEME_STATE eState,

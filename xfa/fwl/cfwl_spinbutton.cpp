@@ -78,7 +78,7 @@ FWL_WidgetHit CFWL_SpinButton::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::DrawWidget(CXFA_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -107,7 +107,7 @@ bool CFWL_SpinButton::IsDownButtonEnabled() {
   return m_dwDnState != CFWL_PartState_Disabled;
 }
 
-void CFWL_SpinButton::DrawUpButton(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::DrawUpButton(CXFA_Graphics* pGraphics,
                                    IFWL_ThemeProvider* pTheme,
                                    const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
@@ -122,7 +122,7 @@ void CFWL_SpinButton::DrawUpButton(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&params);
 }
 
-void CFWL_SpinButton::DrawDownButton(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::DrawDownButton(CXFA_Graphics* pGraphics,
                                      IFWL_ThemeProvider* pTheme,
                                      const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
@@ -182,7 +182,7 @@ void CFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_SpinButton::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::OnDrawWidget(CXFA_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

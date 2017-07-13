@@ -20,7 +20,7 @@ bool CXFA_FFSignature::LoadWidget() {
   return CXFA_FFField::LoadWidget();
 }
 
-void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFSignature::RenderWidget(CXFA_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))

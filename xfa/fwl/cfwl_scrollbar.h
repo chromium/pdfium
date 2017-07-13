@@ -30,9 +30,9 @@ class CFWL_ScrollBar : public CFWL_Widget {
   // CFWL_Widget
   FWL_Type GetClassID() const override;
   void Update() override;
-  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
+  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   void GetRange(float* fMin, float* fMax) const {
@@ -66,15 +66,15 @@ class CFWL_ScrollBar : public CFWL_Widget {
   bool IsVertical() const {
     return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
   }
-  void DrawTrack(CFX_Graphics* pGraphics,
+  void DrawTrack(CXFA_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  bool bLower,
                  const CFX_Matrix* pMatrix);
-  void DrawArrowBtn(CFX_Graphics* pGraphics,
+  void DrawArrowBtn(CXFA_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     bool bMinBtn,
                     const CFX_Matrix* pMatrix);
-  void DrawThumb(CFX_Graphics* pGraphics,
+  void DrawThumb(CXFA_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  const CFX_Matrix* pMatrix);
   void Layout();

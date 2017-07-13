@@ -63,14 +63,14 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   virtual void RemoveStates(uint32_t dwStates);
   virtual void Update() = 0;
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
-  virtual void DrawWidget(CFX_Graphics* pGraphics,
+  virtual void DrawWidget(CXFA_Graphics* pGraphics,
                           const CFX_Matrix* pMatrix) = 0;
   virtual void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
 
   // IFWL_WidgetDelegate.
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   void InflateWidgetRect(CFX_RectF& rect);
@@ -143,7 +143,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void RegisterEventTarget(CFWL_Widget* pEventSource);
   void UnregisterEventTarget();
   void DispatchEvent(CFWL_Event* pEvent);
-  void DrawBorder(CFX_Graphics* pGraphics,
+  void DrawBorder(CXFA_Graphics* pGraphics,
                   CFWL_Part iPartBorder,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix);
@@ -175,7 +175,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                           float fMaxHeight,
                           const CFX_RectF& rtAnchor,
                           CFX_RectF& rtPopup);
-  void DrawBackground(CFX_Graphics* pGraphics,
+  void DrawBackground(CXFA_Graphics* pGraphics,
                       CFWL_Part iPartBk,
                       IFWL_ThemeProvider* pTheme,
                       const CFX_Matrix* pMatrix);

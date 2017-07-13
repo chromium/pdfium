@@ -26,7 +26,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_rendercontext.h"
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -95,7 +95,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
         static_cast<float>(pClip.left), static_cast<float>(pClip.top),
         static_cast<float>(pClip.Width()), static_cast<float>(pClip.Height()));
 
-    CFX_Graphics gs(pDevice);
+    CXFA_Graphics gs(pDevice);
     gs.SetClipRect(rectClip);
 
     CXFA_FFPageView* xfaView = pPage->GetXFAPageView();

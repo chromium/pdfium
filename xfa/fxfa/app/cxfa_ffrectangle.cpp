@@ -11,7 +11,7 @@ CXFA_FFRectangle::CXFA_FFRectangle(CXFA_WidgetAcc* pDataAcc)
 
 CXFA_FFRectangle::~CXFA_FFRectangle() {}
 
-void CXFA_FFRectangle::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))

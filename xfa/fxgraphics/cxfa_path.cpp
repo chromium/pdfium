@@ -4,52 +4,52 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_path.h"
 
 #include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/ptr_util.h"
 
-CFX_Path::CFX_Path() {}
+CXFA_Path::CXFA_Path() {}
 
-CFX_Path::~CFX_Path() {}
+CXFA_Path::~CXFA_Path() {}
 
-void CFX_Path::Clear() {
+void CXFA_Path::Clear() {
   data_.Clear();
 }
 
-void CFX_Path::Close() {
+void CXFA_Path::Close() {
   data_.ClosePath();
 }
 
-void CFX_Path::MoveTo(const CFX_PointF& point) {
+void CXFA_Path::MoveTo(const CFX_PointF& point) {
   data_.AppendPoint(point, FXPT_TYPE::MoveTo, false);
 }
 
-void CFX_Path::LineTo(const CFX_PointF& point) {
+void CXFA_Path::LineTo(const CFX_PointF& point) {
   data_.AppendPoint(point, FXPT_TYPE::LineTo, false);
 }
 
-void CFX_Path::BezierTo(const CFX_PointF& c1,
-                        const CFX_PointF& c2,
-                        const CFX_PointF& to) {
+void CXFA_Path::BezierTo(const CFX_PointF& c1,
+                         const CFX_PointF& c2,
+                         const CFX_PointF& to) {
   data_.AppendPoint(c1, FXPT_TYPE::BezierTo, false);
   data_.AppendPoint(c2, FXPT_TYPE::BezierTo, false);
   data_.AppendPoint(to, FXPT_TYPE::BezierTo, false);
 }
 
-void CFX_Path::ArcTo(const CFX_PointF& pos,
-                     const CFX_SizeF& size,
-                     float start_angle,
-                     float sweep_angle) {
+void CXFA_Path::ArcTo(const CFX_PointF& pos,
+                      const CFX_SizeF& size,
+                      float start_angle,
+                      float sweep_angle) {
   CFX_SizeF new_size = size / 2.0f;
   ArcToInternal(CFX_PointF(pos.x + new_size.width, pos.y + new_size.height),
                 new_size, start_angle, sweep_angle);
 }
 
-void CFX_Path::ArcToInternal(const CFX_PointF& pos,
-                             const CFX_SizeF& size,
-                             float start_angle,
-                             float sweep_angle) {
+void CXFA_Path::ArcToInternal(const CFX_PointF& pos,
+                              const CFX_SizeF& size,
+                              float start_angle,
+                              float sweep_angle) {
   float x0 = cos(sweep_angle / 2);
   float y0 = sin(sweep_angle / 2);
   float tx = ((1.0f - x0) * 4) / (3 * 1.0f);
@@ -73,23 +73,23 @@ void CFX_Path::ArcToInternal(const CFX_PointF& pos,
   data_.AppendPoint(bezier, FXPT_TYPE::BezierTo, false);
 }
 
-void CFX_Path::AddLine(const CFX_PointF& p1, const CFX_PointF& p2) {
+void CXFA_Path::AddLine(const CFX_PointF& p1, const CFX_PointF& p2) {
   data_.AppendPoint(p1, FXPT_TYPE::MoveTo, false);
   data_.AppendPoint(p2, FXPT_TYPE::LineTo, false);
 }
 
-void CFX_Path::AddRectangle(float left, float top, float width, float height) {
+void CXFA_Path::AddRectangle(float left, float top, float width, float height) {
   data_.AppendRect(left, top, left + width, top + height);
 }
 
-void CFX_Path::AddEllipse(const CFX_RectF& rect) {
+void CXFA_Path::AddEllipse(const CFX_RectF& rect) {
   AddArc(rect.TopLeft(), rect.Size(), 0, FX_PI * 2);
 }
 
-void CFX_Path::AddArc(const CFX_PointF& original_pos,
-                      const CFX_SizeF& original_size,
-                      float start_angle,
-                      float sweep_angle) {
+void CXFA_Path::AddArc(const CFX_PointF& original_pos,
+                       const CFX_SizeF& original_size,
+                       float start_angle,
+                       float sweep_angle) {
   if (sweep_angle == 0)
     return;
 
@@ -137,12 +137,12 @@ void CFX_Path::AddArc(const CFX_PointF& original_pos,
   } while (!done);
 }
 
-void CFX_Path::AddSubpath(CFX_Path* path) {
+void CXFA_Path::AddSubpath(CXFA_Path* path) {
   if (!path)
     return;
   data_.Append(&path->data_, nullptr);
 }
 
-void CFX_Path::TransformBy(const CFX_Matrix& mt) {
+void CXFA_Path::TransformBy(const CFX_Matrix& mt) {
   data_.Transform(&mt);
 }

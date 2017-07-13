@@ -24,7 +24,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
 
   // CXFA_FFWidget
   CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false) override;
-  void RenderWidget(CFX_Graphics* pGS,
+  void RenderWidget(CXFA_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
   bool IsLoaded() override;
@@ -55,7 +55,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   // IFWL_WidgetDelegate
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
   void UpdateFWL();
@@ -69,18 +69,18 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   CFWL_Widget* GetNormalWidget() { return m_pNormalWidget.get(); }
   CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
-  void RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
+  void RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
 
   int32_t CalculateOverride();
   int32_t CalculateWidgetAcc(CXFA_WidgetAcc* pAcc);
   bool ProcessCommittedData();
   virtual bool CommitData();
   virtual bool IsDataChanged();
-  void DrawHighlight(CFX_Graphics* pGS,
+  void DrawHighlight(CXFA_Graphics* pGS,
                      CFX_Matrix* pMatrix,
                      uint32_t dwStatus,
                      bool bEllipse);
-  void DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
+  void DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
   void TranslateFWLMessage(CFWL_Message* pMessage);
   void CapPlacement();
   void CapTopBottomPlacement(CXFA_Caption caption,

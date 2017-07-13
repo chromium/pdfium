@@ -51,7 +51,7 @@ void CFWL_PushButton::Update() {
   m_rtCaption = m_rtClient;
 }
 
-void CFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_PushButton::DrawWidget(CXFA_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -65,7 +65,7 @@ void CFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
   DrawBkground(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
 }
 
-void CFWL_PushButton::DrawBkground(CFX_Graphics* pGraphics,
+void CFWL_PushButton::DrawBkground(CXFA_Graphics* pGraphics,
                                    IFWL_ThemeProvider* pTheme,
                                    const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
@@ -144,7 +144,7 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_PushButton::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_PushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

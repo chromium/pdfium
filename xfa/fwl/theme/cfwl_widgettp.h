@@ -15,7 +15,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFDE_TextOut;
 class CFGAS_GEFont;
@@ -55,39 +55,39 @@ class CFWL_WidgetTP {
   void InitTTO();
   void FinalizeTTO();
 
-  void DrawBorder(CFX_Graphics* pGraphics,
+  void DrawBorder(CXFA_Graphics* pGraphics,
                   const CFX_RectF* pRect,
                   CFX_Matrix* pMatrix = nullptr);
-  void FillBackground(CFX_Graphics* pGraphics,
+  void FillBackground(CXFA_Graphics* pGraphics,
                       const CFX_RectF* pRect,
                       CFX_Matrix* pMatrix = nullptr);
-  void FillSoildRect(CFX_Graphics* pGraphics,
+  void FillSoildRect(CXFA_Graphics* pGraphics,
                      FX_ARGB fillColor,
                      const CFX_RectF* pRect,
                      CFX_Matrix* pMatrix = nullptr);
-  void DrawAxialShading(CFX_Graphics* pGraphics,
+  void DrawAxialShading(CXFA_Graphics* pGraphics,
                         float fx1,
                         float fy1,
                         float fx2,
                         float fy2,
                         FX_ARGB beginColor,
                         FX_ARGB endColor,
-                        CFX_Path* path,
+                        CXFA_Path* path,
                         int32_t fillMode = FXFILL_WINDING,
                         CFX_Matrix* pMatrix = nullptr);
-  void DrawFocus(CFX_Graphics* pGraphics,
+  void DrawFocus(CXFA_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  CFX_Matrix* pMatrix = nullptr);
-  void DrawArrow(CFX_Graphics* pGraphics,
+  void DrawArrow(CXFA_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  FWLTHEME_DIRECTION eDict,
                  FX_ARGB argSign,
                  CFX_Matrix* pMatrix = nullptr);
-  void DrawBtn(CFX_Graphics* pGraphics,
+  void DrawBtn(CXFA_Graphics* pGraphics,
                const CFX_RectF* pRect,
                FWLTHEME_STATE eState,
                CFX_Matrix* pMatrix = nullptr);
-  void DrawArrowBtn(CFX_Graphics* pGraphics,
+  void DrawArrowBtn(CXFA_Graphics* pGraphics,
                     const CFX_RectF* pRect,
                     FWLTHEME_DIRECTION eDict,
                     FWLTHEME_STATE eState,

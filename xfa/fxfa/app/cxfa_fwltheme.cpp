@@ -105,7 +105,7 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     if (pParams->m_iPart == CFWL_Part::Caption)
       m_pTextOut->SetTextColor(ArgbEncode(0xff, 0, 153, 255));
 
-    CFX_Graphics* pGraphics = pParams->m_pGraphics;
+    CXFA_Graphics* pGraphics = pParams->m_pGraphics;
     CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
     if (!pRenderDevice)
       return;
@@ -126,7 +126,7 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     return;
 
   CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
-  CFX_Graphics* pGraphics = pParams->m_pGraphics;
+  CXFA_Graphics* pGraphics = pParams->m_pGraphics;
   CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
   if (!pRenderDevice)
     return;

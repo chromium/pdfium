@@ -16,7 +16,7 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cxfa_path.h"
 
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)
 #define FWL_STYLEEXT_EDT_MultiLine (1L << 1)
@@ -61,11 +61,11 @@ class CFWL_Edit : public CFWL_Widget {
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void SetStates(uint32_t dwStates) override;
-  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
+  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   virtual void SetText(const CFX_WideString& wsText);
@@ -109,13 +109,13 @@ class CFWL_Edit : public CFWL_Widget {
   CFDE_TxtEdtEngine* GetTxtEdtEngine() { return &m_EdtEngine; }
 
  private:
-  void DrawTextBk(CFX_Graphics* pGraphics,
+  void DrawTextBk(CXFA_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix);
-  void DrawContent(CFX_Graphics* pGraphics,
+  void DrawContent(CXFA_Graphics* pGraphics,
                    IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
-  void DrawSpellCheck(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DrawSpellCheck(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
 
   void UpdateEditEngine();
   void UpdateEditParams();
@@ -138,7 +138,7 @@ class CFWL_Edit : public CFWL_Widget {
   bool IsContentHeightOverflow();
   int32_t AddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord);
   void ProcessInsertError(int32_t iError);
-  void AddSpellCheckObj(CFX_Path& PathData,
+  void AddSpellCheckObj(CXFA_Path& PathData,
                         int32_t nStart,
                         int32_t nCount,
                         float fOffSetX,

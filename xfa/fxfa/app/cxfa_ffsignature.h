@@ -15,7 +15,7 @@ class CXFA_FFSignature final : public CXFA_FFField {
   ~CXFA_FFSignature() override;
 
   // CXFA_FFField
-  void RenderWidget(CFX_Graphics* pGS,
+  void RenderWidget(CXFA_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
   bool LoadWidget() override;

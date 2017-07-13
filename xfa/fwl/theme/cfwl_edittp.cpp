@@ -11,8 +11,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxfa/app/cxfa_fwltheme.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_path.h"
 
 CFWL_EditTP::CFWL_EditTP() {}
 
@@ -44,7 +44,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     }
     case CFWL_Part::Background: {
       if (pParams->m_pPath) {
-        CFX_Graphics* pGraphics = pParams->m_pGraphics;
+        CXFA_Graphics* pGraphics = pParams->m_pGraphics;
         pGraphics->SaveGraphState();
         CXFA_Color crSelected(FWLTHEME_COLOR_BKSelected);
         pGraphics->SetFillColor(&crSelected);
@@ -52,7 +52,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                             &pParams->m_matrix);
         pGraphics->RestoreGraphState();
       } else {
-        CFX_Path path;
+        CXFA_Path path;
         path.AddRectangle(pParams->m_rtPart.left, pParams->m_rtPart.top,
                           pParams->m_rtPart.width, pParams->m_rtPart.height);
         CXFA_Color cr(FWLTHEME_COLOR_Background);

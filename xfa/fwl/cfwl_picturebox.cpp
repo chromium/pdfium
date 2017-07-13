@@ -32,7 +32,7 @@ void CFWL_PictureBox::Update() {
   m_rtClient = GetClientRect();
 }
 
-void CFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_PictureBox::DrawWidget(CXFA_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -44,7 +44,7 @@ void CFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
 }
 
-void CFWL_PictureBox::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_PictureBox::OnDrawWidget(CXFA_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

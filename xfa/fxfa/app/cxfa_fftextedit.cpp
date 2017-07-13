@@ -353,7 +353,7 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
   m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
-void CXFA_FFTextEdit::OnDrawWidget(CFX_Graphics* pGraphics,
+void CXFA_FFTextEdit::OnDrawWidget(CXFA_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }

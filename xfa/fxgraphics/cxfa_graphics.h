@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_CFX_GRAPHICS_H_
-#define XFA_FXGRAPHICS_CFX_GRAPHICS_H_
+#ifndef XFA_FXGRAPHICS_CXFA_GRAPHICS_H_
+#define XFA_FXGRAPHICS_CXFA_GRAPHICS_H_
 
 #include <memory>
 #include <vector>
@@ -18,7 +18,7 @@
 #include "core/fxge/fx_font.h"
 
 class CXFA_Color;
-class CFX_Path;
+class CXFA_Path;
 
 using FX_FillMode = int32_t;
 
@@ -41,10 +41,10 @@ enum class FX_HatchStyle {
 
 class CFX_RenderDevice;
 
-class CFX_Graphics {
+class CXFA_Graphics {
  public:
-  explicit CFX_Graphics(CFX_RenderDevice* renderDevice);
-  ~CFX_Graphics();
+  explicit CXFA_Graphics(CFX_RenderDevice* renderDevice);
+  ~CXFA_Graphics();
 
   void SaveGraphState();
   void RestoreGraphState();
@@ -60,8 +60,8 @@ class CFX_Graphics {
   void SetStrokeColor(CXFA_Color* color);
   void SetFillColor(CXFA_Color* color);
   void SetClipRect(const CFX_RectF& rect);
-  void StrokePath(CFX_Path* path, CFX_Matrix* matrix = nullptr);
-  void FillPath(CFX_Path* path,
+  void StrokePath(CXFA_Path* path, CFX_Matrix* matrix = nullptr);
+  void FillPath(CXFA_Path* path,
                 FX_FillMode fillMode = FXFILL_WINDING,
                 CFX_Matrix* matrix = nullptr);
   void StretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
@@ -86,18 +86,18 @@ class CFX_Graphics {
   } m_info;
 
   void RenderDeviceSetLineDash(FX_DashStyle dashStyle);
-  void RenderDeviceStrokePath(CFX_Path* path, CFX_Matrix* matrix);
-  void RenderDeviceFillPath(CFX_Path* path,
+  void RenderDeviceStrokePath(CXFA_Path* path, CFX_Matrix* matrix);
+  void RenderDeviceFillPath(CXFA_Path* path,
                             FX_FillMode fillMode,
                             CFX_Matrix* matrix);
   void RenderDeviceStretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
                                 const CFX_RectF& rect,
                                 CFX_Matrix* matrix);
 
-  void FillPathWithPattern(CFX_Path* path,
+  void FillPathWithPattern(CXFA_Path* path,
                            FX_FillMode fillMode,
                            CFX_Matrix* matrix);
-  void FillPathWithShading(CFX_Path* path,
+  void FillPathWithShading(CXFA_Path* path,
                            FX_FillMode fillMode,
                            CFX_Matrix* matrix);
 
@@ -108,4 +108,4 @@ class CFX_Graphics {
   std::vector<std::unique_ptr<TInfo>> m_infoStack;
 };
 
-#endif  // XFA_FXGRAPHICS_CFX_GRAPHICS_H_
+#endif  // XFA_FXGRAPHICS_CXFA_GRAPHICS_H_

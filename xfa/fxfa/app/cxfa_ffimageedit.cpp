@@ -51,7 +51,7 @@ void CXFA_FFImageEdit::UnloadWidget() {
   CXFA_FFField::UnloadWidget();
 }
 
-void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
@@ -137,7 +137,7 @@ void CXFA_FFImageEdit::OnProcessEvent(CFWL_Event* pEvent) {
   m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
-void CXFA_FFImageEdit::OnDrawWidget(CFX_Graphics* pGraphics,
+void CXFA_FFImageEdit::OnDrawWidget(CXFA_Graphics* pGraphics,
                                     const CFX_Matrix* pMatrix) {
   m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }

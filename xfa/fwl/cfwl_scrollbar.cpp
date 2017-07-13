@@ -74,7 +74,7 @@ void CFWL_ScrollBar::Update() {
   Layout();
 }
 
-void CFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawWidget(CXFA_Graphics* pGraphics,
                                 const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -104,7 +104,7 @@ bool CFWL_ScrollBar::DoScroll(CFWL_EventScroll::Code dwCode, float fPos) {
   return OnScroll(dwCode, fPos);
 }
 
-void CFWL_ScrollBar::DrawTrack(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawTrack(CXFA_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme,
                                bool bLower,
                                const CFX_Matrix* pMatrix) {
@@ -120,7 +120,7 @@ void CFWL_ScrollBar::DrawTrack(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void CFWL_ScrollBar::DrawArrowBtn(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawArrowBtn(CXFA_Graphics* pGraphics,
                                   IFWL_ThemeProvider* pTheme,
                                   bool bMinBtn,
                                   const CFX_Matrix* pMatrix) {
@@ -137,7 +137,7 @@ void CFWL_ScrollBar::DrawArrowBtn(CFX_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
 }
 
-void CFWL_ScrollBar::DrawThumb(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawThumb(CXFA_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme,
                                const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
@@ -355,7 +355,7 @@ void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
   }
 }
 
-void CFWL_ScrollBar::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::OnDrawWidget(CXFA_Graphics* pGraphics,
                                   const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

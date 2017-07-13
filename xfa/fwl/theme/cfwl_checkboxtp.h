@@ -36,31 +36,31 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   };
 
   void DrawCheckSign(CFWL_Widget* pWidget,
-                     CFX_Graphics* pGraphics,
+                     CXFA_Graphics* pGraphics,
                      const CFX_RectF& pRtBox,
                      int32_t iState,
                      CFX_Matrix* pMatrix);
-  void DrawSignCheck(CFX_Graphics* pGraphics,
+  void DrawSignCheck(CXFA_Graphics* pGraphics,
                      const CFX_RectF* pRtSign,
                      FX_ARGB argbFill,
                      CFX_Matrix* pMatrix);
-  void DrawSignCircle(CFX_Graphics* pGraphics,
+  void DrawSignCircle(CXFA_Graphics* pGraphics,
                       const CFX_RectF* pRtSign,
                       FX_ARGB argbFill,
                       CFX_Matrix* pMatrix);
-  void DrawSignCross(CFX_Graphics* pGraphics,
+  void DrawSignCross(CXFA_Graphics* pGraphics,
                      const CFX_RectF* pRtSign,
                      FX_ARGB argbFill,
                      CFX_Matrix* pMatrix);
-  void DrawSignDiamond(CFX_Graphics* pGraphics,
+  void DrawSignDiamond(CXFA_Graphics* pGraphics,
                        const CFX_RectF* pRtSign,
                        FX_ARGB argbFill,
                        CFX_Matrix* pMatrix);
-  void DrawSignSquare(CFX_Graphics* pGraphics,
+  void DrawSignSquare(CXFA_Graphics* pGraphics,
                       const CFX_RectF* pRtSign,
                       FX_ARGB argbFill,
                       CFX_Matrix* pMatrix);
-  void DrawSignStar(CFX_Graphics* pGraphics,
+  void DrawSignStar(CXFA_Graphics* pGraphics,
                     const CFX_RectF* pRtSign,
                     FX_ARGB argbFill,
                     CFX_Matrix* pMatrix);
@@ -68,7 +68,7 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   void InitCheckPath(float fCheckLen);
 
   std::unique_ptr<CKBThemeData> m_pThemeData;
-  std::unique_ptr<CFX_Path> m_pCheckPath;
+  std::unique_ptr<CXFA_Path> m_pCheckPath;
 
  private:
   void SetThemeData();

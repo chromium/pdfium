@@ -28,13 +28,13 @@ class CFWL_PushButton : public CFWL_Widget {
   FWL_Type GetClassID() const override;
   void SetStates(uint32_t dwStates) override;
   void Update() override;
-  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
+  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
  private:
-  void DrawBkground(CFX_Graphics* pGraphics,
+  void DrawBkground(CXFA_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
   uint32_t GetPartStates();

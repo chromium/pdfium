@@ -14,7 +14,7 @@
 #include "xfa/fwl/cfwl_combolist.h"
 #include "xfa/fwl/cfwl_form.h"
 #include "xfa/fwl/cfwl_listbox.h"
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFWL_WidgetProperties;
 class CFWL_ComboBox;
@@ -52,11 +52,11 @@ class CFWL_ComboBox : public CFWL_Widget {
   void RemoveStates(uint32_t dwStates) override;
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
-  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
+  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   CFX_WideString GetTextByIndex(int32_t iIndex) const;
@@ -95,7 +95,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   CFX_RectF GetBBox() const;
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
-  void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DrawStretchHandler(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   bool IsDropListVisible() const {
     return m_pComboBoxProxy &&
            !(m_pComboBoxProxy->GetStates() & FWL_WGTSTATE_Invisible);
@@ -136,7 +136,7 @@ class CFWL_ComboBox : public CFWL_Widget {
                               uint32_t dwStylesExRemoved);
   void DisForm_Update();
   FWL_WidgetHit DisForm_HitTest(const CFX_PointF& point);
-  void DisForm_DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
+  void DisForm_DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   CFX_RectF DisForm_GetBBox() const;
   void DisForm_Layout();
   void DisForm_OnProcessMessage(CFWL_Message* pMessage);

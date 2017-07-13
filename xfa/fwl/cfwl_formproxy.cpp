@@ -32,7 +32,7 @@ bool CFWL_FormProxy::IsInstance(const CFX_WideStringC& wsClass) const {
 
 void CFWL_FormProxy::Update() {}
 
-void CFWL_FormProxy::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_FormProxy::DrawWidget(CXFA_Graphics* pGraphics,
                                 const CFX_Matrix* pMatrix) {}
 
 void CFWL_FormProxy::OnProcessMessage(CFWL_Message* pMessage) {

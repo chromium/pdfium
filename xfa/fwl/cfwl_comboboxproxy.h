@@ -23,7 +23,7 @@ class CFWL_ComboBoxProxy : public CFWL_FormProxy {
 
   // CFWL_FormProxy
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   void Reset() { m_bLButtonUpSelf = false; }

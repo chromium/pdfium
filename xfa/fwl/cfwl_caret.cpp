@@ -43,7 +43,7 @@ FWL_Type CFWL_Caret::GetClassID() const {
 
 void CFWL_Caret::Update() {}
 
-void CFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_Caret::DrawWidget(CXFA_Graphics* pGraphics,
                             const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -70,7 +70,7 @@ void CFWL_Caret::HideCaret() {
   SetStates(FWL_WGTSTATE_Invisible);
 }
 
-void CFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
+void CFWL_Caret::DrawCaretBK(CXFA_Graphics* pGraphics,
                              IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix* pMatrix) {
   if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
@@ -89,7 +89,7 @@ void CFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
 
 void CFWL_Caret::OnProcessMessage(CFWL_Message* pMessage) {}
 
-void CFWL_Caret::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_Caret::OnDrawWidget(CXFA_Graphics* pGraphics,
                               const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }

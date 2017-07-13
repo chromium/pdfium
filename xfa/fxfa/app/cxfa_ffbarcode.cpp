@@ -137,7 +137,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   return CXFA_FFField::LoadWidget();
 }
 
-void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
                                   CFX_Matrix* pMatrix,
                                   uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))

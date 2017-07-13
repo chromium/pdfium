@@ -13,14 +13,14 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/ifwl_widgetmgrdelegate.h"
-#include "xfa/fxgraphics/cfx_graphics.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 #define FWL_WGTMGR_DisableForm 0x00000002
 
 class CFWL_Message;
 class CXFA_FFApp;
 class CXFA_FWLAdapterWidgetMgr;
-class CFX_Graphics;
+class CXFA_Graphics;
 class CFX_Matrix;
 class CFWL_Widget;
 
@@ -33,7 +33,7 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   void OnSetCapability(uint32_t dwCapability) override;
   void OnProcessMessageToForm(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFWL_Widget* pWidget,
-                    CFX_Graphics* pGraphics,
+                    CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   CFWL_Widget* GetParentWidget(CFWL_Widget* pWidget) const;
@@ -82,7 +82,7 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
     Item* pPrevious;
     Item* pNext;
     CFWL_Widget* const pWidget;
-    std::unique_ptr<CFX_Graphics> pOffscreen;
+    std::unique_ptr<CXFA_Graphics> pOffscreen;
     int32_t iRedrawCounter;
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
     bool bOutsideChanged;
@@ -103,11 +103,11 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
 
   void DrawChild(CFWL_Widget* pParent,
                  const CFX_RectF& rtClip,
-                 CFX_Graphics* pGraphics,
+                 CXFA_Graphics* pGraphics,
                  const CFX_Matrix* pMatrix);
-  CFX_Graphics* DrawWidgetBefore(CFWL_Widget* pWidget,
-                                 CFX_Graphics* pGraphics,
-                                 const CFX_Matrix* pMatrix);
+  CXFA_Graphics* DrawWidgetBefore(CFWL_Widget* pWidget,
+                                  CXFA_Graphics* pGraphics,
+                                  const CFX_Matrix* pMatrix);
   bool IsNeedRepaint(CFWL_Widget* pWidget,
                      CFX_Matrix* pMatrix,
                      const CFX_RectF& rtDirty);

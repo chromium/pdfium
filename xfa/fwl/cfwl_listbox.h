@@ -42,11 +42,11 @@ class CFWL_ListBox : public CFWL_Widget {
   FWL_Type GetClassID() const override;
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
-  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
+  void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
+  void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
   int32_t CountItems(const CFWL_Widget* pWidget) const;
@@ -85,19 +85,19 @@ class CFWL_ListBox : public CFWL_Widget {
   void SelectAll();
   CFWL_ListItem* GetFocusedItem();
   void SetFocusItem(CFWL_ListItem* hItem);
-  void DrawBkground(CFX_Graphics* pGraphics,
+  void DrawBkground(CXFA_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
-  void DrawItems(CFX_Graphics* pGraphics,
+  void DrawItems(CXFA_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  const CFX_Matrix* pMatrix);
-  void DrawItem(CFX_Graphics* pGraphics,
+  void DrawItem(CXFA_Graphics* pGraphics,
                 IFWL_ThemeProvider* pTheme,
                 CFWL_ListItem* hItem,
                 int32_t Index,
                 const CFX_RectF& rtItem,
                 const CFX_Matrix* pMatrix);
-  void DrawStatic(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
+  void DrawStatic(CXFA_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
   CFX_SizeF CalcSize(bool bAutoSize);
   void UpdateItemSize(CFWL_ListItem* hItem,
                       CFX_SizeF& size,

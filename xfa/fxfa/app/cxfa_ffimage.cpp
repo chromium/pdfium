@@ -34,7 +34,7 @@ void CXFA_FFImage::UnloadWidget() {
   GetDataAcc()->SetImageImage(nullptr);
 }
 
-void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
                                 CFX_Matrix* pMatrix,
                                 uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))

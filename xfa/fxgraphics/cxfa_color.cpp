@@ -12,11 +12,11 @@ CXFA_Color::CXFA_Color(const FX_ARGB argb) {
   Set(argb);
 }
 
-CXFA_Color::CXFA_Color(CFX_Pattern* pattern, const FX_ARGB argb) {
+CXFA_Color::CXFA_Color(CXFA_Pattern* pattern, const FX_ARGB argb) {
   Set(pattern, argb);
 }
 
-CXFA_Color::CXFA_Color(CFX_Shading* shading) {
+CXFA_Color::CXFA_Color(CXFA_Shading* shading) {
   Set(shading);
 }
 
@@ -30,7 +30,7 @@ void CXFA_Color::Set(const FX_ARGB argb) {
   m_info.pattern = nullptr;
 }
 
-void CXFA_Color::Set(CFX_Pattern* pattern, const FX_ARGB argb) {
+void CXFA_Color::Set(CXFA_Pattern* pattern, const FX_ARGB argb) {
   if (!pattern)
     return;
   m_type = FX_COLOR_Pattern;
@@ -38,7 +38,7 @@ void CXFA_Color::Set(CFX_Pattern* pattern, const FX_ARGB argb) {
   m_info.pattern = pattern;
 }
 
-void CXFA_Color::Set(CFX_Shading* shading) {
+void CXFA_Color::Set(CXFA_Shading* shading) {
   if (!shading)
     return;
   m_type = FX_COLOR_Shading;

@@ -11,16 +11,16 @@
 #include "xfa/fwl/cfwl_themepart.h"
 
 class CFX_DIBitmpa;
-class CFX_Graphics;
-class CFX_Path;
+class CXFA_Graphics;
+class CXFA_Path;
 
 class CFWL_ThemeBackground : public CFWL_ThemePart {
  public:
   CFWL_ThemeBackground();
   ~CFWL_ThemeBackground();
 
-  CFX_Graphics* m_pGraphics;
-  CFX_Path* m_pPath;
+  CXFA_Graphics* m_pGraphics;
+  CXFA_Path* m_pPath;
   CFX_RetainPtr<CFX_DIBitmap> m_pImage;
 };
 

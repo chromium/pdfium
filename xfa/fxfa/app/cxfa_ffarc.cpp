@@ -10,7 +10,7 @@ CXFA_FFArc::CXFA_FFArc(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 
 CXFA_FFArc::~CXFA_FFArc() {}
 
-void CXFA_FFArc::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
                               CFX_Matrix* pMatrix,
                               uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))

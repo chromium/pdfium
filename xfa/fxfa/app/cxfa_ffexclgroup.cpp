@@ -16,7 +16,7 @@ CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_WidgetAcc* pDataAcc)
 
 CXFA_FFExclGroup::~CXFA_FFExclGroup() {}
 
-void CXFA_FFExclGroup::RenderWidget(CFX_Graphics* pGS,
+void CXFA_FFExclGroup::RenderWidget(CXFA_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
