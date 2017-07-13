@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFDOC_CPVT_WORDRANGE_H_
 #define CORE_FPDFDOC_CPVT_WORDRANGE_H_
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfdoc/cpvt_wordplace.h"
@@ -39,6 +40,16 @@ struct CPVT_WordRange {
   void SetEndPos(const CPVT_WordPlace& end) {
     EndPos = end;
     Normalize();
+  }
+
+  CPVT_WordRange Intersect(const CPVT_WordRange& that) const {
+    if (that.EndPos < BeginPos || that.BeginPos > EndPos ||
+        EndPos < that.BeginPos || BeginPos > that.EndPos) {
+      return CPVT_WordRange();
+    }
+
+    return CPVT_WordRange(std::max(BeginPos, that.BeginPos),
+                          std::min(EndPos, that.EndPos));
   }
 
   inline bool IsEmpty() const { return BeginPos == EndPos; }

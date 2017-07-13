@@ -18,17 +18,6 @@
 #include "fpdfsdk/pdfwindow/cpwl_icon.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
-CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
-                                            const CPVT_WordRange& wr2) {
-  if (wr2.EndPos < wr1.BeginPos || wr2.BeginPos > wr1.EndPos ||
-      wr1.EndPos < wr2.BeginPos || wr1.BeginPos > wr2.EndPos) {
-    return CPVT_WordRange();
-  }
-
-  return CPVT_WordRange(std::max(wr1.BeginPos, wr2.BeginPos),
-                        std::min(wr1.EndPos, wr2.EndPos));
-}
-
 CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {
   const float fWidth = crBBox.right - crBBox.left;
   const float fHeight = crBBox.top - crBBox.bottom;
