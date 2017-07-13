@@ -26,8 +26,9 @@ void FXMEM_InitializePartitionAlloc() {
 
 // TODO(palmer): Remove the |flags| argument.
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags) {
-  return pdfium::base::PartitionAllocGeneric(gGeneralPartitionAllocator.root(),
-                                             byte_size, "GeneralPartition");
+  return pdfium::base::PartitionAllocGenericFlags(
+      gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
+      byte_size, "GeneralPartition");
 }
 
 void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
