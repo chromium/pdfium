@@ -29,3 +29,4 @@ Local Modifications:
 0022-upstream-patch-0012.patch: Use the upstream solution corresponding to patch 0012.
 0023-upstream-security-fixes.patch: more upstream patches related to security issues.
 0024-upstream-PackBitsDecode-fix.patch: fix Heap-buffer-overflow in tif_packbits.c.
+0025-upstream-OOM-gtTileContig: allocates the decoded buffer only after a first successful TIFFFillStrip.
