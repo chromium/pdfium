@@ -89,36 +89,31 @@ CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideString& filepath) {
 #endif
 }
 
-bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
+CFX_WideString CPDF_FileSpec::GetFileName() const {
+  CFX_WideString csFileName;
   if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    *csFileName = pDict->GetUnicodeTextFor("UF");
-    if (csFileName->IsEmpty()) {
-      *csFileName =
+    csFileName = pDict->GetUnicodeTextFor("UF");
+    if (csFileName.IsEmpty()) {
+      csFileName =
           CFX_WideString::FromLocal(pDict->GetStringFor("F").AsStringC());
     }
     if (pDict->GetStringFor("FS") == "URL")
-      return true;
-    if (csFileName->IsEmpty()) {
-      if (pDict->KeyExist("DOS")) {
-        *csFileName =
-            CFX_WideString::FromLocal(pDict->GetStringFor("DOS").AsStringC());
-      } else if (pDict->KeyExist("Mac")) {
-        *csFileName =
-            CFX_WideString::FromLocal(pDict->GetStringFor("Mac").AsStringC());
-      } else if (pDict->KeyExist("Unix")) {
-        *csFileName =
-            CFX_WideString::FromLocal(pDict->GetStringFor("Unix").AsStringC());
-      } else {
-        return false;
+      return csFileName;
+
+    if (csFileName.IsEmpty()) {
+      constexpr const char* keys[] = {"DOS", "Mac", "Unix"};
+      for (const auto* key : keys) {
+        if (pDict->KeyExist(key)) {
+          csFileName =
+              CFX_WideString::FromLocal(pDict->GetStringFor(key).AsStringC());
+          break;
+        }
       }
     }
   } else if (m_pObj->IsString()) {
-    *csFileName = CFX_WideString::FromLocal(m_pObj->GetString().AsStringC());
-  } else {
-    return false;
+    csFileName = CFX_WideString::FromLocal(m_pObj->GetString().AsStringC());
   }
-  *csFileName = DecodeFileName(*csFileName);
-  return true;
+  return DecodeFileName(csFileName);
 }
 
 CPDF_Stream* CPDF_FileSpec::GetFileStream() const {

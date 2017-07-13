@@ -28,7 +28,7 @@ class CPDF_FileSpec {
   static CFX_WideString DecodeFileName(const CFX_WideString& filepath);
 
   CPDF_Object* GetObj() const { return m_pObj.Get(); }
-  bool GetFileName(CFX_WideString* wsFileName) const;
+  CFX_WideString GetFileName() const;
   CPDF_Stream* GetFileStream() const;
   CPDF_Dictionary* GetParamsDict() const;
 

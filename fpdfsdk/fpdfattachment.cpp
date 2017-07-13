@@ -35,13 +35,10 @@ FPDFDoc_GetAttachmentName(FPDF_DOCUMENT document,
   if (!pFile)
     return 0;
 
-  CFX_WideString name;
-  CPDF_FileSpec filespec(pFile);
-  filespec.GetFileName(&name);
-  CFX_ByteString encodedName = name.UTF16LE_Encode();
-  unsigned long len = encodedName.GetLength();
+  CFX_ByteString name = CPDF_FileSpec(pFile).GetFileName().UTF16LE_Encode();
+  unsigned long len = name.GetLength();
   if (buffer && buflen >= len)
-    memcpy(buffer, encodedName.c_str(), len);
+    memcpy(buffer, name.c_str(), len);
 
   return len;
 }
