@@ -76,7 +76,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
   CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
   m_BitmapAlpha = FXSYS_round(255 * state.GetFillAlpha());
   m_pDIBSource = m_Loader.m_pBitmap;
-  if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_ALPHA &&
+  if (m_pRenderStatus->m_Options.m_ColorMode == CPDF_RenderOptions::kAlpha &&
       !m_Loader.m_pMask) {
     return StartBitmapAlpha();
   }
@@ -103,10 +103,10 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
         m_bPatternColor = true;
     }
     m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject.Get());
-  } else if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
+  } else if (m_pRenderStatus->m_Options.m_ColorMode ==
+             CPDF_RenderOptions::kGray) {
     m_pClone = m_pDIBSource->Clone(nullptr);
-    m_pClone->ConvertColorScale(m_pRenderStatus->m_Options.m_BackColor,
-                                m_pRenderStatus->m_Options.m_ForeColor);
+    m_pClone->ConvertColorScale(0xffffff, 0);
     m_pDIBSource = m_pClone;
   }
   m_Flags = 0;

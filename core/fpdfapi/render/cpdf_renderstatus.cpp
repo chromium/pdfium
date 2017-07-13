@@ -937,7 +937,7 @@ CFX_RetainPtr<CFX_DIBitmap> DrawPatternBitmap(CPDF_Document* pDoc,
   mtPattern2Bitmap.Concat(mtAdjust);
   CPDF_RenderOptions options;
   if (!pPattern->colored())
-    options.m_ColorMode = RENDER_COLOR_ALPHA;
+    options.m_ColorMode = CPDF_RenderOptions::kAlpha;
 
   flags |= RENDER_FORCE_HALFTONE;
   options.m_Flags = flags;
@@ -2138,8 +2138,8 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   if (bAlphaMode)
     pBitmap->LoadChannel(FXDIB_Red, pBitmap, FXDIB_Alpha);
 
-  if (m_Options.m_ColorMode == RENDER_COLOR_GRAY)
-    pBitmap->ConvertColorScale(m_Options.m_ForeColor, m_Options.m_BackColor);
+  if (m_Options.m_ColorMode == CPDF_RenderOptions::kGray)
+    pBitmap->ConvertColorScale(0, 0xffffff);
   buffer.OutputToDevice();
 }
 
@@ -2170,7 +2170,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
       FXSYS_round(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
                                  : pPageObj->m_GeneralState.GetFillAlpha()));
   DrawShading(pattern, &matrix, rect, alpha,
-              m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
+              m_Options.m_ColorMode == CPDF_RenderOptions::kAlpha);
 }
 
 void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
@@ -2185,7 +2185,7 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
   matrix.Concat(*pObj2Device);
   DrawShading(pShadingObj->m_pShading.Get(), &matrix, rect,
               FXSYS_round(255 * pShadingObj->m_GeneralState.GetFillAlpha()),
-              m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
+              m_Options.m_ColorMode == CPDF_RenderOptions::kAlpha);
 }
 
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
@@ -2310,9 +2310,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   if (!pPatternBitmap)
     return;
 
-  if (m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
-    pPatternBitmap->ConvertColorScale(m_Options.m_ForeColor,
-                                      m_Options.m_BackColor);
+  if (m_Options.m_ColorMode == CPDF_RenderOptions::kGray) {
+    pPatternBitmap->ConvertColorScale(0, 0xffffff);
   }
   FX_ARGB fill_argb = GetFillArgb(pPageObj);
   int clip_width = clip_box.right - clip_box.left;
@@ -2616,7 +2615,8 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     pFormResource = form.m_pFormDict->GetDictFor("Resources");
   }
   CPDF_RenderOptions options;
-  options.m_ColorMode = bLuminosity ? RENDER_COLOR_NORMAL : RENDER_COLOR_ALPHA;
+  options.m_ColorMode =
+      bLuminosity ? CPDF_RenderOptions::kNormal : CPDF_RenderOptions::kAlpha;
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr, nullptr,
                     nullptr, &options, 0, m_bDropObjects, pFormResource, true,

@@ -101,11 +101,8 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
 #endif  // PDF_ENABLE_XFA
 
   // Grayscale output
-  if (flags & FPDF_GRAYSCALE) {
-    pContext->m_pOptions->m_ColorMode = RENDER_COLOR_GRAY;
-    pContext->m_pOptions->m_ForeColor = 0;
-    pContext->m_pOptions->m_BackColor = 0xffffff;
-  }
+  if (flags & FPDF_GRAYSCALE)
+    pContext->m_pOptions->m_ColorMode = CPDF_RenderOptions::kGray;
 
   const CPDF_OCContext::UsageType usage =
       (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;

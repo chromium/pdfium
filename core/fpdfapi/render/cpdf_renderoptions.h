@@ -12,10 +12,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
 
-#define RENDER_COLOR_NORMAL 0
-#define RENDER_COLOR_GRAY 1
-#define RENDER_COLOR_TWOCOLOR 2
-#define RENDER_COLOR_ALPHA 3
 #define RENDER_CLEARTYPE 0x00000001
 #define RENDER_PRINTGRAPHICTEXT 0x00000002
 #define RENDER_FORCE_DOWNSAMPLE 0x00000004
@@ -36,15 +32,15 @@
 
 class CPDF_RenderOptions {
  public:
+  enum Type { kNormal = 0, kGray, kAlpha };
+
   CPDF_RenderOptions();
   CPDF_RenderOptions(const CPDF_RenderOptions& rhs);
   ~CPDF_RenderOptions();
 
   FX_ARGB TranslateColor(FX_ARGB argb) const;
 
-  int m_ColorMode;
-  FX_COLORREF m_BackColor;
-  FX_COLORREF m_ForeColor;
+  Type m_ColorMode;
   uint32_t m_Flags;
   uint32_t m_dwLimitCacheSize;
   bool m_bDrawAnnots;
