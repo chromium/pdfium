@@ -54,9 +54,8 @@ class CPDF_MeshStream {
   bool ReadVertex(const CFX_Matrix& pObject2Bitmap,
                   CPDF_MeshVertex* vertex,
                   uint32_t* flag);
-  bool ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
-                     int count,
-                     CPDF_MeshVertex* vertex);
+  std::vector<CPDF_MeshVertex> ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
+                                             int count);
 
   CFX_BitStream* BitStream() { return &m_BitStream; }
   uint32_t ComponentBits() const { return m_nComponentBits; }

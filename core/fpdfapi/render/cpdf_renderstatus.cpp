@@ -527,25 +527,24 @@ void DrawLatticeGouraudShading(
   if (!stream.Load())
     return;
 
-  std::unique_ptr<CPDF_MeshVertex, FxFreeDeleter> vertex(
-      FX_Alloc2D(CPDF_MeshVertex, row_verts, 2));
-  if (!stream.ReadVertexRow(*pObject2Bitmap, row_verts, vertex.get()))
+  std::vector<CPDF_MeshVertex> vertices[2];
+  vertices[0] = stream.ReadVertexRow(*pObject2Bitmap, row_verts);
+  if (vertices[0].empty())
     return;
 
   int last_index = 0;
   while (1) {
-    CPDF_MeshVertex* last_row = vertex.get() + last_index * row_verts;
-    CPDF_MeshVertex* this_row = vertex.get() + (1 - last_index) * row_verts;
-    if (!stream.ReadVertexRow(*pObject2Bitmap, row_verts, this_row))
+    vertices[1 - last_index] = stream.ReadVertexRow(*pObject2Bitmap, row_verts);
+    if (vertices[1 - last_index].empty())
       return;
 
     CPDF_MeshVertex triangle[3];
-    for (int i = 1; i < row_verts; i++) {
-      triangle[0] = last_row[i];
-      triangle[1] = this_row[i - 1];
-      triangle[2] = last_row[i - 1];
+    for (int i = 1; i < row_verts; ++i) {
+      triangle[0] = vertices[last_index][i];
+      triangle[1] = vertices[1 - last_index][i - 1];
+      triangle[2] = vertices[last_index][i - 1];
       DrawGouraud(pBitmap, alpha, triangle);
-      triangle[2] = this_row[i];
+      triangle[2] = vertices[1 - last_index][i];
       DrawGouraud(pBitmap, alpha, triangle);
     }
     last_index = 1 - last_index;
