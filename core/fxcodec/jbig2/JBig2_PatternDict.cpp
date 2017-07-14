@@ -8,16 +8,7 @@
 
 #include "core/fxcrt/fx_memory.h"
 
-CJBig2_PatternDict::CJBig2_PatternDict() {
-  NUMPATS = 0;
-  HDPATS = nullptr;
-}
+CJBig2_PatternDict::CJBig2_PatternDict(uint32_t dict_size)
+    : NUMPATS(dict_size), HDPATS(dict_size) {}
 
-CJBig2_PatternDict::~CJBig2_PatternDict() {
-  if (HDPATS) {
-    for (uint32_t i = 0; i < NUMPATS; i++) {
-      delete HDPATS[i];
-    }
-    FX_Free(HDPATS);
-  }
-}
+CJBig2_PatternDict::~CJBig2_PatternDict() {}

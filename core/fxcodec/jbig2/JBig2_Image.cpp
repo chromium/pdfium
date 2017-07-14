@@ -9,6 +9,7 @@
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -162,32 +163,37 @@ bool CJBig2_Image::composeFrom(int32_t x,
                                CJBig2_Image* pSrc,
                                JBig2ComposeOp op,
                                const FX_RECT* pSrcRect) {
-  if (!m_pData) {
-    return false;
-  }
-  return pSrc->composeTo(this, x, y, op, pSrcRect);
+  return m_pData ? pSrc->composeTo(this, x, y, op, pSrcRect) : false;
 }
+
 #define JBIG2_GETDWORD(buf) \
   ((uint32_t)(((buf)[0] << 24) | ((buf)[1] << 16) | ((buf)[2] << 8) | (buf)[3]))
-CJBig2_Image* CJBig2_Image::subImage(int32_t x,
-                                     int32_t y,
-                                     int32_t w,
-                                     int32_t h) {
-  int32_t m, n, j;
-  uint8_t *pLineSrc, *pLineDst;
+
+std::unique_ptr<CJBig2_Image> CJBig2_Image::subImage(int32_t x,
+                                                     int32_t y,
+                                                     int32_t w,
+                                                     int32_t h) {
+  int32_t m;
+  int32_t n;
+  int32_t j;
+  uint8_t* pLineSrc;
+  uint8_t* pLineDst;
   uint32_t wTmp;
-  uint8_t *pSrc, *pSrcEnd, *pDst, *pDstEnd;
-  if (w == 0 || h == 0) {
+  uint8_t* pSrc;
+  uint8_t* pSrcEnd;
+  uint8_t* pDst;
+  uint8_t* pDstEnd;
+  if (w == 0 || h == 0)
     return nullptr;
-  }
-  CJBig2_Image* pImage = new CJBig2_Image(w, h);
+
+  auto pImage = pdfium::MakeUnique<CJBig2_Image>(w, h);
   if (!m_pData) {
     pImage->fill(0);
     return pImage;
   }
-  if (!pImage->m_pData) {
+  if (!pImage->m_pData)
     return pImage;
-  }
+
   pLineSrc = m_pData + m_nStride * y;
   pLineDst = pImage->m_pData;
   m = (x >> 5) << 2;

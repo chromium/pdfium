@@ -19,10 +19,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_Arith(
     IFX_Pause* pPause) {
   uint32_t GRAY;
   std::unique_ptr<CJBig2_Image> BHDC;
-  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>();
-  pDict->NUMPATS = GRAYMAX + 1;
-  pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
-  JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
+  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
 
   auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = HDMMR;
@@ -60,10 +57,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_MMR(
     CJBig2_BitStream* pStream) {
   uint32_t GRAY;
   std::unique_ptr<CJBig2_Image> BHDC;
-  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>();
-  pDict->NUMPATS = GRAYMAX + 1;
-  pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
-  JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
+  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
 
   auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = HDMMR;

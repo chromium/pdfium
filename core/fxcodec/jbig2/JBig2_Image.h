@@ -7,6 +7,8 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_IMAGE_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_IMAGE_H_
 
+#include <memory>
+
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 
 struct FX_RECT;
@@ -60,7 +62,10 @@ class CJBig2_Image {
                    JBig2ComposeOp op,
                    const FX_RECT* pSrcRect);
 
-  CJBig2_Image* subImage(int32_t x, int32_t y, int32_t w, int32_t h);
+  std::unique_ptr<CJBig2_Image> subImage(int32_t x,
+                                         int32_t y,
+                                         int32_t w,
+                                         int32_t h);
   void expand(int32_t h, bool v);
 
   uint8_t* m_pData;

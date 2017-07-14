@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_JBIG2_JBIG2_HTRDPROC_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/fx_system.h"
@@ -31,7 +32,7 @@ class CJBig2_HTRDProc {
   bool HMMR;
   uint8_t HTEMPLATE;
   uint32_t HNUMPATS;
-  CJBig2_Image** HPATS;
+  const std::vector<std::unique_ptr<CJBig2_Image>>* HPATS;
   bool HDEFPIXEL;
   JBig2ComposeOp HCOMBOP;
   bool HENABLESKIP;

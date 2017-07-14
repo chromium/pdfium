@@ -6,6 +6,8 @@
 
 #include "core/fxcodec/jbig2/JBig2_HtrdProc.h"
 
+#include <algorithm>
+
 #include "core/fxcodec/jbig2/JBig2_GsidProc.h"
 #include "core/fxcrt/fx_basic.h"
 #include "third_party/base/ptr_util.h"
@@ -56,11 +58,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_Arith(
     for (ng = 0; ng < HGW; ng++) {
       x = (HGX + mg * HRY + ng * HRX) >> 8;
       y = (HGY + mg * HRX - ng * HRY) >> 8;
-      uint32_t pat_index = GI[mg * HGW + ng];
-      if (pat_index >= HNUMPATS) {
-        pat_index = HNUMPATS - 1;
-      }
-      HTREG->composeFrom(x, y, HPATS[pat_index], HCOMBOP);
+      uint32_t pat_index = std::min(GI[mg * HGW + ng], HNUMPATS - 1);
+      HTREG->composeFrom(x, y, (*HPATS)[pat_index].get(), HCOMBOP);
     }
   }
   FX_Free(GI);
@@ -92,11 +91,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_MMR(
     for (ng = 0; ng < HGW; ng++) {
       x = (HGX + mg * HRY + ng * HRX) >> 8;
       y = (HGY + mg * HRX - ng * HRY) >> 8;
-      uint32_t pat_index = GI[mg * HGW + ng];
-      if (pat_index >= HNUMPATS) {
-        pat_index = HNUMPATS - 1;
-      }
-      HTREG->composeFrom(x, y, HPATS[pat_index], HCOMBOP);
+      uint32_t pat_index = std::min(GI[mg * HGW + ng], HNUMPATS - 1);
+      HTREG->composeFrom(x, y, (*HPATS)[pat_index].get(), HCOMBOP);
     }
   }
   FX_Free(GI);

@@ -1008,7 +1008,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     return JBIG2_ERROR_FATAL;
 
   pHRD->HNUMPATS = pPatternDict->NUMPATS;
-  pHRD->HPATS = pPatternDict->HDPATS;
+  pHRD->HPATS = &pPatternDict->HDPATS;
   pHRD->HPW = pPatternDict->HDPATS[0]->width();
   pHRD->HPH = pPatternDict->HDPATS[0]->height();
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
