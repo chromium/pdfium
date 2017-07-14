@@ -40,6 +40,11 @@ class util : public CJS_EmbedObj {
 
   static CFX_WideString printx(const CFX_WideString& cFormat,
                                const CFX_WideString& cSource);
+
+ private:
+  friend class CJS_Util_ParseDataType_Test;
+
+  static int ParseDataType(std::wstring* sFormat);
 };
 
 class CJS_Util : public CJS_Object {

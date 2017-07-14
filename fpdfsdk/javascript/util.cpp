@@ -70,40 +70,6 @@ const TbConvert TbConvertTable[] = {
 #endif
 };
 
-int ParseDataType(std::wstring* sFormat) {
-  bool bPercent = false;
-  for (size_t i = 0; i < sFormat->length(); ++i) {
-    wchar_t c = (*sFormat)[i];
-    if (c == L'%') {
-      bPercent = true;
-      continue;
-    }
-
-    if (bPercent) {
-      if (c == L'c' || c == L'C' || c == L'd' || c == L'i' || c == L'o' ||
-          c == L'u' || c == L'x' || c == L'X') {
-        return UTIL_INT;
-      }
-      if (c == L'e' || c == L'E' || c == L'f' || c == L'g' || c == L'G') {
-        return UTIL_DOUBLE;
-      }
-      if (c == L's' || c == L'S') {
-        // Map s to S since we always deal internally
-        // with wchar_t strings.
-        (*sFormat)[i] = L'S';
-        return UTIL_STRING;
-      }
-      if (c == L'.' || c == L'+' || c == L'-' || c == L'#' || c == L' ' ||
-          std::iswdigit(c)) {
-        continue;
-      }
-      break;
-    }
-  }
-
-  return -1;
-}
-
 }  // namespace
 
 util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
@@ -479,4 +445,38 @@ bool util::byteToChar(CJS_Runtime* pRuntime,
   CFX_WideString wStr(static_cast<wchar_t>(arg));
   vRet = CJS_Value(pRuntime, wStr.c_str());
   return true;
+}
+
+int util::ParseDataType(std::wstring* sFormat) {
+  bool bPercent = false;
+  for (size_t i = 0; i < sFormat->length(); ++i) {
+    wchar_t c = (*sFormat)[i];
+    if (c == L'%') {
+      bPercent = true;
+      continue;
+    }
+
+    if (bPercent) {
+      if (c == L'c' || c == L'C' || c == L'd' || c == L'i' || c == L'o' ||
+          c == L'u' || c == L'x' || c == L'X') {
+        return UTIL_INT;
+      }
+      if (c == L'e' || c == L'E' || c == L'f' || c == L'g' || c == L'G') {
+        return UTIL_DOUBLE;
+      }
+      if (c == L's' || c == L'S') {
+        // Map s to S since we always deal internally
+        // with wchar_t strings.
+        (*sFormat)[i] = L'S';
+        return UTIL_STRING;
+      }
+      if (c == L'.' || c == L'+' || c == L'-' || c == L'#' || c == L' ' ||
+          std::iswdigit(c)) {
+        continue;
+      }
+      break;
+    }
+  }
+
+  return -1;
 }

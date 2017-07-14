@@ -1981,7 +1981,10 @@ test("pdfium_unittests") {
     deps += [ "//skia" ]
   }
   if (pdf_enable_v8) {
-    sources += [ "fpdfsdk/javascript/public_methods_unittest.cpp" ]
+    sources += [
+      "fpdfsdk/javascript/public_methods_unittest.cpp",
+      "fpdfsdk/javascript/util_unittest.cpp",
+    ]
     include_dirs += [
       "//v8",
       "//v8/include",
