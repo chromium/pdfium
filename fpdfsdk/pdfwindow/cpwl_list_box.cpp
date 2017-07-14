@@ -405,13 +405,8 @@ float CPWL_ListBox::GetFirstHeight() const {
 }
 
 CFX_FloatRect CPWL_ListBox::GetListRect() const {
-  CFX_FloatRect rect = GetWindowRect();
-  if (!rect.IsEmpty()) {
-    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
-    rect.Deflate(width, width);
-    rect.Normalize();
-  }
-  return rect;
+  float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+  return GetWindowRect().GetDeflated(width, width);
 }
 
 bool CPWL_ListBox::OnMouseWheel(short zDelta,

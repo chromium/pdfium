@@ -543,6 +543,16 @@ class CFX_FloatRect {
     Deflate(rt.left, rt.bottom, rt.right, rt.top);
   }
 
+  CFX_FloatRect GetDeflated(float x, float y) const {
+    if (IsEmpty())
+      return CFX_FloatRect();
+
+    CFX_FloatRect that = *this;
+    that.Deflate(x, y);
+    that.Normalize();
+    return that;
+  }
+
   void Translate(float e, float f) {
     left += e;
     right += e;

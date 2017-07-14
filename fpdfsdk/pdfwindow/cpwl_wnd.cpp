@@ -292,14 +292,9 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
     return;
 
   if (HasFlag(PWS_BACKGROUND)) {
-    CFX_FloatRect rcClient = rectWnd;
-    if (!rcClient.IsEmpty()) {
-      float width =
-          static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
-      rcClient.Deflate(width, width);
-      rcClient.Normalize();
-    }
-    CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient,
+    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+    CPWL_Utils::DrawFillRect(pDevice, pUser2Device,
+                             rectWnd.GetDeflated(width, width),
                              GetBackgroundColor(), GetTransparency());
   }
 
@@ -468,13 +463,9 @@ CFX_FloatRect CPWL_Wnd::GetWindowRect() const {
 
 CFX_FloatRect CPWL_Wnd::GetClientRect() const {
   CFX_FloatRect rcWindow = GetWindowRect();
-  CFX_FloatRect rcClient = rcWindow;
-  if (!rcClient.IsEmpty()) {
-    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
-    rcClient.Deflate(width, width);
-    rcClient.Normalize();
-  }
 
+  float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+  CFX_FloatRect rcClient = rcWindow.GetDeflated(width, width);
   if (CPWL_ScrollBar* pVSB = GetVScrollBar())
     rcClient.right -= pVSB->GetScrollBarWidth();
 

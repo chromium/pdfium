@@ -103,13 +103,8 @@ void CPWL_Edit::RePosChildWnd() {
 }
 
 CFX_FloatRect CPWL_Edit::GetClientRect() const {
-  CFX_FloatRect rcClient = GetWindowRect();
-  if (!rcClient.IsEmpty()) {
-    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
-    rcClient.Deflate(width, width);
-    rcClient.Normalize();
-  }
-
+  float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+  CFX_FloatRect rcClient = GetWindowRect().GetDeflated(width, width);
   if (CPWL_ScrollBar* pVSB = GetVScrollBar()) {
     if (pVSB->IsVisible()) {
       rcClient.right -= PWL_SCROLLBAR_WIDTH;

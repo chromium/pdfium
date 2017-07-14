@@ -242,31 +242,23 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 
   // draw border
-  CFX_FloatRect rcDraw = rectWnd;
-  CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
+  CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rectWnd,
                              ArgbEncode(nTransparency, 100, 100, 100), 0.0f);
 
   // draw inner border
-  rcDraw = rectWnd;
-  if (!rcDraw.IsEmpty()) {
-    rcDraw.Deflate(0.5f, 0.5f);
-    rcDraw.Normalize();
-  }
-  CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
+  CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device,
+                             rectWnd.GetDeflated(0.5f, 0.5f),
                              ArgbEncode(nTransparency, 255, 255, 255), 1.0f);
 
   if (m_eSBButtonType != PSBT_POS) {
     // draw background
-    rcDraw = rectWnd;
-    if (!rcDraw.IsEmpty()) {
-      rcDraw.Deflate(1.0f, 1.0f);
-      rcDraw.Normalize();
-    }
     if (IsEnabled()) {
-      CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false, rcDraw,
-                             nTransparency, 80, 220);
+      CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false,
+                             rectWnd.GetDeflated(1.0f, 1.0f), nTransparency, 80,
+                             220);
     } else {
-      CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
+      CPWL_Utils::DrawFillRect(pDevice, pUser2Device,
+                               rectWnd.GetDeflated(1.0f, 1.0f),
                                ArgbEncode(255, 255, 255, 255));
     }
 
@@ -326,7 +318,8 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       ptBottom.x += 1.0f;
     }
   } else {
-    CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
+    CPWL_Utils::DrawFillRect(pDevice, pUser2Device,
+                             rectWnd.GetDeflated(0.5f, 0.5f),
                              ArgbEncode(255, 255, 255, 255));
   }
 

@@ -925,12 +925,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
       break;
   }
 
-  CFX_FloatRect rcClient = rcWindow;
-  if (!rcClient.IsEmpty()) {
-    rcClient.Deflate(fBorderWidth, fBorderWidth);
-    rcClient.Normalize();
-  }
-
+  CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CFX_Color crText(COLORTYPE_GRAY, 0);
 
   CFX_ByteString csNameTag;
@@ -1107,12 +1102,7 @@ void CPDFSDK_Widget::ResetAppearance_CheckBox() {
   }
 
   CFX_FloatRect rcWindow = GetRotatedRect();
-  CFX_FloatRect rcClient = rcWindow;
-  if (!rcClient.IsEmpty()) {
-    rcClient.Deflate(fBorderWidth, fBorderWidth);
-    rcClient.Normalize();
-  }
-
+  CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
     da.GetColor(iColorType, fc);
@@ -1232,12 +1222,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
   }
 
   CFX_FloatRect rcWindow = GetRotatedRect();
-  CFX_FloatRect rcClient = rcWindow;
-  if (!rcClient.IsEmpty()) {
-    rcClient.Deflate(fBorderWidth, fBorderWidth);
-    rcClient.Normalize();
-  }
-
+  CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
     da.GetColor(iColorType, fc);
@@ -1272,13 +1257,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
   }
 
   CFX_ByteString csAP_N_ON;
-
-  CFX_FloatRect rcCenter = rcWindow.GetCenterSquare();
-  if (!rcCenter.IsEmpty()) {
-    rcCenter.Deflate(1.0f, 1.0f);
-    rcCenter.Normalize();
-  }
-
+  CFX_FloatRect rcCenter = rcWindow.GetCenterSquare().GetDeflated(1.0f, 1.0f);
   if (nStyle == PCS_CIRCLE) {
     if (nBorderStyle == BorderStyle::BEVELED) {
       crLeftTop = CFX_Color(COLORTYPE_GRAY, 1);
@@ -1664,12 +1643,7 @@ CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
     default:
       break;
   }
-
-  if (!rcWindow.IsEmpty()) {
-    rcWindow.Deflate(fBorderWidth, fBorderWidth);
-    rcWindow.Normalize();
-  }
-  return rcWindow;
+  return rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
 }
 
 CFX_FloatRect CPDFSDK_Widget::GetRotatedRect() const {

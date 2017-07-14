@@ -18,13 +18,8 @@ CFX_ByteString CPWL_PushButton::GetClassName() const {
 }
 
 CFX_FloatRect CPWL_PushButton::GetFocusRect() const {
-  CFX_FloatRect rect = GetWindowRect();
-  if (!rect.IsEmpty()) {
-    rect.Deflate(static_cast<float>(GetBorderWidth()),
-                 static_cast<float>(GetBorderWidth()));
-    rect.Normalize();
-  }
-  return rect;
+  return GetWindowRect().GetDeflated(static_cast<float>(GetBorderWidth()),
+                                     static_cast<float>(GetBorderWidth()));
 }
 
 CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(false) {}
