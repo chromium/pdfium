@@ -15,6 +15,10 @@
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "third_party/base/ptr_util.h"
 
+CJBig2_TRDProc::CJBig2_TRDProc() {}
+
+CJBig2_TRDProc::~CJBig2_TRDProc() {}
+
 std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
     CJBig2_BitStream* pStream,
     JBig2ArithCtx* grContext) {

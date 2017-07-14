@@ -79,10 +79,10 @@ class CJBig2_Context {
   int32_t parseTable(CJBig2_Segment* pSegment);
   int32_t parseRegionInfo(JBig2RegionInfo* pRI);
 
-  JBig2HuffmanCode* decodeSymbolIDHuffmanTable(CJBig2_BitStream* pStream,
-                                               uint32_t SBNUMSYMS);
+  std::vector<JBig2HuffmanCode> decodeSymbolIDHuffmanTable(
+      CJBig2_BitStream* pStream,
+      uint32_t SBNUMSYMS);
 
-  void huffman_assign_code(int* CODES, int* PREFLEN, int NTEMP);
   void huffman_assign_code(JBig2HuffmanCode* SBSYMCODES, int NTEMP);
 
   std::unique_ptr<CJBig2_Context> m_pGlobalContext;

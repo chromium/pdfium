@@ -279,7 +279,6 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Huffman(
   uint32_t nTmp;
   uint32_t SBNUMSYMS;
   uint8_t SBSYMCODELEN;
-  std::vector<JBig2HuffmanCode> SBSYMCODES;
   uint32_t IDI;
   int32_t RDXI, RDYI;
   uint32_t BMSIZE;
@@ -345,16 +344,15 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Huffman(
           pDecoder->SBSTRIPS = 1;
           pDecoder->SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           SBNUMSYMS = pDecoder->SBNUMSYMS;
-          SBSYMCODES.resize(SBNUMSYMS);
+          std::vector<JBig2HuffmanCode> SBSYMCODES(SBNUMSYMS);
           nTmp = 1;
-          while ((uint32_t)(1 << nTmp) < SBNUMSYMS) {
-            nTmp++;
-          }
-          for (I = 0; I < SBNUMSYMS; I++) {
+          while (static_cast<uint32_t>(1 << nTmp) < SBNUMSYMS)
+            ++nTmp;
+          for (I = 0; I < SBNUMSYMS; ++I) {
             SBSYMCODES[I].codelen = nTmp;
             SBSYMCODES[I].code = I;
           }
-          pDecoder->SBSYMCODES = SBSYMCODES.data();
+          pDecoder->SBSYMCODES = std::move(SBSYMCODES);
           SBSYMS.resize(SBNUMSYMS);
           std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
           for (size_t i = 0; i < NSYMSDECODED; ++i)

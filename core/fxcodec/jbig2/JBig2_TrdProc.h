@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_JBIG2_JBIG2_TRDPROC_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/fx_system.h"
@@ -42,6 +43,9 @@ enum JBig2Corner {
 
 class CJBig2_TRDProc {
  public:
+  CJBig2_TRDProc();
+  ~CJBig2_TRDProc();
+
   std::unique_ptr<CJBig2_Image> decode_Huffman(CJBig2_BitStream* pStream,
                                                JBig2ArithCtx* grContext);
 
@@ -57,7 +61,7 @@ class CJBig2_TRDProc {
   uint32_t SBSTRIPS;
   uint32_t SBNUMSYMS;
 
-  JBig2HuffmanCode* SBSYMCODES;
+  std::vector<JBig2HuffmanCode> SBSYMCODES;
   uint8_t SBSYMCODELEN;
 
   CJBig2_Image** SBSYMS;
