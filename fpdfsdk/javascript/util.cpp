@@ -38,10 +38,6 @@ JSMethodSpec CJS_Util::MethodSpecs[] = {
 
 IMPLEMENT_JS_CLASS(CJS_Util, util)
 
-#define UTIL_INT 0
-#define UTIL_DOUBLE 1
-#define UTIL_STRING 2
-
 namespace {
 
 // Map PDF-style directives to equivalent wcsftime directives. Not

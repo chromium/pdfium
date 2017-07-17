@@ -7,11 +7,6 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-// Should mirror the defines in util.cpp.
-#define UTIL_INT 0
-#define UTIL_DOUBLE 1
-#define UTIL_STRING 2
-
 TEST(CJS_Util, ParseDataType) {
   struct ParseDataTypeCase {
     const wchar_t* const input_string;

@@ -12,6 +12,11 @@
 
 #include "fpdfsdk/javascript/JS_Define.h"
 
+// Return values for ParseDataType() below.
+#define UTIL_INT 0
+#define UTIL_DOUBLE 1
+#define UTIL_STRING 2
+
 class util : public CJS_EmbedObj {
  public:
   explicit util(CJS_Object* pJSObject);
