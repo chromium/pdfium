@@ -84,26 +84,26 @@ bool util::printf(CJS_Runtime* pRuntime,
   if (iSize < 1)
     return false;
 
-  std::wstring c_ConvChar(params[0].ToCFXWideString(pRuntime).c_str());
-  std::vector<std::wstring> c_strConvers;
+  std::wstring unsafe_fmt_string(params[0].ToCFXWideString(pRuntime).c_str());
+  std::vector<std::wstring> unsafe_conversion_specifiers;
   int iOffset = 0;
   int iOffend = 0;
-  c_ConvChar.insert(c_ConvChar.begin(), L'S');
+  unsafe_fmt_string.insert(unsafe_fmt_string.begin(), L'S');
   while (iOffset != -1) {
-    iOffend = c_ConvChar.find(L"%", iOffset + 1);
+    iOffend = unsafe_fmt_string.find(L"%", iOffset + 1);
     std::wstring strSub;
     if (iOffend == -1)
-      strSub = c_ConvChar.substr(iOffset);
+      strSub = unsafe_fmt_string.substr(iOffset);
     else
-      strSub = c_ConvChar.substr(iOffset, iOffend - iOffset);
-    c_strConvers.push_back(strSub);
+      strSub = unsafe_fmt_string.substr(iOffset, iOffend - iOffset);
+    unsafe_conversion_specifiers.push_back(strSub);
     iOffset = iOffend;
   }
 
   std::wstring c_strResult;
-  std::wstring c_strFormat;
-  for (size_t iIndex = 0; iIndex < c_strConvers.size(); ++iIndex) {
-    c_strFormat = c_strConvers[iIndex];
+  for (size_t iIndex = 0; iIndex < unsafe_conversion_specifiers.size();
+       ++iIndex) {
+    std::wstring c_strFormat = unsafe_conversion_specifiers[iIndex];
     if (iIndex == 0) {
       c_strResult = c_strFormat;
       continue;
@@ -116,28 +116,9 @@ bool util::printf(CJS_Runtime* pRuntime,
 
     CFX_WideString strSegment;
     switch (ParseDataType(&c_strFormat)) {
-      case UTIL_INT: {
-        int dot = c_strFormat.find(L".", 0);
-        if (dot != -1) {
-          size_t len = 0;
-          for (size_t i = dot + 1; i < c_strFormat.length(); ++i) {
-            wchar_t c = c_strFormat[i];
-            if (std::iswdigit(c)) {
-              ++len;
-              continue;
-            }
-            break;
-          }
-
-          // Windows has a max of ~261 characters in the format string of
-          // the form %0.261x. We're just going to bail out if the format
-          // would be over 3 or more characters long.
-          if (len > 2)
-            return false;
-        }
+      case UTIL_INT:
         strSegment.Format(c_strFormat.c_str(), params[iIndex].ToInt(pRuntime));
         break;
-      }
       case UTIL_DOUBLE:
         strSegment.Format(c_strFormat.c_str(),
                           params[iIndex].ToDouble(pRuntime));
@@ -147,7 +128,7 @@ bool util::printf(CJS_Runtime* pRuntime,
                           params[iIndex].ToCFXWideString(pRuntime).c_str());
         break;
       default:
-        strSegment.Format(L"%S", c_strFormat.c_str());
+        strSegment.Format(L"%ls", c_strFormat.c_str());
         break;
     }
     c_strResult += strSegment.c_str();
@@ -447,36 +428,84 @@ bool util::byteToChar(CJS_Runtime* pRuntime,
   return true;
 }
 
+// Ensure that sFormat contains at most one well-understood printf formatting
+// directive which is safe to use with a single argument, and return the type
+// of argument expected, or -1 otherwise. If -1 is returned, it is NOT safe
+// to use sFormat with printf() and it must be copied byte-by-byte.
 int util::ParseDataType(std::wstring* sFormat) {
-  bool bPercent = false;
-  for (size_t i = 0; i < sFormat->length(); ++i) {
+  enum State { BEFORE, FLAGS, WIDTH, PRECISION, SPECIFIER, AFTER };
+
+  int result = -1;
+  State state = BEFORE;
+  size_t precision_digits = 0;
+  size_t i = 0;
+  while (i < sFormat->length()) {
     wchar_t c = (*sFormat)[i];
-    if (c == L'%') {
-      bPercent = true;
-      continue;
+    switch (state) {
+      case BEFORE:
+        if (c == L'%')
+          state = FLAGS;
+        break;
+      case FLAGS:
+        if (c == L'+' || c == L'-' || c == L'#' || c == L' ') {
+          // Stay in same state.
+        } else {
+          state = WIDTH;
+          continue;  // Re-process same character.
+        }
+        break;
+      case WIDTH:
+        if (c == L'*')
+          return -1;
+        if (std::iswdigit(c)) {
+          // Stay in same state.
+        } else if (c == L'.') {
+          state = PRECISION;
+        } else {
+          state = SPECIFIER;
+          continue;  // Re-process same character.
+        }
+        break;
+      case PRECISION:
+        if (c == L'*')
+          return -1;
+        if (std::iswdigit(c)) {
+          // Stay in same state.
+          ++precision_digits;
+        } else {
+          state = SPECIFIER;
+          continue;  // Re-process same character.
+        }
+        break;
+      case SPECIFIER:
+        if (c == L'c' || c == L'C' || c == L'd' || c == L'i' || c == L'o' ||
+            c == L'u' || c == L'x' || c == L'X') {
+          result = UTIL_INT;
+        } else if (c == L'e' || c == L'E' || c == L'f' || c == L'g' ||
+                   c == L'G') {
+          result = UTIL_DOUBLE;
+        } else if (c == L's' || c == L'S') {
+          // Map s to S since we always deal internally with wchar_t strings.
+          // TODO(tsepez): Probably 100% borked. %S is not a standard
+          // conversion.
+          (*sFormat)[i] = L'S';
+          result = UTIL_STRING;
+        } else {
+          return -1;
+        }
+        state = AFTER;
+        break;
+      case AFTER:
+        if (c == L'%')
+          return -1;
+        // Stay in same state until string exhausted.
+        break;
     }
-
-    if (bPercent) {
-      if (c == L'c' || c == L'C' || c == L'd' || c == L'i' || c == L'o' ||
-          c == L'u' || c == L'x' || c == L'X') {
-        return UTIL_INT;
-      }
-      if (c == L'e' || c == L'E' || c == L'f' || c == L'g' || c == L'G') {
-        return UTIL_DOUBLE;
-      }
-      if (c == L's' || c == L'S') {
-        // Map s to S since we always deal internally
-        // with wchar_t strings.
-        (*sFormat)[i] = L'S';
-        return UTIL_STRING;
-      }
-      if (c == L'.' || c == L'+' || c == L'-' || c == L'#' || c == L' ' ||
-          std::iswdigit(c)) {
-        continue;
-      }
-      break;
-    }
+    ++i;
   }
+  // See https://crbug.com/740166
+  if (result == UTIL_INT && precision_digits > 2)
+    return -1;
 
-  return -1;
+  return result;
 }

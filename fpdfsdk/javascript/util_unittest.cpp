@@ -78,12 +78,12 @@ TEST(CJS_Util, ParseDataType) {
       // {L"%.14s", -1},
       // {L"%.f", -1},
 
+      // See https://crbug.com/740166
       // nPrecision too large (> 260) causes crashes in Windows.
-      // TODO(tsepez): Reenable when fix is out.
-      // {L"%.261d", -1},
-      // {L"%.261x", -1},
-      // {L"%.261f", -1},
-      // {L"%.261s", -1},
+      // Avoid this by limiting to two digits
+      {L"%.1d", UTIL_INT},
+      {L"%.10d", UTIL_INT},
+      {L"%.100d", -1},
 
       // Unexpected characters
       {L"%ad", -1},

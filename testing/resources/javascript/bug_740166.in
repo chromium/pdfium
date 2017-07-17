@@ -47,7 +47,10 @@ endobj
 {{object 11 0}} <<
 >>
 stream
-app.alert("Value " + util.printf("= %0.769x", 1));
+app.alert(util.printf("Values = %0.1x .9999 %x", 1, 2));
+app.alert(util.printf("Values = %0.10x .9999 %x", 1, 2));
+app.alert(util.printf("Values = %0.100x .9999 %x", 1, 2));
+app.alert(util.printf("Values = %0.1000x .9999 %x", 1, 2));
 endstream
 endobj
 {{xref}}
