@@ -77,49 +77,6 @@ class CPWL_Utils {
       const CPVT_WordRange* pRange = nullptr);
   static CFX_ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox);
 
-  static void DrawFillRect(CFX_RenderDevice* pDevice,
-                           CFX_Matrix* pUser2Device,
-                           const CFX_FloatRect& rect,
-                           const CFX_Color& color,
-                           int32_t nTransparency);
-  static void DrawFillRect(CFX_RenderDevice* pDevice,
-                           CFX_Matrix* pUser2Device,
-                           const CFX_FloatRect& rect,
-                           const FX_COLORREF& color);
-  static void DrawStrokeRect(CFX_RenderDevice* pDevice,
-                             CFX_Matrix* pUser2Device,
-                             const CFX_FloatRect& rect,
-                             const FX_COLORREF& color,
-                             float fWidth);
-  static void DrawStrokeLine(CFX_RenderDevice* pDevice,
-                             CFX_Matrix* pUser2Device,
-                             const CFX_PointF& ptMoveTo,
-                             const CFX_PointF& ptLineTo,
-                             const FX_COLORREF& color,
-                             float fWidth);
-  static void DrawBorder(CFX_RenderDevice* pDevice,
-                         CFX_Matrix* pUser2Device,
-                         const CFX_FloatRect& rect,
-                         float fWidth,
-                         const CFX_Color& color,
-                         const CFX_Color& crLeftTop,
-                         const CFX_Color& crRightBottom,
-                         BorderStyle nStyle,
-                         int32_t nTransparency);
-  static void DrawFillArea(CFX_RenderDevice* pDevice,
-                           CFX_Matrix* pUser2Device,
-                           const CFX_PointF* pPts,
-                           int32_t nCount,
-                           const FX_COLORREF& color);
-  static void DrawShadow(CFX_RenderDevice* pDevice,
-                         CFX_Matrix* pUser2Device,
-                         bool bVertical,
-                         bool bHorizontal,
-                         CFX_FloatRect rect,
-                         int32_t nTransparency,
-                         int32_t nStartGray,
-                         int32_t nEndGray);
-
  private:
   static CFX_ByteString GetAppStream_Check(const CFX_FloatRect& rcBBox,
                                            const CFX_Color& crText);

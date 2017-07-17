@@ -8,6 +8,7 @@
 
 #include <sstream>
 
+#include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/fxedit/fxet_list.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit.h"
@@ -171,8 +172,8 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
                            nullptr, pSysHandler, m_pFormFiller.Get());
         pSysHandler->OutputSelectedRect(m_pFormFiller.Get(), rcItem);
       } else {
-        CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcItem,
-                                 ArgbEncode(255, 0, 51, 113));
+        pDevice->DrawFillRect(pUser2Device, rcItem,
+                              ArgbEncode(255, 0, 51, 113));
         CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
                            ArgbEncode(255, 255, 255, 255), rcList, ptOffset,
                            nullptr, pSysHandler, m_pFormFiller.Get());

@@ -10,6 +10,7 @@
 #include <sstream>
 #include <vector>
 
+#include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
 #include "fpdfsdk/pdfwindow/cpwl_utils.h"
 #include "third_party/base/ptr_util.h"
@@ -293,17 +294,16 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   if (HasFlag(PWS_BACKGROUND)) {
     float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
-    CPWL_Utils::DrawFillRect(pDevice, pUser2Device,
-                             rectWnd.GetDeflated(width, width),
-                             GetBackgroundColor(), GetTransparency());
+    pDevice->DrawFillRect(pUser2Device, rectWnd.GetDeflated(width, width),
+                          GetBackgroundColor(), GetTransparency());
   }
 
   if (HasFlag(PWS_BORDER)) {
-    CPWL_Utils::DrawBorder(pDevice, pUser2Device, rectWnd,
-                           (float)GetBorderWidth(), GetBorderColor(),
-                           GetBorderLeftTopColor(GetBorderStyle()),
-                           GetBorderRightBottomColor(GetBorderStyle()),
-                           GetBorderStyle(), GetTransparency());
+    pDevice->DrawBorder(pUser2Device, rectWnd,
+                        static_cast<float>(GetBorderWidth()), GetBorderColor(),
+                        GetBorderLeftTopColor(GetBorderStyle()),
+                        GetBorderRightBottomColor(GetBorderStyle()),
+                        GetBorderStyle(), GetTransparency());
   }
 }
 
