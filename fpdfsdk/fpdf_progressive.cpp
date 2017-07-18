@@ -23,7 +23,7 @@
 static_assert(CPDF_ProgressiveRenderer::Ready == FPDF_RENDER_READER,
               "CPDF_ProgressiveRenderer::Ready value mismatch");
 static_assert(CPDF_ProgressiveRenderer::ToBeContinued ==
-                  FPDF_RENDER_TOBECOUNTINUED,
+                  FPDF_RENDER_TOBECONTINUED,
               "CPDF_ProgressiveRenderer::ToBeContinued value mismatch");
 static_assert(CPDF_ProgressiveRenderer::Done == FPDF_RENDER_DONE,
               "CPDF_ProgressiveRenderer::Done value mismatch");

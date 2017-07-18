@@ -26,7 +26,7 @@ class CPDF_ProgressiveRenderer {
   // static_asserts to make sure the two sets of values match.
   enum Status {
     Ready,          // FPDF_RENDER_READER
-    ToBeContinued,  // FPDF_RENDER_TOBECOUNTINUED
+    ToBeContinued,  // FPDF_RENDER_TOBECONTINUED
     Done,           // FPDF_RENDER_DONE
     Failed          // FPDF_RENDER_FAILED
   };
