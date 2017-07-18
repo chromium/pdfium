@@ -8,7 +8,7 @@
 // NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
-#include "public/fpdf_doc.h"
+#include "fpdf_doc.h"
 
 #ifdef __cplusplus
 extern "C" {
