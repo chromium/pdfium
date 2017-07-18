@@ -212,7 +212,7 @@ DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {
   return pFontInfoExt;
 }
 
-DLLEXPORT void FPDF_FreeDefaultSystemFontInfo(
-    FPDF_SYSFONTINFO* pDefaultFontInfo) {
+DLLEXPORT void STDCALL
+FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pDefaultFontInfo) {
   FX_Free(static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pDefaultFontInfo));
 }

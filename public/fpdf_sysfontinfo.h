@@ -307,7 +307,8 @@ DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo();
  * Return Value:
  *          None
  **/
-DLLEXPORT void FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
+DLLEXPORT void STDCALL
+FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
 
 #ifdef __cplusplus
 }

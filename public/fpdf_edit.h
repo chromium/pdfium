@@ -344,11 +344,11 @@ DLLEXPORT void STDCALL FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
 // A      - the stroke alpha for the path.
 //
 // Returns TRUE on success.
-DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
-                                            unsigned int R,
-                                            unsigned int G,
-                                            unsigned int B,
-                                            unsigned int A);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
+                                                    unsigned int R,
+                                                    unsigned int G,
+                                                    unsigned int B,
+                                                    unsigned int A);
 
 // Get the stroke RGBA of a path. Range of values: 0 - 255.
 //
@@ -359,11 +359,11 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
 // A      - the stroke alpha of the path.
 //
 // Returns TRUE on success.
-DLLEXPORT FPDF_BOOL FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
-                                            unsigned int* R,
-                                            unsigned int* G,
-                                            unsigned int* B,
-                                            unsigned int* A);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
+                                                    unsigned int* R,
+                                                    unsigned int* G,
+                                                    unsigned int* B,
+                                                    unsigned int* A);
 
 // Set the stroke width of a path.
 //
@@ -371,7 +371,8 @@ DLLEXPORT FPDF_BOOL FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
 // width  - the width of the stroke.
 //
 // Returns TRUE on success
-DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path,
+                                                    float width);
 
 // Set the line join of |page_object|.
 //
@@ -380,8 +381,8 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
 //
 // Line join can be one of following: FPDF_LINEJOIN_MITER, FPDF_LINEJOIN_ROUND,
 // FPDF_LINEJOIN_BEVEL
-DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page_object,
-                                            int line_join);
+DLLEXPORT void STDCALL STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page_object,
+                                                    int line_join);
 
 // Set the line cap of |page_object|.
 //
@@ -402,11 +403,11 @@ DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT page_object,
 // A      - the fill alpha for the path.
 //
 // Returns TRUE on success.
-DLLEXPORT FPDF_BOOL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
-                                          unsigned int R,
-                                          unsigned int G,
-                                          unsigned int B,
-                                          unsigned int A);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
+                                                  unsigned int R,
+                                                  unsigned int G,
+                                                  unsigned int B,
+                                                  unsigned int A);
 
 // Get the fill RGBA of a path. Range of values: 0 - 255.
 //
@@ -417,11 +418,11 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
 // A      - the fill alpha of the path.
 //
 // Returns TRUE on success.
-DLLEXPORT FPDF_BOOL FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
-                                          unsigned int* R,
-                                          unsigned int* G,
-                                          unsigned int* B,
-                                          unsigned int* A);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
+                                                  unsigned int* R,
+                                                  unsigned int* G,
+                                                  unsigned int* B,
+                                                  unsigned int* A);
 
 // Move a path's current point.
 //
@@ -433,7 +434,9 @@ DLLEXPORT FPDF_BOOL FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
 // new one.
 //
 // Returns TRUE on success
-DLLEXPORT FPDF_BOOL FPDFPath_MoveTo(FPDF_PAGEOBJECT path, float x, float y);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
+                                            float x,
+                                            float y);
 
 // Add a line between the current point and a new point in the path.
 //
@@ -444,7 +447,9 @@ DLLEXPORT FPDF_BOOL FPDFPath_MoveTo(FPDF_PAGEOBJECT path, float x, float y);
 // The path's current point is changed to (x, y).
 //
 // Returns TRUE on success
-DLLEXPORT FPDF_BOOL FPDFPath_LineTo(FPDF_PAGEOBJECT path, float x, float y);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_LineTo(FPDF_PAGEOBJECT path,
+                                            float x,
+                                            float y);
 
 // Add a cubic Bezier curve to the given path, starting at the current point.
 //
@@ -457,13 +462,13 @@ DLLEXPORT FPDF_BOOL FPDFPath_LineTo(FPDF_PAGEOBJECT path, float x, float y);
 // y3     - the vertical position of the ending point of the Bezier curve.
 //
 // Returns TRUE on success
-DLLEXPORT FPDF_BOOL FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
-                                      float x1,
-                                      float y1,
-                                      float x2,
-                                      float y2,
-                                      float x3,
-                                      float y3);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
+                                              float x1,
+                                              float y1,
+                                              float x2,
+                                              float y2,
+                                              float x3,
+                                              float y3);
 
 // Close the current subpath of a given path.
 //
@@ -473,7 +478,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
 // subpath, thus terminating the current subpath.
 //
 // Returns TRUE on success
-DLLEXPORT FPDF_BOOL FPDFPath_Close(FPDF_PAGEOBJECT path);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_Close(FPDF_PAGEOBJECT path);
 
 // Set the drawing mode of a path.
 //
@@ -483,9 +488,9 @@ DLLEXPORT FPDF_BOOL FPDFPath_Close(FPDF_PAGEOBJECT path);
 // stroke   - a boolean specifying if the path should be stroked or not.
 //
 // Returns TRUE on success
-DLLEXPORT FPDF_BOOL FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
-                                         int fillmode,
-                                         FPDF_BOOL stroke);
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
+                                                 int fillmode,
+                                                 FPDF_BOOL stroke);
 
 // Create a new text object using one of the standard PDF fonts.
 //
