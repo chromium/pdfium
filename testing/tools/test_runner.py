@@ -40,6 +40,7 @@ class TestRunner:
   def __init__(self, dirname):
     self.test_dir = dirname
     self.enforce_expected_images = False
+    self.oneshot_renderer = False
 
   # GenerateAndTest returns a tuple <success, outputfiles> where
   # success is a boolean indicating whether the tests passed comparison
@@ -125,6 +126,8 @@ class TestRunner:
     cmd_to_run = [self.pdfium_test_path, '--send-events', '--png']
     if self.gold_results:
       cmd_to_run.append('--md5')
+    if self.oneshot_renderer:
+      cmd_to_run.append('--render-oneshot')
     cmd_to_run.append(pdf_path)
     return common.RunCommandExtractHashedFiles(cmd_to_run)
 
@@ -302,3 +305,7 @@ class TestRunner:
   def SetEnforceExpectedImages(self, new_value):
     """Set whether to enforce that each test case provide an expected image."""
     self.enforce_expected_images = new_value
+
+  def SetOneShotRenderer(self, new_value):
+    """Set whether to use the oneshot renderer. """
+    self.oneshot_renderer = new_value

@@ -25,6 +25,7 @@
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
+#include "public/fpdf_progressive.h"
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
@@ -81,6 +82,7 @@ struct Options {
       : show_config(false),
         show_metadata(false),
         send_events(false),
+        render_oneshot(false),
 #ifdef ENABLE_CALLGRIND
         callgrind_delimiters(false),
 #endif  // ENABLE_CALLGRIND
@@ -92,6 +94,7 @@ struct Options {
   bool show_config;
   bool show_metadata;
   bool send_events;
+  bool render_oneshot;
 #ifdef ENABLE_CALLGRIND
   bool callgrind_delimiters;
 #endif  // ENABLE_CALLGRIND
@@ -696,6 +699,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->show_metadata = true;
     } else if (cur_arg == "--send-events") {
       options->send_events = true;
+    } else if (cur_arg == "--render-oneshot") {
+      options->render_oneshot = true;
 #ifdef ENABLE_CALLGRIND
     } else if (cur_arg == "--callgrind-delim") {
       options->callgrind_delimiters = true;
@@ -973,6 +978,13 @@ void DumpPageStructure(FPDF_PAGE page, const int page_idx) {
   printf("\n\n");
 }
 
+// Note, for a client using progressive rendering you'd want to determine if you
+// need the rendering to pause instead of always saying |true|. This is for
+// testing to force the renderer to break whenever possible.
+FPDF_BOOL NeedToPauseNow(IFSDK_PAUSE* p) {
+  return true;
+}
+
 bool RenderPage(const std::string& name,
                 FPDF_DOCUMENT doc,
                 FPDF_FORMHANDLE form,
@@ -1007,11 +1019,30 @@ bool RenderPage(const std::string& name,
   if (bitmap) {
     FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
     FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, fill_color);
-    FPDF_RenderPageBitmap(bitmap.get(), page.get(), 0, 0, width, height, 0,
-                          FPDF_ANNOT);
+
+    if (options.render_oneshot) {
+      // Note, client programs probably want to use this method instead of the
+      // progressive calls. The progressive calls are if you need to pause the
+      // rendering to update the UI, the PDF renderer will break when possible.
+      FPDF_RenderPageBitmap(bitmap.get(), page.get(), 0, 0, width, height, 0,
+                            FPDF_ANNOT);
+    } else {
+      IFSDK_PAUSE pause;
+      pause.version = 1;
+      pause.NeedToPauseNow = &NeedToPauseNow;
+
+      int rv = FPDF_RenderPageBitmap_Start(
+          bitmap.get(), page.get(), 0, 0, width, height, 0, FPDF_ANNOT, &pause);
+      while (rv == FPDF_RENDER_TOBECOUNTINUED)
+        rv = FPDF_RenderPage_Continue(page.get(), &pause);
+    }
 
     FPDF_FFLDraw(form, bitmap.get(), page.get(), 0, 0, width, height, 0,
                  FPDF_ANNOT);
+
+    if (!options.render_oneshot)
+      FPDF_RenderPage_Close(page.get());
+
     int stride = FPDFBitmap_GetStride(bitmap.get());
     const char* buffer =
         reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap.get()));
@@ -1280,6 +1311,7 @@ static const char kUsageString[] =
     "  --show-metadata   - print the file metadata\n"
     "  --show-structure  - print the structure elements from the document\n"
     "  --send-events     - send input described by .evt file\n"
+    "  --render-oneshot  - render image without using progressive renderer\n"
 #ifdef ENABLE_CALLGRIND
     "  --callgrind-delim - delimit interesting section when using callgrind\n"
 #endif  // ENABLE_CALLGRIND
