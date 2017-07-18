@@ -30,7 +30,7 @@ CFX_SAXContext* CFX_SAXReaderHandler::OnTagEnter(
   if (eType == CFX_SAXItem::Type::Instruction)
     m_SAXContext.m_TextBuf << "?";
 
-  m_SAXContext.m_TextBuf << bsTagName.c_str();
+  m_SAXContext.m_TextBuf << bsTagName;
   m_SAXContext.m_bsTagName = bsTagName;
   return &m_SAXContext;
 }
