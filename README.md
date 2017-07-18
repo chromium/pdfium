@@ -133,6 +133,11 @@ differences on the various platforms. These tests are reliable on the bots. If
 you see failures, it can be a good idea to run the tests on the tip-of-tree
 checkout to see if the same failures appear.
 
+## Code Coverage
+
+Code coverage reports for PDFium can be generated in Linux development
+environments. Details can be found [here](/docs/code-coverage.md).
+
 ## Waterfall
 
 The current health of the source tree can be found at
