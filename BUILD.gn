@@ -719,8 +719,6 @@ static_library("fxcodec") {
     "core/fxcodec/jbig2/JBig2_GrdProc.h",
     "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
     "core/fxcodec/jbig2/JBig2_GrrdProc.h",
-    "core/fxcodec/jbig2/JBig2_GsidProc.cpp",
-    "core/fxcodec/jbig2/JBig2_GsidProc.h",
     "core/fxcodec/jbig2/JBig2_HtrdProc.cpp",
     "core/fxcodec/jbig2/JBig2_HtrdProc.h",
     "core/fxcodec/jbig2/JBig2_HuffmanDecoder.cpp",
