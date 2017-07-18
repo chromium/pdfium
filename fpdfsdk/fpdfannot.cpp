@@ -170,10 +170,6 @@ bool HasAPStream(const CPDF_Dictionary* pAnnotDict) {
   return !!FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
 }
 
-CFX_ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING text) {
-  return CFX_WideString::FromUTF16LE(text, CFX_WideString::WStringLength(text))
-      .UTF8Encode();
-}
 void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
   ASSERT(pForm);
   ASSERT(pStream);
@@ -760,14 +756,9 @@ DLLEXPORT unsigned long STDCALL FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return 0;
 
-  CFX_ByteString contents =
-      pAnnotDict->GetUnicodeTextFor(CFXByteStringFromFPDFWideString(key))
-          .UTF16LE_Encode();
-  unsigned long len = contents.GetLength();
-  if (buffer && buflen >= len)
-    memcpy(buffer, contents.c_str(), len);
-
-  return len;
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pAnnotDict->GetUnicodeTextFor(CFXByteStringFromFPDFWideString(key)),
+      buffer, buflen);
 }
 
 DLLEXPORT int STDCALL FPDFAnnot_GetFlags(FPDF_ANNOTATION annot) {

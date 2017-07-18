@@ -20,9 +20,22 @@
 #define PDF_USE_XFA
 #endif  // PDF_ENABLE_XFA
 
+// PDF object types
+#define FPDF_OBJECT_UNKNOWN 0
+#define FPDF_OBJECT_BOOLEAN 1
+#define FPDF_OBJECT_NUMBER 2
+#define FPDF_OBJECT_STRING 3
+#define FPDF_OBJECT_NAME 4
+#define FPDF_OBJECT_ARRAY 5
+#define FPDF_OBJECT_DICTIONARY 6
+#define FPDF_OBJECT_STREAM 7
+#define FPDF_OBJECT_NULLOBJ 8
+#define FPDF_OBJECT_REFERENCE 9
+
 // PDF types
 typedef void* FPDF_ACTION;
 typedef void* FPDF_ANNOTATION;
+typedef void* FPDF_ATTACHMENT;
 typedef void* FPDF_BITMAP;
 typedef void* FPDF_BOOKMARK;
 typedef void* FPDF_CLIPPATH;
