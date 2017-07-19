@@ -94,34 +94,6 @@ bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {
   return OnNotifySelectionChanged(true, nFlag);
 }
 
-void CPWL_CBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
-  CPWL_Wnd::GetThisAppearanceStream(psAppStream);
-
-  CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
-
-  if (!IsVisible() || rectWnd.IsEmpty())
-    return;
-
-  CFX_PointF ptCenter = GetCenterPoint();
-
-  CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
-                 ptCenter.y + kTriangleHalfLength * 0.5f);
-  CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
-                 ptCenter.y + kTriangleHalfLength * 0.5f);
-  CFX_PointF pt3(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
-
-  if (IsFloatBigger(rectWnd.right - rectWnd.left, kTriangleHalfLength * 2) &&
-      IsFloatBigger(rectWnd.top - rectWnd.bottom, kTriangleHalfLength)) {
-    *psAppStream << "q\n"
-                 << "0 g\n"
-                 << pt1.x << " " << pt1.y << " m\n"
-                 << pt2.x << " " << pt2.y << " l\n"
-                 << pt3.x << " " << pt3.y << " l\n"
-                 << pt1.x << " " << pt1.y << " l f\n"
-                 << "Q\n";
-  }
-}
-
 void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                        CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);

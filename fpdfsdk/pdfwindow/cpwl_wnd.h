@@ -274,7 +274,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
   virtual void RePosChildWnd();
-  virtual void GetThisAppearanceStream(std::ostringstream* psAppStream);
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   CFX_Matrix* pUser2Device);
@@ -286,7 +285,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void OnSetFocus();
   virtual void OnKillFocus();
 
-  void GetAppearanceStream(std::ostringstream* psAppStream);
   void SetNotifyFlag(bool bNotifying = true) { m_bNotifying = bNotifying; }
 
   bool IsValid() const;
@@ -308,7 +306,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   CFX_PointF ParentToChild(const CFX_PointF& point) const;
   CFX_FloatRect ParentToChild(const CFX_FloatRect& rect) const;
 
-  void GetChildAppearanceStream(std::ostringstream* psAppStream);
   void DrawChildAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 
   FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;

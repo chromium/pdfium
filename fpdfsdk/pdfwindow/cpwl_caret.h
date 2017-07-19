@@ -16,7 +16,6 @@ class CPWL_Caret : public CPWL_Wnd {
 
   // CPWL_Wnd
   CFX_ByteString GetClassName() const override;
-  void GetThisAppearanceStream(std::ostringstream* psAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
   void InvalidateRect(CFX_FloatRect* pRect = nullptr) override;
@@ -26,11 +25,9 @@ class CPWL_Caret : public CPWL_Wnd {
   void SetCaret(bool bVisible,
                 const CFX_PointF& ptHead,
                 const CFX_PointF& ptFoot);
-  CFX_ByteString GetCaretAppearanceStream(const CFX_PointF& ptOffset);
   void SetInvalidRect(CFX_FloatRect rc) { m_rcInvalid = rc; }
 
  private:
-  void GetCaretApp(const CFX_PointF& ptOffset, std::ostringstream* psAppStream);
   CFX_FloatRect GetCaretRect() const;
 
   bool m_bFlash;

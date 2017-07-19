@@ -48,7 +48,6 @@ class CPWL_ListBox : public CPWL_Wnd {
   CFX_ByteString GetClassName() const override;
   void OnCreated() override;
   void OnDestroy() override;
-  void GetThisAppearanceStream(std::ostringstream* psAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;

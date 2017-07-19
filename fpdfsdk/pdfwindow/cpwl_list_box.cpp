@@ -94,54 +94,6 @@ void CPWL_ListBox::OnDestroy() {
   m_pListNotify.reset();
 }
 
-void CPWL_ListBox::GetThisAppearanceStream(std::ostringstream* psAppStream) {
-  CPWL_Wnd::GetThisAppearanceStream(psAppStream);
-
-  std::ostringstream sListItems;
-
-  CFX_FloatRect rcPlate = m_pList->GetPlateRect();
-  for (int32_t i = 0, sz = m_pList->GetCount(); i < sz; i++) {
-    CFX_FloatRect rcItem = m_pList->GetItemRect(i);
-
-    if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom)
-      continue;
-
-    CFX_PointF ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
-    if (m_pList->IsItemSelected(i)) {
-      sListItems << CPWL_Utils::GetRectFillAppStream(rcItem,
-                                                     PWL_DEFAULT_SELBACKCOLOR);
-      CFX_ByteString sItem =
-          CPWL_Utils::GetEditAppStream(m_pList->GetItemEdit(i), ptOffset);
-      if (sItem.GetLength() > 0) {
-        sListItems << "BT\n"
-                   << CPWL_Utils::GetColorAppStream(
-                          CFX_Color(COLORTYPE_RGB, 1, 1, 1))
-                   << sItem << "ET\n";
-      }
-    } else {
-      CFX_ByteString sItem =
-          CPWL_Utils::GetEditAppStream(m_pList->GetItemEdit(i), ptOffset);
-      if (sItem.GetLength() > 0) {
-        sListItems << "BT\n"
-                   << CPWL_Utils::GetColorAppStream(GetTextColor()) << sItem
-                   << "ET\n";
-      }
-    }
-  }
-
-  if (sListItems.tellp() <= 0)
-    return;
-
-  CFX_FloatRect rcClient = GetClientRect();
-  *psAppStream << "/Tx BMC\n"
-               << "q\n"
-               << rcClient.left << " " << rcClient.bottom << " "
-               << rcClient.right - rcClient.left << " "
-               << rcClient.top - rcClient.bottom << " re W n\n"
-               << sListItems.str() << "Q\n"
-               << "EMC\n";
-}
-
 void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                       CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);

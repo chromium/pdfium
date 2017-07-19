@@ -245,39 +245,6 @@ void CPWL_Wnd::InvalidateRectMove(const CFX_FloatRect& rcOld,
   InvalidateRect(&rcUnion);
 }
 
-void CPWL_Wnd::GetAppearanceStream(std::ostringstream* psAppStream) {
-  if (IsValid() && IsVisible()) {
-    GetThisAppearanceStream(psAppStream);
-    GetChildAppearanceStream(psAppStream);
-  }
-}
-
-// if don't set,Get default apperance stream
-void CPWL_Wnd::GetThisAppearanceStream(std::ostringstream* psAppStream) {
-  CFX_FloatRect rectWnd = GetWindowRect();
-  if (rectWnd.IsEmpty())
-    return;
-
-  if (HasFlag(PWS_BACKGROUND))
-    *psAppStream << CPWL_Utils::GetRectFillAppStream(rectWnd,
-                                                     GetBackgroundColor());
-
-  if (HasFlag(PWS_BORDER)) {
-    *psAppStream << CPWL_Utils::GetBorderAppStream(
-        rectWnd, (float)GetBorderWidth(), GetBorderColor(),
-        GetBorderLeftTopColor(GetBorderStyle()),
-        GetBorderRightBottomColor(GetBorderStyle()), GetBorderStyle(),
-        GetBorderDash());
-  }
-}
-
-void CPWL_Wnd::GetChildAppearanceStream(std::ostringstream* psAppStream) {
-  for (CPWL_Wnd* pChild : m_Children) {
-    if (pChild)
-      pChild->GetAppearanceStream(psAppStream);
-  }
-}
-
 void CPWL_Wnd::DrawAppearance(CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device) {
   if (IsValid() && IsVisible()) {

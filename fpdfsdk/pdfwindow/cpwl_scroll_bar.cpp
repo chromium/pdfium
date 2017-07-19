@@ -136,64 +136,6 @@ void CPWL_SBButton::OnCreate(PWL_CREATEPARAM& cp) {
   cp.eCursorType = FXCT_ARROW;
 }
 
-void CPWL_SBButton::GetThisAppearanceStream(std::ostringstream* psAppStream) {
-  CPWL_Wnd::GetThisAppearanceStream(psAppStream);
-
-  if (!IsVisible())
-    return;
-
-  CFX_FloatRect rectWnd = GetWindowRect();
-  if (rectWnd.IsEmpty())
-    return;
-
-  CFX_PointF ptCenter = GetCenterPoint();
-  CFX_PointF pt1;
-  CFX_PointF pt2;
-  CFX_PointF pt3;
-  if (m_eScrollBarType == SBT_HSCROLL) {
-    if (m_eSBButtonType == PSBT_MIN) {
-      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
-      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
-                       ptCenter.y + kTriangleHalfLength);
-      pt3 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
-                       ptCenter.y - kTriangleHalfLength);
-    } else if (m_eSBButtonType == PSBT_MAX) {
-      pt1 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
-      pt2 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
-                       ptCenter.y + kTriangleHalfLength);
-      pt3 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
-                       ptCenter.y - kTriangleHalfLength);
-    }
-  } else {
-    if (m_eSBButtonType == PSBT_MIN) {
-      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength,
-                       ptCenter.y - kTriangleHalfLength * 0.5f);
-      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength,
-                       ptCenter.y - kTriangleHalfLength * 0.5f);
-      pt3 = CFX_PointF(ptCenter.x, ptCenter.y + kTriangleHalfLength * 0.5f);
-    } else if (m_eSBButtonType == PSBT_MAX) {
-      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength,
-                       ptCenter.y + kTriangleHalfLength * 0.5f);
-      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength,
-                       ptCenter.y + kTriangleHalfLength * 0.5f);
-      pt3 = CFX_PointF(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
-    }
-  }
-
-  *psAppStream << "q\n";
-  if (m_eSBButtonType != PSBT_POS) {
-    if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-        rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
-      *psAppStream << "0 g\n"
-                   << pt1.x << " " << pt1.y << " m\n"
-                   << pt2.x << " " << pt2.y << " l\n"
-                   << pt3.x << " " << pt3.y << " l\n"
-                   << pt1.x << " " << pt1.y << " l f\n";
-    }
-  }
-  *psAppStream << "Q\n";
-}
-
 void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                        CFX_Matrix* pUser2Device) {
   if (!IsVisible())
@@ -459,20 +401,6 @@ void CPWL_ScrollBar::RePosChildWnd() {
   if (m_pMaxButton)
     m_pMaxButton->Move(rcMaxButton, true, false);
   MovePosButton(false);
-}
-
-void CPWL_ScrollBar::GetThisAppearanceStream(std::ostringstream* psAppStream) {
-  CFX_FloatRect rectWnd = GetWindowRect();
-
-  if (!IsVisible() || rectWnd.IsEmpty())
-    return;
-
-  *psAppStream << "q\n"
-               << "0 w\n"
-               << CPWL_Utils::GetColorAppStream(GetBackgroundColor(), true)
-               << rectWnd.left << " " << rectWnd.bottom << " "
-               << rectWnd.right - rectWnd.left << " "
-               << rectWnd.top - rectWnd.bottom << " re b Q\n";
 }
 
 void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
