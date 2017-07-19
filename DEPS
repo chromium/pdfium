@@ -92,6 +92,11 @@ deps = {
     Var('chromium_git') + "/chromium/src/tools/generate_library_loader@" +
         Var('gen_library_loader_revision'),
 
+  # TODO(GYP): Remove this when no tools rely on GYP anymore.
+  "tools/gyp":
+    Var('chromium_git') + '/external/gyp.git@' +
+        'eb296f67da078ec01f5e3a9ea9cdc6d26d680161',
+
   "tools/memory":
     Var('chromium_git') + "/chromium/src/tools/memory@" +
         Var('tools_memory_revision'),
@@ -113,11 +118,6 @@ deps_os = {
     'third_party/yasm/binaries':
       Var('chromium_git') + '/chromium/deps/yasm/binaries.git' + '@' +
           Var('yasm_binary_revision'),
-
-    # TODO(GYP): Remove this when no tools rely on GYP anymore.
-    "tools/gyp":
-      Var('chromium_git') + '/external/gyp.git@' +
-          'c61b0b35c8396bfd59efc6cfc11401d912b0f510',
 
     "v8/third_party/cygwin":
       Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),
@@ -217,6 +217,15 @@ hooks = [
     'action': ['python',
                'pdfium/tools/clang/scripts/update.py'
     ],
+  },
+  {
+    # Downloads the current stable linux sysroot to build/linux/ if needed.
+    # This sysroot updates at about the same rate that the chrome build deps
+    # change.
+    'name': 'sysroot',
+    'pattern': '.',
+    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+               '--running-as-hook'],
   },
   {
     # Update the Windows toolchain if necessary.

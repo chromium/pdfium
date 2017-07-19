@@ -94,7 +94,6 @@ pdf_is_standalone = true  # Set for a non-embedded build.
 is_component_build = false # Disable component build (must be false)
 
 clang_use_chrome_plugins = false  # Currently must be false.
-use_sysroot = false  # Currently must be false on Linux, but entirely omitted on windows.
 ```
 
 Note, you must set `pdf_is_standalone = true` if you want the sample
