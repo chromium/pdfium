@@ -17,7 +17,7 @@ FX_ARGB CXFA_Data::ToColor(const CFX_WideStringC& wsValue) {
     return 0xff000000;
 
   int cc = 0;
-  const wchar_t* str = wsValue.c_str();
+  const wchar_t* str = wsValue.unterminated_c_str();
   int len = wsValue.GetLength();
   while (FXSYS_iswspace(str[cc]) && cc < len)
     cc++;

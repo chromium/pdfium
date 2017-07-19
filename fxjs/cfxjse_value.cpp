@@ -58,7 +58,7 @@ void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Message) {
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::String> hMessage = v8::String::NewFromUtf8(
-      pIsolate, utf8Message.c_str(), v8::String::kNormalString,
+      pIsolate, utf8Message.unterminated_c_str(), v8::String::kNormalString,
       utf8Message.GetLength());
   v8::Local<v8::Value> hError = v8::Exception::Error(hMessage);
   pIsolate->ThrowException(hError);
@@ -138,7 +138,7 @@ bool CFXJSE_Value::SetObjectProperty(const CFX_ByteStringC& szPropName,
   v8::Local<v8::Value> hPropValue =
       v8::Local<v8::Value>::New(m_pIsolate, lpPropValue->DirectGetValue());
   return (bool)hObject.As<v8::Object>()->Set(
-      v8::String::NewFromUtf8(m_pIsolate, szPropName.c_str(),
+      v8::String::NewFromUtf8(m_pIsolate, szPropName.unterminated_c_str(),
                               v8::String::kNormalString,
                               szPropName.GetLength()),
       hPropValue);
@@ -155,8 +155,8 @@ bool CFXJSE_Value::GetObjectProperty(const CFX_ByteStringC& szPropName,
 
   v8::Local<v8::Value> hPropValue =
       hObject.As<v8::Object>()->Get(v8::String::NewFromUtf8(
-          m_pIsolate, szPropName.c_str(), v8::String::kNormalString,
-          szPropName.GetLength()));
+          m_pIsolate, szPropName.unterminated_c_str(),
+          v8::String::kNormalString, szPropName.GetLength()));
   lpPropValue->ForceSetValue(hPropValue);
   return true;
 }
@@ -195,7 +195,7 @@ bool CFXJSE_Value::DeleteObjectProperty(const CFX_ByteStringC& szPropName) {
     return false;
 
   hObject.As<v8::Object>()->Delete(v8::String::NewFromUtf8(
-      m_pIsolate, szPropName.c_str(), v8::String::kNormalString,
+      m_pIsolate, szPropName.unterminated_c_str(), v8::String::kNormalString,
       szPropName.GetLength()));
   return true;
 }
@@ -209,7 +209,7 @@ bool CFXJSE_Value::HasObjectOwnProperty(const CFX_ByteStringC& szPropName,
     return false;
 
   v8::Local<v8::String> hKey = v8::String::NewFromUtf8(
-      m_pIsolate, szPropName.c_str(), v8::String::kNormalString,
+      m_pIsolate, szPropName.unterminated_c_str(), v8::String::kNormalString,
       szPropName.GetLength());
   return hObject.As<v8::Object>()->HasRealNamedProperty(hKey) ||
          (bUseTypeGetter &&
@@ -232,7 +232,7 @@ bool CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
   return hObject.As<v8::Object>()
       ->DefineOwnProperty(
           m_pIsolate->GetCurrentContext(),
-          v8::String::NewFromUtf8(m_pIsolate, szPropName.c_str(),
+          v8::String::NewFromUtf8(m_pIsolate, szPropName.unterminated_c_str(),
                                   v8::String::kNormalString,
                                   szPropName.GetLength()),
           pValue)

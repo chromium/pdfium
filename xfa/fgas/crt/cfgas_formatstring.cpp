@@ -769,7 +769,7 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   if (wsTime.GetLength() == 0)
     return false;
 
-  const wchar_t* str = wsTime.c_str();
+  const wchar_t* str = wsTime.unterminated_c_str();
   int len = wsTime.GetLength();
 
   int cc = 0;

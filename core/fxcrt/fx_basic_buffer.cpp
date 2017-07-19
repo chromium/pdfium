@@ -133,7 +133,7 @@ void CFX_WideTextBuf::AppendChar(wchar_t ch) {
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideStringC& str) {
-  AppendBlock(str.c_str(), str.GetLength() * sizeof(wchar_t));
+  AppendBlock(str.unterminated_c_str(), str.GetLength() * sizeof(wchar_t));
   return *this;
 }
 

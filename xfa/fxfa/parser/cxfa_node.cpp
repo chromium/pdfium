@@ -3591,7 +3591,7 @@ bool CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
       return SetBoolean(pAttr->eName, wsValue != L"0", bNotify);
     case XFA_ATTRIBUTETYPE_Integer:
       return SetInteger(pAttr->eName,
-                        FXSYS_round(FXSYS_wcstof(wsValue.c_str(),
+                        FXSYS_round(FXSYS_wcstof(wsValue.unterminated_c_str(),
                                                  wsValue.GetLength(), nullptr)),
                         bNotify);
     case XFA_ATTRIBUTETYPE_Measure:
@@ -4554,7 +4554,8 @@ bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
             static_cast<CFX_XMLElement*>(pNode->m_pXMLNode);
         CFX_WideStringC wsAttributeName =
             pNode->GetCData(XFA_ATTRIBUTE_QualifiedName);
-        pXMLElement->RemoveAttribute(wsAttributeName.c_str());
+        // TODO(tsepez): check usage of c_str() below.
+        pXMLElement->RemoveAttribute(wsAttributeName.unterminated_c_str());
       }
       CFX_WideString wsName;
       pNode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
@@ -4850,7 +4851,7 @@ bool CXFA_Node::GetMapModuleValue(void* pKey, void*& pValue) {
 }
 
 void CXFA_Node::SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue) {
-  SetMapModuleBuffer(pKey, (void*)wsValue.c_str(),
+  SetMapModuleBuffer(pKey, (void*)wsValue.unterminated_c_str(),
                      wsValue.GetLength() * sizeof(wchar_t));
 }
 

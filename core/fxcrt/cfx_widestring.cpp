@@ -263,15 +263,15 @@ CFX_WideString GetWideString(uint16_t codepage, const CFX_ByteStringC& bstr) {
   ASSERT(IsValidCodePage(codepage));
 
   int src_len = bstr.GetLength();
-  int dest_len =
-      FXSYS_MultiByteToWideChar(codepage, 0, bstr.c_str(), src_len, nullptr, 0);
+  int dest_len = FXSYS_MultiByteToWideChar(
+      codepage, 0, bstr.unterminated_c_str(), src_len, nullptr, 0);
   if (!dest_len)
     return CFX_WideString();
 
   CFX_WideString wstr;
   wchar_t* dest_buf = wstr.GetBuffer(dest_len);
-  FXSYS_MultiByteToWideChar(codepage, 0, bstr.c_str(), src_len, dest_buf,
-                            dest_len);
+  FXSYS_MultiByteToWideChar(codepage, 0, bstr.unterminated_c_str(), src_len,
+                            dest_buf, dest_len);
   wstr.ReleaseBuffer(dest_len);
   return wstr;
 }
@@ -308,7 +308,8 @@ CFX_WideString::CFX_WideString(const wchar_t* ptr)
 
 CFX_WideString::CFX_WideString(const CFX_WideStringC& stringSrc) {
   if (!stringSrc.IsEmpty()) {
-    m_pData.Reset(StringData::Create(stringSrc.c_str(), stringSrc.GetLength()));
+    m_pData.Reset(StringData::Create(stringSrc.unterminated_c_str(),
+                                     stringSrc.GetLength()));
   }
 }
 
@@ -322,8 +323,9 @@ CFX_WideString::CFX_WideString(const CFX_WideStringC& str1,
     return;
 
   m_pData.Reset(StringData::Create(nNewLen));
-  m_pData->CopyContents(str1.c_str(), str1.GetLength());
-  m_pData->CopyContentsAt(str1.GetLength(), str2.c_str(), str2.GetLength());
+  m_pData->CopyContents(str1.unterminated_c_str(), str1.GetLength());
+  m_pData->CopyContentsAt(str1.GetLength(), str2.unterminated_c_str(),
+                          str2.GetLength());
 }
 
 CFX_WideString::CFX_WideString(
@@ -340,7 +342,8 @@ CFX_WideString::CFX_WideString(
 
   FX_STRSIZE nOffset = 0;
   for (const auto& item : list) {
-    m_pData->CopyContentsAt(nOffset, item.c_str(), item.GetLength());
+    m_pData->CopyContentsAt(nOffset, item.unterminated_c_str(),
+                            item.GetLength());
     nOffset += item.GetLength();
   }
 }
@@ -361,7 +364,7 @@ const CFX_WideString& CFX_WideString::operator=(
   if (stringSrc.IsEmpty())
     clear();
   else
-    AssignCopy(stringSrc.c_str(), stringSrc.GetLength());
+    AssignCopy(stringSrc.unterminated_c_str(), stringSrc.GetLength());
 
   return *this;
 }
@@ -395,7 +398,7 @@ const CFX_WideString& CFX_WideString::operator+=(const CFX_WideString& str) {
 
 const CFX_WideString& CFX_WideString::operator+=(const CFX_WideStringC& str) {
   if (!str.IsEmpty())
-    Concat(str.c_str(), str.GetLength());
+    Concat(str.unterminated_c_str(), str.GetLength());
 
   return *this;
 }
@@ -416,7 +419,8 @@ bool CFX_WideString::operator==(const CFX_WideStringC& str) const {
     return str.IsEmpty();
 
   return m_pData->m_nDataLength == str.GetLength() &&
-         wmemcmp(m_pData->m_String, str.c_str(), str.GetLength()) == 0;
+         wmemcmp(m_pData->m_String, str.unterminated_c_str(),
+                 str.GetLength()) == 0;
 }
 
 bool CFX_WideString::operator==(const CFX_WideString& other) const {
@@ -746,7 +750,7 @@ FX_STRSIZE CFX_WideString::Find(const CFX_WideStringC& pSub,
 
   const wchar_t* pStr =
       FX_wcsstr(m_pData->m_String + nStart, m_pData->m_nDataLength - nStart,
-                pSub.c_str(), pSub.GetLength());
+                pSub.unterminated_c_str(), pSub.GetLength());
   return pStr ? (int)(pStr - m_pData->m_String) : -1;
 }
 
@@ -812,7 +816,7 @@ FX_STRSIZE CFX_WideString::Replace(const CFX_WideStringC& pOld,
   wchar_t* pEnd = m_pData->m_String + m_pData->m_nDataLength;
   while (1) {
     const wchar_t* pTarget = FX_wcsstr(pStart, (FX_STRSIZE)(pEnd - pStart),
-                                       pOld.c_str(), nSourceLen);
+                                       pOld.unterminated_c_str(), nSourceLen);
     if (!pTarget)
       break;
 
@@ -835,10 +839,10 @@ FX_STRSIZE CFX_WideString::Replace(const CFX_WideStringC& pOld,
   wchar_t* pDest = pNewData->m_String;
   for (FX_STRSIZE i = 0; i < nCount; i++) {
     const wchar_t* pTarget = FX_wcsstr(pStart, (FX_STRSIZE)(pEnd - pStart),
-                                       pOld.c_str(), nSourceLen);
+                                       pOld.unterminated_c_str(), nSourceLen);
     wmemcpy(pDest, pStart, pTarget - pStart);
     pDest += pTarget - pStart;
-    wmemcpy(pDest, pNew.c_str(), pNew.GetLength());
+    wmemcpy(pDest, pNew.unterminated_c_str(), pNew.GetLength());
     pDest += pNew.GetLength();
     pStart = pTarget + nSourceLen;
   }
@@ -1060,7 +1064,7 @@ std::ostream& operator<<(std::ostream& os, const CFX_WideString& str) {
 }
 
 std::wostream& operator<<(std::wostream& os, const CFX_WideStringC& str) {
-  return os.write(str.c_str(), str.GetLength());
+  return os.write(str.unterminated_c_str(), str.GetLength());
 }
 
 std::ostream& operator<<(std::ostream& os, const CFX_WideStringC& str) {

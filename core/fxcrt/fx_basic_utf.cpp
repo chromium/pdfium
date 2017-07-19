@@ -76,7 +76,7 @@ void CFX_UTF8Encoder::Input(wchar_t unicode) {
 
 CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr) {
   FX_STRSIZE len = wsStr.GetLength();
-  const wchar_t* pStr = wsStr.c_str();
+  const wchar_t* pStr = wsStr.unterminated_c_str();
   CFX_UTF8Encoder encoder;
   while (len-- > 0)
     encoder.Input(*pStr++);

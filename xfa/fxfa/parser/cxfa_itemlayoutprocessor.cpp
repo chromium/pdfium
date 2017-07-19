@@ -1748,7 +1748,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
                               : containerSize.width - fLeftInset - fRightInset;
   CFX_WideStringC wsColumnWidths;
   if (pLayoutNode->TryCData(XFA_ATTRIBUTE_ColumnWidths, wsColumnWidths)) {
-    auto widths = SeparateStringW(wsColumnWidths.c_str(),
+    auto widths = SeparateStringW(wsColumnWidths.unterminated_c_str(),
                                   wsColumnWidths.GetLength(), L' ');
     for (auto& width : widths) {
       width.TrimLeft(L' ');

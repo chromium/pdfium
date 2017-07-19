@@ -291,8 +291,9 @@ bool CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
     m_pFontMgr = CFGAS_FontMgr::Create(m_pFontSource.get());
 #endif
   }
-  m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.c_str(), dwFontStyles,
-                                   dwCodePage, m_pFontMgr.get());
+  // TODO(tsepez): check usage of c_str() below.
+  m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.unterminated_c_str(),
+                                   dwFontStyles, dwCodePage, m_pFontMgr.get());
   return !!m_pFont;
 }
 

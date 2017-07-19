@@ -160,9 +160,8 @@ void CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyTable* pTable,
                                       const CFX_WideStringC& value) {
   ASSERT(!value.IsEmpty());
 
-  const wchar_t* pszValue = value.c_str();
+  const wchar_t* pszValue = value.unterminated_c_str();
   int32_t iValueLen = value.GetLength();
-
   bool bImportant = false;
   if (iValueLen >= 10 && pszValue[iValueLen - 10] == '!' &&
       FXSYS_wcsnicmp(L"important", pszValue + iValueLen - 9, 9) == 0) {

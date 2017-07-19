@@ -95,5 +95,5 @@ bool IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
 }
 
 bool IFX_SeekableStream::WriteString(const CFX_ByteStringC& str) {
-  return WriteBlock(str.c_str(), str.GetLength());
+  return WriteBlock(str.unterminated_c_str(), str.GetLength());
 }

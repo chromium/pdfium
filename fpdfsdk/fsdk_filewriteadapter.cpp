@@ -18,5 +18,5 @@ bool FSDK_FileWriteAdapter::WriteBlock(const void* data, size_t size) {
 }
 
 bool FSDK_FileWriteAdapter::WriteString(const CFX_ByteStringC& str) {
-  return WriteBlock(str.c_str(), str.GetLength());
+  return WriteBlock(str.unterminated_c_str(), str.GetLength());
 }

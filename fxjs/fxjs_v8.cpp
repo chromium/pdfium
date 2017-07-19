@@ -648,7 +648,7 @@ v8::Local<v8::Boolean> CFXJS_Engine::NewBoolean(bool b) {
 
 v8::Local<v8::String> CFXJS_Engine::NewString(const CFX_ByteStringC& str) {
   v8::Isolate* pIsolate = m_isolate ? m_isolate : v8::Isolate::GetCurrent();
-  return v8::String::NewFromUtf8(pIsolate, str.c_str(),
+  return v8::String::NewFromUtf8(pIsolate, str.unterminated_c_str(),
                                  v8::NewStringType::kNormal, str.GetLength())
       .ToLocalChecked();
 }

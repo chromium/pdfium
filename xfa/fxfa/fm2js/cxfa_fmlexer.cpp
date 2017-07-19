@@ -111,7 +111,7 @@ CXFA_FMToken::CXFA_FMToken(uint32_t uLineNum)
 CXFA_FMToken::~CXFA_FMToken() {}
 
 CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc)
-    : m_ptr(wsFormCalc.c_str()),
+    : m_ptr(wsFormCalc.unterminated_c_str()),
       m_end(m_ptr + wsFormCalc.GetLength() - 1),
       m_uCurrentLine(1),
       m_LexerError(false) {}

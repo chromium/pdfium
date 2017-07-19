@@ -57,8 +57,8 @@ bool CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
 
   uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-  m_hFile = ::CreateFileA(fileName.c_str(), dwAccess, dwShare, nullptr,
-                          dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
+  m_hFile = ::CreateFileA(fileName.unterminated_c_str(), dwAccess, dwShare,
+                          nullptr, dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
   if (m_hFile == INVALID_HANDLE_VALUE)
     m_hFile = nullptr;
 
@@ -72,8 +72,9 @@ bool CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
 
   uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-  m_hFile = ::CreateFileW((LPCWSTR)fileName.c_str(), dwAccess, dwShare, nullptr,
-                          dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
+  m_hFile =
+      ::CreateFileW((LPCWSTR)fileName.unterminated_c_str(), dwAccess, dwShare,
+                    nullptr, dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
   if (m_hFile == INVALID_HANDLE_VALUE)
     m_hFile = nullptr;
 

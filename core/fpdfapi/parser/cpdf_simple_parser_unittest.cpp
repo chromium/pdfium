@@ -54,7 +54,7 @@ TEST(SimpleParserTest, GetWord) {
     CFX_ByteStringC word = parser.GetWord();
     EXPECT_EQ(std::string(reinterpret_cast<const char*>(data.expected),
                           data.expected_size),
-              std::string(word.c_str(), word.GetLength()))
+              std::string(word.unterminated_c_str(), word.GetLength()))
         << " for case " << i;
   }
 }

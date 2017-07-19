@@ -294,7 +294,7 @@ void CFX_SeekableStreamProxy::WriteString(const CFX_WideStringC& str) {
       m_wCodePage != FX_CODEPAGE_UTF8) {
     return;
   }
-  if (!m_pStream->WriteBlock(str.c_str(), m_iPosition,
+  if (!m_pStream->WriteBlock(str.unterminated_c_str(), m_iPosition,
                              str.GetLength() * sizeof(wchar_t))) {
     return;
   }

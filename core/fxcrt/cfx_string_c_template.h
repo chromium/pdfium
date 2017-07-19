@@ -112,7 +112,7 @@ class CFX_StringCTemplate {
   }
 
   const UnsignedType* raw_str() const { return m_Ptr.Get(); }
-  const CharType* c_str() const {
+  const CharType* unterminated_c_str() const {
     return reinterpret_cast<const CharType*>(m_Ptr.Get());
   }
 

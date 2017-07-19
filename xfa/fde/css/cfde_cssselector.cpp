@@ -52,7 +52,7 @@ std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
     const CFX_WideStringC& str) {
   ASSERT(!str.IsEmpty());
 
-  const wchar_t* psz = str.c_str();
+  const wchar_t* psz = str.unterminated_c_str();
   const wchar_t* pStart = psz;
   const wchar_t* pEnd = psz + str.GetLength();
   for (; psz < pEnd; ++psz) {

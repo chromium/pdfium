@@ -1970,8 +1970,8 @@ int32_t CXFA_FM2JSContext::DateString2Num(const CFX_ByteStringC& szDateString) {
   int32_t iDay = 0;
   if (iLength <= 10) {
     int32_t iStyle = -1;
-    if (!IsIsoDateFormat(szDateString.c_str(), iLength, iStyle, iYear, iMonth,
-                         iDay)) {
+    if (!IsIsoDateFormat(szDateString.unterminated_c_str(), iLength, iStyle,
+                         iYear, iMonth, iDay)) {
       return 0;
     }
   } else {
@@ -1981,9 +1981,9 @@ int32_t CXFA_FM2JSContext::DateString2Num(const CFX_ByteStringC& szDateString) {
     int32_t iMilliSecond = 0;
     int32_t iZoneHour = 0;
     int32_t iZoneMinute = 0;
-    if (!IsIsoDateTimeFormat(szDateString.c_str(), iLength, iYear, iMonth, iDay,
-                             iHour, iMinute, iSecond, iMilliSecond, iZoneHour,
-                             iZoneMinute)) {
+    if (!IsIsoDateTimeFormat(szDateString.unterminated_c_str(), iLength, iYear,
+                             iMonth, iDay, iHour, iMinute, iSecond,
+                             iMilliSecond, iZoneHour, iZoneMinute)) {
       return 0;
     }
   }
@@ -3516,7 +3516,8 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
 // static
 void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultBuf) {
-  CFX_ByteString str = szHTMLString.c_str();
+  // TODO(tsepez): check usage of c_str() below.
+  CFX_ByteString str = szHTMLString.unterminated_c_str();
   CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str.AsStringC());
   const wchar_t* strCode = L"0123456789abcdef";
   wchar_t strEncode[9];
@@ -3637,13 +3638,14 @@ bool CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
                                      uint32_t* iCode) {
   auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter,
                     const CFX_WideStringC& val) {
-    return wcscmp(val.c_str(), iter.m_htmlReserve) > 0;
+    // TODO(tsepez): check usage of c_str() below.
+    return wcscmp(val.unterminated_c_str(), iter.m_htmlReserve) > 0;
   };
   const XFA_FMHtmlReserveCode* result =
       std::lower_bound(std::begin(reservesForDecode),
                        std::end(reservesForDecode), pData, cmpFunc);
   if (result != std::end(reservesForEncode) &&
-      !wcscmp(pData.c_str(), result->m_htmlReserve)) {
+      !wcscmp(pData.unterminated_c_str(), result->m_htmlReserve)) {
     *iCode = result->m_uCode;
     return true;
   }
@@ -4424,7 +4426,7 @@ void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
                                  "Sixty",  "Seventy", "Eighty", "Ninety"};
   CFX_ByteStringC pComm[] = {" Hundred ", " Thousand ", " Million ",
                              " Billion ", "Trillion"};
-  const char* pData = szData.c_str();
+  const char* pData = szData.unterminated_c_str();
   int32_t iLength = szData.GetLength();
   int32_t iComm = 0;
   if (iLength > 12)
@@ -4513,7 +4515,7 @@ void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
 void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
                                int32_t iStyle,
                                CFX_ByteTextBuf& strBuf) {
-  const char* pData = szData.c_str();
+  const char* pData = szData.unterminated_c_str();
   int32_t iLength = szData.GetLength();
   if (iStyle < 0 || iStyle > 2) {
     return;
@@ -6094,7 +6096,9 @@ void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
 
 void CXFA_FM2JSContext::ThrowNoDefaultPropertyException(
     const CFX_ByteStringC& name) const {
-  ThrowException(L"%.16S doesn't have a default property.", name.c_str());
+  // TODO(tsepez): check usage of c_str() below.
+  ThrowException(L"%.16S doesn't have a default property.",
+                 name.unterminated_c_str());
 }
 
 void CXFA_FM2JSContext::ThrowCompilerErrorException() const {

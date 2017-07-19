@@ -295,7 +295,7 @@ CFX_Decimal::CFX_Decimal(float val, uint8_t scale) {
 }
 
 CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
-  const wchar_t* str = strObj.c_str();
+  const wchar_t* str = strObj.unterminated_c_str();
   const wchar_t* strBound = str + strObj.GetLength();
   bool pointmet = false;
   bool negmet = false;

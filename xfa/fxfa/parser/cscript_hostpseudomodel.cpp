@@ -325,7 +325,7 @@ static int32_t XFA_FilterName(const CFX_WideStringC& wsExpression,
   }
   wchar_t* pBuf = wsFilter.GetBuffer(iLength - nStart);
   int32_t nCount = 0;
-  const wchar_t* pSrc = wsExpression.c_str();
+  const wchar_t* pSrc = wsExpression.unterminated_c_str();
   wchar_t wCur;
   while (nStart < iLength) {
     wCur = pSrc[nStart++];

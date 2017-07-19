@@ -161,7 +161,7 @@ uint32_t FPF_SkiaGetCharset(uint8_t uCharset) {
 uint32_t FPF_SKIANormalizeFontName(const CFX_ByteStringC& bsfamily) {
   uint32_t dwHash = 0;
   int32_t iLength = bsfamily.GetLength();
-  const char* pBuffer = bsfamily.c_str();
+  const char* pBuffer = bsfamily.unterminated_c_str();
   for (int32_t i = 0; i < iLength; i++) {
     char ch = pBuffer[i];
     if (ch == ' ' || ch == '-' || ch == ',')
@@ -395,7 +395,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const CFX_ByteStringC& bsFile,
     return nullptr;
   FXFT_Open_Args args;
   args.flags = FT_OPEN_PATHNAME;
-  args.pathname = const_cast<FT_String*>(bsFile.c_str());
+  args.pathname = const_cast<FT_String*>(bsFile.unterminated_c_str());
   FXFT_Face face;
   if (FXFT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face))
     return nullptr;

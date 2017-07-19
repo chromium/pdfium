@@ -502,7 +502,7 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
   int32_t nConditionCount = 0;
   std::vector<int32_t> stack;
   int32_t nType = -1;
-  const wchar_t* pSrc = wsExpression.c_str();
+  const wchar_t* pSrc = wsExpression.unterminated_c_str();
   wchar_t wPrev = 0, wCur;
   bool bIsCondition = false;
   while (nStart < iLength) {
