@@ -85,8 +85,9 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
     IFSDK_PAUSE_Adapter IPauseAdapter(pause);
     pContext->m_pRenderer->Continue(&IPauseAdapter);
 #ifdef _SKIA_SUPPORT_PATHS_
+    CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
     pDevice->Flush();
-    pBitmap->UnPreMultiply();
+    pDevice->GetBitmap()->UnPreMultiply();
 #endif
     return CPDF_ProgressiveRenderer::ToFPDFStatus(
         pContext->m_pRenderer->GetStatus());
