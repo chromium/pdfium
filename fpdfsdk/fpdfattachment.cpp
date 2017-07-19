@@ -30,7 +30,7 @@ DLLEXPORT FPDF_ATTACHMENT STDCALL FPDFDoc_GetAttachment(FPDF_DOCUMENT document,
   if (static_cast<size_t>(index) >= nameTree.GetCount())
     return nullptr;
 
-  CFX_ByteString csName;
+  CFX_WideString csName;
   return nameTree.LookupValueAndName(index, &csName);
 }
 

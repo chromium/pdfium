@@ -1917,6 +1917,7 @@ test("pdfium_unittests") {
     "core/fpdfdoc/cpdf_dest_unittest.cpp",
     "core/fpdfdoc/cpdf_filespec_unittest.cpp",
     "core/fpdfdoc/cpdf_formfield_unittest.cpp",
+    "core/fpdfdoc/cpdf_nametree_unittest.cpp",
     "core/fpdftext/cpdf_linkextract_unittest.cpp",
     "core/fxcodec/codec/fx_codec_a85_unittest.cpp",
     "core/fxcodec/codec/fx_codec_jpx_unittest.cpp",

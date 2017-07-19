@@ -1594,13 +1594,12 @@ bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
     return false;
   }
   CFX_WideString wideName = params[0].ToCFXWideString(pRuntime);
-  CFX_ByteString utf8Name = wideName.UTF8Encode();
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (!pDocument)
     return false;
 
   CPDF_NameTree nameTree(pDocument, "Dests");
-  CPDF_Array* destArray = nameTree.LookupNamedDest(pDocument, utf8Name);
+  CPDF_Array* destArray = nameTree.LookupNamedDest(pDocument, wideName);
   if (!destArray)
     return false;
 

@@ -21,11 +21,11 @@ class CPDF_NameTree {
   CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteString& category);
   ~CPDF_NameTree();
 
-  CPDF_Object* LookupValueAndName(int nIndex, CFX_ByteString* csName) const;
-  CPDF_Object* LookupValue(const CFX_ByteString& csName) const;
-  CPDF_Array* LookupNamedDest(CPDF_Document* pDoc, const CFX_ByteString& sName);
+  CPDF_Object* LookupValueAndName(int nIndex, CFX_WideString* csName) const;
+  CPDF_Object* LookupValue(const CFX_WideString& csName) const;
+  CPDF_Array* LookupNamedDest(CPDF_Document* pDoc, const CFX_WideString& sName);
 
-  int GetIndex(const CFX_ByteString& csName) const;
+  int GetIndex(const CFX_WideString& csName) const;
   size_t GetCount() const;
   CPDF_Dictionary* GetRoot() const { return m_pRoot.Get(); }
 

@@ -20,7 +20,7 @@ int CPDF_DocJSActions::CountJSActions() const {
 
 CPDF_Action CPDF_DocJSActions::GetJSActionAndName(
     int index,
-    CFX_ByteString* csName) const {
+    CFX_WideString* csName) const {
   ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument.Get(), "JavaScript");
   CPDF_Object* pAction = name_tree.LookupValueAndName(index, csName);
@@ -28,7 +28,7 @@ CPDF_Action CPDF_DocJSActions::GetJSActionAndName(
                                : CPDF_Action();
 }
 
-CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_ByteString& csName) const {
+CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_WideString& csName) const {
   ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument.Get(), "JavaScript");
   CPDF_Object* pAction = name_tree.LookupValue(csName);
@@ -36,7 +36,7 @@ CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_ByteString& csName) const {
                                : CPDF_Action();
 }
 
-int CPDF_DocJSActions::FindJSAction(const CFX_ByteString& csName) const {
+int CPDF_DocJSActions::FindJSAction(const CFX_WideString& csName) const {
   ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument.Get(), "JavaScript");
   return name_tree.GetIndex(csName);

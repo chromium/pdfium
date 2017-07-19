@@ -105,6 +105,12 @@ CFX_ByteString CPDF_Array::GetStringAt(size_t i) const {
   return m_Objects[i]->GetString();
 }
 
+CFX_WideString CPDF_Array::GetUnicodeTextAt(size_t i) const {
+  if (i >= m_Objects.size())
+    return CFX_WideString();
+  return m_Objects[i]->GetUnicodeText();
+}
+
 int CPDF_Array::GetIntegerAt(size_t i) const {
   if (i >= m_Objects.size())
     return 0;
