@@ -182,7 +182,7 @@ TEST(fxcrt, FXSYS_wcsftime) {
   year_time.tm_min = 59;
   year_time.tm_sec = 59;
 
-  for (int year = -2500; year <= 2500; ++year) {
+  for (int year = -2500; year <= 8500; ++year) {
     year_time.tm_year = year;
     wchar_t year_buf[100] = {};
     FXSYS_wcsftime(year_buf, FX_ArraySize(year_buf), L"%Y-%m-%dT%H:%M:%S",
