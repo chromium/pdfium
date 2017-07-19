@@ -60,6 +60,10 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, false, &IPauseAdapter);
 
+#ifdef _SKIA_SUPPORT_PATHS_
+  pDevice->Flush();
+  pBitmap->UnPreMultiply();
+#endif
   if (pContext->m_pRenderer) {
     return CPDF_ProgressiveRenderer::ToFPDFStatus(
         pContext->m_pRenderer->GetStatus());
@@ -80,6 +84,10 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
   if (pContext && pContext->m_pRenderer) {
     IFSDK_PAUSE_Adapter IPauseAdapter(pause);
     pContext->m_pRenderer->Continue(&IPauseAdapter);
+#ifdef _SKIA_SUPPORT_PATHS_
+    pDevice->Flush();
+    pBitmap->UnPreMultiply();
+#endif
     return CPDF_ProgressiveRenderer::ToFPDFStatus(
         pContext->m_pRenderer->GetStatus());
   }
