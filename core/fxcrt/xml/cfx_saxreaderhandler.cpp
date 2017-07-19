@@ -26,11 +26,12 @@ CFX_SAXContext* CFX_SAXReaderHandler::OnTagEnter(
   }
 
   m_SAXContext.m_eNode = eType;
-  m_SAXContext.m_TextBuf << "<";
+  CFX_ByteTextBuf& textBuf = m_SAXContext.m_TextBuf;
+  textBuf << "<";
   if (eType == CFX_SAXItem::Type::Instruction)
-    m_SAXContext.m_TextBuf << "?";
+    textBuf << "?";
 
-  m_SAXContext.m_TextBuf << bsTagName;
+  textBuf << bsTagName;
   m_SAXContext.m_bsTagName = bsTagName;
   return &m_SAXContext;
 }
@@ -40,7 +41,7 @@ void CFX_SAXReaderHandler::OnTagAttribute(CFX_SAXContext* pTag,
                                           const CFX_ByteStringC& bsValue) {
   if (!pTag)
     return;
-  pTag->m_TextBuf << " " << bsAttri.c_str() << "=\"" << bsValue.c_str() << "\"";
+  pTag->m_TextBuf << " " << bsAttri << "=\"" << bsValue << "\"";
 }
 
 void CFX_SAXReaderHandler::OnTagBreak(CFX_SAXContext* pTag) {
@@ -58,22 +59,24 @@ void CFX_SAXReaderHandler::OnTagData(CFX_SAXContext* pTag,
   if (!pTag)
     return;
 
+  CFX_ByteTextBuf& textBuf = pTag->m_TextBuf;
   if (eType == CFX_SAXItem::Type::CharData)
-    pTag->m_TextBuf << "<![CDATA[";
+    textBuf << "<![CDATA[";
 
-  pTag->m_TextBuf << bsData.c_str();
+  textBuf << bsData;
   if (eType == CFX_SAXItem::Type::CharData)
-    pTag->m_TextBuf << "]]>";
+    textBuf << "]]>";
 }
 
 void CFX_SAXReaderHandler::OnTagClose(CFX_SAXContext* pTag, uint32_t dwEndPos) {
   if (!pTag)
     return;
 
+  CFX_ByteTextBuf& textBuf = pTag->m_TextBuf;
   if (pTag->m_eNode == CFX_SAXItem::Type::Instruction)
-    pTag->m_TextBuf << "?>";
+    textBuf << "?>";
   else if (pTag->m_eNode == CFX_SAXItem::Type::Tag)
-    pTag->m_TextBuf << "></" << pTag->m_bsTagName.AsStringC().c_str() << ">";
+    textBuf << "></" << pTag->m_bsTagName.AsStringC() << ">";
 
   UpdateChecksum(false);
 }
@@ -84,7 +87,7 @@ void CFX_SAXReaderHandler::OnTagEnd(CFX_SAXContext* pTag,
   if (!pTag)
     return;
 
-  pTag->m_TextBuf << "</" << bsTagName.c_str() << ">";
+  pTag->m_TextBuf << "</" << bsTagName << ">";
   UpdateChecksum(false);
 }
 
@@ -96,20 +99,19 @@ void CFX_SAXReaderHandler::OnTargetData(CFX_SAXContext* pTag,
     return;
 
   if (eType == CFX_SAXItem::Type::Comment) {
-    m_SAXContext.m_TextBuf << "<!--" << bsData.c_str() << "-->";
+    m_SAXContext.m_TextBuf << "<!--" << bsData << "-->";
     UpdateChecksum(false);
   } else {
-    pTag->m_TextBuf << " " << bsData.c_str();
+    pTag->m_TextBuf << " " << bsData;
   }
 }
 
 void CFX_SAXReaderHandler::UpdateChecksum(bool bCheckSpace) {
-  int32_t iLength = m_SAXContext.m_TextBuf.tellp();
+  int32_t iLength = m_SAXContext.m_TextBuf.GetLength();
   if (iLength < 1)
     return;
 
-  const uint8_t* pBuffer =
-      reinterpret_cast<const uint8_t*>(m_SAXContext.m_TextBuf.str().c_str());
+  uint8_t* pBuffer = m_SAXContext.m_TextBuf.GetBuffer();
   bool bUpdata = true;
   if (bCheckSpace) {
     bUpdata = false;
@@ -122,5 +124,5 @@ void CFX_SAXReaderHandler::UpdateChecksum(bool bCheckSpace) {
   if (bUpdata)
     m_pContext->Update(CFX_ByteStringC(pBuffer, iLength));
 
-  m_SAXContext.m_TextBuf.str("");
+  m_SAXContext.m_TextBuf.Clear();
 }

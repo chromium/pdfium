@@ -887,7 +887,6 @@ static_library("fxcrt") {
       "core/fxcrt/fx_arabic.h",
       "core/fxcrt/ifx_chariter.h",
       "core/fxcrt/ifx_locale.h",
-      "core/fxcrt/xml/cfx_saxcontext.cpp",
       "core/fxcrt/xml/cfx_saxcontext.h",
       "core/fxcrt/xml/cfx_saxreader.cpp",
       "core/fxcrt/xml/cfx_saxreader.h",
