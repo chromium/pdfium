@@ -21,6 +21,7 @@
 
 #include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_annot.h"
+#include "public/fpdf_attachment.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
@@ -83,6 +84,7 @@ struct Options {
         show_metadata(false),
         send_events(false),
         render_oneshot(false),
+        save_attachments(false),
 #ifdef ENABLE_CALLGRIND
         callgrind_delimiters(false),
 #endif  // ENABLE_CALLGRIND
@@ -95,6 +97,7 @@ struct Options {
   bool show_metadata;
   bool send_events;
   bool render_oneshot;
+  bool save_attachments;
 #ifdef ENABLE_CALLGRIND
   bool callgrind_delimiters;
 #endif  // ENABLE_CALLGRIND
@@ -701,6 +704,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->send_events = true;
     } else if (cur_arg == "--render-oneshot") {
       options->render_oneshot = true;
+    } else if (cur_arg == "--save-attachments") {
+      options->save_attachments = true;
 #ifdef ENABLE_CALLGRIND
     } else if (cur_arg == "--callgrind-delim") {
       options->callgrind_delimiters = true;
@@ -1225,6 +1230,58 @@ void RenderPdf(const std::string& name,
     }
   }
 
+  if (options.save_attachments) {
+    for (int i = 0; i < FPDFDoc_GetAttachmentCount(doc.get()); ++i) {
+      FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(doc.get(), i);
+
+      // Retrieve the attachment file name.
+      unsigned long len = FPDFAttachment_GetName(attachment, nullptr, 0);
+      if (!len) {
+        fprintf(stderr, "Warning: Attachment #%d has an empty file name.\n",
+                i + 1);
+      }
+      std::vector<char> buf(len);
+      FPDFAttachment_GetName(attachment, buf.data(), len);
+      std::string attachment_name =
+          GetPlatformString(reinterpret_cast<unsigned short*>(buf.data()));
+
+      // Open the attachment file for writing.
+      char save_name[256];
+      int chars_formatted =
+          snprintf(save_name, sizeof(save_name), "%s.attachment.%s",
+                   name.c_str(), attachment_name.c_str());
+      if (chars_formatted < 0 ||
+          static_cast<size_t>(chars_formatted) >= sizeof(save_name)) {
+        fprintf(stderr, "Filename %s is too long\n", save_name);
+        continue;
+      }
+      FILE* fp = fopen(save_name, "wb");
+      if (!fp) {
+        fprintf(stderr, "Failed to open %s for saving attachment.\n",
+                save_name);
+        continue;
+      }
+
+      // Write the attachment file.
+      len = FPDFAttachment_GetFile(attachment, nullptr, 0);
+      if (!len) {
+        fprintf(stderr, "Warning: Attachment \"%s\" is empty.\n",
+                attachment_name.c_str());
+      }
+      buf.clear();
+      buf.resize(len);
+      FPDFAttachment_GetFile(attachment, buf.data(), len);
+      size_t written_len = fwrite(buf.data(), sizeof(char), len, fp);
+      if (written_len != len) {
+        fprintf(stderr, "Warning: Unsuccessful write to file \"%s\".\n",
+                save_name);
+      }
+      fclose(fp);
+
+      fprintf(stderr, "Saved attachment \"%s\".\n", attachment_name.c_str());
+    }
+  }
+
   std::unique_ptr<void, FPDFFormHandleDeleter> form(
       FPDFDOC_InitFormFillEnvironment(doc.get(), &form_callbacks));
   form_callbacks.form_handle = form.get();
@@ -1307,17 +1364,19 @@ static void ShowConfig() {
 
 static const char kUsageString[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
-    "  --show-config     - print build options and exit\n"
-    "  --show-metadata   - print the file metadata\n"
-    "  --show-structure  - print the structure elements from the document\n"
-    "  --send-events     - send input described by .evt file\n"
-    "  --render-oneshot  - render image without using progressive renderer\n"
+    "  --show-config       - print build options and exit\n"
+    "  --show-metadata     - print the file metadata\n"
+    "  --show-structure    - print the structure elements from the document\n"
+    "  --send-events       - send input described by .evt file\n"
+    "  --render-oneshot    - render image without using progressive renderer\n"
+    "  --save-attachments  - write embedded attachments "
+    "<pdf-name>.attachment.<attachment-name>\n"
 #ifdef ENABLE_CALLGRIND
-    "  --callgrind-delim - delimit interesting section when using callgrind\n"
+    "  --callgrind-delim   - delimit interesting section when using callgrind\n"
 #endif  // ENABLE_CALLGRIND
-    "  --bin-dir=<path>  - override path to v8 external data\n"
-    "  --font-dir=<path> - override path to external fonts\n"
-    "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
+    "  --bin-dir=<path>    - override path to v8 external data\n"
+    "  --font-dir=<path>   - override path to external fonts\n"
+    "  --scale=<number>    - scale output size by number (e.g. 0.5)\n"
     "  --pages=<number>(-<number>) - only render the given 0-based page(s)\n"
 #ifdef _WIN32
     "  --bmp   - write page images <pdf-name>.<page-number>.bmp\n"
