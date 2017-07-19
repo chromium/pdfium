@@ -1094,6 +1094,8 @@ static_library("fxedit") {
 
 static_library("pdfwindow") {
   sources = [
+    "fpdfsdk/pdfwindow/cpwl_appstream.cpp",
+    "fpdfsdk/pdfwindow/cpwl_appstream.h",
     "fpdfsdk/pdfwindow/cpwl_button.cpp",
     "fpdfsdk/pdfwindow/cpwl_button.h",
     "fpdfsdk/pdfwindow/cpwl_caret.cpp",

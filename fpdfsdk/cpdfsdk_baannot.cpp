@@ -38,6 +38,13 @@ CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
   return m_pAnnot->GetAnnotDict();
 }
 
+CPDF_Dictionary* CPDFSDK_BAAnnot::GetAPDict() const {
+  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
+  if (!pAPDict)
+    pAPDict = m_pAnnot->GetAnnotDict()->SetNewFor<CPDF_Dictionary>("AP");
+  return pAPDict;
+}
+
 void CPDFSDK_BAAnnot::SetRect(const CFX_FloatRect& rect) {
   ASSERT(rect.right - rect.left >= GetMinWidth());
   ASSERT(rect.top - rect.bottom >= GetMinHeight());
@@ -291,50 +298,6 @@ bool CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
   }
 
   return false;
-}
-
-void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
-                                      const CFX_FloatRect& rcBBox,
-                                      const CFX_Matrix& matrix,
-                                      const CFX_ByteString& sContents,
-                                      const CFX_ByteString& sAPState) {
-  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
-  if (!pAPDict)
-    pAPDict = m_pAnnot->GetAnnotDict()->SetNewFor<CPDF_Dictionary>("AP");
-
-  CPDF_Stream* pStream = nullptr;
-  CPDF_Dictionary* pParentDict = nullptr;
-  if (sAPState.IsEmpty()) {
-    pParentDict = pAPDict;
-    pStream = pAPDict->GetStreamFor(sAPType);
-  } else {
-    CPDF_Dictionary* pAPTypeDict = pAPDict->GetDictFor(sAPType);
-    if (!pAPTypeDict)
-      pAPTypeDict = pAPDict->SetNewFor<CPDF_Dictionary>(sAPType);
-
-    pParentDict = pAPTypeDict;
-    pStream = pAPTypeDict->GetStreamFor(sAPState);
-  }
-
-  if (!pStream) {
-    CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
-    pStream = pDoc->NewIndirect<CPDF_Stream>();
-    pParentDict->SetNewFor<CPDF_Reference>(sAPType, pDoc, pStream->GetObjNum());
-  }
-
-  CPDF_Dictionary* pStreamDict = pStream->GetDict();
-  if (!pStreamDict) {
-    auto pNewDict = pdfium::MakeUnique<CPDF_Dictionary>(
-        m_pAnnot->GetDocument()->GetByteStringPool());
-    pStreamDict = pNewDict.get();
-    pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
-    pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
-    pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
-    pStream->InitStream(nullptr, 0, std::move(pNewDict));
-  }
-  pStreamDict->SetMatrixFor("Matrix", matrix);
-  pStreamDict->SetRectFor("BBox", rcBBox);
-  pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength());
 }
 
 bool CPDFSDK_BAAnnot::IsVisible() const {
