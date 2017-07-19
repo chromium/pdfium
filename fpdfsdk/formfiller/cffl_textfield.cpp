@@ -238,14 +238,12 @@ CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView,
     SaveState(pPageView);
 
   DestroyPDFWindow(pPageView);
-
-  CPWL_Wnd* pRet = nullptr;
-
   if (bRestoreValue)
     RestoreState(pPageView);
-  pRet = GetPDFWindow(pPageView, !bRestoreValue);
-  m_pWidget->UpdateField();
-  return pRet;
+
+  CPWL_Wnd::ObservedPtr pRet(GetPDFWindow(pPageView, !bRestoreValue));
+  m_pWidget->UpdateField();  // May invoke JS, invalidating pRet.
+  return pRet.Get();
 }
 
 #ifdef PDF_ENABLE_XFA

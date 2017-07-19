@@ -168,7 +168,7 @@ struct PWL_CREATEPARAM {
   CFX_Matrix mtChild;                           // ignore
 };
 
-class CPWL_Wnd : public CPWL_TimerHandler {
+class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
  public:
   CPWL_Wnd();
   ~CPWL_Wnd() override;
