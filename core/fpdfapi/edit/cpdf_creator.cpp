@@ -323,9 +323,9 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
   m_ObjectOffsets[objnum] = m_Archive->CurrentOffset();
 
   bool bExistInMap = !!m_pDocument->GetIndirectObject(objnum);
-  const uint8_t object_type = m_pParser->GetObjectType(objnum);
+  const CPDF_Parser::ObjectType object_type = m_pParser->GetObjectType(objnum);
   if (m_pParser->IsVersionUpdated() || m_bSecurityChanged || bExistInMap ||
-      (object_type == 2 && m_pEncryptDict)) {
+      (object_type == CPDF_Parser::ObjectType::kCompressed && m_pEncryptDict)) {
     CPDF_Object* pObj = m_pDocument->GetOrParseIndirectObject(objnum);
     if (!pObj) {
       m_ObjectOffsets.erase(objnum);
@@ -341,7 +341,7 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
     m_pParser->GetIndirectBinary(objnum, pBuffer, size);
     if (!pBuffer)
       return true;
-    if (object_type == 2) {
+    if (object_type == CPDF_Parser::ObjectType::kCompressed) {
       if (!m_Archive->WriteDWord(objnum) ||
           !m_Archive->WriteString(" 0 obj ") ||
           !m_Archive->WriteBlock(pBuffer, size) ||
@@ -412,7 +412,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
       continue;
     }
     if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
-        m_pParser->GetObjectType(objnum)) {
+        m_pParser->GetObjectType(objnum) != CPDF_Parser::ObjectType::kFree) {
       continue;
     }
     m_NewObjNumArray.insert(std::lower_bound(m_NewObjNumArray.begin(),

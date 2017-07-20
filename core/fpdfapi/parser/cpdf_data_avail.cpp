@@ -94,11 +94,12 @@ uint32_t CPDF_DataAvail::GetObjectSize(uint32_t objnum, FX_FILESIZE& offset) {
   if (!pParser || !pParser->IsValidObjectNumber(objnum))
     return 0;
 
-  if (pParser->GetObjectType(objnum) == 2)
+  if (pParser->GetObjectType(objnum) == CPDF_Parser::ObjectType::kCompressed)
     objnum = pParser->GetObjectPositionOrZero(objnum);
 
-  if (pParser->GetObjectType(objnum) != 1 &&
-      pParser->GetObjectType(objnum) != 255) {
+  if (pParser->GetObjectType(objnum) !=
+          CPDF_Parser::ObjectType::kNotCompressed &&
+      pParser->GetObjectType(objnum) != CPDF_Parser::ObjectType::kNull) {
     return 0;
   }
 

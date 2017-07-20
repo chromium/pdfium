@@ -49,6 +49,20 @@ int32_t GetStreamFirst(const CFX_RetainPtr<CPDF_StreamAcc>& pObjStream) {
   return pObjStream->GetDict()->GetIntegerFor("First");
 }
 
+CPDF_Parser::ObjectType GetObjectTypeFromCrossRefStreamType(
+    int cross_ref_stream_type) {
+  switch (cross_ref_stream_type) {
+    case 0:
+      return CPDF_Parser::ObjectType::kFree;
+    case 1:
+      return CPDF_Parser::ObjectType::kNotCompressed;
+    case 2:
+      return CPDF_Parser::ObjectType::kCompressed;
+    default:
+      return CPDF_Parser::ObjectType::kNull;
+  }
+}
+
 }  // namespace
 
 CPDF_Parser::CPDF_Parser()
@@ -78,10 +92,10 @@ FX_FILESIZE CPDF_Parser::GetObjectPositionOrZero(uint32_t objnum) const {
   return it != m_ObjectInfo.end() ? it->second.pos : 0;
 }
 
-uint8_t CPDF_Parser::GetObjectType(uint32_t objnum) const {
+CPDF_Parser::ObjectType CPDF_Parser::GetObjectType(uint32_t objnum) const {
   ASSERT(IsValidObjectNumber(objnum));
   auto it = m_ObjectInfo.find(objnum);
-  return it != m_ObjectInfo.end() ? it->second.type : 0;
+  return it != m_ObjectInfo.end() ? it->second.type : ObjectType::kFree;
 }
 
 uint16_t CPDF_Parser::GetObjectGenNum(uint32_t objnum) const {
@@ -91,8 +105,16 @@ uint16_t CPDF_Parser::GetObjectGenNum(uint32_t objnum) const {
 }
 
 bool CPDF_Parser::IsObjectFreeOrNull(uint32_t objnum) const {
-  uint8_t type = GetObjectType(objnum);
-  return type == 0 || type == 255;
+  switch (GetObjectType(objnum)) {
+    case ObjectType::kFree:
+    case ObjectType::kNull:
+      return true;
+    case ObjectType::kNotCompressed:
+    case ObjectType::kCompressed:
+      return false;
+  }
+  ASSERT(false);  // NOTREACHED();
+  return false;
 }
 
 void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict) {
@@ -265,10 +287,10 @@ FX_FILESIZE CPDF_Parser::GetObjectOffset(uint32_t objnum) const {
   if (!IsValidObjectNumber(objnum))
     return 0;
 
-  if (GetObjectType(objnum) == 1)
+  if (GetObjectType(objnum) == ObjectType::kNotCompressed)
     return GetObjectPositionOrZero(objnum);
 
-  if (GetObjectType(objnum) == 2) {
+  if (GetObjectType(objnum) == ObjectType::kCompressed) {
     FX_FILESIZE pos = GetObjectPositionOrZero(objnum);
     return GetObjectPositionOrZero(pos);
   }
@@ -444,7 +466,7 @@ bool CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
       char* pEntry = &buf[i * recordsize];
       if (pEntry[17] == 'f') {
         m_ObjectInfo[objnum].pos = 0;
-        m_ObjectInfo[objnum].type = 0;
+        m_ObjectInfo[objnum].type = ObjectType::kFree;
       } else {
         int32_t offset = FXSYS_atoi(pEntry);
         if (offset == 0) {
@@ -463,7 +485,7 @@ bool CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
         if (m_ObjectInfo[objnum].pos < m_pSyntax->m_FileLen)
           m_SortedOffset.insert(m_ObjectInfo[objnum].pos);
 
-        m_ObjectInfo[objnum].type = 1;
+        m_ObjectInfo[objnum].type = ObjectType::kNotCompressed;
       }
     }
   }
@@ -519,7 +541,7 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
           char* pEntry = &buf[i * recordsize];
           if (pEntry[17] == 'f') {
             m_ObjectInfo[objnum].pos = 0;
-            m_ObjectInfo[objnum].type = 0;
+            m_ObjectInfo[objnum].type = ObjectType::kFree;
           } else {
             FX_FILESIZE offset = (FX_FILESIZE)FXSYS_atoi64(pEntry);
             if (offset == 0) {
@@ -538,7 +560,7 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
             if (m_ObjectInfo[objnum].pos < m_pSyntax->m_FileLen)
               m_SortedOffset.insert(m_ObjectInfo[objnum].pos);
 
-            m_ObjectInfo[objnum].type = 1;
+            m_ObjectInfo[objnum].type = ObjectType::kNotCompressed;
           }
         }
       }
@@ -766,7 +788,7 @@ bool CPDF_Parser::RebuildCrossRef() {
                   }
                 } else {
                   m_ObjectInfo[objnum].pos = obj_pos;
-                  m_ObjectInfo[objnum].type = 1;
+                  m_ObjectInfo[objnum].type = ObjectType::kNotCompressed;
                   m_ObjectInfo[objnum].gennum = gennum;
                 }
               }
@@ -959,7 +981,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     m_TrailerPos = m_Trailers.size() - 1;
     ShrinkObjectMap(size);
     for (auto& it : m_ObjectInfo)
-      it.second.type = 0;
+      it.second.type = ObjectType::kFree;
   } else {
     m_Trailers.push_back(std::move(pNewTrailer));
   }
@@ -1027,12 +1049,15 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       continue;
 
     for (uint32_t j = 0; j < count; j++) {
-      int32_t type = 1;
+      ObjectType type = ObjectType::kNotCompressed;
       const uint8_t* entrystart = segstart + j * totalWidth;
-      if (WidthArray[0])
-        type = GetVarInt(entrystart, WidthArray[0]);
+      if (WidthArray[0]) {
+        const int cross_ref_stream_obj_type =
+            GetVarInt(entrystart, WidthArray[0]);
+        type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
+      }
 
-      if (GetObjectType(startnum + j) == 255) {
+      if (GetObjectType(startnum + j) == ObjectType::kNull) {
         FX_FILESIZE offset =
             GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
         m_ObjectInfo[startnum + j].pos = offset;
@@ -1040,22 +1065,22 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         continue;
       }
 
-      if (GetObjectType(startnum + j))
+      if (GetObjectType(startnum + j) != ObjectType::kFree)
         continue;
 
       m_ObjectInfo[startnum + j].type = type;
-      if (type == 0) {
+      if (type == ObjectType::kFree) {
         m_ObjectInfo[startnum + j].pos = 0;
       } else {
         FX_FILESIZE offset =
             GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
         m_ObjectInfo[startnum + j].pos = offset;
-        if (type == 1) {
+        if (type == ObjectType::kNotCompressed) {
           m_SortedOffset.insert(offset);
         } else {
           if (offset < 0 || !IsValidObjectNumber(offset))
             return false;
-          m_ObjectInfo[offset].type = 255;
+          m_ObjectInfo[offset].type = ObjectType::kNull;
         }
       }
     }
@@ -1117,13 +1142,14 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
     return nullptr;
 
   pdfium::ScopedSetInsertion<uint32_t> local_insert(&m_ParsingObjNums, objnum);
-  if (GetObjectType(objnum) == 1 || GetObjectType(objnum) == 255) {
+  if (GetObjectType(objnum) == ObjectType::kNotCompressed ||
+      GetObjectType(objnum) == ObjectType::kNull) {
     FX_FILESIZE pos = m_ObjectInfo[objnum].pos;
     if (pos <= 0)
       return nullptr;
     return ParseIndirectObjectAt(pObjList, pos, objnum);
   }
-  if (GetObjectType(objnum) != 2)
+  if (GetObjectType(objnum) != ObjectType::kCompressed)
     return nullptr;
 
   CFX_RetainPtr<CPDF_StreamAcc> pObjStream =
@@ -1178,10 +1204,11 @@ FX_FILESIZE CPDF_Parser::GetObjectSize(uint32_t objnum) const {
   if (!IsValidObjectNumber(objnum))
     return 0;
 
-  if (GetObjectType(objnum) == 2)
+  if (GetObjectType(objnum) == ObjectType::kCompressed)
     objnum = GetObjectPositionOrZero(objnum);
 
-  if (GetObjectType(objnum) != 1 && GetObjectType(objnum) != 255)
+  if (GetObjectType(objnum) != ObjectType::kNotCompressed &&
+      GetObjectType(objnum) != ObjectType::kNull)
     return 0;
 
   FX_FILESIZE offset = GetObjectPositionOrZero(objnum);
@@ -1203,7 +1230,7 @@ void CPDF_Parser::GetIndirectBinary(uint32_t objnum,
   if (!IsValidObjectNumber(objnum))
     return;
 
-  if (GetObjectType(objnum) == 2) {
+  if (GetObjectType(objnum) == ObjectType::kCompressed) {
     CFX_RetainPtr<CPDF_StreamAcc> pObjStream =
         GetObjectStream(m_ObjectInfo[objnum].pos);
     if (!pObjStream)
@@ -1238,7 +1265,7 @@ void CPDF_Parser::GetIndirectBinary(uint32_t objnum,
     return;
   }
 
-  if (GetObjectType(objnum) != 1)
+  if (GetObjectType(objnum) != ObjectType::kNotCompressed)
     return;
 
   FX_FILESIZE pos = m_ObjectInfo[objnum].pos;
