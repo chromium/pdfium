@@ -44,6 +44,10 @@ class CJBig2_HTRDProc {
   uint16_t HRY;
   uint8_t HPW;
   uint8_t HPH;
+
+ private:
+  std::unique_ptr<CJBig2_Image> decode_image(
+      const std::vector<std::unique_ptr<CJBig2_Image>>& GSPLANES);
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_HTRDPROC_H_

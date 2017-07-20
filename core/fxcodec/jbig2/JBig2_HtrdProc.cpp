@@ -20,8 +20,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_Arith(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   std::unique_ptr<CJBig2_Image> HSKIP;
-  auto HTREG = pdfium::MakeUnique<CJBig2_Image>(HBW, HBH);
-  HTREG->fill(HDEFPIXEL);
   if (HENABLESKIP == 1) {
     HSKIP = pdfium::MakeUnique<CJBig2_Image>(HGW, HGH);
     for (uint32_t mg = 0; mg < HGH; ++mg) {
@@ -79,29 +77,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_Arith(
     if (i < GSBPP - 1)
       GSPLANES[i]->composeFrom(0, 0, GSPLANES[i + 1].get(), JBIG2_COMPOSE_XOR);
   }
-  std::vector<uint32_t> GSVALS(HGW * HGH);
-  for (uint32_t y = 0; y < HGH; ++y) {
-    for (uint32_t x = 0; x < HGW; ++x) {
-      for (int32_t i = 0; i < GSBPP; ++i)
-        GSVALS[y * HGW + x] |= GSPLANES[i]->getPixel(x, y) << i;
-    }
-  }
-
-  for (uint32_t mg = 0; mg < HGH; ++mg) {
-    for (uint32_t ng = 0; ng < HGW; ++ng) {
-      int32_t x = (HGX + mg * HRY + ng * HRX) >> 8;
-      int32_t y = (HGY + mg * HRX - ng * HRY) >> 8;
-      uint32_t pat_index = std::min(GSVALS[mg * HGW + ng], HNUMPATS - 1);
-      HTREG->composeFrom(x, y, (*HPATS)[pat_index].get(), HCOMBOP);
-    }
-  }
-  return HTREG;
+  return decode_image(GSPLANES);
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_MMR(
     CJBig2_BitStream* pStream) {
-  auto HTREG = pdfium::MakeUnique<CJBig2_Image>(HBW, HBH);
-  HTREG->fill(HDEFPIXEL);
   uint32_t HBPP = 1;
   while (static_cast<uint32_t>(1 << HBPP) < HNUMPATS)
     ++HBPP;
@@ -128,14 +108,20 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_MMR(
     pStream->offset(3);
     GSPLANES[J]->composeFrom(0, 0, GSPLANES[J + 1].get(), JBIG2_COMPOSE_XOR);
   }
+  return decode_image(GSPLANES);
+}
+
+std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_image(
+    const std::vector<std::unique_ptr<CJBig2_Image>>& GSPLANES) {
+  auto HTREG = pdfium::MakeUnique<CJBig2_Image>(HBW, HBH);
+  HTREG->fill(HDEFPIXEL);
   std::vector<uint32_t> GSVALS(HGW * HGH);
   for (uint32_t y = 0; y < HGH; ++y) {
     for (uint32_t x = 0; x < HGW; ++x) {
-      for (int32_t i = 0; i < GSBPP; ++i)
-        GSVALS[y * HGW + x] |= GSPLANES[i]->getPixel(x, y) << i;
+      for (uint8_t J = 0; J < GSPLANES.size(); ++J)
+        GSVALS[y * HGW + x] |= GSPLANES[J]->getPixel(x, y) << J;
     }
   }
-
   for (uint32_t mg = 0; mg < HGH; ++mg) {
     for (uint32_t ng = 0; ng < HGW; ++ng) {
       int32_t x = (HGX + mg * HRY + ng * HRX) >> 8;
