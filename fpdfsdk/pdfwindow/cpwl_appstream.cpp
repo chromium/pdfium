@@ -593,6 +593,53 @@ CFX_ByteString GetEditAppStream(CFX_Edit* pEdit,
   return CFX_ByteString(sAppStream);
 }
 
+CFX_ByteString GenerateIconAppStream(CPDF_IconFit& fit,
+                                     CPDF_Stream* pIconStream,
+                                     const CFX_FloatRect& rcIcon) {
+  if (rcIcon.IsEmpty() || !pIconStream)
+    return CFX_ByteString();
+
+  CPWL_Icon icon;
+  PWL_CREATEPARAM cp;
+  cp.dwFlags = PWS_VISIBLE;
+  icon.Create(cp);
+  icon.SetIconFit(&fit);
+  icon.SetPDFStream(pIconStream);
+  icon.Move(rcIcon, false, false);
+
+  CFX_ByteString sAlias = icon.GetImageAlias();
+  if (sAlias.GetLength() <= 0)
+    return CFX_ByteString();
+
+  CFX_FloatRect rcPlate = icon.GetClientRect();
+  CFX_Matrix mt = icon.GetImageMatrix().GetInverse();
+
+  float fHScale;
+  float fVScale;
+  std::tie(fHScale, fVScale) = icon.GetScale();
+
+  float fx;
+  float fy;
+  std::tie(fx, fy) = icon.GetImageOffset();
+
+  std::ostringstream str;
+  str << "q\n";
+  str << rcPlate.left << " " << rcPlate.bottom << " "
+      << rcPlate.right - rcPlate.left << " " << rcPlate.top - rcPlate.bottom
+      << " re W n\n";
+
+  str << fHScale << " 0 0 " << fVScale << " " << rcPlate.left + fx << " "
+      << rcPlate.bottom + fy << " cm\n";
+  str << mt.a << " " << mt.b << " " << mt.c << " " << mt.d << " " << mt.e << " "
+      << mt.f << " cm\n";
+
+  str << "0 g 0 G 1 w /" << sAlias << " Do\n"
+      << "Q\n";
+  icon.Destroy();
+
+  return CFX_ByteString(str);
+}
+
 CFX_ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                       IPVT_FontMap* pFontMap,
                                       CPDF_Stream* pIconStream,
@@ -756,54 +803,14 @@ CFX_ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   }
 
   std::ostringstream sTemp;
-
-  if (!rcIcon.IsEmpty()) {
-    CPWL_Icon icon;
-    PWL_CREATEPARAM cp;
-    cp.dwFlags = PWS_VISIBLE;
-    icon.Create(cp);
-    icon.SetIconFit(&IconFit);
-    icon.SetPDFStream(pIconStream);
-    icon.Move(rcIcon, false, false);
-
-    CFX_ByteString sAlias = icon.GetImageAlias();
-    if (sAlias.GetLength() > 0) {
-      CFX_FloatRect rcPlate = icon.GetClientRect();
-      CFX_Matrix mt = icon.GetImageMatrix().GetInverse();
-
-      float fHScale = 1.0f;
-      float fVScale = 1.0f;
-      icon.GetScale(fHScale, fVScale);
-
-      float fx = 0.0f;
-      float fy = 0.0f;
-      icon.GetImageOffset(fx, fy);
-
-      if (icon.GetPDFStream()) {
-        sTemp << "q\n";
-        sTemp << rcPlate.left << " " << rcPlate.bottom << " "
-              << rcPlate.right - rcPlate.left << " "
-              << rcPlate.top - rcPlate.bottom << " re W n\n";
-
-        sTemp << fHScale << " 0 0 " << fVScale << " " << rcPlate.left + fx
-              << " " << rcPlate.bottom + fy << " cm\n";
-        sTemp << mt.a << " " << mt.b << " " << mt.c << " " << mt.d << " "
-              << mt.e << " " << mt.f << " cm\n";
-
-        sTemp << "0 g 0 G 1 w /" << sAlias << " Do\n"
-              << "Q\n";
-      }
-    }
-    icon.Destroy();
-  }
+  sTemp << GenerateIconAppStream(IconFit, pIconStream, rcIcon);
 
   if (!rcLabel.IsEmpty()) {
     pEdit->SetPlateRect(rcLabel);
     CFX_ByteString sEdit =
         GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, 0.0f), true, 0);
-    if (sEdit.GetLength() > 0) {
+    if (sEdit.GetLength() > 0)
       sTemp << "BT\n" << GetColorAppStream(crText, true) << sEdit << "ET\n";
-    }
   }
 
   if (sTemp.tellp() <= 0)
