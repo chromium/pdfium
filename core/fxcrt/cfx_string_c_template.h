@@ -35,7 +35,7 @@ class CFX_StringCTemplate {
 
   CFX_StringCTemplate(const CharType* ptr, FX_STRSIZE len)
       : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)),
-        m_Length(len == -1 ? FXSYS_len(ptr) : len) {}
+        m_Length(len < 0 ? FXSYS_len(ptr) : len) {}
 
   template <typename U = UnsignedType>
   CFX_StringCTemplate(
