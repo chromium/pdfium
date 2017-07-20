@@ -42,61 +42,10 @@ class CLST_Rect : public CFX_FloatRect {
 
   ~CLST_Rect() {}
 
-  void Default() { left = top = right = bottom = 0.0f; }
-
-  const CLST_Rect operator=(const CFX_FloatRect& rect) {
-    left = rect.left;
-    top = rect.top;
-    right = rect.right;
-    bottom = rect.bottom;
-
-    return *this;
-  }
-
-  bool operator==(const CLST_Rect& rect) const {
-    return memcmp(this, &rect, sizeof(CLST_Rect)) == 0;
-  }
-
-  bool operator!=(const CLST_Rect& rect) const { return !(*this == rect); }
-
-  float Width() const { return right - left; }
-
   float Height() const {
     if (top > bottom)
       return top - bottom;
     return bottom - top;
-  }
-
-  CFX_PointF LeftTop() const { return CFX_PointF(left, top); }
-
-  CFX_PointF RightBottom() const { return CFX_PointF(right, bottom); }
-
-  const CLST_Rect operator+=(const CFX_PointF& point) {
-    left += point.x;
-    right += point.x;
-    top += point.y;
-    bottom += point.y;
-
-    return *this;
-  }
-
-  const CLST_Rect operator-=(const CFX_PointF& point) {
-    left -= point.x;
-    right -= point.x;
-    top -= point.y;
-    bottom -= point.y;
-
-    return *this;
-  }
-
-  CLST_Rect operator+(const CFX_PointF& point) const {
-    return CLST_Rect(left + point.x, top + point.y, right + point.x,
-                     bottom + point.y);
-  }
-
-  CLST_Rect operator-(const CFX_PointF& point) const {
-    return CLST_Rect(left - point.x, top - point.y, right - point.x,
-                     bottom - point.y);
   }
 };
 
@@ -108,13 +57,13 @@ class CFX_ListItem final {
   void SetFontMap(IPVT_FontMap* pFontMap);
   CFX_Edit* GetEdit() const;
 
-  void SetRect(const CLST_Rect& rect);
+  void SetRect(const CFX_FloatRect& rect);
   void SetSelect(bool bSelected);
   void SetText(const CFX_WideString& text);
   void SetFontSize(float fFontSize);
   CFX_WideString GetText() const;
 
-  CLST_Rect GetRect() const;
+  CFX_FloatRect GetRect() const;
   bool IsSelected() const;
   float GetItemHeight() const;
   uint16_t GetFirstChar() const;
@@ -124,7 +73,7 @@ class CFX_ListItem final {
 
   std::unique_ptr<CFX_Edit> m_pEdit;
   bool m_bSelected;
-  CLST_Rect m_rcListItem;
+  CFX_FloatRect m_rcListItem;
 };
 
 class CFX_ListContainer {

@@ -30,8 +30,6 @@ class CPVT_FloatRect : public CFX_FloatRect {
     bottom = rect.bottom;
   }
 
-  void Default() { left = top = right = bottom = 0.0f; }
-
   float Height() const {
     if (top > bottom)
       return top - bottom;

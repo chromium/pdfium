@@ -38,11 +38,11 @@ CFX_Edit_Iterator* CFX_ListItem::GetIterator() const {
   return m_pEdit->GetIterator();
 }
 
-void CFX_ListItem::SetRect(const CLST_Rect& rect) {
+void CFX_ListItem::SetRect(const CFX_FloatRect& rect) {
   m_rcListItem = rect;
 }
 
-CLST_Rect CFX_ListItem::GetRect() const {
+CFX_FloatRect CFX_ListItem::GetRect() const {
   return m_rcListItem;
 }
 
@@ -559,7 +559,7 @@ int32_t CFX_ListCtrl::GetItemIndex(const CFX_PointF& point) const {
   for (const auto& pListItem : m_ListItems) {
     if (!pListItem)
       continue;
-    CLST_Rect rcListItem = pListItem->GetRect();
+    CFX_FloatRect rcListItem = pListItem->GetRect();
     if (IsFloatBigger(pt.y, rcListItem.top))
       bFirst = false;
     if (IsFloatSmaller(pt.y, rcListItem.bottom))
