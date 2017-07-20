@@ -887,3 +887,72 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   FPDFPage_CloseAnnot(new_annot);
   CloseSaved();
 }
+
+TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
+  // Open file with form text fields.
+  ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // Retrieve the first annotation: user-editable text field.
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  ASSERT_TRUE(annot);
+
+  // Check that the flag values are as expected.
+  int flags = FPDFAnnot_GetFormFieldFlags(page, annot);
+  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+  FPDFPage_CloseAnnot(annot);
+
+  // Retrieve the second annotation: read-only text field.
+  annot = FPDFPage_GetAnnot(page, 1);
+  ASSERT_TRUE(annot);
+
+  // Check that the flag values are as expected.
+  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
+  EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+  FPDFPage_CloseAnnot(annot);
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
+  // Open file with form text fields.
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // Retrieve the first annotation: user-editable combobox.
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  ASSERT_TRUE(annot);
+
+  // Check that the flag values are as expected.
+  int flags = FPDFAnnot_GetFormFieldFlags(page, annot);
+  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  FPDFPage_CloseAnnot(annot);
+
+  // Retrieve the second annotation: regular combobox.
+  annot = FPDFPage_GetAnnot(page, 1);
+  ASSERT_TRUE(annot);
+
+  // Check that the flag values are as expected.
+  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
+  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+  EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  FPDFPage_CloseAnnot(annot);
+
+  // Retrieve the third annotation: read-only combobox.
+  annot = FPDFPage_GetAnnot(page, 2);
+  ASSERT_TRUE(annot);
+
+  // Check that the flag values are as expected.
+  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
+  EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+  EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  FPDFPage_CloseAnnot(annot);
+
+  UnloadPage(page);
+}

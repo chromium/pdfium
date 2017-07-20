@@ -18,6 +18,8 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "fpdfsdk/fsdk_define.h"
@@ -785,4 +787,20 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFAnnot_SetFlags(FPDF_ANNOTATION annot,
 
   pAnnotDict->SetNewFor<CPDF_Number>("F", flags);
   return true;
+}
+
+DLLEXPORT int STDCALL FPDFAnnot_GetFormFieldFlags(FPDF_PAGE page,
+                                                  FPDF_ANNOTATION annot) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage || !annot)
+    return FPDF_FORMFLAG_NONE;
+
+  CPDF_Dictionary* pAnnotDict =
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
+  if (!pAnnotDict)
+    return FPDF_FORMFLAG_NONE;
+
+  CPDF_InterForm interform(pPage->m_pDocument.Get());
+  CPDF_FormField* pFormField = interform.GetFieldByDict(pAnnotDict);
+  return pFormField ? pFormField->GetFieldFlags() : FPDF_FORMFLAG_NONE;
 }
