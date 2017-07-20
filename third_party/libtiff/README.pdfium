@@ -11,9 +11,7 @@ Local Modifications:
 
 0000-build-config.patch: Local build configuration changes.
 0001-build-config.patch: Enable HAVE_SEARCH_H in tiffconf.h for VS 2015
-0005-Leak-TIFFFetchStripThing.patch: Fix a memory leak
 0006-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
-0007-uninitialized-value.patch: Fix potentially uninitialized dircount value
 0008-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0025-upstream-OOM-gtTileContig: allocates the decoded buffer only after a first successful TIFFFillStrip.
