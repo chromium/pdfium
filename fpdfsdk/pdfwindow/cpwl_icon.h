@@ -16,13 +16,10 @@ class CPWL_Image : public CPWL_Wnd {
   CPWL_Image();
   ~CPWL_Image() override;
 
-  virtual CFX_ByteString GetImageAppStream();
-
   virtual void GetScale(float& fHScale, float& fVScale);
   virtual void GetImageOffset(float& x, float& y);
-  virtual CPDF_Stream* GetPDFStream() const;
 
- public:
+  CPDF_Stream* GetPDFStream() const;
   void SetPDFStream(CPDF_Stream* pStream);
   void GetImageSize(float& fWidth, float& fHeight);
   CFX_Matrix GetImageMatrix();
@@ -39,7 +36,7 @@ class CPWL_Icon : public CPWL_Image {
   CPWL_Icon();
   ~CPWL_Icon() override;
 
-  virtual CPDF_IconFit* GetIconFit() const;
+  CPDF_IconFit* GetIconFit() const;
 
   // CPWL_Image
   void GetScale(float& fHScale, float& fVScale) override;

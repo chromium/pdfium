@@ -6,7 +6,6 @@
 
 #include "fpdfsdk/pdfwindow/cpwl_special_button.h"
 #include "fpdfsdk/pdfwindow/cpwl_button.h"
-#include "fpdfsdk/pdfwindow/cpwl_utils.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 CPWL_PushButton::CPWL_PushButton() {}

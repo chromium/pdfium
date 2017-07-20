@@ -13,7 +13,6 @@
 #include "fpdfsdk/pdfwindow/cpwl_caret.h"
 #include "fpdfsdk/pdfwindow/cpwl_font_map.h"
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
-#include "fpdfsdk/pdfwindow/cpwl_utils.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 

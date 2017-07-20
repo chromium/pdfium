@@ -80,8 +80,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void SetText(const CFX_WideString& csText);
   void ReplaceSel(const CFX_WideString& csText);
 
-  CFX_ByteString GetSelectAppearanceStream(const CFX_PointF& ptOffset) const;
-
   bool IsTextFull() const;
 
   static float GetCharArrayAutoFontSize(CPDF_Font* pFont,

@@ -11,45 +11,11 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "fpdfsdk/pdfwindow/cpwl_utils.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 CPWL_Image::CPWL_Image() : m_pPDFStream(nullptr) {}
 
 CPWL_Image::~CPWL_Image() {}
-
-CFX_ByteString CPWL_Image::GetImageAppStream() {
-  std::ostringstream sAppStream;
-
-  CFX_ByteString sAlias = GetImageAlias();
-  CFX_FloatRect rcPlate = GetClientRect();
-  CFX_Matrix mt = GetImageMatrix().GetInverse();
-
-  float fHScale = 1.0f;
-  float fVScale = 1.0f;
-  GetScale(fHScale, fVScale);
-
-  float fx = 0.0f;
-  float fy = 0.0f;
-  GetImageOffset(fx, fy);
-
-  if (m_pPDFStream && sAlias.GetLength() > 0) {
-    sAppStream << "q\n";
-    sAppStream << rcPlate.left << " " << rcPlate.bottom << " "
-               << rcPlate.right - rcPlate.left << " "
-               << rcPlate.top - rcPlate.bottom << " re W n\n";
-
-    sAppStream << fHScale << " 0 0 " << fVScale << " " << rcPlate.left + fx
-               << " " << rcPlate.bottom + fy << " cm\n";
-    sAppStream << mt.a << " " << mt.b << " " << mt.c << " " << mt.d << " "
-               << mt.e << " " << mt.f << " cm\n";
-
-    sAppStream << "0 g 0 G 1 w /" << sAlias << " Do\n"
-               << "Q\n";
-  }
-
-  return CFX_ByteString(sAppStream);
-}
 
 void CPWL_Image::SetPDFStream(CPDF_Stream* pStream) {
   m_pPDFStream = pStream;

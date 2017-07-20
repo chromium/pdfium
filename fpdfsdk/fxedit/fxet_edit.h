@@ -286,14 +286,6 @@ class CFXEU_InsertText : public CFX_Edit_UndoItem {
 
 class CFX_Edit {
  public:
-  static CFX_ByteString GetEditAppearanceStream(CFX_Edit* pEdit,
-                                                const CFX_PointF& ptOffset,
-                                                const CPVT_WordRange* pRange,
-                                                bool bContinuous,
-                                                uint16_t SubWord);
-  static CFX_ByteString GetSelectAppearanceStream(CFX_Edit* pEdit,
-                                                  const CFX_PointF& ptOffset,
-                                                  const CPVT_WordRange* pRange);
   static void DrawEdit(CFX_RenderDevice* pDevice,
                        CFX_Matrix* pUser2Device,
                        CFX_Edit* pEdit,

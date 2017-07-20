@@ -1120,8 +1120,6 @@ static_library("pdfwindow") {
     "fpdfsdk/pdfwindow/cpwl_timer.h",
     "fpdfsdk/pdfwindow/cpwl_timer_handler.cpp",
     "fpdfsdk/pdfwindow/cpwl_timer_handler.h",
-    "fpdfsdk/pdfwindow/cpwl_utils.cpp",
-    "fpdfsdk/pdfwindow/cpwl_utils.h",
     "fpdfsdk/pdfwindow/cpwl_wnd.cpp",
     "fpdfsdk/pdfwindow/cpwl_wnd.h",
   ]

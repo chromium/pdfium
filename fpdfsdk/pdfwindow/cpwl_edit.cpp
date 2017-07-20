@@ -25,7 +25,6 @@
 #include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pdfwindow/cpwl_font_map.h"
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
-#include "fpdfsdk/pdfwindow/cpwl_utils.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/stl_util.h"
@@ -355,12 +354,6 @@ void CPWL_Edit::OnKillFocus() {
 
 void CPWL_Edit::SetCharSpace(float fCharSpace) {
   m_pEdit->SetCharSpace(fCharSpace);
-}
-
-CFX_ByteString CPWL_Edit::GetSelectAppearanceStream(
-    const CFX_PointF& ptOffset) const {
-  CPVT_WordRange wr = GetSelectWordRange();
-  return CPWL_Utils::GetEditSelAppStream(m_pEdit.get(), ptOffset, &wr);
 }
 
 CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
