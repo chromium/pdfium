@@ -804,3 +804,22 @@ DLLEXPORT int STDCALL FPDFAnnot_GetFormFieldFlags(FPDF_PAGE page,
   CPDF_FormField* pFormField = interform.GetFieldByDict(pAnnotDict);
   return pFormField ? pFormField->GetFieldFlags() : FPDF_FORMFLAG_NONE;
 }
+
+DLLEXPORT FPDF_ANNOTATION STDCALL
+FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
+                              FPDF_PAGE page,
+                              double page_x,
+                              double page_y) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!hHandle || !pPage)
+    return nullptr;
+
+  CPDF_InterForm interform(pPage->m_pDocument.Get());
+  int annot_index = -1;
+  CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
+      pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
+      &annot_index);
+  if (!pFormCtrl || annot_index == -1)
+    return nullptr;
+  return FPDFPage_GetAnnot(page, annot_index);
+}

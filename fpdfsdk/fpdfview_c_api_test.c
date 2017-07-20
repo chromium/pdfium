@@ -62,6 +62,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetFlags);
     CHK(FPDFAnnot_SetFlags);
     CHK(FPDFAnnot_GetFormFieldFlags);
+    CHK(FPDFAnnot_GetFormFieldAtPoint);
 
     // fpdf_attachment.h
     CHK(FPDFDoc_GetAttachmentCount);
