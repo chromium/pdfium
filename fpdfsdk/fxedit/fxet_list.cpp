@@ -322,7 +322,7 @@ CFX_FloatRect CFX_ListCtrl::GetItemRectInternal(int32_t nIndex) const {
   CFX_FloatRect rcItem = m_ListItems[nIndex]->GetRect();
   rcItem.left = 0.0f;
   rcItem.right = GetPlateRect().Width();
-  return InnerToOuter(CLST_Rect(rcItem));
+  return InnerToOuter(rcItem);
 }
 
 int32_t CFX_ListCtrl::GetCaret() const {
@@ -519,11 +519,12 @@ void CFX_ListCtrl::ReArrange(int32_t nItemIndex) {
   for (const auto& pListItem : m_ListItems) {
     if (pListItem) {
       float fListItemHeight = pListItem->GetItemHeight();
-      pListItem->SetRect(CLST_Rect(0.0f, fPosY, 0.0f, fPosY + fListItemHeight));
+      pListItem->SetRect(
+          CFX_FloatRect(0.0f, fPosY + fListItemHeight, 0.0f, fPosY));
       fPosY += fListItemHeight;
     }
   }
-  SetContentRect(CLST_Rect(0.0f, 0.0f, 0.0f, fPosY));
+  SetContentRect(CFX_FloatRect(0.0f, fPosY, 0.0f, 0.0f));
   SetScrollInfo();
 }
 

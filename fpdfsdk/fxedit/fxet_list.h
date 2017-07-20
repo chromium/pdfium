@@ -19,36 +19,6 @@ class CFX_Edit;
 class CFX_Edit_Iterator;
 class CPWL_List_Notify;
 
-class CLST_Rect : public CFX_FloatRect {
- public:
-  CLST_Rect() { left = top = right = bottom = 0.0f; }
-
-  CLST_Rect(float other_left,
-            float other_top,
-            float other_right,
-            float other_bottom) {
-    left = other_left;
-    top = other_top;
-    right = other_right;
-    bottom = other_bottom;
-  }
-
-  explicit CLST_Rect(const CFX_FloatRect& rect) {
-    left = rect.left;
-    top = rect.top;
-    right = rect.right;
-    bottom = rect.bottom;
-  }
-
-  ~CLST_Rect() {}
-
-  float Height() const {
-    if (top > bottom)
-      return top - bottom;
-    return bottom - top;
-  }
-};
-
 class CFX_ListItem final {
  public:
   CFX_ListItem();
@@ -84,8 +54,8 @@ class CFX_ListContainer {
   virtual void SetPlateRect(const CFX_FloatRect& rect);
 
   CFX_FloatRect GetPlateRect() const { return m_rcPlate; }
-  void SetContentRect(const CLST_Rect& rect) { m_rcContent = rect; }
-  CLST_Rect GetContentRect() const { return m_rcContent; }
+  void SetContentRect(const CFX_FloatRect& rect) { m_rcContent = rect; }
+  CFX_FloatRect GetContentRect() const { return m_rcContent; }
   CFX_PointF GetBTPoint() const {
     return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
   }
@@ -100,24 +70,24 @@ class CFX_ListContainer {
   CFX_PointF OuterToInner(const CFX_PointF& point) const {
     return CFX_PointF(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
   }
-  CFX_FloatRect InnerToOuter(const CLST_Rect& rect) const {
+  CFX_FloatRect InnerToOuter(const CFX_FloatRect& rect) const {
     CFX_PointF ptLeftTop = InnerToOuter(CFX_PointF(rect.left, rect.top));
     CFX_PointF ptRightBottom =
         InnerToOuter(CFX_PointF(rect.right, rect.bottom));
     return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
                          ptLeftTop.y);
   }
-  CLST_Rect OuterToInner(const CFX_FloatRect& rect) const {
+  CFX_FloatRect OuterToInner(const CFX_FloatRect& rect) const {
     CFX_PointF ptLeftTop = OuterToInner(CFX_PointF(rect.left, rect.top));
     CFX_PointF ptRightBottom =
         OuterToInner(CFX_PointF(rect.right, rect.bottom));
-    return CLST_Rect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
-                     ptRightBottom.y);
+    return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
+                         ptLeftTop.y);
   }
 
  private:
   CFX_FloatRect m_rcPlate;
-  CLST_Rect m_rcContent;  // positive forever!
+  CFX_FloatRect m_rcContent;
 };
 
 class CPLST_Select {
