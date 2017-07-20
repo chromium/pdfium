@@ -1,4 +1,4 @@
-/* $Id: tiffiop.h,v 1.89 2016-01-23 21:20:34 erouault Exp $ */
+/* $Id: tiffiop.h,v 1.90 2016-12-02 21:56:56 erouault Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -368,7 +368,6 @@ extern tmsize_t
 _TIFFReadEncodedStripAndAllocBuffer(TIFF* tif, uint32 strip,
                                     void **buf, tmsize_t bufsizetoalloc,
                                     tmsize_t size_to_read);
-
 extern tmsize_t
 _TIFFReadEncodedTileAndAllocBuffer(TIFF* tif, uint32 tile,
                                     void **buf, tmsize_t bufsizetoalloc,
@@ -377,6 +376,7 @@ extern tmsize_t
 _TIFFReadTileAndAllocBuffer(TIFF* tif,
                             void **buf, tmsize_t bufsizetoalloc,
                             uint32 x, uint32 y, uint32 z, uint16 s);
+
 
 extern int TIFFInitDumpMode(TIFF*, int);
 #ifdef PACKBITS_SUPPORT

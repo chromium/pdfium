@@ -1,4 +1,4 @@
-/* $Id: tif_dir.c,v 1.127 2016-10-25 21:35:15 erouault Exp $ */
+/* $Id: tif_dir.c,v 1.130 2017-05-17 21:54:05 erouault Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -460,14 +460,6 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	case TIFFTAG_REFERENCEBLACKWHITE:
 		/* XXX should check for null range */
 		_TIFFsetFloatArray(&td->td_refblackwhite, va_arg(ap, float*), 6);
-		for (int i = 0; i < 6; i++) {
-			if (isnan(td->td_refblackwhite[i])) {
-				if (i % 2 == 0)
-					td->td_refblackwhite[i] = 0;
-				else
-					td->td_refblackwhite[i] = pow(2, td->td_bitspersample) - 1;
-			}
-		}
 		break;
 	case TIFFTAG_INKNAMES:
 		v = (uint16) va_arg(ap, uint16_vap);
@@ -694,7 +686,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 				case TIFF_SRATIONAL:
 				case TIFF_FLOAT:
 					{
-						float v2 = (float)va_arg(ap, double);
+						float v2 = TIFFClampDoubleToFloat(va_arg(ap, double));
 						_TIFFmemcpy(val, &v2, tv_size);
 					}
 					break;
@@ -872,31 +864,31 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 	if( fip == NULL ) /* cannot happen since TIFFGetField() already checks it */
 	    return 0;
 	
-	if( tag == TIFFTAG_NUMBEROFINKS )
-	{
-		int i;
-		for (i = 0; i < td->td_customValueCount; i++) {
-			uint16 val;
-			TIFFTagValue *tv = td->td_customValues + i;
-			if (tv->info->field_tag != tag)
-				continue;
-			val = *(uint16 *)tv->value;
-			/* Truncate to SamplesPerPixel, since the */
-			/* setting code for INKNAMES assume that there are SamplesPerPixel */
-			/* inknames. */
-			/* Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2599 */
-			if( val > td->td_samplesperpixel )
-			{
-				TIFFWarningExt(tif->tif_clientdata,"_TIFFVGetField",
-							   "Truncating NumberOfInks from %u to %u",
-							   val, td->td_samplesperpixel);
-				val = td->td_samplesperpixel;
-			}
-			*va_arg(ap, uint16*) = val;
-			return 1;
-		}
-		return 0;
-	}
+        if( tag == TIFFTAG_NUMBEROFINKS )
+        {
+            int i;
+            for (i = 0; i < td->td_customValueCount; i++) {
+                uint16 val;
+                TIFFTagValue *tv = td->td_customValues + i;
+                if (tv->info->field_tag != tag)
+                    continue;
+                val = *(uint16 *)tv->value;
+                /* Truncate to SamplesPerPixel, since the */
+                /* setting code for INKNAMES assume that there are SamplesPerPixel */
+                /* inknames. */
+                /* Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2599 */
+                if( val > td->td_samplesperpixel )
+                {
+                    TIFFWarningExt(tif->tif_clientdata,"_TIFFVGetField",
+                                   "Truncating NumberOfInks from %u to %u",
+                                   val, td->td_samplesperpixel);
+                    val = td->td_samplesperpixel;
+                }
+                *va_arg(ap, uint16*) = val;
+                return 1;
+            }
+            return 0;
+        }
 
 	/*
 	 * We want to force the custom code to be used for custom

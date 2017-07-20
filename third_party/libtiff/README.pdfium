@@ -1,6 +1,6 @@
 Name: LibTIFF
-URL: http://www.remotesensing.org/libtiff/
-Version: 4.0.7
+URL: http://www.simplesystems.org/libtiff/
+Version: 4.0.8
 Security Critical: yes
 License: BSD
 
@@ -15,18 +15,5 @@ Local Modifications:
 0006-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
 0007-uninitialized-value.patch: Fix potentially uninitialized dircount value
 0008-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
-0010-fix-leak-imagebegin: Fix a leak when TIFFRGBAImageBegin fails
-0011-fix-leak-imagebegin2: Apply upstream fix related to our previous patch
-0012-initialize-tif-rawdata.patch: Initialize tif_rawdata to guard against unitialized access
-0013-validate-refblackwhite.patch: Make sure the refblackwhite values aren't nan.
-0014-cast-to-unsigned-in-putagreytile.patch: casting to avoid undefined shifts.
-0015-fix-leaks-in-tif_ojpeg.patch: fix direct leaks in tif_ojpeg.c methods
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
-0018-fix-leak-in-PredictorSetupDecode.patch: call tif->tif_cleanup if the setup fails.
-0019-oom-TIFFReadDirEntryArray.patch: OOM in tif_dirread.c (patch should be replaced when upstream fixes http://bugzilla.maptools.org/show_bug.cgi?id=2675).
-0020-upstream-security-fixes.patch: patch our copy with several upstream security fixes.
-0021-oom-TIFFFillStrip.patch: Try to avoid out-of-memory in tif_read.c
-0022-upstream-patch-0012.patch: Use the upstream solution corresponding to patch 0012.
-0023-upstream-security-fixes.patch: more upstream patches related to security issues.
-0024-upstream-PackBitsDecode-fix.patch: fix Heap-buffer-overflow in tif_packbits.c.
 0025-upstream-OOM-gtTileContig: allocates the decoded buffer only after a first successful TIFFFillStrip.

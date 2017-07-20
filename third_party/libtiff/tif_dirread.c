@@ -1,4 +1,4 @@
-/* $Id: tif_dirread.c,v 1.204 2016-11-16 15:14:15 erouault Exp $ */
+/* $Id: tif_dirread.c,v 1.208 2017-04-27 15:46:22 erouault Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -791,43 +791,44 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 	*count=(uint32)direntry->tdir_count;
 	datasize=(*count)*typesize;
 	assert((tmsize_t)datasize>0);
-	const uint32 small_alloc_threshold=(tif->tif_flags&TIFF_BIGTIFF)? 8 : 4;
-	if (datasize <= small_alloc_threshold)
-	{
-		data=_TIFFCheckMalloc(tif, *count, typesize, "ReadDirEntryArray");
-		if (data==0)
-			return(TIFFReadDirEntryErrAlloc);
-		_TIFFmemcpy(data,&direntry->tdir_offset,datasize);
-		*value=data;
-		return(TIFFReadDirEntryErrOk);
-	}
-	uint64 offset;
-	if (!(tif->tif_flags&TIFF_BIGTIFF))
-	{
-		uint32 small_offset=direntry->tdir_offset.toff_long;
-		if (tif->tif_flags&TIFF_SWAB)
-			TIFFSwabLong(&small_offset);
-		offset=(uint64)small_offset;
-	}
-	else
-	{
-		offset = direntry->tdir_offset.toff_long8;
-		if (tif->tif_flags&TIFF_SWAB)
-			TIFFSwabLong8(&offset);
-	}
-	if ((uint64)(-1) - offset < datasize)
-		return(TIFFReadDirEntryErrIo);
-	const uint64 size=isMapped(tif)? (uint64)tif->tif_size : TIFFGetFileSize(tif);
-	if (offset + datasize > size)
-		return(TIFFReadDirEntryErrIo);
 	data=_TIFFCheckMalloc(tif, *count, typesize, "ReadDirEntryArray");
 	if (data==0)
 		return(TIFFReadDirEntryErrAlloc);
-	enum TIFFReadDirEntryErr err=TIFFReadDirEntryData(tif,offset,(tmsize_t)datasize,data);
-	if (err!=TIFFReadDirEntryErrOk)
+	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
-		_TIFFfree(data);
-		return(err);
+		if (datasize<=4)
+			_TIFFmemcpy(data,&direntry->tdir_offset,datasize);
+		else
+		{
+			enum TIFFReadDirEntryErr err;
+			uint32 offset = direntry->tdir_offset.toff_long;
+			if (tif->tif_flags&TIFF_SWAB)
+				TIFFSwabLong(&offset);
+			err=TIFFReadDirEntryData(tif,(uint64)offset,(tmsize_t)datasize,data);
+			if (err!=TIFFReadDirEntryErrOk)
+			{
+				_TIFFfree(data);
+				return(err);
+			}
+		}
+	}
+	else
+	{
+		if (datasize<=8)
+			_TIFFmemcpy(data,&direntry->tdir_offset,datasize);
+		else
+		{
+			enum TIFFReadDirEntryErr err;
+			uint64 offset = direntry->tdir_offset.toff_long8;
+			if (tif->tif_flags&TIFF_SWAB)
+				TIFFSwabLong8(&offset);
+			err=TIFFReadDirEntryData(tif,offset,(tmsize_t)datasize,data);
+			if (err!=TIFFReadDirEntryErrOk)
+			{
+				_TIFFfree(data);
+				return(err);
+			}
+		}
 	}
 	*value=data;
 	return(TIFFReadDirEntryErrOk);
@@ -2406,14 +2407,14 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 				ma=(double*)origdata;
 				mb=data;
 				for (n=0; n<count; n++)
-				{
-					double val = *ma++;
-					if( val > FLT_MAX )
-						val = FLT_MAX;
-					else if( val < -FLT_MAX )
-						val = -FLT_MAX;
-					*mb++=(float)val;
-				}
+                                {
+                                    double val = *ma++;
+                                    if( val > FLT_MAX )
+                                        val = FLT_MAX;
+                                    else if( val < -FLT_MAX )
+                                        val = -FLT_MAX;
+                                    *mb++=(float)val;
+                                }
 			}
 			break;
 	}
@@ -2879,9 +2880,9 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedRational(TIFF* tif, TIFFD
 		m.l = direntry->tdir_offset.toff_long8;
 	if (tif->tif_flags&TIFF_SWAB)
 		TIFFSwabArrayOfLong(m.i,2);
-	/* Not completely sure what we should do when m.i[1]==0, but some */
-	/* sanitizers do not like division by 0.0: */
-	/* http://bugzilla.maptools.org/show_bug.cgi?id=2644 */
+        /* Not completely sure what we should do when m.i[1]==0, but some */
+        /* sanitizers do not like division by 0.0: */
+        /* http://bugzilla.maptools.org/show_bug.cgi?id=2644 */
 	if (m.i[0]==0 || m.i[1]==0)
 		*value=0.0;
 	else
@@ -2910,9 +2911,9 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSrational(TIFF* tif, TIFF
 		m.l=direntry->tdir_offset.toff_long8;
 	if (tif->tif_flags&TIFF_SWAB)
 		TIFFSwabArrayOfLong(m.i,2);
-	/* Not completely sure what we should do when m.i[1]==0, but some */
-	/* sanitizers do not like division by 0.0: */
-	/* http://bugzilla.maptools.org/show_bug.cgi?id=2644 */
+        /* Not completely sure what we should do when m.i[1]==0, but some */
+        /* sanitizers do not like division by 0.0: */
+        /* http://bugzilla.maptools.org/show_bug.cgi?id=2644 */
 	if ((int32)m.i[0]==0 || m.i[1]==0)
 		*value=0.0;
 	else
@@ -3737,6 +3738,14 @@ TIFFReadDirectory(TIFF* tif)
                                 _TIFFmemcpy( &(tif->tif_dir.td_stripoffset_entry),
                                              dp, sizeof(TIFFDirEntry) );
 #else                          
+                                if( tif->tif_dir.td_stripoffset != NULL )
+                                {
+                                    TIFFErrorExt(tif->tif_clientdata, module,
+                                        "tif->tif_dir.td_stripoffset is "
+                                        "already allocated. Likely duplicated "
+                                        "StripOffsets/TileOffsets tag");
+                                    goto bad;
+                                }
 				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripoffset))  
 					goto bad;
 #endif                                
@@ -3747,7 +3756,15 @@ TIFFReadDirectory(TIFF* tif)
                                 _TIFFmemcpy( &(tif->tif_dir.td_stripbytecount_entry),
                                              dp, sizeof(TIFFDirEntry) );
 #else                          
-				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripbytecount))  
+                                if( tif->tif_dir.td_stripbytecount != NULL )
+                                {
+                                    TIFFErrorExt(tif->tif_clientdata, module,
+                                        "tif->tif_dir.td_stripbytecount is "
+                                        "already allocated. Likely duplicated "
+                                        "StripByteCounts/TileByteCounts tag");
+                                    goto bad;
+                                }
+                                if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripbytecount))  
 					goto bad;
 #endif                                
 				break;
@@ -5552,9 +5569,9 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	 */
 	if (rowsperstrip >= td->td_rowsperstrip)
 		return;
-	nstrips = TIFFhowmany_32(td->td_imagelength, rowsperstrip);
-	if( nstrips == 0 )
-		return;
+        nstrips = TIFFhowmany_32(td->td_imagelength, rowsperstrip);
+        if( nstrips == 0 )
+            return;
 
 	newcounts = (uint64*) _TIFFCheckMalloc(tif, nstrips, sizeof (uint64),
 				"for chopped \"StripByteCounts\" array");
