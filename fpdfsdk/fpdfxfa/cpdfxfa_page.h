@@ -76,7 +76,6 @@ class CPDFXFA_Page : public CFX_Retainable {
   CXFA_FFPageView* m_pXFAPageView;
   CFX_UnownedPtr<CPDFXFA_Context> const m_pContext;
   const int m_iPageIndex;
-  int m_iRef;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_
