@@ -186,7 +186,7 @@ void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
     case CPDF_AAction::KeyStroke:
       if (CPWL_Edit* pEdit = GetEdit(pPageView, false)) {
         pEdit->SetFocus();
-        pEdit->SetSel(fa.nSelStart, fa.nSelEnd);
+        pEdit->SetSelection(fa.nSelStart, fa.nSelEnd);
         pEdit->ReplaceSel(fa.sChange);
       }
       break;
@@ -217,7 +217,7 @@ void CFFL_TextField::SaveState(CPDFSDK_PageView* pPageView) {
   if (!pWnd)
     return;
 
-  pWnd->GetSel(m_State.nStart, m_State.nEnd);
+  pWnd->GetSelection(m_State.nStart, m_State.nEnd);
   m_State.sValue = pWnd->GetText();
 }
 
@@ -229,7 +229,7 @@ void CFFL_TextField::RestoreState(CPDFSDK_PageView* pPageView) {
     return;
 
   pWnd->SetText(m_State.sValue);
-  pWnd->SetSel(m_State.nStart, m_State.nEnd);
+  pWnd->SetSelection(m_State.nStart, m_State.nEnd);
 }
 
 CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView,

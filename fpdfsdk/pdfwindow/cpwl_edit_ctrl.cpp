@@ -334,12 +334,12 @@ CFX_WideString CPWL_EditCtrl::GetText() const {
   return m_pEdit->GetText();
 }
 
-void CPWL_EditCtrl::SetSel(int32_t nStartChar, int32_t nEndChar) {
-  m_pEdit->SetSel(nStartChar, nEndChar);
+void CPWL_EditCtrl::SetSelection(int32_t nStartChar, int32_t nEndChar) {
+  m_pEdit->SetSelection(nStartChar, nEndChar);
 }
 
-void CPWL_EditCtrl::GetSel(int32_t& nStartChar, int32_t& nEndChar) const {
-  m_pEdit->GetSel(nStartChar, nEndChar);
+void CPWL_EditCtrl::GetSelection(int32_t& nStartChar, int32_t& nEndChar) const {
+  m_pEdit->GetSelection(nStartChar, nEndChar);
 }
 
 void CPWL_EditCtrl::Clear() {

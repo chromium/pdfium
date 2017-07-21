@@ -213,17 +213,18 @@ void CPWL_ComboBox::SetSelect(int32_t nItemIndex) {
   m_nSelectItem = nItemIndex;
 }
 
-void CPWL_ComboBox::SetEditSel(int32_t nStartChar, int32_t nEndChar) {
+void CPWL_ComboBox::SetEditSelection(int32_t nStartChar, int32_t nEndChar) {
   if (m_pEdit)
-    m_pEdit->SetSel(nStartChar, nEndChar);
+    m_pEdit->SetSelection(nStartChar, nEndChar);
 }
 
-void CPWL_ComboBox::GetEditSel(int32_t& nStartChar, int32_t& nEndChar) const {
+void CPWL_ComboBox::GetEditSelection(int32_t& nStartChar,
+                                     int32_t& nEndChar) const {
   nStartChar = -1;
   nEndChar = -1;
 
   if (m_pEdit)
-    m_pEdit->GetSel(nStartChar, nEndChar);
+    m_pEdit->GetSelection(nStartChar, nEndChar);
 }
 
 void CPWL_ComboBox::Clear() {

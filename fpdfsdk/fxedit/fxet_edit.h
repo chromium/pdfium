@@ -361,8 +361,8 @@ class CFX_Edit {
   CFX_WideString GetRangeText(const CPVT_WordRange& range) const;
   int32_t GetHorzScale() const;
   float GetCharSpace() const;
-  void SetSel(int32_t nStartChar, int32_t nEndChar);
-  void GetSel(int32_t& nStartChar, int32_t& nEndChar) const;
+  void SetSelection(int32_t nStartChar, int32_t nEndChar);
+  void GetSelection(int32_t& nStartChar, int32_t& nEndChar) const;
   void SelectAll();
   void SelectNone();
   bool IsSelected() const;
@@ -397,7 +397,7 @@ class CFX_Edit {
   friend class CFXEU_Clear;
   friend class CFXEU_InsertText;
 
-  void SetSel(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
+  void SetSelection(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& range);

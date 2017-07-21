@@ -26,8 +26,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   ~CPWL_EditCtrl() override;
 
   CFX_WideString GetText() const;
-  void SetSel(int32_t nStartChar, int32_t nEndChar);
-  void GetSel(int32_t& nStartChar, int32_t& nEndChar) const;
+  void SetSelection(int32_t nStartChar, int32_t nEndChar);
+  void GetSelection(int32_t& nStartChar, int32_t& nEndChar) const;
   void Clear();
   void SelectAll();
 
