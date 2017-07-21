@@ -16,8 +16,9 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
 
   // Add the key "1" (with BOM) and value 100 into the array.
   std::ostringstream buf;
-  buf << static_cast<unsigned char>(254) << static_cast<unsigned char>(255)
-      << static_cast<unsigned char>(0) << static_cast<unsigned char>(49);
+  constexpr char kData[] = "\xFE\xFF\x00\x31";
+  for (size_t i = 0; i < sizeof(kData); ++i)
+    buf.put(kData[i]);
   pNames->AddNew<CPDF_String>(CFX_ByteString(buf), true);
   pNames->AddNew<CPDF_Number>(100);
 

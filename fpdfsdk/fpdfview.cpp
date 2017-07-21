@@ -1397,7 +1397,6 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
     return nullptr;
 
   CPDF_Object* pDestObj = nullptr;
-  CFX_ByteString bsName;
   CFX_WideString wsName;
   CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
@@ -1413,6 +1412,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
 
     index -= count;
     int i = 0;
+    CFX_ByteString bsName;
     for (const auto& it : *pDest) {
       bsName = it.first;
       pDestObj = it.second.get();

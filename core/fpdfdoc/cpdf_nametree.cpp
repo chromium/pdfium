@@ -43,14 +43,14 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     for (size_t i = 0; i < dwCount; i++) {
       CFX_WideString csValue = pNames->GetUnicodeTextAt(i * 2);
       int32_t iCompare = csValue.Compare(csName);
-      if (iCompare <= 0) {
-        if (ppFind)
-          *ppFind = pNames;
-        if (iCompare < 0)
-          continue;
-      } else {
+      if (iCompare > 0)
         break;
-      }
+
+      if (ppFind)
+        *ppFind = pNames;
+      if (iCompare < 0)
+        continue;
+
       nIndex += i;
       return pNames->GetDirectObjectAt(i * 2 + 1);
     }
@@ -170,7 +170,7 @@ int CPDF_NameTree::GetIndex(const CFX_WideString& csName) const {
 
 CPDF_Object* CPDF_NameTree::LookupValueAndName(int nIndex,
                                                CFX_WideString* csName) const {
-  *csName = CFX_WideString();
+  csName->clear();
   if (!m_pRoot)
     return nullptr;
 
