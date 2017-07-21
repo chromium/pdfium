@@ -351,7 +351,7 @@ class CFX_Edit {
   CPVT_WordPlace SearchWordPlace(const CFX_PointF& point) const;
   int32_t GetCaret() const;
   CPVT_WordPlace GetCaretWordPlace() const;
-  CFX_WideString GetSelText() const;
+  CFX_WideString GetSelectedText() const;
   CFX_WideString GetText() const;
   float GetFontSize() const;
   uint16_t GetPasswordChar() const;

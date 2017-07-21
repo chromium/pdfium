@@ -843,7 +843,7 @@ CFX_WideString CFX_Edit::GetRangeText(const CPVT_WordRange& range) const {
   return swRet;
 }
 
-CFX_WideString CFX_Edit::GetSelText() const {
+CFX_WideString CFX_Edit::GetSelectedText() const {
   return GetRangeText(m_SelState.ConvertToWordRange());
 }
 
@@ -1737,7 +1737,8 @@ bool CFX_Edit::Clear(bool bAddUndo, bool bPaint) {
 
   CPVT_WordRange range = m_SelState.ConvertToWordRange();
   if (bAddUndo && m_bEnableUndo)
-    AddEditUndoItem(pdfium::MakeUnique<CFXEU_Clear>(this, range, GetSelText()));
+    AddEditUndoItem(
+        pdfium::MakeUnique<CFXEU_Clear>(this, range, GetSelectedText()));
 
   SelectNone();
   SetCaret(m_pVT->DeleteWords(range));
