@@ -18,13 +18,14 @@ import sys
 CALLGRIND_PROFILER = 'callgrind'
 PERFSTAT_PROFILER = 'perfstat'
 
+PDFIUM_TEST = 'pdfium_test'
 
 class PerformanceRun(object):
   """A single measurement of a test case."""
 
   def __init__(self, args):
     self.args = args
-    self.pdfium_test_path = os.path.join(self.args.build_dir, 'pdfium_test')
+    self.pdfium_test_path = os.path.join(self.args.build_dir, PDFIUM_TEST)
 
   def _CheckTools(self):
     """Returns whether the tool file paths are sane."""
@@ -122,7 +123,8 @@ def main():
   parser.add_argument('pdf_path',
                       help='test case to measure load and rendering time')
   parser.add_argument('--build-dir', default=os.path.join('out', 'Release'),
-                      help='relative path from the base source directory')
+                      help='relative path to the build directory with '
+                           '%s' % PDFIUM_TEST)
   parser.add_argument('--profiler', default=CALLGRIND_PROFILER,
                       help='which profiler to use. Supports callgrind and '
                            'perfstat for now.')
