@@ -884,7 +884,7 @@ bool CFX_Edit::Delete() {
   return Delete(true, true);
 }
 
-bool CFX_Edit::Clear() {
+bool CFX_Edit::ClearSelection() {
   return Clear(true, true);
 }
 
@@ -1736,9 +1736,10 @@ bool CFX_Edit::Clear(bool bAddUndo, bool bPaint) {
     return false;
 
   CPVT_WordRange range = m_SelState.ConvertToWordRange();
-  if (bAddUndo && m_bEnableUndo)
+  if (bAddUndo && m_bEnableUndo) {
     AddEditUndoItem(
         pdfium::MakeUnique<CFXEU_Clear>(this, range, GetSelectedText()));
+  }
 
   SelectNone();
   SetCaret(m_pVT->DeleteWords(range));

@@ -28,7 +28,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   CFX_WideString GetText() const;
   void SetSelection(int32_t nStartChar, int32_t nEndChar);
   void GetSelection(int32_t& nStartChar, int32_t& nEndChar) const;
-  void Clear();
+  void ClearSelection();
   void SelectAll();
 
   CFX_PointF GetScrollPos() const;

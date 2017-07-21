@@ -343,7 +343,7 @@ class CFX_Edit {
   bool InsertReturn();
   bool Backspace();
   bool Delete();
-  bool Clear();
+  bool ClearSelection();
   bool InsertText(const CFX_WideString& sText, int32_t charset);
   bool Redo();
   bool Undo();
