@@ -802,18 +802,3 @@ void CPWL_Wnd::EnableWindow(bool bEnable) {
   }
   m_bEnabled = bEnable;
 }
-
-bool CPWL_Wnd::IsCTRLpressed(uint32_t nFlag) const {
-  CFX_SystemHandler* pSystemHandler = GetSystemHandler();
-  return pSystemHandler && pSystemHandler->IsCTRLKeyDown(nFlag);
-}
-
-bool CPWL_Wnd::IsSHIFTpressed(uint32_t nFlag) const {
-  CFX_SystemHandler* pSystemHandler = GetSystemHandler();
-  return pSystemHandler && pSystemHandler->IsSHIFTKeyDown(nFlag);
-}
-
-bool CPWL_Wnd::IsALTpressed(uint32_t nFlag) const {
-  CFX_SystemHandler* pSystemHandler = GetSystemHandler();
-  return pSystemHandler && pSystemHandler->IsALTKeyDown(nFlag);
-}

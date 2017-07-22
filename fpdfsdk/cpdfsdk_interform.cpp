@@ -347,8 +347,8 @@ bool CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
 
   CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHandler();
   PDFSDK_FieldAction fa;
-  fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
-  fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
+  fa.bModifier = false;
+  fa.bShift = false;
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(
       action, CPDF_AAction::KeyStroke, m_pFormFillEnv.Get(), pFormField, fa);
@@ -367,8 +367,8 @@ bool CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
 
   CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHandler();
   PDFSDK_FieldAction fa;
-  fa.bModifier = m_pFormFillEnv->IsCTRLKeyDown(0);
-  fa.bShift = m_pFormFillEnv->IsSHIFTKeyDown(0);
+  fa.bModifier = false;
+  fa.bShift = false;
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(
       action, CPDF_AAction::Validate, m_pFormFillEnv.Get(), pFormField, fa);

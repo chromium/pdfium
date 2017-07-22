@@ -29,13 +29,13 @@
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
     CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pBAAnnotHandler(pdfium::MakeUnique<CPDFSDK_BAAnnotHandler>()),
-      m_pWidgetHandler(pdfium::MakeUnique<CPDFSDK_WidgetHandler>(pFormFillEnv)),
+      m_pWidgetHandler(pdfium::MakeUnique<CPDFSDK_WidgetHandler>(pFormFillEnv))
 #ifdef PDF_ENABLE_XFA
+      ,
       m_pXFAWidgetHandler(
-          pdfium::MakeUnique<CPDFSDK_XFAWidgetHandler>(pFormFillEnv)),
+          pdfium::MakeUnique<CPDFSDK_XFAWidgetHandler>(pFormFillEnv))
 #endif  // PDF_ENABLE_XFA
-      m_pFormFillEnv(pFormFillEnv) {
-  m_pWidgetHandler->SetFormFiller(m_pFormFillEnv->GetInteractiveFormFiller());
+{
 }
 
 CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() {}
@@ -205,16 +205,16 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
                                               int nKeyCode,
                                               int nFlag) {
-  if (m_pFormFillEnv->IsCTRLKeyDown(nFlag) ||
-      m_pFormFillEnv->IsALTKeyDown(nFlag)) {
+  if (CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag) ||
+      CPDFSDK_FormFillEnvironment::IsALTKeyDown(nFlag)) {
     return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
   }
 
   CPDFSDK_PageView* pPage = pAnnot->GetPageView();
   CPDFSDK_Annot* pFocusAnnot = pPage->GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
-    CPDFSDK_Annot::ObservedPtr pNext(
-        GetNextAnnot(pFocusAnnot, !m_pFormFillEnv->IsSHIFTKeyDown(nFlag)));
+    CPDFSDK_Annot::ObservedPtr pNext(GetNextAnnot(
+        pFocusAnnot, !CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag)));
     if (pNext && pNext.Get() != pFocusAnnot) {
       pPage->GetFormFillEnv()->SetFocusAnnot(&pNext);
       return true;

@@ -25,7 +25,8 @@
 
 CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(
     CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv), m_pFormFiller(nullptr) {}
+    : m_pFormFillEnv(pFormFillEnv),
+      m_pFormFiller(pFormFillEnv->GetInteractiveFormFiller()) {}
 
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() {}
 

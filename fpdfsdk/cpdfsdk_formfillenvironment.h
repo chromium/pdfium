@@ -47,6 +47,16 @@ class CPDFSDK_FormFillEnvironment
                               FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFSDK_FormFillEnvironment();
 
+  static bool IsSHIFTKeyDown(uint32_t nFlag) {
+    return !!(nFlag & FWL_EVENTFLAG_ShiftKey);
+  }
+  static bool IsCTRLKeyDown(uint32_t nFlag) {
+    return !!(nFlag & FWL_EVENTFLAG_ControlKey);
+  }
+  static bool IsALTKeyDown(uint32_t nFlag) {
+    return !!(nFlag & FWL_EVENTFLAG_AltKey);
+  }
+
   CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
   CPDFSDK_PageView* GetCurrentView();
@@ -74,8 +84,6 @@ class CPDFSDK_FormFillEnvironment
   void SetChangeMark() { m_bChangeMask = true; }
   void ClearChangeMark() { m_bChangeMask = false; }
 
-  UnderlyingPageType* GetPage(int nIndex);
-
   void ProcJavascriptFun();
   bool ProcOpenAction();
 
@@ -88,11 +96,7 @@ class CPDFSDK_FormFillEnvironment
   FX_SYSTEMTIME GetLocalTime() const;
 
   void OnChange();
-  bool IsSHIFTKeyDown(uint32_t nFlag) const;
-  bool IsCTRLKeyDown(uint32_t nFlag) const;
-  bool IsALTKeyDown(uint32_t nFlag) const;
 
-  FPDF_PAGE GetPage(UnderlyingDocumentType* document, int nPageIndex);
   FPDF_PAGE GetCurrentPage(UnderlyingDocumentType* document);
 
   void ExecuteNamedAction(const char* namedAction);
@@ -214,6 +218,8 @@ class CPDFSDK_FormFillEnvironment
   CPDFSDK_InterForm* GetInterForm();              // Creates if not present.
 
  private:
+  UnderlyingPageType* GetPage(int nIndex);
+
   FPDF_FORMFILLINFO* const m_pInfo;
   std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;

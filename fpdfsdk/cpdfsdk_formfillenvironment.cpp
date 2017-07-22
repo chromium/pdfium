@@ -289,25 +289,6 @@ void CPDFSDK_FormFillEnvironment::OnChange() {
     m_pInfo->FFI_OnChange(m_pInfo);
 }
 
-bool CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(uint32_t nFlag) const {
-  return (nFlag & FWL_EVENTFLAG_ShiftKey) != 0;
-}
-
-bool CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(uint32_t nFlag) const {
-  return (nFlag & FWL_EVENTFLAG_ControlKey) != 0;
-}
-
-bool CPDFSDK_FormFillEnvironment::IsALTKeyDown(uint32_t nFlag) const {
-  return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
-}
-
-FPDF_PAGE CPDFSDK_FormFillEnvironment::GetPage(UnderlyingDocumentType* document,
-                                               int nPageIndex) {
-  if (m_pInfo && m_pInfo->FFI_GetPage)
-    return m_pInfo->FFI_GetPage(m_pInfo, document, nPageIndex);
-  return nullptr;
-}
-
 FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage(
     UnderlyingDocumentType* document) {
   if (m_pInfo && m_pInfo->FFI_GetCurrentPage)
@@ -589,8 +570,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
 }
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
-  UnderlyingPageType* pTempPage =
-      UnderlyingFromFPDFPage(GetPage(m_pUnderlyingDoc.Get(), nIndex));
+  UnderlyingPageType* pTempPage = GetPage(nIndex);
   if (!pTempPage)
     return nullptr;
 
@@ -663,7 +643,10 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(
 }
 
 UnderlyingPageType* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
-  return UnderlyingFromFPDFPage(GetPage(m_pUnderlyingDoc.Get(), nIndex));
+  if (!m_pInfo || !m_pInfo->FFI_GetPage)
+    return nullptr;
+  return UnderlyingFromFPDFPage(
+      m_pInfo->FFI_GetPage(m_pInfo, m_pUnderlyingDoc.Get(), nIndex));
 }
 
 CPDFSDK_InterForm* CPDFSDK_FormFillEnvironment::GetInterForm() {

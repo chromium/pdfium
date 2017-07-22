@@ -132,15 +132,3 @@ int32_t CFX_SystemHandler::SetTimer(int32_t uElapse,
 void CFX_SystemHandler::KillTimer(int32_t nID) {
   m_pFormFillEnv->KillTimer(nID);
 }
-
-bool CFX_SystemHandler::IsSHIFTKeyDown(uint32_t nFlag) const {
-  return !!m_pFormFillEnv->IsSHIFTKeyDown(nFlag);
-}
-
-bool CFX_SystemHandler::IsCTRLKeyDown(uint32_t nFlag) const {
-  return !!m_pFormFillEnv->IsCTRLKeyDown(nFlag);
-}
-
-bool CFX_SystemHandler::IsALTKeyDown(uint32_t nFlag) const {
-  return !!m_pFormFillEnv->IsALTKeyDown(nFlag);
-}

@@ -64,9 +64,6 @@ class CFX_SystemHandler {
 
   int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc);
   void KillTimer(int32_t nID);
-  bool IsSHIFTKeyDown(uint32_t nFlag) const;
-  bool IsCTRLKeyDown(uint32_t nFlag) const;
-  bool IsALTKeyDown(uint32_t nFlag) const;
 
  private:
   CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
