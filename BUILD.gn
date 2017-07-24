@@ -796,6 +796,8 @@ static_library("fxcrt") {
   sources = [
     "core/fxcrt/cfx_bytestring.cpp",
     "core/fxcrt/cfx_bytestring.h",
+    "core/fxcrt/cfx_datetime.cpp",
+    "core/fxcrt/cfx_datetime.h",
     "core/fxcrt/cfx_maybe_owned.h",
     "core/fxcrt/cfx_memorystream.cpp",
     "core/fxcrt/cfx_memorystream.h",
@@ -874,8 +876,6 @@ static_library("fxcrt") {
       "core/fxcrt/cfx_checksumcontext.h",
       "core/fxcrt/cfx_crtfileaccess.cpp",
       "core/fxcrt/cfx_crtfileaccess.h",
-      "core/fxcrt/cfx_datetime.cpp",
-      "core/fxcrt/cfx_datetime.h",
       "core/fxcrt/cfx_decimal.cpp",
       "core/fxcrt/cfx_decimal.h",
       "core/fxcrt/cfx_seekablestreamproxy.cpp",

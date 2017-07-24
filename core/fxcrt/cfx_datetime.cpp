@@ -109,7 +109,7 @@ void CFX_DateTime::Now() {
   utLocal.wMinute = st.tm_min;
   utLocal.wSecond = st.tm_sec;
   utLocal.wMillisecond = curTime.tv_usec / 1000;
-#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
+#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ ||
         // _FX_OS_ == _FX_WIN64_
 
   year_ = utLocal.wYear;

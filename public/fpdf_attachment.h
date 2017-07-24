@@ -21,6 +21,19 @@ extern "C" {
 DLLEXPORT int STDCALL FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document);
 
 // Experimental API.
+// Add an embedded file with |name| in |document|. If |name| is empty, or if
+// |name| is the name of a existing embedded file in |document|, or if
+// |document|'s embedded file name tree is too deep (i.e. |document| has too
+// many embedded files already), then a new attachment will not be added.
+//
+//   document - handle to a document.
+//   name     - name of the new attachment.
+//
+// Returns a handle to the new attachment object, or NULL on failure.
+DLLEXPORT FPDF_ATTACHMENT FPDFDoc_AddAttachment(FPDF_DOCUMENT document,
+                                                FPDF_WIDESTRING name);
+
+// Experimental API.
 // Get the embedded attachment at |index| in |document|. Note that the returned
 // attachment handle is only valid while |document| is open.
 //
@@ -68,6 +81,21 @@ DLLEXPORT FPDF_OBJECT_TYPE STDCALL
 FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key);
 
 // Experimental API.
+// Set the string value corresponding to |key| in the params dictionary of the
+// embedded file |attachment|, overwriting the existing value if any. The value
+// type should be FPDF_OBJECT_STRING after this function call succeeds.
+//
+//   attachment - handle to an attachment.
+//   key        - the key to the dictionary entry, encoded in UTF16-LE.
+//   value      - the string value to be set, encoded in UTF16-LE.
+//
+// Returns true if successful.
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
+                              FPDF_WIDESTRING key,
+                              FPDF_WIDESTRING value);
+
+// Experimental API.
 // Get the string value corresponding to |key| in the params dictionary of the
 // embedded file |attachment|. |buffer| is only modified if |buflen| is longer
 // than the length of the string value. Note that if |key| does not exist in the
@@ -79,7 +107,7 @@ FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key);
 //
 //   attachment - handle to an attachment.
 //   key        - the key to the requested string value.
-//   buffer     - buffer for holding the file's date string encoded in UTF16-LE.
+//   buffer     - buffer for holding the string value encoded in UTF16-LE.
 //   buflen     - length of the buffer.
 //
 // Returns the length of the dictionary value string.
@@ -90,12 +118,28 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
                               unsigned long buflen);
 
 // Experimental API.
+// Set the file data of |attachment|, overwriting the existing file data if any.
+// The creation date and checksum will be updated, while all other dictionary
+// entries will be deleted. Note that only contents with |len| smaller than
+// INT_MAX is supported.
+//
+//   attachment - handle to an attachment.
+//   contents   - buffer holding the file data to be written in raw bytes.
+//   len        - length of file data.
+//
+// Returns true if successful.
+DLLEXPORT FPDF_BOOL FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
+                                           FPDF_DOCUMENT document,
+                                           const void* contents,
+                                           const unsigned long len);
+
+// Experimental API.
 // Get the file data of |attachment|. |buffer| is only modified if |buflen| is
 // longer than the length of the file. On errors, |buffer| is unmodified and the
 // returned length is 0.
 //
 //   attachment - handle to an attachment.
-//   buffer     - buffer for holding the file's data in raw bytes.
+//   buffer     - buffer for holding the file data in raw bytes.
 //   buflen     - length of the buffer.
 //
 // Returns the length of the file.
