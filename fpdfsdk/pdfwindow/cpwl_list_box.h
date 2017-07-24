@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
 class CFX_ListCtrl;

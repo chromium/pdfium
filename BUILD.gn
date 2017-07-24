@@ -1079,8 +1079,6 @@ static_library("fxge") {
 
 static_library("fxedit") {
   sources = [
-    "fpdfsdk/fxedit/fx_edit.h",
-    "fpdfsdk/fxedit/fxet_ap.cpp",
     "fpdfsdk/fxedit/fxet_edit.cpp",
     "fpdfsdk/fxedit/fxet_edit.h",
     "fpdfsdk/fxedit/fxet_list.cpp",

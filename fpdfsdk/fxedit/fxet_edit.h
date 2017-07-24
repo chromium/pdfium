@@ -14,7 +14,10 @@
 #include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "fpdfsdk/fxedit/fx_edit.h"
+
+#define FX_EDIT_ISLATINWORD(u)                  \
+  (u == 0x2D || (u <= 0x005A && u >= 0x0041) || \
+   (u <= 0x007A && u >= 0x0061) || (u <= 0x02AF && u >= 0x00C0))
 
 class CFFL_FormFiller;
 class CFX_Edit;
@@ -387,6 +390,10 @@ class CFX_Edit {
   int32_t GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset);
 
   int32_t GetTotalLines() const;
+
+  CFX_ByteString GetPDFWordString(int32_t nFontIndex,
+                                  uint16_t Word,
+                                  uint16_t SubWord);
 
  private:
   friend class CFX_Edit_Iterator;

@@ -13,11 +13,11 @@
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "fpdfsdk/fxedit/fx_edit.h"
 
 class CFX_Edit;
 class CFX_Edit_Iterator;
 class CPWL_List_Notify;
+class IPVT_FontMap;
 
 class CPLST_Select {
  public:

@@ -577,8 +577,7 @@ CFX_ByteString GetEditAppStream(CFX_Edit* pEdit,
           nCurFontIndex = word.nFontIndex;
         }
 
-        sWords << GetPDFWordString(pEdit->GetFontMap(), nCurFontIndex,
-                                   word.Word, SubWord);
+        sWords << pEdit->GetPDFWordString(nCurFontIndex, word.Word, SubWord);
       }
 
       oldplace = place;
@@ -600,8 +599,8 @@ CFX_ByteString GetEditAppStream(CFX_Edit* pEdit,
           nCurFontIndex = word.nFontIndex;
         }
 
-        sEditStream << GetWordRenderString(GetPDFWordString(
-            pEdit->GetFontMap(), nCurFontIndex, word.Word, SubWord));
+        sEditStream << GetWordRenderString(
+            pEdit->GetPDFWordString(nCurFontIndex, word.Word, SubWord));
       }
     }
   }

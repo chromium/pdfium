@@ -27,7 +27,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
@@ -586,14 +585,15 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
             crOldFill = crCurFill;
           }
 
-          sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word,
-                                       SubWord);
+          sTextBuf << pEdit->GetPDFWordString(word.nFontIndex, word.Word,
+                                              SubWord);
         } else {
           DrawTextString(
-              pDevice, CFX_PointF(word.ptWord.x + ptOffset.x,
-                                  word.ptWord.y + ptOffset.y),
+              pDevice,
+              CFX_PointF(word.ptWord.x + ptOffset.x,
+                         word.ptWord.y + ptOffset.y),
               pFontMap->GetPDFFont(word.nFontIndex), fFontSize, pUser2Device,
-              GetPDFWordString(pFontMap, word.nFontIndex, word.Word, SubWord),
+              pEdit->GetPDFWordString(word.nFontIndex, word.Word, SubWord),
               crCurFill, nHorzScale);
         }
         oldplace = place;
@@ -1935,6 +1935,30 @@ int32_t CFX_Edit::GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
 void CFX_Edit::AddEditUndoItem(
     std::unique_ptr<CFX_Edit_UndoItem> pEditUndoItem) {
   m_Undo.AddItem(std::move(pEditUndoItem));
+}
+
+CFX_ByteString CFX_Edit::GetPDFWordString(int32_t nFontIndex,
+                                          uint16_t Word,
+                                          uint16_t SubWord) {
+  IPVT_FontMap* pFontMap = GetFontMap();
+  CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex);
+  if (!pPDFFont)
+    return CFX_ByteString();
+
+  CFX_ByteString sWord;
+  if (SubWord > 0) {
+    Word = SubWord;
+  } else {
+    uint32_t dwCharCode = pPDFFont->IsUnicodeCompatible()
+                              ? pPDFFont->CharCodeFromUnicode(Word)
+                              : pFontMap->CharCodeFromUnicode(nFontIndex, Word);
+    if (dwCharCode > 0) {
+      pPDFFont->AppendChar(&sWord, dwCharCode);
+      return sWord;
+    }
+  }
+  pPDFFont->AppendChar(&sWord, Word);
+  return sWord;
 }
 
 CFX_Edit_LineRectArray::CFX_Edit_LineRectArray() {}
