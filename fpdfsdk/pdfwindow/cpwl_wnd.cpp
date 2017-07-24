@@ -369,6 +369,8 @@ CFX_WideString CPWL_Wnd::GetSelectedText() {
   return CFX_WideString();
 }
 
+void CPWL_Wnd::DeleteSelectedText() {}
+
 bool CPWL_Wnd::OnMouseWheel(short zDelta,
                             const CFX_PointF& point,
                             uint32_t nFlag) {

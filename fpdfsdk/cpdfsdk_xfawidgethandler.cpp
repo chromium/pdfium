@@ -97,10 +97,16 @@ CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   return rcWidget;
 }
 
+// TODO(crbug.com/62400): Implement so selected text can be obtained from XFA
+// fields.
 CFX_WideString CPDFSDK_XFAWidgetHandler::GetSelectedText(
     CPDFSDK_Annot* pAnnot) {
   return CFX_WideString();
 }
+
+// TODO(crbug.com/62400): Implement so selected text can be deleted from XFA
+// fields.
+void CPDFSDK_XFAWidgetHandler::DeleteSelectedText(CPDFSDK_Annot* pAnnot) {}
 
 bool CPDFSDK_XFAWidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot,

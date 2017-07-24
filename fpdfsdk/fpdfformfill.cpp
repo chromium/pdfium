@@ -383,6 +383,14 @@ DLLEXPORT unsigned long STDCALL FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
   return form_text_len;
 }
 
+DLLEXPORT void STDCALL FORM_DeleteSelectedText(FPDF_FORMHANDLE hHandle,
+                                               FPDF_PAGE page) {
+  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
+  if (!pPageView)
+    return;
+  pPageView->DeleteSelectedText();
+}
+
 DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);

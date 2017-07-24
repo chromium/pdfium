@@ -22,7 +22,7 @@ using testing::Return;
 
 class FPDFFormFillEmbeddertest : public EmbedderTest {
  protected:
-  void TypeTextIntoTextfield(FPDF_PAGE page,
+  void TypeTextIntoTextField(FPDF_PAGE page,
                              int num_chars,
                              int form_type,
                              double x,
@@ -380,10 +380,10 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicKeyboard) {
   ASSERT_TRUE(page);
 
   // Test empty selection.
-  CheckSelection(page, CFX_WideString(L""));
+  CheckSelection(page, CFX_WideString());
 
   // Test basic selection.
-  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
   SelectTextWithKeyboard(page, 3, FWL_VKEY_Left, 123.0, 115.5);
   CheckSelection(page, CFX_WideString(L"ABC"));
 
@@ -397,10 +397,10 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicMouse) {
   ASSERT_TRUE(page);
 
   // Test empty selection.
-  CheckSelection(page, CFX_WideString(L""));
+  CheckSelection(page, CFX_WideString());
 
   // Test basic selection.
-  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
   SelectTextWithMouse(page, 125.0, 102.0, 115.5);
   CheckSelection(page, CFX_WideString(L"ABC"));
 
@@ -413,7 +413,7 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsKeyBoard) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  TypeTextIntoTextfield(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithKeyboard(page, 1, FWL_VKEY_Right, 102.0, 115.5);
@@ -444,7 +444,7 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsMouse) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  TypeTextIntoTextfield(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithMouse(page, 102.0, 106.0, 115.5);
@@ -476,7 +476,7 @@ TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicNormalComboBox) {
   ASSERT_TRUE(page);
 
   // Test empty selection.
-  CheckSelection(page, CFX_WideString(L""));
+  CheckSelection(page, CFX_WideString());
 
   // Test basic selection of text within normal, non-editable combobox.
   // Click on normal combobox text field.
@@ -502,10 +502,10 @@ TEST_F(FPDFFormFillEmbeddertest,
   ASSERT_TRUE(page);
 
   // Test empty selection.
-  CheckSelection(page, CFX_WideString(L""));
+  CheckSelection(page, CFX_WideString());
 
   // Test basic selection of text within user editable combobox using keyboard.
-  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
   SelectTextWithKeyboard(page, 3, FWL_VKEY_Left, 128.0, 63.0);
   CheckSelection(page, CFX_WideString(L"ABC"));
 
@@ -524,10 +524,10 @@ TEST_F(FPDFFormFillEmbeddertest,
   ASSERT_TRUE(page);
 
   // Test empty selection.
-  CheckSelection(page, CFX_WideString(L""));
+  CheckSelection(page, CFX_WideString());
 
   // Test basic selection of text within user editable combobox using mouse.
-  TypeTextIntoTextfield(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
   SelectTextWithMouse(page, 128.0, 103.0, 63.0);
   CheckSelection(page, CFX_WideString(L"ABC"));
 
@@ -584,7 +584,7 @@ TEST_F(FPDFFormFillEmbeddertest,
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  TypeTextIntoTextfield(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithKeyboard(page, 1, FWL_VKEY_Right, 102.0, 63.0);
@@ -622,7 +622,7 @@ TEST_F(FPDFFormFillEmbeddertest,
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  TypeTextIntoTextfield(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithMouse(page, 102.0, 107.0, 63.0);
@@ -643,6 +643,202 @@ TEST_F(FPDFFormFillEmbeddertest,
   // Test selecting last character in backwards direction.
   SelectTextWithMouse(page, 178.0, 174.0, 63.0);
   CheckSelection(page, CFX_WideString(L"J"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldEntireSelection) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select entire contents of text field.
+  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(page, 191.0, 102.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJKL"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(page, CFX_WideString());
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldSelectionMiddle) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select middle section of text.
+  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(page, 170.0, 125.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"DEFGHI"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABCJKL"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldSelectionLeft) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select first few characters of text.
+  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(page, 102.0, 132.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABCD"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"EFGHIJKL"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldSelectionRight) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select last few characters of text.
+  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(page, 191.0, 165.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"IJKL"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGH"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteEmptyTextFieldSelection) {
+  // Open file with form text field.
+  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Do not select text.
+  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  CheckSelection(page, CFX_WideString());
+
+  // Test that attempt to delete empty text selection has no effect.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJKL"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxEntireSelection) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select entire contents of user-editable combobox text field.
+  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(page, 178.0, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJ"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithMouse(page, 178.0, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString());
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxSelectionMiddle) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select middle section of text.
+  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(page, 168.0, 127.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"DEFGH"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithMouse(page, 178.0, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABCIJ"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxSelectionLeft) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select first few characters of text.
+  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(page, 102.0, 132.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABCD"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithMouse(page, 178.0, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"EFGHIJ"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxSelectionRight) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Select last few characters of text.
+  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(page, 178.0, 152.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"GHIJ"));
+
+  // Test deleting current text selection. Select what remains after deletion to
+  // check that remaining text is as expected.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithMouse(page, 178.0, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABCDEF"));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, DeleteEmptyEditableComboBoxSelection) {
+  // Open file with form comboboxes.
+  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Do not select text.
+  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  CheckSelection(page, CFX_WideString());
+
+  // Test that attempt to delete empty text selection has no effect.
+  FORM_DeleteSelectedText(form_handle(), page);
+  SelectTextWithMouse(page, 178.0, 102.0, 63.0);
+  CheckSelection(page, CFX_WideString(L"ABCDEFGHIJ"));
 
   UnloadPage(page);
 }

@@ -123,3 +123,65 @@ TEST_F(CPWLEditEmbeddertest, GetSelectedTextFragments) {
   GetCPWLEdit()->SetSelection(49, 50);
   EXPECT_STREQ(L"r", GetCPWLEdit()->GetSelectedText().c_str());
 }
+
+TEST_F(CPWLEditEmbeddertest, DeleteEntireTextSelection) {
+  for (int i = 0; i < 50; ++i) {
+    EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), i + 'A', 0));
+  }
+
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
+               GetCPWLEdit()->GetSelectedText().c_str());
+
+  GetCPWLEdit()->DeleteSelectedText();
+  EXPECT_TRUE(GetCPWLEdit()->GetText().IsEmpty());
+}
+
+TEST_F(CPWLEditEmbeddertest, DeleteTextSelectionMiddle) {
+  for (int i = 0; i < 50; ++i) {
+    EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), i + 'A', 0));
+  }
+
+  GetCPWLEdit()->SetSelection(12, 23);
+  EXPECT_STREQ(L"MNOPQRSTUVW", GetCPWLEdit()->GetSelectedText().c_str());
+
+  GetCPWLEdit()->DeleteSelectedText();
+  EXPECT_STREQ(L"ABCDEFGHIJKLXYZ[\\]^_`abcdefghijklmnopqr",
+               GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, DeleteTextSelectionLeft) {
+  for (int i = 0; i < 50; ++i) {
+    EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), i + 'A', 0));
+  }
+
+  GetCPWLEdit()->SetSelection(0, 5);
+  EXPECT_STREQ(L"ABCDE", GetCPWLEdit()->GetSelectedText().c_str());
+
+  GetCPWLEdit()->DeleteSelectedText();
+  EXPECT_STREQ(L"FGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
+               GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, DeleteTextSelectionRight) {
+  for (int i = 0; i < 50; ++i) {
+    EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), i + 'A', 0));
+  }
+
+  GetCPWLEdit()->SetSelection(45, 50);
+  EXPECT_STREQ(L"nopqr", GetCPWLEdit()->GetSelectedText().c_str());
+
+  GetCPWLEdit()->DeleteSelectedText();
+  EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklm",
+               GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, DeleteEmptyTextSelection) {
+  for (int i = 0; i < 50; ++i) {
+    EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), i + 'A', 0));
+  }
+
+  GetCPWLEdit()->DeleteSelectedText();
+  EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
+               GetCPWLEdit()->GetText().c_str());
+}
