@@ -10,6 +10,7 @@
 #include <bitset>
 #include <iterator>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -118,7 +119,7 @@ struct Options {
 struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
   // Hold a map of the currently loaded pages in order to avoid them
   // to get loaded twice.
-  std::map<int, FPDF_PAGE> loaded_pages;
+  std::map<int, std::unique_ptr<void, FPDFPageDeleter>> loaded_pages;
 
   // Hold a pointer of FPDF_FORMHANDLE so that PDFium app hooks can
   // make use of it.
@@ -966,7 +967,7 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
   auto& loaded_pages = form_fill_info->loaded_pages;
   auto iter = loaded_pages.find(index);
   if (iter != loaded_pages.end())
-    return iter->second;
+    return iter->second.get();
 
   FPDF_PAGE page = FPDF_LoadPage(doc, index);
   if (!page)
@@ -975,7 +976,7 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
   FPDF_FORMHANDLE& form_handle = form_fill_info->form_handle;
   FORM_OnAfterLoadPage(page, form_handle);
   FORM_DoPageAAction(page, form_handle, FPDFPAGE_AACTION_OPEN);
-  loaded_pages[index] = page;
+  loaded_pages[index].reset(page);
   return page;
 }
 
@@ -1130,27 +1131,25 @@ bool RenderPage(const std::string& name,
                 const int page_index,
                 const Options& options,
                 const std::string& events) {
-  std::unique_ptr<void, FPDFPageDeleter> page(
-      GetPageForIndex(form_fill_info, doc, page_index));
-  if (!page.get())
+  FPDF_PAGE page = GetPageForIndex(form_fill_info, doc, page_index);
+  if (!page)
     return false;
   if (options.send_events)
-    SendPageEvents(form, page.get(), events);
+    SendPageEvents(form, page, events);
   if (options.output_format == OUTPUT_STRUCTURE) {
-    DumpPageStructure(page.get(), page_index);
+    DumpPageStructure(page, page_index);
     return true;
   }
 
-  std::unique_ptr<void, FPDFTextPageDeleter> text_page(
-      FPDFText_LoadPage(page.get()));
+  std::unique_ptr<void, FPDFTextPageDeleter> text_page(FPDFText_LoadPage(page));
 
   double scale = 1.0;
   if (!options.scale_factor_as_string.empty())
     std::stringstream(options.scale_factor_as_string) >> scale;
 
-  int width = static_cast<int>(FPDF_GetPageWidth(page.get()) * scale);
-  int height = static_cast<int>(FPDF_GetPageHeight(page.get()) * scale);
-  int alpha = FPDFPage_HasTransparency(page.get()) ? 1 : 0;
+  int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
+  int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
+  int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
   std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
       FPDFBitmap_Create(width, height, alpha));
 
@@ -1162,24 +1161,23 @@ bool RenderPage(const std::string& name,
       // Note, client programs probably want to use this method instead of the
       // progressive calls. The progressive calls are if you need to pause the
       // rendering to update the UI, the PDF renderer will break when possible.
-      FPDF_RenderPageBitmap(bitmap.get(), page.get(), 0, 0, width, height, 0,
+      FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, width, height, 0,
                             FPDF_ANNOT);
     } else {
       IFSDK_PAUSE pause;
       pause.version = 1;
       pause.NeedToPauseNow = &NeedToPauseNow;
 
-      int rv = FPDF_RenderPageBitmap_Start(
-          bitmap.get(), page.get(), 0, 0, width, height, 0, FPDF_ANNOT, &pause);
+      int rv = FPDF_RenderPageBitmap_Start(bitmap.get(), page, 0, 0, width,
+                                           height, 0, FPDF_ANNOT, &pause);
       while (rv == FPDF_RENDER_TOBECOUNTINUED)
-        rv = FPDF_RenderPage_Continue(page.get(), &pause);
+        rv = FPDF_RenderPage_Continue(page, &pause);
     }
 
-    FPDF_FFLDraw(form, bitmap.get(), page.get(), 0, 0, width, height, 0,
-                 FPDF_ANNOT);
+    FPDF_FFLDraw(form, bitmap.get(), page, 0, 0, width, height, 0, FPDF_ANNOT);
 
     if (!options.render_oneshot)
-      FPDF_RenderPage_Close(page.get());
+      FPDF_RenderPage_Close(page);
 
     int stride = FPDFBitmap_GetStride(bitmap.get());
     const char* buffer =
@@ -1194,20 +1192,20 @@ bool RenderPage(const std::string& name,
         break;
 
       case OUTPUT_EMF:
-        WriteEmf(page.get(), name.c_str(), page_index);
+        WriteEmf(page, name.c_str(), page_index);
         break;
 
       case OUTPUT_PS2:
       case OUTPUT_PS3:
-        WritePS(page.get(), name.c_str(), page_index);
+        WritePS(page, name.c_str(), page_index);
         break;
 #endif
       case OUTPUT_TEXT:
-        WriteText(page.get(), name.c_str(), page_index);
+        WriteText(page, name.c_str(), page_index);
         break;
 
       case OUTPUT_ANNOT:
-        WriteAnnot(page.get(), name.c_str(), page_index);
+        WriteAnnot(page, name.c_str(), page_index);
         break;
 
       case OUTPUT_PNG:
@@ -1224,9 +1222,8 @@ bool RenderPage(const std::string& name,
       case OUTPUT_SKP: {
         std::unique_ptr<SkPictureRecorder> recorder(
             reinterpret_cast<SkPictureRecorder*>(
-                FPDF_RenderPageSkp(page.get(), width, height)));
-        FPDF_FFLRecord(form, recorder.get(), page.get(), 0, 0, width, height, 0,
-                       0);
+                FPDF_RenderPageSkp(page, width, height)));
+        FPDF_FFLRecord(form, recorder.get(), page, 0, 0, width, height, 0, 0);
         image_file_name = WriteSkp(name.c_str(), page_index, recorder.get());
       } break;
 #endif
@@ -1242,9 +1239,8 @@ bool RenderPage(const std::string& name,
     fprintf(stderr, "Page was too large to be rendered.\n");
   }
 
-  form_fill_info->loaded_pages.erase(page_index);
-  FORM_DoPageAAction(page.get(), form, FPDFPAGE_AACTION_CLOSE);
-  FORM_OnBeforeClosePage(page.get(), form);
+  FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
+  FORM_OnBeforeClosePage(page, form);
   return !!bitmap;
 }
 
@@ -1260,6 +1256,8 @@ void RenderPdf(const std::string& name,
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
   platform_callbacks.Doc_mail = ExampleDocMail;
 
+  // The document must outlive |form_callbacks.loaded_pages|.
+  std::unique_ptr<void, FPDFDocumentDeleter> doc;
   FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
 #ifdef PDF_ENABLE_XFA
   form_callbacks.version = 2;
@@ -1285,7 +1283,6 @@ void RenderPdf(const std::string& name,
 
   int nRet = PDF_DATA_NOTAVAIL;
   bool bIsLinearized = false;
-  std::unique_ptr<void, FPDFDocumentDeleter> doc;
   std::unique_ptr<void, FPDFAvailDeleter> pdf_avail(
       FPDFAvail_Create(&file_avail, &file_access));
 
