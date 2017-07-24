@@ -123,8 +123,8 @@ class CXFA_FMLexer {
   const wchar_t* String(CXFA_FMToken* t, const wchar_t* p);
   const wchar_t* Identifiers(CXFA_FMToken* t, const wchar_t* p);
   const wchar_t* Comment(const wchar_t* p);
+
   XFA_FM_TOKEN IsKeyword(const CFX_WideStringC& p);
-  std::unique_ptr<CXFA_FMToken> Scan();
 
   const wchar_t* m_ptr;
   const wchar_t* const m_end;
