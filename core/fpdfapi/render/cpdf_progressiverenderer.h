@@ -25,7 +25,7 @@ class CPDF_ProgressiveRenderer {
   // cannot #include that header. fpdfsdk/fpdf_progressive.cpp has
   // static_asserts to make sure the two sets of values match.
   enum Status {
-    Ready,          // FPDF_RENDER_READER
+    Ready,          // FPDF_RENDER_READY
     ToBeContinued,  // FPDF_RENDER_TOBECONTINUED
     Done,           // FPDF_RENDER_DONE
     Failed          // FPDF_RENDER_FAILED

@@ -11,7 +11,8 @@
 #include "fpdfview.h"
 
 // Flags for progressive process status.
-#define FPDF_RENDER_READER 0
+#define FPDF_RENDER_READY 0
+#define FPDF_RENDER_READER 0  // Deprecated
 #define FPDF_RENDER_TOBECONTINUED 1
 #define FPDF_RENDER_TOBECOUNTINUED 1  // Deprecated.
 #define FPDF_RENDER_DONE 2
