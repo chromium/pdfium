@@ -19,77 +19,6 @@ class CFX_Edit;
 class CFX_Edit_Iterator;
 class CPWL_List_Notify;
 
-class CFX_ListItem final {
- public:
-  CFX_ListItem();
-  ~CFX_ListItem();
-
-  void SetFontMap(IPVT_FontMap* pFontMap);
-  CFX_Edit* GetEdit() const;
-
-  void SetRect(const CFX_FloatRect& rect);
-  void SetSelect(bool bSelected);
-  void SetText(const CFX_WideString& text);
-  void SetFontSize(float fFontSize);
-  CFX_WideString GetText() const;
-
-  CFX_FloatRect GetRect() const;
-  bool IsSelected() const;
-  float GetItemHeight() const;
-  uint16_t GetFirstChar() const;
-
- private:
-  CFX_Edit_Iterator* GetIterator() const;
-
-  std::unique_ptr<CFX_Edit> m_pEdit;
-  bool m_bSelected;
-  CFX_FloatRect m_rcListItem;
-};
-
-class CFX_ListContainer {
- public:
-  CFX_ListContainer();
-  virtual ~CFX_ListContainer();
-
-  virtual void SetPlateRect(const CFX_FloatRect& rect);
-
-  CFX_FloatRect GetPlateRect() const { return m_rcPlate; }
-  void SetContentRect(const CFX_FloatRect& rect) { m_rcContent = rect; }
-  CFX_FloatRect GetContentRect() const { return m_rcContent; }
-  CFX_PointF GetBTPoint() const {
-    return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
-  }
-  CFX_PointF GetETPoint() const {
-    return CFX_PointF(m_rcPlate.right, m_rcPlate.bottom);
-  }
-
- public:
-  CFX_PointF InnerToOuter(const CFX_PointF& point) const {
-    return CFX_PointF(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
-  }
-  CFX_PointF OuterToInner(const CFX_PointF& point) const {
-    return CFX_PointF(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
-  }
-  CFX_FloatRect InnerToOuter(const CFX_FloatRect& rect) const {
-    CFX_PointF ptLeftTop = InnerToOuter(CFX_PointF(rect.left, rect.top));
-    CFX_PointF ptRightBottom =
-        InnerToOuter(CFX_PointF(rect.right, rect.bottom));
-    return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
-                         ptLeftTop.y);
-  }
-  CFX_FloatRect OuterToInner(const CFX_FloatRect& rect) const {
-    CFX_PointF ptLeftTop = OuterToInner(CFX_PointF(rect.left, rect.top));
-    CFX_PointF ptRightBottom =
-        OuterToInner(CFX_PointF(rect.right, rect.bottom));
-    return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
-                         ptLeftTop.y);
-  }
-
- private:
-  CFX_FloatRect m_rcPlate;
-  CFX_FloatRect m_rcContent;
-};
-
 class CPLST_Select {
  public:
   enum State { DESELECTING = -1, NORMAL = 0, SELECTING = 1 };
@@ -112,15 +41,12 @@ class CPLST_Select {
   std::map<int32_t, State> m_Items;
 };
 
-class CFX_ListCtrl : protected CFX_ListContainer {
+class CFX_ListCtrl {
  public:
   CFX_ListCtrl();
-  ~CFX_ListCtrl() override;
+  ~CFX_ListCtrl();
 
-  // CFX_ListContainer
-  void SetPlateRect(const CFX_FloatRect& rect) override;
-
-  void SetNotify(CPWL_List_Notify* pNotify);
+  void SetNotify(CPWL_List_Notify* pNotify) { m_pNotify = pNotify; }
   void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnVK_UP(bool bShift, bool bCtrl);
@@ -135,10 +61,15 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void SetScrollPos(const CFX_PointF& point);
   void ScrollToListItem(int32_t nItemIndex);
   CFX_FloatRect GetItemRect(int32_t nIndex) const;
-  int32_t GetCaret() const;
-  int32_t GetSelect() const;
+  int32_t GetCaret() const { return m_nCaretIndex; }
+  int32_t GetSelect() const { return m_nSelItem; }
   int32_t GetTopItem() const;
+  void SetContentRect(const CFX_FloatRect& rect) { m_rcContent = rect; }
   CFX_FloatRect GetContentRect() const;
+  CFX_PointF GetBTPoint() const {
+    return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
+  }
+
   int32_t GetItemIndex(const CFX_PointF& point) const;
   void AddString(const CFX_WideString& str);
   void SetTopItem(int32_t nIndex);
@@ -148,16 +79,18 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void Cancel();
   CFX_WideString GetText() const;
 
-  void SetFontMap(IPVT_FontMap* pFontMap);
-  void SetFontSize(float fFontSize);
-  CFX_FloatRect GetPlateRect() const;
-  float GetFontSize() const;
+  void SetFontMap(IPVT_FontMap* pFontMap) { m_pFontMap = pFontMap; }
+  void SetFontSize(float fFontSize) { m_fFontSize = fFontSize; }
+  CFX_FloatRect GetPlateRect() const { return m_rcPlate; }
+  void SetPlateRect(const CFX_FloatRect& rect);
+
+  float GetFontSize() const { return m_fFontSize; }
   CFX_Edit* GetItemEdit(int32_t nIndex) const;
   int32_t GetCount() const;
   bool IsItemSelected(int32_t nIndex) const;
   float GetFirstHeight() const;
-  void SetMultipleSel(bool bMultiple);
-  bool IsMultipleSel() const;
+  void SetMultipleSel(bool bMultiple) { m_bMultiple = bMultiple; }
+  bool IsMultipleSel() const { return m_bMultiple; }
   bool IsValid(int32_t nItemIndex) const;
   int32_t FindNext(int32_t nIndex, wchar_t nChar) const;
   int32_t GetFirstSelected() const;
@@ -167,7 +100,39 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   CFX_FloatRect InToOut(const CFX_FloatRect& rect) const;
   CFX_FloatRect OutToIn(const CFX_FloatRect& rect) const;
 
+  CFX_PointF InnerToOuter(const CFX_PointF& point) const;
+  CFX_PointF OuterToInner(const CFX_PointF& point) const;
+  CFX_FloatRect InnerToOuter(const CFX_FloatRect& rect) const;
+  CFX_FloatRect OuterToInner(const CFX_FloatRect& rect) const;
+
  private:
+  class Item {
+   public:
+    Item();
+    ~Item();
+
+    void SetFontMap(IPVT_FontMap* pFontMap);
+    CFX_Edit* GetEdit() const { return m_pEdit.get(); }
+
+    void SetRect(const CFX_FloatRect& rect) { m_rcListItem = rect; }
+    void SetSelect(bool bSelected) { m_bSelected = bSelected; }
+    void SetText(const CFX_WideString& text);
+    void SetFontSize(float fFontSize);
+    CFX_WideString GetText() const;
+
+    CFX_FloatRect GetRect() const { return m_rcListItem; }
+    bool IsSelected() const { return m_bSelected; }
+    float GetItemHeight() const;
+    uint16_t GetFirstChar() const;
+
+   private:
+    CFX_Edit_Iterator* GetIterator() const;
+
+    std::unique_ptr<CFX_Edit> m_pEdit;
+    bool m_bSelected;
+    CFX_FloatRect m_rcListItem;
+  };
+
   void ReArrange(int32_t nItemIndex);
   CFX_FloatRect GetItemRectInternal(int32_t nIndex) const;
   CFX_FloatRect GetContentRectInternal() const;
@@ -183,6 +148,8 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void SetItemSelect(int32_t nItemIndex, bool bSelected);
   int32_t GetLastSelected() const;
 
+  CFX_FloatRect m_rcPlate;
+  CFX_FloatRect m_rcContent;
   CFX_UnownedPtr<CPWL_List_Notify> m_pNotify;
   bool m_bNotifyFlag;
   CFX_PointF m_ptScrollPos;
@@ -191,7 +158,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   int32_t m_nFootIndex;      // for multiple
   bool m_bCtrlSel;           // for multiple
   int32_t m_nCaretIndex;     // for multiple
-  std::vector<std::unique_ptr<CFX_ListItem>> m_ListItems;
+  std::vector<std::unique_ptr<Item>> m_ListItems;
   float m_fFontSize;
   CFX_UnownedPtr<IPVT_FontMap> m_pFontMap;
   bool m_bMultiple;
