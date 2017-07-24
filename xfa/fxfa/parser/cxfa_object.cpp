@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_value.h"
-#include "xfa/fxfa/app/cxfa_ffnotify.h"
+#include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodelist.h"

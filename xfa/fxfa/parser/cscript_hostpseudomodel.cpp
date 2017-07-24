@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "fxjs/cfxjse_arguments.h"
-#include "xfa/fxfa/app/cxfa_ffnotify.h"
+#include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"

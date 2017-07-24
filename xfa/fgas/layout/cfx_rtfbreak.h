@@ -16,7 +16,7 @@
 #include "core/fxcrt/fx_ucd.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fgas/layout/cfx_break.h"
-#include "xfa/fxfa/app/cxfa_textuserdata.h"
+#include "xfa/fxfa/cxfa_textuserdata.h"
 
 class CFGAS_GEFont;
 

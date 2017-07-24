@@ -13,7 +13,7 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/app/cxfa_textuserdata.h"
+#include "xfa/fxfa/cxfa_textuserdata.h"
 
 class CFX_BreakPiece {
  public:

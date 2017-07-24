@@ -16,12 +16,12 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
-#include "xfa/fxfa/app/cxfa_fwladapterwidgetmgr.h"
-#include "xfa/fxfa/app/cxfa_fwltheme.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdochandler.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
+#include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
+#include "xfa/fxfa/cxfa_fwltheme.h"
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
   // Ensure fully initialized before making an app based on |this|.
