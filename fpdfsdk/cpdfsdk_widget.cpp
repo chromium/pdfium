@@ -29,7 +29,6 @@
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/fsdk_actionhandler.h"
 #include "fpdfsdk/fsdk_define.h"
-#include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_appstream.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit.h"
 

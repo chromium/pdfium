@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
-class CFX_Edit;
+class CPWL_EditImpl;
 class CPWL_Caret;
 struct CPVT_WordPlace;
 
@@ -82,7 +82,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
 
   void SetEditCaret(bool bVisible);
 
-  std::unique_ptr<CFX_Edit> m_pEdit;
+  std::unique_ptr<CPWL_EditImpl> m_pEdit;
   CPWL_Caret* m_pEditCaret;
   bool m_bMouseDown;
 

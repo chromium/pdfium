@@ -9,15 +9,15 @@
 #include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxge/fx_font.h"
-#include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_caret.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_impl.h"
 #include "fpdfsdk/pdfwindow/cpwl_font_map.h"
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 
 CPWL_EditCtrl::CPWL_EditCtrl()
-    : m_pEdit(new CFX_Edit),
+    : m_pEdit(new CPWL_EditImpl),
       m_pEditCaret(nullptr),
       m_bMouseDown(false),
       m_nCharSet(FX_CHARSET_Default) {}
@@ -302,7 +302,7 @@ void CPWL_EditCtrl::SetEditCaret(bool bVisible) {
 }
 
 void CPWL_EditCtrl::GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const {
-  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CPWL_EditImpl_Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(m_pEdit->GetCaret());
   CPVT_Word word;
   CPVT_Line line;

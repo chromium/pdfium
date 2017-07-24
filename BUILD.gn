@@ -187,7 +187,6 @@ static_library("pdfium") {
     ":fpdftext",
     ":fxcodec",
     ":fxcrt",
-    ":fxedit",
     ":fxge",
     ":javascript",
     ":pdfwindow",
@@ -1077,19 +1076,6 @@ static_library("fxge") {
   }
 }
 
-static_library("fxedit") {
-  sources = [
-    "fpdfsdk/fxedit/fxet_edit.cpp",
-    "fpdfsdk/fxedit/fxet_edit.h",
-    "fpdfsdk/fxedit/fxet_list.cpp",
-    "fpdfsdk/fxedit/fxet_list.h",
-  ]
-  configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
-}
-
 static_library("pdfwindow") {
   sources = [
     "fpdfsdk/pdfwindow/cpwl_appstream.cpp",
@@ -1104,12 +1090,16 @@ static_library("pdfwindow") {
     "fpdfsdk/pdfwindow/cpwl_edit.h",
     "fpdfsdk/pdfwindow/cpwl_edit_ctrl.cpp",
     "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h",
+    "fpdfsdk/pdfwindow/cpwl_edit_impl.cpp",
+    "fpdfsdk/pdfwindow/cpwl_edit_impl.h",
     "fpdfsdk/pdfwindow/cpwl_font_map.cpp",
     "fpdfsdk/pdfwindow/cpwl_font_map.h",
     "fpdfsdk/pdfwindow/cpwl_icon.cpp",
     "fpdfsdk/pdfwindow/cpwl_icon.h",
     "fpdfsdk/pdfwindow/cpwl_list_box.cpp",
     "fpdfsdk/pdfwindow/cpwl_list_box.h",
+    "fpdfsdk/pdfwindow/cpwl_list_impl.cpp",
+    "fpdfsdk/pdfwindow/cpwl_list_impl.h",
     "fpdfsdk/pdfwindow/cpwl_scroll_bar.cpp",
     "fpdfsdk/pdfwindow/cpwl_scroll_bar.h",
     "fpdfsdk/pdfwindow/cpwl_special_button.cpp",

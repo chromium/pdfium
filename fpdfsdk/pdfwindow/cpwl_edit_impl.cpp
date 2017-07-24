@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fxedit/fxet_edit.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_impl.h"
 
 #include <algorithm>
 #include <memory>
@@ -72,21 +72,22 @@ void DrawTextString(CFX_RenderDevice* pDevice,
 
 }  // namespace
 
-CFX_Edit_Iterator::CFX_Edit_Iterator(CFX_Edit* pEdit,
-                                     CPDF_VariableText::Iterator* pVTIterator)
+CPWL_EditImpl_Iterator::CPWL_EditImpl_Iterator(
+    CPWL_EditImpl* pEdit,
+    CPDF_VariableText::Iterator* pVTIterator)
     : m_pEdit(pEdit), m_pVTIterator(pVTIterator) {}
 
-CFX_Edit_Iterator::~CFX_Edit_Iterator() {}
+CPWL_EditImpl_Iterator::~CPWL_EditImpl_Iterator() {}
 
-bool CFX_Edit_Iterator::NextWord() {
+bool CPWL_EditImpl_Iterator::NextWord() {
   return m_pVTIterator->NextWord();
 }
 
-bool CFX_Edit_Iterator::PrevWord() {
+bool CPWL_EditImpl_Iterator::PrevWord() {
   return m_pVTIterator->PrevWord();
 }
 
-bool CFX_Edit_Iterator::GetWord(CPVT_Word& word) const {
+bool CPWL_EditImpl_Iterator::GetWord(CPVT_Word& word) const {
   ASSERT(m_pEdit);
 
   if (m_pVTIterator->GetWord(word)) {
@@ -96,7 +97,7 @@ bool CFX_Edit_Iterator::GetWord(CPVT_Word& word) const {
   return false;
 }
 
-bool CFX_Edit_Iterator::GetLine(CPVT_Line& line) const {
+bool CPWL_EditImpl_Iterator::GetLine(CPVT_Line& line) const {
   ASSERT(m_pEdit);
 
   if (m_pVTIterator->GetLine(line)) {
@@ -106,30 +107,31 @@ bool CFX_Edit_Iterator::GetLine(CPVT_Line& line) const {
   return false;
 }
 
-void CFX_Edit_Iterator::SetAt(int32_t nWordIndex) {
+void CPWL_EditImpl_Iterator::SetAt(int32_t nWordIndex) {
   m_pVTIterator->SetAt(nWordIndex);
 }
 
-void CFX_Edit_Iterator::SetAt(const CPVT_WordPlace& place) {
+void CPWL_EditImpl_Iterator::SetAt(const CPVT_WordPlace& place) {
   m_pVTIterator->SetAt(place);
 }
 
-const CPVT_WordPlace& CFX_Edit_Iterator::GetAt() const {
+const CPVT_WordPlace& CPWL_EditImpl_Iterator::GetAt() const {
   return m_pVTIterator->GetAt();
 }
 
-CFX_Edit_Provider::CFX_Edit_Provider(IPVT_FontMap* pFontMap)
+CPWL_EditImpl_Provider::CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap)
     : CPDF_VariableText::Provider(pFontMap), m_pFontMap(pFontMap) {
   ASSERT(m_pFontMap);
 }
 
-CFX_Edit_Provider::~CFX_Edit_Provider() {}
+CPWL_EditImpl_Provider::~CPWL_EditImpl_Provider() {}
 
-IPVT_FontMap* CFX_Edit_Provider::GetFontMap() const {
+IPVT_FontMap* CPWL_EditImpl_Provider::GetFontMap() const {
   return m_pFontMap;
 }
 
-int32_t CFX_Edit_Provider::GetCharWidth(int32_t nFontIndex, uint16_t word) {
+int32_t CPWL_EditImpl_Provider::GetCharWidth(int32_t nFontIndex,
+                                             uint16_t word) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
     uint32_t charcode = word;
 
@@ -145,84 +147,82 @@ int32_t CFX_Edit_Provider::GetCharWidth(int32_t nFontIndex, uint16_t word) {
   return 0;
 }
 
-int32_t CFX_Edit_Provider::GetTypeAscent(int32_t nFontIndex) {
+int32_t CPWL_EditImpl_Provider::GetTypeAscent(int32_t nFontIndex) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex))
     return pPDFFont->GetTypeAscent();
 
   return 0;
 }
 
-int32_t CFX_Edit_Provider::GetTypeDescent(int32_t nFontIndex) {
+int32_t CPWL_EditImpl_Provider::GetTypeDescent(int32_t nFontIndex) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex))
     return pPDFFont->GetTypeDescent();
 
   return 0;
 }
 
-int32_t CFX_Edit_Provider::GetWordFontIndex(uint16_t word,
-                                            int32_t charset,
-                                            int32_t nFontIndex) {
+int32_t CPWL_EditImpl_Provider::GetWordFontIndex(uint16_t word,
+                                                 int32_t charset,
+                                                 int32_t nFontIndex) {
   return m_pFontMap->GetWordFontIndex(word, charset, nFontIndex);
 }
 
-int32_t CFX_Edit_Provider::GetDefaultFontIndex() {
+int32_t CPWL_EditImpl_Provider::GetDefaultFontIndex() {
   return 0;
 }
 
-bool CFX_Edit_Provider::IsLatinWord(uint16_t word) {
+bool CPWL_EditImpl_Provider::IsLatinWord(uint16_t word) {
   return FX_EDIT_ISLATINWORD(word);
 }
 
-CFX_Edit_Refresh::CFX_Edit_Refresh() {}
+CPWL_EditImpl_Refresh::CPWL_EditImpl_Refresh() {}
 
-CFX_Edit_Refresh::~CFX_Edit_Refresh() {}
+CPWL_EditImpl_Refresh::~CPWL_EditImpl_Refresh() {}
 
-void CFX_Edit_Refresh::BeginRefresh() {
+void CPWL_EditImpl_Refresh::BeginRefresh() {
   m_RefreshRects.Clear();
   m_OldLineRects = std::move(m_NewLineRects);
 }
 
-void CFX_Edit_Refresh::Push(const CPVT_WordRange& linerange,
-                            const CFX_FloatRect& rect) {
+void CPWL_EditImpl_Refresh::Push(const CPVT_WordRange& linerange,
+                                 const CFX_FloatRect& rect) {
   m_NewLineRects.Add(linerange, rect);
 }
 
-void CFX_Edit_Refresh::NoAnalyse() {
+void CPWL_EditImpl_Refresh::NoAnalyse() {
   {
     for (int32_t i = 0, sz = m_OldLineRects.GetSize(); i < sz; i++)
-      if (CFX_Edit_LineRect* pOldRect = m_OldLineRects.GetAt(i))
+      if (CPWL_EditImpl_LineRect* pOldRect = m_OldLineRects.GetAt(i))
         m_RefreshRects.Add(pOldRect->m_rcLine);
   }
 
   {
     for (int32_t i = 0, sz = m_NewLineRects.GetSize(); i < sz; i++)
-      if (CFX_Edit_LineRect* pNewRect = m_NewLineRects.GetAt(i))
+      if (CPWL_EditImpl_LineRect* pNewRect = m_NewLineRects.GetAt(i))
         m_RefreshRects.Add(pNewRect->m_rcLine);
   }
 }
 
-const CFX_Edit_RectArray* CFX_Edit_Refresh::GetRefreshRects() const {
+const CPWL_EditImpl_RectArray* CPWL_EditImpl_Refresh::GetRefreshRects() const {
   return &m_RefreshRects;
 }
 
-void CFX_Edit_Refresh::EndRefresh() {
+void CPWL_EditImpl_Refresh::EndRefresh() {
   m_RefreshRects.Clear();
 }
 
-CFX_Edit_Undo::CFX_Edit_Undo(int32_t nBufsize)
-    : m_nCurUndoPos(0),
-      m_nBufSize(nBufsize),
-      m_bWorking(false) {}
+CPWL_EditImpl_Undo::CPWL_EditImpl_Undo(int32_t nBufsize)
+    : m_nCurUndoPos(0), m_nBufSize(nBufsize), m_bWorking(false) {}
 
-CFX_Edit_Undo::~CFX_Edit_Undo() {
+CPWL_EditImpl_Undo::~CPWL_EditImpl_Undo() {
   Reset();
 }
 
-bool CFX_Edit_Undo::CanUndo() const {
+bool CPWL_EditImpl_Undo::CanUndo() const {
   return m_nCurUndoPos > 0;
 }
 
-void CFX_Edit_Undo::Undo() {
+void CPWL_EditImpl_Undo::Undo() {
   m_bWorking = true;
   if (m_nCurUndoPos > 0) {
     m_UndoItemStack[m_nCurUndoPos - 1]->Undo();
@@ -231,11 +231,11 @@ void CFX_Edit_Undo::Undo() {
   m_bWorking = false;
 }
 
-bool CFX_Edit_Undo::CanRedo() const {
+bool CPWL_EditImpl_Undo::CanRedo() const {
   return m_nCurUndoPos < m_UndoItemStack.size();
 }
 
-void CFX_Edit_Undo::Redo() {
+void CPWL_EditImpl_Undo::Redo() {
   m_bWorking = true;
   if (m_nCurUndoPos < m_UndoItemStack.size()) {
     m_UndoItemStack[m_nCurUndoPos]->Redo();
@@ -244,7 +244,7 @@ void CFX_Edit_Undo::Redo() {
   m_bWorking = false;
 }
 
-void CFX_Edit_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
+void CPWL_EditImpl_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
   ASSERT(!m_bWorking);
   ASSERT(pItem);
   ASSERT(m_nBufSize > 1);
@@ -258,42 +258,43 @@ void CFX_Edit_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
   m_nCurUndoPos = m_UndoItemStack.size();
 }
 
-void CFX_Edit_Undo::RemoveHeads() {
+void CPWL_EditImpl_Undo::RemoveHeads() {
   ASSERT(m_UndoItemStack.size() > 1);
   m_UndoItemStack.pop_front();
 }
 
-void CFX_Edit_Undo::RemoveTails() {
+void CPWL_EditImpl_Undo::RemoveTails() {
   while (m_UndoItemStack.size() > m_nCurUndoPos)
     m_UndoItemStack.pop_back();
 }
 
-void CFX_Edit_Undo::Reset() {
+void CPWL_EditImpl_Undo::Reset() {
   m_UndoItemStack.clear();
   m_nCurUndoPos = 0;
 }
 
-CFX_Edit_UndoItem::CFX_Edit_UndoItem() : m_bFirst(true), m_bLast(true) {}
+CPWL_EditImpl_UndoItem::CPWL_EditImpl_UndoItem()
+    : m_bFirst(true), m_bLast(true) {}
 
-CFX_Edit_UndoItem::~CFX_Edit_UndoItem() {}
+CPWL_EditImpl_UndoItem::~CPWL_EditImpl_UndoItem() {}
 
-CFX_WideString CFX_Edit_UndoItem::GetUndoTitle() const {
+CFX_WideString CPWL_EditImpl_UndoItem::GetUndoTitle() const {
   return CFX_WideString();
 }
 
-void CFX_Edit_UndoItem::SetFirst(bool bFirst) {
+void CPWL_EditImpl_UndoItem::SetFirst(bool bFirst) {
   m_bFirst = bFirst;
 }
 
-void CFX_Edit_UndoItem::SetLast(bool bLast) {
+void CPWL_EditImpl_UndoItem::SetLast(bool bLast) {
   m_bLast = bLast;
 }
 
-bool CFX_Edit_UndoItem::IsLast() {
+bool CPWL_EditImpl_UndoItem::IsLast() {
   return m_bLast;
 }
 
-CFXEU_InsertWord::CFXEU_InsertWord(CFX_Edit* pEdit,
+CFXEU_InsertWord::CFXEU_InsertWord(CPWL_EditImpl* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
                                    uint16_t word,
@@ -327,7 +328,7 @@ void CFXEU_InsertWord::Undo() {
   }
 }
 
-CFXEU_InsertReturn::CFXEU_InsertReturn(CFX_Edit* pEdit,
+CFXEU_InsertReturn::CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
                                        const CPVT_WordPlace& wpOldPlace,
                                        const CPVT_WordPlace& wpNewPlace,
                                        const CPVT_SecProps* pSecProps,
@@ -361,7 +362,7 @@ void CFXEU_InsertReturn::Undo() {
   }
 }
 
-CFXEU_Backspace::CFXEU_Backspace(CFX_Edit* pEdit,
+CFXEU_Backspace::CFXEU_Backspace(CPWL_EditImpl* pEdit,
                                  const CPVT_WordPlace& wpOldPlace,
                                  const CPVT_WordPlace& wpNewPlace,
                                  uint16_t word,
@@ -399,7 +400,7 @@ void CFXEU_Backspace::Undo() {
     m_pEdit->InsertWord(m_Word, m_nCharset, &m_WordProps, false, true);
 }
 
-CFXEU_Delete::CFXEU_Delete(CFX_Edit* pEdit,
+CFXEU_Delete::CFXEU_Delete(CPWL_EditImpl* pEdit,
                            const CPVT_WordPlace& wpOldPlace,
                            const CPVT_WordPlace& wpNewPlace,
                            uint16_t word,
@@ -438,7 +439,7 @@ void CFXEU_Delete::Undo() {
   }
 }
 
-CFXEU_Clear::CFXEU_Clear(CFX_Edit* pEdit,
+CFXEU_Clear::CFXEU_Clear(CPWL_EditImpl* pEdit,
                          const CPVT_WordRange& wrSel,
                          const CFX_WideString& swText)
     : m_pEdit(pEdit), m_wrSel(wrSel), m_swText(swText) {}
@@ -462,7 +463,7 @@ void CFXEU_Clear::Undo() {
   }
 }
 
-CFXEU_InsertText::CFXEU_InsertText(CFX_Edit* pEdit,
+CFXEU_InsertText::CFXEU_InsertText(CPWL_EditImpl* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
                                    const CFX_WideString& swText,
@@ -492,15 +493,15 @@ void CFXEU_InsertText::Undo() {
 }
 
 // static
-void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
-                        CFX_Matrix* pUser2Device,
-                        CFX_Edit* pEdit,
-                        FX_COLORREF crTextFill,
-                        const CFX_FloatRect& rcClip,
-                        const CFX_PointF& ptOffset,
-                        const CPVT_WordRange* pRange,
-                        CFX_SystemHandler* pSystemHandler,
-                        CFFL_FormFiller* pFFLData) {
+void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
+                             CFX_Matrix* pUser2Device,
+                             CPWL_EditImpl* pEdit,
+                             FX_COLORREF crTextFill,
+                             const CFX_FloatRect& rcClip,
+                             const CFX_PointF& ptOffset,
+                             const CPVT_WordRange* pRange,
+                             CFX_SystemHandler* pSystemHandler,
+                             CFFL_FormFiller* pFFLData) {
   const bool bContinuous =
       pEdit->GetCharArray() == 0 && pEdit->GetCharSpace() <= 0.0f;
   uint16_t SubWord = pEdit->GetPasswordChar();
@@ -525,7 +526,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
     pDevice->SetClip_Rect(rcTemp.ToFxRect());
   }
 
-  CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  CPWL_EditImpl_Iterator* pIterator = pEdit->GetIterator();
   if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
     if (pRange)
       pIterator->SetAt(pRange->BeginPos);
@@ -609,7 +610,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
   }
 }
 
-CFX_Edit::CFX_Edit()
+CPWL_EditImpl::CPWL_EditImpl()
     : m_pVT(new CPDF_VariableText),
       m_pNotify(nullptr),
       m_pOprNotify(nullptr),
@@ -626,114 +627,114 @@ CFX_Edit::CFX_Edit()
       m_bEnableUndo(true),
       m_bOprNotify(false) {}
 
-CFX_Edit::~CFX_Edit() {}
+CPWL_EditImpl::~CPWL_EditImpl() {}
 
-void CFX_Edit::Initialize() {
+void CPWL_EditImpl::Initialize() {
   m_pVT->Initialize();
   SetCaret(m_pVT->GetBeginWordPlace());
   SetCaretOrigin();
 }
 
-void CFX_Edit::SetFontMap(IPVT_FontMap* pFontMap) {
-  m_pVTProvider = pdfium::MakeUnique<CFX_Edit_Provider>(pFontMap);
+void CPWL_EditImpl::SetFontMap(IPVT_FontMap* pFontMap) {
+  m_pVTProvider = pdfium::MakeUnique<CPWL_EditImpl_Provider>(pFontMap);
   m_pVT->SetProvider(m_pVTProvider.get());
 }
 
-void CFX_Edit::SetNotify(CPWL_EditCtrl* pNotify) {
+void CPWL_EditImpl::SetNotify(CPWL_EditCtrl* pNotify) {
   m_pNotify = pNotify;
 }
 
-void CFX_Edit::SetOprNotify(CPWL_Edit* pOprNotify) {
+void CPWL_EditImpl::SetOprNotify(CPWL_Edit* pOprNotify) {
   m_pOprNotify = pOprNotify;
 }
 
-CFX_Edit_Iterator* CFX_Edit::GetIterator() {
+CPWL_EditImpl_Iterator* CPWL_EditImpl::GetIterator() {
   if (!m_pIterator) {
     m_pIterator =
-        pdfium::MakeUnique<CFX_Edit_Iterator>(this, m_pVT->GetIterator());
+        pdfium::MakeUnique<CPWL_EditImpl_Iterator>(this, m_pVT->GetIterator());
   }
   return m_pIterator.get();
 }
 
-IPVT_FontMap* CFX_Edit::GetFontMap() {
+IPVT_FontMap* CPWL_EditImpl::GetFontMap() {
   return m_pVTProvider ? m_pVTProvider->GetFontMap() : nullptr;
 }
 
-void CFX_Edit::SetPlateRect(const CFX_FloatRect& rect) {
+void CPWL_EditImpl::SetPlateRect(const CFX_FloatRect& rect) {
   m_pVT->SetPlateRect(rect);
   m_ptScrollPos = CFX_PointF(rect.left, rect.top);
   Paint();
 }
 
-void CFX_Edit::SetAlignmentH(int32_t nFormat, bool bPaint) {
+void CPWL_EditImpl::SetAlignmentH(int32_t nFormat, bool bPaint) {
   m_pVT->SetAlignment(nFormat);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAlignmentV(int32_t nFormat, bool bPaint) {
+void CPWL_EditImpl::SetAlignmentV(int32_t nFormat, bool bPaint) {
   m_nAlignment = nFormat;
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetPasswordChar(uint16_t wSubWord, bool bPaint) {
+void CPWL_EditImpl::SetPasswordChar(uint16_t wSubWord, bool bPaint) {
   m_pVT->SetPasswordChar(wSubWord);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetLimitChar(int32_t nLimitChar) {
+void CPWL_EditImpl::SetLimitChar(int32_t nLimitChar) {
   m_pVT->SetLimitChar(nLimitChar);
   Paint();
 }
 
-void CFX_Edit::SetCharArray(int32_t nCharArray) {
+void CPWL_EditImpl::SetCharArray(int32_t nCharArray) {
   m_pVT->SetCharArray(nCharArray);
   Paint();
 }
 
-void CFX_Edit::SetCharSpace(float fCharSpace) {
+void CPWL_EditImpl::SetCharSpace(float fCharSpace) {
   m_pVT->SetCharSpace(fCharSpace);
   Paint();
 }
 
-void CFX_Edit::SetMultiLine(bool bMultiLine, bool bPaint) {
+void CPWL_EditImpl::SetMultiLine(bool bMultiLine, bool bPaint) {
   m_pVT->SetMultiLine(bMultiLine);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAutoReturn(bool bAuto, bool bPaint) {
+void CPWL_EditImpl::SetAutoReturn(bool bAuto, bool bPaint) {
   m_pVT->SetAutoReturn(bAuto);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAutoFontSize(bool bAuto, bool bPaint) {
+void CPWL_EditImpl::SetAutoFontSize(bool bAuto, bool bPaint) {
   m_pVT->SetAutoFontSize(bAuto);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetFontSize(float fFontSize) {
+void CPWL_EditImpl::SetFontSize(float fFontSize) {
   m_pVT->SetFontSize(fFontSize);
   Paint();
 }
 
-void CFX_Edit::SetAutoScroll(bool bAuto, bool bPaint) {
+void CPWL_EditImpl::SetAutoScroll(bool bAuto, bool bPaint) {
   m_bEnableScroll = bAuto;
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetTextOverflow(bool bAllowed, bool bPaint) {
+void CPWL_EditImpl::SetTextOverflow(bool bAllowed, bool bPaint) {
   m_bEnableOverflow = bAllowed;
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetSelection(int32_t nStartChar, int32_t nEndChar) {
+void CPWL_EditImpl::SetSelection(int32_t nStartChar, int32_t nEndChar) {
   if (m_pVT->IsValid()) {
     if (nStartChar == 0 && nEndChar < 0) {
       SelectAll();
@@ -751,8 +752,8 @@ void CFX_Edit::SetSelection(int32_t nStartChar, int32_t nEndChar) {
   }
 }
 
-void CFX_Edit::SetSelection(const CPVT_WordPlace& begin,
-                            const CPVT_WordPlace& end) {
+void CPWL_EditImpl::SetSelection(const CPVT_WordPlace& begin,
+                                 const CPVT_WordPlace& end) {
   if (!m_pVT->IsValid())
     return;
 
@@ -765,7 +766,7 @@ void CFX_Edit::SetSelection(const CPVT_WordPlace& begin,
   SetCaretInfo();
 }
 
-void CFX_Edit::GetSelection(int32_t& nStartChar, int32_t& nEndChar) const {
+void CPWL_EditImpl::GetSelection(int32_t& nStartChar, int32_t& nEndChar) const {
   nStartChar = -1;
   nEndChar = -1;
   if (!m_pVT->IsValid())
@@ -785,18 +786,18 @@ void CFX_Edit::GetSelection(int32_t& nStartChar, int32_t& nEndChar) const {
   nEndChar = m_pVT->WordPlaceToWordIndex(m_SelState.BeginPos);
 }
 
-int32_t CFX_Edit::GetCaret() const {
+int32_t CPWL_EditImpl::GetCaret() const {
   if (m_pVT->IsValid())
     return m_pVT->WordPlaceToWordIndex(m_wpCaret);
 
   return -1;
 }
 
-CPVT_WordPlace CFX_Edit::GetCaretWordPlace() const {
+CPVT_WordPlace CPWL_EditImpl::GetCaretWordPlace() const {
   return m_wpCaret;
 }
 
-CFX_WideString CFX_Edit::GetText() const {
+CFX_WideString CPWL_EditImpl::GetText() const {
   CFX_WideString swRet;
   if (!m_pVT->IsValid())
     return swRet;
@@ -817,7 +818,7 @@ CFX_WideString CFX_Edit::GetText() const {
   return swRet;
 }
 
-CFX_WideString CFX_Edit::GetRangeText(const CPVT_WordRange& range) const {
+CFX_WideString CPWL_EditImpl::GetRangeText(const CPVT_WordRange& range) const {
   CFX_WideString swRet;
   if (!m_pVT->IsValid())
     return swRet;
@@ -843,11 +844,11 @@ CFX_WideString CFX_Edit::GetRangeText(const CPVT_WordRange& range) const {
   return swRet;
 }
 
-CFX_WideString CFX_Edit::GetSelectedText() const {
+CFX_WideString CPWL_EditImpl::GetSelectedText() const {
   return GetRangeText(m_SelState.ConvertToWordRange());
 }
 
-int32_t CFX_Edit::GetTotalLines() const {
+int32_t CPWL_EditImpl::GetTotalLines() const {
   int32_t nLines = 1;
 
   CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
@@ -858,72 +859,72 @@ int32_t CFX_Edit::GetTotalLines() const {
   return nLines;
 }
 
-CPVT_WordRange CFX_Edit::GetSelectWordRange() const {
+CPVT_WordRange CPWL_EditImpl::GetSelectWordRange() const {
   return m_SelState.ConvertToWordRange();
 }
 
-void CFX_Edit::SetText(const CFX_WideString& sText) {
+void CPWL_EditImpl::SetText(const CFX_WideString& sText) {
   Empty();
   DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_CHARSET_Default);
   Paint();
 }
 
-bool CFX_Edit::InsertWord(uint16_t word, int32_t charset) {
+bool CPWL_EditImpl::InsertWord(uint16_t word, int32_t charset) {
   return InsertWord(word, charset, nullptr, true, true);
 }
 
-bool CFX_Edit::InsertReturn() {
+bool CPWL_EditImpl::InsertReturn() {
   return InsertReturn(nullptr, nullptr, true, true);
 }
 
-bool CFX_Edit::Backspace() {
+bool CPWL_EditImpl::Backspace() {
   return Backspace(true, true);
 }
 
-bool CFX_Edit::Delete() {
+bool CPWL_EditImpl::Delete() {
   return Delete(true, true);
 }
 
-bool CFX_Edit::ClearSelection() {
+bool CPWL_EditImpl::ClearSelection() {
   return Clear(true, true);
 }
 
-bool CFX_Edit::InsertText(const CFX_WideString& sText, int32_t charset) {
+bool CPWL_EditImpl::InsertText(const CFX_WideString& sText, int32_t charset) {
   return InsertText(sText, charset, true, true);
 }
 
-float CFX_Edit::GetFontSize() const {
+float CPWL_EditImpl::GetFontSize() const {
   return m_pVT->GetFontSize();
 }
 
-uint16_t CFX_Edit::GetPasswordChar() const {
+uint16_t CPWL_EditImpl::GetPasswordChar() const {
   return m_pVT->GetPasswordChar();
 }
 
-int32_t CFX_Edit::GetCharArray() const {
+int32_t CPWL_EditImpl::GetCharArray() const {
   return m_pVT->GetCharArray();
 }
 
-CFX_FloatRect CFX_Edit::GetContentRect() const {
+CFX_FloatRect CPWL_EditImpl::GetContentRect() const {
   return VTToEdit(m_pVT->GetContentRect());
 }
 
-int32_t CFX_Edit::GetHorzScale() const {
+int32_t CPWL_EditImpl::GetHorzScale() const {
   return m_pVT->GetHorzScale();
 }
 
-float CFX_Edit::GetCharSpace() const {
+float CPWL_EditImpl::GetCharSpace() const {
   return m_pVT->GetCharSpace();
 }
 
-CPVT_WordRange CFX_Edit::GetWholeWordRange() const {
+CPVT_WordRange CPWL_EditImpl::GetWholeWordRange() const {
   if (m_pVT->IsValid())
     return CPVT_WordRange(m_pVT->GetBeginWordPlace(), m_pVT->GetEndWordPlace());
 
   return CPVT_WordRange();
 }
 
-CPVT_WordRange CFX_Edit::GetVisibleWordRange() const {
+CPVT_WordRange CPWL_EditImpl::GetVisibleWordRange() const {
   if (m_bEnableOverflow)
     return GetWholeWordRange();
 
@@ -941,7 +942,7 @@ CPVT_WordRange CFX_Edit::GetVisibleWordRange() const {
   return CPVT_WordRange();
 }
 
-CPVT_WordPlace CFX_Edit::SearchWordPlace(const CFX_PointF& point) const {
+CPVT_WordPlace CPWL_EditImpl::SearchWordPlace(const CFX_PointF& point) const {
   if (m_pVT->IsValid()) {
     return m_pVT->SearchWordPlace(EditToVT(point));
   }
@@ -949,7 +950,7 @@ CPVT_WordPlace CFX_Edit::SearchWordPlace(const CFX_PointF& point) const {
   return CPVT_WordPlace();
 }
 
-void CFX_Edit::Paint() {
+void CPWL_EditImpl::Paint() {
   if (m_pVT->IsValid()) {
     RearrangeAll();
     ScrollToCaret();
@@ -959,7 +960,7 @@ void CFX_Edit::Paint() {
   }
 }
 
-void CFX_Edit::RearrangeAll() {
+void CPWL_EditImpl::RearrangeAll() {
   if (m_pVT->IsValid()) {
     m_pVT->UpdateWordPlace(m_wpCaret);
     m_pVT->RearrangeAll();
@@ -969,7 +970,7 @@ void CFX_Edit::RearrangeAll() {
   }
 }
 
-void CFX_Edit::RearrangePart(const CPVT_WordRange& range) {
+void CPWL_EditImpl::RearrangePart(const CPVT_WordRange& range) {
   if (m_pVT->IsValid()) {
     m_pVT->UpdateWordPlace(m_wpCaret);
     m_pVT->RearrangePart(range);
@@ -979,7 +980,7 @@ void CFX_Edit::RearrangePart(const CPVT_WordRange& range) {
   }
 }
 
-void CFX_Edit::SetContentChanged() {
+void CPWL_EditImpl::SetContentChanged() {
   if (m_pNotify) {
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
     if (rcContent.Width() != m_rcOldContent.Width() ||
@@ -989,17 +990,17 @@ void CFX_Edit::SetContentChanged() {
   }
 }
 
-void CFX_Edit::SelectAll() {
+void CPWL_EditImpl::SelectAll() {
   if (!m_pVT->IsValid())
     return;
-  m_SelState = CFX_Edit_Select(GetWholeWordRange());
+  m_SelState = CPWL_EditImpl_Select(GetWholeWordRange());
   SetCaret(m_SelState.EndPos);
   ScrollToCaret();
   Refresh();
   SetCaretInfo();
 }
 
-void CFX_Edit::SelectNone() {
+void CPWL_EditImpl::SelectNone() {
   if (!m_pVT->IsValid() || m_SelState.IsEmpty())
     return;
 
@@ -1007,11 +1008,11 @@ void CFX_Edit::SelectNone() {
   Refresh();
 }
 
-bool CFX_Edit::IsSelected() const {
+bool CPWL_EditImpl::IsSelected() const {
   return !m_SelState.IsEmpty();
 }
 
-CFX_PointF CFX_Edit::VTToEdit(const CFX_PointF& point) const {
+CFX_PointF CPWL_EditImpl::VTToEdit(const CFX_PointF& point) const {
   CFX_FloatRect rcContent = m_pVT->GetContentRect();
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
@@ -1033,7 +1034,7 @@ CFX_PointF CFX_Edit::VTToEdit(const CFX_PointF& point) const {
                     point.y - (m_ptScrollPos.y + fPadding - rcPlate.top));
 }
 
-CFX_PointF CFX_Edit::EditToVT(const CFX_PointF& point) const {
+CFX_PointF CPWL_EditImpl::EditToVT(const CFX_PointF& point) const {
   CFX_FloatRect rcContent = m_pVT->GetContentRect();
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
@@ -1055,7 +1056,7 @@ CFX_PointF CFX_Edit::EditToVT(const CFX_PointF& point) const {
                     point.y + (m_ptScrollPos.y + fPadding - rcPlate.top));
 }
 
-CFX_FloatRect CFX_Edit::VTToEdit(const CFX_FloatRect& rect) const {
+CFX_FloatRect CPWL_EditImpl::VTToEdit(const CFX_FloatRect& rect) const {
   CFX_PointF ptLeftBottom = VTToEdit(CFX_PointF(rect.left, rect.bottom));
   CFX_PointF ptRightTop = VTToEdit(CFX_PointF(rect.right, rect.top));
 
@@ -1063,7 +1064,7 @@ CFX_FloatRect CFX_Edit::VTToEdit(const CFX_FloatRect& rect) const {
                        ptRightTop.y);
 }
 
-void CFX_Edit::SetScrollInfo() {
+void CPWL_EditImpl::SetScrollInfo() {
   if (!m_pNotify)
     return;
 
@@ -1084,7 +1085,7 @@ void CFX_Edit::SetScrollInfo() {
   m_pNotify->SetScrollInfo(Info);
 }
 
-void CFX_Edit::SetScrollPosX(float fx) {
+void CPWL_EditImpl::SetScrollPosX(float fx) {
   if (!m_bEnableScroll)
     return;
 
@@ -1096,7 +1097,7 @@ void CFX_Edit::SetScrollPosX(float fx) {
   }
 }
 
-void CFX_Edit::SetScrollPosY(float fy) {
+void CPWL_EditImpl::SetScrollPosY(float fy) {
   if (!m_bEnableScroll)
     return;
 
@@ -1116,18 +1117,18 @@ void CFX_Edit::SetScrollPosY(float fy) {
   }
 }
 
-void CFX_Edit::SetScrollPos(const CFX_PointF& point) {
+void CPWL_EditImpl::SetScrollPos(const CFX_PointF& point) {
   SetScrollPosX(point.x);
   SetScrollPosY(point.y);
   SetScrollLimit();
   SetCaretInfo();
 }
 
-CFX_PointF CFX_Edit::GetScrollPos() const {
+CFX_PointF CPWL_EditImpl::GetScrollPos() const {
   return m_ptScrollPos;
 }
 
-void CFX_Edit::SetScrollLimit() {
+void CPWL_EditImpl::SetScrollLimit() {
   if (m_pVT->IsValid()) {
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
     CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
@@ -1156,7 +1157,7 @@ void CFX_Edit::SetScrollLimit() {
   }
 }
 
-void CFX_Edit::ScrollToCaret() {
+void CPWL_EditImpl::ScrollToCaret() {
   SetScrollLimit();
 
   if (!m_pVT->IsValid())
@@ -1207,7 +1208,7 @@ void CFX_Edit::ScrollToCaret() {
   }
 }
 
-void CFX_Edit::Refresh() {
+void CPWL_EditImpl::Refresh() {
   if (m_bEnableRefresh && m_pVT->IsValid()) {
     m_Refresh.BeginRefresh();
     RefreshPushLineRects(GetVisibleWordRange());
@@ -1219,7 +1220,8 @@ void CFX_Edit::Refresh() {
       if (!m_bNotifyFlag) {
         CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
         m_bNotifyFlag = true;
-        if (const CFX_Edit_RectArray* pRects = m_Refresh.GetRefreshRects()) {
+        if (const CPWL_EditImpl_RectArray* pRects =
+                m_Refresh.GetRefreshRects()) {
           for (int32_t i = 0, sz = pRects->GetSize(); i < sz; i++)
             m_pNotify->InvalidateRect(pRects->GetAt(i));
         }
@@ -1230,7 +1232,7 @@ void CFX_Edit::Refresh() {
   }
 }
 
-void CFX_Edit::RefreshPushLineRects(const CPVT_WordRange& wr) {
+void CPWL_EditImpl::RefreshPushLineRects(const CPVT_WordRange& wr) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1258,7 +1260,7 @@ void CFX_Edit::RefreshPushLineRects(const CPVT_WordRange& wr) {
   } while (pIterator->NextLine());
 }
 
-void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
+void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
   CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   CPVT_WordRange wrTemp = wr;
 
@@ -1312,12 +1314,12 @@ void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
   }
 }
 
-void CFX_Edit::SetCaret(const CPVT_WordPlace& place) {
+void CPWL_EditImpl::SetCaret(const CPVT_WordPlace& place) {
   m_wpOldCaret = m_wpCaret;
   m_wpCaret = place;
 }
 
-void CFX_Edit::SetCaretInfo() {
+void CPWL_EditImpl::SetCaretInfo() {
   if (m_pNotify) {
     if (!m_bNotifyFlag) {
       CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
@@ -1347,7 +1349,9 @@ void CFX_Edit::SetCaretInfo() {
   }
 }
 
-void CFX_Edit::OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnMouseDown(const CFX_PointF& point,
+                                bool bShift,
+                                bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1359,7 +1363,9 @@ void CFX_Edit::OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl) {
   SetCaretInfo();
 }
 
-void CFX_Edit::OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnMouseMove(const CFX_PointF& point,
+                                bool bShift,
+                                bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1374,7 +1380,7 @@ void CFX_Edit::OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl) {
   SetCaretInfo();
 }
 
-void CFX_Edit::OnVK_UP(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_UP(bool bShift, bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1397,7 +1403,7 @@ void CFX_Edit::OnVK_UP(bool bShift, bool bCtrl) {
   }
 }
 
-void CFX_Edit::OnVK_DOWN(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_DOWN(bool bShift, bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1420,7 +1426,7 @@ void CFX_Edit::OnVK_DOWN(bool bShift, bool bCtrl) {
   }
 }
 
-void CFX_Edit::OnVK_LEFT(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_LEFT(bool bShift, bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1463,7 +1469,7 @@ void CFX_Edit::OnVK_LEFT(bool bShift, bool bCtrl) {
   }
 }
 
-void CFX_Edit::OnVK_RIGHT(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_RIGHT(bool bShift, bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1506,7 +1512,7 @@ void CFX_Edit::OnVK_RIGHT(bool bShift, bool bCtrl) {
   }
 }
 
-void CFX_Edit::OnVK_HOME(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_HOME(bool bShift, bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1543,7 +1549,7 @@ void CFX_Edit::OnVK_HOME(bool bShift, bool bCtrl) {
   }
 }
 
-void CFX_Edit::OnVK_END(bool bShift, bool bCtrl) {
+void CPWL_EditImpl::OnVK_END(bool bShift, bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
 
@@ -1580,11 +1586,11 @@ void CFX_Edit::OnVK_END(bool bShift, bool bCtrl) {
   }
 }
 
-bool CFX_Edit::InsertWord(uint16_t word,
-                          int32_t charset,
-                          const CPVT_WordProps* pWordProps,
-                          bool bAddUndo,
-                          bool bPaint) {
+bool CPWL_EditImpl::InsertWord(uint16_t word,
+                               int32_t charset,
+                               const CPVT_WordProps* pWordProps,
+                               bool bAddUndo,
+                               bool bPaint) {
   if (IsTextOverflow() || !m_pVT->IsValid())
     return false;
 
@@ -1608,10 +1614,10 @@ bool CFX_Edit::InsertWord(uint16_t word,
   return true;
 }
 
-bool CFX_Edit::InsertReturn(const CPVT_SecProps* pSecProps,
-                            const CPVT_WordProps* pWordProps,
-                            bool bAddUndo,
-                            bool bPaint) {
+bool CPWL_EditImpl::InsertReturn(const CPVT_SecProps* pSecProps,
+                                 const CPVT_WordProps* pWordProps,
+                                 bool bAddUndo,
+                                 bool bPaint) {
   if (IsTextOverflow() || !m_pVT->IsValid())
     return false;
 
@@ -1638,7 +1644,7 @@ bool CFX_Edit::InsertReturn(const CPVT_SecProps* pSecProps,
   return true;
 }
 
-bool CFX_Edit::Backspace(bool bAddUndo, bool bPaint) {
+bool CPWL_EditImpl::Backspace(bool bAddUndo, bool bPaint) {
   if (!m_pVT->IsValid() || m_wpCaret == m_pVT->GetBeginWordPlace())
     return false;
 
@@ -1680,7 +1686,7 @@ bool CFX_Edit::Backspace(bool bAddUndo, bool bPaint) {
   return true;
 }
 
-bool CFX_Edit::Delete(bool bAddUndo, bool bPaint) {
+bool CPWL_EditImpl::Delete(bool bAddUndo, bool bPaint) {
   if (!m_pVT->IsValid() || m_wpCaret == m_pVT->GetEndWordPlace())
     return false;
 
@@ -1720,7 +1726,7 @@ bool CFX_Edit::Delete(bool bAddUndo, bool bPaint) {
   return true;
 }
 
-bool CFX_Edit::Empty() {
+bool CPWL_EditImpl::Empty() {
   if (m_pVT->IsValid()) {
     m_pVT->DeleteWords(GetWholeWordRange());
     SetCaret(m_pVT->GetBeginWordPlace());
@@ -1731,7 +1737,7 @@ bool CFX_Edit::Empty() {
   return false;
 }
 
-bool CFX_Edit::Clear(bool bAddUndo, bool bPaint) {
+bool CPWL_EditImpl::Clear(bool bAddUndo, bool bPaint) {
   if (!m_pVT->IsValid() || m_SelState.IsEmpty())
     return false;
 
@@ -1757,10 +1763,10 @@ bool CFX_Edit::Clear(bool bAddUndo, bool bPaint) {
   return true;
 }
 
-bool CFX_Edit::InsertText(const CFX_WideString& sText,
-                          int32_t charset,
-                          bool bAddUndo,
-                          bool bPaint) {
+bool CPWL_EditImpl::InsertText(const CFX_WideString& sText,
+                               int32_t charset,
+                               bool bAddUndo,
+                               bool bPaint) {
   if (IsTextOverflow())
     return false;
 
@@ -1783,8 +1789,8 @@ bool CFX_Edit::InsertText(const CFX_WideString& sText,
   return true;
 }
 
-void CFX_Edit::PaintInsertText(const CPVT_WordPlace& wpOld,
-                               const CPVT_WordPlace& wpNew) {
+void CPWL_EditImpl::PaintInsertText(const CPVT_WordPlace& wpOld,
+                                    const CPVT_WordPlace& wpNew) {
   if (m_pVT->IsValid()) {
     RearrangePart(CPVT_WordRange(wpOld, wpNew));
     ScrollToCaret();
@@ -1794,7 +1800,7 @@ void CFX_Edit::PaintInsertText(const CPVT_WordPlace& wpOld,
   }
 }
 
-bool CFX_Edit::Redo() {
+bool CPWL_EditImpl::Redo() {
   if (m_bEnableUndo) {
     if (m_Undo.CanRedo()) {
       m_Undo.Redo();
@@ -1805,7 +1811,7 @@ bool CFX_Edit::Redo() {
   return false;
 }
 
-bool CFX_Edit::Undo() {
+bool CPWL_EditImpl::Undo() {
   if (m_bEnableUndo) {
     if (m_Undo.CanUndo()) {
       m_Undo.Undo();
@@ -1816,7 +1822,7 @@ bool CFX_Edit::Undo() {
   return false;
 }
 
-void CFX_Edit::SetCaretOrigin() {
+void CPWL_EditImpl::SetCaretOrigin() {
   if (!m_pVT->IsValid())
     return;
 
@@ -1833,14 +1839,14 @@ void CFX_Edit::SetCaretOrigin() {
   }
 }
 
-CPVT_WordPlace CFX_Edit::WordIndexToWordPlace(int32_t index) const {
+CPVT_WordPlace CPWL_EditImpl::WordIndexToWordPlace(int32_t index) const {
   if (m_pVT->IsValid())
     return m_pVT->WordIndexToWordPlace(index);
 
   return CPVT_WordPlace();
 }
 
-bool CFX_Edit::IsTextFull() const {
+bool CPWL_EditImpl::IsTextFull() const {
   int32_t nTotalWords = m_pVT->GetTotalWords();
   int32_t nLimitChar = m_pVT->GetLimitChar();
   int32_t nCharArray = m_pVT->GetCharArray();
@@ -1849,7 +1855,7 @@ bool CFX_Edit::IsTextFull() const {
          (nCharArray > 0 && nTotalWords >= nCharArray);
 }
 
-bool CFX_Edit::IsTextOverflow() const {
+bool CPWL_EditImpl::IsTextOverflow() const {
   if (!m_bEnableScroll && !m_bEnableOverflow) {
     CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
@@ -1866,7 +1872,7 @@ bool CFX_Edit::IsTextOverflow() const {
   return false;
 }
 
-bool CFX_Edit::CanUndo() const {
+bool CPWL_EditImpl::CanUndo() const {
   if (m_bEnableUndo) {
     return m_Undo.CanUndo();
   }
@@ -1874,7 +1880,7 @@ bool CFX_Edit::CanUndo() const {
   return false;
 }
 
-bool CFX_Edit::CanRedo() const {
+bool CPWL_EditImpl::CanRedo() const {
   if (m_bEnableUndo) {
     return m_Undo.CanRedo();
   }
@@ -1882,21 +1888,21 @@ bool CFX_Edit::CanRedo() const {
   return false;
 }
 
-void CFX_Edit::EnableRefresh(bool bRefresh) {
+void CPWL_EditImpl::EnableRefresh(bool bRefresh) {
   m_bEnableRefresh = bRefresh;
 }
 
-void CFX_Edit::EnableUndo(bool bUndo) {
+void CPWL_EditImpl::EnableUndo(bool bUndo) {
   m_bEnableUndo = bUndo;
 }
 
-void CFX_Edit::EnableOprNotify(bool bNotify) {
+void CPWL_EditImpl::EnableOprNotify(bool bNotify) {
   m_bOprNotify = bNotify;
 }
 
-CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place,
-                                      const CFX_WideString& sText,
-                                      int32_t charset) {
+CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
+                                           const CFX_WideString& sText,
+                                           int32_t charset) {
   CPVT_WordPlace wp = place;
 
   if (m_pVT->IsValid()) {
@@ -1926,20 +1932,21 @@ CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place,
   return wp;
 }
 
-int32_t CFX_Edit::GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
+int32_t CPWL_EditImpl::GetCharSetFromUnicode(uint16_t word,
+                                             int32_t nOldCharset) {
   if (IPVT_FontMap* pFontMap = GetFontMap())
     return pFontMap->CharSetFromUnicode(word, nOldCharset);
   return nOldCharset;
 }
 
-void CFX_Edit::AddEditUndoItem(
-    std::unique_ptr<CFX_Edit_UndoItem> pEditUndoItem) {
+void CPWL_EditImpl::AddEditUndoItem(
+    std::unique_ptr<CPWL_EditImpl_UndoItem> pEditUndoItem) {
   m_Undo.AddItem(std::move(pEditUndoItem));
 }
 
-CFX_ByteString CFX_Edit::GetPDFWordString(int32_t nFontIndex,
-                                          uint16_t Word,
-                                          uint16_t SubWord) {
+CFX_ByteString CPWL_EditImpl::GetPDFWordString(int32_t nFontIndex,
+                                               uint16_t Word,
+                                               uint16_t SubWord) {
   IPVT_FontMap* pFontMap = GetFontMap();
   CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex);
   if (!pPDFFont)
@@ -1961,68 +1968,71 @@ CFX_ByteString CFX_Edit::GetPDFWordString(int32_t nFontIndex,
   return sWord;
 }
 
-CFX_Edit_LineRectArray::CFX_Edit_LineRectArray() {}
+CPWL_EditImpl_LineRectArray::CPWL_EditImpl_LineRectArray() {}
 
-CFX_Edit_LineRectArray::~CFX_Edit_LineRectArray() {}
+CPWL_EditImpl_LineRectArray::~CPWL_EditImpl_LineRectArray() {}
 
-void CFX_Edit_LineRectArray::operator=(CFX_Edit_LineRectArray&& that) {
+void CPWL_EditImpl_LineRectArray::operator=(
+    CPWL_EditImpl_LineRectArray&& that) {
   m_LineRects = std::move(that.m_LineRects);
 }
 
-void CFX_Edit_LineRectArray::Add(const CPVT_WordRange& wrLine,
-                                 const CFX_FloatRect& rcLine) {
-  m_LineRects.push_back(pdfium::MakeUnique<CFX_Edit_LineRect>(wrLine, rcLine));
+void CPWL_EditImpl_LineRectArray::Add(const CPVT_WordRange& wrLine,
+                                      const CFX_FloatRect& rcLine) {
+  m_LineRects.push_back(
+      pdfium::MakeUnique<CPWL_EditImpl_LineRect>(wrLine, rcLine));
 }
 
-int32_t CFX_Edit_LineRectArray::GetSize() const {
+int32_t CPWL_EditImpl_LineRectArray::GetSize() const {
   return pdfium::CollectionSize<int32_t>(m_LineRects);
 }
 
-CFX_Edit_LineRect* CFX_Edit_LineRectArray::GetAt(int32_t nIndex) const {
+CPWL_EditImpl_LineRect* CPWL_EditImpl_LineRectArray::GetAt(
+    int32_t nIndex) const {
   if (nIndex < 0 || nIndex >= GetSize())
     return nullptr;
 
   return m_LineRects[nIndex].get();
 }
 
-CFX_Edit_Select::CFX_Edit_Select() {}
+CPWL_EditImpl_Select::CPWL_EditImpl_Select() {}
 
-CFX_Edit_Select::CFX_Edit_Select(const CPVT_WordRange& range) {
+CPWL_EditImpl_Select::CPWL_EditImpl_Select(const CPVT_WordRange& range) {
   Set(range.BeginPos, range.EndPos);
 }
 
-CPVT_WordRange CFX_Edit_Select::ConvertToWordRange() const {
+CPVT_WordRange CPWL_EditImpl_Select::ConvertToWordRange() const {
   return CPVT_WordRange(BeginPos, EndPos);
 }
 
-void CFX_Edit_Select::Reset() {
+void CPWL_EditImpl_Select::Reset() {
   BeginPos.Reset();
   EndPos.Reset();
 }
 
-void CFX_Edit_Select::Set(const CPVT_WordPlace& begin,
-                          const CPVT_WordPlace& end) {
+void CPWL_EditImpl_Select::Set(const CPVT_WordPlace& begin,
+                               const CPVT_WordPlace& end) {
   BeginPos = begin;
   EndPos = end;
 }
 
-void CFX_Edit_Select::SetEndPos(const CPVT_WordPlace& end) {
+void CPWL_EditImpl_Select::SetEndPos(const CPVT_WordPlace& end) {
   EndPos = end;
 }
 
-bool CFX_Edit_Select::IsEmpty() const {
+bool CPWL_EditImpl_Select::IsEmpty() const {
   return BeginPos == EndPos;
 }
 
-CFX_Edit_RectArray::CFX_Edit_RectArray() {}
+CPWL_EditImpl_RectArray::CPWL_EditImpl_RectArray() {}
 
-CFX_Edit_RectArray::~CFX_Edit_RectArray() {}
+CPWL_EditImpl_RectArray::~CPWL_EditImpl_RectArray() {}
 
-void CFX_Edit_RectArray::Clear() {
+void CPWL_EditImpl_RectArray::Clear() {
   m_Rects.clear();
 }
 
-void CFX_Edit_RectArray::Add(const CFX_FloatRect& rect) {
+void CPWL_EditImpl_RectArray::Add(const CFX_FloatRect& rect) {
   // check for overlapped area
   for (const auto& pRect : m_Rects) {
     if (pRect && pRect->Contains(rect))
@@ -2031,11 +2041,11 @@ void CFX_Edit_RectArray::Add(const CFX_FloatRect& rect) {
   m_Rects.push_back(pdfium::MakeUnique<CFX_FloatRect>(rect));
 }
 
-int32_t CFX_Edit_RectArray::GetSize() const {
+int32_t CPWL_EditImpl_RectArray::GetSize() const {
   return pdfium::CollectionSize<int32_t>(m_Rects);
 }
 
-CFX_FloatRect* CFX_Edit_RectArray::GetAt(int32_t nIndex) const {
+CFX_FloatRect* CPWL_EditImpl_RectArray::GetAt(int32_t nIndex) const {
   if (nIndex < 0 || nIndex >= GetSize())
     return nullptr;
 

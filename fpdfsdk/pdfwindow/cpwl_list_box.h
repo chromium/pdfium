@@ -12,7 +12,7 @@
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
-class CFX_ListCtrl;
+class CPWL_ListCtrl;
 class CPWL_List_Notify;
 class CPWL_ListBox;
 class IPWL_Filler_Notify;
@@ -97,7 +97,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
 
  protected:
-  std::unique_ptr<CFX_ListCtrl> m_pList;
+  std::unique_ptr<CPWL_ListCtrl> m_pList;
   std::unique_ptr<CPWL_List_Notify> m_pListNotify;
   bool m_bMouseDown;
   bool m_bHoverSel;

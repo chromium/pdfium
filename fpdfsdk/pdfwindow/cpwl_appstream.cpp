@@ -22,8 +22,8 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
-#include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_impl.h"
 #include "fpdfsdk/pdfwindow/cpwl_icon.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 
@@ -523,11 +523,11 @@ CFX_ByteString GetWordRenderString(const CFX_ByteString& strWords) {
   return CFX_ByteString();
 }
 
-CFX_ByteString GetEditAppStream(CFX_Edit* pEdit,
+CFX_ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
                                 const CFX_PointF& ptOffset,
                                 bool bContinuous,
                                 uint16_t SubWord) {
-  CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
+  CPWL_EditImpl_Iterator* pIterator = pEdit->GetIterator();
   pIterator->SetAt(0);
 
   std::ostringstream sEditStream;
@@ -686,7 +686,7 @@ CFX_ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                       ButtonStyle nLayOut) {
   const float fAutoFontScale = 1.0f / 3.0f;
 
-  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
+  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->SetFontMap(pFontMap);
   pEdit->SetAlignmentH(1, true);
   pEdit->SetAlignmentV(1, true);
@@ -1515,7 +1515,7 @@ void CPWL_AppStream::SetAsComboBox(const CFX_WideString* sValue) {
   rcButton.left = rcButton.right - 13;
   rcButton.Normalize();
 
-  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
+  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
 
   CBA_FontMap font_map(
@@ -1578,7 +1578,7 @@ void CPWL_AppStream::SetAsListBox() {
   CFX_FloatRect rcClient = widget_->GetClientRect();
   std::ostringstream sBody;
 
-  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
+  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
 
   CBA_FontMap font_map(
@@ -1658,7 +1658,7 @@ void CPWL_AppStream::SetAsTextField(const CFX_WideString* sValue) {
   std::ostringstream sBody;
   std::ostringstream sLines;
 
-  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
+  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
 
   CBA_FontMap font_map(

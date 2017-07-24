@@ -11,10 +11,10 @@
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/fxedit/fxet_list.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pdfwindow/cpwl_list_box.h"
+#include "fpdfsdk/pdfwindow/cpwl_list_impl.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 

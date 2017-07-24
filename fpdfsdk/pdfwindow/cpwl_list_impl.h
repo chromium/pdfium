@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FXEDIT_FXET_LIST_H_
-#define FPDFSDK_FXEDIT_FXET_LIST_H_
+#ifndef FPDFSDK_PDFWINDOW_CPWL_LIST_IMPL_H_
+#define FPDFSDK_PDFWINDOW_CPWL_LIST_IMPL_H_
 
 #include <map>
 #include <memory>
@@ -14,8 +14,8 @@
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 
-class CFX_Edit;
-class CFX_Edit_Iterator;
+class CPWL_EditImpl;
+class CPWL_EditImpl_Iterator;
 class CPWL_List_Notify;
 class IPVT_FontMap;
 
@@ -41,10 +41,10 @@ class CPLST_Select {
   std::map<int32_t, State> m_Items;
 };
 
-class CFX_ListCtrl {
+class CPWL_ListCtrl {
  public:
-  CFX_ListCtrl();
-  ~CFX_ListCtrl();
+  CPWL_ListCtrl();
+  ~CPWL_ListCtrl();
 
   void SetNotify(CPWL_List_Notify* pNotify) { m_pNotify = pNotify; }
   void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
@@ -81,7 +81,7 @@ class CFX_ListCtrl {
   void SetPlateRect(const CFX_FloatRect& rect);
 
   float GetFontSize() const { return m_fFontSize; }
-  CFX_Edit* GetItemEdit(int32_t nIndex) const;
+  CPWL_EditImpl* GetItemEdit(int32_t nIndex) const;
   int32_t GetCount() const;
   bool IsItemSelected(int32_t nIndex) const;
   float GetFirstHeight() const;
@@ -97,7 +97,7 @@ class CFX_ListCtrl {
     ~Item();
 
     void SetFontMap(IPVT_FontMap* pFontMap);
-    CFX_Edit* GetEdit() const { return m_pEdit.get(); }
+    CPWL_EditImpl* GetEdit() const { return m_pEdit.get(); }
 
     void SetRect(const CFX_FloatRect& rect) { m_rcListItem = rect; }
     void SetSelect(bool bSelected) { m_bSelected = bSelected; }
@@ -111,9 +111,9 @@ class CFX_ListCtrl {
     uint16_t GetFirstChar() const;
 
    private:
-    CFX_Edit_Iterator* GetIterator() const;
+    CPWL_EditImpl_Iterator* GetIterator() const;
 
-    std::unique_ptr<CFX_Edit> m_pEdit;
+    std::unique_ptr<CPWL_EditImpl> m_pEdit;
     bool m_bSelected;
     CFX_FloatRect m_rcListItem;
   };
@@ -165,4 +165,4 @@ class CFX_ListCtrl {
   bool m_bMultiple;
 };
 
-#endif  // FPDFSDK_FXEDIT_FXET_LIST_H_
+#endif  // FPDFSDK_PDFWINDOW_CPWL_LIST_IMPL_H_

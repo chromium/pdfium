@@ -9,10 +9,10 @@
 #include <sstream>
 
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/fxedit/fxet_edit.h"
-#include "fpdfsdk/fxedit/fxet_list.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_impl.h"
+#include "fpdfsdk/pdfwindow/cpwl_list_impl.h"
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
@@ -63,7 +63,7 @@ void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {
 }
 
 CPWL_ListBox::CPWL_ListBox()
-    : m_pList(new CFX_ListCtrl),
+    : m_pList(new CPWL_ListCtrl),
       m_bMouseDown(false),
       m_bHoverSel(false),
       m_pFillerNotify(nullptr) {}
@@ -107,7 +107,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
       continue;
 
     CFX_PointF ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
-    if (CFX_Edit* pEdit = m_pList->GetItemEdit(i)) {
+    if (CPWL_EditImpl* pEdit = m_pList->GetItemEdit(i)) {
       CFX_FloatRect rcContent = pEdit->GetContentRect();
       if (rcContent.Width() > rcClient.Width())
         rcItem.Intersect(rcList);
@@ -118,22 +118,23 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
     if (m_pList->IsItemSelected(i)) {
       CFX_SystemHandler* pSysHandler = GetSystemHandler();
       if (pSysHandler && pSysHandler->IsSelectionImplemented()) {
-        CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
-                           GetTextColor().ToFXColor(255), rcList, ptOffset,
-                           nullptr, pSysHandler, m_pFormFiller.Get());
+        CPWL_EditImpl::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+                                GetTextColor().ToFXColor(255), rcList, ptOffset,
+                                nullptr, pSysHandler, m_pFormFiller.Get());
         pSysHandler->OutputSelectedRect(m_pFormFiller.Get(), rcItem);
       } else {
         pDevice->DrawFillRect(pUser2Device, rcItem,
                               ArgbEncode(255, 0, 51, 113));
-        CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
-                           ArgbEncode(255, 255, 255, 255), rcList, ptOffset,
-                           nullptr, pSysHandler, m_pFormFiller.Get());
+        CPWL_EditImpl::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+                                ArgbEncode(255, 255, 255, 255), rcList,
+                                ptOffset, nullptr, pSysHandler,
+                                m_pFormFiller.Get());
       }
     } else {
       CFX_SystemHandler* pSysHandler = GetSystemHandler();
-      CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
-                         GetTextColor().ToFXColor(255), rcList, ptOffset,
-                         nullptr, pSysHandler, nullptr);
+      CPWL_EditImpl::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+                              GetTextColor().ToFXColor(255), rcList, ptOffset,
+                              nullptr, pSysHandler, nullptr);
     }
   }
 }

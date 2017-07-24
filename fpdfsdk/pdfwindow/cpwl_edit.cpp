@@ -20,9 +20,9 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_font.h"
-#include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/cpwl_caret.h"
 #include "fpdfsdk/pdfwindow/cpwl_edit_ctrl.h"
+#include "fpdfsdk/pdfwindow/cpwl_edit_impl.h"
 #include "fpdfsdk/pdfwindow/cpwl_font_map.h"
 #include "fpdfsdk/pdfwindow/cpwl_scroll_bar.h"
 #include "fpdfsdk/pdfwindow/cpwl_wnd.h"
@@ -281,9 +281,10 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 
   CFX_SystemHandler* pSysHandler = GetSystemHandler();
-  CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pEdit.get(),
-                     GetTextColor().ToFXColor(GetTransparency()), rcClip,
-                     CFX_PointF(), pRange, pSysHandler, m_pFormFiller.Get());
+  CPWL_EditImpl::DrawEdit(pDevice, pUser2Device, m_pEdit.get(),
+                          GetTextColor().ToFXColor(GetTransparency()), rcClip,
+                          CFX_PointF(), pRange, pSysHandler,
+                          m_pFormFiller.Get());
 }
 
 bool CPWL_Edit::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
@@ -373,7 +374,7 @@ CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
 }
 
 CFX_PointF CPWL_Edit::GetWordRightBottomPoint(const CPVT_WordPlace& wpWord) {
-  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CPWL_EditImpl_Iterator* pIterator = m_pEdit->GetIterator();
   CPVT_WordPlace wpOld = pIterator->GetAt();
   pIterator->SetAt(wpWord);
 
@@ -660,7 +661,7 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
                                             bool bArabic) const {
   CPVT_WordRange range;
 
-  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
+  CPWL_EditImpl_Iterator* pIterator = m_pEdit->GetIterator();
   CPVT_Word wordinfo;
   CPVT_WordPlace wpStart(place), wpEnd(place);
   pIterator->SetAt(place);
