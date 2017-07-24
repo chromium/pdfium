@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_NAMETREE_H_
 #define CORE_FPDFDOC_CPDF_NAMETREE_H_
 
+#include <memory>
+
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 
@@ -20,6 +22,9 @@ class CPDF_NameTree {
   explicit CPDF_NameTree(CPDF_Dictionary* pRoot);
   CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteString& category);
   ~CPDF_NameTree();
+
+  bool AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
+                       const CFX_WideString& name);
 
   CPDF_Object* LookupValueAndName(int nIndex, CFX_WideString* csName) const;
   CPDF_Object* LookupValue(const CFX_WideString& csName) const;
