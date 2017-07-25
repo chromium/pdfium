@@ -77,12 +77,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseFunction() {
   CFX_WideStringC ident;
   std::vector<CFX_WideStringC> arguments;
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
     m_ParserError = true;
   } else {
-    ident = m_pToken->m_wstring;
+    ident = m_pToken->m_string;
     NextToken();
   }
   Check(TOKlparen);
@@ -91,7 +91,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseFunction() {
   } else {
     while (1) {
       if (m_pToken->m_type == TOKidentifier) {
-        arguments.push_back(m_pToken->m_wstring);
+        arguments.push_back(m_pToken->m_string);
         NextToken();
         if (m_pToken->m_type == TOKcomma) {
           NextToken();
@@ -124,7 +124,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseFunction() {
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpression() {
   std::unique_ptr<CXFA_FMExpression> expr;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   switch (m_pToken->m_type) {
     case TOKvar:
       expr = ParseVarExpression();
@@ -172,12 +172,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpression() {
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseVarExpression() {
   CFX_WideStringC ident;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   NextToken();
   if (m_pToken->m_type != TOKidentifier) {
     m_ParserError = true;
   } else {
-    ident = m_pToken->m_wstring;
+    ident = m_pToken->m_string;
     NextToken();
   }
   std::unique_ptr<CXFA_FMExpression> expr;
@@ -192,7 +192,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseVarExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseSimpleExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseLogicalOrExpression();
   int level = 1;
   while (m_pToken->m_type == TOKassign) {
@@ -211,7 +211,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseSimpleExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseSimpleExpression();
   if (HasError())
     return nullptr;
@@ -221,7 +221,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParse::ParseLogicalOrExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseLogicalAndExpression();
   for (;;) {
     switch (m_pToken->m_type) {
@@ -248,7 +248,7 @@ CXFA_FMParse::ParseLogicalOrExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParse::ParseLogicalAndExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseEqualityExpression();
   for (;;) {
     switch (m_pToken->m_type) {
@@ -274,7 +274,7 @@ CXFA_FMParse::ParseLogicalAndExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParse::ParseEqualityExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseRelationalExpression();
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
@@ -311,7 +311,7 @@ CXFA_FMParse::ParseEqualityExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParse::ParseRelationalExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseAddtiveExpression();
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
@@ -370,7 +370,7 @@ CXFA_FMParse::ParseRelationalExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParse::ParseAddtiveExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseMultiplicativeExpression();
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
@@ -405,7 +405,7 @@ CXFA_FMParse::ParseAddtiveExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParse::ParseMultiplicativeExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseUnaryExpression();
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
@@ -440,7 +440,7 @@ CXFA_FMParse::ParseMultiplicativeExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseUnaryExpression() {
   std::unique_ptr<CXFA_FMSimpleExpression> expr;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   switch (m_pToken->m_type) {
     case TOKplus:
       NextToken();
@@ -476,20 +476,20 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseUnaryExpression() {
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParse::ParsePrimaryExpression() {
   std::unique_ptr<CXFA_FMSimpleExpression> expr;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   switch (m_pToken->m_type) {
     case TOKnumber:
-      expr = pdfium::MakeUnique<CXFA_FMNumberExpression>(line,
-                                                         m_pToken->m_wstring);
+      expr =
+          pdfium::MakeUnique<CXFA_FMNumberExpression>(line, m_pToken->m_string);
       NextToken();
       break;
     case TOKstring:
-      expr = pdfium::MakeUnique<CXFA_FMStringExpression>(line,
-                                                         m_pToken->m_wstring);
+      expr =
+          pdfium::MakeUnique<CXFA_FMStringExpression>(line, m_pToken->m_string);
       NextToken();
       break;
     case TOKidentifier: {
-      CFX_WideStringC wsIdentifier(m_pToken->m_wstring);
+      CFX_WideStringC wsIdentifier(m_pToken->m_string);
       NextToken();
       if (m_pToken->m_type == TOKlbracket) {
         std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
@@ -506,7 +506,7 @@ CXFA_FMParse::ParsePrimaryExpression() {
     }
     case TOKif:
       expr = pdfium::MakeUnique<CXFA_FMIdentifierExpression>(
-          line, m_pToken->m_wstring);
+          line, m_pToken->m_string);
       NextToken();
       break;
     case TOKnull:
@@ -529,7 +529,7 @@ CXFA_FMParse::ParsePrimaryExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> expr) {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   while (1) {
     switch (m_pToken->m_type) {
       case TOKlparen: {
@@ -572,8 +572,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
       case TOKdot:
         NextToken();
         if (m_pToken->m_type == TOKidentifier) {
-          CFX_WideStringC tempStr = m_pToken->m_wstring;
-          uint32_t tempLine = m_pToken->m_uLinenum;
+          CFX_WideStringC tempStr = m_pToken->m_string;
+          uint32_t tempLine = m_pToken->m_line_num;
           NextToken();
           if (m_pToken->m_type == TOKlparen) {
             std::unique_ptr<CXFA_FMSimpleExpression> pExpCall;
@@ -640,8 +640,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
       case TOKdotdot:
         NextToken();
         if (m_pToken->m_type == TOKidentifier) {
-          CFX_WideStringC tempStr = m_pToken->m_wstring;
-          uint32_t tempLine = m_pToken->m_uLinenum;
+          CFX_WideStringC tempStr = m_pToken->m_string;
+          uint32_t tempLine = m_pToken->m_line_num;
           NextToken();
           if (m_pToken->m_type == TOKlbracket) {
             std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
@@ -669,8 +669,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
           m_ParserError = true;
           return expr;
         }
-        CFX_WideStringC tempStr = m_pToken->m_wstring;
-        uint32_t tempLine = m_pToken->m_uLinenum;
+        CFX_WideStringC tempStr = m_pToken->m_string;
+        uint32_t tempLine = m_pToken->m_line_num;
         NextToken();
         if (m_pToken->m_type != TOKlbracket) {
           std::unique_ptr<CXFA_FMSimpleExpression> s =
@@ -706,7 +706,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseIndexExpression() {
   std::unique_ptr<CXFA_FMSimpleExpression> pExp;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   NextToken();
   std::unique_ptr<CXFA_FMSimpleExpression> s;
   XFA_FM_AccessorIndex accessorIndex = ACCESSOR_NO_RELATIVEINDEX;
@@ -746,7 +746,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseParenExpression() {
     return nullptr;
   }
 
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseLogicalOrExpression();
 
   int level = 1;
@@ -767,7 +767,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseParenExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseBlockExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   std::unique_ptr<CXFA_FMExpression> expr;
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
 
@@ -807,7 +807,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseBlockExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   const wchar_t* pStartPos = m_lexer->GetPos();
   NextToken();
   Check(TOKlparen);
@@ -824,7 +824,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
     auto pNewToken = pdfium::MakeUnique<CXFA_FMToken>(line);
     m_pToken = pNewToken.get();
     m_pToken->m_type = TOKidentifier;
-    m_pToken->m_wstring = L"if";
+    m_pToken->m_string = L"if";
     m_lexer->SetToken(std::move(pNewToken));
     m_lexer->SetPos(pStartPos);
     return ParseExpExpression();
@@ -864,7 +864,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseWhileExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   NextToken();
   std::unique_ptr<CXFA_FMSimpleExpression> pCondition = ParseParenExpression();
   Check(TOKdo);
@@ -895,12 +895,12 @@ CXFA_FMParse::ParseSubassignmentInForExpression() {
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForExpression() {
   CFX_WideStringC wsVariant;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   NextToken();
   if (m_pToken->m_type != TOKidentifier)
     m_ParserError = true;
 
-  wsVariant = m_pToken->m_wstring;
+  wsVariant = m_pToken->m_string;
   NextToken();
   std::unique_ptr<CXFA_FMSimpleExpression> pAssignment;
   if (m_pToken->m_type == TOKassign) {
@@ -942,12 +942,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForeachExpression() {
   CFX_WideStringC wsIdentifier;
   std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> pAccessors;
   std::unique_ptr<CXFA_FMExpression> pList;
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   NextToken();
   if (m_pToken->m_type != TOKidentifier)
     m_ParserError = true;
 
-  wsIdentifier = m_pToken->m_wstring;
+  wsIdentifier = m_pToken->m_string;
   NextToken();
   Check(TOKin);
   Check(TOKlparen);
@@ -976,7 +976,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForeachExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseDoExpression() {
-  uint32_t line = m_pToken->m_uLinenum;
+  uint32_t line = m_pToken->m_line_num;
   NextToken();
   std::unique_ptr<CXFA_FMExpression> expr = ParseBlockExpression();
   Check(TOKend);
