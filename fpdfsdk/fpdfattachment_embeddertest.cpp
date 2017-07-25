@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "public/fpdf_attachment.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -234,4 +238,33 @@ TEST_F(FPDFAttachmentEmbeddertest, AddAttachmentsWithParams) {
                                                buf.data(), len));
   EXPECT_EQ(L"<D41D8CD98F00B204E9800998ECF8427E>",
             GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data())));
+}
+
+TEST_F(FPDFAttachmentEmbeddertest, DeleteAttachment) {
+  // Open a file with two attachments.
+  ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
+  EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
+
+  // Verify the name of the first attachment.
+  FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(document(), 0);
+  unsigned long len = FPDFAttachment_GetName(attachment, nullptr, 0);
+  std::vector<char> buf(len);
+  EXPECT_EQ(12u, FPDFAttachment_GetName(attachment, buf.data(), len));
+  EXPECT_STREQ(L"1.txt",
+               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
+                   .c_str());
+
+  // Delete the first attachment.
+  EXPECT_TRUE(FPDFDoc_DeleteAttachment(document(), 0));
+  EXPECT_EQ(1, FPDFDoc_GetAttachmentCount(document()));
+
+  // Verify the name of the new first attachment.
+  attachment = FPDFDoc_GetAttachment(document(), 0);
+  len = FPDFAttachment_GetName(attachment, nullptr, 0);
+  buf.clear();
+  buf.resize(len);
+  EXPECT_EQ(26u, FPDFAttachment_GetName(attachment, buf.data(), len));
+  EXPECT_STREQ(L"attached.pdf",
+               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
+                   .c_str());
 }

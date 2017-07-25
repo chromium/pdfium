@@ -112,6 +112,19 @@ DLLEXPORT FPDF_ATTACHMENT STDCALL FPDFDoc_GetAttachment(FPDF_DOCUMENT document,
   return nameTree.LookupValueAndName(index, &csName);
 }
 
+DLLEXPORT FPDF_BOOL STDCALL FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document,
+                                                     int index) {
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc || index < 0)
+    return false;
+
+  CPDF_NameTree nameTree(pDoc, "EmbeddedFiles");
+  if (static_cast<size_t>(index) >= nameTree.GetCount())
+    return false;
+
+  return nameTree.DeleteValueAndName(index);
+}
+
 DLLEXPORT unsigned long STDCALL
 FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
                        void* buffer,
