@@ -30,8 +30,8 @@ DLLEXPORT int STDCALL FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document);
 //   name     - name of the new attachment.
 //
 // Returns a handle to the new attachment object, or NULL on failure.
-DLLEXPORT FPDF_ATTACHMENT FPDFDoc_AddAttachment(FPDF_DOCUMENT document,
-                                                FPDF_WIDESTRING name);
+DLLEXPORT FPDF_ATTACHMENT STDCALL FPDFDoc_AddAttachment(FPDF_DOCUMENT document,
+                                                        FPDF_WIDESTRING name);
 
 // Experimental API.
 // Get the embedded attachment at |index| in |document|. Note that the returned
@@ -128,10 +128,10 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
 //   len        - length of file data.
 //
 // Returns true if successful.
-DLLEXPORT FPDF_BOOL FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
-                                           FPDF_DOCUMENT document,
-                                           const void* contents,
-                                           const unsigned long len);
+DLLEXPORT FPDF_BOOL STDCALL FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
+                                                   FPDF_DOCUMENT document,
+                                                   const void* contents,
+                                                   const unsigned long len);
 
 // Experimental API.
 // Get the file data of |attachment|. |buffer| is only modified if |buflen| is

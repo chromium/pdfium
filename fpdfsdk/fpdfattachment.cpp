@@ -4,6 +4,9 @@
 
 #include "public/fpdf_attachment.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fdrm/crypto/fx_crypt.h"
 #include "core/fpdfapi/page/cpdf_streamparser.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -51,8 +54,8 @@ DLLEXPORT int STDCALL FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document) {
   return CPDF_NameTree(pDoc, "EmbeddedFiles").GetCount();
 }
 
-DLLEXPORT FPDF_ATTACHMENT FPDFDoc_AddAttachment(FPDF_DOCUMENT document,
-                                                FPDF_WIDESTRING name) {
+DLLEXPORT FPDF_ATTACHMENT STDCALL FPDFDoc_AddAttachment(FPDF_DOCUMENT document,
+                                                        FPDF_WIDESTRING name) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   CFX_WideString wsName =
       CFX_WideString::FromUTF16LE(name, CFX_WideString::WStringLength(name));
@@ -198,10 +201,10 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
   return Utf16EncodeMaybeCopyAndReturnLength(value, buffer, buflen);
 }
 
-DLLEXPORT FPDF_BOOL FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
-                                           FPDF_DOCUMENT document,
-                                           const void* contents,
-                                           const unsigned long len) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
+                                                   FPDF_DOCUMENT document,
+                                                   const void* contents,
+                                                   const unsigned long len) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pFile || !pFile->IsDictionary() || !pDoc || len > INT_MAX)
