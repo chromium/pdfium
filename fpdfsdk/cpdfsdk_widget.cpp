@@ -29,8 +29,8 @@
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/fsdk_actionhandler.h"
 #include "fpdfsdk/fsdk_define.h"
-#include "fpdfsdk/pdfwindow/cpwl_appstream.h"
-#include "fpdfsdk/pdfwindow/cpwl_edit.h"
+#include "fpdfsdk/pwl/cpwl_appstream.h"
+#include "fpdfsdk/pwl/cpwl_edit.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"

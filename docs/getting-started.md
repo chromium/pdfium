@@ -73,7 +73,7 @@ the link line in order to compile. My build line was:
 ```
 PDF_LIBS="-lpdfium -lfpdfapi -lfxge -lfpdfdoc -lfxcrt -lfx_agg \
 -lfxcodec -lfx_lpng -lfx_libopenjpeg -lfx_lcms2 -lfx_freetype -ljpeg \
--lfdrm -lpdfwindow -lbigint -lformfiller -ljavascript -lfxedit"
+-lfdrm -lpwl -lbigint -lformfiller -ljavascript -lfxedit"
 PDF_DIR=<path/to/pdfium>
 
 clang -I $PDF_DIR/public -o init init.c -L $PDF_DIR/out/Debug -lstdc++ -framework AppKit $PDF_LIBS

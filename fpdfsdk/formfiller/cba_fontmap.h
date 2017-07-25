@@ -8,7 +8,7 @@
 #define FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "fpdfsdk/pdfwindow/cpwl_font_map.h"
+#include "fpdfsdk/pwl/cpwl_font_map.h"
 
 class CPDF_Dictionary;
 class CPDFSDK_Annot;

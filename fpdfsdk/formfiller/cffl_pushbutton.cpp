@@ -7,7 +7,7 @@
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/pdfwindow/cpwl_special_button.h"
+#include "fpdfsdk/pwl/cpwl_special_button.h"
 
 CFFL_PushButton::CFFL_PushButton(CPDFSDK_FormFillEnvironment* pApp,
                                  CPDFSDK_Widget* pWidget)

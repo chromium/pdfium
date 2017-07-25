@@ -14,7 +14,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "fpdfsdk/fsdk_define.h"
-#include "fpdfsdk/pdfwindow/cpwl_font_map.h"
+#include "fpdfsdk/pwl/cpwl_font_map.h"
 #include "third_party/base/ptr_util.h"
 
 static_assert(FXFONT_ANSI_CHARSET == FX_CHARSET_ANSI, "Charset must match");

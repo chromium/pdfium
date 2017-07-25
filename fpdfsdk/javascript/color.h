@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/pdfwindow/cpwl_wnd.h"
+#include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class color : public CJS_EmbedObj {
  public:
