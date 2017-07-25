@@ -375,13 +375,16 @@ CFX_RenderDevice::CFX_RenderDevice()
 CFX_RenderDevice::~CFX_RenderDevice() {
   RestoreState(false);
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
-  Flush();
+  Flush(true);
 #endif
 }
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
-void CFX_RenderDevice::Flush() {
-  m_pDeviceDriver.reset();
+void CFX_RenderDevice::Flush(bool release) {
+  if (release)
+    m_pDeviceDriver.reset();
+  else
+    m_pDeviceDriver->Flush();
 }
 #endif
 

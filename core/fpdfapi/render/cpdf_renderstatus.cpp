@@ -944,7 +944,7 @@ CFX_RetainPtr<CFX_DIBitmap> DrawPatternBitmap(CPDF_Document* pDoc,
   context.AppendLayer(pPattern->form(), &mtPattern2Bitmap);
   context.Render(&bitmap_device, &options, nullptr);
 #if defined _SKIA_SUPPORT_PATHS_
-  bitmap_device.Flush();
+  bitmap_device.Flush(true);
   pBitmap->UnPreMultiply();
 #endif
   return pBitmap;
@@ -1602,7 +1602,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                            m_bDropObjects, pFormResource, true);
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
 #if defined _SKIA_SUPPORT_PATHS_
-  bitmap_device.Flush();
+  bitmap_device.Flush(true);
   bitmap->UnPreMultiply();
 #endif
   m_bStopped = bitmap_render.m_bStopped;

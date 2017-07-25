@@ -2595,7 +2595,7 @@ bool CFX_DefaultRenderDevice::Create(
 }
 
 CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() {
-  Flush();
+  Flush(true);
 }
 
 #ifdef _SKIA_SUPPORT_

@@ -61,7 +61,7 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                          rotate, flags, false, &IPauseAdapter);
 
 #ifdef _SKIA_SUPPORT_PATHS_
-  pDevice->Flush();
+  pDevice->Flush(false);
   pBitmap->UnPreMultiply();
 #endif
   if (pContext->m_pRenderer) {
@@ -86,7 +86,7 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
     pContext->m_pRenderer->Continue(&IPauseAdapter);
 #ifdef _SKIA_SUPPORT_PATHS_
     CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
-    pDevice->Flush();
+    pDevice->Flush(false);
     pDevice->GetBitmap()->UnPreMultiply();
 #endif
     return CPDF_ProgressiveRenderer::ToFPDFStatus(
@@ -97,6 +97,15 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
 
 DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (pPage)
+  if (pPage) {
+#ifdef _SKIA_SUPPORT_PATHS_
+    CPDF_PageRenderContext* pContext = pPage->GetRenderContext();
+    if (pContext && pContext->m_pRenderer) {
+      CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
+      pDevice->Flush(true);
+      pDevice->GetBitmap()->UnPreMultiply();
+    }
+#endif
     pPage->SetRenderContext(nullptr);
+  }
 }

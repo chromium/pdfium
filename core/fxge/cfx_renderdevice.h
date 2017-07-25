@@ -274,7 +274,7 @@ class CFX_RenderDevice {
                                int blend_type);
 #endif
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
-  void Flush();
+  void Flush(bool release);
 #endif
 
  private:

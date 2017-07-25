@@ -144,7 +144,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 #endif  // PDF_ENABLE_XFA
   }
 #ifdef _SKIA_SUPPORT_PATHS_
-  pDevice->Flush();
+  pDevice->Flush(true);
   holder->UnPreMultiply();
 #endif
 }
