@@ -14,7 +14,9 @@ Also install Python, Subversion, and Git and make sure they're in your path.
 PDFium uses a similar Windows toolchain as Chromium:
 
 #### Open source contributors
-Visual Studio 2015 Update 2 or later is highly recommended.
+Visual Studio 2015 Update 2 or later is highly recommended. Visual Studio 2015
+is current default version, run `set GYP_MSVS_VERSION=2017` when you use Visual
+Studio 2017.
 
 Run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0`, or set that variable in your global
 environment.
