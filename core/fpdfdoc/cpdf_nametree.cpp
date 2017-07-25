@@ -19,13 +19,28 @@ namespace {
 
 const int nMaxRecursion = 32;
 
+std::pair<CFX_WideString, CFX_WideString> GetNodeLimitsMaybeSwap(
+    CPDF_Array* pLimits) {
+  ASSERT(pLimits);
+  CFX_WideString csLeft = pLimits->GetUnicodeTextAt(0);
+  CFX_WideString csRight = pLimits->GetUnicodeTextAt(1);
+  // If the lower limit is greater than the upper limit, swap them.
+  if (csLeft.Compare(csRight) > 0) {
+    pLimits->SetNewAt<CPDF_String>(0, csRight);
+    pLimits->SetNewAt<CPDF_String>(1, csLeft);
+    csLeft = pLimits->GetUnicodeTextAt(0);
+    csRight = pLimits->GetUnicodeTextAt(1);
+  }
+  return {csLeft, csRight};
+}
+
 // Get the limit arrays that leaf array |pFind| is under in the tree with root
 // |pNode|. |pLimits| will hold all the limit arrays from the leaf up to before
 // the root. Return true if successful.
-bool GetNodeLimits(const CPDF_Dictionary* pNode,
-                   const CPDF_Array* pFind,
-                   int nLevel,
-                   std::vector<CPDF_Array*>* pLimits) {
+bool GetNodeAncestorsLimits(const CPDF_Dictionary* pNode,
+                            const CPDF_Array* pFind,
+                            int nLevel,
+                            std::vector<CPDF_Array*>* pLimits) {
   if (nLevel > nMaxRecursion)
     return false;
 
@@ -43,10 +58,92 @@ bool GetNodeLimits(const CPDF_Dictionary* pNode,
     if (!pKid)
       continue;
 
-    if (GetNodeLimits(pKid, pFind, nLevel + 1, pLimits)) {
+    if (GetNodeAncestorsLimits(pKid, pFind, nLevel + 1, pLimits)) {
       pLimits->push_back(pNode->GetArrayFor("Limits"));
       return true;
     }
+  }
+  return false;
+}
+
+// Upon the deletion of |csName| from leaf array |pFind|, update the ancestors
+// of |pFind|. Specifically, the limits of |pFind|'s ancestors will be updated
+// if needed, and any ancestors that are now empty will be removed.
+bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
+                                      const CPDF_Array* pFind,
+                                      const CFX_WideString& csName,
+                                      int nLevel) {
+  if (nLevel > nMaxRecursion)
+    return false;
+
+  CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
+  CFX_WideString csLeft;
+  CFX_WideString csRight;
+  if (pLimits)
+    std::tie(csLeft, csRight) = GetNodeLimitsMaybeSwap(pLimits);
+
+  CPDF_Array* pNames = pNode->GetArrayFor("Names");
+  if (pNames) {
+    if (pNames != pFind)
+      return false;
+    if (pNames->IsEmpty() || !pLimits)
+      return true;
+    if (csLeft != csName && csRight != csName)
+      return true;
+
+    // Since |csName| defines |pNode|'s limits, we need to loop through the
+    // names to find the new lower and upper limits.
+    CFX_WideString csNewLeft = csRight;
+    CFX_WideString csNewRight = csLeft;
+    for (size_t i = 0; i < pNames->GetCount() / 2; ++i) {
+      CFX_WideString wsName = pNames->GetUnicodeTextAt(i * 2);
+      if (wsName.Compare(csNewLeft) < 0)
+        csNewLeft = wsName;
+      if (wsName.Compare(csNewRight) > 0)
+        csNewRight = wsName;
+    }
+    pLimits->SetNewAt<CPDF_String>(0, csNewLeft);
+    pLimits->SetNewAt<CPDF_String>(1, csNewRight);
+    return true;
+  }
+
+  CPDF_Array* pKids = pNode->GetArrayFor("Kids");
+  if (!pKids)
+    return false;
+
+  // Loop through the kids to find the leaf array |pFind|.
+  for (size_t i = 0; i < pKids->GetCount(); ++i) {
+    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    if (!pKid)
+      continue;
+    if (!UpdateNodesAndLimitsUponDeletion(pKid, pFind, csName, nLevel + 1))
+      continue;
+
+    // Remove this child node if it's empty.
+    if ((pKid->KeyExist("Names") && pKid->GetArrayFor("Names")->IsEmpty()) ||
+        (pKid->KeyExist("Kids") && pKid->GetArrayFor("Kids")->IsEmpty())) {
+      pKids->RemoveAt(i);
+    }
+    if (pKids->IsEmpty() || !pLimits)
+      return true;
+    if (csLeft != csName && csRight != csName)
+      return true;
+
+    // Since |csName| defines |pNode|'s limits, we need to loop through the
+    // kids to find the new lower and upper limits.
+    CFX_WideString csNewLeft = csRight;
+    CFX_WideString csNewRight = csLeft;
+    for (size_t j = 0; j < pKids->GetCount(); ++j) {
+      CPDF_Array* pKidLimits = pKids->GetDictAt(j)->GetArrayFor("Limits");
+      ASSERT(pKidLimits);
+      if (pKidLimits->GetUnicodeTextAt(0).Compare(csNewLeft) < 0)
+        csNewLeft = pKidLimits->GetUnicodeTextAt(0);
+      if (pKidLimits->GetUnicodeTextAt(1).Compare(csNewRight) > 0)
+        csNewRight = pKidLimits->GetUnicodeTextAt(1);
+    }
+    pLimits->SetNewAt<CPDF_String>(0, csNewLeft);
+    pLimits->SetNewAt<CPDF_String>(1, csNewRight);
+    return true;
   }
   return false;
 }
@@ -69,15 +166,9 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
   CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pLimits) {
-    CFX_WideString csLeft = pLimits->GetUnicodeTextAt(0);
-    CFX_WideString csRight = pLimits->GetUnicodeTextAt(1);
-    // If the lower limit is greater than the higher limit, swap them.
-    if (csLeft.Compare(csRight) > 0) {
-      pLimits->SetNewAt<CPDF_String>(0, csRight);
-      pLimits->SetNewAt<CPDF_String>(1, csLeft);
-      csLeft = pLimits->GetUnicodeTextAt(0);
-      csRight = pLimits->GetUnicodeTextAt(1);
-    }
+    CFX_WideString csLeft;
+    CFX_WideString csRight;
+    std::tie(csLeft, csRight) = GetNodeLimitsMaybeSwap(pLimits);
     // Skip this node if the name to look for is smaller than its lower limit.
     if (csName.Compare(csLeft) < 0)
       return nullptr;
@@ -87,7 +178,6 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     if (csName.Compare(csRight) > 0 && pNames) {
       if (ppFind)
         *ppFind = pNames;
-
       if (pFindIndex)
         *pFindIndex = pNames->GetCount() / 2 - 1;
 
@@ -103,13 +193,10 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
       int32_t iCompare = csValue.Compare(csName);
       if (iCompare > 0)
         break;
-
       if (ppFind)
         *ppFind = pNames;
-
       if (pFindIndex)
         *pFindIndex = i;
-
       if (iCompare < 0)
         continue;
 
@@ -139,14 +226,16 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
 }
 
 // Get the key-value pair at |nIndex| in the tree with root |pNode|. If
-// successful, return the value object; |csName| will be the key, and |ppFind|
-// will be the leaf array that this pair is in.
+// successful, return the value object; |csName| will be the key, |ppFind|
+// will be the leaf array that this pair is in, and |pFindIndex| will be the
+// index of the pair in |pFind|.
 CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
                             size_t nIndex,
                             size_t& nCurIndex,
                             int nLevel,
                             CFX_WideString* csName,
-                            CPDF_Array** ppFind) {
+                            CPDF_Array** ppFind,
+                            int* pFindIndex) {
   if (nLevel > nMaxRecursion)
     return nullptr;
 
@@ -159,18 +248,23 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     }
     if (ppFind)
       *ppFind = pNames;
+    if (pFindIndex)
+      *pFindIndex = nIndex - nCurIndex;
+
     *csName = pNames->GetUnicodeTextAt((nIndex - nCurIndex) * 2);
     return pNames->GetDirectObjectAt((nIndex - nCurIndex) * 2 + 1);
   }
+
   CPDF_Array* pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return nullptr;
+
   for (size_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
-    CPDF_Object* pFound =
-        SearchNameNode(pKid, nIndex, nCurIndex, nLevel + 1, csName, ppFind);
+    CPDF_Object* pFound = SearchNameNode(pKid, nIndex, nCurIndex, nLevel + 1,
+                                         csName, ppFind, pFindIndex);
     if (pFound)
       return pFound;
   }
@@ -254,7 +348,7 @@ bool CPDF_NameTree::AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
   if (!pFind) {
     size_t nCurIndex = 0;
     CFX_WideString csName;
-    SearchNameNode(m_pRoot.Get(), 0, nCurIndex, 0, &csName, &pFind);
+    SearchNameNode(m_pRoot.Get(), 0, nCurIndex, 0, &csName, &pFind, nullptr);
   }
   ASSERT(pFind);
 
@@ -268,7 +362,7 @@ bool CPDF_NameTree::AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
   // Expand the limits that the newly added name is under, if the name falls
   // outside of the limits of its leaf array or any arrays above it.
   std::vector<CPDF_Array*> pLimits;
-  GetNodeLimits(m_pRoot.Get(), pFind, 0, &pLimits);
+  GetNodeAncestorsLimits(m_pRoot.Get(), pFind, 0, &pLimits);
   for (auto* pLimit : pLimits) {
     if (!pLimit)
       continue;
@@ -282,6 +376,29 @@ bool CPDF_NameTree::AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
   return true;
 }
 
+bool CPDF_NameTree::DeleteValueAndName(int nIndex) {
+  if (!m_pRoot)
+    return false;
+
+  size_t nCurIndex = 0;
+  CFX_WideString csName;
+  CPDF_Array* pFind = nullptr;
+  int nFindIndex = -1;
+  // Fail if the tree does not contain |nIndex|.
+  if (!SearchNameNode(m_pRoot.Get(), nIndex, nCurIndex, 0, &csName, &pFind,
+                      &nFindIndex)) {
+    return false;
+  }
+
+  // Remove the name and the object from the leaf array |pFind|.
+  pFind->RemoveAt(nFindIndex * 2);
+  pFind->RemoveAt(nFindIndex * 2);
+
+  // Delete empty nodes and update the limits of |pFind|'s ancestors as needed.
+  UpdateNodesAndLimitsUponDeletion(m_pRoot.Get(), pFind, csName, 0);
+  return true;
+}
+
 CPDF_Object* CPDF_NameTree::LookupValueAndName(int nIndex,
                                                CFX_WideString* csName) const {
   csName->clear();
@@ -289,7 +406,8 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(int nIndex,
     return nullptr;
 
   size_t nCurIndex = 0;
-  return SearchNameNode(m_pRoot.Get(), nIndex, nCurIndex, 0, csName, nullptr);
+  return SearchNameNode(m_pRoot.Get(), nIndex, nCurIndex, 0, csName, nullptr,
+                        nullptr);
 }
 
 CPDF_Object* CPDF_NameTree::LookupValue(const CFX_WideString& csName) const {

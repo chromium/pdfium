@@ -25,6 +25,7 @@ class CPDF_NameTree {
 
   bool AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
                        const CFX_WideString& name);
+  bool DeleteValueAndName(int nIndex);
 
   CPDF_Object* LookupValueAndName(int nIndex, CFX_WideString* csName) const;
   CPDF_Object* LookupValue(const CFX_WideString& csName) const;
