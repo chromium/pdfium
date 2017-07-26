@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_FX_COORDINATES_H_
 #define CORE_FXCRT_FX_COORDINATES_H_
 
+#include <algorithm>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CFX_Matrix;
@@ -340,14 +342,12 @@ class CFX_RTemplate {
   void Union(BaseType x, BaseType y) {
     BaseType r = right();
     BaseType b = bottom();
-    if (left > x)
-      left = x;
-    if (r < x)
-      r = x;
-    if (top > y)
-      top = y;
-    if (b < y)
-      b = y;
+
+    left = std::min(left, x);
+    top = std::min(top, y);
+    r = std::max(r, x);
+    b = std::max(b, y);
+
     width = r - left;
     height = b - top;
   }
@@ -355,28 +355,24 @@ class CFX_RTemplate {
   void Union(const RectType& rt) {
     BaseType r = right();
     BaseType b = bottom();
-    if (left > rt.left)
-      left = rt.left;
-    if (r < rt.right())
-      r = rt.right();
-    if (top > rt.top)
-      top = rt.top;
-    if (b < rt.bottom())
-      b = rt.bottom();
+
+    left = std::min(left, rt.left);
+    top = std::min(top, rt.top);
+    r = std::max(r, rt.right());
+    b = std::max(b, rt.bottom());
+
     width = r - left;
     height = b - top;
   }
   void Intersect(const RectType& rt) {
     BaseType r = right();
     BaseType b = bottom();
-    if (left < rt.left)
-      left = rt.left;
-    if (r > rt.right())
-      r = rt.right();
-    if (top < rt.top)
-      top = rt.top;
-    if (b > rt.bottom())
-      b = rt.bottom();
+
+    left = std::max(left, rt.left);
+    top = std::max(top, rt.top);
+    r = std::min(r, rt.right());
+    b = std::min(b, rt.bottom());
+
     width = r - left;
     height = b - top;
   }
