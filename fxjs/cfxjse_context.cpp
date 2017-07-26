@@ -198,7 +198,8 @@ std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext =
       v8::Local<v8::Context>::New(m_pIsolate, m_hContext);
-  v8::Local<v8::Object> hGlobalObject = hContext->Global();
+  v8::Local<v8::Object> hGlobalObject =
+      FXJSE_GetGlobalObjectFromContext(hContext);
   pValue->ForceSetValue(hGlobalObject);
   return pValue;
 }
