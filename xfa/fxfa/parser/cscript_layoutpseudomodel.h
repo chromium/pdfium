@@ -55,7 +55,8 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
                                       int32_t iPageNo,
                                       const CFX_WideString& wsType,
                                       bool bOnPageArea);
-  void PageImp(CFXJSE_Arguments* pArguments, bool bAbsPage);
+
+  void PageInternals(CFXJSE_Arguments* pArguments, bool bAbsPage);
   void ThrowSetReadyException() const;
 };
 

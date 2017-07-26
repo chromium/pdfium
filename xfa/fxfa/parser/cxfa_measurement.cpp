@@ -8,8 +8,18 @@
 
 #include "core/fxcrt/fx_extension.h"
 
+namespace {
+
+constexpr float kPtToInch = 72;
+constexpr float kPtToCm = kPtToInch / 2.54f;
+constexpr float kPtToMm = kPtToCm / 10;
+constexpr float kPtToMp = 0.001f;
+constexpr float kPtToPc = 12;
+
+}  // namespace
+
 CXFA_Measurement::CXFA_Measurement(const CFX_WideStringC& wsMeasure) {
-  Set(wsMeasure);
+  SetString(wsMeasure);
 }
 
 CXFA_Measurement::CXFA_Measurement() {
@@ -20,7 +30,7 @@ CXFA_Measurement::CXFA_Measurement(float fValue, XFA_UNIT eUnit) {
   Set(fValue, eUnit);
 }
 
-void CXFA_Measurement::Set(const CFX_WideStringC& wsMeasure) {
+void CXFA_Measurement::SetString(const CFX_WideStringC& wsMeasure) {
   if (wsMeasure.IsEmpty()) {
     m_fValue = 0;
     m_eUnit = XFA_UNIT_Unknown;
@@ -30,44 +40,49 @@ void CXFA_Measurement::Set(const CFX_WideStringC& wsMeasure) {
   int32_t iOffset = (wsMeasure.GetAt(0) == L'=') ? 1 : 0;
   float fValue = FXSYS_wcstof(wsMeasure.unterminated_c_str() + iOffset,
                               wsMeasure.GetLength() - iOffset, &iUsedLen);
-  XFA_UNIT eUnit = GetUnit(wsMeasure.Mid(iOffset + iUsedLen));
+  XFA_UNIT eUnit = GetUnitFromString(wsMeasure.Mid(iOffset + iUsedLen));
   Set(fValue, eUnit);
 }
 
-bool CXFA_Measurement::ToString(CFX_WideString& wsMeasure) const {
+bool CXFA_Measurement::ToString(CFX_WideString* wsMeasure) const {
   switch (GetUnit()) {
     case XFA_UNIT_Mm:
-      wsMeasure.Format(L"%.8gmm", GetValue());
+      wsMeasure->Format(L"%.8gmm", GetValue());
       return true;
     case XFA_UNIT_Pt:
-      wsMeasure.Format(L"%.8gpt", GetValue());
+      wsMeasure->Format(L"%.8gpt", GetValue());
       return true;
     case XFA_UNIT_In:
-      wsMeasure.Format(L"%.8gin", GetValue());
+      wsMeasure->Format(L"%.8gin", GetValue());
       return true;
     case XFA_UNIT_Cm:
-      wsMeasure.Format(L"%.8gcm", GetValue());
+      wsMeasure->Format(L"%.8gcm", GetValue());
       return true;
     case XFA_UNIT_Mp:
-      wsMeasure.Format(L"%.8gmp", GetValue());
+      wsMeasure->Format(L"%.8gmp", GetValue());
       return true;
     case XFA_UNIT_Pc:
-      wsMeasure.Format(L"%.8gpc", GetValue());
+      wsMeasure->Format(L"%.8gpc", GetValue());
       return true;
     case XFA_UNIT_Em:
-      wsMeasure.Format(L"%.8gem", GetValue());
+      wsMeasure->Format(L"%.8gem", GetValue());
       return true;
     case XFA_UNIT_Percent:
-      wsMeasure.Format(L"%.8g%%", GetValue());
+      wsMeasure->Format(L"%.8g%%", GetValue());
       return true;
     default:
-      wsMeasure.Format(L"%.8g", GetValue());
+      wsMeasure->Format(L"%.8g", GetValue());
       return false;
   }
 }
 
-bool CXFA_Measurement::ToUnit(XFA_UNIT eUnit, float& fValue) const {
-  fValue = GetValue();
+float CXFA_Measurement::ToUnit(XFA_UNIT eUnit) const {
+  float f;
+  return ToUnitInternal(eUnit, &f) ? f : 0;
+}
+
+bool CXFA_Measurement::ToUnitInternal(XFA_UNIT eUnit, float* fValue) const {
+  *fValue = GetValue();
   XFA_UNIT eFrom = GetUnit();
   if (eFrom == eUnit)
     return true;
@@ -76,49 +91,50 @@ bool CXFA_Measurement::ToUnit(XFA_UNIT eUnit, float& fValue) const {
     case XFA_UNIT_Pt:
       break;
     case XFA_UNIT_Mm:
-      fValue *= 72 / 2.54f / 10;
+      *fValue *= kPtToMm;
       break;
     case XFA_UNIT_In:
-      fValue *= 72;
+      *fValue *= kPtToInch;
       break;
     case XFA_UNIT_Cm:
-      fValue *= 72 / 2.54f;
+      *fValue *= kPtToCm;
       break;
     case XFA_UNIT_Mp:
-      fValue *= 0.001f;
+      *fValue *= kPtToMp;
       break;
     case XFA_UNIT_Pc:
-      fValue *= 12.0f;
+      *fValue *= kPtToPc;
       break;
     default:
-      fValue = 0;
+      *fValue = 0;
       return false;
   }
   switch (eUnit) {
     case XFA_UNIT_Pt:
       return true;
     case XFA_UNIT_Mm:
-      fValue /= 72 / 2.54f / 10;
+      *fValue /= kPtToMm;
       return true;
     case XFA_UNIT_In:
-      fValue /= 72;
+      *fValue /= kPtToInch;
       return true;
     case XFA_UNIT_Cm:
-      fValue /= 72 / 2.54f;
+      *fValue /= kPtToCm;
       return true;
     case XFA_UNIT_Mp:
-      fValue /= 0.001f;
+      *fValue /= kPtToMp;
       return true;
     case XFA_UNIT_Pc:
-      fValue /= 12.0f;
+      *fValue /= kPtToPc;
       return true;
     default:
-      fValue = 0;
+      NOTREACHED();
       return false;
   }
 }
 
-XFA_UNIT CXFA_Measurement::GetUnit(const CFX_WideStringC& wsUnit) {
+// static
+XFA_UNIT CXFA_Measurement::GetUnitFromString(const CFX_WideStringC& wsUnit) {
   if (wsUnit == L"mm")
     return XFA_UNIT_Mm;
   if (wsUnit == L"pt")

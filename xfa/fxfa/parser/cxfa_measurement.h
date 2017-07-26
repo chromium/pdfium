@@ -17,24 +17,23 @@ class CXFA_Measurement {
   CXFA_Measurement();
   CXFA_Measurement(float fValue, XFA_UNIT eUnit);
 
-  void Set(const CFX_WideStringC& wsMeasure);
+  static XFA_UNIT GetUnitFromString(const CFX_WideStringC& wsUnit);
+
   void Set(float fValue, XFA_UNIT eUnit) {
     m_fValue = fValue;
     m_eUnit = eUnit;
   }
 
-  XFA_UNIT GetUnit(const CFX_WideStringC& wsUnit);
   XFA_UNIT GetUnit() const { return m_eUnit; }
   float GetValue() const { return m_fValue; }
 
-  bool ToString(CFX_WideString& wsMeasure) const;
-  bool ToUnit(XFA_UNIT eUnit, float& fValue) const;
-  float ToUnit(XFA_UNIT eUnit) const {
-    float f;
-    return ToUnit(eUnit, f) ? f : 0;
-  }
+  bool ToString(CFX_WideString* wsMeasure) const;
+  float ToUnit(XFA_UNIT eUnit) const;
 
  private:
+  void SetString(const CFX_WideStringC& wsMeasure);
+  bool ToUnitInternal(XFA_UNIT eUnit, float* fValue) const;
+
   float m_fValue;
   XFA_UNIT m_eUnit;
 };

@@ -2087,7 +2087,7 @@ void CXFA_Node::Script_Som_BorderWidth(CFXJSE_Value* pValue,
   } else {
     CXFA_Edge edge = border.GetEdge(0);
     CXFA_Measurement thickness = edge.GetMSThickness();
-    thickness.ToString(wsThickness);
+    thickness.ToString(&wsThickness);
     pValue->SetString(wsThickness.UTF8Encode().AsStringC());
   }
 }
@@ -3606,9 +3606,9 @@ bool CXFA_Node::GetAttribute(XFA_ATTRIBUTE eAttr,
                              CFX_WideString& wsValue,
                              bool bUseDefault) {
   const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
-  if (!pAttr) {
+  if (!pAttr)
     return false;
-  }
+
   XFA_ATTRIBUTETYPE eType = pAttr->eType;
   if (eType == XFA_ATTRIBUTETYPE_NOTSURE) {
     const XFA_NOTSUREATTRIBUTE* pNotsure =
@@ -3618,48 +3618,47 @@ bool CXFA_Node::GetAttribute(XFA_ATTRIBUTE eAttr,
   switch (eType) {
     case XFA_ATTRIBUTETYPE_Enum: {
       XFA_ATTRIBUTEENUM eValue;
-      if (!TryEnum(pAttr->eName, eValue, bUseDefault)) {
+      if (!TryEnum(pAttr->eName, eValue, bUseDefault))
         return false;
-      }
+
       wsValue = GetAttributeEnumByID(eValue)->pName;
       return true;
-    } break;
+    }
     case XFA_ATTRIBUTETYPE_Cdata: {
       CFX_WideStringC wsValueC;
-      if (!TryCData(pAttr->eName, wsValueC, bUseDefault)) {
+      if (!TryCData(pAttr->eName, wsValueC, bUseDefault))
         return false;
-      }
+
       wsValue = wsValueC;
       return true;
-    } break;
+    }
     case XFA_ATTRIBUTETYPE_Boolean: {
       bool bValue;
-      if (!TryBoolean(pAttr->eName, bValue, bUseDefault)) {
+      if (!TryBoolean(pAttr->eName, bValue, bUseDefault))
         return false;
-      }
+
       wsValue = bValue ? L"1" : L"0";
       return true;
-    } break;
+    }
     case XFA_ATTRIBUTETYPE_Integer: {
       int32_t iValue;
-      if (!TryInteger(pAttr->eName, iValue, bUseDefault)) {
+      if (!TryInteger(pAttr->eName, iValue, bUseDefault))
         return false;
-      }
+
       wsValue.Format(L"%d", iValue);
       return true;
-    } break;
+    }
     case XFA_ATTRIBUTETYPE_Measure: {
       CXFA_Measurement mValue;
-      if (!TryMeasure(pAttr->eName, mValue, bUseDefault)) {
+      if (!TryMeasure(pAttr->eName, mValue, bUseDefault))
         return false;
-      }
-      mValue.ToString(wsValue);
+
+      mValue.ToString(&wsValue);
       return true;
-    } break;
+    }
     default:
-      break;
+      return false;
   }
-  return false;
 }
 
 bool CXFA_Node::SetAttribute(const CFX_WideStringC& wsAttr,
