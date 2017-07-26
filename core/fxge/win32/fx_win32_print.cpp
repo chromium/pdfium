@@ -611,13 +611,14 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
   CFX_WideString wsText;
   int totalLength = nChars;
 
-  // Detect new lines and add a space. Was likely removed by SkPDF if this is
-  // just text, and spaces seem to be ignored by label printers that use this
-  // driver.
+  // Detect new lines and add clrf characters (since this is Windows only).
+  // These characters are removed by SkPDF, but the new line information is
+  // preserved in the text location. clrf characters seem to be ignored by
+  // label printers that use this driver.
   if (m_SetOrigin &&
       FXSYS_round(m_OriginY) != FXSYS_round(pObject2Device->f * kScaleFactor)) {
-    wsText += L" ";
-    totalLength++;
+    wsText += L"\r\n";
+    totalLength += 2;
   }
   m_OriginY = pObject2Device->f * kScaleFactor;
   m_SetOrigin = true;
