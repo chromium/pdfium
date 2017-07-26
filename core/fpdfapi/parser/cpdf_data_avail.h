@@ -107,7 +107,6 @@ class CPDF_DataAvail final {
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
   bool IsLinearized();
-  void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, uint32_t* pSize);
   CFX_RetainPtr<IFX_SeekableReadStream> GetFileRead() const {
     return m_pFileRead;
   }

@@ -1568,14 +1568,6 @@ bool CPDF_DataAvail::CheckResources(DownloadHints* pHints) {
   return true;
 }
 
-void CPDF_DataAvail::GetLinearizedMainXRefInfo(FX_FILESIZE* pPos,
-                                               uint32_t* pSize) {
-  if (pPos)
-    *pPos = m_dwLastXRefOffset;
-  if (pSize)
-    *pSize = (uint32_t)(m_dwFileLen - m_dwLastXRefOffset);
-}
-
 int CPDF_DataAvail::GetPageCount() const {
   if (m_pLinearized)
     return m_pLinearized->GetPageCount();
