@@ -124,8 +124,6 @@ class CPDF_DataAvail final {
     std::vector<std::unique_ptr<PageNode>> m_ChildNodes;
   };
 
-  static const int kMaxDataAvailRecursionDepth = 64;
-  static int s_CurrentDataAvailRecursionDepth;
   static const int kMaxPageRecursionDepth = 1024;
 
   uint32_t GetObjectSize(uint32_t objnum, FX_FILESIZE& offset);
@@ -175,7 +173,6 @@ class CPDF_DataAvail final {
 
   DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage,
                                           DownloadHints* pHints);
-  bool HaveResourceAncestor(CPDF_Dictionary* pDict);
   bool CheckPage(uint32_t dwPage, DownloadHints* pHints);
   bool LoadDocPages(DownloadHints* pHints);
   bool LoadDocPage(uint32_t dwPage, DownloadHints* pHints);

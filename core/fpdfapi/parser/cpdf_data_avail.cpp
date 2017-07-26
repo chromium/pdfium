@@ -28,12 +28,34 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
+namespace {
+
+// static
+CPDF_Object* GetResourceObject(CPDF_Dictionary* pDict) {
+  constexpr size_t kMaxHierarchyDepth = 64;
+  size_t depth = 0;
+
+  CPDF_Dictionary* dictionary_to_check = pDict;
+  while (dictionary_to_check) {
+    CPDF_Object* result = dictionary_to_check->GetObjectFor("Resources");
+    if (result)
+      return result;
+    const CPDF_Object* parent = dictionary_to_check->GetObjectFor("Parent");
+    dictionary_to_check = parent ? parent->GetDict() : nullptr;
+
+    if (++depth > kMaxHierarchyDepth) {
+      // We have cycle in parents hierarchy.
+      return nullptr;
+    }
+  }
+  return nullptr;
+}
+
+}  // namespace
+
 CPDF_DataAvail::FileAvail::~FileAvail() {}
 
 CPDF_DataAvail::DownloadHints::~DownloadHints() {}
-
-// static
-int CPDF_DataAvail::s_CurrentDataAvailRecursionDepth = 0;
 
 CPDF_DataAvail::CPDF_DataAvail(
     FileAvail* pFileAvail,
@@ -1404,28 +1426,6 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedFirstPage(
   return DataAvailable;
 }
 
-bool CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary* pDict) {
-  CFX_AutoRestorer<int> restorer(&s_CurrentDataAvailRecursionDepth);
-  if (++s_CurrentDataAvailRecursionDepth > kMaxDataAvailRecursionDepth)
-    return false;
-
-  CPDF_Object* pParent = pDict->GetObjectFor("Parent");
-  if (!pParent)
-    return false;
-
-  CPDF_Dictionary* pParentDict = pParent->GetDict();
-  if (!pParentDict)
-    return false;
-
-  CPDF_Object* pRet = pParentDict->GetObjectFor("Resources");
-  if (pRet) {
-    m_pPageResource = pRet;
-    return true;
-  }
-
-  return HaveResourceAncestor(pParentDict);
-}
-
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     uint32_t dwPage,
     DownloadHints* pHints) {
@@ -1527,9 +1527,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   }
 
   if (m_pPageDict && !m_bNeedDownLoadResource) {
-    m_pPageResource = m_pPageDict->GetObjectFor("Resources");
-    m_bNeedDownLoadResource =
-        m_pPageResource || HaveResourceAncestor(m_pPageDict);
+    m_pPageResource = GetResourceObject(m_pPageDict);
+    m_bNeedDownLoadResource = !!m_pPageResource;
   }
 
   if (m_bNeedDownLoadResource) {
