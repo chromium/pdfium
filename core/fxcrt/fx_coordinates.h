@@ -194,6 +194,186 @@ using CFX_VectorF = CFX_VTemplate<float>;
 // Rectangles.
 // TODO(tsepez): Consolidate all these different rectangle classes.
 
+// LTRB rectangles (y-axis runs downwards).
+struct FX_RECT {
+  FX_RECT() : left(0), top(0), right(0), bottom(0) {}
+  FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
+
+  int Width() const { return right - left; }
+  int Height() const { return bottom - top; }
+  bool IsEmpty() const { return right <= left || bottom <= top; }
+
+  bool Valid() const {
+    pdfium::base::CheckedNumeric<int> w = right;
+    pdfium::base::CheckedNumeric<int> h = bottom;
+    w -= left;
+    h -= top;
+    return w.IsValid() && h.IsValid();
+  }
+
+  void Normalize();
+
+  void Intersect(const FX_RECT& src);
+  void Intersect(int l, int t, int r, int b) { Intersect(FX_RECT(l, t, r, b)); }
+
+  void Offset(int dx, int dy) {
+    left += dx;
+    right += dx;
+    top += dy;
+    bottom += dy;
+  }
+
+  bool operator==(const FX_RECT& src) const {
+    return left == src.left && right == src.right && top == src.top &&
+           bottom == src.bottom;
+  }
+
+  bool Contains(int x, int y) const {
+    return x >= left && x < right && y >= top && y < bottom;
+  }
+
+  int32_t left;
+  int32_t top;
+  int32_t right;
+  int32_t bottom;
+};
+
+// LTRB rectangles (y-axis runs upwards).
+class CFX_FloatRect {
+ public:
+  CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
+  CFX_FloatRect(float l, float b, float r, float t)
+      : left(l), bottom(b), right(r), top(t) {}
+
+  explicit CFX_FloatRect(const float* pArray)
+      : CFX_FloatRect(pArray[0], pArray[1], pArray[2], pArray[3]) {}
+
+  explicit CFX_FloatRect(const FX_RECT& rect);
+
+  void Normalize();
+
+  void Reset() {
+    left = 0.0f;
+    right = 0.0f;
+    bottom = 0.0f;
+    top = 0.0f;
+  }
+
+  bool IsEmpty() const { return left >= right || bottom >= top; }
+
+  bool Contains(const CFX_PointF& point) const;
+  bool Contains(const CFX_FloatRect& other_rect) const;
+
+  void Intersect(const CFX_FloatRect& other_rect);
+  void Union(const CFX_FloatRect& other_rect);
+
+  FX_RECT GetInnerRect() const;
+  FX_RECT GetOuterRect() const;
+  FX_RECT GetClosestRect() const;
+  CFX_FloatRect GetCenterSquare() const;
+
+  int Substract4(CFX_FloatRect& substract_rect, CFX_FloatRect* pRects);
+
+  void InitRect(float x, float y) {
+    left = x;
+    right = x;
+    bottom = y;
+    top = y;
+  }
+  void UpdateRect(float x, float y);
+
+  float Width() const { return right - left; }
+  float Height() const { return top - bottom; }
+
+  void Inflate(float x, float y) {
+    Normalize();
+    left -= x;
+    right += x;
+    bottom -= y;
+    top += y;
+  }
+
+  void Inflate(float other_left,
+               float other_bottom,
+               float other_right,
+               float other_top) {
+    Normalize();
+    left -= other_left;
+    bottom -= other_bottom;
+    right += other_right;
+    top += other_top;
+  }
+
+  void Inflate(const CFX_FloatRect& rt) {
+    Inflate(rt.left, rt.bottom, rt.right, rt.top);
+  }
+
+  void Deflate(float x, float y) {
+    Normalize();
+    left += x;
+    right -= x;
+    bottom += y;
+    top -= y;
+  }
+
+  void Deflate(float other_left,
+               float other_bottom,
+               float other_right,
+               float other_top) {
+    Normalize();
+    left += other_left;
+    bottom += other_bottom;
+    right -= other_right;
+    top -= other_top;
+  }
+
+  void Deflate(const CFX_FloatRect& rt) {
+    Deflate(rt.left, rt.bottom, rt.right, rt.top);
+  }
+
+  CFX_FloatRect GetDeflated(float x, float y) const {
+    if (IsEmpty())
+      return CFX_FloatRect();
+
+    CFX_FloatRect that = *this;
+    that.Deflate(x, y);
+    that.Normalize();
+    return that;
+  }
+
+  void Translate(float e, float f) {
+    left += e;
+    right += e;
+    top += f;
+    bottom += f;
+  }
+
+  void Scale(float fScale) {
+    float fHalfWidth = (right - left) / 2.0f;
+    float fHalfHeight = (top - bottom) / 2.0f;
+
+    float center_x = (left + right) / 2;
+    float center_y = (top + bottom) / 2;
+
+    left = center_x - fHalfWidth * fScale;
+    bottom = center_y - fHalfHeight * fScale;
+    right = center_x + fHalfWidth * fScale;
+    top = center_y + fHalfHeight * fScale;
+  }
+
+  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
+
+  FX_RECT ToFxRect() const {
+    return FX_RECT(static_cast<int32_t>(left), static_cast<int32_t>(top),
+                   static_cast<int32_t>(right), static_cast<int32_t>(bottom));
+  }
+
+  float left;
+  float bottom;
+  float right;
+  float top;
+};
+
 // LTWH rectangles (y-axis runs downwards).
 template <class BaseType>
 class CFX_RTemplate {
@@ -229,6 +409,12 @@ class CFX_RTemplate {
       : left(p.x), top(p.y), width(v.x), height(v.y) {
     Normalize();
   }
+
+  explicit CFX_RTemplate(const CFX_FloatRect& r)
+      : left(static_cast<BaseType>(r.left)),
+        top(static_cast<BaseType>(r.top)),
+        width(static_cast<BaseType>(r.Width())),
+        height(static_cast<BaseType>(r.Height())) {}
 
   // NOLINTNEXTLINE(runtime/explicit)
   CFX_RTemplate(const RectType& other)
@@ -394,6 +580,12 @@ class CFX_RTemplate {
     return !(rc1 == rc2);
   }
 
+  CFX_FloatRect ToFloatRect() const {
+    // Note, we flip top/bottom here because the CFX_FloatRect has the
+    // y-axis running in the opposite direction.
+    return CFX_FloatRect(left, top, right(), bottom());
+  }
+
   BaseType left;
   BaseType top;
   BaseType width;
@@ -401,190 +593,6 @@ class CFX_RTemplate {
 };
 using CFX_Rect = CFX_RTemplate<int32_t>;
 using CFX_RectF = CFX_RTemplate<float>;
-
-// LTRB rectangles (y-axis runs downwards).
-struct FX_RECT {
-  FX_RECT() : left(0), top(0), right(0), bottom(0) {}
-  FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
-
-  int Width() const { return right - left; }
-  int Height() const { return bottom - top; }
-  bool IsEmpty() const { return right <= left || bottom <= top; }
-
-  bool Valid() const {
-    pdfium::base::CheckedNumeric<int> w = right;
-    pdfium::base::CheckedNumeric<int> h = bottom;
-    w -= left;
-    h -= top;
-    return w.IsValid() && h.IsValid();
-  }
-
-  void Normalize();
-
-  void Intersect(const FX_RECT& src);
-  void Intersect(int l, int t, int r, int b) { Intersect(FX_RECT(l, t, r, b)); }
-
-  void Offset(int dx, int dy) {
-    left += dx;
-    right += dx;
-    top += dy;
-    bottom += dy;
-  }
-
-  bool operator==(const FX_RECT& src) const {
-    return left == src.left && right == src.right && top == src.top &&
-           bottom == src.bottom;
-  }
-
-  bool Contains(int x, int y) const {
-    return x >= left && x < right && y >= top && y < bottom;
-  }
-
-  int32_t left;
-  int32_t top;
-  int32_t right;
-  int32_t bottom;
-};
-
-// LBRT rectangles (y-axis runs upwards).
-class CFX_FloatRect {
- public:
-  CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
-  CFX_FloatRect(float l, float b, float r, float t)
-      : left(l), bottom(b), right(r), top(t) {}
-
-  explicit CFX_FloatRect(const float* pArray)
-      : CFX_FloatRect(pArray[0], pArray[1], pArray[2], pArray[3]) {}
-
-  explicit CFX_FloatRect(const FX_RECT& rect);
-
-  void Normalize();
-
-  void Reset() {
-    left = 0.0f;
-    right = 0.0f;
-    bottom = 0.0f;
-    top = 0.0f;
-  }
-
-  bool IsEmpty() const { return left >= right || bottom >= top; }
-
-  bool Contains(const CFX_PointF& point) const;
-  bool Contains(const CFX_FloatRect& other_rect) const;
-
-  void Intersect(const CFX_FloatRect& other_rect);
-  void Union(const CFX_FloatRect& other_rect);
-
-  FX_RECT GetInnerRect() const;
-  FX_RECT GetOuterRect() const;
-  FX_RECT GetClosestRect() const;
-  CFX_FloatRect GetCenterSquare() const;
-
-  int Substract4(CFX_FloatRect& substract_rect, CFX_FloatRect* pRects);
-
-  void InitRect(float x, float y) {
-    left = x;
-    right = x;
-    bottom = y;
-    top = y;
-  }
-  void UpdateRect(float x, float y);
-
-  float Width() const { return right - left; }
-  float Height() const { return top - bottom; }
-
-  void Inflate(float x, float y) {
-    Normalize();
-    left -= x;
-    right += x;
-    bottom -= y;
-    top += y;
-  }
-
-  void Inflate(float other_left,
-               float other_bottom,
-               float other_right,
-               float other_top) {
-    Normalize();
-    left -= other_left;
-    bottom -= other_bottom;
-    right += other_right;
-    top += other_top;
-  }
-
-  void Inflate(const CFX_FloatRect& rt) {
-    Inflate(rt.left, rt.bottom, rt.right, rt.top);
-  }
-
-  void Deflate(float x, float y) {
-    Normalize();
-    left += x;
-    right -= x;
-    bottom += y;
-    top -= y;
-  }
-
-  void Deflate(float other_left,
-               float other_bottom,
-               float other_right,
-               float other_top) {
-    Normalize();
-    left += other_left;
-    bottom += other_bottom;
-    right -= other_right;
-    top -= other_top;
-  }
-
-  void Deflate(const CFX_FloatRect& rt) {
-    Deflate(rt.left, rt.bottom, rt.right, rt.top);
-  }
-
-  CFX_FloatRect GetDeflated(float x, float y) const {
-    if (IsEmpty())
-      return CFX_FloatRect();
-
-    CFX_FloatRect that = *this;
-    that.Deflate(x, y);
-    that.Normalize();
-    return that;
-  }
-
-  void Translate(float e, float f) {
-    left += e;
-    right += e;
-    top += f;
-    bottom += f;
-  }
-
-  void Scale(float fScale) {
-    float fHalfWidth = (right - left) / 2.0f;
-    float fHalfHeight = (top - bottom) / 2.0f;
-
-    float center_x = (left + right) / 2;
-    float center_y = (top + bottom) / 2;
-
-    left = center_x - fHalfWidth * fScale;
-    bottom = center_y - fHalfHeight * fScale;
-    right = center_x + fHalfWidth * fScale;
-    top = center_y + fHalfHeight * fScale;
-  }
-
-  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
-
-  FX_RECT ToFxRect() const {
-    return FX_RECT(static_cast<int32_t>(left), static_cast<int32_t>(top),
-                   static_cast<int32_t>(right), static_cast<int32_t>(bottom));
-  }
-
-  static CFX_FloatRect FromCFXRectF(const CFX_RectF& rect) {
-    return CFX_FloatRect(rect.left, rect.top, rect.right(), rect.bottom());
-  }
-
-  float left;
-  float bottom;
-  float right;
-  float top;
-};
 
 // The matrix is of the form:
 // | a  b  0 |

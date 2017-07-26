@@ -66,8 +66,7 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (!pFormFillEnv)
     return;
 
-  pFormFillEnv->Invalidate(pPage.Get(),
-                           CFX_FloatRect::FromCFXRectF(rt).ToFxRect());
+  pFormFillEnv->Invalidate(pPage.Get(), rt.ToFloatRect().ToFxRect());
 }
 
 void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
@@ -97,7 +96,7 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
   if (!pFormFillEnv)
     return;
 
-  CFX_FloatRect rcCaret = CFX_FloatRect::FromCFXRectF(*pRtAnchor);
+  CFX_FloatRect rcCaret = pRtAnchor->ToFloatRect();
   pFormFillEnv->DisplayCaret(pPage.Get(), bVisible, rcCaret.left, rcCaret.top,
                              rcCaret.right, rcCaret.bottom);
 }
@@ -127,7 +126,7 @@ bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
 
   int t1;
   int t2;
-  CFX_FloatRect rcAnchor = CFX_FloatRect::FromCFXRectF(rtAnchor);
+  CFX_FloatRect rcAnchor = rtAnchor.ToFloatRect();
   int nRotate = hWidget->GetDataAcc()->GetRotate();
   switch (nRotate) {
     case 90: {
