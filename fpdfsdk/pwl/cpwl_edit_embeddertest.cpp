@@ -122,6 +122,9 @@ TEST_F(CPWLEditEmbeddertest, GetSelectedTextFragments) {
 
   GetCPWLEdit()->SetSelection(49, 50);
   EXPECT_STREQ(L"r", GetCPWLEdit()->GetSelectedText().c_str());
+
+  GetCPWLEdit()->SetSelection(49, 55);
+  EXPECT_STREQ(L"r", GetCPWLEdit()->GetSelectedText().c_str());
 }
 
 TEST_F(CPWLEditEmbeddertest, DeleteEntireTextSelection) {

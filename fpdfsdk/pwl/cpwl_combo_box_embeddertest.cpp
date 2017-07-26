@@ -193,6 +193,9 @@ TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextFragmentsEditable) {
 
   GetCPWLComboBox()->SetEditSelection(49, 50);
   EXPECT_STREQ(L"r", GetCPWLComboBox()->GetSelectedText().c_str());
+
+  GetCPWLComboBox()->SetEditSelection(49, 55);
+  EXPECT_STREQ(L"r", GetCPWLComboBox()->GetSelectedText().c_str());
 }
 
 TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEntireTextSelection) {
