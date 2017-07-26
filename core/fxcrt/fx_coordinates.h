@@ -450,7 +450,7 @@ struct FX_RECT {
   int32_t bottom;
 };
 
-// LTRB rectangles (y-axis runs upwards).
+// LBRT rectangles (y-axis runs upwards).
 class CFX_FloatRect {
  public:
   CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
