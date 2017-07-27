@@ -162,7 +162,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     if (wsExpr.GetAt(0) == '#') {
       CXFA_Node* pNode = pDocument->GetNodeByID(
           ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Template)),
-          wsExpr.Mid(1).AsStringC());
+          wsExpr.Mid(1, wsExpr.GetLength() - 1).AsStringC());
       if (pNode)
         return pNode;
     } else if (bNewExprStyle) {

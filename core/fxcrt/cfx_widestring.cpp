@@ -291,6 +291,7 @@ CFX_WideString::CFX_WideString(CFX_WideString&& other) noexcept {
 }
 
 CFX_WideString::CFX_WideString(const wchar_t* pStr, FX_STRSIZE nLen) {
+  ASSERT(nLen >= 0);
   if (nLen < 0)
     nLen = pStr ? FXSYS_wcslen(pStr) : 0;
 
@@ -605,14 +606,8 @@ CFX_ByteString CFX_WideString::UTF16LE_Encode() const {
   return result;
 }
 
-CFX_WideString CFX_WideString::Mid(FX_STRSIZE nFirst) const {
-  if (!m_pData)
-    return CFX_WideString();
-
-  return Mid(nFirst, m_pData->m_nDataLength - nFirst);
-}
-
 CFX_WideString CFX_WideString::Mid(FX_STRSIZE nFirst, FX_STRSIZE nCount) const {
+  ASSERT(nCount >= 0);
   if (!m_pData)
     return CFX_WideString();
 

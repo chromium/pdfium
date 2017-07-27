@@ -1323,7 +1323,10 @@ bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float* val) {
     } else {
       int32_t fA, fB;
       fA = FXSYS_wtoi(wsWideNarrowRatio.Left(ptPos).c_str());
-      fB = FXSYS_wtoi(wsWideNarrowRatio.Mid(ptPos + 1).c_str());
+      fB = FXSYS_wtoi(
+          wsWideNarrowRatio
+              .Mid(ptPos + 1, wsWideNarrowRatio.GetLength() - (ptPos + 1))
+              .c_str());
       if (fB)
         fRatio = (float)fA / fB;
     }

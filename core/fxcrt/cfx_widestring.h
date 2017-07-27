@@ -112,7 +112,6 @@ class CFX_WideString {
   int Compare(const CFX_WideString& str) const;
   int CompareNoCase(const wchar_t* str) const;
 
-  CFX_WideString Mid(FX_STRSIZE first) const;
   CFX_WideString Mid(FX_STRSIZE first, FX_STRSIZE count) const;
   CFX_WideString Left(FX_STRSIZE count) const;
   CFX_WideString Right(FX_STRSIZE count) const;

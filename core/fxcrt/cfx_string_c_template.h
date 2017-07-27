@@ -130,29 +130,32 @@ class CFX_StringCTemplate {
     return found ? found - m_Ptr.Get() : -1;
   }
 
-  CFX_StringCTemplate Mid(FX_STRSIZE index, FX_STRSIZE count = -1) const {
-    index = std::max(0, index);
+  CFX_StringCTemplate Mid(FX_STRSIZE index, FX_STRSIZE count) const {
+    ASSERT(count >= 0);
     if (index > m_Length)
       return CFX_StringCTemplate();
 
-    if (count < 0 || count > m_Length - index)
-      count = m_Length - index;
+    index = pdfium::clamp(index, 0, m_Length);
+    count = pdfium::clamp(count, 0, m_Length - index);
+    if (count == 0)
+      return CFX_StringCTemplate();
 
     return CFX_StringCTemplate(m_Ptr.Get() + index, count);
   }
 
   CFX_StringCTemplate Left(FX_STRSIZE count) const {
-    if (count <= 0)
+    count = pdfium::clamp(count, 0, m_Length);
+    if (count == 0)
       return CFX_StringCTemplate();
 
-    return CFX_StringCTemplate(m_Ptr.Get(), std::min(count, m_Length));
+    return CFX_StringCTemplate(m_Ptr.Get(), count);
   }
 
   CFX_StringCTemplate Right(FX_STRSIZE count) const {
-    if (count <= 0)
+    count = pdfium::clamp(count, 0, m_Length);
+    if (count == 0)
       return CFX_StringCTemplate();
 
-    count = std::min(count, m_Length);
     return CFX_StringCTemplate(m_Ptr.Get() + m_Length - count, count);
   }
 

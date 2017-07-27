@@ -619,7 +619,8 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (type != CPDF_StreamParser::Name) {
       break;
     }
-    CFX_ByteString key(m_pSyntax->GetWord().Mid(1));
+    auto word = m_pSyntax->GetWord();
+    CFX_ByteString key(word.Mid(1, word.GetLength() - 1));
     auto pObj = m_pSyntax->ReadNextObject(false, false, 0);
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
@@ -1185,7 +1186,7 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
   }
   if (name == "DeviceGray" || name == "DeviceCMYK" || name == "DeviceRGB") {
     CFX_ByteString defname = "Default";
-    defname += name.Mid(7);
+    defname += name.Mid(7, name.GetLength() - 7);
     CPDF_Object* pDefObj = FindResourceObj("ColorSpace", defname);
     if (!pDefObj) {
       if (name == "DeviceGray") {
@@ -1522,9 +1523,11 @@ uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
       case CPDF_StreamParser::Number:
         AddNumberParam(syntax.GetWord());
         break;
-      case CPDF_StreamParser::Name:
-        AddNameParam(syntax.GetWord().Mid(1));
+      case CPDF_StreamParser::Name: {
+        auto word = syntax.GetWord();
+        AddNameParam(word.Mid(1, word.GetLength() - 1));
         break;
+      }
       default:
         AddObjectParam(syntax.GetObject());
     }

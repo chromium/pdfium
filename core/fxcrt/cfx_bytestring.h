@@ -124,7 +124,6 @@ class CFX_ByteString {
   char* GetBuffer(FX_STRSIZE len);
   void ReleaseBuffer(FX_STRSIZE len = -1);
 
-  CFX_ByteString Mid(FX_STRSIZE first) const;
   CFX_ByteString Mid(FX_STRSIZE first, FX_STRSIZE count) const;
   CFX_ByteString Left(FX_STRSIZE count) const;
   CFX_ByteString Right(FX_STRSIZE count) const;

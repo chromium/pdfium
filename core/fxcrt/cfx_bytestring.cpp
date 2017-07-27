@@ -121,6 +121,7 @@ static_assert(sizeof(CFX_ByteString) <= sizeof(char*),
               "Strings must not require more space than pointers");
 
 CFX_ByteString::CFX_ByteString(const char* pStr, FX_STRSIZE nLen) {
+  ASSERT(nLen >= 0);
   if (nLen < 0)
     nLen = pStr ? FXSYS_strlen(pStr) : 0;
 
@@ -129,6 +130,7 @@ CFX_ByteString::CFX_ByteString(const char* pStr, FX_STRSIZE nLen) {
 }
 
 CFX_ByteString::CFX_ByteString(const uint8_t* pStr, FX_STRSIZE nLen) {
+  ASSERT(nLen >= 0);
   if (nLen > 0) {
     m_pData.Reset(
         StringData::Create(reinterpret_cast<const char*>(pStr), nLen));
@@ -456,14 +458,8 @@ void CFX_ByteString::Concat(const char* pSrcData, FX_STRSIZE nSrcLen) {
   m_pData.Swap(pNewData);
 }
 
-CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE nFirst) const {
-  if (!m_pData)
-    return CFX_ByteString();
-
-  return Mid(nFirst, m_pData->m_nDataLength - nFirst);
-}
-
 CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE nFirst, FX_STRSIZE nCount) const {
+  ASSERT(nCount >= 0);
   if (!m_pData)
     return CFX_ByteString();
 

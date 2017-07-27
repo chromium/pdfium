@@ -432,7 +432,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   CFX_ByteString SubstName = name;
   SubstName.Remove(' ');
   if (bTrueType && name[0] == '@')
-    SubstName = name.Mid(1);
+    SubstName = name.Mid(1, name.GetLength() - 1);
   PDF_GetStandardFontName(&SubstName);
   if (SubstName == "Symbol" && !bTrueType) {
     pSubstFont->m_Family = "Chrome Symbol";
@@ -453,7 +453,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   if (find >= 0) {
     family = SubstName.Left(find);
     PDF_GetStandardFontName(&family);
-    style = SubstName.Mid(find + 1);
+    style = SubstName.Mid(find + 1, SubstName.GetLength() - (find + 1));
     bHasComma = true;
   } else {
     family = SubstName;
@@ -480,7 +480,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     if (!bHasComma) {
       find = family.ReverseFind('-');
       if (find >= 0) {
-        style = family.Mid(find + 1);
+        style = family.Mid(find + 1, family.GetLength() - (find + 1));
         family = family.Left(find);
         bHasHyphen = true;
       }

@@ -1138,7 +1138,8 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
   CXFA_Document* pDoc = pContext->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
   CFX_ByteString szArgString = ValueToUTF8String(argOne.get());
-  szArgString = szArgString.Mid(szArgString.Find('T', 0) + 1);
+  FX_STRSIZE pos = szArgString.Find('T', 0);
+  szArgString = szArgString.Mid(pos + 1, szArgString.GetLength() - (pos + 1));
   if (szArgString.IsEmpty()) {
     args.GetReturnValue()->SetInteger(0);
     return;
@@ -3692,7 +3693,9 @@ void CXFA_FM2JSContext::Format(CFXJSE_Value* pThis,
         wsDatePattern += wsPattern.Left(iTChar) + L"} ";
 
         CFX_WideString wsTimePattern(L"time{");
-        wsTimePattern += wsPattern.Mid(iTChar + 1) + L"}";
+        wsTimePattern +=
+            wsPattern.Mid(iTChar + 1, wsPattern.GetLength() - (iTChar + 1)) +
+            L"}";
         wsPattern = wsDatePattern + wsTimePattern;
       } break;
       case XFA_VT_DATE: {
@@ -3877,7 +3880,10 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
     case XFA_VT_DATETIME: {
       FX_STRSIZE iTChar = wsPattern.Find(L'T');
       CFX_WideString wsDatePattern(L"date{" + wsPattern.Left(iTChar) + L"} ");
-      CFX_WideString wsTimePattern(L"time{" + wsPattern.Mid(iTChar + 1) + L"}");
+      CFX_WideString wsTimePattern(
+          L"time{" +
+          wsPattern.Mid(iTChar + 1, wsPattern.GetLength() - (iTChar + 1)) +
+          L"}");
       wsPattern = wsDatePattern + wsTimePattern;
       CXFA_LocaleValue localeValue(patternType, wsValue, wsPattern, pLocale,
                                    pMgr);

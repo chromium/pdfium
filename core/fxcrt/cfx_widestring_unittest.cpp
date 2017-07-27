@@ -406,10 +406,10 @@ TEST(fxcrt, WideStringMid) {
   CFX_WideString fred(L"FRED");
   EXPECT_EQ(L"", fred.Mid(0, 0));
   EXPECT_EQ(L"", fred.Mid(3, 0));
-  EXPECT_EQ(L"FRED", fred.Mid(0));
-  EXPECT_EQ(L"RED", fred.Mid(1));
-  EXPECT_EQ(L"ED", fred.Mid(2));
-  EXPECT_EQ(L"D", fred.Mid(3));
+  EXPECT_EQ(L"FRED", fred.Mid(0, 4));
+  EXPECT_EQ(L"RED", fred.Mid(1, 3));
+  EXPECT_EQ(L"ED", fred.Mid(2, 2));
+  EXPECT_EQ(L"D", fred.Mid(3, 1));
   EXPECT_EQ(L"F", fred.Mid(0, 1));
   EXPECT_EQ(L"R", fred.Mid(1, 1));
   EXPECT_EQ(L"E", fred.Mid(2, 1));
@@ -424,9 +424,6 @@ TEST(fxcrt, WideStringMid) {
 
   CFX_WideString empty;
   EXPECT_EQ(L"", empty.Mid(0, 0));
-  EXPECT_EQ(L"", empty.Mid(0));
-  EXPECT_EQ(L"", empty.Mid(1));
-  EXPECT_EQ(L"", empty.Mid(-1));
 }
 
 TEST(fxcrt, WideStringLeft) {

@@ -983,7 +983,8 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
   CFX_WideString wprefix = wstrValue.Mid(0, pEvent->SelStart());
   CFX_WideString wpostfix;
   if (pEvent->SelEnd() < wstrValue.GetLength())
-    wpostfix = wstrValue.Mid(pEvent->SelEnd());
+    wpostfix = wstrValue.Mid(pEvent->SelEnd(),
+                             wstrValue.GetLength() - pEvent->SelEnd());
   val = wprefix + wstrChange + wpostfix;
   return true;
 }

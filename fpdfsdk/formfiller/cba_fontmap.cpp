@@ -220,7 +220,8 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString* sAlias) {
   syntax.FindTagParamFromStart("Tf", 2);
 
   CFX_ByteString sFontName(syntax.GetWord());
-  *sAlias = PDF_NameDecode(sFontName).Mid(1);
+  CFX_ByteString sDecodedFontName = PDF_NameDecode(sFontName);
+  *sAlias = sDecodedFontName.Mid(1, sDecodedFontName.GetLength() - 1);
 
   CPDF_Dictionary* pFontDict = nullptr;
   if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP")) {

@@ -440,10 +440,10 @@ TEST(fxcrt, ByteStringMid) {
   CFX_ByteString fred("FRED");
   EXPECT_EQ("", fred.Mid(0, 0));
   EXPECT_EQ("", fred.Mid(3, 0));
-  EXPECT_EQ("FRED", fred.Mid(0));
-  EXPECT_EQ("RED", fred.Mid(1));
-  EXPECT_EQ("ED", fred.Mid(2));
-  EXPECT_EQ("D", fred.Mid(3));
+  EXPECT_EQ("FRED", fred.Mid(0, 4));
+  EXPECT_EQ("RED", fred.Mid(1, 3));
+  EXPECT_EQ("ED", fred.Mid(2, 2));
+  EXPECT_EQ("D", fred.Mid(3, 1));
   EXPECT_EQ("F", fred.Mid(0, 1));
   EXPECT_EQ("R", fred.Mid(1, 1));
   EXPECT_EQ("E", fred.Mid(2, 1));
@@ -458,9 +458,6 @@ TEST(fxcrt, ByteStringMid) {
 
   CFX_ByteString empty;
   EXPECT_EQ("", empty.Mid(0, 0));
-  EXPECT_EQ("", empty.Mid(0));
-  EXPECT_EQ("", empty.Mid(1));
-  EXPECT_EQ("", empty.Mid(-1));
 }
 
 TEST(fxcrt, ByteStringLeft) {
