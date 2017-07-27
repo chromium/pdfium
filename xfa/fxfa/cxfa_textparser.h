@@ -20,7 +20,6 @@ class CFDE_CSSComputedStyle;
 class CFDE_CSSStyleSelector;
 class CFDE_CSSStyleSheet;
 class CFX_XMLNode;
-class CXFA_CSSTagProvider;
 class CXFA_TextParseContext;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
@@ -86,10 +85,35 @@ class CXFA_TextParser {
   bool TagValidate(const CFX_WideString& str) const;
 
  private:
+  class TagProvider {
+   public:
+    TagProvider();
+    ~TagProvider();
+
+    CFX_WideString GetTagName() { return m_wsTagName; }
+
+    void SetTagName(const CFX_WideString& wsName) { m_wsTagName = wsName; }
+    void SetAttribute(const CFX_WideString& wsAttr,
+                      const CFX_WideString& wsValue) {
+      m_Attributes.insert({wsAttr, wsValue});
+    }
+
+    CFX_WideString GetAttribute(const CFX_WideString& wsAttr) {
+      return m_Attributes[wsAttr];
+    }
+
+    bool m_bTagAvailable;
+    bool m_bContent;
+
+   private:
+    CFX_WideString m_wsTagName;
+    std::map<CFX_WideString, CFX_WideString> m_Attributes;
+  };
+
   void InitCSSData(CXFA_TextProvider* pTextProvider);
   void ParseRichText(CFX_XMLNode* pXMLNode,
                      CFDE_CSSComputedStyle* pParentStyle);
-  std::unique_ptr<CXFA_CSSTagProvider> ParseTagInfo(CFX_XMLNode* pXMLNode);
+  std::unique_ptr<TagProvider> ParseTagInfo(CFX_XMLNode* pXMLNode);
   std::unique_ptr<CFDE_CSSStyleSheet> LoadDefaultSheetStyle();
   CFX_RetainPtr<CFDE_CSSComputedStyle> CreateStyle(
       CFDE_CSSComputedStyle* pParentStyle);

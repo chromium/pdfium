@@ -1614,8 +1614,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/theme/cfwl_utils.h",
       "xfa/fwl/theme/cfwl_widgettp.cpp",
       "xfa/fwl/theme/cfwl_widgettp.h",
-      "xfa/fxfa/cxfa_csstagprovider.cpp",
-      "xfa/fxfa/cxfa_csstagprovider.h",
       "xfa/fxfa/cxfa_deffontmgr.cpp",
       "xfa/fxfa/cxfa_deffontmgr.h",
       "xfa/fxfa/cxfa_eventparam.cpp",
