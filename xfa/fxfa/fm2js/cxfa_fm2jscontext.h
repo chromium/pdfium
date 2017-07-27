@@ -224,21 +224,15 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static void Decode(CFXJSE_Value* pThis,
                      const CFX_ByteStringC& szFuncName,
                      CFXJSE_Arguments& args);
-  static void DecodeURL(const CFX_ByteStringC& szURLString,
-                        CFX_ByteTextBuf& szResultBuf);
-  static void DecodeHTML(const CFX_ByteStringC& szHTMLString,
-                         CFX_ByteTextBuf& szResultBuf);
-  static void DecodeXML(const CFX_ByteStringC& szXMLString,
-                        CFX_ByteTextBuf& szResultBuf);
+  static CFX_WideString DecodeURL(const CFX_WideString& wsURLString);
+  static CFX_WideString DecodeHTML(const CFX_WideString& wsHTMLString);
+  static CFX_WideString DecodeXML(const CFX_WideString& wsXMLString);
   static void Encode(CFXJSE_Value* pThis,
                      const CFX_ByteStringC& szFuncName,
                      CFXJSE_Arguments& args);
-  static void EncodeURL(const CFX_ByteStringC& szURLString,
-                        CFX_ByteTextBuf& szResultBuf);
-  static void EncodeHTML(const CFX_ByteStringC& szHTMLString,
-                         CFX_ByteTextBuf& szResultBuf);
-  static void EncodeXML(const CFX_ByteStringC& szXMLString,
-                        CFX_ByteTextBuf& szResultBuf);
+  static CFX_WideString EncodeURL(const CFX_ByteString& szURLString);
+  static CFX_WideString EncodeHTML(const CFX_ByteString& szHTMLString);
+  static CFX_WideString EncodeXML(const CFX_ByteString& szXMLString);
   static bool HTMLSTR2Code(const CFX_WideStringC& pData, uint32_t* iCode);
   static bool HTMLCode2STR(uint32_t iCode, CFX_WideString* wsHTMLReserve);
   static void Format(CFXJSE_Value* pThis,
@@ -289,11 +283,8 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static void WordNum(CFXJSE_Value* pThis,
                       const CFX_ByteStringC& szFuncName,
                       CFXJSE_Arguments& args);
-  static void TrillionUS(const CFX_ByteStringC& szData,
-                         CFX_ByteTextBuf& strBuf);
-  static void WordUS(const CFX_ByteStringC& szData,
-                     int32_t iStyle,
-                     CFX_ByteTextBuf& strBuf);
+  static CFX_ByteString TrillionUS(const CFX_ByteStringC& szData);
+  static CFX_ByteString WordUS(const CFX_ByteString& szData, int32_t iStyle);
 
   static void Get(CFXJSE_Value* pThis,
                   const CFX_ByteStringC& szFuncName,

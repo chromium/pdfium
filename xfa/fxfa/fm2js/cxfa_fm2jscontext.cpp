@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <string>
 
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_extension.h"
@@ -3124,10 +3125,11 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
       return;
     }
 
-    CFX_ByteString toDecodeString = ValueToUTF8String(argOne.get());
-    CFX_ByteTextBuf resultBuf;
-    DecodeURL(toDecodeString.AsStringC(), resultBuf);
-    args.GetReturnValue()->SetString(resultBuf.AsStringC());
+    CFX_WideString decoded = DecodeURL(
+        CFX_WideString::FromUTF8(ValueToUTF8String(argOne.get()).AsStringC()));
+
+    args.GetReturnValue()->SetString(
+        FX_UTF8Encode(decoded.AsStringC()).AsStringC());
     return;
   }
 
@@ -3140,21 +3142,24 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
 
   CFX_ByteString toDecodeString = ValueToUTF8String(argOne.get());
   CFX_ByteString identifyString = ValueToUTF8String(argTwo.get());
-  CFX_ByteTextBuf resultBuf;
-  if (identifyString.EqualNoCase("html"))
-    DecodeHTML(toDecodeString.AsStringC(), resultBuf);
-  else if (identifyString.EqualNoCase("xml"))
-    DecodeXML(toDecodeString.AsStringC(), resultBuf);
-  else
-    DecodeURL(toDecodeString.AsStringC(), resultBuf);
+  CFX_WideString decoded;
 
-  args.GetReturnValue()->SetString(resultBuf.AsStringC());
+  CFX_WideString toDecodeWideString =
+      CFX_WideString::FromUTF8(toDecodeString.AsStringC());
+
+  if (identifyString.EqualNoCase("html"))
+    decoded = DecodeHTML(toDecodeWideString);
+  else if (identifyString.EqualNoCase("xml"))
+    decoded = DecodeXML(toDecodeWideString);
+  else
+    decoded = DecodeURL(toDecodeWideString);
+
+  args.GetReturnValue()->SetString(
+      FX_UTF8Encode(decoded.AsStringC()).AsStringC());
 }
 
 // static
-void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
-                                  CFX_ByteTextBuf& szResultString) {
-  CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
+CFX_WideString CXFA_FM2JSContext::DecodeURL(const CFX_WideString& wsURLString) {
   const wchar_t* pData = wsURLString.c_str();
   int32_t i = 0;
   CFX_WideTextBuf wsResultBuf;
@@ -3179,8 +3184,7 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
       } else if (ch <= 'f' && ch >= 'a') {
         chTemp += (ch - 'a' + 10) * (!iCount ? 16 : 1);
       } else {
-        wsResultBuf.Clear();
-        return;
+        return CFX_WideString();
       }
       ++iCount;
     }
@@ -3188,14 +3192,12 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
     ++i;
   }
   wsResultBuf.AppendChar(0);
-  szResultString.Clear();
-  szResultString << FX_UTF8Encode(wsResultBuf.AsStringC());
+  return wsResultBuf.MakeString();
 }
 
 // static
-void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
-                                   CFX_ByteTextBuf& szResultString) {
-  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(szHTMLString);
+CFX_WideString CXFA_FM2JSContext::DecodeHTML(
+    const CFX_WideString& wsHTMLString) {
   wchar_t strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsHTMLString.GetLength();
@@ -3217,8 +3219,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
       ++i;
       ch = pData[i];
       if (ch != 'x' && ch != 'X') {
-        wsResultBuf.Clear();
-        return;
+        return CFX_WideString();
       }
 
       ++i;
@@ -3233,8 +3234,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
           } else if (ch <= 'F' && ch >= 'A') {
             iCode += ch - 'A' + 10;
           } else {
-            wsResultBuf.Clear();
-            return;
+            return CFX_WideString();
           }
           ++i;
           // TODO(dsinclair): Postmultiply seems wrong, start at zero
@@ -3264,14 +3264,11 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
   }
   wsResultBuf.AppendChar(0);
 
-  szResultString.Clear();
-  szResultString << FX_UTF8Encode(wsResultBuf.AsStringC());
+  return wsResultBuf.MakeString();
 }
 
 // static
-void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
-                                  CFX_ByteTextBuf& szResultString) {
-  CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString);
+CFX_WideString CXFA_FM2JSContext::DecodeXML(const CFX_WideString& wsXMLString) {
   wchar_t strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsXMLString.GetLength();
@@ -3279,11 +3276,11 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
   int32_t iCode = 0;
   wchar_t ch = 0;
   const wchar_t* pData = wsXMLString.c_str();
-  CFX_WideTextBuf wsXMLBuf;
+  CFX_WideTextBuf wsResultBuf;
   while (i < iLen) {
     ch = pData[i];
     if (ch != '&') {
-      wsXMLBuf.AppendChar(ch);
+      wsResultBuf.AppendChar(ch);
       ++i;
       continue;
     }
@@ -3296,8 +3293,7 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
       ++i;
       ch = pData[i];
       if (ch != 'x' && ch != 'X') {
-        wsXMLBuf.Clear();
-        return;
+        return CFX_WideString();
       }
 
       ++i;
@@ -3312,8 +3308,7 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
           } else if (ch <= 'F' && ch >= 'A') {
             iCode += ch - 'A' + 10;
           } else {
-            wsXMLBuf.Clear();
-            return;
+            return CFX_WideString();
           }
           ++i;
           iCode *= 16;
@@ -3341,22 +3336,22 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
     }
     switch (iIndex) {
       case 0:
-        wsXMLBuf.AppendChar('"');
+        wsResultBuf.AppendChar('"');
         break;
       case 1:
-        wsXMLBuf.AppendChar('&');
+        wsResultBuf.AppendChar('&');
         break;
       case 2:
-        wsXMLBuf.AppendChar('\'');
+        wsResultBuf.AppendChar('\'');
         break;
       case 3:
-        wsXMLBuf.AppendChar('<');
+        wsResultBuf.AppendChar('<');
         break;
       case 4:
-        wsXMLBuf.AppendChar('>');
+        wsResultBuf.AppendChar('>');
         break;
       default:
-        wsXMLBuf.AppendChar(iCode);
+        wsResultBuf.AppendChar(iCode);
         break;
     }
     iStrIndex = 0;
@@ -3364,9 +3359,8 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
     ++i;
     iCode = 0;
   }
-  wsXMLBuf.AppendChar(0);
-  szResultString.Clear();
-  szResultString << FX_UTF8Encode(wsXMLBuf.AsStringC());
+  wsResultBuf.AppendChar(0);
+  return wsResultBuf.MakeString();
 }
 
 // static
@@ -3386,10 +3380,9 @@ void CXFA_FM2JSContext::Encode(CFXJSE_Value* pThis,
       return;
     }
 
-    CFX_ByteString toEncodeString = ValueToUTF8String(argOne.get());
-    CFX_ByteTextBuf resultBuf;
-    EncodeURL(toEncodeString.AsStringC(), resultBuf);
-    args.GetReturnValue()->SetString(resultBuf.AsStringC());
+    CFX_WideString encoded = EncodeURL(ValueToUTF8String(argOne.get()));
+    args.GetReturnValue()->SetString(
+        FX_UTF8Encode(encoded.AsStringC()).AsStringC());
     return;
   }
 
@@ -3402,21 +3395,22 @@ void CXFA_FM2JSContext::Encode(CFXJSE_Value* pThis,
 
   CFX_ByteString toEncodeString = ValueToUTF8String(argOne.get());
   CFX_ByteString identifyString = ValueToUTF8String(argTwo.get());
-  CFX_ByteTextBuf resultBuf;
+  CFX_WideString encoded;
   if (identifyString.EqualNoCase("html"))
-    EncodeHTML(toEncodeString.AsStringC(), resultBuf);
+    encoded = EncodeHTML(toEncodeString);
   else if (identifyString.EqualNoCase("xml"))
-    EncodeXML(toEncodeString.AsStringC(), resultBuf);
+    encoded = EncodeXML(toEncodeString);
   else
-    EncodeURL(toEncodeString.AsStringC(), resultBuf);
+    encoded = EncodeURL(toEncodeString);
 
-  args.GetReturnValue()->SetString(resultBuf.AsStringC());
+  args.GetReturnValue()->SetString(
+      FX_UTF8Encode(encoded.AsStringC()).AsStringC());
 }
 
 // static
-void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
-                                  CFX_ByteTextBuf& szResultBuf) {
-  CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
+CFX_WideString CXFA_FM2JSContext::EncodeURL(const CFX_ByteString& szURLString) {
+  CFX_WideString wsURLString =
+      CFX_WideString::FromUTF8(szURLString.AsStringC());
   CFX_WideTextBuf wsResultBuf;
   wchar_t strEncode[4];
   strEncode[0] = '%';
@@ -3509,16 +3503,14 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
     }
   }
   wsResultBuf.AppendChar(0);
-  szResultBuf.Clear();
-  szResultBuf << FX_UTF8Encode(wsResultBuf.AsStringC());
+  return wsResultBuf.MakeString();
 }
 
 // static
-void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
-                                   CFX_ByteTextBuf& szResultBuf) {
-  // TODO(tsepez): check usage of c_str() below.
-  CFX_ByteString str = szHTMLString.unterminated_c_str();
-  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str.AsStringC());
+CFX_WideString CXFA_FM2JSContext::EncodeHTML(
+    const CFX_ByteString& szHTMLString) {
+  CFX_WideString wsHTMLString =
+      CFX_WideString::FromUTF8(szHTMLString.AsStringC());
   const wchar_t* strCode = L"0123456789abcdef";
   wchar_t strEncode[9];
   strEncode[0] = '&';
@@ -3560,14 +3552,13 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
     ++i;
   }
   wsResultBuf.AppendChar(0);
-  szResultBuf.Clear();
-  szResultBuf << FX_UTF8Encode(wsResultBuf.AsStringC());
+  return wsResultBuf.MakeString();
 }
 
 // static
-void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
-                                  CFX_ByteTextBuf& szResultBuf) {
-  CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString);
+CFX_WideString CXFA_FM2JSContext::EncodeXML(const CFX_ByteString& szXMLString) {
+  CFX_WideString wsXMLString =
+      CFX_WideString::FromUTF8(szXMLString.AsStringC());
   CFX_WideTextBuf wsResultBuf;
   wchar_t strEncode[9];
   strEncode[0] = '&';
@@ -3629,8 +3620,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
     }
   }
   wsResultBuf.AppendChar(0);
-  szResultBuf.Clear();
-  szResultBuf << FX_UTF8Encode(wsResultBuf.AsStringC());
+  return wsResultBuf.MakeString();
 }
 
 // static
@@ -3996,12 +3986,12 @@ void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
   }
 
   int32_t iFindLen = twoString.GetLength();
-  CFX_ByteTextBuf resultString;
+  std::ostringstream resultString;
   int32_t iFindIndex = 0;
   for (int32_t u = 0; u < oneString.GetLength(); ++u) {
-    uint8_t ch = oneString.GetAt(u);
-    if (ch != twoString.GetAt(iFindIndex)) {
-      resultString.AppendChar(ch);
+    char ch = static_cast<char>(oneString.GetAt(u));
+    if (ch != static_cast<char>(twoString.GetAt(iFindIndex))) {
+      resultString << ch;
       continue;
     }
 
@@ -4018,15 +4008,15 @@ void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
       ++iFindIndex;
     }
     if (iFindIndex == iFindLen) {
-      resultString << threeString.AsStringC();
+      resultString << threeString;
       u += iFindLen - 1;
       iFindIndex = 0;
     } else {
-      resultString.AppendChar(ch);
+      resultString << ch;
     }
   }
-  resultString.AppendChar(0);
-  args.GetReturnValue()->SetString(resultString.AsStringC());
+  resultString << '\0';
+  args.GetReturnValue()->SetString(CFX_ByteStringC(resultString.str().c_str()));
 }
 
 // static
@@ -4087,14 +4077,14 @@ void CXFA_FM2JSContext::Space(CFXJSE_Value* pThis,
   }
 
   int32_t count = std::max(0, ValueToInteger(pThis, argOne.get()));
-  CFX_ByteTextBuf spaceString;
+  std::ostringstream spaceString;
   int32_t index = 0;
   while (index < count) {
-    spaceString.AppendByte(' ');
+    spaceString << ' ';
     index++;
   }
-  spaceString.AppendByte(0);
-  args.GetReturnValue()->SetString(spaceString.AsStringC());
+  spaceString << '\0';
+  args.GetReturnValue()->SetString(CFX_ByteStringC(spaceString.str().c_str()));
 }
 
 // static
@@ -4147,15 +4137,15 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
     ++u;
   }
 
-  CFX_ByteTextBuf resultBuf;
+  std::ostringstream resultBuf;
   if (u > iWidth || (iPrecision + u) >= iWidth) {
     int32_t i = 0;
     while (i < iWidth) {
-      resultBuf.AppendChar('*');
+      resultBuf << '*';
       ++i;
     }
-    resultBuf.AppendChar(0);
-    args.GetReturnValue()->SetString(resultBuf.AsStringC());
+    resultBuf << '\0';
+    args.GetReturnValue()->SetString(CFX_ByteStringC(resultBuf.str().c_str()));
     return;
   }
 
@@ -4163,18 +4153,18 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
     if (iLength > iWidth) {
       int32_t i = 0;
       while (i < iWidth) {
-        resultBuf.AppendChar('*');
+        resultBuf << '*';
         ++i;
       }
     } else {
       int32_t i = 0;
       while (i < iWidth - iLength) {
-        resultBuf.AppendChar(' ');
+        resultBuf << ' ';
         ++i;
       }
       resultBuf << pData;
     }
-    args.GetReturnValue()->SetString(resultBuf.AsStringC());
+    args.GetReturnValue()->SetString(CFX_ByteStringC(resultBuf.str().c_str()));
     return;
   }
 
@@ -4184,16 +4174,16 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
 
   int32_t i = 0;
   while (i < iLeavingSpace) {
-    resultBuf.AppendChar(' ');
+    resultBuf << ' ';
     ++i;
   }
   i = 0;
   while (i < u) {
-    resultBuf.AppendChar(pData[i]);
+    resultBuf << pData[i];
     ++i;
   }
   if (iPrecision != 0)
-    resultBuf.AppendChar('.');
+    resultBuf << '.';
 
   u++;
   i = 0;
@@ -4201,16 +4191,16 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
     if (i >= iPrecision)
       break;
 
-    resultBuf.AppendChar(pData[u]);
+    resultBuf << pData[u];
     ++i;
     ++u;
   }
   while (i < iPrecision) {
-    resultBuf.AppendChar('0');
+    resultBuf << '0';
     ++i;
   }
-  resultBuf.AppendChar(0);
-  args.GetReturnValue()->SetString(resultBuf.AsStringC());
+  resultBuf << '\0';
+  args.GetReturnValue()->SetString(CFX_ByteStringC(resultBuf.str().c_str()));
 }
 
 // static
@@ -4248,20 +4238,20 @@ void CXFA_FM2JSContext::Stuff(CFXJSE_Value* pThis,
   }
 
   iStart -= 1;
-  CFX_ByteTextBuf resultString;
+  std::ostringstream resultString;
   int32_t i = 0;
   while (i < iStart) {
-    resultString.AppendChar(sourceString.GetAt(i));
+    resultString << static_cast<char>(sourceString.GetAt(i));
     ++i;
   }
   resultString << insertString.AsStringC();
   i = iStart + iDelete;
   while (i < iLength) {
-    resultString.AppendChar(sourceString.GetAt(i));
+    resultString << static_cast<char>(sourceString.GetAt(i));
     ++i;
   }
-  resultString.AppendChar(0);
-  args.GetReturnValue()->SetString(resultString.AsStringC());
+  resultString << '\0';
+  args.GetReturnValue()->SetString(CFX_ByteStringC(resultString.str().c_str()));
 }
 
 // static
@@ -4407,14 +4397,13 @@ void CXFA_FM2JSContext::WordNum(CFXJSE_Value* pThis,
   CFX_ByteString numberString;
   numberString.Format("%.2f", fNumber);
 
-  CFX_ByteTextBuf resultBuf;
-  WordUS(numberString.AsStringC(), iIdentifier, resultBuf);
-  args.GetReturnValue()->SetString(resultBuf.AsStringC());
+  args.GetReturnValue()->SetString(
+      WordUS(numberString, iIdentifier).AsStringC());
 }
 
 // static
-void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
-                                   CFX_ByteTextBuf& strBuf) {
+CFX_ByteString CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData) {
+  std::ostringstream strBuf;
   CFX_ByteStringC pUnits[] = {"zero", "one", "two",   "three", "four",
                               "five", "six", "seven", "eight", "nine"};
   CFX_ByteStringC pCapUnits[] = {"Zero", "One", "Two",   "Three", "Four",
@@ -4509,17 +4498,19 @@ void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
     }
     iIndex += 3;
   }
+  return CFX_ByteString(strBuf);
 }
 
 // static
-void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
-                               int32_t iStyle,
-                               CFX_ByteTextBuf& strBuf) {
-  const char* pData = szData.unterminated_c_str();
+CFX_ByteString CXFA_FM2JSContext::WordUS(const CFX_ByteString& szData,
+                                         int32_t iStyle) {
+  const char* pData = szData.c_str();
   int32_t iLength = szData.GetLength();
   if (iStyle < 0 || iStyle > 2) {
-    return;
+    return CFX_ByteString();
   }
+
+  std::ostringstream strBuf;
 
   int32_t iIndex = 0;
   while (iIndex < iLength) {
@@ -4534,7 +4525,7 @@ void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
     if (!iCount && iInteger - iIndex > 0)
       iCount = 12;
 
-    TrillionUS(CFX_ByteStringC(pData + iIndex, iCount), strBuf);
+    strBuf << TrillionUS(CFX_ByteStringC(pData + iIndex, iCount));
     iIndex += iCount;
     if (iIndex < iInteger)
       strBuf << " Trillion ";
@@ -4551,13 +4542,14 @@ void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
       if (!iCount && iLength - iIndex > 0)
         iCount = 12;
 
-      TrillionUS(CFX_ByteStringC(pData + iIndex, iCount), strBuf);
+      strBuf << TrillionUS(CFX_ByteStringC(pData + iIndex, iCount));
       iIndex += iCount;
       if (iIndex < iLength)
         strBuf << " Trillion ";
     }
     strBuf << " Cents";
   }
+  return CFX_ByteString(strBuf);
 }
 
 // static
