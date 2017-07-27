@@ -33,16 +33,14 @@ CFDE_CSSRuleCollection::GetTagRuleData(const CFX_WideString& tagname) const {
   return it != m_TagRules.end() ? &it->second : nullptr;
 }
 
-void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheet* sheet,
-                                          CFGAS_FontMgr* pFontMgr) {
+void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheet* sheet) {
   int32_t iRules = sheet->CountRules();
   for (int32_t j = 0; j < iRules; j++)
-    AddRulesFrom(sheet, sheet->GetRule(j), pFontMgr);
+    AddRulesFrom(sheet, sheet->GetRule(j));
 }
 
 void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
-                                          CFDE_CSSStyleRule* pStyleRule,
-                                          CFGAS_FontMgr* pFontMgr) {
+                                          CFDE_CSSStyleRule* pStyleRule) {
   CFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
   int32_t iSelectors = pStyleRule->CountSelectorLists();
   for (int32_t i = 0; i < iSelectors; ++i) {

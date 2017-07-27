@@ -17,7 +17,6 @@ class CFDE_CSSDeclaration;
 class CFDE_CSSSelector;
 class CFDE_CSSStyleRule;
 class CFDE_CSSStyleSheet;
-class CFGAS_FontMgr;
 
 class CFDE_CSSRuleCollection {
  public:
@@ -32,7 +31,7 @@ class CFDE_CSSRuleCollection {
   CFDE_CSSRuleCollection();
   ~CFDE_CSSRuleCollection();
 
-  void AddRulesFrom(const CFDE_CSSStyleSheet* sheet, CFGAS_FontMgr* pFontMgr);
+  void AddRulesFrom(const CFDE_CSSStyleSheet* sheet);
   void Clear();
   int32_t CountSelectors() const { return m_iSelectors; }
 
@@ -41,8 +40,7 @@ class CFDE_CSSRuleCollection {
 
  private:
   void AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
-                    CFDE_CSSStyleRule* pRule,
-                    CFGAS_FontMgr* pFontMgr);
+                    CFDE_CSSStyleRule* pRule);
 
   std::map<uint32_t, std::vector<std::unique_ptr<Data>>> m_TagRules;
   int32_t m_iSelectors;

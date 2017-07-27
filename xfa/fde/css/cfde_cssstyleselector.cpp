@@ -22,8 +22,7 @@
 #include "xfa/fde/css/cfde_csssyntaxparser.h"
 #include "xfa/fde/css/cfde_cssvaluelist.h"
 
-CFDE_CSSStyleSelector::CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr)
-    : m_pFontMgr(pFontMgr), m_fDefFontSize(12.0f) {}
+CFDE_CSSStyleSelector::CFDE_CSSStyleSelector() : m_fDefFontSize(12.0f) {}
 
 CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {}
 
@@ -47,7 +46,7 @@ void CFDE_CSSStyleSelector::SetUAStyleSheet(
 
 void CFDE_CSSStyleSelector::UpdateStyleIndex() {
   m_UARules.Clear();
-  m_UARules.AddRulesFrom(m_UAStyles.get(), m_pFontMgr.Get());
+  m_UARules.AddRulesFrom(m_UAStyles.get());
 }
 
 std::vector<const CFDE_CSSDeclaration*>

@@ -56,10 +56,8 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     return;
 
   if (!m_pSelector) {
-    CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
-    CFGAS_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
-    ASSERT(pFontMgr);
-    m_pSelector = pdfium::MakeUnique<CFDE_CSSStyleSelector>(pFontMgr);
+    m_pSelector = pdfium::MakeUnique<CFDE_CSSStyleSelector>();
+
     CXFA_Font font = pTextProvider->GetFontNode();
     m_pSelector->SetDefFontSize(font ? font.GetFontSize() : 10.0f);
   }
