@@ -356,21 +356,19 @@ wchar_t GetArabicFromAlefTable(wchar_t alef) {
 
 class CFX_BidiLine {
  public:
-  void BidiLine(std::vector<CFX_Char>* chars,
-                int32_t iCount,
-                int32_t iBaseLevel) {
+  void BidiLine(std::vector<CFX_Char>* chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(*chars));
     if (iCount < 2)
       return;
 
     Classify(chars, iCount, false);
-    ResolveExplicit(chars, iCount, iBaseLevel);
-    ResolveWeak(chars, iCount, iBaseLevel);
-    ResolveNeutrals(chars, iCount, iBaseLevel);
+    ResolveExplicit(chars, iCount);
+    ResolveWeak(chars, iCount);
+    ResolveNeutrals(chars, iCount);
     ResolveImplicit(chars, iCount);
     Classify(chars, iCount, true);
-    ResolveWhitespace(chars, iCount, iBaseLevel);
-    Reorder(chars, iCount, iBaseLevel);
+    ResolveWhitespace(chars, iCount);
+    Reorder(chars, iCount);
     Position(chars, iCount);
   }
 
@@ -441,25 +439,20 @@ class CFX_BidiLine {
     }
   }
 
-  void ResolveExplicit(std::vector<CFX_Char>* chars,
-                       int32_t iCount,
-                       int32_t iBaseLevel) {
+  void ResolveExplicit(std::vector<CFX_Char>* chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(*chars));
-    ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     for (int32_t i = 0; i < iCount; i++)
-      (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iBaseLevel);
+      (*chars)[i].m_iBidiLevel = 0;
   }
 
-  void ResolveWeak(std::vector<CFX_Char>* chars,
-                   int32_t iCount,
-                   int32_t iBaseLevel) {
+  void ResolveWeak(std::vector<CFX_Char>* chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(*chars));
     iCount--;
     if (iCount < 1)
       return;
 
-    int32_t iLevelCur = iBaseLevel;
-    int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BWSxr : FX_BWSxl;
+    int32_t iLevelCur = 0;
+    int32_t iState = FX_BWSxl;
     int32_t i = 0;
     int32_t iNum = 0;
     int32_t iClsCur;
@@ -471,7 +464,7 @@ class CFX_BidiLine {
       iClsCur = pTC->m_iBidiClass;
       if (iClsCur == FX_BIDICLASS_BN) {
         pTC->m_iBidiLevel = (int16_t)iLevelCur;
-        if (i == iCount && iLevelCur != iBaseLevel) {
+        if (i == iCount && iLevelCur != 0) {
           iClsCur = Direction(iLevelCur);
           pTC->m_iBidiClass = (int16_t)iClsCur;
         } else if (i < iCount) {
@@ -513,25 +506,22 @@ class CFX_BidiLine {
       iState = gc_FX_BidiWeakStates[iState][iClsCur];
     }
     if (iNum > 0) {
-      iClsCur = Direction(iBaseLevel);
+      iClsCur = Direction(0);
       iClsRun = GetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
       if (iClsRun != FX_BWAXX)
         SetDeferredRun(chars, true, i, iNum, iClsRun);
     }
   }
 
-  void ResolveNeutrals(std::vector<CFX_Char>* chars,
-                       int32_t iCount,
-                       int32_t iBaseLevel) {
+  void ResolveNeutrals(std::vector<CFX_Char>* chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(*chars));
-    ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     iCount--;
     if (iCount < 1)
       return;
 
     CFX_Char* pTC;
-    int32_t iLevel = iBaseLevel;
-    int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BNSr : FX_BNSl;
+    int32_t iLevel = 0;
+    int32_t iState = FX_BNSl;
     int32_t i = 0;
     int32_t iNum = 0;
     int32_t iClsCur;
@@ -587,16 +577,13 @@ class CFX_BidiLine {
     }
   }
 
-  void ResolveWhitespace(std::vector<CFX_Char>* chars,
-                         int32_t iCount,
-                         int32_t iBaseLevel) {
+  void ResolveWhitespace(std::vector<CFX_Char>* chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(*chars));
-    ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     if (iCount < 1)
       return;
 
     iCount--;
-    int32_t iLevel = iBaseLevel;
+    int32_t iLevel = 0;
     int32_t i = 0;
     int32_t iNum = 0;
     for (; i <= iCount; i++) {
@@ -616,9 +603,9 @@ class CFX_BidiLine {
         case FX_BIDICLASS_S:
         case FX_BIDICLASS_B:
           if (iNum > 0)
-            SetDeferredRun(chars, false, i, iNum, iBaseLevel);
+            SetDeferredRun(chars, false, i, iNum, 0);
 
-          (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iBaseLevel);
+          (*chars)[i].m_iBidiLevel = 0;
           iNum = 0;
           break;
         default:
@@ -628,7 +615,7 @@ class CFX_BidiLine {
       iLevel = (*chars)[i].m_iBidiLevel;
     }
     if (iNum > 0)
-      SetDeferredRun(chars, false, i, iNum, iBaseLevel);
+      SetDeferredRun(chars, false, i, iNum, 0);
   }
 
   int32_t ReorderLevel(std::vector<CFX_Char>* chars,
@@ -660,14 +647,11 @@ class CFX_BidiLine {
     return iNum;
   }
 
-  void Reorder(std::vector<CFX_Char>* chars,
-               int32_t iCount,
-               int32_t iBaseLevel) {
+  void Reorder(std::vector<CFX_Char>* chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(*chars));
-    ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     int32_t i = 0;
     while (i < iCount)
-      i += ReorderLevel(chars, iCount, iBaseLevel, i, false);
+      i += ReorderLevel(chars, iCount, 0, i, false);
   }
 
   void Position(std::vector<CFX_Char>* chars, int32_t iCount) {
@@ -739,5 +723,5 @@ wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda) {
 
 void FX_BidiLine(std::vector<CFX_Char>* chars, int32_t iCount) {
   CFX_BidiLine blt;
-  blt.BidiLine(chars, iCount, 0);
+  blt.BidiLine(chars, iCount);
 }
