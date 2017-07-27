@@ -21,6 +21,7 @@ class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
 class CPDF_LinearizedHeader;
 class CPDF_Parser;
+class CPDF_ReadValidator;
 
 enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_HEADER = 0,
@@ -107,9 +108,7 @@ class CPDF_DataAvail final {
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
   bool IsLinearized();
-  CFX_RetainPtr<IFX_SeekableReadStream> GetFileRead() const {
-    return m_pFileRead;
-  }
+  CFX_RetainPtr<IFX_SeekableReadStream> GetFileRead() const;
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
 
@@ -137,7 +136,7 @@ class CPDF_DataAvail final {
   bool CheckHintTables(DownloadHints* pHints);
   bool CheckEnd(DownloadHints* pHints);
   bool CheckCrossRef(DownloadHints* pHints);
-  bool CheckCrossRefItem(DownloadHints* pHints);
+  bool CheckCrossRefItem();
   bool CheckTrailer(DownloadHints* pHints);
   bool CheckRoot(DownloadHints* pHints);
   bool CheckInfo(DownloadHints* pHints);
@@ -194,7 +193,7 @@ class CPDF_DataAvail final {
   bool ValidateForm();
 
   FileAvail* const m_pFileAvail;
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
+  CFX_RetainPtr<CPDF_ReadValidator> m_pFileRead;
   CPDF_Parser m_parser;
   CPDF_SyntaxParser m_syntaxParser;
   std::unique_ptr<CPDF_Object> m_pRoot;

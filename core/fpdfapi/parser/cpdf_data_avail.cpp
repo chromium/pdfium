@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
@@ -51,6 +52,27 @@ CPDF_Object* GetResourceObject(CPDF_Dictionary* pDict) {
   return nullptr;
 }
 
+class HintsAssigner {
+ public:
+  HintsAssigner(CPDF_ReadValidator* validator,
+                CPDF_DataAvail::DownloadHints* hints)
+      : validator_(validator) {
+    if (validator_) {
+      validator_->ResetErrors();
+      validator_->SetDownloadHints(hints);
+    }
+  }
+
+  ~HintsAssigner() {
+    if (validator_) {
+      validator_->SetDownloadHints(nullptr);
+    }
+  }
+
+ private:
+  CFX_UnownedPtr<CPDF_ReadValidator> validator_;
+};
+
 }  // namespace
 
 CPDF_DataAvail::FileAvail::~FileAvail() {}
@@ -61,7 +83,11 @@ CPDF_DataAvail::CPDF_DataAvail(
     FileAvail* pFileAvail,
     const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
     bool bSupportHintTable)
-    : m_pFileAvail(pFileAvail), m_pFileRead(pFileRead) {
+    : m_pFileAvail(pFileAvail),
+      m_pFileRead(
+          pFileRead
+              ? pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail)
+              : nullptr) {
   m_Pos = 0;
   m_dwFileLen = 0;
   if (m_pFileRead) {
@@ -211,6 +237,8 @@ bool CPDF_DataAvail::AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
     DownloadHints* pHints) {
+  const HintsAssigner hints_assigner(m_pFileRead.Get(), pHints);
+
   if (!m_dwFileLen && m_pFileRead) {
     m_dwFileLen = (uint32_t)m_pFileRead->GetSize();
     if (!m_dwFileLen)
@@ -285,7 +313,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
     case PDF_DATAAVAIL_CROSSREF:
       return CheckCrossRef(pHints);
     case PDF_DATAAVAIL_CROSSREF_ITEM:
-      return CheckCrossRefItem(pHints);
+      return CheckCrossRefItem();
     case PDF_DATAAVAIL_CROSSREF_STREAM:
       return CheckAllCrossRefStream(pHints);
     case PDF_DATAAVAIL_TRAILER:
@@ -955,14 +983,12 @@ bool CPDF_DataAvail::GetNextChar(uint8_t& ch) {
   return true;
 }
 
-bool CPDF_DataAvail::CheckCrossRefItem(DownloadHints* pHints) {
-  int32_t iSize = 0;
+bool CPDF_DataAvail::CheckCrossRefItem() {
   CFX_ByteString token;
   while (1) {
     if (!GetNextToken(&token)) {
-      iSize = static_cast<int32_t>(
-          m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
-      pHints->AddSegment(m_Pos, iSize);
+      if (!m_pFileRead->has_read_problems())
+        m_docStatus = PDF_DATAAVAIL_ERROR;
       return false;
     }
 
@@ -1565,6 +1591,10 @@ bool CPDF_DataAvail::CheckResources(DownloadHints* pHints) {
   }
   m_objs_array.clear();
   return true;
+}
+
+CFX_RetainPtr<IFX_SeekableReadStream> CPDF_DataAvail::GetFileRead() const {
+  return m_pFileRead;
 }
 
 int CPDF_DataAvail::GetPageCount() const {

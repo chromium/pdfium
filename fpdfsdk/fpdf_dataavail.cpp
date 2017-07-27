@@ -105,9 +105,9 @@ class CFPDF_DataAvail {
         m_FileRead(pdfium::MakeRetain<CFPDF_FileAccessWrap>()) {}
   ~CFPDF_DataAvail() {}
 
-  std::unique_ptr<CPDF_DataAvail> m_pDataAvail;
   std::unique_ptr<CFPDF_FileAvailWrap> m_FileAvail;
   CFX_RetainPtr<CFPDF_FileAccessWrap> m_FileRead;
+  std::unique_ptr<CPDF_DataAvail> m_pDataAvail;
 };
 
 CFPDF_DataAvail* CFPDFDataAvailFromFPDFAvail(FPDF_AVAIL avail) {

@@ -1256,6 +1256,8 @@ void RenderPdf(const std::string& name,
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
   platform_callbacks.Doc_mail = ExampleDocMail;
 
+  // The pdf_avail must outlive doc.
+  std::unique_ptr<void, FPDFAvailDeleter> pdf_avail;
   // The document must outlive |form_callbacks.loaded_pages|.
   std::unique_ptr<void, FPDFDocumentDeleter> doc;
   FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
@@ -1283,8 +1285,7 @@ void RenderPdf(const std::string& name,
 
   int nRet = PDF_DATA_NOTAVAIL;
   bool bIsLinearized = false;
-  std::unique_ptr<void, FPDFAvailDeleter> pdf_avail(
-      FPDFAvail_Create(&file_avail, &file_access));
+  pdf_avail.reset(FPDFAvail_Create(&file_avail, &file_access));
 
   if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
     doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), nullptr));
