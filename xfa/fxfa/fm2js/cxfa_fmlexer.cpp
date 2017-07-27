@@ -95,6 +95,26 @@ const XFA_FMKeyword keyWords[] = {
 const XFA_FM_TOKEN KEYWORD_START = TOKdo;
 const XFA_FM_TOKEN KEYWORD_END = TOKendif;
 
+const wchar_t* tokenStrings[] = {
+    L"TOKand",        L"TOKlparen",     L"TOKrparen",   L"TOKmul",
+    L"TOKplus",       L"TOKcomma",      L"TOKminus",    L"TOKdot",
+    L"TOKdiv",        L"TOKlt",         L"TOKassign",   L"TOKgt",
+    L"TOKlbracket",   L"TOKrbracket",   L"TOKor",       L"TOKdotscream",
+    L"TOKdotstar",    L"TOKdotdot",     L"TOKle",       L"TOKne",
+    L"TOKeq",         L"TOKge",         L"TOKdo",       L"TOKkseq",
+    L"TOKksge",       L"TOKksgt",       L"TOKif",       L"TOKin",
+    L"TOKksle",       L"TOKkslt",       L"TOKksne",     L"TOKksor",
+    L"TOKnull",       L"TOKbreak",      L"TOKksand",    L"TOKend",
+    L"TOKeof",        L"TOKfor",        L"TOKnan",      L"TOKksnot",
+    L"TOKvar",        L"TOKthen",       L"TOKelse",     L"TOKexit",
+    L"TOKdownto",     L"TOKreturn",     L"TOKinfinity", L"TOKendwhile",
+    L"TOKforeach",    L"TOKendfunc",    L"TOKelseif",   L"TOKwhile",
+    L"TOKendfor",     L"TOKthrow",      L"TOKstep",     L"TOKupto",
+    L"TOKcontinue",   L"TOKfunc",       L"TOKendif",    L"TOKstar",
+    L"TOKidentifier", L"TOKunderscore", L"TOKdollar",   L"TOKexclamation",
+    L"TOKcall",       L"TOKstring",     L"TOKnumber",   L"TOKreserver",
+};
+
 XFA_FM_TOKEN TokenizeIdentifier(const CFX_WideStringC& str) {
   uint32_t key = FX_HashCode_GetW(str, true);
 
@@ -117,6 +137,16 @@ CXFA_FMToken::CXFA_FMToken(uint32_t line_num)
     : m_type(TOKreserver), m_line_num(line_num) {}
 
 CXFA_FMToken::~CXFA_FMToken() {}
+
+CFX_WideString CXFA_FMToken::ToDebugString() const {
+  CFX_WideString str(L"type = ");
+  str += tokenStrings[m_type];
+  str += L", string = ";
+  str += m_string;
+  str += L", line_num = ";
+  str += std::to_wstring(m_line_num).c_str();
+  return str;
+}
 
 CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc)
     : m_cursor(wsFormCalc.unterminated_c_str()),
