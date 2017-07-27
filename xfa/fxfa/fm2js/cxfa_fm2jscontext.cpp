@@ -6065,7 +6065,7 @@ bool CXFA_FM2JSContext::Translate(const CFX_WideStringC& wsFormcalc,
 
   CXFA_FMParse parser(wsFormcalc);
   std::unique_ptr<CXFA_FMFunctionDefinition> func = parser.Parse();
-  if (parser.HasError())
+  if (!func || parser.HasError())
     return false;
 
   if (!func->ToJavaScript(*wsJavascript))

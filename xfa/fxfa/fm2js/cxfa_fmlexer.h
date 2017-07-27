@@ -107,14 +107,9 @@ class CXFA_FMLexer {
   explicit CXFA_FMLexer(const CFX_WideStringC& wsFormcalc);
   ~CXFA_FMLexer();
 
-  CXFA_FMToken* NextToken();
-  bool HasError() const { return m_lexer_error; }
+  std::unique_ptr<CXFA_FMToken> NextToken();
 
   void SetCurrentLine(uint32_t line) { m_current_line = line; }
-  void SetToken(std::unique_ptr<CXFA_FMToken> token) {
-    m_token = std::move(token);
-  }
-
   const wchar_t* GetPos() { return m_cursor; }
   void SetPos(const wchar_t* pos) { m_cursor = pos; }
 
@@ -123,6 +118,11 @@ class CXFA_FMLexer {
   void AdvanceForString();
   void AdvanceForIdentifier();
   void AdvanceForComment();
+
+  void RaiseError() {
+    m_token.reset();
+    m_lexer_error = true;
+  }
 
   const wchar_t* m_cursor;
   const wchar_t* const m_end;

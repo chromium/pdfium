@@ -22,8 +22,8 @@ class CXFA_FMParse {
   bool HasError() const;
 
  private:
-  void NextToken();
-  void Check(XFA_FM_TOKEN op);
+  bool NextToken();
+  bool CheckThenNext(XFA_FM_TOKEN op);
 
   std::vector<std::unique_ptr<CXFA_FMExpression>> ParseTopExpression();
   std::unique_ptr<CXFA_FMExpression> ParseFunction();
@@ -52,8 +52,8 @@ class CXFA_FMParse {
   std::unique_ptr<CXFA_FMSimpleExpression> ParseIndexExpression();
 
   std::unique_ptr<CXFA_FMLexer> m_lexer;
-  CXFA_FMToken* m_pToken;
-  bool m_ParserError;
+  std::unique_ptr<CXFA_FMToken> m_token;
+  bool m_error;
 };
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMPARSE_H_

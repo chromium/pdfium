@@ -156,12 +156,15 @@ CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc)
 
 CXFA_FMLexer::~CXFA_FMLexer() {}
 
-CXFA_FMToken* CXFA_FMLexer::NextToken() {
+std::unique_ptr<CXFA_FMToken> CXFA_FMLexer::NextToken() {
+  if (m_lexer_error)
+    return nullptr;
+
   m_token = pdfium::MakeUnique<CXFA_FMToken>(m_current_line);
   while (m_cursor <= m_end && *m_cursor) {
     if (!IsFormCalcCharacter(*m_cursor)) {
-      m_lexer_error = true;
-      return m_token.get();
+      RaiseError();
+      return nullptr;
     }
 
     switch (*m_cursor) {
@@ -180,7 +183,7 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
       case '"': {
         m_token->m_type = TOKstring;
         AdvanceForString();
-        return m_token.get();
+        return std::move(m_token);
       }
       case '0':
       case '1':
@@ -194,119 +197,119 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
       case '9': {
         m_token->m_type = TOKnumber;
         AdvanceForNumber();
-        return m_token.get();
+        return std::move(m_token);
       }
       case '=':
         ++m_cursor;
         if (m_cursor > m_end) {
           m_token->m_type = TOKassign;
-          return m_token.get();
+          return std::move(m_token);
         }
 
-        if (IsFormCalcCharacter(*m_cursor)) {
-          if (*m_cursor == '=') {
-            m_token->m_type = TOKeq;
-            ++m_cursor;
-          } else {
-            m_token->m_type = TOKassign;
-          }
-        } else {
-          m_lexer_error = true;
+        if (!IsFormCalcCharacter(*m_cursor)) {
+          RaiseError();
+          return nullptr;
         }
-        return m_token.get();
+        if (*m_cursor == '=') {
+          m_token->m_type = TOKeq;
+          ++m_cursor;
+        } else {
+          m_token->m_type = TOKassign;
+        }
+        return std::move(m_token);
       case '<':
         ++m_cursor;
         if (m_cursor > m_end) {
           m_token->m_type = TOKlt;
-          return m_token.get();
+          return std::move(m_token);
         }
 
-        if (IsFormCalcCharacter(*m_cursor)) {
-          if (*m_cursor == '=') {
-            m_token->m_type = TOKle;
-            ++m_cursor;
-          } else if (*m_cursor == '>') {
-            m_token->m_type = TOKne;
-            ++m_cursor;
-          } else {
-            m_token->m_type = TOKlt;
-          }
-        } else {
-          m_lexer_error = true;
+        if (!IsFormCalcCharacter(*m_cursor)) {
+          RaiseError();
+          return nullptr;
         }
-        return m_token.get();
+        if (*m_cursor == '=') {
+          m_token->m_type = TOKle;
+          ++m_cursor;
+        } else if (*m_cursor == '>') {
+          m_token->m_type = TOKne;
+          ++m_cursor;
+        } else {
+          m_token->m_type = TOKlt;
+        }
+        return std::move(m_token);
       case '>':
         ++m_cursor;
         if (m_cursor > m_end) {
           m_token->m_type = TOKgt;
-          return m_token.get();
+          return std::move(m_token);
         }
 
-        if (IsFormCalcCharacter(*m_cursor)) {
-          if (*m_cursor == '=') {
-            m_token->m_type = TOKge;
-            ++m_cursor;
-          } else {
-            m_token->m_type = TOKgt;
-          }
-        } else {
-          m_lexer_error = true;
+        if (!IsFormCalcCharacter(*m_cursor)) {
+          RaiseError();
+          return nullptr;
         }
-        return m_token.get();
+        if (*m_cursor == '=') {
+          m_token->m_type = TOKge;
+          ++m_cursor;
+        } else {
+          m_token->m_type = TOKgt;
+        }
+        return std::move(m_token);
       case ',':
         m_token->m_type = TOKcomma;
         ++m_cursor;
-        return m_token.get();
+        return std::move(m_token);
       case '(':
         m_token->m_type = TOKlparen;
         ++m_cursor;
-        return m_token.get();
+        return std::move(m_token);
       case ')':
         m_token->m_type = TOKrparen;
         ++m_cursor;
-        return m_token.get();
+        return std::move(m_token);
       case '[':
         m_token->m_type = TOKlbracket;
         ++m_cursor;
-        return m_token.get();
+        return std::move(m_token);
       case ']':
         m_token->m_type = TOKrbracket;
         ++m_cursor;
-        return m_token.get();
+        return std::move(m_token);
       case '&':
         ++m_cursor;
         m_token->m_type = TOKand;
-        return m_token.get();
+        return std::move(m_token);
       case '|':
         ++m_cursor;
         m_token->m_type = TOKor;
-        return m_token.get();
+        return std::move(m_token);
       case '+':
         ++m_cursor;
         m_token->m_type = TOKplus;
-        return m_token.get();
+        return std::move(m_token);
       case '-':
         ++m_cursor;
         m_token->m_type = TOKminus;
-        return m_token.get();
+        return std::move(m_token);
       case '*':
         ++m_cursor;
         m_token->m_type = TOKmul;
-        return m_token.get();
+        return std::move(m_token);
       case '/': {
         ++m_cursor;
         if (m_cursor > m_end) {
           m_token->m_type = TOKdiv;
-          return m_token.get();
+          return std::move(m_token);
         }
 
         if (!IsFormCalcCharacter(*m_cursor)) {
-          m_lexer_error = true;
-          return m_token.get();
+          RaiseError();
+          return nullptr;
         }
         if (*m_cursor != '/') {
           m_token->m_type = TOKdiv;
-          return m_token.get();
+          return std::move(m_token);
         }
         AdvanceForComment();
         break;
@@ -315,12 +318,12 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
         ++m_cursor;
         if (m_cursor > m_end) {
           m_token->m_type = TOKdot;
-          return m_token.get();
+          return std::move(m_token);
         }
 
         if (!IsFormCalcCharacter(*m_cursor)) {
-          m_lexer_error = true;
-          return m_token.get();
+          RaiseError();
+          return nullptr;
         }
 
         if (*m_cursor == '.') {
@@ -339,7 +342,7 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
         } else {
           m_token->m_type = TOKdot;
         }
-        return m_token.get();
+        return std::move(m_token);
       case 0x09:
       case 0x0B:
       case 0x0C:
@@ -348,11 +351,11 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
         break;
       default: {
         if (!IsInitialIdentifierCharacter(*m_cursor)) {
-          m_lexer_error = true;
-          return m_token.get();
+          RaiseError();
+          return nullptr;
         }
         AdvanceForIdentifier();
-        return m_token.get();
+        return std::move(m_token);
       }
     }
   }
@@ -360,7 +363,7 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
   // If there isn't currently a token type then mark it EOF.
   if (m_token->m_type == TOKreserver)
     m_token->m_type = TOKeof;
-  return m_token.get();
+  return std::move(m_token);
 }
 
 void CXFA_FMLexer::AdvanceForNumber() {
@@ -369,7 +372,7 @@ void CXFA_FMLexer::AdvanceForNumber() {
   if (m_cursor)
     wcstod(const_cast<wchar_t*>(m_cursor), &end);
   if (end && FXSYS_iswalpha(*end)) {
-    m_lexer_error = true;
+    RaiseError();
     return;
   }
 
@@ -406,8 +409,7 @@ void CXFA_FMLexer::AdvanceForString() {
   }
 
   // Didn't find the end of the string.
-  m_token->m_string = CFX_WideStringC(start, (m_cursor - start));
-  m_lexer_error = true;
+  RaiseError();
 }
 
 void CXFA_FMLexer::AdvanceForIdentifier() {
@@ -415,8 +417,7 @@ void CXFA_FMLexer::AdvanceForIdentifier() {
   ++m_cursor;
   while (m_cursor <= m_end && *m_cursor) {
     if (!IsFormCalcCharacter(*m_cursor)) {
-      m_token->m_string = CFX_WideStringC(start, (m_cursor - start));
-      m_lexer_error = true;
+      RaiseError();
       return;
     }
 
@@ -432,6 +433,11 @@ void CXFA_FMLexer::AdvanceForIdentifier() {
 void CXFA_FMLexer::AdvanceForComment() {
   m_cursor++;
   while (m_cursor <= m_end && *m_cursor) {
+    if (!IsFormCalcCharacter(*m_cursor)) {
+      RaiseError();
+      return;
+    }
+
     if (*m_cursor == L'\r') {
       ++m_cursor;
       return;
