@@ -673,7 +673,7 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   }
 
   info.m_Index = m_TextBuf.GetLength();
-  wChar = FX_GetMirrorChar(wChar, true, false);
+  wChar = FX_GetMirrorChar(wChar);
   wchar_t* pDst = nullptr;
   FX_STRSIZE nCount = Unicode_GetNormalization(wChar, pDst);
   if (nCount >= 1) {

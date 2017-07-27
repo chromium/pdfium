@@ -793,7 +793,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
     } else if (wch == L',') {
       wForm = wch;
     } else if (bRTLPiece) {
-      wForm = FX_GetMirrorChar(wch, dwProps, bRTLPiece, false);
+      wForm = FX_GetMirrorChar(wch, dwProps);
     } else {
       wForm = wch;
     }

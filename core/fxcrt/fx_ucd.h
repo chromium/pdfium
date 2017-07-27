@@ -10,8 +10,8 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
-#define FX_BIDICLASSBITS 6
-#define FX_BIDICLASSBITSMASK (31 << FX_BIDICLASSBITS)
+constexpr uint32_t FX_BIDICLASSBITS = 6;
+constexpr uint32_t FX_BIDICLASSBITSMASK = 0x1F << FX_BIDICLASSBITS;
 
 enum FX_BIDICLASS {
   FX_BIDICLASS_ON = 0,    // Other Neutral
@@ -39,14 +39,12 @@ enum FX_BIDICLASS {
 extern const uint32_t kTextLayoutCodeProperties[];
 extern const size_t kTextLayoutCodePropertiesSize;
 
-extern const uint16_t kFXTextLayoutVerticalMirror[];
-extern const size_t kFXTextLayoutVerticalMirrorSize;
-
 extern const uint16_t kFXTextLayoutBidiMirror[];
 extern const size_t kFXTextLayoutBidiMirrorSize;
 
 uint32_t FX_GetUnicodeProperties(wchar_t wch);
-wchar_t FX_GetMirrorChar(wchar_t wch, bool bRTL, bool bVertical);
+
+wchar_t FX_GetMirrorChar(wchar_t wch);
 
 #ifdef PDF_ENABLE_XFA
 
@@ -93,8 +91,9 @@ enum FXCHAR_BREAKPROP {
   FX_CBP_TB = 37,  // ?
 };
 
-#define FX_CHARTYPEBITS 11
-#define FX_CHARTYPEBITSMASK (15 << FX_CHARTYPEBITS)
+constexpr uint32_t FX_CHARTYPEBITS = 11;
+constexpr uint32_t FX_CHARTYPEBITSMASK = 0xF << FX_CHARTYPEBITS;
+
 enum FX_CHARTYPE {
   FX_CHARTYPE_Unknown = 0,
   FX_CHARTYPE_Tab = (1 << FX_CHARTYPEBITS),
@@ -114,10 +113,7 @@ inline FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
   return static_cast<FX_CHARTYPE>(prop & FX_CHARTYPEBITSMASK);
 }
 
-wchar_t FX_GetMirrorChar(wchar_t wch,
-                         uint32_t dwProps,
-                         bool bRTL,
-                         bool bVertical);
+wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps);
 
 #endif  // PDF_ENABLE_XFA
 

@@ -722,7 +722,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
         }
         wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
       } else if (bRTLPiece) {
-        wForm = FX_GetMirrorChar(wch, dwProps, bRTLPiece, false);
+        wForm = FX_GetMirrorChar(wch, dwProps);
       }
       dwProps = FX_GetUnicodeProperties(wForm);
 
