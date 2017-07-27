@@ -272,6 +272,26 @@ bool CFPDF_FileStream::Flush() {
 }
 #endif  // PDF_ENABLE_XFA
 
+FPDF_DOCUMENT LoadDocumentImpl(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    FPDF_BYTESTRING password) {
+  if (!pFileAccess)
+    return nullptr;
+
+  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
+  pParser->SetPassword(password);
+
+  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
+  CPDF_Parser::Error error =
+      pDocument->GetParser()->StartParse(pFileAccess, pDocument.get());
+  if (error != CPDF_Parser::SUCCESS) {
+    ProcessParseError(error);
+    return nullptr;
+  }
+  CheckUnSupportError(pDocument.get(), error);
+  return FPDFDocumentFromCPDFDocument(pDocument.release());
+}
+
 }  // namespace
 
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
@@ -492,23 +512,9 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password) {
   // NOTE: the creation of the file needs to be by the embedder on the
   // other side of this API.
-  CFX_RetainPtr<IFX_SeekableReadStream> pFileAccess =
-      IFX_SeekableReadStream::CreateFromFilename((const char*)file_path);
-  if (!pFileAccess)
-    return nullptr;
-
-  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
-  pParser->SetPassword(password);
-
-  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
-  CPDF_Parser::Error error =
-      pDocument->GetParser()->StartParse(pFileAccess, pDocument.get());
-  if (error != CPDF_Parser::SUCCESS) {
-    ProcessParseError(error);
-    return nullptr;
-  }
-  CheckUnSupportError(pDocument.get(), error);
-  return FPDFDocumentFromCPDFDocument(pDocument.release());
+  return LoadDocumentImpl(
+      IFX_SeekableReadStream::CreateFromFilename((const char*)file_path),
+      password);
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -574,37 +580,14 @@ class CMemFile final : public IFX_SeekableReadStream {
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
                                                      int size,
                                                      FPDF_BYTESTRING password) {
-  CFX_RetainPtr<CMemFile> pMemFile = CMemFile::Create((uint8_t*)data_buf, size);
-  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
-  pParser->SetPassword(password);
-
-  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
-  CPDF_Parser::Error error =
-      pDocument->GetParser()->StartParse(pMemFile, pDocument.get());
-  if (error != CPDF_Parser::SUCCESS) {
-    ProcessParseError(error);
-    return nullptr;
-  }
-  CheckUnSupportError(pDocument.get(), error);
-  return FPDFDocumentFromCPDFDocument(pDocument.release());
+  return LoadDocumentImpl(CMemFile::Create((uint8_t*)data_buf, size), password);
 }
 
 DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
                         FPDF_BYTESTRING password) {
-  auto pFile = pdfium::MakeRetain<CPDF_CustomAccess>(pFileAccess);
-  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
-  pParser->SetPassword(password);
-
-  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
-  CPDF_Parser::Error error =
-      pDocument->GetParser()->StartParse(pFile, pDocument.get());
-  if (error != CPDF_Parser::SUCCESS) {
-    ProcessParseError(error);
-    return nullptr;
-  }
-  CheckUnSupportError(pDocument.get(), error);
-  return FPDFDocumentFromCPDFDocument(pDocument.release());
+  return LoadDocumentImpl(pdfium::MakeRetain<CPDF_CustomAccess>(pFileAccess),
+                          password);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
