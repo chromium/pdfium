@@ -92,8 +92,7 @@ bool FX_IsLeapYear(int32_t iYear) {
 
 void CFX_DateTime::Now() {
   FXUT_SYSTEMTIME utLocal;
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
-    _FX_OS_ == _FX_WIN64_
+#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
   ::GetLocalTime((LPSYSTEMTIME)&utLocal);
 #elif _FX_OS_ != _FX_EMBEDDED_
   timeval curTime;
@@ -109,8 +108,7 @@ void CFX_DateTime::Now() {
   utLocal.wMinute = st.tm_min;
   utLocal.wSecond = st.tm_sec;
   utLocal.wMillisecond = curTime.tv_usec / 1000;
-#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ ||
-        // _FX_OS_ == _FX_WIN64_
+#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
 
   year_ = utLocal.wYear;
   month_ = static_cast<uint8_t>(utLocal.wMonth);

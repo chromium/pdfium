@@ -12,18 +12,8 @@
 //NOTE: The tiff codec requires an ANSI C compiler environment for building and 
 //		presumes an ANSI C environment for use.
 
-/* Define to 1 if you have the <fcntl.h> header file. */
-/* Define to 1 if you have the <sys/types.h> header file. */
-#if _FX_OS_ == _FX_WIN32_MOBILE_
-# define O_RDONLY       0x0000  /* open for reading only */
-# define O_WRONLY       0x0001  /* open for writing only */
-# define O_RDWR         0x0002  /* open for reading and writing */
-# define O_CREAT        0x0100  /* create and open file */
-# define O_TRUNC        0x0200  /* open and truncate */
-#else
 # define HAVE_SYS_TYPES_H 1
 # define HAVE_FCNTL_H 1
-#endif
 
 /* Compatibility stuff. */
 
@@ -45,19 +35,17 @@
 #define HAVE_SEARCH_H 1
 #endif
 
+static const size_t sizeOfInt = sizeof(int);
 /* The size of a `int', as computed by sizeof. */
-/* According typedef int	int32_t; in the fx_system.h*/
-#define SIZEOF_INT 4
+#define SIZEOF_INT sizeOfInt
 
-/* Sunliang.Liu 20110325. We should config the correct long size for tif 
-   fax4decode optimize in tif_fax3.c  -- Linux64 decode issue. 
-   TESTDOC: Bug #23661 - z1.tif. */
-#if _FX_CPU_ == _FX_WIN64_ || _FX_CPU_ == _FX_X64_ || _FX_CPU_ == _FX_IA64_
+static const size_t sizeOfULong = sizeof(unsigned long);
 /* The size of `unsigned long', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_LONG 8
-#else
-#define SIZEOF_UNSIGNED_LONG 4
-#endif
+#define SIZEOF_UNSIGNED_LONG sizeOfULong
+
+static const size_t sizeOfVoidP = sizeof(void*);
+/* The size of void* as computed by sizeof. */
+#define SIZEOF_VOIDP sizeOfVoidP
 
 /* Signed 8-bit type */
 #define TIFF_INT8_T signed char

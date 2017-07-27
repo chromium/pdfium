@@ -6,8 +6,7 @@
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
-    _FX_OS_ == _FX_WIN64_
+#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
 #include <io.h>
 #endif
 
