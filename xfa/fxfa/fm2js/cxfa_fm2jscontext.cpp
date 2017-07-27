@@ -19,7 +19,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/fm2js/cxfa_fmparse.h"
+#include "xfa/fxfa/fm2js/cxfa_fmparser.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -6055,7 +6055,7 @@ bool CXFA_FM2JSContext::Translate(const CFX_WideStringC& wsFormcalc,
     return true;
   }
 
-  CXFA_FMParse parser(wsFormcalc);
+  CXFA_FMParser parser(wsFormcalc);
   std::unique_ptr<CXFA_FMFunctionDefinition> func = parser.Parse();
   if (!func || parser.HasError())
     return false;

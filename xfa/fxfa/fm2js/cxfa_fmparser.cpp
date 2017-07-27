@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/fm2js/cxfa_fmparse.h"
+#include "xfa/fxfa/fm2js/cxfa_fmparser.h"
 
 #include <memory>
 #include <utility>
@@ -18,14 +18,15 @@ const int kMaxAssignmentChainLength = 12;
 
 }  // namespace
 
-CXFA_FMParse::CXFA_FMParse(const CFX_WideStringC& wsFormcalc) : m_error(false) {
+CXFA_FMParser::CXFA_FMParser(const CFX_WideStringC& wsFormcalc)
+    : m_error(false) {
   m_lexer = pdfium::MakeUnique<CXFA_FMLexer>(wsFormcalc);
   m_token = m_lexer->NextToken();
 }
 
-CXFA_FMParse::~CXFA_FMParse() {}
+CXFA_FMParser::~CXFA_FMParser() {}
 
-std::unique_ptr<CXFA_FMFunctionDefinition> CXFA_FMParse::Parse() {
+std::unique_ptr<CXFA_FMFunctionDefinition> CXFA_FMParser::Parse() {
   auto expressions = ParseTopExpression();
   if (HasError())
     return nullptr;
@@ -35,7 +36,7 @@ std::unique_ptr<CXFA_FMFunctionDefinition> CXFA_FMParse::Parse() {
       1, true, L"", std::move(arguments), std::move(expressions));
 }
 
-bool CXFA_FMParse::NextToken() {
+bool CXFA_FMParser::NextToken() {
   if (HasError())
     return false;
   m_token = m_lexer->NextToken();
@@ -44,7 +45,7 @@ bool CXFA_FMParse::NextToken() {
   return !HasError();
 }
 
-bool CXFA_FMParse::CheckThenNext(XFA_FM_TOKEN op) {
+bool CXFA_FMParser::CheckThenNext(XFA_FM_TOKEN op) {
   if (HasError())
     return false;
 
@@ -56,7 +57,7 @@ bool CXFA_FMParse::CheckThenNext(XFA_FM_TOKEN op) {
 }
 
 std::vector<std::unique_ptr<CXFA_FMExpression>>
-CXFA_FMParse::ParseTopExpression() {
+CXFA_FMParser::ParseTopExpression() {
   std::unique_ptr<CXFA_FMExpression> expr;
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
   if (HasError())
@@ -82,7 +83,7 @@ CXFA_FMParse::ParseTopExpression() {
   return expressions;
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseFunction() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   if (HasError())
     return nullptr;
 
@@ -144,7 +145,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseFunction() {
       line, false, ident, std::move(arguments), std::move(expressions));
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
   if (HasError())
     return nullptr;
 
@@ -196,7 +197,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpression() {
   return expr;
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseVarExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseVarExpression() {
   if (HasError())
     return nullptr;
 
@@ -226,7 +227,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseVarExpression() {
   return pdfium::MakeUnique<CXFA_FMVarExpression>(line, ident, std::move(expr));
 }
 
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseSimpleExpression() {
+std::unique_ptr<CXFA_FMSimpleExpression>
+CXFA_FMParser::ParseSimpleExpression() {
   if (HasError())
     return nullptr;
 
@@ -251,7 +253,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseSimpleExpression() {
   return pExp1;
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
   if (HasError())
     return nullptr;
 
@@ -263,7 +265,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseExpExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParseLogicalOrExpression() {
+CXFA_FMParser::ParseLogicalOrExpression() {
   if (HasError())
     return nullptr;
 
@@ -297,7 +299,7 @@ CXFA_FMParse::ParseLogicalOrExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParseLogicalAndExpression() {
+CXFA_FMParser::ParseLogicalAndExpression() {
   if (HasError())
     return nullptr;
 
@@ -330,7 +332,7 @@ CXFA_FMParse::ParseLogicalAndExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParseEqualityExpression() {
+CXFA_FMParser::ParseEqualityExpression() {
   if (HasError())
     return nullptr;
 
@@ -374,7 +376,7 @@ CXFA_FMParse::ParseEqualityExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParseRelationalExpression() {
+CXFA_FMParser::ParseRelationalExpression() {
   if (HasError())
     return nullptr;
 
@@ -443,7 +445,7 @@ CXFA_FMParse::ParseRelationalExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParseAddtiveExpression() {
+CXFA_FMParser::ParseAddtiveExpression() {
   if (HasError())
     return nullptr;
 
@@ -486,7 +488,7 @@ CXFA_FMParse::ParseAddtiveExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParseMultiplicativeExpression() {
+CXFA_FMParser::ParseMultiplicativeExpression() {
   if (HasError())
     return nullptr;
 
@@ -528,7 +530,7 @@ CXFA_FMParse::ParseMultiplicativeExpression() {
   return e1;
 }
 
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseUnaryExpression() {
+std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseUnaryExpression() {
   if (HasError())
     return nullptr;
 
@@ -575,7 +577,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseUnaryExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParsePrimaryExpression() {
+CXFA_FMParser::ParsePrimaryExpression() {
   if (HasError())
     return nullptr;
 
@@ -641,7 +643,7 @@ CXFA_FMParse::ParsePrimaryExpression() {
   return expr;
 }
 
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
+std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> expr) {
   if (HasError())
     return nullptr;
@@ -749,44 +751,42 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
 
           expr = pdfium::MakeUnique<CXFA_FMDotAccessorExpression>(
               tempLine, std::move(expr), TOKdot, tempStr, std::move(s));
-          } else {
-            std::unique_ptr<CXFA_FMSimpleExpression> s =
-                pdfium::MakeUnique<CXFA_FMIndexExpression>(
-                    tempLine, ACCESSOR_NO_INDEX, nullptr, false);
-            expr = pdfium::MakeUnique<CXFA_FMDotAccessorExpression>(
-                line, std::move(expr), TOKdot, tempStr, std::move(s));
-            continue;
-          }
+        } else {
+          std::unique_ptr<CXFA_FMSimpleExpression> s =
+              pdfium::MakeUnique<CXFA_FMIndexExpression>(
+                  tempLine, ACCESSOR_NO_INDEX, nullptr, false);
+          expr = pdfium::MakeUnique<CXFA_FMDotAccessorExpression>(
+              line, std::move(expr), TOKdot, tempStr, std::move(s));
+          continue;
         }
-        break;
-        case TOKdotdot: {
-          if (!NextToken())
+      } break;
+      case TOKdotdot: {
+        if (!NextToken())
+          return nullptr;
+        if (m_token->m_type != TOKidentifier) {
+          m_error = true;
+          return nullptr;
+        }
+        CFX_WideStringC tempStr = m_token->m_string;
+        uint32_t tempLine = m_token->m_line_num;
+        if (!NextToken())
+          return nullptr;
+        if (m_token->m_type == TOKlbracket) {
+          std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
+          if (!s)
             return nullptr;
-          if (m_token->m_type != TOKidentifier) {
-            m_error = true;
-            return nullptr;
-          }
-          CFX_WideStringC tempStr = m_token->m_string;
-          uint32_t tempLine = m_token->m_line_num;
-          if (!NextToken())
-            return nullptr;
-          if (m_token->m_type == TOKlbracket) {
-            std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
-            if (!s)
-              return nullptr;
 
-            expr = pdfium::MakeUnique<CXFA_FMDotDotAccessorExpression>(
-                tempLine, std::move(expr), TOKdotdot, tempStr, std::move(s));
-          } else {
-            std::unique_ptr<CXFA_FMSimpleExpression> s =
-                pdfium::MakeUnique<CXFA_FMIndexExpression>(
-                    tempLine, ACCESSOR_NO_INDEX, nullptr, false);
-            expr = pdfium::MakeUnique<CXFA_FMDotDotAccessorExpression>(
-                line, std::move(expr), TOKdotdot, tempStr, std::move(s));
-            continue;
-          }
+          expr = pdfium::MakeUnique<CXFA_FMDotDotAccessorExpression>(
+              tempLine, std::move(expr), TOKdotdot, tempStr, std::move(s));
+        } else {
+          std::unique_ptr<CXFA_FMSimpleExpression> s =
+              pdfium::MakeUnique<CXFA_FMIndexExpression>(
+                  tempLine, ACCESSOR_NO_INDEX, nullptr, false);
+          expr = pdfium::MakeUnique<CXFA_FMDotDotAccessorExpression>(
+              line, std::move(expr), TOKdotdot, tempStr, std::move(s));
+          continue;
         }
-        break;
+      } break;
       case TOKdotscream: {
         if (!NextToken())
           return nullptr;
@@ -831,7 +831,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParsePostExpression(
   return expr;
 }
 
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseIndexExpression() {
+std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
   if (HasError())
     return nullptr;
 
@@ -873,7 +873,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseIndexExpression() {
                                                     std::move(s), false);
 }
 
-std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseParenExpression() {
+std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
   if (!CheckThenNext(TOKlparen))
     return nullptr;
 
@@ -908,7 +908,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseParenExpression() {
   return pExp1;
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseBlockExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseBlockExpression() {
   if (HasError())
     return nullptr;
 
@@ -948,7 +948,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseBlockExpression() {
                                                     std::move(expressions));
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
   if (HasError())
     return nullptr;
 
@@ -1018,7 +1018,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
                                                  std::move(pElseExpression));
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseWhileExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
   if (HasError())
     return nullptr;
 
@@ -1038,7 +1038,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseWhileExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParse::ParseSubassignmentInForExpression() {
+CXFA_FMParser::ParseSubassignmentInForExpression() {
   if (HasError())
     return nullptr;
 
@@ -1052,7 +1052,7 @@ CXFA_FMParse::ParseSubassignmentInForExpression() {
   return expr;
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
   if (HasError())
     return nullptr;
 
@@ -1120,7 +1120,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForExpression() {
       std::move(pStep), std::move(pList));
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForeachExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
   if (HasError())
     return nullptr;
 
@@ -1165,7 +1165,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseForeachExpression() {
       line, wsIdentifier, std::move(pAccessors), std::move(pList));
 }
 
-std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseDoExpression() {
+std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
   if (HasError())
     return nullptr;
 
@@ -1179,6 +1179,6 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseDoExpression() {
   return pdfium::MakeUnique<CXFA_FMDoExpression>(line, std::move(expr));
 }
 
-bool CXFA_FMParse::HasError() const {
+bool CXFA_FMParser::HasError() const {
   return m_error || m_token == nullptr;
 }
