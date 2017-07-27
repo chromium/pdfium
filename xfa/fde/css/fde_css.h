@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fgas/font/cfgas_fontmgr.h"
 
 enum FDE_CSSVALUETYPE {
   FDE_CSSVALUETYPE_Primitive = 1 << 0,

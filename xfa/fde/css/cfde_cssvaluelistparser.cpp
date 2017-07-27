@@ -6,6 +6,8 @@
 
 #include "xfa/fde/css/cfde_cssvaluelistparser.h"
 
+#include "core/fxcrt/fx_extension.h"
+
 CFDE_CSSValueListParser::CFDE_CSSValueListParser(const wchar_t* psz,
                                                  int32_t iLen,
                                                  wchar_t separator)
