@@ -15,7 +15,7 @@
 namespace {
 
 bool IsFormCalcCharacter(wchar_t c) {
-  return c == 0 || (c >= 0x09 && c <= 0x0D) || (c >= 0x20 && c <= 0xd7FF) ||
+  return (c >= 0x09 && c <= 0x0D) || (c >= 0x20 && c <= 0xd7FF) ||
          (c >= 0xE000 && c <= 0xFFFD);
 }
 
