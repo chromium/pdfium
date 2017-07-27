@@ -98,24 +98,18 @@ const XFA_FM_TOKEN KEYWORD_END = TOKendif;
 XFA_FM_TOKEN TokenizeIdentifier(const CFX_WideStringC& str) {
   uint32_t key = FX_HashCode_GetW(str, true);
 
+  const XFA_FMKeyword* end = std::begin(keyWords) + KEYWORD_END + 1;
   const XFA_FMKeyword* result =
-      std::lower_bound(std::begin(keyWords) + KEYWORD_START, std::end(keyWords),
-                       key, [](const XFA_FMKeyword& iter, const uint32_t& val) {
+      std::lower_bound(std::begin(keyWords) + KEYWORD_START, end, key,
+                       [](const XFA_FMKeyword& iter, const uint32_t& val) {
                          return iter.m_hash < val;
                        });
-  if (result != std::end(keyWords) && result->m_hash == key) {
+  if (result != end && result->m_hash == key)
     return result->m_type;
-  }
   return TOKidentifier;
 }
 
 }  // namespace
-
-const wchar_t* XFA_FM_KeywordToString(XFA_FM_TOKEN op) {
-  if (op < KEYWORD_START || op > KEYWORD_END)
-    return L"";
-  return keyWords[op].m_keyword;
-}
 
 CXFA_FMToken::CXFA_FMToken() : m_type(TOKreserver), m_line_num(1) {}
 
