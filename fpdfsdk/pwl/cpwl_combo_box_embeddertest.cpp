@@ -68,6 +68,14 @@ class CPWLComboBoxEditEmbeddertest : public EmbedderTest {
     m_pComboBox = static_cast<CPWL_ComboBox*>(pWindow);
   }
 
+  void TypeTextIntoTextField(int num_chars) {
+    // Type text starting with 'A' to as many chars as specified by |num_chars|.
+    for (int i = 0; i < num_chars; ++i) {
+      EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(),
+                                              i + 'A', 0));
+    }
+  }
+
   FPDF_PAGE GetPage() const { return m_page; }
   CPWL_ComboBox* GetCPWLComboBox() const { return m_pComboBox; }
   CFFL_FormFiller* GetCFFLFormFiller() const { return m_pFormFiller; }
@@ -167,10 +175,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextEmptyAndBasicEditable) {
 
 TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextFragmentsEditable) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
-  for (int i = 0; i < 50; ++i) {
-    EXPECT_TRUE(
-        GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), i + 'A', 0));
-  }
+  TypeTextIntoTextField(50);
 
   GetCPWLComboBox()->SetEditSelection(0, 0);
   EXPECT_TRUE(GetCPWLComboBox()->GetSelectedText().IsEmpty());
@@ -200,10 +205,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextFragmentsEditable) {
 
 TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEntireTextSelection) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
-  for (int i = 0; i < 50; ++i) {
-    EXPECT_TRUE(
-        GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), i + 'A', 0));
-  }
+  TypeTextIntoTextField(50);
 
   GetCPWLComboBox()->SetEditSelection(0, -1);
   EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
@@ -215,10 +217,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEntireTextSelection) {
 
 TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionMiddle) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
-  for (int i = 0; i < 50; ++i) {
-    EXPECT_TRUE(
-        GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), i + 'A', 0));
-  }
+  TypeTextIntoTextField(50);
 
   GetCPWLComboBox()->SetEditSelection(12, 23);
   EXPECT_STREQ(L"MNOPQRSTUVW", GetCPWLComboBox()->GetSelectedText().c_str());
@@ -230,10 +229,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionMiddle) {
 
 TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionLeft) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
-  for (int i = 0; i < 50; ++i) {
-    EXPECT_TRUE(
-        GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), i + 'A', 0));
-  }
+  TypeTextIntoTextField(50);
 
   GetCPWLComboBox()->SetEditSelection(0, 5);
   EXPECT_STREQ(L"ABCDE", GetCPWLComboBox()->GetSelectedText().c_str());
@@ -245,10 +241,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionLeft) {
 
 TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionRight) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
-  for (int i = 0; i < 50; ++i) {
-    EXPECT_TRUE(
-        GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), i + 'A', 0));
-  }
+  TypeTextIntoTextField(50);
 
   GetCPWLComboBox()->SetEditSelection(45, 50);
   EXPECT_STREQ(L"nopqr", GetCPWLComboBox()->GetSelectedText().c_str());
@@ -260,10 +253,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionRight) {
 
 TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEmptyTextSelection) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
-  for (int i = 0; i < 50; ++i) {
-    EXPECT_TRUE(
-        GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotUserEditable(), i + 'A', 0));
-  }
+  TypeTextIntoTextField(50);
 
   GetCPWLComboBox()->DeleteSelectedText();
   EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
