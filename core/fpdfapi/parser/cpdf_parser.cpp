@@ -126,7 +126,7 @@ CFX_RetainPtr<CPDF_CryptoHandler> CPDF_Parser::GetCryptoHandler() const {
 }
 
 CFX_RetainPtr<IFX_SeekableReadStream> CPDF_Parser::GetFileAccess() const {
-  return m_pSyntax->m_pFileAccess;
+  return m_pSyntax->GetFileAccess();
 }
 
 void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
@@ -615,7 +615,7 @@ bool CPDF_Parser::RebuildCrossRef() {
     bool bOverFlow = false;
     uint32_t size =
         std::min((uint32_t)(m_pSyntax->m_FileLen - pos), kBufferSize);
-    if (!m_pSyntax->m_pFileAccess->ReadBlock(buffer.data(), pos, size))
+    if (!m_pSyntax->GetFileAccess()->ReadBlock(buffer.data(), pos, size))
       break;
 
     for (uint32_t i = 0; i < size; i++) {
@@ -1506,7 +1506,6 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     return FORMAT_ERROR;
 
   if (!IsLinearizedFile(pFileAccess, offset)) {
-    m_pSyntax->m_pFileAccess = nullptr;
     return StartParse(pFileAccess, std::move(pDocument));
   }
   m_bHasParsed = true;

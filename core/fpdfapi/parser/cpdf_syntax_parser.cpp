@@ -879,3 +879,7 @@ void CPDF_SyntaxParser::SetEncrypt(
     const CFX_RetainPtr<CPDF_CryptoHandler>& pCryptoHandler) {
   m_pCryptoHandler = pCryptoHandler;
 }
+
+CFX_RetainPtr<IFX_SeekableReadStream> CPDF_SyntaxParser::GetFileAccess() const {
+  return m_pFileAccess;
+}

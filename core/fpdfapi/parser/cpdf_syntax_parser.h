@@ -53,6 +53,8 @@ class CPDF_SyntaxParser {
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   CFX_ByteString GetNextWord(bool* bIsNumber);
 
+  CFX_RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
+
  private:
   friend class CPDF_Parser;
   friend class CPDF_DataAvail;
