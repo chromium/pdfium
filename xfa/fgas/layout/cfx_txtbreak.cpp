@@ -45,7 +45,7 @@ void CFX_TxtBreak::SetCombWidth(float fCombWidth) {
   m_iCombWidth = FXSYS_round(fCombWidth * 20000.0f);
 }
 
-void CFX_TxtBreak::AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps) {
+void CFX_TxtBreak::AppendChar_PageLoad(CFX_Char* pCurChar) {
   pCurChar->m_dwStatus = CFX_BreakType::None;
   pCurChar->m_dwCharStyles = m_iAlignment | (1 << 8);
 }
@@ -222,7 +222,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
   pCurChar->m_iBidiPos = 0;
   pCurChar->m_iBidiOrder = 0;
 
-  AppendChar_PageLoad(pCurChar, dwProps);
+  AppendChar_PageLoad(pCurChar);
   CFX_BreakType dwRet1 = CFX_BreakType::None;
   if (chartype != FX_CHARTYPE_Combination &&
       GetUnifiedCharType(m_eCharType) != GetUnifiedCharType(chartype) &&
