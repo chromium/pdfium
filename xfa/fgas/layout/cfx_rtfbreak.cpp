@@ -66,7 +66,7 @@ bool CFX_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
 CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
   ASSERT(m_pFont && m_pCurLine);
 
-  uint32_t dwProps = kTextLayoutCodeProperties[static_cast<uint16_t>(wch)];
+  uint32_t dwProps = FX_GetUnicodeProperties(wch);
   FX_CHARTYPE chartype = GetCharTypeFromProp(dwProps);
   m_pCurLine->m_LineChars.emplace_back();
 

@@ -24,7 +24,7 @@ wchar_t GetMirrorChar(wchar_t wch, uint32_t dwProps) {
 uint32_t FX_GetUnicodeProperties(wchar_t wch) {
   size_t idx = static_cast<size_t>(wch);
   if (idx < kTextLayoutCodePropertiesSize)
-    return kTextLayoutCodeProperties[(uint16_t)wch];
+    return kTextLayoutCodeProperties[idx];
   return 0;
 }
 
