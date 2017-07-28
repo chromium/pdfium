@@ -1943,7 +1943,8 @@ void CPWL_AppStream::Write(const CFX_ByteString& sAPType,
   }
   pStreamDict->SetMatrixFor("Matrix", widget_->GetMatrix());
   pStreamDict->SetRectFor("BBox", widget_->GetRotatedRect());
-  pStream->SetData((uint8_t*)(sContents.c_str()), sContents.GetLength());
+  pStream->SetDataAndRemoveFilter((uint8_t*)(sContents.c_str()),
+                                  sContents.GetLength());
 }
 
 void CPWL_AppStream::Remove(const CFX_ByteString& sAPType) {

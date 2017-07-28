@@ -97,6 +97,17 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
                                          std::move(pNewDict));
 }
 
+void CPDF_Stream::SetDataAndRemoveFilter(const uint8_t* pData, uint32_t size) {
+  SetData(pData, size);
+  m_pDict->RemoveFor("Filter");
+  m_pDict->RemoveFor("DecodeParms");
+}
+
+void CPDF_Stream::SetDataAndRemoveFilter(std::ostringstream* stream) {
+  SetDataAndRemoveFilter(
+      reinterpret_cast<const uint8_t*>(stream->str().c_str()), stream->tellp());
+}
+
 void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
   m_bMemoryBased = true;
   m_pDataBuf.reset(FX_Alloc(uint8_t, size));
@@ -106,8 +117,6 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
   if (!m_pDict)
     m_pDict = pdfium::MakeUnique<CPDF_Dictionary>();
   m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
-  m_pDict->RemoveFor("Filter");
-  m_pDict->RemoveFor("DecodeParms");
 }
 
 void CPDF_Stream::SetData(std::ostringstream* stream) {

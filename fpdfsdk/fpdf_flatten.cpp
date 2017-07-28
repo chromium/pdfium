@@ -203,7 +203,8 @@ void SetPageContents(const CFX_ByteString& key,
     CFX_ByteString sBody =
         CFX_ByteString((const char*)pAcc->GetData(), pAcc->GetSize());
     sStream = sStream + sBody + "\nQ";
-    pContentsStream->SetData(sStream.raw_str(), sStream.GetLength());
+    pContentsStream->SetDataAndRemoveFilter(sStream.raw_str(),
+                                            sStream.GetLength());
     pContentsArray->AddNew<CPDF_Reference>(pDocument,
                                            pContentsStream->GetObjNum());
     pPage->SetNewFor<CPDF_Reference>("Contents", pDocument,
@@ -405,7 +406,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f,
                  sFormName.c_str());
     sStream += sTemp;
-    pNewXObject->SetData(sStream.raw_str(), sStream.GetLength());
+    pNewXObject->SetDataAndRemoveFilter(sStream.raw_str(), sStream.GetLength());
   }
   pPageDict->RemoveFor("Annots");
   return FLATTEN_SUCCESS;

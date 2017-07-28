@@ -179,7 +179,7 @@ void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
   CPDF_PageContentGenerator generator(pForm);
   std::ostringstream buf;
   generator.ProcessPageObjects(&buf);
-  pStream->SetData(&buf);
+  pStream->SetDataAndRemoveFilter(&buf);
 }
 
 }  // namespace

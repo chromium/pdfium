@@ -42,6 +42,10 @@ class CPDF_Stream : public CPDF_Object {
   // Does not takes ownership of |pData|, copies into internally-owned buffer.
   void SetData(const uint8_t* pData, uint32_t size);
   void SetData(std::ostringstream* stream);
+  // Set data and remove "Filter" and "DecodeParms" fields from stream
+  // dictionary.
+  void SetDataAndRemoveFilter(const uint8_t* pData, uint32_t size);
+  void SetDataAndRemoveFilter(std::ostringstream* stream);
 
   void InitStream(const uint8_t* pData,
                   uint32_t size,

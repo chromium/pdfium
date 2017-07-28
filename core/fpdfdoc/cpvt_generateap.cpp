@@ -429,7 +429,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     } break;
   }
   if (pNormalStream) {
-    pNormalStream->SetData(&sAppStream);
+    pNormalStream->SetDataAndRemoveFilter(&sAppStream);
     pStreamDict = pNormalStream->GetDict();
     if (pStreamDict) {
       pStreamDict->SetMatrixFor("Matrix", matrix);
