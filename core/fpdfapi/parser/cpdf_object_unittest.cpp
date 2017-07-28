@@ -883,3 +883,13 @@ TEST(PDFDictionaryTest, ConvertIndirect) {
   EXPECT_EQ(pObj, pNum);
   EXPECT_EQ(42, dict->GetIntegerFor("clams"));
 }
+
+TEST(PDFDictionaryTest, ExtractObjectOnRemove) {
+  auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
+  CPDF_Object* pObj = dict->SetNewFor<CPDF_Number>("child", 42);
+  auto extracted_object = dict->RemoveFor("child");
+  EXPECT_EQ(pObj, extracted_object.get());
+
+  extracted_object = dict->RemoveFor("non_exists_object");
+  EXPECT_FALSE(extracted_object);
+}
