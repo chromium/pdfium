@@ -22,7 +22,7 @@ import sys
 # 'binary' is the file that is to be run for the test.
 # 'use_test_runner' indicates if 'binary' depends on test_runner.py and thus
 # requires special handling.
-TestSpec = namedtuple('binary', 'use_test_runner')
+TestSpec = namedtuple('TestSpec', 'binary, use_test_runner')
 
 # All of the coverage tests that the script knows how to run.
 COVERAGE_TESTS = {
@@ -150,12 +150,12 @@ class CoverageExecutor(object):
                                            'tools')
     coverage_tests = {}
     for name in COVERAGE_TESTS.keys():
-      (binary, uses_test_runner) = COVERAGE_TESTS[name]
-      if uses_test_runner:
-        binary_path = os.path.join(testing_tools_directory, binary)
+      test_spec = COVERAGE_TESTS[name]
+      if test_spec.use_test_runner:
+        binary_path = os.path.join(testing_tools_directory, test_spec.binary)
       else:
-        binary_path = os.path.join(self.build_directory, binary)
-      coverage_tests[name] = (binary_path, uses_test_runner)
+        binary_path = os.path.join(self.build_directory, test_spec.binary)
+      coverage_tests[name] = TestSpec(binary_path, test_spec.use_test_runner)
 
     if args['tests']:
       return {name: spec
