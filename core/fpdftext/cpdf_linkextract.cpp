@@ -154,7 +154,7 @@ void CPDF_LinkExtract::ParseLink() {
         while (strBeCheck.GetLength() > 0) {
           wchar_t ch = strBeCheck.GetAt(strBeCheck.GetLength() - 1);
           if (ch == L')' || ch == L',' || ch == L'>' || ch == L'.') {
-            strBeCheck = strBeCheck.Mid(0, strBeCheck.GetLength() - 1);
+            strBeCheck = strBeCheck.Left(strBeCheck.GetLength() - 1);
             nCount--;
           } else {
             break;

@@ -91,7 +91,7 @@ bool ParserPageRangeString(CFX_ByteString rangstring,
     nStringTo = rangstring.Find(',', nStringFrom);
     if (nStringTo == -1)
       nStringTo = nLength;
-    cbMidRange = rangstring.Mid(nStringFrom, nStringTo - nStringFrom);
+    cbMidRange = rangstring.Right(nStringTo - nStringFrom);
     int nMid = cbMidRange.Find('-');
     if (nMid == -1) {
       long lPageNum = atol(cbMidRange.c_str());
@@ -99,7 +99,7 @@ bool ParserPageRangeString(CFX_ByteString rangstring,
         return false;
       pageArray->push_back((uint16_t)lPageNum);
     } else {
-      int nStartPageNum = atol(cbMidRange.Mid(0, nMid).c_str());
+      int nStartPageNum = atol(cbMidRange.Left(nMid).c_str());
       if (nStartPageNum == 0)
         return false;
 

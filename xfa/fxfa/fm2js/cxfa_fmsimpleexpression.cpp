@@ -181,7 +181,7 @@ bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     tempStr = L"xfa.template";
   } else if (tempStr[0] == L'!') {
     tempStr =
-        EXCLAMATION_IN_IDENTIFIER + tempStr.Mid(1, tempStr.GetLength() - 1);
+        EXCLAMATION_IN_IDENTIFIER + tempStr.Right(tempStr.GetLength() - 1);
   }
   javascript << tempStr;
   return true;

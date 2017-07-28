@@ -43,7 +43,7 @@ CFX_WideString CBC_EAN8::Preprocess(const CFX_WideStringC& contents) {
     encodeContents += wchar_t(checksum - 0 + '0');
   }
   if (length > 8)
-    encodeContents = encodeContents.Mid(0, 8);
+    encodeContents = encodeContents.Left(8);
 
   return encodeContents;
 }

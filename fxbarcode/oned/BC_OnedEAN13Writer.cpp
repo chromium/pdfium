@@ -109,7 +109,7 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const CFX_ByteString& contents,
     return nullptr;
 
   m_iDataLenth = 13;
-  int32_t firstDigit = FXSYS_atoi(contents.Mid(0, 1).c_str());
+  int32_t firstDigit = FXSYS_atoi(contents.Left(1).c_str());
   int32_t parities = FIRST_DIGIT_ENCODINGS[firstDigit];
   outLength = m_codeWidth;
   std::unique_ptr<uint8_t, FxFreeDeleter> result(
@@ -219,7 +219,7 @@ bool CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
                            static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
-  tempStr = str.Mid(0, 1);
+  tempStr = str.Left(1);
   iLen = tempStr.GetLength();
   strWidth = multiple * 7;
   strWidth = (int32_t)(strWidth * m_outputHScale);

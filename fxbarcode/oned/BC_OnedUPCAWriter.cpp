@@ -183,7 +183,7 @@ bool CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
                            static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
-  tempStr = str.Mid(0, 1);
+  tempStr = str.Left(1);
   iLen = tempStr.GetLength();
   strWidth = (float)multiple * 7;
   strWidth = strWidth * m_outputHScale;

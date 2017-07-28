@@ -221,7 +221,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString* sAlias) {
 
   CFX_ByteString sFontName(syntax.GetWord());
   CFX_ByteString sDecodedFontName = PDF_NameDecode(sFontName);
-  *sAlias = sDecodedFontName.Mid(1, sDecodedFontName.GetLength() - 1);
+  *sAlias = sDecodedFontName.Right(sDecodedFontName.GetLength() - 1);
 
   CPDF_Dictionary* pFontDict = nullptr;
   if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP")) {

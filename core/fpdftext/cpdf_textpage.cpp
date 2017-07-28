@@ -441,8 +441,8 @@ CFX_WideString CPDF_TextPage::GetPageText(int start, int nCount) const {
 
   if (nCount == -1) {
     nCount = pdfium::CollectionSize<int>(m_CharList) - start;
-    return CFX_WideString(
-        m_TextBuf.AsStringC().Mid(start, m_TextBuf.AsStringC().GetLength()));
+    CFX_WideStringC wsTextBuf = m_TextBuf.AsStringC();
+    return CFX_WideString(wsTextBuf.Right(wsTextBuf.GetLength() - start));
   }
   if (nCount <= 0 || m_CharList.empty())
     return L"";

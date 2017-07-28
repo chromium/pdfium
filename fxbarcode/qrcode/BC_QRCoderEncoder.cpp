@@ -432,7 +432,7 @@ void SplitString(const CFX_ByteString& content,
     index += 2;
   }
   if (index)
-    result->push_back({CBC_QRCoderMode::sGBK, content.Mid(0, index)});
+    result->push_back({CBC_QRCoderMode::sGBK, content.Left(index)});
   if (index >= content.GetLength())
     return;
 
@@ -479,7 +479,7 @@ void SplitString(const CFX_ByteString& content,
   }
   flag = index;
   if (index < content.GetLength())
-    SplitString(content.Mid(index, content.GetLength() - index), result);
+    SplitString(content.Right(content.GetLength() - index), result);
 }
 
 CBC_QRCoderMode* ChooseMode(const CFX_ByteString& content,

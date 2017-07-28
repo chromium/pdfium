@@ -2242,7 +2242,7 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   }
   if (!bAddNeg && bNeg) {
     *wsOutput = pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) +
-                (*wsOutput)[0] + wsOutput->Mid(1, wsOutput->GetLength() - 1);
+                (*wsOutput)[0] + wsOutput->Right(wsOutput->GetLength() - 1);
   }
   return true;
 }

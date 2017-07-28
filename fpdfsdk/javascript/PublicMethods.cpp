@@ -980,11 +980,10 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
     }
   }
 
-  CFX_WideString wprefix = wstrValue.Mid(0, pEvent->SelStart());
+  CFX_WideString wprefix = wstrValue.Left(pEvent->SelStart());
   CFX_WideString wpostfix;
   if (pEvent->SelEnd() < wstrValue.GetLength())
-    wpostfix = wstrValue.Mid(pEvent->SelEnd(),
-                             wstrValue.GetLength() - pEvent->SelEnd());
+    wpostfix = wstrValue.Right(wstrValue.GetLength() - pEvent->SelEnd());
   val = wprefix + wstrChange + wpostfix;
   return true;
 }
@@ -1532,14 +1531,13 @@ bool CJS_PublicMethods::AFMergeChange(CJS_Runtime* pRuntime,
   CFX_WideString prefix, postfix;
 
   if (pEventHandler->SelStart() >= 0)
-    prefix = swValue.Mid(0, pEventHandler->SelStart());
+    prefix = swValue.Left(pEventHandler->SelStart());
   else
     prefix = L"";
 
   if (pEventHandler->SelEnd() >= 0 &&
       pEventHandler->SelEnd() <= swValue.GetLength())
-    postfix = swValue.Mid(pEventHandler->SelEnd(),
-                          swValue.GetLength() - pEventHandler->SelEnd());
+    postfix = swValue.Right(swValue.GetLength() - pEventHandler->SelEnd());
   else
     postfix = L"";
 

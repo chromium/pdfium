@@ -300,7 +300,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
           continue;
         }
         if (pos > 0)
-          m_csFindWhatArray.push_back(csWord.Mid(0, pos));
+          m_csFindWhatArray.push_back(csWord.Left(pos));
         m_csFindWhatArray.push_back(curStr);
         if (pos == csWord.GetLength() - 1) {
           csWord.clear();

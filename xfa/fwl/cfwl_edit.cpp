@@ -1152,8 +1152,8 @@ bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {
     return false;
 
   int32_t nLen = wsText.GetLength();
-  CFX_WideString l = wsText.Mid(0, caretPos);
-  CFX_WideString r = wsText.Mid(caretPos, nLen - caretPos);
+  CFX_WideString l = wsText.Left(caretPos);
+  CFX_WideString r = wsText.Right(nLen - caretPos);
   CFX_WideString wsNew = l + cNum + r;
   return wsNew.GetInteger() <= m_iMax;
 }

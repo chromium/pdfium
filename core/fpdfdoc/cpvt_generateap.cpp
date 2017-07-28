@@ -66,7 +66,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     return false;
 
   CPDF_Dictionary* pFontDict =
-      pDRFontDict->GetDictFor(sFontName.Mid(1, sFontName.GetLength() - 1));
+      pDRFontDict->GetDictFor(sFontName.Right(sFontName.GetLength() - 1));
   if (!pFontDict) {
     pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
     pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
@@ -74,7 +74,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     pFontDict->SetNewFor<CPDF_Name>("BaseFont", "Helvetica");
     pFontDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
     pDRFontDict->SetNewFor<CPDF_Reference>(
-        sFontName.Mid(1, sFontName.GetLength() - 1), pDoc,
+        sFontName.Right(sFontName.GetLength() - 1), pDoc,
         pFontDict->GetObjNum());
   }
   CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);

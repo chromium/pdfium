@@ -159,7 +159,7 @@ bool CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
   CFX_ByteString str = FX_UTF8Encode(contents);
   int32_t iLength = str.GetLength();
   std::vector<FXTEXT_CHARPOS> charpos(iLength);
-  CFX_ByteString tempStr = str.Mid(0, 4);
+  CFX_ByteString tempStr = str.Left(4);
   int32_t iLen = tempStr.GetLength();
   int32_t strWidth = 7 * multiple * 4;
   float blank = 0.0;

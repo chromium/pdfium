@@ -45,7 +45,7 @@ CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
     encodeContents = byteString.UTF8Decode();
   }
   if (length > 13)
-    encodeContents = encodeContents.Mid(0, 13);
+    encodeContents = encodeContents.Left(13);
 
   return encodeContents;
 }

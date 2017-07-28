@@ -44,7 +44,7 @@ CFX_WideString CBC_UPCA::Preprocess(const CFX_WideStringC& contents) {
     encodeContents = byteString.UTF8Decode();
   }
   if (length > 12)
-    encodeContents = encodeContents.Mid(0, 12);
+    encodeContents = encodeContents.Left(12);
 
   return encodeContents;
 }
