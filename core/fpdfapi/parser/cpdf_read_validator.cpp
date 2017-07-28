@@ -26,6 +26,19 @@ FX_FILESIZE AlignUp(FX_FILESIZE offset) {
 
 }  // namespace
 
+CPDF_ReadValidator::Session::Session(CPDF_ReadValidator* validator)
+    : validator_(validator) {
+  ASSERT(validator_);
+  saved_read_error_ = validator_->read_error_;
+  saved_has_unavailable_data_ = validator_->has_unavailable_data_;
+  validator_->ResetErrors();
+}
+
+CPDF_ReadValidator::Session::~Session() {
+  validator_->read_error_ |= saved_read_error_;
+  validator_->has_unavailable_data_ |= saved_has_unavailable_data_;
+}
+
 CPDF_ReadValidator::CPDF_ReadValidator(
     const CFX_RetainPtr<IFX_SeekableReadStream>& file_read,
     CPDF_DataAvail::FileAvail* file_avail)

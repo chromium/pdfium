@@ -12,6 +12,17 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  class Session {
+   public:
+    explicit Session(CPDF_ReadValidator* validator);
+    ~Session();
+
+   private:
+    CFX_UnownedPtr<CPDF_ReadValidator> validator_;
+    bool saved_read_error_;
+    bool saved_has_unavailable_data_;
+  };
+
   void SetDownloadHints(CPDF_DataAvail::DownloadHints* hints) {
     hints_ = hints;
   }

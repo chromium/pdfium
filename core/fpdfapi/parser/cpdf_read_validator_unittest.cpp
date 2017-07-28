@@ -178,3 +178,83 @@ TEST(CPDF_ReadValidatorTest, IntOverflow) {
   EXPECT_FALSE(validator->read_error());
   EXPECT_FALSE(validator->has_unavailable_data());
 }
+
+TEST(CPDF_ReadValidatorTest, Session) {
+  std::vector<uint8_t> test_data(kTestDataSize);
+
+  auto file = pdfium::MakeRetain<InvalidReader>();
+  MockFileAvail file_avail;
+  MockDownloadHints hints;
+  auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
+  validator->SetDownloadHints(&hints);
+
+  const CPDF_ReadValidator::Session read_session(validator.Get());
+  ASSERT_FALSE(validator->has_read_problems());
+
+  // Data is unavailable
+  validator->ReadBlock(test_data.data(), 0, 100);
+
+  EXPECT_TRUE(validator->has_read_problems());
+  EXPECT_TRUE(validator->has_unavailable_data());
+  EXPECT_FALSE(validator->read_error());
+
+  {
+    const CPDF_ReadValidator::Session read_subsession(validator.Get());
+    // The read problems should be hidden.
+    EXPECT_FALSE(validator->has_read_problems());
+
+    file_avail.SetAvailableRange(0, 100);
+    // Read fail.
+    validator->ReadBlock(test_data.data(), 0, 100);
+    EXPECT_TRUE(validator->has_read_problems());
+    EXPECT_TRUE(validator->has_unavailable_data());
+    EXPECT_TRUE(validator->read_error());
+  }
+
+  // The problems should be merged
+  EXPECT_TRUE(validator->has_read_problems());
+  EXPECT_TRUE(validator->has_unavailable_data());
+  EXPECT_TRUE(validator->read_error());
+}
+
+TEST(CPDF_ReadValidatorTest, SessionReset) {
+  std::vector<uint8_t> test_data(kTestDataSize);
+
+  auto file = pdfium::MakeRetain<InvalidReader>();
+  MockFileAvail file_avail;
+  MockDownloadHints hints;
+  auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
+  validator->SetDownloadHints(&hints);
+
+  const CPDF_ReadValidator::Session read_session(validator.Get());
+  ASSERT_FALSE(validator->has_read_problems());
+
+  // Data is unavailable
+  validator->ReadBlock(test_data.data(), 0, 100);
+
+  EXPECT_TRUE(validator->has_read_problems());
+  EXPECT_TRUE(validator->has_unavailable_data());
+  EXPECT_FALSE(validator->read_error());
+
+  {
+    const CPDF_ReadValidator::Session read_subsession(validator.Get());
+    // The read problems should be hidden.
+    EXPECT_FALSE(validator->has_read_problems());
+
+    file_avail.SetAvailableRange(0, 100);
+    // Read fail.
+    validator->ReadBlock(test_data.data(), 0, 100);
+    EXPECT_TRUE(validator->has_read_problems());
+    EXPECT_TRUE(validator->has_unavailable_data());
+    EXPECT_TRUE(validator->read_error());
+
+    // Reset session.
+    validator->ResetErrors();
+    EXPECT_FALSE(validator->has_read_problems());
+  }
+
+  // The problems should be restored.
+  EXPECT_TRUE(validator->has_read_problems());
+  EXPECT_TRUE(validator->has_unavailable_data());
+  EXPECT_FALSE(validator->read_error());
+}
