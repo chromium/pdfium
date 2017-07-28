@@ -979,22 +979,8 @@ bool CPDF_DataAvail::CheckCrossRef(DownloadHints* pHints) {
     return true;
   }
 
-  while (1) {
-    if (!GetNextToken(&token)) {
-      iSize = static_cast<int32_t>(
-          m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
-      pHints->AddSegment(m_Pos, iSize);
-      m_docStatus = PDF_DATAAVAIL_CROSSREF_ITEM;
-      return false;
-    }
-
-    if (token == "trailer") {
-      m_dwTrailerOffset = m_Pos;
-      m_docStatus = PDF_DATAAVAIL_TRAILER;
-      return true;
-    }
-  }
-  return false;
+  m_docStatus = PDF_DATAAVAIL_CROSSREF_ITEM;
+  return true;
 }
 
 bool CPDF_DataAvail::CheckTrailerAppend(DownloadHints* pHints) {
