@@ -15,3 +15,4 @@ Local Modifications:
 0008-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch: Fix a heap buffer overflow
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0025-upstream-OOM-gtTileContig: allocates the decoded buffer only after a first successful TIFFFillStrip.
+0026-upstream-null-dereference: properly evit when stoponerr is set and avoid null dereferences.
