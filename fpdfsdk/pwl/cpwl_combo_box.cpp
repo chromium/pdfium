@@ -184,9 +184,9 @@ CFX_WideString CPWL_ComboBox::GetSelectedText() {
   return CFX_WideString();
 }
 
-void CPWL_ComboBox::DeleteSelectedText() {
+void CPWL_ComboBox::ReplaceSelection(const CFX_WideString& text) {
   if (m_pEdit)
-    m_pEdit->DeleteSelectedText();
+    m_pEdit->ReplaceSelection(text);
 }
 
 CFX_WideString CPWL_ComboBox::GetText() const {

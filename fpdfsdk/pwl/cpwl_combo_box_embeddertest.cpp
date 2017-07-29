@@ -211,7 +211,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEntireTextSelection) {
   EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
                GetCPWLComboBox()->GetSelectedText().c_str());
 
-  GetCPWLComboBox()->DeleteSelectedText();
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString());
   EXPECT_TRUE(GetCPWLComboBox()->GetText().IsEmpty());
 }
 
@@ -222,7 +222,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionMiddle) {
   GetCPWLComboBox()->SetEditSelection(12, 23);
   EXPECT_STREQ(L"MNOPQRSTUVW", GetCPWLComboBox()->GetSelectedText().c_str());
 
-  GetCPWLComboBox()->DeleteSelectedText();
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString());
   EXPECT_STREQ(L"ABCDEFGHIJKLXYZ[\\]^_`abcdefghijklmnopqr",
                GetCPWLComboBox()->GetText().c_str());
 }
@@ -234,7 +234,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionLeft) {
   GetCPWLComboBox()->SetEditSelection(0, 5);
   EXPECT_STREQ(L"ABCDE", GetCPWLComboBox()->GetSelectedText().c_str());
 
-  GetCPWLComboBox()->DeleteSelectedText();
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString());
   EXPECT_STREQ(L"FGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
                GetCPWLComboBox()->GetText().c_str());
 }
@@ -246,7 +246,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionRight) {
   GetCPWLComboBox()->SetEditSelection(45, 50);
   EXPECT_STREQ(L"nopqr", GetCPWLComboBox()->GetSelectedText().c_str());
 
-  GetCPWLComboBox()->DeleteSelectedText();
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString());
   EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklm",
                GetCPWLComboBox()->GetText().c_str());
 }
@@ -255,7 +255,94 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEmptyTextSelection) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
-  GetCPWLComboBox()->DeleteSelectedText();
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString());
   EXPECT_STREQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
                GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest, InsertTextInEmptyEditableComboBox) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"Hello", GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest,
+       InsertTextInPopulatedEditableComboBoxLeft) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  // Move cursor to beginning of user-editable combobox text field.
+  EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(GetCPDFSDKAnnotUserEditable(),
+                                             FWL_VKEY_Home, 0));
+
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"HelloABCDEFGHIJ", GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest,
+       InsertTextInPopulatedEditableComboBoxMiddle) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  // Move cursor to middle of user-editable combobox text field.
+  for (int i = 0; i < 5; ++i) {
+    EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(GetCPDFSDKAnnotUserEditable(),
+                                               FWL_VKEY_Left, 0));
+  }
+
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"ABCDEHelloFGHIJ", GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest,
+       InsertTextInPopulatedEditableComboBoxRight) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"ABCDEFGHIJHello", GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest,
+       InsertTextAndReplaceSelectionInPopulatedEditableComboBoxWhole) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  GetCPWLComboBox()->SetEditSelection(0, -1);
+  EXPECT_STREQ(L"ABCDEFGHIJ", GetCPWLComboBox()->GetSelectedText().c_str());
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"Hello", GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest,
+       InsertTextAndReplaceSelectionInPopulatedEditableComboBoxLeft) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  GetCPWLComboBox()->SetEditSelection(0, 5);
+  EXPECT_STREQ(L"ABCDE", GetCPWLComboBox()->GetSelectedText().c_str());
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"HelloFGHIJ", GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest,
+       InsertTextAndReplaceSelectionInPopulatedEditableComboBoxMiddle) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  GetCPWLComboBox()->SetEditSelection(2, 7);
+  EXPECT_STREQ(L"CDEFG", GetCPWLComboBox()->GetSelectedText().c_str());
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"ABHelloHIJ", GetCPWLComboBox()->GetText().c_str());
+}
+
+TEST_F(CPWLComboBoxEditEmbeddertest,
+       InsertTextAndReplaceSelectionInPopulatedEditableComboBoxRight) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  GetCPWLComboBox()->SetEditSelection(5, 10);
+  EXPECT_STREQ(L"FGHIJ", GetCPWLComboBox()->GetSelectedText().c_str());
+  GetCPWLComboBox()->ReplaceSelection(CFX_WideString(L"Hello"));
+  EXPECT_STREQ(L"ABCDEHello", GetCPWLComboBox()->GetText().c_str());
 }

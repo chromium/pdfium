@@ -287,9 +287,10 @@ CFX_WideString CPDFSDK_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
   return CFX_WideString();
 }
 
-void CPDFSDK_WidgetHandler::DeleteSelectedText(CPDFSDK_Annot* pAnnot) {
+void CPDFSDK_WidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
+                                             const CFX_WideString& text) {
   if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
-    m_pFormFiller->DeleteSelectedText(pAnnot);
+    m_pFormFiller->ReplaceSelection(pAnnot, text);
 }
 
 bool CPDFSDK_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,

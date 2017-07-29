@@ -202,7 +202,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   virtual float GetFontSize() const;
 
   virtual CFX_WideString GetSelectedText();
-  virtual void DeleteSelectedText();
+  virtual void ReplaceSelection(const CFX_WideString& text);
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 

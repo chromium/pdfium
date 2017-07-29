@@ -59,9 +59,12 @@ CFX_WideString CPWL_EditCtrl::GetSelectedText() {
   return CFX_WideString();
 }
 
-void CPWL_EditCtrl::DeleteSelectedText() {
-  if (m_pEdit)
-    m_pEdit->ClearSelection();
+void CPWL_EditCtrl::ReplaceSelection(const CFX_WideString& text) {
+  if (!m_pEdit)
+    return;
+
+  m_pEdit->ClearSelection();
+  m_pEdit->InsertText(text, FX_CHARSET_Default);
 }
 
 void CPWL_EditCtrl::RePosChildWnd() {

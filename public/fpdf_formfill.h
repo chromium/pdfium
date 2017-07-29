@@ -1378,20 +1378,24 @@ DLLEXPORT unsigned long STDCALL FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
                                                      unsigned long buflen);
 
 /**
- * Function: FORM_DeleteSelectedText
- *          You can call this function to delete the current text selection in
- *          a form text field or user-editable form combobox text field. If
- *          there is no selected text, this function does nothing.
+ * Function: FORM_ReplaceSelection
+ *          You can call this function to replace the selected text in a form
+ *          text field or user-editable form combobox text field with another
+ *          text string (which can be empty or non-empty). If there is no
+ *          selected text, this function will append the replacement text after
+ *          the current caret position.
  * Parameters:
  *          hHandle     -   Handle to the form fill module. Returned by
  *                          FPDFDOC_InitFormFillEnvironment.
  *          page        -   Handle to the page. Returned by FPDF_LoadPage
  *                          function.
+ *          wsText      -   The text to be inserted, in UTF-16LE format.
  * Return Value:
  *          None.
  **/
-DLLEXPORT void STDCALL FORM_DeleteSelectedText(FPDF_FORMHANDLE hHandle,
-                                               FPDF_PAGE page);
+DLLEXPORT void STDCALL FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
+                                             FPDF_PAGE page,
+                                             FPDF_WIDESTRING wsText);
 
 /**
  * Function: FORM_ForceToKillFocus.

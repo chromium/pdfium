@@ -3,7 +3,7 @@
 <<
   /Type /Catalog
   /Pages 2 0 R
-  /AcroForm << /Fields [ 4 0 R 9 0 R ] /DR 5 0 R >>
+  /AcroForm << /Fields [ 4 0 R 9 0 R 10 0 R ] /DR 5 0 R >>
 >>
 endobj
 {{object 2 0}}
@@ -16,7 +16,7 @@ endobj
   /Resources 5 0 R
   /MediaBox [ 0 0 300 300 ]
   /Contents 8 0 R
-  /Annots [ 4 0 R 9 0 R ]
+  /Annots [ 4 0 R 9 0 R 10 0 R ]
 >>
 endobj
 {{object 4 0}}
@@ -60,6 +60,18 @@ endobj
   /T (ReadOnly)
   /DA (0 0 0 rg /F1 12 Tf)
   /Rect [ 100 200 200 230 ]
+  /Subtype /Widget
+>>
+endobj
+{{object 10 0}}
+<<
+  /Type /Annot
+  /FT /Tx
+  /T (CharLimit)
+  /MaxLen 10
+  /DA (0 0 0 rg /F1 12 Tf)
+  /V (Elephant)
+  /Rect [ 100 50 200 75 ]
   /Subtype /Widget
 >>
 endobj
