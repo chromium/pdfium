@@ -87,7 +87,7 @@ class CoverageExecutor(object):
     self.output_directory = args['output_directory']
     if not os.path.exists(self.output_directory):
       if not self.dry_run:
-        os.mkdirs(self.output_directory)
+        os.makedirs(self.output_directory)
     elif not os.path.isdir(self.output_directory):
       parser.error('%s exists, but is not a directory' % self.output_directory)
     self.coverage_totals_path = os.path.join(self.output_directory,
@@ -338,14 +338,12 @@ def main():
   parser.add_argument(
       '-s',
       '--source_directory',
-      nargs=1,
       help='Location of PDFium source directory, defaults to CWD',
       default=os.getcwd())
   build_default = os.path.join('out', 'Coverage')
   parser.add_argument(
       '-b',
       '--build_directory',
-      nargs=1,
       help=
       'Location of PDFium build directory with coverage enabled, defaults to '
       '%s under CWD' % build_default,
@@ -354,7 +352,6 @@ def main():
   parser.add_argument(
       '-o',
       '--output_directory',
-      nargs=1,
       help='Location to write out coverage report to, defaults to %s under CWD '
       % output_default,
       default=os.path.join(os.getcwd(), output_default))
