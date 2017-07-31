@@ -91,7 +91,7 @@ bool ParserPageRangeString(CFX_ByteString rangstring,
     nStringTo = rangstring.Find(',', nStringFrom);
     if (nStringTo == -1)
       nStringTo = nLength;
-    cbMidRange = rangstring.Right(nStringTo - nStringFrom);
+    cbMidRange = rangstring.Mid(nStringFrom, nStringTo - nStringFrom);
     int nMid = cbMidRange.Find('-');
     if (nMid == -1) {
       long lPageNum = atol(cbMidRange.c_str());
