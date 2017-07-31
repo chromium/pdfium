@@ -657,9 +657,11 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
         std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> expressions;
         if (m_token->m_type != TOKrparen) {
           while (m_token->m_type != TOKrparen) {
-            if (std::unique_ptr<CXFA_FMSimpleExpression> expr =
-                    ParseSimpleExpression())
-              expressions.push_back(std::move(expr));
+            std::unique_ptr<CXFA_FMSimpleExpression> simple_expr =
+                ParseSimpleExpression();
+            if (!simple_expr)
+              return nullptr;
+            expressions.push_back(std::move(simple_expr));
             if (m_token->m_type == TOKcomma) {
               if (!NextToken())
                 return nullptr;
