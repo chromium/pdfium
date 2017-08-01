@@ -57,17 +57,12 @@ class HintsAssigner {
   HintsAssigner(CPDF_ReadValidator* validator,
                 CPDF_DataAvail::DownloadHints* hints)
       : validator_(validator) {
-    if (validator_) {
-      validator_->ResetErrors();
-      validator_->SetDownloadHints(hints);
-    }
+    ASSERT(validator_);
+    validator_->ResetErrors();
+    validator_->SetDownloadHints(hints);
   }
 
-  ~HintsAssigner() {
-    if (validator_) {
-      validator_->SetDownloadHints(nullptr);
-    }
-  }
+  ~HintsAssigner() { validator_->SetDownloadHints(nullptr); }
 
  private:
   CFX_UnownedPtr<CPDF_ReadValidator> validator_;
@@ -83,16 +78,11 @@ CPDF_DataAvail::CPDF_DataAvail(
     FileAvail* pFileAvail,
     const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
     bool bSupportHintTable)
-    : m_pFileAvail(pFileAvail),
-      m_pFileRead(
-          pFileRead
-              ? pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail)
-              : nullptr) {
+    : m_pFileAvail(pFileAvail) {
+  ASSERT(pFileRead);
+  m_pFileRead = pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail);
   m_Pos = 0;
-  m_dwFileLen = 0;
-  if (m_pFileRead) {
-    m_dwFileLen = (uint32_t)m_pFileRead->GetSize();
-  }
+  m_dwFileLen = m_pFileRead->GetSize();
   m_dwCurrentOffset = 0;
   m_dwXRefOffset = 0;
   m_dwTrailerOffset = 0;
@@ -237,13 +227,10 @@ bool CPDF_DataAvail::AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
     DownloadHints* pHints) {
-  const HintsAssigner hints_assigner(m_pFileRead.Get(), pHints);
+  if (!m_dwFileLen)
+    return DataError;
 
-  if (!m_dwFileLen && m_pFileRead) {
-    m_dwFileLen = (uint32_t)m_pFileRead->GetSize();
-    if (!m_dwFileLen)
-      return DataError;
-  }
+  const HintsAssigner hints_assigner(m_pFileRead.Get(), pHints);
 
   while (!m_bDocAvail) {
     if (!CheckDocStatus(pHints))
@@ -743,9 +730,6 @@ CPDF_DataAvail::DocLinearizationStatus CPDF_DataAvail::IsLinearizedPDF() {
   const uint32_t kReqSize = 1024;
   if (!m_pFileAvail->IsDataAvail(0, kReqSize))
     return LinearizationUnknown;
-
-  if (!m_pFileRead)
-    return NotLinearized;
 
   FX_FILESIZE dwSize = m_pFileRead->GetSize();
   if (dwSize < (FX_FILESIZE)kReqSize)
