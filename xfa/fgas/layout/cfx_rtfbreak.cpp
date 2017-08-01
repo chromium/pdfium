@@ -68,16 +68,10 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
 
   uint32_t dwProps = FX_GetUnicodeProperties(wch);
   FX_CHARTYPE chartype = GetCharTypeFromProp(dwProps);
-  m_pCurLine->m_LineChars.emplace_back();
-
+  m_pCurLine->m_LineChars.emplace_back(wch, dwProps, m_iHorizontalScale,
+                                       m_iVerticalScale);
   CFX_Char* pCurChar = &m_pCurLine->m_LineChars.back();
-  pCurChar->m_dwStatus = CFX_BreakType::None;
-  pCurChar->m_wCharCode = wch;
-  pCurChar->m_dwCharProps = dwProps;
   pCurChar->m_iFontSize = m_iFontSize;
-  pCurChar->m_iHorizontalScale = m_iHorizontalScale;
-  pCurChar->m_iVerticalScale = m_iVerticalScale;
-  pCurChar->m_iCharWidth = 0;
   pCurChar->m_dwIdentity = m_dwIdentity;
   pCurChar->m_pUserData = m_pUserData;
 
@@ -127,7 +121,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
 
 void CFX_RTFBreak::AppendChar_Combination(CFX_Char* pCurChar) {
   int32_t iCharWidth = 0;
-  if (!m_pFont->GetCharWidth(pCurChar->m_wCharCode, iCharWidth, false))
+  if (!m_pFont->GetCharWidth(pCurChar->char_code(), iCharWidth, false))
     iCharWidth = 0;
 
   iCharWidth *= m_iFontSize;
@@ -160,7 +154,7 @@ void CFX_RTFBreak::AppendChar_Tab(CFX_Char* pCurChar) {
 
 CFX_BreakType CFX_RTFBreak::AppendChar_Control(CFX_Char* pCurChar) {
   CFX_BreakType dwRet2 = CFX_BreakType::None;
-  switch (pCurChar->m_wCharCode) {
+  switch (pCurChar->char_code()) {
     case L'\v':
     case 0x2028:
       dwRet2 = CFX_BreakType::Line;
@@ -172,7 +166,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Control(CFX_Char* pCurChar) {
       dwRet2 = CFX_BreakType::Paragraph;
       break;
     default:
-      if (pCurChar->m_wCharCode == m_wParagraphBreakChar)
+      if (pCurChar->char_code() == m_wParagraphBreakChar)
         dwRet2 = CFX_BreakType::Paragraph;
       break;
   }
@@ -197,7 +191,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
       if (!m_pFont->GetCharWidth(wForm, iCharWidth, false) &&
-          !m_pFont->GetCharWidth(pLastChar->m_wCharCode, iCharWidth, false)) {
+          !m_pFont->GetCharWidth(pLastChar->char_code(), iCharWidth, false)) {
         iCharWidth = m_iDefChar;
       }
 
@@ -212,7 +206,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   wForm = pdfium::arabic::GetFormChar(pCurChar, bAlef ? nullptr : pLastChar,
                                       nullptr);
   if (!m_pFont->GetCharWidth(wForm, iCharWidth, false) &&
-      !m_pFont->GetCharWidth(pCurChar->m_wCharCode, iCharWidth, false)) {
+      !m_pFont->GetCharWidth(pCurChar->char_code(), iCharWidth, false)) {
     iCharWidth = m_iDefChar;
   }
 
@@ -229,7 +223,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
 
 CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
-  wchar_t wForm = pCurChar->m_wCharCode;
+  wchar_t wForm = pCurChar->char_code();
   int32_t iCharWidth = 0;
   if (!m_pFont->GetCharWidth(wForm, iCharWidth, false))
     iCharWidth = m_iDefChar;
@@ -335,8 +329,8 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
       tp.m_iWidth = 0;
       tp.m_dwStatus = pTC->m_dwStatus;
       tp.m_iFontSize = pTC->m_iFontSize;
-      tp.m_iHorizontalScale = pTC->m_iHorizontalScale;
-      tp.m_iVerticalScale = pTC->m_iVerticalScale;
+      tp.m_iHorizontalScale = pTC->horizonal_scale();
+      tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
       tp.m_pUserData = pTC->m_pUserData.As<CXFA_TextUserData>();
@@ -408,8 +402,8 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       tp.m_iBidiLevel = iBidiLevel;
       tp.m_iBidiPos = pTC->m_iBidiOrder;
       tp.m_iFontSize = pTC->m_iFontSize;
-      tp.m_iHorizontalScale = pTC->m_iHorizontalScale;
-      tp.m_iVerticalScale = pTC->m_iVerticalScale;
+      tp.m_iHorizontalScale = pTC->horizonal_scale();
+      tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
       tp.m_pUserData = pTC->m_pUserData.As<CXFA_TextUserData>();
@@ -558,7 +552,7 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
   if (bAllChars)
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
 
-  uint32_t nCodeProp = pCur->m_dwCharProps;
+  uint32_t nCodeProp = pCur->char_props();
   uint32_t nNext = nCodeProp & 0x003F;
   int32_t iCharWidth = pCur->m_iCharWidth;
   if (iCharWidth > 0)
@@ -566,7 +560,7 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
 
   while (iLength >= 0) {
     pCur = pCharArray + iLength;
-    nCodeProp = pCur->m_dwCharProps;
+    nCodeProp = pCur->char_props();
     uint32_t nCur = nCodeProp & 0x003F;
     bool bNeedBreak = false;
     FX_LINEBREAKTYPE eType;

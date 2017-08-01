@@ -6,36 +6,27 @@
 
 #include "core/fxcrt/cfx_char.h"
 
-CFX_Char::CFX_Char()
+CFX_Char::CFX_Char(uint16_t wCharCode, uint32_t dwCharProps)
+    : CFX_Char(wCharCode, dwCharProps, 100, 100) {}
+
+CFX_Char::CFX_Char(uint16_t wCharCode,
+                   uint32_t dwCharProps,
+                   int32_t iHorizontalScale,
+                   int32_t iVerticalScale)
     : m_dwStatus(CFX_BreakType::None),
       m_nBreakType(0),
       m_dwCharStyles(0),
-      m_dwCharProps(0),
       m_iCharWidth(0),
-      m_iHorizontalScale(100),
-      m_iVerticalScale(100),
       m_iBidiClass(0),
       m_iBidiLevel(0),
       m_iBidiPos(0),
       m_iBidiOrder(0),
-      m_wCharCode(0),
       m_iFontSize(0),
-      m_dwIdentity(0) {}
-
-CFX_Char::CFX_Char(uint16_t wCharCode, uint32_t dwCharProps)
-    : m_nBreakType(0),
-      m_dwCharStyles(0),
-      m_dwCharProps(dwCharProps),
-      m_iCharWidth(0),
-      m_iHorizontalScale(100),
-      m_iVerticalScale(100),
-      m_iBidiClass(0),
-      m_iBidiLevel(0),
-      m_iBidiPos(0),
-      m_iBidiOrder(0),
+      m_dwIdentity(0),
       m_wCharCode(wCharCode),
-      m_iFontSize(0),
-      m_dwIdentity(0) {}
+      m_dwCharProps(dwCharProps),
+      m_iHorizontalScale(iHorizontalScale),
+      m_iVerticalScale(iVerticalScale) {}
 
 CFX_Char::CFX_Char(const CFX_Char& other) = default;
 

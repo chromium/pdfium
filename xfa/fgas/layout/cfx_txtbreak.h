@@ -76,7 +76,6 @@ class CFX_TxtBreak : public CFX_Break {
  private:
   void AppendChar_Combination(CFX_Char* pCurChar);
   void AppendChar_Tab(CFX_Char* pCurChar);
-  void AppendChar_PageLoad(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Control(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Arabic(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);

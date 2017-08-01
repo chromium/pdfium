@@ -39,7 +39,7 @@ void CFX_BreakLine::GetString(CFX_WideString& wsStr) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_LineChars);
   wchar_t* pBuf = wsStr.GetBuffer(iCount);
   for (int32_t i = 0; i < iCount; i++)
-    *pBuf++ = static_cast<wchar_t>(m_LineChars[i].m_wCharCode);
+    *pBuf++ = static_cast<wchar_t>(m_LineChars[i].char_code());
   wsStr.ReleaseBuffer(iCount);
 }
 

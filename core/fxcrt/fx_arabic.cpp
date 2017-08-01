@@ -336,7 +336,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
   }
 
   *eType = pTC->GetCharType();
-  *wChar = static_cast<wchar_t>(pTC->m_wCharCode);
+  *wChar = static_cast<wchar_t>(pTC->char_code());
   const FX_ARBFORMTABLE* pFT = GetArabicFormTable(*wChar);
   if (!pFT || *eType >= FX_CHARTYPE_ArabicNormal)
     *eType = FX_CHARTYPE_Unknown;
@@ -424,17 +424,18 @@ class CFX_BidiLine {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(*chars));
     if (bWS) {
       for (int32_t i = 0; i < iCount; i++) {
-        (*chars)[i].m_iBidiClass =
-            static_cast<int16_t>((*chars)[i].m_dwCharProps &
-                                 FX_BIDICLASSBITSMASK) >>
+        CFX_Char& cur = (*chars)[i];
+        cur.m_iBidiClass =
+            static_cast<int16_t>(cur.char_props() & FX_BIDICLASSBITSMASK) >>
             FX_BIDICLASSBITS;
       }
       return;
     }
 
     for (int32_t i = 0; i < iCount; i++) {
-      (*chars)[i].m_iBidiClass = static_cast<int16_t>(
-          gc_FX_BidiNTypes[((*chars)[i].m_dwCharProps & FX_BIDICLASSBITSMASK) >>
+      CFX_Char& cur = (*chars)[i];
+      cur.m_iBidiClass = static_cast<int16_t>(
+          gc_FX_BidiNTypes[(cur.char_props() & FX_BIDICLASSBITSMASK) >>
                            FX_BIDICLASSBITS]);
     }
   }
