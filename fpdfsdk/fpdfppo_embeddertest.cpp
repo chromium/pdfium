@@ -142,6 +142,50 @@ TEST_F(FPDFPPOEmbeddertest, BUG_664284) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFPPOEmbeddertest, BUG_750568) {
+  const char* const kHashes[] = {
+      "64ad08132a1c5a166768298c8a578f57", "83b83e2f6bc80707d0a917c7634140b9",
+      "913cd3723a451e4e46fbc2c05702d1ee", "81fb7cfd4860f855eb468f73dfeb6d60"};
+
+  ASSERT_TRUE(OpenDocument("bug_750568.pdf"));
+  ASSERT_EQ(4, FPDF_GetPageCount(document()));
+
+  for (size_t i = 0; i < 4; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    ASSERT_NE(nullptr, page);
+
+    FPDF_BITMAP bitmap = RenderPage(page);
+    ASSERT_EQ(200, FPDFBitmap_GetWidth(bitmap));
+    ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap));
+    ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap));
+
+    std::string digest = HashBitmap(bitmap, 200, 200);
+    FPDFBitmap_Destroy(bitmap);
+    UnloadPage(page);
+    EXPECT_EQ(kHashes[i], digest);
+  }
+
+  FPDF_DOCUMENT output_doc = FPDF_CreateNewDocument();
+  ASSERT_TRUE(output_doc);
+  EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "1,2,3,4", 0));
+  ASSERT_EQ(4, FPDF_GetPageCount(output_doc));
+  for (size_t i = 0; i < 4; ++i) {
+    FPDF_PAGE page = FPDF_LoadPage(output_doc, i);
+    ASSERT_NE(nullptr, page);
+
+    FPDF_BITMAP bitmap = RenderPage(page);
+    ASSERT_EQ(200, FPDFBitmap_GetWidth(bitmap));
+    ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap));
+    ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap));
+
+    std::string digest = HashBitmap(bitmap, 200, 200);
+    FPDFBitmap_Destroy(bitmap);
+    FPDF_ClosePage(page);
+    EXPECT_EQ(kHashes[i], digest);
+  }
+  FPDF_CloseDocument(output_doc);
+}
+
 TEST_F(FPDFPPOEmbeddertest, ImportWithZeroLengthStream) {
   EXPECT_TRUE(OpenDocument("zero_length_stream.pdf"));
   FPDF_PAGE page = LoadPage(0);
