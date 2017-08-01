@@ -29,7 +29,7 @@ class CPDF_ImageRenderer {
   ~CPDF_ImageRenderer();
 
   bool Start(CPDF_RenderStatus* pStatus,
-             CPDF_PageObject* pObj,
+             CPDF_ImageObject* pImageObject,
              const CFX_Matrix* pObj2Device,
              bool bStdCS,
              int blendType);

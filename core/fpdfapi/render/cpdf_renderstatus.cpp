@@ -1122,20 +1122,20 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
   if (ProcessTransparency(pObj, pObj2Device))
     return false;
 
-  if (pObj->IsImage()) {
-    m_pImageRenderer = pdfium::MakeUnique<CPDF_ImageRenderer>();
-    if (!m_pImageRenderer->Start(this, pObj, pObj2Device, false,
-                                 FXDIB_BLEND_NORMAL)) {
-      if (!m_pImageRenderer->GetResult())
-        DrawObjWithBackground(pObj, pObj2Device);
-      m_pImageRenderer.reset();
-      return false;
-    }
-    return ContinueSingleObject(pObj, pObj2Device, pPause);
+  if (!pObj->IsImage()) {
+    ProcessObjectNoClip(pObj, pObj2Device);
+    return false;
   }
 
-  ProcessObjectNoClip(pObj, pObj2Device);
-  return false;
+  m_pImageRenderer = pdfium::MakeUnique<CPDF_ImageRenderer>();
+  if (!m_pImageRenderer->Start(this, pObj->AsImage(), pObj2Device, false,
+                               FXDIB_BLEND_NORMAL)) {
+    if (!m_pImageRenderer->GetResult())
+      DrawObjWithBackground(pObj, pObj2Device);
+    m_pImageRenderer.reset();
+    return false;
+  }
+  return ContinueSingleObject(pObj, pObj2Device, pPause);
 }
 
 bool CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,

@@ -161,13 +161,14 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
 }
 
 bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
-                               CPDF_PageObject* pObj,
+                               CPDF_ImageObject* pImageObject,
                                const CFX_Matrix* pObj2Device,
                                bool bStdCS,
                                int blendType) {
+  ASSERT(pImageObject);
   m_pRenderStatus = pStatus;
   m_bStdCS = bStdCS;
-  m_pImageObject = pObj->AsImage();
+  m_pImageObject = pImageObject;
   m_BlendType = blendType;
   m_pObj2Device = pObj2Device;
   CPDF_Dictionary* pOC = m_pImageObject->GetImage()->GetOC();
