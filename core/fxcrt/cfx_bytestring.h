@@ -79,6 +79,9 @@ class CFX_ByteString {
   }
 
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
+  FX_STRSIZE GetStringLength() const {
+    return m_pData ? FXSYS_strlen(m_pData->m_String) : 0;
+  }
   bool IsEmpty() const { return !GetLength(); }
 
   int Compare(const CFX_ByteStringC& str) const;
@@ -122,7 +125,7 @@ class CFX_ByteString {
 
   void Reserve(FX_STRSIZE len);
   char* GetBuffer(FX_STRSIZE len);
-  void ReleaseBuffer(FX_STRSIZE len = -1);
+  void ReleaseBuffer(FX_STRSIZE len);
 
   CFX_ByteString Mid(FX_STRSIZE first, FX_STRSIZE count) const;
   CFX_ByteString Left(FX_STRSIZE count) const;

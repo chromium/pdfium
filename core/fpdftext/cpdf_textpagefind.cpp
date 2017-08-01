@@ -377,7 +377,7 @@ bool CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
                      : (int)FXSYS_wcslen(lpszFullString);
   ASSERT(nLen >= 0);
   memcpy(rString.GetBuffer(nLen), lpszFullString, nLen * sizeof(wchar_t));
-  rString.ReleaseBuffer();
+  rString.ReleaseBuffer(rString.GetStringLength());
   return true;
 }
 

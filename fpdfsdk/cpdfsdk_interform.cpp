@@ -482,10 +482,10 @@ bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
     CFX_ByteString csValue_b = CFX_ByteString::FromUnicode(csWValue);
 
     fdfEncodedData << name_b.GetBuffer(name_b.GetLength());
-    name_b.ReleaseBuffer();
+    name_b.ReleaseBuffer(name_b.GetStringLength());
     fdfEncodedData << "=";
     fdfEncodedData << csValue_b.GetBuffer(csValue_b.GetLength());
-    csValue_b.ReleaseBuffer();
+    csValue_b.ReleaseBuffer(csValue_b.GetStringLength());
     if (i != pFields->GetCount() - 1)
       fdfEncodedData << "&";
   }

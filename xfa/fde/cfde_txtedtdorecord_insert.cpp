@@ -18,7 +18,7 @@ CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
   ASSERT(pEngine);
   wchar_t* lpBuffer = m_wsInsert.GetBuffer(nLength);
   memcpy(lpBuffer, lpText, nLength * sizeof(wchar_t));
-  m_wsInsert.ReleaseBuffer();
+  m_wsInsert.ReleaseBuffer(m_wsInsert.GetStringLength());
 }
 
 CFDE_TxtEdtDoRecord_Insert::~CFDE_TxtEdtDoRecord_Insert() {}

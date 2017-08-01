@@ -618,14 +618,14 @@ TEST(fxcrt, WideStringGetBuffer) {
     CFX_WideString str;
     wchar_t* buffer = str.GetBuffer(12);
     wcscpy(buffer, L"clams");
-    str.ReleaseBuffer();
+    str.ReleaseBuffer(str.GetStringLength());
     EXPECT_EQ(L"clams", str);
   }
   {
     CFX_WideString str(L"cl");
     wchar_t* buffer = str.GetBuffer(12);
     wcscpy(buffer + 2, L"ams");
-    str.ReleaseBuffer();
+    str.ReleaseBuffer(str.GetStringLength());
     EXPECT_EQ(L"clams", str);
   }
 }

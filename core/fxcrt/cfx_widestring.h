@@ -75,6 +75,9 @@ class CFX_WideString {
   void clear() { m_pData.Reset(); }
 
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
+  FX_STRSIZE GetStringLength() const {
+    return m_pData ? FXSYS_wcslen(m_pData->m_String) : 0;
+  }
   bool IsEmpty() const { return !GetLength(); }
 
   const CFX_WideString& operator=(const wchar_t* str);
@@ -135,7 +138,7 @@ class CFX_WideString {
 
   void Reserve(FX_STRSIZE len);
   wchar_t* GetBuffer(FX_STRSIZE len);
-  void ReleaseBuffer(FX_STRSIZE len = -1);
+  void ReleaseBuffer(FX_STRSIZE len);
 
   int GetInteger() const;
   float GetFloat() const;

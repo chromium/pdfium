@@ -653,7 +653,7 @@ TEST(fxcrt, ByteStringGetBuffer) {
     char* buffer = str.GetBuffer(12);
     // NOLINTNEXTLINE(runtime/printf)
     strcpy(buffer, "clams");
-    str.ReleaseBuffer();
+    str.ReleaseBuffer(str.GetStringLength());
     EXPECT_EQ("clams", str);
   }
   {
@@ -661,7 +661,7 @@ TEST(fxcrt, ByteStringGetBuffer) {
     char* buffer = str.GetBuffer(12);
     // NOLINTNEXTLINE(runtime/printf)
     strcpy(buffer + 2, "ams");
-    str.ReleaseBuffer();
+    str.ReleaseBuffer(str.GetStringLength());
     EXPECT_EQ("clams", str);
   }
 }

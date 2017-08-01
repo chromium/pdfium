@@ -361,11 +361,9 @@ void CFX_ByteString::AllocBeforeWrite(FX_STRSIZE nNewLength) {
 }
 
 void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
+  ASSERT(nNewLength >= 0);
   if (!m_pData)
     return;
-
-  if (nNewLength == -1)
-    nNewLength = FXSYS_strlen(m_pData->m_String);
 
   nNewLength = std::min(nNewLength, m_pData->m_nAllocLength);
   if (nNewLength == 0) {
@@ -507,7 +505,7 @@ void CFX_ByteString::FormatV(const char* pFormat, va_list argList) {
       // a terminating NUL that's not included in nMaxLen.
       memset(m_pData->m_String, 0, nMaxLen + 1);
       vsnprintf(m_pData->m_String, nMaxLen + 1, pFormat, argListSave);
-      ReleaseBuffer();
+      ReleaseBuffer(GetStringLength());
     }
   }
   va_end(argListSave);

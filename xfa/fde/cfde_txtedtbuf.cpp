@@ -118,7 +118,7 @@ CFX_WideString CFDE_TxtEdtBuf::GetRange(int32_t nBegin, int32_t nLength) const {
     lpDstBuf += nCopyLength;
     nCopyLength = chunkHeader->nUsed;
   }
-  wsText.ReleaseBuffer();
+  wsText.ReleaseBuffer(wsText.GetStringLength());
 
   return wsText;
 }

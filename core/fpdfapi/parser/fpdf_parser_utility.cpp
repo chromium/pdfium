@@ -147,7 +147,7 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {
     }
   }
   dest_buf[dest_len] = 0;
-  res.ReleaseBuffer();
+  res.ReleaseBuffer(res.GetStringLength());
   return res;
 }
 

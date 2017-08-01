@@ -376,7 +376,7 @@ void CPDFSDK_FormFillEnvironment::GotoURL(CPDFXFA_Context* document,
   CFX_ByteString bsTo = CFX_WideString(wsURL).UTF16LE_Encode();
   FPDF_WIDESTRING pTo = (FPDF_WIDESTRING)bsTo.GetBuffer(wsURL.GetLength());
   m_pInfo->FFI_GotoURL(m_pInfo, document, pTo);
-  bsTo.ReleaseBuffer();
+  bsTo.ReleaseBuffer(bsTo.GetStringLength());
 }
 
 void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,

@@ -488,11 +488,9 @@ void CFX_WideString::AllocBeforeWrite(FX_STRSIZE nNewLength) {
 }
 
 void CFX_WideString::ReleaseBuffer(FX_STRSIZE nNewLength) {
+  ASSERT(nNewLength >= 0);
   if (!m_pData)
     return;
-
-  if (nNewLength == -1)
-    nNewLength = FXSYS_wcslen(m_pData->m_String);
 
   nNewLength = std::min(nNewLength, m_pData->m_nAllocLength);
   if (nNewLength == 0) {
@@ -651,7 +649,7 @@ bool CFX_WideString::TryVSWPrintf(FX_STRSIZE size,
   memset(m_pData->m_String, 0, (size + 1) * sizeof(wchar_t));
   int ret = vswprintf(m_pData->m_String, size + 1, pFormat, argList);
   bool bSufficientBuffer = ret >= 0 || m_pData->m_String[size - 1] == 0;
-  ReleaseBuffer();
+  ReleaseBuffer(GetStringLength());
   return bSufficientBuffer;
 }
 
