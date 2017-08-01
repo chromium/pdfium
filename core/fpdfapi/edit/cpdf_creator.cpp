@@ -336,23 +336,20 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
     if (!bExistInMap)
       m_pDocument->DeleteIndirectObject(objnum);
   } else {
-    uint8_t* pBuffer;
-    uint32_t size;
-    m_pParser->GetIndirectBinary(objnum, pBuffer, size);
-    if (!pBuffer)
+    std::vector<uint8_t> buffer = m_pParser->GetIndirectBinary(objnum);
+    if (buffer.empty())
       return true;
     if (object_type == CPDF_Parser::ObjectType::kCompressed) {
       if (!m_Archive->WriteDWord(objnum) ||
           !m_Archive->WriteString(" 0 obj ") ||
-          !m_Archive->WriteBlock(pBuffer, size) ||
+          !m_Archive->WriteBlock(buffer.data(), buffer.size()) ||
           !m_Archive->WriteString("\r\nendobj\r\n")) {
         return false;
       }
     } else {
-      if (!m_Archive->WriteBlock(pBuffer, size))
+      if (!m_Archive->WriteBlock(buffer.data(), buffer.size()))
         return false;
     }
-    FX_Free(pBuffer);
   }
   return true;
 }
