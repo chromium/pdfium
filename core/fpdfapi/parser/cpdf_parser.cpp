@@ -1068,19 +1068,24 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       if (GetObjectType(startnum + j) != ObjectType::kFree)
         continue;
 
-      m_ObjectInfo[startnum + j].type = type;
+      ObjectInfo& info = m_ObjectInfo[startnum + j];
+
+      info.type = type;
       if (type == ObjectType::kFree) {
-        m_ObjectInfo[startnum + j].pos = 0;
+        info.pos = 0;
       } else {
-        FX_FILESIZE offset =
+        const FX_FILESIZE entry_value =
             GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
-        m_ObjectInfo[startnum + j].pos = offset;
         if (type == ObjectType::kNotCompressed) {
-          m_SortedOffset.insert(offset);
+          const auto object_offset = entry_value;
+          m_SortedOffset.insert(object_offset);
+          info.pos = object_offset;
         } else {
-          if (offset < 0 || !IsValidObjectNumber(offset))
+          const auto archive_obj_num = entry_value;
+          info.archive_obj_num = archive_obj_num;
+          if (archive_obj_num < 0 || !IsValidObjectNumber(archive_obj_num))
             return false;
-          m_ObjectInfo[offset].type = ObjectType::kNull;
+          m_ObjectInfo[archive_obj_num].type = ObjectType::kNull;
         }
       }
     }
