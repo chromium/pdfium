@@ -18,10 +18,6 @@ class CPDF_Stream;
 class CPDF_FlateEncoder {
  public:
   CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode);
-  CPDF_FlateEncoder(const uint8_t* pBuffer,
-                    uint32_t size,
-                    bool bFlateEncode,
-                    bool bXRefStream);
   ~CPDF_FlateEncoder();
 
   void CloneDict();

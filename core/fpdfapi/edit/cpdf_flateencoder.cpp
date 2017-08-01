@@ -45,27 +45,6 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
   m_pDict->RemoveFor("DecodeParms");
 }
 
-CPDF_FlateEncoder::CPDF_FlateEncoder(const uint8_t* pBuffer,
-                                     uint32_t size,
-                                     bool bFlateEncode,
-                                     bool bXRefStream)
-    : m_dwSize(0) {
-  if (!bFlateEncode) {
-    m_pData = const_cast<uint8_t*>(pBuffer);
-    m_dwSize = size;
-    return;
-  }
-
-  uint8_t* buffer = nullptr;
-  // TODO(thestig): Move to Init() and check return value.
-  if (bXRefStream)
-    ::PngEncode(pBuffer, size, &buffer, &m_dwSize);
-  else
-    ::FlateEncode(pBuffer, size, &buffer, &m_dwSize);
-
-  m_pData = std::unique_ptr<uint8_t, FxFreeDeleter>(buffer);
-}
-
 CPDF_FlateEncoder::~CPDF_FlateEncoder() {}
 
 void CPDF_FlateEncoder::CloneDict() {
