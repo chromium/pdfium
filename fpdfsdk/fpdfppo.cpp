@@ -80,20 +80,20 @@ bool ParserPageRangeString(CFX_ByteString rangstring,
   int nLength = rangstring.GetLength();
   CFX_ByteString cbCompareString("0123456789-,");
   for (int i = 0; i < nLength; ++i) {
-    if (cbCompareString.Find(rangstring[i]) == -1)
+    if (cbCompareString.Find(rangstring[i]) == FX_STRNPOS)
       return false;
   }
 
   CFX_ByteString cbMidRange;
-  int nStringFrom = 0;
-  int nStringTo = 0;
+  FX_STRSIZE nStringFrom = 0;
+  FX_STRSIZE nStringTo = 0;
   while (nStringTo < nLength) {
     nStringTo = rangstring.Find(',', nStringFrom);
-    if (nStringTo == -1)
+    if (nStringTo == FX_STRNPOS)
       nStringTo = nLength;
     cbMidRange = rangstring.Mid(nStringFrom, nStringTo - nStringFrom);
-    int nMid = cbMidRange.Find('-');
-    if (nMid == -1) {
+    FX_STRSIZE nMid = cbMidRange.Find('-');
+    if (nMid == FX_STRNPOS) {
       long lPageNum = atol(cbMidRange.c_str());
       if (lPageNum <= 0 || lPageNum > nCount)
         return false;

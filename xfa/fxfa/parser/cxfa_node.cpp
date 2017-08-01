@@ -4043,10 +4043,10 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
           std::vector<CFX_WideString> wsSaveTextArray;
           size_t iSize = 0;
           if (!wsContent.IsEmpty()) {
-            int32_t iStart = 0;
-            int32_t iLength = wsContent.GetLength();
-            int32_t iEnd = wsContent.Find(L'\n', iStart);
-            iEnd = (iEnd == -1) ? iLength : iEnd;
+            FX_STRSIZE iStart = 0;
+            FX_STRSIZE iLength = wsContent.GetLength();
+            FX_STRSIZE iEnd = wsContent.Find(L'\n', iStart);
+            iEnd = (iEnd == FX_STRNPOS) ? iLength : iEnd;
             while (iEnd >= iStart) {
               wsSaveTextArray.push_back(wsContent.Mid(iStart, iEnd - iStart));
               iStart = iEnd + 1;
@@ -4054,7 +4054,7 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
                 break;
               }
               iEnd = wsContent.Find(L'\n', iStart);
-              if (iEnd < 0) {
+              if (iEnd == FX_STRNPOS) {
                 wsSaveTextArray.push_back(
                     wsContent.Mid(iStart, iLength - iStart));
               }

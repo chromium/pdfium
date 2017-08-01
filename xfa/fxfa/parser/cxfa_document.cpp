@@ -306,7 +306,7 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     return XFA_VERSION_UNKNOWN;
   }
   FX_STRSIZE nDotPos = wsTemplateNS.Find('.', nPrefixLength);
-  if (nDotPos == (FX_STRSIZE)-1)
+  if (nDotPos == FX_STRNPOS)
     return XFA_VERSION_UNKNOWN;
 
   int8_t iMajor = FXSYS_wtoi(
@@ -368,7 +368,7 @@ void CXFA_Document::DoProtoMerge() {
     if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
         !wsUseVal.IsEmpty()) {
       FX_STRSIZE uSharpPos = wsUseVal.Find('#');
-      if (uSharpPos < 0) {
+      if (uSharpPos == FX_STRNPOS) {
         wsURI = wsUseVal.AsStringC();
       } else {
         wsURI = CFX_WideStringC(wsUseVal.c_str(), uSharpPos);

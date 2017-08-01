@@ -78,7 +78,7 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
         ++pStr;
     }
     if (nWidth < 0 || nWidth > 128 * 1024)
-      return -1;
+      return FX_STRNPOS;
     int nPrecision = 0;
     if (*pStr == '.') {
       pStr++;
@@ -92,7 +92,7 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
       }
     }
     if (nPrecision < 0 || nPrecision > 128 * 1024)
-      return -1;
+      return FX_STRNPOS;
     int nModifier = 0;
     if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
       pStr += 3;
@@ -662,7 +662,7 @@ void CFX_WideString::FormatV(const wchar_t* pFormat, va_list argList) {
   va_end(argListCopy);
   if (nMaxLen <= 0) {
     nMaxLen = GuessSizeForVSWPrintf(pFormat, argListCopy);
-    if (nMaxLen <= 0)
+    if (nMaxLen == FX_STRNPOS)
       return;
   }
   while (nMaxLen < 32 * 1024) {
@@ -724,29 +724,29 @@ CFX_WideString CFX_WideString::Left(FX_STRSIZE nCount) const {
 
 FX_STRSIZE CFX_WideString::Find(wchar_t ch, FX_STRSIZE nStart) const {
   if (!m_pData)
-    return -1;
+    return FX_STRNPOS;
 
   if (nStart < 0 || nStart >= m_pData->m_nDataLength)
-    return -1;
+    return FX_STRNPOS;
 
   const wchar_t* pStr =
       wmemchr(m_pData->m_String + nStart, ch, m_pData->m_nDataLength - nStart);
-  return pStr ? pStr - m_pData->m_String : -1;
+  return pStr ? pStr - m_pData->m_String : FX_STRNPOS;
 }
 
 FX_STRSIZE CFX_WideString::Find(const CFX_WideStringC& pSub,
                                 FX_STRSIZE nStart) const {
   if (!m_pData)
-    return -1;
+    return FX_STRNPOS;
 
   FX_STRSIZE nLength = m_pData->m_nDataLength;
   if (nStart > nLength)
-    return -1;
+    return FX_STRNPOS;
 
   const wchar_t* pStr =
       FX_wcsstr(m_pData->m_String + nStart, m_pData->m_nDataLength - nStart,
                 pSub.unterminated_c_str(), pSub.GetLength());
-  return pStr ? (int)(pStr - m_pData->m_String) : -1;
+  return pStr ? (int)(pStr - m_pData->m_String) : FX_STRNPOS;
 }
 
 void CFX_WideString::MakeLower() {

@@ -93,7 +93,7 @@ bool GetAttributeLocalName(const CFX_WideStringC& wsAttributeName,
                            CFX_WideString& wsLocalAttrName) {
   CFX_WideString wsAttrName(wsAttributeName);
   FX_STRSIZE iFind = wsAttrName.Find(L':', 0);
-  if (iFind < 0) {
+  if (iFind == FX_STRNPOS) {
     wsLocalAttrName = wsAttrName;
     return false;
   }
@@ -135,7 +135,7 @@ bool FindAttributeWithNS(CFX_XMLElement* pElement,
   for (auto it : pElement->GetAttributes()) {
     FX_STRSIZE iFind = it.first.Find(L':', 0);
     CFX_WideString wsNSPrefix;
-    if (iFind < 0) {
+    if (iFind == FX_STRNPOS) {
       if (wsLocalAttributeName != it.first)
         continue;
     } else {

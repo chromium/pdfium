@@ -374,7 +374,8 @@ bool PatternStringType(const CFX_ByteStringC& szPattern,
     return true;
   }
   if (L"date" == wsPattern.Left(4)) {
-    patternType = wsPattern.Find(L"time") > 0 ? XFA_VT_DATETIME : XFA_VT_DATE;
+    FX_STRSIZE ret = wsPattern.Find(L"time");
+    patternType = ret != 0 && ret != FX_STRNPOS ? XFA_VT_DATETIME : XFA_VT_DATE;
     return true;
   }
   if (L"time" == wsPattern.Left(4)) {

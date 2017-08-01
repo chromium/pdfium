@@ -164,7 +164,7 @@ bool CPDF_TextPageFind::FindNext() {
     }
     int endIndex;
     nResultPos = m_strText.Find(csWord.c_str(), nStartPos);
-    if (nResultPos == -1) {
+    if (nResultPos == FX_STRNPOS) {
       m_IsFind = false;
       return m_IsFind;
     }

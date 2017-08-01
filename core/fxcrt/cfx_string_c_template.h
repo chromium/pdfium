@@ -127,7 +127,7 @@ class CFX_StringCTemplate {
   FX_STRSIZE Find(CharType ch) const {
     const UnsignedType* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
         reinterpret_cast<const CharType*>(m_Ptr.Get()), ch, m_Length));
-    return found ? found - m_Ptr.Get() : -1;
+    return found ? found - m_Ptr.Get() : FX_STRNPOS;
   }
 
   CFX_StringCTemplate Mid(FX_STRSIZE index, FX_STRSIZE count) const {

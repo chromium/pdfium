@@ -148,9 +148,10 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   bool bTargetAllFind = true;
   while (iSplitIndex != -1) {
     CFX_WideString wsExpr;
-    int32_t iSplitNextIndex = 0;
+    FX_STRSIZE iSplitNextIndex = 0;
     if (!bTargetAllFind) {
       iSplitNextIndex = wsTargetAll.Find(' ', iSplitIndex);
+      ASSERT(iSplitNextIndex != FX_STRNPOS);
       wsExpr = wsTargetAll.Mid(iSplitIndex, iSplitNextIndex - iSplitIndex);
     } else {
       wsExpr = wsTargetAll;

@@ -809,19 +809,19 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
 
 void CPDFXFA_DocEnvironment::ToXFAContentFlags(CFX_WideString csSrcContent,
                                                FPDF_DWORD& flag) {
-  if (csSrcContent.Find(L" config ", 0) != -1)
+  if (csSrcContent.Find(L" config ", 0) != FX_STRNPOS)
     flag |= FXFA_CONFIG;
-  if (csSrcContent.Find(L" template ", 0) != -1)
+  if (csSrcContent.Find(L" template ", 0) != FX_STRNPOS)
     flag |= FXFA_TEMPLATE;
-  if (csSrcContent.Find(L" localeSet ", 0) != -1)
+  if (csSrcContent.Find(L" localeSet ", 0) != FX_STRNPOS)
     flag |= FXFA_LOCALESET;
-  if (csSrcContent.Find(L" datasets ", 0) != -1)
+  if (csSrcContent.Find(L" datasets ", 0) != FX_STRNPOS)
     flag |= FXFA_DATASETS;
-  if (csSrcContent.Find(L" xmpmeta ", 0) != -1)
+  if (csSrcContent.Find(L" xmpmeta ", 0) != FX_STRNPOS)
     flag |= FXFA_XMPMETA;
-  if (csSrcContent.Find(L" xfdf ", 0) != -1)
+  if (csSrcContent.Find(L" xfdf ", 0) != FX_STRNPOS)
     flag |= FXFA_XFDF;
-  if (csSrcContent.Find(L" form ", 0) != -1)
+  if (csSrcContent.Find(L" form ", 0) != FX_STRNPOS)
     flag |= FXFA_FORM;
   if (flag == 0) {
     flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
@@ -840,11 +840,11 @@ bool CPDFXFA_DocEnvironment::MailToInfo(CFX_WideString& csURL,
   if (srcURL.Left(7).CompareNoCase(L"mailto:") != 0)
     return false;
 
-  int pos = srcURL.Find(L'?', 0);
+  FX_STRSIZE pos = srcURL.Find(L'?', 0);
   CFX_WideString tmp;
-  if (pos == -1) {
+  if (pos == FX_STRNPOS) {
     pos = srcURL.Find(L'@', 0);
-    if (pos == -1)
+    if (pos == FX_STRNPOS)
       return false;
 
     tmp = srcURL.Right(csURL.GetLength() - 7);
@@ -863,7 +863,7 @@ bool CPDFXFA_DocEnvironment::MailToInfo(CFX_WideString& csURL,
     srcURL.TrimRight();
     pos = srcURL.Find(L'&', 0);
 
-    tmp = (pos == -1) ? srcURL : srcURL.Left(pos);
+    tmp = (pos == FX_STRNPOS) ? srcURL : srcURL.Left(pos);
     tmp.TrimLeft();
     tmp.TrimRight();
     if (tmp.GetLength() >= 3 && tmp.Left(3).CompareNoCase(L"cc=") == 0) {

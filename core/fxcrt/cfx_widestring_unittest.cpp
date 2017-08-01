@@ -853,22 +853,22 @@ TEST(fxcrt, WideStringCOperatorNE) {
 
 TEST(fxcrt, WideStringCFind) {
   CFX_WideStringC null_string;
-  EXPECT_EQ(-1, null_string.Find(L'a'));
-  EXPECT_EQ(-1, null_string.Find(0));
+  EXPECT_EQ(FX_STRNPOS, null_string.Find(L'a'));
+  EXPECT_EQ(FX_STRNPOS, null_string.Find(0));
 
   CFX_WideStringC empty_string(L"");
-  EXPECT_EQ(-1, empty_string.Find(L'a'));
-  EXPECT_EQ(-1, empty_string.Find(0));
+  EXPECT_EQ(FX_STRNPOS, empty_string.Find(L'a'));
+  EXPECT_EQ(FX_STRNPOS, empty_string.Find(0));
 
   CFX_WideStringC single_string(L"a");
   EXPECT_EQ(0, single_string.Find(L'a'));
-  EXPECT_EQ(-1, single_string.Find(L'b'));
-  EXPECT_EQ(-1, single_string.Find(0));
+  EXPECT_EQ(FX_STRNPOS, single_string.Find(L'b'));
+  EXPECT_EQ(FX_STRNPOS, single_string.Find(0));
 
   CFX_WideStringC longer_string(L"abccc");
   EXPECT_EQ(0, longer_string.Find(L'a'));
   EXPECT_EQ(2, longer_string.Find(L'c'));
-  EXPECT_EQ(-1, longer_string.Find(0));
+  EXPECT_EQ(FX_STRNPOS, longer_string.Find(0));
 
   CFX_WideStringC hibyte_string(
       L"ab\xff08"

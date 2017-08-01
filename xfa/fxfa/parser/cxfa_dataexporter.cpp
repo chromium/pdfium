@@ -225,10 +225,10 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
           break;
 
         std::vector<CFX_WideString> wsSelTextArray;
-        int32_t iStart = 0;
-        int32_t iEnd = wsRawValue.Find(L'\n', iStart);
-        iEnd = (iEnd == -1) ? wsRawValue.GetLength() : iEnd;
-        while (iEnd >= iStart) {
+        FX_STRSIZE iStart = 0;
+        FX_STRSIZE iEnd = wsRawValue.Find(L'\n', iStart);
+        iEnd = (iEnd == FX_STRNPOS) ? wsRawValue.GetLength() : iEnd;
+        while (iEnd != FX_STRNPOS && iEnd >= iStart) {
           wsSelTextArray.push_back(wsRawValue.Mid(iStart, iEnd - iStart));
           iStart = iEnd + 1;
           if (iStart >= wsRawValue.GetLength())

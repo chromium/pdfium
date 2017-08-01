@@ -172,7 +172,7 @@ const struct CODEPAGE_MAP {
 int CompareFontFamilyString(const void* key, const void* element) {
   CFX_ByteString str_key((const char*)key);
   const AltFontFamily* family = reinterpret_cast<const AltFontFamily*>(element);
-  if (str_key.Find(family->m_pFontName) != -1)
+  if (str_key.Find(family->m_pFontName) != FX_STRNPOS)
     return 0;
   return FXSYS_stricmp(reinterpret_cast<const char*>(key), family->m_pFontName);
 }
@@ -187,8 +187,8 @@ CFX_ByteString TT_NormalizeName(const char* family) {
   norm.Remove(' ');
   norm.Remove('-');
   norm.Remove(',');
-  int pos = norm.Find('+');
-  if (pos > 0)
+  FX_STRSIZE pos = norm.Find('+');
+  if (pos != 0 && pos != FX_STRNPOS)
     norm = norm.Left(pos);
   norm.MakeLower();
   return norm;

@@ -1267,7 +1267,7 @@ void CFGAS_FontMgr::GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB) {
 
 int32_t CFGAS_FontMgr::IsPartName(const CFX_WideString& Name1,
                                   const CFX_WideString& Name2) {
-  if (Name1.Find(Name2.c_str()) != -1)
+  if (Name1.Find(Name2.c_str()) != FX_STRNPOS)
     return 1;
   return 0;
 }

@@ -83,7 +83,7 @@ void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
     return;
 
   FX_STRSIZE iStart = bsFullName.Find(':');
-  if (iStart == -1) {
+  if (iStart == FX_STRNPOS) {
     bsName = bsFullName;
   } else {
     bsSpace = bsFullName.Left(iStart);

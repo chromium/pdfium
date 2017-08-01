@@ -191,7 +191,7 @@ bool GetNumericDotIndex(const CFX_WideString& wsNum,
     ccf++;
   }
   *iDotIndex = wsNum.Find('.');
-  if (*iDotIndex >= 0)
+  if (*iDotIndex != FX_STRNPOS)
     return true;
 
   *iDotIndex = iLenf;
@@ -249,7 +249,7 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       *cc += iLiteralLen;
       ccf++;
       continue;
-    } else if (wsDateSymbols.Find(strf[ccf]) == -1) {
+    } else if (wsDateSymbols.Find(strf[ccf]) == FX_STRNPOS) {
       if (strf[ccf] != str[*cc])
         return false;
       (*cc)++;
@@ -370,7 +370,7 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
       ccf++;
       continue;
     }
-    if (wsTimeSymbols.Find(strf[ccf]) == -1) {
+    if (wsTimeSymbols.Find(strf[ccf]) == FX_STRNPOS) {
       if (strf[ccf] != str[*cc])
         return false;
       (*cc)++;
@@ -577,7 +577,7 @@ CFX_WideString DateFormat(const CFX_WideString& wsDatePattern,
       ccf++;
       continue;
     }
-    if (wsDateSymbols.Find(strf[ccf]) == -1) {
+    if (wsDateSymbols.Find(strf[ccf]) == FX_STRNPOS) {
       wsResult += strf[ccf++];
       continue;
     }
@@ -635,7 +635,7 @@ CFX_WideString TimeFormat(const CFX_WideString& wsTimePattern,
   int32_t lenf = wsTimePattern.GetLength();
   uint16_t wHour = hour;
   bool bPM = false;
-  if (wsTimePattern.Find('A') != -1) {
+  if (wsTimePattern.Find('A') != FX_STRNPOS) {
     if (wHour >= 12)
       bPM = true;
   }
@@ -647,7 +647,7 @@ CFX_WideString TimeFormat(const CFX_WideString& wsTimePattern,
       ccf++;
       continue;
     }
-    if (wsTimeSymbols.Find(strf[ccf]) == -1) {
+    if (wsTimeSymbols.Find(strf[ccf]) == FX_STRNPOS) {
       wsResult += strf[ccf++];
       continue;
     }
@@ -874,7 +874,7 @@ FX_LOCALECATEGORY CFGAS_FormatString::GetCategory(
   while (ccf < iLenf) {
     if (pStr[ccf] == '\'') {
       GetLiteralText(pStr, &ccf, iLenf);
-    } else if (!bBraceOpen && wsConstChars.Find(pStr[ccf]) == -1) {
+    } else if (!bBraceOpen && wsConstChars.Find(pStr[ccf]) == FX_STRNPOS) {
       CFX_WideString wsCategory(pStr[ccf]);
       ccf++;
       while (true) {
@@ -932,7 +932,7 @@ CFX_WideString CFGAS_FormatString::GetTextFormat(
       int32_t iCurChar = ccf;
       GetLiteralText(pStr, &ccf, iLenf);
       wsPurgePattern += CFX_WideStringC(pStr + iCurChar, ccf - iCurChar + 1);
-    } else if (!bBrackOpen && wsConstChars.Find(pStr[ccf]) == -1) {
+    } else if (!bBrackOpen && wsConstChars.Find(pStr[ccf]) == FX_STRNPOS) {
       CFX_WideString wsSearchCategory(pStr[ccf]);
       ccf++;
       while (ccf < iLenf && pStr[ccf] != '{' && pStr[ccf] != '.' &&
@@ -984,7 +984,7 @@ IFX_Locale* CFGAS_FormatString::GetNumericFormat(
       int32_t iCurChar = ccf;
       GetLiteralText(pStr, &ccf, iLenf);
       *wsPurgePattern += CFX_WideStringC(pStr + iCurChar, ccf - iCurChar + 1);
-    } else if (!bBrackOpen && wsConstChars.Find(pStr[ccf]) == -1) {
+    } else if (!bBrackOpen && wsConstChars.Find(pStr[ccf]) == FX_STRNPOS) {
       CFX_WideString wsCategory(pStr[ccf]);
       ccf++;
       while (ccf < iLenf && pStr[ccf] != '{' && pStr[ccf] != '.' &&
@@ -1031,7 +1031,7 @@ IFX_Locale* CFGAS_FormatString::GetNumericFormat(
 
           wsSubCategory = pLocale->GetNumPattern(eSubCategory);
           *iDotIndex = wsSubCategory.Find('.');
-          if (*iDotIndex > 0) {
+          if (*iDotIndex != 0 && *iDotIndex != FX_STRNPOS) {
             *iDotIndex += wsPurgePattern->GetLength();
             bFindDot = true;
             *dwStyle |= FX_NUMSTYLE_DotVorv;
@@ -1570,7 +1570,7 @@ FX_DATETIMETYPE CFGAS_FormatString::GetDateTimeFormat(
       GetLiteralText(pStr, &ccf, iLenf);
       wsTempPattern += CFX_WideStringC(pStr + iCurChar, ccf - iCurChar + 1);
     } else if (!bBraceOpen && iFindCategory != 3 &&
-               wsConstChars.Find(pStr[ccf]) == -1) {
+               wsConstChars.Find(pStr[ccf]) == FX_STRNPOS) {
       CFX_WideString wsCategory(pStr[ccf]);
       ccf++;
       while (ccf < iLenf && pStr[ccf] != '{' && pStr[ccf] != '.' &&
@@ -1951,7 +1951,7 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   const wchar_t* str = wsSrcNum.c_str();
   int len = wsSrcNum.GetLength();
   int dot_index = wsSrcNum.Find('.');
-  if (dot_index == -1)
+  if (dot_index == FX_STRNPOS)
     dot_index = len;
 
   ccf = dot_index_f - 1;
@@ -2282,7 +2282,7 @@ bool CFGAS_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
 
   CFX_DateTime dt;
   int32_t iT = wsSrcDateTime.Find(L"T");
-  if (iT < 0) {
+  if (iT == FX_STRNPOS) {
     if (eCategory == FX_DATETIMETYPE_Date &&
         FX_DateFromCanonical(wsSrcDateTime, &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,

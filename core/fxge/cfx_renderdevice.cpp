@@ -337,7 +337,7 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
     return false;
 
   const CFX_ByteString bsPsName = pFont->GetPsName();
-  if (bsPsName.Find("+ZJHL") != -1)
+  if (bsPsName.Find("+ZJHL") != FX_STRNPOS)
     return false;
 
   if (bsPsName == "CNAAJI+cmex10")

@@ -251,11 +251,11 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
   m_pMapper->AddInstalledFont(facename, FX_CHARSET_ANSI);
   pInfo->m_Charsets |= CHARSET_FLAG_ANSI;
   pInfo->m_Styles = 0;
-  if (style.Find("Bold") > -1)
+  if (style.Find("Bold") != FX_STRNPOS)
     pInfo->m_Styles |= FXFONT_BOLD;
-  if (style.Find("Italic") > -1 || style.Find("Oblique") > -1)
+  if (style.Find("Italic") != FX_STRNPOS || style.Find("Oblique") != FX_STRNPOS)
     pInfo->m_Styles |= FXFONT_ITALIC;
-  if (facename.Find("Serif") > -1)
+  if (facename.Find("Serif") != FX_STRNPOS)
     pInfo->m_Styles |= FXFONT_SERIF;
 
   m_FontList[facename] = std::move(pInfo);
@@ -289,7 +289,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
       continue;
 
     int32_t index = bsName.Find(family);
-    if (bMatchName && index < 0)
+    if (bMatchName && index == FX_STRNPOS)
       continue;
 
     int32_t iSimilarValue =

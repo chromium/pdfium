@@ -186,8 +186,10 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   std::ostringstream buf;
   TestProcessText(&generator, &buf, pTextObj.get());
   CFX_ByteString textString(buf);
-  int firstResourceAt = textString.Find('/') + 1;
-  int secondResourceAt = textString.ReverseFind('/') + 1;
+  FX_STRSIZE firstResourceAt = textString.Find('/') + 1;
+  FX_STRSIZE secondResourceAt = textString.ReverseFind('/') + 1;
+  EXPECT_NE(FX_STRNPOS, firstResourceAt);
+  EXPECT_NE(FX_STRNPOS, secondResourceAt);
   CFX_ByteString firstString = textString.Left(firstResourceAt);
   CFX_ByteString midString =
       textString.Mid(firstResourceAt, secondResourceAt - firstResourceAt);
@@ -252,7 +254,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   }
 
   CFX_ByteString textString(buf);
-  int firstResourceAt = textString.Find('/') + 1;
+  FX_STRSIZE firstResourceAt = textString.Find('/') + 1;
+  EXPECT_NE(FX_STRNPOS, firstResourceAt);
   CFX_ByteString firstString = textString.Left(firstResourceAt);
   CFX_ByteString lastString =
       textString.Right(textString.GetLength() - firstResourceAt);

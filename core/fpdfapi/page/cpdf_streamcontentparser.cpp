@@ -316,7 +316,7 @@ void CPDF_StreamContentParser::AddNameParam(const CFX_ByteStringC& bsName) {
         m_pDocument->GetByteStringPool(), PDF_NameDecode(bsName));
   } else {
     param.m_Type = ContentParam::NAME;
-    if (bsName.Find('#') == -1) {
+    if (bsName.Find('#') == FX_STRNPOS) {
       memcpy(param.m_Name.m_Buffer, bsName.raw_str(), bsName.GetLength());
       param.m_Name.m_Len = bsName.GetLength();
     } else {

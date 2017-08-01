@@ -22,7 +22,7 @@ namespace {
 FX_STRSIZE FindWebLinkEnding(const CFX_WideString& str,
                              FX_STRSIZE start,
                              FX_STRSIZE end) {
-  if (str.Find(L'/', start) != -1) {
+  if (str.Find(L'/', start) != FX_STRNPOS) {
     // When there is a path and query after '/', most ASCII chars are allowed.
     // We don't sanitize in this case.
     return end;
@@ -197,7 +197,7 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
   FX_STRSIZE len = str.GetLength();
   // First, try to find the scheme.
   FX_STRSIZE start = str.Find(kHttpScheme);
-  if (start != -1) {
+  if (start != FX_STRNPOS) {
     FX_STRSIZE off = start + kHttpSchemeLen;  // move after "http".
     if (len > off + 4) {                      // At least "://<char>" follows.
       if (str[off] == L's')                   // "https" scheme is accepted.
@@ -219,7 +219,7 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
 
   // When there is no scheme, try to find url starting with "www.".
   start = str.Find(kWWWAddrStart);
-  if (start != -1 && len > start + kWWWAddrStartLen) {
+  if (start != FX_STRNPOS && len > start + kWWWAddrStartLen) {
     FX_STRSIZE end =
         TrimExternalBracketsFromWebLink(str, start, str.GetLength() - 1);
     end = FindWebLinkEnding(str, start, end);
@@ -234,9 +234,9 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
 }
 
 bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
-  int aPos = str->Find(L'@');
-  // Invalid when no '@'.
-  if (aPos < 1)
+  FX_STRSIZE aPos = str->Find(L'@');
+  // Invalid when no '@' or when starts/ends with '@'.
+  if (aPos == FX_STRNPOS || aPos == 0 || aPos == str->GetLength() - 1)
     return false;
 
   // Check the local part.
@@ -263,15 +263,15 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
 
   // Check the domain name part.
   aPos = str->Find(L'@');
-  if (aPos < 1)
+  if (aPos < 1 || aPos == FX_STRNPOS)
     return false;
 
   str->TrimRight(L'.');
   // At least one '.' in domain name, but not at the beginning.
   // TODO(weili): RFC5322 allows domain names to be a local name without '.'.
   // Check whether we should remove this check.
-  int ePos = str->Find(L'.', aPos + 1);
-  if (ePos == -1 || ePos == aPos + 1)
+  FX_STRSIZE ePos = str->Find(L'.', aPos + 1);
+  if (ePos == FX_STRNPOS || ePos == aPos + 1)
     return false;
 
   // Validate all other chars in domain name.
@@ -295,7 +295,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
     pPos = i;
   }
 
-  if (str->Find(L"mailto:") == -1)
+  if (str->Find(L"mailto:") == FX_STRNPOS)
     *str = L"mailto:" + *str;
 
   return true;
