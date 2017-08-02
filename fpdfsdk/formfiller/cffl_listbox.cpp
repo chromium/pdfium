@@ -9,7 +9,6 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/fsdk_common.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
@@ -19,12 +18,12 @@
 
 CFFL_ListBox::CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp,
                            CPDFSDK_Widget* pWidget)
-    : CFFL_FormFiller(pApp, pWidget) {}
+    : CFFL_TextObject(pApp, pWidget) {}
 
 CFFL_ListBox::~CFFL_ListBox() {}
 
 PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
-  PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
+  PWL_CREATEPARAM cp = CFFL_TextObject::GetCreateParam();
   uint32_t dwFieldFlag = m_pWidget->GetFieldFlags();
   if (dwFieldFlag & FIELDFLAG_MULTISELECT)
     cp.dwFlags |= PLBS_MULTIPLESEL;
@@ -34,11 +33,7 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
   if (cp.dwFlags & PWS_AUTOFONTSIZE)
     cp.fFontSize = FFL_DEFAULTLISTBOXFONTSIZE;
 
-  if (!m_pFontMap) {
-    m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(
-        m_pWidget.Get(), m_pFormFillEnv->GetSysHandler());
-  }
-  cp.pFontMap = m_pFontMap.get();
+  cp.pFontMap = MaybeCreateFontMap();
   return cp;
 }
 
@@ -82,7 +77,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp) {
 bool CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
                           uint32_t nChar,
                           uint32_t nFlags) {
-  return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
+  return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
 }
 
 bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
@@ -181,18 +176,4 @@ void CFFL_ListBox::RestoreState(CPDFSDK_PageView* pPageView) {
 
   for (const auto& item : m_State)
     pListBox->Select(item);
-}
-
-CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
-                                       bool bRestoreValue) {
-  if (bRestoreValue)
-    SaveState(pPageView);
-
-  DestroyPDFWindow(pPageView);
-  if (bRestoreValue)
-    RestoreState(pPageView);
-
-  CPWL_Wnd::ObservedPtr pRet(GetPDFWindow(pPageView, !bRestoreValue));
-  m_pWidget->UpdateField();  // May invoke JS, invalidating pRet.
-  return pRet.Get();
 }

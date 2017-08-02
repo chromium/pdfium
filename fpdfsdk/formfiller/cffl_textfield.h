@@ -7,9 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_
 #define FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_
 
-#include <memory>
-
-#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_textobject.h"
 
 #define BF_ALIGN_LEFT 0
 #define BF_ALIGN_MIDDLE 1
@@ -26,12 +24,12 @@ struct FFL_TextFieldState {
   CFX_WideString sValue;
 };
 
-class CFFL_TextField : public CFFL_FormFiller, public IPWL_FocusHandler {
+class CFFL_TextField : public CFFL_TextObject, public IPWL_FocusHandler {
  public:
   CFFL_TextField(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
   ~CFFL_TextField() override;
 
-  // CFFL_FormFiller:
+  // CFFL_TextObject:
   PWL_CREATEPARAM GetCreateParam() override;
   CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp) override;
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
@@ -48,21 +46,16 @@ class CFFL_TextField : public CFFL_FormFiller, public IPWL_FocusHandler {
                            const PDFSDK_FieldAction& faNew) override;
   void SaveState(CPDFSDK_PageView* pPageView) override;
   void RestoreState(CPDFSDK_PageView* pPageView) override;
-  CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
-                           bool bRestoreValue) override;
+#ifdef PDF_ENABLE_XFA
+  bool IsFieldFull(CPDFSDK_PageView* pPageView) override;
+#endif
 
   // IPWL_FocusHandler:
   void OnSetFocus(CPWL_Edit* pEdit) override;
 
-#ifdef PDF_ENABLE_XFA
-  // CFFL_FormFiller:
-  bool IsFieldFull(CPDFSDK_PageView* pPageView) override;
-#endif  // PDF_ENABLE_XFA
-
  private:
   CPWL_Edit* GetEdit(CPDFSDK_PageView* pPageView, bool bNew);
 
-  std::unique_ptr<CBA_FontMap> m_pFontMap;
   FFL_TextFieldState m_State;
 };
 

@@ -1204,6 +1204,8 @@ static_library("formfiller") {
     "fpdfsdk/formfiller/cffl_radiobutton.h",
     "fpdfsdk/formfiller/cffl_textfield.cpp",
     "fpdfsdk/formfiller/cffl_textfield.h",
+    "fpdfsdk/formfiller/cffl_textobject.cpp",
+    "fpdfsdk/formfiller/cffl_textobject.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [

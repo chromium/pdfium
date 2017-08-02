@@ -14,7 +14,7 @@
 
 CFFL_TextField::CFFL_TextField(CPDFSDK_FormFillEnvironment* pApp,
                                CPDFSDK_Widget* pWidget)
-    : CFFL_FormFiller(pApp, pWidget) {}
+    : CFFL_TextObject(pApp, pWidget) {}
 
 CFFL_TextField::~CFFL_TextField() {
   for (const auto& it : m_Maps)
@@ -27,7 +27,7 @@ CFFL_TextField::~CFFL_TextField() {
 }
 
 PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
-  PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
+  PWL_CREATEPARAM cp = CFFL_TextObject::GetCreateParam();
   int nFlags = m_pWidget->GetFieldFlags();
   if (nFlags & FIELDFLAG_PASSWORD)
     cp.dwFlags |= PES_PASSWORD;
@@ -62,11 +62,7 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
       cp.dwFlags |= PES_RIGHT;
       break;
   }
-  if (!m_pFontMap) {
-    m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(
-        m_pWidget.Get(), m_pFormFillEnv->GetSysHandler());
-  }
-  cp.pFontMap = m_pFontMap.get();
+  cp.pFontMap = MaybeCreateFontMap();
   cp.pFocusHandler = this;
   return cp;
 }
@@ -127,7 +123,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
     }
   }
 
-  return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
+  return CFFL_TextObject::OnChar(pAnnot, nChar, nFlags);
 }
 
 bool CFFL_TextField::IsDataChanged(CPDFSDK_PageView* pPageView) {
@@ -230,20 +226,6 @@ void CFFL_TextField::RestoreState(CPDFSDK_PageView* pPageView) {
 
   pWnd->SetText(m_State.sValue);
   pWnd->SetSelection(m_State.nStart, m_State.nEnd);
-}
-
-CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView,
-                                         bool bRestoreValue) {
-  if (bRestoreValue)
-    SaveState(pPageView);
-
-  DestroyPDFWindow(pPageView);
-  if (bRestoreValue)
-    RestoreState(pPageView);
-
-  CPWL_Wnd::ObservedPtr pRet(GetPDFWindow(pPageView, !bRestoreValue));
-  m_pWidget->UpdateField();  // May invoke JS, invalidating pRet.
-  return pRet.Get();
 }
 
 #ifdef PDF_ENABLE_XFA
