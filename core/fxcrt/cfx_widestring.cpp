@@ -538,26 +538,23 @@ wchar_t* CFX_WideString::GetBuffer(FX_STRSIZE nMinBufLength) {
   return m_pData->m_String;
 }
 
-FX_STRSIZE CFX_WideString::Delete(FX_STRSIZE nIndex, FX_STRSIZE nCount) {
+FX_STRSIZE CFX_WideString::Delete(FX_STRSIZE index, FX_STRSIZE count) {
   if (!m_pData)
     return 0;
 
-  if (nIndex < 0)
-    nIndex = 0;
+  FX_STRSIZE old_length = m_pData->m_nDataLength;
+  if (count <= 0 || index != pdfium::clamp(index, 0, old_length))
+    return old_length;
 
-  FX_STRSIZE nOldLength = m_pData->m_nDataLength;
-  if (nCount > 0 && nIndex < nOldLength) {
-    FX_STRSIZE mLength = nIndex + nCount;
-    if (mLength >= nOldLength) {
-      m_pData->m_nDataLength = nIndex;
-      return m_pData->m_nDataLength;
-    }
-    ReallocBeforeWrite(nOldLength);
-    int nCharsToCopy = nOldLength - mLength + 1;
-    wmemmove(m_pData->m_String + nIndex, m_pData->m_String + mLength,
-             nCharsToCopy);
-    m_pData->m_nDataLength = nOldLength - nCount;
-  }
+  FX_STRSIZE removal_length = index + count;
+  if (removal_length > old_length)
+    return old_length;
+
+  ReallocBeforeWrite(old_length);
+  int chars_to_copy = old_length - removal_length + 1;
+  wmemmove(m_pData->m_String + index, m_pData->m_String + removal_length,
+           chars_to_copy);
+  m_pData->m_nDataLength = old_length - count;
   return m_pData->m_nDataLength;
 }
 

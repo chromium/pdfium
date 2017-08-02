@@ -414,21 +414,25 @@ TEST(fxcrt, WideStringInsertAtFrontAndInsertAtBack) {
 
 TEST(fxcrt, WideStringDelete) {
   CFX_WideString fred(L"FRED");
-  fred.Delete(0, 2);
+  EXPECT_EQ(4, fred.Delete(0, 0));
+  EXPECT_EQ(L"FRED", fred);
+  EXPECT_EQ(2, fred.Delete(0, 2));
   EXPECT_EQ(L"ED", fred);
-  fred.Delete(1);
+  EXPECT_EQ(1, fred.Delete(1));
   EXPECT_EQ(L"E", fred);
-  fred.Delete(-1);
+  EXPECT_EQ(1, fred.Delete(-1));
+  EXPECT_EQ(L"E", fred);
+  EXPECT_EQ(0, fred.Delete(0));
   EXPECT_EQ(L"", fred);
-  fred.Delete(1);
+  EXPECT_EQ(0, fred.Delete(0));
   EXPECT_EQ(L"", fred);
 
   CFX_WideString empty;
-  empty.Delete(0);
+  EXPECT_EQ(0, empty.Delete(0));
   EXPECT_EQ(L"", empty);
-  empty.Delete(-1);
+  EXPECT_EQ(0, empty.Delete(-1));
   EXPECT_EQ(L"", empty);
-  empty.Delete(1);
+  EXPECT_EQ(0, empty.Delete(1));
   EXPECT_EQ(L"", empty);
 }
 

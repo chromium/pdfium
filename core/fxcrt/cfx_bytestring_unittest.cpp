@@ -454,21 +454,25 @@ TEST(fxcrt, ByteStringInsertAtFrontAndInsertAtBack) {
 
 TEST(fxcrt, ByteStringDelete) {
   CFX_ByteString fred("FRED");
-  fred.Delete(0, 2);
+  EXPECT_EQ(4, fred.Delete(0, 0));
+  EXPECT_EQ("FRED", fred);
+  EXPECT_EQ(2, fred.Delete(0, 2));
   EXPECT_EQ("ED", fred);
-  fred.Delete(1);
+  EXPECT_EQ(1, fred.Delete(1));
   EXPECT_EQ("E", fred);
-  fred.Delete(-1);
+  EXPECT_EQ(1, fred.Delete(-1));
+  EXPECT_EQ("E", fred);
+  EXPECT_EQ(0, fred.Delete(0));
   EXPECT_EQ("", fred);
-  fred.Delete(1);
+  EXPECT_EQ(0, fred.Delete(0));
   EXPECT_EQ("", fred);
 
   CFX_ByteString empty;
-  empty.Delete(0);
+  EXPECT_EQ(0, empty.Delete(0));
   EXPECT_EQ("", empty);
-  empty.Delete(-1);
+  EXPECT_EQ(0, empty.Delete(-1));
   EXPECT_EQ("", empty);
-  empty.Delete(1);
+  EXPECT_EQ(0, empty.Delete(1));
   EXPECT_EQ("", empty);
 }
 
