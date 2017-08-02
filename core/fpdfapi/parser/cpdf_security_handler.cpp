@@ -240,13 +240,13 @@ void Revision6_Hash(const uint8_t* password,
   uint8_t digest[32];
   CRYPT_SHA256Finish(&sha, digest);
 
-  CFX_ByteTextBuf buf;
+  std::vector<uint8_t> buf;
   uint8_t* input = digest;
   uint8_t* key = input;
   uint8_t* iv = input + 16;
-  uint8_t* E = buf.GetBuffer();
-  int iBufLen = buf.GetLength();
-  CFX_ByteTextBuf interDigest;
+  uint8_t* E = nullptr;
+  int iBufLen = 0;
+  std::vector<uint8_t> interDigest;
   int i = 0;
   int iBlockSize = 32;
   CRYPT_aes_context aes;
@@ -257,19 +257,19 @@ void Revision6_Hash(const uint8_t* password,
       iRoundSize += 48;
     }
     iBufLen = iRoundSize * 64;
-    buf.EstimateSize(iBufLen);
-    E = buf.GetBuffer();
-    CFX_ByteTextBuf content;
+    buf.resize(iBufLen);
+    E = buf.data();
+    std::vector<uint8_t> content;
     for (int j = 0; j < 64; ++j) {
-      content.AppendBlock(password, size);
-      content.AppendBlock(input, iBlockSize);
+      content.insert(std::end(content), password, password + size);
+      content.insert(std::end(content), input, input + iBlockSize);
       if (vector) {
-        content.AppendBlock(vector, 48);
+        content.insert(std::end(content), vector, vector + 48);
       }
     }
     CRYPT_AESSetKey(&aes, 16, key, 16, true);
     CRYPT_AESSetIV(&aes, iv);
-    CRYPT_AESEncrypt(&aes, E, content.GetBuffer(), iBufLen);
+    CRYPT_AESEncrypt(&aes, E, content.data(), iBufLen);
     int iHash = 0;
     switch (BigOrder64BitsMod3(E)) {
       case 0:
@@ -285,8 +285,8 @@ void Revision6_Hash(const uint8_t* password,
         iBlockSize = 64;
         break;
     }
-    interDigest.EstimateSize(iBlockSize);
-    input = interDigest.GetBuffer();
+    interDigest.resize(iBlockSize);
+    input = interDigest.data();
     if (iHash == 0) {
       CRYPT_SHA256Generate(E, iBufLen, input);
     } else if (iHash == 1) {
