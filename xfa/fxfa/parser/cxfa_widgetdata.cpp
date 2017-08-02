@@ -1750,7 +1750,7 @@ void CXFA_WidgetData::NormalizeNumStr(const CFX_WideString& wsValue,
     wsOutput.TrimRight(L".");
   }
   if (wsOutput.IsEmpty() || wsOutput[0] == '.')
-    wsOutput.Insert(0, '0');
+    wsOutput.InsertAtFront('0');
 }
 
 void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,

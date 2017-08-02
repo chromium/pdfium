@@ -680,18 +680,18 @@ void CFX_WideString::Format(const wchar_t* pFormat, ...) {
   va_end(argList);
 }
 
-FX_STRSIZE CFX_WideString::Insert(FX_STRSIZE nIndex, wchar_t ch) {
-  FX_STRSIZE nNewLength = m_pData ? m_pData->m_nDataLength : 0;
-  nIndex = std::max(nIndex, 0);
-  nIndex = std::min(nIndex, nNewLength);
-  nNewLength++;
+FX_STRSIZE CFX_WideString::Insert(FX_STRSIZE index, wchar_t ch) {
+  const FX_STRSIZE cur_length = m_pData ? m_pData->m_nDataLength : 0;
+  if (index != pdfium::clamp(index, 0, cur_length))
+    return cur_length;
 
-  ReallocBeforeWrite(nNewLength);
-  wmemmove(m_pData->m_String + nIndex + 1, m_pData->m_String + nIndex,
-           nNewLength - nIndex);
-  m_pData->m_String[nIndex] = ch;
-  m_pData->m_nDataLength = nNewLength;
-  return nNewLength;
+  const FX_STRSIZE new_length = cur_length + 1;
+  ReallocBeforeWrite(new_length);
+  wmemmove(m_pData->m_String + index + 1, m_pData->m_String + index,
+           new_length - index);
+  m_pData->m_String[index] = ch;
+  m_pData->m_nDataLength = new_length;
+  return new_length;
 }
 
 CFX_WideString CFX_WideString::Right(FX_STRSIZE nCount) const {

@@ -347,38 +347,68 @@ TEST(fxcrt, WideStringReplace) {
 
 TEST(fxcrt, WideStringInsert) {
   CFX_WideString fred(L"FRED");
-  fred.Insert(-1, 'X');
-  EXPECT_EQ(L"XFRED", fred);
-
-  fred.Insert(0, 'S');
-  EXPECT_EQ(L"SXFRED", fred);
-
-  fred.Insert(2, 'T');
-  EXPECT_EQ(L"SXTFRED", fred);
-
-  fred.Insert(5, 'U');
-  EXPECT_EQ(L"SXTFRUED", fred);
-
-  fred.Insert(8, 'V');
-  EXPECT_EQ(L"SXTFRUEDV", fred);
-
-  fred.Insert(12, 'P');
-  EXPECT_EQ(L"SXTFRUEDVP", fred);
-
+  EXPECT_EQ(4, fred.Insert(-1, 'X'));
+  EXPECT_EQ(L"FRED", fred);
+  EXPECT_EQ(5, fred.Insert(0, 'S'));
+  EXPECT_EQ(L"SFRED", fred);
+  EXPECT_EQ(6, fred.Insert(1, 'T'));
+  EXPECT_EQ(L"STFRED", fred);
+  EXPECT_EQ(7, fred.Insert(4, 'U'));
+  EXPECT_EQ(L"STFRUED", fred);
+  EXPECT_EQ(8, fred.Insert(7, 'V'));
+  EXPECT_EQ(L"STFRUEDV", fred);
+  EXPECT_EQ(8, fred.Insert(12, 'P'));
+  EXPECT_EQ(L"STFRUEDV", fred);
   {
     CFX_WideString empty;
-    empty.Insert(-1, 'X');
+    EXPECT_EQ(0, empty.Insert(-1, 'X'));
+    EXPECT_NE(L"X", empty);
+  }
+  {
+    CFX_WideString empty;
+    EXPECT_EQ(1, empty.Insert(0, 'X'));
     EXPECT_EQ(L"X", empty);
   }
   {
     CFX_WideString empty;
-    empty.Insert(0, 'X');
-    EXPECT_EQ(L"X", empty);
+    EXPECT_EQ(0, empty.Insert(5, 'X'));
+    EXPECT_NE(L"X", empty);
+  }
+}
+
+TEST(fxcrt, WideStringInsertAtFrontAndInsertAtBack) {
+  {
+    CFX_WideString empty;
+    EXPECT_EQ(1, empty.InsertAtFront('D'));
+    EXPECT_EQ(L"D", empty);
+    EXPECT_EQ(2, empty.InsertAtFront('E'));
+    EXPECT_EQ(L"ED", empty);
+    EXPECT_EQ(3, empty.InsertAtFront('R'));
+    EXPECT_EQ(L"RED", empty);
+    EXPECT_EQ(4, empty.InsertAtFront('F'));
+    EXPECT_EQ(L"FRED", empty);
   }
   {
     CFX_WideString empty;
-    empty.Insert(5, 'X');
-    EXPECT_EQ(L"X", empty);
+    EXPECT_EQ(1, empty.InsertAtBack('F'));
+    EXPECT_EQ(L"F", empty);
+    EXPECT_EQ(2, empty.InsertAtBack('R'));
+    EXPECT_EQ(L"FR", empty);
+    EXPECT_EQ(3, empty.InsertAtBack('E'));
+    EXPECT_EQ(L"FRE", empty);
+    EXPECT_EQ(4, empty.InsertAtBack('D'));
+    EXPECT_EQ(L"FRED", empty);
+  }
+  {
+    CFX_WideString empty;
+    EXPECT_EQ(1, empty.InsertAtBack('E'));
+    EXPECT_EQ(L"E", empty);
+    EXPECT_EQ(2, empty.InsertAtFront('R'));
+    EXPECT_EQ(L"RE", empty);
+    EXPECT_EQ(3, empty.InsertAtBack('D'));
+    EXPECT_EQ(L"RED", empty);
+    EXPECT_EQ(4, empty.InsertAtFront('F'));
+    EXPECT_EQ(L"FRED", empty);
   }
 }
 
@@ -720,8 +750,8 @@ TEST(fxcrt, WideStringCOperatorSubscript) {
 TEST(fxcrt, WideStringCOperatorLT) {
   CFX_WideStringC empty;
   CFX_WideStringC a(L"a");
-  CFX_WideStringC abc(L"\x0110qq");  // Comes before despite endianness.
-  CFX_WideStringC def(L"\x1001qq");  // Comes after despite endianness.
+  CFX_WideStringC abc(L"\x0110qq");  // Comes InsertAtFront despite endianness.
+  CFX_WideStringC def(L"\x1001qq");  // Comes InsertAtBack despite endianness.
 
   EXPECT_FALSE(empty < empty);
   EXPECT_FALSE(a < a);

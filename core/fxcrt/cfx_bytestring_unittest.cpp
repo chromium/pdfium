@@ -387,32 +387,68 @@ TEST(fxcrt, ByteStringReplace) {
 
 TEST(fxcrt, ByteStringInsert) {
   CFX_ByteString fred("FRED");
-  fred.Insert(-1, 'X');
-  EXPECT_EQ("XFRED", fred);
-  fred.Insert(0, 'S');
-  EXPECT_EQ("SXFRED", fred);
-  fred.Insert(2, 'T');
-  EXPECT_EQ("SXTFRED", fred);
-  fred.Insert(5, 'U');
-  EXPECT_EQ("SXTFRUED", fred);
-  fred.Insert(8, 'V');
-  EXPECT_EQ("SXTFRUEDV", fred);
-  fred.Insert(12, 'P');
-  EXPECT_EQ("SXTFRUEDVP", fred);
+  EXPECT_EQ(4, fred.Insert(-1, 'X'));
+  EXPECT_EQ("FRED", fred);
+  EXPECT_EQ(5, fred.Insert(0, 'S'));
+  EXPECT_EQ("SFRED", fred);
+  EXPECT_EQ(6, fred.Insert(1, 'T'));
+  EXPECT_EQ("STFRED", fred);
+  EXPECT_EQ(7, fred.Insert(4, 'U'));
+  EXPECT_EQ("STFRUED", fred);
+  EXPECT_EQ(8, fred.Insert(7, 'V'));
+  EXPECT_EQ("STFRUEDV", fred);
+  EXPECT_EQ(8, fred.Insert(12, 'P'));
+  EXPECT_EQ("STFRUEDV", fred);
   {
     CFX_ByteString empty;
-    empty.Insert(-1, 'X');
+    EXPECT_EQ(0, empty.Insert(-1, 'X'));
+    EXPECT_NE("X", empty);
+  }
+  {
+    CFX_ByteString empty;
+    EXPECT_EQ(1, empty.Insert(0, 'X'));
     EXPECT_EQ("X", empty);
   }
   {
     CFX_ByteString empty;
-    empty.Insert(0, 'X');
-    EXPECT_EQ("X", empty);
+    EXPECT_EQ(0, empty.Insert(5, 'X'));
+    EXPECT_NE("X", empty);
+  }
+}
+
+TEST(fxcrt, ByteStringInsertAtFrontAndInsertAtBack) {
+  {
+    CFX_ByteString empty;
+    EXPECT_EQ(1, empty.InsertAtFront('D'));
+    EXPECT_EQ("D", empty);
+    EXPECT_EQ(2, empty.InsertAtFront('E'));
+    EXPECT_EQ("ED", empty);
+    EXPECT_EQ(3, empty.InsertAtFront('R'));
+    EXPECT_EQ("RED", empty);
+    EXPECT_EQ(4, empty.InsertAtFront('F'));
+    EXPECT_EQ("FRED", empty);
   }
   {
     CFX_ByteString empty;
-    empty.Insert(5, 'X');
-    EXPECT_EQ("X", empty);
+    EXPECT_EQ(1, empty.InsertAtBack('F'));
+    EXPECT_EQ("F", empty);
+    EXPECT_EQ(2, empty.InsertAtBack('R'));
+    EXPECT_EQ("FR", empty);
+    EXPECT_EQ(3, empty.InsertAtBack('E'));
+    EXPECT_EQ("FRE", empty);
+    EXPECT_EQ(4, empty.InsertAtBack('D'));
+    EXPECT_EQ("FRED", empty);
+  }
+  {
+    CFX_ByteString empty;
+    EXPECT_EQ(1, empty.InsertAtBack('E'));
+    EXPECT_EQ("E", empty);
+    EXPECT_EQ(2, empty.InsertAtFront('R'));
+    EXPECT_EQ("RE", empty);
+    EXPECT_EQ(3, empty.InsertAtBack('D'));
+    EXPECT_EQ("RED", empty);
+    EXPECT_EQ(4, empty.InsertAtFront('F'));
+    EXPECT_EQ("FRED", empty);
   }
 }
 

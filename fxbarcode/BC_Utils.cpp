@@ -19,7 +19,7 @@ bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
   }
   dst.Delete(first, last - first);
   for (int32_t i = 0; i < count; i++) {
-    dst.Insert(0, c);
+    dst.InsertAtFront(c);
   }
   return true;
 }

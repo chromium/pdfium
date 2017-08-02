@@ -118,6 +118,8 @@ class CFX_ByteString {
 
   void SetAt(FX_STRSIZE nIndex, char ch);
   FX_STRSIZE Insert(FX_STRSIZE index, char ch);
+  FX_STRSIZE InsertAtFront(char ch) { return Insert(0, ch); }
+  FX_STRSIZE InsertAtBack(char ch) { return Insert(GetLength(), ch); }
   FX_STRSIZE Delete(FX_STRSIZE index, FX_STRSIZE count = 1);
 
   void Format(const char* lpszFormat, ...);

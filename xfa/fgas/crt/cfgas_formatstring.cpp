@@ -1208,7 +1208,7 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         if (!FXSYS_isDecimalDigit(str[cc]))
           return false;
 
-        wsValue->Insert(0, str[cc]);
+        wsValue->InsertAtFront(str[cc]);
         cc--;
         ccf--;
         break;
@@ -1216,7 +1216,7 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case 'Z':
         if (strf[ccf] == 'z' || str[cc] != ' ') {
           if (FXSYS_isDecimalDigit(str[cc])) {
-            wsValue->Insert(0, str[cc]);
+            wsValue->InsertAtFront(str[cc]);
             cc--;
           }
         } else {
@@ -1545,7 +1545,7 @@ bool CFGAS_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
     *wsValue = decimal;
   }
   if (bNeg)
-    wsValue->Insert(0, L'-');
+    wsValue->InsertAtFront(L'-');
 
   return true;
 }
@@ -1878,7 +1878,7 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   CFX_WideString wsSrcNum(wsInputNum);
   wsSrcNum.TrimLeft('0');
   if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.')
-    wsSrcNum.Insert(0, '0');
+    wsSrcNum.InsertAtFront('0');
 
   CFX_Decimal decimal = CFX_Decimal(wsSrcNum.AsStringC());
   if (dwNumStyle & FX_NUMSTYLE_Percent) {
@@ -1963,10 +1963,10 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
           if (!FXSYS_isDecimalDigit(str[cc]))
             return false;
 
-          wsOutput->Insert(0, str[cc]);
+          wsOutput->InsertAtFront(str[cc]);
           cc--;
         } else {
-          wsOutput->Insert(0, L'0');
+          wsOutput->InsertAtFront(L'0');
         }
         ccf--;
         break;
@@ -1975,7 +1975,7 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
           if (!FXSYS_isDecimalDigit(str[cc]))
             return false;
           if (str[0] != '0')
-            wsOutput->Insert(0, str[cc]);
+            wsOutput->InsertAtFront(str[cc]);
 
           cc--;
         }
@@ -1986,10 +1986,10 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
           if (!FXSYS_isDecimalDigit(str[cc]))
             return false;
 
-          wsOutput->Insert(0, str[0] == '0' ? L' ' : str[cc]);
+          wsOutput->InsertAtFront(str[0] == '0' ? L' ' : str[cc]);
           cc--;
         } else {
-          wsOutput->Insert(0, L' ');
+          wsOutput->InsertAtFront(L' ');
         }
         ccf--;
         break;
@@ -1999,7 +1999,7 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
               pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + *wsOutput;
           bAddNeg = true;
         } else {
-          wsOutput->Insert(0, L' ');
+          wsOutput->InsertAtFront(L' ');
         }
         ccf--;
         break;
@@ -2070,12 +2070,12 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         ccf--;
         break;
       case '(':
-        wsOutput->Insert(0, bNeg ? L'(' : L' ');
+        wsOutput->InsertAtFront(bNeg ? L'(' : L' ');
         bAddNeg = true;
         ccf--;
         break;
       case ')':
-        wsOutput->Insert(0, bNeg ? L')' : L' ');
+        wsOutput->InsertAtFront(bNeg ? L')' : L' ');
         ccf--;
         break;
       case '\'':
@@ -2083,7 +2083,7 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         ccf--;
         break;
       default:
-        wsOutput->Insert(0, strf[ccf]);
+        wsOutput->InsertAtFront(strf[ccf]);
         ccf--;
     }
   }
