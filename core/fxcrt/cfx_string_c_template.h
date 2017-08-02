@@ -99,14 +99,14 @@ class CFX_StringCTemplate {
     return !(*this == other);
   }
 
-  uint32_t GetID(FX_STRSIZE start_pos = 0) const {
-    if (m_Length == 0 || start_pos < 0 || start_pos >= m_Length)
+  uint32_t GetID() const {
+    if (m_Length == 0)
       return 0;
 
     uint32_t strid = 0;
-    FX_STRSIZE size = std::min(4, m_Length - start_pos);
+    FX_STRSIZE size = std::min(4, m_Length);
     for (FX_STRSIZE i = 0; i < size; i++)
-      strid = strid * 256 + m_Ptr.Get()[start_pos + i];
+      strid = strid * 256 + m_Ptr.Get()[i];
 
     return strid << ((4 - size) * 8);
   }

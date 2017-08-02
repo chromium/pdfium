@@ -155,7 +155,7 @@ class CFX_ByteString {
 
   CFX_WideString UTF8Decode() const;
 
-  uint32_t GetID(FX_STRSIZE start_pos = 0) const;
+  uint32_t GetID() const { return AsStringC().GetID(); }
 
 #define FXFORMAT_SIGNED 1
 #define FXFORMAT_HEX 2

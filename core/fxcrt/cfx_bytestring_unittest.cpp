@@ -835,33 +835,15 @@ TEST(fxcrt, ByteStringCFromVector) {
 TEST(fxcrt, ByteStringCGetID) {
   CFX_ByteStringC null_string;
   EXPECT_EQ(0u, null_string.GetID());
-  EXPECT_EQ(0u, null_string.GetID(1));
-  EXPECT_EQ(0u, null_string.GetID(-1));
-  EXPECT_EQ(0u, null_string.GetID(-1000000));
 
   CFX_ByteStringC empty_string("");
   EXPECT_EQ(0u, empty_string.GetID());
-  EXPECT_EQ(0u, empty_string.GetID(1));
-  EXPECT_EQ(0u, empty_string.GetID(-1));
-  EXPECT_EQ(0u, empty_string.GetID(-1000000));
 
   CFX_ByteStringC short_string("ab");
   EXPECT_EQ(FXBSTR_ID('a', 'b', 0, 0), short_string.GetID());
-  EXPECT_EQ(FXBSTR_ID('b', 0, 0, 0), short_string.GetID(1));
-  EXPECT_EQ(0u, short_string.GetID(2));
-  EXPECT_EQ(0u, short_string.GetID(-1));
-  EXPECT_EQ(0u, short_string.GetID(-1000000));
 
   CFX_ByteStringC longer_string("abcdef");
   EXPECT_EQ(FXBSTR_ID('a', 'b', 'c', 'd'), longer_string.GetID());
-  EXPECT_EQ(FXBSTR_ID('b', 'c', 'd', 'e'), longer_string.GetID(1));
-  EXPECT_EQ(FXBSTR_ID('c', 'd', 'e', 'f'), longer_string.GetID(2));
-  EXPECT_EQ(FXBSTR_ID('d', 'e', 'f', 0), longer_string.GetID(3));
-  EXPECT_EQ(FXBSTR_ID('e', 'f', 0, 0), longer_string.GetID(4));
-  EXPECT_EQ(FXBSTR_ID('f', 0, 0, 0), longer_string.GetID(5));
-  EXPECT_EQ(0u, longer_string.GetID(6));
-  EXPECT_EQ(0u, longer_string.GetID(-1));
-  EXPECT_EQ(0u, longer_string.GetID(-1000000));
 }
 
 TEST(fxcrt, ByteStringCFind) {

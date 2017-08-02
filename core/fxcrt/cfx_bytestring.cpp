@@ -814,9 +814,6 @@ void CFX_ByteString::TrimLeft() {
   TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
 }
 
-uint32_t CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
-  return AsStringC().GetID(start_pos);
-}
 FX_STRSIZE FX_ftoa(float d, char* buf) {
   buf[0] = '0';
   buf[1] = '\0';
