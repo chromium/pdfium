@@ -710,12 +710,6 @@ CFX_WideString CFX_ByteString::UTF8Decode() const {
 }
 
 // static
-CFX_ByteString CFX_ByteString::FromUnicode(const wchar_t* str, FX_STRSIZE len) {
-  FX_STRSIZE str_len = len >= 0 ? len : FXSYS_wcslen(str);
-  return FromUnicode(CFX_WideString(str, str_len));
-}
-
-// static
 CFX_ByteString CFX_ByteString::FromUnicode(const CFX_WideString& str) {
   return GetByteString(0, str.AsStringC());
 }

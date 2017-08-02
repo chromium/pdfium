@@ -52,7 +52,6 @@ class CFX_ByteString {
 
   void clear() { m_pData.Reset(); }
 
-  static CFX_ByteString FromUnicode(const wchar_t* ptr, FX_STRSIZE len = -1);
   static CFX_ByteString FromUnicode(const CFX_WideString& str);
 
   // Explicit conversion to C-style string.
