@@ -440,56 +440,116 @@ bool CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
 
   m_pSyntax->SetPos(dwStartPos);
   m_SortedOffset.insert(pos);
+  std::vector<CrossRefObjData> objects;
+  if (!ParseAndAppendCrossRefSubsectionData(0, dwObjCount, &objects))
+    return false;
+  MergeCrossRefObjectsData(objects);
+  return true;
+}
 
-  uint32_t start_objnum = 0;
-  uint32_t count = dwObjCount;
-  FX_FILESIZE SavedPos = m_pSyntax->GetPos();
+bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
+    uint32_t start_objnum,
+    uint32_t count,
+    std::vector<CrossRefObjData>* out_objects) {
+  // Each entry shall be exactly 20 byte.
+  // A sample entry looks like:
+  // "0000000000 00007 f\r\n"
+  static constexpr int32_t kEntryConstSize = 20;
 
-  const int32_t recordsize = 20;
-  std::vector<char> buf(1024 * recordsize + 1);
-  buf[1024 * recordsize] = '\0';
+  if (!out_objects) {
+    m_pSyntax->SetPos(m_pSyntax->GetPos() + count * kEntryConstSize);
+    return true;
+  }
+  const size_t start_obj_index = out_objects->size();
+  out_objects->resize(start_obj_index + count);
+
+  std::vector<char> buf(1024 * kEntryConstSize + 1);
+  buf[1024 * kEntryConstSize] = '\0';
 
   int32_t nBlocks = count / 1024 + 1;
   for (int32_t block = 0; block < nBlocks; block++) {
     int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
-    uint32_t dwReadSize = block_size * recordsize;
-    if ((FX_FILESIZE)(dwStartPos + dwReadSize) > m_pSyntax->m_FileLen)
-      return false;
-
     if (!m_pSyntax->ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
-                              dwReadSize)) {
+                              block_size * kEntryConstSize))
       return false;
-    }
 
     for (int32_t i = 0; i < block_size; i++) {
-      uint32_t objnum = start_objnum + block * 1024 + i;
-      char* pEntry = &buf[i * recordsize];
+      CrossRefObjData& obj_data =
+          (*out_objects)[start_obj_index + block * 1024 + i];
+
+      const uint32_t objnum = start_objnum + block * 1024 + i;
+
+      obj_data.obj_num = objnum;
+
+      ObjectInfo& info = obj_data.info;
+
+      char* pEntry = &buf[i * kEntryConstSize];
       if (pEntry[17] == 'f') {
-        m_ObjectInfo[objnum].pos = 0;
-        m_ObjectInfo[objnum].type = ObjectType::kFree;
+        info.pos = 0;
+        info.type = ObjectType::kFree;
       } else {
-        int32_t offset = FXSYS_atoi(pEntry);
-        if (offset == 0) {
+        const FX_SAFE_FILESIZE offset = FXSYS_atoi64(pEntry);
+        if (!offset.IsValid())
+          return false;
+
+        if (offset.ValueOrDie() == 0) {
           for (int32_t c = 0; c < 10; c++) {
             if (!std::isdigit(pEntry[c]))
               return false;
           }
         }
 
-        m_ObjectInfo[objnum].pos = offset;
-        int32_t version = FXSYS_atoi(pEntry + 11);
-        if (version >= 1)
-          m_bVersionUpdated = true;
+        info.pos = offset.ValueOrDie();
 
-        m_ObjectInfo[objnum].gennum = version;
-        if (m_ObjectInfo[objnum].pos < m_pSyntax->m_FileLen)
-          m_SortedOffset.insert(m_ObjectInfo[objnum].pos);
-
-        m_ObjectInfo[objnum].type = ObjectType::kNotCompressed;
+        // TODO(art-snake): The info.gennum is uint16_t, but version may be
+        // greated than max<uint16_t>. Needs solve this issue.
+        const int32_t version = FXSYS_atoi(pEntry + 11);
+        info.gennum = version;
+        info.type = ObjectType::kNotCompressed;
       }
     }
   }
-  m_pSyntax->SetPos(SavedPos + count * recordsize);
+  return true;
+}
+
+bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects,
+                                  uint32_t* start_obj_num_at_last_block) {
+  if (out_objects)
+    out_objects->clear();
+
+  if (m_pSyntax->GetKeyword() != "xref")
+    return false;
+  std::vector<CrossRefObjData> result_objects;
+  while (1) {
+    FX_FILESIZE SavedPos = m_pSyntax->GetPos();
+    bool bIsNumber;
+    CFX_ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
+    if (word.IsEmpty()) {
+      return false;
+    }
+
+    if (!bIsNumber) {
+      m_pSyntax->SetPos(SavedPos);
+      break;
+    }
+
+    uint32_t start_objnum = FXSYS_atoui(word.c_str());
+    if (start_objnum >= kMaxObjectNumber)
+      return false;
+    if (start_obj_num_at_last_block)
+      *start_obj_num_at_last_block = start_objnum;
+
+    uint32_t count = m_pSyntax->GetDirectNum();
+    m_pSyntax->ToNextWord();
+    SavedPos = m_pSyntax->GetPos();
+
+    if (!ParseAndAppendCrossRefSubsectionData(
+            start_objnum, count, out_objects ? &result_objects : nullptr)) {
+      return false;
+    }
+  }
+  if (out_objects)
+    *out_objects = std::move(result_objects);
   return true;
 }
 
@@ -504,70 +564,29 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
   if (streampos)
     m_SortedOffset.insert(streampos);
 
-  while (1) {
-    FX_FILESIZE SavedPos = m_pSyntax->GetPos();
-    bool bIsNumber;
-    CFX_ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
-    if (word.IsEmpty())
-      return false;
+  m_pSyntax->SetPos(pos);
+  std::vector<CrossRefObjData> objects;
+  if (!ParseCrossRefV4(bSkip ? nullptr : &objects, &m_dwXrefStartObjNum))
+    return false;
 
-    if (!bIsNumber) {
-      m_pSyntax->SetPos(SavedPos);
-      break;
-    }
+  MergeCrossRefObjectsData(objects);
 
-    uint32_t start_objnum = FXSYS_atoui(word.c_str());
-    if (start_objnum >= kMaxObjectNumber)
-      return false;
+  return !streampos || LoadCrossRefV5(&streampos, false);
+}
 
-    uint32_t count = m_pSyntax->GetDirectNum();
-    m_pSyntax->ToNextWord();
-    SavedPos = m_pSyntax->GetPos();
-    const int32_t recordsize = 20;
-
-    m_dwXrefStartObjNum = start_objnum;
-    if (!bSkip) {
-      std::vector<char> buf(1024 * recordsize + 1);
-      buf[1024 * recordsize] = '\0';
-
-      int32_t nBlocks = count / 1024 + 1;
-      for (int32_t block = 0; block < nBlocks; block++) {
-        int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
-        m_pSyntax->ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
-                             block_size * recordsize);
-
-        for (int32_t i = 0; i < block_size; i++) {
-          uint32_t objnum = start_objnum + block * 1024 + i;
-          char* pEntry = &buf[i * recordsize];
-          if (pEntry[17] == 'f') {
-            m_ObjectInfo[objnum].pos = 0;
-            m_ObjectInfo[objnum].type = ObjectType::kFree;
-          } else {
-            FX_FILESIZE offset = (FX_FILESIZE)FXSYS_atoi64(pEntry);
-            if (offset == 0) {
-              for (int32_t c = 0; c < 10; c++) {
-                if (!std::isdigit(pEntry[c]))
-                  return false;
-              }
-            }
-
-            m_ObjectInfo[objnum].pos = offset;
-            int32_t version = FXSYS_atoi(pEntry + 11);
-            if (version >= 1)
-              m_bVersionUpdated = true;
-
-            m_ObjectInfo[objnum].gennum = version;
-            if (m_ObjectInfo[objnum].pos < m_pSyntax->m_FileLen)
-              m_SortedOffset.insert(m_ObjectInfo[objnum].pos);
-
-            m_ObjectInfo[objnum].type = ObjectType::kNotCompressed;
-          }
-        }
+void CPDF_Parser::MergeCrossRefObjectsData(
+    const std::vector<CrossRefObjData>& objects) {
+  for (const auto& obj : objects) {
+    m_ObjectInfo[obj.obj_num] = obj.info;
+    if (obj.info.type != ObjectType::kFree) {
+      if (obj.info.gennum > 0)
+        m_bVersionUpdated = true;
+      if (obj.info.type == ObjectType::kNotCompressed &&
+          obj.info.pos < m_pSyntax->m_FileLen) {
+        m_SortedOffset.insert(obj.info.pos);
       }
     }
-    m_pSyntax->SetPos(SavedPos + count * recordsize);
   }
-  return !streampos || LoadCrossRefV5(&streampos, false);
 }
 
 bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
