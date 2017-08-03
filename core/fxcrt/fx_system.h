@@ -283,8 +283,7 @@ int FXSYS_round(float f);
 // Handle differnces between platform's variadic function implementations.
 #if defined(__ARMCC_VERSION) ||                                              \
     (!defined(_MSC_VER) && (_FX_CPU_ == _FX_X64_ || _FX_CPU_ == _FX_IA64_ || \
-                            _FX_CPU_ == _FX_ARM64_)) ||                      \
-    defined(__native_client__)
+                            _FX_CPU_ == _FX_ARM64_))
 #define FX_VA_COPY(dst, src) va_copy((dst), (src))
 #else
 #define FX_VA_COPY(dst, src) ((dst) = (src))

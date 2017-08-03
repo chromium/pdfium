@@ -177,9 +177,6 @@ bool FX_GetNextFile(FX_FileHandle* handle,
   if (!FindNextFileA(handle->m_Handle, &handle->m_FindData))
     handle->m_bEnd = true;
   return true;
-#elif defined(__native_client__)
-  abort();
-  return false;
 #else
   struct dirent* de = readdir(handle);
   if (!de)
