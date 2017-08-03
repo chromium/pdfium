@@ -29,12 +29,18 @@ enum ColorFormat {
   // This is the native JPEG format.
   FORMAT_RGB,
 
+  // 3 bytes per pixel, in BGR order regardless of endianness.
+  FORMAT_BGR,
+
   // 4 bytes per pixel, in RGBA order in memory regardless of endianness.
   FORMAT_RGBA,
 
   // 4 bytes per pixel, in BGRA order in memory regardless of endianness.
   // This is the default Windows DIB order.
   FORMAT_BGRA,
+
+  // 1 byte per pixel.
+  FORMAT_GRAY,
 };
 
 // Represents a comment in the tEXt ancillary chunk of the png.
@@ -55,6 +61,19 @@ void ConvertBetweenBGRAandRGBA(const unsigned char* input,
     pixel_out[1] = pixel_in[1];
     pixel_out[2] = pixel_in[0];
     pixel_out[3] = pixel_in[3];
+  }
+}
+
+void ConvertBGRtoRGB(const unsigned char* bgr,
+                     int pixel_width,
+                     unsigned char* rgb,
+                     bool* is_opaque) {
+  for (int x = 0; x < pixel_width; x++) {
+    const unsigned char* pixel_in = &bgr[x * 3];
+    unsigned char* pixel_out = &rgb[x * 3];
+    pixel_out[0] = pixel_in[2];
+    pixel_out[1] = pixel_in[1];
+    pixel_out[2] = pixel_in[0];
   }
 }
 
@@ -93,7 +112,7 @@ class PngDecoderState {
         output_channels(0),
         is_opaque(true),
         output(o),
-        row_converter(NULL),
+        row_converter(nullptr),
         width(0),
         height(0),
         done(false) {}
@@ -217,7 +236,7 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
   if (channels == 3) {
     switch (state->output_format) {
       case FORMAT_RGB:
-        state->row_converter = NULL;  // no conversion necessary
+        state->row_converter = nullptr;  // no conversion necessary
         state->output_channels = 3;
         break;
       case FORMAT_RGBA:
@@ -227,6 +246,10 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
       case FORMAT_BGRA:
         state->row_converter = &ConvertRGBtoBGRA;
         state->output_channels = 4;
+        break;
+      case FORMAT_GRAY:
+        state->row_converter = nullptr;
+        state->output_channels = 1;
         break;
       default:
         NOTREACHED();
@@ -239,7 +262,7 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         state->output_channels = 3;
         break;
       case FORMAT_RGBA:
-        state->row_converter = NULL;  // no conversion necessary
+        state->row_converter = nullptr;  // no conversion necessary
         state->output_channels = 4;
         break;
       case FORMAT_BGRA:
@@ -546,11 +569,14 @@ bool EncodeWithCompressionLevel(const unsigned char* input,
                                 std::vector<unsigned char>* output) {
   // Run to convert an input row into the output row format, NULL means no
   // conversion is necessary.
-  FormatConverter converter = NULL;
+  FormatConverter converter = nullptr;
 
   int input_color_components, output_color_components;
   int png_output_color_type;
   switch (format) {
+    case FORMAT_BGR:
+      converter = ConvertBGRtoRGB;
+
     case FORMAT_RGB:
       input_color_components = 3;
       output_color_components = 3;
@@ -567,7 +593,7 @@ bool EncodeWithCompressionLevel(const unsigned char* input,
       } else {
         output_color_components = 4;
         png_output_color_type = PNG_COLOR_TYPE_RGB_ALPHA;
-        converter = NULL;
+        converter = nullptr;
       }
       break;
 
@@ -584,13 +610,20 @@ bool EncodeWithCompressionLevel(const unsigned char* input,
       }
       break;
 
+    case FORMAT_GRAY:
+      input_color_components = 1;
+      output_color_components = 1;
+      png_output_color_type = PNG_COLOR_TYPE_GRAY;
+      discard_transparency = false;
+      break;
+
     default:
       NOTREACHED();
       return false;
   }
 
   // Row stride should be at least as long as the length of the data.
-  if (input_color_components * width < row_byte_width)
+  if (row_byte_width < input_color_components * width)
     return false;
 
   png_struct* png_ptr =
@@ -636,6 +669,16 @@ bool DecodePNG(const unsigned char* input,
   return Decode(input, input_size, FORMAT_RGBA, output, width, height);
 }
 
+// Encode a BGR pixel array into a PNG.
+bool EncodeBGRPNG(const unsigned char* input,
+                  int width,
+                  int height,
+                  int row_byte_width,
+                  std::vector<unsigned char>* output) {
+  return Encode(input, FORMAT_BGR, width, height, row_byte_width, false,
+                std::vector<Comment>(), output);
+}
+
 // Encode an RGBA pixel array into a PNG.
 bool EncodeRGBAPNG(const unsigned char* input,
                    int width,
@@ -655,6 +698,16 @@ bool EncodeBGRAPNG(const unsigned char* input,
                    std::vector<unsigned char>* output) {
   return Encode(input, FORMAT_BGRA, width, height, row_byte_width,
                 discard_transparency, std::vector<Comment>(), output);
+}
+
+// Encode a grayscale pixel array into a PNG.
+bool EncodeGrayPNG(const unsigned char* input,
+                   int width,
+                   int height,
+                   int row_byte_width,
+                   std::vector<unsigned char>* output) {
+  return Encode(input, FORMAT_GRAY, width, height, row_byte_width, false,
+                std::vector<Comment>(), output);
 }
 
 }  // namespace image_diff_png

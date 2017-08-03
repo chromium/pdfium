@@ -18,6 +18,13 @@ bool DecodePNG(const unsigned char* input,
                int* width,
                int* height);
 
+// Encode a BGR pixel array into a PNG.
+bool EncodeBGRPNG(const unsigned char* input,
+                  int width,
+                  int height,
+                  int row_byte_width,
+                  std::vector<unsigned char>* output);
+
 // Encode an RGBA pixel array into a PNG.
 bool EncodeRGBAPNG(const unsigned char* input,
                    int width,
@@ -31,6 +38,13 @@ bool EncodeBGRAPNG(const unsigned char* input,
                    int height,
                    int row_byte_width,
                    bool discard_transparency,
+                   std::vector<unsigned char>* output);
+
+// Encode a grayscale pixel array into a PNG.
+bool EncodeGrayPNG(const unsigned char* input,
+                   int width,
+                   int height,
+                   int row_byte_width,
                    std::vector<unsigned char>* output);
 
 }  // namespace image_diff_png

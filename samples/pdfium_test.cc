@@ -88,6 +88,7 @@ struct Options {
         send_events(false),
         render_oneshot(false),
         save_attachments(false),
+        save_images(false),
 #ifdef ENABLE_CALLGRIND
         callgrind_delimiters(false),
 #endif  // ENABLE_CALLGRIND
@@ -101,6 +102,7 @@ struct Options {
   bool send_events;
   bool render_oneshot;
   bool save_attachments;
+  bool save_images;
 #ifdef ENABLE_CALLGRIND
   bool callgrind_delimiters;
 #endif  // ENABLE_CALLGRIND
@@ -727,6 +729,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->render_oneshot = true;
     } else if (cur_arg == "--save-attachments") {
       options->save_attachments = true;
+    } else if (cur_arg == "--save-images") {
+      options->save_images = true;
 #ifdef ENABLE_CALLGRIND
     } else if (cur_arg == "--callgrind-delim") {
       options->callgrind_delimiters = true;
@@ -1117,6 +1121,88 @@ void SaveAttachments(FPDF_DOCUMENT doc, const std::string& name) {
   }
 }
 
+void SaveImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
+  for (int i = 0; i < FPDFPage_CountObject(page); ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE)
+      continue;
+
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
+        FPDFImageObj_GetBitmap(obj));
+    if (!bitmap) {
+      fprintf(stderr, "Image object #%d on page #%d has an empty bitmap.\n",
+              i + 1, page_num + 1);
+      continue;
+    }
+
+    int format = FPDFBitmap_GetFormat(bitmap.get());
+    if (format == FPDFBitmap_Unknown) {
+      fprintf(stderr,
+              "Image object #%d on page #%d has a bitmap of unknown format.\n",
+              i + 1, page_num + 1);
+      continue;
+    }
+
+    std::vector<unsigned char> png_encoding;
+    const unsigned char* buffer =
+        static_cast<const unsigned char*>(FPDFBitmap_GetBuffer(bitmap.get()));
+    int width = FPDFBitmap_GetWidth(bitmap.get());
+    int height = FPDFBitmap_GetHeight(bitmap.get());
+    int stride = FPDFBitmap_GetStride(bitmap.get());
+    bool ret = false;
+    switch (format) {
+      case FPDFBitmap_Gray:
+        ret = image_diff_png::EncodeGrayPNG(buffer, width, height, stride,
+                                            &png_encoding);
+        break;
+      case FPDFBitmap_BGR:
+        ret = image_diff_png::EncodeBGRPNG(buffer, width, height, stride,
+                                           &png_encoding);
+        break;
+      case FPDFBitmap_BGRx:
+        ret = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride, true,
+                                            &png_encoding);
+        break;
+      case FPDFBitmap_BGRA:
+        ret = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
+                                            false, &png_encoding);
+        break;
+      default:
+        NOTREACHED();
+    }
+    if (!ret) {
+      fprintf(stderr,
+              "Failed to convert image object #%d on page #%d to png.\n", i + 1,
+              page_num + 1);
+      continue;
+    }
+
+    char filename[256];
+    int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%d.png",
+                                   pdf_name, page_num, i);
+    if (chars_formatted < 0 ||
+        static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
+      fprintf(stderr, "Filename %s for saving image is too long\n", filename);
+      continue;
+    }
+
+    FILE* fp = fopen(filename, "wb");
+    if (!fp) {
+      fprintf(stderr, "Failed to open %s for saving image.\n", filename);
+      continue;
+    }
+
+    size_t bytes_written =
+        fwrite(&png_encoding.front(), 1, png_encoding.size(), fp);
+    if (bytes_written != png_encoding.size())
+      fprintf(stderr, "Failed to write to %s.\n", filename);
+    else
+      fprintf(stderr, "Successfully wrote embedded image %s.\n", filename);
+
+    (void)fclose(fp);
+  }
+}
+
 // Note, for a client using progressive rendering you'd want to determine if you
 // need the rendering to pause instead of always saying |true|. This is for
 // testing to force the renderer to break whenever possible.
@@ -1136,6 +1222,8 @@ bool RenderPage(const std::string& name,
     return false;
   if (options.send_events)
     SendPageEvents(form, page, events);
+  if (options.save_images)
+    SaveImages(page, name.c_str(), page_index);
   if (options.output_format == OUTPUT_STRUCTURE) {
     DumpPageStructure(page, page_index);
     return true;
@@ -1413,6 +1501,8 @@ constexpr char kUsageString[] =
     "  --render-oneshot    - render image without using progressive renderer\n"
     "  --save-attachments  - write embedded attachments "
     "<pdf-name>.attachment.<attachment-name>\n"
+    "  --save-images       - write embedded images "
+    "<pdf-name>.<page-number>.<object-number>.png\n"
 #ifdef ENABLE_CALLGRIND
     "  --callgrind-delim   - delimit interesting section when using callgrind\n"
 #endif  // ENABLE_CALLGRIND
