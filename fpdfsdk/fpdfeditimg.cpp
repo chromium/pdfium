@@ -137,3 +137,45 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
 
   return pBitmap.Leak();
 }
+
+DLLEXPORT unsigned long STDCALL
+FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
+                                 void* buffer,
+                                 unsigned long buflen) {
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
+  if (!pObj || !pObj->IsImage())
+    return 0;
+
+  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  if (!pImg)
+    return 0;
+
+  CPDF_Stream* pImgStream = pImg->GetStream();
+  if (!pImgStream)
+    return 0;
+
+  return DecodeStreamMaybeCopyAndReturnLength(pImgStream, buffer, buflen);
+}
+
+DLLEXPORT unsigned long STDCALL
+FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
+                             void* buffer,
+                             unsigned long buflen) {
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
+  if (!pObj || !pObj->IsImage())
+    return 0;
+
+  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  if (!pImg)
+    return 0;
+
+  CPDF_Stream* pImgStream = pImg->GetStream();
+  if (!pImgStream)
+    return 0;
+
+  uint32_t len = pImgStream->GetRawSize();
+  if (buffer && buflen >= len)
+    memcpy(buffer, pImgStream->GetRawData(), len);
+
+  return len;
+}

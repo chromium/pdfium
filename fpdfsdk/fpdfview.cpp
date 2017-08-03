@@ -357,10 +357,48 @@ CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const CFX_WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen) {
-  CFX_ByteString encodedText = text.UTF16LE_Encode();
-  unsigned long len = encodedText.GetLength();
+  CFX_ByteString encoded_text = text.UTF16LE_Encode();
+  unsigned long len = encoded_text.GetLength();
   if (buffer && len <= buflen)
-    memcpy(buffer, encodedText.c_str(), len);
+    memcpy(buffer, encoded_text.c_str(), len);
+  return len;
+}
+
+unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
+                                                   void* buffer,
+                                                   unsigned long buflen) {
+  ASSERT(stream);
+  uint8_t* data = stream->GetRawData();
+  uint32_t len = stream->GetRawSize();
+  CPDF_Dictionary* dict = stream->GetDict();
+  CPDF_Object* decoder = dict ? dict->GetDirectObjectFor("Filter") : nullptr;
+  if (decoder && (decoder->IsArray() || decoder->IsName())) {
+    // Decode the stream if one or more stream filters are specified.
+    uint8_t* decoded_data = nullptr;
+    uint32_t decoded_len = 0;
+    CFX_ByteString dummy_last_decoder;
+    CPDF_Dictionary* dummy_last_param;
+    if (PDF_DataDecode(data, len, dict, dict->GetIntegerFor("DL"), false,
+                       &decoded_data, &decoded_len, &dummy_last_decoder,
+                       &dummy_last_param)) {
+      if (buffer && buflen >= decoded_len)
+        memcpy(buffer, decoded_data, decoded_len);
+
+      // Free the buffer for the decoded data if it was allocated by
+      // PDF_DataDecode(). Note that for images with a single image-specific
+      // filter, |decoded_data| is directly assigned to be |data|, so
+      // |decoded_data| does not need to be freed.
+      if (decoded_data != data)
+        FX_Free(decoded_data);
+
+      return decoded_len;
+    }
+  }
+  // Copy the raw data and return its length if there is no valid filter
+  // specified or if decoding failed.
+  if (buffer && buflen >= len)
+    memcpy(buffer, data, len);
+
   return len;
 }
 

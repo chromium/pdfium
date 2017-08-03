@@ -298,6 +298,35 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
 DLLEXPORT FPDF_BITMAP STDCALL
 FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object);
 
+// Get the decoded image data of |image_object|. The decoded data is the
+// uncompressed image data, i.e. the raw image data after having all filters
+// applied. |buffer| is only modified if |buflen| is longer than the length of
+// the decoded image data.
+//
+//   image_object - handle to an image object.
+//   buffer       - buffer for holding the decoded image data in raw bytes.
+//   buflen       - length of the buffer.
+//
+// Returns the length of the decoded image data.
+DLLEXPORT unsigned long STDCALL
+FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
+                                 void* buffer,
+                                 unsigned long buflen);
+
+// Get the raw image data of |image_object|. The raw data is the image data as
+// stored in the PDF without applying any filters. |buffer| is only modified if
+// |buflen| is longer than the length of the raw image data.
+//
+//   image_object - handle to an image object.
+//   buffer       - buffer for holding the raw image data in raw bytes.
+//   buflen       - length of the buffer.
+//
+// Returns the length of the raw image data.
+DLLEXPORT unsigned long STDCALL
+FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
+                             void* buffer,
+                             unsigned long buflen);
+
 // Create a new path object at an initial position.
 //
 //   x - initial horizontal position.

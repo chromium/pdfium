@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "core/fdrm/crypto/fx_crypt.h"
-#include "core/fpdfapi/page/cpdf_streamparser.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -273,26 +272,5 @@ FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
   if (!pFileStream)
     return 0;
 
-  uint8_t* data = pFileStream->GetRawData();
-  uint32_t len = pFileStream->GetRawSize();
-  CPDF_Dictionary* pFileDict = pFileStream->GetDict();
-  if (!pFileDict || pFileDict->GetStringFor("Filter").IsEmpty()) {
-    if (buffer && buflen >= len)
-      memcpy(buffer, data, len);
-
-    return len;
-  }
-
-  // Decode the stream if a stream filter is specified.
-  uint8_t* decodedData = nullptr;
-  uint32_t decodedLen = 0;
-  CPDF_StreamParser::DecodeInlineStream(
-      data, len, pFileDict->GetIntegerFor("Width"),
-      pFileDict->GetIntegerFor("Height"), pFileDict->GetStringFor("Filter"),
-      pFileDict->GetDictFor("DecodeParms"), &decodedData, &decodedLen);
-  if (buffer && buflen >= decodedLen)
-    memcpy(buffer, decodedData, decodedLen);
-
-  FX_Free(decodedData);
-  return decodedLen;
+  return DecodeStreamMaybeCopyAndReturnLength(pFileStream, buffer, buflen);
 }

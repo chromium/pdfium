@@ -21,15 +21,6 @@ class CPDF_StreamParser {
  public:
   enum SyntaxType { EndOfData, Number, Keyword, Name, Others };
 
-  static uint32_t DecodeInlineStream(const uint8_t* src_buf,
-                                     uint32_t limit,
-                                     int width,
-                                     int height,
-                                     const CFX_ByteString& decoder,
-                                     CPDF_Dictionary* pParam,
-                                     uint8_t** dest_buf,
-                                     uint32_t* dest_size);
-
   CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize);
   CPDF_StreamParser(const uint8_t* pData,
                     uint32_t dwSize,

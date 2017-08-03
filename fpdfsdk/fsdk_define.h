@@ -26,6 +26,7 @@ class CPDF_Page;
 class CPDF_PageObject;
 class CPDF_PageRenderContext;
 class CPDF_PathObject;
+class CPDF_Stream;
 class IFSDK_PAUSE_Adapter;
 
 // Layering prevents fxcrt from knowing about FPDF_FILEACCESS, so this can't
@@ -76,6 +77,10 @@ CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const CFX_WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen);
+
+unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
+                                                   void* buffer,
+                                                   unsigned long buflen);
 
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
