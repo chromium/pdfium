@@ -148,14 +148,26 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
 CPDF_Parser::Error CPDF_Parser::StartParse(
     const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     CPDF_Document* pDocument) {
+  return StartParseInternal(pFileAccess, pDocument, kInvalidHeaderOffset);
+}
+
+CPDF_Parser::Error CPDF_Parser::StartParseInternal(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    CPDF_Document* pDocument,
+    int32_t iHeaderOffset) {
   ASSERT(!m_bHasParsed);
   m_bHasParsed = true;
   m_bXRefStream = false;
   m_LastXRefOffset = 0;
 
-  int32_t offset = GetHeaderOffset(pFileAccess);
-  if (offset == -1)
-    return FORMAT_ERROR;
+  int32_t offset;
+  if (iHeaderOffset == kInvalidHeaderOffset) {
+    offset = GetHeaderOffset(pFileAccess);
+    if (offset == kInvalidHeaderOffset)
+      return FORMAT_ERROR;
+  } else {
+    offset = iHeaderOffset;
+  }
 
   m_pSyntax->InitParser(pFileAccess, offset);
 
@@ -1521,12 +1533,12 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   m_LastXRefOffset = 0;
 
   int32_t offset = GetHeaderOffset(pFileAccess);
-  if (offset == -1)
+  if (offset == kInvalidHeaderOffset)
     return FORMAT_ERROR;
 
-  if (!IsLinearizedFile(pFileAccess, offset)) {
-    return StartParse(pFileAccess, std::move(pDocument));
-  }
+  if (!IsLinearizedFile(pFileAccess, offset))
+    return StartParseInternal(pFileAccess, std::move(pDocument), offset);
+
   m_bHasParsed = true;
   m_pDocument = pDocument;
 

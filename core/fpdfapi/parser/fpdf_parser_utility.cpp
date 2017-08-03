@@ -75,12 +75,12 @@ int32_t GetHeaderOffset(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile) {
   uint8_t buf[kBufSize];
   for (int32_t offset = 0; offset <= 1024; ++offset) {
     if (!pFile->ReadBlock(buf, offset, kBufSize))
-      return -1;
+      return kInvalidHeaderOffset;
 
     if (memcmp(buf, "%PDF", 4) == 0)
       return offset;
   }
-  return -1;
+  return kInvalidHeaderOffset;
 }
 
 int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key) {

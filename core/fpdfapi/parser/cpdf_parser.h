@@ -153,6 +153,9 @@ class CPDF_Parser {
     ObjectInfo info;
   };
 
+  Error StartParseInternal(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+                           CPDF_Document* pDocument,
+                           int32_t iHeaderOffset);
   CPDF_Object* ParseDirect(CPDF_Object* pObj);
   bool LoadAllCrossRefV4(FX_FILESIZE pos);
   bool LoadAllCrossRefV5(FX_FILESIZE pos);
