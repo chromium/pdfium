@@ -10,7 +10,7 @@ vars = {
   'catapult_revision': '86352b966b0245d6883e5f7df27687856978b6d7',
   'clang_revision': '7185692a14ef62ca9686e9175549224663eaa29f',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
-  'freetype_revision': '38bdf22bfe68432aebdd33c198a0bd11b4ebb96f',
+  'freetype_revision': '7e50824288fac5a36c2938fdb3e1c949ea53f982',
   'gen_library_loader_revision': '916d4acd8b2cde67a390737dfba90b3c37de23a1',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
