@@ -42,6 +42,22 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
 
+int GetBitmapBytesPerPixel(FPDF_BITMAP bitmap) {
+  const int format = FPDFBitmap_GetFormat(bitmap);
+  switch (format) {
+    case FPDFBitmap_Gray:
+      return 1;
+    case FPDFBitmap_BGR:
+      return 3;
+    case FPDFBitmap_BGRx:
+    case FPDFBitmap_BGRA:
+      return 4;
+    default:
+      ASSERT(false);
+      return 0;
+  }
+}
+
 }  // namespace
 
 EmbedderTest::EmbedderTest()
@@ -381,8 +397,10 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap,
                                      int expected_width,
                                      int expected_height) {
   uint8_t digest[16];
-  CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
-                    expected_width * 4 * expected_height, digest);
+  CRYPT_MD5Generate(
+      static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
+      expected_width * GetBitmapBytesPerPixel(bitmap) * expected_height,
+      digest);
   return CryptToBase16(digest);
 }
 
@@ -393,7 +411,11 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
                                  const char* expected_md5sum) {
   ASSERT_EQ(expected_width, FPDFBitmap_GetWidth(bitmap));
   ASSERT_EQ(expected_height, FPDFBitmap_GetHeight(bitmap));
-  const int expected_stride = expected_width * 4;
+
+  // The expected stride is calculated using the same formula as in
+  // CFX_DIBitmap::CalculatePitchAndSize(), which sets the bitmap stride.
+  const int expected_stride =
+      (expected_width * GetBitmapBytesPerPixel(bitmap) * 8 + 31) / 32 * 4;
   ASSERT_EQ(expected_stride, FPDFBitmap_GetStride(bitmap));
 
   if (!expected_md5sum)

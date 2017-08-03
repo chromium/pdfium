@@ -1126,6 +1126,26 @@ DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_CreateEx(int width,
   return pBitmap.Leak();
 }
 
+DLLEXPORT int STDCALL FPDFBitmap_GetFormat(FPDF_BITMAP bitmap) {
+  if (!bitmap)
+    return FPDFBitmap_Unknown;
+
+  FXDIB_Format format = CFXBitmapFromFPDFBitmap(bitmap)->GetFormat();
+  switch (format) {
+    case FXDIB_8bppRgb:
+    case FXDIB_8bppMask:
+      return FPDFBitmap_Gray;
+    case FXDIB_Rgb:
+      return FPDFBitmap_BGR;
+    case FXDIB_Rgb32:
+      return FPDFBitmap_BGRx;
+    case FXDIB_Argb:
+      return FPDFBitmap_BGRA;
+    default:
+      return FPDFBitmap_Unknown;
+  }
+}
+
 DLLEXPORT void STDCALL FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
                                            int left,
                                            int top,

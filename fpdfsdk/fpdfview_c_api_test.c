@@ -132,6 +132,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFImageObj_LoadJpegFileInline);
     CHK(FPDFImageObj_SetMatrix);
     CHK(FPDFImageObj_SetBitmap);
+    CHK(FPDFImageObj_GetBitmap);
     CHK(FPDFPageObj_CreateNewPath);
     CHK(FPDFPageObj_CreateNewRect);
     CHK(FPDFPath_SetStrokeColor);
@@ -302,6 +303,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_PageToDevice);
     CHK(FPDFBitmap_Create);
     CHK(FPDFBitmap_CreateEx);
+    CHK(FPDFBitmap_GetFormat);
     CHK(FPDFBitmap_FillRect);
     CHK(FPDFBitmap_GetBuffer);
     CHK(FPDFBitmap_GetWidth);

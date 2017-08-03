@@ -925,3 +925,57 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
   }
   TestAndCloseSaved(612, 792, md5);
 }
+
+TEST_F(FPDFEditEmbeddertest, ExtractImageBitmap) {
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(39, FPDFPage_CountObject(page));
+
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 32);
+  EXPECT_NE(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_FALSE(FPDFImageObj_GetBitmap(obj));
+
+  obj = FPDFPage_GetObject(page, 33);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  FPDF_BITMAP bitmap = FPDFImageObj_GetBitmap(obj);
+  EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap));
+  CompareBitmap(bitmap, 109, 88, "d65e98d968d196abf13f78aec655ffae");
+  FPDFBitmap_Destroy(bitmap);
+
+  obj = FPDFPage_GetObject(page, 34);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  bitmap = FPDFImageObj_GetBitmap(obj);
+  EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap));
+  CompareBitmap(bitmap, 103, 75, "1287711c84dbef767c435d11697661d6");
+  FPDFBitmap_Destroy(bitmap);
+
+  obj = FPDFPage_GetObject(page, 35);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  bitmap = FPDFImageObj_GetBitmap(obj);
+  EXPECT_EQ(FPDFBitmap_Gray, FPDFBitmap_GetFormat(bitmap));
+  CompareBitmap(bitmap, 92, 68, "9c6d76cb1e37ef8514f9455d759391f3");
+  FPDFBitmap_Destroy(bitmap);
+
+  obj = FPDFPage_GetObject(page, 36);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  bitmap = FPDFImageObj_GetBitmap(obj);
+  EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap));
+  CompareBitmap(bitmap, 79, 60, "15cb6a49a2e354ed0e9f45dd34e3da1a");
+  FPDFBitmap_Destroy(bitmap);
+
+  obj = FPDFPage_GetObject(page, 37);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  bitmap = FPDFImageObj_GetBitmap(obj);
+  EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap));
+  CompareBitmap(bitmap, 126, 106, "be5a64ba7890d2657522af6524118534");
+  FPDFBitmap_Destroy(bitmap);
+
+  obj = FPDFPage_GetObject(page, 38);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  bitmap = FPDFImageObj_GetBitmap(obj);
+  EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap));
+  CompareBitmap(bitmap, 194, 119, "f9e24207ee1bc0db6c543d33a5f12ec5");
+  FPDFBitmap_Destroy(bitmap);
+  UnloadPage(page);
+}

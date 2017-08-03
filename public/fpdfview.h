@@ -626,7 +626,8 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
 // Parameters:
 //          bitmap      -   Handle to the device independent bitmap (as the
 //                          output buffer). The bitmap handle can be created
-//                          by FPDFBitmap_Create.
+//                          by FPDFBitmap_Create or retrieved from an image
+//                          object by FPDFImageObj_GetBitmap.
 //          page        -   Handle to the page. Returned by FPDF_LoadPage
 //          start_x     -   Left pixel position of the display area in
 //                          bitmap coordinates.
@@ -660,7 +661,8 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 // Parameters:
 //          bitmap      -   Handle to the device independent bitmap (as the
 //                          output buffer). The bitmap handle can be created
-//                          by FPDFBitmap_Create.
+//                          by FPDFBitmap_Create or retrieved by
+//                          FPDFImageObj_GetBitmap.
 //          page        -   Handle to the page. Returned by FPDF_LoadPage
 //          matrix      -   The transform matrix.
 //          clipping    -   The rect to clip to.
@@ -820,6 +822,8 @@ DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_Create(int width,
                                                 int alpha);
 
 // More DIB formats
+// Unknown or unsupported format.
+#define FPDFBitmap_Unknown 0
 // Gray scale bitmap, one byte per pixel.
 #define FPDFBitmap_Gray 1
 // 3 bytes per pixel, byte order: blue, green, red.
@@ -860,6 +864,18 @@ DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_CreateEx(int width,
                                                   void* first_scan,
                                                   int stride);
 
+// Function: FPDFBitmap_GetFormat
+//          Get the format of the bitmap.
+// Parameters:
+//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create
+//                          or FPDFImageObj_GetBitmap.
+// Return value:
+//          The format of the bitmap.
+// Comments:
+//          Only formats supported by FPDFBitmap_CreateEx are supported by this
+//          function; see the list of such formats above.
+DLLEXPORT int STDCALL FPDFBitmap_GetFormat(FPDF_BITMAP bitmap);
+
 // Function: FPDFBitmap_FillRect
 //          Fill a rectangle in a bitmap.
 // Parameters:
@@ -894,7 +910,8 @@ DLLEXPORT void STDCALL FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
 // Function: FPDFBitmap_GetBuffer
 //          Get data buffer of a bitmap.
 // Parameters:
-//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create.
+//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create
+//                          or FPDFImageObj_GetBitmap.
 // Return value:
 //          The pointer to the first byte of the bitmap buffer.
 // Comments:
@@ -911,7 +928,8 @@ DLLEXPORT void* STDCALL FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap);
 // Function: FPDFBitmap_GetWidth
 //          Get width of a bitmap.
 // Parameters:
-//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create.
+//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create
+//                          or FPDFImageObj_GetBitmap.
 // Return value:
 //          The width of the bitmap in pixels.
 DLLEXPORT int STDCALL FPDFBitmap_GetWidth(FPDF_BITMAP bitmap);
@@ -919,7 +937,8 @@ DLLEXPORT int STDCALL FPDFBitmap_GetWidth(FPDF_BITMAP bitmap);
 // Function: FPDFBitmap_GetHeight
 //          Get height of a bitmap.
 // Parameters:
-//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create.
+//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create
+//                          or FPDFImageObj_GetBitmap.
 // Return value:
 //          The height of the bitmap in pixels.
 DLLEXPORT int STDCALL FPDFBitmap_GetHeight(FPDF_BITMAP bitmap);
@@ -927,7 +946,8 @@ DLLEXPORT int STDCALL FPDFBitmap_GetHeight(FPDF_BITMAP bitmap);
 // Function: FPDFBitmap_GetStride
 //          Get number of bytes for each line in the bitmap buffer.
 // Parameters:
-//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create.
+//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create
+//                          or FPDFImageObj_GetBitmap.
 // Return value:
 //          The number of bytes for each line in the bitmap buffer.
 // Comments:
@@ -937,7 +957,8 @@ DLLEXPORT int STDCALL FPDFBitmap_GetStride(FPDF_BITMAP bitmap);
 // Function: FPDFBitmap_Destroy
 //          Destroy a bitmap and release all related buffers.
 // Parameters:
-//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create.
+//          bitmap      -   Handle to the bitmap. Returned by FPDFBitmap_Create
+//                          or FPDFImageObj_GetBitmap.
 // Return value:
 //          None.
 // Comments:

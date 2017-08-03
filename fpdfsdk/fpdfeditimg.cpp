@@ -110,3 +110,30 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   pImgObj->SetDirty(true);
   return true;
 }
+
+DLLEXPORT FPDF_BITMAP STDCALL
+FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
+  if (!pObj || !pObj->IsImage())
+    return nullptr;
+
+  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  if (!pImg)
+    return nullptr;
+
+  CFX_RetainPtr<CFX_DIBSource> pSource = pImg->LoadDIBSource();
+  if (!pSource)
+    return nullptr;
+
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap;
+  // If the source image has a representation of 1 bit per pixel, then convert
+  // it to a grayscale bitmap having 1 byte per pixel, since bitmaps have no
+  // concept of bits. Otherwise, convert the source image to a bitmap directly,
+  // retaining its color representation.
+  if (pSource->GetBPP() == 1)
+    pBitmap = pSource->CloneConvert(FXDIB_8bppRgb);
+  else
+    pBitmap = pSource->Clone(nullptr);
+
+  return pBitmap.Leak();
+}

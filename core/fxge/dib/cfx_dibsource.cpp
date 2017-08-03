@@ -271,12 +271,14 @@ void ConvertBuffer_IndexCopy(uint8_t* dest_buf,
   if (pSrcBitmap->GetBPP() == 1) {
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * dest_pitch;
-      memset(dest_scan, 0, width);
+      // Set all destination pixels to be white initially.
+      memset(dest_scan, 255, width);
       const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
       for (int col = src_left; col < src_left + width; col++) {
-        if (src_scan[col / 8] & (1 << (7 - col % 8))) {
-          *dest_scan = 1;
-        }
+        // If the source bit is set, then set the destination pixel to be black.
+        if (src_scan[col / 8] & (1 << (7 - col % 8)))
+          *dest_scan = 0;
+
         dest_scan++;
       }
     }
