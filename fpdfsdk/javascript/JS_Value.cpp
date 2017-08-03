@@ -37,10 +37,9 @@ double GetLocalTZA() {
   time_t t = 0;
   time(&t);
   localtime(&t);
-#if _MSC_VER >= 1900
-  // In gcc and in Visual Studio prior to VS 2015 'timezone' is a global
-  // variable declared in time.h. That variable was deprecated and in VS 2015
-  // is removed, with _get_timezone replacing it.
+#if defined(_MSC_VER)
+  // In gcc 'timezone' is a global variable declared in time.h. In VC++, that
+  // variable was removed in VC++ 2015, with _get_timezone replacing it.
   long timezone = 0;
   _get_timezone(&timezone);
 #endif
@@ -68,7 +67,7 @@ double Mod(double x, double y) {
 }
 
 int IsFinite(double v) {
-#if _MSC_VER
+#if defined(_MSC_VER)
   return ::_finite(v);
 #else
   return std::fabs(v) < std::numeric_limits<double>::max();

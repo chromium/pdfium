@@ -53,6 +53,10 @@
 #error Sorry, can not figure out target OS. Please specify _FX_OS_ macro.
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#error Sorry, VC++ 2015 or later is required to compile PDFium.
+#endif  // defined(_MSC_VER) && _MSC_VER < 1900
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include <windows.h>
 #include <sal.h>
@@ -106,19 +110,9 @@ typedef int FX_STRSIZE;
 #define FX_BEZIER 0.5522847498308f
 
 // NOTE: prevent use of the return value from snprintf() since some platforms
-// have different return values (e.g. windows _vsnprintf()), and provide
-// versions that always NUL-terminate.
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
-void FXSYS_snprintf(char* str,
-                    size_t size,
-                    _Printf_format_string_ const char* fmt,
-                    ...);
-void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
+// have different return values.
 #define FXSYS_snprintf (void)snprintf
 #define FXSYS_vsnprintf (void)vsnprintf
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
-
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 

@@ -127,24 +127,6 @@ float FX_atof(const CFX_WideStringC& wsStr) {
   return FX_atof(FX_UTF8Encode(wsStr).c_str());
 }
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
-void FXSYS_snprintf(char* str,
-                    size_t size,
-                    _Printf_format_string_ const char* fmt,
-                    ...) {
-  va_list ap;
-  va_start(ap, fmt);
-  FXSYS_vsnprintf(str, size, fmt, ap);
-  va_end(ap);
-}
-
-void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap) {
-  (void)_vsnprintf(str, size, fmt, ap);
-  if (size)
-    str[size - 1] = 0;
-}
-#endif  // _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
-
 FX_FileHandle* FX_OpenFolder(const char* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   auto pData = pdfium::MakeUnique<CFindFileDataA>();

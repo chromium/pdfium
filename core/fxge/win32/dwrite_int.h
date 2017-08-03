@@ -12,14 +12,14 @@
 #include "core/fxge/fx_dib.h"
 
 #ifndef DECLSPEC_UUID
-#if (_MSC_VER >= 1100) && defined(__cplusplus)
+#if defined(__cplusplus)
 #define DECLSPEC_UUID(x) __declspec(uuid(x))
 #else
 #define DECLSPEC_UUID(x)
 #endif
 #endif
 #ifndef DECLSPEC_NOVTABLE
-#if (_MSC_VER >= 1100) && defined(__cplusplus)
+#if defined(__cplusplus)
 #define DECLSPEC_NOVTABLE __declspec(novtable)
 #else
 #define DECLSPEC_NOVTABLE
