@@ -53,32 +53,6 @@ TEST(cpdf_array, Clear) {
   EXPECT_EQ(0U, arr->GetCount());
 }
 
-TEST(cpdf_array, Truncate) {
-  {
-    const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
-    for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-      arr->AddNew<CPDF_Number>(elems[i]);
-    arr->Truncate(4);
-    const int expected[] = {1, 2, 3, 4};
-    ASSERT_EQ(FX_ArraySize(expected), arr->GetCount());
-    for (size_t i = 0; i < FX_ArraySize(expected); ++i)
-      EXPECT_EQ(expected[i], arr->GetIntegerAt(i));
-    arr->Truncate(0);
-    EXPECT_EQ(0U, arr->GetCount());
-  }
-  {
-    // When the range is out of bound, Truncate() has no effect.
-    // It does not try to grow the array.
-    const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
-    for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-      arr->AddNew<CPDF_Number>(elems[i]);
-    arr->Truncate(11);
-    EXPECT_EQ(FX_ArraySize(elems), arr->GetCount());
-  }
-}
-
 TEST(cpdf_array, InsertAt) {
   {
     const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

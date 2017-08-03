@@ -100,9 +100,8 @@ class CPDF_Array : public CPDF_Object {
         index, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
 
-  void RemoveAt(size_t index);
   void Clear();
-  void Truncate(size_t nNewSize);
+  void RemoveAt(size_t index);
   void ConvertToIndirectObjectAt(size_t index, CPDF_IndirectObjectHolder* pDoc);
 
   const_iterator begin() const { return m_Objects.begin(); }
