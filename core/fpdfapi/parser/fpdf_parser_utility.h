@@ -43,6 +43,6 @@ int32_t GetHeaderOffset(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
 
 int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key);
 
-CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj);
+std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_

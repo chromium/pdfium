@@ -151,7 +151,7 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {
   return res;
 }
 
-CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
+std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
   if (!pObj) {
     buf << " null";
     return buf;
@@ -211,7 +211,8 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       buf << p->GetDict() << "stream\r\n";
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);
       pAcc->LoadAllData(true);
-      buf.AppendBlock(pAcc->GetData(), pAcc->GetSize());
+      buf.write(reinterpret_cast<const char*>(pAcc->GetData()),
+                pAcc->GetSize());
       buf << "\r\nendstream";
       break;
     }

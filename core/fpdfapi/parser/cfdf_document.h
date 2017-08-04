@@ -27,7 +27,7 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
   CFDF_Document();
   ~CFDF_Document() override;
 
-  bool WriteBuf(CFX_ByteTextBuf& buf) const;
+  CFX_ByteString WriteToString() const;
   CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
 
  protected:
