@@ -197,7 +197,6 @@ double JS_DateParse(const CFX_WideString& str);
 double JS_MakeDay(int nYear, int nMonth, int nDay);
 double JS_MakeTime(int nHour, int nMin, int nSec, int nMs);
 double JS_MakeDate(double day, double time);
-bool JS_PortIsNan(double d);
 double JS_LocalTime(double d);
 
 // Some JS methods have the bizarre convention that they may also be called

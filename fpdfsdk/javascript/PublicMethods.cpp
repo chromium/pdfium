@@ -7,6 +7,7 @@
 #include "fpdfsdk/javascript/PublicMethods.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cwctype>
 #include <iomanip>
 #include <limits>
@@ -603,11 +604,11 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
   } else {
     dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
                        JS_MakeTime(nHour, nMin, nSec, 0));
-    if (JS_PortIsNan(dRet))
+    if (std::isnan(dRet))
       dRet = JS_DateParse(value);
   }
 
-  if (JS_PortIsNan(dRet))
+  if (std::isnan(dRet))
     dRet = ParseNormalDate(value, &bBadFormat);
 
   if (bWrongFormat)
@@ -1120,7 +1121,7 @@ bool CJS_PublicMethods::AFDate_FormatEx(CJS_Runtime* pRuntime,
     dDate = MakeRegularDate(strValue, sFormat, nullptr);
   }
 
-  if (JS_PortIsNan(dDate)) {
+  if (std::isnan(dDate)) {
     CFX_WideString swMsg;
     swMsg.Format(JSGetStringFromID(IDS_STRING_JSPARSEDATE).c_str(),
                  sFormat.c_str());
@@ -1181,7 +1182,7 @@ double CJS_PublicMethods::MakeInterDate(const CFX_WideString& strValue) {
   int nYear = FX_atof(wsArray[7].AsStringC());
   double dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
                             JS_MakeTime(nHour, nMin, nSec, 0));
-  if (JS_PortIsNan(dRet))
+  if (std::isnan(dRet))
     dRet = JS_DateParse(strValue);
 
   return dRet;
@@ -1210,7 +1211,7 @@ bool CJS_PublicMethods::AFDate_KeystrokeEx(CJS_Runtime* pRuntime,
     CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime);
     bool bWrongFormat = false;
     double dRet = MakeRegularDate(strValue, sFormat, &bWrongFormat);
-    if (bWrongFormat || JS_PortIsNan(dRet)) {
+    if (bWrongFormat || std::isnan(dRet)) {
       CFX_WideString swMsg;
       swMsg.Format(JSGetStringFromID(IDS_STRING_JSPARSEDATE).c_str(),
                    sFormat.c_str());
@@ -1559,7 +1560,7 @@ bool CJS_PublicMethods::AFParseDateEx(CJS_Runtime* pRuntime,
   CFX_WideString sValue = params[0].ToCFXWideString(pRuntime);
   CFX_WideString sFormat = params[1].ToCFXWideString(pRuntime);
   double dDate = MakeRegularDate(sValue, sFormat, nullptr);
-  if (JS_PortIsNan(dDate)) {
+  if (std::isnan(dDate)) {
     CFX_WideString swMsg;
     swMsg.Format(JSGetStringFromID(IDS_STRING_JSPARSEDATE).c_str(),
                  sFormat.c_str());

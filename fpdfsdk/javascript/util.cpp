@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cwctype>
 #include <string>
 #include <vector>
@@ -395,7 +396,7 @@ bool util::scand(CJS_Runtime* pRuntime,
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
   }
 
-  if (!JS_PortIsNan(dDate)) {
+  if (!std::isnan(dDate)) {
     vRet = CJS_Value(pRuntime, CJS_Date(pRuntime, dDate));
   } else {
     vRet.SetNull(pRuntime);

@@ -19,12 +19,6 @@
 
 namespace {
 
-const uint32_t g_nan[2] = {0, 0x7FF80000};
-
-double GetNan() {
-  return *(double*)g_nan;
-}
-
 double
 MakeDate(int year, int mon, int day, int hour, int min, int sec, int ms) {
   return JS_MakeDate(JS_MakeDay(year, mon, day),
@@ -66,18 +60,6 @@ double Mod(double x, double y) {
   return r;
 }
 
-int IsFinite(double v) {
-#if defined(_MSC_VER)
-  return ::_finite(v);
-#else
-  return std::fabs(v) < std::numeric_limits<double>::max();
-#endif
-}
-
-double ToInteger(double n) {
-  return (n >= 0) ? floor(n) : -floor(-n);
-}
-
 bool IsLeapYear(int year) {
   return (year % 4 == 0) && ((year % 100 != 0) || (year % 400 != 0));
 }
@@ -102,12 +84,12 @@ double TimeFromYearMonth(int y, int m) {
 }
 
 int Day(double t) {
-  return (int)floor(t / 86400000);
+  return static_cast<int>(floor(t / 86400000.0));
 }
 
 int YearFromTime(double t) {
   // estimate the time.
-  int y = 1970 + static_cast<int>(t / (365.2425 * 86400000));
+  int y = 1970 + static_cast<int>(t / (365.2425 * 86400000.0));
   if (TimeFromYear(y) <= t) {
     while (TimeFromYear(y + 1) <= t)
       y++;
@@ -517,7 +499,7 @@ CJS_Date::CJS_Date(CJS_Runtime* pRuntime,
 CJS_Date::~CJS_Date() {}
 
 bool CJS_Date::IsValidDate(CJS_Runtime* pRuntime) const {
-  return !m_pDate.IsEmpty() && !JS_PortIsNan(pRuntime->ToDouble(m_pDate));
+  return !m_pDate.IsEmpty() && !std::isnan(pRuntime->ToDouble(m_pDate));
 }
 
 void CJS_Date::Attach(v8::Local<v8::Date> pDate) {
@@ -682,7 +664,7 @@ double JS_DateParse(const CFX_WideString& str) {
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {
         double date = v->ToNumber(context).ToLocalChecked()->Value();
-        if (!IsFinite(date))
+        if (!std::isfinite(date))
           return date;
         return JS_LocalTime(date);
       }
@@ -692,42 +674,31 @@ double JS_DateParse(const CFX_WideString& str) {
 }
 
 double JS_MakeDay(int nYear, int nMonth, int nDate) {
-  if (!IsFinite(nYear) || !IsFinite(nMonth) || !IsFinite(nDate))
-    return GetNan();
-  double y = ToInteger(nYear);
-  double m = ToInteger(nMonth);
-  double dt = ToInteger(nDate);
-  double ym = y + floor((double)m / 12);
+  double y = static_cast<double>(nYear);
+  double m = static_cast<double>(nMonth);
+  double dt = static_cast<double>(nDate);
+  double ym = y + floor(m / 12);
   double mn = Mod(m, 12);
-
-  double t = TimeFromYearMonth((int)ym, (int)mn);
-
+  double t = TimeFromYearMonth(static_cast<int>(ym), static_cast<int>(mn));
   if (YearFromTime(t) != ym || MonthFromTime(t) != mn || DateFromTime(t) != 1)
-    return GetNan();
+    return std::nan("");
+
   return Day(t) + dt - 1;
 }
 
 double JS_MakeTime(int nHour, int nMin, int nSec, int nMs) {
-  if (!IsFinite(nHour) || !IsFinite(nMin) || !IsFinite(nSec) || !IsFinite(nMs))
-    return GetNan();
-
-  double h = ToInteger(nHour);
-  double m = ToInteger(nMin);
-  double s = ToInteger(nSec);
-  double milli = ToInteger(nMs);
-
+  double h = static_cast<double>(nHour);
+  double m = static_cast<double>(nMin);
+  double s = static_cast<double>(nSec);
+  double milli = static_cast<double>(nMs);
   return h * 3600000 + m * 60000 + s * 1000 + milli;
 }
 
 double JS_MakeDate(double day, double time) {
-  if (!IsFinite(day) || !IsFinite(time))
-    return GetNan();
+  if (!std::isfinite(day) || !std::isfinite(time))
+    return std::nan("");
 
   return day * 86400000 + time;
-}
-
-bool JS_PortIsNan(double d) {
-  return d != d;
 }
 
 double JS_LocalTime(double d) {
