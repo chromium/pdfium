@@ -8,8 +8,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <sstream>
-#include <string>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -438,28 +436,21 @@ bool CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination,
                                      const std::vector<CPDF_FormField*>& fields,
                                      bool bIncludeOrExclude,
                                      bool bUrlEncoded) {
-  CFX_ByteString textBuf = ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude);
+  CFX_ByteTextBuf textBuf;
+  ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude, textBuf);
 
+  uint8_t* pBuffer = textBuf.GetBuffer();
   FX_STRSIZE nBufSize = textBuf.GetLength();
-  if (nBufSize == 0)
-    return false;
 
-  uint8_t* pLocalBuffer = FX_Alloc(uint8_t, nBufSize);
-  memcpy(pLocalBuffer, textBuf.c_str(), nBufSize);
-  uint8_t* pBuffer = pLocalBuffer;
-
-  if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize)) {
-    FX_Free(pLocalBuffer);
+  if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize))
     return false;
-  }
 
   m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination.c_str());
+  return true;
+}
 
-  if (pBuffer != pLocalBuffer)
-    FX_Free(pBuffer);
-
-  FX_Free(pLocalBuffer);
-
+bool CPDFSDK_InterForm::FDFToURLEncodedData(CFX_WideString csFDFFile,
+                                            CFX_WideString csTxtFile) {
   return true;
 }
 
@@ -478,7 +469,7 @@ bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
   if (!pFields)
     return false;
 
-  std::ostringstream fdfEncodedData;
+  CFX_ByteTextBuf fdfEncodedData;
   for (uint32_t i = 0; i < pFields->GetCount(); i++) {
     CPDF_Dictionary* pField = pFields->GetDictAt(i);
     if (!pField)
@@ -499,22 +490,19 @@ bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
       fdfEncodedData << "&";
   }
 
-  nBufSize = fdfEncodedData.tellp();
-  if (nBufSize == 0)
-    return false;
-
+  nBufSize = fdfEncodedData.GetLength();
   pBuf = FX_Alloc(uint8_t, nBufSize);
-  memcpy(pBuf, fdfEncodedData.str().c_str(), nBufSize);
+  memcpy(pBuf, fdfEncodedData.GetBuffer(), nBufSize);
   return true;
 }
 
-CFX_ByteString CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
+bool CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     const std::vector<CPDF_FormField*>& fields,
-    bool bIncludeOrExclude) {
+    bool bIncludeOrExclude,
+    CFX_ByteTextBuf& textBuf) {
   std::unique_ptr<CFDF_Document> pFDF = m_pInterForm->ExportToFDF(
       m_pFormFillEnv->JS_docGetFilePath(), fields, bIncludeOrExclude, false);
-
-  return pFDF ? pFDF->WriteToString() : CFX_ByteString();
+  return pFDF ? pFDF->WriteBuf(textBuf) : false;
 }
 
 CFX_WideString CPDFSDK_InterForm::GetTemporaryFileName(
@@ -535,36 +523,26 @@ bool CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
   if (!pFDFDoc)
     return false;
 
-  CFX_ByteString fdfBuffer = pFDFDoc->WriteToString();
-
-  FX_STRSIZE nBufSize = fdfBuffer.GetLength();
-  if (nBufSize == 0)
+  CFX_ByteTextBuf FdfBuffer;
+  if (!pFDFDoc->WriteBuf(FdfBuffer))
     return false;
 
-  uint8_t* pLocalBuffer = FX_Alloc(uint8_t, nBufSize);
-  memcpy(pLocalBuffer, fdfBuffer.c_str(), nBufSize);
-  uint8_t* pBuffer = pLocalBuffer;
-
-  if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize)) {
-    FX_Free(pLocalBuffer);
+  uint8_t* pBuffer = FdfBuffer.GetBuffer();
+  FX_STRSIZE nBufSize = FdfBuffer.GetLength();
+  if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize))
     return false;
-  }
 
   m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
-
-  if (pBuffer != pLocalBuffer)
+  if (bUrlEncoded)
     FX_Free(pBuffer);
-
-  FX_Free(pLocalBuffer);
 
   return true;
 }
 
-CFX_ByteString CPDFSDK_InterForm::ExportFormToFDFTextBuf() {
+bool CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
   std::unique_ptr<CFDF_Document> pFDF =
       m_pInterForm->ExportToFDF(m_pFormFillEnv->JS_docGetFilePath(), false);
-
-  return pFDF ? pFDF->WriteToString() : CFX_ByteString();
+  return pFDF && pFDF->WriteBuf(textBuf);
 }
 
 bool CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {

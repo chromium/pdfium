@@ -7,7 +7,6 @@
 #include "core/fpdfapi/parser/cfdf_document.h"
 
 #include <memory>
-#include <sstream>
 #include <utility>
 
 #include "core/fpdfapi/edit/cpdf_creator.h"
@@ -89,11 +88,10 @@ void CFDF_Document::ParseStream(
   }
 }
 
-CFX_ByteString CFDF_Document::WriteToString() const {
+bool CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
   if (!m_pRootDict)
-    return CFX_ByteString();
+    return false;
 
-  std::ostringstream buf;
   buf << "%FDF-1.2\r\n";
   for (const auto& pair : *this)
     buf << pair.first << " 0 obj\r\n"
@@ -101,6 +99,5 @@ CFX_ByteString CFDF_Document::WriteToString() const {
 
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";
-
-  return CFX_ByteString(buf);
+  return true;
 }
