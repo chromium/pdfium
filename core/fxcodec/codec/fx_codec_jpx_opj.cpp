@@ -26,17 +26,233 @@
 #include "third_party/lcms2-2.6/include/lcms2.h"
 #endif
 
-static void fx_error_callback(const char* msg, void* client_data) {
+namespace {
+
+void fx_error_callback(const char* msg, void* client_data) {
   (void)client_data;
 }
 
-static void fx_warning_callback(const char* msg, void* client_data) {
+void fx_warning_callback(const char* msg, void* client_data) {
   (void)client_data;
 }
 
-static void fx_info_callback(const char* msg, void* client_data) {
+void fx_info_callback(const char* msg, void* client_data) {
   (void)client_data;
 }
+
+opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data,
+                                                 OPJ_SIZE_T p_size,
+                                                 OPJ_BOOL p_is_read_stream) {
+  if (!data || !data->src_data || data->src_size <= 0)
+    return nullptr;
+
+  opj_stream_t* stream = opj_stream_create(p_size, p_is_read_stream);
+  if (!stream)
+    return nullptr;
+
+  opj_stream_set_user_data(stream, data, nullptr);
+  opj_stream_set_user_data_length(stream, data->src_size);
+  opj_stream_set_read_function(stream, opj_read_from_memory);
+  opj_stream_set_skip_function(stream, opj_skip_from_memory);
+  opj_stream_set_seek_function(stream, opj_seek_from_memory);
+  return stream;
+}
+
+void sycc_to_rgb(int offset,
+                 int upb,
+                 int y,
+                 int cb,
+                 int cr,
+                 int* out_r,
+                 int* out_g,
+                 int* out_b) {
+  int r, g, b;
+  cb -= offset;
+  cr -= offset;
+  r = y + (int)(1.402 * (float)cr);
+  if (r < 0) {
+    r = 0;
+  } else if (r > upb) {
+    r = upb;
+  }
+  *out_r = r;
+  g = y - (int)(0.344 * (float)cb + 0.714 * (float)cr);
+  if (g < 0) {
+    g = 0;
+  } else if (g > upb) {
+    g = upb;
+  }
+  *out_g = g;
+  b = y + (int)(1.772 * (float)cb);
+  if (b < 0) {
+    b = 0;
+  } else if (b > upb) {
+    b = upb;
+  }
+  *out_b = b;
+}
+
+void sycc444_to_rgb(opj_image_t* img) {
+  int prec = img->comps[0].prec;
+  // If we shift 31 we're going to go negative, then things go bad.
+  if (prec > 30)
+    return;
+  int offset = 1 << (prec - 1);
+  int upb = (1 << prec) - 1;
+  OPJ_UINT32 maxw =
+      std::min({img->comps[0].w, img->comps[1].w, img->comps[2].w});
+  OPJ_UINT32 maxh =
+      std::min({img->comps[0].h, img->comps[1].h, img->comps[2].h});
+  FX_SAFE_SIZE_T max_size = maxw;
+  max_size *= maxh;
+  if (!max_size.IsValid())
+    return;
+
+  const int* y = img->comps[0].data;
+  const int* cb = img->comps[1].data;
+  const int* cr = img->comps[2].data;
+  if (!y || !cb || !cr)
+    return;
+
+  int* r = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* g = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* b = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* d0 = r;
+  int* d1 = g;
+  int* d2 = b;
+  for (size_t i = 0; i < max_size.ValueOrDie(); ++i) {
+    sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+    ++y;
+    ++cb;
+    ++cr;
+    ++r;
+    ++g;
+    ++b;
+  }
+  opj_free(img->comps[0].data);
+  opj_free(img->comps[1].data);
+  opj_free(img->comps[2].data);
+  img->comps[0].data = d0;
+  img->comps[1].data = d1;
+  img->comps[2].data = d2;
+}
+
+bool sycc420_422_size_is_valid(opj_image_t* img) {
+  return (img && img->comps[0].w != std::numeric_limits<OPJ_UINT32>::max() &&
+          (img->comps[0].w + 1) / 2 == img->comps[1].w &&
+          img->comps[1].w == img->comps[2].w &&
+          img->comps[1].h == img->comps[2].h);
+}
+
+bool sycc420_size_is_valid(opj_image_t* img) {
+  return (sycc420_422_size_is_valid(img) &&
+          img->comps[0].h != std::numeric_limits<OPJ_UINT32>::max() &&
+          (img->comps[0].h + 1) / 2 == img->comps[1].h);
+}
+
+bool sycc422_size_is_valid(opj_image_t* img) {
+  return (sycc420_422_size_is_valid(img) && img->comps[0].h == img->comps[1].h);
+}
+
+void sycc422_to_rgb(opj_image_t* img) {
+  if (!sycc422_size_is_valid(img))
+    return;
+
+  int prec = img->comps[0].prec;
+  if (prec <= 0 || prec >= 32)
+    return;
+
+  int offset = 1 << (prec - 1);
+  int upb = (1 << prec) - 1;
+  OPJ_UINT32 maxw = img->comps[0].w;
+  OPJ_UINT32 maxh = img->comps[0].h;
+  FX_SAFE_SIZE_T max_size = maxw;
+  max_size *= maxh;
+  if (!max_size.IsValid())
+    return;
+
+  const int* y = img->comps[0].data;
+  const int* cb = img->comps[1].data;
+  const int* cr = img->comps[2].data;
+  if (!y || !cb || !cr)
+    return;
+
+  int* r = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* g = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* b = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* d0 = r;
+  int* d1 = g;
+  int* d2 = b;
+  for (uint32_t i = 0; i < maxh; ++i) {
+    OPJ_UINT32 j;
+    for (j = 0; j < (maxw & ~static_cast<OPJ_UINT32>(1)); j += 2) {
+      sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+      ++y;
+      ++r;
+      ++g;
+      ++b;
+      sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+      ++y;
+      ++r;
+      ++g;
+      ++b;
+      ++cb;
+      ++cr;
+    }
+    if (j < maxw) {
+      sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+      ++y;
+      ++r;
+      ++g;
+      ++b;
+      ++cb;
+      ++cr;
+    }
+  }
+  opj_free(img->comps[0].data);
+  opj_free(img->comps[1].data);
+  opj_free(img->comps[2].data);
+  img->comps[0].data = d0;
+  img->comps[1].data = d1;
+  img->comps[2].data = d2;
+  img->comps[1].w = maxw;
+  img->comps[1].h = maxh;
+  img->comps[2].w = maxw;
+  img->comps[2].h = maxh;
+  img->comps[1].dx = img->comps[0].dx;
+  img->comps[2].dx = img->comps[0].dx;
+  img->comps[1].dy = img->comps[0].dy;
+  img->comps[2].dy = img->comps[0].dy;
+}
+
+bool sycc420_must_extend_cbcr(OPJ_UINT32 y, OPJ_UINT32 cbcr) {
+  return (y & 1) && (cbcr == y / 2);
+}
+
+void color_sycc_to_rgb(opj_image_t* img) {
+  if (img->numcomps < 3) {
+    img->color_space = OPJ_CLRSPC_GRAY;
+    return;
+  }
+  if ((img->comps[0].dx == 1) && (img->comps[1].dx == 2) &&
+      (img->comps[2].dx == 2) && (img->comps[0].dy == 1) &&
+      (img->comps[1].dy == 2) && (img->comps[2].dy == 2)) {
+    sycc420_to_rgb(img);
+  } else if ((img->comps[0].dx == 1) && (img->comps[1].dx == 2) &&
+             (img->comps[2].dx == 2) && (img->comps[0].dy == 1) &&
+             (img->comps[1].dy == 1) && (img->comps[2].dy == 1)) {
+    sycc422_to_rgb(img);
+  } else if ((img->comps[0].dx == 1) && (img->comps[1].dx == 1) &&
+             (img->comps[2].dx == 1) && (img->comps[0].dy == 1) &&
+             (img->comps[1].dy == 1) && (img->comps[2].dy == 1)) {
+    sycc444_to_rgb(img);
+  } else {
+    return;
+  }
+  img->color_space = OPJ_CLRSPC_SRGB;
+}
+
+}  // namespace
 
 OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
                                 OPJ_SIZE_T nb_bytes,
@@ -111,196 +327,6 @@ OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
     srcData->offset = std::min(checkedNbBytes, srcData->src_size);
   }
   return OPJ_TRUE;
-}
-
-static opj_stream_t* fx_opj_stream_create_memory_stream(
-    DecodeData* data,
-    OPJ_SIZE_T p_size,
-    OPJ_BOOL p_is_read_stream) {
-  if (!data || !data->src_data || data->src_size <= 0)
-    return nullptr;
-
-  opj_stream_t* stream = opj_stream_create(p_size, p_is_read_stream);
-  if (!stream)
-    return nullptr;
-
-  opj_stream_set_user_data(stream, data, nullptr);
-  opj_stream_set_user_data_length(stream, data->src_size);
-  opj_stream_set_read_function(stream, opj_read_from_memory);
-  opj_stream_set_skip_function(stream, opj_skip_from_memory);
-  opj_stream_set_seek_function(stream, opj_seek_from_memory);
-  return stream;
-}
-
-static void sycc_to_rgb(int offset,
-                        int upb,
-                        int y,
-                        int cb,
-                        int cr,
-                        int* out_r,
-                        int* out_g,
-                        int* out_b) {
-  int r, g, b;
-  cb -= offset;
-  cr -= offset;
-  r = y + (int)(1.402 * (float)cr);
-  if (r < 0) {
-    r = 0;
-  } else if (r > upb) {
-    r = upb;
-  }
-  *out_r = r;
-  g = y - (int)(0.344 * (float)cb + 0.714 * (float)cr);
-  if (g < 0) {
-    g = 0;
-  } else if (g > upb) {
-    g = upb;
-  }
-  *out_g = g;
-  b = y + (int)(1.772 * (float)cb);
-  if (b < 0) {
-    b = 0;
-  } else if (b > upb) {
-    b = upb;
-  }
-  *out_b = b;
-}
-
-static void sycc444_to_rgb(opj_image_t* img) {
-  int prec = img->comps[0].prec;
-  // If we shift 31 we're going to go negative, then things go bad.
-  if (prec > 30)
-    return;
-  int offset = 1 << (prec - 1);
-  int upb = (1 << prec) - 1;
-  OPJ_UINT32 maxw =
-      std::min({img->comps[0].w, img->comps[1].w, img->comps[2].w});
-  OPJ_UINT32 maxh =
-      std::min({img->comps[0].h, img->comps[1].h, img->comps[2].h});
-  FX_SAFE_SIZE_T max_size = maxw;
-  max_size *= maxh;
-  if (!max_size.IsValid())
-    return;
-
-  const int* y = img->comps[0].data;
-  const int* cb = img->comps[1].data;
-  const int* cr = img->comps[2].data;
-  if (!y || !cb || !cr)
-    return;
-
-  int* r = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
-  int* g = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
-  int* b = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
-  int* d0 = r;
-  int* d1 = g;
-  int* d2 = b;
-  for (size_t i = 0; i < max_size.ValueOrDie(); ++i) {
-    sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-    ++y;
-    ++cb;
-    ++cr;
-    ++r;
-    ++g;
-    ++b;
-  }
-  opj_free(img->comps[0].data);
-  opj_free(img->comps[1].data);
-  opj_free(img->comps[2].data);
-  img->comps[0].data = d0;
-  img->comps[1].data = d1;
-  img->comps[2].data = d2;
-}
-
-static bool sycc420_422_size_is_valid(opj_image_t* img) {
-  return (img && img->comps[0].w != std::numeric_limits<OPJ_UINT32>::max() &&
-          (img->comps[0].w + 1) / 2 == img->comps[1].w &&
-          img->comps[1].w == img->comps[2].w &&
-          img->comps[1].h == img->comps[2].h);
-}
-
-static bool sycc420_size_is_valid(opj_image_t* img) {
-  return (sycc420_422_size_is_valid(img) &&
-          img->comps[0].h != std::numeric_limits<OPJ_UINT32>::max() &&
-          (img->comps[0].h + 1) / 2 == img->comps[1].h);
-}
-
-static bool sycc422_size_is_valid(opj_image_t* img) {
-  return (sycc420_422_size_is_valid(img) && img->comps[0].h == img->comps[1].h);
-}
-
-static void sycc422_to_rgb(opj_image_t* img) {
-  if (!sycc422_size_is_valid(img))
-    return;
-
-  int prec = img->comps[0].prec;
-  if (prec <= 0 || prec >= 32)
-    return;
-
-  int offset = 1 << (prec - 1);
-  int upb = (1 << prec) - 1;
-  OPJ_UINT32 maxw = img->comps[0].w;
-  OPJ_UINT32 maxh = img->comps[0].h;
-  FX_SAFE_SIZE_T max_size = maxw;
-  max_size *= maxh;
-  if (!max_size.IsValid())
-    return;
-
-  const int* y = img->comps[0].data;
-  const int* cb = img->comps[1].data;
-  const int* cr = img->comps[2].data;
-  if (!y || !cb || !cr)
-    return;
-
-  int* r = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
-  int* g = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
-  int* b = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
-  int* d0 = r;
-  int* d1 = g;
-  int* d2 = b;
-  for (uint32_t i = 0; i < maxh; ++i) {
-    OPJ_UINT32 j;
-    for (j = 0; j < (maxw & ~static_cast<OPJ_UINT32>(1)); j += 2) {
-      sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-      ++y;
-      ++r;
-      ++g;
-      ++b;
-      sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-      ++y;
-      ++r;
-      ++g;
-      ++b;
-      ++cb;
-      ++cr;
-    }
-    if (j < maxw) {
-      sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-      ++y;
-      ++r;
-      ++g;
-      ++b;
-      ++cb;
-      ++cr;
-    }
-  }
-  opj_free(img->comps[0].data);
-  opj_free(img->comps[1].data);
-  opj_free(img->comps[2].data);
-  img->comps[0].data = d0;
-  img->comps[1].data = d1;
-  img->comps[2].data = d2;
-  img->comps[1].w = maxw;
-  img->comps[1].h = maxh;
-  img->comps[2].w = maxw;
-  img->comps[2].h = maxh;
-  img->comps[1].dx = img->comps[0].dx;
-  img->comps[2].dx = img->comps[0].dx;
-  img->comps[1].dy = img->comps[0].dy;
-  img->comps[2].dy = img->comps[0].dy;
-}
-
-static bool sycc420_must_extend_cbcr(OPJ_UINT32 y, OPJ_UINT32 cbcr) {
-  return (y & 1) && (cbcr == y / 2);
 }
 
 void sycc420_to_rgb(opj_image_t* img) {
@@ -441,29 +467,6 @@ void sycc420_to_rgb(opj_image_t* img) {
   img->comps[2].dx = img->comps[0].dx;
   img->comps[1].dy = img->comps[0].dy;
   img->comps[2].dy = img->comps[0].dy;
-}
-
-static void color_sycc_to_rgb(opj_image_t* img) {
-  if (img->numcomps < 3) {
-    img->color_space = OPJ_CLRSPC_GRAY;
-    return;
-  }
-  if ((img->comps[0].dx == 1) && (img->comps[1].dx == 2) &&
-      (img->comps[2].dx == 2) && (img->comps[0].dy == 1) &&
-      (img->comps[1].dy == 2) && (img->comps[2].dy == 2)) {
-    sycc420_to_rgb(img);
-  } else if ((img->comps[0].dx == 1) && (img->comps[1].dx == 2) &&
-             (img->comps[2].dx == 2) && (img->comps[0].dy == 1) &&
-             (img->comps[1].dy == 1) && (img->comps[2].dy == 1)) {
-    sycc422_to_rgb(img);
-  } else if ((img->comps[0].dx == 1) && (img->comps[1].dx == 1) &&
-             (img->comps[2].dx == 1) && (img->comps[0].dy == 1) &&
-             (img->comps[1].dy == 1) && (img->comps[2].dy == 1)) {
-    sycc444_to_rgb(img);
-  } else {
-    return;
-  }
-  img->color_space = OPJ_CLRSPC_SRGB;
 }
 
 CJPX_Decoder::CJPX_Decoder(CPDF_ColorSpace* cs)
