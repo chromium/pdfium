@@ -1030,3 +1030,11 @@ TEST_F(FPDFEditEmbeddertest, GetImageData) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFEditEmbeddertest, DestroyPageObject) {
+  FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
+  ASSERT_TRUE(rect);
+
+  // There should be no memory leaks with a call to FPDFPageObj_Destroy().
+  FPDFPageObj_Destroy(rect);
+}

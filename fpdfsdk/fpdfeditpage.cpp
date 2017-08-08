@@ -201,6 +201,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page) {
   return pPage && pPage->BackgroundAlphaNeeded();
 }
 
+DLLEXPORT void STDCALL FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_obj) {
+  delete CPDFPageObjectFromFPDFPageObject(page_obj);
+}
+
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)

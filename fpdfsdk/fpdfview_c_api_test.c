@@ -121,6 +121,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_GetObject);
     CHK(FPDFPage_HasTransparency);
     CHK(FPDFPage_GenerateContent);
+    CHK(FPDFPageObj_Destroy);
     CHK(FPDFPageObj_HasTransparency);
     CHK(FPDFPageObj_GetBounds);
     CHK(FPDFPageObj_GetType);

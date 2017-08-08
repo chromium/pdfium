@@ -141,6 +141,15 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page);
 // |FPDFPage_GenerateContent| or any changes to |page| will be lost.
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page);
 
+// Destroy |page_obj| by releasing its resources. |page_obj| must have been
+// created by FPDFPageObj_CreateNew{Path|Rect}() or
+// FPDFPageObj_New{Text|Image}Obj(). This function must be called on
+// newly-created objects if they are not added to a page through
+// FPDFPage_InsertObject() or to an annotation through FPDFAnnot_AppendObject().
+//
+//   page_obj - handle to a page object.
+DLLEXPORT void STDCALL FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_obj);
+
 // Checks if |page_object| contains transparency.
 //
 //   page_object - handle to a page object.
