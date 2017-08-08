@@ -187,6 +187,13 @@ class CPDF_Parser {
                        uint32_t* start_obj_num_at_last_block);
   void MergeCrossRefObjectsData(const std::vector<CrossRefObjData>& objects);
 
+  std::unique_ptr<CPDF_Object> ParseIndirectObjectAtInternal(
+      CPDF_IndirectObjectHolder* pObjList,
+      FX_FILESIZE pos,
+      uint32_t objnum,
+      bool strict_parse,
+      FX_FILESIZE* pResultPos);
+
   CFX_UnownedPtr<CPDF_Document> m_pDocument;
   bool m_bHasParsed;
   bool m_bXRefStream;

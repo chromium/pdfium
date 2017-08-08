@@ -1378,6 +1378,15 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(
     CPDF_IndirectObjectHolder* pObjList,
     FX_FILESIZE pos,
     uint32_t objnum) {
+  return ParseIndirectObjectAtInternal(pObjList, pos, objnum, false, nullptr);
+}
+
+std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAtInternal(
+    CPDF_IndirectObjectHolder* pObjList,
+    FX_FILESIZE pos,
+    uint32_t objnum,
+    bool strict_parse,
+    FX_FILESIZE* pResultPos) {
   FX_FILESIZE SavedPos = m_pSyntax->GetPos();
   m_pSyntax->SetPos(pos);
   bool bIsNumber;
@@ -1387,8 +1396,6 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(
     return nullptr;
   }
 
-  FX_FILESIZE objOffset = m_pSyntax->GetPos();
-  objOffset -= word.GetLength();
   uint32_t parser_objnum = FXSYS_atoui(word.c_str());
   if (objnum && parser_objnum != objnum) {
     m_pSyntax->SetPos(SavedPos);
@@ -1408,19 +1415,20 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(
   }
 
   std::unique_ptr<CPDF_Object> pObj =
-      m_pSyntax->GetObject(pObjList, objnum, parser_gennum, true);
-  m_pSyntax->GetPos();
+      strict_parse
+          ? m_pSyntax->GetObjectForStrict(pObjList, objnum, parser_gennum)
+          : m_pSyntax->GetObject(pObjList, objnum, parser_gennum, true);
 
-  CFX_ByteString bsWord = m_pSyntax->GetKeyword();
-  if (bsWord == "endobj")
-    m_pSyntax->GetPos();
+  if (pResultPos)
+    *pResultPos = m_pSyntax->m_Pos;
 
-  m_pSyntax->SetPos(SavedPos);
   if (pObj) {
     if (!objnum)
       pObj->m_ObjNum = parser_objnum;
     pObj->m_GenNum = parser_gennum;
   }
+
+  m_pSyntax->SetPos(SavedPos);
   return pObj;
 }
 
@@ -1429,42 +1437,7 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAtByStrict(
     FX_FILESIZE pos,
     uint32_t objnum,
     FX_FILESIZE* pResultPos) {
-  FX_FILESIZE SavedPos = m_pSyntax->GetPos();
-  m_pSyntax->SetPos(pos);
-
-  bool bIsNumber;
-  CFX_ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
-  if (!bIsNumber) {
-    m_pSyntax->SetPos(SavedPos);
-    return nullptr;
-  }
-
-  uint32_t parser_objnum = FXSYS_atoui(word.c_str());
-  if (objnum && parser_objnum != objnum) {
-    m_pSyntax->SetPos(SavedPos);
-    return nullptr;
-  }
-
-  word = m_pSyntax->GetNextWord(&bIsNumber);
-  if (!bIsNumber) {
-    m_pSyntax->SetPos(SavedPos);
-    return nullptr;
-  }
-
-  uint32_t gennum = FXSYS_atoui(word.c_str());
-  if (m_pSyntax->GetKeyword() != "obj") {
-    m_pSyntax->SetPos(SavedPos);
-    return nullptr;
-  }
-
-  std::unique_ptr<CPDF_Object> pObj =
-      m_pSyntax->GetObjectForStrict(pObjList, objnum, gennum);
-
-  if (pResultPos)
-    *pResultPos = m_pSyntax->m_Pos;
-
-  m_pSyntax->SetPos(SavedPos);
-  return pObj;
+  return ParseIndirectObjectAtInternal(pObjList, pos, objnum, true, pResultPos);
 }
 
 uint32_t CPDF_Parser::GetFirstPageNo() const {
