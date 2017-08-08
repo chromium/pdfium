@@ -15,9 +15,6 @@
 #include "core/fxcrt/css/cfx_cssvalue.h"
 #include "core/fxcrt/fx_system.h"
 
-#define CFX_IsOnlyValue(type, enum) \
-  (((type) & ~(enum)) == CFX_CSSVALUETYPE_Primitive)
-
 struct CFX_CSSPropertyTable {
   CFX_CSSProperty eName;
   const wchar_t* pszName;

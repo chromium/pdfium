@@ -205,7 +205,8 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
           AddPropertyHolder(pTable->eName, pCSSValue, bImportant);
           return;
         }
-        if (CFX_IsOnlyValue(dwType, g_ValueGuessOrder[i]))
+
+        if ((dwType & ~(g_ValueGuessOrder[i])) == CFX_CSSVALUETYPE_Primitive)
           return;
       }
       break;
