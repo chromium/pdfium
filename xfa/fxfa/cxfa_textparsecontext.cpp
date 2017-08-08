@@ -6,11 +6,11 @@
 
 #include "xfa/fxfa/cxfa_textparsecontext.h"
 
-#include "xfa/fde/css/cfde_csscomputedstyle.h"
-#include "xfa/fde/css/cfde_cssdeclaration.h"
-#include "xfa/fde/css/cfde_cssstyleselector.h"
+#include "core/fxcrt/css/cfx_csscomputedstyle.h"
+#include "core/fxcrt/css/cfx_cssdeclaration.h"
+#include "core/fxcrt/css/cfx_cssstyleselector.h"
 
 CXFA_TextParseContext::CXFA_TextParseContext()
-    : m_pParentStyle(nullptr), m_eDisplay(FDE_CSSDisplay::None) {}
+    : m_pParentStyle(nullptr), m_eDisplay(CFX_CSSDisplay::None) {}
 
 CXFA_TextParseContext::~CXFA_TextParseContext() {}

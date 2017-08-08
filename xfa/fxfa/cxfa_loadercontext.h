@@ -9,9 +9,9 @@
 
 #include <vector>
 
+#include "core/fxcrt/css/cfx_csscomputedstyle.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fde/css/cfde_csscomputedstyle.h"
 
 class CFX_XMLNode;
 class CXFA_Node;
@@ -32,7 +32,7 @@ class CXFA_LoaderContext {
   uint32_t m_dwFlags;
   CFX_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
-  CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
+  CFX_RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
   std::vector<float> m_lineHeights;
   std::vector<float> m_BlocksHeight;
 };

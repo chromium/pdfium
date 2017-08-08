@@ -10,30 +10,30 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/css/cfx_css.h"
+#include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/css/cfde_cssdeclaration.h"
-#include "xfa/fde/css/fde_css.h"
 
-class CFDE_CSSComputedStyle;
+class CFX_CSSComputedStyle;
 
 class CXFA_TextParseContext {
  public:
   CXFA_TextParseContext();
   ~CXFA_TextParseContext();
 
-  void SetDisplay(FDE_CSSDisplay eDisplay) { m_eDisplay = eDisplay; }
-  FDE_CSSDisplay GetDisplay() const { return m_eDisplay; }
+  void SetDisplay(CFX_CSSDisplay eDisplay) { m_eDisplay = eDisplay; }
+  CFX_CSSDisplay GetDisplay() const { return m_eDisplay; }
 
-  void SetDecls(std::vector<const CFDE_CSSDeclaration*>&& decl) {
+  void SetDecls(std::vector<const CFX_CSSDeclaration*>&& decl) {
     decls_ = std::move(decl);
   }
-  const std::vector<const CFDE_CSSDeclaration*>& GetDecls() { return decls_; }
+  const std::vector<const CFX_CSSDeclaration*>& GetDecls() { return decls_; }
 
-  CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
+  CFX_RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
 
  private:
-  std::vector<const CFDE_CSSDeclaration*> decls_;
-  FDE_CSSDisplay m_eDisplay;
+  std::vector<const CFX_CSSDeclaration*> decls_;
+  CFX_CSSDisplay m_eDisplay;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTPARSECONTEXT_H_

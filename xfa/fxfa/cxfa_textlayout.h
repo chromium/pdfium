@@ -10,15 +10,15 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fde/css/fde_css.h"
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 
 class CFDE_Brush;
-class CFDE_CSSComputedStyle;
+class CFX_CSSComputedStyle;
 class CFDE_Pen;
 class CFDE_RenderDevice;
 class CFX_XMLNode;
@@ -67,11 +67,11 @@ class CXFA_TextLayout {
   CFX_XMLNode* GetXMLContainerNode();
   std::unique_ptr<CFX_RTFBreak> CreateBreak(bool bDefault);
   void InitBreak(float fLineWidth);
-  void InitBreak(CFDE_CSSComputedStyle* pStyle,
-                 FDE_CSSDisplay eDisplay,
+  void InitBreak(CFX_CSSComputedStyle* pStyle,
+                 CFX_CSSDisplay eDisplay,
                  float fLineWidth,
                  CFX_XMLNode* pXMLNode,
-                 CFDE_CSSComputedStyle* pParentStyle = nullptr);
+                 CFX_CSSComputedStyle* pParentStyle = nullptr);
   bool Loader(const CFX_SizeF& szText,
               float& fLinePos,
               bool bSavePieces = true);
@@ -82,7 +82,7 @@ class CXFA_TextLayout {
   bool LoadRichText(CFX_XMLNode* pXMLNode,
                     const CFX_SizeF& szText,
                     float& fLinePos,
-                    const CFX_RetainPtr<CFDE_CSSComputedStyle>& pParentStyle,
+                    const CFX_RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,
                     CFX_RetainPtr<CXFA_LinkUserData> pLinkData,
                     bool bEndBreak = true,
@@ -116,7 +116,7 @@ class CXFA_TextLayout {
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode = false);
   bool ToRun(const CXFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr);
-  void DoTabstops(CFDE_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
+  void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
 

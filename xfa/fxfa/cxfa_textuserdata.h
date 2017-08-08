@@ -10,7 +10,7 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
-class CFDE_CSSComputedStyle;
+class CFX_CSSComputedStyle;
 class CXFA_LinkUserData;
 
 class CXFA_TextUserData : public CFX_Retainable {
@@ -18,13 +18,12 @@ class CXFA_TextUserData : public CFX_Retainable {
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  CFX_RetainPtr<CFDE_CSSComputedStyle> m_pStyle;
+  CFX_RetainPtr<CFX_CSSComputedStyle> m_pStyle;
   CFX_RetainPtr<CXFA_LinkUserData> m_pLinkData;
 
  private:
-  explicit CXFA_TextUserData(
-      const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle);
-  CXFA_TextUserData(const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle,
+  explicit CXFA_TextUserData(const CFX_RetainPtr<CFX_CSSComputedStyle>& pStyle);
+  CXFA_TextUserData(const CFX_RetainPtr<CFX_CSSComputedStyle>& pStyle,
                     const CFX_RetainPtr<CXFA_LinkUserData>& pLinkData);
   ~CXFA_TextUserData() override;
 };

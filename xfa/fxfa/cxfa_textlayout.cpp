@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/css/cfx_csscomputedstyle.h"
+#include "core/fxcrt/css/cfx_cssstyleselector.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
@@ -18,8 +20,6 @@
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/cfde_pen.h"
 #include "xfa/fde/cfde_renderdevice.h"
-#include "xfa/fde/css/cfde_csscomputedstyle.h"
-#include "xfa/fde/css/cfde_cssstyleselector.h"
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
 #include "xfa/fxfa/cxfa_pieceline.h"
@@ -155,30 +155,30 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
   m_pBreak->SetLineBreakTolerance(fFontSize * 0.2f);
 }
 
-void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
-                                FDE_CSSDisplay eDisplay,
+void CXFA_TextLayout::InitBreak(CFX_CSSComputedStyle* pStyle,
+                                CFX_CSSDisplay eDisplay,
                                 float fLineWidth,
                                 CFX_XMLNode* pXMLNode,
-                                CFDE_CSSComputedStyle* pParentStyle) {
+                                CFX_CSSComputedStyle* pParentStyle) {
   if (!pStyle) {
     InitBreak(fLineWidth);
     return;
   }
 
-  if (eDisplay == FDE_CSSDisplay::Block ||
-      eDisplay == FDE_CSSDisplay::ListItem) {
+  if (eDisplay == CFX_CSSDisplay::Block ||
+      eDisplay == CFX_CSSDisplay::ListItem) {
     CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
     switch (pStyle->GetTextAlign()) {
-      case FDE_CSSTextAlign::Right:
+      case CFX_CSSTextAlign::Right:
         iAlign = CFX_RTFLineAlignment::Right;
         break;
-      case FDE_CSSTextAlign::Center:
+      case CFX_CSSTextAlign::Center:
         iAlign = CFX_RTFLineAlignment::Center;
         break;
-      case FDE_CSSTextAlign::Justify:
+      case CFX_CSSTextAlign::Justify:
         iAlign = CFX_RTFLineAlignment::Justified;
         break;
-      case FDE_CSSTextAlign::JustifyAll:
+      case CFX_CSSTextAlign::JustifyAll:
         iAlign = CFX_RTFLineAlignment::Distributed;
         break;
       default:
@@ -187,8 +187,8 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
     m_pBreak->SetAlignment(iAlign);
 
     float fStart = 0;
-    const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
-    const FDE_CSSRect* pPaddingRect = pStyle->GetPaddingWidth();
+    const CFX_CSSRect* pRect = pStyle->GetMarginWidth();
+    const CFX_CSSRect* pPaddingRect = pStyle->GetPaddingWidth();
     if (pRect) {
       fStart = pRect->left.GetValue();
       fLineWidth -= pRect->right.GetValue();
@@ -196,9 +196,9 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
         fStart += pPaddingRect->left.GetValue();
         fLineWidth -= pPaddingRect->right.GetValue();
       }
-      if (eDisplay == FDE_CSSDisplay::ListItem) {
-        const FDE_CSSRect* pParRect = pParentStyle->GetMarginWidth();
-        const FDE_CSSRect* pParPaddingRect = pParentStyle->GetPaddingWidth();
+      if (eDisplay == CFX_CSSDisplay::ListItem) {
+        const CFX_CSSRect* pParRect = pParentStyle->GetMarginWidth();
+        const CFX_CSSRect* pParPaddingRect = pParentStyle->GetPaddingWidth();
         if (pParRect) {
           fStart += pParRect->left.GetValue();
           fLineWidth -= pParRect->right.GetValue();
@@ -207,11 +207,11 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
             fLineWidth -= pParPaddingRect->right.GetValue();
           }
         }
-        FDE_CSSRect pNewRect;
-        pNewRect.left.Set(FDE_CSSLengthUnit::Point, fStart);
-        pNewRect.right.Set(FDE_CSSLengthUnit::Point, pRect->right.GetValue());
-        pNewRect.top.Set(FDE_CSSLengthUnit::Point, pRect->top.GetValue());
-        pNewRect.bottom.Set(FDE_CSSLengthUnit::Point, pRect->bottom.GetValue());
+        CFX_CSSRect pNewRect;
+        pNewRect.left.Set(CFX_CSSLengthUnit::Point, fStart);
+        pNewRect.right.Set(CFX_CSSLengthUnit::Point, pRect->right.GetValue());
+        pNewRect.top.Set(CFX_CSSLengthUnit::Point, pRect->top.GetValue());
+        pNewRect.bottom.Set(CFX_CSSLengthUnit::Point, pRect->bottom.GetValue());
         pStyle->SetMarginWidth(pNewRect);
       }
     }
@@ -696,7 +696,7 @@ bool CXFA_TextLayout::LoadRichText(
     CFX_XMLNode* pXMLNode,
     const CFX_SizeF& szText,
     float& fLinePos,
-    const CFX_RetainPtr<CFDE_CSSComputedStyle>& pParentStyle,
+    const CFX_RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
     bool bSavePieces,
     CFX_RetainPtr<CXFA_LinkUserData> pLinkData,
     bool bEndBreak,
@@ -707,10 +707,10 @@ bool CXFA_TextLayout::LoadRichText(
 
   CXFA_TextParseContext* pContext =
       m_textParser.GetParseContextFromMap(pXMLNode);
-  FDE_CSSDisplay eDisplay = FDE_CSSDisplay::None;
+  CFX_CSSDisplay eDisplay = CFX_CSSDisplay::None;
   bool bContentNode = false;
   float fSpaceBelow = 0;
-  CFX_RetainPtr<CFDE_CSSComputedStyle> pStyle;
+  CFX_RetainPtr<CFX_CSSComputedStyle> pStyle;
   CFX_WideString wsName;
   if (bEndBreak) {
     bool bCurOl = false;
@@ -733,21 +733,21 @@ bool CXFA_TextLayout::LoadRichText(
       }
       if (m_bBlockContinue || bContentNode == false) {
         eDisplay = pContext->GetDisplay();
-        if (eDisplay != FDE_CSSDisplay::Block &&
-            eDisplay != FDE_CSSDisplay::Inline &&
-            eDisplay != FDE_CSSDisplay::ListItem) {
+        if (eDisplay != CFX_CSSDisplay::Block &&
+            eDisplay != CFX_CSSDisplay::Inline &&
+            eDisplay != CFX_CSSDisplay::ListItem) {
           return true;
         }
 
         pStyle = m_textParser.ComputeStyle(pXMLNode, pParentStyle.Get());
         InitBreak(bContentNode ? pParentStyle.Get() : pStyle.Get(), eDisplay,
                   szText.width, pXMLNode, pParentStyle.Get());
-        if ((eDisplay == FDE_CSSDisplay::Block ||
-             eDisplay == FDE_CSSDisplay::ListItem) &&
+        if ((eDisplay == CFX_CSSDisplay::Block ||
+             eDisplay == CFX_CSSDisplay::ListItem) &&
             pStyle &&
             (wsName.IsEmpty() || (wsName != L"body" && wsName != L"html" &&
                                   wsName != L"ol" && wsName != L"ul"))) {
-          const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
+          const CFX_CSSRect* pRect = pStyle->GetMarginWidth();
           if (pRect) {
             fLinePos += pRect->top.GetValue();
             fSpaceBelow = pRect->bottom.GetValue();
@@ -797,9 +797,9 @@ bool CXFA_TextLayout::LoadRichText(
               (m_pLoader->m_dwFlags & XFA_LOADERCNTXTFLG_FILTERSPACE)) {
             wsText.TrimLeft(0x20);
           }
-          if (FDE_CSSDisplay::Block == eDisplay) {
+          if (CFX_CSSDisplay::Block == eDisplay) {
             m_pLoader->m_dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
-          } else if (FDE_CSSDisplay::Inline == eDisplay &&
+          } else if (CFX_CSSDisplay::Inline == eDisplay &&
                      (m_pLoader->m_dwFlags & XFA_LOADERCNTXTFLG_FILTERSPACE)) {
             m_pLoader->m_dwFlags &= ~XFA_LOADERCNTXTFLG_FILTERSPACE;
           } else if (wsText.GetLength() > 0 &&
@@ -847,7 +847,7 @@ bool CXFA_TextLayout::LoadRichText(
     }
 
     if (m_pLoader) {
-      if (FDE_CSSDisplay::Block == eDisplay)
+      if (CFX_CSSDisplay::Block == eDisplay)
         m_pLoader->m_dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
     }
     if (bCurLi)
@@ -859,11 +859,11 @@ bool CXFA_TextLayout::LoadRichText(
 
   if (m_bBlockContinue) {
     if (pContext && !bContentNode) {
-      CFX_BreakType dwStatus = (eDisplay == FDE_CSSDisplay::Block)
+      CFX_BreakType dwStatus = (eDisplay == CFX_CSSDisplay::Block)
                                    ? CFX_BreakType::Paragraph
                                    : CFX_BreakType::Piece;
       EndBreak(dwStatus, fLinePos, bSavePieces);
-      if (eDisplay == FDE_CSSDisplay::Block) {
+      if (eDisplay == CFX_CSSDisplay::Block) {
         fLinePos += fSpaceBelow;
         if (m_pTabstopContext)
           m_pTabstopContext->RemoveAll();
@@ -952,7 +952,7 @@ void CXFA_TextLayout::EndBreak(CFX_BreakType dwStatus,
     AppendTextLine(dwStatus, fLinePos, bSavePieces, true);
 }
 
-void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
+void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
                                  CXFA_PieceLine* pPieceLine) {
   if (!pStyle || !pPieceLine)
     return;
@@ -1015,7 +1015,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
   if (iPieces < 1)
     return;
 
-  CFX_RetainPtr<CFDE_CSSComputedStyle> pStyle;
+  CFX_RetainPtr<CFX_CSSComputedStyle> pStyle;
   if (bSavePieces) {
     auto pNew = pdfium::MakeUnique<CXFA_PieceLine>();
     CXFA_PieceLine* pPieceLine = pNew.get();
@@ -1130,7 +1130,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
 
   if (pStyle) {
     float fStart = 0;
-    const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
+    const CFX_CSSRect* pRect = pStyle->GetMarginWidth();
     if (pRect)
       fStart = pRect->left.GetValue();
 
