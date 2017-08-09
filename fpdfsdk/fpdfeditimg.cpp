@@ -10,6 +10,8 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 
@@ -178,4 +180,47 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
     memcpy(buffer, pImgStream->GetRawData(), len);
 
   return len;
+}
+
+DLLEXPORT int STDCALL
+FPDFImageObj_GetImageFilterCount(FPDF_PAGEOBJECT image_object) {
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
+  if (!pObj || !pObj->IsImage())
+    return 0;
+
+  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  if (!pImg)
+    return 0;
+
+  CPDF_Dictionary* pDict = pImg->GetDict();
+  CPDF_Object* pFilter = pDict ? pDict->GetDirectObjectFor("Filter") : nullptr;
+  if (!pFilter)
+    return 0;
+
+  if (pFilter->IsArray())
+    return pFilter->AsArray()->GetCount();
+  if (pFilter->IsName())
+    return 1;
+
+  return 0;
+}
+
+DLLEXPORT unsigned long STDCALL
+FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
+                            int index,
+                            void* buffer,
+                            unsigned long buflen) {
+  if (index < 0 || index >= FPDFImageObj_GetImageFilterCount(image_object))
+    return 0;
+
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
+  CPDF_Object* pFilter =
+      pObj->AsImage()->GetImage()->GetDict()->GetDirectObjectFor("Filter");
+  CFX_WideString wsFilters;
+  if (pFilter->IsName())
+    wsFilters = pFilter->AsName()->GetUnicodeText();
+  else
+    wsFilters = pFilter->AsArray()->GetUnicodeTextAt(index);
+
+  return Utf16EncodeMaybeCopyAndReturnLength(wsFilters, buffer, buflen);
 }
