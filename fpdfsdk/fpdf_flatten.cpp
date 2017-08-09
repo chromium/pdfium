@@ -235,7 +235,7 @@ CFX_Matrix GetMatrix(CFX_FloatRect rcAnnot,
 
 }  // namespace
 
-DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
+FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!page)
     return FLATTEN_FAIL;

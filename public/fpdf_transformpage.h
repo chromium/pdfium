@@ -26,11 +26,11 @@ typedef void* FPDF_PAGEARCLOADER;
 * @param[in] top    - The top of the rectangle.
 * @retval None.
 */
-DLLEXPORT void STDCALL FPDFPage_SetMediaBox(FPDF_PAGE page,
-                                            float left,
-                                            float bottom,
-                                            float right,
-                                            float top);
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetMediaBox(FPDF_PAGE page,
+                                                    float left,
+                                                    float bottom,
+                                                    float right,
+                                                    float top);
 
 /**
 *  Set "CropBox" entry to the page dictionary.
@@ -41,11 +41,11 @@ DLLEXPORT void STDCALL FPDFPage_SetMediaBox(FPDF_PAGE page,
 * @param[in] top    - The top of the rectangle.
 * @retval None.
 */
-DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page,
-                                           float left,
-                                           float bottom,
-                                           float right,
-                                           float top);
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
+                                                   float left,
+                                                   float bottom,
+                                                   float right,
+                                                   float top);
 
 /**  Get "MediaBox" entry from the page dictionary.
 * @param[in] page   - Handle to a page.
@@ -59,11 +59,11 @@ DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page,
 * rectangle.
 * @retval True if success,else fail.
 */
-DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page,
-                                                 float* left,
-                                                 float* bottom,
-                                                 float* right,
-                                                 float* top);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetMediaBox(FPDF_PAGE page,
+                                                         float* left,
+                                                         float* bottom,
+                                                         float* right,
+                                                         float* top);
 
 /**  Get "CropBox" entry from the page dictionary.
 * @param[in] page   - Handle to a page.
@@ -77,11 +77,11 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page,
 * rectangle.
 * @retval True if success,else fail.
 */
-DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page,
-                                                float* left,
-                                                float* bottom,
-                                                float* right,
-                                                float* top);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
+                                                        float* left,
+                                                        float* bottom,
+                                                        float* right,
+                                                        float* top);
 
 /**
 * Transform the whole page with a specified matrix, then clip the page content
@@ -93,9 +93,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page,
 * @Note. This function will transform the whole page, and would take effect to
 * all the objects in the page.
 */
-DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
-                                                       FS_MATRIX* matrix,
-                                                       FS_RECTF* clipRect);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_TransFormWithClip(FPDF_PAGE page,
+                           FS_MATRIX* matrix,
+                           FS_RECTF* clipRect);
 
 /**
 * Transform (scale, rotate, shear, move) the clip path of page object.
@@ -109,7 +110,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
 * @param[in] f  - The coefficient "f" of the matrix.
 * @retval None.
 */
-DLLEXPORT void STDCALL
+FPDF_EXPORT void FPDF_CALLCONV
 FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
                               double a,
                               double b,
@@ -127,10 +128,10 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
 * @param[in] top    - The top of the clip box.
 * @retval a handle to the clip path.
 */
-DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
-                                                    float bottom,
-                                                    float right,
-                                                    float top);
+FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV FPDF_CreateClipPath(float left,
+                                                            float bottom,
+                                                            float right,
+                                                            float top);
 
 /**
 * Destroy the clip path.
@@ -139,7 +140,7 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
 * Destroy the clip path.
 * @retval None.
 */
-DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath);
+FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath);
 
 /**
 * Clip the page content, the page content that outside the clipping region
@@ -151,8 +152,8 @@ DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath);
 * array. In this way, the page content will be clipped
 * by this clip path.
 */
-DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
-                                               FPDF_CLIPPATH clipPath);
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
+                                                       FPDF_CLIPPATH clipPath);
 
 #ifdef __cplusplus
 }

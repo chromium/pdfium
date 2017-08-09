@@ -19,6 +19,7 @@ config("pdfium_common_config") {
   ldflags = []
   include_dirs = [ "." ]
   defines = [
+    "FPDF_IMPLEMENTATION",
     "OPJ_STATIC",
     "PNG_PREFIX",
     "PNG_USE_READ_MACROS",
@@ -99,7 +100,7 @@ config("xfa_warnings") {
   }
 }
 
-static_library("pdfium") {
+component("pdfium") {
   sources = [
     "fpdfsdk/cba_annotiterator.cpp",
     "fpdfsdk/cba_annotiterator.h",
@@ -228,7 +229,7 @@ static_library("pdfium") {
   }
 }
 
-static_library("test_support") {
+pdf_source_set("test_support") {
   testonly = true
   sources = [
     "testing/fx_string_testhelpers.cpp",
@@ -261,7 +262,7 @@ static_library("test_support") {
   configs += [ ":pdfium_core_config" ]
 }
 
-static_library("image_diff") {
+pdf_source_set("image_diff") {
   testonly = true
   sources = [
     "testing/image_diff/image_diff_png.cpp",
@@ -281,7 +282,7 @@ visibility = [
   "//:gn_visibility",
 ]
 
-static_library("fdrm") {
+pdf_source_set("fdrm") {
   sources = [
     "core/fdrm/crypto/fx_crypt.cpp",
     "core/fdrm/crypto/fx_crypt.h",
@@ -294,7 +295,7 @@ static_library("fdrm") {
   ]
 }
 
-static_library("fpdfdoc") {
+pdf_source_set("fpdfdoc") {
   sources = [
     "core/fpdfdoc/cline.cpp",
     "core/fpdfdoc/cline.h",
@@ -794,7 +795,7 @@ config("fxge_warnings") {
   }
 }
 
-static_library("fxcrt") {
+pdf_source_set("fxcrt") {
   sources = [
     "core/fxcrt/cfx_bytestring.cpp",
     "core/fxcrt/cfx_bytestring.h",
@@ -1119,7 +1120,7 @@ static_library("fxge") {
   }
 }
 
-static_library("pwl") {
+pdf_source_set("pwl") {
   sources = [
     "fpdfsdk/pwl/cpwl_appstream.cpp",
     "fpdfsdk/pwl/cpwl_appstream.h",
@@ -1160,7 +1161,7 @@ static_library("pwl") {
   ]
 }
 
-static_library("javascript") {
+pdf_source_set("javascript") {
   sources = [
     "fpdfsdk/javascript/ijs_event_context.h",
     "fpdfsdk/javascript/ijs_runtime.h",
@@ -1223,7 +1224,7 @@ static_library("javascript") {
   }
 }
 
-static_library("formfiller") {
+pdf_source_set("formfiller") {
   sources = [
     "fpdfsdk/formfiller/cba_fontmap.cpp",
     "fpdfsdk/formfiller/cba_fontmap.h",
@@ -1255,7 +1256,7 @@ static_library("formfiller") {
 }
 
 if (pdf_enable_v8) {
-  static_library("fxjs") {
+  pdf_source_set("fxjs") {
     sources = [
       "fxjs/fxjs_v8.cpp",
       "fxjs/fxjs_v8.h",
@@ -1295,7 +1296,7 @@ if (pdf_enable_v8) {
 }
 
 if (pdf_enable_xfa) {
-  static_library("fpdfxfa") {
+  pdf_source_set("fpdfxfa") {
     sources = [
       "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
       "fpdfsdk/fpdfxfa/cpdfxfa_context.h",
@@ -1314,7 +1315,7 @@ if (pdf_enable_xfa) {
     configs += [ ":pdfium_core_config" ]
   }
 
-  static_library("fxbarcode") {
+  pdf_source_set("fxbarcode") {
     sources = [
       "fxbarcode/BC_Library.cpp",
       "fxbarcode/BC_Library.h",
@@ -1449,7 +1450,7 @@ if (pdf_enable_xfa) {
     configs += [ ":pdfium_core_config" ]
   }
 
-  static_library("xfa") {
+  pdf_source_set("xfa") {
     sources = [
       "xfa/fde/cfde_brush.h",
       "xfa/fde/cfde_path.cpp",

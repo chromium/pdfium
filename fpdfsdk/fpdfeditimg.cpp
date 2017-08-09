@@ -47,7 +47,7 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
 
 }  // namespace
 
-DLLEXPORT FPDF_PAGEOBJECT STDCALL
+FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
@@ -58,7 +58,7 @@ FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
   return pImageObj.release();
 }
 
-DLLEXPORT FPDF_BOOL STDCALL
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
                           int nCount,
                           FPDF_PAGEOBJECT image_object,
@@ -66,7 +66,7 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
   return LoadJpegHelper(pages, nCount, image_object, fileAccess, false);
 }
 
-DLLEXPORT FPDF_BOOL STDCALL
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
                                 int nCount,
                                 FPDF_PAGEOBJECT image_object,
@@ -74,13 +74,14 @@ FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
   return LoadJpegHelper(pages, nCount, image_object, fileAccess, true);
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
-                                                   double a,
-                                                   double b,
-                                                   double c,
-                                                   double d,
-                                                   double e,
-                                                   double f) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
+                       double a,
+                       double b,
+                       double c,
+                       double d,
+                       double e,
+                       double f) {
   if (!image_object)
     return false;
 
@@ -93,10 +94,11 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
   return true;
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
-                                                   int nCount,
-                                                   FPDF_PAGEOBJECT image_object,
-                                                   FPDF_BITMAP bitmap) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
+                       int nCount,
+                       FPDF_PAGEOBJECT image_object,
+                       FPDF_BITMAP bitmap) {
   if (!image_object || !bitmap || !pages)
     return false;
 
@@ -113,7 +115,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   return true;
 }
 
-DLLEXPORT FPDF_BITMAP STDCALL
+FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
   if (!pObj || !pObj->IsImage())
@@ -140,7 +142,7 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   return pBitmap.Leak();
 }
 
-DLLEXPORT unsigned long STDCALL
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
                                  void* buffer,
                                  unsigned long buflen) {
@@ -159,7 +161,7 @@ FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
   return DecodeStreamMaybeCopyAndReturnLength(pImgStream, buffer, buflen);
 }
 
-DLLEXPORT unsigned long STDCALL
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
                              void* buffer,
                              unsigned long buflen) {
@@ -182,7 +184,7 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
   return len;
 }
 
-DLLEXPORT int STDCALL
+FPDF_EXPORT int FPDF_CALLCONV
 FPDFImageObj_GetImageFilterCount(FPDF_PAGEOBJECT image_object) {
   CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
   if (!pObj || !pObj->IsImage())
@@ -205,7 +207,7 @@ FPDFImageObj_GetImageFilterCount(FPDF_PAGEOBJECT image_object) {
   return 0;
 }
 
-DLLEXPORT unsigned long STDCALL
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
                             int index,
                             void* buffer,

@@ -37,7 +37,8 @@ unsigned long WideStringToBuffer(const CFX_WideString& str,
 
 }  // namespace
 
-DLLEXPORT FPDF_STRUCTTREE STDCALL FPDF_StructTree_GetForPage(FPDF_PAGE page) {
+FPDF_EXPORT FPDF_STRUCTTREE FPDF_CALLCONV
+FPDF_StructTree_GetForPage(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return nullptr;
@@ -46,17 +47,18 @@ DLLEXPORT FPDF_STRUCTTREE STDCALL FPDF_StructTree_GetForPage(FPDF_PAGE page) {
       .release();
 }
 
-DLLEXPORT void STDCALL FPDF_StructTree_Close(FPDF_STRUCTTREE struct_tree) {
+FPDF_EXPORT void FPDF_CALLCONV
+FPDF_StructTree_Close(FPDF_STRUCTTREE struct_tree) {
   std::unique_ptr<CPDF_StructTree>(ToStructTree(struct_tree));
 }
 
-DLLEXPORT int STDCALL
+FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructTree_CountChildren(FPDF_STRUCTTREE struct_tree) {
   CPDF_StructTree* tree = ToStructTree(struct_tree);
   return tree ? tree->CountTopElements() : -1;
 }
 
-DLLEXPORT FPDF_STRUCTELEMENT STDCALL
+FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructTree_GetChildAtIndex(FPDF_STRUCTTREE struct_tree, int index) {
   CPDF_StructTree* tree = ToStructTree(struct_tree);
   if (!tree || index < 0 || index >= tree->CountTopElements())
@@ -64,7 +66,7 @@ FPDF_StructTree_GetChildAtIndex(FPDF_STRUCTTREE struct_tree, int index) {
   return tree->GetTopElement(index);
 }
 
-DLLEXPORT unsigned long STDCALL
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
                               void* buffer,
                               unsigned long buflen) {
@@ -75,7 +77,7 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
              : 0;
 }
 
-DLLEXPORT unsigned long STDCALL
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_StructElement_GetType(FPDF_STRUCTELEMENT struct_element,
                            void* buffer,
                            unsigned long buflen) {
@@ -84,7 +86,7 @@ FPDF_StructElement_GetType(FPDF_STRUCTELEMENT struct_element,
               : 0;
 }
 
-DLLEXPORT unsigned long STDCALL
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_StructElement_GetTitle(FPDF_STRUCTELEMENT struct_element,
                             void* buffer,
                             unsigned long buflen) {
@@ -94,13 +96,13 @@ FPDF_StructElement_GetTitle(FPDF_STRUCTELEMENT struct_element,
              : 0;
 }
 
-DLLEXPORT int STDCALL
+FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_CountChildren(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem = ToStructTreeElement(struct_element);
   return elem ? elem->CountKids() : -1;
 }
 
-DLLEXPORT FPDF_STRUCTELEMENT STDCALL
+FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
                                    int index) {
   CPDF_StructElement* elem = ToStructTreeElement(struct_element);

@@ -64,7 +64,7 @@ typedef struct _UNSUPPORT_INFO {
 //   unsp_info - Pointer to an UNSUPPORT_INFO structure.
 //
 // Returns TRUE on success.
-DLLEXPORT FPDF_BOOL STDCALL
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info);
 
 // Unknown page mode.
@@ -89,7 +89,7 @@ FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info);
 // Returns one of the |PAGEMODE_*| flags defined above.
 //
 // The page mode defines how the document should be initially displayed.
-DLLEXPORT int STDCALL FPDFDoc_GetPageMode(FPDF_DOCUMENT document);
+FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document);
 
 #ifdef __cplusplus
 }  // extern "C"

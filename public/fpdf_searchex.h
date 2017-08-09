@@ -20,7 +20,7 @@ extern "C" {
 //   nTextIndex - index of the text returned from |FPDFText_GetText|.
 //
 // Returns the index of the character in internal character list. -1 for error.
-DLLEXPORT int STDCALL
+FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
 
 // Get the text index in |text_page| internal character list.
@@ -29,7 +29,7 @@ FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
 //   nCharIndex - index of the character in internal character list.
 //
 // Returns the index of the text returned from |FPDFText_GetText|. -1 for error.
-DLLEXPORT int STDCALL
+FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_GetTextIndexFromCharIndex(FPDF_TEXTPAGE text_page, int nCharIndex);
 
 #ifdef __cplusplus
