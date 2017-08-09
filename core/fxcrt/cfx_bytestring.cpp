@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <string>
 
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -195,9 +196,11 @@ CFX_ByteString::CFX_ByteString(
   }
 }
 
-CFX_ByteString::CFX_ByteString(std::ostringstream& outStream)
-    : CFX_ByteString(outStream.str().c_str(),
-                     static_cast<int>(outStream.tellp())) {}
+CFX_ByteString::CFX_ByteString(const std::ostringstream& outStream) {
+  std::string str = outStream.str();
+  if (str.length() > 0)
+    m_pData.Reset(StringData::Create(str.c_str(), str.length()));
+}
 
 CFX_ByteString::~CFX_ByteString() {}
 

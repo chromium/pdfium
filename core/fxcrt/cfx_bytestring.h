@@ -46,7 +46,7 @@ class CFX_ByteString {
   explicit CFX_ByteString(const CFX_ByteStringC& bstrc);
   CFX_ByteString(const CFX_ByteStringC& bstrc1, const CFX_ByteStringC& bstrc2);
   CFX_ByteString(const std::initializer_list<CFX_ByteStringC>& list);
-  explicit CFX_ByteString(std::ostringstream& outStream);
+  explicit CFX_ByteString(const std::ostringstream& outStream);
 
   ~CFX_ByteString();
 
