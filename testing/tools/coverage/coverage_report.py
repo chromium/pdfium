@@ -12,11 +12,23 @@ Requires that 'use_coverage = true' is set in args.gn.
 
 import argparse
 from collections import namedtuple
-import pprint
 import os
+import pprint
 import re
 import subprocess
 import sys
+
+
+# Add src dir to path to avoid having to set PYTHONPATH.
+sys.path.append(
+    os.path.abspath(
+       os.path.join(
+          os.path.dirname(__file__),
+          os.path.pardir,
+          os.path.pardir,
+          os.path.pardir)))
+
+from testing.tools.common import GetBooleanGnArg
 
 
 # 'binary' is the file that is to be run for the test.
@@ -77,12 +89,13 @@ class CoverageExecutor(object):
           'No valid tests in set to be run. This is likely due to bad command '
           'line arguments')
 
-    if not self.boolean_gn_arg('use_coverage'):
+    if not GetBooleanGnArg('use_coverage', self.build_directory, self.verbose):
       parser.error(
           'use_coverage does not appear to be set to true for build, but is '
           'needed')
 
-    self.use_goma = self.boolean_gn_arg('use_goma')
+    self.use_goma = GetBooleanGnArg('use_goma', self.build_directory,
+                                    self.verbose)
 
     self.output_directory = args['output_directory']
     if not os.path.exists(self.output_directory):
@@ -92,18 +105,6 @@ class CoverageExecutor(object):
       parser.error('%s exists, but is not a directory' % self.output_directory)
     self.coverage_totals_path = os.path.join(self.output_directory,
                                              'pdfium_totals.info')
-
-  def boolean_gn_arg(self, arg):
-    """Extract the value of a boolean flag in args.gn"""
-    cwd = os.getcwd()
-    os.chdir(self.build_directory)
-    gn_args_output = self.check_output(
-        ['gn', 'args', '.', '--list=%s' % arg, '--short'])
-    os.chdir(cwd)
-    arg_match_output = re.match('%s = (.*)' % arg, gn_args_output).group(1)
-    if self.verbose:
-      print "Found '%s' for value of %s" % (arg_match_output, arg)
-    return arg_match_output == 'true'
 
   def check_output(self, args, dry_run=False, env=None):
     """Dry run aware wrapper of subprocess.check_output()"""
