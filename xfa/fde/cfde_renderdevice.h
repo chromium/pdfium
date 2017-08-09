@@ -34,11 +34,11 @@ class CFDE_RenderDevice {
                   const FXTEXT_CHARPOS* pCharPos,
                   int32_t iCount,
                   float fFontSize,
-                  const CFX_Matrix* pMatrix = nullptr);
+                  const CFX_Matrix* pMatrix);
   bool DrawPath(FX_ARGB color,
                 float fPenWidth,
                 const CFDE_Path* pPath,
-                const CFX_Matrix* pMatrix = nullptr);
+                const CFX_Matrix* pMatrix);
 
  private:
   CFX_RenderDevice* const m_pDevice;
