@@ -64,6 +64,13 @@ TEST_F(FPDFViewEmbeddertest, EmptyDocument) {
   EXPECT_EQ(0u, FPDF_CountNamedDests(document()));
 }
 
+TEST_F(FPDFViewEmbeddertest, LinearizedDocument) {
+  EXPECT_TRUE(OpenDocument("feature_linearized_loading.pdf", nullptr, true));
+  int version;
+  EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
+  EXPECT_EQ(16, version);
+}
+
 TEST_F(FPDFViewEmbeddertest, Page) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
