@@ -16,9 +16,7 @@
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_path.h"
-#include "xfa/fde/cfde_pen.h"
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
@@ -563,8 +561,6 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
 
-  auto pSolidBrush = pdfium::MakeUnique<CFDE_Brush>();
-  auto pPen = pdfium::MakeUnique<CFDE_Pen>();
   if (m_pieceLines.empty()) {
     int32_t iBlockCount = CountBlocks();
     for (int32_t i = 0; i < iBlockCount; i++)
@@ -602,12 +598,10 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
         iCharCount = iChars;
       }
       memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
-      RenderString(pDevice.get(), pSolidBrush.get(), pPieceLine, j, pCharPos,
-                   tmDoc2Device);
+      RenderString(pDevice.get(), pPieceLine, j, pCharPos, tmDoc2Device);
     }
     for (j = 0; j < iPieces; j++) {
-      RenderPath(pDevice.get(), pPen.get(), pPieceLine, j, pCharPos,
-                 tmDoc2Device);
+      RenderPath(pDevice.get(), pPieceLine, j, pCharPos, tmDoc2Device);
     }
   }
   pDevice->RestoreState();
@@ -1144,7 +1138,6 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
 }
 
 void CXFA_TextLayout::RenderString(CFDE_RenderDevice* pDevice,
-                                   CFDE_Brush* pBrush,
                                    CXFA_PieceLine* pPieceLine,
                                    int32_t iPiece,
                                    FXTEXT_CHARPOS* pCharPos,
@@ -1152,15 +1145,13 @@ void CXFA_TextLayout::RenderString(CFDE_RenderDevice* pDevice,
   const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
   int32_t iCount = GetDisplayPos(pPiece, pCharPos);
   if (iCount > 0) {
-    pBrush->SetColor(pPiece->dwColor);
-    pDevice->DrawString(pBrush, pPiece->pFont, pCharPos, iCount,
+    pDevice->DrawString(pPiece->dwColor, pPiece->pFont, pCharPos, iCount,
                         pPiece->fFontSize, &tmDoc2Device);
   }
   pPieceLine->m_charCounts.push_back(iCount);
 }
 
 void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
-                                 CFDE_Pen* pPen,
                                  CXFA_PieceLine* pPieceLine,
                                  int32_t iPiece,
                                  FXTEXT_CHARPOS* pCharPos,
@@ -1171,7 +1162,6 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
   if (bNoUnderline && bNoLineThrough)
     return;
 
-  pPen->SetColor(pPiece->dwColor);
   auto pPath = pdfium::MakeUnique<CFDE_Path>();
   int32_t iChars = GetDisplayPos(pPiece, pCharPos);
   if (iChars > 0) {
@@ -1270,7 +1260,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
       fEndY += 2.0f;
     }
   }
-  pDevice->DrawPath(pPen, 1, pPath.get(), &tmDoc2Device);
+  pDevice->DrawPath(pPiece->dwColor, 1, pPath.get(), &tmDoc2Device);
 }
 
 int32_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,

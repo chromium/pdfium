@@ -13,9 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_path.h"
-#include "xfa/fde/cfde_pen.h"
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
@@ -651,14 +649,9 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
   if (!m_pRenderDevice || m_ttoLines.empty())
     return;
 
-  auto pBrush = pdfium::MakeUnique<CFDE_Brush>();
-  pBrush->SetColor(m_TxtColor);
   m_pRenderDevice->SaveState();
   if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f)
     m_pRenderDevice->SetClipRect(rtClip);
-
-  auto pPen = pdfium::MakeUnique<CFDE_Pen>();
-  pPen->SetColor(m_TxtColor);
 
   for (auto& line : m_ttoLines) {
     int32_t iPieces = line.GetSize();
@@ -669,10 +662,10 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
 
       int32_t iCount = GetDisplayPos(pPiece);
       if (iCount > 0) {
-        m_pRenderDevice->DrawString(pBrush.get(), m_pFont, m_CharPos.data(),
+        m_pRenderDevice->DrawString(m_TxtColor, m_pFont, m_CharPos.data(),
                                     iCount, m_fFontSize, &m_Matrix);
       }
-      DrawLine(pPiece, pPen.get());
+      DrawLine(pPiece, m_TxtColor);
     }
   }
   m_pRenderDevice->RestoreState();
@@ -704,7 +697,7 @@ FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
   return tr;
 }
 
-void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen) {
+void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, FX_ARGB color) {
   bool bUnderLine = !!(m_dwStyles & FDE_TTOSTYLE_Underline);
   bool bStrikeOut = !!(m_dwStyles & FDE_TTOSTYLE_Strikeout);
   bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
@@ -748,7 +741,7 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen) {
     }
   }
   if (iLineCount > 0)
-    m_pRenderDevice->DrawPath(pPen, 1, pPath.get(), &m_Matrix);
+    m_pRenderDevice->DrawPath(color, 1, pPath.get(), &m_Matrix);
 }
 
 CFDE_TTOLine::CFDE_TTOLine() : m_bNewReload(false) {}

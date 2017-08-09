@@ -34,7 +34,6 @@ class CFDE_RenderContext {
   CFDE_RenderDevice* m_pRenderDevice;
   CFX_Matrix m_Transform;
   std::vector<FXTEXT_CHARPOS> m_CharPos;
-  std::unique_ptr<CFDE_Brush> m_pBrush;
   std::unique_ptr<CFDE_VisualSetIterator> m_pIterator;
 };
 

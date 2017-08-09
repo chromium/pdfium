@@ -17,9 +17,7 @@
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 
-class CFDE_Brush;
 class CFX_CSSComputedStyle;
-class CFDE_Pen;
 class CFDE_RenderDevice;
 class CFX_XMLNode;
 class CFX_RTFBreak;
@@ -101,13 +99,11 @@ class CXFA_TextLayout {
   void ProcessText(CFX_WideString& wsText);
   void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFDE_RenderDevice* pDevice,
-                    CFDE_Brush* pBrush,
                     CXFA_PieceLine* pPieceLine,
                     int32_t iPiece,
                     FXTEXT_CHARPOS* pCharPos,
                     const CFX_Matrix& tmDoc2Device);
   void RenderPath(CFDE_RenderDevice* pDevice,
-                  CFDE_Pen* pPen,
                   CXFA_PieceLine* pPieceLine,
                   int32_t iPiece,
                   FXTEXT_CHARPOS* pCharPos,

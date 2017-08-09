@@ -37,7 +37,6 @@
 #define FDE_TTOALIGNMENT_BottomRight 10
 #define FDE_TTOALIGNMENT_BottomAuto 11
 
-class CFDE_Pen;
 class CFDE_RenderDevice;
 class CFX_RenderDevice;
 class CFX_TxtBreak;
@@ -139,7 +138,7 @@ class CFDE_TextOut {
   int32_t GetCharRects(const FDE_TTOPIECE* pPiece);
 
   FX_TXTRUN ToTextRun(const FDE_TTOPIECE* pPiece);
-  void DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen);
+  void DrawLine(const FDE_TTOPIECE* pPiece, FX_ARGB color);
 
   std::unique_ptr<CFX_TxtBreak> m_pTxtBreak;
   CFX_RetainPtr<CFGAS_GEFont> m_pFont;

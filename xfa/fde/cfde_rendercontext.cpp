@@ -8,7 +8,6 @@
 
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fde/cfde_txtedttextset.h"
 
@@ -83,15 +82,10 @@ void CFDE_RenderContext::RenderText(CFDE_TxtEdtTextSet* pTextSet,
   int32_t iCount = pTextSet->GetDisplayPos(*pText, nullptr, false);
   if (iCount < 1)
     return;
-  if (!m_pBrush)
-    m_pBrush = pdfium::MakeUnique<CFDE_Brush>();
   if (m_CharPos.size() < static_cast<size_t>(iCount))
     m_CharPos.resize(iCount, FXTEXT_CHARPOS());
 
   iCount = pTextSet->GetDisplayPos(*pText, m_CharPos.data(), false);
-  float fFontSize = pTextSet->GetFontSize();
-  FX_ARGB dwColor = pTextSet->GetFontColor();
-  m_pBrush->SetColor(dwColor);
-  m_pRenderDevice->DrawString(m_pBrush.get(), pFont, m_CharPos.data(), iCount,
-                              fFontSize, &m_Transform);
+  m_pRenderDevice->DrawString(pTextSet->GetFontColor(), pFont, m_CharPos.data(),
+                              iCount, pTextSet->GetFontSize(), &m_Transform);
 }
