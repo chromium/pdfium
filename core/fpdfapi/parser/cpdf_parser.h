@@ -83,7 +83,6 @@ class CPDF_Parser {
   FX_FILESIZE GetObjectPositionOrZero(uint32_t objnum) const;
   ObjectType GetObjectType(uint32_t objnum) const;
   uint16_t GetObjectGenNum(uint32_t objnum) const;
-  bool IsVersionUpdated() const { return m_bVersionUpdated; }
   bool IsObjectFreeOrNull(uint32_t objnum) const;
   CFX_RetainPtr<CPDF_CryptoHandler> GetCryptoHandler() const;
   CFX_RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
@@ -196,7 +195,6 @@ class CPDF_Parser {
   CFX_UnownedPtr<CPDF_Document> m_pDocument;
   bool m_bHasParsed;
   bool m_bXRefStream;
-  bool m_bVersionUpdated;
   int m_FileVersion;
   CFX_UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   FX_FILESIZE m_LastXRefOffset;
