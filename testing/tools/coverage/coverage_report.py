@@ -133,9 +133,11 @@ class CoverageExecutor(object):
     """Wrapper to call lcov that adds appropriate arguments as needed."""
     lcov_args = [
         self.lcov, '--config-file',
-        os.path.join(self.source_directory, 'tools', 'coverage', 'lcovrc'),
+        os.path.join(self.source_directory, 'testing', 'tools', 'coverage',
+                     'lcovrc'),
         '--gcov-tool',
-        os.path.join(self.source_directory, 'tools', 'coverage', 'llvm-gcov')
+        os.path.join(self.source_directory, 'testing', 'tools', 'coverage',
+                     'llvm-gcov')
     ]
     if needs_directory:
       lcov_args.extend(['--directory', self.source_directory])
