@@ -91,7 +91,6 @@ class CPDF_Parser {
   FX_FILESIZE GetObjectOffset(uint32_t objnum) const;
   FX_FILESIZE GetObjectSize(uint32_t objnum) const;
 
-  std::vector<uint8_t> GetIndirectBinary(uint32_t objnum);
   int GetFileVersion() const { return m_FileVersion; }
   bool IsXRefStream() const { return m_bXRefStream; }
 

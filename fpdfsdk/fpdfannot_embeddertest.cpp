@@ -863,11 +863,11 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 
   // Open the saved annotation.
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  const char md5[] = "c35408717759562d1f8bf33d317483d2";
+  const char md5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  const char md5[] = "4f64add0190ede63f7bb9eb1e2e83edb";
+  const char md5[] = "0e3710ea6476f5bcba2cd39eb42d54e2";
 #else
-  const char md5[] = "02e1c6adff8fee4aeabd91c2c2e4be43";
+  const char md5[] = "831a3c465a56d2e0c89aef7bdf15306a";
 #endif
   TestSaved(595, 842, md5);
   FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 0);

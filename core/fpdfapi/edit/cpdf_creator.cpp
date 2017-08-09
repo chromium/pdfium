@@ -323,34 +323,15 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
   m_ObjectOffsets[objnum] = m_Archive->CurrentOffset();
 
   bool bExistInMap = !!m_pDocument->GetIndirectObject(objnum);
-  const CPDF_Parser::ObjectType object_type = m_pParser->GetObjectType(objnum);
-  if (m_pParser->IsVersionUpdated() || m_bSecurityChanged || bExistInMap ||
-      (object_type == CPDF_Parser::ObjectType::kCompressed && m_pEncryptDict)) {
-    CPDF_Object* pObj = m_pDocument->GetOrParseIndirectObject(objnum);
-    if (!pObj) {
-      m_ObjectOffsets.erase(objnum);
-      return true;
-    }
-    if (!WriteIndirectObj(pObj->GetObjNum(), pObj))
-      return false;
-    if (!bExistInMap)
-      m_pDocument->DeleteIndirectObject(objnum);
-  } else {
-    std::vector<uint8_t> buffer = m_pParser->GetIndirectBinary(objnum);
-    if (buffer.empty())
-      return true;
-    if (object_type == CPDF_Parser::ObjectType::kCompressed) {
-      if (!m_Archive->WriteDWord(objnum) ||
-          !m_Archive->WriteString(" 0 obj ") ||
-          !m_Archive->WriteBlock(buffer.data(), buffer.size()) ||
-          !m_Archive->WriteString("\r\nendobj\r\n")) {
-        return false;
-      }
-    } else {
-      if (!m_Archive->WriteBlock(buffer.data(), buffer.size()))
-        return false;
-    }
+  CPDF_Object* pObj = m_pDocument->GetOrParseIndirectObject(objnum);
+  if (!pObj) {
+    m_ObjectOffsets.erase(objnum);
+    return true;
   }
+  if (!WriteIndirectObj(pObj->GetObjNum(), pObj))
+    return false;
+  if (!bExistInMap)
+    m_pDocument->DeleteIndirectObject(objnum);
   return true;
 }
 
