@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
@@ -128,14 +129,18 @@ class CFX_UTF8Decoder {
 
 class CFX_UTF8Encoder {
  public:
-  CFX_UTF8Encoder() {}
+  CFX_UTF8Encoder();
+  ~CFX_UTF8Encoder();
 
   void Input(wchar_t unicode);
-  void AppendStr(const CFX_ByteStringC& str) { m_Buffer << str; }
-  CFX_ByteStringC GetResult() const { return m_Buffer.AsStringC(); }
+  void AppendStr(const CFX_ByteStringC& str);
+
+  // The data returned by GetResult() is invalidated when this is modified by
+  // appending any data.
+  CFX_ByteStringC GetResult() const;
 
  private:
-  CFX_ByteTextBuf m_Buffer;
+  std::vector<uint8_t> m_Buffer;
 };
 
 template <class DataType, int FixedSize>
