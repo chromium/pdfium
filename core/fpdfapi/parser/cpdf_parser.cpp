@@ -34,6 +34,8 @@ namespace {
 // this may be large enough in practice.
 const int32_t kMaxXRefSize = 1048576;
 
+constexpr FX_FILESIZE kPDFHeaderSize = 9;
+
 uint32_t GetVarInt(const uint8_t* p, int32_t n) {
   uint32_t result = 0;
   for (int32_t i = 0; i < n; ++i)
@@ -145,47 +147,48 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
     m_ObjectInfo[objnum - 1].pos = 0;
 }
 
-CPDF_Parser::Error CPDF_Parser::StartParse(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
-    CPDF_Document* pDocument) {
-  return StartParseInternal(pFileAccess, pDocument, kInvalidHeaderOffset);
+bool CPDF_Parser::InitSyntaxParser(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& file_access) {
+  const int32_t header_offset = GetHeaderOffset(file_access);
+  if (header_offset == kInvalidHeaderOffset)
+    return false;
+  if (file_access->GetSize() < header_offset + kPDFHeaderSize)
+    return false;
+
+  m_pSyntax->InitParser(file_access, header_offset);
+  return ParseFileVersion();
 }
 
-CPDF_Parser::Error CPDF_Parser::StartParseInternal(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
-    CPDF_Document* pDocument,
-    int32_t iHeaderOffset) {
-  ASSERT(!m_bHasParsed);
-  m_bHasParsed = true;
-  m_bXRefStream = false;
-  m_LastXRefOffset = 0;
-
-  int32_t offset;
-  if (iHeaderOffset == kInvalidHeaderOffset) {
-    offset = GetHeaderOffset(pFileAccess);
-    if (offset == kInvalidHeaderOffset)
-      return FORMAT_ERROR;
-  } else {
-    offset = iHeaderOffset;
-  }
-
-  m_pSyntax->InitParser(pFileAccess, offset);
-
+bool CPDF_Parser::ParseFileVersion() {
+  m_FileVersion = 0;
   uint8_t ch;
   if (!m_pSyntax->GetCharAt(5, ch))
-    return FORMAT_ERROR;
+    return false;
 
   if (std::isdigit(ch))
     m_FileVersion = FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch)) * 10;
 
   if (!m_pSyntax->GetCharAt(7, ch))
-    return FORMAT_ERROR;
+    return false;
 
   if (std::isdigit(ch))
     m_FileVersion += FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
+  return true;
+}
 
-  if (m_pSyntax->m_FileLen < m_pSyntax->m_HeaderOffset + 9)
+CPDF_Parser::Error CPDF_Parser::StartParse(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    CPDF_Document* pDocument) {
+  if (!InitSyntaxParser(pFileAccess))
     return FORMAT_ERROR;
+  return StartParseInternal(pDocument);
+}
+
+CPDF_Parser::Error CPDF_Parser::StartParseInternal(CPDF_Document* pDocument) {
+  ASSERT(!m_bHasParsed);
+  m_bHasParsed = true;
+  m_bXRefStream = false;
+  m_LastXRefOffset = 0;
 
   m_pSyntax->SetPos(m_pSyntax->m_FileLen - m_pSyntax->m_HeaderOffset - 9);
   m_pDocument = pDocument;
@@ -1348,10 +1351,7 @@ uint32_t CPDF_Parser::GetPermissions() const {
   return dwPermission;
 }
 
-bool CPDF_Parser::IsLinearizedFile(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
-    uint32_t offset) {
-  m_pSyntax->InitParser(pFileAccess, offset);
+bool CPDF_Parser::ParseLinearizedHeader() {
   m_pSyntax->SetPos(m_pSyntax->m_HeaderOffset + 9);
 
   FX_FILESIZE SavedPos = m_pSyntax->GetPos();
@@ -1389,12 +1389,11 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   m_bXRefStream = false;
   m_LastXRefOffset = 0;
 
-  int32_t offset = GetHeaderOffset(pFileAccess);
-  if (offset == kInvalidHeaderOffset)
+  if (!InitSyntaxParser(pFileAccess))
     return FORMAT_ERROR;
 
-  if (!IsLinearizedFile(pFileAccess, offset))
-    return StartParseInternal(pFileAccess, std::move(pDocument), offset);
+  if (!ParseLinearizedHeader())
+    return StartParseInternal(std::move(pDocument));
 
   m_bHasParsed = true;
   m_pDocument = pDocument;
