@@ -202,20 +202,28 @@ void CFX_PathData::AppendPoint(const CFX_PointF& point,
   m_Points.push_back(FX_PATHPOINT(point, type, closeFigure));
 }
 
+void CFX_PathData::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
+  if (m_Points.empty() || fabs(m_Points.back().m_Point.x - pt1.x) > 0.001 ||
+      fabs(m_Points.back().m_Point.y - pt1.y) > 0.001) {
+    AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
+  }
+  AppendPoint(pt2, FXPT_TYPE::LineTo, false);
+}
+
 void CFX_PathData::AppendRect(float left,
                               float bottom,
                               float right,
                               float top) {
-  m_Points.push_back(
-      FX_PATHPOINT(CFX_PointF(left, bottom), FXPT_TYPE::MoveTo, false));
-  m_Points.push_back(
-      FX_PATHPOINT(CFX_PointF(left, top), FXPT_TYPE::LineTo, false));
-  m_Points.push_back(
-      FX_PATHPOINT(CFX_PointF(right, top), FXPT_TYPE::LineTo, false));
-  m_Points.push_back(
-      FX_PATHPOINT(CFX_PointF(right, bottom), FXPT_TYPE::LineTo, false));
-  m_Points.push_back(
-      FX_PATHPOINT(CFX_PointF(left, bottom), FXPT_TYPE::LineTo, true));
+  CFX_PointF left_bottom(left, bottom);
+  CFX_PointF left_top(left, top);
+  CFX_PointF right_top(right, top);
+  CFX_PointF right_bottom(right, bottom);
+
+  AppendLine(left_bottom, left_top);
+  AppendLine(left_top, right_top);
+  AppendLine(right_top, right_bottom);
+  AppendLine(right_bottom, left_bottom);
+  ClosePath();
 }
 
 CFX_FloatRect CFX_PathData::GetBoundingBox() const {

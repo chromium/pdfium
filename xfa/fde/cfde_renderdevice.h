@@ -12,7 +12,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
-class CFDE_Path;
+class CFX_PathData;
 class CFX_GraphStateData;
 
 class CFDE_RenderDevice {
@@ -37,7 +37,7 @@ class CFDE_RenderDevice {
                   const CFX_Matrix* pMatrix);
   bool DrawPath(FX_ARGB color,
                 float fPenWidth,
-                const CFDE_Path* pPath,
+                const CFX_PathData& pPath,
                 const CFX_Matrix* pMatrix);
 
  private:

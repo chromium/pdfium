@@ -11,9 +11,9 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_path.h"
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
@@ -704,7 +704,7 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, FX_ARGB color) {
   if (!bUnderLine && !bStrikeOut && !bHotKey)
     return;
 
-  auto pPath = pdfium::MakeUnique<CFDE_Path>();
+  CFX_PathData path;
   int32_t iLineCount = 0;
   CFX_RectF rtText = pPiece->rtPiece;
   CFX_PointF pt1, pt2;
@@ -713,7 +713,7 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, FX_ARGB color) {
     pt1.y = rtText.bottom();
     pt2.x = rtText.right();
     pt2.y = rtText.bottom();
-    pPath->AddLine(pt1, pt2);
+    path.AppendLine(pt1, pt2);
     iLineCount++;
   }
   if (bStrikeOut) {
@@ -721,7 +721,7 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, FX_ARGB color) {
     pt1.y = rtText.bottom() - rtText.height * 2.0f / 5.0f;
     pt2.x = rtText.right();
     pt2.y = pt1.y;
-    pPath->AddLine(pt1, pt2);
+    path.AppendLine(pt1, pt2);
     iLineCount++;
   }
   if (bHotKey) {
@@ -734,14 +734,14 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, FX_ARGB color) {
           pt1.y = rect.bottom();
           pt2.x = rect.right();
           pt2.y = rect.bottom();
-          pPath->AddLine(pt1, pt2);
+          path.AppendLine(pt1, pt2);
           iLineCount++;
         }
       }
     }
   }
   if (iLineCount > 0)
-    m_pRenderDevice->DrawPath(color, 1, pPath.get(), &m_Matrix);
+    m_pRenderDevice->DrawPath(color, 1, path, &m_Matrix);
 }
 
 CFDE_TTOLine::CFDE_TTOLine() : m_bNewReload(false) {}

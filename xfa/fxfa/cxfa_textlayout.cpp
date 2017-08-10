@@ -14,9 +14,9 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_path.h"
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
@@ -1162,7 +1162,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
   if (bNoUnderline && bNoLineThrough)
     return;
 
-  auto pPath = pdfium::MakeUnique<CFDE_Path>();
+  CFX_PathData path;
   int32_t iChars = GetDisplayPos(pPiece, pCharPos);
   if (iChars > 0) {
     CFX_PointF pt1, pt2;
@@ -1174,7 +1174,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
           pt2.x =
               pt1.x + pCharPos[j].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
           pt1.y = pt2.y = fEndY;
-          pPath->AddLine(pt1, pt2);
+          path.AppendLine(pt1, pt2);
         }
         fEndY += 2.0f;
       }
@@ -1185,7 +1185,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
           pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         pt1.y = pt2.y = fEndY;
-        pPath->AddLine(pt1, pt2);
+        path.AppendLine(pt1, pt2);
         fEndY += 2.0f;
       }
     }
@@ -1195,7 +1195,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
             pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
-      pPath->AddLine(pt1, pt2);
+      path.AppendLine(pt1, pt2);
       fEndY += 2.0f;
     }
   } else {
@@ -1249,18 +1249,18 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
     for (int32_t i = 0; i < pPiece->iUnderline; i++) {
       pt1.y = fEndY;
       pt2.y = fEndY;
-      pPath->AddLine(pt1, pt2);
+      path.AppendLine(pt1, pt2);
       fEndY += 2.0f;
     }
     fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = fEndY;
       pt2.y = fEndY;
-      pPath->AddLine(pt1, pt2);
+      path.AppendLine(pt1, pt2);
       fEndY += 2.0f;
     }
   }
-  pDevice->DrawPath(pPiece->dwColor, 1, pPath.get(), &tmDoc2Device);
+  pDevice->DrawPath(pPiece->dwColor, 1, path, &tmDoc2Device);
 }
 
 int32_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,

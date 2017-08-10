@@ -13,7 +13,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fde/cfde_path.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 class FXTEXT_CHARPOS;

@@ -11,11 +11,11 @@
 #include <utility>
 
 #include "core/fxge/cfx_graphstatedata.h"
+#include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/cfde_path.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
@@ -147,18 +147,13 @@ bool CFDE_RenderDevice::DrawString(FX_ARGB color,
 
 bool CFDE_RenderDevice::DrawPath(FX_ARGB color,
                                  float fPenWidth,
-                                 const CFDE_Path* pPath,
+                                 const CFX_PathData& pPath,
                                  const CFX_Matrix* pMatrix) {
-  CFDE_Path* pGePath = (CFDE_Path*)pPath;
-  if (!pGePath)
-    return false;
-
   CFX_GraphStateData graphState;
   graphState.m_LineCap = CFX_GraphStateData::LineCapButt;
   graphState.m_LineJoin = CFX_GraphStateData::LineJoinMiter;
   graphState.m_LineWidth = fPenWidth;
   graphState.m_MiterLimit = 10;
   graphState.m_DashPhase = 0;
-  return m_pDevice->DrawPath(&pGePath->m_Path, (const CFX_Matrix*)pMatrix,
-                             &graphState, 0, color, 0);
+  return m_pDevice->DrawPath(&pPath, pMatrix, &graphState, 0, color, 0);
 }
