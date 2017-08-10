@@ -539,7 +539,7 @@ class CompareRun(object):
           ComparisonConclusions.GetOutputDict().
     """
     if self.args.machine_readable:
-      print json.dumps(conclusions_dict)
+      print json.dumps(conclusions_dict, ensure_ascii=False)
     else:
       PrintConclusionsDictHumanReadable(
           conclusions_dict, colored=True, key=self.args.case_order)
