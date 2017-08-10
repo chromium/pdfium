@@ -195,11 +195,12 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
       textString.Mid(firstResourceAt, secondResourceAt - firstResourceAt);
   CFX_ByteString lastString =
       textString.Right(textString.GetLength() - secondResourceAt);
-  CFX_ByteString compareString1 = "BT 1 0 0 1 100 100 Tm /";
+  // q and Q must be outside the BT .. ET operations
+  CFX_ByteString compareString1 =
+      "q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
   // Color RGB values used are integers divided by 255.
-  CFX_ByteString compareString2 =
-      " 10 Tf q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
-  CFX_ByteString compareString3 = " gs <48656C6C6F20576F726C64> Tj ET Q\n";
+  CFX_ByteString compareString2 = " gs BT 1 0 0 1 100 100 Tm /";
+  CFX_ByteString compareString3 = " 10 Tf <48656C6C6F20576F726C64> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength() +
                 compareString3.GetLength(),
             textString.GetLength());
@@ -208,13 +209,13 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   EXPECT_EQ(compareString3, lastString.Right(compareString3.GetLength()));
   CPDF_Dictionary* externalGS = TestGetResource(
       &generator, "ExtGState",
-      lastString.Left(lastString.GetLength() - compareString3.GetLength()));
+      midString.Left(midString.GetLength() - compareString2.GetLength()));
   ASSERT_TRUE(externalGS);
   EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
   EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
   CPDF_Dictionary* fontDict = TestGetResource(
       &generator, "Font",
-      midString.Left(midString.GetLength() - compareString2.GetLength()));
+      lastString.Left(lastString.GetLength() - compareString3.GetLength()));
   ASSERT_TRUE(fontDict);
   EXPECT_EQ("Font", fontDict->GetStringFor("Type"));
   EXPECT_EQ("Type1", fontDict->GetStringFor("Subtype"));
@@ -259,9 +260,10 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   CFX_ByteString firstString = textString.Left(firstResourceAt);
   CFX_ByteString lastString =
       textString.Right(textString.GetLength() - firstResourceAt);
-  CFX_ByteString compareString1 = "BT 1 0 0 1 0 0 Tm /";
+  // q and Q must be outside the BT .. ET operations
+  CFX_ByteString compareString1 = "q BT 1 0 0 1 0 0 Tm /";
   CFX_ByteString compareString2 =
-      " 15.5 Tf q <4920616D20696E646972656374> Tj ET Q\n";
+      " 15.5 Tf <4920616D20696E646972656374> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),
             textString.GetLength());
   EXPECT_EQ(compareString1, textString.Left(compareString1.GetLength()));

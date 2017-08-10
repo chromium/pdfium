@@ -352,6 +352,7 @@ void CPDF_PageContentGenerator::ProcessDefaultGraphics(
 // Tj sets the actual text, <####...> is used when specifying charcodes.
 void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
                                             CPDF_TextObject* pTextObj) {
+  ProcessGraphics(buf, pTextObj);
   *buf << "BT " << pTextObj->GetTextMatrix() << " Tm ";
   CPDF_Font* pFont = pTextObj->GetFont();
   if (!pFont)
@@ -391,7 +392,6 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
     if (charcode != CPDF_Font::kInvalidCharCode)
       pFont->AppendChar(&text, charcode);
   }
-  ProcessGraphics(buf, pTextObj);
   *buf << PDF_EncodeString(text, true) << " Tj ET";
   *buf << " Q\n";
 }
