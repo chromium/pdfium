@@ -138,13 +138,12 @@ class CPDF_DataAvail final {
   bool CheckCrossRef(DownloadHints* pHints);
   bool CheckCrossRefItem();
   bool CheckTrailer(DownloadHints* pHints);
-  bool CheckRoot(DownloadHints* pHints);
-  bool CheckInfo(DownloadHints* pHints);
-  bool CheckPages(DownloadHints* pHints);
-  bool CheckPage(DownloadHints* pHints);
+  bool CheckRoot();
+  bool CheckInfo();
+  bool CheckPages();
+  bool CheckPage();
   bool CheckResources();
-  bool CheckAnnots(DownloadHints* pHints);
-  bool CheckAcroForm(DownloadHints* pHints);
+  bool CheckAcroForm();
   bool CheckAcroFormSubObject();
   bool CheckTrailerAppend(DownloadHints* pHints);
   bool CheckPageStatus(DownloadHints* pHints);
@@ -160,7 +159,6 @@ class CPDF_DataAvail final {
       uint32_t objnum,
       CPDF_IndirectObjectHolder* pObjList = nullptr);
   std::unique_ptr<CPDF_Object> GetObject(uint32_t objnum,
-                                         DownloadHints* pHints,
                                          bool* pExistInFile);
   bool GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
   bool PreparePageItem();
@@ -172,20 +170,15 @@ class CPDF_DataAvail final {
 
   DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage);
   bool CheckPage(uint32_t dwPage, DownloadHints* pHints);
-  bool LoadDocPages(DownloadHints* pHints);
-  bool LoadDocPage(uint32_t dwPage, DownloadHints* pHints);
+  bool LoadDocPages();
+  bool LoadDocPage(uint32_t dwPage);
   bool CheckPageNode(const PageNode& pageNode,
                      int32_t iPage,
                      int32_t& iCount,
-                     DownloadHints* pHints,
                      int level);
-  bool CheckUnknownPageNode(uint32_t dwPageNo,
-                            PageNode* pPageNode,
-                            DownloadHints* pHints);
-  bool CheckArrayPageNode(uint32_t dwPageNo,
-                          PageNode* pPageNode,
-                          DownloadHints* pHints);
-  bool CheckPageCount(DownloadHints* pHints);
+  bool CheckUnknownPageNode(uint32_t dwPageNo, PageNode* pPageNode);
+  bool CheckArrayPageNode(uint32_t dwPageNo, PageNode* pPageNode);
+  bool CheckPageCount();
   bool IsFirstCheck(uint32_t dwPage);
   void ResetFirstCheck(uint32_t dwPage);
   bool ValidatePage(uint32_t dwPage);
