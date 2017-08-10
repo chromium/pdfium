@@ -303,7 +303,7 @@ void CXML_Parser::GetAttrValue(CFX_WideString& value) {
         break;
 
       if (ch == '&') {
-        decoder.AppendChar(GetCharRef());
+        decoder.AppendCodePoint(GetCharRef());
         if (IsEOF()) {
           value = decoder.GetResult();
           return;
@@ -459,7 +459,7 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
             iState = 1;
           } else if (ch == '&') {
             decoder.ClearStatus();
-            decoder.AppendChar(GetCharRef());
+            decoder.AppendCodePoint(GetCharRef());
           } else {
             decoder.Input(ch);
           }

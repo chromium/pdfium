@@ -117,7 +117,7 @@ class CFX_UTF8Decoder {
 
   void Clear();
   void Input(uint8_t byte);
-  void AppendChar(uint32_t ch);
+  void AppendCodePoint(uint32_t ch);
   void ClearStatus() { m_PendingBytes = 0; }
   CFX_WideStringC GetResult() const { return m_Buffer.AsStringC(); }
 
