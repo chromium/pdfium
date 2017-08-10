@@ -17,6 +17,10 @@ class GitHelper(object):
     """Checks out a branch."""
     subprocess.check_output(['git', 'checkout', branch])
 
+  def FetchOriginMaster(self):
+    """Fetches new changes on origin/master."""
+    subprocess.check_output(['git', 'fetch', 'origin', 'master'])
+
   def StashPush(self):
     """Stashes uncommitted changes."""
     output = subprocess.check_output(['git', 'stash', '--include-untracked'])
@@ -36,6 +40,14 @@ class GitHelper(object):
     """Returns a string with the current branch name."""
     return subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
+
+  def GetCurrentBranchHash(self):
+    return subprocess.check_output(
+        ['git', 'rev-parse', 'HEAD']).strip()
+
+  def IsCurrentBranchClean(self):
+    output = subprocess.check_output(['git', 'status', '--porcelain'])
+    return not output
 
   def BranchExists(self, branch_name):
     """Return whether a branch with the given name exists."""
