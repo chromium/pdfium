@@ -1070,6 +1070,11 @@ static_library("fxge") {
   ]
 
   defines = [ "DEFINE_PS_TABLES" ]
+  if (is_component_build) {
+    # ft_adobe_glyph_list is not exported from the Freetype shared library so we
+    # need it defined in component builds.
+    defines += [ "DEFINE_PS_TABLES_DATA" ]
+  }
 
   if (pdf_enable_xfa) {
     sources += [
