@@ -56,11 +56,11 @@ bool GetBoundingBox(CPDF_Page* page,
 
 }  // namespace
 
-DLLEXPORT void STDCALL FPDFPage_SetMediaBox(FPDF_PAGE page,
-                                            float left,
-                                            float bottom,
-                                            float right,
-                                            float top) {
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetMediaBox(FPDF_PAGE page,
+                                                    float left,
+                                                    float bottom,
+                                                    float right,
+                                                    float top) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
@@ -68,11 +68,11 @@ DLLEXPORT void STDCALL FPDFPage_SetMediaBox(FPDF_PAGE page,
   SetBoundingBox(pPage, "MediaBox", left, bottom, right, top);
 }
 
-DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page,
-                                           float left,
-                                           float bottom,
-                                           float right,
-                                           float top) {
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
+                                                   float left,
+                                                   float bottom,
+                                                   float right,
+                                                   float top) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
@@ -80,27 +80,28 @@ DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page,
   SetBoundingBox(pPage, "CropBox", left, bottom, right, top);
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page,
-                                                 float* left,
-                                                 float* bottom,
-                                                 float* right,
-                                                 float* top) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetMediaBox(FPDF_PAGE page,
+                                                         float* left,
+                                                         float* bottom,
+                                                         float* right,
+                                                         float* top) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   return pPage && GetBoundingBox(pPage, "MediaBox", left, bottom, right, top);
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page,
-                                                float* left,
-                                                float* bottom,
-                                                float* right,
-                                                float* top) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
+                                                        float* left,
+                                                        float* bottom,
+                                                        float* right,
+                                                        float* top) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   return pPage && GetBoundingBox(pPage, "CropBox", left, bottom, right, top);
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
-                                                       FS_MATRIX* matrix,
-                                                       FS_RECTF* clipRect) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_TransFormWithClip(FPDF_PAGE page,
+                           FS_MATRIX* matrix,
+                           FS_RECTF* clipRect) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return false;
@@ -197,7 +198,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   return true;
 }
 
-DLLEXPORT void STDCALL
+FPDF_EXPORT void FPDF_CALLCONV
 FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
                               double a,
                               double b,
@@ -217,10 +218,10 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
   pPageObj->TransformGeneralState(matrix);
 }
 
-DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
-                                                    float bottom,
-                                                    float right,
-                                                    float top) {
+FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV FPDF_CreateClipPath(float left,
+                                                            float bottom,
+                                                            float right,
+                                                            float top) {
   CPDF_Path Path;
   Path.AppendRect(left, bottom, right, top);
 
@@ -229,7 +230,7 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
   return pNewClipPath.release();  // Caller takes ownership.
 }
 
-DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
+FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
   // Take ownership back from caller and destroy.
   std::unique_ptr<CPDF_ClipPath>(static_cast<CPDF_ClipPath*>(clipPath));
 }
@@ -271,8 +272,8 @@ void OutputPath(std::ostringstream& buf, CPDF_Path path) {
   }
 }
 
-DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
-                                               FPDF_CLIPPATH clipPath) {
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
+                                                       FPDF_CLIPPATH clipPath) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
