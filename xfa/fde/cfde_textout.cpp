@@ -36,8 +36,6 @@ CFDE_TextOut::CFDE_TextOut()
       m_TxtColor(0xFF000000),
       m_dwStyles(0),
       m_dwTxtBkStyles(0),
-      m_bElliChanged(false),
-      m_iEllipsisWidth(0),
       m_ttoLines(5),
       m_iCurLine(0),
       m_iCurPiece(0),
@@ -77,11 +75,6 @@ void CFDE_TextOut::SetStyles(uint32_t dwStyles) {
 void CFDE_TextOut::SetTabWidth(float fTabWidth) {
   ASSERT(fTabWidth > 1.0f);
   m_pTxtBreak->SetTabWidth(fTabWidth);
-}
-
-void CFDE_TextOut::SetEllipsisString(const CFX_WideString& wsEllipsis) {
-  m_bElliChanged = true;
-  m_wsEllipsis = wsEllipsis;
 }
 
 void CFDE_TextOut::SetParagraphBreakChar(wchar_t wch) {
@@ -179,7 +172,6 @@ void CFDE_TextOut::CalcTextSize(const wchar_t* pwsStr,
   SetLineWidth(rect);
   m_iTotalLines = 0;
   const wchar_t* pStr = pwsStr;
-  bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
   float fWidth = 0.0f;
   float fHeight = 0.0f;
   float fStartPos = rect.right();
@@ -192,10 +184,6 @@ void CFDE_TextOut::CalcTextSize(const wchar_t* pwsStr,
     if (wBreak == 0 && (wch == L'\n' || wch == L'\r')) {
       wBreak = wch;
       m_pTxtBreak->SetParagraphBreakChar(wch);
-    }
-    if (bHotKey && wch == L'&' && wPreChar != L'&') {
-      wPreChar = wch;
-      continue;
     }
     dwBreakStatus = m_pTxtBreak->AppendChar(wch);
     if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
@@ -328,74 +316,9 @@ void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
   m_ttoLines.clear();
   m_wsText.clear();
   LoadText(pwsStr, iLength, rect);
-  if (m_dwStyles & FDE_TTOSTYLE_Ellipsis) {
-    ReplaceWidthEllipsis();
-  }
   Reload(rect);
   DoAlignment(rect);
   OnDraw(rtClip);
-}
-
-void CFDE_TextOut::ExpandBuffer(int32_t iSize, int32_t iType) {
-  ASSERT(iSize >= 0);
-  size_t size = iSize;
-  switch (iType) {
-    case 0:
-      if (m_CharWidths.size() < size)
-        m_CharWidths.resize(size, 0);
-      break;
-    case 1:
-      if (m_EllCharWidths.size() < size)
-        m_EllCharWidths.resize(size, 0);
-      break;
-    case 2:
-      if (m_CharPos.size() < size)
-        m_CharPos.resize(size, FXTEXT_CHARPOS());
-      break;
-  }
-}
-
-void CFDE_TextOut::LoadEllipsis() {
-  if (!m_bElliChanged) {
-    return;
-  }
-  m_bElliChanged = false;
-  m_iEllipsisWidth = 0;
-  int32_t iLength = m_wsEllipsis.GetLength();
-  if (iLength < 1) {
-    return;
-  }
-  ExpandBuffer(iLength, 1);
-  const wchar_t* pStr = m_wsEllipsis.c_str();
-  CFX_BreakType dwBreakStatus;
-  wchar_t wch;
-  while (iLength-- > 0) {
-    wch = *pStr++;
-    dwBreakStatus = m_pTxtBreak->AppendChar(wch);
-    if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-      RetrieveEllPieces(&m_EllCharWidths);
-  }
-  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
-  if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-    RetrieveEllPieces(&m_EllCharWidths);
-
-  m_pTxtBreak->Reset();
-}
-
-void CFDE_TextOut::RetrieveEllPieces(std::vector<int32_t>* pCharWidths) {
-  int32_t iCount = m_pTxtBreak->CountBreakPieces();
-  int32_t iCharIndex = 0;
-  for (int32_t i = 0; i < iCount; i++) {
-    const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
-    int32_t iPieceChars = pPiece->GetLength();
-    for (int32_t j = 0; j < iPieceChars; j++) {
-      (*pCharWidths)[iCharIndex] =
-          std::max(pPiece->GetChar(j)->m_iCharWidth, 0);
-      m_iEllipsisWidth += (*pCharWidths)[iCharIndex];
-      iCharIndex++;
-    }
-  }
-  m_pTxtBreak->ClearBreakPieces();
 }
 
 void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
@@ -403,13 +326,15 @@ void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
                             const CFX_RectF& rect) {
   wchar_t* pStr = m_wsText.GetBuffer(iLength);
   int32_t iTxtLength = iLength;
-  ExpandBuffer(iTxtLength, 0);
-  bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
+
+  ASSERT(iTxtLength >= 0);
+  if (pdfium::CollectionSize<int32_t>(m_CharWidths) < iTxtLength)
+    m_CharWidths.resize(iTxtLength, 0);
+
   bool bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   float fLineStop = rect.bottom();
   m_fLinePos = rect.top;
-  m_HotKeys.clear();
   int32_t iStartChar = 0;
   int32_t iChars = 0;
   int32_t iPieceWidths = 0;
@@ -418,11 +343,6 @@ void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
   bool bRet = false;
   while (iTxtLength-- > 0) {
     wch = *pwsStr++;
-    if (bHotKey && wch == L'&' && *(pStr - 1) != L'&') {
-      if (iTxtLength > 0)
-        m_HotKeys.push_back(iChars);
-      continue;
-    }
     *pStr++ = wch;
     iChars++;
     dwBreakStatus = m_pTxtBreak->AppendChar(wch);
@@ -534,47 +454,6 @@ void CFDE_TextOut::AppendPiece(const FDE_TTOPIECE& ttoPiece,
     m_iCurPiece = 0;
 }
 
-void CFDE_TextOut::ReplaceWidthEllipsis() {
-  LoadEllipsis();
-  int32_t iLength = m_wsEllipsis.GetLength();
-  if (iLength < 1)
-    return;
-
-  for (auto& line : m_ttoLines) {
-    if (!line.GetNewReload())
-      continue;
-
-    int32_t iEllipsisCharIndex = iLength - 1;
-    int32_t iCharWidth = 0;
-    int32_t iCharCount = 0;
-    int32_t iPiece = line.GetSize();
-    while (iPiece-- > 0) {
-      FDE_TTOPIECE* pPiece = line.GetPtrAt(iPiece);
-      if (!pPiece)
-        break;
-
-      for (int32_t j = pPiece->iChars - 1; j >= 0; j--) {
-        if (iEllipsisCharIndex < 0)
-          break;
-
-        int32_t index = pPiece->iStartChar + j;
-        iCharWidth += m_CharWidths[index];
-        iCharCount++;
-        if (iCharCount <= iLength) {
-          m_wsText.SetAt(index, m_wsEllipsis.GetAt(iEllipsisCharIndex));
-          m_CharWidths[index] = m_EllCharWidths[iEllipsisCharIndex];
-        } else if (iCharWidth <= m_iEllipsisWidth) {
-          m_wsText.SetAt(index, 0);
-          m_CharWidths[index] = 0;
-        }
-        iEllipsisCharIndex--;
-      }
-      if (iEllipsisCharIndex < 0)
-        break;
-    }
-  }
-}
-
 void CFDE_TextOut::Reload(const CFX_RectF& rect) {
   int i = 0;
   for (auto& line : m_ttoLines) {
@@ -665,7 +544,6 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
         m_pRenderDevice->DrawString(m_TxtColor, m_pFont, m_CharPos.data(),
                                     iCount, m_fFontSize, &m_Matrix);
       }
-      DrawLine(pPiece, m_TxtColor);
     }
   }
   m_pRenderDevice->RestoreState();
@@ -673,7 +551,9 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
 
 int32_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
   FX_TXTRUN tr = ToTextRun(pPiece);
-  ExpandBuffer(tr.iLength, 2);
+  ASSERT(tr.iLength >= 0);
+  if (pdfium::CollectionSize<int32_t>(m_CharPos) < tr.iLength)
+    m_CharPos.resize(tr.iLength, FXTEXT_CHARPOS());
   return m_pTxtBreak->GetDisplayPos(&tr, m_CharPos.data());
 }
 
@@ -695,53 +575,6 @@ FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
   tr.wLineBreakChar = m_wParagraphBkChar;
   tr.pRect = &pPiece->rtPiece;
   return tr;
-}
-
-void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, FX_ARGB color) {
-  bool bUnderLine = !!(m_dwStyles & FDE_TTOSTYLE_Underline);
-  bool bStrikeOut = !!(m_dwStyles & FDE_TTOSTYLE_Strikeout);
-  bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
-  if (!bUnderLine && !bStrikeOut && !bHotKey)
-    return;
-
-  CFX_PathData path;
-  int32_t iLineCount = 0;
-  CFX_RectF rtText = pPiece->rtPiece;
-  CFX_PointF pt1, pt2;
-  if (bUnderLine) {
-    pt1.x = rtText.left;
-    pt1.y = rtText.bottom();
-    pt2.x = rtText.right();
-    pt2.y = rtText.bottom();
-    path.AppendLine(pt1, pt2);
-    iLineCount++;
-  }
-  if (bStrikeOut) {
-    pt1.x = rtText.left;
-    pt1.y = rtText.bottom() - rtText.height * 2.0f / 5.0f;
-    pt2.x = rtText.right();
-    pt2.y = pt1.y;
-    path.AppendLine(pt1, pt2);
-    iLineCount++;
-  }
-  if (bHotKey) {
-    if (GetCharRects(pPiece) > 0) {
-      for (int32_t iCharIndex : m_HotKeys) {
-        if (iCharIndex >= pPiece->iStartChar &&
-            iCharIndex < pPiece->iStartChar + pPiece->iChars) {
-          CFX_RectF rect = m_rectArray[iCharIndex - pPiece->iStartChar];
-          pt1.x = rect.left;
-          pt1.y = rect.bottom();
-          pt2.x = rect.right();
-          pt2.y = rect.bottom();
-          path.AppendLine(pt1, pt2);
-          iLineCount++;
-        }
-      }
-    }
-  }
-  if (iLineCount > 0)
-    m_pRenderDevice->DrawPath(color, 1, path, &m_Matrix);
 }
 
 CFDE_TTOLine::CFDE_TTOLine() : m_bNewReload(false) {}

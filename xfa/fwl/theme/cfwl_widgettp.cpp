@@ -89,7 +89,6 @@ void CFWL_WidgetTP::InitTTO() {
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
-  m_pTextOut->SetEllipsisString(L"...");
 }
 
 void CFWL_WidgetTP::FinalizeTTO() {
