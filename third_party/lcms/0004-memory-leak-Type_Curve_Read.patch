@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmstypes.c b/third_party/lcms2-2.6/src/cmstypes.c
+diff --git a/third_party/lcms/src/cmstypes.c b/third_party/lcms/src/cmstypes.c
 index 06742b5..9fe5e2a 100644
---- a/third_party/lcms2-2.6/src/cmstypes.c
-+++ b/third_party/lcms2-2.6/src/cmstypes.c
+--- a/third_party/lcms/src/cmstypes.c
++++ b/third_party/lcms/src/cmstypes.c
 @@ -1112,7 +1112,10 @@ void *Type_Curve_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cm
                 NewGamma = cmsBuildTabulatedToneCurve16(self ->ContextID, Count, NULL);
                 if (!NewGamma) return NULL;

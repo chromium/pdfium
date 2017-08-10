@@ -1,5 +1,5 @@
 include_rules = [
-  '+third_party/lcms2-2.6',
+  '+third_party/lcms',
   '+third_party/libjpeg/jpeglib.h',
   # For non-standalone builds that may use libjpeg_turbo.
   '+third_party/libjpeg_turbo/jpeglib.h',

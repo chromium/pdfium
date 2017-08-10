@@ -17,7 +17,7 @@
 #if defined(USE_SYSTEM_LCMS2)
 #include <lcms2.h>
 #else
-#include "third_party/lcms2-2.6/include/lcms2.h"
+#include "third_party/lcms/include/lcms2.h"
 #endif
 
 class CLcmsCmm {

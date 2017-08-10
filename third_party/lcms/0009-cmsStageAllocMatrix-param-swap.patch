@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmslut.c b/third_party/lcms2-2.6/src/cmslut.c
+diff --git a/third_party/lcms/src/cmslut.c b/third_party/lcms/src/cmslut.c
 index 73e6726..9b0eb4b 100644
---- a/third_party/lcms2-2.6/src/cmslut.c
-+++ b/third_party/lcms2-2.6/src/cmslut.c
+--- a/third_party/lcms/src/cmslut.c
++++ b/third_party/lcms/src/cmslut.c
 @@ -414,13 +414,13 @@ cmsStage*  CMSEXPORT cmsStageAllocMatrix(cmsContext ContextID, cmsUInt32Number R
  
      if (Offset != NULL) {

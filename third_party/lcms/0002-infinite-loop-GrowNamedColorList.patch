@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmsnamed.c b/third_party/lcms2-2.6/src/cmsnamed.c
+diff --git a/third_party/lcms/src/cmsnamed.c b/third_party/lcms/src/cmsnamed.c
 index acfd1c8..ef1eb30 100644
---- a/third_party/lcms2-2.6/src/cmsnamed.c
-+++ b/third_party/lcms2-2.6/src/cmsnamed.c
+--- a/third_party/lcms/src/cmsnamed.c
++++ b/third_party/lcms/src/cmsnamed.c
 @@ -514,8 +514,12 @@ cmsNAMEDCOLORLIST* CMSEXPORT cmsAllocNamedColorList(cmsContext ContextID, cmsUIn
      v ->nColors   = 0;
      v ->ContextID  = ContextID;

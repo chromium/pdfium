@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmscgats.c b/third_party/lcms2-2.6/src/cmscgats.c
+diff --git a/third_party/lcms/src/cmscgats.c b/third_party/lcms/src/cmscgats.c
 index 5720c66a7..cce4cedba 100644
---- a/third_party/lcms2-2.6/src/cmscgats.c
-+++ b/third_party/lcms2-2.6/src/cmscgats.c
+--- a/third_party/lcms/src/cmscgats.c
++++ b/third_party/lcms/src/cmscgats.c
 @@ -150,23 +150,24 @@ typedef struct {
          SUBALLOCATOR   Allocator;             // String suballocator -- just to keep it fast
  
@@ -64,10 +64,10 @@ index 5720c66a7..cce4cedba 100644
                          ReadReal(it8, it8->inum);
                          it8->sy = SDNUM;
                          it8->dnum *= sign;
-diff --git a/third_party/lcms2-2.6/src/cmstypes.c b/third_party/lcms2-2.6/src/cmstypes.c
+diff --git a/third_party/lcms/src/cmstypes.c b/third_party/lcms/src/cmstypes.c
 index 0256e247b..75f1fae32 100644
---- a/third_party/lcms2-2.6/src/cmstypes.c
-+++ b/third_party/lcms2-2.6/src/cmstypes.c
+--- a/third_party/lcms/src/cmstypes.c
++++ b/third_party/lcms/src/cmstypes.c
 @@ -4199,9 +4199,13 @@ void *Type_MPEmatrix_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io
      if (!_cmsReadUInt16Number(io, &OutputChans)) return NULL;
  

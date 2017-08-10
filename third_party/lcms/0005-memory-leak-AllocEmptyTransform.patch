@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmsxform.c b/third_party/lcms2-2.6/src/cmsxform.c
+diff --git a/third_party/lcms/src/cmsxform.c b/third_party/lcms/src/cmsxform.c
 index eddb9bd..6466d27 100644
---- a/third_party/lcms2-2.6/src/cmsxform.c
-+++ b/third_party/lcms2-2.6/src/cmsxform.c
+--- a/third_party/lcms/src/cmsxform.c
++++ b/third_party/lcms/src/cmsxform.c
 @@ -593,7 +593,10 @@ _cmsTRANSFORM* AllocEmptyTransform(cmsContext ContextID, cmsPipeline* lut,
  
      // Allocate needed memory

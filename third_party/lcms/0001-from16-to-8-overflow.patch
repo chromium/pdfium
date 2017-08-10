@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/lcms2_internal.h b/third_party/lcms2-2.6/src/lcms2_internal.h
+diff --git a/third_party/lcms/src/lcms2_internal.h b/third_party/lcms/src/lcms2_internal.h
 index 8617e92..cc76d48 100644
---- a/third_party/lcms2-2.6/src/lcms2_internal.h
-+++ b/third_party/lcms2-2.6/src/lcms2_internal.h
+--- a/third_party/lcms/src/lcms2_internal.h
++++ b/third_party/lcms/src/lcms2_internal.h
 @@ -94,7 +94,7 @@
  
  // A fast way to convert from/to 16 <-> 8 bits

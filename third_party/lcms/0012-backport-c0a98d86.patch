@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmsintrp.c b/third_party/lcms2-2.6/src/cmsintrp.c
+diff --git a/third_party/lcms/src/cmsintrp.c b/third_party/lcms/src/cmsintrp.c
 index 5d5f35d..14c6856 100644
---- a/third_party/lcms2-2.6/src/cmsintrp.c
-+++ b/third_party/lcms2-2.6/src/cmsintrp.c
+--- a/third_party/lcms/src/cmsintrp.c
++++ b/third_party/lcms/src/cmsintrp.c
 @@ -215,7 +215,7 @@ void LinLerp1D(register const cmsUInt16Number Value[],
  // To prevent out of bounds indexing
  cmsINLINE cmsFloat32Number fclamp(cmsFloat32Number v) 
@@ -11,10 +11,10 @@ index 5d5f35d..14c6856 100644
  }
  
  // Floating-point version of 1D interpolation
-diff --git a/third_party/lcms2-2.6/src/cmsio0.c b/third_party/lcms2-2.6/src/cmsio0.c
+diff --git a/third_party/lcms/src/cmsio0.c b/third_party/lcms/src/cmsio0.c
 index 5f9f08a..3ed730a 100644
---- a/third_party/lcms2-2.6/src/cmsio0.c
-+++ b/third_party/lcms2-2.6/src/cmsio0.c
+--- a/third_party/lcms/src/cmsio0.c
++++ b/third_party/lcms/src/cmsio0.c
 @@ -1475,6 +1475,17 @@ void* CMSEXPORT cmsReadTag(cmsHPROFILE hProfile, cmsTagSignature sig)
      // If the element is already in memory, return the pointer
      if (Icc -> TagPtrs[n]) {
@@ -33,10 +33,10 @@ index 5f9f08a..3ed730a 100644
          if (Icc ->TagSaveAsRaw[n]) goto Error;  // We don't support read raw tags as cooked
  
          _cmsUnlockMutex(Icc->ContextID, Icc ->UsrMutex);
-diff --git a/third_party/lcms2-2.6/src/cmstypes.c b/third_party/lcms2-2.6/src/cmstypes.c
+diff --git a/third_party/lcms/src/cmstypes.c b/third_party/lcms/src/cmstypes.c
 index 04dd0c4..386439b 100644
---- a/third_party/lcms2-2.6/src/cmstypes.c
-+++ b/third_party/lcms2-2.6/src/cmstypes.c
+--- a/third_party/lcms/src/cmstypes.c
++++ b/third_party/lcms/src/cmstypes.c
 @@ -4297,8 +4297,12 @@ void *Type_MPEclut_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io,
  
      // Copy MAX_INPUT_DIMENSIONS at most. Expand to cmsUInt32Number

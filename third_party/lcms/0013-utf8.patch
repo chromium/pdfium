@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmscgats.c b/third_party/lcms2-2.6/src/cmscgats.c
+diff --git a/third_party/lcms/src/cmscgats.c b/third_party/lcms/src/cmscgats.c
 index 9017435..5720c66 100644
---- a/third_party/lcms2-2.6/src/cmscgats.c
-+++ b/third_party/lcms2-2.6/src/cmscgats.c
+--- a/third_party/lcms/src/cmscgats.c
++++ b/third_party/lcms/src/cmscgats.c
 @@ -258,7 +258,7 @@ static PROPERTY PredefinedProperties[] = {
                                 // needed.
  
@@ -20,10 +20,10 @@ index 9017435..5720c66 100644
  
         {"WEIGHTING_FUNCTION", WRITE_PAIR},   // Indicates such functions as: the CIE standard observer functions used in the
                                 // calculation of various data parameters (2 degree and 10 degree), CIE standard
-diff --git a/third_party/lcms2-2.6/src/cmstypes.c b/third_party/lcms2-2.6/src/cmstypes.c
+diff --git a/third_party/lcms/src/cmstypes.c b/third_party/lcms/src/cmstypes.c
 index 386439b..e5ed06c 100644
---- a/third_party/lcms2-2.6/src/cmstypes.c
-+++ b/third_party/lcms2-2.6/src/cmstypes.c
+--- a/third_party/lcms/src/cmstypes.c
++++ b/third_party/lcms/src/cmstypes.c
 @@ -962,7 +962,7 @@ cmsBool  Type_Text_Description_Write(struct _cms_typehandler_struct* self, cmsIO
      len = cmsMLUgetASCII(mlu, cmsNoLanguage, cmsNoCountry, NULL, 0);
  
@@ -66,10 +66,10 @@ index 386439b..e5ed06c 100644
  // first and last curve segments shall be specified in terms of a formula, whereas the other segments shall be
  // specified either in terms of a formula, or by a sampled curve.
  
-diff --git a/third_party/lcms2-2.6/src/cmsvirt.c b/third_party/lcms2-2.6/src/cmsvirt.c
+diff --git a/third_party/lcms/src/cmsvirt.c b/third_party/lcms/src/cmsvirt.c
 index b324c99..d19ace1 100644
---- a/third_party/lcms2-2.6/src/cmsvirt.c
-+++ b/third_party/lcms2-2.6/src/cmsvirt.c
+--- a/third_party/lcms/src/cmsvirt.c
++++ b/third_party/lcms/src/cmsvirt.c
 @@ -612,18 +612,18 @@ cmsHPROFILE CMSEXPORT cmsCreateXYZProfile(void)
  
  //sRGB Curves are defined by:

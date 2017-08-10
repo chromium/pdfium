@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmsopt.c b/third_party/lcms2-2.6/src/cmsopt.c
+diff --git a/third_party/lcms/src/cmsopt.c b/third_party/lcms/src/cmsopt.c
 index f885ef3..684910d 100644
---- a/third_party/lcms2-2.6/src/cmsopt.c
-+++ b/third_party/lcms2-2.6/src/cmsopt.c
+--- a/third_party/lcms/src/cmsopt.c
++++ b/third_party/lcms/src/cmsopt.c
 @@ -612,7 +612,7 @@ cmsBool OptimizeByResampling(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
  
      // Allocate the CLUT

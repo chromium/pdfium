@@ -1,7 +1,7 @@
-diff --git a/third_party/lcms2-2.6/src/cmsopt.c b/third_party/lcms2-2.6/src/cmsopt.c
+diff --git a/third_party/lcms/src/cmsopt.c b/third_party/lcms/src/cmsopt.c
 index 684910d..76de015 100644
---- a/third_party/lcms2-2.6/src/cmsopt.c
-+++ b/third_party/lcms2-2.6/src/cmsopt.c
+--- a/third_party/lcms/src/cmsopt.c
++++ b/third_party/lcms/src/cmsopt.c
 @@ -1443,7 +1443,7 @@ void MatShaperEval16(register const cmsUInt16Number In[],
  
  // This table converts from 8 bits to 1.14 after applying the curve
