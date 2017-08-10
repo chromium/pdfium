@@ -37,7 +37,7 @@ bool FPDF_UnSupportError(int nError) {
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+DLLEXPORT FPDF_BOOL STDCALL
 FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
   if (!unsp_info || unsp_info->version != 1)
     return false;
@@ -169,7 +169,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
 #endif  // PDF_ENABLE_XFA
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
+DLLEXPORT int STDCALL FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return PAGEMODE_UNKNOWN;

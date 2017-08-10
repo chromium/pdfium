@@ -95,7 +95,7 @@ void CalcBoundingBox(CPDF_PageObject* pPageObj) {
 
 }  // namespace
 
-FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
+DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   auto pDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
   pDoc->CreateNewDoc();
 
@@ -123,16 +123,15 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
   return FPDFDocumentFromCPDFDocument(pDoc.release());
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
-                                               int page_index) {
+DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index) {
   if (UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document))
     pDoc->DeletePage(page_index);
 }
 
-FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
-                                                 int page_index,
-                                                 double width,
-                                                 double height) {
+DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
+                                         int page_index,
+                                         double width,
+                                         double height) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
@@ -162,13 +161,13 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
 #endif  // PDF_ENABLE_XFA
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetRotation(FPDF_PAGE page) {
+DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   return IsPageObject(pPage) ? pPage->GetPageRotation() : -1;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertObject(FPDF_PAGE page,
-                                                     FPDF_PAGEOBJECT page_obj) {
+DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
+                                             FPDF_PAGEOBJECT page_obj) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_obj);
   if (!pPageObj)
     return;
@@ -182,31 +181,31 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertObject(FPDF_PAGE page,
   CalcBoundingBox(pPageObj);
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFPage_CountObject(FPDF_PAGE page) {
+DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))
     return -1;
   return pdfium::CollectionSize<int>(*pPage->GetPageObjectList());
 }
 
-FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPage_GetObject(FPDF_PAGE page,
-                                                             int index) {
+DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page,
+                                                     int index) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))
     return nullptr;
   return pPage->GetPageObjectList()->GetPageObjectByIndex(index);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_HasTransparency(FPDF_PAGE page) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   return pPage && pPage->BackgroundAlphaNeeded();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_obj) {
+DLLEXPORT void STDCALL FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_obj) {
   delete CPDFPageObjectFromFPDFPageObject(page_obj);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+DLLEXPORT FPDF_BOOL STDCALL
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
     return false;
@@ -240,7 +239,7 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   return false;
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject) {
+DLLEXPORT int STDCALL FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
     return FPDF_PAGEOBJ_UNKNOWN;
 
@@ -248,7 +247,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject) {
   return pPageObj->GetType();
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GenerateContent(FPDF_PAGE page) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))
     return false;
@@ -258,14 +257,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GenerateContent(FPDF_PAGE page) {
   return true;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
-FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
-                      double a,
-                      double b,
-                      double c,
-                      double d,
-                      double e,
-                      double f) {
+DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
+                                             double a,
+                                             double b,
+                                             double c,
+                                             double d,
+                                             double e,
+                                             double f) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return;
@@ -274,9 +272,8 @@ FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
   pPageObj->Transform(matrix);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
-FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
-                         FPDF_BYTESTRING blend_mode) {
+DLLEXPORT void STDCALL FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
+                                                FPDF_BYTESTRING blend_mode) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return;
@@ -285,13 +282,13 @@ FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
   pPageObj->SetDirty(true);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
-                                                        double a,
-                                                        double b,
-                                                        double c,
-                                                        double d,
-                                                        double e,
-                                                        double f) {
+DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
+                                                double a,
+                                                double b,
+                                                double c,
+                                                double d,
+                                                double e,
+                                                double f) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
@@ -320,8 +317,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
   }
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page,
-                                                    int rotate) {
+DLLEXPORT void STDCALL FPDFPage_SetRotation(FPDF_PAGE page, int rotate) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))
     return;
@@ -347,12 +343,11 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
-                      float* left,
-                      float* bottom,
-                      float* right,
-                      float* top) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
+                                                  float* left,
+                                                  float* bottom,
+                                                  float* right,
+                                                  float* top) {
   if (!pageObject)
     return false;
 

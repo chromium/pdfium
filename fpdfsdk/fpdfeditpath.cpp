@@ -26,30 +26,28 @@ static_assert(CFX_GraphStateData::LineJoinRound == FPDF_LINEJOIN_ROUND,
 static_assert(CFX_GraphStateData::LineJoinBevel == FPDF_LINEJOIN_BEVEL,
               "CFX_GraphStateData::LineJoinBevel value mismatch");
 
-FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewPath(float x,
-                                                                    float y) {
+DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewPath(float x, float y) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
   pPathObj->DefaultStates();
   return pPathObj.release();  // Caller takes ownership.
 }
 
-FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewRect(float x,
-                                                                    float y,
-                                                                    float w,
-                                                                    float h) {
+DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewRect(float x,
+                                                            float y,
+                                                            float w,
+                                                            float h) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendRect(x, y, x + w, y + h);
   pPathObj->DefaultStates();
   return pPathObj.release();  // Caller takes ownership.
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
-                        unsigned int R,
-                        unsigned int G,
-                        unsigned int B,
-                        unsigned int A) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
+                                                    unsigned int R,
+                                                    unsigned int G,
+                                                    unsigned int B,
+                                                    unsigned int A) {
   if (!path || R > 255 || G > 255 || B > 255 || A > 255)
     return false;
 
@@ -62,12 +60,11 @@ FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
-                        unsigned int* R,
-                        unsigned int* G,
-                        unsigned int* B,
-                        unsigned int* A) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
+                                                    unsigned int* R,
+                                                    unsigned int* G,
+                                                    unsigned int* B,
+                                                    unsigned int* A) {
   if (!path || !R || !G || !B || !A)
     return false;
 
@@ -81,8 +78,8 @@ FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path,
+                                                    float width) {
   if (!path || width < 0.0f)
     return false;
 
@@ -92,19 +89,19 @@ FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width) {
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
-                                                          unsigned int R,
-                                                          unsigned int G,
-                                                          unsigned int B,
-                                                          unsigned int A) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
+                                                  unsigned int R,
+                                                  unsigned int G,
+                                                  unsigned int B,
+                                                  unsigned int A) {
   return FPDFPageObj_SetFillColor(path, R, G, B, A);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
-                                                          unsigned int* R,
-                                                          unsigned int* G,
-                                                          unsigned int* B,
-                                                          unsigned int* A) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
+                                                  unsigned int* R,
+                                                  unsigned int* G,
+                                                  unsigned int* B,
+                                                  unsigned int* A) {
   if (!path || !R || !G || !B || !A)
     return false;
 
@@ -118,9 +115,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
-                                                    float x,
-                                                    float y) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
+                                            float x,
+                                            float y) {
   if (!path)
     return false;
 
@@ -130,9 +127,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_LineTo(FPDF_PAGEOBJECT path,
-                                                    float x,
-                                                    float y) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_LineTo(FPDF_PAGEOBJECT path,
+                                            float x,
+                                            float y) {
   if (!path)
     return false;
 
@@ -142,13 +139,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_LineTo(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
-                                                      float x1,
-                                                      float y1,
-                                                      float x2,
-                                                      float y2,
-                                                      float x3,
-                                                      float y3) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
+                                              float x1,
+                                              float y1,
+                                              float x2,
+                                              float y2,
+                                              float x3,
+                                              float y3) {
   if (!path)
     return false;
 
@@ -160,7 +157,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_Close(FPDF_PAGEOBJECT path) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_Close(FPDF_PAGEOBJECT path) {
   if (!path)
     return false;
 
@@ -173,9 +170,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_Close(FPDF_PAGEOBJECT path) {
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
-                                                         int fillmode,
-                                                         FPDF_BOOL stroke) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
+                                                 int fillmode,
+                                                 FPDF_BOOL stroke) {
   if (!path)
     return false;
 
@@ -192,8 +189,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineJoin(FPDF_PAGEOBJECT path,
-                                                    int line_join) {
+DLLEXPORT void STDCALL FPDFPath_SetLineJoin(FPDF_PAGEOBJECT path,
+                                            int line_join) {
   if (!path)
     return;
   if (line_join <
@@ -209,8 +206,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineJoin(FPDF_PAGEOBJECT path,
   pPathObj->SetDirty(true);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineCap(FPDF_PAGEOBJECT path,
-                                                   int line_cap) {
+DLLEXPORT void STDCALL FPDFPath_SetLineCap(FPDF_PAGEOBJECT path, int line_cap) {
   if (!path)
     return;
   if (line_cap < static_cast<int>(CFX_GraphStateData::LineCap::LineCapButt) ||

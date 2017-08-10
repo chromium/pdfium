@@ -35,7 +35,7 @@ extern "C" {
 //
 // Currently, all failures return |FLATTEN_FAIL| with no indication of the
 // cause.
-FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag);
+DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag);
 
 #ifdef __cplusplus
 }  // extern "C"

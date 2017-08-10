@@ -45,8 +45,7 @@ CFX_ByteString GenerateMD5Base16(const void* contents,
 
 }  // namespace
 
-FPDF_EXPORT int FPDF_CALLCONV
-FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document) {
+DLLEXPORT int STDCALL FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
@@ -54,8 +53,8 @@ FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document) {
   return CPDF_NameTree(pDoc, "EmbeddedFiles").GetCount();
 }
 
-FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
-FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
+DLLEXPORT FPDF_ATTACHMENT STDCALL FPDFDoc_AddAttachment(FPDF_DOCUMENT document,
+                                                        FPDF_WIDESTRING name) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   CFX_WideString wsName =
       CFX_WideString::FromUTF16LE(name, CFX_WideString::WStringLength(name));
@@ -98,8 +97,8 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   return pFile;
 }
 
-FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
-FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
+DLLEXPORT FPDF_ATTACHMENT STDCALL FPDFDoc_GetAttachment(FPDF_DOCUMENT document,
+                                                        int index) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc || index < 0)
     return nullptr;
@@ -112,8 +111,8 @@ FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
   return nameTree.LookupValueAndName(index, &csName);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document, int index) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document,
+                                                     int index) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc || index < 0)
     return false;
@@ -125,7 +124,7 @@ FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document, int index) {
   return nameTree.DeleteValueAndName(index);
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
+DLLEXPORT unsigned long STDCALL
 FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
                        void* buffer,
                        unsigned long buflen) {
@@ -137,8 +136,8 @@ FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
                                              buffer, buflen);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment,
+                                                  FPDF_WIDESTRING key) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   if (!pFile)
     return 0;
@@ -150,7 +149,7 @@ FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key) {
   return pParamsDict->KeyExist(CFXByteStringFromFPDFWideString(key));
 }
 
-FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
+DLLEXPORT FPDF_OBJECT_TYPE STDCALL
 FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key) {
   if (!FPDFAttachment_HasKey(attachment, key))
     return FPDF_OBJECT_UNKNOWN;
@@ -164,7 +163,7 @@ FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key) {
   return pObj->GetType();
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+DLLEXPORT FPDF_BOOL STDCALL
 FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
                               FPDF_WIDESTRING key,
                               FPDF_WIDESTRING value) {
@@ -186,7 +185,7 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
   return true;
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
+DLLEXPORT unsigned long STDCALL
 FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
                               FPDF_WIDESTRING key,
                               void* buffer,
@@ -214,11 +213,10 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
   return Utf16EncodeMaybeCopyAndReturnLength(value, buffer, buflen);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
-                       FPDF_DOCUMENT document,
-                       const void* contents,
-                       const unsigned long len) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
+                                                   FPDF_DOCUMENT document,
+                                                   const void* contents,
+                                                   const unsigned long len) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pFile || !pFile->IsDictionary() || !pDoc || len > INT_MAX)
@@ -262,7 +260,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   return true;
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
+DLLEXPORT unsigned long STDCALL
 FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
                        void* buffer,
                        unsigned long buflen) {

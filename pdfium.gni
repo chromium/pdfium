@@ -66,26 +66,3 @@ declare_args() {
 if (pdf_use_skia && pdf_use_skia_paths) {
   assert(false, "Enable at most ONE of pdf_use_skia and pdf_use_skia_paths")
 }
-
-# Custom template used to enable building with "source_set" instead of
-# "static_library" when doing component or complete static library builds
-
-template("pdf_source_set") {
-  if (is_component_build || pdf_is_complete_lib) {
-    pdf_link_target_type = "source_set"
-  } else {
-    pdf_link_target_type = "static_library"
-  }
-  target(pdf_link_target_type, target_name) {
-    # See http://crbug.com/594610
-    forward_variables_from(invoker, [ "visibility" ])
-    forward_variables_from(invoker, "*", [ "visibility" ])
-  }
-}
-
-set_defaults("pdf_source_set") {
-  if (!defined(deps)) {
-    deps = []
-  }
-  configs = default_compiler_configs
-}

@@ -274,16 +274,15 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
 
 }  // namespace
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SaveAsCopy(FPDF_DOCUMENT document,
-                                                    FPDF_FILEWRITE* pFileWrite,
-                                                    FPDF_DWORD flags) {
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SaveAsCopy(FPDF_DOCUMENT document,
+                                            FPDF_FILEWRITE* pFileWrite,
+                                            FPDF_DWORD flags) {
   return FPDF_Doc_Save(document, pFileWrite, flags, false, 0);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDF_SaveWithVersion(FPDF_DOCUMENT document,
-                     FPDF_FILEWRITE* pFileWrite,
-                     FPDF_DWORD flags,
-                     int fileVersion) {
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SaveWithVersion(FPDF_DOCUMENT document,
+                                                 FPDF_FILEWRITE* pFileWrite,
+                                                 FPDF_DWORD flags,
+                                                 int fileVersion) {
   return FPDF_Doc_Save(document, pFileWrite, flags, true, fileVersion);
 }

@@ -8,7 +8,7 @@
 
 #include "core/fpdftext/cpdf_textpage.h"
 
-FPDF_EXPORT int FPDF_CALLCONV
+DLLEXPORT int STDCALL
 FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex) {
   if (!text_page)
     return -1;
@@ -16,7 +16,7 @@ FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex) {
       ->CharIndexFromTextIndex(nTextIndex);
 }
 
-FPDF_EXPORT int FPDF_CALLCONV
+DLLEXPORT int STDCALL
 FPDFText_GetTextIndexFromCharIndex(FPDF_TEXTPAGE text_page, int nCharIndex) {
   if (!text_page)
     return -1;

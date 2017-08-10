@@ -79,15 +79,15 @@ typedef struct _IFSDK_PAUSE {
 //          Rendering Status. See flags for progressive process status for the
 //          details.
 //
-FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
-                                                          FPDF_PAGE page,
-                                                          int start_x,
-                                                          int start_y,
-                                                          int size_x,
-                                                          int size_y,
-                                                          int rotate,
-                                                          int flags,
-                                                          IFSDK_PAUSE* pause);
+DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
+                                                  FPDF_PAGE page,
+                                                  int start_x,
+                                                  int start_y,
+                                                  int size_x,
+                                                  int size_y,
+                                                  int rotate,
+                                                  int flags,
+                                                  IFSDK_PAUSE* pause);
 
 // Function: FPDF_RenderPage_Continue
 //          Continue rendering a PDF page.
@@ -101,8 +101,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
 // Return value:
 //          The rendering status. See flags for progressive process status for
 //          the details.
-FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
-                                                       IFSDK_PAUSE* pause);
+DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
+                                               IFSDK_PAUSE* pause);
 
 // Function: FPDF_RenderPage_Close
 //          Release the resource allocate during page rendering. Need to be
@@ -113,7 +113,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
 //          function.
 // Return value:
 //          NULL
-FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page);
+DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page);
 
 #ifdef __cplusplus
 }

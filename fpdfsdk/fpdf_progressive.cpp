@@ -30,15 +30,15 @@ static_assert(CPDF_ProgressiveRenderer::Done == FPDF_RENDER_DONE,
 static_assert(CPDF_ProgressiveRenderer::Failed == FPDF_RENDER_FAILED,
               "CPDF_ProgressiveRenderer::Failed value mismatch");
 
-FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
-                                                          FPDF_PAGE page,
-                                                          int start_x,
-                                                          int start_y,
-                                                          int size_x,
-                                                          int size_y,
-                                                          int rotate,
-                                                          int flags,
-                                                          IFSDK_PAUSE* pause) {
+DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
+                                                  FPDF_PAGE page,
+                                                  int start_x,
+                                                  int start_y,
+                                                  int size_x,
+                                                  int size_y,
+                                                  int rotate,
+                                                  int flags,
+                                                  IFSDK_PAUSE* pause) {
   if (!bitmap || !pause || pause->version != 1)
     return FPDF_RENDER_FAILED;
 
@@ -71,8 +71,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   return FPDF_RENDER_FAILED;
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
-                                                       IFSDK_PAUSE* pause) {
+DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
+                                               IFSDK_PAUSE* pause) {
   if (!pause || pause->version != 1)
     return FPDF_RENDER_FAILED;
 
@@ -95,7 +95,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
   return FPDF_RENDER_FAILED;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {
+DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (pPage) {
 #ifdef _SKIA_SUPPORT_PATHS_

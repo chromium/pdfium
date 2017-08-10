@@ -103,15 +103,14 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
   FPDF_SYSFONTINFO* const m_pInfo;
 };
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
-                                                     const char* name,
-                                                     int charset) {
+DLLEXPORT void STDCALL FPDF_AddInstalledFont(void* mapper,
+                                             const char* name,
+                                             int charset) {
   CFX_FontMapper* pMapper = static_cast<CFX_FontMapper*>(mapper);
   pMapper->AddInstalledFont(name, charset);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
+DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
   if (pFontInfoExt->version != 1)
     return;
 
@@ -119,7 +118,7 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
       pdfium::MakeUnique<CFX_ExternalFontInfo>(pFontInfoExt));
 }
 
-FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap() {
+DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap() {
   return CPWL_FontMap::defaultTTFMap;
 }
 
@@ -192,7 +191,7 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
   pDefault->m_pFontInfo->DeleteFont(hFont);
 }
 
-FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo() {
+DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {
   std::unique_ptr<IFX_SystemFontInfo> pFontInfo =
       IFX_SystemFontInfo::CreateDefault(nullptr);
   if (!pFontInfo)
@@ -213,7 +212,7 @@ FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo() {
   return pFontInfoExt;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
+DLLEXPORT void STDCALL
 FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pDefaultFontInfo) {
   FX_Free(static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pDefaultFontInfo));
 }

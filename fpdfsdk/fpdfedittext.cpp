@@ -396,10 +396,9 @@ void* LoadCompositeFont(CPDF_Document* pDoc,
 
 }  // namespace
 
-FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
-FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
-                       FPDF_BYTESTRING font,
-                       float font_size) {
+DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
+                                                         FPDF_BYTESTRING font,
+                                                         float font_size) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
@@ -415,8 +414,8 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
   return pTextObj.release();  // Caller takes ownership.
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
+                                             FPDF_WIDESTRING text) {
   auto* pTextObj = static_cast<CPDF_TextObject*>(text_object);
   if (!pTextObj)
     return false;
@@ -432,11 +431,11 @@ FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
   return true;
 }
 
-FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
-                                                      const uint8_t* data,
-                                                      uint32_t size,
-                                                      int font_type,
-                                                      FPDF_BOOL cid) {
+DLLEXPORT FPDF_FONT STDCALL FPDFText_LoadFont(FPDF_DOCUMENT document,
+                                              const uint8_t* data,
+                                              uint32_t size,
+                                              int font_type,
+                                              FPDF_BOOL cid) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc || !data || size == 0 ||
       (font_type != FPDF_FONT_TYPE1 && font_type != FPDF_FONT_TRUETYPE)) {
@@ -455,16 +454,15 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
              : LoadSimpleFont(pDoc, std::move(pFont), data, size, font_type);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFText_SetFillColor(FPDF_PAGEOBJECT text_object,
-                      unsigned int R,
-                      unsigned int G,
-                      unsigned int B,
-                      unsigned int A) {
+DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetFillColor(FPDF_PAGEOBJECT text_object,
+                                                  unsigned int R,
+                                                  unsigned int G,
+                                                  unsigned int B,
+                                                  unsigned int A) {
   return FPDFPageObj_SetFillColor(text_object, R, G, B, A);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
+DLLEXPORT void STDCALL FPDFFont_Close(FPDF_FONT font) {
   CPDF_Font* pFont = static_cast<CPDF_Font*>(font);
   if (!pFont)
     return;
@@ -478,7 +476,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
     pPageData->ReleaseFont(pFont->GetFontDict());
 }
 
-FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
+DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           FPDF_FONT font,
                           float font_size) {

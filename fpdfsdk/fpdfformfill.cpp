@@ -151,11 +151,10 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
 }  // namespace
 
-FPDF_EXPORT int FPDF_CALLCONV
-FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
-                             FPDF_PAGE page,
-                             double page_x,
-                             double page_y) {
+DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
+                                                   FPDF_PAGE page,
+                                                   double page_x,
+                                                   double page_y) {
   if (!hHandle)
     return -1;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
@@ -210,11 +209,10 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   return -1;
 }
 
-FPDF_EXPORT int FPDF_CALLCONV
-FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
-                                FPDF_PAGE page,
-                                double page_x,
-                                double page_y) {
+DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
+                                                      FPDF_PAGE page,
+                                                      double page_x,
+                                                      double page_y) {
   if (!hHandle)
     return -1;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
@@ -228,7 +226,7 @@ FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
   return z_order;
 }
 
-FPDF_EXPORT FPDF_FORMHANDLE FPDF_CALLCONV
+DLLEXPORT FPDF_FORMHANDLE STDCALL
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
                                 FPDF_FORMFILLINFO* formInfo) {
 #ifdef PDF_ENABLE_XFA
@@ -261,7 +259,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   return pFormFillEnv.release();  // Caller takes ownership.
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
+DLLEXPORT void STDCALL
 FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
@@ -280,33 +278,33 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   delete pFormFillEnv;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
-                                                     FPDF_PAGE page,
-                                                     int modifier,
-                                                     double page_x,
-                                                     double page_y) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
+                                             FPDF_PAGE page,
+                                             int modifier,
+                                             double page_x,
+                                             double page_y) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
   return pPageView->OnMouseMove(CFX_PointF(page_x, page_y), modifier);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,
-                                                       FPDF_PAGE page,
-                                                       int modifier,
-                                                       double page_x,
-                                                       double page_y) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,
+                                               FPDF_PAGE page,
+                                               int modifier,
+                                               double page_x,
+                                               double page_y) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
   return pPageView->OnLButtonDown(CFX_PointF(page_x, page_y), modifier);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
-                                                     FPDF_PAGE page,
-                                                     int modifier,
-                                                     double page_x,
-                                                     double page_y) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
+                                             FPDF_PAGE page,
+                                             int modifier,
+                                             double page_x,
+                                             double page_y) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
@@ -314,22 +312,22 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
 }
 
 #ifdef PDF_ENABLE_XFA
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
-                                                       FPDF_PAGE page,
-                                                       int modifier,
-                                                       double page_x,
-                                                       double page_y) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
+                                               FPDF_PAGE page,
+                                               int modifier,
+                                               double page_x,
+                                               double page_y) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
   return pPageView->OnRButtonDown(CFX_PointF(page_x, page_y), modifier);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
-                                                     FPDF_PAGE page,
-                                                     int modifier,
-                                                     double page_x,
-                                                     double page_y) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
+                                             FPDF_PAGE page,
+                                             int modifier,
+                                             double page_x,
+                                             double page_y) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
@@ -337,41 +335,40 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
 }
 #endif  // PDF_ENABLE_XFA
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
-                                                   FPDF_PAGE page,
-                                                   int nKeyCode,
-                                                   int modifier) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
+                                           FPDF_PAGE page,
+                                           int nKeyCode,
+                                           int modifier) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
   return pPageView->OnKeyDown(nKeyCode, modifier);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
-                                                 FPDF_PAGE page,
-                                                 int nKeyCode,
-                                                 int modifier) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,
+                                         FPDF_PAGE page,
+                                         int nKeyCode,
+                                         int modifier) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
   return pPageView->OnKeyUp(nKeyCode, modifier);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,
-                                                FPDF_PAGE page,
-                                                int nChar,
-                                                int modifier) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnChar(FPDF_FORMHANDLE hHandle,
+                                        FPDF_PAGE page,
+                                        int nChar,
+                                        int modifier) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return false;
   return pPageView->OnChar(nChar, modifier);
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
-FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
-                     FPDF_PAGE page,
-                     void* buffer,
-                     unsigned long buflen) {
+DLLEXPORT unsigned long STDCALL FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
+                                                     FPDF_PAGE page,
+                                                     void* buffer,
+                                                     unsigned long buflen) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return 0;
@@ -386,9 +383,9 @@ FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
   return form_text_len;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
-                                                     FPDF_PAGE page,
-                                                     FPDF_WIDESTRING wsText) {
+DLLEXPORT void STDCALL FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
+                                             FPDF_PAGE page,
+                                             FPDF_WIDESTRING wsText) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView)
     return;
@@ -399,8 +396,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
   pPageView->ReplaceSelection(wide_str_text);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
+DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (!pFormFillEnv)
@@ -408,37 +404,37 @@ FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
   return pFormFillEnv->KillFocusAnnot(0);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
-                                            FPDF_BITMAP bitmap,
-                                            FPDF_PAGE page,
-                                            int start_x,
-                                            int start_y,
-                                            int size_x,
-                                            int size_y,
-                                            int rotate,
-                                            int flags) {
+DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
+                                    FPDF_BITMAP bitmap,
+                                    FPDF_PAGE page,
+                                    int start_x,
+                                    int start_y,
+                                    int size_x,
+                                    int size_y,
+                                    int rotate,
+                                    int flags) {
   FFLCommon(hHandle, bitmap, nullptr, page, start_x, start_y, size_x, size_y,
             rotate, flags);
 }
 
 #ifdef _SKIA_SUPPORT_
-FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
-                                              FPDF_RECORDER recorder,
-                                              FPDF_PAGE page,
-                                              int start_x,
-                                              int start_y,
-                                              int size_x,
-                                              int size_y,
-                                              int rotate,
-                                              int flags) {
+DLLEXPORT void STDCALL FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
+                                      FPDF_RECORDER recorder,
+                                      FPDF_PAGE page,
+                                      int start_x,
+                                      int start_y,
+                                      int size_x,
+                                      int size_y,
+                                      int rotate,
+                                      int flags) {
   FFLCommon(hHandle, nullptr, recorder, page, start_x, start_y, size_x, size_y,
             rotate, flags);
 }
 #endif
 
 #ifdef PDF_ENABLE_XFA
-FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Undo(FPDF_DOCUMENT document,
-                                                FPDF_WIDGET hWidget) {
+DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document,
+                                        FPDF_WIDGET hWidget) {
   if (!hWidget || !document)
     return;
 
@@ -451,8 +447,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Undo(FPDF_DOCUMENT document,
   static_cast<CXFA_FFWidget*>(hWidget)->Undo();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Redo(FPDF_DOCUMENT document,
-                                                FPDF_WIDGET hWidget) {
+DLLEXPORT void STDCALL FPDF_Widget_Redo(FPDF_DOCUMENT document,
+                                        FPDF_WIDGET hWidget) {
   if (!hWidget || !document)
     return;
 
@@ -464,8 +460,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Redo(FPDF_DOCUMENT document,
   static_cast<CXFA_FFWidget*>(hWidget)->Redo();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_SelectAll(FPDF_DOCUMENT document,
-                                                     FPDF_WIDGET hWidget) {
+DLLEXPORT void STDCALL FPDF_Widget_SelectAll(FPDF_DOCUMENT document,
+                                             FPDF_WIDGET hWidget) {
   if (!hWidget || !document)
     return;
 
@@ -477,10 +473,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_SelectAll(FPDF_DOCUMENT document,
   static_cast<CXFA_FFWidget*>(hWidget)->SelectAll();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Copy(FPDF_DOCUMENT document,
-                                                FPDF_WIDGET hWidget,
-                                                FPDF_WIDESTRING wsText,
-                                                FPDF_DWORD* size) {
+DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
+                                        FPDF_WIDGET hWidget,
+                                        FPDF_WIDESTRING wsText,
+                                        FPDF_DWORD* size) {
   if (!hWidget || !document)
     return;
 
@@ -509,10 +505,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Copy(FPDF_DOCUMENT document,
   *size = real_size;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Cut(FPDF_DOCUMENT document,
-                                               FPDF_WIDGET hWidget,
-                                               FPDF_WIDESTRING wsText,
-                                               FPDF_DWORD* size) {
+DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document,
+                                       FPDF_WIDGET hWidget,
+                                       FPDF_WIDESTRING wsText,
+                                       FPDF_DWORD* size) {
   if (!hWidget || !document)
     return;
 
@@ -541,10 +537,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Cut(FPDF_DOCUMENT document,
   *size = real_size;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Paste(FPDF_DOCUMENT document,
-                                                 FPDF_WIDGET hWidget,
-                                                 FPDF_WIDESTRING wsText,
-                                                 FPDF_DWORD size) {
+DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document,
+                                         FPDF_WIDGET hWidget,
+                                         FPDF_WIDESTRING wsText,
+                                         FPDF_DWORD size) {
   if (!hWidget || !document)
     return;
 
@@ -557,7 +553,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Paste(FPDF_DOCUMENT document,
   static_cast<CXFA_FFWidget*>(hWidget)->Paste(wstr);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
+DLLEXPORT void STDCALL
 FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
                                   FPDF_WIDGET hWidget,
                                   float x,
@@ -578,7 +574,7 @@ FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
   static_cast<CXFA_FFWidget*>(hWidget)->ReplaceSpellCheckWord(ptPopup, bs);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
+DLLEXPORT void STDCALL
 FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
                                FPDF_WIDGET hWidget,
                                float x,
@@ -603,13 +599,12 @@ FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
   *stringHandle = ToFPDFStringHandle(sSuggestWords.release());
 }
 
-FPDF_EXPORT int FPDF_CALLCONV
-FPDF_StringHandleCounts(FPDF_STRINGHANDLE sHandle) {
+DLLEXPORT int STDCALL FPDF_StringHandleCounts(FPDF_STRINGHANDLE sHandle) {
   std::vector<CFX_ByteString>* sSuggestWords = FromFPDFStringHandle(sHandle);
   return sSuggestWords ? pdfium::CollectionSize<int>(*sSuggestWords) : -1;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+DLLEXPORT FPDF_BOOL STDCALL
 FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE sHandle,
                                   int index,
                                   FPDF_BYTESTRING bsText,
@@ -635,12 +630,12 @@ FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE sHandle,
   return true;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
+DLLEXPORT void STDCALL
 FPDF_StringHandleRelease(FPDF_STRINGHANDLE stringHandle) {
   delete FromFPDFStringHandle(stringHandle);
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+DLLEXPORT FPDF_BOOL STDCALL
 FPDF_StringHandleAddString(FPDF_STRINGHANDLE stringHandle,
                            FPDF_BYTESTRING bsText,
                            FPDF_DWORD size) {
@@ -652,34 +647,32 @@ FPDF_StringHandleAddString(FPDF_STRINGHANDLE stringHandle,
 }
 #endif  // PDF_ENABLE_XFA
 
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
-                                int fieldType,
-                                unsigned long color) {
+DLLEXPORT void STDCALL FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
+                                                       int fieldType,
+                                                       unsigned long color) {
   if (CPDFSDK_InterForm* pInterForm = FormHandleToInterForm(hHandle))
     pInterForm->SetHighlightColor(color, fieldType);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_SetFormFieldHighlightAlpha(FPDF_FORMHANDLE hHandle, unsigned char alpha) {
+DLLEXPORT void STDCALL FPDF_SetFormFieldHighlightAlpha(FPDF_FORMHANDLE hHandle,
+                                                       unsigned char alpha) {
   if (CPDFSDK_InterForm* pInterForm = FormHandleToInterForm(hHandle))
     pInterForm->SetHighlightAlpha(alpha);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle) {
+DLLEXPORT void STDCALL FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle) {
   if (CPDFSDK_InterForm* pInterForm = FormHandleToInterForm(hHandle))
     pInterForm->RemoveAllHighLight();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FORM_OnAfterLoadPage(FPDF_PAGE page,
-                                                    FPDF_FORMHANDLE hHandle) {
+DLLEXPORT void STDCALL FORM_OnAfterLoadPage(FPDF_PAGE page,
+                                            FPDF_FORMHANDLE hHandle) {
   if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page))
     pPageView->SetValid(true);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FORM_OnBeforeClosePage(FPDF_PAGE page,
-                                                      FPDF_FORMHANDLE hHandle) {
+DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
+                                              FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (!pFormFillEnv)
@@ -697,24 +690,22 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_OnBeforeClosePage(FPDF_PAGE page,
   }
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
-FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
+DLLEXPORT void STDCALL FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
     pFormFillEnv->ProcJavascriptFun();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV
-FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
+DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
     pFormFillEnv->ProcOpenAction();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
-                                                      int aaType) {
+DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
+                                              int aaType) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (!pFormFillEnv)
@@ -735,9 +726,9 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   }
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
-                                                  FPDF_FORMHANDLE hHandle,
-                                                  int aaType) {
+DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
+                                          FPDF_FORMHANDLE hHandle,
+                                          int aaType) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
   if (!pFormFillEnv)

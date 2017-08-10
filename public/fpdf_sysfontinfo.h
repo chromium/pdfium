@@ -244,7 +244,7 @@ typedef struct FPDF_CharsetFontMap_ {
  * Return Value:
  *     Pointer to the Charset Font Map.
  **/
-FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap();
+DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap();
 
 /**
  * Function: FPDF_AddInstalledFont
@@ -259,9 +259,9 @@ FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap();
  * Return Value:
  *          None.
  **/
-FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
-                                                     const char* face,
-                                                     int charset);
+DLLEXPORT void STDCALL FPDF_AddInstalledFont(void* mapper,
+                                             const char* face,
+                                             int charset);
 
 /**
  * Function: FPDF_SetSystemFontInfo
@@ -275,8 +275,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
  * Return Value:
  *          None
  **/
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
+DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
 
 /**
  * Function: FPDF_GetDefaultSystemFontInfo
@@ -295,7 +294,7 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
  *          Application should call FPDF_FreeDefaultSystemFontInfo to free the
  *returned pointer.
  **/
-FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo();
+DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo();
 
 /**
  * Function: FPDF_FreeDefaultSystemFontInfo
@@ -308,7 +307,7 @@ FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo();
  * Return Value:
  *          None
  **/
-FPDF_EXPORT void FPDF_CALLCONV
+DLLEXPORT void STDCALL
 FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
 
 #ifdef __cplusplus
