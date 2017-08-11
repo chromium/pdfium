@@ -71,6 +71,12 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_NEAR(49.844, bottom, 0.001);
   EXPECT_NEAR(55.520, top, 0.001);
 
+  double x = 0.0;
+  double y = 0.0;
+  EXPECT_TRUE(FPDFText_GetCharOrigin(textpage, 4, &x, &y));
+  EXPECT_NEAR(40.664, x, 0.001);
+  EXPECT_NEAR(50.000, y, 0.001);
+
   EXPECT_EQ(4, FPDFText_GetCharIndexAtPos(textpage, 42.0, 50.0, 1.0, 1.0));
   EXPECT_EQ(-1, FPDFText_GetCharIndexAtPos(textpage, 0.0, 0.0, 1.0, 1.0));
   EXPECT_EQ(-1, FPDFText_GetCharIndexAtPos(textpage, 199.0, 199.0, 1.0, 1.0));
