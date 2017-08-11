@@ -26,7 +26,7 @@ vars = {
   'v8_revision': '539f7ab310f8865090c494b0251c45e7c52ae5f5',
   'yasm_binary_revision': '52f9b3f4b0aa06da24ef8b123058bb61ee468881',
   'yasm_source_revision': '7da28c6c7c6a1387217352ce02b31754deb54d2a',
-  'zlib_revision': 'eed2732a73838fd581cb25819ab1c4f478d6b38f',
+  'zlib_revision': '718f686437b89038ac83525f4f1b1888aadd9bfc',
 }
 
 deps = {
