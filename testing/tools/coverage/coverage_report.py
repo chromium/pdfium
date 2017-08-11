@@ -292,7 +292,7 @@ class CoverageExecutor(object):
   def generate_report(self):
     """Produce HTML coverage report based on combined coverage data set."""
     config_file = os.path.join(
-        self.source_directory, 'tools', 'coverage', 'lcovrc')
+        self.source_directory, 'testing', 'tools', 'coverage', 'lcovrc')
 
     lcov_args = ['genhtml',
       '--config-file', config_file,
