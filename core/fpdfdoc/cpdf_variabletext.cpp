@@ -430,18 +430,16 @@ void CPDF_VariableText::SetText(const CFX_WideString& swText) {
     switch (word) {
       case 0x0D:
         if (m_bMultiLine) {
-          if (swText.GetAt(i + 1) == 0x0A)
-            i += 1;
-
+          if (i + 1 < sz && swText.GetAt(i + 1) == 0x0A)
+            i++;
           wp.AdvanceSection();
           AddSection(wp, secinfo);
         }
         break;
       case 0x0A:
         if (m_bMultiLine) {
-          if (swText.GetAt(i + 1) == 0x0D)
-            i += 1;
-
+          if (i + 1 < sz && swText.GetAt(i + 1) == 0x0D)
+            i++;
           wp.AdvanceSection();
           AddSection(wp, secinfo);
         }

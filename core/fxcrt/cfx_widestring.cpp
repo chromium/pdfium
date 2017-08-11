@@ -841,14 +841,10 @@ FX_STRSIZE CFX_WideString::Replace(const CFX_WideStringC& pOld,
   return nCount;
 }
 
-void CFX_WideString::SetAt(FX_STRSIZE nIndex, wchar_t ch) {
-  if (!m_pData) {
-    return;
-  }
-  ASSERT(nIndex >= 0);
-  ASSERT(nIndex < m_pData->m_nDataLength);
+void CFX_WideString::SetAt(FX_STRSIZE index, wchar_t c) {
+  ASSERT(index >= 0 && index < GetLength());
   ReallocBeforeWrite(m_pData->m_nDataLength);
-  m_pData->m_String[nIndex] = ch;
+  m_pData->m_String[index] = c;
 }
 
 // static

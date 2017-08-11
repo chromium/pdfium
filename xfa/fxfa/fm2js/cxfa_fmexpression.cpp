@@ -60,7 +60,7 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << L"(\n";
   }
   javascript << L"function ";
-  if (m_wsName.GetAt(0) == L'!') {
+  if (!m_wsName.IsEmpty() && m_wsName[0] == L'!') {
     CFX_WideString tempName =
         EXCLAMATION_IN_IDENTIFIER + m_wsName.Right(m_wsName.GetLength() - 1);
     javascript << tempName;

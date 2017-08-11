@@ -35,7 +35,7 @@ CIDSet CIDSetFromSizeT(size_t index) {
 CFX_ByteStringC CMap_GetString(const CFX_ByteStringC& word) {
   if (word.GetLength() <= 2)
     return CFX_ByteStringC();
-  return CFX_ByteStringC(&word[1], word.GetLength() - 2);
+  return word.Right(word.GetLength() - 2);
 }
 
 }  // namespace
@@ -137,6 +137,8 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
 
 // Static.
 uint32_t CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
+  if (word.IsEmpty())
+    return 0;
   pdfium::base::CheckedNumeric<uint32_t> num = 0;
   if (word.GetAt(0) == '<') {
     for (int i = 1; i < word.GetLength() && std::isxdigit(word.GetAt(i)); ++i) {
