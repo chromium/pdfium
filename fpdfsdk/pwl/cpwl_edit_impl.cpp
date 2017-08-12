@@ -285,6 +285,7 @@ CFXEU_InsertWord::CFXEU_InsertWord(CPWL_EditImpl* pEdit,
       m_Word(word),
       m_nCharset(charset),
       m_WordProps() {
+  ASSERT(m_pEdit);
   if (pWordProps)
     m_WordProps = *pWordProps;
 }
@@ -292,19 +293,15 @@ CFXEU_InsertWord::CFXEU_InsertWord(CPWL_EditImpl* pEdit,
 CFXEU_InsertWord::~CFXEU_InsertWord() {}
 
 void CFXEU_InsertWord::Redo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpOld);
-    m_pEdit->InsertWord(m_Word, m_nCharset, &m_WordProps, false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wpOld);
+  m_pEdit->InsertWord(m_Word, m_nCharset, &m_WordProps, false, true);
 }
 
 void CFXEU_InsertWord::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpNew);
-    m_pEdit->Backspace(false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wpNew);
+  m_pEdit->Backspace(false, true);
 }
 
 CFXEU_InsertReturn::CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
@@ -317,6 +314,7 @@ CFXEU_InsertReturn::CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
       m_wpNew(wpNewPlace),
       m_SecProps(),
       m_WordProps() {
+  ASSERT(m_pEdit);
   if (pSecProps)
     m_SecProps = *pSecProps;
   if (pWordProps)
@@ -326,19 +324,15 @@ CFXEU_InsertReturn::CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
 CFXEU_InsertReturn::~CFXEU_InsertReturn() {}
 
 void CFXEU_InsertReturn::Redo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpOld);
-    m_pEdit->InsertReturn(&m_SecProps, &m_WordProps, false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wpOld);
+  m_pEdit->InsertReturn(&m_SecProps, &m_WordProps, false, true);
 }
 
 void CFXEU_InsertReturn::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpNew);
-    m_pEdit->Backspace(false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wpNew);
+  m_pEdit->Backspace(false, true);
 }
 
 CFXEU_Backspace::CFXEU_Backspace(CPWL_EditImpl* pEdit,
@@ -354,23 +348,19 @@ CFXEU_Backspace::CFXEU_Backspace(CPWL_EditImpl* pEdit,
       m_Word(word),
       m_nCharset(charset),
       m_SecProps(SecProps),
-      m_WordProps(WordProps) {}
+      m_WordProps(WordProps) {
+  ASSERT(m_pEdit);
+}
 
 CFXEU_Backspace::~CFXEU_Backspace() {}
 
 void CFXEU_Backspace::Redo() {
-  if (!m_pEdit)
-    return;
-
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpOld);
   m_pEdit->Backspace(false, true);
 }
 
 void CFXEU_Backspace::Undo() {
-  if (!m_pEdit)
-    return;
-
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpNew);
   if (m_wpNew.nSecIndex != m_wpOld.nSecIndex)
@@ -394,52 +384,47 @@ CFXEU_Delete::CFXEU_Delete(CPWL_EditImpl* pEdit,
       m_nCharset(charset),
       m_SecProps(SecProps),
       m_WordProps(WordProps),
-      m_bSecEnd(bSecEnd) {}
+      m_bSecEnd(bSecEnd) {
+  ASSERT(m_pEdit);
+}
 
 CFXEU_Delete::~CFXEU_Delete() {}
 
 void CFXEU_Delete::Redo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpOld);
-    m_pEdit->Delete(false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wpOld);
+  m_pEdit->Delete(false, true);
 }
 
 void CFXEU_Delete::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpNew);
-    if (m_bSecEnd) {
-      m_pEdit->InsertReturn(&m_SecProps, &m_WordProps, false, true);
-    } else {
-      m_pEdit->InsertWord(m_Word, m_nCharset, &m_WordProps, false, true);
-    }
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wpNew);
+  if (m_bSecEnd)
+    m_pEdit->InsertReturn(&m_SecProps, &m_WordProps, false, true);
+  else
+    m_pEdit->InsertWord(m_Word, m_nCharset, &m_WordProps, false, true);
 }
 
 CFXEU_Clear::CFXEU_Clear(CPWL_EditImpl* pEdit,
                          const CPVT_WordRange& wrSel,
                          const CFX_WideString& swText)
-    : m_pEdit(pEdit), m_wrSel(wrSel), m_swText(swText) {}
+    : m_pEdit(pEdit), m_wrSel(wrSel), m_swText(swText) {
+  ASSERT(m_pEdit);
+}
 
 CFXEU_Clear::~CFXEU_Clear() {}
 
 void CFXEU_Clear::Redo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
-    m_pEdit->Clear(false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
+  m_pEdit->Clear(false, true);
 }
 
 void CFXEU_Clear::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wrSel.BeginPos);
-    m_pEdit->InsertText(m_swText, FX_CHARSET_Default, false, true);
-    m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wrSel.BeginPos);
+  m_pEdit->InsertText(m_swText, FX_CHARSET_Default, false, true);
+  m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
 }
 
 CFXEU_InsertText::CFXEU_InsertText(CPWL_EditImpl* pEdit,
@@ -451,24 +436,22 @@ CFXEU_InsertText::CFXEU_InsertText(CPWL_EditImpl* pEdit,
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
       m_swText(swText),
-      m_nCharset(charset) {}
+      m_nCharset(charset) {
+  ASSERT(m_pEdit);
+}
 
 CFXEU_InsertText::~CFXEU_InsertText() {}
 
 void CFXEU_InsertText::Redo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetCaret(m_wpOld);
-    m_pEdit->InsertText(m_swText, m_nCharset, false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetCaret(m_wpOld);
+  m_pEdit->InsertText(m_swText, m_nCharset, false, true);
 }
 
 void CFXEU_InsertText::Undo() {
-  if (m_pEdit) {
-    m_pEdit->SelectNone();
-    m_pEdit->SetSelection(m_wpOld, m_wpNew);
-    m_pEdit->Clear(false, true);
-  }
+  m_pEdit->SelectNone();
+  m_pEdit->SetSelection(m_wpOld, m_wpNew);
+  m_pEdit->Clear(false, true);
 }
 
 // static
