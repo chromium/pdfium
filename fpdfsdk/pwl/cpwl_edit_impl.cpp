@@ -611,21 +611,14 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
 }
 
 CPWL_EditImpl::CPWL_EditImpl()
-    : m_pVT(new CPDF_VariableText),
-      m_pNotify(nullptr),
-      m_pOprNotify(nullptr),
-      m_wpCaret(-1, -1, -1),
-      m_wpOldCaret(-1, -1, -1),
-      m_SelState(),
+    : m_pVT(pdfium::MakeUnique<CPDF_VariableText>()),
       m_bEnableScroll(false),
       m_Undo(kEditUndoMaxItems),
       m_nAlignment(0),
       m_bNotifyFlag(false),
       m_bEnableOverflow(false),
       m_bEnableRefresh(true),
-      m_rcOldContent(0.0f, 0.0f, 0.0f, 0.0f),
-      m_bEnableUndo(true),
-      m_bOprNotify(false) {}
+      m_bEnableUndo(true) {}
 
 CPWL_EditImpl::~CPWL_EditImpl() {}
 
@@ -644,8 +637,8 @@ void CPWL_EditImpl::SetNotify(CPWL_EditCtrl* pNotify) {
   m_pNotify = pNotify;
 }
 
-void CPWL_EditImpl::SetOprNotify(CPWL_Edit* pOprNotify) {
-  m_pOprNotify = pOprNotify;
+void CPWL_EditImpl::SetOperationNotify(CPWL_Edit* pOperationNotify) {
+  m_pOperationNotify = pOperationNotify;
 }
 
 CPWL_EditImpl_Iterator* CPWL_EditImpl::GetIterator() {
@@ -1608,8 +1601,8 @@ bool CPWL_EditImpl::InsertWord(uint16_t word,
   if (bPaint)
     PaintInsertText(m_wpOldCaret, m_wpCaret);
 
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnInsertWord(m_wpCaret, m_wpOldCaret);
+  if (m_pOperationNotify)
+    m_pOperationNotify->OnInsertWord(m_wpCaret, m_wpOldCaret);
 
   return true;
 }
@@ -1638,8 +1631,8 @@ bool CPWL_EditImpl::InsertReturn(const CPVT_SecProps* pSecProps,
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnInsertReturn(m_wpCaret, m_wpOldCaret);
+  if (m_pOperationNotify)
+    m_pOperationNotify->OnInsertReturn(m_wpCaret, m_wpOldCaret);
 
   return true;
 }
@@ -1680,8 +1673,8 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnBackSpace(m_wpCaret, m_wpOldCaret);
+  if (m_pOperationNotify)
+    m_pOperationNotify->OnBackSpace(m_wpCaret, m_wpOldCaret);
 
   return true;
 }
@@ -1720,8 +1713,8 @@ bool CPWL_EditImpl::Delete(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnDelete(m_wpCaret, m_wpOldCaret);
+  if (m_pOperationNotify)
+    m_pOperationNotify->OnDelete(m_wpCaret, m_wpOldCaret);
 
   return true;
 }
@@ -1757,8 +1750,8 @@ bool CPWL_EditImpl::Clear(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnClear(m_wpCaret, m_wpOldCaret);
+  if (m_pOperationNotify)
+    m_pOperationNotify->OnClear(m_wpCaret, m_wpOldCaret);
 
   return true;
 }
@@ -1783,8 +1776,8 @@ bool CPWL_EditImpl::InsertText(const CFX_WideString& sText,
   if (bPaint)
     PaintInsertText(m_wpOldCaret, m_wpCaret);
 
-  if (m_bOprNotify && m_pOprNotify)
-    m_pOprNotify->OnInsertText(m_wpCaret, m_wpOldCaret);
+  if (m_pOperationNotify)
+    m_pOperationNotify->OnInsertText(m_wpCaret, m_wpOldCaret);
 
   return true;
 }
@@ -1894,10 +1887,6 @@ void CPWL_EditImpl::EnableRefresh(bool bRefresh) {
 
 void CPWL_EditImpl::EnableUndo(bool bUndo) {
   m_bEnableUndo = bUndo;
-}
-
-void CPWL_EditImpl::EnableOprNotify(bool bNotify) {
-  m_bOprNotify = bNotify;
 }
 
 CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,

@@ -151,8 +151,7 @@ void CPWL_Edit::OnCreated() {
 
   m_rcOldWindow = GetWindowRect();
 
-  m_pEdit->SetOprNotify(this);
-  m_pEdit->EnableOprNotify(true);
+  m_pEdit->SetOperationNotify(this);
 }
 
 void CPWL_Edit::SetParamByFlag() {

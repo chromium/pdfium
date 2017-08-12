@@ -305,7 +305,7 @@ class CPWL_EditImpl {
 
   void SetFontMap(IPVT_FontMap* pFontMap);
   void SetNotify(CPWL_EditCtrl* pNotify);
-  void SetOprNotify(CPWL_Edit* pOprNotify);
+  void SetOperationNotify(CPWL_Edit* pOperationNotify);
 
   // Returns an iterator for the contents. Should not be released.
   CPWL_EditImpl_Iterator* GetIterator();
@@ -376,7 +376,6 @@ class CPWL_EditImpl {
   CPVT_WordRange GetWholeWordRange() const;
   CPVT_WordRange GetSelectWordRange() const;
   void EnableUndo(bool bUndo);
-  void EnableOprNotify(bool bNotify);
   bool IsTextFull() const;
   bool IsTextOverflow() const;
   bool CanUndo() const;
@@ -451,7 +450,7 @@ class CPWL_EditImpl {
  private:
   std::unique_ptr<CPDF_VariableText> m_pVT;
   CFX_UnownedPtr<CPWL_EditCtrl> m_pNotify;
-  CFX_UnownedPtr<CPWL_Edit> m_pOprNotify;
+  CFX_UnownedPtr<CPWL_Edit> m_pOperationNotify;
   std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
@@ -469,7 +468,6 @@ class CPWL_EditImpl {
   bool m_bEnableRefresh;
   CFX_FloatRect m_rcOldContent;
   bool m_bEnableUndo;
-  bool m_bOprNotify;
 };
 
 class CPWL_EditImpl_Iterator {
