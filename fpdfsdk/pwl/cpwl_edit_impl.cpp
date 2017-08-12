@@ -273,27 +273,6 @@ void CPWL_EditImpl_Undo::Reset() {
   m_nCurUndoPos = 0;
 }
 
-CPWL_EditImpl_UndoItem::CPWL_EditImpl_UndoItem()
-    : m_bFirst(true), m_bLast(true) {}
-
-CPWL_EditImpl_UndoItem::~CPWL_EditImpl_UndoItem() {}
-
-CFX_WideString CPWL_EditImpl_UndoItem::GetUndoTitle() const {
-  return CFX_WideString();
-}
-
-void CPWL_EditImpl_UndoItem::SetFirst(bool bFirst) {
-  m_bFirst = bFirst;
-}
-
-void CPWL_EditImpl_UndoItem::SetLast(bool bLast) {
-  m_bLast = bLast;
-}
-
-bool CPWL_EditImpl_UndoItem::IsLast() {
-  return m_bLast;
-}
-
 CFXEU_InsertWord::CFXEU_InsertWord(CPWL_EditImpl* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
@@ -477,7 +456,7 @@ CFXEU_InsertText::CFXEU_InsertText(CPWL_EditImpl* pEdit,
 CFXEU_InsertText::~CFXEU_InsertText() {}
 
 void CFXEU_InsertText::Redo() {
-  if (m_pEdit && IsLast()) {
+  if (m_pEdit) {
     m_pEdit->SelectNone();
     m_pEdit->SetCaret(m_wpOld);
     m_pEdit->InsertText(m_swText, m_nCharset, false, true);
@@ -1929,7 +1908,7 @@ int32_t CPWL_EditImpl::GetCharSetFromUnicode(uint16_t word,
 }
 
 void CPWL_EditImpl::AddEditUndoItem(
-    std::unique_ptr<CPWL_EditImpl_UndoItem> pEditUndoItem) {
+    std::unique_ptr<IFX_Edit_UndoItem> pEditUndoItem) {
   m_Undo.AddItem(std::move(pEditUndoItem));
 }
 

@@ -129,26 +129,9 @@ class IFX_Edit_UndoItem {
 
   virtual void Undo() = 0;
   virtual void Redo() = 0;
-  virtual CFX_WideString GetUndoTitle() const = 0;
 };
 
-class CPWL_EditImpl_UndoItem : public IFX_Edit_UndoItem {
- public:
-  CPWL_EditImpl_UndoItem();
-  ~CPWL_EditImpl_UndoItem() override;
-
-  CFX_WideString GetUndoTitle() const override;
-
-  void SetFirst(bool bFirst);
-  void SetLast(bool bLast);
-  bool IsLast();
-
- private:
-  bool m_bFirst;
-  bool m_bLast;
-};
-
-class CFXEU_InsertWord : public CPWL_EditImpl_UndoItem {
+class CFXEU_InsertWord : public IFX_Edit_UndoItem {
  public:
   CFXEU_InsertWord(CPWL_EditImpl* pEdit,
                    const CPVT_WordPlace& wpOldPlace,
@@ -158,7 +141,7 @@ class CFXEU_InsertWord : public CPWL_EditImpl_UndoItem {
                    const CPVT_WordProps* pWordProps);
   ~CFXEU_InsertWord() override;
 
-  // CPWL_EditImpl_UndoItem
+  // IFX_Edit_UndoItem:
   void Redo() override;
   void Undo() override;
 
@@ -172,7 +155,7 @@ class CFXEU_InsertWord : public CPWL_EditImpl_UndoItem {
   CPVT_WordProps m_WordProps;
 };
 
-class CFXEU_InsertReturn : public CPWL_EditImpl_UndoItem {
+class CFXEU_InsertReturn : public IFX_Edit_UndoItem {
  public:
   CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
                      const CPVT_WordPlace& wpOldPlace,
@@ -181,7 +164,7 @@ class CFXEU_InsertReturn : public CPWL_EditImpl_UndoItem {
                      const CPVT_WordProps* pWordProps);
   ~CFXEU_InsertReturn() override;
 
-  // CPWL_EditImpl_UndoItem
+  // IFX_Edit_UndoItem:
   void Redo() override;
   void Undo() override;
 
@@ -194,7 +177,7 @@ class CFXEU_InsertReturn : public CPWL_EditImpl_UndoItem {
   CPVT_WordProps m_WordProps;
 };
 
-class CFXEU_Backspace : public CPWL_EditImpl_UndoItem {
+class CFXEU_Backspace : public IFX_Edit_UndoItem {
  public:
   CFXEU_Backspace(CPWL_EditImpl* pEdit,
                   const CPVT_WordPlace& wpOldPlace,
@@ -205,7 +188,7 @@ class CFXEU_Backspace : public CPWL_EditImpl_UndoItem {
                   const CPVT_WordProps& WordProps);
   ~CFXEU_Backspace() override;
 
-  // CPWL_EditImpl_UndoItem
+  // IFX_Edit_UndoItem:
   void Redo() override;
   void Undo() override;
 
@@ -220,7 +203,7 @@ class CFXEU_Backspace : public CPWL_EditImpl_UndoItem {
   CPVT_WordProps m_WordProps;
 };
 
-class CFXEU_Delete : public CPWL_EditImpl_UndoItem {
+class CFXEU_Delete : public IFX_Edit_UndoItem {
  public:
   CFXEU_Delete(CPWL_EditImpl* pEdit,
                const CPVT_WordPlace& wpOldPlace,
@@ -232,7 +215,7 @@ class CFXEU_Delete : public CPWL_EditImpl_UndoItem {
                bool bSecEnd);
   ~CFXEU_Delete() override;
 
-  // CPWL_EditImpl_UndoItem
+  // IFX_Edit_UndoItem:
   void Redo() override;
   void Undo() override;
 
@@ -248,14 +231,14 @@ class CFXEU_Delete : public CPWL_EditImpl_UndoItem {
   bool m_bSecEnd;
 };
 
-class CFXEU_Clear : public CPWL_EditImpl_UndoItem {
+class CFXEU_Clear : public IFX_Edit_UndoItem {
  public:
   CFXEU_Clear(CPWL_EditImpl* pEdit,
               const CPVT_WordRange& wrSel,
               const CFX_WideString& swText);
   ~CFXEU_Clear() override;
 
-  // CPWL_EditImpl_UndoItem
+  // IFX_Edit_UndoItem:
   void Redo() override;
   void Undo() override;
 
@@ -266,7 +249,7 @@ class CFXEU_Clear : public CPWL_EditImpl_UndoItem {
   CFX_WideString m_swText;
 };
 
-class CFXEU_InsertText : public CPWL_EditImpl_UndoItem {
+class CFXEU_InsertText : public IFX_Edit_UndoItem {
  public:
   CFXEU_InsertText(CPWL_EditImpl* pEdit,
                    const CPVT_WordPlace& wpOldPlace,
@@ -275,7 +258,7 @@ class CFXEU_InsertText : public CPWL_EditImpl_UndoItem {
                    int32_t charset);
   ~CFXEU_InsertText() override;
 
-  // CPWL_EditImpl_UndoItem
+  // IFX_Edit_UndoItem:
   void Redo() override;
   void Undo() override;
 
@@ -445,7 +428,7 @@ class CPWL_EditImpl {
   void SetCaretInfo();
   void SetCaretOrigin();
 
-  void AddEditUndoItem(std::unique_ptr<CPWL_EditImpl_UndoItem> pEditUndoItem);
+  void AddEditUndoItem(std::unique_ptr<IFX_Edit_UndoItem> pEditUndoItem);
 
  private:
   std::unique_ptr<CPDF_VariableText> m_pVT;
