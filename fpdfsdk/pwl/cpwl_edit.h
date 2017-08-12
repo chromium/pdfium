@@ -90,7 +90,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
     m_pFillerNotify = pNotify;
   }
 
-  bool IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
   void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
 
   void OnInsertWord(const CPVT_WordPlace& place,
@@ -104,6 +103,11 @@ class CPWL_Edit : public CPWL_EditCtrl {
                     const CPVT_WordPlace& oldplace);
 
  private:
+  // In case of implementation swallow the OnKeyDown event. If the event is
+  // swallowed, implementation may do other unexpected things, which is not the
+  // control means to do.
+  static bool IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
+
   CPVT_WordRange GetSelectWordRange() const;
   bool IsVScrollBarVisible() const;
   void SetParamByFlag();

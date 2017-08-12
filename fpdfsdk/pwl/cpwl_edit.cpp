@@ -357,19 +357,18 @@ void CPWL_Edit::SetCharSpace(float fCharSpace) {
 }
 
 CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
-  if (m_pEdit->IsSelected()) {
-    int32_t nStart = -1;
-    int32_t nEnd = -1;
+  if (!m_pEdit->IsSelected())
+    return CPVT_WordRange();
 
-    m_pEdit->GetSelection(nStart, nEnd);
+  int32_t nStart = -1;
+  int32_t nEnd = -1;
 
-    CPVT_WordPlace wpStart = m_pEdit->WordIndexToWordPlace(nStart);
-    CPVT_WordPlace wpEnd = m_pEdit->WordIndexToWordPlace(nEnd);
+  m_pEdit->GetSelection(nStart, nEnd);
 
-    return CPVT_WordRange(wpStart, wpEnd);
-  }
+  CPVT_WordPlace wpStart = m_pEdit->WordIndexToWordPlace(nStart);
+  CPVT_WordPlace wpEnd = m_pEdit->WordIndexToWordPlace(nEnd);
 
-  return CPVT_WordRange();
+  return CPVT_WordRange(wpStart, wpEnd);
 }
 
 CFX_PointF CPWL_Edit::GetWordRightBottomPoint(const CPVT_WordPlace& wpWord) {
@@ -379,9 +378,8 @@ CFX_PointF CPWL_Edit::GetWordRightBottomPoint(const CPVT_WordPlace& wpWord) {
 
   CFX_PointF pt;
   CPVT_Word word;
-  if (pIterator->GetWord(word)) {
+  if (pIterator->GetWord(word))
     pt = CFX_PointF(word.ptWord.x + word.fWidth, word.ptWord.y + word.fDescent);
-  }
   pIterator->SetAt(wpOld);
   return pt;
 }
@@ -393,36 +391,40 @@ bool CPWL_Edit::IsTextFull() const {
 float CPWL_Edit::GetCharArrayAutoFontSize(CPDF_Font* pFont,
                                           const CFX_FloatRect& rcPlate,
                                           int32_t nCharArray) {
-  if (pFont && !pFont->IsStandardFont()) {
-    FX_RECT rcBBox;
-    pFont->GetFontBBox(rcBBox);
+  if (!pFont || pFont->IsStandardFont())
+    return 0.0f;
 
-    CFX_FloatRect rcCell = rcPlate;
-    float xdiv = rcCell.Width() / nCharArray * 1000.0f / rcBBox.Width();
-    float ydiv = -rcCell.Height() * 1000.0f / rcBBox.Height();
+  FX_RECT rcBBox;
+  pFont->GetFontBBox(rcBBox);
 
-    return xdiv < ydiv ? xdiv : ydiv;
-  }
+  CFX_FloatRect rcCell = rcPlate;
+  float xdiv = rcCell.Width() / nCharArray * 1000.0f / rcBBox.Width();
+  float ydiv = -rcCell.Height() * 1000.0f / rcBBox.Height();
 
-  return 0.0f;
+  return xdiv < ydiv ? xdiv : ydiv;
 }
 
 void CPWL_Edit::SetCharArray(int32_t nCharArray) {
-  if (HasFlag(PES_CHARARRAY) && nCharArray > 0) {
-    m_pEdit->SetCharArray(nCharArray);
-    m_pEdit->SetTextOverflow(true, true);
+  if (!HasFlag(PES_CHARARRAY) || nCharArray <= 0)
+    return;
 
-    if (HasFlag(PWS_AUTOFONTSIZE)) {
-      if (IPVT_FontMap* pFontMap = GetFontMap()) {
-        float fFontSize = GetCharArrayAutoFontSize(pFontMap->GetPDFFont(0),
-                                                   GetClientRect(), nCharArray);
-        if (fFontSize > 0.0f) {
-          m_pEdit->SetAutoFontSize(false, true);
-          m_pEdit->SetFontSize(fFontSize);
-        }
-      }
-    }
-  }
+  m_pEdit->SetCharArray(nCharArray);
+  m_pEdit->SetTextOverflow(true, true);
+
+  if (!HasFlag(PWS_AUTOFONTSIZE))
+    return;
+
+  IPVT_FontMap* pFontMap = GetFontMap();
+  if (!pFontMap)
+    return;
+
+  float fFontSize = GetCharArrayAutoFontSize(pFontMap->GetPDFFont(0),
+                                             GetClientRect(), nCharArray);
+  if (fFontSize <= 0.0f)
+    return;
+
+  m_pEdit->SetAutoFontSize(false, true);
+  m_pEdit->SetFontSize(fFontSize);
 }
 
 void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
@@ -439,9 +441,8 @@ CFX_FloatRect CPWL_Edit::GetFocusRect() const {
 }
 
 bool CPWL_Edit::IsVScrollBarVisible() const {
-  if (CPWL_ScrollBar* pScroll = GetVScrollBar())
-    return pScroll->IsVisible();
-  return false;
+  CPWL_ScrollBar* pScroll = GetVScrollBar();
+  return pScroll && pScroll->IsVisible();
 }
 
 bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
@@ -481,11 +482,7 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
   return bRet;
 }
 
-/**
- *In case of implementation swallow the OnKeyDown event.
- *If the event is swallowed, implementation may do other unexpected things,
- *which is not the control means to do.
- */
+// static
 bool CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag) {
   bool bCtrl = IsCTRLpressed(nFlag);
   bool bAlt = IsALTpressed(nFlag);
@@ -568,20 +565,16 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
 bool CPWL_Edit::OnMouseWheel(short zDelta,
                              const CFX_PointF& point,
                              uint32_t nFlag) {
-  if (HasFlag(PES_MULTILINE)) {
-    CFX_PointF ptScroll = GetScrollPos();
+  if (!HasFlag(PES_MULTILINE))
+    return false;
 
-    if (zDelta > 0) {
-      ptScroll.y += GetFontSize();
-    } else {
-      ptScroll.y -= GetFontSize();
-    }
-    SetScrollPos(ptScroll);
-
-    return true;
-  }
-
-  return false;
+  CFX_PointF ptScroll = GetScrollPos();
+  if (zDelta > 0)
+    ptScroll.y += GetFontSize();
+  else
+    ptScroll.y -= GetFontSize();
+  SetScrollPos(ptScroll);
+  return true;
 }
 
 void CPWL_Edit::OnInsertReturn(const CPVT_WordPlace& place,
