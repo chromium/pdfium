@@ -18,7 +18,6 @@
 class FXTEXT_CHARPOS;
 
 enum FDE_VISUALOBJTYPE {
-  FDE_VISUALOBJ_Canvas = 0x00,
   FDE_VISUALOBJ_Text = 0x01
 };
 

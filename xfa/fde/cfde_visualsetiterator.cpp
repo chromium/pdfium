@@ -66,14 +66,6 @@ FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
       ASSERT(pObj);
 
       FDE_VISUALOBJTYPE eType = pVisualSet->GetType();
-      if (eType == FDE_VISUALOBJ_Canvas) {
-        FDE_CANVASITEM canvas;
-        canvas.hCanvas = pObj;
-        canvas.pCanvas = static_cast<CFDE_TxtEdtPage*>(pVisualSet);
-        canvas.pos = canvas.pCanvas->GetFirstPosition();
-        m_CanvasStack.push(canvas);
-        break;
-      }
       uint32_t dwObj = (uint32_t)eType;
       if ((m_dwFilter & dwObj) != 0) {
         if (ppCanvasSet)

@@ -58,9 +58,6 @@ void CFDE_RenderContext::DoRender() {
         RenderText(static_cast<CFDE_TxtEdtTextSet*>(pVisualSet), pPiece);
         iCount += 5;
         break;
-      case FDE_VISUALOBJ_Canvas:
-        NOTREACHED();
-        break;
       default:
         break;
     }
