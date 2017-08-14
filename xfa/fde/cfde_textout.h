@@ -76,6 +76,14 @@ class CFDE_TTOLine {
 
 class CFDE_TextOut {
  public:
+  static bool DrawString(CFX_RenderDevice* device,
+                         FX_ARGB color,
+                         const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+                         const FXTEXT_CHARPOS* pCharPos,
+                         int32_t iCount,
+                         float fFontSize,
+                         const CFX_Matrix* pMatrix);
+
   CFDE_TextOut();
   ~CFDE_TextOut();
 
@@ -85,13 +93,13 @@ class CFDE_TextOut {
   void SetStyles(const FDE_TextStyle& dwStyles);
   void SetAlignment(FDE_TextAlignment iAlignment);
   void SetLineSpace(float fLineSpace);
-  void SetRenderDevice(CFX_RenderDevice* pDevice);
   void SetMatrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
   void SetLineBreakTolerance(float fTolerance);
 
   void CalcLogicSize(const wchar_t* pwsStr, int32_t iLength, CFX_SizeF& size);
   void CalcLogicSize(const wchar_t* pwsStr, int32_t iLength, CFX_RectF& rect);
-  void DrawLogicText(const wchar_t* pwsStr,
+  void DrawLogicText(CFX_RenderDevice* device,
+                     const wchar_t* pwsStr,
                      int32_t iLength,
                      const CFX_RectF& rect);
   int32_t GetTotalLines() const { return m_iTotalLines; }
@@ -134,7 +142,6 @@ class CFDE_TextOut {
   int32_t m_iCurPiece;
   int32_t m_iTotalLines;
   std::vector<FXTEXT_CHARPOS> m_CharPos;
-  std::unique_ptr<CFDE_RenderDevice> m_pRenderDevice;
 };
 
 #endif  // XFA_FDE_CFDE_TEXTOUT_H_

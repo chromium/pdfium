@@ -14,10 +14,11 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_renderdevice.h"
+#include "xfa/fde/cfde_textout.h"
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
 #include "xfa/fxfa/cxfa_pieceline.h"
@@ -557,9 +558,8 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   if (!pFxDevice)
     return false;
 
-  auto pDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pFxDevice);
-  pDevice->SaveState();
-  pDevice->SetClipRect(rtClip);
+  pFxDevice->SaveState();
+  pFxDevice->SetClip_Rect(rtClip);
 
   if (m_pieceLines.empty()) {
     int32_t iBlockCount = CountBlocks();
@@ -598,13 +598,12 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
         iCharCount = iChars;
       }
       memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
-      RenderString(pDevice.get(), pPieceLine, j, pCharPos, tmDoc2Device);
+      RenderString(pFxDevice, pPieceLine, j, pCharPos, tmDoc2Device);
     }
-    for (j = 0; j < iPieces; j++) {
-      RenderPath(pDevice.get(), pPieceLine, j, pCharPos, tmDoc2Device);
-    }
+    for (j = 0; j < iPieces; j++)
+      RenderPath(pFxDevice, pPieceLine, j, pCharPos, tmDoc2Device);
   }
-  pDevice->RestoreState();
+  pFxDevice->RestoreState(false);
   FX_Free(pCharPos);
   return iPieceLines > 0;
 }
@@ -1137,7 +1136,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
   m_iLines++;
 }
 
-void CXFA_TextLayout::RenderString(CFDE_RenderDevice* pDevice,
+void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
                                    CXFA_PieceLine* pPieceLine,
                                    int32_t iPiece,
                                    FXTEXT_CHARPOS* pCharPos,
@@ -1145,13 +1144,13 @@ void CXFA_TextLayout::RenderString(CFDE_RenderDevice* pDevice,
   const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
   int32_t iCount = GetDisplayPos(pPiece, pCharPos);
   if (iCount > 0) {
-    pDevice->DrawString(pPiece->dwColor, pPiece->pFont, pCharPos, iCount,
-                        pPiece->fFontSize, &tmDoc2Device);
+    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont, pCharPos,
+                             iCount, pPiece->fFontSize, &tmDoc2Device);
   }
   pPieceLine->m_charCounts.push_back(iCount);
 }
 
-void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
+void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
                                  CXFA_PieceLine* pPieceLine,
                                  int32_t iPiece,
                                  FXTEXT_CHARPOS* pCharPos,
@@ -1260,7 +1259,14 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
       fEndY += 2.0f;
     }
   }
-  pDevice->DrawPath(pPiece->dwColor, 1, path, &tmDoc2Device);
+
+  CFX_GraphStateData graphState;
+  graphState.m_LineCap = CFX_GraphStateData::LineCapButt;
+  graphState.m_LineJoin = CFX_GraphStateData::LineJoinMiter;
+  graphState.m_LineWidth = 1;
+  graphState.m_MiterLimit = 10;
+  graphState.m_DashPhase = 0;
+  pDevice->DrawPath(&path, &tmDoc2Device, &graphState, 0, pPiece->dwColor, 0);
 }
 
 int32_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,

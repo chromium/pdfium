@@ -471,6 +471,13 @@ bool CFX_RenderDevice::SetClip_PathStroke(
   return true;
 }
 
+bool CFX_RenderDevice::SetClip_Rect(const CFX_RectF& rtClip) {
+  return SetClip_Rect(FX_RECT(static_cast<int32_t>(floor(rtClip.left)),
+                              static_cast<int32_t>(floor(rtClip.top)),
+                              static_cast<int32_t>(ceil(rtClip.right())),
+                              static_cast<int32_t>(ceil(rtClip.bottom()))));
+}
+
 bool CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
   CFX_PathData path;
   path.AppendRect(rect.left, rect.bottom, rect.right, rect.top);

@@ -46,14 +46,14 @@ void CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
     return;
 
   CXFA_Graphics* pGraphics = pParams->m_pGraphics;
-  m_pTextOut->SetRenderDevice(pGraphics->GetRenderDevice());
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
 
   CFX_Matrix* pMatrix = &pParams->m_matrix;
   pMatrix->Concat(*pGraphics->GetMatrix());
   m_pTextOut->SetMatrix(*pMatrix);
-  m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(), iLen, pParams->m_rtPart);
+  m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(),
+                            pParams->m_wsText.c_str(), iLen, pParams->m_rtPart);
 }
 
 void CFWL_WidgetTP::InitializeArrowColorData() {

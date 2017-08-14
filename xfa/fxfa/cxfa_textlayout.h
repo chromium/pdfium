@@ -98,12 +98,12 @@ class CXFA_TextLayout {
   bool IsEnd(bool bSavePieces);
   void ProcessText(CFX_WideString& wsText);
   void UpdateAlign(float fHeight, float fBottom);
-  void RenderString(CFDE_RenderDevice* pDevice,
+  void RenderString(CFX_RenderDevice* pDevice,
                     CXFA_PieceLine* pPieceLine,
                     int32_t iPiece,
                     FXTEXT_CHARPOS* pCharPos,
                     const CFX_Matrix& tmDoc2Device);
-  void RenderPath(CFDE_RenderDevice* pDevice,
+  void RenderPath(CFX_RenderDevice* pDevice,
                   CXFA_PieceLine* pPieceLine,
                   int32_t iPiece,
                   FXTEXT_CHARPOS* pCharPos,

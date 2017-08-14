@@ -14,7 +14,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
 namespace {
@@ -30,6 +29,90 @@ bool IsTextAlignmentTop(const FDE_TextAlignment align) {
 }
 
 }  // namespace
+
+// static
+bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
+                              FX_ARGB color,
+                              const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+                              const FXTEXT_CHARPOS* pCharPos,
+                              int32_t iCount,
+                              float fFontSize,
+                              const CFX_Matrix* pMatrix) {
+  ASSERT(pFont && pCharPos && iCount > 0);
+  CFX_Font* pFxFont = pFont->GetDevFont();
+  if ((pFont->GetFontStyles() & FX_FONTSTYLE_Italic) != 0 &&
+      !pFxFont->IsItalic()) {
+    FXTEXT_CHARPOS* pCP = (FXTEXT_CHARPOS*)pCharPos;
+    float* pAM;
+    for (int32_t i = 0; i < iCount; ++i) {
+      static const float mc = 0.267949f;
+      pAM = pCP->m_AdjustMatrix;
+      pAM[2] = mc * pAM[0] + pAM[2];
+      pAM[3] = mc * pAM[1] + pAM[3];
+      pCP++;
+    }
+  }
+  FXTEXT_CHARPOS* pCP = (FXTEXT_CHARPOS*)pCharPos;
+  CFX_RetainPtr<CFGAS_GEFont> pCurFont;
+  CFX_RetainPtr<CFGAS_GEFont> pSTFont;
+  FXTEXT_CHARPOS* pCurCP = nullptr;
+  int32_t iCurCount = 0;
+
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+  uint32_t dwFontStyle = pFont->GetFontStyles();
+  CFX_Font FxFont;
+  auto SubstFxFont = pdfium::MakeUnique<CFX_SubstFont>();
+  SubstFxFont->m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
+  SubstFxFont->m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
+  SubstFxFont->m_WeightCJK = SubstFxFont->m_Weight;
+  SubstFxFont->m_bItalicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
+  FxFont.SetSubstFont(std::move(SubstFxFont));
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
+  for (int32_t i = 0; i < iCount; ++i) {
+    pSTFont = pFont->GetSubstFont((int32_t)pCP->m_GlyphIndex);
+    pCP->m_GlyphIndex &= 0x00FFFFFF;
+    pCP->m_bFontStyle = false;
+    if (pCurFont != pSTFont) {
+      if (pCurFont) {
+        pFxFont = pCurFont->GetDevFont();
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+        FxFont.SetFace(pFxFont->GetFace());
+        device->DrawNormalText(iCurCount, pCurCP, &FxFont, -fFontSize, pMatrix,
+                               color, FXTEXT_CLEARTYPE);
+#else
+        device->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize, pMatrix,
+                               color, FXTEXT_CLEARTYPE);
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+      }
+      pCurFont = pSTFont;
+      pCurCP = pCP;
+      iCurCount = 1;
+    } else {
+      iCurCount++;
+    }
+    pCP++;
+  }
+  if (pCurFont && iCurCount) {
+    pFxFont = pCurFont->GetDevFont();
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+    FxFont.SetFace(pFxFont->GetFace());
+    bool bRet = device->DrawNormalText(iCurCount, pCurCP, &FxFont, -fFontSize,
+                                       pMatrix, color, FXTEXT_CLEARTYPE);
+    FxFont.SetFace(nullptr);
+    return bRet;
+#else
+    return device->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize,
+                                  pMatrix, color, FXTEXT_CLEARTYPE);
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+  }
+
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+  FxFont.SetFace(nullptr);
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
+  return true;
+}
 
 FDE_TTOPIECE::FDE_TTOPIECE() = default;
 
@@ -100,11 +183,6 @@ void CFDE_TextOut::SetAlignment(FDE_TextAlignment iAlignment) {
 void CFDE_TextOut::SetLineSpace(float fLineSpace) {
   ASSERT(fLineSpace > 1.0f);
   m_fLineSpace = fLineSpace;
-}
-
-void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
-  ASSERT(pDevice);
-  m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pDevice);
 }
 
 void CFDE_TextOut::SetLineBreakTolerance(float fTolerance) {
@@ -208,7 +286,8 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
   return true;
 }
 
-void CFDE_TextOut::DrawLogicText(const wchar_t* pwsStr,
+void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
+                                 const wchar_t* pwsStr,
                                  int32_t iLength,
                                  const CFX_RectF& rect) {
   ASSERT(m_pFont && m_fFontSize >= 1.0f);
@@ -226,15 +305,15 @@ void CFDE_TextOut::DrawLogicText(const wchar_t* pwsStr,
   Reload(rect);
   DoAlignment(rect);
 
-  if (!m_pRenderDevice || m_ttoLines.empty())
+  if (!device || m_ttoLines.empty())
     return;
 
   CFX_RectF rtClip;
   m_Matrix.TransformRect(rtClip);
 
-  m_pRenderDevice->SaveState();
+  device->SaveState();
   if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f)
-    m_pRenderDevice->SetClipRect(rtClip);
+    device->SetClip_Rect(rtClip);
 
   for (auto& line : m_ttoLines) {
     int32_t iPieces = line.GetSize();
@@ -245,12 +324,12 @@ void CFDE_TextOut::DrawLogicText(const wchar_t* pwsStr,
 
       int32_t iCount = GetDisplayPos(pPiece);
       if (iCount > 0) {
-        m_pRenderDevice->DrawString(m_TxtColor, m_pFont, m_CharPos.data(),
-                                    iCount, m_fFontSize, &m_Matrix);
+        CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont, m_CharPos.data(),
+                                 iCount, m_fFontSize, &m_Matrix);
       }
     }
   }
-  m_pRenderDevice->RestoreState();
+  device->RestoreState(false);
 }
 
 void CFDE_TextOut::LoadText(const wchar_t* pwsStr,

@@ -110,14 +110,13 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     if (!pRenderDevice)
       return;
 
-    m_pTextOut->SetRenderDevice(pRenderDevice);
     CFX_Matrix mtPart = pParams->m_matrix;
     CFX_Matrix* pMatrix = pGraphics->GetMatrix();
     if (pMatrix) {
       mtPart.Concat(*pMatrix);
     }
     m_pTextOut->SetMatrix(mtPart);
-    m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(),
+    m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.c_str(),
                               pParams->m_wsText.GetLength(), pParams->m_rtPart);
     return;
   }
@@ -131,7 +130,6 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
   if (!pRenderDevice)
     return;
 
-  m_pTextOut->SetRenderDevice(pRenderDevice);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetFont(pAcc->GetFDEFont());
@@ -143,7 +141,7 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     mtPart.Concat(*pMatrix);
 
   m_pTextOut->SetMatrix(mtPart);
-  m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(),
+  m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.c_str(),
                             pParams->m_wsText.GetLength(), pParams->m_rtPart);
 }
 

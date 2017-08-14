@@ -123,6 +123,7 @@ class CFX_RenderDevice {
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
                         int fill_mode);
+  bool SetClip_Rect(const CFX_RectF& pRect);
   bool SetClip_Rect(const FX_RECT& pRect);
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,

@@ -13,7 +13,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_renderdevice.h"
+#include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedttextset.h"
@@ -606,14 +606,13 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
   if (!pFont)
     return;
 
-  CFDE_RenderDevice renderDevice(pRenderDev);
-  renderDevice.SetClipRect(clipRect);
+  pRenderDev->SetClip_Rect(clipRect);
 
-  CFX_RectF rtDocClip = renderDevice.GetClipRect();
+  CFX_RectF rtDocClip = clipRect;
   if (rtDocClip.IsEmpty()) {
     rtDocClip.left = rtDocClip.top = 0;
-    rtDocClip.width = static_cast<float>(renderDevice.GetWidth());
-    rtDocClip.height = static_cast<float>(renderDevice.GetHeight());
+    rtDocClip.width = static_cast<float>(pRenderDev->GetWidth());
+    rtDocClip.height = static_cast<float>(pRenderDev->GetHeight());
   }
   mt.GetInverse().TransformRect(rtDocClip);
 
@@ -631,8 +630,9 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
       char_pos.resize(iCount, FXTEXT_CHARPOS());
 
     iCount = pTextSet->GetDisplayPos(pText, char_pos.data(), false);
-    renderDevice.DrawString(pTextSet->GetFontColor(), pFont, char_pos.data(),
-                            iCount, pTextSet->GetFontSize(), &mt);
+    CFDE_TextOut::DrawString(pRenderDev, pTextSet->GetFontColor(), pFont,
+                             char_pos.data(), iCount, pTextSet->GetFontSize(),
+                             &mt);
   }
 }
 
