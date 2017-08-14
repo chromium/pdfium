@@ -45,8 +45,6 @@ CFDE_TextOut::CFDE_TextOut()
       m_fLinePos(0.0f),
       m_fTolerance(0.0f),
       m_iAlignment(FDE_TextAlignment::kTopLeft),
-      m_iTxtBkAlignment(0),
-      m_wParagraphBkChar(L'\n'),
       m_TxtColor(0xFF000000),
       m_dwTxtBkStyles(0),
       m_ttoLines(5),
@@ -54,8 +52,6 @@ CFDE_TextOut::CFDE_TextOut()
       m_iCurPiece(0),
       m_iTotalLines(0) {
   m_Matrix.SetIdentity();
-  m_rtClip.Reset();
-  m_rtLogicClip.Reset();
 }
 
 CFDE_TextOut::~CFDE_TextOut() {}
@@ -72,10 +68,6 @@ void CFDE_TextOut::SetFontSize(float fFontSize) {
   m_pTxtBreak->SetFontSize(fFontSize);
 }
 
-void CFDE_TextOut::SetTextColor(FX_ARGB color) {
-  m_TxtColor = color;
-}
-
 void CFDE_TextOut::SetStyles(const FDE_TextStyle& dwStyles) {
   m_Styles = dwStyles;
 
@@ -86,31 +78,23 @@ void CFDE_TextOut::SetStyles(const FDE_TextStyle& dwStyles) {
   m_pTxtBreak->SetLayoutStyles(m_dwTxtBkStyles);
 }
 
-void CFDE_TextOut::SetTabWidth(float fTabWidth) {
-  ASSERT(fTabWidth > 1.0f);
-  m_pTxtBreak->SetTabWidth(fTabWidth);
-}
-
-void CFDE_TextOut::SetParagraphBreakChar(wchar_t wch) {
-  m_wParagraphBkChar = wch;
-  m_pTxtBreak->SetParagraphBreakChar(wch);
-}
-
 void CFDE_TextOut::SetAlignment(FDE_TextAlignment iAlignment) {
   m_iAlignment = iAlignment;
+
+  int32_t txtBreakAlignment = 0;
   switch (m_iAlignment) {
     case FDE_TextAlignment::kCenter:
-      m_iTxtBkAlignment = CFX_TxtLineAlignment_Center;
+      txtBreakAlignment = CFX_TxtLineAlignment_Center;
       break;
     case FDE_TextAlignment::kCenterRight:
-      m_iTxtBkAlignment = CFX_TxtLineAlignment_Right;
+      txtBreakAlignment = CFX_TxtLineAlignment_Right;
       break;
     case FDE_TextAlignment::kCenterLeft:
     case FDE_TextAlignment::kTopLeft:
-      m_iTxtBkAlignment = CFX_TxtLineAlignment_Left;
+      txtBreakAlignment = CFX_TxtLineAlignment_Left;
       break;
   }
-  m_pTxtBreak->SetAlignment(m_iTxtBkAlignment);
+  m_pTxtBreak->SetAlignment(txtBreakAlignment);
 }
 
 void CFDE_TextOut::SetLineSpace(float fLineSpace) {
@@ -118,43 +102,14 @@ void CFDE_TextOut::SetLineSpace(float fLineSpace) {
   m_fLineSpace = fLineSpace;
 }
 
-void CFDE_TextOut::SetDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIB) {
-  ASSERT(pDIB);
-  m_pRenderDevice.reset();
-  m_pDefaultRenderDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
-  m_pDefaultRenderDevice->Attach(pDIB, false, nullptr, false);
-  m_pRenderDevice =
-      pdfium::MakeUnique<CFDE_RenderDevice>(m_pDefaultRenderDevice.get());
-}
-
 void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
   ASSERT(pDevice);
   m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pDevice);
 }
 
-void CFDE_TextOut::SetClipRect(const CFX_Rect& rtClip) {
-  m_rtClip = rtClip.As<float>();
-}
-
-void CFDE_TextOut::SetClipRect(const CFX_RectF& rtClip) {
-  m_rtClip = rtClip;
-}
-
-void CFDE_TextOut::SetLogicClipRect(const CFX_RectF& rtClip) {
-  m_rtLogicClip = rtClip;
-}
-
-void CFDE_TextOut::SetMatrix(const CFX_Matrix& matrix) {
-  m_Matrix = matrix;
-}
-
 void CFDE_TextOut::SetLineBreakTolerance(float fTolerance) {
   m_fTolerance = fTolerance;
   m_pTxtBreak->SetLineBreakTolerance(m_fTolerance);
-}
-
-int32_t CFDE_TextOut::GetTotalLines() {
-  return m_iTotalLines;
 }
 
 void CFDE_TextOut::CalcLogicSize(const wchar_t* pwsStr,
@@ -171,16 +126,18 @@ void CFDE_TextOut::CalcLogicSize(const wchar_t* pwsStr,
   if (!pwsStr || iLength < 1) {
     rect.width = 0.0f;
     rect.height = 0.0f;
-  } else {
-    CalcTextSize(pwsStr, iLength, rect);
+    return;
   }
-}
 
-void CFDE_TextOut::CalcTextSize(const wchar_t* pwsStr,
-                                int32_t iLength,
-                                CFX_RectF& rect) {
   ASSERT(m_pFont && m_fFontSize >= 1.0f);
-  SetLineWidth(rect);
+
+  if (!m_Styles.single_line_) {
+    if (rect.Width() < 1.0f)
+      rect.width = m_fFontSize * 1000.0f;
+
+    m_pTxtBreak->SetLineWidth(rect.Width());
+  }
+
   m_iTotalLines = 0;
   const wchar_t* pStr = pwsStr;
   float fWidth = 0.0f;
@@ -221,15 +178,6 @@ void CFDE_TextOut::CalcTextSize(const wchar_t* pwsStr,
     rect.height -= m_fLineSpace - m_fFontSize;
 }
 
-void CFDE_TextOut::SetLineWidth(CFX_RectF& rect) {
-  if (m_Styles.single_line_)
-    return;
-  if (rect.Width() < 1.0f)
-    rect.width = m_fFontSize * 1000.0f;
-
-  m_pTxtBreak->SetLineWidth(rect.Width());
-}
-
 bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
                                      float& fStartPos,
                                      float& fWidth,
@@ -260,58 +208,9 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
   return true;
 }
 
-void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
-                            int32_t iLength,
-                            int32_t x,
-                            int32_t y) {
-  CFX_RectF rtText(static_cast<float>(x), static_cast<float>(y),
-                   m_fFontSize * 1000.0f, m_fFontSize * 1000.0f);
-  DrawText(pwsStr, iLength, rtText);
-}
-
-void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
-                            int32_t iLength,
-                            float x,
-                            float y) {
-  DrawText(pwsStr, iLength,
-           CFX_RectF(x, y, m_fFontSize * 1000.0f, m_fFontSize * 1000.0f));
-}
-
-void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
-                            int32_t iLength,
-                            const CFX_Rect& rect) {
-  DrawText(pwsStr, iLength, rect.As<float>());
-}
-
-void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
-                            int32_t iLength,
-                            const CFX_RectF& rect) {
-  CFX_RectF rtText(rect.left, rect.top, rect.width, rect.height);
-  m_Matrix.GetInverse().TransformRect(rtText);
-  DrawText(pwsStr, iLength, rtText, m_rtClip);
-}
-
-void CFDE_TextOut::DrawLogicText(const wchar_t* pwsStr,
-                                 int32_t iLength,
-                                 float x,
-                                 float y) {
-  CFX_RectF rtText(x, y, m_fFontSize * 1000.0f, m_fFontSize * 1000.0f);
-  DrawLogicText(pwsStr, iLength, rtText);
-}
-
 void CFDE_TextOut::DrawLogicText(const wchar_t* pwsStr,
                                  int32_t iLength,
                                  const CFX_RectF& rect) {
-  CFX_RectF rtClip(m_rtLogicClip.left, m_rtLogicClip.top, m_rtLogicClip.width,
-                   m_rtLogicClip.height);
-  m_Matrix.TransformRect(rtClip);
-  DrawText(pwsStr, iLength, rect, rtClip);
-}
-
-void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
-                            int32_t iLength,
-                            const CFX_RectF& rect,
-                            const CFX_RectF& rtClip) {
   ASSERT(m_pFont && m_fFontSize >= 1.0f);
   if (!pwsStr || iLength < 1)
     return;
@@ -322,10 +221,36 @@ void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
   m_pTxtBreak->SetLineWidth(fLineWidth);
   m_ttoLines.clear();
   m_wsText.clear();
+
   LoadText(pwsStr, iLength, rect);
   Reload(rect);
   DoAlignment(rect);
-  OnDraw(rtClip);
+
+  if (!m_pRenderDevice || m_ttoLines.empty())
+    return;
+
+  CFX_RectF rtClip;
+  m_Matrix.TransformRect(rtClip);
+
+  m_pRenderDevice->SaveState();
+  if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f)
+    m_pRenderDevice->SetClipRect(rtClip);
+
+  for (auto& line : m_ttoLines) {
+    int32_t iPieces = line.GetSize();
+    for (int32_t j = 0; j < iPieces; j++) {
+      FDE_TTOPIECE* pPiece = line.GetPtrAt(j);
+      if (!pPiece)
+        continue;
+
+      int32_t iCount = GetDisplayPos(pPiece);
+      if (iCount > 0) {
+        m_pRenderDevice->DrawString(m_TxtColor, m_pFont, m_CharPos.data(),
+                                    iCount, m_fFontSize, &m_Matrix);
+      }
+    }
+  }
+  m_pRenderDevice->RestoreState();
 }
 
 void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
@@ -528,43 +453,12 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   }
 }
 
-void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
-  if (!m_pRenderDevice || m_ttoLines.empty())
-    return;
-
-  m_pRenderDevice->SaveState();
-  if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f)
-    m_pRenderDevice->SetClipRect(rtClip);
-
-  for (auto& line : m_ttoLines) {
-    int32_t iPieces = line.GetSize();
-    for (int32_t j = 0; j < iPieces; j++) {
-      FDE_TTOPIECE* pPiece = line.GetPtrAt(j);
-      if (!pPiece)
-        continue;
-
-      int32_t iCount = GetDisplayPos(pPiece);
-      if (iCount > 0) {
-        m_pRenderDevice->DrawString(m_TxtColor, m_pFont, m_CharPos.data(),
-                                    iCount, m_fFontSize, &m_Matrix);
-      }
-    }
-  }
-  m_pRenderDevice->RestoreState();
-}
-
 int32_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
   FX_TXTRUN tr = ToTextRun(pPiece);
   ASSERT(tr.iLength >= 0);
   if (pdfium::CollectionSize<int32_t>(m_CharPos) < tr.iLength)
     m_CharPos.resize(tr.iLength, FXTEXT_CHARPOS());
   return m_pTxtBreak->GetDisplayPos(&tr, m_CharPos.data());
-}
-
-int32_t CFDE_TextOut::GetCharRects(const FDE_TTOPIECE* pPiece) {
-  FX_TXTRUN tr = ToTextRun(pPiece);
-  m_rectArray = m_pTxtBreak->GetCharRects(&tr);
-  return pdfium::CollectionSize<int32_t>(m_rectArray);
 }
 
 FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
@@ -576,7 +470,7 @@ FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
   tr.fFontSize = m_fFontSize;
   tr.dwStyles = m_dwTxtBkStyles;
   tr.dwCharStyles = pPiece->dwCharStyles;
-  tr.wLineBreakChar = m_wParagraphBkChar;
+  tr.wLineBreakChar = L'\n';
   tr.pRect = &pPiece->rtPiece;
   return tr;
 }
@@ -612,8 +506,4 @@ void CFDE_TTOLine::RemoveLast(int32_t icount) {
     return;
   icount = std::min(icount, pdfium::CollectionSize<int32_t>(m_pieces));
   m_pieces.erase(m_pieces.end() - icount, m_pieces.end());
-}
-
-void CFDE_TTOLine::RemoveAll() {
-  m_pieces.clear();
 }
