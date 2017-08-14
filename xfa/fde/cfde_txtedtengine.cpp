@@ -25,6 +25,22 @@ namespace {
 const uint32_t kPageWidthMax = 0xffff;
 const uint32_t kUnicodeParagraphSeparator = 0x2029;
 
+enum FDE_TXTEDT_MODIFY_RET {
+  FDE_TXTEDT_MODIFY_RET_F_Locked = -5,
+  FDE_TXTEDT_MODIFY_RET_F_Invalidate = -4,
+  FDE_TXTEDT_MODIFY_RET_F_Boundary = -3,
+  FDE_TXTEDT_MODIFY_RET_F_Full = -2,
+  FDE_TXTEDT_MODIFY_RET_S_Normal = 0,
+  FDE_TXTEDT_MODIFY_RET_S_Part = 2,
+};
+
+enum FDE_TXTEDIT_LINEEND {
+  FDE_TXTEDIT_LINEEND_Auto,
+  FDE_TXTEDIT_LINEEND_CRLF,
+  FDE_TXTEDIT_LINEEND_CR,
+  FDE_TXTEDIT_LINEEND_LF,
+};
+
 }  // namespace
 
 FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
@@ -252,25 +268,11 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
         UpdateCaretIndex(ptCaret);
       break;
     }
-    case MC_WordBackward:
-      break;
-    case MC_WordForward:
-      break;
     case MC_LineStart:
       MoveLineStart();
       break;
     case MC_LineEnd:
       MoveLineEnd();
-      break;
-    case MC_ParagStart:
-      MoveParagStart();
-      break;
-    case MC_ParagEnd:
-      MoveParagEnd();
-      break;
-    case MC_PageDown:
-      break;
-    case MC_PageUp:
       break;
     case MC_Home:
       MoveHome();
@@ -1278,31 +1280,6 @@ bool CFDE_TxtEdtEngine::MoveLineEnd() {
   }
   UpdateCaretRect(nIndex, bBefore);
   pParag->UnloadParag();
-  return true;
-}
-
-bool CFDE_TxtEdtEngine::MoveParagStart() {
-  FDE_TXTEDTPARAGPOS ParagPos;
-  TextPos2ParagPos(m_bBefore ? m_nCaret : m_nCaret - 1, ParagPos);
-  UpdateCaretRect(m_ParagPtrArray[ParagPos.nParagIndex]->GetStartIndex(), true);
-  return true;
-}
-
-bool CFDE_TxtEdtEngine::MoveParagEnd() {
-  int32_t nIndex = m_bBefore ? m_nCaret : m_nCaret - 1;
-  FDE_TXTEDTPARAGPOS ParagPos;
-  TextPos2ParagPos(nIndex, ParagPos);
-  CFDE_TxtEdtParag* pParag = m_ParagPtrArray[ParagPos.nParagIndex].get();
-  nIndex = pParag->GetStartIndex() + pParag->GetTextLength() - 1;
-  wchar_t wChar = m_pTxtBuf->GetCharByIndex(nIndex);
-  if (wChar == L'\n' && nIndex > 0) {
-    nIndex--;
-    wChar = m_pTxtBuf->GetCharByIndex(nIndex);
-    if (wChar != L'\r') {
-      nIndex++;
-    }
-  }
-  UpdateCaretRect(nIndex, true);
   return true;
 }
 

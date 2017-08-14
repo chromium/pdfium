@@ -14,7 +14,6 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtengine.h"
-#include "xfa/fde/ifde_txtedtengine.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
 CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)

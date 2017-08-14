@@ -639,10 +639,8 @@ void CFWL_Edit::UpdateEditParams() {
       params.dwAlignment |= FDE_TEXTEDITALIGN_Justified;
       break;
     }
-    default: {
-      params.dwAlignment |= FDE_TEXTEDITALIGN_Normal;
+    default:
       break;
-    }
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) {
     params.dwMode |= FDE_TEXTEDITMODE_MultiLines;
@@ -659,10 +657,6 @@ void CFWL_Edit::UpdateEditParams() {
   } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_AutoHScroll) ==
              0) {
     params.dwMode |= FDE_TEXTEDITMODE_LimitArea_Horz;
-  }
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
-      (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
-    params.dwMode |= FDE_TEXTEDITMODE_ReadOnly;
   }
 
   IFWL_ThemeProvider* theme = GetAvailableTheme();

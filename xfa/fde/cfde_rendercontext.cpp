@@ -11,9 +11,6 @@
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fde/cfde_txtedttextset.h"
 
-#define FDE_PATHRENDER_Stroke 1
-#define FDE_PATHRENDER_Fill 2
-
 CFDE_RenderContext::CFDE_RenderContext()
     : m_pRenderDevice(nullptr), m_Transform() {
   m_Transform.SetIdentity();

@@ -11,14 +11,84 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "xfa/fde/ifde_txtedtengine.h"
+#include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxge/fx_dib.h"
 
 class CFDE_TxtEdtBuf;
 class CFDE_TxtEdtPage;
 class CFDE_TxtEdtParag;
+class CFGAS_GEFont;
+class CFWL_Edit;
 class CFX_TxtBreak;
 class IFDE_TxtEdtDoRecord;
 class IFX_CharIter;
+
+#define FDE_TEXTEDITMODE_MultiLines (1L << 0)
+#define FDE_TEXTEDITMODE_AutoLineWrap (1L << 1)
+#define FDE_TEXTEDITMODE_LimitArea_Vert (1L << 3)
+#define FDE_TEXTEDITMODE_LimitArea_Horz (1L << 4)
+#define FDE_TEXTEDITMODE_Validate (1L << 8)
+#define FDE_TEXTEDITMODE_Password (1L << 9)
+
+#define FDE_TEXTEDITALIGN_Left 0
+#define FDE_TEXTEDITALIGN_Center (1L << 0)
+#define FDE_TEXTEDITALIGN_Right (1L << 1)
+#define FDE_TEXTEDITALIGN_Justified (1L << 4)
+
+#define FDE_TEXTEDITLAYOUT_CombText (1L << 4)
+#define FDE_TEXTEDITLAYOUT_LastLineHeight (1L << 8)
+
+enum FDE_TXTEDTMOVECARET {
+  MC_MoveNone = 0,
+  MC_Left,
+  MC_Right,
+  MC_Up,
+  MC_Down,
+  MC_LineStart,
+  MC_LineEnd,
+  MC_Home,
+  MC_End,
+};
+
+struct FDE_TXTEDTPARAMS {
+  FDE_TXTEDTPARAMS();
+  ~FDE_TXTEDTPARAMS();
+
+  float fPlateWidth;
+  float fPlateHeight;
+  int32_t nLineCount;
+  uint32_t dwLayoutStyles;
+  uint32_t dwAlignment;
+  uint32_t dwMode;
+  CFX_RetainPtr<CFGAS_GEFont> pFont;
+  float fFontSize;
+  FX_ARGB dwFontColor;
+  float fLineSpace;
+  float fTabWidth;
+  wchar_t wDefChar;
+  wchar_t wLineBreakChar;
+  int32_t nLineEnd;
+  int32_t nHorzScale;
+  float fCharSpace;
+  CFWL_Edit* pEventSink;
+};
+
+enum FDE_TXTEDT_TEXTCHANGE_TYPE {
+  FDE_TXTEDT_TEXTCHANGE_TYPE_Insert = 0,
+  FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
+  FDE_TXTEDT_TEXTCHANGE_TYPE_Replace,
+};
+
+struct FDE_TXTEDT_TEXTCHANGE_INFO {
+  FDE_TXTEDT_TEXTCHANGE_INFO();
+  ~FDE_TXTEDT_TEXTCHANGE_INFO();
+
+  int32_t nChangeType;
+  CFX_WideString wsInsert;
+  CFX_WideString wsDelete;
+  CFX_WideString wsPrevText;
+};
 
 class CFDE_TxtEdtEngine {
  public:
@@ -132,8 +202,6 @@ class CFDE_TxtEdtEngine {
   bool MoveDown(CFX_PointF& ptCaret);
   bool MoveLineStart();
   bool MoveLineEnd();
-  bool MoveParagStart();
-  bool MoveParagEnd();
   bool MoveHome();
   bool MoveEnd();
   bool IsFitArea(CFX_WideString& wsText);
