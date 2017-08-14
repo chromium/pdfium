@@ -192,6 +192,7 @@ TEST_F(FXJSV8EmbedderTest, NewObject) {
   v8::Context::Scope context_scope(GetV8Context());
 
   auto object = engine()->NewFxDynamicObj(-1);
+  ASSERT_FALSE(object.IsEmpty());
   EXPECT_EQ(0u, engine()->GetObjectPropertyNames(object).size());
   EXPECT_FALSE(engine()->GetObjectProperty(object, L"clams").IsEmpty());
   EXPECT_TRUE(engine()->GetObjectProperty(object, L"clams")->IsUndefined());

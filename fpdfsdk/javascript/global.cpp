@@ -206,11 +206,13 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
         break;
       case JS_GlobalDataType::OBJECT: {
         v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
-        PutObjectProperty(pObj, &pData->data);
-        SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::OBJECT, 0,
-                           false, "", pObj, pData->bPersistent == 1);
-        pRuntime->PutObjectProperty(m_pJSObject->ToV8Object(),
-                                    pData->data.sKey.UTF8Decode(), pObj);
+        if (!pObj.IsEmpty()) {
+          PutObjectProperty(pObj, &pData->data);
+          SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::OBJECT, 0,
+                             false, "", pObj, pData->bPersistent == 1);
+          pRuntime->PutObjectProperty(m_pJSObject->ToV8Object(),
+                                      pData->data.sKey.UTF8Decode(), pObj);
+        }
       } break;
       case JS_GlobalDataType::NULLOBJ:
         SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::NULLOBJ, 0,
@@ -335,8 +337,11 @@ void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
         break;
       case JS_GlobalDataType::OBJECT: {
         v8::Local<v8::Object> pNewObj = pRuntime->NewFxDynamicObj(-1);
-        PutObjectProperty(pNewObj, pObjData);
-        pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(), pNewObj);
+        if (!pNewObj.IsEmpty()) {
+          PutObjectProperty(pNewObj, pObjData);
+          pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),
+                                      pNewObj);
+        }
       } break;
       case JS_GlobalDataType::NULLOBJ:
         pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),

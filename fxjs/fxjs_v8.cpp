@@ -409,8 +409,12 @@ void CFXJS_Engine::InitializeEngine() {
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
       v8::Local<v8::String> pObjName = NewString(pObjDef->m_ObjName);
       v8::Local<v8::Object> obj = NewFxDynamicObj(i, true);
-      v8Context->Global()->Set(v8Context, pObjName, obj).FromJust();
-      m_StaticObjects[i] = new v8::Global<v8::Object>(m_isolate, obj);
+      if (!obj.IsEmpty()) {
+        v8Context->Global()->Set(v8Context, pObjName, obj).FromJust();
+        m_StaticObjects[i] = new v8::Global<v8::Object>(m_isolate, obj);
+      } else {
+        m_StaticObjects[i] = nullptr;
+      }
     }
   }
   m_V8PersistentContext.Reset(m_isolate, v8Context);
