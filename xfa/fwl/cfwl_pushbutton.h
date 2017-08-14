@@ -49,8 +49,6 @@ class CFWL_PushButton : public CFWL_Widget {
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
   bool m_bBtnDown;
-  uint32_t m_dwTTOStyles;
-  int32_t m_iTTOAlign;
 };
 
 #endif  // XFA_FWL_CFWL_PUSHBUTTON_H_

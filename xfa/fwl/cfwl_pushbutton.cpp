@@ -22,9 +22,7 @@
 
 CFWL_PushButton::CFWL_PushButton(const CFWL_App* app)
     : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
-      m_bBtnDown(false),
-      m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
-      m_iTTOAlign(FDE_TTOALIGNMENT_Center) {}
+      m_bBtnDown(false) {}
 
 CFWL_PushButton::~CFWL_PushButton() {}
 
@@ -46,7 +44,6 @@ void CFWL_PushButton::Update() {
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
 
-  UpdateTextOutStyles();
   m_rtClient = GetClientRect();
   m_rtCaption = m_rtClient;
 }
@@ -92,11 +89,6 @@ uint32_t CFWL_PushButton::GetPartStates() {
   else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered)
     dwStates |= CFWL_PartState_Hovered;
   return dwStates;
-}
-
-void CFWL_PushButton::UpdateTextOutStyles() {
-  m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
-  m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
 }
 
 void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {

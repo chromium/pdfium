@@ -17,27 +17,33 @@
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
-#define FDE_TTOSTYLE_SingleLine 0x0010
-#define FDE_TTOSTYLE_LineWrap 0x0100
-#define FDE_TTOSTYLE_LastLineHeight 0x1000
-
-#define FDE_TTOALIGNMENT_TopLeft 0
-#define FDE_TTOALIGNMENT_TopCenter 1
-#define FDE_TTOALIGNMENT_TopRight 2
-#define FDE_TTOALIGNMENT_TopAuto 3
-#define FDE_TTOALIGNMENT_CenterLeft 4
-#define FDE_TTOALIGNMENT_Center 5
-#define FDE_TTOALIGNMENT_CenterRight 6
-#define FDE_TTOALIGNMENT_CenterAuto 7
-#define FDE_TTOALIGNMENT_BottomLeft 8
-#define FDE_TTOALIGNMENT_BottomCenter 9
-#define FDE_TTOALIGNMENT_BottomRight 10
-#define FDE_TTOALIGNMENT_BottomAuto 11
-
 class CFDE_RenderDevice;
 class CFX_RenderDevice;
 class CFX_TxtBreak;
 struct FX_TXTRUN;
+
+enum class FDE_TextAlignment : uint8_t {
+  kTopLeft = 0,
+  kCenterLeft,
+  kCenter,
+  kCenterRight
+};
+
+struct FDE_TextStyle {
+  FDE_TextStyle()
+      : single_line_(false), line_wrap_(false), last_line_height_(false) {}
+  ~FDE_TextStyle() {}
+
+  void Reset() {
+    single_line_ = false;
+    line_wrap_ = false;
+    last_line_height_ = false;
+  }
+
+  bool single_line_;
+  bool line_wrap_;
+  bool last_line_height_;
+};
 
 struct FDE_TTOPIECE {
   FDE_TTOPIECE();
@@ -77,10 +83,10 @@ class CFDE_TextOut {
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(float fFontSize);
   void SetTextColor(FX_ARGB color);
-  void SetStyles(uint32_t dwStyles);
+  void SetStyles(const FDE_TextStyle& dwStyles);
   void SetTabWidth(float fTabWidth);
   void SetParagraphBreakChar(wchar_t wch);
-  void SetAlignment(int32_t iAlignment);
+  void SetAlignment(FDE_TextAlignment iAlignment);
   void SetLineSpace(float fLineSpace);
   void SetDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIB);
   void SetRenderDevice(CFX_RenderDevice* pDevice);
@@ -137,12 +143,12 @@ class CFDE_TextOut {
   float m_fLineSpace;
   float m_fLinePos;
   float m_fTolerance;
-  int32_t m_iAlignment;
+  FDE_TextAlignment m_iAlignment;
+  FDE_TextStyle m_Styles;
   int32_t m_iTxtBkAlignment;
   std::vector<int32_t> m_CharWidths;
   wchar_t m_wParagraphBkChar;
   FX_ARGB m_TxtColor;
-  uint32_t m_dwStyles;
   uint32_t m_dwTxtBkStyles;
   CFX_WideString m_wsText;
   CFX_RectF m_rtClip;

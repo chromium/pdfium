@@ -324,9 +324,12 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
   CFWL_ThemeText calPart;
   calPart.m_pWidget = this;
   calPart.m_wsText = wsText;
-  calPart.m_dwTTOStyles =
-      bMultiLine ? FDE_TTOSTYLE_LineWrap : FDE_TTOSTYLE_SingleLine;
-  calPart.m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
+  if (bMultiLine)
+    calPart.m_dwTTOStyles.line_wrap_ = true;
+  else
+    calPart.m_dwTTOStyles.single_line_ = true;
+
+  calPart.m_iTTOAlign = FDE_TextAlignment::kTopLeft;
   float fWidth = bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
   CFX_RectF rect(0, 0, fWidth, FWL_WGT_CalcHeight);
   pTheme->CalcTextRect(&calPart, rect);
@@ -335,8 +338,8 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
 
 void CFWL_Widget::CalcTextRect(const CFX_WideString& wsText,
                                IFWL_ThemeProvider* pTheme,
-                               uint32_t dwTTOStyles,
-                               int32_t iTTOAlign,
+                               const FDE_TextStyle& dwTTOStyles,
+                               FDE_TextAlignment iTTOAlign,
                                CFX_RectF& rect) {
   CFWL_ThemeText calPart;
   calPart.m_pWidget = this;

@@ -12,6 +12,7 @@
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -132,8 +133,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                          bool bMultiLine);
   void CalcTextRect(const CFX_WideString& wsText,
                     IFWL_ThemeProvider* pTheme,
-                    uint32_t dwTTOStyles,
-                    int32_t iTTOAlign,
+                    const FDE_TextStyle& dwTTOStyles,
+                    FDE_TextAlignment iTTOAlign,
                     CFX_RectF& rect);
   void SetGrab(bool bSet);
   void GetPopupPos(float fMinHeight,

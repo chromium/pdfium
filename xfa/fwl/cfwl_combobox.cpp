@@ -180,8 +180,8 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
                                   ? CFWL_PartState_Selected
                                   : CFWL_PartState_Normal;
       theme_text.m_wsText = hItem ? hItem->GetText() : L"";
-      theme_text.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
-      theme_text.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
+      theme_text.m_dwTTOStyles.single_line_ = true;
+      theme_text.m_iTTOAlign = FDE_TextAlignment::kCenterLeft;
       pTheme->DrawText(&theme_text);
     }
   }

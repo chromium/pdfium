@@ -841,9 +841,11 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
     pTextOut->SetFontSize(fFontSize);
     pTextOut->SetLineBreakTolerance(fFontSize * 0.2f);
     pTextOut->SetLineSpace(GetLineHeight());
-    uint32_t dwStyles = FDE_TTOSTYLE_LastLineHeight;
+
+    FDE_TextStyle dwStyles;
+    dwStyles.last_line_height_ = true;
     if (GetUIType() == XFA_Element::TextEdit && IsMultiLine())
-      dwStyles |= FDE_TTOSTYLE_LineWrap;
+      dwStyles.line_wrap_ = true;
 
     pTextOut->SetStyles(dwStyles);
   }

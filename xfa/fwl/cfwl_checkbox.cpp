@@ -31,10 +31,10 @@ const int kCaptionMargin = 5;
 
 CFWL_CheckBox::CFWL_CheckBox(const CFWL_App* app)
     : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
-      m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
-      m_iTTOAlign(FDE_TTOALIGNMENT_Center),
+      m_iTTOAlign(FDE_TextAlignment::kCenter),
       m_bBtnDown(false),
       m_fBoxHeight(16.0f) {
+  m_dwTTOStyles.single_line_ = true;
   m_rtClient.Reset();
   m_rtBox.Reset();
   m_rtCaption.Reset();
@@ -170,9 +170,10 @@ uint32_t CFWL_CheckBox::GetPartStates() const {
 }
 
 void CFWL_CheckBox::UpdateTextOutStyles() {
-  m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
-  m_dwTTOStyles = 0;
-  m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
+  m_iTTOAlign = FDE_TextAlignment::kTopLeft;
+
+  m_dwTTOStyles.Reset();
+  m_dwTTOStyles.single_line_ = true;
 }
 
 void CFWL_CheckBox::NextStates() {

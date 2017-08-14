@@ -1321,13 +1321,14 @@ bool CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   pTextOut->SetLineSpace(m_Param.fLineSpace);
   pTextOut->SetFont(m_Param.pFont);
   pTextOut->SetFontSize(m_Param.fFontSize);
-  uint32_t dwStyle = 0;
+
+  FDE_TextStyle dwStyle;
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines))
-    dwStyle |= FDE_TTOSTYLE_SingleLine;
+    dwStyle.single_line_ = true;
 
   CFX_RectF rcText;
   if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap) {
-    dwStyle |= FDE_TTOSTYLE_LineWrap;
+    dwStyle.line_wrap_ = true;
     rcText.width = m_Param.fPlateWidth;
   } else {
     rcText.width = 65535;

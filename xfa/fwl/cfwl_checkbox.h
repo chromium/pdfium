@@ -66,8 +66,8 @@ class CFWL_CheckBox : public CFWL_Widget {
   CFX_RectF m_rtBox;
   CFX_RectF m_rtCaption;
   CFX_RectF m_rtFocus;
-  uint32_t m_dwTTOStyles;
-  int32_t m_iTTOAlign;
+  FDE_TextStyle m_dwTTOStyles;
+  FDE_TextAlignment m_iTTOAlign;
   bool m_bBtnDown;
   float m_fBoxHeight;
 };

@@ -122,8 +122,8 @@ class CFWL_ListBox : public CFWL_Widget {
   CFX_RectF m_rtConent;
   std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
   std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
-  uint32_t m_dwTTOStyles;
-  int32_t m_iTTOAligns;
+  FDE_TextStyle m_dwTTOStyles;
+  FDE_TextAlignment m_iTTOAligns;
   CFWL_ListItem* m_hAnchor;
   float m_fItemHeight;
   float m_fScorllBarWidth;

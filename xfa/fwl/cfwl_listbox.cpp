@@ -32,8 +32,7 @@ CFWL_ListBox::CFWL_ListBox(const CFWL_App* app,
                            std::unique_ptr<CFWL_WidgetProperties> properties,
                            CFWL_Widget* pOuter)
     : CFWL_Widget(app, std::move(properties), pOuter),
-      m_dwTTOStyles(0),
-      m_iTTOAligns(0),
+      m_iTTOAligns(FDE_TextAlignment::kTopLeft),
       m_hAnchor(nullptr),
       m_fScorllBarWidth(0),
       m_bLButtonDown(false),
@@ -57,20 +56,20 @@ void CFWL_ListBox::Update() {
 
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_AlignMask) {
     case FWL_STYLEEXT_LTB_LeftAlign: {
-      m_iTTOAligns = FDE_TTOALIGNMENT_CenterLeft;
+      m_iTTOAligns = FDE_TextAlignment::kCenterLeft;
       break;
     }
     case FWL_STYLEEXT_LTB_RightAlign: {
-      m_iTTOAligns = FDE_TTOALIGNMENT_CenterRight;
+      m_iTTOAligns = FDE_TextAlignment::kCenterRight;
       break;
     }
     case FWL_STYLEEXT_LTB_CenterAlign:
     default: {
-      m_iTTOAligns = FDE_TTOALIGNMENT_Center;
+      m_iTTOAligns = FDE_TextAlignment::kCenter;
       break;
     }
   }
-  m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
+  m_dwTTOStyles.single_line_ = true;
   m_fScorllBarWidth = GetScrollWidth();
   CalcSize(false);
 }
