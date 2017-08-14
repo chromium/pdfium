@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2012 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -39,9 +39,9 @@
 
 #ifdef CMS_IS_WINDOWS_
 //sunliang.liu modified 2010426 for wince error
-#	ifndef _WIN32_WCE
-#		include <io.h>
-#	endif
+# ifndef _WIN32_WCE
+#   include <io.h>
+# endif
 #    define DIR_CHAR    '\\'
 #else
 #    define DIR_CHAR    '/'
@@ -51,7 +51,7 @@
 // Symbols
 typedef enum {
 
-        SNONE,
+        SUNDEFINED,
         SINUM,      // Integer
         SDNUM,      // Real
         SIDENT,     // Identifier
@@ -275,7 +275,7 @@ static PROPERTY PredefinedProperties[] = {
                                // denote the use of filters such as none, D65, Red, Green or Blue.
 
        {"POLARIZATION",      WRITE_STRINGIFY},   // Identifies the use of a physical polarization filter during measurement. Allowed
-                               // values are "yes" "white" "none" or "na"
+                               // values are "yes" "white" "none" or "na".
 
        {"WEIGHTING_FUNCTION", WRITE_PAIR},   // Indicates such functions as: the CIE standard observer functions used in the
                                // calculation of various data parameters (2 degree and 10 degree), CIE standard
@@ -328,7 +328,7 @@ static const char* PredefinedSampleID[] = {
         "XYZ_X",          // X component of tristimulus data
         "XYZ_Y",          // Y component of tristimulus data
         "XYZ_Z",          // Z component of tristimulus data
-        "XYY_X"           // x component of chromaticity data
+        "XYY_X",          // x component of chromaticity data
         "XYY_Y",          // y component of chromaticity data
         "XYY_CAPY",       // Y component of tristimulus data
         "LAB_L",          // L* component of Lab data
@@ -525,7 +525,7 @@ SYMBOL BinSrchKey(const char *id)
         else l = x + 1;
     }
 
-    return SNONE;
+    return SUNDEFINED;
 }
 
 
@@ -600,7 +600,7 @@ void ReadReal(cmsIT8* it8, int inum)
 }
 
 // Parses a float number
-// This can not call directly atof because it uses locale dependant
+// This can not call directly atof because it uses locale dependent
 // parsing, while CCMX files always use . as decimal separator
 static
 cmsFloat64Number ParseFloatNumber(const char *Buffer)
@@ -710,7 +710,7 @@ void InSymbol(cmsIT8* it8)
 
 
             key = BinSrchKey(it8->id);
-            if (key == SNONE) it8->sy = SIDENT;
+            if (key == SUNDEFINED) it8->sy = SIDENT;
             else it8->sy = key;
 
         }
@@ -805,11 +805,11 @@ void InSymbol(cmsIT8* it8)
 
                     if (it8 ->sy == SINUM) {
 
-                        sprintf(it8->id, "%d", it8->inum);
+                        snprintf(it8->id, 127, "%d", it8->inum);
                     }
                     else {
 
-                        sprintf(it8->id, it8 ->DoubleFormatter, it8->dnum);
+                        snprintf(it8->id, 127, it8 ->DoubleFormatter, it8->dnum);
                     }
 
                     k = (int) strlen(it8 ->id);
@@ -1301,7 +1301,7 @@ cmsHANDLE  CMSEXPORT cmsIT8Alloc(cmsContext ContextID)
     it8->ValidKeywords = NULL;
     it8->ValidSampleID = NULL;
 
-    it8 -> sy = SNONE;
+    it8 -> sy = SUNDEFINED;
     it8 -> ch = ' ';
     it8 -> Source = NULL;
     it8 -> inum = 0;
@@ -1367,7 +1367,7 @@ cmsBool CMSEXPORT cmsIT8SetPropertyDbl(cmsHANDLE hIT8, const char* cProp, cmsFlo
     cmsIT8* it8 = (cmsIT8*) hIT8;
     char Buffer[1024];
 
-    sprintf(Buffer, it8->DoubleFormatter, Val);
+    snprintf(Buffer, 1023, it8->DoubleFormatter, Val);
 
     return AddToList(it8, &GetTable(it8)->HeaderList, cProp, NULL, Buffer, WRITE_UNCOOKED) != NULL;
 }
@@ -1377,7 +1377,7 @@ cmsBool CMSEXPORT cmsIT8SetPropertyHex(cmsHANDLE hIT8, const char* cProp, cmsUIn
     cmsIT8* it8 = (cmsIT8*) hIT8;
     char Buffer[1024];
 
-    sprintf(Buffer, "%u", Val);
+    snprintf(Buffer, 1023, "%u", Val);
 
     return AddToList(it8, &GetTable(it8)->HeaderList, cProp, NULL, Buffer, WRITE_HEXADECIMAL) != NULL;
 }
@@ -1821,7 +1821,7 @@ cmsBool CMSEXPORT cmsIT8SaveToMem(cmsHANDLE hIT8, void *MemPtr, cmsUInt32Number*
 }
 
 
-// -------------------------------------------------------------- Higer level parsing
+// -------------------------------------------------------------- Higher level parsing
 
 static
 cmsBool DataFormatSection(cmsIT8* it8)
@@ -2124,7 +2124,7 @@ cmsBool ParseIT8(cmsIT8* it8, cmsBool nosheet)
 
 
 
-// Init usefull pointers
+// Init useful pointers
 
 static
 void CookPointers(cmsIT8* it8)
@@ -2520,8 +2520,10 @@ int LocateSample(cmsIT8* it8, const char* cSample)
     for (i=0; i < t->nSamples; i++) {
 
         fld = GetDataFormat(it8, i);
-        if (cmsstrcasecmp(fld, cSample) == 0)
-            return i;
+        if (fld != NULL) {
+            if (cmsstrcasecmp(fld, cSample) == 0)
+                return i;
+        }
     }
 
     return -1;
@@ -2579,7 +2581,7 @@ cmsBool CMSEXPORT cmsIT8SetDataRowColDbl(cmsHANDLE hIT8, int row, int col, cmsFl
 
     _cmsAssert(hIT8 != NULL);
 
-    sprintf(Buff, it8->DoubleFormatter, Val);
+    snprintf(Buff, 255, it8->DoubleFormatter, Val);
 
     return SetData(it8, row, col, Buff);
 }
@@ -2774,3 +2776,4 @@ void CMSEXPORT cmsIT8DefineDblFormat(cmsHANDLE hIT8, const char* Formatter)
 
     it8 ->DoubleFormatter[sizeof(it8 ->DoubleFormatter)-1] = 0;
 }
+

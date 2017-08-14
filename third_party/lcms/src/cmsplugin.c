@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2010 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -107,7 +107,7 @@ void CMSEXPORT  _cmsAdjustEndianess64(cmsUInt64Number* Result, cmsUInt64Number* 
 #endif
 }
 
-// Auxiliar -- read 8, 16 and 32-bit numbers
+// Auxiliary -- read 8, 16 and 32-bit numbers
 cmsBool CMSEXPORT  _cmsReadUInt8Number(cmsIOHANDLER* io, cmsUInt8Number* n)
 {
     cmsUInt8Number tmp;
@@ -172,13 +172,13 @@ cmsBool CMSEXPORT  _cmsReadFloat32Number(cmsIOHANDLER* io, cmsFloat32Number* n)
 
     _cmsAssert(io != NULL);
 
-    if (io -> Read(io, &tmp, sizeof(cmsFloat32Number), 1) != 1)
+    if (io -> Read(io, &tmp, sizeof(cmsUInt32Number), 1) != 1)
             return FALSE;
 
     if (n != NULL) {
 
         tmp = _cmsAdjustEndianess32(tmp);
-        *n = *(cmsFloat32Number*) &tmp;
+        *n = *(cmsFloat32Number*) (void*) &tmp;
         if (isnan(*n))
             return FALSE;
     }
@@ -219,22 +219,6 @@ cmsBool CMSEXPORT  _cmsRead15Fixed16Number(cmsIOHANDLER* io, cmsFloat64Number* n
 }
 
 
-// Jun-21-2000: Some profiles (those that comes with W2K) comes
-// with the media white (media black?) x 100. Add a sanity check
-
-static
-void NormalizeXYZ(cmsCIEXYZ* Dest)
-{
-    while (Dest -> X > 2. &&
-           Dest -> Y > 2. &&
-           Dest -> Z > 2.) {
-
-               Dest -> X /= 10.;
-               Dest -> Y /= 10.;
-               Dest -> Z /= 10.;
-       }
-}
-
 cmsBool CMSEXPORT  _cmsReadXYZNumber(cmsIOHANDLER* io, cmsCIEXYZ* XYZ)
 {
     cmsEncodedXYZNumber xyz;
@@ -248,8 +232,6 @@ cmsBool CMSEXPORT  _cmsReadXYZNumber(cmsIOHANDLER* io, cmsCIEXYZ* XYZ)
         XYZ->X = _cms15Fixed16toDouble(_cmsAdjustEndianess32(xyz.X));
         XYZ->Y = _cms15Fixed16toDouble(_cmsAdjustEndianess32(xyz.Y));
         XYZ->Z = _cms15Fixed16toDouble(_cmsAdjustEndianess32(xyz.Z));
-
-        NormalizeXYZ(XYZ);
     }
     return TRUE;
 }
@@ -311,7 +293,7 @@ cmsBool CMSEXPORT  _cmsWriteFloat32Number(cmsIOHANDLER* io, cmsFloat32Number n)
 
     _cmsAssert(io != NULL);
 
-    tmp = *(cmsUInt32Number*) &n;
+    tmp = *(cmsUInt32Number*) (void*) &n;
     tmp = _cmsAdjustEndianess32(tmp);
     if (io -> Write(io, sizeof(cmsUInt32Number), &tmp) != 1)
             return FALSE;
@@ -507,7 +489,10 @@ cmsBool CMSEXPORT _cmsIOPrintf(cmsIOHANDLER* io, const char* frm, ...)
     va_start(args, frm);
 
     len = vsnprintf((char*) Buffer, 2047, frm, args);
-    if (len < 0) return FALSE;   // Truncated, which is a fatal error for us
+    if (len < 0) {
+        va_end(args);
+        return FALSE;   // Truncated, which is a fatal error for us
+    }
 
     rc = io ->Write(io, len, Buffer);
 
@@ -529,6 +514,7 @@ void* _cmsPluginMalloc(cmsContext ContextID, cmsUInt32Number size)
         if (ContextID == NULL) {
 
             ctx->MemPool = _cmsCreateSubAlloc(0, 2*1024);
+            if (ctx->MemPool == NULL) return NULL;
         }
         else {
             cmsSignalError(ContextID, cmsERROR_CORRUPTION_DETECTED, "NULL memory pool on context");
@@ -687,15 +673,21 @@ struct _cmsContext_struct* _cmsGetContext(cmsContext ContextID)
 
 
 // Internal: get the memory area associanted with each context client
-// Returns the block assigned to the specific zone. 
+// Returns the block assigned to the specific zone. Never return NULL.
 void* _cmsContextGetClientChunk(cmsContext ContextID, _cmsMemoryClient mc)
 {
     struct _cmsContext_struct* ctx;
     void *ptr;
 
-    if (mc >= MemoryClientMax) {
-        cmsSignalError(ContextID, cmsERROR_RANGE, "Bad context client");
-        return NULL;
+    if ((int) mc < 0 || mc >= MemoryClientMax) {
+        
+           cmsSignalError(ContextID, cmsERROR_INTERNAL, "Bad context client -- possible corruption");
+
+           // This is catastrophic. Should never reach here
+           _cmsAssert(0);
+
+           // Reverts to global context
+           return globalContext.chunks[UserPtr];
     }
     
     ctx = _cmsGetContext(ContextID);
@@ -884,7 +876,7 @@ cmsContext CMSEXPORT cmsDupContext(cmsContext ContextID, void* NewUserData)
 }
 
 
-
+/*
 static
 struct _cmsContext_struct* FindPrev(struct _cmsContext_struct* id)
 {
@@ -901,6 +893,7 @@ struct _cmsContext_struct* FindPrev(struct _cmsContext_struct* id)
 
     return NULL;  // List is empty or only one element!
 }
+*/
 
 // Frees any resources associated with the given context, 
 // and destroys the context placeholder. 
@@ -936,8 +929,8 @@ void CMSEXPORT cmsDeleteContext(cmsContext ContextID)
 
             // Search for previous
             for (prev = _cmsContextPoolHead; 
-                prev != NULL;
-                prev = prev ->Next)
+                 prev != NULL;
+                 prev = prev ->Next)
             {
                 if (prev -> Next == ctx) {
                     prev -> Next = ctx ->Next;
@@ -957,3 +950,5 @@ void* CMSEXPORT cmsGetContextUserData(cmsContext ContextID)
 {
     return _cmsContextGetClientChunk(ContextID, UserPtr);
 }
+
+

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2012 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -24,6 +24,15 @@
 //---------------------------------------------------------------------------------
 
 #include "lcms2_internal.h"
+
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
+
+// This function is here to help applications to prevent mixing lcms versions on header and shared objects.
+int CMSEXPORT cmsGetEncodedCMMversion(void)
+{
+       return LCMS_VERSION;
+}
 
 // I am so tired about incompatibilities on those functions that here are some replacements
 // that hopefully would be fully portable.
@@ -58,123 +67,59 @@ long int CMSEXPORT cmsfilelength(FILE* f)
     return n;
 }
 
-#if 0
-// Memory handling ------------------------------------------------------------------
-//
-// This is the interface to low-level memory management routines. By default a simple
-// wrapping to malloc/free/realloc is provided, although there is a limit on the max
-// amount of memoy that can be reclaimed. This is mostly as a safety feature to prevent
-// bogus or evil code to allocate huge blocks that otherwise lcms would never need.
-
-#define MAX_MEMORY_FOR_ALLOC  ((cmsUInt32Number)(1024U*1024U*512U))
-
-// User may override this behaviour by using a memory plug-in, which basically replaces
-// the default memory management functions. In this case, no check is performed and it
-// is up to the plug-in writter to keep in the safe side. There are only three functions
-// required to be implemented: malloc, realloc and free, although the user may want to
-// replace the optional mallocZero, calloc and dup as well.
-
-cmsBool   _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase* Plugin);
-
-// *********************************************************************************
-
-// This is the default memory allocation function. It does a very coarse
-// check of amout of memory, just to prevent exploits
-static
-void* _cmsMallocDefaultFn(cmsContext ContextID, cmsUInt32Number size)
+cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase* Plugin)
 {
-    if (size > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never allow over maximum
+    return TRUE;
+}
 
-    return (void*) malloc(size);
-
-    cmsUNUSED_PARAMETER(ContextID);
+// Generic allocate
+void* CMSEXPORT _cmsMalloc(cmsContext ContextID, cmsUInt32Number size)
+{
+    return FXMEM_DefaultAlloc(size, 1);
 }
 
 // Generic allocate & zero
-static
-void* _cmsMallocZeroDefaultFn(cmsContext ContextID, cmsUInt32Number size)
+void* CMSEXPORT _cmsMallocZero(cmsContext ContextID, cmsUInt32Number size)
 {
-    void *pt = _cmsMalloc(ContextID, size);
-    if (pt == NULL) return NULL;
-
-    memset(pt, 0, size);
-    return pt;
+    void* p = FXMEM_DefaultAlloc(size, 1);
+    if (p) memset(p, 0, size);
+    return p;
 }
 
-
-// The default free function. The only check proformed is against NULL pointers
-static
-void _cmsFreeDefaultFn(cmsContext ContextID, void *Ptr)
+// Generic calloc
+void* CMSEXPORT _cmsCalloc(cmsContext ContextID, cmsUInt32Number num, cmsUInt32Number size)
 {
-    // free(NULL) is defined a no-op by C99, therefore it is safe to
-    // avoid the check, but it is here just in case...
-
-    if (Ptr) free(Ptr);
-
-    cmsUNUSED_PARAMETER(ContextID);
-}
-
-// The default realloc function. Again it checks for exploits. If Ptr is NULL,
-// realloc behaves the same way as malloc and allocates a new block of size bytes.
-static
-void* _cmsReallocDefaultFn(cmsContext ContextID, void* Ptr, cmsUInt32Number size)
-{
-
-    if (size > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never realloc over 512Mb
-
-    return realloc(Ptr, size);
-
-    cmsUNUSED_PARAMETER(ContextID);
-}
-
-
-// The default calloc function. Allocates an array of num elements, each one of size bytes
-// all memory is initialized to zero.
-static
-void* _cmsCallocDefaultFn(cmsContext ContextID, cmsUInt32Number num, cmsUInt32Number size)
-{
-    cmsUInt32Number Total = num * size;
-
-    // Preserve calloc behaviour
-    if (Total == 0) return NULL;
-
-    // Safe check for overflow.
-    if (num >= UINT_MAX / size) return NULL;
-
-    // Check for overflow
-    if (Total < num || Total < size) {
+    cmsUInt32Number total = num * size;
+    if (total == 0 || total / size != num || total >= 512 * 1024 * 1024)
         return NULL;
-    }
 
-    if (Total > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never alloc over 512Mb
+    return _cmsMallocZero(ContextID, num * size);
+}
 
-    return _cmsMallocZero(ContextID, Total);
+// Generic reallocate
+void* CMSEXPORT _cmsRealloc(cmsContext ContextID, void* Ptr, cmsUInt32Number size)
+{
+    return FXMEM_DefaultRealloc(Ptr, size, 1);
+}
+
+// Generic free memory
+void CMSEXPORT _cmsFree(cmsContext ContextID, void* Ptr)
+{
+    if (Ptr != NULL) FXMEM_DefaultFree(Ptr, 0);
 }
 
 // Generic block duplication
-static
-void* _cmsDupDefaultFn(cmsContext ContextID, const void* Org, cmsUInt32Number size)
+void* CMSEXPORT _cmsDupMem(cmsContext ContextID, const void* Org, cmsUInt32Number size)
 {
-    void* mem;
-
-    if (size > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never dup over 512Mb
-
-    mem = _cmsMalloc(ContextID, size);
-
-    if (mem != NULL && Org != NULL)
-        memmove(mem, Org, size);
-
-    return mem;
+    void* p = FXMEM_DefaultAlloc(size, 1);
+    memmove(p, Org, size);
+    return p;
 }
 
-
-// Pointers to memory manager functions in Context0
-_cmsMemPluginChunkType _cmsMemPluginChunk = { _cmsMallocDefaultFn, _cmsMallocZeroDefaultFn, _cmsFreeDefaultFn,
-                                              _cmsReallocDefaultFn, _cmsCallocDefaultFn,    _cmsDupDefaultFn
+_cmsMemPluginChunkType _cmsMemPluginChunk = {_cmsMalloc, _cmsMallocZero, _cmsFree,
+                                             _cmsRealloc, _cmsCalloc,    _cmsDupMem
                                             };
 
-
-// Reset and duplicate memory manager
 void _cmsAllocMemPluginChunk(struct _cmsContext_struct* ctx, const struct _cmsContext_struct* src)
 {
     _cmsAssert(ctx != NULL);
@@ -191,7 +136,6 @@ void _cmsAllocMemPluginChunk(struct _cmsContext_struct* ctx, const struct _cmsCo
     }
 }
 
-// Auxiliar to fill memory management functions from plugin (or context 0 defaults)
 void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkType* ptr)
 {
     if (Plugin == NULL) {
@@ -205,9 +149,9 @@ void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkTy
         ptr ->ReallocPtr = Plugin -> ReallocPtr;
 
         // Make sure we revert to defaults
-        ptr ->MallocZeroPtr= _cmsMallocZeroDefaultFn;
-        ptr ->CallocPtr    = _cmsCallocDefaultFn;
-        ptr ->DupPtr       = _cmsDupDefaultFn;
+        ptr ->MallocZeroPtr= _cmsMallocZero;
+        ptr ->CallocPtr    = _cmsCalloc;
+        ptr ->DupPtr       = _cmsDupMem;
 
         if (Plugin ->MallocZeroPtr != NULL) ptr ->MallocZeroPtr = Plugin -> MallocZeroPtr;
         if (Plugin ->CallocPtr != NULL)     ptr ->CallocPtr     = Plugin -> CallocPtr;
@@ -215,138 +159,6 @@ void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkTy
 
     }
 }
-
-
-// Plug-in replacement entry
-cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase *Data)
-{
-    cmsPluginMemHandler* Plugin = (cmsPluginMemHandler*) Data;
-    _cmsMemPluginChunkType* ptr;
-
-    // NULL forces to reset to defaults. In this special case, the defaults are stored in the context structure.
-    // Remaining plug-ins does NOT have any copy in the context structure, but this is somehow special as the
-    // context internal data should be malloce'd by using those functions.
-    if (Data == NULL) {
-
-       struct _cmsContext_struct* ctx = ( struct _cmsContext_struct*) ContextID;
-
-       // Return to the default allocators
-        if (ContextID != NULL) {
-            ctx->chunks[MemPlugin] = (void*) &ctx->DefaultMemoryManager;
-        }
-        return TRUE;
-    }
-
-    // Check for required callbacks
-    if (Plugin -> MallocPtr == NULL ||
-        Plugin -> FreePtr == NULL ||
-        Plugin -> ReallocPtr == NULL) return FALSE;
-
-    // Set replacement functions
-    ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
-    if (ptr == NULL)
-        return FALSE;
-
-    _cmsInstallAllocFunctions(Plugin, ptr);
-    return TRUE;
-}
-#else
-#include "core/fxcrt/fx_memory.h"
-#include "core/fxcrt/fx_system.h"
-
-cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase* Plugin)
-{
-	return TRUE;
-}
-
-// Generic allocate
-void* CMSEXPORT _cmsMalloc(cmsContext ContextID, cmsUInt32Number size)
-{
-    return FXMEM_DefaultAlloc(size, 1);
-}
-
-// Generic allocate & zero
-void* CMSEXPORT _cmsMallocZero(cmsContext ContextID, cmsUInt32Number size)
-{
-	void* p = FXMEM_DefaultAlloc(size, 1);
-	if (p) memset(p, 0, size);
-	return p;
-}
-
-// Generic calloc
-void* CMSEXPORT _cmsCalloc(cmsContext ContextID, cmsUInt32Number num, cmsUInt32Number size)
-{
-	cmsUInt32Number total = num * size;
-	if (total == 0 || total / size != num || total >= 512 * 1024 * 1024)
-		return NULL;
-
-	return _cmsMallocZero(ContextID, num * size);
-}
-
-// Generic reallocate
-void* CMSEXPORT _cmsRealloc(cmsContext ContextID, void* Ptr, cmsUInt32Number size)
-{
-	return FXMEM_DefaultRealloc(Ptr, size, 1);
-}
-
-// Generic free memory
-void CMSEXPORT _cmsFree(cmsContext ContextID, void* Ptr)
-{
-	if (Ptr != NULL) FXMEM_DefaultFree(Ptr, 0);
-}
-
-// Generic block duplication
-void* CMSEXPORT _cmsDupMem(cmsContext ContextID, const void* Org, cmsUInt32Number size)
-{
-	void* p = FXMEM_DefaultAlloc(size, 1);
-	memmove(p, Org, size);
-	return p;
-}
-
-_cmsMemPluginChunkType _cmsMemPluginChunk = {_cmsMalloc, _cmsMallocZero, _cmsFree,
-	                                         _cmsRealloc, _cmsCalloc,    _cmsDupMem
-                                            };
-
-void _cmsAllocMemPluginChunk(struct _cmsContext_struct* ctx, const struct _cmsContext_struct* src)
-{
-	_cmsAssert(ctx != NULL);
-
-	if (src != NULL) {
-
-		// Duplicate
-		ctx ->chunks[MemPlugin] = _cmsSubAllocDup(ctx ->MemPool, src ->chunks[MemPlugin], sizeof(_cmsMemPluginChunkType));
-	}
-	else {
-
-		// To reset it, we use the default allocators, which cannot be overriden
-		ctx ->chunks[MemPlugin] = &ctx ->DefaultMemoryManager;
-	}
-}
-
-void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkType* ptr)
-{
-	if (Plugin == NULL) {
-
-		memcpy(ptr, &_cmsMemPluginChunk, sizeof(_cmsMemPluginChunk));
-	}
-	else {
-
-		ptr ->MallocPtr  = Plugin -> MallocPtr;
-		ptr ->FreePtr    = Plugin -> FreePtr;
-		ptr ->ReallocPtr = Plugin -> ReallocPtr;
-
-		// Make sure we revert to defaults
-		ptr ->MallocZeroPtr= _cmsMallocZero;
-		ptr ->CallocPtr    = _cmsCalloc;
-		ptr ->DupPtr       = _cmsDupMem;
-
-		if (Plugin ->MallocZeroPtr != NULL) ptr ->MallocZeroPtr = Plugin -> MallocZeroPtr;
-		if (Plugin ->CallocPtr != NULL)     ptr ->CallocPtr     = Plugin -> CallocPtr;
-		if (Plugin ->DupPtr != NULL)        ptr ->DupPtr        = Plugin -> DupPtr;
-
-	}
-}
-#endif
 
 // ********************************************************************************************
 
@@ -458,7 +270,7 @@ void*  _cmsSubAlloc(_cmsSubAllocator* sub, cmsUInt32Number size)
 void* _cmsSubAllocDup(_cmsSubAllocator* s, const void *ptr, cmsUInt32Number size)
 {
     void *NewPtr;
-
+    
     // Dup of null pointer is also NULL
     if (ptr == NULL)
         return NULL;
@@ -476,14 +288,14 @@ void* _cmsSubAllocDup(_cmsSubAllocator* s, const void *ptr, cmsUInt32Number size
 
 // Error logging ******************************************************************
 
-// There is no error handling at all. When a funtion fails, it returns proper value.
+// There is no error handling at all. When a function fails, it returns proper value.
 // For example, all create functions does return NULL on failure. Other return FALSE
 // It may be interesting, for the developer, to know why the function is failing.
 // for that reason, lcms2 does offer a logging function. This function does recive
 // a ENGLISH string with some clues on what is going wrong. You can show this
 // info to the end user, or just create some sort of log.
 // The logging function should NOT terminate the program, as this obviously can leave
-// resources. It is the programmer's responsability to check each function return code
+// resources. It is the programmer's responsibility to check each function return code
 // to make sure it didn't fail.
 
 // Error messages are limited to MAX_ERROR_MESSAGE_LEN
@@ -500,20 +312,20 @@ _cmsLogErrorChunkType _cmsLogErrorChunk = { DefaultLogErrorHandlerFunction };
 
 // Allocates and inits error logger container for a given context. If src is NULL, only initializes the value
 // to the default. Otherwise, it duplicates the value. The interface is standard across all context clients
-void _cmsAllocLogErrorChunk(struct _cmsContext_struct* ctx,
+void _cmsAllocLogErrorChunk(struct _cmsContext_struct* ctx, 
                             const struct _cmsContext_struct* src)
-{
+{    
     static _cmsLogErrorChunkType LogErrorChunk = { DefaultLogErrorHandlerFunction };
     void* from;
-
+     
      if (src != NULL) {
-        from = src ->chunks[Logger];
+        from = src ->chunks[Logger];       
     }
     else {
        from = &LogErrorChunk;
     }
-
-    ctx ->chunks[Logger] = _cmsSubAllocDup(ctx ->MemPool, from, sizeof(_cmsLogErrorChunkType));
+    
+    ctx ->chunks[Logger] = _cmsSubAllocDup(ctx ->MemPool, from, sizeof(_cmsLogErrorChunkType));   
 }
 
 // The default error logger does nothing.
@@ -545,7 +357,7 @@ void CMSEXPORT cmsSetLogErrorHandlerTHR(cmsContext ContextID, cmsLogErrorHandler
 // Change log error, legacy
 void CMSEXPORT cmsSetLogErrorHandler(cmsLogErrorHandlerFunction Fn)
 {
-    cmsSetLogErrorHandlerTHR(NULL, Fn);
+    cmsSetLogErrorHandlerTHR(NULL, Fn);    
 }
 
 // Log an error
@@ -565,7 +377,7 @@ void CMSEXPORT cmsSignalError(cmsContext ContextID, cmsUInt32Number ErrorCode, c
     lhg = (_cmsLogErrorChunkType*) _cmsContextGetClientChunk(ContextID, Logger);
     if (lhg ->LogErrorHandler) {
         lhg ->LogErrorHandler(ContextID, ErrorCode, Buffer);
-    }
+    }   
 }
 
 // Utility function to print signatures
@@ -591,13 +403,13 @@ void* defMtxCreate(cmsContext id)
 {
     _cmsMutex* ptr_mutex = (_cmsMutex*) _cmsMalloc(id, sizeof(_cmsMutex));
     _cmsInitMutexPrimitive(ptr_mutex);
-    return (void*) ptr_mutex;
+    return (void*) ptr_mutex;   
 }
 
 static
 void defMtxDestroy(cmsContext id, void* mtx)
 {
-    _cmsDestroyMutexPrimitive((_cmsMutex *) mtx);
+    _cmsDestroyMutexPrimitive((_cmsMutex *) mtx); 
     _cmsFree(id, mtx);
 }
 
@@ -605,14 +417,14 @@ static
 cmsBool defMtxLock(cmsContext id, void* mtx)
 {
     cmsUNUSED_PARAMETER(id);
-    return _cmsLockPrimitive((_cmsMutex *) mtx) == 0;
+    return _cmsLockPrimitive((_cmsMutex *) mtx) == 0;     
 }
 
 static
 void defMtxUnlock(cmsContext id, void* mtx)
 {
     cmsUNUSED_PARAMETER(id);
-    _cmsUnlockPrimitive((_cmsMutex *) mtx);
+    _cmsUnlockPrimitive((_cmsMutex *) mtx); 
 }
 
 
@@ -621,20 +433,20 @@ void defMtxUnlock(cmsContext id, void* mtx)
 _cmsMutexPluginChunkType _cmsMutexPluginChunk = { defMtxCreate, defMtxDestroy, defMtxLock, defMtxUnlock };
 
 // Allocate and init mutex container.
-void _cmsAllocMutexPluginChunk(struct _cmsContext_struct* ctx,
+void _cmsAllocMutexPluginChunk(struct _cmsContext_struct* ctx, 
                                         const struct _cmsContext_struct* src)
 {
     static _cmsMutexPluginChunkType MutexChunk = {defMtxCreate, defMtxDestroy, defMtxLock, defMtxUnlock };
     void* from;
-
+     
      if (src != NULL) {
-        from = src ->chunks[MutexPlugin];
+        from = src ->chunks[MutexPlugin];       
     }
     else {
        from = &MutexChunk;
     }
-
-    ctx ->chunks[MutexPlugin] = _cmsSubAllocDup(ctx ->MemPool, from, sizeof(_cmsMutexPluginChunkType));
+    
+    ctx ->chunks[MutexPlugin] = _cmsSubAllocDup(ctx ->MemPool, from, sizeof(_cmsMutexPluginChunkType));   
 }
 
 // Register new ways to transform
@@ -646,15 +458,15 @@ cmsBool  _cmsRegisterMutexPlugin(cmsContext ContextID, cmsPluginBase* Data)
     if (Data == NULL) {
 
         // No lock routines
-        ctx->CreateMutexPtr = NULL;
-        ctx->DestroyMutexPtr = NULL;
+        ctx->CreateMutexPtr = NULL; 
+        ctx->DestroyMutexPtr = NULL; 
         ctx->LockMutexPtr = NULL;
         ctx ->UnlockMutexPtr = NULL;
         return TRUE;
     }
 
     // Factory callback is required
-    if (Plugin ->CreateMutexPtr == NULL || Plugin ->DestroyMutexPtr == NULL ||
+    if (Plugin ->CreateMutexPtr == NULL || Plugin ->DestroyMutexPtr == NULL || 
         Plugin ->LockMutexPtr == NULL || Plugin ->UnlockMutexPtr == NULL) return FALSE;
 
 

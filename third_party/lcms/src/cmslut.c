@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2012 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -505,7 +505,7 @@ void* CLUTElemDup(cmsStage* mpe)
                 goto Error;
         } else {
             NewElem ->Tab.T = (cmsUInt16Number*) _cmsDupMem(mpe ->ContextID, Data ->Tab.T, Data ->nEntries * sizeof (cmsUInt16Number));
-            if (NewElem ->Tab.TFloat == NULL)
+            if (NewElem ->Tab.T == NULL)
                 goto Error;
         }
     }
@@ -1125,7 +1125,23 @@ cmsStage* _cmsStageNormalizeToXyzFloat(cmsContext ContextID)
     return mpe;
 }
 
+// Clips values smaller than zero
+static
+void Clipper(const cmsFloat32Number In[], cmsFloat32Number Out[], const cmsStage *mpe)
+{
+       cmsUInt32Number i;
+       for (i = 0; i < mpe->InputChannels; i++) {
 
+              cmsFloat32Number n = In[i];
+              Out[i] = n < 0 ? 0 : n;
+       }
+}
+
+cmsStage*  _cmsStageClipNegatives(cmsContext ContextID, int nChannels)
+{
+       return _cmsStageAllocPlaceholder(ContextID, cmsSigClipNegativesElemType,
+              nChannels, nChannels, Clipper, NULL, NULL, NULL);
+}
 
 // ********************************************************************************
 // Type cmsSigXYZ2LabElemType
@@ -1287,7 +1303,7 @@ cmsBool BlessLUT(cmsPipeline* lut)
             prev = prev->Next;
         }
     }
-    return TRUE;    
+    return TRUE;
 }
 
 
@@ -1460,7 +1476,8 @@ cmsPipeline* CMSEXPORT cmsPipelineDup(const cmsPipeline* lut)
                  First = FALSE;
              }
              else {
-                Anterior ->Next = NewMPE;
+                if (Anterior != NULL) 
+                    Anterior ->Next = NewMPE;
              }
 
             Anterior = NewMPE;
@@ -1510,7 +1527,7 @@ int CMSEXPORT cmsPipelineInsertStage(cmsPipeline* lut, cmsStageLoc loc, cmsStage
                 for (pt = lut ->Elements;
                      pt != NULL;
                      pt = pt -> Next) Anterior = pt;
-
+                
                 Anterior ->Next = mpe;
                 mpe ->Next = NULL;
             }
@@ -1519,7 +1536,7 @@ int CMSEXPORT cmsPipelineInsertStage(cmsPipeline* lut, cmsStageLoc loc, cmsStage
             return FALSE;
     }
 
-    return BlessLUT(lut);    
+    return BlessLUT(lut);
 }
 
 // Unlink an element and return the pointer to it
@@ -1601,7 +1618,7 @@ cmsBool  CMSEXPORT cmsPipelineCat(cmsPipeline* l1, const cmsPipeline* l2)
                 return FALSE;
     }
 
-    return BlessLUT(l1);    
+    return BlessLUT(l1);
 }
 
 
@@ -1818,3 +1835,5 @@ cmsBool CMSEXPORT cmsPipelineEvalReverseFloat(cmsFloat32Number Target[],
 
     return TRUE;
 }
+
+

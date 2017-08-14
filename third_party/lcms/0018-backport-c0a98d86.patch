@@ -47,7 +47,7 @@ index 04dd0c4..386439b 100644
 +        if (Dimensions8[i] == 1) goto Error; // Impossible value, 0 for no CLUT and then 2 at least
 +        GridPoints[i] = (cmsUInt32Number)Dimensions8[i];
 +    }
-+    
++
      // Allocate the true CLUT
      mpe = cmsStageAllocCLutFloatGranular(self ->ContextID, GridPoints, InputChans, OutputChans, NULL);
      if (mpe == NULL) goto Error;

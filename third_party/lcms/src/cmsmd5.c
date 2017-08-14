@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2012 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -22,6 +22,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 //---------------------------------------------------------------------------------
+
 
 #include "lcms2_internal.h"
 
@@ -314,30 +315,3 @@ Error:
     return FALSE;
 }
 
-cmsBool CMSEXPORT cmsMD5computeIDExt(const void* buf, unsigned long size, unsigned char ProfileID[16])
-{
-	cmsHANDLE  MD5;
-	cmsUInt8Number* Mem;
-
-	if (buf == NULL)
-		return FALSE;
-    MD5 = NULL;
-	Mem = (cmsUInt8Number*)_cmsMalloc(NULL,size);
-	memmove(Mem,buf,size);
-	// Create MD5 object
-    MD5 = MD5alloc(NULL);
-    if (MD5 == NULL) goto Error;
-
-	// Add all bytes
-    MD5add(MD5, Mem, size);
-
-	// Temp storage is no longer needed
-    _cmsFree(NULL, Mem);
-
-	// And store the ID
-    MD5finish((cmsProfileID*)ProfileID,  MD5);
-	return TRUE;
-Error:
-	if (MD5 != NULL) _cmsFree(NULL, MD5);
-	return FALSE;
-}

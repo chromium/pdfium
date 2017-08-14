@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2012 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -23,6 +23,7 @@
 //
 //---------------------------------------------------------------------------------
 //
+
 #include "lcms2_internal.h"
 
 // Generic I/O, tag dictionary management, profile struct
@@ -323,7 +324,7 @@ cmsUInt32Number FileRead(cmsIOHANDLER* iohandler, void *Buffer, cmsUInt32Number 
     return nReaded;
 }
 
-// Postion file pointer in the file
+// Position file pointer in the file
 static
 cmsBool  FileSeek(cmsIOHANDLER* iohandler, cmsUInt32Number offset)
 {
@@ -367,6 +368,7 @@ cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromFile(cmsContext ContextID, const cha
 {
     cmsIOHANDLER* iohandler = NULL;
     FILE* fm = NULL;
+    cmsInt32Number fileLen;
 
     _cmsAssert(FileName != NULL);
     _cmsAssert(AccessMode != NULL);
@@ -382,8 +384,17 @@ cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromFile(cmsContext ContextID, const cha
             _cmsFree(ContextID, iohandler);
              cmsSignalError(ContextID, cmsERROR_FILE, "File '%s' not found", FileName);
             return NULL;
+        }                                     
+        fileLen = cmsfilelength(fm);
+        if (fileLen < 0)
+        {
+            fclose(fm);
+            _cmsFree(ContextID, iohandler);
+            cmsSignalError(ContextID, cmsERROR_FILE, "Cannot get size of file '%s'", FileName);
+            return NULL;
         }
-        iohandler -> ReportedSize = (cmsUInt32Number) cmsfilelength(fm);
+
+        iohandler -> ReportedSize = (cmsUInt32Number) fileLen;
         break;
 
     case 'w':
@@ -423,6 +434,14 @@ cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromFile(cmsContext ContextID, const cha
 cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromStream(cmsContext ContextID, FILE* Stream)
 {
     cmsIOHANDLER* iohandler = NULL;
+    cmsInt32Number fileSize;
+
+    fileSize = cmsfilelength(Stream);
+    if (fileSize < 0)
+    {
+        cmsSignalError(ContextID, cmsERROR_FILE, "Cannot get size of stream");
+        return NULL;
+    }
 
     iohandler = (cmsIOHANDLER*) _cmsMallocZero(ContextID, sizeof(cmsIOHANDLER));
     if (iohandler == NULL) return NULL;
@@ -430,7 +449,7 @@ cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromStream(cmsContext ContextID, FILE* S
     iohandler -> ContextID = ContextID;
     iohandler -> stream = (void*) Stream;
     iohandler -> UsedSpace = 0;
-    iohandler -> ReportedSize = (cmsUInt32Number) cmsfilelength(Stream);
+    iohandler -> ReportedSize = (cmsUInt32Number) fileSize;
     iohandler -> PhysicalFile[0] = 0;
 
     iohandler ->Read    = FileRead;
@@ -451,6 +470,14 @@ cmsBool CMSEXPORT cmsCloseIOhandler(cmsIOHANDLER* io)
 }
 
 // -------------------------------------------------------------------------------------------------------
+
+cmsIOHANDLER* CMSEXPORT cmsGetProfileIOhandler(cmsHPROFILE hProfile)
+{
+	_cmsICCPROFILE* Icc = (_cmsICCPROFILE*)hProfile;
+
+	if (Icc == NULL) return NULL;
+	return Icc->IOhandler;
+}
 
 #ifdef _WIN32_WCE
 time_t wceex_time(time_t *timer);
@@ -551,14 +578,14 @@ int _cmsSearchTag(_cmsICCPROFILE* Icc, cmsTagSignature sig, cmsBool lFollowLinks
 
         // Yes, follow link
         if (LinkedSig != (cmsTagSignature) 0) {
-			// fix bug mantis id#0055942
-			// assume that TRCTag and ColorantTag can't be linked.
-			// Xiaochuan Liu 2014-04-23
-			if ((sig == cmsSigRedTRCTag || sig == cmsSigGreenTRCTag || sig == cmsSigBlueTRCTag) && 
-				(LinkedSig == cmsSigRedColorantTag || LinkedSig == cmsSigGreenColorantTag || LinkedSig == cmsSigBlueColorantTag))
-			{
-				return n;
-			}
+            // fix bug mantis id#0055942
+            // assume that TRCTag and ColorantTag can't be linked.
+            // Xiaochuan Liu 2014-04-23
+            if ((sig == cmsSigRedTRCTag || sig == cmsSigGreenTRCTag || sig == cmsSigBlueTRCTag) && 
+                (LinkedSig == cmsSigRedColorantTag || LinkedSig == cmsSigGreenColorantTag || LinkedSig == cmsSigBlueColorantTag))
+            {
+                return n;
+            }
             sig = LinkedSig;
         }
 
@@ -630,13 +657,39 @@ cmsBool _cmsNewTag(_cmsICCPROFILE* Icc, cmsTagSignature sig, int* NewPos)
 }
 
 
-// Check existance
+// Check existence
 cmsBool CMSEXPORT cmsIsTag(cmsHPROFILE hProfile, cmsTagSignature sig)
 {
        _cmsICCPROFILE*  Icc = (_cmsICCPROFILE*) (void*) hProfile;
        return _cmsSearchTag(Icc, sig, FALSE) >= 0;
 }
 
+
+
+// Enforces that the profile version is per. spec.
+// Operates on the big endian bytes from the profile.
+// Called before converting to platform endianness.
+// Byte 0 is BCD major version, so max 9.
+// Byte 1 is 2 BCD digits, one per nibble.
+// Reserved bytes 2 & 3 must be 0.
+static 
+cmsUInt32Number _validatedVersion(cmsUInt32Number DWord)
+{
+    cmsUInt8Number* pByte = (cmsUInt8Number*) &DWord;
+    cmsUInt8Number temp1;
+    cmsUInt8Number temp2;
+
+    if (*pByte > 0x09) *pByte = (cmsUInt8Number) 0x09;
+    temp1 = *(pByte+1) & 0xf0;
+    temp2 = *(pByte+1) & 0x0f;
+    if (temp1 > 0x90) temp1 = 0x90;
+    if (temp2 > 0x09) temp2 = 0x09;
+    *(pByte+1) = (cmsUInt8Number)(temp1 | temp2);
+    *(pByte+2) = (cmsUInt8Number)0;
+    *(pByte+3) = (cmsUInt8Number)0;
+
+    return DWord;
+}
 
 // Read profile header and validate it
 cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)
@@ -660,7 +713,7 @@ cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)
         return FALSE;
     }
 
-    // Adjust endianess of the used parameters
+    // Adjust endianness of the used parameters
     Icc -> DeviceClass     = (cmsProfileClassSignature) _cmsAdjustEndianess32(Header.deviceClass);
     Icc -> ColorSpace      = (cmsColorSpaceSignature)   _cmsAdjustEndianess32(Header.colorSpace);
     Icc -> PCS             = (cmsColorSpaceSignature)   _cmsAdjustEndianess32(Header.pcs);
@@ -672,7 +725,7 @@ cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)
     Icc -> creator         = _cmsAdjustEndianess32(Header.creator);
     
     _cmsAdjustEndianess64(&Icc -> attributes, &Header.attributes);
-    Icc -> Version         = _cmsAdjustEndianess32(Header.version);
+    Icc -> Version         = _cmsAdjustEndianess32(_validatedVersion(Header.version));
 
     // Get size as reported in header
     HeaderSize = _cmsAdjustEndianess32(Header.size);
@@ -779,7 +832,7 @@ cmsBool _cmsWriteHeader(_cmsICCPROFILE* Icc, cmsUInt32Number UsedSpace)
 
     memset(&Header.reserved, 0, sizeof(Header.reserved));
 
-    // Set profile ID. Endianess is always big endian
+    // Set profile ID. Endianness is always big endian
     memmove(&Header.profileID, &Icc ->ProfileID, 16);
 
     // Dump the header
@@ -789,7 +842,7 @@ cmsBool _cmsWriteHeader(_cmsICCPROFILE* Icc, cmsUInt32Number UsedSpace)
 
     // Get true count
     for (i=0;  i < Icc -> TagCount; i++) {
-        if (Icc ->TagNames[i] != 0)
+        if (Icc ->TagNames[i] != (cmsTagSignature) 0)
             Count++;
     }
 
@@ -798,7 +851,7 @@ cmsBool _cmsWriteHeader(_cmsICCPROFILE* Icc, cmsUInt32Number UsedSpace)
 
     for (i=0; i < Icc -> TagCount; i++) {
 
-        if (Icc ->TagNames[i] == 0) continue;   // It is just a placeholder
+        if (Icc ->TagNames[i] == (cmsTagSignature) 0) continue;   // It is just a placeholder
 
         Tag.sig    = (cmsTagSignature) _cmsAdjustEndianess32((cmsInt32Number) Icc -> TagNames[i]);
         Tag.offset = _cmsAdjustEndianess32((cmsInt32Number) Icc -> TagOffsets[i]);
@@ -1148,7 +1201,7 @@ cmsBool SaveTags(_cmsICCPROFILE* Icc, _cmsICCPROFILE* FileOrig)
 
     for (i=0; i < Icc -> TagCount; i++) {
 
-        if (Icc ->TagNames[i] == 0) continue;
+        if (Icc ->TagNames[i] == (cmsTagSignature) 0) continue;
 
         // Linked tags are not written
         if (Icc ->TagLinked[i] != (cmsTagSignature) 0) continue;
@@ -1281,12 +1334,16 @@ cmsUInt32Number CMSEXPORT cmsSaveProfileToIOhandler(cmsHPROFILE hProfile, cmsIOH
     cmsContext ContextID;
 
     _cmsAssert(hProfile != NULL);
-
+    
+    if (!_cmsLockMutex(Icc->ContextID, Icc->UsrMutex)) return 0;
     memmove(&Keep, Icc, sizeof(_cmsICCPROFILE));
 
     ContextID = cmsGetProfileContextID(hProfile);
     PrevIO = Icc ->IOhandler = cmsOpenIOhandlerFromNULL(ContextID);
-    if (PrevIO == NULL) return 0;
+    if (PrevIO == NULL) {
+        _cmsUnlockMutex(Icc->ContextID, Icc->UsrMutex);
+        return 0;
+    }
 
     // Pass #1 does compute offsets
 
@@ -1306,7 +1363,10 @@ cmsUInt32Number CMSEXPORT cmsSaveProfileToIOhandler(cmsHPROFILE hProfile, cmsIOH
     }
 
     memmove(Icc, &Keep, sizeof(_cmsICCPROFILE));
-    if (!cmsCloseIOhandler(PrevIO)) return 0;
+    if (!cmsCloseIOhandler(PrevIO)) 
+        UsedSpace = 0; // As a error marker
+
+    _cmsUnlockMutex(Icc->ContextID, Icc->UsrMutex);
 
     return UsedSpace;
 
@@ -1314,13 +1374,15 @@ cmsUInt32Number CMSEXPORT cmsSaveProfileToIOhandler(cmsHPROFILE hProfile, cmsIOH
 Error:
     cmsCloseIOhandler(PrevIO);
     memmove(Icc, &Keep, sizeof(_cmsICCPROFILE));
+    _cmsUnlockMutex(Icc->ContextID, Icc->UsrMutex);
+
     return 0;
 }
 
 #ifdef _WIN32_WCE
 int wceex_unlink(const char *filename);
 #ifndef remove
-#	define remove wceex_unlink
+#   define remove wceex_unlink
 #endif
 #endif
 
@@ -1534,7 +1596,7 @@ void* CMSEXPORT cmsReadTag(cmsHPROFILE hProfile, cmsTagSignature sig)
     LocalTypeHandler.ICCVersion = Icc ->Version;
     Icc -> TagPtrs[n] = LocalTypeHandler.ReadPtr(&LocalTypeHandler, io, &ElemCount, TagSize);
 
-    // The tag type is supported, but something wrong happend and we cannot read the tag.
+    // The tag type is supported, but something wrong happened and we cannot read the tag.
     // let know the user about this (although it is just a warning)
     if (Icc -> TagPtrs[n] == NULL) {
 
@@ -1827,7 +1889,7 @@ Error:
 
 // Similar to the anterior. This function allows to write directly to the ICC profile any data, without
 // checking anything. As a rule, mixing Raw with cooked doesn't work, so writting a tag as raw and then reading
-// it as cooked without serializing does result into an error. If that is wha you want, you will need to dump
+// it as cooked without serializing does result into an error. If that is what you want, you will need to dump
 // the profile to memry or disk and then reopen it.
 cmsBool CMSEXPORT cmsWriteRawTag(cmsHPROFILE hProfile, cmsTagSignature sig, const void* data, cmsUInt32Number Size)
 {
@@ -1851,6 +1913,11 @@ cmsBool CMSEXPORT cmsWriteRawTag(cmsHPROFILE hProfile, cmsTagSignature sig, cons
     Icc ->TagSizes[i] = Size;
 
     _cmsUnlockMutex(Icc->ContextID, Icc ->UsrMutex);
+
+    if (Icc->TagPtrs[i] == NULL) {           
+           Icc->TagNames[i] = (cmsTagSignature) 0;
+           return FALSE;
+    }
     return TRUE;
 }
 

@@ -255,6 +255,7 @@ static_library("fx_lcms2") {
   sources = [
     "lcms/include/lcms2.h",
     "lcms/include/lcms2_plugin.h",
+    "lcms/src/cmsalpha.c",
     "lcms/src/cmscam02.c",
     "lcms/src/cmscgats.c",
     "lcms/src/cmscnvrt.c",

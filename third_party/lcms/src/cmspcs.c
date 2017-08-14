@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2010 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -105,6 +105,15 @@ void CMSEXPORT cmsxyY2XYZ(cmsCIEXYZ* Dest, const cmsCIExyY* Source)
     Dest -> Y = Source -> Y;
     Dest -> Z = ((1 - Source -> x - Source -> y) / Source -> y) * Source -> Y;
 }
+
+/*
+       The break point (24/116)^3 = (6/29)^3 is a very small amount of tristimulus 
+       primary (0.008856).  Generally, this only happens for 
+       nearly ideal blacks and for some orange / amber colors in transmission mode.  
+       For example, the Z value of the orange turn indicator lamp lens on an 
+       automobile will often be below this value.  But the Z does not 
+       contribute to the perceived color directly.
+*/
 
 static
 cmsFloat64Number f(cmsFloat64Number t)
@@ -299,7 +308,7 @@ void CMSEXPORT cmsFloat2LabEncoded(cmsUInt16Number wLab[3], const cmsCIELab* fLa
     wLab[2] = ab2Fix4(Lab.b);
 }
 
-// Auxiliar: convert to Radians
+// Auxiliary: convert to Radians
 static
 cmsFloat64Number RADIANS(cmsFloat64Number deg)
 {
@@ -307,7 +316,7 @@ cmsFloat64Number RADIANS(cmsFloat64Number deg)
 }
 
 
-// Auxiliar: atan2 but operating in degrees and returning 0 if a==b==0
+// Auxiliary: atan2 but operating in degrees and returning 0 if a==b==0
 static
 cmsFloat64Number atan2deg(cmsFloat64Number a, cmsFloat64Number b)
 {
@@ -330,7 +339,7 @@ cmsFloat64Number atan2deg(cmsFloat64Number a, cmsFloat64Number b)
 }
 
 
-// Auxiliar: Square
+// Auxiliary: Square
 static
 cmsFloat64Number Sqr(cmsFloat64Number v)
 {

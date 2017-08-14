@@ -23,7 +23,6 @@
 //
 //---------------------------------------------------------------------------------
 //
-
 #include "lcms2_internal.h"
 
 // Tone curves are powerful constructs that can contain curves specified in diverse ways.
@@ -568,7 +567,7 @@ cmsFloat64Number DefaultEvalParametricFn(cmsInt32Number Type, const cmsFloat64Nu
     return Val;
 }
 
-// Evaluate a segmented funtion for a single value. Return -1 if no valid segment found .
+// Evaluate a segmented function for a single value. Return -1 if no valid segment found .
 // If fn type is 0, perform an interpolation on the table
 static
 cmsFloat64Number EvalSegmentedFn(const cmsToneCurve *g, cmsFloat64Number R)
@@ -750,20 +749,19 @@ void CMSEXPORT cmsFreeToneCurve(cmsToneCurve* Curve)
 {
     cmsContext ContextID;
 
-	// added by Xiaochuan Liu
-	// Curve->InterpParams may be null
+    // added by Xiaochuan Liu
+    // Curve->InterpParams may be null
     if (Curve == NULL || Curve->InterpParams == NULL) return;
 
     ContextID = Curve ->InterpParams->ContextID;
 
     _cmsFreeInterpParams(Curve ->InterpParams);
-	Curve ->InterpParams = NULL;
+    Curve ->InterpParams = NULL;
 
-    if (Curve -> Table16)
-	{
+    if (Curve -> Table16) {
         _cmsFree(ContextID, Curve ->Table16);
-		Curve ->Table16 = NULL;
-	}
+        Curve ->Table16 = NULL;
+    }
 
     if (Curve ->Segments) {
 
@@ -773,33 +771,30 @@ void CMSEXPORT cmsFreeToneCurve(cmsToneCurve* Curve)
 
             if (Curve ->Segments[i].SampledPoints) {
                 _cmsFree(ContextID, Curve ->Segments[i].SampledPoints);
-				Curve ->Segments[i].SampledPoints = NULL;
+                Curve ->Segments[i].SampledPoints = NULL;
             }
 
-            if (Curve ->SegInterp[i] != 0)
-			{
+            if (Curve ->SegInterp[i] != 0) {
                 _cmsFreeInterpParams(Curve->SegInterp[i]);
-				Curve->SegInterp[i] = NULL;
-			}
+                Curve->SegInterp[i] = NULL;
+            }
         }
 
         _cmsFree(ContextID, Curve ->Segments);
-		Curve ->Segments = NULL;
+        Curve ->Segments = NULL;
         _cmsFree(ContextID, Curve ->SegInterp);
-		Curve ->SegInterp = NULL;
+        Curve ->SegInterp = NULL;
     }
 
-    if (Curve -> Evals)
-	{
+    if (Curve -> Evals) {
         _cmsFree(ContextID, Curve -> Evals);
-		Curve -> Evals = NULL;
-	}
+        Curve -> Evals = NULL;
+    }
 
-    if (Curve)
-	{
-		_cmsFree(ContextID, Curve);
-		Curve = NULL;
-	}
+    if (Curve) {
+        _cmsFree(ContextID, Curve);
+        Curve = NULL;
+    }
 }
 
 // Utility function, free 3 gamma tables
@@ -818,10 +813,10 @@ void CMSEXPORT cmsFreeToneCurveTriple(cmsToneCurve* Curve[3])
 
 // Duplicate a gamma table
 cmsToneCurve* CMSEXPORT cmsDupToneCurve(const cmsToneCurve* In)
-{   
-	// Xiaochuan Liu
-	// fix openpdf bug(mantis id:0055683, google id:360198)
-	// the function CurveSetElemTypeFree in cmslut.c also needs to check pointer
+{
+    // Xiaochuan Liu
+    // fix openpdf bug(mantis id:0055683, google id:360198)
+    // the function CurveSetElemTypeFree in cmslut.c also needs to check pointer
     if (In == NULL || In ->InterpParams == NULL || In ->Segments == NULL || In ->Table16 == NULL) return NULL;
 
     return  AllocateToneCurveStruct(In ->InterpParams ->ContextID, In ->nEntries, In ->nSegments, In ->Segments, In ->Table16);
