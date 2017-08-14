@@ -7,34 +7,21 @@
 #ifndef XFA_FDE_CFDE_RENDERCONTEXT_H_
 #define XFA_FDE_CFDE_RENDERCONTEXT_H_
 
-#include <memory>
-#include <vector>
-
 #include "core/fxcrt/fx_coordinates.h"
-#include "xfa/fde/cfde_renderdevice.h"
-#include "xfa/fde/cfde_visualsetiterator.h"
-#include "xfa/fde/ifde_visualset.h"
 
 class CFDE_RenderDevice;
+class CFDE_TxtEdtPage;
 class CFDE_TxtEdtTextSet;
 
 class CFDE_RenderContext {
  public:
-  CFDE_RenderContext();
+  explicit CFDE_RenderContext(CFDE_RenderDevice* pRenderDevice);
   ~CFDE_RenderContext();
 
-  void StartRender(CFDE_RenderDevice* pRenderDevice,
-                   CFDE_TxtEdtPage* pCanvasSet,
-                   const CFX_Matrix& tmDoc2Device);
-  void DoRender();
+  void Render(CFDE_TxtEdtPage* pCanvasSet, const CFX_Matrix& tmDoc2Device);
 
  private:
-  void RenderText(CFDE_TxtEdtTextSet* pTextSet, FDE_TEXTEDITPIECE* pText);
-
   CFDE_RenderDevice* m_pRenderDevice;
-  CFX_Matrix m_Transform;
-  std::vector<FXTEXT_CHARPOS> m_CharPos;
-  std::unique_ptr<CFDE_VisualSetIterator> m_pIterator;
 };
 
 #endif  // XFA_FDE_CFDE_RENDERCONTEXT_H_

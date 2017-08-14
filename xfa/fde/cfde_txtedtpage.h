@@ -11,22 +11,37 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/ifx_chariter.h"
-#include "xfa/fde/ifde_visualset.h"
+#include "core/fxge/cfx_renderdevice.h"
 
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtParag;
 class CFDE_TxtEdtTextSet;
 
-class CFDE_TxtEdtPage : public IFDE_VisualSet {
+struct FDE_TEXTEDITPIECE {
+  FDE_TEXTEDITPIECE();
+  FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that);
+  ~FDE_TEXTEDITPIECE();
+
+  int32_t nStart;
+  int32_t nCount;
+  int32_t nBidiLevel;
+  CFX_RectF rtPiece;
+  uint32_t dwCharStyles;
+};
+
+inline FDE_TEXTEDITPIECE::FDE_TEXTEDITPIECE() = default;
+inline FDE_TEXTEDITPIECE::FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that) =
+    default;
+inline FDE_TEXTEDITPIECE::~FDE_TEXTEDITPIECE() = default;
+
+class CFDE_TxtEdtPage {
  public:
   CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nLineIndex);
-  ~CFDE_TxtEdtPage() override;
+  ~CFDE_TxtEdtPage();
 
-  // IFDE_VisualSet:
-  FDE_VISUALOBJTYPE GetType() override;
-  CFX_RectF GetRect(const FDE_TEXTEDITPIECE& pPiece) override;
-
+  CFX_RectF GetRect(const FDE_TEXTEDITPIECE& pPiece);
   CFDE_TxtEdtEngine* GetEngine() const;
   int32_t GetCharRect(int32_t nIndex,
                       CFX_RectF& rect,
@@ -46,11 +61,13 @@ class CFDE_TxtEdtPage : public IFDE_VisualSet {
   void UnloadPage(const CFX_RectF* pClipBox);
   const CFX_RectF& GetContentsBox();
 
-  size_t GetFirstPosition();
-  FDE_TEXTEDITPIECE* GetNext(size_t* pos, IFDE_VisualSet*& pVisualSet);
+  size_t GetTextPieceCount() const;
+  const FDE_TEXTEDITPIECE& GetTextPiece(size_t pos) const;
 
   wchar_t GetChar(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
   int32_t GetWidth(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
+
+  CFDE_TxtEdtTextSet* GetTextSet() const { return m_pTextSet.get(); }
 
  private:
   void NormalizePt2Rect(CFX_PointF& ptF,

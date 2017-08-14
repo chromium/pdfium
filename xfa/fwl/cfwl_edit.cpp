@@ -567,12 +567,11 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   if (!pRenderDev)
     return;
 
-  auto pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pRenderDev);
-  pRenderDevice->SetClipRect(rtClip);
+  CFDE_RenderDevice renderDevice(pRenderDev);
+  renderDevice.SetClipRect(rtClip);
 
-  auto pRenderContext = pdfium::MakeUnique<CFDE_RenderContext>();
-  pRenderContext->StartRender(pRenderDevice.get(), pPage, mt);
-  pRenderContext->DoRender();
+  CFDE_RenderContext renderContext(&renderDevice);
+  renderContext.Render(pPage, mt);
 
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->RestoreGraphState();

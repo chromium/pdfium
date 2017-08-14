@@ -40,10 +40,6 @@ CFDE_TxtEdtEngine* CFDE_TxtEdtPage::GetEngine() const {
   return m_pEditEngine.Get();
 }
 
-FDE_VISUALOBJTYPE CFDE_TxtEdtPage::GetType() {
-  return FDE_VISUALOBJ_Text;
-}
-
 CFX_RectF CFDE_TxtEdtPage::GetRect(const FDE_TEXTEDITPIECE& hVisualObj) {
   return CFX_RectF();
 }
@@ -411,27 +407,13 @@ const CFX_RectF& CFDE_TxtEdtPage::GetContentsBox() {
   return m_rtPageContents;
 }
 
-size_t CFDE_TxtEdtPage::GetFirstPosition() {
-  return m_Pieces.empty() ? 0 : 1;
+size_t CFDE_TxtEdtPage::GetTextPieceCount() const {
+  return m_pTextSet ? m_Pieces.size() : 0;
 }
 
-FDE_TEXTEDITPIECE* CFDE_TxtEdtPage::GetNext(size_t* pos,
-                                            IFDE_VisualSet*& pVisualSet) {
-  ASSERT(pos);
-
-  if (!m_pTextSet) {
-    *pos = 0;
-    return nullptr;
-  }
-
-  size_t nPos = *pos;
-  pVisualSet = m_pTextSet.get();
-  if (nPos + 1 > m_Pieces.size())
-    *pos = 0;
-  else
-    *pos = nPos + 1;
-
-  return &m_Pieces[nPos - 1];
+const FDE_TEXTEDITPIECE& CFDE_TxtEdtPage::GetTextPiece(size_t pos) const {
+  ASSERT(pos < m_Pieces.size());
+  return m_Pieces[pos];
 }
 
 wchar_t CFDE_TxtEdtPage::GetChar(const FDE_TEXTEDITPIECE* pIdentity,

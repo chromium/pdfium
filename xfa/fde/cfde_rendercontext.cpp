@@ -6,80 +6,56 @@
 
 #include "xfa/fde/cfde_rendercontext.h"
 
+#include <vector>
+
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_renderdevice.h"
+#include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedttextset.h"
 
-CFDE_RenderContext::CFDE_RenderContext()
-    : m_pRenderDevice(nullptr), m_Transform() {
-  m_Transform.SetIdentity();
-}
+CFDE_RenderContext::CFDE_RenderContext(CFDE_RenderDevice* pRenderDevice)
+    : m_pRenderDevice(pRenderDevice) {}
 
 CFDE_RenderContext::~CFDE_RenderContext() {}
 
-void CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
-                                     CFDE_TxtEdtPage* pCanvasSet,
-                                     const CFX_Matrix& tmDoc2Device) {
-  if (m_pRenderDevice || !pRenderDevice || !pCanvasSet)
+void CFDE_RenderContext::Render(CFDE_TxtEdtPage* pCanvasSet,
+                                const CFX_Matrix& tmDoc2Device) {
+  if (!m_pRenderDevice || !pCanvasSet)
     return;
 
-  m_pRenderDevice = pRenderDevice;
-  m_Transform = tmDoc2Device;
-  if (!m_pIterator)
-    m_pIterator = pdfium::MakeUnique<CFDE_VisualSetIterator>();
-  if (m_pIterator->AttachCanvas(pCanvasSet))
-    m_pIterator->FilterObjects();
-}
+  CFDE_TxtEdtTextSet* pVisualSet = pCanvasSet->GetTextSet();
+  if (!pVisualSet)
+    return;
 
-void CFDE_RenderContext::DoRender() {
-  if (!m_pRenderDevice || !m_pIterator)
+  CFX_RetainPtr<CFGAS_GEFont> pFont = pVisualSet->GetFont();
+  if (!pFont)
     return;
 
   CFX_RectF rtDocClip = m_pRenderDevice->GetClipRect();
   if (rtDocClip.IsEmpty()) {
     rtDocClip.left = rtDocClip.top = 0;
-    rtDocClip.width = (float)m_pRenderDevice->GetWidth();
-    rtDocClip.height = (float)m_pRenderDevice->GetHeight();
+    rtDocClip.width = static_cast<float>(m_pRenderDevice->GetWidth());
+    rtDocClip.height = static_cast<float>(m_pRenderDevice->GetHeight());
   }
-  m_Transform.GetInverse().TransformRect(rtDocClip);
-  IFDE_VisualSet* pVisualSet;
-  FDE_TEXTEDITPIECE* pPiece;
-  int32_t iCount = 0;
-  while (true) {
-    pPiece = m_pIterator->GetNext(pVisualSet);
-    if (!pPiece || !pVisualSet)
-      return;
-    if (!rtDocClip.IntersectWith(pVisualSet->GetRect(*pPiece)))
+  tmDoc2Device.GetInverse().TransformRect(rtDocClip);
+
+  std::vector<FXTEXT_CHARPOS> char_pos;
+
+  for (size_t i = 0; i < pCanvasSet->GetTextPieceCount(); ++i) {
+    const FDE_TEXTEDITPIECE& pText = pCanvasSet->GetTextPiece(i);
+    if (!rtDocClip.IntersectWith(pVisualSet->GetRect(pText)))
       continue;
 
-    switch (pVisualSet->GetType()) {
-      case FDE_VISUALOBJ_Text:
-        RenderText(static_cast<CFDE_TxtEdtTextSet*>(pVisualSet), pPiece);
-        iCount += 5;
-        break;
-      default:
-        break;
-    }
+    int32_t iCount = pVisualSet->GetDisplayPos(pText, nullptr, false);
+    if (iCount < 1)
+      continue;
+    if (char_pos.size() < static_cast<size_t>(iCount))
+      char_pos.resize(iCount, FXTEXT_CHARPOS());
+
+    iCount = pVisualSet->GetDisplayPos(pText, char_pos.data(), false);
+    m_pRenderDevice->DrawString(pVisualSet->GetFontColor(), pFont,
+                                char_pos.data(), iCount,
+                                pVisualSet->GetFontSize(), &tmDoc2Device);
   }
-}
-
-void CFDE_RenderContext::RenderText(CFDE_TxtEdtTextSet* pTextSet,
-                                    FDE_TEXTEDITPIECE* pText) {
-  ASSERT(m_pRenderDevice);
-  ASSERT(pTextSet && pText);
-
-  CFX_RetainPtr<CFGAS_GEFont> pFont = pTextSet->GetFont();
-  if (!pFont)
-    return;
-
-  int32_t iCount = pTextSet->GetDisplayPos(*pText, nullptr, false);
-  if (iCount < 1)
-    return;
-  if (m_CharPos.size() < static_cast<size_t>(iCount))
-    m_CharPos.resize(iCount, FXTEXT_CHARPOS());
-
-  iCount = pTextSet->GetDisplayPos(*pText, m_CharPos.data(), false);
-  m_pRenderDevice->DrawString(pTextSet->GetFontColor(), pFont, m_CharPos.data(),
-                              iCount, pTextSet->GetFontSize(), &m_Transform);
 }

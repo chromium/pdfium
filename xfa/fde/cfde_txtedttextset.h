@@ -9,29 +9,26 @@
 
 #include <vector>
 
-#include "xfa/fde/ifde_visualset.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "xfa/fde/cfde_txtedtpage.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
-class CFDE_TxtEdtPage;
-
-class CFDE_TxtEdtTextSet : public IFDE_VisualSet {
+class CFDE_TxtEdtTextSet {
  public:
   explicit CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage);
-  ~CFDE_TxtEdtTextSet() override;
+  ~CFDE_TxtEdtTextSet();
 
-  // IFDE_VisualSet
-  FDE_VISUALOBJTYPE GetType() override;
-  CFX_RectF GetRect(const FDE_TEXTEDITPIECE& hVisualObj) override;
-
-  int32_t GetString(FDE_TEXTEDITPIECE* pPiece, CFX_WideString& wsText);
-  CFX_RetainPtr<CFGAS_GEFont> GetFont();
-  float GetFontSize();
-  FX_ARGB GetFontColor();
+  CFX_RectF GetRect(const FDE_TEXTEDITPIECE& hVisualObj) const;
+  int32_t GetString(FDE_TEXTEDITPIECE* pPiece, CFX_WideString& wsText) const;
+  CFX_RetainPtr<CFGAS_GEFont> GetFont() const;
+  float GetFontSize() const;
+  FX_ARGB GetFontColor() const;
   int32_t GetDisplayPos(const FDE_TEXTEDITPIECE& pPiece,
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode = false,
-                        CFX_WideString* pWSForms = nullptr);
+                        CFX_WideString* pWSForms = nullptr) const;
   std::vector<CFX_RectF> GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
-                                      bool bBBox);
+                                      bool bBBox) const;
 
  private:
   CFX_UnownedPtr<CFDE_TxtEdtPage> const m_pPage;

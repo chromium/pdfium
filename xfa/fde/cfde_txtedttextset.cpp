@@ -7,7 +7,6 @@
 #include "xfa/fde/cfde_txtedttextset.h"
 
 #include "xfa/fde/cfde_txtedtengine.h"
-#include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
@@ -16,16 +15,12 @@ CFDE_TxtEdtTextSet::CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage)
 
 CFDE_TxtEdtTextSet::~CFDE_TxtEdtTextSet() {}
 
-FDE_VISUALOBJTYPE CFDE_TxtEdtTextSet::GetType() {
-  return FDE_VISUALOBJ_Text;
-}
-
-CFX_RectF CFDE_TxtEdtTextSet::GetRect(const FDE_TEXTEDITPIECE& pPiece) {
+CFX_RectF CFDE_TxtEdtTextSet::GetRect(const FDE_TEXTEDITPIECE& pPiece) const {
   return pPiece.rtPiece;
 }
 
 int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
-                                      CFX_WideString& wsText) {
+                                      CFX_WideString& wsText) const {
   wchar_t* pBuffer = wsText.GetBuffer(pPiece->nCount);
   for (int32_t i = 0; i < pPiece->nCount; i++)
     pBuffer[i] = m_pPage->GetChar(pPiece, i);
@@ -34,22 +29,22 @@ int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
   return pPiece->nCount;
 }
 
-CFX_RetainPtr<CFGAS_GEFont> CFDE_TxtEdtTextSet::GetFont() {
+CFX_RetainPtr<CFGAS_GEFont> CFDE_TxtEdtTextSet::GetFont() const {
   return m_pPage->GetEngine()->GetEditParams()->pFont;
 }
 
-float CFDE_TxtEdtTextSet::GetFontSize() {
+float CFDE_TxtEdtTextSet::GetFontSize() const {
   return m_pPage->GetEngine()->GetEditParams()->fFontSize;
 }
 
-FX_ARGB CFDE_TxtEdtTextSet::GetFontColor() {
+FX_ARGB CFDE_TxtEdtTextSet::GetFontColor() const {
   return m_pPage->GetEngine()->GetEditParams()->dwFontColor;
 }
 
 int32_t CFDE_TxtEdtTextSet::GetDisplayPos(const FDE_TEXTEDITPIECE& piece,
                                           FXTEXT_CHARPOS* pCharPos,
                                           bool bCharCode,
-                                          CFX_WideString* pWSForms) {
+                                          CFX_WideString* pWSForms) const {
   int32_t nLength = piece.nCount;
   if (nLength < 1)
     return 0;
@@ -74,7 +69,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(const FDE_TEXTEDITPIECE& piece,
 
 std::vector<CFX_RectF> CFDE_TxtEdtTextSet::GetCharRects(
     const FDE_TEXTEDITPIECE* pPiece,
-    bool bBBox) {
+    bool bBBox) const {
   if (!pPiece || pPiece->nCount < 1)
     return std::vector<CFX_RectF>();
 

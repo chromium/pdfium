@@ -1476,8 +1476,6 @@ if (pdf_enable_xfa) {
       "xfa/fde/cfde_txtedtparag.h",
       "xfa/fde/cfde_txtedttextset.cpp",
       "xfa/fde/cfde_txtedttextset.h",
-      "xfa/fde/cfde_visualsetiterator.cpp",
-      "xfa/fde/cfde_visualsetiterator.h",
       "xfa/fde/ifde_txtedtdorecord.h",
       "xfa/fde/ifde_txtedtpage.h",
       "xfa/fgas/crt/cfgas_formatstring.cpp",
