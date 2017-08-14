@@ -111,6 +111,7 @@ class CPDF_DataAvail final {
   CFX_RetainPtr<IFX_SeekableReadStream> GetFileRead() const;
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
+  CFX_RetainPtr<CPDF_ReadValidator> GetValidator() const;
 
  protected:
   class PageNode {
@@ -128,7 +129,6 @@ class CPDF_DataAvail final {
   uint32_t GetObjectSize(uint32_t objnum, FX_FILESIZE& offset);
   bool AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
                            bool bParsePage,
-                           DownloadHints* pHints,
                            std::vector<CPDF_Object*>& ret_array);
   bool CheckDocStatus(DownloadHints* pHints);
   bool CheckHeader(DownloadHints* pHints);
@@ -142,10 +142,10 @@ class CPDF_DataAvail final {
   bool CheckInfo(DownloadHints* pHints);
   bool CheckPages(DownloadHints* pHints);
   bool CheckPage(DownloadHints* pHints);
-  bool CheckResources(DownloadHints* pHints);
+  bool CheckResources();
   bool CheckAnnots(DownloadHints* pHints);
   bool CheckAcroForm(DownloadHints* pHints);
-  bool CheckAcroFormSubObject(DownloadHints* pHints);
+  bool CheckAcroFormSubObject();
   bool CheckTrailerAppend(DownloadHints* pHints);
   bool CheckPageStatus(DownloadHints* pHints);
   bool CheckAllCrossRefStream(DownloadHints* pHints);
@@ -168,10 +168,9 @@ class CPDF_DataAvail final {
   bool LoadAllXref(DownloadHints* pHints);
   bool LoadAllFile(DownloadHints* pHints);
   DocAvailStatus CheckLinearizedData(DownloadHints* pHints);
-  bool CheckPageAnnots(uint32_t dwPage, DownloadHints* pHints);
+  bool CheckPageAnnots(uint32_t dwPage);
 
-  DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage,
-                                          DownloadHints* pHints);
+  DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage);
   bool CheckPage(uint32_t dwPage, DownloadHints* pHints);
   bool LoadDocPages(DownloadHints* pHints);
   bool LoadDocPage(uint32_t dwPage, DownloadHints* pHints);
