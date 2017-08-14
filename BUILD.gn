@@ -1457,8 +1457,6 @@ if (pdf_enable_xfa) {
 
   static_library("xfa") {
     sources = [
-      "xfa/fde/cfde_rendercontext.cpp",
-      "xfa/fde/cfde_rendercontext.h",
       "xfa/fde/cfde_renderdevice.cpp",
       "xfa/fde/cfde_textout.cpp",
       "xfa/fde/cfde_textout.h",

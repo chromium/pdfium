@@ -13,10 +13,10 @@
 
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_rendercontext.h"
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtpage.h"
+#include "xfa/fde/cfde_txtedttextset.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_caret.h"
@@ -567,11 +567,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   if (!pRenderDev)
     return;
 
-  CFDE_RenderDevice renderDevice(pRenderDev);
-  renderDevice.SetClipRect(rtClip);
-
-  CFDE_RenderContext renderContext(&renderDevice);
-  renderContext.Render(pPage, mt);
+  RenderText(pRenderDev, rtClip, *pPage, mt);
 
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->RestoreGraphState();
@@ -594,6 +590,50 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
   }
   pGraphics->RestoreGraphState();
+}
+
+void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
+                           const CFX_RectF& clipRect,
+                           const CFDE_TxtEdtPage& pPage,
+                           const CFX_Matrix& mt) {
+  ASSERT(pRenderDev);
+
+  CFDE_TxtEdtTextSet* pTextSet = pPage.GetTextSet();
+  if (!pTextSet)
+    return;
+
+  CFX_RetainPtr<CFGAS_GEFont> pFont = pTextSet->GetFont();
+  if (!pFont)
+    return;
+
+  CFDE_RenderDevice renderDevice(pRenderDev);
+  renderDevice.SetClipRect(clipRect);
+
+  CFX_RectF rtDocClip = renderDevice.GetClipRect();
+  if (rtDocClip.IsEmpty()) {
+    rtDocClip.left = rtDocClip.top = 0;
+    rtDocClip.width = static_cast<float>(renderDevice.GetWidth());
+    rtDocClip.height = static_cast<float>(renderDevice.GetHeight());
+  }
+  mt.GetInverse().TransformRect(rtDocClip);
+
+  std::vector<FXTEXT_CHARPOS> char_pos;
+
+  for (size_t i = 0; i < pPage.GetTextPieceCount(); ++i) {
+    const FDE_TEXTEDITPIECE& pText = pPage.GetTextPiece(i);
+    if (!rtDocClip.IntersectWith(pTextSet->GetRect(pText)))
+      continue;
+
+    int32_t iCount = pTextSet->GetDisplayPos(pText, nullptr, false);
+    if (iCount < 1)
+      continue;
+    if (char_pos.size() < static_cast<size_t>(iCount))
+      char_pos.resize(iCount, FXTEXT_CHARPOS());
+
+    iCount = pTextSet->GetDisplayPos(pText, char_pos.data(), false);
+    renderDevice.DrawString(pTextSet->GetFontColor(), pFont, char_pos.data(),
+                            iCount, pTextSet->GetFontSize(), &mt);
+  }
 }
 
 void CFWL_Edit::UpdateEditEngine() {

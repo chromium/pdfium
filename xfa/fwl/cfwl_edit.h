@@ -109,6 +109,10 @@ class CFWL_Edit : public CFWL_Widget {
   CFDE_TxtEdtEngine* GetTxtEdtEngine() { return &m_EdtEngine; }
 
  private:
+  void RenderText(CFX_RenderDevice* pRenderDev,
+                  const CFX_RectF& clipRect,
+                  const CFDE_TxtEdtPage& pPage,
+                  const CFX_Matrix& mt);
   void DrawTextBk(CXFA_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix);
