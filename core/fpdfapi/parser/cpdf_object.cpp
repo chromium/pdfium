@@ -95,6 +95,10 @@ bool CPDF_Object::IsString() const {
   return false;
 }
 
+bool CPDF_Object::IsNull() const {
+  return false;
+}
+
 CPDF_Array* CPDF_Object::AsArray() {
   return nullptr;
 }

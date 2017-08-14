@@ -71,6 +71,7 @@ class CPDF_Object {
   virtual bool IsReference() const;
   virtual bool IsStream() const;
   virtual bool IsString() const;
+  virtual bool IsNull() const;
 
   virtual CPDF_Array* AsArray();
   virtual const CPDF_Array* AsArray() const;
