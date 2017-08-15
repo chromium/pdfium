@@ -110,16 +110,14 @@ class CFDE_TxtEdtEngine {
   int32_t GetCaretRect(CFX_RectF& rtCaret) const;
   int32_t GetCaretPos() const;
   int32_t SetCaretPos(int32_t nIndex, bool bBefore);
-  int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
-                       bool bShift = false,
-                       bool bCtrl = false);
+  int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret, bool bShift, bool bCtrl);
   void Lock();
   void Unlock();
   bool IsLocked() const;
 
   int32_t Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
-  int32_t Delete(int32_t nStart, bool bBackspace = false);
-  int32_t DeleteRange(int32_t nStart, int32_t nCount = -1);
+  int32_t Delete(int32_t nStart, bool bBackspace);
+  int32_t DeleteRange(int32_t nStart, size_t nCount);
   int32_t Replace(int32_t nStart,
                   int32_t nLength,
                   const CFX_WideString& wsReplace);
@@ -180,8 +178,8 @@ class CFDE_TxtEdtEngine {
                                    const wchar_t* lpText,
                                    int32_t nLength);
 
-  void Inner_DeleteRange(int32_t nStart, int32_t nCount = -1);
-  void DeleteRange_DoRecord(int32_t nStart, int32_t nCount, bool bSel = false);
+  void Inner_DeleteRange(int32_t nStart, int32_t nCount);
+  void DeleteRange_DoRecord(int32_t nStart, int32_t nCount, bool bSel);
   void ResetEngine();
   void RebuildParagraphs();
   void RemoveAllParags();
@@ -190,9 +188,7 @@ class CFDE_TxtEdtEngine {
   void UpdatePages();
   void UpdateTxtBreak();
 
-  bool ReplaceParagEnd(wchar_t*& lpText,
-                       int32_t& nLength,
-                       bool bPreIsCR = false);
+  bool ReplaceParagEnd(wchar_t*& lpText, int32_t& nLength, bool bPreIsCR);
   void RecoverParagEnd(CFX_WideString& wsText) const;
   int32_t MovePage2Char(int32_t nIndex);
   void TextPos2ParagPos(int32_t nIndex, FDE_TXTEDTPARAGPOS& ParagPos) const;
@@ -205,11 +201,11 @@ class CFDE_TxtEdtEngine {
   bool MoveHome();
   bool MoveEnd();
   bool IsFitArea(CFX_WideString& wsText);
-  void UpdateCaretRect(int32_t nIndex, bool bBefore = true);
+  void UpdateCaretRect(int32_t nIndex, bool bBefore);
   void GetCaretRect(CFX_RectF& rtCaret,
                     int32_t nPageIndex,
                     int32_t nCaret,
-                    bool bBefore = true);
+                    bool bBefore);
   void UpdateCaretIndex(const CFX_PointF& ptCaret);
 
   bool IsSelect();

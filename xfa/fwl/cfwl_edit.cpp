@@ -348,7 +348,7 @@ bool CFWL_Edit::Cut(CFX_WideString& wsCut) {
     wsCut += wsTemp;
     wsTemp.clear();
   }
-  m_EdtEngine.Delete(0);
+  m_EdtEngine.Delete(0, false);
   return true;
 }
 
@@ -623,13 +623,13 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
     if (!rtDocClip.IntersectWith(pTextSet->GetRect(pText)))
       continue;
 
-    int32_t iCount = pTextSet->GetDisplayPos(pText, nullptr, false);
+    int32_t iCount = pTextSet->GetDisplayPos(pText, nullptr);
     if (iCount < 1)
       continue;
     if (char_pos.size() < static_cast<size_t>(iCount))
       char_pos.resize(iCount, FXTEXT_CHARPOS());
 
-    iCount = pTextSet->GetDisplayPos(pText, char_pos.data(), false);
+    iCount = pTextSet->GetDisplayPos(pText, char_pos.data());
     CFDE_TextOut::DrawString(pRenderDev, pTextSet->GetFontColor(), pFont,
                              char_pos.data(), iCount, pTextSet->GetFontSize(),
                              &mt);
@@ -1432,7 +1432,7 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
 #if (_FX_OS_ == _FX_MACOSX_)
       m_EdtEngine.Delete(nCaret, true);
 #else
-      m_EdtEngine.Delete(nCaret);
+      m_EdtEngine.Delete(nCaret, false);
 #endif
       break;
     }

@@ -109,7 +109,7 @@ void CFDE_TxtEdtParag::CalcLines() {
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(
-      static_cast<CFDE_TxtEdtBuf*>(pTxtBuf));
+      static_cast<CFDE_TxtEdtBuf*>(pTxtBuf), 0);
   pIter->SetAt(m_nCharStart);
   bool bReload = false;
   do {

@@ -43,9 +43,7 @@ class CFDE_TxtEdtPage {
 
   CFX_RectF GetRect(const FDE_TEXTEDITPIECE& pPiece);
   CFDE_TxtEdtEngine* GetEngine() const;
-  int32_t GetCharRect(int32_t nIndex,
-                      CFX_RectF& rect,
-                      bool bBBox = false) const;
+  int32_t GetCharRect(int32_t nIndex, CFX_RectF& rect, bool bBBox) const;
   int32_t GetCharIndex(const CFX_PointF& fPoint, bool& bBefore);
   void CalcRangeRectArray(int32_t nStart,
                           int32_t nCount,

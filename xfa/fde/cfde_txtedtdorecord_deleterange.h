@@ -19,7 +19,7 @@ class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord {
                                   int32_t nIndex,
                                   int32_t nCaret,
                                   const CFX_WideString& wsRange,
-                                  bool bSel = false);
+                                  bool bSel);
   ~CFDE_TxtEdtDoRecord_DeleteRange() override;
 
   bool Undo() const override;

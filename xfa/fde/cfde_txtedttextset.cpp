@@ -42,9 +42,7 @@ FX_ARGB CFDE_TxtEdtTextSet::GetFontColor() const {
 }
 
 int32_t CFDE_TxtEdtTextSet::GetDisplayPos(const FDE_TEXTEDITPIECE& piece,
-                                          FXTEXT_CHARPOS* pCharPos,
-                                          bool bCharCode,
-                                          CFX_WideString* pWSForms) const {
+                                          FXTEXT_CHARPOS* pCharPos) const {
   int32_t nLength = piece.nCount;
   if (nLength < 1)
     return 0;
@@ -64,7 +62,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(const FDE_TEXTEDITPIECE& piece,
   tr.dwCharStyles = piece.dwCharStyles;
   tr.pRect = &piece.rtPiece;
   tr.wLineBreakChar = pTextParams->wLineBreakChar;
-  return pBreak->GetDisplayPos(&tr, pCharPos, bCharCode, pWSForms);
+  return pBreak->GetDisplayPos(&tr, pCharPos);
 }
 
 std::vector<CFX_RectF> CFDE_TxtEdtTextSet::GetCharRects(

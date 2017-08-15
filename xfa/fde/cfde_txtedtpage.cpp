@@ -147,7 +147,7 @@ int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
     if (!rtClip.IntersectWith(m_pTextSet->GetRect(piece)))
       continue;
 
-    int32_t nCount = m_pTextSet->GetDisplayPos(piece, pos, false);
+    int32_t nCount = m_pTextSet->GetDisplayPos(piece, pos);
     nCharPosCount += nCount;
     pos += nCount;
   }
@@ -211,7 +211,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
     return -1;
   }
   auto pIter = pdfium::MakeUnique<CFX_WordBreak>();
-  pIter->Attach(new CFDE_TxtEdtBuf::Iterator(pBuf));
+  pIter->Attach(new CFDE_TxtEdtBuf::Iterator(pBuf, 0));
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
   return pIter->GetWordPos();

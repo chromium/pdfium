@@ -634,9 +634,7 @@ struct FX_FORMCHAR {
 };
 
 int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
-                                    FXTEXT_CHARPOS* pCharPos,
-                                    bool bCharCode,
-                                    CFX_WideString* pWSForms) const {
+                                    FXTEXT_CHARPOS* pCharPos) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
 
@@ -822,14 +820,11 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
         wLast = (wchar_t)formChars[j - 1].wForm;
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        pCharPos->m_GlyphIndex =
-            bCharCode ? wch : pFont->GetGlyphIndex(wForm, false);
+        pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm, false);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
         pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
 #endif
         pCharPos->m_FontCharWidth = iCharWidth;
-        if (pWSForms)
-          *pWSForms += wForm;
       }
 
       int32_t iCharHeight = 1000;

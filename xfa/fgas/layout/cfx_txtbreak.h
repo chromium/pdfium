@@ -66,9 +66,7 @@ class CFX_TxtBreak : public CFX_Break {
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
 
   int32_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
-                        FXTEXT_CHARPOS* pCharPos,
-                        bool bCharCode = false,
-                        CFX_WideString* pWSForms = nullptr) const;
+                        FXTEXT_CHARPOS* pCharPos) const;
   std::vector<CFX_RectF> GetCharRects(const FX_TXTRUN* pTxtRun,
                                       bool bCharBBox = false) const;
   CFX_BreakType AppendChar(wchar_t wch);

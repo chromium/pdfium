@@ -19,7 +19,7 @@ class CFDE_TxtEdtBuf {
  public:
   class Iterator : public IFX_CharIter {
    public:
-    explicit Iterator(CFDE_TxtEdtBuf* pBuf, wchar_t wcAlias = 0);
+    Iterator(CFDE_TxtEdtBuf* pBuf, wchar_t wcAlias);
     ~Iterator() override;
 
     bool Next(bool bPrev = false) override;

@@ -344,7 +344,7 @@ bool CFDE_TxtEdtBuf::Iterator::IsEOF(bool bTail) const {
 }
 
 std::unique_ptr<IFX_CharIter> CFDE_TxtEdtBuf::Iterator::Clone() {
-  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(m_pBuf);
+  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(m_pBuf, 0);
   pIter->m_nCurChunk = m_nCurChunk;
   pIter->m_nCurIndex = m_nCurIndex;
   pIter->m_nIndex = m_nIndex;

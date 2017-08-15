@@ -24,9 +24,7 @@ class CFDE_TxtEdtTextSet {
   float GetFontSize() const;
   FX_ARGB GetFontColor() const;
   int32_t GetDisplayPos(const FDE_TEXTEDITPIECE& pPiece,
-                        FXTEXT_CHARPOS* pCharPos,
-                        bool bCharCode = false,
-                        CFX_WideString* pWSForms = nullptr) const;
+                        FXTEXT_CHARPOS* pCharPos) const;
   std::vector<CFX_RectF> GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
                                       bool bBBox) const;
 

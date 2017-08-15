@@ -186,7 +186,7 @@ CFX_WideString CFDE_TxtEdtEngine::GetText(int32_t nStart,
 }
 
 void CFDE_TxtEdtEngine::ClearText() {
-  DeleteRange(0, -1);
+  DeleteRange(0, GetTextBufLength());
 }
 
 int32_t CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret) const {
@@ -430,8 +430,8 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
   }
   CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
   m_Param.pEventSink->OnAddDoRecord(
-      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(this, nStart,
-                                                          m_nCaret, wsRange));
+      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(
+          this, nStart, m_nCaret, wsRange, false));
 
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
   m_ChangeInfo.wsDelete = GetText(nStart, nCount);
@@ -442,11 +442,9 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
   return FDE_TXTEDT_MODIFY_RET_S_Normal;
 }
 
-int32_t CFDE_TxtEdtEngine::DeleteRange(int32_t nStart, int32_t nCount) {
+int32_t CFDE_TxtEdtEngine::DeleteRange(int32_t nStart, size_t nCount) {
   if (IsLocked())
     return FDE_TXTEDT_MODIFY_RET_F_Locked;
-  if (nCount == -1)
-    nCount = GetTextBufLength();
   if (nCount == 0)
     return FDE_TXTEDT_MODIFY_RET_S_Normal;
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
@@ -454,7 +452,7 @@ int32_t CFDE_TxtEdtEngine::DeleteRange(int32_t nStart, int32_t nCount) {
     if (!m_Param.pEventSink->OnValidate(wsText))
       return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
   }
-  DeleteRange_DoRecord(nStart, nCount);
+  DeleteRange_DoRecord(nStart, nCount, false);
   m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
   SetCaretPos(nStart, true);
   return FDE_TXTEDT_MODIFY_RET_S_Normal;
@@ -903,7 +901,7 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
   wchar_t wChar = L' ';
   int32_t nParagStart = 0;
   int32_t nIndex = 0;
-  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(m_pTxtBuf.get());
+  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(m_pTxtBuf.get(), 0);
   pIter->SetAt(0);
   do {
     wChar = pIter->GetChar();
