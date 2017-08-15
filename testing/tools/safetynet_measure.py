@@ -14,6 +14,8 @@ import re
 import subprocess
 import sys
 
+from common import PrintErr
+
 
 CALLGRIND_PROFILER = 'callgrind'
 PERFSTAT_PROFILER = 'perfstat'
@@ -30,12 +32,13 @@ class PerformanceRun(object):
   def _CheckTools(self):
     """Returns whether the tool file paths are sane."""
     if not os.path.exists(self.pdfium_test_path):
-      print "FAILURE: Can't find test executable '%s'" % self.pdfium_test_path
-      print 'Use --build-dir to specify its location.'
+      PrintErr("FAILURE: Can't find test executable '%s'"
+               % self.pdfium_test_path)
+      PrintErr('Use --build-dir to specify its location.')
       return False
     if not os.access(self.pdfium_test_path, os.X_OK):
-      print ("FAILURE: Test executable '%s' lacks execution permissions"
-             % self.pdfium_test_path)
+      PrintErr("FAILURE: Test executable '%s' lacks execution permissions"
+               % self.pdfium_test_path)
       return False
     return True
 
@@ -53,7 +56,7 @@ class PerformanceRun(object):
     elif self.args.profiler == PERFSTAT_PROFILER:
       time = self._RunPerfStat()
     else:
-      print 'profiler=%s not supported, aborting' % self.args.profiler
+      PrintErr('profiler=%s not supported, aborting' % self.args.profiler)
       return 1
 
     if time is None:
@@ -142,7 +145,7 @@ def main():
   args = parser.parse_args()
 
   if args.interesting_section and args.profiler != CALLGRIND_PROFILER:
-    print '--interesting-section requires profiler to be callgrind.'
+    PrintErr('--interesting-section requires profiler to be callgrind.')
     return 1
 
   run = PerformanceRun(args)

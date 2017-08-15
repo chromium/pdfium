@@ -179,7 +179,7 @@ class ComparisonConclusions(object):
     output_dict['params'] = {'threshold': self.threshold_significant}
     output_dict['summary'] = self.summary.GetOutputDict()
     output_dict['comparison_by_case'] = {
-        cr.case_name: cr.GetOutputDict()
+        cr.case_name.decode('utf-8'): cr.GetOutputDict()
         for cr in self.GetCaseResults().values()
     }
     return output_dict
@@ -264,17 +264,18 @@ def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
 
   for case_name, case_dict in case_pairs:
     if case_dict['rating'] == RATING_FAILURE:
-      print '%s to measure time for %s' % (
-          RATING_TO_COLOR[RATING_FAILURE].format('Failed'), case_name)
+      print u'{} to measure time for {}'.format(
+          RATING_TO_COLOR[RATING_FAILURE].format('Failed'),
+          case_name).encode('utf-8')
       continue
 
     if colored:
       color = RATING_TO_COLOR[case_dict['rating']]
 
-    print '{0} {1:15,d}  {2}' .format(
+    print u'{0} {1:15,d}  {2}' .format(
         color.format('{:+11.4%}'.format(case_dict['ratio'])),
         case_dict['after'],
-        case_name)
+        case_name).encode('utf-8')
 
   # Print totals
   totals = conclusions_dict['summary']

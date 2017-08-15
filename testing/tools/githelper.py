@@ -6,6 +6,8 @@
 
 import subprocess
 
+from common import RunCommandPropagateErr
+
 
 class GitHelper(object):
   """Issues git commands. Stateful."""
@@ -15,15 +17,17 @@ class GitHelper(object):
 
   def Checkout(self, branch):
     """Checks out a branch."""
-    subprocess.check_output(['git', 'checkout', branch])
+    RunCommandPropagateErr(['git', 'checkout', branch], exit_status_on_error=1)
 
   def FetchOriginMaster(self):
     """Fetches new changes on origin/master."""
-    subprocess.check_output(['git', 'fetch', 'origin', 'master'])
+    RunCommandPropagateErr(['git', 'fetch', 'origin', 'master'],
+                           exit_status_on_error=1)
 
   def StashPush(self):
     """Stashes uncommitted changes."""
-    output = subprocess.check_output(['git', 'stash', '--include-untracked'])
+    output = RunCommandPropagateErr(['git', 'stash', '--include-untracked'],
+                                    exit_status_on_error=1)
     if 'No local changes to save' in output:
       return False
 
@@ -33,30 +37,30 @@ class GitHelper(object):
   def StashPopAll(self):
     """Pops as many changes as this instance stashed."""
     while self.stashed > 0:
-      subprocess.check_output(['git', 'stash', 'pop'])
+      RunCommandPropagateErr(['git', 'stash', 'pop'], exit_status_on_error=1)
       self.stashed -= 1
 
   def GetCurrentBranchName(self):
     """Returns a string with the current branch name."""
-    return subprocess.check_output(
-        ['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
+    return RunCommandPropagateErr(
+        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+        exit_status_on_error=1).strip()
 
   def GetCurrentBranchHash(self):
-    return subprocess.check_output(
-        ['git', 'rev-parse', 'HEAD']).strip()
+    return RunCommandPropagateErr(
+        ['git', 'rev-parse', 'HEAD'], exit_status_on_error=1).strip()
 
   def IsCurrentBranchClean(self):
-    output = subprocess.check_output(['git', 'status', '--porcelain'])
+    output = RunCommandPropagateErr(['git', 'status', '--porcelain'],
+                                    exit_status_on_error=1)
     return not output
 
   def BranchExists(self, branch_name):
     """Return whether a branch with the given name exists."""
-    try:
-      subprocess.check_output(['git', 'rev-parse', '--verify',
-                               branch_name])
-      return True
-    except subprocess.CalledProcessError:
-      return False
+    output = RunCommandPropagateErr(['git', 'rev-parse', '--verify',
+                                     branch_name])
+    return output is not None
 
   def CloneLocal(self, source_repo, new_repo):
-    subprocess.check_call(['git', 'clone', source_repo, new_repo])
+    RunCommandPropagateErr(['git', 'clone', source_repo, new_repo],
+                           exit_status_on_error=1)

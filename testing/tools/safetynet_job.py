@@ -17,6 +17,9 @@ import os
 import subprocess
 import sys
 
+from common import PrintErr
+from common import PrintWithTime
+from common import RunCommandPropagateErr
 from githelper import GitHelper
 from safetynet_conclusions import PrintConclusionsDictHumanReadable
 
@@ -66,16 +69,15 @@ class JobRun(object):
         os.path.pardir)
     os.chdir(pdfium_src_dir)
 
-    if not self.git.IsCurrentBranchClean():
-      print 'Current branch is not clean, aborting'
+    if not self.git.IsCurrentBranchClean() and not self.args.no_checkout:
+      PrintWithTime('Current branch is not clean, aborting')
       return 1
 
     branch_to_restore = self.git.GetCurrentBranchName()
 
-    if not self.args.no_fetch:
+    if not self.args.no_checkout:
       self.git.FetchOriginMaster()
-
-    self.git.Checkout('origin/master')
+      self.git.Checkout('origin/master')
 
     # Make sure results dir exists
     if not os.path.exists(self.context.results_dir):
@@ -99,11 +101,12 @@ class JobRun(object):
     """
     current = self.git.GetCurrentBranchHash()
 
-    print 'Initial run, current is %s' % current
+    PrintWithTime('Initial run, current is %s' % current)
 
     self._WriteCheckpoint(current)
 
-    print 'All set up, next runs will be incremental and perform comparisons'
+    PrintWithTime('All set up, next runs will be incremental and perform '
+                  'comparisons')
     return 0
 
   def _IncrementalRun(self, last_revision_covered):
@@ -117,11 +120,11 @@ class JobRun(object):
     """
     current = self.git.GetCurrentBranchHash()
 
-    print ('Incremental run, current is %s, last is %s'
-           % (current, last_revision_covered))
+    PrintWithTime('Incremental run, current is %s, last is %s'
+                  % (current, last_revision_covered))
 
     if current == last_revision_covered:
-      print 'No changes seen, finishing job'
+      PrintWithTime('No changes seen, finishing job')
       return 0
 
     # Run compare
@@ -134,8 +137,10 @@ class JobRun(object):
            '--output-dir=%s' % self.context.run_output_dir]
     cmd.extend(self.args.input_paths)
 
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    json_output, _ = p.communicate()
+    json_output = RunCommandPropagateErr(cmd)
+
+    if json_output is None:
+      return 1
 
     output_info = json.loads(json_output)
     PrintConclusionsDictHumanReadable(output_info,
@@ -145,15 +150,15 @@ class JobRun(object):
     status = 0
 
     if output_info['summary']['improvement']:
-      print 'Improvement detected.'
+      PrintWithTime('Improvement detected.')
       status = 3
 
     if output_info['summary']['regression']:
-      print 'Regression detected.'
+      PrintWithTime('Regression detected.')
       status = 2
 
     if status == 0:
-      print 'Nothing detected.'
+      PrintWithTime('Nothing detected.')
 
     self._WriteCheckpoint(current)
 
@@ -172,9 +177,9 @@ def main():
   parser.add_argument('input_paths', nargs='+',
                       help='pdf files or directories to search for pdf files '
                            'to run as test cases')
-  parser.add_argument('--no-fetch', action='store_true',
-                      help='whether to skip the git fetch. Use for script '
-                      'debugging.')
+  parser.add_argument('--no-checkout', action='store_true',
+                      help='whether to skip checking out origin/master. Use '
+                           'for script debugging.')
   parser.add_argument('--no-checkpoint', action='store_true',
                       help='whether to skip writing the new checkpoint. Use '
                            'for script debugging.')

@@ -17,16 +17,13 @@ import sys
 import tempfile
 
 from common import GetBooleanGnArg
+from common import PrintErr
+from common import RunCommandPropagateErr
 from githelper import GitHelper
 from safetynet_conclusions import ComparisonConclusions
 from safetynet_conclusions import PrintConclusionsDictHumanReadable
 from safetynet_conclusions import RATING_IMPROVEMENT
 from safetynet_conclusions import RATING_REGRESSION
-
-
-def PrintErr(s):
-  """Prints s to stderr."""
-  print >> sys.stderr, s
 
 
 def RunSingleTestCaseParallel(this, run_label, build_dir, test_case):
@@ -44,11 +41,13 @@ class CompareRun(object):
 
   def _InitPaths(self):
     if self.args.this_repo:
-      measure_script_path = os.path.join(self.args.build_dir,
-                                         'safetynet_measure_current.py')
+      self.safe_script_dir = self.args.build_dir
     else:
-      measure_script_path = 'testing/tools/safetynet_measure.py'
-    self.safe_measure_script_path = os.path.abspath(measure_script_path)
+      self.safe_script_dir = os.path.join('testing', 'tools')
+
+    self.safe_measure_script_path = os.path.abspath(
+        os.path.join(self.safe_script_dir,
+                     'safetynet_measure.py'))
 
     input_file_re = re.compile('^.+[.]pdf$')
     self.test_cases = []
@@ -115,8 +114,12 @@ class CompareRun(object):
     This is needed to make sure we are comparing the pdfium library changes and
     not script changes that may happen between the two branches.
     """
-    subprocess.check_output(['cp', 'testing/tools/safetynet_measure.py',
-                             self.safe_measure_script_path])
+    self.__FreezeFile(os.path.join('testing', 'tools', 'safetynet_measure.py'))
+    self.__FreezeFile(os.path.join('testing', 'tools', 'common.py'))
+
+  def __FreezeFile(self, file):
+    RunCommandPropagateErr(['cp', file, self.safe_script_dir],
+                           exit_status_on_error=1)
 
   def _ProfileTwoOtherBranchesInThisRepo(self, before_branch, after_branch):
     """Profiles two branches that are not the current branch.
@@ -334,9 +337,10 @@ class CompareRun(object):
            'https://pdfium.googlesource.com/pdfium.git']
     if self.args.cache_dir:
       cmd.append('--cache-dir=%s' % self.args.cache_dir)
-    subprocess.check_output(cmd)
+    RunCommandPropagateErr(cmd, exit_status_on_error=1)
 
-    subprocess.check_output(['gclient', 'sync'])
+    RunCommandPropagateErr(['gclient', 'sync'], exit_status_on_error=1)
+
     PrintErr('Done.')
 
     build_dir = os.path.join(src_dir, relative_build_dir)
@@ -347,7 +351,8 @@ class CompareRun(object):
     dest_gn_args = os.path.join(build_dir, 'args.gn')
     shutil.copy(source_gn_args, dest_gn_args)
 
-    subprocess.check_output(['gn', 'gen', relative_build_dir])
+    RunCommandPropagateErr(['gn', 'gen', relative_build_dir],
+                           exit_status_on_error=1)
 
     os.chdir(cwd)
 
@@ -373,16 +378,14 @@ class CompareRun(object):
       build_dir: String with path to build directory
     """
     PrintErr('Syncing...')
-    subprocess.check_output(['gclient', 'sync'])
+    RunCommandPropagateErr(['gclient', 'sync'], exit_status_on_error=1)
     PrintErr('Done.')
 
+    PrintErr('Building...')
     cmd = ['ninja', '-C', build_dir, 'pdfium_test']
-
     if GetBooleanGnArg('use_goma', build_dir):
       cmd.extend(['-j', '250'])
-
-    PrintErr('Building...')
-    subprocess.check_output(cmd)
+    RunCommandPropagateErr(cmd, stdout_has_errors=True, exit_status_on_error=1)
     PrintErr('Done.')
 
   def _MeasureCurrentBranch(self, run_label, build_dir):
@@ -480,13 +483,9 @@ class CompareRun(object):
     if profile_file_path:
       command.append('--output-path=%s' % profile_file_path)
 
-    try:
-      output = subprocess.check_output(command)
-    except subprocess.CalledProcessError as e:
-      PrintErr(e)
-      PrintErr(35 * '=' + '  Output:  ' + 34 * '=')
-      PrintErr(e.output)
-      PrintErr(80 * '=')
+    output = RunCommandPropagateErr(command)
+
+    if output is None:
       return None
 
     # Get the time number as output, making sure it's just a number
@@ -539,7 +538,7 @@ class CompareRun(object):
           ComparisonConclusions.GetOutputDict().
     """
     if self.args.machine_readable:
-      print json.dumps(conclusions_dict, ensure_ascii=False)
+      print json.dumps(conclusions_dict)
     else:
       PrintConclusionsDictHumanReadable(
           conclusions_dict, colored=True, key=self.args.case_order)
