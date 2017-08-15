@@ -95,37 +95,6 @@ void CFX_BinaryBuf::InsertBlock(FX_STRSIZE pos,
   m_DataSize += size;
 }
 
-CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(const CFX_ByteStringC& lpsz) {
-  AppendBlock(lpsz.raw_str(), lpsz.GetLength());
-  return *this;
-}
-
-CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(int i) {
-  char buf[32];
-  FXSYS_itoa(i, buf, 10);
-  AppendBlock(buf, FXSYS_strlen(buf));
-  return *this;
-}
-
-CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(uint32_t i) {
-  char buf[32];
-  FXSYS_itoa(i, buf, 10);
-  AppendBlock(buf, FXSYS_strlen(buf));
-  return *this;
-}
-
-CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(double f) {
-  char buf[32];
-  FX_STRSIZE len = FX_ftoa((float)f, buf);
-  AppendBlock(buf, len);
-  return *this;
-}
-
-CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(const CFX_ByteTextBuf& buf) {
-  AppendBlock(buf.m_pBuffer.get(), buf.m_DataSize);
-  return *this;
-}
-
 void CFX_WideTextBuf::AppendChar(wchar_t ch) {
   ExpandBuf(sizeof(wchar_t));
   *(wchar_t*)(m_pBuffer.get() + m_DataSize) = ch;

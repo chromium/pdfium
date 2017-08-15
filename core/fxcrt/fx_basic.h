@@ -57,30 +57,6 @@ class CFX_BinaryBuf {
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
 };
 
-class CFX_ByteTextBuf : public CFX_BinaryBuf {
- public:
-  FX_STRSIZE GetLength() const { return m_DataSize; }
-  CFX_ByteString MakeString() const {
-    return CFX_ByteString(m_pBuffer.get(), m_DataSize);
-  }
-  CFX_ByteStringC AsStringC() const {
-    return CFX_ByteStringC(m_pBuffer.get(), m_DataSize);
-  }
-
-  void AppendChar(int ch) { AppendByte(static_cast<uint8_t>(ch)); }
-  CFX_ByteTextBuf& operator<<(int i);
-  CFX_ByteTextBuf& operator<<(uint32_t i);
-  CFX_ByteTextBuf& operator<<(double f);
-  CFX_ByteTextBuf& operator<<(const char* pStr) {
-    return *this << CFX_ByteStringC(pStr);
-  }
-  CFX_ByteTextBuf& operator<<(const CFX_ByteString& str) {
-    return *this << str.AsStringC();
-  }
-  CFX_ByteTextBuf& operator<<(const CFX_ByteStringC& lpsz);
-  CFX_ByteTextBuf& operator<<(const CFX_ByteTextBuf& buf);
-};
-
 class CFX_WideTextBuf : public CFX_BinaryBuf {
  public:
   void AppendChar(wchar_t wch);
