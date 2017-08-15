@@ -590,15 +590,16 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
   return true;
 }
 
-FPDF_EXPORT FS_QUADPOINTSF FPDF_CALLCONV
-FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot) {
-  if (!annot || !FPDFAnnot_HasAttachmentPoints(annot))
-    return FS_QUADPOINTSF();
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
+                              FS_QUADPOINTSF* quadPoints) {
+  if (!annot || !FPDFAnnot_HasAttachmentPoints(annot) || !quadPoints)
+    return false;
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   if (!pAnnotDict)
-    return FS_QUADPOINTSF();
+    return false;
 
   // If the annotation's appearance stream is defined, then retrieve the
   // quadpoints defined by the "BBox" entry in the AP dictionary, since its
@@ -606,41 +607,40 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot) {
   // takes priority over "QuadPoints" when rendering. Otherwise, retrieve
   // the "Quadpoints" entry from the annotation dictionary.
   CPDF_Array* pArray;
-  FS_QUADPOINTSF quadPoints;
   CPDF_Stream* pStream =
       FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
   if (pStream) {
     pArray = pStream->GetDict()->GetArrayFor("BBox");
     if (!pArray)
-      return FS_QUADPOINTSF();
+      return false;
 
     // Convert the BBox array into quadpoint coordinates. BBox array follows the
     // order of a rectangle array: (left, bottom, right, up); and quadpoints
     // follows the following order: (top-left vertex, top-right vertex, bottom-
     // left vertex, bottom-right vertex).
-    quadPoints.x1 = pArray->GetNumberAt(0);
-    quadPoints.y1 = pArray->GetNumberAt(3);
-    quadPoints.x2 = pArray->GetNumberAt(2);
-    quadPoints.y2 = pArray->GetNumberAt(3);
-    quadPoints.x3 = pArray->GetNumberAt(0);
-    quadPoints.y3 = pArray->GetNumberAt(1);
-    quadPoints.x4 = pArray->GetNumberAt(2);
-    quadPoints.y4 = pArray->GetNumberAt(1);
+    quadPoints->x1 = pArray->GetNumberAt(0);
+    quadPoints->y1 = pArray->GetNumberAt(3);
+    quadPoints->x2 = pArray->GetNumberAt(2);
+    quadPoints->y2 = pArray->GetNumberAt(3);
+    quadPoints->x3 = pArray->GetNumberAt(0);
+    quadPoints->y3 = pArray->GetNumberAt(1);
+    quadPoints->x4 = pArray->GetNumberAt(2);
+    quadPoints->y4 = pArray->GetNumberAt(1);
   } else {
     pArray = pAnnotDict->GetArrayFor("QuadPoints");
     if (!pArray)
-      return FS_QUADPOINTSF();
+      return false;
 
-    quadPoints.x1 = pArray->GetNumberAt(0);
-    quadPoints.y1 = pArray->GetNumberAt(1);
-    quadPoints.x2 = pArray->GetNumberAt(2);
-    quadPoints.y2 = pArray->GetNumberAt(3);
-    quadPoints.x3 = pArray->GetNumberAt(4);
-    quadPoints.y3 = pArray->GetNumberAt(5);
-    quadPoints.x4 = pArray->GetNumberAt(6);
-    quadPoints.y4 = pArray->GetNumberAt(7);
+    quadPoints->x1 = pArray->GetNumberAt(0);
+    quadPoints->y1 = pArray->GetNumberAt(1);
+    quadPoints->x2 = pArray->GetNumberAt(2);
+    quadPoints->y2 = pArray->GetNumberAt(3);
+    quadPoints->x3 = pArray->GetNumberAt(4);
+    quadPoints->y3 = pArray->GetNumberAt(5);
+    quadPoints->x4 = pArray->GetNumberAt(6);
+    quadPoints->y4 = pArray->GetNumberAt(7);
   }
-  return quadPoints;
+  return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
@@ -673,14 +673,15 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   return true;
 }
 
-FPDF_EXPORT FS_RECTF FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot) {
-  if (!annot)
-    return FS_RECTF();
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
+                                                      FS_RECTF* rect) {
+  if (!annot || !rect)
+    return false;
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   if (!pAnnotDict)
-    return FS_RECTF();
+    return false;
 
   // If the annotation's appearance stream is defined and the annotation is of
   // a type that does not have quadpoints, then retrieve the rectangle defined
@@ -696,12 +697,11 @@ FPDF_EXPORT FS_RECTF FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot) {
   else
     rt = pStream->GetDict()->GetRectFor("BBox");
 
-  FS_RECTF rect;
-  rect.left = rt.left;
-  rect.bottom = rt.bottom;
-  rect.right = rt.right;
-  rect.top = rt.top;
-  return rect;
+  rect->left = rt.left;
+  rect->bottom = rt.bottom;
+  rect->right = rt.right;
+  rect->top = rt.top;
+  return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,

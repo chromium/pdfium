@@ -108,7 +108,8 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
                    .c_str());
 
   // Check that the quadpoints are correct.
-  FS_QUADPOINTSF quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  FS_QUADPOINTSF quadpoints;
+  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &quadpoints));
   EXPECT_EQ(115.802643f, quadpoints.x1);
   EXPECT_EQ(718.913940f, quadpoints.y1);
   EXPECT_EQ(157.211182f, quadpoints.x4);
@@ -152,7 +153,8 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
 
   // Check that the rectange coordinates are correct.
   // Note that upon rendering, the rectangle coordinates will be adjusted.
-  FS_RECTF rect = FPDFAnnot_GetRect(annot);
+  FS_RECTF rect;
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_EQ(351.820404f, rect.left);
   EXPECT_EQ(583.830688f, rect.bottom);
   EXPECT_EQ(475.336090f, rect.right);
@@ -223,7 +225,8 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   EXPECT_EQ(51u, A);
 
   // Set the annotation rectangle.
-  FS_RECTF rect = FPDFAnnot_GetRect(annot);
+  FS_RECTF rect;
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_EQ(0.f, rect.left);
   EXPECT_EQ(0.f, rect.right);
   rect.left = 35;
@@ -232,7 +235,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   rect.top = 165;
   ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
   // Check that the annotation rectangle has been set correctly.
-  rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_EQ(35.f, rect.left);
   EXPECT_EQ(150.f, rect.bottom);
   EXPECT_EQ(53.f, rect.right);
@@ -270,7 +273,8 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
   FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
   ASSERT_TRUE(annot);
-  FS_QUADPOINTSF quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  FS_QUADPOINTSF quadpoints;
+  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &quadpoints));
   EXPECT_EQ(115.802643f, quadpoints.x1);
   EXPECT_EQ(718.913940f, quadpoints.y1);
   EXPECT_EQ(157.211182f, quadpoints.x4);
@@ -301,7 +305,8 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 1);
   ASSERT_TRUE(new_annot);
   EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot));
-  FS_QUADPOINTSF new_quadpoints = FPDFAnnot_GetAttachmentPoints(new_annot);
+  FS_QUADPOINTSF new_quadpoints;
+  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(new_annot, &new_quadpoints));
   EXPECT_NEAR(quadpoints.x1, new_quadpoints.x1, 0.001f);
   EXPECT_NEAR(quadpoints.y1, new_quadpoints.y1, 0.001f);
   EXPECT_NEAR(quadpoints.x4, new_quadpoints.x4, 0.001f);
@@ -329,7 +334,8 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
   // Check that when getting the attachment points, bounding box points are
   // returned since this is a markup annotation with AP defined.
-  FS_QUADPOINTSF quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  FS_QUADPOINTSF quadpoints;
+  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &quadpoints));
   EXPECT_NEAR(0.f, quadpoints.x1, 0.001f);
   EXPECT_NEAR(16.9955f, quadpoints.y1, 0.001f);
   EXPECT_NEAR(68.5953f, quadpoints.x4, 0.001f);
@@ -340,7 +346,8 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   quadpoints.x1 = 1.0f;
   quadpoints.x3 = 1.0f;
   ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
-  FS_QUADPOINTSF new_quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  FS_QUADPOINTSF new_quadpoints;
+  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &new_quadpoints));
   EXPECT_NE(quadpoints.x1, new_quadpoints.x1);
 
   // Check that the bounding box gets updated successfully when valid attachment
@@ -352,7 +359,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   quadpoints.x3 = 0.f;
   quadpoints.x4 = 133.055f;
   ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
-  new_quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &new_quadpoints));
   EXPECT_EQ(quadpoints.x1, new_quadpoints.x1);
   EXPECT_EQ(quadpoints.y1, new_quadpoints.y1);
   EXPECT_EQ(quadpoints.x4, new_quadpoints.x4);
@@ -360,7 +367,8 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
   // Check that when getting the annotation rectangle, rectangle points are
   // returned, but not bounding box points.
-  FS_RECTF rect = FPDFAnnot_GetRect(annot);
+  FS_RECTF rect;
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_NEAR(67.7299f, rect.left, 0.001f);
   EXPECT_NEAR(704.296f, rect.bottom, 0.001f);
   EXPECT_NEAR(136.325f, rect.right, 0.001f);
@@ -373,9 +381,10 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   rect.right = 134.055f;
   rect.top = 722.792f;
   ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
-  FS_RECTF new_rect = FPDFAnnot_GetRect(annot);
+  FS_RECTF new_rect;
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
   EXPECT_EQ(rect.right, new_rect.right);
-  new_quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
+  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &new_quadpoints));
   EXPECT_NE(rect.right, new_quadpoints.x2);
 
   FPDFPage_CloseAnnot(annot);
@@ -387,10 +396,10 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
   // Check that the rectangle and the bounding box get updated successfully when
   // a valid rectangle is set, since this is not a markup annotation.
-  rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   rect.right += 1.f;
   ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
-  new_rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
   EXPECT_EQ(rect.right, new_rect.right);
 
   FPDFPage_CloseAnnot(annot);
@@ -406,17 +415,18 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
 
   // Check that the annotations have the expected rectangle coordinates.
   FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  FS_RECTF rect = FPDFAnnot_GetRect(annot);
+  FS_RECTF rect;
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_NEAR(86.1971f, rect.left, 0.001f);
   FPDFPage_CloseAnnot(annot);
 
   annot = FPDFPage_GetAnnot(page, 1);
-  rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_NEAR(149.8127f, rect.left, 0.001f);
   FPDFPage_CloseAnnot(annot);
 
   annot = FPDFPage_GetAnnot(page, 2);
-  rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_NEAR(351.8204f, rect.left, 0.001f);
   FPDFPage_CloseAnnot(annot);
 
@@ -454,12 +464,12 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   // Check that the remaining 2 annotations are the original 1st and 3rd ones by
   // verifying their rectangle coordinates.
   annot = FPDFPage_GetAnnot(new_page, 0);
-  rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_NEAR(86.1971f, rect.left, 0.001f);
   FPDFPage_CloseAnnot(annot);
 
   annot = FPDFPage_GetAnnot(new_page, 1);
-  rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_NEAR(351.8204f, rect.left, 0.001f);
   FPDFPage_CloseAnnot(annot);
   FPDF_ClosePage(new_page);
@@ -563,7 +573,8 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
 
   // Check that the annotation's bounding box came from its rectangle.
-  FS_RECTF new_rect = FPDFAnnot_GetRect(annot);
+  FS_RECTF new_rect;
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
   EXPECT_EQ(rect.left, new_rect.left);
   EXPECT_EQ(rect.bottom, new_rect.bottom);
   EXPECT_EQ(rect.right, new_rect.right);
@@ -584,7 +595,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
 
   // Check that the new annotation's rectangle is as defined.
-  new_rect = FPDFAnnot_GetRect(annot);
+  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
   EXPECT_EQ(rect.left, new_rect.left);
   EXPECT_EQ(rect.bottom, new_rect.bottom);
   EXPECT_EQ(rect.right, new_rect.right);

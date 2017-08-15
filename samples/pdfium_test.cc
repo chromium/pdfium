@@ -416,18 +416,26 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
 
     // Retrieve the annotation's quadpoints if it is a markup annotation.
     if (FPDFAnnot_HasAttachmentPoints(annot)) {
-      FS_QUADPOINTSF quadpoints = FPDFAnnot_GetAttachmentPoints(annot);
-      fprintf(fp,
-              "Quadpoints: (%.3f, %.3f), (%.3f, %.3f), (%.3f, %.3f), (%.3f, "
-              "%.3f)\n",
-              quadpoints.x1, quadpoints.y1, quadpoints.x2, quadpoints.y2,
-              quadpoints.x3, quadpoints.y3, quadpoints.x4, quadpoints.y4);
+      FS_QUADPOINTSF quadpoints;
+      if (FPDFAnnot_GetAttachmentPoints(annot, &quadpoints)) {
+        fprintf(fp,
+                "Quadpoints: (%.3f, %.3f), (%.3f, %.3f), (%.3f, %.3f), (%.3f, "
+                "%.3f)\n",
+                quadpoints.x1, quadpoints.y1, quadpoints.x2, quadpoints.y2,
+                quadpoints.x3, quadpoints.y3, quadpoints.x4, quadpoints.y4);
+      } else {
+        fprintf(fp, "Failed to retrieve quadpoints.\n");
+      }
     }
 
     // Retrieve the annotation's rectangle coordinates.
-    FS_RECTF rect = FPDFAnnot_GetRect(annot);
-    fprintf(fp, "Rectangle: l - %.3f, b - %.3f, r - %.3f, t - %.3f\n\n",
-            rect.left, rect.bottom, rect.right, rect.top);
+    FS_RECTF rect;
+    if (FPDFAnnot_GetRect(annot, &rect)) {
+      fprintf(fp, "Rectangle: l - %.3f, b - %.3f, r - %.3f, t - %.3f\n\n",
+              rect.left, rect.bottom, rect.right, rect.top);
+    } else {
+      fprintf(fp, "Failed to retrieve annotation rectangle.\n");
+    }
 
     FPDFPage_CloseAnnot(annot);
   }
