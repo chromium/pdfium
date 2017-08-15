@@ -16,11 +16,11 @@ class IFX_CharIter {
   virtual ~IFX_CharIter() {}
 
   virtual bool Next(bool bPrev = false) = 0;
-  virtual wchar_t GetChar() = 0;
+  virtual wchar_t GetChar() const = 0;
   virtual void SetAt(int32_t nIndex) = 0;
   virtual int32_t GetAt() const = 0;
   virtual bool IsEOF(bool bTail = true) const = 0;
-  virtual std::unique_ptr<IFX_CharIter> Clone() = 0;
+  virtual std::unique_ptr<IFX_CharIter> Clone() const = 0;
 };
 
 #endif  // CORE_FXCRT_IFX_CHARITER_H_

@@ -330,7 +330,7 @@ int32_t CFDE_TxtEdtBuf::Iterator::GetAt() const {
   return m_nIndex;
 }
 
-wchar_t CFDE_TxtEdtBuf::Iterator::GetChar() {
+wchar_t CFDE_TxtEdtBuf::Iterator::GetChar() const {
   ASSERT(m_nIndex >= 0 && m_nIndex < m_pBuf->m_nTotal);
   if (m_Alias == 0 || m_nIndex == (m_pBuf->m_nTotal - 1)) {
     wchar_t* buf = m_pBuf->m_chunks[m_nCurChunk]->wChars.get();
@@ -343,7 +343,7 @@ bool CFDE_TxtEdtBuf::Iterator::IsEOF(bool bTail) const {
   return bTail ? m_nIndex == (m_pBuf->GetTextLength() - 2) : m_nIndex == 0;
 }
 
-std::unique_ptr<IFX_CharIter> CFDE_TxtEdtBuf::Iterator::Clone() {
+std::unique_ptr<IFX_CharIter> CFDE_TxtEdtBuf::Iterator::Clone() const {
   auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(m_pBuf, 0);
   pIter->m_nCurChunk = m_nCurChunk;
   pIter->m_nCurIndex = m_nCurIndex;

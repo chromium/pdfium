@@ -19,11 +19,11 @@ class CFX_CharIter : public IFX_CharIter {
   ~CFX_CharIter() override;
 
   bool Next(bool bPrev = false) override;
-  wchar_t GetChar() override;
+  wchar_t GetChar() const override;
   void SetAt(int32_t nIndex) override;
   int32_t GetAt() const override;
   bool IsEOF(bool bTail = true) const override;
-  std::unique_ptr<IFX_CharIter> Clone() override;
+  std::unique_ptr<IFX_CharIter> Clone() const override;
 
  private:
   const CFX_WideString& m_wsText;

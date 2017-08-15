@@ -28,7 +28,7 @@ bool CFX_CharIter::Next(bool bPrev) {
   return true;
 }
 
-wchar_t CFX_CharIter::GetChar() {
+wchar_t CFX_CharIter::GetChar() const {
   return m_wsText[m_nIndex];
 }
 
@@ -46,7 +46,7 @@ bool CFX_CharIter::IsEOF(bool bTail) const {
   return bTail ? (m_nIndex + 1 == m_wsText.GetLength()) : (m_nIndex == 0);
 }
 
-std::unique_ptr<IFX_CharIter> CFX_CharIter::Clone() {
+std::unique_ptr<IFX_CharIter> CFX_CharIter::Clone() const {
   auto pIter = pdfium::MakeUnique<CFX_CharIter>(m_wsText);
   pIter->m_nIndex = m_nIndex;
   return pIter;
