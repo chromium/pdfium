@@ -127,32 +127,6 @@ void CPDF_DataAvail::SetDocument(CPDF_Document* pDoc) {
   m_pDocument = pDoc;
 }
 
-uint32_t CPDF_DataAvail::GetObjectSize(uint32_t objnum, FX_FILESIZE& offset) {
-  CPDF_Parser* pParser = m_pDocument->GetParser();
-  if (!pParser || !pParser->IsValidObjectNumber(objnum))
-    return 0;
-
-  if (pParser->GetObjectType(objnum) == CPDF_Parser::ObjectType::kCompressed)
-    objnum = pParser->GetObjectPositionOrZero(objnum);
-
-  if (pParser->GetObjectType(objnum) !=
-          CPDF_Parser::ObjectType::kNotCompressed &&
-      pParser->GetObjectType(objnum) != CPDF_Parser::ObjectType::kNull) {
-    return 0;
-  }
-
-  offset = pParser->GetObjectPositionOrZero(objnum);
-  if (offset == 0)
-    return 0;
-
-  auto it = pParser->m_SortedOffset.find(offset);
-  if (it == pParser->m_SortedOffset.end() ||
-      ++it == pParser->m_SortedOffset.end()) {
-    return 0;
-  }
-  return *it - offset;
-}
-
 bool CPDF_DataAvail::AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
                                          bool bParsePage,
                                          std::vector<CPDF_Object*>& ret_array) {

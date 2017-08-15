@@ -126,7 +126,6 @@ class CPDF_DataAvail final {
 
   static const int kMaxPageRecursionDepth = 1024;
 
-  uint32_t GetObjectSize(uint32_t objnum, FX_FILESIZE& offset);
   bool AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
                            bool bParsePage,
                            std::vector<CPDF_Object*>& ret_array);
