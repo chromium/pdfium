@@ -84,8 +84,6 @@ class CFWL_Edit : public CFWL_Widget {
   bool Copy(CFX_WideString& wsCopy);
   bool Cut(CFX_WideString& wsCut);
   bool Paste(const CFX_WideString& wsPaste);
-  bool Redo(const IFDE_TxtEdtDoRecord* pRecord);
-  bool Undo(const IFDE_TxtEdtDoRecord* pRecord);
   bool Undo();
   bool Redo();
   bool CanUndo();

@@ -363,24 +363,18 @@ bool CFWL_Edit::Paste(const CFX_WideString& wsPaste) {
   return true;
 }
 
-bool CFWL_Edit::Redo(const IFDE_TxtEdtDoRecord* pRecord) {
-  return m_EdtEngine.Redo(pRecord);
-}
-
-bool CFWL_Edit::Undo(const IFDE_TxtEdtDoRecord* pRecord) {
-  return m_EdtEngine.Undo(pRecord);
-}
-
 bool CFWL_Edit::Undo() {
   if (!CanUndo())
     return false;
-  return Undo(m_DoRecords[m_iCurRecord--].get());
+  m_EdtEngine.Undo(m_DoRecords[m_iCurRecord--].get());
+  return true;
 }
 
 bool CFWL_Edit::Redo() {
   if (!CanRedo())
     return false;
-  return Redo(m_DoRecords[++m_iCurRecord].get());
+  m_EdtEngine.Redo(m_DoRecords[++m_iCurRecord].get());
+  return true;
 }
 
 bool CFWL_Edit::CanUndo() {

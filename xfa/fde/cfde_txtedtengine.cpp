@@ -13,8 +13,6 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
-#include "xfa/fde/cfde_txtedtdorecord_deleterange.h"
-#include "xfa/fde/cfde_txtedtdorecord_insert.h"
 #include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedtparag.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
@@ -39,6 +37,97 @@ enum FDE_TXTEDIT_LINEEND {
   FDE_TXTEDIT_LINEEND_CRLF,
   FDE_TXTEDIT_LINEEND_CR,
   FDE_TXTEDIT_LINEEND_LF,
+};
+
+class InsertOperation : public IFDE_TxtEdtDoRecord {
+ public:
+  InsertOperation(CFDE_TxtEdtEngine* pEngine,
+                  int32_t nCaret,
+                  const CFX_WideString& str)
+      : m_pEngine(pEngine), m_nCaret(nCaret), m_wsInsert(str) {
+    ASSERT(m_pEngine);
+  }
+
+  ~InsertOperation() override {}
+
+  void Undo() const override {
+    if (m_pEngine->IsSelect())
+      m_pEngine->ClearSelection();
+
+    m_pEngine->Inner_DeleteRange(m_nCaret, m_wsInsert.GetLength());
+    m_pEngine->UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
+                                      m_wsInsert);
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(
+        *m_pEngine->GetChangeInfo());
+    m_pEngine->SetCaretPos(m_nCaret, true);
+  }
+
+  void Redo() const override {
+    m_pEngine->Inner_Insert(m_nCaret, m_wsInsert.c_str(),
+                            m_wsInsert.GetLength());
+    m_pEngine->UpdateChangeInfoInsert(FDE_TXTEDT_TEXTCHANGE_TYPE_Insert,
+                                      m_wsInsert);
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(
+        *m_pEngine->GetChangeInfo());
+    m_pEngine->SetCaretPos(m_nCaret, false);
+  }
+
+ private:
+  CFDE_TxtEdtEngine* m_pEngine;
+  int32_t m_nCaret;
+  CFX_WideString m_wsInsert;
+};
+
+class DeleteOperation : public IFDE_TxtEdtDoRecord {
+ public:
+  DeleteOperation(CFDE_TxtEdtEngine* pEngine,
+                  int32_t nIndex,
+                  int32_t nCaret,
+                  const CFX_WideString& wsRange,
+                  bool bSel)
+      : m_pEngine(pEngine),
+        m_bSel(bSel),
+        m_nIndex(nIndex),
+        m_nCaret(nCaret),
+        m_wsRange(wsRange) {
+    ASSERT(m_pEngine);
+  }
+
+  ~DeleteOperation() override {}
+
+  void Undo() const override {
+    if (m_pEngine->IsSelect())
+      m_pEngine->ClearSelection();
+
+    m_pEngine->Inner_Insert(m_nIndex, m_wsRange.c_str(), m_wsRange.GetLength());
+    if (m_bSel)
+      m_pEngine->AddSelRange(m_nIndex, m_wsRange.GetLength());
+
+    m_pEngine->UpdateChangeInfoInsert(FDE_TXTEDT_TEXTCHANGE_TYPE_Insert,
+                                      m_wsRange);
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(
+        *m_pEngine->GetChangeInfo());
+    m_pEngine->SetCaretPos(m_nCaret, true);
+  }
+
+  void Redo() const override {
+    m_pEngine->Inner_DeleteRange(m_nIndex, m_wsRange.GetLength());
+    if (m_bSel)
+      m_pEngine->RemoveSelRange(m_nIndex, m_wsRange.GetLength());
+
+    m_pEngine->UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
+                                      m_wsRange);
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(
+        *m_pEngine->GetChangeInfo());
+    m_pEngine->SetCaretPos(m_nIndex, true);
+  }
+
+ private:
+  CFDE_TxtEdtEngine* m_pEngine;
+  bool m_bSel;
+  int32_t m_nIndex;
+  int32_t m_nCaret;
+  CFX_WideString m_wsRange;
 };
 
 }  // namespace
@@ -372,9 +461,8 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   if (IsSelect()) {
     DeleteSelect();
   }
-  m_Param.pEventSink->OnAddDoRecord(
-      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_Insert>(this, m_nCaret, lpBuffer,
-                                                     nLength));
+  m_Param.pEventSink->OnAddDoRecord(pdfium::MakeUnique<InsertOperation>(
+      this, m_nCaret, CFX_WideString(lpBuffer, nLength)));
 
   m_ChangeInfo.wsPrevText = GetText(0, -1);
   Inner_Insert(m_nCaret, lpBuffer, nLength);
@@ -429,12 +517,11 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
       return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
   }
   CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
-  m_Param.pEventSink->OnAddDoRecord(
-      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(
-          this, nStart, m_nCaret, wsRange, false));
+  m_Param.pEventSink->OnAddDoRecord(pdfium::MakeUnique<DeleteOperation>(
+      this, nStart, m_nCaret, wsRange, false));
 
-  m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
-  m_ChangeInfo.wsDelete = GetText(nStart, nCount);
+  UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
+                         GetText(nStart, nCount));
   Inner_DeleteRange(nStart, nCount);
   SetCaretPos(nStart + ((!bBackspace && nStart > 0) ? -1 : 0),
               (bBackspace || nStart == 0));
@@ -474,8 +561,8 @@ int32_t CFDE_TxtEdtEngine::Replace(int32_t nStart,
   if (IsSelect())
     ClearSelection();
 
-  m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Replace;
-  m_ChangeInfo.wsDelete = GetText(nStart, nLength);
+  UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Replace,
+                         GetText(nStart, nLength));
   if (nLength > 0)
     Inner_DeleteRange(nStart, nLength);
 
@@ -605,13 +692,15 @@ void CFDE_TxtEdtEngine::ClearSelection() {
 bool CFDE_TxtEdtEngine::Redo(const IFDE_TxtEdtDoRecord* pDoRecord) {
   if (IsLocked())
     return false;
-  return pDoRecord->Redo();
+  pDoRecord->Redo();
+  return true;
 }
 
 bool CFDE_TxtEdtEngine::Undo(const IFDE_TxtEdtDoRecord* pDoRecord) {
   if (IsLocked())
     return false;
-  return pDoRecord->Undo();
+  pDoRecord->Undo();
+  return true;
 }
 
 int32_t CFDE_TxtEdtEngine::StartLayout() {
@@ -878,12 +967,11 @@ void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
   ASSERT((nStart + nCount) <= m_pTxtBuf->GetTextLength());
 
   CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
-  m_Param.pEventSink->OnAddDoRecord(
-      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(
-          this, nStart, m_nCaret, wsRange, bSel));
+  m_Param.pEventSink->OnAddDoRecord(pdfium::MakeUnique<DeleteOperation>(
+      this, nStart, m_nCaret, wsRange, bSel));
 
-  m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
-  m_ChangeInfo.wsDelete = GetText(nStart, nCount);
+  UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
+                         GetText(nStart, nCount));
   Inner_DeleteRange(nStart, nCount);
 }
 

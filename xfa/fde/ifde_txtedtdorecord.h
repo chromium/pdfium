@@ -13,8 +13,8 @@ class IFDE_TxtEdtDoRecord {
  public:
   virtual ~IFDE_TxtEdtDoRecord() {}
 
-  virtual bool Redo() const = 0;
-  virtual bool Undo() const = 0;
+  virtual void Redo() const = 0;
+  virtual void Undo() const = 0;
 };
 
 #endif  // XFA_FDE_IFDE_TXTEDTDORECORD_H_

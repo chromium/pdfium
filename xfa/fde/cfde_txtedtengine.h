@@ -153,9 +153,23 @@ class CFDE_TxtEdtEngine {
                      int32_t& nStartLine) const;
   wchar_t GetAliasChar() const { return m_wcAliasChar; }
 
+  bool IsSelect();
+  void Inner_DeleteRange(int32_t nStart, int32_t nCount);
+  void Inner_Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
+  const FDE_TXTEDTPARAMS* GetParams() const { return &m_Param; }
+  FDE_TXTEDT_TEXTCHANGE_INFO* GetChangeInfo() { return &m_ChangeInfo; }
+
+  void UpdateChangeInfoInsert(int32_t type, const CFX_WideString& insertValue) {
+    m_ChangeInfo.nChangeType = type;
+    m_ChangeInfo.wsInsert = insertValue;
+  }
+
+  void UpdateChangeInfoDelete(int32_t type, const CFX_WideString& deleteValue) {
+    m_ChangeInfo.nChangeType = type;
+    m_ChangeInfo.wsDelete = deleteValue;
+  }
+
  private:
-  friend class CFDE_TxtEdtDoRecord_Insert;
-  friend class CFDE_TxtEdtDoRecord_DeleteRange;
   friend class CFDE_TxtEdtPage;
 
   struct FDE_TXTEDTSELRANGE {
@@ -168,7 +182,6 @@ class CFDE_TxtEdtEngine {
     int32_t nCharIndex;
   };
 
-  void Inner_Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
   CFX_WideString GetPreDeleteText(int32_t nIndex, int32_t nLength);
   CFX_WideString GetPreInsertText(int32_t nIndex,
                                   const wchar_t* lpText,
@@ -178,7 +191,6 @@ class CFDE_TxtEdtEngine {
                                    const wchar_t* lpText,
                                    int32_t nLength);
 
-  void Inner_DeleteRange(int32_t nStart, int32_t nCount);
   void DeleteRange_DoRecord(int32_t nStart, int32_t nCount, bool bSel);
   void ResetEngine();
   void RebuildParagraphs();
@@ -208,7 +220,6 @@ class CFDE_TxtEdtEngine {
                     bool bBefore);
   void UpdateCaretIndex(const CFX_PointF& ptCaret);
 
-  bool IsSelect();
   void DeleteSelect();
 
   std::unique_ptr<CFDE_TxtEdtBuf> m_pTxtBuf;
