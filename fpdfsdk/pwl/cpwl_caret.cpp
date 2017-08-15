@@ -58,7 +58,7 @@ void CPWL_Caret::TimerProc() {
     m_nDelay--;
   } else {
     m_bFlash = !m_bFlash;
-    InvalidateRect();
+    InvalidateRect(nullptr);
   }
 }
 

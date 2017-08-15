@@ -175,7 +175,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   ~CPWL_Wnd() override;
 
   virtual CFX_ByteString GetClassName() const;
-  virtual void InvalidateRect(CFX_FloatRect* pRect = nullptr);
+  virtual void InvalidateRect(CFX_FloatRect* pRect);
 
   virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
   virtual bool OnChar(uint16_t nChar, uint32_t nFlag);

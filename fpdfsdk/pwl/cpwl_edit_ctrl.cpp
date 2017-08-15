@@ -265,7 +265,7 @@ bool CPWL_EditCtrl::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
 
   if (ClientHitTest(point)) {
     if (m_bMouseDown)
-      InvalidateRect();
+      InvalidateRect(nullptr);
 
     m_bMouseDown = true;
     SetCapture();

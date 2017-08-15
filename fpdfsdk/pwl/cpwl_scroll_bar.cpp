@@ -428,7 +428,7 @@ bool CPWL_ScrollBar::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
     if (GetTransparency() != 255) {
       SetTransparency(255);
-      InvalidateRect();
+      InvalidateRect(nullptr);
     }
   }
 
@@ -479,7 +479,7 @@ bool CPWL_ScrollBar::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
     if (GetTransparency() != PWL_SCROLLBAR_TRANSPARENCY) {
       SetTransparency(PWL_SCROLLBAR_TRANSPARENCY);
-      InvalidateRect();
+      InvalidateRect(nullptr);
     }
   }
 

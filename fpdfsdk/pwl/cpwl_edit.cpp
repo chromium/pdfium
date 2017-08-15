@@ -291,7 +291,7 @@ bool CPWL_Edit::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
 
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
     if (m_bMouseDown)
-      InvalidateRect();
+      InvalidateRect(nullptr);
 
     m_bMouseDown = true;
     SetCapture();

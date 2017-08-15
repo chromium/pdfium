@@ -584,7 +584,7 @@ void CPWL_Wnd::SetVisible(bool bVisible) {
   if (bVisible != m_bVisible) {
     m_bVisible = bVisible;
     RePosChildWnd();
-    InvalidateRect();
+    InvalidateRect(nullptr);
   }
 }
 
