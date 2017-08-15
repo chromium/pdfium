@@ -114,7 +114,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
   BorderStyle nBorderStyle = BorderStyle::SOLID;
   float fBorderWidth = 1;
   CPVT_Dash dsBorder(3, 0, 0);
-  CPVT_Color crLeftTop, crRightBottom;
+  CPVT_Color crLeftTop;
+  CPVT_Color crRightBottom;
   if (CPDF_Dictionary* pBSDict = pAnnotDict->GetDictFor("BS")) {
     if (pBSDict->KeyExist("W"))
       fBorderWidth = pBSDict->GetNumberFor("W");
@@ -123,31 +124,34 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       dsBorder = CPVT_Dash(pArray->GetIntegerAt(0), pArray->GetIntegerAt(1),
                            pArray->GetIntegerAt(2));
     }
-    switch (pBSDict->GetStringFor("S")[0]) {
-      case 'S':
-        nBorderStyle = BorderStyle::SOLID;
-        break;
-      case 'D':
-        nBorderStyle = BorderStyle::DASH;
-        break;
-      case 'B':
-        nBorderStyle = BorderStyle::BEVELED;
-        fBorderWidth *= 2;
-        crLeftTop = CPVT_Color(CPVT_Color::kGray, 1);
-        crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.5);
-        break;
-      case 'I':
-        nBorderStyle = BorderStyle::INSET;
-        fBorderWidth *= 2;
-        crLeftTop = CPVT_Color(CPVT_Color::kGray, 0.5);
-        crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.75);
-        break;
-      case 'U':
-        nBorderStyle = BorderStyle::UNDERLINE;
-        break;
+    if (pBSDict->GetStringFor("S").GetLength()) {
+      switch (pBSDict->GetStringFor("S")[0]) {
+        case 'S':
+          nBorderStyle = BorderStyle::SOLID;
+          break;
+        case 'D':
+          nBorderStyle = BorderStyle::DASH;
+          break;
+        case 'B':
+          nBorderStyle = BorderStyle::BEVELED;
+          fBorderWidth *= 2;
+          crLeftTop = CPVT_Color(CPVT_Color::kGray, 1);
+          crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.5);
+          break;
+        case 'I':
+          nBorderStyle = BorderStyle::INSET;
+          fBorderWidth *= 2;
+          crLeftTop = CPVT_Color(CPVT_Color::kGray, 0.5);
+          crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.75);
+          break;
+        case 'U':
+          nBorderStyle = BorderStyle::UNDERLINE;
+          break;
+      }
     }
   }
-  CPVT_Color crBorder, crBG;
+  CPVT_Color crBorder;
+  CPVT_Color crBG;
   if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDictFor("MK")) {
     if (CPDF_Array* pArray = pMKDict->GetArrayFor("BC"))
       crBorder = CPVT_Color::ParseColor(*pArray);
