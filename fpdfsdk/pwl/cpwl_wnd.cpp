@@ -245,27 +245,27 @@ void CPWL_Wnd::InvalidateRectMove(const CFX_FloatRect& rcOld,
 }
 
 void CPWL_Wnd::DrawAppearance(CFX_RenderDevice* pDevice,
-                              CFX_Matrix* pUser2Device) {
+                              const CFX_Matrix& mtUser2Device) {
   if (IsValid() && IsVisible()) {
-    DrawThisAppearance(pDevice, pUser2Device);
-    DrawChildAppearance(pDevice, pUser2Device);
+    DrawThisAppearance(pDevice, mtUser2Device);
+    DrawChildAppearance(pDevice, mtUser2Device);
   }
 }
 
 void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CFX_Matrix* pUser2Device) {
+                                  const CFX_Matrix& mtUser2Device) {
   CFX_FloatRect rectWnd = GetWindowRect();
   if (rectWnd.IsEmpty())
     return;
 
   if (HasFlag(PWS_BACKGROUND)) {
     float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
-    pDevice->DrawFillRect(pUser2Device, rectWnd.GetDeflated(width, width),
+    pDevice->DrawFillRect(&mtUser2Device, rectWnd.GetDeflated(width, width),
                           GetBackgroundColor(), GetTransparency());
   }
 
   if (HasFlag(PWS_BORDER)) {
-    pDevice->DrawBorder(pUser2Device, rectWnd,
+    pDevice->DrawBorder(&mtUser2Device, rectWnd,
                         static_cast<float>(GetBorderWidth()), GetBorderColor(),
                         GetBorderLeftTopColor(GetBorderStyle()),
                         GetBorderRightBottomColor(GetBorderStyle()),
@@ -274,17 +274,17 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
-                                   CFX_Matrix* pUser2Device) {
+                                   const CFX_Matrix& mtUser2Device) {
   for (CPWL_Wnd* pChild : m_Children) {
     if (!pChild)
       continue;
 
     CFX_Matrix mt = pChild->GetChildMatrix();
     if (mt.IsIdentity()) {
-      pChild->DrawAppearance(pDevice, pUser2Device);
+      pChild->DrawAppearance(pDevice, mtUser2Device);
     } else {
-      mt.Concat(*pUser2Device);
-      pChild->DrawAppearance(pDevice, &mt);
+      mt.Concat(mtUser2Device);
+      pChild->DrawAppearance(pDevice, mt);
     }
   }
 }

@@ -37,7 +37,7 @@ class CPWL_CBButton : public CPWL_Wnd {
 
   // CPWL_Wnd
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CFX_Matrix* pUser2Device) override;
+                          const CFX_Matrix& mtUser2Device) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
 };

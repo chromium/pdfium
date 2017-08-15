@@ -38,18 +38,20 @@ void CPWL_List_Notify::IOnSetScrollInfoY(float fPlateMin,
   Info.fBigStep = fBigStep;
   m_pList->SetScrollInfo(Info);
 
-  if (CPWL_ScrollBar* pScroll = m_pList->GetVScrollBar()) {
-    if (IsFloatBigger(Info.fPlateWidth, Info.fContentMax - Info.fContentMin) ||
-        IsFloatEqual(Info.fPlateWidth, Info.fContentMax - Info.fContentMin)) {
-      if (pScroll->IsVisible()) {
-        pScroll->SetVisible(false);
-        m_pList->RePosChildWnd();
-      }
-    } else {
-      if (!pScroll->IsVisible()) {
-        pScroll->SetVisible(true);
-        m_pList->RePosChildWnd();
-      }
+  CPWL_ScrollBar* pScroll = m_pList->GetVScrollBar();
+  if (!pScroll)
+    return;
+
+  if (IsFloatBigger(Info.fPlateWidth, Info.fContentMax - Info.fContentMin) ||
+      IsFloatEqual(Info.fPlateWidth, Info.fContentMax - Info.fContentMin)) {
+    if (pScroll->IsVisible()) {
+      pScroll->SetVisible(false);
+      m_pList->RePosChildWnd();
+    }
+  } else {
+    if (!pScroll->IsVisible()) {
+      pScroll->SetVisible(true);
+      m_pList->RePosChildWnd();
     }
   }
 }
@@ -94,8 +96,8 @@ void CPWL_ListBox::OnDestroy() {
 }
 
 void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                      CFX_Matrix* pUser2Device) {
-  CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
+                                      const CFX_Matrix& mtUser2Device) {
+  CPWL_Wnd::DrawThisAppearance(pDevice, mtUser2Device);
 
   CFX_FloatRect rcPlate = m_pList->GetPlateRect();
   CFX_FloatRect rcList = GetListRect();
@@ -118,21 +120,21 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
     if (m_pList->IsItemSelected(i)) {
       CFX_SystemHandler* pSysHandler = GetSystemHandler();
       if (pSysHandler && pSysHandler->IsSelectionImplemented()) {
-        CPWL_EditImpl::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+        CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pList->GetItemEdit(i),
                                 GetTextColor().ToFXColor(255), rcList, ptOffset,
                                 nullptr, pSysHandler, m_pFormFiller.Get());
         pSysHandler->OutputSelectedRect(m_pFormFiller.Get(), rcItem);
       } else {
-        pDevice->DrawFillRect(pUser2Device, rcItem,
+        pDevice->DrawFillRect(&mtUser2Device, rcItem,
                               ArgbEncode(255, 0, 51, 113));
-        CPWL_EditImpl::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+        CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pList->GetItemEdit(i),
                                 ArgbEncode(255, 255, 255, 255), rcList,
                                 ptOffset, nullptr, pSysHandler,
                                 m_pFormFiller.Get());
       }
     } else {
       CFX_SystemHandler* pSysHandler = GetSystemHandler();
-      CPWL_EditImpl::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
+      CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pList->GetItemEdit(i),
                               GetTextColor().ToFXColor(255), rcList, ptOffset,
                               nullptr, pSysHandler, nullptr);
     }

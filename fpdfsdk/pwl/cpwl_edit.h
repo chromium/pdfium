@@ -49,7 +49,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void RePosChildWnd() override;
   CFX_FloatRect GetClientRect() const override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CFX_Matrix* pUser2Device) override;
+                          const CFX_Matrix& mtUser2Device) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) override;

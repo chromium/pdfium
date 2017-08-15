@@ -48,7 +48,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   void OnCreated() override;
   void OnDestroy() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CFX_Matrix* pUser2Device) override;
+                          const CFX_Matrix& mtUser2Device) override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;

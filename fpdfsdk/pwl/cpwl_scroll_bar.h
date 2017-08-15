@@ -52,7 +52,7 @@ class CPWL_SBButton : public CPWL_Wnd {
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CFX_Matrix* pUser2Device) override;
+                          const CFX_Matrix& mtUser2Device) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag) override;
@@ -126,7 +126,7 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void OnDestroy() override;
   void RePosChildWnd() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CFX_Matrix* pUser2Device) override;
+                          const CFX_Matrix& mtUser2Device) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;

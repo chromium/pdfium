@@ -94,8 +94,8 @@ bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {
 }
 
 void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                       CFX_Matrix* pUser2Device) {
-  CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
+                                       const CFX_Matrix& mtUser2Device) {
+  CPWL_Wnd::DrawThisAppearance(pDevice, mtUser2Device);
 
   CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
 
@@ -118,7 +118,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
     path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
     path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
 
-    pDevice->DrawPath(&path, pUser2Device, nullptr,
+    pDevice->DrawPath(&path, &mtUser2Device, nullptr,
                       PWL_DEFAULT_BLACKCOLOR.ToFXColor(GetTransparency()), 0,
                       FXFILL_ALTERNATE);
   }

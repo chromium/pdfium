@@ -272,7 +272,7 @@ class CFXEU_InsertText : public IFX_Edit_UndoItem {
 class CPWL_EditImpl {
  public:
   static void DrawEdit(CFX_RenderDevice* pDevice,
-                       CFX_Matrix* pUser2Device,
+                       const CFX_Matrix& mtUser2Device,
                        CPWL_EditImpl* pEdit,
                        FX_COLORREF crTextFill,
                        const CFX_FloatRect& rcClip,

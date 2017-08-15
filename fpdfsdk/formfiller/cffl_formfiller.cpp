@@ -88,7 +88,7 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false)) {
     CFX_Matrix mt = GetCurMatrix();
     mt.Concat(*pUser2Device);
-    pWnd->DrawAppearance(pDevice, &mt);
+    pWnd->DrawAppearance(pDevice, mt);
     return;
   }
 

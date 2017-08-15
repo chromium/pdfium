@@ -136,7 +136,7 @@ void CPWL_SBButton::OnCreate(PWL_CREATEPARAM& cp) {
 }
 
 void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                       CFX_Matrix* pUser2Device) {
+                                       const CFX_Matrix& mtUser2Device) {
   if (!IsVisible())
     return;
 
@@ -148,7 +148,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   int32_t nTransparency = GetTransparency();
 
   if (m_eScrollBarType == SBT_HSCROLL) {
-    CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
+    CPWL_Wnd::DrawThisAppearance(pDevice, mtUser2Device);
 
     CFX_PointF pt1;
     CFX_PointF pt2;
@@ -175,7 +175,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
       path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
 
-      pDevice->DrawPath(&path, pUser2Device, nullptr,
+      pDevice->DrawPath(&path, &mtUser2Device, nullptr,
                         PWL_DEFAULT_BLACKCOLOR.ToFXColor(nTransparency), 0,
                         FXFILL_ALTERNATE);
     }
@@ -183,19 +183,19 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 
   // draw border
-  pDevice->DrawStrokeRect(pUser2Device, rectWnd,
+  pDevice->DrawStrokeRect(&mtUser2Device, rectWnd,
                           ArgbEncode(nTransparency, 100, 100, 100), 0.0f);
-  pDevice->DrawStrokeRect(pUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
+  pDevice->DrawStrokeRect(&mtUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
                           ArgbEncode(nTransparency, 255, 255, 255), 1.0f);
 
   if (m_eSBButtonType != PSBT_POS) {
     // draw background
     if (IsEnabled()) {
-      pDevice->DrawShadow(pUser2Device, true, false,
+      pDevice->DrawShadow(&mtUser2Device, true, false,
                           rectWnd.GetDeflated(1.0f, 1.0f), nTransparency, 80,
                           220);
     } else {
-      pDevice->DrawFillRect(pUser2Device, rectWnd.GetDeflated(1.0f, 1.0f),
+      pDevice->DrawFillRect(&mtUser2Device, rectWnd.GetDeflated(1.0f, 1.0f),
                             ArgbEncode(255, 255, 255, 255));
     }
 
@@ -221,7 +221,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
         pts.push_back(CFX_PointF(fX + 4.5f, fY + 3.0f));
         pts.push_back(CFX_PointF(fX + 2.5f, fY + 5.0f));
       }
-      pDevice->DrawFillArea(pUser2Device, pts.data(), 7,
+      pDevice->DrawFillArea(&mtUser2Device, pts.data(), 7,
                             IsEnabled()
                                 ? ArgbEncode(nTransparency, 255, 255, 255)
                                 : PWL_DEFAULT_HEAVYGRAYCOLOR.ToFXColor(255));
@@ -248,13 +248,13 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                 ArgbEncode(nTransparency, 180, 180, 180),
                                 ArgbEncode(nTransparency, 210, 210, 210)};
     for (FX_COLORREF ref : refs) {
-      pDevice->DrawStrokeLine(pUser2Device, ptTop, ptBottom, ref, 1.0f);
+      pDevice->DrawStrokeLine(&mtUser2Device, ptTop, ptBottom, ref, 1.0f);
 
       ptTop.x += 1.0f;
       ptBottom.x += 1.0f;
     }
   } else {
-    pDevice->DrawFillRect(pUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
+    pDevice->DrawFillRect(&mtUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
                           ArgbEncode(255, 255, 255, 255));
   }
 
@@ -275,7 +275,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
 
   for (size_t i = 0; i < 3; ++i) {
-    pDevice->DrawStrokeLine(pUser2Device, ptLeft, ptRight, crStroke, 1.0f);
+    pDevice->DrawStrokeLine(&mtUser2Device, ptLeft, ptRight, crStroke, 1.0f);
     ptLeft.y += 2.0f;
     ptRight.y += 2.0f;
   }
@@ -403,20 +403,20 @@ void CPWL_ScrollBar::RePosChildWnd() {
 }
 
 void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                        CFX_Matrix* pUser2Device) {
+                                        const CFX_Matrix& mtUser2Device) {
   CFX_FloatRect rectWnd = GetWindowRect();
 
   if (IsVisible() && !rectWnd.IsEmpty()) {
-    pDevice->DrawFillRect(pUser2Device, rectWnd, GetBackgroundColor(),
+    pDevice->DrawFillRect(&mtUser2Device, rectWnd, GetBackgroundColor(),
                           GetTransparency());
 
     pDevice->DrawStrokeLine(
-        pUser2Device, CFX_PointF(rectWnd.left + 2.0f, rectWnd.top - 2.0f),
+        &mtUser2Device, CFX_PointF(rectWnd.left + 2.0f, rectWnd.top - 2.0f),
         CFX_PointF(rectWnd.left + 2.0f, rectWnd.bottom + 2.0f),
         ArgbEncode(GetTransparency(), 100, 100, 100), 1.0f);
 
     pDevice->DrawStrokeLine(
-        pUser2Device, CFX_PointF(rectWnd.right - 2.0f, rectWnd.top - 2.0f),
+        &mtUser2Device, CFX_PointF(rectWnd.right - 2.0f, rectWnd.top - 2.0f),
         CFX_PointF(rectWnd.right - 2.0f, rectWnd.bottom + 2.0f),
         ArgbEncode(GetTransparency(), 100, 100, 100), 1.0f);
   }

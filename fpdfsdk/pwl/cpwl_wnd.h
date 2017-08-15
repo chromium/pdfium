@@ -215,7 +215,8 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   void SetCapture();
   void ReleaseCapture();
 
-  void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
+  void DrawAppearance(CFX_RenderDevice* pDevice,
+                      const CFX_Matrix& mtUser2Device);
 
   CFX_Color GetBackgroundColor() const;
   void SetBackgroundColor(const CFX_Color& color);
@@ -278,7 +279,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   virtual void RePosChildWnd();
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CFX_Matrix* pUser2Device);
+                                  const CFX_Matrix& mtUser2Device);
 
   virtual void OnCreate(PWL_CREATEPARAM& cp);
   virtual void OnCreated();
@@ -314,7 +315,8 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   CFX_PointF ParentToChild(const CFX_PointF& point) const;
   CFX_FloatRect ParentToChild(const CFX_FloatRect& rect) const;
 
-  void DrawChildAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
+  void DrawChildAppearance(CFX_RenderDevice* pDevice,
+                           const CFX_Matrix& mtUser2Device);
 
   FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
 
