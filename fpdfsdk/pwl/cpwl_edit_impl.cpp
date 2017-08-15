@@ -211,12 +211,10 @@ void CPWL_EditImpl_Refresh::EndRefresh() {
   m_RefreshRects.Clear();
 }
 
-CPWL_EditImpl_Undo::CPWL_EditImpl_Undo(int32_t nBufsize)
-    : m_nCurUndoPos(0), m_nBufSize(nBufsize), m_bWorking(false) {}
+CPWL_EditImpl_Undo::CPWL_EditImpl_Undo()
+    : m_nCurUndoPos(0), m_bWorking(false) {}
 
-CPWL_EditImpl_Undo::~CPWL_EditImpl_Undo() {
-  Reset();
-}
+CPWL_EditImpl_Undo::~CPWL_EditImpl_Undo() {}
 
 bool CPWL_EditImpl_Undo::CanUndo() const {
   return m_nCurUndoPos > 0;
@@ -224,7 +222,7 @@ bool CPWL_EditImpl_Undo::CanUndo() const {
 
 void CPWL_EditImpl_Undo::Undo() {
   m_bWorking = true;
-  if (m_nCurUndoPos > 0) {
+  if (CanUndo()) {
     m_UndoItemStack[m_nCurUndoPos - 1]->Undo();
     m_nCurUndoPos--;
   }
@@ -237,7 +235,7 @@ bool CPWL_EditImpl_Undo::CanRedo() const {
 
 void CPWL_EditImpl_Undo::Redo() {
   m_bWorking = true;
-  if (m_nCurUndoPos < m_UndoItemStack.size()) {
+  if (CanRedo()) {
     m_UndoItemStack[m_nCurUndoPos]->Redo();
     m_nCurUndoPos++;
   }
@@ -247,11 +245,10 @@ void CPWL_EditImpl_Undo::Redo() {
 void CPWL_EditImpl_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
   ASSERT(!m_bWorking);
   ASSERT(pItem);
-  ASSERT(m_nBufSize > 1);
-  if (m_nCurUndoPos < m_UndoItemStack.size())
+  if (CanRedo())
     RemoveTails();
 
-  if (m_UndoItemStack.size() >= m_nBufSize)
+  if (m_UndoItemStack.size() >= kEditUndoMaxItems)
     RemoveHeads();
 
   m_UndoItemStack.push_back(std::move(pItem));
@@ -264,13 +261,8 @@ void CPWL_EditImpl_Undo::RemoveHeads() {
 }
 
 void CPWL_EditImpl_Undo::RemoveTails() {
-  while (m_UndoItemStack.size() > m_nCurUndoPos)
+  while (CanRedo())
     m_UndoItemStack.pop_back();
-}
-
-void CPWL_EditImpl_Undo::Reset() {
-  m_UndoItemStack.clear();
-  m_nCurUndoPos = 0;
 }
 
 CFXEU_InsertWord::CFXEU_InsertWord(CPWL_EditImpl* pEdit,
@@ -575,7 +567,6 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
 CPWL_EditImpl::CPWL_EditImpl()
     : m_pVT(pdfium::MakeUnique<CPDF_VariableText>()),
       m_bEnableScroll(false),
-      m_Undo(kEditUndoMaxItems),
       m_nAlignment(0),
       m_bNotifyFlag(false),
       m_bEnableOverflow(false),

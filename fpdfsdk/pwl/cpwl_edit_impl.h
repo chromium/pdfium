@@ -103,7 +103,7 @@ class CPWL_EditImpl_Select {
 
 class CPWL_EditImpl_Undo {
  public:
-  explicit CPWL_EditImpl_Undo(int32_t nBufsize);
+  CPWL_EditImpl_Undo();
   ~CPWL_EditImpl_Undo();
 
   void AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem);
@@ -111,7 +111,6 @@ class CPWL_EditImpl_Undo {
   void Redo();
   bool CanUndo() const;
   bool CanRedo() const;
-  void Reset();
 
  private:
   void RemoveHeads();
@@ -119,7 +118,6 @@ class CPWL_EditImpl_Undo {
 
   std::deque<std::unique_ptr<IFX_Edit_UndoItem>> m_UndoItemStack;
   size_t m_nCurUndoPos;
-  size_t m_nBufSize;
   bool m_bWorking;
 };
 
