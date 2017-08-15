@@ -37,8 +37,8 @@ void CBC_ASCIIEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   int32_t n = CBC_HighLevelEncoder::determineConsecutiveDigitCount(
       context.m_msg, context.m_pos);
   if (n >= 2) {
-    wchar_t code = encodeASCIIDigits(context.m_msg.GetAt(context.m_pos),
-                                     context.m_msg.GetAt(context.m_pos + 1), e);
+    wchar_t code = encodeASCIIDigits(context.m_msg[context.m_pos],
+                                     context.m_msg[context.m_pos + 1], e);
     if (e != BCExceptionNO) {
       return;
     }

@@ -52,7 +52,7 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
   CFX_WideString wsPassWord;
   m_pDataAcc->GetPasswordChar(wsPassWord);
   if (!wsPassWord.IsEmpty())
-    pWidget->SetAliasChar(wsPassWord.GetAt(0));
+    pWidget->SetAliasChar(wsPassWord[0]);
   if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off)
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||

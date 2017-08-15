@@ -1215,7 +1215,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char* val) {
   CFX_WideStringC wsStartEndChar;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_StartChar, wsStartEndChar)) {
     if (wsStartEndChar.GetLength()) {
-      *val = static_cast<char>(wsStartEndChar.GetAt(0));
+      *val = static_cast<char>(wsStartEndChar[0]);
       return true;
     }
   }
@@ -1227,7 +1227,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_EndChar(char* val) {
   CFX_WideStringC wsStartEndChar;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_EndChar, wsStartEndChar)) {
     if (wsStartEndChar.GetLength()) {
-      *val = static_cast<char>(wsStartEndChar.GetAt(0));
+      *val = static_cast<char>(wsStartEndChar[0]);
       return true;
     }
   }

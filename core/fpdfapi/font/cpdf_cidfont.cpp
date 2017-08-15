@@ -627,7 +627,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (uni_str.IsEmpty())
         return cid;
 
-      unicode = uni_str.GetAt(0);
+      unicode = uni_str[0];
 #endif
     } else {
       if (cid && m_pCID2UnicodeMap && m_pCID2UnicodeMap->IsLoaded())
@@ -637,7 +637,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (unicode == 0) {
         CFX_WideString unicode_str = UnicodeFromCharCode(charcode);
         if (!unicode_str.IsEmpty())
-          unicode = unicode_str.GetAt(0);
+          unicode = unicode_str[0];
       }
     }
     FXFT_Face face = m_Font.GetFace();
@@ -735,7 +735,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (unicode_str.IsEmpty())
         return -1;
 
-      charcode = unicode_str.GetAt(0);
+      charcode = unicode_str[0];
     }
     return GetGlyphIndex(charcode, pVertGlyph);
   }

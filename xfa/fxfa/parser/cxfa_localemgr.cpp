@@ -1083,10 +1083,9 @@ static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
     return FX_LANG_en_US;
 
   wsLanguage.MakeLower();
-  uint32_t dwIDFirst = wsLanguage.GetAt(0) << 8 | wsLanguage.GetAt(1);
-  uint32_t dwIDSecond = wsLanguage.GetLength() >= 5
-                            ? wsLanguage.GetAt(3) << 8 | wsLanguage.GetAt(4)
-                            : 0;
+  uint32_t dwIDFirst = wsLanguage[0] << 8 | wsLanguage[1];
+  uint32_t dwIDSecond =
+      wsLanguage.GetLength() >= 5 ? wsLanguage[3] << 8 | wsLanguage[4] : 0;
   switch (dwIDFirst) {
     case FXBSTR_ID(0, 0, 'z', 'h'):
       if (dwIDSecond == FXBSTR_ID(0, 0, 'c', 'n'))

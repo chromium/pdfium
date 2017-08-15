@@ -107,14 +107,13 @@ class CFX_ByteString {
   const CFX_ByteString& operator+=(const CFX_ByteString& str);
   const CFX_ByteString& operator+=(const CFX_ByteStringC& bstrc);
 
-  uint8_t GetAt(FX_STRSIZE index) const {
+  const CharType& operator[](const FX_STRSIZE index) const {
     ASSERT(index >= 0 && index < GetLength());
     return m_pData->m_String[index];
   }
 
-  uint8_t operator[](FX_STRSIZE index) const { return GetAt(index); }
-
   void SetAt(FX_STRSIZE index, char c);
+
   FX_STRSIZE Insert(FX_STRSIZE index, char ch);
   FX_STRSIZE InsertAtFront(char ch) { return Insert(0, ch); }
   FX_STRSIZE InsertAtBack(char ch) { return Insert(GetLength(), ch); }

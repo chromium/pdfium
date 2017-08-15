@@ -106,7 +106,7 @@ CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
   CFX_WideString filtercontents;
   wchar_t ch;
   for (int32_t index = 0; index < contents.GetLength(); index++) {
-    ch = contents.GetAt(index);
+    ch = contents[index];
     if (ch > 175) {
       index++;
       continue;
@@ -137,7 +137,7 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const CFX_ByteString& contents,
   char ch;
   int32_t position = 0;
   for (int32_t index = 0; index < data.GetLength(); index++) {
-    ch = data.GetAt(index);
+    ch = data[index];
     if (((ch >= 'a') && (ch <= 'z'))) {
       ch = ch - 32;
     }

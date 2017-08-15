@@ -58,7 +58,7 @@ CFX_WideString ExportEncodeContent(const CFX_WideStringC& str) {
   CFX_WideTextBuf textBuf;
   int32_t iLen = str.GetLength();
   for (int32_t i = 0; i < iLen; i++) {
-    wchar_t ch = str.GetAt(i);
+    wchar_t ch = str[i];
     if (!IsXMLValidChar(ch))
       continue;
 
@@ -73,13 +73,13 @@ CFX_WideString ExportEncodeContent(const CFX_WideStringC& str) {
     } else if (ch == '\"') {
       textBuf << L"&quot;";
     } else if (ch == ' ') {
-      if (i && str.GetAt(i - 1) != ' ') {
+      if (i && str[i - 1] != ' ') {
         textBuf.AppendChar(' ');
       } else {
         textBuf << L"&#x20;";
       }
     } else {
-      textBuf.AppendChar(str.GetAt(i));
+      textBuf.AppendChar(str[i]);
     }
   }
   return textBuf.MakeString();

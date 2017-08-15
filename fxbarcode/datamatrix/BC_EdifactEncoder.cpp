@@ -38,10 +38,10 @@ CFX_WideString EncodeToCodewords(const CFX_WideString& sb, int32_t startPos) {
   if (len == 0)
     return CFX_WideString();
 
-  wchar_t c1 = sb.GetAt(startPos);
-  wchar_t c2 = len >= 2 ? sb.GetAt(startPos + 1) : 0;
-  wchar_t c3 = len >= 3 ? sb.GetAt(startPos + 2) : 0;
-  wchar_t c4 = len >= 4 ? sb.GetAt(startPos + 3) : 0;
+  wchar_t c1 = sb[startPos];
+  wchar_t c2 = len >= 2 ? sb[startPos + 1] : 0;
+  wchar_t c3 = len >= 3 ? sb[startPos + 2] : 0;
+  wchar_t c4 = len >= 4 ? sb[startPos + 3] : 0;
   int32_t v = (c1 << 18) + (c2 << 12) + (c3 << 6) + c4;
   constexpr int32_t kBuflen = 3;
   wchar_t cw[kBuflen];

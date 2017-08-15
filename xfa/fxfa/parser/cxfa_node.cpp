@@ -76,7 +76,7 @@ int32_t GetCount(CXFA_Node* pInstMgrNode) {
     if (iCount == 0) {
       CFX_WideStringC wsName = pNode->GetCData(XFA_ATTRIBUTE_Name);
       CFX_WideStringC wsInstName = pInstMgrNode->GetCData(XFA_ATTRIBUTE_Name);
-      if (wsInstName.GetLength() < 1 || wsInstName.GetAt(0) != '_' ||
+      if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
           wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
         return iCount;
       }
@@ -197,7 +197,7 @@ CXFA_Node* GetItem(CXFA_Node* pInstMgrNode, int32_t iIndex) {
     if (iCount == 0) {
       CFX_WideStringC wsName = pNode->GetCData(XFA_ATTRIBUTE_Name);
       CFX_WideStringC wsInstName = pInstMgrNode->GetCData(XFA_ATTRIBUTE_Name);
-      if (wsInstName.GetLength() < 1 || wsInstName.GetAt(0) != '_' ||
+      if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
           wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
         return nullptr;
       }
@@ -406,7 +406,7 @@ void StrToRGB(const CFX_WideString& strRGB,
   int32_t iIndex = 0;
   int32_t iLen = strRGB.GetLength();
   for (int32_t i = 0; i < iLen; ++i) {
-    wchar_t ch = strRGB.GetAt(i);
+    wchar_t ch = strRGB[i];
     if (ch == L',')
       ++iIndex;
     if (iIndex > 2)
@@ -2736,7 +2736,7 @@ void CXFA_Node::Script_Subform_InstanceManager(CFXJSE_Value* pValue,
        pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
     if (pNode->GetElementType() == XFA_Element::InstanceManager) {
       CFX_WideStringC wsInstMgrName = pNode->GetCData(XFA_ATTRIBUTE_Name);
-      if (wsInstMgrName.GetLength() >= 1 && wsInstMgrName.GetAt(0) == '_' &&
+      if (wsInstMgrName.GetLength() >= 1 && wsInstMgrName[0] == '_' &&
           wsInstMgrName.Right(wsInstMgrName.GetLength() - 1) == wsName) {
         pInstanceMgr = pNode;
       }
@@ -4664,7 +4664,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
       if (eType == XFA_Element::InstanceManager) {
         CFX_WideStringC wsName = GetCData(XFA_ATTRIBUTE_Name);
         CFX_WideStringC wsInstName = pNode->GetCData(XFA_ATTRIBUTE_Name);
-        if (wsInstName.GetLength() > 0 && wsInstName.GetAt(0) == '_' &&
+        if (wsInstName.GetLength() > 0 && wsInstName[0] == '_' &&
             wsInstName.Right(wsInstName.GetLength() - 1) == wsName) {
           pInstanceMgr = pNode;
         }

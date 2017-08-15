@@ -32,9 +32,9 @@
 namespace {
 
 CFX_WideString EncodeToCodewords(const CFX_WideString& sb, int32_t startPos) {
-  wchar_t c1 = sb.GetAt(startPos);
-  wchar_t c2 = sb.GetAt(startPos + 1);
-  wchar_t c3 = sb.GetAt(startPos + 2);
+  wchar_t c1 = sb[startPos];
+  wchar_t c2 = sb[startPos + 1];
+  wchar_t c3 = sb[startPos + 2];
   int32_t v = (1600 * c1) + (40 * c2) + c3 + 1;
   wchar_t cw[2];
   cw[0] = static_cast<wchar_t>(v / 256);

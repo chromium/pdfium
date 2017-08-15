@@ -150,7 +150,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
     for (int32_t block = 0; block < blockCount; block++) {
       CFX_WideString temp;
       for (int32_t d = block; d < symbolInfo->dataCapacity(); d += blockCount) {
-        temp += (wchar_t)codewords.GetAt(d);
+        temp += (wchar_t)codewords[d];
       }
       CFX_WideString ecc = createECCBlock(temp, errorSizes[block], e);
       if (e != BCExceptionNO)
@@ -158,7 +158,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
       int32_t pos = 0;
       for (int32_t l = block; l < errorSizes[block] * blockCount;
            l += blockCount) {
-        sb.SetAt(symbolInfo->dataCapacity() + l, ecc.GetAt(pos++));
+        sb.SetAt(symbolInfo->dataCapacity() + l, ecc[pos++]);
       }
     }
   }
@@ -186,7 +186,7 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords,
   uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
   memset(ecc, 0, numECWords * sizeof(uint16_t));
   for (int32_t l = start; l < start + len; l++) {
-    uint16_t m = ecc[numECWords - 1] ^ codewords.GetAt(l);
+    uint16_t m = ecc[numECWords - 1] ^ codewords[l];
     for (int32_t k = numECWords - 1; k > 0; k--) {
       if (m != 0 && FACTORS[table][k] != 0) {
         ecc[k] = (uint16_t)(ecc[k - 1] ^

@@ -37,7 +37,7 @@ void CXFA_Measurement::SetString(const CFX_WideStringC& wsMeasure) {
     return;
   }
   int32_t iUsedLen = 0;
-  int32_t iOffset = (wsMeasure.GetAt(0) == L'=') ? 1 : 0;
+  int32_t iOffset = (wsMeasure[0] == L'=') ? 1 : 0;
   float fValue = FXSYS_wcstof(wsMeasure.unterminated_c_str() + iOffset,
                               wsMeasure.GetLength() - iOffset, &iUsedLen);
   XFA_UNIT eUnit = GetUnitFromString(

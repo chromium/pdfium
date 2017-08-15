@@ -3488,17 +3488,17 @@ CFX_WideString CXFA_FM2JSContext::EncodeURL(const CFX_ByteString& szURLString) {
       int32_t iIndex = 0;
       if (iLen % 2 != 0) {
         strEncode[1] = '0';
-        strEncode[2] = strTmp.GetAt(iLen - 1);
+        strEncode[2] = strTmp[iLen - 1];
         iIndex = iLen - 2;
       } else {
-        strEncode[1] = strTmp.GetAt(iLen - 1);
-        strEncode[2] = strTmp.GetAt(iLen - 2);
+        strEncode[1] = strTmp[iLen - 1];
+        strEncode[2] = strTmp[iLen - 2];
         iIndex = iLen - 3;
       }
       wsResultBuf << strEncode;
       while (iIndex > 0) {
-        strEncode[1] = strTmp.GetAt(iIndex);
-        strEncode[2] = strTmp.GetAt(iIndex - 1);
+        strEncode[1] = strTmp[iIndex];
+        strEncode[2] = strTmp[iIndex - 1];
         iIndex -= 2;
         wsResultBuf << strEncode;
       }
@@ -3994,8 +3994,8 @@ void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
   std::ostringstream resultString;
   int32_t iFindIndex = 0;
   for (int32_t u = 0; u < oneString.GetLength(); ++u) {
-    char ch = static_cast<char>(oneString.GetAt(u));
-    if (ch != static_cast<char>(twoString.GetAt(iFindIndex))) {
+    char ch = static_cast<char>(oneString[u]);
+    if (ch != static_cast<char>(twoString[iFindIndex])) {
       resultString << ch;
       continue;
     }
@@ -4003,8 +4003,8 @@ void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
     int32_t iTemp = u + 1;
     ++iFindIndex;
     while (iFindIndex < iFindLen) {
-      uint8_t chTemp = oneString.GetAt(iTemp);
-      if (chTemp != twoString.GetAt(iFindIndex)) {
+      uint8_t chTemp = oneString[iTemp];
+      if (chTemp != twoString[iFindIndex]) {
         iFindIndex = 0;
         break;
       }
@@ -4246,13 +4246,13 @@ void CXFA_FM2JSContext::Stuff(CFXJSE_Value* pThis,
   std::ostringstream resultString;
   int32_t i = 0;
   while (i < iStart) {
-    resultString << static_cast<char>(sourceString.GetAt(i));
+    resultString << static_cast<char>(sourceString[i]);
     ++i;
   }
   resultString << insertString.AsStringC();
   i = iStart + iDelete;
   while (i < iLength) {
-    resultString << static_cast<char>(sourceString.GetAt(i));
+    resultString << static_cast<char>(sourceString[i]);
     ++i;
   }
   resultString << '\0';

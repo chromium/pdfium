@@ -11,26 +11,8 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 
-TEST(fxcrt, ByteStringGetAt) {
-  CFX_ByteString short_string("a");
-  CFX_ByteString longer_string("abc");
-  CFX_ByteString embedded_nul_string("ab\0c", 4);
-
-#ifndef NDEBUG
-  EXPECT_DEATH({ short_string.GetAt(-1); }, ".*");
-#endif
-  EXPECT_EQ('a', short_string.GetAt(0));
-#ifndef NDEBUG
-  EXPECT_DEATH({ short_string.GetAt(1); }, ".*");
-#endif
-  EXPECT_EQ('c', longer_string.GetAt(2));
-  EXPECT_EQ('b', embedded_nul_string.GetAt(1));
-  EXPECT_EQ('\0', embedded_nul_string.GetAt(2));
-  EXPECT_EQ('c', embedded_nul_string.GetAt(3));
-}
-
-TEST(fxcrt, ByteStringOperatorSubscript) {
-  CFX_ByteString abc("abc");
+TEST(fxcrt, ByteStringElementAccess) {
+  const CFX_ByteString abc("abc");
 #ifndef NDEBUG
   EXPECT_DEATH({ abc[-1]; }, ".*");
 #endif
@@ -40,22 +22,35 @@ TEST(fxcrt, ByteStringOperatorSubscript) {
 #ifndef NDEBUG
   EXPECT_DEATH({ abc[3]; }, ".*");
 #endif
-}
 
-TEST(fxcrt, ByteStringSetAt) {
-  // CFX_ByteString includes the NUL terminator for non-empty strings.
-  CFX_ByteString abc("abc");
+  CFX_ByteString mutable_abc = abc;
+  EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
+  EXPECT_EQ('a', mutable_abc[0]);
+  EXPECT_EQ('b', mutable_abc[1]);
+  EXPECT_EQ('c', mutable_abc[2]);
+  EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
+
 #ifndef NDEBUG
-  EXPECT_DEATH({ abc.SetAt(-1, 'd'); }, ".*");
+  EXPECT_DEATH({ mutable_abc.SetAt(-1, 'd'); }, ".*");
+  EXPECT_EQ("abc", abc);
 #endif
-  abc.SetAt(0, 'd');
-  EXPECT_EQ("dbc", abc);
-  abc.SetAt(1, 'e');
-  EXPECT_EQ("dec", abc);
-  abc.SetAt(2, 'f');
-  EXPECT_EQ("def", abc);
+  const char* c_str = abc.c_str();
+  mutable_abc.SetAt(0, 'd');
+  EXPECT_EQ(c_str, abc.c_str());
+  EXPECT_NE(c_str, mutable_abc.c_str());
+  EXPECT_EQ("abc", abc);
+  EXPECT_EQ("dbc", mutable_abc);
+
+  mutable_abc.SetAt(1, 'e');
+  EXPECT_EQ("abc", abc);
+  EXPECT_EQ("dec", mutable_abc);
+
+  mutable_abc.SetAt(2, 'f');
+  EXPECT_EQ("abc", abc);
+  EXPECT_EQ("def", mutable_abc);
 #ifndef NDEBUG
-  EXPECT_DEATH({ abc.SetAt(3, 'g'); }, ".*");
+  EXPECT_DEATH({ mutable_abc.SetAt(3, 'g'); }, ".*");
+  EXPECT_EQ("abc", abc);
 #endif
 }
 
@@ -943,25 +938,7 @@ TEST(fxcrt, ByteStringCMid) {
   EXPECT_EQ(trailing_substring, longer_string.Mid(4, 3));
 }
 
-TEST(fxcrt, ByteStringCGetAt) {
-  CFX_ByteStringC short_string("a");
-  CFX_ByteStringC longer_string("abc");
-  CFX_ByteStringC embedded_nul_string("ab\0c", 4);
-
-#ifndef NDEBUG
-  EXPECT_DEATH({ short_string.GetAt(-1); }, ".*");
-#endif
-  EXPECT_EQ('a', static_cast<char>(short_string.GetAt(0)));
-#ifndef NDEBUG
-  EXPECT_DEATH({ short_string.GetAt(1); }, ".*");
-#endif
-  EXPECT_EQ('c', static_cast<char>(longer_string.GetAt(2)));
-  EXPECT_EQ('b', static_cast<char>(embedded_nul_string.GetAt(1)));
-  EXPECT_EQ('\0', static_cast<char>(embedded_nul_string.GetAt(2)));
-  EXPECT_EQ('c', static_cast<char>(embedded_nul_string.GetAt(3)));
-}
-
-TEST(fxcrt, ByteStringCOperatorSubscript) {
+TEST(fxcrt, ByteStringCElementAccess) {
   // CFX_ByteStringC includes the NUL terminator for non-empty strings.
   CFX_ByteStringC abc("abc");
 #ifndef NDEBUG

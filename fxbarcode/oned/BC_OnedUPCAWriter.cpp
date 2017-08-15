@@ -43,7 +43,7 @@ CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}
 
 bool CBC_OnedUPCAWriter::CheckContentValidity(const CFX_WideStringC& contents) {
   for (FX_STRSIZE i = 0; i < contents.GetLength(); ++i) {
-    if (contents.GetAt(i) < '0' || contents.GetAt(i) > '9')
+    if (contents[i] < '0' || contents[i] > '9')
       return false;
   }
   return true;
@@ -54,7 +54,7 @@ CFX_WideString CBC_OnedUPCAWriter::FilterContents(
   CFX_WideString filtercontents;
   wchar_t ch;
   for (int32_t i = 0; i < contents.GetLength(); i++) {
-    ch = contents.GetAt(i);
+    ch = contents[i];
     if (ch > 175) {
       i++;
       continue;

@@ -498,7 +498,7 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
     CFX_WideString wsAttr = pElement->GetString(L"xfa:embed");
     if (wsAttr.IsEmpty())
       return false;
-    if (wsAttr.GetAt(0) == L'#')
+    if (wsAttr[0] == L'#')
       wsAttr.Delete(0);
 
     CFX_WideString ws = pElement->GetString(L"xfa:embedType");

@@ -426,9 +426,10 @@ void MergeString(std::vector<ModeStringPair>* result,
 void SplitString(const CFX_ByteString& content,
                  std::vector<ModeStringPair>* result) {
   int32_t index = 0;
-  while (index < content.GetLength() &&
-         ((content[index] >= 0xA1 && content[index] <= 0xAA) ||
-          (content[index] >= 0xB0 && content[index] <= 0xFA))) {
+  while (index < content.GetLength()) {
+    uint8_t c = static_cast<uint8_t>(content[index]);
+    if (!((c >= 0xA1 && c <= 0xAA) || (c >= 0xB0 && c <= 0xFA)))
+      break;
     index += 2;
   }
   if (index)
@@ -438,9 +439,10 @@ void SplitString(const CFX_ByteString& content,
 
   int32_t flag = index;
   while (GetAlphaNumericCode(content[index]) == -1 &&
-         index < content.GetLength() &&
-         !((content[index] >= 0xA1 && content[index] <= 0xAA) ||
-           (content[index] >= 0xB0 && content[index] <= 0xFA))) {
+         index < content.GetLength()) {
+    uint8_t c = static_cast<uint8_t>(content[index]);
+    if (((c >= 0xA1 && c <= 0xAA) || (c >= 0xB0 && c <= 0xFA)))
+      break;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     bool high = !!IsDBCSLeadByte(content[index]);
 #else

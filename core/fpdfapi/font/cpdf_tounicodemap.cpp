@@ -147,7 +147,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
           continue;
         }
         if (len == 1) {
-          m_Map[srccode] = destcode.GetAt(0);
+          m_Map[srccode] = destcode[0];
         } else {
           m_Map[srccode] = GetUnicode();
           m_MultiCharBuf.AppendChar(destcode.GetLength());
@@ -178,7 +178,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
               continue;
             }
             if (len == 1) {
-              m_Map[code] = destcode.GetAt(0);
+              m_Map[code] = destcode[0];
             } else {
               m_Map[code] = GetUnicode();
               m_MultiCharBuf.AppendChar(destcode.GetLength());

@@ -145,7 +145,7 @@ bool CBC_PDF417ErrorCorrection::generateErrorCorrection(
   std::vector<wchar_t> ech(k);
   int32_t sld = dataCodewords.GetLength();
   for (int32_t i = 0; i < sld; i++) {
-    int32_t t1 = (dataCodewords.GetAt(i) + ech[k - 1]) % 929;
+    int32_t t1 = (dataCodewords[i] + ech[k - 1]) % 929;
     int32_t t2;
     int32_t t3;
     for (int32_t j = k - 1; j >= 1; j--) {

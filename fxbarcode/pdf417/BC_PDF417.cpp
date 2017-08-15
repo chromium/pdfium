@@ -523,7 +523,7 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
     int32_t pattern = CODEWORD_TABLE[cluster][left];
     encodeChar(pattern, 17, logic->getCurrentRow());
     for (int32_t x = 0; x < c; x++) {
-      pattern = CODEWORD_TABLE[cluster][fullCodewords.GetAt(idx)];
+      pattern = CODEWORD_TABLE[cluster][fullCodewords[idx]];
       encodeChar(pattern, 17, logic->getCurrentRow());
       idx++;
     }

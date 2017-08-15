@@ -50,7 +50,7 @@ CBC_OnedCode39Writer::~CBC_OnedCode39Writer() {}
 bool CBC_OnedCode39Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
   for (int32_t i = 0; i < contents.GetLength(); i++) {
-    wchar_t ch = contents.GetAt(i);
+    wchar_t ch = contents[i];
     if ((ch >= (wchar_t)'0' && ch <= (wchar_t)'9') ||
         (ch >= (wchar_t)'A' && ch <= (wchar_t)'Z') || ch == (wchar_t)'-' ||
         ch == (wchar_t)'.' || ch == (wchar_t)' ' || ch == (wchar_t)'*' ||
@@ -67,7 +67,7 @@ CFX_WideString CBC_OnedCode39Writer::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filtercontents;
   for (int32_t i = 0; i < contents.GetLength(); i++) {
-    wchar_t ch = contents.GetAt(i);
+    wchar_t ch = contents[i];
     if (ch == (wchar_t)'*' && (i == 0 || i == contents.GetLength() - 1)) {
       continue;
     }
@@ -92,7 +92,7 @@ CFX_WideString CBC_OnedCode39Writer::RenderTextContents(
     const CFX_WideStringC& contents) {
   CFX_WideString renderContents;
   for (int32_t i = 0; i < contents.GetLength(); i++) {
-    wchar_t ch = contents.GetAt(i);
+    wchar_t ch = contents[i];
     if (ch == (wchar_t)'*' && (i == 0 || i == contents.GetLength() - 1)) {
       continue;
     }

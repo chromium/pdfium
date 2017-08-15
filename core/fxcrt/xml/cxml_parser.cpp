@@ -171,7 +171,7 @@ void CXML_Parser::SkipLiterals(const CFX_ByteStringC& str) {
   int32_t i = 0, iLen = str.GetLength();
   do {
     while (m_dwIndex < m_dwBufferSize) {
-      if (str.GetAt(i) != m_pBuffer[m_dwIndex++]) {
+      if (str[i] != m_pBuffer[m_dwIndex++]) {
         i = 0;
         continue;
       }

@@ -119,12 +119,12 @@ class CFX_StringCTemplate {
   FX_STRSIZE GetLength() const { return m_Length; }
   bool IsEmpty() const { return m_Length == 0; }
 
-  UnsignedType GetAt(FX_STRSIZE index) const {
+  const UnsignedType& operator[](const FX_STRSIZE index) const {
     ASSERT(index >= 0 && index < GetLength());
     return m_Ptr.Get()[index];
   }
 
-  CharType CharAt(FX_STRSIZE index) const {
+  const CharType CharAt(const FX_STRSIZE index) const {
     ASSERT(index >= 0 && index < GetLength());
     return static_cast<CharType>(m_Ptr.Get()[index]);
   }
@@ -163,8 +163,6 @@ class CFX_StringCTemplate {
 
     return CFX_StringCTemplate(m_Ptr.Get() + m_Length - count, count);
   }
-
-  UnsignedType operator[](FX_STRSIZE index) const { return GetAt(index); }
 
   bool operator<(const CFX_StringCTemplate& that) const {
     int result = FXSYS_cmp(reinterpret_cast<const CharType*>(m_Ptr.Get()),

@@ -41,7 +41,7 @@ int32_t CXFA_ResolveProcessor::Resolve(CXFA_ResolveNodesData& rnd) {
   if (rnd.m_dwStyles & XFA_RESOLVENODE_AnyChild) {
     return ResolveAnyChild(rnd);
   }
-  wchar_t wch = rnd.m_wsName.GetAt(0);
+  wchar_t wch = rnd.m_wsName[0];
   switch (wch) {
     case '$':
       return ResolveDollar(rnd);
@@ -89,7 +89,7 @@ int32_t CXFA_ResolveProcessor::ResolveAnyChild(CXFA_ResolveNodesData& rnd) {
   CFX_WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* findNode = nullptr;
   bool bClassName = false;
-  if (wsName.GetAt(0) == '#') {
+  if (wsName[0] == '#') {
     bClassName = true;
     wsName = wsName.Right(wsName.GetLength() - 1);
   }

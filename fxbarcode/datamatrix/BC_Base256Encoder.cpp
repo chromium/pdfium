@@ -35,7 +35,7 @@ int32_t CBC_Base256Encoder::getEncodingMode() {
 }
 void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   CFX_WideString buffer;
-  buffer += (wchar_t)'\0';
+  buffer += L'\0';
   while (context.hasMoreCharacters()) {
     wchar_t c = context.getCurrentChar();
     buffer += c;
@@ -50,7 +50,7 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   int32_t dataCount = buffer.GetLength() - 1;
   char buf[128];
   FXSYS_itoa(dataCount, buf, 10);
-  buffer.SetAt(0, wchar_t(*buf) - '0');
+  buffer.SetAt(0, static_cast<wchar_t>(*buf) - '0');
   int32_t lengthFieldSize = 1;
   int32_t currentSize =
       context.getCodewordCount() + dataCount + lengthFieldSize;
@@ -61,10 +61,10 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   bool mustPad = (context.m_symbolInfo->dataCapacity() - currentSize) > 0;
   if (context.hasMoreCharacters() || mustPad) {
     if (dataCount <= 249) {
-      buffer.SetAt(0, (wchar_t)dataCount);
+      buffer.SetAt(0, static_cast<wchar_t>(dataCount));
     } else if (dataCount > 249 && dataCount <= 1555) {
-      buffer.SetAt(0, (wchar_t)((dataCount / 250) + 249));
-      buffer.Insert(1, (wchar_t)(dataCount % 250));
+      buffer.SetAt(0, static_cast<wchar_t>((dataCount / 250) + 249));
+      buffer.Insert(1, static_cast<wchar_t>(dataCount % 250));
     } else {
       e = BCExceptionIllegalStateMessageLengthInvalid;
       return;
@@ -79,8 +79,8 @@ wchar_t CBC_Base256Encoder::randomize255State(wchar_t ch,
   int32_t pseudoRandom = ((149 * codewordPosition) % 255) + 1;
   int32_t tempVariable = ch + pseudoRandom;
   if (tempVariable <= 255) {
-    return (wchar_t)tempVariable;
+    return static_cast<wchar_t>(tempVariable);
   } else {
-    return (wchar_t)(tempVariable - 256);
+    return static_cast<wchar_t>(tempVariable - 256);
   }
 }

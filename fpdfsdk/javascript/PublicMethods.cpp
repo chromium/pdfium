@@ -235,7 +235,7 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& str,
     if (i - nStart > 10)
       break;
 
-    wchar_t c = str.GetAt(i);
+    wchar_t c = str[i];
     if (!std::iswdigit(c))
       break;
 
@@ -254,7 +254,7 @@ CFX_WideString CJS_PublicMethods::ParseStringString(const CFX_WideString& str,
   CFX_WideString swRet;
   nSkip = 0;
   for (int i = nStart, sz = str.GetLength(); i < sz; i++) {
-    wchar_t c = str.GetAt(i);
+    wchar_t c = str[i];
     if (!std::iswdigit(c))
       break;
 
@@ -286,7 +286,7 @@ double CJS_PublicMethods::ParseNormalDate(const CFX_WideString& value,
     if (nIndex > 2)
       break;
 
-    wchar_t c = value.GetAt(i);
+    wchar_t c = value[i];
     if (std::iswdigit(c)) {
       number[nIndex++] = ParseStringInteger(value, i, nSkip, 4);
       i += nSkip;
@@ -373,7 +373,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
     if (bExit)
       break;
 
-    wchar_t c = format.GetAt(i);
+    wchar_t c = format[i];
     switch (c) {
       case ':':
       case '.':
@@ -396,7 +396,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
         int nSkip = 0;
         int remaining = format.GetLength() - i - 1;
 
-        if (remaining == 0 || format.GetAt(i + 1) != c) {
+        if (remaining == 0 || format[i + 1] != c) {
           switch (c) {
             case 'y':
               i++;
@@ -433,12 +433,12 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
               j += nSkip;
               break;
             case 't':
-              bPm = (j < value.GetLength() && value.GetAt(j) == 'p');
+              bPm = (j < value.GetLength() && value[j] == 'p');
               i++;
               j++;
               break;
           }
-        } else if (remaining == 1 || format.GetAt(i + 2) != c) {
+        } else if (remaining == 1 || format[i + 2] != c) {
           switch (c) {
             case 'y':
               nYear = ParseStringInteger(value, j, nSkip, 4);
@@ -476,13 +476,13 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
               j += nSkip;
               break;
             case 't':
-              bPm = (j + 1 < value.GetLength() && value.GetAt(j) == 'p' &&
-                     value.GetAt(j + 1) == 'm');
+              bPm = (j + 1 < value.GetLength() && value[j] == 'p' &&
+                     value[j + 1] == 'm');
               i += 2;
               j += 2;
               break;
           }
-        } else if (remaining == 2 || format.GetAt(i + 3) != c) {
+        } else if (remaining == 2 || format[i + 3] != c) {
           switch (c) {
             case 'm': {
               CFX_WideString sMonth = ParseStringString(value, j, nSkip);
@@ -510,7 +510,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
               j += 3;
               break;
           }
-        } else if (remaining == 3 || format.GetAt(i + 4) != c) {
+        } else if (remaining == 3 || format[i + 4] != c) {
           switch (c) {
             case 'y':
               nYear = ParseStringInteger(value, j, nSkip, 4);
@@ -548,7 +548,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
               break;
           }
         } else {
-          if (j >= value.GetLength() || format.GetAt(i) != value.GetAt(j)) {
+          if (j >= value.GetLength() || format[i] != value[j]) {
             bBadFormat = true;
             bExit = true;
           }
@@ -566,7 +566,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
       default:
         if (value.GetLength() <= j) {
           bExit = true;
-        } else if (format.GetAt(i) != value.GetAt(j)) {
+        } else if (format[i] != value[j]) {
           bBadFormat = true;
           bExit = true;
         }
@@ -630,7 +630,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
 
   int i = 0;
   while (i < format.GetLength()) {
-    wchar_t c = format.GetAt(i);
+    wchar_t c = format[i];
     int remaining = format.GetLength() - i - 1;
     sPart = L"";
     switch (c) {
@@ -642,7 +642,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
       case 'M':
       case 's':
       case 't':
-        if (remaining == 0 || format.GetAt(i + 1) != c) {
+        if (remaining == 0 || format[i + 1] != c) {
           switch (c) {
             case 'y':
               sPart += c;
@@ -670,7 +670,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
               break;
           }
           i++;
-        } else if (remaining == 1 || format.GetAt(i + 2) != c) {
+        } else if (remaining == 1 || format[i + 2] != c) {
           switch (c) {
             case 'y':
               sPart.Format(L"%02d", nYear - (nYear / 100) * 100);
@@ -698,7 +698,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
               break;
           }
           i += 2;
-        } else if (remaining == 2 || format.GetAt(i + 3) != c) {
+        } else if (remaining == 2 || format[i + 3] != c) {
           switch (c) {
             case 'm':
               i += 3;
@@ -712,7 +712,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
               sPart += c;
               break;
           }
-        } else if (remaining == 3 || format.GetAt(i + 4) != c) {
+        } else if (remaining == 3 || format[i + 4] != c) {
           switch (c) {
             case 'y':
               sPart.Format(L"%04d", nYear);
@@ -1762,7 +1762,7 @@ bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
   }
 
   CFX_WideString str = params[0].ToCFXWideString(pRuntime);
-  if (str.GetAt(0) == L'.' || str.GetAt(0) == L',')
+  if (str[0] == L'.' || str[0] == L',')
     str = L"0" + str;
 
   CFX_WideString sPart;

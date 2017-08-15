@@ -162,7 +162,7 @@ bool CXFA_PDFFontMgr::PsNameMatchDRFontName(const CFX_ByteStringC& bsPsName,
         return false;
 
       bool bMatch = false;
-      switch (bsPsName.GetAt(iPsLen - 1)) {
+      switch (bsPsName[iPsLen - 1]) {
         case 'L': {
           if (bsDRName.Right(5) == "Light") {
             bMatch = true;

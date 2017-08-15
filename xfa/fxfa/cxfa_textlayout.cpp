@@ -796,7 +796,7 @@ bool CXFA_TextLayout::LoadRichText(
                      (m_pLoader->m_dwFlags & XFA_LOADERCNTXTFLG_FILTERSPACE)) {
             m_pLoader->m_dwFlags &= ~XFA_LOADERCNTXTFLG_FILTERSPACE;
           } else if (wsText.GetLength() > 0 &&
-                     (0x20 == wsText.GetAt(wsText.GetLength() - 1))) {
+                     (0x20 == wsText[wsText.GetLength() - 1])) {
             m_pLoader->m_dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
           } else if (wsText.GetLength() != 0) {
             m_pLoader->m_dwFlags &= ~XFA_LOADERCNTXTFLG_FILTERSPACE;
@@ -885,7 +885,7 @@ bool CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
 
   int32_t iLength = wsText.GetLength();
   for (int32_t i = iChar; i < iLength; i++) {
-    wchar_t wch = wsText.GetAt(i);
+    wchar_t wch = wsText[i];
     if (wch == 0xA0)
       wch = 0x20;
 

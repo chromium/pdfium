@@ -123,7 +123,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       dsBorder = CPVT_Dash(pArray->GetIntegerAt(0), pArray->GetIntegerAt(1),
                            pArray->GetIntegerAt(2));
     }
-    switch (pBSDict->GetStringFor("S").GetAt(0)) {
+    switch (pBSDict->GetStringFor("S")[0]) {
       case 'S':
         nBorderStyle = BorderStyle::SOLID;
         break;

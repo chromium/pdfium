@@ -69,13 +69,13 @@ CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideString& filepath) {
   return ChangeSlashToPlatform(filepath.c_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-  if (filepath.GetAt(0) != L'/')
+  if (filepath[0] != L'/')
     return ChangeSlashToPlatform(filepath.c_str());
-  if (filepath.GetAt(1) == L'/')
+  if (filepath[1] == L'/')
     return ChangeSlashToPlatform(filepath.c_str() + 1);
-  if (filepath.GetAt(2) == L'/') {
+  if (filepath[2] == L'/') {
     CFX_WideString result;
-    result += filepath.GetAt(1);
+    result += filepath[1];
     result += L':';
     result += ChangeSlashToPlatform(filepath.c_str() + 2);
     return result;
@@ -158,19 +158,19 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideString& filepath) {
     return CFX_WideString();
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  if (filepath.GetAt(1) == L':') {
+  if (filepath[1] == L':') {
     CFX_WideString result(L'/');
-    result += filepath.GetAt(0);
-    if (filepath.GetAt(2) != L'\\')
+    result += filepath[0];
+    if (filepath[2] != L'\\')
       result += L'/';
 
     result += ChangeSlashToPDF(filepath.c_str() + 2);
     return result;
   }
-  if (filepath.GetAt(0) == L'\\' && filepath.GetAt(1) == L'\\')
+  if (filepath[0] == L'\\' && filepath[1] == L'\\')
     return ChangeSlashToPDF(filepath.c_str() + 1);
 
-  if (filepath.GetAt(0) == L'\\')
+  if (filepath[0] == L'\\')
     return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

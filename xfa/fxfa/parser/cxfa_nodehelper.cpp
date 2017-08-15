@@ -283,7 +283,7 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(CFX_WideString& wsCondition) {
     m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
     return false;
   }
-  if (wsCondition.GetAt(0) == '[') {
+  if (wsCondition[0] == '[') {
     int32_t i = 1;
     for (; i < iLen; ++i) {
       wchar_t ch = wsCondition[i];
@@ -323,12 +323,12 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(
   }
   bool bIsClassName = false;
   bool bResult = false;
-  if (wsName.GetAt(0) == '!') {
+  if (wsName[0] == '!') {
     wsName = wsName.Right(wsName.GetLength() - 1);
     m_pCreateParent = ToNode(
         pScriptContext->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets));
   }
-  if (wsName.GetAt(0) == '#') {
+  if (wsName[0] == '#') {
     bIsClassName = true;
     wsName = wsName.Right(wsName.GetLength() - 1);
   }

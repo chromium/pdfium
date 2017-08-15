@@ -340,7 +340,7 @@ void CXFA_ScriptContext::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
         pReturnValue, true, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
   } else {
     if (pObject->IsNode()) {
-      if (wsPropName.GetAt(0) == '#') {
+      if (wsPropName[0] == '#') {
         wsPropName = wsPropName.Right(wsPropName.GetLength() - 1);
       }
       CXFA_Node* pNode = ToNode(pObject);
