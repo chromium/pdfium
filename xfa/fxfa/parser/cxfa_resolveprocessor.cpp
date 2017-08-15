@@ -41,21 +41,23 @@ int32_t CXFA_ResolveProcessor::Resolve(CXFA_ResolveNodesData& rnd) {
   if (rnd.m_dwStyles & XFA_RESOLVENODE_AnyChild) {
     return ResolveAnyChild(rnd);
   }
-  wchar_t wch = rnd.m_wsName[0];
-  switch (wch) {
-    case '$':
-      return ResolveDollar(rnd);
-    case '!':
-      return ResolveExcalmatory(rnd);
-    case '#':
-      return ResolveNumberSign(rnd);
-    case '*':
-      return ResolveAsterisk(rnd);
-    // TODO(dsinclair): We could probably remove this.
-    case '.':
-      return ResolveAnyChild(rnd);
-    default:
-      break;
+  if (rnd.m_wsName.GetLength()) {
+    wchar_t wch = rnd.m_wsName[0];
+    switch (wch) {
+      case '$':
+        return ResolveDollar(rnd);
+      case '!':
+        return ResolveExcalmatory(rnd);
+      case '#':
+        return ResolveNumberSign(rnd);
+      case '*':
+        return ResolveAsterisk(rnd);
+      // TODO(dsinclair): We could probably remove this.
+      case '.':
+        return ResolveAnyChild(rnd);
+      default:
+        break;
+    }
   }
   if (rnd.m_uHashName == XFA_HASHCODE_This && rnd.m_nLevel == 0) {
     rnd.m_Objects.push_back(rnd.m_pSC->GetThisObject());
@@ -89,7 +91,7 @@ int32_t CXFA_ResolveProcessor::ResolveAnyChild(CXFA_ResolveNodesData& rnd) {
   CFX_WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* findNode = nullptr;
   bool bClassName = false;
-  if (wsName[0] == '#') {
+  if (wsName.GetLength() && wsName[0] == '#') {
     bClassName = true;
     wsName = wsName.Right(wsName.GetLength() - 1);
   }
