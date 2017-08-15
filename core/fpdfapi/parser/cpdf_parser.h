@@ -88,7 +88,6 @@ class CPDF_Parser {
   CFX_RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
 
   FX_FILESIZE GetObjectOffset(uint32_t objnum) const;
-  FX_FILESIZE GetObjectSize(uint32_t objnum) const;
 
   int GetFileVersion() const { return m_FileVersion; }
   bool IsXRefStream() const { return m_bXRefStream; }
@@ -200,7 +199,6 @@ class CPDF_Parser {
   FX_FILESIZE m_LastXRefOffset;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   CFX_ByteString m_Password;
-  std::set<FX_FILESIZE> m_SortedOffset;
   std::vector<std::unique_ptr<CPDF_Dictionary>> m_Trailers;
   size_t m_TrailerPos;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;

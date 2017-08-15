@@ -194,7 +194,6 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal(CPDF_Document* pDocument) {
 
   bool bXRefRebuilt = false;
   if (m_pSyntax->BackwardsSearchToWord("startxref", 4096)) {
-    m_SortedOffset.insert(m_pSyntax->GetPos());
     m_pSyntax->GetKeyword();
 
     bool bNumber;
@@ -453,7 +452,6 @@ bool CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
   FX_FILESIZE dwStartPos = pos - m_pSyntax->m_HeaderOffset;
 
   m_pSyntax->SetPos(dwStartPos);
-  m_SortedOffset.insert(pos);
   std::vector<CrossRefObjData> objects;
   if (!ParseAndAppendCrossRefSubsectionData(0, dwObjCount, &objects))
     return false;
@@ -590,14 +588,6 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
                                  FX_FILESIZE streampos,
                                  bool bSkip) {
   m_pSyntax->SetPos(pos);
-  if (m_pSyntax->GetKeyword() != "xref")
-    return false;
-
-  m_SortedOffset.insert(pos);
-  if (streampos)
-    m_SortedOffset.insert(streampos);
-
-  m_pSyntax->SetPos(pos);
   std::vector<CrossRefObjData> objects;
   if (!ParseCrossRefV4(bSkip ? nullptr : &objects, &m_dwXrefStartObjNum))
     return false;
@@ -611,12 +601,6 @@ void CPDF_Parser::MergeCrossRefObjectsData(
     const std::vector<CrossRefObjData>& objects) {
   for (const auto& obj : objects) {
     m_ObjectInfo[obj.obj_num] = obj.info;
-    if (obj.info.type != ObjectType::kFree) {
-      if (obj.info.type == ObjectType::kNotCompressed &&
-          obj.info.pos < m_pSyntax->m_FileLen) {
-        m_SortedOffset.insert(obj.info.pos);
-      }
-    }
   }
 }
 
@@ -641,7 +625,6 @@ bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
 
 bool CPDF_Parser::RebuildCrossRef() {
   m_ObjectInfo.clear();
-  m_SortedOffset.clear();
   m_Trailers.clear();
   m_TrailerPos = CPDF_Parser::kInvalidPos;
 
@@ -790,7 +773,6 @@ bool CPDF_Parser::RebuildCrossRef() {
             case 3:
               if (PDFCharIsWhitespace(byte) || PDFCharIsDelimiter(byte)) {
                 FX_FILESIZE obj_pos = start_pos - m_pSyntax->m_HeaderOffset;
-                m_SortedOffset.insert(obj_pos);
                 last_obj = start_pos;
                 FX_FILESIZE obj_end = 0;
                 std::unique_ptr<CPDF_Object> pObject =
@@ -987,7 +969,6 @@ bool CPDF_Parser::RebuildCrossRef() {
   else if (last_trailer == -1 || last_xref < last_obj)
     last_trailer = m_pSyntax->m_FileLen;
 
-  m_SortedOffset.insert(last_trailer - m_pSyntax->m_HeaderOffset);
   return GetTrailer() && !m_ObjectInfo.empty();
 }
 
@@ -1108,7 +1089,6 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         FX_FILESIZE offset =
             GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
         m_ObjectInfo[startnum + j].pos = offset;
-        m_SortedOffset.insert(offset);
         continue;
       }
 
@@ -1125,7 +1105,6 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
             GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
         if (type == ObjectType::kNotCompressed) {
           const auto object_offset = entry_value;
-          m_SortedOffset.insert(object_offset);
           info.pos = object_offset;
         } else {
           const auto archive_obj_num = entry_value;
@@ -1250,28 +1229,6 @@ CFX_RetainPtr<CPDF_StreamAcc> CPDF_Parser::GetObjectStream(uint32_t objnum) {
   pStreamAcc->LoadAllData();
   m_ObjectStreamMap[objnum] = pStreamAcc;
   return pStreamAcc;
-}
-
-FX_FILESIZE CPDF_Parser::GetObjectSize(uint32_t objnum) const {
-  if (!IsValidObjectNumber(objnum))
-    return 0;
-
-  if (GetObjectType(objnum) == ObjectType::kCompressed)
-    objnum = GetObjectPositionOrZero(objnum);
-
-  if (GetObjectType(objnum) != ObjectType::kNotCompressed &&
-      GetObjectType(objnum) != ObjectType::kNull)
-    return 0;
-
-  FX_FILESIZE offset = GetObjectPositionOrZero(objnum);
-  if (offset == 0)
-    return 0;
-
-  auto it = m_SortedOffset.find(offset);
-  if (it == m_SortedOffset.end() || ++it == m_SortedOffset.end())
-    return 0;
-
-  return *it - offset;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(
