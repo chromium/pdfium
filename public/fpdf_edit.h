@@ -20,6 +20,20 @@
 #define FPDF_GetRValue(argb) ((uint8_t)((argb) >> 16))
 #define FPDF_GetAValue(argb) ((uint8_t)((argb) >> 24))
 
+// Refer to PDF Reference version 1.7 table 4.12 for all color space families.
+#define FPDF_COLORSPACE_UNKNOWN 0
+#define FPDF_COLORSPACE_DEVICEGRAY 1
+#define FPDF_COLORSPACE_DEVICERGB 2
+#define FPDF_COLORSPACE_DEVICECMYK 3
+#define FPDF_COLORSPACE_CALGRAY 4
+#define FPDF_COLORSPACE_CALRGB 5
+#define FPDF_COLORSPACE_LAB 6
+#define FPDF_COLORSPACE_ICCBASED 7
+#define FPDF_COLORSPACE_SEPARATION 8
+#define FPDF_COLORSPACE_DEVICEN 9
+#define FPDF_COLORSPACE_INDEXED 10
+#define FPDF_COLORSPACE_PATTERN 11
+
 // The page object constants.
 #define FPDF_PAGEOBJ_UNKNOWN 0
 #define FPDF_PAGEOBJ_TEXT 1
@@ -46,6 +60,21 @@
 #define FPDF_PRINTMODE_TEXTONLY 1
 #define FPDF_PRINTMODE_POSTSCRIPT2 2
 #define FPDF_PRINTMODE_POSTSCRIPT3 3
+
+typedef struct FPDF_IMAGEOBJ_METADATA {
+  // The image width in pixels.
+  unsigned int width;
+  // The image height in pixels.
+  unsigned int height;
+  // The image's horizontal pixel-per-inch.
+  float horizontal_dpi;
+  // The image's vertical pixel-per-inch.
+  float vertical_dpi;
+  // The number of bits used to represent each pixel.
+  unsigned int bits_per_pixel;
+  // The image's colorspace. See above for the list of FPDF_COLORSPACE_*.
+  int colorspace;
+} FPDF_IMAGEOBJ_METADATA;
 
 #ifdef __cplusplus
 extern "C" {
@@ -365,6 +394,22 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
                             int index,
                             void* buffer,
                             unsigned long buflen);
+
+// Get the image metadata of |image_object|, including dimension, DPI, bits per
+// pixel, and colorspace. If the |image_object| is not an image object or if it
+// does not have an image, then the return value will be false. Otherwise,
+// failure to retrieve any specific parameter would result in its value being 0.
+//
+//   image_object - handle to an image object.
+//   page         - handle to the page that |image_object| is on. Required for
+//                  retrieving the image's bits per pixel and colorspace.
+//   metadata     - receives the image metadata; must not be NULL.
+//
+// Returns true if successful.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
+                              FPDF_PAGE page,
+                              FPDF_IMAGEOBJ_METADATA* metadata);
 
 // Create a new path object at an initial position.
 //

@@ -60,6 +60,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
                           int clip_left,
                           int clip_width) const override;
 
+  const CPDF_ColorSpace* GetColorSpace() const { return m_pColorSpace; }
   uint32_t GetMatteColor() const { return m_MatteColor; }
 
   int StartLoadDIBSource(CPDF_Document* pDoc,

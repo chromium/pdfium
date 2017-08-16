@@ -9,13 +9,39 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
+
+// These checks ensure the consistency of colorspace values across core/ and
+// public/.
+static_assert(PDFCS_DEVICEGRAY == FPDF_COLORSPACE_DEVICEGRAY,
+              "PDFCS_DEVICEGRAY value mismatch");
+static_assert(PDFCS_DEVICERGB == FPDF_COLORSPACE_DEVICERGB,
+              "PDFCS_DEVICERGB value mismatch");
+static_assert(PDFCS_DEVICECMYK == FPDF_COLORSPACE_DEVICECMYK,
+              "PDFCS_DEVICECMYK value mismatch");
+static_assert(PDFCS_CALGRAY == FPDF_COLORSPACE_CALGRAY,
+              "PDFCS_CALGRAY value mismatch");
+static_assert(PDFCS_CALRGB == FPDF_COLORSPACE_CALRGB,
+              "PDFCS_CALRGB value mismatch");
+static_assert(PDFCS_LAB == FPDF_COLORSPACE_LAB, "PDFCS_LAB value mismatch");
+static_assert(PDFCS_ICCBASED == FPDF_COLORSPACE_ICCBASED,
+              "PDFCS_ICCBASED value mismatch");
+static_assert(PDFCS_SEPARATION == FPDF_COLORSPACE_SEPARATION,
+              "PDFCS_SEPARATION value mismatch");
+static_assert(PDFCS_DEVICEN == FPDF_COLORSPACE_DEVICEN,
+              "PDFCS_DEVICEN value mismatch");
+static_assert(PDFCS_INDEXED == FPDF_COLORSPACE_INDEXED,
+              "PDFCS_INDEXED value mismatch");
+static_assert(PDFCS_PATTERN == FPDF_COLORSPACE_PATTERN,
+              "PDFCS_PATTERN value mismatch");
 
 bool LoadJpegHelper(FPDF_PAGE* pages,
                     int nCount,
@@ -225,4 +251,50 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
     wsFilters = pFilter->AsArray()->GetUnicodeTextAt(index);
 
   return Utf16EncodeMaybeCopyAndReturnLength(wsFilters, buffer, buflen);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
+                              FPDF_PAGE page,
+                              FPDF_IMAGEOBJ_METADATA* metadata) {
+  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
+  if (!pObj || !pObj->IsImage() || !metadata)
+    return false;
+
+  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  if (!pImg)
+    return false;
+
+  const int nPixelWidth = pImg->GetPixelWidth();
+  const int nPixelHeight = pImg->GetPixelHeight();
+  metadata->width = nPixelWidth;
+  metadata->height = nPixelHeight;
+
+  const float nWidth = pObj->m_Right - pObj->m_Left;
+  const float nHeight = pObj->m_Top - pObj->m_Bottom;
+  constexpr int nPointsPerInch = 72;
+  if (nWidth != 0 && nHeight != 0) {
+    metadata->horizontal_dpi = nPixelWidth / nWidth * nPointsPerInch;
+    metadata->vertical_dpi = nPixelHeight / nHeight * nPointsPerInch;
+  }
+
+  metadata->bits_per_pixel = 0;
+  metadata->colorspace = FPDF_COLORSPACE_UNKNOWN;
+
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage || !pPage->m_pDocument.Get() || !pImg->GetStream())
+    return true;
+
+  auto pSource = pdfium::MakeRetain<CPDF_DIBSource>();
+  if (!pSource->StartLoadDIBSource(pPage->m_pDocument.Get(), pImg->GetStream(),
+                                   false, nullptr,
+                                   pPage->m_pPageResources.Get())) {
+    return true;
+  }
+
+  metadata->bits_per_pixel = pSource->GetBPP();
+  if (pSource->GetColorSpace())
+    metadata->colorspace = pSource->GetColorSpace()->GetFamily();
+
+  return true;
 }

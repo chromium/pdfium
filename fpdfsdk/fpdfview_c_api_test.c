@@ -138,6 +138,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFImageObj_GetImageDataRaw);
     CHK(FPDFImageObj_GetImageFilterCount);
     CHK(FPDFImageObj_GetImageFilter);
+    CHK(FPDFImageObj_GetImageMetadata);
     CHK(FPDFPageObj_CreateNewPath);
     CHK(FPDFPageObj_CreateNewRect);
     CHK(FPDFPath_SetStrokeColor);
