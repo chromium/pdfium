@@ -21,9 +21,14 @@ class CXFA_FMParser {
   std::unique_ptr<CXFA_FMFunctionDefinition> Parse();
   bool HasError() const;
 
+  void SetMaxParseDepthForTest(unsigned long max_depth) {
+    m_max_parse_depth = max_depth;
+  }
+
  private:
   bool NextToken();
   bool CheckThenNext(XFA_FM_TOKEN op);
+  bool IncrementParseDepthAndCheck();
 
   std::vector<std::unique_ptr<CXFA_FMExpression>> ParseTopExpression();
   std::unique_ptr<CXFA_FMExpression> ParseFunction();
@@ -54,6 +59,8 @@ class CXFA_FMParser {
   std::unique_ptr<CXFA_FMLexer> m_lexer;
   std::unique_ptr<CXFA_FMToken> m_token;
   bool m_error;
+  unsigned long m_parse_depth;
+  unsigned long m_max_parse_depth;
 };
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMPARSER_H_

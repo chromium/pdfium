@@ -107,3 +107,10 @@ TEST(CXFA_FMParserTest, Parse) {
   EXPECT_TRUE(ast->ToJavaScript(buf));
   EXPECT_EQ(ret, buf.AsStringC());
 }
+
+TEST(CXFA_FMParserTest, MaxParseDepth) {
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(L"foo(bar[baz(fizz[0])])");
+  parser->SetMaxParseDepthForTest(5);
+  EXPECT_EQ(nullptr, parser->Parse());
+  EXPECT_TRUE(parser->HasError());
+}
