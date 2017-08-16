@@ -88,7 +88,6 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   void SetValid(bool bValid) { m_bValid = bValid; }
   bool IsValid() { return m_bValid; }
 
-  void SetLock(bool bLocked) { m_bLocked = bLocked; }
   bool IsLocked() { return m_bLocked; }
 
   void SetBeingDestroyed() { m_bBeingDestroyed = true; }
@@ -115,7 +114,6 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool m_bOwnsPage;
 #endif  // PDF_ENABLE_XFA
   bool m_bEnterWidget;
-  bool m_bExitWidget;
   bool m_bOnWidget;
   bool m_bValid;
   bool m_bLocked;
