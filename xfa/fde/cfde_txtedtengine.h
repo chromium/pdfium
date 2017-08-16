@@ -100,7 +100,7 @@ class CFDE_TxtEdtEngine {
   CFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
   void SetText(const CFX_WideString& wsText);
-  int32_t GetTextLength() const { return GetTextBufLength(); }
+  int32_t GetTextLength() const { return m_pTxtBuf->GetTextLength() - 1; }
   CFX_WideString GetText(int32_t nStart, int32_t nCount) const;
   void ClearText();
 
@@ -136,7 +136,6 @@ class CFDE_TxtEdtEngine {
     return m_ParagPtrArray[nParagIndex].get();
   }
   CFDE_TxtEdtBuf* GetTextBuf() const { return m_pTxtBuf.get(); }
-  int32_t GetTextBufLength() const { return m_pTxtBuf->GetTextLength() - 1; }
 
   CFX_TxtBreak* GetTextBreak() const { return m_pTextBreak.get(); }
   int32_t GetLineCount() const { return m_nLineCount; }

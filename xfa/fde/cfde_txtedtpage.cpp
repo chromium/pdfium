@@ -92,9 +92,9 @@ int32_t CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) {
       for (int32_t j = 0; j < nRtCount; j++) {
         if (rectArr[j].Contains(ptF)) {
           nCaret = m_nPageStart + pPiece->nStart + j;
-          if (nCaret >= m_pEditEngine->GetTextBufLength()) {
+          if (nCaret >= m_pEditEngine->GetTextLength()) {
             bBefore = true;
-            return m_pEditEngine->GetTextBufLength();
+            return m_pEditEngine->GetTextLength();
           }
           wchar_t wChar = m_pEditEngine->GetTextBuf()->GetCharByIndex(nCaret);
           if (wChar == L'\n' || wChar == L'\r') {
@@ -165,8 +165,8 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   CFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
   bool bBefore;
   int32_t nIndex = GetCharIndex(fPoint, bBefore);
-  if (nIndex == m_pEditEngine->GetTextBufLength()) {
-    nIndex = m_pEditEngine->GetTextBufLength() - 1;
+  if (nIndex == m_pEditEngine->GetTextLength()) {
+    nIndex = m_pEditEngine->GetTextLength() - 1;
   }
   if (nIndex < 0) {
     return -1;

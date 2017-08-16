@@ -218,7 +218,7 @@ void CFDE_TxtEdtEngine::SetText(const CFX_WideString& wsText) {
 
 CFX_WideString CFDE_TxtEdtEngine::GetText(int32_t nStart,
                                           int32_t nCount) const {
-  int32_t nTextBufLength = GetTextBufLength();
+  int32_t nTextBufLength = GetTextLength();
   if (nCount == -1)
     nCount = nTextBufLength - nStart;
 
@@ -231,7 +231,7 @@ void CFDE_TxtEdtEngine::ClearText() {
   if (IsLocked())
     return;
 
-  int32_t len = GetTextBufLength();
+  int32_t len = GetTextLength();
   if (len == 0)
     return;
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
@@ -249,7 +249,7 @@ int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, bool bBefore) {
   if (IsLocked())
     return 0;
 
-  ASSERT(nIndex >= 0 && nIndex <= GetTextBufLength());
+  ASSERT(nIndex >= 0 && nIndex <= GetTextLength());
   if (!pdfium::IndexInBounds(m_PagePtrArray, m_nCaretPage))
     return 0;
 
@@ -350,7 +350,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   wsTemp.ReleaseBuffer(nLength);
   bool bPart = false;
   if (m_nLimit > 0) {
-    int32_t nTotalLength = GetTextBufLength();
+    int32_t nTotalLength = GetTextLength();
     for (const auto& lpSelRange : m_SelRangePtrArr)
       nTotalLength -= lpSelRange->nCount;
 
@@ -445,10 +445,10 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
     }
     nStart--;
   } else {
-    if (nStart == GetTextBufLength()) {
+    if (nStart == GetTextLength()) {
       return FDE_TXTEDT_MODIFY_RET_F_Full;
     }
-    if ((nStart + 1 < GetTextBufLength()) &&
+    if ((nStart + 1 < GetTextLength()) &&
         (m_pTxtBuf->GetCharByIndex(nStart) == L'\r') &&
         (m_pTxtBuf->GetCharByIndex(nStart + 1) == L'\n')) {
       nCount++;
@@ -611,7 +611,7 @@ int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
 
 CFX_WideString CFDE_TxtEdtEngine::GetPreDeleteText(int32_t nIndex,
                                                    int32_t nLength) {
-  CFX_WideString wsText = GetText(0, GetTextBufLength());
+  CFX_WideString wsText = GetText(0, GetTextLength());
   wsText.Delete(nIndex, nLength);
   return wsText;
 }
@@ -619,7 +619,7 @@ CFX_WideString CFDE_TxtEdtEngine::GetPreDeleteText(int32_t nIndex,
 CFX_WideString CFDE_TxtEdtEngine::GetPreInsertText(int32_t nIndex,
                                                    const wchar_t* lpText,
                                                    int32_t nLength) {
-  CFX_WideString wsText = GetText(0, GetTextBufLength());
+  CFX_WideString wsText = GetText(0, GetTextLength());
   int32_t nSelIndex = 0;
   int32_t nSelLength = 0;
   int32_t nSelCount = CountSelRanges();
@@ -645,7 +645,7 @@ CFX_WideString CFDE_TxtEdtEngine::GetPreReplaceText(int32_t nIndex,
                                                     int32_t nOriginLength,
                                                     const wchar_t* lpText,
                                                     int32_t nLength) {
-  CFX_WideString wsText = GetText(0, GetTextBufLength());
+  CFX_WideString wsText = GetText(0, GetTextLength());
   int32_t nSelIndex = 0;
   int32_t nSelLength = 0;
   int32_t nSelCount = CountSelRanges();
@@ -1164,10 +1164,10 @@ bool CFDE_TxtEdtEngine::MoveLineEnd() {
     }
   }
   nIndex = nStart + nCount - 1;
-  ASSERT(nIndex <= GetTextBufLength());
+  ASSERT(nIndex <= GetTextLength());
   wchar_t wChar = m_pTxtBuf->GetCharByIndex(nIndex);
   bool bBefore = false;
-  if (nIndex <= GetTextBufLength()) {
+  if (nIndex <= GetTextLength()) {
     if (wChar == L'\r') {
       bBefore = true;
     } else if (wChar == L'\n' && nIndex > nStart) {
@@ -1190,7 +1190,7 @@ bool CFDE_TxtEdtEngine::MoveHome() {
 }
 
 bool CFDE_TxtEdtEngine::MoveEnd() {
-  UpdateCaretRect(GetTextBufLength(), true);
+  UpdateCaretRect(GetTextLength(), true);
   return true;
 }
 
