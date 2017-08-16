@@ -410,12 +410,12 @@ void CFWL_Edit::OnCaretChanged() {
   }
 }
 
-void CFWL_Edit::OnTextChanged(const FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo) {
+void CFWL_Edit::OnTextChanged(const CFX_WideString& prevText) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VAlignMask)
     UpdateVAlignment();
 
   CFWL_EventTextChanged event(this);
-  event.wsPrevText = ChangeInfo.wsPrevText;
+  event.wsPrevText = prevText;
   DispatchEvent(&event);
 
   LayoutScrollBar();
@@ -640,7 +640,6 @@ void CFWL_Edit::UpdateEditEngine() {
 
 void CFWL_Edit::UpdateEditParams() {
   FDE_TXTEDTPARAMS params;
-  params.nHorzScale = 100;
   params.fPlateWidth = m_rtEngine.width;
   params.fPlateHeight = m_rtEngine.height;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText)
@@ -714,7 +713,6 @@ void CFWL_Edit::UpdateEditParams() {
   if (params.nLineCount <= 0)
     params.nLineCount = 1;
   params.fTabWidth = params.fFontSize * 1;
-  params.wLineBreakChar = L'\n';
   params.pEventSink = this;
   m_EdtEngine.SetEditParams(params);
 }

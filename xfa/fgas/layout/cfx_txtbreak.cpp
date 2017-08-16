@@ -922,7 +922,6 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   bool bSingleLine = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_SingleLine);
   bool bCombText = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_CombText);
   wchar_t wch;
-  wchar_t wLineBreakChar = pTxtRun->wLineBreakChar;
   int32_t iCharSize;
   float fCharSize;
   float fStart = bRTLPiece ? rect.right() : rect.left;
@@ -939,7 +938,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
     fCharSize = static_cast<float>(iCharSize) / 20000.0f;
     bool bRet = (!bSingleLine && IsCtrlCode(wch));
     if (!(wch == L'\v' || wch == L'\f' || wch == 0x2028 || wch == 0x2029 ||
-          (wLineBreakChar != 0xFEFF && wch == wLineBreakChar))) {
+          wch == L'\n')) {
       bRet = false;
     }
     if (bRet) {
@@ -991,7 +990,6 @@ FX_TXTRUN::FX_TXTRUN()
       iVerticalScale(100),
       dwCharStyles(0),
       pRect(nullptr),
-      wLineBreakChar(L'\n'),
       bSkipSpace(true) {}
 
 FX_TXTRUN::~FX_TXTRUN() {}

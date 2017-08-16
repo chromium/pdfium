@@ -549,7 +549,6 @@ FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
   tr.fFontSize = m_fFontSize;
   tr.dwStyles = m_dwTxtBkStyles;
   tr.dwCharStyles = pPiece->dwCharStyles;
-  tr.wLineBreakChar = L'\n';
   tr.pRect = &pPiece->rtPiece;
   return tr;
 }

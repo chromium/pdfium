@@ -92,7 +92,7 @@ class CFWL_Edit : public CFWL_Widget {
   void SetOuter(CFWL_Widget* pOuter);
 
   void OnCaretChanged();
-  void OnTextChanged(const FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo);
+  void OnTextChanged(const CFX_WideString& prevText);
   void OnSelChanged();
   bool OnPageLoad(int32_t nPageIndex);
   bool OnPageUnload(int32_t nPageIndex);

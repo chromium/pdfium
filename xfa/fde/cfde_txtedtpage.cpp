@@ -260,22 +260,21 @@ int32_t CFDE_TxtEdtPage::LoadPage() {
 
         float fParaBreakWidth = 0.0f;
         if (!CFX_BreakTypeNoneOrPiece(pPiece->m_dwStatus)) {
-          wchar_t wRtChar = pParams->wLineBreakChar;
           if (TxtEdtPiece.nCount >= 2) {
             wchar_t wChar = pBuf->GetCharByIndex(
                 m_nPageStart + TxtEdtPiece.nStart + TxtEdtPiece.nCount - 1);
             wchar_t wCharPre = pBuf->GetCharByIndex(
                 m_nPageStart + TxtEdtPiece.nStart + TxtEdtPiece.nCount - 2);
-            if (wChar == wRtChar) {
+            if (wChar == L'\n') {
               fParaBreakWidth += fDefCharWidth;
             }
-            if (wCharPre == wRtChar) {
+            if (wCharPre == L'\n') {
               fParaBreakWidth += fDefCharWidth;
             }
           } else if (TxtEdtPiece.nCount >= 1) {
             wchar_t wChar = pBuf->GetCharByIndex(
                 m_nPageStart + TxtEdtPiece.nStart + TxtEdtPiece.nCount - 1);
-            if (wChar == wRtChar) {
+            if (wChar == L'\n') {
               fParaBreakWidth += fDefCharWidth;
             }
           }

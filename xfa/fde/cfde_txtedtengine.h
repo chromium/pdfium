@@ -55,37 +55,20 @@ struct FDE_TXTEDTPARAMS {
 
   float fPlateWidth;
   float fPlateHeight;
+
   int32_t nLineCount;
   uint32_t dwLayoutStyles;
   uint32_t dwAlignment;
   uint32_t dwMode;
+
   CFX_RetainPtr<CFGAS_GEFont> pFont;
   float fFontSize;
   FX_ARGB dwFontColor;
+
   float fLineSpace;
   float fTabWidth;
-  wchar_t wDefChar;
-  wchar_t wLineBreakChar;
-  int32_t nLineEnd;
-  int32_t nHorzScale;
-  float fCharSpace;
+
   CFWL_Edit* pEventSink;
-};
-
-enum FDE_TXTEDT_TEXTCHANGE_TYPE {
-  FDE_TXTEDT_TEXTCHANGE_TYPE_Insert = 0,
-  FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
-  FDE_TXTEDT_TEXTCHANGE_TYPE_Replace,
-};
-
-struct FDE_TXTEDT_TEXTCHANGE_INFO {
-  FDE_TXTEDT_TEXTCHANGE_INFO();
-  ~FDE_TXTEDT_TEXTCHANGE_INFO();
-
-  int32_t nChangeType;
-  CFX_WideString wsInsert;
-  CFX_WideString wsDelete;
-  CFX_WideString wsPrevText;
 };
 
 class CFDE_TxtEdtEngine {
@@ -149,17 +132,6 @@ class CFDE_TxtEdtEngine {
   void Inner_DeleteRange(int32_t nStart, int32_t nCount);
   void Inner_Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
   const FDE_TXTEDTPARAMS* GetParams() const { return &m_Param; }
-  FDE_TXTEDT_TEXTCHANGE_INFO* GetChangeInfo() { return &m_ChangeInfo; }
-
-  void UpdateChangeInfoInsert(int32_t type, const CFX_WideString& insertValue) {
-    m_ChangeInfo.nChangeType = type;
-    m_ChangeInfo.wsInsert = insertValue;
-  }
-
-  void UpdateChangeInfoDelete(int32_t type, const CFX_WideString& deleteValue) {
-    m_ChangeInfo.nChangeType = type;
-    m_ChangeInfo.wsDelete = deleteValue;
-  }
 
  private:
   struct FDE_TXTEDTSELRANGE {
@@ -229,16 +201,14 @@ class CFDE_TxtEdtEngine {
   int32_t m_nAnchorPos;
   float m_fCaretPosReserve;
   int32_t m_nCaret;
-  bool m_bBefore;
   int32_t m_nCaretPage;
   CFX_RectF m_rtCaret;
-  bool m_bLock;
   int32_t m_nLimit;
   wchar_t m_wcAliasChar;
   int32_t m_nFirstLineEnd;
+  bool m_bBefore;
+  bool m_bLock;
   bool m_bAutoLineEnd;
-  wchar_t m_wLineEnd;
-  FDE_TXTEDT_TEXTCHANGE_INFO m_ChangeInfo;
 };
 
 #endif  // XFA_FDE_CFDE_TXTEDTENGINE_H_

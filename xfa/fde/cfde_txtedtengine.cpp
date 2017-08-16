@@ -21,7 +21,6 @@
 namespace {
 
 const uint32_t kPageWidthMax = 0xffff;
-const uint32_t kUnicodeParagraphSeparator = 0x2029;
 
 enum FDE_TXTEDT_MODIFY_RET {
   FDE_TXTEDT_MODIFY_RET_F_Locked = -5,
@@ -49,24 +48,21 @@ class InsertOperation : public IFDE_TxtEdtDoRecord {
   ~InsertOperation() override {}
 
   void Undo() const override {
+    CFX_WideString prev = m_pEngine->GetText(0, -1);
+
     if (m_pEngine->IsSelect())
       m_pEngine->ClearSelection();
 
     m_pEngine->Inner_DeleteRange(m_nCaret, m_wsInsert.GetLength());
-    m_pEngine->UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
-                                      m_wsInsert);
-    m_pEngine->GetParams()->pEventSink->OnTextChanged(
-        *m_pEngine->GetChangeInfo());
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(prev);
     m_pEngine->SetCaretPos(m_nCaret, true);
   }
 
   void Redo() const override {
+    CFX_WideString prev = m_pEngine->GetText(0, -1);
     m_pEngine->Inner_Insert(m_nCaret, m_wsInsert.c_str(),
                             m_wsInsert.GetLength());
-    m_pEngine->UpdateChangeInfoInsert(FDE_TXTEDT_TEXTCHANGE_TYPE_Insert,
-                                      m_wsInsert);
-    m_pEngine->GetParams()->pEventSink->OnTextChanged(
-        *m_pEngine->GetChangeInfo());
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(prev);
     m_pEngine->SetCaretPos(m_nCaret, false);
   }
 
@@ -94,6 +90,7 @@ class DeleteOperation : public IFDE_TxtEdtDoRecord {
   ~DeleteOperation() override {}
 
   void Undo() const override {
+    CFX_WideString prev = m_pEngine->GetText(0, -1);
     if (m_pEngine->IsSelect())
       m_pEngine->ClearSelection();
 
@@ -101,22 +98,17 @@ class DeleteOperation : public IFDE_TxtEdtDoRecord {
     if (m_bSel)
       m_pEngine->AddSelRange(m_nIndex, m_wsRange.GetLength());
 
-    m_pEngine->UpdateChangeInfoInsert(FDE_TXTEDT_TEXTCHANGE_TYPE_Insert,
-                                      m_wsRange);
-    m_pEngine->GetParams()->pEventSink->OnTextChanged(
-        *m_pEngine->GetChangeInfo());
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(prev);
     m_pEngine->SetCaretPos(m_nCaret, true);
   }
 
   void Redo() const override {
+    CFX_WideString prev = m_pEngine->GetText(0, -1);
     m_pEngine->Inner_DeleteRange(m_nIndex, m_wsRange.GetLength());
     if (m_bSel)
       m_pEngine->RemoveSelRange(m_nIndex, m_wsRange.GetLength());
 
-    m_pEngine->UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
-                                      m_wsRange);
-    m_pEngine->GetParams()->pEventSink->OnTextChanged(
-        *m_pEngine->GetChangeInfo());
+    m_pEngine->GetParams()->pEventSink->OnTextChanged(prev);
     m_pEngine->SetCaretPos(m_nIndex, true);
   }
 
@@ -141,18 +133,9 @@ FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
       dwFontColor(0xff000000),
       fLineSpace(10.0f),
       fTabWidth(36),
-      wDefChar(0xFEFF),
-      wLineBreakChar('\n'),
-      nLineEnd(0),
-      nHorzScale(100),
-      fCharSpace(0),
       pEventSink(nullptr) {}
 
 FDE_TXTEDTPARAMS::~FDE_TXTEDTPARAMS() {}
-
-FDE_TXTEDT_TEXTCHANGE_INFO::FDE_TXTEDT_TEXTCHANGE_INFO() {}
-
-FDE_TXTEDT_TEXTCHANGE_INFO::~FDE_TXTEDT_TEXTCHANGE_INFO() {}
 
 CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
     : m_pTxtBuf(pdfium::MakeUnique<CFDE_TxtEdtBuf>()),
@@ -161,16 +144,13 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_nAnchorPos(-1),
       m_fCaretPosReserve(0.0),
       m_nCaret(0),
-      m_bBefore(true),
       m_nCaretPage(0),
-      m_bLock(false),
       m_nLimit(0),
       m_wcAliasChar(L'*'),
       m_nFirstLineEnd(FDE_TXTEDIT_LINEEND_Auto),
-      m_bAutoLineEnd(true),
-      m_wLineEnd(kUnicodeParagraphSeparator) {
-  m_bAutoLineEnd = (m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto);
-}
+      m_bBefore(true),
+      m_bLock(false),
+      m_bAutoLineEnd(true) {}
 
 CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
   RemoveAllParags();
@@ -184,8 +164,7 @@ void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
     m_pTextBreak = pdfium::MakeUnique<CFX_TxtBreak>();
 
   m_Param = params;
-  m_wLineEnd = params.wLineBreakChar;
-  m_bAutoLineEnd = m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto;
+  m_bAutoLineEnd = true;
   UpdateTxtBreak();
 }
 
@@ -210,7 +189,7 @@ void CFDE_TxtEdtEngine::SetText(const CFX_WideString& wsText) {
     }
     m_pTxtBuf->SetText(wsTemp);
   }
-  m_pTxtBuf->Insert(nLength, &m_wLineEnd, 1);
+  m_pTxtBuf->Insert(nLength, L"\n", 1);
   RebuildParagraphs();
 }
 
@@ -238,8 +217,10 @@ void CFDE_TxtEdtEngine::ClearText() {
       return;
   }
 
+  CFX_WideString prev = GetText(0, -1);
+
   DeleteRange_DoRecord(0, len, false);
-  m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
+  m_Param.pEventSink->OnTextChanged(prev);
   SetCaretPos(0, true);
 }
 
@@ -393,10 +374,9 @@ int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
   m_Param.pEventSink->OnAddDoRecord(pdfium::MakeUnique<InsertOperation>(
       this, m_nCaret, CFX_WideString(lpBuffer, nLength)));
 
-  m_ChangeInfo.wsPrevText = GetText(0, -1);
+  CFX_WideString prev = GetText(0, -1);
   Inner_Insert(m_nCaret, lpBuffer, nLength);
-  m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
-  m_ChangeInfo.wsInsert = CFX_WideString(lpBuffer, nLength);
+
   int32_t nStart = m_nCaret;
   nStart += nLength;
   wchar_t wChar = m_pTxtBuf->GetCharByIndex(nStart - 1);
@@ -406,7 +386,7 @@ int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
     bBefore = false;
   }
   SetCaretPos(nStart, bBefore);
-  m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
+  m_Param.pEventSink->OnTextChanged(prev);
   return FDE_TXTEDT_MODIFY_RET_S_Normal;
 }
 
@@ -450,12 +430,11 @@ void CFDE_TxtEdtEngine::Delete(bool bBackspace) {
   m_Param.pEventSink->OnAddDoRecord(pdfium::MakeUnique<DeleteOperation>(
       this, nStart, m_nCaret, wsRange, false));
 
-  UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
-                         GetText(nStart, nCount));
+  CFX_WideString prev = GetText(0, -1);
   Inner_DeleteRange(nStart, nCount);
   SetCaretPos(nStart + ((!bBackspace && nStart > 0) ? -1 : 0),
               (bBackspace || nStart == 0));
-  m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
+  m_Param.pEventSink->OnTextChanged(prev);
 }
 
 void CFDE_TxtEdtEngine::RemoveSelRange(int32_t nStart, int32_t nCount) {
@@ -670,7 +649,7 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
   int32_t nParagIndex = ParagPos.nParagIndex;
   for (int32_t i = 0; i < nLength; i++, lpPos++) {
     wCurChar = *lpPos;
-    if (wCurChar == m_wLineEnd) {
+    if (wCurChar == L'\n') {
       if (bFirst) {
         pParag->SetTextLength(nLeavePart + (i - nTextStart + 1));
         pParag->SetLineCount(-1);
@@ -780,8 +759,6 @@ void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
   m_Param.pEventSink->OnAddDoRecord(pdfium::MakeUnique<DeleteOperation>(
       this, nStart, m_nCaret, wsRange, bSel));
 
-  UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Delete,
-                         GetText(nStart, nCount));
   Inner_DeleteRange(nStart, nCount);
 }
 
@@ -804,7 +781,7 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
   do {
     wChar = pIter->GetChar();
     nIndex = pIter->GetAt();
-    if (wChar == m_wLineEnd) {
+    if (wChar == L'\n') {
       auto pParag = pdfium::MakeUnique<CFDE_TxtEdtParag>(this);
       pParag->SetStartIndex(nParagStart);
       pParag->SetTextLength(nIndex - nParagStart + 1);
@@ -885,11 +862,11 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   m_pTextBreak->SetFont(m_Param.pFont);
   m_pTextBreak->SetFontSize(m_Param.fFontSize);
   m_pTextBreak->SetTabWidth(m_Param.fTabWidth);
-  m_pTextBreak->SetDefaultChar(m_Param.wDefChar);
-  m_pTextBreak->SetParagraphBreakChar(m_Param.wLineBreakChar);
+  m_pTextBreak->SetDefaultChar(0xFEFF);
+  m_pTextBreak->SetParagraphBreakChar(L'\n');
   m_pTextBreak->SetLineBreakTolerance(m_Param.fFontSize * 0.2f);
-  m_pTextBreak->SetHorizontalScale(m_Param.nHorzScale);
-  m_pTextBreak->SetCharSpace(m_Param.fCharSpace);
+  m_pTextBreak->SetHorizontalScale(100);
+  m_pTextBreak->SetCharSpace(0);
 }
 
 bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
@@ -899,7 +876,7 @@ bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
     wchar_t wc = lpText[i];
     switch (wc) {
       case L'\r': {
-        lpText[i] = m_wLineEnd;
+        lpText[i] = L'\n';
         bPreIsCR = true;
       } break;
       case L'\n': {
@@ -917,7 +894,7 @@ bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
             m_bAutoLineEnd = false;
           }
         } else {
-          lpText[i] = m_wLineEnd;
+          lpText[i] = L'\n';
           if (m_bAutoLineEnd) {
             m_nFirstLineEnd = FDE_TXTEDIT_LINEEND_LF;
             m_bAutoLineEnd = false;
@@ -943,7 +920,7 @@ void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) const {
     int32_t nLength = wsText.GetLength();
     wchar_t* lpPos = const_cast<wchar_t*>(wsText.c_str());
     for (int32_t i = 0; i < nLength; i++, lpPos++) {
-      if (*lpPos == m_wLineEnd) {
+      if (*lpPos == L'\n') {
         *lpPos = wc;
         PosArr.push_back(i);
       }
@@ -974,7 +951,7 @@ void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) const {
     int32_t nLength = wsText.GetLength();
     wchar_t* lpBuf = const_cast<wchar_t*>(wsText.c_str());
     for (int32_t i = 0; i < nLength; i++, lpBuf++) {
-      if (*lpBuf == m_wLineEnd)
+      if (*lpBuf == L'\n')
         *lpBuf = wc;
     }
   }
@@ -1269,6 +1246,8 @@ void CFDE_TxtEdtEngine::DeleteSelect() {
   if (nCountRange <= 0)
     return;
 
+  CFX_WideString prev = GetText(0, -1);
+
   int32_t nSelStart = 0;
   while (nCountRange > 0) {
     int32_t nSelCount = GetSelRange(--nCountRange, &nSelStart);
@@ -1276,7 +1255,7 @@ void CFDE_TxtEdtEngine::DeleteSelect() {
     DeleteRange_DoRecord(nSelStart, nSelCount, true);
   }
   ClearSelection();
-  m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
+  m_Param.pEventSink->OnTextChanged(prev);
   m_Param.pEventSink->OnSelChanged();
   SetCaretPos(nSelStart, true);
 }

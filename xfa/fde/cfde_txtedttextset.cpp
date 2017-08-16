@@ -35,7 +35,6 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(const FDE_TEXTEDITPIECE& piece,
   tr.dwStyles = dwLayoutStyle;
   tr.dwCharStyles = piece.dwCharStyles;
   tr.pRect = &piece.rtPiece;
-  tr.wLineBreakChar = pTextParams->wLineBreakChar;
   return pBreak->GetDisplayPos(&tr, pCharPos);
 }
 
@@ -57,6 +56,5 @@ std::vector<CFX_RectF> CFDE_TxtEdtTextSet::GetCharRects(
   tr.dwStyles = dwLayoutStyle;
   tr.dwCharStyles = pPiece->dwCharStyles;
   tr.pRect = &pPiece->rtPiece;
-  tr.wLineBreakChar = pTextParams->wLineBreakChar;
   return pEngine->GetTextBreak()->GetCharRects(&tr, bBBox);
 }

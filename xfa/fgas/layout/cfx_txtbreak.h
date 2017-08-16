@@ -51,7 +51,6 @@ struct FX_TXTRUN {
   int32_t iVerticalScale;
   uint32_t dwCharStyles;
   const CFX_RectF* pRect;
-  wchar_t wLineBreakChar;
   bool bSkipSpace;
 };
 
