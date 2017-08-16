@@ -62,6 +62,8 @@ class CPDF_RenderStatus {
   bool ContinueSingleObject(CPDF_PageObject* pObj,
                             const CFX_Matrix* pObj2Device,
                             IFX_Pause* pPause);
+  void ProcessClipPath(const CPDF_ClipPath& ClipPath,
+                       const CFX_Matrix* pObj2Device);
   CPDF_RenderContext* GetContext() const { return m_pContext.Get(); }
 
 #if defined _SKIA_SUPPORT_
@@ -77,7 +79,6 @@ class CPDF_RenderStatus {
   friend class CPDF_ImageRenderer;
   friend class CPDF_RenderContext;
 
-  void ProcessClipPath(CPDF_ClipPath ClipPath, const CFX_Matrix* pObj2Device);
   bool ProcessTransparency(CPDF_PageObject* PageObj,
                            const CFX_Matrix* pObj2Device);
   void ProcessObjectNoClip(CPDF_PageObject* PageObj,

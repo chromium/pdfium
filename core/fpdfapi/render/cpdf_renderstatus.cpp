@@ -1383,7 +1383,7 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
   return m_Options.TranslateColor(ArgbEncode(alpha, rgb));
 }
 
-void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
+void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
                                         const CFX_Matrix* pObj2Device) {
   if (!ClipPath.HasRef()) {
     if (m_LastClipPath.HasRef()) {

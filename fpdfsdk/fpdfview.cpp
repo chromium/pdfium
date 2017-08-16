@@ -765,6 +765,9 @@ FX_RECT GetMaskDimensionsAndOffsets(CPDF_Page* pPage,
   // Compute offsets
   int offset_x = 0;
   int offset_y = 0;
+  if (size_x > size_y)
+    std::swap(size_x_bm, size_y_bm);
+
   switch ((rotate + page_rotation) % 4) {
     case 0:
       offset_x = start_x_bm + start_x;
@@ -829,9 +832,8 @@ void RenderBitmap(CFX_RenderDevice* device,
                         FXDIB_BLEND_NORMAL, nullptr, false);
 
   if (device->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
-    device->StretchDIBitsWithFlagsAndBlend(pDst, mask_area.left, mask_area.top,
-                                           size_x_bm, size_y_bm, 0,
-                                           FXDIB_BLEND_NORMAL);
+    device->StretchDIBits(pDst, mask_area.left, mask_area.top, size_x_bm,
+                          size_y_bm);
   } else {
     device->SetDIBits(pDst, mask_area.left, mask_area.top);
   }
@@ -854,16 +856,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   CPDF_PageRenderContext* pContext = pPage->GetRenderContext();
 
   CFX_RetainPtr<CFX_DIBitmap> pBitmap;
-  // TODO(rbpotter): Restore the behavior described below after resolving
-  // crbug.com/753700
   // Don't render the full page to bitmap for a mask unless there are a lot
   // of masks. Full page bitmaps result in large spool sizes, so they should
   // only be used when necessary. For large numbers of masks, rendering each
   // individually is inefficient and unlikely to significantly improve spool
-  // size. This fix is temporarily disabled due to crbug.com/753700 so all
-  // image masks will result in the full page rendering as bitmap.
+  // size.
   const bool bNewBitmap =
-      pPage->BackgroundAlphaNeeded() || pPage->HasImageMask();
+      pPage->BackgroundAlphaNeeded() ||
+      (pPage->HasImageMask() && pPage->GetMaskBoundingBoxes().size() > 100);
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
   if (bNewBitmap || bHasMask) {
     pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();

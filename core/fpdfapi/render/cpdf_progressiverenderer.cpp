@@ -72,12 +72,23 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
       iter = m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->begin();
     }
     int nObjsToGo = kStepLimit;
+    bool is_mask = false;
     while (iter != iterEnd) {
       CPDF_PageObject* pCurObj = iter->get();
       if (pCurObj && pCurObj->m_Left <= m_ClipRect.right &&
           pCurObj->m_Right >= m_ClipRect.left &&
           pCurObj->m_Bottom <= m_ClipRect.top &&
           pCurObj->m_Top >= m_ClipRect.bottom) {
+        if (m_pOptions->m_Flags & RENDER_BREAKFORMASKS && pCurObj->IsImage() &&
+            pCurObj->AsImage()->GetImage()->IsMask()) {
+          if (m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
+            m_LastObjectRendered = iter;
+            m_pRenderStatus->ProcessClipPath(pCurObj->m_ClipPath,
+                                             &m_pCurrentLayer->m_Matrix);
+            return;
+          }
+          is_mask = true;
+        }
         if (m_pRenderStatus->ContinueSingleObject(
                 pCurObj, &m_pCurrentLayer->m_Matrix, pPause)) {
           return;
@@ -98,20 +109,20 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
           return;
         nObjsToGo = kStepLimit;
       }
-      if (pCurObj->IsImage() && pCurObj->AsImage()->GetImage()->IsMask() &&
-          (m_pOptions->m_Flags & RENDER_BREAKFORMASKS)) {
-        return;
-      }
       ++iter;
+      if (is_mask && iter != iterEnd)
+        return;
     }
     if (m_pCurrentLayer->m_pObjectHolder->IsParsed()) {
       m_pRenderStatus.reset();
       m_pDevice->RestoreState(false);
       m_pCurrentLayer = nullptr;
       m_LayerIndex++;
-      if (pPause && pPause->NeedToPauseNow()) {
+      if (is_mask || (pPause && pPause->NeedToPauseNow())) {
         return;
       }
+    } else if (is_mask) {
+      return;
     } else {
       m_pCurrentLayer->m_pObjectHolder->ContinueParse(pPause);
       if (!m_pCurrentLayer->m_pObjectHolder->IsParsed())
