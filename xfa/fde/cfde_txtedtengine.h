@@ -111,15 +111,14 @@ class CFDE_TxtEdtEngine {
   int32_t SetCaretPos(int32_t nIndex, bool bBefore);
   int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret, bool bShift, bool bCtrl);
 
-  int32_t Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
-  int32_t Delete(int32_t nStart, bool bBackspace);
+  int32_t Insert(const CFX_WideString& str);
+  void Delete(bool bBackspace);
 
   void SetLimit(int32_t nLimit) { m_nLimit = nLimit; }
   int32_t GetLimit() const { return m_nLimit; }
   void SetAliasChar(wchar_t wcAlias) { m_wcAliasChar = wcAlias; }
 
   void RemoveSelRange(int32_t nStart, int32_t nCount);
-
   void AddSelRange(int32_t nStart, int32_t nCount);
   int32_t CountSelRanges() const {
     return pdfium::CollectionSize<int32_t>(m_SelRangePtrArr);

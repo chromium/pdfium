@@ -347,14 +347,12 @@ bool CFWL_Edit::Cut(CFX_WideString& wsCut) {
     wsCut += wsTemp;
     wsTemp.clear();
   }
-  m_EdtEngine.Delete(0, false);
+  m_EdtEngine.Delete(false);
   return true;
 }
 
 bool CFWL_Edit::Paste(const CFX_WideString& wsPaste) {
-  int32_t nCaret = m_EdtEngine.GetCaretPos();
-  int32_t iError =
-      m_EdtEngine.Insert(nCaret, wsPaste.c_str(), wsPaste.GetLength());
+  int32_t iError = m_EdtEngine.Insert(wsPaste);
   if (iError < 0) {
     ProcessInsertError(iError);
     return false;
@@ -1195,6 +1193,9 @@ void CFWL_Edit::ClearRecord() {
 }
 
 void CFWL_Edit::ProcessInsertError(int32_t iError) {
+  // TODO(dsinclair): This should probably also send events for Validation
+  // failure ....
+
   if (iError != -2)
     return;
 
@@ -1422,11 +1423,11 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
           (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
         break;
       }
-      int32_t nCaret = m_EdtEngine.GetCaretPos();
+
 #if (_FX_OS_ == _FX_MACOSX_)
-      m_EdtEngine.Delete(nCaret, true);
+      m_EdtEngine.Delete(true);
 #else
-      m_EdtEngine.Delete(nCaret, false);
+      m_EdtEngine.Delete(false);
 #endif
       break;
     }
@@ -1447,21 +1448,20 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
 
   int32_t iError = 0;
   wchar_t c = static_cast<wchar_t>(pMsg->m_dwKeyCode);
-  int32_t nCaret = m_EdtEngine.GetCaretPos();
   switch (c) {
     case FWL_VKEY_Back:
-      m_EdtEngine.Delete(nCaret, true);
+      m_EdtEngine.Delete(true);
       break;
     case FWL_VKEY_NewLine:
     case FWL_VKEY_Escape:
       break;
     case FWL_VKEY_Tab: {
-      iError = m_EdtEngine.Insert(nCaret, L"\t", 1);
+      iError = m_EdtEngine.Insert(L"\t");
       break;
     }
     case FWL_VKEY_Return: {
       if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_WantReturn) {
-        iError = m_EdtEngine.Insert(nCaret, L"\n", 1);
+        iError = m_EdtEngine.Insert(L"\n");
       }
       break;
     }
@@ -1485,7 +1485,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
       {
         break;
       }
-      iError = m_EdtEngine.Insert(nCaret, &c, 1);
+      iError = m_EdtEngine.Insert(CFX_WideString(c));
       break;
     }
   }

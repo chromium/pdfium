@@ -26,10 +26,8 @@ const uint32_t kUnicodeParagraphSeparator = 0x2029;
 enum FDE_TXTEDT_MODIFY_RET {
   FDE_TXTEDT_MODIFY_RET_F_Locked = -5,
   FDE_TXTEDT_MODIFY_RET_F_Invalidate = -4,
-  FDE_TXTEDT_MODIFY_RET_F_Boundary = -3,
   FDE_TXTEDT_MODIFY_RET_F_Full = -2,
   FDE_TXTEDT_MODIFY_RET_S_Normal = 0,
-  FDE_TXTEDT_MODIFY_RET_S_Part = 2,
 };
 
 enum FDE_TXTEDIT_LINEEND {
@@ -337,18 +335,17 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
   return m_nCaret;
 }
 
-int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
-                                  const wchar_t* lpText,
-                                  int32_t nLength) {
+int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
   if (IsLocked())
     return FDE_TXTEDT_MODIFY_RET_F_Locked;
 
+  int32_t nLength = str.GetLength();
   CFX_WideString wsTemp;
   wchar_t* lpBuffer = wsTemp.GetBuffer(nLength);
-  memcpy(lpBuffer, lpText, nLength * sizeof(wchar_t));
+  memcpy(lpBuffer, str.c_str(), nLength * sizeof(wchar_t));
   ReplaceParagEnd(lpBuffer, nLength, false);
   wsTemp.ReleaseBuffer(nLength);
-  bool bPart = false;
+
   if (m_nLimit > 0) {
     int32_t nTotalLength = GetTextLength();
     for (const auto& lpSelRange : m_SelRangePtrArr)
@@ -358,14 +355,11 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
     if (nTotalLength == m_nLimit)
       return FDE_TXTEDT_MODIFY_RET_F_Full;
 
-    if (nExpectLength > m_nLimit) {
+    if (nExpectLength > m_nLimit)
       nLength -= (nExpectLength - m_nLimit);
-      bPart = true;
-    }
   }
   if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Vert) ||
       (m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz)) {
-    int32_t nTemp = nLength;
     if (m_Param.dwMode & FDE_TEXTEDITMODE_Password) {
       while (nLength > 0) {
         CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
@@ -389,12 +383,8 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
         nLength--;
       }
     }
-    if (nLength == 0) {
+    if (nLength == 0)
       return FDE_TXTEDT_MODIFY_RET_F_Full;
-    }
-    if (nLength < nTemp) {
-      bPart = true;
-    }
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
     CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
@@ -411,7 +401,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   Inner_Insert(m_nCaret, lpBuffer, nLength);
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
   m_ChangeInfo.wsInsert = CFX_WideString(lpBuffer, nLength);
-  nStart = m_nCaret;
+  int32_t nStart = m_nCaret;
   nStart += nLength;
   wchar_t wChar = m_pTxtBuf->GetCharByIndex(nStart - 1);
   bool bBefore = true;
@@ -421,23 +411,23 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   }
   SetCaretPos(nStart, bBefore);
   m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
-  return bPart ? FDE_TXTEDT_MODIFY_RET_S_Part : FDE_TXTEDT_MODIFY_RET_S_Normal;
+  return FDE_TXTEDT_MODIFY_RET_S_Normal;
 }
 
-int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
-  if (IsLocked()) {
-    return FDE_TXTEDT_MODIFY_RET_F_Locked;
-  }
+void CFDE_TxtEdtEngine::Delete(bool bBackspace) {
+  if (IsLocked())
+    return;
   if (IsSelect()) {
     DeleteSelect();
-    return FDE_TXTEDT_MODIFY_RET_S_Normal;
+    return;
   }
 
   int32_t nCount = 1;
+  int32_t nStart = m_nCaret;
   if (bBackspace) {
-    if (nStart == 0) {
-      return FDE_TXTEDT_MODIFY_RET_F_Boundary;
-    }
+    if (nStart == 0)
+      return;
+
     if (nStart > 2 && m_pTxtBuf->GetCharByIndex(nStart - 1) == L'\n' &&
         m_pTxtBuf->GetCharByIndex(nStart - 2) == L'\r') {
       nStart--;
@@ -445,9 +435,9 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
     }
     nStart--;
   } else {
-    if (nStart == GetTextLength()) {
-      return FDE_TXTEDT_MODIFY_RET_F_Full;
-    }
+    if (nStart == GetTextLength())
+      return;
+
     if ((nStart + 1 < GetTextLength()) &&
         (m_pTxtBuf->GetCharByIndex(nStart) == L'\r') &&
         (m_pTxtBuf->GetCharByIndex(nStart + 1) == L'\n')) {
@@ -457,8 +447,9 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
     CFX_WideString wsText = GetPreDeleteText(nStart, nCount);
     if (!m_Param.pEventSink->OnValidate(wsText))
-      return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
+      return;
   }
+
   CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
   m_Param.pEventSink->OnAddDoRecord(pdfium::MakeUnique<DeleteOperation>(
       this, nStart, m_nCaret, wsRange, false));
@@ -469,7 +460,6 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
   SetCaretPos(nStart + ((!bBackspace && nStart > 0) ? -1 : 0),
               (bBackspace || nStart == 0));
   m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
-  return FDE_TXTEDT_MODIFY_RET_S_Normal;
 }
 
 void CFDE_TxtEdtEngine::RemoveSelRange(int32_t nStart, int32_t nCount) {
