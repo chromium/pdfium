@@ -67,16 +67,14 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                        m_pThemeData->clrEnd[iColor], &fillPath,
                        FXFILL_ALTERNATE, &pParams->m_matrix);
 
-      CXFA_Color crStroke(m_pThemeData->clrBorder[iColor]);
-      pGraphics->SetStrokeColor(&crStroke);
+      pGraphics->SetStrokeColor(CXFA_Color(m_pThemeData->clrBorder[iColor]));
       pGraphics->StrokePath(&strokePath, &pParams->m_matrix);
 
       fillPath.Clear();
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
-      CXFA_Color crFill(m_pThemeData->clrFill[iColor]);
-      pGraphics->SetFillColor(&crFill);
+      pGraphics->SetFillColor(CXFA_Color(m_pThemeData->clrFill[iColor]));
       pGraphics->FillPath(&fillPath, FXFILL_WINDING, &pParams->m_matrix);
       if (pParams->m_dwStates & CFWL_PartState_Focused) {
         rtInner.Inflate(1, 1, 0, 0);

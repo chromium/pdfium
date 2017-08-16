@@ -92,8 +92,8 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
   }
 
   CXFA_FFDoc* pDoc = GetDoc();
-  CXFA_Color crHighlight(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc));
-  pGS->SetFillColor(&crHighlight);
+  pGS->SetFillColor(
+      CXFA_Color(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc)));
   CXFA_Path path;
   if (bEllipse)
     path.AddEllipse(m_rtUI);
@@ -107,8 +107,7 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   if (!(m_dwStatus & XFA_WidgetStatus_Focused))
     return;
 
-  CXFA_Color cr(0xFF000000);
-  pGS->SetStrokeColor(&cr);
+  pGS->SetStrokeColor(CXFA_Color(0xFF000000));
 
   float DashPattern[2] = {1, 1};
   pGS->SetLineDash(0.0f, DashPattern, 2);

@@ -16,8 +16,8 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_font.h"
+#include "xfa/fxgraphics/cxfa_color.h"
 
-class CXFA_Color;
 class CXFA_Path;
 
 using FX_FillMode = int32_t;
@@ -57,8 +57,8 @@ class CXFA_Graphics {
   void SetLineDash(float dashPhase, float* dashArray, int32_t dashCount);
   void SetLineDash(FX_DashStyle dashStyle);
   void SetLineWidth(float lineWidth, bool isActOnDash = false);
-  void SetStrokeColor(CXFA_Color* color);
-  void SetFillColor(CXFA_Color* color);
+  void SetStrokeColor(const CXFA_Color& color);
+  void SetFillColor(const CXFA_Color& color);
   void SetClipRect(const CFX_RectF& rect);
   void StrokePath(CXFA_Path* path, CFX_Matrix* matrix = nullptr);
   void FillPath(CXFA_Path* path,
@@ -81,8 +81,8 @@ class CXFA_Graphics {
     CFX_GraphStateData graphState;
     CFX_Matrix CTM;
     bool isActOnDash;
-    CXFA_Color* strokeColor;
-    CXFA_Color* fillColor;
+    CXFA_Color strokeColor;
+    CXFA_Color fillColor;
   } m_info;
 
   void RenderDeviceSetLineDash(FX_DashStyle dashStyle);

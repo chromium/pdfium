@@ -30,8 +30,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
         fWidth = edge.GetThickness();
       }
     }
-    CXFA_Color crLine(cr);
-    pParams->m_pGraphics->SetStrokeColor(&crLine);
+    pParams->m_pGraphics->SetStrokeColor(CXFA_Color(cr));
     pParams->m_pGraphics->SetLineWidth(fWidth);
     pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);
     return;
@@ -46,8 +45,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       if (pParams->m_pPath) {
         CXFA_Graphics* pGraphics = pParams->m_pGraphics;
         pGraphics->SaveGraphState();
-        CXFA_Color crSelected(FWLTHEME_COLOR_BKSelected);
-        pGraphics->SetFillColor(&crSelected);
+        pGraphics->SetFillColor(CXFA_Color(FWLTHEME_COLOR_BKSelected));
         pGraphics->FillPath(pParams->m_pPath, FXFILL_WINDING,
                             &pParams->m_matrix);
         pGraphics->RestoreGraphState();
@@ -58,14 +56,14 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
         CXFA_Color cr(FWLTHEME_COLOR_Background);
         if (!pParams->m_bStaticBackground) {
           if (pParams->m_dwStates & CFWL_PartState_Disabled)
-            cr.Set(FWLTHEME_COLOR_EDGERB1);
+            cr = CXFA_Color(FWLTHEME_COLOR_EDGERB1);
           else if (pParams->m_dwStates & CFWL_PartState_ReadOnly)
-            cr.Set(ArgbEncode(255, 236, 233, 216));
+            cr = CXFA_Color(ArgbEncode(255, 236, 233, 216));
           else
-            cr.Set(0xFFFFFFFF);
+            cr = CXFA_Color(0xFFFFFFFF);
         }
         pParams->m_pGraphics->SaveGraphState();
-        pParams->m_pGraphics->SetFillColor(&cr);
+        pParams->m_pGraphics->SetFillColor(cr);
         pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING,
                                        &pParams->m_matrix);
         pParams->m_pGraphics->RestoreGraphState();
@@ -73,11 +71,8 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       break;
     }
     case CFWL_Part::CombTextLine: {
-      FX_ARGB cr = 0xFF000000;
-      float fWidth = 1.0f;
-      CXFA_Color crLine(cr);
-      pParams->m_pGraphics->SetStrokeColor(&crLine);
-      pParams->m_pGraphics->SetLineWidth(fWidth);
+      pParams->m_pGraphics->SetStrokeColor(CXFA_Color(0xFF000000));
+      pParams->m_pGraphics->SetLineWidth(1.0f);
       pParams->m_pGraphics->StrokePath(pParams->m_pPath, &pParams->m_matrix);
       break;
     }

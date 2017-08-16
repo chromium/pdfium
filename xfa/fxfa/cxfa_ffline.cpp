@@ -88,11 +88,10 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   else
     linePath.AddLine(rtLine.TopLeft(), rtLine.BottomRight());
 
-  CXFA_Color color(lineColor);
   pGS->SaveGraphState();
   pGS->SetLineWidth(fLineWidth, true);
   XFA_StrokeTypeSetLineDash(pGS, iStrokeType, iCap);
-  pGS->SetStrokeColor(&color);
+  pGS->SetStrokeColor(CXFA_Color(lineColor));
   pGS->SetLineCap(XFA_LineCapToFXGE(iCap));
   pGS->StrokePath(&linePath, &mtRotate);
   pGS->RestoreGraphState();

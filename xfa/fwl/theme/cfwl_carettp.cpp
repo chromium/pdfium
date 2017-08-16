@@ -43,10 +43,9 @@ void CFWL_CaretTP::DrawCaretBK(CXFA_Graphics* pGraphics,
   CFX_RectF rect = *pRect;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   if (crFill) {
-    pGraphics->SetFillColor(crFill);
+    pGraphics->SetFillColor(*crFill);
   } else {
-    CXFA_Color crFilltemp(ArgbEncode(255, 0, 0, 0));
-    pGraphics->SetFillColor(&crFilltemp);
+    pGraphics->SetFillColor(CXFA_Color(ArgbEncode(255, 0, 0, 0)));
   }
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
 }

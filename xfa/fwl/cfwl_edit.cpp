@@ -190,7 +190,6 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
   if (pMatrix)
     pGraphics->ConcatMatrix(const_cast<CFX_Matrix*>(pMatrix));
 
-  CXFA_Color crLine(0xFFFF0000);
   CFWL_EventCheckWord checkWordEvent(this);
   CFX_ByteString sLatinWord;
   CXFA_Path pathSpell;
@@ -233,7 +232,7 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
       mt.Concat(*pMatrix);
     }
     pGraphics->SetClipRect(rtClip);
-    pGraphics->SetStrokeColor(&crLine);
+    pGraphics->SetStrokeColor(CXFA_Color(0xFFFF0000));
     pGraphics->SetLineWidth(0);
     pGraphics->StrokePath(&pathSpell, nullptr);
   }
