@@ -18,13 +18,13 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 
+class CFWL_WidgetMgr;
 class CXFA_DefFontMgr;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 class CXFA_FFDocHandler;
 class CXFA_FontMgr;
 class IFWL_AdapterTimerMgr;
-class CFWL_WidgetMgrDelegate;
 
 class CXFA_FFApp {
  public:
@@ -36,7 +36,7 @@ class CXFA_FFApp {
   void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
 
   CXFA_FFDocHandler* GetDocHandler();
-  CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgrDelegate* pDelegate);
+  CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgr* pDelegate);
   CFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
 
@@ -44,9 +44,7 @@ class CXFA_FFApp {
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   IFWL_AdapterTimerMgr* GetTimerMgr() const;
   CXFA_FontMgr* GetXFAFontMgr() const;
-  CFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() const {
-    return m_pWidgetMgrDelegate.Get();
-  }
+  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.Get(); }
 
   void ClearEventTargets();
 
@@ -77,9 +75,9 @@ class CXFA_FFApp {
   std::unique_ptr<CXFA_FWLTheme> m_pFWLTheme;
   std::unique_ptr<CFWL_App> m_pFWLApp;
 
-  // |m_pWidgetMgrDelegate| has to be released before |m_pFWLApp|, since
+  // |m_pWidgetMgr| has to be released before |m_pFWLApp|, since
   // |m_pFWLApp| is its owner.
-  CFX_UnownedPtr<CFWL_WidgetMgrDelegate> m_pWidgetMgrDelegate;
+  CFX_UnownedPtr<CFWL_WidgetMgr> m_pWidgetMgr;
 };
 
 #endif  // XFA_FXFA_CXFA_FFAPP_H_

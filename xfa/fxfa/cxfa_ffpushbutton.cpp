@@ -44,8 +44,7 @@ void CXFA_FFPushButton::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtWidget = GetRectWithoutRotate();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget.get(), pGS,
-                                                 &mt);
+  GetApp()->GetWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, &mt);
 }
 
 bool CXFA_FFPushButton::LoadWidget() {

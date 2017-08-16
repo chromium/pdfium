@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/ifwl_widgetmgrdelegate.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 #define FWL_WGTMGR_DisableForm 0x00000002
@@ -24,17 +23,16 @@ class CXFA_Graphics;
 class CFX_Matrix;
 class CFWL_Widget;
 
-class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
+class CFWL_WidgetMgr {
  public:
   explicit CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
   ~CFWL_WidgetMgr();
 
-  // CFWL_WidgetMgrDelegate
-  void OnSetCapability(uint32_t dwCapability) override;
-  void OnProcessMessageToForm(CFWL_Message* pMessage) override;
+  void OnSetCapability(uint32_t dwCapability);
+  void OnProcessMessageToForm(CFWL_Message* pMessage);
   void OnDrawWidget(CFWL_Widget* pWidget,
                     CXFA_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix) override;
+                    const CFX_Matrix* pMatrix);
 
   CFWL_Widget* GetParentWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetOwnerWidget(CFWL_Widget* pWidget) const;
