@@ -161,7 +161,6 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_nPageLineCount(20),
       m_nLineCount(0),
       m_nAnchorPos(-1),
-      m_nLayoutPos(0),
       m_fCaretPosReserve(0.0),
       m_nCaret(0),
       m_bBefore(true),
@@ -379,14 +378,6 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
     m_Param.pEventSink->OnSelChanged();
 
   return m_nCaret;
-}
-
-void CFDE_TxtEdtEngine::Lock() {
-  m_bLock = true;
-}
-
-void CFDE_TxtEdtEngine::Unlock() {
-  m_bLock = false;
 }
 
 bool CFDE_TxtEdtEngine::IsLocked() const {
@@ -702,39 +693,16 @@ bool CFDE_TxtEdtEngine::Undo(const IFDE_TxtEdtDoRecord* pDoRecord) {
   return true;
 }
 
-int32_t CFDE_TxtEdtEngine::StartLayout() {
-  Lock();
+void CFDE_TxtEdtEngine::Layout() {
+  CFX_AutoRestorer<bool> lock(&m_bLock);
+  m_bLock = true;
+
   RemoveAllPages();
-  m_nLayoutPos = 0;
-  m_nLineCount = 0;
-  return 0;
-}
-
-int32_t CFDE_TxtEdtEngine::DoLayout() {
-  int32_t nCount = pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
-  CFDE_TxtEdtParag* pParag = nullptr;
-  int32_t nLineCount = 0;
-  for (; m_nLayoutPos < nCount; m_nLayoutPos++) {
-    pParag = m_ParagPtrArray[m_nLayoutPos].get();
-    pParag->CalcLines();
-    nLineCount += pParag->GetLineCount();
-  }
-  m_nLineCount += nLineCount;
-  return 100;
-}
-
-void CFDE_TxtEdtEngine::EndLayout() {
+  UpdateLineCounts();
   UpdatePages();
-  int32_t nLength = GetTextLength();
-  if (m_nCaret > nLength)
-    m_nCaret = nLength;
 
-  int32_t nIndex = m_nCaret;
-  if (!m_bBefore)
-    nIndex--;
-
+  m_nCaret = std::min(m_nCaret, GetTextLength());
   m_rtCaret = CFX_RectF(0, 0, 1, m_Param.fFontSize);
-  Unlock();
 }
 
 CFDE_TxtEdtBuf* CFDE_TxtEdtEngine::GetTextBuf() const {
@@ -1012,14 +980,13 @@ void CFDE_TxtEdtEngine::RemoveAllPages() {
   m_PagePtrArray.clear();
 }
 
-void CFDE_TxtEdtEngine::UpdateParags() {
+void CFDE_TxtEdtEngine::UpdateLineCounts() {
   if (m_ParagPtrArray.empty())
     return;
 
   int32_t nLineCount = 0;
   for (auto& pParag : m_ParagPtrArray) {
-    if (pParag->GetLineCount() == -1)
-      pParag->CalcLines();
+    pParag->CalcLines();
     nLineCount += pParag->GetLineCount();
   }
   m_nLineCount = nLineCount;

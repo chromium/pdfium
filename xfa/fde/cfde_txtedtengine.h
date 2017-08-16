@@ -111,8 +111,6 @@ class CFDE_TxtEdtEngine {
   int32_t GetCaretPos() const;
   int32_t SetCaretPos(int32_t nIndex, bool bBefore);
   int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret, bool bShift, bool bCtrl);
-  void Lock();
-  void Unlock();
   bool IsLocked() const;
 
   int32_t Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
@@ -136,9 +134,7 @@ class CFDE_TxtEdtEngine {
   bool Redo(const IFDE_TxtEdtDoRecord* pRecord);
   bool Undo(const IFDE_TxtEdtDoRecord* pRecord);
 
-  int32_t StartLayout();
-  int32_t DoLayout();
-  void EndLayout();
+  void Layout();
 
   int32_t CountParags() const;
   CFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const;
@@ -195,7 +191,7 @@ class CFDE_TxtEdtEngine {
   void RebuildParagraphs();
   void RemoveAllParags();
   void RemoveAllPages();
-  void UpdateParags();
+  void UpdateLineCounts();
   void UpdatePages();
   void UpdateTxtBreak();
 
@@ -230,7 +226,6 @@ class CFDE_TxtEdtEngine {
   int32_t m_nPageLineCount;
   int32_t m_nLineCount;
   int32_t m_nAnchorPos;
-  int32_t m_nLayoutPos;
   float m_fCaretPosReserve;
   int32_t m_nCaret;
   bool m_bBefore;

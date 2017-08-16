@@ -726,9 +726,8 @@ void CFWL_Edit::UpdateEditLayout() {
   if (pPage)
     pPage->UnloadPage(nullptr);
 
-  m_EdtEngine.StartLayout();
-  m_EdtEngine.DoLayout();
-  m_EdtEngine.EndLayout();
+  m_EdtEngine.Layout();
+
   pPage = m_EdtEngine.GetPage(0);
   if (pPage)
     pPage->LoadPage(nullptr);
