@@ -38,16 +38,15 @@ class IFX_CharIter;
 #define FDE_TEXTEDITLAYOUT_CombText (1L << 4)
 #define FDE_TEXTEDITLAYOUT_LastLineHeight (1L << 8)
 
-enum FDE_TXTEDTMOVECARET {
-  MC_MoveNone = 0,
-  MC_Left,
-  MC_Right,
-  MC_Up,
-  MC_Down,
-  MC_LineStart,
-  MC_LineEnd,
-  MC_Home,
-  MC_End,
+enum class FDE_CaretMove {
+  Left,
+  Right,
+  Up,
+  Down,
+  LineStart,
+  LineEnd,
+  Home,
+  End,
 };
 
 struct FDE_TXTEDTPARAMS {
@@ -109,7 +108,7 @@ class CFDE_TxtEdtEngine {
     return IsLocked() ? 0 : m_nCaret + (m_bBefore ? 0 : 1);
   }
   int32_t SetCaretPos(int32_t nIndex, bool bBefore);
-  int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret, bool bShift, bool bCtrl);
+  int32_t MoveCaretPos(FDE_CaretMove eMoveCaret, bool bShift);
 
   int32_t Insert(const CFX_WideString& str);
   void Delete(bool bBackspace);

@@ -265,9 +265,7 @@ int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, bool bBefore) {
   return m_nCaret;
 }
 
-int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
-                                        bool bShift,
-                                        bool bCtrl) {
+int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_CaretMove eMoveCaret, bool bShift) {
   if (IsLocked() || !pdfium::IndexInBounds(m_PagePtrArray, m_nCaretPage))
     return 0;
 
@@ -284,45 +282,43 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
   }
 
   switch (eMoveCaret) {
-    case MC_Left: {
+    case FDE_CaretMove::Left: {
       bool bBefore = true;
       int32_t nIndex = MoveBackward(bBefore);
       if (nIndex >= 0)
         UpdateCaretRect(nIndex, bBefore);
       break;
     }
-    case MC_Right: {
+    case FDE_CaretMove::Right: {
       bool bBefore = true;
       int32_t nIndex = MoveForward(bBefore);
       if (nIndex >= 0)
         UpdateCaretRect(nIndex, bBefore);
       break;
     }
-    case MC_Up: {
+    case FDE_CaretMove::Up: {
       CFX_PointF ptCaret;
       if (MoveUp(ptCaret))
         UpdateCaretIndex(ptCaret);
       break;
     }
-    case MC_Down: {
+    case FDE_CaretMove::Down: {
       CFX_PointF ptCaret;
       if (MoveDown(ptCaret))
         UpdateCaretIndex(ptCaret);
       break;
     }
-    case MC_LineStart:
+    case FDE_CaretMove::LineStart:
       MoveLineStart();
       break;
-    case MC_LineEnd:
+    case FDE_CaretMove::LineEnd:
       MoveLineEnd();
       break;
-    case MC_Home:
+    case FDE_CaretMove::Home:
       MoveHome();
       break;
-    case MC_End:
+    case FDE_CaretMove::End:
       MoveEnd();
-      break;
-    default:
       break;
   }
   if (bShift && m_nAnchorPos != -1 && (m_nAnchorPos != m_nCaret)) {

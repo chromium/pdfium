@@ -28,7 +28,7 @@ void CFWL_ComboEdit::ClearSelected() {
 
 void CFWL_ComboEdit::SetSelected() {
   FlagFocus(true);
-  GetTxtEdtEngine()->MoveCaretPos(MC_End, false, false);
+  GetTxtEdtEngine()->MoveCaretPos(FDE_CaretMove::End, false);
   AddSelRange(0);
 }
 

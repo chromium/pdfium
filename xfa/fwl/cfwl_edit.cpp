@@ -1387,43 +1387,34 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
-  FDE_TXTEDTMOVECARET MoveCaret = MC_MoveNone;
   bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
   bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
-  uint32_t dwKeyCode = pMsg->m_dwKeyCode;
-  switch (dwKeyCode) {
-    case FWL_VKEY_Left: {
-      MoveCaret = MC_Left;
+  switch (pMsg->m_dwKeyCode) {
+    case FWL_VKEY_Left:
+      m_EdtEngine.MoveCaretPos(FDE_CaretMove::Left, bShift);
       break;
-    }
-    case FWL_VKEY_Right: {
-      MoveCaret = MC_Right;
+    case FWL_VKEY_Right:
+      m_EdtEngine.MoveCaretPos(FDE_CaretMove::Right, bShift);
       break;
-    }
-    case FWL_VKEY_Up: {
-      MoveCaret = MC_Up;
+    case FWL_VKEY_Up:
+      m_EdtEngine.MoveCaretPos(FDE_CaretMove::Up, bShift);
       break;
-    }
-    case FWL_VKEY_Down: {
-      MoveCaret = MC_Down;
+    case FWL_VKEY_Down:
+      m_EdtEngine.MoveCaretPos(FDE_CaretMove::Down, bShift);
       break;
-    }
-    case FWL_VKEY_Home: {
-      MoveCaret = bCtrl ? MC_Home : MC_LineStart;
+    case FWL_VKEY_Home:
+      m_EdtEngine.MoveCaretPos(
+          bCtrl ? FDE_CaretMove::Home : FDE_CaretMove::LineStart, bShift);
       break;
-    }
-    case FWL_VKEY_End: {
-      MoveCaret = bCtrl ? MC_End : MC_LineEnd;
-      break;
-    }
-    case FWL_VKEY_Insert:
+    case FWL_VKEY_End:
+      m_EdtEngine.MoveCaretPos(
+          bCtrl ? FDE_CaretMove::End : FDE_CaretMove::LineEnd, bShift);
       break;
     case FWL_VKEY_Delete: {
       if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
           (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
         break;
       }
-
 #if (_FX_OS_ == _FX_MACOSX_)
       m_EdtEngine.Delete(true);
 #else
@@ -1431,13 +1422,12 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
 #endif
       break;
     }
+    case FWL_VKEY_Insert:
     case FWL_VKEY_F2:
     case FWL_VKEY_Tab:
     default:
       break;
   }
-  if (MoveCaret != MC_MoveNone)
-    m_EdtEngine.MoveCaretPos(MoveCaret, bShift, bCtrl);
 }
 
 void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
