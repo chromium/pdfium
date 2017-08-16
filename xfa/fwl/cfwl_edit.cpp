@@ -734,8 +734,7 @@ void CFWL_Edit::UpdateEditLayout() {
 }
 
 bool CFWL_Edit::UpdateOffset() {
-  CFX_RectF rtCaret;
-  m_EdtEngine.GetCaretRect(rtCaret);
+  CFX_RectF rtCaret = m_EdtEngine.GetCaretRect();
   float fOffSetX = m_rtEngine.left - m_fScrollOffsetX;
   float fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
   rtCaret.Offset(fOffSetX, fOffSetY);
@@ -823,8 +822,7 @@ void CFWL_Edit::UpdateVAlignment() {
 }
 
 void CFWL_Edit::UpdateCaret() {
-  CFX_RectF rtFDE;
-  m_EdtEngine.GetCaretRect(rtFDE);
+  CFX_RectF rtFDE = m_EdtEngine.GetCaretRect();
 
   rtFDE.Offset(m_rtEngine.left - m_fScrollOffsetX,
                m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset);

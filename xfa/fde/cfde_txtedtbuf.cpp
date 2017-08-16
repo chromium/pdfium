@@ -24,14 +24,6 @@ CFDE_TxtEdtBuf::CFDE_TxtEdtBuf() : m_chunkSize(kDefaultChunkSize), m_nTotal(0) {
 
 CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {}
 
-int32_t CFDE_TxtEdtBuf::GetChunkSize() const {
-  return m_chunkSize;
-}
-
-int32_t CFDE_TxtEdtBuf::GetTextLength() const {
-  return m_nTotal;
-}
-
 void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
   ASSERT(!wsText.IsEmpty());
 
@@ -59,10 +51,6 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
     chunk->nUsed = nCopyedLength;
   }
   m_nTotal = nTextLength;
-}
-
-CFX_WideString CFDE_TxtEdtBuf::GetText() const {
-  return GetRange(0, m_nTotal);
 }
 
 wchar_t CFDE_TxtEdtBuf::GetCharByIndex(int32_t nIndex) const {

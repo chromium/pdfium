@@ -191,17 +191,6 @@ void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
   UpdateTxtBreak();
 }
 
-FDE_TXTEDTPARAMS* CFDE_TxtEdtEngine::GetEditParams() {
-  return &m_Param;
-}
-
-int32_t CFDE_TxtEdtEngine::CountPages() const {
-  if (m_nLineCount == 0) {
-    return 0;
-  }
-  return ((m_nLineCount - 1) / m_nPageLineCount) + 1;
-}
-
 CFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
   if (!pdfium::IndexInBounds(m_PagePtrArray, nIndex))
     return nullptr;
@@ -257,10 +246,6 @@ void CFDE_TxtEdtEngine::SetText(const CFX_WideString& wsText) {
   RebuildParagraphs();
 }
 
-int32_t CFDE_TxtEdtEngine::GetTextLength() const {
-  return GetTextBufLength();
-}
-
 CFX_WideString CFDE_TxtEdtEngine::GetText(int32_t nStart,
                                           int32_t nCount) const {
   int32_t nTextBufLength = GetTextBufLength();
@@ -274,18 +259,6 @@ CFX_WideString CFDE_TxtEdtEngine::GetText(int32_t nStart,
 
 void CFDE_TxtEdtEngine::ClearText() {
   DeleteRange(0, GetTextBufLength());
-}
-
-int32_t CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret) const {
-  rtCaret = m_rtCaret;
-  return m_nCaret;
-}
-
-int32_t CFDE_TxtEdtEngine::GetCaretPos() const {
-  if (IsLocked())
-    return 0;
-
-  return m_nCaret + (m_bBefore ? 0 : 1);
 }
 
 int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, bool bBefore) {
@@ -378,10 +351,6 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
     m_Param.pEventSink->OnSelChanged();
 
   return m_nCaret;
-}
-
-bool CFDE_TxtEdtEngine::IsLocked() const {
-  return m_bLock;
 }
 
 int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
@@ -575,14 +544,6 @@ int32_t CFDE_TxtEdtEngine::Replace(int32_t nStart,
   return FDE_TXTEDT_MODIFY_RET_S_Normal;
 }
 
-void CFDE_TxtEdtEngine::SetLimit(int32_t nLimit) {
-  m_nLimit = nLimit;
-}
-
-void CFDE_TxtEdtEngine::SetAliasChar(wchar_t wcAlias) {
-  m_wcAliasChar = wcAlias;
-}
-
 void CFDE_TxtEdtEngine::RemoveSelRange(int32_t nStart, int32_t nCount) {
   int32_t nRangeCount = pdfium::CollectionSize<int32_t>(m_SelRangePtrArr);
   for (int32_t i = 0; i < nRangeCount; i++) {
@@ -661,10 +622,6 @@ void CFDE_TxtEdtEngine::AddSelRange(int32_t nStart, int32_t nCount) {
   m_Param.pEventSink->OnSelChanged();
 }
 
-int32_t CFDE_TxtEdtEngine::CountSelRanges() const {
-  return pdfium::CollectionSize<int32_t>(m_SelRangePtrArr);
-}
-
 int32_t CFDE_TxtEdtEngine::GetSelRange(int32_t nIndex, int32_t* nStart) const {
   if (nStart)
     *nStart = m_SelRangePtrArr[nIndex]->nStart;
@@ -703,34 +660,6 @@ void CFDE_TxtEdtEngine::Layout() {
 
   m_nCaret = std::min(m_nCaret, GetTextLength());
   m_rtCaret = CFX_RectF(0, 0, 1, m_Param.fFontSize);
-}
-
-CFDE_TxtEdtBuf* CFDE_TxtEdtEngine::GetTextBuf() const {
-  return m_pTxtBuf.get();
-}
-
-int32_t CFDE_TxtEdtEngine::GetTextBufLength() const {
-  return m_pTxtBuf->GetTextLength() - 1;
-}
-
-CFX_TxtBreak* CFDE_TxtEdtEngine::GetTextBreak() const {
-  return m_pTextBreak.get();
-}
-
-int32_t CFDE_TxtEdtEngine::GetLineCount() const {
-  return m_nLineCount;
-}
-
-int32_t CFDE_TxtEdtEngine::GetPageLineCount() const {
-  return m_nPageLineCount;
-}
-
-int32_t CFDE_TxtEdtEngine::CountParags() const {
-  return pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
-}
-
-CFDE_TxtEdtParag* CFDE_TxtEdtEngine::GetParag(int32_t nParagIndex) const {
-  return m_ParagPtrArray[nParagIndex].get();
 }
 
 int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
@@ -970,14 +899,6 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
       nParagStart = nIndex + 1;
     }
   } while (pIter->Next());
-}
-
-void CFDE_TxtEdtEngine::RemoveAllParags() {
-  m_ParagPtrArray.clear();
-}
-
-void CFDE_TxtEdtEngine::RemoveAllPages() {
-  m_PagePtrArray.clear();
 }
 
 void CFDE_TxtEdtEngine::UpdateLineCounts() {
@@ -1427,10 +1348,6 @@ void CFDE_TxtEdtEngine::UpdateCaretIndex(const CFX_PointF& ptCaret) {
   }
   m_Param.pEventSink->OnCaretChanged();
   m_Param.pEventSink->OnPageUnload(m_nCaretPage);
-}
-
-bool CFDE_TxtEdtEngine::IsSelect() {
-  return !m_SelRangePtrArr.empty();
 }
 
 void CFDE_TxtEdtEngine::DeleteSelect() {

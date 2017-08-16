@@ -36,14 +36,6 @@ CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
 
 CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {}
 
-CFDE_TxtEdtEngine* CFDE_TxtEdtPage::GetEngine() const {
-  return m_pEditEngine.Get();
-}
-
-CFX_RectF CFDE_TxtEdtPage::GetRect(const FDE_TEXTEDITPIECE& hVisualObj) {
-  return CFX_RectF();
-}
-
 int32_t CFDE_TxtEdtPage::GetCharRect(int32_t nIndex,
                                      CFX_RectF& rect,
                                      bool bBBox) const {
@@ -129,14 +121,6 @@ int32_t CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) {
   return nCaret;
 }
 
-int32_t CFDE_TxtEdtPage::GetCharStart() const {
-  return m_nPageStart;
-}
-
-int32_t CFDE_TxtEdtPage::GetCharCount() const {
-  return m_nCharCount;
-}
-
 int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
                                        FXTEXT_CHARPOS*& pCharPos,
                                        CFX_RectF* pBBox) const {
@@ -215,10 +199,6 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
   return pIter->GetWordPos();
-}
-
-bool CFDE_TxtEdtPage::IsLoaded(const CFX_RectF* pClipBox) {
-  return m_bLoaded;
 }
 
 int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox) {
@@ -401,14 +381,6 @@ void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
     m_pEndParag = nullptr;
   }
   m_pIter.reset();
-}
-
-const CFX_RectF& CFDE_TxtEdtPage::GetContentsBox() {
-  return m_rtPageContents;
-}
-
-size_t CFDE_TxtEdtPage::GetTextPieceCount() const {
-  return m_pTextSet ? m_Pieces.size() : 0;
 }
 
 const FDE_TEXTEDITPIECE& CFDE_TxtEdtPage::GetTextPiece(size_t pos) const {

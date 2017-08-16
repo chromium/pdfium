@@ -14,10 +14,10 @@
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/fx_dib.h"
+#include "xfa/fde/cfde_txtedtbuf.h"
+#include "xfa/fde/cfde_txtedtpage.h"
+#include "xfa/fde/cfde_txtedtparag.h"
 
-class CFDE_TxtEdtBuf;
-class CFDE_TxtEdtPage;
-class CFDE_TxtEdtParag;
 class CFGAS_GEFont;
 class CFWL_Edit;
 class CFX_TxtBreak;
@@ -96,22 +96,26 @@ class CFDE_TxtEdtEngine {
   ~CFDE_TxtEdtEngine();
 
   void SetEditParams(const FDE_TXTEDTPARAMS& params);
-  FDE_TXTEDTPARAMS* GetEditParams();
+  FDE_TXTEDTPARAMS* GetEditParams() { return &m_Param; }
 
-  int32_t CountPages() const;
+  int32_t CountPages() const {
+    return m_nLineCount == 0 ? 0 : ((m_nLineCount - 1) / m_nPageLineCount) + 1;
+  }
   CFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
   void SetTextByStream(const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
   void SetText(const CFX_WideString& wsText);
-  int32_t GetTextLength() const;
+  int32_t GetTextLength() const { return GetTextBufLength(); }
   CFX_WideString GetText(int32_t nStart, int32_t nCount) const;
   void ClearText();
 
-  int32_t GetCaretRect(CFX_RectF& rtCaret) const;
-  int32_t GetCaretPos() const;
+  CFX_RectF GetCaretRect() const { return m_rtCaret; }
+  int32_t GetCaretPos() const {
+    return IsLocked() ? 0 : m_nCaret + (m_bBefore ? 0 : 1);
+  }
   int32_t SetCaretPos(int32_t nIndex, bool bBefore);
   int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret, bool bShift, bool bCtrl);
-  bool IsLocked() const;
+  bool IsLocked() const { return m_bLock; }
 
   int32_t Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
   int32_t Delete(int32_t nStart, bool bBackspace);
@@ -120,14 +124,16 @@ class CFDE_TxtEdtEngine {
                   int32_t nLength,
                   const CFX_WideString& wsReplace);
 
-  void SetLimit(int32_t nLimit);
+  void SetLimit(int32_t nLimit) { m_nLimit = nLimit; }
   int32_t GetLimit() const { return m_nLimit; }
-  void SetAliasChar(wchar_t wcAlias);
+  void SetAliasChar(wchar_t wcAlias) { m_wcAliasChar = wcAlias; }
 
   void RemoveSelRange(int32_t nStart, int32_t nCount);
 
   void AddSelRange(int32_t nStart, int32_t nCount);
-  int32_t CountSelRanges() const;
+  int32_t CountSelRanges() const {
+    return pdfium::CollectionSize<int32_t>(m_SelRangePtrArr);
+  }
   int32_t GetSelRange(int32_t nIndex, int32_t* nStart) const;
   void ClearSelection();
 
@@ -136,13 +142,17 @@ class CFDE_TxtEdtEngine {
 
   void Layout();
 
-  int32_t CountParags() const;
-  CFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const;
-  CFDE_TxtEdtBuf* GetTextBuf() const;
-  int32_t GetTextBufLength() const;
-  CFX_TxtBreak* GetTextBreak() const;
-  int32_t GetLineCount() const;
-  int32_t GetPageLineCount() const;
+  int32_t CountParags() const {
+    return pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
+  }
+  CFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const {
+    return m_ParagPtrArray[nParagIndex].get();
+  }
+  CFDE_TxtEdtBuf* GetTextBuf() const { return m_pTxtBuf.get(); }
+  int32_t GetTextBufLength() const { return m_pTxtBuf->GetTextLength() - 1; }
+  CFX_TxtBreak* GetTextBreak() const { return m_pTextBreak.get(); }
+  int32_t GetLineCount() const { return m_nLineCount; }
+  int32_t GetPageLineCount() const { return m_nPageLineCount; }
 
   int32_t Line2Parag(int32_t nStartParag,
                      int32_t nStartLineofParag,
@@ -150,7 +160,7 @@ class CFDE_TxtEdtEngine {
                      int32_t& nStartLine) const;
   wchar_t GetAliasChar() const { return m_wcAliasChar; }
 
-  bool IsSelect();
+  bool IsSelect() const { return !m_SelRangePtrArr.empty(); }
   void Inner_DeleteRange(int32_t nStart, int32_t nCount);
   void Inner_Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
   const FDE_TXTEDTPARAMS* GetParams() const { return &m_Param; }
@@ -189,8 +199,8 @@ class CFDE_TxtEdtEngine {
   void DeleteRange_DoRecord(int32_t nStart, int32_t nCount, bool bSel);
   void ResetEngine();
   void RebuildParagraphs();
-  void RemoveAllParags();
-  void RemoveAllPages();
+  void RemoveAllParags() { m_ParagPtrArray.clear(); }
+  void RemoveAllPages() { m_PagePtrArray.clear(); }
   void UpdateLineCounts();
   void UpdatePages();
   void UpdateTxtBreak();

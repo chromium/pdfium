@@ -18,7 +18,9 @@ class CFDE_TxtEdtTextSet {
   explicit CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage);
   ~CFDE_TxtEdtTextSet();
 
-  CFX_RectF GetRect(const FDE_TEXTEDITPIECE& hVisualObj) const;
+  CFX_RectF GetRect(const FDE_TEXTEDITPIECE& pPiece) const {
+    return pPiece.rtPiece;
+  }
   int32_t GetString(FDE_TEXTEDITPIECE* pPiece, CFX_WideString& wsText) const;
   CFX_RetainPtr<CFGAS_GEFont> GetFont() const;
   float GetFontSize() const;

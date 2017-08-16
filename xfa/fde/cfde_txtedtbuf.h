@@ -42,11 +42,11 @@ class CFDE_TxtEdtBuf {
   CFDE_TxtEdtBuf();
   ~CFDE_TxtEdtBuf();
 
-  int32_t GetChunkSize() const;
-  int32_t GetTextLength() const;
+  int32_t GetChunkSize() const { return m_chunkSize; }
+  int32_t GetTextLength() const { return m_nTotal; }
 
   void SetText(const CFX_WideString& wsText);
-  CFX_WideString GetText() const;
+  CFX_WideString GetText() const { return GetRange(0, m_nTotal); }
 
   wchar_t GetCharByIndex(int32_t nIndex) const;
   CFX_WideString GetRange(int32_t nBegin, int32_t nCount) const;

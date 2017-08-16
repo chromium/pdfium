@@ -15,10 +15,6 @@ CFDE_TxtEdtTextSet::CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage)
 
 CFDE_TxtEdtTextSet::~CFDE_TxtEdtTextSet() {}
 
-CFX_RectF CFDE_TxtEdtTextSet::GetRect(const FDE_TEXTEDITPIECE& pPiece) const {
-  return pPiece.rtPiece;
-}
-
 int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
                                       CFX_WideString& wsText) const {
   wchar_t* pBuffer = wsText.GetBuffer(pPiece->nCount);
