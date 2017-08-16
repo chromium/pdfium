@@ -431,7 +431,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   }
   CFX_ByteString SubstName = name;
   SubstName.Remove(' ');
-  if (bTrueType && name[0] == '@')
+  if (bTrueType && name.GetLength() > 0 && name[0] == '@')
     SubstName = name.Right(name.GetLength() - 1);
   PDF_GetStandardFontName(&SubstName);
   if (SubstName == "Symbol" && !bTrueType) {
