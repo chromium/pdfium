@@ -360,7 +360,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox) {
         if ((pParams->dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) &&
             m_nCharCount > 1) {
           int32_t nCount = m_nCharCount - 1;
-          int32_t n = (m_pEditEngine->m_nLimit - nCount) / 2;
+          int32_t n = (m_pEditEngine->GetLimit() - nCount) / 2;
           fDelta = (m_rtPageContents.width / nCount) * n;
         } else {
           fDelta = (pParams->fPlateWidth - m_rtPageContents.width) / 2;

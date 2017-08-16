@@ -166,7 +166,6 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_nCaret(0),
       m_bBefore(true),
       m_nCaretPage(0),
-      m_dwFindFlags(0),
       m_bLock(false),
       m_nLimit(0),
       m_wcAliasChar(L'*'),

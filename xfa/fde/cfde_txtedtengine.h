@@ -123,6 +123,7 @@ class CFDE_TxtEdtEngine {
                   const CFX_WideString& wsReplace);
 
   void SetLimit(int32_t nLimit);
+  int32_t GetLimit() const { return m_nLimit; }
   void SetAliasChar(wchar_t wcAlias);
 
   void RemoveSelRange(int32_t nStart, int32_t nCount);
@@ -170,8 +171,6 @@ class CFDE_TxtEdtEngine {
   }
 
  private:
-  friend class CFDE_TxtEdtPage;
-
   struct FDE_TXTEDTSELRANGE {
     int32_t nStart;
     int32_t nCount;
@@ -237,7 +236,6 @@ class CFDE_TxtEdtEngine {
   bool m_bBefore;
   int32_t m_nCaretPage;
   CFX_RectF m_rtCaret;
-  uint32_t m_dwFindFlags;
   bool m_bLock;
   int32_t m_nLimit;
   wchar_t m_wcAliasChar;
