@@ -471,21 +471,40 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
   static constexpr int32_t kEntryConstSize = 20;
 
   if (!out_objects) {
-    m_pSyntax->SetPos(m_pSyntax->GetPos() + count * kEntryConstSize);
+    FX_SAFE_FILESIZE pos = count;
+    pos *= kEntryConstSize;
+    pos += m_pSyntax->GetPos();
+    if (!pos.IsValid())
+      return false;
+    m_pSyntax->SetPos(pos.ValueOrDie());
     return true;
   }
   const size_t start_obj_index = out_objects->size();
-  out_objects->resize(start_obj_index + count);
+  FX_SAFE_SIZE_T new_size = start_obj_index;
+  new_size += count;
+  if (!new_size.IsValid())
+    return false;
+
+  if (new_size.ValueOrDie() > kMaxXRefSize)
+    return false;
+
+  const size_t max_entries_in_file =
+      m_pSyntax->GetFileAccess()->GetSize() / kEntryConstSize;
+  if (new_size.ValueOrDie() > max_entries_in_file)
+    return false;
+
+  out_objects->resize(new_size.ValueOrDie());
 
   std::vector<char> buf(1024 * kEntryConstSize + 1);
-  buf[1024 * kEntryConstSize] = '\0';
+  buf.back() = '\0';
 
   int32_t nBlocks = count / 1024 + 1;
   for (int32_t block = 0; block < nBlocks; block++) {
     int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
     if (!m_pSyntax->ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
-                              block_size * kEntryConstSize))
+                              block_size * kEntryConstSize)) {
       return false;
+    }
 
     for (int32_t i = 0; i < block_size; i++) {
       CrossRefObjData& obj_data =
