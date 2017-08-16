@@ -283,7 +283,8 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot);
 // Experimental API.
 // Set the attachment points (i.e. quadpoints) of an annotation. If the
 // annotation's appearance stream is defined and this annotation is of a type
-// with quadpoints, then update the bounding box too.
+// with quadpoints, then update the bounding box too if the new quadpoints
+// define a bigger one.
 //
 //   annot      - handle to an annotation.
 //   quadPoints - the quadpoints to be set.
@@ -294,9 +295,7 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
                               const FS_QUADPOINTSF* quadPoints);
 
 // Experimental API.
-// Get the attachment points (i.e. quadpoints) of an annotation. If the
-// annotation's appearance stream is defined and this annotation is of a type
-// with quadpoints, then return the bounding box it specifies instead.
+// Get the attachment points (i.e. quadpoints) of an annotation.
 //
 //   annot      - handle to an annotation.
 //   quadPoints - receives the quadpoints; must not be NULL.
@@ -309,7 +308,8 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
 // Experimental API.
 // Set the annotation rectangle defining the location of the annotation. If the
 // annotation's appearance stream is defined and this annotation is of a type
-// without quadpoints, then update the bounding box too.
+// without quadpoints, then update the bounding box too if the new rectangle
+// defines a bigger one.
 //
 //   annot  - handle to an annotation.
 //   rect   - the annotation rectangle to be set.
@@ -319,9 +319,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
                                                       const FS_RECTF* rect);
 
 // Experimental API.
-// Get the annotation rectangle defining the location of the annotation. If the
-// annotation's appearance stream is defined and this annotation is of a type
-// without quadpoints, then return the bounding box it specifies instead.
+// Get the annotation rectangle defining the location of the annotation.
 //
 //   annot  - handle to an annotation.
 //   rect   - receives the rectangle; must not be NULL.

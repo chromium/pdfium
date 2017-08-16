@@ -317,11 +317,30 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
 }
 
 TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5_original[] = "63af8432fab95a67cdebb7cd0e514941";
+  const char md5_modified_highlight[] = "aec26075011349dec9bace891856b5f2";
+  const char md5_modified_square[] = "057f57a32be95975775e5ec513fdcb56";
+#elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+  const char md5_original[] = "ade6762a70e85605546ce067e7d2148f";
+  const char md5_modified_highlight[] = "fb8440ed1a070b53ed5598ce7451cfad";
+  const char md5_modified_square[] = "7925f6726b343393f258e8b4e93dd65d";
+#else
+  const char md5_original[] = "ade6762a70e85605546ce067e7d2148f";
+  const char md5_modified_highlight[] = "fb8440ed1a070b53ed5598ce7451cfad";
+  const char md5_modified_square[] = "7925f6726b343393f258e8b4e93dd65d";
+#endif
+
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
   EXPECT_EQ(4, FPDFPage_GetAnnotCount(page));
+
+  // Check that the original file renders correctly.
+  FPDF_BITMAP bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, md5_original);
+  FPDFBitmap_Destroy(bitmap);
 
   // Retrieve the highlight annotation which has its AP stream already defined.
   FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
@@ -332,41 +351,33 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   EXPECT_FALSE(
       FPDFAnnot_SetColor(annot, FPDFANNOT_COLORTYPE_Color, 51, 102, 153, 204));
 
-  // Check that when getting the attachment points, bounding box points are
-  // returned since this is a markup annotation with AP defined.
+  // Verify its attachment points.
   FS_QUADPOINTSF quadpoints;
   ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &quadpoints));
-  EXPECT_NEAR(0.f, quadpoints.x1, 0.001f);
-  EXPECT_NEAR(16.9955f, quadpoints.y1, 0.001f);
-  EXPECT_NEAR(68.5953f, quadpoints.x4, 0.001f);
-  EXPECT_NEAR(0.f, quadpoints.y4, 0.001f);
+  EXPECT_NEAR(72.0000f, quadpoints.x1, 0.001f);
+  EXPECT_NEAR(720.792f, quadpoints.y1, 0.001f);
+  EXPECT_NEAR(132.055f, quadpoints.x4, 0.001f);
+  EXPECT_NEAR(704.796f, quadpoints.y4, 0.001f);
 
-  // Check that when new attachment points define a smaller bounding box, the
-  // bounding box does not get updated.
-  quadpoints.x1 = 1.0f;
-  quadpoints.x3 = 1.0f;
+  // Check that updating the attachment points would succeed.
+  quadpoints.x1 -= 50.f;
+  quadpoints.x2 -= 50.f;
+  quadpoints.x3 -= 50.f;
+  quadpoints.x4 -= 50.f;
   ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
   FS_QUADPOINTSF new_quadpoints;
-  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &new_quadpoints));
-  EXPECT_NE(quadpoints.x1, new_quadpoints.x1);
-
-  // Check that the bounding box gets updated successfully when valid attachment
-  // points are set.
-  quadpoints.x1 = 0.f;
-  quadpoints.y1 = 721.792f;
-  quadpoints.x2 = 133.055f;
-  quadpoints.y2 = 721.792f;
-  quadpoints.x3 = 0.f;
-  quadpoints.x4 = 133.055f;
-  ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
   ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &new_quadpoints));
   EXPECT_EQ(quadpoints.x1, new_quadpoints.x1);
   EXPECT_EQ(quadpoints.y1, new_quadpoints.y1);
   EXPECT_EQ(quadpoints.x4, new_quadpoints.x4);
   EXPECT_EQ(quadpoints.y4, new_quadpoints.y4);
 
-  // Check that when getting the annotation rectangle, rectangle points are
-  // returned, but not bounding box points.
+  // Check that updating quadpoints does not change the annotation's position.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, md5_original);
+  FPDFBitmap_Destroy(bitmap);
+
+  // Verify its annotation rectangle.
   FS_RECTF rect;
   ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
   EXPECT_NEAR(67.7299f, rect.left, 0.001f);
@@ -374,33 +385,37 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   EXPECT_NEAR(136.325f, rect.right, 0.001f);
   EXPECT_NEAR(721.292f, rect.top, 0.001f);
 
-  // Check that the rectangle gets updated successfully when a valid rectangle
-  // is set, and that the bounding box is not modified.
-  rect.left = 0.f;
-  rect.bottom = 0.f;
-  rect.right = 134.055f;
-  rect.top = 722.792f;
+  // Check that updating the rectangle would succeed.
+  rect.left -= 60.f;
+  rect.right -= 60.f;
   ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
   FS_RECTF new_rect;
   ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
   EXPECT_EQ(rect.right, new_rect.right);
-  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &new_quadpoints));
-  EXPECT_NE(rect.right, new_quadpoints.x2);
-
   FPDFPage_CloseAnnot(annot);
+
+  // Check that updating the rectangle changes the annotation's position.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, md5_modified_highlight);
+  FPDFBitmap_Destroy(bitmap);
 
   // Retrieve the square annotation which has its AP stream already defined.
   annot = FPDFPage_GetAnnot(page, 2);
   ASSERT_TRUE(annot);
   EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot));
 
-  // Check that the rectangle and the bounding box get updated successfully when
-  // a valid rectangle is set, since this is not a markup annotation.
+  // Check that updating the rectangle would succeed.
   ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  rect.right += 1.f;
+  rect.left += 70.f;
+  rect.right += 70.f;
   ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
   ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
   EXPECT_EQ(rect.right, new_rect.right);
+
+  // Check that updating the rectangle changes the square annotation's position.
+  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+  CompareBitmap(bitmap, 612, 792, md5_modified_square);
+  FPDFBitmap_Destroy(bitmap);
 
   FPDFPage_CloseAnnot(annot);
   UnloadPage(page);
