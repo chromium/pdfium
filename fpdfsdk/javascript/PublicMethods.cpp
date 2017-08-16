@@ -1762,7 +1762,7 @@ bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
   }
 
   CFX_WideString str = params[0].ToCFXWideString(pRuntime);
-  if (str[0] == L'.' || str[0] == L',')
+  if (str.GetLength() > 0 && (str[0] == L'.' || str[0] == L','))
     str = L"0" + str;
 
   CFX_WideString sPart;
