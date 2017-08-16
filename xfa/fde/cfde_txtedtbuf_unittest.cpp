@@ -15,7 +15,7 @@ class CFDE_TxtEdtBufTest : public testing::Test {
     buf_->SetChunkSizeForTesting(5);
   }
 
-  size_t ChunkCount() const { return buf_->m_chunks.size(); }
+  size_t ChunkCount() const { return buf_->GetChunkCountForTesting(); }
 
   std::unique_ptr<CFDE_TxtEdtBuf> buf_;
 };

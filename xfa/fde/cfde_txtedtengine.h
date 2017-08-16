@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
@@ -98,12 +97,8 @@ class CFDE_TxtEdtEngine {
   void SetEditParams(const FDE_TXTEDTPARAMS& params);
   FDE_TXTEDTPARAMS* GetEditParams() { return &m_Param; }
 
-  int32_t CountPages() const {
-    return m_nLineCount == 0 ? 0 : ((m_nLineCount - 1) / m_nPageLineCount) + 1;
-  }
   CFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
-  void SetTextByStream(const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
   void SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const { return GetTextBufLength(); }
   CFX_WideString GetText(int32_t nStart, int32_t nCount) const;
@@ -115,14 +110,9 @@ class CFDE_TxtEdtEngine {
   }
   int32_t SetCaretPos(int32_t nIndex, bool bBefore);
   int32_t MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret, bool bShift, bool bCtrl);
-  bool IsLocked() const { return m_bLock; }
 
   int32_t Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
   int32_t Delete(int32_t nStart, bool bBackspace);
-  int32_t DeleteRange(int32_t nStart, size_t nCount);
-  int32_t Replace(int32_t nStart,
-                  int32_t nLength,
-                  const CFX_WideString& wsReplace);
 
   void SetLimit(int32_t nLimit) { m_nLimit = nLimit; }
   int32_t GetLimit() const { return m_nLimit; }
@@ -142,14 +132,12 @@ class CFDE_TxtEdtEngine {
 
   void Layout();
 
-  int32_t CountParags() const {
-    return pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
-  }
   CFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const {
     return m_ParagPtrArray[nParagIndex].get();
   }
   CFDE_TxtEdtBuf* GetTextBuf() const { return m_pTxtBuf.get(); }
   int32_t GetTextBufLength() const { return m_pTxtBuf->GetTextLength() - 1; }
+
   CFX_TxtBreak* GetTextBreak() const { return m_pTextBreak.get(); }
   int32_t GetLineCount() const { return m_nLineCount; }
   int32_t GetPageLineCount() const { return m_nPageLineCount; }
@@ -186,6 +174,12 @@ class CFDE_TxtEdtEngine {
     int32_t nParagIndex;
     int32_t nCharIndex;
   };
+
+  int32_t CountPages() const {
+    return m_nLineCount == 0 ? 0 : ((m_nLineCount - 1) / m_nPageLineCount) + 1;
+  }
+
+  bool IsLocked() const { return m_bLock; }
 
   CFX_WideString GetPreDeleteText(int32_t nIndex, int32_t nLength);
   CFX_WideString GetPreInsertText(int32_t nIndex,

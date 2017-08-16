@@ -197,36 +197,6 @@ CFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
   return m_PagePtrArray[nIndex].get();
 }
 
-void CFDE_TxtEdtEngine::SetTextByStream(
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream) {
-  ResetEngine();
-  int32_t nIndex = 0;
-  if (pStream && pStream->GetLength()) {
-    int32_t nStreamLength = pStream->GetLength();
-    bool bValid = true;
-    if (m_nLimit > 0 && nStreamLength > m_nLimit) {
-      bValid = false;
-    }
-    bool bPreIsCR = false;
-    if (bValid) {
-      int32_t nPos = pStream->GetBOMLength();
-      pStream->Seek(CFX_SeekableStreamProxy::Pos::Begin, nPos);
-      int32_t nPlateSize = std::min(nStreamLength, m_pTxtBuf->GetChunkSize());
-      wchar_t* lpwstr = FX_Alloc(wchar_t, nPlateSize);
-      bool bEos = false;
-      while (!bEos) {
-        int32_t nRead = pStream->ReadString(lpwstr, nPlateSize, &bEos);
-        bPreIsCR = ReplaceParagEnd(lpwstr, nRead, bPreIsCR);
-        m_pTxtBuf->Insert(nIndex, lpwstr, nRead);
-        nIndex += nRead;
-      }
-      FX_Free(lpwstr);
-    }
-  }
-  m_pTxtBuf->Insert(nIndex, &m_wLineEnd, 1);
-  RebuildParagraphs();
-}
-
 void CFDE_TxtEdtEngine::SetText(const CFX_WideString& wsText) {
   ResetEngine();
   int32_t nLength = wsText.GetLength();
@@ -258,7 +228,21 @@ CFX_WideString CFDE_TxtEdtEngine::GetText(int32_t nStart,
 }
 
 void CFDE_TxtEdtEngine::ClearText() {
-  DeleteRange(0, GetTextBufLength());
+  if (IsLocked())
+    return;
+
+  int32_t len = GetTextBufLength();
+  if (len == 0)
+    return;
+  if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
+    CFX_WideString wsText = GetPreDeleteText(0, len);
+    if (!m_Param.pEventSink->OnValidate(wsText))
+      return;
+  }
+
+  DeleteRange_DoRecord(0, len, false);
+  m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
+  SetCaretPos(0, true);
 }
 
 int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, bool bBefore) {
@@ -484,62 +468,6 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
   Inner_DeleteRange(nStart, nCount);
   SetCaretPos(nStart + ((!bBackspace && nStart > 0) ? -1 : 0),
               (bBackspace || nStart == 0));
-  m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
-  return FDE_TXTEDT_MODIFY_RET_S_Normal;
-}
-
-int32_t CFDE_TxtEdtEngine::DeleteRange(int32_t nStart, size_t nCount) {
-  if (IsLocked())
-    return FDE_TXTEDT_MODIFY_RET_F_Locked;
-  if (nCount == 0)
-    return FDE_TXTEDT_MODIFY_RET_S_Normal;
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText = GetPreDeleteText(nStart, nCount);
-    if (!m_Param.pEventSink->OnValidate(wsText))
-      return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-  }
-  DeleteRange_DoRecord(nStart, nCount, false);
-  m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
-  SetCaretPos(nStart, true);
-  return FDE_TXTEDT_MODIFY_RET_S_Normal;
-}
-
-int32_t CFDE_TxtEdtEngine::Replace(int32_t nStart,
-                                   int32_t nLength,
-                                   const CFX_WideString& wsReplace) {
-  if (IsLocked())
-    return FDE_TXTEDT_MODIFY_RET_F_Locked;
-  if (nStart < 0 || (nStart + nLength > GetTextBufLength()))
-    return FDE_TXTEDT_MODIFY_RET_F_Boundary;
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText = GetPreReplaceText(
-        nStart, nLength, wsReplace.c_str(), wsReplace.GetLength());
-    if (!m_Param.pEventSink->OnValidate(wsText))
-      return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-  }
-  if (IsSelect())
-    ClearSelection();
-
-  UpdateChangeInfoDelete(FDE_TXTEDT_TEXTCHANGE_TYPE_Replace,
-                         GetText(nStart, nLength));
-  if (nLength > 0)
-    Inner_DeleteRange(nStart, nLength);
-
-  int32_t nTextLength = wsReplace.GetLength();
-  if (nTextLength > 0)
-    Inner_Insert(nStart, wsReplace.c_str(), nTextLength);
-
-  m_ChangeInfo.wsInsert = CFX_WideString(wsReplace.c_str(), nTextLength);
-  nStart += nTextLength;
-  wchar_t wChar = m_pTxtBuf->GetCharByIndex(nStart - 1);
-  bool bBefore = true;
-  if (wChar != L'\n' && wChar != L'\r') {
-    nStart--;
-    bBefore = false;
-  }
-  SetCaretPos(nStart, bBefore);
-  m_Param.pEventSink->OnPageUnload(m_nCaretPage);
-  m_Param.pEventSink->OnPageLoad(m_nCaretPage);
   m_Param.pEventSink->OnTextChanged(m_ChangeInfo);
   return FDE_TXTEDT_MODIFY_RET_S_Normal;
 }

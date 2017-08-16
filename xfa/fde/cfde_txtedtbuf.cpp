@@ -14,7 +14,7 @@
 
 namespace {
 
-const int kDefaultChunkSize = 1024;
+const int32_t kDefaultChunkSize = 1024;
 
 }  // namespace
 
@@ -29,8 +29,7 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
 
   Clear(false);
   int32_t nTextLength = wsText.GetLength();
-  int32_t nNeedCount =
-      ((nTextLength - 1) / GetChunkSize() + 1) - m_chunks.size();
+  int32_t nNeedCount = ((nTextLength - 1) / m_chunkSize + 1) - m_chunks.size();
   int32_t i = 0;
   for (i = 0; i < nNeedCount; i++)
     m_chunks.push_back(NewChunk());
@@ -38,7 +37,7 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
   int32_t nTotalCount = m_chunks.size();
   const wchar_t* lpSrcBuf = wsText.c_str();
   int32_t nLeave = nTextLength;
-  int32_t nCopyedLength = GetChunkSize();
+  int32_t nCopyedLength = m_chunkSize;
   for (i = 0; i < nTotalCount && nLeave > 0; i++) {
     if (nLeave < nCopyedLength) {
       nCopyedLength = nLeave;
@@ -140,9 +139,9 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
 
   if (chunkIndex != 0) {
     ChunkHeader* chunk = m_chunks[chunkIndex - 1].get();
-    if (chunk->nUsed != GetChunkSize()) {
+    if (chunk->nUsed != m_chunkSize) {
       chunkIndex--;
-      int32_t nFree = GetChunkSize() - chunk->nUsed;
+      int32_t nFree = m_chunkSize - chunk->nUsed;
       int32_t nCopy = std::min(nLengthTemp, nFree);
       memcpy(chunk->wChars.get() + chunk->nUsed, lpText,
              nCopy * sizeof(wchar_t));
@@ -156,7 +155,7 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
   while (nLengthTemp > 0) {
     auto chunk = NewChunk();
 
-    int32_t nCopy = std::min(nLengthTemp, GetChunkSize());
+    int32_t nCopy = std::min(nLengthTemp, m_chunkSize);
     memcpy(chunk->wChars.get(), lpText, nCopy * sizeof(wchar_t));
     lpText += nCopy;
     nLengthTemp -= nCopy;
@@ -241,7 +240,7 @@ std::tuple<int32_t, int32_t> CFDE_TxtEdtBuf::Index2CP(int32_t nIndex) const {
 
 std::unique_ptr<CFDE_TxtEdtBuf::ChunkHeader> CFDE_TxtEdtBuf::NewChunk() {
   auto chunk = pdfium::MakeUnique<ChunkHeader>();
-  chunk->wChars.reset(FX_Alloc(wchar_t, GetChunkSize()));
+  chunk->wChars.reset(FX_Alloc(wchar_t, m_chunkSize));
   chunk->nUsed = 0;
   return chunk;
 }

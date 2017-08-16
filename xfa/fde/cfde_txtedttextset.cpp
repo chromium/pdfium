@@ -15,28 +15,6 @@ CFDE_TxtEdtTextSet::CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage)
 
 CFDE_TxtEdtTextSet::~CFDE_TxtEdtTextSet() {}
 
-int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
-                                      CFX_WideString& wsText) const {
-  wchar_t* pBuffer = wsText.GetBuffer(pPiece->nCount);
-  for (int32_t i = 0; i < pPiece->nCount; i++)
-    pBuffer[i] = m_pPage->GetChar(pPiece, i);
-
-  wsText.ReleaseBuffer(pPiece->nCount);
-  return pPiece->nCount;
-}
-
-CFX_RetainPtr<CFGAS_GEFont> CFDE_TxtEdtTextSet::GetFont() const {
-  return m_pPage->GetEngine()->GetEditParams()->pFont;
-}
-
-float CFDE_TxtEdtTextSet::GetFontSize() const {
-  return m_pPage->GetEngine()->GetEditParams()->fFontSize;
-}
-
-FX_ARGB CFDE_TxtEdtTextSet::GetFontColor() const {
-  return m_pPage->GetEngine()->GetEditParams()->dwFontColor;
-}
-
 int32_t CFDE_TxtEdtTextSet::GetDisplayPos(const FDE_TEXTEDITPIECE& piece,
                                           FXTEXT_CHARPOS* pCharPos) const {
   int32_t nLength = piece.nCount;

@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/cfx_unowned_ptr.h"
+
 class CFDE_TxtEdtEngine;
 
 class CFDE_TxtEdtParag {
@@ -37,7 +39,7 @@ class CFDE_TxtEdtParag {
   int32_t m_nCharCount;
   int32_t m_nLineCount;
   int32_t* m_lpData;
-  CFDE_TxtEdtEngine* m_pEngine;
+  CFX_UnownedPtr<CFDE_TxtEdtEngine> m_pEngine;
 };
 
 #endif  // XFA_FDE_CFDE_TXTEDTPARAG_H_

@@ -42,9 +42,7 @@ class CFDE_TxtEdtBuf {
   CFDE_TxtEdtBuf();
   ~CFDE_TxtEdtBuf();
 
-  int32_t GetChunkSize() const { return m_chunkSize; }
   int32_t GetTextLength() const { return m_nTotal; }
-
   void SetText(const CFX_WideString& wsText);
   CFX_WideString GetText() const { return GetRange(0, m_nTotal); }
 
@@ -55,10 +53,10 @@ class CFDE_TxtEdtBuf {
   void Delete(int32_t nIndex, int32_t nLength);
   void Clear(bool bRelease);
 
- private:
-  friend class Iterator;
-  friend class CFDE_TxtEdtBufTest;
+  void SetChunkSizeForTesting(size_t size);
+  size_t GetChunkCountForTesting() const { return m_chunks.size(); }
 
+ private:
   class ChunkHeader {
    public:
     ChunkHeader();
@@ -68,11 +66,10 @@ class CFDE_TxtEdtBuf {
     std::unique_ptr<wchar_t, FxFreeDeleter> wChars;
   };
 
-  void SetChunkSizeForTesting(size_t size);
   std::tuple<int32_t, int32_t> Index2CP(int32_t nIndex) const;
   std::unique_ptr<ChunkHeader> NewChunk();
 
-  size_t m_chunkSize;
+  int32_t m_chunkSize;
   int32_t m_nTotal;
   std::vector<std::unique_ptr<ChunkHeader>> m_chunks;
 };

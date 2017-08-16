@@ -121,29 +121,6 @@ int32_t CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) {
   return nCaret;
 }
 
-int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
-                                       FXTEXT_CHARPOS*& pCharPos,
-                                       CFX_RectF* pBBox) const {
-  pCharPos = FX_Alloc(FXTEXT_CHARPOS, m_nCharCount);
-  int32_t nCharPosCount = 0;
-  FXTEXT_CHARPOS* pos = pCharPos;
-  for (const auto& piece : m_Pieces) {
-    if (!rtClip.IntersectWith(m_pTextSet->GetRect(piece)))
-      continue;
-
-    int32_t nCount = m_pTextSet->GetDisplayPos(piece, pos);
-    nCharPosCount += nCount;
-    pos += nCount;
-  }
-  if ((nCharPosCount * 5) < (m_nCharCount << 2)) {
-    FXTEXT_CHARPOS* pTemp = FX_Alloc(FXTEXT_CHARPOS, nCharPosCount);
-    memcpy(pTemp, pCharPos, sizeof(FXTEXT_CHARPOS) * nCharPosCount);
-    FX_Free(pCharPos);
-    pCharPos = pTemp;
-  }
-  return nCharPosCount;
-}
-
 void CFDE_TxtEdtPage::CalcRangeRectArray(
     int32_t nStart,
     int32_t nCount,
@@ -201,7 +178,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   return pIter->GetWordPos();
 }
 
-int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox) {
+int32_t CFDE_TxtEdtPage::LoadPage() {
   if (m_nRefCount > 0) {
     m_nRefCount++;
     return m_nRefCount;
@@ -363,7 +340,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox) {
   return 0;
 }
 
-void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
+void CFDE_TxtEdtPage::UnloadPage() {
   ASSERT(m_nRefCount > 0);
   m_nRefCount--;
   if (m_nRefCount != 0)
