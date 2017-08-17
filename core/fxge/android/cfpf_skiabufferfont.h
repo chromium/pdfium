@@ -13,10 +13,11 @@
 
 class CFPF_SkiaBufferFont : public CFPF_SkiaFontDescriptor {
  public:
-  CFPF_SkiaBufferFont() : m_pBuffer(nullptr), m_szBuffer(0) {}
+  CFPF_SkiaBufferFont();
+  ~CFPF_SkiaBufferFont() override;
 
   // CFPF_SkiaFontDescriptor
-  int32_t GetType() const override { return FPF_SKIAFONTTYPE_Buffer; }
+  int32_t GetType() const override;
 
   void* m_pBuffer;
   size_t m_szBuffer;

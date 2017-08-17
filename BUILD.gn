@@ -962,15 +962,19 @@ static_library("fxcrt") {
 
 static_library("fxge") {
   sources = [
+    "core/fxge/android/cfpf_skiabufferfont.cpp",
     "core/fxge/android/cfpf_skiabufferfont.h",
     "core/fxge/android/cfpf_skiadevicemodule.cpp",
     "core/fxge/android/cfpf_skiadevicemodule.h",
+    "core/fxge/android/cfpf_skiafilefont.cpp",
     "core/fxge/android/cfpf_skiafilefont.h",
     "core/fxge/android/cfpf_skiafont.cpp",
     "core/fxge/android/cfpf_skiafont.h",
+    "core/fxge/android/cfpf_skiafontdescriptor.cpp",
     "core/fxge/android/cfpf_skiafontdescriptor.h",
     "core/fxge/android/cfpf_skiafontmgr.cpp",
     "core/fxge/android/cfpf_skiafontmgr.h",
+    "core/fxge/android/cfpf_skiapathfont.cpp",
     "core/fxge/android/cfpf_skiapathfont.h",
     "core/fxge/android/cfx_androidfontinfo.cpp",
     "core/fxge/android/cfx_androidfontinfo.h",

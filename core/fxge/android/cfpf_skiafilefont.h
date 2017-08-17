@@ -16,10 +16,11 @@ class IFX_SeekableReadStream;
 
 class CFPF_SkiaFileFont : public CFPF_SkiaFontDescriptor {
  public:
-  CFPF_SkiaFileFont() {}
+  CFPF_SkiaFileFont();
+  ~CFPF_SkiaFileFont() override;
 
   // CFPF_SkiaFontDescriptor
-  int32_t GetType() const override { return FPF_SKIAFONTTYPE_File; }
+  int32_t GetType() const override;
 
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
 };

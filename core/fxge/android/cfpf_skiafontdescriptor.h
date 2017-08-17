@@ -13,23 +13,13 @@
 
 class CFPF_SkiaFontDescriptor {
  public:
-  CFPF_SkiaFontDescriptor()
-      : m_pFamily(nullptr),
-        m_dwStyle(0),
-        m_iFaceIndex(0),
-        m_dwCharsets(0),
-        m_iGlyphNum(0) {}
-  virtual ~CFPF_SkiaFontDescriptor() { FX_Free(m_pFamily); }
+  CFPF_SkiaFontDescriptor();
+  virtual ~CFPF_SkiaFontDescriptor();
 
-  virtual int32_t GetType() const { return FPF_SKIAFONTTYPE_Unknown; }
+  virtual int32_t GetType() const;
 
-  void SetFamily(const char* pFamily) {
-    FX_Free(m_pFamily);
-    int32_t iSize = FXSYS_strlen(pFamily);
-    m_pFamily = FX_Alloc(char, iSize + 1);
-    memcpy(m_pFamily, pFamily, iSize * sizeof(char));
-    m_pFamily[iSize] = 0;
-  }
+  void SetFamily(const char* pFamily);
+
   char* m_pFamily;
   uint32_t m_dwStyle;
   int32_t m_iFaceIndex;
