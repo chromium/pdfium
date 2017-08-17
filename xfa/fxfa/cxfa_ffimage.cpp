@@ -35,16 +35,15 @@ void CXFA_FFImage::UnloadWidget() {
 }
 
 void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
-                                CFX_Matrix* pMatrix,
+                                const CFX_Matrix& matrix,
                                 uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
-  if (pMatrix)
-    mtRotate.Concat(*pMatrix);
+  mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
 
   CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = GetDataAcc()->GetImageImage();
   if (!pDIBitmap)
@@ -67,6 +66,6 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
   m_pDataAcc->GetImageDpi(iImageXDpi, iImageYDpi);
-  XFA_DrawImage(pGS, rtImage, &mtRotate, pDIBitmap, iAspect, iImageXDpi,
+  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, iAspect, iImageXDpi,
                 iImageYDpi, iHorzAlign, iVertAlign);
 }

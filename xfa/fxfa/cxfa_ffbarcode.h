@@ -93,7 +93,7 @@ class CXFA_FFBarcode : public CXFA_FFTextEdit {
   // CXFA_FFTextEdit
   bool LoadWidget() override;
   void RenderWidget(CXFA_Graphics* pGS,
-                    CFX_Matrix* pMatrix,
+                    const CFX_Matrix& matrix,
                     uint32_t dwStatus) override;
   void UpdateWidgetProperty() override;
   bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;

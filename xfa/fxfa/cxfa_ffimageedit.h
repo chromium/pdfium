@@ -16,7 +16,7 @@ class CXFA_FFImageEdit : public CXFA_FFField {
 
   // CXFA_FFField
   void RenderWidget(CXFA_Graphics* pGS,
-                    CFX_Matrix* pMatrix,
+                    const CFX_Matrix& matrix,
                     uint32_t dwStatus) override;
   bool LoadWidget() override;
   void UnloadWidget() override;

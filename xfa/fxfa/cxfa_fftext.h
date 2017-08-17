@@ -20,7 +20,7 @@ class CXFA_FFText : public CXFA_FFDraw {
   bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) override;
   FWL_WidgetHit OnHitTest(const CFX_PointF& point) override;
   void RenderWidget(CXFA_Graphics* pGS,
-                    CFX_Matrix* pMatrix,
+                    const CFX_Matrix& matrix,
                     uint32_t dwStatus) override;
   bool IsLoaded() override;
   bool PerformLayout() override;

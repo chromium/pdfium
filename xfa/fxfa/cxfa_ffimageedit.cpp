@@ -52,16 +52,15 @@ void CXFA_FFImageEdit::UnloadWidget() {
 }
 
 void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
-                                    CFX_Matrix* pMatrix,
+                                    const CFX_Matrix& matrix,
                                     uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
-  if (pMatrix)
-    mtRotate.Concat(*pMatrix);
+  mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
   RenderCaption(pGS, &mtRotate);
@@ -86,7 +85,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
   m_pDataAcc->GetImageEditDpi(iImageXDpi, iImageYDpi);
-  XFA_DrawImage(pGS, rtImage, &mtRotate, pDIBitmap, iAspect, iImageXDpi,
+  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, iAspect, iImageXDpi,
                 iImageYDpi, iHorzAlign, iVertAlign);
 }
 

@@ -109,7 +109,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
       return;
     // Render the focus widget
     docView->GetWidgetHandler()->RenderWidget(annot->GetXFAWidget(), &gs,
-                                              pUser2Device, false);
+                                              *pUser2Device, false);
     return;
   }
 #endif  // PDF_ENABLE_XFA

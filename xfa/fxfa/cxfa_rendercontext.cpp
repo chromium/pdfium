@@ -30,7 +30,7 @@ void CXFA_RenderContext::DoRender(CXFA_Graphics* gs) {
     rtWidgetBox.width += 1;
     rtWidgetBox.height += 1;
     if (rtWidgetBox.IntersectWith(m_rtClipRect))
-      m_pWidget->RenderWidget(gs, &m_matrix, XFA_WidgetStatus_Highlight);
+      m_pWidget->RenderWidget(gs, m_matrix, XFA_WidgetStatus_Highlight);
 
     m_pWidget = m_pWidgetIterator->MoveToNext();
   }

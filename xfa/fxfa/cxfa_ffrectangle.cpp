@@ -12,7 +12,7 @@ CXFA_FFRectangle::CXFA_FFRectangle(CXFA_WidgetAcc* pDataAcc)
 CXFA_FFRectangle::~CXFA_FFRectangle() {}
 
 void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
-                                    CFX_Matrix* pMatrix,
+                                    const CFX_Matrix& matrix,
                                     uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
     return;
@@ -27,8 +27,7 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
     XFA_RectWidthoutMargin(rect, mgWidget);
 
   CFX_Matrix mtRotate = GetRotateMatrix();
-  if (pMatrix)
-    mtRotate.Concat(*pMatrix);
+  mtRotate.Concat(matrix);
 
   DrawBorder(pGS, rtObj, rect, &mtRotate);
 }

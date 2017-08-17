@@ -41,7 +41,7 @@ int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
 CFX_GraphStateData::LineCap XFA_LineCapToFXGE(int32_t iLineCap);
 void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
-                   CFX_Matrix* pMatrix,
+                   const CFX_Matrix& matrix,
                    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
                    int32_t iAspect,
                    int32_t iImageXDpi,
@@ -88,7 +88,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
 
   virtual CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false);
   virtual void RenderWidget(CXFA_Graphics* pGS,
-                            CFX_Matrix* pMatrix,
+                            const CFX_Matrix& matrix,
                             uint32_t dwStatus);
   virtual bool IsLoaded();
   virtual bool LoadWidget();
@@ -169,11 +169,11 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   void DrawBorder(CXFA_Graphics* pGS,
                   CXFA_Box box,
                   const CFX_RectF& rtBorder,
-                  CFX_Matrix* pMatrix);
+                  const CFX_Matrix* pMatrix);
   void DrawBorderWithFlags(CXFA_Graphics* pGS,
                            CXFA_Box box,
                            const CFX_RectF& rtBorder,
-                           CFX_Matrix* pMatrix,
+                           const CFX_Matrix* pMatrix,
                            uint32_t dwFlags);
 
   CFX_RectF GetRectWithoutRotate();

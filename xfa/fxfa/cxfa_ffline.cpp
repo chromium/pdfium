@@ -48,7 +48,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
 }
 
 void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
-                               CFX_Matrix* pMatrix,
+                               const CFX_Matrix& matrix,
                                uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
     return;
@@ -74,8 +74,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
-  if (pMatrix)
-    mtRotate.Concat(*pMatrix);
+  mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
   if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())

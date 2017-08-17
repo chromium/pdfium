@@ -11,7 +11,7 @@ CXFA_FFArc::CXFA_FFArc(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 CXFA_FFArc::~CXFA_FFArc() {}
 
 void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
-                              CFX_Matrix* pMatrix,
+                              const CFX_Matrix& matrix,
                               uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
     return;
@@ -22,8 +22,7 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_Arc arcObj = value.GetArc();
   CFX_Matrix mtRotate = GetRotateMatrix();
-  if (pMatrix)
-    mtRotate.Concat(*pMatrix);
+  mtRotate.Concat(matrix);
 
   CFX_RectF rtArc = GetRectWithoutRotate();
   if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())

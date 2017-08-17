@@ -29,16 +29,15 @@ CXFA_FFPushButton::~CXFA_FFPushButton() {
 }
 
 void CXFA_FFPushButton::RenderWidget(CXFA_Graphics* pGS,
-                                     CFX_Matrix* pMatrix,
+                                     const CFX_Matrix& matrix,
                                      uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
-  if (pMatrix)
-    mtRotate.Concat(*pMatrix);
+  mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   RenderHighlightCaption(pGS, &mtRotate);
 
   CFX_RectF rtWidget = GetRectWithoutRotate();
