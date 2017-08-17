@@ -188,7 +188,7 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix) {
   pGraphics->SaveGraphState();
   if (pMatrix)
-    pGraphics->ConcatMatrix(const_cast<CFX_Matrix*>(pMatrix));
+    pGraphics->ConcatMatrix(pMatrix);
 
   CFWL_EventCheckWord checkWordEvent(this);
   CFX_ByteString sLatinWord;

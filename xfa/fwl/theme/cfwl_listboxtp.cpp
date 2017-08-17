@@ -41,7 +41,7 @@ void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     }
     case CFWL_Part::Icon: {
       pParams->m_pGraphics->StretchImage(pParams->m_pImage, pParams->m_rtPart,
-                                         &pParams->m_matrix);
+                                         pParams->m_matrix);
       break;
     }
     case CFWL_Part::Check: {

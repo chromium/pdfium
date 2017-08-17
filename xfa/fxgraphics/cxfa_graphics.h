@@ -50,7 +50,7 @@ class CXFA_Graphics {
   void RestoreGraphState();
 
   CFX_RectF GetClipRect() const;
-  CFX_Matrix* GetMatrix();
+  const CFX_Matrix* GetMatrix() const;
   CFX_RenderDevice* GetRenderDevice();
 
   void SetLineCap(CFX_GraphStateData::LineCap lineCap);
@@ -61,13 +61,13 @@ class CXFA_Graphics {
   void SetStrokeColor(const CXFA_Color& color);
   void SetFillColor(const CXFA_Color& color);
   void SetClipRect(const CFX_RectF& rect);
-  void StrokePath(CXFA_Path* path, CFX_Matrix* matrix = nullptr);
+  void StrokePath(CXFA_Path* path, const CFX_Matrix* matrix);
   void FillPath(CXFA_Path* path,
-                FX_FillMode fillMode = FXFILL_WINDING,
-                CFX_Matrix* matrix = nullptr);
+                FX_FillMode fillMode,
+                const CFX_Matrix* matrix);
   void StretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
                     const CFX_RectF& rect,
-                    CFX_Matrix* matrix = nullptr);
+                    const CFX_Matrix& matrix);
   void ConcatMatrix(const CFX_Matrix* matrix);
 
  protected:
@@ -87,23 +87,23 @@ class CXFA_Graphics {
   } m_info;
 
   void RenderDeviceSetLineDash(FX_DashStyle dashStyle);
-  void RenderDeviceStrokePath(CXFA_Path* path, CFX_Matrix* matrix);
-  void RenderDeviceFillPath(CXFA_Path* path,
+  void RenderDeviceStrokePath(const CXFA_Path* path, const CFX_Matrix* matrix);
+  void RenderDeviceFillPath(const CXFA_Path* path,
                             FX_FillMode fillMode,
-                            CFX_Matrix* matrix);
+                            const CFX_Matrix* matrix);
   void RenderDeviceStretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
                                 const CFX_RectF& rect,
-                                CFX_Matrix* matrix);
+                                const CFX_Matrix& matrix);
 
-  void FillPathWithPattern(CXFA_Path* path,
+  void FillPathWithPattern(const CXFA_Path* path,
                            FX_FillMode fillMode,
-                           CFX_Matrix* matrix);
-  void FillPathWithShading(CXFA_Path* path,
+                           const CFX_Matrix& matrix);
+  void FillPathWithShading(const CXFA_Path* path,
                            FX_FillMode fillMode,
-                           CFX_Matrix* matrix);
+                           const CFX_Matrix& matrix);
 
   void SetDIBitsWithMatrix(const CFX_RetainPtr<CFX_DIBSource>& source,
-                           CFX_Matrix* matrix);
+                           const CFX_Matrix& matrix);
 
   CFX_RenderDevice* const m_renderDevice;  // Not owned.
   std::vector<std::unique_ptr<TInfo>> m_infoStack;
