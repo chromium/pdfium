@@ -15,7 +15,7 @@ vars = {
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': '08cb956852a5ccdba7f9c941728bb833529ba3c6',
-  'instrumented_lib_revision': '45f5814b1543e41ea0be54c771e3840ea52cca4a',
+  'instrumented_lib_revision': '644afd349826cb68204226a16c38bde13abe9c3c',
   'jinja2_revision': 'd34383206fa42d52faa10bb9931d6d538f3a57e0',
   'jpeg_turbo_revision': '7260e4d8b8e1e40b17f03fafdf1cd83296900f76',
   'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
