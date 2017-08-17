@@ -355,6 +355,6 @@ void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CXFA_FFComboBox::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                   const CFX_Matrix* pMatrix) {
-  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+                                   const CFX_Matrix& matrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }

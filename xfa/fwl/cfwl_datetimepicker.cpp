@@ -115,7 +115,7 @@ FWL_WidgetHit CFWL_DateTimePicker::HitTest(const CFX_PointF& point) {
 }
 
 void CFWL_DateTimePicker::DrawWidget(CXFA_Graphics* pGraphics,
-                                     const CFX_Matrix* pMatrix) {
+                                     const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -123,11 +123,11 @@ void CFWL_DateTimePicker::DrawWidget(CXFA_Graphics* pGraphics,
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
   if (!m_rtBtn.IsEmpty())
-    DrawDropDownButton(pGraphics, pTheme, pMatrix);
+    DrawDropDownButton(pGraphics, pTheme, &matrix);
   if (m_pWidgetMgr->IsFormDisabled()) {
-    DisForm_DrawWidget(pGraphics, pMatrix);
+    DisForm_DrawWidget(pGraphics, &matrix);
     return;
   }
 }
@@ -453,7 +453,7 @@ void CFWL_DateTimePicker::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
     CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);
     if (pMatrix)
       mt.Concat(*pMatrix);
-    m_pEdit->DrawWidget(pGraphics, &mt);
+    m_pEdit->DrawWidget(pGraphics, mt);
   }
   if (!IsMonthCalendarVisible())
     return;
@@ -462,7 +462,7 @@ void CFWL_DateTimePicker::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
   CFX_Matrix mt(1, 0, 0, 1, rtMonth.left, rtMonth.top);
   if (pMatrix)
     mt.Concat(*pMatrix);
-  m_pMonthCal->DrawWidget(pGraphics, &mt);
+  m_pMonthCal->DrawWidget(pGraphics, mt);
 }
 
 void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
@@ -511,8 +511,8 @@ void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_DateTimePicker::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                       const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                                       const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {

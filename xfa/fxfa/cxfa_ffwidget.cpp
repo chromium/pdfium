@@ -391,7 +391,7 @@ void XFA_BOX_Fill_Radial(CXFA_Box box,
                          CXFA_Graphics* pGS,
                          CXFA_Path& fillPath,
                          CFX_RectF rtFill,
-                         const CFX_Matrix* pMatrix) {
+                         const CFX_Matrix& matrix) {
   CXFA_Fill fill = box.GetFill();
   FX_ARGB crStart, crEnd;
   crStart = fill.GetColor();
@@ -407,14 +407,14 @@ void XFA_BOX_Fill_Radial(CXFA_Box box,
                            2,
                        true, true, crStart, crEnd);
   pGS->SetFillColor(CXFA_Color(&shading));
-  pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
+  pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
 void XFA_BOX_Fill_Pattern(CXFA_Box box,
                           CXFA_Graphics* pGS,
                           CXFA_Path& fillPath,
                           CFX_RectF rtFill,
-                          const CFX_Matrix* pMatrix) {
+                          const CFX_Matrix& matrix) {
   CXFA_Fill fill = box.GetFill();
   FX_ARGB crStart, crEnd;
   crStart = fill.GetColor();
@@ -442,14 +442,14 @@ void XFA_BOX_Fill_Pattern(CXFA_Box box,
 
   CXFA_Pattern pattern(iHatch, crEnd, crStart);
   pGS->SetFillColor(CXFA_Color(&pattern, 0x0));
-  pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
+  pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
 void XFA_BOX_Fill_Linear(CXFA_Box box,
                          CXFA_Graphics* pGS,
                          CXFA_Path& fillPath,
                          CFX_RectF rtFill,
-                         const CFX_Matrix* pMatrix) {
+                         const CFX_Matrix& matrix) {
   CXFA_Fill fill = box.GetFill();
   FX_ARGB crStart = fill.GetColor();
   FX_ARGB crEnd;
@@ -478,14 +478,14 @@ void XFA_BOX_Fill_Linear(CXFA_Box box,
   }
   CXFA_Shading shading(ptStart, ptEnd, false, false, crStart, crEnd);
   pGS->SetFillColor(CXFA_Color(&shading));
-  pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
+  pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
 void XFA_BOX_Fill(CXFA_Box box,
                   const std::vector<CXFA_Stroke>& strokes,
                   CXFA_Graphics* pGS,
                   const CFX_RectF& rtWidget,
-                  const CFX_Matrix* pMatrix,
+                  const CFX_Matrix& matrix,
                   uint32_t dwFlags) {
   CXFA_Fill fill = box.GetFill();
   if (!fill || fill.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
@@ -499,13 +499,13 @@ void XFA_BOX_Fill(CXFA_Box box,
   XFA_Element eType = fill.GetFillType();
   switch (eType) {
     case XFA_Element::Radial:
-      XFA_BOX_Fill_Radial(box, pGS, fillPath, rtWidget, pMatrix);
+      XFA_BOX_Fill_Radial(box, pGS, fillPath, rtWidget, matrix);
       break;
     case XFA_Element::Pattern:
-      XFA_BOX_Fill_Pattern(box, pGS, fillPath, rtWidget, pMatrix);
+      XFA_BOX_Fill_Pattern(box, pGS, fillPath, rtWidget, matrix);
       break;
     case XFA_Element::Linear:
-      XFA_BOX_Fill_Linear(box, pGS, fillPath, rtWidget, pMatrix);
+      XFA_BOX_Fill_Linear(box, pGS, fillPath, rtWidget, matrix);
       break;
     default: {
       FX_ARGB cr;
@@ -521,7 +521,7 @@ void XFA_BOX_Fill(CXFA_Box box,
         cr = fill.GetColor();
       }
       pGS->SetFillColor(CXFA_Color(cr));
-      pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
+      pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
     } break;
   }
   pGS->RestoreGraphState();
@@ -530,7 +530,7 @@ void XFA_BOX_Fill(CXFA_Box box,
 void XFA_BOX_StrokePath(CXFA_Stroke stroke,
                         CXFA_Path* pPath,
                         CXFA_Graphics* pGS,
-                        const CFX_Matrix* pMatrix) {
+                        const CFX_Matrix& matrix) {
   if (!stroke || !stroke.IsVisible()) {
     return;
   }
@@ -548,14 +548,14 @@ void XFA_BOX_StrokePath(CXFA_Stroke stroke,
   XFA_StrokeTypeSetLineDash(pGS, stroke.GetStrokeType(),
                             XFA_ATTRIBUTEENUM_Butt);
   pGS->SetStrokeColor(CXFA_Color(stroke.GetColor()));
-  pGS->StrokePath(pPath, pMatrix);
+  pGS->StrokePath(pPath, &matrix);
   pGS->RestoreGraphState();
 }
 
 void XFA_BOX_StrokeArc(CXFA_Box box,
                        CXFA_Graphics* pGS,
                        CFX_RectF rtWidget,
-                       const CFX_Matrix* pMatrix,
+                       const CFX_Matrix& matrix,
                        uint32_t dwFlags) {
   CXFA_Edge edge = box.GetEdge(0);
   if (!edge || !edge.IsVisible()) {
@@ -586,7 +586,7 @@ void XFA_BOX_StrokeArc(CXFA_Box box,
 
     CXFA_Path arcPath;
     XFA_BOX_GetPath_Arc(box, rtWidget, arcPath, dwFlags);
-    XFA_BOX_StrokePath(edge, &arcPath, pGS, pMatrix);
+    XFA_BOX_StrokePath(edge, &arcPath, pGS, matrix);
     return;
   }
   pGS->SaveGraphState();
@@ -615,33 +615,33 @@ void XFA_BOX_StrokeArc(CXFA_Box box,
                  FX_PI);
 
   pGS->SetStrokeColor(CXFA_Color(0xFF808080));
-  pGS->StrokePath(&arcPath, pMatrix);
+  pGS->StrokePath(&arcPath, &matrix);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
                  FX_PI);
 
   pGS->SetStrokeColor(CXFA_Color(0xFFFFFFFF));
-  pGS->StrokePath(&arcPath, pMatrix);
+  pGS->StrokePath(&arcPath, &matrix);
   rtWidget.Deflate(fHalf, fHalf);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
                  FX_PI);
 
   pGS->SetStrokeColor(CXFA_Color(0xFF404040));
-  pGS->StrokePath(&arcPath, pMatrix);
+  pGS->StrokePath(&arcPath, &matrix);
   arcPath.Clear();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
                  FX_PI);
 
   pGS->SetStrokeColor(CXFA_Color(0xFFC0C0C0));
-  pGS->StrokePath(&arcPath, pMatrix);
+  pGS->StrokePath(&arcPath, &matrix);
   pGS->RestoreGraphState();
 }
 
 void XFA_Draw3DRect(CXFA_Graphics* pGraphic,
                     const CFX_RectF& rt,
                     float fLineWidth,
-                    const CFX_Matrix* pMatrix,
+                    const CFX_Matrix& matrix,
                     FX_ARGB argbTopLeft,
                     FX_ARGB argbBottomRight) {
   float fBottom = rt.bottom();
@@ -655,7 +655,7 @@ void XFA_Draw3DRect(CXFA_Graphics* pGraphic,
   pathLT.LineTo(CFX_PointF(rt.left + fLineWidth, fBottom - fLineWidth));
   pathLT.LineTo(CFX_PointF(rt.left, fBottom));
   pGraphic->SetFillColor(CXFA_Color(argbTopLeft));
-  pGraphic->FillPath(&pathLT, FXFILL_WINDING, pMatrix);
+  pGraphic->FillPath(&pathLT, FXFILL_WINDING, &matrix);
 
   CXFA_Path pathRB;
   pathRB.MoveTo(CFX_PointF(fRight, rt.top));
@@ -666,13 +666,13 @@ void XFA_Draw3DRect(CXFA_Graphics* pGraphic,
   pathRB.LineTo(CFX_PointF(fRight - fLineWidth, rt.top + fLineWidth));
   pathRB.LineTo(CFX_PointF(fRight, rt.top));
   pGraphic->SetFillColor(CXFA_Color(argbBottomRight));
-  pGraphic->FillPath(&pathRB, FXFILL_WINDING, pMatrix);
+  pGraphic->FillPath(&pathRB, FXFILL_WINDING, &matrix);
 }
 
 void XFA_BOX_Stroke_3DRect_Lowered(CXFA_Graphics* pGS,
                                    CFX_RectF rt,
                                    float fThickness,
-                                   const CFX_Matrix* pMatrix) {
+                                   const CFX_Matrix& matrix) {
   float fHalfWidth = fThickness / 2.0f;
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
@@ -681,14 +681,14 @@ void XFA_BOX_Stroke_3DRect_Lowered(CXFA_Graphics* pGS,
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->SetFillColor(CXFA_Color(0xFF000000));
-  pGS->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
-  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, pMatrix, 0xFF808080, 0xFFC0C0C0);
+  pGS->FillPath(&path, FXFILL_ALTERNATE, &matrix);
+  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, matrix, 0xFF808080, 0xFFC0C0C0);
 }
 
 void XFA_BOX_Stroke_3DRect_Raised(CXFA_Graphics* pGS,
                                   CFX_RectF rt,
                                   float fThickness,
-                                  const CFX_Matrix* pMatrix) {
+                                  const CFX_Matrix& matrix) {
   float fHalfWidth = fThickness / 2.0f;
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
@@ -697,37 +697,37 @@ void XFA_BOX_Stroke_3DRect_Raised(CXFA_Graphics* pGS,
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->SetFillColor(CXFA_Color(0xFF000000));
-  pGS->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
-  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, pMatrix, 0xFFFFFFFF, 0xFF808080);
+  pGS->FillPath(&path, FXFILL_ALTERNATE, &matrix);
+  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, matrix, 0xFFFFFFFF, 0xFF808080);
 }
 
 void XFA_BOX_Stroke_3DRect_Etched(CXFA_Graphics* pGS,
                                   CFX_RectF rt,
                                   float fThickness,
-                                  const CFX_Matrix* pMatrix) {
+                                  const CFX_Matrix& matrix) {
   float fHalfWidth = fThickness / 2.0f;
-  XFA_Draw3DRect(pGS, rt, fThickness, pMatrix, 0xFF808080, 0xFFFFFFFF);
+  XFA_Draw3DRect(pGS, rt, fThickness, matrix, 0xFF808080, 0xFFFFFFFF);
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
-  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, pMatrix, 0xFFFFFFFF, 0xFF808080);
+  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, matrix, 0xFFFFFFFF, 0xFF808080);
 }
 
 void XFA_BOX_Stroke_3DRect_Embossed(CXFA_Graphics* pGS,
                                     CFX_RectF rt,
                                     float fThickness,
-                                    const CFX_Matrix* pMatrix) {
+                                    const CFX_Matrix& matrix) {
   float fHalfWidth = fThickness / 2.0f;
-  XFA_Draw3DRect(pGS, rt, fThickness, pMatrix, 0xFF808080, 0xFF000000);
+  XFA_Draw3DRect(pGS, rt, fThickness, matrix, 0xFF808080, 0xFF000000);
   CFX_RectF rtInner(rt);
   rtInner.Deflate(fHalfWidth, fHalfWidth);
-  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, pMatrix, 0xFF000000, 0xFF808080);
+  XFA_Draw3DRect(pGS, rtInner, fHalfWidth, matrix, 0xFF000000, 0xFF808080);
 }
 
 void XFA_BOX_Stroke_Rect(CXFA_Box box,
                          const std::vector<CXFA_Stroke>& strokes,
                          CXFA_Graphics* pGS,
                          CFX_RectF rtWidget,
-                         const CFX_Matrix* pMatrix) {
+                         const CFX_Matrix& matrix) {
   bool bVisible = false;
   float fThickness = 0;
   int32_t i3DType = box.Get3DStyle(bVisible, fThickness);
@@ -737,16 +737,16 @@ void XFA_BOX_Stroke_Rect(CXFA_Box box,
     }
     switch (i3DType) {
       case XFA_ATTRIBUTEENUM_Lowered:
-        XFA_BOX_Stroke_3DRect_Lowered(pGS, rtWidget, fThickness, pMatrix);
+        XFA_BOX_Stroke_3DRect_Lowered(pGS, rtWidget, fThickness, matrix);
         break;
       case XFA_ATTRIBUTEENUM_Raised:
-        XFA_BOX_Stroke_3DRect_Raised(pGS, rtWidget, fThickness, pMatrix);
+        XFA_BOX_Stroke_3DRect_Raised(pGS, rtWidget, fThickness, matrix);
         break;
       case XFA_ATTRIBUTEENUM_Etched:
-        XFA_BOX_Stroke_3DRect_Etched(pGS, rtWidget, fThickness, pMatrix);
+        XFA_BOX_Stroke_3DRect_Etched(pGS, rtWidget, fThickness, matrix);
         break;
       case XFA_ATTRIBUTEENUM_Embossed:
-        XFA_BOX_Stroke_3DRect_Embossed(pGS, rtWidget, fThickness, pMatrix);
+        XFA_BOX_Stroke_3DRect_Embossed(pGS, rtWidget, fThickness, matrix);
         break;
     }
     return;
@@ -789,7 +789,7 @@ void XFA_BOX_Stroke_Rect(CXFA_Box box,
     if ((i % 1) == 0 && stroke.GetRadius() < 0) {
       bool bEmpty = path.IsEmpty();
       if (!bEmpty) {
-        XFA_BOX_StrokePath(stroke, &path, pGS, pMatrix);
+        XFA_BOX_StrokePath(stroke, &path, pGS, matrix);
         path.Clear();
       }
       bStart = true;
@@ -799,7 +799,7 @@ void XFA_BOX_Stroke_Rect(CXFA_Box box,
     CXFA_Stroke stroke2 = strokes[(i + 1) % 8];
     bStart = !stroke.SameStyles(stroke2);
     if (bStart) {
-      XFA_BOX_StrokePath(stroke, &path, pGS, pMatrix);
+      XFA_BOX_StrokePath(stroke, &path, pGS, matrix);
       path.Clear();
     }
   }
@@ -808,7 +808,7 @@ void XFA_BOX_Stroke_Rect(CXFA_Box box,
     if (bClose) {
       path.Close();
     }
-    XFA_BOX_StrokePath(strokes[7], &path, pGS, pMatrix);
+    XFA_BOX_StrokePath(strokes[7], &path, pGS, matrix);
   }
 }
 
@@ -816,10 +816,10 @@ void XFA_BOX_Stroke(CXFA_Box box,
                     const std::vector<CXFA_Stroke>& strokes,
                     CXFA_Graphics* pGS,
                     CFX_RectF rtWidget,
-                    const CFX_Matrix* pMatrix,
+                    const CFX_Matrix& matrix,
                     uint32_t dwFlags) {
   if (box.IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
-    XFA_BOX_StrokeArc(box, pGS, rtWidget, pMatrix, dwFlags);
+    XFA_BOX_StrokeArc(box, pGS, rtWidget, matrix, dwFlags);
     return;
   }
   bool bVisible = false;
@@ -875,13 +875,13 @@ void XFA_BOX_Stroke(CXFA_Box box,
         break;
     }
   }
-  XFA_BOX_Stroke_Rect(box, strokes, pGS, rtWidget, pMatrix);
+  XFA_BOX_Stroke_Rect(box, strokes, pGS, rtWidget, matrix);
 }
 
 void XFA_DrawBox(CXFA_Box box,
                  CXFA_Graphics* pGS,
                  const CFX_RectF& rtWidget,
-                 const CFX_Matrix* pMatrix,
+                 const CFX_Matrix& matrix,
                  uint32_t dwFlags) {
   if (!box || box.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
@@ -895,8 +895,8 @@ void XFA_DrawBox(CXFA_Box box,
   if (!(dwFlags & XFA_DRAWBOX_ForceRound) && eType != XFA_Element::Arc)
     box.GetStrokes(&strokes);
 
-  XFA_BOX_Fill(box, strokes, pGS, rtWidget, pMatrix, dwFlags);
-  XFA_BOX_Stroke(box, strokes, pGS, rtWidget, pMatrix, dwFlags);
+  XFA_BOX_Fill(box, strokes, pGS, rtWidget, matrix, dwFlags);
+  XFA_BOX_Stroke(box, strokes, pGS, rtWidget, matrix, dwFlags);
 }
 
 }  // namespace
@@ -991,7 +991,7 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
     XFA_RectWidthoutMargin(rtBorder, margin);
 
   rtBorder.Normalize();
-  DrawBorder(pGS, border, rtBorder, &matrix);
+  DrawBorder(pGS, border, rtBorder, matrix);
 }
 
 bool CXFA_FFWidget::IsLoaded() {
@@ -1014,16 +1014,16 @@ void CXFA_FFWidget::UpdateWidgetProperty() {}
 void CXFA_FFWidget::DrawBorder(CXFA_Graphics* pGS,
                                CXFA_Box box,
                                const CFX_RectF& rtBorder,
-                               const CFX_Matrix* pMatrix) {
-  XFA_DrawBox(box, pGS, rtBorder, pMatrix, 0);
+                               const CFX_Matrix& matrix) {
+  XFA_DrawBox(box, pGS, rtBorder, matrix, 0);
 }
 
 void CXFA_FFWidget::DrawBorderWithFlags(CXFA_Graphics* pGS,
                                         CXFA_Box box,
                                         const CFX_RectF& rtBorder,
-                                        const CFX_Matrix* pMatrix,
+                                        const CFX_Matrix& matrix,
                                         uint32_t dwFlags) {
-  XFA_DrawBox(box, pGS, rtBorder, pMatrix, dwFlags);
+  XFA_DrawBox(box, pGS, rtBorder, matrix, dwFlags);
 }
 
 void CXFA_FFWidget::AddInvalidateRect() {

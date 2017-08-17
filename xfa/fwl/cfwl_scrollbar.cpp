@@ -75,7 +75,7 @@ void CFWL_ScrollBar::Update() {
 }
 
 void CFWL_ScrollBar::DrawWidget(CXFA_Graphics* pGraphics,
-                                const CFX_Matrix* pMatrix) {
+                                const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -83,12 +83,12 @@ void CFWL_ScrollBar::DrawWidget(CXFA_Graphics* pGraphics,
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  DrawTrack(pGraphics, pTheme, true, pMatrix);
-  DrawTrack(pGraphics, pTheme, false, pMatrix);
-  DrawArrowBtn(pGraphics, pTheme, true, pMatrix);
-  DrawArrowBtn(pGraphics, pTheme, false, pMatrix);
-  DrawThumb(pGraphics, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
+  DrawTrack(pGraphics, pTheme, true, &matrix);
+  DrawTrack(pGraphics, pTheme, false, &matrix);
+  DrawArrowBtn(pGraphics, pTheme, true, &matrix);
+  DrawArrowBtn(pGraphics, pTheme, false, &matrix);
+  DrawThumb(pGraphics, pTheme, &matrix);
 }
 
 void CFWL_ScrollBar::SetTrackPos(float fTrackPos) {
@@ -356,8 +356,8 @@ void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_ScrollBar::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                  const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                                  const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {

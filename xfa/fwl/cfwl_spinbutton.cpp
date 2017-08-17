@@ -79,20 +79,19 @@ FWL_WidgetHit CFWL_SpinButton::HitTest(const CFX_PointF& point) {
 }
 
 void CFWL_SpinButton::DrawWidget(CXFA_Graphics* pGraphics,
-                                 const CFX_Matrix* pMatrix) {
+                                 const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
 
   CFX_RectF rtClip(m_rtClient);
-  if (pMatrix)
-    pMatrix->TransformRect(rtClip);
+  matrix.TransformRect(rtClip);
 
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 
-  DrawUpButton(pGraphics, pTheme, pMatrix);
-  DrawDownButton(pGraphics, pTheme, pMatrix);
+  DrawUpButton(pGraphics, pTheme, &matrix);
+  DrawDownButton(pGraphics, pTheme, &matrix);
 }
 
 void CFWL_SpinButton::DisableButton() {
@@ -183,8 +182,8 @@ void CFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_SpinButton::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                   const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                                   const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_SpinButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {

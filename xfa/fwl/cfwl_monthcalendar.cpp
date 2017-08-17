@@ -147,7 +147,7 @@ void CFWL_MonthCalendar::Update() {
 }
 
 void CFWL_MonthCalendar::DrawWidget(CXFA_Graphics* pGraphics,
-                                    const CFX_Matrix* pMatrix) {
+                                    const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -155,20 +155,20 @@ void CFWL_MonthCalendar::DrawWidget(CXFA_Graphics* pGraphics,
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 
-  DrawBackground(pGraphics, pTheme, pMatrix);
-  DrawHeadBK(pGraphics, pTheme, pMatrix);
-  DrawLButton(pGraphics, pTheme, pMatrix);
-  DrawRButton(pGraphics, pTheme, pMatrix);
-  DrawSeperator(pGraphics, pTheme, pMatrix);
-  DrawDatesInBK(pGraphics, pTheme, pMatrix);
-  DrawDatesInCircle(pGraphics, pTheme, pMatrix);
-  DrawCaption(pGraphics, pTheme, pMatrix);
-  DrawWeek(pGraphics, pTheme, pMatrix);
-  DrawDatesIn(pGraphics, pTheme, pMatrix);
-  DrawDatesOut(pGraphics, pTheme, pMatrix);
-  DrawToday(pGraphics, pTheme, pMatrix);
+  DrawBackground(pGraphics, pTheme, &matrix);
+  DrawHeadBK(pGraphics, pTheme, &matrix);
+  DrawLButton(pGraphics, pTheme, &matrix);
+  DrawRButton(pGraphics, pTheme, &matrix);
+  DrawSeperator(pGraphics, pTheme, &matrix);
+  DrawDatesInBK(pGraphics, pTheme, &matrix);
+  DrawDatesInCircle(pGraphics, pTheme, &matrix);
+  DrawCaption(pGraphics, pTheme, &matrix);
+  DrawWeek(pGraphics, pTheme, &matrix);
+  DrawDatesIn(pGraphics, pTheme, &matrix);
+  DrawDatesOut(pGraphics, pTheme, &matrix);
+  DrawToday(pGraphics, pTheme, &matrix);
 }
 
 void CFWL_MonthCalendar::SetSelect(int32_t iYear,
@@ -749,8 +749,8 @@ void CFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_MonthCalendar::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                      const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                                      const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {

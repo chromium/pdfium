@@ -43,7 +43,7 @@ void CXFA_FFPushButton::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtWidget = GetRectWithoutRotate();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, &mt);
+  GetApp()->GetWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
 }
 
 bool CXFA_FFPushButton::LoadWidget() {
@@ -204,7 +204,7 @@ void CXFA_FFPushButton::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CXFA_FFPushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                     const CFX_Matrix* pMatrix) {
+                                     const CFX_Matrix& matrix) {
   if (m_pNormalWidget->GetStylesEx() & XFA_FWL_PSBSTYLEEXT_HiliteInverted) {
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
@@ -214,7 +214,7 @@ void CXFA_FFPushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
       CXFA_Path path;
       path.AddRectangle(rtFill.left, rtFill.top, rtFill.width, rtFill.height);
       pGraphics->SetFillColor(CXFA_Color(FXARGB_MAKE(128, 128, 255, 255)));
-      pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
+      pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
     }
     return;
   }
@@ -229,7 +229,7 @@ void CXFA_FFPushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
       CXFA_Path path;
       CFX_RectF rect = m_pNormalWidget->GetWidgetRect();
       path.AddRectangle(0, 0, rect.width, rect.height);
-      pGraphics->StrokePath(&path, (CFX_Matrix*)pMatrix);
+      pGraphics->StrokePath(&path, &matrix);
     }
   }
 }

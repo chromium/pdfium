@@ -62,7 +62,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
-  DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
+  DrawBorder(pGS, borderUI, m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDataAcc->GetImageEditImage();
   if (!pDIBitmap)
@@ -137,6 +137,6 @@ void CXFA_FFImageEdit::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CXFA_FFImageEdit::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                    const CFX_Matrix* pMatrix) {
-  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+                                    const CFX_Matrix& matrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }

@@ -62,7 +62,7 @@ void CFWL_CheckBox::Update() {
 }
 
 void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix) {
+                               const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -71,7 +71,7 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
-               pMatrix);
+               matrix);
   }
 
   int32_t dwStates = GetPartStates();
@@ -81,8 +81,7 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = dwStates;
   param.m_pGraphics = pGraphics;
-  if (pMatrix)
-    param.m_matrix.Concat(*pMatrix);
+  param.m_matrix.Concat(matrix);
   param.m_rtPart = m_rtClient;
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
     param.m_pData = &m_rtFocus;
@@ -97,8 +96,7 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   textParam.m_iPart = CFWL_Part::Caption;
   textParam.m_dwStates = dwStates;
   textParam.m_pGraphics = pGraphics;
-  if (pMatrix)
-    textParam.m_matrix.Concat(*pMatrix);
+  textParam.m_matrix.Concat(matrix);
   textParam.m_rtPart = m_rtCaption;
   textParam.m_wsText = L"Check box";
   textParam.m_dwTTOStyles = m_dwTTOStyles;
@@ -268,8 +266,8 @@ void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_CheckBox::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                 const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                                 const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_CheckBox::OnFocusChanged(bool bSet) {

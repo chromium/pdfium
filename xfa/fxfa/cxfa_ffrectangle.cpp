@@ -29,5 +29,5 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, rtObj, rect, &mtRotate);
+  DrawBorder(pGS, rtObj, rect, mtRotate);
 }

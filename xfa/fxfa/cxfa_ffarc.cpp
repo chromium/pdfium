@@ -28,5 +28,5 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
     XFA_RectWidthoutMargin(rtArc, mgWidget);
 
-  DrawBorder(pGS, arcObj, rtArc, &mtRotate);
+  DrawBorder(pGS, arcObj, rtArc, mtRotate);
 }

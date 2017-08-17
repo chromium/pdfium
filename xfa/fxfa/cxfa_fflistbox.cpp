@@ -205,6 +205,6 @@ void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CXFA_FFListBox::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                  const CFX_Matrix* pMatrix) {
-  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+                                  const CFX_Matrix& matrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }

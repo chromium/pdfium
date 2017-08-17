@@ -234,7 +234,7 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorderWithFlags(
-      pGS, borderUI, m_rtUI, &mtRotate,
+      pGS, borderUI, m_rtUI, mtRotate,
       m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round
           ? XFA_DRAWBOX_ForceRound
           : 0);
@@ -243,7 +243,7 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
                 m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round);
   CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, &mt);
+  GetApp()->GetWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
 }
 
 bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
@@ -339,6 +339,6 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CXFA_FFCheckButton::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                      const CFX_Matrix* pMatrix) {
-  m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
+                                      const CFX_Matrix& matrix) {
+  m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }

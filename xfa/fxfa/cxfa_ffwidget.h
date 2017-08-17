@@ -169,11 +169,11 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   void DrawBorder(CXFA_Graphics* pGS,
                   CXFA_Box box,
                   const CFX_RectF& rtBorder,
-                  const CFX_Matrix* pMatrix);
+                  const CFX_Matrix& matrix);
   void DrawBorderWithFlags(CXFA_Graphics* pGS,
                            CXFA_Box box,
                            const CFX_RectF& rtBorder,
-                           const CFX_Matrix* pMatrix,
+                           const CFX_Matrix& matrix,
                            uint32_t dwFlags);
 
   CFX_RectF GetRectWithoutRotate();

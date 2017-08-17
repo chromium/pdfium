@@ -56,7 +56,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
+                    const CFX_Matrix& matrix) override;
 
   void UpdateFWL();
   uint32_t UpdateUIProperty();

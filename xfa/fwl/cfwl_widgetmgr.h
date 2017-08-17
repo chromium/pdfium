@@ -32,7 +32,7 @@ class CFWL_WidgetMgr {
   void OnProcessMessageToForm(CFWL_Message* pMessage);
   void OnDrawWidget(CFWL_Widget* pWidget,
                     CXFA_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix);
+                    const CFX_Matrix& matrix);
 
   CFWL_Widget* GetParentWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetOwnerWidget(CFWL_Widget* pWidget) const;

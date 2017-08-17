@@ -49,7 +49,7 @@ void CFWL_PushButton::Update() {
 }
 
 void CFWL_PushButton::DrawWidget(CXFA_Graphics* pGraphics,
-                                 const CFX_Matrix* pMatrix) {
+                                 const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -57,9 +57,9 @@ void CFWL_PushButton::DrawWidget(CXFA_Graphics* pGraphics,
 
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
-               pMatrix);
+               matrix);
   }
-  DrawBkground(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
+  DrawBkground(pGraphics, m_pProperties->m_pThemeProvider, &matrix);
 }
 
 void CFWL_PushButton::DrawBkground(CXFA_Graphics* pGraphics,
@@ -137,8 +137,8 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_PushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                   const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                                   const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_PushButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {

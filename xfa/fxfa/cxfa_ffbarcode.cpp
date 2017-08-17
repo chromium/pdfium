@@ -148,13 +148,13 @@ void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
-  DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
+  DrawBorder(pGS, borderUI, m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
 
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
-  m_pNormalWidget->DrawWidget(pGS, &mt);
+  m_pNormalWidget->DrawWidget(pGS, mt);
 }
 
 void CXFA_FFBarcode::UpdateWidgetProperty() {

@@ -36,7 +36,7 @@ void CFWL_Barcode::Update() {
 }
 
 void CFWL_Barcode::DrawWidget(CXFA_Graphics* pGraphics,
-                              const CFX_Matrix* pMatrix) {
+                              const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -49,13 +49,12 @@ void CFWL_Barcode::DrawWidget(CXFA_Graphics* pGraphics,
     CFX_Matrix mt;
     mt.e = GetRTClient().left;
     mt.f = GetRTClient().top;
-    if (pMatrix)
-      mt.Concat(*pMatrix);
+    mt.Concat(matrix);
 
-    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix);
+    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), &matrix);
     return;
   }
-  CFWL_Edit::DrawWidget(pGraphics, pMatrix);
+  CFWL_Edit::DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_Barcode::SetType(BC_TYPE type) {

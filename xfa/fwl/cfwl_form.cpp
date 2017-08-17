@@ -75,8 +75,7 @@ FWL_WidgetHit CFWL_Form::HitTest(const CFX_PointF& point) {
                                : FWL_WidgetHit::Client;
 }
 
-void CFWL_Form::DrawWidget(CXFA_Graphics* pGraphics,
-                           const CFX_Matrix* pMatrix) {
+void CFWL_Form::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -93,8 +92,7 @@ void CFWL_Form::DrawWidget(CXFA_Graphics* pGraphics,
   param.m_dwStates = CFWL_PartState_Normal;
   param.m_pGraphics = pGraphics;
   param.m_rtPart = m_rtRelative;
-  if (pMatrix)
-    param.m_matrix.Concat(*pMatrix);
+  param.m_matrix.Concat(matrix);
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
     param.m_iPart = CFWL_Part::Border;
     pTheme->DrawBackground(&param);
@@ -240,8 +238,8 @@ void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_Form::OnDrawWidget(CXFA_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                             const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_Form::OnLButtonDown(CFWL_MessageMouse* pMsg) {

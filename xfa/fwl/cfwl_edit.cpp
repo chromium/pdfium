@@ -239,8 +239,7 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics,
-                           const CFX_Matrix* pMatrix) {
+void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -250,15 +249,15 @@ void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics,
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (!m_pWidgetMgr->IsFormDisabled())
-    DrawTextBk(pGraphics, pTheme, pMatrix);
-  DrawContent(pGraphics, pTheme, pMatrix);
+    DrawTextBk(pGraphics, pTheme, &matrix);
+  DrawContent(pGraphics, pTheme, &matrix);
 
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) &&
       !(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly)) {
-    DrawSpellCheck(pGraphics, pMatrix);
+    DrawSpellCheck(pGraphics, &matrix);
   }
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 }
 
 void CFWL_Edit::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
@@ -1263,8 +1262,8 @@ void CFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CFWL_Edit::OnDrawWidget(CXFA_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                             const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_Edit::DoButtonDown(CFWL_MessageMouse* pMsg) {

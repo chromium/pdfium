@@ -126,9 +126,9 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
 }
 
 void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix) {
+                               const CFX_Matrix& matrix) {
   if (m_pWidgetMgr->IsFormDisabled()) {
-    DisForm_DrawWidget(pGraphics, pMatrix);
+    DisForm_DrawWidget(pGraphics, &matrix);
     return;
   }
 
@@ -139,7 +139,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 
   if (!IsDropDownStyle()) {
     CFX_RectF rtTextBk(m_rtClient);
@@ -149,8 +149,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
     param.m_pWidget = this;
     param.m_iPart = CFWL_Part::Background;
     param.m_pGraphics = pGraphics;
-    if (pMatrix)
-      param.m_matrix.Concat(*pMatrix);
+    param.m_matrix.Concat(matrix);
     param.m_rtPart = rtTextBk;
 
     if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
@@ -174,7 +173,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
       theme_text.m_iPart = CFWL_Part::Caption;
       theme_text.m_dwStates = m_iBtnState;
       theme_text.m_pGraphics = pGraphics;
-      theme_text.m_matrix.Concat(*pMatrix);
+      theme_text.m_matrix.Concat(matrix);
       theme_text.m_rtPart = rtTextBk;
       theme_text.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
                                   ? CFWL_PartState_Selected
@@ -193,7 +192,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
                          ? CFWL_PartState_Disabled
                          : m_iBtnState;
   param.m_pGraphics = pGraphics;
-  param.m_matrix.Concat(*pMatrix);
+  param.m_matrix.Concat(matrix);
   param.m_rtPart = m_rtBtn;
   pTheme->DrawBackground(&param);
 }
@@ -639,13 +638,13 @@ void CFWL_ComboBox::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
     CFX_RectF rtEdit = m_pEdit->GetWidgetRect();
     CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);
     mt.Concat(mtOrg);
-    m_pEdit->DrawWidget(pGraphics, &mt);
+    m_pEdit->DrawWidget(pGraphics, mt);
   }
   if (m_pListBox && DisForm_IsDropListVisible()) {
     CFX_RectF rtList = m_pListBox->GetWidgetRect();
     CFX_Matrix mt(1, 0, 0, 1, rtList.left, rtList.top);
     mt.Concat(mtOrg);
-    m_pListBox->DrawWidget(pGraphics, &mt);
+    m_pListBox->DrawWidget(pGraphics, mt);
   }
 }
 
@@ -757,8 +756,8 @@ void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 void CFWL_ComboBox::OnDrawWidget(CXFA_Graphics* pGraphics,
-                                 const CFX_Matrix* pMatrix) {
-  DrawWidget(pGraphics, pMatrix);
+                                 const CFX_Matrix& matrix) {
+  DrawWidget(pGraphics, matrix);
 }
 
 void CFWL_ComboBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
