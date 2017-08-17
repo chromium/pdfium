@@ -234,10 +234,11 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
-  DrawBorder(pGS, borderUI, m_rtUI, &mtRotate,
-             m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round
-                 ? XFA_DRAWBOX_ForceRound
-                 : 0);
+  DrawBorderWithFlags(
+      pGS, borderUI, m_rtUI, &mtRotate,
+      m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round
+          ? XFA_DRAWBOX_ForceRound
+          : 0);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus,
                 m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round);

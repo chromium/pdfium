@@ -521,7 +521,7 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
   } else {
     pWidget->LoadWidget();
   }
-  pWidget->AddInvalidateRect(nullptr);
+  pWidget->AddInvalidateRect();
 }
 
 void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
@@ -536,5 +536,5 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
 
   pDocView->DeleteLayoutItem(pWidget);
   m_pDoc->GetDocEnvironment()->WidgetPreRemove(pWidget, pWidget->GetDataAcc());
-  pWidget->AddInvalidateRect(nullptr);
+  pWidget->AddInvalidateRect();
 }
