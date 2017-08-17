@@ -24,8 +24,7 @@ vars = {
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '06294c8a4a6f744ef284cd63cfe54dbf61eea290',
   'v8_revision': '4931eb42e8a934941dc60d8f7dc510c08d7bc2c6',
-  'yasm_binary_revision': '52f9b3f4b0aa06da24ef8b123058bb61ee468881',
-  'yasm_source_revision': '7da28c6c7c6a1387217352ce02b31754deb54d2a',
+  'yasm_source_revision': 'b98114e18d8b9b84586b10d24353ab8616d4c5fc',
   'zlib_revision': '718f686437b89038ac83525f4f1b1888aadd9bfc',
 }
 
@@ -115,10 +114,6 @@ deps_os = {
           Var('catapult_revision'),
   },
   "win": {
-    'third_party/yasm/binaries':
-      Var('chromium_git') + '/chromium/deps/yasm/binaries.git' + '@' +
-          Var('yasm_binary_revision'),
-
     "v8/third_party/cygwin":
       Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),
   },
