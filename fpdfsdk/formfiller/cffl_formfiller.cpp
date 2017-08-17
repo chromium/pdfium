@@ -96,14 +96,14 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
   if (!CFFL_InteractiveFormFiller::IsVisible(pWidget))
     return;
 
-  pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
+  pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal, nullptr);
 }
 
 void CFFL_FormFiller::OnDrawDeactive(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot,
                                      CFX_RenderDevice* pDevice,
                                      CFX_Matrix* pUser2Device) {
-  CPDFSDKAnnotToWidget(pAnnot)->DrawAppearance(pDevice, pUser2Device,
+  CPDFSDKAnnotToWidget(pAnnot)->DrawAppearance(pDevice, *pUser2Device,
                                                CPDF_Annot::Normal, nullptr);
 }
 

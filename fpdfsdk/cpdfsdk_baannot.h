@@ -80,7 +80,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   virtual bool IsAppearanceValid();
   virtual bool IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
   virtual void DrawAppearance(CFX_RenderDevice* pDevice,
-                              const CFX_Matrix* pUser2Device,
+                              const CFX_Matrix& mtUser2Device,
                               CPDF_Annot::AppearanceMode mode,
                               const CPDF_RenderOptions* pOptions);
 

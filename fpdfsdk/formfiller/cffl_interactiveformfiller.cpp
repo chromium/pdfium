@@ -96,10 +96,12 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
   }
 
   pFormFiller = GetFormFiller(pAnnot, false);
-  if (pFormFiller)
+  if (pFormFiller) {
     pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, pUser2Device);
-  else
-    pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
+  } else {
+    pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal,
+                            nullptr);
+  }
 
   if (!IsReadOnly(pWidget) && IsFillingAllowed(pWidget))
     pWidget->DrawShadow(pDevice, pPageView);

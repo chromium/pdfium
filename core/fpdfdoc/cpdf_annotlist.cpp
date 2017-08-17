@@ -159,7 +159,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
     }
     if (pContext) {
       pAnnot->DrawInContext(pPage, pContext, &matrix, CPDF_Annot::Normal);
-    } else if (!pAnnot->DrawAppearance(pPage, pDevice, &matrix,
+    } else if (!pAnnot->DrawAppearance(pPage, pDevice, matrix,
                                        CPDF_Annot::Normal, pOptions)) {
       pAnnot->DrawBorder(pDevice, &matrix, pOptions);
     }

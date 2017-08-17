@@ -67,30 +67,32 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
   if (pCtrl->GetHighlightingMode() != CPDF_FormControl::Push) {
-    pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
+    pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal,
+                            nullptr);
     return;
   }
   if (m_bMouseDown) {
     if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Down)) {
-      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Down, nullptr);
+      pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Down,
+                              nullptr);
     } else {
-      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal,
+      pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal,
                               nullptr);
     }
     return;
   }
   if (m_bMouseIn) {
     if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Rollover)) {
-      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Rollover,
+      pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Rollover,
                               nullptr);
     } else {
-      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal,
+      pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal,
                               nullptr);
     }
     return;
   }
 
-  pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
+  pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal, nullptr);
 }
 
 void CFFL_Button::OnDrawDeactive(CPDFSDK_PageView* pPageView,

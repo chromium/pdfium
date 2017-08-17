@@ -135,7 +135,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 
   bool IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode);
   void DrawAppearance(CFX_RenderDevice* pDevice,
-                      const CFX_Matrix* pUser2Device,
+                      const CFX_Matrix& mtUser2Device,
                       CPDF_Annot::AppearanceMode mode,
                       const CPDF_RenderOptions* pOptions) override;
 
