@@ -731,7 +731,7 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
     pParag = m_ParagPtrArray[ParagPosBgn.nParagIndex].get();
     pParag->SetTextLength(nTotalCharCount - nCount);
     pParag->CalcLines();
-    nTotalLineCount -= pParag->GetTextLength();
+    nTotalLineCount -= pParag->GetLineCount();
   }
   int32_t nParagCount = pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
   for (i = nNextParagIndex; i < nParagCount; i++)
