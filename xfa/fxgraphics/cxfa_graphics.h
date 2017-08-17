@@ -56,7 +56,8 @@ class CXFA_Graphics {
   void SetLineCap(CFX_GraphStateData::LineCap lineCap);
   void SetLineDash(float dashPhase, float* dashArray, int32_t dashCount);
   void SetLineDash(FX_DashStyle dashStyle);
-  void SetLineWidth(float lineWidth, bool isActOnDash = false);
+  void SetLineWidth(float lineWidth);
+  void EnableActOnDash();
   void SetStrokeColor(const CXFA_Color& color);
   void SetFillColor(const CXFA_Color& color);
   void SetClipRect(const CFX_RectF& rect);

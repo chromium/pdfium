@@ -1676,7 +1676,8 @@ static void XFA_BOX_StrokePath(CXFA_Stroke stroke,
   if (stroke.IsCorner() && fThickness > 2 * stroke.GetRadius()) {
     fThickness = 2 * stroke.GetRadius();
   }
-  pGS->SetLineWidth(fThickness, true);
+  pGS->SetLineWidth(fThickness);
+  pGS->EnableActOnDash();
   pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
   XFA_StrokeTypeSetLineDash(pGS, stroke.GetStrokeType(),
                             XFA_ATTRIBUTEENUM_Butt);

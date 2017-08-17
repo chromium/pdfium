@@ -158,11 +158,14 @@ void CXFA_Graphics::SetLineDash(FX_DashStyle dashStyle) {
     RenderDeviceSetLineDash(dashStyle);
 }
 
-void CXFA_Graphics::SetLineWidth(float lineWidth, bool isActOnDash) {
-  if (m_type == FX_CONTEXT_Device && m_renderDevice) {
+void CXFA_Graphics::SetLineWidth(float lineWidth) {
+  if (m_type == FX_CONTEXT_Device && m_renderDevice)
     m_info.graphState.m_LineWidth = lineWidth;
-    m_info.isActOnDash = isActOnDash;
-  }
+}
+
+void CXFA_Graphics::EnableActOnDash() {
+  if (m_type == FX_CONTEXT_Device && m_renderDevice)
+    m_info.isActOnDash = true;
 }
 
 void CXFA_Graphics::SetStrokeColor(const CXFA_Color& color) {

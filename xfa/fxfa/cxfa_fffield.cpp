@@ -111,7 +111,7 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
 
   float DashPattern[2] = {1, 1};
   pGS->SetLineDash(0.0f, DashPattern, 2);
-  pGS->SetLineWidth(0, false);
+  pGS->SetLineWidth(0);
 
   CXFA_Path path;
   path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
