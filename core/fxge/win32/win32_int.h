@@ -150,10 +150,8 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   bool FillRectWithBlend(const FX_RECT* pRect,
                          uint32_t fill_color,
                          int blend_type) override;
-  bool DrawCosmeticLine(float x1,
-                        float y1,
-                        float x2,
-                        float y2,
+  bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                        const CFX_PointF& ptLineTo,
                         uint32_t color,
                         int blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;

@@ -514,8 +514,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
       pos1 = pObject2Device->Transform(pos1);
       pos2 = pObject2Device->Transform(pos2);
     }
-    DrawCosmeticLine(pos1.x, pos1.y, pos2.x, pos2.y, fill_color, fill_mode,
-                     blend_type);
+    DrawCosmeticLine(pos1, pos2, fill_color, fill_mode, blend_type);
     return true;
   }
 
@@ -691,21 +690,19 @@ bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT* pRect,
   return true;
 }
 
-bool CFX_RenderDevice::DrawCosmeticLine(float x1,
-                                        float y1,
-                                        float x2,
-                                        float y2,
+bool CFX_RenderDevice::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                        const CFX_PointF& ptLineTo,
                                         uint32_t color,
                                         int fill_mode,
                                         int blend_type) {
-  if ((color >= 0xff000000) &&
-      m_pDeviceDriver->DrawCosmeticLine(x1, y1, x2, y2, color, blend_type)) {
+  if ((color >= 0xff000000) && m_pDeviceDriver->DrawCosmeticLine(
+                                   ptMoveTo, ptLineTo, color, blend_type)) {
     return true;
   }
   CFX_GraphStateData graph_state;
   CFX_PathData path;
-  path.AppendPoint(CFX_PointF(x1, y1), FXPT_TYPE::MoveTo, false);
-  path.AppendPoint(CFX_PointF(x2, y2), FXPT_TYPE::LineTo, false);
+  path.AppendPoint(ptMoveTo, FXPT_TYPE::MoveTo, false);
+  path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo, false);
   return m_pDeviceDriver->DrawPath(&path, nullptr, &graph_state, 0, color,
                                    fill_mode, blend_type);
 }

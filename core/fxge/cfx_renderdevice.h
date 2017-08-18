@@ -288,10 +288,8 @@ class CFX_RenderDevice {
                           uint32_t stroke_color,
                           int fill_mode,
                           int blend_type);
-  bool DrawCosmeticLine(float x1,
-                        float y1,
-                        float x2,
-                        float y2,
+  bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                        const CFX_PointF& ptLineTo,
                         uint32_t color,
                         int fill_mode,
                         int blend_type);

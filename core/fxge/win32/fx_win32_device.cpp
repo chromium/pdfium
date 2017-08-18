@@ -998,14 +998,14 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
 
     FX_RECT bbox = bbox_f.GetInnerRect();
     if (bbox.Width() <= 0) {
-      return DrawCosmeticLine((float)(bbox.left), (float)(bbox.top),
-                              (float)(bbox.left), (float)(bbox.bottom + 1),
+      return DrawCosmeticLine(CFX_PointF(bbox.left, bbox.top),
+                              CFX_PointF(bbox.left, bbox.bottom + 1),
                               fill_color, FXDIB_BLEND_NORMAL);
     }
     if (bbox.Height() <= 0) {
-      return DrawCosmeticLine((float)(bbox.left), (float)(bbox.top),
-                              (float)(bbox.right + 1), (float)(bbox.top),
-                              fill_color, FXDIB_BLEND_NORMAL);
+      return DrawCosmeticLine(CFX_PointF(bbox.left, bbox.top),
+                              CFX_PointF(bbox.right + 1, bbox.top), fill_color,
+                              FXDIB_BLEND_NORMAL);
     }
   }
   int fill_alpha = FXARGB_A(fill_color);
@@ -1137,10 +1137,8 @@ bool CGdiDeviceDriver::SetClip_PathStroke(
   return ret;
 }
 
-bool CGdiDeviceDriver::DrawCosmeticLine(float x1,
-                                        float y1,
-                                        float x2,
-                                        float y2,
+bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                        const CFX_PointF& ptLineTo,
                                         uint32_t color,
                                         int blend_type) {
   if (blend_type != FXDIB_BLEND_NORMAL)
@@ -1154,8 +1152,8 @@ bool CGdiDeviceDriver::DrawCosmeticLine(float x1,
 
   HPEN hPen = CreatePen(PS_SOLID, 1, rgb);
   hPen = (HPEN)SelectObject(m_hDC, hPen);
-  MoveToEx(m_hDC, FXSYS_round(x1), FXSYS_round(y1), nullptr);
-  LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
+  MoveToEx(m_hDC, FXSYS_round(ptMoveTo.x), FXSYS_round(ptMoveTo.y), nullptr);
+  LineTo(m_hDC, FXSYS_round(ptLineTo.x), FXSYS_round(ptLineTo.y));
   hPen = (HPEN)SelectObject(m_hDC, hPen);
   DeleteObject(hPen);
   return true;
