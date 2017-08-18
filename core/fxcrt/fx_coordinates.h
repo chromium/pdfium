@@ -274,13 +274,13 @@ class CFX_FloatRect {
 
   int Substract4(CFX_FloatRect& substract_rect, CFX_FloatRect* pRects);
 
-  void InitRect(float x, float y) {
-    left = x;
-    right = x;
-    bottom = y;
-    top = y;
+  void InitRect(const CFX_PointF& point) {
+    left = point.x;
+    right = point.x;
+    bottom = point.y;
+    top = point.y;
   }
-  void UpdateRect(float x, float y);
+  void UpdateRect(const CFX_PointF& point);
 
   float Width() const { return right - left; }
   float Height() const { return top - bottom; }

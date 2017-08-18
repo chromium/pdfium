@@ -114,9 +114,9 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
         break;
       CFX_PointF origin = stream.ReadCoords();
       if (bStarted) {
-        rect.UpdateRect(origin.x, origin.y);
+        rect.UpdateRect(origin);
       } else {
-        rect.InitRect(origin.x, origin.y);
+        rect.InitRect(origin);
         bStarted = true;
       }
     }

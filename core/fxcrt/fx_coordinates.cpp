@@ -184,11 +184,11 @@ bool CFX_FloatRect::Contains(const CFX_FloatRect& other_rect) const {
          n2.top <= n1.top;
 }
 
-void CFX_FloatRect::UpdateRect(float x, float y) {
-  left = std::min(left, x);
-  bottom = std::min(bottom, y);
-  right = std::max(right, x);
-  top = std::max(top, y);
+void CFX_FloatRect::UpdateRect(const CFX_PointF& point) {
+  left = std::min(left, point.x);
+  bottom = std::min(bottom, point.y);
+  right = std::max(right, point.x);
+  top = std::max(top, point.y);
 }
 
 CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_PointF* pPoints, int nPoints) {
