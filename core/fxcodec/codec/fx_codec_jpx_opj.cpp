@@ -14,9 +14,11 @@
 #include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/libopenjpeg20/openjpeg.h"
+#include "third_party/libopenjpeg20/opj_malloc.h"
 
 #if defined(USE_SYSTEM_LCMS2)
 #include <lcms2.h>
@@ -27,9 +29,11 @@
 static void fx_error_callback(const char* msg, void* client_data) {
   (void)client_data;
 }
+
 static void fx_warning_callback(const char* msg, void* client_data) {
   (void)client_data;
 }
+
 static void fx_info_callback(const char* msg, void* client_data) {
   (void)client_data;
 }
@@ -38,13 +42,13 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
                                 OPJ_SIZE_T nb_bytes,
                                 void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0) {
+  if (!srcData || !srcData->src_data || srcData->src_size == 0)
     return static_cast<OPJ_SIZE_T>(-1);
-  }
+
   // Reads at EOF return an error code.
-  if (srcData->offset >= srcData->src_size) {
+  if (srcData->offset >= srcData->src_size)
     return static_cast<OPJ_SIZE_T>(-1);
-  }
+
   OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
   OPJ_SIZE_T readlength = nb_bytes < bufferLength ? nb_bytes : bufferLength;
   memcpy(p_buffer, &srcData->src_data[srcData->offset], readlength);
@@ -54,16 +58,16 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
 
 OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0) {
+  if (!srcData || !srcData->src_data || srcData->src_size == 0)
     return static_cast<OPJ_OFF_T>(-1);
-  }
+
   // Offsets are signed and may indicate a negative skip. Do not support this
   // because of the strange return convention where either bytes skipped or
   // -1 is returned. Following that convention, a successful relative seek of
   // -1 bytes would be required to to give the same result as the error case.
-  if (nb_bytes < 0) {
+  if (nb_bytes < 0)
     return static_cast<OPJ_OFF_T>(-1);
-  }
+
   // FIXME: use std::make_unsigned<OPJ_OFF_T>::type once c++11 lib is OK'd.
   uint64_t unsignedNbBytes = static_cast<uint64_t>(nb_bytes);
   // Additionally, the offset may take us beyond the range of a size_t (e.g.
@@ -86,14 +90,14 @@ OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
 
 OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0) {
+  if (!srcData || !srcData->src_data || srcData->src_size == 0)
     return OPJ_FALSE;
-  }
+
   // Offsets are signed and may indicate a negative position, which would
   // be before the start of the file. Do not support this.
-  if (nb_bytes < 0) {
+  if (nb_bytes < 0)
     return OPJ_FALSE;
-  }
+
   // FIXME: use std::make_unsigned<OPJ_OFF_T>::type once c++11 lib is OK'd.
   uint64_t unsignedNbBytes = static_cast<uint64_t>(nb_bytes);
   // Additionally, the offset may take us beyond the range of a size_t (e.g.
@@ -108,24 +112,26 @@ OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   }
   return OPJ_TRUE;
 }
-opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data,
-                                                 OPJ_SIZE_T p_size,
-                                                 OPJ_BOOL p_is_read_stream) {
-  opj_stream_t* l_stream = 00;
-  if (!data || !data->src_data || data->src_size <= 0) {
+
+static opj_stream_t* fx_opj_stream_create_memory_stream(
+    DecodeData* data,
+    OPJ_SIZE_T p_size,
+    OPJ_BOOL p_is_read_stream) {
+  if (!data || !data->src_data || data->src_size <= 0)
     return nullptr;
-  }
-  l_stream = opj_stream_create(p_size, p_is_read_stream);
-  if (!l_stream) {
+
+  opj_stream_t* stream = opj_stream_create(p_size, p_is_read_stream);
+  if (!stream)
     return nullptr;
-  }
-  opj_stream_set_user_data(l_stream, data, nullptr);
-  opj_stream_set_user_data_length(l_stream, data->src_size);
-  opj_stream_set_read_function(l_stream, opj_read_from_memory);
-  opj_stream_set_skip_function(l_stream, opj_skip_from_memory);
-  opj_stream_set_seek_function(l_stream, opj_seek_from_memory);
-  return l_stream;
+
+  opj_stream_set_user_data(stream, data, nullptr);
+  opj_stream_set_user_data_length(stream, data->src_size);
+  opj_stream_set_read_function(stream, opj_read_from_memory);
+  opj_stream_set_skip_function(stream, opj_skip_from_memory);
+  opj_stream_set_seek_function(stream, opj_seek_from_memory);
+  return stream;
 }
+
 static void sycc_to_rgb(int offset,
                         int upb,
                         int y,
@@ -182,9 +188,9 @@ static void sycc444_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  int* r = FX_Alloc(int, max_size.ValueOrDie());
-  int* g = FX_Alloc(int, max_size.ValueOrDie());
-  int* b = FX_Alloc(int, max_size.ValueOrDie());
+  int* r = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* g = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* b = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
   int* d0 = r;
   int* d1 = g;
   int* d2 = b;
@@ -197,9 +203,9 @@ static void sycc444_to_rgb(opj_image_t* img) {
     ++g;
     ++b;
   }
-  FX_Free(img->comps[0].data);
-  FX_Free(img->comps[1].data);
-  FX_Free(img->comps[2].data);
+  opj_free(img->comps[0].data);
+  opj_free(img->comps[1].data);
+  opj_free(img->comps[2].data);
   img->comps[0].data = d0;
   img->comps[1].data = d1;
   img->comps[2].data = d2;
@@ -211,14 +217,17 @@ static bool sycc420_422_size_is_valid(opj_image_t* img) {
           img->comps[1].w == img->comps[2].w &&
           img->comps[1].h == img->comps[2].h);
 }
+
 static bool sycc420_size_is_valid(opj_image_t* img) {
   return (sycc420_422_size_is_valid(img) &&
           img->comps[0].h != std::numeric_limits<OPJ_UINT32>::max() &&
           (img->comps[0].h + 1) / 2 == img->comps[1].h);
 }
+
 static bool sycc422_size_is_valid(opj_image_t* img) {
   return (sycc420_422_size_is_valid(img) && img->comps[0].h == img->comps[1].h);
 }
+
 static void sycc422_to_rgb(opj_image_t* img) {
   if (!sycc422_size_is_valid(img))
     return;
@@ -229,7 +238,6 @@ static void sycc422_to_rgb(opj_image_t* img) {
 
   int offset = 1 << (prec - 1);
   int upb = (1 << prec) - 1;
-
   OPJ_UINT32 maxw = img->comps[0].w;
   OPJ_UINT32 maxh = img->comps[0].h;
   FX_SAFE_SIZE_T max_size = maxw;
@@ -243,10 +251,12 @@ static void sycc422_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  int *d0, *d1, *d2, *r, *g, *b;
-  d0 = r = FX_Alloc(int, max_size.ValueOrDie());
-  d1 = g = FX_Alloc(int, max_size.ValueOrDie());
-  d2 = b = FX_Alloc(int, max_size.ValueOrDie());
+  int* r = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* g = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* b = static_cast<int*>(opj_calloc(max_size.ValueOrDie(), sizeof(int)));
+  int* d0 = r;
+  int* d1 = g;
+  int* d2 = b;
   for (uint32_t i = 0; i < maxh; ++i) {
     OPJ_UINT32 j;
     for (j = 0; j < (maxw & ~static_cast<OPJ_UINT32>(1)); j += 2) {
@@ -273,11 +283,11 @@ static void sycc422_to_rgb(opj_image_t* img) {
       ++cr;
     }
   }
-  FX_Free(img->comps[0].data);
+  opj_free(img->comps[0].data);
+  opj_free(img->comps[1].data);
+  opj_free(img->comps[2].data);
   img->comps[0].data = d0;
-  FX_Free(img->comps[1].data);
   img->comps[1].data = d1;
-  FX_Free(img->comps[2].data);
   img->comps[2].data = d2;
   img->comps[1].w = maxw;
   img->comps[1].h = maxh;
@@ -288,9 +298,11 @@ static void sycc422_to_rgb(opj_image_t* img) {
   img->comps[1].dy = img->comps[0].dy;
   img->comps[2].dy = img->comps[0].dy;
 }
+
 static bool sycc420_must_extend_cbcr(OPJ_UINT32 y, OPJ_UINT32 cbcr) {
   return (y & 1) && (cbcr == y / 2);
 }
+
 void sycc420_to_rgb(opj_image_t* img) {
   if (!sycc420_size_is_valid(img))
     return;
@@ -298,6 +310,7 @@ void sycc420_to_rgb(opj_image_t* img) {
   OPJ_UINT32 prec = img->comps[0].prec;
   if (!prec)
     return;
+
   OPJ_UINT32 offset = 1 << (prec - 1);
   OPJ_UINT32 upb = (1 << prec) - 1;
   OPJ_UINT32 yw = img->comps[0].w;
@@ -311,9 +324,10 @@ void sycc420_to_rgb(opj_image_t* img) {
   safeSize *= yh;
   if (!safeSize.IsValid())
     return;
-  int* r = FX_Alloc(int, safeSize.ValueOrDie());
-  int* g = FX_Alloc(int, safeSize.ValueOrDie());
-  int* b = FX_Alloc(int, safeSize.ValueOrDie());
+
+  int* r = static_cast<int*>(opj_calloc(safeSize.ValueOrDie(), sizeof(int)));
+  int* g = static_cast<int*>(opj_calloc(safeSize.ValueOrDie(), sizeof(int)));
+  int* b = static_cast<int*>(opj_calloc(safeSize.ValueOrDie(), sizeof(int)));
   int* d0 = r;
   int* d1 = g;
   int* d2 = b;
@@ -409,11 +423,11 @@ void sycc420_to_rgb(opj_image_t* img) {
     }
   }
 
-  FX_Free(img->comps[0].data);
+  opj_free(img->comps[0].data);
+  opj_free(img->comps[1].data);
+  opj_free(img->comps[2].data);
   img->comps[0].data = d0;
-  FX_Free(img->comps[1].data);
   img->comps[1].data = d1;
-  FX_Free(img->comps[2].data);
   img->comps[2].data = d2;
   img->comps[1].w = yw;
   img->comps[1].h = yh;
@@ -428,7 +442,8 @@ void sycc420_to_rgb(opj_image_t* img) {
   img->comps[1].dy = img->comps[0].dy;
   img->comps[2].dy = img->comps[0].dy;
 }
-void color_sycc_to_rgb(opj_image_t* img) {
+
+static void color_sycc_to_rgb(opj_image_t* img) {
   if (img->numcomps < 3) {
     img->color_space = OPJ_CLRSPC_GRAY;
     return;
@@ -450,250 +465,17 @@ void color_sycc_to_rgb(opj_image_t* img) {
   }
   img->color_space = OPJ_CLRSPC_SRGB;
 }
-void color_apply_icc_profile(opj_image_t* image) {
-  cmsHPROFILE out_prof;
-  cmsUInt32Number in_type;
-  cmsUInt32Number out_type;
-  int* r;
-  int* g;
-  int* b;
-  int max;
-  cmsHPROFILE in_prof =
-      cmsOpenProfileFromMem(image->icc_profile_buf, image->icc_profile_len);
-  if (!in_prof) {
-    return;
-  }
-  cmsColorSpaceSignature out_space = cmsGetColorSpace(in_prof);
-  cmsUInt32Number intent = cmsGetHeaderRenderingIntent(in_prof);
-  int max_w = (int)image->comps[0].w;
-  int max_h = (int)image->comps[0].h;
-  int prec = (int)image->comps[0].prec;
-  OPJ_COLOR_SPACE oldspace = image->color_space;
-  if (out_space == cmsSigRgbData) {
-    if (prec <= 8) {
-      in_type = TYPE_RGB_8;
-      out_type = TYPE_RGB_8;
-    } else {
-      in_type = TYPE_RGB_16;
-      out_type = TYPE_RGB_16;
-    }
-    out_prof = cmsCreate_sRGBProfile();
-    image->color_space = OPJ_CLRSPC_SRGB;
-  } else if (out_space == cmsSigGrayData) {
-    if (prec <= 8) {
-      in_type = TYPE_GRAY_8;
-      out_type = TYPE_RGB_8;
-    } else {
-      in_type = TYPE_GRAY_16;
-      out_type = TYPE_RGB_16;
-    }
-    out_prof = cmsCreate_sRGBProfile();
-    image->color_space = OPJ_CLRSPC_SRGB;
-  } else if (out_space == cmsSigYCbCrData) {
-    in_type = TYPE_YCbCr_16;
-    out_type = TYPE_RGB_16;
-    out_prof = cmsCreate_sRGBProfile();
-    image->color_space = OPJ_CLRSPC_SRGB;
-  } else {
-    return;
-  }
-  cmsHTRANSFORM transform =
-      cmsCreateTransform(in_prof, in_type, out_prof, out_type, intent, 0);
-  cmsCloseProfile(in_prof);
-  cmsCloseProfile(out_prof);
-  if (!transform) {
-    image->color_space = oldspace;
-    return;
-  }
-  if (image->numcomps > 2) {
-    if (prec <= 8) {
-      unsigned char *inbuf, *outbuf, *in, *out;
-      max = max_w * max_h;
-      cmsUInt32Number nr_samples = max * 3 * sizeof(unsigned char);
-      in = inbuf = FX_Alloc(unsigned char, nr_samples);
-      out = outbuf = FX_Alloc(unsigned char, nr_samples);
-      r = image->comps[0].data;
-      g = image->comps[1].data;
-      b = image->comps[2].data;
-      for (int i = 0; i < max; ++i) {
-        *in++ = (unsigned char)*r++;
-        *in++ = (unsigned char)*g++;
-        *in++ = (unsigned char)*b++;
-      }
-      cmsDoTransform(transform, inbuf, outbuf, (cmsUInt32Number)max);
-      r = image->comps[0].data;
-      g = image->comps[1].data;
-      b = image->comps[2].data;
-      for (int i = 0; i < max; ++i) {
-        *r++ = (int)*out++;
-        *g++ = (int)*out++;
-        *b++ = (int)*out++;
-      }
-      FX_Free(inbuf);
-      FX_Free(outbuf);
-    } else {
-      unsigned short *inbuf, *outbuf, *in, *out;
-      max = max_w * max_h;
-      cmsUInt32Number nr_samples = max * 3 * sizeof(unsigned short);
-      in = inbuf = FX_Alloc(unsigned short, nr_samples);
-      out = outbuf = FX_Alloc(unsigned short, nr_samples);
-      r = image->comps[0].data;
-      g = image->comps[1].data;
-      b = image->comps[2].data;
-      for (int i = 0; i < max; ++i) {
-        *in++ = (unsigned short)*r++;
-        *in++ = (unsigned short)*g++;
-        *in++ = (unsigned short)*b++;
-      }
-      cmsDoTransform(transform, inbuf, outbuf, (cmsUInt32Number)max);
-      r = image->comps[0].data;
-      g = image->comps[1].data;
-      b = image->comps[2].data;
-      for (int i = 0; i < max; ++i) {
-        *r++ = (int)*out++;
-        *g++ = (int)*out++;
-        *b++ = (int)*out++;
-      }
-      FX_Free(inbuf);
-      FX_Free(outbuf);
-    }
-  } else {
-    unsigned char *in, *inbuf, *out, *outbuf;
-    max = max_w * max_h;
-    cmsUInt32Number nr_samples =
-        (cmsUInt32Number)max * 3 * sizeof(unsigned char);
-    in = inbuf = FX_Alloc(unsigned char, nr_samples);
-    out = outbuf = FX_Alloc(unsigned char, nr_samples);
-    image->comps = (opj_image_comp_t*)realloc(
-        image->comps, (image->numcomps + 2) * sizeof(opj_image_comp_t));
-    if (image->numcomps == 2) {
-      image->comps[3] = image->comps[1];
-    }
-    image->comps[1] = image->comps[0];
-    image->comps[2] = image->comps[0];
-    image->comps[1].data = FX_Alloc(int, (size_t)max);
-    memset(image->comps[1].data, 0, sizeof(int) * (size_t)max);
-    image->comps[2].data = FX_Alloc(int, (size_t)max);
-    memset(image->comps[2].data, 0, sizeof(int) * (size_t)max);
-    image->numcomps += 2;
-    r = image->comps[0].data;
-    for (int i = 0; i < max; ++i) {
-      *in++ = (unsigned char)*r++;
-    }
-    cmsDoTransform(transform, inbuf, outbuf, (cmsUInt32Number)max);
-    r = image->comps[0].data;
-    g = image->comps[1].data;
-    b = image->comps[2].data;
-    for (int i = 0; i < max; ++i) {
-      *r++ = (int)*out++;
-      *g++ = (int)*out++;
-      *b++ = (int)*out++;
-    }
-    FX_Free(inbuf);
-    FX_Free(outbuf);
-  }
-  cmsDeleteTransform(transform);
-}
-void color_apply_conversion(opj_image_t* image) {
-  int* row;
-  int enumcs, numcomps;
-  numcomps = image->numcomps;
-  if (numcomps < 3) {
-    return;
-  }
-  row = (int*)image->icc_profile_buf;
-  enumcs = row[0];
-  if (enumcs == 14) {
-    int *L, *a, *b, *red, *green, *blue, *src0, *src1, *src2;
-    double rl, ol, ra, oa, rb, ob, prec0, prec1, prec2;
-    double minL, maxL, mina, maxa, minb, maxb;
-    unsigned int default_type;
-    unsigned int i, max;
-    cmsHPROFILE in, out;
-    cmsHTRANSFORM transform;
-    cmsUInt16Number RGB[3];
-    cmsCIELab Lab;
-    in = cmsCreateLab4Profile(nullptr);
-    out = cmsCreate_sRGBProfile();
-    transform = cmsCreateTransform(in, TYPE_Lab_DBL, out, TYPE_RGB_16,
-                                   INTENT_PERCEPTUAL, 0);
-    cmsCloseProfile(in);
-    cmsCloseProfile(out);
-    if (!transform) {
-      return;
-    }
-    prec0 = (double)image->comps[0].prec;
-    prec1 = (double)image->comps[1].prec;
-    prec2 = (double)image->comps[2].prec;
-    default_type = row[1];
-    if (default_type == 0x44454600) {
-      rl = 100;
-      ra = 170;
-      rb = 200;
-      ol = 0;
-      oa = pow(2, prec1 - 1);
-      ob = pow(2, prec2 - 2) + pow(2, prec2 - 3);
-    } else {
-      rl = row[2];
-      ra = row[4];
-      rb = row[6];
-      ol = row[3];
-      oa = row[5];
-      ob = row[7];
-    }
-    L = src0 = image->comps[0].data;
-    a = src1 = image->comps[1].data;
-    b = src2 = image->comps[2].data;
-    max = image->comps[0].w * image->comps[0].h;
-    red = FX_Alloc(int, max);
-    image->comps[0].data = red;
-    green = FX_Alloc(int, max);
-    image->comps[1].data = green;
-    blue = FX_Alloc(int, max);
-    image->comps[2].data = blue;
-    minL = -(rl * ol) / (pow(2, prec0) - 1);
-    maxL = minL + rl;
-    mina = -(ra * oa) / (pow(2, prec1) - 1);
-    maxa = mina + ra;
-    minb = -(rb * ob) / (pow(2, prec2) - 1);
-    maxb = minb + rb;
-    for (i = 0; i < max; ++i) {
-      Lab.L = minL + (double)(*L) * (maxL - minL) / (pow(2, prec0) - 1);
-      ++L;
-      Lab.a = mina + (double)(*a) * (maxa - mina) / (pow(2, prec1) - 1);
-      ++a;
-      Lab.b = minb + (double)(*b) * (maxb - minb) / (pow(2, prec2) - 1);
-      ++b;
-      cmsDoTransform(transform, &Lab, RGB, 1);
-      *red++ = RGB[0];
-      *green++ = RGB[1];
-      *blue++ = RGB[2];
-    }
-    cmsDeleteTransform(transform);
-    FX_Free(src0);
-    FX_Free(src1);
-    FX_Free(src2);
-    image->color_space = OPJ_CLRSPC_SRGB;
-    image->comps[0].prec = 16;
-    image->comps[1].prec = 16;
-    image->comps[2].prec = 16;
-    return;
-  }
-}
 
 CJPX_Decoder::CJPX_Decoder(CPDF_ColorSpace* cs)
     : image(nullptr), l_codec(nullptr), l_stream(nullptr), m_ColorSpace(cs) {}
 
 CJPX_Decoder::~CJPX_Decoder() {
-  if (l_codec) {
+  if (l_codec)
     opj_destroy_codec(l_codec);
-  }
-  if (l_stream) {
+  if (l_stream)
     opj_stream_destroy(l_stream);
-  }
-  if (image) {
+  if (image)
     opj_image_destroy(image);
-  }
 }
 
 bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
@@ -769,17 +551,14 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     color_sycc_to_rgb(image);
   }
   if (image->icc_profile_buf) {
-    // TODO(crbug.com/737033): Using |free| here resolves the crash described in
-    // chromium:737033, but ultimately we need to harmonize the memory
-    // allocation strategy across OpenJPEG and its PDFium callers.
-    free(image->icc_profile_buf);
+    // TODO(palmer): Using |opj_free| here resolves the crash described in
+    // https://crbug.com/737033, but ultimately we need to harmonize the
+    // memory allocation strategy across OpenJPEG and its PDFium callers.
+    opj_free(image->icc_profile_buf);
     image->icc_profile_buf = nullptr;
     image->icc_profile_len = 0;
   }
-  if (!image) {
-    return false;
-  }
-  return true;
+  return !!image;
 }
 
 void CJPX_Decoder::GetInfo(uint32_t* width,

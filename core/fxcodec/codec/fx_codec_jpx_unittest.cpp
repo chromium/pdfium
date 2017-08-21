@@ -8,6 +8,7 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/libopenjpeg20/opj_malloc.h"
 
 static const OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);
 static const OPJ_SIZE_T kReadError = static_cast<OPJ_SIZE_T>(-1);
@@ -435,11 +436,11 @@ TEST(fxcodec, YUV420ToRGB) {
     y.h = y.w;
     img.x1 = y.w;
     img.y1 = y.h;
-    y.data = FX_Alloc(OPJ_INT32, y.w * y.h);
+    y.data = static_cast<OPJ_INT32*>(opj_calloc(y.w * y.h, sizeof(OPJ_INT32)));
+    v.data = static_cast<OPJ_INT32*>(opj_calloc(v.w * v.h, sizeof(OPJ_INT32)));
+    u.data = static_cast<OPJ_INT32*>(opj_calloc(u.w * u.h, sizeof(OPJ_INT32)));
     memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
-    u.data = FX_Alloc(OPJ_INT32, u.w * u.h);
     memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
-    v.data = FX_Alloc(OPJ_INT32, v.w * v.h);
     memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
     img.comps[0] = y;
     img.comps[1] = u;
@@ -456,9 +457,9 @@ TEST(fxcodec, YUV420ToRGB) {
       EXPECT_NE(img.comps[0].w, img.comps[2].w);
       EXPECT_NE(img.comps[0].h, img.comps[2].h);
     }
-    FX_Free(img.comps[0].data);
-    FX_Free(img.comps[1].data);
-    FX_Free(img.comps[2].data);
+    opj_free(img.comps[0].data);
+    opj_free(img.comps[1].data);
+    opj_free(img.comps[2].data);
   }
   FX_Free(img.comps);
 }
