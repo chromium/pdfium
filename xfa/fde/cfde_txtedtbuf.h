@@ -49,7 +49,7 @@ class CFDE_TxtEdtBuf {
   wchar_t GetCharByIndex(int32_t nIndex) const;
   CFX_WideString GetRange(int32_t nBegin, int32_t nCount) const;
 
-  void Insert(int32_t nPos, const wchar_t* lpText, int32_t nLength);
+  void Insert(int32_t nPos, const CFX_WideString& wsText);
   void Delete(int32_t nIndex, int32_t nLength);
   void Clear(bool bRelease);
 

@@ -60,8 +60,7 @@ class InsertOperation : public IFDE_TxtEdtDoRecord {
 
   void Redo() const override {
     CFX_WideString prev = m_pEngine->GetText(0, -1);
-    m_pEngine->Inner_Insert(m_nCaret, m_wsInsert.c_str(),
-                            m_wsInsert.GetLength());
+    m_pEngine->Inner_Insert(m_nCaret, m_wsInsert);
     m_pEngine->GetParams()->pEventSink->OnTextChanged(prev);
     m_pEngine->SetCaretPos(m_nCaret, false);
   }
@@ -94,7 +93,7 @@ class DeleteOperation : public IFDE_TxtEdtDoRecord {
     if (m_pEngine->IsSelect())
       m_pEngine->ClearSelection();
 
-    m_pEngine->Inner_Insert(m_nIndex, m_wsRange.c_str(), m_wsRange.GetLength());
+    m_pEngine->Inner_Insert(m_nIndex, m_wsRange);
     if (m_bSel)
       m_pEngine->AddSelRange(m_nIndex, m_wsRange.GetLength());
 
@@ -189,7 +188,7 @@ void CFDE_TxtEdtEngine::SetText(const CFX_WideString& wsText) {
     }
     m_pTxtBuf->SetText(wsTemp);
   }
-  m_pTxtBuf->Insert(nLength, L"\n", 1);
+  m_pTxtBuf->Insert(nLength, L"\n");
   RebuildParagraphs();
 }
 
@@ -375,7 +374,7 @@ int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
       this, m_nCaret, CFX_WideString(lpBuffer, nLength)));
 
   CFX_WideString prev = GetText(0, -1);
-  Inner_Insert(m_nCaret, lpBuffer, nLength);
+  Inner_Insert(m_nCaret, CFX_WideString(lpBuffer, nLength));
 
   int32_t nStart = m_nCaret;
   nStart += nLength;
@@ -627,8 +626,8 @@ CFX_WideString CFDE_TxtEdtEngine::GetPreReplaceText(int32_t nIndex,
 }
 
 void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
-                                     const wchar_t* lpText,
-                                     int32_t nLength) {
+                                     const CFX_WideString& wsText) {
+  const int32_t nLength = wsText.GetLength();
   ASSERT(nLength > 0);
   FDE_TXTEDTPARAGPOS ParagPos;
   TextPos2ParagPos(nStart, ParagPos);
@@ -643,28 +642,27 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
   int32_t nLeavePart = ParagPos.nCharIndex;
   int32_t nCutPart = pParag->GetTextLength() - ParagPos.nCharIndex;
   int32_t nTextStart = 0;
-  wchar_t wCurChar = L' ';
-  const wchar_t* lpPos = lpText;
+  int32_t nCur = 0;
   bool bFirst = true;
   int32_t nParagIndex = ParagPos.nParagIndex;
-  for (int32_t i = 0; i < nLength; i++, lpPos++) {
-    wCurChar = *lpPos;
+  for (const auto& wCurChar : wsText) {
+    ++nCur;
     if (wCurChar == L'\n') {
       if (bFirst) {
-        pParag->SetTextLength(nLeavePart + (i - nTextStart + 1));
+        pParag->SetTextLength(nLeavePart + (nCur - nTextStart + 1));
         pParag->SetLineCount(-1);
         nReserveCharStart += pParag->GetTextLength();
         bFirst = false;
       } else {
         auto pParag2 = pdfium::MakeUnique<CFDE_TxtEdtParag>(this);
         pParag2->SetLineCount(-1);
-        pParag2->SetTextLength(i - nTextStart + 1);
+        pParag2->SetTextLength(nCur - nTextStart + 1);
         pParag2->SetStartIndex(nReserveCharStart);
         nReserveCharStart += pParag2->GetTextLength();
         m_ParagPtrArray.insert(m_ParagPtrArray.begin() + ++nParagIndex,
                                std::move(pParag2));
       }
-      nTextStart = i + 1;
+      nTextStart = nCur + 1;
     }
   }
   if (bFirst) {
@@ -679,7 +677,7 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
     m_ParagPtrArray.insert(m_ParagPtrArray.begin() + ++nParagIndex,
                            std::move(pParag2));
   }
-  m_pTxtBuf->Insert(nStart, lpText, nLength);
+  m_pTxtBuf->Insert(nStart, wsText);
   int32_t nTotalLineCount = 0;
   for (int32_t i = ParagPos.nParagIndex; i <= nParagIndex; i++) {
     pParag = m_ParagPtrArray[i].get();

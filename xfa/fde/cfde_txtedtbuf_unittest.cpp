@@ -34,7 +34,7 @@ TEST_F(CFDE_TxtEdtBufTest, InsertAppendChunk) {
   buf_->SetText(L"Hi");
 
   CFX_WideString end = L" World";
-  buf_->Insert(2, end.c_str(), end.GetLength());
+  buf_->Insert(2, end);
   EXPECT_EQ(3UL, ChunkCount());
   EXPECT_EQ(8, buf_->GetTextLength());
 
@@ -47,7 +47,7 @@ TEST_F(CFDE_TxtEdtBufTest, InsertPrependChunk) {
   buf_->SetText(L"Hi");
 
   CFX_WideString end = L"World ";
-  buf_->Insert(0, end.c_str(), end.GetLength());
+  buf_->Insert(0, end);
   EXPECT_EQ(3UL, ChunkCount());
   EXPECT_EQ(8, buf_->GetTextLength());
 
@@ -61,7 +61,7 @@ TEST_F(CFDE_TxtEdtBufTest, InsertBetweenChunks) {
   EXPECT_EQ(3UL, ChunkCount());
 
   CFX_WideString inst = L"there ";
-  buf_->Insert(6, inst.c_str(), inst.GetLength());
+  buf_->Insert(6, inst);
   EXPECT_EQ(5UL, ChunkCount());
   EXPECT_EQ(17, buf_->GetTextLength());
 
@@ -170,9 +170,8 @@ TEST_F(CFDE_TxtEdtBufTestDeathTest, InsertBadIndexes) {
   CFX_WideString inst = L"there ";
 
   buf_->SetText(L"Hi");
-  EXPECT_DEATH(buf_->Insert(-4, inst.c_str(), inst.GetLength()), "Assertion");
-  EXPECT_DEATH(buf_->Insert(9999, inst.c_str(), inst.GetLength()), "Assertion");
-  EXPECT_DEATH(buf_->Insert(1, inst.c_str(), -6), "Assertion");
+  EXPECT_DEATH(buf_->Insert(-4, inst), "Assertion");
+  EXPECT_DEATH(buf_->Insert(9999, inst), "Assertion");
 }
 
 TEST_F(CFDE_TxtEdtBufTestDeathTest, DeleteWithBadIdx) {

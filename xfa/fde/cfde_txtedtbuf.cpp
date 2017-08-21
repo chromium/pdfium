@@ -110,10 +110,10 @@ CFX_WideString CFDE_TxtEdtBuf::GetRange(int32_t nBegin, int32_t nLength) const {
   return wsText;
 }
 
-void CFDE_TxtEdtBuf::Insert(int32_t nPos,
-                            const wchar_t* lpText,
-                            int32_t nLength) {
+void CFDE_TxtEdtBuf::Insert(int32_t nPos, const CFX_WideString& wsText) {
   ASSERT(nPos >= 0 && nPos <= m_nTotal);
+
+  int32_t nLength = wsText.GetLength();
   ASSERT(nLength > 0);
 
   int32_t chunkIndex = 0;
@@ -137,6 +137,7 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     charIndex = 0;
   }
 
+  const wchar_t* lpText = wsText.c_str();
   if (chunkIndex != 0) {
     ChunkHeader* chunk = m_chunks[chunkIndex - 1].get();
     if (chunk->nUsed != m_chunkSize) {

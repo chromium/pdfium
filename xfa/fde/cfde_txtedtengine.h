@@ -130,7 +130,7 @@ class CFDE_TxtEdtEngine {
 
   bool IsSelect() const { return !m_SelRangePtrArr.empty(); }
   void Inner_DeleteRange(int32_t nStart, int32_t nCount);
-  void Inner_Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
+  void Inner_Insert(int32_t nStart, const CFX_WideString& wsText);
   const FDE_TXTEDTPARAMS* GetParams() const { return &m_Param; }
 
  private:
