@@ -914,6 +914,51 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   CloseSaved();
 }
 
+TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
+  // Open a file with annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // Retrieve the highlight annotation which has its popup defined.
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  ASSERT_TRUE(annot);
+  EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot));
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> popup_key =
+      GetFPDFWideString(L"Popup");
+  ASSERT_TRUE(FPDFAnnot_HasKey(annot, popup_key.get()));
+  ASSERT_EQ(FPDF_OBJECT_REFERENCE,
+            FPDFAnnot_GetValueType(annot, popup_key.get()));
+
+  // Retrieve and verify the popup of the highlight annotation.
+  FPDF_ANNOTATION popup = FPDFAnnot_GetLinkedAnnot(annot, popup_key.get());
+  ASSERT_TRUE(popup);
+  EXPECT_EQ(FPDF_ANNOT_POPUP, FPDFAnnot_GetSubtype(popup));
+  FS_RECTF rect;
+  ASSERT_TRUE(FPDFAnnot_GetRect(popup, &rect));
+  EXPECT_NEAR(612.0f, rect.left, 0.001f);
+  EXPECT_NEAR(578.792, rect.bottom, 0.001f);
+
+  // Attempting to retrieve |annot|'s "IRT"-linked annotation would fail, since
+  // "IRT" is not a key in |annot|'s dictionary.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> irt_key =
+      GetFPDFWideString(L"IRT");
+  ASSERT_FALSE(FPDFAnnot_HasKey(annot, irt_key.get()));
+  EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot, irt_key.get()));
+
+  // Attempting to retrieve |annot|'s parent dictionary as an annotation would
+  // fail, since its parent is not an annotation.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> p_key =
+      GetFPDFWideString(L"P");
+  ASSERT_TRUE(FPDFAnnot_HasKey(annot, p_key.get()));
+  EXPECT_EQ(FPDF_OBJECT_REFERENCE, FPDFAnnot_GetValueType(annot, p_key.get()));
+  EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot, p_key.get()));
+
+  FPDFPage_CloseAnnot(popup);
+  FPDFPage_CloseAnnot(annot);
+  UnloadPage(page);
+}
+
 TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));

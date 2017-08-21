@@ -727,6 +727,22 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
       buffer, buflen);
 }
 
+FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
+FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_WIDESTRING key) {
+  CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
+  if (!pAnnot || !pAnnot->GetAnnotDict())
+    return nullptr;
+
+  CPDF_Dictionary* pLinkedDict =
+      pAnnot->GetAnnotDict()->GetDictFor(CFXByteStringFromFPDFWideString(key));
+  if (!pLinkedDict || pLinkedDict->GetStringFor("Type") != "Annot")
+    return nullptr;
+
+  auto pLinkedAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(
+      pLinkedDict, pAnnot->GetPage(), nullptr);
+  return pLinkedAnnot.release();
+}
+
 FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetFlags(FPDF_ANNOTATION annot) {
   if (!annot)
     return FPDF_ANNOT_FLAG_NONE;

@@ -385,6 +385,19 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
                          unsigned long buflen);
 
 // Experimental API.
+// Get the annotation corresponding to |key| in |annot|'s dictionary. Common
+// keys for linking annotations include "IRT" and "Popup". Must call
+// FPDFPage_CloseAnnot() when the annotation returned by this function is no
+// longer needed.
+//
+//   annot  - handle to an annotation.
+//   key    - the key to the requested dictionary entry.
+//
+// Returns a handle to the linked annotation object, or NULL on failure.
+FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
+FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_WIDESTRING key);
+
+// Experimental API.
 // Get the annotation flags of |annot|.
 //
 //   annot    - handle to an annotation.
