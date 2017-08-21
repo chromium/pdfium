@@ -164,14 +164,9 @@ class CFDE_TxtEdtEngine {
 
   bool IsLocked() const { return m_bLock; }
 
-  CFX_WideString GetPreDeleteText(int32_t nIndex, int32_t nLength);
-  CFX_WideString GetPreInsertText(int32_t nIndex,
-                                  const wchar_t* lpText,
-                                  int32_t nLength);
-  CFX_WideString GetPreReplaceText(int32_t nIndex,
-                                   int32_t nOriginLength,
-                                   const wchar_t* lpText,
-                                   int32_t nLength);
+  CFX_WideString InsertIntoTextCopy(int32_t nIndex,
+                                    const wchar_t* lpText,
+                                    int32_t nLength);
 
   void DeleteRange_DoRecord(int32_t nStart, int32_t nCount, bool bSel);
   void ResetEngine();

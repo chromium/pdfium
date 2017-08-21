@@ -193,7 +193,11 @@ void CFDE_TxtEdtEngine::ClearText() {
   if (len == 0)
     return;
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText = GetPreDeleteText(0, len);
+    // This doesn't really make sense, if the cleared text isn't valid we
+    // don't clear it? But what if you want to clear and start again? Should
+    // this validation check be removed?
+    CFX_WideString wsText = GetText(0, GetTextLength());
+    wsText.Delete(0, len);
     if (!m_Param.pEventSink->OnValidate(wsText))
       return;
   }
@@ -320,7 +324,7 @@ FDE_EditResult CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
       (m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz)) {
     if (m_Param.dwMode & FDE_TEXTEDITMODE_Password) {
       while (nLength > 0) {
-        CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
+        CFX_WideString wsText = InsertIntoTextCopy(m_nCaret, lpBuffer, nLength);
         int32_t nTotal = wsText.GetLength();
         wchar_t* lpBuf = wsText.GetBuffer(nTotal);
         for (int32_t i = 0; i < nTotal; i++) {
@@ -334,10 +338,10 @@ FDE_EditResult CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
       }
     } else {
       while (nLength > 0) {
-        CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
-        if (IsFitArea(wsText)) {
+        CFX_WideString wsText = InsertIntoTextCopy(m_nCaret, lpBuffer, nLength);
+        if (IsFitArea(wsText))
           break;
-        }
+
         nLength--;
       }
     }
@@ -345,7 +349,7 @@ FDE_EditResult CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
       return FDE_EditResult::kFull;
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
+    CFX_WideString wsText = InsertIntoTextCopy(m_nCaret, lpBuffer, nLength);
     if (!m_Param.pEventSink->OnValidate(wsText))
       return FDE_EditResult::kInvalidate;
   }
@@ -402,7 +406,12 @@ void CFDE_TxtEdtEngine::Delete(bool bBackspace) {
     }
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText = GetPreDeleteText(nStart, nCount);
+    // This doesn't really make sense, if the text with the character removed
+    // isn't valid we disallow the removal? Is that even possible as the string
+    // must have been valid in order to type the character in before hand?
+    // Should this check be removed?
+    CFX_WideString wsText = GetText(0, GetTextLength());
+    wsText.Delete(nStart, nCount);
     if (!m_Param.pEventSink->OnValidate(wsText))
       return;
   }
@@ -555,16 +564,9 @@ int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
   return i;
 }
 
-CFX_WideString CFDE_TxtEdtEngine::GetPreDeleteText(int32_t nIndex,
-                                                   int32_t nLength) {
-  CFX_WideString wsText = GetText(0, GetTextLength());
-  wsText.Delete(nIndex, nLength);
-  return wsText;
-}
-
-CFX_WideString CFDE_TxtEdtEngine::GetPreInsertText(int32_t nIndex,
-                                                   const wchar_t* lpText,
-                                                   int32_t nLength) {
+CFX_WideString CFDE_TxtEdtEngine::InsertIntoTextCopy(int32_t nIndex,
+                                                     const wchar_t* lpText,
+                                                     int32_t nLength) {
   CFX_WideString wsText = GetText(0, GetTextLength());
   int32_t nSelIndex = 0;
   int32_t nSelLength = 0;
@@ -584,26 +586,6 @@ CFX_WideString CFDE_TxtEdtEngine::GetPreInsertText(int32_t nIndex,
          (nOldLength - nIndex) * sizeof(wchar_t));
   wsTemp.ReleaseBuffer(nOldLength + nLength);
   wsText = wsTemp;
-  return wsText;
-}
-
-CFX_WideString CFDE_TxtEdtEngine::GetPreReplaceText(int32_t nIndex,
-                                                    int32_t nOriginLength,
-                                                    const wchar_t* lpText,
-                                                    int32_t nLength) {
-  CFX_WideString wsText = GetText(0, GetTextLength());
-  int32_t nSelIndex = 0;
-  int32_t nSelLength = 0;
-  int32_t nSelCount = CountSelRanges();
-  while (nSelCount--) {
-    nSelLength = GetSelRange(nSelCount, &nSelIndex);
-    wsText.Delete(nSelIndex, nSelLength);
-  }
-  wsText.Delete(nIndex, nOriginLength);
-  int32_t i = 0;
-  for (i = 0; i < nLength; i++)
-    wsText.Insert(nIndex++, lpText[i]);
-
   return wsText;
 }
 
