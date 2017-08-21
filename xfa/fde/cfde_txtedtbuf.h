@@ -8,7 +8,7 @@
 #define XFA_FDE_CFDE_TXTEDTBUF_H_
 
 #include <memory>
-#include <tuple>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
@@ -51,7 +51,7 @@ class CFDE_TxtEdtBuf {
 
   void Insert(int32_t nPos, const CFX_WideString& wsText);
   void Delete(int32_t nIndex, int32_t nLength);
-  void Clear(bool bRelease);
+  void Clear();
 
   void SetChunkSizeForTesting(size_t size);
   size_t GetChunkCountForTesting() const { return m_chunks.size(); }
@@ -59,15 +59,14 @@ class CFDE_TxtEdtBuf {
  private:
   class ChunkHeader {
    public:
-    ChunkHeader();
+    explicit ChunkHeader(int32_t chunkSize);
     ~ChunkHeader();
 
     int32_t nUsed;
-    std::unique_ptr<wchar_t, FxFreeDeleter> wChars;
+    std::vector<wchar_t> wChars;
   };
 
-  std::tuple<int32_t, int32_t> Index2CP(int32_t nIndex) const;
-  std::unique_ptr<ChunkHeader> NewChunk();
+  std::pair<int32_t, int32_t> Index2CP(int32_t nIndex) const;
 
   int32_t m_chunkSize;
   int32_t m_nTotal;

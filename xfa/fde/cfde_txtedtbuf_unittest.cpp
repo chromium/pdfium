@@ -128,20 +128,9 @@ TEST_F(CFDE_TxtEdtBufTest, DeleteAllText) {
   EXPECT_EQ(0, res.GetLength());
 }
 
-TEST_F(CFDE_TxtEdtBufTest, ClearWithRelease) {
+TEST_F(CFDE_TxtEdtBufTest, Clear) {
   buf_->SetText(L"Hello World");
-  buf_->Clear(true);
-  EXPECT_EQ(0UL, ChunkCount());
-  EXPECT_EQ(0, buf_->GetTextLength());
-
-  CFX_WideString res = buf_->GetText();
-  EXPECT_EQ(L"", res);
-  EXPECT_EQ(0, res.GetLength());
-}
-
-TEST_F(CFDE_TxtEdtBufTest, ClearWithoutRelease) {
-  buf_->SetText(L"Hello World");
-  buf_->Clear(false);
+  buf_->Clear();
   EXPECT_EQ(3UL, ChunkCount());
   EXPECT_EQ(0, buf_->GetTextLength());
 

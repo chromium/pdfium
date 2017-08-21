@@ -19,7 +19,7 @@ const int32_t kDefaultChunkSize = 1024;
 }  // namespace
 
 CFDE_TxtEdtBuf::CFDE_TxtEdtBuf() : m_chunkSize(kDefaultChunkSize), m_nTotal(0) {
-  m_chunks.push_back(NewChunk());
+  m_chunks.push_back(pdfium::MakeUnique<ChunkHeader>(m_chunkSize));
 }
 
 CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {}
@@ -27,24 +27,23 @@ CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {}
 void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
   ASSERT(!wsText.IsEmpty());
 
-  Clear(false);
-  int32_t nTextLength = wsText.GetLength();
-  int32_t nNeedCount = ((nTextLength - 1) / m_chunkSize + 1) - m_chunks.size();
-  int32_t i = 0;
-  for (i = 0; i < nNeedCount; i++)
-    m_chunks.push_back(NewChunk());
+  Clear();
 
-  int32_t nTotalCount = m_chunks.size();
+  int32_t nTextLength = wsText.GetLength();
+  int32_t nNeedCount = ((nTextLength - 1) / m_chunkSize + 1) -
+                       pdfium::CollectionSize<int32_t>(m_chunks);
+  for (int32_t i = 0; i < nNeedCount; ++i)
+    m_chunks.push_back(pdfium::MakeUnique<ChunkHeader>(m_chunkSize));
+
   const wchar_t* lpSrcBuf = wsText.c_str();
   int32_t nLeave = nTextLength;
   int32_t nCopyedLength = m_chunkSize;
-  for (i = 0; i < nTotalCount && nLeave > 0; i++) {
-    if (nLeave < nCopyedLength) {
+  for (size_t i = 0; i < m_chunks.size() && nLeave > 0; ++i) {
+    if (nLeave < nCopyedLength)
       nCopyedLength = nLeave;
-    }
 
     ChunkHeader* chunk = m_chunks[i].get();
-    memcpy(chunk->wChars.get(), lpSrcBuf, nCopyedLength * sizeof(wchar_t));
+    memcpy(chunk->wChars.data(), lpSrcBuf, nCopyedLength * sizeof(wchar_t));
     nLeave -= nCopyedLength;
     lpSrcBuf += nCopyedLength;
     chunk->nUsed = nCopyedLength;
@@ -65,8 +64,7 @@ wchar_t CFDE_TxtEdtBuf::GetCharByIndex(int32_t nIndex) const {
   }
   ASSERT(pChunkHeader);
 
-  wchar_t* buf = pChunkHeader->wChars.get();
-  return buf[pChunkHeader->nUsed - (nTotal - nIndex)];
+  return pChunkHeader->wChars[pChunkHeader->nUsed - (nTotal - nIndex)];
 }
 
 CFX_WideString CFDE_TxtEdtBuf::GetRange(int32_t nBegin, int32_t nLength) const {
@@ -81,32 +79,24 @@ CFX_WideString CFDE_TxtEdtBuf::GetRange(int32_t nBegin, int32_t nLength) const {
   std::tie(chunkIndex, charIndex) = Index2CP(nBegin);
 
   int32_t nLeave = nLength;
-  int32_t nCount = m_chunks.size();
-
   CFX_WideString wsText;
-  wchar_t* lpDstBuf = wsText.GetBuffer(nLength);
-  int32_t nChunkIndex = chunkIndex;
 
-  ChunkHeader* chunkHeader = m_chunks[nChunkIndex].get();
-  int32_t nCopyLength = chunkHeader->nUsed - charIndex;
-  wchar_t* lpSrcBuf = chunkHeader->wChars.get() + charIndex;
+  int32_t nCopyLength = m_chunks[chunkIndex]->nUsed - charIndex;
+  wchar_t* lpSrcBuf = m_chunks[chunkIndex]->wChars.data() + charIndex;
   while (nLeave > 0) {
-    if (nLeave <= nCopyLength) {
+    if (nLeave <= nCopyLength)
       nCopyLength = nLeave;
-    }
-    memcpy(lpDstBuf, lpSrcBuf, nCopyLength * sizeof(wchar_t));
-    nChunkIndex++;
-    if (nChunkIndex >= nCount) {
-      break;
-    }
-    chunkHeader = m_chunks[nChunkIndex].get();
-    lpSrcBuf = chunkHeader->wChars.get();
-    nLeave -= nCopyLength;
-    lpDstBuf += nCopyLength;
-    nCopyLength = chunkHeader->nUsed;
-  }
-  wsText.ReleaseBuffer(wsText.GetStringLength());
 
+    wsText += CFX_WideStringC(lpSrcBuf, nCopyLength);
+
+    ++chunkIndex;
+    if (chunkIndex >= pdfium::CollectionSize<int32_t>(m_chunks))
+      break;
+
+    lpSrcBuf = m_chunks[chunkIndex]->wChars.data();
+    nLeave -= nCopyLength;
+    nCopyLength = m_chunks[chunkIndex]->nUsed;
+  }
   return wsText;
 }
 
@@ -120,17 +110,16 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos, const CFX_WideString& wsText) {
   int32_t charIndex = 0;
   std::tie(chunkIndex, charIndex) = Index2CP(nPos);
 
-  int32_t nLengthTemp = nLength;
   if (charIndex != 0) {
-    auto newChunk = NewChunk();
+    auto newChunk = pdfium::MakeUnique<ChunkHeader>(m_chunkSize);
 
     ChunkHeader* chunk = m_chunks[chunkIndex].get();
     int32_t nCopy = chunk->nUsed - charIndex;
 
-    memcpy(newChunk->wChars.get(), chunk->wChars.get() + charIndex,
+    memcpy(newChunk->wChars.data(), chunk->wChars.data() + charIndex,
            nCopy * sizeof(wchar_t));
     chunk->nUsed -= nCopy;
-    chunkIndex++;
+    ++chunkIndex;
 
     newChunk->nUsed = nCopy;
     m_chunks.insert(m_chunks.begin() + chunkIndex, std::move(newChunk));
@@ -142,29 +131,29 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos, const CFX_WideString& wsText) {
     ChunkHeader* chunk = m_chunks[chunkIndex - 1].get();
     if (chunk->nUsed != m_chunkSize) {
       chunkIndex--;
-      int32_t nFree = m_chunkSize - chunk->nUsed;
-      int32_t nCopy = std::min(nLengthTemp, nFree);
-      memcpy(chunk->wChars.get() + chunk->nUsed, lpText,
+      int32_t nCopy = std::min(nLength, m_chunkSize - chunk->nUsed);
+      memcpy(chunk->wChars.data() + chunk->nUsed, lpText,
              nCopy * sizeof(wchar_t));
       lpText += nCopy;
-      nLengthTemp -= nCopy;
+      nLength -= nCopy;
       chunk->nUsed += nCopy;
-      chunkIndex++;
+      ++chunkIndex;
     }
   }
 
-  while (nLengthTemp > 0) {
-    auto chunk = NewChunk();
+  while (nLength > 0) {
+    auto chunk = pdfium::MakeUnique<ChunkHeader>(m_chunkSize);
 
-    int32_t nCopy = std::min(nLengthTemp, m_chunkSize);
-    memcpy(chunk->wChars.get(), lpText, nCopy * sizeof(wchar_t));
+    int32_t nCopy = std::min(nLength, m_chunkSize);
+    memcpy(chunk->wChars.data(), lpText, nCopy * sizeof(wchar_t));
     lpText += nCopy;
-    nLengthTemp -= nCopy;
+    nLength -= nCopy;
     chunk->nUsed = nCopy;
     m_chunks.insert(m_chunks.begin() + chunkIndex, std::move(chunk));
-    chunkIndex++;
+    ++chunkIndex;
   }
-  m_nTotal += nLength;
+
+  m_nTotal += wsText.GetLength();
 }
 
 void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
@@ -175,38 +164,32 @@ void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
   std::tie(endChunkIndex, endCharIndex) = Index2CP(nIndex + nLength - 1);
   m_nTotal -= nLength;
 
-  ChunkHeader* chunk = m_chunks[endChunkIndex].get();
   int32_t nFirstPart = endCharIndex + 1;
-  int32_t nMovePart = chunk->nUsed - nFirstPart;
+  int32_t nMovePart = m_chunks[endChunkIndex]->nUsed - nFirstPart;
   if (nMovePart != 0) {
     int32_t nDelete = std::min(nFirstPart, nLength);
-    memmove(chunk->wChars.get() + nFirstPart - nDelete,
-            chunk->wChars.get() + nFirstPart, nMovePart * sizeof(wchar_t));
-    chunk->nUsed -= nDelete;
+    memmove(m_chunks[endChunkIndex]->wChars.data() + nFirstPart - nDelete,
+            m_chunks[endChunkIndex]->wChars.data() + nFirstPart,
+            nMovePart * sizeof(wchar_t));
+    m_chunks[endChunkIndex]->nUsed -= nDelete;
     nLength -= nDelete;
-    endChunkIndex--;
+    --endChunkIndex;
   }
 
   while (nLength > 0) {
-    ChunkHeader* curChunk = m_chunks[endChunkIndex].get();
-    int32_t nDeleted = std::min(curChunk->nUsed, nLength);
-    curChunk->nUsed -= nDeleted;
-    if (curChunk->nUsed == 0)
+    int32_t nDeleted = std::min(m_chunks[endChunkIndex]->nUsed, nLength);
+    m_chunks[endChunkIndex]->nUsed -= nDeleted;
+    if (m_chunks[endChunkIndex]->nUsed == 0)
       m_chunks.erase(m_chunks.begin() + endChunkIndex);
 
     nLength -= nDeleted;
-    endChunkIndex--;
+    --endChunkIndex;
   }
 }
 
-void CFDE_TxtEdtBuf::Clear(bool bRelease) {
-  if (bRelease) {
-    m_chunks.clear();
-  } else {
-    size_t i = 0;
-    while (i < m_chunks.size())
-      m_chunks[i++]->nUsed = 0;
-  }
+void CFDE_TxtEdtBuf::Clear() {
+  for (auto& chunk : m_chunks)
+    chunk->nUsed = 0;
   m_nTotal = 0;
 }
 
@@ -215,16 +198,14 @@ void CFDE_TxtEdtBuf::SetChunkSizeForTesting(size_t size) {
 
   m_chunkSize = size;
   m_chunks.clear();
-  m_chunks.push_back(NewChunk());
+  m_chunks.push_back(pdfium::MakeUnique<ChunkHeader>(m_chunkSize));
 }
 
-std::tuple<int32_t, int32_t> CFDE_TxtEdtBuf::Index2CP(int32_t nIndex) const {
+std::pair<int32_t, int32_t> CFDE_TxtEdtBuf::Index2CP(int32_t nIndex) const {
   ASSERT(nIndex <= GetTextLength());
 
-  if (nIndex == m_nTotal) {
-    return std::tuple<int32_t, int32_t>(m_chunks.size() - 1,
-                                        m_chunks.back()->nUsed);
-  }
+  if (nIndex == m_nTotal)
+    return {m_chunks.size() - 1, m_chunks.back()->nUsed};
 
   int32_t chunkIndex = 0;
   int32_t nTotal = 0;
@@ -232,21 +213,16 @@ std::tuple<int32_t, int32_t> CFDE_TxtEdtBuf::Index2CP(int32_t nIndex) const {
     nTotal += chunk->nUsed;
     if (nTotal > nIndex)
       break;
-    chunkIndex++;
+
+    ++chunkIndex;
   }
 
-  int32_t charIndex = m_chunks[chunkIndex]->nUsed - (nTotal - nIndex);
-  return std::tuple<int32_t, int32_t>(chunkIndex, charIndex);
+  return {chunkIndex, m_chunks[chunkIndex]->nUsed - (nTotal - nIndex)};
 }
 
-std::unique_ptr<CFDE_TxtEdtBuf::ChunkHeader> CFDE_TxtEdtBuf::NewChunk() {
-  auto chunk = pdfium::MakeUnique<ChunkHeader>();
-  chunk->wChars.reset(FX_Alloc(wchar_t, m_chunkSize));
-  chunk->nUsed = 0;
-  return chunk;
+CFDE_TxtEdtBuf::ChunkHeader::ChunkHeader(int32_t chunkSize) : nUsed(0) {
+  wChars.resize(chunkSize);
 }
-
-CFDE_TxtEdtBuf::ChunkHeader::ChunkHeader() {}
 
 CFDE_TxtEdtBuf::ChunkHeader::~ChunkHeader() {}
 
@@ -268,13 +244,12 @@ bool CFDE_TxtEdtBuf::Iterator::Next(bool bPrev) {
 
     ASSERT(m_nCurChunk < pdfium::CollectionSize<int32_t>(m_pBuf->m_chunks));
 
-    ChunkHeader* chunk = nullptr;
     if (m_nCurIndex > 0) {
-      m_nCurIndex--;
+      --m_nCurIndex;
     } else {
       while (m_nCurChunk > 0) {
         --m_nCurChunk;
-        chunk = m_pBuf->m_chunks[m_nCurChunk].get();
+        ChunkHeader* chunk = m_pBuf->m_chunks[m_nCurChunk].get();
         if (chunk->nUsed > 0) {
           m_nCurIndex = chunk->nUsed - 1;
           break;
@@ -282,29 +257,30 @@ bool CFDE_TxtEdtBuf::Iterator::Next(bool bPrev) {
       }
     }
     ASSERT(m_nCurChunk >= 0);
-    m_nIndex--;
-    return true;
-  } else {
-    if (m_nIndex >= (m_pBuf->m_nTotal - 1))
-      return false;
 
-    ASSERT(m_nCurChunk < pdfium::CollectionSize<int32_t>(m_pBuf->m_chunks));
-    if (m_pBuf->m_chunks[m_nCurChunk]->nUsed != (m_nCurIndex + 1)) {
-      m_nCurIndex++;
-    } else {
-      int32_t nEnd = m_pBuf->m_chunks.size() - 1;
-      while (m_nCurChunk < nEnd) {
-        m_nCurChunk++;
-        ChunkHeader* chunkTemp = m_pBuf->m_chunks[m_nCurChunk].get();
-        if (chunkTemp->nUsed > 0) {
-          m_nCurIndex = 0;
-          break;
-        }
-      }
-    }
-    m_nIndex++;
+    --m_nIndex;
     return true;
   }
+
+  if (m_nIndex >= (m_pBuf->m_nTotal - 1))
+    return false;
+
+  ASSERT(m_nCurChunk < pdfium::CollectionSize<int32_t>(m_pBuf->m_chunks));
+
+  if (m_pBuf->m_chunks[m_nCurChunk]->nUsed != (m_nCurIndex + 1)) {
+    ++m_nCurIndex;
+  } else {
+    while (m_nCurChunk <
+           pdfium::CollectionSize<int32_t>(m_pBuf->m_chunks) - 1) {
+      ++m_nCurChunk;
+      if (m_pBuf->m_chunks[m_nCurChunk]->nUsed > 0) {
+        m_nCurIndex = 0;
+        break;
+      }
+    }
+  }
+  ++m_nIndex;
+  return true;
 }
 
 void CFDE_TxtEdtBuf::Iterator::SetAt(int32_t nIndex) {
@@ -320,11 +296,10 @@ int32_t CFDE_TxtEdtBuf::Iterator::GetAt() const {
 
 wchar_t CFDE_TxtEdtBuf::Iterator::GetChar() const {
   ASSERT(m_nIndex >= 0 && m_nIndex < m_pBuf->m_nTotal);
-  if (m_Alias == 0 || m_nIndex == (m_pBuf->m_nTotal - 1)) {
-    wchar_t* buf = m_pBuf->m_chunks[m_nCurChunk]->wChars.get();
-    return buf[m_nCurIndex];
-  }
-  return m_Alias;
+
+  if (m_Alias != 0 && m_nIndex != (m_pBuf->m_nTotal - 1))
+    return m_Alias;
+  return m_pBuf->m_chunks[m_nCurChunk]->wChars[m_nCurIndex];
 }
 
 bool CFDE_TxtEdtBuf::Iterator::IsEOF(bool bTail) const {

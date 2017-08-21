@@ -765,7 +765,7 @@ void CFDE_TxtEdtEngine::ResetEngine() {
   RemoveAllParags();
   ClearSelection();
   m_nCaret = 0;
-  m_pTxtBuf->Clear(false);
+  m_pTxtBuf->Clear();
   m_nCaret = 0;
 }
 
