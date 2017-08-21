@@ -351,8 +351,8 @@ bool CFWL_Edit::Cut(CFX_WideString& wsCut) {
 }
 
 bool CFWL_Edit::Paste(const CFX_WideString& wsPaste) {
-  int32_t iError = m_EdtEngine.Insert(wsPaste);
-  if (iError < 0) {
+  FDE_EditResult iError = m_EdtEngine.Insert(wsPaste);
+  if (iError != FDE_EditResult::kSuccess) {
     ProcessInsertError(iError);
     return false;
   }
@@ -1188,11 +1188,11 @@ void CFWL_Edit::ClearRecord() {
   m_DoRecords.clear();
 }
 
-void CFWL_Edit::ProcessInsertError(int32_t iError) {
+void CFWL_Edit::ProcessInsertError(FDE_EditResult iError) {
   // TODO(dsinclair): This should probably also send events for Validation
   // failure ....
 
-  if (iError != -2)
+  if (iError != FDE_EditResult::kFull)
     return;
 
   CFWL_Event textFullEvent(CFWL_Event::Type::TextFull, this);
@@ -1432,7 +1432,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
     return;
   }
 
-  int32_t iError = 0;
+  FDE_EditResult iError = FDE_EditResult::kSuccess;
   wchar_t c = static_cast<wchar_t>(pMsg->m_dwKeyCode);
   switch (c) {
     case FWL_VKEY_Back:
@@ -1475,7 +1475,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
       break;
     }
   }
-  if (iError < 0)
+  if (iError != FDE_EditResult::kSuccess)
     ProcessInsertError(iError);
 }
 

@@ -22,13 +22,6 @@ namespace {
 
 const uint32_t kPageWidthMax = 0xffff;
 
-enum FDE_TXTEDT_MODIFY_RET {
-  FDE_TXTEDT_MODIFY_RET_F_Locked = -5,
-  FDE_TXTEDT_MODIFY_RET_F_Invalidate = -4,
-  FDE_TXTEDT_MODIFY_RET_F_Full = -2,
-  FDE_TXTEDT_MODIFY_RET_S_Normal = 0,
-};
-
 class InsertOperation : public IFDE_TxtEdtDoRecord {
  public:
   InsertOperation(CFDE_TxtEdtEngine* pEngine,
@@ -304,9 +297,9 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_CaretMove eMoveCaret, bool bShift) {
   return m_nCaret;
 }
 
-int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
+FDE_EditResult CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
   if (IsLocked())
-    return FDE_TXTEDT_MODIFY_RET_F_Locked;
+    return FDE_EditResult::kLocked;
 
   int32_t nLength = str.GetLength();
   CFX_WideString wsTemp;
@@ -322,7 +315,7 @@ int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
 
     int32_t nExpectLength = nTotalLength + nLength;
     if (nTotalLength == m_nLimit)
-      return FDE_TXTEDT_MODIFY_RET_F_Full;
+      return FDE_EditResult::kFull;
 
     if (nExpectLength > m_nLimit)
       nLength -= (nExpectLength - m_nLimit);
@@ -353,12 +346,12 @@ int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
       }
     }
     if (nLength == 0)
-      return FDE_TXTEDT_MODIFY_RET_F_Full;
+      return FDE_EditResult::kFull;
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
     CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
     if (!m_Param.pEventSink->OnValidate(wsText))
-      return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
+      return FDE_EditResult::kInvalidate;
   }
   if (IsSelect()) {
     DeleteSelect();
@@ -379,7 +372,7 @@ int32_t CFDE_TxtEdtEngine::Insert(const CFX_WideString& str) {
   }
   SetCaretPos(nStart, bBefore);
   m_Param.pEventSink->OnTextChanged(prev);
-  return FDE_TXTEDT_MODIFY_RET_S_Normal;
+  return FDE_EditResult::kSuccess;
 }
 
 void CFDE_TxtEdtEngine::Delete(bool bBackspace) {

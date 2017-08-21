@@ -49,6 +49,13 @@ enum class FDE_CaretMove {
   End,
 };
 
+enum class FDE_EditResult {
+  kLocked = -5,
+  kInvalidate = -4,
+  kFull = -2,
+  kSuccess = 0,
+};
+
 struct FDE_TXTEDTPARAMS {
   FDE_TXTEDTPARAMS();
   ~FDE_TXTEDTPARAMS();
@@ -93,7 +100,7 @@ class CFDE_TxtEdtEngine {
   int32_t SetCaretPos(int32_t nIndex, bool bBefore);
   int32_t MoveCaretPos(FDE_CaretMove eMoveCaret, bool bShift);
 
-  int32_t Insert(const CFX_WideString& str);
+  FDE_EditResult Insert(const CFX_WideString& str);
   void Delete(bool bBackspace);
 
   void SetLimit(int32_t nLimit) { m_nLimit = nLimit; }
@@ -144,7 +151,7 @@ class CFDE_TxtEdtEngine {
     int32_t nCharIndex;
   };
 
-  enum class LineEnding {
+  enum class LineEnding : uint8_t {
     kAuto,
     kCRLF,
     kCR,

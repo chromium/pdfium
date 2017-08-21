@@ -139,7 +139,7 @@ class CFWL_Edit : public CFWL_Widget {
   bool IsShowScrollBar(bool bVert);
   bool IsContentHeightOverflow();
   int32_t AddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord);
-  void ProcessInsertError(int32_t iError);
+  void ProcessInsertError(FDE_EditResult iError);
   void AddSpellCheckObj(CXFA_Path& PathData,
                         int32_t nStart,
                         int32_t nCount,
