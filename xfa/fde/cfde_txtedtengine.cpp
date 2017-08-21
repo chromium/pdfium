@@ -29,13 +29,6 @@ enum FDE_TXTEDT_MODIFY_RET {
   FDE_TXTEDT_MODIFY_RET_S_Normal = 0,
 };
 
-enum FDE_TXTEDIT_LINEEND {
-  FDE_TXTEDIT_LINEEND_Auto,
-  FDE_TXTEDIT_LINEEND_CRLF,
-  FDE_TXTEDIT_LINEEND_CR,
-  FDE_TXTEDIT_LINEEND_LF,
-};
-
 class InsertOperation : public IFDE_TxtEdtDoRecord {
  public:
   InsertOperation(CFDE_TxtEdtEngine* pEngine,
@@ -146,7 +139,7 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_nCaretPage(0),
       m_nLimit(0),
       m_wcAliasChar(L'*'),
-      m_nFirstLineEnd(FDE_TXTEDIT_LINEEND_Auto),
+      m_FirstLineEnding(LineEnding::kAuto),
       m_bBefore(true),
       m_bLock(false),
       m_bAutoLineEnd(true) {}
@@ -888,20 +881,20 @@ bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
           nLength--;
           bPreIsCR = false;
           if (m_bAutoLineEnd) {
-            m_nFirstLineEnd = FDE_TXTEDIT_LINEEND_CRLF;
+            m_FirstLineEnding = LineEnding::kCRLF;
             m_bAutoLineEnd = false;
           }
         } else {
           lpText[i] = L'\n';
           if (m_bAutoLineEnd) {
-            m_nFirstLineEnd = FDE_TXTEDIT_LINEEND_LF;
+            m_FirstLineEnding = LineEnding::kLF;
             m_bAutoLineEnd = false;
           }
         }
       } break;
       default: {
         if (bPreIsCR && m_bAutoLineEnd) {
-          m_nFirstLineEnd = FDE_TXTEDIT_LINEEND_CR;
+          m_FirstLineEnding = LineEnding::kCR;
           m_bAutoLineEnd = false;
         }
         bPreIsCR = false;
@@ -912,14 +905,16 @@ bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
 }
 
 void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) const {
-  wchar_t wc = (m_nFirstLineEnd == FDE_TXTEDIT_LINEEND_CR) ? L'\n' : L'\r';
-  if (m_nFirstLineEnd == FDE_TXTEDIT_LINEEND_CRLF) {
+  if (m_FirstLineEnding == LineEnding::kCR)
+    return;
+
+  if (m_FirstLineEnding == LineEnding::kCRLF) {
     std::vector<int32_t> PosArr;
     int32_t nLength = wsText.GetLength();
     wchar_t* lpPos = const_cast<wchar_t*>(wsText.c_str());
     for (int32_t i = 0; i < nLength; i++, lpPos++) {
       if (*lpPos == L'\n') {
-        *lpPos = wc;
+        *lpPos = L'\r';
         PosArr.push_back(i);
       }
     }
@@ -945,13 +940,14 @@ void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) const {
     }
     wsTemp.ReleaseBuffer(nLength + nCount);
     wsText = wsTemp;
-  } else {
-    int32_t nLength = wsText.GetLength();
-    wchar_t* lpBuf = const_cast<wchar_t*>(wsText.c_str());
-    for (int32_t i = 0; i < nLength; i++, lpBuf++) {
-      if (*lpBuf == L'\n')
-        *lpBuf = wc;
-    }
+    return;
+  }
+
+  int32_t nLength = wsText.GetLength();
+  wchar_t* lpBuf = const_cast<wchar_t*>(wsText.c_str());
+  for (int32_t i = 0; i < nLength; i++, lpBuf++) {
+    if (*lpBuf == L'\n')
+      *lpBuf = L'\r';
   }
 }
 

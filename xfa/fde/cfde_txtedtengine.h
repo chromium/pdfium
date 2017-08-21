@@ -144,6 +144,13 @@ class CFDE_TxtEdtEngine {
     int32_t nCharIndex;
   };
 
+  enum class LineEnding {
+    kAuto,
+    kCRLF,
+    kCR,
+    kLF,
+  };
+
   int32_t CountPages() const {
     return m_nLineCount == 0 ? 0 : ((m_nLineCount - 1) / m_nPageLineCount) + 1;
   }
@@ -205,7 +212,7 @@ class CFDE_TxtEdtEngine {
   CFX_RectF m_rtCaret;
   int32_t m_nLimit;
   wchar_t m_wcAliasChar;
-  int32_t m_nFirstLineEnd;
+  LineEnding m_FirstLineEnding;
   bool m_bBefore;
   bool m_bLock;
   bool m_bAutoLineEnd;
