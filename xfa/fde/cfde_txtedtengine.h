@@ -16,10 +16,10 @@
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedtparag.h"
+#include "xfa/fgas/layout/cfx_txtbreak.h"
 
 class CFGAS_GEFont;
 class CFWL_Edit;
-class CFX_TxtBreak;
 class IFDE_TxtEdtDoRecord;
 class IFX_CharIter;
 
@@ -125,7 +125,7 @@ class CFDE_TxtEdtEngine {
   }
   CFDE_TxtEdtBuf* GetTextBuf() const { return m_pTxtBuf.get(); }
 
-  CFX_TxtBreak* GetTextBreak() const { return m_pTextBreak.get(); }
+  CFX_TxtBreak* GetTextBreak() { return &m_TextBreak; }
   int32_t GetLineCount() const { return m_nLineCount; }
   int32_t GetPageLineCount() const { return m_nPageLineCount; }
 
@@ -205,7 +205,7 @@ class CFDE_TxtEdtEngine {
   void DeleteSelect();
 
   std::unique_ptr<CFDE_TxtEdtBuf> m_pTxtBuf;
-  std::unique_ptr<CFX_TxtBreak> m_pTextBreak;
+  CFX_TxtBreak m_TextBreak;
   FDE_TXTEDTPARAMS m_Param;
   std::vector<std::unique_ptr<CFDE_TxtEdtPage>> m_PagePtrArray;
   std::vector<std::unique_ptr<CFDE_TxtEdtParag>> m_ParagPtrArray;

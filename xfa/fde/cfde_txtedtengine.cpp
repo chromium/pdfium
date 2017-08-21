@@ -15,7 +15,6 @@
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedtparag.h"
-#include "xfa/fgas/layout/cfx_txtbreak.h"
 #include "xfa/fwl/cfwl_edit.h"
 
 namespace {
@@ -145,9 +144,6 @@ CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
 }
 
 void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
-  if (!m_pTextBreak)
-    m_pTextBreak = pdfium::MakeUnique<CFX_TxtBreak>();
-
   m_Param = params;
   m_bAutoLineEnd = true;
   UpdateTxtBreak();
@@ -807,7 +803,7 @@ void CFDE_TxtEdtEngine::UpdatePages() {
 }
 
 void CFDE_TxtEdtEngine::UpdateTxtBreak() {
-  uint32_t dwStyle = m_pTextBreak->GetLayoutStyles();
+  uint32_t dwStyle = m_TextBreak.GetLayoutStyles();
   if (m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines)
     dwStyle &= ~FX_LAYOUTSTYLE_SingleLine;
   else
@@ -818,7 +814,7 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   else
     dwStyle &= ~FX_LAYOUTSTYLE_CombText;
 
-  m_pTextBreak->SetLayoutStyles(dwStyle);
+  m_TextBreak.SetLayoutStyles(dwStyle);
   uint32_t dwAligment = 0;
   if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Justified)
     dwAligment |= CFX_TxtLineAlignment_Justified;
@@ -828,12 +824,12 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   else if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Right)
     dwAligment |= CFX_TxtLineAlignment_Right;
 
-  m_pTextBreak->SetAlignment(dwAligment);
+  m_TextBreak.SetAlignment(dwAligment);
 
   if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap)
-    m_pTextBreak->SetLineWidth(m_Param.fPlateWidth);
+    m_TextBreak.SetLineWidth(m_Param.fPlateWidth);
   else
-    m_pTextBreak->SetLineWidth(kPageWidthMax);
+    m_TextBreak.SetLineWidth(kPageWidthMax);
 
   m_nPageLineCount = m_Param.nLineCount;
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) {
@@ -841,16 +837,16 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
     if (m_nLimit > 0)
       fCombWidth /= m_nLimit;
 
-    m_pTextBreak->SetCombWidth(fCombWidth);
+    m_TextBreak.SetCombWidth(fCombWidth);
   }
-  m_pTextBreak->SetFont(m_Param.pFont);
-  m_pTextBreak->SetFontSize(m_Param.fFontSize);
-  m_pTextBreak->SetTabWidth(m_Param.fTabWidth);
-  m_pTextBreak->SetDefaultChar(0xFEFF);
-  m_pTextBreak->SetParagraphBreakChar(L'\n');
-  m_pTextBreak->SetLineBreakTolerance(m_Param.fFontSize * 0.2f);
-  m_pTextBreak->SetHorizontalScale(100);
-  m_pTextBreak->SetCharSpace(0);
+  m_TextBreak.SetFont(m_Param.pFont);
+  m_TextBreak.SetFontSize(m_Param.fFontSize);
+  m_TextBreak.SetTabWidth(m_Param.fTabWidth);
+  m_TextBreak.SetDefaultChar(0xFEFF);
+  m_TextBreak.SetParagraphBreakChar(L'\n');
+  m_TextBreak.SetLineBreakTolerance(m_Param.fFontSize * 0.2f);
+  m_TextBreak.SetHorizontalScale(100);
+  m_TextBreak.SetCharSpace(0);
 }
 
 bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
