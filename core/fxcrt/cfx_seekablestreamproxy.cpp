@@ -92,10 +92,9 @@ std::pair<FX_STRSIZE, FX_STRSIZE> UTF8Decode(const char* pSrc,
 }
 
 void UTF16ToWChar(void* pBuffer, FX_STRSIZE iLength) {
-  ASSERT(pBuffer && iLength > 0);
-
-  if (sizeof(wchar_t) == 2)
-    return;
+  ASSERT(pBuffer);
+  ASSERT(iLength > 0);
+  ASSERT(sizeof(wchar_t) > 2);
 
   uint16_t* pSrc = static_cast<uint16_t*>(pBuffer);
   wchar_t* pDst = static_cast<wchar_t*>(pBuffer);
@@ -242,7 +241,8 @@ FX_STRSIZE CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer,
 FX_STRSIZE CFX_SeekableStreamProxy::ReadString(wchar_t* pStr,
                                                FX_STRSIZE iMaxLength,
                                                bool* bEOS) {
-  ASSERT(pStr && iMaxLength > 0);
+  ASSERT(pStr);
+  ASSERT(iMaxLength > 0);
 
   if (m_IsWriteStream)
     return -1;
@@ -252,7 +252,7 @@ FX_STRSIZE CFX_SeekableStreamProxy::ReadString(wchar_t* pStr,
     FX_FILESIZE iBytes = iMaxLength * 2;
     FX_STRSIZE iLen = ReadData(reinterpret_cast<uint8_t*>(pStr), iBytes);
     iMaxLength = iLen / 2;
-    if (sizeof(wchar_t) > 2)
+    if (sizeof(wchar_t) > 2 && iMaxLength > 0)
       UTF16ToWChar(pStr, iMaxLength);
 
 #if _FX_ENDIAN_ == _FX_BIG_ENDIAN_
