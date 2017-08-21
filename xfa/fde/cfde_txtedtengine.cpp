@@ -1176,7 +1176,7 @@ bool CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   }
   pTextOut->SetStyles(dwStyle);
   wsText += L"\n";
-  pTextOut->CalcLogicSize(wsText.c_str(), wsText.GetLength(), rcText);
+  pTextOut->CalcLogicSize(wsText, rcText);
   wsText.Delete(wsText.GetLength() - 1);
   if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz) &&
       (rcText.width > m_Param.fPlateWidth)) {

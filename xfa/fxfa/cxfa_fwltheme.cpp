@@ -116,8 +116,8 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
       mtPart.Concat(*pMatrix);
 
     m_pTextOut->SetMatrix(mtPart);
-    m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.c_str(),
-                              pParams->m_wsText.GetLength(), pParams->m_rtPart);
+    m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringC(),
+                              pParams->m_rtPart);
     return;
   }
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
@@ -141,8 +141,8 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     mtPart.Concat(*pMatrix);
 
   m_pTextOut->SetMatrix(mtPart);
-  m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.c_str(),
-                            pParams->m_wsText.GetLength(), pParams->m_rtPart);
+  m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringC(),
+                            pParams->m_rtPart);
 }
 
 CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
@@ -231,8 +231,7 @@ void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
     m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
     m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-    m_pTextOut->CalcLogicSize(pParams->m_wsText.c_str(),
-                              pParams->m_wsText.GetLength(), rect);
+    m_pTextOut->CalcLogicSize(pParams->m_wsText, rect);
   }
 
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
@@ -248,8 +247,7 @@ void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
 
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-  m_pTextOut->CalcLogicSize(pParams->m_wsText.c_str(),
-                            pParams->m_wsText.GetLength(), rect);
+  m_pTextOut->CalcLogicSize(pParams->m_wsText, rect);
 }
 
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) const {

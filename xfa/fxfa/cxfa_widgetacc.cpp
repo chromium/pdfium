@@ -849,8 +849,7 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
 
     pTextOut->SetStyles(dwStyles);
   }
-  layoutData->m_pTextOut->CalcLogicSize(wsText.c_str(), wsText.GetLength(),
-                                        size);
+  layoutData->m_pTextOut->CalcLogicSize(wsText, size);
 }
 
 bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {

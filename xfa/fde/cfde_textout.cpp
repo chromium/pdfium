@@ -34,29 +34,23 @@ bool IsTextAlignmentTop(const FDE_TextAlignment align) {
 bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               FX_ARGB color,
                               const CFX_RetainPtr<CFGAS_GEFont>& pFont,
-                              const FXTEXT_CHARPOS* pCharPos,
+                              FXTEXT_CHARPOS* pCharPos,
                               int32_t iCount,
                               float fFontSize,
                               const CFX_Matrix* pMatrix) {
   ASSERT(pFont && pCharPos && iCount > 0);
+
   CFX_Font* pFxFont = pFont->GetDevFont();
   if ((pFont->GetFontStyles() & FX_FONTSTYLE_Italic) != 0 &&
       !pFxFont->IsItalic()) {
-    FXTEXT_CHARPOS* pCP = (FXTEXT_CHARPOS*)pCharPos;
-    float* pAM;
     for (int32_t i = 0; i < iCount; ++i) {
       static const float mc = 0.267949f;
-      pAM = pCP->m_AdjustMatrix;
+      float* pAM = pCharPos->m_AdjustMatrix;
       pAM[2] = mc * pAM[0] + pAM[2];
       pAM[3] = mc * pAM[1] + pAM[3];
-      pCP++;
+      ++pCharPos;
     }
   }
-  FXTEXT_CHARPOS* pCP = (FXTEXT_CHARPOS*)pCharPos;
-  CFX_RetainPtr<CFGAS_GEFont> pCurFont;
-  CFX_RetainPtr<CFGAS_GEFont> pSTFont;
-  FXTEXT_CHARPOS* pCurCP = nullptr;
-  int32_t iCurCount = 0;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   uint32_t dwFontStyle = pFont->GetFontStyles();
@@ -69,49 +63,58 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   FxFont.SetSubstFont(std::move(SubstFxFont));
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
+  CFX_RetainPtr<CFGAS_GEFont> pCurFont;
+  FXTEXT_CHARPOS* pCurCP = nullptr;
+  int32_t iCurCount = 0;
   for (int32_t i = 0; i < iCount; ++i) {
-    pSTFont = pFont->GetSubstFont((int32_t)pCP->m_GlyphIndex);
-    pCP->m_GlyphIndex &= 0x00FFFFFF;
-    pCP->m_bFontStyle = false;
+    CFX_RetainPtr<CFGAS_GEFont> pSTFont =
+        pFont->GetSubstFont(static_cast<int32_t>(pCharPos->m_GlyphIndex));
+    pCharPos->m_GlyphIndex &= 0x00FFFFFF;
+    pCharPos->m_bFontStyle = false;
     if (pCurFont != pSTFont) {
       if (pCurFont) {
         pFxFont = pCurFont->GetDevFont();
+
+        CFX_Font* font;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
         FxFont.SetFace(pFxFont->GetFace());
-        device->DrawNormalText(iCurCount, pCurCP, &FxFont, -fFontSize, pMatrix,
-                               color, FXTEXT_CLEARTYPE);
+        font = &FxFont;
 #else
-        device->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize, pMatrix,
-                               color, FXTEXT_CLEARTYPE);
+        font = pFxFont;
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
+        device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, pMatrix,
+                               color, FXTEXT_CLEARTYPE);
       }
       pCurFont = pSTFont;
-      pCurCP = pCP;
+      pCurCP = pCharPos;
       iCurCount = 1;
     } else {
-      iCurCount++;
+      ++iCurCount;
     }
-    pCP++;
+    ++pCharPos;
   }
+
+  bool bRet = true;
   if (pCurFont && iCurCount) {
     pFxFont = pCurFont->GetDevFont();
+    CFX_Font* font;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     FxFont.SetFace(pFxFont->GetFace());
-    bool bRet = device->DrawNormalText(iCurCount, pCurCP, &FxFont, -fFontSize,
-                                       pMatrix, color, FXTEXT_CLEARTYPE);
-    FxFont.SetFace(nullptr);
-    return bRet;
+    font = &FxFont;
 #else
-    return device->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize,
-                                  pMatrix, color, FXTEXT_CLEARTYPE);
+    font = pFxFont;
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
+    bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, pMatrix,
+                                  color, FXTEXT_CLEARTYPE);
   }
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   FxFont.SetFace(nullptr);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
-  return true;
+  return bRet;
 }
 
 FDE_TTOPIECE::FDE_TTOPIECE() = default;
@@ -133,9 +136,7 @@ CFDE_TextOut::CFDE_TextOut()
       m_ttoLines(5),
       m_iCurLine(0),
       m_iCurPiece(0),
-      m_iTotalLines(0) {
-  m_Matrix.SetIdentity();
-}
+      m_iTotalLines(0) {}
 
 CFDE_TextOut::~CFDE_TextOut() {}
 
@@ -190,18 +191,14 @@ void CFDE_TextOut::SetLineBreakTolerance(float fTolerance) {
   m_pTxtBreak->SetLineBreakTolerance(m_fTolerance);
 }
 
-void CFDE_TextOut::CalcLogicSize(const wchar_t* pwsStr,
-                                 int32_t iLength,
-                                 CFX_SizeF& size) {
+void CFDE_TextOut::CalcLogicSize(const CFX_WideString& str, CFX_SizeF& size) {
   CFX_RectF rtText(0.0f, 0.0f, size.width, size.height);
-  CalcLogicSize(pwsStr, iLength, rtText);
+  CalcLogicSize(str, rtText);
   size = rtText.Size();
 }
 
-void CFDE_TextOut::CalcLogicSize(const wchar_t* pwsStr,
-                                 int32_t iLength,
-                                 CFX_RectF& rect) {
-  if (!pwsStr || iLength < 1) {
+void CFDE_TextOut::CalcLogicSize(const CFX_WideString& str, CFX_RectF& rect) {
+  if (str.IsEmpty()) {
     rect.width = 0.0f;
     rect.height = 0.0f;
     return;
@@ -217,26 +214,21 @@ void CFDE_TextOut::CalcLogicSize(const wchar_t* pwsStr,
   }
 
   m_iTotalLines = 0;
-  const wchar_t* pStr = pwsStr;
   float fWidth = 0.0f;
   float fHeight = 0.0f;
   float fStartPos = rect.right();
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
-  wchar_t wPreChar = 0;
-  wchar_t wch;
-  wchar_t wBreak = 0;
-  while (iLength-- > 0) {
-    wch = *pStr++;
-    if (wBreak == 0 && (wch == L'\n' || wch == L'\r')) {
-      wBreak = wch;
+  bool break_char_is_set = false;
+  for (const wchar_t& wch : str) {
+    if (!break_char_is_set && (wch == L'\n' || wch == L'\r')) {
+      break_char_is_set = true;
       m_pTxtBreak->SetParagraphBreakChar(wch);
     }
     dwBreakStatus = m_pTxtBreak->AppendChar(wch);
     if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
       RetrieveLineWidth(dwBreakStatus, fStartPos, fWidth, fHeight);
-
-    wPreChar = 0;
   }
+
   dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
     RetrieveLineWidth(dwBreakStatus, fStartPos, fWidth, fHeight);
@@ -265,33 +257,32 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
 
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   float fLineWidth = 0.0f;
-  int32_t iCount = m_pTxtBreak->CountBreakPieces();
-  for (int32_t i = 0; i < iCount; i++) {
+  for (int32_t i = 0; i < m_pTxtBreak->CountBreakPieces(); i++) {
     const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
     fLineWidth += static_cast<float>(pPiece->m_iWidth) / 20000.0f;
     fStartPos =
         std::min(fStartPos, static_cast<float>(pPiece->m_iStartPos) / 20000.0f);
   }
   m_pTxtBreak->ClearBreakPieces();
-  if (dwBreakStatus == CFX_BreakType::Paragraph) {
+
+  if (dwBreakStatus == CFX_BreakType::Paragraph)
     m_pTxtBreak->Reset();
-  }
   if (!m_Styles.line_wrap_ && dwBreakStatus == CFX_BreakType::Line) {
     fWidth += fLineWidth;
   } else {
     fWidth = std::max(fWidth, fLineWidth);
     fHeight += fLineStep;
   }
-  m_iTotalLines++;
+  ++m_iTotalLines;
   return true;
 }
 
 void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
-                                 const wchar_t* pwsStr,
-                                 int32_t iLength,
+                                 const CFX_WideStringC& str,
                                  const CFX_RectF& rect) {
   ASSERT(m_pFont && m_fFontSize >= 1.0f);
-  if (!pwsStr || iLength < 1)
+
+  if (str.IsEmpty())
     return;
   if (rect.width < m_fFontSize || rect.height < m_fFontSize)
     return;
@@ -301,7 +292,7 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
   m_ttoLines.clear();
   m_wsText.clear();
 
-  LoadText(pwsStr, iLength, rect);
+  LoadText(CFX_WideString(str), rect);
   Reload(rect);
   DoAlignment(rect);
 
@@ -332,55 +323,49 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
   device->RestoreState(false);
 }
 
-void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
-                            int32_t iLength,
-                            const CFX_RectF& rect) {
-  wchar_t* pStr = m_wsText.GetBuffer(iLength);
-  int32_t iTxtLength = iLength;
+void CFDE_TextOut::LoadText(const CFX_WideString& str, const CFX_RectF& rect) {
+  ASSERT(!str.IsEmpty());
 
-  ASSERT(iTxtLength >= 0);
-  if (pdfium::CollectionSize<int32_t>(m_CharWidths) < iTxtLength)
-    m_CharWidths.resize(iTxtLength, 0);
+  m_wsText = str;
+
+  if (pdfium::CollectionSize<int32_t>(m_CharWidths) < str.GetLength())
+    m_CharWidths.resize(str.GetLength(), 0);
 
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   float fLineStop = rect.bottom();
   m_fLinePos = rect.top;
   int32_t iStartChar = 0;
-  int32_t iChars = 0;
   int32_t iPieceWidths = 0;
   CFX_BreakType dwBreakStatus;
-  wchar_t wch;
   bool bRet = false;
-  while (iTxtLength-- > 0) {
-    wch = *pwsStr++;
-    *pStr++ = wch;
-    iChars++;
+  for (const auto& wch : str) {
     dwBreakStatus = m_pTxtBreak->AppendChar(wch);
-    if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
-      bool bEndofLine =
-          RetrievePieces(dwBreakStatus, iStartChar, iPieceWidths, false, rect);
-      if (bEndofLine &&
-          (m_Styles.line_wrap_ || dwBreakStatus == CFX_BreakType::Paragraph ||
-           dwBreakStatus == CFX_BreakType::Page)) {
-        iPieceWidths = 0;
-        m_iCurLine++;
-        m_fLinePos += fLineStep;
-      }
-      if (m_fLinePos + fLineStep > fLineStop) {
-        int32_t iCurLine = bEndofLine ? m_iCurLine - 1 : m_iCurLine;
-        m_ttoLines[iCurLine].SetNewReload(true);
-        bRet = true;
-        break;
-      }
+    if (CFX_BreakTypeNoneOrPiece(dwBreakStatus))
+      continue;
+
+    bool bEndofLine =
+        RetrievePieces(dwBreakStatus, iStartChar, iPieceWidths, false, rect);
+    if (bEndofLine &&
+        (m_Styles.line_wrap_ || dwBreakStatus == CFX_BreakType::Paragraph ||
+         dwBreakStatus == CFX_BreakType::Page)) {
+      iPieceWidths = 0;
+      ++m_iCurLine;
+      m_fLinePos += fLineStep;
+    }
+    if (m_fLinePos + fLineStep > fLineStop) {
+      int32_t iCurLine = bEndofLine ? m_iCurLine - 1 : m_iCurLine;
+      m_ttoLines[iCurLine].SetNewReload(true);
+      bRet = true;
+      break;
     }
   }
+
   dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus) && !bRet)
     RetrievePieces(dwBreakStatus, iStartChar, iPieceWidths, false, rect);
 
   m_pTxtBreak->ClearBreakPieces();
   m_pTxtBreak->Reset();
-  m_wsText.ReleaseBuffer(iLength);
 }
 
 bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
@@ -390,8 +375,7 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
                                   const CFX_RectF& rect) {
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   bool bNeedReload = false;
-  float fLineWidth = rect.Width();
-  int32_t iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
+  int32_t iLineWidth = FXSYS_round(rect.Width() * 20000.0f);
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
     const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
@@ -411,29 +395,28 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
       iWidth += iCurCharWidth;
       m_CharWidths[iChar++] = iCurCharWidth;
     }
+
     if (j == 0 && !bReload) {
       m_ttoLines[m_iCurLine].SetNewReload(true);
     } else if (j > 0) {
-      CFX_RectF rtPiece;
-      rtPiece.left = rect.left + (float)pPiece->m_iStartPos / 20000.0f;
-      rtPiece.top = m_fLinePos;
-      rtPiece.width = iWidth / 20000.0f;
-      rtPiece.height = fLineStep;
-
       FDE_TTOPIECE ttoPiece;
       ttoPiece.iStartChar = iStartChar;
       ttoPiece.iChars = j;
-      ttoPiece.rtPiece = rtPiece;
       ttoPiece.dwCharStyles = pPiece->m_dwCharStyles;
-      if (FX_IsOdd(pPiece->m_iBidiLevel)) {
+      ttoPiece.rtPiece = CFX_RectF(
+          rect.left + static_cast<float>(pPiece->m_iStartPos) / 20000.0f,
+          m_fLinePos, iWidth / 20000.0f, fLineStep);
+
+      if (FX_IsOdd(pPiece->m_iBidiLevel))
         ttoPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
-      }
+
       AppendPiece(ttoPiece, bNeedReload, (bReload && i == iCount - 1));
     }
     iStartChar += iPieceChars;
     iPieceWidths += iWidth;
   }
   m_pTxtBreak->ClearBreakPieces();
+
   return m_Styles.single_line_ || m_Styles.line_wrap_ || bNeedReload ||
          dwBreakStatus == CFX_BreakType::Paragraph;
 }
@@ -444,18 +427,19 @@ void CFDE_TextOut::AppendPiece(const FDE_TTOPIECE& ttoPiece,
   if (m_iCurLine >= pdfium::CollectionSize<int32_t>(m_ttoLines)) {
     CFDE_TTOLine ttoLine;
     ttoLine.SetNewReload(bNeedReload);
+
     m_iCurPiece = ttoLine.AddPiece(m_iCurPiece, ttoPiece);
     m_ttoLines.push_back(ttoLine);
     m_iCurLine = pdfium::CollectionSize<int32_t>(m_ttoLines) - 1;
   } else {
     CFDE_TTOLine* pLine = &m_ttoLines[m_iCurLine];
     pLine->SetNewReload(bNeedReload);
+
     m_iCurPiece = pLine->AddPiece(m_iCurPiece, ttoPiece);
     if (bEnd) {
       int32_t iPieces = pLine->GetSize();
-      if (m_iCurPiece < iPieces) {
+      if (m_iCurPiece < iPieces)
         pLine->RemoveLast(iPieces - m_iCurPiece - 1);
-      }
     }
   }
   if (!bEnd && bNeedReload)
@@ -477,26 +461,27 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
 void CFDE_TextOut::ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect) {
   const wchar_t* pwsStr = m_wsText.c_str();
   int32_t iPieceWidths = 0;
+
   FDE_TTOPIECE* pPiece = pLine->GetPtrAt(0);
   int32_t iStartChar = pPiece->iStartChar;
-  m_fLinePos = pPiece->rtPiece.top;
   int32_t iPieceCount = pLine->GetSize();
   int32_t iPieceIndex = 0;
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
-  wchar_t wch;
+  m_fLinePos = pPiece->rtPiece.top;
   while (iPieceIndex < iPieceCount) {
     int32_t iStar = iStartChar;
     int32_t iEnd = pPiece->iChars + iStar;
     while (iStar < iEnd) {
-      wch = *(pwsStr + iStar);
-      dwBreakStatus = m_pTxtBreak->AppendChar(wch);
+      dwBreakStatus = m_pTxtBreak->AppendChar(*(pwsStr + iStar));
       if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
         RetrievePieces(dwBreakStatus, iStartChar, iPieceWidths, true, rect);
-      iStar++;
+
+      ++iStar;
     }
-    iPieceIndex++;
+    ++iPieceIndex;
     pPiece = pLine->GetPtrAt(iPieceIndex);
   }
+
   dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
     RetrievePieces(dwBreakStatus, iStartChar, iPieceWidths, true, rect);
@@ -508,13 +493,11 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   if (m_ttoLines.empty())
     return;
 
-  float fLineStopS = rect.bottom();
   FDE_TTOPIECE* pFirstPiece = m_ttoLines.back().GetPtrAt(0);
   if (!pFirstPiece)
     return;
 
-  float fLineStopD = pFirstPiece->rtPiece.bottom();
-  float fInc = fLineStopS - fLineStopD;
+  float fInc = rect.bottom() - pFirstPiece->rtPiece.bottom();
   if (TextAlignmentVerticallyCentered(m_iAlignment))
     fInc /= 2.0f;
   else if (IsTextAlignmentTop(m_iAlignment))
@@ -525,22 +508,17 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
 
   for (auto& line : m_ttoLines) {
     int32_t iPieces = line.GetSize();
-    for (int32_t j = 0; j < iPieces; j++) {
-      FDE_TTOPIECE* pPiece = line.GetPtrAt(j);
-      pPiece->rtPiece.top += fInc;
-    }
+    for (int32_t j = 0; j < iPieces; j++)
+      line.GetPtrAt(j)->rtPiece.top += fInc;
   }
 }
 
 int32_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
-  FX_TXTRUN tr = ToTextRun(pPiece);
-  ASSERT(tr.iLength >= 0);
-  if (pdfium::CollectionSize<int32_t>(m_CharPos) < tr.iLength)
-    m_CharPos.resize(tr.iLength, FXTEXT_CHARPOS());
-  return m_pTxtBreak->GetDisplayPos(&tr, m_CharPos.data());
-}
+  ASSERT(pPiece->iChars >= 0);
 
-FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
+  if (pdfium::CollectionSize<int32_t>(m_CharPos) < pPiece->iChars)
+    m_CharPos.resize(pPiece->iChars, FXTEXT_CHARPOS());
+
   FX_TXTRUN tr;
   tr.wsStr = m_wsText + pPiece->iStartChar;
   tr.pWidths = &m_CharWidths[pPiece->iStartChar];
@@ -550,7 +528,8 @@ FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
   tr.dwStyles = m_dwTxtBkStyles;
   tr.dwCharStyles = pPiece->dwCharStyles;
   tr.pRect = &pPiece->rtPiece;
-  return tr;
+
+  return m_pTxtBreak->GetDisplayPos(&tr, m_CharPos.data());
 }
 
 CFDE_TTOLine::CFDE_TTOLine() : m_bNewReload(false) {}
@@ -582,6 +561,8 @@ FDE_TTOPIECE* CFDE_TTOLine::GetPtrAt(int32_t index) {
 void CFDE_TTOLine::RemoveLast(int32_t icount) {
   if (icount < 0)
     return;
-  icount = std::min(icount, pdfium::CollectionSize<int32_t>(m_pieces));
-  m_pieces.erase(m_pieces.end() - icount, m_pieces.end());
+  m_pieces.erase(
+      m_pieces.end() -
+          std::min(icount, pdfium::CollectionSize<int32_t>(m_pieces)),
+      m_pieces.end());
 }

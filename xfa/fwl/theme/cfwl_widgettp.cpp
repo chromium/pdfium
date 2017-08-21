@@ -53,7 +53,8 @@ void CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   pMatrix->Concat(*pGraphics->GetMatrix());
   m_pTextOut->SetMatrix(*pMatrix);
   m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(),
-                            pParams->m_wsText.c_str(), iLen, pParams->m_rtPart);
+                            CFX_WideStringC(pParams->m_wsText.c_str(), iLen),
+                            pParams->m_rtPart);
 }
 
 void CFWL_WidgetTP::InitializeArrowColorData() {

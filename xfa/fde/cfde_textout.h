@@ -20,7 +20,6 @@
 class CFDE_RenderDevice;
 class CFX_RenderDevice;
 class CFX_TxtBreak;
-struct FX_TXTRUN;
 
 enum class FDE_TextAlignment : uint8_t {
   kTopLeft = 0,
@@ -79,7 +78,7 @@ class CFDE_TextOut {
   static bool DrawString(CFX_RenderDevice* device,
                          FX_ARGB color,
                          const CFX_RetainPtr<CFGAS_GEFont>& pFont,
-                         const FXTEXT_CHARPOS* pCharPos,
+                         FXTEXT_CHARPOS* pCharPos,
                          int32_t iCount,
                          float fFontSize,
                          const CFX_Matrix* pMatrix);
@@ -96,11 +95,10 @@ class CFDE_TextOut {
   void SetMatrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
   void SetLineBreakTolerance(float fTolerance);
 
-  void CalcLogicSize(const wchar_t* pwsStr, int32_t iLength, CFX_SizeF& size);
-  void CalcLogicSize(const wchar_t* pwsStr, int32_t iLength, CFX_RectF& rect);
+  void CalcLogicSize(const CFX_WideString& str, CFX_SizeF& size);
+  void CalcLogicSize(const CFX_WideString& str, CFX_RectF& rect);
   void DrawLogicText(CFX_RenderDevice* device,
-                     const wchar_t* pwsStr,
-                     int32_t iLength,
+                     const CFX_WideStringC& str,
                      const CFX_RectF& rect);
   int32_t GetTotalLines() const { return m_iTotalLines; }
 
@@ -109,7 +107,7 @@ class CFDE_TextOut {
                          float& fStartPos,
                          float& fWidth,
                          float& fHeight);
-  void LoadText(const wchar_t* pwsStr, int32_t iLength, const CFX_RectF& rect);
+  void LoadText(const CFX_WideString& str, const CFX_RectF& rect);
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect);
@@ -121,8 +119,6 @@ class CFDE_TextOut {
   void AppendPiece(const FDE_TTOPIECE& ttoPiece, bool bNeedReload, bool bEnd);
   void DoAlignment(const CFX_RectF& rect);
   int32_t GetDisplayPos(FDE_TTOPIECE* pPiece);
-
-  FX_TXTRUN ToTextRun(const FDE_TTOPIECE* pPiece);
 
   std::unique_ptr<CFX_TxtBreak> m_pTxtBreak;
   CFX_RetainPtr<CFGAS_GEFont> m_pFont;
