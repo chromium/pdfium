@@ -425,24 +425,6 @@ void CFWL_Edit::OnSelChanged() {
   RepaintRect(GetClientRect());
 }
 
-bool CFWL_Edit::OnPageLoad(int32_t nPageIndex) {
-  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(nPageIndex);
-  if (!pPage)
-    return false;
-
-  pPage->LoadPage();
-  return true;
-}
-
-bool CFWL_Edit::OnPageUnload(int32_t nPageIndex) {
-  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(nPageIndex);
-  if (!pPage)
-    return false;
-
-  pPage->UnloadPage();
-  return true;
-}
-
 void CFWL_Edit::OnAddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord) {
   AddDoRecord(std::move(pRecord));
 }

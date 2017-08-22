@@ -94,8 +94,6 @@ class CFWL_Edit : public CFWL_Widget {
   void OnCaretChanged();
   void OnTextChanged(const CFX_WideString& prevText);
   void OnSelChanged();
-  bool OnPageLoad(int32_t nPageIndex);
-  bool OnPageUnload(int32_t nPageIndex);
   void OnAddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord);
   bool OnValidate(const CFX_WideString& wsText);
   void SetScrollOffset(float fScrollOffset);

@@ -595,7 +595,9 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
   ASSERT(nLength > 0);
   FDE_TXTEDTPARAGPOS ParagPos;
   TextPos2ParagPos(nStart, ParagPos);
-  m_Param.pEventSink->OnPageUnload(m_nCaretPage);
+
+  GetPage(m_nCaretPage)->UnloadPage();
+
   int32_t nParagCount = pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
   for (int32_t i = ParagPos.nParagIndex + 1; i < nParagCount; i++)
     m_ParagPtrArray[i]->IncrementStartIndex(nLength);
@@ -649,7 +651,8 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
     nTotalLineCount += pParag->GetLineCount();
   }
   m_nLineCount += nTotalLineCount - nReserveLineCount;
-  m_Param.pEventSink->OnPageLoad(m_nCaretPage);
+
+  GetPage(m_nCaretPage)->LoadPage();
   UpdatePages();
 }
 
@@ -659,7 +662,9 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
   }
   int32_t nEnd = nStart + nCount - 1;
   ASSERT(nStart >= 0 && nEnd < m_pTxtBuf->GetTextLength());
-  m_Param.pEventSink->OnPageUnload(m_nCaretPage);
+
+  GetPage(m_nCaretPage)->UnloadPage();
+
   FDE_TXTEDTPARAGPOS ParagPosBgn, ParagPosEnd;
   TextPos2ParagPos(nStart, ParagPosBgn);
   TextPos2ParagPos(nEnd, ParagPosEnd);
@@ -705,7 +710,8 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
   if (m_nCaretPage >= nPageCount) {
     m_nCaretPage = nPageCount - 1;
   }
-  m_Param.pEventSink->OnPageLoad(m_nCaretPage);
+
+  GetPage(m_nCaret)->LoadPage();
 }
 
 void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
@@ -927,15 +933,16 @@ int32_t CFDE_TxtEdtEngine::MovePage2Char(int32_t nIndex) {
   ASSERT(nIndex <= m_pTxtBuf->GetTextLength());
   if (m_nCaretPage >= 0) {
     CFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage].get();
-    m_Param.pEventSink->OnPageLoad(m_nCaretPage);
+    pPage->LoadPage();
+
     int32_t nPageCharStart = pPage->GetCharStart();
     int32_t nPageCharCount = pPage->GetCharCount();
-    if (nIndex >= nPageCharStart && nIndex < nPageCharStart + nPageCharCount) {
-      m_Param.pEventSink->OnPageUnload(m_nCaretPage);
+
+    pPage->UnloadPage();
+    if (nIndex >= nPageCharStart && nIndex < nPageCharStart + nPageCharCount)
       return m_nCaretPage;
-    }
-    m_Param.pEventSink->OnPageUnload(m_nCaretPage);
   }
+
   CFDE_TxtEdtParag* pParag = nullptr;
   int32_t nLineCount = 0;
   int32_t nParagCount = pdfium::CollectionSize<int32_t>(m_ParagPtrArray);
@@ -1172,7 +1179,7 @@ void CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret,
                                      int32_t nCaret,
                                      bool bBefore) {
   CFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage].get();
-  m_Param.pEventSink->OnPageLoad(m_nCaretPage);
+  pPage->LoadPage();
 
   bool bCombText = !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText);
   int32_t nIndexInpage = nCaret - pPage->GetCharStart();
@@ -1190,12 +1197,13 @@ void CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret,
 
   rtCaret.width = 1.0f;
 
-  m_Param.pEventSink->OnPageUnload(m_nCaretPage);
+  GetPage(m_nCaretPage)->UnloadPage();
 }
 
 void CFDE_TxtEdtEngine::UpdateCaretIndex(const CFX_PointF& ptCaret) {
   CFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage].get();
-  m_Param.pEventSink->OnPageLoad(m_nCaretPage);
+  pPage->LoadPage();
+
   m_nCaret = pPage->GetCharIndex(ptCaret, m_bBefore);
   GetCaretRect(m_rtCaret, m_nCaretPage, m_nCaret, m_bBefore);
   if (!m_bBefore) {
@@ -1203,7 +1211,7 @@ void CFDE_TxtEdtEngine::UpdateCaretIndex(const CFX_PointF& ptCaret) {
     m_bBefore = true;
   }
   m_Param.pEventSink->OnCaretChanged();
-  m_Param.pEventSink->OnPageUnload(m_nCaretPage);
+  GetPage(m_nCaretPage)->UnloadPage();
 }
 
 void CFDE_TxtEdtEngine::DeleteSelect() {
