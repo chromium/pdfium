@@ -14,7 +14,6 @@
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
@@ -36,7 +35,6 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 #ifndef PDF_ENABLE_XFA
       m_bOwnsPage(false),
 #endif  // PDF_ENABLE_XFA
-      m_bEnterWidget(false),
       m_bOnWidget(false),
       m_bValid(false),
       m_bLocked(false),
@@ -329,40 +327,46 @@ bool CPDFSDK_PageView::OnMouseMove(const CFX_PointF& point, int nFlag) {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
   CPDFSDK_Annot::ObservedPtr pFXAnnot(GetFXAnnotAtPoint(point));
-  if (pFXAnnot) {
-    if (m_pCaptureWidget && m_pCaptureWidget != pFXAnnot) {
-      m_bEnterWidget = false;
-      pAnnotHandlerMgr->Annot_OnMouseExit(this, &m_pCaptureWidget, nFlag);
-    }
-    m_bOnWidget = true;
-    m_pCaptureWidget.Reset(pFXAnnot.Get());
 
-    if (!m_bEnterWidget) {
-      m_bEnterWidget = true;
-      pAnnotHandlerMgr->Annot_OnMouseEnter(this, &pFXAnnot, nFlag);
+  if (m_bOnWidget && m_pCaptureWidget != pFXAnnot)
+    ExitWidget(pAnnotHandlerMgr, true, nFlag);
+
+  if (pFXAnnot) {
+    if (!m_bOnWidget) {
+      EnterWidget(pAnnotHandlerMgr, &pFXAnnot, nFlag);
 
       // Annot_OnMouseEnter may have invalidated pFXAnnot.
       if (!pFXAnnot) {
-        m_bOnWidget = false;
-        m_bEnterWidget = false;
-        m_pCaptureWidget.Reset();
+        ExitWidget(pAnnotHandlerMgr, false, nFlag);
         return true;
       }
     }
+
     pAnnotHandlerMgr->Annot_OnMouseMove(this, &pFXAnnot, nFlag, point);
     return true;
   }
 
-  if (m_bOnWidget) {
-    m_bOnWidget = false;
-    m_bEnterWidget = false;
-    if (m_pCaptureWidget) {
-      pAnnotHandlerMgr->Annot_OnMouseExit(this, &m_pCaptureWidget, nFlag);
-      m_pCaptureWidget.Reset();
-    }
-  }
-
   return false;
+}
+
+void CPDFSDK_PageView::EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
+                                   CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                   uint32_t nFlag) {
+  m_bOnWidget = true;
+  m_pCaptureWidget.Reset(pAnnot->Get());
+  pAnnotHandlerMgr->Annot_OnMouseEnter(this, pAnnot, nFlag);
+}
+
+void CPDFSDK_PageView::ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
+                                  bool callExitCallback,
+                                  uint32_t nFlag) {
+  m_bOnWidget = false;
+  if (m_pCaptureWidget) {
+    if (callExitCallback)
+      pAnnotHandlerMgr->Annot_OnMouseExit(this, &m_pCaptureWidget, nFlag);
+
+    m_pCaptureWidget.Reset();
+  }
 }
 
 bool CPDFSDK_PageView::OnMouseWheel(double deltaX,

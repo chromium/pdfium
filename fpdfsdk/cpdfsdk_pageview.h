@@ -14,6 +14,7 @@
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 
 class CFX_RenderDevice;
 class CPDF_AnnotList;
@@ -104,6 +105,13 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   int GetPageIndexForStaticPDF() const;
 
+  void EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
+                   CPDFSDK_Annot::ObservedPtr* pAnnot,
+                   uint32_t nFlag);
+  void ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
+                  bool callExitCallback,
+                  uint32_t nFlag);
+
   CFX_Matrix m_curMatrix;
   UnderlyingPageType* const m_page;
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
@@ -113,7 +121,6 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 #ifndef PDF_ENABLE_XFA
   bool m_bOwnsPage;
 #endif  // PDF_ENABLE_XFA
-  bool m_bEnterWidget;
   bool m_bOnWidget;
   bool m_bValid;
   bool m_bLocked;
