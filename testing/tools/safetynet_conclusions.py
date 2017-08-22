@@ -263,14 +263,14 @@ def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
     case_pairs = sorted(conclusions_dict['comparison_by_case'].iteritems())
 
   for case_name, case_dict in case_pairs:
-    if case_dict['rating'] == RATING_FAILURE:
-      print u'{} to measure time for {}'.format(
-          RATING_TO_COLOR[RATING_FAILURE].format('Failed'),
-          case_name).encode('utf-8')
-      continue
-
     if colored:
       color = RATING_TO_COLOR[case_dict['rating']]
+
+    if case_dict['rating'] == RATING_FAILURE:
+      print u'{} to measure time for {}'.format(
+          color.format('Failed'),
+          case_name).encode('utf-8')
+      continue
 
     print u'{0} {1:15,d}  {2}' .format(
         color.format('{:+11.4%}'.format(case_dict['ratio'])),

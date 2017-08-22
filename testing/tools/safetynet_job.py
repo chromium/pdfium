@@ -60,7 +60,7 @@ class JobRun(object):
 
     Returns:
       Exit code for the script: 0 if no significant changes are found; 1 if
-      there was an error in the comparison; 2 if there was a regression; 3 if
+      there was an error in the comparison; 3 if there was a regression; 4 if
       there was an improvement and no regression.
     """
     pdfium_src_dir = os.path.join(
@@ -144,18 +144,19 @@ class JobRun(object):
 
     output_info = json.loads(json_output)
     PrintConclusionsDictHumanReadable(output_info,
-                                      colored=(not self.args.output_to_log),
+                                      colored=(not self.args.output_to_log
+                                               and not self.args.no_color),
                                       key='after')
 
     status = 0
 
     if output_info['summary']['improvement']:
       PrintWithTime('Improvement detected.')
-      status = 3
+      status = 4
 
     if output_info['summary']['regression']:
       PrintWithTime('Regression detected.')
-      status = 2
+      status = 3
 
     if status == 0:
       PrintWithTime('Nothing detected.')
@@ -183,6 +184,9 @@ def main():
   parser.add_argument('--no-checkpoint', action='store_true',
                       help='whether to skip writing the new checkpoint. Use '
                            'for script debugging.')
+  parser.add_argument('--no-color', action='store_true',
+                      help='whether to write output without color escape '
+                           'codes.')
   parser.add_argument('--output-to-log', action='store_true',
                       help='whether to write output to a log file')
   args = parser.parse_args()
