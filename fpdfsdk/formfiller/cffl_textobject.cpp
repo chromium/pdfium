@@ -24,7 +24,11 @@ CFFL_TextObject::CFFL_TextObject(CPDFSDK_FormFillEnvironment* pApp,
                                  CPDFSDK_Widget* pWidget)
     : CFFL_FormFiller(pApp, pWidget) {}
 
-CFFL_TextObject::~CFFL_TextObject() {}
+CFFL_TextObject::~CFFL_TextObject() {
+  // Destroy view classes before this object's members are destroyed since
+  // the view classes have pointers to m_pFontMap that would be left dangling.
+  DestroyWindows();
+}
 
 CBA_FontMap* CFFL_TextObject::MaybeCreateFontMap() {
   if (!m_pFontMap) {
