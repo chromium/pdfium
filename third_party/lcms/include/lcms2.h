@@ -38,7 +38,7 @@
 // #define CMS_DONT_USE_INT64        1
 
 // Uncomment this if your compiler doesn't work with fast floor function
-// #define CMS_DONT_USE_FAST_FLOOR 1
+#define CMS_DONT_USE_FAST_FLOOR 1
 
 // Uncomment this line if you want lcms to use the black point tag in profile,
 // if commented, lcms will compute the black point by its own.
