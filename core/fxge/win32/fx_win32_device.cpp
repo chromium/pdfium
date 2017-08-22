@@ -430,7 +430,7 @@ bool CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
 void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
                                          uint32_t FontType) {
   CFX_ByteString name(plf->lfFaceName);
-  if (name[0] == '@')
+  if (name.GetLength() > 0 && name[0] == '@')
     return;
 
   if (name == m_LastFamily) {
