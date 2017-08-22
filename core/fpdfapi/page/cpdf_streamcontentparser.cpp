@@ -130,8 +130,7 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
     if (bGouraud)
       stream.BitStream()->ByteAlign();
   }
-  matrix.TransformRect(rect);
-  return rect;
+  return matrix.TransformRect(rect);
 }
 
 struct AbbrPair {

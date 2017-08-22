@@ -622,7 +622,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
     bbox = pPathData->GetBoundingBox();
   }
   if (pObject2Device)
-    pObject2Device->TransformRect(bbox);
+    bbox = pObject2Device->TransformRect(bbox);
 
   CFX_Matrix ctm = GetCTM();
   float fScaleX = fabs(ctm.a);

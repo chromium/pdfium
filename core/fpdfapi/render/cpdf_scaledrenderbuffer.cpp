@@ -52,9 +52,8 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     bpp = 32;
   }
   while (1) {
-    CFX_FloatRect rect(pRect);
-    m_Matrix.TransformRect(rect);
-    FX_RECT bitmap_rect = rect.GetOuterRect();
+    FX_RECT bitmap_rect =
+        m_Matrix.TransformRect(CFX_FloatRect(pRect)).GetOuterRect();
     int32_t iWidth = bitmap_rect.Width();
     int32_t iHeight = bitmap_rect.Height();
     int32_t iPitch = (iWidth * bpp + 31) / 32 * 4;

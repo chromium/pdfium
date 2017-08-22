@@ -130,7 +130,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (rcBBox.right <= rcBBox.left || rcBBox.bottom >= rcBBox.top)
     char_rect = pNewChar->m_pForm->CalcBoundingBox();
 
-  m_FontMatrix.TransformRect(char_rect);
+  char_rect = m_FontMatrix.TransformRect(char_rect);
   rcBBox.left = FXSYS_round(char_rect.left * 1000);
   rcBBox.right = FXSYS_round(char_rect.right * 1000);
   rcBBox.top = FXSYS_round(char_rect.top * 1000);

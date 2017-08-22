@@ -468,11 +468,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   int32_t nFontIndex = -1;
   CFX_PointF ptBT;
   CFX_RenderDevice::StateRestorer restorer(pDevice);
-  if (!rcClip.IsEmpty()) {
-    CFX_FloatRect rcTemp = rcClip;
-    mtUser2Device.TransformRect(rcTemp);
-    pDevice->SetClip_Rect(rcTemp.ToFxRect());
-  }
+  if (!rcClip.IsEmpty())
+    pDevice->SetClip_Rect(mtUser2Device.TransformRect(rcClip).ToFxRect());
 
   CPWL_EditImpl_Iterator* pIterator = pEdit->GetIterator();
   IPVT_FontMap* pFontMap = pEdit->GetFontMap();

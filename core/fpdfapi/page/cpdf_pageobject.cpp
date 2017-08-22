@@ -95,8 +95,8 @@ void CPDF_PageObject::TransformGeneralState(CFX_Matrix& matrix) {
 
 FX_RECT CPDF_PageObject::GetBBox(const CFX_Matrix* pMatrix) const {
   CFX_FloatRect rect(m_Left, m_Bottom, m_Right, m_Top);
-  if (pMatrix) {
-    pMatrix->TransformRect(rect);
-  }
+  if (pMatrix)
+    rect = pMatrix->TransformRect(rect);
+
   return rect.GetOuterRect();
 }

@@ -176,7 +176,7 @@ void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
   rtClip.Intersect(GetRectWithoutRotate());
   CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
   if (pMatrix) {
-    pMatrix->TransformRect(rtClip);
+    rtClip = pMatrix->TransformRect(rtClip);
     mt.Concat(*pMatrix);
   }
 

@@ -222,7 +222,7 @@ CFX_Matrix GetMatrix(CFX_FloatRect rcAnnot,
   if (rcStream.IsEmpty())
     return CFX_Matrix();
 
-  matrix.TransformRect(rcStream);
+  rcStream = matrix.TransformRect(rcStream);
   rcStream.Normalize();
 
   float a = rcAnnot.Width() / rcStream.Width();

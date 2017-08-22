@@ -994,7 +994,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
       !pPlatform->m_GdiplusExt.IsAvailable()) {
     CFX_FloatRect bbox_f = pPathData->GetBoundingBox();
     if (pMatrix)
-      pMatrix->TransformRect(bbox_f);
+      bbox_f = pMatrix->TransformRect(bbox_f);
 
     FX_RECT bbox = bbox_f.GetInnerRect();
     if (bbox.Width() <= 0) {

@@ -59,8 +59,8 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
           m_pOptions, m_pCurrentLayer->m_pObjectHolder->m_Transparency, false,
           nullptr);
       m_pDevice->SaveState();
-      m_ClipRect = CFX_FloatRect(m_pDevice->GetClipBox());
-      m_pCurrentLayer->m_Matrix.GetInverse().TransformRect(m_ClipRect);
+      m_ClipRect = m_pCurrentLayer->m_Matrix.GetInverse().TransformRect(
+          CFX_FloatRect(m_pDevice->GetClipBox()));
     }
     CPDF_PageObjectList::iterator iter;
     CPDF_PageObjectList::iterator iterEnd =

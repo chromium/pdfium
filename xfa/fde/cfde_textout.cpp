@@ -299,9 +299,7 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
   if (!device || m_ttoLines.empty())
     return;
 
-  CFX_RectF rtClip;
-  m_Matrix.TransformRect(rtClip);
-
+  CFX_RectF rtClip = m_Matrix.TransformRect(CFX_RectF());
   device->SaveState();
   if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f)
     device->SetClip_Rect(rtClip);

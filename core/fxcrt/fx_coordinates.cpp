@@ -313,9 +313,7 @@ float CFX_Matrix::GetYUnit() const {
 }
 
 CFX_FloatRect CFX_Matrix::GetUnitRect() const {
-  CFX_FloatRect rect(0, 0, 1, 1);
-  TransformRect(rect);
-  return rect;
+  return TransformRect(CFX_FloatRect(0.f, 0.f, 1.f, 1.f));
 }
 
 float CFX_Matrix::TransformXDistance(float dx) const {
@@ -338,33 +336,47 @@ CFX_PointF CFX_Matrix::Transform(const CFX_PointF& point) const {
   return CFX_PointF(a * point.x + c * point.y + e,
                     b * point.x + d * point.y + f);
 }
-
-void CFX_Matrix::TransformRect(CFX_RectF& rect) const {
-  float right = rect.right(), bottom = rect.bottom();
-  TransformRect(rect.left, right, bottom, rect.top);
-  rect.width = right - rect.left;
-  rect.height = bottom - rect.top;
-}
-
-void CFX_Matrix::TransformRect(float& left,
-                               float& right,
-                               float& top,
-                               float& bottom) const {
+std::tuple<float, float, float, float> CFX_Matrix::TransformRect(
+    const float& left,
+    const float& right,
+    const float& top,
+    const float& bottom) const {
   CFX_PointF points[] = {
       {left, top}, {left, bottom}, {right, top}, {right, bottom}};
   for (int i = 0; i < 4; i++)
     points[i] = Transform(points[i]);
 
-  right = points[0].x;
-  left = points[0].x;
-  top = points[0].y;
-  bottom = points[0].y;
+  float new_right = points[0].x;
+  float new_left = points[0].x;
+  float new_top = points[0].y;
+  float new_bottom = points[0].y;
   for (int i = 1; i < 4; i++) {
-    right = std::max(right, points[i].x);
-    left = std::min(left, points[i].x);
-    top = std::max(top, points[i].y);
-    bottom = std::min(bottom, points[i].y);
+    new_right = std::max(new_right, points[i].x);
+    new_left = std::min(new_left, points[i].x);
+    new_top = std::max(new_top, points[i].y);
+    new_bottom = std::min(new_bottom, points[i].y);
   }
+  return std::make_tuple(new_left, new_right, new_top, new_bottom);
+}
+
+CFX_RectF CFX_Matrix::TransformRect(const CFX_RectF& rect) const {
+  float left;
+  float right;
+  float bottom;
+  float top;
+  std::tie(left, right, bottom, top) =
+      TransformRect(rect.left, rect.right(), rect.bottom(), rect.top);
+  return CFX_RectF(left, top, right - left, bottom - top);
+}
+
+CFX_FloatRect CFX_Matrix::TransformRect(const CFX_FloatRect& rect) const {
+  float left;
+  float right;
+  float top;
+  float bottom;
+  std::tie(left, right, top, bottom) =
+      TransformRect(rect.left, rect.right, rect.top, rect.bottom);
+  return CFX_FloatRect(left, bottom, right, top);
 }
 
 void CFX_Matrix::ConcatInternal(const CFX_Matrix& other, bool prepend) {

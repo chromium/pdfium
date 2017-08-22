@@ -228,7 +228,7 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
     CFX_RectF rtClip = m_rtEngine;
     CFX_Matrix mt(1, 0, 0, 1, fOffSetX, fOffSetY);
     if (pMatrix) {
-      pMatrix->TransformRect(rtClip);
+      rtClip = pMatrix->TransformRect(rtClip);
       mt.Concat(*pMatrix);
     }
     pGraphics->SetClipRect(rtClip);
@@ -511,7 +511,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   float fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
   CFX_Matrix mt(1, 0, 0, 1, fOffSetX, fOffSetY);
   if (pMatrix) {
-    pMatrix->TransformRect(rtClip);
+    rtClip = pMatrix->TransformRect(rtClip);
     mt.Concat(*pMatrix);
   }
 
@@ -609,7 +609,7 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
     rtDocClip.width = static_cast<float>(pRenderDev->GetWidth());
     rtDocClip.height = static_cast<float>(pRenderDev->GetHeight());
   }
-  mt.GetInverse().TransformRect(rtDocClip);
+  rtDocClip = mt.GetInverse().TransformRect(rtDocClip);
 
   std::vector<FXTEXT_CHARPOS> char_pos;
 
@@ -1130,8 +1130,7 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
   if (!pDocEnvironment)
     return;
 
-  CFX_RectF rt(*pRect);
-  pXFAWidget->GetRotateMatrix().TransformRect(rt);
+  CFX_RectF rt = pXFAWidget->GetRotateMatrix().TransformRect(*pRect);
   pDocEnvironment->DisplayCaret(pXFAWidget, true, &rt);
 }
 

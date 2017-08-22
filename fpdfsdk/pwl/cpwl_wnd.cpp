@@ -738,9 +738,8 @@ CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
 }
 
 FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
-  CFX_FloatRect rcTemp = rect;
   CFX_Matrix mt = GetWindowMatrix();
-  mt.TransformRect(rcTemp);
+  CFX_FloatRect rcTemp = mt.TransformRect(rect);
   return FX_RECT((int32_t)(rcTemp.left + 0.5), (int32_t)(rcTemp.bottom + 0.5),
                  (int32_t)(rcTemp.right + 0.5), (int32_t)(rcTemp.top + 0.5));
 }
@@ -764,9 +763,8 @@ CFX_FloatRect CPWL_Wnd::ParentToChild(const CFX_FloatRect& rect) const {
   CFX_Matrix inverse = mt.GetInverse();
   if (!inverse.IsIdentity())
     mt = inverse;
-  CFX_FloatRect rc = rect;
-  mt.TransformRect(rc);
-  return rc;
+
+  return mt.TransformRect(rect);
 }
 
 CFX_Matrix CPWL_Wnd::GetChildToRoot() const {

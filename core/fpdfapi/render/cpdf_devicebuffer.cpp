@@ -45,10 +45,8 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   CFX_Matrix ctm = m_pDevice->GetCTM();
   m_Matrix.Concat(CFX_Matrix(fabs(ctm.a), 0, 0, fabs(ctm.d), 0, 0));
 
-  CFX_FloatRect rect(*pRect);
-  m_Matrix.TransformRect(rect);
-
-  FX_RECT bitmap_rect = rect.GetOuterRect();
+  FX_RECT bitmap_rect =
+      m_Matrix.TransformRect(CFX_FloatRect(*pRect)).GetOuterRect();
   m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(), FXDIB_Argb);
   return true;

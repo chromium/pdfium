@@ -189,8 +189,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   if (geWidth != m_Width) {
     rect.right -= 1;
   }
-  matrix->TransformRect(rect);
-  FX_RECT re = rect.GetOuterRect();
+  FX_RECT re = matrix->TransformRect(rect).GetOuterRect();
   device->FillRect(&re, m_backgroundColor);
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
                            (float)(locY + iFontSize));

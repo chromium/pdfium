@@ -213,7 +213,7 @@ void CFX_PSRenderer::SetClip_PathFill(const CFX_PathData* pPathData,
   OutputPath(pPathData, pObject2Device);
   CFX_FloatRect rect = pPathData->GetBoundingBox();
   if (pObject2Device)
-    pObject2Device->TransformRect(rect);
+    rect = pObject2Device->TransformRect(rect);
 
   m_ClipBox.left = static_cast<int>(rect.left);
   m_ClipBox.right = static_cast<int>(rect.left + rect.right);
@@ -242,8 +242,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
   OutputPath(pPathData, nullptr);
   CFX_FloatRect rect = pPathData->GetBoundingBox(pGraphState->m_LineWidth,
                                                  pGraphState->m_MiterLimit);
-  pObject2Device->TransformRect(rect);
-  m_ClipBox.Intersect(rect.GetOuterRect());
+  m_ClipBox.Intersect(pObject2Device->TransformRect(rect).GetOuterRect());
 
   m_pStream->WriteString("strokepath W n");
   if (pObject2Device)

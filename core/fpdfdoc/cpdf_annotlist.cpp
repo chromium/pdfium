@@ -148,12 +148,11 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
         continue;
       }
     }
-    CFX_FloatRect annot_rect_f = pAnnot->GetRect();
+
     CFX_Matrix matrix = *pMatrix;
     if (clip_rect) {
-      matrix.TransformRect(annot_rect_f);
-
-      FX_RECT annot_rect = annot_rect_f.GetOuterRect();
+      FX_RECT annot_rect =
+          matrix.TransformRect(pAnnot->GetRect()).GetOuterRect();
       annot_rect.Intersect(*clip_rect);
       if (annot_rect.IsEmpty())
         continue;

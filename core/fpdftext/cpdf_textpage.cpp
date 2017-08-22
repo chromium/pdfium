@@ -1136,7 +1136,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       charinfo.m_CharBox.right =
           charinfo.m_CharBox.left + pTextObj->GetCharWidth(charinfo.m_CharCode);
     }
-    matrix.TransformRect(charinfo.m_CharBox);
+    charinfo.m_CharBox = matrix.TransformRect(charinfo.m_CharBox);
     charinfo.m_Matrix = matrix;
     if (wstrItem.IsEmpty()) {
       charinfo.m_Unicode = 0;

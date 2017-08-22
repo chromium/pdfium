@@ -91,9 +91,9 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
     if (pParentMatrix)
       ClipPath.Transform(pParentMatrix);
 
-    form_matrix.TransformRect(form_bbox);
+    form_bbox = form_matrix.TransformRect(form_bbox);
     if (pParentMatrix)
-      pParentMatrix->TransformRect(form_bbox);
+      form_bbox = pParentMatrix->TransformRect(form_bbox);
   }
 
   CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDictFor("Resources");

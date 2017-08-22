@@ -514,8 +514,8 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
     return true;
   }
 
-  CFX_RectF rtWidget(0, 0, pWidget->GetWidgetRect().Size());
-  pMatrix->TransformRect(rtWidget);
+  CFX_RectF rtWidget =
+      pMatrix->TransformRect(CFX_RectF(0, 0, pWidget->GetWidgetRect().Size()));
   if (!rtWidget.IntersectWith(rtDirty))
     return false;
 
@@ -593,7 +593,7 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
   if (repaintPoint > 0)
     return true;
 
-  pMatrix->TransformRect(rtChilds);
+  rtChilds = pMatrix->TransformRect(rtChilds);
   if (rtChilds.Contains(rtDirty) || rtChilds.Contains(rtWidget))
     return false;
   return true;

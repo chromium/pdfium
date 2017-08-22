@@ -8,6 +8,7 @@
 #define CORE_FXCRT_FX_COORDINATES_H_
 
 #include <algorithm>
+#include <tuple>
 
 #include "core/fxcrt/fx_basic.h"
 
@@ -672,14 +673,13 @@ class CFX_Matrix {
 
   CFX_PointF Transform(const CFX_PointF& point) const;
 
-  void TransformRect(CFX_RectF& rect) const;
-  void TransformRect(float& left,
-                     float& right,
-                     float& top,
-                     float& bottom) const;
-  void TransformRect(CFX_FloatRect& rect) const {
-    TransformRect(rect.left, rect.right, rect.top, rect.bottom);
-  }
+  std::tuple<float, float, float, float> TransformRect(
+      const float& left,
+      const float& right,
+      const float& top,
+      const float& bottom) const;
+  CFX_RectF TransformRect(const CFX_RectF& rect) const;
+  CFX_FloatRect TransformRect(const CFX_FloatRect& rect) const;
 
   float a;
   float b;

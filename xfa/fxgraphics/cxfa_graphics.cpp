@@ -346,8 +346,8 @@ void CXFA_Graphics::FillPathWithPattern(const CXFA_Path* path,
   auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
   mask->Create(data.width, data.height, FXDIB_1bppMask);
   memcpy(mask->GetBuffer(), data.maskBits, mask->GetPitch() * data.height);
-  CFX_FloatRect rectf = path->GetPathData()->GetBoundingBox();
-  matrix.TransformRect(rectf);
+  CFX_FloatRect rectf =
+      matrix.TransformRect(path->GetPathData()->GetBoundingBox());
 
   FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
                FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));

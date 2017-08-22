@@ -261,12 +261,8 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
     min_y = min_y * fontsize / 1000;
     max_y = max_y * fontsize / 1000;
   }
-
-  m_Left = min_x;
-  m_Right = max_x;
-  m_Bottom = min_y;
-  m_Top = max_y;
-  GetTextMatrix().TransformRect(m_Left, m_Right, m_Top, m_Bottom);
+  std::tie(m_Left, m_Right, m_Top, m_Bottom) =
+      GetTextMatrix().TransformRect(min_x, max_x, max_y, min_y);
 
   if (!TextRenderingModeIsStrokeMode(m_TextState.GetTextMode()))
     return ret;

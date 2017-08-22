@@ -233,9 +233,8 @@ CFX_ImageTransformer::CFX_ImageTransformer(
                  m_pMatrix->e, m_pMatrix->f));
   m_dest2stretch = stretch2dest.GetInverse();
 
-  CFX_FloatRect clip_rect_f(result_clip);
-  m_dest2stretch.TransformRect(clip_rect_f);
-  m_StretchClip = clip_rect_f.GetOuterRect();
+  m_StretchClip =
+      m_dest2stretch.TransformRect(CFX_FloatRect(result_clip)).GetOuterRect();
   m_StretchClip.Intersect(0, 0, stretch_width, stretch_height);
   m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
       &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip, m_Flags);

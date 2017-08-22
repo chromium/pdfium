@@ -61,8 +61,7 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
   }
 
   CFX_Matrix mt(1, 0, 0, 1, rtText.left, rtText.top);
-  CFX_RectF rtClip = rtText;
-  mtRotate.TransformRect(rtClip);
+  CFX_RectF rtClip = mtRotate.TransformRect(rtText);
   mt.Concat(mtRotate);
   pTextLayout->DrawString(pRenderDevice, mt, rtClip, GetIndex());
 }

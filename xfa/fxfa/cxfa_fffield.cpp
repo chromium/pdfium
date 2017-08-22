@@ -52,9 +52,7 @@ CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
     return CFX_RectF();
   }
 
-  CFX_RectF rtBox = m_rtUI;
-  GetRotateMatrix().TransformRect(rtBox);
-  return rtBox;
+  return GetRotateMatrix().TransformRect(m_rtUI);
 }
 
 void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
@@ -619,7 +617,7 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
   if (pMatrix) {
-    pMatrix->TransformRect(rtClip);
+    rtClip = pMatrix->TransformRect(rtClip);
     mt.Concat(*pMatrix);
   }
   pCapTextLayout->DrawString(pRenderDevice, mt, rtClip);

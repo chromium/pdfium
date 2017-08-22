@@ -107,9 +107,8 @@ void CFWL_ListBox::DrawWidget(CXFA_Graphics* pGraphics,
     rtClip.height -= m_fScorllBarWidth;
   if (IsShowScrollBar(true))
     rtClip.width -= m_fScorllBarWidth;
-  matrix.TransformRect(rtClip);
 
-  pGraphics->SetClipRect(rtClip);
+  pGraphics->SetClipRect(matrix.TransformRect(rtClip));
   if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_NoBackground) == 0)
     DrawBkground(pGraphics, pTheme, &matrix);
 

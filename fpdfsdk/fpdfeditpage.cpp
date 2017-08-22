@@ -299,10 +299,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
   CPDF_AnnotList AnnotList(pPage);
   for (size_t i = 0; i < AnnotList.Count(); ++i) {
     CPDF_Annot* pAnnot = AnnotList.GetAt(i);
-    CFX_FloatRect rect = pAnnot->GetRect();  // transformAnnots Rectangle
     CFX_Matrix matrix((float)a, (float)b, (float)c, (float)d, (float)e,
                       (float)f);
-    matrix.TransformRect(rect);
+    CFX_FloatRect rect = matrix.TransformRect(pAnnot->GetRect());
 
     CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
     CPDF_Array* pRectArray = pAnnotDict->GetArrayFor("Rect");

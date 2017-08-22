@@ -83,9 +83,6 @@ void CFWL_SpinButton::DrawWidget(CXFA_Graphics* pGraphics,
   if (!pGraphics)
     return;
 
-  CFX_RectF rtClip(m_rtClient);
-  matrix.TransformRect(rtClip);
-
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
