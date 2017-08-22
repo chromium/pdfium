@@ -275,8 +275,10 @@ bool CFPDF_FileStream::Flush() {
 FPDF_DOCUMENT LoadDocumentImpl(
     const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     FPDF_BYTESTRING password) {
-  if (!pFileAccess)
+  if (!pFileAccess) {
+    ProcessParseError(CPDF_Parser::FILE_ERROR);
     return nullptr;
+  }
 
   auto pParser = pdfium::MakeUnique<CPDF_Parser>();
   pParser->SetPassword(password);

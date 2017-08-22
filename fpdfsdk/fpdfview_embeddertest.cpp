@@ -30,6 +30,12 @@ TEST_F(FPDFViewEmbeddertest, Document) {
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
 }
 
+TEST_F(FPDFViewEmbeddertest, LoadNonexistentDocument) {
+  FPDF_DOCUMENT doc = FPDF_LoadDocument("nonexistent_document.pdf", "");
+  ASSERT_FALSE(doc);
+  EXPECT_EQ(static_cast<int>(FPDF_GetLastError()), FPDF_ERR_FILE);
+}
+
 // See bug 465.
 TEST_F(FPDFViewEmbeddertest, EmptyDocument) {
   EXPECT_TRUE(CreateEmptyDocument());
