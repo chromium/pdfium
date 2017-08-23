@@ -67,14 +67,56 @@ CPDF_Parser::ObjectType GetObjectTypeFromCrossRefStreamType(
 
 }  // namespace
 
+class CPDF_Parser::TrailerData {
+ public:
+  TrailerData() {}
+  ~TrailerData() {}
+
+  CPDF_Dictionary* GetMainTrailer() const { return main_trailer_.get(); }
+
+  void SetMainTrailer(std::unique_ptr<CPDF_Dictionary> trailer) {
+    ASSERT(trailer);
+    main_trailer_ = std::move(trailer);
+    ApplyTrailer(main_trailer_.get());
+  }
+
+  void AppendTrailer(std::unique_ptr<CPDF_Dictionary> trailer) {
+    ASSERT(trailer);
+    ApplyTrailer(trailer.get());
+  }
+
+  void Clear() {
+    main_trailer_.reset();
+    last_info_obj_num_ = 0;
+  }
+
+  uint32_t GetInfoObjNum() const {
+    const CPDF_Reference* pRef = ToReference(
+        GetMainTrailer() ? GetMainTrailer()->GetObjectFor("Info") : nullptr);
+    return pRef ? pRef->GetRefObjNum() : last_info_obj_num_;
+  }
+
+ private:
+  void ApplyTrailer(const CPDF_Dictionary* dict) {
+    // The most recent Info object number contained in last added trailer.
+    // See PDF 1.7 spec, section 3.4.5 - Incremental Updates.
+    const auto* pRef = ToReference(dict->GetObjectFor("Info"));
+    if (pRef)
+      last_info_obj_num_ = pRef->GetRefObjNum();
+  }
+
+  std::unique_ptr<CPDF_Dictionary> main_trailer_;
+  uint32_t last_info_obj_num_ = 0;
+};
+
 CPDF_Parser::CPDF_Parser()
     : m_pSyntax(pdfium::MakeUnique<CPDF_SyntaxParser>()),
       m_bHasParsed(false),
       m_bXRefStream(false),
       m_FileVersion(0),
       m_pEncryptDict(nullptr),
-      m_TrailerPos(CPDF_Parser::kInvalidPos),
-      m_dwXrefStartObjNum(0) {}
+      m_TrailerData(pdfium::MakeUnique<TrailerData>()),
+      m_linearized_first_page_cross_ref_start_obj_num(0) {}
 
 CPDF_Parser::~CPDF_Parser() {
   ReleaseEncryptHandler();
@@ -344,8 +386,7 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   if (!trailer)
     return false;
 
-  m_Trailers.push_back(std::move(trailer));
-  m_TrailerPos = m_Trailers.size() - 1;
+  m_TrailerData->SetMainTrailer(std::move(trailer));
   int32_t xrefsize = GetDirectInteger(GetTrailer(), "Size");
   if (xrefsize > 0 && xrefsize <= kMaxXRefSize)
     ShrinkObjectMap(xrefsize);
@@ -381,7 +422,7 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
     // SLOW ...
     XRefStreamList.insert(XRefStreamList.begin(),
                           pDict->GetIntegerFor("XRefStm"));
-    m_Trailers.push_back(std::move(pDict));
+    m_TrailerData->AppendTrailer(std::move(pDict));
   }
 
   for (size_t i = 0; i < CrossRefList.size(); ++i) {
@@ -402,8 +443,7 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
   if (!trailer)
     return false;
 
-  m_Trailers.push_back(std::move(trailer));
-  m_TrailerPos = m_Trailers.size() - 1;
+  m_TrailerData->SetMainTrailer(std::move(trailer));
   int32_t xrefsize = GetDirectInteger(GetTrailer(), "Size");
   if (xrefsize == 0)
     return false;
@@ -437,7 +477,7 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
     // SLOW ...
     XRefStreamList.insert(XRefStreamList.begin(),
                           pDict->GetIntegerFor("XRefStm"));
-    m_Trailers.push_back(std::move(pDict));
+    m_TrailerData->AppendTrailer(std::move(pDict));
   }
 
   for (size_t i = 1; i < CrossRefList.size(); ++i) {
@@ -543,8 +583,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
   return true;
 }
 
-bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects,
-                                  uint32_t* start_obj_num_at_last_block) {
+bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
   if (out_objects)
     out_objects->clear();
 
@@ -567,8 +606,6 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects,
     uint32_t start_objnum = FXSYS_atoui(word.c_str());
     if (start_objnum >= kMaxObjectNumber)
       return false;
-    if (start_obj_num_at_last_block)
-      *start_obj_num_at_last_block = start_objnum;
 
     uint32_t count = m_pSyntax->GetDirectNum();
     m_pSyntax->ToNextWord();
@@ -589,7 +626,7 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
                                  bool bSkip) {
   m_pSyntax->SetPos(pos);
   std::vector<CrossRefObjData> objects;
-  if (!ParseCrossRefV4(bSkip ? nullptr : &objects, &m_dwXrefStartObjNum))
+  if (!ParseCrossRefV4(bSkip ? nullptr : &objects))
     return false;
 
   MergeCrossRefObjectsData(objects);
@@ -625,8 +662,7 @@ bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
 
 bool CPDF_Parser::RebuildCrossRef() {
   m_ObjectInfo.clear();
-  m_Trailers.clear();
-  m_TrailerPos = CPDF_Parser::kInvalidPos;
+  m_TrailerData->Clear();
 
   ParserState state = ParserState::kDefault;
   int32_t inside_index = 0;
@@ -786,8 +822,8 @@ bool CPDF_Parser::RebuildCrossRef() {
                       CPDF_Object* pRoot = pDict->GetObjectFor("Root");
                       if (pRoot && pRoot->GetDict() &&
                           pRoot->GetDict()->GetObjectFor("Pages")) {
-                        m_Trailers.push_back(ToDictionary(pDict->Clone()));
-                        m_TrailerPos = m_Trailers.size() - 1;
+                        m_TrailerData->SetMainTrailer(
+                            ToDictionary(pDict->Clone()));
                       }
                     }
                   }
@@ -862,11 +898,9 @@ bool CPDF_Parser::RebuildCrossRef() {
                         }
                       }
                     } else {
-                      if (pObj->IsStream())
-                        m_Trailers.push_back(ToDictionary(pTrailer->Clone()));
-                      else
-                        m_Trailers.push_back(ToDictionary(std::move(pObj)));
-                      m_TrailerPos = m_Trailers.size() - 1;
+                      m_TrailerData->SetMainTrailer(
+                          ToDictionary(pObj->IsStream() ? pTrailer->Clone()
+                                                        : std::move(pObj)));
 
                       FX_FILESIZE dwSavePos = m_pSyntax->GetPos();
                       CFX_ByteString strWord = m_pSyntax->GetKeyword();
@@ -1005,13 +1039,12 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
 
   std::unique_ptr<CPDF_Dictionary> pNewTrailer = ToDictionary(pDict->Clone());
   if (bMainXRef) {
-    m_Trailers.push_back(std::move(pNewTrailer));
-    m_TrailerPos = m_Trailers.size() - 1;
+    m_TrailerData->SetMainTrailer(std::move(pNewTrailer));
     ShrinkObjectMap(size);
     for (auto& it : m_ObjectInfo)
       it.second.type = ObjectType::kFree;
   } else {
-    m_Trailers.push_back(std::move(pNewTrailer));
+    m_TrailerData->AppendTrailer(std::move(pNewTrailer));
   }
 
   std::vector<std::pair<int32_t, int32_t>> arrIndex;
@@ -1059,7 +1092,6 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     if (startnum < 0)
       continue;
 
-    m_dwXrefStartObjNum = pdfium::base::checked_cast<uint32_t>(startnum);
     uint32_t count = pdfium::base::checked_cast<uint32_t>(arrIndex[i].second);
     FX_SAFE_UINT32 dwCaculatedSize = segindex;
     dwCaculatedSize += count;
@@ -1145,21 +1177,12 @@ uint32_t CPDF_Parser::GetRootObjNum() {
   return pRef ? pRef->GetRefObjNum() : 0;
 }
 
-uint32_t CPDF_Parser::GetInfoObjNum() {
-  CPDF_Reference* pRef =
-      ToReference(GetTrailer() ? GetTrailer()->GetObjectFor("Info") : nullptr);
-  if (pRef)
-    return pRef->GetRefObjNum();
+CPDF_Dictionary* CPDF_Parser::GetTrailer() const {
+  return m_TrailerData->GetMainTrailer();
+}
 
-  // Search trailers array from latest to earliest revision, as we want the
-  // most recent Info object number.
-  // See PDF 1.7 spec, section 3.4.5 - Incremental Updates.
-  for (auto it = m_Trailers.rbegin(); it != m_Trailers.rend(); ++it) {
-    pRef = ToReference(it->get()->GetObjectFor("Info"));
-    if (pRef)
-      return pRef->GetRefObjNum();
-  }
-  return 0;
+uint32_t CPDF_Parser::GetInfoObjNum() {
+  return m_TrailerData->GetInfoObjNum();
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
@@ -1378,14 +1401,14 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     bXRefRebuilt = true;
     m_LastXRefOffset = 0;
   }
-
+  m_linearized_first_page_cross_ref_start_obj_num =
+      m_ObjectInfo.empty() ? 0 : m_ObjectInfo.begin()->first;
   if (bLoadV4) {
     std::unique_ptr<CPDF_Dictionary> trailer = LoadTrailerV4();
     if (!trailer)
       return SUCCESS;
 
-    m_Trailers.push_back(std::move(trailer));
-    m_TrailerPos = m_Trailers.size() - 1;
+    m_TrailerData->SetMainTrailer(std::move(trailer));
     int32_t xrefsize = GetDirectInteger(GetTrailer(), "Size");
     if (xrefsize > 0)
       ShrinkObjectMap(xrefsize);
@@ -1470,7 +1493,12 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   m_ObjectStreamMap.clear();
   m_ObjCache.clear();
 
-  if (!LoadLinearizedAllCrossRefV4(m_LastXRefOffset, m_dwXrefStartObjNum) &&
+  // In linearized document, the main cross ref always should start from 0
+  // objnum.
+  // And should have count equals to first obj number of first page cross ref
+  // table.
+  if (!LoadLinearizedAllCrossRefV4(
+          m_LastXRefOffset, m_linearized_first_page_cross_ref_start_obj_num) &&
       !LoadLinearizedAllCrossRefV5(m_LastXRefOffset)) {
     m_LastXRefOffset = 0;
     m_pSyntax->m_MetadataObjnum = dwSaveMetadataObjnum;
