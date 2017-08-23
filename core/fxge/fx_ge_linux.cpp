@@ -45,18 +45,16 @@ size_t GetJapanesePreference(const char* facearr,
                              int weight,
                              int pitch_family) {
   CFX_ByteString face = facearr;
-  if (face.Find("Gothic") != FX_STRNPOS ||
-      face.Find("\x83\x53\x83\x56\x83\x62\x83\x4e") != FX_STRNPOS) {
-    if (face.Find("PGothic") != FX_STRNPOS ||
-        face.Find("\x82\x6f\x83\x53\x83\x56\x83\x62\x83\x4e") != FX_STRNPOS) {
+  if (face.Contains("Gothic") ||
+      face.Contains("\x83\x53\x83\x56\x83\x62\x83\x4e")) {
+    if (face.Contains("PGothic") ||
+        face.Contains("\x82\x6f\x83\x53\x83\x56\x83\x62\x83\x4e")) {
       return 0;
     }
     return 1;
   }
-  if (face.Find("Mincho") != FX_STRNPOS ||
-      face.Find("\x96\xbe\x92\xa9") != FX_STRNPOS) {
-    if (face.Find("PMincho") != FX_STRNPOS ||
-        face.Find("\x82\x6f\x96\xbe\x92\xa9") != FX_STRNPOS) {
+  if (face.Contains("Mincho") || face.Contains("\x96\xbe\x92\xa9")) {
+    if (face.Contains("PMincho") || face.Contains("\x82\x6f\x96\xbe\x92\xa9")) {
       return 2;
     }
     return 3;

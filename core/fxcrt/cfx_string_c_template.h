@@ -9,10 +9,12 @@
 
 #include <algorithm>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 
 // An immutable string with caller-provided storage which must outlive the
@@ -129,11 +131,15 @@ class CFX_StringCTemplate {
     return static_cast<CharType>(m_Ptr.Get()[index]);
   }
 
-  FX_STRSIZE Find(CharType ch) const {
+  pdfium::Optional<FX_STRSIZE> Find(CharType ch) const {
     const UnsignedType* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
         reinterpret_cast<const CharType*>(m_Ptr.Get()), ch, m_Length));
-    return found ? found - m_Ptr.Get() : FX_STRNPOS;
+
+    return found ? pdfium::Optional<FX_STRSIZE>(found - m_Ptr.Get())
+                 : pdfium::Optional<FX_STRSIZE>();
   }
+
+  bool Contains(CharType ch) const { return Find(ch).has_value(); }
 
   CFX_StringCTemplate Mid(FX_STRSIZE index, FX_STRSIZE count) const {
     ASSERT(count >= 0);

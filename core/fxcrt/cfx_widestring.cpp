@@ -54,7 +54,8 @@ const wchar_t* FX_wcsstr(const wchar_t* haystack,
   return nullptr;
 }
 
-FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
+pdfium::Optional<FX_STRSIZE> GuessSizeForVSWPrintf(const wchar_t* pFormat,
+                                                   va_list argList) {
   FX_STRSIZE nMaxLen = 0;
   for (const wchar_t* pStr = pFormat; *pStr != 0; pStr++) {
     if (*pStr != '%' || *(pStr = pStr + 1) == '%') {
@@ -78,7 +79,7 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
         ++pStr;
     }
     if (nWidth < 0 || nWidth > 128 * 1024)
-      return FX_STRNPOS;
+      return pdfium::Optional<FX_STRSIZE>();
     int nPrecision = 0;
     if (*pStr == '.') {
       pStr++;
@@ -92,7 +93,7 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
       }
     }
     if (nPrecision < 0 || nPrecision > 128 * 1024)
-      return FX_STRNPOS;
+      return pdfium::Optional<FX_STRSIZE>();
     int nModifier = 0;
     if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
       pStr += 3;
@@ -241,7 +242,7 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
     nMaxLen += nItemLen;
   }
   nMaxLen += 32;  // Fudge factor.
-  return nMaxLen;
+  return pdfium::Optional<FX_STRSIZE>(nMaxLen);
 }
 
 #ifndef NDEBUG
@@ -656,9 +657,10 @@ void CFX_WideString::FormatV(const wchar_t* pFormat, va_list argList) {
   FX_STRSIZE nMaxLen = vswprintf(nullptr, 0, pFormat, argListCopy);
   va_end(argListCopy);
   if (nMaxLen <= 0) {
-    nMaxLen = GuessSizeForVSWPrintf(pFormat, argListCopy);
-    if (nMaxLen == FX_STRNPOS)
+    auto guess = GuessSizeForVSWPrintf(pFormat, argListCopy);
+    if (!guess.has_value())
       return;
+    nMaxLen = guess.value();
   }
   while (nMaxLen < 32 * 1024) {
     FX_VA_COPY(argListCopy, argList);
@@ -717,31 +719,36 @@ CFX_WideString CFX_WideString::Left(FX_STRSIZE nCount) const {
   return dest;
 }
 
-FX_STRSIZE CFX_WideString::Find(wchar_t ch, FX_STRSIZE nStart) const {
+pdfium::Optional<FX_STRSIZE> CFX_WideString::Find(wchar_t ch,
+                                                  FX_STRSIZE nStart) const {
   if (!m_pData)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   if (nStart < 0 || nStart >= m_pData->m_nDataLength)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   const wchar_t* pStr =
       wmemchr(m_pData->m_String + nStart, ch, m_pData->m_nDataLength - nStart);
-  return pStr ? pStr - m_pData->m_String : FX_STRNPOS;
+  return pStr ? pdfium::Optional<FX_STRSIZE>(
+                    static_cast<FX_STRSIZE>(pStr - m_pData->m_String))
+              : pdfium::Optional<FX_STRSIZE>();
 }
 
-FX_STRSIZE CFX_WideString::Find(const CFX_WideStringC& pSub,
-                                FX_STRSIZE nStart) const {
+pdfium::Optional<FX_STRSIZE> CFX_WideString::Find(const CFX_WideStringC& pSub,
+                                                  FX_STRSIZE nStart) const {
   if (!m_pData)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   FX_STRSIZE nLength = m_pData->m_nDataLength;
   if (nStart > nLength)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   const wchar_t* pStr =
       FX_wcsstr(m_pData->m_String + nStart, m_pData->m_nDataLength - nStart,
                 pSub.unterminated_c_str(), pSub.GetLength());
-  return pStr ? (int)(pStr - m_pData->m_String) : FX_STRNPOS;
+  return pStr ? pdfium::Optional<FX_STRSIZE>(
+                    static_cast<FX_STRSIZE>(pStr - m_pData->m_String))
+              : pdfium::Optional<FX_STRSIZE>();
 }
 
 void CFX_WideString::MakeLower() {
@@ -942,7 +949,7 @@ void CFX_WideString::TrimRight(const CFX_WideStringC& pTargets) {
     return;
 
   FX_STRSIZE pos = GetLength();
-  while (pos && pTargets.Find(m_pData->m_String[pos - 1]) != -1)
+  while (pos && pTargets.Contains(m_pData->m_String[pos - 1]))
     pos--;
 
   if (pos < m_pData->m_nDataLength) {

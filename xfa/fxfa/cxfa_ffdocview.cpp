@@ -279,7 +279,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
         wsValidateStr = pValidateNode->GetContent();
     }
 
-    if (wsValidateStr.Find(L"preSubmit") == FX_STRNPOS)
+    if (!wsValidateStr.Contains(L"preSubmit"))
       return XFA_EVENTERROR_Success;
   }
 

@@ -121,10 +121,6 @@ typedef int FX_STRSIZE;
 
 #include "third_party/base/numerics/safe_conversions.h"
 
-// Constant used to indicate failure from find methods and other methods that
-// return FX_STRSIZE.
-constexpr FX_STRSIZE FX_STRNPOS = -1;
-
 #define FXSYS_strlen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(strlen(ptr))
 #define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
 

@@ -279,7 +279,7 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                      FXFILL_WINDING);
   }
 
-  return m_locTextLoc == BC_TEXT_LOC_NONE || contents.Find(' ') == FX_STRNPOS ||
+  return m_locTextLoc == BC_TEXT_LOC_NONE || !contents.Contains(' ') ||
          ShowChars(contents, device, matrix, m_barWidth, m_multiple);
 }
 

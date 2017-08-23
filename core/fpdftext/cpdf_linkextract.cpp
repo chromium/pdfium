@@ -22,7 +22,7 @@ namespace {
 FX_STRSIZE FindWebLinkEnding(const CFX_WideString& str,
                              FX_STRSIZE start,
                              FX_STRSIZE end) {
-  if (str.Find(L'/', start) != FX_STRNPOS) {
+  if (str.Contains(L'/', start)) {
     // When there is a path and query after '/', most ASCII chars are allowed.
     // We don't sanitize in this case.
     return end;
@@ -33,16 +33,20 @@ FX_STRSIZE FindWebLinkEnding(const CFX_WideString& str,
   if (str[start] == L'[') {
     // IPv6 reference.
     // Find the end of the reference.
-    end = str.Find(L']', start + 1);
-    if (end != -1 && end > start + 1) {  // Has content inside brackets.
-      FX_STRSIZE len = str.GetLength();
-      FX_STRSIZE off = end + 1;
-      if (off < len && str[off] == L':') {
-        off++;
-        while (off < len && str[off] >= L'0' && str[off] <= L'9')
+    auto result = str.Find(L']', start + 1);
+    if (result.has_value()) {
+      end = result.value();
+      if (end > start + 1) {  // Has content inside brackets.
+        FX_STRSIZE len = str.GetLength();
+        FX_STRSIZE off = end + 1;
+        if (off < len && str[off] == L':') {
           off++;
-        if (off > end + 2 && off <= len)  // At least one digit in port number.
-          end = off - 1;  // |off| is offset of the first invalid char.
+          while (off < len && str[off] >= L'0' && str[off] <= L'9')
+            off++;
+          if (off > end + 2 &&
+              off <= len)   // At least one digit in port number.
+            end = off - 1;  // |off| is offset of the first invalid char.
+        }
       }
     }
     return end;
@@ -196,20 +200,20 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
 
   FX_STRSIZE len = str.GetLength();
   // First, try to find the scheme.
-  FX_STRSIZE start = str.Find(kHttpScheme);
-  if (start != FX_STRNPOS) {
-    FX_STRSIZE off = start + kHttpSchemeLen;  // move after "http".
+  auto start = str.Find(kHttpScheme);
+  if (start.has_value()) {
+    FX_STRSIZE off = start.value() + kHttpSchemeLen;  // move after "http".
     if (len > off + 4) {                      // At least "://<char>" follows.
       if (str[off] == L's')                   // "https" scheme is accepted.
         off++;
       if (str[off] == L':' && str[off + 1] == L'/' && str[off + 2] == L'/') {
         off += 3;
-        FX_STRSIZE end =
-            TrimExternalBracketsFromWebLink(str, start, str.GetLength() - 1);
+        FX_STRSIZE end = TrimExternalBracketsFromWebLink(str, start.value(),
+                                                         str.GetLength() - 1);
         end = FindWebLinkEnding(str, off, end);
         if (end > off) {  // Non-empty host name.
-          *nStart = start;
-          *nCount = end - start + 1;
+          *nStart = start.value();
+          *nCount = end - start.value() + 1;
           *strBeCheck = strBeCheck->Mid(*nStart, *nCount);
           return true;
         }
@@ -219,13 +223,13 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
 
   // When there is no scheme, try to find url starting with "www.".
   start = str.Find(kWWWAddrStart);
-  if (start != FX_STRNPOS && len > start + kWWWAddrStartLen) {
-    FX_STRSIZE end =
-        TrimExternalBracketsFromWebLink(str, start, str.GetLength() - 1);
-    end = FindWebLinkEnding(str, start, end);
-    if (end > start + kWWWAddrStartLen) {
-      *nStart = start;
-      *nCount = end - start + 1;
+  if (start.has_value() && len > start.value() + kWWWAddrStartLen) {
+    FX_STRSIZE end = TrimExternalBracketsFromWebLink(str, start.value(),
+                                                     str.GetLength() - 1);
+    end = FindWebLinkEnding(str, start.value(), end);
+    if (end > start.value() + kWWWAddrStartLen) {
+      *nStart = start.value();
+      *nCount = end - start.value() + 1;
       *strBeCheck = L"http://" + strBeCheck->Mid(*nStart, *nCount);
       return true;
     }
@@ -234,20 +238,20 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
 }
 
 bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
-  FX_STRSIZE aPos = str->Find(L'@');
+  auto aPos = str->Find(L'@');
   // Invalid when no '@' or when starts/ends with '@'.
-  if (aPos == FX_STRNPOS || aPos == 0 || aPos == str->GetLength() - 1)
+  if (!aPos.has_value() || aPos.value() == 0 || aPos == str->GetLength() - 1)
     return false;
 
   // Check the local part.
-  int pPos = aPos;  // Used to track the position of '@' or '.'.
-  for (int i = aPos - 1; i >= 0; i--) {
+  int pPos = aPos.value();  // Used to track the position of '@' or '.'.
+  for (int i = aPos.value() - 1; i >= 0; i--) {
     wchar_t ch = (*str)[i];
     if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch))
       continue;
 
     if (ch != L'.' || i == pPos - 1 || i == 0) {
-      if (i == aPos - 1) {
+      if (i == aPos.value() - 1) {
         // There is '.' or invalid char before '@'.
         return false;
       }
@@ -263,21 +267,21 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
 
   // Check the domain name part.
   aPos = str->Find(L'@');
-  if (aPos < 1 || aPos == FX_STRNPOS)
+  if (!aPos.has_value() || aPos.value() == 0)
     return false;
 
   str->TrimRight(L'.');
   // At least one '.' in domain name, but not at the beginning.
   // TODO(weili): RFC5322 allows domain names to be a local name without '.'.
   // Check whether we should remove this check.
-  FX_STRSIZE ePos = str->Find(L'.', aPos + 1);
-  if (ePos == FX_STRNPOS || ePos == aPos + 1)
+  auto ePos = str->Find(L'.', aPos.value() + 1);
+  if (!ePos.has_value() || ePos.value() == aPos.value() + 1)
     return false;
 
   // Validate all other chars in domain name.
   int nLen = str->GetLength();
   pPos = 0;  // Used to track the position of '.'.
-  for (int i = aPos + 1; i < nLen; i++) {
+  for (int i = aPos.value() + 1; i < nLen; i++) {
     wchar_t wch = (*str)[i];
     if (wch == L'-' || FXSYS_iswalnum(wch))
       continue;
@@ -285,7 +289,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
     if (wch != L'.' || i == pPos + 1) {
       // Domain name should end before invalid char.
       int host_end = i == pPos + 1 ? i - 2 : i - 1;
-      if (pPos > 0 && host_end - aPos >= 3) {
+      if (pPos > 0 && host_end - aPos.value() >= 3) {
         // Trim the ending invalid chars if there is at least one '.' and name.
         *str = str->Left(host_end + 1);
         break;
@@ -295,7 +299,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
     pPos = i;
   }
 
-  if (str->Find(L"mailto:") == FX_STRNPOS)
+  if (!str->Contains(L"mailto:"))
     *str = L"mailto:" + *str;
 
   return true;

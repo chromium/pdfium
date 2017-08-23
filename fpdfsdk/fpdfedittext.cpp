@@ -39,7 +39,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   int flags = 0;
   if (FXFT_Is_Face_fixedwidth(pFont->GetFace()))
     flags |= FXFONT_FIXED_PITCH;
-  if (font_name.Find("Serif") != FX_STRNPOS)
+  if (font_name.Contains("Serif"))
     flags |= FXFONT_SERIF;
   if (FXFT_Is_Face_Italic(pFont->GetFace()))
     flags |= FXFONT_ITALIC;

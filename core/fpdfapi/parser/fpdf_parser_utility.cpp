@@ -89,7 +89,7 @@ int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key) {
 }
 
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
-  if (bstr.Find('#') == FX_STRNPOS)
+  if (!bstr.Contains('#'))
     return CFX_ByteString(bstr);
 
   int size = bstr.GetLength();
@@ -110,9 +110,7 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
 }
 
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig) {
-  if (orig.Find('#') == FX_STRNPOS)
-    return orig;
-  return PDF_NameDecode(orig.AsStringC());
+  return orig.Contains("#") ? PDF_NameDecode(orig.AsStringC()) : orig;
 }
 
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {

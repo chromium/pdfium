@@ -52,7 +52,7 @@ const char JAPAN_GOTHIC[] = "Hiragino Kaku Gothic Pro W6";
 const char JAPAN_MINCHO[] = "Hiragino Mincho Pro W6";
 
 void GetJapanesePreference(CFX_ByteString* face, int weight, int pitch_family) {
-  if (face->Find("Gothic") != FX_STRNPOS) {
+  if (face->Contains("Gothic")) {
     *face = JAPAN_GOTHIC;
     return;
   }
@@ -82,7 +82,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
   // Times New Roman. A more sophisticated approach would be to find all the
   // fonts in |m_FontList| with |face| in the name, and examine the fonts to
   // see which best matches the requested characteristics.
-  if (face.Find("Bold") == FX_STRNPOS && face.Find("Italic") == FX_STRNPOS) {
+  if (!face.Contains("Bold") && !face.Contains("Italic")) {
     CFX_ByteString new_face = face;
     if (weight > 400)
       new_face += " Bold";

@@ -305,15 +305,17 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
       wsTemplateURIPrefix) {
     return XFA_VERSION_UNKNOWN;
   }
-  FX_STRSIZE nDotPos = wsTemplateNS.Find('.', nPrefixLength);
-  if (nDotPos == FX_STRNPOS)
+  auto nDotPos = wsTemplateNS.Find('.', nPrefixLength);
+  if (!nDotPos.has_value())
     return XFA_VERSION_UNKNOWN;
 
   int8_t iMajor = FXSYS_wtoi(
-      wsTemplateNS.Mid(nPrefixLength, nDotPos - nPrefixLength).c_str());
-  int8_t iMinor = FXSYS_wtoi(
-      wsTemplateNS.Mid(nDotPos + 1, wsTemplateNS.GetLength() - nDotPos - 2)
-          .c_str());
+      wsTemplateNS.Mid(nPrefixLength, nDotPos.value() - nPrefixLength).c_str());
+  int8_t iMinor =
+      FXSYS_wtoi(wsTemplateNS
+                     .Mid(nDotPos.value() + 1,
+                          wsTemplateNS.GetLength() - nDotPos.value() - 2)
+                     .c_str());
   XFA_VERSION eVersion = (XFA_VERSION)((int32_t)iMajor * 100 + iMinor);
   if (eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX)
     return XFA_VERSION_UNKNOWN;
@@ -367,20 +369,21 @@ void CXFA_Document::DoProtoMerge() {
     CFX_WideStringC wsURI, wsID, wsSOM;
     if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
         !wsUseVal.IsEmpty()) {
-      FX_STRSIZE uSharpPos = wsUseVal.Find('#');
-      if (uSharpPos == FX_STRNPOS) {
+      auto uSharpPos = wsUseVal.Find('#');
+      if (!uSharpPos.has_value()) {
         wsURI = wsUseVal.AsStringC();
       } else {
-        wsURI = CFX_WideStringC(wsUseVal.c_str(), uSharpPos);
+        wsURI = CFX_WideStringC(wsUseVal.c_str(), uSharpPos.value());
         FX_STRSIZE uLen = wsUseVal.GetLength();
-        if (uLen >= uSharpPos + 5 &&
-            CFX_WideStringC(wsUseVal.c_str() + uSharpPos, 5) == L"#som(" &&
+        if (uLen >= uSharpPos.value() + 5 &&
+            CFX_WideStringC(wsUseVal.c_str() + uSharpPos.value(), 5) ==
+                L"#som(" &&
             wsUseVal[uLen - 1] == ')') {
-          wsSOM = CFX_WideStringC(wsUseVal.c_str() + uSharpPos + 5,
-                                  uLen - 1 - uSharpPos - 5);
+          wsSOM = CFX_WideStringC(wsUseVal.c_str() + uSharpPos.value() + 5,
+                                  uLen - 1 - uSharpPos.value() - 5);
         } else {
-          wsID = CFX_WideStringC(wsUseVal.c_str() + uSharpPos + 1,
-                                 uLen - uSharpPos - 1);
+          wsID = CFX_WideStringC(wsUseVal.c_str() + uSharpPos.value() + 1,
+                                 uLen - uSharpPos.value() - 1);
         }
       }
     } else if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) &&

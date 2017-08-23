@@ -4045,16 +4045,17 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
           if (!wsContent.IsEmpty()) {
             FX_STRSIZE iStart = 0;
             FX_STRSIZE iLength = wsContent.GetLength();
-            FX_STRSIZE iEnd = wsContent.Find(L'\n', iStart);
-            iEnd = (iEnd == FX_STRNPOS) ? iLength : iEnd;
-            while (iEnd >= iStart) {
-              wsSaveTextArray.push_back(wsContent.Mid(iStart, iEnd - iStart));
-              iStart = iEnd + 1;
+            auto iEnd = wsContent.Find(L'\n', iStart);
+            iEnd = !iEnd.has_value() ? iLength : iEnd;
+            while (iEnd.value() >= iStart) {
+              wsSaveTextArray.push_back(
+                  wsContent.Mid(iStart, iEnd.value() - iStart));
+              iStart = iEnd.value() + 1;
               if (iStart >= iLength) {
                 break;
               }
               iEnd = wsContent.Find(L'\n', iStart);
-              if (iEnd == FX_STRNPOS) {
+              if (!iEnd.has_value()) {
                 wsSaveTextArray.push_back(
                     wsContent.Mid(iStart, iLength - iStart));
               }

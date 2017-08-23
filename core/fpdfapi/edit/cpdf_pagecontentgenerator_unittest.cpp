@@ -186,15 +186,18 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   std::ostringstream buf;
   TestProcessText(&generator, &buf, pTextObj.get());
   CFX_ByteString textString(buf);
-  FX_STRSIZE firstResourceAt = textString.Find('/') + 1;
-  FX_STRSIZE secondResourceAt = textString.ReverseFind('/') + 1;
-  EXPECT_NE(FX_STRNPOS, firstResourceAt);
-  EXPECT_NE(FX_STRNPOS, secondResourceAt);
-  CFX_ByteString firstString = textString.Left(firstResourceAt);
+  auto firstResourceAt = textString.Find('/');
+  ASSERT_TRUE(firstResourceAt.has_value());
+  firstResourceAt = firstResourceAt.value() + 1;
+  auto secondResourceAt = textString.ReverseFind('/');
+  ASSERT_TRUE(secondResourceAt.has_value());
+  secondResourceAt = secondResourceAt.value() + 1;
+  CFX_ByteString firstString = textString.Left(firstResourceAt.value());
   CFX_ByteString midString =
-      textString.Mid(firstResourceAt, secondResourceAt - firstResourceAt);
+      textString.Mid(firstResourceAt.value(),
+                     secondResourceAt.value() - firstResourceAt.value());
   CFX_ByteString lastString =
-      textString.Right(textString.GetLength() - secondResourceAt);
+      textString.Right(textString.GetLength() - secondResourceAt.value());
   // q and Q must be outside the BT .. ET operations
   CFX_ByteString compareString1 =
       "q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
@@ -255,11 +258,12 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   }
 
   CFX_ByteString textString(buf);
-  FX_STRSIZE firstResourceAt = textString.Find('/') + 1;
-  EXPECT_NE(FX_STRNPOS, firstResourceAt);
-  CFX_ByteString firstString = textString.Left(firstResourceAt);
+  auto firstResourceAt = textString.Find('/');
+  ASSERT_TRUE(firstResourceAt.has_value());
+  firstResourceAt = firstResourceAt.value() + 1;
+  CFX_ByteString firstString = textString.Left(firstResourceAt.value());
   CFX_ByteString lastString =
-      textString.Right(textString.GetLength() - firstResourceAt);
+      textString.Right(textString.GetLength() - firstResourceAt.value());
   // q and Q must be outside the BT .. ET operations
   CFX_ByteString compareString1 = "q BT 1 0 0 1 0 0 Tm /";
   CFX_ByteString compareString2 =

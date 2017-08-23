@@ -92,12 +92,12 @@ bool MatchNodeName(CFX_XMLNode* pNode,
 bool GetAttributeLocalName(const CFX_WideStringC& wsAttributeName,
                            CFX_WideString& wsLocalAttrName) {
   CFX_WideString wsAttrName(wsAttributeName);
-  FX_STRSIZE iFind = wsAttrName.Find(L':', 0);
-  if (iFind == FX_STRNPOS) {
+  auto pos = wsAttrName.Find(L':', 0);
+  if (!pos.has_value()) {
     wsLocalAttrName = wsAttrName;
     return false;
   }
-  wsLocalAttrName = wsAttrName.Right(wsAttrName.GetLength() - iFind - 1);
+  wsLocalAttrName = wsAttrName.Right(wsAttrName.GetLength() - pos.value() - 1);
   return true;
 }
 
@@ -133,17 +133,17 @@ bool FindAttributeWithNS(CFX_XMLElement* pElement,
 
   CFX_WideString wsAttrNS;
   for (auto it : pElement->GetAttributes()) {
-    FX_STRSIZE iFind = it.first.Find(L':', 0);
+    auto pos = it.first.Find(L':', 0);
     CFX_WideString wsNSPrefix;
-    if (iFind == FX_STRNPOS) {
+    if (!pos.has_value()) {
       if (wsLocalAttributeName != it.first)
         continue;
     } else {
       if (wsLocalAttributeName !=
-          it.first.Right(it.first.GetLength() - iFind - 1)) {
+          it.first.Right(it.first.GetLength() - pos.value() - 1)) {
         continue;
       }
-      wsNSPrefix = it.first.Left(iFind);
+      wsNSPrefix = it.first.Left(pos.value());
     }
 
     if (!XFA_FDEExtension_ResolveNamespaceQualifier(

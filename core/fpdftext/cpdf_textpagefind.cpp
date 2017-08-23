@@ -142,9 +142,8 @@ bool CPDF_TextPageFind::FindNext() {
     return m_IsFind;
   }
   int nCount = pdfium::CollectionSize<int>(m_csFindWhatArray);
-  int nResultPos = 0;
-  int nStartPos = 0;
-  nStartPos = m_findNextStart;
+  pdfium::Optional<FX_STRSIZE> nResultPos = 0;
+  int nStartPos = m_findNextStart;
   bool bSpaceStart = false;
   for (int iWord = 0; iWord < nCount; iWord++) {
     CFX_WideString csWord = m_csFindWhatArray[iWord];
@@ -164,25 +163,25 @@ bool CPDF_TextPageFind::FindNext() {
     }
     int endIndex;
     nResultPos = m_strText.Find(csWord.c_str(), nStartPos);
-    if (nResultPos == FX_STRNPOS) {
+    if (!nResultPos.has_value()) {
       m_IsFind = false;
       return m_IsFind;
     }
-    endIndex = nResultPos + csWord.GetLength() - 1;
+    endIndex = nResultPos.value() + csWord.GetLength() - 1;
     if (iWord == 0)
-      m_resStart = nResultPos;
+      m_resStart = nResultPos.value();
     bool bMatch = true;
     if (iWord != 0 && !bSpaceStart) {
       int PreResEndPos = nStartPos;
       int curChar = csWord[0];
       CFX_WideString lastWord = m_csFindWhatArray[iWord - 1];
       int lastChar = lastWord[lastWord.GetLength() - 1];
-      if (nStartPos == nResultPos &&
+      if (nStartPos == nResultPos.value() &&
           !(IsIgnoreSpaceCharacter(lastChar) ||
             IsIgnoreSpaceCharacter(curChar))) {
         bMatch = false;
       }
-      for (int d = PreResEndPos; d < nResultPos; d++) {
+      for (int d = PreResEndPos; d < nResultPos.value(); d++) {
         wchar_t strInsert = m_strText[d];
         if (strInsert != TEXT_LINEFEED_CHAR && strInsert != TEXT_SPACE_CHAR &&
             strInsert != TEXT_RETURN_CHAR && strInsert != 160) {
@@ -191,19 +190,19 @@ bool CPDF_TextPageFind::FindNext() {
         }
       }
     } else if (bSpaceStart) {
-      if (nResultPos > 0) {
-        wchar_t strInsert = m_strText[nResultPos - 1];
+      if (nResultPos.value() > 0) {
+        wchar_t strInsert = m_strText[nResultPos.value() - 1];
         if (strInsert != TEXT_LINEFEED_CHAR && strInsert != TEXT_SPACE_CHAR &&
             strInsert != TEXT_RETURN_CHAR && strInsert != 160) {
           bMatch = false;
-          m_resStart = nResultPos;
+          m_resStart = nResultPos.value();
         } else {
-          m_resStart = nResultPos - 1;
+          m_resStart = nResultPos.value() - 1;
         }
       }
     }
     if (m_bMatchWholeWord && bMatch) {
-      bMatch = IsMatchWholeWord(m_strText, nResultPos, endIndex);
+      bMatch = IsMatchWholeWord(m_strText, nResultPos.value(), endIndex);
     }
     nStartPos = endIndex + 1;
     if (!bMatch) {
@@ -214,7 +213,7 @@ bool CPDF_TextPageFind::FindNext() {
         nStartPos = m_resStart + m_csFindWhatArray[0].GetLength();
     }
   }
-  m_resEnd = nResultPos + m_csFindWhatArray.back().GetLength() - 1;
+  m_resEnd = nResultPos.value() + m_csFindWhatArray.back().GetLength() - 1;
   m_IsFind = true;
   int resStart = GetCharIndex(m_resStart);
   int resEnd = GetCharIndex(m_resEnd);

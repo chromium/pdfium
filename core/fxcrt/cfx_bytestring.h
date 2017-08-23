@@ -16,6 +16,7 @@
 #include "core/fxcrt/cfx_string_data_template.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/optional.h"
 
 class CFX_WideString;
 
@@ -130,9 +131,18 @@ class CFX_ByteString {
   CFX_ByteString Left(FX_STRSIZE count) const;
   CFX_ByteString Right(FX_STRSIZE count) const;
 
-  FX_STRSIZE Find(const CFX_ByteStringC& lpszSub, FX_STRSIZE start = 0) const;
-  FX_STRSIZE Find(char ch, FX_STRSIZE start = 0) const;
-  FX_STRSIZE ReverseFind(char ch) const;
+  pdfium::Optional<FX_STRSIZE> Find(const CFX_ByteStringC& lpszSub,
+                                    FX_STRSIZE start = 0) const;
+  pdfium::Optional<FX_STRSIZE> Find(char ch, FX_STRSIZE start = 0) const;
+  pdfium::Optional<FX_STRSIZE> ReverseFind(char ch) const;
+
+  bool Contains(const CFX_ByteStringC& lpszSub, FX_STRSIZE start = 0) const {
+    return Find(lpszSub, start).has_value();
+  }
+
+  bool Contains(char ch, FX_STRSIZE start = 0) const {
+    return Find(ch, start).has_value();
+  }
 
   void MakeLower();
   void MakeUpper();

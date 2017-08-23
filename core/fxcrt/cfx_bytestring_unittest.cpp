@@ -317,7 +317,7 @@ TEST(fxcrt, ByteStringCNull) {
   EXPECT_EQ(null_string, assigned_null_string);
 
   CFX_ByteStringC assigned_nullptr_string("initially not nullptr");
-  assigned_nullptr_string = (const char*)nullptr;
+  assigned_nullptr_string = nullptr;
   EXPECT_FALSE(assigned_nullptr_string.raw_str());
   EXPECT_EQ(assigned_nullptr_string.GetLength(), 0);
   EXPECT_TRUE(assigned_nullptr_string.IsEmpty());
@@ -566,6 +566,89 @@ TEST(fxcrt, ByteStringRight) {
   EXPECT_EQ("", empty.Right(0));
   EXPECT_EQ("", empty.Right(1));
   EXPECT_EQ("", empty.Right(-1));
+}
+
+TEST(fxcrt, ByteStringFind) {
+  CFX_ByteString null_string;
+  EXPECT_FALSE(null_string.Find('a').has_value());
+  EXPECT_FALSE(null_string.Find('\0').has_value());
+
+  CFX_ByteString empty_string("");
+  EXPECT_FALSE(empty_string.Find('a').has_value());
+  EXPECT_FALSE(empty_string.Find('\0').has_value());
+
+  pdfium::Optional<FX_STRSIZE> result;
+  CFX_ByteString single_string("a");
+  result = single_string.Find('a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  EXPECT_FALSE(single_string.Find('b').has_value());
+  EXPECT_FALSE(single_string.Find('\0').has_value());
+
+  CFX_ByteString longer_string("abccc");
+  result = longer_string.Find('a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  result = longer_string.Find('c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+  result = longer_string.Find('c', 3);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(3, result.value());
+  EXPECT_FALSE(longer_string.Find('d').has_value());
+  EXPECT_FALSE(longer_string.Find('\0').has_value());
+
+  result = longer_string.Find("ab");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  result = longer_string.Find("ccc");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+  result = longer_string.Find("cc", 3);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(3, result.value());
+  EXPECT_FALSE(longer_string.Find("d").has_value());
+
+  CFX_ByteString hibyte_string(
+      "ab\x8c"
+      "def");
+  result = hibyte_string.Find('\x8c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+}
+
+TEST(fxcrt, ByteStringReverseFind) {
+  CFX_ByteString null_string;
+  EXPECT_FALSE(null_string.ReverseFind('a').has_value());
+  EXPECT_FALSE(null_string.ReverseFind('\0').has_value());
+
+  CFX_ByteString empty_string("");
+  EXPECT_FALSE(empty_string.ReverseFind('a').has_value());
+  EXPECT_FALSE(empty_string.ReverseFind('\0').has_value());
+
+  pdfium::Optional<FX_STRSIZE> result;
+  CFX_ByteString single_string("a");
+  result = single_string.ReverseFind('a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  EXPECT_FALSE(single_string.ReverseFind('b').has_value());
+  EXPECT_FALSE(single_string.ReverseFind('\0').has_value());
+
+  CFX_ByteString longer_string("abccc");
+  result = longer_string.ReverseFind('a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  result = longer_string.ReverseFind('c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(4, result.value());
+  EXPECT_FALSE(longer_string.ReverseFind('\0').has_value());
+
+  CFX_ByteString hibyte_string(
+      "ab\x8c"
+      "def");
+  result = hibyte_string.ReverseFind('\x8c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
 }
 
 TEST(fxcrt, ByteStringUpperLower) {
@@ -882,27 +965,37 @@ TEST(fxcrt, ByteStringCGetID) {
 
 TEST(fxcrt, ByteStringCFind) {
   CFX_ByteStringC null_string;
-  EXPECT_EQ(FX_STRNPOS, null_string.Find('a'));
-  EXPECT_EQ(FX_STRNPOS, null_string.Find(0));
+  EXPECT_FALSE(null_string.Find('a').has_value());
+  EXPECT_FALSE(null_string.Find('\0').has_value());
 
   CFX_ByteStringC empty_string("");
-  EXPECT_EQ(FX_STRNPOS, empty_string.Find('a'));
-  EXPECT_EQ(FX_STRNPOS, empty_string.Find(0));
+  EXPECT_FALSE(empty_string.Find('a').has_value());
+  EXPECT_FALSE(empty_string.Find('\0').has_value());
 
+  pdfium::Optional<FX_STRSIZE> result;
   CFX_ByteStringC single_string("a");
-  EXPECT_EQ(0, single_string.Find('a'));
-  EXPECT_EQ(FX_STRNPOS, single_string.Find('b'));
-  EXPECT_EQ(FX_STRNPOS, single_string.Find(0));
+  result = single_string.Find('a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  EXPECT_FALSE(single_string.Find('b').has_value());
+  EXPECT_FALSE(single_string.Find('\0').has_value());
 
   CFX_ByteStringC longer_string("abccc");
-  EXPECT_EQ(0, longer_string.Find('a'));
-  EXPECT_EQ(2, longer_string.Find('c'));
-  EXPECT_EQ(FX_STRNPOS, longer_string.Find(0));
+  result = longer_string.Find('a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  result = longer_string.Find('c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+  EXPECT_FALSE(longer_string.Find('d').has_value());
+  EXPECT_FALSE(longer_string.Find('\0').has_value());
 
   CFX_ByteStringC hibyte_string(
       "ab\x8c"
       "def");
-  EXPECT_EQ(2, hibyte_string.Find('\x8c'));
+  result = hibyte_string.Find('\x8c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
 }
 
 TEST(fxcrt, ByteStringCMid) {

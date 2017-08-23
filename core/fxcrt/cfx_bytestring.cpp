@@ -564,43 +564,48 @@ CFX_ByteString CFX_ByteString::Left(FX_STRSIZE nCount) const {
   return dest;
 }
 
-FX_STRSIZE CFX_ByteString::Find(char ch, FX_STRSIZE nStart) const {
+pdfium::Optional<FX_STRSIZE> CFX_ByteString::Find(char ch,
+                                                  FX_STRSIZE nStart) const {
   if (!m_pData)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   if (nStart < 0 || nStart >= m_pData->m_nDataLength)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   const char* pStr = static_cast<const char*>(
       memchr(m_pData->m_String + nStart, ch, m_pData->m_nDataLength - nStart));
-  return pStr ? pStr - m_pData->m_String : FX_STRNPOS;
+  return pStr ? pdfium::Optional<FX_STRSIZE>(
+                    static_cast<FX_STRSIZE>(pStr - m_pData->m_String))
+              : pdfium::Optional<FX_STRSIZE>();
 }
 
-FX_STRSIZE CFX_ByteString::ReverseFind(char ch) const {
+pdfium::Optional<FX_STRSIZE> CFX_ByteString::Find(const CFX_ByteStringC& pSub,
+                                                  FX_STRSIZE nStart) const {
   if (!m_pData)
-    return FX_STRNPOS;
-
-  FX_STRSIZE nLength = m_pData->m_nDataLength;
-  while (nLength--) {
-    if (m_pData->m_String[nLength] == ch)
-      return nLength;
-  }
-  return FX_STRNPOS;
-}
-
-FX_STRSIZE CFX_ByteString::Find(const CFX_ByteStringC& pSub,
-                                FX_STRSIZE nStart) const {
-  if (!m_pData)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   FX_STRSIZE nLength = m_pData->m_nDataLength;
   if (nStart > nLength)
-    return FX_STRNPOS;
+    return pdfium::Optional<FX_STRSIZE>();
 
   const char* pStr =
       FX_strstr(m_pData->m_String + nStart, m_pData->m_nDataLength - nStart,
                 pSub.unterminated_c_str(), pSub.GetLength());
-  return pStr ? (int)(pStr - m_pData->m_String) : FX_STRNPOS;
+  return pStr ? pdfium::Optional<FX_STRSIZE>(
+                    static_cast<FX_STRSIZE>(pStr - m_pData->m_String))
+              : pdfium::Optional<FX_STRSIZE>();
+}
+
+pdfium::Optional<FX_STRSIZE> CFX_ByteString::ReverseFind(char ch) const {
+  if (!m_pData)
+    return pdfium::Optional<FX_STRSIZE>();
+
+  FX_STRSIZE nLength = m_pData->m_nDataLength;
+  while (nLength--) {
+    if (m_pData->m_String[nLength] == ch)
+      return pdfium::Optional<FX_STRSIZE>(nLength);
+  }
+  return pdfium::Optional<FX_STRSIZE>();
 }
 
 void CFX_ByteString::MakeLower() {

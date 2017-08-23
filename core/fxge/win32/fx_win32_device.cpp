@@ -503,7 +503,7 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
 void CFX_Win32FontInfo::GetGBPreference(CFX_ByteString& face,
                                         int weight,
                                         int picth_family) {
-  if (face.Find("KaiTi") != FX_STRNPOS || face.Find("\xbf\xac") != FX_STRNPOS) {
+  if (face.Contains("KaiTi") || face.Contains("\xbf\xac")) {
     if (m_KaiTi.IsEmpty()) {
       m_KaiTi = FindFont("KaiTi");
       if (m_KaiTi.IsEmpty()) {
@@ -511,8 +511,7 @@ void CFX_Win32FontInfo::GetGBPreference(CFX_ByteString& face,
       }
     }
     face = m_KaiTi;
-  } else if (face.Find("FangSong") != FX_STRNPOS ||
-             face.Find("\xb7\xc2\xcb\xce") != FX_STRNPOS) {
+  } else if (face.Contains("FangSong") || face.Contains("\xb7\xc2\xcb\xce")) {
     if (m_FangSong.IsEmpty()) {
       m_FangSong = FindFont("FangSong");
       if (m_FangSong.IsEmpty()) {
@@ -520,11 +519,9 @@ void CFX_Win32FontInfo::GetGBPreference(CFX_ByteString& face,
       }
     }
     face = m_FangSong;
-  } else if (face.Find("SimSun") != FX_STRNPOS ||
-             face.Find("\xcb\xce") != FX_STRNPOS) {
+  } else if (face.Contains("SimSun") || face.Contains("\xcb\xce")) {
     face = "SimSun";
-  } else if (face.Find("SimHei") != FX_STRNPOS ||
-             face.Find("\xba\xda") != FX_STRNPOS) {
+  } else if (face.Contains("SimHei") || face.Contains("\xba\xda")) {
     face = "SimHei";
   } else if (!(picth_family & FF_ROMAN) && weight > 550) {
     face = "SimHei";
@@ -536,16 +533,15 @@ void CFX_Win32FontInfo::GetGBPreference(CFX_ByteString& face,
 void CFX_Win32FontInfo::GetJapanesePreference(CFX_ByteString& face,
                                               int weight,
                                               int picth_family) {
-  if (face.Find("Gothic") != FX_STRNPOS ||
-      face.Find("\x83\x53\x83\x56\x83\x62\x83\x4e") != FX_STRNPOS) {
-    if (face.Find("PGothic") != FX_STRNPOS ||
-        face.Find("\x82\x6f\x83\x53\x83\x56\x83\x62\x83\x4e") != FX_STRNPOS) {
+  if (face.Contains("Gothic") ||
+      face.Contains("\x83\x53\x83\x56\x83\x62\x83\x4e")) {
+    if (face.Contains("PGothic") ||
+        face.Contains("\x82\x6f\x83\x53\x83\x56\x83\x62\x83\x4e")) {
       face = "MS PGothic";
-    } else if (face.Find("UI Gothic") != FX_STRNPOS) {
+    } else if (face.Contains("UI Gothic")) {
       face = "MS UI Gothic";
     } else {
-      if (face.Find("HGSGothicM") != FX_STRNPOS ||
-          face.Find("HGMaruGothicMPRO") != FX_STRNPOS) {
+      if (face.Contains("HGSGothicM") || face.Contains("HGMaruGothicMPRO")) {
         face = "MS PGothic";
       } else {
         face = "MS Gothic";
@@ -553,10 +549,8 @@ void CFX_Win32FontInfo::GetJapanesePreference(CFX_ByteString& face,
     }
     return;
   }
-  if (face.Find("Mincho") != FX_STRNPOS ||
-      face.Find("\x96\xbe\x92\xa9") != FX_STRNPOS) {
-    if (face.Find("PMincho") != FX_STRNPOS ||
-        face.Find("\x82\x6f\x96\xbe\x92\xa9") != FX_STRNPOS) {
+  if (face.Contains("Mincho") || face.Contains("\x96\xbe\x92\xa9")) {
+    if (face.Contains("PMincho") || face.Contains("\x82\x6f\x96\xbe\x92\xa9")) {
       face = "MS PMincho";
     } else {
       face = "MS Mincho";
@@ -640,7 +634,7 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       face = "Gulim";
       break;
     case FX_CHARSET_ChineseTraditional:
-      if (face.Find("MSung") != FX_STRNPOS) {
+      if (face.Contains("MSung")) {
         face = "MingLiU";
       } else {
         face = "PMingLiU";

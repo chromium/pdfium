@@ -447,7 +447,7 @@ bool CFX_Font::IsItalic() const {
 
   CFX_ByteString str(FXFT_Get_Face_Style_Name(m_Face));
   str.MakeLower();
-  return str.Find("italic") != FX_STRNPOS;
+  return str.Contains("italic");
 }
 
 bool CFX_Font::IsBold() const {

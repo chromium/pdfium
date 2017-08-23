@@ -42,18 +42,18 @@ bool SplitDateTime(const CFX_WideString& wsDateTime,
   if (wsDateTime.IsEmpty())
     return false;
 
-  FX_STRSIZE nSplitIndex = wsDateTime.Find('T');
-  if (nSplitIndex == FX_STRNPOS)
+  auto nSplitIndex = wsDateTime.Find('T');
+  if (!nSplitIndex.has_value())
     nSplitIndex = wsDateTime.Find(' ');
-  if (nSplitIndex == FX_STRNPOS)
+  if (!nSplitIndex.has_value())
     return false;
 
-  wsDate = wsDateTime.Left(nSplitIndex);
+  wsDate = wsDateTime.Left(nSplitIndex.value());
   if (!wsDate.IsEmpty()) {
     if (!std::any_of(wsDate.begin(), wsDate.end(), std::iswdigit))
       return false;
   }
-  wsTime = wsDateTime.Right(wsDateTime.GetLength() - nSplitIndex - 1);
+  wsTime = wsDateTime.Right(wsDateTime.GetLength() - nSplitIndex.value() - 1);
   if (!wsTime.IsEmpty()) {
     if (!std::any_of(wsTime.begin(), wsTime.end(), std::iswdigit))
       return false;
@@ -849,15 +849,15 @@ std::vector<CFX_WideString> CXFA_WidgetData::GetSelectedItemsValue() {
     if (!wsValue.IsEmpty()) {
       FX_STRSIZE iStart = 0;
       FX_STRSIZE iLength = wsValue.GetLength();
-      FX_STRSIZE iEnd = wsValue.Find(L'\n', iStart);
-      iEnd = (iEnd == FX_STRNPOS) ? iLength : iEnd;
+      auto iEnd = wsValue.Find(L'\n', iStart);
+      iEnd = (!iEnd.has_value()) ? iLength : iEnd;
       while (iEnd >= iStart) {
-        wsSelTextArray.push_back(wsValue.Mid(iStart, iEnd - iStart));
-        iStart = iEnd + 1;
+        wsSelTextArray.push_back(wsValue.Mid(iStart, iEnd.value() - iStart));
+        iStart = iEnd.value() + 1;
         if (iStart >= iLength)
           break;
         iEnd = wsValue.Find(L'\n', iStart);
-        if (iEnd == FX_STRNPOS)
+        if (!iEnd.has_value())
           wsSelTextArray.push_back(wsValue.Mid(iStart, iLength - iStart));
       }
     }
@@ -1315,15 +1315,16 @@ bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float* val) {
   CXFA_Node* pUIChild = GetUIChild();
   CFX_WideString wsWideNarrowRatio;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_WideNarrowRatio, wsWideNarrowRatio)) {
-    FX_STRSIZE ptPos = wsWideNarrowRatio.Find(':');
+    auto ptPos = wsWideNarrowRatio.Find(':');
     float fRatio = 0;
-    if (ptPos != FX_STRNPOS) {
+    if (!ptPos.has_value()) {
       fRatio = (float)FXSYS_wtoi(wsWideNarrowRatio.c_str());
     } else {
       int32_t fA, fB;
-      fA = FXSYS_wtoi(wsWideNarrowRatio.Left(ptPos).c_str());
+      fA = FXSYS_wtoi(wsWideNarrowRatio.Left(ptPos.value()).c_str());
       fB = FXSYS_wtoi(
-          wsWideNarrowRatio.Right(wsWideNarrowRatio.GetLength() - (ptPos + 1))
+          wsWideNarrowRatio
+              .Right(wsWideNarrowRatio.GetLength() - (ptPos.value() + 1))
               .c_str());
       if (fB)
         fRatio = (float)fA / fB;
@@ -1742,9 +1743,8 @@ void CXFA_WidgetData::NormalizeNumStr(const CFX_WideString& wsValue,
 
   wsOutput = wsValue;
   wsOutput.TrimLeft('0');
-  FX_STRSIZE dot_index = wsOutput.Find('.');
   int32_t iFracDigits = 0;
-  if (!wsOutput.IsEmpty() && dot_index != FX_STRNPOS &&
+  if (!wsOutput.IsEmpty() && wsOutput.Contains('.') &&
       (!GetFracDigits(iFracDigits) || iFracDigits != -1)) {
     wsOutput.TrimRight(L"0");
     wsOutput.TrimRight(L".");
@@ -1768,13 +1768,12 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
     wsSrcNum.Delete(0, 1);
   }
   int32_t len = wsSrcNum.GetLength();
-  FX_STRSIZE dot_index = wsSrcNum.Find('.');
-  if (dot_index == FX_STRNPOS)
-    dot_index = len;
+  auto dot_index = wsSrcNum.Find('.');
+  dot_index = !dot_index.has_value() ? len : dot_index;
 
-  int32_t cc = dot_index - 1;
+  int32_t cc = dot_index.value() - 1;
   if (cc >= 0) {
-    int nPos = dot_index % 3;
+    int nPos = dot_index.value() % 3;
     wsOutput.clear();
     for (int32_t i = 0; i < dot_index; i++) {
       if (i % 3 == nPos && i != 0)
@@ -1784,7 +1783,7 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
     }
     if (dot_index < len) {
       wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
-      wsOutput += wsSrcNum.Right(len - dot_index - 1);
+      wsOutput += wsSrcNum.Right(len - dot_index.value() - 1);
     }
     if (bNeg) {
       wsOutput =

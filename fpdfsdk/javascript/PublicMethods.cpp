@@ -527,7 +527,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
                 CFX_WideString sFullMonths = fullmonths[m];
                 sFullMonths.MakeLower();
 
-                if (sFullMonths.Find(sMonth.c_str(), 0) != FX_STRNPOS) {
+                if (sFullMonths.Contains(sMonth.c_str())) {
                   nMonth = m + 1;
                   i += 4;
                   j += nSkip;
@@ -933,8 +933,7 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
                                  pEvent->SelEnd() - pEvent->SelStart());
   }
 
-  bool bHasSign = wstrValue.Find(L'-') != FX_STRNPOS &&
-                  wstrSelected.Find(L'-') == FX_STRNPOS;
+  bool bHasSign = wstrValue.Contains(L'-') && !wstrSelected.Contains(L'-');
   if (bHasSign) {
     // can't insert "change" in front to sign postion.
     if (pEvent->SelStart() == 0) {
@@ -948,7 +947,7 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
     iSepStyle = 0;
   const wchar_t cSep = iSepStyle < 2 ? L'.' : L',';
 
-  bool bHasSep = wstrValue.Find(cSep) != FX_STRNPOS;
+  bool bHasSep = wstrValue.Contains(cSep);
   for (FX_STRSIZE i = 0; i < wstrChange.GetLength(); ++i) {
     if (wstrChange[i] == cSep) {
       if (bHasSep) {
@@ -1113,7 +1112,7 @@ bool CJS_PublicMethods::AFDate_FormatEx(CJS_Runtime* pRuntime,
   CFX_WideString sFormat = params[0].ToCFXWideString(pRuntime);
   double dDate = 0.0f;
 
-  if (strValue.Find(L"GMT") != FX_STRNPOS) {
+  if (strValue.Contains(L"GMT")) {
     // for GMT format time
     // such as "Tue Aug 11 14:24:16 GMT+08002009"
     dDate = MakeInterDate(strValue);

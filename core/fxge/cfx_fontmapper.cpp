@@ -172,7 +172,7 @@ const struct CODEPAGE_MAP {
 int CompareFontFamilyString(const void* key, const void* element) {
   CFX_ByteString str_key((const char*)key);
   const AltFontFamily* family = reinterpret_cast<const AltFontFamily*>(element);
-  if (str_key.Find(family->m_pFontName) != FX_STRNPOS)
+  if (str_key.Contains(family->m_pFontName))
     return 0;
   return FXSYS_stricmp(reinterpret_cast<const char*>(key), family->m_pFontName);
 }
@@ -187,9 +187,9 @@ CFX_ByteString TT_NormalizeName(const char* family) {
   norm.Remove(' ');
   norm.Remove('-');
   norm.Remove(',');
-  FX_STRSIZE pos = norm.Find('+');
-  if (pos != 0 && pos != FX_STRNPOS)
-    norm = norm.Left(pos);
+  auto pos = norm.Find('+');
+  if (pos.has_value() && pos.value() != 0)
+    norm = norm.Left(pos.value());
   norm.MakeLower();
   return norm;
 }
@@ -208,14 +208,14 @@ uint8_t GetCharsetFromCodePage(uint16_t codepage) {
 }
 
 CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
-  if (fontName.Find("Script") >= 0) {
+  if (fontName.Contains("Script")) {
     if ((nStyle & FX_FONT_STYLE_Bold) == FX_FONT_STYLE_Bold)
       fontName = "ScriptMTBold";
-    else if (fontName.Find("Palace") >= 0)
+    else if (fontName.Contains("Palace"))
       fontName = "PalaceScriptMT";
-    else if (fontName.Find("French") >= 0)
+    else if (fontName.Contains("French"))
       fontName = "FrenchScriptMT";
-    else if (fontName.Find("FreeStyle") >= 0)
+    else if (fontName.Contains("FreeStyle"))
       fontName = "FreeStyleScript";
     return fontName;
   }
@@ -449,11 +449,11 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   CFX_ByteString style;
   bool bHasComma = false;
   bool bHasHyphen = false;
-  int find = SubstName.Find(",", 0);
-  if (find >= 0) {
-    family = SubstName.Left(find);
+  auto pos = SubstName.Find(",", 0);
+  if (pos.has_value()) {
+    family = SubstName.Left(pos.value());
     PDF_GetStandardFontName(&family);
-    style = SubstName.Right(SubstName.GetLength() - (find + 1));
+    style = SubstName.Right(SubstName.GetLength() - (pos.value() + 1));
     bHasComma = true;
   } else {
     family = SubstName;
@@ -478,10 +478,10 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   } else {
     iBaseFont = kNumStandardFonts;
     if (!bHasComma) {
-      find = family.ReverseFind('-');
-      if (find >= 0) {
-        style = family.Right(family.GetLength() - (find + 1));
-        family = family.Left(find);
+      pos = family.ReverseFind('-');
+      if (pos.has_value()) {
+        style = family.Right(family.GetLength() - (pos.value() + 1));
+        family = family.Left(pos.value());
         bHasHyphen = true;
       }
     }
@@ -580,15 +580,18 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
         weight = old_weight;
       }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
-      if (SubstName.Find("Narrow") > 0 || SubstName.Find("Condensed") > 0)
-        family = "LiberationSansNarrow";
+      const char* narrow_family = "LiberationSansNarrow";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
-      if (family.Find("Narrow") > 0 || family.Find("Condensed") > 0)
-        family = "RobotoCondensed";
+      const char* narrow_family = "RobotoCondensed";
 #else
-      if (family.Find("Narrow") > 0 || family.Find("Condensed") > 0)
-        family = "ArialNarrow";
+      const char* narrow_family = "ArialNarrow";
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+      auto pos = SubstName.Find("Narrow");
+      if (pos.has_value() && pos.value() != 0)
+        family = narrow_family;
+      pos = SubstName.Find("Condensed");
+      if (pos.has_value() && pos.value() != 0)
+        family = narrow_family;
     } else {
       pSubstFont->m_bSubstCJK = true;
       if (nStyle)

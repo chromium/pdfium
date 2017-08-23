@@ -14,7 +14,7 @@
 #include "third_party/base/ptr_util.h"
 
 bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
-  if (strc.Find('.') != FX_STRNPOS) {
+  if (strc.Contains('.')) {
     float* pFloat = static_cast<float*>(pData);
     *pFloat = FX_atof(strc);
     return false;

@@ -148,11 +148,13 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   bool bTargetAllFind = true;
   while (iSplitIndex != -1) {
     CFX_WideString wsExpr;
-    FX_STRSIZE iSplitNextIndex = 0;
+    pdfium::Optional<FX_STRSIZE> iSplitNextIndex = 0;
     if (!bTargetAllFind) {
       iSplitNextIndex = wsTargetAll.Find(' ', iSplitIndex);
-      ASSERT(iSplitNextIndex != FX_STRNPOS);
-      wsExpr = wsTargetAll.Mid(iSplitIndex, iSplitNextIndex - iSplitIndex);
+      if (!iSplitNextIndex.has_value())
+        return nullptr;
+      wsExpr =
+          wsTargetAll.Mid(iSplitIndex, iSplitNextIndex.value() - iSplitIndex);
     } else {
       wsExpr = wsTargetAll;
     }
@@ -180,7 +182,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
       if (iCount > 0 && rs.objects.front()->IsNode())
         return rs.objects.front()->AsNode();
     }
-    iSplitIndex = iSplitNextIndex;
+    iSplitIndex = iSplitNextIndex.value();
   }
   return nullptr;
 }

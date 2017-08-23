@@ -80,35 +80,35 @@ bool ParserPageRangeString(CFX_ByteString rangstring,
   int nLength = rangstring.GetLength();
   CFX_ByteString cbCompareString("0123456789-,");
   for (int i = 0; i < nLength; ++i) {
-    if (cbCompareString.Find(rangstring[i]) == FX_STRNPOS)
+    if (!cbCompareString.Contains(rangstring[i]))
       return false;
   }
 
   CFX_ByteString cbMidRange;
   FX_STRSIZE nStringFrom = 0;
-  FX_STRSIZE nStringTo = 0;
+  pdfium::Optional<FX_STRSIZE> nStringTo = 0;
   while (nStringTo < nLength) {
     nStringTo = rangstring.Find(',', nStringFrom);
-    if (nStringTo == FX_STRNPOS)
+    if (!nStringTo.has_value())
       nStringTo = nLength;
-    cbMidRange = rangstring.Mid(nStringFrom, nStringTo - nStringFrom);
-    FX_STRSIZE nMid = cbMidRange.Find('-');
-    if (nMid == FX_STRNPOS) {
+    cbMidRange = rangstring.Mid(nStringFrom, nStringTo.value() - nStringFrom);
+    auto nMid = cbMidRange.Find('-');
+    if (!nMid.has_value()) {
       long lPageNum = atol(cbMidRange.c_str());
       if (lPageNum <= 0 || lPageNum > nCount)
         return false;
       pageArray->push_back((uint16_t)lPageNum);
     } else {
-      int nStartPageNum = atol(cbMidRange.Left(nMid).c_str());
+      int nStartPageNum = atol(cbMidRange.Left(nMid.value()).c_str());
       if (nStartPageNum == 0)
         return false;
 
-      ++nMid;
-      int nEnd = cbMidRange.GetLength() - nMid;
+      nMid = nMid.value() + 1;
+      int nEnd = cbMidRange.GetLength() - nMid.value();
       if (nEnd == 0)
         return false;
 
-      int nEndPageNum = atol(cbMidRange.Mid(nMid, nEnd).c_str());
+      int nEndPageNum = atol(cbMidRange.Mid(nMid.value(), nEnd).c_str());
       if (nStartPageNum < 0 || nStartPageNum > nEndPageNum ||
           nEndPageNum > nCount) {
         return false;
@@ -117,7 +117,7 @@ bool ParserPageRangeString(CFX_ByteString rangstring,
         pageArray->push_back(i);
       }
     }
-    nStringFrom = nStringTo + 1;
+    nStringFrom = nStringTo.value() + 1;
   }
   return true;
 }

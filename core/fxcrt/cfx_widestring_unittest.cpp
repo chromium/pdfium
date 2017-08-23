@@ -527,6 +527,54 @@ TEST(fxcrt, WideStringRight) {
   EXPECT_EQ(L"", empty.Right(-1));
 }
 
+TEST(fxcrt, WideStringFind) {
+  CFX_WideString null_string;
+  EXPECT_FALSE(null_string.Find(L'a').has_value());
+  EXPECT_FALSE(null_string.Find(L'\0').has_value());
+
+  CFX_WideString empty_string(L"");
+  EXPECT_FALSE(empty_string.Find(L'a').has_value());
+  EXPECT_FALSE(empty_string.Find(L'\0').has_value());
+
+  pdfium::Optional<FX_STRSIZE> result;
+  CFX_WideString single_string(L"a");
+  result = single_string.Find(L'a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  EXPECT_FALSE(single_string.Find(L'b').has_value());
+  EXPECT_FALSE(single_string.Find(L'\0').has_value());
+
+  CFX_WideString longer_string(L"abccc");
+  result = longer_string.Find(L'a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  result = longer_string.Find(L'c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+  result = longer_string.Find(L'c', 3);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(3, result.value());
+  EXPECT_FALSE(longer_string.Find(L'\0').has_value());
+
+  result = longer_string.Find(L"ab");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  result = longer_string.Find(L"ccc");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+  result = longer_string.Find(L"cc", 3);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(3, result.value());
+  EXPECT_FALSE(longer_string.Find(L"d").has_value());
+
+  CFX_WideString hibyte_string(
+      L"ab\xff8c"
+      L"def");
+  result = hibyte_string.Find(L'\xff8c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+}
+
 TEST(fxcrt, WideStringUpperLower) {
   CFX_WideString fred(L"F-Re.42D");
   fred.MakeLower();
@@ -924,27 +972,37 @@ TEST(fxcrt, WideStringCOperatorNE) {
 
 TEST(fxcrt, WideStringCFind) {
   CFX_WideStringC null_string;
-  EXPECT_EQ(FX_STRNPOS, null_string.Find(L'a'));
-  EXPECT_EQ(FX_STRNPOS, null_string.Find(0));
+  EXPECT_FALSE(null_string.Find(L'a').has_value());
+  EXPECT_FALSE(null_string.Find(L'\0').has_value());
 
   CFX_WideStringC empty_string(L"");
-  EXPECT_EQ(FX_STRNPOS, empty_string.Find(L'a'));
-  EXPECT_EQ(FX_STRNPOS, empty_string.Find(0));
+  EXPECT_FALSE(empty_string.Find(L'a').has_value());
+  EXPECT_FALSE(empty_string.Find(L'\0').has_value());
 
+  pdfium::Optional<FX_STRSIZE> result;
   CFX_WideStringC single_string(L"a");
-  EXPECT_EQ(0, single_string.Find(L'a'));
-  EXPECT_EQ(FX_STRNPOS, single_string.Find(L'b'));
-  EXPECT_EQ(FX_STRNPOS, single_string.Find(0));
+  result = single_string.Find(L'a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  EXPECT_FALSE(single_string.Find(L'b').has_value());
+  EXPECT_FALSE(single_string.Find(L'\0').has_value());
 
   CFX_WideStringC longer_string(L"abccc");
-  EXPECT_EQ(0, longer_string.Find(L'a'));
-  EXPECT_EQ(2, longer_string.Find(L'c'));
-  EXPECT_EQ(FX_STRNPOS, longer_string.Find(0));
+  result = longer_string.Find(L'a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0, result.value());
+  result = longer_string.Find(L'c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
+  EXPECT_FALSE(longer_string.Find(L'd').has_value());
+  EXPECT_FALSE(longer_string.Find(L'\0').has_value());
 
   CFX_WideStringC hibyte_string(
-      L"ab\xff08"
+      L"ab\xFF8c"
       L"def");
-  EXPECT_EQ(2, hibyte_string.Find(L'\xff08'));
+  result = hibyte_string.Find(L'\xFF8c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2, result.value());
 }
 
 TEST(fxcrt, WideStringCNullIterator) {
