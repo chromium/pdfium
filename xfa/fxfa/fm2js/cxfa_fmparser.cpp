@@ -15,7 +15,7 @@
 namespace {
 
 const unsigned int kMaxAssignmentChainLength = 12;
-const unsigned int kMaxParseDepth = 2000;
+const unsigned int kMaxParseDepth = 1250;
 
 }  // namespace
 
