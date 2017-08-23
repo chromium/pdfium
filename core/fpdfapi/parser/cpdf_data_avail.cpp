@@ -275,8 +275,6 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
       return CheckCrossRef(pHints);
     case PDF_DATAAVAIL_CROSSREF_ITEM:
       return CheckCrossRefItem();
-    case PDF_DATAAVAIL_CROSSREF_STREAM:
-      return CheckAllCrossRefStream(pHints);
     case PDF_DATAAVAIL_TRAILER:
       return CheckTrailer(pHints);
     case PDF_DATAAVAIL_TRAILER_APPEND:
@@ -782,49 +780,6 @@ bool CPDF_DataAvail::CheckEnd() {
   return true;
 }
 
-int32_t CPDF_DataAvail::CheckCrossRefStream(DownloadHints* pHints,
-                                            FX_FILESIZE& xref_offset) {
-  xref_offset = 0;
-  uint32_t req_size =
-      (uint32_t)(m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
-
-  if (!m_pFileAvail->IsDataAvail(m_Pos, req_size)) {
-    pHints->AddSegment(m_Pos, req_size);
-    return 0;
-  }
-
-  int32_t iSize = (int32_t)(m_Pos + req_size - m_dwCurrentXRefSteam);
-  std::vector<uint8_t> buf(iSize);
-  m_pFileRead->ReadBlock(buf.data(), m_dwCurrentXRefSteam, iSize);
-
-  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
-      buf.data(), static_cast<size_t>(iSize), false);
-  m_parser.m_pSyntax->InitParser(file, 0);
-
-  bool bNumber;
-  CFX_ByteString objnum = m_parser.m_pSyntax->GetNextWord(&bNumber);
-  if (!bNumber)
-    return -1;
-
-  uint32_t objNum = FXSYS_atoui(objnum.c_str());
-  std::unique_ptr<CPDF_Object> pObj =
-      m_parser.ParseIndirectObjectAt(nullptr, 0, objNum);
-
-  if (!pObj) {
-    m_Pos += m_parser.m_pSyntax->GetPos();
-    return 0;
-  }
-
-  CPDF_Dictionary* pDict = pObj->GetDict();
-  CPDF_Name* pName = ToName(pDict ? pDict->GetObjectFor("Type") : nullptr);
-  if (pName && pName->GetString() == "XRef") {
-    m_Pos += m_parser.m_pSyntax->GetPos();
-    xref_offset = pObj->GetDict()->GetIntegerFor("Prev");
-    return 1;
-  }
-  return -1;
-}
-
 void CPDF_DataAvail::SetStartOffset(FX_FILESIZE dwOffset) {
   m_Pos = dwOffset;
 }
@@ -947,24 +902,6 @@ bool CPDF_DataAvail::CheckCrossRefItem() {
       return true;
     }
   }
-}
-
-bool CPDF_DataAvail::CheckAllCrossRefStream(DownloadHints* pHints) {
-  FX_FILESIZE xref_offset = 0;
-  int32_t nRet = CheckCrossRefStream(pHints, xref_offset);
-  if (nRet == 1) {
-    if (xref_offset) {
-      m_dwCurrentXRefSteam = xref_offset;
-      m_Pos = xref_offset;
-    } else {
-      m_docStatus = PDF_DATAAVAIL_LOADALLCROSSREF;
-    }
-    return true;
-  }
-
-  if (nRet == -1)
-    m_docStatus = PDF_DATAAVAIL_ERROR;
-  return false;
 }
 
 bool CPDF_DataAvail::CheckCrossRef(DownloadHints* pHints) {

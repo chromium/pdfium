@@ -30,7 +30,6 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_END,
   PDF_DATAAVAIL_CROSSREF,
   PDF_DATAAVAIL_CROSSREF_ITEM,
-  PDF_DATAAVAIL_CROSSREF_STREAM,
   PDF_DATAAVAIL_TRAILER,
   PDF_DATAAVAIL_LOADALLCROSSREF,
   PDF_DATAAVAIL_ROOT,
@@ -146,9 +145,7 @@ class CPDF_DataAvail final {
   bool CheckAcroFormSubObject();
   bool CheckTrailerAppend(DownloadHints* pHints);
   bool CheckPageStatus(DownloadHints* pHints);
-  bool CheckAllCrossRefStream(DownloadHints* pHints);
 
-  int32_t CheckCrossRefStream(DownloadHints* pHints, FX_FILESIZE& xref_offset);
   bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
   void SetStartOffset(FX_FILESIZE dwOffset);
   bool GetNextToken(CFX_ByteString* token);
