@@ -113,7 +113,7 @@ class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
     allPages->AddNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(1))->GetObjNum());
     // Page without pageNum.
-    allPages->Add(CreateNumberedPage(2));
+    inlined_page_ = allPages->Add(CreateNumberedPage(2));
     CPDF_Dictionary* pagesDict =
         CreatePageTreeNode(std::move(allPages), this, 3);
     m_pOwnedRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
@@ -123,8 +123,11 @@ class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
     m_PageList.resize(3);
   }
 
+  const CPDF_Object* inlined_page() const { return inlined_page_; }
+
  private:
   std::unique_ptr<CPDF_Dictionary> m_pOwnedRootDict;
+  const CPDF_Object* inlined_page_;
 };
 
 class TestLinearized : public CPDF_LinearizedHeader {
@@ -171,12 +174,11 @@ TEST_F(cpdf_document_test, GetPages) {
 }
 
 TEST_F(cpdf_document_test, GetPageWithoutObjNumTwice) {
-  std::unique_ptr<CPDF_TestDocumentWithPageWithoutPageNum> document =
-      pdfium::MakeUnique<CPDF_TestDocumentWithPageWithoutPageNum>();
+  auto document = pdfium::MakeUnique<CPDF_TestDocumentWithPageWithoutPageNum>();
   const CPDF_Dictionary* page = document->GetPage(2);
   ASSERT_TRUE(page);
-  // This is page without obj num.
-  ASSERT_EQ(0ul, page->GetObjNum());
+  ASSERT_EQ(document->inlined_page(), page);
+
   const CPDF_Dictionary* second_call_page = document->GetPage(2);
   EXPECT_TRUE(second_call_page);
   EXPECT_EQ(page, second_call_page);
