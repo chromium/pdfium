@@ -8,6 +8,7 @@
 
 #include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 
@@ -23,6 +24,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   uint32_t height;
   uint32_t components;
   g_module.GetImageInfo(decoder.get(), &width, &height, &components);
+
+  static constexpr uint32_t kMemLimit = 1024 * 1024 * 1024;  // 1 GB.
+  FX_SAFE_UINT32 mem = width;
+  mem *= height;
+  mem *= components;
+  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit)
+    return 0;
 
   FXDIB_Format format;
   if (components == 1) {
