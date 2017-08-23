@@ -264,7 +264,7 @@ bool CPDF_DataAvail::CheckAcroForm() {
 bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
   switch (m_docStatus) {
     case PDF_DATAAVAIL_HEADER:
-      return CheckHeader(pHints);
+      return CheckHeader();
     case PDF_DATAAVAIL_FIRSTPAGE:
       return CheckFirstPage(pHints);
     case PDF_DATAAVAIL_HINTTABLE:
@@ -560,15 +560,17 @@ bool CPDF_DataAvail::CheckPages() {
   return true;
 }
 
-bool CPDF_DataAvail::CheckHeader(DownloadHints* pHints) {
+bool CPDF_DataAvail::CheckHeader() {
   ASSERT(m_dwFileLen >= 0);
   const uint32_t kReqSize = std::min(static_cast<uint32_t>(m_dwFileLen), 1024U);
-  if (!m_pFileAvail->IsDataAvail(0, kReqSize)) {
-    pHints->AddSegment(0, kReqSize);
-    return false;
-  }
   std::vector<uint8_t> buffer(kReqSize);
-  m_pFileRead->ReadBlock(buffer.data(), 0, kReqSize);
+  {
+    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+    m_pFileRead->ReadBlock(buffer.data(), 0, kReqSize);
+    if (GetValidator()->has_read_problems())
+      return false;
+  }
+
   if (IsLinearizedFile(buffer.data(), kReqSize)) {
     m_docStatus = PDF_DATAAVAIL_FIRSTPAGE;
     return true;

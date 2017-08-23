@@ -130,7 +130,7 @@ class CPDF_DataAvail final {
                            bool bParsePage,
                            std::vector<CPDF_Object*>& ret_array);
   bool CheckDocStatus(DownloadHints* pHints);
-  bool CheckHeader(DownloadHints* pHints);
+  bool CheckHeader();
   bool CheckFirstPage(DownloadHints* pHints);
   bool CheckHintTables(DownloadHints* pHints);
   bool CheckEnd(DownloadHints* pHints);
