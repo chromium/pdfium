@@ -58,7 +58,6 @@ class HintsScope {
              CPDF_DataAvail::DownloadHints* hints)
       : validator_(validator) {
     ASSERT(validator_);
-    validator_->ResetErrors();
     validator_->SetDownloadHints(hints);
   }
 
@@ -272,7 +271,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
     case PDF_DATAAVAIL_END:
       return CheckEnd();
     case PDF_DATAAVAIL_CROSSREF:
-      return CheckCrossRef(pHints);
+      return CheckCrossRef();
     case PDF_DATAAVAIL_CROSSREF_ITEM:
       return CheckCrossRefItem();
     case PDF_DATAAVAIL_TRAILER:
@@ -890,8 +889,9 @@ bool CPDF_DataAvail::GetNextChar(uint8_t& ch) {
 bool CPDF_DataAvail::CheckCrossRefItem() {
   CFX_ByteString token;
   while (1) {
+    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
     if (!GetNextToken(&token)) {
-      if (!m_pFileRead->has_read_problems())
+      if (!GetValidator()->has_read_problems())
         m_docStatus = PDF_DATAAVAIL_ERROR;
       return false;
     }
@@ -904,13 +904,12 @@ bool CPDF_DataAvail::CheckCrossRefItem() {
   }
 }
 
-bool CPDF_DataAvail::CheckCrossRef(DownloadHints* pHints) {
-  int32_t iSize = 0;
+bool CPDF_DataAvail::CheckCrossRef() {
+  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
   CFX_ByteString token;
   if (!GetNextToken(&token)) {
-    iSize = static_cast<int32_t>(m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos
-                                                           : 512);
-    pHints->AddSegment(m_Pos, iSize);
+    if (!GetValidator()->has_read_problems())
+      m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
 

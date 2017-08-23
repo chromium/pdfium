@@ -133,7 +133,7 @@ class CPDF_DataAvail final {
   bool CheckFirstPage(DownloadHints* pHints);
   bool CheckHintTables(DownloadHints* pHints);
   bool CheckEnd();
-  bool CheckCrossRef(DownloadHints* pHints);
+  bool CheckCrossRef();
   bool CheckCrossRefItem();
   bool CheckTrailer(DownloadHints* pHints);
   bool CheckRoot();
