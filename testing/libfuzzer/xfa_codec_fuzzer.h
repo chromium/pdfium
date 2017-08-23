@@ -28,7 +28,7 @@ class XFACodecFuzzer {
 
     std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
         mgr->CreateProgressiveDecoder();
-    CFX_RetainPtr<Reader> source(new Reader(data, size));
+    auto source = pdfium::MakeRetain<Reader>(data, size);
     FXCODEC_STATUS status = decoder->LoadImageInfo(source, type, nullptr, true);
     if (status != FXCODEC_STATUS_FRAME_READY)
       return 0;
@@ -38,8 +38,9 @@ class XFACodecFuzzer {
 
     int32_t frames;
     if (decoder->GetFrames(frames) != FXCODEC_STATUS_DECODE_READY ||
-        frames == 0)
+        frames == 0) {
       return 0;
+    }
 
     status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
                                   bitmap->GetHeight());
@@ -71,7 +72,7 @@ class XFACodecFuzzer {
 
    private:
     const uint8_t* const m_data;
-    size_t m_size;
+    const size_t m_size;
   };
 };
 
