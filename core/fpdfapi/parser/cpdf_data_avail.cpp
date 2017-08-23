@@ -281,7 +281,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
     case PDF_DATAAVAIL_LOADALLCROSSREF:
       return LoadAllXref(pHints);
     case PDF_DATAAVAIL_LOADALLFILE:
-      return LoadAllFile(pHints);
+      return LoadAllFile();
     case PDF_DATAAVAIL_ROOT:
       return CheckRoot();
     case PDF_DATAAVAIL_INFO:
@@ -298,7 +298,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
       m_docStatus = PDF_DATAAVAIL_PAGE_LATERLOAD;
       return true;
     case PDF_DATAAVAIL_ERROR:
-      return LoadAllFile(pHints);
+      return LoadAllFile();
     case PDF_DATAAVAIL_PAGE_LATERLOAD:
       m_docStatus = PDF_DATAAVAIL_PAGE;
     default:
@@ -307,14 +307,14 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
   }
 }
 
-bool CPDF_DataAvail::CheckPageStatus(DownloadHints* pHints) {
+bool CPDF_DataAvail::CheckPageStatus() {
   switch (m_docStatus) {
     case PDF_DATAAVAIL_PAGETREE:
       return CheckPages();
     case PDF_DATAAVAIL_PAGE:
       return CheckPage();
     case PDF_DATAAVAIL_ERROR:
-      return LoadAllFile(pHints);
+      return LoadAllFile();
     default:
       m_bPagesTreeLoad = true;
       m_bPagesLoad = true;
@@ -322,13 +322,12 @@ bool CPDF_DataAvail::CheckPageStatus(DownloadHints* pHints) {
   }
 }
 
-bool CPDF_DataAvail::LoadAllFile(DownloadHints* pHints) {
-  if (m_pFileAvail->IsDataAvail(0, (uint32_t)m_dwFileLen)) {
+bool CPDF_DataAvail::LoadAllFile() {
+  if (GetValidator()->IsWholeFileAvailable()) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return true;
   }
-
-  pHints->AddSegment(0, (uint32_t)m_dwFileLen);
+  GetValidator()->ScheduleDownloadWholeFile();
   return false;
 }
 
@@ -1001,7 +1000,7 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
   return true;
 }
 
-bool CPDF_DataAvail::CheckPage(uint32_t dwPage, DownloadHints* pHints) {
+bool CPDF_DataAvail::CheckPage(uint32_t dwPage) {
   while (true) {
     switch (m_docStatus) {
       case PDF_DATAAVAIL_PAGETREE:
@@ -1013,7 +1012,7 @@ bool CPDF_DataAvail::CheckPage(uint32_t dwPage, DownloadHints* pHints) {
           return false;
         break;
       case PDF_DATAAVAIL_ERROR:
-        return LoadAllFile(pHints);
+        return LoadAllFile();
       default:
         m_bPagesTreeLoad = true;
         m_bPagesLoad = true;
@@ -1225,9 +1224,9 @@ bool CPDF_DataAvail::LoadDocPages() {
   return false;
 }
 
-bool CPDF_DataAvail::LoadPages(DownloadHints* pHints) {
+bool CPDF_DataAvail::LoadPages() {
   while (!m_bPagesTreeLoad) {
-    if (!CheckPageStatus(pHints))
+    if (!CheckPageStatus())
       return false;
   }
 
@@ -1359,22 +1358,21 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     }
 
     if (!m_bMainXRefLoadedOK) {
-      if (!LoadAllFile(pHints))
+      if (!LoadAllFile())
         return DataNotAvailable;
       m_pDocument->GetParser()->RebuildCrossRef();
       ResetFirstCheck(dwPage);
       return DataAvailable;
     }
     if (m_bTotalLoadPageTree) {
-      if (!LoadPages(pHints))
+      if (!LoadPages())
         return DataNotAvailable;
     } else {
-      if (!m_bCurPageDictLoadOK && !CheckPage(dwPage, pHints))
+      if (!m_bCurPageDictLoadOK && !CheckPage(dwPage))
         return DataNotAvailable;
     }
   } else {
-    if (!m_bTotalLoadPageTree && !m_bCurPageDictLoadOK &&
-        !CheckPage(dwPage, pHints)) {
+    if (!m_bTotalLoadPageTree && !m_bCurPageDictLoadOK && !CheckPage(dwPage)) {
       return DataNotAvailable;
     }
   }

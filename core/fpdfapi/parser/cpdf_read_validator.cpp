@@ -84,6 +84,13 @@ FX_FILESIZE CPDF_ReadValidator::GetSize() {
 }
 
 void CPDF_ReadValidator::ScheduleDownload(FX_FILESIZE offset, size_t size) {
+  const FX_SAFE_UINT32 safe_size = size;
+  if (safe_size.IsValid())
+    ScheduleDataDownload(offset, safe_size.ValueOrDie());
+}
+
+void CPDF_ReadValidator::ScheduleDataDownload(FX_FILESIZE offset,
+                                              uint32_t size) {
   if (!hints_ || size == 0)
     return;
 
@@ -104,4 +111,21 @@ void CPDF_ReadValidator::ScheduleDownload(FX_FILESIZE offset, size_t size) {
     return;
   }
   hints_->AddSegment(start_segment_offset, segment_size.ValueOrDie());
+}
+
+void CPDF_ReadValidator::ScheduleDownloadWholeFile() {
+  const FX_SAFE_UINT32 safe_size = GetSize();
+  if (safe_size.IsValid())
+    ScheduleDataDownload(0, safe_size.ValueOrDie());
+}
+
+bool CPDF_ReadValidator::IsDataRangeAvailable(FX_FILESIZE offset,
+                                              uint32_t size) const {
+  return !file_avail_ || file_avail_->IsDataAvail(offset, size);
+}
+
+bool CPDF_ReadValidator::IsWholeFileAvailable() {
+  const FX_SAFE_UINT32 safe_size = GetSize();
+  return safe_size.IsValid() ? IsDataRangeAvailable(0, safe_size.ValueOrDie())
+                             : false;
 }

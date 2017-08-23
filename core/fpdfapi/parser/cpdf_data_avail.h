@@ -144,7 +144,7 @@ class CPDF_DataAvail final {
   bool CheckAcroForm();
   bool CheckAcroFormSubObject();
   bool CheckTrailerAppend(DownloadHints* pHints);
-  bool CheckPageStatus(DownloadHints* pHints);
+  bool CheckPageStatus();
 
   bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
   void SetStartOffset(FX_FILESIZE dwOffset);
@@ -158,14 +158,14 @@ class CPDF_DataAvail final {
                                          bool* pExistInFile);
   bool GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
   bool PreparePageItem();
-  bool LoadPages(DownloadHints* pHints);
+  bool LoadPages();
   bool LoadAllXref(DownloadHints* pHints);
-  bool LoadAllFile(DownloadHints* pHints);
+  bool LoadAllFile();
   DocAvailStatus CheckLinearizedData(DownloadHints* pHints);
   bool CheckPageAnnots(uint32_t dwPage);
 
   DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage);
-  bool CheckPage(uint32_t dwPage, DownloadHints* pHints);
+  bool CheckPage(uint32_t dwPage);
   bool LoadDocPages();
   bool LoadDocPage(uint32_t dwPage);
   bool CheckPageNode(const PageNode& pageNode,
