@@ -270,7 +270,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
     case PDF_DATAAVAIL_HINTTABLE:
       return CheckHintTables(pHints);
     case PDF_DATAAVAIL_END:
-      return CheckEnd(pHints);
+      return CheckEnd();
     case PDF_DATAAVAIL_CROSSREF:
       return CheckCrossRef(pHints);
     case PDF_DATAAVAIL_CROSSREF_ITEM:
@@ -743,16 +743,17 @@ bool CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
   return true;
 }
 
-bool CPDF_DataAvail::CheckEnd(DownloadHints* pHints) {
-  uint32_t req_pos = (uint32_t)(m_dwFileLen > 1024 ? m_dwFileLen - 1024 : 0);
-  uint32_t dwSize = (uint32_t)(m_dwFileLen - req_pos);
-  if (!m_pFileAvail->IsDataAvail(req_pos, dwSize)) {
-    pHints->AddSegment(req_pos, dwSize);
-    return false;
-  }
-
+bool CPDF_DataAvail::CheckEnd() {
+  const uint32_t req_pos =
+      (uint32_t)(m_dwFileLen > 1024 ? m_dwFileLen - 1024 : 0);
+  const uint32_t dwSize = (uint32_t)(m_dwFileLen - req_pos);
   std::vector<uint8_t> buffer(dwSize);
-  m_pFileRead->ReadBlock(buffer.data(), req_pos, dwSize);
+  {
+    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+    m_pFileRead->ReadBlock(buffer.data(), req_pos, dwSize);
+    if (GetValidator()->has_read_problems())
+      return false;
+  }
 
   auto file = pdfium::MakeRetain<CFX_MemoryStream>(
       buffer.data(), static_cast<size_t>(dwSize), false);
