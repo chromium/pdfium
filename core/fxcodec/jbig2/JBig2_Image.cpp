@@ -74,7 +74,7 @@ CJBig2_Image::~CJBig2_Image() {
   }
 }
 
-int CJBig2_Image::getPixel(int32_t x, int32_t y) {
+int CJBig2_Image::getPixel(int32_t x, int32_t y) const {
   if (!m_pData)
     return 0;
 

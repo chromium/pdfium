@@ -33,6 +33,15 @@ class CJBig2_GRRDProc {
   std::unique_ptr<CJBig2_Image> decode_Template0_unopt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* grContext);
+  uint32_t decode_Template0_unopt_CalculateContext(const CJBig2_Image& GRREG,
+                                                   const uint32_t* lines,
+                                                   uint32_t w,
+                                                   uint32_t h) const;
+  void decode_Template0_unopt_SetPixel(CJBig2_Image* GRREG,
+                                       uint32_t* lines,
+                                       uint32_t w,
+                                       uint32_t h,
+                                       int bVal);
 
   std::unique_ptr<CJBig2_Image> decode_Template0_opt(
       CJBig2_ArithDecoder* pArithDecoder,

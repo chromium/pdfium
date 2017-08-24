@@ -32,7 +32,7 @@ class CJBig2_Image {
   int32_t height() const { return m_nHeight; }
   int32_t stride() const { return m_nStride; }
 
-  int getPixel(int32_t x, int32_t y);
+  int getPixel(int32_t x, int32_t y) const;
   int32_t setPixel(int32_t x, int32_t y, int bVal);
 
   void copyLine(int32_t hTo, int32_t hFrom);
