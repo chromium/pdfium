@@ -9,6 +9,7 @@
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
@@ -26,6 +27,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   uint32_t height = GetInteger(data + 4);
   size -= kParameterSize;
   data += kParameterSize;
+
+  static constexpr uint32_t kMemLimit = 1024 * 1024 * 1024;  // 1 GB.
+  static constexpr uint32_t k1bppRgbComponents = 4;  // From CFX_DIBitmap impl.
+  FX_SAFE_UINT32 mem = width;
+  mem *= height;
+  mem *= k1bppRgbComponents;
+  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit)
+    return 0;
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!bitmap->Create(width, height, FXDIB_1bppRgb))
