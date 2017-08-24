@@ -16,8 +16,10 @@
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
-  if (GRW == 0 || GRH == 0)
+  if (GRW == 0 || GRW > JBIG2_MAX_IMAGE_SIZE || GRH == 0 ||
+      GRH > JBIG2_MAX_IMAGE_SIZE) {
     return pdfium::MakeUnique<CJBig2_Image>(GRW, GRH);
+  }
 
   if (!GRTEMPLATE) {
     if ((GRAT[0] == -1) && (GRAT[1] == -1) && (GRAT[2] == -1) &&
