@@ -919,11 +919,13 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
+  EXPECT_EQ(-1, FPDFPage_GetAnnotIndex(page, nullptr));
 
   // Retrieve the highlight annotation which has its popup defined.
   FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
   ASSERT_TRUE(annot);
   EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot));
+  EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot));
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> popup_key =
       GetFPDFWideString(L"Popup");
   ASSERT_TRUE(FPDFAnnot_HasKey(annot, popup_key.get()));
@@ -934,6 +936,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
   FPDF_ANNOTATION popup = FPDFAnnot_GetLinkedAnnot(annot, popup_key.get());
   ASSERT_TRUE(popup);
   EXPECT_EQ(FPDF_ANNOT_POPUP, FPDFAnnot_GetSubtype(popup));
+  EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page, popup));
   FS_RECTF rect;
   ASSERT_TRUE(FPDFAnnot_GetRect(popup, &rect));
   EXPECT_NEAR(612.0f, rect.left, 0.001f);

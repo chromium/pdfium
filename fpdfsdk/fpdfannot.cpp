@@ -241,6 +241,30 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
   return pNewAnnot.release();
 }
 
+FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
+                                                     FPDF_ANNOTATION annot) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
+  if (!pPage || !pPage->m_pFormDict || !pAnnot || !pAnnot->GetAnnotDict())
+    return -1;
+
+  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
+  if (!pAnnots)
+    return -1;
+
+  CPDF_Dictionary* pDict = pAnnot->GetAnnotDict();
+  auto it =
+      std::find_if(pAnnots->begin(), pAnnots->end(),
+                   [pDict](const std::unique_ptr<CPDF_Object>& candidate) {
+                     return candidate->GetDirect() == pDict;
+                   });
+
+  if (it == pAnnots->end())
+    return -1;
+
+  return it - pAnnots->begin();
+}
+
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_CloseAnnot(FPDF_ANNOTATION annot) {
   delete CPDFAnnotContextFromFPDFAnnotation(annot);
 }
