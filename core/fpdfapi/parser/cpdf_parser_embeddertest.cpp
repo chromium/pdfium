@@ -53,3 +53,7 @@ TEST_F(CPDFParserEmbeddertest, Bug_602650) {
   FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
+
+TEST_F(CPDFParserEmbeddertest, Bug_757705) {
+  EXPECT_TRUE(OpenDocument("bug_757705.pdf"));
+}
