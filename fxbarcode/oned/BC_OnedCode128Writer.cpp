@@ -193,7 +193,9 @@ int32_t CBC_OnedCode128Writer::Encode128C(const CFX_ByteString& contents,
     int32_t patternIndex;
     char ch = contents[position];
     if (std::isdigit(ch)) {
-      patternIndex = FXSYS_atoi(contents.Mid(position, 2).c_str());
+      patternIndex = FXSYS_atoi(
+          contents.Mid(position, position + 1 < contents.GetLength() ? 2 : 1)
+              .c_str());
       ++position;
       if (position < contents.GetLength() && std::isdigit(contents[position]))
         ++position;

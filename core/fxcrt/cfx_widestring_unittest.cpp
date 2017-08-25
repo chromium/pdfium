@@ -304,13 +304,6 @@ TEST(fxcrt, WideStringConcatInPlace) {
   fred.Concat(L"DY", 2);
   EXPECT_EQ(L"FREDDY", fred);
   EXPECT_EQ(L"FRED", copy);
-
-  // Test invalid arguments.
-  copy = fred;
-  fred.Concat(L"freddy", -6);
-  CFX_WideString not_aliased(L"xxxxxx");
-  EXPECT_EQ(L"FREDDY", fred);
-  EXPECT_EQ(L"xxxxxx", not_aliased);
 }
 
 TEST(fxcrt, WideStringRemove) {
@@ -483,10 +476,10 @@ TEST(fxcrt, WideStringMid) {
   EXPECT_EQ(L"D", fred.Mid(3, 1));
   EXPECT_EQ(L"FR", fred.Mid(0, 2));
   EXPECT_EQ(L"FRED", fred.Mid(0, 4));
-  EXPECT_EQ(L"FRED", fred.Mid(0, 10));
+  EXPECT_EQ(L"", fred.Mid(0, 10));
 
-  EXPECT_EQ(L"FR", fred.Mid(-1, 2));
-  EXPECT_EQ(L"RED", fred.Mid(1, 4));
+  EXPECT_EQ(L"", fred.Mid(-1, 2));
+  EXPECT_EQ(L"", fred.Mid(1, 4));
   EXPECT_EQ(L"", fred.Mid(4, 1));
 
   CFX_WideString empty;
@@ -501,7 +494,7 @@ TEST(fxcrt, WideStringLeft) {
   EXPECT_EQ(L"FRE", fred.Left(3));
   EXPECT_EQ(L"FRED", fred.Left(4));
 
-  EXPECT_EQ(L"FRED", fred.Left(5));
+  EXPECT_EQ(L"", fred.Left(5));
   EXPECT_EQ(L"", fred.Left(-1));
 
   CFX_WideString empty;
@@ -518,7 +511,7 @@ TEST(fxcrt, WideStringRight) {
   EXPECT_EQ(L"RED", fred.Right(3));
   EXPECT_EQ(L"FRED", fred.Right(4));
 
-  EXPECT_EQ(L"FRED", fred.Right(5));
+  EXPECT_EQ(L"", fred.Right(5));
   EXPECT_EQ(L"", fred.Right(-1));
 
   CFX_WideString empty;

@@ -291,7 +291,7 @@ TEST(fxcrt, ByteStringOperatorNE) {
 TEST(fxcrt, ByteStringCNull) {
   CFX_ByteStringC null_string;
   EXPECT_FALSE(null_string.raw_str());
-  EXPECT_EQ(null_string.GetLength(), 0);
+  EXPECT_EQ(0, null_string.GetLength());
   EXPECT_TRUE(null_string.IsEmpty());
 
   CFX_ByteStringC another_null_string;
@@ -299,27 +299,27 @@ TEST(fxcrt, ByteStringCNull) {
 
   CFX_ByteStringC copied_null_string(null_string);
   EXPECT_FALSE(copied_null_string.raw_str());
-  EXPECT_EQ(copied_null_string.GetLength(), 0);
+  EXPECT_EQ(0, copied_null_string.GetLength());
   EXPECT_TRUE(copied_null_string.IsEmpty());
   EXPECT_EQ(null_string, copied_null_string);
 
   CFX_ByteStringC empty_string("");  // Pointer to NUL, not NULL pointer.
   EXPECT_TRUE(empty_string.raw_str());
-  EXPECT_EQ(empty_string.GetLength(), 0);
+  EXPECT_EQ(0, empty_string.GetLength());
   EXPECT_TRUE(empty_string.IsEmpty());
   EXPECT_EQ(null_string, empty_string);
 
   CFX_ByteStringC assigned_null_string("initially not nullptr");
   assigned_null_string = null_string;
   EXPECT_FALSE(assigned_null_string.raw_str());
-  EXPECT_EQ(assigned_null_string.GetLength(), 0);
+  EXPECT_EQ(0, assigned_null_string.GetLength());
   EXPECT_TRUE(assigned_null_string.IsEmpty());
   EXPECT_EQ(null_string, assigned_null_string);
 
   CFX_ByteStringC assigned_nullptr_string("initially not nullptr");
   assigned_nullptr_string = nullptr;
   EXPECT_FALSE(assigned_nullptr_string.raw_str());
-  EXPECT_EQ(assigned_nullptr_string.GetLength(), 0);
+  EXPECT_EQ(0, assigned_nullptr_string.GetLength());
   EXPECT_TRUE(assigned_nullptr_string.IsEmpty());
   EXPECT_EQ(null_string, assigned_nullptr_string);
 
@@ -345,13 +345,6 @@ TEST(fxcrt, ByteStringConcat) {
   fred.Concat("DY", 2);
   EXPECT_EQ("FREDDY", fred);
   EXPECT_EQ("FRED", copy);
-
-  // Test invalid arguments.
-  copy = fred;
-  fred.Concat("freddy", -6);
-  CFX_ByteString not_aliased("xxxxxx");
-  EXPECT_EQ("FREDDY", fred);
-  EXPECT_EQ("xxxxxx", not_aliased);
 }
 
 TEST(fxcrt, ByteStringRemove) {
@@ -524,10 +517,10 @@ TEST(fxcrt, ByteStringMid) {
   EXPECT_EQ("D", fred.Mid(3, 1));
   EXPECT_EQ("FR", fred.Mid(0, 2));
   EXPECT_EQ("FRED", fred.Mid(0, 4));
-  EXPECT_EQ("FRED", fred.Mid(0, 10));
+  EXPECT_EQ("", fred.Mid(0, 10));
 
-  EXPECT_EQ("FR", fred.Mid(-1, 2));
-  EXPECT_EQ("RED", fred.Mid(1, 4));
+  EXPECT_EQ("", fred.Mid(-1, 2));
+  EXPECT_EQ("RED", fred.Mid(1, 3));
   EXPECT_EQ("", fred.Mid(4, 1));
 
   CFX_ByteString empty;
@@ -542,7 +535,7 @@ TEST(fxcrt, ByteStringLeft) {
   EXPECT_EQ("FRE", fred.Left(3));
   EXPECT_EQ("FRED", fred.Left(4));
 
-  EXPECT_EQ("FRED", fred.Left(5));
+  EXPECT_EQ("", fred.Left(5));
   EXPECT_EQ("", fred.Left(-1));
 
   CFX_ByteString empty;
@@ -559,7 +552,7 @@ TEST(fxcrt, ByteStringRight) {
   EXPECT_EQ("RED", fred.Right(3));
   EXPECT_EQ("FRED", fred.Right(4));
 
-  EXPECT_EQ("FRED", fred.Right(5));
+  EXPECT_EQ("", fred.Right(5));
   EXPECT_EQ("", fred.Right(-1));
 
   CFX_ByteString empty;
@@ -1004,31 +997,31 @@ TEST(fxcrt, ByteStringCMid) {
   EXPECT_EQ(null_string, null_string.Mid(1, 1));
 
   CFX_ByteStringC empty_string("");
-  EXPECT_EQ(empty_string, empty_string.Mid(0, 1));
-  EXPECT_EQ(empty_string, empty_string.Mid(1, 1));
+  EXPECT_EQ("", empty_string.Mid(0, 1));
+  EXPECT_EQ("", empty_string.Mid(1, 1));
 
   CFX_ByteStringC single_character("a");
-  EXPECT_EQ(empty_string, single_character.Mid(0, 0));
+  EXPECT_EQ("", single_character.Mid(0, 0));
   EXPECT_EQ(single_character, single_character.Mid(0, 1));
-  EXPECT_EQ(empty_string, single_character.Mid(1, 0));
-  EXPECT_EQ(empty_string, single_character.Mid(1, 1));
+  EXPECT_EQ("", single_character.Mid(1, 0));
+  EXPECT_EQ("", single_character.Mid(1, 1));
 
   CFX_ByteStringC longer_string("abcdef");
   EXPECT_EQ(longer_string, longer_string.Mid(0, 6));
-  EXPECT_EQ(longer_string, longer_string.Mid(0, 187));
-  EXPECT_EQ(longer_string, longer_string.Mid(-42, 6));
-  EXPECT_EQ(longer_string, longer_string.Mid(-42, 187));
+  EXPECT_EQ("", longer_string.Mid(0, 187));
+  EXPECT_EQ("", longer_string.Mid(-42, 6));
+  EXPECT_EQ("", longer_string.Mid(-42, 187));
 
   CFX_ByteStringC leading_substring("ab");
   EXPECT_EQ(leading_substring, longer_string.Mid(0, 2));
-  EXPECT_EQ(leading_substring, longer_string.Mid(-1, 2));
+  EXPECT_EQ("", longer_string.Mid(-1, 2));
 
   CFX_ByteStringC middle_substring("bcde");
   EXPECT_EQ(middle_substring, longer_string.Mid(1, 4));
 
   CFX_ByteStringC trailing_substring("ef");
   EXPECT_EQ(trailing_substring, longer_string.Mid(4, 2));
-  EXPECT_EQ(trailing_substring, longer_string.Mid(4, 3));
+  EXPECT_EQ("", longer_string.Mid(4, 3));
 }
 
 TEST(fxcrt, ByteStringCElementAccess) {

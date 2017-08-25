@@ -119,15 +119,24 @@ class CFX_StringCTemplate {
   }
 
   FX_STRSIZE GetLength() const { return m_Length; }
+
   bool IsEmpty() const { return m_Length == 0; }
 
+  bool IsValidIndex(FX_STRSIZE index) const {
+    return 0 <= index && index < GetLength();
+  }
+
+  bool IsValidLength(FX_STRSIZE length) const {
+    return 0 <= length && length <= GetLength();
+  }
+
   const UnsignedType& operator[](const FX_STRSIZE index) const {
-    ASSERT(index >= 0 && index < GetLength());
+    ASSERT(IsValidIndex(index));
     return m_Ptr.Get()[index];
   }
 
   const CharType CharAt(const FX_STRSIZE index) const {
-    ASSERT(index >= 0 && index < GetLength());
+    ASSERT(IsValidIndex(index));
     return static_cast<CharType>(m_Ptr.Get()[index]);
   }
 
@@ -141,33 +150,32 @@ class CFX_StringCTemplate {
 
   bool Contains(CharType ch) const { return Find(ch).has_value(); }
 
-  CFX_StringCTemplate Mid(FX_STRSIZE index, FX_STRSIZE count) const {
-    ASSERT(count >= 0);
-    if (index > m_Length)
+  CFX_StringCTemplate Mid(FX_STRSIZE first, FX_STRSIZE count) const {
+    if (!m_Ptr.Get())
       return CFX_StringCTemplate();
 
-    index = pdfium::clamp(index, 0, m_Length);
-    count = pdfium::clamp(count, 0, m_Length - index);
-    if (count == 0)
+    if (!IsValidIndex(first))
       return CFX_StringCTemplate();
 
-    return CFX_StringCTemplate(m_Ptr.Get() + index, count);
+    if (count == 0 || !IsValidLength(count))
+      return CFX_StringCTemplate();
+
+    if (!IsValidIndex(first + count - 1))
+      return CFX_StringCTemplate();
+
+    return CFX_StringCTemplate(m_Ptr.Get() + first, count);
   }
 
   CFX_StringCTemplate Left(FX_STRSIZE count) const {
-    count = pdfium::clamp(count, 0, m_Length);
-    if (count == 0)
+    if (count == 0 || !IsValidLength(count))
       return CFX_StringCTemplate();
-
-    return CFX_StringCTemplate(m_Ptr.Get(), count);
+    return Mid(0, count);
   }
 
   CFX_StringCTemplate Right(FX_STRSIZE count) const {
-    count = pdfium::clamp(count, 0, m_Length);
-    if (count == 0)
+    if (count == 0 || !IsValidLength(count))
       return CFX_StringCTemplate();
-
-    return CFX_StringCTemplate(m_Ptr.Get() + m_Length - count, count);
+    return Mid(GetLength() - count, count);
   }
 
   bool operator<(const CFX_StringCTemplate& that) const {
