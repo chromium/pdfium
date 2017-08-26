@@ -44,6 +44,9 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
   // Returns the name of the PDF to use.
   virtual const char* GetDocumentName() const = 0;
 
+  // Returns the type of field(s) in the PDF.
+  virtual int GetFormType() const = 0;
+
   // Optionally do some sanity check on the document after loading.
   virtual void FormSanityChecks() {}
 
@@ -56,10 +59,8 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
     FORM_OnLButtonUp(form_handle(), page_, 0, x, y);
   }
 
-  void TypeTextIntoTextField(int num_chars, int form_type, double x, double y) {
-    ASSERT(form_type == FPDF_FORMFIELD_COMBOBOX ||
-           form_type == FPDF_FORMFIELD_TEXTFIELD);
-    EXPECT_EQ(form_type,
+  void TypeTextIntoTextField(int num_chars, double x, double y) {
+    EXPECT_EQ(GetFormType(),
               FPDFPage_HasFormFieldAtPoint(form_handle(), page_, x, y));
     ClickOnFormFieldAtPoint(x, y);
 
@@ -136,6 +137,8 @@ class FPDFFormFillTextFormEmbeddertest
     // - "CharLimit" - MaxLen: 10, V: Elephant.
     return "text_form_multiple.pdf";
   }
+
+  int GetFormType() const override { return FPDF_FORMFIELD_TEXTFIELD; }
 };
 
 class FPDFFormFillComboBoxFormEmbeddertest
@@ -149,10 +152,11 @@ class FPDFFormFillComboBoxFormEmbeddertest
     return "combobox_form.pdf";
   }
 
+  int GetFormType() const override { return FPDF_FORMFIELD_COMBOBOX; }
+
   void FormSanityChecks() override {
-    EXPECT_EQ(
-        FPDF_FORMFIELD_COMBOBOX,
-        FPDFPage_HasFormFieldAtPoint(form_handle(), page(), 102.0, 113.0));
+    EXPECT_EQ(GetFormType(), FPDFPage_HasFormFieldAtPoint(form_handle(), page(),
+                                                          102.0, 113.0));
   }
 
   // Selects one of the pre-selected values from a combobox with three options.
@@ -429,7 +433,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextEmptyAndBasicKeyboard) {
   CheckSelection(L"");
 
   // Test basic selection.
-  TypeTextIntoTextField(3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(3, 120.0, 120.0);
   SelectTextWithKeyboard(3, FWL_VKEY_Left, 123.0, 115.5);
   CheckSelection(L"ABC");
 }
@@ -439,13 +443,13 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextEmptyAndBasicMouse) {
   CheckSelection(L"");
 
   // Test basic selection.
-  TypeTextIntoTextField(3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(3, 120.0, 120.0);
   SelectTextWithMouse(125.0, 102.0, 115.5);
   CheckSelection(L"ABC");
 }
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextFragmentsKeyBoard) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithKeyboard(1, FWL_VKEY_Right, 102.0, 115.5);
@@ -469,7 +473,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextFragmentsKeyBoard) {
 }
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextFragmentsMouse) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithMouse(102.0, 106.0, 115.5);
@@ -512,7 +516,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
   CheckSelection(L"");
 
   // Test basic selection of text within user editable combobox using keyboard.
-  TypeTextIntoTextField(3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(3, 102.0, 62.0);
   SelectTextWithKeyboard(3, FWL_VKEY_Left, 128.0, 62.0);
   CheckSelection(L"ABC");
 
@@ -527,7 +531,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
   CheckSelection(L"");
 
   // Test basic selection of text within user editable combobox using mouse.
-  TypeTextIntoTextField(3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(3, 102.0, 62.0);
   SelectTextWithMouse(128.0, 103.0, 62.0);
   CheckSelection(L"ABC");
 
@@ -567,7 +571,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        GetSelectedTextFragmentsEditableComboBoxKeyboard) {
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithKeyboard(1, FWL_VKEY_Right, 102.0, 62.0);
@@ -598,7 +602,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        GetSelectedTextFragmentsEditableComboBoxMouse) {
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
 
   // Test selecting first character in forward direction.
   SelectTextWithMouse(102.0, 107.0, 62.0);
@@ -623,7 +627,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldEntireSelection) {
   // Select entire contents of text field.
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
   SelectTextWithMouse(191.0, 102.0, 115.5);
   CheckSelection(L"ABCDEFGHIJKL");
 
@@ -637,7 +641,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldEntireSelection) {
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionMiddle) {
   // Select middle section of text.
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
   SelectTextWithMouse(170.0, 125.0, 115.5);
   CheckSelection(L"DEFGHI");
 
@@ -650,7 +654,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionMiddle) {
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionLeft) {
   // Select first few characters of text.
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
   SelectTextWithMouse(102.0, 132.0, 115.5);
   CheckSelection(L"ABCD");
 
@@ -663,7 +667,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionLeft) {
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionRight) {
   // Select last few characters of text.
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
   SelectTextWithMouse(191.0, 165.0, 115.5);
   CheckSelection(L"IJKL");
 
@@ -676,7 +680,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionRight) {
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteEmptyTextFieldSelection) {
   // Do not select text.
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
   CheckSelection(L"");
 
   // Test that attempt to delete empty text selection has no effect.
@@ -688,7 +692,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteEmptyTextFieldSelection) {
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        DeleteEditableComboBoxEntireSelection) {
   // Select entire contents of user-editable combobox text field.
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
   SelectTextWithMouse(178.0, 102.0, 62.0);
   CheckSelection(L"ABCDEFGHIJ");
 
@@ -702,7 +706,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        DeleteEditableComboBoxSelectionMiddle) {
   // Select middle section of text.
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
   SelectTextWithMouse(168.0, 127.0, 62.0);
   CheckSelection(L"DEFGH");
 
@@ -716,7 +720,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        DeleteEditableComboBoxSelectionLeft) {
   // Select first few characters of text.
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
   SelectTextWithMouse(102.0, 132.0, 62.0);
   CheckSelection(L"ABCD");
 
@@ -730,7 +734,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        DeleteEditableComboBoxSelectionRight) {
   // Select last few characters of text.
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
   SelectTextWithMouse(178.0, 152.0, 62.0);
   CheckSelection(L"GHIJ");
 
@@ -744,7 +748,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        DeleteEmptyEditableComboBoxSelection) {
   // Do not select text.
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
   CheckSelection(L"");
 
   // Test that attempt to delete empty text selection has no effect.
@@ -768,7 +772,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInEmptyTextField) {
 }
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldLeft) {
-  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(8, 120.0, 120.0);
 
   // Click on the leftmost part of the text field.
   ClickOnFormFieldAtPoint(102.0, 115.5);
@@ -785,7 +789,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldLeft) {
 }
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldMiddle) {
-  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(8, 120.0, 120.0);
 
   // Click on the middle of the text field.
   ClickOnFormFieldAtPoint(134.0, 115.5);
@@ -802,7 +806,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldMiddle) {
 }
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldRight) {
-  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(8, 120.0, 120.0);
 
   // Click on the rightmost part of the text field.
   ClickOnFormFieldAtPoint(166.0, 115.5);
@@ -820,7 +824,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldRight) {
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldWhole) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select entire string in text field.
   SelectTextWithKeyboard(12, FWL_VKEY_Left, 195.0, 115.0);
@@ -839,7 +843,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldLeft) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select left portion of string in text field.
   SelectTextWithKeyboard(6, FWL_VKEY_Left, 148.0, 115.0);
@@ -858,7 +862,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldMiddle) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select middle portion of string in text field.
   SelectTextWithKeyboard(6, FWL_VKEY_Left, 171.0, 115.0);
@@ -877,7 +881,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldRight) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select right portion of string in text field.
   SelectTextWithKeyboard(6, FWL_VKEY_Left, 195.0, 115.0);
@@ -911,7 +915,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextInPopulatedEditableComboBoxLeft) {
-  TypeTextIntoTextField(6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(6, 102.0, 62.0);
 
   // Click on the leftmost part of the user-editable combobox.
   ClickOnFormFieldAtPoint(102.0, 62.0);
@@ -929,7 +933,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextInPopulatedEditableComboBoxMiddle) {
-  TypeTextIntoTextField(6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(6, 102.0, 62.0);
 
   // Click on the middle of the user-editable combobox.
   ClickOnFormFieldAtPoint(126.0, 62.0);
@@ -948,7 +952,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextInPopulatedEditableComboBoxRight) {
-  TypeTextIntoTextField(6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(6, 102.0, 62.0);
 
   // Click on the rightmost part of the user-editable combobox.
   ClickOnFormFieldAtPoint(150.0, 62.0);
@@ -966,7 +970,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxWhole) {
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
 
   // Select entire string in user-editable combobox.
   SelectTextWithKeyboard(10, FWL_VKEY_Left, 183.0, 62.0);
@@ -985,7 +989,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxLeft) {
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
 
   // Select left portion of string in user-editable combobox.
   SelectTextWithKeyboard(5, FWL_VKEY_Left, 142.0, 62.0);
@@ -1004,7 +1008,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxMiddle) {
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
 
   // Select middle portion of string in user-editable combobox.
   SelectTextWithKeyboard(5, FWL_VKEY_Left, 167.0, 62.0);
@@ -1023,7 +1027,7 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
 
 TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxRight) {
-  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, 102.0, 62.0);
 
   // Select right portion of string in user-editable combobox.
   SelectTextWithKeyboard(5, FWL_VKEY_Left, 183.0, 62.0);
@@ -1102,7 +1106,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextInPopulatedCharLimitTextFieldMiddle) {
-  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(8, 120.0, 120.0);
 
   // Click on the middle of the text field.
   ClickOnFormFieldAtPoint(134.0, 60.0);
@@ -1120,7 +1124,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextInPopulatedCharLimitTextFieldRight) {
-  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(8, 120.0, 120.0);
 
   // Click on the rightmost part of the text field.
   ClickOnFormFieldAtPoint(166.0, 60.0);
@@ -1138,7 +1142,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldWhole) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select entire string in text field.
   SelectTextWithKeyboard(12, FWL_VKEY_Left, 195.0, 60.0);
@@ -1157,7 +1161,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldLeft) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select left portion of string in text field.
   SelectTextWithKeyboard(4, FWL_VKEY_Left, 122.0, 60.0);
@@ -1176,7 +1180,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldMiddle) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select middle portion of string in text field.
   SelectTextWithKeyboard(4, FWL_VKEY_Left, 136.0, 60.0);
@@ -1195,7 +1199,7 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
 
 TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldRight) {
-  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, 120.0, 120.0);
 
   // Select right portion of string in text field.
   SelectTextWithKeyboard(4, FWL_VKEY_Left, 152.0, 60.0);
