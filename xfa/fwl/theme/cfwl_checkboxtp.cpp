@@ -20,6 +20,13 @@ namespace {
 
 const int kSignPath = 100;
 
+CFX_PointF ScaleBezierPoint(const CFX_PointF& point) {
+  CFX_PointF scaled_point(point);
+  scaled_point.x *= FX_BEZIER;
+  scaled_point.y *= FX_BEZIER;
+  return scaled_point;
+}
+
 }  // namespace
 
 #define CHECKBOX_COLOR_BOXLT1 (ArgbEncode(255, 172, 168, 153))
@@ -234,24 +241,24 @@ void CFWL_CheckBoxTP::InitCheckPath(float fCheckLen) {
     CFX_PointF pt15(fWidth / 3.5f, fBottom + fHeight * 3.5f / 5.0f);
     m_pCheckPath->MoveTo(pt1);
 
-    CFX_PointF p1 = CFX_PointF(pt12.x - pt1.x, pt12.y - pt1.y) * FX_BEZIER;
-    CFX_PointF p2 = CFX_PointF(pt21.x - pt2.x, pt21.y - pt2.y) * FX_BEZIER;
+    CFX_PointF p1 = ScaleBezierPoint(pt12 - pt1);
+    CFX_PointF p2 = ScaleBezierPoint(pt21 - pt2);
     m_pCheckPath->BezierTo(pt1 + p1, pt2 + p2, pt2);
 
-    p1 = CFX_PointF(pt23.x - pt2.x, pt23.y - pt2.y) * FX_BEZIER;
-    p2 = CFX_PointF(pt32.x - pt3.x, pt32.y - pt3.y) * FX_BEZIER;
+    p1 = ScaleBezierPoint(pt23 - pt2);
+    p2 = ScaleBezierPoint(pt32 - pt3);
     m_pCheckPath->BezierTo(pt2 + p1, pt3 + p2, pt3);
 
-    p1 = CFX_PointF(pt34.x - pt3.x, pt34.y - pt3.y) * FX_BEZIER;
-    p2 = CFX_PointF(pt43.x - pt4.x, pt43.y - pt4.y) * FX_BEZIER;
+    p1 = ScaleBezierPoint(pt34 - pt3);
+    p2 = ScaleBezierPoint(pt43 - pt4);
     m_pCheckPath->BezierTo(pt3 + p1, pt4 + p2, pt4);
 
-    p1 = CFX_PointF(pt45.x - pt4.x, pt45.y - pt4.y) * FX_BEZIER;
-    p2 = CFX_PointF(pt54.x - pt5.x, pt54.y - pt5.y) * FX_BEZIER;
+    p1 = ScaleBezierPoint(pt45 - pt4);
+    p2 = ScaleBezierPoint(pt54 - pt5);
     m_pCheckPath->BezierTo(pt4 + p1, pt5 + p2, pt5);
 
-    p1 = CFX_PointF(pt51.x - pt5.x, pt51.y - pt5.y) * FX_BEZIER;
-    p2 = CFX_PointF(pt15.x - pt1.x, pt15.y - pt1.y) * FX_BEZIER;
+    p1 = ScaleBezierPoint(pt51 - pt5);
+    p2 = ScaleBezierPoint(pt15 - pt1);
     m_pCheckPath->BezierTo(pt5 + p1, pt1 + p2, pt1);
 
     float fScale = fCheckLen / kSignPath;

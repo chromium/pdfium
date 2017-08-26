@@ -20,10 +20,7 @@ class CFX_PTemplate {
   CFX_PTemplate() : x(0), y(0) {}
   CFX_PTemplate(BaseType new_x, BaseType new_y) : x(new_x), y(new_y) {}
   CFX_PTemplate(const CFX_PTemplate& other) : x(other.x), y(other.y) {}
-  void clear() {
-    x = 0;
-    y = 0;
-  }
+
   CFX_PTemplate operator=(const CFX_PTemplate& other) {
     if (this != &other) {
       x = other.x;
@@ -47,27 +44,11 @@ class CFX_PTemplate {
     y -= obj.y;
     return *this;
   }
-  CFX_PTemplate& operator*=(BaseType factor) {
-    x *= factor;
-    y *= factor;
-    return *this;
-  }
-  CFX_PTemplate& operator/=(BaseType divisor) {
-    x /= divisor;
-    y /= divisor;
-    return *this;
-  }
   CFX_PTemplate operator+(const CFX_PTemplate& other) const {
     return CFX_PTemplate(x + other.x, y + other.y);
   }
   CFX_PTemplate operator-(const CFX_PTemplate& other) const {
     return CFX_PTemplate(x - other.x, y - other.y);
-  }
-  CFX_PTemplate operator*(BaseType factor) const {
-    return CFX_PTemplate(x * factor, y * factor);
-  }
-  CFX_PTemplate operator/(BaseType divisor) const {
-    return CFX_PTemplate(x / divisor, y / divisor);
   }
 
   BaseType x;
