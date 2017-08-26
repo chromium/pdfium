@@ -18,70 +18,89 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 using testing::_;
-using testing::Return;
 
-class FPDFFormFillEmbeddertest : public EmbedderTest {
+using FPDFFormFillEmbeddertest = EmbedderTest;
+
+// A base class for many related tests that involve clicking and typing into
+// form fields.
+class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
  protected:
-  void ClickOnFormFieldAtPoint(FPDF_PAGE page, double x, double y) {
-    // Click on the text field or combobox as specified by coordinates.
-    FORM_OnMouseMove(form_handle(), page, 0, x, y);
-    FORM_OnLButtonDown(form_handle(), page, 0, x, y);
-    FORM_OnLButtonUp(form_handle(), page, 0, x, y);
+  FPDFFormFillInteractiveEmbeddertest() = default;
+  ~FPDFFormFillInteractiveEmbeddertest() override = default;
+
+  void SetUp() override {
+    FPDFFormFillEmbeddertest::SetUp();
+    ASSERT_TRUE(OpenDocument(GetDocumentName()));
+    page_ = LoadPage(0);
+    ASSERT_TRUE(page_);
+    FormSanityChecks();
   }
 
-  void TypeTextIntoTextField(FPDF_PAGE page,
-                             int num_chars,
-                             int form_type,
-                             double x,
-                             double y) {
+  void TearDown() override {
+    UnloadPage(page_);
+    FPDFFormFillEmbeddertest::TearDown();
+  }
+
+  // Returns the name of the PDF to use.
+  virtual const char* GetDocumentName() const = 0;
+
+  // Optionally do some sanity check on the document after loading.
+  virtual void FormSanityChecks() {}
+
+  FPDF_PAGE page() { return page_; }
+
+  void ClickOnFormFieldAtPoint(double x, double y) {
+    // Click on the text field or combobox as specified by coordinates.
+    FORM_OnMouseMove(form_handle(), page_, 0, x, y);
+    FORM_OnLButtonDown(form_handle(), page_, 0, x, y);
+    FORM_OnLButtonUp(form_handle(), page_, 0, x, y);
+  }
+
+  void TypeTextIntoTextField(int num_chars, int form_type, double x, double y) {
     ASSERT(form_type == FPDF_FORMFIELD_COMBOBOX ||
            form_type == FPDF_FORMFIELD_TEXTFIELD);
     EXPECT_EQ(form_type,
-              FPDFPage_HasFormFieldAtPoint(form_handle(), page, x, y));
-    ClickOnFormFieldAtPoint(page, x, y);
+              FPDFPage_HasFormFieldAtPoint(form_handle(), page_, x, y));
+    ClickOnFormFieldAtPoint(x, y);
 
     // Type text starting with 'A' to as many chars as specified by |num_chars|.
     for (int i = 0; i < num_chars; ++i) {
-      FORM_OnChar(form_handle(), page, 'A' + i, 0);
+      FORM_OnChar(form_handle(), page_, 'A' + i, 0);
     }
   }
 
   // Navigates to text field using the mouse and then selects text via the
   // shift and specfied left or right arrow key.
-  void SelectTextWithKeyboard(FPDF_PAGE page,
-                              int num_chars,
+  void SelectTextWithKeyboard(int num_chars,
                               int arrow_key,
                               double x,
                               double y) {
     // Navigate to starting position for selection.
-    ClickOnFormFieldAtPoint(page, x, y);
+    ClickOnFormFieldAtPoint(x, y);
 
     // Hold down shift (and don't release until entire text is selected).
-    FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Shift, 0);
+    FORM_OnKeyDown(form_handle(), page_, FWL_VKEY_Shift, 0);
 
     // Select text char by char via left or right arrow key.
     for (int i = 0; i < num_chars; ++i) {
-      FORM_OnKeyDown(form_handle(), page, arrow_key, FWL_EVENTFLAG_ShiftKey);
-      FORM_OnKeyUp(form_handle(), page, arrow_key, FWL_EVENTFLAG_ShiftKey);
+      FORM_OnKeyDown(form_handle(), page_, arrow_key, FWL_EVENTFLAG_ShiftKey);
+      FORM_OnKeyUp(form_handle(), page_, arrow_key, FWL_EVENTFLAG_ShiftKey);
     }
-    FORM_OnKeyUp(form_handle(), page, FWL_VKEY_Shift, 0);
+    FORM_OnKeyUp(form_handle(), page_, FWL_VKEY_Shift, 0);
   }
 
   // Uses the mouse to navigate to text field and select text.
-  void SelectTextWithMouse(FPDF_PAGE page,
-                           double start_x,
-                           double end_x,
-                           double y) {
+  void SelectTextWithMouse(double start_x, double end_x, double y) {
     // Navigate to starting position and click mouse.
-    FORM_OnMouseMove(form_handle(), page, 0, start_x, y);
-    FORM_OnLButtonDown(form_handle(), page, 0, start_x, y);
+    FORM_OnMouseMove(form_handle(), page_, 0, start_x, y);
+    FORM_OnLButtonDown(form_handle(), page_, 0, start_x, y);
 
     // Hold down mouse until reach end of desired selection.
-    FORM_OnMouseMove(form_handle(), page, 0, end_x, y);
-    FORM_OnLButtonUp(form_handle(), page, 0, end_x, y);
+    FORM_OnMouseMove(form_handle(), page_, 0, end_x, y);
+    FORM_OnLButtonUp(form_handle(), page_, 0, end_x, y);
   }
 
-  void CheckSelection(FPDF_PAGE page, const CFX_WideStringC& expected_string) {
+  void CheckSelection(const CFX_WideStringC& expected_string) {
     // Calculate expected length for selected text.
     int num_chars = expected_string.GetLength();
 
@@ -89,34 +108,70 @@ class FPDFFormFillEmbeddertest : public EmbedderTest {
     const unsigned long expected_length =
         sizeof(unsigned short) * (num_chars + 1);
     unsigned long sel_text_len =
-        FORM_GetSelectedText(form_handle(), page, nullptr, 0);
+        FORM_GetSelectedText(form_handle(), page_, nullptr, 0);
     ASSERT_EQ(expected_length, sel_text_len);
 
     std::vector<unsigned short> buf(sel_text_len);
-    EXPECT_EQ(expected_length, FORM_GetSelectedText(form_handle(), page,
+    EXPECT_EQ(expected_length, FORM_GetSelectedText(form_handle(), page_,
                                                     buf.data(), sel_text_len));
 
     EXPECT_EQ(expected_string,
               CFX_WideString::FromUTF16LE(buf.data(), num_chars));
   }
 
+ private:
+  FPDF_PAGE page_ = nullptr;
+};
+
+class FPDFFormFillTextFormEmbeddertest
+    : public FPDFFormFillInteractiveEmbeddertest {
+ protected:
+  FPDFFormFillTextFormEmbeddertest() = default;
+  ~FPDFFormFillTextFormEmbeddertest() override = default;
+
+  const char* GetDocumentName() const override {
+    // PDF with several form text fields:
+    // - "Text Box" - No special attributes.
+    // - "ReadOnly" - Ff: 1.
+    // - "CharLimit" - MaxLen: 10, V: Elephant.
+    return "text_form_multiple.pdf";
+  }
+};
+
+class FPDFFormFillComboBoxFormEmbeddertest
+    : public FPDFFormFillInteractiveEmbeddertest {
+ protected:
+  FPDFFormFillComboBoxFormEmbeddertest() = default;
+  ~FPDFFormFillComboBoxFormEmbeddertest() override = default;
+
+  const char* GetDocumentName() const override {
+    // PDF with form comboboxes.
+    return "combobox_form.pdf";
+  }
+
+  void FormSanityChecks() override {
+    EXPECT_EQ(
+        FPDF_FORMFIELD_COMBOBOX,
+        FPDFPage_HasFormFieldAtPoint(form_handle(), page(), 102.0, 113.0));
+  }
+
   // Selects one of the pre-selected values from a combobox with three options.
   // Options are specified by |item_index|, which is 0-based.
-  void SelectOption(FPDF_PAGE page, int32_t item_index, double x, double y) {
+  void SelectOption(int32_t item_index, double x, double y) {
     // Only relevant for comboboxes with three choices and the same dimensions
     // as those in combobox_form.pdf.
     ASSERT(item_index >= 0);
     ASSERT(item_index < 3);
 
     // Navigate to button for drop down and click mouse to reveal options.
-    ClickOnFormFieldAtPoint(page, x, y);
+    ClickOnFormFieldAtPoint(x, y);
 
     // Y coordinate of dropdown option to be selected.
     constexpr double kChoiceHeight = 15;
     double option_y = y - kChoiceHeight * (item_index + 1);
 
     // Navigate to option and click mouse to select it.
-    ClickOnFormFieldAtPoint(page, x, option_y);
+    ClickOnFormFieldAtPoint(x, option_y);
   }
 };
 
@@ -369,1099 +424,790 @@ TEST_F(FPDFFormFillEmbeddertest, FormText) {
   TestAndCloseSaved(300, 300, md5_3);
 }
 
-TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicKeyboard) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextEmptyAndBasicKeyboard) {
   // Test empty selection.
-  CheckSelection(page, L"");
+  CheckSelection(L"");
 
   // Test basic selection.
-  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
-  SelectTextWithKeyboard(page, 3, FWL_VKEY_Left, 123.0, 115.5);
-  CheckSelection(page, L"ABC");
-
-  UnloadPage(page);
+  TypeTextIntoTextField(3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithKeyboard(3, FWL_VKEY_Left, 123.0, 115.5);
+  CheckSelection(L"ABC");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicMouse) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextEmptyAndBasicMouse) {
   // Test empty selection.
-  CheckSelection(page, L"");
+  CheckSelection(L"");
 
   // Test basic selection.
-  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
-  SelectTextWithMouse(page, 125.0, 102.0, 115.5);
-  CheckSelection(page, L"ABC");
-
-  UnloadPage(page);
+  TypeTextIntoTextField(3, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(125.0, 102.0, 115.5);
+  CheckSelection(L"ABC");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsKeyBoard) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextFragmentsKeyBoard) {
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
-  SelectTextWithKeyboard(page, 1, FWL_VKEY_Right, 102.0, 115.5);
-  CheckSelection(page, L"A");
+  SelectTextWithKeyboard(1, FWL_VKEY_Right, 102.0, 115.5);
+  CheckSelection(L"A");
 
   // Test selecting entire long string in backwards direction.
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
-  CheckSelection(page, L"ABCDEFGHIJKL");
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(L"ABCDEFGHIJKL");
 
   // Test selecting middle section in backwards direction.
-  SelectTextWithKeyboard(page, 6, FWL_VKEY_Left, 170.0, 115.5);
-  CheckSelection(page, L"DEFGHI");
+  SelectTextWithKeyboard(6, FWL_VKEY_Left, 170.0, 115.5);
+  CheckSelection(L"DEFGHI");
 
   // Test selecting middle selection in forward direction.
-  SelectTextWithKeyboard(page, 6, FWL_VKEY_Right, 125.0, 115.5);
-  CheckSelection(page, L"DEFGHI");
+  SelectTextWithKeyboard(6, FWL_VKEY_Right, 125.0, 115.5);
+  CheckSelection(L"DEFGHI");
 
   // Test selecting last character in backwards direction.
-  SelectTextWithKeyboard(page, 1, FWL_VKEY_Left, 191.0, 115.5);
-  CheckSelection(page, L"L");
-
-  UnloadPage(page);
+  SelectTextWithKeyboard(1, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(L"L");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsMouse) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+TEST_F(FPDFFormFillTextFormEmbeddertest, GetSelectedTextFragmentsMouse) {
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Test selecting first character in forward direction.
-  SelectTextWithMouse(page, 102.0, 106.0, 115.5);
-  CheckSelection(page, L"A");
+  SelectTextWithMouse(102.0, 106.0, 115.5);
+  CheckSelection(L"A");
 
   // Test selecting entire long string in backwards direction.
-  SelectTextWithMouse(page, 191.0, 102.0, 115.5);
-  CheckSelection(page, L"ABCDEFGHIJKL");
+  SelectTextWithMouse(191.0, 102.0, 115.5);
+  CheckSelection(L"ABCDEFGHIJKL");
 
   // Test selecting middle section in backwards direction.
-  SelectTextWithMouse(page, 170.0, 125.0, 115.5);
-  CheckSelection(page, L"DEFGHI");
+  SelectTextWithMouse(170.0, 125.0, 115.5);
+  CheckSelection(L"DEFGHI");
 
   // Test selecting middle selection in forward direction.
-  SelectTextWithMouse(page, 125.0, 170.0, 115.5);
-  CheckSelection(page, L"DEFGHI");
+  SelectTextWithMouse(125.0, 170.0, 115.5);
+  CheckSelection(L"DEFGHI");
 
   // Test selecting last character in backwards direction.
-  SelectTextWithMouse(page, 191.0, 186.0, 115.5);
-  CheckSelection(page, L"L");
-
-  UnloadPage(page);
+  SelectTextWithMouse(191.0, 186.0, 115.5);
+  CheckSelection(L"L");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextEmptyAndBasicNormalComboBox) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       GetSelectedTextEmptyAndBasicNormalComboBox) {
   // Test empty selection.
-  CheckSelection(page, L"");
-
-  // Test basic selection of text within normal, non-editable combobox.
-  // Click on normal combobox text field.
-  EXPECT_EQ(FPDF_FORMFIELD_COMBOBOX,
-            FPDFPage_HasFormFieldAtPoint(form_handle(), page, 102.0, 113.0));
+  CheckSelection(L"");
 
   // Non-editable comboboxes don't allow selection with keyboard.
-  SelectTextWithMouse(page, 102.0, 142.0, 113.0);
-  CheckSelection(page, L"Banana");
+  SelectTextWithMouse(102.0, 142.0, 113.0);
+  CheckSelection(L"Banana");
 
   // Select other another provided option.
-  SelectOption(page, 0, 192.0, 110.0);
-  CheckSelection(page, L"Apple");
-
-  UnloadPage(page);
+  SelectOption(0, 192.0, 110.0);
+  CheckSelection(L"Apple");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        GetSelectedTextEmptyAndBasicEditableComboBoxKeyboard) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
   // Test empty selection.
-  CheckSelection(page, L"");
+  CheckSelection(L"");
 
   // Test basic selection of text within user editable combobox using keyboard.
-  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
-  SelectTextWithKeyboard(page, 3, FWL_VKEY_Left, 128.0, 62.0);
-  CheckSelection(page, L"ABC");
+  TypeTextIntoTextField(3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithKeyboard(3, FWL_VKEY_Left, 128.0, 62.0);
+  CheckSelection(L"ABC");
 
   // Select a provided option.
-  SelectOption(page, 1, 192.0, 60.0);
-  CheckSelection(page, L"Bar");
-
-  UnloadPage(page);
+  SelectOption(1, 192.0, 60.0);
+  CheckSelection(L"Bar");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        GetSelectedTextEmptyAndBasicEditableComboBoxMouse) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
   // Test empty selection.
-  CheckSelection(page, L"");
+  CheckSelection(L"");
 
   // Test basic selection of text within user editable combobox using mouse.
-  TypeTextIntoTextField(page, 3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
-  SelectTextWithMouse(page, 128.0, 103.0, 62.0);
-  CheckSelection(page, L"ABC");
+  TypeTextIntoTextField(3, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(128.0, 103.0, 62.0);
+  CheckSelection(L"ABC");
 
   // Select a provided option.
-  SelectOption(page, 2, 192.0, 60.0);
-  CheckSelection(page, L"Qux");
-
-  UnloadPage(page);
+  SelectOption(2, 192.0, 60.0);
+  CheckSelection(L"Qux");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, GetSelectedTextFragmentsNormalComboBox) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  // Click on normal combobox text field.
-  EXPECT_EQ(FPDF_FORMFIELD_COMBOBOX,
-            FPDFPage_HasFormFieldAtPoint(form_handle(), page, 102.0, 113.0));
-
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       GetSelectedTextFragmentsNormalComboBox) {
   // Test selecting first character in forward direction.
-  SelectTextWithMouse(page, 102.0, 107.0, 113.0);
-  CheckSelection(page, L"B");
+  SelectTextWithMouse(102.0, 107.0, 113.0);
+  CheckSelection(L"B");
 
   // Test selecting entire string in backwards direction.
-  SelectTextWithMouse(page, 142.0, 102.0, 113.0);
-  CheckSelection(page, L"Banana");
+  SelectTextWithMouse(142.0, 102.0, 113.0);
+  CheckSelection(L"Banana");
 
   // Test selecting middle section in backwards direction.
-  SelectTextWithMouse(page, 135.0, 117.0, 113.0);
-  CheckSelection(page, L"nan");
+  SelectTextWithMouse(135.0, 117.0, 113.0);
+  CheckSelection(L"nan");
 
   // Test selecting middle section in forward direction.
-  SelectTextWithMouse(page, 117.0, 135.0, 113.0);
-  CheckSelection(page, L"nan");
+  SelectTextWithMouse(117.0, 135.0, 113.0);
+  CheckSelection(L"nan");
 
   // Test selecting last character in backwards direction.
-  SelectTextWithMouse(page, 142.0, 138.0, 113.0);
-  CheckSelection(page, L"a");
+  SelectTextWithMouse(142.0, 138.0, 113.0);
+  CheckSelection(L"a");
 
   // Select another option and then reset selection as first three chars.
-  SelectOption(page, 2, 192.0, 110.0);
-  CheckSelection(page, L"Cherry");
-  SelectTextWithMouse(page, 102.0, 122.0, 113.0);
-  CheckSelection(page, L"Che");
-
-  UnloadPage(page);
+  SelectOption(2, 192.0, 110.0);
+  CheckSelection(L"Cherry");
+  SelectTextWithMouse(102.0, 122.0, 113.0);
+  CheckSelection(L"Che");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        GetSelectedTextFragmentsEditableComboBoxKeyboard) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Test selecting first character in forward direction.
-  SelectTextWithKeyboard(page, 1, FWL_VKEY_Right, 102.0, 62.0);
-  CheckSelection(page, L"A");
+  SelectTextWithKeyboard(1, FWL_VKEY_Right, 102.0, 62.0);
+  CheckSelection(L"A");
 
   // Test selecting entire long string in backwards direction.
-  SelectTextWithKeyboard(page, 10, FWL_VKEY_Left, 178.0, 62.0);
-  CheckSelection(page, L"ABCDEFGHIJ");
+  SelectTextWithKeyboard(10, FWL_VKEY_Left, 178.0, 62.0);
+  CheckSelection(L"ABCDEFGHIJ");
 
   // Test selecting middle section in backwards direction.
-  SelectTextWithKeyboard(page, 5, FWL_VKEY_Left, 168.0, 62.0);
-  CheckSelection(page, L"DEFGH");
+  SelectTextWithKeyboard(5, FWL_VKEY_Left, 168.0, 62.0);
+  CheckSelection(L"DEFGH");
 
   // Test selecting middle selection in forward direction.
-  SelectTextWithKeyboard(page, 5, FWL_VKEY_Right, 127.0, 62.0);
-  CheckSelection(page, L"DEFGH");
+  SelectTextWithKeyboard(5, FWL_VKEY_Right, 127.0, 62.0);
+  CheckSelection(L"DEFGH");
 
   // Test selecting last character in backwards direction.
-  SelectTextWithKeyboard(page, 1, FWL_VKEY_Left, 178.0, 62.0);
-  CheckSelection(page, L"J");
+  SelectTextWithKeyboard(1, FWL_VKEY_Left, 178.0, 62.0);
+  CheckSelection(L"J");
 
   // Select a provided option and then reset selection as first two chars.
-  SelectOption(page, 0, 192.0, 60.0);
-  CheckSelection(page, L"Foo");
-  SelectTextWithKeyboard(page, 2, FWL_VKEY_Right, 102.0, 62.0);
-  CheckSelection(page, L"Fo");
-
-  UnloadPage(page);
+  SelectOption(0, 192.0, 60.0);
+  CheckSelection(L"Foo");
+  SelectTextWithKeyboard(2, FWL_VKEY_Right, 102.0, 62.0);
+  CheckSelection(L"Fo");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        GetSelectedTextFragmentsEditableComboBoxMouse) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Test selecting first character in forward direction.
-  SelectTextWithMouse(page, 102.0, 107.0, 62.0);
-  CheckSelection(page, L"A");
+  SelectTextWithMouse(102.0, 107.0, 62.0);
+  CheckSelection(L"A");
 
   // Test selecting entire long string in backwards direction.
-  SelectTextWithMouse(page, 178.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCDEFGHIJ");
+  SelectTextWithMouse(178.0, 102.0, 62.0);
+  CheckSelection(L"ABCDEFGHIJ");
 
   // Test selecting middle section in backwards direction.
-  SelectTextWithMouse(page, 168.0, 127.0, 62.0);
-  CheckSelection(page, L"DEFGH");
+  SelectTextWithMouse(168.0, 127.0, 62.0);
+  CheckSelection(L"DEFGH");
 
   // Test selecting middle selection in forward direction.
-  SelectTextWithMouse(page, 127.0, 168.0, 62.0);
-  CheckSelection(page, L"DEFGH");
+  SelectTextWithMouse(127.0, 168.0, 62.0);
+  CheckSelection(L"DEFGH");
 
   // Test selecting last character in backwards direction.
-  SelectTextWithMouse(page, 178.0, 174.0, 62.0);
-  CheckSelection(page, L"J");
-
-  UnloadPage(page);
+  SelectTextWithMouse(178.0, 174.0, 62.0);
+  CheckSelection(L"J");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldEntireSelection) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldEntireSelection) {
   // Select entire contents of text field.
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
-  SelectTextWithMouse(page, 191.0, 102.0, 115.5);
-  CheckSelection(page, L"ABCDEFGHIJKL");
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(191.0, 102.0, 115.5);
+  CheckSelection(L"ABCDEFGHIJKL");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
 
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
-  CheckSelection(page, L"");
-
-  UnloadPage(page);
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(L"");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldSelectionMiddle) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionMiddle) {
   // Select middle section of text.
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
-  SelectTextWithMouse(page, 170.0, 125.0, 115.5);
-  CheckSelection(page, L"DEFGHI");
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(170.0, 125.0, 115.5);
+  CheckSelection(L"DEFGHI");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
-  CheckSelection(page, L"ABCJKL");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(L"ABCJKL");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldSelectionLeft) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionLeft) {
   // Select first few characters of text.
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
-  SelectTextWithMouse(page, 102.0, 132.0, 115.5);
-  CheckSelection(page, L"ABCD");
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(102.0, 132.0, 115.5);
+  CheckSelection(L"ABCD");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
-  CheckSelection(page, L"EFGHIJKL");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(L"EFGHIJKL");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteTextFieldSelectionRight) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteTextFieldSelectionRight) {
   // Select last few characters of text.
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
-  SelectTextWithMouse(page, 191.0, 165.0, 115.5);
-  CheckSelection(page, L"IJKL");
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  SelectTextWithMouse(191.0, 165.0, 115.5);
+  CheckSelection(L"IJKL");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
-  CheckSelection(page, L"ABCDEFGH");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(L"ABCDEFGH");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteEmptyTextFieldSelection) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest, DeleteEmptyTextFieldSelection) {
   // Do not select text.
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
-  CheckSelection(page, L"");
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  CheckSelection(L"");
 
   // Test that attempt to delete empty text selection has no effect.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 191.0, 115.5);
-  CheckSelection(page, L"ABCDEFGHIJKL");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 191.0, 115.5);
+  CheckSelection(L"ABCDEFGHIJKL");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxEntireSelection) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       DeleteEditableComboBoxEntireSelection) {
   // Select entire contents of user-editable combobox text field.
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
-  SelectTextWithMouse(page, 178.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCDEFGHIJ");
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(178.0, 102.0, 62.0);
+  CheckSelection(L"ABCDEFGHIJ");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithMouse(page, 178.0, 102.0, 62.0);
-  CheckSelection(page, L"");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithMouse(178.0, 102.0, 62.0);
+  CheckSelection(L"");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxSelectionMiddle) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       DeleteEditableComboBoxSelectionMiddle) {
   // Select middle section of text.
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
-  SelectTextWithMouse(page, 168.0, 127.0, 62.0);
-  CheckSelection(page, L"DEFGH");
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(168.0, 127.0, 62.0);
+  CheckSelection(L"DEFGH");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithMouse(page, 178.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCIJ");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithMouse(178.0, 102.0, 62.0);
+  CheckSelection(L"ABCIJ");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxSelectionLeft) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       DeleteEditableComboBoxSelectionLeft) {
   // Select first few characters of text.
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
-  SelectTextWithMouse(page, 102.0, 132.0, 62.0);
-  CheckSelection(page, L"ABCD");
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(102.0, 132.0, 62.0);
+  CheckSelection(L"ABCD");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithMouse(page, 178.0, 102.0, 62.0);
-  CheckSelection(page, L"EFGHIJ");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithMouse(178.0, 102.0, 62.0);
+  CheckSelection(L"EFGHIJ");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteEditableComboBoxSelectionRight) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       DeleteEditableComboBoxSelectionRight) {
   // Select last few characters of text.
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
-  SelectTextWithMouse(page, 178.0, 152.0, 62.0);
-  CheckSelection(page, L"GHIJ");
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  SelectTextWithMouse(178.0, 152.0, 62.0);
+  CheckSelection(L"GHIJ");
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithMouse(page, 178.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCDEF");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithMouse(178.0, 102.0, 62.0);
+  CheckSelection(L"ABCDEF");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, DeleteEmptyEditableComboBoxSelection) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       DeleteEmptyEditableComboBoxSelection) {
   // Do not select text.
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
-  CheckSelection(page, L"");
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  CheckSelection(L"");
 
   // Test that attempt to delete empty text selection has no effect.
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
-  SelectTextWithMouse(page, 178.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCDEFGHIJ");
-
-  UnloadPage(page);
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  SelectTextWithMouse(178.0, 102.0, 62.0);
+  CheckSelection(L"ABCDEFGHIJ");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInEmptyTextField) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  ClickOnFormFieldAtPoint(page, 120.0, 120.0);
+TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInEmptyTextField) {
+  ClickOnFormFieldAtPoint(120.0, 120.0);
 
   // Test inserting text into empty text field.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"Hello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"Hello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedTextFieldLeft) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldLeft) {
+  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Click on the leftmost part of the text field.
-  ClickOnFormFieldAtPoint(page, 102.0, 115.5);
+  ClickOnFormFieldAtPoint(102.0, 115.5);
 
   // Test inserting text in front of existing text in text field.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"HelloABCDEFGH");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"HelloABCDEFGH");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedTextFieldMiddle) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldMiddle) {
+  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Click on the middle of the text field.
-  ClickOnFormFieldAtPoint(page, 134.0, 115.5);
+  ClickOnFormFieldAtPoint(134.0, 115.5);
 
   // Test inserting text in the middle of existing text in text field.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"ABCDHelloEFGH");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"ABCDHelloEFGH");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedTextFieldRight) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+TEST_F(FPDFFormFillTextFormEmbeddertest, InsertTextInPopulatedTextFieldRight) {
+  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Click on the rightmost part of the text field.
-  ClickOnFormFieldAtPoint(page, 166.0, 115.5);
+  ClickOnFormFieldAtPoint(166.0, 115.5);
 
   // Test inserting text behind existing text in text field.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"ABCDEFGHHello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"ABCDEFGHHello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldWhole) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select entire string in text field.
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 195.0, 115.0);
-  CheckSelection(page, L"ABCDEFGHIJKL");
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 195.0, 115.0);
+  CheckSelection(L"ABCDEFGHIJKL");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"Hello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"Hello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldLeft) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select left portion of string in text field.
-  SelectTextWithKeyboard(page, 6, FWL_VKEY_Left, 148.0, 115.0);
-  CheckSelection(page, L"ABCDEF");
+  SelectTextWithKeyboard(6, FWL_VKEY_Left, 148.0, 115.0);
+  CheckSelection(L"ABCDEF");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"HelloGHIJKL");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"HelloGHIJKL");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldMiddle) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select middle portion of string in text field.
-  SelectTextWithKeyboard(page, 6, FWL_VKEY_Left, 171.0, 115.0);
-  CheckSelection(page, L"DEFGHI");
+  SelectTextWithKeyboard(6, FWL_VKEY_Left, 171.0, 115.0);
+  CheckSelection(L"DEFGHI");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"ABCHelloJKL");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"ABCHelloJKL");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldRight) {
-  // Open file with form text field.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select right portion of string in text field.
-  SelectTextWithKeyboard(page, 6, FWL_VKEY_Left, 195.0, 115.0);
-  CheckSelection(page, L"GHIJKL");
+  SelectTextWithKeyboard(6, FWL_VKEY_Left, 195.0, 115.0);
+  CheckSelection(L"GHIJKL");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 115.5);
-  CheckSelection(page, L"ABCDEFHello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 115.5);
+  CheckSelection(L"ABCDEFHello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInEmptyEditableComboBox) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  ClickOnFormFieldAtPoint(page, 102.0, 62.0);
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       InsertTextInEmptyEditableComboBox) {
+  ClickOnFormFieldAtPoint(102.0, 62.0);
 
   // Test inserting text into empty user-editable combobox.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"Hello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"Hello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedEditableComboBoxLeft) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       InsertTextInPopulatedEditableComboBoxLeft) {
+  TypeTextIntoTextField(6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Click on the leftmost part of the user-editable combobox.
-  ClickOnFormFieldAtPoint(page, 102.0, 62.0);
+  ClickOnFormFieldAtPoint(102.0, 62.0);
 
   // Test inserting text in front of existing text in user-editable combobox.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"HelloABCDEF");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"HelloABCDEF");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedEditableComboBoxMiddle) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       InsertTextInPopulatedEditableComboBoxMiddle) {
+  TypeTextIntoTextField(6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Click on the middle of the user-editable combobox.
-  ClickOnFormFieldAtPoint(page, 126.0, 62.0);
+  ClickOnFormFieldAtPoint(126.0, 62.0);
 
   // Test inserting text in the middle of existing text in user-editable
   // combobox.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCHelloDEF");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"ABCHelloDEF");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedEditableComboBoxRight) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
+       InsertTextInPopulatedEditableComboBoxRight) {
+  TypeTextIntoTextField(6, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Click on the rightmost part of the user-editable combobox.
-  ClickOnFormFieldAtPoint(page, 150.0, 62.0);
+  ClickOnFormFieldAtPoint(150.0, 62.0);
 
   // Test inserting text behind existing text in user-editable combobox.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCDEFHello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"ABCDEFHello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxWhole) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Select entire string in user-editable combobox.
-  SelectTextWithKeyboard(page, 10, FWL_VKEY_Left, 183.0, 62.0);
-  CheckSelection(page, L"ABCDEFGHIJ");
+  SelectTextWithKeyboard(10, FWL_VKEY_Left, 183.0, 62.0);
+  CheckSelection(L"ABCDEFGHIJ");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"Hello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"Hello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxLeft) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Select left portion of string in user-editable combobox.
-  SelectTextWithKeyboard(page, 5, FWL_VKEY_Left, 142.0, 62.0);
-  CheckSelection(page, L"ABCDE");
+  SelectTextWithKeyboard(5, FWL_VKEY_Left, 142.0, 62.0);
+  CheckSelection(L"ABCDE");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"HelloFGHIJ");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"HelloFGHIJ");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxMiddle) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Select middle portion of string in user-editable combobox.
-  SelectTextWithKeyboard(page, 5, FWL_VKEY_Left, 167.0, 62.0);
-  CheckSelection(page, L"DEFGH");
+  SelectTextWithKeyboard(5, FWL_VKEY_Left, 167.0, 62.0);
+  CheckSelection(L"DEFGH");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCHelloIJ");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"ABCHelloIJ");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxRight) {
-  // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
+  TypeTextIntoTextField(10, FPDF_FORMFIELD_COMBOBOX, 102.0, 62.0);
 
   // Select right portion of string in user-editable combobox.
-  SelectTextWithKeyboard(page, 5, FWL_VKEY_Left, 183.0, 62.0);
-  CheckSelection(page, L"FGHIJ");
+  SelectTextWithKeyboard(5, FWL_VKEY_Left, 183.0, 62.0);
+  CheckSelection(L"FGHIJ");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  SelectTextWithMouse(page, 183.0, 102.0, 62.0);
-  CheckSelection(page, L"ABCDEHello");
-
-  UnloadPage(page);
+  SelectTextWithMouse(183.0, 102.0, 62.0);
+  CheckSelection(L"ABCDEHello");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInEmptyCharLimitTextFieldOverflow) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest,
+       InsertTextInEmptyCharLimitTextFieldOverflow) {
   // Click on the textfield.
-  ClickOnFormFieldAtPoint(page, 195.0, 60.0);
+  ClickOnFormFieldAtPoint(195.0, 60.0);
 
   // Delete pre-filled contents of text field with char limit.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"Elephant");
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"Elephant");
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
 
   // Test inserting text into now empty text field so text to be inserted
   // exceeds the char limit and is cut off.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"Hippopotam");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"Hippopotam");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInEmptyCharLimitTextFieldFit) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest,
+       InsertTextInEmptyCharLimitTextFieldFit) {
   // Click on the textfield.
-  ClickOnFormFieldAtPoint(page, 195.0, 60.0);
+  ClickOnFormFieldAtPoint(195.0, 60.0);
 
   // Delete pre-filled contents of text field with char limit.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"Elephant");
-  FORM_ReplaceSelection(form_handle(), page, nullptr);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"Elephant");
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
 
   // Test inserting text into now empty text field so text to be inserted
   // exceeds the char limit and is cut off.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Zebra");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"Zebra");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"Zebra");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedCharLimitTextFieldLeft) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
+TEST_F(FPDFFormFillTextFormEmbeddertest,
+       InsertTextInPopulatedCharLimitTextFieldLeft) {
   // Click on the leftmost part of the text field.
-  ClickOnFormFieldAtPoint(page, 102.0, 60.0);
+  ClickOnFormFieldAtPoint(102.0, 60.0);
 
   // Test inserting text in front of existing text in text field.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"HiElephant");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"HiElephant");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextInPopulatedCharLimitTextFieldMiddle) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Click on the middle of the text field.
-  ClickOnFormFieldAtPoint(page, 134.0, 60.0);
+  ClickOnFormFieldAtPoint(134.0, 60.0);
 
   // Test inserting text in the middle of existing text in text field.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"ElephHiant");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"ElephHiant");
 }
 
-TEST_F(FPDFFormFillEmbeddertest, InsertTextInPopulatedCharLimitTextFieldRight) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+TEST_F(FPDFFormFillTextFormEmbeddertest,
+       InsertTextInPopulatedCharLimitTextFieldRight) {
+  TypeTextIntoTextField(8, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Click on the rightmost part of the text field.
-  ClickOnFormFieldAtPoint(page, 166.0, 60.0);
+  ClickOnFormFieldAtPoint(166.0, 60.0);
 
   // Test inserting text behind existing text in text field.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"ElephantHi");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"ElephantHi");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldWhole) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select entire string in text field.
-  SelectTextWithKeyboard(page, 12, FWL_VKEY_Left, 195.0, 60.0);
-  CheckSelection(page, L"Elephant");
+  SelectTextWithKeyboard(12, FWL_VKEY_Left, 195.0, 60.0);
+  CheckSelection(L"Elephant");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"Hippopotam");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"Hippopotam");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldLeft) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select left portion of string in text field.
-  SelectTextWithKeyboard(page, 4, FWL_VKEY_Left, 122.0, 60.0);
-  CheckSelection(page, L"Elep");
+  SelectTextWithKeyboard(4, FWL_VKEY_Left, 122.0, 60.0);
+  CheckSelection(L"Elep");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"Hippophant");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"Hippophant");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldMiddle) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select middle portion of string in text field.
-  SelectTextWithKeyboard(page, 4, FWL_VKEY_Left, 136.0, 60.0);
-  CheckSelection(page, L"epha");
+  SelectTextWithKeyboard(4, FWL_VKEY_Left, 136.0, 60.0);
+  CheckSelection(L"epha");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"ElHippopnt");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"ElHippopnt");
 }
 
-TEST_F(FPDFFormFillEmbeddertest,
+TEST_F(FPDFFormFillTextFormEmbeddertest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldRight) {
-  // Open file with form text field with a character limit of 10.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-
-  TypeTextIntoTextField(page, 12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
+  TypeTextIntoTextField(12, FPDF_FORMFIELD_TEXTFIELD, 120.0, 120.0);
 
   // Select right portion of string in text field.
-  SelectTextWithKeyboard(page, 4, FWL_VKEY_Left, 152.0, 60.0);
-  CheckSelection(page, L"hant");
+  SelectTextWithKeyboard(4, FWL_VKEY_Left, 152.0, 60.0);
+  CheckSelection(L"hant");
 
   // Test replacing text selection with text to be inserted.
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
       GetFPDFWideString(L"Hippopotamus");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  SelectTextWithMouse(page, 195.0, 102.0, 60.0);
-  CheckSelection(page, L"ElepHippop");
-
-  UnloadPage(page);
+  SelectTextWithMouse(195.0, 102.0, 60.0);
+  CheckSelection(L"ElepHippop");
 }
