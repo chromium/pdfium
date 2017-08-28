@@ -46,11 +46,12 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
   FX_FILESIZE GetSize() override;
 
- private:
+ protected:
   CPDF_ReadValidator(const CFX_RetainPtr<IFX_SeekableReadStream>& file_read,
                      CPDF_DataAvail::FileAvail* file_avail);
   ~CPDF_ReadValidator() override;
 
+ private:
   void ScheduleDownload(FX_FILESIZE offset, size_t size);
 
   CFX_RetainPtr<IFX_SeekableReadStream> file_read_;

@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_page_object_avail.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -1514,10 +1515,8 @@ bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) {
   CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
   if (!pPageDict)
     return false;
-  std::vector<CPDF_Object*> obj_array;
-  obj_array.push_back(pPageDict);
-  std::vector<CPDF_Object*> dummy;
-  return AreObjectsAvailable(obj_array, true, dummy);
+  CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument, pPageDict);
+  return obj_avail.CheckAvail() == DocAvailStatus::DataAvailable;
 }
 
 bool CPDF_DataAvail::ValidateForm() {
@@ -1527,10 +1526,8 @@ bool CPDF_DataAvail::ValidateForm() {
   CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
   if (!pAcroForm)
     return false;
-  std::vector<CPDF_Object*> obj_array;
-  obj_array.push_back(pAcroForm);
-  std::vector<CPDF_Object*> dummy;
-  return AreObjectsAvailable(obj_array, true, dummy);
+  CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument, pAcroForm);
+  return obj_avail.CheckAvail() == DocAvailStatus::DataAvailable;
 }
 
 CPDF_DataAvail::PageNode::PageNode() : m_type(PDF_PAGENODE_UNKNOWN) {}
