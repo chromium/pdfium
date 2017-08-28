@@ -1932,7 +1932,6 @@ test("pdfium_unittests") {
     "core/fxge/dib/cstretchengine_unittest.cpp",
     "fpdfsdk/fpdfdoc_unittest.cpp",
     "fpdfsdk/fpdfeditimg_unittest.cpp",
-    "fpdfsdk/fpdfview_unittest.cpp",
     "testing/unit_test_main.cpp",
   ]
   deps = [

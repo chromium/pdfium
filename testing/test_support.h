@@ -13,6 +13,10 @@
 
 #include "public/fpdfview.h"
 
+#if PDF_ENABLE_XFA
+#include "xfa/fgas/font/cfgas_fontmgr.h"
+#endif  // PDF_ENABLE_XFA
+
 namespace pdfium {
 
 #define STR_IN_TEST_CASE(input_literal, ...)                         \
@@ -109,5 +113,9 @@ class TestLoader {
   const char* const m_pBuf;
   const size_t m_Len;
 };
+
+#if PDF_ENABLE_XFA
+CFGAS_FontMgr* GetGlobalFontManager();
+#endif  // PDF_ENABLE_XFA
 
 #endif  // TESTING_TEST_SUPPORT_H_
