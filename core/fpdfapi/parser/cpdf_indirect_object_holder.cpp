@@ -75,7 +75,8 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     return false;
 
   pObj->m_ObjNum = objnum;
-  m_OrphanObjs.push_back(std::move(m_IndirectObjs[objnum]));
+  if (m_IndirectObjs[objnum])
+    m_OrphanObjs.push_back(std::move(m_IndirectObjs[objnum]));
   m_IndirectObjs[objnum] = std::move(pObj);
   m_LastObjNum = std::max(m_LastObjNum, objnum);
   return true;
