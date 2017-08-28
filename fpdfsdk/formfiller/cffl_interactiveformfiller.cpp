@@ -63,7 +63,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
   if (pFormFiller && pFormFiller->IsValid()) {
-    pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
+    pFormFiller->OnDraw(pPageView, pAnnot, pDevice, *pUser2Device);
     pAnnot->GetPDFPage();
 
     if (m_pFormFillEnv->GetFocusAnnot() != pAnnot)
@@ -97,7 +97,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
 
   pFormFiller = GetFormFiller(pAnnot, false);
   if (pFormFiller) {
-    pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, pUser2Device);
+    pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, *pUser2Device);
   } else {
     pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal,
                             nullptr);

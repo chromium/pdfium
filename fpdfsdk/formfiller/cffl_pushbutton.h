@@ -16,11 +16,6 @@ class CFFL_PushButton : public CFFL_Button {
 
   // CFFL_Button
   CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp) override;
-  bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
-  void OnDraw(CPDFSDK_PageView* pPageView,
-              CPDFSDK_Annot* pAnnot,
-              CFX_RenderDevice* pDevice,
-              CFX_Matrix* pUser2Device) override;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_

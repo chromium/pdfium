@@ -42,11 +42,11 @@ class CFFL_Button : public CFFL_FormFiller {
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
-              CFX_Matrix* pUser2Device) override;
+              const CFX_Matrix& mtUser2Device) override;
   void OnDrawDeactive(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
-                      CFX_Matrix* pUser2Device) override;
+                      const CFX_Matrix& mtUser2Device) override;
 
  private:
   bool m_bMouseIn;

@@ -82,12 +82,12 @@ FX_RECT CFFL_FormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
 void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              CFX_RenderDevice* pDevice,
-                             CFX_Matrix* pUser2Device) {
+                             const CFX_Matrix& mtUser2Device) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false)) {
     CFX_Matrix mt = GetCurMatrix();
-    mt.Concat(*pUser2Device);
+    mt.Concat(mtUser2Device);
     pWnd->DrawAppearance(pDevice, mt);
     return;
   }
@@ -96,14 +96,14 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
   if (!CFFL_InteractiveFormFiller::IsVisible(pWidget))
     return;
 
-  pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal, nullptr);
+  pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Normal, nullptr);
 }
 
 void CFFL_FormFiller::OnDrawDeactive(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot,
                                      CFX_RenderDevice* pDevice,
-                                     CFX_Matrix* pUser2Device) {
-  CPDFSDKAnnotToWidget(pAnnot)->DrawAppearance(pDevice, *pUser2Device,
+                                     const CFX_Matrix& mtUser2Device) {
+  CPDFSDKAnnotToWidget(pAnnot)->DrawAppearance(pDevice, mtUser2Device,
                                                CPDF_Annot::Normal, nullptr);
 }
 
