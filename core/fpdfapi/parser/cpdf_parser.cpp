@@ -1296,7 +1296,7 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAtInternal(
 
   std::unique_ptr<CPDF_Object> pObj =
       strict_parse
-          ? m_pSyntax->GetObjectForStrict(pObjList, objnum, parser_gennum)
+          ? m_pSyntax->GetObjectForStrict(pObjList, objnum, parser_gennum, true)
           : m_pSyntax->GetObject(pObjList, objnum, parser_gennum, true);
 
   if (pResultPos)

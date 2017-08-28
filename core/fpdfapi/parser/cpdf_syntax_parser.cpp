@@ -376,7 +376,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
     uint32_t gennum,
     bool bDecrypt) {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  auto result = GetObjectInternal(pObjList, objnum, gennum, bDecrypt);
+  auto result =
+      GetObjectInternal(pObjList, objnum, gennum, bDecrypt, ParseType::kLoose);
   if (GetValidator()->has_read_problems())
     return nullptr;
   return result;
@@ -386,7 +387,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t objnum,
     uint32_t gennum,
-    bool bDecrypt) {
+    bool bDecrypt,
+    ParseType parse_type) {
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
     return nullptr;
@@ -432,12 +434,14 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
     return pdfium::MakeUnique<CPDF_String>(m_pPool, str, true);
   }
   if (word == "[") {
-    std::unique_ptr<CPDF_Array> pArray = pdfium::MakeUnique<CPDF_Array>();
+    auto pArray = pdfium::MakeUnique<CPDF_Array>();
     while (std::unique_ptr<CPDF_Object> pObj =
                GetObject(pObjList, objnum, gennum, true)) {
       pArray->Add(std::move(pObj));
     }
-    return std::move(pArray);
+    return (parse_type == ParseType::kLoose || m_WordBuffer[0] == ']')
+               ? std::move(pArray)
+               : nullptr;
   }
   if (word[0] == '/') {
     return pdfium::MakeUnique<CPDF_Name>(
@@ -445,7 +449,6 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (word == "<<") {
-    int32_t nKeys = 0;
     FX_FILESIZE dwSignValuePos = 0;
     std::unique_ptr<CPDF_Dictionary> pDict =
         pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
@@ -465,26 +468,33 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
       if (key[0] != '/')
         continue;
 
-      ++nKeys;
       key = PDF_NameDecode(key);
-      if (key.IsEmpty())
-        continue;
-
       if (key == "/Contents")
         dwSignValuePos = m_Pos;
 
-      std::unique_ptr<CPDF_Object> pObj =
-          GetObject(pObjList, objnum, gennum, true);
-      if (!pObj)
+      if (key.IsEmpty() && parse_type == ParseType::kLoose)
         continue;
 
-      CFX_ByteString keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
-      pDict->SetFor(keyNoSlash, std::move(pObj));
+      std::unique_ptr<CPDF_Object> pObj =
+          GetObject(pObjList, objnum, gennum, true);
+      if (!pObj) {
+        if (parse_type == ParseType::kLoose)
+          continue;
+
+        ToNextLine();
+        return nullptr;
+      }
+
+      if (!key.IsEmpty()) {
+        CFX_ByteString keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
+        pDict->SetFor(keyNoSlash, std::move(pObj));
+      }
     }
 
     // Only when this is a signature dictionary and has contents, we reset the
     // contents to the un-decrypted form.
-    if (pDict->IsSignatureDict() && dwSignValuePos) {
+    if (m_pCryptoHandler && bDecrypt && pDict->IsSignatureDict() &&
+        dwSignValuePos) {
       CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
       m_Pos = dwSignValuePos;
       pDict->SetFor("Contents", GetObject(pObjList, objnum, gennum, false));
@@ -507,123 +517,14 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
 std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t objnum,
-    uint32_t gennum) {
+    uint32_t gennum,
+    bool bDecrypt) {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  auto result = GetObjectForStrictInternal(pObjList, objnum, gennum);
+  auto result =
+      GetObjectInternal(pObjList, objnum, gennum, bDecrypt, ParseType::kStrict);
   if (GetValidator()->has_read_problems())
     return nullptr;
   return result;
-}
-
-std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrictInternal(
-    CPDF_IndirectObjectHolder* pObjList,
-    uint32_t objnum,
-    uint32_t gennum) {
-  CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
-  if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
-    return nullptr;
-
-  FX_FILESIZE SavedObjPos = m_Pos;
-  bool bIsNumber;
-  CFX_ByteString word = GetNextWord(&bIsNumber);
-  if (word.GetLength() == 0)
-    return nullptr;
-
-  if (bIsNumber) {
-    FX_FILESIZE SavedPos = m_Pos;
-    CFX_ByteString nextword = GetNextWord(&bIsNumber);
-    if (bIsNumber) {
-      CFX_ByteString nextword2 = GetNextWord(nullptr);
-      if (nextword2 == "R") {
-        uint32_t refnum = FXSYS_atoui(word.c_str());
-        if (refnum == CPDF_Object::kInvalidObjNum)
-          return nullptr;
-        return pdfium::MakeUnique<CPDF_Reference>(pObjList, refnum);
-      }
-    }
-    m_Pos = SavedPos;
-    return pdfium::MakeUnique<CPDF_Number>(word.AsStringC());
-  }
-
-  if (word == "true" || word == "false")
-    return pdfium::MakeUnique<CPDF_Boolean>(word == "true");
-
-  if (word == "null")
-    return pdfium::MakeUnique<CPDF_Null>();
-
-  if (word == "(") {
-    CFX_ByteString str = ReadString();
-    if (m_pCryptoHandler)
-      str = m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, false);
-  }
-  if (word == "<") {
-    CFX_ByteString str = ReadHexString();
-    if (m_pCryptoHandler)
-      str = m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, true);
-  }
-  if (word == "[") {
-    auto pArray = pdfium::MakeUnique<CPDF_Array>();
-    while (std::unique_ptr<CPDF_Object> pObj =
-               GetObject(pObjList, objnum, gennum, true)) {
-      pArray->Add(std::move(pObj));
-    }
-    return m_WordBuffer[0] == ']' ? std::move(pArray) : nullptr;
-  }
-  if (word[0] == '/') {
-    return pdfium::MakeUnique<CPDF_Name>(
-        m_pPool,
-        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
-  }
-  if (word == "<<") {
-    std::unique_ptr<CPDF_Dictionary> pDict =
-        pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
-    while (1) {
-      FX_FILESIZE SavedPos = m_Pos;
-      CFX_ByteString key = GetNextWord(nullptr);
-      if (key.IsEmpty())
-        return nullptr;
-
-      if (key == ">>")
-        break;
-
-      if (key == "endobj") {
-        m_Pos = SavedPos;
-        break;
-      }
-      if (key[0] != '/')
-        continue;
-
-      key = PDF_NameDecode(key);
-      std::unique_ptr<CPDF_Object> obj(
-          GetObject(pObjList, objnum, gennum, true));
-      if (!obj) {
-        uint8_t ch;
-        while (GetNextChar(ch) && ch != 0x0A && ch != 0x0D) {
-          continue;
-        }
-        return nullptr;
-      }
-
-      if (key.GetLength() > 1) {
-        pDict->SetFor(CFX_ByteString(key.c_str() + 1, key.GetLength() - 1),
-                      std::move(obj));
-      }
-    }
-
-    FX_FILESIZE SavedPos = m_Pos;
-    CFX_ByteString nextword = GetNextWord(nullptr);
-    if (nextword != "stream") {
-      m_Pos = SavedPos;
-      return std::move(pDict);
-    }
-    return ReadStream(std::move(pDict), objnum, gennum);
-  }
-  if (word == ">>")
-    m_Pos = SavedObjPos;
-
-  return nullptr;
 }
 
 unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
