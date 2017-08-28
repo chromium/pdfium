@@ -860,9 +860,6 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
             }
           }
         }
-        CFX_PointF ptOffset;
-        pCharPos->m_Origin.x += ptOffset.x;
-        pCharPos->m_Origin.y -= ptOffset.y;
       }
       if (!bRTLPiece && chartype != FX_CHARTYPE_Combination)
         fX += fCharWidth;
