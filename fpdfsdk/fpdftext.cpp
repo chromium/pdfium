@@ -250,7 +250,9 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
       new CPDF_TextPageFind(CPDFTextPageFromFPDFTextPage(text_page));
   FX_STRSIZE len = CFX_WideString::WStringLength(findwhat);
   textpageFind->FindFirst(CFX_WideString::FromUTF16LE(findwhat, len), flags,
-                          start_index);
+                          start_index >= 0
+                              ? pdfium::Optional<FX_STRSIZE>(start_index)
+                              : pdfium::Optional<FX_STRSIZE>());
   return textpageFind;
 }
 
