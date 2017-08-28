@@ -275,9 +275,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
     case PDF_DATAAVAIL_CROSSREF_ITEM:
       return CheckCrossRefItem();
     case PDF_DATAAVAIL_TRAILER:
-      return CheckTrailer(pHints);
-    case PDF_DATAAVAIL_TRAILER_APPEND:
-      return CheckTrailerAppend(pHints);
+      return CheckTrailer();
     case PDF_DATAAVAIL_LOADALLCROSSREF:
       return LoadAllXref(pHints);
     case PDF_DATAAVAIL_LOADALLFILE:
@@ -921,49 +919,16 @@ bool CPDF_DataAvail::CheckCrossRef() {
   return true;
 }
 
-bool CPDF_DataAvail::CheckTrailerAppend(DownloadHints* pHints) {
-  if (m_Pos < m_dwFileLen) {
-    FX_FILESIZE dwAppendPos = m_Pos + m_syntaxParser.GetPos();
-    int32_t iSize = (int32_t)(
-        dwAppendPos + 512 > m_dwFileLen ? m_dwFileLen - dwAppendPos : 512);
+bool CPDF_DataAvail::CheckTrailer() {
+  m_syntaxParser.InitParser(m_pFileRead, 0);
 
-    if (!m_pFileAvail->IsDataAvail(dwAppendPos, iSize)) {
-      pHints->AddSegment(dwAppendPos, iSize);
-      return false;
-    }
-  }
-
-  if (m_dwPrevXRefOffset) {
-    SetStartOffset(m_dwPrevXRefOffset);
-    m_docStatus = PDF_DATAAVAIL_CROSSREF;
-  } else {
-    m_docStatus = PDF_DATAAVAIL_LOADALLCROSSREF;
-  }
-  return true;
-}
-
-bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
-  int32_t iTrailerSize =
-      (int32_t)(m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
-  if (!m_pFileAvail->IsDataAvail(m_Pos, iTrailerSize)) {
-    pHints->AddSegment(m_Pos, iTrailerSize);
-    return false;
-  }
-
-  int32_t iSize = (int32_t)(m_Pos + iTrailerSize - m_dwTrailerOffset);
-  std::vector<uint8_t> buf(iSize);
-  if (!m_pFileRead->ReadBlock(buf.data(), m_dwTrailerOffset, iSize))
-    return false;
-
-  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
-      buf.data(), static_cast<size_t>(iSize), false);
-  m_syntaxParser.InitParser(file, 0);
-
-  std::unique_ptr<CPDF_Object> pTrailer(
-      m_syntaxParser.GetObject(nullptr, 0, 0, true));
+  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  m_syntaxParser.SetPos(m_dwTrailerOffset);
+  const std::unique_ptr<CPDF_Object> pTrailer =
+      m_syntaxParser.GetObject(nullptr, 0, 0, true);
   if (!pTrailer) {
-    m_Pos += m_syntaxParser.GetPos();
-    pHints->AddSegment(m_Pos, iTrailerSize);
+    if (!GetValidator()->has_read_problems())
+      m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
 
@@ -980,7 +945,7 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
   uint32_t xrefpos = GetDirectInteger(pTrailerDict, "Prev");
   if (!xrefpos) {
     m_dwPrevXRefOffset = 0;
-    m_docStatus = PDF_DATAAVAIL_TRAILER_APPEND;
+    m_docStatus = PDF_DATAAVAIL_LOADALLCROSSREF;
     return true;
   }
 
@@ -995,7 +960,7 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
     m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
   } else {
     SetStartOffset(m_dwPrevXRefOffset);
-    m_docStatus = PDF_DATAAVAIL_TRAILER_APPEND;
+    m_docStatus = PDF_DATAAVAIL_CROSSREF;
   }
   return true;
 }

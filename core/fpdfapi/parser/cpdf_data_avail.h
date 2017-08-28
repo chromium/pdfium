@@ -43,7 +43,6 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_DONE,
   PDF_DATAAVAIL_ERROR,
   PDF_DATAAVAIL_LOADALLFILE,
-  PDF_DATAAVAIL_TRAILER_APPEND
 };
 
 enum PDF_PAGENODE_TYPE {
@@ -135,7 +134,7 @@ class CPDF_DataAvail final {
   bool CheckEnd();
   bool CheckCrossRef();
   bool CheckCrossRefItem();
-  bool CheckTrailer(DownloadHints* pHints);
+  bool CheckTrailer();
   bool CheckRoot();
   bool CheckInfo();
   bool CheckPages();
@@ -143,7 +142,6 @@ class CPDF_DataAvail final {
   bool CheckResources();
   bool CheckAcroForm();
   bool CheckAcroFormSubObject();
-  bool CheckTrailerAppend(DownloadHints* pHints);
   bool CheckPageStatus();
 
   bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
