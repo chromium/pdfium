@@ -74,7 +74,7 @@ echo "use_coverage = true" >> out/Coverage/args.gn
 ### Usage
 
 Generating code coverage information is done via the
-`tools/coverage/coverage_report.py` script. This script will build any binaries
+`testing/tools/coverage/coverage_report.py` script. This script will build any binaries
 that it needs, perform test runs, collect coverage data, and finally generate a
 nice HTML coverage report.
 
@@ -86,7 +86,7 @@ coverage data. This is because the other tests are known to take a long time to
 run, so they are not included in the defaults.
 
 ```shell
-tools/coverage/coverage_report.py
+testing/tools/coverage/coverage_report.py
 ```
 
 If the current working directory is not the root of your PDFium checkout, then
@@ -98,9 +98,10 @@ you will need to pass in `--output-directory`.
 An example of all these flags being used:
 
 ```shell
-coverage_report.py --source-directory ~/pdfium/pdfium \
-                   --build-directory ~/pdfium/pdfium/out/Debug_with_Coverage \
-                   --output-directory ~/Documents/PDFium_coverage
+testing/tools/coverage/coverage_report.py \
+    --source-directory ~/pdfium/pdfium \
+    --build-directory ~/pdfium/pdfium/out/Debug_with_Coverage \
+    --output-directory ~/Documents/PDFium_coverage
 ```
 
 To run different tests then the default set, there are two ways to achieve
@@ -108,7 +109,7 @@ this. If you want to run everything, including tests that are known to take a
 long time, then you just need to add the `--slow` flag.
 
 ```shell
-tools/coverage/coverage_report.py --slow
+testing/tools/coverage/coverage_report.py --slow
 ```
 
 If you want more fine grained control, including running just a single test, you
@@ -119,7 +120,7 @@ by running the script with `--help`.
 An example running the default tests explicitly:
 
 ```shell
-tools/coverage/coverage_report.py pdfium_unittests pdfium_embeddertests
+testing/tools/coverage/coverage_report.py pdfium_unittests pdfium_embeddertests
 ```
 
 NOTE:
