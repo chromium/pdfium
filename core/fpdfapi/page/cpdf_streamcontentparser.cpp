@@ -241,7 +241,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     const CFX_Matrix* pmtContentToUser,
     CPDF_PageObjectHolder* pObjHolder,
     CPDF_Dictionary* pResources,
-    CFX_FloatRect* pBBox,
+    const CFX_FloatRect& rcBBox,
     CPDF_AllStates* pStates,
     int level)
     : m_pDocument(pDocument),
@@ -250,6 +250,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_pResources(pResources),
       m_pObjectHolder(pObjHolder),
       m_Level(level),
+      m_BBox(rcBBox),
       m_ParamStartPos(0),
       m_ParamCount(0),
       m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()),
@@ -269,8 +270,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     m_pResources = m_pParentResources;
   if (!m_pResources)
     m_pResources = m_pPageResources;
-  if (pBBox)
-    m_BBox = *pBBox;
   if (pStates) {
     m_pCurStates->Copy(*pStates);
   } else {
@@ -1625,11 +1624,13 @@ void CPDF_StreamContentParser::ParsePathObject() {
   }
 }
 
+// static
 CFX_ByteStringC CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
     const CFX_ByteStringC& abbr) {
   return FindFullName(InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), abbr);
 }
 
+// static
 CFX_ByteStringC CPDF_StreamContentParser::FindValueAbbreviationForTesting(
     const CFX_ByteStringC& abbr) {
   return FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr), abbr);

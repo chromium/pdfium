@@ -37,7 +37,7 @@ class CPDF_StreamContentParser {
                            const CFX_Matrix* pmtContentToUser,
                            CPDF_PageObjectHolder* pObjectHolder,
                            CPDF_Dictionary* pResources,
-                           CFX_FloatRect* pBBox,
+                           const CFX_FloatRect& rcBBox,
                            CPDF_AllStates* pAllStates,
                            int level);
   ~CPDF_StreamContentParser();
@@ -51,8 +51,10 @@ class CPDF_StreamContentParser {
   const float* GetType3Data() const { return m_Type3Data; }
   CPDF_Font* FindFont(const CFX_ByteString& name);
 
-  CFX_ByteStringC FindKeyAbbreviationForTesting(const CFX_ByteStringC& abbr);
-  CFX_ByteStringC FindValueAbbreviationForTesting(const CFX_ByteStringC& abbr);
+  static CFX_ByteStringC FindKeyAbbreviationForTesting(
+      const CFX_ByteStringC& abbr);
+  static CFX_ByteStringC FindValueAbbreviationForTesting(
+      const CFX_ByteStringC& abbr);
 
  private:
   struct ContentParam {
@@ -196,9 +198,9 @@ class CPDF_StreamContentParser {
   CFX_UnownedPtr<CPDF_Dictionary> m_pParentResources;
   CFX_UnownedPtr<CPDF_Dictionary> m_pResources;
   CFX_UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
-  int m_Level;
+  const int m_Level;
   CFX_Matrix m_mtContentToUser;
-  CFX_FloatRect m_BBox;
+  const CFX_FloatRect m_BBox;
   ContentParam m_ParamBuf[kParamBufSize];
   uint32_t m_ParamStartPos;
   uint32_t m_ParamCount;

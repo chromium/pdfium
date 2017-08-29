@@ -99,7 +99,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDictFor("Resources");
   m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
       pForm->m_pDocument.Get(), pForm->m_pPageResources.Get(),
-      pForm->m_pResources.Get(), pParentMatrix, pForm, pResources, &form_bbox,
+      pForm->m_pResources.Get(), pParentMatrix, pForm, pResources, form_bbox,
       pGraphicStates, level);
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
@@ -172,7 +172,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
             m_pObjectHolder->m_pDocument.Get(),
             m_pObjectHolder->m_pPageResources.Get(), nullptr, nullptr,
             m_pObjectHolder.Get(), m_pObjectHolder->m_pResources.Get(),
-            &m_pObjectHolder->m_BBox, nullptr, 0);
+            m_pObjectHolder->m_BBox, nullptr, 0);
         m_pParser->GetCurStates()->m_ColorState.SetDefault();
       }
       if (m_CurrentOffset >= m_Size) {
