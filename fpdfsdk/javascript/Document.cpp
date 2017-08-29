@@ -1016,7 +1016,7 @@ bool Document::documentFileName(CJS_Runtime* pRuntime,
     return false;
   }
   CFX_WideString wsFilePath = m_pFormFillEnv->JS_docGetFilePath();
-  int32_t i = wsFilePath.GetLength() - 1;
+  FX_STRSIZE i = wsFilePath.GetLength() - 1;
   for (; i >= 0; i--) {
     if (wsFilePath[i] == L'\\' || wsFilePath[i] == L'/')
       break;

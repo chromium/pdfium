@@ -43,7 +43,7 @@ class CFX_BinaryBuf {
   }
 
   void InsertBlock(FX_STRSIZE pos, const void* pBuf, FX_STRSIZE size);
-  void Delete(int start_index, int count);
+  void Delete(FX_STRSIZE start_index, FX_STRSIZE count);
 
   // Releases ownership of |m_pBuffer| and returns it.
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachBuffer();

@@ -98,8 +98,8 @@ void UTF16ToWChar(void* pBuffer, FX_STRSIZE iLength) {
 
   uint16_t* pSrc = static_cast<uint16_t*>(pBuffer);
   wchar_t* pDst = static_cast<wchar_t*>(pBuffer);
-  while (--iLength >= 0)
-    pDst[iLength] = static_cast<wchar_t>(pSrc[iLength]);
+  for (FX_STRSIZE i = 0; i < iLength; i++)
+    pDst[i] = static_cast<wchar_t>(pSrc[i]);
 }
 
 void SwapByteOrder(wchar_t* pStr, FX_STRSIZE iLength) {

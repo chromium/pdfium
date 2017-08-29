@@ -21,7 +21,7 @@ bool CFX_CharIter::Next(bool bPrev) {
       return false;
     m_nIndex--;
   } else {
-    if (m_nIndex + 1 >= m_wsText.GetLength())
+    if (static_cast<FX_STRSIZE>(m_nIndex + 1) >= m_wsText.GetLength())
       return false;
     m_nIndex++;
   }
@@ -33,7 +33,7 @@ wchar_t CFX_CharIter::GetChar() const {
 }
 
 void CFX_CharIter::SetAt(int32_t nIndex) {
-  if (nIndex < 0 || nIndex >= m_wsText.GetLength())
+  if (nIndex < 0 || static_cast<FX_STRSIZE>(nIndex) >= m_wsText.GetLength())
     return;
   m_nIndex = nIndex;
 }
@@ -43,7 +43,8 @@ int32_t CFX_CharIter::GetAt() const {
 }
 
 bool CFX_CharIter::IsEOF(bool bTail) const {
-  return bTail ? (m_nIndex + 1 == m_wsText.GetLength()) : (m_nIndex == 0);
+  return bTail ? (static_cast<FX_STRSIZE>(m_nIndex + 1) == m_wsText.GetLength())
+               : (m_nIndex == 0);
 }
 
 std::unique_ptr<IFX_CharIter> CFX_CharIter::Clone() const {

@@ -649,7 +649,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
     if (nCount >= 1) {
       pDst = FX_Alloc(wchar_t, nCount);
       Unicode_GetNormalization(wChar, pDst);
-      for (int nIndex = 0; nIndex < nCount; nIndex++) {
+      for (FX_STRSIZE nIndex = 0; nIndex < nCount; nIndex++) {
         PAGECHAR_INFO info2 = info;
         info2.m_Unicode = pDst[nIndex];
         info2.m_Flag = FPDFTEXT_CHAR_PIECE;
@@ -679,7 +679,7 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   if (nCount >= 1) {
     pDst = FX_Alloc(wchar_t, nCount);
     Unicode_GetNormalization(wChar, pDst);
-    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+    for (FX_STRSIZE nIndex = 0; nIndex < nCount; nIndex++) {
       PAGECHAR_INFO info2 = info;
       info2.m_Unicode = pDst[nIndex];
       info2.m_Flag = FPDFTEXT_CHAR_PIECE;
@@ -700,7 +700,7 @@ void CPDF_TextPage::CloseTempLine() {
 
   CFX_WideString str = m_TempTextBuf.MakeString();
   bool bPrevSpace = false;
-  for (int i = 0; i < str.GetLength(); i++) {
+  for (FX_STRSIZE i = 0; i < str.GetLength(); i++) {
     if (str[i] != ' ') {
       bPrevSpace = false;
       continue;
@@ -1222,7 +1222,7 @@ bool CPDF_TextPage::IsHyphen(wchar_t curChar) {
   FX_STRSIZE nCount = strCurText.GetLength();
   if (nCount < 1)
     return false;
-  int nIndex = nCount - 1;
+  FX_STRSIZE nIndex = nCount - 1;
   wchar_t wcTmp = strCurText[nIndex];
   while (wcTmp == 0x20 && nIndex > 0 && nIndex <= nCount - 1)
     wcTmp = strCurText[--nIndex];

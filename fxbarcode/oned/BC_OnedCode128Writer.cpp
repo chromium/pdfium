@@ -96,7 +96,7 @@ bool CBC_OnedCode128Writer::CheckContentValidity(
 CFX_WideString CBC_OnedCode128Writer::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filterChineseChar;
-  for (int32_t i = 0; i < contents.GetLength(); i++) {
+  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
     if (ch > 175) {
       i++;
@@ -173,9 +173,8 @@ int32_t CBC_OnedCode128Writer::Encode128B(const CFX_ByteString& contents,
   int32_t checkWeight = 1;
   patterns->push_back(CODE_START_B);
   int32_t checkSum = CODE_START_B * checkWeight;
-  int32_t position = 0;
-  while (position < contents.GetLength()) {
-    int32_t patternIndex = contents[position++] - ' ';
+  for (FX_STRSIZE position = 0; position < contents.GetLength(); position++) {
+    int32_t patternIndex = contents[position] - ' ';
     patterns->push_back(patternIndex);
     checkSum += patternIndex * checkWeight++;
   }
@@ -188,13 +187,13 @@ int32_t CBC_OnedCode128Writer::Encode128C(const CFX_ByteString& contents,
   int32_t checkWeight = 1;
   patterns->push_back(CODE_START_C);
   int32_t checkSum = CODE_START_C * checkWeight;
-  int32_t position = 0;
+  FX_STRSIZE position = 0;
   while (position < contents.GetLength()) {
     int32_t patternIndex;
     char ch = contents[position];
     if (std::isdigit(ch)) {
       patternIndex = FXSYS_atoi(
-          contents.Mid(position, position + 1 < contents.GetLength() ? 2 : 1)
+          contents.Mid(position, contents.IsValidIndex(position + 1) ? 2 : 1)
               .c_str());
       ++position;
       if (position < contents.GetLength() && std::isdigit(contents[position]))

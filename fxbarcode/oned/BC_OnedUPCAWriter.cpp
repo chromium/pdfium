@@ -53,7 +53,7 @@ CFX_WideString CBC_OnedUPCAWriter::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filtercontents;
   wchar_t ch;
-  for (int32_t i = 0; i < contents.GetLength(); i++) {
+  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     ch = contents[i];
     if (ch > 175) {
       i++;
@@ -69,8 +69,8 @@ CFX_WideString CBC_OnedUPCAWriter::FilterContents(
 int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
-  int32_t j = 1;
-  for (int32_t i = contents.GetLength() - 1; i >= 0; i--) {
+  FX_STRSIZE j = 1;
+  for (FX_STRSIZE i = contents.GetLength() - 1; i >= 0; i--) {
     if (j % 2) {
       odd += FXSYS_atoi(contents.Mid(i, 1).c_str());
     } else {

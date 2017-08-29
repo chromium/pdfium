@@ -105,7 +105,7 @@ CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filtercontents;
   wchar_t ch;
-  for (int32_t index = 0; index < contents.GetLength(); index++) {
+  for (FX_STRSIZE index = 0; index < contents.GetLength(); index++) {
     ch = contents[index];
     if (ch > 175) {
       index++;
@@ -136,7 +136,7 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const CFX_ByteString& contents,
   uint8_t* result = FX_Alloc2D(uint8_t, m_iWideNarrRatio * 7, data.GetLength());
   char ch;
   int32_t position = 0;
-  for (int32_t index = 0; index < data.GetLength(); index++) {
+  for (FX_STRSIZE index = 0; index < data.GetLength(); index++) {
     ch = data[index];
     if (((ch >= 'a') && (ch <= 'z'))) {
       ch = ch - 32;

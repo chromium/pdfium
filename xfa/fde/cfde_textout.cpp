@@ -326,7 +326,7 @@ void CFDE_TextOut::LoadText(const CFX_WideString& str, const CFX_RectF& rect) {
 
   m_wsText = str;
 
-  if (pdfium::CollectionSize<int32_t>(m_CharWidths) < str.GetLength())
+  if (pdfium::CollectionSize<FX_STRSIZE>(m_CharWidths) < str.GetLength())
     m_CharWidths.resize(str.GetLength(), 0);
 
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;

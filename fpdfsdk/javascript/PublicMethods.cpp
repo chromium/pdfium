@@ -366,7 +366,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
   bool bExit = false;
   bool bBadFormat = false;
 
-  int i = 0;
+  FX_STRSIZE i = 0;
   int j = 0;
 
   while (i < format.GetLength()) {
@@ -394,7 +394,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
       case 't': {
         int oldj = j;
         int nSkip = 0;
-        int remaining = format.GetLength() - i - 1;
+        FX_STRSIZE remaining = format.GetLength() - i - 1;
 
         if (remaining == 0 || format[i + 1] != c) {
           switch (c) {
@@ -628,10 +628,10 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
   int nMin = JS_GetMinFromTime(dDate);
   int nSec = JS_GetSecFromTime(dDate);
 
-  int i = 0;
+  FX_STRSIZE i = 0;
   while (i < format.GetLength()) {
     wchar_t c = format[i];
-    int remaining = format.GetLength() - i - 1;
+    FX_STRSIZE remaining = format.GetLength() - i - 1;
     sPart = L"";
     switch (c) {
       case 'y':

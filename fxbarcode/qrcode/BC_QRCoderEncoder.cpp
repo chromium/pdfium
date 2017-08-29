@@ -134,7 +134,7 @@ void Append8BitBytes(const CFX_ByteString& content,
                      CBC_QRCoderBitVector* bits,
                      CFX_ByteString encoding,
                      int32_t& e) {
-  for (int32_t i = 0; i < content.GetLength(); i++)
+  for (FX_STRSIZE i = 0; i < content.GetLength(); i++)
     bits->AppendBits(content[i], 8);
 }
 
@@ -425,7 +425,7 @@ void MergeString(std::vector<ModeStringPair>* result,
 
 void SplitString(const CFX_ByteString& content,
                  std::vector<ModeStringPair>* result) {
-  int32_t index = 0;
+  FX_STRSIZE index = 0;
   while (index < content.GetLength()) {
     uint8_t c = static_cast<uint8_t>(content[index]);
     if (!((c >= 0xA1 && c <= 0xAA) || (c >= 0xB0 && c <= 0xFA)))
@@ -437,7 +437,7 @@ void SplitString(const CFX_ByteString& content,
   if (index >= content.GetLength())
     return;
 
-  int32_t flag = index;
+  FX_STRSIZE flag = index;
   while (GetAlphaNumericCode(content[index]) == -1 &&
          index < content.GetLength()) {
     uint8_t c = static_cast<uint8_t>(content[index]);
@@ -491,7 +491,7 @@ CBC_QRCoderMode* ChooseMode(const CFX_ByteString& content,
 
   bool hasNumeric = false;
   bool hasAlphaNumeric = false;
-  for (int32_t i = 0; i < content.GetLength(); i++) {
+  for (FX_STRSIZE i = 0; i < content.GetLength(); i++) {
     if (isdigit(content[i])) {
       hasNumeric = true;
     } else if (GetAlphaNumericCode(content[i]) != -1) {

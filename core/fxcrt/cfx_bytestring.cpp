@@ -427,7 +427,7 @@ FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE index, FX_STRSIZE count) {
     return old_length;
 
   ReallocBeforeWrite(old_length);
-  int chars_to_copy = old_length - removal_length + 1;
+  FX_STRSIZE chars_to_copy = old_length - removal_length + 1;
   memmove(m_pData->m_String + index, m_pData->m_String + removal_length,
           chars_to_copy);
   m_pData->m_nDataLength = old_length - count;

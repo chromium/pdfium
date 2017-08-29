@@ -377,7 +377,7 @@ int CompareFieldName(const CFX_WideString& name1, const CFX_WideString& name2) {
   if (name1.GetLength() == name2.GetLength())
     return name1 == name2 ? 1 : 0;
 
-  int i = 0;
+  FX_STRSIZE i = 0;
   while (ptr1[i] == ptr2[i])
     i++;
   if (i == name1.GetLength())

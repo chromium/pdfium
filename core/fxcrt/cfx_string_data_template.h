@@ -21,7 +21,7 @@ class CFX_StringDataTemplate {
     // NUL char that is not included in |m_nAllocLength|.
     int overhead =
         offsetof(CFX_StringDataTemplate, m_String) + sizeof(CharType);
-    pdfium::base::CheckedNumeric<int> nSize = nLen;
+    pdfium::base::CheckedNumeric<FX_STRSIZE> nSize = nLen;
     nSize *= sizeof(CharType);
     nSize += overhead;
 
@@ -31,8 +31,8 @@ class CFX_StringDataTemplate {
     // by using this otherwise wasted space.
     nSize += 7;
     nSize &= ~7;
-    int totalSize = nSize.ValueOrDie();
-    int usableLen = (totalSize - overhead) / sizeof(CharType);
+    FX_STRSIZE totalSize = nSize.ValueOrDie();
+    FX_STRSIZE usableLen = (totalSize - overhead) / sizeof(CharType);
     ASSERT(usableLen >= nLen);
 
     void* pData = pdfium::base::PartitionAllocGeneric(

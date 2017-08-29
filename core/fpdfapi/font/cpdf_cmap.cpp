@@ -182,7 +182,7 @@ const PredefinedCMap g_PredefinedCMaps[] = {
 };
 
 int CheckFourByteCodeRange(uint8_t* codes,
-                           int size,
+                           FX_STRSIZE size,
                            const std::vector<CPDF_CMap::CodeRange>& ranges) {
   int iSeg = pdfium::CollectionSize<int>(ranges) - 1;
   while (iSeg >= 0) {
@@ -216,7 +216,7 @@ int GetFourByteCharSizeImpl(uint32_t charcode,
   codes[0] = codes[1] = 0x00;
   codes[2] = (uint8_t)(charcode >> 8 & 0xFF);
   codes[3] = (uint8_t)charcode;
-  int offset = 0;
+  FX_STRSIZE offset = 0;
   int size = 4;
   for (int i = 0; i < 4; ++i) {
     int iSeg = pdfium::CollectionSize<int>(ranges) - 1;

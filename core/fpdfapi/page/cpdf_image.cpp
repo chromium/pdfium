@@ -257,7 +257,7 @@ void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
     int32_t maskWidth = pMaskBitmap->GetWidth();
     int32_t maskHeight = pMaskBitmap->GetHeight();
     std::unique_ptr<uint8_t, FxFreeDeleter> mask_buf;
-    FX_STRSIZE mask_size = 0;
+    int32_t mask_size = 0;
     auto pMaskDict =
         pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
     pMaskDict->SetNewFor<CPDF_Name>("Type", "XObject");

@@ -1767,21 +1767,20 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
     bNeg = true;
     wsSrcNum.Delete(0, 1);
   }
-  int32_t len = wsSrcNum.GetLength();
+  FX_STRSIZE len = wsSrcNum.GetLength();
   auto dot_index = wsSrcNum.Find('.');
   dot_index = !dot_index.has_value() ? len : dot_index;
 
-  int32_t cc = dot_index.value() - 1;
-  if (cc >= 0) {
+  if (dot_index.value() >= 1) {
     int nPos = dot_index.value() % 3;
     wsOutput.clear();
-    for (int32_t i = 0; i < dot_index; i++) {
+    for (FX_STRSIZE i = 0; i < dot_index.value(); i++) {
       if (i % 3 == nPos && i != 0)
         wsOutput += wsGroupSymbol;
 
       wsOutput += wsSrcNum[i];
     }
-    if (dot_index < len) {
+    if (dot_index.value() < len) {
       wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
       wsOutput += wsSrcNum.Right(len - dot_index.value() - 1);
     }

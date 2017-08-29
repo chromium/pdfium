@@ -141,7 +141,8 @@ uint32_t CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
     return 0;
   pdfium::base::CheckedNumeric<uint32_t> num = 0;
   if (word[0] == '<') {
-    for (int i = 1; i < word.GetLength() && std::isxdigit(word[i]); ++i) {
+    for (FX_STRSIZE i = 1; i < word.GetLength() && std::isxdigit(word[i]);
+         ++i) {
       num = num * 16 + FXSYS_HexCharToInt(word[i]);
       if (!num.IsValid())
         return 0;
@@ -149,7 +150,7 @@ uint32_t CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
     return num.ValueOrDie();
   }
 
-  for (int i = 0; i < word.GetLength() && std::isdigit(word[i]); ++i) {
+  for (FX_STRSIZE i = 0; i < word.GetLength() && std::isdigit(word[i]); ++i) {
     num = num * 10 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(word[i]));
     if (!num.IsValid())
       return 0;
@@ -164,7 +165,7 @@ bool CPDF_CMapParser::CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
   if (first.GetLength() == 0 || first[0] != '<')
     return false;
 
-  int i;
+  FX_STRSIZE i;
   for (i = 1; i < first.GetLength(); ++i) {
     if (first[i] == '>') {
       break;
@@ -181,14 +182,10 @@ bool CPDF_CMapParser::CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
         FXSYS_HexCharToInt(digit1) * 16 + FXSYS_HexCharToInt(digit2);
   }
 
-  uint32_t size = second.GetLength();
+  FX_STRSIZE size = second.GetLength();
   for (i = 0; i < range.m_CharSize; ++i) {
-    uint8_t digit1 = ((uint32_t)i * 2 + 1 < size)
-                         ? second[static_cast<FX_STRSIZE>(i * 2 + 1)]
-                         : '0';
-    uint8_t digit2 = ((uint32_t)i * 2 + 2 < size)
-                         ? second[static_cast<FX_STRSIZE>(i * 2 + 2)]
-                         : '0';
+    uint8_t digit1 = (i * 2 + 1 < size) ? second[i * 2 + 1] : '0';
+    uint8_t digit2 = (i * 2 + 2 < size) ? second[i * 2 + 2] : '0';
     range.m_Upper[i] =
         FXSYS_HexCharToInt(digit1) * 16 + FXSYS_HexCharToInt(digit2);
   }

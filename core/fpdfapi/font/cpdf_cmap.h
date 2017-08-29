@@ -37,7 +37,7 @@ class CPDF_CMap : public CFX_Retainable {
   };
 
   struct CodeRange {
-    int m_CharSize;
+    FX_STRSIZE m_CharSize;
     uint8_t m_Lower[4];
     uint8_t m_Upper[4];
   };

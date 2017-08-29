@@ -28,7 +28,7 @@ bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   pdfium::base::CheckedNumeric<uint32_t> integer = 0;
   bool bNegative = false;
   bool bSigned = false;
-  int cc = 0;
+  FX_STRSIZE cc = 0;
   if (strc[0] == '+') {
     cc++;
     bSigned = true;

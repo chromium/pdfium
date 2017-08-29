@@ -136,10 +136,10 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
   std::unique_ptr<CFX_UnicodeEncodingEx> encoding =
       FX_CreateFontEncodingEx(cFont, FXFM_ENCODING_NONE);
 
-  int32_t length = text.GetLength();
+  FX_STRSIZE length = text.GetLength();
   uint32_t* pCharCode = FX_Alloc(uint32_t, text.GetLength());
   float charWidth = 0;
-  for (int32_t j = 0; j < text.GetLength(); j++) {
+  for (FX_STRSIZE j = 0; j < length; j++) {
     pCharCode[j] = encoding->CharCodeFromUnicode(text[j]);
     int32_t glyp_code = encoding->GlyphFromCharCode(pCharCode[j]);
     int32_t glyp_value = cFont->GetGlyphWidth(glyp_code);
@@ -162,7 +162,7 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
   charPos[0].m_ExtGID = charPos[0].m_GlyphIndex;
 #endif
   penX += (float)(charPos[0].m_FontCharWidth) * (float)fontSize / 1000.0f;
-  for (int32_t i = 1; i < length; i++) {
+  for (FX_STRSIZE i = 1; i < length; i++) {
     charPos[i].m_Origin = CFX_PointF(penX + left, penY + top);
     charPos[i].m_GlyphIndex = encoding->GlyphFromCharCode(pCharCode[i]);
     charPos[i].m_FontCharWidth = cFont->GetGlyphWidth(charPos[i].m_GlyphIndex);

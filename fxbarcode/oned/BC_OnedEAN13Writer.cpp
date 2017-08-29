@@ -63,7 +63,7 @@ CFX_WideString CBC_OnedEAN13Writer::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filtercontents;
   wchar_t ch;
-  for (int32_t i = 0; i < contents.GetLength(); i++) {
+  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     ch = contents[i];
     if (ch > 175) {
       i++;
@@ -78,12 +78,13 @@ CFX_WideString CBC_OnedEAN13Writer::FilterContents(
 int32_t CBC_OnedEAN13Writer::CalcChecksum(const CFX_ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
-  int32_t j = 1;
-  for (int32_t i = contents.GetLength() - 1; i >= 0; i--) {
+  FX_STRSIZE j = 1;
+  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
+    FX_STRSIZE rev_i = (contents.GetLength() - 1) - 1;
     if (j % 2) {
-      odd += FXSYS_atoi(contents.Mid(i, 1).c_str());
+      odd += FXSYS_atoi(contents.Mid(i, rev_i).c_str());
     } else {
-      even += FXSYS_atoi(contents.Mid(i, 1).c_str());
+      even += FXSYS_atoi(contents.Mid(i, rev_i).c_str());
     }
     j++;
   }
