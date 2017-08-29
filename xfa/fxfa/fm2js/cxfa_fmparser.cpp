@@ -814,7 +814,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
         }
         CFX_WideStringC tempStr = m_token->m_string;
         uint32_t tempLine = m_token->m_line_num;
-        if (NextToken())
+        if (!NextToken())
           return nullptr;
         if (m_token->m_type != TOKlbracket) {
           std::unique_ptr<CXFA_FMSimpleExpression> s =

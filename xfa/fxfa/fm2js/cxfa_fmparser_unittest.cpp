@@ -114,3 +114,12 @@ TEST(CXFA_FMParserTest, MaxParseDepth) {
   EXPECT_EQ(nullptr, parser->Parse());
   EXPECT_TRUE(parser->HasError());
 }
+
+TEST(CFXA_FMParserTest, chromium752201) {
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(
+      L"fTep a\n"
+      L".#\n"
+      L"fo@ =[=l");
+  EXPECT_EQ(nullptr, parser->Parse());
+  EXPECT_TRUE(parser->HasError());
+}
