@@ -61,7 +61,6 @@ class CXFA_FFDoc {
 
   CXFA_FFDocView* CreateDocView();
 
-  bool OpenDoc(const CFX_RetainPtr<IFX_SeekableStream>& pStream);
   bool OpenDoc(CPDF_Document* pPDFDoc);
   void CloseDoc();
 

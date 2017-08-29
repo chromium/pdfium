@@ -282,11 +282,6 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
   return m_DocView.get();
 }
 
-bool CXFA_FFDoc::OpenDoc(const CFX_RetainPtr<IFX_SeekableStream>& pStream) {
-  m_pStream = pStream;
-  return true;
-}
-
 bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (!pPDFDoc)
     return false;
