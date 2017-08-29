@@ -101,7 +101,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       ASSERT(pPageView);
       m_bValid = !m_bValid;
       m_pFormFillEnv->Invalidate(pAnnot->GetUnderlyingPage(),
-                                 pAnnot->GetRect().ToFxRect());
+                                 pAnnot->GetRect().GetOuterRect());
 
       if (m_bValid) {
         if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true))

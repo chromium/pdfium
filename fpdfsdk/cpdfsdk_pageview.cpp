@@ -459,12 +459,12 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 
 void CPDFSDK_PageView::UpdateRects(const std::vector<CFX_FloatRect>& rects) {
   for (const auto& rc : rects)
-    m_pFormFillEnv->Invalidate(m_page, rc.ToFxRect());
+    m_pFormFillEnv->Invalidate(m_page, rc.GetOuterRect());
 }
 
 void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {
   CFX_FloatRect rcWindow = pAnnot->GetRect();
-  m_pFormFillEnv->Invalidate(m_page, rcWindow.ToFxRect());
+  m_pFormFillEnv->Invalidate(m_page, rcWindow.GetOuterRect());
 }
 
 int CPDFSDK_PageView::GetPageIndex() const {

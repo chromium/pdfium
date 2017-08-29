@@ -18,7 +18,6 @@
 namespace {
 
 constexpr float kDefaultFontSize = 9.0f;
-constexpr int kInvalidationInflate = 2;
 
 }  // namespace
 
@@ -302,11 +301,9 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
     }
   }
 
-  FX_RECT rcWin = PWLtoWnd(rcRefresh);
-  rcWin.left -= kInvalidationInflate;
-  rcWin.top -= kInvalidationInflate;
-  rcWin.right += kInvalidationInflate;
-  rcWin.bottom += kInvalidationInflate;
+  CFX_FloatRect rcWin = PWLtoWnd(rcRefresh);
+  rcWin.Inflate(1, 1);
+  rcWin.Normalize();
 
   if (CFX_SystemHandler* pSH = GetSystemHandler()) {
     if (CPDFSDK_Widget* widget = static_cast<CPDFSDK_Widget*>(
@@ -737,11 +734,9 @@ CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
   return mt;
 }
 
-FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
+CFX_FloatRect CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
   CFX_Matrix mt = GetWindowMatrix();
-  CFX_FloatRect rcTemp = mt.TransformRect(rect);
-  return FX_RECT((int32_t)(rcTemp.left + 0.5), (int32_t)(rcTemp.bottom + 0.5),
-                 (int32_t)(rcTemp.right + 0.5), (int32_t)(rcTemp.top + 0.5));
+  return mt.TransformRect(rect);
 }
 
 CFX_PointF CPWL_Wnd::ParentToChild(const CFX_PointF& point) const {

@@ -327,12 +327,14 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
     ASSERT(pFormCtrl);
 
-    if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl)) {
-      UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
-      m_pFormFillEnv->Invalidate(
-          pPage, formfiller->GetViewBBox(
-                     m_pFormFillEnv->GetPageView(pPage, false), pWidget));
-    }
+    CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl);
+    if (!pWidget)
+      continue;
+
+    UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
+    FX_RECT rect = formfiller->GetViewBBox(
+        m_pFormFillEnv->GetPageView(pPage, false), pWidget);
+    m_pFormFillEnv->Invalidate(pPage, rect);
   }
 }
 

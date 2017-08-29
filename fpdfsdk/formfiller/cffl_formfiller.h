@@ -140,7 +140,6 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   CPDFSDK_PageView* GetCurPageView(bool renew);
   void SetChangeMark();
 
-  virtual void InvalidateRect(const FX_RECT& rect);
   CPDFSDK_Annot* GetSDKAnnot() { return m_pWidget.Get(); }
 
  protected:
@@ -153,6 +152,8 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   // The font map should be stored somewhere more appropriate so it will live
   // until the PWL_Edit is done with it. pdfium:566
   void DestroyWindows();
+
+  void InvalidateRect(const FX_RECT& rect);
 
   CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   CFX_UnownedPtr<CPDFSDK_Widget> m_pWidget;

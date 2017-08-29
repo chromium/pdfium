@@ -318,7 +318,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   void DrawChildAppearance(CFX_RenderDevice* pDevice,
                            const CFX_Matrix& mtUser2Device);
 
-  FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
+  CFX_FloatRect PWLtoWnd(const CFX_FloatRect& rect) const;
 
   void AddChild(CPWL_Wnd* pWnd);
   void RemoveChild(CPWL_Wnd* pWnd);

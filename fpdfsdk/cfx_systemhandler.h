@@ -53,7 +53,7 @@ class CFX_SystemHandler {
   explicit CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CFX_SystemHandler();
 
-  void InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect);
+  void InvalidateRect(CPDFSDK_Widget* widget, const CFX_FloatRect& rect);
   void OutputSelectedRect(CFFL_FormFiller* pFormFiller, CFX_FloatRect& rect);
   bool IsSelectionImplemented() const;
   void SetCursor(int32_t nCursorType);
