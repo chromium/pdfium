@@ -151,7 +151,7 @@ class CPDF_AnnotContext {
 
     m_pAnnotForm = pdfium::MakeUnique<CPDF_Form>(
         m_pPage->m_pDocument.Get(), m_pPage->m_pResources.Get(), pStream);
-    m_pAnnotForm->ParseContent(nullptr, nullptr, nullptr);
+    m_pAnnotForm->ParseContent();
   }
 
   CPDF_Form* GetForm() const { return m_pAnnotForm.get(); }

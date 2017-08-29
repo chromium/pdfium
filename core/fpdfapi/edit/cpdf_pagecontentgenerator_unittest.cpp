@@ -298,7 +298,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
   // Create an empty form.
   auto pTestForm =
       pdfium::MakeUnique<CPDF_Form>(pDoc.get(), nullptr, pStream.get());
-  pTestForm->ParseContent(nullptr, nullptr, nullptr);
+  pTestForm->ParseContent();
   ASSERT_TRUE(pTestForm->IsParsed());
 
   // The generated stream for the empty form should be an empty string.
@@ -324,7 +324,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   // Create a form with a non-empty stream.
   auto pTestForm =
       pdfium::MakeUnique<CPDF_Form>(pDoc.get(), nullptr, pStream.get());
-  pTestForm->ParseContent(nullptr, nullptr, nullptr);
+  pTestForm->ParseContent();
   ASSERT_TRUE(pTestForm->IsParsed());
 
   CPDF_PageContentGenerator generator(pTestForm.get());

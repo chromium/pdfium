@@ -44,10 +44,14 @@ void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
   m_ParseState = CONTENT_PARSING;
 }
 
-void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
-                             const CFX_Matrix* pParentMatrix,
-                             CPDF_Type3Char* pType3Char,
-                             int level) {
+void CPDF_Form::ParseContent() {
+  ParseContentWithParams(nullptr, nullptr, nullptr, 0);
+}
+
+void CPDF_Form::ParseContentWithParams(CPDF_AllStates* pGraphicStates,
+                                       const CFX_Matrix* pParentMatrix,
+                                       CPDF_Type3Char* pType3Char,
+                                       int level) {
   StartParse(pGraphicStates, pParentMatrix, pType3Char, level);
   ContinueParse(nullptr);
 }

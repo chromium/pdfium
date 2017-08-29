@@ -24,16 +24,17 @@ class CPDF_Form : public CPDF_PageObjectHolder {
             CPDF_Dictionary* pParentResources = nullptr);
   ~CPDF_Form() override;
 
-  void ParseContent(CPDF_AllStates* pGraphicStates,
-                    const CFX_Matrix* pParentMatrix,
-                    CPDF_Type3Char* pType3Char,
-                    int level = 0);
+  void ParseContent();
+  void ParseContentWithParams(CPDF_AllStates* pGraphicStates,
+                              const CFX_Matrix* pParentMatrix,
+                              CPDF_Type3Char* pType3Char,
+                              int level);
 
  private:
   void StartParse(CPDF_AllStates* pGraphicStates,
                   const CFX_Matrix* pParentMatrix,
                   CPDF_Type3Char* pType3Char,
-                  int level = 0);
+                  int level);
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_FORM_H_
