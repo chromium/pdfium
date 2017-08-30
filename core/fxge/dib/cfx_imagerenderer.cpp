@@ -88,7 +88,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(
 
 CFX_ImageRenderer::~CFX_ImageRenderer() {}
 
-bool CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
+bool CFX_ImageRenderer::Continue(IFX_PauseIndicator* pPause) {
   if (m_Status == 1)
     return m_Stretcher->Continue(pPause);
   if (m_Status != 2)

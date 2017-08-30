@@ -61,7 +61,7 @@ class CPDF_RenderStatus {
   void RenderSingleObject(CPDF_PageObject* pObj, const CFX_Matrix* pObj2Device);
   bool ContinueSingleObject(CPDF_PageObject* pObj,
                             const CFX_Matrix* pObj2Device,
-                            IFX_Pause* pPause);
+                            IFX_PauseIndicator* pPause);
   void ProcessClipPath(const CPDF_ClipPath& ClipPath,
                        const CFX_Matrix* pObj2Device);
   CPDF_RenderContext* GetContext() const { return m_pContext.Get(); }

@@ -244,7 +244,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(
 
 CFX_ImageTransformer::~CFX_ImageTransformer() {}
 
-bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
+bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
   if (m_Status == 1) {
     if (m_Stretcher->Continue(pPause))
       return true;

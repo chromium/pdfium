@@ -110,7 +110,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
   return false;
 }
 
-bool CPDF_PageRenderCache::Continue(IFX_Pause* pPause,
+bool CPDF_PageRenderCache::Continue(IFX_PauseIndicator* pPause,
                                     CPDF_RenderStatus* pRenderStatus) {
   int ret = m_pCurImageCacheEntry->Continue(pPause, pRenderStatus);
   if (ret == 2)

@@ -22,12 +22,6 @@
 #define FX_IsOdd(a) ((a)&1)
 #endif  // PDF_ENABLE_XFA
 
-class IFX_Pause {
- public:
-  virtual ~IFX_Pause() {}
-  virtual bool NeedToPauseNow() = 0;
-};
-
 uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits);
 
 #endif  // CORE_FXCRT_FX_BASIC_H_

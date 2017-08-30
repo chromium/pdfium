@@ -856,6 +856,7 @@ static_library("fxcrt") {
     "core/fxcrt/fxcrt_posix.h",
     "core/fxcrt/fxcrt_windows.cpp",
     "core/fxcrt/fxcrt_windows.h",
+    "core/fxcrt/ifx_pauseindicator.h",
     "core/fxcrt/ifxcrt_fileaccess.h",
     "core/fxcrt/xml/cxml_attritem.cpp",
     "core/fxcrt/xml/cxml_attritem.h",

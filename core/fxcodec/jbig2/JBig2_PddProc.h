@@ -14,7 +14,7 @@
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;
 class CJBig2_PatternDict;
-class IFX_Pause;
+class IFX_PauseIndicator;
 struct JBig2ArithCtx;
 
 class CJBig2_PDDProc {
@@ -22,7 +22,7 @@ class CJBig2_PDDProc {
   std::unique_ptr<CJBig2_PatternDict> decode_Arith(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext,
-      IFX_Pause* pPause);
+      IFX_PauseIndicator* pPause);
 
   std::unique_ptr<CJBig2_PatternDict> decode_MMR(CJBig2_BitStream* pStream);
 

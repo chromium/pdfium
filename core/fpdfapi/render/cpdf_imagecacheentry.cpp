@@ -105,7 +105,7 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
   CalcSize();
 }
 
-int CPDF_ImageCacheEntry::Continue(IFX_Pause* pPause,
+int CPDF_ImageCacheEntry::Continue(IFX_PauseIndicator* pPause,
                                    CPDF_RenderStatus* pRenderStatus) {
   int ret = m_pCurBitmap.As<CPDF_DIBSource>()->ContinueLoadDIBSource(pPause);
   if (!ret) {

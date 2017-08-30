@@ -23,6 +23,7 @@
 #include "core/fxcodec/jbig2/JBig2_PddProc.h"
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
+#include "core/fxcrt/ifx_pauseindicator.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -69,7 +70,8 @@ CJBig2_Context::CJBig2_Context(
 
 CJBig2_Context::~CJBig2_Context() {}
 
-int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
+int32_t CJBig2_Context::decode_SquentialOrgnazation(
+    IFX_PauseIndicator* pPause) {
   int32_t nRet;
   if (m_pStream->getByteLeft() <= 0)
     return JBIG2_END_OF_FILE;
@@ -115,11 +117,12 @@ int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::decode_EmbedOrgnazation(IFX_Pause* pPause) {
+int32_t CJBig2_Context::decode_EmbedOrgnazation(IFX_PauseIndicator* pPause) {
   return decode_SquentialOrgnazation(pPause);
 }
 
-int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
+int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(
+    IFX_PauseIndicator* pPause) {
   int32_t nRet;
   while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
     auto pSegment = pdfium::MakeUnique<CJBig2_Segment>();
@@ -140,7 +143,7 @@ int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
   return decode_RandomOrgnazation(pPause);
 }
 
-int32_t CJBig2_Context::decode_RandomOrgnazation(IFX_Pause* pPause) {
+int32_t CJBig2_Context::decode_RandomOrgnazation(IFX_PauseIndicator* pPause) {
   for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
     int32_t nRet =
         parseSegmentData(m_SegmentList[m_nSegmentDecoded].get(), pPause);
@@ -163,7 +166,7 @@ int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
                                      int32_t width,
                                      int32_t height,
                                      int32_t stride,
-                                     IFX_Pause* pPause) {
+                                     IFX_PauseIndicator* pPause) {
   int32_t nRet = 0;
   if (m_pGlobalContext) {
     nRet = m_pGlobalContext->decode_EmbedOrgnazation(pPause);
@@ -183,7 +186,7 @@ int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
   return Continue(pPause);
 }
 
-int32_t CJBig2_Context::Continue(IFX_Pause* pPause) {
+int32_t CJBig2_Context::Continue(IFX_PauseIndicator* pPause) {
   m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
   int32_t nRet = 0;
   if (m_PauseStep <= 1) {
@@ -322,7 +325,7 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
 }
 
 int32_t CJBig2_Context::parseSegmentData(CJBig2_Segment* pSegment,
-                                         IFX_Pause* pPause) {
+                                         IFX_PauseIndicator* pPause) {
   int32_t ret = ProcessingParseSegmentData(pSegment, pPause);
   while (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE &&
          m_pStream->getByteLeft() > 0) {
@@ -332,7 +335,7 @@ int32_t CJBig2_Context::parseSegmentData(CJBig2_Segment* pSegment,
 }
 
 int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
-                                                   IFX_Pause* pPause) {
+                                                   IFX_PauseIndicator* pPause) {
   switch (pSegment->m_cFlags.s.type) {
     case 0:
       return parseSymbolDict(pSegment);
@@ -931,7 +934,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
 }
 
 int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
-                                         IFX_Pause* pPause) {
+                                         IFX_PauseIndicator* pPause) {
   uint8_t cFlags;
   auto pPDD = pdfium::MakeUnique<CJBig2_PDDProc>();
   if (m_pStream->read1Byte(&cFlags) != 0 ||
@@ -970,7 +973,7 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
 }
 
 int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
-                                            IFX_Pause* pPause) {
+                                            IFX_PauseIndicator* pPause) {
   uint8_t cFlags;
   JBig2RegionInfo ri;
   auto pHRD = pdfium::MakeUnique<CJBig2_HTRDProc>();
@@ -1048,7 +1051,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
 }
 
 int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
-                                           IFX_Pause* pPause) {
+                                           IFX_PauseIndicator* pPause) {
   if (!m_pGRD) {
     auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
     uint8_t cFlags;

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/ifx_pauseindicator.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/dib/ifx_scanlinecomposer.h"
@@ -310,7 +311,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
 
 CStretchEngine::~CStretchEngine() {}
 
-bool CStretchEngine::Continue(IFX_Pause* pPause) {
+bool CStretchEngine::Continue(IFX_PauseIndicator* pPause) {
   while (m_State == 1) {
     if (ContinueStretchHorz(pPause))
       return true;
@@ -347,7 +348,7 @@ bool CStretchEngine::StartStretchHorz() {
   return true;
 }
 
-bool CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
+bool CStretchEngine::ContinueStretchHorz(IFX_PauseIndicator* pPause) {
   if (!m_DestWidth)
     return false;
   if (m_pSource->SkipToScanline(m_CurRow, pPause))

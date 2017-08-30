@@ -13,6 +13,7 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fxcrt/ifx_pauseindicator.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/ptr_util.h"
 
@@ -34,7 +35,7 @@ CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
   }
 }
 
-void CPDF_ProgressiveRenderer::Start(IFX_Pause* pPause) {
+void CPDF_ProgressiveRenderer::Start(IFX_PauseIndicator* pPause) {
   if (!m_pContext || !m_pDevice || m_Status != Ready) {
     m_Status = Failed;
     return;
@@ -43,7 +44,7 @@ void CPDF_ProgressiveRenderer::Start(IFX_Pause* pPause) {
   Continue(pPause);
 }
 
-void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
+void CPDF_ProgressiveRenderer::Continue(IFX_PauseIndicator* pPause) {
   while (m_Status == ToBeContinued) {
     if (!m_pCurrentLayer) {
       if (m_LayerIndex >= m_pContext->CountLayers()) {

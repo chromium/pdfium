@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/fx_dib.h"
 
+class IFX_PauseIndicator;
 class IFX_ScanlineComposer;
 
 class CStretchEngine {
@@ -26,10 +27,10 @@ class CStretchEngine {
                  int flags);
   ~CStretchEngine();
 
-  bool Continue(IFX_Pause* pPause);
+  bool Continue(IFX_PauseIndicator* pPause);
 
   bool StartStretchHorz();
-  bool ContinueStretchHorz(IFX_Pause* pPause);
+  bool ContinueStretchHorz(IFX_PauseIndicator* pPause);
   void StretchVert();
 
   class CWeightTable {

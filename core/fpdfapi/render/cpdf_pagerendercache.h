@@ -19,7 +19,7 @@ class CPDF_ImageCacheEntry;
 class CPDF_Page;
 class CPDF_RenderStatus;
 class CPDF_Stream;
-class IFX_Pause;
+class IFX_PauseIndicator;
 
 class CPDF_PageRenderCache {
  public:
@@ -41,7 +41,7 @@ class CPDF_PageRenderCache {
                             bool bLoadMask,
                             CPDF_RenderStatus* pRenderStatus);
 
-  bool Continue(IFX_Pause* pPause, CPDF_RenderStatus* pRenderStatus);
+  bool Continue(IFX_PauseIndicator* pPause, CPDF_RenderStatus* pRenderStatus);
 
  private:
   void ClearImageCacheEntry(CPDF_Stream* pStream);

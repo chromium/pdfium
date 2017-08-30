@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/ifx_pauseindicator.h"
 #include "third_party/base/ptr_util.h"
 
 #define PARSE_STEP_LIMIT 100
@@ -125,7 +126,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   m_CurrentOffset = 0;
 }
 
-void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
+void CPDF_ContentParser::Continue(IFX_PauseIndicator* pPause) {
   int steps = 0;
   while (m_Status == ToBeContinued) {
     if (m_InternalStage == STAGE_GETCONTENT) {

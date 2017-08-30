@@ -33,7 +33,7 @@ class CFX_ImageRenderer {
                     bool bRgbByteOrder);
   ~CFX_ImageRenderer();
 
-  bool Continue(IFX_Pause* pPause);
+  bool Continue(IFX_PauseIndicator* pPause);
 
  private:
   const CFX_RetainPtr<CFX_DIBitmap> m_pDevice;

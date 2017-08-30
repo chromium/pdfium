@@ -89,7 +89,8 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
                    uint32_t flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    int blend_type) override;
-  bool ContinueDIBits(CFX_ImageRenderer* handle, IFX_Pause* pPause) override;
+  bool ContinueDIBits(CFX_ImageRenderer* handle,
+                      IFX_PauseIndicator* pPause) override;
   bool DrawDeviceText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,

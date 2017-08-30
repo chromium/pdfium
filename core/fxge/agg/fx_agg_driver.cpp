@@ -1553,7 +1553,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
 }
 
 bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
-                                         IFX_Pause* pPause) {
+                                         IFX_PauseIndicator* pPause) {
   return m_pBitmap->GetBuffer() ? pHandle->Continue(pPause) : true;
 }
 

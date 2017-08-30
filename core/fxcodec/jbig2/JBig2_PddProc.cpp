@@ -16,7 +16,7 @@
 std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   uint32_t GRAY;
   std::unique_ptr<CJBig2_Image> BHDC;
   auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);

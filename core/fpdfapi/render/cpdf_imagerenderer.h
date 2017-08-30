@@ -43,7 +43,7 @@ class CPDF_ImageRenderer {
              bool bStdCS,
              int blendType);
 
-  bool Continue(IFX_Pause* pPause);
+  bool Continue(IFX_PauseIndicator* pPause);
   bool GetResult() const { return m_Result; }
 
  private:

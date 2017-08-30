@@ -314,7 +314,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   return ret;
 }
 
-int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
+int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
   FXCODEC_STATUS ret;
   if (m_Status == 1) {
     const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
@@ -729,7 +729,7 @@ int CPDF_DIBSource::StartLoadMask() {
   return m_pMaskStream ? StartLoadMaskDIB() : 1;
 }
 
-int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_Pause* pPause) {
+int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_PauseIndicator* pPause) {
   if (!m_pMask)
     return 1;
 
@@ -1124,7 +1124,8 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
   return m_pMaskedLine;
 }
 
-bool CPDF_DIBSource::SkipToScanline(int line, IFX_Pause* pPause) const {
+bool CPDF_DIBSource::SkipToScanline(int line,
+                                    IFX_PauseIndicator* pPause) const {
   return m_pDecoder && m_pDecoder->SkipToScanline(line, pPause);
 }
 

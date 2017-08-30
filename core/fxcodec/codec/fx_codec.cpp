@@ -15,6 +15,7 @@
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/ifx_pauseindicator.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
@@ -1389,7 +1390,8 @@ const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
   return m_pLastScanline;
 }
 
-bool CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
+bool CCodec_ScanlineDecoder::SkipToScanline(int line,
+                                            IFX_PauseIndicator* pPause) {
   if (m_NextLine == line || m_NextLine == line + 1)
     return false;
 

@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_system.h"
 
-class IFX_Pause;
+class IFX_PauseIndicator;
 
 class CCodec_ScanlineDecoder {
  public:
@@ -24,7 +24,7 @@ class CCodec_ScanlineDecoder {
   virtual ~CCodec_ScanlineDecoder();
 
   const uint8_t* GetScanline(int line);
-  bool SkipToScanline(int line, IFX_Pause* pPause);
+  bool SkipToScanline(int line, IFX_PauseIndicator* pPause);
 
   int GetWidth() { return m_OutputWidth; }
   int GetHeight() { return m_OutputHeight; }

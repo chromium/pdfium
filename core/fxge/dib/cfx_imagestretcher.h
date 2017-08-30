@@ -15,6 +15,7 @@
 #include "core/fxge/fx_dib.h"
 
 class CFX_DIBSource;
+class IFX_PauseIndicator;
 
 class CFX_ImageStretcher {
  public:
@@ -27,15 +28,15 @@ class CFX_ImageStretcher {
   ~CFX_ImageStretcher();
 
   bool Start();
-  bool Continue(IFX_Pause* pPause);
+  bool Continue(IFX_PauseIndicator* pPause);
 
   CFX_RetainPtr<CFX_DIBSource> source() { return m_pSource; }
 
  private:
   bool StartQuickStretch();
   bool StartStretch();
-  bool ContinueQuickStretch(IFX_Pause* pPause);
-  bool ContinueStretch(IFX_Pause* pPause);
+  bool ContinueQuickStretch(IFX_PauseIndicator* pPause);
+  bool ContinueStretch(IFX_PauseIndicator* pPause);
 
   CFX_UnownedPtr<IFX_ScanlineComposer> const m_pDest;
   CFX_RetainPtr<CFX_DIBSource> m_pSource;

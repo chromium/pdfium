@@ -19,7 +19,7 @@ class CFX_DIBSource;
 class CFX_DIBitmap;
 class CPDF_Document;
 class CPDF_Page;
-class IFX_Pause;
+class IFX_PauseIndicator;
 class IFX_SeekableReadStream;
 
 class CPDF_Image : public CFX_Retainable {
@@ -57,7 +57,7 @@ class CPDF_Image : public CFX_Retainable {
                           bool bStdCS = false,
                           uint32_t GroupFamily = 0,
                           bool bLoadMask = false);
-  bool Continue(IFX_Pause* pPause);
+  bool Continue(IFX_PauseIndicator* pPause);
   CFX_RetainPtr<CFX_DIBSource> DetachBitmap();
   CFX_RetainPtr<CFX_DIBSource> DetachMask();
 

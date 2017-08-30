@@ -20,7 +20,7 @@
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;
 class CPDF_StreamAcc;
-class IFX_Pause;
+class IFX_PauseIndicator;
 
 // Cache is keyed by the ObjNum of a stream and an index within the stream.
 using CJBig2_CacheKey = std::pair<uint32_t, uint32_t>;
@@ -50,16 +50,16 @@ class CJBig2_Context {
                        int32_t width,
                        int32_t height,
                        int32_t stride,
-                       IFX_Pause* pPause);
+                       IFX_PauseIndicator* pPause);
 
-  int32_t Continue(IFX_Pause* pPause);
+  int32_t Continue(IFX_PauseIndicator* pPause);
   FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
 
  private:
-  int32_t decode_SquentialOrgnazation(IFX_Pause* pPause);
-  int32_t decode_EmbedOrgnazation(IFX_Pause* pPause);
-  int32_t decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause);
-  int32_t decode_RandomOrgnazation(IFX_Pause* pPause);
+  int32_t decode_SquentialOrgnazation(IFX_PauseIndicator* pPause);
+  int32_t decode_EmbedOrgnazation(IFX_PauseIndicator* pPause);
+  int32_t decode_RandomOrgnazation_FirstPage(IFX_PauseIndicator* pPause);
+  int32_t decode_RandomOrgnazation(IFX_PauseIndicator* pPause);
 
   CJBig2_Segment* findSegmentByNumber(uint32_t dwNumber);
   CJBig2_Segment* findReferredSegmentByTypeAndIndex(CJBig2_Segment* pSegment,
@@ -67,14 +67,18 @@ class CJBig2_Context {
                                                     int32_t nIndex);
 
   int32_t parseSegmentHeader(CJBig2_Segment* pSegment);
-  int32_t parseSegmentData(CJBig2_Segment* pSegment, IFX_Pause* pPause);
+  int32_t parseSegmentData(CJBig2_Segment* pSegment,
+                           IFX_PauseIndicator* pPause);
   int32_t ProcessingParseSegmentData(CJBig2_Segment* pSegment,
-                                     IFX_Pause* pPause);
+                                     IFX_PauseIndicator* pPause);
   int32_t parseSymbolDict(CJBig2_Segment* pSegment);
   int32_t parseTextRegion(CJBig2_Segment* pSegment);
-  int32_t parsePatternDict(CJBig2_Segment* pSegment, IFX_Pause* pPause);
-  int32_t parseHalftoneRegion(CJBig2_Segment* pSegment, IFX_Pause* pPause);
-  int32_t parseGenericRegion(CJBig2_Segment* pSegment, IFX_Pause* pPause);
+  int32_t parsePatternDict(CJBig2_Segment* pSegment,
+                           IFX_PauseIndicator* pPause);
+  int32_t parseHalftoneRegion(CJBig2_Segment* pSegment,
+                              IFX_PauseIndicator* pPause);
+  int32_t parseGenericRegion(CJBig2_Segment* pSegment,
+                             IFX_PauseIndicator* pPause);
   int32_t parseGenericRefinementRegion(CJBig2_Segment* pSegment);
   int32_t parseTable(CJBig2_Segment* pSegment);
   int32_t parseRegionInfo(JBig2RegionInfo* pRI);

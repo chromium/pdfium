@@ -208,7 +208,7 @@ class CFX_RenderDevice {
                             uint32_t flags,
                             std::unique_ptr<CFX_ImageRenderer>* handle,
                             int blend_type);
-  bool ContinueDIBits(CFX_ImageRenderer* handle, IFX_Pause* pPause);
+  bool ContinueDIBits(CFX_ImageRenderer* handle, IFX_PauseIndicator* pPause);
 
   bool DrawNormalText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,

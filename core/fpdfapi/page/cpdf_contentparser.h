@@ -38,7 +38,7 @@ class CPDF_ContentParser {
              const CFX_Matrix* pParentMatrix,
              CPDF_Type3Char* pType3Char,
              int level);
-  void Continue(IFX_Pause* pPause);
+  void Continue(IFX_PauseIndicator* pPause);
 
  private:
   enum InternalStage {

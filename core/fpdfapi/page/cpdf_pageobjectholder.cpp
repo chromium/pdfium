@@ -30,7 +30,7 @@ bool CPDF_PageObjectHolder::IsPage() const {
   return false;
 }
 
-void CPDF_PageObjectHolder::ContinueParse(IFX_Pause* pPause) {
+void CPDF_PageObjectHolder::ContinueParse(IFX_PauseIndicator* pPause) {
   if (!m_pParser)
     return;
 

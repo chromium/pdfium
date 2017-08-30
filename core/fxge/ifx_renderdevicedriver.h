@@ -22,7 +22,7 @@ class CFX_Matrix;
 class CFX_PathData;
 class CPDF_ShadingPattern;
 class FXTEXT_CHARPOS;
-class IFX_Pause;
+class IFX_PauseIndicator;
 struct FX_RECT;
 
 class IFX_RenderDeviceDriver {
@@ -86,7 +86,8 @@ class IFX_RenderDeviceDriver {
                            uint32_t flags,
                            std::unique_ptr<CFX_ImageRenderer>* handle,
                            int blend_type) = 0;
-  virtual bool ContinueDIBits(CFX_ImageRenderer* handle, IFX_Pause* pPause);
+  virtual bool ContinueDIBits(CFX_ImageRenderer* handle,
+                              IFX_PauseIndicator* pPause);
   virtual bool DrawDeviceText(int nChars,
                               const FXTEXT_CHARPOS* pCharPos,
                               CFX_Font* pFont,

@@ -7,11 +7,12 @@
 #ifndef FPDFSDK_FSDK_PAUSEADAPTER_H_
 #define FPDFSDK_FSDK_PAUSEADAPTER_H_
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/ifx_pauseindicator.h"
 #include "public/fpdf_progressive.h"
 
-class IFSDK_PAUSE_Adapter : public IFX_Pause {
+class IFSDK_PAUSE_Adapter : public IFX_PauseIndicator {
  public:
   explicit IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause);
   ~IFSDK_PAUSE_Adapter() override;

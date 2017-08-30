@@ -19,7 +19,7 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Image;
 class CPDF_RenderStatus;
-class IFX_Pause;
+class IFX_PauseIndicator;
 
 class CPDF_ImageCacheEntry {
  public:
@@ -37,7 +37,7 @@ class CPDF_ImageCacheEntry {
                            uint32_t GroupFamily,
                            bool bLoadMask,
                            CPDF_RenderStatus* pRenderStatus);
-  int Continue(IFX_Pause* pPause, CPDF_RenderStatus* pRenderStatus);
+  int Continue(IFX_PauseIndicator* pPause, CPDF_RenderStatus* pRenderStatus);
   CFX_RetainPtr<CFX_DIBSource> DetachBitmap();
   CFX_RetainPtr<CFX_DIBSource> DetachMask();
 

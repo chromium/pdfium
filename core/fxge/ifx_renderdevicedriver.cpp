@@ -58,7 +58,7 @@ CFX_RetainPtr<CFX_DIBitmap> IFX_RenderDeviceDriver::GetBackDrop() {
 }
 
 bool IFX_RenderDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
-                                            IFX_Pause* pPause) {
+                                            IFX_PauseIndicator* pPause) {
   return false;
 }
 

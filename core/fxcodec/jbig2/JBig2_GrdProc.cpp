@@ -13,6 +13,7 @@
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
+#include "core/fxcrt/ifx_pauseindicator.h"
 #include "third_party/base/ptr_util.h"
 
 CJBig2_GRDProc::CJBig2_GRDProc()
@@ -640,7 +641,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
     std::unique_ptr<CJBig2_Image>* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   if (GBW == 0 || GBW > JBIG2_MAX_IMAGE_SIZE || GBH == 0 ||
       GBH > JBIG2_MAX_IMAGE_SIZE) {
     m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
@@ -665,7 +666,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(
-    IFX_Pause* pPause,
+    IFX_PauseIndicator* pPause,
     CJBig2_ArithDecoder* pArithDecoder) {
   int iline = m_loopIndex;
   if (GBTEMPLATE == 0) {
@@ -733,7 +734,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::Continue_decode(
-    IFX_Pause* pPause,
+    IFX_PauseIndicator* pPause,
     CJBig2_ArithDecoder* pArithDecoder) {
   if (m_ProssiveStatus != FXCODEC_STATUS_DECODE_TOBECONTINUE)
     return m_ProssiveStatus;
@@ -749,7 +750,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   if (!m_pLine) {
     m_pLine = pImage->m_pData;
   }
@@ -853,7 +854,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
@@ -911,7 +912,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   if (!m_pLine) {
     m_pLine = pImage->m_pData;
   }
@@ -1013,7 +1014,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
@@ -1067,7 +1068,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   if (!m_pLine) {
     m_pLine = pImage->m_pData;
   }
@@ -1169,7 +1170,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
@@ -1223,7 +1224,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   if (!m_pLine)
     m_pLine = pImage->m_pData;
 
@@ -1311,7 +1312,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_Pause* pPause) {
+    IFX_PauseIndicator* pPause) {
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())

@@ -49,7 +49,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   bool Load(CPDF_Document* pDoc, const CPDF_Stream* pStream);
 
   // CFX_DIBSource
-  bool SkipToScanline(int line, IFX_Pause* pPause) const override;
+  bool SkipToScanline(int line, IFX_PauseIndicator* pPause) const override;
   uint8_t* GetBuffer() const override;
   const uint8_t* GetScanline(int line) const override;
   void DownSampleScanline(int line,
@@ -71,10 +71,10 @@ class CPDF_DIBSource : public CFX_DIBSource {
                          bool bStdCS = false,
                          uint32_t GroupFamily = 0,
                          bool bLoadMask = false);
-  int ContinueLoadDIBSource(IFX_Pause* pPause);
+  int ContinueLoadDIBSource(IFX_PauseIndicator* pPause);
   int StartLoadMask();
   int StartLoadMaskDIB();
-  int ContinueLoadMaskDIB(IFX_Pause* pPause);
+  int ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
   int ContinueToLoadMask();
   CFX_RetainPtr<CPDF_DIBSource> DetachMask();
 
