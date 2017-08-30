@@ -103,22 +103,6 @@ class CFX_UTF8Decoder {
   CFX_WideTextBuf m_Buffer;
 };
 
-class CFX_UTF8Encoder {
- public:
-  CFX_UTF8Encoder();
-  ~CFX_UTF8Encoder();
-
-  void Input(wchar_t unicode);
-  void AppendStr(const CFX_ByteStringC& str);
-
-  // The data returned by GetResult() is invalidated when this is modified by
-  // appending any data.
-  CFX_ByteStringC GetResult() const;
-
- private:
-  std::vector<uint8_t> m_Buffer;
-};
-
 template <class DataType, int FixedSize>
 class CFX_FixedBufGrow {
  public:
