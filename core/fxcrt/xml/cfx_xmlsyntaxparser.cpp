@@ -128,8 +128,8 @@ FX_XmlSyntaxResult CFX_XMLSyntaxParser::DoSyntaxParse() {
     return m_syntaxParserResult;
   }
 
-  int32_t iStreamLength = m_pStream->GetLength();
-  int32_t iPos;
+  FX_FILESIZE iStreamLength = m_pStream->GetLength();
+  FX_FILESIZE iPos;
 
   FX_XmlSyntaxResult syntaxParserResult = FX_XmlSyntaxResult::None;
   while (true) {
@@ -141,7 +141,7 @@ FX_XmlSyntaxResult CFX_XMLSyntaxParser::DoSyntaxParse() {
       m_ParsedChars += m_End;
       m_iParsedBytes = m_iCurrentPos;
       if (m_pStream->GetPosition() != m_iCurrentPos)
-        m_pStream->Seek(CFX_SeekableStreamProxy::Pos::Begin, m_iCurrentPos);
+        m_pStream->Seek(CFX_SeekableStreamProxy::From::Begin, m_iCurrentPos);
 
       m_iBufferChars =
           m_pStream->ReadString(m_Buffer.data(), m_iXMLPlaneSize, &m_bEOS);

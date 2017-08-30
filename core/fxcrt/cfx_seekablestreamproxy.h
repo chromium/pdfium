@@ -15,7 +15,7 @@
 
 class CFX_SeekableStreamProxy : public CFX_Retainable {
  public:
-  enum class Pos {
+  enum class From {
     Begin = 0,
     Current,
   };
@@ -28,7 +28,7 @@ class CFX_SeekableStreamProxy : public CFX_Retainable {
   FX_STRSIZE GetBOMLength() const { return std::max(0, m_wBOMLength); }
   bool IsEOF() const { return m_iPosition >= GetLength(); }
 
-  void Seek(CFX_SeekableStreamProxy::Pos eSeek, FX_FILESIZE iOffset);
+  void Seek(From eSeek, FX_FILESIZE iOffset);
   FX_STRSIZE ReadString(wchar_t* pStr, FX_STRSIZE iMaxLength, bool* bEOS);
 
   void WriteString(const CFX_WideStringC& str);
