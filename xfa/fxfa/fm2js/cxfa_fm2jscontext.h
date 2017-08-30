@@ -14,6 +14,7 @@
 #include "fxjs/cfxjse_context.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
+class CFX_WideTextBuf;
 class CXFA_Document;
 
 class CXFA_FM2JSContext : public CFXJSE_HostObject {

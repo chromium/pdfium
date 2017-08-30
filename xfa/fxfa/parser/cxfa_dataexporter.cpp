@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_memorystream.h"
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmldoc.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"

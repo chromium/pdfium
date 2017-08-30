@@ -12,6 +12,7 @@
 #include <string>
 
 #include "core/fxcrt/cfx_decimal.h"
+#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"

@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_widetextbuf.h"
 
 class CPDF_CID2UnicodeMap;
 

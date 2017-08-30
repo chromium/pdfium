@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
 #define RUNTIMEFUNCTIONRETURNVALUE L"pfm_ret"
@@ -43,6 +42,8 @@ enum XFA_FM_SimpleExpressionType {
   GETFMJSOBJ,
   VARFILTER
 };
+
+class CFX_WideTextBuf;
 
 CFX_WideStringC XFA_FM_EXPTypeToString(
     XFA_FM_SimpleExpressionType simpleExpType);

@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"

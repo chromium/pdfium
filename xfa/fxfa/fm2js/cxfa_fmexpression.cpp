@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_widetextbuf.h"
 
 namespace {
 

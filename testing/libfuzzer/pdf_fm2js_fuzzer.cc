@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/fm2js/cxfa_fm2jscontext.h"

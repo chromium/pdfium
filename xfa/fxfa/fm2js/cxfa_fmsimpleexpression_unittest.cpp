@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"

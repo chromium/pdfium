@@ -23,6 +23,8 @@ enum XFA_FM_EXPTYPE {
   XFA_FM_EXPTYPE_CONTINUE,
 };
 
+class CFX_WideTextBuf;
+
 class CXFA_FMExpression {
  public:
   explicit CXFA_FMExpression(uint32_t line);
