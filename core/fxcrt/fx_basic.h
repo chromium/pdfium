@@ -87,22 +87,6 @@ class CFX_WideTextBuf : public CFX_BinaryBuf {
   CFX_WideTextBuf& operator<<(const CFX_WideTextBuf& buf);
 };
 
-class CFX_UTF8Decoder {
- public:
-  CFX_UTF8Decoder() { m_PendingBytes = 0; }
-
-  void Clear();
-  void Input(uint8_t byte);
-  void AppendCodePoint(uint32_t ch);
-  void ClearStatus() { m_PendingBytes = 0; }
-  CFX_WideStringC GetResult() const { return m_Buffer.AsStringC(); }
-
- private:
-  int m_PendingBytes;
-  uint32_t m_PendingChar;
-  CFX_WideTextBuf m_Buffer;
-};
-
 template <class DataType, int FixedSize>
 class CFX_FixedBufGrow {
  public:

@@ -13,6 +13,7 @@
 #include <string>
 
 #include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"

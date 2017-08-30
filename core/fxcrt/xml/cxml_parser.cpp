@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cxml_content.h"
 #include "core/fxcrt/xml/cxml_element.h"

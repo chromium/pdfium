@@ -820,6 +820,8 @@ static_library("fxcrt") {
     "core/fxcrt/cfx_string_data_template.h",
     "core/fxcrt/cfx_string_pool_template.h",
     "core/fxcrt/cfx_unowned_ptr.h",
+    "core/fxcrt/cfx_utf8decoder.cpp",
+    "core/fxcrt/cfx_utf8decoder.h",
     "core/fxcrt/cfx_weak_ptr.h",
     "core/fxcrt/cfx_widestring.cpp",
     "core/fxcrt/cfx_widestring.h",
