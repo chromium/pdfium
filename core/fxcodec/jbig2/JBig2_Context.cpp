@@ -7,6 +7,7 @@
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 
 #include <algorithm>
+#include <limits>
 #include <list>
 #include <utility>
 #include <vector>
@@ -1254,8 +1255,10 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::decodeSymbolIDHuffmanTable(
     int32_t nBits = 0;
     uint32_t nTemp;
     while (true) {
-      if (pStream->read1Bit(&nTemp) != 0)
+      if (nVal > std::numeric_limits<int32_t>::max() / 2 ||
+          pStream->read1Bit(&nTemp) != 0) {
         return std::vector<JBig2HuffmanCode>();
+      }
 
       nVal = (nVal << 1) | nTemp;
       ++nBits;
