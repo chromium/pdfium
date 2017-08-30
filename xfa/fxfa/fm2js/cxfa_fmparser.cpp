@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/cfx_autorestorer.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

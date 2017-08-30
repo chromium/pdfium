@@ -22,6 +22,7 @@
 #include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
+#include "core/fxcrt/cfx_autorestorer.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"

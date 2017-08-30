@@ -142,18 +142,6 @@ class IFX_Pause {
   virtual bool NeedToPauseNow() = 0;
 };
 
-template <typename T>
-class CFX_AutoRestorer {
- public:
-  explicit CFX_AutoRestorer(T* location)
-      : m_Location(location), m_OldValue(*location) {}
-  ~CFX_AutoRestorer() { *m_Location = m_OldValue; }
-
- private:
-  T* const m_Location;
-  const T m_OldValue;
-};
-
 uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits);
 
 #endif  // CORE_FXCRT_FX_BASIC_H_
