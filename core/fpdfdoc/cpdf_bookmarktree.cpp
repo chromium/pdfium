@@ -18,7 +18,7 @@ CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
   if (pParentDict)
     return CPDF_Bookmark(pParentDict->GetDictFor("First"));
 
-  CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
+  const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   if (!pRoot)
     return CPDF_Bookmark();
 

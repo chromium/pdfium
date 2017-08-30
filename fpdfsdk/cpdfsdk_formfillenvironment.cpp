@@ -593,7 +593,7 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   if (!m_pUnderlyingDoc)
     return false;
 
-  CPDF_Dictionary* pRoot = GetPDFDocument()->GetRoot();
+  const CPDF_Dictionary* pRoot = GetPDFDocument()->GetRoot();
   if (!pRoot)
     return false;
 

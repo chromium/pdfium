@@ -384,7 +384,7 @@ void CPDFXFA_DocEnvironment::GetTitle(CXFA_FFDoc* hDoc,
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetPDFDoc())
     return;
 
-  CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo();
+  const CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo();
   if (!pInfoDict)
     return;
 
@@ -398,7 +398,8 @@ void CPDFXFA_DocEnvironment::SetTitle(CXFA_FFDoc* hDoc,
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetPDFDoc())
     return;
 
-  if (CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo())
+  CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo();
+  if (pInfoDict)
     pInfoDict->SetNewFor<CPDF_String>("Title", wsTitle);
 }
 
@@ -449,7 +450,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     if (!m_pContext->GetPDFDoc())
       return;
 
-    CPDF_Dictionary* pRoot = m_pContext->GetPDFDoc()->GetRoot();
+    const CPDF_Dictionary* pRoot = m_pContext->GetPDFDoc()->GetRoot();
     if (!pRoot)
       return;
 
@@ -750,7 +751,7 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     return false;
   }
 
-  CPDF_Dictionary* pRoot = m_pContext->GetPDFDoc()->GetRoot();
+  const CPDF_Dictionary* pRoot = m_pContext->GetPDFDoc()->GetRoot();
   if (!pRoot) {
     fileStream->Flush();
     return false;

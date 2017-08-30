@@ -84,7 +84,7 @@ bool CPDF_PageLabel::GetLabel(int nPage, CFX_WideString* wsLabel) const {
   if (nPage < 0 || nPage >= m_pDocument->GetPageCount())
     return false;
 
-  CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
+  const CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
   if (!pPDFRoot)
     return false;
 
@@ -124,7 +124,7 @@ int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
   if (!m_pDocument)
     return -1;
 
-  CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
+  const CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
   if (!pPDFRoot)
     return -1;
 

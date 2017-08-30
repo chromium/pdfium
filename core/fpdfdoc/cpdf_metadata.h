@@ -14,7 +14,7 @@ class CXML_Element;
 
 class CPDF_Metadata {
  public:
-  explicit CPDF_Metadata(CPDF_Document* pDoc);
+  explicit CPDF_Metadata(const CPDF_Document* pDoc);
   ~CPDF_Metadata();
 
   const CXML_Element* GetRoot() const;

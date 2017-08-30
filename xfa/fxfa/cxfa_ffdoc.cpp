@@ -286,7 +286,7 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (!pPDFDoc)
     return false;
 
-  CPDF_Dictionary* pRoot = pPDFDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = pPDFDoc->GetRoot();
   if (!pRoot)
     return false;
 
@@ -347,7 +347,7 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
     return it->second.pDibSource.As<CFX_DIBitmap>();
   }
 
-  CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
   if (!pRoot)
     return nullptr;
 

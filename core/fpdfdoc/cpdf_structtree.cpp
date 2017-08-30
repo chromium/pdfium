@@ -19,8 +19,8 @@ namespace {
 const int nMaxRecursion = 32;
 
 bool IsTagged(const CPDF_Document* pDoc) {
-  CPDF_Dictionary* pCatalog = pDoc->GetRoot();
-  CPDF_Dictionary* pMarkInfo = pCatalog->GetDictFor("MarkInfo");
+  const CPDF_Dictionary* pCatalog = pDoc->GetRoot();
+  const CPDF_Dictionary* pMarkInfo = pCatalog->GetDictFor("MarkInfo");
   return pMarkInfo && pMarkInfo->GetIntegerFor("Marked");
 }
 

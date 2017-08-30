@@ -387,7 +387,7 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
   if (!pDoc)
     return 0;
   pDoc->LoadDocumentInfo();
-  CPDF_Dictionary* pInfo = pDoc->GetInfo();
+  const CPDF_Dictionary* pInfo = pDoc->GetInfo();
   if (!pInfo)
     return 0;
   CFX_WideString text = pInfo->GetUnicodeTextFor(tag);

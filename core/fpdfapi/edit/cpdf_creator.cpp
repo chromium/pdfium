@@ -407,7 +407,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1() {
     if (m_bSecurityChanged && IsOriginal())
       m_dwFlags &= ~FPDFCREATE_INCREMENTAL;
 
-    CPDF_Dictionary* pDict = m_pDocument->GetRoot();
+    const CPDF_Dictionary* pDict = m_pDocument->GetRoot();
     m_pMetadata = pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr;
     m_iStage = 10;
   }

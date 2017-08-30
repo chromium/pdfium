@@ -62,7 +62,7 @@ bool SaveXFADocumentData(
   if (!pPDFDocument)
     return false;
 
-  CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
+  const CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
   if (!pRoot)
     return false;
 

@@ -11,8 +11,8 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/xml/cxml_element.h"
 
-CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+CPDF_Metadata::CPDF_Metadata(const CPDF_Document* pDoc) {
+  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
     return;
 

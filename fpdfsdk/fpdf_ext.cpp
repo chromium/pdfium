@@ -126,7 +126,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
     return;
 
   // Portfolios and Packages
-  CPDF_Dictionary* pRootDict = pDoc->GetRoot();
+  const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
   if (pRootDict) {
     CFX_ByteString cbString;
     if (pRootDict->KeyExist("Collection")) {
@@ -174,7 +174,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   if (!pDoc)
     return PAGEMODE_UNKNOWN;
 
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
     return PAGEMODE_UNKNOWN;
 

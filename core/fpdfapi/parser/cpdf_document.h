@@ -49,8 +49,10 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   ~CPDF_Document() override;
 
   CPDF_Parser* GetParser() const { return m_pParser.get(); }
-  CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
-  CPDF_Dictionary* GetInfo() const { return m_pInfoDict.Get(); }
+  const CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
+  CPDF_Dictionary* GetRoot() { return m_pRootDict; }
+  const CPDF_Dictionary* GetInfo() const { return m_pInfoDict.Get(); }
+  CPDF_Dictionary* GetInfo() { return m_pInfoDict.Get(); }
 
   void DeletePage(int iPage);
   int GetPageCount() const;
@@ -112,7 +114,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                     uint32_t* skip_count,
                     uint32_t objnum,
                     int* index,
-                    int level = 0);
+                    int level = 0) const;
   std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
   void LoadDocInternal();
   size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);

@@ -55,6 +55,6 @@ bool CPDF_ViewerPreferences::GenericName(const CFX_ByteString& bsKey,
 }
 
 CPDF_Dictionary* CPDF_ViewerPreferences::GetViewerPreferences() const {
-  CPDF_Dictionary* pDict = m_pDoc->GetRoot();
+  const CPDF_Dictionary* pDict = m_pDoc->GetRoot();
   return pDict ? pDict->GetDictFor("ViewerPreferences") : nullptr;
 }

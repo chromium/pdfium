@@ -89,7 +89,7 @@ CPDF_Font* CBA_FontMap::FindFontSameCharset(CFX_ByteString* sFontAlias,
     return nullptr;
 
   CPDF_Document* pDocument = GetDocument();
-  CPDF_Dictionary* pRootDict = pDocument->GetRoot();
+  const CPDF_Dictionary* pRootDict = pDocument->GetRoot();
   if (!pRootDict)
     return nullptr;
 
@@ -198,7 +198,8 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString* sAlias) {
   CPDF_Dictionary* pAcroFormDict = nullptr;
   const bool bWidget = (m_pAnnotDict->GetStringFor("Subtype") == "Widget");
   if (bWidget) {
-    if (CPDF_Dictionary* pRootDict = m_pDocument->GetRoot())
+    const CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
+    if (pRootDict)
       pAcroFormDict = pRootDict->GetDictFor("AcroForm");
   }
 

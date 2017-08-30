@@ -299,10 +299,10 @@ size_t CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
 
 CPDF_NameTree::CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
 
-CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc,
+CPDF_NameTree::CPDF_NameTree(const CPDF_Document* pDoc,
                              const CFX_ByteString& category)
     : m_pRoot(nullptr) {
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
     return;
 

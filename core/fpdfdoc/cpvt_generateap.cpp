@@ -34,9 +34,11 @@ namespace {
 bool GenerateWidgetAP(CPDF_Document* pDoc,
                       CPDF_Dictionary* pAnnotDict,
                       const int32_t& nWidgetType) {
-  CPDF_Dictionary* pFormDict = nullptr;
-  if (CPDF_Dictionary* pRootDict = pDoc->GetRoot())
-    pFormDict = pRootDict->GetDictFor("AcroForm");
+  const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
+  if (!pRootDict)
+    return false;
+
+  const CPDF_Dictionary* pFormDict = pRootDict->GetDictFor("AcroForm");
   if (!pFormDict)
     return false;
 
