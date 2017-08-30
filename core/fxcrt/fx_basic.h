@@ -136,26 +136,6 @@ class CFX_FixedBufGrow {
   std::unique_ptr<DataType, FxFreeDeleter> m_pGrowData;
 };
 
-class CFX_BitStream {
- public:
-  void Init(const uint8_t* pData, uint32_t dwSize);
-
-  void ByteAlign();
-  bool IsEOF() const { return m_BitPos >= m_BitSize; }
-  uint32_t GetBits(uint32_t nBits);
-  void SkipBits(uint32_t nBits) { m_BitPos += nBits; }
-  void Rewind() { m_BitPos = 0; }
-  uint32_t GetPos() const { return m_BitPos; }
-  uint32_t BitsRemaining() const {
-    return m_BitSize >= m_BitPos ? m_BitSize - m_BitPos : 0;
-  }
-
- private:
-  uint32_t m_BitPos;
-  uint32_t m_BitSize;
-  const uint8_t* m_pData;
-};
-
 class IFX_Pause {
  public:
   virtual ~IFX_Pause() {}
