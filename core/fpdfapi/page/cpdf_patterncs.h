@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PATTERNCS_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PATTERNCS_H_
 
+#include <set>
+
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
 class CPDF_Document;
@@ -17,7 +19,9 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
   ~CPDF_PatternCS() override;
 
   // CPDF_ColorSpace:
-  bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
+  bool v_Load(CPDF_Document* pDoc,
+              CPDF_Array* pArray,
+              std::set<CPDF_Object*>* pVisited) override;
   bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
 
  private:

@@ -24,13 +24,15 @@ CPDF_PatternCS::~CPDF_PatternCS() {
   }
 }
 
-bool CPDF_PatternCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
+bool CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
+                            CPDF_Array* pArray,
+                            std::set<CPDF_Object*>* pVisited) {
   CPDF_Object* pBaseCS = pArray->GetDirectObjectAt(1);
   if (pBaseCS == m_pArray)
     return false;
 
   CPDF_DocPageData* pDocPageData = pDoc->GetPageData();
-  m_pBaseCS = pDocPageData->GetColorSpace(pBaseCS, nullptr);
+  m_pBaseCS = pDocPageData->GetColorSpaceGuarded(pBaseCS, nullptr, pVisited);
   if (!m_pBaseCS) {
     m_nComponents = 1;
     return true;

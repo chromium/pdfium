@@ -41,6 +41,10 @@ class CPDF_DocPageData {
 
   CPDF_ColorSpace* GetColorSpace(CPDF_Object* pCSObj,
                                  const CPDF_Dictionary* pResources);
+  CPDF_ColorSpace* GetColorSpaceGuarded(CPDF_Object* pCSObj,
+                                        const CPDF_Dictionary* pResources,
+                                        std::set<CPDF_Object*>* pVisited);
+
   CPDF_ColorSpace* GetCopiedColorSpace(CPDF_Object* pCSObj);
   void ReleaseColorSpace(const CPDF_Object* pColorSpace);
 
@@ -63,10 +67,6 @@ class CPDF_DocPageData {
 
  private:
   using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
-
-  CPDF_ColorSpace* GetColorSpaceImpl(CPDF_Object* pCSObj,
-                                     const CPDF_Dictionary* pResources,
-                                     std::set<CPDF_Object*>* pVisited);
 
   bool m_bForceClear;
   CFX_UnownedPtr<CPDF_Document> const m_pPDFDoc;
