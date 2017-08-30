@@ -831,14 +831,16 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   CPDF_PageRenderContext* pContext = pPage->GetRenderContext();
 
   CFX_RetainPtr<CFX_DIBitmap> pBitmap;
+  // TODO(rbpotter): Restore the behavior described below after resolving
+  // crbug.com/753700
   // Don't render the full page to bitmap for a mask unless there are a lot
   // of masks. Full page bitmaps result in large spool sizes, so they should
   // only be used when necessary. For large numbers of masks, rendering each
   // individually is inefficient and unlikely to significantly improve spool
-  // size.
+  // size. This fix is temporarily disabled due to crbug.com/753700 so all
+  // image masks will result in the full page rendering as bitmap.
   const bool bNewBitmap =
-      pPage->BackgroundAlphaNeeded() ||
-      (pPage->HasImageMask() && pPage->GetMaskBoundingBoxes().size() > 100);
+      pPage->BackgroundAlphaNeeded() || pPage->HasImageMask();
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
   if (bNewBitmap || bHasMask) {
     pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
