@@ -76,7 +76,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   bool EditCanRedo() const { return m_pEdit->CanRedo(); }
   bool EditUndo() { return m_pEdit->Undo(); }
   bool EditRedo() { return m_pEdit->Redo(); }
-  bool EditCanCopy() const { return m_pEdit->CountSelRanges() > 0; }
+  bool EditCanCopy() const { return m_pEdit->HasSelection(); }
   bool EditCanCut() const {
     if (m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)
       return false;
@@ -88,9 +88,9 @@ class CFWL_ComboBox : public CFWL_Widget {
   bool EditPaste(const CFX_WideString& wsPaste) {
     return m_pEdit->Paste(wsPaste);
   }
-  void EditSelectAll() { m_pEdit->AddSelRange(0); }
+  void EditSelectAll() { m_pEdit->SelectAll(); }
   void EditDelete() { m_pEdit->ClearText(); }
-  void EditDeSelect() { m_pEdit->ClearSelections(); }
+  void EditDeSelect() { m_pEdit->ClearSelection(); }
 
   CFX_RectF GetBBox() const;
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);

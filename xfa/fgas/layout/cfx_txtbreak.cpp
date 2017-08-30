@@ -11,6 +11,7 @@
 #include "core/fxcrt/fx_arabic.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_linebreak.h"
 
@@ -220,33 +221,39 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
   }
 
   CFX_BreakType dwRet2 = CFX_BreakType::None;
-  switch (chartype) {
-    case FX_CHARTYPE_Tab:
-      AppendChar_Tab(pCurChar);
-      break;
-    case FX_CHARTYPE_Control:
-      dwRet2 = AppendChar_Control(pCurChar);
-      break;
-    case FX_CHARTYPE_Combination:
-      AppendChar_Combination(pCurChar);
-      break;
-    case FX_CHARTYPE_ArabicAlef:
-    case FX_CHARTYPE_ArabicSpecial:
-    case FX_CHARTYPE_ArabicDistortion:
-    case FX_CHARTYPE_ArabicNormal:
-    case FX_CHARTYPE_ArabicForm:
-    case FX_CHARTYPE_Arabic:
-      dwRet2 = AppendChar_Arabic(pCurChar);
-      break;
-    case FX_CHARTYPE_Unknown:
-    case FX_CHARTYPE_Space:
-    case FX_CHARTYPE_Numeric:
-    case FX_CHARTYPE_Normal:
-    default:
-      dwRet2 = AppendChar_Others(pCurChar);
-      break;
+  if (wch == m_wParagraphBreakChar) {
+    // This is handled in AppendChar_Control, but it seems like \n and \r
+    // don't get matched as control characters so we go into AppendChar_other
+    // and never detect the new paragraph ...
+    dwRet2 = CFX_BreakType::Paragraph;
+  } else {
+    switch (chartype) {
+      case FX_CHARTYPE_Tab:
+        AppendChar_Tab(pCurChar);
+        break;
+      case FX_CHARTYPE_Control:
+        dwRet2 = AppendChar_Control(pCurChar);
+        break;
+      case FX_CHARTYPE_Combination:
+        AppendChar_Combination(pCurChar);
+        break;
+      case FX_CHARTYPE_ArabicAlef:
+      case FX_CHARTYPE_ArabicSpecial:
+      case FX_CHARTYPE_ArabicDistortion:
+      case FX_CHARTYPE_ArabicNormal:
+      case FX_CHARTYPE_ArabicForm:
+      case FX_CHARTYPE_Arabic:
+        dwRet2 = AppendChar_Arabic(pCurChar);
+        break;
+      case FX_CHARTYPE_Unknown:
+      case FX_CHARTYPE_Space:
+      case FX_CHARTYPE_Numeric:
+      case FX_CHARTYPE_Normal:
+      default:
+        dwRet2 = AppendChar_Others(pCurChar);
+        break;
+    }
   }
-
   return std::max(dwRet1, dwRet2);
 }
 
@@ -638,8 +645,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
 
-  CFDE_TxtEdtPage* pAccess = pTxtRun->pAccess;
-  const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
+  CFDE_TextEditEngine* pEngine = pTxtRun->pEdtEngine;
   const wchar_t* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
@@ -681,9 +687,9 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   for (int32_t i = 0; i <= iLength; i++) {
     int32_t iWidth;
     wchar_t wch;
-    if (pAccess) {
-      wch = pAccess->GetChar(pIdentity, i);
-      iWidth = pAccess->GetWidth(pIdentity, i);
+    if (pEngine) {
+      wch = pEngine->GetChar(i);
+      iWidth = pEngine->GetWidthOfChar(i);
     } else {
       wch = *pStr++;
       iWidth = *pWidths++;
@@ -699,10 +705,10 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 
     if (chartype >= FX_CHARTYPE_ArabicAlef) {
       if (i < iLength) {
-        if (pAccess) {
+        if (pEngine) {
           iNext = i + 1;
           while (iNext <= iLength) {
-            wNext = pAccess->GetChar(pIdentity, iNext);
+            wNext = pEngine->GetChar(iNext);
             dwProps = FX_GetUnicodeProperties(wNext);
             if ((dwProps & FX_CHARTYPEBITSMASK) != FX_CHARTYPE_Combination)
               break;
@@ -738,10 +744,10 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
           bShadda = false;
         } else {
           wNext = 0xFEFF;
-          if (pAccess) {
+          if (pEngine) {
             iNext = i + 1;
             if (iNext <= iLength)
-              wNext = pAccess->GetChar(pIdentity, iNext);
+              wNext = pEngine->GetChar(iNext);
           } else {
             if (i < iLength)
               wNext = *pStr;
@@ -836,6 +842,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
         pCharPos->m_Origin = CFX_PointF(fX, fY);
+
         if ((dwStyles & FX_LAYOUTSTYLE_CombText) != 0) {
           int32_t iFormWidth = iCharWidth;
           pFont->GetCharWidth(wForm, iFormWidth, false);
@@ -896,8 +903,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   if (!pTxtRun || pTxtRun->iLength < 1)
     return std::vector<CFX_RectF>();
 
-  CFDE_TxtEdtPage* pAccess = pTxtRun->pAccess;
-  const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
+  CFDE_TextEditEngine* pEngine = pTxtRun->pEdtEngine;
   const wchar_t* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength;
@@ -925,9 +931,9 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 
   std::vector<CFX_RectF> rtArray(iLength);
   for (int32_t i = 0; i < iLength; i++) {
-    if (pAccess) {
-      wch = pAccess->GetChar(pIdentity, i);
-      iCharSize = pAccess->GetWidth(pIdentity, i);
+    if (pEngine) {
+      wch = pEngine->GetChar(i);
+      iCharSize = pEngine->GetWidthOfChar(i);
     } else {
       wch = *pStr++;
       iCharSize = *pWidths++;
@@ -976,7 +982,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 }
 
 FX_TXTRUN::FX_TXTRUN()
-    : pAccess(nullptr),
+    : pEdtEngine(nullptr),
       pIdentity(nullptr),
       pWidths(nullptr),
       iLength(0),

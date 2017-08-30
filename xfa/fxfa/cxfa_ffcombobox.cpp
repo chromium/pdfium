@@ -74,8 +74,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
     return;
 
   uint32_t dwExtendedStyle = 0;
-  uint32_t dwEditStyles =
-      FWL_STYLEEXT_EDT_ReadOnly | FWL_STYLEEXT_EDT_LastLineHeight;
+  uint32_t dwEditStyles = FWL_STYLEEXT_EDT_ReadOnly;
   dwExtendedStyle |= UpdateUIProperty();
   if (m_pDataAcc->IsChoiceListAllowTextEntry()) {
     dwEditStyles &= ~FWL_STYLEEXT_EDT_ReadOnly;

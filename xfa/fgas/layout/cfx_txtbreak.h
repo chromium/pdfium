@@ -14,9 +14,9 @@
 #include "core/fxcrt/cfx_char.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fgas/layout/cfx_break.h"
 
+class CFDE_TextEditEngine;
 class CFGAS_GEFont;
 struct FDE_TEXTEDITPIECE;
 
@@ -39,7 +39,7 @@ struct FX_TXTRUN {
   FX_TXTRUN(const FX_TXTRUN& other);
   ~FX_TXTRUN();
 
-  CFDE_TxtEdtPage* pAccess;
+  CFDE_TextEditEngine* pEdtEngine;
   const FDE_TEXTEDITPIECE* pIdentity;
   CFX_WideString wsStr;
   int32_t* pWidths;

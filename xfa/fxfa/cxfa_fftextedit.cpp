@@ -60,9 +60,8 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
     return;
 
   uint32_t dwStyle = 0;
-  uint32_t dwExtendedStyle = FWL_STYLEEXT_EDT_ShowScrollbarFocus |
-                             FWL_STYLEEXT_EDT_OuterScrollbar |
-                             FWL_STYLEEXT_EDT_LastLineHeight;
+  uint32_t dwExtendedStyle =
+      FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar;
   dwExtendedStyle |= UpdateUIProperty();
   if (m_pDataAcc->IsMultiLine()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine | FWL_STYLEEXT_EDT_WantReturn;
@@ -300,14 +299,14 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   if (m_pDataAcc->GetUIType() == XFA_Element::DateTimeEdit) {
     CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)pEdit;
     eParam.m_wsNewText = pDateTime->GetEditText();
-    int32_t iSels = pDateTime->CountSelRanges();
-    if (iSels)
-      eParam.m_iSelEnd = pDateTime->GetSelRange(0, &eParam.m_iSelStart);
+    if (pDateTime->HasSelection()) {
+      std::tie(eParam.m_iSelStart, eParam.m_iSelEnd) =
+          pDateTime->GetSelection();
+    }
   } else {
     eParam.m_wsNewText = pEdit->GetText();
-    int32_t iSels = pEdit->CountSelRanges();
-    if (iSels)
-      eParam.m_iSelEnd = pEdit->GetSelRange(0, &eParam.m_iSelStart);
+    if (pEdit->HasSelection())
+      std::tie(eParam.m_iSelStart, eParam.m_iSelEnd) = pEdit->GetSelection();
   }
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }

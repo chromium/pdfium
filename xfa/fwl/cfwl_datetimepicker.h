@@ -8,6 +8,7 @@
 #define XFA_FWL_CFWL_DATETIMEPICKER_H_
 
 #include <memory>
+#include <utility>
 
 #include "xfa/fwl/cfwl_datetimeedit.h"
 #include "xfa/fwl/cfwl_event.h"
@@ -51,9 +52,10 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   void SetEditText(const CFX_WideString& wsText);
   CFX_WideString GetEditText() const;
 
-  int32_t CountSelRanges() const { return m_pEdit->CountSelRanges(); }
-  int32_t GetSelRange(int32_t nIndex, int32_t* nStart) const {
-    return m_pEdit->GetSelRange(nIndex, nStart);
+  bool HasSelection() const { return m_pEdit->HasSelection(); }
+  // Returns <start, end> indices of the selection.
+  std::pair<size_t, size_t> GetSelection() const {
+    return m_pEdit->GetSelection();
   }
 
   CFX_RectF GetBBox() const;

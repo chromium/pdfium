@@ -48,8 +48,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
 
   uint32_t dwExtendedStyle =
       FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar |
-      FWL_STYLEEXT_EDT_Validate | FWL_STYLEEXT_EDT_Number |
-      FWL_STYLEEXT_EDT_LastLineHeight;
+      FWL_STYLEEXT_EDT_Validate | FWL_STYLEEXT_EDT_Number;
   dwExtendedStyle |= UpdateUIProperty();
   if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off)
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;

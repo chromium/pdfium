@@ -77,7 +77,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   dwExtendedStyle |= UpdateUIProperty();
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
-  uint32_t dwEditStyles = FWL_STYLEEXT_EDT_LastLineHeight;
+  uint32_t dwEditStyles = 0;
   int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
   if (iNumCells > 0) {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;

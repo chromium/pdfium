@@ -44,9 +44,9 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
   if (!pWidget)
     return;
 
-  uint32_t dwExtendedStyle =
-      FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar |
-      FWL_STYLEEXT_EDT_Password | FWL_STYLEEXT_EDT_LastLineHeight;
+  uint32_t dwExtendedStyle = FWL_STYLEEXT_EDT_ShowScrollbarFocus |
+                             FWL_STYLEEXT_EDT_OuterScrollbar |
+                             FWL_STYLEEXT_EDT_Password;
   dwExtendedStyle |= UpdateUIProperty();
 
   CFX_WideString wsPassWord;

@@ -11,8 +11,8 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fde/cfde_textout.h"
-#include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"

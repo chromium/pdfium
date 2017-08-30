@@ -40,6 +40,7 @@ class CFX_Break {
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(float fFontSize);
   void SetTabWidth(float fTabWidth);
+  int32_t GetTabWidth() const { return m_iTabWidth; }
 
   void SetHorizontalScale(int32_t iScale);
   void SetVerticalScale(int32_t iScale);
