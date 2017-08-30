@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_JBIG2_JBIG2_SEGMENT_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
@@ -47,7 +48,7 @@ class CJBig2_Segment {
     uint8_t c;
   } m_cFlags;
   int32_t m_nReferred_to_segment_count;
-  uint32_t* m_pReferred_to_segment_numbers;
+  std::vector<uint32_t> m_Referred_to_segment_numbers;
   uint32_t m_dwPage_association;
   uint32_t m_dwData_length;
 

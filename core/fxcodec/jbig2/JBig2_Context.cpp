@@ -238,7 +238,7 @@ CJBig2_Segment* CJBig2_Context::findReferredSegmentByTypeAndIndex(
   int32_t count = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
-        findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
+        findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg && pSeg->m_cFlags.s.type == cType) {
       if (count == nIndex)
         return pSeg;
@@ -278,31 +278,31 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
       pSegment->m_dwNumber > 65536 ? 4 : pSegment->m_dwNumber > 256 ? 2 : 1;
   uint8_t cPSize = pSegment->m_cFlags.s.page_association_size ? 4 : 1;
   if (pSegment->m_nReferred_to_segment_count) {
-    pSegment->m_pReferred_to_segment_numbers =
-        FX_Alloc(uint32_t, pSegment->m_nReferred_to_segment_count);
+    pSegment->m_Referred_to_segment_numbers.resize(
+        pSegment->m_nReferred_to_segment_count);
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       switch (cSSize) {
         case 1:
           if (m_pStream->read1Byte(&cTemp) != 0)
             return JBIG2_ERROR_TOO_SHORT;
 
-          pSegment->m_pReferred_to_segment_numbers[i] = cTemp;
+          pSegment->m_Referred_to_segment_numbers[i] = cTemp;
           break;
         case 2:
           uint16_t wTemp;
           if (m_pStream->readShortInteger(&wTemp) != 0)
             return JBIG2_ERROR_TOO_SHORT;
 
-          pSegment->m_pReferred_to_segment_numbers[i] = wTemp;
+          pSegment->m_Referred_to_segment_numbers[i] = wTemp;
           break;
         case 4:
           if (m_pStream->readInteger(&dwTemp) != 0)
             return JBIG2_ERROR_TOO_SHORT;
 
-          pSegment->m_pReferred_to_segment_numbers[i] = dwTemp;
+          pSegment->m_Referred_to_segment_numbers[i] = dwTemp;
           break;
       }
-      if (pSegment->m_pReferred_to_segment_numbers[i] >= pSegment->m_dwNumber)
+      if (pSegment->m_Referred_to_segment_numbers[i] >= pSegment->m_dwNumber)
         return JBIG2_ERROR_TOO_SHORT;
     }
   }
@@ -457,14 +457,14 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     return JBIG2_ERROR_LIMIT;
   }
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
-    if (!findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]))
+    if (!findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
       return JBIG2_ERROR_FATAL;
   }
   CJBig2_Segment* pLRSeg = nullptr;
   pSymbolDictDecoder->SDNUMINSYMS = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
-        findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
+        findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
       pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_SymbolDict->NumImages();
       pLRSeg = pSeg;
@@ -477,7 +477,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     uint32_t dwTemp = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
-          findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
+          findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict.get();
         for (size_t j = 0; j < dict.NumImages(); ++j)
@@ -693,14 +693,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     return JBIG2_ERROR_TOO_SHORT;
 
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
-    if (!findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]))
+    if (!findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
       return JBIG2_ERROR_FATAL;
   }
 
   pTRD->SBNUMSYMS = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
-        findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
+        findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
       pTRD->SBNUMSYMS += pSeg->m_SymbolDict->NumImages();
     }
@@ -712,7 +712,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     dwTemp = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
-          findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
+          findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict.get();
         for (size_t j = 0; j < dict.NumImages(); ++j)
@@ -1002,7 +1002,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     return JBIG2_ERROR_FATAL;
 
   CJBig2_Segment* pSeg =
-      findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
+      findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
   if (!pSeg || (pSeg->m_cFlags.s.type != 16))
     return JBIG2_ERROR_FATAL;
 
@@ -1170,7 +1170,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   if (pSegment->m_nReferred_to_segment_count > 0) {
     int32_t i;
     for (i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
-      pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
+      pSeg = findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
 

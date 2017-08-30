@@ -8,20 +8,17 @@
 
 #include "core/fxcrt/fx_memory.h"
 
-CJBig2_Segment::CJBig2_Segment() {
-  m_dwNumber = 0;
+CJBig2_Segment::CJBig2_Segment()
+    : m_dwNumber(0),
+      m_nReferred_to_segment_count(0),
+      m_dwPage_association(0),
+      m_dwData_length(0),
+      m_dwHeader_Length(0),
+      m_dwObjNum(0),
+      m_dwDataOffset(0),
+      m_State(JBIG2_SEGMENT_HEADER_UNPARSED),
+      m_nResultType(JBIG2_VOID_POINTER) {
   m_cFlags.c = 0;
-  m_nReferred_to_segment_count = 0;
-  m_pReferred_to_segment_numbers = nullptr;
-  m_dwPage_association = 0;
-  m_dwData_length = 0;
-  m_dwHeader_Length = 0;
-  m_dwObjNum = 0;
-  m_dwDataOffset = 0;
-  m_State = JBIG2_SEGMENT_HEADER_UNPARSED;
-  m_nResultType = JBIG2_VOID_POINTER;
 }
 
-CJBig2_Segment::~CJBig2_Segment() {
-  FX_Free(m_pReferred_to_segment_numbers);
-}
+CJBig2_Segment::~CJBig2_Segment() {}
