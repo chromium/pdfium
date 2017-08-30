@@ -812,6 +812,7 @@ static_library("fxcrt") {
     "core/fxcrt/cfx_bytestring.h",
     "core/fxcrt/cfx_datetime.cpp",
     "core/fxcrt/cfx_datetime.h",
+    "core/fxcrt/cfx_fixedbufgrow.h",
     "core/fxcrt/cfx_maybe_owned.h",
     "core/fxcrt/cfx_memorystream.cpp",
     "core/fxcrt/cfx_memorystream.h",

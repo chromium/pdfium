@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_system.h"
 
 #ifndef _SKIA_SUPPORT_

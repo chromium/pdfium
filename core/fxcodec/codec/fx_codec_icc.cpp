@@ -8,6 +8,7 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_fixedbufgrow.h"
 
 #if defined(USE_SYSTEM_LCMS2)
 #include <lcms2.h>

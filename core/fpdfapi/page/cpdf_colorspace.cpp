@@ -29,6 +29,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/stl_util.h"

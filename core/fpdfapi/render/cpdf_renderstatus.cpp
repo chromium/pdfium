@@ -47,6 +47,7 @@
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
