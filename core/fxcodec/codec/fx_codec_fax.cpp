@@ -10,6 +10,7 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

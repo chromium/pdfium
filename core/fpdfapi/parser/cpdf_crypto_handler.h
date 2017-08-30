@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"

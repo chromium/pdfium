@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_binarybuf.h"
 #include "fpdfsdk/javascript/JS_KeyValue.h"
 
 class CPDFSDK_FormFillEnvironment;

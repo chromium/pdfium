@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_stream.h"
@@ -20,42 +21,6 @@
 #ifdef PDF_ENABLE_XFA
 #define FX_IsOdd(a) ((a)&1)
 #endif  // PDF_ENABLE_XFA
-
-class CFX_BinaryBuf {
- public:
-  CFX_BinaryBuf();
-  explicit CFX_BinaryBuf(FX_STRSIZE size);
-  ~CFX_BinaryBuf();
-
-  uint8_t* GetBuffer() const { return m_pBuffer.get(); }
-  FX_STRSIZE GetSize() const { return m_DataSize; }
-
-  void Clear();
-  void EstimateSize(FX_STRSIZE size, FX_STRSIZE alloc_step = 0);
-  void AppendBlock(const void* pBuf, FX_STRSIZE size);
-  void AppendString(const CFX_ByteString& str) {
-    AppendBlock(str.c_str(), str.GetLength());
-  }
-
-  void AppendByte(uint8_t byte) {
-    ExpandBuf(1);
-    m_pBuffer.get()[m_DataSize++] = byte;
-  }
-
-  void InsertBlock(FX_STRSIZE pos, const void* pBuf, FX_STRSIZE size);
-  void Delete(FX_STRSIZE start_index, FX_STRSIZE count);
-
-  // Releases ownership of |m_pBuffer| and returns it.
-  std::unique_ptr<uint8_t, FxFreeDeleter> DetachBuffer();
-
- protected:
-  void ExpandBuf(FX_STRSIZE size);
-
-  FX_STRSIZE m_AllocStep;
-  FX_STRSIZE m_AllocSize;
-  FX_STRSIZE m_DataSize;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
-};
 
 class CFX_WideTextBuf : public CFX_BinaryBuf {
  public:
