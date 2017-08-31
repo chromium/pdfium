@@ -548,14 +548,15 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>& ca,
     pCur = &ca[iLength];
     nCodeProp = pCur->char_props();
     nCur = nCodeProp & 0x003F;
-    if (nNext == FX_CBP_SP)
+    if (nNext == kBreakPropertySpace)
       eType = FX_LBT_PROHIBITED_BRK;
     else
       eType = gs_FX_LineBreak_PairTable[nCur][nNext];
     if (bAllChars)
       pCur->m_nBreakType = static_cast<uint8_t>(eType);
     if (!bOnlyBrk) {
-      if (m_bSingleLine || iEndPos <= m_iLineWidth || nCur == FX_CBP_SP) {
+      if (m_bSingleLine || iEndPos <= m_iLineWidth ||
+          nCur == kBreakPropertySpace) {
         if (eType == FX_LBT_DIRECT_BRK && iBreak < 0) {
           iBreak = iLength;
           iBreakPos = iEndPos;

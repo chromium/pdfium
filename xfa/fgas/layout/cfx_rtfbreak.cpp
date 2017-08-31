@@ -565,16 +565,18 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
     uint32_t nCur = nCodeProp & 0x003F;
     bool bNeedBreak = false;
     FX_LINEBREAKTYPE eType;
-    if (nCur == FX_CBP_TB) {
+    if (nCur == kBreakPropertyTB) {
       bNeedBreak = true;
-      eType = nNext == FX_CBP_TB ? FX_LBT_PROHIBITED_BRK
-                                 : gs_FX_LineBreak_PairTable[nCur][nNext];
+      eType = nNext == kBreakPropertyTB
+                  ? FX_LBT_PROHIBITED_BRK
+                  : gs_FX_LineBreak_PairTable[nCur][nNext];
     } else {
-      if (nCur == FX_CBP_SP)
+      if (nCur == kBreakPropertySpace)
         bNeedBreak = true;
 
-      eType = nNext == FX_CBP_SP ? FX_LBT_PROHIBITED_BRK
-                                 : gs_FX_LineBreak_PairTable[nCur][nNext];
+      eType = nNext == kBreakPropertySpace
+                  ? FX_LBT_PROHIBITED_BRK
+                  : gs_FX_LineBreak_PairTable[nCur][nNext];
     }
     if (bAllChars)
       pCur->m_nBreakType = eType;
