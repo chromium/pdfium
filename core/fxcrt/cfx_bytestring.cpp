@@ -40,12 +40,6 @@ int Buffer_itoa(char* buf, int i, uint32_t flags) {
   }
   int base = 10;
   const char* str = "0123456789abcdef";
-  if (flags & FXFORMAT_HEX) {
-    base = 16;
-    if (flags & FXFORMAT_CAPITAL) {
-      str = "0123456789ABCDEF";
-    }
-  }
   while (u != 0) {
     buf1[buf_pos--] = str[u % base];
     u = u / base;
