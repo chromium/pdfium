@@ -43,6 +43,12 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   unsigned short fixed_buffer[128];
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
 
+  // Check that unreasonable inputs are handled gracefully
+  EXPECT_EQ(0, FPDFText_GetText(textpage, 0, 128, nullptr));
+  EXPECT_EQ(0, FPDFText_GetText(textpage, -1, 128, fixed_buffer));
+  EXPECT_EQ(0, FPDFText_GetText(textpage, 0, 0, fixed_buffer));
+  EXPECT_EQ(0, FPDFText_GetText(textpage, 0, -1, fixed_buffer));
+
   // Check includes the terminating NUL that is provided.
   int num_chars = FPDFText_GetText(textpage, 0, 128, fixed_buffer);
   ASSERT_GE(num_chars, 0);

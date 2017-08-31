@@ -162,7 +162,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
                                                int start,
                                                int count,
                                                unsigned short* result) {
-  if (!text_page)
+  if (start < 0 || count < 1 || !result || !text_page)
     return 0;
 
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
@@ -170,13 +170,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
     return 0;
 
   CFX_WideString str = textpage->GetPageText(start, count);
-  if (str.GetLength() > count)
-    str = str.Left(count);
+  if (str.GetLength() <= 0)
+    return 0;
 
+  // UFT16LE_Encode doesn't handle surrogate pairs properly, so it is expected
+  // the number of items to stay the same.
   CFX_ByteString cbUTF16str = str.UTF16LE_Encode();
+  ASSERT(cbUTF16str.GetLength() / sizeof(unsigned short) <=
+         static_cast<size_t>(count));
   memcpy(result, cbUTF16str.GetBuffer(cbUTF16str.GetLength()),
          cbUTF16str.GetLength());
-  cbUTF16str.ReleaseBuffer(cbUTF16str.GetLength());
 
   return cbUTF16str.GetLength() / sizeof(unsigned short);
 }
