@@ -1846,13 +1846,11 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
       switch (word) {
         case 0x0D:
           wp = m_pVT->InsertSection(wp, nullptr, nullptr);
-          if (sText[i + 1] == 0x0A)
+          if (i + 1 < sz && sText[i + 1] == 0x0A)
             i++;
           break;
         case 0x0A:
           wp = m_pVT->InsertSection(wp, nullptr, nullptr);
-          if (sText[i + 1] == 0x0D)
-            i++;
           break;
         case 0x09:
           word = 0x20;

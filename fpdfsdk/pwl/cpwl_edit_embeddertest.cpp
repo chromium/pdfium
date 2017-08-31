@@ -371,3 +371,51 @@ TEST_F(CPWLEditEmbeddertest,
   GetCPWLEdit()->ReplaceSelection(L"Hippopotamus");
   EXPECT_STREQ(L"ElepHippop", GetCPWLEdit()->GetText().c_str());
 }
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithEndCarriageFeed) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\r");
+  EXPECT_STREQ(L"Foo", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithEndNewline) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\n");
+  EXPECT_STREQ(L"Foo", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithEndCarriageFeedAndNewLine) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\r\n");
+  EXPECT_STREQ(L"Foo", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithEndNewLineAndCarriageFeed) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\n\r");
+  EXPECT_STREQ(L"Foo", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithBodyCarriageFeed) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\rBar");
+  EXPECT_STREQ(L"FooBar", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithBodyNewline) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\nBar");
+  EXPECT_STREQ(L"FooBar", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithBodyCarriageFeedAndNewLine) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\r\nBar");
+  EXPECT_STREQ(L"FooBar", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbeddertest, SetTextWithBodyNewLineAndCarriageFeed) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetText(L"Foo\n\rBar");
+  EXPECT_STREQ(L"FooBar", GetCPWLEdit()->GetText().c_str());
+}
