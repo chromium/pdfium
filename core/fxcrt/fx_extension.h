@@ -86,9 +86,6 @@ void FXSYS_IntToFourHexChars(uint16_t c, char* buf);
 
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
 
-float FXSYS_FractionalScale(size_t scale_factor, int value);
-int FXSYS_FractionalScaleCount();
-
 void* FX_Random_MT_Start(uint32_t dwSeed);
 void FX_Random_MT_Close(void* pContext);
 uint32_t FX_Random_MT_Generate(void* pContext);

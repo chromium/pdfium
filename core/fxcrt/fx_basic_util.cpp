@@ -11,7 +11,21 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
+
+namespace {
+
+const float fraction_scales[] = {0.1f,          0.01f,         0.001f,
+                                 0.0001f,       0.00001f,      0.000001f,
+                                 0.0000001f,    0.00000001f,   0.000000001f,
+                                 0.0000000001f, 0.00000000001f};
+
+float FractionalScale(size_t scale_factor, int value) {
+  return fraction_scales[scale_factor] * value;
+}
+
+}  // namespace
 
 bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   if (strc.Contains('.')) {
@@ -70,19 +84,6 @@ bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   return true;
 }
 
-static const float fraction_scales[] = {
-    0.1f,         0.01f,         0.001f,        0.0001f,
-    0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
-    0.000000001f, 0.0000000001f, 0.00000000001f};
-
-int FXSYS_FractionalScaleCount() {
-  return FX_ArraySize(fraction_scales);
-}
-
-float FXSYS_FractionalScale(size_t scale_factor, int value) {
-  return fraction_scales[scale_factor] * value;
-}
-
 float FX_atof(const CFX_ByteStringC& strc) {
   if (strc.IsEmpty())
     return 0.0;
@@ -112,10 +113,9 @@ float FX_atof(const CFX_ByteStringC& strc) {
   if (cc < len && strc[cc] == '.') {
     cc++;
     while (cc < len) {
-      value +=
-          FXSYS_FractionalScale(scale, FXSYS_DecimalCharToInt(strc.CharAt(cc)));
+      value += FractionalScale(scale, FXSYS_DecimalCharToInt(strc.CharAt(cc)));
       scale++;
-      if (scale == FXSYS_FractionalScaleCount())
+      if (scale == FX_ArraySize(fraction_scales))
         break;
       cc++;
     }
@@ -178,14 +178,6 @@ void FX_CloseFolder(FX_FileHandle* handle) {
   delete handle;
 #else
   closedir(handle);
-#endif
-}
-
-wchar_t FX_GetFolderSeparator() {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  return '\\';
-#else
-  return '/';
 #endif
 }
 

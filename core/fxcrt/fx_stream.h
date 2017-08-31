@@ -33,7 +33,6 @@ bool FX_GetNextFile(FX_FileHandle* handle,
                     CFX_ByteString* filename,
                     bool* bFolder);
 void FX_CloseFolder(FX_FileHandle* handle);
-wchar_t FX_GetFolderSeparator();
 
 #define FX_FILEMODE_Write 0
 #define FX_FILEMODE_ReadOnly 1

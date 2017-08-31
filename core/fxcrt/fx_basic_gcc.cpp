@@ -11,6 +11,8 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 
+namespace {
+
 template <typename IntType, typename CharType>
 IntType FXSYS_StrToInt(const CharType* str) {
   if (!str)
@@ -79,9 +81,8 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
   return str;
 }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+}  // namespace
+
 int32_t FXSYS_atoi(const char* str) {
   return FXSYS_StrToInt<int32_t, char>(str);
 }
@@ -94,47 +95,16 @@ int32_t FXSYS_wtoi(const wchar_t* str) {
 int64_t FXSYS_atoi64(const char* str) {
   return FXSYS_StrToInt<int64_t, char>(str);
 }
-int64_t FXSYS_wtoi64(const wchar_t* str) {
-  return FXSYS_StrToInt<int64_t, wchar_t>(str);
-}
 const char* FXSYS_i64toa(int64_t value, char* str, int radix) {
   return FXSYS_IntToStr<int64_t, uint64_t, char*>(value, str, radix);
 }
-#ifdef __cplusplus
-}
-#endif
+
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 int FXSYS_GetACP() {
   return 0;
 }
 
-uint32_t FXSYS_GetFullPathName(const char* filename,
-                               uint32_t buflen,
-                               char* buf,
-                               char** filepart) {
-  int srclen = FXSYS_strlen(filename);
-  if (!buf || (int)buflen < srclen + 1)
-    return srclen + 1;
-
-  strncpy(buf, filename, buflen);
-  return srclen;
-}
-
-uint32_t FXSYS_GetModuleFileName(void* hModule, char* buf, uint32_t bufsize) {
-  return 0xFFFFFFFF;
-}
-
-#ifdef __cplusplus
-}
-#endif
-#endif
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-#ifdef __cplusplus
-extern "C" {
-#endif
 char* FXSYS_strlwr(char* str) {
   if (!str) {
     return nullptr;
@@ -207,14 +177,7 @@ int FXSYS_wcsicmp(const wchar_t* dst, const wchar_t* src) {
 char* FXSYS_itoa(int value, char* str, int radix) {
   return FXSYS_IntToStr<int32_t, uint32_t, char*>(value, str, radix);
 }
-#ifdef __cplusplus
-}
-#endif
-#endif
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 int FXSYS_WideCharToMultiByte(uint32_t codepage,
                               uint32_t dwFlags,
                               const wchar_t* wstr,
@@ -248,7 +211,5 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
   }
   return wlen;
 }
-#ifdef __cplusplus
-}
-#endif
-#endif
+
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_

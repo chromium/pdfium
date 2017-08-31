@@ -162,8 +162,6 @@ extern "C" {
 #define FXSYS_strupr _strupr
 #define FXSYS_stricmp _stricmp
 #define FXSYS_pow(a, b) (float)powf(a, b)
-#define FXSYS_GetFullPathName GetFullPathName
-#define FXSYS_GetModuleFileName GetModuleFileName
 size_t FXSYS_wcsftime(wchar_t* strDest,
                       size_t maxsize,
                       const wchar_t* format,
@@ -183,7 +181,9 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
 #define FXSYS_wcslwr _wcslwr
 #define FXSYS_wcsupr _wcsupr
 #endif  // _NATIVE_WCHAR_T_DEFINED
+
 #else   // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
+
 int FXSYS_GetACP();
 char* FXSYS_itoa(int value, char* str, int radix);
 int FXSYS_WideCharToMultiByte(uint32_t codepage,
@@ -200,11 +200,6 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
                               int blen,
                               wchar_t* buf,
                               int buflen);
-uint32_t FXSYS_GetFullPathName(const char* filename,
-                               uint32_t buflen,
-                               char* buf,
-                               char** filepart);
-uint32_t FXSYS_GetModuleFileName(void* hModule, char* buf, uint32_t bufsize);
 char* FXSYS_strlwr(char* str);
 char* FXSYS_strupr(char* str);
 int FXSYS_stricmp(const char*, const char*);
@@ -225,7 +220,6 @@ int32_t FXSYS_atoi(const char* str);
 uint32_t FXSYS_atoui(const char* str);
 int32_t FXSYS_wtoi(const wchar_t* str);
 int64_t FXSYS_atoi64(const char* str);
-int64_t FXSYS_wtoi64(const wchar_t* str);
 const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_round(float f);
 #define FXSYS_sqrt2(a, b) (float)sqrt((a) * (a) + (b) * (b))

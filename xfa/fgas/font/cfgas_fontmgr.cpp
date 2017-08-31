@@ -611,6 +611,8 @@ const FX_BIT2CHARSET g_FX_Bit2Charset[4][16] = {
      {1 << 14, FX_CHARSET_Default},
      {1 << 15, FX_CHARSET_US}}};
 
+constexpr wchar_t kFolderSeparator = L'/';
+
 }  // namespace
 
 CFX_FontDescriptor::CFX_FontDescriptor()
@@ -640,7 +642,7 @@ CFX_ByteString CFX_FontSourceEnum_File::GetNextFile() {
   CFX_ByteString bsName;
   bool bFolder;
   CFX_ByteString bsFolderSeparator =
-      CFX_ByteString::FromUnicode(CFX_WideString(FX_GetFolderSeparator()));
+      CFX_ByteString::FromUnicode(CFX_WideString(kFolderSeparator));
   while (true) {
     if (!FX_GetNextFile(pCurHandle, &bsName, &bFolder)) {
       FX_CloseFolder(pCurHandle);
