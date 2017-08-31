@@ -116,7 +116,7 @@ CPDF_Parser::CPDF_Parser()
       m_FileVersion(0),
       m_pEncryptDict(nullptr),
       m_TrailerData(pdfium::MakeUnique<TrailerData>()),
-      m_linearized_first_page_cross_ref_start_obj_num(0) {}
+      m_dwLinearizedFirstPageXRefStartObjNum(0) {}
 
 CPDF_Parser::~CPDF_Parser() {
   ReleaseEncryptHandler();
@@ -1401,7 +1401,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     bXRefRebuilt = true;
     m_LastXRefOffset = 0;
   }
-  m_linearized_first_page_cross_ref_start_obj_num =
+  m_dwLinearizedFirstPageXRefStartObjNum =
       m_ObjectInfo.empty() ? 0 : m_ObjectInfo.begin()->first;
   if (bLoadV4) {
     std::unique_ptr<CPDF_Dictionary> trailer = LoadTrailerV4();
@@ -1497,8 +1497,8 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   // objnum.
   // And should have count equals to first obj number of first page cross ref
   // table.
-  if (!LoadLinearizedAllCrossRefV4(
-          m_LastXRefOffset, m_linearized_first_page_cross_ref_start_obj_num) &&
+  if (!LoadLinearizedAllCrossRefV4(m_LastXRefOffset,
+                                   m_dwLinearizedFirstPageXRefStartObjNum) &&
       !LoadLinearizedAllCrossRefV5(m_LastXRefOffset)) {
     m_LastXRefOffset = 0;
     m_pSyntax->m_MetadataObjnum = dwSaveMetadataObjnum;

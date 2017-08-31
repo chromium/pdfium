@@ -199,7 +199,7 @@ class CPDF_Parser {
   CFX_ByteString m_Password;
   std::unique_ptr<TrailerData> m_TrailerData;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
-  uint32_t m_linearized_first_page_cross_ref_start_obj_num;
+  uint32_t m_dwLinearizedFirstPageXRefStartObjNum;
 
   // A map of object numbers to indirect streams.
   std::map<uint32_t, CFX_RetainPtr<CPDF_StreamAcc>> m_ObjectStreamMap;
