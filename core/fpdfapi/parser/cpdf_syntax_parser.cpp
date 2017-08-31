@@ -592,14 +592,8 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     std::unique_ptr<CPDF_Dictionary> pDict,
     uint32_t objnum,
     uint32_t gennum) {
-  CPDF_Object* pLenObj = pDict->GetObjectFor("Length");
-  FX_FILESIZE len = -1;
-  CPDF_Reference* pLenObjRef = ToReference(pLenObj);
-
-  bool differingObjNum = !pLenObjRef || (pLenObjRef->GetObjList() &&
-                                         pLenObjRef->GetRefObjNum() != objnum);
-  if (pLenObj && differingObjNum)
-    len = pLenObj->GetInteger();
+  const CPDF_Number* pLenObj = ToNumber(pDict->GetDirectObjectFor("Length"));
+  FX_FILESIZE len = pLenObj ? pLenObj->GetInteger() : -1;
 
   // Locate the start of stream.
   ToNextLine();
