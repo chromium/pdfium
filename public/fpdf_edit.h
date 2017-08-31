@@ -385,7 +385,7 @@ FPDFImageObj_GetImageFilterCount(FPDF_PAGEOBJECT image_object);
 //
 //   image_object - handle to an image object.
 //   index        - the index of the filter requested.
-//   buffer       - buffer for holding filter string, encoded in UTF16-LE.
+//   buffer       - buffer for holding filter string, encoded in UTF-8.
 //   buflen       - length of the buffer.
 //
 // Returns the length of the filter string.

@@ -1056,10 +1056,10 @@ TEST_F(FPDFEditEmbeddertest, GetImageFilters) {
   ASSERT_EQ(1, FPDFImageObj_GetImageFilterCount(obj));
   unsigned long len = FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0);
   std::vector<char> buf(len);
-  EXPECT_EQ(24u, FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
-  EXPECT_STREQ(L"FlateDecode",
-               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
-                   .c_str());
+  static constexpr char kFlateDecode[] = "FlateDecode";
+  EXPECT_EQ(sizeof(kFlateDecode),
+            FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
+  EXPECT_STREQ(kFlateDecode, buf.data());
   EXPECT_EQ(0u, FPDFImageObj_GetImageFilter(obj, 1, nullptr, 0));
 
   // Verify all the filters for an image object with a list of filters.
@@ -1069,18 +1069,18 @@ TEST_F(FPDFEditEmbeddertest, GetImageFilters) {
   len = FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0);
   buf.clear();
   buf.resize(len);
-  EXPECT_EQ(30u, FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
-  EXPECT_STREQ(L"ASCIIHexDecode",
-               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
-                   .c_str());
+  static constexpr char kASCIIHexDecode[] = "ASCIIHexDecode";
+  EXPECT_EQ(sizeof(kASCIIHexDecode),
+            FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
+  EXPECT_STREQ(kASCIIHexDecode, buf.data());
 
   len = FPDFImageObj_GetImageFilter(obj, 1, nullptr, 0);
   buf.clear();
   buf.resize(len);
-  EXPECT_EQ(20u, FPDFImageObj_GetImageFilter(obj, 1, buf.data(), len));
-  EXPECT_STREQ(L"DCTDecode",
-               GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
-                   .c_str());
+  static constexpr char kDCTDecode[] = "DCTDecode";
+  EXPECT_EQ(sizeof(kDCTDecode),
+            FPDFImageObj_GetImageFilter(obj, 1, buf.data(), len));
+  EXPECT_STREQ(kDCTDecode, buf.data());
 
   UnloadPage(page);
 }

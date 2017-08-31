@@ -244,13 +244,16 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
   CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
   CPDF_Object* pFilter =
       pObj->AsImage()->GetImage()->GetDict()->GetDirectObjectFor("Filter");
-  CFX_WideString wsFilters;
+  CFX_ByteString bsFilter;
   if (pFilter->IsName())
-    wsFilters = pFilter->AsName()->GetUnicodeText();
+    bsFilter = pFilter->AsName()->GetString();
   else
-    wsFilters = pFilter->AsArray()->GetUnicodeTextAt(index);
+    bsFilter = pFilter->AsArray()->GetStringAt(index);
 
-  return Utf16EncodeMaybeCopyAndReturnLength(wsFilters, buffer, buflen);
+  unsigned long len = bsFilter.GetLength() + 1;
+  if (buffer && len <= buflen)
+    memcpy(buffer, bsFilter.c_str(), len);
+  return len;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
