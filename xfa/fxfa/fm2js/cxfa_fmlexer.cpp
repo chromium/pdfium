@@ -372,12 +372,13 @@ void CXFA_FMLexer::AdvanceForNumber() {
   wchar_t* end = nullptr;
   if (m_cursor)
     wcstod(const_cast<wchar_t*>(m_cursor), &end);
-  if (end && FXSYS_iswalpha(*end)) {
+  if (!end || FXSYS_iswalpha(*end)) {
     RaiseError();
     return;
   }
 
-  m_token->m_string = CFX_WideStringC(m_cursor, (end - m_cursor));
+  m_token->m_string =
+      CFX_WideStringC(m_cursor, static_cast<FX_STRSIZE>(end - m_cursor));
   m_cursor = end;
 }
 
@@ -393,7 +394,8 @@ void CXFA_FMLexer::AdvanceForString() {
       ++m_cursor;
       // If the end of the input has been reached it was not escaped.
       if (m_cursor > m_end) {
-        m_token->m_string = CFX_WideStringC(start, (m_cursor - start));
+        m_token->m_string =
+            CFX_WideStringC(start, static_cast<FX_STRSIZE>(m_cursor - start));
         return;
       }
       // If the next character is not a " then the end of the string has been
@@ -427,7 +429,8 @@ void CXFA_FMLexer::AdvanceForIdentifier() {
     }
     ++m_cursor;
   }
-  m_token->m_string = CFX_WideStringC(start, (m_cursor - start));
+  m_token->m_string =
+      CFX_WideStringC(start, static_cast<FX_STRSIZE>(m_cursor - start));
   m_token->m_type = TokenizeIdentifier(m_token->m_string);
 }
 
