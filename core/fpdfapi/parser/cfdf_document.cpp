@@ -67,7 +67,7 @@ void CFDF_Document::ParseStream(
         break;
 
       std::unique_ptr<CPDF_Object> pObj =
-          parser.GetObject(this, objnum, 0, true);
+          parser.GetObject(this, objnum, 0, false);
       if (!pObj)
         break;
 
@@ -80,7 +80,7 @@ void CFDF_Document::ParseStream(
         break;
 
       std::unique_ptr<CPDF_Dictionary> pMainDict =
-          ToDictionary(parser.GetObject(this, 0, 0, true));
+          ToDictionary(parser.GetObject(this, 0, 0, false));
       if (pMainDict)
         m_pRootDict = pMainDict->GetDictFor("Root");
 

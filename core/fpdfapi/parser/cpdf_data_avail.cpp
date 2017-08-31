@@ -680,7 +680,7 @@ std::unique_ptr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
   }
 
   std::unique_ptr<CPDF_Object> pObj =
-      m_syntaxParser.GetObject(pObjList, parser_objnum, gennum, true);
+      m_syntaxParser.GetObject(pObjList, parser_objnum, gennum, false);
   m_syntaxParser.SetPos(SavedPos);
   return pObj;
 }
@@ -926,7 +926,7 @@ bool CPDF_DataAvail::CheckTrailer() {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
   m_syntaxParser.SetPos(m_dwTrailerOffset);
   const std::unique_ptr<CPDF_Object> pTrailer =
-      m_syntaxParser.GetObject(nullptr, 0, 0, true);
+      m_syntaxParser.GetObject(nullptr, 0, 0, false);
   if (!pTrailer) {
     if (!GetValidator()->has_read_problems())
       m_docStatus = PDF_DATAAVAIL_ERROR;
