@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fxcrt_windows.h"
+#include "core/fxcrt/cfx_fileaccess_windows.h"
 
 #include <memory>
 
@@ -13,15 +13,12 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-// static
-std::unique_ptr<IFXCRT_FileAccess> IFXCRT_FileAccess::Create() {
-  return pdfium::MakeUnique<CFXCRT_FileAccess_Win64>();
-}
+namespace {
 
-void FXCRT_Windows_GetFileMode(uint32_t dwMode,
-                               uint32_t& dwAccess,
-                               uint32_t& dwShare,
-                               uint32_t& dwCreation) {
+void GetFileMode(uint32_t dwMode,
+                 uint32_t& dwAccess,
+                 uint32_t& dwShare,
+                 uint32_t& dwCreation) {
   dwAccess = GENERIC_READ;
   dwShare = FILE_SHARE_READ | FILE_SHARE_WRITE;
   if (!(dwMode & FX_FILEMODE_ReadOnly)) {
@@ -30,6 +27,13 @@ void FXCRT_Windows_GetFileMode(uint32_t dwMode,
   } else {
     dwCreation = OPEN_EXISTING;
   }
+}
+
+}  // namespace
+
+// static
+std::unique_ptr<IFX_FileAccess> IFX_FileAccess::Create() {
+  return pdfium::MakeUnique<CFX_FileAccess_Windows>();
 }
 
 #ifdef __cplusplus
@@ -44,19 +48,19 @@ WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE hFile,
 }
 #endif
 
-CFXCRT_FileAccess_Win64::CFXCRT_FileAccess_Win64() : m_hFile(nullptr) {}
+CFX_FileAccess_Windows::CFX_FileAccess_Windows() : m_hFile(nullptr) {}
 
-CFXCRT_FileAccess_Win64::~CFXCRT_FileAccess_Win64() {
+CFX_FileAccess_Windows::~CFX_FileAccess_Windows() {
   Close();
 }
 
-bool CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
-                                   uint32_t dwMode) {
+bool CFX_FileAccess_Windows::Open(const CFX_ByteStringC& fileName,
+                                  uint32_t dwMode) {
   if (m_hFile)
     return false;
 
   uint32_t dwAccess, dwShare, dwCreation;
-  FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
+  GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
   m_hFile = ::CreateFileA(fileName.unterminated_c_str(), dwAccess, dwShare,
                           nullptr, dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
   if (m_hFile == INVALID_HANDLE_VALUE)
@@ -65,13 +69,13 @@ bool CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
   return !!m_hFile;
 }
 
-bool CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
-                                   uint32_t dwMode) {
+bool CFX_FileAccess_Windows::Open(const CFX_WideStringC& fileName,
+                                  uint32_t dwMode) {
   if (m_hFile)
     return false;
 
   uint32_t dwAccess, dwShare, dwCreation;
-  FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
+  GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
   m_hFile =
       ::CreateFileW((LPCWSTR)fileName.unterminated_c_str(), dwAccess, dwShare,
                     nullptr, dwCreation, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -81,7 +85,7 @@ bool CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
   return !!m_hFile;
 }
 
-void CFXCRT_FileAccess_Win64::Close() {
+void CFX_FileAccess_Windows::Close() {
   if (!m_hFile)
     return;
 
@@ -89,7 +93,7 @@ void CFXCRT_FileAccess_Win64::Close() {
   m_hFile = nullptr;
 }
 
-FX_FILESIZE CFXCRT_FileAccess_Win64::GetSize() const {
+FX_FILESIZE CFX_FileAccess_Windows::GetSize() const {
   if (!m_hFile)
     return 0;
 
@@ -100,7 +104,7 @@ FX_FILESIZE CFXCRT_FileAccess_Win64::GetSize() const {
   return (FX_FILESIZE)size.QuadPart;
 }
 
-FX_FILESIZE CFXCRT_FileAccess_Win64::GetPosition() const {
+FX_FILESIZE CFX_FileAccess_Windows::GetPosition() const {
   if (!m_hFile)
     return (FX_FILESIZE)-1;
 
@@ -112,7 +116,7 @@ FX_FILESIZE CFXCRT_FileAccess_Win64::GetPosition() const {
   return (FX_FILESIZE)newPos.QuadPart;
 }
 
-FX_FILESIZE CFXCRT_FileAccess_Win64::SetPosition(FX_FILESIZE pos) {
+FX_FILESIZE CFX_FileAccess_Windows::SetPosition(FX_FILESIZE pos) {
   if (!m_hFile)
     return (FX_FILESIZE)-1;
 
@@ -125,7 +129,7 @@ FX_FILESIZE CFXCRT_FileAccess_Win64::SetPosition(FX_FILESIZE pos) {
   return (FX_FILESIZE)newPos.QuadPart;
 }
 
-size_t CFXCRT_FileAccess_Win64::Read(void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Windows::Read(void* pBuffer, size_t szBuffer) {
   if (!m_hFile)
     return 0;
 
@@ -137,7 +141,7 @@ size_t CFXCRT_FileAccess_Win64::Read(void* pBuffer, size_t szBuffer) {
   return szRead;
 }
 
-size_t CFXCRT_FileAccess_Win64::Write(const void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Windows::Write(const void* pBuffer, size_t szBuffer) {
   if (!m_hFile)
     return 0;
 
@@ -149,9 +153,9 @@ size_t CFXCRT_FileAccess_Win64::Write(const void* pBuffer, size_t szBuffer) {
   return szWrite;
 }
 
-size_t CFXCRT_FileAccess_Win64::ReadPos(void* pBuffer,
-                                        size_t szBuffer,
-                                        FX_FILESIZE pos) {
+size_t CFX_FileAccess_Windows::ReadPos(void* pBuffer,
+                                       size_t szBuffer,
+                                       FX_FILESIZE pos) {
   if (!m_hFile)
     return 0;
 
@@ -164,9 +168,9 @@ size_t CFXCRT_FileAccess_Win64::ReadPos(void* pBuffer,
   return Read(pBuffer, szBuffer);
 }
 
-size_t CFXCRT_FileAccess_Win64::WritePos(const void* pBuffer,
-                                         size_t szBuffer,
-                                         FX_FILESIZE pos) {
+size_t CFX_FileAccess_Windows::WritePos(const void* pBuffer,
+                                        size_t szBuffer,
+                                        FX_FILESIZE pos) {
   if (!m_hFile) {
     return 0;
   }
@@ -176,14 +180,14 @@ size_t CFXCRT_FileAccess_Win64::WritePos(const void* pBuffer,
   return Write(pBuffer, szBuffer);
 }
 
-bool CFXCRT_FileAccess_Win64::Flush() {
+bool CFX_FileAccess_Windows::Flush() {
   if (!m_hFile)
     return false;
 
   return !!::FlushFileBuffers(m_hFile);
 }
 
-bool CFXCRT_FileAccess_Win64::Truncate(FX_FILESIZE szFile) {
+bool CFX_FileAccess_Windows::Truncate(FX_FILESIZE szFile) {
   if (SetPosition(szFile) == (FX_FILESIZE)-1)
     return false;
 

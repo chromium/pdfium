@@ -4,18 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_FXCRT_WINDOWS_H_
-#define CORE_FXCRT_FXCRT_WINDOWS_H_
+#ifndef CORE_FXCRT_CFX_FILEACCESS_POSIX_H_
+#define CORE_FXCRT_CFX_FILEACCESS_POSIX_H_
 
-#include "core/fxcrt/ifxcrt_fileaccess.h"
+#include "core/fxcrt/ifx_fileaccess.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess {
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || \
+    _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
+    _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
+class CFX_FileAccess_Posix : public IFX_FileAccess {
  public:
-  CFXCRT_FileAccess_Win64();
-  ~CFXCRT_FileAccess_Win64() override;
+  CFX_FileAccess_Posix();
+  ~CFX_FileAccess_Posix() override;
 
-  // IFXCRT_FileAccess
+  // IFX_FileAccess:
   bool Open(const CFX_ByteStringC& fileName, uint32_t dwMode) override;
   bool Open(const CFX_WideStringC& fileName, uint32_t dwMode) override;
   void Close() override;
@@ -32,8 +34,8 @@ class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess {
   bool Truncate(FX_FILESIZE szFile) override;
 
  protected:
-  void* m_hFile;
+  int32_t m_nFD;
 };
 #endif
 
-#endif  // CORE_FXCRT_FXCRT_WINDOWS_H_
+#endif  // CORE_FXCRT_CFX_FILEACCESS_POSIX_H_

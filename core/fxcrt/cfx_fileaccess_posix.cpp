@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fxcrt_posix.h"
+#include "core/fxcrt/cfx_fileaccess_posix.h"
 
 #include <memory>
 
@@ -22,14 +22,9 @@
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
 
-// static
-std::unique_ptr<IFXCRT_FileAccess> IFXCRT_FileAccess::Create() {
-  return pdfium::MakeUnique<CFXCRT_FileAccess_Posix>();
-}
+namespace {
 
-void FXCRT_Posix_GetFileMode(uint32_t dwModes,
-                             int32_t& nFlags,
-                             int32_t& nMasks) {
+void GetFileMode(uint32_t dwModes, int32_t& nFlags, int32_t& nMasks) {
   nFlags = O_BINARY | O_LARGEFILE;
   if (dwModes & FX_FILEMODE_ReadOnly) {
     nFlags |= O_RDONLY;
@@ -42,38 +37,47 @@ void FXCRT_Posix_GetFileMode(uint32_t dwModes,
     nMasks = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
   }
 }
-CFXCRT_FileAccess_Posix::CFXCRT_FileAccess_Posix() : m_nFD(-1) {}
-CFXCRT_FileAccess_Posix::~CFXCRT_FileAccess_Posix() {
+
+}  // namespace
+
+// static
+std::unique_ptr<IFX_FileAccess> IFX_FileAccess::Create() {
+  return pdfium::MakeUnique<CFX_FileAccess_Posix>();
+}
+
+CFX_FileAccess_Posix::CFX_FileAccess_Posix() : m_nFD(-1) {}
+
+CFX_FileAccess_Posix::~CFX_FileAccess_Posix() {
   Close();
 }
 
-bool CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
-                                   uint32_t dwMode) {
+bool CFX_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
+                                uint32_t dwMode) {
   if (m_nFD > -1)
     return false;
 
   int32_t nFlags;
   int32_t nMasks;
-  FXCRT_Posix_GetFileMode(dwMode, nFlags, nMasks);
+  GetFileMode(dwMode, nFlags, nMasks);
 
   // TODO(tsepez): check usage of c_str() below.
   m_nFD = open(fileName.unterminated_c_str(), nFlags, nMasks);
   return m_nFD > -1;
 }
 
-bool CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName,
-                                   uint32_t dwMode) {
+bool CFX_FileAccess_Posix::Open(const CFX_WideStringC& fileName,
+                                uint32_t dwMode) {
   return Open(FX_UTF8Encode(fileName).AsStringC(), dwMode);
 }
 
-void CFXCRT_FileAccess_Posix::Close() {
+void CFX_FileAccess_Posix::Close() {
   if (m_nFD < 0) {
     return;
   }
   close(m_nFD);
   m_nFD = -1;
 }
-FX_FILESIZE CFXCRT_FileAccess_Posix::GetSize() const {
+FX_FILESIZE CFX_FileAccess_Posix::GetSize() const {
   if (m_nFD < 0) {
     return 0;
   }
@@ -82,33 +86,33 @@ FX_FILESIZE CFXCRT_FileAccess_Posix::GetSize() const {
   fstat(m_nFD, &s);
   return s.st_size;
 }
-FX_FILESIZE CFXCRT_FileAccess_Posix::GetPosition() const {
+FX_FILESIZE CFX_FileAccess_Posix::GetPosition() const {
   if (m_nFD < 0) {
     return (FX_FILESIZE)-1;
   }
   return lseek(m_nFD, 0, SEEK_CUR);
 }
-FX_FILESIZE CFXCRT_FileAccess_Posix::SetPosition(FX_FILESIZE pos) {
+FX_FILESIZE CFX_FileAccess_Posix::SetPosition(FX_FILESIZE pos) {
   if (m_nFD < 0) {
     return (FX_FILESIZE)-1;
   }
   return lseek(m_nFD, pos, SEEK_SET);
 }
-size_t CFXCRT_FileAccess_Posix::Read(void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Posix::Read(void* pBuffer, size_t szBuffer) {
   if (m_nFD < 0) {
     return 0;
   }
   return read(m_nFD, pBuffer, szBuffer);
 }
-size_t CFXCRT_FileAccess_Posix::Write(const void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Posix::Write(const void* pBuffer, size_t szBuffer) {
   if (m_nFD < 0) {
     return 0;
   }
   return write(m_nFD, pBuffer, szBuffer);
 }
-size_t CFXCRT_FileAccess_Posix::ReadPos(void* pBuffer,
-                                        size_t szBuffer,
-                                        FX_FILESIZE pos) {
+size_t CFX_FileAccess_Posix::ReadPos(void* pBuffer,
+                                     size_t szBuffer,
+                                     FX_FILESIZE pos) {
   if (m_nFD < 0) {
     return 0;
   }
@@ -120,9 +124,9 @@ size_t CFXCRT_FileAccess_Posix::ReadPos(void* pBuffer,
   }
   return Read(pBuffer, szBuffer);
 }
-size_t CFXCRT_FileAccess_Posix::WritePos(const void* pBuffer,
-                                         size_t szBuffer,
-                                         FX_FILESIZE pos) {
+size_t CFX_FileAccess_Posix::WritePos(const void* pBuffer,
+                                      size_t szBuffer,
+                                      FX_FILESIZE pos) {
   if (m_nFD < 0) {
     return 0;
   }
@@ -132,14 +136,14 @@ size_t CFXCRT_FileAccess_Posix::WritePos(const void* pBuffer,
   return Write(pBuffer, szBuffer);
 }
 
-bool CFXCRT_FileAccess_Posix::Flush() {
+bool CFX_FileAccess_Posix::Flush() {
   if (m_nFD < 0)
     return false;
 
   return fsync(m_nFD) > -1;
 }
 
-bool CFXCRT_FileAccess_Posix::Truncate(FX_FILESIZE szFile) {
+bool CFX_FileAccess_Posix::Truncate(FX_FILESIZE szFile) {
   if (m_nFD < 0)
     return false;
 
