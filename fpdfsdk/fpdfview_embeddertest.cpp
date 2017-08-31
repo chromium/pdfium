@@ -318,6 +318,13 @@ TEST_F(FPDFViewEmbeddertest, Hang_298) {
 // reference loop. Cross references will be rebuilt successfully.
 TEST_F(FPDFViewEmbeddertest, CrossRefV4Loop) {
   EXPECT_TRUE(OpenDocument("bug_xrefv4_loop.pdf"));
+
+  // Make sure calling FPDFAvail_IsDocAvail() on this file does not infinite
+  // loop either. See bug 875.
+  int ret = PDF_DATA_NOTAVAIL;
+  while (ret == PDF_DATA_NOTAVAIL)
+    ret = FPDFAvail_IsDocAvail(avail_, &hints_);
+  EXPECT_EQ(PDF_DATA_AVAIL, ret);
 }
 
 // The test should pass when circular references to ParseIndirectObject will not
