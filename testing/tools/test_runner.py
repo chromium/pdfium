@@ -115,7 +115,7 @@ class TestRunner:
     txt_path = os.path.join(self.working_dir, input_root + '.txt')
 
     with open(txt_path, 'w') as outfile:
-      cmd_to_run = [self.pdfium_test_path, pdf_path]
+      cmd_to_run = [self.pdfium_test_path, '--send-events', pdf_path]
       subprocess.check_call(cmd_to_run, stdout=outfile)
 
     cmd = [sys.executable, self.text_diff_path, expected_txt_path, txt_path]

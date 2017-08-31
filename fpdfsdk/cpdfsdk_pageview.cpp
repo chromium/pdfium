@@ -259,6 +259,17 @@ void CPDFSDK_PageView::ReplaceSelection(const CFX_WideString& text) {
   }
 }
 
+bool CPDFSDK_PageView::OnFocus(const CFX_PointF& point, uint32_t nFlag) {
+  CPDFSDK_Annot::ObservedPtr pAnnot(GetFXWidgetAtPoint(point));
+  if (!pAnnot) {
+    m_pFormFillEnv->KillFocusAnnot(nFlag);
+    return false;
+  }
+
+  m_pFormFillEnv->SetFocusAnnot(&pAnnot);
+  return true;
+}
+
 bool CPDFSDK_PageView::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   CPDFSDK_Annot::ObservedPtr pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot) {

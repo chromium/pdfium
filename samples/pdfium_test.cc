@@ -965,6 +965,14 @@ void SendPageEvents(FPDF_FORMHANDLE form,
       } else {
         fprintf(stderr, "mousemove: bad args\n");
       }
+    } else if (tokens[0] == "focus") {
+      if (tokens.size() == 3) {
+        int x = atoi(tokens[1].c_str());
+        int y = atoi(tokens[2].c_str());
+        FORM_OnFocus(form, page, 0, x, y);
+      } else {
+        fprintf(stderr, "focus: bad args\n");
+      }
     } else {
       fprintf(stderr, "Unrecognized event: %s\n", tokens[0].c_str());
     }

@@ -1242,6 +1242,29 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
                                                      double page_y);
 
 /**
+ * Function: FORM_OnFocus
+ *          This function focuses the form annotation at a given point. If the
+ *          annotation at the point already has focus, nothing happens. If there
+ *          is no annotation at the point, remove form focus.
+ * Parameters:
+ *          hHandle     -   Handle to the form fill module. Returned by
+ *                          FPDFDOC_InitFormFillEnvironment.
+ *          page        -   Handle to the page. Returned by FPDF_LoadPage.
+ *          modifier    -   Indicates whether various virtual keys are down.
+ *          page_x      -   Specifies the x-coordinate of the cursor in PDF user
+ *                          space.
+ *          page_y      -   Specifies the y-coordinate of the cursor in PDF user
+ *                          space.
+ * Return Value:
+ *          TRUE if there is an annotation at the given point and it has focus.
+ **/
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnFocus(FPDF_FORMHANDLE hHandle,
+                                                 FPDF_PAGE page,
+                                                 int modifier,
+                                                 double page_x,
+                                                 double page_y);
+
+/**
  * Function: FORM_OnLButtonDown
  *          You can call this member function when the user presses the left
  *mouse button.

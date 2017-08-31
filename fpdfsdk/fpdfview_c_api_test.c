@@ -181,6 +181,7 @@ int CheckPDFiumCApi() {
     CHK(FORM_DoDocumentAAction);
     CHK(FORM_DoPageAAction);
     CHK(FORM_OnMouseMove);
+    CHK(FORM_OnFocus);
     CHK(FORM_OnLButtonDown);
     CHK(FORM_OnLButtonUp);
 #ifdef PDF_ENABLE_XFA

@@ -291,6 +291,17 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
   return pPageView->OnMouseMove(CFX_PointF(page_x, page_y), modifier);
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnFocus(FPDF_FORMHANDLE hHandle,
+                                                 FPDF_PAGE page,
+                                                 int modifier,
+                                                 double page_x,
+                                                 double page_y) {
+  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
+  if (!pPageView)
+    return false;
+  return pPageView->OnFocus(CFX_PointF(page_x, page_y), modifier);
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,
                                                        FPDF_PAGE page,
                                                        int modifier,
