@@ -80,11 +80,10 @@ int32_t CBC_OnedEAN13Writer::CalcChecksum(const CFX_ByteString& contents) {
   int32_t even = 0;
   FX_STRSIZE j = 1;
   for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
-    FX_STRSIZE rev_i = (contents.GetLength() - 1) - 1;
     if (j % 2) {
-      odd += FXSYS_atoi(contents.Mid(i, rev_i).c_str());
+      odd += FXSYS_atoi(contents.Mid(i, 1).c_str());
     } else {
-      even += FXSYS_atoi(contents.Mid(i, rev_i).c_str());
+      even += FXSYS_atoi(contents.Mid(i, 1).c_str());
     }
     j++;
   }
