@@ -23,6 +23,8 @@
 
 namespace {
 
+constexpr char kChecksumKey[] = "CheckSum";
+
 CFX_ByteString CFXByteStringHexDecode(const CFX_ByteString& bsHex) {
   uint8_t* result = nullptr;
   uint32_t size = 0;
@@ -138,35 +140,28 @@ FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key) {
+FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   if (!pFile)
     return 0;
 
   CPDF_Dictionary* pParamsDict = CPDF_FileSpec(pFile).GetParamsDict();
-  if (!pParamsDict)
-    return 0;
-
-  return pParamsDict->KeyExist(CFXByteStringFromFPDFWideString(key));
+  return pParamsDict ? pParamsDict->KeyExist(key) : 0;
 }
 
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
-FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key) {
+FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key) {
   if (!FPDFAttachment_HasKey(attachment, key))
     return FPDF_OBJECT_UNKNOWN;
 
-  CPDF_Object* pObj = CPDF_FileSpec(CPDFObjectFromFPDFAttachment(attachment))
-                          .GetParamsDict()
-                          ->GetObjectFor(CFXByteStringFromFPDFWideString(key));
-  if (!pObj)
-    return FPDF_OBJECT_UNKNOWN;
-
-  return pObj->GetType();
+  CPDF_FileSpec spec(CPDFObjectFromFPDFAttachment(attachment));
+  CPDF_Object* pObj = spec.GetParamsDict()->GetObjectFor(key);
+  return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
-                              FPDF_WIDESTRING key,
+                              FPDF_BYTESTRING key,
                               FPDF_WIDESTRING value) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   if (!pFile)
@@ -176,9 +171,9 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
   if (!pParamsDict)
     return false;
 
-  CFX_ByteString bsKey = CFXByteStringFromFPDFWideString(key);
+  CFX_ByteString bsKey = key;
   CFX_ByteString bsValue = CFXByteStringFromFPDFWideString(value);
-  bool bEncodedAsHex = bsKey == "CheckSum";
+  bool bEncodedAsHex = bsKey == kChecksumKey;
   if (bEncodedAsHex)
     bsValue = CFXByteStringHexDecode(bsValue);
 
@@ -188,7 +183,7 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
-                              FPDF_WIDESTRING key,
+                              FPDF_BYTESTRING key,
                               void* buffer,
                               unsigned long buflen) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
@@ -199,15 +194,13 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
   if (!pParamsDict)
     return 0;
 
-  CFX_ByteString bsKey = CFXByteStringFromFPDFWideString(key);
+  CFX_ByteString bsKey = key;
   CFX_WideString value = pParamsDict->GetUnicodeTextFor(bsKey);
-  if (bsKey == "CheckSum" && !value.IsEmpty()) {
+  if (bsKey == kChecksumKey && !value.IsEmpty()) {
     CPDF_String* stringValue = pParamsDict->GetObjectFor(bsKey)->AsString();
     if (stringValue->IsHex()) {
-      value =
-          CPDF_String(nullptr, PDF_EncodeString(stringValue->GetString(), true),
-                      false)
-              .GetUnicodeText();
+      CFX_ByteString encoded = PDF_EncodeString(stringValue->GetString(), true);
+      value = CPDF_String(nullptr, encoded, false).GetUnicodeText();
     }
   }
 
@@ -248,7 +241,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
 
   // Set the checksum of the new attachment in the dictionary.
   pParamsDict->SetNewFor<CPDF_String>(
-      "CheckSum", CFXByteStringHexDecode(GenerateMD5Base16(contents, len)),
+      kChecksumKey, CFXByteStringHexDecode(GenerateMD5Base16(contents, len)),
       true);
 
   // Create the file stream and have the filespec dictionary link to it.

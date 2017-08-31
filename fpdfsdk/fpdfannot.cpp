@@ -689,7 +689,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
-                                                     FPDF_WIDESTRING key) {
+                                                     FPDF_BYTESTRING key) {
   if (!annot)
     return false;
 
@@ -698,26 +698,22 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  return pAnnotDict->KeyExist(CFXByteStringFromFPDFWideString(key));
+  return pAnnotDict->KeyExist(key);
 }
 
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
-FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_WIDESTRING key) {
+FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
   if (!FPDFAnnot_HasKey(annot, key))
     return FPDF_OBJECT_UNKNOWN;
 
-  CPDF_Object* pObj =
-      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict()->GetObjectFor(
-          CFXByteStringFromFPDFWideString(key));
-  if (!pObj)
-    return FPDF_OBJECT_UNKNOWN;
-
-  return pObj->GetType();
+  auto* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
+  CPDF_Object* pObj = pAnnot->GetAnnotDict()->GetObjectFor(key);
+  return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
-                         FPDF_WIDESTRING key,
+                         FPDF_BYTESTRING key,
                          FPDF_WIDESTRING value) {
   if (!annot)
     return false;
@@ -727,15 +723,14 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  pAnnotDict->SetNewFor<CPDF_String>(CFXByteStringFromFPDFWideString(key),
-                                     CFXByteStringFromFPDFWideString(value),
-                                     false);
+  pAnnotDict->SetNewFor<CPDF_String>(
+      key, CFXByteStringFromFPDFWideString(value), false);
   return true;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
-                         FPDF_WIDESTRING key,
+                         FPDF_BYTESTRING key,
                          void* buffer,
                          unsigned long buflen) {
   if (!annot)
@@ -746,19 +741,17 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return 0;
 
-  return Utf16EncodeMaybeCopyAndReturnLength(
-      pAnnotDict->GetUnicodeTextFor(CFXByteStringFromFPDFWideString(key)),
-      buffer, buflen);
+  return Utf16EncodeMaybeCopyAndReturnLength(pAnnotDict->GetUnicodeTextFor(key),
+                                             buffer, buflen);
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
-FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_WIDESTRING key) {
+FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
   if (!pAnnot || !pAnnot->GetAnnotDict())
     return nullptr;
 
-  CPDF_Dictionary* pLinkedDict =
-      pAnnot->GetAnnotDict()->GetDictFor(CFXByteStringFromFPDFWideString(key));
+  CPDF_Dictionary* pLinkedDict = pAnnot->GetAnnotDict()->GetDictFor(key);
   if (!pLinkedDict || pLinkedDict->GetStringFor("Type") != "Annot")
     return nullptr;
 
@@ -773,10 +766,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetFlags(FPDF_ANNOTATION annot) {
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  if (!pAnnotDict)
-    return FPDF_ANNOT_FLAG_NONE;
-
-  return pAnnotDict->GetIntegerFor("F");
+  return pAnnotDict ? pAnnotDict->GetIntegerFor("F") : FPDF_ANNOT_FLAG_NONE;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetFlags(FPDF_ANNOTATION annot,

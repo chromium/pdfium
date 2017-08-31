@@ -347,7 +347,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
 //
 // Returns true if |key| exists.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
-                                                     FPDF_WIDESTRING key);
+                                                     FPDF_BYTESTRING key);
 
 // Experimental API.
 // Get the type of the value corresponding to |key| in |annot|'s dictionary.
@@ -357,7 +357,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
 //
 // Returns the type of the dictionary value.
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
-FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_WIDESTRING key);
+FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_BYTESTRING key);
 
 // Experimental API.
 // Set the string value corresponding to |key| in |annot|'s dictionary,
@@ -371,7 +371,7 @@ FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_WIDESTRING key);
 // Returns true if successful.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
-                         FPDF_WIDESTRING key,
+                         FPDF_BYTESTRING key,
                          FPDF_WIDESTRING value);
 
 // Experimental API.
@@ -391,7 +391,7 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
 // Returns the length of the string value.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
-                         FPDF_WIDESTRING key,
+                         FPDF_BYTESTRING key,
                          void* buffer,
                          unsigned long buflen);
 
@@ -406,7 +406,7 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
 //
 // Returns a handle to the linked annotation object, or NULL on failure.
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
-FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_WIDESTRING key);
+FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_BYTESTRING key);
 
 // Experimental API.
 // Get the annotation flags of |annot|.

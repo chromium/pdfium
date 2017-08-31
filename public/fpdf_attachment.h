@@ -81,7 +81,7 @@ FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
 //
 // Returns true if |key| exists.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key);
+FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key);
 
 // Experimental API.
 // Get the type of the value corresponding to |key| in the params dictionary of
@@ -92,7 +92,7 @@ FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key);
 //
 // Returns the type of the dictionary value.
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
-FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key);
+FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key);
 
 // Experimental API.
 // Set the string value corresponding to |key| in the params dictionary of the
@@ -106,7 +106,7 @@ FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_WIDESTRING key);
 // Returns true if successful.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
-                              FPDF_WIDESTRING key,
+                              FPDF_BYTESTRING key,
                               FPDF_WIDESTRING value);
 
 // Experimental API.
@@ -127,7 +127,7 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
 // Returns the length of the dictionary value string.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
-                              FPDF_WIDESTRING key,
+                              FPDF_BYTESTRING key,
                               void* buffer,
                               unsigned long buflen);
 
