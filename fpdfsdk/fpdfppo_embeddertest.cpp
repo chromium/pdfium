@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 #include <string>
 
-#include "core/fxcrt/fx_basic.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ppo.h"
 #include "public/fpdf_save.h"

@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_IPDFSDK_ANNOTHANDLER_H_
 #define FPDFSDK_IPDFSDK_ANNOTHANDLER_H_
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 

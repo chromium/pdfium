@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 
 class CJBig2_Context;
 class CJBig2_Image;

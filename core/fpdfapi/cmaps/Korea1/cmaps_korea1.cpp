@@ -10,7 +10,6 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
-#include "core/fxcrt/fx_basic.h"
 
 static const FXCMAP_CMap g_FXCMAP_Korea1_cmaps[] = {
     {"KSC-EUC-H", FXCMAP_CMap::Range, g_FXCMAP_KSC_EUC_H_0, 467,

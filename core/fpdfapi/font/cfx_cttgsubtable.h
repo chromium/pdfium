@@ -13,7 +13,6 @@
 #include <set>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 

@@ -19,10 +19,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "fxbarcode/common/BC_CommonByteArray.h"
 
 #include <algorithm>
 
-#include "fxbarcode/common/BC_CommonByteArray.h"
+#include "core/fxcrt/fx_memory.h"
 
 CBC_CommonByteArray::CBC_CommonByteArray() {
   m_bytes = nullptr;

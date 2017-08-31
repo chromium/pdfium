@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 
 class CPDF_CryptoHandler;
 class CPDF_Dictionary;

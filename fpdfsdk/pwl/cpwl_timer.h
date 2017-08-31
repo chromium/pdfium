@@ -8,7 +8,6 @@
 #define FPDFSDK_PWL_CPWL_TIMER_H_
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 
 class CFX_SystemHandler;
 class CPWL_TimerHandler;

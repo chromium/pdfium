@@ -11,7 +11,6 @@
 #include <set>
 #include <type_traits>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -24,6 +23,7 @@ class CPDF_Number;
 class CPDF_Reference;
 class CPDF_Stream;
 class CPDF_String;
+class IFX_ArchiveStream;
 
 class CPDF_Object {
  public:

@@ -9,6 +9,8 @@
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
+
 class CJBig2_HuffmanDecoder {
  public:
   explicit CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream);

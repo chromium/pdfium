@@ -7,7 +7,6 @@
 #include <string>
 
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcrt/fx_basic.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

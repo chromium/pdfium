@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
 
 bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
                               uint32_t first,

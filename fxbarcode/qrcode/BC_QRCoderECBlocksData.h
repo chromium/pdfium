@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_QRCODE_BC_QRCODERECBLOCKSDATA_H_
 #define FXBARCODE_QRCODE_BC_QRCODERECBLOCKSDATA_H_
 
-#include "core/fxcrt/fx_basic.h"
+#include <stdint.h>
 
 struct CBC_QRCoderECBlockData {
   uint8_t ecCodeWordsPerBlock;

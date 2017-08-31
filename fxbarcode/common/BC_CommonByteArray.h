@@ -9,8 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
-
 // TODO(weili): The usage of this class should be replaced by
 // std::vector<uint8_t>.
 class CBC_CommonByteArray {

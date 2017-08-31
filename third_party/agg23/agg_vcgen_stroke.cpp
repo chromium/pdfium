@@ -24,7 +24,6 @@
 //----------------------------------------------------------------------------
 
 #include "agg_vcgen_stroke.h"
-#include "core/fxcrt/fx_basic.h"
 
 namespace agg
 {

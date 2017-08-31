@@ -11,9 +11,13 @@
 #include <cwctype>
 #include <memory>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
 
 #define FX_INVALID_OFFSET static_cast<uint32_t>(-1)
+
+#ifdef PDF_ENABLE_XFA
+#define FX_IsOdd(a) ((a)&1)
+#endif  // PDF_ENABLE_XFA
 
 float FXSYS_wcstof(const wchar_t* pwsStr,
                    int32_t iLength = -1,
@@ -101,5 +105,7 @@ struct FX_GUID {
 void FX_GUID_CreateV4(FX_GUID* pGUID);
 CFX_ByteString FX_GUID_ToString(const FX_GUID* pGUID, bool bSeparator = true);
 #endif  // PDF_ENABLE_XFA
+
+uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits);
 
 #endif  // CORE_FXCRT_FX_EXTENSION_H_

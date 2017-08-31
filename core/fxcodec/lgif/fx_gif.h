@@ -10,8 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
-
 class CGifContext;
 
 #define GIF_SIGNATURE "GIF"

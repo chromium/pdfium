@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
 
 class CCodec_ScanlineDecoder;
 class CPDF_Dictionary;

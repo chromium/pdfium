@@ -10,8 +10,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/fx_basic.h"
-
 class CCodec_FaxModule;
 class CCodec_FlateModule;
 class CCodec_IccModule;

@@ -9,8 +9,8 @@
 #include <limits>
 #include <memory>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"
 
 bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {

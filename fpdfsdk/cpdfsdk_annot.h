@@ -12,7 +12,6 @@
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/fsdk_common.h"
 #include "fpdfsdk/fsdk_define.h"

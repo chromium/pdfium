@@ -14,6 +14,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectlist.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
 class IFX_PauseIndicator;

@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
-#include "core/fxcrt/fx_basic.h"
 
 class CJBig2_Image;
 

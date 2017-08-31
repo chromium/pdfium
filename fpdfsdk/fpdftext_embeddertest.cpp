@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_memory.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"

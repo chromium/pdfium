@@ -10,7 +10,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 
 class CBC_QRCoder;

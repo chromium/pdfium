@@ -6,6 +6,7 @@
 #define CORE_FPDFAPI_PARSER_CPDF_READ_VALIDATOR_H_
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
+#include "core/fxcrt/fx_stream.h"
 
 class CPDF_ReadValidator : public IFX_SeekableReadStream {
  public:

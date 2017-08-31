@@ -9,7 +9,13 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
+
+// Used with std::unique_ptr to Release() objects that can't be deleted.
+template <class T>
+struct ReleaseDeleter {
+  inline void operator()(T* ptr) const { ptr->Release(); }
+};
 
 // Analogous to base's scoped_refptr.
 template <class T>
@@ -25,6 +31,7 @@ class CFX_RetainPtr {
   CFX_RetainPtr(CFX_RetainPtr&& that) noexcept { Swap(that); }
 
   // Deliberately implicit to allow returning nullptrs.
+  // NOLINTNEXTLINE(runtime/explicit)
   CFX_RetainPtr(std::nullptr_t ptr) {}
 
   template <class U>

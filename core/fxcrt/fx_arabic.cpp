@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_ucd.h"
 #include "third_party/base/stl_util.h"
 

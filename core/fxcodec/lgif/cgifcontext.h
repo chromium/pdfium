@@ -13,7 +13,7 @@
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
 #include "core/fxcodec/lgif/fx_gif.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
 
 class CGifContext : public CCodec_GifModule::Context {
  public:

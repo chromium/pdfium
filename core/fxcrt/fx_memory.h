@@ -136,12 +136,6 @@ struct FxFreeDeleter {
   inline void operator()(void* ptr) const { FX_Free(ptr); }
 };
 
-// Used with std::unique_ptr to Release() objects that can't be deleted.
-template <class T>
-struct ReleaseDeleter {
-  inline void operator()(T* ptr) const { ptr->Release(); }
-};
-
 #endif  // __cplusplus
 
 #endif  // CORE_FXCRT_FX_MEMORY_H_

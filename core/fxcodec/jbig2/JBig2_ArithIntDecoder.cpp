@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_memory.h"
 
 namespace {
 

@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
+#include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 

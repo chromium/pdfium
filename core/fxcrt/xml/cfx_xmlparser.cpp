@@ -6,7 +6,6 @@
 
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"

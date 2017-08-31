@@ -9,7 +9,6 @@
 
 #include <set>
 
-#include "core/fxcrt/fx_basic.h"
 #include "xfa/fwl/cfwl_event.h"
 
 class CFWL_Event;

@@ -9,8 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
-
 struct CBC_QRCoderECBlockData;
 
 class CBC_QRCoderECBlocks {

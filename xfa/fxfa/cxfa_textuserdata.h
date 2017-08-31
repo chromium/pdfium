@@ -8,7 +8,6 @@
 #define XFA_FXFA_CXFA_TEXTUSERDATA_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 
 class CFX_CSSComputedStyle;
 class CXFA_LinkUserData;

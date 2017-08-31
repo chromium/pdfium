@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 
 class CPDF_Document;
 class CPDF_Font;

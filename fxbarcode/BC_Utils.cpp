@@ -6,7 +6,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "fxbarcode/utils.h"
 
 bool BC_FX_ByteString_Replace(CFX_ByteString& dst,

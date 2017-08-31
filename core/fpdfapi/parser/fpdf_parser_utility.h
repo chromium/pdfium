@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_string.h"
 
 class IFX_SeekableReadStream;
 class CPDF_Dictionary;

@@ -10,7 +10,8 @@
 #include <algorithm>
 #include <tuple>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_system.h"
+#include "third_party/base/numerics/safe_math.h"
 
 class CFX_Matrix;
 

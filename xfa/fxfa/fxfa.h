@@ -21,6 +21,7 @@ class CXFA_Node;
 class CXFA_NodeList;
 class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
+class IFX_SeekableReadStream;
 class IXFA_AppProvider;
 class IXFA_DocEnvironment;
 class IXFA_WidgetAccIterator;

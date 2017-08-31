@@ -7,7 +7,7 @@
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_memory.h"
 
 namespace {
 

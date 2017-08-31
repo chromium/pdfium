@@ -19,7 +19,6 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
-#include "core/fxcrt/fx_basic.h"
 #include "third_party/base/ptr_util.h"
 
 std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Arith(

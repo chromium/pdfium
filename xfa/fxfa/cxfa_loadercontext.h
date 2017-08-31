@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "core/fxcrt/css/cfx_csscomputedstyle.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_XMLNode;

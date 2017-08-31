@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/xml/cfx_saxreaderhandler.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

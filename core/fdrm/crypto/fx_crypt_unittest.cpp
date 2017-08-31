@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

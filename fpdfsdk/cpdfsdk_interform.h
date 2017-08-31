@@ -14,7 +14,6 @@
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/ipdf_formnotify.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxge/fx_dib.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 

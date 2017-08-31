@@ -21,7 +21,6 @@
 
 #include "agg_curves.h"
 #include "agg_math.h"
-#include "core/fxcrt/fx_basic.h"
 
 namespace agg
 {

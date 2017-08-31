@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/cxfa_texttabstopscontext.h"
 
+#include <algorithm>
+
 CXFA_TextTabstopsContext::CXFA_TextTabstopsContext()
     : m_iTabIndex(-1), m_bTabstops(false), m_fTabWidth(0), m_fLeft(0) {}
 

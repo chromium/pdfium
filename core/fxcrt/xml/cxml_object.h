@@ -7,8 +7,6 @@
 #ifndef CORE_FXCRT_XML_CXML_OBJECT_H_
 #define CORE_FXCRT_XML_CXML_OBJECT_H_
 
-#include "core/fxcrt/fx_basic.h"
-
 class CXML_Content;
 class CXML_Element;
 

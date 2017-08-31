@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_CFX_CLIPRGN_H_
 #define CORE_FXGE_CFX_CLIPRGN_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 
 class CFX_DIBitmap;

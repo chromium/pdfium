@@ -9,8 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
-
 class CBC_BarcodeRow {
  public:
   explicit CBC_BarcodeRow(size_t width);

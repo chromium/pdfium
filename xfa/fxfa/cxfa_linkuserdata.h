@@ -8,7 +8,6 @@
 #define XFA_FXFA_CXFA_LINKUSERDATA_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 

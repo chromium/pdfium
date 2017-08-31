@@ -9,7 +9,6 @@
 
 #include <sstream>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/xml/cfx_saxreader.h"
 

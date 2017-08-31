@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"
 
 CPDF_String::CPDF_String() : m_bHex(false) {}

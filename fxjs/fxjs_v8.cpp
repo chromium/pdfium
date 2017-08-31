@@ -8,7 +8,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 
 // Keep this consistent with the values defined in gin/public/context_holder.h

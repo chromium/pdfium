@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/dib/cfx_dibsource.h"
 #include "third_party/base/stl_util.h"

@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_csscustomproperty.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 
 class CFX_CSSValueList;

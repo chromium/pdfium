@@ -7,6 +7,7 @@
 #include "core/fxcrt/cfx_checksumcontext.h"
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/xml/cfx_saxreaderhandler.h"
 #include "third_party/base/ptr_util.h"
 

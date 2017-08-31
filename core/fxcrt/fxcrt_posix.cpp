@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_basic.h"
 #include "third_party/base/ptr_util.h"
 
 #ifndef O_BINARY

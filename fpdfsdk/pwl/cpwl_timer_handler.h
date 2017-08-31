@@ -9,8 +9,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_basic.h"
-
 class CFX_SystemHandler;
 class CPWL_Timer;
 

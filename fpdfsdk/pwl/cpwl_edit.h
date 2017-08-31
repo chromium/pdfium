@@ -11,7 +11,6 @@
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 
 class IPWL_Filler_Notify {

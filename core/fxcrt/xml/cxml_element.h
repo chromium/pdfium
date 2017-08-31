@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/xml/cxml_attrmap.h"
 #include "core/fxcrt/xml/cxml_object.h"
 

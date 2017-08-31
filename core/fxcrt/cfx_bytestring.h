@@ -14,7 +14,6 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_string_c_template.h"
 #include "core/fxcrt/cfx_string_data_template.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/optional.h"
 

@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 
 class CBC_ReedSolomonGF256;
 class CBC_ReedSolomonGF256Poly;

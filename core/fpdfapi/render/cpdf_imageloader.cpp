@@ -12,7 +12,6 @@
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
-#include "core/fxcrt/fx_basic.h"
 
 CPDF_ImageLoader::CPDF_ImageLoader()
     : m_MatteColor(0),

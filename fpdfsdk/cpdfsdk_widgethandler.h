@@ -8,7 +8,6 @@
 #define FPDFSDK_CPDFSDK_WIDGETHANDLER_H_
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 

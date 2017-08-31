@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fxcrt/cfx_fixedbufgrow.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 
 namespace {

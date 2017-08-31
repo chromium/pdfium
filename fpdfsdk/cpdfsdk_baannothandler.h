@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_CPDFSDK_BAANNOTHANDLER_H_
 #define FPDFSDK_CPDFSDK_BAANNOTHANDLER_H_
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 

@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_dib.h"
 
 enum FXDIB_Channel {

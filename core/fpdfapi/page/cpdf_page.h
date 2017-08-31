@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 

@@ -10,6 +10,7 @@
 #include <limits>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
 static_assert(sizeof(BmpFileHeader) == 14,

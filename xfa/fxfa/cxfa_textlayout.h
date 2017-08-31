@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fxcrt/css/cfx_css.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fgas/layout/cfx_rtfbreak.h"

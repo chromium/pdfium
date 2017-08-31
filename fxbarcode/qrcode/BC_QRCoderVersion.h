@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 
 class CBC_QRCoderErrorCorrectionLevel;

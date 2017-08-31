@@ -14,6 +14,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 class CFX_DIBAttribute;
+class IFX_SeekableReadStream;
 
 class CCodec_TiffModule {
  public:

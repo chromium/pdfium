@@ -11,7 +11,6 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 
 class CPDF_CMapManager;
 struct FXCMAP_CMap;

@@ -22,7 +22,6 @@
 #include "core/fxcodec/codec/ccodec_jpxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 
 #ifdef PDF_ENABLE_XFA

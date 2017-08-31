@@ -11,10 +11,12 @@
 #include <stack>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/fx_string.h"
 
 class CFX_SAXCommentContext;
 class CFX_SAXContext;
+class IFX_SeekableReadStream;
 enum class CFX_SaxMode;
 
 class CFX_SAXItem {

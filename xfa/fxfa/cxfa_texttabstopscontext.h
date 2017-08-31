@@ -9,8 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
-
 struct XFA_TABSTOPS {
   uint32_t dwAlign;
   float fTabstops;

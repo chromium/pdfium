@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
 using TimerCallback = void (*)(int32_t idEvent);

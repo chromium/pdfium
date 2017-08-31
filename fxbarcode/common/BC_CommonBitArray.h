@@ -9,8 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
-
 class CBC_CommonBitArray {
  public:
   explicit CBC_CommonBitArray(CBC_CommonBitArray* array);

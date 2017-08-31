@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
 
 class CPWL_EditImpl;
 class CPWL_EditImpl_Iterator;

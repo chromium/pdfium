@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_ucd.h"
 
 const uint32_t kTextLayoutCodeProperties[] = {

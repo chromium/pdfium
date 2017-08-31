@@ -14,7 +14,6 @@
 #include <tuple>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/fxfa_basic.h"
 

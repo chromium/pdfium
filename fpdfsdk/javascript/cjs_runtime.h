@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_observable.h"
-#include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"

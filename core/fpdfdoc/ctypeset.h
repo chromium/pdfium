@@ -8,6 +8,7 @@
 #define CORE_FPDFDOC_CTYPESET_H_
 
 #include "core/fpdfdoc/cpvt_floatrect.h"
+#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_VariableText;

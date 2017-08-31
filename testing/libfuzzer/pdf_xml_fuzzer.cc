@@ -7,7 +7,6 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/xml/cfx_xmldoc.h"

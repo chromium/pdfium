@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "fxjs/fxjs_v8.h"
 
 class CJS_Array;

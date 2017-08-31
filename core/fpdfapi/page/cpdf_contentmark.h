@@ -11,7 +11,6 @@
 
 #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
 #include "core/fxcrt/cfx_shared_copy_on_write.h"
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;

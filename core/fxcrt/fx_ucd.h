@@ -8,7 +8,6 @@
 #define CORE_FXCRT_FX_UCD_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_basic.h"
 
 constexpr uint32_t FX_BIDICLASSBITS = 6;
 constexpr uint32_t FX_BIDICLASSBITSMASK = 0x1F << FX_BIDICLASSBITS;

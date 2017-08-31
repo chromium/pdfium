@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_basic.h"
-
 #include <vector>
+
+#include "core/fxcrt/fx_string.h"
 
 namespace {
 
