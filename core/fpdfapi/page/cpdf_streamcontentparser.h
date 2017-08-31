@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
@@ -39,7 +40,7 @@ class CPDF_StreamContentParser {
                            CPDF_Dictionary* pResources,
                            const CFX_FloatRect& rcBBox,
                            CPDF_AllStates* pAllStates,
-                           int level);
+                           std::set<const uint8_t*>* parsedSet);
   ~CPDF_StreamContentParser();
 
   uint32_t Parse(const uint8_t* pData, uint32_t dwSize, uint32_t max_cost);
@@ -198,7 +199,7 @@ class CPDF_StreamContentParser {
   CFX_UnownedPtr<CPDF_Dictionary> m_pParentResources;
   CFX_UnownedPtr<CPDF_Dictionary> m_pResources;
   CFX_UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
-  const int m_Level;
+  CFX_UnownedPtr<std::set<const uint8_t*>> m_ParsedSet;
   CFX_Matrix m_mtContentToUser;
   const CFX_FloatRect m_BBox;
   ContentParam m_ParamBuf[kParamBufSize];

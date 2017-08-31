@@ -37,6 +37,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -243,13 +244,13 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Dictionary* pResources,
     const CFX_FloatRect& rcBBox,
     CPDF_AllStates* pStates,
-    int level)
+    std::set<const uint8_t*>* parsedSet)
     : m_pDocument(pDocument),
       m_pPageResources(pPageResources),
       m_pParentResources(pParentResources),
       m_pResources(pResources),
       m_pObjectHolder(pObjHolder),
-      m_Level(level),
+      m_ParsedSet(parsedSet),
       m_BBox(rcBBox),
       m_ParamStartPos(0),
       m_ParamCount(0),
@@ -776,7 +777,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   status.m_ColorState = m_pCurStates->m_ColorState;
   status.m_TextState = m_pCurStates->m_TextState;
   pFormObj->m_pForm->ParseContentWithParams(&status, nullptr, nullptr,
-                                            m_Level + 1);
+                                            m_ParsedSet.Get());
   if (!m_pObjectHolder->BackgroundAlphaNeeded() &&
       pFormObj->m_pForm->BackgroundAlphaNeeded()) {
     m_pObjectHolder->SetBackgroundAlphaNeeded(true);
@@ -1507,8 +1508,12 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
 uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
                                          uint32_t dwSize,
                                          uint32_t max_cost) {
-  if (m_Level > kMaxFormLevel)
+  if (m_ParsedSet->size() > kMaxFormLevel ||
+      pdfium::ContainsKey(*m_ParsedSet, pData))
     return dwSize;
+
+  pdfium::ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet.Get(),
+                                                          pData);
 
   uint32_t InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
   CPDF_StreamParser syntax(pData, dwSize, m_pDocument->GetByteStringPool());
