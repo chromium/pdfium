@@ -4,33 +4,10 @@
 
 #include <limits>
 
-#include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-namespace {
-
-uint32_t ReferenceGetBits32(const uint8_t* pData, int bitpos, int nbits) {
-  int result = 0;
-  for (int i = 0; i < nbits; i++) {
-    if (pData[(bitpos + i) / 8] & (1 << (7 - (bitpos + i) % 8)))
-      result |= 1 << (nbits - i - 1);
-  }
-  return result;
-}
-
-}  // namespace
-
-TEST(fxge, GetBits32) {
-  unsigned char data[] = {0xDE, 0x3F, 0xB1, 0x7C, 0x12, 0x9A, 0x04, 0x56};
-  for (int nbits = 1; nbits <= 32; ++nbits) {
-    for (int bitpos = 0; bitpos < (int)sizeof(data) * 8 - nbits; ++bitpos) {
-      EXPECT_EQ(ReferenceGetBits32(data, bitpos, nbits),
-                GetBits32(data, bitpos, nbits));
-    }
-  }
-}
-
-TEST(fxcrt, FX_atonum) {
+TEST(fxstring, FX_atonum) {
   int i;
   EXPECT_TRUE(FX_atonum("10", &i));
   EXPECT_EQ(10, i);
