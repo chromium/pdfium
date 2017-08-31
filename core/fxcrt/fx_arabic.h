@@ -24,6 +24,5 @@ wchar_t GetFormChar(const CFX_Char* cur,
 }  // namespace pdfium
 
 wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda);
-void FX_BidiLine(std::vector<CFX_Char>* chars, int32_t iCount);
 
 #endif  // CORE_FXCRT_FX_ARABIC_H_
