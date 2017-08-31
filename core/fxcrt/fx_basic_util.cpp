@@ -6,62 +6,7 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/fx_stream.h"
-#include "third_party/base/ptr_util.h"
-
-FX_FileHandle* FX_OpenFolder(const char* path) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  auto pData = pdfium::MakeUnique<CFindFileDataA>();
-  pData->m_Handle = FindFirstFileExA((CFX_ByteString(path) + "/*.*").c_str(),
-                                     FindExInfoStandard, &pData->m_FindData,
-                                     FindExSearchNameMatch, nullptr, 0);
-  if (pData->m_Handle == INVALID_HANDLE_VALUE)
-    return nullptr;
-
-  pData->m_bEnd = false;
-  return pData.release();
-#else
-  return opendir(path);
-#endif
-}
-
-bool FX_GetNextFile(FX_FileHandle* handle,
-                    CFX_ByteString* filename,
-                    bool* bFolder) {
-  if (!handle)
-    return false;
-
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  if (handle->m_bEnd)
-    return false;
-
-  *filename = handle->m_FindData.cFileName;
-  *bFolder =
-      (handle->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-  if (!FindNextFileA(handle->m_Handle, &handle->m_FindData))
-    handle->m_bEnd = true;
-  return true;
-#else
-  struct dirent* de = readdir(handle);
-  if (!de)
-    return false;
-  *filename = de->d_name;
-  *bFolder = de->d_type == DT_DIR;
-  return true;
-#endif
-}
-
-void FX_CloseFolder(FX_FileHandle* handle) {
-  if (!handle)
-    return;
-
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  FindClose(handle->m_Handle);
-  delete handle;
-#else
-  closedir(handle);
-#endif
-}
+#include "core/fxcrt/fx_system.h"
 
 uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits) {
   ASSERT(0 < nbits && nbits <= 32);
