@@ -230,15 +230,15 @@ FX_STRSIZE CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer,
 FX_STRSIZE CFX_SeekableStreamProxy::ReadString(wchar_t* pStr,
                                                FX_STRSIZE iMaxLength,
                                                bool* bEOS) {
-  ASSERT(pStr);
-  ASSERT(iMaxLength > 0);
+  if (!pStr || iMaxLength <= 0)
+    return 0;
 
   if (m_IsWriteStream)
     return 0;
 
   if (m_wCodePage == FX_CODEPAGE_UTF16LE ||
       m_wCodePage == FX_CODEPAGE_UTF16BE) {
-    FX_FILESIZE iBytes = iMaxLength * 2;
+    FX_STRSIZE iBytes = iMaxLength * 2;
     FX_STRSIZE iLen = ReadData(reinterpret_cast<uint8_t*>(pStr), iBytes);
     iMaxLength = iLen / 2;
     if (sizeof(wchar_t) > 2 && iMaxLength > 0)

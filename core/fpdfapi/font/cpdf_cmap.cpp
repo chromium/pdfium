@@ -434,46 +434,46 @@ int CPDF_CMap::CountChar(const char* pString, int size) const {
 int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
   switch (m_CodingScheme) {
     case OneByte:
-      str[0] = (uint8_t)charcode;
+      str[0] = static_cast<char>(charcode);
       return 1;
     case TwoBytes:
-      str[0] = (uint8_t)(charcode / 256);
-      str[1] = (uint8_t)(charcode % 256);
+      str[0] = static_cast<char>(charcode / 256);
+      str[1] = static_cast<char>(charcode % 256);
       return 2;
     case MixedTwoBytes:
-      if (charcode < 0x100 && !m_MixedTwoByteLeadingBytes[(uint8_t)charcode]) {
-        str[0] = (uint8_t)charcode;
+      if (charcode < 0x100 && !m_MixedTwoByteLeadingBytes[charcode]) {
+        str[0] = static_cast<char>(charcode);
         return 1;
       }
-      str[0] = (uint8_t)(charcode >> 8);
-      str[1] = (uint8_t)charcode;
+      str[0] = static_cast<char>(charcode >> 8);
+      str[1] = static_cast<char>(charcode);
       return 2;
     case MixedFourBytes:
       if (charcode < 0x100) {
-        int iSize =
-            GetFourByteCharSizeImpl(charcode, m_MixedFourByteLeadingRanges);
+        int iSize = static_cast<int>(
+            GetFourByteCharSizeImpl(charcode, m_MixedFourByteLeadingRanges));
         if (iSize == 0)
           iSize = 1;
-        str[iSize - 1] = (uint8_t)charcode;
+        str[iSize - 1] = static_cast<char>(charcode);
         if (iSize > 1)
           memset(str, 0, iSize - 1);
         return iSize;
       }
       if (charcode < 0x10000) {
-        str[0] = (uint8_t)(charcode >> 8);
-        str[1] = (uint8_t)charcode;
+        str[0] = static_cast<char>(charcode >> 8);
+        str[1] = static_cast<char>(charcode);
         return 2;
       }
       if (charcode < 0x1000000) {
-        str[0] = (uint8_t)(charcode >> 16);
-        str[1] = (uint8_t)(charcode >> 8);
-        str[2] = (uint8_t)charcode;
+        str[0] = static_cast<char>(charcode >> 16);
+        str[1] = static_cast<char>(charcode >> 8);
+        str[2] = static_cast<char>(charcode);
         return 3;
       }
-      str[0] = (uint8_t)(charcode >> 24);
-      str[1] = (uint8_t)(charcode >> 16);
-      str[2] = (uint8_t)(charcode >> 8);
-      str[3] = (uint8_t)charcode;
+      str[0] = static_cast<char>(charcode >> 24);
+      str[1] = static_cast<char>(charcode >> 16);
+      str[2] = static_cast<char>(charcode >> 8);
+      str[3] = static_cast<char>(charcode);
       return 4;
   }
   return 0;

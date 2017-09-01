@@ -25,7 +25,7 @@ class CFX_SeekableStreamProxy : public CFX_Retainable {
 
   FX_FILESIZE GetLength() const { return m_pStream->GetSize(); }
   FX_FILESIZE GetPosition() { return m_iPosition; }
-  FX_STRSIZE GetBOMLength() const { return std::max(0, m_wBOMLength); }
+  FX_STRSIZE GetBOMLength() const { return m_wBOMLength; }
   bool IsEOF() const { return m_iPosition >= GetLength(); }
 
   void Seek(From eSeek, FX_FILESIZE iOffset);

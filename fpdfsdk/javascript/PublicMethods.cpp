@@ -226,12 +226,12 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
 }
 
 int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& str,
-                                          int nStart,
-                                          int& nSkip,
-                                          int nMaxStep) {
+                                          FX_STRSIZE nStart,
+                                          FX_STRSIZE& nSkip,
+                                          FX_STRSIZE nMaxStep) {
   int nRet = 0;
   nSkip = 0;
-  for (int i = nStart, sz = str.GetLength(); i < sz; i++) {
+  for (FX_STRSIZE i = nStart, sz = str.GetLength(); i < sz; i++) {
     if (i - nStart > 10)
       break;
 
@@ -249,11 +249,11 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& str,
 }
 
 CFX_WideString CJS_PublicMethods::ParseStringString(const CFX_WideString& str,
-                                                    int nStart,
-                                                    int& nSkip) {
+                                                    FX_STRSIZE nStart,
+                                                    FX_STRSIZE& nSkip) {
   CFX_WideString swRet;
   nSkip = 0;
-  for (int i = nStart, sz = str.GetLength(); i < sz; i++) {
+  for (FX_STRSIZE i = nStart, sz = str.GetLength(); i < sz; i++) {
     wchar_t c = str[i];
     if (!std::iswdigit(c))
       break;
@@ -278,10 +278,10 @@ double CJS_PublicMethods::ParseNormalDate(const CFX_WideString& value,
 
   int number[3];
 
-  int nSkip = 0;
-  int nLen = value.GetLength();
-  int nIndex = 0;
-  int i = 0;
+  FX_STRSIZE nSkip = 0;
+  FX_STRSIZE nLen = value.GetLength();
+  FX_STRSIZE nIndex = 0;
+  FX_STRSIZE i = 0;
   while (i < nLen) {
     if (nIndex > 2)
       break;
@@ -367,7 +367,7 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
   bool bBadFormat = false;
 
   FX_STRSIZE i = 0;
-  int j = 0;
+  FX_STRSIZE j = 0;
 
   while (i < format.GetLength()) {
     if (bExit)
@@ -392,8 +392,8 @@ double CJS_PublicMethods::MakeRegularDate(const CFX_WideString& value,
       case 'M':
       case 's':
       case 't': {
-        int oldj = j;
-        int nSkip = 0;
+        FX_STRSIZE oldj = j;
+        FX_STRSIZE nSkip = 0;
         FX_STRSIZE remaining = format.GetLength() - i - 1;
 
         if (remaining == 0 || format[i + 1] != c) {
@@ -806,7 +806,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
   }
 
   // Processing separator style
-  if (iDec2 < strValue.GetLength()) {
+  if (static_cast<FX_STRSIZE>(iDec2) < strValue.GetLength()) {
     if (iSepStyle == 2 || iSepStyle == 3)
       strValue.Replace(".", ",");
 
@@ -983,8 +983,10 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
 
   CFX_WideString wprefix = wstrValue.Left(pEvent->SelStart());
   CFX_WideString wpostfix;
-  if (pEvent->SelEnd() < wstrValue.GetLength())
-    wpostfix = wstrValue.Right(wstrValue.GetLength() - pEvent->SelEnd());
+  if (pEvent->SelEnd() >= 0 &&
+      static_cast<FX_STRSIZE>(pEvent->SelEnd()) < wstrValue.GetLength())
+    wpostfix = wstrValue.Right(wstrValue.GetLength() -
+                               static_cast<FX_STRSIZE>(pEvent->SelEnd()));
   val = wprefix + wstrChange + wpostfix;
   return true;
 }
@@ -1537,8 +1539,9 @@ bool CJS_PublicMethods::AFMergeChange(CJS_Runtime* pRuntime,
     prefix = L"";
 
   if (pEventHandler->SelEnd() >= 0 &&
-      pEventHandler->SelEnd() <= swValue.GetLength())
-    postfix = swValue.Right(swValue.GetLength() - pEventHandler->SelEnd());
+      static_cast<FX_STRSIZE>(pEventHandler->SelEnd()) <= swValue.GetLength())
+    postfix = swValue.Right(swValue.GetLength() -
+                            static_cast<FX_STRSIZE>(pEventHandler->SelEnd()));
   else
     postfix = L"";
 
