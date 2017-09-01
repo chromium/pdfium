@@ -24,6 +24,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
@@ -72,9 +73,9 @@ int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString& contents) {
   FX_STRSIZE j = 1;
   for (FX_STRSIZE i = contents.GetLength(); i > 0; i--) {
     if (j % 2) {
-      odd += FXSYS_atoi(contents.Mid(i - 1, 1).c_str());
+      odd += FXSYS_DecimalCharToInt(contents[i - 1]);
     } else {
-      even += FXSYS_atoi(contents.Mid(i - 1, 1).c_str());
+      even += FXSYS_DecimalCharToInt(contents[i - 1]);
     }
     j++;
   }

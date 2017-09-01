@@ -135,6 +135,12 @@ class CFX_StringCTemplate {
     return m_Ptr.Get()[index];
   }
 
+  UnsignedType First() const { return GetLength() ? (*this)[0] : 0; }
+
+  UnsignedType Last() const {
+    return GetLength() ? (*this)[GetLength() - 1] : 0;
+  }
+
   const CharType CharAt(const FX_STRSIZE index) const {
     ASSERT(IsValidIndex(index));
     return static_cast<CharType>(m_Ptr.Get()[index]);

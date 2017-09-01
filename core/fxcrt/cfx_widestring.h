@@ -115,6 +115,9 @@ class CFX_WideString {
     return m_pData ? m_pData->m_String[index] : 0;
   }
 
+  CharType First() const { return GetLength() ? (*this)[0] : 0; }
+  CharType Last() const { return GetLength() ? (*this)[GetLength() - 1] : 0; }
+
   void SetAt(FX_STRSIZE index, wchar_t c);
 
   int Compare(const wchar_t* str) const;

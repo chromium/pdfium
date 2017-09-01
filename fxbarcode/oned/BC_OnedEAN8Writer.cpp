@@ -27,6 +27,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
@@ -87,9 +88,9 @@ int32_t CBC_OnedEAN8Writer::CalcChecksum(const CFX_ByteString& contents) {
   int32_t even = 0;
   for (FX_STRSIZE i = contents.GetLength(); i > 0; i--) {
     if (i % 2) {
-      odd += FXSYS_atoi(contents.Mid(i - 1, 1).c_str());
+      odd += FXSYS_DecimalCharToInt(contents[i - 1]);
     } else {
-      even += FXSYS_atoi(contents.Mid(i - 1, 1).c_str());
+      even += FXSYS_DecimalCharToInt(contents[i - 1]);
     }
   }
   int32_t checksum = (odd * 3 + even) % 10;
@@ -124,7 +125,7 @@ uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const CFX_ByteString& contents,
 
   int32_t i = 0;
   for (i = 0; i <= 3; i++) {
-    int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
+    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
     pos += AppendPattern(result.get(), pos, L_PATTERNS[digit], 4, 0, e);
     if (e != BCExceptionNO)
       return nullptr;
@@ -134,7 +135,7 @@ uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const CFX_ByteString& contents,
     return nullptr;
 
   for (i = 4; i <= 7; i++) {
-    int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
+    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
     pos += AppendPattern(result.get(), pos, L_PATTERNS[digit], 4, 1, e);
     if (e != BCExceptionNO)
       return nullptr;

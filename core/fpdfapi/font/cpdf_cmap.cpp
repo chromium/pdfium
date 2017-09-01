@@ -253,12 +253,12 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
   m_PredefinedCMap = bsName;
   if (m_PredefinedCMap == "Identity-H" || m_PredefinedCMap == "Identity-V") {
     m_Coding = CIDCODING_CID;
-    m_bVertical = bsName[9] == 'V';
+    m_bVertical = bsName.Last() == 'V';
     m_bLoaded = true;
     return;
   }
   CFX_ByteString cmapid = m_PredefinedCMap;
-  m_bVertical = cmapid.Right(1) == "V";
+  m_bVertical = cmapid.Last() == 'V';
   if (cmapid.GetLength() > 2) {
     cmapid = cmapid.Left(cmapid.GetLength() - 2);
   }

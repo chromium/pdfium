@@ -109,7 +109,7 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const CFX_ByteString& contents,
     return nullptr;
 
   m_iDataLenth = 13;
-  int32_t firstDigit = FXSYS_atoi(contents.Left(1).c_str());
+  int32_t firstDigit = FXSYS_DecimalCharToInt(contents.First());
   int32_t parities = FIRST_DIGIT_ENCODINGS[firstDigit];
   outLength = m_codeWidth;
   std::unique_ptr<uint8_t, FxFreeDeleter> result(
@@ -122,7 +122,7 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const CFX_ByteString& contents,
 
   int32_t i = 0;
   for (i = 1; i <= 6; i++) {
-    int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
+    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
     if ((parities >> (6 - i) & 1) == 1) {
       digit += 10;
     }
@@ -135,7 +135,7 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const CFX_ByteString& contents,
     return nullptr;
 
   for (i = 7; i <= 12; i++) {
-    int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
+    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
     pos += AppendPattern(result.get(), pos, L_PATTERNS[digit], 4, 1, e);
     if (e != BCExceptionNO)
       return nullptr;

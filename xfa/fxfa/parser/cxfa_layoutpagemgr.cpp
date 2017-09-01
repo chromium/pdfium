@@ -170,7 +170,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
         return pNode;
     } else if (bNewExprStyle) {
       CFX_WideString wsProcessedTarget = wsExpr;
-      if (wsExpr.Left(4) == L"som(" && wsExpr.Right(1) == L")") {
+      if (wsExpr.Left(4) == L"som(" && wsExpr.Last() == L')') {
         wsProcessedTarget = wsExpr.Mid(4, wsExpr.GetLength() - 5);
       }
       XFA_RESOLVENODE_RS rs;

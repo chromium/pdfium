@@ -76,12 +76,12 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
     return CFX_WideString();
 
   context.setAllowRectangular(allowRectangular);
-  if ((msg.Left(6) == MACRO_05_HEADER) && (msg.Right(1) == MACRO_TRAILER)) {
+  if ((msg.Left(6) == MACRO_05_HEADER) && (msg.Last() == MACRO_TRAILER)) {
     context.writeCodeword(MACRO_05);
     context.setSkipAtEnd(2);
     context.m_pos += 6;
   } else if ((msg.Left(6) == MACRO_06_HEADER) &&
-             (msg.Right(1) == MACRO_TRAILER)) {
+             (msg.Last() == MACRO_TRAILER)) {
     context.writeCodeword(MACRO_06);
     context.setSkipAtEnd(2);
     context.m_pos += 6;

@@ -661,9 +661,9 @@ void CXFA_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
   ASSERT(iFoundCount == pdfium::CollectionSize<int32_t>(rnd.m_Objects));
   CFX_WideString wsExpression;
   XFA_SCRIPTLANGTYPE eLangType = XFA_SCRIPTLANGTYPE_Unkown;
-  if (wsCondition.Left(2) == L".[" && wsCondition.Right(1) == L"]") {
+  if (wsCondition.Left(2) == L".[" && wsCondition.Last() == L']') {
     eLangType = XFA_SCRIPTLANGTYPE_Formcalc;
-  } else if (wsCondition.Left(2) == L".(" && wsCondition.Right(1) == L")") {
+  } else if (wsCondition.Left(2) == L".(" && wsCondition.Last() == L')') {
     eLangType = XFA_SCRIPTLANGTYPE_Javascript;
   } else {
     return;
