@@ -1511,3 +1511,18 @@ TEST(fxcrt, OStreamByteStringCOverload) {
     EXPECT_EQ("abcdef", stream.str());
   }
 }
+
+TEST(fxcrt, ByteStringFormatInteger) {
+  // Base case of 0.
+  EXPECT_EQ("0", CFX_ByteString::FormatInteger(0));
+
+  // Positive ordinary number.
+  EXPECT_EQ("123456", CFX_ByteString::FormatInteger(123456));
+
+  // Negative ordinary number.
+  EXPECT_EQ("-123456", CFX_ByteString::FormatInteger(-123456));
+
+  // int limits.
+  EXPECT_EQ("2147483647", CFX_ByteString::FormatInteger(INT_MAX));
+  EXPECT_EQ("-2147483648", CFX_ByteString::FormatInteger(INT_MIN));
+}

@@ -27,33 +27,6 @@ template struct std::hash<CFX_ByteString>;
 
 namespace {
 
-int Buffer_itoa(char* buf, int i, uint32_t flags) {
-  if (i == 0) {
-    buf[0] = '0';
-    return 1;
-  }
-  char buf1[32];
-  int buf_pos = 31;
-  uint32_t u = i;
-  if ((flags & FXFORMAT_SIGNED) && i < 0) {
-    u = -i;
-  }
-  int base = 10;
-  const char* str = "0123456789abcdef";
-  while (u != 0) {
-    buf1[buf_pos--] = str[u % base];
-    u = u / base;
-  }
-  if ((flags & FXFORMAT_SIGNED) && i < 0) {
-    buf1[buf_pos--] = '-';
-  }
-  int len = 31 - buf_pos;
-  for (int ii = 0; ii < len; ii++) {
-    buf[ii] = buf1[ii + buf_pos + 1];
-  }
-  return len;
-}
-
 const char* FX_strstr(const char* haystack,
                       int haystack_len,
                       const char* needle,
@@ -499,9 +472,10 @@ void CFX_ByteString::AllocCopy(CFX_ByteString& dest,
 #define FORCE_UNICODE 0x20000
 #define FORCE_INT64 0x40000
 
-CFX_ByteString CFX_ByteString::FormatInteger(int i, uint32_t flags) {
+CFX_ByteString CFX_ByteString::FormatInteger(int i) {
   char buf[32];
-  return CFX_ByteString(buf, Buffer_itoa(buf, i, flags));
+  FXSYS_snprintf(buf, 32, "%d", i);
+  return CFX_ByteString(buf);
 }
 
 void CFX_ByteString::FormatV(const char* pFormat, va_list argList) {

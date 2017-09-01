@@ -53,7 +53,7 @@ void CPDF_Number::SetString(const CFX_ByteString& str) {
 }
 
 CFX_ByteString CPDF_Number::GetString() const {
-  return m_bInteger ? CFX_ByteString::FormatInteger(m_Integer, FXFORMAT_SIGNED)
+  return m_bInteger ? CFX_ByteString::FormatInteger(m_Integer)
                     : CFX_ByteString::FormatFloat(m_Float);
 }
 

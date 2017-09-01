@@ -5790,7 +5790,7 @@ CFX_ByteString CXFA_FM2JSContext::GenerateSomExpression(
 
   if (iIndexFlags == 1 || iIndexValue == 0) {
     return CFX_ByteString(szName, "[") +
-           CFX_ByteString::FormatInteger(iIndexValue, FXFORMAT_SIGNED) + "]";
+           CFX_ByteString::FormatInteger(iIndexValue) + "]";
   }
   CFX_ByteString szSomExp;
   if (iIndexFlags == 2) {
