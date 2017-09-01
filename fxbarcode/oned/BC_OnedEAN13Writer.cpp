@@ -79,17 +79,16 @@ CFX_WideString CBC_OnedEAN13Writer::FilterContents(
 int32_t CBC_OnedEAN13Writer::CalcChecksum(const CFX_ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
-  FX_STRSIZE j = 1;
-  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
-    if (j % 2) {
-      odd += FXSYS_DecimalCharToInt(contents[i]);
+  FX_STRSIZE parity = 1;
+  for (FX_STRSIZE i = contents.GetLength(); i > 0; i--) {
+    if (parity % 2) {
+      odd += FXSYS_DecimalCharToInt(contents[i - 1]);
     } else {
-      even += FXSYS_DecimalCharToInt(contents[i]);
+      even += FXSYS_DecimalCharToInt(contents[i - 1]);
     }
-    j++;
+    parity++;
   }
-  int32_t checksum = 10 - (odd * 3 + even) % 10;
-  return checksum;
+  return (10 - (odd * 3 + even) % 10) % 10;
 }
 
 uint8_t* CBC_OnedEAN13Writer::EncodeWithHint(const CFX_ByteString& contents,
