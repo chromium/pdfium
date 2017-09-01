@@ -86,16 +86,16 @@ CFX_WideString CBC_OnedEAN8Writer::FilterContents(
 int32_t CBC_OnedEAN8Writer::CalcChecksum(const CFX_ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
+  FX_STRSIZE parity = 1;
   for (FX_STRSIZE i = contents.GetLength(); i > 0; i--) {
     if (i % 2) {
       odd += FXSYS_DecimalCharToInt(contents[i - 1]);
     } else {
       even += FXSYS_DecimalCharToInt(contents[i - 1]);
     }
+    parity++;
   }
-  int32_t checksum = (odd * 3 + even) % 10;
-  checksum = (10 - checksum) % 10;
-  return checksum;
+  return (10 - (odd * 3 + even) % 10) % 10;
 }
 
 uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const CFX_ByteString& contents,
