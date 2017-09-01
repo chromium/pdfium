@@ -83,20 +83,18 @@ CFX_WideString CBC_OnedEAN8Writer::FilterContents(
 }
 
 int32_t CBC_OnedEAN8Writer::CalcChecksum(const CFX_ByteString& contents) {
-  FX_STRSIZE odd = 0;
-  FX_STRSIZE even = 0;
-  FX_STRSIZE j = 1;
-  for (FX_STRSIZE i = contents.GetLength() - 1; i >= 0; i--) {
-    if (j % 2) {
-      odd += FXSYS_atoi(contents.Mid(i, 1).c_str());
+  int32_t odd = 0;
+  int32_t even = 0;
+  for (FX_STRSIZE i = contents.GetLength(); i > 0; i--) {
+    if (i % 2) {
+      odd += FXSYS_atoi(contents.Mid(i - 1, 1).c_str());
     } else {
-      even += FXSYS_atoi(contents.Mid(i, 1).c_str());
+      even += FXSYS_atoi(contents.Mid(i - 1, 1).c_str());
     }
-    j++;
   }
   int32_t checksum = (odd * 3 + even) % 10;
   checksum = (10 - checksum) % 10;
-  return (checksum);
+  return checksum;
 }
 
 uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const CFX_ByteString& contents,
