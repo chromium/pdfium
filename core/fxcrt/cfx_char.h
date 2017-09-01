@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/fx_ucd.h"
+#include "core/fxcrt/fx_unicode.h"
 
 enum class CFX_BreakType { None = 0, Piece, Line, Paragraph, Page };
 

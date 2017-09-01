@@ -202,7 +202,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
 }
 
 CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
-  uint32_t dwProps = kTextLayoutCodeProperties[static_cast<uint16_t>(wch)];
+  uint32_t dwProps = FX_GetUnicodeProperties(wch);
   FX_CHARTYPE chartype = GetCharTypeFromProp(dwProps);
   m_pCurLine->m_LineChars.emplace_back(wch, dwProps, m_iHorizontalScale,
                                        m_iVerticalScale);

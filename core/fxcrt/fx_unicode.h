@@ -4,16 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_FX_UCD_H_
-#define CORE_FXCRT_FX_UCD_H_
+#ifndef CORE_FXCRT_FX_UNICODE_H_
+#define CORE_FXCRT_FX_UNICODE_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-
-extern const uint32_t kTextLayoutCodeProperties[];
-extern const size_t kTextLayoutCodePropertiesSize;
-
-extern const uint16_t kFXTextLayoutBidiMirror[];
-extern const size_t kFXTextLayoutBidiMirrorSize;
 
 uint32_t FX_GetUnicodeProperties(wchar_t wch);
 wchar_t FX_GetMirrorChar(wchar_t wch);
@@ -51,4 +45,4 @@ wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps);
 
 #endif  // PDF_ENABLE_XFA
 
-#endif  // CORE_FXCRT_FX_UCD_H_
+#endif  // CORE_FXCRT_FX_UNICODE_H_

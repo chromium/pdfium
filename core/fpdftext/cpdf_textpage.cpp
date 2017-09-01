@@ -21,7 +21,7 @@
 #include "core/fpdftext/unicodenormalizationdata.h"
 #include "core/fxcrt/fx_bidi.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_ucd.h"
+#include "core/fxcrt/fx_unicode.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

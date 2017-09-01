@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_ucd.h"
+#include "core/fxcrt/fx_unicode.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fgas/layout/cfx_break.h"
 #include "xfa/fxfa/cxfa_textuserdata.h"
