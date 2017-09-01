@@ -386,11 +386,11 @@ static_library("fx_libopenjpeg") {
     "libopenjpeg20/openjpeg.c",
     "libopenjpeg20/opj_clock.c",
     "libopenjpeg20/pi.c",
-    "libopenjpeg20/raw.c",
     "libopenjpeg20/t1.c",
     "libopenjpeg20/t2.c",
     "libopenjpeg20/tcd.c",
     "libopenjpeg20/tgt.c",
+    "libopenjpeg20/thread.c",
   ]
 }
 

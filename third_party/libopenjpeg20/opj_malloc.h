@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -29,8 +29,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __OPJ_MALLOC_H
-#define __OPJ_MALLOC_H
+#ifndef OPJ_MALLOC_H
+#define OPJ_MALLOC_H
 /**
 @file opj_malloc.h
 @brief Internal functions
@@ -63,8 +63,8 @@ void * OPJ_CALLCONV opj_malloc(size_t size);
 
 /**
 Allocate a memory block with elements initialized to 0
-@param num Blocks to allocate
-@param size Bytes per block to allocate
+@param numOfElements  Blocks to allocate
+@param sizeOfElements Bytes per block to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
 #ifdef ALLOC_PERF_OPT
@@ -85,64 +85,79 @@ Allocate memory aligned to a 16 byte boundary
 */
 /* FIXME: These should be set with cmake tests, but we're currently not requiring use of cmake */
 #ifdef _WIN32
-	/* Someone should tell the mingw people that their malloc.h ought to provide _mm_malloc() */
-	#ifdef __GNUC__
-		#include <mm_malloc.h>
-		#define HAVE_MM_MALLOC
-	#else /* MSVC, Intel C++ */
-		#include <malloc.h>
-		#ifdef _mm_malloc
-			#define HAVE_MM_MALLOC
-		#endif
-	#endif
+  /* Someone should tell the mingw people that their malloc.h ought to provide _mm_malloc() */
+  #ifdef __GNUC__
+    #include <mm_malloc.h>
+    #define HAVE_MM_MALLOC
+  #else /* MSVC, Intel C++ */
+    #include <malloc.h>
+    #ifdef _mm_malloc
+      #define HAVE_MM_MALLOC
+    #endif
+  #endif
 #else /* Not _WIN32 */
-	#if defined(__sun)
-		#define HAVE_MEMALIGN
+  #if defined(__sun)
+    #define HAVE_MEMALIGN
   #elif defined(__FreeBSD__)
     #define HAVE_POSIX_MEMALIGN
-	/* Linux x86_64 and OSX always align allocations to 16 bytes */
-	#elif !defined(__amd64__) && !defined(__APPLE__) && !defined(_AIX)
-		#define HAVE_MEMALIGN
-		#include <malloc.h>			
-	#endif
+  /* Linux x86_64 and OSX always align allocations to 16 bytes */
+  #elif !defined(__amd64__) && !defined(__APPLE__) && !defined(_AIX)
+    #define HAVE_MEMALIGN
+    #include <malloc.h>
+  #endif
 #endif
 
 #define opj_aligned_malloc(size) malloc(size)
+#define opj_aligned_32_malloc(size) malloc(size)
 #define opj_aligned_free(m) free(m)
 
 #ifdef HAVE_MM_MALLOC
-	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) _mm_malloc(size, 16)
-	#undef opj_aligned_free
-	#define opj_aligned_free(m) _mm_free(m)
+  #undef opj_aligned_malloc
+  #define opj_aligned_malloc(size) _mm_malloc((size), 16)
+  #undef opj_aligned_32_malloc
+  #define opj_aligned_32_malloc(size) _mm_malloc((size), 32)
+  #undef opj_aligned_free
+  #define opj_aligned_free(m) _mm_free(m)
 #endif
 
 #ifdef HAVE_MEMALIGN
-	extern void* memalign(size_t, size_t);
-	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) memalign(16, (size))
-	#undef opj_aligned_free
-	#define opj_aligned_free(m) free(m)
+  extern void* memalign(size_t, size_t);
+  #undef opj_aligned_malloc
+  #define opj_aligned_malloc(size) memalign(16, (size))
+  #undef opj_aligned_32_malloc
+  #define opj_aligned_32_malloc(size) memalign(32, (size))
+  #undef opj_aligned_free
+  #define opj_aligned_free(m) free(m)
 #endif
 
 #ifdef HAVE_POSIX_MEMALIGN
-	#undef opj_aligned_malloc
-	extern int posix_memalign(void**, size_t, size_t);
+  #undef opj_aligned_malloc
+  extern int posix_memalign(void**, size_t, size_t);
 
-	static INLINE void* __attribute__ ((malloc)) opj_aligned_malloc(size_t size){
-		void* mem = NULL;
-		posix_memalign(&mem, 16, size);
-		return mem;
-	}
-	#undef opj_aligned_free
-	#define opj_aligned_free(m) free(m)
+  static INLINE void* __attribute__ ((malloc)) opj_aligned_malloc(size_t size){
+    void* mem = NULL;
+    posix_memalign(&mem, 16, size);
+    return mem;
+  }
+
+  #undef opj_aligned_32_malloc
+  static INLINE void* __attribute__ ((malloc)) opj_aligned_32_malloc(size_t size){
+    void* mem = NULL;
+    posix_memalign(&mem, 32, size);
+    return mem;
+  }
+
+  #undef opj_aligned_free
+  #define opj_aligned_free(m) free(m)
 #endif
 
 #ifdef ALLOC_PERF_OPT
-	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) opj_malloc(size)
-	#undef opj_aligned_free
-	#define opj_aligned_free(m) opj_free(m)
+  #undef opj_aligned_malloc
+  #define opj_aligned_malloc(size) opj_malloc(size)
+  #undef opj_aligned_32_malloc
+  #define opj_aligned_32_malloc(size) opj_malloc(size)
+  #undef opj_aligned_free
+  #define opj_aligned_free(m) opj_free(m)
 #endif
 
 /**
@@ -172,7 +187,7 @@ void OPJ_CALLCONV opj_free(void * m);
 #define opj_free(m) free(m)
 #endif
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(OPJ_SKIP_POISON)
 #pragma GCC poison malloc calloc realloc free
 #endif
 
@@ -181,5 +196,5 @@ void OPJ_CALLCONV opj_free(void * m);
 
 /*@}*/
 
-#endif /* __OPJ_MALLOC_H */
+#endif /* OPJ_MALLOC_H */
 
