@@ -23,6 +23,8 @@ class IFX_SeekableReadStream;
 
 class CPDF_SyntaxParser {
  public:
+  enum class ParseType { kStrict, kLoose };
+
   CPDF_SyntaxParser();
   explicit CPDF_SyntaxParser(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   ~CPDF_SyntaxParser();
@@ -47,6 +49,12 @@ class CPDF_SyntaxParser {
       uint32_t objnum,
       uint32_t gennum,
       bool bDecrypt);
+
+  std::unique_ptr<CPDF_Object> GetIndirectObject(
+      CPDF_IndirectObjectHolder* pObjList,
+      uint32_t objnum,
+      bool bDecrypt,
+      ParseType parse_type);
 
   CFX_ByteString GetKeyword();
   void ToNextLine();
@@ -94,8 +102,6 @@ class CPDF_SyntaxParser {
     return m_BufOffset >= pos ||
            static_cast<FX_FILESIZE>(m_BufOffset + m_BufSize) <= pos;
   }
-
-  enum class ParseType { kStrict, kLoose };
 
   std::unique_ptr<CPDF_Object> GetObjectInternal(
       CPDF_IndirectObjectHolder* pObjList,

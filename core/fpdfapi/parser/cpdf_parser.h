@@ -13,6 +13,7 @@
 #include <set>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
@@ -184,7 +185,7 @@ class CPDF_Parser {
       CPDF_IndirectObjectHolder* pObjList,
       FX_FILESIZE pos,
       uint32_t objnum,
-      bool strict_parse,
+      CPDF_SyntaxParser::ParseType parse_type,
       FX_FILESIZE* pResultPos);
 
   bool InitSyntaxParser(
