@@ -38,6 +38,8 @@ std::string Walk(CPDF_Object* object) {
       result << " Stream";
     else if (obj->IsReference())
       result << " Ref";
+    else if (obj->IsNumber())
+      result << " Num";
     else if (obj->IsNull())
       result << " Null";
     else
@@ -72,13 +74,14 @@ TEST(CPDF_ObjectWalkerTest, CombinedObject) {
   array->Add(pdfium::MakeUnique<CPDF_Stream>(
       nullptr, 0, pdfium::MakeUnique<CPDF_Dictionary>()));
   dict->SetFor("3", std::move(array));
-  EXPECT_EQ(Walk(dict.get()), "Dict Str Bool Arr Ref Null Stream Dict");
+  // The last number for stream length.
+  EXPECT_EQ(Walk(dict.get()), "Dict Str Bool Arr Ref Null Stream Dict Num");
 }
 
 TEST(CPDF_ObjectWalkerTest, GetParent) {
-  auto level_4 = pdfium::MakeUnique<CPDF_Null>();
+  auto level_4 = pdfium::MakeUnique<CPDF_Number>(0);
   auto level_3 = pdfium::MakeUnique<CPDF_Dictionary>();
-  level_3->SetFor("AnyObj", std::move(level_4));
+  level_3->SetFor("Length", std::move(level_4));
   auto level_2 =
       pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, std::move(level_3));
   auto level_1 = pdfium::MakeUnique<CPDF_Array>();
@@ -86,7 +89,7 @@ TEST(CPDF_ObjectWalkerTest, GetParent) {
   auto level_0 = pdfium::MakeUnique<CPDF_Dictionary>();
   level_0->SetFor("Array", std::move(level_1));
 
-  // We have <</Array [ stream( << /AnyObj null >>) ]>>
+  // We have <</Array [ stream( << /Length 0 >>) ]>>
   // In this case each step will increase depth.
   // And on each step the prev object should be parent for current.
   const CPDF_Object* cur_parent = nullptr;

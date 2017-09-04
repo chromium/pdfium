@@ -22,7 +22,9 @@ CPDF_Stream::CPDF_Stream() {}
 CPDF_Stream::CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                          uint32_t size,
                          std::unique_ptr<CPDF_Dictionary> pDict)
-    : m_dwSize(size), m_pDict(std::move(pDict)), m_pDataBuf(std::move(pData)) {}
+    : m_pDict(std::move(pDict)) {
+  SetData(std::move(pData), size);
+}
 
 CPDF_Stream::~CPDF_Stream() {
   m_ObjNum = kInvalidObjNum;
@@ -54,14 +56,7 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
                              uint32_t size,
                              std::unique_ptr<CPDF_Dictionary> pDict) {
   m_pDict = std::move(pDict);
-  m_bMemoryBased = true;
-  m_pFile = nullptr;
-  m_pDataBuf.reset(FX_Alloc(uint8_t, size));
-  if (pData)
-    memcpy(m_pDataBuf.get(), pData, size);
-  m_dwSize = size;
-  if (m_pDict)
-    m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
+  SetData(pData, size);
 }
 
 void CPDF_Stream::InitStreamFromFile(
@@ -110,10 +105,19 @@ void CPDF_Stream::SetDataAndRemoveFilter(std::ostringstream* stream) {
 }
 
 void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
+  std::unique_ptr<uint8_t, FxFreeDeleter> data_copy;
+  if (pData) {
+    data_copy.reset(FX_Alloc(uint8_t, size));
+    memcpy(data_copy.get(), pData, size);
+  }
+  SetData(std::move(data_copy), size);
+}
+
+void CPDF_Stream::SetData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                          uint32_t size) {
   m_bMemoryBased = true;
-  m_pDataBuf.reset(FX_Alloc(uint8_t, size));
-  if (pData)
-    memcpy(m_pDataBuf.get(), pData, size);
+  m_pFile = nullptr;
+  m_pDataBuf = std::move(pData);
   m_dwSize = size;
   if (!m_pDict)
     m_pDict = pdfium::MakeUnique<CPDF_Dictionary>();

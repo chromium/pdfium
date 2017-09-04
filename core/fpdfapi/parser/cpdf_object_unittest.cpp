@@ -828,6 +828,30 @@ TEST(PDFStreamTest, SetDataAndRemoveFilter) {
   EXPECT_FALSE(stream->GetDict()->KeyExist("DecodeParms"));
 }
 
+TEST(PDFStreamTest, LengthInDictionaryOnCreate) {
+  static constexpr uint32_t kBufSize = 100;
+  // The length field should be created on stream create.
+  {
+    std::unique_ptr<uint8_t, FxFreeDeleter> data;
+    data.reset(FX_Alloc(uint8_t, kBufSize));
+    auto stream = pdfium::MakeUnique<CPDF_Stream>(
+        std::move(data), kBufSize, pdfium::MakeUnique<CPDF_Dictionary>());
+    EXPECT_EQ(static_cast<int>(kBufSize),
+              stream->GetDict()->GetIntegerFor("Length"));
+  }
+  // The length field should be corrected on stream create.
+  {
+    std::unique_ptr<uint8_t, FxFreeDeleter> data;
+    data.reset(FX_Alloc(uint8_t, kBufSize));
+    auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
+    dict->SetNewFor<CPDF_Number>("Length", 30000);
+    auto stream = pdfium::MakeUnique<CPDF_Stream>(std::move(data), kBufSize,
+                                                  std::move(dict));
+    EXPECT_EQ(static_cast<int>(kBufSize),
+              stream->GetDict()->GetIntegerFor("Length"));
+  }
+}
+
 TEST(PDFDictionaryTest, CloneDirectObject) {
   CPDF_IndirectObjectHolder objects_holder;
   auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
