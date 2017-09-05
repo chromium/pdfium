@@ -22,9 +22,8 @@ class CFX_WordBreak {
   int32_t GetWordLength() const;
 
  private:
-  bool FindNextBreakPos(IFX_CharIter* pIter, bool bPrev, bool bFromNext);
+  bool FindNextBreakPos(IFX_CharIter* pIter, bool bPrev);
   bool IsEOF(bool bTail) const;
-  bool Next(bool bPrev);
 
   std::unique_ptr<IFX_CharIter> m_pPreIter;
   std::unique_ptr<IFX_CharIter> m_pCurIter;

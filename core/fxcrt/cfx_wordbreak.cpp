@@ -2788,35 +2788,14 @@ void CFX_WordBreak::Attach(IFX_CharIter* pIter) {
   m_pCurIter.reset(pIter);
 }
 
-bool CFX_WordBreak::Next(bool bPrev) {
-  std::unique_ptr<IFX_CharIter> pIter =
-      (bPrev ? m_pPreIter : m_pCurIter)->Clone();
-  if (pIter->IsEOF(!bPrev))
-    return false;
-
-  pIter->Next(bPrev);
-  if (!FindNextBreakPos(pIter.get(), bPrev, true))
-    return false;
-
-  if (bPrev) {
-    m_pCurIter = std::move(m_pPreIter);
-    m_pCurIter->Next(true);
-    m_pPreIter = std::move(pIter);
-  } else {
-    m_pPreIter = std::move(m_pCurIter);
-    m_pPreIter->Next();
-    m_pCurIter = std::move(pIter);
-  }
-  return true;
-}
-
 void CFX_WordBreak::SetAt(int32_t nIndex) {
   m_pPreIter.reset();
   m_pCurIter->SetAt(nIndex);
-  FindNextBreakPos(m_pCurIter.get(), true, false);
+  FindNextBreakPos(m_pCurIter.get(), true);
+
   m_pPreIter = std::move(m_pCurIter);
   m_pCurIter = m_pPreIter->Clone();
-  FindNextBreakPos(m_pCurIter.get(), false, false);
+  FindNextBreakPos(m_pCurIter.get(), false);
 }
 
 int32_t CFX_WordBreak::GetWordPos() const {
@@ -2831,16 +2810,14 @@ bool CFX_WordBreak::IsEOF(bool bTail) const {
   return m_pCurIter->IsEOF(bTail);
 }
 
-bool CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter,
-                                     bool bPrev,
-                                     bool bFromNext) {
+bool CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter, bool bPrev) {
   FX_WordBreakProp ePreType = FX_WordBreakProp_None;
   FX_WordBreakProp eCurType = FX_WordBreakProp_None;
   FX_WordBreakProp eNextType = FX_WordBreakProp_None;
-  if (pIter->IsEOF(!bPrev)) {
+  if (pIter->IsEOF(!bPrev))
     return true;
-  }
-  if (!(bFromNext || pIter->IsEOF(bPrev))) {
+
+  if (!pIter->IsEOF(bPrev)) {
     pIter->Next(!bPrev);
     ePreType = GetWordBreakProperty(pIter->GetChar());
     pIter->Next(bPrev);
