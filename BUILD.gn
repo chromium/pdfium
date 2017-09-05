@@ -1954,6 +1954,7 @@ test("pdfium_unittests") {
       "core/fxcrt/css/cfx_cssvaluelistparser_unittest.cpp",
       "core/fxcrt/xml/cfx_saxreader_unittest.cpp",
       "core/fxcrt/xml/cfx_xmlsyntaxparser_unittest.cpp",
+      "fxbarcode/oned/BC_OnedCodaBarWriter_unittest.cpp",
       "fxbarcode/oned/BC_OnedCode128Writer_unittest.cpp",
       "fxbarcode/oned/BC_OnedCode39Writer_unittest.cpp",
       "fxbarcode/oned/BC_OnedEAN13Writer_unittest.cpp",
