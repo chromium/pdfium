@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_FX_RAND_H_
-#define CORE_FXCRT_FX_RAND_H_
+#ifndef CORE_FXCRT_FX_RANDOM_H_
+#define CORE_FXCRT_FX_RANDOM_H_
 
 #include <stdint.h>
 
@@ -15,4 +15,4 @@ uint32_t FX_Random_MT_Generate(void* pContext);
 void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount);
 void FX_Random_GenerateMT(uint32_t* pBuffer, int32_t iCount);
 
-#endif  // CORE_FXCRT_FX_RAND_H_
+#endif  // CORE_FXCRT_FX_RANDOM_H_

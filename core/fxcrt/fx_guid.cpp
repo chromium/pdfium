@@ -7,7 +7,7 @@
 #include "core/fxcrt/fx_guid.h"
 
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_rand.h"
+#include "core/fxcrt/fx_random.h"
 
 void FX_GUID_CreateV4(FX_GUID* pGUID) {
   FX_Random_GenerateMT((uint32_t*)pGUID, 4);
