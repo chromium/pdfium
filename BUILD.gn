@@ -944,6 +944,8 @@ static_library("fxcrt") {
       "core/fxcrt/css/cfx_cssvaluelistparser.h",
       "core/fxcrt/fx_arabic.cpp",
       "core/fxcrt/fx_arabic.h",
+      "core/fxcrt/fx_guid.cpp",
+      "core/fxcrt/fx_guid.h",
       "core/fxcrt/ifx_chariter.h",
       "core/fxcrt/ifx_locale.h",
       "core/fxcrt/xml/cfx_saxcontext.cpp",
