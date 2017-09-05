@@ -1955,6 +1955,7 @@ test("pdfium_unittests") {
       "core/fxcrt/xml/cfx_saxreader_unittest.cpp",
       "core/fxcrt/xml/cfx_xmlsyntaxparser_unittest.cpp",
       "fxbarcode/oned/BC_OnedCode128Writer_unittest.cpp",
+      "fxbarcode/oned/BC_OnedCode39Writer_unittest.cpp",
       "fxbarcode/oned/BC_OnedEAN13Writer_unittest.cpp",
       "fxbarcode/oned/BC_OnedEAN8Writer_unittest.cpp",
       "fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
