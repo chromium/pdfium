@@ -29,6 +29,8 @@
 
 namespace {
 
+constexpr size_t kBytesPerCharacter = sizeof(unsigned short);
+
 CPDF_TextPage* CPDFTextPageFromFPDFTextPage(FPDF_TEXTPAGE text_page) {
   return static_cast<CPDF_TextPage*>(text_page);
 }
@@ -169,19 +171,19 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
   if (start >= textpage->CountChars())
     return 0;
 
-  CFX_WideString str = textpage->GetPageText(start, count);
+  CFX_WideString str = textpage->GetPageText(start, count - 1);
   if (str.GetLength() <= 0)
     return 0;
 
   // UFT16LE_Encode doesn't handle surrogate pairs properly, so it is expected
   // the number of items to stay the same.
   CFX_ByteString cbUTF16str = str.UTF16LE_Encode();
-  ASSERT(cbUTF16str.GetLength() / sizeof(unsigned short) <=
+  ASSERT(cbUTF16str.GetLength() / kBytesPerCharacter <=
          static_cast<size_t>(count));
   memcpy(result, cbUTF16str.GetBuffer(cbUTF16str.GetLength()),
          cbUTF16str.GetLength());
 
-  return cbUTF16str.GetLength() / sizeof(unsigned short);
+  return cbUTF16str.GetLength() / kBytesPerCharacter;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
