@@ -35,7 +35,7 @@ bool CBC_Code128::SetTextLocation(BC_TEXT_LOC location) {
   return GetOnedCode128Writer()->SetTextLocation(location);
 }
 
-bool CBC_Code128::Encode(const CFX_WideStringC& contents, bool isDevice) {
+bool CBC_Code128::Encode(const CFX_WideStringC& contents) {
   if (contents.IsEmpty())
     return false;
 
@@ -54,8 +54,8 @@ bool CBC_Code128::Encode(const CFX_WideStringC& contents, bool isDevice) {
       pWriter->Encode(byteString, format, outWidth, outHeight));
   if (!data)
     return false;
-  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(), outWidth,
-                               isDevice);
+  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(),
+                               outWidth);
 }
 
 bool CBC_Code128::RenderDevice(CFX_RenderDevice* device,

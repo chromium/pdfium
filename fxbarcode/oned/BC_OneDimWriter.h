@@ -26,8 +26,7 @@ class CBC_OneDimWriter : public CBC_Writer {
 
   virtual bool RenderResult(const CFX_WideStringC& contents,
                             uint8_t* code,
-                            int32_t codeLength,
-                            bool isDevice);
+                            int32_t codeLength);
   virtual bool CheckContentValidity(const CFX_WideStringC& contents) = 0;
   virtual CFX_WideString FilterContents(const CFX_WideStringC& contents) = 0;
   virtual CFX_WideString RenderTextContents(const CFX_WideStringC& contents);

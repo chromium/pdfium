@@ -30,7 +30,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_WideStringC content(reinterpret_cast<const wchar_t*>(data),
                           size / sizeof(wchar_t));
 
-  if (!barcode.Encode(content, false))
+  if (!barcode.Encode(content))
     return 0;
 
   // TODO(tsepez): Output to device.

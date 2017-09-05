@@ -245,11 +245,10 @@ bool CBC_OnedCode39Writer::encodedContents(const CFX_WideStringC& contents,
 
 bool CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents,
                                         uint8_t* code,
-                                        int32_t codeLength,
-                                        bool isDevice) {
+                                        int32_t codeLength) {
   CFX_WideString encodedCon;
   if (!encodedContents(contents, &encodedCon))
     return false;
   return CBC_OneDimWriter::RenderResult(encodedCon.AsStringC(), code,
-                                        codeLength, isDevice);
+                                        codeLength);
 }

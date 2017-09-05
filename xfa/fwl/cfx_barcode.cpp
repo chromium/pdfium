@@ -294,8 +294,8 @@ bool CFX_Barcode::SetTruncated(bool truncated) {
                                : false;
 }
 
-bool CFX_Barcode::Encode(const CFX_WideStringC& contents, bool isDevice) {
-  return m_pBCEngine && m_pBCEngine->Encode(contents, isDevice);
+bool CFX_Barcode::Encode(const CFX_WideStringC& contents) {
+  return m_pBCEngine && m_pBCEngine->Encode(contents);
 }
 
 bool CFX_Barcode::RenderDevice(CFX_RenderDevice* device,

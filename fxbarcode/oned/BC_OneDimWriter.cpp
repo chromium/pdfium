@@ -285,8 +285,7 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
 
 bool CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
                                     uint8_t* code,
-                                    int32_t codeLength,
-                                    bool isDevice) {
+                                    int32_t codeLength) {
   if (codeLength < 1)
     return false;
 
@@ -299,28 +298,15 @@ bool CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   m_outputHScale =
       m_Width > 0 ? static_cast<float>(m_Width) / static_cast<float>(codeLength)
                   : 1.0;
-  if (!isDevice) {
-    m_outputHScale =
-        std::max(m_outputHScale, static_cast<float>(m_ModuleWidth));
-  }
   float dataLengthScale = 1.0;
   if (m_iDataLenth > 0 && contents.GetLength() != 0)
     dataLengthScale = float(contents.GetLength()) / float(m_iDataLenth);
   if (m_iDataLenth > 0 && contents.GetLength() == 0)
     dataLengthScale = float(1) / float(m_iDataLenth);
   m_multiple = 1;
-  if (!isDevice) {
-    m_multiple = (int32_t)ceil(m_outputHScale * dataLengthScale);
-  }
-  int32_t outputHeight = 1;
-  if (!isDevice)
-    outputHeight = m_Height ? m_Height : std::max(20, m_ModuleHeight);
-  int32_t outputWidth = codeLength;
-  if (!isDevice)
-    outputWidth = (int32_t)(codeLength * m_multiple / dataLengthScale);
+  const int32_t outputHeight = 1;
+  const int32_t outputWidth = codeLength;
   m_barWidth = m_Width;
-  if (!isDevice)
-    m_barWidth = codeLength * m_multiple;
 
   m_output.clear();
   for (int32_t inputX = 0, outputX = leftPadding * m_multiple;

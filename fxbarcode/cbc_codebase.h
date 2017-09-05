@@ -26,7 +26,7 @@ class CBC_CodeBase {
   virtual ~CBC_CodeBase();
 
   virtual BC_TYPE GetType() = 0;
-  virtual bool Encode(const CFX_WideStringC& contents, bool isDevice) = 0;
+  virtual bool Encode(const CFX_WideStringC& contents) = 0;
   virtual bool RenderDevice(CFX_RenderDevice* device,
                             const CFX_Matrix* matrix) = 0;
 

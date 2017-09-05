@@ -203,7 +203,7 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED)
     m_pBarcodeEngine->SetTruncated(m_bTruncated);
 
-  m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringC(), true)
+  m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringC())
                    ? XFA_BCS_EncodeSuccess
                    : 0;
 }

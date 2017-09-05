@@ -50,7 +50,7 @@ CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
   return encodeContents;
 }
 
-bool CBC_EAN13::Encode(const CFX_WideStringC& contents, bool isDevice) {
+bool CBC_EAN13::Encode(const CFX_WideStringC& contents) {
   if (contents.IsEmpty())
     return false;
 
@@ -65,8 +65,8 @@ bool CBC_EAN13::Encode(const CFX_WideStringC& contents, bool isDevice) {
       pWriter->Encode(byteString, format, outWidth, outHeight));
   if (!data)
     return false;
-  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(), outWidth,
-                               isDevice);
+  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(),
+                               outWidth);
 }
 
 bool CBC_EAN13::RenderDevice(CFX_RenderDevice* device,

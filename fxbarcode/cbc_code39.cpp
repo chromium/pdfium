@@ -31,7 +31,7 @@ CBC_Code39::CBC_Code39()
 
 CBC_Code39::~CBC_Code39() {}
 
-bool CBC_Code39::Encode(const CFX_WideStringC& contents, bool isDevice) {
+bool CBC_Code39::Encode(const CFX_WideStringC& contents) {
   if (contents.IsEmpty())
     return false;
 
@@ -47,8 +47,8 @@ bool CBC_Code39::Encode(const CFX_WideStringC& contents, bool isDevice) {
       pWriter->Encode(byteString, format, outWidth, outHeight));
   if (!data)
     return false;
-  return pWriter->RenderResult(renderContents.AsStringC(), data.get(), outWidth,
-                               isDevice);
+  return pWriter->RenderResult(renderContents.AsStringC(), data.get(),
+                               outWidth);
 }
 
 bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,

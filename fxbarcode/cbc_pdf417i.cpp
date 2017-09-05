@@ -40,7 +40,7 @@ void CBC_PDF417I::SetTruncated(bool truncated) {
   GetPDF417Writer()->SetTruncated(truncated);
 }
 
-bool CBC_PDF417I::Encode(const CFX_WideStringC& contents, bool isDevice) {
+bool CBC_PDF417I::Encode(const CFX_WideStringC& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   auto* pWriter = GetPDF417Writer();

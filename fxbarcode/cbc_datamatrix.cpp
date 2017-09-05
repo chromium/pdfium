@@ -31,7 +31,7 @@ CBC_DataMatrix::CBC_DataMatrix()
 
 CBC_DataMatrix::~CBC_DataMatrix() {}
 
-bool CBC_DataMatrix::Encode(const CFX_WideStringC& contents, bool isDevice) {
+bool CBC_DataMatrix::Encode(const CFX_WideStringC& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   auto* pWriter = GetDataMatrixWriter();

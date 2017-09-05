@@ -25,8 +25,7 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
                       int32_t& outLength) override;
   bool RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
-                    int32_t codeLength,
-                    bool isDevice) override;
+                    int32_t codeLength) override;
   bool CheckContentValidity(const CFX_WideStringC& contents) override;
   CFX_WideString FilterContents(const CFX_WideStringC& contents) override;
   CFX_WideString RenderTextContents(const CFX_WideStringC& contents) override;

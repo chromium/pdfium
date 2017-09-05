@@ -37,7 +37,7 @@ bool CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
   return GetQRCodeWriter()->SetErrorCorrectionLevel(level);
 }
 
-bool CBC_QRCode::Encode(const CFX_WideStringC& contents, bool isDevice) {
+bool CBC_QRCode::Encode(const CFX_WideStringC& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   CBC_QRCodeWriter* pWriter = GetQRCodeWriter();

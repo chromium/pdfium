@@ -197,8 +197,7 @@ CFX_WideString CBC_OnedCodaBarWriter::encodedContents(
 
 bool CBC_OnedCodaBarWriter::RenderResult(const CFX_WideStringC& contents,
                                          uint8_t* code,
-                                         int32_t codeLength,
-                                         bool isDevice) {
+                                         int32_t codeLength) {
   return CBC_OneDimWriter::RenderResult(encodedContents(contents).AsStringC(),
-                                        code, codeLength, isDevice);
+                                        code, codeLength);
 }

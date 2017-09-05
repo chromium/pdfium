@@ -20,7 +20,7 @@ class CBC_DataMatrix : public CBC_CodeBase {
   ~CBC_DataMatrix() override;
 
   // CBC_OneCode:
-  bool Encode(const CFX_WideStringC& contents, bool isDevice) override;
+  bool Encode(const CFX_WideStringC& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;

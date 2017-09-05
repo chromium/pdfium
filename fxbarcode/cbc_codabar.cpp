@@ -47,7 +47,7 @@ bool CBC_Codabar::SetWideNarrowRatio(int8_t ratio) {
   return GetOnedCodaBarWriter()->SetWideNarrowRatio(ratio);
 }
 
-bool CBC_Codabar::Encode(const CFX_WideStringC& contents, bool isDevice) {
+bool CBC_Codabar::Encode(const CFX_WideStringC& contents) {
   if (contents.IsEmpty())
     return false;
 
@@ -64,8 +64,8 @@ bool CBC_Codabar::Encode(const CFX_WideStringC& contents, bool isDevice) {
   if (!data)
     return false;
 
-  return pWriter->RenderResult(filtercontents.AsStringC(), data.get(), outWidth,
-                               isDevice);
+  return pWriter->RenderResult(filtercontents.AsStringC(), data.get(),
+                               outWidth);
 }
 
 bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
