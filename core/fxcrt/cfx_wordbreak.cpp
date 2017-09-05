@@ -2827,22 +2827,6 @@ int32_t CFX_WordBreak::GetWordLength() const {
   return m_pCurIter->GetAt() - m_pPreIter->GetAt() + 1;
 }
 
-void CFX_WordBreak::GetWord(CFX_WideString& wsWord) const {
-  int32_t nWordLength = GetWordLength();
-  if (nWordLength <= 0) {
-    return;
-  }
-  wchar_t* lpBuf = wsWord.GetBuffer(nWordLength);
-  std::unique_ptr<IFX_CharIter> pTempIter = m_pPreIter->Clone();
-  int32_t i = 0;
-  while (pTempIter->GetAt() <= m_pCurIter->GetAt()) {
-    lpBuf[i++] = pTempIter->GetChar();
-    if (!pTempIter->Next())
-      break;
-  }
-  wsWord.ReleaseBuffer(nWordLength);
-}
-
 bool CFX_WordBreak::IsEOF(bool bTail) const {
   return m_pCurIter->IsEOF(bTail);
 }

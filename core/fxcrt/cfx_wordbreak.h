@@ -9,9 +9,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
-
 class IFX_CharIter;
 
 class CFX_WordBreak {
@@ -20,17 +17,15 @@ class CFX_WordBreak {
   ~CFX_WordBreak();
 
   void Attach(IFX_CharIter* pIter);
-  bool Next(bool bPrev);
   void SetAt(int32_t nIndex);
   int32_t GetWordPos() const;
   int32_t GetWordLength() const;
-  void GetWord(CFX_WideString& wsWord) const;
-  bool IsEOF(bool bTail) const;
-
- protected:
-  bool FindNextBreakPos(IFX_CharIter* pIter, bool bPrev, bool bFromNext = true);
 
  private:
+  bool FindNextBreakPos(IFX_CharIter* pIter, bool bPrev, bool bFromNext);
+  bool IsEOF(bool bTail) const;
+  bool Next(bool bPrev);
+
   std::unique_ptr<IFX_CharIter> m_pPreIter;
   std::unique_ptr<IFX_CharIter> m_pCurIter;
 };
