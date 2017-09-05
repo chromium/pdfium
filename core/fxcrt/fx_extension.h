@@ -86,11 +86,6 @@ void FXSYS_IntToFourHexChars(uint16_t c, char* buf);
 
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
 
-void* FX_Random_MT_Start(uint32_t dwSeed);
-void FX_Random_MT_Close(void* pContext);
-uint32_t FX_Random_MT_Generate(void* pContext);
-void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount);
-void FX_Random_GenerateMT(uint32_t* pBuffer, int32_t iCount);
 
 #ifdef PDF_ENABLE_XFA
 struct FX_GUID {
