@@ -889,8 +889,6 @@ static_library("fxcrt") {
       "core/fxcrt/cfx_blockbuffer.h",
       "core/fxcrt/cfx_char.cpp",
       "core/fxcrt/cfx_char.h",
-      "core/fxcrt/cfx_chariter.cpp",
-      "core/fxcrt/cfx_chariter.h",
       "core/fxcrt/cfx_checksumcontext.cpp",
       "core/fxcrt/cfx_checksumcontext.h",
       "core/fxcrt/cfx_crtfileaccess.cpp",

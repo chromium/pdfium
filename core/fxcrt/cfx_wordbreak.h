@@ -20,7 +20,6 @@ class CFX_WordBreak {
   ~CFX_WordBreak();
 
   void Attach(IFX_CharIter* pIter);
-  void Attach(const CFX_WideString& wsText);
   bool Next(bool bPrev);
   void SetAt(int32_t nIndex);
   int32_t GetWordPos() const;
