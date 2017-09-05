@@ -105,9 +105,6 @@ void UTF16ToWChar(void* pBuffer, FX_STRSIZE iLength) {
 void SwapByteOrder(wchar_t* pStr, FX_STRSIZE iLength) {
   ASSERT(pStr);
 
-  if (iLength < 0)
-    iLength = FXSYS_wcslen(pStr);
-
   uint16_t wch;
   if (sizeof(wchar_t) > 2) {
     while (iLength-- > 0) {
@@ -230,7 +227,7 @@ FX_STRSIZE CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer,
 FX_STRSIZE CFX_SeekableStreamProxy::ReadString(wchar_t* pStr,
                                                FX_STRSIZE iMaxLength,
                                                bool* bEOS) {
-  if (!pStr || iMaxLength <= 0)
+  if (!pStr || iMaxLength == 0)
     return 0;
 
   if (m_IsWriteStream)

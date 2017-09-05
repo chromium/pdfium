@@ -45,11 +45,11 @@ TEST(cpdf_cmapparser, CMap_GetCodeRange) {
 
   // m_CharSize must be <= 4
   EXPECT_FALSE(CPDF_CMapParser::CMap_GetCodeRange(range, "<aaaaaaaaaa>", ""));
-  EXPECT_EQ(5, range.m_CharSize);
+  EXPECT_EQ(5u, range.m_CharSize);
 
   EXPECT_TRUE(
       CPDF_CMapParser::CMap_GetCodeRange(range, "<12345678>", "<87654321>"));
-  EXPECT_EQ(4, range.m_CharSize);
+  EXPECT_EQ(4u, range.m_CharSize);
   {
     uint8_t lower[4] = {18, 52, 86, 120};
     uint8_t upper[4] = {135, 101, 67, 33};
@@ -59,13 +59,13 @@ TEST(cpdf_cmapparser, CMap_GetCodeRange) {
 
   // Hex characters
   EXPECT_TRUE(CPDF_CMapParser::CMap_GetCodeRange(range, "<a1>", "<F3>"));
-  EXPECT_EQ(1, range.m_CharSize);
+  EXPECT_EQ(1u, range.m_CharSize);
   EXPECT_EQ(161, range.m_Lower[0]);
   EXPECT_EQ(243, range.m_Upper[0]);
 
   // The second string should return 0's if it is shorter
   EXPECT_TRUE(CPDF_CMapParser::CMap_GetCodeRange(range, "<a1>", ""));
-  EXPECT_EQ(1, range.m_CharSize);
+  EXPECT_EQ(1u, range.m_CharSize);
   EXPECT_EQ(161, range.m_Lower[0]);
   EXPECT_EQ(0, range.m_Upper[0]);
 }

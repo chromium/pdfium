@@ -380,8 +380,8 @@ void MergeString(std::vector<ModeStringPair>* result,
                                      CBC_QRCoderMode::sBYTE, versionNum, e);
       if (e != BCExceptionNO)
         return;
-      if (element2.first == CBC_QRCoderMode::sBYTE &&
-          element1.second.GetLength() < tmp) {
+      if (element2.first == CBC_QRCoderMode::sBYTE && tmp >= 0 &&
+          element1.second.GetLength() < static_cast<FX_STRSIZE>(tmp)) {
         element2.second = element1.second + element2.second;
         result->erase(result->begin() + i);
         i--;
@@ -399,8 +399,8 @@ void MergeString(std::vector<ModeStringPair>* result,
                                      CBC_QRCoderMode::sBYTE, versionNum, e);
       if (e != BCExceptionNO)
         return;
-      if (element2.first == CBC_QRCoderMode::sBYTE &&
-          element1.second.GetLength() < tmp) {
+      if (element2.first == CBC_QRCoderMode::sBYTE && tmp >= 0 &&
+          element1.second.GetLength() < static_cast<FX_STRSIZE>(tmp)) {
         element2.second = element1.second + element2.second;
         result->erase(result->begin() + i);
         i--;
@@ -410,8 +410,8 @@ void MergeString(std::vector<ModeStringPair>* result,
                              CBC_QRCoderMode::sALPHANUMERIC, versionNum, e);
       if (e != BCExceptionNO)
         return;
-      if (element2.first == CBC_QRCoderMode::sALPHANUMERIC &&
-          element1.second.GetLength() < tmp) {
+      if (element2.first == CBC_QRCoderMode::sALPHANUMERIC && tmp >= 0 &&
+          element1.second.GetLength() < static_cast<FX_STRSIZE>(tmp)) {
         element2.second = element1.second + element2.second;
         result->erase(result->begin() + i);
         i--;

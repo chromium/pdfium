@@ -624,7 +624,9 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refObject,
       bool bCreate =
           m_ResolveProcessor->GetNodeHelper()->ResolveNodes_CreateNode(
               rndFind.m_wsName, rndFind.m_wsCondition,
-              nStart == wsExpression.GetLength(), this);
+              nStart ==
+                  pdfium::base::checked_cast<int32_t>(wsExpression.GetLength()),
+              this);
       if (bCreate) {
         continue;
       } else {
@@ -650,7 +652,9 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refObject,
         continue;
       }
       if (rndFind.m_dwFlag == XFA_RESOVENODE_RSTYPE_Attribute &&
-          rndFind.m_pScriptAttribute && nStart < wsExpression.GetLength()) {
+          rndFind.m_pScriptAttribute &&
+          nStart <
+              pdfium::base::checked_cast<int32_t>(wsExpression.GetLength())) {
         auto pValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
         (rndFind.m_Objects.front()
              ->*(rndFind.m_pScriptAttribute->lpfnCallback))(
@@ -679,7 +683,9 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refObject,
         bool bCreate =
             m_ResolveProcessor->GetNodeHelper()->ResolveNodes_CreateNode(
                 rndFind.m_wsName, rndFind.m_wsCondition,
-                nStart == wsExpression.GetLength(), this);
+                nStart == pdfium::base::checked_cast<int32_t>(
+                              wsExpression.GetLength()),
+                this);
         if (bCreate) {
           continue;
         } else {

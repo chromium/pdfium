@@ -293,7 +293,7 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
         }
       }
     } else if (symbol == L"YY" || symbol == L"YYYY") {
-      if (*cc + symbol.GetLength() > len)
+      if (*cc + pdfium::base::checked_cast<int32_t>(symbol.GetLength()) > len)
         return false;
 
       year = 0;
@@ -417,11 +417,13 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
     } else if (symbol == L"A") {
       CFX_WideString wsAM = pLocale->GetMeridiemName(true);
       CFX_WideString wsPM = pLocale->GetMeridiemName(false);
-      if ((*cc + wsAM.GetLength() <= len) &&
+      if ((*cc + pdfium::base::checked_cast<int32_t>(wsAM.GetLength()) <=
+           len) &&
           (CFX_WideStringC(str + *cc, wsAM.GetLength()) == wsAM)) {
         *cc += wsAM.GetLength();
         bHasA = true;
-      } else if ((*cc + wsPM.GetLength() <= len) &&
+      } else if ((*cc + pdfium::base::checked_cast<int32_t>(wsPM.GetLength()) <=
+                  len) &&
                  (CFX_WideStringC(str + *cc, wsPM.GetLength()) == wsPM)) {
         *cc += wsPM.GetLength();
         bHasA = true;
@@ -2087,12 +2089,13 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   if (cc >= 0) {
     int nPos = dot_index.value() % 3;
     wsOutput->clear();
-    for (int32_t i = 0; i < dot_index; i++) {
+    for (int32_t i = 0;
+         i < pdfium::base::checked_cast<int32_t>(dot_index.value()); i++) {
       if (i % 3 == nPos && i != 0)
         *wsOutput += wsGroupSymbol;
       *wsOutput += wsSrcNum[i];
     }
-    if (dot_index < len) {
+    if (pdfium::base::checked_cast<int32_t>(dot_index.value()) < len) {
       *wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
       *wsOutput += wsSrcNum.Right(len - dot_index.value() - 1);
     }
@@ -2102,7 +2105,8 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
     }
     return false;
   }
-  if (dot_index_f == wsNumFormat.GetLength()) {
+  if (dot_index_f ==
+      pdfium::base::checked_cast<int32_t>(wsNumFormat.GetLength())) {
     if (!bAddNeg && bNeg) {
       *wsOutput =
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + *wsOutput;
@@ -2115,7 +2119,7 @@ bool CFGAS_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   if (strf[dot_index_f] == 'V') {
     *wsOutput += wsDotSymbol;
   } else if (strf[dot_index_f] == '.') {
-    if (dot_index < len)
+    if (pdfium::base::checked_cast<int32_t>(dot_index.value()) < len)
       *wsOutput += wsDotSymbol;
     else if (strf[dot_index_f + 1] == '9' || strf[dot_index_f + 1] == 'Z')
       *wsOutput += wsDotSymbol;

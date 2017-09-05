@@ -90,20 +90,14 @@ static_assert(sizeof(CFX_ByteString) <= sizeof(char*),
               "Strings must not require more space than pointers");
 
 CFX_ByteString::CFX_ByteString(const char* pStr, FX_STRSIZE nLen) {
-  ASSERT(nLen >= 0);
-  if (nLen < 0)
-    nLen = pStr ? FXSYS_strlen(pStr) : 0;
-
   if (nLen)
     m_pData.Reset(StringData::Create(pStr, nLen));
 }
 
 CFX_ByteString::CFX_ByteString(const uint8_t* pStr, FX_STRSIZE nLen) {
-  ASSERT(nLen >= 0);
-  if (nLen > 0) {
+  if (nLen)
     m_pData.Reset(
         StringData::Create(reinterpret_cast<const char*>(pStr), nLen));
-  }
 }
 
 CFX_ByteString::CFX_ByteString() {}
@@ -302,7 +296,7 @@ void CFX_ByteString::ReallocBeforeWrite(FX_STRSIZE nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength))
     return;
 
-  if (nNewLength <= 0) {
+  if (nNewLength == 0) {
     clear();
     return;
   }
@@ -323,7 +317,7 @@ void CFX_ByteString::AllocBeforeWrite(FX_STRSIZE nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength))
     return;
 
-  if (nNewLength <= 0) {
+  if (nNewLength == 0) {
     clear();
     return;
   }
@@ -332,7 +326,6 @@ void CFX_ByteString::AllocBeforeWrite(FX_STRSIZE nNewLength) {
 }
 
 void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
-  ASSERT(nNewLength >= 0);
   if (!m_pData)
     return;
 
@@ -387,7 +380,8 @@ FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE index, FX_STRSIZE count) {
     return 0;
 
   FX_STRSIZE old_length = m_pData->m_nDataLength;
-  if (count <= 0 || index != pdfium::clamp(index, 0, old_length))
+  if (count == 0 ||
+      index != pdfium::clamp(index, static_cast<FX_STRSIZE>(0), old_length))
     return old_length;
 
   FX_STRSIZE removal_length = index + count;
@@ -403,7 +397,7 @@ FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE index, FX_STRSIZE count) {
 }
 
 void CFX_ByteString::Concat(const char* pSrcData, FX_STRSIZE nSrcLen) {
-  if (!pSrcData || nSrcLen <= 0)
+  if (!pSrcData || nSrcLen == 0)
     return;
 
   if (!m_pData) {
@@ -460,7 +454,7 @@ CFX_ByteString CFX_ByteString::Right(FX_STRSIZE count) const {
 void CFX_ByteString::AllocCopy(CFX_ByteString& dest,
                                FX_STRSIZE nCopyLen,
                                FX_STRSIZE nCopyIndex) const {
-  if (nCopyLen <= 0)
+  if (nCopyLen == 0)
     return;
 
   CFX_RetainPtr<StringData> pNewData(
@@ -700,13 +694,13 @@ int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
 }
 
 void CFX_ByteString::TrimRight(const CFX_ByteStringC& pTargets) {
-  if (!m_pData || pTargets.IsEmpty()) {
+  if (!m_pData || pTargets.IsEmpty())
     return;
-  }
+
   FX_STRSIZE pos = GetLength();
-  if (pos < 1) {
+  if (pos == 0)
     return;
-  }
+
   while (pos) {
     FX_STRSIZE i = 0;
     while (i < pTargets.GetLength() &&
@@ -738,7 +732,7 @@ void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
     return;
 
   FX_STRSIZE len = GetLength();
-  if (len < 1)
+  if (len == 0)
     return;
 
   FX_STRSIZE pos = 0;

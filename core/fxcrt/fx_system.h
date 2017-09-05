@@ -76,10 +76,9 @@ extern "C" {
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
-// PDFium string sizes are limited to 2^31-1, and the value is signed to
-// allow -1 as a placeholder for "unknown".
-// TODO(palmer): it should be a |size_t|, or at least unsigned.
-typedef int FX_STRSIZE;
+// Unsigned value used to represent a location or range in a string.
+// TODO(rharrison): Remove and use size_t directly once int->size_t stabilizes.
+typedef size_t FX_STRSIZE;
 
 // PDFium file sizes match the platform, but PDFium itself does not support
 // files larger than 2GB even if the platform does. The value must be signed

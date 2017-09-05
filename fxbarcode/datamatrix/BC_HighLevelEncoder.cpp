@@ -118,18 +118,20 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
     }
   }
   CFX_WideString codewords = context.m_codewords;
-  if (codewords.GetLength() < capacity) {
+  if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) < capacity) {
     codewords += PAD;
   }
-  while (codewords.GetLength() < capacity) {
-    codewords += (randomize253State(PAD, codewords.GetLength() + 1));
+  while (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) <
+         capacity) {
+    codewords += (randomize253State(
+        PAD, pdfium::base::checked_cast<int32_t>(codewords.GetLength()) + 1));
   }
   return codewords;
 }
 int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
                                             int32_t startpos,
                                             int32_t currentMode) {
-  if (startpos >= msg.GetLength()) {
+  if (startpos >= pdfium::base::checked_cast<int32_t>(msg.GetLength())) {
     return currentMode;
   }
   std::vector<float> charCounts;
@@ -151,7 +153,8 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
   }
   int32_t charsProcessed = 0;
   while (true) {
-    if ((startpos + charsProcessed) == msg.GetLength()) {
+    if ((startpos + charsProcessed) ==
+        pdfium::base::checked_cast<int32_t>(msg.GetLength())) {
       int32_t min = std::numeric_limits<int32_t>::max();
       std::vector<uint8_t> mins(6);
       std::vector<int32_t> intCharCounts(6);
@@ -252,7 +255,9 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
         }
         if (intCharCounts[C40_ENCODATION] == intCharCounts[X12_ENCODATION]) {
           int32_t p = startpos + charsProcessed + 1;
-          while (p < msg.GetLength()) {
+          int32_t checked_length =
+              pdfium::base::checked_cast<int32_t>(msg.GetLength());
+          while (p < checked_length) {
             wchar_t tc = msg[p];
             if (isX12TermSep(tc)) {
               return X12_ENCODATION;

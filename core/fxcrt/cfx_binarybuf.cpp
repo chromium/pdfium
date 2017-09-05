@@ -20,10 +20,9 @@ CFX_BinaryBuf::CFX_BinaryBuf(FX_STRSIZE size)
 CFX_BinaryBuf::~CFX_BinaryBuf() {}
 
 void CFX_BinaryBuf::Delete(FX_STRSIZE start_index, FX_STRSIZE count) {
-  if (!m_pBuffer || start_index < 0 || count < 0 || count > m_DataSize ||
-      start_index > m_DataSize - count) {
+  if (!m_pBuffer || count > m_DataSize || start_index > m_DataSize - count)
     return;
-  }
+
   memmove(m_pBuffer.get() + start_index, m_pBuffer.get() + start_index + count,
           m_DataSize - start_index - count);
   m_DataSize -= count;

@@ -122,7 +122,8 @@ CBC_ErrorCorrection::~CBC_ErrorCorrection() {}
 CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
                                                  CBC_SymbolInfo* symbolInfo,
                                                  int32_t& e) {
-  if (codewords.GetLength() != symbolInfo->dataCapacity()) {
+  if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) !=
+      symbolInfo->dataCapacity()) {
     e = BCExceptionIllegalArgument;
     return CFX_WideString();
   }

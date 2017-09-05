@@ -36,8 +36,7 @@ class CFX_StringCTemplate {
         m_Length(ptr ? FXSYS_len(ptr) : 0) {}
 
   CFX_StringCTemplate(const CharType* ptr, FX_STRSIZE len)
-      : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)),
-        m_Length(len < 0 ? FXSYS_len(ptr) : len) {}
+      : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)), m_Length(len) {}
 
   template <typename U = UnsignedType>
   CFX_StringCTemplate(
@@ -106,7 +105,7 @@ class CFX_StringCTemplate {
       return 0;
 
     uint32_t strid = 0;
-    FX_STRSIZE size = std::min(4, m_Length);
+    FX_STRSIZE size = std::min(static_cast<FX_STRSIZE>(4), m_Length);
     for (FX_STRSIZE i = 0; i < size; i++)
       strid = strid * 256 + m_Ptr.Get()[i];
 
@@ -119,16 +118,9 @@ class CFX_StringCTemplate {
   }
 
   FX_STRSIZE GetLength() const { return m_Length; }
-
   bool IsEmpty() const { return m_Length == 0; }
-
-  bool IsValidIndex(FX_STRSIZE index) const {
-    return 0 <= index && index < GetLength();
-  }
-
-  bool IsValidLength(FX_STRSIZE length) const {
-    return 0 <= length && length <= GetLength();
-  }
+  bool IsValidIndex(FX_STRSIZE index) const { return index < GetLength(); }
+  bool IsValidLength(FX_STRSIZE length) const { return length <= GetLength(); }
 
   const UnsignedType& operator[](const FX_STRSIZE index) const {
     ASSERT(IsValidIndex(index));
