@@ -49,6 +49,30 @@ bool GenerateCryptoRandom(uint32_t* pBuffer, int32_t iCount) {
 }
 #endif
 
+void Random_GenerateBase(uint32_t* pBuffer, int32_t iCount) {
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+  SYSTEMTIME st1, st2;
+  ::GetSystemTime(&st1);
+  do {
+    ::GetSystemTime(&st2);
+  } while (memcmp(&st1, &st2, sizeof(SYSTEMTIME)) == 0);
+  uint32_t dwHash1 =
+      FX_HashCode_GetA(CFX_ByteStringC((uint8_t*)&st1, sizeof(st1)), true);
+  uint32_t dwHash2 =
+      FX_HashCode_GetA(CFX_ByteStringC((uint8_t*)&st2, sizeof(st2)), true);
+  ::srand((dwHash1 << 16) | (uint32_t)dwHash2);
+#else
+  time_t tmLast = time(nullptr);
+  time_t tmCur;
+  while ((tmCur = time(nullptr)) == tmLast)
+    continue;
+
+  ::srand((tmCur << 16) | (tmLast & 0xFFFF));
+#endif
+  while (iCount-- > 0)
+    *pBuffer++ = static_cast<uint32_t>((::rand() << 16) | (::rand() & 0xFFFF));
+}
+
 }  // namespace
 
 void* FX_Random_MT_Start(uint32_t dwSeed) {
@@ -105,37 +129,13 @@ void FX_Random_GenerateMT(uint32_t* pBuffer, int32_t iCount) {
   uint32_t dwSeed;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   if (!GenerateCryptoRandom(&dwSeed, 1))
-    FX_Random_GenerateBase(&dwSeed, 1);
+    Random_GenerateBase(&dwSeed, 1);
 #else
-  FX_Random_GenerateBase(&dwSeed, 1);
+  Random_GenerateBase(&dwSeed, 1);
 #endif
   void* pContext = FX_Random_MT_Start(dwSeed);
   while (iCount-- > 0)
     *pBuffer++ = FX_Random_MT_Generate(pContext);
 
   FX_Random_MT_Close(pContext);
-}
-
-void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  SYSTEMTIME st1, st2;
-  ::GetSystemTime(&st1);
-  do {
-    ::GetSystemTime(&st2);
-  } while (memcmp(&st1, &st2, sizeof(SYSTEMTIME)) == 0);
-  uint32_t dwHash1 =
-      FX_HashCode_GetA(CFX_ByteStringC((uint8_t*)&st1, sizeof(st1)), true);
-  uint32_t dwHash2 =
-      FX_HashCode_GetA(CFX_ByteStringC((uint8_t*)&st2, sizeof(st2)), true);
-  ::srand((dwHash1 << 16) | (uint32_t)dwHash2);
-#else
-  time_t tmLast = time(nullptr);
-  time_t tmCur;
-  while ((tmCur = time(nullptr)) == tmLast)
-    continue;
-
-  ::srand((tmCur << 16) | (tmLast & 0xFFFF));
-#endif
-  while (iCount-- > 0)
-    *pBuffer++ = static_cast<uint32_t>((::rand() << 16) | (::rand() & 0xFFFF));
 }

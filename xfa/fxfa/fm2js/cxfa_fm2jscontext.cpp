@@ -14,7 +14,7 @@
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_guid.h"
+#include "core/fxcrt/fx_random.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"
@@ -512,6 +512,23 @@ bool IsPartOfNumber(char ch) {
 
 bool IsPartOfNumberW(wchar_t ch) {
   return std::iswdigit(ch) || ch == L'-' || ch == L'.';
+}
+
+CFX_ByteString GUIDString(bool bSeparator) {
+  uint8_t data[16];
+  FX_Random_GenerateMT(reinterpret_cast<uint32_t*>(data), 4);
+  data[6] = (data[6] & 0x0F) | 0x40;
+
+  CFX_ByteString bsStr;
+  char* pBuf = bsStr.GetBuffer(40);
+  for (int32_t i = 0; i < 16; ++i, pBuf += 2) {
+    if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10))
+      *pBuf++ = L'-';
+
+    FXSYS_IntToTwoHexChars(data[i], pBuf);
+  }
+  bsStr.ReleaseBuffer(bSeparator ? 36 : 32);
+  return bsStr;
 }
 
 }  // namespace
@@ -4324,11 +4341,7 @@ void CXFA_FM2JSContext::Uuid(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
     iNum = static_cast<int32_t>(ValueToFloat(pThis, argOne.get()));
   }
-  FX_GUID guid;
-  FX_GUID_CreateV4(&guid);
-
-  CFX_ByteString bsUId = FX_GUID_ToString(&guid, !!iNum);
-  args.GetReturnValue()->SetString(bsUId.AsStringC());
+  args.GetReturnValue()->SetString(GUIDString(!!iNum).AsStringC());
 }
 
 // static
