@@ -1422,6 +1422,8 @@ if (pdf_enable_xfa) {
       "fxbarcode/oned/BC_OnedEAN13Writer.h",
       "fxbarcode/oned/BC_OnedEAN8Writer.cpp",
       "fxbarcode/oned/BC_OnedEAN8Writer.h",
+      "fxbarcode/oned/BC_OnedEANChecksum.cpp",
+      "fxbarcode/oned/BC_OnedEANChecksum.h",
       "fxbarcode/oned/BC_OnedUPCAWriter.cpp",
       "fxbarcode/oned/BC_OnedUPCAWriter.h",
       "fxbarcode/pdf417/BC_PDF417.cpp",
