@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "core/fxcrt/cfx_wordbreak.h"
 #include "xfa/fde/cfde_textout.h"
 
 namespace {
@@ -927,7 +928,14 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharacterRectsInRange(
   return rects;
 }
 
-CFDE_TextEditEngine::Iterator::Iterator(CFDE_TextEditEngine* engine)
+std::pair<size_t, size_t> CFDE_TextEditEngine::BoundsForWordAt(
+    size_t idx) const {
+  CFX_WordBreak breaker(
+      pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(this));
+  return breaker.BoundsAt(idx);
+}
+
+CFDE_TextEditEngine::Iterator::Iterator(const CFDE_TextEditEngine* engine)
     : engine_(engine), current_position_(-1) {}
 
 CFDE_TextEditEngine::Iterator::~Iterator() {}
@@ -936,8 +944,9 @@ bool CFDE_TextEditEngine::Iterator::Next(bool bPrev) {
   if (bPrev && current_position_ == -1)
     return false;
   if (!bPrev && current_position_ > -1 &&
-      static_cast<size_t>(current_position_) == engine_->GetLength())
+      static_cast<size_t>(current_position_) == engine_->GetLength()) {
     return false;
+  }
 
   if (bPrev)
     --current_position_;
@@ -952,7 +961,12 @@ wchar_t CFDE_TextEditEngine::Iterator::GetChar() const {
 }
 
 void CFDE_TextEditEngine::Iterator::SetAt(int32_t nIndex) {
-  NOTREACHED();
+  if (nIndex < 0)
+    current_position_ = 0;
+  else if (static_cast<size_t>(nIndex) >= engine_->GetLength())
+    current_position_ = engine_->GetLength();
+  else
+    current_position_ = nIndex;
 }
 
 int32_t CFDE_TextEditEngine::Iterator::GetAt() const {
@@ -967,6 +981,7 @@ bool CFDE_TextEditEngine::Iterator::IsEOF(bool bTail) const {
 }
 
 std::unique_ptr<IFX_CharIter> CFDE_TextEditEngine::Iterator::Clone() const {
-  NOTREACHED();
-  return pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(engine_.Get());
+  auto it = pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(engine_.Get());
+  it->current_position_ = current_position_;
+  return it;
 }

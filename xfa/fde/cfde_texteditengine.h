@@ -40,7 +40,7 @@ class CFDE_TextEditEngine {
  public:
   class Iterator : public IFX_CharIter {
    public:
-    explicit Iterator(CFDE_TextEditEngine* engine);
+    explicit Iterator(const CFDE_TextEditEngine* engine);
     ~Iterator() override;
 
     bool Next(bool bPrev = false) override;
@@ -51,7 +51,7 @@ class CFDE_TextEditEngine {
     std::unique_ptr<IFX_CharIter> Clone() const override;
 
    private:
-    CFX_UnownedPtr<CFDE_TextEditEngine> engine_;
+    CFX_UnownedPtr<const CFDE_TextEditEngine> engine_;
     int32_t current_position_;
   };
 
@@ -160,6 +160,8 @@ class CFDE_TextEditEngine {
   size_t GetWidthOfChar(size_t idx);
   // Non-const so we can force a Layout() if needed.
   size_t GetIndexForPoint(const CFX_PointF& point);
+  // <start_idx, end_idx>
+  std::pair<size_t, size_t> BoundsForWordAt(size_t idx) const;
 
   // Returns <bidi level, character rect>
   std::pair<int32_t, CFX_RectF> GetCharacterInfo(int32_t start_idx);

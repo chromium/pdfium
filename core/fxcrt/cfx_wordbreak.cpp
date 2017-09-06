@@ -2779,16 +2779,14 @@ FX_WordBreakProp GetWordBreakProperty(wchar_t wcCodePoint) {
 
 }  // namespace
 
-CFX_WordBreak::CFX_WordBreak() {}
+CFX_WordBreak::CFX_WordBreak(std::unique_ptr<IFX_CharIter> pIter)
+    : m_pCurIter(std::move(pIter)) {
+  ASSERT(m_pCurIter);
+}
 
 CFX_WordBreak::~CFX_WordBreak() {}
 
-void CFX_WordBreak::Attach(IFX_CharIter* pIter) {
-  ASSERT(pIter);
-  m_pCurIter.reset(pIter);
-}
-
-void CFX_WordBreak::SetAt(int32_t nIndex) {
+std::pair<size_t, size_t> CFX_WordBreak::BoundsAt(int32_t nIndex) {
   m_pPreIter.reset();
   m_pCurIter->SetAt(nIndex);
   FindNextBreakPos(m_pCurIter.get(), true);
@@ -2796,18 +2794,8 @@ void CFX_WordBreak::SetAt(int32_t nIndex) {
   m_pPreIter = std::move(m_pCurIter);
   m_pCurIter = m_pPreIter->Clone();
   FindNextBreakPos(m_pCurIter.get(), false);
-}
 
-int32_t CFX_WordBreak::GetWordPos() const {
-  return m_pPreIter->GetAt();
-}
-
-int32_t CFX_WordBreak::GetWordLength() const {
-  return m_pCurIter->GetAt() - m_pPreIter->GetAt() + 1;
-}
-
-bool CFX_WordBreak::IsEOF(bool bTail) const {
-  return m_pCurIter->IsEOF(bTail);
+  return {m_pPreIter->GetAt(), m_pCurIter->GetAt()};
 }
 
 bool CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter, bool bPrev) {

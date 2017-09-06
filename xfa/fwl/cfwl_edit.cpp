@@ -1234,14 +1234,13 @@ void CFWL_Edit::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_Edit::OnButtonDoubleClick(CFWL_MessageMouse* pMsg) {
-  // TODO(dsinclair): Handle OnButtonDoubleClick
-  //  int32_t nCount = 0;
-  //  int32_t nIndex = pPage->SelectWord(DeviceToEngine(pMsg->m_pos), nCount);
-  //  if (nIndex < 0)
-  //    return;
-  //
-  //  m_EdtEngine.AddSelRange(nIndex, nCount);
-  // SetCursorPosition(nIndex + nCount - 1);
+  size_t click_idx = m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
+  size_t start_idx;
+  size_t end_idx;
+  std::tie(start_idx, end_idx) = m_EdtEngine.BoundsForWordAt(click_idx);
+
+  m_EdtEngine.SetSelection(start_idx, end_idx);
+  m_CursorPosition = end_idx;
   RepaintRect(m_rtEngine);
 }
 

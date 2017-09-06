@@ -8,22 +8,20 @@
 #define CORE_FXCRT_CFX_WORDBREAK_H_
 
 #include <memory>
+#include <utility>
 
 class IFX_CharIter;
 
 class CFX_WordBreak {
  public:
-  CFX_WordBreak();
+  explicit CFX_WordBreak(std::unique_ptr<IFX_CharIter> pIter);
   ~CFX_WordBreak();
 
-  void Attach(IFX_CharIter* pIter);
-  void SetAt(int32_t nIndex);
-  int32_t GetWordPos() const;
-  int32_t GetWordLength() const;
+  // <start_idx, end_idx>
+  std::pair<size_t, size_t> BoundsAt(int32_t nIndex);
 
  private:
   bool FindNextBreakPos(IFX_CharIter* pIter, bool bPrev);
-  bool IsEOF(bool bTail) const;
 
   std::unique_ptr<IFX_CharIter> m_pPreIter;
   std::unique_ptr<IFX_CharIter> m_pCurIter;

@@ -416,3 +416,115 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPoint) {
   EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
   EXPECT_EQ(1U, engine()->GetIndexForPoint({10.0f, 5.0f}));
 }
+
+TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {
+  size_t start_idx;
+  size_t end_idx;
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(100);
+  EXPECT_EQ(0U, start_idx);
+  EXPECT_EQ(0U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"Hello");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
+  EXPECT_EQ(0U, start_idx);
+  EXPECT_EQ(4U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"Hello World");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(100);
+  EXPECT_EQ(11U, start_idx);
+  EXPECT_EQ(11U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
+  EXPECT_EQ(0U, start_idx);
+  EXPECT_EQ(4U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(1);
+  EXPECT_EQ(0U, start_idx);
+  EXPECT_EQ(4U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(4);
+  EXPECT_EQ(0U, start_idx);
+  EXPECT_EQ(4U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
+
+  // Select the space
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
+  EXPECT_EQ(5U, start_idx);
+  EXPECT_EQ(5U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(6);
+  EXPECT_EQ(6U, start_idx);
+  EXPECT_EQ(10U, end_idx);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"123 456 789");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"456", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"123def789");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"123def789", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"abc456ghi");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"abc456ghi", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"hello, world");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"hello", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"hello, world");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"np-complete");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(6);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"complete", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"(123) 456-7890");
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(1);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"123", engine()->GetSelectedText().c_str());
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(7);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"456", engine()->GetSelectedText().c_str());
+
+  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(11);
+  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_STREQ(L"7890", engine()->GetSelectedText().c_str());
+}
