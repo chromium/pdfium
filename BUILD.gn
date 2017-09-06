@@ -1957,6 +1957,7 @@ test("pdfium_unittests") {
       "fxbarcode/oned/BC_OnedCode39Writer_unittest.cpp",
       "fxbarcode/oned/BC_OnedEAN13Writer_unittest.cpp",
       "fxbarcode/oned/BC_OnedEAN8Writer_unittest.cpp",
+      "fxbarcode/oned/BC_OnedUPCAWriter_unittest.cpp",
       "fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
       "xfa/fde/cfde_texteditengine_unittest.cpp",
       "xfa/fgas/crt/cfgas_formatstring_unittest.cpp",
