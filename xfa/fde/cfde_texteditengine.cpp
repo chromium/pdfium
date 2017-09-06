@@ -9,14 +9,30 @@
 #include <algorithm>
 #include <limits>
 
-#include "core/fxcrt/cfx_wordbreak.h"
 #include "xfa/fde/cfde_textout.h"
+#include "xfa/fde/cfde_wordbreak_data.h"
 
 namespace {
 
 constexpr size_t kMaxEditOperations = 128;
 constexpr size_t kGapSize = 128;
 constexpr size_t kPageWidthMax = 0xffff;
+
+enum class WordBreakProperty {
+  kNone = 0,
+  kCR,
+  kLF,
+  kNewLine,
+  kExtend,
+  kFormat,
+  kKataKana,
+  kALetter,
+  kMidLetter,
+  kMidNum,
+  kMidNumLet,
+  kNumeric,
+  kExtendNumLet,
+};
 
 class InsertOperation : public CFDE_TextEditEngine::Operation {
  public:
@@ -93,6 +109,33 @@ class ReplaceOperation : public CFDE_TextEditEngine::Operation {
   InsertOperation insert_op_;
   DeleteOperation delete_op_;
 };
+
+WordBreakProperty GetWordBreakProperty(wchar_t wcCodePoint) {
+  uint8_t dwProperty = gs_FX_WordBreak_CodePointProperties[wcCodePoint >> 1];
+  return static_cast<WordBreakProperty>((wcCodePoint & 1) ? (dwProperty & 0x0F)
+                                                          : (dwProperty >> 4));
+}
+
+int GetBreakFlagsFor(WordBreakProperty current, WordBreakProperty next) {
+  if (current == WordBreakProperty::kMidLetter) {
+    if (next == WordBreakProperty::kALetter)
+      return 1;
+  } else if (current == WordBreakProperty::kMidNum) {
+    if (next == WordBreakProperty::kNumeric)
+      return 2;
+  } else if (current == WordBreakProperty::kMidNumLet) {
+    if (next == WordBreakProperty::kALetter)
+      return 1;
+    if (next == WordBreakProperty::kNumeric)
+      return 2;
+  }
+  return 0;
+}
+
+bool BreakFlagsChanged(int flags, WordBreakProperty previous) {
+  return (flags != 1 || previous != WordBreakProperty::kALetter) &&
+         (flags != 2 || previous != WordBreakProperty::kNumeric);
+}
 
 }  // namespace
 
@@ -930,9 +973,14 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharacterRectsInRange(
 
 std::pair<size_t, size_t> CFDE_TextEditEngine::BoundsForWordAt(
     size_t idx) const {
-  CFX_WordBreak breaker(
-      pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(this));
-  return breaker.BoundsAt(idx);
+  CFDE_TextEditEngine::Iterator iter(this);
+  iter.SetAt(idx);
+  iter.FindNextBreakPos(true);
+  size_t start_idx = iter.GetAt();
+
+  iter.FindNextBreakPos(false);
+  size_t end_idx = iter.GetAt();
+  return {start_idx, end_idx};
 }
 
 CFDE_TextEditEngine::Iterator::Iterator(const CFDE_TextEditEngine* engine)
@@ -940,20 +988,18 @@ CFDE_TextEditEngine::Iterator::Iterator(const CFDE_TextEditEngine* engine)
 
 CFDE_TextEditEngine::Iterator::~Iterator() {}
 
-bool CFDE_TextEditEngine::Iterator::Next(bool bPrev) {
+void CFDE_TextEditEngine::Iterator::Next(bool bPrev) {
   if (bPrev && current_position_ == -1)
-    return false;
+    return;
   if (!bPrev && current_position_ > -1 &&
       static_cast<size_t>(current_position_) == engine_->GetLength()) {
-    return false;
+    return;
   }
 
   if (bPrev)
     --current_position_;
   else
     ++current_position_;
-
-  return true;
 }
 
 wchar_t CFDE_TextEditEngine::Iterator::GetChar() const {
@@ -980,8 +1026,60 @@ bool CFDE_TextEditEngine::Iterator::IsEOF(bool bTail) const {
                : current_position_ == -1;
 }
 
-std::unique_ptr<IFX_CharIter> CFDE_TextEditEngine::Iterator::Clone() const {
-  auto it = pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(engine_.Get());
-  it->current_position_ = current_position_;
-  return it;
+void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
+  if (IsEOF(!bPrev))
+    return;
+
+  WordBreakProperty ePreType = WordBreakProperty::kNone;
+  if (!IsEOF(bPrev)) {
+    Next(!bPrev);
+    ePreType = GetWordBreakProperty(GetChar());
+    Next(bPrev);
+  }
+
+  WordBreakProperty eCurType = GetWordBreakProperty(GetChar());
+  bool bFirst = true;
+  do {
+    Next(bPrev);
+
+    WordBreakProperty eNextType = GetWordBreakProperty(GetChar());
+    uint16_t wBreak = gs_FX_WordBreak_Table[static_cast<int>(eCurType)] &
+                      ((uint16_t)(1 << static_cast<int>(eNextType)));
+    if (wBreak) {
+      if (IsEOF(!bPrev)) {
+        Next(!bPrev);
+        return;
+      }
+      if (bFirst) {
+        int32_t nFlags = GetBreakFlagsFor(eCurType, eNextType);
+        if (nFlags > 0) {
+          if (BreakFlagsChanged(nFlags, ePreType)) {
+            Next(!bPrev);
+            return;
+          }
+          Next(bPrev);
+          wBreak = false;
+        }
+        bFirst = false;
+      }
+      if (wBreak) {
+        int32_t nFlags = GetBreakFlagsFor(eNextType, eCurType);
+        if (nFlags <= 0) {
+          Next(!bPrev);
+          return;
+        }
+
+        Next(bPrev);
+        eNextType = GetWordBreakProperty(GetChar());
+        if (BreakFlagsChanged(nFlags, eNextType)) {
+          Next(!bPrev);
+          Next(!bPrev);
+          return;
+        }
+      }
+    }
+    ePreType = eCurType;
+    eCurType = eNextType;
+    bFirst = false;
+  } while (!IsEOF(!bPrev));
 }
