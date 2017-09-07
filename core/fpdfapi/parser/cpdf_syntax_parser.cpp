@@ -125,26 +125,10 @@ void CPDF_SyntaxParser::GetNextWordInternal(bool* bIsNumber) {
   if (bIsNumber)
     *bIsNumber = true;
 
+  ToNextWord();
   uint8_t ch;
   if (!GetNextChar(ch))
     return;
-
-  while (1) {
-    while (PDFCharIsWhitespace(ch)) {
-      if (!GetNextChar(ch))
-        return;
-    }
-
-    if (ch != '%')
-      break;
-
-    while (1) {
-      if (!GetNextChar(ch))
-        return;
-      if (PDFCharIsLineEnding(ch))
-        break;
-    }
-  }
 
   if (PDFCharIsDelimiter(ch)) {
     if (bIsNumber)
