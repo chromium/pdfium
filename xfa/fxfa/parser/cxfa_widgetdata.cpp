@@ -1772,7 +1772,7 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
   dot_index = !dot_index.has_value() ? len : dot_index;
 
   if (dot_index.value() >= 1) {
-    int nPos = dot_index.value() % 3;
+    FX_STRSIZE nPos = dot_index.value() % 3;
     wsOutput.clear();
     for (FX_STRSIZE i = 0; i < dot_index.value(); i++) {
       if (i % 3 == nPos && i != 0)

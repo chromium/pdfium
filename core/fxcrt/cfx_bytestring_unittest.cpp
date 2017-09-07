@@ -13,9 +13,6 @@
 
 TEST(fxcrt, ByteStringElementAccess) {
   const CFX_ByteString abc("abc");
-#ifndef NDEBUG
-  EXPECT_DEATH({ abc[-1]; }, ".*");
-#endif
   EXPECT_EQ('a', abc[0]);
   EXPECT_EQ('b', abc[1]);
   EXPECT_EQ('c', abc[2]);
@@ -29,11 +26,8 @@ TEST(fxcrt, ByteStringElementAccess) {
   EXPECT_EQ('b', mutable_abc[1]);
   EXPECT_EQ('c', mutable_abc[2]);
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
-
-#ifndef NDEBUG
-  EXPECT_DEATH({ mutable_abc.SetAt(-1, 'd'); }, ".*");
   EXPECT_EQ("abc", abc);
-#endif
+
   const char* c_str = abc.c_str();
   mutable_abc.SetAt(0, 'd');
   EXPECT_EQ(c_str, abc.c_str());
@@ -414,8 +408,6 @@ TEST(fxcrt, ByteStringReplace) {
 
 TEST(fxcrt, ByteStringInsert) {
   CFX_ByteString fred("FRED");
-  EXPECT_EQ(4u, fred.Insert(-1, 'X'));
-  EXPECT_EQ("FRED", fred);
   EXPECT_EQ(5u, fred.Insert(0, 'S'));
   EXPECT_EQ("SFRED", fred);
   EXPECT_EQ(6u, fred.Insert(1, 'T'));
@@ -426,11 +418,6 @@ TEST(fxcrt, ByteStringInsert) {
   EXPECT_EQ("STFRUEDV", fred);
   EXPECT_EQ(8u, fred.Insert(12, 'P'));
   EXPECT_EQ("STFRUEDV", fred);
-  {
-    CFX_ByteString empty;
-    EXPECT_EQ(0u, empty.Insert(-1, 'X'));
-    EXPECT_NE("X", empty);
-  }
   {
     CFX_ByteString empty;
     EXPECT_EQ(1u, empty.Insert(0, 'X'));
@@ -487,8 +474,6 @@ TEST(fxcrt, ByteStringDelete) {
   EXPECT_EQ("ED", fred);
   EXPECT_EQ(1u, fred.Delete(1));
   EXPECT_EQ("E", fred);
-  EXPECT_EQ(1u, fred.Delete(-1));
-  EXPECT_EQ("E", fred);
   EXPECT_EQ(0u, fred.Delete(0));
   EXPECT_EQ("", fred);
   EXPECT_EQ(0u, fred.Delete(0));
@@ -496,8 +481,6 @@ TEST(fxcrt, ByteStringDelete) {
 
   CFX_ByteString empty;
   EXPECT_EQ(0u, empty.Delete(0));
-  EXPECT_EQ("", empty);
-  EXPECT_EQ(0u, empty.Delete(-1));
   EXPECT_EQ("", empty);
   EXPECT_EQ(0u, empty.Delete(1));
   EXPECT_EQ("", empty);
@@ -519,7 +502,6 @@ TEST(fxcrt, ByteStringMid) {
   EXPECT_EQ("FRED", fred.Mid(0, 4));
   EXPECT_EQ("", fred.Mid(0, 10));
 
-  EXPECT_EQ("", fred.Mid(-1, 2));
   EXPECT_EQ("RED", fred.Mid(1, 3));
   EXPECT_EQ("", fred.Mid(4, 1));
 
@@ -536,12 +518,10 @@ TEST(fxcrt, ByteStringLeft) {
   EXPECT_EQ("FRED", fred.Left(4));
 
   EXPECT_EQ("", fred.Left(5));
-  EXPECT_EQ("", fred.Left(-1));
 
   CFX_ByteString empty;
   EXPECT_EQ("", empty.Left(0));
   EXPECT_EQ("", empty.Left(1));
-  EXPECT_EQ("", empty.Left(-1));
 }
 
 TEST(fxcrt, ByteStringRight) {
@@ -553,12 +533,10 @@ TEST(fxcrt, ByteStringRight) {
   EXPECT_EQ("FRED", fred.Right(4));
 
   EXPECT_EQ("", fred.Right(5));
-  EXPECT_EQ("", fred.Right(-1));
 
   CFX_ByteString empty;
   EXPECT_EQ("", empty.Right(0));
   EXPECT_EQ("", empty.Right(1));
-  EXPECT_EQ("", empty.Right(-1));
 }
 
 TEST(fxcrt, ByteStringFind) {
@@ -1009,12 +987,9 @@ TEST(fxcrt, ByteStringCMid) {
   CFX_ByteStringC longer_string("abcdef");
   EXPECT_EQ(longer_string, longer_string.Mid(0, 6));
   EXPECT_EQ("", longer_string.Mid(0, 187));
-  EXPECT_EQ("", longer_string.Mid(-42, 6));
-  EXPECT_EQ("", longer_string.Mid(-42, 187));
 
   CFX_ByteStringC leading_substring("ab");
   EXPECT_EQ(leading_substring, longer_string.Mid(0, 2));
-  EXPECT_EQ("", longer_string.Mid(-1, 2));
 
   CFX_ByteStringC middle_substring("bcde");
   EXPECT_EQ(middle_substring, longer_string.Mid(1, 4));
@@ -1027,9 +1002,6 @@ TEST(fxcrt, ByteStringCMid) {
 TEST(fxcrt, ByteStringCElementAccess) {
   // CFX_ByteStringC includes the NUL terminator for non-empty strings.
   CFX_ByteStringC abc("abc");
-#ifndef NDEBUG
-  EXPECT_DEATH({ abc[-1]; }, ".*");
-#endif
   EXPECT_EQ('a', static_cast<char>(abc[0]));
   EXPECT_EQ('b', static_cast<char>(abc[1]));
   EXPECT_EQ('c', static_cast<char>(abc[2]));

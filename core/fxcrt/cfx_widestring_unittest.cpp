@@ -12,9 +12,6 @@
 
 TEST(fxcrt, WideStringElementAccess) {
   const CFX_WideString abc(L"abc");
-#ifndef NDEBUG
-  EXPECT_DEATH({ abc[-1]; }, ".*");
-#endif
   EXPECT_EQ(L'a', abc[0]);
   EXPECT_EQ(L'b', abc[1]);
   EXPECT_EQ(L'c', abc[2]);
@@ -28,10 +25,8 @@ TEST(fxcrt, WideStringElementAccess) {
   EXPECT_EQ(L'b', mutable_abc[1]);
   EXPECT_EQ(L'c', mutable_abc[2]);
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
-#ifndef NDEBUG
-  EXPECT_DEATH({ mutable_abc.SetAt(-1, L'd'); }, ".*");
   EXPECT_EQ(L"abc", abc);
-#endif
+
   const wchar_t* c_str = abc.c_str();
   mutable_abc.SetAt(0, L'd');
   EXPECT_EQ(c_str, abc.c_str());
@@ -373,8 +368,6 @@ TEST(fxcrt, WideStringReplace) {
 
 TEST(fxcrt, WideStringInsert) {
   CFX_WideString fred(L"FRED");
-  EXPECT_EQ(4u, fred.Insert(-1, 'X'));
-  EXPECT_EQ(L"FRED", fred);
   EXPECT_EQ(5u, fred.Insert(0, 'S'));
   EXPECT_EQ(L"SFRED", fred);
   EXPECT_EQ(6u, fred.Insert(1, 'T'));
@@ -385,11 +378,6 @@ TEST(fxcrt, WideStringInsert) {
   EXPECT_EQ(L"STFRUEDV", fred);
   EXPECT_EQ(8u, fred.Insert(12, 'P'));
   EXPECT_EQ(L"STFRUEDV", fred);
-  {
-    CFX_WideString empty;
-    EXPECT_EQ(0u, empty.Insert(-1, 'X'));
-    EXPECT_NE(L"X", empty);
-  }
   {
     CFX_WideString empty;
     EXPECT_EQ(1u, empty.Insert(0, 'X'));
@@ -446,8 +434,6 @@ TEST(fxcrt, WideStringDelete) {
   EXPECT_EQ(L"ED", fred);
   EXPECT_EQ(1u, fred.Delete(1));
   EXPECT_EQ(L"E", fred);
-  EXPECT_EQ(1u, fred.Delete(-1));
-  EXPECT_EQ(L"E", fred);
   EXPECT_EQ(0u, fred.Delete(0));
   EXPECT_EQ(L"", fred);
   EXPECT_EQ(0u, fred.Delete(0));
@@ -455,8 +441,6 @@ TEST(fxcrt, WideStringDelete) {
 
   CFX_WideString empty;
   EXPECT_EQ(0u, empty.Delete(0));
-  EXPECT_EQ(L"", empty);
-  EXPECT_EQ(0u, empty.Delete(-1));
   EXPECT_EQ(L"", empty);
   EXPECT_EQ(0u, empty.Delete(1));
   EXPECT_EQ(L"", empty);
@@ -478,7 +462,6 @@ TEST(fxcrt, WideStringMid) {
   EXPECT_EQ(L"FRED", fred.Mid(0, 4));
   EXPECT_EQ(L"", fred.Mid(0, 10));
 
-  EXPECT_EQ(L"", fred.Mid(-1, 2));
   EXPECT_EQ(L"", fred.Mid(1, 4));
   EXPECT_EQ(L"", fred.Mid(4, 1));
 
@@ -495,12 +478,10 @@ TEST(fxcrt, WideStringLeft) {
   EXPECT_EQ(L"FRED", fred.Left(4));
 
   EXPECT_EQ(L"", fred.Left(5));
-  EXPECT_EQ(L"", fred.Left(-1));
 
   CFX_WideString empty;
   EXPECT_EQ(L"", empty.Left(0));
   EXPECT_EQ(L"", empty.Left(1));
-  EXPECT_EQ(L"", empty.Left(-1));
 }
 
 TEST(fxcrt, WideStringRight) {
@@ -512,12 +493,10 @@ TEST(fxcrt, WideStringRight) {
   EXPECT_EQ(L"FRED", fred.Right(4));
 
   EXPECT_EQ(L"", fred.Right(5));
-  EXPECT_EQ(L"", fred.Right(-1));
 
   CFX_WideString empty;
   EXPECT_EQ(L"", empty.Right(0));
   EXPECT_EQ(L"", empty.Right(1));
-  EXPECT_EQ(L"", empty.Right(-1));
 }
 
 TEST(fxcrt, WideStringFind) {
@@ -818,9 +797,6 @@ TEST(fxcrt, WideStringCFromVector) {
 
 TEST(fxcrt, WideStringCElementAccess) {
   CFX_WideStringC abc(L"abc");
-#ifndef NDEBUG
-  EXPECT_DEATH({ abc[-1]; }, ".*");
-#endif
   EXPECT_EQ(L'a', static_cast<wchar_t>(abc[0]));
   EXPECT_EQ(L'b', static_cast<wchar_t>(abc[1]));
   EXPECT_EQ(L'c', static_cast<wchar_t>(abc[2]));
