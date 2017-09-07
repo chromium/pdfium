@@ -155,3 +155,12 @@ TEST(cpdf_syntax_parser, GetInvalidReference) {
       parser.GetObject(nullptr, CPDF_Object::kInvalidObjNum, 0, false);
   EXPECT_FALSE(ref);
 }
+
+TEST(cpdf_syntax_parser, PeekNextWord) {
+  CPDF_SyntaxParser parser;
+  uint8_t data[] = "    WORD ";
+  parser.InitParser(
+      pdfium::MakeRetain<CFX_MemoryStream>(data, sizeof(data), false), 0);
+  EXPECT_EQ("WORD", parser.PeekNextWord(nullptr));
+  EXPECT_EQ("WORD", parser.GetNextWord(nullptr));
+}

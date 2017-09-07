@@ -65,6 +65,7 @@ class CPDF_SyntaxParser {
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   CFX_ByteString GetNextWord(bool* bIsNumber);
+  CFX_ByteString PeekNextWord(bool* bIsNumber);
 
   CFX_RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
 

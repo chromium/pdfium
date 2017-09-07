@@ -352,6 +352,11 @@ CFX_ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
              : CFX_ByteString((const char*)m_WordBuffer, m_WordSize);
 }
 
+CFX_ByteString CPDF_SyntaxParser::PeekNextWord(bool* bIsNumber) {
+  const CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
+  return GetNextWord(bIsNumber);
+}
+
 CFX_ByteString CPDF_SyntaxParser::GetKeyword() {
   return GetNextWord(nullptr);
 }
