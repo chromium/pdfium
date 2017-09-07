@@ -101,6 +101,7 @@ class CompareRun(object):
 
     conclusions = self._DrawConclusions(before, after)
     conclusions_dict = conclusions.GetOutputDict()
+    conclusions_dict.setdefault('metadata', {})['profiler'] = self.args.profiler
 
     self._PrintConclusions(conclusions_dict)
 

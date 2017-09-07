@@ -124,6 +124,7 @@ class ComparisonConclusions(object):
     Returns:
       A serializable dict with the format illustrated below:
       {
+        "version": 1,
         "params": {
           "threshold": 0.02
         },
@@ -176,6 +177,7 @@ class ComparisonConclusions(object):
       }
     """
     output_dict = {}
+    output_dict['version'] = 1
     output_dict['params'] = {'threshold': self.threshold_significant}
     output_dict['summary'] = self.summary.GetOutputDict()
     output_dict['comparison_by_case'] = {

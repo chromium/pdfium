@@ -14,10 +14,8 @@ import argparse
 import datetime
 import json
 import os
-import subprocess
 import sys
 
-from common import PrintErr
 from common import PrintWithTime
 from common import RunCommandPropagateErr
 from githelper import GitHelper
@@ -28,14 +26,14 @@ class JobContext(object):
   """Context for a single run, including name and directory paths."""
 
   def __init__(self, args):
-    self.run_name = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    self.datetime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     self.results_dir = args.results_dir
     self.last_revision_covered_file = os.path.join(self.results_dir,
                                                    'last_revision_covered')
     self.run_output_dir = os.path.join(self.results_dir,
-                                       'profiles_%s' % self.run_name)
+                                       'profiles_%s' % self.datetime)
     self.run_output_log_file = os.path.join(self.results_dir,
-                                            '%s.log' % self.run_name)
+                                            '%s.log' % self.datetime)
 
 
 class JobRun(object):
@@ -123,13 +121,19 @@ class JobRun(object):
     PrintWithTime('Incremental run, current is %s, last is %s'
                   % (current, last_revision_covered))
 
+    if not os.path.exists(self.context.run_output_dir):
+      os.makedirs(self.context.run_output_dir)
+
     if current == last_revision_covered:
       PrintWithTime('No changes seen, finishing job')
+      output_info = {
+          'metadata': self._BuildRunMetadata(last_revision_covered,
+                                             current,
+                                             False)}
+      self._WriteRawJson(output_info)
       return 0
 
     # Run compare
-    if not os.path.exists(self.context.run_output_dir):
-      os.makedirs(self.context.run_output_dir)
     cmd = ['testing/tools/safetynet_compare.py',
            '--this-repo',
            '--machine-readable',
@@ -143,6 +147,13 @@ class JobRun(object):
       return 1
 
     output_info = json.loads(json_output)
+
+    run_metadata = self._BuildRunMetadata(last_revision_covered,
+                                          current,
+                                          True)
+    output_info.setdefault('metadata', {}).update(run_metadata)
+    self._WriteRawJson(output_info)
+
     PrintConclusionsDictHumanReadable(output_info,
                                       colored=(not self.args.output_to_log
                                                and not self.args.no_color),
@@ -164,6 +175,20 @@ class JobRun(object):
     self._WriteCheckpoint(current)
 
     return status
+
+  def _WriteRawJson(self, output_info):
+    json_output_file = os.path.join(self.context.run_output_dir, 'raw.json')
+    with open(json_output_file, 'w') as f:
+      json.dump(output_info, f)
+
+  def _BuildRunMetadata(self, revision_before, revision_after,
+                        comparison_performed):
+    return {
+        'datetime': self.context.datetime,
+        'revision_before': revision_before,
+        'revision_after': revision_after,
+        'comparison_performed': comparison_performed,
+    }
 
   def _WriteCheckpoint(self, checkpoint):
     if not self.args.no_checkpoint:
