@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -23,7 +25,7 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLInstruction::Clone() {
   auto pClone = pdfium::MakeUnique<CFX_XMLInstruction>(GetName());
   pClone->SetAttributes(GetAttributes());
   pClone->m_TargetData = m_TargetData;
-  return pClone;
+  return std::move(pClone);
 }
 
 void CFX_XMLInstruction::AppendData(const CFX_WideString& wsData) {
