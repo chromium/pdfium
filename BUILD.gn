@@ -1570,8 +1570,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/cfwl_pushbutton.h",
       "xfa/fwl/cfwl_scrollbar.cpp",
       "xfa/fwl/cfwl_scrollbar.h",
-      "xfa/fwl/cfwl_spinbutton.cpp",
-      "xfa/fwl/cfwl_spinbutton.h",
       "xfa/fwl/cfwl_themebackground.h",
       "xfa/fwl/cfwl_themepart.cpp",
       "xfa/fwl/cfwl_themepart.h",

@@ -16,7 +16,6 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_messagesetfocus.h"
 #include "xfa/fwl/cfwl_notedriver.h"
-#include "xfa/fwl/cfwl_spinbutton.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
