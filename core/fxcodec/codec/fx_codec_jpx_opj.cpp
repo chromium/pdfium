@@ -12,7 +12,6 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
-#include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -431,15 +430,19 @@ void sycc420_to_rgb(opj_image_t* img) {
 }
 
 CJPX_Decoder::CJPX_Decoder(CPDF_ColorSpace* cs)
-    : image(nullptr), l_codec(nullptr), l_stream(nullptr), m_ColorSpace(cs) {}
+    : m_Image(nullptr),
+      m_Codec(nullptr),
+      m_DecodeData(nullptr),
+      m_Stream(nullptr),
+      m_ColorSpace(cs) {}
 
 CJPX_Decoder::~CJPX_Decoder() {
-  if (l_codec)
-    opj_destroy_codec(l_codec);
-  if (l_stream)
-    opj_stream_destroy(l_stream);
-  if (image)
-    opj_image_destroy(image);
+  if (m_Codec)
+    opj_destroy_codec(m_Codec);
+  if (m_Stream)
+    opj_stream_destroy(m_Stream);
+  if (m_Image)
+    opj_image_destroy(m_Image);
 }
 
 bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
@@ -448,134 +451,140 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   if (!src_data || src_size < sizeof(szJP2Header))
     return false;
 
-  image = nullptr;
+  m_Image = nullptr;
   m_SrcData = src_data;
   m_SrcSize = src_size;
-  DecodeData srcData(const_cast<unsigned char*>(src_data), src_size);
-  l_stream = fx_opj_stream_create_memory_stream(&srcData,
-                                                OPJ_J2K_STREAM_CHUNK_SIZE, 1);
-  if (!l_stream)
+  m_DecodeData = pdfium::MakeUnique<DecodeData>(
+      const_cast<unsigned char*>(src_data), src_size);
+  m_Stream = fx_opj_stream_create_memory_stream(
+      m_DecodeData.get(), static_cast<unsigned int>(OPJ_J2K_STREAM_CHUNK_SIZE),
+      1);
+  if (!m_Stream)
     return false;
 
-  opj_dparameters_t parameters;
-  opj_set_default_decoder_parameters(&parameters);
-  parameters.decod_format = 0;
-  parameters.cod_format = 3;
+  opj_set_default_decoder_parameters(&m_Parameters);
+  m_Parameters.decod_format = 0;
+  m_Parameters.cod_format = 3;
   if (memcmp(m_SrcData, szJP2Header, sizeof(szJP2Header)) == 0) {
-    l_codec = opj_create_decompress(OPJ_CODEC_JP2);
-    parameters.decod_format = 1;
+    m_Codec = opj_create_decompress(OPJ_CODEC_JP2);
+    m_Parameters.decod_format = 1;
   } else {
-    l_codec = opj_create_decompress(OPJ_CODEC_J2K);
+    m_Codec = opj_create_decompress(OPJ_CODEC_J2K);
   }
-  if (!l_codec)
+  if (!m_Codec)
     return false;
 
   if (m_ColorSpace && m_ColorSpace->GetFamily() == PDFCS_INDEXED)
-    parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
-  opj_set_info_handler(l_codec, fx_ignore_callback, nullptr);
-  opj_set_warning_handler(l_codec, fx_ignore_callback, nullptr);
-  opj_set_error_handler(l_codec, fx_ignore_callback, nullptr);
-  if (!opj_setup_decoder(l_codec, &parameters))
+    m_Parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
+  opj_set_info_handler(m_Codec, fx_ignore_callback, nullptr);
+  opj_set_warning_handler(m_Codec, fx_ignore_callback, nullptr);
+  opj_set_error_handler(m_Codec, fx_ignore_callback, nullptr);
+  if (!opj_setup_decoder(m_Codec, &m_Parameters))
     return false;
 
-  if (!opj_read_header(l_stream, l_codec, &image)) {
-    image = nullptr;
+  if (!opj_read_header(m_Stream, m_Codec, &m_Image)) {
+    m_Image = nullptr;
     return false;
   }
-  image->pdfium_use_colorspace = !!m_ColorSpace;
+  m_Image->pdfium_use_colorspace = !!m_ColorSpace;
 
-  if (!parameters.nb_tile_to_decode) {
-    if (!opj_set_decode_area(l_codec, image, parameters.DA_x0, parameters.DA_y0,
-                             parameters.DA_x1, parameters.DA_y1)) {
-      opj_image_destroy(image);
-      image = nullptr;
-      return false;
-    }
-    if (!(opj_decode(l_codec, l_stream, image) &&
-          opj_end_decompress(l_codec, l_stream))) {
-      opj_image_destroy(image);
-      image = nullptr;
-      return false;
-    }
-  } else {
-    if (!opj_get_decoded_tile(l_codec, l_stream, image,
-                              parameters.tile_index)) {
-      return false;
-    }
-  }
-  opj_stream_destroy(l_stream);
-  l_stream = nullptr;
-  if (image->color_space != OPJ_CLRSPC_SYCC && image->numcomps == 3 &&
-      image->comps[0].dx == image->comps[0].dy && image->comps[1].dx != 1) {
-    image->color_space = OPJ_CLRSPC_SYCC;
-  } else if (image->numcomps <= 2) {
-    image->color_space = OPJ_CLRSPC_GRAY;
-  }
-  if (image->color_space == OPJ_CLRSPC_SYCC)
-    color_sycc_to_rgb(image);
-
-  if (image->icc_profile_buf) {
-    // TODO(palmer): Using |opj_free| here resolves the crash described in
-    // https://crbug.com/737033, but ultimately we need to harmonize the
-    // memory allocation strategy across OpenJPEG and its PDFium callers.
-    opj_free(image->icc_profile_buf);
-    image->icc_profile_buf = nullptr;
-    image->icc_profile_len = 0;
-  }
   return true;
 }
 
 void CJPX_Decoder::GetInfo(uint32_t* width,
                            uint32_t* height,
                            uint32_t* components) {
-  *width = (uint32_t)image->x1;
-  *height = (uint32_t)image->y1;
-  *components = (uint32_t)image->numcomps;
+  *width = m_Image->x1;
+  *height = m_Image->y1;
+  *components = m_Image->numcomps;
 }
 
 bool CJPX_Decoder::Decode(uint8_t* dest_buf,
                           int pitch,
                           const std::vector<uint8_t>& offsets) {
-  if (image->comps[0].w != image->x1 || image->comps[0].h != image->y1)
+  if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
     return false;
 
-  if (pitch<(int)(image->comps[0].w * 8 * image->numcomps + 31)>> 5 << 2)
+  if (pitch<static_cast<int>(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>>
+      5 << 2)
     return false;
 
-  memset(dest_buf, 0xff, image->y1 * pitch);
-  std::vector<uint8_t*> channel_bufs(image->numcomps);
-  std::vector<int> adjust_comps(image->numcomps);
-  for (uint32_t i = 0; i < image->numcomps; i++) {
+  if (!m_Parameters.nb_tile_to_decode) {
+    if (!opj_set_decode_area(m_Codec, m_Image, m_Parameters.DA_x0,
+                             m_Parameters.DA_y0, m_Parameters.DA_x1,
+                             m_Parameters.DA_y1)) {
+      opj_image_destroy(m_Image);
+      m_Image = nullptr;
+      return false;
+    }
+    if (!(opj_decode(m_Codec, m_Stream, m_Image) &&
+          opj_end_decompress(m_Codec, m_Stream))) {
+      opj_image_destroy(m_Image);
+      m_Image = nullptr;
+      return false;
+    }
+  } else {
+    if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image,
+                              m_Parameters.tile_index)) {
+      return false;
+    }
+  }
+
+  opj_stream_destroy(m_Stream);
+  m_Stream = nullptr;
+  if (m_Image->color_space != OPJ_CLRSPC_SYCC && m_Image->numcomps == 3 &&
+      m_Image->comps[0].dx == m_Image->comps[0].dy &&
+      m_Image->comps[1].dx != 1) {
+    m_Image->color_space = OPJ_CLRSPC_SYCC;
+  } else if (m_Image->numcomps <= 2) {
+    m_Image->color_space = OPJ_CLRSPC_GRAY;
+  }
+  if (m_Image->color_space == OPJ_CLRSPC_SYCC)
+    color_sycc_to_rgb(m_Image);
+
+  if (m_Image->icc_profile_buf) {
+    // TODO(palmer): Using |opj_free| here resolves the crash described in
+    // https://crbug.com/737033, but ultimately we need to harmonize the
+    // memory allocation strategy across OpenJPEG and its PDFium callers.
+    opj_free(m_Image->icc_profile_buf);
+    m_Image->icc_profile_buf = nullptr;
+    m_Image->icc_profile_len = 0;
+  }
+
+  memset(dest_buf, 0xff, m_Image->y1 * pitch);
+  std::vector<uint8_t*> channel_bufs(m_Image->numcomps);
+  std::vector<int> adjust_comps(m_Image->numcomps);
+  for (uint32_t i = 0; i < m_Image->numcomps; i++) {
     channel_bufs[i] = dest_buf + offsets[i];
-    adjust_comps[i] = image->comps[i].prec - 8;
+    adjust_comps[i] = m_Image->comps[i].prec - 8;
     if (i > 0) {
-      if (image->comps[i].dx != image->comps[i - 1].dx ||
-          image->comps[i].dy != image->comps[i - 1].dy ||
-          image->comps[i].prec != image->comps[i - 1].prec) {
+      if (m_Image->comps[i].dx != m_Image->comps[i - 1].dx ||
+          m_Image->comps[i].dy != m_Image->comps[i - 1].dy ||
+          m_Image->comps[i].prec != m_Image->comps[i - 1].prec) {
         return false;
       }
     }
   }
-  int width = image->comps[0].w;
-  int height = image->comps[0].h;
-  for (uint32_t channel = 0; channel < image->numcomps; ++channel) {
+  int width = m_Image->comps[0].w;
+  int height = m_Image->comps[0].h;
+  for (uint32_t channel = 0; channel < m_Image->numcomps; ++channel) {
     uint8_t* pChannel = channel_bufs[channel];
     if (adjust_comps[channel] < 0) {
       for (int row = 0; row < height; ++row) {
         uint8_t* pScanline = pChannel + row * pitch;
         for (int col = 0; col < width; ++col) {
-          uint8_t* pPixel = pScanline + col * image->numcomps;
-          if (!image->comps[channel].data)
+          uint8_t* pPixel = pScanline + col * m_Image->numcomps;
+          if (!m_Image->comps[channel].data)
             continue;
 
-          int src = image->comps[channel].data[row * width + col];
-          src += image->comps[channel].sgnd
-                     ? 1 << (image->comps[channel].prec - 1)
+          int src = m_Image->comps[channel].data[row * width + col];
+          src += m_Image->comps[channel].sgnd
+                     ? 1 << (m_Image->comps[channel].prec - 1)
                      : 0;
           if (adjust_comps[channel] > 0) {
             *pPixel = 0;
           } else {
-            *pPixel = (uint8_t)(src << -adjust_comps[channel]);
+            *pPixel = static_cast<uint8_t>(src << -adjust_comps[channel]);
           }
         }
       }
@@ -583,16 +592,16 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
       for (int row = 0; row < height; ++row) {
         uint8_t* pScanline = pChannel + row * pitch;
         for (int col = 0; col < width; ++col) {
-          uint8_t* pPixel = pScanline + col * image->numcomps;
-          if (!image->comps[channel].data)
+          uint8_t* pPixel = pScanline + col * m_Image->numcomps;
+          if (!m_Image->comps[channel].data)
             continue;
 
-          int src = image->comps[channel].data[row * width + col];
-          src += image->comps[channel].sgnd
-                     ? 1 << (image->comps[channel].prec - 1)
+          int src = m_Image->comps[channel].data[row * width + col];
+          src += m_Image->comps[channel].sgnd
+                     ? 1 << (m_Image->comps[channel].prec - 1)
                      : 0;
           if (adjust_comps[channel] - 1 < 0) {
-            *pPixel = (uint8_t)((src >> adjust_comps[channel]));
+            *pPixel = static_cast<uint8_t>((src >> adjust_comps[channel]));
           } else {
             int tmpPixel = (src >> adjust_comps[channel]) +
                            ((src >> (adjust_comps[channel] - 1)) % 2);
@@ -601,7 +610,7 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
             } else if (tmpPixel < 0) {
               tmpPixel = 0;
             }
-            *pPixel = (uint8_t)tmpPixel;
+            *pPixel = static_cast<uint8_t>(tmpPixel);
           }
         }
       }
