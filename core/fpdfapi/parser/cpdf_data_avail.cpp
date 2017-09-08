@@ -266,7 +266,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
     case PDF_DATAAVAIL_HEADER:
       return CheckHeader();
     case PDF_DATAAVAIL_FIRSTPAGE:
-      return CheckFirstPage(pHints);
+      return CheckFirstPage();
     case PDF_DATAAVAIL_HINTTABLE:
       return CheckHintTables(pHints);
     case PDF_DATAAVAIL_END:
@@ -577,7 +577,7 @@ bool CPDF_DataAvail::CheckHeader() {
   return true;
 }
 
-bool CPDF_DataAvail::CheckFirstPage(DownloadHints* pHints) {
+bool CPDF_DataAvail::CheckFirstPage() {
   if (!m_pLinearized->GetFirstPageEndOffset() ||
       !m_pLinearized->GetFileSize() || !m_pLinearized->GetLastXRefOffset()) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
@@ -589,10 +589,10 @@ bool CPDF_DataAvail::CheckFirstPage(DownloadHints* pHints) {
   if ((FX_FILESIZE)dwEnd > m_dwFileLen)
     dwEnd = (uint32_t)m_dwFileLen;
 
-  int32_t iStartPos = (int32_t)(m_dwFileLen > 1024 ? 1024 : m_dwFileLen);
-  int32_t iSize = dwEnd > 1024 ? dwEnd - 1024 : 0;
-  if (!m_pFileAvail->IsDataAvail(iStartPos, iSize)) {
-    pHints->AddSegment(iStartPos, iSize);
+  const FX_FILESIZE start_pos = m_dwFileLen > 1024 ? 1024 : m_dwFileLen;
+  const uint32_t data_size = dwEnd > 1024 ? dwEnd - 1024 : 0;
+  if (!GetValidator()->IsDataRangeAvailable(start_pos, data_size)) {
+    GetValidator()->ScheduleDataDownload(start_pos, data_size);
     return false;
   }
 
