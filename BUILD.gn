@@ -1932,6 +1932,7 @@ test("pdfium_unittests") {
     "core/fxcrt/fx_coordinates_unittest.cpp",
     "core/fxcrt/fx_extension_unittest.cpp",
     "core/fxcrt/fx_memory_unittest.cpp",
+    "core/fxcrt/fx_random_unittest.cpp",
     "core/fxcrt/fx_string_unittest.cpp",
     "core/fxcrt/fx_system_unittest.cpp",
     "core/fxge/dib/cstretchengine_unittest.cpp",
