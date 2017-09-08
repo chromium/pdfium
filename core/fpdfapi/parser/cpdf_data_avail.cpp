@@ -1204,8 +1204,7 @@ bool CPDF_DataAvail::LoadPages() {
   return false;
 }
 
-CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData(
-    DownloadHints* pHints) {
+CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
   if (m_bLinearedDataOK)
     return DataAvailable;
   ASSERT(m_pLinearized);
@@ -1218,10 +1217,10 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData(
     if (!data_size.IsValid())
       return DataError;
 
-    if (!m_pFileAvail->IsDataAvail(m_pLinearized->GetLastXRefOffset(),
-                                   data_size.ValueOrDie())) {
-      pHints->AddSegment(m_pLinearized->GetLastXRefOffset(),
-                         data_size.ValueOrDie());
+    if (!GetValidator()->IsDataRangeAvailable(
+            m_pLinearized->GetLastXRefOffset(), data_size.ValueOrDie())) {
+      GetValidator()->ScheduleDataDownload(m_pLinearized->GetLastXRefOffset(),
+                                           data_size.ValueOrDie());
       return DataNotAvailable;
     }
 
@@ -1312,7 +1311,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       return nRet;
     }
 
-    DocAvailStatus nResult = CheckLinearizedData(pHints);
+    DocAvailStatus nResult = CheckLinearizedData();
     if (nResult != DataAvailable)
       return nResult;
 
@@ -1479,7 +1478,7 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
 
   const HintsScope hints_scope(GetValidator().Get(), pHints);
   if (m_pLinearized) {
-    DocAvailStatus nDocStatus = CheckLinearizedData(pHints);
+    DocAvailStatus nDocStatus = CheckLinearizedData();
     if (nDocStatus == DataError)
       return FormError;
     if (nDocStatus == DataNotAvailable)

@@ -158,7 +158,7 @@ class CPDF_DataAvail final {
   bool LoadPages();
   bool LoadAllXref(DownloadHints* pHints);
   bool LoadAllFile();
-  DocAvailStatus CheckLinearizedData(DownloadHints* pHints);
+  DocAvailStatus CheckLinearizedData();
   bool CheckPageAnnots(uint32_t dwPage);
 
   DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage);
