@@ -278,7 +278,7 @@ bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
     case PDF_DATAAVAIL_TRAILER:
       return CheckTrailer();
     case PDF_DATAAVAIL_LOADALLCROSSREF:
-      return LoadAllXref(pHints);
+      return LoadAllXref();
     case PDF_DATAAVAIL_LOADALLFILE:
       return LoadAllFile();
     case PDF_DATAAVAIL_ROOT:
@@ -330,7 +330,7 @@ bool CPDF_DataAvail::LoadAllFile() {
   return false;
 }
 
-bool CPDF_DataAvail::LoadAllXref(DownloadHints* pHints) {
+bool CPDF_DataAvail::LoadAllXref() {
   m_parser.m_pSyntax->InitParser(m_pFileRead, (uint32_t)m_dwHeaderOffset);
   if (!m_parser.LoadAllCrossRefV4(m_dwLastXRefOffset) &&
       !m_parser.LoadAllCrossRefV5(m_dwLastXRefOffset)) {

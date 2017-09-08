@@ -156,7 +156,7 @@ class CPDF_DataAvail final {
   bool GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
   bool PreparePageItem();
   bool LoadPages();
-  bool LoadAllXref(DownloadHints* pHints);
+  bool LoadAllXref();
   bool LoadAllFile();
   DocAvailStatus CheckLinearizedData();
   bool CheckPageAnnots(uint32_t dwPage);
