@@ -35,8 +35,7 @@ class CPDF_LinearizedHeader {
   bool HasHintTable() const;
   // Will only return values > 0.
   FX_FILESIZE GetHintStart() const { return m_szHintStart; }
-  // Will only return values > 0.
-  FX_FILESIZE GetHintLength() const { return m_szHintLength; }
+  uint32_t GetHintLength() const { return m_HintLength; }
 
  protected:
   explicit CPDF_LinearizedHeader(const CPDF_Dictionary* pDict);
@@ -49,7 +48,7 @@ class CPDF_LinearizedHeader {
   FX_FILESIZE m_szFirstPageEndOffset = 0;
   uint32_t m_FirstPageObjNum = 0;
   FX_FILESIZE m_szHintStart = 0;
-  FX_FILESIZE m_szHintLength = 0;
+  uint32_t m_HintLength = 0;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_HEADER_H_

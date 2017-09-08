@@ -400,12 +400,7 @@ bool CPDF_HintTables::GetPagePos(uint32_t index,
   return true;
 }
 
-CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
-    uint32_t index,
-    CPDF_DataAvail::DownloadHints* pHints) {
-  if (!pHints)
-    return CPDF_DataAvail::DataError;
-
+CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
   int nFirstPageNum = GetFirstPageNumber();
   if (!pdfium::base::IsValueInRangeForNumericType<uint32_t>(nFirstPageNum))
     return CPDF_DataAvail::DataError;
@@ -418,7 +413,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
   if (!dwLength)
     return CPDF_DataAvail::DataError;
 
-  if (!m_pDataAvail->IsDataAvail(m_szPageOffsetArray[index], dwLength, pHints))
+  if (!m_pDataAvail->IsDataAvail(m_szPageOffsetArray[index], dwLength))
     return CPDF_DataAvail::DataNotAvailable;
 
   // Download data of shared objects in the page.
@@ -449,8 +444,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
     if (!dwLength)
       return CPDF_DataAvail::DataError;
 
-    if (!m_pDataAvail->IsDataAvail(m_szSharedObjOffsetArray[dwIndex], dwLength,
-                                   pHints)) {
+    if (!m_pDataAvail->IsDataAvail(m_szSharedObjOffsetArray[dwIndex],
+                                   dwLength)) {
       return CPDF_DataAvail::DataNotAvailable;
     }
   }

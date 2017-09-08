@@ -98,7 +98,7 @@ class CPDF_DataAvail final {
                  bool bSupportHintTable);
   ~CPDF_DataAvail();
 
-  bool IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
+  bool IsDataAvail(FX_FILESIZE offset, uint32_t size);
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
   void SetDocument(CPDF_Document* pDoc);
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
@@ -126,10 +126,10 @@ class CPDF_DataAvail final {
   bool AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
                            bool bParsePage,
                            std::vector<CPDF_Object*>& ret_array);
-  bool CheckDocStatus(DownloadHints* pHints);
+  bool CheckDocStatus();
   bool CheckHeader();
   bool CheckFirstPage();
-  bool CheckHintTables(DownloadHints* pHints);
+  bool CheckHintTables();
   bool CheckEnd();
   bool CheckCrossRef();
   bool CheckCrossRefItem();

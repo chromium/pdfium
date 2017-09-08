@@ -61,7 +61,9 @@ CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict) {
       pHintStreamRange ? pHintStreamRange->GetCount() : 0;
   if (nHintStreamSize == 2 || nHintStreamSize == 4) {
     m_szHintStart = std::max(pHintStreamRange->GetIntegerAt(0), 0);
-    m_szHintLength = std::max(pHintStreamRange->GetIntegerAt(1), 0);
+    const FX_SAFE_UINT32 safe_hint_length = pHintStreamRange->GetIntegerAt(1);
+    if (safe_hint_length.IsValid())
+      m_HintLength = safe_hint_length.ValueOrDie();
   }
 }
 

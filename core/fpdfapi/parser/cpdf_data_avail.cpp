@@ -207,7 +207,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
   const HintsScope hints_scope(m_pFileRead.Get(), pHints);
 
   while (!m_bDocAvail) {
-    if (!CheckDocStatus(pHints))
+    if (!CheckDocStatus())
       return DataNotAvailable;
   }
 
@@ -261,14 +261,14 @@ bool CPDF_DataAvail::CheckAcroForm() {
   return true;
 }
 
-bool CPDF_DataAvail::CheckDocStatus(DownloadHints* pHints) {
+bool CPDF_DataAvail::CheckDocStatus() {
   switch (m_docStatus) {
     case PDF_DATAAVAIL_HEADER:
       return CheckHeader();
     case PDF_DATAAVAIL_FIRSTPAGE:
       return CheckFirstPage();
     case PDF_DATAAVAIL_HINTTABLE:
-      return CheckHintTables(pHints);
+      return CheckHintTables();
     case PDF_DATAAVAIL_END:
       return CheckEnd();
     case PDF_DATAAVAIL_CROSSREF:
@@ -601,9 +601,7 @@ bool CPDF_DataAvail::CheckFirstPage() {
   return true;
 }
 
-bool CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset,
-                                 uint32_t size,
-                                 DownloadHints* pHints) {
+bool CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset, uint32_t size) {
   if (offset < 0 || offset > m_dwFileLen)
     return true;
 
@@ -615,15 +613,14 @@ bool CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset,
   else
     size += 512;
 
-  if (!m_pFileAvail->IsDataAvail(offset, size)) {
-    if (pHints)
-      pHints->AddSegment(offset, size);
+  if (!GetValidator()->IsDataRangeAvailable(offset, size)) {
+    GetValidator()->ScheduleDataDownload(offset, size);
     return false;
   }
   return true;
 }
 
-bool CPDF_DataAvail::CheckHintTables(DownloadHints* pHints) {
+bool CPDF_DataAvail::CheckHintTables() {
   if (m_pLinearized->GetPageCount() <= 1) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return true;
@@ -633,10 +630,10 @@ bool CPDF_DataAvail::CheckHintTables(DownloadHints* pHints) {
     return false;
   }
 
-  FX_FILESIZE szHintStart = m_pLinearized->GetHintStart();
-  FX_FILESIZE szHintLength = m_pLinearized->GetHintLength();
+  const FX_FILESIZE szHintStart = m_pLinearized->GetHintStart();
+  const uint32_t szHintLength = m_pLinearized->GetHintLength();
 
-  if (!IsDataAvail(szHintStart, szHintLength, pHints))
+  if (!IsDataAvail(szHintStart, szHintLength))
     return false;
 
   m_syntaxParser.InitParser(m_pFileRead, m_dwHeaderOffset);
@@ -1316,7 +1313,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       return nResult;
 
     if (m_pHintTables) {
-      nResult = m_pHintTables->CheckPage(dwPage, pHints);
+      nResult = m_pHintTables->CheckPage(dwPage);
       if (nResult != DataAvailable)
         return nResult;
       m_pagesLoadState.insert(dwPage);

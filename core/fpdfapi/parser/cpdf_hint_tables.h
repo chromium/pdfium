@@ -28,9 +28,7 @@ class CPDF_HintTables {
                   FX_FILESIZE* szPageLength,
                   uint32_t* dwObjNum);
 
-  CPDF_DataAvail::DocAvailStatus CheckPage(
-      uint32_t index,
-      CPDF_DataAvail::DownloadHints* pHints);
+  CPDF_DataAvail::DocAvailStatus CheckPage(uint32_t index);
 
   bool LoadHintStream(CPDF_Stream* pHintStream);
 
