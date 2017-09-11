@@ -436,9 +436,12 @@ TEST(fxcodec, YUV420ToRGB) {
     y.h = y.w;
     img.x1 = y.w;
     img.y1 = y.h;
-    y.data = static_cast<OPJ_INT32*>(opj_calloc(y.w * y.h, sizeof(OPJ_INT32)));
-    v.data = static_cast<OPJ_INT32*>(opj_calloc(v.w * v.h, sizeof(OPJ_INT32)));
-    u.data = static_cast<OPJ_INT32*>(opj_calloc(u.w * u.h, sizeof(OPJ_INT32)));
+    y.data = static_cast<OPJ_INT32*>(
+        opj_image_data_alloc(y.w * y.h * sizeof(OPJ_INT32)));
+    v.data = static_cast<OPJ_INT32*>(
+        opj_image_data_alloc(v.w * v.h * sizeof(OPJ_INT32)));
+    u.data = static_cast<OPJ_INT32*>(
+        opj_image_data_alloc(u.w * u.h * sizeof(OPJ_INT32)));
     memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
     memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
     memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
@@ -457,9 +460,9 @@ TEST(fxcodec, YUV420ToRGB) {
       EXPECT_NE(img.comps[0].w, img.comps[2].w);
       EXPECT_NE(img.comps[0].h, img.comps[2].h);
     }
-    opj_free(img.comps[0].data);
-    opj_free(img.comps[1].data);
-    opj_free(img.comps[2].data);
+    opj_image_data_free(img.comps[0].data);
+    opj_image_data_free(img.comps[1].data);
+    opj_image_data_free(img.comps[2].data);
   }
   FX_Free(img.comps);
 }
