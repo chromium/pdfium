@@ -510,8 +510,9 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
     return false;
 
   if (pitch<static_cast<int>(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>>
-      5 << 2)
+      5 << 2) {
     return false;
+  }
 
   if (!m_Parameters.nb_tile_to_decode) {
     if (!opj_set_decode_area(m_Codec, m_Image, m_Parameters.DA_x0,
@@ -527,11 +528,9 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
       m_Image = nullptr;
       return false;
     }
-  } else {
-    if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image,
-                              m_Parameters.tile_index)) {
-      return false;
-    }
+  } else if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image,
+                                   m_Parameters.tile_index)) {
+    return false;
   }
 
   opj_stream_destroy(m_Stream);
@@ -609,11 +608,7 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
           } else {
             int tmpPixel = (src >> adjust_comps[channel]) +
                            ((src >> (adjust_comps[channel] - 1)) % 2);
-            if (tmpPixel > 255) {
-              tmpPixel = 255;
-            } else if (tmpPixel < 0) {
-              tmpPixel = 0;
-            }
+            tmpPixel = pdfium::clamp(tmpPixel, 0, 255);
             *pPixel = static_cast<uint8_t>(tmpPixel);
           }
         }
