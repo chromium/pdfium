@@ -116,7 +116,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
     ASSERT_TRUE(
         parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
 
-    ASSERT_TRUE(parser.LoadCrossRefV4(0, 0, false));
+    ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 17, 81, 0, 331, 409};
     const CPDF_Parser::ObjectType types[] = {
         CPDF_Parser::ObjectType::kFree,
@@ -147,7 +147,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
     ASSERT_TRUE(
         parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
 
-    ASSERT_TRUE(parser.LoadCrossRefV4(0, 0, false));
+    ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 0,     0,     25325, 0, 0,    0,
                                    0, 25518, 25635, 0,     0, 25777};
     const CPDF_Parser::ObjectType types[] = {
@@ -186,7 +186,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
     ASSERT_TRUE(
         parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
 
-    ASSERT_TRUE(parser.LoadCrossRefV4(0, 0, false));
+    ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 0, 0,     25325, 0, 0,    0,
                                    0, 0, 25635, 0,     0, 25777};
     const CPDF_Parser::ObjectType types[] = {
@@ -224,7 +224,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
     ASSERT_TRUE(
         parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
 
-    ASSERT_TRUE(parser.LoadCrossRefV4(0, 0, false));
+    ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 23, 0, 0, 0, 45, 179};
     const CPDF_Parser::ObjectType types[] = {
         CPDF_Parser::ObjectType::kFree,

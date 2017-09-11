@@ -379,7 +379,7 @@ bool CPDF_Parser::VerifyCrossRefV4() {
 }
 
 bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
-  if (!LoadCrossRefV4(xrefpos, 0, true))
+  if (!LoadCrossRefV4(xrefpos, true))
     return false;
 
   std::unique_ptr<CPDF_Dictionary> trailer = LoadTrailerV4();
@@ -411,7 +411,7 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
 
     // SLOW ...
     CrossRefList.insert(CrossRefList.begin(), xrefpos);
-    LoadCrossRefV4(xrefpos, 0, true);
+    LoadCrossRefV4(xrefpos, true);
 
     std::unique_ptr<CPDF_Dictionary> pDict(LoadTrailerV4());
     if (!pDict)
@@ -426,8 +426,12 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   }
 
   for (size_t i = 0; i < CrossRefList.size(); ++i) {
-    if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], false))
+    if (!LoadCrossRefV4(CrossRefList[i], false))
       return false;
+
+    if (XRefStreamList[i] && !LoadCrossRefV5(&XRefStreamList[i], false))
+      return false;
+
     if (i == 0 && !VerifyCrossRefV4())
       return false;
   }
@@ -466,7 +470,7 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
 
     // SLOW ...
     CrossRefList.insert(CrossRefList.begin(), xrefpos);
-    LoadCrossRefV4(xrefpos, 0, true);
+    LoadCrossRefV4(xrefpos, true);
 
     std::unique_ptr<CPDF_Dictionary> pDict(LoadTrailerV4());
     if (!pDict)
@@ -481,7 +485,10 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
   }
 
   for (size_t i = 1; i < CrossRefList.size(); ++i) {
-    if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], false))
+    if (!LoadCrossRefV4(CrossRefList[i], false))
+      return false;
+
+    if (XRefStreamList[i] && !LoadCrossRefV5(&XRefStreamList[i], false))
       return false;
   }
   return true;
@@ -622,7 +629,6 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
 }
 
 bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
-                                 FX_FILESIZE streampos,
                                  bool bSkip) {
   m_pSyntax->SetPos(pos);
   std::vector<CrossRefObjData> objects;
@@ -631,7 +637,7 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
 
   MergeCrossRefObjectsData(objects);
 
-  return !streampos || LoadCrossRefV5(&streampos, false);
+  return true;
 }
 
 void CPDF_Parser::MergeCrossRefObjectsData(
@@ -1359,7 +1365,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
 
   FX_FILESIZE dwFirstXRefOffset = m_pSyntax->GetPos();
   bool bXRefRebuilt = false;
-  bool bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, 0, false);
+  bool bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, false);
   if (!bLoadV4 && !LoadCrossRefV5(&dwFirstXRefOffset, true)) {
     if (!RebuildCrossRef())
       return FORMAT_ERROR;
