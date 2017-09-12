@@ -175,7 +175,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
   if (str.GetLength() <= 0)
     return 0;
 
-  ASSERT(str.GetLength() <= static_cast<FX_STRSIZE>(count));
   if (str.GetLength() > static_cast<FX_STRSIZE>(count))
     str = str.Left(static_cast<FX_STRSIZE>(count));
 
