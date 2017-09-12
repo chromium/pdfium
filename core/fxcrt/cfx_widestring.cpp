@@ -665,17 +665,19 @@ bool CFX_WideString::TryVSWPrintf(FX_STRSIZE size,
 
 void CFX_WideString::FormatV(const wchar_t* format, va_list argList) {
   va_list argListCopy;
-  FX_VA_COPY(argListCopy, argList);
+  va_copy(argListCopy, argList);
   int maxLen = vswprintf(nullptr, 0, format, argListCopy);
   va_end(argListCopy);
   if (maxLen <= 0) {
+    va_copy(argListCopy, argList);
     auto guess = GuessSizeForVSWPrintf(format, argListCopy);
+    va_end(argListCopy);
     if (!guess.has_value())
       return;
     maxLen = pdfium::base::checked_cast<int>(guess.value());
   }
   while (maxLen < 32 * 1024) {
-    FX_VA_COPY(argListCopy, argList);
+    va_copy(argListCopy, argList);
     bool bSufficientBuffer =
         TryVSWPrintf(static_cast<FX_STRSIZE>(maxLen), format, argListCopy);
     va_end(argListCopy);

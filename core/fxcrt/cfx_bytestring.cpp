@@ -473,20 +473,22 @@ CFX_ByteString CFX_ByteString::FormatInteger(int i) {
 }
 
 void CFX_ByteString::FormatV(const char* pFormat, va_list argList) {
-  va_list argListSave;
-  FX_VA_COPY(argListSave, argList);
-  FX_STRSIZE nMaxLen = vsnprintf(nullptr, 0, pFormat, argList);
+  va_list argListCopy;
+  va_copy(argListCopy, argList);
+  FX_STRSIZE nMaxLen = vsnprintf(nullptr, 0, pFormat, argListCopy);
+  va_end(argListCopy);
   if (nMaxLen > 0) {
     GetBuffer(nMaxLen);
     if (m_pData) {
       // In the following two calls, there's always space in the buffer for
       // a terminating NUL that's not included in nMaxLen.
       memset(m_pData->m_String, 0, nMaxLen + 1);
-      vsnprintf(m_pData->m_String, nMaxLen + 1, pFormat, argListSave);
+      va_copy(argListCopy, argList);
+      vsnprintf(m_pData->m_String, nMaxLen + 1, pFormat, argListCopy);
+      va_end(argListCopy);
       ReleaseBuffer(GetStringLength());
     }
   }
-  va_end(argListSave);
 }
 
 void CFX_ByteString::Format(const char* pFormat, ...) {

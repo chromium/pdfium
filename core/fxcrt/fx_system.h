@@ -263,13 +263,4 @@ int FXSYS_round(float f);
 #define NEVER_INLINE __attribute__((__noinline__))
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-// Handle differnces between platform's variadic function implementations.
-#if defined(__ARMCC_VERSION) ||                                              \
-    (!defined(_MSC_VER) && (_FX_CPU_ == _FX_X64_ || _FX_CPU_ == _FX_IA64_ || \
-                            _FX_CPU_ == _FX_ARM64_))
-#define FX_VA_COPY(dst, src) va_copy((dst), (src))
-#else
-#define FX_VA_COPY(dst, src) ((dst) = (src))
-#endif
-
 #endif  // CORE_FXCRT_FX_SYSTEM_H_
