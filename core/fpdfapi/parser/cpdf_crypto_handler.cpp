@@ -297,6 +297,10 @@ bool CPDF_CryptoHandler::Init(int cipher, const uint8_t* key, int keylen) {
   return true;
 }
 
+bool CPDF_CryptoHandler::IsCipherAES() const {
+  return m_Cipher == FXCIPHER_AES;
+}
+
 bool CPDF_CryptoHandler::DecryptStream(void* context,
                                        const uint8_t* src_buf,
                                        uint32_t src_size,

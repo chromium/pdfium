@@ -690,6 +690,9 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
 
   std::unique_ptr<uint8_t, FxFreeDeleter> pData;
   if (len > 0) {
+    if (pCryptoHandler && pCryptoHandler->IsCipherAES() && len < 16)
+      return nullptr;
+
     pData.reset(FX_Alloc(uint8_t, len));
     ReadBlock(pData.get(), len);
     if (pCryptoHandler) {

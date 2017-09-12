@@ -48,6 +48,7 @@ class CPDF_CryptoHandler : public CFX_Retainable {
                       uint32_t& dest_size);
 
   bool Init(int cipher, const uint8_t* key, int keylen);
+  bool IsCipherAES() const;
 
  private:
   CPDF_CryptoHandler();
