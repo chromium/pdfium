@@ -37,3 +37,5 @@
 *.user
 *.vcxproj
 *.xcodeproj
+*~
+
