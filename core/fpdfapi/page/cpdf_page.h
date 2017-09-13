@@ -38,11 +38,16 @@ class CPDF_Page : public CPDF_PageObjectHolder {
                               int xSize,
                               int ySize,
                               int iRotate) const;
+  CFX_Matrix GetDisplayMatrixWithTransformation(
+      int xPos,
+      int yPos,
+      int xSize,
+      int ySize,
+      const CFX_Matrix& transformation);
 
   float GetPageWidth() const { return m_PageWidth; }
   float GetPageHeight() const { return m_PageHeight; }
   CFX_FloatRect GetPageBBox() const { return m_BBox; }
-  const CFX_Matrix& GetPageMatrix() const { return m_PageMatrix; }
   int GetPageRotation() const;
   CPDF_PageRenderCache* GetRenderCache() const { return m_pPageRender.get(); }
 

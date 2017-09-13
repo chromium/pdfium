@@ -666,7 +666,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 //                          by FPDFBitmap_Create or retrieved by
 //                          FPDFImageObj_GetBitmap.
 //          page        -   Handle to the page. Returned by FPDF_LoadPage
-//          matrix      -   The transform matrix.
+//          matrix      -   The transform matrix. It must be invertible.
 //          clipping    -   The rect to clip to.
 //          flags       -   0 for normal display, or combination of the Page
 //                          Rendering flags defined above. With the FPDF_ANNOT
@@ -674,7 +674,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 //                          user-interaction, which are all annotations except
 //                          widget and popup annotations.
 // Return value:
-//          None.
+//          None. Note that behavior is undefined if det of |matrix| is 0.
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
                                 FPDF_PAGE page,
