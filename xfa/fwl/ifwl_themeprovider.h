@@ -7,8 +7,9 @@
 #ifndef XFA_FWL_IFWL_THEMEPROVIDER_H_
 #define XFA_FWL_IFWL_THEMEPROVIDER_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "xfa/fwl/theme/cfwl_widgettp.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;

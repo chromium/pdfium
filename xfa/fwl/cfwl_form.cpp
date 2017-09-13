@@ -21,7 +21,6 @@
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fwl/theme/cfwl_widgettp.h"
 
 CFWL_Form::CFWL_Form(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,

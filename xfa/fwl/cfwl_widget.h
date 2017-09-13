@@ -18,7 +18,6 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fwl/ifwl_widgetdelegate.h"
-#include "xfa/fwl/theme/cfwl_widgettp.h"
 
 enum class FWL_Type {
   Unknown = 0,
