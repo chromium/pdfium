@@ -50,11 +50,11 @@ FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
                         unsigned int G,
                         unsigned int B,
                         unsigned int A) {
-  if (!path || R > 255 || G > 255 || B > 255 || A > 255)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj || R > 255 || G > 255 || B > 255 || A > 255)
     return false;
 
   float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   pPathObj->m_GeneralState.SetStrokeAlpha(A / 255.f);
   pPathObj->m_ColorState.SetStrokeColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
@@ -68,10 +68,10 @@ FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
                         unsigned int* G,
                         unsigned int* B,
                         unsigned int* A) {
-  if (!path || !R || !G || !B || !A)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj || !R || !G || !B || !A)
     return false;
 
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   uint32_t strokeRGB = pPathObj->m_ColorState.GetStrokeRGB();
   *R = FXSYS_GetRValue(strokeRGB);
   *G = FXSYS_GetGValue(strokeRGB);
@@ -83,10 +83,10 @@ FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width) {
-  if (!path || width < 0.0f)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj || width < 0.0f)
     return false;
 
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   pPathObj->m_GraphState.SetLineWidth(width);
   pPathObj->SetDirty(true);
   return true;
@@ -105,10 +105,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
                                                           unsigned int* G,
                                                           unsigned int* B,
                                                           unsigned int* A) {
-  if (!path || !R || !G || !B || !A)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj || !R || !G || !B || !A)
     return false;
 
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   uint32_t fillRGB = pPathObj->m_ColorState.GetFillRGB();
   *R = FXSYS_GetRValue(fillRGB);
   *G = FXSYS_GetGValue(fillRGB);
@@ -121,10 +121,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
                                                     float x,
                                                     float y) {
-  if (!path)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
     return false;
 
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
   pPathObj->SetDirty(true);
   return true;
@@ -133,10 +133,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_LineTo(FPDF_PAGEOBJECT path,
                                                     float x,
                                                     float y) {
-  if (!path)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
     return false;
 
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::LineTo, false);
   pPathObj->SetDirty(true);
   return true;
@@ -149,10 +149,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
                                                       float y2,
                                                       float x3,
                                                       float y3) {
-  if (!path)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
     return false;
 
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x1, y1), FXPT_TYPE::BezierTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x2, y2), FXPT_TYPE::BezierTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x3, y3), FXPT_TYPE::BezierTo, false);
@@ -161,10 +161,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_Close(FPDF_PAGEOBJECT path) {
-  if (!path)
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
     return false;
 
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   if (pPathObj->m_Path.GetPoints().empty())
     return false;
 
@@ -176,10 +176,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_Close(FPDF_PAGEOBJECT path) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
                                                          int fillmode,
                                                          FPDF_BOOL stroke) {
-  if (!path)
-    return false;
-
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
+    return false;
 
   if (fillmode == FPDF_FILLMODE_ALTERNATE)
     pPathObj->m_FillType = FXFILL_ALTERNATE;
