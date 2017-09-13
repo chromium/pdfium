@@ -106,6 +106,10 @@ float MaskPercentFilled(const std::vector<bool>& mask,
   return count / (end - start);
 }
 
+bool IsHyphenCode(wchar_t c) {
+  return c == 0x2D || c == 0xAD;
+}
+
 }  // namespace
 
 PDFTEXT_Obj::PDFTEXT_Obj() {}
@@ -1215,36 +1219,37 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::GetTextObjectWritingMode(
   return m_TextlineDir;
 }
 
-bool CPDF_TextPage::IsHyphen(wchar_t curChar) {
-  CFX_WideString strCurText = m_TempTextBuf.MakeString();
-  if (strCurText.IsEmpty())
-    strCurText = m_TextBuf.AsStringC();
-  FX_STRSIZE nCount = strCurText.GetLength();
-  if (nCount < 1)
+bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
+  CFX_WideStringC curText;
+  if (!m_TempTextBuf.IsEmpty())
+    curText = m_TempTextBuf.AsStringC();
+  else if (!m_TextBuf.IsEmpty())
+    curText = m_TextBuf.AsStringC();
+  else
     return false;
-  FX_STRSIZE nIndex = nCount - 1;
-  wchar_t wcTmp = strCurText[nIndex];
-  while (wcTmp == 0x20 && nIndex > 0 && nIndex <= nCount - 1)
-    wcTmp = strCurText[--nIndex];
-  if (0x2D == wcTmp || 0xAD == wcTmp) {
-    if (--nIndex > 0) {
-      wchar_t preChar = strCurText[nIndex];
-      if (FXSYS_iswalpha(preChar) && FXSYS_iswalpha(curChar))
-        return true;
-    }
-    const PAGECHAR_INFO* preInfo;
-    if (!m_TempCharList.empty())
-      preInfo = &m_TempCharList.back();
-    else if (!m_CharList.empty())
-      preInfo = &m_CharList.back();
-    else
-      return false;
-    if (FPDFTEXT_CHAR_PIECE == preInfo->m_Flag &&
-        (0xAD == preInfo->m_Unicode || 0x2D == preInfo->m_Unicode)) {
-      return true;
-    }
-  }
-  return false;
+
+  curText = curText.TrimmedRight(0x20);
+  if (curText.GetLength() < 2)
+    return false;
+
+  // Extracting the last 2 characters, since they are all that matter
+  curText = curText.Right(2);
+  if (!IsHyphenCode(curText.Last()))
+    return false;
+
+  if (FXSYS_iswalpha(curText.First() && FXSYS_iswalnum(curChar)))
+    return true;
+
+  const PAGECHAR_INFO* preInfo;
+  if (!m_TempCharList.empty())
+    preInfo = &m_TempCharList.back();
+  else if (!m_CharList.empty())
+    preInfo = &m_CharList.back();
+  else
+    return false;
+
+  return FPDFTEXT_CHAR_PIECE == preInfo->m_Flag &&
+         IsHyphenCode(preInfo->m_Unicode);
 }
 
 CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(

@@ -132,7 +132,7 @@ class CPDF_TextPage {
     Hyphen,
   };
 
-  bool IsHyphen(wchar_t curChar);
+  bool IsHyphen(wchar_t curChar) const;
   bool IsControlChar(const PAGECHAR_INFO& charInfo);
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,

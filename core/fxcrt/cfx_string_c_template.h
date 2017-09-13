@@ -176,6 +176,20 @@ class CFX_StringCTemplate {
     return Mid(GetLength() - count, count);
   }
 
+  CFX_StringCTemplate TrimmedRight(CharType ch) const {
+    if (IsEmpty())
+      return CFX_StringCTemplate();
+
+    FX_STRSIZE pos = GetLength();
+    while (pos && CharAt(pos - 1) == ch)
+      pos--;
+
+    if (pos == 0)
+      return CFX_StringCTemplate();
+
+    return CFX_StringCTemplate(m_Ptr.Get(), pos);
+  }
+
   bool operator<(const CFX_StringCTemplate& that) const {
     int result = FXSYS_cmp(reinterpret_cast<const CharType*>(m_Ptr.Get()),
                            reinterpret_cast<const CharType*>(that.m_Ptr.Get()),

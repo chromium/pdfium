@@ -999,6 +999,14 @@ TEST(fxcrt, ByteStringCMid) {
   EXPECT_EQ("", longer_string.Mid(4, 3));
 }
 
+TEST(fxcrt, ByteStringCTrimmedRight) {
+  CFX_ByteStringC fred("FRED");
+  EXPECT_EQ("FRED", fred.TrimmedRight('E'));
+  EXPECT_EQ("FRE", fred.TrimmedRight('D'));
+  CFX_ByteStringC fredd("FREDD");
+  EXPECT_EQ("FRE", fred.TrimmedRight('D'));
+}
+
 TEST(fxcrt, ByteStringCElementAccess) {
   // CFX_ByteStringC includes the NUL terminator for non-empty strings.
   CFX_ByteStringC abc("abc");

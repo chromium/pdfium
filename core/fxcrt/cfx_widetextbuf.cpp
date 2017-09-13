@@ -6,6 +6,10 @@
 
 #include "core/fxcrt/cfx_widetextbuf.h"
 
+FX_STRSIZE CFX_WideTextBuf::GetLength() const {
+  return m_DataSize / sizeof(wchar_t);
+}
+
 void CFX_WideTextBuf::AppendChar(wchar_t ch) {
   ExpandBuf(sizeof(wchar_t));
   *(wchar_t*)(m_pBuffer.get() + m_DataSize) = ch;

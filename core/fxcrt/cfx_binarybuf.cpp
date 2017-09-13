@@ -28,6 +28,10 @@ void CFX_BinaryBuf::Delete(FX_STRSIZE start_index, FX_STRSIZE count) {
   m_DataSize -= count;
 }
 
+FX_STRSIZE CFX_BinaryBuf::GetLength() const {
+  return m_DataSize;
+}
+
 void CFX_BinaryBuf::Clear() {
   m_DataSize = 0;
 }

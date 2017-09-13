@@ -1038,6 +1038,14 @@ TEST(fxcrt, WideStringCAnyAllNoneOf) {
   EXPECT_FALSE(pdfium::ContainsValue(str, L'z'));
 }
 
+TEST(fxcrt, WideStringCTrimmedRight) {
+  CFX_WideStringC fred(L"FRED");
+  EXPECT_EQ(L"FRED", fred.TrimmedRight(L'E'));
+  EXPECT_EQ(L"FRE", fred.TrimmedRight(L'D'));
+  CFX_WideStringC fredd(L"FREDD");
+  EXPECT_EQ(L"FRE", fred.TrimmedRight(L'D'));
+}
+
 TEST(fxcrt, WideStringFormatWidth) {
   {
     CFX_WideString str;

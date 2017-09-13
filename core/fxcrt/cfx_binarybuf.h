@@ -17,10 +17,12 @@ class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
   explicit CFX_BinaryBuf(FX_STRSIZE size);
-  ~CFX_BinaryBuf();
+  virtual ~CFX_BinaryBuf();
 
   uint8_t* GetBuffer() const { return m_pBuffer.get(); }
   FX_STRSIZE GetSize() const { return m_DataSize; }
+  virtual FX_STRSIZE GetLength() const;
+  bool IsEmpty() const { return GetLength() == 0; }
 
   void Clear();
   void EstimateSize(FX_STRSIZE size, FX_STRSIZE alloc_step = 0);
