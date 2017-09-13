@@ -63,8 +63,8 @@ class CFDE_TextEditEngine {
 
   class Delegate {
    public:
+    virtual ~Delegate() = default;
     virtual void NotifyTextFull() = 0;
-
     virtual void OnCaretChanged() = 0;
     virtual void OnTextChanged(const CFX_WideString& prevText) = 0;
     virtual void OnSelChanged() = 0;
