@@ -756,6 +756,73 @@ TEST(fxcrt, WideStringReleaseBuffer) {
   }
 }
 
+TEST(fxcrt, WideStringEmptyReverseIterator) {
+  CFX_WideString empty;
+  auto iter = empty.rbegin();
+  EXPECT_TRUE(iter == empty.rend());
+  EXPECT_FALSE(iter != empty.rend());
+  EXPECT_FALSE(iter < empty.rend());
+}
+
+TEST(fxcrt, WideStringOneCharReverseIterator) {
+  CFX_WideString one_str(L"a");
+  auto iter = one_str.rbegin();
+  EXPECT_FALSE(iter == one_str.rend());
+  EXPECT_TRUE(iter != one_str.rend());
+  EXPECT_TRUE(iter < one_str.rend());
+
+  char ch = *iter++;
+  EXPECT_EQ('a', ch);
+  EXPECT_TRUE(iter == one_str.rend());
+  EXPECT_FALSE(iter != one_str.rend());
+  EXPECT_FALSE(iter < one_str.rend());
+}
+
+TEST(fxcrt, WideStringMultiCharReverseIterator) {
+  CFX_WideString multi_str(L"abcd");
+  auto iter = multi_str.rbegin();
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  char ch = *iter++;
+  EXPECT_EQ('d', ch);
+  EXPECT_EQ('c', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *(++iter);
+  EXPECT_EQ('b', ch);
+  EXPECT_EQ('b', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter++;
+  EXPECT_EQ('b', ch);
+  EXPECT_EQ('a', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter++;
+  EXPECT_EQ('a', ch);
+  EXPECT_TRUE(iter == multi_str.rend());
+
+  ch = *(--iter);
+  EXPECT_EQ('a', ch);
+  EXPECT_EQ('a', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter--;
+  EXPECT_EQ('a', ch);
+  EXPECT_EQ('b', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter--;
+  EXPECT_EQ('b', ch);
+  EXPECT_EQ('c', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *(--iter);
+  EXPECT_EQ('d', ch);
+  EXPECT_EQ('d', *iter);
+  EXPECT_TRUE(iter == multi_str.rbegin());
+}
+
 TEST(fxcrt, WideStringUTF16LE_Encode) {
   struct UTF16LEEncodeCase {
     CFX_WideString ws;
@@ -1020,6 +1087,73 @@ TEST(fxcrt, WideStringCMultiCharIterator) {
   }
   EXPECT_TRUE(any_present);
   EXPECT_EQ(static_cast<int32_t>(L'a' + L'b' + L'c'), sum);
+}
+
+TEST(fxcrt, WideStringCEmptyReverseIterator) {
+  CFX_WideStringC empty;
+  auto iter = empty.rbegin();
+  EXPECT_TRUE(iter == empty.rend());
+  EXPECT_FALSE(iter != empty.rend());
+  EXPECT_FALSE(iter < empty.rend());
+}
+
+TEST(fxcrt, WideStringCOneCharReverseIterator) {
+  CFX_WideStringC one_str(L"a");
+  auto iter = one_str.rbegin();
+  EXPECT_FALSE(iter == one_str.rend());
+  EXPECT_TRUE(iter != one_str.rend());
+  EXPECT_TRUE(iter < one_str.rend());
+
+  char ch = *iter++;
+  EXPECT_EQ('a', ch);
+  EXPECT_TRUE(iter == one_str.rend());
+  EXPECT_FALSE(iter != one_str.rend());
+  EXPECT_FALSE(iter < one_str.rend());
+}
+
+TEST(fxcrt, WideStringCMultiCharReverseIterator) {
+  CFX_WideStringC multi_str(L"abcd");
+  auto iter = multi_str.rbegin();
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  char ch = *iter++;
+  EXPECT_EQ('d', ch);
+  EXPECT_EQ('c', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *(++iter);
+  EXPECT_EQ('b', ch);
+  EXPECT_EQ('b', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter++;
+  EXPECT_EQ('b', ch);
+  EXPECT_EQ('a', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter++;
+  EXPECT_EQ('a', ch);
+  EXPECT_TRUE(iter == multi_str.rend());
+
+  ch = *(--iter);
+  EXPECT_EQ('a', ch);
+  EXPECT_EQ('a', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter--;
+  EXPECT_EQ('a', ch);
+  EXPECT_EQ('b', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *iter--;
+  EXPECT_EQ('b', ch);
+  EXPECT_EQ('c', *iter);
+  EXPECT_FALSE(iter == multi_str.rend());
+
+  ch = *(--iter);
+  EXPECT_EQ('d', ch);
+  EXPECT_EQ('d', *iter);
+  EXPECT_TRUE(iter == multi_str.rbegin());
 }
 
 TEST(fxcrt, WideStringCAnyAllNoneOf) {
