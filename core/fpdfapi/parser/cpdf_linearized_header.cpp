@@ -52,7 +52,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::CreateForObject(
 CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict) {
   m_szFileSize = pDict->GetIntegerFor("L");
   m_dwFirstPageNo = pDict->GetIntegerFor("P");
-  m_szLastXRefOffset = pDict->GetIntegerFor("T");
+  m_szMainXRefTableFirstEntryOffset = pDict->GetIntegerFor("T");
   m_PageCount = pDict->GetIntegerFor("N");
   m_szFirstPageEndOffset = pDict->GetIntegerFor("E");
   m_FirstPageObjNum = pDict->GetIntegerFor("O");

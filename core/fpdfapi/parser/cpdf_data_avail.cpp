@@ -578,7 +578,8 @@ bool CPDF_DataAvail::CheckHeader() {
 
 bool CPDF_DataAvail::CheckFirstPage() {
   if (!m_pLinearized->GetFirstPageEndOffset() ||
-      !m_pLinearized->GetFileSize() || !m_pLinearized->GetLastXRefOffset()) {
+      !m_pLinearized->GetFileSize() ||
+      !m_pLinearized->GetMainXRefTableFirstEntryOffset()) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
@@ -1167,7 +1168,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
   if (m_bLinearedDataOK)
     return DataAvailable;
   ASSERT(m_pLinearized);
-  if (!m_pLinearized->GetLastXRefOffset())
+  if (!m_pLinearized->GetMainXRefTableFirstEntryOffset())
     return DataError;
 
   if (!m_bMainXRefLoadTried) {

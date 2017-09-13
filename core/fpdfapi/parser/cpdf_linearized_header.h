@@ -25,7 +25,9 @@ class CPDF_LinearizedHeader {
   FX_FILESIZE GetFileSize() const { return m_szFileSize; }
   uint32_t GetFirstPageNo() const { return m_dwFirstPageNo; }
   // Will only return values > 0.
-  FX_FILESIZE GetLastXRefOffset() const { return m_szLastXRefOffset; }
+  FX_FILESIZE GetMainXRefTableFirstEntryOffset() const {
+    return m_szMainXRefTableFirstEntryOffset;
+  }
   uint32_t GetPageCount() const { return m_PageCount; }
   // Will only return values > 0.
   FX_FILESIZE GetFirstPageEndOffset() const { return m_szFirstPageEndOffset; }
@@ -43,7 +45,7 @@ class CPDF_LinearizedHeader {
  private:
   FX_FILESIZE m_szFileSize = 0;
   uint32_t m_dwFirstPageNo = 0;
-  FX_FILESIZE m_szLastXRefOffset = 0;
+  FX_FILESIZE m_szMainXRefTableFirstEntryOffset = 0;
   uint32_t m_PageCount = 0;
   FX_FILESIZE m_szFirstPageEndOffset = 0;
   uint32_t m_FirstPageObjNum = 0;
