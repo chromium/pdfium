@@ -182,6 +182,40 @@ TEST_F(FPDFDocEmbeddertest, DeletePage) {
   EXPECT_EQ(0, FPDF_GetPageCount(document()));
 }
 
+TEST_F(FPDFDocEmbeddertest, GetMetaText) {
+  ASSERT_TRUE(OpenDocument("bug_601362.pdf"));
+
+  // Invalid document / tag results in 0.
+  unsigned short buf[128];
+  EXPECT_EQ(0u, FPDF_GetMetaText(document(), nullptr, buf, sizeof(buf)));
+  EXPECT_EQ(0u, FPDF_GetMetaText(nullptr, "", buf, sizeof(buf)));
+
+  // Tags that do not eixst results in an empty wide string.
+  EXPECT_EQ(2u, FPDF_GetMetaText(document(), "", buf, sizeof(buf)));
+  EXPECT_EQ(2u, FPDF_GetMetaText(document(), "foo", buf, sizeof(buf)));
+  ASSERT_EQ(2u, FPDF_GetMetaText(document(), "Title", buf, sizeof(buf)));
+  ASSERT_EQ(2u, FPDF_GetMetaText(document(), "Author", buf, sizeof(buf)));
+  ASSERT_EQ(2u, FPDF_GetMetaText(document(), "Subject", buf, sizeof(buf)));
+  ASSERT_EQ(2u, FPDF_GetMetaText(document(), "Keywords", buf, sizeof(buf)));
+  ASSERT_EQ(2u, FPDF_GetMetaText(document(), "Producer", buf, sizeof(buf)));
+
+  constexpr wchar_t kExpectedCreator[] = L"Microsoft Word";
+  ASSERT_EQ(30u, FPDF_GetMetaText(document(), "Creator", buf, sizeof(buf)));
+  EXPECT_EQ(CFX_WideString(kExpectedCreator),
+            CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedCreator)));
+
+  constexpr wchar_t kExpectedCreationDate[] = L"D:20160411190039+00'00'";
+  ASSERT_EQ(48u,
+            FPDF_GetMetaText(document(), "CreationDate", buf, sizeof(buf)));
+  EXPECT_EQ(CFX_WideString(kExpectedCreationDate),
+            CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedCreationDate)));
+
+  constexpr wchar_t kExpectedModDate[] = L"D:20160411190039+00'00'";
+  ASSERT_EQ(48u, FPDF_GetMetaText(document(), "ModDate", buf, sizeof(buf)));
+  EXPECT_EQ(CFX_WideString(kExpectedModDate),
+            CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
+}
+
 TEST_F(FPDFDocEmbeddertest, NoPageLabels) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
