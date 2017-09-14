@@ -49,6 +49,9 @@ CJBig2_ArithIntDecoder::~CJBig2_ArithIntDecoder() {}
 
 bool CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
                                     int* nResult) {
+  // This decoding algorithm is explained in "Annex A - Arithmetic Integer
+  // Decoding Procedure" on page 113 of the JBIG2 specification (ISO/IEC FCD
+  // 14492).
   int PREV = 1;
   const int S = pArithDecoder->DECODE(&m_IAx[PREV]);
   PREV = ShiftOr(PREV, S);
@@ -64,8 +67,17 @@ bool CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
       PREV = (PREV & 511) | 256;
     nTemp = ShiftOr(nTemp, D);
   }
-  int nValue = g_ArithIntDecodeData[nDecodeDataIndex].nValue;
-  nValue += nTemp;
+  pdfium::base::CheckedNumeric<int> safeValue =
+      g_ArithIntDecodeData[nDecodeDataIndex].nValue;
+  safeValue += nTemp;
+
+  // Value does not fit in int.
+  if (!safeValue.IsValid()) {
+    *nResult = 0;
+    return false;
+  }
+
+  int nValue = safeValue.ValueOrDie();
   if (S == 1 && nValue > 0)
     nValue = -nValue;
 
