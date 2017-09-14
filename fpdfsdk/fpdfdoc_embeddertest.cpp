@@ -216,6 +216,30 @@ TEST_F(FPDFDocEmbeddertest, GetMetaText) {
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
 }
 
+TEST_F(FPDFDocEmbeddertest, GetMetaTextSameObjectNumber) {
+  ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
+
+  // The PDF has been edited. It has two %%EOF markers, and 2 objects numbered
+  // (1 0). Both objects are /Info dictionaries, but contain different data.
+  // Make sure ModDate is the date of the last modification.
+  unsigned short buf[128];
+  constexpr wchar_t kExpectedModDate[] = L"D:20170612232940-04'00'";
+  ASSERT_EQ(48u, FPDF_GetMetaText(document(), "ModDate", buf, sizeof(buf)));
+  EXPECT_EQ(CFX_WideString(kExpectedModDate),
+            CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
+}
+
+TEST_F(FPDFDocEmbeddertest, GetMetaTextInAttachmentFile) {
+  ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
+
+  // Make sure this is the date from the PDF itself and not the attached PDF.
+  unsigned short buf[128];
+  constexpr wchar_t kExpectedModDate[] = L"D:20170712214448-07'00'";
+  ASSERT_EQ(48u, FPDF_GetMetaText(document(), "ModDate", buf, sizeof(buf)));
+  EXPECT_EQ(CFX_WideString(kExpectedModDate),
+            CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
+}
+
 TEST_F(FPDFDocEmbeddertest, NoPageLabels) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
