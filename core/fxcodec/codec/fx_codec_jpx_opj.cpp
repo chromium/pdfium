@@ -492,28 +492,6 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   }
   m_Image->pdfium_use_colorspace = !!m_ColorSpace;
 
-  return true;
-}
-
-void CJPX_Decoder::GetInfo(uint32_t* width,
-                           uint32_t* height,
-                           uint32_t* components) {
-  *width = m_Image->x1;
-  *height = m_Image->y1;
-  *components = m_Image->numcomps;
-}
-
-bool CJPX_Decoder::Decode(uint8_t* dest_buf,
-                          int pitch,
-                          const std::vector<uint8_t>& offsets) {
-  if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
-    return false;
-
-  if (pitch<static_cast<int>(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>>
-      5 << 2) {
-    return false;
-  }
-
   if (!m_Parameters.nb_tile_to_decode) {
     if (!opj_set_decode_area(m_Codec, m_Image, m_Parameters.DA_x0,
                              m_Parameters.DA_y0, m_Parameters.DA_x1,
@@ -552,6 +530,28 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
     opj_free(m_Image->icc_profile_buf);
     m_Image->icc_profile_buf = nullptr;
     m_Image->icc_profile_len = 0;
+  }
+
+  return true;
+}
+
+void CJPX_Decoder::GetInfo(uint32_t* width,
+                           uint32_t* height,
+                           uint32_t* components) {
+  *width = m_Image->x1;
+  *height = m_Image->y1;
+  *components = m_Image->numcomps;
+}
+
+bool CJPX_Decoder::Decode(uint8_t* dest_buf,
+                          int pitch,
+                          const std::vector<uint8_t>& offsets) {
+  if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
+    return false;
+
+  if (pitch<static_cast<int>(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>>
+      5 << 2) {
+    return false;
   }
 
   memset(dest_buf, 0xff, m_Image->y1 * pitch);
