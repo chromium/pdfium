@@ -552,6 +552,16 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
                                                           unsigned int* B,
                                                           unsigned int* A);
 
+// Get number of point objects inside |path|.
+//
+//   path - handle to a path.
+//
+// A point object is a command, created by e.g. FPDFPath_MoveTo() or
+// FPDFPath_LineTo().
+//
+// Returns the number of objects in |path| or -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountPoint(FPDF_PAGEOBJECT path);
+
 // Move a path's current point.
 //
 // path   - the handle to the path object.

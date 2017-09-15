@@ -118,6 +118,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
   return true;
 }
 
+FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountPoint(FPDF_PAGEOBJECT path) {
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
+    return -1;
+  return pdfium::CollectionSize<int>(pPathObj->m_Path.GetPoints());
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
                                                     float x,
                                                     float y) {

@@ -256,6 +256,10 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_EQ(0U, B);
   EXPECT_EQ(128U, A);
 
+  // Make sure the path has 5 points (1 FXPT_TYPE::MoveTo and 4
+  // FXPT_TYPE::LineTo).
+  ASSERT_EQ(5, FPDFPath_CountPoint(green_rect));
+
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_WINDING, 0));
   FPDFPage_InsertObject(page, green_rect);
   page_bitmap = RenderPage(page);
@@ -269,6 +273,11 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_TRUE(FPDFPath_LineTo(black_path, 400, 200));
   EXPECT_TRUE(FPDFPath_LineTo(black_path, 300, 100));
   EXPECT_TRUE(FPDFPath_Close(black_path));
+
+  // Make sure the path has 3 points (1 FXPT_TYPE::MoveTo and 2
+  // FXPT_TYPE::LineTo).
+  ASSERT_EQ(3, FPDFPath_CountPoint(black_path));
+
   FPDFPage_InsertObject(page, black_path);
   page_bitmap = RenderPage(page);
   CompareBitmap(page_bitmap, 612, 792, "eadc8020a14dfcf091da2688733d8806");
@@ -297,6 +306,18 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
 
   // Render the saved result
   TestAndCloseSaved(612, 792, last_md5);
+}
+
+TEST_F(FPDFEditEmbeddertest, PathsPoints) {
+  CreateNewDocument();
+  FPDF_PAGEOBJECT img = FPDFPageObj_NewImageObj(document_);
+  // This should fail gracefully, even if img is not a path.
+  ASSERT_EQ(-1, FPDFPath_CountPoint(img));
+
+  // This should fail gracefully, even if path is NULL.
+  ASSERT_EQ(-1, FPDFPath_CountPoint(nullptr));
+
+  FPDFPageObj_Destroy(img);
 }
 
 TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
