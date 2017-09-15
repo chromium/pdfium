@@ -506,6 +506,17 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_707673) {
   EXPECT_EQ(0u, alerts.size());
 }
 
+TEST_F(FPDFFormFillEmbeddertest, BUG_765384) {
+  EXPECT_TRUE(OpenDocument("bug_765384.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  DoOpenActions();
+  FORM_OnLButtonDown(form_handle(), page, 0, 140, 590);
+  FORM_OnLButtonUp(form_handle(), page, 0, 140, 590);
+  UnloadPage(page);
+}
+
 #endif  // PDF_ENABLE_V8
 
 TEST_F(FPDFFormFillEmbeddertest, FormText) {
