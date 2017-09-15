@@ -4033,6 +4033,9 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
     case XFA_ObjectType::ContainerNode: {
       if (XFA_FieldIsMultiListBox(this)) {
         CXFA_Node* pValue = GetProperty(0, XFA_Element::Value);
+        if (!pValue)
+          break;
+
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
         ASSERT(pChildValue);
         pChildValue->SetCData(XFA_ATTRIBUTE_ContentType, L"text/xml");
@@ -4106,10 +4109,14 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
           }
         }
         break;
-      } else if (GetElementType() == XFA_Element::ExclGroup) {
+      }
+      if (GetElementType() == XFA_Element::ExclGroup) {
         pNode = this;
       } else {
         CXFA_Node* pValue = GetProperty(0, XFA_Element::Value);
+        if (!pValue)
+          break;
+
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
         ASSERT(pChildValue);
         pChildValue->SetScriptContent(wsContent, wsContent, bNotify,
@@ -4147,7 +4154,7 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       }
       return pContentRawDataNode->SetScriptContent(
           wsContent, wsXMLValue, bNotify, bScriptModify, bSyncData);
-    } break;
+    }
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::TextNode:
       pNode = this;
@@ -4178,17 +4185,17 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       }
       break;
   }
-  if (pNode) {
-    SetAttributeValue(wsContent, wsXMLValue, bNotify, bScriptModify);
-    if (pBindNode && bSyncData) {
-      for (CXFA_Node* pArrayNode : pBindNode->GetBindItems()) {
-        pArrayNode->SetScriptContent(wsContent, wsContent, bNotify,
-                                     bScriptModify, false);
-      }
+  if (!pNode)
+    return false;
+
+  SetAttributeValue(wsContent, wsXMLValue, bNotify, bScriptModify);
+  if (pBindNode && bSyncData) {
+    for (CXFA_Node* pArrayNode : pBindNode->GetBindItems()) {
+      pArrayNode->SetScriptContent(wsContent, wsContent, bNotify, bScriptModify,
+                                   false);
     }
-    return true;
   }
-  return false;
+  return true;
 }
 
 bool CXFA_Node::SetContent(const CFX_WideString& wsContent,
