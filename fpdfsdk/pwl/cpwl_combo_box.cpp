@@ -151,9 +151,9 @@ CFX_ByteString CPWL_ComboBox::GetClassName() const {
   return "CPWL_ComboBox";
 }
 
-void CPWL_ComboBox::OnCreate(PWL_CREATEPARAM& cp) {
-  cp.dwFlags &= ~PWS_HSCROLL;
-  cp.dwFlags &= ~PWS_VSCROLL;
+void CPWL_ComboBox::OnCreate(CreateParams* pParamsToAdjust) {
+  pParamsToAdjust->dwFlags &= ~PWS_HSCROLL;
+  pParamsToAdjust->dwFlags &= ~PWS_VSCROLL;
 }
 
 void CPWL_ComboBox::OnDestroy() {
@@ -237,20 +237,20 @@ void CPWL_ComboBox::ClearSelection() {
     m_pEdit->ClearSelection();
 }
 
-void CPWL_ComboBox::CreateChildWnd(const PWL_CREATEPARAM& cp) {
+void CPWL_ComboBox::CreateChildWnd(const CreateParams& cp) {
   CreateEdit(cp);
   CreateButton(cp);
   CreateListBox(cp);
 }
 
-void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
+void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
   if (m_pEdit)
     return;
 
   m_pEdit = new CPWL_Edit();
   m_pEdit->AttachFFLData(m_pFormFiller.Get());
 
-  PWL_CREATEPARAM ecp = cp;
+  CreateParams ecp = cp;
   ecp.pParentWnd = this;
   ecp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PES_CENTER |
                 PES_AUTOSCROLL | PES_UNDO;
@@ -267,13 +267,13 @@ void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
   m_pEdit->Create(ecp);
 }
 
-void CPWL_ComboBox::CreateButton(const PWL_CREATEPARAM& cp) {
+void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   if (m_pButton)
     return;
 
   m_pButton = new CPWL_CBButton;
 
-  PWL_CREATEPARAM bcp = cp;
+  CreateParams bcp = cp;
   bcp.pParentWnd = this;
   bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
   bcp.sBackgroundColor = CFX_Color(COLORTYPE_RGB, 220.0f / 255.0f,
@@ -285,14 +285,14 @@ void CPWL_ComboBox::CreateButton(const PWL_CREATEPARAM& cp) {
   m_pButton->Create(bcp);
 }
 
-void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
+void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   if (m_pList)
     return;
 
   m_pList = new CPWL_CBListBox();
   m_pList->AttachFFLData(m_pFormFiller.Get());
 
-  PWL_CREATEPARAM lcp = cp;
+  CreateParams lcp = cp;
   lcp.pParentWnd = this;
   lcp.dwFlags =
       PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;

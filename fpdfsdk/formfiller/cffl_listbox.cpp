@@ -22,8 +22,8 @@ CFFL_ListBox::CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_ListBox::~CFFL_ListBox() {}
 
-PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
-  PWL_CREATEPARAM cp = CFFL_TextObject::GetCreateParam();
+CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
+  CPWL_Wnd::CreateParams cp = CFFL_TextObject::GetCreateParam();
   uint32_t dwFieldFlag = m_pWidget->GetFieldFlags();
   if (dwFieldFlag & FIELDFLAG_MULTISELECT)
     cp.dwFlags |= PLBS_MULTIPLESEL;
@@ -37,8 +37,8 @@ PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
   return cp;
 }
 
-CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp) {
-  CPWL_ListBox* pWnd = new CPWL_ListBox();
+CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
+  auto* pWnd = new CPWL_ListBox();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());

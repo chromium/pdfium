@@ -15,24 +15,20 @@ CFX_ByteString CPWL_Button::GetClassName() const {
   return "CPWL_Button";
 }
 
-void CPWL_Button::OnCreate(PWL_CREATEPARAM& cp) {
-  cp.eCursorType = FXCT_HAND;
+void CPWL_Button::OnCreate(CreateParams* pParamsToAdjust) {
+  pParamsToAdjust->eCursorType = FXCT_HAND;
 }
 
 bool CPWL_Button::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
-
   m_bMouseDown = true;
   SetCapture();
-
   return true;
 }
 
 bool CPWL_Button::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
-
   ReleaseCapture();
   m_bMouseDown = false;
-
   return true;
 }

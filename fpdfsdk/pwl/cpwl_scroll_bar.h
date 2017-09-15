@@ -50,7 +50,7 @@ class CPWL_SBButton : public CPWL_Wnd {
 
   // CPWL_Wnd
   CFX_ByteString GetClassName() const override;
-  void OnCreate(PWL_CREATEPARAM& cp) override;
+  void OnCreate(CreateParams* pParamsToAdjust) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
@@ -120,9 +120,9 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   explicit CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType = SBT_HSCROLL);
   ~CPWL_ScrollBar() override;
 
-  // CPWL_Wnd
+  // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
-  void OnCreate(PWL_CREATEPARAM& cp) override;
+  void OnCreate(CreateParams* pParamsToAdjust) override;
   void OnDestroy() override;
   void RePosChildWnd() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -134,7 +134,7 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos) override;
-  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void CreateChildWnd(const CreateParams& cp) override;
   void TimerProc() override;
 
   float GetScrollBarWidth() const;
@@ -151,7 +151,7 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   CFX_FloatRect GetScrollArea() const;
 
  private:
-  void CreateButtons(const PWL_CREATEPARAM& cp);
+  void CreateButtons(const CreateParams& cp);
 
   void OnMinButtonLBDown(const CFX_PointF& point);
   void OnMinButtonLBUp(const CFX_PointF& point);

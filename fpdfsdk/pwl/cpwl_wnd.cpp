@@ -21,7 +21,7 @@ constexpr float kDefaultFontSize = 9.0f;
 
 }  // namespace
 
-PWL_CREATEPARAM::PWL_CREATEPARAM()
+CPWL_Wnd::CreateParams::CreateParams()
     : rcRectWnd(0, 0, 0, 0),
       pSystemHandler(nullptr),
       pFontMap(nullptr),
@@ -42,7 +42,7 @@ PWL_CREATEPARAM::PWL_CREATEPARAM()
       pMsgControl(nullptr),
       eCursorType(FXCT_ARROW) {}
 
-PWL_CREATEPARAM::PWL_CREATEPARAM(const PWL_CREATEPARAM& other) = default;
+CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 
 class CPWL_MsgControl : public CFX_Observable<CPWL_MsgControl> {
   friend class CPWL_Wnd;
@@ -148,52 +148,47 @@ CFX_ByteString CPWL_Wnd::GetClassName() const {
   return "CPWL_Wnd";
 }
 
-void CPWL_Wnd::Create(const PWL_CREATEPARAM& cp) {
+void CPWL_Wnd::Create(const CreateParams& cp) {
   if (IsValid())
     return;
 
-  m_sPrivateParam = cp;
-  OnCreate(m_sPrivateParam);
-
-  m_sPrivateParam.rcRectWnd.Normalize();
-  m_rcWindow = m_sPrivateParam.rcRectWnd;
+  m_CreationParams = cp;
+  OnCreate(&m_CreationParams);
+  m_CreationParams.rcRectWnd.Normalize();
+  m_rcWindow = m_CreationParams.rcRectWnd;
   m_rcClip = m_rcWindow;
   if (!m_rcClip.IsEmpty()) {
     m_rcClip.Inflate(1.0f, 1.0f);
     m_rcClip.Normalize();
   }
   CreateMsgControl();
+  if (m_CreationParams.pParentWnd)
+    m_CreationParams.pParentWnd->AddChild(this);
 
-  if (m_sPrivateParam.pParentWnd)
-    m_sPrivateParam.pParentWnd->AddChild(this);
-
-  PWL_CREATEPARAM ccp = m_sPrivateParam;
-
+  CreateParams ccp = m_CreationParams;
   ccp.dwFlags &= 0xFFFF0000L;  // remove sub styles
   CreateScrollBar(ccp);
   CreateChildWnd(ccp);
-
   m_bVisible = HasFlag(PWS_VISIBLE);
   OnCreated();
-
   RePosChildWnd();
   m_bCreated = true;
 }
 
-void CPWL_Wnd::OnCreate(PWL_CREATEPARAM& cp) {}
+void CPWL_Wnd::OnCreate(CreateParams* pParamsToAdjust) {}
 
 void CPWL_Wnd::OnCreated() {}
 
 void CPWL_Wnd::OnDestroy() {}
 
 void CPWL_Wnd::InvalidateFocusHandler(IPWL_FocusHandler* handler) {
-  if (m_sPrivateParam.pFocusHandler == handler)
-    m_sPrivateParam.pFocusHandler = nullptr;
+  if (m_CreationParams.pFocusHandler == handler)
+    m_CreationParams.pFocusHandler = nullptr;
 }
 
 void CPWL_Wnd::InvalidateProvider(IPWL_Provider* provider) {
-  if (m_sPrivateParam.pProvider.Get() == provider)
-    m_sPrivateParam.pProvider.Reset();
+  if (m_CreationParams.pProvider.Get() == provider)
+    m_CreationParams.pProvider.Reset();
 }
 
 void CPWL_Wnd::Destroy() {
@@ -208,13 +203,12 @@ void CPWL_Wnd::Destroy() {
         delete pChild;
       }
     }
-    if (m_sPrivateParam.pParentWnd)
-      m_sPrivateParam.pParentWnd->RemoveChild(this);
+    if (m_CreationParams.pParentWnd)
+      m_CreationParams.pParentWnd->RemoveChild(this);
 
     m_bCreated = false;
   }
   DestroyMsgControl();
-  m_sPrivateParam.Reset();
   m_Children.clear();
 }
 
@@ -235,7 +229,7 @@ void CPWL_Wnd::Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh) {
   if (bRefresh)
     InvalidateRectMove(rcOld, rcNew);
 
-  m_sPrivateParam.rcRectWnd = m_rcWindow;
+  m_CreationParams.rcRectWnd = m_rcWindow;
 }
 
 void CPWL_Wnd::InvalidateRectMove(const CFX_FloatRect& rcOld,
@@ -310,7 +304,7 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
 
   if (CFX_SystemHandler* pSH = GetSystemHandler()) {
     if (CPDFSDK_Widget* widget = static_cast<CPDFSDK_Widget*>(
-            m_sPrivateParam.pAttachedWidget.Get())) {
+            m_CreationParams.pAttachedWidget.Get())) {
       pSH->InvalidateRect(widget, rcWin);
     }
   }
@@ -413,16 +407,8 @@ void CPWL_Wnd::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {}
 
 void CPWL_Wnd::NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos) {}
 
-bool CPWL_Wnd::IsValid() const {
-  return m_bCreated;
-}
-
-const PWL_CREATEPARAM& CPWL_Wnd::GetCreationParam() const {
-  return m_sPrivateParam;
-}
-
 CPWL_Wnd* CPWL_Wnd::GetParentWindow() const {
-  return m_sPrivateParam.pParentWnd;
+  return m_CreationParams.pParentWnd;
 }
 
 CFX_FloatRect CPWL_Wnd::GetWindowRect() const {
@@ -448,40 +434,40 @@ CFX_PointF CPWL_Wnd::GetCenterPoint() const {
 }
 
 bool CPWL_Wnd::HasFlag(uint32_t dwFlags) const {
-  return (m_sPrivateParam.dwFlags & dwFlags) != 0;
+  return (m_CreationParams.dwFlags & dwFlags) != 0;
 }
 
 void CPWL_Wnd::RemoveFlag(uint32_t dwFlags) {
-  m_sPrivateParam.dwFlags &= ~dwFlags;
+  m_CreationParams.dwFlags &= ~dwFlags;
 }
 
 void CPWL_Wnd::AddFlag(uint32_t dwFlags) {
-  m_sPrivateParam.dwFlags |= dwFlags;
+  m_CreationParams.dwFlags |= dwFlags;
 }
 
 CFX_Color CPWL_Wnd::GetBackgroundColor() const {
-  return m_sPrivateParam.sBackgroundColor;
+  return m_CreationParams.sBackgroundColor;
 }
 
 void CPWL_Wnd::SetBackgroundColor(const CFX_Color& color) {
-  m_sPrivateParam.sBackgroundColor = color;
+  m_CreationParams.sBackgroundColor = color;
 }
 
 CFX_Color CPWL_Wnd::GetTextColor() const {
-  return m_sPrivateParam.sTextColor;
+  return m_CreationParams.sTextColor;
 }
 
 BorderStyle CPWL_Wnd::GetBorderStyle() const {
-  return m_sPrivateParam.nBorderStyle;
+  return m_CreationParams.nBorderStyle;
 }
 
 void CPWL_Wnd::SetBorderStyle(BorderStyle nBorderStyle) {
   if (HasFlag(PWS_BORDER))
-    m_sPrivateParam.nBorderStyle = nBorderStyle;
+    m_CreationParams.nBorderStyle = nBorderStyle;
 }
 
 int32_t CPWL_Wnd::GetBorderWidth() const {
-  return HasFlag(PWS_BORDER) ? m_sPrivateParam.dwBorderWidth : 0;
+  return HasFlag(PWS_BORDER) ? m_CreationParams.dwBorderWidth : 0;
 }
 
 int32_t CPWL_Wnd::GetInnerBorderWidth() const {
@@ -489,30 +475,30 @@ int32_t CPWL_Wnd::GetInnerBorderWidth() const {
 }
 
 CFX_Color CPWL_Wnd::GetBorderColor() const {
-  return HasFlag(PWS_BORDER) ? m_sPrivateParam.sBorderColor : CFX_Color();
+  return HasFlag(PWS_BORDER) ? m_CreationParams.sBorderColor : CFX_Color();
 }
 
 const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
-  return m_sPrivateParam.sDash;
+  return m_CreationParams.sDash;
 }
 
 void* CPWL_Wnd::GetAttachedData() const {
-  return m_sPrivateParam.pAttachedData;
+  return m_CreationParams.pAttachedData;
 }
 
 CPWL_ScrollBar* CPWL_Wnd::GetVScrollBar() const {
   return HasFlag(PWS_VSCROLL) ? m_pVScrollBar.Get() : nullptr;
 }
 
-void CPWL_Wnd::CreateScrollBar(const PWL_CREATEPARAM& cp) {
+void CPWL_Wnd::CreateScrollBar(const CreateParams& cp) {
   CreateVScrollBar(cp);
 }
 
-void CPWL_Wnd::CreateVScrollBar(const PWL_CREATEPARAM& cp) {
+void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   if (m_pVScrollBar || !HasFlag(PWS_VSCROLL))
     return;
 
-  PWL_CREATEPARAM scp = cp;
+  CreateParams scp = cp;
 
   // flags
   scp.dwFlags =
@@ -569,7 +555,7 @@ bool CPWL_Wnd::ClientHitTest(const CFX_PointF& point) const {
 }
 
 const CPWL_Wnd* CPWL_Wnd::GetRootWnd() const {
-  auto* pParent = m_sPrivateParam.pParentWnd;
+  auto* pParent = m_CreationParams.pParentWnd;
   return pParent ? pParent->GetRootWnd() : this;
 }
 
@@ -618,20 +604,20 @@ void CPWL_Wnd::RePosChildWnd() {
   pVSB->Move(rcVScroll, true, false);
 }
 
-void CPWL_Wnd::CreateChildWnd(const PWL_CREATEPARAM& cp) {}
+void CPWL_Wnd::CreateChildWnd(const CreateParams& cp) {}
 
 void CPWL_Wnd::SetCursor() {
   if (IsValid()) {
     if (CFX_SystemHandler* pSH = GetSystemHandler()) {
-      int32_t nCursorType = GetCreationParam().eCursorType;
+      int32_t nCursorType = GetCreationParams().eCursorType;
       pSH->SetCursor(nCursorType);
     }
   }
 }
 
 void CPWL_Wnd::CreateMsgControl() {
-  if (!m_sPrivateParam.pMsgControl)
-    m_sPrivateParam.pMsgControl = new CPWL_MsgControl(this);
+  if (!m_CreationParams.pMsgControl)
+    m_CreationParams.pMsgControl = new CPWL_MsgControl(this);
 }
 
 void CPWL_Wnd::DestroyMsgControl() {
@@ -641,7 +627,7 @@ void CPWL_Wnd::DestroyMsgControl() {
 }
 
 CPWL_MsgControl* CPWL_Wnd::GetMsgControl() const {
-  return m_sPrivateParam.pMsgControl;
+  return m_CreationParams.pMsgControl;
 }
 
 bool CPWL_Wnd::IsCaptureMouse() const {
@@ -673,27 +659,27 @@ CFX_FloatRect CPWL_Wnd::GetFocusRect() const {
 }
 
 float CPWL_Wnd::GetFontSize() const {
-  return m_sPrivateParam.fFontSize;
+  return m_CreationParams.fFontSize;
 }
 
 void CPWL_Wnd::SetFontSize(float fFontSize) {
-  m_sPrivateParam.fFontSize = fFontSize;
+  m_CreationParams.fFontSize = fFontSize;
 }
 
 CFX_SystemHandler* CPWL_Wnd::GetSystemHandler() const {
-  return m_sPrivateParam.pSystemHandler;
+  return m_CreationParams.pSystemHandler;
 }
 
 IPWL_FocusHandler* CPWL_Wnd::GetFocusHandler() const {
-  return m_sPrivateParam.pFocusHandler;
+  return m_CreationParams.pFocusHandler;
 }
 
 IPWL_Provider* CPWL_Wnd::GetProvider() const {
-  return m_sPrivateParam.pProvider.Get();
+  return m_CreationParams.pProvider.Get();
 }
 
 IPVT_FontMap* CPWL_Wnd::GetFontMap() const {
-  return m_sPrivateParam.pFontMap;
+  return m_CreationParams.pFontMap;
 }
 
 CFX_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
@@ -719,7 +705,7 @@ CFX_Color CPWL_Wnd::GetBorderRightBottomColor(BorderStyle nBorderStyle) const {
 }
 
 int32_t CPWL_Wnd::GetTransparency() {
-  return m_sPrivateParam.nTransparency;
+  return m_CreationParams.nTransparency;
 }
 
 void CPWL_Wnd::SetTransparency(int32_t nTransparency) {
@@ -727,7 +713,7 @@ void CPWL_Wnd::SetTransparency(int32_t nTransparency) {
     if (pChild)
       pChild->SetTransparency(nTransparency);
   }
-  m_sPrivateParam.nTransparency = nTransparency;
+  m_CreationParams.nTransparency = nTransparency;
 }
 
 CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
@@ -778,11 +764,11 @@ CFX_Matrix CPWL_Wnd::GetChildToRoot() const {
 }
 
 CFX_Matrix CPWL_Wnd::GetChildMatrix() const {
-  return HasFlag(PWS_CHILD) ? m_sPrivateParam.mtChild : CFX_Matrix();
+  return HasFlag(PWS_CHILD) ? m_CreationParams.mtChild : CFX_Matrix();
 }
 
 void CPWL_Wnd::SetChildMatrix(const CFX_Matrix& mt) {
-  m_sPrivateParam.mtChild = mt;
+  m_CreationParams.mtChild = mt;
 }
 
 const CPWL_Wnd* CPWL_Wnd::GetFocused() const {

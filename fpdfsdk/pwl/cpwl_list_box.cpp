@@ -83,7 +83,7 @@ void CPWL_ListBox::OnCreated() {
 
   SetHoverSel(HasFlag(PLBS_HOVERSEL));
   m_pList->SetMultipleSel(HasFlag(PLBS_MULTIPLESEL));
-  m_pList->SetFontSize(GetCreationParam().fFontSize);
+  m_pList->SetFontSize(GetCreationParams().fFontSize);
 
   m_bHoverSel = HasFlag(PLBS_HOVERSEL);
 }

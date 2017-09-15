@@ -44,8 +44,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
 
   void SetReadyToInput();
 
-  // CPWL_Wnd
-  void OnCreate(PWL_CREATEPARAM& cp) override;
+  // CPWL_Wnd:
+  void OnCreate(CreateParams* pParamsToAdjust) override;
   void OnCreated() override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
@@ -55,7 +55,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void ScrollWindowVertically(float pos) override;
-  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void CreateChildWnd(const CreateParams& cp) override;
   void RePosChildWnd() override;
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;
@@ -88,7 +88,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   bool m_bMouseDown;
 
  private:
-  void CreateEditCaret(const PWL_CREATEPARAM& cp);
+  void CreateEditCaret(const CreateParams& cp);
 
   int32_t m_nCharSet;
 };

@@ -18,12 +18,10 @@ CFFL_RadioButton::CFFL_RadioButton(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_RadioButton::~CFFL_RadioButton() {}
 
-CPWL_Wnd* CFFL_RadioButton::NewPDFWindow(const PWL_CREATEPARAM& cp) {
-  CPWL_RadioButton* pWnd = new CPWL_RadioButton();
+CPWL_Wnd* CFFL_RadioButton::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
+  auto* pWnd = new CPWL_RadioButton();
   pWnd->Create(cp);
-
   pWnd->SetCheck(m_pWidget->IsChecked());
-
   return pWnd;
 }
 

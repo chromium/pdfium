@@ -691,7 +691,7 @@ CFX_ByteString GenerateIconAppStream(CPDF_IconFit& fit,
     return CFX_ByteString();
 
   CPWL_Icon icon;
-  PWL_CREATEPARAM cp;
+  CPWL_Wnd::CreateParams cp;
   cp.dwFlags = PWS_VISIBLE;
   icon.Create(cp);
   icon.SetIconFit(&fit);
