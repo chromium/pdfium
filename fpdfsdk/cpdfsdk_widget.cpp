@@ -57,7 +57,7 @@ CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_InterForm* pInterForm)
     : CPDFSDK_BAAnnot(pAnnot, pPageView),
       m_pInterForm(pInterForm),
-      m_nAppAge(0),
+      m_nAppearanceAge(0),
       m_nValueAge(0)
 #ifdef PDF_ENABLE_XFA
       ,
@@ -757,9 +757,7 @@ void CPDFSDK_Widget::ResetAppearance(const CFX_WideString* sValue,
                                      bool bValueChanged) {
   SetAppModified();
 
-  m_nAppAge++;
-  if (m_nAppAge > 999999)
-    m_nAppAge = 0;
+  m_nAppearanceAge++;
   if (bValueChanged)
     m_nValueAge++;
 
@@ -1047,12 +1045,4 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
 CFX_WideString CPDFSDK_Widget::GetAlternateName() const {
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetAlternateName();
-}
-
-int32_t CPDFSDK_Widget::GetAppearanceAge() const {
-  return m_nAppAge;
-}
-
-int32_t CPDFSDK_Widget::GetValueAge() const {
-  return m_nValueAge;
 }

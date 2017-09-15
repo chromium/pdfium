@@ -361,8 +361,8 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
     auto* pPrivateData = new CFFL_PrivateData;
     pPrivateData->pWidget = m_pWidget.Get();
     pPrivateData->pPageView = pPageView;
-    pPrivateData->nWidgetAge = m_pWidget->GetAppearanceAge();
-    pPrivateData->nValueAge = 0;
+    pPrivateData->nWidgetAppearanceAge = m_pWidget->GetAppearanceAge();
+    pPrivateData->nWidgetValueAge = 0;
     cp.pAttachedData = pPrivateData;
     CPWL_Wnd* pNewWnd = NewPDFWindow(cp);
     m_Maps[pPageView] = pNewWnd;
@@ -370,11 +370,11 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
   }
 
   auto* pPrivateData = static_cast<CFFL_PrivateData*>(pWnd->GetAttachedData());
-  if (pPrivateData->nWidgetAge == m_pWidget->GetAppearanceAge())
+  if (pPrivateData->nWidgetAppearanceAge == m_pWidget->GetAppearanceAge())
     return pWnd;
 
-  return ResetPDFWindow(pPageView,
-                        m_pWidget->GetValueAge() == pPrivateData->nValueAge);
+  return ResetPDFWindow(
+      pPageView, pPrivateData->nWidgetValueAge == m_pWidget->GetValueAge());
 }
 
 void CFFL_FormFiller::DestroyPDFWindow(CPDFSDK_PageView* pPageView) {

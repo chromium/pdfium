@@ -130,8 +130,8 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void ClearAppModified();
   bool IsAppModified() const;
 
-  int32_t GetAppearanceAge() const;
-  int32_t GetValueAge() const;
+  uint32_t GetAppearanceAge() const { return m_nAppearanceAge; }
+  uint32_t GetValueAge() const { return m_nValueAge; }
 
   bool IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode);
   void DrawAppearance(CFX_RenderDevice* pDevice,
@@ -149,8 +149,8 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  private:
   CFX_UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
   bool m_bAppModified;
-  int32_t m_nAppAge;
-  int32_t m_nValueAge;
+  uint32_t m_nAppearanceAge;
+  uint32_t m_nValueAge;
 
 #ifdef PDF_ENABLE_XFA
   mutable CFX_UnownedPtr<CXFA_FFWidget> m_hMixXFAWidget;

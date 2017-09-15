@@ -157,8 +157,8 @@ class CFFL_PrivateData : public CPWL_Wnd::PrivateData {
  public:
   CPDFSDK_Widget* pWidget;
   CPDFSDK_PageView* pPageView;
-  int nWidgetAge;
-  int nValueAge;
+  uint32_t nWidgetAppearanceAge;
+  uint32_t nWidgetValueAge;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_INTERACTIVEFORMFILLER_H_
