@@ -44,7 +44,7 @@ PWL_CREATEPARAM::PWL_CREATEPARAM()
 
 PWL_CREATEPARAM::PWL_CREATEPARAM(const PWL_CREATEPARAM& other) = default;
 
-class CPWL_MsgControl {
+class CPWL_MsgControl : public CFX_Observable<CPWL_MsgControl> {
   friend class CPWL_Wnd;
 
  public:
@@ -96,9 +96,12 @@ class CPWL_MsgControl {
   }
 
   void KillFocus() {
+    ObservedPtr observed_ptr = ObservedPtr(this);
     if (!m_aKeyboardPath.empty())
       if (CPWL_Wnd* pWnd = m_aKeyboardPath[0])
         pWnd->OnKillFocus();
+    if (!observed_ptr)
+      return;
 
     m_pMainKeyboardWnd = nullptr;
     m_aKeyboardPath.clear();
