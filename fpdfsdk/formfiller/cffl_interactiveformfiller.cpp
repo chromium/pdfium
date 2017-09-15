@@ -544,14 +544,15 @@ void CFFL_InteractiveFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
   m_Maps.erase(it);
 }
 
-void CFFL_InteractiveFormFiller::QueryWherePopup(void* pPrivateData,
-                                                 float fPopupMin,
-                                                 float fPopupMax,
-                                                 bool* bBottom,
-                                                 float* fPopupRet) {
-  CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
+void CFFL_InteractiveFormFiller::QueryWherePopup(
+    CPWL_Wnd::PrivateData* pAttached,
+    float fPopupMin,
+    float fPopupMax,
+    bool* bBottom,
+    float* fPopupRet) {
+  auto* pData = static_cast<CFFL_PrivateData*>(pAttached);
   CPDFSDK_Widget* pWidget = pData->pWidget;
-  auto* pPage = pWidget->GetPDFPage();
+  CPDF_Page* pPage = pWidget->GetPDFPage();
 
   CFX_FloatRect rcPageView(0, pPage->GetPageHeight(), pPage->GetPageWidth(), 0);
   rcPageView.Normalize();
@@ -767,9 +768,10 @@ bool CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
   return true;
 }
 
-bool CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
-                                                uint32_t nFlag) {
-  CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
+bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
+    CPWL_Wnd::PrivateData* pAttached,
+    uint32_t nFlag) {
+  auto* pData = static_cast<CFFL_PrivateData*>(pAttached);
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
@@ -777,9 +779,10 @@ bool CFFL_InteractiveFormFiller::OnPopupPreOpen(void* pPrivateData,
   return OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
 }
 
-bool CFFL_InteractiveFormFiller::OnPopupPostOpen(void* pPrivateData,
-                                                 uint32_t nFlag) {
-  CFFL_PrivateData* pData = reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
+bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
+    CPWL_Wnd::PrivateData* pAttached,
+    uint32_t nFlag) {
+  auto* pData = static_cast<CFFL_PrivateData*>(pAttached);
   ASSERT(pData);
   ASSERT(pData->pWidget);
 
@@ -856,7 +859,7 @@ bool CFFL_InteractiveFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
 }
 
 std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
-    void* pPrivateData,
+    CPWL_Wnd::PrivateData* pAttached,
     CFX_WideString& strChange,
     const CFX_WideString& strChangeEx,
     int nSelStart,
@@ -864,8 +867,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     bool bKeyDown,
     uint32_t nFlag) {
   // Copy the private data since the window owning it may not survive.
-  CFFL_PrivateData privateData =
-      *reinterpret_cast<CFFL_PrivateData*>(pPrivateData);
+  CFFL_PrivateData privateData = *static_cast<CFFL_PrivateData*>(pAttached);
   ASSERT(privateData.pWidget);
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(privateData.pWidget, false);
@@ -921,7 +923,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
         privateData.pPageView, nValueAge == privateData.pWidget->GetValueAge());
     if (!pWnd)
       return {true, true};
-    privateData = *reinterpret_cast<CFFL_PrivateData*>(pWnd->GetAttachedData());
+    privateData = *static_cast<CFFL_PrivateData*>(pWnd->GetAttachedData());
     bExit = true;
   }
   if (fa.bRC) {

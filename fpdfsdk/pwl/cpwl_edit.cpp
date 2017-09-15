@@ -333,7 +333,7 @@ bool CPWL_Edit::OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 void CPWL_Edit::OnSetFocus() {
   SetEditCaret(true);
   if (!IsReadOnly()) {
-    if (IPWL_FocusHandler* pFocusHandler = GetFocusHandler())
+    if (CPWL_Wnd::FocusHandlerIface* pFocusHandler = GetFocusHandler())
       pFocusHandler->OnSetFocus(this);
   }
   m_bFocus = true;

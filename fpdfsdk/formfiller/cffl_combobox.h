@@ -19,7 +19,8 @@ struct FFL_ComboBoxState {
   CFX_WideString sValue;
 };
 
-class CFFL_ComboBox : public CFFL_TextObject, public IPWL_FocusHandler {
+class CFFL_ComboBox : public CFFL_TextObject,
+                      public CPWL_Wnd::FocusHandlerIface {
  public:
   CFFL_ComboBox(CPDFSDK_FormFillEnvironment* pApp, CPDFSDK_Widget* pWidget);
   ~CFFL_ComboBox() override;
@@ -45,7 +46,7 @@ class CFFL_ComboBox : public CFFL_TextObject, public IPWL_FocusHandler {
   bool IsFieldFull(CPDFSDK_PageView* pPageView) override;
 #endif
 
-  // IPWL_FocusHandler:
+  // CPWL_Wnd::FocusHandlerIface:
   void OnSetFocus(CPWL_Edit* pEdit) override;
 
  private:

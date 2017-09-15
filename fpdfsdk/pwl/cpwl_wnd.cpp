@@ -44,6 +44,8 @@ CPWL_Wnd::CreateParams::CreateParams()
 
 CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 
+CPWL_Wnd::CreateParams::~CreateParams() = default;
+
 class CPWL_MsgControl : public CFX_Observable<CPWL_MsgControl> {
   friend class CPWL_Wnd;
 
@@ -181,12 +183,12 @@ void CPWL_Wnd::OnCreated() {}
 
 void CPWL_Wnd::OnDestroy() {}
 
-void CPWL_Wnd::InvalidateFocusHandler(IPWL_FocusHandler* handler) {
+void CPWL_Wnd::InvalidateFocusHandler(FocusHandlerIface* handler) {
   if (m_CreationParams.pFocusHandler == handler)
     m_CreationParams.pFocusHandler = nullptr;
 }
 
-void CPWL_Wnd::InvalidateProvider(IPWL_Provider* provider) {
+void CPWL_Wnd::InvalidateProvider(ProviderIface* provider) {
   if (m_CreationParams.pProvider.Get() == provider)
     m_CreationParams.pProvider.Reset();
 }
@@ -482,8 +484,8 @@ const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
   return m_CreationParams.sDash;
 }
 
-void* CPWL_Wnd::GetAttachedData() const {
-  return m_CreationParams.pAttachedData;
+CPWL_Wnd::PrivateData* CPWL_Wnd::GetAttachedData() const {
+  return m_CreationParams.pAttachedData.Get();
 }
 
 CPWL_ScrollBar* CPWL_Wnd::GetVScrollBar() const {
@@ -670,11 +672,11 @@ CFX_SystemHandler* CPWL_Wnd::GetSystemHandler() const {
   return m_CreationParams.pSystemHandler;
 }
 
-IPWL_FocusHandler* CPWL_Wnd::GetFocusHandler() const {
-  return m_CreationParams.pFocusHandler;
+CPWL_Wnd::FocusHandlerIface* CPWL_Wnd::GetFocusHandler() const {
+  return m_CreationParams.pFocusHandler.Get();
 }
 
-IPWL_Provider* CPWL_Wnd::GetProvider() const {
+CPWL_Wnd::ProviderIface* CPWL_Wnd::GetProvider() const {
   return m_CreationParams.pProvider.Get();
 }
 
@@ -718,7 +720,7 @@ void CPWL_Wnd::SetTransparency(int32_t nTransparency) {
 
 CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
   CFX_Matrix mt = GetChildToRoot();
-  if (IPWL_Provider* pProvider = GetProvider())
+  if (ProviderIface* pProvider = GetProvider())
     mt.Concat(pProvider->GetWindowMatrix(GetAttachedData()));
   return mt;
 }

@@ -22,10 +22,8 @@
 class CPWL_Edit;
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
-class CPWL_Wnd;
 class CFX_SystemHandler;
 class IPVT_FontMap;
-class IPWL_Provider;
 struct PWL_SCROLL_INFO;
 
 // window styles
@@ -65,8 +63,6 @@ struct PWL_SCROLL_INFO;
 // combobox styles
 #define PCBS_ALLOWCUSTOMTEXT 0x0001L
 
-#define PWL_CLASSNAME_EDIT "CPWL_Edit"
-
 struct CPWL_Dash {
   CPWL_Dash() : nDash(0), nGap(0), nPhase(0) {}
   CPWL_Dash(int32_t dash, int32_t gap, int32_t phase)
@@ -104,47 +100,53 @@ inline bool operator!=(const CFX_Color& c1, const CFX_Color& c2) {
 #define PWL_DEFAULT_BLACKCOLOR CFX_Color(COLORTYPE_GRAY, 0)
 #define PWL_DEFAULT_WHITECOLOR CFX_Color(COLORTYPE_GRAY, 1)
 
-class IPWL_Provider : public CFX_Observable<IPWL_Provider> {
- public:
-  virtual ~IPWL_Provider() {}
-
-  // get a matrix which map user space to CWnd client space
-  virtual CFX_Matrix GetWindowMatrix(void* pAttachedData) = 0;
-};
-
-class IPWL_FocusHandler {
- public:
-  virtual ~IPWL_FocusHandler() {}
-  virtual void OnSetFocus(CPWL_Edit* pEdit) = 0;
-};
-
 class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
  public:
-  struct CreateParams {
+  class PrivateData {
+   protected:
+    ~PrivateData() {}
+  };
+
+  class ProviderIface : public CFX_Observable<ProviderIface> {
+   public:
+    virtual ~ProviderIface() {}
+
+    // get a matrix which map user space to CWnd client space
+    virtual CFX_Matrix GetWindowMatrix(PrivateData* pAttached) = 0;
+  };
+
+  class FocusHandlerIface {
+   public:
+    virtual ~FocusHandlerIface() {}
+    virtual void OnSetFocus(CPWL_Edit* pEdit) = 0;
+  };
+
+  class CreateParams {
    public:
     CreateParams();
     CreateParams(const CreateParams& other);
+    ~CreateParams();
 
-    CFX_FloatRect rcRectWnd;                      // required
-    CFX_SystemHandler* pSystemHandler;            // required
-    IPVT_FontMap* pFontMap;                       // required
-    IPWL_Provider::ObservedPtr pProvider;         // required
-    IPWL_FocusHandler* pFocusHandler;             // optional
-    uint32_t dwFlags;                             // optional
-    CFX_Color sBackgroundColor;                   // optional
-    CPDFSDK_Widget::ObservedPtr pAttachedWidget;  // required
-    BorderStyle nBorderStyle;                     // optional
-    int32_t dwBorderWidth;                        // optional
-    CFX_Color sBorderColor;                       // optional
-    CFX_Color sTextColor;                         // optional
-    int32_t nTransparency;                        // optional
-    float fFontSize;                              // optional
-    CPWL_Dash sDash;                              // optional
-    void* pAttachedData;                          // optional
-    CPWL_Wnd* pParentWnd;                         // ignore
-    CPWL_MsgControl* pMsgControl;                 // ignore
-    int32_t eCursorType;                          // ignore
-    CFX_Matrix mtChild;                           // ignore
+    CFX_FloatRect rcRectWnd;                          // required
+    CFX_SystemHandler* pSystemHandler;                // required
+    IPVT_FontMap* pFontMap;                           // required
+    ProviderIface::ObservedPtr pProvider;             // required
+    CFX_UnownedPtr<FocusHandlerIface> pFocusHandler;  // optional
+    uint32_t dwFlags;                                 // optional
+    CFX_Color sBackgroundColor;                       // optional
+    CPDFSDK_Widget::ObservedPtr pAttachedWidget;      // required
+    BorderStyle nBorderStyle;                         // optional
+    int32_t dwBorderWidth;                            // optional
+    CFX_Color sBorderColor;                           // optional
+    CFX_Color sTextColor;                             // optional
+    int32_t nTransparency;                            // optional
+    float fFontSize;                                  // optional
+    CPWL_Dash sDash;                                  // optional
+    CFX_UnownedPtr<PrivateData> pAttachedData;        // optional
+    CPWL_Wnd* pParentWnd;                             // ignore
+    CPWL_MsgControl* pMsgControl;                     // ignore
+    int32_t eCursorType;                              // ignore
+    CFX_Matrix mtChild;                               // ignore
   };
 
   CPWL_Wnd();
@@ -182,8 +184,8 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 
-  void InvalidateFocusHandler(IPWL_FocusHandler* handler);
-  void InvalidateProvider(IPWL_Provider* provider);
+  void InvalidateFocusHandler(FocusHandlerIface* handler);
+  void InvalidateProvider(ProviderIface* provider);
   void Create(const CreateParams& cp);
   void Destroy();
   void Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
@@ -220,7 +222,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   const CFX_FloatRect& GetClipRect() const;
 
   CPWL_Wnd* GetParentWindow() const;
-  void* GetAttachedData() const;
+  PrivateData* GetAttachedData() const;
 
   bool WndHitTest(const CFX_PointF& point) const;
   bool ClientHitTest(const CFX_PointF& point) const;
@@ -234,8 +236,8 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   CPWL_ScrollBar* GetVScrollBar() const;
 
   IPVT_FontMap* GetFontMap() const;
-  IPWL_Provider* GetProvider() const;
-  IPWL_FocusHandler* GetFocusHandler() const;
+  ProviderIface* GetProvider() const;
+  FocusHandlerIface* GetFocusHandler() const;
 
   int32_t GetTransparency();
   void SetTransparency(int32_t nTransparency);
