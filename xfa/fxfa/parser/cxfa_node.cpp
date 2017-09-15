@@ -1237,22 +1237,19 @@ void CXFA_Node::Script_NodeClass_IsPropertySpecified(
     ThrowParamCountMismatchException(L"isPropertySpecified");
     return;
   }
-  CFX_WideString wsExpression;
-  bool bParent = true;
-  int32_t iIndex = 0;
-  wsExpression =
+
+  CFXJSE_Value* pValue = pArguments->GetReturnValue();
+  if (!pValue)
+    return;
+
+  CFX_WideString wsExpression =
       CFX_WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringC());
-  if (iLength >= 2)
-    bParent = !!pArguments->GetInt32(1);
-  if (iLength >= 3)
-    iIndex = pArguments->GetInt32(2);
-  bool bHas = false;
   const XFA_ATTRIBUTEINFO* pAttributeInfo =
       XFA_GetAttributeByName(wsExpression.AsStringC());
-  CFX_WideString wsValue;
-  if (pAttributeInfo)
-    bHas = HasAttribute(pAttributeInfo->eName);
+  bool bHas = pAttributeInfo ? HasAttribute(pAttributeInfo->eName) : false;
   if (!bHas) {
+    bool bParent = iLength < 2 || pArguments->GetInt32(1);
+    int32_t iIndex = iLength == 3 ? pArguments->GetInt32(2) : 0;
     XFA_Element eType = XFA_GetElementTypeForName(wsExpression.AsStringC());
     bHas = !!GetProperty(iIndex, eType);
     if (!bHas && bParent && m_pParent) {
@@ -1262,9 +1259,7 @@ void CXFA_Node::Script_NodeClass_IsPropertySpecified(
         bHas = !!m_pParent->GetProperty(iIndex, eType);
     }
   }
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetBoolean(bHas);
+  pValue->SetBoolean(bHas);
 }
 
 void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
@@ -4307,31 +4302,30 @@ bool CXFA_Node::TryNamespace(CFX_WideString& wsNamespace) {
   wsNamespace.clear();
   if (IsModelNode() || GetElementType() == XFA_Element::Packet) {
     CFX_XMLNode* pXMLNode = GetXMLMappingNode();
-    if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element) {
+    if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
       return false;
-    }
+
     wsNamespace = static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI();
     return true;
-  } else if (GetPacketID() == XFA_XDPPACKET_Datasets) {
-    CFX_XMLNode* pXMLNode = GetXMLMappingNode();
-    if (!pXMLNode) {
-      return false;
-    }
-    if (pXMLNode->GetType() != FX_XMLNODE_Element) {
-      return true;
-    }
-    if (GetElementType() == XFA_Element::DataValue &&
-        GetEnum(XFA_ATTRIBUTE_Contains) == XFA_ATTRIBUTEENUM_MetaData) {
-      return XFA_FDEExtension_ResolveNamespaceQualifier(
-          static_cast<CFX_XMLElement*>(pXMLNode),
-          GetCData(XFA_ATTRIBUTE_QualifiedName), &wsNamespace);
-    }
-    wsNamespace = static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI();
-    return true;
-  } else {
-    CXFA_Node* pModelNode = GetModelNode();
-    return pModelNode->TryNamespace(wsNamespace);
   }
+
+  if (GetPacketID() != XFA_XDPPACKET_Datasets)
+    return GetModelNode()->TryNamespace(wsNamespace);
+
+  CFX_XMLNode* pXMLNode = GetXMLMappingNode();
+  if (!pXMLNode)
+    return false;
+  if (pXMLNode->GetType() != FX_XMLNODE_Element)
+    return true;
+
+  if (GetElementType() == XFA_Element::DataValue &&
+      GetEnum(XFA_ATTRIBUTE_Contains) == XFA_ATTRIBUTEENUM_MetaData) {
+    return XFA_FDEExtension_ResolveNamespaceQualifier(
+        static_cast<CFX_XMLElement*>(pXMLNode),
+        GetCData(XFA_ATTRIBUTE_QualifiedName), &wsNamespace);
+  }
+  wsNamespace = static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI();
+  return true;
 }
 
 CXFA_Node* CXFA_Node::GetProperty(int32_t index,
