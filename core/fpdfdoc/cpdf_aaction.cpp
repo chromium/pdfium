@@ -8,9 +8,13 @@
 
 namespace {
 
-const char* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
-                            "PV", "PI", "O",  "C",  "K",  "F",  "V",  "C",
-                            "WC", "WS", "DS", "WP", "DP", ""};
+constexpr const char* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO",
+                                      "PC", "PV", "PI", "O",  "C",  "K",  "F",
+                                      "V",  "C",  "WC", "WS", "DS", "WP", "DP"};
+
+// |g_sAATypes| should have as many elements as enum AActionType.
+static_assert(FX_ArraySize(g_sAATypes) == CPDF_AAction::NumberOfActions,
+              "g_sAATypes count mismatch");
 
 }  // namespace
 

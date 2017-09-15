@@ -443,7 +443,7 @@ FX_LPEnumAllFonts FX_GetDefFontEnumerator() {
 
 namespace {
 
-const char* g_FontFolders[] = {
+constexpr const char* g_FontFolders[] = {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
     "/usr/share/fonts", "/usr/share/X11/fonts/Type1",
     "/usr/share/X11/fonts/TTF", "/usr/local/share/fonts",

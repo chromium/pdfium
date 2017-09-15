@@ -164,11 +164,8 @@ static XFA_EVENTTYPE GetXFAEventType(CPDF_AAction::AActionType eAAT,
       eEventType = XFA_EVENT_Exit;
       break;
     case CPDF_AAction::PageOpen:
-      break;
     case CPDF_AAction::PageClose:
-      break;
     case CPDF_AAction::PageVisible:
-      break;
     case CPDF_AAction::PageInvisible:
       break;
     case CPDF_AAction::KeyStroke:
@@ -187,6 +184,9 @@ static XFA_EVENTTYPE GetXFAEventType(CPDF_AAction::AActionType eAAT,
     case CPDF_AAction::DocumentSaved:
     case CPDF_AAction::PrintDocument:
     case CPDF_AAction::DocumentPrinted:
+      break;
+    case CPDF_AAction::NumberOfActions:
+      NOTREACHED();
       break;
   }
 

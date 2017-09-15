@@ -697,8 +697,9 @@ TEST(PDFArrayTest, AddInteger) {
 }
 
 TEST(PDFArrayTest, AddStringAndName) {
-  const char* vals[] = {"",        "a", "ehjhRIOYTTFdfcdnv",  "122323",
-                        "$#%^&**", " ", "This is a test.\r\n"};
+  static constexpr const char* vals[] = {
+      "",        "a", "ehjhRIOYTTFdfcdnv",  "122323",
+      "$#%^&**", " ", "This is a test.\r\n"};
   auto string_array = pdfium::MakeUnique<CPDF_Array>();
   auto name_array = pdfium::MakeUnique<CPDF_Array>();
   for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
