@@ -18,22 +18,6 @@ constexpr size_t kMaxEditOperations = 128;
 constexpr size_t kGapSize = 128;
 constexpr size_t kPageWidthMax = 0xffff;
 
-enum class WordBreakProperty {
-  kNone = 0,
-  kCR,
-  kLF,
-  kNewLine,
-  kExtend,
-  kFormat,
-  kKataKana,
-  kALetter,
-  kMidLetter,
-  kMidNum,
-  kMidNumLet,
-  kNumeric,
-  kExtendNumLet,
-};
-
 class InsertOperation : public CFDE_TextEditEngine::Operation {
  public:
   InsertOperation(CFDE_TextEditEngine* engine,
@@ -109,6 +93,14 @@ class ReplaceOperation : public CFDE_TextEditEngine::Operation {
   InsertOperation insert_op_;
   DeleteOperation delete_op_;
 };
+
+bool CheckStateChangeForWordBreak(WordBreakProperty from,
+                                  WordBreakProperty to) {
+  ASSERT(static_cast<int>(from) < 13);
+
+  return !!(gs_FX_WordBreak_Table[static_cast<int>(from)] &
+            static_cast<uint16_t>(1 << static_cast<int>(to)));
+}
 
 WordBreakProperty GetWordBreakProperty(wchar_t wcCodePoint) {
   uint8_t dwProperty = gs_FX_WordBreak_CodePointProperties[wcCodePoint >> 1];
@@ -1043,8 +1035,7 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
     Next(bPrev);
 
     WordBreakProperty eNextType = GetWordBreakProperty(GetChar());
-    uint16_t wBreak = gs_FX_WordBreak_Table[static_cast<int>(eCurType)] &
-                      ((uint16_t)(1 << static_cast<int>(eNextType)));
+    bool wBreak = CheckStateChangeForWordBreak(eCurType, eNextType);
     if (wBreak) {
       if (IsEOF(!bPrev)) {
         Next(!bPrev);

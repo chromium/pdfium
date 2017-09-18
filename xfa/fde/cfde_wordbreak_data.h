@@ -9,6 +9,22 @@
 
 #include <stdint.h>
 
+enum class WordBreakProperty : uint8_t {
+  kNone = 0,
+  kCR,
+  kLF,
+  kNewLine,
+  kExtend,
+  kFormat,
+  kKataKana,
+  kALetter,
+  kMidLetter,
+  kMidNum,
+  kMidNumLet,
+  kNumeric,
+  kExtendNumLet,
+};
+
 extern const uint16_t gs_FX_WordBreak_Table[];
 extern const uint8_t gs_FX_WordBreak_CodePointProperties[];
 

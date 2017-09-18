@@ -6,9 +6,112 @@
 
 #include "xfa/fde/cfde_wordbreak_data.h"
 
-const uint16_t gs_FX_WordBreak_Table[16] = {
-    0xFFFF, 0xFFF9, 0xFFFB, 0xFFFB, 0xFFFB, 0xFFFB, 0xEFBB, 0xE77B,
-    0xFFFB, 0xFFFB, 0xFFFB, 0xE77B, 0xE73B, 0xFFFB, 0xFFFB, 0xFFFB,
+namespace {
+
+enum WordBreakValue : uint16_t {
+  kWordBreakValueNone = 1 << 0,
+  kWordBreakValueCR = 1 << 1,
+  kWordBreakValueLF = 1 << 2,
+  kWordBreakValueNewLine = 1 << 3,
+  kWordBreakValueExtend = 1 << 4,
+  kWordBreakValueFormat = 1 << 5,
+  kWordBreakValueKataKana = 1 << 6,
+  kWordBreakValueALetter = 1 << 7,
+  kWordBreakValueMidLetter = 1 << 8,
+  kWordBreakValueMidNum = 1 << 9,
+  kWordBreakValueMidNumLet = 1 << 10,
+  kWordBreakValueNumeric = 1 << 11,
+  kWordBreakValueExtendNumLet = 1 << 12,
+};
+
+static_assert(kWordBreakValueNone ==
+                  (1 << static_cast<int>(WordBreakProperty::kNone)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueCR ==
+                  (1 << static_cast<int>(WordBreakProperty::kCR)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueLF ==
+                  (1 << static_cast<int>(WordBreakProperty::kLF)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueNewLine ==
+                  (1 << static_cast<int>(WordBreakProperty::kNewLine)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueExtend ==
+                  (1 << static_cast<int>(WordBreakProperty::kExtend)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueFormat ==
+                  (1 << static_cast<int>(WordBreakProperty::kFormat)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueKataKana ==
+                  (1 << static_cast<int>(WordBreakProperty::kKataKana)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueALetter ==
+                  (1 << static_cast<int>(WordBreakProperty::kALetter)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueMidLetter ==
+                  (1 << static_cast<int>(WordBreakProperty::kMidLetter)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueMidNum ==
+                  (1 << static_cast<int>(WordBreakProperty::kMidNum)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueMidNumLet ==
+                  (1 << static_cast<int>(WordBreakProperty::kMidNumLet)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueNumeric ==
+                  (1 << static_cast<int>(WordBreakProperty::kNumeric)),
+              "WordBreakValue must match");
+static_assert(kWordBreakValueExtendNumLet ==
+                  (1 << static_cast<int>(WordBreakProperty::kExtendNumLet)),
+              "WordBreakValue must match");
+
+}  // namespace
+
+const uint16_t gs_FX_WordBreak_Table[] = {
+    // WordBreakProperty::kNone
+    0xFFFF,
+
+    // WordBreakProperty::kCR
+    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueCR)),
+
+    // WordBreakProperty::kLF
+    static_cast<uint16_t>(~(kWordBreakValueLF)),
+
+    // WordBreakProperty::kNewLine
+    static_cast<uint16_t>(~(kWordBreakValueLF)),
+
+    // WordBreakProperty::kExtend
+    static_cast<uint16_t>(~(kWordBreakValueLF)),
+
+    // WordBreakPropery:: kFormat
+    static_cast<uint16_t>(~(kWordBreakValueLF)),
+
+    // WordBreakProperty::kKataKana
+    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueKataKana |
+                            kWordBreakValueExtendNumLet)),
+
+    // WordBreakProperty::kALetter
+    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueALetter |
+                            kWordBreakValueNumeric |
+                            kWordBreakValueExtendNumLet)),
+
+    // WordBreakProperty::kMidLetter
+    static_cast<uint16_t>(~(kWordBreakValueLF)),
+
+    // WordBreakProperty::kMidNum
+    static_cast<uint16_t>(~(kWordBreakValueLF)),
+
+    // WordBreakProperty::kMidNumLet
+    static_cast<uint16_t>(~(kWordBreakValueLF)),
+
+    // WordBreakProperty::kNumeric
+    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueALetter |
+                            kWordBreakValueNumeric |
+                            kWordBreakValueExtendNumLet)),
+
+    // WordBreakProperty::kExtendNumLet
+    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueKataKana |
+                            kWordBreakValueALetter | kWordBreakValueNumeric |
+                            kWordBreakValueExtendNumLet)),
 };
 
 const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1] = {
