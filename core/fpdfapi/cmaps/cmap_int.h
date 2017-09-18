@@ -23,7 +23,7 @@ struct FXCMAP_CMap {
   int m_UseOffset;
 };
 
-void FPDFAPI_FindEmbeddedCMap(const CFX_ByteString& name,
+void FPDFAPI_FindEmbeddedCMap(const ByteString& name,
                               int charset,
                               int coding,
                               const FXCMAP_CMap*& pMap);

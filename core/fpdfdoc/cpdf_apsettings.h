@@ -23,7 +23,7 @@ class CPDF_ApSettings {
   CPDF_ApSettings(const CPDF_ApSettings& that);
   ~CPDF_ApSettings();
 
-  bool HasMKEntry(const CFX_ByteString& csEntry) const;
+  bool HasMKEntry(const ByteString& csEntry) const;
   int GetRotation() const;
 
   FX_ARGB GetBorderColor(int& iColorType) const {
@@ -50,9 +50,9 @@ class CPDF_ApSettings {
     GetOriginalColor(iColorType, fc, "BG");
   }
 
-  CFX_WideString GetNormalCaption() const { return GetCaption("CA"); }
-  CFX_WideString GetRolloverCaption() const { return GetCaption("RC"); }
-  CFX_WideString GetDownCaption() const { return GetCaption("AC"); }
+  WideString GetNormalCaption() const { return GetCaption("CA"); }
+  WideString GetRolloverCaption() const { return GetCaption("RC"); }
+  WideString GetDownCaption() const { return GetCaption("AC"); }
   CPDF_Stream* GetNormalIcon() const { return GetIcon("I"); }
   CPDF_Stream* GetRolloverIcon() const { return GetIcon("RI"); }
   CPDF_Stream* GetDownIcon() const { return GetIcon("IX"); }
@@ -62,14 +62,14 @@ class CPDF_ApSettings {
  private:
   friend class CPDF_FormControl;
 
-  FX_ARGB GetColor(int& iColorType, const CFX_ByteString& csEntry) const;
-  float GetOriginalColor(int index, const CFX_ByteString& csEntry) const;
+  FX_ARGB GetColor(int& iColorType, const ByteString& csEntry) const;
+  float GetOriginalColor(int index, const ByteString& csEntry) const;
   void GetOriginalColor(int& iColorType,
                         float fc[4],
-                        const CFX_ByteString& csEntry) const;
+                        const ByteString& csEntry) const;
 
-  CFX_WideString GetCaption(const CFX_ByteString& csEntry) const;
-  CPDF_Stream* GetIcon(const CFX_ByteString& csEntry) const;
+  WideString GetCaption(const ByteString& csEntry) const;
+  CPDF_Stream* GetIcon(const ByteString& csEntry) const;
 
   CFX_UnownedPtr<CPDF_Dictionary> const m_pDict;
 };

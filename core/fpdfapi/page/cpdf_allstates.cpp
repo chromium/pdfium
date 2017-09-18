@@ -39,7 +39,7 @@ void CPDF_AllStates::SetLineDash(CPDF_Array* pArray, float phase, float scale) {
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
                                   CPDF_StreamContentParser* pParser) {
   for (const auto& it : *pGS) {
-    const CFX_ByteString& key_str = it.first;
+    const ByteString& key_str = it.first;
     CPDF_Object* pElement = it.second.get();
     CPDF_Object* pObject = pElement ? pElement->GetDirect() : nullptr;
     if (!pObject)

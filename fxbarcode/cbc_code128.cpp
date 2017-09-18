@@ -35,7 +35,7 @@ bool CBC_Code128::SetTextLocation(BC_TEXT_LOC location) {
   return GetOnedCode128Writer()->SetTextLocation(location);
 }
 
-bool CBC_Code128::Encode(const CFX_WideStringC& contents) {
+bool CBC_Code128::Encode(const WideStringView& contents) {
   if (contents.IsEmpty())
     return false;
 
@@ -43,25 +43,25 @@ bool CBC_Code128::Encode(const CFX_WideStringC& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   auto* pWriter = GetOnedCode128Writer();
-  CFX_WideString content(contents);
+  WideString content(contents);
   if (contents.GetLength() % 2 && pWriter->GetType() == BC_CODE128_C)
     content += '0';
 
-  CFX_WideString encodeContents = pWriter->FilterContents(content.AsStringC());
+  WideString encodeContents = pWriter->FilterContents(content.AsStringView());
   m_renderContents = encodeContents;
-  CFX_ByteString byteString = encodeContents.UTF8Encode();
+  ByteString byteString = encodeContents.UTF8Encode();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
       pWriter->Encode(byteString, format, outWidth, outHeight));
   if (!data)
     return false;
-  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(),
+  return pWriter->RenderResult(encodeContents.AsStringView(), data.get(),
                                outWidth);
 }
 
 bool CBC_Code128::RenderDevice(CFX_RenderDevice* device,
                                const CFX_Matrix* matrix) {
   return GetOnedCode128Writer()->RenderDeviceResult(
-      device, matrix, m_renderContents.AsStringC());
+      device, matrix, m_renderContents.AsStringView());
 }
 
 BC_TYPE CBC_Code128::GetType() {

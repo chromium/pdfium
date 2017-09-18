@@ -21,7 +21,7 @@ CXFA_Script CXFA_Calculate::GetScript() {
   return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script));
 }
 
-void CXFA_Calculate::GetMessageText(CFX_WideString& wsMessage) {
+void CXFA_Calculate::GetMessageText(WideString& wsMessage) {
   CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Message);
   if (!pNode)
     return;

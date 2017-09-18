@@ -18,14 +18,14 @@ class CXML_AttrMap {
   CXML_AttrMap();
   ~CXML_AttrMap();
 
-  const CFX_WideString* Lookup(const CFX_ByteString& space,
-                               const CFX_ByteString& name) const;
+  const WideString* Lookup(const ByteString& space,
+                           const ByteString& name) const;
   int GetSize() const;
   CXML_AttrItem& GetAt(int index) const;
 
-  void SetAt(const CFX_ByteString& space,
-             const CFX_ByteString& name,
-             const CFX_WideString& value);
+  void SetAt(const ByteString& space,
+             const ByteString& name,
+             const WideString& value);
 
   std::unique_ptr<std::vector<CXML_AttrItem>> m_pMap;
 };

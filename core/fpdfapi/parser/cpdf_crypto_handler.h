@@ -28,9 +28,7 @@ class CPDF_CryptoHandler : public CFX_Retainable {
             CPDF_SecurityHandler* pSecurityHandler);
   uint32_t DecryptGetSize(uint32_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
-  CFX_ByteString Decrypt(uint32_t objnum,
-                         uint32_t gennum,
-                         const CFX_ByteString& str);
+  ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
   bool DecryptStream(void* context,
                      const uint8_t* src_buf,
                      uint32_t src_size,

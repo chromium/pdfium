@@ -19,10 +19,10 @@ class CFX_CRTFileAccess : public CFX_Retainable {
   CFX_RetainPtr<IFX_SeekableStream> CreateFileStream(uint32_t dwModes);
 
  private:
-  explicit CFX_CRTFileAccess(const CFX_WideStringC& wsPath);
+  explicit CFX_CRTFileAccess(const WideStringView& wsPath);
   ~CFX_CRTFileAccess() override;
 
-  CFX_WideString m_path;
+  WideString m_path;
 };
 
 #endif  // CORE_FXCRT_CFX_CRTFILEACCESS_H_

@@ -33,8 +33,7 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
 
   ~CFX_WindowsDIB() override;
 
-  static CFX_ByteString GetBitmapInfo(
-      const CFX_RetainPtr<CFX_DIBitmap>& pBitmap);
+  static ByteString GetBitmapInfo(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap);
   static HBITMAP GetDDBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                              HDC hDC);
 

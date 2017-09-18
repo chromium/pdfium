@@ -22,7 +22,7 @@ class CXFA_LinkUserData : public CFX_Retainable {
   explicit CXFA_LinkUserData(wchar_t* pszText);
   ~CXFA_LinkUserData() override;
 
-  CFX_WideString m_wsURLContent;
+  WideString m_wsURLContent;
 };
 
 #endif  // XFA_FXFA_CXFA_LINKUSERDATA_H_

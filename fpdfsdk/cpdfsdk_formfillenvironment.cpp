@@ -24,7 +24,7 @@ namespace {
 
 // NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
 // since modifying the result would impact |bsUTF16LE|.
-FPDF_WIDESTRING AsFPDFWideString(CFX_ByteString* bsUTF16LE) {
+FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
   return reinterpret_cast<FPDF_WIDESTRING>(
       bsUTF16LE->GetBuffer(bsUTF16LE->GetLength()));
 }
@@ -69,8 +69,8 @@ int CPDFSDK_FormFillEnvironment::JS_appAlert(const wchar_t* Msg,
       !m_pInfo->m_pJsPlatform->app_alert) {
     return -1;
   }
-  CFX_ByteString bsMsg = CFX_WideString(Msg).UTF16LE_Encode();
-  CFX_ByteString bsTitle = CFX_WideString(Title).UTF16LE_Encode();
+  ByteString bsMsg = WideString(Msg).UTF16LE_Encode();
+  ByteString bsTitle = WideString(Title).UTF16LE_Encode();
   return m_pInfo->m_pJsPlatform->app_alert(
       m_pInfo->m_pJsPlatform, AsFPDFWideString(&bsMsg),
       AsFPDFWideString(&bsTitle), Type, Icon);
@@ -87,10 +87,10 @@ int CPDFSDK_FormFillEnvironment::JS_appResponse(const wchar_t* Question,
       !m_pInfo->m_pJsPlatform->app_response) {
     return -1;
   }
-  CFX_ByteString bsQuestion = CFX_WideString(Question).UTF16LE_Encode();
-  CFX_ByteString bsTitle = CFX_WideString(Title).UTF16LE_Encode();
-  CFX_ByteString bsDefault = CFX_WideString(Default).UTF16LE_Encode();
-  CFX_ByteString bsLabel = CFX_WideString(cLabel).UTF16LE_Encode();
+  ByteString bsQuestion = WideString(Question).UTF16LE_Encode();
+  ByteString bsTitle = WideString(Title).UTF16LE_Encode();
+  ByteString bsDefault = WideString(Default).UTF16LE_Encode();
+  ByteString bsLabel = WideString(cLabel).UTF16LE_Encode();
   return m_pInfo->m_pJsPlatform->app_response(
       m_pInfo->m_pJsPlatform, AsFPDFWideString(&bsQuestion),
       AsFPDFWideString(&bsTitle), AsFPDFWideString(&bsDefault),
@@ -105,44 +105,44 @@ void CPDFSDK_FormFillEnvironment::JS_appBeep(int nType) {
   m_pInfo->m_pJsPlatform->app_beep(m_pInfo->m_pJsPlatform, nType);
 }
 
-CFX_WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
+WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Field_browse) {
-    return CFX_WideString();
+    return WideString();
   }
   const int nRequiredLen =
       m_pInfo->m_pJsPlatform->Field_browse(m_pInfo->m_pJsPlatform, nullptr, 0);
   if (nRequiredLen <= 0)
-    return CFX_WideString();
+    return WideString();
 
   std::vector<uint8_t> pBuff(nRequiredLen);
   const int nActualLen = m_pInfo->m_pJsPlatform->Field_browse(
       m_pInfo->m_pJsPlatform, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
-    return CFX_WideString();
+    return WideString();
 
   pBuff.resize(nActualLen);
-  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff));
+  return WideString::FromLocal(ByteStringView(pBuff));
 }
 
-CFX_WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
+WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Doc_getFilePath) {
-    return CFX_WideString();
+    return WideString();
   }
   const int nRequiredLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
       m_pInfo->m_pJsPlatform, nullptr, 0);
   if (nRequiredLen <= 0)
-    return CFX_WideString();
+    return WideString();
 
   std::vector<uint8_t> pBuff(nRequiredLen);
   const int nActualLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
       m_pInfo->m_pJsPlatform, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
-    return CFX_WideString();
+    return WideString();
 
   pBuff.resize(nActualLen);
-  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff));
+  return WideString::FromLocal(ByteStringView(pBuff));
 }
 
 void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
@@ -152,7 +152,7 @@ void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
       !m_pInfo->m_pJsPlatform->Doc_submitForm) {
     return;
   }
-  CFX_ByteString bsDestination = CFX_WideString(URL).UTF16LE_Encode();
+  ByteString bsDestination = WideString(URL).UTF16LE_Encode();
   m_pInfo->m_pJsPlatform->Doc_submitForm(m_pInfo->m_pJsPlatform, formData,
                                          length,
                                          AsFPDFWideString(&bsDestination));
@@ -170,11 +170,11 @@ void CPDFSDK_FormFillEnvironment::JS_docmailForm(void* mailData,
       !m_pInfo->m_pJsPlatform->Doc_mail) {
     return;
   }
-  CFX_ByteString bsTo = CFX_WideString(To).UTF16LE_Encode();
-  CFX_ByteString bsSubject = CFX_WideString(Subject).UTF16LE_Encode();
-  CFX_ByteString bsCC = CFX_WideString(CC).UTF16LE_Encode();
-  CFX_ByteString bsBcc = CFX_WideString(BCC).UTF16LE_Encode();
-  CFX_ByteString bsMsg = CFX_WideString(Msg).UTF16LE_Encode();
+  ByteString bsTo = WideString(To).UTF16LE_Encode();
+  ByteString bsSubject = WideString(Subject).UTF16LE_Encode();
+  ByteString bsCC = WideString(CC).UTF16LE_Encode();
+  ByteString bsBcc = WideString(BCC).UTF16LE_Encode();
+  ByteString bsMsg = WideString(Msg).UTF16LE_Encode();
   m_pInfo->m_pJsPlatform->Doc_mail(
       m_pInfo->m_pJsPlatform, mailData, length, bUI, AsFPDFWideString(&bsTo),
       AsFPDFWideString(&bsSubject), AsFPDFWideString(&bsCC),
@@ -350,30 +350,30 @@ void CPDFSDK_FormFillEnvironment::SetCurrentPage(CPDFXFA_Context* document,
     m_pInfo->FFI_SetCurrentPage(m_pInfo, document, iCurPage);
 }
 
-CFX_WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
+WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
   if (!m_pInfo || !m_pInfo->FFI_GetPlatform)
-    return CFX_WideString();
+    return WideString();
 
   int nRequiredLen = m_pInfo->FFI_GetPlatform(m_pInfo, nullptr, 0);
   if (nRequiredLen <= 0)
-    return CFX_WideString();
+    return WideString();
 
   std::vector<uint8_t> pBuff(nRequiredLen);
   int nActualLen =
       m_pInfo->FFI_GetPlatform(m_pInfo, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
-    return CFX_WideString();
+    return WideString();
 
-  return CFX_WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
-                                     nActualLen / sizeof(uint16_t));
+  return WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
+                                 nActualLen / sizeof(uint16_t));
 }
 
 void CPDFSDK_FormFillEnvironment::GotoURL(CPDFXFA_Context* document,
-                                          const CFX_WideStringC& wsURL) {
+                                          const WideStringView& wsURL) {
   if (!m_pInfo || !m_pInfo->FFI_GotoURL)
     return;
 
-  CFX_ByteString bsTo = CFX_WideString(wsURL).UTF16LE_Encode();
+  ByteString bsTo = WideString(wsURL).UTF16LE_Encode();
   FPDF_WIDESTRING pTo = (FPDF_WIDESTRING)bsTo.GetBuffer(wsURL.GetLength());
   m_pInfo->FFI_GotoURL(m_pInfo, document, pTo);
   bsTo.ReleaseBuffer(bsTo.GetStringLength());
@@ -446,7 +446,7 @@ CPDFSDK_FormFillEnvironment::DownloadFromURL(const wchar_t* url) {
   if (!m_pInfo || !m_pInfo->FFI_DownloadFromURL)
     return nullptr;
 
-  CFX_ByteString bstrURL = CFX_WideString(url).UTF16LE_Encode();
+  ByteString bstrURL = WideString(url).UTF16LE_Encode();
   FPDF_WIDESTRING wsURL =
       (FPDF_WIDESTRING)bstrURL.GetBuffer(bstrURL.GetLength());
 
@@ -454,7 +454,7 @@ CPDFSDK_FormFillEnvironment::DownloadFromURL(const wchar_t* url) {
   return MakeSeekableStream(fileHandler);
 }
 
-CFX_WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
+WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
     const wchar_t* wsURL,
     const wchar_t* wsData,
     const wchar_t* wsContentType,
@@ -463,21 +463,21 @@ CFX_WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
   if (!m_pInfo || !m_pInfo->FFI_PostRequestURL)
     return L"";
 
-  CFX_ByteString bsURL = CFX_WideString(wsURL).UTF16LE_Encode();
+  ByteString bsURL = WideString(wsURL).UTF16LE_Encode();
   FPDF_WIDESTRING URL = (FPDF_WIDESTRING)bsURL.GetBuffer(bsURL.GetLength());
 
-  CFX_ByteString bsData = CFX_WideString(wsData).UTF16LE_Encode();
+  ByteString bsData = WideString(wsData).UTF16LE_Encode();
   FPDF_WIDESTRING data = (FPDF_WIDESTRING)bsData.GetBuffer(bsData.GetLength());
 
-  CFX_ByteString bsContentType = CFX_WideString(wsContentType).UTF16LE_Encode();
+  ByteString bsContentType = WideString(wsContentType).UTF16LE_Encode();
   FPDF_WIDESTRING contentType =
       (FPDF_WIDESTRING)bsContentType.GetBuffer(bsContentType.GetLength());
 
-  CFX_ByteString bsEncode = CFX_WideString(wsEncode).UTF16LE_Encode();
+  ByteString bsEncode = WideString(wsEncode).UTF16LE_Encode();
   FPDF_WIDESTRING encode =
       (FPDF_WIDESTRING)bsEncode.GetBuffer(bsEncode.GetLength());
 
-  CFX_ByteString bsHeader = CFX_WideString(wsHeader).UTF16LE_Encode();
+  ByteString bsHeader = WideString(wsHeader).UTF16LE_Encode();
   FPDF_WIDESTRING header =
       (FPDF_WIDESTRING)bsHeader.GetBuffer(bsHeader.GetLength());
 
@@ -486,7 +486,7 @@ CFX_WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
   m_pInfo->FFI_PostRequestURL(m_pInfo, URL, data, contentType, encode, header,
                               &response);
 
-  CFX_WideString wsRet = CFX_WideString::FromUTF16LE(
+  WideString wsRet = WideString::FromUTF16LE(
       (FPDF_WIDESTRING)response.str, response.len / sizeof(FPDF_WIDESTRING));
   FPDF_BStr_Clear(&response);
 
@@ -499,35 +499,35 @@ FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(const wchar_t* wsURL,
   if (!m_pInfo || !m_pInfo->FFI_PutRequestURL)
     return false;
 
-  CFX_ByteString bsURL = CFX_WideString(wsURL).UTF16LE_Encode();
+  ByteString bsURL = WideString(wsURL).UTF16LE_Encode();
   FPDF_WIDESTRING URL = (FPDF_WIDESTRING)bsURL.GetBuffer(bsURL.GetLength());
 
-  CFX_ByteString bsData = CFX_WideString(wsData).UTF16LE_Encode();
+  ByteString bsData = WideString(wsData).UTF16LE_Encode();
   FPDF_WIDESTRING data = (FPDF_WIDESTRING)bsData.GetBuffer(bsData.GetLength());
 
-  CFX_ByteString bsEncode = CFX_WideString(wsEncode).UTF16LE_Encode();
+  ByteString bsEncode = WideString(wsEncode).UTF16LE_Encode();
   FPDF_WIDESTRING encode =
       (FPDF_WIDESTRING)bsEncode.GetBuffer(bsEncode.GetLength());
 
   return m_pInfo->FFI_PutRequestURL(m_pInfo, URL, data, encode);
 }
 
-CFX_WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
+WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
   if (!m_pInfo || !m_pInfo->FFI_GetLanguage)
-    return CFX_WideString();
+    return WideString();
 
   int nRequiredLen = m_pInfo->FFI_GetLanguage(m_pInfo, nullptr, 0);
   if (nRequiredLen <= 0)
-    return CFX_WideString();
+    return WideString();
 
   std::vector<uint8_t> pBuff(nRequiredLen);
   int nActualLen =
       m_pInfo->FFI_GetLanguage(m_pInfo, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
-    return CFX_WideString();
+    return WideString();
 
-  return CFX_WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
-                                     nActualLen / sizeof(uint16_t));
+  return WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
+                                 nActualLen / sizeof(uint16_t));
 }
 
 void CPDFSDK_FormFillEnvironment::PageEvent(int iPageCount,
@@ -583,7 +583,7 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
   CPDF_DocJSActions docJS(pPDFDoc);
   int iCount = docJS.CountJSActions();
   for (int i = 0; i < iCount; i++) {
-    CFX_WideString csJSName;
+    WideString csJSName;
     CPDF_Action jsAction = docJS.GetJSActionAndName(i, &csJSName);
     GetActionHandler()->DoAction_JavaScript(jsAction, csJSName, this);
   }

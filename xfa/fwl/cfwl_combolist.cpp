@@ -25,14 +25,14 @@ CFWL_ComboList::CFWL_ComboList(
   ASSERT(pOuter);
 }
 
-int32_t CFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
+int32_t CFWL_ComboList::MatchItem(const WideString& wsMatch) {
   if (wsMatch.IsEmpty())
     return -1;
 
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_ListItem* hItem = GetItem(this, i);
-    CFX_WideString wsText = hItem ? hItem->GetText() : L"";
+    WideString wsText = hItem ? hItem->GetText() : L"";
     auto pos = wsText.Find(wsMatch.c_str());
     if (pos.has_value() && pos.value() == 0)
       return i;

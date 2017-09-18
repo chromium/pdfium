@@ -33,7 +33,7 @@ bool CXFA_FFNumericEdit::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  CFX_WideString wsText;
+  WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetText(wsText);
   UpdateWidgetProperty();
@@ -75,9 +75,8 @@ void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFTextEdit::OnProcessEvent(pEvent);
 }
 
-bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
-                                    CFX_WideString& wsText) {
-  CFX_WideString wsPattern;
+bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget, WideString& wsText) {
+  WideString wsPattern;
   m_pDataAcc->GetPictureContent(wsPattern, XFA_VALUEPICTURE_Edit);
   if (!wsPattern.IsEmpty())
     return true;
@@ -88,7 +87,7 @@ bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
   int32_t iFracs = 0;
   m_pDataAcc->GetFracDigits(iFracs);
 
-  CFX_WideString wsFormat;
+  WideString wsFormat;
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pDataAcc.Get());
   widgetValue.GetNumericFormat(wsFormat, iLeads, iFracs);
   return widgetValue.ValidateNumericTemp(wsText, wsFormat,

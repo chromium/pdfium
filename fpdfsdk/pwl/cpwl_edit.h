@@ -27,8 +27,8 @@ class IPWL_Filler_Notify {
                                float* fPopupRet) = 0;
   virtual std::pair<bool, bool> OnBeforeKeyStroke(
       CPWL_Wnd::PrivateData* pAttached,
-      CFX_WideString& strChange,
-      const CFX_WideString& strChangeEx,
+      WideString& strChange,
+      const WideString& strChangeEx,
       int nSelStart,
       int nSelEnd,
       bool bKeyDown,
@@ -47,7 +47,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   ~CPWL_Edit() override;
 
   // CPWL_EditCtrl
-  CFX_ByteString GetClassName() const override;
+  ByteString GetClassName() const override;
   void OnCreated() override;
   void RePosChildWnd() override;
   CFX_FloatRect GetClientRect() const override;
@@ -80,8 +80,8 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
   void CutText();
 
-  void SetText(const CFX_WideString& csText);
-  void ReplaceSel(const CFX_WideString& csText);
+  void SetText(const WideString& csText);
+  void ReplaceSel(const WideString& csText);
 
   bool IsTextFull() const;
 

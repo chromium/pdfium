@@ -114,22 +114,22 @@ class IXFA_AppProvider {
   /**
    * Returns the language of the running host application. Such as zh_CN
    */
-  virtual CFX_WideString GetLanguage() = 0;
+  virtual WideString GetLanguage() = 0;
 
   /**
    * Returns the platform of the machine running the script. Such as WIN
    */
-  virtual CFX_WideString GetPlatform() = 0;
+  virtual WideString GetPlatform() = 0;
 
   /**
    * Get application name, such as Phantom.
    */
-  virtual CFX_WideString GetAppName() = 0;
+  virtual WideString GetAppName() = 0;
 
   /**
    * Get application message box title.
    */
-  virtual CFX_WideString GetAppTitle() const = 0;
+  virtual WideString GetAppTitle() const = 0;
 
   /**
    * Causes the system to play a sound.
@@ -147,8 +147,8 @@ class IXFA_AppProvider {
    * @return A valid integer representing the value of the button pressed by the
    * user, refer to XFA_ID.
    */
-  virtual int32_t MsgBox(const CFX_WideString& wsMessage,
-                         const CFX_WideString& wsTitle = L"",
+  virtual int32_t MsgBox(const WideString& wsMessage,
+                         const WideString& wsTitle = L"",
                          uint32_t dwIconType = 0,
                          uint32_t dwButtonType = 0) = 0;
 
@@ -160,10 +160,10 @@ class IXFA_AppProvider {
    * @param[in] bMask           - Mask the user input with asterisks when true,
    * @return A string containing the user's response.
    */
-  virtual CFX_WideString Response(const CFX_WideString& wsQuestion,
-                                  const CFX_WideString& wsTitle = L"",
-                                  const CFX_WideString& wsDefaultAnswer = L"",
-                                  bool bMask = true) = 0;
+  virtual WideString Response(const WideString& wsQuestion,
+                              const WideString& wsTitle = L"",
+                              const WideString& wsDefaultAnswer = L"",
+                              bool bMask = true) = 0;
 
   /**
    * Download something from somewhere.
@@ -171,7 +171,7 @@ class IXFA_AppProvider {
    * "http://www.w3.org/TR/REC-xml-names/".
    */
   virtual CFX_RetainPtr<IFX_SeekableReadStream> DownloadURL(
-      const CFX_WideString& wsURL) = 0;
+      const WideString& wsURL) = 0;
 
   /**
    * POST data to the given url.
@@ -188,12 +188,12 @@ class IXFA_AppProvider {
    * @param[out] wsResponse   decoded response from server.
    * @return true Server permitted the post request, false otherwise.
    */
-  virtual bool PostRequestURL(const CFX_WideString& wsURL,
-                              const CFX_WideString& wsData,
-                              const CFX_WideString& wsContentType,
-                              const CFX_WideString& wsEncode,
-                              const CFX_WideString& wsHeader,
-                              CFX_WideString& wsResponse) = 0;
+  virtual bool PostRequestURL(const WideString& wsURL,
+                              const WideString& wsData,
+                              const WideString& wsContentType,
+                              const WideString& wsEncode,
+                              const WideString& wsHeader,
+                              WideString& wsResponse) = 0;
 
   /**
    * PUT data to the given url.
@@ -203,9 +203,9 @@ class IXFA_AppProvider {
    * ISO8859-1, any recognized [IANA]character encoding
    * @return true Server permitted the post request, false otherwise.
    */
-  virtual bool PutRequestURL(const CFX_WideString& wsURL,
-                             const CFX_WideString& wsData,
-                             const CFX_WideString& wsEncode) = 0;
+  virtual bool PutRequestURL(const WideString& wsURL,
+                             const WideString& wsData,
+                             const WideString& wsEncode) = 0;
 
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
@@ -237,12 +237,12 @@ class IXFA_DocEnvironment {
   virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) = 0;
   virtual bool IsCalculationsEnabled(CXFA_FFDoc* hDoc) = 0;
   virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
-  virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) = 0;
-  virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle) = 0;
+  virtual void GetTitle(CXFA_FFDoc* hDoc, WideString& wsTitle) = 0;
+  virtual void SetTitle(CXFA_FFDoc* hDoc, const WideString& wsTitle) = 0;
   virtual void ExportData(CXFA_FFDoc* hDoc,
-                          const CFX_WideString& wsFilePath,
+                          const WideString& wsFilePath,
                           bool bXDP) = 0;
-  virtual void GotoURL(CXFA_FFDoc* hDoc, const CFX_WideString& bsURL) = 0;
+  virtual void GotoURL(CXFA_FFDoc* hDoc, const WideString& bsURL) = 0;
   virtual bool IsValidationsEnabled(CXFA_FFDoc* hDoc) = 0;
   virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
   virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
@@ -254,14 +254,14 @@ class IXFA_DocEnvironment {
 
   virtual bool SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) = 0;
   virtual bool GetGlobalProperty(CXFA_FFDoc* hDoc,
-                                 const CFX_ByteStringC& szPropName,
+                                 const ByteStringView& szPropName,
                                  CFXJSE_Value* pValue) = 0;
   virtual bool SetGlobalProperty(CXFA_FFDoc* hDoc,
-                                 const CFX_ByteStringC& szPropName,
+                                 const ByteStringView& szPropName,
                                  CFXJSE_Value* pValue) = 0;
   virtual CFX_RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
       CXFA_FFDoc* hDoc,
-      const CFX_WideString& wsLink) = 0;
+      const WideString& wsLink) = 0;
 };
 
 class IXFA_WidgetIterator {

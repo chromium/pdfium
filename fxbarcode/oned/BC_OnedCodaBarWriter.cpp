@@ -95,15 +95,15 @@ bool CBC_OnedCodaBarWriter::FindChar(wchar_t ch, bool isContent) {
 }
 
 bool CBC_OnedCodaBarWriter::CheckContentValidity(
-    const CFX_WideStringC& contents) {
+    const WideStringView& contents) {
   return std::all_of(
       contents.begin(), contents.end(),
       [this](const wchar_t& ch) { return this->FindChar(ch, false); });
 }
 
-CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
-    const CFX_WideStringC& contents) {
-  CFX_WideString filtercontents;
+WideString CBC_OnedCodaBarWriter::FilterContents(
+    const WideStringView& contents) {
+  WideString filtercontents;
   wchar_t ch;
   for (FX_STRSIZE index = 0; index < contents.GetLength(); index++) {
     ch = contents[index];
@@ -118,7 +118,7 @@ CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
   return filtercontents;
 }
 
-uint8_t* CBC_OnedCodaBarWriter::EncodeWithHint(const CFX_ByteString& contents,
+uint8_t* CBC_OnedCodaBarWriter::EncodeWithHint(const ByteString& contents,
                                                BCFORMAT format,
                                                int32_t& outWidth,
                                                int32_t& outHeight,
@@ -129,9 +129,9 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeWithHint(const CFX_ByteString& contents,
                                           hints);
 }
 
-uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const CFX_ByteString& contents,
+uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const ByteString& contents,
                                            int32_t& outLength) {
-  CFX_ByteString data = m_chStart + contents + m_chEnd;
+  ByteString data = m_chStart + contents + m_chEnd;
   m_iContentLen = data.GetLength();
   uint8_t* result = FX_Alloc2D(uint8_t, m_iWideNarrRatio * 7, data.GetLength());
   char ch;
@@ -188,16 +188,16 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const CFX_ByteString& contents,
   return result;
 }
 
-CFX_WideString CBC_OnedCodaBarWriter::encodedContents(
-    const CFX_WideStringC& contents) {
-  CFX_WideString strStart(static_cast<wchar_t>(m_chStart));
-  CFX_WideString strEnd(static_cast<wchar_t>(m_chEnd));
+WideString CBC_OnedCodaBarWriter::encodedContents(
+    const WideStringView& contents) {
+  WideString strStart(static_cast<wchar_t>(m_chStart));
+  WideString strEnd(static_cast<wchar_t>(m_chEnd));
   return strStart + contents + strEnd;
 }
 
-bool CBC_OnedCodaBarWriter::RenderResult(const CFX_WideStringC& contents,
+bool CBC_OnedCodaBarWriter::RenderResult(const WideStringView& contents,
                                          uint8_t* code,
                                          int32_t codeLength) {
-  return CBC_OneDimWriter::RenderResult(encodedContents(contents).AsStringC(),
-                                        code, codeLength);
+  return CBC_OneDimWriter::RenderResult(
+      encodedContents(contents).AsStringView(), code, codeLength);
 }

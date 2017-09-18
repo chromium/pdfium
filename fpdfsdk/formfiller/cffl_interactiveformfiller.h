@@ -83,8 +83,8 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, bool bRegister);
   void RemoveFormFiller(CPDFSDK_Annot* pAnnot);
 
-  CFX_WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
-  void ReplaceSelection(CPDFSDK_Annot* pAnnot, const CFX_WideString& text);
+  WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
+  void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
 
   static bool IsVisible(CPDFSDK_Widget* pWidget);
   static bool IsReadOnly(CPDFSDK_Widget* pWidget);
@@ -133,8 +133,8 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
                        float* fPopupRet) override;
   // Returns {bRC, bExit}.
   std::pair<bool, bool> OnBeforeKeyStroke(CPWL_Wnd::PrivateData* pAttached,
-                                          CFX_WideString& strChange,
-                                          const CFX_WideString& strChangeEx,
+                                          WideString& strChange,
+                                          const WideString& strChangeEx,
                                           int nSelStart,
                                           int nSelEnd,
                                           bool bKeyDown,

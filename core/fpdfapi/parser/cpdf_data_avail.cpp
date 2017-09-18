@@ -473,7 +473,7 @@ bool CPDF_DataAvail::CheckPage() {
     if (!pObj->IsDictionary())
       continue;
 
-    CFX_ByteString type = pObj->GetDict()->GetStringFor("Type");
+    ByteString type = pObj->GetDict()->GetStringFor("Type");
     if (type == "Pages") {
       m_PagesArray.push_back(std::move(pObj));
       continue;
@@ -661,7 +661,7 @@ std::unique_ptr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
   m_syntaxParser.SetPos(pos);
 
   bool bIsNumber;
-  CFX_ByteString word = m_syntaxParser.GetNextWord(&bIsNumber);
+  ByteString word = m_syntaxParser.GetNextWord(&bIsNumber);
   if (!bIsNumber)
     return nullptr;
 
@@ -723,7 +723,7 @@ bool CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
   m_syntaxParser.SetPos(m_syntaxParser.m_HeaderOffset + 9);
 
   bool bNumber;
-  CFX_ByteString wordObjNum = m_syntaxParser.GetNextWord(&bNumber);
+  ByteString wordObjNum = m_syntaxParser.GetNextWord(&bNumber);
   if (!bNumber)
     return false;
 
@@ -761,7 +761,7 @@ bool CPDF_DataAvail::CheckEnd() {
   m_syntaxParser.GetNextWord(nullptr);
 
   bool bNumber;
-  CFX_ByteString xrefpos_str = m_syntaxParser.GetNextWord(&bNumber);
+  ByteString xrefpos_str = m_syntaxParser.GetNextWord(&bNumber);
   if (!bNumber) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
@@ -781,7 +781,7 @@ void CPDF_DataAvail::SetStartOffset(FX_FILESIZE dwOffset) {
   m_Pos = dwOffset;
 }
 
-bool CPDF_DataAvail::GetNextToken(CFX_ByteString* token) {
+bool CPDF_DataAvail::GetNextToken(ByteString* token) {
   uint8_t ch;
   if (!GetNextChar(ch))
     return false;
@@ -814,7 +814,7 @@ bool CPDF_DataAvail::GetNextToken(CFX_ByteString* token) {
 
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_Pos--;
-          *token = CFX_ByteString(buffer, index);
+          *token = ByteString(buffer, index);
           return true;
         }
         if (index < sizeof(buffer))
@@ -837,7 +837,7 @@ bool CPDF_DataAvail::GetNextToken(CFX_ByteString* token) {
       else
         m_Pos--;
     }
-    *token = CFX_ByteString(buffer, index);
+    *token = ByteString(buffer, index);
     return true;
   }
 
@@ -854,7 +854,7 @@ bool CPDF_DataAvail::GetNextToken(CFX_ByteString* token) {
     }
   }
 
-  *token = CFX_ByteString(buffer, index);
+  *token = ByteString(buffer, index);
   return true;
 }
 
@@ -885,7 +885,7 @@ bool CPDF_DataAvail::GetNextChar(uint8_t& ch) {
 }
 
 bool CPDF_DataAvail::CheckCrossRefItem() {
-  CFX_ByteString token;
+  ByteString token;
   while (1) {
     const CPDF_ReadValidator::Session read_session(GetValidator().Get());
     if (!GetNextToken(&token)) {
@@ -904,7 +904,7 @@ bool CPDF_DataAvail::CheckCrossRefItem() {
 
 bool CPDF_DataAvail::CheckCrossRef() {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  CFX_ByteString token;
+  ByteString token;
   if (!GetNextToken(&token)) {
     if (!GetValidator()->has_read_problems())
       m_docStatus = PDF_DATAAVAIL_ERROR;
@@ -1046,7 +1046,7 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
 
   pPageNode->m_dwPageNo = dwPageNo;
   CPDF_Dictionary* pDict = pPage->GetDict();
-  const CFX_ByteString type = pDict->GetStringFor("Type");
+  const ByteString type = pDict->GetStringFor("Type");
   if (type == "Page") {
     pPageNode->m_type = PDF_PAGENODE_PAGE;
     return true;

@@ -89,7 +89,7 @@ void CFX_SystemHandler::SetCursor(int32_t nCursorType) {
   m_pFormFillEnv->SetCursor(nCursorType);
 }
 
-bool CFX_SystemHandler::FindNativeTrueTypeFont(CFX_ByteString sFontFaceName) {
+bool CFX_SystemHandler::FindNativeTrueTypeFont(ByteString sFontFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   if (!pFontMgr)
     return false;
@@ -102,11 +102,11 @@ bool CFX_SystemHandler::FindNativeTrueTypeFont(CFX_ByteString sFontFaceName) {
     pFontMapper->LoadInstalledFonts();
 
   for (const auto& font : pFontMapper->m_InstalledTTFonts) {
-    if (font.Compare(sFontFaceName.AsStringC()))
+    if (font.Compare(sFontFaceName.AsStringView()))
       return true;
   }
   for (const auto& fontPair : pFontMapper->m_LocalizedTTFonts) {
-    if (fontPair.first.Compare(sFontFaceName.AsStringC()))
+    if (fontPair.first.Compare(sFontFaceName.AsStringView()))
       return true;
   }
   return false;
@@ -114,7 +114,7 @@ bool CFX_SystemHandler::FindNativeTrueTypeFont(CFX_ByteString sFontFaceName) {
 
 CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(
     CPDF_Document* pDoc,
-    CFX_ByteString sFontFaceName,
+    ByteString sFontFaceName,
     uint8_t nCharset) {
   if (!pDoc)
     return nullptr;

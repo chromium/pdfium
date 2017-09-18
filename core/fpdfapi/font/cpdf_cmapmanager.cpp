@@ -17,7 +17,7 @@ CPDF_CMapManager::CPDF_CMapManager() {}
 CPDF_CMapManager::~CPDF_CMapManager() {}
 
 CFX_RetainPtr<CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
-    const CFX_ByteString& name,
+    const ByteString& name,
     bool bPromptCJK) {
   auto it = m_CMaps.find(name);
   if (it != m_CMaps.end())
@@ -31,7 +31,7 @@ CFX_RetainPtr<CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
 }
 
 CFX_RetainPtr<CPDF_CMap> CPDF_CMapManager::LoadPredefinedCMap(
-    const CFX_ByteString& name,
+    const ByteString& name,
     bool bPromptCJK) {
   const char* pname = name.c_str();
   if (*pname == '/')

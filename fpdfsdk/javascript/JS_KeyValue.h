@@ -35,11 +35,11 @@ class CJS_KeyValue {
   CJS_KeyValue();
   ~CJS_KeyValue();
 
-  CFX_ByteString sKey;
+  ByteString sKey;
   JS_GlobalDataType nType;
   double dData;
   bool bData;
-  CFX_ByteString sData;
+  ByteString sData;
   CJS_GlobalVariableArray objData;
 };
 

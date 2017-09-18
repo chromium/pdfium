@@ -145,7 +145,7 @@ bool CPDF_Stream::HasFilter() const {
   return m_pDict && m_pDict->KeyExist("Filter");
 }
 
-CFX_WideString CPDF_Stream::GetUnicodeText() const {
+WideString CPDF_Stream::GetUnicodeText() const {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
   pAcc->LoadAllData(false);
   return PDF_DecodeText(pAcc->GetData(), pAcc->GetSize());

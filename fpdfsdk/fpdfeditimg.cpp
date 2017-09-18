@@ -244,7 +244,7 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
   CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
   CPDF_Object* pFilter =
       pObj->AsImage()->GetImage()->GetDict()->GetDirectObjectFor("Filter");
-  CFX_ByteString bsFilter;
+  ByteString bsFilter;
   if (pFilter->IsName())
     bsFilter = pFilter->AsName()->GetString();
   else

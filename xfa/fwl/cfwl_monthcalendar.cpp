@@ -32,9 +32,9 @@
 
 namespace {
 
-CFX_WideString GetCapacityForDay(IFWL_ThemeProvider* pTheme,
-                                 CFWL_ThemePart& params,
-                                 uint32_t day) {
+WideString GetCapacityForDay(IFWL_ThemeProvider* pTheme,
+                             CFWL_ThemePart& params,
+                             uint32_t day) {
   ASSERT(day < 7);
 
   if (day == 0)
@@ -52,9 +52,9 @@ CFX_WideString GetCapacityForDay(IFWL_ThemeProvider* pTheme,
   return L"Sat";
 }
 
-CFX_WideString GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
-                                   CFWL_ThemePart& params,
-                                   uint32_t month) {
+WideString GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
+                               CFWL_ThemePart& params,
+                               uint32_t month) {
   ASSERT(month < 12);
 
   if (month == 0)
@@ -430,7 +430,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   float fDayMaxW = 0.0f;
   float fDayMaxH = 0.0f;
   for (int day = 10; day <= 31; day++) {
-    CFX_WideString wsDay;
+    WideString wsDay;
     wsDay.Format(L"%d", day);
     CFX_SizeF sz = CalcTextSize(wsDay, m_pProperties->m_pThemeProvider, false);
     fDayMaxW = (fDayMaxW >= sz.width) ? fDayMaxW : sz.width;
@@ -462,7 +462,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
       m_szHead.width + MONTHCAL_HEADER_BTN_HMARGIN * 2 + m_szCell.width * 2;
   fs.width = std::max(fs.width, fMonthMaxW);
 
-  CFX_WideString wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
+  WideString wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
   m_wsToday = L"Today" + wsToday;
   m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider, false);
   m_szToday.height = (m_szToday.height >= m_szCell.height) ? m_szToday.height
@@ -579,7 +579,7 @@ void CFWL_MonthCalendar::ResetDateItem() {
     if (iDayOfWeek >= 7)
       iDayOfWeek = 0;
 
-    CFX_WideString wsDay;
+    WideString wsDay;
     wsDay.Format(L"%d", i + 1);
     uint32_t dwStates = 0;
     if (m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == (i + 1))
@@ -674,21 +674,21 @@ void CFWL_MonthCalendar::JumpToToday() {
     AddSelDay(m_iDay);
 }
 
-CFX_WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
+WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
   ASSERT(iMonth > 0 && iMonth < 13);
   static const wchar_t* const pMonth[] = {L"January", L"February", L"March",
                                           L"April",   L"May",      L"June",
                                           L"July",    L"August",   L"September",
                                           L"October", L"November", L"December"};
-  CFX_WideString wsHead;
+  WideString wsHead;
   wsHead.Format(L"%s, %d", pMonth[iMonth - 1], iYear);
   return wsHead;
 }
 
-CFX_WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,
-                                                int32_t iMonth,
-                                                int32_t iDay) {
-  CFX_WideString wsToday;
+WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,
+                                            int32_t iMonth,
+                                            int32_t iDay) {
+  WideString wsToday;
   wsToday.Format(L", %d/%d/%d", iDay, iMonth, iYear);
   return wsToday;
 }
@@ -893,7 +893,7 @@ CFWL_MonthCalendar::DATEINFO::DATEINFO(int32_t day,
                                        int32_t dayofweek,
                                        uint32_t dwSt,
                                        CFX_RectF rc,
-                                       CFX_WideString& wsday)
+                                       WideString& wsday)
     : iDay(day),
       iDayOfWeek(dayofweek),
       dwStates(dwSt),

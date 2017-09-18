@@ -55,24 +55,23 @@ void CBC_PDF417HighLevelEncoder::Initialize() {
 
 void CBC_PDF417HighLevelEncoder::Finalize() {}
 
-CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
-    CFX_WideString wideMsg,
-    Compaction compaction,
-    int32_t& e) {
-  CFX_ByteString bytes;
+WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(WideString wideMsg,
+                                                       Compaction compaction,
+                                                       int32_t& e) {
+  ByteString bytes;
   CBC_UtilCodingConvert::UnicodeToUTF8(wideMsg, bytes);
-  CFX_WideString msg;
+  WideString msg;
   int32_t len = bytes.GetLength();
   for (int32_t i = 0; i < len; i++) {
     wchar_t ch = (wchar_t)(bytes[i] & 0xff);
     if (ch == '?' && bytes[i] != '?') {
       e = BCExceptionCharactersOutsideISO88591Encoding;
-      return CFX_WideString();
+      return WideString();
     }
     msg += ch;
   }
   std::vector<uint8_t> byteArr(bytes.begin(), bytes.end());
-  CFX_WideString sb;
+  WideString sb;
   len = msg.GetLength();
   int32_t p = 0;
   int32_t textSubMode = SUBMODE_ALPHA;
@@ -145,12 +144,12 @@ void CBC_PDF417HighLevelEncoder::Inverse() {
   }
 }
 
-int32_t CBC_PDF417HighLevelEncoder::encodeText(CFX_WideString msg,
+int32_t CBC_PDF417HighLevelEncoder::encodeText(WideString msg,
                                                int32_t startpos,
                                                int32_t count,
-                                               CFX_WideString& sb,
+                                               WideString& sb,
                                                int32_t initialSubmode) {
-  CFX_WideString tmp;
+  WideString tmp;
   int32_t submode = initialSubmode;
   int32_t idx = 0;
   while (true) {
@@ -262,7 +261,7 @@ void CBC_PDF417HighLevelEncoder::encodeBinary(std::vector<uint8_t>* bytes,
                                               int32_t startpos,
                                               int32_t count,
                                               int32_t startmode,
-                                              CFX_WideString& sb) {
+                                              WideString& sb) {
   if (count == 1 && startmode == TEXT_COMPACTION) {
     sb += (wchar_t)SHIFT_TO_BYTE;
   }
@@ -295,16 +294,16 @@ void CBC_PDF417HighLevelEncoder::encodeBinary(std::vector<uint8_t>* bytes,
     sb += (wchar_t)ch;
   }
 }
-void CBC_PDF417HighLevelEncoder::encodeNumeric(CFX_WideString msg,
+void CBC_PDF417HighLevelEncoder::encodeNumeric(WideString msg,
                                                int32_t startpos,
                                                int32_t count,
-                                               CFX_WideString& sb) {
+                                               WideString& sb) {
   int32_t idx = 0;
   BigInteger num900 = 900;
   while (idx < count) {
-    CFX_WideString tmp;
+    WideString tmp;
     int32_t len = 44 < count - idx ? 44 : count - idx;
-    CFX_ByteString part =
+    ByteString part =
         ((wchar_t)'1' + msg.Mid(startpos + idx, len)).UTF8Encode();
     BigInteger bigint = stringToBigInteger(part.c_str());
     do {
@@ -337,7 +336,7 @@ bool CBC_PDF417HighLevelEncoder::isText(wchar_t ch) {
   return ch == '\t' || ch == '\n' || ch == '\r' || (ch >= 32 && ch <= 126);
 }
 int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveDigitCount(
-    CFX_WideString msg,
+    WideString msg,
     int32_t startpos) {
   int32_t count = 0;
   int32_t len = msg.GetLength();
@@ -355,7 +354,7 @@ int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveDigitCount(
   return count;
 }
 int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveTextCount(
-    CFX_WideString msg,
+    WideString msg,
     int32_t startpos) {
   int32_t len = msg.GetLength();
   int32_t idx = startpos;
@@ -384,7 +383,7 @@ int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveTextCount(
   return idx - startpos;
 }
 int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveBinaryCount(
-    CFX_WideString msg,
+    WideString msg,
     std::vector<uint8_t>* bytes,
     int32_t startpos,
     int32_t& e) {

@@ -31,16 +31,16 @@ class CFXJSE_HostObject {
 };
 
 typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,
-                                   const CFX_ByteStringC& szFuncName,
+                                   const ByteStringView& szFuncName,
                                    CFXJSE_Arguments& args);
 typedef void (*FXJSE_PropAccessor)(CFXJSE_Value* pObject,
-                                   const CFX_ByteStringC& szPropName,
+                                   const ByteStringView& szPropName,
                                    CFXJSE_Value* pValue);
 typedef int32_t (*FXJSE_PropTypeGetter)(CFXJSE_Value* pObject,
-                                        const CFX_ByteStringC& szPropName,
+                                        const ByteStringView& szPropName,
                                         bool bQueryIn);
 typedef bool (*FXJSE_PropDeleter)(CFXJSE_Value* pObject,
-                                  const CFX_ByteStringC& szPropName);
+                                  const ByteStringView& szPropName);
 
 enum FXJSE_ClassPropTypes {
   FXJSE_ClassPropType_None,
@@ -79,6 +79,6 @@ void FXJSE_Finalize();
 v8::Isolate* FXJSE_Runtime_Create_Own();
 void FXJSE_Runtime_Release(v8::Isolate* pIsolate);
 
-void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Message);
+void FXJSE_ThrowMessage(const ByteStringView& utf8Message);
 
 #endif  // FXJS_FXJSE_H_

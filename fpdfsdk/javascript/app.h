@@ -41,132 +41,120 @@ class app : public CJS_EmbedObj {
   explicit app(CJS_Object* pJSObject);
   ~app() override;
 
-  bool activeDocs(CJS_Runtime* pRuntime,
-                  CJS_PropValue& vp,
-                  CFX_WideString& sError);
-  bool calculate(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError);
+  bool activeDocs(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool calculate(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
   bool formsVersion(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError);
-  bool fs(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool fullscreen(CJS_Runtime* pRuntime,
-                  CJS_PropValue& vp,
-                  CFX_WideString& sError);
-  bool language(CJS_Runtime* pRuntime,
-                CJS_PropValue& vp,
-                CFX_WideString& sError);
-  bool media(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool platform(CJS_Runtime* pRuntime,
-                CJS_PropValue& vp,
-                CFX_WideString& sError);
+                    WideString& sError);
+  bool fs(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool fullscreen(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool language(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool media(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool platform(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
   bool runtimeHighlight(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError);
-  bool viewerType(CJS_Runtime* pRuntime,
-                  CJS_PropValue& vp,
-                  CFX_WideString& sError);
+                        WideString& sError);
+  bool viewerType(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
   bool viewerVariation(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError);
+                       WideString& sError);
   bool viewerVersion(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError);
+                     WideString& sError);
 
   bool alert(CJS_Runtime* pRuntime,
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
-             CFX_WideString& sError);
+             WideString& sError);
   bool beep(CJS_Runtime* pRuntime,
             const std::vector<CJS_Value>& params,
             CJS_Value& vRet,
-            CFX_WideString& sError);
+            WideString& sError);
   bool browseForDoc(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
-                    CFX_WideString& sError);
+                    WideString& sError);
   bool clearInterval(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
-                     CFX_WideString& sError);
+                     WideString& sError);
   bool clearTimeOut(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
-                    CFX_WideString& sError);
+                    WideString& sError);
   bool execDialog(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
-                  CFX_WideString& sError);
+                  WideString& sError);
   bool execMenuItem(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
-                    CFX_WideString& sError);
+                    WideString& sError);
   bool findComponent(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
-                     CFX_WideString& sError);
+                     WideString& sError);
   bool goBack(CJS_Runtime* pRuntime,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
-              CFX_WideString& sError);
+              WideString& sError);
   bool goForward(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
-                 CFX_WideString& sError);
+                 WideString& sError);
   bool launchURL(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
-                 CFX_WideString& sError);
+                 WideString& sError);
   bool mailMsg(CJS_Runtime* pRuntime,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
-               CFX_WideString& sError);
+               WideString& sError);
   bool newFDF(CJS_Runtime* pRuntime,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
-              CFX_WideString& sError);
+              WideString& sError);
   bool newDoc(CJS_Runtime* pRuntime,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
-              CFX_WideString& sError);
+              WideString& sError);
   bool openDoc(CJS_Runtime* pRuntime,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
-               CFX_WideString& sError);
+               WideString& sError);
   bool openFDF(CJS_Runtime* pRuntime,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
-               CFX_WideString& sError);
+               WideString& sError);
   bool popUpMenuEx(CJS_Runtime* pRuntime,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
-                   CFX_WideString& sError);
+                   WideString& sError);
   bool popUpMenu(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
-                 CFX_WideString& sError);
+                 WideString& sError);
   bool response(CJS_Runtime* pRuntime,
                 const std::vector<CJS_Value>& params,
                 CJS_Value& vRet,
-                CFX_WideString& sError);
+                WideString& sError);
   bool setInterval(CJS_Runtime* pRuntime,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
-                   CFX_WideString& sError);
+                   WideString& sError);
   bool setTimeOut(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
-                  CFX_WideString& sError);
+                  WideString& sError);
 
   void TimerProc(GlobalTimer* pTimer);
   void CancelProc(GlobalTimer* pTimer);
 
-  static CFX_WideString SysPathToPDFPath(const CFX_WideString& sOldPath);
+  static WideString SysPathToPDFPath(const WideString& sOldPath);
 
  private:
   // CJS_EmbedObj
-  void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
+  void RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript);
 
   void ClearTimerCommon(CJS_Runtime* pRuntime, const CJS_Value& param);
 

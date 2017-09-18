@@ -20,7 +20,7 @@ class CBC_PDF417I : public CBC_CodeBase {
   ~CBC_PDF417I() override;
 
   // CBC_CodeBase:
-  bool Encode(const CFX_WideStringC& contents) override;
+  bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;

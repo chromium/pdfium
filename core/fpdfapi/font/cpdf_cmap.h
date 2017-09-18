@@ -51,7 +51,7 @@ class CPDF_CMap : public CFX_Retainable {
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   void LoadPredefined(CPDF_CMapManager* pMgr,
-                      const CFX_ByteString& name,
+                      const ByteString& name,
                       bool bPromptCJK);
   void LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
 
@@ -70,7 +70,7 @@ class CPDF_CMap : public CFX_Retainable {
   CPDF_CMap();
   ~CPDF_CMap() override;
 
-  CFX_ByteString m_PredefinedCMap;
+  ByteString m_PredefinedCMap;
   bool m_bLoaded;
   bool m_bVertical;
   CIDSet m_Charset;

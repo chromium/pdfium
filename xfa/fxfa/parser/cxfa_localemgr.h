@@ -19,15 +19,15 @@ class IFX_Locale;
 
 class CXFA_LocaleMgr {
  public:
-  CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid);
+  CXFA_LocaleMgr(CXFA_Node* pLocaleSet, WideString wsDeflcid);
   ~CXFA_LocaleMgr();
 
   uint16_t GetDefLocaleID() const;
   IFX_Locale* GetDefLocale();
-  IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName);
+  IFX_Locale* GetLocaleByName(const WideString& wsLocaleName);
 
   void SetDefLocale(IFX_Locale* pLocale);
-  CFX_WideStringC GetConfigLocaleName(CXFA_Node* pConfig);
+  WideStringView GetConfigLocaleName(CXFA_Node* pConfig);
 
  private:
   std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid);
@@ -35,7 +35,7 @@ class CXFA_LocaleMgr {
   std::vector<std::unique_ptr<IFX_Locale>> m_LocaleArray;
   std::vector<std::unique_ptr<IFX_Locale>> m_XMLLocaleArray;
   IFX_Locale* m_pDefLocale;  // owned by m_LocaleArray or m_XMLLocaleArray.
-  CFX_WideString m_wsConfigLocale;
+  WideString m_wsConfigLocale;
   uint16_t m_dwDeflcid;
   uint16_t m_dwLocaleFlags;
 };

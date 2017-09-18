@@ -17,31 +17,29 @@ class color : public CJS_EmbedObj {
   explicit color(CJS_Object* pJSObject);
   ~color() override;
 
-  bool black(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool blue(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool cyan(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool dkGray(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool gray(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool green(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool ltGray(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool magenta(CJS_Runtime* pRuntime,
-               CJS_PropValue& vp,
-               CFX_WideString& sError);
-  bool red(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool black(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool blue(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool cyan(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool dkGray(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool gray(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool green(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool ltGray(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool magenta(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool red(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
   bool transparent(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  bool white(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
-  bool yellow(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+                   WideString& sError);
+  bool white(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool yellow(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
 
   bool convert(CJS_Runtime* pRuntime,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
-               CFX_WideString& sError);
+               WideString& sError);
   bool equal(CJS_Runtime* pRuntime,
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
-             CFX_WideString& sError);
+             WideString& sError);
 
   static void ConvertPWLColorToArray(CJS_Runtime* pRuntime,
                                      const CFX_Color& color,

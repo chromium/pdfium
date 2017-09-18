@@ -99,7 +99,7 @@ TEST(fpdf_parser_decode, EncodeText) {
 
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     const auto& test_case = test_data[i];
-    CFX_ByteString output = PDF_EncodeText(test_case.input);
+    ByteString output = PDF_EncodeText(test_case.input);
     ASSERT_EQ(test_case.expected_length, output.GetLength()) << "for case "
                                                              << i;
     const char* str_ptr = output.c_str();

@@ -44,7 +44,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   ~CPWL_ListBox() override;
 
   // CPWL_Wnd
-  CFX_ByteString GetClassName() const override;
+  ByteString GetClassName() const override;
   void OnCreated() override;
   void OnDestroy() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -66,11 +66,11 @@ class CPWL_ListBox : public CPWL_Wnd {
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;
 
-  virtual CFX_WideString GetText() const;
+  virtual WideString GetText() const;
 
   bool OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag);
 
-  void AddString(const CFX_WideString& str);
+  void AddString(const WideString& str);
   void SetTopVisibleIndex(int32_t nItemIndex);
   void ScrollToListItem(int32_t nItemIndex);
   void ResetContent();

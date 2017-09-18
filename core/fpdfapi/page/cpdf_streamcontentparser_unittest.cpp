@@ -6,39 +6,39 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(cpdf_streamcontentparser, PDF_FindKeyAbbreviation) {
-  EXPECT_EQ(CFX_ByteStringC("BitsPerComponent"),
+  EXPECT_EQ(ByteStringView("BitsPerComponent"),
             CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
-                CFX_ByteStringC("BPC")));
-  EXPECT_EQ(CFX_ByteStringC("Width"),
+                ByteStringView("BPC")));
+  EXPECT_EQ(ByteStringView("Width"),
             CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
-                CFX_ByteStringC("W")));
-  EXPECT_EQ(CFX_ByteStringC(""),
+                ByteStringView("W")));
+  EXPECT_EQ(ByteStringView(""),
             CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
-                CFX_ByteStringC("")));
-  EXPECT_EQ(CFX_ByteStringC(""),
+                ByteStringView("")));
+  EXPECT_EQ(ByteStringView(""),
             CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
-                CFX_ByteStringC("NoInList")));
+                ByteStringView("NoInList")));
   // Prefix should not match.
-  EXPECT_EQ(CFX_ByteStringC(""),
+  EXPECT_EQ(ByteStringView(""),
             CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
-                CFX_ByteStringC("WW")));
+                ByteStringView("WW")));
 }
 
 TEST(cpdf_streamcontentparser, PDF_FindValueAbbreviation) {
-  EXPECT_EQ(CFX_ByteStringC("DeviceGray"),
+  EXPECT_EQ(ByteStringView("DeviceGray"),
             CPDF_StreamContentParser::FindValueAbbreviationForTesting(
-                CFX_ByteStringC("G")));
-  EXPECT_EQ(CFX_ByteStringC("DCTDecode"),
+                ByteStringView("G")));
+  EXPECT_EQ(ByteStringView("DCTDecode"),
             CPDF_StreamContentParser::FindValueAbbreviationForTesting(
-                CFX_ByteStringC("DCT")));
-  EXPECT_EQ(CFX_ByteStringC(""),
+                ByteStringView("DCT")));
+  EXPECT_EQ(ByteStringView(""),
             CPDF_StreamContentParser::FindValueAbbreviationForTesting(
-                CFX_ByteStringC("")));
-  EXPECT_EQ(CFX_ByteStringC(""),
+                ByteStringView("")));
+  EXPECT_EQ(ByteStringView(""),
             CPDF_StreamContentParser::FindValueAbbreviationForTesting(
-                CFX_ByteStringC("NoInList")));
+                ByteStringView("NoInList")));
   // Prefix should not match.
-  EXPECT_EQ(CFX_ByteStringC(""),
+  EXPECT_EQ(ByteStringView(""),
             CPDF_StreamContentParser::FindValueAbbreviationForTesting(
-                CFX_ByteStringC("II")));
+                ByteStringView("II")));
 }

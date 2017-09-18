@@ -24,7 +24,7 @@ class CBC_QRCoderMode {
 
   int32_t GetCharacterCountBits(int32_t number, int32_t& e) const;
   int32_t GetBits() const;
-  CFX_ByteString GetName() const;
+  ByteString GetName() const;
 
   static CBC_QRCoderMode* sBYTE;
   static CBC_QRCoderMode* sNUMERIC;
@@ -41,11 +41,11 @@ class CBC_QRCoderMode {
   CBC_QRCoderMode();
   CBC_QRCoderMode(std::vector<int32_t> charCountBits,
                   int32_t bits,
-                  CFX_ByteString name);
+                  ByteString name);
 
   std::vector<int32_t> m_characterCountBitsForVersions;
   const int32_t m_bits;
-  const CFX_ByteString m_name;
+  const ByteString m_name;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERMODE_H_

@@ -22,7 +22,7 @@ class CPDF_Dest {
   ~CPDF_Dest();
 
   CPDF_Object* GetObject() const { return m_pObj.Get(); }
-  CFX_ByteString GetRemoteName();
+  ByteString GetRemoteName();
   int GetPageIndex(CPDF_Document* pDoc);
   uint32_t GetPageObjNum();
   int GetZoomMode();

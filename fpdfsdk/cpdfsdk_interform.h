@@ -43,7 +43,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
 
   CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, bool bNext) const;
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
-  void GetWidgets(const CFX_WideString& sFieldName,
+  void GetWidgets(const WideString& sFieldName,
                   std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const;
   void GetWidgets(CPDF_FormField* pField,
                   std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const;
@@ -65,14 +65,13 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   void SynchronizeField(CPDF_FormField* pFormField, bool bSynchronizeElse);
 #endif  // PDF_ENABLE_XFA
 
-  bool OnKeyStrokeCommit(CPDF_FormField* pFormField,
-                         const CFX_WideString& csValue);
-  bool OnValidate(CPDF_FormField* pFormField, const CFX_WideString& csValue);
+  bool OnKeyStrokeCommit(CPDF_FormField* pFormField, const WideString& csValue);
+  bool OnValidate(CPDF_FormField* pFormField, const WideString& csValue);
   void OnCalculate(CPDF_FormField* pFormField = nullptr);
-  CFX_WideString OnFormat(CPDF_FormField* pFormField, bool& bFormatted);
+  WideString OnFormat(CPDF_FormField* pFormField, bool& bFormatted);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,
-                            const CFX_WideString* sValue,
+                            const WideString* sValue,
                             bool bValueChanged);
   void UpdateField(CPDF_FormField* pFormField);
 
@@ -84,16 +83,16 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   std::vector<CPDF_FormField*> GetFieldFromObjects(
       const std::vector<CPDF_Object*>& objects) const;
   bool IsValidField(CPDF_Dictionary* pFieldDict);
-  bool SubmitFields(const CFX_WideString& csDestination,
+  bool SubmitFields(const WideString& csDestination,
                     const std::vector<CPDF_FormField*>& fields,
                     bool bIncludeOrExclude,
                     bool bUrlEncoded);
-  bool SubmitForm(const CFX_WideString& sDestination, bool bUrlEncoded);
-  CFX_ByteString ExportFormToFDFTextBuf();
-  CFX_ByteString ExportFieldsToFDFTextBuf(
+  bool SubmitForm(const WideString& sDestination, bool bUrlEncoded);
+  ByteString ExportFormToFDFTextBuf();
+  ByteString ExportFieldsToFDFTextBuf(
       const std::vector<CPDF_FormField*>& fields,
       bool bIncludeOrExclude);
-  CFX_WideString GetTemporaryFileName(const CFX_WideString& sFileExt);
+  WideString GetTemporaryFileName(const WideString& sFileExt);
 
   bool IsNeedHighLight(int nFieldType);
   void RemoveAllHighLight();
@@ -105,10 +104,10 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
  private:
   // IPDF_FormNotify:
   int BeforeValueChange(CPDF_FormField* pField,
-                        const CFX_WideString& csValue) override;
+                        const WideString& csValue) override;
   void AfterValueChange(CPDF_FormField* pField) override;
   int BeforeSelectionChange(CPDF_FormField* pField,
-                            const CFX_WideString& csValue) override;
+                            const WideString& csValue) override;
   void AfterSelectionChange(CPDF_FormField* pField) override;
   void AfterCheckedStatusChange(CPDF_FormField* pField) override;
   int BeforeFormReset(CPDF_InterForm* pForm) override;

@@ -73,7 +73,7 @@ void FormValueNode_MatchNoneCreateChild(CXFA_Node* pFormNode) {
 }
 
 bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
-                                   const CFX_WideString& wsContent,
+                                   const WideString& wsContent,
                                    XFA_Element iType = XFA_Element::Unknown) {
   if (!pValueNode)
     return false;
@@ -90,7 +90,7 @@ bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (pChildNode->GetElementType() == XFA_Element::ExData) {
-          CFX_WideString wsContentType;
+          WideString wsContentType;
           pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
                                    false);
           if (wsContentType == L"text/html")
@@ -131,13 +131,13 @@ void CreateDataBinding(CXFA_Node* pFormNode,
   XFA_Element eUIType = pWidgetData->GetUIType();
   CXFA_Value defValue(pFormNode->GetProperty(0, XFA_Element::Value));
   if (!bDataToForm) {
-    CFX_WideString wsValue;
-    CFX_WideString wsFormattedValue;
+    WideString wsValue;
+    WideString wsFormattedValue;
     switch (eUIType) {
       case XFA_Element::ImageEdit: {
         CXFA_Image image = defValue.GetImage();
-        CFX_WideString wsContentType;
-        CFX_WideString wsHref;
+        WideString wsContentType;
+        WideString wsHref;
         if (image) {
           image.GetContent(wsValue);
           image.GetContentType(wsContentType);
@@ -157,7 +157,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       case XFA_Element::ChoiceList:
         defValue.GetChildValueContent(wsValue);
         if (pWidgetData->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
-          std::vector<CFX_WideString> wsSelTextArray =
+          std::vector<WideString> wsSelTextArray =
               pWidgetData->GetSelectedItemsValue();
           if (!wsSelTextArray.empty()) {
             for (const auto& text : wsSelTextArray) {
@@ -211,7 +211,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (!pText)
             continue;
 
-          CFX_WideString wsContent;
+          WideString wsContent;
           if (pText->TryContent(wsContent) && (wsContent == wsValue)) {
             pChecked = pChild;
             wsFormattedValue = wsValue;
@@ -237,7 +237,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (pText)
             pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling);
 
-          CFX_WideString wsContent;
+          WideString wsContent;
           if (pText)
             pText->TryContent(wsContent);
 
@@ -250,7 +250,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         if (wsValue.IsEmpty())
           break;
 
-        CFX_WideString wsOutput;
+        WideString wsOutput;
         pWidgetData->NormalizeNumStr(wsValue, wsOutput);
         wsValue = wsOutput;
         pWidgetData->GetFormatDataValue(wsValue, wsFormattedValue);
@@ -271,9 +271,9 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     return;
   }
 
-  CFX_WideString wsXMLValue;
+  WideString wsXMLValue;
   pDataNode->TryContent(wsXMLValue);
-  CFX_WideString wsNormalizeValue;
+  WideString wsNormalizeValue;
   pWidgetData->GetNormalizeDataValue(wsXMLValue, wsNormalizeValue);
   pDataNode->SetAttributeValue(wsNormalizeValue, wsXMLValue);
   switch (eUIType) {
@@ -286,14 +286,14 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
 
-        CFX_WideString wsContentType =
+        WideString wsContentType =
             pXMLDataElement->GetString(L"xfa:contentType");
         if (!wsContentType.IsEmpty()) {
           pDataNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
           image.SetContentType(wsContentType);
         }
 
-        CFX_WideString wsHref = pXMLDataElement->GetString(L"href");
+        WideString wsHref = pXMLDataElement->GetString(L"href");
         if (!wsHref.IsEmpty())
           image.SetHref(wsHref);
       }
@@ -305,7 +305,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         if (!items.empty()) {
           bool single = items.size() == 1;
           wsNormalizeValue.clear();
-          CFX_WideString wsItem;
+          WideString wsItem;
           for (CXFA_Node* pNode : items) {
             pNode->TryContent(wsItem);
             wsItem = single ? wsItem : wsItem + L"\n";
@@ -327,8 +327,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                     XFA_Element::Text);
       break;
     case XFA_Element::ExclGroup: {
-      pWidgetData->SetSelectedMemberByValue(wsNormalizeValue.AsStringC(), false,
-                                            false, false);
+      pWidgetData->SetSelectedMemberByValue(wsNormalizeValue.AsStringView(),
+                                            false, false, false);
       break;
     }
     case XFA_Element::DateTimeEdit:
@@ -336,10 +336,10 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                     XFA_Element::DateTime);
       break;
     case XFA_Element::NumericEdit: {
-      CFX_WideString wsPicture;
+      WideString wsPicture;
       pWidgetData->GetPictureContent(wsPicture, XFA_VALUEPICTURE_DataBind);
       if (wsPicture.IsEmpty()) {
-        CFX_WideString wsOutput;
+        WideString wsOutput;
         pWidgetData->NormalizeNumStr(wsNormalizeValue, wsOutput);
         wsNormalizeValue = wsOutput;
       }
@@ -407,7 +407,7 @@ CXFA_Node* ScopeMatchGlobalBinding(CXFA_Node* pDataScope,
 }
 
 CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
-                              CFX_WideStringC wsName,
+                              WideStringView wsName,
                               CXFA_Node* pDataScope,
                               XFA_Element eMatchNodeType) {
   if (wsName.IsEmpty())
@@ -425,7 +425,7 @@ CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
 }
 
 CXFA_Node* FindOnceDataNode(CXFA_Document* pDocument,
-                            CFX_WideStringC wsName,
+                            WideStringView wsName,
                             CXFA_Node* pDataScope,
                             XFA_Element eMatchNodeType) {
   if (wsName.IsEmpty())
@@ -452,7 +452,7 @@ CXFA_Node* FindOnceDataNode(CXFA_Document* pDocument,
 }
 
 CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
-                               CFX_WideStringC wsRef,
+                               WideStringView wsRef,
                                CXFA_Node* pDataScope,
                                XFA_Element eMatchNodeType,
                                CXFA_Node* pTemplateNode,
@@ -496,10 +496,10 @@ CXFA_Node* CloneOrMergeInstanceManager(CXFA_Document* pDocument,
                                        CXFA_Node* pFormParent,
                                        CXFA_Node* pTemplateNode,
                                        std::vector<CXFA_Node*>* subforms) {
-  CFX_WideStringC wsSubformName = pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
-  CFX_WideString wsInstMgrNodeName = L"_" + wsSubformName;
+  WideStringView wsSubformName = pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
+  WideString wsInstMgrNodeName = L"_" + wsSubformName;
   uint32_t dwInstNameHash =
-      FX_HashCode_GetW(wsInstMgrNodeName.AsStringC(), false);
+      FX_HashCode_GetW(wsInstMgrNodeName.AsStringView(), false);
   CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
       pDocument, XFA_Element::InstanceManager, dwInstNameHash, pFormParent);
   if (pExistingNode) {
@@ -1000,7 +1000,7 @@ CXFA_Node* CopyContainer_Field(CXFA_Document* pDocument,
 CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
                                CXFA_Node* pDataParent,
                                XFA_Element eNodeType,
-                               const CFX_WideString& wsName) {
+                               const WideString& wsName) {
   if (!pDataParent)
     return nullptr;
 
@@ -1023,13 +1023,14 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
       if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
         continue;
 
-      CFX_WideString wsNamespace;
+      WideString wsNamespace;
       if (!pDDGroupNode->TryNamespace(wsNamespace) ||
           wsNamespace != L"http://ns.adobe.com/data-description/") {
         continue;
       }
     }
-    CXFA_Node* pDDNode = pDDGroupNode->GetFirstChildByName(wsName.AsStringC());
+    CXFA_Node* pDDNode =
+        pDDGroupNode->GetFirstChildByName(wsName.AsStringView());
     if (!pDDNode)
       continue;
     if (pDDNode->GetElementType() != eNodeType)
@@ -1086,7 +1087,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
                                               : XFA_Element::DataValue;
               pDataNode = MaybeCreateDataNode(
                   pDocument, pDataScope, eDataNodeType,
-                  CFX_WideString(pFormNode->GetCData(XFA_ATTRIBUTE_Name)));
+                  WideString(pFormNode->GetCData(XFA_ATTRIBUTE_Name)));
               if (pDataNode)
                 CreateDataBinding(pFormNode, pDataNode, false);
             }
@@ -1118,7 +1119,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
                   ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record));
               pDataNode = MaybeCreateDataNode(
                   pDocument, pRecordNode, eDataNodeType,
-                  CFX_WideString(pFormNode->GetCData(XFA_ATTRIBUTE_Name)));
+                  WideString(pFormNode->GetCData(XFA_ATTRIBUTE_Name)));
               if (pDataNode) {
                 CreateDataBinding(pFormNode, pDataNode, false);
                 RegisterGlobalBinding(pDocument, pFormNode->GetNameHash(),
@@ -1136,8 +1137,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
         bMatchRef = bDataRef;
         bParentDataRef = true;
         if (!pDataNode && bDataRef) {
-          CFX_WideStringC wsRef =
-              pTemplateNodeBind->GetCData(XFA_ATTRIBUTE_Ref);
+          WideStringView wsRef = pTemplateNodeBind->GetCData(XFA_ATTRIBUTE_Ref);
           uint32_t dFlags =
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
           XFA_RESOLVENODE_RS rs;
@@ -1197,7 +1197,7 @@ void UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDataDescriptionNode) {
         if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
           continue;
 
-        CFX_WideString wsNamespace;
+        WideString wsNamespace;
         if (!pDDGroupNode->TryNamespace(wsNamespace) ||
             wsNamespace != L"http://ns.adobe.com/data-description/") {
           continue;
@@ -1363,7 +1363,7 @@ void CXFA_Document::DoDataMerge() {
     pDatasetsRoot->SetXMLMappingNode(pDatasetsXMLNode);
   }
   CXFA_Node *pDataRoot = nullptr, *pDDRoot = nullptr;
-  CFX_WideString wsDatasetsURI;
+  WideString wsDatasetsURI;
   pDatasetsRoot->TryNamespace(wsDatasetsURI);
   for (CXFA_Node* pChildNode =
            pDatasetsRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -1372,7 +1372,7 @@ void CXFA_Document::DoDataMerge() {
     if (pChildNode->GetElementType() != XFA_Element::DataGroup)
       continue;
 
-    CFX_WideString wsNamespaceURI;
+    WideString wsNamespaceURI;
     if (!pDDRoot && pChildNode->GetNameHash() == XFA_HASHCODE_DataDescription) {
       if (!pChildNode->TryNamespace(wsNamespaceURI))
         continue;
@@ -1435,9 +1435,8 @@ void CXFA_Document::DoDataMerge() {
       this, pFormRoot, pTemplateChosen, false, nullptr);
   ASSERT(pSubformSetNode);
   if (!pDataTopLevel) {
-    CFX_WideStringC wsFormName = pSubformSetNode->GetCData(XFA_ATTRIBUTE_Name);
-    CFX_WideString wsDataTopLevelName(wsFormName.IsEmpty() ? L"form"
-                                                           : wsFormName);
+    WideStringView wsFormName = pSubformSetNode->GetCData(XFA_ATTRIBUTE_Name);
+    WideString wsDataTopLevelName(wsFormName.IsEmpty() ? L"form" : wsFormName);
     CFX_XMLElement* pDataTopLevelXMLNode =
         new CFX_XMLElement(wsDataTopLevelName);
 

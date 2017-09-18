@@ -137,7 +137,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       if (m_GlyphIndex[charcode] != 0 || !bToUnicode)
         continue;
 
-      CFX_WideString wsUnicode = UnicodeFromCharCode(charcode);
+      WideString wsUnicode = UnicodeFromCharCode(charcode);
       if (!wsUnicode.IsEmpty()) {
         m_GlyphIndex[charcode] =
             FXFT_Get_Char_Index(m_Font.GetFace(), wsUnicode[0]);

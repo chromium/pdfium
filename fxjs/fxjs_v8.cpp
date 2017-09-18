@@ -460,12 +460,12 @@ void CFXJS_Engine::ReleaseEngine() {
   m_isolate->SetData(g_embedderDataSlot, nullptr);
 }
 
-int CFXJS_Engine::Execute(const CFX_WideString& script, FXJSErr* pError) {
+int CFXJS_Engine::Execute(const WideString& script, FXJSErr* pError) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::TryCatch try_catch(m_isolate);
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
   v8::Local<v8::Script> compiled_script;
-  if (!v8::Script::Compile(context, NewString(script.AsStringC()))
+  if (!v8::Script::Compile(context, NewString(script.AsStringView()))
            .ToLocal(&compiled_script)) {
     v8::String::Utf8Value error(try_catch.Exception());
     // TODO(tsepez): return error via pError->message.
@@ -527,8 +527,8 @@ v8::Local<v8::Object> CFXJS_Engine::GetThisObj() {
   return context->Global()->GetPrototype()->ToObject(context).ToLocalChecked();
 }
 
-void CFXJS_Engine::Error(const CFX_WideString& message) {
-  m_isolate->ThrowException(NewString(message.AsStringC()));
+void CFXJS_Engine::Error(const WideString& message) {
+  m_isolate->ThrowException(NewString(message.AsStringView()));
 }
 
 void CFXJS_Engine::SetObjectPrivate(v8::Local<v8::Object> pObj, void* p) {
@@ -555,28 +555,28 @@ void* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
 
 v8::Local<v8::Value> CFXJS_Engine::GetObjectProperty(
     v8::Local<v8::Object> pObj,
-    const CFX_WideString& wsPropertyName) {
+    const WideString& wsPropertyName) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   v8::Local<v8::Value> val;
   if (!pObj->Get(m_isolate->GetCurrentContext(),
-                 NewString(wsPropertyName.AsStringC()))
+                 NewString(wsPropertyName.AsStringView()))
            .ToLocal(&val))
     return v8::Local<v8::Value>();
   return val;
 }
 
-std::vector<CFX_WideString> CFXJS_Engine::GetObjectPropertyNames(
+std::vector<WideString> CFXJS_Engine::GetObjectPropertyNames(
     v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
-    return std::vector<CFX_WideString>();
+    return std::vector<WideString>();
 
   v8::Local<v8::Array> val;
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
   if (!pObj->GetPropertyNames(context).ToLocal(&val))
-    return std::vector<CFX_WideString>();
+    return std::vector<WideString>();
 
-  std::vector<CFX_WideString> result;
+  std::vector<WideString> result;
   for (uint32_t i = 0; i < val->Length(); ++i) {
     result.push_back(ToWideString(val->Get(context, i).ToLocalChecked()));
   }
@@ -585,12 +585,12 @@ std::vector<CFX_WideString> CFXJS_Engine::GetObjectPropertyNames(
 }
 
 void CFXJS_Engine::PutObjectProperty(v8::Local<v8::Object> pObj,
-                                     const CFX_WideString& wsPropertyName,
+                                     const WideString& wsPropertyName,
                                      v8::Local<v8::Value> pPut) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(m_isolate->GetCurrentContext(),
-            NewString(wsPropertyName.AsStringC()), pPut)
+            NewString(wsPropertyName.AsStringView()), pPut)
       .FromJust();
 }
 
@@ -649,18 +649,18 @@ v8::Local<v8::Boolean> CFXJS_Engine::NewBoolean(bool b) {
   return v8::Boolean::New(m_isolate, b);
 }
 
-v8::Local<v8::String> CFXJS_Engine::NewString(const CFX_ByteStringC& str) {
+v8::Local<v8::String> CFXJS_Engine::NewString(const ByteStringView& str) {
   v8::Isolate* pIsolate = m_isolate ? m_isolate : v8::Isolate::GetCurrent();
   return v8::String::NewFromUtf8(pIsolate, str.unterminated_c_str(),
                                  v8::NewStringType::kNormal, str.GetLength())
       .ToLocalChecked();
 }
 
-v8::Local<v8::String> CFXJS_Engine::NewString(const CFX_WideStringC& str) {
+v8::Local<v8::String> CFXJS_Engine::NewString(const WideStringView& str) {
   // Conversion from pdfium's wchar_t wide-strings to v8's uint16_t
   // wide-strings isn't handled by v8, so use UTF8 as a common
   // intermediate format.
-  return NewString(FX_UTF8Encode(str).AsStringC());
+  return NewString(FX_UTF8Encode(str).AsStringView());
 }
 
 v8::Local<v8::Value> CFXJS_Engine::NewNull() {
@@ -703,15 +703,15 @@ double CFXJS_Engine::ToDouble(v8::Local<v8::Value> pValue) {
   return maybe_number.ToLocalChecked()->Value();
 }
 
-CFX_WideString CFXJS_Engine::ToWideString(v8::Local<v8::Value> pValue) {
+WideString CFXJS_Engine::ToWideString(v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
-    return CFX_WideString();
+    return WideString();
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
   v8::MaybeLocal<v8::String> maybe_string = pValue->ToString(context);
   if (maybe_string.IsEmpty())
-    return CFX_WideString();
+    return WideString();
   v8::String::Utf8Value s(maybe_string.ToLocalChecked());
-  return CFX_WideString::FromUTF8(CFX_ByteStringC(*s, s.length()));
+  return WideString::FromUTF8(ByteStringView(*s, s.length()));
 }
 
 v8::Local<v8::Object> CFXJS_Engine::ToObject(v8::Local<v8::Value> pValue) {
@@ -728,11 +728,11 @@ v8::Local<v8::Array> CFXJS_Engine::ToArray(v8::Local<v8::Value> pValue) {
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
 }
 
-void CFXJS_Engine::SetConstArray(const CFX_WideString& name,
+void CFXJS_Engine::SetConstArray(const WideString& name,
                                  v8::Local<v8::Array> array) {
   m_ConstArrays[name] = v8::Global<v8::Array>(GetIsolate(), array);
 }
 
-v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const CFX_WideString& name) {
+v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const WideString& name) {
   return v8::Local<v8::Array>::New(GetIsolate(), m_ConstArrays[name]);
 }

@@ -18,9 +18,9 @@ class CBC_X12Encoder : public CBC_C40Encoder {
   int32_t getEncodingMode() override;
   void Encode(CBC_EncoderContext& context, int32_t& e) override;
   void handleEOD(CBC_EncoderContext& context,
-                 CFX_WideString& buffer,
+                 WideString& buffer,
                  int32_t& e) override;
-  int32_t encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) override;
+  int32_t encodeChar(wchar_t c, WideString& sb, int32_t& e) override;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_X12ENCODER_H_

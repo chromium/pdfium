@@ -966,7 +966,7 @@ CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
   return m_pDataAcc.Get();
 }
 
-bool CXFA_FFWidget::GetToolTip(CFX_WideString& wsToolTip) {
+bool CXFA_FFWidget::GetToolTip(WideString& wsToolTip) {
   if (CXFA_Assist assist = m_pDataAcc->GetAssist()) {
     if (CXFA_ToolTip toolTip = assist.GetToolTip()) {
       return toolTip.GetTip(wsToolTip);
@@ -1032,7 +1032,7 @@ void CXFA_FFWidget::AddInvalidateRect() {
   m_pDocView->AddInvalidateRect(m_pPageView, rtWidget);
 }
 
-bool CXFA_FFWidget::GetCaptionText(CFX_WideString& wsCap) {
+bool CXFA_FFWidget::GetCaptionText(WideString& wsCap) {
   CXFA_TextLayout* pCapTextlayout = m_pDataAcc->GetCaptionTextLayout();
   if (!pCapTextlayout) {
     return false;
@@ -1168,15 +1168,15 @@ bool CXFA_FFWidget::CanDeSelect() {
   return CanCopy();
 }
 
-bool CXFA_FFWidget::Copy(CFX_WideString& wsCopy) {
+bool CXFA_FFWidget::Copy(WideString& wsCopy) {
   return false;
 }
 
-bool CXFA_FFWidget::Cut(CFX_WideString& wsCut) {
+bool CXFA_FFWidget::Cut(WideString& wsCut) {
   return false;
 }
 
-bool CXFA_FFWidget::Paste(const CFX_WideString& wsPaste) {
+bool CXFA_FFWidget::Paste(const WideString& wsPaste) {
   return false;
 }
 
@@ -1187,12 +1187,12 @@ void CXFA_FFWidget::Delete() {}
 void CXFA_FFWidget::DeSelect() {}
 
 void CXFA_FFWidget::GetSuggestWords(CFX_PointF pointf,
-                                    std::vector<CFX_ByteString>* pWords) {
+                                    std::vector<ByteString>* pWords) {
   pWords->clear();
 }
 
 bool CXFA_FFWidget::ReplaceSpellCheckWord(CFX_PointF pointf,
-                                          const CFX_ByteStringC& bsReplace) {
+                                          const ByteStringView& bsReplace) {
   return false;
 }
 
@@ -1869,8 +1869,8 @@ char* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
   out[j] = '\0';
   return out;
 }
-FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideString& wsType) {
-  CFX_WideString wsContentType(wsType);
+FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
+  WideString wsContentType(wsType);
   wsContentType.MakeLower();
   if (wsContentType == L"image/jpg")
     return FXCODEC_IMAGE_JPG;
@@ -1890,24 +1890,24 @@ CFX_RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
                                               bool& bNameImage,
                                               int32_t& iImageXDpi,
                                               int32_t& iImageYDpi) {
-  CFX_WideString wsHref;
-  CFX_WideString wsImage;
+  WideString wsHref;
+  WideString wsImage;
   pImage->GetHref(wsHref);
   pImage->GetContent(wsImage);
   if (wsHref.IsEmpty() && wsImage.IsEmpty())
     return nullptr;
 
-  CFX_WideString wsContentType;
+  WideString wsContentType;
   pImage->GetContentType(wsContentType);
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
-  CFX_ByteString bsContent;
+  ByteString bsContent;
   uint8_t* pImageBuffer = nullptr;
   CFX_RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
     XFA_ATTRIBUTEENUM iEncoding =
         (XFA_ATTRIBUTEENUM)pImage->GetTransferEncoding();
     if (iEncoding == XFA_ATTRIBUTEENUM_Base64) {
-      CFX_ByteString bsData = wsImage.UTF8Encode();
+      ByteString bsData = wsImage.UTF8Encode();
       int32_t iLength = bsData.GetLength();
       pImageBuffer = FX_Alloc(uint8_t, iLength);
       int32_t iRead = XFA_Base64Decode(bsData.c_str(), pImageBuffer);
@@ -1916,16 +1916,16 @@ CFX_RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
             pdfium::MakeRetain<CFX_MemoryStream>(pImageBuffer, iRead, false);
       }
     } else {
-      bsContent = CFX_ByteString::FromUnicode(wsImage);
+      bsContent = ByteString::FromUnicode(wsImage);
       pImageFileRead = pdfium::MakeRetain<CFX_MemoryStream>(
           const_cast<uint8_t*>(bsContent.raw_str()), bsContent.GetLength(),
           false);
     }
   } else {
-    CFX_WideString wsURL = wsHref;
+    WideString wsURL = wsHref;
     if (wsURL.Left(7) != L"http://" && wsURL.Left(6) != L"ftp://") {
       CFX_RetainPtr<CFX_DIBitmap> pBitmap =
-          pDoc->GetPDFNamedImage(wsURL.AsStringC(), iImageXDpi, iImageYDpi);
+          pDoc->GetPDFNamedImage(wsURL.AsStringView(), iImageXDpi, iImageYDpi);
       if (pBitmap) {
         bNameImage = true;
         return pBitmap;

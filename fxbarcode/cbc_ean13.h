@@ -21,16 +21,16 @@ class CBC_EAN13 : public CBC_OneCode {
   ~CBC_EAN13() override;
 
   // CBC_OneCode:
-  bool Encode(const CFX_WideStringC& contents) override;
+  bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
 
  private:
   CBC_OnedEAN13Writer* GetOnedEAN13Writer();
-  CFX_WideString Preprocess(const CFX_WideStringC& contents);
+  WideString Preprocess(const WideStringView& contents);
 
-  CFX_WideString m_renderContents;
+  WideString m_renderContents;
 };
 
 #endif  // FXBARCODE_CBC_EAN13_H_

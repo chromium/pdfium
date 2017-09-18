@@ -19,28 +19,28 @@ class CBA_FontMap : public CPWL_FontMap {
   ~CBA_FontMap() override;
 
   void Reset();
-  void SetDefaultFont(CPDF_Font* pFont, const CFX_ByteString& sFontName);
-  void SetAPType(const CFX_ByteString& sAPType);
+  void SetDefaultFont(CPDF_Font* pFont, const ByteString& sFontName);
+  void SetAPType(const ByteString& sAPType);
 
  private:
   // CPWL_FontMap:
   void Initialize() override;
   CPDF_Document* GetDocument() override;
-  CPDF_Font* FindFontSameCharset(CFX_ByteString* sFontAlias,
+  CPDF_Font* FindFontSameCharset(ByteString* sFontAlias,
                                  int32_t nCharset) override;
-  void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias) override;
+  void AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias) override;
 
   CPDF_Font* FindResFontSameCharset(CPDF_Dictionary* pResDict,
-                                    CFX_ByteString* sFontAlias,
+                                    ByteString* sFontAlias,
                                     int32_t nCharset);
-  CPDF_Font* GetAnnotDefaultFont(CFX_ByteString* csNameTag);
-  void AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAlias);
+  CPDF_Font* GetAnnotDefaultFont(ByteString* csNameTag);
+  void AddFontToAnnotDict(CPDF_Font* pFont, const ByteString& sAlias);
 
   CFX_UnownedPtr<CPDF_Document> m_pDocument;
   CFX_UnownedPtr<CPDF_Dictionary> m_pAnnotDict;
   CFX_UnownedPtr<CPDF_Font> m_pDefaultFont;
-  CFX_ByteString m_sDefaultFontName;
-  CFX_ByteString m_sAPType;
+  ByteString m_sDefaultFontName;
+  ByteString m_sAPType;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CBA_FONTMAP_H_

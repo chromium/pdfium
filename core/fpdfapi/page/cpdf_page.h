@@ -62,8 +62,8 @@ class CPDF_Page : public CPDF_PageObjectHolder {
  private:
   void StartParse();
 
-  CPDF_Object* GetPageAttr(const CFX_ByteString& name) const;
-  CFX_FloatRect GetBox(const CFX_ByteString& name) const;
+  CPDF_Object* GetPageAttr(const ByteString& name) const;
+  CFX_FloatRect GetBox(const ByteString& name) const;
 
   float m_PageWidth;
   float m_PageHeight;

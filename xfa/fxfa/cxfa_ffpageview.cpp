@@ -311,7 +311,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
   if (pTraversal) {
     CXFA_Node* pTraverse = pTraversal->GetChild(0, XFA_Element::Traverse);
     if (pTraverse) {
-      CFX_WideString wsTraverseWidgetName;
+      WideString wsTraverseWidgetName;
       if (pTraverse->GetAttribute(XFA_ATTRIBUTE_Ref, wsTraverseWidgetName)) {
         return FindWidgetByName(wsTraverseWidgetName, pWidget);
       }
@@ -320,7 +320,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
   return nullptr;
 }
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::FindWidgetByName(
-    const CFX_WideString& wsWidgetName,
+    const WideString& wsWidgetName,
     CXFA_FFWidget* pRefWidget) {
   return pRefWidget->GetDocView()->GetWidgetByName(wsWidgetName, pRefWidget);
 }

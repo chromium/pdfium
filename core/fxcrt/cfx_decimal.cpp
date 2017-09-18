@@ -294,7 +294,7 @@ CFX_Decimal::CFX_Decimal(float val, uint8_t scale) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(val < 0 && IsNotZero(), scale);
 }
 
-CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
+CFX_Decimal::CFX_Decimal(const WideStringView& strObj) {
   const wchar_t* str = strObj.unterminated_c_str();
   const wchar_t* strBound = str + strObj.GetLength();
   bool pointmet = false;
@@ -329,9 +329,9 @@ CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(negmet && IsNotZero(), scale);
 }
 
-CFX_Decimal::operator CFX_WideString() const {
-  CFX_WideString retString;
-  CFX_WideString tmpbuf;
+CFX_Decimal::operator WideString() const {
+  WideString retString;
+  WideString tmpbuf;
   uint64_t phi = m_uHi;
   uint64_t pmid = m_uMid;
   uint64_t plo = m_uLo;

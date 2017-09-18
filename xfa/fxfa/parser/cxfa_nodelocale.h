@@ -14,7 +14,7 @@
 
 class CXFA_Node;
 
-CFX_WideString XFA_PatternToString(FX_LOCALENUMSUBCATEGORY category);
+WideString XFA_PatternToString(FX_LOCALENUMSUBCATEGORY category);
 
 class CXFA_NodeLocale : public IFX_Locale {
  public:
@@ -22,30 +22,28 @@ class CXFA_NodeLocale : public IFX_Locale {
   ~CXFA_NodeLocale() override;
 
   // IFX_Locale
-  CFX_WideString GetName() const override;
-  CFX_WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
+  WideString GetName() const override;
+  WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
 
-  CFX_WideString GetDateTimeSymbols() const override;
-  CFX_WideString GetMonthName(int32_t nMonth, bool bAbbr) const override;
-  CFX_WideString GetDayName(int32_t nWeek, bool bAbbr) const override;
-  CFX_WideString GetMeridiemName(bool bAM) const override;
+  WideString GetDateTimeSymbols() const override;
+  WideString GetMonthName(int32_t nMonth, bool bAbbr) const override;
+  WideString GetDayName(int32_t nWeek, bool bAbbr) const override;
+  WideString GetMeridiemName(bool bAM) const override;
   FX_TIMEZONE GetTimeZone() const override;
-  CFX_WideString GetEraName(bool bAD) const override;
+  WideString GetEraName(bool bAD) const override;
 
-  CFX_WideString GetDatePattern(
-      FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  CFX_WideString GetTimePattern(
-      FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  CFX_WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
+  WideString GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
+  WideString GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
+  WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
 
  private:
   CXFA_Node* GetNodeByName(CXFA_Node* pParent,
-                           const CFX_WideStringC& wsName) const;
-  CFX_WideString GetSymbol(XFA_Element eElement,
-                           const CFX_WideStringC& symbol_type) const;
-  CFX_WideString GetCalendarSymbol(XFA_Element eElement,
-                                   int index,
-                                   bool bAbbr) const;
+                           const WideStringView& wsName) const;
+  WideString GetSymbol(XFA_Element eElement,
+                       const WideStringView& symbol_type) const;
+  WideString GetCalendarSymbol(XFA_Element eElement,
+                               int index,
+                               bool bAbbr) const;
 
   CFX_UnownedPtr<CXFA_Node> const m_pLocale;
 };

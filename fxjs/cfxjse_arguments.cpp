@@ -39,10 +39,10 @@ float CFXJSE_Arguments::GetFloat(int32_t index) const {
   return static_cast<float>((*m_pInfo)[index]->NumberValue());
 }
 
-CFX_ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
+ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   v8::Local<v8::String> hString = (*m_pInfo)[index]->ToString();
   v8::String::Utf8Value szStringVal(hString);
-  return CFX_ByteString(*szStringVal);
+  return ByteString(*szStringVal);
 }
 
 CFXJSE_HostObject* CFXJSE_Arguments::GetObject(int32_t index,

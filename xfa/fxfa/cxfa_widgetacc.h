@@ -37,13 +37,13 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode);
   ~CXFA_WidgetAcc();
 
-  bool GetName(CFX_WideString& wsName, int32_t iNameType = 0);
+  bool GetName(WideString& wsName, int32_t iNameType = 0);
   bool ProcessValueChanged();
   void ResetData();
 
-  void SetImageEdit(const CFX_WideString& wsContentType,
-                    const CFX_WideString& wsHref,
-                    const CFX_WideString& wsData);
+  void SetImageEdit(const WideString& wsContentType,
+                    const WideString& wsHref,
+                    const WideString& wsData);
 
   CXFA_WidgetAcc* GetExclGroup();
   CXFA_FFDocView* GetDocView();
@@ -92,8 +92,8 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   int32_t ProcessNullTestValidate(CXFA_Validate validate,
                                   int32_t iFlags,
                                   bool bVersionFlag);
-  CFX_WideString GetValidateCaptionName(bool bVersionFlag);
-  CFX_WideString GetValidateMessage(bool bError, bool bVersionFlag);
+  WideString GetValidateCaptionName(bool bVersionFlag);
+  WideString GetValidateMessage(bool bError, bool bVersionFlag);
   void CalcCaptionSize(CFX_SizeF& szCap);
   bool CalculateFieldAutoSize(CFX_SizeF& size);
   bool CalculateWidgetAutoSize(CFX_SizeF& size);

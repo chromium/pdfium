@@ -399,7 +399,7 @@ CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
   return m_barcodeMatrix.get();
 }
 
-bool CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
+bool CBC_PDF417::generateBarcodeLogic(WideString msg,
                                       int32_t errorCorrectionLevel) {
   int32_t errorCorrectionCodeWords =
       CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(
@@ -408,7 +408,7 @@ bool CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
     return false;
 
   int32_t e = BCExceptionNO;
-  CFX_WideString highLevel =
+  WideString highLevel =
       CBC_PDF417HighLevelEncoder::encodeHighLevel(msg, m_compaction, e);
   if (e != BCExceptionNO)
     return false;
@@ -425,19 +425,19 @@ bool CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
     return false;
 
   int32_t n = sourceCodeWords + pad + 1;
-  CFX_WideString sb;
+  WideString sb;
   sb += (wchar_t)n;
   sb += highLevel;
   for (int32_t i = 0; i < pad; i++)
     sb += (wchar_t)900;
 
-  CFX_WideString dataCodewords(sb);
-  CFX_WideString ec;
+  WideString dataCodewords(sb);
+  WideString ec;
   if (!CBC_PDF417ErrorCorrection::generateErrorCorrection(
           dataCodewords, errorCorrectionLevel, &ec)) {
     return false;
   }
-  CFX_WideString fullCodewords = dataCodewords + ec;
+  WideString fullCodewords = dataCodewords + ec;
   m_barcodeMatrix = pdfium::MakeUnique<CBC_BarcodeMatrix>(rows, cols);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
                  m_barcodeMatrix.get());
@@ -498,7 +498,7 @@ void CBC_PDF417::encodeChar(int32_t pattern,
   logic->addBar(last, width);
 }
 
-void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
+void CBC_PDF417::encodeLowLevel(WideString fullCodewords,
                                 int32_t c,
                                 int32_t r,
                                 int32_t errorCorrectionLevel,

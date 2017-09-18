@@ -73,7 +73,7 @@ int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count) {
   return wch1 - wch2;
 }
 
-uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetA(const ByteStringView& str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     for (const auto& c : str)
@@ -85,7 +85,7 @@ uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase) {
   return dwHashCode;
 }
 
-uint32_t FX_HashCode_GetW(const CFX_WideStringC& str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetW(const WideStringView& str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     for (const auto& c : str)

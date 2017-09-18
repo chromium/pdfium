@@ -1078,7 +1078,7 @@ static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
                  : nullptr;
 }
 
-static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
+static uint16_t XFA_GetLanguage(WideString wsLanguage) {
   if (wsLanguage.GetLength() < 2)
     return FX_LANG_en_US;
 
@@ -1121,7 +1121,7 @@ static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
   return FX_LANG_en_US;
 }
 
-CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
+CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, WideString wsDeflcid)
     : m_dwLocaleFlags(0x00) {
   m_dwDeflcid = XFA_GetLanguage(wsDeflcid);
   if (pLocaleSet) {
@@ -1194,8 +1194,7 @@ std::unique_ptr<IFX_Locale> CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   }
 }
 
-IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
-    const CFX_WideString& wsLocaleName) {
+IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(const WideString& wsLocaleName) {
   for (size_t i = 0; i < m_LocaleArray.size(); i++) {
     IFX_Locale* pLocale = m_LocaleArray[i].get();
     if (pLocale->GetName() == wsLocaleName)
@@ -1220,7 +1219,7 @@ void CXFA_LocaleMgr::SetDefLocale(IFX_Locale* pLocale) {
   m_pDefLocale = pLocale;
 }
 
-CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
+WideStringView CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
   if (!(m_dwLocaleFlags & 0x01)) {
     m_wsConfigLocale.clear();
     if (pConfig) {
@@ -1242,5 +1241,5 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
     }
     m_dwLocaleFlags |= 0x01;
   }
-  return m_wsConfigLocale.AsStringC();
+  return m_wsConfigLocale.AsStringView();
 }

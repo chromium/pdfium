@@ -28,13 +28,12 @@ class IJS_Runtime {
   virtual IJS_EventContext* NewEventContext() = 0;
   virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;
-  virtual int ExecuteScript(const CFX_WideString& script,
-                            CFX_WideString* info) = 0;
+  virtual int ExecuteScript(const WideString& script, WideString* info) = 0;
 
 #ifdef PDF_ENABLE_XFA
-  virtual bool GetValueByName(const CFX_ByteStringC& utf8Name,
+  virtual bool GetValueByName(const ByteStringView& utf8Name,
                               CFXJSE_Value* pValue) = 0;
-  virtual bool SetValueByName(const CFX_ByteStringC& utf8Name,
+  virtual bool SetValueByName(const ByteStringView& utf8Name,
                               CFXJSE_Value* pValue) = 0;
 #endif  // PDF_ENABLE_XFA
 

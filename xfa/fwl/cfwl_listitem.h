@@ -12,7 +12,7 @@
 
 class CFWL_ListItem {
  public:
-  explicit CFWL_ListItem(const CFX_WideString& text);
+  explicit CFWL_ListItem(const WideString& text);
   ~CFWL_ListItem();
 
   CFX_RectF GetRect() const { return m_rtItem; }
@@ -21,12 +21,12 @@ class CFWL_ListItem {
   uint32_t GetStates() const { return m_dwStates; }
   void SetStates(uint32_t dwStates) { m_dwStates = dwStates; }
 
-  CFX_WideString GetText() const { return m_wsText; }
+  WideString GetText() const { return m_wsText; }
 
  private:
   CFX_RectF m_rtItem;
   uint32_t m_dwStates;
-  CFX_WideString m_wsText;
+  WideString m_wsText;
 };
 
 #endif  // XFA_FWL_CFWL_LISTITEM_H_

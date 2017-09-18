@@ -20,7 +20,7 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {
   if (!m_pDict)
     return Always;
 
-  CFX_ByteString csSW = m_pDict->GetStringFor("SW", "A");
+  ByteString csSW = m_pDict->GetStringFor("SW", "A");
   if (csSW == "B")
     return Bigger;
   if (csSW == "S")

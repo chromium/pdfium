@@ -22,12 +22,12 @@ class CPVT_FontMap : public IPVT_FontMap {
   CPVT_FontMap(CPDF_Document* pDoc,
                CPDF_Dictionary* pResDict,
                CPDF_Font* pDefFont,
-               const CFX_ByteString& sDefFontAlias);
+               const ByteString& sDefFontAlias);
   ~CPVT_FontMap() override;
 
   // IPVT_FontMap:
   CPDF_Font* GetPDFFont(int32_t nFontIndex) override;
-  CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) override;
+  ByteString GetPDFFontAlias(int32_t nFontIndex) override;
   int32_t GetWordFontIndex(uint16_t word,
                            int32_t charset,
                            int32_t nFontIndex) override;
@@ -36,15 +36,15 @@ class CPVT_FontMap : public IPVT_FontMap {
 
   static CPDF_Font* GetAnnotSysPDFFont(CPDF_Document* pDoc,
                                        const CPDF_Dictionary* pResDict,
-                                       CFX_ByteString* sSysFontAlias);
+                                       ByteString* sSysFontAlias);
 
  private:
   CFX_UnownedPtr<CPDF_Document> const m_pDocument;
   CFX_UnownedPtr<CPDF_Dictionary> const m_pResDict;
   CFX_UnownedPtr<CPDF_Font> const m_pDefFont;
   CFX_UnownedPtr<CPDF_Font> m_pSysFont;
-  const CFX_ByteString m_sDefFontAlias;
-  CFX_ByteString m_sSysFontAlias;
+  const ByteString m_sDefFontAlias;
+  ByteString m_sSysFontAlias;
 };
 
 #endif  // CORE_FPDFDOC_CPVT_FONTMAP_H_

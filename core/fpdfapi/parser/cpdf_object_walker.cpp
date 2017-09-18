@@ -57,11 +57,11 @@ class DictionaryIterator : public CPDF_ObjectWalker::SubobjectIterator {
     dict_iterator_ = object()->GetDict()->begin();
   }
 
-  const CFX_ByteString& dict_key() const { return dict_key_; }
+  const ByteString& dict_key() const { return dict_key_; }
 
  private:
   CPDF_Dictionary::const_iterator dict_iterator_;
-  CFX_ByteString dict_key_;
+  ByteString dict_key_;
 };
 
 class ArrayIterator : public CPDF_ObjectWalker::SubobjectIterator {
@@ -149,11 +149,11 @@ const CPDF_Object* CPDF_ObjectWalker::GetNext() {
       parent_object_ = it->object();
       dict_key_ = parent_object_->IsDictionary()
                       ? static_cast<DictionaryIterator*>(it)->dict_key()
-                      : CFX_ByteString();
+                      : ByteString();
       current_depth_ = stack_.size();
     }
   }
-  dict_key_ = CFX_ByteString();
+  dict_key_ = ByteString();
   current_depth_ = 0;
   return nullptr;
 }

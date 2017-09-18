@@ -140,11 +140,11 @@ void CFX_ChecksumContext::FinishChecksum() {
   }
 }
 
-CFX_ByteString CFX_ChecksumContext::GetChecksum() const {
+ByteString CFX_ChecksumContext::GetChecksum() const {
   return m_bsChecksum;
 }
 
-void CFX_ChecksumContext::Update(const CFX_ByteStringC& bsText) {
+void CFX_ChecksumContext::Update(const ByteStringView& bsText) {
   if (!m_pByteContext)
     return;
 

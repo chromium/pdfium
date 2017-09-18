@@ -25,9 +25,7 @@ Icon::Icon(CJS_Object* pJSObject)
 
 Icon::~Icon() {}
 
-bool Icon::name(CJS_Runtime* pRuntime,
-                CJS_PropValue& vp,
-                CFX_WideString& sError) {
+bool Icon::name(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (!vp.IsGetting())
     return false;
 

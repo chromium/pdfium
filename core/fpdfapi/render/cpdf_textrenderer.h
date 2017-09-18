@@ -28,7 +28,7 @@ class CPDF_TextRenderer {
                              CPDF_Font* pFont,
                              float font_size,
                              const CFX_Matrix* matrix,
-                             const CFX_ByteString& str,
+                             const ByteString& str,
                              FX_ARGB fill_argb,
                              const CFX_GraphStateData* pGraphState,
                              const CPDF_RenderOptions* pOptions);

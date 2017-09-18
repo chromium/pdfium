@@ -70,7 +70,7 @@ class CXFA_Document {
   CXFA_FFNotify* GetNotify() const;
   CXFA_LocaleMgr* GetLocalMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
-  CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const CFX_WideStringC& wsID);
+  CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const WideStringView& wsID);
   CXFA_Node* GetNotBindNode(const std::vector<CXFA_Object*>& arrayNodes);
   CXFA_LayoutProcessor* GetLayoutProcessor();
   CXFA_LayoutProcessor* GetDocLayout();
@@ -87,7 +87,7 @@ class CXFA_Document {
 
   bool IsInteractive();
   XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }
-  XFA_VERSION RecognizeXFAVersionNumber(const CFX_WideString& wsTemplateNS);
+  XFA_VERSION RecognizeXFAVersionNumber(const WideString& wsTemplateNS);
 
   CXFA_Node* CreateNode(uint32_t dwPacket, XFA_Element eElement);
   CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket, XFA_Element eElement);

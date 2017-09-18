@@ -78,9 +78,9 @@ bool g_FXCRT_XML_IsNameChar(uint8_t ch) {
 
 }  // namespace
 
-void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
-                               CFX_ByteStringC& bsSpace,
-                               CFX_ByteStringC& bsName) {
+void FX_XML_SplitQualifiedName(const ByteStringView& bsFullName,
+                               ByteStringView& bsSpace,
+                               ByteStringView& bsName) {
   if (bsFullName.IsEmpty())
     return;
 
@@ -139,7 +139,7 @@ void CXML_Parser::SkipWhiteSpaces() {
   } while (ReadNextBlock());
 }
 
-void CXML_Parser::GetName(CFX_ByteString* space, CFX_ByteString* name) {
+void CXML_Parser::GetName(ByteString* space, ByteString* name) {
   m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);
   if (IsEOF())
     return;
@@ -149,7 +149,7 @@ void CXML_Parser::GetName(CFX_ByteString* space, CFX_ByteString* name) {
     while (m_dwIndex < m_dwBufferSize) {
       uint8_t ch = m_pBuffer[m_dwIndex];
       if (ch == ':') {
-        *space = CFX_ByteString(buf);
+        *space = ByteString(buf);
         buf.str("");
       } else if (g_FXCRT_XML_IsNameChar(ch)) {
         buf << static_cast<char>(ch);
@@ -162,10 +162,10 @@ void CXML_Parser::GetName(CFX_ByteString* space, CFX_ByteString* name) {
     if (m_dwIndex < m_dwBufferSize || IsEOF())
       break;
   } while (ReadNextBlock());
-  *name = CFX_ByteString(buf);
+  *name = ByteString(buf);
 }
 
-void CXML_Parser::SkipLiterals(const CFX_ByteStringC& str) {
+void CXML_Parser::SkipLiterals(const ByteStringView& str) {
   m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);
   if (IsEOF()) {
     return;
@@ -281,7 +281,7 @@ uint32_t CXML_Parser::GetCharRef() {
   return code;
 }
 
-void CXML_Parser::GetAttrValue(CFX_WideString& value) {
+void CXML_Parser::GetAttrValue(WideString& value) {
   m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);
   if (IsEOF())
     return;
@@ -323,8 +323,8 @@ void CXML_Parser::GetAttrValue(CFX_WideString& value) {
 
 void CXML_Parser::GetTagName(bool bStartTag,
                              bool* bEndTag,
-                             CFX_ByteString* space,
-                             CFX_ByteString* name) {
+                             ByteString* space,
+                             ByteString* name) {
   m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);
   if (IsEOF())
     return;
@@ -389,18 +389,18 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
   if (IsEOF())
     return nullptr;
 
-  CFX_ByteString tag_name;
-  CFX_ByteString tag_space;
+  ByteString tag_name;
+  ByteString tag_space;
   bool bEndTag;
   GetTagName(bStartTag, &bEndTag, &tag_space, &tag_name);
   if (tag_name.IsEmpty() || bEndTag)
     return nullptr;
 
   auto pElement = pdfium::MakeUnique<CXML_Element>(
-      pParent, tag_space.AsStringC(), tag_name.AsStringC());
+      pParent, tag_space.AsStringView(), tag_name.AsStringView());
   do {
-    CFX_ByteString attr_space;
-    CFX_ByteString attr_name;
+    ByteString attr_space;
+    ByteString attr_name;
     while (m_dwIndex < m_dwBufferSize) {
       SkipWhiteSpaces();
       if (IsEOF())
@@ -422,7 +422,7 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
       if (IsEOF())
         break;
 
-      CFX_WideString attr_value;
+      WideString attr_value;
       GetAttrValue(attr_value);
       pElement->m_AttrMap.SetAt(attr_space, attr_name, attr_value);
     }
@@ -474,19 +474,20 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
             SkipWhiteSpaces();
             iState = 0;
           } else if (ch == '/') {
-            CFX_ByteString space;
-            CFX_ByteString name;
+            ByteString space;
+            ByteString name;
             GetName(&space, &name);
             SkipWhiteSpaces();
             m_dwIndex++;
             iState = 10;
           } else {
             content << decoder.GetResult();
-            CFX_WideString dataStr = content.MakeString();
+            WideString dataStr = content.MakeString();
             if (!bCDATA)
               dataStr.TrimRight(L" \t\r\n");
 
-            InsertContentSegment(bCDATA, dataStr.AsStringC(), pElement.get());
+            InsertContentSegment(bCDATA, dataStr.AsStringView(),
+                                 pElement.get());
             content.Clear();
             decoder.Clear();
             bCDATA = false;
@@ -524,10 +525,10 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
       break;
   } while (ReadNextBlock());
   content << decoder.GetResult();
-  CFX_WideString dataStr = content.MakeString();
+  WideString dataStr = content.MakeString();
   dataStr.TrimRight(L" \t\r\n");
 
-  InsertContentSegment(bCDATA, dataStr.AsStringC(), pElement.get());
+  InsertContentSegment(bCDATA, dataStr.AsStringView(), pElement.get());
   content.Clear();
   decoder.Clear();
   bCDATA = false;
@@ -535,7 +536,7 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
 }
 
 void CXML_Parser::InsertContentSegment(bool bCDATA,
-                                       const CFX_WideStringC& content,
+                                       const WideStringView& content,
                                        CXML_Element* pElement) {
   if (content.IsEmpty())
     return;

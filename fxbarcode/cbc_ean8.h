@@ -20,15 +20,15 @@ class CBC_EAN8 : public CBC_OneCode {
   ~CBC_EAN8() override;
 
   // CBC_OneCode:
-  bool Encode(const CFX_WideStringC& contents) override;
+  bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
 
  private:
   CBC_OnedEAN8Writer* GetOnedEAN8Writer();
-  CFX_WideString Preprocess(const CFX_WideStringC& contents);
-  CFX_WideString m_renderContents;
+  WideString Preprocess(const WideStringView& contents);
+  WideString m_renderContents;
 };
 
 #endif  // FXBARCODE_CBC_EAN8_H_

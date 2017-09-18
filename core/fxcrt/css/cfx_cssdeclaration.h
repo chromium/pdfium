@@ -48,8 +48,8 @@ class CFX_CSSDeclaration {
   bool empty() const { return properties_.empty(); }
 
   void AddProperty(const CFX_CSSPropertyTable* pTable,
-                   const CFX_WideStringC& value);
-  void AddProperty(const CFX_WideString& prop, const CFX_WideString& value);
+                   const WideStringView& value);
+  void AddProperty(const WideString& prop, const WideString& value);
 
   size_t PropertyCountForTesting() const;
 

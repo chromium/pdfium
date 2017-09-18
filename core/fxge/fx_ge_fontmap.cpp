@@ -9,28 +9,28 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 
-static CFX_ByteString GetStringFromTable(const uint8_t* string_ptr,
-                                         uint32_t string_ptr_length,
-                                         uint16_t offset,
-                                         uint16_t length) {
+static ByteString GetStringFromTable(const uint8_t* string_ptr,
+                                     uint32_t string_ptr_length,
+                                     uint16_t offset,
+                                     uint16_t length) {
   if (string_ptr_length < static_cast<uint32_t>(offset + length)) {
-    return CFX_ByteString();
+    return ByteString();
   }
-  return CFX_ByteString(string_ptr + offset, length);
+  return ByteString(string_ptr + offset, length);
 }
 
-CFX_ByteString GetNameFromTT(const uint8_t* name_table,
-                             uint32_t name_table_size,
-                             uint32_t name_id) {
+ByteString GetNameFromTT(const uint8_t* name_table,
+                         uint32_t name_table_size,
+                         uint32_t name_id) {
   if (!name_table || name_table_size < 6) {
-    return CFX_ByteString();
+    return ByteString();
   }
   uint32_t name_count = GET_TT_SHORT(name_table + 2);
   uint32_t string_offset = GET_TT_SHORT(name_table + 4);
   // We will ignore the possibility of overlap of structures and
   // string table as if it's all corrupt there's not a lot we can do.
   if (name_table_size < string_offset) {
-    return CFX_ByteString();
+    return ByteString();
   }
 
   const uint8_t* string_ptr = name_table + string_offset;
@@ -38,7 +38,7 @@ CFX_ByteString GetNameFromTT(const uint8_t* name_table,
   name_table += 6;
   name_table_size -= 6;
   if (name_table_size < name_count * 12) {
-    return CFX_ByteString();
+    return ByteString();
   }
 
   for (uint32_t i = 0; i < name_count; i++, name_table += 12) {
@@ -49,7 +49,7 @@ CFX_ByteString GetNameFromTT(const uint8_t* name_table,
                                 GET_TT_SHORT(name_table + 8));
     }
   }
-  return CFX_ByteString();
+  return ByteString();
 }
 #ifdef PDF_ENABLE_XFA
 void* IFX_SystemFontInfo::MapFontByUnicode(uint32_t dwUnicode,
@@ -79,9 +79,9 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
 }
 #endif
 
-CFX_FontFaceInfo::CFX_FontFaceInfo(CFX_ByteString filePath,
-                                   CFX_ByteString faceName,
-                                   CFX_ByteString fontTables,
+CFX_FontFaceInfo::CFX_FontFaceInfo(ByteString filePath,
+                                   ByteString faceName,
+                                   ByteString fontTables,
                                    uint32_t fontOffset,
                                    uint32_t fileSize)
     : m_FilePath(filePath),

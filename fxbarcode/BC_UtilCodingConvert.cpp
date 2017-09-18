@@ -10,43 +10,42 @@ CBC_UtilCodingConvert::CBC_UtilCodingConvert() {}
 
 CBC_UtilCodingConvert::~CBC_UtilCodingConvert() {}
 
-void CBC_UtilCodingConvert::UnicodeToLocale(const CFX_WideString& src,
-                                            CFX_ByteString& dst) {
-  dst = CFX_ByteString::FromUnicode(src);
+void CBC_UtilCodingConvert::UnicodeToLocale(const WideString& src,
+                                            ByteString& dst) {
+  dst = ByteString::FromUnicode(src);
 }
 
-void CBC_UtilCodingConvert::LocaleToUtf8(const CFX_ByteString& src,
-                                         CFX_ByteString& dst) {
-  CFX_WideString unicode = CFX_WideString::FromLocal(src.AsStringC());
+void CBC_UtilCodingConvert::LocaleToUtf8(const ByteString& src,
+                                         ByteString& dst) {
+  WideString unicode = WideString::FromLocal(src.AsStringView());
   dst = unicode.UTF8Encode();
 }
 
-void CBC_UtilCodingConvert::LocaleToUtf8(const CFX_ByteString& src,
+void CBC_UtilCodingConvert::LocaleToUtf8(const ByteString& src,
                                          std::vector<uint8_t>& dst) {
-  CFX_WideString unicode = CFX_WideString::FromLocal(src.AsStringC());
-  CFX_ByteString utf8 = unicode.UTF8Encode();
+  WideString unicode = WideString::FromLocal(src.AsStringView());
+  ByteString utf8 = unicode.UTF8Encode();
   dst = std::vector<uint8_t>(utf8.begin(), utf8.end());
 }
 
 void CBC_UtilCodingConvert::Utf8ToLocale(const std::vector<uint8_t>& src,
-                                         CFX_ByteString& dst) {
-  CFX_ByteString utf8;
+                                         ByteString& dst) {
+  ByteString utf8;
   for (uint8_t value : src)
     utf8 += value;
 
-  CFX_WideString unicode = CFX_WideString::FromUTF8(utf8.AsStringC());
-  dst = CFX_ByteString::FromUnicode(unicode);
+  WideString unicode = WideString::FromUTF8(utf8.AsStringView());
+  dst = ByteString::FromUnicode(unicode);
 }
 
 void CBC_UtilCodingConvert::Utf8ToLocale(const uint8_t* src,
                                          int32_t count,
-                                         CFX_ByteString& dst) {
-  CFX_WideString unicode =
-      CFX_WideString::FromUTF8(CFX_ByteStringC(src, count));
-  dst = CFX_ByteString::FromUnicode(unicode);
+                                         ByteString& dst) {
+  WideString unicode = WideString::FromUTF8(ByteStringView(src, count));
+  dst = ByteString::FromUnicode(unicode);
 }
 
-void CBC_UtilCodingConvert::UnicodeToUTF8(const CFX_WideString& src,
-                                          CFX_ByteString& dst) {
+void CBC_UtilCodingConvert::UnicodeToUTF8(const WideString& src,
+                                          ByteString& dst) {
   dst = src.UTF8Encode();
 }

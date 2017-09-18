@@ -40,8 +40,8 @@ bool CXFA_FMExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     uint32_t line,
     bool isGlobal,
-    const CFX_WideStringC& wsName,
-    std::vector<CFX_WideStringC>&& arguments,
+    const WideStringView& wsName,
+    std::vector<WideStringView>&& arguments,
     std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_FUNC),
       m_wsName(wsName),
@@ -61,7 +61,7 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript) {
   }
   javascript << L"function ";
   if (!m_wsName.IsEmpty() && m_wsName[0] == L'!') {
-    CFX_WideString tempName =
+    WideString tempName =
         EXCLAMATION_IN_IDENTIFIER + m_wsName.Right(m_wsName.GetLength() - 1);
     javascript << tempName;
   } else {
@@ -73,9 +73,8 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript) {
     if (bNeedComma)
       javascript << L", ";
     if (identifier[0] == L'!') {
-      CFX_WideString tempIdentifier =
-          EXCLAMATION_IN_IDENTIFIER +
-          identifier.Right(identifier.GetLength() - 1);
+      WideString tempIdentifier = EXCLAMATION_IN_IDENTIFIER +
+                                  identifier.Right(identifier.GetLength() - 1);
       javascript << tempIdentifier;
     } else {
       javascript << identifier;
@@ -117,7 +116,7 @@ bool CXFA_FMFunctionDefinition::ToImpliedReturnJS(CFX_WideTextBuf&) {
 
 CXFA_FMVarExpression::CXFA_FMVarExpression(
     uint32_t line,
-    const CFX_WideStringC& wsName,
+    const WideStringView& wsName,
     std::unique_ptr<CXFA_FMExpression> pInit)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_VAR),
       m_wsName(wsName),
@@ -127,7 +126,7 @@ CXFA_FMVarExpression::~CXFA_FMVarExpression() {}
 
 bool CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << L"var ";
-  CFX_WideString tempName(m_wsName);
+  WideString tempName(m_wsName);
   if (m_wsName[0] == L'!') {
     tempName =
         EXCLAMATION_IN_IDENTIFIER + m_wsName.Right(m_wsName.GetLength() - 1);
@@ -151,7 +150,7 @@ bool CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 
 bool CXFA_FMVarExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << L"var ";
-  CFX_WideString tempName(m_wsName);
+  WideString tempName(m_wsName);
   if (m_wsName[0] == L'!') {
     tempName =
         EXCLAMATION_IN_IDENTIFIER + m_wsName.Right(m_wsName.GetLength() - 1);
@@ -440,7 +439,7 @@ bool CXFA_FMContinueExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 
 CXFA_FMForExpression::CXFA_FMForExpression(
     uint32_t line,
-    const CFX_WideStringC& wsVariant,
+    const WideStringView& wsVariant,
     std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
     int32_t iDirection,
@@ -458,7 +457,7 @@ CXFA_FMForExpression::~CXFA_FMForExpression() {}
 
 bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << L"{\nvar ";
-  CFX_WideString tempVariant;
+  WideString tempVariant;
   if (m_wsVariant[0] == L'!') {
     tempVariant = EXCLAMATION_IN_IDENTIFIER +
                   m_wsVariant.Right(m_wsVariant.GetLength() - 1);
@@ -513,7 +512,7 @@ bool CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << RUNTIMEFUNCTIONRETURNVALUE;
   javascript << L" = 0;\n";
   javascript << L"{\nvar ";
-  CFX_WideString tempVariant;
+  WideString tempVariant;
   if (m_wsVariant[0] == L'!') {
     tempVariant = EXCLAMATION_IN_IDENTIFIER +
                   m_wsVariant.Right(m_wsVariant.GetLength() - 1);
@@ -567,7 +566,7 @@ bool CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 
 CXFA_FMForeachExpression::CXFA_FMForeachExpression(
     uint32_t line,
-    const CFX_WideStringC& wsIdentifier,
+    const WideStringView& wsIdentifier,
     std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
     std::unique_ptr<CXFA_FMExpression> pList)
     : CXFA_FMLoopExpression(line),
@@ -581,7 +580,7 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << L"{\n";
   javascript << L"var ";
   if (m_wsIdentifier[0] == L'!') {
-    CFX_WideString tempIdentifier =
+    WideString tempIdentifier =
         EXCLAMATION_IN_IDENTIFIER +
         m_wsIdentifier.Right(m_wsIdentifier.GetLength() - 1);
     javascript << tempIdentifier;
@@ -613,7 +612,7 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << RUNTIMEBLOCKTEMPARRAY;
   javascript << L".length)\n{\n";
   if (m_wsIdentifier[0] == L'!') {
-    CFX_WideString tempIdentifier =
+    WideString tempIdentifier =
         EXCLAMATION_IN_IDENTIFIER +
         m_wsIdentifier.Right(m_wsIdentifier.GetLength() - 1);
     javascript << tempIdentifier;
@@ -638,7 +637,7 @@ bool CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << L"{\n";
   javascript << L"var ";
   if (m_wsIdentifier[0] == L'!') {
-    CFX_WideString tempIdentifier =
+    WideString tempIdentifier =
         EXCLAMATION_IN_IDENTIFIER +
         m_wsIdentifier.Right(m_wsIdentifier.GetLength() - 1);
     javascript << tempIdentifier;
@@ -669,7 +668,7 @@ bool CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << RUNTIMEBLOCKTEMPARRAY;
   javascript << L".length)\n{\n";
   if (m_wsIdentifier[0] == L'!') {
-    CFX_WideString tempIdentifier =
+    WideString tempIdentifier =
         EXCLAMATION_IN_IDENTIFIER +
         m_wsIdentifier.Right(m_wsIdentifier.GetLength() - 1);
     javascript << tempIdentifier;

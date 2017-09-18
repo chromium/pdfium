@@ -19,21 +19,20 @@ enum class PaintOperation { STROKE, FILL };
 class CPDF_DefaultAppearance {
  public:
   CPDF_DefaultAppearance() {}
-  explicit CPDF_DefaultAppearance(const CFX_ByteString& csDA) : m_csDA(csDA) {}
+  explicit CPDF_DefaultAppearance(const ByteString& csDA) : m_csDA(csDA) {}
 
   CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA) {
     m_csDA = cDA.GetStr();
   }
 
-  CFX_ByteString GetStr() const { return m_csDA; }
+  ByteString GetStr() const { return m_csDA; }
 
   bool HasFont();
-  CFX_ByteString GetFontString();
-  CFX_ByteString GetFont(float* fFontSize);
+  ByteString GetFontString();
+  ByteString GetFont(float* fFontSize);
 
   bool HasColor(PaintOperation nOperation = PaintOperation::FILL);
-  CFX_ByteString GetColorString(
-      PaintOperation nOperation = PaintOperation::FILL);
+  ByteString GetColorString(PaintOperation nOperation = PaintOperation::FILL);
   void GetColor(int& iColorType,
                 float fc[4],
                 PaintOperation nOperation = PaintOperation::FILL);
@@ -42,11 +41,11 @@ class CPDF_DefaultAppearance {
                 PaintOperation nOperation = PaintOperation::FILL);
 
   bool HasTextMatrix();
-  CFX_ByteString GetTextMatrixString();
+  ByteString GetTextMatrixString();
   CFX_Matrix GetTextMatrix();
 
  private:
-  CFX_ByteString m_csDA;
+  ByteString m_csDA;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_

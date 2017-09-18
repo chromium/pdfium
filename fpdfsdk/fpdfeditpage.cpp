@@ -100,7 +100,7 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
   pDoc->CreateNewDoc();
 
   time_t currentTime;
-  CFX_ByteString DateStr;
+  ByteString DateStr;
   if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
     if (time(&currentTime) != -1) {
       tm* pTM = localtime(&currentTime);

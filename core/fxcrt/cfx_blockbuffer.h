@@ -37,7 +37,7 @@ class CFX_BlockBuffer {
 
   void SetTextChar(size_t iIndex, wchar_t ch);
   void DeleteTextChars(size_t iCount);
-  CFX_WideString GetTextData(size_t iStart, size_t iLength) const;
+  WideString GetTextData(size_t iStart, size_t iLength) const;
 
  private:
   std::pair<size_t, size_t> TextDataIndex2BufIndex(const size_t iIndex) const;

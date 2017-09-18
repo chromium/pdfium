@@ -54,7 +54,7 @@ CFX_FileAccess_Windows::~CFX_FileAccess_Windows() {
   Close();
 }
 
-bool CFX_FileAccess_Windows::Open(const CFX_ByteStringC& fileName,
+bool CFX_FileAccess_Windows::Open(const ByteStringView& fileName,
                                   uint32_t dwMode) {
   if (m_hFile)
     return false;
@@ -69,7 +69,7 @@ bool CFX_FileAccess_Windows::Open(const CFX_ByteStringC& fileName,
   return !!m_hFile;
 }
 
-bool CFX_FileAccess_Windows::Open(const CFX_WideStringC& fileName,
+bool CFX_FileAccess_Windows::Open(const WideStringView& fileName,
                                   uint32_t dwMode) {
   if (m_hFile)
     return false;

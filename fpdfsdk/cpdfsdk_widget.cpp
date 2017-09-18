@@ -75,7 +75,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
   if (pContext->GetDocType() == XFA_DocType::Static) {
     if (!m_hMixXFAWidget) {
       if (CXFA_FFDocView* pDocView = pContext->GetXFADocView()) {
-        CFX_WideString sName;
+        WideString sName;
         if (GetFieldType() == FIELDTYPE_RADIOBUTTON) {
           sName = GetAnnotName();
           if (sName.IsEmpty())
@@ -102,7 +102,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
   if (!pDocView)
     return nullptr;
 
-  CFX_WideString sName = GetName();
+  WideString sName = GetName();
   return !sName.IsEmpty() ? pDocView->GetWidgetByName(sName, nullptr) : nullptr;
 }
 
@@ -377,7 +377,7 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
     }
     case FIELDTYPE_TEXTFIELD: {
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
-        CFX_WideString sValue;
+        WideString sValue;
         pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
         pFormField->SetValue(sValue, true);
       }
@@ -409,7 +409,7 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
           }
         }
 
-        CFX_WideString sValue;
+        WideString sValue;
         pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
         pFormField->SetValue(sValue, true);
       }
@@ -432,7 +432,7 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
         for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
              i++) {
-          CFX_WideString swText;
+          WideString swText;
           pWidgetAcc->GetChoiceListItem(swText, i, false);
 
           pFormField->InsertOption(swText, i, true);
@@ -447,7 +447,7 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
         for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
              i++) {
-          CFX_WideString swText;
+          WideString swText;
           pWidgetAcc->GetChoiceListItem(swText, i, false);
 
           pFormField->InsertOption(swText, i, false);
@@ -552,7 +552,7 @@ int CPDFSDK_Widget::GetRotate() const {
 }
 
 #ifdef PDF_ENABLE_XFA
-CFX_WideString CPDFSDK_Widget::GetName() const {
+WideString CPDFSDK_Widget::GetName() const {
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetFullName();
 }
@@ -607,28 +607,28 @@ int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
 }
 
 #ifdef PDF_ENABLE_XFA
-CFX_WideString CPDFSDK_Widget::GetValue(bool bDisplay) const {
+WideString CPDFSDK_Widget::GetValue(bool bDisplay) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
-      CFX_WideString sValue;
+      WideString sValue;
       pWidgetAcc->GetValue(
           sValue, bDisplay ? XFA_VALUEPICTURE_Display : XFA_VALUEPICTURE_Edit);
       return sValue;
     }
   }
 #else
-CFX_WideString CPDFSDK_Widget::GetValue() const {
+WideString CPDFSDK_Widget::GetValue() const {
 #endif  // PDF_ENABLE_XFA
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetValue();
 }
 
-CFX_WideString CPDFSDK_Widget::GetDefaultValue() const {
+WideString CPDFSDK_Widget::GetDefaultValue() const {
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetDefaultValue();
 }
 
-CFX_WideString CPDFSDK_Widget::GetOptionLabel(int nIndex) const {
+WideString CPDFSDK_Widget::GetOptionLabel(int nIndex) const {
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetOptionLabel(nIndex);
 }
@@ -692,7 +692,7 @@ void CPDFSDK_Widget::SetCheck(bool bChecked, bool bNotify) {
 #endif  // PDF_ENABLE_XFA
 }
 
-void CPDFSDK_Widget::SetValue(const CFX_WideString& sValue, bool bNotify) {
+void CPDFSDK_Widget::SetValue(const WideString& sValue, bool bNotify) {
   CPDF_FormField* pFormField = GetFormField();
   pFormField->SetValue(sValue, bNotify);
 #ifdef PDF_ENABLE_XFA
@@ -701,7 +701,7 @@ void CPDFSDK_Widget::SetValue(const CFX_WideString& sValue, bool bNotify) {
 #endif  // PDF_ENABLE_XFA
 }
 
-void CPDFSDK_Widget::SetDefaultValue(const CFX_WideString& sValue) {}
+void CPDFSDK_Widget::SetDefaultValue(const WideString& sValue) {}
 void CPDFSDK_Widget::SetOptionSelection(int index,
                                         bool bSelected,
                                         bool bNotify) {
@@ -742,7 +742,7 @@ void CPDFSDK_Widget::ResetAppearance(bool bValueChanged) {
     case FIELDTYPE_TEXTFIELD:
     case FIELDTYPE_COMBOBOX: {
       bool bFormatted = false;
-      CFX_WideString sValue = OnFormat(bFormatted);
+      WideString sValue = OnFormat(bFormatted);
       ResetAppearance(bFormatted ? &sValue : nullptr, true);
       break;
     }
@@ -753,7 +753,7 @@ void CPDFSDK_Widget::ResetAppearance(bool bValueChanged) {
 }
 #endif  // PDF_ENABLE_XFA
 
-void CPDFSDK_Widget::ResetAppearance(const CFX_WideString* sValue,
+void CPDFSDK_Widget::ResetAppearance(const WideString* sValue,
                                      bool bValueChanged) {
   SetAppModified();
 
@@ -786,7 +786,7 @@ void CPDFSDK_Widget::ResetAppearance(const CFX_WideString* sValue,
   m_pAnnot->ClearCachedAP();
 }
 
-CFX_WideString CPDFSDK_Widget::OnFormat(bool& bFormatted) {
+WideString CPDFSDK_Widget::OnFormat(bool& bFormatted) {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
   return m_pInterForm->OnFormat(pFormField, bFormatted);
@@ -1042,7 +1042,7 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
   return CPDF_Action();
 }
 
-CFX_WideString CPDFSDK_Widget::GetAlternateName() const {
+WideString CPDFSDK_Widget::GetAlternateName() const {
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetAlternateName();
 }

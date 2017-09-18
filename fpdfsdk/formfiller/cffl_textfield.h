@@ -21,7 +21,7 @@ struct FFL_TextFieldState {
 
   int nStart;
   int nEnd;
-  CFX_WideString sValue;
+  WideString sValue;
 };
 
 class CFFL_TextField : public CFFL_TextObject,

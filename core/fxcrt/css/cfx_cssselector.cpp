@@ -31,7 +31,7 @@ CFX_CSSSelector::CFX_CSSSelector(CFX_CSSSelectorType eType,
                                  int32_t iLen,
                                  bool bIgnoreCase)
     : m_eType(eType),
-      m_dwHash(FX_HashCode_GetW(CFX_WideStringC(psz, iLen), bIgnoreCase)) {}
+      m_dwHash(FX_HashCode_GetW(WideStringView(psz, iLen), bIgnoreCase)) {}
 
 CFX_CSSSelector::~CFX_CSSSelector() {}
 
@@ -49,7 +49,7 @@ CFX_CSSSelector* CFX_CSSSelector::GetNextSelector() const {
 
 // static.
 std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
-    const CFX_WideStringC& str) {
+    const WideStringView& str) {
   ASSERT(!str.IsEmpty());
 
   const wchar_t* psz = str.unterminated_c_str();

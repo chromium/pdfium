@@ -22,13 +22,13 @@ CPDF_StructElement* ToStructTreeElement(FPDF_STRUCTELEMENT struct_element) {
   return static_cast<CPDF_StructElement*>(struct_element);
 }
 
-unsigned long WideStringToBuffer(const CFX_WideString& str,
+unsigned long WideStringToBuffer(const WideString& str,
                                  void* buffer,
                                  unsigned long buflen) {
   if (str.IsEmpty())
     return 0;
 
-  CFX_ByteString encodedStr = str.UTF16LE_Encode();
+  ByteString encodedStr = str.UTF16LE_Encode();
   const unsigned long len = encodedStr.GetLength();
   if (buffer && len <= buflen)
     memcpy(buffer, encodedStr.c_str(), len);

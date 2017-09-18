@@ -6,7 +6,7 @@
 
 #include "xfa/fwl/cfwl_listitem.h"
 
-CFWL_ListItem::CFWL_ListItem(const CFX_WideString& text)
+CFWL_ListItem::CFWL_ListItem(const WideString& text)
     : m_dwStates(0), m_wsText(text) {
   m_rtItem.Reset();
 }

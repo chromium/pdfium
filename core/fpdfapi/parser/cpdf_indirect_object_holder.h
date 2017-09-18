@@ -58,7 +58,7 @@ class CPDF_IndirectObjectHolder {
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }
 
-  CFX_WeakPtr<CFX_ByteStringPool> GetByteStringPool() const {
+  CFX_WeakPtr<ByteStringPool> GetByteStringPool() const {
     return m_pByteStringPool;
   }
 
@@ -72,7 +72,7 @@ class CPDF_IndirectObjectHolder {
   uint32_t m_LastObjNum;
   std::map<uint32_t, std::unique_ptr<CPDF_Object>> m_IndirectObjs;
   std::vector<std::unique_ptr<CPDF_Object>> m_OrphanObjs;
-  CFX_WeakPtr<CFX_ByteStringPool> m_pByteStringPool;
+  CFX_WeakPtr<ByteStringPool> m_pByteStringPool;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_INDIRECT_OBJECT_HOLDER_H_

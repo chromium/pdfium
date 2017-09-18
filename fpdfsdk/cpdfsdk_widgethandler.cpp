@@ -231,7 +231,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
   if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX) {
     bool bFormatted = false;
     CPDFSDK_Annot::ObservedPtr pObserved(pWidget);
-    CFX_WideString sValue = pWidget->OnFormat(bFormatted);
+    WideString sValue = pWidget->OnFormat(bFormatted);
     if (!pObserved)
       return;
 
@@ -280,15 +280,15 @@ CFX_FloatRect CPDFSDK_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   return CFX_FloatRect();
 }
 
-CFX_WideString CPDFSDK_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
+WideString CPDFSDK_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
   if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->GetSelectedText(pAnnot);
 
-  return CFX_WideString();
+  return WideString();
 }
 
 void CPDFSDK_WidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
-                                             const CFX_WideString& text) {
+                                             const WideString& text) {
   if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     m_pFormFiller->ReplaceSelection(pAnnot, text);
 }

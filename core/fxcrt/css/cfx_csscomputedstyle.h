@@ -56,7 +56,7 @@ class CFX_CSSComputedStyle : public CFX_Retainable {
   };
 
   int32_t CountFontFamilies() const;
-  const CFX_WideString GetFontFamily(int32_t index) const;
+  const WideString GetFontFamily(int32_t index) const;
   uint16_t GetFontWeight() const;
   CFX_CSSFontVariant GetFontVariant() const;
   CFX_CSSFontStyle GetFontStyle() const;
@@ -91,8 +91,7 @@ class CFX_CSSComputedStyle : public CFX_Retainable {
   void SetLetterSpacing(const CFX_CSSLength& letterSpacing);
   void AddCustomStyle(const CFX_CSSCustomProperty& prop);
 
-  bool GetCustomStyle(const CFX_WideString& wsName,
-                      CFX_WideString& wsValue) const;
+  bool GetCustomStyle(const WideString& wsName, WideString& wsValue) const;
 
   InheritedData m_InheritedData;
   NonInheritedData m_NonInheritedData;

@@ -52,14 +52,14 @@ void CPWL_EditCtrl::SetCursor() {
   }
 }
 
-CFX_WideString CPWL_EditCtrl::GetSelectedText() {
+WideString CPWL_EditCtrl::GetSelectedText() {
   if (m_pEdit)
     return m_pEdit->GetSelectedText();
 
-  return CFX_WideString();
+  return WideString();
 }
 
-void CPWL_EditCtrl::ReplaceSelection(const CFX_WideString& text) {
+void CPWL_EditCtrl::ReplaceSelection(const WideString& text) {
   if (!m_pEdit)
     return;
 
@@ -338,7 +338,7 @@ void CPWL_EditCtrl::SetCaret(bool bVisible,
   }
 }
 
-CFX_WideString CPWL_EditCtrl::GetText() const {
+WideString CPWL_EditCtrl::GetText() const {
   return m_pEdit->GetText();
 }
 

@@ -20,7 +20,7 @@ class CBC_Codabar : public CBC_OneCode {
   ~CBC_Codabar() override;
 
   // CBC_OneCode:
-  bool Encode(const CFX_WideStringC& contents) override;
+  bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
@@ -33,7 +33,7 @@ class CBC_Codabar : public CBC_OneCode {
  private:
   CBC_OnedCodaBarWriter* GetOnedCodaBarWriter();
 
-  CFX_WideString m_renderContents;
+  WideString m_renderContents;
 };
 
 #endif  // FXBARCODE_CBC_CODABAR_H_

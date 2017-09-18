@@ -25,12 +25,12 @@ struct PDFSDK_FieldAction {
   bool bModifier;
   bool bShift;
   int nCommitKey;
-  CFX_WideString sChange;
-  CFX_WideString sChangeEx;
+  WideString sChange;
+  WideString sChangeEx;
   bool bKeyDown;
   int nSelEnd;
   int nSelStart;
-  CFX_WideString sValue;
+  WideString sValue;
   bool bWillCommit;
   bool bFieldFull;
   bool bRC;

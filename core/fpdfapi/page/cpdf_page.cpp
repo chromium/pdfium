@@ -97,7 +97,7 @@ void CPDF_Page::SetRenderContext(
   m_pRenderContext = std::move(pContext);
 }
 
-CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteString& name) const {
+CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
   CPDF_Dictionary* pPageDict = m_pFormDict.Get();
   std::set<CPDF_Dictionary*> visited;
   while (1) {
@@ -112,7 +112,7 @@ CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteString& name) const {
   return nullptr;
 }
 
-CFX_FloatRect CPDF_Page::GetBox(const CFX_ByteString& name) const {
+CFX_FloatRect CPDF_Page::GetBox(const ByteString& name) const {
   CFX_FloatRect box;
   CPDF_Array* pBox = ToArray(GetPageAttr(name));
   if (pBox) {

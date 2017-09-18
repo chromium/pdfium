@@ -379,8 +379,7 @@ void CPDFXFA_DocEnvironment::SetCalculationsEnabled(CXFA_FFDoc* hDoc,
   }
 }
 
-void CPDFXFA_DocEnvironment::GetTitle(CXFA_FFDoc* hDoc,
-                                      CFX_WideString& wsTitle) {
+void CPDFXFA_DocEnvironment::GetTitle(CXFA_FFDoc* hDoc, WideString& wsTitle) {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetPDFDoc())
     return;
 
@@ -388,13 +387,13 @@ void CPDFXFA_DocEnvironment::GetTitle(CXFA_FFDoc* hDoc,
   if (!pInfoDict)
     return;
 
-  CFX_ByteString csTitle = pInfoDict->GetStringFor("Title");
+  ByteString csTitle = pInfoDict->GetStringFor("Title");
   wsTitle = wsTitle.FromLocal(csTitle.GetBuffer(csTitle.GetLength()));
   csTitle.ReleaseBuffer(csTitle.GetLength());
 }
 
 void CPDFXFA_DocEnvironment::SetTitle(CXFA_FFDoc* hDoc,
-                                      const CFX_WideString& wsTitle) {
+                                      const WideString& wsTitle) {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetPDFDoc())
     return;
 
@@ -404,7 +403,7 @@ void CPDFXFA_DocEnvironment::SetTitle(CXFA_FFDoc* hDoc,
 }
 
 void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
-                                        const CFX_WideString& wsFilePath,
+                                        const WideString& wsFilePath,
                                         bool bXDP) {
   if (hDoc != m_pContext->GetXFADoc())
     return;
@@ -419,14 +418,14 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     return;
 
   int fileType = bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML;
-  CFX_ByteString bs = wsFilePath.UTF16LE_Encode();
+  ByteString bs = wsFilePath.UTF16LE_Encode();
   if (wsFilePath.IsEmpty()) {
     if (!pFormFillEnv->GetFormFillInfo() ||
         !pFormFillEnv->GetFormFillInfo()->m_pJsPlatform) {
       return;
     }
 
-    CFX_WideString filepath = pFormFillEnv->JS_fieldBrowse();
+    WideString filepath = pFormFillEnv->JS_fieldBrowse();
     bs = filepath.UTF16LE_Encode();
   }
   int len = bs.GetLength();
@@ -439,7 +438,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
 
   CFX_RetainPtr<IFX_SeekableStream> fileWrite =
       MakeSeekableStream(pFileHandler);
-  CFX_ByteString content;
+  ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileWrite->WriteBlock(content.c_str(), fileWrite->GetSize(),
@@ -485,10 +484,10 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         continue;
       }
       if (i == size - 1) {
-        CFX_WideString wPath = CFX_WideString::FromUTF16LE(
+        WideString wPath = WideString::FromUTF16LE(
             reinterpret_cast<const unsigned short*>(bs.c_str()),
             bs.GetLength() / sizeof(unsigned short));
-        CFX_ByteString bPath = wPath.UTF8Encode();
+        ByteString bPath = wPath.UTF8Encode();
         const char* szFormat =
             "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
         content.Format(szFormat, bPath.c_str());
@@ -505,7 +504,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
 }
 
 void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
-                                     const CFX_WideString& bsURL) {
+                                     const WideString& bsURL) {
   if (hDoc != m_pContext->GetXFADoc())
     return;
 
@@ -516,7 +515,7 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
   if (!pFormFillEnv)
     return;
 
-  CFX_WideStringC str(bsURL.c_str());
+  WideStringView str(bsURL.c_str());
   pFormFillEnv->GotoURL(m_pContext.Get(), str);
 }
 
@@ -644,9 +643,9 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       if (!pFormFillEnv)
         return false;
 
-      CFX_WideString ws;
+      WideString ws;
       ws.FromLocal(IDS_XFA_Validate_Input);
-      CFX_ByteString bs = ws.UTF16LE_Encode();
+      ByteString bs = ws.UTF16LE_Encode();
       int len = bs.GetLength();
       pFormFillEnv->Alert((FPDF_WIDESTRING)bs.GetBuffer(len),
                           (FPDF_WIDESTRING)L"", 0, 1);
@@ -700,12 +699,12 @@ bool CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
 
 CFX_RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
     CXFA_FFDoc* hDoc,
-    const CFX_WideString& wsLink) {
+    const WideString& wsLink) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return nullptr;
 
-  CFX_ByteString bs = wsLink.UTF16LE_Encode();
+  ByteString bs = wsLink.UTF16LE_Encode();
   int len = bs.GetLength();
   FPDF_FILEHANDLER* pFileHandler =
       pFormFillEnv->OpenFile(0, (FPDF_WIDESTRING)bs.GetBuffer(len), "rb");
@@ -723,7 +722,7 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   if (!m_pContext->GetXFADocView())
     return false;
 
-  CFX_ByteString content;
+  ByteString content;
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return false;
@@ -808,7 +807,7 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   return true;
 }
 
-void CPDFXFA_DocEnvironment::ToXFAContentFlags(CFX_WideString csSrcContent,
+void CPDFXFA_DocEnvironment::ToXFAContentFlags(WideString csSrcContent,
                                                FPDF_DWORD& flag) {
   if (csSrcContent.Contains(L" config "))
     flag |= FXFA_CONFIG;
@@ -830,19 +829,19 @@ void CPDFXFA_DocEnvironment::ToXFAContentFlags(CFX_WideString csSrcContent,
   }
 }
 
-bool CPDFXFA_DocEnvironment::MailToInfo(CFX_WideString& csURL,
-                                        CFX_WideString& csToAddress,
-                                        CFX_WideString& csCCAddress,
-                                        CFX_WideString& csBCCAddress,
-                                        CFX_WideString& csSubject,
-                                        CFX_WideString& csMsg) {
-  CFX_WideString srcURL = csURL;
+bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
+                                        WideString& csToAddress,
+                                        WideString& csCCAddress,
+                                        WideString& csBCCAddress,
+                                        WideString& csSubject,
+                                        WideString& csMsg) {
+  WideString srcURL = csURL;
   srcURL.TrimLeft();
   if (srcURL.Left(7).CompareNoCase(L"mailto:") != 0)
     return false;
 
   auto pos = srcURL.Find(L'?');
-  CFX_WideString tmp;
+  WideString tmp;
   if (!pos.has_value()) {
     pos = srcURL.Find(L'@');
     if (!pos.has_value())
@@ -903,13 +902,13 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
   if (!pFormFillEnv)
     return false;
 
-  CFX_WideStringC csURLC;
+  WideStringView csURLC;
   submit.GetSubmitTarget(csURLC);
-  CFX_WideString csURL(csURLC);
+  WideString csURL(csURLC);
   if (csURL.IsEmpty()) {
-    CFX_WideString ws;
+    WideString ws;
     ws.FromLocal("Submit cancelled.");
-    CFX_ByteString bs = ws.UTF16LE_Encode();
+    ByteString bs = ws.UTF16LE_Encode();
     int len = bs.GetLength();
     pFormFillEnv->Alert((FPDF_WIDESTRING)bs.GetBuffer(len),
                         (FPDF_WIDESTRING)L"", 0, 4);
@@ -921,13 +920,13 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
   int fileFlag = -1;
   switch (submit.GetSubmitFormat()) {
     case XFA_ATTRIBUTEENUM_Xdp: {
-      CFX_WideStringC csContentC;
+      WideStringView csContentC;
       submit.GetSubmitXDPContent(csContentC);
-      CFX_WideString csContent;
+      WideString csContent;
       csContent = csContentC;
       csContent.TrimLeft();
       csContent.TrimRight();
-      CFX_WideString space;
+      WideString space;
       space.FromLocal(" ");
       csContent = space + csContent + space;
       FPDF_DWORD flag = 0;
@@ -958,20 +957,20 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
   if (!pFileHandler)
     return false;
   if (csURL.Left(7).CompareNoCase(L"mailto:") == 0) {
-    CFX_WideString csToAddress;
-    CFX_WideString csCCAddress;
-    CFX_WideString csBCCAddress;
-    CFX_WideString csSubject;
-    CFX_WideString csMsg;
+    WideString csToAddress;
+    WideString csCCAddress;
+    WideString csBCCAddress;
+    WideString csSubject;
+    WideString csMsg;
     if (!MailToInfo(csURL, csToAddress, csCCAddress, csBCCAddress, csSubject,
                     csMsg)) {
       return false;
     }
-    CFX_ByteString bsTo = CFX_WideString(csToAddress).UTF16LE_Encode();
-    CFX_ByteString bsCC = CFX_WideString(csCCAddress).UTF16LE_Encode();
-    CFX_ByteString bsBcc = CFX_WideString(csBCCAddress).UTF16LE_Encode();
-    CFX_ByteString bsSubject = CFX_WideString(csSubject).UTF16LE_Encode();
-    CFX_ByteString bsMsg = CFX_WideString(csMsg).UTF16LE_Encode();
+    ByteString bsTo = WideString(csToAddress).UTF16LE_Encode();
+    ByteString bsCC = WideString(csCCAddress).UTF16LE_Encode();
+    ByteString bsBcc = WideString(csBCCAddress).UTF16LE_Encode();
+    ByteString bsSubject = WideString(csSubject).UTF16LE_Encode();
+    ByteString bsMsg = WideString(csMsg).UTF16LE_Encode();
     FPDF_WIDESTRING pTo = (FPDF_WIDESTRING)bsTo.GetBuffer(bsTo.GetLength());
     FPDF_WIDESTRING pCC = (FPDF_WIDESTRING)bsCC.GetBuffer(bsCC.GetLength());
     FPDF_WIDESTRING pBcc = (FPDF_WIDESTRING)bsBcc.GetBuffer(bsBcc.GetLength());
@@ -986,8 +985,8 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
     bsMsg.ReleaseBuffer(bsMsg.GetStringLength());
   } else {
     // HTTP or FTP
-    CFX_WideString ws;
-    CFX_ByteString bs = csURL.UTF16LE_Encode();
+    WideString ws;
+    ByteString bs = csURL.UTF16LE_Encode();
     int len = bs.GetLength();
     pFormFillEnv->UploadTo(pFileHandler, fileFlag,
                            (FPDF_WIDESTRING)bs.GetBuffer(len));
@@ -996,10 +995,9 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
   return true;
 }
 
-bool CPDFXFA_DocEnvironment::SetGlobalProperty(
-    CXFA_FFDoc* hDoc,
-    const CFX_ByteStringC& szPropName,
-    CFXJSE_Value* pValue) {
+bool CPDFXFA_DocEnvironment::SetGlobalProperty(CXFA_FFDoc* hDoc,
+                                               const ByteStringView& szPropName,
+                                               CFXJSE_Value* pValue) {
   if (hDoc != m_pContext->GetXFADoc())
     return false;
   if (!m_pContext->GetFormFillEnv() ||
@@ -1013,10 +1011,9 @@ bool CPDFXFA_DocEnvironment::SetGlobalProperty(
   return bRet;
 }
 
-bool CPDFXFA_DocEnvironment::GetGlobalProperty(
-    CXFA_FFDoc* hDoc,
-    const CFX_ByteStringC& szPropName,
-    CFXJSE_Value* pValue) {
+bool CPDFXFA_DocEnvironment::GetGlobalProperty(CXFA_FFDoc* hDoc,
+                                               const ByteStringView& szPropName,
+                                               CFXJSE_Value* pValue) {
   if (hDoc != m_pContext->GetXFADoc())
     return false;
   if (!m_pContext->GetFormFillEnv() ||

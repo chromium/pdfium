@@ -51,8 +51,8 @@ class CFX_UTF8Encoder {
 
   // The data returned by GetResult() is invalidated when this is modified by
   // appending any data.
-  CFX_ByteStringC GetResult() const {
-    return CFX_ByteStringC(m_Buffer.data(), m_Buffer.size());
+  ByteStringView GetResult() const {
+    return ByteStringView(m_Buffer.data(), m_Buffer.size());
   }
 
  private:
@@ -61,14 +61,14 @@ class CFX_UTF8Encoder {
 
 }  // namespace
 
-CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr) {
+ByteString FX_UTF8Encode(const WideStringView& wsStr) {
   FX_STRSIZE len = wsStr.GetLength();
   const wchar_t* pStr = wsStr.unterminated_c_str();
   CFX_UTF8Encoder encoder;
   while (len-- > 0)
     encoder.Input(*pStr++);
 
-  return CFX_ByteString(encoder.GetResult());
+  return ByteString(encoder.GetResult());
 }
 
 namespace {
@@ -84,7 +84,7 @@ float FractionalScale(size_t scale_factor, int value) {
 
 }  // namespace
 
-bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
+bool FX_atonum(const ByteStringView& strc, void* pData) {
   if (strc.Contains('.')) {
     float* pFloat = static_cast<float*>(pData);
     *pFloat = FX_atof(strc);
@@ -141,7 +141,7 @@ bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   return true;
 }
 
-float FX_atof(const CFX_ByteStringC& strc) {
+float FX_atof(const ByteStringView& strc) {
   if (strc.IsEmpty())
     return 0.0;
 
@@ -180,7 +180,7 @@ float FX_atof(const CFX_ByteStringC& strc) {
   return bNegative ? -value : value;
 }
 
-float FX_atof(const CFX_WideStringC& wsStr) {
+float FX_atof(const WideStringView& wsStr) {
   return FX_atof(FX_UTF8Encode(wsStr).c_str());
 }
 

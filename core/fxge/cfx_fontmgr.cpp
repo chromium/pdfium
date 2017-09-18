@@ -46,18 +46,18 @@ const BuiltinFont g_MMFonts[2] = {
     {g_FoxitSansMMFontData, 66919},
 };
 
-CFX_ByteString KeyNameFromFace(const CFX_ByteString& face_name,
-                               int weight,
-                               bool bItalic) {
-  CFX_ByteString key(face_name);
+ByteString KeyNameFromFace(const ByteString& face_name,
+                           int weight,
+                           bool bItalic) {
+  ByteString key(face_name);
   key += ',';
-  key += CFX_ByteString::FormatInteger(weight);
+  key += ByteString::FormatInteger(weight);
   key += bItalic ? 'I' : 'N';
   return key;
 }
 
-CFX_ByteString KeyNameFromSize(int ttc_size, uint32_t checksum) {
-  CFX_ByteString key;
+ByteString KeyNameFromSize(int ttc_size, uint32_t checksum) {
+  ByteString key;
   key.Format("%d:%d", ttc_size, checksum);
   return key;
 }
@@ -110,7 +110,7 @@ void CFX_FontMgr::SetSystemFontInfo(
   m_pBuiltinMapper->SetSystemFontInfo(std::move(pFontInfo));
 }
 
-FXFT_Face CFX_FontMgr::FindSubstFont(const CFX_ByteString& face_name,
+FXFT_Face CFX_FontMgr::FindSubstFont(const ByteString& face_name,
                                      bool bTrueType,
                                      uint32_t flags,
                                      int weight,
@@ -122,7 +122,7 @@ FXFT_Face CFX_FontMgr::FindSubstFont(const CFX_ByteString& face_name,
                                          italic_angle, CharsetCP, pSubstFont);
 }
 
-FXFT_Face CFX_FontMgr::GetCachedFace(const CFX_ByteString& face_name,
+FXFT_Face CFX_FontMgr::GetCachedFace(const ByteString& face_name,
                                      int weight,
                                      bool bItalic,
                                      uint8_t*& pFontData) {
@@ -136,7 +136,7 @@ FXFT_Face CFX_FontMgr::GetCachedFace(const CFX_ByteString& face_name,
   return pFontDesc->m_SingleFace;
 }
 
-FXFT_Face CFX_FontMgr::AddCachedFace(const CFX_ByteString& face_name,
+FXFT_Face CFX_FontMgr::AddCachedFace(const ByteString& face_name,
                                      int weight,
                                      bool bItalic,
                                      uint8_t* pData,

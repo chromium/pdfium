@@ -20,20 +20,19 @@ class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
   ~CBC_OnedEAN13Writer() override;
 
   // CBC_OneDimWriter
-  uint8_t* EncodeWithHint(const CFX_ByteString& contents,
+  uint8_t* EncodeWithHint(const ByteString& contents,
                           BCFORMAT format,
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t hints) override;
-  uint8_t* EncodeImpl(const CFX_ByteString& contents,
-                      int32_t& outLength) override;
-  bool CheckContentValidity(const CFX_WideStringC& contents) override;
-  CFX_WideString FilterContents(const CFX_WideStringC& contents) override;
+  uint8_t* EncodeImpl(const ByteString& contents, int32_t& outLength) override;
+  bool CheckContentValidity(const WideStringView& contents) override;
+  WideString FilterContents(const WideStringView& contents) override;
 
-  int32_t CalcChecksum(const CFX_ByteString& contents);
+  int32_t CalcChecksum(const ByteString& contents);
 
  protected:
-  bool ShowChars(const CFX_WideStringC& contents,
+  bool ShowChars(const WideStringView& contents,
                  CFX_RenderDevice* device,
                  const CFX_Matrix* matrix,
                  int32_t barWidth,

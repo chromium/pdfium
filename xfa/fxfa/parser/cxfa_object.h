@@ -35,7 +35,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   CXFA_Object(CXFA_Document* pDocument,
               XFA_ObjectType objectType,
               XFA_Element eType,
-              const CFX_WideStringC& elementName);
+              const WideStringView& elementName);
   ~CXFA_Object() override;
 
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
@@ -71,7 +71,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   const CXFA_NodeList* AsNodeList() const;
 
   XFA_Element GetElementType() const { return m_elementType; }
-  CFX_WideStringC GetClassName() const { return m_elementName; }
+  WideStringView GetClassName() const { return m_elementName; }
   uint32_t GetClassHashCode() const { return m_elementNameHash; }
 
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
@@ -81,7 +81,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   void ThrowInvalidPropertyException() const;
   void ThrowArgumentMismatchException() const;
   void ThrowIndexOutOfBoundsException() const;
-  void ThrowParamCountMismatchException(const CFX_WideString& method) const;
+  void ThrowParamCountMismatchException(const WideString& method) const;
 
  protected:
   void ThrowException(const wchar_t* str, ...) const;
@@ -91,7 +91,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   const XFA_Element m_elementType;
 
   const uint32_t m_elementNameHash;
-  const CFX_WideStringC m_elementName;
+  const WideStringView m_elementName;
 };
 
 CXFA_Node* ToNode(CXFA_Object* pObj);

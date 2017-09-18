@@ -18,25 +18,25 @@ TEST(CFX_CSSValueListParserTest, rgb_short) {
   auto parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"#abc", 4, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::RGB, type);
-  EXPECT_EQ(L"#abc", CFX_WideString(start, len));
+  EXPECT_EQ(L"#abc", WideString(start, len));
   EXPECT_FALSE(parser->NextValue(type, start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"#abcdef", 7, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::RGB, type);
-  EXPECT_EQ(L"#abcdef", CFX_WideString(start, len));
+  EXPECT_EQ(L"#abcdef", WideString(start, len));
   EXPECT_FALSE(parser->NextValue(type, start, len));
 
   parser =
       pdfium::MakeUnique<CFX_CSSValueListParser>(L"rgb(1, 255, 4)", 14, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::RGB, type);
-  EXPECT_EQ(L"rgb(1, 255, 4)", CFX_WideString(start, len));
+  EXPECT_EQ(L"rgb(1, 255, 4)", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"#abcdefghij", 11, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Unknown, type);
-  EXPECT_EQ(L"#abcdefghij", CFX_WideString(start, len));
+  EXPECT_EQ(L"#abcdefghij", WideString(start, len));
   EXPECT_FALSE(parser->NextValue(type, start, len));
 }
 
@@ -48,38 +48,38 @@ TEST(CFX_CSSValueListParserTest, number_parsing) {
   auto parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"1234", 4, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"1234", CFX_WideString(start, len));
+  EXPECT_EQ(L"1234", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"-1234", 5, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"-1234", CFX_WideString(start, len));
+  EXPECT_EQ(L"-1234", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"+1234", 5, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"+1234", CFX_WideString(start, len));
+  EXPECT_EQ(L"+1234", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L".1234", 5, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L".1234", CFX_WideString(start, len));
+  EXPECT_EQ(L".1234", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"4321.1234", 9, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"4321.1234", CFX_WideString(start, len));
+  EXPECT_EQ(L"4321.1234", WideString(start, len));
 
   // TODO(dsinclair): These should probably fail but currently don't.
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"4321.12.34", 10, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"4321.12.34", CFX_WideString(start, len));
+  EXPECT_EQ(L"4321.12.34", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"43a1.12.34", 10, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"43a1.12.34", CFX_WideString(start, len));
+  EXPECT_EQ(L"43a1.12.34", WideString(start, len));
 }
 
 TEST(CFX_CSSValueListParserTest, string_parsing) {
@@ -91,18 +91,18 @@ TEST(CFX_CSSValueListParserTest, string_parsing) {
       pdfium::MakeUnique<CFX_CSSValueListParser>(L"'string'", 8, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::String, type);
-  EXPECT_EQ(L"string", CFX_WideString(start, len));
+  EXPECT_EQ(L"string", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"\"another string\"", 16,
                                                       L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::String, type);
-  EXPECT_EQ(L"another string", CFX_WideString(start, len));
+  EXPECT_EQ(L"another string", WideString(start, len));
 
   parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"standalone", 10, L' ');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::String, type);
-  EXPECT_EQ(L"standalone", CFX_WideString(start, len));
+  EXPECT_EQ(L"standalone", WideString(start, len));
 }
 
 TEST(CFX_CSSValueListParserTest, multiparsing) {
@@ -113,15 +113,15 @@ TEST(CFX_CSSValueListParserTest, multiparsing) {
   auto parser = pdfium::MakeUnique<CFX_CSSValueListParser>(L"1, 2, 3", 7, L',');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"1", CFX_WideString(start, len));
+  EXPECT_EQ(L"1", WideString(start, len));
 
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"2", CFX_WideString(start, len));
+  EXPECT_EQ(L"2", WideString(start, len));
 
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"3", CFX_WideString(start, len));
+  EXPECT_EQ(L"3", WideString(start, len));
 
   EXPECT_FALSE(parser->NextValue(type, start, len));
 
@@ -129,13 +129,13 @@ TEST(CFX_CSSValueListParserTest, multiparsing) {
                                                       22, L',');
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::String, type);
-  EXPECT_EQ(L"str", CFX_WideString(start, len));
+  EXPECT_EQ(L"str", WideString(start, len));
 
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::RGB, type);
-  EXPECT_EQ(L"rgb(1, 2, 3)", CFX_WideString(start, len));
+  EXPECT_EQ(L"rgb(1, 2, 3)", WideString(start, len));
 
   EXPECT_TRUE(parser->NextValue(type, start, len));
   EXPECT_EQ(CFX_CSSPrimitiveType::Number, type);
-  EXPECT_EQ(L"4", CFX_WideString(start, len));
+  EXPECT_EQ(L"4", WideString(start, len));
 }

@@ -34,8 +34,8 @@ CFX_Char* CFX_BreakPiece::GetChar(int32_t index) const {
   return &(*m_pChars)[m_iStartChar + index];
 }
 
-CFX_WideString CFX_BreakPiece::GetString() const {
-  CFX_WideString ret;
+WideString CFX_BreakPiece::GetString() const {
+  WideString ret;
   ret.Reserve(m_iChars);
   for (int32_t i = m_iStartChar; i < m_iStartChar + m_iChars; i++)
     ret += static_cast<wchar_t>((*m_pChars)[i].char_code());

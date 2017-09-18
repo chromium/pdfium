@@ -193,8 +193,7 @@ CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {
   return m_pFormFillEnv.Get();
 }
 
-int CJS_Runtime::ExecuteScript(const CFX_WideString& script,
-                               CFX_WideString* info) {
+int CJS_Runtime::ExecuteScript(const WideString& script, WideString* info) {
   FXJSErr error = {};
   int nRet = Execute(script, &error);
   if (nRet < 0) {
@@ -213,13 +212,13 @@ void CJS_Runtime::RemoveEventFromSet(const FieldEvent& event) {
 }
 
 #ifdef PDF_ENABLE_XFA
-CFX_WideString ChangeObjName(const CFX_WideString& str) {
-  CFX_WideString sRet = str;
+WideString ChangeObjName(const WideString& str) {
+  WideString sRet = str;
   sRet.Replace(L"_", L".");
   return sRet;
 }
 
-bool CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
+bool CJS_Runtime::GetValueByName(const ByteStringView& utf8Name,
                                  CFXJSE_Value* pValue) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
@@ -236,7 +235,7 @@ bool CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
   return true;
 }
 
-bool CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
+bool CJS_Runtime::SetValueByName(const ByteStringView& utf8Name,
                                  CFXJSE_Value* pValue) {
   if (utf8Name.IsEmpty() || !pValue)
     return false;

@@ -34,7 +34,7 @@ int32_t CBC_Base256Encoder::getEncodingMode() {
   return BASE256_ENCODATION;
 }
 void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
-  CFX_WideString buffer;
+  WideString buffer;
   buffer += L'\0';
   while (context.hasMoreCharacters()) {
     wchar_t c = context.getCurrentChar();

@@ -63,7 +63,7 @@ CFWL_Widget::~CFWL_Widget() {
   m_pWidgetMgr->RemoveWidget(this);
 }
 
-bool CFWL_Widget::IsInstance(const CFX_WideStringC& wsClass) const {
+bool CFWL_Widget::IsInstance(const WideStringView& wsClass) const {
   return false;
 }
 
@@ -315,7 +315,7 @@ CFWL_Widget* CFWL_Widget::GetRootOuter() {
   return pRet;
 }
 
-CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
+CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
                                     IFWL_ThemeProvider* pTheme,
                                     bool bMultiLine) {
   if (!pTheme)
@@ -336,7 +336,7 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
   return CFX_SizeF(rect.width, rect.height);
 }
 
-void CFWL_Widget::CalcTextRect(const CFX_WideString& wsText,
+void CFWL_Widget::CalcTextRect(const WideString& wsText,
                                IFWL_ThemeProvider* pTheme,
                                const FDE_TextStyle& dwTTOStyles,
                                FDE_TextAlignment iTTOAlign,

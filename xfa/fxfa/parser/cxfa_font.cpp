@@ -18,21 +18,21 @@ float CXFA_Font::GetBaselineShift() {
 }
 
 float CXFA_Font::GetHorizontalScale() {
-  CFX_WideString wsValue;
+  WideString wsValue;
   m_pNode->TryCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_Font::GetVerticalScale() {
-  CFX_WideString wsValue;
+  WideString wsValue;
   m_pNode->TryCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_Font::GetLetterSpacing() {
-  CFX_WideStringC wsValue;
+  WideStringView wsValue;
   if (!m_pNode->TryCData(XFA_ATTRIBUTE_LetterSpacing, wsValue))
     return 0;
 
@@ -66,7 +66,7 @@ float CXFA_Font::GetFontSize() {
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-void CXFA_Font::GetTypeface(CFX_WideStringC& wsTypeFace) {
+void CXFA_Font::GetTypeface(WideStringView& wsTypeFace) {
   m_pNode->TryCData(XFA_ATTRIBUTE_Typeface, wsTypeFace);
 }
 

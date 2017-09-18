@@ -158,7 +158,7 @@ uint32_t FPF_SkiaGetCharset(uint8_t uCharset) {
   return FPF_SKIACHARSET_Default;
 }
 
-uint32_t FPF_SKIANormalizeFontName(const CFX_ByteStringC& bsfamily) {
+uint32_t FPF_SKIANormalizeFontName(const ByteStringView& bsfamily) {
   uint32_t dwHash = 0;
   int32_t iLength = bsfamily.GetLength();
   const char* pBuffer = bsfamily.unterminated_c_str();
@@ -171,10 +171,10 @@ uint32_t FPF_SKIANormalizeFontName(const CFX_ByteStringC& bsfamily) {
   return dwHash;
 }
 
-uint32_t FPF_SKIAGetFamilyHash(const CFX_ByteStringC& bsFamily,
+uint32_t FPF_SKIAGetFamilyHash(const ByteStringView& bsFamily,
                                uint32_t dwStyle,
                                uint8_t uCharset) {
-  CFX_ByteString bsFont(bsFamily);
+  ByteString bsFont(bsFamily);
   if (dwStyle & FXFONT_BOLD)
     bsFont += "Bold";
   if (dwStyle & FXFONT_ITALIC)
@@ -191,14 +191,14 @@ bool FPF_SkiaIsCJK(uint8_t uCharset) {
          (uCharset == FX_CHARSET_Hangul) || (uCharset == FX_CHARSET_ShiftJIS);
 }
 
-bool FPF_SkiaMaybeSymbol(const CFX_ByteStringC& bsFacename) {
-  CFX_ByteString bsName(bsFacename);
+bool FPF_SkiaMaybeSymbol(const ByteStringView& bsFacename) {
+  ByteString bsName(bsFacename);
   bsName.MakeLower();
   return bsName.Contains("symbol");
 }
 
-bool FPF_SkiaMaybeArabic(const CFX_ByteStringC& bsFacename) {
-  CFX_ByteString bsName(bsFacename);
+bool FPF_SkiaMaybeArabic(const ByteStringView& bsFacename) {
+  ByteString bsName(bsFacename);
   bsName.MakeLower();
   return bsName.Contains("arabic");
 }
@@ -280,7 +280,7 @@ void CFPF_SkiaFontMgr::LoadSystemFonts() {
   m_bLoaded = true;
 }
 
-CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
+CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
                                             uint8_t uCharset,
                                             uint32_t dwStyle,
                                             uint32_t dwMatch) {
@@ -387,7 +387,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(
   return face;
 }
 
-FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const CFX_ByteStringC& bsFile,
+FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const ByteStringView& bsFile,
                                         int32_t iFaceIndex) {
   if (bsFile.IsEmpty())
     return nullptr;
@@ -421,23 +421,23 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const uint8_t* pBuffer,
   return face;
 }
 
-void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteString& path) {
+void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
   DIR* handle = FX_OpenFolder(path.c_str());
   if (!handle)
     return;
-  CFX_ByteString filename;
+  ByteString filename;
   bool bFolder = false;
   while (FX_GetNextFile(handle, &filename, &bFolder)) {
     if (bFolder) {
       if (filename == "." || filename == "..")
         continue;
     } else {
-      CFX_ByteString ext = filename.Right(4);
+      ByteString ext = filename.Right(4);
       ext.MakeLower();
       if (ext != ".ttf" && ext != ".ttc" && ext != ".otf")
         continue;
     }
-    CFX_ByteString fullpath(path);
+    ByteString fullpath(path);
     fullpath += "/";
     fullpath += filename;
     if (bFolder)
@@ -448,8 +448,8 @@ void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteString& path) {
   FX_CloseFolder(handle);
 }
 
-void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteString& file) {
-  FXFT_Face face = GetFontFace(file.AsStringC());
+void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
+  FXFT_Face face = GetFontFace(file.AsStringView());
   if (!face)
     return;
   CFPF_SkiaPathFont* pFontDesc = new CFPF_SkiaPathFont;

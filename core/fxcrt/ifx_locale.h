@@ -58,19 +58,19 @@ class IFX_Locale {
  public:
   virtual ~IFX_Locale() {}
 
-  virtual CFX_WideString GetName() const = 0;
-  virtual CFX_WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const = 0;
-  virtual CFX_WideString GetDateTimeSymbols() const = 0;
-  virtual CFX_WideString GetMonthName(int32_t nMonth, bool bAbbr) const = 0;
-  virtual CFX_WideString GetDayName(int32_t nWeek, bool bAbbr) const = 0;
-  virtual CFX_WideString GetMeridiemName(bool bAM) const = 0;
+  virtual WideString GetName() const = 0;
+  virtual WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const = 0;
+  virtual WideString GetDateTimeSymbols() const = 0;
+  virtual WideString GetMonthName(int32_t nMonth, bool bAbbr) const = 0;
+  virtual WideString GetDayName(int32_t nWeek, bool bAbbr) const = 0;
+  virtual WideString GetMeridiemName(bool bAM) const = 0;
   virtual FX_TIMEZONE GetTimeZone() const = 0;
-  virtual CFX_WideString GetEraName(bool bAD) const = 0;
-  virtual CFX_WideString GetDatePattern(
+  virtual WideString GetEraName(bool bAD) const = 0;
+  virtual WideString GetDatePattern(
       FX_LOCALEDATETIMESUBCATEGORY eType) const = 0;
-  virtual CFX_WideString GetTimePattern(
+  virtual WideString GetTimePattern(
       FX_LOCALEDATETIMESUBCATEGORY eType) const = 0;
-  virtual CFX_WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const = 0;
+  virtual WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const = 0;
 };
 
 #endif  // CORE_FXCRT_IFX_LOCALE_H_

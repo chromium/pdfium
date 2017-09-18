@@ -52,7 +52,7 @@ FX_ARGB CXFA_Stroke::GetColor() const {
   if (!pNode)
     return 0xFF000000;
 
-  CFX_WideStringC wsColor;
+  WideStringView wsColor;
   pNode->TryCData(XFA_ATTRIBUTE_Value, wsColor);
   return CXFA_Data::ToColor(wsColor);
 }
@@ -62,7 +62,7 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
     return;
 
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Color);
-  CFX_WideString wsColor;
+  WideString wsColor;
   int a;
   int r;
   int g;

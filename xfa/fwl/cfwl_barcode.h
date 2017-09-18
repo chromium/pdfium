@@ -49,7 +49,7 @@ class CFWL_Barcode : public CFWL_Edit {
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
   // CFWL_Edit
-  void SetText(const CFX_WideString& wsText) override;
+  void SetText(const WideString& wsText) override;
 
   void SetType(BC_TYPE type);
   bool IsProtectedType() const;

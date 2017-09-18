@@ -50,7 +50,7 @@ TEST(SimpleParserTest, GetWord) {
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     const pdfium::StrFuncTestData& data = test_data[i];
     CPDF_SimpleParser parser(data.input, data.input_size);
-    CFX_ByteStringC word = parser.GetWord();
+    ByteStringView word = parser.GetWord();
     EXPECT_EQ(std::string(reinterpret_cast<const char*>(data.expected),
                           data.expected_size),
               std::string(word.unterminated_c_str(), word.GetLength()))

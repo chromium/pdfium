@@ -317,7 +317,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
 int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
   FXCODEC_STATUS ret;
   if (m_Status == 1) {
-    const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
+    const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
     if (decoder == "JPXDecode") {
       return 0;
     }
@@ -397,7 +397,7 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     if (!m_bImageMask) {
       CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
       if (pFilter) {
-        CFX_ByteString filter;
+        ByteString filter;
         if (pFilter->IsName()) {
           filter = pFilter->GetString();
         } else if (CPDF_Array* pArray = pFilter->AsArray()) {
@@ -432,7 +432,7 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   m_Family = m_pColorSpace->GetFamily();
   m_nComponents = m_pColorSpace->CountComponents();
   if (m_Family == PDFCS_ICCBASED && pCSObj->IsName()) {
-    CFX_ByteString cs = pCSObj->GetString();
+    ByteString cs = pCSObj->GetString();
     if (cs == "DeviceGray")
       m_nComponents = 1;
     else if (cs == "DeviceRGB")
@@ -500,7 +500,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool* bDefaultDecode,
 }
 
 int CPDF_DIBSource::CreateDecoder() {
-  const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
+  const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder.IsEmpty())
     return 1;
 
@@ -841,7 +841,7 @@ void CPDF_DIBSource::ValidateDictParam() {
   CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
   if (pFilter) {
     if (pFilter->IsName()) {
-      CFX_ByteString filter = pFilter->GetString();
+      ByteString filter = pFilter->GetString();
       if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
         m_bpc = 1;
         m_nComponents = 1;
@@ -853,7 +853,7 @@ void CPDF_DIBSource::ValidateDictParam() {
         m_bpc = 8;
       }
     } else if (CPDF_Array* pArray = pFilter->AsArray()) {
-      CFX_ByteString filter = pArray->GetStringAt(pArray->GetCount() - 1);
+      ByteString filter = pArray->GetStringAt(pArray->GetCount() - 1);
       if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
         m_bpc = 1;
         m_nComponents = 1;

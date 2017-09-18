@@ -17,7 +17,7 @@ class CBC_QRCodeWriter : public CBC_TwoDimWriter {
 
   static void ReleaseAll();
 
-  uint8_t* Encode(const CFX_WideString& contents,
+  uint8_t* Encode(const WideString& contents,
                   int32_t ecLevel,
                   int32_t& outWidth,
                   int32_t& outHeight);

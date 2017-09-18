@@ -29,16 +29,16 @@ class CJS_GlobalData {
   static CJS_GlobalData* GetRetainedInstance(CPDFSDK_FormFillEnvironment* pApp);
   void Release();
 
-  void SetGlobalVariableNumber(const CFX_ByteString& propname, double dData);
-  void SetGlobalVariableBoolean(const CFX_ByteString& propname, bool bData);
-  void SetGlobalVariableString(const CFX_ByteString& propname,
-                               const CFX_ByteString& sData);
-  void SetGlobalVariableObject(const CFX_ByteString& propname,
+  void SetGlobalVariableNumber(const ByteString& propname, double dData);
+  void SetGlobalVariableBoolean(const ByteString& propname, bool bData);
+  void SetGlobalVariableString(const ByteString& propname,
+                               const ByteString& sData);
+  void SetGlobalVariableObject(const ByteString& propname,
                                const CJS_GlobalVariableArray& array);
-  void SetGlobalVariableNull(const CFX_ByteString& propname);
-  bool SetGlobalVariablePersistent(const CFX_ByteString& propname,
+  void SetGlobalVariableNull(const ByteString& propname);
+  bool SetGlobalVariablePersistent(const ByteString& propname,
                                    bool bPersistent);
-  bool DeleteGlobalVariable(const CFX_ByteString& propname);
+  bool DeleteGlobalVariable(const ByteString& propname);
 
   int32_t GetSize() const;
   CJS_GlobalData_Element* GetAt(int index) const;
@@ -55,9 +55,9 @@ class CJS_GlobalData {
   void LoadGlobalPersistentVariables();
   void SaveGlobalPersisitentVariables();
 
-  CJS_GlobalData_Element* GetGlobalVariable(const CFX_ByteString& sPropname);
-  iterator FindGlobalVariable(const CFX_ByteString& sPropname);
-  const_iterator FindGlobalVariable(const CFX_ByteString& sPropname) const;
+  CJS_GlobalData_Element* GetGlobalVariable(const ByteString& sPropname);
+  iterator FindGlobalVariable(const ByteString& sPropname);
+  const_iterator FindGlobalVariable(const ByteString& sPropname) const;
 
   void LoadFileBuffer(const wchar_t* sFilePath,
                       uint8_t*& pBuffer,
@@ -65,13 +65,13 @@ class CJS_GlobalData {
   void WriteFileBuffer(const wchar_t* sFilePath,
                        const char* pBuffer,
                        int32_t nLength);
-  void MakeByteString(const CFX_ByteString& name,
+  void MakeByteString(const ByteString& name,
                       CJS_KeyValue* pData,
                       CFX_BinaryBuf& sData);
 
   size_t m_RefCount;
   std::vector<std::unique_ptr<CJS_GlobalData_Element>> m_arrayGlobalData;
-  CFX_WideString m_sFilePath;
+  WideString m_sFilePath;
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_JS_GLOBALDATA_H_

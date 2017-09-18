@@ -11,13 +11,13 @@
 
 class CFX_CSSStringValue : public CFX_CSSValue {
  public:
-  explicit CFX_CSSStringValue(const CFX_WideString& value);
+  explicit CFX_CSSStringValue(const WideString& value);
   ~CFX_CSSStringValue() override;
 
-  const CFX_WideString Value() const { return value_; }
+  const WideString Value() const { return value_; }
 
  private:
-  const CFX_WideString value_;
+  const WideString value_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSSTRINGVALUE_H_

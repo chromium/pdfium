@@ -19,7 +19,7 @@ class CXFA_NodeList : public CXFA_Object {
   explicit CXFA_NodeList(CXFA_Document* pDocument);
   ~CXFA_NodeList() override;
 
-  CXFA_Node* NamedItem(const CFX_WideStringC& wsName);
+  CXFA_Node* NamedItem(const WideStringView& wsName);
   virtual int32_t GetLength() = 0;
   virtual bool Append(CXFA_Node* pNode) = 0;
   virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;

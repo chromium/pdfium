@@ -12,7 +12,7 @@
 
 class CXML_Content : public CXML_Object {
  public:
-  CXML_Content(bool bCDATA, const CFX_WideStringC& content);
+  CXML_Content(bool bCDATA, const WideStringView& content);
   ~CXML_Content() override;
 
   // CXML_Object:
@@ -20,7 +20,7 @@ class CXML_Content : public CXML_Object {
   const CXML_Content* AsContent() const override;
 
   bool m_bCDATA;
-  CFX_WideString m_Content;
+  WideString m_Content;
 };
 
 #endif  // CORE_FXCRT_XML_CXML_CONTENT_H_

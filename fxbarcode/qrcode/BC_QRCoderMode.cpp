@@ -39,7 +39,7 @@ CBC_QRCoderMode* CBC_QRCoderMode::sSTRUCTURED_APPEND = nullptr;
 
 CBC_QRCoderMode::CBC_QRCoderMode(std::vector<int32_t> charCountBits,
                                  int32_t bits,
-                                 CFX_ByteString name)
+                                 ByteString name)
     : m_characterCountBitsForVersions(std::move(charCountBits)),
       m_bits(bits),
       m_name(name) {}
@@ -107,7 +107,7 @@ int32_t CBC_QRCoderMode::GetBits() const {
   return m_bits;
 }
 
-CFX_ByteString CBC_QRCoderMode::GetName() const {
+ByteString CBC_QRCoderMode::GetName() const {
   return m_name;
 }
 

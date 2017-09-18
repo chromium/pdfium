@@ -76,14 +76,13 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {
   GetAnnotHandler(pAnnot)->OnLoad(pAnnot);
 }
 
-CFX_WideString CPDFSDK_AnnotHandlerMgr::Annot_GetSelectedText(
+WideString CPDFSDK_AnnotHandlerMgr::Annot_GetSelectedText(
     CPDFSDK_Annot* pAnnot) {
   return GetAnnotHandler(pAnnot)->GetSelectedText(pAnnot);
 }
 
-void CPDFSDK_AnnotHandlerMgr::Annot_ReplaceSelection(
-    CPDFSDK_Annot* pAnnot,
-    const CFX_WideString& text) {
+void CPDFSDK_AnnotHandlerMgr::Annot_ReplaceSelection(CPDFSDK_Annot* pAnnot,
+                                                     const WideString& text) {
   GetAnnotHandler(pAnnot)->ReplaceSelection(pAnnot, text);
 }
 

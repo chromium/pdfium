@@ -24,8 +24,7 @@ CPDFSDK_FormFillEnvironment* CJS_EventContext::GetFormFillEnv() {
   return m_pRuntime->GetFormFillEnv();
 }
 
-bool CJS_EventContext::RunScript(const CFX_WideString& script,
-                                 CFX_WideString* info) {
+bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
   v8::Isolate::Scope isolate_scope(m_pRuntime->GetIsolate());
   v8::HandleScope handle_scope(m_pRuntime->GetIsolate());
   v8::Local<v8::Context> context = m_pRuntime->NewLocalContext();
@@ -47,7 +46,7 @@ bool CJS_EventContext::RunScript(const CFX_WideString& script,
     return false;
   }
 
-  CFX_WideString sErrorMessage;
+  WideString sErrorMessage;
   int nRet = 0;
   if (script.GetLength() > 0)
     nRet = m_pRuntime->ExecuteScript(script.c_str(), &sErrorMessage);
@@ -67,7 +66,7 @@ void CJS_EventContext::OnApp_Init() {
 }
 
 void CJS_EventContext::OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                  const CFX_WideString& strTargetName) {
+                                  const WideString& strTargetName) {
   m_pEventHandler->OnDoc_Open(pFormFillEnv, strTargetName);
 }
 
@@ -141,39 +140,39 @@ void CJS_EventContext::OnField_MouseUp(bool bModifier,
 void CJS_EventContext::OnField_Focus(bool bModifier,
                                      bool bShift,
                                      CPDF_FormField* pTarget,
-                                     const CFX_WideString& Value) {
+                                     const WideString& Value) {
   m_pEventHandler->OnField_Focus(bModifier, bShift, pTarget, Value);
 }
 
 void CJS_EventContext::OnField_Blur(bool bModifier,
                                     bool bShift,
                                     CPDF_FormField* pTarget,
-                                    const CFX_WideString& Value) {
+                                    const WideString& Value) {
   m_pEventHandler->OnField_Blur(bModifier, bShift, pTarget, Value);
 }
 
 void CJS_EventContext::OnField_Calculate(CPDF_FormField* pSource,
                                          CPDF_FormField* pTarget,
-                                         CFX_WideString& Value,
+                                         WideString& Value,
                                          bool& bRc) {
   m_pEventHandler->OnField_Calculate(pSource, pTarget, Value, bRc);
 }
 
 void CJS_EventContext::OnField_Format(CPDF_FormField* pTarget,
-                                      CFX_WideString& Value,
+                                      WideString& Value,
                                       bool bWillCommit) {
   m_pEventHandler->OnField_Format(pTarget, Value, bWillCommit);
 }
 
-void CJS_EventContext::OnField_Keystroke(CFX_WideString& strChange,
-                                         const CFX_WideString& strChangeEx,
+void CJS_EventContext::OnField_Keystroke(WideString& strChange,
+                                         const WideString& strChangeEx,
                                          bool bKeyDown,
                                          bool bModifier,
                                          int& nSelEnd,
                                          int& nSelStart,
                                          bool bShift,
                                          CPDF_FormField* pTarget,
-                                         CFX_WideString& Value,
+                                         WideString& Value,
                                          bool bWillCommit,
                                          bool bFieldFull,
                                          bool& bRc) {
@@ -182,13 +181,13 @@ void CJS_EventContext::OnField_Keystroke(CFX_WideString& strChange,
       pTarget, Value, bWillCommit, bFieldFull, bRc);
 }
 
-void CJS_EventContext::OnField_Validate(CFX_WideString& strChange,
-                                        const CFX_WideString& strChangeEx,
+void CJS_EventContext::OnField_Validate(WideString& strChange,
+                                        const WideString& strChangeEx,
                                         bool bKeyDown,
                                         bool bModifier,
                                         bool bShift,
                                         CPDF_FormField* pTarget,
-                                        CFX_WideString& Value,
+                                        WideString& Value,
                                         bool& bRc) {
   m_pEventHandler->OnField_Validate(strChange, strChangeEx, bKeyDown, bModifier,
                                     bShift, pTarget, Value, bRc);
@@ -276,6 +275,6 @@ void CJS_EventContext::OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
 }
 
 void CJS_EventContext::OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                   const CFX_WideString& strTargetName) {
+                                   const WideString& strTargetName) {
   m_pEventHandler->OnMenu_Exec(pFormFillEnv, strTargetName);
 }

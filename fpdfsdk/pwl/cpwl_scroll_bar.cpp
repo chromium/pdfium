@@ -127,7 +127,7 @@ CPWL_SBButton::CPWL_SBButton(PWL_SCROLLBAR_TYPE eScrollBarType,
 
 CPWL_SBButton::~CPWL_SBButton() {}
 
-CFX_ByteString CPWL_SBButton::GetClassName() const {
+ByteString CPWL_SBButton::GetClassName() const {
   return "CPWL_SBButton";
 }
 
@@ -325,7 +325,7 @@ CPWL_ScrollBar::CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType)
 
 CPWL_ScrollBar::~CPWL_ScrollBar() {}
 
-CFX_ByteString CPWL_ScrollBar::GetClassName() const {
+ByteString CPWL_ScrollBar::GetClassName() const {
   return "CPWL_ScrollBar";
 }
 

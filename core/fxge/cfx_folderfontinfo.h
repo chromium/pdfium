@@ -21,7 +21,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
   CFX_FolderFontInfo();
   ~CFX_FolderFontInfo() override;
 
-  void AddPath(const CFX_ByteString& path);
+  void AddPath(const ByteString& path);
 
   // IFX_SytemFontInfo:
   bool EnumFontList(CFX_FontMapper* pMapper) override;
@@ -43,17 +43,17 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                        uint8_t* buffer,
                        uint32_t size) override;
   void DeleteFont(void* hFont) override;
-  bool GetFaceName(void* hFont, CFX_ByteString* name) override;
+  bool GetFaceName(void* hFont, ByteString* name) override;
   bool GetFontCharset(void* hFont, int* charset) override;
 
  protected:
-  void ScanPath(const CFX_ByteString& path);
-  void ScanFile(const CFX_ByteString& path);
-  void ReportFace(const CFX_ByteString& path,
+  void ScanPath(const ByteString& path);
+  void ScanFile(const ByteString& path);
+  void ReportFace(const ByteString& path,
                   FILE* pFile,
                   uint32_t filesize,
                   uint32_t offset);
-  void* GetSubstFont(const CFX_ByteString& face);
+  void* GetSubstFont(const ByteString& face);
   void* FindFont(int weight,
                  bool bItalic,
                  int charset,
@@ -61,8 +61,8 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                  const char* family,
                  bool bMatchName);
 
-  std::map<CFX_ByteString, std::unique_ptr<CFX_FontFaceInfo>> m_FontList;
-  std::vector<CFX_ByteString> m_PathList;
+  std::map<ByteString, std::unique_ptr<CFX_FontFaceInfo>> m_FontList;
+  std::vector<ByteString> m_PathList;
   CFX_UnownedPtr<CFX_FontMapper> m_pMapper;
 };
 

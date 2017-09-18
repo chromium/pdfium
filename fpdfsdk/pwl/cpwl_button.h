@@ -15,7 +15,7 @@ class CPWL_Button : public CPWL_Wnd {
   ~CPWL_Button() override;
 
   // CPWL_Wnd
-  CFX_ByteString GetClassName() const override;
+  ByteString GetClassName() const override;
   void OnCreate(CreateParams* pParamsToAdjust) override;
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;

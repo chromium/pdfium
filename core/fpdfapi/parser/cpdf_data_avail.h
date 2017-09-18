@@ -145,7 +145,7 @@ class CPDF_DataAvail final {
 
   bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
   void SetStartOffset(FX_FILESIZE dwOffset);
-  bool GetNextToken(CFX_ByteString* token);
+  bool GetNextToken(ByteString* token);
   bool GetNextChar(uint8_t& ch);
   std::unique_ptr<CPDF_Object> ParseIndirectObjectAt(
       FX_FILESIZE pos,
@@ -200,7 +200,7 @@ class CPDF_DataAvail final {
   FX_FILESIZE m_Pos;
   FX_FILESIZE m_bufferOffset;
   uint32_t m_bufferSize;
-  CFX_ByteString m_WordBuf;
+  ByteString m_WordBuf;
   uint8_t m_bufferData[512];
   std::vector<uint32_t> m_XRefStreamList;
   std::vector<uint32_t> m_PageObjList;

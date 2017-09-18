@@ -19,8 +19,8 @@ class IFX_FileAccess {
   static std::unique_ptr<IFX_FileAccess> Create();
   virtual ~IFX_FileAccess() {}
 
-  virtual bool Open(const CFX_ByteStringC& fileName, uint32_t dwMode) = 0;
-  virtual bool Open(const CFX_WideStringC& fileName, uint32_t dwMode) = 0;
+  virtual bool Open(const ByteStringView& fileName, uint32_t dwMode) = 0;
+  virtual bool Open(const WideStringView& fileName, uint32_t dwMode) = 0;
   virtual void Close() = 0;
   virtual FX_FILESIZE GetSize() const = 0;
   virtual FX_FILESIZE GetPosition() const = 0;

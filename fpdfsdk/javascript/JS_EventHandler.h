@@ -67,7 +67,7 @@ class CJS_EventHandler {
   void OnApp_Init();
 
   void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                  const CFX_WideString& strTargetName);
+                  const WideString& strTargetName);
   void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv);
@@ -81,30 +81,30 @@ class CJS_EventHandler {
 
   void OnField_Calculate(CPDF_FormField* pSource,
                          CPDF_FormField* pTarget,
-                         CFX_WideString& Value,
+                         WideString& Value,
                          bool& bRc);
   void OnField_Format(CPDF_FormField* pTarget,
-                      CFX_WideString& Value,
+                      WideString& Value,
                       bool bWillCommit);
-  void OnField_Keystroke(CFX_WideString& strChange,
-                         const CFX_WideString& strChangeEx,
+  void OnField_Keystroke(WideString& strChange,
+                         const WideString& strChangeEx,
                          bool KeyDown,
                          bool bModifier,
                          int& nSelEnd,
                          int& nSelStart,
                          bool bShift,
                          CPDF_FormField* pTarget,
-                         CFX_WideString& Value,
+                         WideString& Value,
                          bool bWillCommit,
                          bool bFieldFull,
                          bool& bRc);
-  void OnField_Validate(CFX_WideString& strChange,
-                        const CFX_WideString& strChangeEx,
+  void OnField_Validate(WideString& strChange,
+                        const WideString& strChangeEx,
                         bool bKeyDown,
                         bool bModifier,
                         bool bShift,
                         CPDF_FormField* pTarget,
-                        CFX_WideString& Value,
+                        WideString& Value,
                         bool& bRc);
 
   void OnField_MouseDown(bool bModifier, bool bShift, CPDF_FormField* pTarget);
@@ -114,11 +114,11 @@ class CJS_EventHandler {
   void OnField_Blur(bool bModifier,
                     bool bShift,
                     CPDF_FormField* pTarget,
-                    const CFX_WideString& Value);
+                    const WideString& Value);
   void OnField_Focus(bool bModifier,
                      bool bShift,
                      CPDF_FormField* pTarget,
-                     const CFX_WideString& Value);
+                     const WideString& Value);
 
   void OnScreen_Focus(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
   void OnScreen_Blur(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
@@ -135,7 +135,7 @@ class CJS_EventHandler {
   void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                   const CFX_WideString& strTargetName);
+                   const WideString& strTargetName);
   void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   void OnConsole_Exec();
   void OnExternal_Exec();
@@ -145,8 +145,8 @@ class CJS_EventHandler {
   void Destroy();
   bool IsValid();
 
-  CFX_WideString& Change();
-  CFX_WideString ChangeEx();
+  WideString& Change();
+  WideString ChangeEx();
   int CommitKey();
   bool FieldFull();
   bool KeyDown();
@@ -159,9 +159,9 @@ class CJS_EventHandler {
   bool Shift();
   Field* Source();
   Field* Target_Field();
-  CFX_WideString& Value();
+  WideString& Value();
   bool WillCommit();
-  CFX_WideString TargetName();
+  WideString TargetName();
 
   JS_EVENT_T EventType() { return m_eEventType; }
 
@@ -170,11 +170,11 @@ class CJS_EventHandler {
   JS_EVENT_T m_eEventType;
   bool m_bValid;
 
-  CFX_WideString m_strTargetName;
-  CFX_WideString m_strSourceName;
-  CFX_UnownedPtr<CFX_WideString> m_pWideStrChange;
-  CFX_WideString m_WideStrChangeDu;
-  CFX_WideString m_WideStrChangeEx;
+  WideString m_strTargetName;
+  WideString m_strSourceName;
+  CFX_UnownedPtr<WideString> m_pWideStrChange;
+  WideString m_WideStrChangeDu;
+  WideString m_WideStrChangeEx;
   int m_nCommitKey;
   bool m_bKeyDown;
   bool m_bModifier;
@@ -184,7 +184,7 @@ class CJS_EventHandler {
   int* m_pISelStart;
   int m_nSelStartDu;
   bool m_bWillCommit;
-  CFX_UnownedPtr<CFX_WideString> m_pValue;
+  CFX_UnownedPtr<WideString> m_pValue;
   bool m_bFieldFull;
   bool* m_pbRc;
   bool m_bRcDu;

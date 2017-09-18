@@ -35,7 +35,7 @@ class CPDF_DocPageData {
   bool IsForceClear() const { return m_bForceClear; }
 
   CPDF_Font* GetFont(CPDF_Dictionary* pFontDict);
-  CPDF_Font* GetStandardFont(const CFX_ByteString& fontName,
+  CPDF_Font* GetStandardFont(const ByteString& fontName,
                              CPDF_FontEncoding* pEncoding);
   void ReleaseFont(const CPDF_Dictionary* pFontDict);
 
@@ -70,7 +70,7 @@ class CPDF_DocPageData {
 
   bool m_bForceClear;
   CFX_UnownedPtr<CPDF_Document> const m_pPDFDoc;
-  std::map<CFX_ByteString, CPDF_Stream*> m_HashProfileMap;
+  std::map<ByteString, CPDF_Stream*> m_HashProfileMap;
   std::map<const CPDF_Object*, CPDF_CountedColorSpace*> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, CFX_RetainPtr<CPDF_StreamAcc>> m_FontFileMap;
   std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;

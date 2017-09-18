@@ -24,7 +24,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   FX_RECT GetCharBBox(uint32_t charcode) override;
   int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
   bool IsUnicodeCompatible() const override;
-  CFX_WideString UnicodeFromCharCode(uint32_t charcode) const override;
+  WideString UnicodeFromCharCode(uint32_t charcode) const override;
   uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 
   CPDF_FontEncoding* GetEncoding() { return &m_Encoding; }
@@ -41,7 +41,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   CPDF_FontEncoding m_Encoding;
   uint16_t m_GlyphIndex[256];
   uint16_t m_ExtGID[256];
-  std::vector<CFX_ByteString> m_CharNames;
+  std::vector<ByteString> m_CharNames;
   int m_BaseEncoding;
   uint16_t m_CharWidth[256];
   FX_RECT m_CharBBox[256];

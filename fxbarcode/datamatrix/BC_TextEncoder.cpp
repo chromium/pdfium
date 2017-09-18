@@ -33,7 +33,7 @@ CBC_TextEncoder::~CBC_TextEncoder() {}
 int32_t CBC_TextEncoder::getEncodingMode() {
   return TEXT_ENCODATION;
 }
-int32_t CBC_TextEncoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
+int32_t CBC_TextEncoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
   if (c == ' ') {
     sb += (wchar_t)'\3';
     return 1;

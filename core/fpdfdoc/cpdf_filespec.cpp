@@ -20,8 +20,8 @@ namespace {
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-CFX_WideString ChangeSlashToPlatform(const wchar_t* str) {
-  CFX_WideString result;
+WideString ChangeSlashToPlatform(const wchar_t* str) {
+  WideString result;
   while (*str) {
     if (*str == '/') {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -37,8 +37,8 @@ CFX_WideString ChangeSlashToPlatform(const wchar_t* str) {
   return result;
 }
 
-CFX_WideString ChangeSlashToPDF(const wchar_t* str) {
-  CFX_WideString result;
+WideString ChangeSlashToPDF(const wchar_t* str) {
+  WideString result;
   while (*str) {
     if (*str == '\\' || *str == ':')
       result += L'/';
@@ -59,12 +59,12 @@ CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {
 
 CPDF_FileSpec::~CPDF_FileSpec() {}
 
-CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideString& filepath) {
+WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
   if (filepath.GetLength() <= 1)
-    return CFX_WideString();
+    return WideString();
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  if (filepath.Left(sizeof("/Mac") - 1) == CFX_WideStringC(L"/Mac"))
+  if (filepath.Left(sizeof("/Mac") - 1) == WideStringView(L"/Mac"))
     return ChangeSlashToPlatform(filepath.c_str() + 1);
   return ChangeSlashToPlatform(filepath.c_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -74,28 +74,28 @@ CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideString& filepath) {
   if (filepath[1] == L'/')
     return ChangeSlashToPlatform(filepath.c_str() + 1);
   if (filepath[2] == L'/') {
-    CFX_WideString result;
+    WideString result;
     result += filepath[1];
     result += L':';
     result += ChangeSlashToPlatform(filepath.c_str() + 2);
     return result;
   }
-  CFX_WideString result;
+  WideString result;
   result += L'\\';
   result += ChangeSlashToPlatform(filepath.c_str());
   return result;
 #else
-  return CFX_WideString(filepath);
+  return WideString(filepath);
 #endif
 }
 
-CFX_WideString CPDF_FileSpec::GetFileName() const {
-  CFX_WideString csFileName;
+WideString CPDF_FileSpec::GetFileName() const {
+  WideString csFileName;
   if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
     csFileName = pDict->GetUnicodeTextFor("UF");
     if (csFileName.IsEmpty()) {
       csFileName =
-          CFX_WideString::FromLocal(pDict->GetStringFor("F").AsStringC());
+          WideString::FromLocal(pDict->GetStringFor("F").AsStringView());
     }
     if (pDict->GetStringFor("FS") == "URL")
       return csFileName;
@@ -105,13 +105,13 @@ CFX_WideString CPDF_FileSpec::GetFileName() const {
       for (const auto* key : keys) {
         if (pDict->KeyExist(key)) {
           csFileName =
-              CFX_WideString::FromLocal(pDict->GetStringFor(key).AsStringC());
+              WideString::FromLocal(pDict->GetStringFor(key).AsStringView());
           break;
         }
       }
     }
   } else if (m_pObj->IsString()) {
-    csFileName = CFX_WideString::FromLocal(m_pObj->GetString().AsStringC());
+    csFileName = WideString::FromLocal(m_pObj->GetString().AsStringView());
   }
   return DecodeFileName(csFileName);
 }
@@ -131,7 +131,7 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
   constexpr const char* keys[] = {"UF", "F", "DOS", "Mac", "Unix"};
   size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(keys);
   for (size_t i = 0; i < end; ++i) {
-    const CFX_ByteString& key = keys[i];
+    const ByteString& key = keys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       CPDF_Stream* pStream = pFiles->GetStreamFor(key);
       if (pStream)
@@ -153,13 +153,13 @@ CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
   return pDict->GetDictFor("Params");
 }
 
-CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideString& filepath) {
+WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
   if (filepath.GetLength() <= 1)
-    return CFX_WideString();
+    return WideString();
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   if (filepath[1] == L':') {
-    CFX_WideString result(L'/');
+    WideString result(L'/');
     result += filepath[0];
     if (filepath[2] != L'\\')
       result += L'/';
@@ -178,17 +178,16 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideString& filepath) {
     return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());
 #else
-  return CFX_WideString(filepath);
+  return WideString(filepath);
 #endif
 }
 
-void CPDF_FileSpec::SetFileName(const CFX_WideString& wsFileName) {
-  CFX_WideString wsStr = EncodeFileName(wsFileName);
+void CPDF_FileSpec::SetFileName(const WideString& wsFileName) {
+  WideString wsStr = EncodeFileName(wsFileName);
   if (m_pObj->IsString()) {
-    m_pObj->SetString(CFX_ByteString::FromUnicode(wsStr));
+    m_pObj->SetString(ByteString::FromUnicode(wsStr));
   } else if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    pDict->SetNewFor<CPDF_String>("F", CFX_ByteString::FromUnicode(wsStr),
-                                  false);
+    pDict->SetNewFor<CPDF_String>("F", ByteString::FromUnicode(wsStr), false);
     pDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsStr), false);
   }
 }

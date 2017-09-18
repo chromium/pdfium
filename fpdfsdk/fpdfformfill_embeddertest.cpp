@@ -106,7 +106,7 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
     FORM_OnLButtonUp(form_handle(), page_, 0, end.x, end.y);
   }
 
-  void CheckSelection(const CFX_WideStringC& expected_string) {
+  void CheckSelection(const WideStringView& expected_string) {
     // Calculate expected length for selected text.
     int num_chars = expected_string.GetLength();
 
@@ -121,8 +121,7 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
     EXPECT_EQ(expected_length, FORM_GetSelectedText(form_handle(), page_,
                                                     buf.data(), sel_text_len));
 
-    EXPECT_EQ(expected_string,
-              CFX_WideString::FromUTF16LE(buf.data(), num_chars));
+    EXPECT_EQ(expected_string, WideString::FromUTF16LE(buf.data(), num_chars));
   }
 
  private:

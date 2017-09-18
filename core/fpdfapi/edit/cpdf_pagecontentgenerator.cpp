@@ -121,9 +121,9 @@ void CPDF_PageContentGenerator::GenerateContent() {
                                        pStream->GetObjNum());
 }
 
-CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
+ByteString CPDF_PageContentGenerator::RealizeResource(
     uint32_t dwResourceObjNum,
-    const CFX_ByteString& bsType) {
+    const ByteString& bsType) {
   ASSERT(dwResourceObjNum);
   if (!m_pObjHolder->m_pResources) {
     m_pObjHolder->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
@@ -135,7 +135,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
   if (!pResList)
     pResList = m_pObjHolder->m_pResources->SetNewFor<CPDF_Dictionary>(bsType);
 
-  CFX_ByteString name;
+  ByteString name;
   int idnum = 1;
   while (1) {
     name.Format("FX%c%d", bsType[0], idnum);
@@ -188,7 +188,7 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
     pImage->ConvertStreamToIndirectObject();
 
   uint32_t dwObjNum = pStream->GetObjNum();
-  CFX_ByteString name = RealizeResource(dwObjNum, "XObject");
+  ByteString name = RealizeResource(dwObjNum, "XObject");
   if (bWasInline)
     pImageObj->SetImage(m_pDocument->GetPageData()->GetImage(dwObjNum));
 
@@ -295,7 +295,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
     return;
   }
 
-  CFX_ByteString name;
+  ByteString name;
   auto it = m_pObjHolder->m_GraphicsMap.find(graphD);
   if (it != m_pObjHolder->m_GraphicsMap.end()) {
     name = it->second;
@@ -330,7 +330,7 @@ void CPDF_PageContentGenerator::ProcessDefaultGraphics(
   defaultGraphics.strokeAlpha = 1.0f;
   defaultGraphics.blendType = FXDIB_BLEND_NORMAL;
   auto it = m_pObjHolder->m_GraphicsMap.find(defaultGraphics);
-  CFX_ByteString name;
+  ByteString name;
   if (it != m_pObjHolder->m_GraphicsMap.end()) {
     name = it->second;
   } else {
@@ -368,7 +368,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
     return;
   fontD.baseFont = pFont->GetBaseFont();
   auto it = m_pObjHolder->m_FontsMap.find(fontD);
-  CFX_ByteString dictName;
+  ByteString dictName;
   if (it != m_pObjHolder->m_FontsMap.end()) {
     dictName = it->second;
   } else {
@@ -387,7 +387,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
   }
   *buf << "/" << PDF_NameEncode(dictName) << " " << pTextObj->GetFontSize()
        << " Tf ";
-  CFX_ByteString text;
+  ByteString text;
   for (uint32_t charcode : pTextObj->m_CharCodes) {
     if (charcode != CPDF_Font::kInvalidCharCode)
       pFont->AppendChar(&text, charcode);

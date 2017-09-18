@@ -22,8 +22,8 @@ class CFPF_SkiaFont {
   void Release();
   CFPF_SkiaFont* Retain();
 
-  CFX_ByteString GetFamilyName();
-  CFX_ByteString GetPsName();
+  ByteString GetFamilyName();
+  ByteString GetPsName();
   uint32_t GetFontStyle() const { return m_dwStyle; }
   uint8_t GetCharset() const { return m_uCharset; }
   int32_t GetGlyphIndex(wchar_t wUnicode);
@@ -38,7 +38,7 @@ class CFPF_SkiaFont {
 
   bool InitFont(CFPF_SkiaFontMgr* pFontMgr,
                 CFPF_SkiaFontDescriptor* pFontDes,
-                const CFX_ByteStringC& bsFamily,
+                const ByteStringView& bsFamily,
                 uint32_t dwStyle,
                 uint8_t uCharset);
 

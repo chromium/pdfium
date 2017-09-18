@@ -42,7 +42,7 @@ void CBC_OnedUPCAWriter::Init() {
 
 CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}
 
-bool CBC_OnedUPCAWriter::CheckContentValidity(const CFX_WideStringC& contents) {
+bool CBC_OnedUPCAWriter::CheckContentValidity(const WideStringView& contents) {
   for (FX_STRSIZE i = 0; i < contents.GetLength(); ++i) {
     if (contents[i] < '0' || contents[i] > '9')
       return false;
@@ -50,9 +50,8 @@ bool CBC_OnedUPCAWriter::CheckContentValidity(const CFX_WideStringC& contents) {
   return true;
 }
 
-CFX_WideString CBC_OnedUPCAWriter::FilterContents(
-    const CFX_WideStringC& contents) {
-  CFX_WideString filtercontents;
+WideString CBC_OnedUPCAWriter::FilterContents(const WideStringView& contents) {
+  WideString filtercontents;
   wchar_t ch;
   for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     ch = contents[i];
@@ -67,7 +66,7 @@ CFX_WideString CBC_OnedUPCAWriter::FilterContents(
   return filtercontents;
 }
 
-int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString& contents) {
+int32_t CBC_OnedUPCAWriter::CalcChecksum(const ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
   FX_STRSIZE j = 1;
@@ -84,7 +83,7 @@ int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString& contents) {
   return checksum;
 }
 
-uint8_t* CBC_OnedUPCAWriter::EncodeWithHint(const CFX_ByteString& contents,
+uint8_t* CBC_OnedUPCAWriter::EncodeWithHint(const ByteString& contents,
                                             BCFORMAT format,
                                             int32_t& outWidth,
                                             int32_t& outHeight,
@@ -92,18 +91,18 @@ uint8_t* CBC_OnedUPCAWriter::EncodeWithHint(const CFX_ByteString& contents,
   if (format != BCFORMAT_UPC_A)
     return nullptr;
 
-  CFX_ByteString toEAN13String = '0' + contents;
+  ByteString toEAN13String = '0' + contents;
   m_iDataLenth = 13;
   return m_subWriter->EncodeWithHint(toEAN13String, BCFORMAT_EAN_13, outWidth,
                                      outHeight, hints);
 }
 
-uint8_t* CBC_OnedUPCAWriter::EncodeImpl(const CFX_ByteString& contents,
+uint8_t* CBC_OnedUPCAWriter::EncodeImpl(const ByteString& contents,
                                         int32_t& outLength) {
   return nullptr;
 }
 
-bool CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
+bool CBC_OnedUPCAWriter::ShowChars(const WideStringView& contents,
                                    CFX_RenderDevice* device,
                                    const CFX_Matrix* matrix,
                                    int32_t barWidth,
@@ -113,10 +112,10 @@ bool CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
 
   int32_t leftPadding = 7 * multiple;
   int32_t leftPosition = 10 * multiple + leftPadding;
-  CFX_ByteString str = FX_UTF8Encode(contents);
+  ByteString str = FX_UTF8Encode(contents);
   int32_t iLen = str.GetLength();
   std::vector<FXTEXT_CHARPOS> charpos(iLen);
-  CFX_ByteString tempStr = str.Mid(1, 5);
+  ByteString tempStr = str.Mid(1, 5);
   float strWidth = (float)35 * multiple;
   float blank = 0.0;
 

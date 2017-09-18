@@ -53,7 +53,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   ~CFWL_Widget() override;
 
   virtual FWL_Type GetClassID() const = 0;
-  virtual bool IsInstance(const CFX_WideStringC& wsClass) const;
+  virtual bool IsInstance(const WideStringView& wsClass) const;
   virtual CFX_RectF GetAutosizedWidgetRect();
   virtual CFX_RectF GetWidgetRect();
   virtual CFX_RectF GetClientRect();
@@ -127,10 +127,10 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   float GetBorderSize(bool bCX);
   CFX_RectF GetRelativeRect();
   IFWL_ThemeProvider* GetAvailableTheme();
-  CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
+  CFX_SizeF CalcTextSize(const WideString& wsText,
                          IFWL_ThemeProvider* pTheme,
                          bool bMultiLine);
-  void CalcTextRect(const CFX_WideString& wsText,
+  void CalcTextRect(const WideString& wsText,
                     IFWL_ThemeProvider* pTheme,
                     const FDE_TextStyle& dwTTOStyles,
                     FDE_TextAlignment iTTOAlign,

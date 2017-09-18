@@ -8,7 +8,7 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFX_XMLCharData::CFX_XMLCharData(const CFX_WideString& wsCData)
+CFX_XMLCharData::CFX_XMLCharData(const WideString& wsCData)
     : CFX_XMLText(wsCData) {}
 
 CFX_XMLCharData::~CFX_XMLCharData() {}

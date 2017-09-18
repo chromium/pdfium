@@ -66,9 +66,9 @@ class CFDE_TextEditEngine {
     virtual ~Delegate() = default;
     virtual void NotifyTextFull() = 0;
     virtual void OnCaretChanged() = 0;
-    virtual void OnTextChanged(const CFX_WideString& prevText) = 0;
+    virtual void OnTextChanged(const WideString& prevText) = 0;
     virtual void OnSelChanged() = 0;
-    virtual bool OnValidate(const CFX_WideString& wsText) = 0;
+    virtual bool OnValidate(const WideString& wsText) = 0;
     virtual void SetScrollOffset(float fScrollOffset) = 0;
   };
 
@@ -84,13 +84,13 @@ class CFDE_TextEditEngine {
   void Clear();
 
   void Insert(size_t idx,
-              const CFX_WideString& text,
+              const WideString& text,
               RecordOperation add_operation = RecordOperation::kInsertRecord);
-  CFX_WideString Delete(
+  WideString Delete(
       size_t start_idx,
       size_t length,
       RecordOperation add_operation = RecordOperation::kInsertRecord);
-  CFX_WideString GetText() const;
+  WideString GetText() const;
   size_t GetLength() const;
 
   // Non-const so we can force a layout.
@@ -147,10 +147,10 @@ class CFDE_TextEditEngine {
   std::pair<size_t, size_t> GetSelection() const {
     return {selection_.start_idx, selection_.end_idx};
   }
-  CFX_WideString GetSelectedText() const;
-  CFX_WideString DeleteSelectedText(
+  WideString GetSelectedText() const;
+  WideString DeleteSelectedText(
       RecordOperation add_operation = RecordOperation::kInsertRecord);
-  void ReplaceSelectedText(const CFX_WideString& str);
+  void ReplaceSelectedText(const WideString& str);
 
   void Layout();
 
@@ -183,8 +183,7 @@ class CFDE_TextEditEngine {
   void SetCombTextWidth();
   void AdjustGap(size_t idx, size_t length);
   void RebuildPieces();
-  size_t CountCharsExceedingSize(const CFX_WideString& str,
-                                 size_t num_to_check);
+  size_t CountCharsExceedingSize(const WideString& str, size_t num_to_check);
   void AddOperationRecord(std::unique_ptr<Operation> op);
 
   bool IsAlignedRight() const {
@@ -210,7 +209,7 @@ class CFDE_TextEditEngine {
   FX_ARGB font_color_;
   float font_size_;
   float line_spacing_;
-  std::vector<CFX_WideString::CharType> content_;
+  std::vector<WideString::CharType> content_;
   size_t text_length_;
   size_t gap_position_;
   size_t gap_size_;

@@ -85,7 +85,7 @@ struct BarCodeInfo {
 
 class CXFA_FFBarcode : public CXFA_FFTextEdit {
  public:
-  static const BarCodeInfo* GetBarcodeTypeByName(const CFX_WideStringC& wsName);
+  static const BarCodeInfo* GetBarcodeTypeByName(const WideStringView& wsName);
 
   explicit CXFA_FFBarcode(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFBarcode() override;

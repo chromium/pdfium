@@ -101,7 +101,7 @@ int32_t CFX_XMLParser::DoParser() {
         m_pParent = m_pChild;
 
         if (m_dwCheckStatus != 0x03 && m_NodeStack.size() == 3) {
-          CFX_WideString wsTag =
+          WideString wsTag =
               static_cast<CFX_XMLElement*>(m_pChild)->GetLocalTagName();
           if (wsTag == L"template") {
             m_dwCheckStatus |= 0x01;

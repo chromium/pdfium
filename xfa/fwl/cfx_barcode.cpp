@@ -294,7 +294,7 @@ bool CFX_Barcode::SetTruncated(bool truncated) {
                                : false;
 }
 
-bool CFX_Barcode::Encode(const CFX_WideStringC& contents) {
+bool CFX_Barcode::Encode(const WideStringView& contents) {
   return m_pBCEngine && m_pBCEngine->Encode(contents);
 }
 

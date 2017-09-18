@@ -11,11 +11,11 @@
 
 class CXML_AttrItem {
  public:
-  bool Matches(const CFX_ByteString& space, const CFX_ByteString& name) const;
+  bool Matches(const ByteString& space, const ByteString& name) const;
 
-  CFX_ByteString m_QSpaceName;
-  CFX_ByteString m_AttrName;
-  CFX_WideString m_Value;
+  ByteString m_QSpaceName;
+  ByteString m_AttrName;
+  WideString m_Value;
 };
 
 #endif  // CORE_FXCRT_XML_CXML_ATTRITEM_H_

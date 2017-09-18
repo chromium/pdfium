@@ -38,7 +38,7 @@ class InsertOperation : public CFDE_TextEditEngine::Operation {
  public:
   InsertOperation(CFDE_TextEditEngine* engine,
                   size_t start_idx,
-                  const CFX_WideString& added_text)
+                  const WideString& added_text)
       : engine_(engine), start_idx_(start_idx), added_text_(added_text) {}
 
   ~InsertOperation() override {}
@@ -56,14 +56,14 @@ class InsertOperation : public CFDE_TextEditEngine::Operation {
  private:
   CFX_UnownedPtr<CFDE_TextEditEngine> engine_;
   size_t start_idx_;
-  CFX_WideString added_text_;
+  WideString added_text_;
 };
 
 class DeleteOperation : public CFDE_TextEditEngine::Operation {
  public:
   DeleteOperation(CFDE_TextEditEngine* engine,
                   size_t start_idx,
-                  const CFX_WideString& removed_text)
+                  const WideString& removed_text)
       : engine_(engine), start_idx_(start_idx), removed_text_(removed_text) {}
 
   ~DeleteOperation() override {}
@@ -81,15 +81,15 @@ class DeleteOperation : public CFDE_TextEditEngine::Operation {
  private:
   CFX_UnownedPtr<CFDE_TextEditEngine> engine_;
   size_t start_idx_;
-  CFX_WideString removed_text_;
+  WideString removed_text_;
 };
 
 class ReplaceOperation : public CFDE_TextEditEngine::Operation {
  public:
   ReplaceOperation(CFDE_TextEditEngine* engine,
                    size_t start_idx,
-                   const CFX_WideString& removed_text,
-                   const CFX_WideString& added_text)
+                   const WideString& removed_text,
+                   const WideString& added_text)
       : insert_op_(engine, start_idx, added_text),
         delete_op_(engine, start_idx, removed_text) {}
 
@@ -195,7 +195,7 @@ void CFDE_TextEditEngine::SetMaxEditOperationsForTesting(size_t max) {
 }
 
 void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
-  static const size_t char_size = sizeof(CFX_WideString::CharType);
+  static const size_t char_size = sizeof(WideString::CharType);
 
   // Move the gap, if necessary.
   if (idx < gap_position_) {
@@ -222,7 +222,7 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
   }
 }
 
-size_t CFDE_TextEditEngine::CountCharsExceedingSize(const CFX_WideString& text,
+size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
                                                     size_t num_to_check) {
   if (!limit_horizontal_area_ && !limit_vertical_area_)
     return 0;
@@ -245,7 +245,7 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const CFX_WideString& text,
   text_out->SetStyles(style);
 
   size_t length = text.GetLength();
-  CFX_WideStringC temp(text.c_str(), length);
+  WideStringView temp(text.c_str(), length);
 
   float vertical_height = line_spacing_ * visible_line_count_;
   size_t chars_exceeding_size = 0;
@@ -253,7 +253,7 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const CFX_WideString& text,
   for (size_t i = 0; i < num_to_check; i++) {
     // This does a lot of string copying ....
     // TODO(dsinclair): make CalcLogicSize take a WideStringC instead.
-    text_out->CalcLogicSize(CFX_WideString(temp), text_rect);
+    text_out->CalcLogicSize(WideString(temp), text_rect);
 
     if (limit_horizontal_area_ && text_rect.width <= available_width_)
       break;
@@ -269,7 +269,7 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const CFX_WideString& text,
 }
 
 void CFDE_TextEditEngine::Insert(size_t idx,
-                                 const CFX_WideString& text,
+                                 const WideString& text,
                                  RecordOperation add_operation) {
   if (idx > text_length_)
     idx = text_length_;
@@ -289,15 +289,15 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   AdjustGap(idx, length);
 
   if (validation_enabled_ || limit_horizontal_area_ || limit_vertical_area_) {
-    CFX_WideString str;
+    WideString str;
     if (gap_position_ > 0)
-      str += CFX_WideStringC(content_.data(), gap_position_);
+      str += WideStringView(content_.data(), gap_position_);
 
     str += text;
 
     if (text_length_ - gap_position_ > 0) {
-      str += CFX_WideStringC(content_.data() + gap_position_ + gap_size_,
-                             text_length_ - gap_position_);
+      str += WideStringView(content_.data() + gap_position_ + gap_size_,
+                            text_length_ - gap_position_);
     }
 
     if (validation_enabled_ && delegate_ && !delegate_->OnValidate(str)) {
@@ -328,12 +328,12 @@ void CFDE_TextEditEngine::Insert(size_t idx,
         pdfium::MakeUnique<InsertOperation>(this, gap_position_, text));
   }
 
-  CFX_WideString previous_text;
+  WideString previous_text;
   if (delegate_)
     previous_text = GetText();
 
   // Copy the new text into the gap.
-  static const size_t char_size = sizeof(CFX_WideString::CharType);
+  static const size_t char_size = sizeof(WideString::CharType);
   memcpy(content_.data() + gap_position_, text.c_str(), length * char_size);
   gap_position_ += length;
   gap_size_ -= length;
@@ -623,32 +623,32 @@ void CFDE_TextEditEngine::SetSelection(size_t start_idx, size_t end_idx) {
   selection_.end_idx = end_idx;
 }
 
-CFX_WideString CFDE_TextEditEngine::GetSelectedText() const {
+WideString CFDE_TextEditEngine::GetSelectedText() const {
   if (!has_selection_)
     return L"";
 
-  CFX_WideString text;
+  WideString text;
   if (selection_.start_idx < gap_position_) {
     if (selection_.end_idx < gap_position_) {
-      text += CFX_WideStringC(content_.data() + selection_.start_idx,
-                              selection_.end_idx - selection_.start_idx + 1);
+      text += WideStringView(content_.data() + selection_.start_idx,
+                             selection_.end_idx - selection_.start_idx + 1);
       return text;
     }
 
-    text += CFX_WideStringC(content_.data() + selection_.start_idx,
-                            gap_position_ - selection_.start_idx);
-    text += CFX_WideStringC(
+    text += WideStringView(content_.data() + selection_.start_idx,
+                           gap_position_ - selection_.start_idx);
+    text += WideStringView(
         content_.data() + gap_position_ + gap_size_,
         selection_.end_idx - (gap_position_ - selection_.start_idx) + 1);
     return text;
   }
 
-  text += CFX_WideStringC(content_.data() + gap_size_ + selection_.start_idx,
-                          selection_.end_idx - selection_.start_idx + 1);
+  text += WideStringView(content_.data() + gap_size_ + selection_.start_idx,
+                         selection_.end_idx - selection_.start_idx + 1);
   return text;
 }
 
-CFX_WideString CFDE_TextEditEngine::DeleteSelectedText(
+WideString CFDE_TextEditEngine::DeleteSelectedText(
     RecordOperation add_operation) {
   if (!has_selection_)
     return L"";
@@ -657,24 +657,24 @@ CFX_WideString CFDE_TextEditEngine::DeleteSelectedText(
                 selection_.end_idx - selection_.start_idx + 1, add_operation);
 }
 
-CFX_WideString CFDE_TextEditEngine::Delete(size_t start_idx,
-                                           size_t length,
-                                           RecordOperation add_operation) {
+WideString CFDE_TextEditEngine::Delete(size_t start_idx,
+                                       size_t length,
+                                       RecordOperation add_operation) {
   if (start_idx >= text_length_)
     return L"";
 
   length = std::min(length, text_length_ - start_idx);
   AdjustGap(start_idx + length, 0);
 
-  CFX_WideString ret;
-  ret += CFX_WideStringC(content_.data() + start_idx, length);
+  WideString ret;
+  ret += WideStringView(content_.data() + start_idx, length);
 
   if (add_operation == RecordOperation::kInsertRecord) {
     AddOperationRecord(
         pdfium::MakeUnique<DeleteOperation>(this, start_idx, ret));
   }
 
-  CFX_WideString previous_text = GetText();
+  WideString previous_text = GetText();
 
   gap_position_ = start_idx;
   gap_size_ += length;
@@ -688,23 +688,23 @@ CFX_WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   return ret;
 }
 
-void CFDE_TextEditEngine::ReplaceSelectedText(const CFX_WideString& rep) {
+void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& rep) {
   size_t start_idx = selection_.start_idx;
 
-  CFX_WideString txt = DeleteSelectedText(RecordOperation::kSkipRecord);
+  WideString txt = DeleteSelectedText(RecordOperation::kSkipRecord);
   Insert(gap_position_, rep, RecordOperation::kSkipRecord);
 
   AddOperationRecord(
       pdfium::MakeUnique<ReplaceOperation>(this, start_idx, txt, rep));
 }
 
-CFX_WideString CFDE_TextEditEngine::GetText() const {
-  CFX_WideString str;
+WideString CFDE_TextEditEngine::GetText() const {
+  WideString str;
   if (gap_position_ > 0)
-    str += CFX_WideStringC(content_.data(), gap_position_);
+    str += WideStringView(content_.data(), gap_position_);
   if (text_length_ - gap_position_ > 0) {
-    str += CFX_WideStringC(content_.data() + gap_position_ + gap_size_,
-                           text_length_ - gap_position_);
+    str += WideStringView(content_.data() + gap_position_ + gap_size_,
+                          text_length_ - gap_position_);
   }
   return str;
 }

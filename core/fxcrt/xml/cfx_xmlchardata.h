@@ -14,7 +14,7 @@
 
 class CFX_XMLCharData : public CFX_XMLText {
  public:
-  explicit CFX_XMLCharData(const CFX_WideString& wsCData);
+  explicit CFX_XMLCharData(const WideString& wsCData);
   ~CFX_XMLCharData() override;
 
   FX_XMLNODETYPE GetType() const override;

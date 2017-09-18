@@ -239,7 +239,7 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal(CPDF_Document* pDocument) {
     m_pSyntax->GetKeyword();
 
     bool bNumber;
-    CFX_ByteString xrefpos_str = m_pSyntax->GetNextWord(&bNumber);
+    ByteString xrefpos_str = m_pSyntax->GetNextWord(&bNumber);
     if (!bNumber)
       return FORMAT_ERROR;
 
@@ -314,7 +314,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
   }
 
   if (m_pEncryptDict) {
-    CFX_ByteString filter = m_pEncryptDict->GetStringFor("Filter");
+    ByteString filter = m_pEncryptDict->GetStringFor("Filter");
     if (filter != "Standard")
       return HANDLER_ERROR;
 
@@ -364,7 +364,7 @@ bool CPDF_Parser::VerifyCrossRefV4() {
     FX_FILESIZE SavedPos = m_pSyntax->GetPos();
     m_pSyntax->SetPos(it.second.pos);
     bool is_num = false;
-    CFX_ByteString num_str = m_pSyntax->GetNextWord(&is_num);
+    ByteString num_str = m_pSyntax->GetNextWord(&is_num);
     m_pSyntax->SetPos(SavedPos);
     if (!is_num || num_str.IsEmpty() ||
         FXSYS_atoui(num_str.c_str()) != it.first) {
@@ -593,7 +593,7 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
   while (1) {
     FX_FILESIZE SavedPos = m_pSyntax->GetPos();
     bool bIsNumber;
-    CFX_ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
+    ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
     if (word.IsEmpty()) {
       return false;
     }
@@ -884,7 +884,7 @@ bool CPDF_Parser::RebuildCrossRef() {
                            m_ObjectInfo[pRef->GetRefObjNum()].pos != 0)) {
                         auto it = pTrailer->begin();
                         while (it != pTrailer->end()) {
-                          const CFX_ByteString& key = it->first;
+                          const ByteString& key = it->first;
                           CPDF_Object* pElement = it->second.get();
                           ++it;
                           uint32_t dwObjNum =
@@ -903,11 +903,10 @@ bool CPDF_Parser::RebuildCrossRef() {
                                                         : std::move(pObj)));
 
                       FX_FILESIZE dwSavePos = m_pSyntax->GetPos();
-                      CFX_ByteString strWord = m_pSyntax->GetKeyword();
+                      ByteString strWord = m_pSyntax->GetKeyword();
                       if (!strWord.Compare("startxref")) {
                         bool bNumber;
-                        CFX_ByteString bsOffset =
-                            m_pSyntax->GetNextWord(&bNumber);
+                        ByteString bsOffset = m_pSyntax->GetNextWord(&bNumber);
                         if (bNumber)
                           m_LastXRefOffset = FXSYS_atoi(bsOffset.c_str());
                       }
@@ -1316,7 +1315,7 @@ bool CPDF_Parser::ParseLinearizedHeader() {
 
   FX_FILESIZE SavedPos = m_pSyntax->GetPos();
   bool bIsNumber;
-  CFX_ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
+  ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
   if (!bIsNumber)
     return false;
 

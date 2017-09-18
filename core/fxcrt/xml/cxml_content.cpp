@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/xml/cxml_content.h"
 
-CXML_Content::CXML_Content(bool bCDATA, const CFX_WideStringC& content)
+CXML_Content::CXML_Content(bool bCDATA, const WideStringView& content)
     : m_bCDATA(bCDATA), m_Content(content) {}
 
 CXML_Content::~CXML_Content() {}

@@ -132,9 +132,9 @@ int32_t CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(
 }
 
 bool CBC_PDF417ErrorCorrection::generateErrorCorrection(
-    const CFX_WideString& dataCodewords,
+    const WideString& dataCodewords,
     int32_t errorCorrectionLevel,
-    CFX_WideString* result) {
+    WideString* result) {
   assert(result);
   assert(result->IsEmpty());
 

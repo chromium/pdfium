@@ -43,7 +43,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
-      CFX_WideString wsContentType;
+      WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, false);
       if (wsContentType == L"text/html")
         bRichText = true;
@@ -80,7 +80,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
-      CFX_WideString wsContentType;
+      WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, false);
       if (wsContentType == L"text/html")
         bRichText = true;
@@ -95,7 +95,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
   CXFA_Node* pNode = pItemNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pNode) {
-    CFX_WideStringC wsName;
+    WideStringView wsName;
     pNode->TryCData(XFA_ATTRIBUTE_Name, wsName);
     if (m_eType == XFA_TEXTPROVIDERTYPE_Rollover && wsName == L"rollover")
       return pNode;
@@ -135,8 +135,8 @@ bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
 
 bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
                                      bool bRaw,
-                                     const CFX_WideString& wsAttr,
-                                     CFX_WideString& wsValue) {
+                                     const WideString& wsAttr,
+                                     WideString& wsValue) {
   if (m_eType != XFA_TEXTPROVIDERTYPE_Text)
     return false;
 
@@ -149,11 +149,12 @@ bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
   CXFA_Node* pIDNode = nullptr;
   CXFA_WidgetAcc* pEmbAcc = nullptr;
   if (pParent)
-    pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsStringC());
+    pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsStringView());
 
   if (!pIDNode) {
     pIDNode = pDocument->GetNodeByID(
-        ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Form)), wsAttr.AsStringC());
+        ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Form)),
+        wsAttr.AsStringView());
   }
   if (pIDNode)
     pEmbAcc = static_cast<CXFA_WidgetAcc*>(pIDNode->GetWidgetData());

@@ -52,7 +52,7 @@ CPWL_Wnd* CFFL_ComboBox::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
   pWnd->SetFillerNotify(pFormFiller);
 
   int32_t nCurSel = m_pWidget->GetSelectedIndex(0);
-  CFX_WideString swText;
+  WideString swText;
   if (nCurSel < 0)
     swText = m_pWidget->GetValue();
   else
@@ -94,7 +94,7 @@ void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
   if (!pWnd)
     return;
 
-  CFX_WideString swText = pWnd->GetText();
+  WideString swText = pWnd->GetText();
   int32_t nCurSel = pWnd->GetSelect();
 
   bool bSetValue = false;
@@ -235,15 +235,15 @@ void CFFL_ComboBox::OnSetFocus(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_CHARSET_ChineseSimplified);
   pEdit->SetReadyToInput();
 
-  CFX_WideString wsText = pEdit->GetText();
+  WideString wsText = pEdit->GetText();
   int nCharacters = wsText.GetLength();
-  CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
+  ByteString bsUTFText = wsText.UTF16LE_Encode();
   auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
   m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, true);
 }
 
-CFX_WideString CFFL_ComboBox::GetSelectExportText() {
-  CFX_WideString swRet;
+WideString CFFL_ComboBox::GetSelectExportText() {
+  WideString swRet;
 
   int nExport = -1;
   CPDFSDK_PageView* pPageView = GetCurPageView(true);

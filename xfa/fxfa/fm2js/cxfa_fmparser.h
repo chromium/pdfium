@@ -15,7 +15,7 @@
 
 class CXFA_FMParser {
  public:
-  explicit CXFA_FMParser(const CFX_WideStringC& wsFormcalc);
+  explicit CXFA_FMParser(const WideStringView& wsFormcalc);
   ~CXFA_FMParser();
 
   std::unique_ptr<CXFA_FMFunctionDefinition> Parse();

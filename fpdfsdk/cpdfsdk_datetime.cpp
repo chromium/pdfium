@@ -63,7 +63,7 @@ CPDFSDK_DateTime::CPDFSDK_DateTime() {
   ResetDateTime();
 }
 
-CPDFSDK_DateTime::CPDFSDK_DateTime(const CFX_ByteString& dtStr) {
+CPDFSDK_DateTime::CPDFSDK_DateTime(const ByteString& dtStr) {
   ResetDateTime();
   FromPDFDateTimeString(dtStr);
 }
@@ -129,7 +129,7 @@ time_t CPDFSDK_DateTime::ToTime_t() const {
 }
 
 CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
-    const CFX_ByteString& dtStr) {
+    const ByteString& dtStr) {
   int strLength = dtStr.GetLength();
   if (strLength <= 0)
     return *this;
@@ -263,34 +263,34 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
   return *this;
 }
 
-CFX_ByteString CPDFSDK_DateTime::ToCommonDateTimeString() {
-  CFX_ByteString str1;
+ByteString CPDFSDK_DateTime::ToCommonDateTimeString() {
+  ByteString str1;
   str1.Format("%04d-%02u-%02u %02u:%02u:%02u ", m_year, m_month, m_day, m_hour,
               m_minute, m_second);
   if (m_tzHour < 0)
     str1 += "-";
   else
     str1 += "+";
-  CFX_ByteString str2;
+  ByteString str2;
   str2.Format("%02d:%02u", std::abs(static_cast<int>(m_tzHour)), m_tzMinute);
   return str1 + str2;
 }
 
-CFX_ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {
-  CFX_ByteString dtStr;
+ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {
+  ByteString dtStr;
   char tempStr[32];
   memset(tempStr, 0, sizeof(tempStr));
   FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "D:%04d%02u%02u%02u%02u%02u",
                  m_year, m_month, m_day, m_hour, m_minute, m_second);
-  dtStr = CFX_ByteString(tempStr);
+  dtStr = ByteString(tempStr);
   if (m_tzHour < 0)
-    dtStr += CFX_ByteString("-");
+    dtStr += ByteString("-");
   else
-    dtStr += CFX_ByteString("+");
+    dtStr += ByteString("+");
   memset(tempStr, 0, sizeof(tempStr));
   FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "%02d'%02u'",
                  std::abs(static_cast<int>(m_tzHour)), m_tzMinute);
-  dtStr += CFX_ByteString(tempStr);
+  dtStr += ByteString(tempStr);
   return dtStr;
 }
 

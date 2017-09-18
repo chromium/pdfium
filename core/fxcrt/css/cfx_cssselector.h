@@ -15,8 +15,7 @@
 
 class CFX_CSSSelector {
  public:
-  static std::unique_ptr<CFX_CSSSelector> FromString(
-      const CFX_WideStringC& str);
+  static std::unique_ptr<CFX_CSSSelector> FromString(const WideStringView& str);
 
   CFX_CSSSelector(CFX_CSSSelectorType eType,
                   const wchar_t* psz,

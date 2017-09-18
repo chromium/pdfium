@@ -21,14 +21,13 @@ class CXFA_DefFontMgr {
   ~CXFA_DefFontMgr();
 
   CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
-                                      const CFX_WideStringC& wsFontFamily,
+                                      const WideStringView& wsFontFamily,
                                       uint32_t dwFontStyles,
                                       uint16_t wCodePage = 0xFFFF);
-  CFX_RetainPtr<CFGAS_GEFont> GetDefaultFont(
-      CXFA_FFDoc* hDoc,
-      const CFX_WideStringC& wsFontFamily,
-      uint32_t dwFontStyles,
-      uint16_t wCodePage = 0xFFFF);
+  CFX_RetainPtr<CFGAS_GEFont> GetDefaultFont(CXFA_FFDoc* hDoc,
+                                             const WideStringView& wsFontFamily,
+                                             uint32_t dwFontStyles,
+                                             uint16_t wCodePage = 0xFFFF);
 
  private:
   std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_CacheFonts;

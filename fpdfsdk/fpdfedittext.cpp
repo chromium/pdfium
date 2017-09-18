@@ -28,7 +28,7 @@
 namespace {
 
 CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
-                              const CFX_ByteString& font_name,
+                              const ByteString& font_name,
                               CFX_Font* pFont,
                               const uint8_t* data,
                               uint32_t size,
@@ -71,8 +71,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
 
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
   pStream->SetData(data, size);
-  CFX_ByteString fontFile =
-      font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
+  ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
   fontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
   return fontDesc;
 }
@@ -243,7 +242,7 @@ void* LoadSimpleFont(CPDF_Document* pDoc,
   fontDict->SetNewFor<CPDF_Name>("Type", "Font");
   fontDict->SetNewFor<CPDF_Name>(
       "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
-  CFX_ByteString name = pFont->GetFaceName();
+  ByteString name = pFont->GetFaceName();
   if (name.IsEmpty())
     name = "Unnamed";
   fontDict->SetNewFor<CPDF_Name>("BaseFont", name);
@@ -286,9 +285,9 @@ void* LoadCompositeFont(CPDF_Document* pDoc,
   fontDict->SetNewFor<CPDF_Name>("Type", "Font");
   fontDict->SetNewFor<CPDF_Name>("Subtype", "Type0");
   // TODO(npm): Get the correct encoding, if it's not identity.
-  CFX_ByteString encoding = "Identity-H";
+  ByteString encoding = "Identity-H";
   fontDict->SetNewFor<CPDF_Name>("Encoding", encoding);
-  CFX_ByteString name = pFont->GetFaceName();
+  ByteString name = pFont->GetFaceName();
   if (name.IsEmpty())
     name = "Unnamed";
   fontDict->SetNewFor<CPDF_Name>(
@@ -404,7 +403,7 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
   if (!pDoc)
     return nullptr;
 
-  CPDF_Font* pFont = CPDF_Font::GetStockFont(pDoc, CFX_ByteStringC(font));
+  CPDF_Font* pFont = CPDF_Font::GetStockFont(pDoc, ByteStringView(font));
   if (!pFont)
     return nullptr;
 
@@ -421,9 +420,9 @@ FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
   if (!pTextObj)
     return false;
 
-  FX_STRSIZE len = CFX_WideString::WStringLength(text);
-  CFX_WideString encodedText = CFX_WideString::FromUTF16LE(text, len);
-  CFX_ByteString byteText;
+  FX_STRSIZE len = WideString::WStringLength(text);
+  WideString encodedText = WideString::FromUTF16LE(text, len);
+  ByteString byteText;
   for (wchar_t wc : encodedText) {
     pTextObj->GetFont()->AppendChar(
         &byteText, pTextObj->GetFont()->CharCodeFromUnicode(wc));

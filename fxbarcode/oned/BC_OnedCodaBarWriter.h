@@ -18,18 +18,17 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
   ~CBC_OnedCodaBarWriter() override;
 
   // CBC_OneDimWriter
-  uint8_t* EncodeImpl(const CFX_ByteString& contents,
-                      int32_t& outLength) override;
-  uint8_t* EncodeWithHint(const CFX_ByteString& contents,
+  uint8_t* EncodeImpl(const ByteString& contents, int32_t& outLength) override;
+  uint8_t* EncodeWithHint(const ByteString& contents,
                           BCFORMAT format,
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t hints) override;
-  bool RenderResult(const CFX_WideStringC& contents,
+  bool RenderResult(const WideStringView& contents,
                     uint8_t* code,
                     int32_t codeLength) override;
-  bool CheckContentValidity(const CFX_WideStringC& contents) override;
-  CFX_WideString FilterContents(const CFX_WideStringC& contents) override;
+  bool CheckContentValidity(const WideStringView& contents) override;
+  WideString FilterContents(const WideStringView& contents) override;
   void SetDataLength(int32_t length) override;
 
   virtual bool SetStartChar(char start);
@@ -38,7 +37,7 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
   virtual bool SetWideNarrowRatio(int8_t ratio);
   virtual bool FindChar(wchar_t ch, bool isContent);
 
-  CFX_WideString encodedContents(const CFX_WideStringC& contents);
+  WideString encodedContents(const WideStringView& contents);
 
  private:
   char m_chStart;

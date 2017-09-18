@@ -26,7 +26,7 @@ XFA_Element CXFA_Event::GetEventType() const {
   return XFA_Element::Unknown;
 }
 
-void CXFA_Event::GetRef(CFX_WideStringC& wsRef) {
+void CXFA_Event::GetRef(WideStringView& wsRef) {
   m_pNode->TryCData(XFA_ATTRIBUTE_Ref, wsRef);
 }
 
@@ -38,12 +38,12 @@ CXFA_Submit CXFA_Event::GetSubmit() const {
   return CXFA_Submit(m_pNode->GetChild(0, XFA_Element::Submit));
 }
 
-void CXFA_Event::GetSignDataTarget(CFX_WideString& wsTarget) {
+void CXFA_Event::GetSignDataTarget(WideString& wsTarget) {
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::SignData);
   if (!pNode)
     return;
 
-  CFX_WideStringC wsCData;
+  WideStringView wsCData;
   pNode->TryCData(XFA_ATTRIBUTE_Target, wsCData);
   wsTarget = wsCData;
 }

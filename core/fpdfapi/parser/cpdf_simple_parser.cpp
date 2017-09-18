@@ -11,7 +11,7 @@
 CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, uint32_t dwSize)
     : m_pData(pData), m_dwSize(dwSize), m_dwCurPos(0) {}
 
-CPDF_SimpleParser::CPDF_SimpleParser(const CFX_ByteStringC& str)
+CPDF_SimpleParser::CPDF_SimpleParser(const ByteStringView& str)
     : m_pData(str.raw_str()), m_dwSize(str.GetLength()), m_dwCurPos(0) {}
 
 void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, uint32_t& dwSize) {
@@ -91,7 +91,7 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, uint32_t& dwSize) {
   }
 }
 
-CFX_ByteStringC CPDF_SimpleParser::GetWord() {
+ByteStringView CPDF_SimpleParser::GetWord() {
   const uint8_t* pStart;
   uint32_t dwSize;
   ParseWord(pStart, dwSize);
@@ -102,8 +102,8 @@ CFX_ByteStringC CPDF_SimpleParser::GetWord() {
     if (m_dwCurPos < m_dwSize) {
       m_dwCurPos++;
     }
-    return CFX_ByteStringC(pStart,
-                           (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
+    return ByteStringView(pStart,
+                          (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
   }
   if (dwSize == 1 && pStart[0] == '(') {
     int level = 1;
@@ -130,13 +130,13 @@ CFX_ByteStringC CPDF_SimpleParser::GetWord() {
     if (m_dwCurPos < m_dwSize) {
       m_dwCurPos++;
     }
-    return CFX_ByteStringC(pStart,
-                           (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
+    return ByteStringView(pStart,
+                          (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
   }
-  return CFX_ByteStringC(pStart, dwSize);
+  return ByteStringView(pStart, dwSize);
 }
 
-bool CPDF_SimpleParser::FindTagParamFromStart(const CFX_ByteStringC& token,
+bool CPDF_SimpleParser::FindTagParamFromStart(const ByteStringView& token,
                                               int nParams) {
   nParams++;
   uint32_t* pBuf = FX_Alloc(uint32_t, nParams);
@@ -152,7 +152,7 @@ bool CPDF_SimpleParser::FindTagParamFromStart(const CFX_ByteStringC& token,
     if (buf_count > nParams) {
       buf_count = nParams;
     }
-    CFX_ByteStringC word = GetWord();
+    ByteStringView word = GetWord();
     if (word.IsEmpty()) {
       FX_Free(pBuf);
       return false;

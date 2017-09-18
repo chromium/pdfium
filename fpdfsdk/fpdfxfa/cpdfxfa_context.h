@@ -56,31 +56,31 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   void ClearChangeMark();
 
   // IFXA_AppProvider:
-  CFX_WideString GetLanguage() override;
-  CFX_WideString GetPlatform() override;
-  CFX_WideString GetAppName() override;
-  CFX_WideString GetAppTitle() const override;
+  WideString GetLanguage() override;
+  WideString GetPlatform() override;
+  WideString GetAppName() override;
+  WideString GetAppTitle() const override;
 
   void Beep(uint32_t dwType) override;
-  int32_t MsgBox(const CFX_WideString& wsMessage,
-                 const CFX_WideString& wsTitle,
+  int32_t MsgBox(const WideString& wsMessage,
+                 const WideString& wsTitle,
                  uint32_t dwIconType,
                  uint32_t dwButtonType) override;
-  CFX_WideString Response(const CFX_WideString& wsQuestion,
-                          const CFX_WideString& wsTitle,
-                          const CFX_WideString& wsDefaultAnswer,
-                          bool bMark) override;
+  WideString Response(const WideString& wsQuestion,
+                      const WideString& wsTitle,
+                      const WideString& wsDefaultAnswer,
+                      bool bMark) override;
   CFX_RetainPtr<IFX_SeekableReadStream> DownloadURL(
-      const CFX_WideString& wsURL) override;
-  bool PostRequestURL(const CFX_WideString& wsURL,
-                      const CFX_WideString& wsData,
-                      const CFX_WideString& wsContentType,
-                      const CFX_WideString& wsEncode,
-                      const CFX_WideString& wsHeader,
-                      CFX_WideString& wsResponse) override;
-  bool PutRequestURL(const CFX_WideString& wsURL,
-                     const CFX_WideString& wsData,
-                     const CFX_WideString& wsEncode) override;
+      const WideString& wsURL) override;
+  bool PostRequestURL(const WideString& wsURL,
+                      const WideString& wsData,
+                      const WideString& wsContentType,
+                      const WideString& wsEncode,
+                      const WideString& wsHeader,
+                      WideString& wsResponse) override;
+  bool PutRequestURL(const WideString& wsURL,
+                     const WideString& wsData,
+                     const WideString& wsEncode) override;
 
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
 

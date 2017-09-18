@@ -73,7 +73,7 @@ const FontNameMap g_JpFontNameMap[] = {
     {"MS Gothic", "Jun101-Light"},
 };
 
-bool GetSubFontName(CFX_ByteString* name) {
+bool GetSubFontName(ByteString* name) {
   for (size_t i = 0; i < FX_ArraySize(g_JpFontNameMap); ++i) {
     if (!FXSYS_stricmp(name->c_str(), g_JpFontNameMap[i].m_pSrcFontName)) {
       *name = g_JpFontNameMap[i].m_pSubFontName;
@@ -349,23 +349,21 @@ class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
                        uint32_t table,
                        uint8_t* buffer,
                        uint32_t size) override;
-  bool GetFaceName(void* hFont, CFX_ByteString* name) override;
+  bool GetFaceName(void* hFont, ByteString* name) override;
   bool GetFontCharset(void* hFont, int* charset) override;
   void DeleteFont(void* hFont) override;
 
   bool IsOpenTypeFromDiv(const LOGFONTA* plf);
   bool IsSupportFontFormDiv(const LOGFONTA* plf);
   void AddInstalledFont(const LOGFONTA* plf, uint32_t FontType);
-  void GetGBPreference(CFX_ByteString& face, int weight, int picth_family);
-  void GetJapanesePreference(CFX_ByteString& face,
-                             int weight,
-                             int picth_family);
-  CFX_ByteString FindFont(const CFX_ByteString& name);
+  void GetGBPreference(ByteString& face, int weight, int picth_family);
+  void GetJapanesePreference(ByteString& face, int weight, int picth_family);
+  ByteString FindFont(const ByteString& name);
 
   HDC m_hDC;
   CFX_UnownedPtr<CFX_FontMapper> m_pMapper;
-  CFX_ByteString m_LastFamily;
-  CFX_ByteString m_KaiTi, m_FangSong;
+  ByteString m_LastFamily;
+  ByteString m_KaiTi, m_FangSong;
 };
 
 int CALLBACK FontEnumProc(const LOGFONTA* plf,
@@ -429,7 +427,7 @@ bool CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
 
 void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
                                          uint32_t FontType) {
-  CFX_ByteString name(plf->lfFaceName);
+  ByteString name(plf->lfFaceName);
   if (name.GetLength() > 0 && name[0] == '@')
     return;
 
@@ -458,21 +456,21 @@ bool CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   return true;
 }
 
-CFX_ByteString CFX_Win32FontInfo::FindFont(const CFX_ByteString& name) {
+ByteString CFX_Win32FontInfo::FindFont(const ByteString& name) {
   if (!m_pMapper)
     return name;
 
   for (size_t i = 0; i < m_pMapper->m_InstalledTTFonts.size(); ++i) {
-    CFX_ByteString thisname = m_pMapper->m_InstalledTTFonts[i];
+    ByteString thisname = m_pMapper->m_InstalledTTFonts[i];
     if (thisname.Left(name.GetLength()) == name)
       return m_pMapper->m_InstalledTTFonts[i];
   }
   for (size_t i = 0; i < m_pMapper->m_LocalizedTTFonts.size(); ++i) {
-    CFX_ByteString thisname = m_pMapper->m_LocalizedTTFonts[i].first;
+    ByteString thisname = m_pMapper->m_LocalizedTTFonts[i].first;
     if (thisname.Left(name.GetLength()) == name)
       return m_pMapper->m_LocalizedTTFonts[i].second;
   }
-  return CFX_ByteString();
+  return ByteString();
 }
 
 void* CFX_Win32FallbackFontInfo::MapFont(int weight,
@@ -500,7 +498,7 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
   return FindFont(weight, bItalic, charset, pitch_family, cstr_face, !bCJK);
 }
 
-void CFX_Win32FontInfo::GetGBPreference(CFX_ByteString& face,
+void CFX_Win32FontInfo::GetGBPreference(ByteString& face,
                                         int weight,
                                         int picth_family) {
   if (face.Contains("KaiTi") || face.Contains("\xbf\xac")) {
@@ -530,7 +528,7 @@ void CFX_Win32FontInfo::GetGBPreference(CFX_ByteString& face,
   }
 }
 
-void CFX_Win32FontInfo::GetJapanesePreference(CFX_ByteString& face,
+void CFX_Win32FontInfo::GetJapanesePreference(ByteString& face,
                                               int weight,
                                               int picth_family) {
   if (face.Contains("Gothic") ||
@@ -573,10 +571,10 @@ void* CFX_Win32FontInfo::MapFont(int weight,
                                  int pitch_family,
                                  const char* cstr_face,
                                  int& iExact) {
-  CFX_ByteString face = cstr_face;
+  ByteString face = cstr_face;
   int iBaseFont;
   for (iBaseFont = 0; iBaseFont < 12; iBaseFont++)
-    if (face == CFX_ByteStringC(g_Base14Substs[iBaseFont].m_pName)) {
+    if (face == ByteStringView(g_Base14Substs[iBaseFont].m_pName)) {
       face = g_Base14Substs[iBaseFont].m_pWinName;
       weight = g_Base14Substs[iBaseFont].m_bBold ? FW_BOLD : FW_NORMAL;
       bItalic = g_Base14Substs[iBaseFont].m_bItalic;
@@ -607,15 +605,15 @@ void* CFX_Win32FontInfo::MapFont(int weight,
   if (face.EqualNoCase(facebuf))
     return hFont;
 
-  CFX_WideString wsFace = CFX_WideString::FromLocal(facebuf);
+  WideString wsFace = WideString::FromLocal(facebuf);
   for (size_t i = 0; i < FX_ArraySize(g_VariantNames); ++i) {
     if (face != g_VariantNames[i].m_pFaceName)
       continue;
 
     const unsigned short* pName = reinterpret_cast<const unsigned short*>(
         g_VariantNames[i].m_pVariantName);
-    FX_STRSIZE len = CFX_WideString::WStringLength(pName);
-    CFX_WideString wsName = CFX_WideString::FromUTF16LE(pName, len);
+    FX_STRSIZE len = WideString::WStringLength(pName);
+    WideString wsName = WideString::FromUTF16LE(pName, len);
     if (wsFace == wsName)
       return hFont;
   }
@@ -665,7 +663,7 @@ uint32_t CFX_Win32FontInfo::GetFontData(void* hFont,
   return size;
 }
 
-bool CFX_Win32FontInfo::GetFaceName(void* hFont, CFX_ByteString* name) {
+bool CFX_Win32FontInfo::GetFaceName(void* hFont, ByteString* name) {
   char facebuf[100];
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   int ret = ::GetTextFaceA(m_hDC, 100, facebuf);
@@ -702,7 +700,7 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
   CHAR windows_path[MAX_PATH] = {};
   DWORD path_len = ::GetWindowsDirectoryA(windows_path, MAX_PATH);
   if (path_len > 0 && path_len < MAX_PATH) {
-    CFX_ByteString fonts_path(windows_path);
+    ByteString fonts_path(windows_path);
     fonts_path += "\\Fonts";
     pInfoFallback->AddPath(fonts_path);
   }
@@ -799,7 +797,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(
 
     int width = pSrcRect->Width(), height = pSrcRect->Height();
     LPBYTE pBuffer = pBitmap->GetBuffer();
-    CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+    ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
     FX_RECT dst_rect(0, 0, width, height);
     dst_rect.Intersect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
@@ -817,7 +815,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(
     }
     int width = pSrcRect->Width(), height = pSrcRect->Height();
     LPBYTE pBuffer = pBitmap->GetBuffer();
-    CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+    ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
     ::SetDIBitsToDevice(m_hDC, left, top, width, height, pSrcRect->left,
                         pBitmap->GetHeight() - pSrcRect->bottom, 0,
                         pBitmap->GetHeight(), pBuffer,
@@ -840,7 +838,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
   if (pBitmap->IsCmykImage() && !pBitmap->ConvertFormat(FXDIB_Rgb))
     return false;
 
-  CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+  ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
   if ((int64_t)abs(dest_width) * abs(dest_height) <
           (int64_t)pBitmap1->GetWidth() * pBitmap1->GetHeight() * 4 ||
       (flags & FXDIB_INTERPOL) || (flags & FXDIB_BICUBIC_INTERPOL)) {
@@ -854,7 +852,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
        (int64_t)abs(dest_width) * abs(dest_height))) {
     pToStrechBitmap = pBitmap->StretchTo(dest_width, dest_height, 0, nullptr);
   }
-  CFX_ByteString toStrechBitmapInfo =
+  ByteString toStrechBitmapInfo =
       CFX_WindowsDIB::GetBitmapInfo(pToStrechBitmap);
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
                   pToStrechBitmap->GetWidth(), pToStrechBitmap->GetHeight(),

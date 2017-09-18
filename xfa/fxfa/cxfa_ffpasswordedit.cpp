@@ -31,7 +31,7 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  CFX_WideString wsText;
+  WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetText(wsText);
   UpdateWidgetProperty();
@@ -49,7 +49,7 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
                              FWL_STYLEEXT_EDT_Password;
   dwExtendedStyle |= UpdateUIProperty();
 
-  CFX_WideString wsPassWord;
+  WideString wsPassWord;
   m_pDataAcc->GetPasswordChar(wsPassWord);
   if (!wsPassWord.IsEmpty())
     pWidget->SetAliasChar(wsPassWord[0]);

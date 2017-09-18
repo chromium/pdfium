@@ -191,13 +191,13 @@ void CFDE_TextOut::SetLineBreakTolerance(float fTolerance) {
   m_pTxtBreak->SetLineBreakTolerance(m_fTolerance);
 }
 
-void CFDE_TextOut::CalcLogicSize(const CFX_WideString& str, CFX_SizeF& size) {
+void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_SizeF& size) {
   CFX_RectF rtText(0.0f, 0.0f, size.width, size.height);
   CalcLogicSize(str, rtText);
   size = rtText.Size();
 }
 
-void CFDE_TextOut::CalcLogicSize(const CFX_WideString& str, CFX_RectF& rect) {
+void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_RectF& rect) {
   if (str.IsEmpty()) {
     rect.width = 0.0f;
     rect.height = 0.0f;
@@ -278,7 +278,7 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
 }
 
 void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
-                                 const CFX_WideStringC& str,
+                                 const WideStringView& str,
                                  const CFX_RectF& rect) {
   ASSERT(m_pFont && m_fFontSize >= 1.0f);
 
@@ -292,7 +292,7 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
   m_ttoLines.clear();
   m_wsText.clear();
 
-  LoadText(CFX_WideString(str), rect);
+  LoadText(WideString(str), rect);
   Reload(rect);
   DoAlignment(rect);
 
@@ -321,7 +321,7 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
   device->RestoreState(false);
 }
 
-void CFDE_TextOut::LoadText(const CFX_WideString& str, const CFX_RectF& rect) {
+void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
   ASSERT(!str.IsEmpty());
 
   m_wsText = str;

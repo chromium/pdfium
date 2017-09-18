@@ -15,7 +15,7 @@ CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::LogPseudoModel,
-                  CFX_WideStringC(L"logPseudoModel")) {}
+                  WideStringView(L"logPseudoModel")) {}
 
 CScript_LogPseudoModel::~CScript_LogPseudoModel() {}
 

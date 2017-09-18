@@ -37,7 +37,7 @@ Annot::~Annot() {}
 
 bool Annot::hidden(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   if (vp.IsGetting()) {
     if (!m_pAnnot) {
       sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -71,9 +71,7 @@ bool Annot::hidden(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool Annot::name(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool Annot::name(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (vp.IsGetting()) {
     if (!m_pAnnot) {
       sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -83,7 +81,7 @@ bool Annot::name(CJS_Runtime* pRuntime,
     return true;
   }
 
-  CFX_WideString annotName;
+  WideString annotName;
   vp >> annotName;  // May invalidate m_pAnnot.
   if (!m_pAnnot) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -94,9 +92,7 @@ bool Annot::name(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool Annot::type(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool Annot::type(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;

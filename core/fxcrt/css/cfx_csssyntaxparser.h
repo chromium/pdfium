@@ -47,7 +47,7 @@ class CFX_CSSSyntaxParser {
   ~CFX_CSSSyntaxParser();
 
   CFX_CSSSyntaxStatus DoSyntaxParse();
-  CFX_WideStringC GetCurrentString() const;
+  WideStringView GetCurrentString() const;
 
  protected:
   void SwitchMode(CFX_CSSSyntaxMode eMode);

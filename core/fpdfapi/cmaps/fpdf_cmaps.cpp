@@ -53,7 +53,7 @@ static int compareDWordSingle(const void* p1, const void* p2) {
 
 };  // extern "C"
 
-void FPDFAPI_FindEmbeddedCMap(const CFX_ByteString& bsName,
+void FPDFAPI_FindEmbeddedCMap(const ByteString& bsName,
                               int charset,
                               int coding,
                               const FXCMAP_CMap*& pMap) {

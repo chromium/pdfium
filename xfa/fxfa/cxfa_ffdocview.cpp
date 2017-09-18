@@ -154,12 +154,12 @@ void CXFA_FFDocView::ShowNullTestMsg() {
   if (pAppProvider && iCount) {
     int32_t iRemain = iCount > 7 ? iCount - 7 : 0;
     iCount -= iRemain;
-    CFX_WideString wsMsg;
+    WideString wsMsg;
     for (int32_t i = 0; i < iCount; i++) {
       wsMsg += m_arrNullTestMsg[i] + L"\n";
     }
     if (iRemain > 0) {
-      CFX_WideString wsTemp;
+      WideString wsTemp;
       wsTemp.Format(
           L"Message limit exceeded. Remaining %d "
           L"validation errors not reported.",
@@ -259,7 +259,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
     return XFA_EVENTERROR_Error;
 
   if (pParam->m_eType == XFA_EVENT_Validate) {
-    CFX_WideString wsValidateStr(L"preSubmit");
+    WideString wsValidateStr(L"preSubmit");
     CXFA_Node* pConfigItem =
         ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Config));
     if (pConfigItem) {
@@ -478,7 +478,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
   return iRet;
 }
 
-CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const CFX_WideString& wsName,
+CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
                                                CXFA_FFWidget* pRefWidget) {
   CXFA_WidgetAcc* pRefAcc = pRefWidget ? pRefWidget->GetDataAcc() : nullptr;
   CXFA_WidgetAcc* pAcc = GetWidgetAccByName(wsName, pRefAcc);
@@ -486,9 +486,9 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const CFX_WideString& wsName,
 }
 
 CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
-    const CFX_WideString& wsName,
+    const WideString& wsName,
     CXFA_WidgetAcc* pRefWidgetAcc) {
-  CFX_WideString wsExpression;
+  WideString wsExpression;
   uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   CXFA_ScriptContext* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
@@ -504,7 +504,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   }
   XFA_RESOLVENODE_RS resoveNodeRS;
   int32_t iRet = pScriptContext->ResolveObjects(
-      refNode, wsExpression.AsStringC(), resoveNodeRS, dwStyle);
+      refNode, wsExpression.AsStringView(), resoveNodeRS, dwStyle);
   if (iRet < 1)
     return nullptr;
 
@@ -735,7 +735,7 @@ void CXFA_FFDocView::RunBindItems() {
     CXFA_BindItems binditems(item);
     CXFA_ScriptContext* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
-    CFX_WideStringC wsRef;
+    WideStringView wsRef;
     binditems.GetRef(wsRef);
     uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
@@ -746,14 +746,14 @@ void CXFA_FFDocView::RunBindItems() {
     if (rs.dwFlags != XFA_RESOVENODE_RSTYPE_Nodes || rs.objects.empty())
       continue;
 
-    CFX_WideStringC wsValueRef, wsLabelRef;
+    WideStringView wsValueRef, wsLabelRef;
     binditems.GetValueRef(wsValueRef);
     binditems.GetLabelRef(wsLabelRef);
     const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
     const bool bLabelUseContent = wsLabelRef.IsEmpty() || wsLabelRef == L"$";
     const bool bValueUseContent = wsValueRef.IsEmpty() || wsValueRef == L"$";
-    CFX_WideString wsValue;
-    CFX_WideString wsLabel;
+    WideString wsValue;
+    WideString wsLabel;
     uint32_t uValueHash = FX_HashCode_GetW(wsValueRef, false);
     for (CXFA_Object* refObject : rs.objects) {
       CXFA_Node* refNode = refObject->AsNode();

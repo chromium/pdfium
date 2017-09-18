@@ -24,7 +24,7 @@ class CPDF_Reference : public CPDF_Object {
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
   CPDF_Object* GetDirect() const override;
-  CFX_ByteString GetString() const override;
+  ByteString GetString() const override;
   float GetNumber() const override;
   int GetInteger() const override;
   CPDF_Dictionary* GetDict() const override;

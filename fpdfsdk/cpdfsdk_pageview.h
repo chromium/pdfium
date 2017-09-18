@@ -61,8 +61,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
     return m_pFormFillEnv.Get();
   }
 
-  CFX_WideString GetSelectedText();
-  void ReplaceSelection(const CFX_WideString& text);
+  WideString GetSelectedText();
+  void ReplaceSelection(const WideString& text);
 
   bool OnFocus(const CFX_PointF& point, uint32_t nFlag);
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag);

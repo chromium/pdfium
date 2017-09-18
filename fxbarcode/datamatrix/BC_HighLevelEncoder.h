@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_widestring.h"
+#include "core/fxcrt/widestring.h"
 
 #define ASCII_ENCODATION 0
 #define C40_ENCODATION 1
@@ -23,18 +23,18 @@ class CBC_HighLevelEncoder {
   CBC_HighLevelEncoder();
   ~CBC_HighLevelEncoder();
 
-  std::vector<uint8_t>& getBytesForMessage(CFX_WideString msg);
+  std::vector<uint8_t>& getBytesForMessage(WideString msg);
 
-  static CFX_WideString encodeHighLevel(CFX_WideString msg,
-                                        CFX_WideString ecLevel,
-                                        bool allowRectangular,
-                                        int32_t& e);
-  static int32_t lookAheadTest(CFX_WideString msg,
+  static WideString encodeHighLevel(WideString msg,
+                                    WideString ecLevel,
+                                    bool allowRectangular,
+                                    int32_t& e);
+  static int32_t lookAheadTest(WideString msg,
                                int32_t startpos,
                                int32_t currentMode);
   static bool isDigit(wchar_t ch);
   static bool isExtendedASCII(wchar_t ch);
-  static int32_t determineConsecutiveDigitCount(CFX_WideString msg,
+  static int32_t determineConsecutiveDigitCount(WideString msg,
                                                 int32_t startpos);
 
   static const wchar_t LATCH_TO_C40;

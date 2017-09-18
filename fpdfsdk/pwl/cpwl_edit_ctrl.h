@@ -25,7 +25,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   CPWL_EditCtrl();
   ~CPWL_EditCtrl() override;
 
-  CFX_WideString GetText() const;
+  WideString GetText() const;
   void SetSelection(int32_t nStartChar, int32_t nEndChar);
   void GetSelection(int32_t& nStartChar, int32_t& nEndChar) const;
   void ClearSelection();
@@ -60,8 +60,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;
   void SetCursor() override;
-  CFX_WideString GetSelectedText() override;
-  void ReplaceSelection(const CFX_WideString& text) override;
+  WideString GetSelectedText() override;
+  void ReplaceSelection(const WideString& text) override;
 
   void SetCaret(bool bVisible,
                 const CFX_PointF& ptHead,

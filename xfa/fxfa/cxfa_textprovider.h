@@ -39,8 +39,8 @@ class CXFA_TextProvider {
   CXFA_FFDoc* GetDocNode() { return m_pWidgetAcc->GetDoc(); }
   bool GetEmbbedObj(bool bURI,
                     bool bRaw,
-                    const CFX_WideString& wsAttr,
-                    CFX_WideString& wsValue);
+                    const WideString& wsAttr,
+                    WideString& wsValue);
 
  private:
   CXFA_WidgetAcc* m_pWidgetAcc;

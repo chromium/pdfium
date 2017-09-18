@@ -181,7 +181,7 @@ bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,
        pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element) {
       CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-      CFX_WideString wsTagName = pXMLElement->GetName();
+      WideString wsTagName = pXMLElement->GetName();
       if (wsTagName == L"document") {
         pDocumentElement = pXMLElement;
         break;
@@ -197,7 +197,7 @@ bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,
        pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element) {
       CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-      CFX_WideString wsTagName = pXMLElement->GetName();
+      WideString wsTagName = pXMLElement->GetName();
       if (wsTagName == L"chunk") {
         pChunkElement = pXMLElement;
         break;
@@ -207,7 +207,7 @@ bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,
   if (!pChunkElement) {
     return false;
   }
-  CFX_WideString wsPDFContent = pChunkElement->GetTextData();
+  WideString wsPDFContent = pChunkElement->GetTextData();
   iBufferSize =
       Base64DecodeW(wsPDFContent.c_str(), wsPDFContent.GetLength(), nullptr);
   pByteBuffer = FX_Alloc(uint8_t, iBufferSize + 1);
@@ -261,7 +261,7 @@ void CXFA_FFDoc::StopLoad() {
   if (!pDynamicRender)
     return;
 
-  CFX_WideString wsType;
+  WideString wsType;
   if (pDynamicRender->TryContent(wsType) && wsType == L"required")
     m_dwDocType = XFA_DocType::Dynamic;
 }
@@ -333,7 +333,7 @@ void CXFA_FFDoc::CloseDoc() {
 }
 
 CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
-    const CFX_WideStringC& wsName,
+    const WideStringView& wsName,
     int32_t& iImageXDpi,
     int32_t& iImageYDpi) {
   if (!m_pPDFDoc)
@@ -360,10 +360,10 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
     return nullptr;
 
   CPDF_NameTree nametree(pXFAImages);
-  CPDF_Object* pObject = nametree.LookupValue(CFX_WideString(wsName));
+  CPDF_Object* pObject = nametree.LookupValue(WideString(wsName));
   if (!pObject) {
     for (size_t i = 0; i < nametree.GetCount(); i++) {
-      CFX_WideString wsTemp;
+      WideString wsTemp;
       CPDF_Object* pTempObject = nametree.LookupValueAndName(i, &wsTemp);
       if (wsTemp == wsName) {
         pObject = pTempObject;
@@ -399,7 +399,7 @@ bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
   if (!pNode)
     return !!pExport->Export(pFile);
 
-  CFX_ByteString bsChecksum;
+  ByteString bsChecksum;
   if (pCSContext)
     bsChecksum = pCSContext->GetChecksum();
 

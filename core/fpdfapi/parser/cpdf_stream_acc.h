@@ -34,7 +34,7 @@ class CPDF_StreamAcc : public CFX_Retainable {
 
   const uint8_t* GetData() const;
   uint32_t GetSize() const;
-  const CFX_ByteString& GetImageDecoder() const { return m_ImageDecoder; }
+  const ByteString& GetImageDecoder() const { return m_ImageDecoder; }
   const CPDF_Dictionary* GetImageParam() const { return m_pImageParam; }
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachData();
 
@@ -45,7 +45,7 @@ class CPDF_StreamAcc : public CFX_Retainable {
   uint8_t* m_pData;
   uint32_t m_dwSize;
   bool m_bNewBuf;
-  CFX_ByteString m_ImageDecoder;
+  ByteString m_ImageDecoder;
   CPDF_Dictionary* m_pImageParam;
   CFX_UnownedPtr<const CPDF_Stream> const m_pStream;
   uint8_t* m_pSrcData;

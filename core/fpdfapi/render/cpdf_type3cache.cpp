@@ -92,7 +92,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
   keygen.Generate(
       4, FXSYS_round(pMatrix->a * 10000), FXSYS_round(pMatrix->b * 10000),
       FXSYS_round(pMatrix->c * 10000), FXSYS_round(pMatrix->d * 10000));
-  CFX_ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
+  ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
   CPDF_Type3Glyphs* pSizeCache;
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it == m_SizeMap.end()) {

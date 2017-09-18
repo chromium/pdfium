@@ -80,14 +80,14 @@ class CFWL_MonthCalendar : public CFWL_Widget {
              int32_t dayofweek,
              uint32_t dwSt,
              CFX_RectF rc,
-             CFX_WideString& wsday);
+             WideString& wsday);
     ~DATEINFO();
 
     int32_t iDay;
     int32_t iDayOfWeek;
     uint32_t dwStates;
     CFX_RectF rect;
-    CFX_WideString wsDay;
+    WideString wsDay;
   };
 
   void DrawBackground(CXFA_Graphics* pGraphics,
@@ -141,8 +141,8 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   void RemoveSelDay();
   void AddSelDay(int32_t iDay);
   void JumpToToday();
-  CFX_WideString GetHeadText(int32_t iYear, int32_t iMonth);
-  CFX_WideString GetTodayText(int32_t iYear, int32_t iMonth, int32_t iDay);
+  WideString GetHeadText(int32_t iYear, int32_t iMonth);
+  WideString GetTodayText(int32_t iYear, int32_t iMonth, int32_t iDay);
   int32_t GetDayAtPoint(const CFX_PointF& point) const;
   CFX_RectF GetDayRect(int32_t iDay);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
@@ -163,8 +163,8 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   CFX_RectF m_rtTodayFlag;
   CFX_RectF m_rtWeekNum;
   CFX_RectF m_rtWeekNumSep;
-  CFX_WideString m_wsHead;
-  CFX_WideString m_wsToday;
+  WideString m_wsHead;
+  WideString m_wsToday;
   std::vector<std::unique_ptr<DATEINFO>> m_arrDates;
   int32_t m_iCurYear;
   int32_t m_iCurMonth;

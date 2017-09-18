@@ -8,28 +8,27 @@
 
 #include "core/fxcrt/fx_extension.h"
 
-CFX_XMLAttributeNode::CFX_XMLAttributeNode(const CFX_WideString& name)
+CFX_XMLAttributeNode::CFX_XMLAttributeNode(const WideString& name)
     : CFX_XMLNode(), name_(name) {
   ASSERT(name_.GetLength() > 0);
 }
 
 CFX_XMLAttributeNode::~CFX_XMLAttributeNode() {}
 
-bool CFX_XMLAttributeNode::HasAttribute(const CFX_WideString& name) const {
+bool CFX_XMLAttributeNode::HasAttribute(const WideString& name) const {
   return attrs_.find(name) != attrs_.end();
 }
 
-CFX_WideString CFX_XMLAttributeNode::GetString(
-    const CFX_WideString& name) const {
+WideString CFX_XMLAttributeNode::GetString(const WideString& name) const {
   auto it = attrs_.find(name);
-  return it != attrs_.end() ? it->second : CFX_WideString();
+  return it != attrs_.end() ? it->second : WideString();
 }
 
-void CFX_XMLAttributeNode::SetString(const CFX_WideString& name,
-                                     const CFX_WideString& value) {
+void CFX_XMLAttributeNode::SetString(const WideString& name,
+                                     const WideString& value) {
   attrs_[name] = value;
 }
 
-void CFX_XMLAttributeNode::RemoveAttribute(const CFX_WideString& name) {
+void CFX_XMLAttributeNode::RemoveAttribute(const WideString& name) {
   attrs_.erase(name);
 }

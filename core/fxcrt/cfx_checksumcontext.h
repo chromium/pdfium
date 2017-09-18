@@ -18,17 +18,17 @@ class CFX_ChecksumContext {
   ~CFX_ChecksumContext();
 
   void StartChecksum();
-  void Update(const CFX_ByteStringC& bsText);
+  void Update(const ByteStringView& bsText);
   bool UpdateChecksum(const CFX_RetainPtr<IFX_SeekableReadStream>& pSrcFile,
                       FX_FILESIZE offset = 0,
                       size_t size = 0);
   void FinishChecksum();
-  CFX_ByteString GetChecksum() const;
+  ByteString GetChecksum() const;
 
  private:
   std::unique_ptr<CFX_SAXReader> m_pSAXReader;
   std::unique_ptr<CRYPT_sha1_context> m_pByteContext;
-  CFX_ByteString m_bsChecksum;
+  ByteString m_bsChecksum;
 };
 
 #endif  // CORE_FXCRT_CFX_CHECKSUMCONTEXT_H_

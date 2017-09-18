@@ -25,24 +25,23 @@ namespace {
 
 constexpr char kChecksumKey[] = "CheckSum";
 
-CFX_ByteString CFXByteStringHexDecode(const CFX_ByteString& bsHex) {
+ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
   uint8_t* result = nullptr;
   uint32_t size = 0;
   HexDecode(bsHex.raw_str(), bsHex.GetLength(), &result, &size);
-  CFX_ByteString bsDecoded(result, size);
+  ByteString bsDecoded(result, size);
   FX_Free(result);
   return bsDecoded;
 }
 
-CFX_ByteString GenerateMD5Base16(const void* contents,
-                                 const unsigned long len) {
+ByteString GenerateMD5Base16(const void* contents, const unsigned long len) {
   uint8_t digest[16];
   CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(contents), len, digest);
   char buf[32];
   for (int i = 0; i < 16; ++i)
     FXSYS_IntToTwoHexChars(digest[i], &buf[i * 2]);
 
-  return CFX_ByteString(buf, 32);
+  return ByteString(buf, 32);
 }
 
 }  // namespace
@@ -59,8 +58,8 @@ FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document) {
 FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
 FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  CFX_WideString wsName =
-      CFX_WideString::FromUTF16LE(name, CFX_WideString::WStringLength(name));
+  WideString wsName =
+      WideString::FromUTF16LE(name, WideString::WStringLength(name));
   if (!pDoc || wsName.IsEmpty())
     return nullptr;
 
@@ -110,7 +109,7 @@ FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
   if (static_cast<size_t>(index) >= nameTree.GetCount())
     return nullptr;
 
-  CFX_WideString csName;
+  WideString csName;
   return nameTree.LookupValueAndName(index, &csName);
 }
 
@@ -171,8 +170,8 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
   if (!pParamsDict)
     return false;
 
-  CFX_ByteString bsKey = key;
-  CFX_ByteString bsValue = CFXByteStringFromFPDFWideString(value);
+  ByteString bsKey = key;
+  ByteString bsValue = CFXByteStringFromFPDFWideString(value);
   bool bEncodedAsHex = bsKey == kChecksumKey;
   if (bEncodedAsHex)
     bsValue = CFXByteStringHexDecode(bsValue);
@@ -194,12 +193,12 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
   if (!pParamsDict)
     return 0;
 
-  CFX_ByteString bsKey = key;
-  CFX_WideString value = pParamsDict->GetUnicodeTextFor(bsKey);
+  ByteString bsKey = key;
+  WideString value = pParamsDict->GetUnicodeTextFor(bsKey);
   if (bsKey == kChecksumKey && !value.IsEmpty()) {
     CPDF_String* stringValue = pParamsDict->GetObjectFor(bsKey)->AsString();
     if (stringValue->IsHex()) {
-      CFX_ByteString encoded = PDF_EncodeString(stringValue->GetString(), true);
+      ByteString encoded = PDF_EncodeString(stringValue->GetString(), true);
       value = CPDF_String(nullptr, encoded, false).GetUnicodeText();
     }
   }
@@ -233,7 +232,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   // Set the creation date of the new attachment in the dictionary.
   CFX_DateTime dateTime;
   dateTime.Now();
-  CFX_ByteString bsDateTime;
+  ByteString bsDateTime;
   bsDateTime.Format("D:%d%02d%02d%02d%02d%02d", dateTime.GetYear(),
                     dateTime.GetMonth(), dateTime.GetDay(), dateTime.GetHour(),
                     dateTime.GetMinute(), dateTime.GetSecond());

@@ -25,7 +25,7 @@ struct JSGlobalData {
   JS_GlobalDataType nType;
   double dData;
   bool bData;
-  CFX_ByteString sData;
+  ByteString sData;
   v8::Global<v8::Object> pData;
   bool bPersistent;
   bool bDeleted;
@@ -39,26 +39,26 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   bool setPersistent(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
-                     CFX_WideString& sError);
+                     WideString& sError);
   bool QueryProperty(const wchar_t* propname);
   bool DoProperty(CJS_Runtime* pRuntime,
                   const wchar_t* propname,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError);
+                  WideString& sError);
   bool DelProperty(CJS_Runtime* pRuntime,
                    const wchar_t* propname,
-                   CFX_WideString& sError);
+                   WideString& sError);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
  private:
   void UpdateGlobalPersistentVariables();
   void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
   void DestroyGlobalPersisitentVariables();
-  bool SetGlobalVariables(const CFX_ByteString& propname,
+  bool SetGlobalVariables(const ByteString& propname,
                           JS_GlobalDataType nType,
                           double dData,
                           bool bData,
-                          const CFX_ByteString& sData,
+                          const ByteString& sData,
                           v8::Local<v8::Object> pData,
                           bool bDefaultPersistent);
   void ObjectToArray(CJS_Runtime* pRuntime,
@@ -66,8 +66,8 @@ class JSGlobalAlternate : public CJS_EmbedObj {
                      CJS_GlobalVariableArray& array);
   void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
 
-  std::map<CFX_ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
-  CFX_WideString m_sFilePath;
+  std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
+  WideString m_sFilePath;
   CJS_GlobalData* m_pGlobalData;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
 };

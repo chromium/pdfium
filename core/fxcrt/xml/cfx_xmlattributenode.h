@@ -15,30 +15,30 @@
 
 class CFX_XMLAttributeNode : public CFX_XMLNode {
  public:
-  explicit CFX_XMLAttributeNode(const CFX_WideString& name);
+  explicit CFX_XMLAttributeNode(const WideString& name);
   ~CFX_XMLAttributeNode() override;
 
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override = 0;
   std::unique_ptr<CFX_XMLNode> Clone() override = 0;
 
-  CFX_WideString GetName() const { return name_; }
-  const std::map<CFX_WideString, CFX_WideString>& GetAttributes() const {
+  WideString GetName() const { return name_; }
+  const std::map<WideString, WideString>& GetAttributes() const {
     return attrs_;
   }
-  void SetAttributes(const std::map<CFX_WideString, CFX_WideString>& attrs) {
+  void SetAttributes(const std::map<WideString, WideString>& attrs) {
     attrs_ = attrs;
   }
-  bool HasAttribute(const CFX_WideString& name) const;
+  bool HasAttribute(const WideString& name) const;
 
-  void SetString(const CFX_WideString& name, const CFX_WideString& value);
-  CFX_WideString GetString(const CFX_WideString& name) const;
+  void SetString(const WideString& name, const WideString& value);
+  WideString GetString(const WideString& name) const;
 
-  void RemoveAttribute(const CFX_WideString& name);
+  void RemoveAttribute(const WideString& name);
 
  private:
-  CFX_WideString name_;
-  std::map<CFX_WideString, CFX_WideString> attrs_;
+  WideString name_;
+  std::map<WideString, WideString> attrs_;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLATTRIBUTENODE_H_

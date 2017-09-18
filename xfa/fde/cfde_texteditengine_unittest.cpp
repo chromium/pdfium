@@ -20,9 +20,9 @@ class CFDE_TextEditEngineTest : public testing::Test {
     void NotifyTextFull() override { text_is_full = true; }
 
     void OnCaretChanged() override {}
-    void OnTextChanged(const CFX_WideString& prevText) override {}
+    void OnTextChanged(const WideString& prevText) override {}
     void OnSelChanged() override {}
-    bool OnValidate(const CFX_WideString& wsText) override {
+    bool OnValidate(const WideString& wsText) override {
       return !fail_validation;
     }
     void SetScrollOffset(float fScrollOffset) override {}

@@ -70,19 +70,19 @@ void CFX_BlockBuffer::DeleteTextChars(size_t count) {
   m_DataLength -= count;
 }
 
-CFX_WideString CFX_BlockBuffer::GetTextData(size_t start, size_t length) const {
+WideString CFX_BlockBuffer::GetTextData(size_t start, size_t length) const {
   if (m_BufferSize <= m_StartPosition + 1 || length == 0)
-    return CFX_WideString();
+    return WideString();
 
   size_t maybeDataLength = m_BufferSize - 1 - m_StartPosition;
   if (start > maybeDataLength)
-    return CFX_WideString();
+    return WideString();
   length = std::min(length, maybeDataLength);
 
-  CFX_WideString wsTextData;
+  WideString wsTextData;
   wchar_t* pBuf = wsTextData.GetBuffer(length);
   if (!pBuf)
-    return CFX_WideString();
+    return WideString();
 
   size_t startBlock = 0;
   size_t startInner = 0;

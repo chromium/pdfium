@@ -74,7 +74,7 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 
   int32_t nMaxLen = m_pWidget->GetMaxLen();
-  CFX_WideString swValue = m_pWidget->GetValue();
+  WideString swValue = m_pWidget->GetValue();
 
   if (nMaxLen > 0) {
     if (pWnd->HasFlag(PES_CHARARRAY)) {
@@ -136,8 +136,8 @@ void CFFL_TextField::SaveData(CPDFSDK_PageView* pPageView) {
   if (!pWnd)
     return;
 
-  CFX_WideString sOldValue = m_pWidget->GetValue();
-  CFX_WideString sNewValue = pWnd->GetText();
+  WideString sOldValue = m_pWidget->GetValue();
+  WideString sNewValue = pWnd->GetText();
 
   m_pWidget->SetValue(sNewValue, false);
   m_pWidget->ResetFieldAppearance(true);
@@ -239,9 +239,9 @@ void CFFL_TextField::OnSetFocus(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_CHARSET_ChineseSimplified);
   pEdit->SetReadyToInput();
 
-  CFX_WideString wsText = pEdit->GetText();
+  WideString wsText = pEdit->GetText();
   int nCharacters = wsText.GetLength();
-  CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
+  ByteString bsUTFText = wsText.UTF16LE_Encode();
   auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
   m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, true);
 }

@@ -21,8 +21,8 @@ int XFA_GetMaxFractionalScale();
 
 bool XFA_FDEExtension_ResolveNamespaceQualifier(
     CFX_XMLElement* pNode,
-    const CFX_WideStringC& wsQualifier,
-    CFX_WideString* wsNamespaceURI);
+    const WideStringView& wsQualifier,
+    WideString* wsNamespaceURI);
 
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {
@@ -144,12 +144,12 @@ class CXFA_NodeIteratorTemplate {
 };
 
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
-double XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
+double XFA_ByteStringToDouble(const ByteStringView& szStringVal);
 int32_t XFA_MapRotation(int32_t nRotation);
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode);
 void XFA_GetPlainTextFromRichText(CFX_XMLNode* pXMLNode,
-                                  CFX_WideString& wsPlainText);
+                                  WideString& wsPlainText);
 bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
@@ -166,7 +166,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
-    const CFX_WideStringC& wsAttributeName);
+    const WideStringView& wsAttributeName);
 
 const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
                                              XFA_Element eProperty,
@@ -175,7 +175,7 @@ const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
                                              int32_t& iCount);
 const uint8_t* XFA_GetElementAttributes(XFA_Element eElement, int32_t& iCount);
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName);
-XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName);
+XFA_Element XFA_GetElementTypeForName(const WideStringView& wsName);
 CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
                                                       XFA_ATTRIBUTE eAttribute,
                                                       uint32_t dwPacket);
@@ -184,10 +184,10 @@ bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_ATTRIBUTE eAttribute,
                                   XFA_ATTRIBUTETYPE eType,
                                   uint32_t dwPacket);
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName);
+const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName);
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
-    const CFX_WideStringC& wsName);
+    const WideStringView& wsName);
 const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket);
 const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket);
 

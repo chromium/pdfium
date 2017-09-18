@@ -16,7 +16,7 @@ XFA_Element CXFA_Value::GetChildValueClassID() {
   return XFA_Element::Unknown;
 }
 
-bool CXFA_Value::GetChildValueContent(CFX_WideString& wsContent) {
+bool CXFA_Value::GetChildValueContent(WideString& wsContent) {
   if (!m_pNode)
     return false;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))

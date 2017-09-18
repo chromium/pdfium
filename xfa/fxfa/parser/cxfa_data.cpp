@@ -11,7 +11,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 // Static.
-FX_ARGB CXFA_Data::ToColor(const CFX_WideStringC& wsValue) {
+FX_ARGB CXFA_Data::ToColor(const WideStringView& wsValue) {
   uint8_t r = 0, g = 0, b = 0;
   if (wsValue.GetLength() == 0)
     return 0xff000000;

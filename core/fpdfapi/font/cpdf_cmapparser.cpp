@@ -32,9 +32,9 @@ CIDSet CIDSetFromSizeT(size_t index) {
   return static_cast<CIDSet>(index);
 }
 
-CFX_ByteStringC CMap_GetString(const CFX_ByteStringC& word) {
+ByteStringView CMap_GetString(const ByteStringView& word) {
   if (word.GetLength() <= 2)
-    return CFX_ByteStringC();
+    return ByteStringView();
   return word.Right(word.GetLength() - 2);
 }
 
@@ -45,7 +45,7 @@ CPDF_CMapParser::CPDF_CMapParser(CPDF_CMap* pCMap)
 
 CPDF_CMapParser::~CPDF_CMapParser() {}
 
-void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
+void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
   if (word.IsEmpty()) {
     return;
   }
@@ -126,7 +126,7 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
       }
       if (m_CodeSeq % 2) {
         CPDF_CMap::CodeRange range;
-        if (CMap_GetCodeRange(range, m_LastWord.AsStringC(), word))
+        if (CMap_GetCodeRange(range, m_LastWord.AsStringView(), word))
           m_CodeRanges.push_back(range);
       }
       m_CodeSeq++;
@@ -136,7 +136,7 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
 }
 
 // Static.
-uint32_t CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
+uint32_t CPDF_CMapParser::CMap_GetCode(const ByteStringView& word) {
   if (word.IsEmpty())
     return 0;
   pdfium::base::CheckedNumeric<uint32_t> num = 0;
@@ -160,8 +160,8 @@ uint32_t CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
 
 // Static.
 bool CPDF_CMapParser::CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
-                                        const CFX_ByteStringC& first,
-                                        const CFX_ByteStringC& second) {
+                                        const ByteStringView& first,
+                                        const ByteStringView& second) {
   if (first.GetLength() == 0 || first[0] != '<')
     return false;
 
@@ -193,7 +193,7 @@ bool CPDF_CMapParser::CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
 }
 
 // static
-CIDSet CPDF_CMapParser::CharsetFromOrdering(const CFX_ByteStringC& ordering) {
+CIDSet CPDF_CMapParser::CharsetFromOrdering(const ByteStringView& ordering) {
   for (size_t charset = 1; charset < FX_ArraySize(g_CharsetNames); ++charset) {
     if (ordering == g_CharsetNames[charset])
       return CIDSetFromSizeT(charset);

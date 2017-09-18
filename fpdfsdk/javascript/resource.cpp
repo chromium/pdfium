@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/resource.h"
 
-CFX_WideString JSGetStringFromID(uint32_t id) {
+WideString JSGetStringFromID(uint32_t id) {
   switch (id) {
     case IDS_STRING_JSALERT:
       return L"Alert";
@@ -54,13 +54,13 @@ CFX_WideString JSGetStringFromID(uint32_t id) {
   }
 }
 
-CFX_WideString JSFormatErrorString(const char* class_name,
-                                   const char* property_name,
-                                   const CFX_WideString& details) {
-  CFX_WideString result = CFX_WideString::FromLocal(class_name);
+WideString JSFormatErrorString(const char* class_name,
+                               const char* property_name,
+                               const WideString& details) {
+  WideString result = WideString::FromLocal(class_name);
   if (property_name) {
     result += L".";
-    result += CFX_WideString::FromLocal(property_name);
+    result += WideString::FromLocal(property_name);
   }
   result += L": ";
   result += details;

@@ -151,11 +151,11 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
         if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data)
           continue;
 
-        CFX_WideString wsNamespaceURI;
+        WideString wsNamespaceURI;
         if (!pDatasetsChild->TryNamespace(wsNamespaceURI))
           continue;
 
-        CFX_WideString wsDatasetsURI;
+        WideString wsDatasetsURI;
         if (!pDatasetsNode->TryNamespace(wsDatasetsURI))
           continue;
         if (wsNamespaceURI == wsDatasetsURI)
@@ -255,7 +255,7 @@ bool CXFA_Document::IsInteractive() {
   if (!pConfig)
     return false;
 
-  CFX_WideString wsInteractive;
+  WideString wsInteractive;
   CXFA_Node* pPresent = pConfig->GetFirstChildByClass(XFA_Element::Present);
   if (!pPresent)
     return false;
@@ -297,11 +297,11 @@ CXFA_ScriptContext* CXFA_Document::GetScriptContext() {
 }
 
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
-    const CFX_WideString& wsTemplateNS) {
-  CFX_WideStringC wsTemplateURIPrefix =
+    const WideString& wsTemplateNS) {
+  WideStringView wsTemplateURIPrefix =
       XFA_GetPacketByIndex(XFA_PACKET_Template)->pURI;
   FX_STRSIZE nPrefixLength = wsTemplateURIPrefix.GetLength();
-  if (CFX_WideStringC(wsTemplateNS.c_str(), wsTemplateNS.GetLength()) !=
+  if (WideStringView(wsTemplateNS.c_str(), wsTemplateNS.GetLength()) !=
       wsTemplateURIPrefix) {
     return XFA_VERSION_UNKNOWN;
   }
@@ -325,14 +325,14 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
 }
 
 CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
-                                      const CFX_WideStringC& wsID) {
+                                      const WideStringView& wsID) {
   if (!pRoot || wsID.IsEmpty())
     return nullptr;
 
   CXFA_NodeIterator sIterator(pRoot);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
-    CFX_WideStringC wsIDVal;
+    WideStringView wsIDVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) && !wsIDVal.IsEmpty()) {
       if (wsIDVal == wsID)
         return pNode;
@@ -351,11 +351,11 @@ void CXFA_Document::DoProtoMerge() {
   CXFA_NodeIterator sIterator(pTemplateRoot);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
-    CFX_WideStringC wsIDVal;
+    WideStringView wsIDVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) && !wsIDVal.IsEmpty()) {
       mIDMap[FX_HashCode_GetW(wsIDVal, false)] = pNode;
     }
-    CFX_WideStringC wsUseVal;
+    WideStringView wsUseVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) && !wsUseVal.IsEmpty()) {
       sUseNodes.insert(pNode);
     } else if (pNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
@@ -365,33 +365,33 @@ void CXFA_Document::DoProtoMerge() {
   }
 
   for (CXFA_Node* pUseHrefNode : sUseNodes) {
-    CFX_WideString wsUseVal;
-    CFX_WideStringC wsURI, wsID, wsSOM;
+    WideString wsUseVal;
+    WideStringView wsURI, wsID, wsSOM;
     if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
         !wsUseVal.IsEmpty()) {
       auto uSharpPos = wsUseVal.Find('#');
       if (!uSharpPos.has_value()) {
-        wsURI = wsUseVal.AsStringC();
+        wsURI = wsUseVal.AsStringView();
       } else {
-        wsURI = CFX_WideStringC(wsUseVal.c_str(), uSharpPos.value());
+        wsURI = WideStringView(wsUseVal.c_str(), uSharpPos.value());
         FX_STRSIZE uLen = wsUseVal.GetLength();
         if (uLen >= uSharpPos.value() + 5 &&
-            CFX_WideStringC(wsUseVal.c_str() + uSharpPos.value(), 5) ==
+            WideStringView(wsUseVal.c_str() + uSharpPos.value(), 5) ==
                 L"#som(" &&
             wsUseVal[uLen - 1] == ')') {
-          wsSOM = CFX_WideStringC(wsUseVal.c_str() + uSharpPos.value() + 5,
-                                  uLen - 1 - uSharpPos.value() - 5);
+          wsSOM = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 5,
+                                 uLen - 1 - uSharpPos.value() - 5);
         } else {
-          wsID = CFX_WideStringC(wsUseVal.c_str() + uSharpPos.value() + 1,
-                                 uLen - uSharpPos.value() - 1);
+          wsID = WideStringView(wsUseVal.c_str() + uSharpPos.value() + 1,
+                                uLen - uSharpPos.value() - 1);
         }
       }
     } else if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) &&
                !wsUseVal.IsEmpty()) {
       if (wsUseVal[0] == '#')
-        wsID = CFX_WideStringC(wsUseVal.c_str() + 1, wsUseVal.GetLength() - 1);
+        wsID = WideStringView(wsUseVal.c_str() + 1, wsUseVal.GetLength() - 1);
       else
-        wsSOM = CFX_WideStringC(wsUseVal.c_str(), wsUseVal.GetLength());
+        wsSOM = WideStringView(wsUseVal.c_str(), wsUseVal.GetLength());
     }
 
     if (!wsURI.IsEmpty() && wsURI != L".")

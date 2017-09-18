@@ -32,7 +32,7 @@ class CFXJSE_Class {
   v8::Global<v8::FunctionTemplate>& GetTemplate() { return m_hTemplate; }
 
  protected:
-  CFX_ByteString m_szClassName;
+  ByteString m_szClassName;
   CFX_UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> m_lpClassDefinition;
   CFX_UnownedPtr<CFXJSE_Context> m_pContext;
   v8::Global<v8::FunctionTemplate> m_hTemplate;

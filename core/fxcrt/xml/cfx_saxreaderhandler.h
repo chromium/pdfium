@@ -18,24 +18,24 @@ class CFX_SAXReaderHandler : public CFX_SAXReader::HandlerIface {
   explicit CFX_SAXReaderHandler(CFX_ChecksumContext* pContext);
   ~CFX_SAXReaderHandler() override;
 
-  CFX_SAXContext* OnTagEnter(const CFX_ByteStringC& bsTagName,
+  CFX_SAXContext* OnTagEnter(const ByteStringView& bsTagName,
                              CFX_SAXItem::Type eType,
                              uint32_t dwStartPos) override;
   void OnTagAttribute(CFX_SAXContext* pTag,
-                      const CFX_ByteStringC& bsAttri,
-                      const CFX_ByteStringC& bsValue) override;
+                      const ByteStringView& bsAttri,
+                      const ByteStringView& bsValue) override;
   void OnTagBreak(CFX_SAXContext* pTag) override;
   void OnTagData(CFX_SAXContext* pTag,
                  CFX_SAXItem::Type eType,
-                 const CFX_ByteStringC& bsData,
+                 const ByteStringView& bsData,
                  uint32_t dwStartPos) override;
   void OnTagClose(CFX_SAXContext* pTag, uint32_t dwEndPos) override;
   void OnTagEnd(CFX_SAXContext* pTag,
-                const CFX_ByteStringC& bsTagName,
+                const ByteStringView& bsTagName,
                 uint32_t dwEndPos) override;
   void OnTargetData(CFX_SAXContext* pTag,
                     CFX_SAXItem::Type eType,
-                    const CFX_ByteStringC& bsData,
+                    const ByteStringView& bsData,
                     uint32_t dwStartPos) override;
 
  private:

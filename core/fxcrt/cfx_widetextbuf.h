@@ -19,13 +19,13 @@ class CFX_WideTextBuf : public CFX_BinaryBuf {
     return reinterpret_cast<wchar_t*>(m_pBuffer.get());
   }
 
-  CFX_WideStringC AsStringC() const {
-    return CFX_WideStringC(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
-                           m_DataSize / sizeof(wchar_t));
-  }
-  CFX_WideString MakeString() const {
-    return CFX_WideString(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
+  WideStringView AsStringView() const {
+    return WideStringView(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
                           m_DataSize / sizeof(wchar_t));
+  }
+  WideString MakeString() const {
+    return WideString(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
+                      m_DataSize / sizeof(wchar_t));
   }
 
   void Delete(int start_index, int count) {
@@ -36,8 +36,8 @@ class CFX_WideTextBuf : public CFX_BinaryBuf {
   CFX_WideTextBuf& operator<<(int i);
   CFX_WideTextBuf& operator<<(double f);
   CFX_WideTextBuf& operator<<(const wchar_t* lpsz);
-  CFX_WideTextBuf& operator<<(const CFX_WideStringC& str);
-  CFX_WideTextBuf& operator<<(const CFX_WideString& str);
+  CFX_WideTextBuf& operator<<(const WideStringView& str);
+  CFX_WideTextBuf& operator<<(const WideString& str);
   CFX_WideTextBuf& operator<<(const CFX_WideTextBuf& buf);
 };
 

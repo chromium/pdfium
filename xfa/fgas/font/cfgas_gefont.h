@@ -89,7 +89,7 @@ class CFGAS_GEFont : public CFX_Retainable {
                         bool bRecursive,
                         CFX_RetainPtr<CFGAS_GEFont>* ppFont,
                         bool bCharCode = false);
-  CFX_WideString GetFamilyName() const;
+  WideString GetFamilyName() const;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   bool m_bUseLogFontStyle;

@@ -26,7 +26,7 @@ class CPDF_SyntaxParser {
   enum class ParseType { kStrict, kLoose };
 
   CPDF_SyntaxParser();
-  explicit CPDF_SyntaxParser(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
+  explicit CPDF_SyntaxParser(const CFX_WeakPtr<ByteStringPool>& pPool);
   ~CPDF_SyntaxParser();
 
   void InitParser(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
@@ -56,16 +56,16 @@ class CPDF_SyntaxParser {
       bool bDecrypt,
       ParseType parse_type);
 
-  CFX_ByteString GetKeyword();
+  ByteString GetKeyword();
   void ToNextLine();
   void ToNextWord();
-  bool BackwardsSearchToWord(const CFX_ByteStringC& word, FX_FILESIZE limit);
-  FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
+  bool BackwardsSearchToWord(const ByteStringView& word, FX_FILESIZE limit);
+  FX_FILESIZE FindTag(const ByteStringView& tag, FX_FILESIZE limit);
   void SetEncrypt(const CFX_RetainPtr<CPDF_CryptoHandler>& pCryptoHandler);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
-  CFX_ByteString GetNextWord(bool* bIsNumber);
-  CFX_ByteString PeekNextWord(bool* bIsNumber);
+  ByteString GetNextWord(bool* bIsNumber);
+  ByteString PeekNextWord(bool* bIsNumber);
 
   CFX_RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
 
@@ -88,11 +88,11 @@ class CPDF_SyntaxParser {
   void GetNextWordInternal(bool* bIsNumber);
   bool IsWholeWord(FX_FILESIZE startpos,
                    FX_FILESIZE limit,
-                   const CFX_ByteStringC& tag,
+                   const ByteStringView& tag,
                    bool checkKeyword);
 
-  CFX_ByteString ReadString();
-  CFX_ByteString ReadHexString();
+  ByteString ReadString();
+  ByteString ReadHexString();
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
   std::unique_ptr<CPDF_Stream> ReadStream(
       std::unique_ptr<CPDF_Dictionary> pDict,
@@ -122,7 +122,7 @@ class CPDF_SyntaxParser {
   CFX_RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   uint32_t m_WordSize;
-  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
+  CFX_WeakPtr<ByteStringPool> m_pPool;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_

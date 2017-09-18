@@ -63,13 +63,12 @@ bool CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
   return false;
 }
 
-bool CBC_OnedEAN8Writer::CheckContentValidity(const CFX_WideStringC& contents) {
+bool CBC_OnedEAN8Writer::CheckContentValidity(const WideStringView& contents) {
   return std::all_of(contents.begin(), contents.end(), std::iswdigit);
 }
 
-CFX_WideString CBC_OnedEAN8Writer::FilterContents(
-    const CFX_WideStringC& contents) {
-  CFX_WideString filtercontents;
+WideString CBC_OnedEAN8Writer::FilterContents(const WideStringView& contents) {
+  WideString filtercontents;
   wchar_t ch;
   for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     ch = contents[i];
@@ -84,11 +83,11 @@ CFX_WideString CBC_OnedEAN8Writer::FilterContents(
   return filtercontents;
 }
 
-int32_t CBC_OnedEAN8Writer::CalcChecksum(const CFX_ByteString& contents) {
+int32_t CBC_OnedEAN8Writer::CalcChecksum(const ByteString& contents) {
   return EANCalcChecksum(contents);
 }
 
-uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const CFX_ByteString& contents,
+uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const ByteString& contents,
                                             BCFORMAT format,
                                             int32_t& outWidth,
                                             int32_t& outHeight,
@@ -99,7 +98,7 @@ uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const CFX_ByteString& contents,
                                           hints);
 }
 
-uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const CFX_ByteString& contents,
+uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const ByteString& contents,
                                         int32_t& outLength) {
   if (contents.GetLength() != 8)
     return nullptr;
@@ -136,7 +135,7 @@ uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const CFX_ByteString& contents,
   return result.release();
 }
 
-bool CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
+bool CBC_OnedEAN8Writer::ShowChars(const WideStringView& contents,
                                    CFX_RenderDevice* device,
                                    const CFX_Matrix* matrix,
                                    int32_t barWidth,
@@ -145,10 +144,10 @@ bool CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
     return false;
 
   int32_t leftPosition = 3 * multiple;
-  CFX_ByteString str = FX_UTF8Encode(contents);
+  ByteString str = FX_UTF8Encode(contents);
   FX_STRSIZE iLength = str.GetLength();
   std::vector<FXTEXT_CHARPOS> charpos(iLength);
-  CFX_ByteString tempStr = str.Left(4);
+  ByteString tempStr = str.Left(4);
   FX_STRSIZE iLen = tempStr.GetLength();
   int32_t strWidth = 7 * multiple * 4;
   float blank = 0.0;

@@ -1672,7 +1672,7 @@ bool CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
 }
 
 std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
-    CFX_WeakPtr<CFX_ByteStringPool> pPool) {
+    CFX_WeakPtr<ByteStringPool> pPool) {
   int predefined = 0;
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
        cs++) {
@@ -1761,10 +1761,10 @@ wchar_t PDF_UnicodeFromAdobeName(const char* name) {
   return (wchar_t)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
 }
 
-CFX_ByteString PDF_AdobeNameFromUnicode(wchar_t unicode) {
+ByteString PDF_AdobeNameFromUnicode(wchar_t unicode) {
   char glyph_name[64];
   FXFT_adobe_name_from_unicode(glyph_name, unicode);
-  return CFX_ByteString(glyph_name);
+  return ByteString(glyph_name);
 }
 
 const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode) {

@@ -31,12 +31,12 @@ CBC_DataMatrix::CBC_DataMatrix()
 
 CBC_DataMatrix::~CBC_DataMatrix() {}
 
-bool CBC_DataMatrix::Encode(const CFX_WideStringC& contents) {
+bool CBC_DataMatrix::Encode(const WideStringView& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   auto* pWriter = GetDataMatrixWriter();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(CFX_WideString(contents), outWidth, outHeight));
+      pWriter->Encode(WideString(contents), outWidth, outHeight));
   if (!data)
     return false;
   return pWriter->RenderResult(data.get(), outWidth, outHeight);

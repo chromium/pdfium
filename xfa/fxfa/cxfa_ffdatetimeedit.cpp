@@ -45,7 +45,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  CFX_WideString wsText;
+  WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
   if (CXFA_Value value = m_pDataAcc->GetFormValue()) {
@@ -148,7 +148,7 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
   if (IsFocused())
     eType = XFA_VALUEPICTURE_Edit;
 
-  CFX_WideString wsText;
+  WideString wsText;
   m_pDataAcc->GetValue(wsText, eType);
 
   auto* normalWidget = static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
@@ -169,9 +169,9 @@ bool CXFA_FFDateTimeEdit::IsDataChanged() {
   if (m_dwStatus & XFA_WidgetStatus_TextEditValueChanged)
     return true;
 
-  CFX_WideString wsText =
+  WideString wsText =
       static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get())->GetEditText();
-  CFX_WideString wsOldValue;
+  WideString wsOldValue;
   m_pDataAcc->GetValue(wsOldValue, XFA_VALUEPICTURE_Edit);
   return wsOldValue != wsText;
 }
@@ -180,13 +180,13 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
                                           int32_t iYear,
                                           int32_t iMonth,
                                           int32_t iDay) {
-  CFX_WideString wsPicture;
+  WideString wsPicture;
   m_pDataAcc->GetPictureContent(wsPicture, XFA_VALUEPICTURE_Edit);
 
   CXFA_LocaleValue date(XFA_VT_DATE, GetDoc()->GetXFADoc()->GetLocalMgr());
   date.SetDate(CFX_DateTime(iYear, iMonth, iDay, 0, 0, 0, 0));
 
-  CFX_WideString wsDate;
+  WideString wsDate;
   date.FormatPatterns(wsDate, wsPicture, m_pDataAcc->GetLocal(),
                       XFA_VALUEPICTURE_Edit);
 

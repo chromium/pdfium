@@ -116,7 +116,7 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
       mtPart.Concat(*pMatrix);
 
     m_pTextOut->SetMatrix(mtPart);
-    m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringC(),
+    m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringView(),
                               pParams->m_rtPart);
     return;
   }
@@ -141,7 +141,7 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     mtPart.Concat(*pMatrix);
 
   m_pTextOut->SetMatrix(mtPart);
-  m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringC(),
+  m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringView(),
                             pParams->m_rtPart);
 }
 

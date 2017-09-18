@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/cfx_crtfileaccess.h"
 
-CFX_CRTFileAccess::CFX_CRTFileAccess(const CFX_WideStringC& wsPath)
+CFX_CRTFileAccess::CFX_CRTFileAccess(const WideStringView& wsPath)
     : m_path(wsPath) {}
 
 CFX_CRTFileAccess::~CFX_CRTFileAccess() {}

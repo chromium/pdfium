@@ -27,7 +27,7 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
   callExp.ToJavaScript(js);
 
   // Generate the result javascript string.
-  CFX_WideString result = L"sign(";
+  WideString result = L"sign(";
   for (size_t i = 0; i < 50; i++) {
     if (i > 0)
       result += L", ";
@@ -41,31 +41,31 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
   }
   result += L")";
 
-  EXPECT_EQ(result.AsStringC(), js.AsStringC());
+  EXPECT_EQ(result.AsStringView(), js.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Empty) {
   CFX_WideTextBuf accumulator;
-  CXFA_FMStringExpression(1, CFX_WideStringC()).ToJavaScript(accumulator);
-  EXPECT_EQ(L"", accumulator.AsStringC());
+  CXFA_FMStringExpression(1, WideStringView()).ToJavaScript(accumulator);
+  EXPECT_EQ(L"", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Short) {
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(1, L"a").ToJavaScript(accumulator);
-  EXPECT_EQ(L"a", accumulator.AsStringC());
+  EXPECT_EQ(L"a", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Medium) {
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(1, L".abcd.").ToJavaScript(accumulator);
-  EXPECT_EQ(L"\"abcd\"", accumulator.AsStringC());
+  EXPECT_EQ(L"\"abcd\"", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Long) {
   CFX_WideTextBuf accumulator;
-  std::vector<CFX_WideStringC::UnsignedType> vec(140000, L'A');
-  CXFA_FMStringExpression(1, CFX_WideStringC(vec)).ToJavaScript(accumulator);
+  std::vector<WideStringView::UnsignedType> vec(140000, L'A');
+  CXFA_FMStringExpression(1, WideStringView(vec)).ToJavaScript(accumulator);
   EXPECT_EQ(140000u, accumulator.GetLength());
 }
 
@@ -73,5 +73,5 @@ TEST(FMStringExpressionTest, Quoted) {
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(1, L".Simon says \"\"run\"\".")
       .ToJavaScript(accumulator);
-  EXPECT_EQ(L"\"Simon says \\\"run\\\"\"", accumulator.AsStringC());
+  EXPECT_EQ(L"\"Simon says \\\"run\\\"\"", accumulator.AsStringView());
 }

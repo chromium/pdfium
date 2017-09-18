@@ -82,12 +82,12 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 
   int GetSelectedIndex(int nIndex) const;
 #ifndef PDF_ENABLE_XFA
-  CFX_WideString GetValue() const;
+  WideString GetValue() const;
 #else
-  CFX_WideString GetValue(bool bDisplay = true) const;
+  WideString GetValue(bool bDisplay = true) const;
 #endif  // PDF_ENABLE_XFA
-  CFX_WideString GetDefaultValue() const;
-  CFX_WideString GetOptionLabel(int nIndex) const;
+  WideString GetDefaultValue() const;
+  WideString GetOptionLabel(int nIndex) const;
   int CountOptions() const;
   bool IsOptionSelected(int nIndex) const;
   int GetTopVisibleIndex() const;
@@ -95,13 +95,13 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   int GetAlignment() const;
   int GetMaxLen() const;
 #ifdef PDF_ENABLE_XFA
-  CFX_WideString GetName() const;
+  WideString GetName() const;
 #endif  // PDF_ENABLE_XFA
-  CFX_WideString GetAlternateName() const;
+  WideString GetAlternateName() const;
 
   void SetCheck(bool bChecked, bool bNotify);
-  void SetValue(const CFX_WideString& sValue, bool bNotify);
-  void SetDefaultValue(const CFX_WideString& sValue);
+  void SetValue(const WideString& sValue, bool bNotify);
+  void SetDefaultValue(const WideString& sValue);
   void SetOptionSelection(int index, bool bSelected, bool bNotify);
   void ClearSelection(bool bNotify);
   void SetTopVisibleIndex(int index);
@@ -109,10 +109,10 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 #ifdef PDF_ENABLE_XFA
   void ResetAppearance(bool bValueChanged);
 #endif  // PDF_ENABLE_XFA
-  void ResetAppearance(const CFX_WideString* sValue, bool bValueChanged);
+  void ResetAppearance(const WideString* sValue, bool bValueChanged);
   void ResetFieldAppearance(bool bValueChanged);
   void UpdateField();
-  CFX_WideString OnFormat(bool& bFormatted);
+  WideString OnFormat(bool& bFormatted);
 
   bool OnAAction(CPDF_AAction::AActionType type,
                  PDFSDK_FieldAction& data,

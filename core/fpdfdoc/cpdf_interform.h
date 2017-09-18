@@ -30,7 +30,7 @@ class IPDF_FormNotify;
 
 CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
                                   CPDF_Document* pDocument,
-                                  CFX_ByteString* csNameTag);
+                                  ByteString* csNameTag);
 
 class CPDF_InterForm {
  public:
@@ -39,20 +39,19 @@ class CPDF_InterForm {
 
   static void SetUpdateAP(bool bUpdateAP);
   static bool IsUpdateAPEnabled();
-  static CFX_ByteString GenerateNewResourceName(const CPDF_Dictionary* pResDict,
-                                                const char* csType,
-                                                int iMinLen,
-                                                const char* csPrefix);
+  static ByteString GenerateNewResourceName(const CPDF_Dictionary* pResDict,
+                                            const char* csType,
+                                            int iMinLen,
+                                            const char* csPrefix);
   static CPDF_Font* AddStandardFont(CPDF_Document* pDocument,
-                                    CFX_ByteString csFontName);
-  static CFX_ByteString GetNativeFont(uint8_t iCharSet, void* pLogFont);
+                                    ByteString csFontName);
+  static ByteString GetNativeFont(uint8_t iCharSet, void* pLogFont);
   static uint8_t GetNativeCharSet();
   static CPDF_Font* AddNativeFont(uint8_t iCharSet, CPDF_Document* pDocument);
   static CPDF_Font* AddNativeFont(CPDF_Document* pDocument);
 
-  size_t CountFields(const CFX_WideString& csFieldName) const;
-  CPDF_FormField* GetField(uint32_t index,
-                           const CFX_WideString& csFieldName) const;
+  size_t CountFields(const WideString& csFieldName) const;
+  CPDF_FormField* GetField(uint32_t index, const WideString& csFieldName) const;
   CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
 
   CPDF_FormControl* GetControlAtPoint(CPDF_Page* pPage,
@@ -65,18 +64,18 @@ class CPDF_InterForm {
   CPDF_FormField* GetFieldInCalculationOrder(int index);
   int FindFieldInCalculationOrder(const CPDF_FormField* pField);
 
-  CPDF_Font* GetFormFont(CFX_ByteString csNameTag) const;
+  CPDF_Font* GetFormFont(ByteString csNameTag) const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
   int GetFormAlignment() const;
 
   bool CheckRequiredFields(const std::vector<CPDF_FormField*>* fields,
                            bool bIncludeOrExclude) const;
 
-  std::unique_ptr<CFDF_Document> ExportToFDF(const CFX_WideString& pdf_path,
+  std::unique_ptr<CFDF_Document> ExportToFDF(const WideString& pdf_path,
                                              bool bSimpleFileSpec) const;
 
   std::unique_ptr<CFDF_Document> ExportToFDF(
-      const CFX_WideString& pdf_path,
+      const WideString& pdf_path,
       const std::vector<CPDF_FormField*>& fields,
       bool bIncludeOrExclude,
       bool bSimpleFileSpec) const;
@@ -99,10 +98,10 @@ class CPDF_InterForm {
   CPDF_FormControl* AddControl(CPDF_FormField* pField,
                                CPDF_Dictionary* pWidgetDict);
   void FDF_ImportField(CPDF_Dictionary* pField,
-                       const CFX_WideString& parent_name,
+                       const WideString& parent_name,
                        bool bNotify = false,
                        int nLevel = 0);
-  bool ValidateFieldName(CFX_WideString& csNewFieldName,
+  bool ValidateFieldName(WideString& csNewFieldName,
                          int iType,
                          const CPDF_FormField* pExcludedField,
                          const CPDF_FormControl* pExcludedControl) const;
@@ -114,7 +113,7 @@ class CPDF_InterForm {
   std::map<const CPDF_Dictionary*, std::unique_ptr<CPDF_FormControl>>
       m_ControlMap;
   std::unique_ptr<CFieldTree> m_pFieldTree;
-  CFX_ByteString m_bsEncoding;
+  ByteString m_bsEncoding;
   CFX_UnownedPtr<IPDF_FormNotify> m_pFormNotify;
 };
 

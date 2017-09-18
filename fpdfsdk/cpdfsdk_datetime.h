@@ -18,16 +18,16 @@
 class CPDFSDK_DateTime {
  public:
   CPDFSDK_DateTime();
-  explicit CPDFSDK_DateTime(const CFX_ByteString& dtStr);
+  explicit CPDFSDK_DateTime(const ByteString& dtStr);
   explicit CPDFSDK_DateTime(const FX_SYSTEMTIME& st);
   CPDFSDK_DateTime(const CPDFSDK_DateTime& datetime);
 
   bool operator==(const CPDFSDK_DateTime& datetime) const;
   bool operator!=(const CPDFSDK_DateTime& datetime) const;
 
-  CPDFSDK_DateTime& FromPDFDateTimeString(const CFX_ByteString& dtStr);
-  CFX_ByteString ToCommonDateTimeString();
-  CFX_ByteString ToPDFDateTimeString();
+  CPDFSDK_DateTime& FromPDFDateTimeString(const ByteString& dtStr);
+  ByteString ToCommonDateTimeString();
+  ByteString ToPDFDateTimeString();
   void ToSystemTime(FX_SYSTEMTIME& st);
   time_t ToTime_t() const;
   CPDFSDK_DateTime ToGMT() const;

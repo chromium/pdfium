@@ -39,12 +39,12 @@ std::unique_ptr<CPDF_Object> CPDF_Object::CloneNonCyclic(
   return Clone();
 }
 
-CFX_ByteString CPDF_Object::GetString() const {
-  return CFX_ByteString();
+ByteString CPDF_Object::GetString() const {
+  return ByteString();
 }
 
-CFX_WideString CPDF_Object::GetUnicodeText() const {
-  return CFX_WideString();
+WideString CPDF_Object::GetUnicodeText() const {
+  return WideString();
 }
 
 float CPDF_Object::GetNumber() const {
@@ -59,7 +59,7 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
   return nullptr;
 }
 
-void CPDF_Object::SetString(const CFX_ByteString& str) {
+void CPDF_Object::SetString(const ByteString& str) {
   NOTREACHED();
 }
 

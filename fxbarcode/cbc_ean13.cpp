@@ -31,15 +31,15 @@ CBC_EAN13::CBC_EAN13()
 
 CBC_EAN13::~CBC_EAN13() {}
 
-CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
+WideString CBC_EAN13::Preprocess(const WideStringView& contents) {
   auto* pWriter = GetOnedEAN13Writer();
-  CFX_WideString encodeContents = pWriter->FilterContents(contents);
+  WideString encodeContents = pWriter->FilterContents(contents);
   int32_t length = encodeContents.GetLength();
   if (length <= 12) {
     for (int32_t i = 0; i < 12 - length; i++)
       encodeContents = wchar_t('0') + encodeContents;
 
-    CFX_ByteString byteString = encodeContents.UTF8Encode();
+    ByteString byteString = encodeContents.UTF8Encode();
     int32_t checksum = pWriter->CalcChecksum(byteString);
     byteString += checksum - 0 + '0';
     encodeContents = byteString.UTF8Decode();
@@ -50,29 +50,29 @@ CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
   return encodeContents;
 }
 
-bool CBC_EAN13::Encode(const CFX_WideStringC& contents) {
+bool CBC_EAN13::Encode(const WideStringView& contents) {
   if (contents.IsEmpty())
     return false;
 
   BCFORMAT format = BCFORMAT_EAN_13;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  CFX_WideString encodeContents = Preprocess(contents);
-  CFX_ByteString byteString = encodeContents.UTF8Encode();
+  WideString encodeContents = Preprocess(contents);
+  ByteString byteString = encodeContents.UTF8Encode();
   m_renderContents = encodeContents;
   auto* pWriter = GetOnedEAN13Writer();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
       pWriter->Encode(byteString, format, outWidth, outHeight));
   if (!data)
     return false;
-  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(),
+  return pWriter->RenderResult(encodeContents.AsStringView(), data.get(),
                                outWidth);
 }
 
 bool CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
                              const CFX_Matrix* matrix) {
-  return GetOnedEAN13Writer()->RenderDeviceResult(device, matrix,
-                                                  m_renderContents.AsStringC());
+  return GetOnedEAN13Writer()->RenderDeviceResult(
+      device, matrix, m_renderContents.AsStringView());
 }
 
 BC_TYPE CBC_EAN13::GetType() {

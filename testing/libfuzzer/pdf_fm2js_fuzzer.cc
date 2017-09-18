@@ -16,8 +16,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   CFX_WideTextBuf js;
-  CFX_WideString input =
-      CFX_WideString::FromUTF8(CFX_ByteStringC(data, safe_size.ValueOrDie()));
-  CXFA_FM2JSContext::Translate(input.AsStringC(), &js);
+  WideString input =
+      WideString::FromUTF8(ByteStringView(data, safe_size.ValueOrDie()));
+  CXFA_FM2JSContext::Translate(input.AsStringView(), &js);
   return 0;
 }

@@ -21,7 +21,7 @@ class CXFA_TextPiece {
   CXFA_TextPiece();
   ~CXFA_TextPiece();
 
-  CFX_WideString szText;
+  WideString szText;
   std::vector<int32_t> Widths;
   int32_t iChars;
   int32_t iHorScale;

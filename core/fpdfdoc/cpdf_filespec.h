@@ -22,18 +22,18 @@ class CPDF_FileSpec {
   ~CPDF_FileSpec();
 
   // Convert a platform dependent file name into pdf format.
-  static CFX_WideString EncodeFileName(const CFX_WideString& filepath);
+  static WideString EncodeFileName(const WideString& filepath);
 
   // Convert a pdf file name into platform dependent format.
-  static CFX_WideString DecodeFileName(const CFX_WideString& filepath);
+  static WideString DecodeFileName(const WideString& filepath);
 
   CPDF_Object* GetObj() const { return m_pObj.Get(); }
-  CFX_WideString GetFileName() const;
+  WideString GetFileName() const;
   CPDF_Stream* GetFileStream() const;
   CPDF_Dictionary* GetParamsDict() const;
 
   // Set this file spec to refer to a file name (not a url).
-  void SetFileName(const CFX_WideString& wsFileName);
+  void SetFileName(const WideString& wsFileName);
 
  private:
   CFX_UnownedPtr<CPDF_Object> const m_pObj;

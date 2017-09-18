@@ -16,7 +16,7 @@ struct FFL_ComboBoxState {
   int nIndex;
   int nStart;
   int nEnd;
-  CFX_WideString sValue;
+  WideString sValue;
 };
 
 class CFFL_ComboBox : public CFFL_TextObject,
@@ -50,7 +50,7 @@ class CFFL_ComboBox : public CFFL_TextObject,
   void OnSetFocus(CPWL_Edit* pEdit) override;
 
  private:
-  CFX_WideString GetSelectExportText();
+  WideString GetSelectExportText();
 
   FFL_ComboBoxState m_State;
 };

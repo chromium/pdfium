@@ -17,13 +17,13 @@ class CJS_EventContextStub final : public IJS_EventContext {
   ~CJS_EventContextStub() override {}
 
   // IJS_EventContext:
-  bool RunScript(const CFX_WideString& script, CFX_WideString* info) override {
+  bool RunScript(const WideString& script, WideString* info) override {
     return false;
   }
 
   void OnApp_Init() override {}
   void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                  const CFX_WideString& strTargetName) override {}
+                  const WideString& strTargetName) override {}
   void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
   void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
   void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
@@ -48,37 +48,37 @@ class CJS_EventContextStub final : public IJS_EventContext {
   void OnField_Focus(bool bModifier,
                      bool bShift,
                      CPDF_FormField* pTarget,
-                     const CFX_WideString& Value) override {}
+                     const WideString& Value) override {}
   void OnField_Blur(bool bModifier,
                     bool bShift,
                     CPDF_FormField* pTarget,
-                    const CFX_WideString& Value) override {}
+                    const WideString& Value) override {}
   void OnField_Calculate(CPDF_FormField* pSource,
                          CPDF_FormField* pTarget,
-                         CFX_WideString& Value,
+                         WideString& Value,
                          bool& bRc) override {}
   void OnField_Format(CPDF_FormField* pTarget,
-                      CFX_WideString& Value,
+                      WideString& Value,
                       bool bWillCommit) override {}
-  void OnField_Keystroke(CFX_WideString& strChange,
-                         const CFX_WideString& strChangeEx,
+  void OnField_Keystroke(WideString& strChange,
+                         const WideString& strChangeEx,
                          bool KeyDown,
                          bool bModifier,
                          int& nSelEnd,
                          int& nSelStart,
                          bool bShift,
                          CPDF_FormField* pTarget,
-                         CFX_WideString& Value,
+                         WideString& Value,
                          bool bWillCommit,
                          bool bFieldFull,
                          bool& bRc) override {}
-  void OnField_Validate(CFX_WideString& strChange,
-                        const CFX_WideString& strChangeEx,
+  void OnField_Validate(WideString& strChange,
+                        const WideString& strChangeEx,
                         bool bKeyDown,
                         bool bModifier,
                         bool bShift,
                         CPDF_FormField* pTarget,
-                        CFX_WideString& Value,
+                        WideString& Value,
                         bool& bRc) override {}
   void OnScreen_Focus(bool bModifier,
                       bool bShift,
@@ -113,7 +113,7 @@ class CJS_EventContextStub final : public IJS_EventContext {
   void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) override {}
   void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
   void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                   const CFX_WideString&) override {}
+                   const WideString&) override {}
   void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv) override {}
   void OnConsole_Exec() override {}
   void OnExternal_Exec() override {}
@@ -138,17 +138,16 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   }
 
 #ifdef PDF_ENABLE_XFA
-  bool GetValueByName(const CFX_ByteStringC&, CFXJSE_Value*) override {
+  bool GetValueByName(const ByteStringView&, CFXJSE_Value*) override {
     return false;
   }
 
-  bool SetValueByName(const CFX_ByteStringC&, CFXJSE_Value*) override {
+  bool SetValueByName(const ByteStringView&, CFXJSE_Value*) override {
     return false;
   }
 #endif  // PDF_ENABLE_XFA
 
-  int ExecuteScript(const CFX_WideString& script,
-                    CFX_WideString* info) override {
+  int ExecuteScript(const WideString& script, WideString* info) override {
     return 0;
   }
 

@@ -122,7 +122,7 @@ const wchar_t* tokenStrings[] = {
     L"TOKcall",       L"TOKstring",     L"TOKnumber",   L"TOKreserver",
 };
 
-XFA_FM_TOKEN TokenizeIdentifier(const CFX_WideStringC& str) {
+XFA_FM_TOKEN TokenizeIdentifier(const WideStringView& str) {
   uint32_t key = FX_HashCode_GetW(str, true);
 
   const XFA_FMKeyword* end = std::begin(keyWords) + KEYWORD_END + 1;
@@ -145,8 +145,8 @@ CXFA_FMToken::CXFA_FMToken(uint32_t line_num)
 
 CXFA_FMToken::~CXFA_FMToken() {}
 
-CFX_WideString CXFA_FMToken::ToDebugString() const {
-  CFX_WideString str(L"type = ");
+WideString CXFA_FMToken::ToDebugString() const {
+  WideString str(L"type = ");
   str += tokenStrings[m_type];
   str += L", string = ";
   str += m_string;
@@ -155,7 +155,7 @@ CFX_WideString CXFA_FMToken::ToDebugString() const {
   return str;
 }
 
-CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc)
+CXFA_FMLexer::CXFA_FMLexer(const WideStringView& wsFormCalc)
     : m_cursor(wsFormCalc.unterminated_c_str()),
       m_end(m_cursor + wsFormCalc.GetLength() - 1),
       m_current_line(1),
@@ -378,7 +378,7 @@ void CXFA_FMLexer::AdvanceForNumber() {
   }
 
   m_token->m_string =
-      CFX_WideStringC(m_cursor, static_cast<FX_STRSIZE>(end - m_cursor));
+      WideStringView(m_cursor, static_cast<FX_STRSIZE>(end - m_cursor));
   m_cursor = end;
 }
 
@@ -395,7 +395,7 @@ void CXFA_FMLexer::AdvanceForString() {
       // If the end of the input has been reached it was not escaped.
       if (m_cursor > m_end) {
         m_token->m_string =
-            CFX_WideStringC(start, static_cast<FX_STRSIZE>(m_cursor - start));
+            WideStringView(start, static_cast<FX_STRSIZE>(m_cursor - start));
         return;
       }
       // If the next character is not a " then the end of the string has been
@@ -404,7 +404,7 @@ void CXFA_FMLexer::AdvanceForString() {
         if (!IsFormCalcCharacter(*m_cursor)) {
           break;
         }
-        m_token->m_string = CFX_WideStringC(start, (m_cursor - start));
+        m_token->m_string = WideStringView(start, (m_cursor - start));
         return;
       }
     }
@@ -430,7 +430,7 @@ void CXFA_FMLexer::AdvanceForIdentifier() {
     ++m_cursor;
   }
   m_token->m_string =
-      CFX_WideStringC(start, static_cast<FX_STRSIZE>(m_cursor - start));
+      WideStringView(start, static_cast<FX_STRSIZE>(m_cursor - start));
   m_token->m_type = TokenizeIdentifier(m_token->m_string);
 }
 

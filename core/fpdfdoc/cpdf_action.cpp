@@ -33,7 +33,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (!m_pDict)
     return CPDF_Dest();
 
-  CFX_ByteString type = m_pDict->GetStringFor("S");
+  ByteString type = m_pDict->GetStringFor("S");
   if (type != "GoTo" && type != "GoToR")
     return CPDF_Dest();
 
@@ -54,7 +54,7 @@ CPDF_Action::ActionType CPDF_Action::GetType() const {
   if (!m_pDict)
     return Unknown;
 
-  CFX_ByteString csType = m_pDict->GetStringFor("S");
+  ByteString csType = m_pDict->GetStringFor("S");
   if (csType.IsEmpty())
     return Unknown;
 
@@ -65,11 +65,11 @@ CPDF_Action::ActionType CPDF_Action::GetType() const {
   return Unknown;
 }
 
-CFX_WideString CPDF_Action::GetFilePath() const {
-  CFX_ByteString type = m_pDict->GetStringFor("S");
+WideString CPDF_Action::GetFilePath() const {
+  ByteString type = m_pDict->GetStringFor("S");
   if (type != "GoToR" && type != "Launch" && type != "SubmitForm" &&
       type != "ImportData") {
-    return CFX_WideString();
+    return WideString();
   }
 
   CPDF_Object* pFile = m_pDict->GetDirectObjectFor("F");
@@ -79,14 +79,14 @@ CFX_WideString CPDF_Action::GetFilePath() const {
   if (type == "Launch") {
     CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
     if (pWinDict) {
-      return CFX_WideString::FromLocal(pWinDict->GetStringFor("F").AsStringC());
+      return WideString::FromLocal(pWinDict->GetStringFor("F").AsStringView());
     }
   }
-  return CFX_WideString();
+  return WideString();
 }
 
-CFX_ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
-  CFX_ByteString csURI;
+ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
+  ByteString csURI;
   if (!m_pDict)
     return csURI;
   if (m_pDict->GetStringFor("S") != "URI")
@@ -103,8 +103,8 @@ CFX_ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
   return csURI;
 }
 
-CFX_WideString CPDF_Action::GetJavaScript() const {
-  CFX_WideString csJS;
+WideString CPDF_Action::GetJavaScript() const {
+  WideString csJS;
   if (!m_pDict)
     return csJS;
 

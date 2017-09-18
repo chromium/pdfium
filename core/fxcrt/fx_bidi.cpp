@@ -581,7 +581,7 @@ void CFX_BidiChar::StartNewSegment(CFX_BidiChar::Direction direction) {
   m_CurrentSegment.direction = direction;
 }
 
-CFX_BidiString::CFX_BidiString(const CFX_WideString& str)
+CFX_BidiString::CFX_BidiString(const WideString& str)
     : m_Str(str),
       m_pBidiChar(pdfium::MakeUnique<CFX_BidiChar>()),
       m_eOverallDirection(CFX_BidiChar::LEFT) {

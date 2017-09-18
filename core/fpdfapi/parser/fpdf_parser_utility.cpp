@@ -84,17 +84,17 @@ int32_t GetHeaderOffset(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile) {
   return kInvalidHeaderOffset;
 }
 
-int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key) {
+int32_t GetDirectInteger(CPDF_Dictionary* pDict, const ByteString& key) {
   CPDF_Number* pObj = ToNumber(pDict->GetObjectFor(key));
   return pObj ? pObj->GetInteger() : 0;
 }
 
-CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
+ByteString PDF_NameDecode(const ByteStringView& bstr) {
   if (!bstr.Contains('#'))
-    return CFX_ByteString(bstr);
+    return ByteString(bstr);
 
   int size = bstr.GetLength();
-  CFX_ByteString result;
+  ByteString result;
   char* pDestStart = result.GetBuffer(size);
   char* pDest = pDestStart;
   for (int i = 0; i < size; i++) {
@@ -110,11 +110,11 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
   return result;
 }
 
-CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig) {
-  return orig.Contains("#") ? PDF_NameDecode(orig.AsStringC()) : orig;
+ByteString PDF_NameDecode(const ByteString& orig) {
+  return orig.Contains("#") ? PDF_NameDecode(orig.AsStringView()) : orig;
 }
 
-CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {
+ByteString PDF_NameEncode(const ByteString& orig) {
   uint8_t* src_buf = (uint8_t*)orig.c_str();
   int src_len = orig.GetLength();
   int dest_len = 0;
@@ -131,7 +131,7 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {
   if (dest_len == src_len)
     return orig;
 
-  CFX_ByteString res;
+  ByteString res;
   char* dest_buf = res.GetBuffer(dest_len);
   dest_len = 0;
   for (i = 0; i < src_len; i++) {
@@ -167,7 +167,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << PDF_EncodeString(pObj->GetString(), pObj->AsString()->IsHex());
       break;
     case CPDF_Object::NAME: {
-      CFX_ByteString str = pObj->GetString();
+      ByteString str = pObj->GetString();
       buf << "/" << PDF_NameEncode(str);
       break;
     }
@@ -193,7 +193,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       const CPDF_Dictionary* p = pObj->AsDictionary();
       buf << "<<";
       for (const auto& it : *p) {
-        const CFX_ByteString& key = it.first;
+        const ByteString& key = it.first;
         CPDF_Object* pValue = it.second.get();
         buf << "/" << PDF_NameEncode(key);
         if (pValue && !pValue->IsInline()) {

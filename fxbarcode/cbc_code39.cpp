@@ -31,7 +31,7 @@ CBC_Code39::CBC_Code39()
 
 CBC_Code39::~CBC_Code39() {}
 
-bool CBC_Code39::Encode(const CFX_WideStringC& contents) {
+bool CBC_Code39::Encode(const WideStringView& contents) {
   if (contents.IsEmpty())
     return false;
 
@@ -39,25 +39,25 @@ bool CBC_Code39::Encode(const CFX_WideStringC& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   auto* pWriter = GetOnedCode39Writer();
-  CFX_WideString filtercontents = pWriter->FilterContents(contents);
-  CFX_WideString renderContents = pWriter->RenderTextContents(contents);
+  WideString filtercontents = pWriter->FilterContents(contents);
+  WideString renderContents = pWriter->RenderTextContents(contents);
   m_renderContents = renderContents;
-  CFX_ByteString byteString = filtercontents.UTF8Encode();
+  ByteString byteString = filtercontents.UTF8Encode();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
       pWriter->Encode(byteString, format, outWidth, outHeight));
   if (!data)
     return false;
-  return pWriter->RenderResult(renderContents.AsStringC(), data.get(),
+  return pWriter->RenderResult(renderContents.AsStringView(), data.get(),
                                outWidth);
 }
 
 bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,
                               const CFX_Matrix* matrix) {
   auto* pWriter = GetOnedCode39Writer();
-  CFX_WideString renderCon;
-  if (!pWriter->encodedContents(m_renderContents.AsStringC(), &renderCon))
+  WideString renderCon;
+  if (!pWriter->encodedContents(m_renderContents.AsStringView(), &renderCon))
     return false;
-  return pWriter->RenderDeviceResult(device, matrix, renderCon.AsStringC());
+  return pWriter->RenderDeviceResult(device, matrix, renderCon.AsStringView());
 }
 
 BC_TYPE CBC_Code39::GetType() {

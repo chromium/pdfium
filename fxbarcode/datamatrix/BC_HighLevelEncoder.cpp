@@ -58,22 +58,21 @@ const wchar_t CBC_HighLevelEncoder::MACRO_TRAILER = 0x0004;
 CBC_HighLevelEncoder::CBC_HighLevelEncoder() {}
 CBC_HighLevelEncoder::~CBC_HighLevelEncoder() {}
 
-std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(
-    CFX_WideString msg) {
-  CFX_ByteString bytestr;
+std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(WideString msg) {
+  ByteString bytestr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytestr);
   m_bytearray.insert(m_bytearray.end(), bytestr.begin(), bytestr.end());
   return m_bytearray;
 }
 
 // static
-CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
-                                                     CFX_WideString ecLevel,
-                                                     bool allowRectangular,
-                                                     int32_t& e) {
+WideString CBC_HighLevelEncoder::encodeHighLevel(WideString msg,
+                                                 WideString ecLevel,
+                                                 bool allowRectangular,
+                                                 int32_t& e) {
   CBC_EncoderContext context(msg, ecLevel, e);
   if (e != BCExceptionNO)
-    return CFX_WideString();
+    return WideString();
 
   context.setAllowRectangular(allowRectangular);
   if ((msg.Left(6) == MACRO_05_HEADER) && (msg.Last() == MACRO_TRAILER)) {
@@ -117,7 +116,7 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
       context.writeCodeword(0x00fe);
     }
   }
-  CFX_WideString codewords = context.m_codewords;
+  WideString codewords = context.m_codewords;
   if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) < capacity) {
     codewords += PAD;
   }
@@ -128,7 +127,7 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
   }
   return codewords;
 }
-int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
+int32_t CBC_HighLevelEncoder::lookAheadTest(WideString msg,
                                             int32_t startpos,
                                             int32_t currentMode) {
   if (startpos >= pdfium::base::checked_cast<int32_t>(msg.GetLength())) {
@@ -279,7 +278,7 @@ bool CBC_HighLevelEncoder::isDigit(wchar_t ch) {
 bool CBC_HighLevelEncoder::isExtendedASCII(wchar_t ch) {
   return ch >= 128 && ch <= 255;
 }
-int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg,
+int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(WideString msg,
                                                              int32_t startpos) {
   int32_t count = 0;
   int32_t len = msg.GetLength();

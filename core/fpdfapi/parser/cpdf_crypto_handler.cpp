@@ -230,14 +230,14 @@ bool CPDF_CryptoHandler::CryptFinish(void* context,
   return true;
 }
 
-CFX_ByteString CPDF_CryptoHandler::Decrypt(uint32_t objnum,
-                                           uint32_t gennum,
-                                           const CFX_ByteString& str) {
+ByteString CPDF_CryptoHandler::Decrypt(uint32_t objnum,
+                                       uint32_t gennum,
+                                       const ByteString& str) {
   CFX_BinaryBuf dest_buf;
   void* context = DecryptStart(objnum, gennum);
   DecryptStream(context, str.raw_str(), str.GetLength(), dest_buf);
   DecryptFinish(context, dest_buf);
-  return CFX_ByteString(dest_buf.GetBuffer(), dest_buf.GetSize());
+  return ByteString(dest_buf.GetBuffer(), dest_buf.GetSize());
 }
 
 void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {

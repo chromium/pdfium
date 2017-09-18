@@ -53,7 +53,7 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
  private:
   std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                       int32_t iPageNo,
-                                      const CFX_WideString& wsType,
+                                      const WideString& wsType,
                                       bool bOnPageArea);
 
   void PageInternals(CFXJSE_Arguments* pArguments, bool bAbsPage);

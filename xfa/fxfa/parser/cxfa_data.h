@@ -15,7 +15,7 @@ class CXFA_Node;
 
 class CXFA_Data {
  public:
-  static FX_ARGB ToColor(const CFX_WideStringC& wsValue);
+  static FX_ARGB ToColor(const WideStringView& wsValue);
 
   explicit CXFA_Data(CXFA_Node* pNode) : m_pNode(pNode) {}
 

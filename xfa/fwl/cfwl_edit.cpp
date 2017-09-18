@@ -189,12 +189,12 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
     pGraphics->ConcatMatrix(pMatrix);
 
   CFWL_EventCheckWord checkWordEvent(this);
-  CFX_ByteString sLatinWord;
+  ByteString sLatinWord;
   CXFA_Path pathSpell;
   int32_t nStart = 0;
   float fOffSetX = m_rtEngine.left - m_fScrollOffsetX;
   float fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
-  CFX_WideString wsSpell = GetText();
+  WideString wsSpell = GetText();
   int32_t nContentLen = wsSpell.GetLength();
   for (int i = 0; i < nContentLen; i++) {
     if (FxEditIsLatinWord(wsSpell[i])) {
@@ -270,7 +270,7 @@ void CFWL_Edit::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pProperties->m_pThemeProvider = pThemeProvider;
 }
 
-void CFWL_Edit::SetText(const CFX_WideString& wsText) {
+void CFWL_Edit::SetText(const WideString& wsText) {
   m_EdtEngine.Clear();
   m_EdtEngine.Insert(0, wsText);
 }
@@ -279,7 +279,7 @@ int32_t CFWL_Edit::GetTextLength() const {
   return m_EdtEngine.GetLength();
 }
 
-CFX_WideString CFWL_Edit::GetText() const {
+WideString CFWL_Edit::GetText() const {
   return m_EdtEngine.GetText();
 }
 
@@ -322,7 +322,7 @@ void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
   m_EdtEngine.SetAliasChar(wAlias);
 }
 
-bool CFWL_Edit::Copy(CFX_WideString& wsCopy) {
+bool CFWL_Edit::Copy(WideString& wsCopy) {
   if (!m_EdtEngine.HasSelection())
     return false;
 
@@ -330,7 +330,7 @@ bool CFWL_Edit::Copy(CFX_WideString& wsCopy) {
   return true;
 }
 
-bool CFWL_Edit::Cut(CFX_WideString& wsCut) {
+bool CFWL_Edit::Cut(WideString& wsCut) {
   if (!m_EdtEngine.HasSelection())
     return false;
 
@@ -338,7 +338,7 @@ bool CFWL_Edit::Cut(CFX_WideString& wsCut) {
   return true;
 }
 
-bool CFWL_Edit::Paste(const CFX_WideString& wsPaste) {
+bool CFWL_Edit::Paste(const WideString& wsPaste) {
   if (m_EdtEngine.HasSelection())
     m_EdtEngine.ReplaceSelectedText(wsPaste);
   else
@@ -396,7 +396,7 @@ void CFWL_Edit::OnCaretChanged() {
   }
 }
 
-void CFWL_Edit::OnTextChanged(const CFX_WideString& prevText) {
+void CFWL_Edit::OnTextChanged(const WideString& prevText) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VAlignMask)
     UpdateVAlignment();
 
@@ -412,7 +412,7 @@ void CFWL_Edit::OnSelChanged() {
   RepaintRect(GetClientRect());
 }
 
-bool CFWL_Edit::OnValidate(const CFX_WideString& wsText) {
+bool CFWL_Edit::OnValidate(const WideString& wsText) {
   CFWL_Widget* pDst = GetOuter();
   if (!pDst)
     pDst = this;
@@ -1050,7 +1050,7 @@ bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {
   if (!m_bSetRange)
     return true;
 
-  CFX_WideString wsText = m_EdtEngine.GetText();
+  WideString wsText = m_EdtEngine.GetText();
   if (wsText.IsEmpty())
     return cNum != L'0';
 
@@ -1060,9 +1060,9 @@ bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {
     return false;
 
   int32_t nLen = wsText.GetLength();
-  CFX_WideString l = wsText.Left(m_CursorPosition);
-  CFX_WideString r = wsText.Right(nLen - m_CursorPosition);
-  CFX_WideString wsNew = l + cNum + r;
+  WideString l = wsText.Left(m_CursorPosition);
+  WideString r = wsText.Right(nLen - m_CursorPosition);
+  WideString wsNew = l + cNum + r;
   return wsNew.GetInteger() <= m_iMax;
 }
 
@@ -1369,7 +1369,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
       if (pMsg->m_dwFlags & kEditingModifier)
         break;
 
-      m_EdtEngine.Insert(m_CursorPosition, CFX_WideString(c));
+      m_EdtEngine.Insert(m_CursorPosition, WideString(c));
       SetCursorPosition(m_CursorPosition + 1);
       break;
     }

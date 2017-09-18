@@ -14,7 +14,7 @@ class CFWL_EventValidate : public CFWL_Event {
   explicit CFWL_EventValidate(CFWL_Widget* pSrcTarget);
   ~CFWL_EventValidate() override;
 
-  CFX_WideString wsInsert;
+  WideString wsInsert;
   bool bValidate;
 };
 

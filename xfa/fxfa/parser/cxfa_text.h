@@ -16,7 +16,7 @@ class CXFA_Text : public CXFA_Data {
  public:
   explicit CXFA_Text(CXFA_Node* pNode);
 
-  void GetContent(CFX_WideString& wsText);
+  void GetContent(WideString& wsText);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TEXT_H_

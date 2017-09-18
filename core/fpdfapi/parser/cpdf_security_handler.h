@@ -46,9 +46,9 @@ class CPDF_SecurityHandler {
                 uint32_t user_size,
                 uint32_t type = PDF_ENCRYPT_CONTENT);
 
-  CFX_ByteString GetUserPassword(const uint8_t* owner_pass,
-                                 uint32_t pass_size,
-                                 int32_t key_len);
+  ByteString GetUserPassword(const uint8_t* owner_pass,
+                             uint32_t pass_size,
+                             int32_t key_len);
   bool CheckPassword(const uint8_t* password,
                      uint32_t pass_size,
                      bool bOwner,

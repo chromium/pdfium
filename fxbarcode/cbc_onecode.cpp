@@ -30,11 +30,11 @@ CBC_OneCode::CBC_OneCode(std::unique_ptr<CBC_Writer> pWriter)
 
 CBC_OneCode::~CBC_OneCode() {}
 
-bool CBC_OneCode::CheckContentValidity(const CFX_WideStringC& contents) {
+bool CBC_OneCode::CheckContentValidity(const WideStringView& contents) {
   return GetOneDimWriter()->CheckContentValidity(contents);
 }
 
-CFX_WideString CBC_OneCode::FilterContents(const CFX_WideStringC& contents) {
+WideString CBC_OneCode::FilterContents(const WideStringView& contents) {
   return GetOneDimWriter()->FilterContents(contents);
 }
 

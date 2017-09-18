@@ -40,7 +40,7 @@ class CPDF_String;
 CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
                                const char* name,
                                int nLevel = 0);
-CFX_WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict);
+WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict);
 
 class CPDF_FormField {
  public:
@@ -60,7 +60,7 @@ class CPDF_FormField {
   CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict);
   ~CPDF_FormField();
 
-  CFX_WideString GetFullName() const;
+  WideString GetFullName() const;
 
   Type GetType() const { return m_Type; }
   uint32_t GetFlags() const { return m_Flags; }
@@ -82,16 +82,16 @@ class CPDF_FormField {
   int GetFieldType() const;
 
   CPDF_AAction GetAdditionalAction() const;
-  CFX_WideString GetAlternateName() const;
-  CFX_WideString GetMappingName() const;
+  WideString GetAlternateName() const;
+  WideString GetMappingName() const;
 
   uint32_t GetFieldFlags() const;
-  CFX_ByteString GetDefaultStyle() const;
-  CFX_WideString GetRichTextString() const;
+  ByteString GetDefaultStyle() const;
+  WideString GetRichTextString() const;
 
-  CFX_WideString GetValue() const;
-  CFX_WideString GetDefaultValue() const;
-  bool SetValue(const CFX_WideString& value, bool bNotify = false);
+  WideString GetValue() const;
+  WideString GetDefaultValue() const;
+  bool SetValue(const WideString& value, bool bNotify = false);
 
   int GetMaxLen() const;
   int CountSelectedItems() const;
@@ -106,11 +106,11 @@ class CPDF_FormField {
   int GetDefaultSelectedItem() const;
   int CountOptions() const;
 
-  CFX_WideString GetOptionLabel(int index) const;
-  CFX_WideString GetOptionValue(int index) const;
+  WideString GetOptionLabel(int index) const;
+  WideString GetOptionValue(int index) const;
 
-  int FindOption(CFX_WideString csOptLabel) const;
-  int FindOptionValue(const CFX_WideString& csOptValue) const;
+  int FindOption(WideString csOptLabel) const;
+  int FindOptionValue(const WideString& csOptValue) const;
 
   bool CheckControl(int iControlIndex, bool bChecked, bool bNotify = false);
 
@@ -127,9 +127,7 @@ class CPDF_FormField {
 #ifdef PDF_ENABLE_XFA
   bool ClearOptions(bool bNotify = false);
 
-  int InsertOption(CFX_WideString csOptLabel,
-                   int index = -1,
-                   bool bNotify = false);
+  int InsertOption(WideString csOptLabel, int index = -1, bool bNotify = false);
 #endif  // PDF_ENABLE_XFA
 
   float GetFontSize() const { return m_FontSize; }
@@ -138,7 +136,7 @@ class CPDF_FormField {
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   const CPDF_InterForm* GetForm() const { return m_pForm.Get(); }
 
-  CFX_WideString GetCheckValue(bool bDefault) const;
+  WideString GetCheckValue(bool bDefault) const;
 
   void AddFormControl(CPDF_FormControl* pFormControl) {
     m_ControlList.emplace_back(pFormControl);
@@ -149,23 +147,23 @@ class CPDF_FormField {
   }
 
  private:
-  CFX_WideString GetValue(bool bDefault) const;
-  bool SetValue(const CFX_WideString& value, bool bDefault, bool bNotify);
+  WideString GetValue(bool bDefault) const;
+  bool SetValue(const WideString& value, bool bDefault, bool bNotify);
 
   void SyncFieldFlags();
   int FindListSel(CPDF_String* str);
-  CFX_WideString GetOptionText(int index, int sub_index) const;
+  WideString GetOptionText(int index, int sub_index) const;
 
   void LoadDA();
-  bool SetCheckValue(const CFX_WideString& value, bool bDefault, bool bNotify);
+  bool SetCheckValue(const WideString& value, bool bDefault, bool bNotify);
 
-  bool NotifyBeforeSelectionChange(const CFX_WideString& value);
+  bool NotifyBeforeSelectionChange(const WideString& value);
   void NotifyAfterSelectionChange();
 
-  bool NotifyBeforeValueChange(const CFX_WideString& value);
+  bool NotifyBeforeValueChange(const WideString& value);
   void NotifyAfterValueChange();
 
-  bool NotifyListOrComboBoxBeforeChange(const CFX_WideString& value);
+  bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 
   CPDF_FormField::Type m_Type;

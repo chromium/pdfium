@@ -11,7 +11,7 @@
 CXFA_Script::CXFA_Script(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 XFA_SCRIPTTYPE CXFA_Script::GetContentType() {
-  CFX_WideStringC cData;
+  WideStringView cData;
   if (m_pNode->TryCData(XFA_ATTRIBUTE_ContentType, cData, false)) {
     if (cData == L"application/x-javascript")
       return XFA_SCRIPTTYPE_Javascript;
@@ -26,6 +26,6 @@ int32_t CXFA_Script::GetRunAt() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_RunAt);
 }
 
-void CXFA_Script::GetExpression(CFX_WideString& wsExpression) {
+void CXFA_Script::GetExpression(WideString& wsExpression) {
   m_pNode->TryContent(wsExpression);
 }

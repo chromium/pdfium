@@ -15,21 +15,19 @@
 
 class CFX_XMLInstruction : public CFX_XMLAttributeNode {
  public:
-  explicit CFX_XMLInstruction(const CFX_WideString& wsTarget);
+  explicit CFX_XMLInstruction(const WideString& wsTarget);
   ~CFX_XMLInstruction() override;
 
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
 
-  const std::vector<CFX_WideString>& GetTargetData() const {
-    return m_TargetData;
-  }
-  void AppendData(const CFX_WideString& wsData);
+  const std::vector<WideString>& GetTargetData() const { return m_TargetData; }
+  void AppendData(const WideString& wsData);
   void RemoveData(int32_t index);
 
  private:
-  std::vector<CFX_WideString> m_TargetData;
+  std::vector<WideString> m_TargetData;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLINSTRUCTION_H_

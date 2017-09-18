@@ -25,7 +25,7 @@ class CFX_BreakPiece {
   int32_t GetLength() const { return m_iChars; }
 
   CFX_Char* GetChar(int32_t index) const;
-  CFX_WideString GetString() const;
+  WideString GetString() const;
   std::vector<int32_t> GetWidths() const;
 
   CFX_BreakType m_dwStatus;

@@ -95,7 +95,7 @@ const BarCodeInfo g_BarCodeData[] = {
 
 // static
 const BarCodeInfo* CXFA_FFBarcode::GetBarcodeTypeByName(
-    const CFX_WideStringC& wsName) {
+    const WideStringView& wsName) {
   if (wsName.IsEmpty())
     return nullptr;
 
@@ -129,7 +129,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  CFX_WideString wsText;
+  WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pFWLBarcode->SetText(wsText);
   UpdateWidgetProperty();
@@ -161,8 +161,8 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
 
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
-  CFX_WideString wsType = GetDataAcc()->GetBarcodeType();
-  const BarCodeInfo* pBarcodeInfo = GetBarcodeTypeByName(wsType.AsStringC());
+  WideString wsType = GetDataAcc()->GetBarcodeType();
+  const BarCodeInfo* pBarcodeInfo = GetBarcodeTypeByName(wsType.AsStringView());
   if (!pBarcodeInfo)
     return;
 

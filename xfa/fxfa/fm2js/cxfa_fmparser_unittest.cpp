@@ -20,7 +20,7 @@ TEST(CXFA_FMParserTest, Empty) {
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
   // TODO(dsinclair): This is a little weird .....
-  EXPECT_EQ(L"// comments only", buf.AsStringC());
+  EXPECT_EQ(L"// comments only", buf.AsStringView());
 }
 
 TEST(CXFA_FMParserTest, CommentOnlyIsError) {
@@ -33,7 +33,7 @@ TEST(CXFA_FMParserTest, CommentOnlyIsError) {
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
-  EXPECT_EQ(L"// comments only", buf.AsStringC());
+  EXPECT_EQ(L"// comments only", buf.AsStringView());
 }
 
 TEST(CXFA_FMParserTest, CommentThenValue) {
@@ -51,7 +51,7 @@ TEST(CXFA_FMParserTest, CommentThenValue) {
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
-  EXPECT_EQ(ret, buf.AsStringC());
+  EXPECT_EQ(ret, buf.AsStringView());
 }
 
 TEST(CXFA_FMParserTest, Parse) {
@@ -106,7 +106,7 @@ TEST(CXFA_FMParserTest, Parse) {
 
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
-  EXPECT_EQ(ret, buf.AsStringC());
+  EXPECT_EQ(ret, buf.AsStringView());
 }
 
 TEST(CXFA_FMParserTest, MaxParseDepth) {

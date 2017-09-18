@@ -32,7 +32,7 @@ const uint8_t JS_RC4KEY[] = {
     0xf8, 0x77, 0xd5, 0xa3};
 
 // Returns true if non-empty, setting sPropName
-bool TrimPropName(CFX_ByteString* sPropName) {
+bool TrimPropName(ByteString* sPropName) {
   sPropName->TrimLeft();
   sPropName->TrimRight();
   return sPropName->GetLength() != 0;
@@ -69,7 +69,7 @@ CJS_GlobalData::~CJS_GlobalData() {
 }
 
 CJS_GlobalData::iterator CJS_GlobalData::FindGlobalVariable(
-    const CFX_ByteString& propname) {
+    const ByteString& propname) {
   for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
        ++it) {
     if ((*it)->data.sKey == propname)
@@ -79,7 +79,7 @@ CJS_GlobalData::iterator CJS_GlobalData::FindGlobalVariable(
 }
 
 CJS_GlobalData::const_iterator CJS_GlobalData::FindGlobalVariable(
-    const CFX_ByteString& propname) const {
+    const ByteString& propname) const {
   for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
        ++it) {
     if ((*it)->data.sKey == propname)
@@ -89,14 +89,14 @@ CJS_GlobalData::const_iterator CJS_GlobalData::FindGlobalVariable(
 }
 
 CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(
-    const CFX_ByteString& propname) {
+    const ByteString& propname) {
   auto iter = FindGlobalVariable(propname);
   return iter != m_arrayGlobalData.end() ? iter->get() : nullptr;
 }
 
-void CJS_GlobalData::SetGlobalVariableNumber(const CFX_ByteString& propname,
+void CJS_GlobalData::SetGlobalVariableNumber(const ByteString& propname,
                                              double dData) {
-  CFX_ByteString sPropName(propname);
+  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -112,9 +112,9 @@ void CJS_GlobalData::SetGlobalVariableNumber(const CFX_ByteString& propname,
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableBoolean(const CFX_ByteString& propname,
+void CJS_GlobalData::SetGlobalVariableBoolean(const ByteString& propname,
                                               bool bData) {
-  CFX_ByteString sPropName(propname);
+  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -130,9 +130,9 @@ void CJS_GlobalData::SetGlobalVariableBoolean(const CFX_ByteString& propname,
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableString(const CFX_ByteString& propname,
-                                             const CFX_ByteString& sData) {
-  CFX_ByteString sPropName(propname);
+void CJS_GlobalData::SetGlobalVariableString(const ByteString& propname,
+                                             const ByteString& sData) {
+  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -149,9 +149,9 @@ void CJS_GlobalData::SetGlobalVariableString(const CFX_ByteString& propname,
 }
 
 void CJS_GlobalData::SetGlobalVariableObject(
-    const CFX_ByteString& propname,
+    const ByteString& propname,
     const CJS_GlobalVariableArray& array) {
-  CFX_ByteString sPropName(propname);
+  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -167,8 +167,8 @@ void CJS_GlobalData::SetGlobalVariableObject(
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableNull(const CFX_ByteString& propname) {
-  CFX_ByteString sPropName(propname);
+void CJS_GlobalData::SetGlobalVariableNull(const ByteString& propname) {
+  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -182,9 +182,9 @@ void CJS_GlobalData::SetGlobalVariableNull(const CFX_ByteString& propname) {
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-bool CJS_GlobalData::SetGlobalVariablePersistent(const CFX_ByteString& propname,
+bool CJS_GlobalData::SetGlobalVariablePersistent(const ByteString& propname,
                                                  bool bPersistent) {
-  CFX_ByteString sPropName(propname);
+  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return false;
 
@@ -196,8 +196,8 @@ bool CJS_GlobalData::SetGlobalVariablePersistent(const CFX_ByteString& propname,
   return true;
 }
 
-bool CJS_GlobalData::DeleteGlobalVariable(const CFX_ByteString& propname) {
-  CFX_ByteString sPropName(propname);
+bool CJS_GlobalData::DeleteGlobalVariable(const ByteString& propname) {
+  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return false;
 
@@ -254,7 +254,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
           if (p + dwNameLen > pBuffer + nLength)
             break;
 
-          CFX_ByteString sEntry = CFX_ByteString(p, dwNameLen);
+          ByteString sEntry = ByteString(p, dwNameLen);
           p += sizeof(char) * dwNameLen;
 
           JS_GlobalDataType wDataType =
@@ -291,7 +291,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
               if (p + dwLength > pBuffer + nLength)
                 break;
 
-              SetGlobalVariableString(sEntry, CFX_ByteString(p, dwLength));
+              SetGlobalVariableString(sEntry, ByteString(p, dwLength));
               SetGlobalVariablePersistent(sEntry, true);
               p += sizeof(char) * dwLength;
             } break;
@@ -353,7 +353,7 @@ void CJS_GlobalData::WriteFileBuffer(const wchar_t* sFilePath,
   // UnSupport.
 }
 
-void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
+void CJS_GlobalData::MakeByteString(const ByteString& name,
                                     CJS_KeyValue* pData,
                                     CFX_BinaryBuf& sData) {
   switch (pData->nType) {

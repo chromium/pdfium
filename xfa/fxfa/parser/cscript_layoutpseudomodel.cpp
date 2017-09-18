@@ -28,7 +28,7 @@ CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::LayoutPseudoModel,
-                  CFX_WideStringC(L"layoutPseudoModel")) {}
+                  WideStringView(L"layoutPseudoModel")) {}
 
 CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
 
@@ -73,11 +73,11 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
   if (!pNode)
     return;
 
-  CFX_WideString wsUnit(L"pt");
+  WideString wsUnit(L"pt");
   if (iLength >= 2) {
-    CFX_ByteString bsUnit = pArguments->GetUTF8String(1);
+    ByteString bsUnit = pArguments->GetUTF8String(1);
     if (!bsUnit.IsEmpty())
-      wsUnit = CFX_WideString::FromUTF8(bsUnit.AsStringC());
+      wsUnit = WideString::FromUTF8(bsUnit.AsStringView());
   }
 
   int32_t iIndex = iLength >= 3 ? pArguments->GetInt32(2) : 0;
@@ -116,8 +116,8 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
       measure.Set(rtRect.top, XFA_UNIT_Pt);
       break;
   }
-  float fValue =
-      measure.ToUnit(CXFA_Measurement::GetUnitFromString(wsUnit.AsStringC()));
+  float fValue = measure.ToUnit(
+      CXFA_Measurement::GetUnitFromString(wsUnit.AsStringView()));
   fValue = FXSYS_round(fValue * 1000) / 1000.0f;
   pValue->SetFloat(fValue);
 }
@@ -203,7 +203,7 @@ void CScript_LayoutPseudoModel::Page(CFXJSE_Arguments* pArguments) {
 std::vector<CXFA_Node*> CScript_LayoutPseudoModel::GetObjArray(
     CXFA_LayoutProcessor* pDocLayout,
     int32_t iPageNo,
-    const CFX_WideString& wsType,
+    const WideString& wsType,
     bool bOnPageArea) {
   CXFA_ContainerLayoutItem* pLayoutPage = pDocLayout->GetPage(iPageNo);
   if (!pLayoutPage)
@@ -338,14 +338,14 @@ void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
     return;
   }
   int32_t iIndex = 0;
-  CFX_WideString wsType;
+  WideString wsType;
   bool bOnPageArea = false;
   if (iLength >= 1)
     iIndex = pArguments->GetInt32(0);
 
   if (iLength >= 2) {
-    CFX_ByteString bsType = pArguments->GetUTF8String(1);
-    wsType = CFX_WideString::FromUTF8(bsType.AsStringC());
+    ByteString bsType = pArguments->GetUTF8String(1);
+    wsType = WideString::FromUTF8(bsType.AsStringView());
   }
   if (iLength >= 3)
     bOnPageArea = pArguments->GetInt32(2) == 0 ? false : true;

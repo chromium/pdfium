@@ -84,17 +84,17 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   constexpr char kData[] = "\xFE\xFF\x00\x31";
   for (size_t i = 0; i < sizeof(kData); ++i)
     buf.put(kData[i]);
-  pNames->AddNew<CPDF_String>(CFX_ByteString(buf), true);
+  pNames->AddNew<CPDF_String>(ByteString(buf), true);
   pNames->AddNew<CPDF_Number>(100);
 
   // Check that the key is as expected.
   CPDF_NameTree nameTree(pRootDict.get());
-  CFX_WideString storedName;
+  WideString storedName;
   nameTree.LookupValueAndName(0, &storedName);
   EXPECT_STREQ(L"1", storedName.c_str());
 
   // Check that the correct value object can be obtained by looking up "1".
-  CFX_WideString matchName = L"1";
+  WideString matchName = L"1";
   CPDF_Object* pObj = nameTree.LookupValue(matchName);
   ASSERT_TRUE(pObj->IsNumber());
   EXPECT_EQ(100, pObj->AsNumber()->GetInteger());
@@ -232,7 +232,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
 
   // Delete the name "9.txt", and check that its node gets deleted and its
   // parent node's limits get updated.
-  CFX_WideString csName;
+  WideString csName;
   ASSERT_TRUE(nameTree.LookupValue(L"9.txt"));
   EXPECT_EQ(999, nameTree.LookupValue(L"9.txt")->GetInteger());
   EXPECT_TRUE(nameTree.LookupValueAndName(4, &csName));

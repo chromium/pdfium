@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_
 #define FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_
 
-#include "core/fxcrt/cfx_widestring.h"
+#include "core/fxcrt/widestring.h"
 
 class CBC_SymbolInfo;
 
@@ -18,9 +18,9 @@ class CBC_ErrorCorrection {
 
   static void Initialize();
   static void Finalize();
-  static CFX_WideString encodeECC200(CFX_WideString codewords,
-                                     CBC_SymbolInfo* symbolInfo,
-                                     int32_t& e);
+  static WideString encodeECC200(WideString codewords,
+                                 CBC_SymbolInfo* symbolInfo,
+                                 int32_t& e);
 
  private:
   static int32_t MODULO_VALUE;
@@ -28,14 +28,14 @@ class CBC_ErrorCorrection {
   static int32_t ALOG[256];
 
  private:
-  static CFX_WideString createECCBlock(CFX_WideString codewords,
-                                       int32_t numECWords,
-                                       int32_t& e);
-  static CFX_WideString createECCBlock(CFX_WideString codewords,
-                                       int32_t start,
-                                       int32_t len,
-                                       int32_t numECWords,
-                                       int32_t& e);
+  static WideString createECCBlock(WideString codewords,
+                                   int32_t numECWords,
+                                   int32_t& e);
+  static WideString createECCBlock(WideString codewords,
+                                   int32_t start,
+                                   int32_t len,
+                                   int32_t numECWords,
+                                   int32_t& e);
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_

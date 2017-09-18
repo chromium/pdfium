@@ -31,34 +31,32 @@ class CXFA_LocaleValue {
   CXFA_LocaleValue(const CXFA_LocaleValue& value);
   CXFA_LocaleValue(uint32_t dwType, CXFA_LocaleMgr* pLocaleMgr);
   CXFA_LocaleValue(uint32_t dwType,
-                   const CFX_WideString& wsValue,
+                   const WideString& wsValue,
                    CXFA_LocaleMgr* pLocaleMgr);
   CXFA_LocaleValue(uint32_t dwType,
-                   const CFX_WideString& wsValue,
-                   const CFX_WideString& wsFormat,
+                   const WideString& wsValue,
+                   const WideString& wsFormat,
                    IFX_Locale* pLocale,
                    CXFA_LocaleMgr* pLocaleMgr);
   ~CXFA_LocaleValue();
   CXFA_LocaleValue& operator=(const CXFA_LocaleValue& value);
 
-  bool ValidateValue(const CFX_WideString& wsValue,
-                     const CFX_WideString& wsPattern,
+  bool ValidateValue(const WideString& wsValue,
+                     const WideString& wsPattern,
                      IFX_Locale* pLocale,
-                     CFX_WideString* pMatchFormat);
+                     WideString* pMatchFormat);
 
-  bool FormatPatterns(CFX_WideString& wsResult,
-                      const CFX_WideString& wsFormat,
+  bool FormatPatterns(WideString& wsResult,
+                      const WideString& wsFormat,
                       IFX_Locale* pLocale,
                       XFA_VALUEPICTURE eValueType) const;
 
-  void GetNumericFormat(CFX_WideString& wsFormat,
-                        int32_t nIntLen,
-                        int32_t nDecLen);
-  bool ValidateNumericTemp(const CFX_WideString& wsNumeric,
-                           const CFX_WideString& wsFormat,
+  void GetNumericFormat(WideString& wsFormat, int32_t nIntLen, int32_t nDecLen);
+  bool ValidateNumericTemp(const WideString& wsNumeric,
+                           const WideString& wsFormat,
                            IFX_Locale* pLocale);
 
-  CFX_WideString GetValue() const { return m_wsValue; }
+  WideString GetValue() const { return m_wsValue; }
   uint32_t GetType() const { return m_dwType; }
   double GetDoubleNum() const;
   bool SetDate(const CFX_DateTime& d);
@@ -68,24 +66,23 @@ class CXFA_LocaleValue {
   bool IsValid() const { return m_bValid; }
 
  private:
-  bool FormatSinglePattern(CFX_WideString& wsResult,
-                           const CFX_WideString& wsFormat,
+  bool FormatSinglePattern(WideString& wsResult,
+                           const WideString& wsFormat,
                            IFX_Locale* pLocale,
                            XFA_VALUEPICTURE eValueType) const;
-  bool ValidateCanonicalValue(const CFX_WideString& wsValue, uint32_t dwVType);
-  bool ValidateCanonicalDate(const CFX_WideString& wsDate,
-                             CFX_DateTime* unDate);
-  bool ValidateCanonicalTime(const CFX_WideString& wsTime);
+  bool ValidateCanonicalValue(const WideString& wsValue, uint32_t dwVType);
+  bool ValidateCanonicalDate(const WideString& wsDate, CFX_DateTime* unDate);
+  bool ValidateCanonicalTime(const WideString& wsTime);
 
   bool SetTime(const CFX_DateTime& t);
   bool SetDateTime(const CFX_DateTime& dt);
 
-  bool ParsePatternValue(const CFX_WideString& wsValue,
-                         const CFX_WideString& wsPattern,
+  bool ParsePatternValue(const WideString& wsValue,
+                         const WideString& wsPattern,
                          IFX_Locale* pLocale);
 
   CXFA_LocaleMgr* m_pLocaleMgr;
-  CFX_WideString m_wsValue;
+  WideString m_wsValue;
   uint32_t m_dwType;
   bool m_bValid;
 };

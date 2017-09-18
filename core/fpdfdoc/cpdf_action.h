@@ -45,12 +45,12 @@ class CPDF_Action {
   CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   ActionType GetType() const;
   CPDF_Dest GetDest(CPDF_Document* pDoc) const;
-  CFX_WideString GetFilePath() const;
-  CFX_ByteString GetURI(const CPDF_Document* pDoc) const;
+  WideString GetFilePath() const;
+  ByteString GetURI(const CPDF_Document* pDoc) const;
   bool GetHideStatus() const { return m_pDict->GetBooleanFor("H", true); }
-  CFX_ByteString GetNamedAction() const { return m_pDict->GetStringFor("N"); }
+  ByteString GetNamedAction() const { return m_pDict->GetStringFor("N"); }
   uint32_t GetFlags() const { return m_pDict->GetIntegerFor("Flags"); }
-  CFX_WideString GetJavaScript() const;
+  WideString GetJavaScript() const;
   size_t GetSubActionsCount() const;
   CPDF_Action GetSubAction(size_t iIndex) const;
 

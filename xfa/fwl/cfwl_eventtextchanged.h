@@ -14,7 +14,7 @@ class CFWL_EventTextChanged : public CFWL_Event {
   explicit CFWL_EventTextChanged(CFWL_Widget* pSrcTarget);
   ~CFWL_EventTextChanged() override;
 
-  CFX_WideString wsPrevText;
+  WideString wsPrevText;
 };
 
 #endif  // XFA_FWL_CFWL_EVENTTEXTCHANGED_H_

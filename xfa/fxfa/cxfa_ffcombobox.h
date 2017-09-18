@@ -29,9 +29,9 @@ class CXFA_FFComboBox : public CXFA_FFField {
   bool CanCut() override;
   bool CanPaste() override;
   bool CanSelectAll() override;
-  bool Copy(CFX_WideString& wsCopy) override;
-  bool Cut(CFX_WideString& wsCut) override;
-  bool Paste(const CFX_WideString& wsPaste) override;
+  bool Copy(WideString& wsCopy) override;
+  bool Cut(WideString& wsCut) override;
+  bool Paste(const WideString& wsPaste) override;
   void SelectAll() override;
   void Delete() override;
   void DeSelect() override;
@@ -44,12 +44,12 @@ class CXFA_FFComboBox : public CXFA_FFField {
 
   virtual void OpenDropDownList();
 
-  void OnTextChanged(CFWL_Widget* pWidget, const CFX_WideString& wsChanged);
+  void OnTextChanged(CFWL_Widget* pWidget, const WideString& wsChanged);
   void OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp);
   void OnPreOpen(CFWL_Widget* pWidget);
   void OnPostOpen(CFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, bool bSelected);
-  void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex);
+  void InsertItem(const WideStringView& wsLabel, int32_t nIndex);
   void DeleteItem(int32_t nIndex);
 
  private:
@@ -62,7 +62,7 @@ class CXFA_FFComboBox : public CXFA_FFField {
   uint32_t GetAlignment();
   void FWLEventSelChange(CXFA_EventParam* pParam);
 
-  CFX_WideString m_wsNewValue;
+  WideString m_wsNewValue;
   IFWL_WidgetDelegate* m_pOldDelegate;
 };
 

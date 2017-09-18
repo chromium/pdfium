@@ -354,7 +354,7 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(
 
 CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
                                              const wchar_t* text) {
-  CFX_WideString swText = text;
+  WideString swText = text;
   CPVT_WordPlace wp = place;
   for (int32_t i = 0, sz = swText.GetLength(); i < sz; i++) {
     CPVT_WordPlace oldwp = wp;
@@ -412,7 +412,7 @@ CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
   return ClearLeftWord(AdjustLineHeader(place, true));
 }
 
-void CPDF_VariableText::SetText(const CFX_WideString& swText) {
+void CPDF_VariableText::SetText(const WideString& swText) {
   DeleteWords(CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));
   CPVT_WordPlace wp(0, 0, -1);
   CPVT_SectionInfo secinfo;

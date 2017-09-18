@@ -12,7 +12,7 @@ CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
     : CXFA_Object(pThisNode->GetDocument(),
                   XFA_ObjectType::VariablesThis,
                   XFA_Element::Unknown,
-                  CFX_WideStringC()),
+                  WideStringView()),
       m_pThisNode(nullptr),
       m_pScriptNode(nullptr) {
   m_pThisNode = pThisNode;

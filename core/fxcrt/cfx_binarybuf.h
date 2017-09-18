@@ -27,7 +27,7 @@ class CFX_BinaryBuf {
   void Clear();
   void EstimateSize(FX_STRSIZE size, FX_STRSIZE alloc_step = 0);
   void AppendBlock(const void* pBuf, FX_STRSIZE size);
-  void AppendString(const CFX_ByteString& str) {
+  void AppendString(const ByteString& str) {
     AppendBlock(str.c_str(), str.GetLength());
   }
 

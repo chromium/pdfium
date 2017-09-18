@@ -32,9 +32,9 @@ class CJS_EventContext;
 #define IDS_STRING_JSNOPERMISSION 25639
 #define IDS_STRING_JSBADOBJECT 25640
 
-CFX_WideString JSGetStringFromID(uint32_t id);
-CFX_WideString JSFormatErrorString(const char* class_name,
-                                   const char* property_name,
-                                   const CFX_WideString& details);
+WideString JSGetStringFromID(uint32_t id);
+WideString JSFormatErrorString(const char* class_name,
+                               const char* property_name,
+                               const WideString& details);
 
 #endif  // FPDFSDK_JAVASCRIPT_RESOURCE_H_

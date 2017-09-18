@@ -55,7 +55,7 @@ bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
+uint8_t* CBC_QRCodeWriter::Encode(const WideString& contents,
                                   int32_t ecLevel,
                                   int32_t& outWidth,
                                   int32_t& outHeight) {

@@ -36,18 +36,18 @@ const struct {
     {"Times-Italic", "Times New Roman Italic"},
 };
 
-CFX_ByteString FPDF_ReadStringFromFile(FILE* pFile, uint32_t size) {
-  CFX_ByteString buffer;
+ByteString FPDF_ReadStringFromFile(FILE* pFile, uint32_t size) {
+  ByteString buffer;
   if (!fread(buffer.GetBuffer(size), size, 1, pFile))
-    return CFX_ByteString();
+    return ByteString();
   buffer.ReleaseBuffer(size);
   return buffer;
 }
 
-CFX_ByteString FPDF_LoadTableFromTT(FILE* pFile,
-                                    const uint8_t* pTables,
-                                    uint32_t nTables,
-                                    uint32_t tag) {
+ByteString FPDF_LoadTableFromTT(FILE* pFile,
+                                const uint8_t* pTables,
+                                uint32_t nTables,
+                                uint32_t tag) {
   for (uint32_t i = 0; i < nTables; i++) {
     const uint8_t* p = pTables + i * 16;
     if (GET_TT_LONG(p) == tag) {
@@ -57,7 +57,7 @@ CFX_ByteString FPDF_LoadTableFromTT(FILE* pFile,
       return FPDF_ReadStringFromFile(pFile, size);
     }
   }
-  return CFX_ByteString();
+  return ByteString();
 }
 
 uint32_t GetCharset(int charset) {
@@ -106,7 +106,7 @@ CFX_FolderFontInfo::CFX_FolderFontInfo() {}
 
 CFX_FolderFontInfo::~CFX_FolderFontInfo() {}
 
-void CFX_FolderFontInfo::AddPath(const CFX_ByteString& path) {
+void CFX_FolderFontInfo::AddPath(const ByteString& path) {
   m_PathList.push_back(path);
 }
 
@@ -117,25 +117,25 @@ bool CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   return true;
 }
 
-void CFX_FolderFontInfo::ScanPath(const CFX_ByteString& path) {
+void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
   FX_FileHandle* handle = FX_OpenFolder(path.c_str());
   if (!handle)
     return;
 
-  CFX_ByteString filename;
+  ByteString filename;
   bool bFolder;
   while (FX_GetNextFile(handle, &filename, &bFolder)) {
     if (bFolder) {
       if (filename == "." || filename == "..")
         continue;
     } else {
-      CFX_ByteString ext = filename.Right(4);
+      ByteString ext = filename.Right(4);
       ext.MakeUpper();
       if (ext != ".TTF" && ext != ".OTF" && ext != ".TTC")
         continue;
     }
 
-    CFX_ByteString fullpath = path;
+    ByteString fullpath = path;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     fullpath += "\\";
 #else
@@ -148,7 +148,7 @@ void CFX_FolderFontInfo::ScanPath(const CFX_ByteString& path) {
   FX_CloseFolder(handle);
 }
 
-void CFX_FolderFontInfo::ScanFile(const CFX_ByteString& path) {
+void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   FILE* pFile = fopen(path.c_str(), "rb");
   if (!pFile)
     return;
@@ -190,7 +190,7 @@ void CFX_FolderFontInfo::ScanFile(const CFX_ByteString& path) {
   fclose(pFile);
 }
 
-void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
+void CFX_FolderFontInfo::ReportFace(const ByteString& path,
                                     FILE* pFile,
                                     uint32_t filesize,
                                     uint32_t offset) {
@@ -200,21 +200,20 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
     return;
 
   uint32_t nTables = GET_TT_SHORT(buffer + 4);
-  CFX_ByteString tables = FPDF_ReadStringFromFile(pFile, nTables * 16);
+  ByteString tables = FPDF_ReadStringFromFile(pFile, nTables * 16);
   if (tables.IsEmpty())
     return;
 
-  CFX_ByteString names =
+  ByteString names =
       FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x6e616d65);
   if (names.IsEmpty())
     return;
 
-  CFX_ByteString facename =
-      GetNameFromTT(names.raw_str(), names.GetLength(), 1);
+  ByteString facename = GetNameFromTT(names.raw_str(), names.GetLength(), 1);
   if (facename.IsEmpty())
     return;
 
-  CFX_ByteString style = GetNameFromTT(names.raw_str(), names.GetLength(), 2);
+  ByteString style = GetNameFromTT(names.raw_str(), names.GetLength(), 2);
   if (style != "Regular")
     facename += " " + style;
 
@@ -223,7 +222,7 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
 
   auto pInfo = pdfium::MakeUnique<CFX_FontFaceInfo>(path, facename, tables,
                                                     offset, filesize);
-  CFX_ByteString os2 =
+  ByteString os2 =
       FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x4f532f32);
   if (os2.GetLength() >= 86) {
     const uint8_t* p = os2.raw_str() + 78;
@@ -262,7 +261,7 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
   m_FontList[facename] = std::move(pInfo);
 }
 
-void* CFX_FolderFontInfo::GetSubstFont(const CFX_ByteString& face) {
+void* CFX_FolderFontInfo::GetSubstFont(const ByteString& face) {
   for (size_t iBaseFont = 0; iBaseFont < FX_ArraySize(Base14Substs);
        iBaseFont++) {
     if (face == Base14Substs[iBaseFont].m_pName)
@@ -284,7 +283,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
   uint32_t charset_flag = GetCharset(charset);
   int32_t iBestSimilar = 0;
   for (const auto& it : m_FontList) {
-    const CFX_ByteString& bsName = it.first;
+    const ByteString& bsName = it.first;
     CFX_FontFaceInfo* pFont = it.second.get();
     if (!(pFont->m_Charsets & charset_flag) && charset != FX_CHARSET_Default)
       continue;
@@ -367,7 +366,7 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
 
 void CFX_FolderFontInfo::DeleteFont(void* hFont) {}
 
-bool CFX_FolderFontInfo::GetFaceName(void* hFont, CFX_ByteString* name) {
+bool CFX_FolderFontInfo::GetFaceName(void* hFont, ByteString* name) {
   if (!hFont)
     return false;
   *name = static_cast<CFX_FontFaceInfo*>(hFont)->m_FaceName;

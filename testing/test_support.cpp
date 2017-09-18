@@ -105,8 +105,8 @@ std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
 }
 
 std::string GetPlatformString(FPDF_WIDESTRING wstr) {
-  CFX_WideString wide_string =
-      CFX_WideString::FromUTF16LE(wstr, CFX_WideString::WStringLength(wstr));
+  WideString wide_string =
+      WideString::FromUTF16LE(wstr, WideString::WStringLength(wstr));
   return std::string(wide_string.UTF8Encode().c_str());
 }
 

@@ -17,14 +17,14 @@ CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::NodeList,
                   XFA_Element::NodeList,
-                  CFX_WideStringC(L"nodeList")) {
+                  WideStringView(L"nodeList")) {
   m_pDocument->GetScriptContext()->AddToCacheList(
       std::unique_ptr<CXFA_NodeList>(this));
 }
 
 CXFA_NodeList::~CXFA_NodeList() {}
 
-CXFA_Node* CXFA_NodeList::NamedItem(const CFX_WideStringC& wsName) {
+CXFA_Node* CXFA_NodeList::NamedItem(const WideStringView& wsName) {
   uint32_t dwHashCode = FX_HashCode_GetW(wsName, false);
   int32_t iCount = GetLength();
   for (int32_t i = 0; i < iCount; i++) {
@@ -105,9 +105,9 @@ void CXFA_NodeList::Script_TreelistClass_NamedItem(
     return;
   }
 
-  CFX_ByteString szName = pArguments->GetUTF8String(0);
+  ByteString szName = pArguments->GetUTF8String(0);
   CXFA_Node* pNode =
-      NamedItem(CFX_WideString::FromUTF8(szName.AsStringC()).AsStringC());
+      NamedItem(WideString::FromUTF8(szName.AsStringView()).AsStringView());
   if (!pNode)
     return;
 

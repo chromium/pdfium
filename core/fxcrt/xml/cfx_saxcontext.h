@@ -18,7 +18,7 @@ class CFX_SAXContext {
   ~CFX_SAXContext();
 
   std::ostringstream m_TextBuf;
-  CFX_ByteString m_bsTagName;
+  ByteString m_bsTagName;
   CFX_SAXItem::Type m_eNode;
 };
 

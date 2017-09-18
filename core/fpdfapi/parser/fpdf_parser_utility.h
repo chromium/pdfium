@@ -41,7 +41,7 @@ constexpr int32_t kInvalidHeaderOffset = -1;
 // |kInvalidHeaderOffset|.
 int32_t GetHeaderOffset(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
 
-int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key);
+int32_t GetDirectInteger(CPDF_Dictionary* pDict, const ByteString& key);
 
 std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj);
 

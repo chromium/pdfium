@@ -51,7 +51,7 @@ class CFX_MacFontInfo : public CFX_FolderFontInfo {
 const char JAPAN_GOTHIC[] = "Hiragino Kaku Gothic Pro W6";
 const char JAPAN_MINCHO[] = "Hiragino Mincho Pro W6";
 
-void GetJapanesePreference(CFX_ByteString* face, int weight, int pitch_family) {
+void GetJapanesePreference(ByteString* face, int weight, int pitch_family) {
   if (face->Contains("Gothic")) {
     *face = JAPAN_GOTHIC;
     return;
@@ -66,9 +66,9 @@ void* CFX_MacFontInfo::MapFont(int weight,
                                int pitch_family,
                                const char* cstr_face,
                                int& iExact) {
-  CFX_ByteString face = cstr_face;
+  ByteString face = cstr_face;
   for (size_t i = 0; i < FX_ArraySize(g_Base14Substs); ++i) {
-    if (face == CFX_ByteStringC(g_Base14Substs[i].m_pName)) {
+    if (face == ByteStringView(g_Base14Substs[i].m_pName)) {
       face = g_Base14Substs[i].m_pSubstName;
       iExact = true;
       return GetFont(face.c_str());
@@ -83,7 +83,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
   // fonts in |m_FontList| with |face| in the name, and examine the fonts to
   // see which best matches the requested characteristics.
   if (!face.Contains("Bold") && !face.Contains("Italic")) {
-    CFX_ByteString new_face = face;
+    ByteString new_face = face;
     if (weight > 400)
       new_face += " Bold";
     if (bItalic)

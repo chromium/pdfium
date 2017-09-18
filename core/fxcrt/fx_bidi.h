@@ -54,7 +54,7 @@ class CFX_BidiString {
  public:
   using const_iterator = std::vector<CFX_BidiChar::Segment>::const_iterator;
 
-  explicit CFX_BidiString(const CFX_WideString& str);
+  explicit CFX_BidiString(const WideString& str);
   ~CFX_BidiString();
 
   // Overall direction is always LEFT or RIGHT, never NEUTRAL.
@@ -70,7 +70,7 @@ class CFX_BidiString {
   const_iterator end() const { return m_Order.end(); }
 
  private:
-  const CFX_WideString m_Str;
+  const WideString m_Str;
   std::unique_ptr<CFX_BidiChar> m_pBidiChar;
   std::vector<CFX_BidiChar::Segment> m_Order;
   CFX_BidiChar::Direction m_eOverallDirection;

@@ -45,8 +45,8 @@ FWL_Type CFWL_Form::GetClassID() const {
   return FWL_Type::Form;
 }
 
-bool CFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
-  if (wsClass == CFX_WideStringC(FWL_CLASS_Form))
+bool CFWL_Form::IsInstance(const WideStringView& wsClass) const {
+  if (wsClass == WideStringView(FWL_CLASS_Form))
     return true;
   return CFWL_Widget::IsInstance(wsClass);
 }

@@ -20,7 +20,7 @@ const unsigned int kMaxParseDepth = 1250;
 
 }  // namespace
 
-CXFA_FMParser::CXFA_FMParser(const CFX_WideStringC& wsFormcalc)
+CXFA_FMParser::CXFA_FMParser(const WideStringView& wsFormcalc)
     : m_error(false), m_parse_depth(0), m_max_parse_depth(kMaxParseDepth) {
   m_lexer = pdfium::MakeUnique<CXFA_FMLexer>(wsFormcalc);
   m_token = m_lexer->NextToken();
@@ -33,7 +33,7 @@ std::unique_ptr<CXFA_FMFunctionDefinition> CXFA_FMParser::Parse() {
   if (HasError())
     return nullptr;
 
-  std::vector<CFX_WideStringC> arguments;
+  std::vector<WideStringView> arguments;
   return pdfium::MakeUnique<CXFA_FMFunctionDefinition>(
       1, true, L"", std::move(arguments), std::move(expressions));
 }
@@ -92,8 +92,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  CFX_WideStringC ident;
-  std::vector<CFX_WideStringC> arguments;
+  WideStringView ident;
+  std::vector<WideStringView> arguments;
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
   uint32_t line = m_token->m_line_num;
   if (!NextToken())
@@ -208,7 +208,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseVarExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  CFX_WideStringC ident;
+  WideStringView ident;
   uint32_t line = m_token->m_line_num;
   if (!NextToken())
     return nullptr;
@@ -613,7 +613,7 @@ CXFA_FMParser::ParsePrimaryExpression() {
         return nullptr;
       break;
     case TOKidentifier: {
-      CFX_WideStringC wsIdentifier(m_token->m_string);
+      WideStringView wsIdentifier(m_token->m_string);
       if (!NextToken())
         return nullptr;
       if (m_token->m_type == TOKlbracket) {
@@ -714,7 +714,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
           m_error = true;
           return nullptr;
         }
-        CFX_WideStringC tempStr = m_token->m_string;
+        WideStringView tempStr = m_token->m_string;
         uint32_t tempLine = m_token->m_line_num;
         if (!NextToken())
           return nullptr;
@@ -786,7 +786,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
           m_error = true;
           return nullptr;
         }
-        CFX_WideStringC tempStr = m_token->m_string;
+        WideStringView tempStr = m_token->m_string;
         uint32_t tempLine = m_token->m_line_num;
         if (!NextToken())
           return nullptr;
@@ -813,7 +813,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
           m_error = true;
           return nullptr;
         }
-        CFX_WideStringC tempStr = m_token->m_string;
+        WideStringView tempStr = m_token->m_string;
         uint32_t tempLine = m_token->m_line_num;
         if (!NextToken())
           return nullptr;
@@ -1083,7 +1083,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  CFX_WideStringC wsVariant;
+  WideStringView wsVariant;
   uint32_t line = m_token->m_line_num;
   if (!NextToken())
     return nullptr;
@@ -1152,7 +1152,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
     return nullptr;
 
   std::unique_ptr<CXFA_FMExpression> expr;
-  CFX_WideStringC wsIdentifier;
+  WideStringView wsIdentifier;
   std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> pAccessors;
   std::unique_ptr<CXFA_FMExpression> pList;
   uint32_t line = m_token->m_line_num;

@@ -131,8 +131,8 @@ class CFX_FontDescriptor {
   ~CFX_FontDescriptor();
 
   int32_t m_nFaceIndex;
-  CFX_WideString m_wsFaceName;
-  std::vector<CFX_WideString> m_wsFamilyNames;
+  WideString m_wsFaceName;
+  std::vector<WideString> m_wsFamilyNames;
   uint32_t m_dwFontStyles;
   uint32_t m_dwUsb[4];
   uint32_t m_dwCsb[2];
@@ -161,7 +161,7 @@ struct FX_HandleParentPath {
     bsParentPath = x.bsParentPath;
   }
   FX_FileHandle* pFileHandle;
-  CFX_ByteString bsParentPath;
+  ByteString bsParentPath;
 };
 
 class CFX_FontSourceEnum_File {
@@ -173,11 +173,11 @@ class CFX_FontSourceEnum_File {
   CFX_RetainPtr<CFX_CRTFileAccess> GetNext();
 
  private:
-  CFX_ByteString GetNextFile();
+  ByteString GetNextFile();
 
-  CFX_WideString m_wsNext;
+  WideString m_wsNext;
   std::vector<FX_HandleParentPath> m_FolderQueue;
-  std::vector<CFX_ByteString> m_FolderPaths;
+  std::vector<ByteString> m_FolderPaths;
 };
 
 class CFGAS_FontMgr : public CFX_Observable<CFGAS_FontMgr> {
@@ -203,28 +203,28 @@ class CFGAS_FontMgr : public CFX_Observable<CFGAS_FontMgr> {
   bool EnumFonts();
   bool EnumFontsFromFontMapper();
   bool EnumFontsFromFiles();
-  void RegisterFace(FXFT_Face pFace, const CFX_WideString* pFaceName);
+  void RegisterFace(FXFT_Face pFace, const WideString* pFaceName);
   void RegisterFaces(const CFX_RetainPtr<IFX_SeekableReadStream>& pFontStream,
-                     const CFX_WideString* pFaceName);
-  void GetNames(const uint8_t* name_table, std::vector<CFX_WideString>& Names);
+                     const WideString* pFaceName);
+  void GetNames(const uint8_t* name_table, std::vector<WideString>& Names);
   std::vector<uint16_t> GetCharsets(FXFT_Face pFace) const;
   void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB);
   uint32_t GetFlags(FXFT_Face pFace);
   bool VerifyUnicode(CFX_FontDescriptor* pDesc, wchar_t wcUnicode);
   bool VerifyUnicode(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                      wchar_t wcUnicode);
-  int32_t IsPartName(const CFX_WideString& Name1, const CFX_WideString& Name2);
+  int32_t IsPartName(const WideString& Name1, const WideString& Name2);
   void MatchFonts(std::vector<CFX_FontDescriptorInfo>* MatchedFonts,
                   uint16_t wCodePage,
                   uint32_t dwFontStyles,
-                  const CFX_WideString& FontName,
+                  const WideString& FontName,
                   wchar_t wcUnicode = 0xFFFE);
   int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
                       uint16_t wCodePage,
                       uint32_t dwFontStyles,
-                      const CFX_WideString& FontName,
+                      const WideString& FontName,
                       wchar_t wcUnicode = 0xFFFE);
-  CFX_RetainPtr<CFGAS_GEFont> LoadFont(const CFX_WideString& wsFaceName,
+  CFX_RetainPtr<CFGAS_GEFont> LoadFont(const WideString& wsFaceName,
                                        int32_t iFaceIndex,
                                        int32_t* pFaceCount);
   FXFT_Face LoadFace(const CFX_RetainPtr<IFX_SeekableReadStream>& pFontStream,
@@ -234,7 +234,7 @@ class CFGAS_FontMgr : public CFX_Observable<CFGAS_FontMgr> {
       IFX_SystemFontInfo* pSystemFontInfo,
       uint32_t index);
   CFX_RetainPtr<IFX_SeekableReadStream> CreateFontStream(
-      const CFX_ByteString& bsFaceName);
+      const ByteString& bsFaceName);
 
   CFX_FontSourceEnum_File* const m_pFontSource;
   std::vector<std::unique_ptr<CFX_FontDescriptor>> m_InstalledFonts;

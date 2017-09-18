@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPVT_GENERATEAP_H_
 #define CORE_FPDFDOC_CPVT_GENERATEAP_H_
 
+#include <memory>
+
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_color.h"
@@ -46,24 +48,24 @@ class CPVT_GenerateAP {
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateUnderlineAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
-  static CFX_ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
-                                       CPDF_VariableText::Iterator* pIterator,
-                                       const CFX_PointF& ptOffset,
-                                       bool bContinuous,
-                                       uint16_t SubWord);
-  static CFX_ByteString GenerateBorderAP(const CFX_FloatRect& rect,
-                                         float fWidth,
-                                         const CPVT_Color& color,
-                                         const CPVT_Color& crLeftTop,
-                                         const CPVT_Color& crRightBottom,
-                                         BorderStyle nStyle,
-                                         const CPVT_Dash& dash);
-  static CFX_ByteString GenerateColorAP(const CPVT_Color& color,
-                                        PaintOperation nOperation);
+  static ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
+                                   CPDF_VariableText::Iterator* pIterator,
+                                   const CFX_PointF& ptOffset,
+                                   bool bContinuous,
+                                   uint16_t SubWord);
+  static ByteString GenerateBorderAP(const CFX_FloatRect& rect,
+                                     float fWidth,
+                                     const CPVT_Color& color,
+                                     const CPVT_Color& crLeftTop,
+                                     const CPVT_Color& crRightBottom,
+                                     BorderStyle nStyle,
+                                     const CPVT_Dash& dash);
+  static ByteString GenerateColorAP(const CPVT_Color& color,
+                                    PaintOperation nOperation);
   static std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
       const CPDF_Dictionary& pAnnotDict,
-      const CFX_ByteString& sExtGSDictName,
-      const CFX_ByteString& sBlendMode);
+      const ByteString& sExtGSDictName,
+      const ByteString& sBlendMode);
   static std::unique_ptr<CPDF_Dictionary> GenerateResourceDict(
       CPDF_Document* pDoc,
       std::unique_ptr<CPDF_Dictionary> pExtGStateDict,
@@ -75,14 +77,14 @@ class CPVT_GenerateAP {
       std::unique_ptr<CPDF_Dictionary> pResourceDict,
       bool bIsTextMarkupAnnotation);
 
-  static CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
-                                         int32_t nFontIndex,
-                                         uint16_t Word,
-                                         uint16_t SubWord);
-  static CFX_ByteString GetWordRenderString(const CFX_ByteString& strWords);
-  static CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
-                                         int32_t nFontIndex,
-                                         float fFontSize);
+  static ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
+                                     int32_t nFontIndex,
+                                     uint16_t Word,
+                                     uint16_t SubWord);
+  static ByteString GetWordRenderString(const ByteString& strWords);
+  static ByteString GetFontSetString(IPVT_FontMap* pFontMap,
+                                     int32_t nFontIndex,
+                                     float fFontSize);
 };
 
 #endif  // CORE_FPDFDOC_CPVT_GENERATEAP_H_

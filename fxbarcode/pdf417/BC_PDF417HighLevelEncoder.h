@@ -14,9 +14,9 @@
 
 class CBC_PDF417HighLevelEncoder {
  public:
-  static CFX_WideString encodeHighLevel(CFX_WideString msg,
-                                        Compaction compaction,
-                                        int32_t& e);
+  static WideString encodeHighLevel(WideString msg,
+                                    Compaction compaction,
+                                    int32_t& e);
   static void Inverse();
   static void Initialize();
   static void Finalize();
@@ -35,31 +35,31 @@ class CBC_PDF417HighLevelEncoder {
   static uint8_t TEXT_PUNCTUATION_RAW[];
   static int32_t MIXED[128];
   static int32_t PUNCTUATION[128];
-  static int32_t encodeText(CFX_WideString msg,
+  static int32_t encodeText(WideString msg,
                             int32_t startpos,
                             int32_t count,
-                            CFX_WideString& sb,
+                            WideString& sb,
                             int32_t initialSubmode);
   static void encodeBinary(std::vector<uint8_t>* bytes,
                            int32_t startpos,
                            int32_t count,
                            int32_t startmode,
-                           CFX_WideString& sb);
-  static void encodeNumeric(CFX_WideString msg,
+                           WideString& sb);
+  static void encodeNumeric(WideString msg,
                             int32_t startpos,
                             int32_t count,
-                            CFX_WideString& sb);
+                            WideString& sb);
   static bool isDigit(wchar_t ch);
   static bool isAlphaUpper(wchar_t ch);
   static bool isAlphaLower(wchar_t ch);
   static bool isMixed(wchar_t ch);
   static bool isPunctuation(wchar_t ch);
   static bool isText(wchar_t ch);
-  static int32_t determineConsecutiveDigitCount(CFX_WideString msg,
+  static int32_t determineConsecutiveDigitCount(WideString msg,
                                                 int32_t startpos);
-  static int32_t determineConsecutiveTextCount(CFX_WideString msg,
+  static int32_t determineConsecutiveTextCount(WideString msg,
                                                int32_t startpos);
-  static int32_t determineConsecutiveBinaryCount(CFX_WideString msg,
+  static int32_t determineConsecutiveBinaryCount(WideString msg,
                                                  std::vector<uint8_t>* bytes,
                                                  int32_t startpos,
                                                  int32_t& e);

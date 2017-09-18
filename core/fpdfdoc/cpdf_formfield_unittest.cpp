@@ -10,7 +10,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(cpdf_formfield, FPDF_GetFullName) {
-  CFX_WideString name = FPDF_GetFullName(nullptr);
+  WideString name = FPDF_GetFullName(nullptr);
   EXPECT_TRUE(name.IsEmpty());
 
   CPDF_IndirectObjectHolder obj_holder;

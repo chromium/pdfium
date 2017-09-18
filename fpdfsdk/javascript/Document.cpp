@@ -164,7 +164,7 @@ Document::~Document() {
 // the total number of fileds in document.
 bool Document::numFields(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -175,13 +175,13 @@ bool Document::numFields(CJS_Runtime* pRuntime,
   }
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  vp << static_cast<int>(pPDFForm->CountFields(CFX_WideString()));
+  vp << static_cast<int>(pPDFForm->CountFields(WideString()));
   return true;
 }
 
 bool Document::dirty(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -202,7 +202,7 @@ bool Document::dirty(CJS_Runtime* pRuntime,
 
 bool Document::ADBE(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   if (vp.IsGetting())
     vp.GetJSValue()->SetNull(pRuntime);
 
@@ -211,7 +211,7 @@ bool Document::ADBE(CJS_Runtime* pRuntime,
 
 bool Document::pageNum(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -237,7 +237,7 @@ bool Document::pageNum(CJS_Runtime* pRuntime,
 bool Document::addAnnot(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   // Not supported.
   return true;
 }
@@ -245,7 +245,7 @@ bool Document::addAnnot(CJS_Runtime* pRuntime,
 bool Document::addField(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   // Not supported.
   return true;
 }
@@ -253,7 +253,7 @@ bool Document::addField(CJS_Runtime* pRuntime,
 bool Document::exportAsText(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -261,7 +261,7 @@ bool Document::exportAsText(CJS_Runtime* pRuntime,
 bool Document::exportAsFDF(CJS_Runtime* pRuntime,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -269,7 +269,7 @@ bool Document::exportAsFDF(CJS_Runtime* pRuntime,
 bool Document::exportAsXFDF(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -277,7 +277,7 @@ bool Document::exportAsXFDF(CJS_Runtime* pRuntime,
 bool Document::getField(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   if (params.size() < 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
@@ -286,7 +286,7 @@ bool Document::getField(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  CFX_WideString wideName = params[0].ToCFXWideString(pRuntime);
+  WideString wideName = params[0].ToCFXWideString(pRuntime);
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (pPDFForm->CountFields(wideName) <= 0) {
@@ -311,7 +311,7 @@ bool Document::getField(CJS_Runtime* pRuntime,
 bool Document::getNthFieldName(CJS_Runtime* pRuntime,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
-                               CFX_WideString& sError) {
+                               WideString& sError) {
   if (params.size() != 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
@@ -327,7 +327,7 @@ bool Document::getNthFieldName(CJS_Runtime* pRuntime,
   }
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  CPDF_FormField* pField = pPDFForm->GetField(nIndex, CFX_WideString());
+  CPDF_FormField* pField = pPDFForm->GetField(nIndex, WideString());
   if (!pField)
     return false;
 
@@ -338,7 +338,7 @@ bool Document::getNthFieldName(CJS_Runtime* pRuntime,
 bool Document::importAnFDF(CJS_Runtime* pRuntime,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -346,7 +346,7 @@ bool Document::importAnFDF(CJS_Runtime* pRuntime,
 bool Document::importAnXFDF(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -354,7 +354,7 @@ bool Document::importAnXFDF(CJS_Runtime* pRuntime,
 bool Document::importTextData(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
-                              CFX_WideString& sError) {
+                              WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -365,7 +365,7 @@ bool Document::importTextData(CJS_Runtime* pRuntime,
 bool Document::mailForm(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -376,14 +376,13 @@ bool Document::mailForm(CJS_Runtime* pRuntime,
   }
   int iLength = params.size();
   bool bUI = iLength > 0 ? params[0].ToBool(pRuntime) : true;
-  CFX_WideString cTo = iLength > 1 ? params[1].ToCFXWideString(pRuntime) : L"";
-  CFX_WideString cCc = iLength > 2 ? params[2].ToCFXWideString(pRuntime) : L"";
-  CFX_WideString cBcc = iLength > 3 ? params[3].ToCFXWideString(pRuntime) : L"";
-  CFX_WideString cSubject =
-      iLength > 4 ? params[4].ToCFXWideString(pRuntime) : L"";
-  CFX_WideString cMsg = iLength > 5 ? params[5].ToCFXWideString(pRuntime) : L"";
+  WideString cTo = iLength > 1 ? params[1].ToCFXWideString(pRuntime) : L"";
+  WideString cCc = iLength > 2 ? params[2].ToCFXWideString(pRuntime) : L"";
+  WideString cBcc = iLength > 3 ? params[3].ToCFXWideString(pRuntime) : L"";
+  WideString cSubject = iLength > 4 ? params[4].ToCFXWideString(pRuntime) : L"";
+  WideString cMsg = iLength > 5 ? params[5].ToCFXWideString(pRuntime) : L"";
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CFX_ByteString sTextBuf = pInterForm->ExportFormToFDFTextBuf();
+  ByteString sTextBuf = pInterForm->ExportFormToFDFTextBuf();
   if (sTextBuf.GetLength() == 0)
     return false;
 
@@ -404,7 +403,7 @@ bool Document::mailForm(CJS_Runtime* pRuntime,
 bool Document::print(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -472,7 +471,7 @@ bool Document::print(CJS_Runtime* pRuntime,
 bool Document::removeField(CJS_Runtime* pRuntime,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   if (params.size() != 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
@@ -486,7 +485,7 @@ bool Document::removeField(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return false;
   }
-  CFX_WideString sFieldName = params[0].ToCFXWideString(pRuntime);
+  WideString sFieldName = params[0].ToCFXWideString(pRuntime);
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
@@ -531,7 +530,7 @@ bool Document::removeField(CJS_Runtime* pRuntime,
 bool Document::resetForm(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -566,7 +565,7 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
   for (int i = 0, isz = aName.GetLength(pRuntime); i < isz; ++i) {
     CJS_Value valElement(pRuntime);
     aName.GetElement(pRuntime, i, valElement);
-    CFX_WideString swVal = valElement.ToCFXWideString(pRuntime);
+    WideString swVal = valElement.ToCFXWideString(pRuntime);
     for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
       aFields.push_back(pPDFForm->GetField(j, swVal));
   }
@@ -582,7 +581,7 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
 bool Document::saveAs(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -590,14 +589,14 @@ bool Document::saveAs(CJS_Runtime* pRuntime,
 bool Document::syncAnnotScan(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
-                             CFX_WideString& sError) {
+                             WideString& sError) {
   return true;
 }
 
 bool Document::submitForm(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   int nSize = params.size();
   if (nSize < 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
@@ -609,7 +608,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
   }
 
   CJS_Array aFields;
-  CFX_WideString strURL;
+  WideString strURL;
   bool bFDF = true;
   bool bEmpty = false;
   CJS_Value v = params[0];
@@ -653,7 +652,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
     CJS_Value valName(pRuntime);
     aFields.GetElement(pRuntime, i, valName);
 
-    CFX_WideString sName = valName.ToCFXWideString(pRuntime);
+    WideString sName = valName.ToCFXWideString(pRuntime);
     CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
     for (int j = 0, jsz = pPDFForm->CountFields(sName); j < jsz; ++j) {
       CPDF_FormField* pField = pPDFForm->GetField(j, sName);
@@ -678,21 +677,21 @@ void Document::SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
 
 bool Document::bookmarkRoot(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   return true;
 }
 
 bool Document::mailDoc(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   // TODO(tsepez): Check maximum number of allowed params.
   bool bUI = true;
-  CFX_WideString cTo = L"";
-  CFX_WideString cCc = L"";
-  CFX_WideString cBcc = L"";
-  CFX_WideString cSubject = L"";
-  CFX_WideString cMsg = L"";
+  WideString cTo = L"";
+  WideString cCc = L"";
+  WideString cBcc = L"";
+  WideString cSubject = L"";
+  WideString cMsg = L"";
 
   if (params.size() >= 1)
     bUI = params[0].ToBool(pRuntime);
@@ -739,13 +738,13 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
 
 bool Document::author(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return getPropertyInternal(pRuntime, vp, "Author", sError);
 }
 
 bool Document::info(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -758,46 +757,46 @@ bool Document::info(CJS_Runtime* pRuntime,
   if (!pDictionary)
     return false;
 
-  CFX_WideString cwAuthor = pDictionary->GetUnicodeTextFor("Author");
-  CFX_WideString cwTitle = pDictionary->GetUnicodeTextFor("Title");
-  CFX_WideString cwSubject = pDictionary->GetUnicodeTextFor("Subject");
-  CFX_WideString cwKeywords = pDictionary->GetUnicodeTextFor("Keywords");
-  CFX_WideString cwCreator = pDictionary->GetUnicodeTextFor("Creator");
-  CFX_WideString cwProducer = pDictionary->GetUnicodeTextFor("Producer");
-  CFX_WideString cwCreationDate =
-      pDictionary->GetUnicodeTextFor("CreationDate");
-  CFX_WideString cwModDate = pDictionary->GetUnicodeTextFor("ModDate");
-  CFX_WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
+  WideString cwAuthor = pDictionary->GetUnicodeTextFor("Author");
+  WideString cwTitle = pDictionary->GetUnicodeTextFor("Title");
+  WideString cwSubject = pDictionary->GetUnicodeTextFor("Subject");
+  WideString cwKeywords = pDictionary->GetUnicodeTextFor("Keywords");
+  WideString cwCreator = pDictionary->GetUnicodeTextFor("Creator");
+  WideString cwProducer = pDictionary->GetUnicodeTextFor("Producer");
+  WideString cwCreationDate = pDictionary->GetUnicodeTextFor("CreationDate");
+  WideString cwModDate = pDictionary->GetUnicodeTextFor("ModDate");
+  WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
 
   v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
   pRuntime->PutObjectProperty(pObj, L"Author",
-                              pRuntime->NewString(cwAuthor.AsStringC()));
+                              pRuntime->NewString(cwAuthor.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"Title",
-                              pRuntime->NewString(cwTitle.AsStringC()));
+                              pRuntime->NewString(cwTitle.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"Subject",
-                              pRuntime->NewString(cwSubject.AsStringC()));
+                              pRuntime->NewString(cwSubject.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"Keywords",
-                              pRuntime->NewString(cwKeywords.AsStringC()));
+                              pRuntime->NewString(cwKeywords.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"Creator",
-                              pRuntime->NewString(cwCreator.AsStringC()));
+                              pRuntime->NewString(cwCreator.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"Producer",
-                              pRuntime->NewString(cwProducer.AsStringC()));
-  pRuntime->PutObjectProperty(pObj, L"CreationDate",
-                              pRuntime->NewString(cwCreationDate.AsStringC()));
+                              pRuntime->NewString(cwProducer.AsStringView()));
+  pRuntime->PutObjectProperty(
+      pObj, L"CreationDate",
+      pRuntime->NewString(cwCreationDate.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"ModDate",
-                              pRuntime->NewString(cwModDate.AsStringC()));
+                              pRuntime->NewString(cwModDate.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"Trapped",
-                              pRuntime->NewString(cwTrapped.AsStringC()));
+                              pRuntime->NewString(cwTrapped.AsStringView()));
 
   // It's to be compatible to non-standard info dictionary.
   for (const auto& it : *pDictionary) {
-    const CFX_ByteString& bsKey = it.first;
+    const ByteString& bsKey = it.first;
     CPDF_Object* pValueObj = it.second.get();
-    CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsStringC());
+    WideString wsKey = WideString::FromUTF8(bsKey.AsStringView());
     if (pValueObj->IsString() || pValueObj->IsName()) {
       pRuntime->PutObjectProperty(
           pObj, wsKey,
-          pRuntime->NewString(pValueObj->GetUnicodeText().AsStringC()));
+          pRuntime->NewString(pValueObj->GetUnicodeText().AsStringView()));
     } else if (pValueObj->IsNumber()) {
       pRuntime->PutObjectProperty(pObj, wsKey,
                                   pRuntime->NewNumber(pValueObj->GetNumber()));
@@ -812,8 +811,8 @@ bool Document::info(CJS_Runtime* pRuntime,
 
 bool Document::getPropertyInternal(CJS_Runtime* pRuntime,
                                    CJS_PropValue& vp,
-                                   const CFX_ByteString& propName,
-                                   CFX_WideString& sError) {
+                                   const ByteString& propName,
+                                   WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -829,7 +828,7 @@ bool Document::getPropertyInternal(CJS_Runtime* pRuntime,
       sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
       return false;
     }
-    CFX_WideString csProperty;
+    WideString csProperty;
     vp >> csProperty;
     pDictionary->SetNewFor<CPDF_String>(propName, PDF_EncodeText(csProperty),
                                         false);
@@ -840,19 +839,19 @@ bool Document::getPropertyInternal(CJS_Runtime* pRuntime,
 
 bool Document::creationDate(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   return getPropertyInternal(pRuntime, vp, "CreationDate", sError);
 }
 
 bool Document::creator(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return getPropertyInternal(pRuntime, vp, "Creator", sError);
 }
 
 bool Document::delay(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -880,31 +879,31 @@ bool Document::delay(CJS_Runtime* pRuntime,
 
 bool Document::keywords(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   return getPropertyInternal(pRuntime, vp, "Keywords", sError);
 }
 
 bool Document::modDate(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return getPropertyInternal(pRuntime, vp, "ModDate", sError);
 }
 
 bool Document::producer(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   return getPropertyInternal(pRuntime, vp, "Producer", sError);
 }
 
 bool Document::subject(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return getPropertyInternal(pRuntime, vp, "Subject", sError);
 }
 
 bool Document::title(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument()) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -914,7 +913,7 @@ bool Document::title(CJS_Runtime* pRuntime,
 
 bool Document::numPages(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -929,7 +928,7 @@ bool Document::numPages(CJS_Runtime* pRuntime,
 
 bool Document::external(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   // In Chrome case, should always return true.
   if (vp.IsGetting()) {
     vp << true;
@@ -939,7 +938,7 @@ bool Document::external(CJS_Runtime* pRuntime,
 
 bool Document::filesize(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -950,19 +949,19 @@ bool Document::filesize(CJS_Runtime* pRuntime,
 
 bool Document::mouseX(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return true;
 }
 
 bool Document::mouseY(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return true;
 }
 
 bool Document::URL(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -977,7 +976,7 @@ bool Document::URL(CJS_Runtime* pRuntime,
 
 bool Document::baseURL(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   if (vp.IsGetting()) {
     vp << m_cwBaseURL;
   } else {
@@ -988,7 +987,7 @@ bool Document::baseURL(CJS_Runtime* pRuntime,
 
 bool Document::calculate(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -1006,7 +1005,7 @@ bool Document::calculate(CJS_Runtime* pRuntime,
 
 bool Document::documentFileName(CJS_Runtime* pRuntime,
                                 CJS_PropValue& vp,
-                                CFX_WideString& sError) {
+                                WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -1015,7 +1014,7 @@ bool Document::documentFileName(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  CFX_WideString wsFilePath = m_pFormFillEnv->JS_docGetFilePath();
+  WideString wsFilePath = m_pFormFillEnv->JS_docGetFilePath();
   FX_STRSIZE i = wsFilePath.GetLength();
   for (; i > 0; i--) {
     if (wsFilePath[i - 1] == L'\\' || wsFilePath[i - 1] == L'/')
@@ -1032,7 +1031,7 @@ bool Document::documentFileName(CJS_Runtime* pRuntime,
 
 bool Document::path(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -1047,41 +1046,41 @@ bool Document::path(CJS_Runtime* pRuntime,
 
 bool Document::pageWindowRect(CJS_Runtime* pRuntime,
                               CJS_PropValue& vp,
-                              CFX_WideString& sError) {
+                              WideString& sError) {
   return true;
 }
 
 bool Document::layout(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return true;
 }
 
 bool Document::addLink(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return true;
 }
 
 bool Document::closeDoc(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   return true;
 }
 
 bool Document::getPageBox(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   return true;
 }
 
 bool Document::getAnnot(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   if (params.size() != 2) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
@@ -1091,7 +1090,7 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
     return false;
   }
   int nPageNo = params[0].ToInt(pRuntime);
-  CFX_WideString swAnnotName = params[1].ToCFXWideString(pRuntime);
+  WideString swAnnotName = params[1].ToCFXWideString(pRuntime);
   CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(nPageNo);
   if (!pPageView)
     return false;
@@ -1125,7 +1124,7 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
 bool Document::getAnnots(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -1166,7 +1165,7 @@ bool Document::getAnnots(CJS_Runtime* pRuntime,
 bool Document::getAnnot3D(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   vRet.SetNull(pRuntime);
   return true;
 }
@@ -1174,21 +1173,21 @@ bool Document::getAnnot3D(CJS_Runtime* pRuntime,
 bool Document::getAnnots3D(CJS_Runtime* pRuntime,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   return true;
 }
 
 bool Document::getOCGs(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return true;
 }
 
 bool Document::getLinks(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   return true;
 }
 
@@ -1200,13 +1199,13 @@ bool Document::IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect) {
 bool Document::addIcon(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   if (params.size() != 2) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
 
-  CFX_WideString swIconName = params[0].ToCFXWideString(pRuntime);
+  WideString swIconName = params[0].ToCFXWideString(pRuntime);
   if (params[1].GetType() != CJS_Value::VT_object) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
@@ -1229,7 +1228,7 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
 
 bool Document::icons(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -1261,13 +1260,13 @@ bool Document::icons(CJS_Runtime* pRuntime,
 bool Document::getIcon(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   if (params.size() != 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
 
-  CFX_WideString swIconName = params[0].ToCFXWideString(pRuntime);
+  WideString swIconName = params[0].ToCFXWideString(pRuntime);
   auto it = std::find(m_IconNames.begin(), m_IconNames.end(), swIconName);
   if (it == m_IconNames.end())
     return false;
@@ -1287,7 +1286,7 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
 bool Document::removeIcon(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   // Unsafe, no supported.
   return true;
 }
@@ -1295,21 +1294,21 @@ bool Document::removeIcon(CJS_Runtime* pRuntime,
 bool Document::createDataObject(CJS_Runtime* pRuntime,
                                 const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
-                                CFX_WideString& sError) {
+                                WideString& sError) {
   // Unsafe, not implemented.
   return true;
 }
 
 bool Document::media(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   return true;
 }
 
 bool Document::calculateNow(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -1326,14 +1325,14 @@ bool Document::calculateNow(CJS_Runtime* pRuntime,
 
 bool Document::Collab(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return true;
 }
 
 bool Document::getPageNthWord(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
-                              CFX_WideString& sError) {
+                              WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -1366,7 +1365,7 @@ bool Document::getPageNthWord(CJS_Runtime* pRuntime,
   page.ParseContent();
 
   int nWords = 0;
-  CFX_WideString swRet;
+  WideString swRet;
   for (auto& pPageObj : *page.GetPageObjectList()) {
     if (pPageObj->IsText()) {
       CPDF_TextObject* pTextObj = pPageObj->AsText();
@@ -1391,7 +1390,7 @@ bool Document::getPageNthWord(CJS_Runtime* pRuntime,
 bool Document::getPageNthWordQuads(CJS_Runtime* pRuntime,
                                    const std::vector<CJS_Value>& params,
                                    CJS_Value& vRet,
-                                   CFX_WideString& sError) {
+                                   WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -1406,7 +1405,7 @@ bool Document::getPageNthWordQuads(CJS_Runtime* pRuntime,
 bool Document::getPageNumWords(CJS_Runtime* pRuntime,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
-                               CFX_WideString& sError) {
+                               WideString& sError) {
   if (!m_pFormFillEnv) {
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -1442,7 +1441,7 @@ bool Document::getPageNumWords(CJS_Runtime* pRuntime,
 bool Document::getPrintParams(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
-                              CFX_WideString& sError) {
+                              WideString& sError) {
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_PrintParamsObj::g_nObjDefnID);
   if (pRetObj.IsEmpty())
@@ -1473,7 +1472,7 @@ int Document::CountWords(CPDF_TextObject* pTextObj) {
     float kerning;
 
     pTextObj->GetCharInfo(i, &charcode, &kerning);
-    CFX_WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
+    WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
 
     uint16_t unicode = 0;
     if (swUnicode.GetLength() > 0)
@@ -1490,9 +1489,8 @@ int Document::CountWords(CPDF_TextObject* pTextObj) {
   return nWords;
 }
 
-CFX_WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj,
-                                       int nWordIndex) {
-  CFX_WideString swRet;
+WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex) {
+  WideString swRet;
 
   CPDF_Font* pFont = pTextObj->GetFont();
   if (!pFont)
@@ -1506,7 +1504,7 @@ CFX_WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj,
     float kerning;
 
     pTextObj->GetCharInfo(i, &charcode, &kerning);
-    CFX_WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
+    WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
 
     uint16_t unicode = 0;
     if (swUnicode.GetLength() > 0)
@@ -1528,7 +1526,7 @@ CFX_WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj,
 
 bool Document::zoom(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   return true;
 }
 
@@ -1544,14 +1542,14 @@ bool Document::zoom(CJS_Runtime* pRuntime,
 
 bool Document::zoomType(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   return true;
 }
 
 bool Document::deletePages(CJS_Runtime* pRuntime,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   // Unsafe, no supported.
   return true;
 }
@@ -1559,7 +1557,7 @@ bool Document::deletePages(CJS_Runtime* pRuntime,
 bool Document::extractPages(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -1567,7 +1565,7 @@ bool Document::extractPages(CJS_Runtime* pRuntime,
 bool Document::insertPages(CJS_Runtime* pRuntime,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -1575,7 +1573,7 @@ bool Document::insertPages(CJS_Runtime* pRuntime,
 bool Document::replacePages(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -1583,7 +1581,7 @@ bool Document::replacePages(CJS_Runtime* pRuntime,
 bool Document::getURL(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -1591,7 +1589,7 @@ bool Document::getURL(CJS_Runtime* pRuntime,
 bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
-                             CFX_WideString& sError) {
+                             WideString& sError) {
   if (params.size() != 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
@@ -1600,7 +1598,7 @@ bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  CFX_WideString wideName = params[0].ToCFXWideString(pRuntime);
+  WideString wideName = params[0].ToCFXWideString(pRuntime);
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (!pDocument)
     return false;
@@ -1629,8 +1627,7 @@ void Document::AddDelayData(CJS_DelayData* pData) {
   m_DelayData.push_back(std::unique_ptr<CJS_DelayData>(pData));
 }
 
-void Document::DoFieldDelay(const CFX_WideString& sFieldName,
-                            int nControlIndex) {
+void Document::DoFieldDelay(const WideString& sFieldName, int nControlIndex) {
   std::vector<std::unique_ptr<CJS_DelayData>> DelayDataForFieldAndControlIndex;
   auto iter = m_DelayData.begin();
   while (iter != m_DelayData.end()) {

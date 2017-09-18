@@ -35,18 +35,18 @@ CPWL_Edit::~CPWL_Edit() {
   ASSERT(!m_bFocus);
 }
 
-CFX_ByteString CPWL_Edit::GetClassName() const {
+ByteString CPWL_Edit::GetClassName() const {
   return PWL_CLASSNAME_EDIT;
 }
 
-void CPWL_Edit::SetText(const CFX_WideString& csText) {
-  CFX_WideString swText = csText;
+void CPWL_Edit::SetText(const WideString& csText) {
+  WideString swText = csText;
   if (!HasFlag(PES_RICH)) {
     m_pEdit->SetText(swText);
     return;
   }
 
-  CFX_ByteString sValue = CFX_ByteString::FromUnicode(swText);
+  ByteString sValue = ByteString::FromUnicode(swText);
   std::unique_ptr<CXML_Element> pXML(
       CXML_Element::Parse(sValue.c_str(), sValue.GetLength()));
   if (!pXML) {
@@ -62,7 +62,7 @@ void CPWL_Edit::SetText(const CFX_WideString& csText) {
     if (!pSubElement || !pSubElement->GetTagName().EqualNoCase("p"))
       continue;
 
-    CFX_WideString swSection;
+    WideString swSection;
     int nSubChild = pSubElement->CountChildren();
     for (int32_t j = 0; j < nSubChild; j++) {
       CXML_Content* pSubContent = ToContent(pSubElement->GetChild(j));
@@ -443,7 +443,7 @@ void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
   m_pEdit->SetLimitChar(nLimitChar);
 }
 
-void CPWL_Edit::ReplaceSel(const CFX_WideString& wsText) {
+void CPWL_Edit::ReplaceSel(const WideString& wsText) {
   m_pEdit->ClearSelection();
   m_pEdit->InsertText(wsText, FX_CHARSET_Default);
 }
@@ -463,8 +463,8 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
 
   if (nChar == FWL_VKEY_Delete) {
     if (m_pFillerNotify) {
-      CFX_WideString strChange;
-      CFX_WideString strChangeEx;
+      WideString strChange;
+      WideString strChangeEx;
 
       int nSelStart = 0;
       int nSelEnd = 0;
@@ -532,7 +532,7 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
 
   if (!IsCTRLpressed(nFlag)) {
     if (m_pFillerNotify) {
-      CFX_WideString swChange;
+      WideString swChange;
 
       int nSelStart = 0;
       int nSelEnd = 0;
@@ -550,7 +550,7 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
           break;
       }
 
-      CFX_WideString strChangeEx;
+      WideString strChangeEx;
       std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
           GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, true,
           nFlag);

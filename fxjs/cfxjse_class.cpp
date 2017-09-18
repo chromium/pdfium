@@ -24,7 +24,7 @@ void V8FunctionCallback_Wrapper(
   if (!lpFunctionInfo)
     return;
 
-  CFX_ByteStringC szFunctionName(lpFunctionInfo->name);
+  ByteStringView szFunctionName(lpFunctionInfo->name);
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
   auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
@@ -42,7 +42,7 @@ void V8ClassGlobalConstructorCallback_Wrapper(
   if (!lpClassDefinition)
     return;
 
-  CFX_ByteStringC szFunctionName(lpClassDefinition->name);
+  ByteStringView szFunctionName(lpClassDefinition->name);
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
   auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
@@ -60,7 +60,7 @@ void V8GetterCallback_Wrapper(v8::Local<v8::String> property,
   if (!lpPropertyInfo)
     return;
 
-  CFX_ByteStringC szPropertyName(lpPropertyInfo->name);
+  ByteStringView szPropertyName(lpPropertyInfo->name);
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   auto lpPropValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
@@ -77,7 +77,7 @@ void V8SetterCallback_Wrapper(v8::Local<v8::String> property,
   if (!lpPropertyInfo)
     return;
 
-  CFX_ByteStringC szPropertyName(lpPropertyInfo->name);
+  ByteStringView szPropertyName(lpPropertyInfo->name);
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   auto lpPropValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
@@ -108,7 +108,7 @@ void Context_GlobalObjToString(
     return;
 
   if (info.This() == info.Holder() && lpClass->name) {
-    CFX_ByteString szStringVal;
+    ByteString szStringVal;
     szStringVal.Format("[object %s]", lpClass->name);
     info.GetReturnValue().Set(v8::String::NewFromUtf8(
         info.GetIsolate(), szStringVal.c_str(), v8::String::kNormalString,
@@ -131,7 +131,7 @@ void DynPropGetterAdapter_MethodCallback(
       hCallBackInfo->GetInternalField(1).As<v8::String>();
   ASSERT(lpClass && !hPropName.IsEmpty());
   v8::String::Utf8Value szPropName(hPropName);
-  CFX_ByteStringC szFxPropName = *szPropName;
+  ByteStringView szFxPropName = *szPropName;
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
   auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
@@ -143,7 +143,7 @@ void DynPropGetterAdapter_MethodCallback(
 
 void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                           CFXJSE_Value* pObject,
-                          const CFX_ByteStringC& szPropName,
+                          const ByteStringView& szPropName,
                           CFXJSE_Value* pValue) {
   ASSERT(lpClass);
   int32_t nPropType =
@@ -179,7 +179,7 @@ void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
 
 void DynPropSetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                           CFXJSE_Value* pObject,
-                          const CFX_ByteStringC& szPropName,
+                          const ByteStringView& szPropName,
                           CFXJSE_Value* pValue) {
   ASSERT(lpClass);
   int32_t nPropType =
@@ -194,7 +194,7 @@ void DynPropSetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
 
 bool DynPropQueryAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                          CFXJSE_Value* pObject,
-                         const CFX_ByteStringC& szPropName) {
+                         const ByteStringView& szPropName) {
   ASSERT(lpClass);
   int32_t nPropType =
       lpClass->dynPropTypeGetter == nullptr
@@ -205,7 +205,7 @@ bool DynPropQueryAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
 
 bool DynPropDeleterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                            CFXJSE_Value* pObject,
-                           const CFX_ByteStringC& szPropName) {
+                           const ByteStringView& szPropName) {
   ASSERT(lpClass);
   int32_t nPropType =
       lpClass->dynPropTypeGetter == nullptr
@@ -228,7 +228,7 @@ void NamedPropertyQueryCallback(
   v8::Isolate* pIsolate = info.GetIsolate();
   v8::HandleScope scope(pIsolate);
   v8::String::Utf8Value szPropName(property);
-  CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
+  ByteStringView szFxPropName(*szPropName, szPropName.length());
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
   if (DynPropQueryAdapter(lpClass, lpThisValue.get(), szFxPropName)) {
@@ -248,7 +248,7 @@ void NamedPropertyDeleterCallback(
   v8::Isolate* pIsolate = info.GetIsolate();
   v8::HandleScope scope(pIsolate);
   v8::String::Utf8Value szPropName(property);
-  CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
+  ByteStringView szFxPropName(*szPropName, szPropName.length());
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
   info.GetReturnValue().Set(
@@ -262,7 +262,7 @@ void NamedPropertyGetterCallback(
   const FXJSE_CLASS_DESCRIPTOR* lpClass = static_cast<FXJSE_CLASS_DESCRIPTOR*>(
       info.Data().As<v8::External>()->Value());
   v8::String::Utf8Value szPropName(property);
-  CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
+  ByteStringView szFxPropName(*szPropName, szPropName.length());
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
   auto lpNewValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
@@ -279,7 +279,7 @@ void NamedPropertySetterCallback(
   const FXJSE_CLASS_DESCRIPTOR* lpClass = static_cast<FXJSE_CLASS_DESCRIPTOR*>(
       info.Data().As<v8::External>()->Value());
   v8::String::Utf8Value szPropName(property);
-  CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
+  ByteStringView szFxPropName(*szPropName, szPropName.length());
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
 

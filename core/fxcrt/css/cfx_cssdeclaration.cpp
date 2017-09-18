@@ -113,7 +113,7 @@ const CFX_CSSColorTable g_CFX_CSSColors[] = {
 };
 
 const CFX_CSSPropertyValueTable* GetCSSPropertyValueByName(
-    const CFX_WideStringC& wsName) {
+    const WideStringView& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint32_t dwHash = FX_HashCode_GetW(wsName, true);
   int32_t iEnd = g_iCSSPropertyValueCount;
@@ -134,7 +134,7 @@ const CFX_CSSPropertyValueTable* GetCSSPropertyValueByName(
 }
 
 const CFX_CSSLengthUnitTable* GetCSSLengthUnitByName(
-    const CFX_WideStringC& wsName) {
+    const WideStringView& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint16_t wHash = FX_HashCode_GetW(wsName, true);
   int32_t iEnd =
@@ -155,7 +155,7 @@ const CFX_CSSLengthUnitTable* GetCSSLengthUnitByName(
   return nullptr;
 }
 
-const CFX_CSSColorTable* GetCSSColorByName(const CFX_WideStringC& wsName) {
+const CFX_CSSColorTable* GetCSSColorByName(const WideStringView& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint32_t dwHash = FX_HashCode_GetW(wsName, true);
   int32_t iEnd = sizeof(g_CFX_CSSColors) / sizeof(CFX_CSSColorTable) - 1;
@@ -192,7 +192,7 @@ bool ParseCSSNumber(const wchar_t* pszValue,
     eUnit = CFX_CSSNumberType::Percent;
   } else if (iValueLen == 2) {
     const CFX_CSSLengthUnitTable* pUnit =
-        GetCSSLengthUnitByName(CFX_WideStringC(pszValue, 2));
+        GetCSSLengthUnitByName(WideStringView(pszValue, 2));
     if (pUnit)
       eUnit = pUnit->wValue;
   }
@@ -273,7 +273,7 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
   }
 
   const CFX_CSSColorTable* pColor =
-      GetCSSColorByName(CFX_WideStringC(pszValue, iValueLen));
+      GetCSSColorByName(WideStringView(pszValue, iValueLen));
   if (!pColor)
     return false;
 
@@ -308,7 +308,7 @@ void CFX_CSSDeclaration::AddPropertyHolder(CFX_CSSProperty eProperty,
 }
 
 void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
-                                     const CFX_WideStringC& value) {
+                                     const WideStringView& value) {
   ASSERT(!value.IsEmpty());
 
   const wchar_t* pszValue = value.unterminated_c_str();
@@ -422,8 +422,8 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
   }
 }
 
-void CFX_CSSDeclaration::AddProperty(const CFX_WideString& prop,
-                                     const CFX_WideString& value) {
+void CFX_CSSDeclaration::AddProperty(const WideString& prop,
+                                     const WideString& value) {
   custom_properties_.push_back(
       pdfium::MakeUnique<CFX_CSSCustomProperty>(prop, value));
 }
@@ -442,7 +442,7 @@ CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseEnum(
     const wchar_t* pszValue,
     int32_t iValueLen) {
   const CFX_CSSPropertyValueTable* pValue =
-      GetCSSPropertyValueByName(CFX_WideStringC(pszValue, iValueLen));
+      GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
   return pValue ? pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName) : nullptr;
 }
 
@@ -466,7 +466,7 @@ CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseString(
     return nullptr;
 
   return pdfium::MakeRetain<CFX_CSSStringValue>(
-      CFX_WideString(pszValue + iOffset, iValueLen));
+      WideString(pszValue + iOffset, iValueLen));
 }
 
 void CFX_CSSDeclaration::ParseValueListProperty(
@@ -502,7 +502,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
         }
         if (dwType & CFX_CSSVALUETYPE_MaybeEnum) {
           const CFX_CSSPropertyValueTable* pValue =
-              GetCSSPropertyValueByName(CFX_WideStringC(pszValue, iValueLen));
+              GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
           if (pValue) {
             list.push_back(pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName));
             continue;
@@ -510,7 +510,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
         }
         if (dwType & CFX_CSSVALUETYPE_MaybeString) {
           list.push_back(pdfium::MakeRetain<CFX_CSSStringValue>(
-              CFX_WideString(pszValue, iValueLen)));
+              WideString(pszValue, iValueLen)));
         }
         break;
       case CFX_CSSPrimitiveType::RGB:
@@ -614,12 +614,12 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
       }
       case CFX_CSSPrimitiveType::String: {
         const CFX_CSSColorTable* pColorItem =
-            GetCSSColorByName(CFX_WideStringC(pszValue, iValueLen));
+            GetCSSColorByName(WideStringView(pszValue, iValueLen));
         if (pColorItem)
           continue;
 
         const CFX_CSSPropertyValueTable* pValue =
-            GetCSSPropertyValueByName(CFX_WideStringC(pszValue, iValueLen));
+            GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
         if (!pValue)
           continue;
 
@@ -661,7 +661,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
     switch (eType) {
       case CFX_CSSPrimitiveType::String: {
         const CFX_CSSPropertyValueTable* pValue =
-            GetCSSPropertyValueByName(CFX_WideStringC(pszValue, iValueLen));
+            GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
         if (pValue) {
           switch (pValue->eName) {
             case CFX_CSSPropertyValue::XxSmall:
@@ -710,7 +710,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
         }
         if (pFontSize) {
           familyList.push_back(pdfium::MakeRetain<CFX_CSSStringValue>(
-              CFX_WideString(pszValue, iValueLen)));
+              WideString(pszValue, iValueLen)));
         }
         parser.m_Separator = ',';
         break;

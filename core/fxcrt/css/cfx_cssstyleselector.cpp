@@ -50,7 +50,7 @@ void CFX_CSSStyleSelector::UpdateStyleIndex() {
 }
 
 std::vector<const CFX_CSSDeclaration*> CFX_CSSStyleSelector::MatchDeclarations(
-    const CFX_WideString& tagname) {
+    const WideString& tagname) {
   std::vector<const CFX_CSSDeclaration*> matchedDecls;
   if (m_UARules.CountSelectors() == 0 || tagname.IsEmpty())
     return matchedDecls;
@@ -66,7 +66,7 @@ std::vector<const CFX_CSSDeclaration*> CFX_CSSStyleSelector::MatchDeclarations(
   return matchedDecls;
 }
 
-bool CFX_CSSStyleSelector::MatchSelector(const CFX_WideString& tagname,
+bool CFX_CSSStyleSelector::MatchSelector(const WideString& tagname,
                                          CFX_CSSSelector* pSel) {
   // TODO(dsinclair): The code only supports a single level of selector at this
   // point. None of the code using selectors required the complexity so lets
@@ -80,8 +80,8 @@ bool CFX_CSSStyleSelector::MatchSelector(const CFX_WideString& tagname,
 
 void CFX_CSSStyleSelector::ComputeStyle(
     const std::vector<const CFX_CSSDeclaration*>& declArray,
-    const CFX_WideString& styleString,
-    const CFX_WideString& alignString,
+    const WideString& styleString,
+    const WideString& alignString,
     CFX_CSSComputedStyle* pDest) {
   std::unique_ptr<CFX_CSSDeclaration> pDecl;
   if (!styleString.IsEmpty() || !alignString.IsEmpty()) {
@@ -91,7 +91,7 @@ void CFX_CSSStyleSelector::ComputeStyle(
       AppendInlineStyle(pDecl.get(), styleString);
     if (!alignString.IsEmpty()) {
       pDecl->AddProperty(CFX_GetCSSPropertyByEnum(CFX_CSSProperty::TextAlign),
-                         alignString.AsStringC());
+                         alignString.AsStringView());
     }
   }
   ApplyDeclarations(declArray, pDecl.get(), pDest);
@@ -137,29 +137,29 @@ void CFX_CSSStyleSelector::ExtractValues(
 }
 
 void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
-                                             const CFX_WideString& style) {
+                                             const WideString& style) {
   ASSERT(pDecl && !style.IsEmpty());
 
   auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(
       style.c_str(), style.GetLength(), 32, true);
   int32_t iLen2 = 0;
   const CFX_CSSPropertyTable* table = nullptr;
-  CFX_WideString wsName;
+  WideString wsName;
   while (1) {
     CFX_CSSSyntaxStatus eStatus = pSyntax->DoSyntaxParse();
     if (eStatus == CFX_CSSSyntaxStatus::PropertyName) {
-      CFX_WideStringC strValue = pSyntax->GetCurrentString();
+      WideStringView strValue = pSyntax->GetCurrentString();
       table = CFX_GetCSSPropertyByName(strValue);
       if (!table)
-        wsName = CFX_WideString(strValue);
+        wsName = WideString(strValue);
     } else if (eStatus == CFX_CSSSyntaxStatus::PropertyValue) {
       if (table || iLen2 > 0) {
-        CFX_WideStringC strValue = pSyntax->GetCurrentString();
+        WideStringView strValue = pSyntax->GetCurrentString();
         if (!strValue.IsEmpty()) {
           if (table)
             pDecl->AddProperty(table, strValue);
           else if (iLen2 > 0)
-            pDecl->AddProperty(wsName, CFX_WideString(strValue));
+            pDecl->AddProperty(wsName, WideString(strValue));
         }
       }
     } else {

@@ -106,16 +106,16 @@ class CFWL_FontData {
   CFWL_FontData();
   virtual ~CFWL_FontData();
 
-  bool Equal(const CFX_WideStringC& wsFontFamily,
+  bool Equal(const WideStringView& wsFontFamily,
              uint32_t dwFontStyles,
              uint16_t wCodePage);
-  bool LoadFont(const CFX_WideStringC& wsFontFamily,
+  bool LoadFont(const WideStringView& wsFontFamily,
                 uint32_t dwFontStyles,
                 uint16_t wCodePage);
   CFX_RetainPtr<CFGAS_GEFont> GetFont() const { return m_pFont; }
 
  protected:
-  CFX_WideString m_wsFamily;
+  WideString m_wsFamily;
   uint32_t m_dwStyles;
   uint32_t m_dwCodePage;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -130,7 +130,7 @@ class CFWL_FontManager {
   static CFWL_FontManager* GetInstance();
   static void DestroyInstance();
 
-  CFX_RetainPtr<CFGAS_GEFont> FindFont(const CFX_WideStringC& wsFontFamily,
+  CFX_RetainPtr<CFGAS_GEFont> FindFont(const WideStringView& wsFontFamily,
                                        uint32_t dwFontStyles,
                                        uint16_t dwCodePage);
 

@@ -174,7 +174,7 @@ class CFXJS_Engine {
   void ReleaseEngine();
 
   // Called after FXJS_InitializeEngine call made.
-  int Execute(const CFX_WideString& script, FXJSErr* perror);
+  int Execute(const WideString& script, FXJSErr* perror);
 
   v8::Local<v8::Context> NewLocalContext();
   v8::Local<v8::Context> GetPersistentContext();
@@ -186,15 +186,15 @@ class CFXJS_Engine {
   v8::Local<v8::Number> NewNumber(double number);
   v8::Local<v8::Number> NewNumber(float number);
   v8::Local<v8::Boolean> NewBoolean(bool b);
-  v8::Local<v8::String> NewString(const CFX_ByteStringC& str);
-  v8::Local<v8::String> NewString(const CFX_WideStringC& str);
+  v8::Local<v8::String> NewString(const ByteStringView& str);
+  v8::Local<v8::String> NewString(const WideStringView& str);
   v8::Local<v8::Date> NewDate(double d);
   v8::Local<v8::Object> NewFxDynamicObj(int nObjDefnID, bool bStatic = false);
 
   int ToInt32(v8::Local<v8::Value> pValue);
   bool ToBoolean(v8::Local<v8::Value> pValue);
   double ToDouble(v8::Local<v8::Value> pValue);
-  CFX_WideString ToWideString(v8::Local<v8::Value> pValue);
+  WideString ToWideString(v8::Local<v8::Value> pValue);
   v8::Local<v8::Object> ToObject(v8::Local<v8::Value> pValue);
   v8::Local<v8::Array> ToArray(v8::Local<v8::Value> pValue);
 
@@ -207,12 +207,11 @@ class CFXJS_Engine {
                            v8::Local<v8::Value> pValue);
 
   // Objects.
-  std::vector<CFX_WideString> GetObjectPropertyNames(
-      v8::Local<v8::Object> pObj);
+  std::vector<WideString> GetObjectPropertyNames(v8::Local<v8::Object> pObj);
   v8::Local<v8::Value> GetObjectProperty(v8::Local<v8::Object> pObj,
-                                         const CFX_WideString& PropertyName);
+                                         const WideString& PropertyName);
   void PutObjectProperty(v8::Local<v8::Object> pObj,
-                         const CFX_WideString& PropertyName,
+                         const WideString& PropertyName,
                          v8::Local<v8::Value> pValue);
 
   // Native object binding.
@@ -221,10 +220,10 @@ class CFXJS_Engine {
   static void FreeObjectPrivate(void* p);
   static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
 
-  void SetConstArray(const CFX_WideString& name, v8::Local<v8::Array> array);
-  v8::Local<v8::Array> GetConstArray(const CFX_WideString& name);
+  void SetConstArray(const WideString& name, v8::Local<v8::Array> array);
+  v8::Local<v8::Array> GetConstArray(const WideString& name);
 
-  void Error(const CFX_WideString& message);
+  void Error(const WideString& message);
 
  protected:
   CFXJS_Engine();
@@ -235,7 +234,7 @@ class CFXJS_Engine {
   v8::Isolate* m_isolate;
   v8::Global<v8::Context> m_V8PersistentContext;
   std::vector<v8::Global<v8::Object>*> m_StaticObjects;
-  std::map<CFX_WideString, v8::Global<v8::Array>> m_ConstArrays;
+  std::map<WideString, v8::Global<v8::Array>> m_ConstArrays;
 };
 
 #endif  // FXJS_FXJS_V8_H_

@@ -15,22 +15,22 @@
 
 class CPDF_Name : public CPDF_Object {
  public:
-  CPDF_Name(CFX_WeakPtr<CFX_ByteStringPool> pPool, const CFX_ByteString& str);
+  CPDF_Name(CFX_WeakPtr<ByteStringPool> pPool, const ByteString& str);
   ~CPDF_Name() override;
 
   // CPDF_Object:
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
-  CFX_ByteString GetString() const override;
-  CFX_WideString GetUnicodeText() const override;
-  void SetString(const CFX_ByteString& str) override;
+  ByteString GetString() const override;
+  WideString GetUnicodeText() const override;
+  void SetString(const ByteString& str) override;
   bool IsName() const override;
   CPDF_Name* AsName() override;
   const CPDF_Name* AsName() const override;
   bool WriteTo(IFX_ArchiveStream* archive) const override;
 
  protected:
-  CFX_ByteString m_Name;
+  ByteString m_Name;
 };
 
 inline CPDF_Name* ToName(CPDF_Object* obj) {

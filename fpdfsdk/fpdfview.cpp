@@ -348,9 +348,9 @@ CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment) {
   return static_cast<CPDF_Object*>(attachment);
 }
 
-CFX_ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
-  return CFX_WideString::FromUTF16LE(wide_string,
-                                     CFX_WideString::WStringLength(wide_string))
+ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
+  return WideString::FromUTF16LE(wide_string,
+                                 WideString::WStringLength(wide_string))
       .UTF8Encode();
 }
 
@@ -358,10 +358,10 @@ CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
   return static_cast<CFX_DIBitmap*>(bitmap);
 }
 
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(const CFX_WideString& text,
+unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen) {
-  CFX_ByteString encoded_text = text.UTF16LE_Encode();
+  ByteString encoded_text = text.UTF16LE_Encode();
   unsigned long len = encoded_text.GetLength();
   if (buffer && len <= buflen)
     memcpy(buffer, encoded_text.c_str(), len);
@@ -380,7 +380,7 @@ unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
     // Decode the stream if one or more stream filters are specified.
     uint8_t* decoded_data = nullptr;
     uint32_t decoded_len = 0;
-    CFX_ByteString dummy_last_decoder;
+    ByteString dummy_last_decoder;
     CPDF_Dictionary* dummy_last_param;
     if (PDF_DataDecode(data, len, dict, dict->GetIntegerFor("DL"), false,
                        &decoded_data, &decoded_len, &dummy_last_decoder,
@@ -1313,7 +1313,7 @@ FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
   if (!pDoc)
     return DuplexUndefined;
   CPDF_ViewerPreferences viewRef(pDoc);
-  CFX_ByteString duplex = viewRef.Duplex();
+  ByteString duplex = viewRef.Duplex();
   if ("Simplex" == duplex)
     return Simplex;
   if ("DuplexFlipShortEdge" == duplex)
@@ -1333,7 +1333,7 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
     return 0;
 
   CPDF_ViewerPreferences viewRef(pDoc);
-  CFX_ByteString bsVal;
+  ByteString bsVal;
   if (!viewRef.GenericName(key, &bsVal))
     return 0;
 
@@ -1375,7 +1375,7 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
     return nullptr;
 
   CPDF_NameTree name_tree(pDoc, "Dests");
-  return name_tree.LookupNamedDest(pDoc, PDF_DecodeText(CFX_ByteString(name)));
+  return name_tree.LookupNamedDest(pDoc, PDF_DecodeText(ByteString(name)));
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -1450,7 +1450,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     return nullptr;
 
   CPDF_Object* pDestObj = nullptr;
-  CFX_WideString wsName;
+  WideString wsName;
   CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
   if (index >= count) {
@@ -1465,7 +1465,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
 
     index -= count;
     int i = 0;
-    CFX_ByteString bsName;
+    ByteString bsName;
     for (const auto& it : *pDest) {
       bsName = it.first;
       pDestObj = it.second.get();
@@ -1489,7 +1489,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pDestObj->IsArray())
     return nullptr;
 
-  CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
+  ByteString utf16Name = wsName.UTF16LE_Encode();
   int len = utf16Name.GetLength();
   if (!buffer) {
     *buflen = len;

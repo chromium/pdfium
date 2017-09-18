@@ -18,7 +18,7 @@ constexpr float kPtToPc = 12;
 
 }  // namespace
 
-CXFA_Measurement::CXFA_Measurement(const CFX_WideStringC& wsMeasure) {
+CXFA_Measurement::CXFA_Measurement(const WideStringView& wsMeasure) {
   SetString(wsMeasure);
 }
 
@@ -30,7 +30,7 @@ CXFA_Measurement::CXFA_Measurement(float fValue, XFA_UNIT eUnit) {
   Set(fValue, eUnit);
 }
 
-void CXFA_Measurement::SetString(const CFX_WideStringC& wsMeasure) {
+void CXFA_Measurement::SetString(const WideStringView& wsMeasure) {
   if (wsMeasure.IsEmpty()) {
     m_fValue = 0;
     m_eUnit = XFA_UNIT_Unknown;
@@ -45,7 +45,7 @@ void CXFA_Measurement::SetString(const CFX_WideStringC& wsMeasure) {
   Set(fValue, eUnit);
 }
 
-bool CXFA_Measurement::ToString(CFX_WideString* wsMeasure) const {
+bool CXFA_Measurement::ToString(WideString* wsMeasure) const {
   switch (GetUnit()) {
     case XFA_UNIT_Mm:
       wsMeasure->Format(L"%.8gmm", GetValue());
@@ -135,7 +135,7 @@ bool CXFA_Measurement::ToUnitInternal(XFA_UNIT eUnit, float* fValue) const {
 }
 
 // static
-XFA_UNIT CXFA_Measurement::GetUnitFromString(const CFX_WideStringC& wsUnit) {
+XFA_UNIT CXFA_Measurement::GetUnitFromString(const WideStringView& wsUnit) {
   if (wsUnit == L"mm")
     return XFA_UNIT_Mm;
   if (wsUnit == L"pt")

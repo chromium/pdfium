@@ -11,7 +11,7 @@ CPWL_Button::CPWL_Button() : m_bMouseDown(false) {}
 
 CPWL_Button::~CPWL_Button() {}
 
-CFX_ByteString CPWL_Button::GetClassName() const {
+ByteString CPWL_Button::GetClassName() const {
   return "CPWL_Button";
 }
 

@@ -122,7 +122,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
       CPDF_Dictionary* pBaseDict,
       int charset,
       bool bVert,
-      CFX_ByteString basefont,
+      ByteString basefont,
       std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
   bool InsertDeletePDFPage(CPDF_Dictionary* pPages,
                            int nPagesToGo,

@@ -15,7 +15,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CFX_XMLElement::CFX_XMLElement(const CFX_WideString& wsTag)
+CFX_XMLElement::CFX_XMLElement(const WideString& wsTag)
     : CFX_XMLAttributeNode(wsTag) {}
 
 CFX_XMLElement::~CFX_XMLElement() {}
@@ -28,7 +28,7 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
   auto pClone = pdfium::MakeUnique<CFX_XMLElement>(GetName());
   pClone->SetAttributes(GetAttributes());
 
-  CFX_WideString wsText;
+  WideString wsText;
   CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
     switch (pChild->GetType()) {
@@ -44,21 +44,21 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
   return std::move(pClone);
 }
 
-CFX_WideString CFX_XMLElement::GetLocalTagName() const {
+WideString CFX_XMLElement::GetLocalTagName() const {
   auto pos = GetName().Find(L':');
   return pos.has_value()
              ? GetName().Right(GetName().GetLength() - pos.value() - 1)
              : GetName();
 }
 
-CFX_WideString CFX_XMLElement::GetNamespacePrefix() const {
+WideString CFX_XMLElement::GetNamespacePrefix() const {
   auto pos = GetName().Find(L':');
-  return pos.has_value() ? GetName().Left(pos.value()) : CFX_WideString();
+  return pos.has_value() ? GetName().Left(pos.value()) : WideString();
 }
 
-CFX_WideString CFX_XMLElement::GetNamespaceURI() const {
-  CFX_WideString wsAttri(L"xmlns");
-  CFX_WideString wsPrefix = GetNamespacePrefix();
+WideString CFX_XMLElement::GetNamespaceURI() const {
+  WideString wsAttri(L"xmlns");
+  WideString wsPrefix = GetNamespacePrefix();
   if (wsPrefix.GetLength() > 0) {
     wsAttri += L":";
     wsAttri += wsPrefix;
@@ -76,10 +76,10 @@ CFX_WideString CFX_XMLElement::GetNamespaceURI() const {
     }
     return pElement->GetString(wsAttri);
   }
-  return CFX_WideString();
+  return WideString();
 }
 
-CFX_WideString CFX_XMLElement::GetTextData() const {
+WideString CFX_XMLElement::GetTextData() const {
   CFX_WideTextBuf buffer;
   CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
@@ -96,7 +96,7 @@ CFX_WideString CFX_XMLElement::GetTextData() const {
   return buffer.MakeString();
 }
 
-void CFX_XMLElement::SetTextData(const CFX_WideString& wsText) {
+void CFX_XMLElement::SetTextData(const WideString& wsText) {
   if (wsText.GetLength() < 1)
     return;
   InsertChildNode(new CFX_XMLText(wsText));

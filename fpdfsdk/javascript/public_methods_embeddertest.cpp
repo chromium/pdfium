@@ -103,7 +103,7 @@ TEST_F(PublicMethodsEmbedderTest, MakeFormatDate) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
-  CFX_WideString formatted_date;
+  WideString formatted_date;
 
   // 1968-06-25
   formatted_date = CJS_PublicMethods::MakeFormatDate(-47952000000, L"ddmmyy");

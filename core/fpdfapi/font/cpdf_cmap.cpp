@@ -248,7 +248,7 @@ CPDF_CMap::CPDF_CMap()
 CPDF_CMap::~CPDF_CMap() {}
 
 void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
-                               const CFX_ByteString& bsName,
+                               const ByteString& bsName,
                                bool bPromptCJK) {
   m_PredefinedCMap = bsName;
   if (m_PredefinedCMap == "Identity-H" || m_PredefinedCMap == "Identity-V") {
@@ -257,14 +257,14 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
     m_bLoaded = true;
     return;
   }
-  CFX_ByteString cmapid = m_PredefinedCMap;
+  ByteString cmapid = m_PredefinedCMap;
   m_bVertical = cmapid.Last() == 'V';
   if (cmapid.GetLength() > 2) {
     cmapid = cmapid.Left(cmapid.GetLength() - 2);
   }
   const PredefinedCMap* map = nullptr;
   for (size_t i = 0; i < FX_ArraySize(g_PredefinedCMaps); ++i) {
-    if (cmapid == CFX_ByteStringC(g_PredefinedCMaps[i].m_pName)) {
+    if (cmapid == ByteStringView(g_PredefinedCMaps[i].m_pName)) {
       map = &g_PredefinedCMaps[i];
       break;
     }
@@ -295,7 +295,7 @@ void CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
   CPDF_CMapParser parser(this);
   CPDF_SimpleParser syntax(pData, size);
   while (1) {
-    CFX_ByteStringC word = syntax.GetWord();
+    ByteStringView word = syntax.GetWord();
     if (word.IsEmpty()) {
       break;
     }

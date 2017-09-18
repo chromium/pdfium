@@ -19,7 +19,7 @@ class CPSOutput : public IFX_WriteStream {
 
   // IFX_Writestream
   bool WriteBlock(const void* str, size_t len) override;
-  bool WriteString(const CFX_ByteStringC& str) override;
+  bool WriteString(const ByteStringView& str) override;
 
  private:
   HDC m_hDC;

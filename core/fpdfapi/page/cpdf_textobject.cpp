@@ -136,7 +136,7 @@ CFX_Matrix CPDF_TextObject::GetTextMatrix() const {
                     pTextMatrix[3], m_Pos.x, m_Pos.y);
 }
 
-void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
+void CPDF_TextObject::SetSegments(const ByteString* pStrs,
                                   const float* pKerning,
                                   int nsegs) {
   m_CharCodes.clear();
@@ -162,7 +162,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
   }
 }
 
-void CPDF_TextObject::SetText(const CFX_ByteString& str) {
+void CPDF_TextObject::SetText(const ByteString& str) {
   SetSegments(&str, nullptr, 1);
   RecalcPositionData();
   SetDirty(true);

@@ -54,7 +54,7 @@ class CScript_HostPseudoModel : public CXFA_Object {
  private:
   bool ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
                           int32_t iArgIndex,
-                          CFX_WideString& wsValue);
+                          WideString& wsValue);
   void ThrowSetLanguageException() const;
   void ThrowSetNumPagesException() const;
   void ThrowSetPlatformException() const;

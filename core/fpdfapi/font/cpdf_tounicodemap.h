@@ -22,15 +22,15 @@ class CPDF_ToUnicodeMap {
 
   void Load(CPDF_Stream* pStream);
 
-  CFX_WideString Lookup(uint32_t charcode) const;
+  WideString Lookup(uint32_t charcode) const;
   uint32_t ReverseLookup(wchar_t unicode) const;
 
  private:
   friend class cpdf_tounicodemap_StringToCode_Test;
   friend class cpdf_tounicodemap_StringToWideString_Test;
 
-  static uint32_t StringToCode(const CFX_ByteStringC& str);
-  static CFX_WideString StringToWideString(const CFX_ByteStringC& str);
+  static uint32_t StringToCode(const ByteStringView& str);
+  static WideString StringToWideString(const ByteStringView& str);
 
   uint32_t GetUnicode();
 

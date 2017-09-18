@@ -20,11 +20,11 @@ class Report : public CJS_EmbedObj {
   bool save(CJS_Runtime* pRuntime,
             const std::vector<CJS_Value>& params,
             CJS_Value& vRet,
-            CFX_WideString& sError);
+            WideString& sError);
   bool writeText(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
-                 CFX_WideString& sError);
+                 WideString& sError);
 };
 
 class CJS_Report : public CJS_Object {

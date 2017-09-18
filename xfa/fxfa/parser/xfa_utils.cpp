@@ -39,8 +39,8 @@ const double fraction_scales[] = {0.1,
                                   0.000000000000001,
                                   0.0000000000000001};
 
-double WideStringToDouble(const CFX_WideString& wsStringVal) {
-  CFX_WideString wsValue = wsStringVal;
+double WideStringToDouble(const WideString& wsStringVal) {
+  WideString wsValue = wsStringVal;
   wsValue.TrimLeft();
   wsValue.TrimRight();
   int64_t nIntegral = 0;
@@ -172,15 +172,15 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
                           pWidgetData->GetNode()->GetDocument()->GetLocalMgr());
 }
 void XFA_GetPlainTextFromRichText(CFX_XMLNode* pXMLNode,
-                                  CFX_WideString& wsPlainText) {
+                                  WideString& wsPlainText) {
   if (!pXMLNode) {
     return;
   }
   switch (pXMLNode->GetType()) {
     case FX_XMLNODE_Element: {
       CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-      CFX_WideString wsTag = pXMLElement->GetLocalTagName();
-      uint32_t uTag = FX_HashCode_GetW(wsTag.AsStringC(), true);
+      WideString wsTag = pXMLElement->GetLocalTagName();
+      uint32_t uTag = FX_HashCode_GetW(wsTag.AsStringView(), true);
       if (uTag == 0x0001f714) {
         wsPlainText += L"\n";
       } else if (uTag == 0x00000070) {
@@ -197,7 +197,7 @@ void XFA_GetPlainTextFromRichText(CFX_XMLNode* pXMLNode,
     }
     case FX_XMLNODE_Text:
     case FX_XMLNODE_CharData: {
-      CFX_WideString wsContent = static_cast<CFX_XMLText*>(pXMLNode)->GetText();
+      WideString wsContent = static_cast<CFX_XMLText*>(pXMLNode)->GetText();
       wsPlainText += wsContent;
       break;
     }
@@ -228,8 +228,8 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
   return bRet;
 }
 
-double XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal) {
-  CFX_WideString wsValue = CFX_WideString::FromUTF8(szStringVal);
+double XFA_ByteStringToDouble(const ByteStringView& szStringVal) {
+  WideString wsValue = WideString::FromUTF8(szStringVal);
   return WideStringToDouble(wsValue);
 }
 
@@ -241,7 +241,7 @@ int32_t XFA_MapRotation(int32_t nRotation) {
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
-    const CFX_WideStringC& wsAttributeName) {
+    const WideStringView& wsAttributeName) {
   if (wsAttributeName.IsEmpty())
     return nullptr;
 
@@ -376,7 +376,7 @@ const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName) {
              : nullptr;
 }
 
-XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName) {
+XFA_Element XFA_GetElementTypeForName(const WideStringView& wsName) {
   if (wsName.IsEmpty())
     return XFA_Element::Unknown;
 
@@ -428,7 +428,7 @@ bool XFA_GetAttributeDefaultValue(void*& pValue,
   return false;
 }
 
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {
+const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName) {
   if (wsName.IsEmpty())
     return nullptr;
 
@@ -449,7 +449,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName) {
 }
 
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
-    const CFX_WideStringC& wsName) {
+    const WideStringView& wsName) {
   if (wsName.IsEmpty())
     return nullptr;
 

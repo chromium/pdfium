@@ -31,7 +31,7 @@
 
 namespace {
 
-CFX_WideString EncodeToCodewords(const CFX_WideString& sb, int32_t startPos) {
+WideString EncodeToCodewords(const WideString& sb, int32_t startPos) {
   wchar_t c1 = sb[startPos];
   wchar_t c2 = sb[startPos + 1];
   wchar_t c3 = sb[startPos + 2];
@@ -39,7 +39,7 @@ CFX_WideString EncodeToCodewords(const CFX_WideString& sb, int32_t startPos) {
   wchar_t cw[2];
   cw[0] = static_cast<wchar_t>(v / 256);
   cw[1] = static_cast<wchar_t>(v % 256);
-  return CFX_WideString(cw, FX_ArraySize(cw));
+  return WideString(cw, FX_ArraySize(cw));
 }
 
 }  // namespace
@@ -50,7 +50,7 @@ int32_t CBC_C40Encoder::getEncodingMode() {
   return C40_ENCODATION;
 }
 void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
-  CFX_WideString buffer;
+  WideString buffer;
   while (context.hasMoreCharacters()) {
     wchar_t c = context.getCurrentChar();
     context.m_pos++;
@@ -98,12 +98,12 @@ void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   handleEOD(context, buffer, e);
 }
 void CBC_C40Encoder::writeNextTriplet(CBC_EncoderContext& context,
-                                      CFX_WideString& buffer) {
+                                      WideString& buffer) {
   context.writeCodewords(EncodeToCodewords(buffer, 0));
   buffer.Delete(0, 3);
 }
 void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
-                               CFX_WideString& buffer,
+                               WideString& buffer,
                                int32_t& e) {
   int32_t unwritten = (buffer.GetLength() / 3) * 2;
   int32_t rest = buffer.GetLength() % 3;
@@ -142,7 +142,7 @@ void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
   }
   context.signalEncoderChange(ASCII_ENCODATION);
 }
-int32_t CBC_C40Encoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
+int32_t CBC_C40Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
   if (c == ' ') {
     sb += (wchar_t)'\3';
     return 1;
@@ -187,7 +187,7 @@ int32_t CBC_C40Encoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
 }
 
 int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,
-                                              CFX_WideString* buffer,
+                                              WideString* buffer,
                                               int32_t lastCharSize) {
   if (context->m_pos < 1)
     return -1;
@@ -200,7 +200,7 @@ int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,
   context->m_pos--;
   wchar_t c = context->getCurrentChar();
   int32_t e = BCExceptionNO;
-  CFX_WideString removed;
+  WideString removed;
   int32_t len = encodeChar(c, removed, e);
   if (e != BCExceptionNO)
     return -1;

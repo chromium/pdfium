@@ -152,7 +152,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   CPWL_Wnd();
   ~CPWL_Wnd() override;
 
-  virtual CFX_ByteString GetClassName() const;
+  virtual ByteString GetClassName() const;
   virtual void InvalidateRect(CFX_FloatRect* pRect);
 
   virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
@@ -179,8 +179,8 @@ class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
   virtual void SetFontSize(float fFontSize);
   virtual float GetFontSize() const;
 
-  virtual CFX_WideString GetSelectedText();
-  virtual void ReplaceSelection(const CFX_WideString& text);
+  virtual WideString GetSelectedText();
+  virtual void ReplaceSelection(const WideString& text);
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 

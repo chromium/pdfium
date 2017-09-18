@@ -22,9 +22,9 @@ class CPDF_Boolean : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
-  CFX_ByteString GetString() const override;
+  ByteString GetString() const override;
   int GetInteger() const override;
-  void SetString(const CFX_ByteString& str) override;
+  void SetString(const ByteString& str) override;
   bool IsBoolean() const override;
   CPDF_Boolean* AsBoolean() override;
   const CPDF_Boolean* AsBoolean() const override;

@@ -55,13 +55,13 @@ class CPDF_Object {
   virtual std::unique_ptr<CPDF_Object> CloneDirectObject() const;
 
   virtual CPDF_Object* GetDirect() const;
-  virtual CFX_ByteString GetString() const;
-  virtual CFX_WideString GetUnicodeText() const;
+  virtual ByteString GetString() const;
+  virtual WideString GetUnicodeText() const;
   virtual float GetNumber() const;
   virtual int GetInteger() const;
   virtual CPDF_Dictionary* GetDict() const;
 
-  virtual void SetString(const CFX_ByteString& str);
+  virtual void SetString(const ByteString& str);
 
   virtual bool IsArray() const;
   virtual bool IsBoolean() const;

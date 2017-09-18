@@ -50,27 +50,27 @@ class CFX_XMLSyntaxParser {
   int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
   int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
 
-  CFX_WideString GetTargetName() const {
+  WideString GetTargetName() const {
     return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  CFX_WideString GetTagName() const {
+  WideString GetTagName() const {
     return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  CFX_WideString GetAttributeName() const {
+  WideString GetAttributeName() const {
     return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  CFX_WideString GetAttributeValue() const {
+  WideString GetAttributeValue() const {
     return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  CFX_WideString GetTextData() const {
+  WideString GetTextData() const {
     return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  CFX_WideString GetTargetData() const {
+  WideString GetTargetData() const {
     return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 

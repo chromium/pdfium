@@ -39,18 +39,17 @@ class CFX_CSSStyleSelector {
   // adds non-inherited data from the parent style. Attempting to copy
   // internally will fail as you'll lose the non-inherited data.
   void ComputeStyle(const std::vector<const CFX_CSSDeclaration*>& declArray,
-                    const CFX_WideString& styleString,
-                    const CFX_WideString& alignString,
+                    const WideString& styleString,
+                    const WideString& alignString,
                     CFX_CSSComputedStyle* pDestStyle);
 
   std::vector<const CFX_CSSDeclaration*> MatchDeclarations(
-      const CFX_WideString& tagname);
+      const WideString& tagname);
 
  private:
-  bool MatchSelector(const CFX_WideString& tagname, CFX_CSSSelector* pSel);
+  bool MatchSelector(const WideString& tagname, CFX_CSSSelector* pSel);
 
-  void AppendInlineStyle(CFX_CSSDeclaration* pDecl,
-                         const CFX_WideString& style);
+  void AppendInlineStyle(CFX_CSSDeclaration* pDecl, const WideString& style);
   void ApplyDeclarations(
       const std::vector<const CFX_CSSDeclaration*>& declArray,
       const CFX_CSSDeclaration* extraDecl,

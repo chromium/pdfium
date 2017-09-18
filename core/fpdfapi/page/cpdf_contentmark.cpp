@@ -36,7 +36,7 @@ int CPDF_ContentMark::GetMCID() const {
   return pData ? pData->GetMCID() : -1;
 }
 
-void CPDF_ContentMark::AddMark(const CFX_ByteString& name,
+void CPDF_ContentMark::AddMark(const ByteString& name,
                                CPDF_Dictionary* pDict,
                                bool bDirect) {
   m_Ref.GetPrivateCopy()->AddMark(name, pDict, bDirect);
@@ -48,7 +48,7 @@ void CPDF_ContentMark::DeleteLastMark() {
     m_Ref.SetNull();
 }
 
-bool CPDF_ContentMark::HasMark(const CFX_ByteStringC& mark) const {
+bool CPDF_ContentMark::HasMark(const ByteStringView& mark) const {
   const MarkData* pData = m_Ref.GetObject();
   if (!pData)
     return false;
@@ -60,7 +60,7 @@ bool CPDF_ContentMark::HasMark(const CFX_ByteStringC& mark) const {
   return false;
 }
 
-bool CPDF_ContentMark::LookupMark(const CFX_ByteStringC& mark,
+bool CPDF_ContentMark::LookupMark(const ByteStringView& mark,
                                   CPDF_Dictionary*& pDict) const {
   const MarkData* pData = m_Ref.GetObject();
   if (!pData)
@@ -105,7 +105,7 @@ int CPDF_ContentMark::MarkData::GetMCID() const {
   return -1;
 }
 
-void CPDF_ContentMark::MarkData::AddMark(const CFX_ByteString& name,
+void CPDF_ContentMark::MarkData::AddMark(const ByteString& name,
                                          CPDF_Dictionary* pDict,
                                          bool bDirect) {
   CPDF_ContentMarkItem item;

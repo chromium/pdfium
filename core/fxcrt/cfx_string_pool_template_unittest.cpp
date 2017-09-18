@@ -7,22 +7,22 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcrt, ByteStringPool) {
-  CFX_ByteStringPool pool;
+  ByteStringPool pool;
 
-  CFX_ByteString null1;
-  CFX_ByteString null2;
-  CFX_ByteString goats1("goats");
-  CFX_ByteString goats2("goats");
+  ByteString null1;
+  ByteString null2;
+  ByteString goats1("goats");
+  ByteString goats2("goats");
 
   // Underlying storage, if non-null, is not shared.
   EXPECT_EQ(nullptr, null1.m_pData.Get());
   EXPECT_EQ(nullptr, null2.m_pData.Get());
   EXPECT_NE(goats1.m_pData, goats2.m_pData);
 
-  CFX_ByteString interned_null1 = pool.Intern(null1);
-  CFX_ByteString interned_null2 = pool.Intern(null2);
-  CFX_ByteString interned_goats1 = pool.Intern(goats1);
-  CFX_ByteString interned_goats2 = pool.Intern(goats2);
+  ByteString interned_null1 = pool.Intern(null1);
+  ByteString interned_null2 = pool.Intern(null2);
+  ByteString interned_goats1 = pool.Intern(goats1);
+  ByteString interned_goats2 = pool.Intern(goats2);
 
   // Strings are logically equal after being interned.
   EXPECT_EQ(null1, interned_null1);
@@ -37,10 +37,10 @@ TEST(fxcrt, ByteStringPool) {
   EXPECT_EQ(goats1.m_pData, interned_goats2.m_pData);
 
   pool.Clear();
-  CFX_ByteString reinterned_null2 = pool.Intern(null2);
-  CFX_ByteString reinterned_null1 = pool.Intern(null2);
-  CFX_ByteString reinterned_goats2 = pool.Intern(goats2);
-  CFX_ByteString reinterned_goats1 = pool.Intern(goats2);
+  ByteString reinterned_null2 = pool.Intern(null2);
+  ByteString reinterned_null1 = pool.Intern(null2);
+  ByteString reinterned_goats2 = pool.Intern(goats2);
+  ByteString reinterned_goats1 = pool.Intern(goats2);
 
   // After clearing pool, storage was re-interned using second strings.
   EXPECT_EQ(nullptr, interned_null1.m_pData.Get());
@@ -50,22 +50,22 @@ TEST(fxcrt, ByteStringPool) {
 }
 
 TEST(fxcrt, WideStringPool) {
-  CFX_WideStringPool pool;
+  WideStringPool pool;
 
-  CFX_WideString null1;
-  CFX_WideString null2;
-  CFX_WideString goats1(L"goats");
-  CFX_WideString goats2(L"goats");
+  WideString null1;
+  WideString null2;
+  WideString goats1(L"goats");
+  WideString goats2(L"goats");
 
   // Underlying storage, if non-null, is not shared.
   EXPECT_EQ(nullptr, null1.m_pData.Get());
   EXPECT_EQ(nullptr, null2.m_pData.Get());
   EXPECT_NE(goats1.m_pData, goats2.m_pData);
 
-  CFX_WideString interned_null1 = pool.Intern(null1);
-  CFX_WideString interned_null2 = pool.Intern(null2);
-  CFX_WideString interned_goats1 = pool.Intern(goats1);
-  CFX_WideString interned_goats2 = pool.Intern(goats2);
+  WideString interned_null1 = pool.Intern(null1);
+  WideString interned_null2 = pool.Intern(null2);
+  WideString interned_goats1 = pool.Intern(goats1);
+  WideString interned_goats2 = pool.Intern(goats2);
 
   // Strings are logically equal after being interned.
   EXPECT_EQ(null1, interned_null1);
@@ -80,10 +80,10 @@ TEST(fxcrt, WideStringPool) {
   EXPECT_EQ(goats1.m_pData, interned_goats2.m_pData);
 
   pool.Clear();
-  CFX_WideString reinterned_null2 = pool.Intern(null2);
-  CFX_WideString reinterned_null1 = pool.Intern(null2);
-  CFX_WideString reinterned_goats2 = pool.Intern(goats2);
-  CFX_WideString reinterned_goats1 = pool.Intern(goats2);
+  WideString reinterned_null2 = pool.Intern(null2);
+  WideString reinterned_null1 = pool.Intern(null2);
+  WideString reinterned_goats2 = pool.Intern(goats2);
+  WideString reinterned_goats1 = pool.Intern(goats2);
 
   // After clearing pool, storage was re-interned using second strings.
   EXPECT_EQ(nullptr, interned_null1.m_pData.Get());

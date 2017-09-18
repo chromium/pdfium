@@ -44,7 +44,7 @@ XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(CXFA_FFDoc* hDoc) {
 
 bool CXFA_FFDocHandler::RunDocScript(CXFA_FFDoc* hDoc,
                                      XFA_SCRIPTTYPE eScriptType,
-                                     const CFX_WideStringC& wsScript,
+                                     const WideStringView& wsScript,
                                      CFXJSE_Value* pRetValue,
                                      CFXJSE_Value* pThisValue) {
   CXFA_Document* pXFADoc = hDoc->GetXFADoc();

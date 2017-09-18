@@ -25,7 +25,7 @@ class CFPF_SkiaFontMgr {
   ~CFPF_SkiaFontMgr();
 
   void LoadSystemFonts();
-  CFPF_SkiaFont* CreateFont(const CFX_ByteStringC& bsFamilyname,
+  CFPF_SkiaFont* CreateFont(const ByteStringView& bsFamilyname,
                             uint8_t uCharset,
                             uint32_t dwStyle,
                             uint32_t dwMatch = 0);
@@ -33,14 +33,14 @@ class CFPF_SkiaFontMgr {
   bool InitFTLibrary();
   FXFT_Face GetFontFace(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
                         int32_t iFaceIndex = 0);
-  FXFT_Face GetFontFace(const CFX_ByteStringC& bsFile, int32_t iFaceIndex = 0);
+  FXFT_Face GetFontFace(const ByteStringView& bsFile, int32_t iFaceIndex = 0);
   FXFT_Face GetFontFace(const uint8_t* pBuffer,
                         size_t szBuffer,
                         int32_t iFaceIndex = 0);
 
  private:
-  void ScanPath(const CFX_ByteString& path);
-  void ScanFile(const CFX_ByteString& file);
+  void ScanPath(const ByteString& path);
+  void ScanFile(const ByteString& file);
   void ReportFace(FXFT_Face face, CFPF_SkiaFontDescriptor* pFontDesc);
 
   bool m_bLoaded;

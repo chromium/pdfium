@@ -20,7 +20,7 @@
 
 CPDF_Array::CPDF_Array() {}
 
-CPDF_Array::CPDF_Array(const CFX_WeakPtr<CFX_ByteStringPool>& pPool)
+CPDF_Array::CPDF_Array(const CFX_WeakPtr<ByteStringPool>& pPool)
     : m_pPool(pPool) {}
 
 CPDF_Array::~CPDF_Array() {
@@ -100,15 +100,15 @@ CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) const {
   return m_Objects[i]->GetDirect();
 }
 
-CFX_ByteString CPDF_Array::GetStringAt(size_t i) const {
+ByteString CPDF_Array::GetStringAt(size_t i) const {
   if (i >= m_Objects.size())
-    return CFX_ByteString();
+    return ByteString();
   return m_Objects[i]->GetString();
 }
 
-CFX_WideString CPDF_Array::GetUnicodeTextAt(size_t i) const {
+WideString CPDF_Array::GetUnicodeTextAt(size_t i) const {
   if (i >= m_Objects.size())
-    return CFX_WideString();
+    return WideString();
   return m_Objects[i]->GetUnicodeText();
 }
 

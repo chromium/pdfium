@@ -36,7 +36,7 @@ CPDF_StructElement::CPDF_StructElement(CPDF_StructTree* pTree,
       m_Type(pDict->GetStringFor("S")),
       m_Title(pDict->GetStringFor("T")) {
   if (pTree->GetRoleMap()) {
-    CFX_ByteString mapped = pTree->GetRoleMap()->GetStringFor(m_Type);
+    ByteString mapped = pTree->GetRoleMap()->GetStringFor(m_Type);
     if (!mapped.IsEmpty())
       m_Type = mapped;
   }
@@ -102,7 +102,7 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
   if (CPDF_Reference* pRef = ToReference(pKidDict->GetObjectFor("Pg")))
     PageObjNum = pRef->GetRefObjNum();
 
-  CFX_ByteString type = pKidDict->GetStringFor("Type");
+  ByteString type = pKidDict->GetStringFor("Type");
   if ((type == "MCR" || type == "OBJR") && m_pTree->GetPage() &&
       m_pTree->GetPage()->GetObjNum() != PageObjNum) {
     return;

@@ -89,7 +89,7 @@ wchar_t CBC_OneDimWriter::Upper(wchar_t ch) {
   return ch;
 }
 
-uint8_t* CBC_OneDimWriter::EncodeWithHint(const CFX_ByteString& contents,
+uint8_t* CBC_OneDimWriter::EncodeWithHint(const ByteString& contents,
                                           BCFORMAT format,
                                           int32_t& outWidth,
                                           int32_t& outHeight,
@@ -98,7 +98,7 @@ uint8_t* CBC_OneDimWriter::EncodeWithHint(const CFX_ByteString& contents,
   return EncodeImpl(contents, outWidth);
 }
 
-uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
+uint8_t* CBC_OneDimWriter::Encode(const ByteString& contents,
                                   BCFORMAT format,
                                   int32_t& outWidth,
                                   int32_t& outHeight) {
@@ -127,7 +127,7 @@ int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
   return numAdded;
 }
 
-void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
+void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
                                     FXTEXT_CHARPOS* charPos,
                                     CFX_Font* cFont,
                                     float geWidth,
@@ -176,7 +176,7 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
 
 void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                                        const CFX_Matrix* matrix,
-                                       const CFX_ByteString str,
+                                       const ByteString str,
                                        float geWidth,
                                        FXTEXT_CHARPOS* pCharPos,
                                        float locX,
@@ -201,7 +201,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                          m_fontColor, FXTEXT_CLEARTYPE);
 }
 
-bool CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
+bool CBC_OneDimWriter::ShowChars(const WideStringView& contents,
                                  CFX_RenderDevice* device,
                                  const CFX_Matrix* matrix,
                                  int32_t barWidth,
@@ -209,7 +209,7 @@ bool CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
   if (!device || !m_pFont)
     return false;
 
-  CFX_ByteString str = FX_UTF8Encode(contents);
+  ByteString str = FX_UTF8Encode(contents);
   int32_t iLen = str.GetLength();
   std::vector<FXTEXT_CHARPOS> charpos(iLen);
   float charsLen = 0;
@@ -260,7 +260,7 @@ bool CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
 
 bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix,
-                                          const CFX_WideStringC& contents) {
+                                          const WideStringView& contents) {
   if (m_output.empty())
     return false;
 
@@ -283,7 +283,7 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
          ShowChars(contents, device, matrix, m_barWidth, m_multiple);
 }
 
-bool CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
+bool CBC_OneDimWriter::RenderResult(const WideStringView& contents,
                                     uint8_t* code,
                                     int32_t codeLength) {
   if (codeLength < 1)
@@ -338,7 +338,7 @@ void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX,
   }
 }
 
-CFX_WideString CBC_OneDimWriter::RenderTextContents(
-    const CFX_WideStringC& contents) {
-  return CFX_WideString();
+WideString CBC_OneDimWriter::RenderTextContents(
+    const WideStringView& contents) {
+  return WideString();
 }

@@ -48,7 +48,7 @@ CBC_OnedCode39Writer::CBC_OnedCode39Writer() : m_iWideNarrRatio(3) {}
 CBC_OnedCode39Writer::~CBC_OnedCode39Writer() {}
 
 bool CBC_OnedCode39Writer::CheckContentValidity(
-    const CFX_WideStringC& contents) {
+    const WideStringView& contents) {
   for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
     if ((ch >= L'0' && ch <= L'9') || (ch >= L'A' && ch <= L'Z') ||
@@ -61,9 +61,9 @@ bool CBC_OnedCode39Writer::CheckContentValidity(
   return true;
 }
 
-CFX_WideString CBC_OnedCode39Writer::FilterContents(
-    const CFX_WideStringC& contents) {
-  CFX_WideString filtercontents;
+WideString CBC_OnedCode39Writer::FilterContents(
+    const WideStringView& contents) {
+  WideString filtercontents;
   for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
     if (ch == L'*' && (i == 0 || i == contents.GetLength() - 1)) {
@@ -84,9 +84,9 @@ CFX_WideString CBC_OnedCode39Writer::FilterContents(
   return filtercontents;
 }
 
-CFX_WideString CBC_OnedCode39Writer::RenderTextContents(
-    const CFX_WideStringC& contents) {
-  CFX_WideString renderContents;
+WideString CBC_OnedCode39Writer::RenderTextContents(
+    const WideStringView& contents) {
+  WideString renderContents;
   for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
     if (ch == L'*' && (i == 0 || i == contents.GetLength() - 1)) {
@@ -120,7 +120,7 @@ bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
   return true;
 }
 
-uint8_t* CBC_OnedCode39Writer::EncodeWithHint(const CFX_ByteString& contents,
+uint8_t* CBC_OnedCode39Writer::EncodeWithHint(const ByteString& contents,
                                               BCFORMAT format,
                                               int32_t& outWidth,
                                               int32_t& outHeight,
@@ -137,7 +137,7 @@ void CBC_OnedCode39Writer::ToIntArray(int32_t a, int8_t* toReturn) {
   }
 }
 
-char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents) {
+char CBC_OnedCode39Writer::CalcCheckSum(const ByteString& contents) {
   FX_STRSIZE length = contents.GetLength();
   if (length > 80)
     return '*';
@@ -160,7 +160,7 @@ char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents) {
   return CHECKSUM_STRING[checksum];
 }
 
-uint8_t* CBC_OnedCode39Writer::EncodeImpl(const CFX_ByteString& contents,
+uint8_t* CBC_OnedCode39Writer::EncodeImpl(const ByteString& contents,
                                           int32_t& outlength) {
   char checksum = CalcCheckSum(contents);
   if (checksum == '*')
@@ -169,7 +169,7 @@ uint8_t* CBC_OnedCode39Writer::EncodeImpl(const CFX_ByteString& contents,
   int8_t widths[9] = {0};
   int32_t wideStrideNum = 3;
   int32_t narrStrideNum = 9 - wideStrideNum;
-  CFX_ByteString encodedContents = contents;
+  ByteString encodedContents = contents;
   if (m_bCalcChecksum)
     encodedContents += checksum;
   m_iContentLen = encodedContents.GetLength();
@@ -227,12 +227,12 @@ uint8_t* CBC_OnedCode39Writer::EncodeImpl(const CFX_ByteString& contents,
   return result.release();
 }
 
-bool CBC_OnedCode39Writer::encodedContents(const CFX_WideStringC& contents,
-                                           CFX_WideString* result) {
-  *result = CFX_WideString(contents);
+bool CBC_OnedCode39Writer::encodedContents(const WideStringView& contents,
+                                           WideString* result) {
+  *result = WideString(contents);
   if (m_bCalcChecksum && m_bPrintChecksum) {
-    CFX_WideString checksumContent = FilterContents(contents);
-    CFX_ByteString str = checksumContent.UTF8Encode();
+    WideString checksumContent = FilterContents(contents);
+    ByteString str = checksumContent.UTF8Encode();
     char checksum;
     checksum = CalcCheckSum(str);
     if (checksum == '*')
@@ -243,12 +243,12 @@ bool CBC_OnedCode39Writer::encodedContents(const CFX_WideStringC& contents,
   return true;
 }
 
-bool CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents,
+bool CBC_OnedCode39Writer::RenderResult(const WideStringView& contents,
                                         uint8_t* code,
                                         int32_t codeLength) {
-  CFX_WideString encodedCon;
+  WideString encodedCon;
   if (!encodedContents(contents, &encodedCon))
     return false;
-  return CBC_OneDimWriter::RenderResult(encodedCon.AsStringC(), code,
+  return CBC_OneDimWriter::RenderResult(encodedCon.AsStringView(), code,
                                         codeLength);
 }

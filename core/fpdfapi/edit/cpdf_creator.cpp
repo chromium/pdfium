@@ -33,7 +33,7 @@ class CFX_FileBufferArchive : public IFX_ArchiveStream {
   bool WriteBlock(const void* pBuf, size_t size) override;
   bool WriteByte(uint8_t byte) override;
   bool WriteDWord(uint32_t i) override;
-  bool WriteString(const CFX_ByteStringC& str) override;
+  bool WriteString(const ByteStringView& str) override;
 
   FX_FILESIZE CurrentOffset() const override { return offset_; }
 
@@ -105,7 +105,7 @@ bool CFX_FileBufferArchive::WriteDWord(uint32_t i) {
   return WriteBlock(buf, static_cast<size_t>(FXSYS_strlen(buf)));
 }
 
-bool CFX_FileBufferArchive::WriteString(const CFX_ByteStringC& str) {
+bool CFX_FileBufferArchive::WriteString(const ByteStringView& str) {
   return WriteBlock(str.raw_str(), str.GetLength());
 }
 
@@ -220,7 +220,7 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
       break;
 
     case CPDF_Object::STRING: {
-      CFX_ByteString str = pObj->GetString();
+      ByteString str = pObj->GetString();
       bool bHex = pObj->AsString()->IsHex();
       if (!m_pCryptoHandler || !bEncrypt) {
         if (!pObj->WriteTo(m_Archive.get()))
@@ -229,9 +229,9 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
       }
       CPDF_Encryptor encryptor(m_pCryptoHandler.Get(), objnum,
                                (uint8_t*)str.c_str(), str.GetLength());
-      CFX_ByteString content = PDF_EncodeString(
-          CFX_ByteString(encryptor.GetData(), encryptor.GetSize()), bHex);
-      if (!m_Archive->WriteString(content.AsStringC()))
+      ByteString content = PDF_EncodeString(
+          ByteString(encryptor.GetData(), encryptor.GetSize()), bHex);
+      if (!m_Archive->WriteString(content.AsStringView()))
         return false;
       break;
     }
@@ -290,10 +290,10 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
       bool bSignDict = p->IsSignatureDict();
       for (const auto& it : *p) {
         bool bSignValue = false;
-        const CFX_ByteString& key = it.first;
+        const ByteString& key = it.first;
         CPDF_Object* pValue = it.second.get();
         if (!m_Archive->WriteString("/") ||
-            !m_Archive->WriteString(PDF_NameEncode(key).AsStringC())) {
+            !m_Archive->WriteString(PDF_NameEncode(key).AsStringView())) {
           return false;
         }
 
@@ -521,11 +521,11 @@ int32_t CPDF_Creator::WriteDoc_Stage3() {
     m_XrefStart = m_Archive->CurrentOffset();
     if (!IsIncremental() || !m_pParser->IsXRefStream()) {
       if (!IsIncremental() || m_pParser->GetLastXRefOffset() == 0) {
-        CFX_ByteString str;
+        ByteString str;
         str = pdfium::ContainsKey(m_ObjectOffsets, 1)
                   ? "xref\r\n"
                   : "xref\r\n0 1\r\n0000000000 65535 f\r\n";
-        if (!m_Archive->WriteString(str.AsStringC()))
+        if (!m_Archive->WriteString(str.AsStringView()))
           return -1;
 
         m_CurObjNum = 1;
@@ -542,7 +542,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3() {
     }
   }
   if (m_iStage == 81) {
-    CFX_ByteString str;
+    ByteString str;
     uint32_t i = m_CurObjNum;
     uint32_t j;
     while (i <= dwLastObjNum) {
@@ -575,7 +575,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3() {
     m_iStage = 90;
   }
   if (m_iStage == 82) {
-    CFX_ByteString str;
+    ByteString str;
     uint32_t iCount = pdfium::CollectionSize<uint32_t>(m_NewObjNumArray);
     uint32_t i = m_CurObjNum;
     while (i < iCount) {
@@ -627,7 +627,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
   if (m_pParser) {
     CPDF_Dictionary* p = m_pParser->GetTrailer();
     for (const auto& it : *p) {
-      const CFX_ByteString& key = it.first;
+      const ByteString& key = it.first;
       CPDF_Object* pValue = it.second.get();
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
@@ -635,7 +635,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
         continue;
       }
       if (!m_Archive->WriteString(("/")) ||
-          !m_Archive->WriteString(PDF_NameEncode(key).AsStringC())) {
+          !m_Archive->WriteString(PDF_NameEncode(key).AsStringView())) {
         return -1;
       }
       if (!pValue->IsInline()) {
@@ -782,7 +782,7 @@ void CPDF_Creator::InitID() {
     } else {
       std::vector<uint8_t> buffer =
           GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
-      CFX_ByteString bsBuffer(buffer.data(), buffer.size());
+      ByteString bsBuffer(buffer.data(), buffer.size());
       m_pIDArray->AddNew<CPDF_String>(bsBuffer, true);
     }
   }
@@ -795,7 +795,7 @@ void CPDF_Creator::InitID() {
     }
     std::vector<uint8_t> buffer =
         GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
-    CFX_ByteString bsBuffer(buffer.data(), buffer.size());
+    ByteString bsBuffer(buffer.data(), buffer.size());
     m_pIDArray->AddNew<CPDF_String>(bsBuffer, true);
     return;
   }
@@ -803,7 +803,7 @@ void CPDF_Creator::InitID() {
   m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
   if (m_pEncryptDict && !pOldIDArray && m_pParser && !idArrayPreExisting) {
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
-      CFX_ByteString user_pass = m_pParser->GetPassword();
+      ByteString user_pass = m_pParser->GetPassword();
       uint32_t flag = PDF_ENCRYPT_CONTENT;
       CPDF_SecurityHandler handler;
       handler.OnCreate(m_pEncryptDict.Get(), m_pIDArray.get(),

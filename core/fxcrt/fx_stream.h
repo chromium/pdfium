@@ -29,9 +29,7 @@ typedef DIR FX_FileHandle;
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 FX_FileHandle* FX_OpenFolder(const char* path);
-bool FX_GetNextFile(FX_FileHandle* handle,
-                    CFX_ByteString* filename,
-                    bool* bFolder);
+bool FX_GetNextFile(FX_FileHandle* handle, ByteString* filename, bool* bFolder);
 void FX_CloseFolder(FX_FileHandle* handle);
 
 #define FX_FILEMODE_Write 0
@@ -41,7 +39,7 @@ void FX_CloseFolder(FX_FileHandle* handle);
 class IFX_WriteStream : virtual public CFX_Retainable {
  public:
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
-  virtual bool WriteString(const CFX_ByteStringC& str) = 0;
+  virtual bool WriteString(const ByteStringView& str) = 0;
 };
 
 class IFX_ArchiveStream : public IFX_WriteStream {
@@ -107,7 +105,7 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
                   FX_FILESIZE offset,
                   size_t size) override = 0;
   bool WriteBlock(const void* buffer, size_t size) override;
-  bool WriteString(const CFX_ByteStringC& str) override;
+  bool WriteString(const ByteStringView& str) override;
 
   bool Flush() override = 0;
 };

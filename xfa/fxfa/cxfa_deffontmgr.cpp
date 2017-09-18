@@ -16,16 +16,16 @@ CXFA_DefFontMgr::~CXFA_DefFontMgr() {}
 
 CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
     CXFA_FFDoc* hDoc,
-    const CFX_WideStringC& wsFontFamily,
+    const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
-  CFX_WideString wsFontName(wsFontFamily);
+  WideString wsFontName(wsFontFamily);
   CFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   CFX_RetainPtr<CFGAS_GEFont> pFont =
       pFDEFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
   if (!pFont) {
     const XFA_FONTINFO* pCurFont =
-        XFA_GetFontINFOByFontName(wsFontName.AsStringC());
+        XFA_GetFontINFOByFontName(wsFontName.AsStringView());
     if (pCurFont && pCurFont->pReplaceFont) {
       uint32_t dwStyle = 0;
       if (dwFontStyles & FX_FONTSTYLE_Bold) {
@@ -42,8 +42,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
           pNameText++;
           iLength--;
         }
-        CFX_WideString wsReplace =
-            CFX_WideString(pReplace, pNameText - pReplace);
+        WideString wsReplace = WideString(pReplace, pNameText - pReplace);
         pFont = pFDEFontMgr->LoadFont(wsReplace.c_str(), dwStyle, wCodePage);
         if (pFont)
           break;
@@ -61,7 +60,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
 
 CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetDefaultFont(
     CXFA_FFDoc* hDoc,
-    const CFX_WideStringC& wsFontFamily,
+    const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
   CFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();

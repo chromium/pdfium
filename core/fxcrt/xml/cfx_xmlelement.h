@@ -15,19 +15,19 @@
 
 class CFX_XMLElement : public CFX_XMLAttributeNode {
  public:
-  explicit CFX_XMLElement(const CFX_WideString& wsTag);
+  explicit CFX_XMLElement(const WideString& wsTag);
   ~CFX_XMLElement() override;
 
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
 
-  CFX_WideString GetLocalTagName() const;
-  CFX_WideString GetNamespacePrefix() const;
-  CFX_WideString GetNamespaceURI() const;
+  WideString GetLocalTagName() const;
+  WideString GetNamespacePrefix() const;
+  WideString GetNamespaceURI() const;
 
-  CFX_WideString GetTextData() const;
-  void SetTextData(const CFX_WideString& wsText);
+  WideString GetTextData() const;
+  void SetTextData(const WideString& wsText);
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLELEMENT_H_

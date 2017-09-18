@@ -22,19 +22,19 @@ class CPWL_AppStream {
   void SetAsPushButton();
   void SetAsCheckBox();
   void SetAsRadioButton();
-  void SetAsComboBox(const CFX_WideString* sValue);
+  void SetAsComboBox(const WideString* sValue);
   void SetAsListBox();
-  void SetAsTextField(const CFX_WideString* sValue);
+  void SetAsTextField(const WideString* sValue);
 
  private:
-  void AddImage(const CFX_ByteString& sAPType, CPDF_Stream* pImage);
-  void Write(const CFX_ByteString& sAPType,
-             const CFX_ByteString& sContents,
-             const CFX_ByteString& sAPState);
-  void Remove(const CFX_ByteString& sAPType);
+  void AddImage(const ByteString& sAPType, CPDF_Stream* pImage);
+  void Write(const ByteString& sAPType,
+             const ByteString& sContents,
+             const ByteString& sAPState);
+  void Remove(const ByteString& sAPType);
 
-  CFX_ByteString GetBackgroundAppStream() const;
-  CFX_ByteString GetBorderAppStream() const;
+  ByteString GetBackgroundAppStream() const;
+  ByteString GetBorderAppStream() const;
 
   CFX_UnownedPtr<CPDFSDK_Widget> widget_;
   CFX_UnownedPtr<CPDF_Dictionary> dict_;

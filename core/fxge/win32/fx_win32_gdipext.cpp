@@ -682,7 +682,7 @@ CGdiplusExt::CGdiplusExt() {
   m_pGdiRemoveFontMemResourseEx = nullptr;
 }
 void CGdiplusExt::Load() {
-  CFX_ByteString strPlusPath = "";
+  ByteString strPlusPath = "";
   char buf[MAX_PATH];
   GetSystemDirectoryA(buf, MAX_PATH);
   strPlusPath += buf;

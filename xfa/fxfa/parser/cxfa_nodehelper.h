@@ -49,15 +49,15 @@ class CXFA_NodeHelper {
                    bool bIsProperty = false,
                    bool bIsClassIndex = false);
   void GetNameExpression(CXFA_Node* refNode,
-                         CFX_WideString& wsName,
+                         WideString& wsName,
                          bool bIsAllPath,
                          XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
   bool NodeIsTransparent(CXFA_Node* refNode);
-  bool ResolveNodes_CreateNode(CFX_WideString wsName,
-                               CFX_WideString wsCondition,
+  bool ResolveNodes_CreateNode(WideString wsName,
+                               WideString wsCondition,
                                bool bLastNode,
                                CXFA_ScriptContext* pScriptContext);
-  bool CreateNode_ForCondition(CFX_WideString& wsCondition);
+  bool CreateNode_ForCondition(WideString& wsCondition);
   void SetCreateNodeType(CXFA_Node* refNode);
   bool NodeIsProperty(CXFA_Node* refNode);
 

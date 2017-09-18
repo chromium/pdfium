@@ -198,7 +198,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
   CFX_UnownedPtr<CPDF_CountedColorSpace> m_pCountedBaseCS;
   int m_nBaseComponents;
   int m_MaxIndex;
-  CFX_ByteString m_Table;
+  ByteString m_Table;
   float* m_pCompMinMax;
 };
 
@@ -364,8 +364,7 @@ void XYZ_to_sRGB_WhitePoint(float X,
 
 }  // namespace
 
-CPDF_ColorSpace* CPDF_ColorSpace::ColorspaceFromName(
-    const CFX_ByteString& name) {
+CPDF_ColorSpace* CPDF_ColorSpace::ColorspaceFromName(const ByteString& name) {
   if (name == "DeviceRGB" || name == "RGB")
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
   if (name == "DeviceGray" || name == "G")
@@ -422,7 +421,7 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   if (!pFamilyObj)
     return nullptr;
 
-  CFX_ByteString familyname = pFamilyObj->GetString();
+  ByteString familyname = pFamilyObj->GetString();
   if (pArray->GetCount() == 1)
     return std::unique_ptr<CPDF_ColorSpace>(ColorspaceFromName(familyname));
 
@@ -1029,7 +1028,7 @@ bool CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   } else if (CPDF_Stream* pStream = pTableObj->AsStream()) {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pAcc->LoadAllData(false);
-    m_Table = CFX_ByteStringC(pAcc->GetData(), pAcc->GetSize());
+    m_Table = ByteStringView(pAcc->GetData(), pAcc->GetSize());
   }
   return true;
 }
@@ -1080,7 +1079,7 @@ void CPDF_SeparationCS::GetDefaultValue(int iComponent,
 bool CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
                                CPDF_Array* pArray,
                                std::set<CPDF_Object*>* pVisited) {
-  CFX_ByteString name = pArray->GetStringAt(1);
+  ByteString name = pArray->GetStringAt(1);
   if (name == "None") {
     m_Type = None;
     return true;

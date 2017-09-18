@@ -163,9 +163,7 @@ JSMethodSpec CJS_Field::MethodSpecs[] = {
 
 IMPLEMENT_JS_CLASS(CJS_Field, Field)
 
-CJS_DelayData::CJS_DelayData(FIELD_PROP prop,
-                             int idx,
-                             const CFX_WideString& name)
+CJS_DelayData::CJS_DelayData(FIELD_PROP prop, int idx, const WideString& name)
     : eProp(prop), nControlIndex(idx), sFieldName(name) {}
 
 CJS_DelayData::~CJS_DelayData() {}
@@ -210,8 +208,7 @@ void Field::ParseFieldName(const std::wstring& strFieldNameParsed,
   strFieldName = strFieldNameParsed.substr(0, iStart);
 }
 
-bool Field::AttachField(Document* pDocument,
-                        const CFX_WideString& csFieldName) {
+bool Field::AttachField(Document* pDocument, const WideString& csFieldName) {
   m_pJSDoc = pDocument;
   m_pFormFillEnv.Reset(pDocument->GetFormFillEnv());
   m_bCanSet = m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM) ||
@@ -220,7 +217,7 @@ bool Field::AttachField(Document* pDocument,
 
   CPDFSDK_InterForm* pRDInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pInterForm = pRDInterForm->GetInterForm();
-  CFX_WideString swFieldNameTemp = csFieldName;
+  WideString swFieldNameTemp = csFieldName;
   swFieldNameTemp.Replace(L"..", L".");
 
   if (pInterForm->CountFields(swFieldNameTemp) <= 0) {
@@ -243,7 +240,7 @@ bool Field::AttachField(Document* pDocument,
 
 std::vector<CPDF_FormField*> Field::GetFormFields(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    const CFX_WideString& csFieldName) {
+    const WideString& csFieldName) {
   std::vector<CPDF_FormField*> fields;
   CPDFSDK_InterForm* pReaderInterForm = pFormFillEnv->GetInterForm();
   CPDF_InterForm* pInterForm = pReaderInterForm->GetInterForm();
@@ -255,7 +252,7 @@ std::vector<CPDF_FormField*> Field::GetFormFields(
 }
 
 std::vector<CPDF_FormField*> Field::GetFormFields(
-    const CFX_WideString& csFieldName) const {
+    const WideString& csFieldName) const {
   return Field::GetFormFields(m_pFormFillEnv.Get(), csFieldName);
 }
 
@@ -275,8 +272,8 @@ void Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       for (auto& pObserved : widgets) {
         if (pObserved) {
           bool bFormatted = false;
-          CFX_WideString sValue = static_cast<CPDFSDK_Widget*>(pObserved.Get())
-                                      ->OnFormat(bFormatted);
+          WideString sValue = static_cast<CPDFSDK_Widget*>(pObserved.Get())
+                                  ->OnFormat(bFormatted);
           if (pObserved) {  // Not redundant, may be clobbered by OnFormat.
             static_cast<CPDFSDK_Widget*>(pObserved.Get())
                 ->ResetAppearance(bFormatted ? &sValue : nullptr, false);
@@ -332,7 +329,7 @@ void Field::UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       if (nFieldType == FIELDTYPE_COMBOBOX ||
           nFieldType == FIELDTYPE_TEXTFIELD) {
         bool bFormatted = false;
-        CFX_WideString sValue = pWidget->OnFormat(bFormatted);
+        WideString sValue = pWidget->OnFormat(bFormatted);
         pWidget->ResetAppearance(bFormatted ? &sValue : nullptr, false);
       } else {
         pWidget->ResetAppearance(nullptr, false);
@@ -356,8 +353,7 @@ CPDFSDK_Widget* Field::GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   return pInterForm ? pInterForm->GetWidget(pFormControl) : nullptr;
 }
 
-bool Field::ValueIsOccur(CPDF_FormField* pFormField,
-                         CFX_WideString csOptLabel) {
+bool Field::ValueIsOccur(CPDF_FormField* pFormField, WideString csOptLabel) {
   for (int i = 0, sz = pFormField->CountOptions(); i < sz; i++) {
     if (csOptLabel.Compare(pFormField->GetOptionLabel(i)) == 0)
       return true;
@@ -379,14 +375,14 @@ CPDF_FormControl* Field::GetSmartFieldControl(CPDF_FormField* pFormField) {
 
 bool Field::alignment(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    CFX_ByteString alignStr;
+    ByteString alignStr;
     vp >> alignStr;
 
     if (m_bDelay) {
@@ -427,22 +423,22 @@ bool Field::alignment(CJS_Runtime* pRuntime,
 }
 
 void Field::SetAlignment(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const CFX_WideString& swFieldName,
+                         const WideString& swFieldName,
                          int nControlIndex,
-                         const CFX_ByteString& string) {
+                         const ByteString& string) {
   // Not supported.
 }
 
 bool Field::borderStyle(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    CFX_ByteString strType = "";
+    ByteString strType = "";
     vp >> strType;
 
     if (m_bDelay) {
@@ -491,9 +487,9 @@ bool Field::borderStyle(CJS_Runtime* pRuntime,
 }
 
 void Field::SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const CFX_WideString& swFieldName,
+                           const WideString& swFieldName,
                            int nControlIndex,
-                           const CFX_ByteString& string) {
+                           const ByteString& string) {
   ASSERT(pFormFillEnv);
 
   BorderStyle nBorderStyle = BorderStyle::SOLID;
@@ -544,7 +540,7 @@ void Field::SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::buttonAlignX(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -585,7 +581,7 @@ bool Field::buttonAlignX(CJS_Runtime* pRuntime,
 }
 
 void Field::SetButtonAlignX(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                            const CFX_WideString& swFieldName,
+                            const WideString& swFieldName,
                             int nControlIndex,
                             int number) {
   // Not supported.
@@ -593,7 +589,7 @@ void Field::SetButtonAlignX(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::buttonAlignY(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -634,7 +630,7 @@ bool Field::buttonAlignY(CJS_Runtime* pRuntime,
 }
 
 void Field::SetButtonAlignY(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                            const CFX_WideString& swFieldName,
+                            const WideString& swFieldName,
                             int nControlIndex,
                             int number) {
   // Not supported.
@@ -642,7 +638,7 @@ void Field::SetButtonAlignY(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::buttonFitBounds(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -678,7 +674,7 @@ bool Field::buttonFitBounds(CJS_Runtime* pRuntime,
 }
 
 void Field::SetButtonFitBounds(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                               const CFX_WideString& swFieldName,
+                               const WideString& swFieldName,
                                int nControlIndex,
                                bool b) {
   // Not supported.
@@ -686,7 +682,7 @@ void Field::SetButtonFitBounds(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::buttonPosition(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -721,7 +717,7 @@ bool Field::buttonPosition(CJS_Runtime* pRuntime,
 }
 
 void Field::SetButtonPosition(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                              const CFX_WideString& swFieldName,
+                              const WideString& swFieldName,
                               int nControlIndex,
                               int number) {
   // Not supported.
@@ -729,7 +725,7 @@ void Field::SetButtonPosition(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::buttonScaleHow(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -769,7 +765,7 @@ bool Field::buttonScaleHow(CJS_Runtime* pRuntime,
 }
 
 void Field::SetButtonScaleHow(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                              const CFX_WideString& swFieldName,
+                              const WideString& swFieldName,
                               int nControlIndex,
                               int number) {
   // Not supported.
@@ -777,7 +773,7 @@ void Field::SetButtonScaleHow(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::buttonScaleWhen(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -828,7 +824,7 @@ bool Field::buttonScaleWhen(CJS_Runtime* pRuntime,
 }
 
 void Field::SetButtonScaleWhen(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                               const CFX_WideString& swFieldName,
+                               const WideString& swFieldName,
                                int nControlIndex,
                                int number) {
   // Not supported.
@@ -836,7 +832,7 @@ void Field::SetButtonScaleWhen(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::calcOrderIndex(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -872,7 +868,7 @@ bool Field::calcOrderIndex(CJS_Runtime* pRuntime,
 }
 
 void Field::SetCalcOrderIndex(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                              const CFX_WideString& swFieldName,
+                              const WideString& swFieldName,
                               int nControlIndex,
                               int number) {
   // Not supported.
@@ -880,7 +876,7 @@ void Field::SetCalcOrderIndex(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::charLimit(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -911,15 +907,13 @@ bool Field::charLimit(CJS_Runtime* pRuntime,
 }
 
 void Field::SetCharLimit(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const CFX_WideString& swFieldName,
+                         const WideString& swFieldName,
                          int nControlIndex,
                          int number) {
   // Not supported.
 }
 
-bool Field::comb(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool Field::comb(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -954,7 +948,7 @@ bool Field::comb(CJS_Runtime* pRuntime,
 }
 
 void Field::SetComb(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                    const CFX_WideString& swFieldName,
+                    const WideString& swFieldName,
                     int nControlIndex,
                     bool b) {
   // Not supported.
@@ -962,7 +956,7 @@ void Field::SetComb(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::commitOnSelChange(CJS_Runtime* pRuntime,
                               CJS_PropValue& vp,
-                              CFX_WideString& sError) {
+                              WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -999,7 +993,7 @@ bool Field::commitOnSelChange(CJS_Runtime* pRuntime,
 }
 
 void Field::SetCommitOnSelChange(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                 const CFX_WideString& swFieldName,
+                                 const WideString& swFieldName,
                                  int nControlIndex,
                                  bool b) {
   // Not supported.
@@ -1007,7 +1001,7 @@ void Field::SetCommitOnSelChange(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::currentValueIndices(CJS_Runtime* pRuntime,
                                 CJS_PropValue& vp,
-                                CFX_WideString& sError) {
+                                WideString& sError) {
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
@@ -1064,7 +1058,7 @@ bool Field::currentValueIndices(CJS_Runtime* pRuntime,
 }
 
 void Field::SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                   const CFX_WideString& swFieldName,
+                                   const WideString& swFieldName,
                                    int nControlIndex,
                                    const std::vector<uint32_t>& array) {
   ASSERT(pFormFillEnv);
@@ -1091,26 +1085,26 @@ void Field::SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::defaultStyle(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   return false;
 }
 
 void Field::SetDefaultStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                            const CFX_WideString& swFieldName,
+                            const WideString& swFieldName,
                             int nControlIndex) {
   // Not supported.
 }
 
 bool Field::defaultValue(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    CFX_WideString WideStr;
+    WideString WideStr;
     vp >> WideStr;
 
     if (m_bDelay) {
@@ -1136,15 +1130,15 @@ bool Field::defaultValue(CJS_Runtime* pRuntime,
 }
 
 void Field::SetDefaultValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                            const CFX_WideString& swFieldName,
+                            const WideString& swFieldName,
                             int nControlIndex,
-                            const CFX_WideString& string) {
+                            const WideString& string) {
   // Not supported.
 }
 
 bool Field::doNotScroll(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -1179,7 +1173,7 @@ bool Field::doNotScroll(CJS_Runtime* pRuntime,
 }
 
 void Field::SetDoNotScroll(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const CFX_WideString& swFieldName,
+                           const WideString& swFieldName,
                            int nControlIndex,
                            bool b) {
   // Not supported.
@@ -1187,7 +1181,7 @@ void Field::SetDoNotScroll(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::doNotSpellCheck(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
-                            CFX_WideString& sError) {
+                            WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -1227,7 +1221,7 @@ void Field::SetDelay(bool bDelay) {
 
 bool Field::delay(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   if (!vp.IsSetting()) {
     vp << m_bDelay;
     return true;
@@ -1243,7 +1237,7 @@ bool Field::delay(CJS_Runtime* pRuntime,
 
 bool Field::display(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
@@ -1288,7 +1282,7 @@ bool Field::display(CJS_Runtime* pRuntime,
 }
 
 void Field::SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                       const CFX_WideString& swFieldName,
+                       const WideString& swFieldName,
                        int nControlIndex,
                        int number) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
@@ -1323,9 +1317,7 @@ void Field::SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-bool Field::doc(CJS_Runtime* pRuntime,
-                CJS_PropValue& vp,
-                CFX_WideString& sError) {
+bool Field::doc(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -1335,7 +1327,7 @@ bool Field::doc(CJS_Runtime* pRuntime,
 
 bool Field::editable(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
@@ -1358,7 +1350,7 @@ bool Field::editable(CJS_Runtime* pRuntime,
 
 bool Field::exportValues(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -1398,7 +1390,7 @@ bool Field::exportValues(CJS_Runtime* pRuntime,
 
 bool Field::fileSelect(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -1421,7 +1413,7 @@ bool Field::fileSelect(CJS_Runtime* pRuntime,
 
 bool Field::fillColor(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   CJS_Array crArray;
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1481,7 +1473,7 @@ bool Field::fillColor(CJS_Runtime* pRuntime,
 }
 
 void Field::SetFillColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const CFX_WideString& swFieldName,
+                         const WideString& swFieldName,
                          int nControlIndex,
                          const CFX_Color& color) {
   // Not supported.
@@ -1489,7 +1481,7 @@ void Field::SetFillColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::hidden(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
@@ -1526,7 +1518,7 @@ bool Field::hidden(CJS_Runtime* pRuntime,
 }
 
 void Field::SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                      const CFX_WideString& swFieldName,
+                      const WideString& swFieldName,
                       int nControlIndex,
                       bool b) {
   int display = b ? 1 /*Hidden*/ : 0 /*Visible*/;
@@ -1535,13 +1527,13 @@ void Field::SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::highlight(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   ASSERT(m_pFormFillEnv);
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    CFX_ByteString strMode;
+    ByteString strMode;
     vp >> strMode;
 
     if (m_bDelay) {
@@ -1586,15 +1578,15 @@ bool Field::highlight(CJS_Runtime* pRuntime,
 }
 
 void Field::SetHighlight(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const CFX_WideString& swFieldName,
+                         const WideString& swFieldName,
                          int nControlIndex,
-                         const CFX_ByteString& string) {
+                         const ByteString& string) {
   // Not supported.
 }
 
 bool Field::lineWidth(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
@@ -1633,7 +1625,7 @@ bool Field::lineWidth(CJS_Runtime* pRuntime,
 }
 
 void Field::SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const CFX_WideString& swFieldName,
+                         const WideString& swFieldName,
                          int nControlIndex,
                          int number) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
@@ -1673,7 +1665,7 @@ void Field::SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::multiline(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -1708,7 +1700,7 @@ bool Field::multiline(CJS_Runtime* pRuntime,
 }
 
 void Field::SetMultiline(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const CFX_WideString& swFieldName,
+                         const WideString& swFieldName,
                          int nControlIndex,
                          bool b) {
   // Not supported.
@@ -1716,7 +1708,7 @@ void Field::SetMultiline(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::multipleSelection(CJS_Runtime* pRuntime,
                               CJS_PropValue& vp,
-                              CFX_WideString& sError) {
+                              WideString& sError) {
   ASSERT(m_pFormFillEnv);
   if (vp.IsSetting()) {
     if (!m_bCanSet)
@@ -1745,15 +1737,13 @@ bool Field::multipleSelection(CJS_Runtime* pRuntime,
 }
 
 void Field::SetMultipleSelection(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                 const CFX_WideString& swFieldName,
+                                 const WideString& swFieldName,
                                  int nControlIndex,
                                  bool b) {
   // Not supported.
 }
 
-bool Field::name(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool Field::name(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -1767,7 +1757,7 @@ bool Field::name(CJS_Runtime* pRuntime,
 
 bool Field::numItems(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -1785,9 +1775,7 @@ bool Field::numItems(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool Field::page(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool Field::page(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (!vp.IsGetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
@@ -1832,7 +1820,7 @@ bool Field::page(CJS_Runtime* pRuntime,
 
 bool Field::password(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -1863,7 +1851,7 @@ bool Field::password(CJS_Runtime* pRuntime,
 }
 
 void Field::SetPassword(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                        const CFX_WideString& swFieldName,
+                        const WideString& swFieldName,
                         int nControlIndex,
                         bool b) {
   // Not supported.
@@ -1871,7 +1859,7 @@ void Field::SetPassword(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::print(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1942,7 +1930,7 @@ bool Field::print(CJS_Runtime* pRuntime,
 
 bool Field::radiosInUnison(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
-                           CFX_WideString& sError) {
+                           WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -1965,7 +1953,7 @@ bool Field::radiosInUnison(CJS_Runtime* pRuntime,
 
 bool Field::readonly(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -1982,9 +1970,7 @@ bool Field::readonly(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool Field::rect(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool Field::rect(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   CJS_Value Upper_Leftx(pRuntime);
   CJS_Value Upper_Lefty(pRuntime);
   CJS_Value Lower_Rightx(pRuntime);
@@ -2045,7 +2031,7 @@ bool Field::rect(CJS_Runtime* pRuntime,
 }
 
 void Field::SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                    const CFX_WideString& swFieldName,
+                    const WideString& swFieldName,
                     int nControlIndex,
                     const CFX_FloatRect& rect) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
@@ -2104,7 +2090,7 @@ void Field::SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::required(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -2127,7 +2113,7 @@ bool Field::required(CJS_Runtime* pRuntime,
 
 bool Field::richText(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -2156,13 +2142,13 @@ bool Field::richText(CJS_Runtime* pRuntime,
 
 bool Field::richValue(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return true;
 }
 
 bool Field::rotation(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -2193,7 +2179,7 @@ bool Field::rotation(CJS_Runtime* pRuntime,
 }
 
 void Field::SetRotation(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                        const CFX_WideString& swFieldName,
+                        const WideString& swFieldName,
                         int nControlIndex,
                         int number) {
   // Not supported.
@@ -2201,7 +2187,7 @@ void Field::SetRotation(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::strokeColor(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   CJS_Array crArray;
 
   if (vp.IsSetting()) {
@@ -2259,7 +2245,7 @@ bool Field::strokeColor(CJS_Runtime* pRuntime,
 }
 
 void Field::SetStrokeColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const CFX_WideString& swFieldName,
+                           const WideString& swFieldName,
                            int nControlIndex,
                            const CFX_Color& color) {
   // Not supported.
@@ -2267,14 +2253,14 @@ void Field::SetStrokeColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::style(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    CFX_ByteString csBCaption;
+    ByteString csBCaption;
     vp >> csBCaption;
 
     if (m_bDelay) {
@@ -2299,8 +2285,8 @@ bool Field::style(CJS_Runtime* pRuntime,
   if (!pFormControl)
     return false;
 
-  CFX_WideString csWCaption = pFormControl->GetNormalCaption();
-  CFX_ByteString csBCaption;
+  WideString csWCaption = pFormControl->GetNormalCaption();
+  ByteString csBCaption;
 
   switch (csWCaption[0]) {
     case L'l':
@@ -2327,21 +2313,21 @@ bool Field::style(CJS_Runtime* pRuntime,
 }
 
 void Field::SetStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                     const CFX_WideString& swFieldName,
+                     const WideString& swFieldName,
                      int nControlIndex,
-                     const CFX_ByteString& string) {
+                     const ByteString& string) {
   // Not supported.
 }
 
 bool Field::submitName(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return true;
 }
 
 bool Field::textColor(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   CJS_Array crArray;
 
   if (vp.IsSetting()) {
@@ -2395,7 +2381,7 @@ bool Field::textColor(CJS_Runtime* pRuntime,
 }
 
 void Field::SetTextColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const CFX_WideString& swFieldName,
+                         const WideString& swFieldName,
                          int nControlIndex,
                          const CFX_Color& color) {
   // Not supported.
@@ -2403,14 +2389,14 @@ void Field::SetTextColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::textFont(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    CFX_ByteString csFontName;
+    ByteString csFontName;
     vp >> csFontName;
     if (csFontName.IsEmpty())
       return false;
@@ -2447,15 +2433,15 @@ bool Field::textFont(CJS_Runtime* pRuntime,
 }
 
 void Field::SetTextFont(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                        const CFX_WideString& swFieldName,
+                        const WideString& swFieldName,
                         int nControlIndex,
-                        const CFX_ByteString& string) {
+                        const ByteString& string) {
   // Not supported.
 }
 
 bool Field::textSize(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
@@ -2490,15 +2476,13 @@ bool Field::textSize(CJS_Runtime* pRuntime,
 }
 
 void Field::SetTextSize(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                        const CFX_WideString& swFieldName,
+                        const WideString& swFieldName,
                         int nControlIndex,
                         int number) {
   // Not supported.
 }
 
-bool Field::type(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool Field::type(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -2541,14 +2525,14 @@ bool Field::type(CJS_Runtime* pRuntime,
 
 bool Field::userName(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   ASSERT(m_pFormFillEnv);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    CFX_WideString swName;
+    WideString swName;
     vp >> swName;
 
     if (m_bDelay) {
@@ -2568,20 +2552,20 @@ bool Field::userName(CJS_Runtime* pRuntime,
 }
 
 void Field::SetUserName(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                        const CFX_WideString& swFieldName,
+                        const WideString& swFieldName,
                         int nControlIndex,
-                        const CFX_WideString& string) {
+                        const WideString& string) {
   // Not supported.
 }
 
 bool Field::value(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
 
-    std::vector<CFX_WideString> strArray;
+    std::vector<WideString> strArray;
     if (vp.GetJSValue()->IsArrayObject()) {
       CJS_Array ValueArray;
       vp.GetJSValue()->ConvertToArray(pRuntime, ValueArray);
@@ -2591,7 +2575,7 @@ bool Field::value(CJS_Runtime* pRuntime,
         strArray.push_back(ElementValue.ToCFXWideString(pRuntime));
       }
     } else {
-      CFX_WideString swValue;
+      WideString swValue;
       vp >> swValue;
       strArray.push_back(swValue);
     }
@@ -2660,9 +2644,9 @@ bool Field::value(CJS_Runtime* pRuntime,
 }
 
 void Field::SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                     const CFX_WideString& swFieldName,
+                     const WideString& swFieldName,
                      int nControlIndex,
-                     const std::vector<CFX_WideString>& strArray) {
+                     const std::vector<WideString>& strArray) {
   ASSERT(pFormFillEnv);
   if (strArray.empty())
     return;
@@ -2715,7 +2699,7 @@ void Field::SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
 bool Field::valueAsString(CJS_Runtime* pRuntime,
                           CJS_PropValue& vp,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -2758,7 +2742,7 @@ bool Field::valueAsString(CJS_Runtime* pRuntime,
 bool Field::browseForFileToSubmit(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
-                                  CFX_WideString& sError) {
+                                  WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -2766,7 +2750,7 @@ bool Field::browseForFileToSubmit(CJS_Runtime* pRuntime,
   CPDF_FormField* pFormField = FieldArray[0];
   if ((pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT) &&
       (pFormField->GetFieldType() == FIELDTYPE_TEXTFIELD)) {
-    CFX_WideString wsFileName = m_pFormFillEnv->JS_fieldBrowse();
+    WideString wsFileName = m_pFormFillEnv->JS_fieldBrowse();
     if (!wsFileName.IsEmpty()) {
       pFormField->SetValue(wsFileName);
       UpdateFormField(m_pFormFillEnv.Get(), pFormField, true, true, true);
@@ -2779,7 +2763,7 @@ bool Field::browseForFileToSubmit(CJS_Runtime* pRuntime,
 bool Field::buttonGetCaption(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
-                             CFX_WideString& sError) {
+                             WideString& sError) {
   int nface = 0;
   int iSize = params.size();
   if (iSize >= 1)
@@ -2812,7 +2796,7 @@ bool Field::buttonGetCaption(CJS_Runtime* pRuntime,
 bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   if (params.size() >= 1) {
     int nFace = params[0].ToInt(pRuntime);
     if (nFace < 0 || nFace > 2)
@@ -2844,28 +2828,28 @@ bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
 bool Field::buttonImportIcon(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
-                             CFX_WideString& sError) {
+                             WideString& sError) {
   return true;
 }
 
 bool Field::buttonSetCaption(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
-                             CFX_WideString& sError) {
+                             WideString& sError) {
   return false;
 }
 
 bool Field::buttonSetIcon(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   return false;
 }
 
 bool Field::checkThisBox(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   int iSize = params.size();
   if (iSize < 1)
     return false;
@@ -2902,14 +2886,14 @@ bool Field::checkThisBox(CJS_Runtime* pRuntime,
 bool Field::clearItems(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return true;
 }
 
 bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
-                             CFX_WideString& sError) {
+                             WideString& sError) {
   if (!m_bCanSet)
     return false;
 
@@ -2936,28 +2920,27 @@ bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
 bool Field::deleteItemAt(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   return true;
 }
 
 bool Field::getArray(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
 
-  std::vector<std::unique_ptr<CFX_WideString>> swSort;
+  std::vector<std::unique_ptr<WideString>> swSort;
   for (CPDF_FormField* pFormField : FieldArray) {
-    swSort.push_back(std::unique_ptr<CFX_WideString>(
-        new CFX_WideString(pFormField->GetFullName())));
+    swSort.push_back(
+        std::unique_ptr<WideString>(new WideString(pFormField->GetFullName())));
   }
 
-  std::sort(
-      swSort.begin(), swSort.end(),
-      [](const std::unique_ptr<CFX_WideString>& p1,
-         const std::unique_ptr<CFX_WideString>& p2) { return *p1 < *p2; });
+  std::sort(swSort.begin(), swSort.end(),
+            [](const std::unique_ptr<WideString>& p1,
+               const std::unique_ptr<WideString>& p2) { return *p1 < *p2; });
 
   CJS_Array FormFieldArray;
 
@@ -2982,7 +2965,7 @@ bool Field::getArray(CJS_Runtime* pRuntime,
 bool Field::getItemAt(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   int iSize = params.size();
   int nIdx = -1;
   if (iSize >= 1)
@@ -3002,7 +2985,7 @@ bool Field::getItemAt(CJS_Runtime* pRuntime,
     if (nIdx == -1 || nIdx > pFormField->CountOptions())
       nIdx = pFormField->CountOptions() - 1;
     if (bExport) {
-      CFX_WideString strval = pFormField->GetOptionValue(nIdx);
+      WideString strval = pFormField->GetOptionValue(nIdx);
       if (strval.IsEmpty())
         vRet = CJS_Value(pRuntime, pFormField->GetOptionLabel(nIdx).c_str());
       else
@@ -3020,21 +3003,21 @@ bool Field::getItemAt(CJS_Runtime* pRuntime,
 bool Field::getLock(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   return false;
 }
 
 bool Field::insertItemAt(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   return true;
 }
 
 bool Field::isBoxChecked(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   int nIndex = -1;
   if (params.size() >= 1)
     nIndex = params[0].ToInt(pRuntime);
@@ -3058,7 +3041,7 @@ bool Field::isBoxChecked(CJS_Runtime* pRuntime,
 bool Field::isDefaultChecked(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
-                             CFX_WideString& sError) {
+                             WideString& sError) {
   int nIndex = -1;
   if (params.size() >= 1)
     nIndex = params[0].ToInt(pRuntime);
@@ -3081,14 +3064,14 @@ bool Field::isDefaultChecked(CJS_Runtime* pRuntime,
 bool Field::setAction(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return true;
 }
 
 bool Field::setFocus(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -3133,62 +3116,62 @@ bool Field::setFocus(CJS_Runtime* pRuntime,
 bool Field::setItems(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   return true;
 }
 
 bool Field::setLock(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   return false;
 }
 
 bool Field::signatureGetModifications(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
-                                      CFX_WideString& sError) {
+                                      WideString& sError) {
   return false;
 }
 
 bool Field::signatureGetSeedValue(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
-                                  CFX_WideString& sError) {
+                                  WideString& sError) {
   return false;
 }
 
 bool Field::signatureInfo(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   return false;
 }
 
 bool Field::signatureSetSeedValue(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
-                                  CFX_WideString& sError) {
+                                  WideString& sError) {
   return false;
 }
 
 bool Field::signatureSign(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
-                          CFX_WideString& sError) {
+                          WideString& sError) {
   return false;
 }
 
 bool Field::signatureValidate(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
-                              CFX_WideString& sError) {
+                              WideString& sError) {
   return false;
 }
 
 bool Field::source(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   if (vp.IsGetting()) {
     vp << (CJS_Object*)nullptr;
   }
@@ -3210,14 +3193,14 @@ void Field::AddDelay_Bool(FIELD_PROP prop, bool b) {
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_String(FIELD_PROP prop, const CFX_ByteString& string) {
+void Field::AddDelay_String(FIELD_PROP prop, const ByteString& string) {
   CJS_DelayData* pNewData =
       new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->string = string;
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_WideString(FIELD_PROP prop, const CFX_WideString& string) {
+void Field::AddDelay_WideString(FIELD_PROP prop, const WideString& string) {
   CJS_DelayData* pNewData =
       new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->widestring = string;
@@ -3247,7 +3230,7 @@ void Field::AddDelay_WordArray(FIELD_PROP prop,
 }
 
 void Field::AddDelay_WideStringArray(FIELD_PROP prop,
-                                     const std::vector<CFX_WideString>& array) {
+                                     const std::vector<WideString>& array) {
   CJS_DelayData* pNewData =
       new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->widestringarray = array;
@@ -3397,7 +3380,7 @@ void Field::DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 void Field::AddField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                      int nPageIndex,
                      int nFieldType,
-                     const CFX_WideString& sName,
+                     const WideString& sName,
                      const CFX_FloatRect& rcCoords) {
   // Not supported.
 }

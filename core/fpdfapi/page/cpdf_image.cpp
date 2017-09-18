@@ -201,7 +201,7 @@ void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
       pCS->AddNew<CPDF_Name>("Indexed");
       pCS->AddNew<CPDF_Name>("DeviceRGB");
       pCS->AddNew<CPDF_Number>(1);
-      CFX_ByteString ct;
+      ByteString ct;
       char* pBuf = ct.GetBuffer(6);
       pBuf[0] = (char)reset_r;
       pBuf[1] = (char)reset_g;

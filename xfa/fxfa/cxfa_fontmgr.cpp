@@ -1700,8 +1700,7 @@ const XFA_FONTINFO g_XFAFontsMap[] = {
 
 }  // namespace
 
-CFX_WideString XFA_LocalFontNameToEnglishName(
-    const CFX_WideStringC& wsLocalName) {
+WideString XFA_LocalFontNameToEnglishName(const WideStringView& wsLocalName) {
   uint32_t dwLocalNameHash = FX_HashCode_GetW(wsLocalName, true);
   const XFA_FONTINFO* pEnd = g_XFAFontsMap + FX_ArraySize(g_XFAFontsMap);
   const XFA_FONTINFO* pFontInfo =
@@ -1711,15 +1710,15 @@ CFX_WideString XFA_LocalFontNameToEnglishName(
                        });
   if (pFontInfo < pEnd && pFontInfo->dwFontNameHash == dwLocalNameHash)
     return pFontInfo->pPsName;
-  return CFX_WideString(wsLocalName);
+  return WideString(wsLocalName);
 }
 
 const XFA_FONTINFO* XFA_GetFontINFOByFontName(
-    const CFX_WideStringC& wsFontName) {
-  CFX_WideString wsFontNameTemp(wsFontName);
+    const WideStringView& wsFontName) {
+  WideString wsFontNameTemp(wsFontName);
   wsFontNameTemp.Remove(L' ');
   uint32_t dwCurFontNameHash =
-      FX_HashCode_GetW(wsFontNameTemp.AsStringC(), true);
+      FX_HashCode_GetW(wsFontNameTemp.AsStringView(), true);
   const XFA_FONTINFO* pEnd = g_XFAFontsMap + FX_ArraySize(g_XFAFontsMap);
   const XFA_FONTINFO* pFontInfo =
       std::lower_bound(g_XFAFontsMap, pEnd, dwCurFontNameHash,
@@ -1737,25 +1736,25 @@ CXFA_FontMgr::~CXFA_FontMgr() {}
 
 CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     CXFA_FFDoc* hDoc,
-    const CFX_WideStringC& wsFontFamily,
+    const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
   uint32_t dwHash = FX_HashCode_GetW(wsFontFamily, false);
-  CFX_ByteString bsKey;
+  ByteString bsKey;
   bsKey.Format("%u%u%u", dwHash, dwFontStyles, wCodePage);
   auto iter = m_FontMap.find(bsKey);
   if (iter != m_FontMap.end())
     return iter->second;
 
-  CFX_WideString wsEnglishName = XFA_LocalFontNameToEnglishName(wsFontFamily);
+  WideString wsEnglishName = XFA_LocalFontNameToEnglishName(wsFontFamily);
   auto it = m_PDFFontMgrMap.find(hDoc);
   CXFA_PDFFontMgr* pMgr =
       it != m_PDFFontMgrMap.end() ? it->second.get() : nullptr;
   CPDF_Font* pPDFFont = nullptr;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
   if (pMgr) {
-    pFont =
-        pMgr->GetFont(wsEnglishName.AsStringC(), dwFontStyles, &pPDFFont, true);
+    pFont = pMgr->GetFont(wsEnglishName.AsStringView(), dwFontStyles, &pPDFFont,
+                          true);
     if (pFont)
       return pFont;
   }
@@ -1764,7 +1763,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
 
   if (!pFont && pMgr) {
     pPDFFont = nullptr;
-    pFont = pMgr->GetFont(wsEnglishName.AsStringC(), dwFontStyles, &pPDFFont,
+    pFont = pMgr->GetFont(wsEnglishName.AsStringView(), dwFontStyles, &pPDFFont,
                           false);
     if (pFont)
       return pFont;

@@ -17,28 +17,28 @@ namespace {
 class MockHandler : public CFX_SAXReader::HandlerIface {
  public:
   MOCK_METHOD3(OnTagEnter,
-               CFX_SAXContext*(const CFX_ByteStringC& bsTagName,
+               CFX_SAXContext*(const ByteStringView& bsTagName,
                                CFX_SAXItem::Type eType,
                                uint32_t dwStartPos));
   MOCK_METHOD3(OnTagAttribute,
                void(CFX_SAXContext* pTag,
-                    const CFX_ByteStringC& bsAttri,
-                    const CFX_ByteStringC& bsValue));
+                    const ByteStringView& bsAttri,
+                    const ByteStringView& bsValue));
   MOCK_METHOD1(OnTagBreak, void(CFX_SAXContext* pTag));
   MOCK_METHOD4(OnTagData,
                void(CFX_SAXContext* pTag,
                     CFX_SAXItem::Type eType,
-                    const CFX_ByteStringC& bsData,
+                    const ByteStringView& bsData,
                     uint32_t dwStartPos));
   MOCK_METHOD2(OnTagClose, void(CFX_SAXContext* pTag, uint32_t dwEndPos));
   MOCK_METHOD3(OnTagEnd,
                void(CFX_SAXContext* pTag,
-                    const CFX_ByteStringC& bsTagName,
+                    const ByteStringView& bsTagName,
                     uint32_t dwEndPos));
   MOCK_METHOD4(OnTargetData,
                void(CFX_SAXContext* pTag,
                     CFX_SAXItem::Type eType,
-                    const CFX_ByteStringC& bsData,
+                    const ByteStringView& bsData,
                     uint32_t dwStartPos));
 };
 

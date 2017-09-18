@@ -52,7 +52,7 @@ double ftod(float fNumber) {
 
 }  // namespace
 
-void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Message) {
+void FXJSE_ThrowMessage(const ByteStringView& utf8Message) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
   ASSERT(pIsolate);
 
@@ -126,7 +126,7 @@ void CFXJSE_Value::SetFloat(float fFloat) {
   m_hValue.Reset(m_pIsolate, pValue);
 }
 
-bool CFXJSE_Value::SetObjectProperty(const CFX_ByteStringC& szPropName,
+bool CFXJSE_Value::SetObjectProperty(const ByteStringView& szPropName,
                                      CFXJSE_Value* lpPropValue) {
   ASSERT(lpPropValue);
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
@@ -144,7 +144,7 @@ bool CFXJSE_Value::SetObjectProperty(const CFX_ByteStringC& szPropName,
       hPropValue);
 }
 
-bool CFXJSE_Value::GetObjectProperty(const CFX_ByteStringC& szPropName,
+bool CFXJSE_Value::GetObjectProperty(const ByteStringView& szPropName,
                                      CFXJSE_Value* lpPropValue) {
   ASSERT(lpPropValue);
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
@@ -187,7 +187,7 @@ bool CFXJSE_Value::GetObjectPropertyByIdx(uint32_t uPropIdx,
   return true;
 }
 
-bool CFXJSE_Value::DeleteObjectProperty(const CFX_ByteStringC& szPropName) {
+bool CFXJSE_Value::DeleteObjectProperty(const ByteStringView& szPropName) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hObject =
       v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -200,7 +200,7 @@ bool CFXJSE_Value::DeleteObjectProperty(const CFX_ByteStringC& szPropName) {
   return true;
 }
 
-bool CFXJSE_Value::HasObjectOwnProperty(const CFX_ByteStringC& szPropName,
+bool CFXJSE_Value::HasObjectOwnProperty(const ByteStringView& szPropName,
                                         bool bUseTypeGetter) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hObject =
@@ -218,7 +218,7 @@ bool CFXJSE_Value::HasObjectOwnProperty(const CFX_ByteStringC& szPropName,
               .FromMaybe(false));
 }
 
-bool CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
+bool CFXJSE_Value::SetObjectOwnProperty(const ByteStringView& szPropName,
                                         CFXJSE_Value* lpPropValue) {
   ASSERT(lpPropValue);
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
@@ -463,13 +463,13 @@ int32_t CFXJSE_Value::ToInteger() const {
   return static_cast<int32_t>(hValue->NumberValue());
 }
 
-CFX_ByteString CFXJSE_Value::ToString() const {
+ByteString CFXJSE_Value::ToString() const {
   ASSERT(!m_hValue.IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hValue = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
   v8::Local<v8::String> hString = hValue->ToString();
   v8::String::Utf8Value hStringVal(hString);
-  return CFX_ByteString(*hStringVal);
+  return ByteString(*hStringVal);
 }
 
 void CFXJSE_Value::SetUndefined() {
@@ -502,7 +502,7 @@ void CFXJSE_Value::SetDouble(double dDouble) {
   m_hValue.Reset(m_pIsolate, hValue);
 }
 
-void CFXJSE_Value::SetString(const CFX_ByteStringC& szString) {
+void CFXJSE_Value::SetString(const ByteStringView& szString) {
   CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
   v8::Local<v8::Value> hValue = v8::String::NewFromUtf8(
       m_pIsolate, reinterpret_cast<const char*>(szString.raw_str()),

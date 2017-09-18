@@ -29,10 +29,8 @@ struct XFA_FONTINFO {
   uint16_t wCodePage;
 };
 
-CFX_WideString XFA_LocalFontNameToEnglishName(
-    const CFX_WideStringC& wsLocalName);
-const XFA_FONTINFO* XFA_GetFontINFOByFontName(
-    const CFX_WideStringC& wsFontName);
+WideString XFA_LocalFontNameToEnglishName(const WideStringView& wsLocalName);
+const XFA_FONTINFO* XFA_GetFontINFOByFontName(const WideStringView& wsFontName);
 
 class CXFA_FontMgr {
  public:
@@ -40,7 +38,7 @@ class CXFA_FontMgr {
   ~CXFA_FontMgr();
 
   CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
-                                      const CFX_WideStringC& wsFontFamily,
+                                      const WideStringView& wsFontFamily,
                                       uint32_t dwFontStyles,
                                       uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(CXFA_FFDoc* hDoc);
@@ -50,7 +48,7 @@ class CXFA_FontMgr {
  private:
   std::unique_ptr<CXFA_DefFontMgr> m_pDefFontMgr;
   std::map<CXFA_FFDoc*, std::unique_ptr<CXFA_PDFFontMgr>> m_PDFFontMgrMap;
-  std::map<CFX_ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
+  std::map<ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
 #endif  //  XFA_FXFA_CXFA_FONTMGR_H_

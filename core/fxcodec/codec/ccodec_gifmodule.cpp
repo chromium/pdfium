@@ -71,7 +71,7 @@ GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
   if (len > 21) {
     uint8_t size = *buf++;
     if (size != 0)
-      pAttribute->m_strAuthor = CFX_ByteString(buf, size);
+      pAttribute->m_strAuthor = ByteString(buf, size);
     else
       pAttribute->m_strAuthor.clear();
   }

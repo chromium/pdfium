@@ -299,7 +299,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
     }
   }
 #endif
-  CFX_ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
+  ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_ || \
     defined _SKIA_SUPPORT_PATHS_
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
@@ -344,7 +344,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
     keygen.Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
                     anti_alias);
   }
-  CFX_ByteString FaceGlyphsKey2(keygen.m_Key, keygen.m_KeyLen);
+  ByteString FaceGlyphsKey2(keygen.m_Key, keygen.m_KeyLen);
   text_flags |= FXTEXT_NO_NATIVETEXT;
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);
@@ -375,7 +375,7 @@ void CFX_FaceCache::InitPlatform() {}
 CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     const CFX_Font* pFont,
     const CFX_Matrix* pMatrix,
-    const CFX_ByteString& FaceGlyphsKey,
+    const ByteString& FaceGlyphsKey,
     uint32_t glyph_index,
     bool bFontStyle,
     int dest_width,

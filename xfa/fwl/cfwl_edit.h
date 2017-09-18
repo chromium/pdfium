@@ -65,10 +65,10 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
-  virtual void SetText(const CFX_WideString& wsText);
+  virtual void SetText(const WideString& wsText);
 
   int32_t GetTextLength() const;
-  CFX_WideString GetText() const;
+  WideString GetText() const;
   void ClearText();
 
   void SelectAll();
@@ -80,9 +80,9 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   int32_t GetLimit() const;
   void SetLimit(int32_t nLimit);
   void SetAliasChar(wchar_t wAlias);
-  bool Copy(CFX_WideString& wsCopy);
-  bool Cut(CFX_WideString& wsCut);
-  bool Paste(const CFX_WideString& wsPaste);
+  bool Copy(WideString& wsCopy);
+  bool Cut(WideString& wsCut);
+  bool Paste(const WideString& wsPaste);
   bool Undo();
   bool Redo();
   bool CanUndo();
@@ -93,9 +93,9 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   // CFDE_TextEditEngine::Delegate
   void NotifyTextFull() override;
   void OnCaretChanged() override;
-  void OnTextChanged(const CFX_WideString& prevText) override;
+  void OnTextChanged(const WideString& prevText) override;
   void OnSelChanged() override;
-  bool OnValidate(const CFX_WideString& wsText) override;
+  bool OnValidate(const WideString& wsText) override;
   void SetScrollOffset(float fScrollOffset) override;
 
  protected:
@@ -171,8 +171,8 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
   std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
   std::unique_ptr<CFWL_Caret> m_pCaret;
-  CFX_WideString m_wsCache;
-  CFX_WideString m_wsFont;
+  WideString m_wsCache;
+  WideString m_wsFont;
 };
 
 #endif  // XFA_FWL_CFWL_EDIT_H_

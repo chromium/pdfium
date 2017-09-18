@@ -24,11 +24,11 @@ class CFX_FontMgr {
 
   void InitFTLibrary();
 
-  FXFT_Face GetCachedFace(const CFX_ByteString& face_name,
+  FXFT_Face GetCachedFace(const ByteString& face_name,
                           int weight,
                           bool bItalic,
                           uint8_t*& pFontData);
-  FXFT_Face AddCachedFace(const CFX_ByteString& face_name,
+  FXFT_Face AddCachedFace(const ByteString& face_name,
                           int weight,
                           bool bItalic,
                           uint8_t* pData,
@@ -47,7 +47,7 @@ class CFX_FontMgr {
   FXFT_Face GetFixedFace(const uint8_t* pData, uint32_t size, int face_index);
   void ReleaseFace(FXFT_Face face);
   void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
-  FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
+  FXFT_Face FindSubstFont(const ByteString& face_name,
                           bool bTrueType,
                           uint32_t flags,
                           int weight,
@@ -61,7 +61,7 @@ class CFX_FontMgr {
 
  private:
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
-  std::map<CFX_ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
+  std::map<ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
   FXFT_Library m_FTLibrary;
   bool m_FTLibrarySupportsHinting;
 };

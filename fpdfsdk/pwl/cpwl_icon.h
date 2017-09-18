@@ -28,7 +28,7 @@ class CPWL_Icon : public CPWL_Wnd {
   std::pair<float, float> GetImageOffset();
 
   CFX_Matrix GetImageMatrix();
-  CFX_ByteString GetImageAlias();
+  ByteString GetImageAlias();
 
  private:
   // left, bottom

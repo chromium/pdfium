@@ -196,13 +196,13 @@ bool CPDF_SimpleFont::IsUnicodeCompatible() const {
          m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS;
 }
 
-CFX_WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
-  CFX_WideString unicode = CPDF_Font::UnicodeFromCharCode(charcode);
+WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
+  WideString unicode = CPDF_Font::UnicodeFromCharCode(charcode);
   if (!unicode.IsEmpty())
     return unicode;
   wchar_t ret = m_Encoding.UnicodeFromCharCode((uint8_t)charcode);
   if (ret == 0)
-    return CFX_WideString();
+    return WideString();
   return ret;
 }
 

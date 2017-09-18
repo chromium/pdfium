@@ -13,8 +13,8 @@ CXML_AttrMap::CXML_AttrMap() {}
 
 CXML_AttrMap::~CXML_AttrMap() {}
 
-const CFX_WideString* CXML_AttrMap::Lookup(const CFX_ByteString& space,
-                                           const CFX_ByteString& name) const {
+const WideString* CXML_AttrMap::Lookup(const ByteString& space,
+                                       const ByteString& name) const {
   if (!m_pMap)
     return nullptr;
 
@@ -25,9 +25,9 @@ const CFX_WideString* CXML_AttrMap::Lookup(const CFX_ByteString& space,
   return nullptr;
 }
 
-void CXML_AttrMap::SetAt(const CFX_ByteString& space,
-                         const CFX_ByteString& name,
-                         const CFX_WideString& value) {
+void CXML_AttrMap::SetAt(const ByteString& space,
+                         const ByteString& name,
+                         const WideString& value) {
   if (!m_pMap)
     m_pMap = pdfium::MakeUnique<std::vector<CXML_AttrItem>>();
 
@@ -38,7 +38,7 @@ void CXML_AttrMap::SetAt(const CFX_ByteString& space,
     }
   }
 
-  m_pMap->push_back({space, name, CFX_WideString(value)});
+  m_pMap->push_back({space, name, WideString(value)});
 }
 
 int CXML_AttrMap::GetSize() const {

@@ -18,16 +18,16 @@ class CPDF_Number : public CPDF_Object {
   CPDF_Number();
   explicit CPDF_Number(int value);
   explicit CPDF_Number(float value);
-  explicit CPDF_Number(const CFX_ByteStringC& str);
+  explicit CPDF_Number(const ByteStringView& str);
   ~CPDF_Number() override;
 
   // CPDF_Object:
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
-  CFX_ByteString GetString() const override;
+  ByteString GetString() const override;
   float GetNumber() const override;
   int GetInteger() const override;
-  void SetString(const CFX_ByteString& str) override;
+  void SetString(const ByteString& str) override;
   bool IsNumber() const override;
   CPDF_Number* AsNumber() override;
   const CPDF_Number* AsNumber() const override;

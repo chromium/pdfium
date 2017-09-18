@@ -31,7 +31,7 @@ struct CPVT_Color {
   float fColor3;
   float fColor4;
 
-  static CPVT_Color ParseColor(const CFX_ByteString& str);
+  static CPVT_Color ParseColor(const ByteString& str);
   static CPVT_Color ParseColor(const CPDF_Array& array);
 };
 

@@ -18,7 +18,7 @@ CFX_SAXReaderHandler::CFX_SAXReaderHandler(CFX_ChecksumContext* pContext)
 CFX_SAXReaderHandler::~CFX_SAXReaderHandler() {}
 
 CFX_SAXContext* CFX_SAXReaderHandler::OnTagEnter(
-    const CFX_ByteStringC& bsTagName,
+    const ByteStringView& bsTagName,
     CFX_SAXItem::Type eType,
     uint32_t dwStartPos) {
   UpdateChecksum(true);
@@ -38,8 +38,8 @@ CFX_SAXContext* CFX_SAXReaderHandler::OnTagEnter(
 }
 
 void CFX_SAXReaderHandler::OnTagAttribute(CFX_SAXContext* pTag,
-                                          const CFX_ByteStringC& bsAttri,
-                                          const CFX_ByteStringC& bsValue) {
+                                          const ByteStringView& bsAttri,
+                                          const ByteStringView& bsValue) {
   if (!pTag)
     return;
   pTag->m_TextBuf << " " << bsAttri << "=\"" << bsValue << "\"";
@@ -55,7 +55,7 @@ void CFX_SAXReaderHandler::OnTagBreak(CFX_SAXContext* pTag) {
 
 void CFX_SAXReaderHandler::OnTagData(CFX_SAXContext* pTag,
                                      CFX_SAXItem::Type eType,
-                                     const CFX_ByteStringC& bsData,
+                                     const ByteStringView& bsData,
                                      uint32_t dwStartPos) {
   if (!pTag)
     return;
@@ -75,13 +75,13 @@ void CFX_SAXReaderHandler::OnTagClose(CFX_SAXContext* pTag, uint32_t dwEndPos) {
   if (pTag->m_eNode == CFX_SAXItem::Type::Instruction)
     pTag->m_TextBuf << "?>";
   else if (pTag->m_eNode == CFX_SAXItem::Type::Tag)
-    pTag->m_TextBuf << "></" << pTag->m_bsTagName.AsStringC() << ">";
+    pTag->m_TextBuf << "></" << pTag->m_bsTagName.AsStringView() << ">";
 
   UpdateChecksum(false);
 }
 
 void CFX_SAXReaderHandler::OnTagEnd(CFX_SAXContext* pTag,
-                                    const CFX_ByteStringC& bsTagName,
+                                    const ByteStringView& bsTagName,
                                     uint32_t dwEndPos) {
   if (!pTag)
     return;
@@ -92,7 +92,7 @@ void CFX_SAXReaderHandler::OnTagEnd(CFX_SAXContext* pTag,
 
 void CFX_SAXReaderHandler::OnTargetData(CFX_SAXContext* pTag,
                                         CFX_SAXItem::Type eType,
-                                        const CFX_ByteStringC& bsData,
+                                        const ByteStringView& bsData,
                                         uint32_t dwStartPos) {
   if (!pTag && eType != CFX_SAXItem::Type::Comment)
     return;
@@ -122,7 +122,7 @@ void CFX_SAXReaderHandler::UpdateChecksum(bool bCheckSpace) {
     }
   }
   if (bUpdata)
-    m_pContext->Update(CFX_ByteStringC(pBuffer, iLength));
+    m_pContext->Update(ByteStringView(pBuffer, iLength));
 
   m_SAXContext.m_TextBuf.str("");
 }

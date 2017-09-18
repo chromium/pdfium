@@ -69,9 +69,8 @@ class CPDF_Annot {
   };
 
   static bool IsAnnotationHidden(CPDF_Dictionary* pAnnotDict);
-  static CPDF_Annot::Subtype StringToAnnotSubtype(
-      const CFX_ByteString& sSubtype);
-  static CFX_ByteString AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype);
+  static CPDF_Annot::Subtype StringToAnnotSubtype(const ByteString& sSubtype);
+  static ByteString AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype);
   static CFX_FloatRect RectFromQuadPoints(CPDF_Dictionary* pAnnotDict);
 
   // The second constructor does not take ownership of the dictionary.

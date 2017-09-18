@@ -24,7 +24,7 @@ namespace {
 
 CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
                            CPDF_Bookmark bookmark,
-                           const CFX_WideString& title,
+                           const WideString& title,
                            std::set<CPDF_Dictionary*>* visited) {
   // Return if already checked to avoid circular calling.
   if (pdfium::ContainsKey(*visited, bookmark.GetDict()))
@@ -91,7 +91,7 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK pDict, void* buffer, unsigned long buflen) {
   if (!pDict)
     return 0;
   CPDF_Bookmark bookmark(ToDictionary(static_cast<CPDF_Object*>(pDict)));
-  CFX_WideString title = bookmark.GetTitle();
+  WideString title = bookmark.GetTitle();
   return Utf16EncodeMaybeCopyAndReturnLength(title, buffer, buflen);
 }
 
@@ -103,8 +103,8 @@ FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
   if (!pDoc)
     return nullptr;
   CPDF_BookmarkTree tree(pDoc);
-  FX_STRSIZE len = CFX_WideString::WStringLength(title);
-  CFX_WideString encodedTitle = CFX_WideString::FromUTF16LE(title, len);
+  FX_STRSIZE len = WideString::WStringLength(title);
+  WideString encodedTitle = WideString::FromUTF16LE(title, len);
   std::set<CPDF_Dictionary*> visited;
   return FindBookmark(tree, CPDF_Bookmark(), encodedTitle, &visited).GetDict();
 }
@@ -174,7 +174,7 @@ FPDFAction_GetFilePath(FPDF_ACTION pDict, void* buffer, unsigned long buflen) {
     return 0;
 
   CPDF_Action action(ToDictionary(static_cast<CPDF_Object*>(pDict)));
-  CFX_ByteString path = action.GetFilePath().UTF8Encode();
+  ByteString path = action.GetFilePath().UTF8Encode();
   unsigned long len = path.GetLength() + 1;
   if (buffer && len <= buflen)
     memcpy(buffer, path.c_str(), len);
@@ -192,7 +192,7 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
   if (!pDoc)
     return 0;
   CPDF_Action action(ToDictionary(static_cast<CPDF_Object*>(pDict)));
-  CFX_ByteString path = action.GetURI(pDoc);
+  ByteString path = action.GetURI(pDoc);
   unsigned long len = path.GetLength() + 1;
   if (buffer && len <= buflen)
     memcpy(buffer, path.c_str(), len);
@@ -390,7 +390,7 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
   const CPDF_Dictionary* pInfo = pDoc->GetInfo();
   if (!pInfo)
     return 0;
-  CFX_WideString text = pInfo->GetUnicodeTextFor(tag);
+  WideString text = pInfo->GetUnicodeTextFor(tag);
   return Utf16EncodeMaybeCopyAndReturnLength(text, buffer, buflen);
 }
 
@@ -404,7 +404,7 @@ FPDF_GetPageLabel(FPDF_DOCUMENT document,
 
   // CPDF_PageLabel can deal with NULL |document|.
   CPDF_PageLabel label(CPDFDocumentFromFPDFDocument(document));
-  CFX_WideString str;
+  WideString str;
   if (!label.GetLabel(page_index, &str))
     return 0;
   return Utf16EncodeMaybeCopyAndReturnLength(str, buffer, buflen);

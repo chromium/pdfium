@@ -32,7 +32,7 @@ class CPDF_Font {
   static std::unique_ptr<CPDF_Font> Create(CPDF_Document* pDoc,
                                            CPDF_Dictionary* pFontDict);
   static CPDF_Font* GetStockFont(CPDF_Document* pDoc,
-                                 const CFX_ByteStringC& fontname);
+                                 const ByteStringView& fontname);
   static const uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
 
   virtual ~CPDF_Font();
@@ -59,17 +59,17 @@ class CPDF_Font {
   virtual int AppendChar(char* buf, uint32_t charcode) const;
   virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;
   virtual int GlyphFromCharCodeExt(uint32_t charcode);
-  virtual CFX_WideString UnicodeFromCharCode(uint32_t charcode) const;
+  virtual WideString UnicodeFromCharCode(uint32_t charcode) const;
   virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
   virtual bool HasFontWidths() const;
 
-  const CFX_ByteString& GetBaseFont() const { return m_BaseFont; }
+  const ByteString& GetBaseFont() const { return m_BaseFont; }
   CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
   bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   CPDF_Dictionary* GetFontDict() const { return m_pFontDict; }
   bool IsStandardFont() const;
   FXFT_Face GetFace() const { return m_Font.GetFace(); }
-  void AppendChar(CFX_ByteString* str, uint32_t charcode) const;
+  void AppendChar(ByteString* str, uint32_t charcode) const;
 
   void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
@@ -97,20 +97,20 @@ class CPDF_Font {
   void LoadUnicodeMap() const;  // logically const only.
   void LoadPDFEncoding(CPDF_Object* pEncoding,
                        int& iBaseEncoding,
-                       std::vector<CFX_ByteString>* pCharNames,
+                       std::vector<ByteString>* pCharNames,
                        bool bEmbedded,
                        bool bTrueType);
   void LoadFontDescriptor(CPDF_Dictionary* pDict);
   void CheckFontMetrics();
 
   const char* GetAdobeCharName(int iBaseEncoding,
-                               const std::vector<CFX_ByteString>& charnames,
+                               const std::vector<ByteString>& charnames,
                                int charcode);
 
   CFX_UnownedPtr<CPDF_Document> m_pDocument;
   CFX_Font m_Font;
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
-  CFX_ByteString m_BaseFont;
+  ByteString m_BaseFont;
   CFX_RetainPtr<CPDF_StreamAcc> m_pFontFile;
   CPDF_Dictionary* m_pFontDict;
   mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;

@@ -41,15 +41,15 @@ CFPF_SkiaFont* CFPF_SkiaFont::Retain() {
   return this;
 }
 
-CFX_ByteString CFPF_SkiaFont::GetFamilyName() {
+ByteString CFPF_SkiaFont::GetFamilyName() {
   if (!m_Face)
-    return CFX_ByteString();
-  return CFX_ByteString(FXFT_Get_Face_Family_Name(m_Face));
+    return ByteString();
+  return ByteString(FXFT_Get_Face_Family_Name(m_Face));
 }
 
-CFX_ByteString CFPF_SkiaFont::GetPsName() {
+ByteString CFPF_SkiaFont::GetPsName() {
   if (!m_Face)
-    return CFX_ByteString();
+    return ByteString();
   return FXFT_Get_Postscript_Name(m_Face);
 }
 
@@ -181,7 +181,7 @@ uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
 
 bool CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr* pFontMgr,
                              CFPF_SkiaFontDescriptor* pFontDes,
-                             const CFX_ByteStringC& bsFamily,
+                             const ByteStringView& bsFamily,
                              uint32_t dwStyle,
                              uint8_t uCharset) {
   if (!pFontMgr || !pFontDes)

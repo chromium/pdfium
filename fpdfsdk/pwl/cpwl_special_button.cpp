@@ -12,7 +12,7 @@ CPWL_PushButton::CPWL_PushButton() {}
 
 CPWL_PushButton::~CPWL_PushButton() {}
 
-CFX_ByteString CPWL_PushButton::GetClassName() const {
+ByteString CPWL_PushButton::GetClassName() const {
   return "CPWL_PushButton";
 }
 
@@ -25,7 +25,7 @@ CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(false) {}
 
 CPWL_CheckBox::~CPWL_CheckBox() {}
 
-CFX_ByteString CPWL_CheckBox::GetClassName() const {
+ByteString CPWL_CheckBox::GetClassName() const {
   return "CPWL_CheckBox";
 }
 
@@ -54,7 +54,7 @@ CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(false) {}
 
 CPWL_RadioButton::~CPWL_RadioButton() {}
 
-CFX_ByteString CPWL_RadioButton::GetClassName() const {
+ByteString CPWL_RadioButton::GetClassName() const {
   return "CPWL_RadioButton";
 }
 

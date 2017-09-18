@@ -14,16 +14,16 @@
 
 CPDF_String::CPDF_String() : m_bHex(false) {}
 
-CPDF_String::CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool,
-                         const CFX_ByteString& str,
+CPDF_String::CPDF_String(CFX_WeakPtr<ByteStringPool> pPool,
+                         const ByteString& str,
                          bool bHex)
     : m_String(str), m_bHex(bHex) {
   if (pPool)
     m_String = pPool->Intern(m_String);
 }
 
-CPDF_String::CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool,
-                         const CFX_WideString& str)
+CPDF_String::CPDF_String(CFX_WeakPtr<ByteStringPool> pPool,
+                         const WideString& str)
     : m_String(PDF_EncodeText(str)), m_bHex(false) {
   if (pPool)
     m_String = pPool->Intern(m_String);
@@ -42,11 +42,11 @@ std::unique_ptr<CPDF_Object> CPDF_String::Clone() const {
   return std::move(pRet);
 }
 
-CFX_ByteString CPDF_String::GetString() const {
+ByteString CPDF_String::GetString() const {
   return m_String;
 }
 
-void CPDF_String::SetString(const CFX_ByteString& str) {
+void CPDF_String::SetString(const ByteString& str) {
   m_String = str;
 }
 
@@ -62,11 +62,11 @@ const CPDF_String* CPDF_String::AsString() const {
   return this;
 }
 
-CFX_WideString CPDF_String::GetUnicodeText() const {
+WideString CPDF_String::GetUnicodeText() const {
   return PDF_DecodeText(m_String);
 }
 
 bool CPDF_String::WriteTo(IFX_ArchiveStream* archive) const {
   return archive->WriteString(
-      PDF_EncodeString(GetString(), IsHex()).AsStringC());
+      PDF_EncodeString(GetString(), IsHex()).AsStringView());
 }

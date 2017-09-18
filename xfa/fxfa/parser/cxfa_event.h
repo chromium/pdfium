@@ -24,8 +24,8 @@ class CXFA_Event : public CXFA_Data {
   XFA_Element GetEventType() const;
   CXFA_Script GetScript() const;
   CXFA_Submit GetSubmit() const;
-  void GetRef(CFX_WideStringC& wsRef);
-  void GetSignDataTarget(CFX_WideString& wsTarget);
+  void GetRef(WideStringView& wsRef);
+  void GetSignDataTarget(WideString& wsTarget);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EVENT_H_

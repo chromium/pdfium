@@ -7,6 +7,6 @@
 
 #include "core/fxcrt/fx_string.h"
 
-int32_t EANCalcChecksum(const CFX_ByteString& contents);
+int32_t EANCalcChecksum(const ByteString& contents);
 
 #endif  // FXBARCODE_ONED_BC_ONEDEANCHECKSUM_H_

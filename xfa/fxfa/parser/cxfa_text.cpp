@@ -10,6 +10,6 @@
 
 CXFA_Text::CXFA_Text(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-void CXFA_Text::GetContent(CFX_WideString& wsText) {
+void CXFA_Text::GetContent(WideString& wsText) {
   m_pNode->TryContent(wsText);
 }

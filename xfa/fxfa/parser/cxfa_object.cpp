@@ -16,7 +16,7 @@
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,
                          XFA_Element elementType,
-                         const CFX_WideStringC& elementName)
+                         const WideStringView& elementName)
     : CFXJSE_HostObject(kXFA),
       m_pDocument(pDocument),
       m_objectType(objectType),
@@ -33,7 +33,7 @@ void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetString(FX_UTF8Encode(GetClassName()).AsStringC());
+  pValue->SetString(FX_UTF8Encode(GetClassName()).AsStringView());
 }
 
 void CXFA_Object::ThrowInvalidPropertyException() const {
@@ -45,7 +45,7 @@ void CXFA_Object::ThrowIndexOutOfBoundsException() const {
 }
 
 void CXFA_Object::ThrowParamCountMismatchException(
-    const CFX_WideString& method) const {
+    const WideString& method) const {
   ThrowException(L"Incorrect number of parameters calling method '%.16s'.",
                  method.c_str());
 }
@@ -55,13 +55,13 @@ void CXFA_Object::ThrowArgumentMismatchException() const {
 }
 
 void CXFA_Object::ThrowException(const wchar_t* str, ...) const {
-  CFX_WideString wsMessage;
+  WideString wsMessage;
   va_list arg_ptr;
   va_start(arg_ptr, str);
   wsMessage.FormatV(str, arg_ptr);
   va_end(arg_ptr);
   ASSERT(!wsMessage.IsEmpty());
-  FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringC());
+  FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringView());
 }
 
 CXFA_Node* CXFA_Object::AsNode() {

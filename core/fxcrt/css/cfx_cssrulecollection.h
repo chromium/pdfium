@@ -36,7 +36,7 @@ class CFX_CSSRuleCollection {
   int32_t CountSelectors() const { return m_iSelectors; }
 
   const std::vector<std::unique_ptr<Data>>* GetTagRuleData(
-      const CFX_WideString& tagname) const;
+      const WideString& tagname) const;
 
  private:
   void AddRulesFrom(const CFX_CSSStyleSheet* pStyleSheet,

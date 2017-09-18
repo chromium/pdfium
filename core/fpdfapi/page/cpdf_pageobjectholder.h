@@ -37,8 +37,8 @@ struct GraphicsData {
 };
 
 struct FontData {
-  CFX_ByteString baseFont;
-  CFX_ByteString type;
+  ByteString baseFont;
+  ByteString type;
   bool operator<(const FontData& other) const;
 };
 
@@ -76,8 +76,8 @@ class CPDF_PageObjectHolder {
   CFX_UnownedPtr<CPDF_Document> m_pDocument;
   CFX_UnownedPtr<CPDF_Dictionary> m_pPageResources;
   CFX_UnownedPtr<CPDF_Dictionary> m_pResources;
-  std::map<GraphicsData, CFX_ByteString> m_GraphicsMap;
-  std::map<FontData, CFX_ByteString> m_FontsMap;
+  std::map<GraphicsData, ByteString> m_GraphicsMap;
+  std::map<FontData, ByteString> m_FontsMap;
   CFX_FloatRect m_BBox;
   int m_Transparency;
 

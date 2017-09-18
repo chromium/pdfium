@@ -48,10 +48,10 @@ event::~event() {}
 
 bool event::change(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  CFX_WideString& wChange = pEvent->Change();
+  WideString& wChange = pEvent->Change();
   if (vp.IsSetting()) {
     if (vp.GetJSValue()->GetType() == CJS_Value::VT_string)
       vp >> wChange;
@@ -63,7 +63,7 @@ bool event::change(CJS_Runtime* pRuntime,
 
 bool event::changeEx(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -76,7 +76,7 @@ bool event::changeEx(CJS_Runtime* pRuntime,
 
 bool event::commitKey(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -89,7 +89,7 @@ bool event::commitKey(CJS_Runtime* pRuntime,
 
 bool event::fieldFull(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -103,7 +103,7 @@ bool event::fieldFull(CJS_Runtime* pRuntime,
 
 bool event::keyDown(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -116,7 +116,7 @@ bool event::keyDown(CJS_Runtime* pRuntime,
 
 bool event::modifier(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -127,9 +127,7 @@ bool event::modifier(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool event::name(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool event::name(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -140,9 +138,7 @@ bool event::name(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool event::rc(CJS_Runtime* pRuntime,
-               CJS_PropValue& vp,
-               CFX_WideString& sError) {
+bool event::rc(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -157,25 +153,25 @@ bool event::rc(CJS_Runtime* pRuntime,
 
 bool event::richChange(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   return true;
 }
 
 bool event::richChangeEx(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
-                         CFX_WideString& sError) {
+                         WideString& sError) {
   return true;
 }
 
 bool event::richValue(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   return true;
 }
 
 bool event::selEnd(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -193,7 +189,7 @@ bool event::selEnd(CJS_Runtime* pRuntime,
 
 bool event::selStart(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
-                     CFX_WideString& sError) {
+                     WideString& sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -211,7 +207,7 @@ bool event::selStart(CJS_Runtime* pRuntime,
 
 bool event::shift(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -224,7 +220,7 @@ bool event::shift(CJS_Runtime* pRuntime,
 
 bool event::source(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -237,7 +233,7 @@ bool event::source(CJS_Runtime* pRuntime,
 
 bool event::target(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -250,7 +246,7 @@ bool event::target(CJS_Runtime* pRuntime,
 
 bool event::targetName(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -261,9 +257,7 @@ bool event::targetName(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool event::type(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool event::type(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
@@ -276,7 +270,7 @@ bool event::type(CJS_Runtime* pRuntime,
 
 bool event::value(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -286,7 +280,7 @@ bool event::value(CJS_Runtime* pRuntime,
   if (!pEvent->m_pValue)
     return false;
 
-  CFX_WideString& val = pEvent->Value();
+  WideString& val = pEvent->Value();
   if (vp.IsSetting())
     vp >> val;
   else
@@ -297,7 +291,7 @@ bool event::value(CJS_Runtime* pRuntime,
 
 bool event::willCommit(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   if (!vp.IsGetting())
     return false;
 

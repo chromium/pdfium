@@ -17,10 +17,10 @@ class IPDF_FormNotify {
   virtual ~IPDF_FormNotify() {}
 
   virtual int BeforeValueChange(CPDF_FormField* pField,
-                                const CFX_WideString& csValue) = 0;
+                                const WideString& csValue) = 0;
   virtual void AfterValueChange(CPDF_FormField* pField) = 0;
   virtual int BeforeSelectionChange(CPDF_FormField* pField,
-                                    const CFX_WideString& csValue) = 0;
+                                    const WideString& csValue) = 0;
   virtual void AfterSelectionChange(CPDF_FormField* pField) = 0;
   virtual void AfterCheckedStatusChange(CPDF_FormField* pField) = 0;
   virtual int BeforeFormReset(CPDF_InterForm* pForm) = 0;

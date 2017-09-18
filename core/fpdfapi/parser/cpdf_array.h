@@ -24,7 +24,7 @@ class CPDF_Array : public CPDF_Object {
       std::vector<std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Array();
-  explicit CPDF_Array(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
+  explicit CPDF_Array(const CFX_WeakPtr<ByteStringPool>& pPool);
   ~CPDF_Array() override;
 
   // CPDF_Object:
@@ -39,8 +39,8 @@ class CPDF_Array : public CPDF_Object {
   size_t GetCount() const { return m_Objects.size(); }
   CPDF_Object* GetObjectAt(size_t index) const;
   CPDF_Object* GetDirectObjectAt(size_t index) const;
-  CFX_ByteString GetStringAt(size_t index) const;
-  CFX_WideString GetUnicodeTextAt(size_t index) const;
+  ByteString GetStringAt(size_t index) const;
+  WideString GetUnicodeTextAt(size_t index) const;
   int GetIntegerAt(size_t index) const;
   float GetNumberAt(size_t index) const;
   CPDF_Dictionary* GetDictAt(size_t index) const;
@@ -112,7 +112,7 @@ class CPDF_Array : public CPDF_Object {
       std::set<const CPDF_Object*>* pVisited) const override;
 
   std::vector<std::unique_ptr<CPDF_Object>> m_Objects;
-  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
+  CFX_WeakPtr<ByteStringPool> m_pPool;
 };
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {

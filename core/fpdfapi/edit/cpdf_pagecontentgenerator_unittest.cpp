@@ -36,8 +36,8 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
   }
 
   CPDF_Dictionary* TestGetResource(CPDF_PageContentGenerator* pGen,
-                                   const CFX_ByteString& type,
-                                   const CFX_ByteString& name) {
+                                   const ByteString& type,
+                                   const ByteString& name) {
     return pGen->m_pObjHolder->m_pResources->GetDictFor(type)->GetDictFor(name);
   }
 
@@ -58,7 +58,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   CPDF_PageContentGenerator generator(pTestPage.get());
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
-  EXPECT_EQ("q 1 0 0 1 0 0 cm 10 5 3 25 re B* Q\n", CFX_ByteString(buf));
+  EXPECT_EQ("q 1 0 0 1 0 0 cm 10 5 3 25 re B* Q\n", ByteString(buf));
 
   pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendPoint(CFX_PointF(0, 0), FXPT_TYPE::MoveTo, false);
@@ -71,7 +71,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   buf.str("");
 
   TestProcessPath(&generator, &buf, pPathObj.get());
-  EXPECT_EQ("q 1 0 0 1 0 0 cm 0 0 5.2 3.78 re n Q\n", CFX_ByteString(buf));
+  EXPECT_EQ("q 1 0 0 1 0 0 cm 0 0 5.2 3.78 re n Q\n", ByteString(buf));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
@@ -105,7 +105,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   EXPECT_EQ(
       "q 1 0 0 1 0 0 cm 3.102 4.67 m 5.45 0.29 l 4.24 3.15 4.65 2.98 3.456 0.24"
       " c 10.6 11.15 l 11 12.5 l 11.46 12.67 11.84 12.96 12 13.64 c h f Q\n",
-      CFX_ByteString(buf));
+      ByteString(buf));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
@@ -132,7 +132,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   CPDF_PageContentGenerator generator(pTestPage.get());
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
-  CFX_ByteString pathString(buf);
+  ByteString pathString(buf);
 
   // Color RGB values used are integers divided by 255.
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /",
@@ -150,7 +150,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   pPathObj->m_GraphState.SetLineWidth(10.5f);
   buf.str("");
   TestProcessPath(&generator, &buf, pPathObj.get());
-  CFX_ByteString pathString2(buf);
+  ByteString pathString2(buf);
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
             pathString2.Left(55));
   EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
@@ -185,25 +185,25 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   pTextObj->SetText("Hello World");
   std::ostringstream buf;
   TestProcessText(&generator, &buf, pTextObj.get());
-  CFX_ByteString textString(buf);
+  ByteString textString(buf);
   auto firstResourceAt = textString.Find('/');
   ASSERT_TRUE(firstResourceAt.has_value());
   firstResourceAt = firstResourceAt.value() + 1;
   auto secondResourceAt = textString.ReverseFind('/');
   ASSERT_TRUE(secondResourceAt.has_value());
   secondResourceAt = secondResourceAt.value() + 1;
-  CFX_ByteString firstString = textString.Left(firstResourceAt.value());
-  CFX_ByteString midString =
+  ByteString firstString = textString.Left(firstResourceAt.value());
+  ByteString midString =
       textString.Mid(firstResourceAt.value(),
                      secondResourceAt.value() - firstResourceAt.value());
-  CFX_ByteString lastString =
+  ByteString lastString =
       textString.Right(textString.GetLength() - secondResourceAt.value());
   // q and Q must be outside the BT .. ET operations
-  CFX_ByteString compareString1 =
+  ByteString compareString1 =
       "q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
   // Color RGB values used are integers divided by 255.
-  CFX_ByteString compareString2 = " gs BT 1 0 0 1 100 100 Tm /";
-  CFX_ByteString compareString3 = " 10 Tf <48656C6C6F20576F726C64> Tj ET Q\n";
+  ByteString compareString2 = " gs BT 1 0 0 1 100 100 Tm /";
+  ByteString compareString3 = " 10 Tf <48656C6C6F20576F726C64> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength() +
                 compareString3.GetLength(),
             textString.GetLength());
@@ -257,17 +257,16 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     TestProcessText(&generator, &buf, pTextObj.get());
   }
 
-  CFX_ByteString textString(buf);
+  ByteString textString(buf);
   auto firstResourceAt = textString.Find('/');
   ASSERT_TRUE(firstResourceAt.has_value());
   firstResourceAt = firstResourceAt.value() + 1;
-  CFX_ByteString firstString = textString.Left(firstResourceAt.value());
-  CFX_ByteString lastString =
+  ByteString firstString = textString.Left(firstResourceAt.value());
+  ByteString lastString =
       textString.Right(textString.GetLength() - firstResourceAt.value());
   // q and Q must be outside the BT .. ET operations
-  CFX_ByteString compareString1 = "q BT 1 0 0 1 0 0 Tm /";
-  CFX_ByteString compareString2 =
-      " 15.5 Tf <4920616D20696E646972656374> Tj ET Q\n";
+  ByteString compareString1 = "q BT 1 0 0 1 0 0 Tm /";
+  ByteString compareString2 = " 15.5 Tf <4920616D20696E646972656374> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),
             textString.GetLength());
   EXPECT_EQ(compareString1, textString.Left(compareString1.GetLength()));
@@ -305,7 +304,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
   CPDF_PageContentGenerator generator(pTestForm.get());
   std::ostringstream buf;
   generator.ProcessPageObjects(&buf);
-  EXPECT_EQ("", CFX_ByteString(buf));
+  EXPECT_EQ("", ByteString(buf));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
@@ -330,5 +329,5 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   CPDF_PageContentGenerator generator(pTestForm.get());
   std::ostringstream process_buf;
   generator.ProcessPageObjects(&process_buf);
-  EXPECT_EQ(content, CFX_ByteString(process_buf));
+  EXPECT_EQ(content, ByteString(process_buf));
 }

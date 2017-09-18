@@ -37,13 +37,13 @@ bool CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
   return GetQRCodeWriter()->SetErrorCorrectionLevel(level);
 }
 
-bool CBC_QRCode::Encode(const CFX_WideStringC& contents) {
+bool CBC_QRCode::Encode(const WideStringView& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   CBC_QRCodeWriter* pWriter = GetQRCodeWriter();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(CFX_WideString(contents),
-                      pWriter->GetErrorCorrectionLevel(), outWidth, outHeight));
+      pWriter->Encode(WideString(contents), pWriter->GetErrorCorrectionLevel(),
+                      outWidth, outHeight));
   if (!data)
     return false;
   return pWriter->RenderResult(data.get(), outWidth, outHeight);

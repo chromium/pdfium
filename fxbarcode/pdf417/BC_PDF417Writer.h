@@ -18,7 +18,7 @@ class CBC_PDF417Writer : public CBC_TwoDimWriter {
   CBC_PDF417Writer();
   ~CBC_PDF417Writer() override;
 
-  uint8_t* Encode(const CFX_WideString& contents,
+  uint8_t* Encode(const WideString& contents,
                   int32_t& outWidth,
                   int32_t& outHeight);
 

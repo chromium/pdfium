@@ -16,9 +16,9 @@ class CPDF_PageLabel {
   explicit CPDF_PageLabel(CPDF_Document* pDocument);
   ~CPDF_PageLabel();
 
-  bool GetLabel(int nPage, CFX_WideString* wsLabel) const;
-  int32_t GetPageByLabel(const CFX_ByteStringC& bsLabel) const;
-  int32_t GetPageByLabel(const CFX_WideStringC& wsLabel) const;
+  bool GetLabel(int nPage, WideString* wsLabel) const;
+  int32_t GetPageByLabel(const ByteStringView& bsLabel) const;
+  int32_t GetPageByLabel(const WideStringView& wsLabel) const;
 
  private:
   CFX_UnownedPtr<CPDF_Document> const m_pDocument;

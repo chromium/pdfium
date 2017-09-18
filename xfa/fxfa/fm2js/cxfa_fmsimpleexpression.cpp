@@ -81,7 +81,7 @@ const XFA_FMSOMMethod gs_FMSomMethods[] = {
 
 }  // namespace
 
-CFX_WideStringC XFA_FM_EXPTypeToString(
+WideStringView XFA_FM_EXPTypeToString(
     XFA_FM_SimpleExpressionType simpleExpType) {
   return gs_lpStrExpFuncName[simpleExpType];
 }
@@ -110,7 +110,7 @@ bool CXFA_FMNullExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMNumberExpression::CXFA_FMNumberExpression(uint32_t line,
-                                                 CFX_WideStringC wsNumber)
+                                                 WideStringView wsNumber)
     : CXFA_FMSimpleExpression(line, TOKnumber), m_wsNumber(wsNumber) {}
 
 CXFA_FMNumberExpression::~CXFA_FMNumberExpression() {}
@@ -121,13 +121,13 @@ bool CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMStringExpression::CXFA_FMStringExpression(uint32_t line,
-                                                 CFX_WideStringC wsString)
+                                                 WideStringView wsString)
     : CXFA_FMSimpleExpression(line, TOKstring), m_wsString(wsString) {}
 
 CXFA_FMStringExpression::~CXFA_FMStringExpression() {}
 
 bool CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
-  CFX_WideString tempStr(m_wsString);
+  WideString tempStr(m_wsString);
   if (tempStr.GetLength() <= 2) {
     javascript << tempStr;
     return true;
@@ -156,14 +156,14 @@ bool CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 
 CXFA_FMIdentifierExpression::CXFA_FMIdentifierExpression(
     uint32_t line,
-    CFX_WideStringC wsIdentifier)
+    WideStringView wsIdentifier)
     : CXFA_FMSimpleExpression(line, TOKidentifier),
       m_wsIdentifier(wsIdentifier) {}
 
 CXFA_FMIdentifierExpression::~CXFA_FMIdentifierExpression() {}
 
 bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
-  CFX_WideString tempStr(m_wsIdentifier);
+  WideString tempStr(m_wsIdentifier);
   if (tempStr == L"$") {
     tempStr = L"this";
   } else if (tempStr == L"!") {
@@ -244,7 +244,7 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << tempExp2;
   javascript << L");\n}\n";
   if (m_pExp1->GetOperatorToken() == TOKidentifier &&
-      tempExp1.AsStringC() != L"this") {
+      tempExp1.AsStringView() != L"this") {
     javascript << L"else\n{\n";
     javascript << tempExp1;
     javascript << L" = ";
@@ -282,7 +282,7 @@ bool CXFA_FMAssignExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << tempExp2;
   javascript << L");\n}\n";
   if (m_pExp1->GetOperatorToken() == TOKidentifier &&
-      tempExp1.AsStringC() != L"this") {
+      tempExp1.AsStringView() != L"this") {
     javascript << L"else\n{\n";
     javascript << RUNTIMEFUNCTIONRETURNVALUE;
     javascript << L" = ";
@@ -522,10 +522,10 @@ bool CXFA_FMCallExpression::IsBuiltInFunc(CFX_WideTextBuf* funcName) {
   if (funcName->GetLength() > g_BuiltInFuncsMaxLen)
     return false;
 
-  auto cmpFunc = [](const wchar_t* iter, const CFX_WideString& val) -> bool {
+  auto cmpFunc = [](const wchar_t* iter, const WideString& val) -> bool {
     return val.CompareNoCase(iter) > 0;
   };
-  CFX_WideString str = funcName->MakeString();
+  WideString str = funcName->MakeString();
   const wchar_t* const* pMatchResult = std::lower_bound(
       std::begin(g_BuiltInFuncs), std::end(g_BuiltInFuncs), str, cmpFunc);
   if (pMatchResult != std::end(g_BuiltInFuncs) &&
@@ -538,8 +538,8 @@ bool CXFA_FMCallExpression::IsBuiltInFunc(CFX_WideTextBuf* funcName) {
 }
 
 uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
-    const CFX_WideString& methodName) {
-  auto cmpFunc = [](const XFA_FMSOMMethod iter, const CFX_WideString& val) {
+    const WideString& methodName) {
+  auto cmpFunc = [](const XFA_FMSOMMethod iter, const WideString& val) {
     return val.Compare(iter.m_wsSomMethodName) > 0;
   };
   const XFA_FMSOMMethod* result =
@@ -599,12 +599,12 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     bool isEvalFunc = false;
     bool isExistsFunc = false;
     if (IsBuiltInFunc(&funcName)) {
-      if (funcName.AsStringC() == L"Eval") {
+      if (funcName.AsStringView() == L"Eval") {
         isEvalFunc = true;
         javascript << L"eval.call(this, ";
         javascript << gs_lpStrExpFuncName[CALL];
         javascript << L"Translate";
-      } else if (funcName.AsStringC() == L"Exists") {
+      } else if (funcName.AsStringView() == L"Exists") {
         isExistsFunc = true;
         javascript << gs_lpStrExpFuncName[CALL];
         javascript << funcName;
@@ -655,7 +655,7 @@ CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
     XFA_FM_TOKEN op,
-    CFX_WideStringC wsIdentifier,
+    WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
     : CXFA_FMBinExpression(line,
                            op,
@@ -745,7 +745,7 @@ CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
     XFA_FM_TOKEN op,
-    CFX_WideStringC wsIdentifier,
+    WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
     : CXFA_FMBinExpression(line,
                            op,

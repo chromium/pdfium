@@ -24,7 +24,7 @@ class CXFA_Font : public CXFA_Data {
   int32_t GetUnderline();
   int32_t GetUnderlinePeriod();
   float GetFontSize();
-  void GetTypeface(CFX_WideStringC& wsTypeFace);
+  void GetTypeface(WideStringView& wsTypeFace);
 
   bool IsBold();
   bool IsItalic();

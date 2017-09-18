@@ -291,7 +291,7 @@ void CFX_Font::DeleteFace() {
   m_Face = nullptr;
 }
 
-void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
+void CFX_Font::LoadSubst(const ByteString& face_name,
                          bool bTrueType,
                          uint32_t flags,
                          int weight,
@@ -446,7 +446,7 @@ bool CFX_Font::IsItalic() const {
   if (FXFT_Is_Face_Italic(m_Face) == FXFT_STYLE_FLAG_ITALIC)
     return true;
 
-  CFX_ByteString str(FXFT_Get_Face_Style_Name(m_Face));
+  ByteString str(FXFT_Get_Face_Style_Name(m_Face));
   str.MakeLower();
   return str.Contains("italic");
 }
@@ -459,31 +459,31 @@ bool CFX_Font::IsFixedWidth() const {
   return m_Face && FXFT_Is_Face_fixedwidth(m_Face) != 0;
 }
 
-CFX_ByteString CFX_Font::GetPsName() const {
+ByteString CFX_Font::GetPsName() const {
   if (!m_Face)
-    return CFX_ByteString();
+    return ByteString();
 
-  CFX_ByteString psName = FXFT_Get_Postscript_Name(m_Face);
+  ByteString psName = FXFT_Get_Postscript_Name(m_Face);
   if (psName.IsEmpty())
     psName = "Untitled";
   return psName;
 }
 
-CFX_ByteString CFX_Font::GetFamilyName() const {
+ByteString CFX_Font::GetFamilyName() const {
   if (!m_Face && !m_pSubstFont)
-    return CFX_ByteString();
+    return ByteString();
   if (m_Face)
-    return CFX_ByteString(FXFT_Get_Face_Family_Name(m_Face));
+    return ByteString(FXFT_Get_Face_Family_Name(m_Face));
 
   return m_pSubstFont->m_Family;
 }
 
-CFX_ByteString CFX_Font::GetFaceName() const {
+ByteString CFX_Font::GetFaceName() const {
   if (!m_Face && !m_pSubstFont)
-    return CFX_ByteString();
+    return ByteString();
   if (m_Face) {
-    CFX_ByteString style = CFX_ByteString(FXFT_Get_Face_Style_Name(m_Face));
-    CFX_ByteString facename = GetFamilyName();
+    ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face));
+    ByteString facename = GetFamilyName();
     if (facename.IsEmpty())
       facename = "Untitled";
     if (!style.IsEmpty() && style != "Regular")

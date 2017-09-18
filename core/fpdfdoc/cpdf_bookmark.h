@@ -25,7 +25,7 @@ class CPDF_Bookmark {
   CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   uint32_t GetColorRef() const;
   uint32_t GetFontStyle() const;
-  CFX_WideString GetTitle() const;
+  WideString GetTitle() const;
   CPDF_Dest GetDest(CPDF_Document* pDocument) const;
   CPDF_Action GetAction() const;
 

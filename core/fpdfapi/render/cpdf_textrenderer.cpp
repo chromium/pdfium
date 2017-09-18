@@ -76,7 +76,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        CPDF_Font* pFont,
                                        float font_size,
                                        const CFX_Matrix* pMatrix,
-                                       const CFX_ByteString& str,
+                                       const ByteString& str,
                                        FX_ARGB fill_argb,
                                        const CFX_GraphStateData* pGraphState,
                                        const CPDF_RenderOptions* pOptions) {

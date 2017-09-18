@@ -87,7 +87,7 @@ class CFX_Font {
   CFX_Font();
   ~CFX_Font();
 
-  void LoadSubst(const CFX_ByteString& face_name,
+  void LoadSubst(const ByteString& face_name,
                  bool bTrueType,
                  uint32_t flags,
                  int weight,
@@ -130,9 +130,9 @@ class CFX_Font {
   bool IsBold() const;
   bool IsFixedWidth() const;
   bool IsVertical() const { return m_bVertical; }
-  CFX_ByteString GetPsName() const;
-  CFX_ByteString GetFamilyName() const;
-  CFX_ByteString GetFaceName() const;
+  ByteString GetPsName() const;
+  ByteString GetFamilyName() const;
+  ByteString GetFaceName() const;
   bool IsTTFont() const;
   bool GetBBox(FX_RECT& bbox);
   bool IsEmbedded() const { return m_bEmbedded; }
@@ -183,15 +183,15 @@ class CFX_Font {
 
 class CFX_FontFaceInfo {
  public:
-  CFX_FontFaceInfo(CFX_ByteString filePath,
-                   CFX_ByteString faceName,
-                   CFX_ByteString fontTables,
+  CFX_FontFaceInfo(ByteString filePath,
+                   ByteString faceName,
+                   ByteString fontTables,
                    uint32_t fontOffset,
                    uint32_t fileSize);
 
-  const CFX_ByteString m_FilePath;
-  const CFX_ByteString m_FaceName;
-  const CFX_ByteString m_FontTables;
+  const ByteString m_FilePath;
+  const ByteString m_FaceName;
+  const ByteString m_FontTables;
   const uint32_t m_FontOffset;
   const uint32_t m_FileSize;
   uint32_t m_Styles;
@@ -229,10 +229,10 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
                            float retinaScaleX,
                            float retinaScaleY);
 
-CFX_ByteString GetNameFromTT(const uint8_t* name_table,
-                             uint32_t name_table_size,
-                             uint32_t name);
+ByteString GetNameFromTT(const uint8_t* name_table,
+                         uint32_t name_table_size,
+                         uint32_t name);
 
-int PDF_GetStandardFontName(CFX_ByteString* name);
+int PDF_GetStandardFontName(ByteString* name);
 
 #endif  // CORE_FXGE_FX_FONT_H_

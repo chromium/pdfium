@@ -32,8 +32,8 @@ class XFAJSEmbedderTest : public EmbedderTest {
   v8::Isolate* GetIsolate() const { return isolate_; }
   CXFA_Document* GetXFADocument();
 
-  bool Execute(const CFX_ByteStringC& input);
-  bool ExecuteSilenceFailure(const CFX_ByteStringC& input);
+  bool Execute(const ByteStringView& input);
+  bool ExecuteSilenceFailure(const ByteStringView& input);
 
   CFXJSE_Value* GetValue() const { return value_.get(); }
 
@@ -43,7 +43,7 @@ class XFAJSEmbedderTest : public EmbedderTest {
   v8::Isolate* isolate_;
   CXFA_ScriptContext* script_context_;
 
-  bool ExecuteHelper(const CFX_ByteStringC& input);
+  bool ExecuteHelper(const ByteStringView& input);
 };
 
 #endif  // TESTING_XFA_JS_EMBEDDER_TEST_H_

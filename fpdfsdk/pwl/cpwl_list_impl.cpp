@@ -29,7 +29,7 @@ void CPWL_ListCtrl::Item::SetFontMap(IPVT_FontMap* pFontMap) {
   m_pEdit->SetFontMap(pFontMap);
 }
 
-void CPWL_ListCtrl::Item::SetText(const CFX_WideString& text) {
+void CPWL_ListCtrl::Item::SetText(const WideString& text) {
   m_pEdit->SetText(text);
 }
 
@@ -49,7 +49,7 @@ uint16_t CPWL_ListCtrl::Item::GetFirstChar() const {
   return word.Word;
 }
 
-CFX_WideString CPWL_ListCtrl::Item::GetText() const {
+WideString CPWL_ListCtrl::Item::GetText() const {
   return m_pEdit->GetText();
 }
 
@@ -310,7 +310,7 @@ CFX_FloatRect CPWL_ListCtrl::GetItemRectInternal(int32_t nIndex) const {
   return InnerToOuter(rcItem);
 }
 
-void CPWL_ListCtrl::AddString(const CFX_WideString& str) {
+void CPWL_ListCtrl::AddString(const WideString& str) {
   AddItem(str);
   ReArrange(GetCount() - 1);
 }
@@ -551,13 +551,13 @@ int32_t CPWL_ListCtrl::GetItemIndex(const CFX_PointF& point) const {
   return -1;
 }
 
-CFX_WideString CPWL_ListCtrl::GetText() const {
+WideString CPWL_ListCtrl::GetText() const {
   if (IsMultipleSel())
     return GetItemText(m_nCaretIndex);
   return GetItemText(m_nSelItem);
 }
 
-void CPWL_ListCtrl::AddItem(const CFX_WideString& str) {
+void CPWL_ListCtrl::AddItem(const WideString& str) {
   auto pListItem = pdfium::MakeUnique<Item>();
   pListItem->SetFontMap(m_pFontMap.Get());
   pListItem->SetFontSize(m_fFontSize);
@@ -630,7 +630,7 @@ bool CPWL_ListCtrl::IsValid(int32_t nItemIndex) const {
   return pdfium::IndexInBounds(m_ListItems, nItemIndex);
 }
 
-CFX_WideString CPWL_ListCtrl::GetItemText(int32_t nIndex) const {
+WideString CPWL_ListCtrl::GetItemText(int32_t nIndex) const {
   if (pdfium::IndexInBounds(m_ListItems, nIndex) && m_ListItems[nIndex])
     return m_ListItems[nIndex]->GetText();
   return L"";

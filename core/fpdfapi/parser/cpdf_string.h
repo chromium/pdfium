@@ -18,18 +18,18 @@
 class CPDF_String : public CPDF_Object {
  public:
   CPDF_String();
-  CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool,
-              const CFX_ByteString& str,
+  CPDF_String(CFX_WeakPtr<ByteStringPool> pPool,
+              const ByteString& str,
               bool bHex);
-  CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool, const CFX_WideString& str);
+  CPDF_String(CFX_WeakPtr<ByteStringPool> pPool, const WideString& str);
   ~CPDF_String() override;
 
   // CPDF_Object:
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
-  CFX_ByteString GetString() const override;
-  CFX_WideString GetUnicodeText() const override;
-  void SetString(const CFX_ByteString& str) override;
+  ByteString GetString() const override;
+  WideString GetUnicodeText() const override;
+  void SetString(const ByteString& str) override;
   bool IsString() const override;
   CPDF_String* AsString() override;
   const CPDF_String* AsString() const override;
@@ -38,7 +38,7 @@ class CPDF_String : public CPDF_Object {
   bool IsHex() const { return m_bHex; }
 
  protected:
-  CFX_ByteString m_String;
+  ByteString m_String;
   bool m_bHex;
 };
 

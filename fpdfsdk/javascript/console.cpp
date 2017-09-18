@@ -33,21 +33,21 @@ console::~console() {}
 bool console::clear(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   return true;
 }
 
 bool console::hide(CJS_Runtime* pRuntime,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   return true;
 }
 
 bool console::println(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
-                      CFX_WideString& sError) {
+                      WideString& sError) {
   if (params.size() < 1) {
     return false;
   }
@@ -57,6 +57,6 @@ bool console::println(CJS_Runtime* pRuntime,
 bool console::show(CJS_Runtime* pRuntime,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   return true;
 }

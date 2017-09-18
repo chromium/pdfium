@@ -26,7 +26,7 @@ class CXFA_Script : public CXFA_Data {
 
   XFA_SCRIPTTYPE GetContentType();
   int32_t GetRunAt();
-  void GetExpression(CFX_WideString& wsExpression);
+  void GetExpression(WideString& wsExpression);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SCRIPT_H_

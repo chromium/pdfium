@@ -623,7 +623,7 @@ void CFX_XMLSyntaxParser::ParseTextChar(wchar_t character) {
   m_pCurrentBlock[m_iIndexInBlock++] = character;
   m_BlockBuffer.IncrementDataLength();
   if (m_iEntityStart > -1 && character == L';') {
-    CFX_WideString csEntity = m_BlockBuffer.GetTextData(
+    WideString csEntity = m_BlockBuffer.GetTextData(
         m_iEntityStart + 1,
         m_BlockBuffer.GetDataLength() - 1 - m_iEntityStart - 1);
     int32_t iLen = csEntity.GetLength();

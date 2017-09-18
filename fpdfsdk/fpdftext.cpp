@@ -171,7 +171,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
   if (start >= textpage->CountChars())
     return 0;
 
-  CFX_WideString str = textpage->GetPageText(start, count - 1);
+  WideString str = textpage->GetPageText(start, count - 1);
   if (str.GetLength() <= 0)
     return 0;
 
@@ -180,7 +180,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
 
   // UFT16LE_Encode doesn't handle surrogate pairs properly, so it is expected
   // the number of items to stay the same.
-  CFX_ByteString cbUTF16str = str.UTF16LE_Encode();
+  ByteString cbUTF16str = str.UTF16LE_Encode();
   ASSERT(cbUTF16str.GetLength() / kBytesPerCharacter <=
          static_cast<size_t>(count));
   memcpy(result, cbUTF16str.GetBuffer(cbUTF16str.GetLength()),
@@ -229,12 +229,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
 
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
   CFX_FloatRect rect((float)left, (float)bottom, (float)right, (float)top);
-  CFX_WideString str = textpage->GetTextByRect(rect);
+  WideString str = textpage->GetTextByRect(rect);
 
   if (buflen <= 0 || !buffer)
     return str.GetLength();
 
-  CFX_ByteString cbUTF16Str = str.UTF16LE_Encode();
+  ByteString cbUTF16Str = str.UTF16LE_Encode();
   int len = cbUTF16Str.GetLength() / sizeof(unsigned short);
   int size = buflen > len ? len : buflen;
   memcpy(buffer, cbUTF16Str.GetBuffer(size * sizeof(unsigned short)),
@@ -256,8 +256,8 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
 
   CPDF_TextPageFind* textpageFind =
       new CPDF_TextPageFind(CPDFTextPageFromFPDFTextPage(text_page));
-  FX_STRSIZE len = CFX_WideString::WStringLength(findwhat);
-  textpageFind->FindFirst(CFX_WideString::FromUTF16LE(findwhat, len), flags,
+  FX_STRSIZE len = WideString::WStringLength(findwhat);
+  textpageFind->FindFirst(WideString::FromUTF16LE(findwhat, len), flags,
                           start_index >= 0
                               ? pdfium::Optional<FX_STRSIZE>(start_index)
                               : pdfium::Optional<FX_STRSIZE>());
@@ -330,12 +330,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetURL(FPDF_PAGELINK link_page,
                                               int link_index,
                                               unsigned short* buffer,
                                               int buflen) {
-  CFX_WideString wsUrl(L"");
+  WideString wsUrl(L"");
   if (link_page && link_index >= 0) {
     CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
     wsUrl = pageLink->GetURL(link_index);
   }
-  CFX_ByteString cbUTF16URL = wsUrl.UTF16LE_Encode();
+  ByteString cbUTF16URL = wsUrl.UTF16LE_Encode();
   int required = cbUTF16URL.GetLength() / sizeof(unsigned short);
   if (!buffer || buflen <= 0)
     return required;

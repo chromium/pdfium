@@ -59,8 +59,8 @@ class CJS_Value {
   double ToDouble(CJS_Runtime* pRuntime) const;
   float ToFloat(CJS_Runtime* pRuntime) const;
   CJS_Object* ToCJSObject(CJS_Runtime* pRuntime) const;
-  CFX_WideString ToCFXWideString(CJS_Runtime* pRuntime) const;
-  CFX_ByteString ToCFXByteString(CJS_Runtime* pRuntime) const;
+  WideString ToCFXWideString(CJS_Runtime* pRuntime) const;
+  ByteString ToCFXByteString(CJS_Runtime* pRuntime) const;
   v8::Local<v8::Object> ToV8Object(CJS_Runtime* pRuntime) const;
   v8::Local<v8::Array> ToV8Array(CJS_Runtime* pRuntime) const;
   v8::Local<v8::Value> ToV8Value(CJS_Runtime* pRuntime) const;
@@ -102,10 +102,10 @@ class CJS_PropValue {
   void operator>>(CJS_Object*& ppObj) const;
   void operator<<(CJS_Document* pJsDoc);
   void operator>>(CJS_Document*& ppJsDoc) const;
-  void operator<<(CFX_ByteString);
-  void operator>>(CFX_ByteString&) const;
-  void operator<<(CFX_WideString);
-  void operator>>(CFX_WideString&) const;
+  void operator<<(ByteString);
+  void operator>>(ByteString&) const;
+  void operator<<(WideString);
+  void operator>>(WideString&) const;
   void operator<<(const wchar_t* c_string);
   void operator<<(v8::Local<v8::Object>);
   void operator>>(v8::Local<v8::Object>&) const;
@@ -179,7 +179,7 @@ class CJS_Date {
 
   v8::Local<v8::Date> ToV8Date(CJS_Runtime* pRuntime) const;
   double ToDouble(CJS_Runtime* pRuntime) const;
-  CFX_WideString ToString(CJS_Runtime* pRuntime) const;
+  WideString ToString(CJS_Runtime* pRuntime) const;
 
  protected:
   v8::Local<v8::Date> m_pDate;
@@ -192,7 +192,7 @@ int JS_GetDayFromTime(double dt);
 int JS_GetHourFromTime(double dt);
 int JS_GetMinFromTime(double dt);
 int JS_GetSecFromTime(double dt);
-double JS_DateParse(const CFX_WideString& str);
+double JS_DateParse(const WideString& str);
 double JS_MakeDay(int nYear, int nMonth, int nDay);
 double JS_MakeTime(int nHour, int nMin, int nSec, int nMs);
 double JS_MakeDate(double day, double time);

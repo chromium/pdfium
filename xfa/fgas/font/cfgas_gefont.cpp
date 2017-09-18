@@ -102,9 +102,9 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                                     uint16_t wCodePage) {
   if (m_pFont)
     return false;
-  CFX_ByteString csFontFamily;
+  ByteString csFontFamily;
   if (pszFontFamily)
-    csFontFamily = CFX_ByteString::FromUnicode(pszFontFamily);
+    csFontFamily = ByteString::FromUnicode(pszFontFamily);
   uint32_t dwFlags = 0;
   if (dwFontStyles & FX_FONTSTYLE_FixedPitch)
     dwFlags |= FXFONT_FIXED_PITCH;
@@ -173,13 +173,13 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::Derive(uint32_t dwFontStyles,
   return pdfium::MakeRetain<CFGAS_GEFont>(pFont, dwFontStyles);
 }
 
-CFX_WideString CFGAS_GEFont::GetFamilyName() const {
+WideString CFGAS_GEFont::GetFamilyName() const {
   if (!m_pFont->GetSubstFont() ||
       m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {
-    return CFX_WideString::FromLocal(m_pFont->GetFamilyName().AsStringC());
+    return WideString::FromLocal(m_pFont->GetFamilyName().AsStringView());
   }
-  return CFX_WideString::FromLocal(
-      m_pFont->GetSubstFont()->m_Family.AsStringC());
+  return WideString::FromLocal(
+      m_pFont->GetSubstFont()->m_Family.AsStringView());
 }
 
 uint32_t CFGAS_GEFont::GetFontStyles() const {
@@ -330,7 +330,7 @@ int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode,
   if (!m_pFontMgr || !bRecursive)
     return 0xFFFF;
 
-  CFX_WideString wsFamily = GetFamilyName();
+  WideString wsFamily = GetFamilyName();
   CFX_RetainPtr<CFGAS_GEFont> pFont =
       m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), wsFamily.c_str());
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_

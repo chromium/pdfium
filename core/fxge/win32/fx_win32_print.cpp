@@ -232,7 +232,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
   lf.lfItalic = pFont->IsItalic();
   lf.lfCharSet = DEFAULT_CHARSET;
 
-  const CFX_WideString wsName = pFont->GetFaceName().UTF8Decode();
+  const WideString wsName = pFont->GetFaceName().UTF8Decode();
   size_t iNameLen =
       std::min(wsName.GetLength(), static_cast<size_t>(LF_FACESIZE - 1));
   memcpy(lf.lfFaceName, wsName.c_str(), sizeof(lf.lfFaceName[0]) * iNameLen);
@@ -288,7 +288,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
   SetBkMode(m_hDC, TRANSPARENT);
 
   // Text
-  CFX_WideString wsText;
+  WideString wsText;
   std::vector<INT> spacing(nChars);
   float fPreviousOriginX = 0;
   for (int i = 0; i < nChars; ++i) {
@@ -609,7 +609,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
   // errors below. Value chosen based on the title of https://crbug.com/18383
   const double kScaleFactor = 10;
 
-  CFX_WideString wsText;
+  WideString wsText;
   int totalLength = nChars;
 
   // Detect new lines and add clrf characters (since this is Windows only).
@@ -638,7 +638,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
     wsText += charpos.m_Unicode;
   }
   size_t len = totalLength;
-  CFX_ByteString text = CFX_ByteString::FromUnicode(wsText);
+  ByteString text = ByteString::FromUnicode(wsText);
   while (len > 0) {
     char buffer[1026];
     size_t send_len = std::min(len, static_cast<size_t>(1024));

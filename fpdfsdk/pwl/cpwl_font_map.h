@@ -21,12 +21,12 @@ class CFX_SystemHandler;
 struct CPWL_FontMap_Data {
   CPDF_Font* pFont;
   int32_t nCharset;
-  CFX_ByteString sFontName;
+  ByteString sFontName;
 };
 
 struct CPWL_FontMap_Native {
   int32_t nCharset;
-  CFX_ByteString sFontName;
+  ByteString sFontName;
 };
 
 class CPWL_FontMap : public IPVT_FontMap {
@@ -36,7 +36,7 @@ class CPWL_FontMap : public IPVT_FontMap {
 
   // IPVT_FontMap
   CPDF_Font* GetPDFFont(int32_t nFontIndex) override;
-  CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) override;
+  ByteString GetPDFFontAlias(int32_t nFontIndex) override;
   int32_t GetWordFontIndex(uint16_t word,
                            int32_t nCharset,
                            int32_t nFontIndex) override;
@@ -45,47 +45,46 @@ class CPWL_FontMap : public IPVT_FontMap {
 
   const CPWL_FontMap_Data* GetFontMapData(int32_t nIndex) const;
   static int32_t GetNativeCharset();
-  CFX_ByteString GetNativeFontName(int32_t nCharset);
+  ByteString GetNativeFontName(int32_t nCharset);
 
-  static CFX_ByteString GetDefaultFontByCharset(int32_t nCharset);
+  static ByteString GetDefaultFontByCharset(int32_t nCharset);
   static const FPDF_CharsetFontMap defaultTTFMap[];
 
  protected:
   virtual void Initialize();
   virtual CPDF_Document* GetDocument();
-  virtual CPDF_Font* FindFontSameCharset(CFX_ByteString* sFontAlias,
+  virtual CPDF_Font* FindFontSameCharset(ByteString* sFontAlias,
                                          int32_t nCharset);
-  virtual void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
+  virtual void AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias);
 
   bool KnowWord(int32_t nFontIndex, uint16_t word);
 
   void Empty();
-  int32_t GetFontIndex(const CFX_ByteString& sFontName,
+  int32_t GetFontIndex(const ByteString& sFontName,
                        int32_t nCharset,
                        bool bFind);
   int32_t AddFontData(CPDF_Font* pFont,
-                      const CFX_ByteString& sFontAlias,
+                      const ByteString& sFontAlias,
                       int32_t nCharset = FX_CHARSET_Default);
 
-  CFX_ByteString EncodeFontAlias(const CFX_ByteString& sFontName,
-                                 int32_t nCharset);
-  CFX_ByteString EncodeFontAlias(const CFX_ByteString& sFontName);
+  ByteString EncodeFontAlias(const ByteString& sFontName, int32_t nCharset);
+  ByteString EncodeFontAlias(const ByteString& sFontName);
 
   std::vector<std::unique_ptr<CPWL_FontMap_Data>> m_Data;
   std::vector<std::unique_ptr<CPWL_FontMap_Native>> m_NativeFont;
 
  private:
-  int32_t FindFont(const CFX_ByteString& sFontName,
+  int32_t FindFont(const ByteString& sFontName,
                    int32_t nCharset = FX_CHARSET_Default);
 
-  CFX_ByteString GetNativeFont(int32_t nCharset);
+  ByteString GetNativeFont(int32_t nCharset);
   CPDF_Font* AddFontToDocument(CPDF_Document* pDoc,
-                               CFX_ByteString& sFontName,
+                               ByteString& sFontName,
                                uint8_t nCharset);
-  bool IsStandardFont(const CFX_ByteString& sFontName);
-  CPDF_Font* AddStandardFont(CPDF_Document* pDoc, CFX_ByteString& sFontName);
+  bool IsStandardFont(const ByteString& sFontName);
+  CPDF_Font* AddStandardFont(CPDF_Document* pDoc, ByteString& sFontName);
   CPDF_Font* AddSystemFont(CPDF_Document* pDoc,
-                           CFX_ByteString& sFontName,
+                           ByteString& sFontName,
                            uint8_t nCharset);
 
   std::unique_ptr<CPDF_Document> m_pPDFDoc;

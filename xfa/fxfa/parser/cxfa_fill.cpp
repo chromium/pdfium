@@ -18,7 +18,7 @@ int32_t CXFA_Fill::GetPresence() {
 
 void CXFA_Fill::SetColor(FX_ARGB color) {
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Color);
-  CFX_WideString wsColor;
+  WideString wsColor;
   int a;
   int r;
   int g;
@@ -30,7 +30,7 @@ void CXFA_Fill::SetColor(FX_ARGB color) {
 
 FX_ARGB CXFA_Fill::GetColor(bool bText) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color)) {
-    CFX_WideStringC wsColor;
+    WideStringView wsColor;
     if (pNode->TryCData(XFA_ATTRIBUTE_Value, wsColor, false))
       return CXFA_Data::ToColor(wsColor);
   }
@@ -54,7 +54,7 @@ XFA_Element CXFA_Fill::GetFillType() {
 int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Pattern);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
-    CFX_WideStringC wsColor;
+    WideStringView wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     foreColor = CXFA_Data::ToColor(wsColor);
   } else {
@@ -68,7 +68,7 @@ int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
   int32_t eAttr = 50;
   pNode->TryInteger(XFA_ATTRIBUTE_Rate, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
-    CFX_WideStringC wsColor;
+    WideStringView wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     stippleColor = CXFA_Data::ToColor(wsColor);
   } else {
@@ -82,7 +82,7 @@ int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToRight;
   pNode->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
-    CFX_WideStringC wsColor;
+    WideStringView wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     endColor = CXFA_Data::ToColor(wsColor);
   } else {
@@ -96,7 +96,7 @@ int32_t CXFA_Fill::GetRadial(FX_ARGB& endColor) {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToEdge;
   pNode->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
-    CFX_WideStringC wsColor;
+    WideStringView wsColor;
     pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     endColor = CXFA_Data::ToColor(wsColor);
   } else {

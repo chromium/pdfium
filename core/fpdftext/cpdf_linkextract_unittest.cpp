@@ -32,7 +32,7 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
   };
   for (size_t i = 0; i < FX_ArraySize(invalid_strs); ++i) {
     const wchar_t* const input = invalid_strs[i];
-    CFX_WideString text_str(input);
+    WideString text_str(input);
     EXPECT_FALSE(extractor.CheckMailLink(&text_str)) << input;
   }
 
@@ -53,8 +53,8 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
   };
   for (size_t i = 0; i < FX_ArraySize(valid_strs); ++i) {
     const wchar_t* const input = valid_strs[i][0];
-    CFX_WideString text_str(input);
-    CFX_WideString expected_str(L"mailto:");
+    WideString text_str(input);
+    WideString expected_str(L"mailto:");
     expected_str += valid_strs[i][1];
     EXPECT_TRUE(extractor.CheckMailLink(&text_str)) << input;
     EXPECT_STREQ(expected_str.c_str(), text_str.c_str());
@@ -80,7 +80,7 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
   const int32_t DEFAULT_VALUE = -42;
   for (size_t i = 0; i < FX_ArraySize(invalid_cases); ++i) {
     const wchar_t* const input = invalid_cases[i];
-    CFX_WideString text_str(input);
+    WideString text_str(input);
     int32_t start_offset = DEFAULT_VALUE;
     int32_t count = DEFAULT_VALUE;
     EXPECT_FALSE(extractor.CheckWebLink(&text_str, &start_offset, &count))
@@ -175,7 +175,7 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
   };
   for (size_t i = 0; i < FX_ArraySize(valid_cases); ++i) {
     const wchar_t* const input = valid_cases[i].input_string;
-    CFX_WideString text_str(input);
+    WideString text_str(input);
     int32_t start_offset = DEFAULT_VALUE;
     int32_t count = DEFAULT_VALUE;
     EXPECT_TRUE(extractor.CheckWebLink(&text_str, &start_offset, &count))

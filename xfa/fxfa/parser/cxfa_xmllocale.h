@@ -19,29 +19,27 @@ class CXFA_XMLLocale : public IFX_Locale {
   ~CXFA_XMLLocale() override;
 
   // IFX_Locale
-  CFX_WideString GetName() const override;
-  CFX_WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
+  WideString GetName() const override;
+  WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
 
-  CFX_WideString GetDateTimeSymbols() const override;
-  CFX_WideString GetMonthName(int32_t nMonth, bool bAbbr) const override;
-  CFX_WideString GetDayName(int32_t nWeek, bool bAbbr) const override;
-  CFX_WideString GetMeridiemName(bool bAM) const override;
+  WideString GetDateTimeSymbols() const override;
+  WideString GetMonthName(int32_t nMonth, bool bAbbr) const override;
+  WideString GetDayName(int32_t nWeek, bool bAbbr) const override;
+  WideString GetMeridiemName(bool bAM) const override;
   FX_TIMEZONE GetTimeZone() const override;
-  CFX_WideString GetEraName(bool bAD) const override;
+  WideString GetEraName(bool bAD) const override;
 
-  CFX_WideString GetDatePattern(
-      FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  CFX_WideString GetTimePattern(
-      FX_LOCALEDATETIMESUBCATEGORY eType) const override;
-  CFX_WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
+  WideString GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
+  WideString GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType) const override;
+  WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
 
  private:
-  CFX_WideString GetPattern(CXML_Element* pElement,
-                            const CFX_ByteStringC& bsTag,
-                            const CFX_WideStringC& wsName) const;
-  CFX_WideString GetCalendarSymbol(const CFX_ByteStringC& symbol,
-                                   int index,
-                                   bool bAbbr) const;
+  WideString GetPattern(CXML_Element* pElement,
+                        const ByteStringView& bsTag,
+                        const WideStringView& wsName) const;
+  WideString GetCalendarSymbol(const ByteStringView& symbol,
+                               int index,
+                               bool bAbbr) const;
 
   std::unique_ptr<CXML_Element> m_pLocaleData;
 };

@@ -18,7 +18,7 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::SignaturePseudoModel,
-                  CFX_WideStringC(L"signaturePseudoModel")) {}
+                  WideStringView(L"signaturePseudoModel")) {}
 
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
 

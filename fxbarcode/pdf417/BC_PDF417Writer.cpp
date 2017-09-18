@@ -48,7 +48,7 @@ void CBC_PDF417Writer::SetTruncated(bool truncated) {
   m_bTruncated = truncated;
 }
 
-uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
+uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
                                   int32_t& outWidth,
                                   int32_t& outHeight) {
   CBC_PDF417 encoder;

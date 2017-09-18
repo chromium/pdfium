@@ -146,7 +146,7 @@ CPWL_Wnd::~CPWL_Wnd() {
   ASSERT(!m_bCreated);
 }
 
-CFX_ByteString CPWL_Wnd::GetClassName() const {
+ByteString CPWL_Wnd::GetClassName() const {
   return "CPWL_Wnd";
 }
 
@@ -361,11 +361,11 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnRButtonUp)
 PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 #undef PWL_IMPLEMENT_MOUSE_METHOD
 
-CFX_WideString CPWL_Wnd::GetSelectedText() {
-  return CFX_WideString();
+WideString CPWL_Wnd::GetSelectedText() {
+  return WideString();
 }
 
-void CPWL_Wnd::ReplaceSelection(const CFX_WideString& text) {}
+void CPWL_Wnd::ReplaceSelection(const WideString& text) {}
 
 bool CPWL_Wnd::OnMouseWheel(short zDelta,
                             const CFX_PointF& point,

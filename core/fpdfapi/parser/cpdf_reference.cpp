@@ -20,9 +20,9 @@ CPDF_Object::Type CPDF_Reference::GetType() const {
   return REFERENCE;
 }
 
-CFX_ByteString CPDF_Reference::GetString() const {
+ByteString CPDF_Reference::GetString() const {
   CPDF_Object* obj = SafeGetDirect();
-  return obj ? obj->GetString() : CFX_ByteString();
+  return obj ? obj->GetString() : ByteString();
 }
 
 float CPDF_Reference::GetNumber() const {

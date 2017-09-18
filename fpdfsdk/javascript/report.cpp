@@ -29,7 +29,7 @@ Report::~Report() {}
 bool Report::writeText(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError) {
+                       WideString& sError) {
   // Unsafe, not supported.
   return true;
 }
@@ -37,7 +37,7 @@ bool Report::writeText(CJS_Runtime* pRuntime,
 bool Report::save(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   // Unsafe, not supported.
   return true;
 }

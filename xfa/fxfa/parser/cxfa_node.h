@@ -105,29 +105,29 @@ class CXFA_Node : public CXFA_Object {
   void UpdateNameHash();
   bool HasAttribute(XFA_ATTRIBUTE eAttr, bool bCanInherit = false);
   bool SetAttribute(XFA_ATTRIBUTE eAttr,
-                    const CFX_WideStringC& wsValue,
+                    const WideStringView& wsValue,
                     bool bNotify = false);
   bool GetAttribute(XFA_ATTRIBUTE eAttr,
-                    CFX_WideString& wsValue,
+                    WideString& wsValue,
                     bool bUseDefault = true);
-  bool SetAttribute(const CFX_WideStringC& wsAttr,
-                    const CFX_WideStringC& wsValue,
+  bool SetAttribute(const WideStringView& wsAttr,
+                    const WideStringView& wsValue,
                     bool bNotify = false);
-  bool GetAttribute(const CFX_WideStringC& wsAttr,
-                    CFX_WideString& wsValue,
+  bool GetAttribute(const WideStringView& wsAttr,
+                    WideString& wsValue,
                     bool bUseDefault = true);
-  bool RemoveAttribute(const CFX_WideStringC& wsAttr);
-  bool SetContent(const CFX_WideString& wsContent,
-                  const CFX_WideString& wsXMLValue,
+  bool RemoveAttribute(const WideStringView& wsAttr);
+  bool SetContent(const WideString& wsContent,
+                  const WideString& wsXMLValue,
                   bool bNotify = false,
                   bool bScriptModify = false,
                   bool bSyncData = true);
-  bool TryContent(CFX_WideString& wsContent,
+  bool TryContent(WideString& wsContent,
                   bool bScriptModify = false,
                   bool bProto = true);
-  CFX_WideString GetContent();
+  WideString GetContent();
 
-  bool TryNamespace(CFX_WideString& wsNamespace);
+  bool TryNamespace(WideString& wsNamespace);
 
   bool SetBoolean(XFA_ATTRIBUTE eAttr, bool bValue, bool bNotify = false) {
     return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (void*)(uintptr_t)bValue,
@@ -163,24 +163,24 @@ class CXFA_Node : public CXFA_Object {
     return TryEnum(eAttr, eValue, true) ? eValue : XFA_ATTRIBUTEENUM_Unknown;
   }
   bool SetCData(XFA_ATTRIBUTE eAttr,
-                const CFX_WideString& wsValue,
+                const WideString& wsValue,
                 bool bNotify = false,
                 bool bScriptModify = false);
-  bool SetAttributeValue(const CFX_WideString& wsValue,
-                         const CFX_WideString& wsXMLValue,
+  bool SetAttributeValue(const WideString& wsValue,
+                         const WideString& wsXMLValue,
                          bool bNotify = false,
                          bool bScriptModify = false);
   bool TryCData(XFA_ATTRIBUTE eAttr,
-                CFX_WideString& wsValue,
+                WideString& wsValue,
                 bool bUseDefault = true,
                 bool bProto = true);
   bool TryCData(XFA_ATTRIBUTE eAttr,
-                CFX_WideStringC& wsValue,
+                WideStringView& wsValue,
                 bool bUseDefault = true,
                 bool bProto = true);
-  CFX_WideStringC GetCData(XFA_ATTRIBUTE eAttr) {
-    CFX_WideStringC wsValue;
-    return TryCData(eAttr, wsValue) ? wsValue : CFX_WideStringC();
+  WideStringView GetCData(XFA_ATTRIBUTE eAttr) {
+    WideStringView wsValue;
+    return TryCData(eAttr, wsValue) ? wsValue : WideStringView();
   }
   bool SetMeasure(XFA_ATTRIBUTE eAttr,
                   CXFA_Measurement mValue,
@@ -236,24 +236,24 @@ class CXFA_Node : public CXFA_Object {
   bool HasBindItem();
   CXFA_WidgetData* GetWidgetData();
   CXFA_WidgetData* GetContainerWidgetData();
-  bool GetLocaleName(CFX_WideString& wsLocaleName);
+  bool GetLocaleName(WideString& wsLocaleName);
   XFA_ATTRIBUTEENUM GetIntact();
-  CXFA_Node* GetFirstChildByName(const CFX_WideStringC& wsNodeName) const;
+  CXFA_Node* GetFirstChildByName(const WideStringView& wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
   CXFA_Node* GetFirstChildByClass(XFA_Element eType) const;
   CXFA_Node* GetNextSameNameSibling(uint32_t dwNodeNameHash) const;
-  CXFA_Node* GetNextSameNameSibling(const CFX_WideStringC& wsNodeName) const;
+  CXFA_Node* GetNextSameNameSibling(const WideStringView& wsNodeName) const;
   CXFA_Node* GetNextSameClassSibling(XFA_Element eType) const;
   int32_t GetNodeSameNameIndex() const;
   int32_t GetNodeSameClassIndex() const;
-  void GetSOMExpression(CFX_WideString& wsSOMExpression);
+  void GetSOMExpression(WideString& wsSOMExpression);
   CXFA_Node* GetInstanceMgrOfSubform();
 
   CXFA_Node* GetOccurNode();
   void Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments);
   void Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments);
   void Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
-                                  CFX_WideString wsExpression,
+                                  WideString wsExpression,
                                   uint32_t dwFlag,
                                   CXFA_Node* refNode = nullptr);
   void Script_TreeClass_All(CFXJSE_Value* pValue,
@@ -540,7 +540,7 @@ class CXFA_Node : public CXFA_Object {
             uint16_t ePacket,
             XFA_ObjectType oType,
             XFA_Element eType,
-            const CFX_WideStringC& elementName);
+            const WideStringView& elementName);
   ~CXFA_Node() override;
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;
@@ -556,20 +556,20 @@ class CXFA_Node : public CXFA_Object {
   void OnRemoved(bool bNotify);
   void OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify);
   void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, bool bScriptModify);
-  int32_t execSingleEventByName(const CFX_WideStringC& wsEventName,
+  int32_t execSingleEventByName(const WideStringView& wsEventName,
                                 XFA_Element eType);
-  bool SetScriptContent(const CFX_WideString& wsContent,
-                        const CFX_WideString& wsXMLValue,
+  bool SetScriptContent(const WideString& wsContent,
+                        const WideString& wsXMLValue,
                         bool bNotify = true,
                         bool bScriptModify = false,
                         bool bSyncData = true);
-  CFX_WideString GetScriptContent(bool bScriptModify = false);
+  WideString GetScriptContent(bool bScriptModify = false);
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
   void SetMapModuleValue(void* pKey, void* pValue);
   bool GetMapModuleValue(void* pKey, void*& pValue);
-  void SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue);
-  bool GetMapModuleString(void* pKey, CFX_WideStringC& wsValue);
+  void SetMapModuleString(void* pKey, const WideStringView& wsValue);
+  bool GetMapModuleString(void* pKey, WideStringView& wsValue);
   void SetMapModuleBuffer(
       void* pKey,
       void* pValue,
@@ -600,9 +600,9 @@ class CXFA_Node : public CXFA_Object {
   XFA_MAPMODULEDATA* m_pMapModuleData;
 
  private:
-  void ThrowMissingPropertyException(const CFX_WideString& obj,
-                                     const CFX_WideString& prop) const;
-  void ThrowTooManyOccurancesException(const CFX_WideString& obj) const;
+  void ThrowMissingPropertyException(const WideString& obj,
+                                     const WideString& prop) const;
+  void ThrowTooManyOccurancesException(const WideString& obj) const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_

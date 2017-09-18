@@ -70,11 +70,11 @@ CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
 
 CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment);
 
-CFX_ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
+ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(const CFX_WideString& text,
+unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen);
 

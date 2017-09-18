@@ -45,7 +45,7 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   FWLTHEME_STATE GetState(uint32_t dwFWLStates);
 
   std::unique_ptr<MCThemeData> m_pThemeData;
-  CFX_WideString wsResource;
+  WideString wsResource;
 
  private:
   void SetThemeData();

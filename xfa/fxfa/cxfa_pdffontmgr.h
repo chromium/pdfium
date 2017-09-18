@@ -25,7 +25,7 @@ class CXFA_PDFFontMgr : public CFX_Observable<CXFA_PDFFontMgr> {
   explicit CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
   ~CXFA_PDFFontMgr();
 
-  CFX_RetainPtr<CFGAS_GEFont> GetFont(const CFX_WideStringC& wsFontFamily,
+  CFX_RetainPtr<CFGAS_GEFont> GetFont(const WideStringView& wsFontFamily,
                                       uint32_t dwFontStyles,
                                       CPDF_Font** pPDFFont,
                                       bool bStrictMatch);
@@ -36,23 +36,23 @@ class CXFA_PDFFontMgr : public CFX_Observable<CXFA_PDFFontMgr> {
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);
 
  private:
-  CFX_RetainPtr<CFGAS_GEFont> FindFont(const CFX_ByteString& strFamilyName,
+  CFX_RetainPtr<CFGAS_GEFont> FindFont(const ByteString& strFamilyName,
                                        bool bBold,
                                        bool bItalic,
                                        CPDF_Font** pPDFFont,
                                        bool bStrictMatch);
-  CFX_ByteString PsNameToFontName(const CFX_ByteString& strPsName,
-                                  bool bBold,
-                                  bool bItalic);
-  bool PsNameMatchDRFontName(const CFX_ByteStringC& bsPsName,
+  ByteString PsNameToFontName(const ByteString& strPsName,
+                              bool bBold,
+                              bool bItalic);
+  bool PsNameMatchDRFontName(const ByteStringView& bsPsName,
                              bool bBold,
                              bool bItalic,
-                             const CFX_ByteString& bsDRFontName,
+                             const ByteString& bsDRFontName,
                              bool bStrictMatch);
 
   CFX_UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::map<CFX_RetainPtr<CFGAS_GEFont>, CPDF_Font*> m_FDE2PDFFont;
-  std::map<CFX_ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
+  std::map<ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
 #endif  // XFA_FXFA_CXFA_PDFFONTMGR_H_

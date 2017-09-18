@@ -18,7 +18,7 @@ CPDF_ApSettings::CPDF_ApSettings(const CPDF_ApSettings& that) = default;
 
 CPDF_ApSettings::~CPDF_ApSettings() {}
 
-bool CPDF_ApSettings::HasMKEntry(const CFX_ByteString& csEntry) const {
+bool CPDF_ApSettings::HasMKEntry(const ByteString& csEntry) const {
   return m_pDict && m_pDict->KeyExist(csEntry);
 }
 
@@ -27,7 +27,7 @@ int CPDF_ApSettings::GetRotation() const {
 }
 
 FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
-                                  const CFX_ByteString& csEntry) const {
+                                  const ByteString& csEntry) const {
   iColorType = COLORTYPE_TRANSPARENT;
   if (!m_pDict)
     return 0;
@@ -65,7 +65,7 @@ FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
 }
 
 float CPDF_ApSettings::GetOriginalColor(int index,
-                                        const CFX_ByteString& csEntry) const {
+                                        const ByteString& csEntry) const {
   if (!m_pDict)
     return 0;
 
@@ -75,7 +75,7 @@ float CPDF_ApSettings::GetOriginalColor(int index,
 
 void CPDF_ApSettings::GetOriginalColor(int& iColorType,
                                        float fc[4],
-                                       const CFX_ByteString& csEntry) const {
+                                       const ByteString& csEntry) const {
   iColorType = COLORTYPE_TRANSPARENT;
   for (int i = 0; i < 4; i++)
     fc[i] = 0;
@@ -105,12 +105,11 @@ void CPDF_ApSettings::GetOriginalColor(int& iColorType,
   }
 }
 
-CFX_WideString CPDF_ApSettings::GetCaption(
-    const CFX_ByteString& csEntry) const {
-  return m_pDict ? m_pDict->GetUnicodeTextFor(csEntry) : CFX_WideString();
+WideString CPDF_ApSettings::GetCaption(const ByteString& csEntry) const {
+  return m_pDict ? m_pDict->GetUnicodeTextFor(csEntry) : WideString();
 }
 
-CPDF_Stream* CPDF_ApSettings::GetIcon(const CFX_ByteString& csEntry) const {
+CPDF_Stream* CPDF_ApSettings::GetIcon(const ByteString& csEntry) const {
   return m_pDict ? m_pDict->GetStreamFor(csEntry) : nullptr;
 }
 

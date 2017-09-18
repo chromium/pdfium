@@ -24,12 +24,12 @@ class CPDF_StreamParser {
   CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize);
   CPDF_StreamParser(const uint8_t* pData,
                     uint32_t dwSize,
-                    const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
+                    const CFX_WeakPtr<ByteStringPool>& pPool);
   ~CPDF_StreamParser();
 
   SyntaxType ParseNextElement();
-  CFX_ByteStringC GetWord() const {
-    return CFX_ByteStringC(m_WordBuffer, m_WordSize);
+  ByteStringView GetWord() const {
+    return ByteStringView(m_WordBuffer, m_WordSize);
   }
   uint32_t GetPos() const { return m_Pos; }
   void SetPos(uint32_t pos) { m_Pos = pos; }
@@ -46,8 +46,8 @@ class CPDF_StreamParser {
   friend class cpdf_streamparser_ReadHexString_Test;
 
   void GetNextWord(bool& bIsNumber);
-  CFX_ByteString ReadString();
-  CFX_ByteString ReadHexString();
+  ByteString ReadString();
+  ByteString ReadHexString();
   bool PositionIsInBounds() const;
 
   const uint8_t* m_pBuf;
@@ -56,7 +56,7 @@ class CPDF_StreamParser {
   uint8_t m_WordBuffer[256];
   uint32_t m_WordSize;
   std::unique_ptr<CPDF_Object> m_pLastObj;
-  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
+  CFX_WeakPtr<ByteStringPool> m_pPool;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_

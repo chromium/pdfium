@@ -14,8 +14,8 @@ CFX_CSSComputedStyle::CFX_CSSComputedStyle() {}
 
 CFX_CSSComputedStyle::~CFX_CSSComputedStyle() {}
 
-bool CFX_CSSComputedStyle::GetCustomStyle(const CFX_WideString& wsName,
-                                          CFX_WideString& wsValue) const {
+bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
+                                          WideString& wsValue) const {
   for (auto iter = m_CustomProperties.rbegin();
        iter != m_CustomProperties.rend(); iter++) {
     if (wsName == iter->name()) {
@@ -32,7 +32,7 @@ int32_t CFX_CSSComputedStyle::CountFontFamilies() const {
              : 0;
 }
 
-const CFX_WideString CFX_CSSComputedStyle::GetFontFamily(int32_t index) const {
+const WideString CFX_CSSComputedStyle::GetFontFamily(int32_t index) const {
   return m_InheritedData.m_pFontFamily->GetValue(index)
       .As<CFX_CSSStringValue>()
       ->Value();

@@ -61,7 +61,7 @@ GifDecodeStatus gif_decode_extension(CGifContext* context) {
           context->skip_size = skip_size_org;
           return GifDecodeStatus::Unfinished;
         }
-        context->cmt_data += CFX_ByteString(data_ptr, data_size);
+        context->cmt_data += ByteString(data_ptr, data_size);
       }
       break;
     }

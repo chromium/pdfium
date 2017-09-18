@@ -25,9 +25,9 @@ class CPDF_GeneralState {
   void Emplace() { m_Ref.Emplace(); }
   bool HasRef() const { return !!m_Ref; }
 
-  void SetRenderIntent(const CFX_ByteString& ri);
+  void SetRenderIntent(const ByteString& ri);
 
-  CFX_ByteString GetBlendMode() const;
+  ByteString GetBlendMode() const;
   int GetBlendType() const;
   void SetBlendType(int type);
 
@@ -46,7 +46,7 @@ class CPDF_GeneralState {
   CFX_RetainPtr<CPDF_TransferFunc> GetTransferFunc() const;
   void SetTransferFunc(const CFX_RetainPtr<CPDF_TransferFunc>& pFunc);
 
-  void SetBlendMode(const CFX_ByteString& mode);
+  void SetBlendMode(const ByteString& mode);
 
   const CFX_Matrix* GetSMaskMatrix() const;
   void SetSMaskMatrix(const CFX_Matrix& matrix);
@@ -83,7 +83,7 @@ class CPDF_GeneralState {
     StateData(const StateData& that);
     ~StateData();
 
-    CFX_ByteString m_BlendMode;
+    ByteString m_BlendMode;
     int m_BlendType;
     CFX_UnownedPtr<CPDF_Object> m_pSoftMask;
     CFX_Matrix m_SMaskMatrix;

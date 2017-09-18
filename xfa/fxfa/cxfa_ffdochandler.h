@@ -21,7 +21,7 @@ class CXFA_FFDocHandler {
 
   bool RunDocScript(CXFA_FFDoc* hDoc,
                     XFA_SCRIPTTYPE eScriptType,
-                    const CFX_WideStringC& wsScript,
+                    const WideStringView& wsScript,
                     CFXJSE_Value* pRetValue,
                     CFXJSE_Value* pThisObject);
 };

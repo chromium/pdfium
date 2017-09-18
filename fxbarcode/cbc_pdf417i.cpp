@@ -40,12 +40,12 @@ void CBC_PDF417I::SetTruncated(bool truncated) {
   GetPDF417Writer()->SetTruncated(truncated);
 }
 
-bool CBC_PDF417I::Encode(const CFX_WideStringC& contents) {
+bool CBC_PDF417I::Encode(const WideStringView& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   auto* pWriter = GetPDF417Writer();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(CFX_WideString(contents), outWidth, outHeight));
+      pWriter->Encode(WideString(contents), outWidth, outHeight));
   if (!data)
     return false;
   return pWriter->RenderResult(data.get(), outWidth, outHeight);

@@ -68,13 +68,13 @@ class CPWL_ListCtrl {
   CFX_FloatRect GetContentRect() const;
 
   int32_t GetItemIndex(const CFX_PointF& point) const;
-  void AddString(const CFX_WideString& str);
+  void AddString(const WideString& str);
   void SetTopItem(int32_t nIndex);
   void Select(int32_t nItemIndex);
   void SetCaret(int32_t nItemIndex);
   void Empty();
   void Cancel();
-  CFX_WideString GetText() const;
+  WideString GetText() const;
 
   void SetFontMap(IPVT_FontMap* pFontMap) { m_pFontMap = pFontMap; }
   void SetFontSize(float fFontSize) { m_fFontSize = fFontSize; }
@@ -102,9 +102,9 @@ class CPWL_ListCtrl {
 
     void SetRect(const CFX_FloatRect& rect) { m_rcListItem = rect; }
     void SetSelect(bool bSelected) { m_bSelected = bSelected; }
-    void SetText(const CFX_WideString& text);
+    void SetText(const WideString& text);
     void SetFontSize(float fFontSize);
-    CFX_WideString GetText() const;
+    WideString GetText() const;
 
     CFX_FloatRect GetRect() const { return m_rcListItem; }
     bool IsSelected() const { return m_bSelected; }
@@ -142,8 +142,8 @@ class CPWL_ListCtrl {
   bool IsItemVisible(int32_t nItemIndex) const;
   void SetScrollInfo();
   void SetScrollPosY(float fy);
-  void AddItem(const CFX_WideString& str);
-  CFX_WideString GetItemText(int32_t nIndex) const;
+  void AddItem(const WideString& str);
+  WideString GetItemText(int32_t nIndex) const;
   void SetItemSelect(int32_t nItemIndex, bool bSelected);
   int32_t GetLastSelected() const;
   CFX_PointF GetBTPoint() const {

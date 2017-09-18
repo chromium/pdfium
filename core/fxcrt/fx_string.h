@@ -7,17 +7,17 @@
 #ifndef CORE_FXCRT_FX_STRING_H_
 #define CORE_FXCRT_FX_STRING_H_
 
-#include "core/fxcrt/cfx_bytestring.h"
-#include "core/fxcrt/cfx_widestring.h"
+#include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/widestring.h"
 
 #define FXBSTR_ID(c1, c2, c3, c4)                                      \
   (((uint32_t)c1 << 24) | ((uint32_t)c2 << 16) | ((uint32_t)c3 << 8) | \
    ((uint32_t)c4))
 
-CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr);
-float FX_atof(const CFX_ByteStringC& str);
-float FX_atof(const CFX_WideStringC& wsStr);
-bool FX_atonum(const CFX_ByteStringC& str, void* pData);
+ByteString FX_UTF8Encode(const WideStringView& wsStr);
+float FX_atof(const ByteStringView& str);
+float FX_atof(const WideStringView& wsStr);
+bool FX_atonum(const ByteStringView& str, void* pData);
 FX_STRSIZE FX_ftoa(float f, char* buf);
 
 #endif  // CORE_FXCRT_FX_STRING_H_

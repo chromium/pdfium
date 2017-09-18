@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CFX_STRING_C_TEMPLATE_H_
-#define CORE_FXCRT_CFX_STRING_C_TEMPLATE_H_
+#ifndef CORE_FXCRT_STRING_VIEW_TEMPLATE_H_
+#define CORE_FXCRT_STRING_VIEW_TEMPLATE_H_
 
 #include <algorithm>
 #include <iterator>
@@ -18,61 +18,63 @@
 #include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 
+namespace fxcrt {
+
 // An immutable string with caller-provided storage which must outlive the
 // string itself. These are not necessarily nul-terminated, so that substring
 // extraction (via the Mid(), Left(), and Right() methods) is copy-free.
 template <typename T>
-class CFX_StringCTemplate {
+class StringViewTemplate {
  public:
   using CharType = T;
   using UnsignedType = typename std::make_unsigned<CharType>::type;
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-  CFX_StringCTemplate() : m_Ptr(nullptr), m_Length(0) {}
+  StringViewTemplate() : m_Ptr(nullptr), m_Length(0) {}
 
   // Deliberately implicit to avoid calling on every string literal.
   // NOLINTNEXTLINE(runtime/explicit)
-  CFX_StringCTemplate(const CharType* ptr)
+  StringViewTemplate(const CharType* ptr)
       : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)),
         m_Length(ptr ? FXSYS_len(ptr) : 0) {}
 
-  CFX_StringCTemplate(const CharType* ptr, FX_STRSIZE len)
+  StringViewTemplate(const CharType* ptr, FX_STRSIZE len)
       : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)), m_Length(len) {}
 
   template <typename U = UnsignedType>
-  CFX_StringCTemplate(
+  StringViewTemplate(
       const UnsignedType* ptr,
       FX_STRSIZE size,
       typename std::enable_if<!std::is_same<U, CharType>::value>::type* = 0)
       : m_Ptr(ptr), m_Length(size) {}
 
   // Deliberately implicit to avoid calling on every string literal.
-  // |ch| must be an lvalue that outlives the the CFX_StringCTemplate.
+  // |ch| must be an lvalue that outlives the the StringViewTemplate.
   // NOLINTNEXTLINE(runtime/explicit)
-  CFX_StringCTemplate(CharType& ch) {
+  StringViewTemplate(CharType& ch) {
     m_Ptr = reinterpret_cast<const UnsignedType*>(&ch);
     m_Length = 1;
   }
 
-  CFX_StringCTemplate(const CFX_StringCTemplate& src) {
+  StringViewTemplate(const StringViewTemplate& src) {
     m_Ptr = src.m_Ptr;
     m_Length = src.m_Length;
   }
 
   // Any changes to |vec| invalidate the string.
-  explicit CFX_StringCTemplate(const std::vector<UnsignedType>& vec) {
+  explicit StringViewTemplate(const std::vector<UnsignedType>& vec) {
     m_Length = pdfium::CollectionSize<FX_STRSIZE>(vec);
     m_Ptr = m_Length ? vec.data() : nullptr;
   }
 
-  CFX_StringCTemplate& operator=(const CharType* src) {
+  StringViewTemplate& operator=(const CharType* src) {
     m_Ptr = reinterpret_cast<const UnsignedType*>(src);
     m_Length = src ? FXSYS_len(src) : 0;
     return *this;
   }
 
-  CFX_StringCTemplate& operator=(const CFX_StringCTemplate& src) {
+  StringViewTemplate& operator=(const StringViewTemplate& src) {
     m_Ptr = src.m_Ptr;
     m_Length = src.m_Length;
     return *this;
@@ -98,14 +100,14 @@ class CFX_StringCTemplate {
            FXSYS_cmp(ptr, reinterpret_cast<const CharType*>(m_Ptr.Get()),
                      m_Length) == 0;
   }
-  bool operator==(const CFX_StringCTemplate& other) const {
+  bool operator==(const StringViewTemplate& other) const {
     return other.m_Length == m_Length &&
            FXSYS_cmp(reinterpret_cast<const CharType*>(other.m_Ptr.Get()),
                      reinterpret_cast<const CharType*>(m_Ptr.Get()),
                      m_Length) == 0;
   }
   bool operator!=(const CharType* ptr) const { return !(*this == ptr); }
-  bool operator!=(const CFX_StringCTemplate& other) const {
+  bool operator!=(const StringViewTemplate& other) const {
     return !(*this == other);
   }
 
@@ -157,56 +159,56 @@ class CFX_StringCTemplate {
 
   bool Contains(CharType ch) const { return Find(ch).has_value(); }
 
-  CFX_StringCTemplate Mid(FX_STRSIZE first, FX_STRSIZE count) const {
+  StringViewTemplate Mid(FX_STRSIZE first, FX_STRSIZE count) const {
     if (!m_Ptr.Get())
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
 
     if (!IsValidIndex(first))
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
 
     if (count == 0 || !IsValidLength(count))
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
 
     if (!IsValidIndex(first + count - 1))
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
 
-    return CFX_StringCTemplate(m_Ptr.Get() + first, count);
+    return StringViewTemplate(m_Ptr.Get() + first, count);
   }
 
-  CFX_StringCTemplate Left(FX_STRSIZE count) const {
+  StringViewTemplate Left(FX_STRSIZE count) const {
     if (count == 0 || !IsValidLength(count))
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
     return Mid(0, count);
   }
 
-  CFX_StringCTemplate Right(FX_STRSIZE count) const {
+  StringViewTemplate Right(FX_STRSIZE count) const {
     if (count == 0 || !IsValidLength(count))
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
     return Mid(GetLength() - count, count);
   }
 
-  CFX_StringCTemplate TrimmedRight(CharType ch) const {
+  StringViewTemplate TrimmedRight(CharType ch) const {
     if (IsEmpty())
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
 
     FX_STRSIZE pos = GetLength();
     while (pos && CharAt(pos - 1) == ch)
       pos--;
 
     if (pos == 0)
-      return CFX_StringCTemplate();
+      return StringViewTemplate();
 
-    return CFX_StringCTemplate(m_Ptr.Get(), pos);
+    return StringViewTemplate(m_Ptr.Get(), pos);
   }
 
-  bool operator<(const CFX_StringCTemplate& that) const {
+  bool operator<(const StringViewTemplate& that) const {
     int result = FXSYS_cmp(reinterpret_cast<const CharType*>(m_Ptr.Get()),
                            reinterpret_cast<const CharType*>(that.m_Ptr.Get()),
                            std::min(m_Length, that.m_Length));
     return result < 0 || (result == 0 && m_Length < that.m_Length);
   }
 
-  bool operator>(const CFX_StringCTemplate& that) const {
+  bool operator>(const StringViewTemplate& that) const {
     int result = FXSYS_cmp(reinterpret_cast<const CharType*>(m_Ptr.Get()),
                            reinterpret_cast<const CharType*>(that.m_Ptr.Get()),
                            std::min(m_Length, that.m_Length));
@@ -222,19 +224,24 @@ class CFX_StringCTemplate {
 };
 
 template <typename T>
-inline bool operator==(const T* lhs, const CFX_StringCTemplate<T>& rhs) {
+inline bool operator==(const T* lhs, const StringViewTemplate<T>& rhs) {
   return rhs == lhs;
 }
 
 template <typename T>
-inline bool operator!=(const T* lhs, const CFX_StringCTemplate<T>& rhs) {
+inline bool operator!=(const T* lhs, const StringViewTemplate<T>& rhs) {
   return rhs != lhs;
 }
 
-extern template class CFX_StringCTemplate<char>;
-extern template class CFX_StringCTemplate<wchar_t>;
+extern template class StringViewTemplate<char>;
+extern template class StringViewTemplate<wchar_t>;
 
-using CFX_ByteStringC = CFX_StringCTemplate<char>;
-using CFX_WideStringC = CFX_StringCTemplate<wchar_t>;
+using ByteStringView = StringViewTemplate<char>;
+using WideStringView = StringViewTemplate<wchar_t>;
 
-#endif  // CORE_FXCRT_CFX_STRING_C_TEMPLATE_H_
+}  // namespace fxcrt
+
+using ByteStringView = fxcrt::ByteStringView;
+using WideStringView = fxcrt::WideStringView;
+
+#endif  // CORE_FXCRT_STRING_VIEW_TEMPLATE_H_

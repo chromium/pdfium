@@ -223,6 +223,6 @@ bool CFX_CSSSyntaxParser::RestoreMode() {
   return true;
 }
 
-CFX_WideStringC CFX_CSSSyntaxParser::GetCurrentString() const {
-  return CFX_WideStringC(m_TextData.GetBuffer(), m_iTextDataLen);
+WideStringView CFX_CSSSyntaxParser::GetCurrentString() const {
+  return WideStringView(m_TextData.GetBuffer(), m_iTextDataLen);
 }

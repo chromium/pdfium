@@ -47,8 +47,8 @@ TEST(PDF417HighLevelEncoder, EncodeBinary) {
     for (size_t j = 0; j < input_length; ++j) {
       input_array[j] = ptr->input[j];
     }
-    CFX_WideString expected(ptr->expected, ptr->expected_length);
-    CFX_WideString result;
+    WideString expected(ptr->expected, ptr->expected_length);
+    WideString result;
     CBC_PDF417HighLevelEncoder::encodeBinary(
         &input_array, ptr->offset, ptr->count, ptr->startmode, result);
     EXPECT_EQ(expected, result) << " for case number " << i;
@@ -109,9 +109,9 @@ TEST(PDF417HighLevelEncoder, EncodeNumeric) {
   CBC_PDF417HighLevelEncoder::Initialize();
   for (size_t i = 0; i < FX_ArraySize(encode_numeric_cases); ++i) {
     EncodeNumericCase* ptr = &encode_numeric_cases[i];
-    CFX_WideString input(ptr->input);
-    CFX_WideString expected(ptr->expected, ptr->expected_length);
-    CFX_WideString result;
+    WideString input(ptr->input);
+    WideString expected(ptr->expected, ptr->expected_length);
+    WideString result;
     CBC_PDF417HighLevelEncoder::encodeNumeric(input, ptr->offset, ptr->count,
                                               result);
     EXPECT_EQ(expected, result) << " for case number " << i;
@@ -156,7 +156,7 @@ TEST(PDF417HighLevelEncoder, ConsecutiveDigitCount) {
   CBC_PDF417HighLevelEncoder::Initialize();
   for (size_t i = 0; i < FX_ArraySize(consecutive_digit_cases); ++i) {
     ConsecutiveDigitCase* ptr = &consecutive_digit_cases[i];
-    CFX_WideString input(ptr->input);
+    WideString input(ptr->input);
     int actual_count =
         CBC_PDF417HighLevelEncoder::determineConsecutiveDigitCount(input,
                                                                    ptr->offset);
@@ -217,7 +217,7 @@ TEST(PDF417HighLevelEncoder, ConsecutiveTextCount) {
   CBC_PDF417HighLevelEncoder::Initialize();
   for (size_t i = 0; i < FX_ArraySize(consecutive_text_cases); ++i) {
     ConsecutiveTextCase* ptr = &consecutive_text_cases[i];
-    CFX_WideString input(ptr->input);
+    WideString input(ptr->input);
     int actual_count =
         CBC_PDF417HighLevelEncoder::determineConsecutiveTextCount(input,
                                                                   ptr->offset);

@@ -29,10 +29,10 @@
 
 namespace {
 
-std::vector<CFX_WideString> SeparateStringW(const wchar_t* pStr,
-                                            int32_t iStrLen,
-                                            wchar_t delimiter) {
-  std::vector<CFX_WideString> ret;
+std::vector<WideString> SeparateStringW(const wchar_t* pStr,
+                                        int32_t iStrLen,
+                                        wchar_t delimiter) {
+  std::vector<WideString> ret;
   if (!pStr)
     return ret;
   if (iStrLen < 0)
@@ -42,7 +42,7 @@ std::vector<CFX_WideString> SeparateStringW(const wchar_t* pStr,
   const wchar_t* pEnd = pStr + iStrLen;
   while (true) {
     if (pStr >= pEnd || delimiter == *pStr) {
-      ret.push_back(CFX_WideString(pToken, pStr - pToken));
+      ret.push_back(WideString(pToken, pStr - pToken));
       pToken = pStr + 1;
       if (pStr >= pEnd)
         break;
@@ -1746,7 +1746,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   float fContentWidthLimit =
       bContainerWidthAutoSize ? FLT_MAX
                               : containerSize.width - fLeftInset - fRightInset;
-  CFX_WideStringC wsColumnWidths;
+  WideStringView wsColumnWidths;
   if (pLayoutNode->TryCData(XFA_ATTRIBUTE_ColumnWidths, wsColumnWidths)) {
     auto widths = SeparateStringW(wsColumnWidths.unterminated_c_str(),
                                   wsColumnWidths.GetLength(), L' ');
@@ -1756,7 +1756,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
         continue;
 
       m_rgSpecifiedColumnWidths.push_back(
-          CXFA_Measurement(width.AsStringC()).ToUnit(XFA_UNIT_Pt));
+          CXFA_Measurement(width.AsStringView()).ToUnit(XFA_UNIT_Pt));
     }
   }
 

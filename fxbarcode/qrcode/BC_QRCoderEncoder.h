@@ -20,7 +20,7 @@ class CBC_QRCoderEncoder {
   CBC_QRCoderEncoder();
   ~CBC_QRCoderEncoder();
 
-  static bool Encode(const CFX_WideString& content,
+  static bool Encode(const WideString& content,
                      const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                      CBC_QRCoder* qrCode);
 };

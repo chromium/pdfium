@@ -17,14 +17,12 @@
 
 namespace {
 
-void StringProperty(CFXJSE_Value* pValue,
-                    CFX_WideString& wsValue,
-                    bool bSetting) {
+void StringProperty(CFXJSE_Value* pValue, WideString& wsValue, bool bSetting) {
   if (bSetting) {
     wsValue = pValue->ToWideString();
     return;
   }
-  pValue->SetString(wsValue.UTF8Encode().AsStringC());
+  pValue->SetString(wsValue.UTF8Encode().AsStringView());
 }
 
 void InterProperty(CFXJSE_Value* pValue, int32_t& iValue, bool bSetting) {
@@ -49,7 +47,7 @@ CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::EventPseudoModel,
-                  CFX_WideStringC(L"eventPseudoModel")) {}
+                  WideStringView(L"eventPseudoModel")) {}
 
 CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
 

@@ -27,8 +27,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   barcode.SetHeight(298);
   barcode.SetWidth(418);
 
-  CFX_WideStringC content(reinterpret_cast<const wchar_t*>(data),
-                          size / sizeof(wchar_t));
+  WideStringView content(reinterpret_cast<const wchar_t*>(data),
+                         size / sizeof(wchar_t));
 
   if (!barcode.Encode(content))
     return 0;

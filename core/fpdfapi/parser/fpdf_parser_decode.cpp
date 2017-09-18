@@ -328,7 +328,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
                     bool bImageAcc,
                     uint8_t** dest_buf,
                     uint32_t* dest_size,
-                    CFX_ByteString* ImageEncoding,
+                    ByteString* ImageEncoding,
                     CPDF_Dictionary** pImageParms) {
   CPDF_Object* pDecoder = pDict ? pDict->GetDirectObjectFor("Filter") : nullptr;
   if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
@@ -337,7 +337,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
   CPDF_Object* pParams =
       pDict ? pDict->GetDirectObjectFor("DecodeParms") : nullptr;
 
-  std::vector<std::pair<CFX_ByteString, CPDF_Object*>> DecoderArray;
+  std::vector<std::pair<ByteString, CPDF_Object*>> DecoderArray;
   if (CPDF_Array* pDecoders = pDecoder->AsArray()) {
     CPDF_Array* pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->GetCount(); ++i) {
@@ -354,7 +354,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
   int nSize = pdfium::CollectionSize<int>(DecoderArray);
   for (int i = 0; i < nSize; ++i) {
     int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
-    CFX_ByteString decoder = DecoderArray[i].first;
+    ByteString decoder = DecoderArray[i].first;
     CPDF_Dictionary* pParam = ToDictionary(DecoderArray[i].second);
     uint8_t* new_buf = nullptr;
     uint32_t new_size = 0xFFFFFFFF;
@@ -415,8 +415,8 @@ bool PDF_DataDecode(const uint8_t* src_buf,
   return true;
 }
 
-CFX_WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
-  CFX_WideString result;
+WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
+  WideString result;
   if (src_len >= 2 && ((src_data[0] == 0xfe && src_data[1] == 0xff) ||
                        (src_data[0] == 0xff && src_data[1] == 0xfe))) {
     bool bBE = src_data[0] == 0xfe;
@@ -455,16 +455,16 @@ CFX_WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
   return result;
 }
 
-CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr) {
+WideString PDF_DecodeText(const ByteString& bstr) {
   return PDF_DecodeText(reinterpret_cast<const uint8_t*>(bstr.c_str()),
                         bstr.GetLength());
 }
 
-CFX_ByteString PDF_EncodeText(const wchar_t* pString, int len) {
+ByteString PDF_EncodeText(const wchar_t* pString, int len) {
   if (len == -1)
     len = FXSYS_wcslen(pString);
 
-  CFX_ByteString result;
+  ByteString result;
   char* dest_buf1 = result.GetBuffer(len);
   int i;
   for (i = 0; i < len; ++i) {
@@ -502,11 +502,11 @@ CFX_ByteString PDF_EncodeText(const wchar_t* pString, int len) {
   return result;
 }
 
-CFX_ByteString PDF_EncodeText(const CFX_WideString& str) {
+ByteString PDF_EncodeText(const WideString& str) {
   return PDF_EncodeText(str.c_str(), str.GetLength());
 }
 
-CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, bool bHex) {
+ByteString PDF_EncodeString(const ByteString& src, bool bHex) {
   std::ostringstream result;
   int srclen = src.GetLength();
   if (bHex) {
@@ -518,7 +518,7 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, bool bHex) {
       result << buf[1];
     }
     result << '>';
-    return CFX_ByteString(result);
+    return ByteString(result);
   }
   result << '(';
   for (int i = 0; i < srclen; ++i) {
@@ -536,7 +536,7 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, bool bHex) {
     result << static_cast<char>(ch);
   }
   result << ')';
-  return CFX_ByteString(result);
+  return ByteString(result);
 }
 
 bool FlateEncode(const uint8_t* src_buf,

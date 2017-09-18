@@ -65,7 +65,7 @@ class PageSetContainerLayoutItem {
 
 uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
   uint32_t dwRelevant = XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
-  CFX_WideStringC wsRelevant;
+  WideStringView wsRelevant;
   if (pFormItem->TryCData(XFA_ATTRIBUTE_Relevant, wsRelevant)) {
     if (wsRelevant == L"+print" || wsRelevant == L"print")
       dwRelevant &= ~XFA_WidgetStatus_Viewable;
@@ -136,18 +136,18 @@ void RemoveLayoutItem(CXFA_ContainerLayoutItem* pLayoutItem) {
 
 CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
                               bool bNewExprStyle,
-                              CFX_WideStringC& wsTargetExpr) {
+                              WideStringView& wsTargetExpr) {
   CXFA_Document* pDocument = pPageSetRoot->GetDocument();
   if (wsTargetExpr.IsEmpty())
     return nullptr;
 
-  CFX_WideString wsTargetAll(wsTargetExpr);
+  WideString wsTargetAll(wsTargetExpr);
   wsTargetAll.TrimLeft();
   wsTargetAll.TrimRight();
   int32_t iSplitIndex = 0;
   bool bTargetAllFind = true;
   while (iSplitIndex != -1) {
-    CFX_WideString wsExpr;
+    WideString wsExpr;
     pdfium::Optional<FX_STRSIZE> iSplitNextIndex = 0;
     if (!bTargetAllFind) {
       iSplitNextIndex = wsTargetAll.Find(' ', iSplitIndex);
@@ -165,17 +165,17 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     if (wsExpr[0] == '#') {
       CXFA_Node* pNode = pDocument->GetNodeByID(
           ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Template)),
-          wsExpr.Right(wsExpr.GetLength() - 1).AsStringC());
+          wsExpr.Right(wsExpr.GetLength() - 1).AsStringView());
       if (pNode)
         return pNode;
     } else if (bNewExprStyle) {
-      CFX_WideString wsProcessedTarget = wsExpr;
+      WideString wsProcessedTarget = wsExpr;
       if (wsExpr.Left(4) == L"som(" && wsExpr.Last() == L')') {
         wsProcessedTarget = wsExpr.Mid(4, wsExpr.GetLength() - 5);
       }
       XFA_RESOLVENODE_RS rs;
       int32_t iCount = pDocument->GetScriptContext()->ResolveObjects(
-          pPageSetRoot, wsProcessedTarget.AsStringC(), rs,
+          pPageSetRoot, wsProcessedTarget.AsStringView(), rs,
           XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
               XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings |
               XFA_RESOLVENODE_Parent);
@@ -477,7 +477,7 @@ float CXFA_LayoutPageMgr::GetAvailHeight() {
 }
 
 bool XFA_LayoutPageMgr_RunBreakTestScript(CXFA_Node* pTestScript) {
-  CFX_WideString wsExpression;
+  WideString wsExpression;
   pTestScript->TryContent(wsExpression);
   if (wsExpression.IsEmpty())
     return true;
@@ -801,7 +801,7 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
   switch (eType) {
     case XFA_Element::BreakBefore:
     case XFA_Element::BreakAfter: {
-      CFX_WideStringC wsBreakLeader, wsBreakTrailer;
+      WideStringView wsBreakLeader, wsBreakTrailer;
       CXFA_Node* pFormNode = pCurNode->GetNodeItem(
           XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
       CXFA_Node* pContainer = pFormNode->GetTemplateNode();
@@ -810,7 +810,7 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
       if (pScript && !XFA_LayoutPageMgr_RunBreakTestScript(pScript))
         return false;
 
-      CFX_WideStringC wsTarget = pCurNode->GetCData(XFA_ATTRIBUTE_Target);
+      WideStringView wsTarget = pCurNode->GetCData(XFA_ATTRIBUTE_Target);
       CXFA_Node* pTarget =
           ResolveBreakTarget(m_pTemplatePageSetRoot, true, wsTarget);
       wsBreakTrailer = pCurNode->GetCData(XFA_ATTRIBUTE_Trailer);
@@ -845,7 +845,7 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
     }
     case XFA_Element::Break: {
       bool bStartNew = pCurNode->GetInteger(XFA_ATTRIBUTE_StartNew) != 0;
-      CFX_WideStringC wsTarget = pCurNode->GetCData(
+      WideStringView wsTarget = pCurNode->GetCData(
           bBefore ? XFA_ATTRIBUTE_BeforeTarget : XFA_ATTRIBUTE_AfterTarget);
       CXFA_Node* pTarget =
           ResolveBreakTarget(m_pTemplatePageSetRoot, true, wsTarget);
@@ -936,9 +936,9 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
           ->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode)
           ->GetTemplateNode();
   if (pOverflowNode->GetElementType() == XFA_Element::Break) {
-    CFX_WideStringC wsOverflowLeader;
-    CFX_WideStringC wsOverflowTarget;
-    CFX_WideStringC wsOverflowTrailer;
+    WideStringView wsOverflowLeader;
+    WideStringView wsOverflowTarget;
+    WideStringView wsOverflowTrailer;
     pOverflowNode->TryCData(XFA_ATTRIBUTE_OverflowLeader, wsOverflowLeader);
     pOverflowNode->TryCData(XFA_ATTRIBUTE_OverflowTrailer, wsOverflowTrailer);
     pOverflowNode->TryCData(XFA_ATTRIBUTE_OverflowTarget, wsOverflowTarget);
@@ -978,9 +978,9 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
   if (pOverflowNode->GetElementType() != XFA_Element::Overflow)
     return nullptr;
 
-  CFX_WideStringC wsOverflowLeader;
-  CFX_WideStringC wsOverflowTrailer;
-  CFX_WideStringC wsOverflowTarget;
+  WideStringView wsOverflowLeader;
+  WideStringView wsOverflowTrailer;
+  WideStringView wsOverflowTarget;
   pOverflowNode->TryCData(XFA_ATTRIBUTE_Leader, wsOverflowLeader);
   pOverflowNode->TryCData(XFA_ATTRIBUTE_Trailer, wsOverflowTrailer);
   pOverflowNode->TryCData(XFA_ATTRIBUTE_Target, wsOverflowTarget);
@@ -1067,7 +1067,7 @@ bool CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
     CXFA_Node* pBookendNode,
     bool bLeader,
     CXFA_Node*& pBookendAppendTemplate) {
-  CFX_WideStringC wsBookendLeader;
+  WideStringView wsBookendLeader;
   CXFA_Node* pContainer =
       pBookendNode
           ->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode)
@@ -1642,9 +1642,9 @@ CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(CXFA_Node* pFormNode) {
   for (CXFA_Node* pCurNode = pFormNode->GetNodeItem(XFA_NODEITEM_FirstChild);
        pCurNode; pCurNode = pCurNode->GetNodeItem((XFA_NODEITEM_NextSibling))) {
     if (pCurNode->GetElementType() == XFA_Element::Break) {
-      CFX_WideStringC wsOverflowLeader;
-      CFX_WideStringC wsOverflowTarget;
-      CFX_WideStringC wsOverflowTrailer;
+      WideStringView wsOverflowLeader;
+      WideStringView wsOverflowTarget;
+      WideStringView wsOverflowTrailer;
       pCurNode->TryCData(XFA_ATTRIBUTE_OverflowLeader, wsOverflowLeader);
       pCurNode->TryCData(XFA_ATTRIBUTE_OverflowTrailer, wsOverflowTrailer);
       pCurNode->TryCData(XFA_ATTRIBUTE_OverflowTarget, wsOverflowTarget);

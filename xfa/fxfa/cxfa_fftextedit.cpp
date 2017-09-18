@@ -47,7 +47,7 @@ bool CXFA_FFTextEdit::LoadWidget() {
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();
 
-  CFX_WideString wsText;
+  WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pFWLEdit->SetText(wsText);
   m_pNormalWidget->UnlockUpdate();
@@ -173,8 +173,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 }
 
 bool CXFA_FFTextEdit::CommitData() {
-  CFX_WideString wsText =
-      static_cast<CFWL_Edit*>(m_pNormalWidget.get())->GetText();
+  WideString wsText = static_cast<CFWL_Edit*>(m_pNormalWidget.get())->GetText();
   if (m_pDataAcc->SetValue(wsText, XFA_VALUEPICTURE_Edit)) {
     m_pDataAcc->UpdateUIDisplay(this);
     return true;
@@ -183,7 +182,7 @@ bool CXFA_FFTextEdit::CommitData() {
   return false;
 }
 
-void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText) {
+void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
   CXFA_WidgetAcc* pAcc = GetDataAcc();
   if (!pAcc || pAcc->GetUIType() != XFA_Element::NumericEdit)
     return;
@@ -192,10 +191,10 @@ void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText) {
   if (!pAppProvider)
     return;
 
-  CFX_WideString wsSomField;
+  WideString wsSomField;
   pAcc->GetNode()->GetSOMExpression(wsSomField);
 
-  CFX_WideString wsMessage;
+  WideString wsMessage;
   wsMessage.Format(L"%s can not contain %s", wsText.c_str(),
                    wsSomField.c_str());
   pAppProvider->MsgBox(wsMessage, pAppProvider->GetAppTitle(), XFA_MBICON_Error,
@@ -272,10 +271,10 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     bUpdate = true;
   }
 
-  CFX_WideString wsText;
+  WideString wsText;
   m_pDataAcc->GetValue(wsText, eType);
 
-  CFX_WideString wsOldText = pEdit->GetText();
+  WideString wsOldText = pEdit->GetText();
   if (wsText != wsOldText || (eType == XFA_VALUEPICTURE_Edit && bUpdate)) {
     pEdit->SetText(wsText);
     bUpdate = true;
@@ -287,8 +286,8 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
 }
 
 void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
-                                    const CFX_WideString& wsChanged,
-                                    const CFX_WideString& wsPrevText) {
+                                    const WideString& wsChanged,
+                                    const WideString& wsPrevText) {
   m_dwStatus |= XFA_WidgetStatus_TextEditValueChanged;
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
@@ -318,7 +317,7 @@ void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Full, &eParam);
 }
 
-bool CXFA_FFTextEdit::CheckWord(const CFX_ByteStringC& sWord) {
+bool CXFA_FFTextEdit::CheckWord(const ByteStringView& sWord) {
   return sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_Element::TextEdit;
 }
 
@@ -332,7 +331,7 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     case CFWL_Event::Type::TextChanged: {
       CFWL_EventTextChanged* event =
           static_cast<CFWL_EventTextChanged*>(pEvent);
-      CFX_WideString wsChange;
+      WideString wsChange;
       OnTextChanged(m_pNormalWidget.get(), wsChange, event->wsPrevText);
       break;
     }
@@ -341,9 +340,9 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
       break;
     }
     case CFWL_Event::Type::CheckWord: {
-      CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
+      WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
       CFWL_EventCheckWord* event = static_cast<CFWL_EventCheckWord*>(pEvent);
-      event->bCheckWord = CheckWord(event->bsWord.AsStringC());
+      event->bCheckWord = CheckWord(event->bsWord.AsStringView());
       break;
     }
     default:

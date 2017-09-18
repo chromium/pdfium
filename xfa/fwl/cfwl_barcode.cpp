@@ -67,7 +67,7 @@ void CFWL_Barcode::SetType(BC_TYPE type) {
   m_dwStatus = XFA_BCS_NeedUpdate;
 }
 
-void CFWL_Barcode::SetText(const CFX_WideString& wsText) {
+void CFWL_Barcode::SetText(const WideString& wsText) {
   m_pBarcodeEngine.reset();
   m_dwStatus = XFA_BCS_NeedUpdate;
   CFWL_Edit::SetText(wsText);
@@ -204,7 +204,7 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED)
     m_pBarcodeEngine->SetTruncated(m_bTruncated);
 
-  m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringC())
+  m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringView())
                    ? XFA_BCS_EncodeSuccess
                    : 0;
 }

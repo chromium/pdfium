@@ -42,7 +42,7 @@ struct PatternValue {
 class CPDF_ColorSpace {
  public:
   static CPDF_ColorSpace* GetStockCS(int Family);
-  static CPDF_ColorSpace* ColorspaceFromName(const CFX_ByteString& name);
+  static CPDF_ColorSpace* ColorspaceFromName(const ByteString& name);
   static std::unique_ptr<CPDF_ColorSpace> Load(CPDF_Document* pDoc,
                                                CPDF_Object* pCSObj);
   static std::unique_ptr<CPDF_ColorSpace> Load(

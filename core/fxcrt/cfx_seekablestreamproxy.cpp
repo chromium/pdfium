@@ -269,7 +269,7 @@ FX_STRSIZE CFX_SeekableStreamProxy::ReadString(wchar_t* pStr,
   return iMaxLength;
 }
 
-void CFX_SeekableStreamProxy::WriteString(const CFX_WideStringC& str) {
+void CFX_SeekableStreamProxy::WriteString(const WideStringView& str) {
   if (!m_IsWriteStream || str.GetLength() == 0 ||
       m_wCodePage != FX_CODEPAGE_UTF8) {
     return;

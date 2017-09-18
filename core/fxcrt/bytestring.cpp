@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/cfx_bytestring.h"
+#include "core/fxcrt/bytestring.h"
 
 #include <stddef.h>
 
@@ -21,9 +21,9 @@
 #include "third_party/base/stl_util.h"
 
 template class CFX_StringDataTemplate<char>;
-template class CFX_StringCTemplate<char>;
-template class CFX_StringPoolTemplate<CFX_ByteString>;
-template struct std::hash<CFX_ByteString>;
+template class fxcrt::StringViewTemplate<char>;
+template class CFX_StringPoolTemplate<ByteString>;
+template struct std::hash<ByteString>;
 
 namespace {
 
@@ -66,7 +66,7 @@ bool IsValidCodePage(uint16_t codepage) {
 }
 #endif
 
-CFX_ByteString GetByteString(uint16_t codepage, const CFX_WideStringC& wstr) {
+ByteString GetByteString(uint16_t codepage, const WideStringView& wstr) {
   ASSERT(IsValidCodePage(codepage));
 
   int src_len = wstr.GetLength();
@@ -74,9 +74,9 @@ CFX_ByteString GetByteString(uint16_t codepage, const CFX_WideStringC& wstr) {
       FXSYS_WideCharToMultiByte(codepage, 0, wstr.unterminated_c_str(), src_len,
                                 nullptr, 0, nullptr, nullptr);
   if (!dest_len)
-    return CFX_ByteString();
+    return ByteString();
 
-  CFX_ByteString bstr;
+  ByteString bstr;
   char* dest_buf = bstr.GetBuffer(dest_len);
   FXSYS_WideCharToMultiByte(codepage, 0, wstr.unterminated_c_str(), src_len,
                             dest_buf, dest_len, nullptr, nullptr);
@@ -86,45 +86,45 @@ CFX_ByteString GetByteString(uint16_t codepage, const CFX_WideStringC& wstr) {
 
 }  // namespace
 
-static_assert(sizeof(CFX_ByteString) <= sizeof(char*),
+namespace fxcrt {
+
+static_assert(sizeof(ByteString) <= sizeof(char*),
               "Strings must not require more space than pointers");
 
-CFX_ByteString::CFX_ByteString(const char* pStr, FX_STRSIZE nLen) {
+ByteString::ByteString(const char* pStr, FX_STRSIZE nLen) {
   if (nLen)
     m_pData.Reset(StringData::Create(pStr, nLen));
 }
 
-CFX_ByteString::CFX_ByteString(const uint8_t* pStr, FX_STRSIZE nLen) {
+ByteString::ByteString(const uint8_t* pStr, FX_STRSIZE nLen) {
   if (nLen)
     m_pData.Reset(
         StringData::Create(reinterpret_cast<const char*>(pStr), nLen));
 }
 
-CFX_ByteString::CFX_ByteString() {}
+ByteString::ByteString() {}
 
-CFX_ByteString::CFX_ByteString(const CFX_ByteString& other)
-    : m_pData(other.m_pData) {}
+ByteString::ByteString(const ByteString& other) : m_pData(other.m_pData) {}
 
-CFX_ByteString::CFX_ByteString(CFX_ByteString&& other) noexcept {
+ByteString::ByteString(ByteString&& other) noexcept {
   m_pData.Swap(other.m_pData);
 }
 
-CFX_ByteString::CFX_ByteString(char ch) {
+ByteString::ByteString(char ch) {
   m_pData.Reset(StringData::Create(1));
   m_pData->m_String[0] = ch;
 }
 
-CFX_ByteString::CFX_ByteString(const char* ptr)
-    : CFX_ByteString(ptr, ptr ? FXSYS_strlen(ptr) : 0) {}
+ByteString::ByteString(const char* ptr)
+    : ByteString(ptr, ptr ? FXSYS_strlen(ptr) : 0) {}
 
-CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& stringSrc) {
+ByteString::ByteString(const ByteStringView& stringSrc) {
   if (!stringSrc.IsEmpty())
     m_pData.Reset(StringData::Create(stringSrc.unterminated_c_str(),
                                      stringSrc.GetLength()));
 }
 
-CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& str1,
-                               const CFX_ByteStringC& str2) {
+ByteString::ByteString(const ByteStringView& str1, const ByteStringView& str2) {
   FX_SAFE_STRSIZE nSafeLen = str1.GetLength();
   nSafeLen += str2.GetLength();
 
@@ -138,8 +138,7 @@ CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& str1,
                           str2.GetLength());
 }
 
-CFX_ByteString::CFX_ByteString(
-    const std::initializer_list<CFX_ByteStringC>& list) {
+ByteString::ByteString(const std::initializer_list<ByteStringView>& list) {
   FX_SAFE_STRSIZE nSafeLen = 0;
   for (const auto& item : list)
     nSafeLen += item.GetLength();
@@ -158,15 +157,15 @@ CFX_ByteString::CFX_ByteString(
   }
 }
 
-CFX_ByteString::CFX_ByteString(const std::ostringstream& outStream) {
+ByteString::ByteString(const std::ostringstream& outStream) {
   std::string str = outStream.str();
   if (str.length() > 0)
     m_pData.Reset(StringData::Create(str.c_str(), str.length()));
 }
 
-CFX_ByteString::~CFX_ByteString() {}
+ByteString::~ByteString() {}
 
-const CFX_ByteString& CFX_ByteString::operator=(const char* pStr) {
+const ByteString& ByteString::operator=(const char* pStr) {
   if (!pStr || !pStr[0])
     clear();
   else
@@ -175,8 +174,7 @@ const CFX_ByteString& CFX_ByteString::operator=(const char* pStr) {
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator=(
-    const CFX_ByteStringC& stringSrc) {
+const ByteString& ByteString::operator=(const ByteStringView& stringSrc) {
   if (stringSrc.IsEmpty())
     clear();
   else
@@ -185,41 +183,40 @@ const CFX_ByteString& CFX_ByteString::operator=(
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator=(
-    const CFX_ByteString& stringSrc) {
+const ByteString& ByteString::operator=(const ByteString& stringSrc) {
   if (m_pData != stringSrc.m_pData)
     m_pData = stringSrc.m_pData;
 
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator+=(const char* pStr) {
+const ByteString& ByteString::operator+=(const char* pStr) {
   if (pStr)
     Concat(pStr, FXSYS_strlen(pStr));
 
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator+=(char ch) {
+const ByteString& ByteString::operator+=(char ch) {
   Concat(&ch, 1);
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteString& str) {
+const ByteString& ByteString::operator+=(const ByteString& str) {
   if (str.m_pData)
     Concat(str.m_pData->m_String, str.m_pData->m_nDataLength);
 
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteStringC& str) {
+const ByteString& ByteString::operator+=(const ByteStringView& str) {
   if (!str.IsEmpty())
     Concat(str.unterminated_c_str(), str.GetLength());
 
   return *this;
 }
 
-bool CFX_ByteString::operator==(const char* ptr) const {
+bool ByteString::operator==(const char* ptr) const {
   if (!m_pData)
     return !ptr || !ptr[0];
 
@@ -230,7 +227,7 @@ bool CFX_ByteString::operator==(const char* ptr) const {
          memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 
-bool CFX_ByteString::operator==(const CFX_ByteStringC& str) const {
+bool ByteString::operator==(const ByteStringView& str) const {
   if (!m_pData)
     return str.IsEmpty();
 
@@ -239,7 +236,7 @@ bool CFX_ByteString::operator==(const CFX_ByteStringC& str) const {
              0;
 }
 
-bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
+bool ByteString::operator==(const ByteString& other) const {
   if (m_pData == other.m_pData)
     return true;
 
@@ -254,7 +251,7 @@ bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
                 m_pData->m_nDataLength) == 0;
 }
 
-bool CFX_ByteString::operator<(const CFX_ByteString& str) const {
+bool ByteString::operator<(const ByteString& str) const {
   if (m_pData == str.m_pData)
     return false;
 
@@ -263,7 +260,7 @@ bool CFX_ByteString::operator<(const CFX_ByteString& str) const {
   return result < 0 || (result == 0 && GetLength() < str.GetLength());
 }
 
-bool CFX_ByteString::EqualNoCase(const CFX_ByteStringC& str) const {
+bool ByteString::EqualNoCase(const ByteStringView& str) const {
   if (!m_pData)
     return str.IsEmpty();
 
@@ -286,13 +283,13 @@ bool CFX_ByteString::EqualNoCase(const CFX_ByteStringC& str) const {
   return true;
 }
 
-void CFX_ByteString::AssignCopy(const char* pSrcData, FX_STRSIZE nSrcLen) {
+void ByteString::AssignCopy(const char* pSrcData, FX_STRSIZE nSrcLen) {
   AllocBeforeWrite(nSrcLen);
   m_pData->CopyContents(pSrcData, nSrcLen);
   m_pData->m_nDataLength = nSrcLen;
 }
 
-void CFX_ByteString::ReallocBeforeWrite(FX_STRSIZE nNewLength) {
+void ByteString::ReallocBeforeWrite(FX_STRSIZE nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength))
     return;
 
@@ -313,7 +310,7 @@ void CFX_ByteString::ReallocBeforeWrite(FX_STRSIZE nNewLength) {
   m_pData.Swap(pNewData);
 }
 
-void CFX_ByteString::AllocBeforeWrite(FX_STRSIZE nNewLength) {
+void ByteString::AllocBeforeWrite(FX_STRSIZE nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength))
     return;
 
@@ -325,7 +322,7 @@ void CFX_ByteString::AllocBeforeWrite(FX_STRSIZE nNewLength) {
   m_pData.Reset(StringData::Create(nNewLength));
 }
 
-void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
+void ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
   if (!m_pData)
     return;
 
@@ -341,16 +338,16 @@ void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
   if (m_pData->m_nAllocLength - nNewLength >= 32) {
     // Over arbitrary threshold, so pay the price to relocate.  Force copy to
     // always occur by holding a second reference to the string.
-    CFX_ByteString preserve(*this);
+    ByteString preserve(*this);
     ReallocBeforeWrite(nNewLength);
   }
 }
 
-void CFX_ByteString::Reserve(FX_STRSIZE len) {
+void ByteString::Reserve(FX_STRSIZE len) {
   GetBuffer(len);
 }
 
-char* CFX_ByteString::GetBuffer(FX_STRSIZE nMinBufLength) {
+char* ByteString::GetBuffer(FX_STRSIZE nMinBufLength) {
   if (!m_pData) {
     if (nMinBufLength == 0)
       return nullptr;
@@ -375,7 +372,7 @@ char* CFX_ByteString::GetBuffer(FX_STRSIZE nMinBufLength) {
   return m_pData->m_String;
 }
 
-FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE index, FX_STRSIZE count) {
+FX_STRSIZE ByteString::Delete(FX_STRSIZE index, FX_STRSIZE count) {
   if (!m_pData)
     return 0;
 
@@ -396,7 +393,7 @@ FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE index, FX_STRSIZE count) {
   return m_pData->m_nDataLength;
 }
 
-void CFX_ByteString::Concat(const char* pSrcData, FX_STRSIZE nSrcLen) {
+void ByteString::Concat(const char* pSrcData, FX_STRSIZE nSrcLen) {
   if (!pSrcData || nSrcLen == 0)
     return;
 
@@ -418,42 +415,42 @@ void CFX_ByteString::Concat(const char* pSrcData, FX_STRSIZE nSrcLen) {
   m_pData.Swap(pNewData);
 }
 
-CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE first, FX_STRSIZE count) const {
+ByteString ByteString::Mid(FX_STRSIZE first, FX_STRSIZE count) const {
   if (!m_pData)
-    return CFX_ByteString();
+    return ByteString();
 
   if (!IsValidIndex(first))
-    return CFX_ByteString();
+    return ByteString();
 
   if (count == 0 || !IsValidLength(count))
-    return CFX_ByteString();
+    return ByteString();
 
   if (!IsValidIndex(first + count - 1))
-    return CFX_ByteString();
+    return ByteString();
 
   if (first == 0 && count == m_pData->m_nDataLength)
     return *this;
 
-  CFX_ByteString dest;
+  ByteString dest;
   AllocCopy(dest, count, first);
   return dest;
 }
 
-CFX_ByteString CFX_ByteString::Left(FX_STRSIZE count) const {
+ByteString ByteString::Left(FX_STRSIZE count) const {
   if (count == 0 || !IsValidLength(count))
-    return CFX_ByteString();
+    return ByteString();
   return Mid(0, count);
 }
 
-CFX_ByteString CFX_ByteString::Right(FX_STRSIZE count) const {
+ByteString ByteString::Right(FX_STRSIZE count) const {
   if (count == 0 || !IsValidLength(count))
-    return CFX_ByteString();
+    return ByteString();
   return Mid(GetLength() - count, count);
 }
 
-void CFX_ByteString::AllocCopy(CFX_ByteString& dest,
-                               FX_STRSIZE nCopyLen,
-                               FX_STRSIZE nCopyIndex) const {
+void ByteString::AllocCopy(ByteString& dest,
+                           FX_STRSIZE nCopyLen,
+                           FX_STRSIZE nCopyIndex) const {
   if (nCopyLen == 0)
     return;
 
@@ -466,13 +463,13 @@ void CFX_ByteString::AllocCopy(CFX_ByteString& dest,
 #define FORCE_UNICODE 0x20000
 #define FORCE_INT64 0x40000
 
-CFX_ByteString CFX_ByteString::FormatInteger(int i) {
+ByteString ByteString::FormatInteger(int i) {
   char buf[32];
   FXSYS_snprintf(buf, 32, "%d", i);
-  return CFX_ByteString(buf);
+  return ByteString(buf);
 }
 
-void CFX_ByteString::FormatV(const char* pFormat, va_list argList) {
+void ByteString::FormatV(const char* pFormat, va_list argList) {
   va_list argListCopy;
   va_copy(argListCopy, argList);
   FX_STRSIZE nMaxLen = vsnprintf(nullptr, 0, pFormat, argListCopy);
@@ -491,20 +488,20 @@ void CFX_ByteString::FormatV(const char* pFormat, va_list argList) {
   }
 }
 
-void CFX_ByteString::Format(const char* pFormat, ...) {
+void ByteString::Format(const char* pFormat, ...) {
   va_list argList;
   va_start(argList, pFormat);
   FormatV(pFormat, argList);
   va_end(argList);
 }
 
-void CFX_ByteString::SetAt(FX_STRSIZE index, char c) {
+void ByteString::SetAt(FX_STRSIZE index, char c) {
   ASSERT(IsValidIndex(index));
   ReallocBeforeWrite(m_pData->m_nDataLength);
   m_pData->m_String[index] = c;
 }
 
-FX_STRSIZE CFX_ByteString::Insert(FX_STRSIZE location, char ch) {
+FX_STRSIZE ByteString::Insert(FX_STRSIZE location, char ch) {
   const FX_STRSIZE cur_length = m_pData ? m_pData->m_nDataLength : 0;
   if (!IsValidLength(location))
     return cur_length;
@@ -518,8 +515,7 @@ FX_STRSIZE CFX_ByteString::Insert(FX_STRSIZE location, char ch) {
   return new_length;
 }
 
-pdfium::Optional<FX_STRSIZE> CFX_ByteString::Find(char ch,
-                                                  FX_STRSIZE start) const {
+pdfium::Optional<FX_STRSIZE> ByteString::Find(char ch, FX_STRSIZE start) const {
   if (!m_pData)
     return pdfium::Optional<FX_STRSIZE>();
 
@@ -533,8 +529,8 @@ pdfium::Optional<FX_STRSIZE> CFX_ByteString::Find(char ch,
               : pdfium::Optional<FX_STRSIZE>();
 }
 
-pdfium::Optional<FX_STRSIZE> CFX_ByteString::Find(const CFX_ByteStringC& subStr,
-                                                  FX_STRSIZE start) const {
+pdfium::Optional<FX_STRSIZE> ByteString::Find(const ByteStringView& subStr,
+                                              FX_STRSIZE start) const {
   if (!m_pData)
     return pdfium::Optional<FX_STRSIZE>();
 
@@ -549,7 +545,7 @@ pdfium::Optional<FX_STRSIZE> CFX_ByteString::Find(const CFX_ByteStringC& subStr,
               : pdfium::Optional<FX_STRSIZE>();
 }
 
-pdfium::Optional<FX_STRSIZE> CFX_ByteString::ReverseFind(char ch) const {
+pdfium::Optional<FX_STRSIZE> ByteString::ReverseFind(char ch) const {
   if (!m_pData)
     return pdfium::Optional<FX_STRSIZE>();
 
@@ -561,7 +557,7 @@ pdfium::Optional<FX_STRSIZE> CFX_ByteString::ReverseFind(char ch) const {
   return pdfium::Optional<FX_STRSIZE>();
 }
 
-void CFX_ByteString::MakeLower() {
+void ByteString::MakeLower() {
   if (!m_pData)
     return;
 
@@ -569,7 +565,7 @@ void CFX_ByteString::MakeLower() {
   FXSYS_strlwr(m_pData->m_String);
 }
 
-void CFX_ByteString::MakeUpper() {
+void ByteString::MakeUpper() {
   if (!m_pData)
     return;
 
@@ -577,7 +573,7 @@ void CFX_ByteString::MakeUpper() {
   FXSYS_strupr(m_pData->m_String);
 }
 
-FX_STRSIZE CFX_ByteString::Remove(char chRemove) {
+FX_STRSIZE ByteString::Remove(char chRemove) {
   if (!m_pData || m_pData->m_nDataLength < 1)
     return 0;
 
@@ -611,8 +607,8 @@ FX_STRSIZE CFX_ByteString::Remove(char chRemove) {
   return nCount;
 }
 
-FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& pOld,
-                                   const CFX_ByteStringC& pNew) {
+FX_STRSIZE ByteString::Replace(const ByteStringView& pOld,
+                               const ByteStringView& pNew) {
   if (!m_pData || pOld.IsEmpty())
     return 0;
 
@@ -658,20 +654,20 @@ FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& pOld,
   return nCount;
 }
 
-CFX_WideString CFX_ByteString::UTF8Decode() const {
+WideString ByteString::UTF8Decode() const {
   CFX_UTF8Decoder decoder;
   for (FX_STRSIZE i = 0; i < GetLength(); i++) {
     decoder.Input(static_cast<uint8_t>(m_pData->m_String[i]));
   }
-  return CFX_WideString(decoder.GetResult());
+  return WideString(decoder.GetResult());
 }
 
 // static
-CFX_ByteString CFX_ByteString::FromUnicode(const CFX_WideString& str) {
-  return GetByteString(0, str.AsStringC());
+ByteString ByteString::FromUnicode(const WideString& str) {
+  return GetByteString(0, str.AsStringView());
 }
 
-int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
+int ByteString::Compare(const ByteStringView& str) const {
   if (!m_pData) {
     return str.IsEmpty() ? 0 : -1;
   }
@@ -695,7 +691,7 @@ int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
   return 0;
 }
 
-void CFX_ByteString::TrimRight(const CFX_ByteStringC& pTargets) {
+void ByteString::TrimRight(const ByteStringView& pTargets) {
   if (!m_pData || pTargets.IsEmpty())
     return;
 
@@ -721,15 +717,15 @@ void CFX_ByteString::TrimRight(const CFX_ByteStringC& pTargets) {
   }
 }
 
-void CFX_ByteString::TrimRight(char chTarget) {
-  TrimRight(CFX_ByteStringC(chTarget));
+void ByteString::TrimRight(char chTarget) {
+  TrimRight(ByteStringView(chTarget));
 }
 
-void CFX_ByteString::TrimRight() {
+void ByteString::TrimRight() {
   TrimRight("\x09\x0a\x0b\x0c\x0d\x20");
 }
 
-void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
+void ByteString::TrimLeft(const ByteStringView& pTargets) {
   if (!m_pData || pTargets.IsEmpty())
     return;
 
@@ -757,24 +753,26 @@ void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
   }
 }
 
-void CFX_ByteString::TrimLeft(char chTarget) {
-  TrimLeft(CFX_ByteStringC(chTarget));
+void ByteString::TrimLeft(char chTarget) {
+  TrimLeft(ByteStringView(chTarget));
 }
 
-void CFX_ByteString::TrimLeft() {
+void ByteString::TrimLeft() {
   TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
 }
 
-CFX_ByteString CFX_ByteString::FormatFloat(float d, int precision) {
+ByteString ByteString::FormatFloat(float d, int precision) {
   char buf[32];
   FX_STRSIZE len = FX_ftoa(d, buf);
-  return CFX_ByteString(buf, len);
+  return ByteString(buf, len);
 }
 
-std::ostream& operator<<(std::ostream& os, const CFX_ByteString& str) {
+std::ostream& operator<<(std::ostream& os, const ByteString& str) {
   return os.write(str.c_str(), str.GetLength());
 }
 
-std::ostream& operator<<(std::ostream& os, const CFX_ByteStringC& str) {
+std::ostream& operator<<(std::ostream& os, const ByteStringView& str) {
   return os.write(str.unterminated_c_str(), str.GetLength());
 }
+
+}  // namespace fxcrt

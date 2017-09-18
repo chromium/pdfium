@@ -11,9 +11,9 @@
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
 
-CFX_ByteString CFX_WindowsDIB::GetBitmapInfo(
+ByteString CFX_WindowsDIB::GetBitmapInfo(
     const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
-  CFX_ByteString result;
+  ByteString result;
   int len = sizeof(BITMAPINFOHEADER);
   if (pBitmap->GetBPP() == 1 || pBitmap->GetBPP() == 8) {
     len += sizeof(DWORD) * (int)(1 << pBitmap->GetBPP());
@@ -102,7 +102,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi,
 
 HBITMAP CFX_WindowsDIB::GetDDBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                                     HDC hDC) {
-  CFX_ByteString info = GetBitmapInfo(pBitmap);
+  ByteString info = GetBitmapInfo(pBitmap);
   return CreateDIBitmap(hDC, (BITMAPINFOHEADER*)info.c_str(), CBM_INIT,
                         pBitmap->GetBuffer(), (BITMAPINFO*)info.c_str(),
                         DIB_RGB_COLORS);
@@ -139,7 +139,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(
     DeleteDC(hDC);
     return nullptr;
   }
-  CFX_ByteString info = GetBitmapInfo(pDIBitmap);
+  ByteString info = GetBitmapInfo(pDIBitmap);
   int ret = GetDIBits(hDC, hBitmap, 0, height, pDIBitmap->GetBuffer(),
                       (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
   DeleteDC(hDC);
@@ -149,7 +149,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(
 }
 
 CFX_RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const char* filename) {
-  return LoadFromFile(CFX_WideString::FromLocal(filename).c_str());
+  return LoadFromFile(WideString::FromLocal(filename).c_str());
 }
 
 CFX_RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(
@@ -175,7 +175,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(
     DeleteDC(hDC);
     return nullptr;
   }
-  CFX_ByteString info = GetBitmapInfo(pDIBitmap);
+  ByteString info = GetBitmapInfo(pDIBitmap);
   int ret = GetDIBits(hDC, hBitmap, 0, height, pDIBitmap->GetBuffer(),
                       (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
   DeleteDC(hDC);

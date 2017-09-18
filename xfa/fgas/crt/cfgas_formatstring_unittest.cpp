@@ -43,7 +43,7 @@ class CFGAS_FormatStringTest : public testing::Test {
 
   // Note, this re-creates the fmt on each call. If you need to multiple
   // times store it locally.
-  CFGAS_FormatString* fmt(const CFX_WideString& locale) {
+  CFGAS_FormatString* fmt(const WideString& locale) {
     mgr_ = pdfium::MakeUnique<CXFA_LocaleMgr>(nullptr, locale);
     fmt_ = pdfium::MakeUnique<CFGAS_FormatString>(mgr_.get());
     return fmt_.get();
@@ -112,7 +112,7 @@ TEST_F(CFGAS_FormatStringTest, DateFormat) {
   // of DDD, DDDD, MMM, MMMM, E, e, gg, YYY, YYYYY.
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
                     ->FormatDateTime(tests[i].input, tests[i].pattern,
                                      FX_DATETIMETYPE_Date, &result));
@@ -161,7 +161,7 @@ TEST_F(CFGAS_FormatStringTest, TimeFormat) {
   SetTZ("UTC+2");
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
                     ->FormatDateTime(tests[i].input, tests[i].pattern,
                                      FX_DATETIMETYPE_Time, &result));
@@ -191,7 +191,7 @@ TEST_F(CFGAS_FormatStringTest, DateTimeFormat) {
        L"At 10:30 GMT on Jul 16, 1999"}};
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
                     ->FormatDateTime(tests[i].input, tests[i].pattern,
                                      FX_DATETIMETYPE_TimeDate, &result));
@@ -288,7 +288,7 @@ TEST_F(CFGAS_FormatStringTest, DateParse) {
 // }
 
 TEST_F(CFGAS_FormatStringTest, SplitFormatString) {
-  std::vector<CFX_WideString> results;
+  std::vector<WideString> results;
   fmt(L"en")->SplitFormatString(
       L"null{'No data'} | null{} | text{999*9999} | text{999*999*9999}",
       &results);
@@ -416,7 +416,7 @@ TEST_F(CFGAS_FormatStringTest, NumParse) {
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
                     ->ParseNum(tests[i].input, tests[i].pattern, &result))
         << " TEST: " << i;
@@ -512,7 +512,7 @@ TEST_F(CFGAS_FormatStringTest, NumFormat) {
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
                     ->FormatNum(tests[i].input, tests[i].pattern, &result))
         << " TEST: " << i;
@@ -538,7 +538,7 @@ TEST_F(CFGAS_FormatStringTest, TextParse) {
                {L"en", L"A1C-1234-D text", L"000-9999-X 'text'", L"A1C1234D"}};
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
                     ->ParseText(tests[i].input, tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
@@ -547,7 +547,7 @@ TEST_F(CFGAS_FormatStringTest, TextParse) {
 
 TEST_F(CFGAS_FormatStringTest, InvalidTextParse) {
   // Input does not match mask.
-  CFX_WideString result;
+  WideString result;
   EXPECT_FALSE(fmt(L"en")->ParseText(L"123-4567-8", L"AAA-9999-X", &result));
 }
 
@@ -568,7 +568,7 @@ TEST_F(CFGAS_FormatStringTest, TextFormat) {
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)
                     ->FormatText(tests[i].input, tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
@@ -599,7 +599,7 @@ TEST_F(CFGAS_FormatStringTest, NullFormat) {
   } tests[] = {{L"en", L"null{'n/a'}", L"n/a"}, {L"en", L"null{}", L""}};
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(fmt(tests[i].locale)->FormatNull(tests[i].pattern, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
@@ -635,7 +635,7 @@ TEST_F(CFGAS_FormatStringTest, ZeroFormat) {
                {L"en", L"0", L"zero{}", L""}};
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    CFX_WideString result;
+    WideString result;
     EXPECT_TRUE(
         fmt(tests[i].locale)
             ->FormatZero(/* tests[i].input,*/ tests[i].pattern, &result));

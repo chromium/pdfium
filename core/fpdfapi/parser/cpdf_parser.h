@@ -63,7 +63,7 @@ class CPDF_Parser {
                              CPDF_Document* pDocument);
 
   void SetPassword(const char* password) { m_Password = password; }
-  CFX_ByteString GetPassword() { return m_Password; }
+  ByteString GetPassword() { return m_Password; }
   CPDF_Dictionary* GetTrailer() const;
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
 
@@ -199,7 +199,7 @@ class CPDF_Parser {
   CFX_UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   FX_FILESIZE m_LastXRefOffset;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
-  CFX_ByteString m_Password;
+  ByteString m_Password;
   std::unique_ptr<TrailerData> m_TrailerData;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   uint32_t m_dwLinearizedFirstPageXRefStartObjNum;

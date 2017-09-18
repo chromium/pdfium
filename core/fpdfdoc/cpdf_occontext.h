@@ -31,7 +31,7 @@ class CPDF_OCContext : public CFX_Retainable {
   CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);
   ~CPDF_OCContext() override;
 
-  bool LoadOCGStateFromConfig(const CFX_ByteString& csConfig,
+  bool LoadOCGStateFromConfig(const ByteString& csConfig,
                               const CPDF_Dictionary* pOCGDict) const;
   bool LoadOCGState(const CPDF_Dictionary* pOCGDict) const;
   bool GetOCGVisible(const CPDF_Dictionary* pOCGDict);

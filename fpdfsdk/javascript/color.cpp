@@ -91,7 +91,7 @@ void color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
 
   CJS_Value value(pRuntime);
   array.GetElement(pRuntime, 0, value);
-  CFX_ByteString sSpace = value.ToCFXByteString(pRuntime);
+  ByteString sSpace = value.ToCFXByteString(pRuntime);
 
   double d1 = 0;
   double d2 = 0;
@@ -132,73 +132,65 @@ void color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
 
 bool color::transparent(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
-                        CFX_WideString& sError) {
+                        WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crTransparent);
 }
 
 bool color::black(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crBlack);
 }
 
 bool color::white(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crWhite);
 }
 
-bool color::red(CJS_Runtime* pRuntime,
-                CJS_PropValue& vp,
-                CFX_WideString& sError) {
+bool color::red(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crRed);
 }
 
 bool color::green(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crGreen);
 }
 
-bool color::blue(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool color::blue(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crBlue);
 }
 
-bool color::cyan(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool color::cyan(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crCyan);
 }
 
 bool color::magenta(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crMagenta);
 }
 
 bool color::yellow(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crYellow);
 }
 
 bool color::dkGray(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crDKGray);
 }
 
-bool color::gray(CJS_Runtime* pRuntime,
-                 CJS_PropValue& vp,
-                 CFX_WideString& sError) {
+bool color::gray(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crGray);
 }
 
 bool color::ltGray(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+                   WideString& sError) {
   return PropertyHelper(pRuntime, vp, &m_crLTGray);
 }
 
@@ -221,7 +213,7 @@ bool color::PropertyHelper(CJS_Runtime* pRuntime,
 bool color::convert(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
-                    CFX_WideString& sError) {
+                    WideString& sError) {
   int iSize = params.size();
   if (iSize < 2)
     return false;
@@ -233,7 +225,7 @@ bool color::convert(CJS_Runtime* pRuntime,
   CFX_Color crSource;
   ConvertArrayToPWLColor(pRuntime, aSource, &crSource);
 
-  CFX_ByteString sDestSpace = params[1].ToCFXByteString(pRuntime);
+  ByteString sDestSpace = params[1].ToCFXByteString(pRuntime);
   int nColorType = COLORTYPE_TRANSPARENT;
 
   if (sDestSpace == "T") {
@@ -257,7 +249,7 @@ bool color::convert(CJS_Runtime* pRuntime,
 bool color::equal(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
-                  CFX_WideString& sError) {
+                  WideString& sError) {
   if (params.size() < 2)
     return false;
 

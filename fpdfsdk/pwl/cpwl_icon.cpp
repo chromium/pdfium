@@ -37,12 +37,12 @@ CFX_Matrix CPWL_Icon::GetImageMatrix() {
   return CFX_Matrix();
 }
 
-CFX_ByteString CPWL_Icon::GetImageAlias() {
+ByteString CPWL_Icon::GetImageAlias() {
   if (!m_pPDFStream)
-    return CFX_ByteString();
+    return ByteString();
   if (CPDF_Dictionary* pDict = m_pPDFStream->GetDict())
     return pDict->GetStringFor("Name");
-  return CFX_ByteString();
+  return ByteString();
 }
 
 std::pair<float, float> CPWL_Icon::GetIconPosition() {

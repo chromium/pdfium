@@ -34,7 +34,7 @@ struct JSMethodSpec {
   v8::FunctionCallback pMethodCall;
 };
 
-template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, CFX_WideString&)>
+template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, WideString&)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -48,7 +48,7 @@ void JSPropGetter(const char* prop_name_string,
   if (!pJSObj)
     return;
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
-  CFX_WideString sError;
+  WideString sError;
   CJS_PropValue value(pRuntime);
   value.StartGetting();
   if (!(pObj->*M)(pRuntime, value, sError)) {
@@ -59,7 +59,7 @@ void JSPropGetter(const char* prop_name_string,
   info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(pRuntime));
 }
 
-template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, CFX_WideString&)>
+template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, WideString&)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -74,7 +74,7 @@ void JSPropSetter(const char* prop_name_string,
   if (!pJSObj)
     return;
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
-  CFX_WideString sError;
+  WideString sError;
   CJS_PropValue propValue(pRuntime, CJS_Value(pRuntime, value));
   propValue.StartSetting();
   if (!(pObj->*M)(pRuntime, propValue, sError)) {
@@ -101,7 +101,7 @@ template <class C,
           bool (C::*M)(CJS_Runtime*,
                        const std::vector<CJS_Value>&,
                        CJS_Value&,
-                       CFX_WideString&)>
+                       WideString&)>
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
@@ -118,7 +118,7 @@ void JSMethod(const char* method_name_string,
   if (!pJSObj)
     return;
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
-  CFX_WideString sError;
+  WideString sError;
   CJS_Value valueRes(pRuntime);
   if (!(pObj->*M)(pRuntime, parameters, valueRes, sError)) {
     pRuntime->Error(
@@ -325,8 +325,8 @@ void JSSpecialPropQuery(const char*,
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname = CFX_WideString::FromUTF8(
-      CFX_ByteStringC(*utf8_value, utf8_value.length()));
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
   bool bRet = pObj->QueryProperty(propname.c_str());
   info.GetReturnValue().Set(bRet ? 4 : 0);
 }
@@ -347,9 +347,9 @@ void JSSpecialPropGet(const char* class_name,
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname = CFX_WideString::FromUTF8(
-      CFX_ByteStringC(*utf8_value, utf8_value.length()));
-  CFX_WideString sError;
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
+  WideString sError;
   CJS_PropValue value(pRuntime);
   value.StartGetting();
   if (!pObj->DoProperty(pRuntime, propname.c_str(), value, sError)) {
@@ -376,9 +376,9 @@ void JSSpecialPropPut(const char* class_name,
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname = CFX_WideString::FromUTF8(
-      CFX_ByteStringC(*utf8_value, utf8_value.length()));
-  CFX_WideString sError;
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
+  WideString sError;
   CJS_PropValue PropValue(pRuntime, CJS_Value(pRuntime, value));
   PropValue.StartSetting();
   if (!pObj->DoProperty(pRuntime, propname.c_str(), PropValue, sError)) {
@@ -402,20 +402,18 @@ void JSSpecialPropDel(const char* class_name,
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname = CFX_WideString::FromUTF8(
-      CFX_ByteStringC(*utf8_value, utf8_value.length()));
-  CFX_WideString sError;
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
+  WideString sError;
   if (!pObj->DelProperty(pRuntime, propname.c_str(), sError)) {
-    CFX_ByteString cbName;
+    ByteString cbName;
     cbName.Format("%s.%s", class_name, "DelProperty");
     // Probably a missing call to JSFX_Error().
   }
 }
 
-template <bool (*F)(CJS_Runtime*,
-                    const std::vector<CJS_Value>&,
-                    CJS_Value&,
-                    CFX_WideString&)>
+template <bool (
+    *F)(CJS_Runtime*, const std::vector<CJS_Value>&, CJS_Value&, WideString&)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
@@ -427,7 +425,7 @@ void JSGlobalFunc(const char* func_name_string,
     parameters.push_back(CJS_Value(pRuntime, info[i]));
   }
   CJS_Value valueRes(pRuntime);
-  CFX_WideString sError;
+  WideString sError;
   if (!(*F)(pRuntime, parameters, valueRes, sError)) {
     pRuntime->Error(JSFormatErrorString(func_name_string, nullptr, sError));
     return;

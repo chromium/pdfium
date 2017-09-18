@@ -64,8 +64,8 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     EXPECT_TRUE(font_desc->KeyExist("Descent"));
     EXPECT_TRUE(font_desc->KeyExist("CapHeight"));
     EXPECT_TRUE(font_desc->KeyExist("StemV"));
-    CFX_ByteString present("FontFile");
-    CFX_ByteString absent("FontFile2");
+    ByteString present("FontFile");
+    ByteString absent("FontFile2");
     if (font_type == FPDF_FONT_TRUETYPE)
       std::swap(present, absent);
     EXPECT_TRUE(font_desc->KeyExist(present));

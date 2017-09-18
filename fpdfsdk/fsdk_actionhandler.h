@@ -26,7 +26,7 @@ class CPDFSDK_ActionHandler {
   bool DoAction_DocOpen(const CPDF_Action& action,
                         CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_JavaScript(const CPDF_Action& JsAction,
-                           CFX_WideString csJSName,
+                           WideString csJSName,
                            CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_Page(const CPDF_Action& action,
                      enum CPDF_AAction::AActionType eType,
@@ -86,15 +86,15 @@ class CPDFSDK_ActionHandler {
                      CPDFSDK_FormFillEnvironment* pFormFillEnv);
   void RunDocumentPageJavaScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDF_AAction::AActionType type,
-                                 const CFX_WideString& script);
+                                 const WideString& script);
   void RunDocumentOpenJavaScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                 const CFX_WideString& sScriptName,
-                                 const CFX_WideString& script);
+                                 const WideString& sScriptName,
+                                 const WideString& script);
   void RunFieldJavaScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           CPDF_FormField* pFormField,
                           CPDF_AAction::AActionType type,
                           PDFSDK_FieldAction& data,
-                          const CFX_WideString& script);
+                          const WideString& script);
 
   bool IsValidField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     CPDF_Dictionary* pFieldDict);

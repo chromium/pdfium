@@ -28,12 +28,12 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/utils.h"
 
-CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString& msg,
-                                       const CFX_WideString& ecLevel,
+CBC_EncoderContext::CBC_EncoderContext(const WideString& msg,
+                                       const WideString& ecLevel,
                                        int32_t& e) {
-  CFX_ByteString dststr;
+  ByteString dststr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, dststr);
-  CFX_WideString sb;
+  WideString sb;
   FX_STRSIZE c = dststr.GetLength();
   for (FX_STRSIZE i = 0; i < c; i++) {
     wchar_t ch = static_cast<wchar_t>(dststr[i] & 0xff);
@@ -66,7 +66,7 @@ wchar_t CBC_EncoderContext::getCurrent() {
   return m_msg[m_pos];
 }
 
-void CBC_EncoderContext::writeCodewords(const CFX_WideString& codewords) {
+void CBC_EncoderContext::writeCodewords(const WideString& codewords) {
   m_codewords += codewords;
 }
 

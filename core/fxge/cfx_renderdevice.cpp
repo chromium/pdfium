@@ -336,7 +336,7 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
   if (text_flags & FXFONT_CIDFONT)
     return false;
 
-  const CFX_ByteString bsPsName = pFont->GetPsName();
+  const ByteString bsPsName = pFont->GetPsName();
   if (bsPsName.Contains("+ZJHL"))
     return false;
 

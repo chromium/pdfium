@@ -687,7 +687,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
         if (!script)
           return 1;
 
-        CFX_WideString wsExpression;
+        WideString wsExpression;
         script.GetExpression(wsExpression);
         if (wsExpression.IsEmpty())
           return 1;
@@ -700,7 +700,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
       if (!pAppProvider)
         return 0;
 
-      CFX_WideString wsMessage;
+      WideString wsMessage;
       calc.GetMessageText(wsMessage);
       if (!wsMessage.IsEmpty())
         wsMessage += L"\r\n";

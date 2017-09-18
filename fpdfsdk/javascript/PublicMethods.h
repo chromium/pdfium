@@ -21,91 +21,91 @@ class CJS_PublicMethods : public CJS_Object {
   static bool AFNumber_Format(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
-                              CFX_WideString& sError);
+                              WideString& sError);
   static bool AFNumber_Keystroke(CJS_Runtime* pRuntime,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
-                                 CFX_WideString& sError);
+                                 WideString& sError);
   static bool AFPercent_Format(CJS_Runtime* pRuntime,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
-                               CFX_WideString& sError);
+                               WideString& sError);
   static bool AFPercent_Keystroke(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
-                                  CFX_WideString& sError);
+                                  WideString& sError);
   static bool AFDate_FormatEx(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
-                              CFX_WideString& sError);
+                              WideString& sError);
   static bool AFDate_KeystrokeEx(CJS_Runtime* pRuntime,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
-                                 CFX_WideString& sError);
+                                 WideString& sError);
   static bool AFDate_Format(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError);
+                            WideString& sError);
   static bool AFDate_Keystroke(CJS_Runtime* pRuntime,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
-                               CFX_WideString& sError);
+                               WideString& sError);
   static bool AFTime_FormatEx(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
-                              CFX_WideString& sError);  //
+                              WideString& sError);  //
   static bool AFTime_KeystrokeEx(CJS_Runtime* pRuntime,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
-                                 CFX_WideString& sError);
+                                 WideString& sError);
   static bool AFTime_Format(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError);
+                            WideString& sError);
   static bool AFTime_Keystroke(CJS_Runtime* pRuntime,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
-                               CFX_WideString& sError);
+                               WideString& sError);
   static bool AFSpecial_Format(CJS_Runtime* pRuntime,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
-                               CFX_WideString& sError);
+                               WideString& sError);
   static bool AFSpecial_Keystroke(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
-                                  CFX_WideString& sError);
+                                  WideString& sError);
   static bool AFSpecial_KeystrokeEx(CJS_Runtime* pRuntime,
                                     const std::vector<CJS_Value>& params,
                                     CJS_Value& vRet,
-                                    CFX_WideString& sError);  //
+                                    WideString& sError);  //
   static bool AFSimple(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
-                       CFX_WideString& sError);
+                       WideString& sError);
   static bool AFMakeNumber(CJS_Runtime* pRuntime,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
-                           CFX_WideString& sError);
+                           WideString& sError);
   static bool AFSimple_Calculate(CJS_Runtime* pRuntime,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
-                                 CFX_WideString& sError);
+                                 WideString& sError);
   static bool AFRange_Validate(CJS_Runtime* pRuntime,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
-                               CFX_WideString& sError);
+                               WideString& sError);
   static bool AFMergeChange(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError);
+                            WideString& sError);
   static bool AFParseDateEx(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError);
+                            WideString& sError);
   static bool AFExtractNums(CJS_Runtime* pRuntime,
                             const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
-                            CFX_WideString& sError);
+                            WideString& sError);
 
   JS_STATIC_GLOBAL_FUN(AFNumber_Format);
   JS_STATIC_GLOBAL_FUN(AFNumber_Keystroke);
@@ -132,23 +132,21 @@ class CJS_PublicMethods : public CJS_Object {
 
   JS_STATIC_DECLARE_GLOBAL_FUN();
 
-  static int ParseStringInteger(const CFX_WideString& string,
+  static int ParseStringInteger(const WideString& string,
                                 FX_STRSIZE nStart,
                                 FX_STRSIZE& nSkip,
                                 FX_STRSIZE nMaxStep);
-  static CFX_WideString ParseStringString(const CFX_WideString& string,
-                                          FX_STRSIZE nStart,
-                                          FX_STRSIZE& nSkip);
-  static double MakeRegularDate(const CFX_WideString& value,
-                                const CFX_WideString& format,
+  static WideString ParseStringString(const WideString& string,
+                                      FX_STRSIZE nStart,
+                                      FX_STRSIZE& nSkip);
+  static double MakeRegularDate(const WideString& value,
+                                const WideString& format,
                                 bool* bWrongFormat);
-  static CFX_WideString MakeFormatDate(double dDate,
-                                       const CFX_WideString& format);
-  static double ParseNormalDate(const CFX_WideString& value,
-                                bool* bWrongFormat);
-  static double MakeInterDate(const CFX_WideString& value);
+  static WideString MakeFormatDate(double dDate, const WideString& format);
+  static double ParseNormalDate(const WideString& value, bool* bWrongFormat);
+  static double MakeInterDate(const WideString& value);
 
-  static bool IsNumber(const CFX_WideString& str);
+  static bool IsNumber(const WideString& str);
 
   static bool maskSatisfied(wchar_t c_Change, wchar_t c_Mask);
   static bool isReservedMaskChar(wchar_t ch);

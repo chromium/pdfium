@@ -19,7 +19,7 @@ namespace {
 // |end|. The purpose of this function is to separate url from the surrounding
 // context characters, we do not intend to fully validate the url. |str|
 // contains lower case characters only.
-FX_STRSIZE FindWebLinkEnding(const CFX_WideString& str,
+FX_STRSIZE FindWebLinkEnding(const WideString& str,
                              FX_STRSIZE start,
                              FX_STRSIZE end) {
   if (str.Contains(L'/', start)) {
@@ -67,7 +67,7 @@ FX_STRSIZE FindWebLinkEnding(const CFX_WideString& str,
 // Remove characters from the end of |str|, delimited by |start| and |end|, up
 // to and including |charToFind|. No-op if |charToFind| is not present. Updates
 // |end| if characters were removed.
-void TrimBackwardsToChar(const CFX_WideString& str,
+void TrimBackwardsToChar(const WideString& str,
                          wchar_t charToFind,
                          FX_STRSIZE start,
                          FX_STRSIZE* end) {
@@ -83,7 +83,7 @@ void TrimBackwardsToChar(const CFX_WideString& str,
 // |start| and |end| in |str|. Matches a closing bracket or quote for each
 // opening character and, if present, removes everything afterwards. Returns the
 // new end position for the string.
-FX_STRSIZE TrimExternalBracketsFromWebLink(const CFX_WideString& str,
+FX_STRSIZE TrimExternalBracketsFromWebLink(const WideString& str,
                                            FX_STRSIZE start,
                                            FX_STRSIZE end) {
   for (FX_STRSIZE pos = 0; pos < start; pos++) {
@@ -144,7 +144,7 @@ void CPDF_LinkExtract::ParseLink() {
         pos++;
         continue;
       }
-      CFX_WideString strBeCheck;
+      WideString strBeCheck;
       strBeCheck = m_pTextPage->GetPageText(start, nCount);
       if (bLineBreak) {
         strBeCheck.Remove(TEXT_LINEFEED_CHAR);
@@ -187,7 +187,7 @@ void CPDF_LinkExtract::ParseLink() {
   }
 }
 
-bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
+bool CPDF_LinkExtract::CheckWebLink(WideString* strBeCheck,
                                     int32_t* nStart,
                                     int32_t* nCount) {
   static const wchar_t kHttpScheme[] = L"http";
@@ -195,7 +195,7 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
   static const wchar_t kWWWAddrStart[] = L"www.";
   static const FX_STRSIZE kWWWAddrStartLen = FXSYS_len(kWWWAddrStart);
 
-  CFX_WideString str = *strBeCheck;
+  WideString str = *strBeCheck;
   str.MakeLower();
 
   FX_STRSIZE len = str.GetLength();
@@ -237,7 +237,7 @@ bool CPDF_LinkExtract::CheckWebLink(CFX_WideString* strBeCheck,
   return false;
 }
 
-bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
+bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
   auto aPos = str->Find(L'@');
   // Invalid when no '@' or when starts/ends with '@'.
   if (!aPos.has_value() || aPos.value() == 0 || aPos == str->GetLength() - 1)
@@ -305,7 +305,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString* str) {
   return true;
 }
 
-CFX_WideString CPDF_LinkExtract::GetURL(size_t index) const {
+WideString CPDF_LinkExtract::GetURL(size_t index) const {
   return index < m_LinkArray.size() ? m_LinkArray[index].m_strUrl : L"";
 }
 

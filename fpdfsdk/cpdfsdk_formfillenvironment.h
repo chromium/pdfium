@@ -133,10 +133,10 @@ class CPDFSDK_FormFillEnvironment
   void SetCurrentPage(CPDFXFA_Context* document, int iCurPage);
 
   // TODO(dsinclair): This should probably change to PDFium?
-  CFX_WideString FFI_GetAppName() const { return CFX_WideString(L"Acrobat"); }
+  WideString FFI_GetAppName() const { return WideString(L"Acrobat"); }
 
-  CFX_WideString GetPlatform();
-  void GotoURL(CPDFXFA_Context* document, const CFX_WideStringC& wsURL);
+  WideString GetPlatform();
+  void GotoURL(CPDFXFA_Context* document, const WideStringView& wsURL);
   void GetPageViewRect(CPDFXFA_Page* page, FS_RECTF& dstRect);
   bool PopupMenu(CPDFXFA_Page* page,
                  FPDF_WIDGET hWidget,
@@ -157,15 +157,15 @@ class CPDFSDK_FormFillEnvironment
                              FPDF_WIDESTRING wsURL,
                              const char* mode);
   CFX_RetainPtr<IFX_SeekableReadStream> DownloadFromURL(const wchar_t* url);
-  CFX_WideString PostRequestURL(const wchar_t* wsURL,
-                                const wchar_t* wsData,
-                                const wchar_t* wsContentType,
-                                const wchar_t* wsEncode,
-                                const wchar_t* wsHeader);
+  WideString PostRequestURL(const wchar_t* wsURL,
+                            const wchar_t* wsData,
+                            const wchar_t* wsContentType,
+                            const wchar_t* wsEncode,
+                            const wchar_t* wsHeader);
   FPDF_BOOL PutRequestURL(const wchar_t* wsURL,
                           const wchar_t* wsData,
                           const wchar_t* wsEncode);
-  CFX_WideString GetLanguage();
+  WideString GetLanguage();
 
   void PageEvent(int iPageCount, uint32_t dwEventType) const;
 #else   // PDF_ENABLE_XFA
@@ -184,8 +184,8 @@ class CPDFSDK_FormFillEnvironment
                      void* response,
                      int length);
   void JS_appBeep(int nType);
-  CFX_WideString JS_fieldBrowse();
-  CFX_WideString JS_docGetFilePath();
+  WideString JS_fieldBrowse();
+  WideString JS_docGetFilePath();
   void JS_docSubmitForm(void* formData, int length, const wchar_t* URL);
   void JS_docmailForm(void* mailData,
                       int length,
@@ -206,7 +206,7 @@ class CPDFSDK_FormFillEnvironment
   void JS_docgotoPage(int nPageNum);
 
   bool IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
-  CFX_ByteString GetAppName() const { return ""; }
+  ByteString GetAppName() const { return ""; }
   CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 

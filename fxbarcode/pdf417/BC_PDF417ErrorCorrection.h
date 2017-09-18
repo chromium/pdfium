@@ -17,9 +17,9 @@ class CBC_PDF417ErrorCorrection {
   virtual ~CBC_PDF417ErrorCorrection();
 
   static int32_t getErrorCorrectionCodewordCount(int32_t errorCorrectionLevel);
-  static bool generateErrorCorrection(const CFX_WideString& dataCodewords,
+  static bool generateErrorCorrection(const WideString& dataCodewords,
                                       int32_t errorCorrectionLevel,
-                                      CFX_WideString* result);
+                                      WideString* result);
 };
 
 #endif  // FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_

@@ -37,10 +37,10 @@ class CXFA_FFTextEdit : public CXFA_FFField {
                     const CFX_Matrix& matrix) override;
 
   void OnTextChanged(CFWL_Widget* pWidget,
-                     const CFX_WideString& wsChanged,
-                     const CFX_WideString& wsPrevText);
+                     const WideString& wsChanged,
+                     const WideString& wsPrevText);
   void OnTextFull(CFWL_Widget* pWidget);
-  bool CheckWord(const CFX_ByteStringC& sWord);
+  bool CheckWord(const ByteStringView& sWord);
 
  protected:
   uint32_t GetAlignment();
@@ -51,7 +51,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   bool CommitData() override;
   bool UpdateFWLData() override;
   bool IsDataChanged() override;
-  void ValidateNumberField(const CFX_WideString& wsText);
+  void ValidateNumberField(const WideString& wsText);
 };
 
 #endif  // XFA_FXFA_CXFA_FFTEXTEDIT_H_

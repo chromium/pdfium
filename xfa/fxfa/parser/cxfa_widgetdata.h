@@ -45,7 +45,7 @@ class CXFA_WidgetData : public CXFA_Data {
 
   CXFA_Node* GetUIChild();
   XFA_Element GetUIType();
-  CFX_WideString GetRawValue();
+  WideString GetRawValue();
   int32_t GetAccess();
   int32_t GetRotate();
 
@@ -73,8 +73,8 @@ class CXFA_WidgetData : public CXFA_Data {
   CXFA_Border GetUIBorder();
   CFX_RectF GetUIMargin();
   int32_t GetButtonHighlight();
-  bool GetButtonRollover(CFX_WideString& wsRollover, bool& bRichText);
-  bool GetButtonDown(CFX_WideString& wsDown, bool& bRichText);
+  bool GetButtonRollover(WideString& wsRollover, bool& bRichText);
+  bool GetButtonDown(WideString& wsDown, bool& bRichText);
   int32_t GetCheckButtonShape();
   int32_t GetCheckButtonMark();
   float GetCheckButtonSize();
@@ -84,8 +84,8 @@ class CXFA_WidgetData : public CXFA_Data {
   void SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify);
   CXFA_Node* GetExclGroupNode();
   CXFA_Node* GetSelectedMember();
-  CXFA_Node* SetSelectedMember(const CFX_WideStringC& wsName, bool bNotify);
-  void SetSelectedMemberByValue(const CFX_WideStringC& wsValue,
+  CXFA_Node* SetSelectedMember(const WideStringView& wsName, bool bNotify);
+  void SetSelectedMemberByValue(const WideStringView& wsValue,
                                 bool bNotify,
                                 bool bScriptModify,
                                 bool bSyncData);
@@ -96,14 +96,12 @@ class CXFA_WidgetData : public CXFA_Data {
   int32_t GetChoiceListOpen();
   bool IsListBox();
   int32_t CountChoiceListItems(bool bSaveValue);
-  bool GetChoiceListItem(CFX_WideString& wsText,
-                         int32_t nIndex,
-                         bool bSaveValue);
-  std::vector<CFX_WideString> GetChoiceListItems(bool bSaveValue);
+  bool GetChoiceListItem(WideString& wsText, int32_t nIndex, bool bSaveValue);
+  std::vector<WideString> GetChoiceListItems(bool bSaveValue);
   int32_t CountSelectedItems();
   int32_t GetSelectedItem(int32_t nIndex);
   std::vector<int32_t> GetSelectedItems();
-  std::vector<CFX_WideString> GetSelectedItemsValue();
+  std::vector<WideString> GetSelectedItemsValue();
   bool GetItemState(int32_t nIndex);
   void SetItemState(int32_t nIndex,
                     bool bSelected,
@@ -115,25 +113,25 @@ class CXFA_WidgetData : public CXFA_Data {
                         bool bScriptModify,
                         bool bSyncData);
   void ClearAllSelections();
-  void InsertItem(const CFX_WideString& wsLabel,
-                  const CFX_WideString& wsValue,
+  void InsertItem(const WideString& wsLabel,
+                  const WideString& wsValue,
                   bool bNotify);
-  void GetItemLabel(const CFX_WideStringC& wsValue, CFX_WideString& wsLabel);
-  void GetItemValue(const CFX_WideStringC& wsLabel, CFX_WideString& wsValue);
+  void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
+  void GetItemValue(const WideStringView& wsLabel, WideString& wsValue);
   bool DeleteItem(int32_t nIndex, bool bNotify, bool bScriptModify);
   int32_t GetHorizontalScrollPolicy();
   int32_t GetNumberOfCells();
-  bool SetValue(const CFX_WideString& wsValue, XFA_VALUEPICTURE eValueType);
-  bool GetPictureContent(CFX_WideString& wsPicture, XFA_VALUEPICTURE ePicture);
+  bool SetValue(const WideString& wsValue, XFA_VALUEPICTURE eValueType);
+  bool GetPictureContent(WideString& wsPicture, XFA_VALUEPICTURE ePicture);
   IFX_Locale* GetLocal();
-  bool GetValue(CFX_WideString& wsValue, XFA_VALUEPICTURE eValueType);
-  bool GetNormalizeDataValue(const CFX_WideString& wsValue,
-                             CFX_WideString& wsNormalizeValue);
-  bool GetFormatDataValue(const CFX_WideString& wsValue,
-                          CFX_WideString& wsFormattedValue);
-  void NormalizeNumStr(const CFX_WideString& wsValue, CFX_WideString& wsOutput);
+  bool GetValue(WideString& wsValue, XFA_VALUEPICTURE eValueType);
+  bool GetNormalizeDataValue(const WideString& wsValue,
+                             WideString& wsNormalizeValue);
+  bool GetFormatDataValue(const WideString& wsValue,
+                          WideString& wsFormattedValue);
+  void NormalizeNumStr(const WideString& wsValue, WideString& wsOutput);
 
-  CFX_WideString GetBarcodeType();
+  WideString GetBarcodeType();
   bool GetBarcodeAttribute_CharEncoding(int32_t* val);
   bool GetBarcodeAttribute_Checksum(bool* val);
   bool GetBarcodeAttribute_DataLength(int32_t* val);
@@ -146,7 +144,7 @@ class CXFA_WidgetData : public CXFA_Data {
   bool GetBarcodeAttribute_TextLocation(int32_t* val);
   bool GetBarcodeAttribute_Truncate(bool* val);
   bool GetBarcodeAttribute_WideNarrowRatio(float* val);
-  void GetPasswordChar(CFX_WideString& wsPassWord);
+  void GetPasswordChar(WideString& wsPassWord);
 
   bool IsMultiLine();
   int32_t GetVerticalScrollPolicy();
@@ -154,22 +152,22 @@ class CXFA_WidgetData : public CXFA_Data {
   bool GetFracDigits(int32_t& iFracDigits);
   bool GetLeadDigits(int32_t& iLeadDigits);
 
-  CFX_WideString NumericLimit(const CFX_WideString& wsValue,
-                              int32_t iLead,
-                              int32_t iTread) const;
+  WideString NumericLimit(const WideString& wsValue,
+                          int32_t iLead,
+                          int32_t iTread) const;
 
   bool m_bIsNull;
   bool m_bPreNull;
 
  private:
   CXFA_Bind GetBind();
-  void SyncValue(const CFX_WideString& wsValue, bool bNotify);
+  void SyncValue(const WideString& wsValue, bool bNotify);
   void InsertListTextItem(CXFA_Node* pItems,
-                          const CFX_WideString& wsText,
+                          const WideString& wsText,
                           int32_t nIndex);
-  void FormatNumStr(const CFX_WideString& wsValue,
+  void FormatNumStr(const WideString& wsValue,
                     IFX_Locale* pLocale,
-                    CFX_WideString& wsOutput);
+                    WideString& wsOutput);
 
   CXFA_Node* m_pUiChildNode;
   XFA_Element m_eUIType;

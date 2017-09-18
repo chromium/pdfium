@@ -30,7 +30,7 @@ class CPDF_Stream : public CPDF_Object {
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
   CPDF_Dictionary* GetDict() const override;
-  CFX_WideString GetUnicodeText() const override;
+  WideString GetUnicodeText() const override;
   bool IsStream() const override;
   CPDF_Stream* AsStream() override;
   const CPDF_Stream* AsStream() const override;

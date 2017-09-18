@@ -31,7 +31,7 @@ CXFA_Node* CXFA_NodeHelper::ResolveNodes_GetOneChild(CXFA_Node* parent,
     return nullptr;
 
   std::vector<CXFA_Node*> siblings;
-  uint32_t uNameHash = FX_HashCode_GetW(CFX_WideStringC(pwsName), false);
+  uint32_t uNameHash = FX_HashCode_GetW(WideStringView(pwsName), false);
   NodeAcc_TraverseAnySiblings(parent, uNameHash, &siblings, bIsClassName);
   return !siblings.empty() ? siblings[0] : nullptr;
 }
@@ -228,13 +228,13 @@ int32_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
 }
 
 void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
-                                        CFX_WideString& wsName,
+                                        WideString& wsName,
                                         bool bIsAllPath,
                                         XFA_LOGIC_TYPE eLogicType) {
   wsName.clear();
   if (bIsAllPath) {
     GetNameExpression(refNode, wsName, false, eLogicType);
-    CFX_WideString wsParent;
+    WideString wsParent;
     CXFA_Node* parent =
         ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
     while (parent) {
@@ -247,7 +247,7 @@ void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
     return;
   }
 
-  CFX_WideString ws;
+  WideString ws;
   bool bIsProperty = NodeIsProperty(refNode);
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
@@ -275,9 +275,9 @@ bool CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {
   return false;
 }
 
-bool CXFA_NodeHelper::CreateNode_ForCondition(CFX_WideString& wsCondition) {
+bool CXFA_NodeHelper::CreateNode_ForCondition(WideString& wsCondition) {
   int32_t iLen = wsCondition.GetLength();
-  CFX_WideString wsIndex(L"0");
+  WideString wsIndex(L"0");
   bool bAll = false;
   if (iLen == 0) {
     m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
@@ -314,8 +314,8 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(CFX_WideString& wsCondition) {
 }
 
 bool CXFA_NodeHelper::ResolveNodes_CreateNode(
-    CFX_WideString wsName,
-    CFX_WideString wsCondition,
+    WideString wsName,
+    WideString wsCondition,
     bool bLastNode,
     CXFA_ScriptContext* pScriptContext) {
   if (!m_pCreateParent) {
@@ -336,7 +336,7 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(
     CreateNode_ForCondition(wsCondition);
   }
   if (bIsClassName) {
-    XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringC());
+    XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringView());
     if (eType == XFA_Element::Unknown)
       return false;
 
@@ -358,7 +358,7 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(
     for (int32_t iIndex = 0; iIndex < m_iCreateCount; iIndex++) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eClassType);
       if (pNewNode) {
-        pNewNode->SetAttribute(XFA_ATTRIBUTE_Name, wsName.AsStringC());
+        pNewNode->SetAttribute(XFA_ATTRIBUTE_Name, wsName.AsStringView());
         pNewNode->CreateXMLMappingNode();
         m_pCreateParent->InsertChild(pNewNode);
         if (iIndex == m_iCreateCount - 1) {

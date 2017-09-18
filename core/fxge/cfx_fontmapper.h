@@ -23,10 +23,10 @@ class CFX_FontMapper {
 
   void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
   IFX_SystemFontInfo* GetSystemFontInfo() { return m_pFontInfo.get(); }
-  void AddInstalledFont(const CFX_ByteString& name, int charset);
+  void AddInstalledFont(const ByteString& name, int charset);
   void LoadInstalledFonts();
 
-  FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
+  FXFT_Face FindSubstFont(const ByteString& face_name,
                           bool bTrueType,
                           uint32_t flags,
                           int weight,
@@ -41,19 +41,17 @@ class CFX_FontMapper {
 #endif  // PDF_ENABLE_XFA
   bool IsBuiltinFace(const FXFT_Face face) const;
   int GetFaceSize() const;
-  CFX_ByteString GetFaceName(int index) const {
-    return m_FaceArray[index].name;
-  }
+  ByteString GetFaceName(int index) const { return m_FaceArray[index].name; }
 
-  std::vector<CFX_ByteString> m_InstalledTTFonts;
-  std::vector<std::pair<CFX_ByteString, CFX_ByteString>> m_LocalizedTTFonts;
+  std::vector<ByteString> m_InstalledTTFonts;
+  std::vector<std::pair<ByteString, ByteString>> m_LocalizedTTFonts;
 
  private:
   static const size_t MM_FACE_COUNT = 2;
   static const size_t FOXIT_FACE_COUNT = 14;
 
-  CFX_ByteString GetPSNameFromTT(void* hFont);
-  CFX_ByteString MatchInstalledFonts(const CFX_ByteString& norm_name);
+  ByteString GetPSNameFromTT(void* hFont);
+  ByteString MatchInstalledFonts(const ByteString& norm_name);
   FXFT_Face UseInternalSubst(CFX_SubstFont* pSubstFont,
                              int iBaseFont,
                              int italic_angle,
@@ -64,19 +62,19 @@ class CFX_FontMapper {
                              uint32_t ttc_size,
                              uint32_t font_size);
   FXFT_Face GetCachedFace(void* hFont,
-                          CFX_ByteString SubstName,
+                          ByteString SubstName,
                           int weight,
                           bool bItalic,
                           uint32_t font_size);
 
   struct FaceData {
-    CFX_ByteString name;
+    ByteString name;
     uint32_t charset;
   };
 
   bool m_bListLoaded;
   FXFT_Face m_MMFaces[MM_FACE_COUNT];
-  CFX_ByteString m_LastFamily;
+  ByteString m_LastFamily;
   std::vector<FaceData> m_FaceArray;
   std::unique_ptr<IFX_SystemFontInfo> m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];

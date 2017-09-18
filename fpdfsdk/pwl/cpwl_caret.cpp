@@ -19,7 +19,7 @@ CPWL_Caret::CPWL_Caret() : m_bFlash(false), m_fWidth(0.4f), m_nDelay(0) {}
 
 CPWL_Caret::~CPWL_Caret() {}
 
-CFX_ByteString CPWL_Caret::GetClassName() const {
+ByteString CPWL_Caret::GetClassName() const {
   return "CPWL_Caret";
 }
 

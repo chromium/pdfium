@@ -63,32 +63,32 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
   CFX_CSSStyleRule* pStyleRule = nullptr;
   int32_t iValueLen = 0;
   const CFX_CSSPropertyTable* propertyTable = nullptr;
-  CFX_WideString wsName;
+  WideString wsName;
   while (1) {
     switch (pSyntax->DoSyntaxParse()) {
       case CFX_CSSSyntaxStatus::Selector: {
-        CFX_WideStringC strValue = pSyntax->GetCurrentString();
+        WideStringView strValue = pSyntax->GetCurrentString();
         auto pSelector = CFX_CSSSelector::FromString(strValue);
         if (pSelector)
           selectors.push_back(std::move(pSelector));
         break;
       }
       case CFX_CSSSyntaxStatus::PropertyName: {
-        CFX_WideStringC strValue = pSyntax->GetCurrentString();
+        WideStringView strValue = pSyntax->GetCurrentString();
         propertyTable = CFX_GetCSSPropertyByName(strValue);
         if (!propertyTable)
-          wsName = CFX_WideString(strValue);
+          wsName = WideString(strValue);
         break;
       }
       case CFX_CSSSyntaxStatus::PropertyValue: {
         if (propertyTable || iValueLen > 0) {
-          CFX_WideStringC strValue = pSyntax->GetCurrentString();
+          WideStringView strValue = pSyntax->GetCurrentString();
           auto* decl = pStyleRule->GetDeclaration();
           if (!strValue.IsEmpty()) {
             if (propertyTable) {
               decl->AddProperty(propertyTable, strValue);
             } else {
-              decl->AddProperty(wsName, CFX_WideString(strValue));
+              decl->AddProperty(wsName, WideString(strValue));
             }
           }
         }

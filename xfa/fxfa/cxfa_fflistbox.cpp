@@ -53,7 +53,7 @@ bool CXFA_FFListBox::LoadWidget() {
   m_pNormalWidget->LockUpdate();
 
   for (const auto& label : m_pDataAcc->GetChoiceListItems(false))
-    pListBox->AddString(label.AsStringC());
+    pListBox->AddString(label.AsStringView());
 
   uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
   if (m_pDataAcc->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect)
@@ -169,10 +169,9 @@ void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {
   AddInvalidateRect();
 }
 
-void CXFA_FFListBox::InsertItem(const CFX_WideStringC& wsLabel,
-                                int32_t nIndex) {
-  CFX_WideString wsTemp(wsLabel);
-  ToListBox(m_pNormalWidget.get())->AddString(wsTemp.AsStringC());
+void CXFA_FFListBox::InsertItem(const WideStringView& wsLabel, int32_t nIndex) {
+  WideString wsTemp(wsLabel);
+  ToListBox(m_pNormalWidget.get())->AddString(wsTemp.AsStringView());
   m_pNormalWidget->Update();
   AddInvalidateRect();
 }

@@ -15,7 +15,7 @@ CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::DataWindow,
-                  CFX_WideStringC(L"dataWindow")) {}
+                  WideStringView(L"dataWindow")) {}
 
 CScript_DataWindow::~CScript_DataWindow() {}
 

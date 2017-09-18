@@ -72,7 +72,7 @@ CPWL_ListBox::CPWL_ListBox()
 
 CPWL_ListBox::~CPWL_ListBox() {}
 
-CFX_ByteString CPWL_ListBox::GetClassName() const {
+ByteString CPWL_ListBox::GetClassName() const {
   return "CPWL_ListBox";
 }
 
@@ -260,8 +260,8 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag) {
   if (!m_pFillerNotify)
     return false;
 
-  CFX_WideString swChange = GetText();
-  CFX_WideString strChangeEx;
+  WideString swChange = GetText();
+  WideString strChangeEx;
   int nSelStart = 0;
   int nSelEnd = swChange.GetLength();
   bool bRC;
@@ -282,11 +282,11 @@ CFX_FloatRect CPWL_ListBox::GetFocusRect() const {
   return CPWL_Wnd::GetFocusRect();
 }
 
-void CPWL_ListBox::AddString(const CFX_WideString& str) {
+void CPWL_ListBox::AddString(const WideString& str) {
   m_pList->AddString(str);
 }
 
-CFX_WideString CPWL_ListBox::GetText() const {
+WideString CPWL_ListBox::GetText() const {
   return m_pList->GetText();
 }
 

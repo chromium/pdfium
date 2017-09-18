@@ -37,7 +37,7 @@ const uint8_t kChineseFontNames[][5] = {{0xCB, 0xCE, 0xCC, 0xE5, 0x00},
                                         {0xB7, 0xC2, 0xCB, 0xCE, 0x00},
                                         {0xD0, 0xC2, 0xCB, 0xCE, 0x00}};
 
-void GetPredefinedEncoding(const CFX_ByteString& value, int* basemap) {
+void GetPredefinedEncoding(const ByteString& value, int* basemap) {
   if (value == "WinAnsiEncoding")
     *basemap = PDFFONT_ENCODING_WINANSI;
   else if (value == "MacRomanEncoding")
@@ -140,17 +140,17 @@ int CPDF_Font::AppendChar(char* buf, uint32_t charcode) const {
   return 1;
 }
 
-void CPDF_Font::AppendChar(CFX_ByteString* str, uint32_t charcode) const {
+void CPDF_Font::AppendChar(ByteString* str, uint32_t charcode) const {
   char buf[4];
   int len = AppendChar(buf, charcode);
-  *str += CFX_ByteStringC(buf, len);
+  *str += ByteStringView(buf, len);
 }
 
-CFX_WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
+WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
   if (!m_bToUnicodeLoaded)
     LoadUnicodeMap();
 
-  return m_pToUnicodeMap ? m_pToUnicodeMap->Lookup(charcode) : CFX_WideString();
+  return m_pToUnicodeMap ? m_pToUnicodeMap->Lookup(charcode) : WideString();
 }
 
 uint32_t CPDF_Font::CharCodeFromUnicode(wchar_t unicode) const {
@@ -297,8 +297,8 @@ int CPDF_Font::GetStringWidth(const char* pString, int size) {
 
 // static
 CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
-                                   const CFX_ByteStringC& name) {
-  CFX_ByteString fontname(name);
+                                   const ByteStringView& name) {
+  ByteString fontname(name);
   int font_id = PDF_GetStandardFontName(&fontname);
   if (font_id < 0)
     return nullptr;
@@ -319,12 +319,12 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
 
 std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
                                              CPDF_Dictionary* pFontDict) {
-  CFX_ByteString type = pFontDict->GetStringFor("Subtype");
+  ByteString type = pFontDict->GetStringFor("Subtype");
   std::unique_ptr<CPDF_Font> pFont;
   if (type == "TrueType") {
-    CFX_ByteString tag = pFontDict->GetStringFor("BaseFont").Left(4);
+    ByteString tag = pFontDict->GetStringFor("BaseFont").Left(4);
     for (size_t i = 0; i < FX_ArraySize(kChineseFontNames); ++i) {
-      if (tag == CFX_ByteString(kChineseFontNames[i], 4)) {
+      if (tag == ByteString(kChineseFontNames[i], 4)) {
         CPDF_Dictionary* pFontDesc = pFontDict->GetDictFor("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))
           pFont = pdfium::MakeUnique<CPDF_CIDFont>();
@@ -358,7 +358,7 @@ uint32_t CPDF_Font::GetNextChar(const char* pString,
 
 void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
                                 int& iBaseEncoding,
-                                std::vector<CFX_ByteString>* pCharNames,
+                                std::vector<ByteString>* pCharNames,
                                 bool bEmbedded,
                                 bool bTrueType) {
   if (!pEncoding) {
@@ -380,7 +380,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
         iBaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
       return;
     }
-    CFX_ByteString bsEncoding = pEncoding->GetString();
+    ByteString bsEncoding = pEncoding->GetString();
     if (bsEncoding.Compare("MacExpertEncoding") == 0) {
       bsEncoding = "WinAnsiEncoding";
     }
@@ -394,7 +394,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
 
   if (iBaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
       iBaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS) {
-    CFX_ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
+    ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
     if (bsEncoding.Compare("MacExpertEncoding") == 0 && bTrueType) {
       bsEncoding = "WinAnsiEncoding";
     }
@@ -436,7 +436,7 @@ bool CPDF_Font::IsStandardFont() const {
 
 const char* CPDF_Font::GetAdobeCharName(
     int iBaseEncoding,
-    const std::vector<CFX_ByteString>& charnames,
+    const std::vector<ByteString>& charnames,
     int charcode) {
   if (charcode < 0 || charcode >= 256) {
     NOTREACHED();
@@ -466,7 +466,7 @@ int CPDF_Font::FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode) {
   if (!pdfium::IndexInBounds(m_FontFallbacks, fallbackFont))
     return -1;
 
-  CFX_WideString str = UnicodeFromCharCode(charcode);
+  WideString str = UnicodeFromCharCode(charcode);
   uint32_t unicode = !str.IsEmpty() ? str[0] : charcode;
   int glyph =
       FXFT_Get_Char_Index(m_FontFallbacks[fallbackFont]->GetFace(), unicode);

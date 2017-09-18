@@ -50,7 +50,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CPWL_Edit* GetEdit() const { return m_pEdit.Get(); }
 
   // CPWL_Wnd:
-  CFX_ByteString GetClassName() const override;
+  ByteString GetClassName() const override;
   void OnCreate(CreateParams* pParamsToAdjust) override;
   void OnDestroy() override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
@@ -62,14 +62,14 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CFX_FloatRect GetFocusRect() const override;
   void SetFocus() override;
   void KillFocus() override;
-  CFX_WideString GetSelectedText() override;
-  void ReplaceSelection(const CFX_WideString& text) override;
+  WideString GetSelectedText() override;
+  void ReplaceSelection(const WideString& text) override;
 
   void SetFillerNotify(IPWL_Filler_Notify* pNotify);
 
-  CFX_WideString GetText() const;
-  void SetText(const CFX_WideString& text);
-  void AddString(const CFX_WideString& str);
+  WideString GetText() const;
+  void SetText(const WideString& text);
+  void AddString(const WideString& str);
   int32_t GetSelect() const;
   void SetSelect(int32_t nItemIndex);
 

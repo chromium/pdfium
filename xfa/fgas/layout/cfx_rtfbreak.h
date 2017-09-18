@@ -31,7 +31,7 @@ struct FX_RTFTEXTOBJ {
   FX_RTFTEXTOBJ();
   ~FX_RTFTEXTOBJ();
 
-  CFX_WideString pStr;
+  WideString pStr;
   std::vector<int32_t> pWidths;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
   const CFX_RectF* pRect;

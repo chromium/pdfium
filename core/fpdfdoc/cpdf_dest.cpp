@@ -65,7 +65,7 @@ int CPDF_Dest::GetZoomMode() {
   if (!pObj)
     return 0;
 
-  CFX_ByteString mode = pObj->GetString();
+  ByteString mode = pObj->GetString();
   for (int i = 0; g_sZoomModes[i]; ++i) {
     if (mode == g_sZoomModes[i])
       return i + 1;
@@ -126,6 +126,6 @@ float CPDF_Dest::GetParam(int index) {
   return pArray ? pArray->GetNumberAt(2 + index) : 0;
 }
 
-CFX_ByteString CPDF_Dest::GetRemoteName() {
-  return m_pObj ? m_pObj->GetString() : CFX_ByteString();
+ByteString CPDF_Dest::GetRemoteName() {
+  return m_pObj ? m_pObj->GetString() : ByteString();
 }

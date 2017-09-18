@@ -556,7 +556,7 @@ void CPDF_ImageRenderer::HandleFilters() {
     return;
 
   if (pFilters->IsName()) {
-    CFX_ByteString bsDecodeType = pFilters->GetString();
+    ByteString bsDecodeType = pFilters->GetString();
     if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode")
       m_Flags |= FXRENDER_IMAGE_LOSSY;
     return;
@@ -567,7 +567,7 @@ void CPDF_ImageRenderer::HandleFilters() {
     return;
 
   for (size_t i = 0; i < pArray->GetCount(); i++) {
-    CFX_ByteString bsDecodeType = pArray->GetStringAt(i);
+    ByteString bsDecodeType = pArray->GetStringAt(i);
     if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
       m_Flags |= FXRENDER_IMAGE_LOSSY;
       break;

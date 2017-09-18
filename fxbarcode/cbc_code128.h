@@ -20,7 +20,7 @@ class CBC_Code128 : public CBC_OneCode {
   ~CBC_Code128() override;
 
   // CBC_OneCode:
-  bool Encode(const CFX_WideStringC& contents) override;
+  bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
@@ -30,7 +30,7 @@ class CBC_Code128 : public CBC_OneCode {
  private:
   CBC_OnedCode128Writer* GetOnedCode128Writer();
 
-  CFX_WideString m_renderContents;
+  WideString m_renderContents;
 };
 
 #endif  // FXBARCODE_CBC_CODE128_H_

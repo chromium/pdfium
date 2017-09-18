@@ -95,10 +95,10 @@ class CFDE_TextOut {
   void SetMatrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
   void SetLineBreakTolerance(float fTolerance);
 
-  void CalcLogicSize(const CFX_WideString& str, CFX_SizeF& size);
-  void CalcLogicSize(const CFX_WideString& str, CFX_RectF& rect);
+  void CalcLogicSize(const WideString& str, CFX_SizeF& size);
+  void CalcLogicSize(const WideString& str, CFX_RectF& rect);
   void DrawLogicText(CFX_RenderDevice* device,
-                     const CFX_WideStringC& str,
+                     const WideStringView& str,
                      const CFX_RectF& rect);
   int32_t GetTotalLines() const { return m_iTotalLines; }
 
@@ -107,7 +107,7 @@ class CFDE_TextOut {
                          float& fStartPos,
                          float& fWidth,
                          float& fHeight);
-  void LoadText(const CFX_WideString& str, const CFX_RectF& rect);
+  void LoadText(const WideString& str, const CFX_RectF& rect);
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect);
@@ -131,7 +131,7 @@ class CFDE_TextOut {
   std::vector<int32_t> m_CharWidths;
   FX_ARGB m_TxtColor;
   uint32_t m_dwTxtBkStyles;
-  CFX_WideString m_wsText;
+  WideString m_wsText;
   CFX_Matrix m_Matrix;
   std::deque<CFDE_TTOLine> m_ttoLines;
   int32_t m_iCurLine;

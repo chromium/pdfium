@@ -21,10 +21,10 @@ class CFX_StringPoolTemplate {
   std::unordered_set<StringType> m_Pool;
 };
 
-using CFX_ByteStringPool = CFX_StringPoolTemplate<CFX_ByteString>;
-using CFX_WideStringPool = CFX_StringPoolTemplate<CFX_WideString>;
+using ByteStringPool = CFX_StringPoolTemplate<ByteString>;
+using WideStringPool = CFX_StringPoolTemplate<WideString>;
 
-extern template class CFX_StringPoolTemplate<CFX_ByteString>;
-extern template class CFX_StringPoolTemplate<CFX_WideString>;
+extern template class CFX_StringPoolTemplate<ByteString>;
+extern template class CFX_StringPoolTemplate<WideString>;
 
 #endif  // CORE_FXCRT_CFX_STRING_POOL_TEMPLATE_H_

@@ -160,7 +160,7 @@ void CFWL_DateTimePicker::SetCurSel(int32_t iYear,
   m_pMonthCal->SetSelect(iYear, iMonth, iDay);
 }
 
-void CFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
+void CFWL_DateTimePicker::SetEditText(const WideString& wsText) {
   if (!m_pEdit)
     return;
 
@@ -171,7 +171,7 @@ void CFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
   DispatchEvent(&ev);
 }
 
-CFX_WideString CFWL_DateTimePicker::GetEditText() const {
+WideString CFWL_DateTimePicker::GetEditText() const {
   return m_pEdit ? m_pEdit->GetText() : L"";
 }
 
@@ -211,7 +211,7 @@ void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
 void CFWL_DateTimePicker::FormatDateString(int32_t iYear,
                                            int32_t iMonth,
                                            int32_t iDay,
-                                           CFX_WideString& wsText) {
+                                           WideString& wsText) {
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat) ==
       FWL_STYLEEXT_DTP_ShortDateFormat) {
     wsText.Format(L"%d-%d-%d", iYear, iMonth, iDay);
@@ -307,7 +307,7 @@ void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
   m_iMonth = iMonth;
   m_iDay = iDay;
 
-  CFX_WideString wsText;
+  WideString wsText;
   FormatDateString(m_iYear, m_iMonth, m_iDay, wsText);
   m_pEdit->SetText(wsText);
   m_pEdit->Update();

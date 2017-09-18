@@ -13,9 +13,7 @@
 
 class CBC_DefaultPlacement {
  public:
-  CBC_DefaultPlacement(CFX_WideString codewords,
-                       int32_t numcols,
-                       int32_t numrows);
+  CBC_DefaultPlacement(WideString codewords, int32_t numcols, int32_t numrows);
   virtual ~CBC_DefaultPlacement();
 
   int32_t getNumrows();
@@ -27,7 +25,7 @@ class CBC_DefaultPlacement {
   void place();
 
  private:
-  CFX_WideString m_codewords;
+  WideString m_codewords;
   int32_t m_numrows;
   int32_t m_numcols;
   std::vector<uint8_t> m_bits;

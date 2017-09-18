@@ -57,8 +57,8 @@ TEST_F(FPDFStructTreeEmbeddertest, GetAltText) {
   ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, buffer,
                                                sizeof(buffer)));
   const wchar_t kExpected[] = L"Black Image";
-  EXPECT_EQ(CFX_WideString(kExpected),
-            CFX_WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
+  EXPECT_EQ(WideString(kExpected),
+            WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
 
   ASSERT_EQ(1, FPDF_StructElement_CountChildren(gchild_element));
   FPDF_STRUCTELEMENT ggchild_element =
@@ -91,8 +91,8 @@ TEST_F(FPDFStructTreeEmbeddertest, GetType) {
 
   ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, sizeof(buffer)));
   const wchar_t kExpected[] = L"Document";
-  EXPECT_EQ(CFX_WideString(kExpected),
-            CFX_WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
+  EXPECT_EQ(WideString(kExpected),
+            WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
 
   FPDF_StructTree_Close(struct_tree);
   FPDF_ClosePage(page);

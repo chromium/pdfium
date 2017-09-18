@@ -18,7 +18,7 @@ class CBC_DataMatrixWriter : public CBC_TwoDimWriter {
   CBC_DataMatrixWriter();
   ~CBC_DataMatrixWriter() override;
 
-  uint8_t* Encode(const CFX_WideString& contents,
+  uint8_t* Encode(const WideString& contents,
                   int32_t& outWidth,
                   int32_t& outHeight);
 

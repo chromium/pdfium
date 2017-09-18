@@ -20,24 +20,22 @@ class CXFA_Validate : public CXFA_Data {
 
   int32_t GetFormatTest();
   int32_t GetNullTest();
-  bool SetNullTest(CFX_WideString wsValue);
+  bool SetNullTest(WideString wsValue);
   int32_t GetScriptTest();
-  void GetFormatMessageText(CFX_WideString& wsMessage);
-  void SetFormatMessageText(CFX_WideString wsMessage);
-  void GetNullMessageText(CFX_WideString& wsMessage);
-  void SetNullMessageText(CFX_WideString wsMessage);
-  void GetScriptMessageText(CFX_WideString& wsMessage);
-  void SetScriptMessageText(CFX_WideString wsMessage);
-  void GetPicture(CFX_WideString& wsPicture);
+  void GetFormatMessageText(WideString& wsMessage);
+  void SetFormatMessageText(WideString wsMessage);
+  void GetNullMessageText(WideString& wsMessage);
+  void SetNullMessageText(WideString wsMessage);
+  void GetScriptMessageText(WideString& wsMessage);
+  void SetScriptMessageText(WideString wsMessage);
+  void GetPicture(WideString& wsPicture);
   CXFA_Script GetScript();
 
  private:
-  void GetMessageText(CFX_WideString& wsMessage,
-                      const CFX_WideString& wsMessageType);
-  void SetMessageText(CFX_WideString& wsMessage,
-                      const CFX_WideString& wsMessageType);
+  void GetMessageText(WideString& wsMessage, const WideString& wsMessageType);
+  void SetMessageText(WideString& wsMessage, const WideString& wsMessageType);
   bool SetTestValue(int32_t iType,
-                    CFX_WideString& wsValue,
+                    WideString& wsValue,
                     XFA_ATTRIBUTEENUM eName);
 };
 

@@ -217,8 +217,8 @@ void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
   InsertWidthArrayImpl(widths, size, pWidthArray);
 }
 
-CFX_ByteString FPDF_GetPSNameFromTT(HDC hDC) {
-  CFX_ByteString result;
+ByteString FPDF_GetPSNameFromTT(HDC hDC) {
+  ByteString result;
   DWORD size = ::GetFontData(hDC, 'eman', 0, nullptr, 0);
   if (size != GDI_ERROR) {
     LPBYTE buffer = FX_Alloc(BYTE, size);
@@ -299,7 +299,7 @@ int CalculateFlags(bool bold,
 void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
                     bool bold,
                     bool italic,
-                    CFX_ByteString basefont,
+                    ByteString basefont,
                     std::unique_ptr<CPDF_Array> pWidths) {
   if (bold && italic)
     basefont += ",BoldItalic";
@@ -316,7 +316,7 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
 
 std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
     CPDF_Document* pDoc,
-    CFX_ByteString basefont,
+    ByteString basefont,
     int flags,
     int italicangle,
     int ascend,
@@ -769,7 +769,7 @@ void CPDF_Document::DeletePage(int iPage) {
 
 CPDF_Font* CPDF_Document::AddStandardFont(const char* font,
                                           CPDF_FontEncoding* pEncoding) {
-  CFX_ByteString name(font);
+  ByteString name(font);
   if (PDF_GetStandardFontName(&name) < 0)
     return nullptr;
   return GetPageData()->GetStandardFont(name, pEncoding);
@@ -793,7 +793,7 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
 
   const uint16_t* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
   for (int j = 0; j < 128; j++) {
-    CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
+    ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
     pArray->AddNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
   pBaseDict->SetNewFor<CPDF_Reference>("Encoding", this,
@@ -805,11 +805,11 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
     CPDF_Dictionary* pBaseDict,
     int charset,
     bool bVert,
-    CFX_ByteString basefont,
+    ByteString basefont,
     std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert) {
   CPDF_Dictionary* pFontDict = NewIndirect<CPDF_Dictionary>();
-  CFX_ByteString cmap;
-  CFX_ByteString ordering;
+  ByteString cmap;
+  ByteString ordering;
   int supplement = 0;
   CPDF_Array* pWidthArray = pFontDict->SetNewFor<CPDF_Array>("W");
   switch (charset) {
@@ -875,7 +875,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   bool bCJK = charset == FX_CHARSET_ChineseTraditional ||
               charset == FX_CHARSET_ChineseSimplified ||
               charset == FX_CHARSET_Hangul || charset == FX_CHARSET_ShiftJIS;
-  CFX_ByteString basefont = pFont->GetFamilyName();
+  ByteString basefont = pFont->GetFamilyName();
   basefont.Replace(" ", "");
   int flags =
       CalculateFlags(pFont->IsBold(), pFont->IsItalic(), pFont->IsFixedWidth(),
@@ -958,12 +958,12 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
                                          bool bTranslateName) {
   LOGFONTA lfa;
   memcpy(&lfa, pLogFont, (char*)lfa.lfFaceName - (char*)&lfa);
-  CFX_ByteString face = CFX_ByteString::FromUnicode(pLogFont->lfFaceName);
+  ByteString face = ByteString::FromUnicode(pLogFont->lfFaceName);
   if (face.GetLength() >= LF_FACESIZE)
     return nullptr;
 
   strncpy(lfa.lfFaceName, face.c_str(),
-          (face.GetLength() + 1) * sizeof(CFX_ByteString::CharType));
+          (face.GetLength() + 1) * sizeof(ByteString::CharType));
   return AddWindowsFont(&lfa, bVert, bTranslateName);
 }
 
@@ -996,7 +996,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
               pLogFont->lfCharSet == FX_CHARSET_ChineseSimplified ||
               pLogFont->lfCharSet == FX_CHARSET_Hangul ||
               pLogFont->lfCharSet == FX_CHARSET_ShiftJIS;
-  CFX_ByteString basefont;
+  ByteString basefont;
   if (bTranslateName && bCJK)
     basefont = FPDF_GetPSNameFromTT(hDC);
 

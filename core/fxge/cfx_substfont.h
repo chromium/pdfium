@@ -16,7 +16,7 @@ class CFX_SubstFont {
  public:
   CFX_SubstFont();
 
-  CFX_ByteString m_Family;
+  ByteString m_Family;
   int m_Charset;
   uint32_t m_SubstFlags;
   int m_Weight;

@@ -11,14 +11,13 @@
 
 #include "core/fxcrt/fx_string.h"
 
-bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
+bool BC_FX_ByteString_Replace(ByteString& dst,
                               uint32_t first,
                               uint32_t last,
                               int32_t count,
                               char c);
-void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, char c);
-void BC_FX_ByteString_Append(CFX_ByteString& dst,
-                             const std::vector<uint8_t>& ba);
+void BC_FX_ByteString_Append(ByteString& dst, int32_t count, char c);
+void BC_FX_ByteString_Append(ByteString& dst, const std::vector<uint8_t>& ba);
 
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_)
 #include <limits>

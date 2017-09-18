@@ -20,13 +20,12 @@ class CPDFSDK_FormFillEnvironment;
 // may trigger new events on top of one another.
 class IJS_EventContext {
  public:
-  virtual bool RunScript(const CFX_WideString& script,
-                         CFX_WideString* info) = 0;
+  virtual bool RunScript(const WideString& script, WideString* info) = 0;
 
   virtual void OnApp_Init() = 0;
 
   virtual void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                          const CFX_WideString& strTargetName) = 0;
+                          const WideString& strTargetName) = 0;
   virtual void OnDoc_WillPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
   virtual void OnDoc_DidPrint(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
   virtual void OnDoc_WillSave(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
@@ -53,38 +52,38 @@ class IJS_EventContext {
   virtual void OnField_Focus(bool bModifier,
                              bool bShift,
                              CPDF_FormField* pTarget,
-                             const CFX_WideString& Value) = 0;
+                             const WideString& Value) = 0;
   virtual void OnField_Blur(bool bModifier,
                             bool bShift,
                             CPDF_FormField* pTarget,
-                            const CFX_WideString& Value) = 0;
+                            const WideString& Value) = 0;
 
   virtual void OnField_Calculate(CPDF_FormField* pSource,
                                  CPDF_FormField* pTarget,
-                                 CFX_WideString& Value,
+                                 WideString& Value,
                                  bool& bRc) = 0;
   virtual void OnField_Format(CPDF_FormField* pTarget,
-                              CFX_WideString& Value,
+                              WideString& Value,
                               bool bWillCommit) = 0;
-  virtual void OnField_Keystroke(CFX_WideString& strChange,
-                                 const CFX_WideString& strChangeEx,
+  virtual void OnField_Keystroke(WideString& strChange,
+                                 const WideString& strChangeEx,
                                  bool KeyDown,
                                  bool bModifier,
                                  int& nSelEnd,
                                  int& nSelStart,
                                  bool bShift,
                                  CPDF_FormField* pTarget,
-                                 CFX_WideString& Value,
+                                 WideString& Value,
                                  bool bWillCommit,
                                  bool bFieldFull,
                                  bool& bRc) = 0;
-  virtual void OnField_Validate(CFX_WideString& strChange,
-                                const CFX_WideString& strChangeEx,
+  virtual void OnField_Validate(WideString& strChange,
+                                const WideString& strChangeEx,
                                 bool bKeyDown,
                                 bool bModifier,
                                 bool bShift,
                                 CPDF_FormField* pTarget,
-                                CFX_WideString& Value,
+                                WideString& Value,
                                 bool& bRc) = 0;
 
   virtual void OnScreen_Focus(bool bModifier,
@@ -122,7 +121,7 @@ class IJS_EventContext {
   virtual void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
 
   virtual void OnMenu_Exec(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const CFX_WideString&) = 0;
+                           const WideString&) = 0;
   virtual void OnBatchExec(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
   virtual void OnConsole_Exec() = 0;
   virtual void OnExternal_Exec() = 0;

@@ -11,17 +11,16 @@
 
 class CFX_CSSCustomProperty {
  public:
-  CFX_CSSCustomProperty(const CFX_WideString& name,
-                        const CFX_WideString& value);
+  CFX_CSSCustomProperty(const WideString& name, const WideString& value);
   CFX_CSSCustomProperty(const CFX_CSSCustomProperty& prop);
   ~CFX_CSSCustomProperty();
 
-  CFX_WideString name() const { return name_; }
-  CFX_WideString value() const { return value_; }
+  WideString name() const { return name_; }
+  WideString value() const { return value_; }
 
  private:
-  CFX_WideString name_;
-  CFX_WideString value_;
+  WideString name_;
+  WideString value_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSCUSTOMPROPERTY_H_

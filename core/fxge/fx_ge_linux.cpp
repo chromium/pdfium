@@ -44,7 +44,7 @@ const char* const g_LinuxHGFontList[] = {
 size_t GetJapanesePreference(const char* facearr,
                              int weight,
                              int pitch_family) {
-  CFX_ByteString face = facearr;
+  ByteString face = facearr;
   if (face.Contains("Gothic") ||
       face.Contains("\x83\x53\x83\x56\x83\x62\x83\x4e")) {
     if (face.Contains("PGothic") ||

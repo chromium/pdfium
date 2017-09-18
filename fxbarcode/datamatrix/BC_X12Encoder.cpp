@@ -36,7 +36,7 @@ int32_t CBC_X12Encoder::getEncodingMode() {
   return X12_ENCODATION;
 }
 void CBC_X12Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
-  CFX_WideString buffer;
+  WideString buffer;
   while (context.hasMoreCharacters()) {
     wchar_t c = context.getCurrentChar();
     context.m_pos++;
@@ -58,7 +58,7 @@ void CBC_X12Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   handleEOD(context, buffer, e);
 }
 void CBC_X12Encoder::handleEOD(CBC_EncoderContext& context,
-                               CFX_WideString& buffer,
+                               WideString& buffer,
                                int32_t& e) {
   context.updateSymbolInfo(e);
   if (e != BCExceptionNO) {
@@ -79,7 +79,7 @@ void CBC_X12Encoder::handleEOD(CBC_EncoderContext& context,
     context.signalEncoderChange(ASCII_ENCODATION);
   }
 }
-int32_t CBC_X12Encoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
+int32_t CBC_X12Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
   if (c == '\r') {
     sb += (wchar_t)'\0';
   } else if (c == '*') {

@@ -33,7 +33,7 @@ class CXFA_TextLayout {
   explicit CXFA_TextLayout(CXFA_TextProvider* pTextProvider);
   ~CXFA_TextLayout();
 
-  int32_t GetText(CFX_WideString& wsText);
+  int32_t GetText(WideString& wsText);
   float GetLayoutHeight();
   float StartLayout(float fWidth = -1);
   bool DoLayout(int32_t iBlockIndex,
@@ -85,7 +85,7 @@ class CXFA_TextLayout {
                     bool bEndBreak = true,
                     bool bIsOl = false,
                     int32_t iLiCount = 0);
-  bool AppendChar(const CFX_WideString& wsText,
+  bool AppendChar(const WideString& wsText,
                   float& fLinePos,
                   float fSpaceAbove,
                   bool bSavePieces);
@@ -95,7 +95,7 @@ class CXFA_TextLayout {
                       bool bEndBreak = false);
   void EndBreak(CFX_BreakType dwStatus, float& fLinePos, bool bDefault);
   bool IsEnd(bool bSavePieces);
-  void ProcessText(CFX_WideString& wsText);
+  void ProcessText(WideString& wsText);
   void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFX_RenderDevice* pDevice,
                     CXFA_PieceLine* pPieceLine,

@@ -22,9 +22,9 @@ class CXFA_ResolveNodesData {
 
   CXFA_ScriptContext* m_pSC;
   CXFA_Object* m_CurObject;
-  CFX_WideString m_wsName;
+  WideString m_wsName;
   XFA_HashCode m_uHashName;
-  CFX_WideString m_wsCondition;
+  WideString m_wsCondition;
   int32_t m_nLevel;
   std::vector<CXFA_Object*> m_Objects;  // Not owned.
   uint32_t m_dwStyles;
@@ -38,12 +38,12 @@ class CXFA_ResolveProcessor {
   ~CXFA_ResolveProcessor();
 
   int32_t Resolve(CXFA_ResolveNodesData& rnd);
-  int32_t GetFilter(const CFX_WideStringC& wsExpression,
+  int32_t GetFilter(const WideStringView& wsExpression,
                     int32_t nStart,
                     CXFA_ResolveNodesData& rnd);
   int32_t SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS,
-                              CFX_WideString& wsLastCondition);
-  void SetIndexDataBind(CFX_WideString& wsNextCondition,
+                              WideString& wsLastCondition);
+  void SetIndexDataBind(WideString& wsNextCondition,
                         int32_t& iIndex,
                         int32_t iCount);
   void SetCurStart(int32_t start) { m_iCurStart = start; }
@@ -53,7 +53,7 @@ class CXFA_ResolveProcessor {
  private:
   int32_t ResolveForAttributeRs(CXFA_Object* curNode,
                                 CXFA_ResolveNodesData& rnd,
-                                const CFX_WideStringC& strAttr);
+                                const WideStringView& strAttr);
   int32_t ResolveAnyChild(CXFA_ResolveNodesData& rnd);
   int32_t ResolveDollar(CXFA_ResolveNodesData& rnd);
   int32_t ResolveExcalmatory(CXFA_ResolveNodesData& rnd);
@@ -64,14 +64,14 @@ class CXFA_ResolveProcessor {
   void SetStylesForChild(uint32_t dwParentStyles, CXFA_ResolveNodesData& rnd);
 
   void ConditionArray(int32_t iCurIndex,
-                      CFX_WideString wsCondition,
+                      WideString wsCondition,
                       int32_t iFoundCount,
                       CXFA_ResolveNodesData& rnd);
   void DoPredicateFilter(int32_t iCurIndex,
-                         CFX_WideString wsCondition,
+                         WideString wsCondition,
                          int32_t iFoundCount,
                          CXFA_ResolveNodesData& rnd);
-  void FilterCondition(CXFA_ResolveNodesData& rnd, CFX_WideString wsCondition);
+  void FilterCondition(CXFA_ResolveNodesData& rnd, WideString wsCondition);
 
   int32_t m_iCurStart;
   std::unique_ptr<CXFA_NodeHelper> m_pNodeHelper;

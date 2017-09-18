@@ -17,7 +17,7 @@ class FSDK_FileWriteAdapter : public IFX_WriteStream {
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool WriteBlock(const void* data, size_t size) override;
-  bool WriteString(const CFX_ByteStringC& str) override;
+  bool WriteString(const ByteStringView& str) override;
 
  private:
   explicit FSDK_FileWriteAdapter(FPDF_FILEWRITE* fileWriteStruct);

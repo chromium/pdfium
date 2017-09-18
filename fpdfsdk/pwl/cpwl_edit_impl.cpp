@@ -43,7 +43,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
                     CPDF_Font* pFont,
                     float fFontSize,
                     const CFX_Matrix& mtUser2Device,
-                    const CFX_ByteString& str,
+                    const ByteString& str,
                     FX_ARGB crTextFill,
                     int32_t nHorzScale) {
   if (!pFont)
@@ -394,7 +394,7 @@ void CFXEU_Delete::Undo() {
 
 CFXEU_Clear::CFXEU_Clear(CPWL_EditImpl* pEdit,
                          const CPVT_WordRange& wrSel,
-                         const CFX_WideString& swText)
+                         const WideString& swText)
     : m_pEdit(pEdit), m_wrSel(wrSel), m_swText(swText) {
   ASSERT(m_pEdit);
 }
@@ -417,7 +417,7 @@ void CFXEU_Clear::Undo() {
 CFXEU_InsertText::CFXEU_InsertText(CPWL_EditImpl* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
-                                   const CFX_WideString& swText,
+                                   const WideString& swText,
                                    int32_t charset)
     : m_pEdit(pEdit),
       m_wpOld(wpOldPlace),
@@ -526,7 +526,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
             DrawTextString(
                 pDevice, CFX_PointF(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                 pFontMap->GetPDFFont(nFontIndex), fFontSize, mtUser2Device,
-                CFX_ByteString(sTextBuf), crOldFill, nHorzScale);
+                ByteString(sTextBuf), crOldFill, nHorzScale);
 
             sTextBuf.str("");
           }
@@ -553,7 +553,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
     DrawTextString(pDevice,
                    CFX_PointF(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                    pFontMap->GetPDFFont(nFontIndex), fFontSize, mtUser2Device,
-                   CFX_ByteString(sTextBuf), crOldFill, nHorzScale);
+                   ByteString(sTextBuf), crOldFill, nHorzScale);
   }
 }
 
@@ -736,8 +736,8 @@ CPVT_WordPlace CPWL_EditImpl::GetCaretWordPlace() const {
   return m_wpCaret;
 }
 
-CFX_WideString CPWL_EditImpl::GetText() const {
-  CFX_WideString swRet;
+WideString CPWL_EditImpl::GetText() const {
+  WideString swRet;
   if (!m_pVT->IsValid())
     return swRet;
 
@@ -757,8 +757,8 @@ CFX_WideString CPWL_EditImpl::GetText() const {
   return swRet;
 }
 
-CFX_WideString CPWL_EditImpl::GetRangeText(const CPVT_WordRange& range) const {
-  CFX_WideString swRet;
+WideString CPWL_EditImpl::GetRangeText(const CPVT_WordRange& range) const {
+  WideString swRet;
   if (!m_pVT->IsValid())
     return swRet;
 
@@ -783,7 +783,7 @@ CFX_WideString CPWL_EditImpl::GetRangeText(const CPVT_WordRange& range) const {
   return swRet;
 }
 
-CFX_WideString CPWL_EditImpl::GetSelectedText() const {
+WideString CPWL_EditImpl::GetSelectedText() const {
   return GetRangeText(m_SelState.ConvertToWordRange());
 }
 
@@ -802,7 +802,7 @@ CPVT_WordRange CPWL_EditImpl::GetSelectWordRange() const {
   return m_SelState.ConvertToWordRange();
 }
 
-void CPWL_EditImpl::SetText(const CFX_WideString& sText) {
+void CPWL_EditImpl::SetText(const WideString& sText) {
   Empty();
   DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_CHARSET_Default);
   Paint();
@@ -828,7 +828,7 @@ bool CPWL_EditImpl::ClearSelection() {
   return Clear(true, true);
 }
 
-bool CPWL_EditImpl::InsertText(const CFX_WideString& sText, int32_t charset) {
+bool CPWL_EditImpl::InsertText(const WideString& sText, int32_t charset) {
   return InsertText(sText, charset, true, true);
 }
 
@@ -1702,7 +1702,7 @@ bool CPWL_EditImpl::Clear(bool bAddUndo, bool bPaint) {
   return true;
 }
 
-bool CPWL_EditImpl::InsertText(const CFX_WideString& sText,
+bool CPWL_EditImpl::InsertText(const WideString& sText,
                                int32_t charset,
                                bool bAddUndo,
                                bool bPaint) {
@@ -1836,7 +1836,7 @@ void CPWL_EditImpl::EnableUndo(bool bUndo) {
 }
 
 CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
-                                           const CFX_WideString& sText,
+                                           const WideString& sText,
                                            int32_t charset) {
   CPVT_WordPlace wp = place;
 
@@ -1877,15 +1877,15 @@ void CPWL_EditImpl::AddEditUndoItem(
   m_Undo.AddItem(std::move(pEditUndoItem));
 }
 
-CFX_ByteString CPWL_EditImpl::GetPDFWordString(int32_t nFontIndex,
-                                               uint16_t Word,
-                                               uint16_t SubWord) {
+ByteString CPWL_EditImpl::GetPDFWordString(int32_t nFontIndex,
+                                           uint16_t Word,
+                                           uint16_t SubWord) {
   IPVT_FontMap* pFontMap = GetFontMap();
   CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex);
   if (!pPDFFont)
-    return CFX_ByteString();
+    return ByteString();
 
-  CFX_ByteString sWord;
+  ByteString sWord;
   if (SubWord > 0) {
     Word = SubWord;
   } else {

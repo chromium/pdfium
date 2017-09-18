@@ -31,7 +31,7 @@ class CFX_SeekableStreamProxy : public CFX_Retainable {
   void Seek(From eSeek, FX_FILESIZE iOffset);
   FX_STRSIZE ReadString(wchar_t* pStr, FX_STRSIZE iMaxLength, bool* bEOS);
 
-  void WriteString(const CFX_WideStringC& str);
+  void WriteString(const WideStringView& str);
 
   uint16_t GetCodePage() const { return m_wCodePage; }
   void SetCodePage(uint16_t wCodePage);

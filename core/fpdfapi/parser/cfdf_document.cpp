@@ -52,7 +52,7 @@ void CFDF_Document::ParseStream(
   parser.InitParser(m_pFile, 0);
   while (1) {
     bool bNumber;
-    CFX_ByteString word = parser.GetNextWord(&bNumber);
+    ByteString word = parser.GetNextWord(&bNumber);
     if (bNumber) {
       uint32_t objnum = FXSYS_atoui(word.c_str());
       if (!objnum)
@@ -89,9 +89,9 @@ void CFDF_Document::ParseStream(
   }
 }
 
-CFX_ByteString CFDF_Document::WriteToString() const {
+ByteString CFDF_Document::WriteToString() const {
   if (!m_pRootDict)
-    return CFX_ByteString();
+    return ByteString();
 
   std::ostringstream buf;
   buf << "%FDF-1.2\r\n";
@@ -102,5 +102,5 @@ CFX_ByteString CFDF_Document::WriteToString() const {
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";
 
-  return CFX_ByteString(buf);
+  return ByteString(buf);
 }

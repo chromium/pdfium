@@ -29,10 +29,10 @@ bool CPDFSDK_ActionHandler::DoAction_DocOpen(
 
 bool CPDFSDK_ActionHandler::DoAction_JavaScript(
     const CPDF_Action& JsAction,
-    CFX_WideString csJSName,
+    WideString csJSName,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   if (JsAction.GetType() == CPDF_Action::JavaScript) {
-    CFX_WideString swJS = JsAction.GetJavaScript();
+    WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
       RunDocumentOpenJavaScript(pFormFillEnv, csJSName, swJS);
       return true;
@@ -51,7 +51,7 @@ bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
   ASSERT(pFormFillEnv);
   if (pFormFillEnv->IsJSInitiated() &&
       JsAction.GetType() == CPDF_Action::JavaScript) {
-    CFX_WideString swJS = JsAction.GetJavaScript();
+    WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
       RunFieldJavaScript(pFormFillEnv, pFormField, type, data, swJS);
       return true;
@@ -125,7 +125,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
-      CFX_WideString swJS = action.GetJavaScript();
+      WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         RunDocumentOpenJavaScript(pFormFillEnv, L"", swJS);
       }
@@ -156,13 +156,13 @@ bool CPDFSDK_ActionHandler::ExecuteLinkAction(
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
-      CFX_WideString swJS = action.GetJavaScript();
+      WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
         IJS_EventContext* pContext = pRuntime->NewEventContext();
         pContext->OnLink_MouseUp(pFormFillEnv);
 
-        CFX_WideString csInfo;
+        WideString csInfo;
         bool bRet = pContext->RunScript(swJS, &csInfo);
         pRuntime->ReleaseEventContext(pContext);
         if (!bRet) {
@@ -197,7 +197,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
-      CFX_WideString swJS = action.GetJavaScript();
+      WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         RunDocumentPageJavaScript(pFormFillEnv, type, swJS);
       }
@@ -244,7 +244,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
-      CFX_WideString swJS = action.GetJavaScript();
+      WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         RunFieldJavaScript(pFormFillEnv, pFormField, type, data, swJS);
         if (!IsValidField(pFormFillEnv, pFormField->GetFieldDict()))
@@ -280,11 +280,11 @@ bool CPDFSDK_ActionHandler::ExecuteScreenAction(
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
-      CFX_WideString swJS = action.GetJavaScript();
+      WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
         IJS_EventContext* pContext = pRuntime->NewEventContext();
-        CFX_WideString csInfo;
+        WideString csInfo;
         bool bRet = pContext->RunScript(swJS, &csInfo);
         pRuntime->ReleaseEventContext(pContext);
         if (!bRet) {
@@ -319,13 +319,13 @@ bool CPDFSDK_ActionHandler::ExecuteBookMark(
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
-      CFX_WideString swJS = action.GetJavaScript();
+      WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
         IJS_EventContext* pContext = pRuntime->NewEventContext();
         pContext->OnBookmark_MouseUp(pBookmark);
 
-        CFX_WideString csInfo;
+        WideString csInfo;
         bool bRet = pContext->RunScript(swJS, &csInfo);
         pRuntime->ReleaseEventContext(pContext);
         if (!bRet) {
@@ -444,7 +444,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(
     const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
-  CFX_ByteString sURI = action.GetURI(pFormFillEnv->GetPDFDocument());
+  ByteString sURI = action.GetURI(pFormFillEnv->GetPDFDocument());
   pFormFillEnv->DoURIAction(sURI.c_str());
 }
 
@@ -453,7 +453,7 @@ void CPDFSDK_ActionHandler::DoAction_Named(
     const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
-  CFX_ByteString csName = action.GetNamedAction();
+  ByteString csName = action.GetNamedAction();
   pFormFillEnv->ExecuteNamedAction(csName.c_str());
 }
 
@@ -466,7 +466,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
     CPDF_FormField* pFormField,
     CPDF_AAction::AActionType type,
     PDFSDK_FieldAction& data,
-    const CFX_WideString& script) {
+    const WideString& script) {
   ASSERT(type != CPDF_AAction::Calculate);
   ASSERT(type != CPDF_AAction::Format);
 
@@ -509,7 +509,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
       break;
   }
 
-  CFX_WideString csInfo;
+  WideString csInfo;
   bool bRet = pContext->RunScript(script, &csInfo);
   pRuntime->ReleaseEventContext(pContext);
   if (!bRet) {
@@ -519,13 +519,13 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
 
 void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    const CFX_WideString& sScriptName,
-    const CFX_WideString& script) {
+    const WideString& sScriptName,
+    const WideString& script) {
   IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
   IJS_EventContext* pContext = pRuntime->NewEventContext();
   pContext->OnDoc_Open(pFormFillEnv, sScriptName);
 
-  CFX_WideString csInfo;
+  WideString csInfo;
   bool bRet = pContext->RunScript(script, &csInfo);
   pRuntime->ReleaseEventContext(pContext);
   if (!bRet) {
@@ -536,7 +536,7 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
 void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_AAction::AActionType type,
-    const CFX_WideString& script) {
+    const WideString& script) {
   IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
   IJS_EventContext* pContext = pRuntime->NewEventContext();
   switch (type) {
@@ -572,7 +572,7 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
       break;
   }
 
-  CFX_WideString csInfo;
+  WideString csInfo;
   bool bRet = pContext->RunScript(script, &csInfo);
   pRuntime->ReleaseEventContext(pContext);
   if (!bRet) {

@@ -75,24 +75,24 @@ class CFX_SAXReader {
   class HandlerIface {
    public:
     virtual ~HandlerIface() {}
-    virtual CFX_SAXContext* OnTagEnter(const CFX_ByteStringC& bsTagName,
+    virtual CFX_SAXContext* OnTagEnter(const ByteStringView& bsTagName,
                                        CFX_SAXItem::Type eType,
                                        uint32_t dwStartPos) = 0;
     virtual void OnTagAttribute(CFX_SAXContext* pTag,
-                                const CFX_ByteStringC& bsAttri,
-                                const CFX_ByteStringC& bsValue) = 0;
+                                const ByteStringView& bsAttri,
+                                const ByteStringView& bsValue) = 0;
     virtual void OnTagBreak(CFX_SAXContext* pTag) = 0;
     virtual void OnTagData(CFX_SAXContext* pTag,
                            CFX_SAXItem::Type eType,
-                           const CFX_ByteStringC& bsData,
+                           const ByteStringView& bsData,
                            uint32_t dwStartPos) = 0;
     virtual void OnTagClose(CFX_SAXContext* pTag, uint32_t dwEndPos) = 0;
     virtual void OnTagEnd(CFX_SAXContext* pTag,
-                          const CFX_ByteStringC& bsTagName,
+                          const ByteStringView& bsTagName,
                           uint32_t dwEndPos) = 0;
     virtual void OnTargetData(CFX_SAXContext* pTag,
                               CFX_SAXItem::Type eType,
-                              const CFX_ByteStringC& bsData,
+                              const ByteStringView& bsData,
                               uint32_t dwStartPos) = 0;
   };
 

@@ -133,7 +133,7 @@ float CPDF_PSEngine::Pop() {
 
 bool CPDF_PSEngine::Parse(const char* str, int size) {
   CPDF_SimpleParser parser(reinterpret_cast<const uint8_t*>(str), size);
-  CFX_ByteStringC word = parser.GetWord();
+  ByteStringView word = parser.GetWord();
   return word == "{" ? m_MainProc.Parse(&parser, 0) : false;
 }
 
@@ -142,7 +142,7 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
     return false;
 
   while (1) {
-    CFX_ByteStringC word = parser->GetWord();
+    ByteStringView word = parser->GetWord();
     if (word.IsEmpty())
       return false;
 
@@ -158,7 +158,7 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
 
     std::unique_ptr<CPDF_PSOP> op;
     for (const PDF_PSOpName& op_name : kPsOpNames) {
-      if (word == CFX_ByteStringC(op_name.name)) {
+      if (word == ByteStringView(op_name.name)) {
         op = pdfium::MakeUnique<CPDF_PSOP>(op_name.op);
         break;
       }

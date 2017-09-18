@@ -47,8 +47,8 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
   CXFA_FMFunctionDefinition(
       uint32_t line,
       bool isGlobal,
-      const CFX_WideStringC& wsName,
-      std::vector<CFX_WideStringC>&& arguments,
+      const WideStringView& wsName,
+      std::vector<WideStringView>&& arguments,
       std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions);
   ~CXFA_FMFunctionDefinition() override;
 
@@ -56,8 +56,8 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
   bool ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
-  CFX_WideStringC m_wsName;
-  std::vector<CFX_WideStringC> m_pArguments;
+  WideStringView m_wsName;
+  std::vector<WideStringView> m_pArguments;
   std::vector<std::unique_ptr<CXFA_FMExpression>> m_pExpressions;
   bool m_isGlobal;
 };
@@ -65,7 +65,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
 class CXFA_FMVarExpression : public CXFA_FMExpression {
  public:
   CXFA_FMVarExpression(uint32_t line,
-                       const CFX_WideStringC& wsName,
+                       const WideStringView& wsName,
                        std::unique_ptr<CXFA_FMExpression> pInit);
   ~CXFA_FMVarExpression() override;
 
@@ -73,7 +73,7 @@ class CXFA_FMVarExpression : public CXFA_FMExpression {
   bool ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
-  CFX_WideStringC m_wsName;
+  WideStringView m_wsName;
   std::unique_ptr<CXFA_FMExpression> m_pInit;
 };
 
@@ -175,7 +175,7 @@ class CXFA_FMContinueExpression : public CXFA_FMExpression {
 class CXFA_FMForExpression : public CXFA_FMLoopExpression {
  public:
   CXFA_FMForExpression(uint32_t line,
-                       const CFX_WideStringC& wsVariant,
+                       const WideStringView& wsVariant,
                        std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
                        std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
                        int32_t iDirection,
@@ -187,7 +187,7 @@ class CXFA_FMForExpression : public CXFA_FMLoopExpression {
   bool ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
-  CFX_WideStringC m_wsVariant;
+  WideStringView m_wsVariant;
   std::unique_ptr<CXFA_FMSimpleExpression> m_pAssignment;
   std::unique_ptr<CXFA_FMSimpleExpression> m_pAccessor;
   const bool m_bDirection;
@@ -200,7 +200,7 @@ class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
   // Takes ownership of |pAccessors|.
   CXFA_FMForeachExpression(
       uint32_t line,
-      const CFX_WideStringC& wsIdentifier,
+      const WideStringView& wsIdentifier,
       std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
       std::unique_ptr<CXFA_FMExpression> pList);
   ~CXFA_FMForeachExpression() override;
@@ -209,7 +209,7 @@ class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
   bool ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
-  CFX_WideStringC m_wsIdentifier;
+  WideStringView m_wsIdentifier;
   std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> m_pAccessors;
   std::unique_ptr<CXFA_FMExpression> m_pList;
 };

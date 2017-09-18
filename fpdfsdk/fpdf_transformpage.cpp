@@ -25,7 +25,7 @@
 namespace {
 
 void SetBoundingBox(CPDF_Page* page,
-                    const CFX_ByteString& key,
+                    const ByteString& key,
                     float left,
                     float bottom,
                     float right,
@@ -38,7 +38,7 @@ void SetBoundingBox(CPDF_Page* page,
 }
 
 bool GetBoundingBox(CPDF_Page* page,
-                    const CFX_ByteString& key,
+                    const ByteString& key,
                     float* left,
                     float* bottom,
                     float* right,
@@ -111,12 +111,12 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   CFX_FloatRect rect(clipRect->left, clipRect->bottom, clipRect->right,
                      clipRect->top);
   rect.Normalize();
-  CFX_ByteString bsClipping;
+  ByteString bsClipping;
   bsClipping.Format("%f %f %f %f re W* n ", rect.left, rect.bottom,
                     rect.Width(), rect.Height());
   textBuf << bsClipping;
 
-  CFX_ByteString bsMatix;
+  ByteString bsMatix;
   bsMatix.Format("%f %f %f %f %f %f cm ", matrix->a, matrix->b, matrix->c,
                  matrix->d, matrix->e, matrix->f);
   textBuf << bsMatix;
@@ -248,7 +248,7 @@ void OutputPath(std::ostringstream& buf, CPDF_Path path) {
     return;
   }
 
-  CFX_ByteString temp;
+  ByteString temp;
   for (size_t i = 0; i < pPoints.size(); i++) {
     buf << pPoints[i].m_Point.x << " " << pPoints[i].m_Point.y;
     FXPT_TYPE point_type = pPoints[i].m_Type;

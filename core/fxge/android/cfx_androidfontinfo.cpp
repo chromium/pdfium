@@ -63,7 +63,7 @@ uint32_t CFX_AndroidFontInfo::GetFontData(void* hFont,
   return static_cast<CFPF_SkiaFont*>(hFont)->GetFontData(table, buffer, size);
 }
 
-bool CFX_AndroidFontInfo::GetFaceName(void* hFont, CFX_ByteString* name) {
+bool CFX_AndroidFontInfo::GetFaceName(void* hFont, ByteString* name) {
   if (!hFont)
     return false;
 

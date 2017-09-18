@@ -200,7 +200,7 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const wchar_t* pWstr)
     : m_pValue(pRuntime->NewString(pWstr)) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const char* pStr)
-    : m_pValue(pRuntime->NewString(CFX_WideString::FromLocal(pStr).c_str())) {}
+    : m_pValue(pRuntime->NewString(WideString::FromLocal(pStr).c_str())) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array)
     : m_pValue(array.ToV8Array(pRuntime)) {}
@@ -245,12 +245,12 @@ v8::Local<v8::Object> CJS_Value::ToV8Object(CJS_Runtime* pRuntime) const {
   return pRuntime->ToObject(m_pValue);
 }
 
-CFX_WideString CJS_Value::ToCFXWideString(CJS_Runtime* pRuntime) const {
+WideString CJS_Value::ToCFXWideString(CJS_Runtime* pRuntime) const {
   return pRuntime->ToWideString(m_pValue);
 }
 
-CFX_ByteString CJS_Value::ToCFXByteString(CJS_Runtime* pRuntime) const {
-  return CFX_ByteString::FromUnicode(ToCFXWideString(pRuntime));
+ByteString CJS_Value::ToCFXByteString(CJS_Runtime* pRuntime) const {
+  return ByteString::FromUnicode(ToCFXWideString(pRuntime));
 }
 
 v8::Local<v8::Value> CJS_Value::ToV8Value(CJS_Runtime* pRuntime) const {
@@ -268,7 +268,7 @@ void CJS_Value::SetNull(CJS_Runtime* pRuntime) {
 void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
   bool bAllowNaN = false;
   if (GetType() == VT_string) {
-    CFX_ByteString bstr = ToCFXByteString(pRuntime);
+    ByteString bstr = ToCFXByteString(pRuntime);
     if (bstr.GetLength() == 0)
       return;
     if (bstr == "NaN")
@@ -398,12 +398,12 @@ void CJS_PropValue::operator>>(v8::Local<v8::Object>& ppObj) const {
   ppObj = m_Value.ToV8Object(m_pJSRuntime.Get());
 }
 
-void CJS_PropValue::operator<<(CFX_ByteString str) {
+void CJS_PropValue::operator<<(ByteString str) {
   ASSERT(!m_bIsSetting);
   m_Value = CJS_Value(m_pJSRuntime.Get(), str.c_str());
 }
 
-void CJS_PropValue::operator>>(CFX_ByteString& str) const {
+void CJS_PropValue::operator>>(ByteString& str) const {
   ASSERT(m_bIsSetting);
   str = m_Value.ToCFXByteString(m_pJSRuntime.Get());
 }
@@ -413,12 +413,12 @@ void CJS_PropValue::operator<<(const wchar_t* str) {
   m_Value = CJS_Value(m_pJSRuntime.Get(), str);
 }
 
-void CJS_PropValue::operator>>(CFX_WideString& wide_string) const {
+void CJS_PropValue::operator>>(WideString& wide_string) const {
   ASSERT(m_bIsSetting);
   wide_string = m_Value.ToCFXWideString(m_pJSRuntime.Get());
 }
 
-void CJS_PropValue::operator<<(CFX_WideString wide_string) {
+void CJS_PropValue::operator<<(WideString wide_string) {
   ASSERT(!m_bIsSetting);
   m_Value = CJS_Value(m_pJSRuntime.Get(), wide_string.c_str());
 }
@@ -588,9 +588,8 @@ double CJS_Date::ToDouble(CJS_Runtime* pRuntime) const {
   return !m_pDate.IsEmpty() ? pRuntime->ToDouble(m_pDate) : 0.0;
 }
 
-CFX_WideString CJS_Date::ToString(CJS_Runtime* pRuntime) const {
-  return !m_pDate.IsEmpty() ? pRuntime->ToWideString(m_pDate)
-                            : CFX_WideString();
+WideString CJS_Date::ToString(CJS_Runtime* pRuntime) const {
+  return !m_pDate.IsEmpty() ? pRuntime->ToWideString(m_pDate) : WideString();
 }
 
 v8::Local<v8::Date> CJS_Date::ToV8Date(CJS_Runtime* pRuntime) const {
@@ -634,7 +633,7 @@ int JS_GetSecFromTime(double dt) {
   return (int)Mod(floor(dt / 1000), 60);
 }
 
-double JS_DateParse(const CFX_WideString& str) {
+double JS_DateParse(const WideString& str) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope scope(pIsolate);
@@ -659,7 +658,7 @@ double JS_DateParse(const CFX_WideString& str) {
       const int argc = 1;
       v8::Local<v8::Value> timeStr =
           CJS_Runtime::CurrentRuntimeFromIsolate(pIsolate)->NewString(
-              str.AsStringC());
+              str.AsStringView());
       v8::Local<v8::Value> argv[argc] = {timeStr};
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {

@@ -122,7 +122,7 @@ static_assert(g_iCSSPropertyCount ==
               "Property table differs in size from property enum");
 
 const CFX_CSSPropertyTable* CFX_GetCSSPropertyByName(
-    const CFX_WideStringC& wsName) {
+    const WideStringView& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint32_t dwHash = FX_HashCode_GetW(wsName, true);
   int32_t iEnd = g_iCSSPropertyCount;

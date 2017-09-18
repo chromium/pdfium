@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 
-int32_t EANCalcChecksum(const CFX_ByteString& contents) {
+int32_t EANCalcChecksum(const ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
   FX_STRSIZE parity = 1;

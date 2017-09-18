@@ -52,7 +52,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
     FPDF_UnSupportError(FPDF_UNSP_ANNOT_3DANNOT);
   } else if (nAnnotSubtype == CPDF_Annot::Subtype::SCREEN) {
     const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
-    CFX_ByteString cbString;
+    ByteString cbString;
     if (pAnnotDict->KeyExist("IT"))
       cbString = pAnnotDict->GetStringFor("IT");
     if (cbString.Compare("Img") != 0)
@@ -67,7 +67,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
     FPDF_UnSupportError(FPDF_UNSP_ANNOT_ATTACHMENT);
   } else if (nAnnotSubtype == CPDF_Annot::Subtype::WIDGET) {
     const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
-    CFX_ByteString cbString;
+    ByteString cbString;
     if (pAnnotDict->KeyExist("FT"))
       cbString = pAnnotDict->GetStringFor("FT");
     if (cbString.Compare("Sig") == 0)
@@ -75,18 +75,18 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
   }
 }
 
-bool CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
+bool CheckSharedForm(const CXML_Element* pElement, ByteString cbName) {
   int count = pElement->CountAttrs();
   int i = 0;
   for (i = 0; i < count; i++) {
-    CFX_ByteString space;
-    CFX_ByteString name;
-    CFX_WideString value;
+    ByteString space;
+    ByteString name;
+    WideString value;
     pElement->GetAttrByIndex(i, &space, &name, &value);
     if (space == "xmlns" && name == "adhocwf" &&
         value == L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
       CXML_Element* pVersion =
-          pElement->GetElement("adhocwf", cbName.AsStringC(), 0);
+          pElement->GetElement("adhocwf", cbName.AsStringView(), 0);
       if (!pVersion)
         continue;
       CXML_Content* pContent = ToContent(pVersion->GetChild(0));
@@ -127,7 +127,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
   // Portfolios and Packages
   const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
   if (pRootDict) {
-    CFX_ByteString cbString;
+    ByteString cbString;
     if (pRootDict->KeyExist("Collection")) {
       FPDF_UnSupportError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
       return;
@@ -143,7 +143,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
         CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
         if (pArray) {
           for (size_t i = 0; i < pArray->GetCount(); i++) {
-            CFX_ByteString cbStr = pArray->GetStringAt(i);
+            ByteString cbStr = pArray->GetStringAt(i);
             if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
               FPDF_UnSupportError(FPDF_UNSP_DOC_SHAREDREVIEW);
               return;
@@ -181,7 +181,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   if (!pName)
     return PAGEMODE_USENONE;
 
-  CFX_ByteString strPageMode = pName->GetString();
+  ByteString strPageMode = pName->GetString();
   if (strPageMode.IsEmpty() || strPageMode.EqualNoCase("UseNone"))
     return PAGEMODE_USENONE;
   if (strPageMode.EqualNoCase("UseOutlines"))

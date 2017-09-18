@@ -147,7 +147,7 @@ CPWL_ComboBox::CPWL_ComboBox() {}
 
 CPWL_ComboBox::~CPWL_ComboBox() {}
 
-CFX_ByteString CPWL_ComboBox::GetClassName() const {
+ByteString CPWL_ComboBox::GetClassName() const {
   return "CPWL_ComboBox";
 }
 
@@ -177,31 +177,31 @@ void CPWL_ComboBox::KillFocus() {
   CPWL_Wnd::KillFocus();
 }
 
-CFX_WideString CPWL_ComboBox::GetSelectedText() {
+WideString CPWL_ComboBox::GetSelectedText() {
   if (m_pEdit)
     return m_pEdit->GetSelectedText();
 
-  return CFX_WideString();
+  return WideString();
 }
 
-void CPWL_ComboBox::ReplaceSelection(const CFX_WideString& text) {
+void CPWL_ComboBox::ReplaceSelection(const WideString& text) {
   if (m_pEdit)
     m_pEdit->ReplaceSelection(text);
 }
 
-CFX_WideString CPWL_ComboBox::GetText() const {
+WideString CPWL_ComboBox::GetText() const {
   if (m_pEdit) {
     return m_pEdit->GetText();
   }
-  return CFX_WideString();
+  return WideString();
 }
 
-void CPWL_ComboBox::SetText(const CFX_WideString& text) {
+void CPWL_ComboBox::SetText(const WideString& text) {
   if (m_pEdit)
     m_pEdit->SetText(text);
 }
 
-void CPWL_ComboBox::AddString(const CFX_WideString& str) {
+void CPWL_ComboBox::AddString(const WideString& str) {
   if (m_pList)
     m_pList->AddString(str);
 }

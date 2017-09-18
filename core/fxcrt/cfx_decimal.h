@@ -16,9 +16,9 @@ class CFX_Decimal {
   explicit CFX_Decimal(uint64_t val);
   explicit CFX_Decimal(int32_t val);
   CFX_Decimal(float val, uint8_t scale);
-  explicit CFX_Decimal(const CFX_WideStringC& str);
+  explicit CFX_Decimal(const WideStringView& str);
 
-  operator CFX_WideString() const;
+  operator WideString() const;
   operator double() const;
 
   CFX_Decimal operator*(const CFX_Decimal& val) const;

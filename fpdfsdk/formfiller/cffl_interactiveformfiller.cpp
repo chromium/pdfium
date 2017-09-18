@@ -516,15 +516,14 @@ void CFFL_InteractiveFormFiller::RemoveFormFiller(CPDFSDK_Annot* pAnnot) {
     UnRegisterFormFiller(pAnnot);
 }
 
-CFX_WideString CFFL_InteractiveFormFiller::GetSelectedText(
-    CPDFSDK_Annot* pAnnot) {
+WideString CFFL_InteractiveFormFiller::GetSelectedText(CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
-  return pFormFiller ? pFormFiller->GetSelectedText(pAnnot) : CFX_WideString();
+  return pFormFiller ? pFormFiller->GetSelectedText(pAnnot) : WideString();
 }
 
 void CFFL_InteractiveFormFiller::ReplaceSelection(CPDFSDK_Annot* pAnnot,
-                                                  const CFX_WideString& text) {
+                                                  const WideString& text) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
   if (!pFormFiller)
@@ -690,8 +689,7 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
   CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
 
   bool bFormatted = false;
-  CFX_WideString sValue =
-      pInterForm->OnFormat(pWidget->GetFormField(), bFormatted);
+  WideString sValue = pInterForm->OnFormat(pWidget->GetFormField(), bFormatted);
   if (!(*pAnnot))
     return;
 
@@ -857,8 +855,8 @@ bool CFFL_InteractiveFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
 
 std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     CPWL_Wnd::PrivateData* pAttached,
-    CFX_WideString& strChange,
-    const CFX_WideString& strChangeEx,
+    WideString& strChange,
+    const WideString& strChangeEx,
     int nSelStart,
     int nSelEnd,
     bool bKeyDown,

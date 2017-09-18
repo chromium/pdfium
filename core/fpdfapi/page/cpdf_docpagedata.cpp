@@ -144,7 +144,7 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {
   return pFontData->AddRef();
 }
 
-CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
+CPDF_Font* CPDF_DocPageData::GetStandardFont(const ByteString& fontName,
                                              CPDF_FontEncoding* pEncoding) {
   if (fontName.IsEmpty())
     return nullptr;
@@ -228,7 +228,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceGuarded(
   pdfium::ScopedSetInsertion<CPDF_Object*> insertion(pVisited, pCSObj);
 
   if (pCSObj->IsName()) {
-    CFX_ByteString name = pCSObj->GetString();
+    ByteString name = pCSObj->GetString();
     CPDF_ColorSpace* pCS = CPDF_ColorSpace::ColorspaceFromName(name);
     if (!pCS && pResources) {
       CPDF_Dictionary* pList = pResources->GetDictFor("ColorSpace");
@@ -422,7 +422,7 @@ CFX_RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
   uint8_t digest[20];
   CRYPT_SHA1Generate(pAccessor->GetData(), pAccessor->GetSize(), digest);
 
-  CFX_ByteString bsDigest(digest, 20);
+  ByteString bsDigest(digest, 20);
   auto hash_it = m_HashProfileMap.find(bsDigest);
   if (hash_it != m_HashProfileMap.end()) {
     auto it_copied_stream = m_IccProfileMap.find(hash_it->second);

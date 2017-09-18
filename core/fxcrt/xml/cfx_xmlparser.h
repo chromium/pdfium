@@ -38,8 +38,8 @@ class CFX_XMLParser {
   CFX_XMLNode* m_pParent;
   CFX_XMLNode* m_pChild;
   std::stack<CFX_XMLNode*> m_NodeStack;
-  CFX_WideString m_ws1;
-  CFX_WideString m_ws2;
+  WideString m_ws1;
+  WideString m_ws2;
   FX_XmlSyntaxResult m_syntaxParserResult;
 };
 

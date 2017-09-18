@@ -53,7 +53,7 @@ void CFX_XMLDoc::SaveXMLNode(
   CFX_XMLNode* pNode = (CFX_XMLNode*)pINode;
   switch (pNode->GetType()) {
     case FX_XMLNODE_Instruction: {
-      CFX_WideString ws;
+      WideString ws;
       CFX_XMLInstruction* pInstruction = (CFX_XMLInstruction*)pNode;
       if (pInstruction->GetName().CompareNoCase(L"xml") == 0) {
         ws = L"<?xml version=\"1.0\" encoding=\"";
@@ -66,13 +66,13 @@ void CFX_XMLDoc::SaveXMLNode(
           ws += L"UTF-8";
         }
         ws += L"\"?>";
-        pXMLStream->WriteString(ws.AsStringC());
+        pXMLStream->WriteString(ws.AsStringView());
       } else {
         ws.Format(L"<?%s", pInstruction->GetName().c_str());
-        pXMLStream->WriteString(ws.AsStringC());
+        pXMLStream->WriteString(ws.AsStringView());
 
         for (auto it : pInstruction->GetAttributes()) {
-          CFX_WideString wsValue = it.second;
+          WideString wsValue = it.second;
           wsValue.Replace(L"&", L"&amp;");
           wsValue.Replace(L"<", L"&lt;");
           wsValue.Replace(L">", L"&gt;");
@@ -84,28 +84,28 @@ void CFX_XMLDoc::SaveXMLNode(
           ws += L"=\"";
           ws += wsValue;
           ws += L"\"";
-          pXMLStream->WriteString(ws.AsStringC());
+          pXMLStream->WriteString(ws.AsStringView());
         }
 
         for (auto target : pInstruction->GetTargetData()) {
           ws = L" \"";
           ws += target;
           ws += L"\"";
-          pXMLStream->WriteString(ws.AsStringC());
+          pXMLStream->WriteString(ws.AsStringView());
         }
         ws = L"?>";
-        pXMLStream->WriteString(ws.AsStringC());
+        pXMLStream->WriteString(ws.AsStringView());
       }
       break;
     }
     case FX_XMLNODE_Element: {
-      CFX_WideString ws;
+      WideString ws;
       ws = L"<";
       ws += static_cast<CFX_XMLElement*>(pNode)->GetName();
-      pXMLStream->WriteString(ws.AsStringC());
+      pXMLStream->WriteString(ws.AsStringView());
 
       for (auto it : static_cast<CFX_XMLElement*>(pNode)->GetAttributes()) {
-        CFX_WideString wsValue = it.second;
+        WideString wsValue = it.second;
         wsValue.Replace(L"&", L"&amp;");
         wsValue.Replace(L"<", L"&lt;");
         wsValue.Replace(L">", L"&gt;");
@@ -117,11 +117,11 @@ void CFX_XMLDoc::SaveXMLNode(
         ws += L"=\"";
         ws += wsValue;
         ws += L"\"";
-        pXMLStream->WriteString(ws.AsStringC());
+        pXMLStream->WriteString(ws.AsStringView());
       }
       if (pNode->m_pChild) {
         ws = L"\n>";
-        pXMLStream->WriteString(ws.AsStringC());
+        pXMLStream->WriteString(ws.AsStringView());
         CFX_XMLNode* pChild = pNode->m_pChild;
         while (pChild) {
           SaveXMLNode(pXMLStream, static_cast<CFX_XMLNode*>(pChild));
@@ -133,24 +133,24 @@ void CFX_XMLDoc::SaveXMLNode(
       } else {
         ws = L"\n/>";
       }
-      pXMLStream->WriteString(ws.AsStringC());
+      pXMLStream->WriteString(ws.AsStringView());
       break;
     }
     case FX_XMLNODE_Text: {
-      CFX_WideString ws = static_cast<CFX_XMLText*>(pNode)->GetText();
+      WideString ws = static_cast<CFX_XMLText*>(pNode)->GetText();
       ws.Replace(L"&", L"&amp;");
       ws.Replace(L"<", L"&lt;");
       ws.Replace(L">", L"&gt;");
       ws.Replace(L"\'", L"&apos;");
       ws.Replace(L"\"", L"&quot;");
-      pXMLStream->WriteString(ws.AsStringC());
+      pXMLStream->WriteString(ws.AsStringView());
       break;
     }
     case FX_XMLNODE_CharData: {
-      CFX_WideString ws = L"<![CDATA[";
+      WideString ws = L"<![CDATA[";
       ws += static_cast<CFX_XMLCharData*>(pNode)->GetText();
       ws += L"]]>";
-      pXMLStream->WriteString(ws.AsStringC());
+      pXMLStream->WriteString(ws.AsStringView());
       break;
     }
     case FX_XMLNODE_Unknown:

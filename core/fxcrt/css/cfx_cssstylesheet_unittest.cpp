@@ -28,7 +28,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
   void TearDown() override { decl_ = nullptr; }
 
   void LoadAndVerifyDecl(const wchar_t* buf,
-                         const std::vector<CFX_WideString>& selectors,
+                         const std::vector<WideString>& selectors,
                          size_t decl_count) {
     ASSERT(sheet_);
 
@@ -39,7 +39,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     EXPECT_EQ(selectors.size(), style->CountSelectorLists());
 
     for (size_t i = 0; i < selectors.size(); i++) {
-      uint32_t hash = FX_HashCode_GetW(selectors[i].AsStringC(), true);
+      uint32_t hash = FX_HashCode_GetW(selectors[i].AsStringView(), true);
       EXPECT_EQ(hash, style->GetSelectorList(i)->GetNameHash());
     }
 
