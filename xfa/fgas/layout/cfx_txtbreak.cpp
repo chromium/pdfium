@@ -665,7 +665,6 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   float fX = rtText.left;
   float fY;
   float fCharWidth;
-  float fCharHeight;
   int32_t iHorScale = pTxtRun->iHorizontalScale;
   int32_t iVerScale = pTxtRun->iVerticalScale;
   bool bSkipSpace = pTxtRun->bSkipSpace;
@@ -835,10 +834,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
         pCharPos->m_FontCharWidth = iCharWidth;
       }
 
-      int32_t iCharHeight = 1000;
-
       fCharWidth = fFontSize * iCharWidth / 1000.0f;
-      fCharHeight = fFontSize * iCharHeight / 1000.0f;
       if (bRTLPiece && chartype != FX_CHARTYPE_Combination)
         fX -= fCharWidth;
 
