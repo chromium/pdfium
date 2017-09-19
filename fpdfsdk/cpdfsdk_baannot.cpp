@@ -353,3 +353,10 @@ void CPDFSDK_BAAnnot::SetOpenState(bool bOpenState) {
   if (CPDF_Annot* pAnnot = m_pAnnot->GetPopupAnnot())
     pAnnot->SetOpenState(bOpenState);
 }
+
+int CPDFSDK_BAAnnot::GetLayoutOrder() const {
+  if (m_pAnnot->GetSubtype() == CPDF_Annot::Subtype::POPUP)
+    return 1;
+
+  return CPDFSDK_Annot::GetLayoutOrder();
+}
