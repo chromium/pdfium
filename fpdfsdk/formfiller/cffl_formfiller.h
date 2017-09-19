@@ -115,10 +115,6 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   CFX_FloatRect FFLtoWnd(CPDFSDK_PageView* pPageView,
                          const CFX_FloatRect& rect);
 
-  void SetWindowRect(CPDFSDK_PageView* pPageView,
-                     const CFX_FloatRect& rcWindow);
-  CFX_FloatRect GetWindowRect(CPDFSDK_PageView* pPageView);
-
   bool CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag);
   virtual bool IsDataChanged(CPDFSDK_PageView* pPageView);
   virtual void SaveData(CPDFSDK_PageView* pPageView);
@@ -160,7 +156,6 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   CFX_UnownedPtr<CPDFSDK_Widget> m_pWidget;
   bool m_bValid;
   CFFL_PageView2PDFWindow m_Maps;
-  CFX_PointF m_ptOldPos;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_FORMFILLER_H_

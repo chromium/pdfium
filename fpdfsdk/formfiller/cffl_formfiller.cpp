@@ -46,17 +46,6 @@ void CFFL_FormFiller::DestroyWindows() {
   m_Maps.clear();
 }
 
-void CFFL_FormFiller::SetWindowRect(CPDFSDK_PageView* pPageView,
-                                    const CFX_FloatRect& rcWindow) {
-  if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false))
-    pWnd->Move(CFX_FloatRect(rcWindow), true, false);
-}
-
-CFX_FloatRect CFFL_FormFiller::GetWindowRect(CPDFSDK_PageView* pPageView) {
-  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
-  return pWnd ? pWnd->GetWindowRect() : CFX_FloatRect();
-}
-
 FX_RECT CFFL_FormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot) {
   ASSERT(pPageView);
@@ -160,9 +149,6 @@ bool CFFL_FormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
                                   uint32_t nFlags,
                                   const CFX_PointF& point) {
-  if (m_ptOldPos != point)
-    m_ptOldPos = point;
-
   CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
   if (!pWnd)
     return false;
