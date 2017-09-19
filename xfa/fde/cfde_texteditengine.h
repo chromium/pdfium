@@ -44,9 +44,8 @@ class CFDE_TextEditEngine {
 
     void Next(bool bPrev);
     wchar_t GetChar() const;
-    void SetAt(int32_t nIndex);
-    int32_t GetAt() const;
-    void FindNextBreakPos(bool bPrev);
+    void SetAt(size_t nIndex);
+    size_t FindNextBreakPos(bool bPrev);
     bool IsEOF(bool bPrev) const;
 
    private:

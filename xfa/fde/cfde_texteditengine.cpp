@@ -975,11 +975,9 @@ std::pair<size_t, size_t> CFDE_TextEditEngine::BoundsForWordAt(
 
   CFDE_TextEditEngine::Iterator iter(this);
   iter.SetAt(idx);
-  iter.FindNextBreakPos(true);
-  size_t start_idx = iter.GetAt();
 
-  iter.FindNextBreakPos(false);
-  size_t end_idx = iter.GetAt();
+  size_t start_idx = iter.FindNextBreakPos(true);
+  size_t end_idx = iter.FindNextBreakPos(false);
   return {start_idx, end_idx - start_idx + 1};
 }
 
@@ -1006,17 +1004,11 @@ wchar_t CFDE_TextEditEngine::Iterator::GetChar() const {
   return engine_->GetChar(current_position_);
 }
 
-void CFDE_TextEditEngine::Iterator::SetAt(int32_t nIndex) {
-  if (nIndex < 0)
-    current_position_ = 0;
-  else if (static_cast<size_t>(nIndex) >= engine_->GetLength())
+void CFDE_TextEditEngine::Iterator::SetAt(size_t nIndex) {
+  if (static_cast<size_t>(nIndex) >= engine_->GetLength())
     current_position_ = engine_->GetLength();
   else
     current_position_ = nIndex;
-}
-
-int32_t CFDE_TextEditEngine::Iterator::GetAt() const {
-  return current_position_;
 }
 
 bool CFDE_TextEditEngine::Iterator::IsEOF(bool bPrev) const {
@@ -1026,9 +1018,9 @@ bool CFDE_TextEditEngine::Iterator::IsEOF(bool bPrev) const {
                          engine_->GetLength();
 }
 
-void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
+size_t CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
   if (IsEOF(bPrev))
-    return;
+    return current_position_ > -1 ? current_position_ : 0;
 
   WordBreakProperty ePreType = WordBreakProperty::kNone;
   if (!IsEOF(!bPrev)) {
@@ -1047,14 +1039,14 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
     if (wBreak) {
       if (IsEOF(bPrev)) {
         Next(!bPrev);
-        return;
+        break;
       }
       if (bFirst) {
         int32_t nFlags = GetBreakFlagsFor(eCurType, eNextType);
         if (nFlags > 0) {
           if (BreakFlagsChanged(nFlags, ePreType)) {
             Next(!bPrev);
-            return;
+            break;
           }
           Next(bPrev);
           wBreak = false;
@@ -1064,7 +1056,7 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
         int32_t nFlags = GetBreakFlagsFor(eNextType, eCurType);
         if (nFlags <= 0) {
           Next(!bPrev);
-          return;
+          break;
         }
 
         Next(bPrev);
@@ -1072,11 +1064,12 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
         if (BreakFlagsChanged(nFlags, eNextType)) {
           Next(!bPrev);
           Next(!bPrev);
-          return;
+          break;
         }
       }
     }
     eCurType = eNextType;
     bFirst = false;
   }
+  return current_position_ > -1 ? current_position_ : 0;
 }
