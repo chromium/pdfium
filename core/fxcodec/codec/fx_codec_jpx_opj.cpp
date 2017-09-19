@@ -19,12 +19,6 @@
 #include "third_party/libopenjpeg20/openjpeg.h"
 #include "third_party/libopenjpeg20/opj_malloc.h"
 
-#if defined(USE_SYSTEM_LCMS2)
-#include <lcms2.h>
-#else
-#include "third_party/lcms/include/lcms2.h"
-#endif
-
 namespace {
 
 void fx_ignore_callback(const char* msg, void* client_data) {}

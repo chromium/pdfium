@@ -672,6 +672,7 @@ static_library("fpdfapi") {
   configs += [ ":pdfium_core_config" ]
   deps = [
     ":fxcrt",
+    "third_party:lcms2",
   ]
 }
 

@@ -9,10 +9,10 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 
+class CLcmsCmm;
 class CPDF_Stream;
 
 class CPDF_IccProfile : public CFX_Retainable {

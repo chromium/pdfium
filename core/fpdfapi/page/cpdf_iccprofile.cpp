@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcodec/codec/ccodec_iccmodule.h"
 
 namespace {
 

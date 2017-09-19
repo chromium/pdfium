@@ -57,6 +57,9 @@ template("pdfium_fuzzer") {
     deps = [
       "../..:pdfium",
     ]
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
     testonly = true
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
@@ -152,6 +155,9 @@ pdfium_fuzzer("pdf_codec_fax_fuzzer") {
 }
 
 pdfium_fuzzer("pdf_codec_icc_fuzzer") {
+  deps = [
+    "../../third_party/:lcms2",
+  ]
   sources = [
     "pdf_codec_icc_fuzzer.cc",
   ]
