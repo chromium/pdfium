@@ -840,12 +840,12 @@ void CFDE_TextEditEngine::RebuildPieces() {
   contents_bounding_box_ = CFX_RectF();
 
   auto iter = pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(this);
-  while (!iter->IsEOF(true)) {
+  while (!iter->IsEOF(false)) {
     iter->Next(false);
 
     CFX_BreakType break_status = text_break_.AppendChar(
         password_mode_ ? password_alias_ : iter->GetChar());
-    if (iter->IsEOF(true) && CFX_BreakTypeNoneOrPiece(break_status))
+    if (iter->IsEOF(false) && CFX_BreakTypeNoneOrPiece(break_status))
       break_status = text_break_.EndBreak(CFX_BreakType::Paragraph);
 
     if (CFX_BreakTypeNoneOrPiece(break_status))
@@ -1019,19 +1019,19 @@ int32_t CFDE_TextEditEngine::Iterator::GetAt() const {
   return current_position_;
 }
 
-bool CFDE_TextEditEngine::Iterator::IsEOF(bool bTail) const {
-  return bTail ? current_position_ > -1 &&
+bool CFDE_TextEditEngine::Iterator::IsEOF(bool bPrev) const {
+  return bPrev ? current_position_ == -1
+               : current_position_ > -1 &&
                      static_cast<size_t>(current_position_) ==
-                         engine_->GetLength()
-               : current_position_ == -1;
+                         engine_->GetLength();
 }
 
 void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
-  if (IsEOF(!bPrev))
+  if (IsEOF(bPrev))
     return;
 
   WordBreakProperty ePreType = WordBreakProperty::kNone;
-  if (!IsEOF(bPrev)) {
+  if (!IsEOF(!bPrev)) {
     Next(!bPrev);
     ePreType = GetWordBreakProperty(GetChar());
     Next(bPrev);
@@ -1045,7 +1045,7 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
     WordBreakProperty eNextType = GetWordBreakProperty(GetChar());
     bool wBreak = CheckStateChangeForWordBreak(eCurType, eNextType);
     if (wBreak) {
-      if (IsEOF(!bPrev)) {
+      if (IsEOF(bPrev)) {
         Next(!bPrev);
         return;
       }
@@ -1080,5 +1080,5 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
     ePreType = eCurType;
     eCurType = eNextType;
     bFirst = false;
-  } while (!IsEOF(!bPrev));
+  } while (!IsEOF(bPrev));
 }

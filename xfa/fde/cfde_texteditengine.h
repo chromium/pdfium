@@ -47,7 +47,7 @@ class CFDE_TextEditEngine {
     void SetAt(int32_t nIndex);
     int32_t GetAt() const;
     void FindNextBreakPos(bool bPrev);
-    bool IsEOF(bool bTail) const;
+    bool IsEOF(bool bPrev) const;
 
    private:
     CFX_UnownedPtr<const CFDE_TextEditEngine> engine_;
