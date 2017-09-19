@@ -7,6 +7,8 @@
 #ifndef FXBARCODE_COMMON_BC_COMMONBITARRAY_H_
 #define FXBARCODE_COMMON_BC_COMMONBITARRAY_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 class CBC_CommonBitArray {

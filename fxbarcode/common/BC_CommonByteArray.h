@@ -7,6 +7,8 @@
 #ifndef FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 #define FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 // TODO(weili): The usage of this class should be replaced by
