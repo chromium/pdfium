@@ -86,19 +86,21 @@ class CPWL_MsgControl : public CFX_Observable<CPWL_MsgControl> {
 
   void SetFocus(CPWL_Wnd* pWnd) {
     m_aKeyboardPath.clear();
-    if (pWnd) {
-      m_pMainKeyboardWnd = pWnd;
-      CPWL_Wnd* pParent = pWnd;
-      while (pParent) {
-        m_aKeyboardPath.push_back(pParent);
-        pParent = pParent->GetParentWindow();
-      }
-      pWnd->OnSetFocus();
+    if (!pWnd)
+      return;
+
+    m_pMainKeyboardWnd = pWnd;
+    CPWL_Wnd* pParent = pWnd;
+    while (pParent) {
+      m_aKeyboardPath.push_back(pParent);
+      pParent = pParent->GetParentWindow();
     }
+    // Note, pWnd may get destroyed in the OnSetFocus call.
+    pWnd->OnSetFocus();
   }
 
   void KillFocus() {
-    ObservedPtr observed_ptr = ObservedPtr(this);
+    ObservedPtr observed_ptr(this);
     if (!m_aKeyboardPath.empty())
       if (CPWL_Wnd* pWnd = m_aKeyboardPath[0])
         pWnd->OnKillFocus();
