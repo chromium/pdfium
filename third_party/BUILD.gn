@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import("//build/config/arm.gni")
+import("//build/config/linux/pkg_config.gni")
 import("//build_overrides/build.gni")
 import("../pdfium.gni")
 
@@ -337,14 +338,15 @@ group("zlib") {
   }
 }
 
-config("system_lcms2_config") {
-  libs = [ "lcms2" ]
-  defines = [ "USE_SYSTEM_LCMS2" ]
+if (use_system_lcms2) {
+  pkg_config("lcms2_from_pkgconfig") {
+    defines = [ "USE_SYSTEM_LCMS2" ]
+    packages = [ "lcms2" ]
+  }
 }
-
 group("lcms2") {
   if (use_system_lcms2) {
-    public_configs = [ ":system_lcms2_config" ]
+    public_configs = [ ":lcms2_from_pkgconfig" ]
   } else {
     public_deps = [
       ":fx_lcms2",
