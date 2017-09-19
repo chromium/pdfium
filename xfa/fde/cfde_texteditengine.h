@@ -140,12 +140,12 @@ class CFDE_TextEditEngine {
   size_t GetIndexAtEndOfLine(size_t pos) { return 0; }
 
   void SelectAll();
-  void SetSelection(size_t start_idx, size_t end_idx);
+  void SetSelection(size_t start_idx, size_t count);
   void ClearSelection();
   bool HasSelection() const { return has_selection_; }
-  // Returns <start, end> indices of the selection.
+  // Returns <start_idx, count> of the selection.
   std::pair<size_t, size_t> GetSelection() const {
-    return {selection_.start_idx, selection_.end_idx};
+    return {selection_.start_idx, selection_.count};
   }
   WideString GetSelectedText() const;
   WideString DeleteSelectedText(
@@ -159,7 +159,7 @@ class CFDE_TextEditEngine {
   size_t GetWidthOfChar(size_t idx);
   // Non-const so we can force a Layout() if needed.
   size_t GetIndexForPoint(const CFX_PointF& point);
-  // <start_idx, end_idx>
+  // <start_idx, count>
   std::pair<size_t, size_t> BoundsForWordAt(size_t idx) const;
 
   // Returns <bidi level, character rect>
@@ -197,7 +197,7 @@ class CFDE_TextEditEngine {
 
   struct Selection {
     size_t start_idx;
-    size_t end_idx;
+    size_t count;
   };
 
   CFX_RectF contents_bounding_box_;

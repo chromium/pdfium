@@ -481,10 +481,10 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   bool bShowSel = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
   if (bShowSel && m_EdtEngine.HasSelection()) {
     size_t sel_start;
-    size_t sel_end;
-    std::tie(sel_start, sel_end) = m_EdtEngine.GetSelection();
-    std::vector<CFX_RectF> rects = m_EdtEngine.GetCharacterRectsInRange(
-        sel_start, sel_end - sel_start + 1);
+    size_t count;
+    std::tie(sel_start, count) = m_EdtEngine.GetSelection();
+    std::vector<CFX_RectF> rects =
+        m_EdtEngine.GetCharacterRectsInRange(sel_start, count);
 
     CXFA_Path path;
     for (auto& rect : rects) {
@@ -1237,11 +1237,11 @@ void CFWL_Edit::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 void CFWL_Edit::OnButtonDoubleClick(CFWL_MessageMouse* pMsg) {
   size_t click_idx = m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
   size_t start_idx;
-  size_t end_idx;
-  std::tie(start_idx, end_idx) = m_EdtEngine.BoundsForWordAt(click_idx);
+  size_t count;
+  std::tie(start_idx, count) = m_EdtEngine.BoundsForWordAt(click_idx);
 
-  m_EdtEngine.SetSelection(start_idx, end_idx);
-  m_CursorPosition = end_idx;
+  m_EdtEngine.SetSelection(start_idx, count);
+  m_CursorPosition = start_idx + count;
   RepaintRect(m_rtEngine);
 }
 
@@ -1260,10 +1260,13 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
     SetCursorPosition(length);
 
   size_t sel_start;
-  size_t sel_end;
-  std::tie(sel_start, sel_end) = m_EdtEngine.GetSelection();
-  m_EdtEngine.SetSelection(std::min(sel_start, m_CursorPosition),
-                           std::max(sel_end, m_CursorPosition));
+  size_t count;
+  std::tie(sel_start, count) = m_EdtEngine.GetSelection();
+  size_t original_end = sel_start + count;
+  sel_start = std::min(sel_start, m_CursorPosition);
+  m_EdtEngine.SetSelection(
+      std::min(sel_start, m_CursorPosition),
+      std::max(original_end, m_CursorPosition) - sel_start);
 }
 
 void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
@@ -1273,8 +1276,8 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
   size_t sel_start = m_CursorPosition;
   if (m_EdtEngine.HasSelection()) {
     size_t start_idx;
-    size_t end_idx;
-    std::tie(start_idx, end_idx) = m_EdtEngine.GetSelection();
+    size_t count;
+    std::tie(start_idx, count) = m_EdtEngine.GetSelection();
     sel_start = start_idx;
   }
 

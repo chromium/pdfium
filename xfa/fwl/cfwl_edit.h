@@ -74,7 +74,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void SelectAll();
   void ClearSelection();
   bool HasSelection() const;
-  // Returns <start, end> indices of the selection.
+  // Returns <start, count> of the selection.
   std::pair<size_t, size_t> GetSelection() const;
 
   int32_t GetLimit() const;

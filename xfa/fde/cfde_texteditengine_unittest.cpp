@@ -244,10 +244,10 @@ TEST_F(CFDE_TextEditEngineTest, Selection) {
 
   engine()->SelectAll();
   size_t start_idx;
-  size_t end_idx;
-  std::tie(start_idx, end_idx) = engine()->GetSelection();
+  size_t count;
+  std::tie(start_idx, count) = engine()->GetSelection();
   EXPECT_EQ(0U, start_idx);
-  EXPECT_EQ(10U, end_idx);
+  EXPECT_EQ(11U, count);
 
   // Selection before gap.
   EXPECT_STREQ(L"Hello World", engine()->GetSelectedText().c_str());
@@ -272,7 +272,7 @@ TEST_F(CFDE_TextEditEngineTest, Selection) {
   EXPECT_STREQ(L"", engine()->GetText().c_str());
 
   engine()->Insert(0, L"Hello World");
-  engine()->SetSelection(5, 9);
+  engine()->SetSelection(5, 5);
   EXPECT_STREQ(L" Worl", engine()->DeleteSelectedText().c_str());
   EXPECT_FALSE(engine()->HasSelection());
   EXPECT_STREQ(L"Hellod", engine()->GetText().c_str());
@@ -419,112 +419,155 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPoint) {
 
 TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {
   size_t start_idx;
-  size_t end_idx;
+  size_t count;
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(100);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(100);
   EXPECT_EQ(0U, start_idx);
-  EXPECT_EQ(0U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_EQ(0U, count);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"Hello");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(0);
   EXPECT_EQ(0U, start_idx);
-  EXPECT_EQ(4U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_EQ(5U, count);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"Hello World");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(100);
-  EXPECT_EQ(11U, start_idx);
-  EXPECT_EQ(11U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(100);
+  EXPECT_EQ(0U, start_idx);
+  EXPECT_EQ(0U, count);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(0);
   EXPECT_EQ(0U, start_idx);
-  EXPECT_EQ(4U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_EQ(5U, count);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(1);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(1);
   EXPECT_EQ(0U, start_idx);
-  EXPECT_EQ(4U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_EQ(5U, count);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(4);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(4);
   EXPECT_EQ(0U, start_idx);
-  EXPECT_EQ(4U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_EQ(5U, count);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"Hello", engine()->GetSelectedText().c_str());
 
   // Select the space
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(5);
   EXPECT_EQ(5U, start_idx);
-  EXPECT_EQ(5U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
-  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+  EXPECT_EQ(1U, count);
+  engine()->SetSelection(start_idx, count);
+  EXPECT_STREQ(L" ", engine()->GetSelectedText().c_str());
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(6);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(6);
   EXPECT_EQ(6U, start_idx);
-  EXPECT_EQ(10U, end_idx);
-  engine()->SetSelection(start_idx, end_idx);
+  EXPECT_EQ(5U, count);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"123 456 789");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"456", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"123def789");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"123def789", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"abc456ghi");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"abc456ghi", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"hello, world");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(0);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"hello", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"hello, world");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(5);
-  engine()->SetSelection(start_idx, end_idx);
-  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(5);
+  engine()->SetSelection(start_idx, count);
+  EXPECT_STREQ(L",", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"np-complete");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(6);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(6);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"complete", engine()->GetSelectedText().c_str());
 
   engine()->Clear();
   engine()->Insert(0, L"(123) 456-7890");
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(0);
-  engine()->SetSelection(start_idx, end_idx);
-  EXPECT_STREQ(L"", engine()->GetSelectedText().c_str());
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(0);
+  engine()->SetSelection(start_idx, count);
+  EXPECT_STREQ(L"(", engine()->GetSelectedText().c_str());
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(1);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(1);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"123", engine()->GetSelectedText().c_str());
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(7);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(7);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"456", engine()->GetSelectedText().c_str());
 
-  std::tie(start_idx, end_idx) = engine()->BoundsForWordAt(11);
-  engine()->SetSelection(start_idx, end_idx);
+  std::tie(start_idx, count) = engine()->BoundsForWordAt(11);
+  engine()->SetSelection(start_idx, count);
   EXPECT_STREQ(L"7890", engine()->GetSelectedText().c_str());
+
+  // Tests from:
+  // http://unicode.org/Public/UNIDATA/auxiliary/WordBreakTest.html#samples
+  struct bounds {
+    size_t start;
+    size_t end;
+  };
+  struct {
+    const wchar_t* str;
+    std::vector<const wchar_t*> results;
+  } tests[] = {
+      // {L"\r\na\n\u0308", {L"\r\n", L"a", L"\n", L"\u0308"}},
+      // {L"a\u0308", {L"a\u0308"}},
+      // {L" \u200d\u0646", {L" \u200d", L"\u0646"}},
+      // {L"\u0646\u200d ", {L"\u0646\u200d", L" "}},
+      {L"AAA", {L"AAA"}},
+      {L"A:A", {L"A:A"}},
+      {L"A::A", {L"A", L":", L":", L"A"}},
+      // {L"\u05d0'", {L"\u05d0'"}},
+      // {L"\u05d0\"\u05d0", {L"\u05d0\"\u05d0"}},
+      {L"A00A", {L"A00A"}},
+      {L"0,0", {L"0,0"}},
+      {L"0,,0", {L"0", L",", L",", L"0"}},
+      {L"\u3031\u3031", {L"\u3031\u3031"}},
+      {L"A_0_\u3031_", {L"A_0_\u3031_"}},
+      {L"A__A", {L"A__A"}},
+      // {L"\u200d\u2640", {L"\u200d\u2640"}},
+      // {L"a\u0308\u200b\u0308b", {L"a\u0308\u200b\u0308b"}},
+  };
+
+  for (auto t : tests) {
+    engine()->Clear();
+    engine()->Insert(0, t.str);
+
+    size_t idx = 0;
+    for (const auto* res : t.results) {
+      std::tie(start_idx, count) = engine()->BoundsForWordAt(idx);
+      engine()->SetSelection(start_idx, count);
+      EXPECT_STREQ(res, engine()->GetSelectedText().c_str())
+          << "Input: '" << t.str << "'";
+      idx += count;
+    }
+  }
 }

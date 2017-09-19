@@ -53,7 +53,7 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   WideString GetEditText() const;
 
   bool HasSelection() const { return m_pEdit->HasSelection(); }
-  // Returns <start, end> indices of the selection.
+  // Returns <start, count> of the selection.
   std::pair<size_t, size_t> GetSelection() const {
     return m_pEdit->GetSelection();
   }

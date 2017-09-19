@@ -299,8 +299,9 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
     CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)pEdit;
     eParam.m_wsNewText = pDateTime->GetEditText();
     if (pDateTime->HasSelection()) {
-      std::tie(eParam.m_iSelStart, eParam.m_iSelEnd) =
-          pDateTime->GetSelection();
+      size_t count;
+      std::tie(eParam.m_iSelStart, count) = pDateTime->GetSelection();
+      eParam.m_iSelEnd = eParam.m_iSelStart + count;
     }
   } else {
     eParam.m_wsNewText = pEdit->GetText();
