@@ -1039,7 +1039,7 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
 
   WordBreakProperty eCurType = GetWordBreakProperty(GetChar());
   bool bFirst = true;
-  do {
+  while (!IsEOF(bPrev)) {
     Next(bPrev);
 
     WordBreakProperty eNextType = GetWordBreakProperty(GetChar());
@@ -1059,7 +1059,6 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
           Next(bPrev);
           wBreak = false;
         }
-        bFirst = false;
       }
       if (wBreak) {
         int32_t nFlags = GetBreakFlagsFor(eNextType, eCurType);
@@ -1077,8 +1076,7 @@ void CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
         }
       }
     }
-    ePreType = eCurType;
     eCurType = eNextType;
     bFirst = false;
-  } while (!IsEOF(bPrev));
+  }
 }
