@@ -7,6 +7,7 @@
 #include <limits>
 
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcodec/fx_codec.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/libopenjpeg20/opj_malloc.h"
 

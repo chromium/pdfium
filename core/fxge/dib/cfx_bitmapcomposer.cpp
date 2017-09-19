@@ -6,7 +6,6 @@
 
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 

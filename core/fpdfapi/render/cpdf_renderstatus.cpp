@@ -45,7 +45,6 @@
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_autorestorer.h"
 #include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/cfx_maybe_owned.h"

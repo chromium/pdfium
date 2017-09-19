@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <utility>
 
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"

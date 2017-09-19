@@ -8,7 +8,6 @@
 #include <limits>
 #include <vector>
 
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/fx_freetype.h"
