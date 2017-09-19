@@ -12,12 +12,26 @@
 #include <tuple>
 #include <utility>
 
+#include "core/fxcodec/codec/ccodec_basicmodule.h"
+#include "core/fxcodec/codec/ccodec_faxmodule.h"
+#include "core/fxcodec/codec/ccodec_flatemodule.h"
+#include "core/fxcodec/codec/ccodec_iccmodule.h"
+#include "core/fxcodec/codec/ccodec_jbig2module.h"
+#include "core/fxcodec/codec/ccodec_jpegmodule.h"
+#include "core/fxcodec/codec/ccodec_jpxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
+
+#ifdef PDF_ENABLE_XFA
+#include "core/fxcodec/codec/ccodec_bmpmodule.h"
+#include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/codec/ccodec_pngmodule.h"
+#include "core/fxcodec/codec/ccodec_tiffmodule.h"
+#endif  // PDF_ENABLE_XFA
 
 namespace {
 
@@ -1349,6 +1363,25 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
       m_pFlateModule(pdfium::MakeUnique<CCodec_FlateModule>()) {}
 
 CCodec_ModuleMgr::~CCodec_ModuleMgr() {}
+
+#ifdef PDF_ENABLE_XFA
+void CCodec_ModuleMgr::SetBmpModule(std::unique_ptr<CCodec_BmpModule> module) {
+  m_pBmpModule = std::move(module);
+}
+
+void CCodec_ModuleMgr::SetGifModule(std::unique_ptr<CCodec_GifModule> module) {
+  m_pGifModule = std::move(module);
+}
+
+void CCodec_ModuleMgr::SetPngModule(std::unique_ptr<CCodec_PngModule> module) {
+  m_pPngModule = std::move(module);
+}
+
+void CCodec_ModuleMgr::SetTiffModule(
+    std::unique_ptr<CCodec_TiffModule> module) {
+  m_pTiffModule = std::move(module);
+}
+#endif  // PDF_ENABLE_XFA
 
 bool CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,
                                          uint32_t src_size,

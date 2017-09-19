@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fxcodec/codec/ccodec_flatemodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/xml/cxml_element.h"
 #include "third_party/base/ptr_util.h"
