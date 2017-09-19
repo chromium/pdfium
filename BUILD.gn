@@ -702,6 +702,7 @@ static_library("fxcodec") {
     "core/fxcodec/codec/ccodec_jbig2module.h",
     "core/fxcodec/codec/ccodec_jpegmodule.h",
     "core/fxcodec/codec/ccodec_jpxmodule.h",
+    "core/fxcodec/codec/ccodec_scanlinedecoder.cpp",
     "core/fxcodec/codec/ccodec_scanlinedecoder.h",
     "core/fxcodec/codec/cjpx_decoder.h",
     "core/fxcodec/codec/codec_int.h",

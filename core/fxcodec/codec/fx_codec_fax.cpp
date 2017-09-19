@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_binarybuf.h"

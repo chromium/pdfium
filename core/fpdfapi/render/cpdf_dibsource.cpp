@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_fixedbufgrow.h"
