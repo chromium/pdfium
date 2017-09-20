@@ -394,10 +394,145 @@ void CFDE_TextEditEngine::ClearOperationRecords() {
   next_operation_index_to_insert_ = 0;
 }
 
+size_t CFDE_TextEditEngine::GetIndexBefore(size_t pos) {
+  int32_t bidi_level;
+  CFX_RectF rect;
+  // Possible |Layout| triggered by |GetCharacterInfo|.
+  std::tie(bidi_level, rect) = GetCharacterInfo(pos);
+  return FX_IsOdd(bidi_level) ? GetIndexRight(pos) : GetIndexLeft(pos);
+}
+
+size_t CFDE_TextEditEngine::GetIndexLeft(size_t pos) const {
+  if (pos == 0)
+    return 0;
+  --pos;
+
+  wchar_t ch = GetChar(pos);
+  while (pos != 0) {
+    // We want to be on the location just before the \r or \n
+    ch = GetChar(pos - 1);
+    if (ch != '\r' && ch != '\n')
+      break;
+
+    --pos;
+  }
+  return pos;
+}
+
+size_t CFDE_TextEditEngine::GetIndexRight(size_t pos) const {
+  if (pos >= text_length_)
+    return text_length_;
+  ++pos;
+
+  wchar_t ch = GetChar(pos);
+  // We want to be on the location after the \r\n.
+  while (pos < text_length_ && (ch == '\r' || ch == '\n')) {
+    ++pos;
+    ch = GetChar(pos);
+  }
+
+  return pos;
+}
+
+size_t CFDE_TextEditEngine::GetIndexUp(size_t pos) const {
+  size_t line_start = GetIndexAtStartOfLine(pos);
+  if (line_start == 0)
+    return pos;
+
+  // Determine how far along the line we were.
+  size_t dist = pos - line_start;
+
+  // Move to the end of the preceding line.
+  wchar_t ch;
+  do {
+    --line_start;
+    ch = GetChar(line_start);
+  } while (line_start != 0 && (ch == '\r' || ch == '\n'));
+
+  if (line_start == 0)
+    return dist;
+
+  // Get the start of the line prior to the current line.
+  size_t prior_start = GetIndexAtStartOfLine(line_start);
+
+  // Prior line is shorter then next line, and we're past the end of that line
+  // return the end of line.
+  if (prior_start + dist > line_start)
+    return GetIndexAtEndOfLine(line_start);
+
+  return prior_start + dist;
+}
+
+size_t CFDE_TextEditEngine::GetIndexDown(size_t pos) const {
+  size_t line_end = GetIndexAtEndOfLine(pos);
+  if (line_end == text_length_)
+    return pos;
+
+  wchar_t ch;
+  do {
+    ++line_end;
+    ch = GetChar(line_end);
+  } while (line_end < text_length_ && (ch == '\r' || ch == '\n'));
+
+  if (line_end == text_length_)
+    return line_end;
+
+  // Determine how far along the line we are.
+  size_t dist = pos - GetIndexAtStartOfLine(pos);
+
+  // Check if next line is shorter then current line. If so, return end
+  // of next line.
+  size_t next_line_end = GetIndexAtEndOfLine(line_end);
+  if (line_end + dist > next_line_end)
+    return next_line_end;
+
+  return line_end + dist;
+}
+
+size_t CFDE_TextEditEngine::GetIndexAtStartOfLine(size_t pos) const {
+  if (pos == 0)
+    return 0;
+
+  wchar_t ch = GetChar(pos);
+  // What to do.
+  if (ch == '\r' || ch == '\n')
+    return pos;
+
+  do {
+    // We want to be on the location just after the \r\n
+    ch = GetChar(pos - 1);
+    if (ch == '\r' || ch == '\n')
+      break;
+
+    --pos;
+  } while (pos > 0);
+
+  return pos;
+}
+
+size_t CFDE_TextEditEngine::GetIndexAtEndOfLine(size_t pos) const {
+  if (pos >= text_length_)
+    return text_length_;
+
+  wchar_t ch = GetChar(pos);
+  // Not quite sure which way to go here?
+  if (ch == '\r' || ch == '\n')
+    return pos;
+
+  // We want to be on the location of the first \r or \n.
+  do {
+    ++pos;
+    ch = GetChar(pos);
+  } while (pos < text_length_ && (ch != '\r' && ch != '\n'));
+
+  return pos;
+}
+
 void CFDE_TextEditEngine::LimitHorizontalScroll(bool val) {
   ClearOperationRecords();
   limit_horizontal_area_ = val;
 }
+
 void CFDE_TextEditEngine::LimitVerticalScroll(bool val) {
   ClearOperationRecords();
   limit_vertical_area_ = val;
@@ -838,6 +973,8 @@ void CFDE_TextEditEngine::RebuildPieces() {
 
   bool initialized_bounding_box = false;
   contents_bounding_box_ = CFX_RectF();
+  size_t current_piece_start = 0;
+  float current_line_start = 0;
 
   auto iter = pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(this);
   while (!iter->IsEOF(false)) {
@@ -850,9 +987,6 @@ void CFDE_TextEditEngine::RebuildPieces() {
 
     if (CFX_BreakTypeNoneOrPiece(break_status))
       continue;
-
-    size_t current_piece_start = 0;
-    float current_line_start = 0;
     int32_t piece_count = text_break_.CountBreakPieces();
     for (int32_t i = 0; i < piece_count; ++i) {
       const CFX_BreakPiece* piece = text_break_.GetBreakPieceUnstable(i);

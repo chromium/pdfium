@@ -571,3 +571,126 @@ TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {
     }
   }
 }
+
+TEST_F(CFDE_TextEditEngineTest, CursorMovement) {
+  engine()->Clear();
+  engine()->Insert(0, L"Hello");
+
+  EXPECT_EQ(0U, engine()->GetIndexLeft(0));
+  EXPECT_EQ(5U, engine()->GetIndexRight(5));
+  EXPECT_EQ(2U, engine()->GetIndexUp(2));
+  EXPECT_EQ(2U, engine()->GetIndexDown(2));
+  EXPECT_EQ(1U, engine()->GetIndexLeft(2));
+  EXPECT_EQ(1U, engine()->GetIndexBefore(2));
+  EXPECT_EQ(3U, engine()->GetIndexRight(2));
+  EXPECT_EQ(0U, engine()->GetIndexAtStartOfLine(2));
+  EXPECT_EQ(5U, engine()->GetIndexAtEndOfLine(2));
+
+  engine()->Clear();
+  engine()->Insert(0, L"The book is \"مدخل إلى C++\"");
+  EXPECT_EQ(2U, engine()->GetIndexBefore(3));    // Before is to left.
+  EXPECT_EQ(16U, engine()->GetIndexBefore(15));  // Before is to right.
+  EXPECT_EQ(22U, engine()->GetIndexBefore(23));  // Before is to left.
+
+  engine()->Clear();
+  engine()->Insert(0, L"Hello\r\nWorld\r\nTest");
+  // Move to end of Hello from start of World.
+  engine()->SetSelection(engine()->GetIndexBefore(7U), 7);
+  EXPECT_STREQ(L"\r\nWorld", engine()->GetSelectedText().c_str());
+
+  // Second letter in Hello from second letter in World.
+  engine()->SetSelection(engine()->GetIndexUp(8U), 2);
+  EXPECT_STREQ(L"el", engine()->GetSelectedText().c_str());
+
+  // Second letter in World from second letter in Test.
+  engine()->SetSelection(engine()->GetIndexUp(15U), 2);
+  EXPECT_STREQ(L"or", engine()->GetSelectedText().c_str());
+
+  // Second letter in World from second letter in Hello.
+  engine()->SetSelection(engine()->GetIndexDown(1U), 2);
+  EXPECT_STREQ(L"or", engine()->GetSelectedText().c_str());
+
+  // Second letter in Test from second letter in World.
+  engine()->SetSelection(engine()->GetIndexDown(8U), 2);
+  EXPECT_STREQ(L"es", engine()->GetSelectedText().c_str());
+
+  size_t start_idx = engine()->GetIndexAtStartOfLine(8U);
+  size_t end_idx = engine()->GetIndexAtEndOfLine(8U);
+  engine()->SetSelection(start_idx, end_idx - start_idx);
+  EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
+
+  // Move past \r\n to before W.
+  engine()->SetSelection(engine()->GetIndexRight(5U), 5);
+  EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"Short\nAnd a very long line");
+  engine()->SetSelection(engine()->GetIndexUp(14U), 11);
+  EXPECT_STREQ(L"\nAnd a very", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"A Very long line\nShort");
+  EXPECT_EQ(engine()->GetLength(), engine()->GetIndexDown(8U));
+
+  engine()->Clear();
+  engine()->Insert(0, L"Hello\rWorld\rTest");
+  // Move to end of Hello from start of World.
+  engine()->SetSelection(engine()->GetIndexBefore(6U), 6);
+  EXPECT_STREQ(L"\rWorld", engine()->GetSelectedText().c_str());
+
+  // Second letter in Hello from second letter in World.
+  engine()->SetSelection(engine()->GetIndexUp(7U), 2);
+  EXPECT_STREQ(L"el", engine()->GetSelectedText().c_str());
+
+  // Second letter in World from second letter in Test.
+  engine()->SetSelection(engine()->GetIndexUp(13U), 2);
+  EXPECT_STREQ(L"or", engine()->GetSelectedText().c_str());
+
+  // Second letter in World from second letter in Hello.
+  engine()->SetSelection(engine()->GetIndexDown(1U), 2);
+  EXPECT_STREQ(L"or", engine()->GetSelectedText().c_str());
+
+  // Second letter in Test from second letter in World.
+  engine()->SetSelection(engine()->GetIndexDown(7U), 2);
+  EXPECT_STREQ(L"es", engine()->GetSelectedText().c_str());
+
+  start_idx = engine()->GetIndexAtStartOfLine(7U);
+  end_idx = engine()->GetIndexAtEndOfLine(7U);
+  engine()->SetSelection(start_idx, end_idx - start_idx);
+  EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
+
+  // Move past \r to before W.
+  engine()->SetSelection(engine()->GetIndexRight(5U), 5);
+  EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
+
+  engine()->Clear();
+  engine()->Insert(0, L"Hello\nWorld\nTest");
+  // Move to end of Hello from start of World.
+  engine()->SetSelection(engine()->GetIndexBefore(6U), 6);
+  EXPECT_STREQ(L"\nWorld", engine()->GetSelectedText().c_str());
+
+  // Second letter in Hello from second letter in World.
+  engine()->SetSelection(engine()->GetIndexUp(7U), 2);
+  EXPECT_STREQ(L"el", engine()->GetSelectedText().c_str());
+
+  // Second letter in World from second letter in Test.
+  engine()->SetSelection(engine()->GetIndexUp(13U), 2);
+  EXPECT_STREQ(L"or", engine()->GetSelectedText().c_str());
+
+  // Second letter in World from second letter in Hello.
+  engine()->SetSelection(engine()->GetIndexDown(1U), 2);
+  EXPECT_STREQ(L"or", engine()->GetSelectedText().c_str());
+
+  // Second letter in Test from second letter in World.
+  engine()->SetSelection(engine()->GetIndexDown(7U), 2);
+  EXPECT_STREQ(L"es", engine()->GetSelectedText().c_str());
+
+  start_idx = engine()->GetIndexAtStartOfLine(7U);
+  end_idx = engine()->GetIndexAtEndOfLine(7U);
+  engine()->SetSelection(start_idx, end_idx - start_idx);
+  EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
+
+  // Move past \r to before W.
+  engine()->SetSelection(engine()->GetIndexRight(5U), 5);
+  EXPECT_STREQ(L"World", engine()->GetSelectedText().c_str());
+}

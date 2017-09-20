@@ -129,14 +129,14 @@ class CFDE_TextEditEngine {
   bool Undo();
   void ClearOperationRecords();
 
-  // TODO(dsinclair): Implement ....
-  size_t GetIndexBefore(size_t pos) { return 0; }
-  size_t GetIndexLeft(size_t pos) { return 0; }
-  size_t GetIndexRight(size_t pos) { return 0; }
-  size_t GetIndexUp(size_t pos) { return 0; }
-  size_t GetIndexDown(size_t pos) { return 0; }
-  size_t GetIndexAtStartOfLine(size_t pos) { return 0; }
-  size_t GetIndexAtEndOfLine(size_t pos) { return 0; }
+  // This is not const it can trigger a |Layout|.
+  size_t GetIndexBefore(size_t pos);
+  size_t GetIndexLeft(size_t pos) const;
+  size_t GetIndexRight(size_t pos) const;
+  size_t GetIndexUp(size_t pos) const;
+  size_t GetIndexDown(size_t pos) const;
+  size_t GetIndexAtStartOfLine(size_t pos) const;
+  size_t GetIndexAtEndOfLine(size_t pos) const;
 
   void SelectAll();
   void SetSelection(size_t start_idx, size_t count);
