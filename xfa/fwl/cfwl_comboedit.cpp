@@ -28,9 +28,6 @@ void CFWL_ComboEdit::ClearSelected() {
 
 void CFWL_ComboEdit::SetSelected() {
   FlagFocus(true);
-
-  // TODO(dsinclair): Fix CFWL_CombEdit::SetSelected
-  // GetTxtEdtEngine()->MoveCaretPos(FDE_CaretMove::End, false);
   SelectAll();
 }
 
