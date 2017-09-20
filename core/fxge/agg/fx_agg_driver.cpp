@@ -1072,7 +1072,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
     if (point_type == FXPT_TYPE::MoveTo) {
       m_PathData.move_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::LineTo) {
-      if (pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+      if (i > 0 && pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
           (i == pPoints.size() - 1 ||
            pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
           pPoints[i].m_Point == pPoints[i - 1].m_Point) {
@@ -1080,21 +1080,23 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
       }
       m_PathData.line_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::BezierTo) {
-      CFX_PointF pos0 = pPoints[i - 1].m_Point;
-      CFX_PointF pos2 = pPoints[i + 1].m_Point;
-      CFX_PointF pos3 = pPoints[i + 2].m_Point;
-      if (pObject2Device) {
-        pos0 = pObject2Device->Transform(pos0);
-        pos2 = pObject2Device->Transform(pos2);
-        pos3 = pObject2Device->Transform(pos3);
+      if (i > 0 && i + 2 < pPoints.size()) {
+        CFX_PointF pos0 = pPoints[i - 1].m_Point;
+        CFX_PointF pos2 = pPoints[i + 1].m_Point;
+        CFX_PointF pos3 = pPoints[i + 2].m_Point;
+        if (pObject2Device) {
+          pos0 = pObject2Device->Transform(pos0);
+          pos2 = pObject2Device->Transform(pos2);
+          pos3 = pObject2Device->Transform(pos3);
+        }
+        pos0 = HardClip(pos0);
+        pos2 = HardClip(pos2);
+        pos3 = HardClip(pos3);
+        agg::curve4 curve(pos0.x, pos0.y, pos.x, pos.y, pos2.x, pos2.y, pos3.x,
+                          pos3.y);
+        i += 2;
+        m_PathData.add_path_curve(curve);
       }
-      pos0 = HardClip(pos0);
-      pos2 = HardClip(pos2);
-      pos3 = HardClip(pos3);
-      agg::curve4 curve(pos0.x, pos0.y, pos.x, pos.y, pos2.x, pos2.y, pos3.x,
-                        pos3.y);
-      i += 2;
-      m_PathData.add_path_curve(curve);
     }
     if (pPoints[i].m_CloseFigure)
       m_PathData.end_poly();
