@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <vector>
+
 #include "public/fpdf_edit.h"
 
 #include "core/fpdfapi/page/cpdf_path.h"
@@ -25,6 +27,13 @@ static_assert(CFX_GraphStateData::LineJoinRound == FPDF_LINEJOIN_ROUND,
               "CFX_GraphStateData::LineJoinRound value mismatch");
 static_assert(CFX_GraphStateData::LineJoinBevel == FPDF_LINEJOIN_BEVEL,
               "CFX_GraphStateData::LineJoinBevel value mismatch");
+
+static_assert(static_cast<int>(FXPT_TYPE::LineTo) == FPDF_SEGMENT_LINETO,
+              "FXPT_TYPE::LineTo value mismatch");
+static_assert(static_cast<int>(FXPT_TYPE::BezierTo) == FPDF_SEGMENT_BEZIERTO,
+              "FXPT_TYPE::BezierTo value mismatch");
+static_assert(static_cast<int>(FXPT_TYPE::MoveTo) == FPDF_SEGMENT_MOVETO,
+              "FXPT_TYPE::MoveTo value mismatch");
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewPath(float x,
                                                                     float y) {
@@ -123,6 +132,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountPoint(FPDF_PAGEOBJECT path) {
   if (!pPathObj)
     return -1;
   return pdfium::CollectionSize<int>(pPathObj->m_Path.GetPoints());
+}
+
+FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
+FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index) {
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
+    return nullptr;
+
+  const std::vector<FX_PATHPOINT>& points = pPathObj->m_Path.GetPoints();
+  return pdfium::IndexInBounds(points, index) ? &points[index] : nullptr;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
@@ -228,4 +247,31 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineCap(FPDF_PAGEOBJECT path,
       static_cast<CFX_GraphStateData::LineCap>(line_cap);
   pPathObj->m_GraphState.SetLineCap(lineCap);
   pPathObj->SetDirty(true);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPathSegment_GetPoint(FPDF_PATHSEGMENT segment, float* x, float* y) {
+  auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);
+  if (!pPathPoint || !x || !y)
+    return false;
+
+  *x = pPathPoint->m_Point.x;
+  *y = pPathPoint->m_Point.y;
+
+  return true;
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPathSegment_GetType(FPDF_PATHSEGMENT segment) {
+  auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);
+
+  return pPathPoint ? static_cast<int>(pPathPoint->m_Type)
+                    : FPDF_SEGMENT_UNKNOWN;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPathSegment_GetClose(FPDF_PATHSEGMENT segment) {
+  auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);
+
+  return pPathPoint ? pPathPoint->m_CloseFigure : false;
 }

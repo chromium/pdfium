@@ -259,6 +259,39 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   // Make sure the path has 5 points (1 FXPT_TYPE::MoveTo and 4
   // FXPT_TYPE::LineTo).
   ASSERT_EQ(5, FPDFPath_CountPoint(green_rect));
+  // Verify actual coordinates.
+  FPDF_PATHSEGMENT segment = FPDFPath_GetPathSegment(green_rect, 0);
+  float x;
+  float y;
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(100, x);
+  EXPECT_EQ(100, y);
+  EXPECT_EQ(FPDF_SEGMENT_MOVETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+  segment = FPDFPath_GetPathSegment(green_rect, 1);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(100, x);
+  EXPECT_EQ(140, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+  segment = FPDFPath_GetPathSegment(green_rect, 2);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(140, x);
+  EXPECT_EQ(140, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+  segment = FPDFPath_GetPathSegment(green_rect, 3);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(140, x);
+  EXPECT_EQ(100, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+  segment = FPDFPath_GetPathSegment(green_rect, 4);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(100, x);
+  EXPECT_EQ(100, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_TRUE(FPDFPathSegment_GetClose(segment));
 
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_WINDING, 0));
   FPDFPage_InsertObject(page, green_rect);
@@ -277,6 +310,27 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   // Make sure the path has 3 points (1 FXPT_TYPE::MoveTo and 2
   // FXPT_TYPE::LineTo).
   ASSERT_EQ(3, FPDFPath_CountPoint(black_path));
+  // Verify actual coordinates.
+  segment = FPDFPath_GetPathSegment(black_path, 0);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(400, x);
+  EXPECT_EQ(100, y);
+  EXPECT_EQ(FPDF_SEGMENT_MOVETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+  segment = FPDFPath_GetPathSegment(black_path, 1);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(400, x);
+  EXPECT_EQ(200, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+  segment = FPDFPath_GetPathSegment(black_path, 2);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(300, x);
+  EXPECT_EQ(100, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_TRUE(FPDFPathSegment_GetClose(segment));
+  // Make sure out of bounds index access fails properly.
+  EXPECT_EQ(nullptr, FPDFPath_GetPathSegment(black_path, 3));
 
   FPDFPage_InsertObject(page, black_path);
   page_bitmap = RenderPage(page);
@@ -316,6 +370,21 @@ TEST_F(FPDFEditEmbeddertest, PathsPoints) {
 
   // This should fail gracefully, even if path is NULL.
   ASSERT_EQ(-1, FPDFPath_CountPoint(nullptr));
+
+  // FPDFPath_GetPathSegment() with a non-path.
+  ASSERT_EQ(nullptr, FPDFPath_GetPathSegment(img, 0));
+  // FPDFPath_GetPathSegment() with a NULL path.
+  ASSERT_EQ(nullptr, FPDFPath_GetPathSegment(nullptr, 0));
+  float x;
+  float y;
+  // FPDFPathSegment_GetPoint() with a NULL segment.
+  EXPECT_FALSE(FPDFPathSegment_GetPoint(nullptr, &x, &y));
+
+  // FPDFPathSegment_GetType() with a NULL segment.
+  ASSERT_EQ(FPDF_SEGMENT_UNKNOWN, FPDFPathSegment_GetType(nullptr));
+
+  // FPDFPathSegment_GetClose() with a NULL segment.
+  EXPECT_FALSE(FPDFPathSegment_GetClose(nullptr));
 
   FPDFPageObj_Destroy(img);
 }

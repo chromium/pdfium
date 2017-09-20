@@ -28,6 +28,7 @@ class CPDF_PageRenderContext;
 class CPDF_PathObject;
 class CPDF_Stream;
 class IFSDK_PAUSE_Adapter;
+class FX_PATHPOINT;
 
 // Layering prevents fxcrt from knowing about FPDF_FILEACCESS, so this can't
 // be a static method of IFX_SeekableReadStream.
@@ -73,6 +74,8 @@ CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment);
 ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
+
+const FX_PATHPOINT* FXPathPointFromFPDFPathSegment(FPDF_PATHSEGMENT segment);
 
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,

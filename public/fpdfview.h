@@ -52,6 +52,7 @@ typedef void* FPDF_SCHHANDLE;
 typedef void* FPDF_STRUCTELEMENT;
 typedef void* FPDF_STRUCTTREE;
 typedef void* FPDF_TEXTPAGE;
+typedef void const* FPDF_PATHSEGMENT;
 
 #ifdef PDF_ENABLE_XFA
 typedef void* FPDF_STRINGHANDLE;
