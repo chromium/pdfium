@@ -42,6 +42,22 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   void OnTextFull(CFWL_Widget* pWidget);
   bool CheckWord(const ByteStringView& sWord);
 
+  // CXFA_FFWidget
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
+  bool CanCopy() override;
+  bool CanCut() override;
+  bool CanPaste() override;
+  bool CanSelectAll() override;
+  bool Copy(WideString& wsCopy) override;
+  bool Cut(WideString& wsCut) override;
+  bool Paste(const WideString& wsPaste) override;
+  void SelectAll() override;
+  void Delete() override;
+  void DeSelect() override;
+
  protected:
   uint32_t GetAlignment();
 

@@ -2051,6 +2051,7 @@ test("pdfium_embeddertests") {
     sources += [
       "testing/xfa_js_embedder_test.cpp",
       "testing/xfa_js_embedder_test.h",
+      "xfa/fwl/cfwl_edit_embeddertest.cpp",
       "xfa/fxfa/fm2js/cxfa_fm2jscontext_embeddertest.cpp",
       "xfa/fxfa/parser/cxfa_simple_parser_embeddertest.cpp",
     ]

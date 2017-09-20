@@ -142,6 +142,23 @@ bool CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
   return bRet;
 }
 
+WideString CXFA_FFWidgetHandler::GetSelectedText(CXFA_FFWidget* widget) {
+  if (!widget->CanCopy())
+    return WideString();
+
+  WideString val;
+  widget->Copy(val);
+  return val;
+}
+
+void CXFA_FFWidgetHandler::PasteText(CXFA_FFWidget* widget,
+                                     const WideString& text) {
+  if (!widget->CanPaste())
+    return;
+
+  widget->Paste(text);
+}
+
 FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
                                               const CFX_PointF& point) {
   if (!(hWidget->GetStatus() & XFA_WidgetStatus_Visible))

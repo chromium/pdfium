@@ -142,7 +142,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void SetCursorPosition(size_t position);
   void UpdateCursorRect();
 
-  void DoButtonDown(CFWL_MessageMouse* pMsg);
+  void DoRButtonDown(CFWL_MessageMouse* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);

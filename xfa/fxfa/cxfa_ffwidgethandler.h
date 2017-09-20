@@ -53,6 +53,9 @@ class CXFA_FFWidgetHandler {
                        uint32_t dwFlags,
                        const CFX_PointF& point);
 
+  WideString GetSelectedText(CXFA_FFWidget* widget);
+  void PasteText(CXFA_FFWidget* widget, const WideString& text);
+
   bool OnKeyDown(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnKeyUp(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);

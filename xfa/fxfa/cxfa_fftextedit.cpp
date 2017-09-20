@@ -20,6 +20,14 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+namespace {
+
+CFWL_Edit* ToEdit(CFWL_Widget* widget) {
+  return static_cast<CFWL_Edit*>(widget);
+}
+
+}  // namespace
+
 CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
 
@@ -355,4 +363,63 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
 void CXFA_FFTextEdit::OnDrawWidget(CXFA_Graphics* pGraphics,
                                    const CFX_Matrix& matrix) {
   m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
+}
+
+bool CXFA_FFTextEdit::CanUndo() {
+  return ToEdit(m_pNormalWidget.get())->CanUndo();
+}
+
+bool CXFA_FFTextEdit::CanRedo() {
+  return ToEdit(m_pNormalWidget.get())->CanRedo();
+}
+
+bool CXFA_FFTextEdit::Undo() {
+  return ToEdit(m_pNormalWidget.get())->Undo();
+}
+
+bool CXFA_FFTextEdit::Redo() {
+  return ToEdit(m_pNormalWidget.get())->Redo();
+}
+
+bool CXFA_FFTextEdit::CanCopy() {
+  return ToEdit(m_pNormalWidget.get())->HasSelection();
+}
+
+bool CXFA_FFTextEdit::CanCut() {
+  if (ToEdit(m_pNormalWidget.get())->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)
+    return false;
+  return ToEdit(m_pNormalWidget.get())->HasSelection();
+}
+
+bool CXFA_FFTextEdit::CanPaste() {
+  return !(ToEdit(m_pNormalWidget.get())->GetStylesEx() &
+           FWL_STYLEEXT_EDT_ReadOnly);
+}
+
+bool CXFA_FFTextEdit::CanSelectAll() {
+  return ToEdit(m_pNormalWidget.get())->GetTextLength() > 0;
+}
+
+bool CXFA_FFTextEdit::Copy(WideString& wsCopy) {
+  return ToEdit(m_pNormalWidget.get())->Copy(wsCopy);
+}
+
+bool CXFA_FFTextEdit::Cut(WideString& wsCut) {
+  return ToEdit(m_pNormalWidget.get())->Copy(wsCut);
+}
+
+bool CXFA_FFTextEdit::Paste(const WideString& wsPaste) {
+  return ToEdit(m_pNormalWidget.get())->Paste(wsPaste);
+}
+
+void CXFA_FFTextEdit::SelectAll() {
+  ToEdit(m_pNormalWidget.get())->SelectAll();
+}
+
+void CXFA_FFTextEdit::Delete() {
+  ToEdit(m_pNormalWidget.get())->ClearText();
+}
+
+void CXFA_FFTextEdit::DeSelect() {
+  ToEdit(m_pNormalWidget.get())->ClearSelection();
 }

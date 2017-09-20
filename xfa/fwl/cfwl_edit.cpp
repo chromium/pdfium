@@ -1120,7 +1120,7 @@ void CFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
           OnMouseMove(pMsg);
           break;
         case FWL_MouseCommand::RightButtonDown:
-          DoButtonDown(pMsg);
+          DoRButtonDown(pMsg);
           break;
         default:
           break;
@@ -1159,17 +1159,11 @@ void CFWL_Edit::OnDrawWidget(CXFA_Graphics* pGraphics,
   DrawWidget(pGraphics, matrix);
 }
 
-void CFWL_Edit::DoButtonDown(CFWL_MessageMouse* pMsg) {
+void CFWL_Edit::DoRButtonDown(CFWL_MessageMouse* pMsg) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
     SetFocus(true);
 
-  // TODO(dsinclair): Handle DoButtonDown
-  //  bool bBefore = true;
-  //  int32_t nIndex =
-  //      std::max(0, pPage->GetCharIndex(DeviceToEngine(pMsg->m_pos),
-  //      bBefore));
-
-  // SetCursorPosition(nIndex);
+  m_CursorPosition = m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
 }
 
 void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
@@ -1206,7 +1200,9 @@ void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
   m_bLButtonDown = true;
   SetGrab(true);
-  DoButtonDown(pMsg);
+
+  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+    SetFocus(true);
 
   bool bRepaint = false;
   if (m_EdtEngine.HasSelection()) {
@@ -1216,13 +1212,16 @@ void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
   size_t index_at_click =
       m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
+
   if (index_at_click != m_CursorPosition &&
       !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift)) {
     size_t start = std::min(m_CursorPosition, index_at_click);
     size_t end = std::max(m_CursorPosition, index_at_click);
 
-    m_EdtEngine.SetSelection(start, end);
+    m_EdtEngine.SetSelection(start, end - start);
     bRepaint = true;
+  } else {
+    m_CursorPosition = index_at_click;
   }
 
   if (bRepaint)
@@ -1259,14 +1258,16 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
   if (m_CursorPosition > length)
     SetCursorPosition(length);
 
-  size_t sel_start;
-  size_t count;
-  std::tie(sel_start, count) = m_EdtEngine.GetSelection();
-  size_t original_end = sel_start + count;
-  sel_start = std::min(sel_start, m_CursorPosition);
-  m_EdtEngine.SetSelection(
-      std::min(sel_start, m_CursorPosition),
-      std::max(original_end, m_CursorPosition) - sel_start);
+  size_t sel_start = 0;
+  size_t count = 0;
+  if (m_EdtEngine.HasSelection())
+    std::tie(sel_start, count) = m_EdtEngine.GetSelection();
+  else
+    sel_start = old_cursor_pos;
+
+  size_t start_pos = std::min(sel_start, m_CursorPosition);
+  size_t end_pos = std::max(sel_start, m_CursorPosition);
+  m_EdtEngine.SetSelection(start_pos, end_pos - start_pos);
 }
 
 void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
