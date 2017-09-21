@@ -19,7 +19,7 @@
 #include "xfa/fxfa/fxfa.h"
 
 class CFWL_WidgetMgr;
-class CXFA_DefFontMgr;
+class CFGAS_DefaultFontManager;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 class CXFA_FFDocHandler;
@@ -33,7 +33,7 @@ class CXFA_FFApp {
 
   std::unique_ptr<CXFA_FFDoc> CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                                         CPDF_Document* pPDFDoc);
-  void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
+  void SetDefaultFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
   CXFA_FFDocHandler* GetDocHandler();
   CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgr* pDelegate);

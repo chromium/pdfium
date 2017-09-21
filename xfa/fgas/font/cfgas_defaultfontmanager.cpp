@@ -4,36 +4,32 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/cxfa_deffontmgr.h"
+#include "xfa/fgas/font/cfgas_defaultfontmanager.h"
 
-#include "xfa/fxfa/cxfa_ffapp.h"
-#include "xfa/fxfa/cxfa_ffdoc.h"
-#include "xfa/fxfa/cxfa_fontmgr.h"
+#include "xfa/fgas/font/fgas_fontutils.h"
 
-CXFA_DefFontMgr::CXFA_DefFontMgr() {}
+CFGAS_DefaultFontManager::CFGAS_DefaultFontManager() {}
 
-CXFA_DefFontMgr::~CXFA_DefFontMgr() {}
+CFGAS_DefaultFontManager::~CFGAS_DefaultFontManager() {}
 
-CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
-    CXFA_FFDoc* hDoc,
+CFX_RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
+    CFGAS_FontMgr* pFontMgr,
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
   WideString wsFontName(wsFontFamily);
-  CFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   CFX_RetainPtr<CFGAS_GEFont> pFont =
-      pFDEFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
+      pFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
   if (!pFont) {
-    const XFA_FONTINFO* pCurFont =
-        XFA_GetFontINFOByFontName(wsFontName.AsStringView());
+    const FGAS_FontInfo* pCurFont =
+        FGAS_FontInfoByFontName(wsFontName.AsStringView());
     if (pCurFont && pCurFont->pReplaceFont) {
       uint32_t dwStyle = 0;
-      if (dwFontStyles & FX_FONTSTYLE_Bold) {
+      if (dwFontStyles & FX_FONTSTYLE_Bold)
         dwStyle |= FX_FONTSTYLE_Bold;
-      }
-      if (dwFontStyles & FX_FONTSTYLE_Italic) {
+      if (dwFontStyles & FX_FONTSTYLE_Italic)
         dwStyle |= FX_FONTSTYLE_Italic;
-      }
+
       const wchar_t* pReplace = pCurFont->pReplaceFont;
       int32_t iLength = FXSYS_wcslen(pReplace);
       while (iLength > 0) {
@@ -43,7 +39,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
           iLength--;
         }
         WideString wsReplace = WideString(pReplace, pNameText - pReplace);
-        pFont = pFDEFontMgr->LoadFont(wsReplace.c_str(), dwStyle, wCodePage);
+        pFont = pFontMgr->LoadFont(wsReplace.c_str(), dwStyle, wCodePage);
         if (pFont)
           break;
 
@@ -58,17 +54,16 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
   return pFont;
 }
 
-CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetDefaultFont(
-    CXFA_FFDoc* hDoc,
+CFX_RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetDefaultFont(
+    CFGAS_FontMgr* pFontMgr,
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
-  CFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   CFX_RetainPtr<CFGAS_GEFont> pFont =
-      pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
+      pFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
   if (!pFont) {
-    pFont = pFDEFontMgr->LoadFont(static_cast<const wchar_t*>(nullptr),
-                                  dwFontStyles, wCodePage);
+    pFont = pFontMgr->LoadFont(static_cast<const wchar_t*>(nullptr),
+                               dwFontStyles, wCodePage);
   }
   if (pFont)
     m_CacheFonts.push_back(pFont);

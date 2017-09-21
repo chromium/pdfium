@@ -49,7 +49,8 @@ std::unique_ptr<CXFA_FFDoc> CXFA_FFApp::CreateDoc(
   return pDoc;
 }
 
-void CXFA_FFApp::SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr) {
+void CXFA_FFApp::SetDefaultFontMgr(
+    std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr) {
   if (!m_pFontMgr)
     m_pFontMgr = pdfium::MakeUnique<CXFA_FontMgr>();
   m_pFontMgr->SetDefFontMgr(std::move(pFontMgr));

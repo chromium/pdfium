@@ -21,7 +21,7 @@
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fxfa/cxfa_deffontmgr.h"
+#include "xfa/fgas/font/cfgas_defaultfontmanager.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -44,7 +44,7 @@ CPDFXFA_Context::CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc)
       m_nPageCount(0),
       m_DocEnv(this) {
   m_pXFAApp = pdfium::MakeUnique<CXFA_FFApp>(this);
-  m_pXFAApp->SetDefaultFontMgr(pdfium::MakeUnique<CXFA_DefFontMgr>());
+  m_pXFAApp->SetDefaultFontMgr(pdfium::MakeUnique<CFGAS_DefaultFontManager>());
 }
 
 CPDFXFA_Context::~CPDFXFA_Context() {

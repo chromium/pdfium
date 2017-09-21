@@ -14,23 +14,12 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
+#include "xfa/fgas/font/cfgas_defaultfontmanager.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
-#include "xfa/fxfa/cxfa_deffontmgr.h"
 #include "xfa/fxfa/fxfa.h"
 
 class CPDF_Font;
-
-struct XFA_FONTINFO {
-  uint32_t dwFontNameHash;
-  const wchar_t* pPsName;
-  const wchar_t* pReplaceFont;
-  uint16_t dwStyles;
-  uint16_t wCodePage;
-};
-
-WideString XFA_LocalFontNameToEnglishName(const WideStringView& wsLocalName);
-const XFA_FONTINFO* XFA_GetFontINFOByFontName(const WideStringView& wsFontName);
 
 class CXFA_FontMgr {
  public:
@@ -43,10 +32,10 @@ class CXFA_FontMgr {
                                       uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(CXFA_FFDoc* hDoc);
   void ReleaseDocFonts(CXFA_FFDoc* hDoc);
-  void SetDefFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
+  void SetDefFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
  private:
-  std::unique_ptr<CXFA_DefFontMgr> m_pDefFontMgr;
+  std::unique_ptr<CFGAS_DefaultFontManager> m_pDefFontMgr;
   std::map<CXFA_FFDoc*, std::unique_ptr<CFGAS_PDFFontMgr>> m_PDFFontMgrMap;
   std::map<ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };

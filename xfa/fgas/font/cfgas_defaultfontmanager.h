@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_CXFA_DEFFONTMGR_H_
-#define XFA_FXFA_CXFA_DEFFONTMGR_H_
+#ifndef XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_
+#define XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_
 
 #include <vector>
 
@@ -13,18 +13,16 @@
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
-class CXFA_FFDoc;
-
-class CXFA_DefFontMgr {
+class CFGAS_DefaultFontManager {
  public:
-  CXFA_DefFontMgr();
-  ~CXFA_DefFontMgr();
+  CFGAS_DefaultFontManager();
+  ~CFGAS_DefaultFontManager();
 
-  CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
+  CFX_RetainPtr<CFGAS_GEFont> GetFont(CFGAS_FontMgr* pFontMgr,
                                       const WideStringView& wsFontFamily,
                                       uint32_t dwFontStyles,
                                       uint16_t wCodePage = 0xFFFF);
-  CFX_RetainPtr<CFGAS_GEFont> GetDefaultFont(CXFA_FFDoc* hDoc,
+  CFX_RetainPtr<CFGAS_GEFont> GetDefaultFont(CFGAS_FontMgr* pFontMgr,
                                              const WideStringView& wsFontFamily,
                                              uint32_t dwFontStyles,
                                              uint16_t wCodePage = 0xFFFF);
@@ -33,4 +31,4 @@ class CXFA_DefFontMgr {
   std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_CacheFonts;
 };
 
-#endif  // XFA_FXFA_CXFA_DEFFONTMGR_H_
+#endif  // XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_
