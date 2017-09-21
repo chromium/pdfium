@@ -21,7 +21,7 @@ class CPDF_PageLabel {
   int32_t GetPageByLabel(const WideStringView& wsLabel) const;
 
  private:
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const m_pDocument;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_PAGELABEL_H_

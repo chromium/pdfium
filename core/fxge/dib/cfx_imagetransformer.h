@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
@@ -33,7 +33,7 @@ class CFX_ImageTransformer {
 
  private:
   const RetainPtr<CFX_DIBSource> m_pSrc;
-  CFX_UnownedPtr<const CFX_Matrix> const m_pMatrix;
+  UnownedPtr<const CFX_Matrix> const m_pMatrix;
   const FX_RECT* const m_pClip;
   FX_RECT m_StretchClip;
   FX_RECT m_result;

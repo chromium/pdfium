@@ -10,7 +10,7 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
@@ -28,8 +28,8 @@ class CPngContext : public CCodec_PngModule::Context {
 
   png_structp m_pPng;
   png_infop m_pInfo;
-  CFX_UnownedPtr<CCodec_PngModule> m_pModule;
-  CFX_UnownedPtr<CCodec_PngModule::Delegate> m_pDelegate;
+  UnownedPtr<CCodec_PngModule> m_pModule;
+  UnownedPtr<CCodec_PngModule::Delegate> m_pDelegate;
   void* (*m_AllocFunc)(unsigned int);
   void (*m_FreeFunc)(void*);
   char m_szLastError[PNG_ERROR_SIZE];

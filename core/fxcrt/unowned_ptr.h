@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_CFX_UNOWNED_PTR_H_
-#define CORE_FXCRT_CFX_UNOWNED_PTR_H_
+#ifndef CORE_FXCRT_UNOWNED_PTR_H_
+#define CORE_FXCRT_UNOWNED_PTR_H_
 
 #include <functional>
 #include <memory>
 #include <type_traits>
 #include <utility>
 
-// CFX_UnownedPtr is a smart pointer class that behaves very much like a
+// UnownedPtr is a smart pointer class that behaves very much like a
 // standard C-style pointer. The advantages of using it over raw
 // pointers are:
 //
@@ -34,39 +34,39 @@
 // because an unowned ptr expresses a one to one relationship with some
 // other heap object.
 
+namespace fxcrt {
+
 template <class T>
-class CFX_UnownedPtr {
+class UnownedPtr {
  public:
-  CFX_UnownedPtr() {}
-  CFX_UnownedPtr(const CFX_UnownedPtr& that) : CFX_UnownedPtr(that.Get()) {}
+  UnownedPtr() {}
+  UnownedPtr(const UnownedPtr& that) : UnownedPtr(that.Get()) {}
 
   template <typename U>
-  explicit CFX_UnownedPtr(U* pObj) : m_pObj(pObj) {}
+  explicit UnownedPtr(U* pObj) : m_pObj(pObj) {}
 
   // Deliberately implicit to allow returning nullptrs.
   // NOLINTNEXTLINE(runtime/explicit)
-  CFX_UnownedPtr(std::nullptr_t ptr) {}
+  UnownedPtr(std::nullptr_t ptr) {}
 
-  ~CFX_UnownedPtr() { ProbeForLowSeverityLifetimeIssue(); }
+  ~UnownedPtr() { ProbeForLowSeverityLifetimeIssue(); }
 
-  CFX_UnownedPtr& operator=(T* that) {
+  UnownedPtr& operator=(T* that) {
     ProbeForLowSeverityLifetimeIssue();
     m_pObj = that;
     return *this;
   }
 
-  CFX_UnownedPtr& operator=(const CFX_UnownedPtr& that) {
+  UnownedPtr& operator=(const UnownedPtr& that) {
     ProbeForLowSeverityLifetimeIssue();
     if (*this != that)
       m_pObj = that.Get();
     return *this;
   }
 
-  bool operator==(const CFX_UnownedPtr& that) const {
-    return Get() == that.Get();
-  }
-  bool operator!=(const CFX_UnownedPtr& that) const { return !(*this == that); }
-  bool operator<(const CFX_UnownedPtr& that) const {
+  bool operator==(const UnownedPtr& that) const { return Get() == that.Get(); }
+  bool operator!=(const UnownedPtr& that) const { return !(*this == that); }
+  bool operator<(const UnownedPtr& that) const {
     return std::less<T*>()(Get(), that.Get());
   }
 
@@ -105,13 +105,17 @@ class CFX_UnownedPtr {
 };
 
 template <typename T, typename U>
-inline bool operator==(const U* lhs, const CFX_UnownedPtr<T>& rhs) {
+inline bool operator==(const U* lhs, const UnownedPtr<T>& rhs) {
   return rhs == lhs;
 }
 
 template <typename T, typename U>
-inline bool operator!=(const U* lhs, const CFX_UnownedPtr<T>& rhs) {
+inline bool operator!=(const U* lhs, const UnownedPtr<T>& rhs) {
   return rhs != lhs;
 }
 
-#endif  // CORE_FXCRT_CFX_UNOWNED_PTR_H_
+}  // namespace fxcrt
+
+using fxcrt::UnownedPtr;
+
+#endif  // CORE_FXCRT_UNOWNED_PTR_H_

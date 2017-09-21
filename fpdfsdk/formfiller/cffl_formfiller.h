@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pdfsdk_fieldaction.h"
@@ -152,8 +152,8 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
 
   void InvalidateRect(const FX_RECT& rect);
 
-  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  CFX_UnownedPtr<CPDFSDK_Widget> m_pWidget;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
+  UnownedPtr<CPDFSDK_Widget> m_pWidget;
   bool m_bValid;
   CFFL_PageView2PDFWindow m_Maps;
 };

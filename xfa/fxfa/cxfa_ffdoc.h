@@ -10,7 +10,7 @@
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
@@ -82,12 +82,12 @@ class CXFA_FFDoc {
                   bool bXDP = true);
 
  private:
-  CFX_UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
+  UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
   std::unique_ptr<CXFA_DocumentParser> m_pDocumentParser;
   RetainPtr<IFX_SeekableStream> m_pStream;
-  CFX_UnownedPtr<CXFA_FFApp> m_pApp;
+  UnownedPtr<CXFA_FFApp> m_pApp;
   std::unique_ptr<CXFA_FFNotify> m_pNotify;
-  CFX_UnownedPtr<CPDF_Document> m_pPDFDoc;
+  UnownedPtr<CPDF_Document> m_pPDFDoc;
   std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
   std::unique_ptr<CXFA_FFDocView> m_DocView;
   std::unique_ptr<CFGAS_PDFFontMgr> m_pPDFFontMgr;

@@ -11,7 +11,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Action;
 class CPDF_Object;
@@ -26,7 +26,7 @@ class CPDF_ActionFields {
   CPDF_Object* GetField(size_t iIndex) const;
 
  private:
-  CFX_UnownedPtr<const CPDF_Action> const m_pAction;
+  UnownedPtr<const CPDF_Action> const m_pAction;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ACTIONFIELDS_H_

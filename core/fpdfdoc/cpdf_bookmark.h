@@ -9,8 +9,8 @@
 
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_dest.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -30,7 +30,7 @@ class CPDF_Bookmark {
   CPDF_Action GetAction() const;
 
  private:
-  CFX_UnownedPtr<CPDF_Dictionary> m_pDict;
+  UnownedPtr<CPDF_Dictionary> m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_BOOKMARK_H_

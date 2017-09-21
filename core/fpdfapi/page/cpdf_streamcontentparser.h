@@ -193,12 +193,12 @@ class CPDF_StreamContentParser {
   void Handle_NextLineShowText_Space();
   void Handle_Invalid();
 
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResources;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pParentResources;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pResources;
-  CFX_UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
-  CFX_UnownedPtr<std::set<const uint8_t*>> m_ParsedSet;
+  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Dictionary> m_pPageResources;
+  UnownedPtr<CPDF_Dictionary> m_pParentResources;
+  UnownedPtr<CPDF_Dictionary> m_pResources;
+  UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
+  UnownedPtr<std::set<const uint8_t*>> m_ParsedSet;
   CFX_Matrix m_mtContentToUser;
   const CFX_FloatRect m_BBox;
   ContentParam m_ParamBuf[kParamBufSize];
@@ -208,7 +208,7 @@ class CPDF_StreamContentParser {
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
   CPDF_ContentMark m_CurContentMark;
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
-  CFX_UnownedPtr<CPDF_TextObject> m_pLastTextObject;
+  UnownedPtr<CPDF_TextObject> m_pLastTextObject;
   float m_DefFontSize;
   std::vector<FX_PATHPOINT> m_PathPoints;
   float m_PathStartX;

@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -32,7 +32,7 @@ class CPDF_RenderContext {
     Layer(const Layer& that);
     ~Layer();
 
-    CFX_UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
+    UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
     CFX_Matrix m_Matrix;
   };
 
@@ -65,9 +65,9 @@ class CPDF_RenderContext {
   CPDF_PageRenderCache* GetPageCache() const { return m_pPageCache.Get(); }
 
  protected:
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResources;
-  CFX_UnownedPtr<CPDF_PageRenderCache> m_pPageCache;
+  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Dictionary> m_pPageResources;
+  UnownedPtr<CPDF_PageRenderCache> m_pPageCache;
   std::vector<Layer> m_Layers;
 };
 

@@ -10,9 +10,9 @@
 #include <memory>
 
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;

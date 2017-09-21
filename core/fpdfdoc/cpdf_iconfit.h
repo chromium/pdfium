@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_ICONFIT_H_
 #define CORE_FPDFDOC_CPDF_ICONFIT_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 
@@ -27,7 +27,7 @@ class CPDF_IconFit {
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
  private:
-  CFX_UnownedPtr<const CPDF_Dictionary> const m_pDict;
+  UnownedPtr<const CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ICONFIT_H_

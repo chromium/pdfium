@@ -12,10 +12,10 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectlist.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class IFX_PauseIndicator;
 class CPDF_Dictionary;
@@ -71,11 +71,11 @@ class CPDF_PageObjectHolder {
   void Transform(const CFX_Matrix& matrix);
   CFX_FloatRect CalcBoundingBox() const;
 
-  CFX_UnownedPtr<CPDF_Dictionary> m_pFormDict;
-  CFX_UnownedPtr<CPDF_Stream> m_pFormStream;
-  CFX_UnownedPtr<CPDF_Document> m_pDocument;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResources;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pResources;
+  UnownedPtr<CPDF_Dictionary> m_pFormDict;
+  UnownedPtr<CPDF_Stream> m_pFormStream;
+  UnownedPtr<CPDF_Document> m_pDocument;
+  UnownedPtr<CPDF_Dictionary> m_pPageResources;
+  UnownedPtr<CPDF_Dictionary> m_pResources;
   std::map<GraphicsData, ByteString> m_GraphicsMap;
   std::map<FontData, ByteString> m_FontsMap;
   CFX_FloatRect m_BBox;

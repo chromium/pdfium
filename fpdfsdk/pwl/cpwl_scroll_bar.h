@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_PWL_CPWL_SCROLL_BAR_H_
 #define FPDFSDK_PWL_CPWL_SCROLL_BAR_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class CPWL_SBButton;
@@ -170,9 +170,9 @@ class CPWL_ScrollBar : public CPWL_Wnd {
 
   PWL_SCROLLBAR_TYPE m_sbType;
   PWL_SCROLL_INFO m_OriginInfo;
-  CFX_UnownedPtr<CPWL_SBButton> m_pMinButton;
-  CFX_UnownedPtr<CPWL_SBButton> m_pMaxButton;
-  CFX_UnownedPtr<CPWL_SBButton> m_pPosButton;
+  UnownedPtr<CPWL_SBButton> m_pMinButton;
+  UnownedPtr<CPWL_SBButton> m_pMaxButton;
+  UnownedPtr<CPWL_SBButton> m_pPosButton;
   PWL_SCROLL_PRIVATEDATA m_sData;
   bool m_bMouseDown;
   bool m_bMinOrMax;

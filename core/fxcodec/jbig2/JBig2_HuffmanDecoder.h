@@ -9,7 +9,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_HuffmanDecoder {
  public:
@@ -20,7 +20,7 @@ class CJBig2_HuffmanDecoder {
   int decodeAValue(CJBig2_HuffmanTable* pTable, int* nResult);
 
  private:
-  CFX_UnownedPtr<CJBig2_BitStream> const m_pStream;
+  UnownedPtr<CJBig2_BitStream> const m_pStream;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_HUFFMANDECODER_H_

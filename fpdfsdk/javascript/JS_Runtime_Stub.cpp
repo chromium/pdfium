@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/javascript/ijs_event_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/ptr_util.h"
@@ -152,7 +152,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   }
 
  protected:
-  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   std::unique_ptr<CJS_EventContextStub> m_pContext;
 };
 

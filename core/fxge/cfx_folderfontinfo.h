@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
@@ -63,7 +63,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
 
   std::map<ByteString, std::unique_ptr<CFX_FontFaceInfo>> m_FontList;
   std::vector<ByteString> m_PathList;
-  CFX_UnownedPtr<CFX_FontMapper> m_pMapper;
+  UnownedPtr<CFX_FontMapper> m_pMapper;
 };
 
 #endif  // CORE_FXGE_CFX_FOLDERFONTINFO_H_

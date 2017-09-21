@@ -12,8 +12,8 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_pattern.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 enum ShadingType {
   kInvalidShading = 0,
@@ -63,13 +63,13 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
  private:
   ShadingType m_ShadingType;
   bool m_bShadingObj;
-  CFX_UnownedPtr<CPDF_Object> m_pShadingObj;
+  UnownedPtr<CPDF_Object> m_pShadingObj;
 
   // Still keep |m_pCS| as some CPDF_ColorSpace (name object) are not managed
   // as counted objects. Refer to CPDF_DocPageData::GetColorSpace.
-  CFX_UnownedPtr<CPDF_ColorSpace> m_pCS;
+  UnownedPtr<CPDF_ColorSpace> m_pCS;
 
-  CFX_UnownedPtr<CPDF_CountedColorSpace> m_pCountedCS;
+  UnownedPtr<CPDF_CountedColorSpace> m_pCountedCS;
   std::vector<std::unique_ptr<CPDF_Function>> m_pFunctions;
 };
 

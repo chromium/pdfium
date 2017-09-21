@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -42,9 +42,9 @@ class CPDF_StructTree {
   bool AddTopLevelNode(CPDF_Dictionary* pDict,
                        const RetainPtr<CPDF_StructElement>& pElement);
 
-  CFX_UnownedPtr<const CPDF_Dictionary> const m_pTreeRoot;
-  CFX_UnownedPtr<const CPDF_Dictionary> const m_pRoleMap;
-  CFX_UnownedPtr<const CPDF_Dictionary> m_pPage;
+  UnownedPtr<const CPDF_Dictionary> const m_pTreeRoot;
+  UnownedPtr<const CPDF_Dictionary> const m_pRoleMap;
+  UnownedPtr<const CPDF_Dictionary> m_pPage;
   std::vector<RetainPtr<CPDF_StructElement>> m_Kids;
 };
 

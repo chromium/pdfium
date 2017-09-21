@@ -11,9 +11,9 @@
 #include <set>
 
 #include "core/fpdfapi/page/cpdf_pattern.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 #define PDFCS_DEVICEGRAY 1
 #define PDFCS_DEVICERGB 2
@@ -83,10 +83,10 @@ class CPDF_ColorSpace {
                       CPDF_Array* pArray,
                       std::set<CPDF_Object*>* pVisited);
 
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const m_pDocument;
   int m_Family;
   uint32_t m_nComponents;
-  CFX_UnownedPtr<CPDF_Array> m_pArray;
+  UnownedPtr<CPDF_Array> m_pArray;
   uint32_t m_dwStdConversion;
 };
 using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace>;

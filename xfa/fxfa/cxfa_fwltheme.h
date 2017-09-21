@@ -60,7 +60,7 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   RetainPtr<CFGAS_GEFont> m_pCalendarFont;
   WideString m_wsResource;
-  CFX_UnownedPtr<CXFA_FFApp> const m_pApp;
+  UnownedPtr<CXFA_FFApp> const m_pApp;
   CFX_RectF m_Rect;
 };
 

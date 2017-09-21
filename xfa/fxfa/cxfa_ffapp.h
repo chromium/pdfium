@@ -12,8 +12,8 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
@@ -52,7 +52,7 @@ class CXFA_FFApp {
 
  private:
   std::unique_ptr<CXFA_FFDocHandler> m_pDocHandler;
-  CFX_UnownedPtr<IXFA_AppProvider> const m_pProvider;
+  UnownedPtr<IXFA_AppProvider> const m_pProvider;
 
   // The fonts stored in the font manager may have been created by the default
   // font manager. The GEFont::LoadFont call takes the manager as a param and

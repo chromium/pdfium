@@ -9,10 +9,10 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/ifx_scanlinecomposer.h"
 #include "core/fxge/fx_dib.h"
 
@@ -40,7 +40,7 @@ class CFX_ImageStretcher {
   bool ContinueQuickStretch(IFX_PauseIndicator* pPause);
   bool ContinueStretch(IFX_PauseIndicator* pPause);
 
-  CFX_UnownedPtr<IFX_ScanlineComposer> const m_pDest;
+  UnownedPtr<IFX_ScanlineComposer> const m_pDest;
   RetainPtr<CFX_DIBSource> m_pSource;
   std::unique_ptr<CStretchEngine> m_pStretchEngine;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanline;

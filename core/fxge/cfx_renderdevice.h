@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_font.h"
@@ -91,7 +91,7 @@ class CFX_RenderDevice {
     ~StateRestorer();
 
    private:
-    CFX_UnownedPtr<CFX_RenderDevice> m_pDevice;
+    UnownedPtr<CFX_RenderDevice> m_pDevice;
   };
 
   CFX_RenderDevice();

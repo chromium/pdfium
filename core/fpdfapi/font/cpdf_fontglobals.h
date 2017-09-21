@@ -29,7 +29,7 @@ class CPDF_FontGlobals {
 
   CPDF_CMapManager m_CMapManager;
   struct {
-    CFX_UnownedPtr<const FXCMAP_CMap> m_pMapList;
+    UnownedPtr<const FXCMAP_CMap> m_pMapList;
     uint32_t m_Count;
   } m_EmbeddedCharsets[CIDSET_NUM_SETS];
   struct {

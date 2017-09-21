@@ -13,9 +13,9 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFieldTree;
 class CFDF_Document;
@@ -108,13 +108,13 @@ class CPDF_InterForm {
 
   static bool s_bUpdateAP;
 
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pFormDict;
+  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Dictionary> m_pFormDict;
   std::map<const CPDF_Dictionary*, std::unique_ptr<CPDF_FormControl>>
       m_ControlMap;
   std::unique_ptr<CFieldTree> m_pFieldTree;
   ByteString m_bsEncoding;
-  CFX_UnownedPtr<IPDF_FormNotify> m_pFormNotify;
+  UnownedPtr<IPDF_FormNotify> m_pFormNotify;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_INTERFORM_H_

@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_CPDFSDK_XFAWIDGET_H_
 #define FPDFSDK_CPDFSDK_XFAWIDGET_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 
 class CPDFSDK_InterForm;
@@ -32,8 +32,8 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
   CPDFSDK_InterForm* GetInterForm() const { return m_pInterForm.Get(); }
 
  private:
-  CFX_UnownedPtr<CPDFSDK_InterForm> m_pInterForm;
-  CFX_UnownedPtr<CXFA_FFWidget> m_hXFAWidget;
+  UnownedPtr<CPDFSDK_InterForm> m_pInterForm;
+  UnownedPtr<CXFA_FFWidget> m_hXFAWidget;
 };
 
 #endif  // FPDFSDK_CPDFSDK_XFAWIDGET_H_

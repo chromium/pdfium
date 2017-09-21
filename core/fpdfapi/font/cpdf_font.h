@@ -12,9 +12,9 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_font.h"
 
 class CFX_SubstFont;
@@ -107,7 +107,7 @@ class CPDF_Font {
                                const std::vector<ByteString>& charnames,
                                int charcode);
 
-  CFX_UnownedPtr<CPDF_Document> m_pDocument;
+  UnownedPtr<CPDF_Document> m_pDocument;
   CFX_Font m_Font;
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
   ByteString m_BaseFont;

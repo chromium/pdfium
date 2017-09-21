@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_ImageObject;
@@ -39,8 +39,8 @@ class CPDF_ImageLoader {
  private:
   void HandleFailure();
 
-  CFX_UnownedPtr<CPDF_PageRenderCache> m_pCache;
-  CFX_UnownedPtr<CPDF_ImageObject> m_pImageObject;
+  UnownedPtr<CPDF_PageRenderCache> m_pCache;
+  UnownedPtr<CPDF_ImageObject> m_pImageObject;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_

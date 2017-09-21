@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFX_DIBSource;
 class CFX_DIBitmap;
@@ -48,7 +48,7 @@ class CPDF_ImageCacheEntry {
   void ContinueGetCachedBitmap(CPDF_RenderStatus* pRenderStatus);
   void CalcSize();
 
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CPDF_Image> const m_pImage;
   RetainPtr<CFX_DIBSource> m_pCurBitmap;
   RetainPtr<CFX_DIBSource> m_pCurMask;

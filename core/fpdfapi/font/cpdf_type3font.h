@@ -48,9 +48,9 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   void LoadGlyphMap() override {}
 
   int m_CharWidthL[256];
-  CFX_UnownedPtr<CPDF_Dictionary> m_pCharProcs;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResources;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pFontResources;
+  UnownedPtr<CPDF_Dictionary> m_pCharProcs;
+  UnownedPtr<CPDF_Dictionary> m_pPageResources;
+  UnownedPtr<CPDF_Dictionary> m_pFontResources;
   std::map<uint32_t, std::unique_ptr<CPDF_Type3Char>> m_CacheMap;
   // The depth char loading is in, to avoid recurive calling LoadChar().
   int m_CharLoadingDepth;

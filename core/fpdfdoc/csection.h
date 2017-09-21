@@ -57,7 +57,7 @@ class CSection final {
   void ClearRightWords(int32_t nWordIndex);
   void ClearMidWords(int32_t nBeginIndex, int32_t nEndIndex);
 
-  CFX_UnownedPtr<CPDF_VariableText> const m_pVT;
+  UnownedPtr<CPDF_VariableText> const m_pVT;
 };
 
 #endif  // CORE_FPDFDOC_CSECTION_H_

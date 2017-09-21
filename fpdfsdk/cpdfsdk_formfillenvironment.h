@@ -227,7 +227,7 @@ class CPDFSDK_FormFillEnvironment
   std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
-  CFX_UnownedPtr<UnderlyingDocumentType> m_pUnderlyingDoc;
+  UnownedPtr<UnderlyingDocumentType> m_pUnderlyingDoc;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
   bool m_bChangeMask;

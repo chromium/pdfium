@@ -19,7 +19,7 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
     ~Session();
 
    private:
-    CFX_UnownedPtr<CPDF_ReadValidator> validator_;
+    UnownedPtr<CPDF_ReadValidator> validator_;
     bool saved_read_error_;
     bool saved_has_unavailable_data_;
   };
@@ -56,9 +56,9 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   void ScheduleDownload(FX_FILESIZE offset, size_t size);
 
   RetainPtr<IFX_SeekableReadStream> file_read_;
-  CFX_UnownedPtr<CPDF_DataAvail::FileAvail> file_avail_;
+  UnownedPtr<CPDF_DataAvail::FileAvail> file_avail_;
 
-  CFX_UnownedPtr<CPDF_DataAvail::DownloadHints> hints_;
+  UnownedPtr<CPDF_DataAvail::DownloadHints> hints_;
 
   bool read_error_;
   bool has_unavailable_data_;

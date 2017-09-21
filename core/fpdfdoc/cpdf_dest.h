@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFDOC_CPDF_DEST_H_
 #define CORE_FPDFDOC_CPDF_DEST_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Document;
 class CPDF_Object;
@@ -36,7 +36,7 @@ class CPDF_Dest {
               float* pZoom) const;
 
  private:
-  CFX_UnownedPtr<CPDF_Object> m_pObj;
+  UnownedPtr<CPDF_Object> m_pObj;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEST_H_

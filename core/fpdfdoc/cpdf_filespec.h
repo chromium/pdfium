@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFDOC_CPDF_FILESPEC_H_
 #define CORE_FPDFDOC_CPDF_FILESPEC_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Object;
@@ -36,7 +36,7 @@ class CPDF_FileSpec {
   void SetFileName(const WideString& wsFileName);
 
  private:
-  CFX_UnownedPtr<CPDF_Object> const m_pObj;
+  UnownedPtr<CPDF_Object> const m_pObj;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FILESPEC_H_

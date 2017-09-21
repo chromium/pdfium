@@ -160,8 +160,8 @@ class CPDF_AnnotContext {
 
  private:
   std::unique_ptr<CPDF_Form> m_pAnnotForm;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pAnnotDict;
-  CFX_UnownedPtr<CPDF_Page> m_pPage;
+  UnownedPtr<CPDF_Dictionary> m_pAnnotDict;
+  UnownedPtr<CPDF_Page> m_pPage;
 };
 
 CPDF_AnnotContext* CPDFAnnotContextFromFPDFAnnotation(FPDF_ANNOTATION annot) {

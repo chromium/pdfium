@@ -13,7 +13,7 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_cmap.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_CMapParser {
  public:
@@ -39,7 +39,7 @@ class CPDF_CMapParser {
                                 const ByteStringView& first,
                                 const ByteStringView& second);
 
-  CFX_UnownedPtr<CPDF_CMap> const m_pCMap;
+  UnownedPtr<CPDF_CMap> const m_pCMap;
   int m_Status;
   int m_CodeSeq;
   uint32_t m_CodePoints[4];

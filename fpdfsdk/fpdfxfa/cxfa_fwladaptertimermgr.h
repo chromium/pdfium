@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "xfa/fwl/cfwl_timerinfo.h"
 #include "xfa/fwl/ifwl_adaptertimermgr.h"
@@ -30,7 +30,7 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
   static void TimerProc(int32_t idEvent);
 
   static std::vector<CFWL_TimerInfo*>* s_TimerArray;
-  CFX_UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CXFA_FWLADAPTERTIMERMGR_H_

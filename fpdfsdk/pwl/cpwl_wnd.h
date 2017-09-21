@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/observable.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -131,7 +131,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     CFX_SystemHandler* pSystemHandler;                // required
     IPVT_FontMap* pFontMap;                           // required
     ProviderIface::ObservedPtr pProvider;             // required
-    CFX_UnownedPtr<FocusHandlerIface> pFocusHandler;  // optional
+    UnownedPtr<FocusHandlerIface> pFocusHandler;      // optional
     uint32_t dwFlags;                                 // optional
     CFX_Color sBackgroundColor;                       // optional
     CPDFSDK_Widget::ObservedPtr pAttachedWidget;      // required
@@ -142,7 +142,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     int32_t nTransparency;                            // optional
     float fFontSize;                                  // optional
     CPWL_Dash sDash;                                  // optional
-    CFX_UnownedPtr<PrivateData> pAttachedData;        // optional
+    UnownedPtr<PrivateData> pAttachedData;            // optional
     CPWL_Wnd* pParentWnd;                             // ignore
     CPWL_MsgControl* pMsgControl;                     // ignore
     int32_t eCursorType;                              // ignore
@@ -311,7 +311,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
 
   CreateParams m_CreationParams;
   std::vector<CPWL_Wnd*> m_Children;
-  CFX_UnownedPtr<CPWL_ScrollBar> m_pVScrollBar;
+  UnownedPtr<CPWL_ScrollBar> m_pVScrollBar;
   CFX_FloatRect m_rcWindow;
   CFX_FloatRect m_rcClip;
   bool m_bCreated;

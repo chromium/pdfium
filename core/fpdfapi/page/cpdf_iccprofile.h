@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CLcmsCmm;
 class CPDF_Stream;
@@ -32,7 +32,7 @@ class CPDF_IccProfile : public Retainable {
   ~CPDF_IccProfile() override;
 
   const bool m_bsRGB;
-  CFX_UnownedPtr<CPDF_Stream> const m_pStream;
+  UnownedPtr<CPDF_Stream> const m_pStream;
   std::unique_ptr<CLcmsCmm> m_Transform;
   uint32_t m_nSrcComponents = 0;
 };

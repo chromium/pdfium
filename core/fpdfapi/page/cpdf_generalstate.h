@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/shared_copy_on_write.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Object;
@@ -85,11 +85,11 @@ class CPDF_GeneralState {
 
     ByteString m_BlendMode;
     int m_BlendType;
-    CFX_UnownedPtr<CPDF_Object> m_pSoftMask;
+    UnownedPtr<CPDF_Object> m_pSoftMask;
     CFX_Matrix m_SMaskMatrix;
     float m_StrokeAlpha;
     float m_FillAlpha;
-    CFX_UnownedPtr<CPDF_Object> m_pTR;
+    UnownedPtr<CPDF_Object> m_pTR;
     RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
     CFX_Matrix m_Matrix;
     int m_RenderIntent;
@@ -99,9 +99,9 @@ class CPDF_GeneralState {
     bool m_StrokeOP;
     bool m_FillOP;
     int m_OPMode;
-    CFX_UnownedPtr<CPDF_Object> m_pBG;
-    CFX_UnownedPtr<CPDF_Object> m_pUCR;
-    CFX_UnownedPtr<CPDF_Object> m_pHT;
+    UnownedPtr<CPDF_Object> m_pBG;
+    UnownedPtr<CPDF_Object> m_pUCR;
+    UnownedPtr<CPDF_Object> m_pHT;
     float m_Flatness;
     float m_Smoothness;
   };

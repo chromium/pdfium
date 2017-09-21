@@ -124,7 +124,7 @@ FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap() {
 }
 
 struct FPDF_SYSFONTINFO_DEFAULT : public FPDF_SYSFONTINFO {
-  CFX_UnownedPtr<IFX_SystemFontInfo> m_pFontInfo;
+  UnownedPtr<IFX_SystemFontInfo> m_pFontInfo;
 };
 
 static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {

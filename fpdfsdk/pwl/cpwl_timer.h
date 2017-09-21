@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_PWL_CPWL_TIMER_H_
 #define FPDFSDK_PWL_CPWL_TIMER_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFX_SystemHandler;
 class CPWL_TimerHandler;
@@ -24,8 +24,8 @@ class CPWL_Timer {
 
  private:
   int32_t m_nTimerID;
-  CFX_UnownedPtr<CPWL_TimerHandler> m_pAttached;
-  CFX_UnownedPtr<CFX_SystemHandler> m_pSystemHandler;
+  UnownedPtr<CPWL_TimerHandler> m_pAttached;
+  UnownedPtr<CFX_SystemHandler> m_pSystemHandler;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_TIMER_H_

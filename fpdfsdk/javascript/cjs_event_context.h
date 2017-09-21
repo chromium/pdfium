@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/javascript/ijs_event_context.h"
 
 class CJS_EventHandler;
@@ -128,7 +128,7 @@ class CJS_EventContext : public IJS_EventContext {
   CPDFSDK_FormFillEnvironment* GetFormFillEnv();
 
  private:
-  CFX_UnownedPtr<CJS_Runtime> const m_pRuntime;
+  UnownedPtr<CJS_Runtime> const m_pRuntime;
   std::unique_ptr<CJS_EventHandler> m_pEventHandler;
   bool m_bBusy;
 };

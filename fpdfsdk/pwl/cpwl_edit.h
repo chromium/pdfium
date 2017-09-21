@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 
 #define PWL_CLASSNAME_EDIT "CPWL_Edit"
@@ -129,8 +129,8 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
   bool m_bFocus;
   CFX_FloatRect m_rcOldWindow;
-  CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
-  CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
+  UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
+  UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_EDIT_H_

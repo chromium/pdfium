@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
@@ -37,7 +37,7 @@ class CFX_ImageRenderer {
 
  private:
   const RetainPtr<CFX_DIBitmap> m_pDevice;
-  const CFX_UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
+  const UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
   const CFX_Matrix m_Matrix;
   const int m_BitmapAlpha;
   const int m_BlendType;

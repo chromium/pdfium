@@ -55,7 +55,7 @@ class CPDF_Action {
   CPDF_Action GetSubAction(size_t iIndex) const;
 
  private:
-  CFX_UnownedPtr<CPDF_Dictionary> const m_pDict;
+  UnownedPtr<CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ACTION_H_

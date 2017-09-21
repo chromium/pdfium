@@ -86,7 +86,7 @@ class CXFA_Object : public CFXJSE_HostObject {
  protected:
   void ThrowException(const wchar_t* str, ...) const;
 
-  CFX_UnownedPtr<CXFA_Document> const m_pDocument;
+  UnownedPtr<CXFA_Document> const m_pDocument;
   const XFA_ObjectType m_objectType;
   const XFA_Element m_elementType;
 

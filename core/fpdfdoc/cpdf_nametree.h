@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;
@@ -36,7 +36,7 @@ class CPDF_NameTree {
   CPDF_Dictionary* GetRoot() const { return m_pRoot.Get(); }
 
  private:
-  CFX_UnownedPtr<CPDF_Dictionary> m_pRoot;
+  UnownedPtr<CPDF_Dictionary> m_pRoot;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_NAMETREE_H_

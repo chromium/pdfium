@@ -18,7 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -141,8 +141,8 @@ class CPDF_PageOrganizer {
   bool UpdateReference(CPDF_Object* pObj, ObjectNumberMap* pObjNumberMap);
   uint32_t GetNewObjId(ObjectNumberMap* pObjNumberMap, CPDF_Reference* pRef);
 
-  CFX_UnownedPtr<CPDF_Document> m_pDestPDFDoc;
-  CFX_UnownedPtr<CPDF_Document> m_pSrcPDFDoc;
+  UnownedPtr<CPDF_Document> m_pDestPDFDoc;
+  UnownedPtr<CPDF_Document> m_pSrcPDFDoc;
 };
 
 CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* pDestPDFDoc,

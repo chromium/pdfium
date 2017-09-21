@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
@@ -28,7 +28,7 @@ class CPDF_StructKid {
   enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
 
   RetainPtr<CPDF_StructElement> m_pElement;      // For Element.
-  CFX_UnownedPtr<CPDF_Dictionary> m_pDict;       // For Element.
+  UnownedPtr<CPDF_Dictionary> m_pDict;           // For Element.
   uint32_t m_PageObjNum;  // For PageContent, StreamContent, Object.
   uint32_t m_RefObjNum;   // For StreamContent, Object.
   uint32_t m_ContentId;   // For PageContent, StreamContent.
@@ -56,9 +56,9 @@ class CPDF_StructElement : public Retainable {
   void LoadKids(CPDF_Dictionary* pDict);
   void LoadKid(uint32_t PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
 
-  CFX_UnownedPtr<CPDF_StructTree> const m_pTree;
-  CFX_UnownedPtr<CPDF_StructElement> const m_pParent;
-  CFX_UnownedPtr<CPDF_Dictionary> const m_pDict;
+  UnownedPtr<CPDF_StructTree> const m_pTree;
+  UnownedPtr<CPDF_StructElement> const m_pParent;
+  UnownedPtr<CPDF_Dictionary> const m_pDict;
   ByteString m_Type;
   ByteString m_Title;
   std::vector<CPDF_StructKid> m_Kids;

@@ -65,7 +65,7 @@ class HintsScope {
   ~HintsScope() { validator_->SetDownloadHints(nullptr); }
 
  private:
-  CFX_UnownedPtr<CPDF_ReadValidator> validator_;
+  UnownedPtr<CPDF_ReadValidator> validator_;
 };
 
 }  // namespace

@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CBC_ReedSolomonGF256;
 
@@ -40,7 +40,7 @@ class CBC_ReedSolomonGF256Poly final {
   std::unique_ptr<CBC_ReedSolomonGF256Poly> Clone() const;
 
  private:
-  CFX_UnownedPtr<CBC_ReedSolomonGF256> m_field;
+  UnownedPtr<CBC_ReedSolomonGF256> m_field;
   std::vector<int32_t> m_coefficients;
 };
 

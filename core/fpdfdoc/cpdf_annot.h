@@ -111,7 +111,7 @@ class CPDF_Annot {
   CFX_FloatRect RectForDrawing() const;
 
   MaybeOwned<CPDF_Dictionary> m_pAnnotDict;
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
   // |m_bOpenState| is only set for popup annotations.

@@ -437,7 +437,7 @@ class CFX_Renderer {
   RetainPtr<CFX_DIBitmap> m_pOriDevice;
   RetainPtr<CFX_DIBitmap> m_pClipMask;
   RetainPtr<CFX_DIBitmap> m_pDevice;
-  CFX_UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
+  UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
 };
 
 void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,

@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/fxjse.h"
 
@@ -31,7 +31,7 @@ class CFXJSE_Arguments {
 
  private:
   const v8::FunctionCallbackInfo<v8::Value>* m_pInfo;
-  CFX_UnownedPtr<CFXJSE_Value> m_pRetValue;
+  UnownedPtr<CFXJSE_Value> m_pRetValue;
 };
 
 #endif  // FXJS_CFXJSE_ARGUMENTS_H_

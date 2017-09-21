@@ -13,8 +13,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 
@@ -216,7 +216,7 @@ class StringViewTemplate {
   }
 
  protected:
-  CFX_UnownedPtr<const UnsignedType> m_Ptr;
+  UnownedPtr<const UnsignedType> m_Ptr;
   FX_STRSIZE m_Length;
 
  private:

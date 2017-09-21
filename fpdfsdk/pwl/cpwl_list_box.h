@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class CPWL_ListCtrl;
@@ -35,7 +35,7 @@ class CPWL_List_Notify {
   void IOnInvalidateRect(CFX_FloatRect* pRect);
 
  private:
-  CFX_UnownedPtr<CPWL_ListBox> m_pList;
+  UnownedPtr<CPWL_ListBox> m_pList;
 };
 
 class CPWL_ListBox : public CPWL_Wnd {
@@ -101,10 +101,10 @@ class CPWL_ListBox : public CPWL_Wnd {
   std::unique_ptr<CPWL_List_Notify> m_pListNotify;
   bool m_bMouseDown;
   bool m_bHoverSel;
-  CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
+  UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
 
  private:
-  CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
+  UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_LIST_BOX_H_

@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_BitStream;
 
@@ -39,7 +39,7 @@ class CJBig2_ArithDecoder {
   unsigned int m_C;
   unsigned int m_A;
   unsigned int m_CT;
-  CFX_UnownedPtr<CJBig2_BitStream> const m_pStream;
+  UnownedPtr<CJBig2_BitStream> const m_pStream;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_ARITHDECODER_H_

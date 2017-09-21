@@ -14,10 +14,10 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Array;
 class CPDF_CryptoHandler;
@@ -191,11 +191,11 @@ class CPDF_Parser {
   bool InitSyntaxParser(const RetainPtr<IFX_SeekableReadStream>& file_access);
   bool ParseFileVersion();
 
-  CFX_UnownedPtr<CPDF_Document> m_pDocument;
+  UnownedPtr<CPDF_Document> m_pDocument;
   bool m_bHasParsed;
   bool m_bXRefStream;
   int m_FileVersion;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
+  UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   FX_FILESIZE m_LastXRefOffset;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   ByteString m_Password;

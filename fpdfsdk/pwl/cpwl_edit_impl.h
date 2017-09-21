@@ -13,7 +13,7 @@
 
 #include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 #define FX_EDIT_ISLATINWORD(u)                  \
   (u == 0x2D || (u <= 0x005A && u >= 0x0041) || \
@@ -144,7 +144,7 @@ class CFXEU_InsertWord : public IFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -167,7 +167,7 @@ class CFXEU_InsertReturn : public IFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -191,7 +191,7 @@ class CFXEU_Backspace : public IFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -218,7 +218,7 @@ class CFXEU_Delete : public IFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -241,7 +241,7 @@ class CFXEU_Clear : public IFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
 
   CPVT_WordRange m_wrSel;
   WideString m_swText;
@@ -261,7 +261,7 @@ class CFXEU_InsertText : public IFX_Edit_UndoItem {
   void Undo() override;
 
  private:
-  CFX_UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -430,8 +430,8 @@ class CPWL_EditImpl {
 
  private:
   std::unique_ptr<CPDF_VariableText> m_pVT;
-  CFX_UnownedPtr<CPWL_EditCtrl> m_pNotify;
-  CFX_UnownedPtr<CPWL_Edit> m_pOperationNotify;
+  UnownedPtr<CPWL_EditCtrl> m_pNotify;
+  UnownedPtr<CPWL_Edit> m_pOperationNotify;
   std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
@@ -466,7 +466,7 @@ class CPWL_EditImpl_Iterator {
   const CPVT_WordPlace& GetAt() const;
 
  private:
-  CFX_UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
   CPDF_VariableText::Iterator* m_pVTIterator;
 };
 

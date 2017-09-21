@@ -134,8 +134,8 @@ class CBmpContext : public CCodec_BmpModule::Context {
   ~CBmpContext() override;
 
   BMPDecompressor m_Bmp;
-  CFX_UnownedPtr<CCodec_BmpModule> const m_pModule;
-  CFX_UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
+  UnownedPtr<CCodec_BmpModule> const m_pModule;
+  UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
   char m_szLastError[256];
 };
 

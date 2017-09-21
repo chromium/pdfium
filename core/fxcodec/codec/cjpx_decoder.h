@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/codec/codec_int.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/libopenjpeg20/openjpeg.h"
 
 class CPDF_ColorSpace;
@@ -36,7 +36,7 @@ class CJPX_Decoder {
   std::unique_ptr<DecodeData> m_DecodeData;
   opj_stream_t* m_Stream;
   opj_dparameters_t m_Parameters;
-  CFX_UnownedPtr<const CPDF_ColorSpace> const m_ColorSpace;
+  UnownedPtr<const CPDF_ColorSpace> const m_ColorSpace;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CJPX_DECODER_H_

@@ -10,8 +10,8 @@
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/observable.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/fsdk_common.h"
 #include "fpdfsdk/fsdk_define.h"
@@ -50,7 +50,7 @@ class CPDFSDK_Annot : public Observable<CPDFSDK_Annot> {
   CPDFSDK_PageView* GetPageView() const { return m_pPageView.Get(); }
 
  protected:
-  CFX_UnownedPtr<CPDFSDK_PageView> const m_pPageView;
+  UnownedPtr<CPDFSDK_PageView> const m_pPageView;
 };
 
 #endif  // FPDFSDK_CPDFSDK_ANNOT_H_

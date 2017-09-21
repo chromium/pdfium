@@ -47,7 +47,7 @@ class CPDF_StreamAcc : public Retainable {
   bool m_bNewBuf;
   ByteString m_ImageDecoder;
   CPDF_Dictionary* m_pImageParam;
-  CFX_UnownedPtr<const CPDF_Stream> const m_pStream;
+  UnownedPtr<const CPDF_Stream> const m_pStream;
   uint8_t* m_pSrcData;
 };
 

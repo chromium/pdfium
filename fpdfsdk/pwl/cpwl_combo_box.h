@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
@@ -89,15 +89,15 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void CreateListBox(const CreateParams& cp);
   void SetPopup(bool bPopup);
 
-  CFX_UnownedPtr<CPWL_Edit> m_pEdit;
-  CFX_UnownedPtr<CPWL_CBButton> m_pButton;
-  CFX_UnownedPtr<CPWL_CBListBox> m_pList;
+  UnownedPtr<CPWL_Edit> m_pEdit;
+  UnownedPtr<CPWL_CBButton> m_pButton;
+  UnownedPtr<CPWL_CBListBox> m_pList;
   CFX_FloatRect m_rcOldWindow;
   bool m_bPopup = false;
   bool m_bBottom = true;
   int32_t m_nSelectItem = -1;
-  CFX_UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
-  CFX_UnownedPtr<CFFL_FormFiller> m_pFormFiller;
+  UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
+  UnownedPtr<CFFL_FormFiller> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_COMBO_BOX_H_

@@ -177,9 +177,9 @@ class PDFObjectsTest : public testing::Test {
   std::vector<std::unique_ptr<CPDF_Object>> m_DirectObjs;
   std::vector<int> m_DirectObjTypes;
   std::vector<std::unique_ptr<CPDF_Object>> m_RefObjs;
-  CFX_UnownedPtr<CPDF_Dictionary> m_DictObj;
-  CFX_UnownedPtr<CPDF_Dictionary> m_StreamDictObj;
-  CFX_UnownedPtr<CPDF_Array> m_ArrayObj;
+  UnownedPtr<CPDF_Dictionary> m_DictObj;
+  UnownedPtr<CPDF_Dictionary> m_StreamDictObj;
+  UnownedPtr<CPDF_Array> m_ArrayObj;
   std::vector<CPDF_Object*> m_IndirectObjs;
 };
 

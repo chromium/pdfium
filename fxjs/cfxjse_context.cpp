@@ -68,7 +68,7 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
   void* operator new(size_t size) = delete;
   void operator delete(void*, size_t) = delete;
 
-  CFX_UnownedPtr<CFXJSE_Context> m_context;
+  UnownedPtr<CFXJSE_Context> m_context;
   CFXJSE_ScopeUtil_IsolateHandle m_parent;
   v8::Context::Scope m_cscope;
 };

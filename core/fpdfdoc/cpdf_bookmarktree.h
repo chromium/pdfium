@@ -8,7 +8,7 @@
 #define CORE_FPDFDOC_CPDF_BOOKMARKTREE_H_
 
 #include "core/fpdfdoc/cpdf_bookmark.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Document;
 
@@ -22,7 +22,7 @@ class CPDF_BookmarkTree {
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
  private:
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const m_pDocument;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_BOOKMARKTREE_H_

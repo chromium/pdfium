@@ -16,9 +16,9 @@
 #include "core/fxcodec/codec/ccodec_pngmodule.h"
 #include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CCodec_ModuleMgr;
@@ -187,7 +187,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
 
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
-  CFX_UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
+  UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
   std::unique_ptr<CCodec_JpegModule::Context> m_pJpegContext;
   std::unique_ptr<CCodec_PngModule::Context> m_pPngContext;
   std::unique_ptr<CCodec_GifModule::Context> m_pGifContext;

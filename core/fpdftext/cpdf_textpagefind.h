@@ -9,10 +9,10 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
 class CPDF_TextPage;
@@ -43,7 +43,7 @@ class CPDF_TextPageFind {
 
  private:
   std::vector<uint16_t> m_CharIndex;
-  CFX_UnownedPtr<const CPDF_TextPage> m_pTextPage;
+  UnownedPtr<const CPDF_TextPage> m_pTextPage;
   WideString m_strText;
   WideString m_findWhat;
   int m_flags;

@@ -13,7 +13,7 @@
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_renderdevice.h"
 
 class CFX_PathData;
@@ -71,8 +71,8 @@ class CPDF_RenderStatus {
 #endif
 
   CPDF_RenderOptions m_Options;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pFormResource;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pPageResource;
+  UnownedPtr<CPDF_Dictionary> m_pFormResource;
+  UnownedPtr<CPDF_Dictionary> m_pPageResource;
   std::vector<CPDF_Type3Font*> m_Type3FontCache;
 
  private:
@@ -159,7 +159,7 @@ class CPDF_RenderStatus {
   static const int kRenderMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
-  CFX_UnownedPtr<CPDF_RenderContext> m_pContext;
+  UnownedPtr<CPDF_RenderContext> m_pContext;
   bool m_bStopped;
   CFX_RenderDevice* m_pDevice;
   CFX_Matrix m_DeviceMatrix;
@@ -174,7 +174,7 @@ class CPDF_RenderStatus {
   bool m_bStdCS;
   uint32_t m_GroupFamily;
   bool m_bLoadMask;
-  CFX_UnownedPtr<CPDF_Type3Char> m_pType3Char;
+  UnownedPtr<CPDF_Type3Char> m_pType3Char;
   FX_ARGB m_T3FillColor;
   int m_curBlend;
 };

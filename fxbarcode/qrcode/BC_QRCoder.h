@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderMode;
@@ -50,8 +50,8 @@ class CBC_QRCoder {
   void SetMatrix(std::unique_ptr<CBC_CommonByteMatrix> pMatrix);
 
  private:
-  CFX_UnownedPtr<CBC_QRCoderMode> m_mode;
-  CFX_UnownedPtr<const CBC_QRCoderErrorCorrectionLevel> m_ecLevel;
+  UnownedPtr<CBC_QRCoderMode> m_mode;
+  UnownedPtr<const CBC_QRCoderErrorCorrectionLevel> m_ecLevel;
   int32_t m_version;
   int32_t m_matrixWidth;
   int32_t m_maskPattern;

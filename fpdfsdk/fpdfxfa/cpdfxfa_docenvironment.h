@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
 #define FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdfview.h"
 #include "xfa/fxfa/fxfa.h"
 
@@ -106,7 +106,7 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
                         FPDF_DWORD flag);
   void ToXFAContentFlags(WideString csSrcContent, FPDF_DWORD& flag);
 
-  CFX_UnownedPtr<CPDFXFA_Context> const m_pContext;
+  UnownedPtr<CPDFXFA_Context> const m_pContext;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_

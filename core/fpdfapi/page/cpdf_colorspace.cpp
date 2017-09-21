@@ -196,7 +196,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
   void EnableStdConversion(bool bEnabled) override;
 
   CPDF_ColorSpace* m_pBaseCS;
-  CFX_UnownedPtr<CPDF_CountedColorSpace> m_pCountedBaseCS;
+  UnownedPtr<CPDF_CountedColorSpace> m_pCountedBaseCS;
   int m_nBaseComponents;
   int m_MaxIndex;
   ByteString m_Table;

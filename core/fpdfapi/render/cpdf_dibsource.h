@@ -18,8 +18,8 @@
 #include "core/fpdfapi/render/cpdf_imageloader.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 
@@ -122,9 +122,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
                                int clip_width) const;
   bool TransMask() const;
 
-  CFX_UnownedPtr<CPDF_Document> m_pDocument;
-  CFX_UnownedPtr<const CPDF_Stream> m_pStream;
-  CFX_UnownedPtr<const CPDF_Dictionary> m_pDict;
+  UnownedPtr<CPDF_Document> m_pDocument;
+  UnownedPtr<const CPDF_Stream> m_pStream;
+  UnownedPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   CPDF_ColorSpace* m_pColorSpace;
   uint32_t m_Family;
@@ -148,7 +148,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
   std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
-  CFX_UnownedPtr<CPDF_Stream> m_pMaskStream;
+  UnownedPtr<CPDF_Stream> m_pMaskStream;
   int m_Status;
 };
 

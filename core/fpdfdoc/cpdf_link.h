@@ -9,8 +9,8 @@
 
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_dest.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 
@@ -27,7 +27,7 @@ class CPDF_Link {
   CPDF_Action GetAction();
 
  private:
-  CFX_UnownedPtr<CPDF_Dictionary> m_pDict;
+  UnownedPtr<CPDF_Dictionary> m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_LINK_H_

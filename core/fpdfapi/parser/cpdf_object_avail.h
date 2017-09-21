@@ -10,8 +10,8 @@
 #include <stack>
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Object;
 class CPDF_Reference;
@@ -42,8 +42,8 @@ class CPDF_ObjectAvail {
   void CleanMemory();
   bool HasObjectParsed(uint32_t obj_num) const;
 
-  CFX_UnownedPtr<CPDF_ReadValidator> validator_;
-  CFX_UnownedPtr<CPDF_IndirectObjectHolder> holder_;
+  UnownedPtr<CPDF_ReadValidator> validator_;
+  UnownedPtr<CPDF_IndirectObjectHolder> holder_;
   MaybeOwned<const CPDF_Object> root_;
   std::set<uint32_t> parsed_objnums_;
   std::stack<uint32_t> non_parsed_objects_;

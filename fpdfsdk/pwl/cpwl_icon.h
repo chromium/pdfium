@@ -9,8 +9,8 @@
 
 #include <utility>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class CPWL_Icon : public CPWL_Wnd {
@@ -37,8 +37,8 @@ class CPWL_Icon : public CPWL_Wnd {
   // width, height
   std::pair<float, float> GetImageSize();
 
-  CFX_UnownedPtr<CPDF_Stream> m_pPDFStream;
-  CFX_UnownedPtr<CPDF_IconFit> m_pIconFit;
+  UnownedPtr<CPDF_Stream> m_pPDFStream;
+  UnownedPtr<CPDF_IconFit> m_pIconFit;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_ICON_H_

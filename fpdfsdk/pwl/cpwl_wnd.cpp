@@ -131,9 +131,9 @@ class CPWL_MsgControl : public Observable<CPWL_MsgControl> {
  private:
   std::vector<CPWL_Wnd*> m_aMousePath;
   std::vector<CPWL_Wnd*> m_aKeyboardPath;
-  CFX_UnownedPtr<CPWL_Wnd> m_pCreatedWnd;
-  CFX_UnownedPtr<CPWL_Wnd> m_pMainMouseWnd;
-  CFX_UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
+  UnownedPtr<CPWL_Wnd> m_pCreatedWnd;
+  UnownedPtr<CPWL_Wnd> m_pMainMouseWnd;
+  UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
 };
 
 CPWL_Wnd::CPWL_Wnd()

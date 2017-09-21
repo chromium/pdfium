@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class IFX_PauseIndicator;
@@ -61,7 +61,7 @@ class CStretchEngine {
   int m_DestBpp;
   int m_SrcBpp;
   int m_bHasAlpha;
-  CFX_UnownedPtr<IFX_ScanlineComposer> m_pDestBitmap;
+  UnownedPtr<IFX_ScanlineComposer> m_pDestBitmap;
   int m_DestWidth;
   int m_DestHeight;
   FX_RECT m_DestClip;

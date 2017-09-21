@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_PAGE_CPDF_SHADINGOBJECT_H_
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_ShadingPattern;
 
@@ -27,7 +27,7 @@ class CPDF_ShadingObject : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
-  CFX_UnownedPtr<CPDF_ShadingPattern> m_pShading;
+  UnownedPtr<CPDF_ShadingPattern> m_pShading;
   CFX_Matrix m_Matrix;
 };
 

@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 
 class CFX_RenderDevice;
@@ -37,10 +37,10 @@ class CPDF_ScaledRenderBuffer {
   void OutputToDevice();
 
  private:
-  CFX_UnownedPtr<CFX_RenderDevice> m_pDevice;
-  CFX_UnownedPtr<CPDF_RenderContext> m_pContext;
+  UnownedPtr<CFX_RenderDevice> m_pDevice;
+  UnownedPtr<CPDF_RenderContext> m_pContext;
   FX_RECT m_Rect;
-  CFX_UnownedPtr<const CPDF_PageObject> m_pObject;
+  UnownedPtr<const CPDF_PageObject> m_pObject;
   std::unique_ptr<CFX_DefaultRenderDevice> m_pBitmapDevice;
   CFX_Matrix m_Matrix;
 };

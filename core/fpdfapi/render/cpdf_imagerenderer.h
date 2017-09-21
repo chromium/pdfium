@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "core/fpdfapi/render/cpdf_imageloader.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 
 class CFX_DIBitmap;
@@ -63,17 +63,17 @@ class CPDF_ImageRenderer {
                           const FX_RECT& rect) const;
   void HandleFilters();
 
-  CFX_UnownedPtr<CPDF_RenderStatus> m_pRenderStatus;
-  CFX_UnownedPtr<CPDF_ImageObject> m_pImageObject;
+  UnownedPtr<CPDF_RenderStatus> m_pRenderStatus;
+  UnownedPtr<CPDF_ImageObject> m_pImageObject;
   int m_Status;
-  CFX_UnownedPtr<const CFX_Matrix> m_pObj2Device;
+  UnownedPtr<const CFX_Matrix> m_pObj2Device;
   CFX_Matrix m_ImageMatrix;
   CPDF_ImageLoader m_Loader;
   RetainPtr<CFX_DIBSource> m_pDIBSource;
   RetainPtr<CFX_DIBitmap> m_pClone;
   int m_BitmapAlpha;
   bool m_bPatternColor;
-  CFX_UnownedPtr<CPDF_Pattern> m_pPattern;
+  UnownedPtr<CPDF_Pattern> m_pPattern;
   FX_ARGB m_FillArgb;
   uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;

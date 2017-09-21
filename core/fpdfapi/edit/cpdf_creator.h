@@ -11,9 +11,9 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Array;
 class CPDF_CryptoHandler;
@@ -80,13 +80,13 @@ class CPDF_Creator {
 
   bool IsXRefNeedEnd();
 
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
-  CFX_UnownedPtr<CPDF_Parser> const m_pParser;
+  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Parser> const m_pParser;
   bool m_bSecurityChanged;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
+  UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   uint32_t m_dwEncryptObjNum;
   RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
-  CFX_UnownedPtr<CPDF_Object> m_pMetadata;
+  UnownedPtr<CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
   FX_FILESIZE m_SavedOffset;

@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFX_BitStream;
 class CPDF_LinearizedHeader;
@@ -49,10 +49,10 @@ class CPDF_HintTables {
                          const std::vector<FX_FILESIZE>& szArray);
 
   // Owner, outlives this object.
-  CFX_UnownedPtr<CPDF_DataAvail> const m_pDataAvail;
+  UnownedPtr<CPDF_DataAvail> const m_pDataAvail;
 
   // Owned by |m_pDataAvail|.
-  CFX_UnownedPtr<CPDF_LinearizedHeader> const m_pLinearized;
+  UnownedPtr<CPDF_LinearizedHeader> const m_pLinearized;
 
   uint32_t m_nFirstPageSharedObjs;
   FX_FILESIZE m_szFirstPageObjOffset;

@@ -137,7 +137,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   // TODO(tsepez): figure out why tests break if this is an UnownedPtr.
   CPDF_Dictionary* m_pRootDict;  // Not owned.
 
-  CFX_UnownedPtr<CPDF_Dictionary> m_pInfoDict;
+  UnownedPtr<CPDF_Dictionary> m_pInfoDict;
 
   // Vector of pairs to know current position in the page tree. The index in the
   // vector corresponds to the level being described. The pair contains a

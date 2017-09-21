@@ -11,9 +11,9 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPWL_EditImpl;
 class CPWL_EditImpl_Iterator;
@@ -152,7 +152,7 @@ class CPWL_ListCtrl {
 
   CFX_FloatRect m_rcPlate;
   CFX_FloatRect m_rcContent;
-  CFX_UnownedPtr<CPWL_List_Notify> m_pNotify;
+  UnownedPtr<CPWL_List_Notify> m_pNotify;
   bool m_bNotifyFlag;
   CFX_PointF m_ptScrollPos;
   CPLST_Select m_aSelItems;  // for multiple
@@ -162,7 +162,7 @@ class CPWL_ListCtrl {
   int32_t m_nCaretIndex;     // for multiple
   std::vector<std::unique_ptr<Item>> m_ListItems;
   float m_fFontSize;
-  CFX_UnownedPtr<IPVT_FontMap> m_pFontMap;
+  UnownedPtr<IPVT_FontMap> m_pFontMap;
   bool m_bMultiple;
 };
 

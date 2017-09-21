@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFX_BitStream {
  public:
@@ -32,7 +32,7 @@ class CFX_BitStream {
  private:
   uint32_t m_BitPos;
   uint32_t m_BitSize;
-  CFX_UnownedPtr<const uint8_t> m_pData;
+  UnownedPtr<const uint8_t> m_pData;
 };
 
 #endif  // CORE_FXCRT_CFX_BITSTREAM_H_

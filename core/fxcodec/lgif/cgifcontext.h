@@ -12,8 +12,8 @@
 
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
 #include "core/fxcodec/lgif/fx_gif.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CGifContext : public CCodec_GifModule::Context {
  public:
@@ -37,8 +37,8 @@ class CGifContext : public CCodec_GifModule::Context {
                          int32_t disposal_method,
                          bool interlace);
 
-  CFX_UnownedPtr<CCodec_GifModule> m_pModule;
-  CFX_UnownedPtr<CCodec_GifModule::Delegate> m_pDelegate;
+  UnownedPtr<CCodec_GifModule> m_pModule;
+  UnownedPtr<CCodec_GifModule::Delegate> m_pDelegate;
   std::vector<GifPalette> m_GlobalPalette;
   int32_t global_pal_num;
   uint32_t img_row_offset;

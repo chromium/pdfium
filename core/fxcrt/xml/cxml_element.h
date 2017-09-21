@@ -102,7 +102,7 @@ class CXML_Element : public CXML_Object {
   friend class CXML_Parser;
   friend class CXML_Composer;
 
-  CFX_UnownedPtr<const CXML_Element> const m_pParent;
+  UnownedPtr<const CXML_Element> const m_pParent;
   ByteString m_QSpaceName;
   ByteString m_TagName;
   CXML_AttrMap m_AttrMap;

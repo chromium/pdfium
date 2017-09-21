@@ -13,9 +13,9 @@
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/stl_util.h"
 
 #define FIELDTYPE_UNKNOWN 0
@@ -168,12 +168,12 @@ class CPDF_FormField {
 
   CPDF_FormField::Type m_Type;
   uint32_t m_Flags;
-  CFX_UnownedPtr<CPDF_InterForm> const m_pForm;
-  CFX_UnownedPtr<CPDF_Dictionary> m_pDict;
+  UnownedPtr<CPDF_InterForm> const m_pForm;
+  UnownedPtr<CPDF_Dictionary> m_pDict;
   // Owned by InterForm parent.
-  std::vector<CFX_UnownedPtr<CPDF_FormControl>> m_ControlList;
+  std::vector<UnownedPtr<CPDF_FormControl>> m_ControlList;
   float m_FontSize;
-  CFX_UnownedPtr<CPDF_Font> m_pFont;
+  UnownedPtr<CPDF_Font> m_pFont;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMFIELD_H_

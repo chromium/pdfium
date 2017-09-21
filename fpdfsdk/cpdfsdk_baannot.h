@@ -95,7 +95,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   int GetLayoutOrder() const override;
 
  protected:
-  CFX_UnownedPtr<CPDF_Annot> const m_pAnnot;
+  UnownedPtr<CPDF_Annot> const m_pAnnot;
 };
 
 #endif  // FPDFSDK_CPDFSDK_BAANNOT_H_

@@ -12,9 +12,9 @@
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_annot.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/pdfsdk_fieldaction.h"
@@ -147,14 +147,14 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   CFX_Color GetFillPWLColor() const;
 
  private:
-  CFX_UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
+  UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
   bool m_bAppModified;
   uint32_t m_nAppearanceAge;
   uint32_t m_nValueAge;
 
 #ifdef PDF_ENABLE_XFA
-  mutable CFX_UnownedPtr<CXFA_FFWidget> m_hMixXFAWidget;
-  mutable CFX_UnownedPtr<CXFA_FFWidgetHandler> m_pWidgetHandler;
+  mutable UnownedPtr<CXFA_FFWidget> m_hMixXFAWidget;
+  mutable UnownedPtr<CXFA_FFWidgetHandler> m_pWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 };
 

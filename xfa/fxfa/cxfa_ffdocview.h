@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
@@ -116,12 +116,12 @@ class CXFA_FFDocView {
   bool ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
   CXFA_Node* GetRootSubform();
 
-  CFX_UnownedPtr<CXFA_FFDoc> const m_pDoc;
+  UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
   CXFA_LayoutProcessor* m_pXFADocLayout;  // Not owned.
-  CFX_UnownedPtr<CXFA_WidgetAcc> m_pFocusAcc;
-  CFX_UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
-  CFX_UnownedPtr<CXFA_FFWidget> m_pOldFocusWidget;
+  UnownedPtr<CXFA_WidgetAcc> m_pFocusAcc;
+  UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
+  UnownedPtr<CXFA_FFWidget> m_pOldFocusWidget;
   std::map<CXFA_FFPageView*, std::unique_ptr<CFX_RectF>> m_mapPageInvalidate;
   std::vector<CXFA_WidgetAcc*> m_ValidateAccs;
   std::vector<CXFA_WidgetAcc*> m_CalculateAccs;

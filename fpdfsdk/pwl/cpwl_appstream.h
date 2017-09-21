@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_PWL_CPWL_APPSTREAM_H_
 #define FPDFSDK_PWL_CPWL_APPSTREAM_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDFSDK_Widget;
 class CPDF_Dictionary;
@@ -36,8 +36,8 @@ class CPWL_AppStream {
   ByteString GetBackgroundAppStream() const;
   ByteString GetBorderAppStream() const;
 
-  CFX_UnownedPtr<CPDFSDK_Widget> widget_;
-  CFX_UnownedPtr<CPDF_Dictionary> dict_;
+  UnownedPtr<CPDFSDK_Widget> widget_;
+  UnownedPtr<CPDF_Dictionary> dict_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_APPSTREAM_H_

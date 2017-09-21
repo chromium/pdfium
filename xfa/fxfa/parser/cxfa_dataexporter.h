@@ -32,7 +32,7 @@ class CXFA_DataExporter {
               uint32_t dwFlag,
               const char* pChecksum);
 
-  CFX_UnownedPtr<CXFA_Document> const m_pDocument;
+  UnownedPtr<CXFA_Document> const m_pDocument;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_

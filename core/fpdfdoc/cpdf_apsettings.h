@@ -8,9 +8,9 @@
 #define CORE_FPDFDOC_CPDF_APSETTINGS_H_
 
 #include "core/fpdfdoc/cpdf_iconfit.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
@@ -71,7 +71,7 @@ class CPDF_ApSettings {
   WideString GetCaption(const ByteString& csEntry) const;
   CPDF_Stream* GetIcon(const ByteString& csEntry) const;
 
-  CFX_UnownedPtr<CPDF_Dictionary> const m_pDict;
+  UnownedPtr<CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_APSETTINGS_H_

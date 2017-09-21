@@ -7,8 +7,8 @@
 #ifndef CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
 #define CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_font.h"
 
 class CFPF_SkiaFontDescriptor;
@@ -43,8 +43,8 @@ class CFPF_SkiaFont {
                 uint8_t uCharset);
 
  private:
-  CFX_UnownedPtr<CFPF_SkiaFontMgr> m_pFontMgr;
-  CFX_UnownedPtr<CFPF_SkiaFontDescriptor> m_pFontDes;
+  UnownedPtr<CFPF_SkiaFontMgr> m_pFontMgr;
+  UnownedPtr<CFPF_SkiaFontDescriptor> m_pFontDes;
   FXFT_Face m_Face;
   uint32_t m_dwStyle;
   uint8_t m_uCharset;

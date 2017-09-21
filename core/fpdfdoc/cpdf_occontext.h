@@ -38,7 +38,7 @@ class CPDF_OCContext : public Retainable {
   bool GetOCGVE(CPDF_Array* pExpression, int nLevel);
   bool LoadOCMDState(const CPDF_Dictionary* pOCMDDict);
 
-  CFX_UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const m_pDocument;
   const UsageType m_eUsageType;
   std::map<const CPDF_Dictionary*, bool> m_OCGStates;
 };

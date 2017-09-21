@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_FSDK_PAUSEADAPTER_H_
 #define FPDFSDK_FSDK_PAUSEADAPTER_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/ifx_pauseindicator.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_progressive.h"
 
 class IFSDK_PAUSE_Adapter : public IFX_PauseIndicator {
@@ -20,7 +20,7 @@ class IFSDK_PAUSE_Adapter : public IFX_PauseIndicator {
   bool NeedToPauseNow() override;
 
  private:
-  CFX_UnownedPtr<IFSDK_PAUSE> const m_IPause;
+  UnownedPtr<IFSDK_PAUSE> const m_IPause;
 };
 
 #endif  // FPDFSDK_FSDK_PAUSEADAPTER_H_

@@ -113,7 +113,7 @@ class CFWL_WidgetMgr {
 
   uint32_t m_dwCapability;
   std::map<CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
-  CFX_UnownedPtr<CXFA_FWLAdapterWidgetMgr> const m_pAdapter;
+  UnownedPtr<CXFA_FWLAdapterWidgetMgr> const m_pAdapter;
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   CFX_RectF m_rtScreen;
 #endif

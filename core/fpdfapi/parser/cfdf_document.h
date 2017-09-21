@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 class IFX_SeekableReadStream;
@@ -33,7 +33,7 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
  protected:
   void ParseStream(const RetainPtr<IFX_SeekableReadStream>& pFile);
 
-  CFX_UnownedPtr<CPDF_Dictionary> m_pRootDict;
+  UnownedPtr<CPDF_Dictionary> m_pRootDict;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
 };
 

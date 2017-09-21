@@ -26,7 +26,7 @@ class CJS_EmbedObj {
   CJS_Object* GetJSObject() const { return m_pJSObject.Get(); }
 
  protected:
-  CFX_UnownedPtr<CJS_Object> const m_pJSObject;
+  UnownedPtr<CJS_Object> const m_pJSObject;
 };
 
 class CJS_Object {

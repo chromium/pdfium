@@ -58,7 +58,7 @@ class CPDF_VariableText {
 
    private:
     CPVT_WordPlace m_CurPos;
-    CFX_UnownedPtr<CPDF_VariableText> const m_pVT;
+    UnownedPtr<CPDF_VariableText> const m_pVT;
   };
 
   class Provider {

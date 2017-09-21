@@ -1252,7 +1252,7 @@ class SkiaState {
   }
 
 #if SHOW_SKIA_PATH
-  static int AggSaveCount(const CFX_UnownedPtr<CFX_SkiaDeviceDriver> driver) {
+  static int AggSaveCount(const UnownedPtr<CFX_SkiaDeviceDriver> driver) {
     FX_RECT last;
     int aggSaveCount = 0;
     bool foundLast = false;
@@ -1399,8 +1399,8 @@ class SkiaState {
   CFX_GraphStateData m_clipState;
   CFX_GraphStateData m_drawState;
   CFX_Matrix m_clipMatrix;
-  CFX_UnownedPtr<CFX_SkiaDeviceDriver> m_pDriver;
-  CFX_UnownedPtr<CFX_TypeFace> m_pTypeFace;
+  UnownedPtr<CFX_SkiaDeviceDriver> m_pDriver;
+  UnownedPtr<CFX_TypeFace> m_pTypeFace;
   float m_fontSize;
   float m_scaleX;
   uint32_t m_fillColor;

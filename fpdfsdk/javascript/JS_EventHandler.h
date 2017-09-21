@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
 #define FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
 class CJS_EventContext;
@@ -166,13 +166,13 @@ class CJS_EventHandler {
   JS_EVENT_T EventType() { return m_eEventType; }
 
  public:
-  CFX_UnownedPtr<CJS_EventContext> const m_pJSEventContext;
+  UnownedPtr<CJS_EventContext> const m_pJSEventContext;
   JS_EVENT_T m_eEventType;
   bool m_bValid;
 
   WideString m_strTargetName;
   WideString m_strSourceName;
-  CFX_UnownedPtr<WideString> m_pWideStrChange;
+  UnownedPtr<WideString> m_pWideStrChange;
   WideString m_WideStrChangeDu;
   WideString m_WideStrChangeEx;
   int m_nCommitKey;
@@ -184,12 +184,12 @@ class CJS_EventHandler {
   int* m_pISelStart;
   int m_nSelStartDu;
   bool m_bWillCommit;
-  CFX_UnownedPtr<WideString> m_pValue;
+  UnownedPtr<WideString> m_pValue;
   bool m_bFieldFull;
   bool* m_pbRc;
   bool m_bRcDu;
 
-  CFX_UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
+  UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pTargetFormFillEnv;
   CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;
 };

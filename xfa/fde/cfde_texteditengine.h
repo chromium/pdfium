@@ -49,7 +49,7 @@ class CFDE_TextEditEngine {
     bool IsEOF(bool bPrev) const;
 
    private:
-    CFX_UnownedPtr<const CFDE_TextEditEngine> engine_;
+    UnownedPtr<const CFDE_TextEditEngine> engine_;
     int32_t current_position_;
   };
 
@@ -200,7 +200,7 @@ class CFDE_TextEditEngine {
   };
 
   CFX_RectF contents_bounding_box_;
-  CFX_UnownedPtr<Delegate> delegate_;
+  UnownedPtr<Delegate> delegate_;
   std::vector<FDE_TEXTEDITPIECE> text_piece_info_;
   std::vector<size_t> char_widths_;
   CFX_TxtBreak text_break_;

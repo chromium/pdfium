@@ -38,7 +38,7 @@ class InsertOperation : public CFDE_TextEditEngine::Operation {
   }
 
  private:
-  CFX_UnownedPtr<CFDE_TextEditEngine> engine_;
+  UnownedPtr<CFDE_TextEditEngine> engine_;
   size_t start_idx_;
   WideString added_text_;
 };
@@ -63,7 +63,7 @@ class DeleteOperation : public CFDE_TextEditEngine::Operation {
   }
 
  private:
-  CFX_UnownedPtr<CFDE_TextEditEngine> engine_;
+  UnownedPtr<CFDE_TextEditEngine> engine_;
   size_t start_idx_;
   WideString removed_text_;
 };

@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_themepart.h"
@@ -148,8 +148,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix& pMatrix);
 
-  CFX_UnownedPtr<const CFWL_App> const m_pOwnerApp;
-  CFX_UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
+  UnownedPtr<const CFWL_App> const m_pOwnerApp;
+  UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
   CFWL_Widget* m_pOuter;
   int32_t m_iLock;
@@ -184,7 +184,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
 
   CXFA_FFWidget* m_pLayoutItem;
   uint32_t m_nEventKey;
-  CFX_UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
+  UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };
 
 #endif  // XFA_FWL_CFWL_WIDGET_H_

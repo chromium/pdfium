@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_CXFA_WIDGETACCITERATOR_H_
 #define XFA_FXFA_CXFA_WIDGETACCITERATOR_H_
 
-#include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 
 class CXFA_Node;
@@ -23,7 +23,7 @@ class CXFA_WidgetAccIterator {
 
  private:
   CXFA_ContainerIterator m_ContentIterator;
-  CFX_UnownedPtr<CXFA_WidgetAcc> m_pCurWidgetAcc;
+  UnownedPtr<CXFA_WidgetAcc> m_pCurWidgetAcc;
 };
 
 #endif  // XFA_FXFA_CXFA_WIDGETACCITERATOR_H_

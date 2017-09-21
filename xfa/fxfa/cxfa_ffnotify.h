@@ -71,7 +71,7 @@ class CXFA_FFNotify {
   void SetFocusWidgetNode(CXFA_Node* pNode);
 
  private:
-  CFX_UnownedPtr<CXFA_FFDoc> const m_pDoc;
+  UnownedPtr<CXFA_FFDoc> const m_pDoc;
 };
 
 #endif  // XFA_FXFA_CXFA_FFNOTIFY_H_
