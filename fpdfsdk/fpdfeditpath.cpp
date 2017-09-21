@@ -127,7 +127,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
   return true;
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountPoint(FPDF_PAGEOBJECT path) {
+FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   if (!pPathObj)
     return -1;

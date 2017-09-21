@@ -559,15 +559,15 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
                                                           unsigned int* A);
 
 // Experimental API.
-// Get number of point objects inside |path|.
+// Get number of segments inside |path|.
 //
 //   path - handle to a path.
 //
-// A point object is a command, created by e.g. FPDFPath_MoveTo() or
-// FPDFPath_LineTo().
+// A segment is a command, created by e.g. FPDFPath_MoveTo(),
+// FPDFPath_LineTo() or FPDFPath_BezierTo().
 //
 // Returns the number of objects in |path| or -1 on failure.
-FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountPoint(FPDF_PAGEOBJECT path);
+FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path);
 
 // Experimental API.
 // Get segment in |path| at |index|.

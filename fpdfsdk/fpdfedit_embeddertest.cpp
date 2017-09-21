@@ -258,7 +258,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
 
   // Make sure the path has 5 points (1 FXPT_TYPE::MoveTo and 4
   // FXPT_TYPE::LineTo).
-  ASSERT_EQ(5, FPDFPath_CountPoint(green_rect));
+  ASSERT_EQ(5, FPDFPath_CountSegments(green_rect));
   // Verify actual coordinates.
   FPDF_PATHSEGMENT segment = FPDFPath_GetPathSegment(green_rect, 0);
   float x;
@@ -309,7 +309,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
 
   // Make sure the path has 3 points (1 FXPT_TYPE::MoveTo and 2
   // FXPT_TYPE::LineTo).
-  ASSERT_EQ(3, FPDFPath_CountPoint(black_path));
+  ASSERT_EQ(3, FPDFPath_CountSegments(black_path));
   // Verify actual coordinates.
   segment = FPDFPath_GetPathSegment(black_path, 0);
   EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
@@ -366,10 +366,10 @@ TEST_F(FPDFEditEmbeddertest, PathsPoints) {
   CreateNewDocument();
   FPDF_PAGEOBJECT img = FPDFPageObj_NewImageObj(document_);
   // This should fail gracefully, even if img is not a path.
-  ASSERT_EQ(-1, FPDFPath_CountPoint(img));
+  ASSERT_EQ(-1, FPDFPath_CountSegments(img));
 
   // This should fail gracefully, even if path is NULL.
-  ASSERT_EQ(-1, FPDFPath_CountPoint(nullptr));
+  ASSERT_EQ(-1, FPDFPath_CountSegments(nullptr));
 
   // FPDFPath_GetPathSegment() with a non-path.
   ASSERT_EQ(nullptr, FPDFPath_GetPathSegment(img, 0));

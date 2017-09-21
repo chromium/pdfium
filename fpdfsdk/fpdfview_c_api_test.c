@@ -148,7 +148,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_SetStrokeWidth);
     CHK(FPDFPath_SetFillColor);
     CHK(FPDFPath_GetFillColor);
-    CHK(FPDFPath_CountPoint);
+    CHK(FPDFPath_CountSegments);
     CHK(FPDFPath_GetPathSegment);
     CHK(FPDFPathSegment_GetPoint);
     CHK(FPDFPathSegment_GetType);
