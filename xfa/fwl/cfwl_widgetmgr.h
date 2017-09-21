@@ -28,7 +28,6 @@ class CFWL_WidgetMgr {
   explicit CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
   ~CFWL_WidgetMgr();
 
-  void OnSetCapability(uint32_t dwCapability);
   void OnProcessMessageToForm(CFWL_Message* pMessage);
   void OnDrawWidget(CFWL_Widget* pWidget,
                     CXFA_Graphics* pGraphics,

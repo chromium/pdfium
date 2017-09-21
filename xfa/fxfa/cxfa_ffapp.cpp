@@ -78,13 +78,9 @@ CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme() {
   return m_pFWLTheme.get();
 }
 
-CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetFWLAdapterWidgetMgr(
-    CFWL_WidgetMgr* pDelegate) {
-  if (!m_pAdapterWidgetMgr) {
+CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetFWLAdapterWidgetMgr() {
+  if (!m_pAdapterWidgetMgr)
     m_pAdapterWidgetMgr = pdfium::MakeUnique<CXFA_FWLAdapterWidgetMgr>();
-    pDelegate->OnSetCapability(FWL_WGTMGR_DisableForm);
-    m_pWidgetMgr = pDelegate;
-  }
   return m_pAdapterWidgetMgr.get();
 }
 

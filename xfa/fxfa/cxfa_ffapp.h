@@ -37,8 +37,8 @@ class CXFA_FFApp {
 
   CXFA_FFDocHandler* GetDocHandler();
 
-  CXFA_FWLAdapterWidgetMgr* GetFWLAdapterWidgetMgr(CFWL_WidgetMgr* pDelegate);
-  CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pWidgetMgr.Get(); }
+  CXFA_FWLAdapterWidgetMgr* GetFWLAdapterWidgetMgr();
+  CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
 
   CFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
@@ -76,10 +76,6 @@ class CXFA_FFApp {
   // may refers to theme manager and the latter refers to font manager.
   std::unique_ptr<CXFA_FWLTheme> m_pFWLTheme;
   std::unique_ptr<CFWL_App> m_pFWLApp;
-
-  // |m_pWidgetMgr| has to be released before |m_pFWLApp|, since
-  // |m_pFWLApp| is its owner.
-  CFX_UnownedPtr<CFWL_WidgetMgr> m_pWidgetMgr;
 };
 
 #endif  // XFA_FXFA_CXFA_FFAPP_H_

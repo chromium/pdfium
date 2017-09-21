@@ -29,8 +29,8 @@ struct FWL_NEEDREPAINTHITDATA {
 }  // namespace
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
-    : m_dwCapability(0),
-      m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr(this)) {
+    : m_dwCapability(FWL_WGTMGR_DisableForm),
+      m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr()) {
   ASSERT(m_pAdapter);
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
@@ -384,10 +384,6 @@ void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
                                         const CFX_RectF& rtAnchor,
                                         CFX_RectF& rtPopup) const {
   m_pAdapter->GetPopupPos(pWidget, fMinHeight, fMaxHeight, rtAnchor, rtPopup);
-}
-
-void CFWL_WidgetMgr::OnSetCapability(uint32_t dwCapability) {
-  m_dwCapability = dwCapability;
 }
 
 void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
