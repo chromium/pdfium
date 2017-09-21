@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/cjs_event_context.h"
 
-#include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/autorestorer.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
@@ -35,7 +35,7 @@ bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
     return false;
   }
 
-  CFX_AutoRestorer<bool> restorer(&m_bBusy);
+  AutoRestorer<bool> restorer(&m_bBusy);
   m_bBusy = true;
 
   ASSERT(m_pEventHandler->IsValid());

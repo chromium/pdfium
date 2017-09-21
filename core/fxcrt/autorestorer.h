@@ -2,19 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_CFX_AUTORESTORER_H_
-#define CORE_FXCRT_CFX_AUTORESTORER_H_
+#ifndef CORE_FXCRT_AUTORESTORER_H_
+#define CORE_FXCRT_AUTORESTORER_H_
+
+namespace fxcrt {
 
 template <typename T>
-class CFX_AutoRestorer {
+class AutoRestorer {
  public:
-  explicit CFX_AutoRestorer(T* location)
+  explicit AutoRestorer(T* location)
       : m_Location(location), m_OldValue(*location) {}
-  ~CFX_AutoRestorer() { *m_Location = m_OldValue; }
+  ~AutoRestorer() { *m_Location = m_OldValue; }
 
  private:
   T* const m_Location;
   const T m_OldValue;
 };
 
-#endif  // CORE_FXCRT_CFX_AUTORESTORER_H_
+}  // namespace fxcrt
+
+using fxcrt::AutoRestorer;
+
+#endif  // CORE_FXCRT_AUTORESTORER_H_

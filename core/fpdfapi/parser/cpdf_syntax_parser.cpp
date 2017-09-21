@@ -25,7 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/numerics/safe_math.h"
@@ -55,7 +55,7 @@ CPDF_SyntaxParser::~CPDF_SyntaxParser() {
 }
 
 bool CPDF_SyntaxParser::GetCharAt(FX_FILESIZE pos, uint8_t& ch) {
-  CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
+  AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
   m_Pos = pos;
   return GetNextChar(ch);
 }
@@ -352,7 +352,7 @@ ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
 }
 
 ByteString CPDF_SyntaxParser::PeekNextWord(bool* bIsNumber) {
-  const CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
+  AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
   return GetNextWord(bIsNumber);
 }
 
@@ -379,7 +379,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
     uint32_t gennum,
     bool bDecrypt,
     ParseType parse_type) {
-  CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
+  AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
     return nullptr;
 
@@ -485,7 +485,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
     // contents to the un-decrypted form.
     if (m_pCryptoHandler && bDecrypt && pDict->IsSignatureDict() &&
         dwSignValuePos) {
-      CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
+      AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
       m_Pos = dwSignValuePos;
       pDict->SetFor("Contents", GetObject(pObjList, objnum, gennum, false));
     }

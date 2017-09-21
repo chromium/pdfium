@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -880,7 +880,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     return {true, false};
   }
 
-  CFX_AutoRestorer<bool> restorer(&m_bNotifying);
+  AutoRestorer<bool> restorer(&m_bNotifying);
   m_bNotifying = true;
 
   uint32_t nAge = privateData.pWidget->GetAppearanceAge();

@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/autorestorer.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -64,7 +64,7 @@ bool CXFA_FMParser::IncrementParseDepthAndCheck() {
 
 std::vector<std::unique_ptr<CXFA_FMExpression>>
 CXFA_FMParser::ParseTopExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return std::vector<std::unique_ptr<CXFA_FMExpression>>();
 
@@ -88,7 +88,7 @@ CXFA_FMParser::ParseTopExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -151,7 +151,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -204,7 +204,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseVarExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -261,7 +261,7 @@ CXFA_FMParser::ParseSimpleExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -274,7 +274,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseLogicalOrExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -309,7 +309,7 @@ CXFA_FMParser::ParseLogicalOrExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseLogicalAndExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -343,7 +343,7 @@ CXFA_FMParser::ParseLogicalAndExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseEqualityExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -388,7 +388,7 @@ CXFA_FMParser::ParseEqualityExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseRelationalExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -458,7 +458,7 @@ CXFA_FMParser::ParseRelationalExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseAddtiveExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -502,7 +502,7 @@ CXFA_FMParser::ParseAddtiveExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseMultiplicativeExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -545,7 +545,7 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseUnaryExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -593,7 +593,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseUnaryExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParsePrimaryExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -661,7 +661,7 @@ CXFA_FMParser::ParsePrimaryExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> expr) {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -855,7 +855,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -898,7 +898,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
 }
 
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -937,7 +937,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseBlockExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -981,7 +981,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseBlockExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -1052,7 +1052,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -1073,7 +1073,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
 
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseSubassignmentInForExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -1091,7 +1091,7 @@ CXFA_FMParser::ParseSubassignmentInForExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -1160,7 +1160,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
@@ -1209,7 +1209,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
 }
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
-  CFX_AutoRestorer<unsigned long> restorer(&m_parse_depth);
+  AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 

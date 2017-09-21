@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_arguments.h"
@@ -150,7 +150,7 @@ bool CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
                                    CFXJSE_Value* hRetValue,
                                    CXFA_Object* pThisObject) {
   ByteString btScript;
-  CFX_AutoRestorer<XFA_SCRIPTLANGTYPE> typeRestorer(&m_eScriptType);
+  AutoRestorer<XFA_SCRIPTLANGTYPE> typeRestorer(&m_eScriptType);
   m_eScriptType = eScriptType;
   if (eScriptType == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (!m_FM2JSContext) {
@@ -166,7 +166,7 @@ bool CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   } else {
     btScript = FX_UTF8Encode(wsScript);
   }
-  CFX_AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
+  AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
   CFXJSE_Value* pValue = pThisObject ? GetJSValueFromMap(pThisObject) : nullptr;
   return m_JsContext->ExecuteScript(btScript.c_str(), hRetValue, pValue);
@@ -498,7 +498,7 @@ bool CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
   CXFA_Node* pThisObject = pParent->GetNodeItem(XFA_NODEITEM_Parent);
   CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
-  CFX_AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
+  AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
   return pVariablesContext->ExecuteScript(btScript.c_str(), hRetValue.get());
 }

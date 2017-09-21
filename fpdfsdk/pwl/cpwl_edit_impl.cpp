@@ -22,7 +22,7 @@
 #include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
-#include "core/fxcrt/cfx_autorestorer.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -1012,7 +1012,7 @@ void CPWL_EditImpl::SetScrollInfo() {
   if (m_bNotifyFlag)
     return;
 
-  CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
+  AutoRestorer<bool> restorer(&m_bNotifyFlag);
   m_bNotifyFlag = true;
 
   PWL_SCROLL_INFO Info;
@@ -1047,7 +1047,7 @@ void CPWL_EditImpl::SetScrollPosY(float fy) {
 
       if (m_pNotify) {
         if (!m_bNotifyFlag) {
-          CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
+          AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           m_pNotify->SetScrollPosition(fy);
         }
@@ -1157,7 +1157,7 @@ void CPWL_EditImpl::Refresh() {
 
     if (m_pNotify) {
       if (!m_bNotifyFlag) {
-        CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
+        AutoRestorer<bool> restorer(&m_bNotifyFlag);
         m_bNotifyFlag = true;
         if (const CPWL_EditImpl_RectArray* pRects =
                 m_Refresh.GetRefreshRects()) {
@@ -1227,7 +1227,7 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
 
       if (m_pNotify) {
         if (!m_bNotifyFlag) {
-          CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
+          AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcWord);
           m_pNotify->InvalidateRect(&rcRefresh);
@@ -1241,7 +1241,7 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
 
       if (m_pNotify) {
         if (!m_bNotifyFlag) {
-          CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
+          AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcLine);
           m_pNotify->InvalidateRect(&rcRefresh);
@@ -1280,7 +1280,7 @@ void CPWL_EditImpl::SetCaretInfo() {
         ptFoot.y = line.ptLine.y + line.fLineDescent;
       }
 
-      CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
+      AutoRestorer<bool> restorer(&m_bNotifyFlag);
       m_bNotifyFlag = true;
       m_pNotify->SetCaret(m_SelState.IsEmpty(), VTToEdit(ptHead),
                           VTToEdit(ptFoot));

@@ -805,9 +805,9 @@ config("fxge_warnings") {
 
 static_library("fxcrt") {
   sources = [
+    "core/fxcrt/autorestorer.h",
     "core/fxcrt/bytestring.cpp",
     "core/fxcrt/bytestring.h",
-    "core/fxcrt/cfx_autorestorer.h",
     "core/fxcrt/cfx_binarybuf.cpp",
     "core/fxcrt/cfx_binarybuf.h",
     "core/fxcrt/cfx_bitstream.cpp",
