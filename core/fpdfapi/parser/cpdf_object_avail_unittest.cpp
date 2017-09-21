@@ -22,7 +22,7 @@ namespace {
 class InvalidReader : public IFX_SeekableReadStream {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream overrides:
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
@@ -38,7 +38,7 @@ class InvalidReader : public IFX_SeekableReadStream {
 class TestReadValidator : public CPDF_ReadValidator {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   void SimulateReadError() { ReadBlock(nullptr, 0, 1); }
 
@@ -71,7 +71,7 @@ class TestHolder : public CPDF_IndirectObjectHolder {
     return obj_data.object.get();
   }
 
-  CFX_RetainPtr<CPDF_ReadValidator> GetValidator() { return validator_; }
+  RetainPtr<CPDF_ReadValidator> GetValidator() { return validator_; }
 
   void AddObject(uint32_t objnum,
                  std::unique_ptr<CPDF_Object> object,
@@ -103,7 +103,7 @@ class TestHolder : public CPDF_IndirectObjectHolder {
     ObjectState state = ObjectState::Unavailable;
   };
   std::map<uint32_t, ObjectData> objects_data_;
-  CFX_RetainPtr<TestReadValidator> validator_;
+  RetainPtr<TestReadValidator> validator_;
 };
 
 class CPDF_ObjectAvailFailOnExclude : public CPDF_ObjectAvail {

@@ -184,7 +184,7 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
 }
 
 bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
-                               const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
+                               const RetainPtr<CFX_DIBSource>& pDIBSource,
                                FX_ARGB bitmap_argb,
                                int bitmap_alpha,
                                const CFX_Matrix* pImage2Device,
@@ -222,7 +222,7 @@ CFX_Matrix CPDF_ImageRenderer::GetDrawMatrix(const FX_RECT& rect) const {
 void CPDF_ImageRenderer::CalculateDrawImage(
     CFX_DefaultRenderDevice* pBitmapDevice1,
     CFX_DefaultRenderDevice* pBitmapDevice2,
-    const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
+    const RetainPtr<CFX_DIBSource>& pDIBSource,
     CFX_Matrix* pNewMatrix,
     const FX_RECT& rect) const {
   CPDF_RenderStatus bitmap_render;
@@ -380,7 +380,7 @@ bool CPDF_ImageRenderer::StartDIBSource() {
     }
   }
 #ifdef _SKIA_SUPPORT_
-  CFX_RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBSource->Clone(nullptr);
+  RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBSource->Clone(nullptr);
   if (m_pDIBSource->HasAlpha())
     CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
   if (m_pRenderStatus->m_pDevice->StartDIBitsWithBlend(
@@ -456,7 +456,7 @@ bool CPDF_ImageRenderer::StartDIBSource() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  CFX_RetainPtr<CFX_DIBitmap> pStretched =
+  RetainPtr<CFX_DIBitmap> pStretched =
       m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
   if (pStretched) {
     m_pRenderStatus->CompositeDIBitmap(pStretched, dest_rect.left,
@@ -477,7 +477,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
                                          FXFILL_WINDING);
     return false;
   }
-  CFX_RetainPtr<CFX_DIBSource> pAlphaMask;
+  RetainPtr<CFX_DIBSource> pAlphaMask;
   if (m_pDIBSource->IsAlphaMask())
     pAlphaMask = m_pDIBSource;
   else
@@ -486,7 +486,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
   if (fabs(m_ImageMatrix.b) >= 0.5f || fabs(m_ImageMatrix.c) >= 0.5f) {
     int left;
     int top;
-    CFX_RetainPtr<CFX_DIBitmap> pTransformed =
+    RetainPtr<CFX_DIBitmap> pTransformed =
         pAlphaMask->TransformTo(&m_ImageMatrix, &left, &top);
     if (!pTransformed)
       return true;
@@ -515,7 +515,7 @@ bool CPDF_ImageRenderer::Continue(IFX_PauseIndicator* pPause) {
     if (m_pTransformer->Continue(pPause))
       return true;
 
-    CFX_RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
+    RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
     if (!pBitmap)
       return false;
 

@@ -85,16 +85,16 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   if (!pParentArray)
     return;
 
-  std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>> element_map;
+  std::map<CPDF_Dictionary*, RetainPtr<CPDF_StructElement>> element_map;
   for (size_t i = 0; i < pParentArray->GetCount(); i++) {
     if (CPDF_Dictionary* pParent = pParentArray->GetDictAt(i))
       AddPageNode(pParent, &element_map, 0);
   }
 }
 
-CFX_RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
+RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
     CPDF_Dictionary* pDict,
-    std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>>* map,
+    std::map<CPDF_Dictionary*, RetainPtr<CPDF_StructElement>>* map,
     int nLevel) {
   if (nLevel > nMaxRecursion)
     return nullptr;
@@ -112,7 +112,7 @@ CFX_RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
     return pElement;
   }
 
-  CFX_RetainPtr<CPDF_StructElement> pParentElement =
+  RetainPtr<CPDF_StructElement> pParentElement =
       AddPageNode(pParent, map, nLevel + 1);
   bool bSave = false;
   for (CPDF_StructKid& kid : *pParentElement->GetKids()) {
@@ -128,7 +128,7 @@ CFX_RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 
 bool CPDF_StructTree::AddTopLevelNode(
     CPDF_Dictionary* pDict,
-    const CFX_RetainPtr<CPDF_StructElement>& pElement) {
+    const RetainPtr<CPDF_StructElement>& pElement) {
   CPDF_Object* pObj = m_pTreeRoot->GetDirectObjectFor("K");
   if (!pObj)
     return false;

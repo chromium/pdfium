@@ -11,9 +11,9 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Array;
 class CPDF_CryptoHandler;
@@ -28,7 +28,7 @@ class CPDF_Parser;
 class CPDF_Creator {
  public:
   explicit CPDF_Creator(CPDF_Document* pDoc,
-                        const CFX_RetainPtr<IFX_WriteStream>& archive);
+                        const RetainPtr<IFX_WriteStream>& archive);
   ~CPDF_Creator();
 
   void RemoveSecurity();
@@ -85,7 +85,7 @@ class CPDF_Creator {
   bool m_bSecurityChanged;
   CFX_UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   uint32_t m_dwEncryptObjNum;
-  CFX_RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
+  RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   CFX_UnownedPtr<CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;

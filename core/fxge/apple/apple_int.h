@@ -19,7 +19,7 @@
 
 class CQuartz2D {
  public:
-  void* createGraphics(const CFX_RetainPtr<CFX_DIBitmap>& bitmap);
+  void* createGraphics(const RetainPtr<CFX_DIBitmap>& bitmap);
   void destroyGraphics(void* graphics);
 
   void* CreateFont(const uint8_t* pFontData, uint32_t dwFontSize);

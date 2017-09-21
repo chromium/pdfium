@@ -27,7 +27,7 @@ const size_t kArchiveBufferSize = 32768;
 
 class CFX_FileBufferArchive : public IFX_ArchiveStream {
  public:
-  explicit CFX_FileBufferArchive(const CFX_RetainPtr<IFX_WriteStream>& archive);
+  explicit CFX_FileBufferArchive(const RetainPtr<IFX_WriteStream>& archive);
   ~CFX_FileBufferArchive() override;
 
   bool WriteBlock(const void* pBuf, size_t size) override;
@@ -43,11 +43,11 @@ class CFX_FileBufferArchive : public IFX_ArchiveStream {
   FX_FILESIZE offset_;
   size_t current_length_;
   std::vector<uint8_t> buffer_;
-  CFX_RetainPtr<IFX_WriteStream> backing_file_;
+  RetainPtr<IFX_WriteStream> backing_file_;
 };
 
 CFX_FileBufferArchive::CFX_FileBufferArchive(
-    const CFX_RetainPtr<IFX_WriteStream>& file)
+    const RetainPtr<IFX_WriteStream>& file)
     : offset_(0),
       current_length_(0),
       buffer_(kArchiveBufferSize),
@@ -139,7 +139,7 @@ int32_t OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
 }  // namespace
 
 CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
-                           const CFX_RetainPtr<IFX_WriteStream>& archive)
+                           const RetainPtr<IFX_WriteStream>& archive)
     : m_pDocument(pDoc),
       m_pParser(pDoc->GetParser()),
       m_bSecurityChanged(false),
@@ -437,8 +437,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1() {
   }
   if (m_iStage == 15) {
     if (IsOriginal() && m_SavedOffset > 0) {
-      CFX_RetainPtr<IFX_SeekableReadStream> pSrcFile =
-          m_pParser->GetFileAccess();
+      RetainPtr<IFX_SeekableReadStream> pSrcFile = m_pParser->GetFileAccess();
       std::vector<uint8_t> buffer(4096);
       FX_FILESIZE src_size = m_SavedOffset;
       while (src_size) {

@@ -48,7 +48,7 @@ void CFX_XMLDoc::CloseXML() {
 }
 
 void CFX_XMLDoc::SaveXMLNode(
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
+    const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
     CFX_XMLNode* pINode) {
   CFX_XMLNode* pNode = (CFX_XMLNode*)pINode;
   switch (pNode->GetType()) {

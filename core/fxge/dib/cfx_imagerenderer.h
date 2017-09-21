@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
@@ -23,9 +23,9 @@ class CFX_ImageStretcher;
 
 class CFX_ImageRenderer {
  public:
-  CFX_ImageRenderer(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
+  CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                     const CFX_ClipRgn* pClipRgn,
-                    const CFX_RetainPtr<CFX_DIBSource>& pSource,
+                    const RetainPtr<CFX_DIBSource>& pSource,
                     int bitmap_alpha,
                     uint32_t mask_color,
                     const CFX_Matrix* pMatrix,
@@ -36,7 +36,7 @@ class CFX_ImageRenderer {
   bool Continue(IFX_PauseIndicator* pPause);
 
  private:
-  const CFX_RetainPtr<CFX_DIBitmap> m_pDevice;
+  const RetainPtr<CFX_DIBitmap> m_pDevice;
   const CFX_UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
   const CFX_Matrix m_Matrix;
   const int m_BitmapAlpha;

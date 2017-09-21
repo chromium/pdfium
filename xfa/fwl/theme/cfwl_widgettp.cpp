@@ -303,7 +303,7 @@ CFWL_FontManager::CFWL_FontManager() {}
 
 CFWL_FontManager::~CFWL_FontManager() {}
 
-CFX_RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(
+RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {

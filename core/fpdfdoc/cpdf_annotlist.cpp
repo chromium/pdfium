@@ -141,7 +141,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
       continue;
 
     if (pOptions) {
-      CFX_RetainPtr<CPDF_OCContext> pOCContext = pOptions->m_pOCContext;
+      RetainPtr<CPDF_OCContext> pOCContext = pOptions->m_pOCContext;
       CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
       if (pOCContext && pAnnotDict &&
           !pOCContext->CheckOCGVisible(pAnnotDict->GetDictFor("OC"))) {

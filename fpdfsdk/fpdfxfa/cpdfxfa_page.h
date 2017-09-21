@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_Matrix;
 class CPDFXFA_Context;
@@ -19,10 +19,10 @@ class CPDF_Dictionary;
 class CPDF_Page;
 class CXFA_FFPageView;
 
-class CPDFXFA_Page : public CFX_Retainable {
+class CPDFXFA_Page : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool LoadPage();
   bool LoadPDFPage(CPDF_Dictionary* pageDict);

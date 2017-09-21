@@ -45,7 +45,7 @@ void CPDF_ImageObject::CalcBoundingBox() {
       m_Matrix.TransformRect(0.f, 1.f, 1.f, 0.f);
 }
 
-void CPDF_ImageObject::SetImage(const CFX_RetainPtr<CPDF_Image>& pImage) {
+void CPDF_ImageObject::SetImage(const RetainPtr<CPDF_Image>& pImage) {
   MaybePurgeCache();
   m_pImage = pImage;
 }

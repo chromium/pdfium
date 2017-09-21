@@ -161,13 +161,13 @@ void CPDF_GeneralState::SetTR(CPDF_Object* pObject) {
   m_Ref.GetPrivateCopy()->m_pTR = pObject;
 }
 
-CFX_RetainPtr<CPDF_TransferFunc> CPDF_GeneralState::GetTransferFunc() const {
+RetainPtr<CPDF_TransferFunc> CPDF_GeneralState::GetTransferFunc() const {
   const StateData* pData = m_Ref.GetObject();
   return pData ? pData->m_pTransferFunc : nullptr;
 }
 
 void CPDF_GeneralState::SetTransferFunc(
-    const CFX_RetainPtr<CPDF_TransferFunc>& pFunc) {
+    const RetainPtr<CPDF_TransferFunc>& pFunc) {
   m_Ref.GetPrivateCopy()->m_pTransferFunc = pFunc;
 }
 

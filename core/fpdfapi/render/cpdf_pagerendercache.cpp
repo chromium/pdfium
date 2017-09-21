@@ -80,7 +80,7 @@ void CPDF_PageRenderCache::ClearImageCacheEntry(CPDF_Stream* pStream) {
 }
 
 bool CPDF_PageRenderCache::StartGetCachedBitmap(
-    const CFX_RetainPtr<CPDF_Image>& pImage,
+    const RetainPtr<CPDF_Image>& pImage,
     bool bStdCS,
     uint32_t GroupFamily,
     bool bLoadMask,
@@ -126,9 +126,8 @@ bool CPDF_PageRenderCache::Continue(IFX_PauseIndicator* pPause,
   return false;
 }
 
-void CPDF_PageRenderCache::ResetBitmap(
-    const CFX_RetainPtr<CPDF_Image>& pImage,
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
+void CPDF_PageRenderCache::ResetBitmap(const RetainPtr<CPDF_Image>& pImage,
+                                       const RetainPtr<CFX_DIBitmap>& pBitmap) {
   CPDF_ImageCacheEntry* pEntry;
   CPDF_Stream* pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);

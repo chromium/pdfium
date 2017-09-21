@@ -18,8 +18,8 @@
 #include "core/fpdfapi/render/cpdf_imageloader.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 
@@ -42,7 +42,7 @@ typedef struct {
 class CPDF_DIBSource : public CFX_DIBSource {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   ~CPDF_DIBSource() override;
 
@@ -76,7 +76,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   int StartLoadMaskDIB();
   int ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
   int ContinueToLoadMask();
-  CFX_RetainPtr<CPDF_DIBSource> DetachMask();
+  RetainPtr<CPDF_DIBSource> DetachMask();
 
  private:
   CPDF_DIBSource();
@@ -125,7 +125,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   CFX_UnownedPtr<CPDF_Document> m_pDocument;
   CFX_UnownedPtr<const CPDF_Stream> m_pStream;
   CFX_UnownedPtr<const CPDF_Dictionary> m_pDict;
-  CFX_RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
+  RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   CPDF_ColorSpace* m_pColorSpace;
   uint32_t m_Family;
   uint32_t m_bpc;
@@ -143,9 +143,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
   DIB_COMP_DATA* m_pCompData;
   uint8_t* m_pLineBuf;
   uint8_t* m_pMaskedLine;
-  CFX_RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
-  CFX_RetainPtr<CPDF_DIBSource> m_pMask;
-  CFX_RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
+  RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
+  RetainPtr<CPDF_DIBSource> m_pMask;
+  RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
   std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
   CFX_UnownedPtr<CPDF_Stream> m_pMaskStream;

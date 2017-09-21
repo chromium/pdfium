@@ -9,18 +9,18 @@
 
 #include <map>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_PageObject;
 
-class CPDF_OCContext : public CFX_Retainable {
+class CPDF_OCContext : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   enum UsageType { View = 0, Design, Print, Export };
 

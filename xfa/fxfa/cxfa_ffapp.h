@@ -12,8 +12,8 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"

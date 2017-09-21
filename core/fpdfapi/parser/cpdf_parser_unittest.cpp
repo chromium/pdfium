@@ -7,9 +7,9 @@
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
@@ -17,7 +17,7 @@
 class CFX_TestBufferRead : public IFX_SeekableReadStream {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream:
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
@@ -46,7 +46,7 @@ class CPDF_TestParser : public CPDF_Parser {
 
   // Setup reading from a file and initial states.
   bool InitTestFromFile(const char* path) {
-    CFX_RetainPtr<IFX_SeekableReadStream> pFileAccess =
+    RetainPtr<IFX_SeekableReadStream> pFileAccess =
         IFX_SeekableReadStream::CreateFromFilename(path);
     if (!pFileAccess)
       return false;

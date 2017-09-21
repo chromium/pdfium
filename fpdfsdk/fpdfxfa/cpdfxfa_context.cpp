@@ -153,7 +153,7 @@ int CPDFXFA_Context::GetPageCount() const {
   }
 }
 
-CFX_RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
+RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
   if (page_index < 0)
     return nullptr;
 
@@ -175,7 +175,7 @@ CFX_RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
   return pPage;
 }
 
-CFX_RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
+RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
     CXFA_FFPageView* pPage) const {
   if (!pPage)
     return nullptr;
@@ -314,7 +314,7 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
                                  nLength / sizeof(uint16_t));
 }
 
-CFX_RetainPtr<IFX_SeekableReadStream> CPDFXFA_Context::DownloadURL(
+RetainPtr<IFX_SeekableReadStream> CPDFXFA_Context::DownloadURL(
     const WideString& wsURL) {
   return m_pFormFillEnv ? m_pFormFillEnv->DownloadFromURL(wsURL.c_str())
                         : nullptr;

@@ -19,7 +19,7 @@ class CFX_ChecksumContext {
 
   void StartChecksum();
   void Update(const ByteStringView& bsText);
-  bool UpdateChecksum(const CFX_RetainPtr<IFX_SeekableReadStream>& pSrcFile,
+  bool UpdateChecksum(const RetainPtr<IFX_SeekableReadStream>& pSrcFile,
                       FX_FILESIZE offset = 0,
                       size_t size = 0);
   void FinishChecksum();

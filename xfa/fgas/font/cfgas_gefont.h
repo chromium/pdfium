@@ -11,9 +11,9 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
@@ -22,25 +22,24 @@
 class CFGAS_FontMgr;
 class CFX_UnicodeEncoding;
 
-class CFGAS_GEFont : public CFX_Retainable {
+class CFGAS_GEFont : public Retainable {
  public:
   template <typename T>
-  friend class CFX_RetainPtr;
+  friend class RetainPtr;
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  static CFX_RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
-                                              uint32_t dwFontStyles,
-                                              uint16_t wCodePage,
-                                              CFGAS_FontMgr* pFontMgr);
-  static CFX_RetainPtr<CFGAS_GEFont> LoadFont(CFX_Font* pExternalFont,
-                                              CFGAS_FontMgr* pFontMgr);
-  static CFX_RetainPtr<CFGAS_GEFont> LoadFont(
+  static RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
+                                          uint32_t dwFontStyles,
+                                          uint16_t wCodePage,
+                                          CFGAS_FontMgr* pFontMgr);
+  static RetainPtr<CFGAS_GEFont> LoadFont(CFX_Font* pExternalFont,
+                                          CFGAS_FontMgr* pFontMgr);
+  static RetainPtr<CFGAS_GEFont> LoadFont(
       std::unique_ptr<CFX_Font> pInternalFont,
       CFGAS_FontMgr* pFontMgr);
 
-  CFX_RetainPtr<CFGAS_GEFont> Derive(uint32_t dwFontStyles,
-                                     uint16_t wCodePage = 0);
+  RetainPtr<CFGAS_GEFont> Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   uint32_t GetFontStyles() const;
   bool GetCharWidth(wchar_t wUnicode, int32_t& iWidth, bool bCharCode);
   int32_t GetGlyphIndex(wchar_t wUnicode, bool bCharCode = false);
@@ -48,7 +47,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   int32_t GetDescent() const;
   bool GetCharBBox(wchar_t wUnicode, CFX_Rect* bbox, bool bCharCode = false);
   bool GetBBox(CFX_Rect* bbox);
-  CFX_RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
+  RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
   CFX_Font* GetDevFont() const { return m_pFont; }
   void SetFontProvider(CFGAS_PDFFontMgr* pProvider) {
     m_pProvider.Reset(pProvider);
@@ -62,7 +61,7 @@ class CFGAS_GEFont : public CFX_Retainable {
 
  private:
   explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
-  CFGAS_GEFont(const CFX_RetainPtr<CFGAS_GEFont>& src, uint32_t dwFontStyles);
+  CFGAS_GEFont(const RetainPtr<CFGAS_GEFont>& src, uint32_t dwFontStyles);
   ~CFGAS_GEFont() override;
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -70,9 +69,8 @@ class CFGAS_GEFont : public CFX_Retainable {
                         uint32_t dwFontStyles,
                         uint16_t wCodePage);
   bool LoadFontInternal(const uint8_t* pBuffer, int32_t length);
-  bool LoadFontInternal(
-      const CFX_RetainPtr<CFX_SeekableStreamProxy>& pFontStream,
-      bool bSaveStream);
+  bool LoadFontInternal(const RetainPtr<CFX_SeekableStreamProxy>& pFontStream,
+                        bool bSaveStream);
 #endif
   bool LoadFontInternal(CFX_Font* pExternalFont);
   bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
@@ -87,7 +85,7 @@ class CFGAS_GEFont : public CFX_Retainable {
                             bool bCharCode);
   int32_t GetGlyphIndex(wchar_t wUnicode,
                         bool bRecursive,
-                        CFX_RetainPtr<CFGAS_GEFont>* ppFont,
+                        RetainPtr<CFGAS_GEFont>* ppFont,
                         bool bCharCode = false);
   WideString GetFamilyName() const;
 
@@ -97,16 +95,16 @@ class CFGAS_GEFont : public CFX_Retainable {
 #endif
   CFX_Font* m_pFont;
   bool m_bExternalFont;
-  CFX_RetainPtr<CFGAS_GEFont> m_pSrcFont;  // Only set by ctor, so no cycles.
+  RetainPtr<CFGAS_GEFont> m_pSrcFont;  // Only set by ctor, so no cycles.
   CFGAS_FontMgr::ObservedPtr m_pFontMgr;
   CFGAS_PDFFontMgr::ObservedPtr m_pProvider;
-  CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
+  RetainPtr<CFX_SeekableStreamProxy> m_pStream;
+  RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;
   std::map<wchar_t, CFX_Rect> m_BBoxMap;
-  std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_SubstFonts;
-  std::map<wchar_t, CFX_RetainPtr<CFGAS_GEFont>> m_FontMapper;
+  std::vector<RetainPtr<CFGAS_GEFont>> m_SubstFonts;
+  std::map<wchar_t, RetainPtr<CFGAS_GEFont>> m_FontMapper;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_GEFONT_H_

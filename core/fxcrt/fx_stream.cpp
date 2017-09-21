@@ -20,7 +20,7 @@ namespace {
 class CFX_CRTFileStream final : public IFX_SeekableStream {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableStream:
   FX_FILESIZE GetSize() override { return m_pFile->GetSize(); }
@@ -50,7 +50,7 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 }  // namespace
 
 // static
-CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
+RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const char* filename,
     uint32_t dwModes) {
   std::unique_ptr<IFX_FileAccess> pFA = IFX_FileAccess::Create();
@@ -60,7 +60,7 @@ CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
 }
 
 // static
-CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
+RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const wchar_t* filename,
     uint32_t dwModes) {
   std::unique_ptr<IFX_FileAccess> pFA = IFX_FileAccess::Create();
@@ -70,8 +70,8 @@ CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
 }
 
 // static
-CFX_RetainPtr<IFX_SeekableReadStream>
-IFX_SeekableReadStream::CreateFromFilename(const char* filename) {
+RetainPtr<IFX_SeekableReadStream> IFX_SeekableReadStream::CreateFromFilename(
+    const char* filename) {
   return IFX_SeekableStream::CreateFromFilename(filename, FX_FILEMODE_ReadOnly);
 }
 

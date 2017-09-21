@@ -81,9 +81,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                             bool bShading,
                             const CFX_Matrix& matrix);
 
-  CFX_RetainPtr<CPDF_Image> LoadImageFromPageData(uint32_t dwStreamObjNum);
-  CFX_RetainPtr<CPDF_StreamAcc> LoadFontFile(CPDF_Stream* pStream);
-  CFX_RetainPtr<CPDF_IccProfile> LoadIccProfile(CPDF_Stream* pStream);
+  RetainPtr<CPDF_Image> LoadImageFromPageData(uint32_t dwStreamObjNum);
+  RetainPtr<CPDF_StreamAcc> LoadFontFile(CPDF_Stream* pStream);
+  RetainPtr<CPDF_IccProfile> LoadIccProfile(CPDF_Stream* pStream);
 
   void LoadDoc();
   void LoadLinearizedDoc(const CPDF_LinearizedHeader* pLinearizationParams);

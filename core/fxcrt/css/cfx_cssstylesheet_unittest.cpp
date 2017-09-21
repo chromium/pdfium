@@ -51,7 +51,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     ASSERT(decl_);
 
     bool important;
-    CFX_RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
+    RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
     EXPECT_EQ(v->GetType(), CFX_CSSPrimitiveType::Number);
     EXPECT_EQ(v.As<CFX_CSSNumberValue>()->Kind(), type);
     EXPECT_EQ(v.As<CFX_CSSNumberValue>()->Value(), val);
@@ -61,7 +61,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     ASSERT(decl_);
 
     bool important;
-    CFX_RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
+    RetainPtr<CFX_CSSValue> v = decl_->GetProperty(prop, &important);
     EXPECT_EQ(v->GetType(), CFX_CSSPrimitiveType::Enum);
     EXPECT_EQ(v.As<CFX_CSSEnumValue>()->Value(), val);
   }
@@ -71,12 +71,12 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     ASSERT(decl_);
 
     bool important;
-    CFX_RetainPtr<CFX_CSSValueList> list =
+    RetainPtr<CFX_CSSValueList> list =
         decl_->GetProperty(prop, &important).As<CFX_CSSValueList>();
     EXPECT_EQ(list->CountValues(), pdfium::CollectionSize<int32_t>(values));
 
     for (size_t i = 0; i < values.size(); i++) {
-      CFX_RetainPtr<CFX_CSSValue> val = list->GetValue(i);
+      RetainPtr<CFX_CSSValue> val = list->GetValue(i);
       EXPECT_EQ(val->GetType(), CFX_CSSPrimitiveType::Enum);
       EXPECT_EQ(val.As<CFX_CSSEnumValue>()->Value(), values[i]);
     }

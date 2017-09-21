@@ -7,23 +7,23 @@
 #ifndef XFA_FXFA_CXFA_TEXTUSERDATA_H_
 #define XFA_FXFA_CXFA_TEXTUSERDATA_H_
 
-#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_CSSComputedStyle;
 class CXFA_LinkUserData;
 
-class CXFA_TextUserData : public CFX_Retainable {
+class CXFA_TextUserData : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  CFX_RetainPtr<CFX_CSSComputedStyle> m_pStyle;
-  CFX_RetainPtr<CXFA_LinkUserData> m_pLinkData;
+  RetainPtr<CFX_CSSComputedStyle> m_pStyle;
+  RetainPtr<CXFA_LinkUserData> m_pLinkData;
 
  private:
-  explicit CXFA_TextUserData(const CFX_RetainPtr<CFX_CSSComputedStyle>& pStyle);
-  CXFA_TextUserData(const CFX_RetainPtr<CFX_CSSComputedStyle>& pStyle,
-                    const CFX_RetainPtr<CXFA_LinkUserData>& pLinkData);
+  explicit CXFA_TextUserData(const RetainPtr<CFX_CSSComputedStyle>& pStyle);
+  CXFA_TextUserData(const RetainPtr<CFX_CSSComputedStyle>& pStyle,
+                    const RetainPtr<CXFA_LinkUserData>& pLinkData);
   ~CXFA_TextUserData() override;
 };
 

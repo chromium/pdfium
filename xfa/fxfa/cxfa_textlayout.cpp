@@ -689,9 +689,9 @@ bool CXFA_TextLayout::LoadRichText(
     CFX_XMLNode* pXMLNode,
     const CFX_SizeF& szText,
     float& fLinePos,
-    const CFX_RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
+    const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
     bool bSavePieces,
-    CFX_RetainPtr<CXFA_LinkUserData> pLinkData,
+    RetainPtr<CXFA_LinkUserData> pLinkData,
     bool bEndBreak,
     bool bIsOl,
     int32_t iLiCount) {
@@ -703,7 +703,7 @@ bool CXFA_TextLayout::LoadRichText(
   CFX_CSSDisplay eDisplay = CFX_CSSDisplay::None;
   bool bContentNode = false;
   float fSpaceBelow = 0;
-  CFX_RetainPtr<CFX_CSSComputedStyle> pStyle;
+  RetainPtr<CFX_CSSComputedStyle> pStyle;
   WideString wsName;
   if (bEndBreak) {
     bool bCurOl = false;
@@ -1008,7 +1008,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
   if (iPieces < 1)
     return;
 
-  CFX_RetainPtr<CFX_CSSComputedStyle> pStyle;
+  RetainPtr<CFX_CSSComputedStyle> pStyle;
   if (bSavePieces) {
     auto pNew = pdfium::MakeUnique<CXFA_PieceLine>();
     CXFA_PieceLine* pPieceLine = pNew.get();

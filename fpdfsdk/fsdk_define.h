@@ -32,13 +32,13 @@ class FX_PATHPOINT;
 
 // Layering prevents fxcrt from knowing about FPDF_FILEACCESS, so this can't
 // be a static method of IFX_SeekableReadStream.
-CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
+RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
     FPDF_FILEACCESS* pFileAccess);
 
 #ifdef PDF_ENABLE_XFA
 // Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't
 // be a static method of IFX_SeekableStream.
-CFX_RetainPtr<IFX_SeekableStream> MakeSeekableStream(
+RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFileHandler);
 #endif  // PDF_ENABLE_XFA
 

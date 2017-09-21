@@ -14,11 +14,11 @@ CFX_BitmapStorer::CFX_BitmapStorer() {}
 
 CFX_BitmapStorer::~CFX_BitmapStorer() {}
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_BitmapStorer::Detach() {
+RetainPtr<CFX_DIBitmap> CFX_BitmapStorer::Detach() {
   return std::move(m_pBitmap);
 }
 
-void CFX_BitmapStorer::Replace(CFX_RetainPtr<CFX_DIBitmap>&& pBitmap) {
+void CFX_BitmapStorer::Replace(RetainPtr<CFX_DIBitmap>&& pBitmap) {
   m_pBitmap = std::move(pBitmap);
 }
 

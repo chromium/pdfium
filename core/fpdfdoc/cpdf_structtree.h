@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -35,17 +35,17 @@ class CPDF_StructTree {
 
  private:
   void LoadPageTree(const CPDF_Dictionary* pPageDict);
-  CFX_RetainPtr<CPDF_StructElement> AddPageNode(
+  RetainPtr<CPDF_StructElement> AddPageNode(
       CPDF_Dictionary* pElement,
-      std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>>* map,
+      std::map<CPDF_Dictionary*, RetainPtr<CPDF_StructElement>>* map,
       int nLevel);
   bool AddTopLevelNode(CPDF_Dictionary* pDict,
-                       const CFX_RetainPtr<CPDF_StructElement>& pElement);
+                       const RetainPtr<CPDF_StructElement>& pElement);
 
   CFX_UnownedPtr<const CPDF_Dictionary> const m_pTreeRoot;
   CFX_UnownedPtr<const CPDF_Dictionary> const m_pRoleMap;
   CFX_UnownedPtr<const CPDF_Dictionary> m_pPage;
-  std::vector<CFX_RetainPtr<CPDF_StructElement>> m_Kids;
+  std::vector<RetainPtr<CPDF_StructElement>> m_Kids;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_STRUCTTREE_H_

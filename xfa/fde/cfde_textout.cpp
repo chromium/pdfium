@@ -33,7 +33,7 @@ bool IsTextAlignmentTop(const FDE_TextAlignment align) {
 // static
 bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               FX_ARGB color,
-                              const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+                              const RetainPtr<CFGAS_GEFont>& pFont,
                               FXTEXT_CHARPOS* pCharPos,
                               int32_t iCount,
                               float fFontSize,
@@ -63,11 +63,11 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   FxFont.SetSubstFont(std::move(SubstFxFont));
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
-  CFX_RetainPtr<CFGAS_GEFont> pCurFont;
+  RetainPtr<CFGAS_GEFont> pCurFont;
   FXTEXT_CHARPOS* pCurCP = nullptr;
   int32_t iCurCount = 0;
   for (int32_t i = 0; i < iCount; ++i) {
-    CFX_RetainPtr<CFGAS_GEFont> pSTFont =
+    RetainPtr<CFGAS_GEFont> pSTFont =
         pFont->GetSubstFont(static_cast<int32_t>(pCharPos->m_GlyphIndex));
     pCharPos->m_GlyphIndex &= 0x00FFFFFF;
     pCharPos->m_bFontStyle = false;
@@ -140,7 +140,7 @@ CFDE_TextOut::CFDE_TextOut()
 
 CFDE_TextOut::~CFDE_TextOut() {}
 
-void CFDE_TextOut::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont) {
+void CFDE_TextOut::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
   ASSERT(pFont);
   m_pFont = pFont;
   m_pTxtBreak->SetFont(pFont);

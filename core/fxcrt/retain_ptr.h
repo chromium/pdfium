@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_CFX_RETAIN_PTR_H_
-#define CORE_FXCRT_CFX_RETAIN_PTR_H_
+#ifndef CORE_FXCRT_RETAIN_PTR_H_
+#define CORE_FXCRT_RETAIN_PTR_H_
 
 #include <functional>
 #include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
+
+namespace fxcrt {
 
 // Used with std::unique_ptr to Release() objects that can't be deleted.
 template <class T>
@@ -19,27 +21,27 @@ struct ReleaseDeleter {
 
 // Analogous to base's scoped_refptr.
 template <class T>
-class CFX_RetainPtr {
+class RetainPtr {
  public:
-  explicit CFX_RetainPtr(T* pObj) : m_pObj(pObj) {
+  explicit RetainPtr(T* pObj) : m_pObj(pObj) {
     if (m_pObj)
       m_pObj->Retain();
   }
 
-  CFX_RetainPtr() {}
-  CFX_RetainPtr(const CFX_RetainPtr& that) : CFX_RetainPtr(that.Get()) {}
-  CFX_RetainPtr(CFX_RetainPtr&& that) noexcept { Swap(that); }
+  RetainPtr() {}
+  RetainPtr(const RetainPtr& that) : RetainPtr(that.Get()) {}
+  RetainPtr(RetainPtr&& that) noexcept { Swap(that); }
 
   // Deliberately implicit to allow returning nullptrs.
   // NOLINTNEXTLINE(runtime/explicit)
-  CFX_RetainPtr(std::nullptr_t ptr) {}
+  RetainPtr(std::nullptr_t ptr) {}
 
   template <class U>
-  CFX_RetainPtr(const CFX_RetainPtr<U>& that) : CFX_RetainPtr(that.Get()) {}
+  RetainPtr(const RetainPtr<U>& that) : RetainPtr(that.Get()) {}
 
   template <class U>
-  CFX_RetainPtr<U> As() const {
-    return CFX_RetainPtr<U>(static_cast<U*>(Get()));
+  RetainPtr<U> As() const {
+    return RetainPtr<U>(static_cast<U*>(Get()));
   }
 
   void Reset(T* obj = nullptr) {
@@ -49,29 +51,27 @@ class CFX_RetainPtr {
   }
 
   T* Get() const { return m_pObj.get(); }
-  void Swap(CFX_RetainPtr& that) { m_pObj.swap(that.m_pObj); }
+  void Swap(RetainPtr& that) { m_pObj.swap(that.m_pObj); }
 
   // Useful for passing notion of object ownership across a C API.
   T* Leak() { return m_pObj.release(); }
   void Unleak(T* ptr) { m_pObj.reset(ptr); }
 
-  CFX_RetainPtr& operator=(const CFX_RetainPtr& that) {
+  RetainPtr& operator=(const RetainPtr& that) {
     if (*this != that)
       Reset(that.Get());
     return *this;
   }
 
-  CFX_RetainPtr& operator=(CFX_RetainPtr&& that) {
+  RetainPtr& operator=(RetainPtr&& that) {
     m_pObj.reset(that.Leak());
     return *this;
   }
 
-  bool operator==(const CFX_RetainPtr& that) const {
-    return Get() == that.Get();
-  }
-  bool operator!=(const CFX_RetainPtr& that) const { return !(*this == that); }
+  bool operator==(const RetainPtr& that) const { return Get() == that.Get(); }
+  bool operator!=(const RetainPtr& that) const { return !(*this == that); }
 
-  bool operator<(const CFX_RetainPtr& that) const {
+  bool operator<(const RetainPtr& that) const {
     return std::less<T*>()(Get(), that.Get());
   }
 
@@ -84,19 +84,19 @@ class CFX_RetainPtr {
 };
 
 // Trivial implementation - internal ref count with virtual destructor.
-class CFX_Retainable {
+class Retainable {
  public:
   bool HasOneRef() const { return m_nRefCount == 1; }
 
  protected:
-  virtual ~CFX_Retainable() {}
+  virtual ~Retainable() {}
 
  private:
   template <typename U>
   friend struct ReleaseDeleter;
 
   template <typename U>
-  friend class CFX_RetainPtr;
+  friend class RetainPtr;
 
   void Retain() { ++m_nRefCount; }
   void Release() {
@@ -108,17 +108,23 @@ class CFX_Retainable {
   intptr_t m_nRefCount = 0;
 };
 
+}  // namespace fxcrt
+
+using fxcrt::ReleaseDeleter;
+using fxcrt::RetainPtr;
+using fxcrt::Retainable;
+
 namespace pdfium {
 
-// Helper to make a CFX_RetainPtr along the lines of std::make_unique<>(),
+// Helper to make a RetainPtr along the lines of std::make_unique<>(),
 // or pdfium::MakeUnique<>(). Arguments are forwarded to T's constructor.
-// Classes managed by CFX_RetainPtr should have protected (or private)
+// Classes managed by RetainPtr should have protected (or private)
 // constructors, and should friend this function.
 template <typename T, typename... Args>
-CFX_RetainPtr<T> MakeRetain(Args&&... args) {
-  return CFX_RetainPtr<T>(new T(std::forward<Args>(args)...));
+RetainPtr<T> MakeRetain(Args&&... args) {
+  return RetainPtr<T>(new T(std::forward<Args>(args)...));
 }
 
 }  // namespace pdfium
 
-#endif  // CORE_FXCRT_CFX_RETAIN_PTR_H_
+#endif  // CORE_FXCRT_RETAIN_PTR_H_

@@ -363,7 +363,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
 }
 
 FXFT_Face CFPF_SkiaFontMgr::GetFontFace(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
+    const RetainPtr<IFX_SeekableReadStream>& pFileRead,
     int32_t iFaceIndex) {
   if (!pFileRead)
     return nullptr;

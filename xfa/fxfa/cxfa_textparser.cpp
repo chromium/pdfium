@@ -88,7 +88,7 @@ std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
                                                              : nullptr;
 }
 
-CFX_RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
+RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     CXFA_TextProvider* pTextProvider) {
   CXFA_Font font = pTextProvider->GetFontNode();
   CXFA_Para para = pTextProvider->GetParaNode();
@@ -150,7 +150,7 @@ CFX_RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
   return pStyle;
 }
 
-CFX_RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
+RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
     CFX_CSSComputedStyle* pParentStyle) {
   auto pNewStyle = m_pSelector->CreateComputedStyle(pParentStyle);
   ASSERT(pNewStyle);
@@ -171,7 +171,7 @@ CFX_RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
   return pNewStyle;
 }
 
-CFX_RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
+RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
     CFX_XMLNode* pXMLNode,
     CFX_CSSComputedStyle* pParentStyle) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
@@ -215,7 +215,7 @@ void CXFA_TextParser::ParseRichText(CFX_XMLNode* pXMLNode,
   if (!tagProvider->m_bTagAvailable)
     return;
 
-  CFX_RetainPtr<CFX_CSSComputedStyle> pNewStyle;
+  RetainPtr<CFX_CSSComputedStyle> pNewStyle;
   if ((tagProvider->GetTagName() != L"body") ||
       (tagProvider->GetTagName() != L"html")) {
     auto pTextContext = pdfium::MakeUnique<CXFA_TextParseContext>();
@@ -315,7 +315,7 @@ bool CXFA_TextParser::IsSpaceRun(CFX_CSSComputedStyle* pStyle) const {
   return false;
 }
 
-CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
+RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
     CXFA_TextProvider* pTextProvider,
     CFX_CSSComputedStyle* pStyle) const {
   WideStringView wsFamily = L"Courier";

@@ -16,9 +16,9 @@
 #include "core/fxcodec/codec/ccodec_pngmodule.h"
 #include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CCodec_ModuleMgr;
@@ -44,11 +44,10 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   explicit CCodec_ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr);
   virtual ~CCodec_ProgressiveDecoder();
 
-  FXCODEC_STATUS LoadImageInfo(
-      const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
-      FXCODEC_IMAGE_TYPE imageType,
-      CFX_DIBAttribute* pAttribute,
-      bool bSkipImageTypeCheck);
+  FXCODEC_STATUS LoadImageInfo(const RetainPtr<IFX_SeekableReadStream>& pFile,
+                               FXCODEC_IMAGE_TYPE imageType,
+                               CFX_DIBAttribute* pAttribute,
+                               bool bSkipImageTypeCheck);
 
   FXCODEC_IMAGE_TYPE GetType() const { return m_imagType; }
   int32_t GetWidth() const { return m_SrcWidth; }
@@ -58,7 +57,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   void SetClipBox(FX_RECT* clip);
 
   FXCODEC_STATUS GetFrames(int32_t& frames);
-  FXCODEC_STATUS StartDecode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+  FXCODEC_STATUS StartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                              int start_x,
                              int start_y,
                              int size_x,
@@ -158,38 +157,36 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
                        FXCODEC_STATUS& err_status);
   bool GifReadMoreData(CCodec_GifModule* pGifModule,
                        FXCODEC_STATUS& err_status);
-  void GifDoubleLineResampleVert(
-      const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-      double scale_y,
-      int des_row);
-  void PngOneOneMapResampleHorz(
-      const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-      int32_t des_line,
-      uint8_t* src_scan,
-      FXCodec_Format src_format);
+  void GifDoubleLineResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+                                 double scale_y,
+                                 int des_row);
+  void PngOneOneMapResampleHorz(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+                                int32_t des_line,
+                                uint8_t* src_scan,
+                                FXCodec_Format src_format);
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
   void GetDownScale(int& down_scale);
   void GetTransMethod(FXDIB_Format des_format, FXCodec_Format src_format);
-  void ReSampleScanline(const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+  void ReSampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                         int32_t des_line,
                         uint8_t* src_scan,
                         FXCodec_Format src_format);
-  void Resample(const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+  void Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                 int32_t src_line,
                 uint8_t* src_scan,
                 FXCodec_Format src_format);
-  void ResampleVert(const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+  void ResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                     double scale_y,
                     int des_row);
   bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
                         FXCODEC_STATUS& err_status);
-  void ResampleVertBT(const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+  void ResampleVertBT(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                       double scale_y,
                       int des_row);
 
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
-  CFX_RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
+  RetainPtr<IFX_SeekableReadStream> m_pFile;
+  RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   CFX_UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
   std::unique_ptr<CCodec_JpegModule::Context> m_pJpegContext;
   std::unique_ptr<CCodec_PngModule::Context> m_pPngContext;

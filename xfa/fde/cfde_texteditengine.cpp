@@ -623,7 +623,7 @@ void CFDE_TextEditEngine::SetCharacterLimit(size_t limit) {
   is_dirty_ = true;
 }
 
-void CFDE_TextEditEngine::SetFont(CFX_RetainPtr<CFGAS_GEFont> font) {
+void CFDE_TextEditEngine::SetFont(RetainPtr<CFGAS_GEFont> font) {
   if (font_ == font)
     return;
 

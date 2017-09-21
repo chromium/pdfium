@@ -10,9 +10,9 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/logging.h"
@@ -27,39 +27,39 @@ class CTiffContext : public CCodec_TiffModule::Context {
   CTiffContext();
   ~CTiffContext() override;
 
-  bool InitDecoder(const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr);
+  bool InitDecoder(const RetainPtr<IFX_SeekableReadStream>& file_ptr);
   bool LoadFrameInfo(int32_t frame,
                      int32_t* width,
                      int32_t* height,
                      int32_t* comps,
                      int32_t* bpc,
                      CFX_DIBAttribute* pAttribute);
-  bool Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  bool Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
-  CFX_RetainPtr<IFX_SeekableReadStream> io_in() const { return m_io_in; }
+  RetainPtr<IFX_SeekableReadStream> io_in() const { return m_io_in; }
   uint32_t offset() const { return m_offset; }
   void set_offset(uint32_t offset) { m_offset = offset; }
 
  private:
-  bool IsSupport(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) const;
-  void SetPalette(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap, uint16_t bps);
-  bool Decode1bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+  bool IsSupport(const RetainPtr<CFX_DIBitmap>& pDIBitmap) const;
+  void SetPalette(const RetainPtr<CFX_DIBitmap>& pDIBitmap, uint16_t bps);
+  bool Decode1bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                      int32_t height,
                      int32_t width,
                      uint16_t bps,
                      uint16_t spp);
-  bool Decode8bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+  bool Decode8bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                      int32_t height,
                      int32_t width,
                      uint16_t bps,
                      uint16_t spp);
-  bool Decode24bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+  bool Decode24bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                       int32_t height,
                       int32_t width,
                       uint16_t bps,
                       uint16_t spp);
 
-  CFX_RetainPtr<IFX_SeekableReadStream> m_io_in;
+  RetainPtr<IFX_SeekableReadStream> m_io_in;
   uint32_t m_offset;
   TIFF* m_tif_ctx;
 };
@@ -228,7 +228,7 @@ CTiffContext::~CTiffContext() {
 }
 
 bool CTiffContext::InitDecoder(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr) {
+    const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   m_io_in = file_ptr;
   m_tif_ctx = tiff_open(this, "r");
   return !!m_tif_ctx;
@@ -291,8 +291,7 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
   return true;
 }
 
-bool CTiffContext::IsSupport(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) const {
+bool CTiffContext::IsSupport(const RetainPtr<CFX_DIBitmap>& pDIBitmap) const {
   if (TIFFIsTiled(m_tif_ctx))
     return false;
 
@@ -322,7 +321,7 @@ bool CTiffContext::IsSupport(
   return planarconfig != PLANARCONFIG_SEPARATE;
 }
 
-void CTiffContext::SetPalette(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+void CTiffContext::SetPalette(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                               uint16_t bps) {
   uint16_t* red_orig = nullptr;
   uint16_t* green_orig = nullptr;
@@ -346,7 +345,7 @@ void CTiffContext::SetPalette(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
   }
 }
 
-bool CTiffContext::Decode1bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+bool CTiffContext::Decode1bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                                  int32_t height,
                                  int32_t width,
                                  uint16_t bps,
@@ -374,7 +373,7 @@ bool CTiffContext::Decode1bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
   return true;
 }
 
-bool CTiffContext::Decode8bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+bool CTiffContext::Decode8bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                                  int32_t height,
                                  int32_t width,
                                  uint16_t bps,
@@ -410,7 +409,7 @@ bool CTiffContext::Decode8bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
   return true;
 }
 
-bool CTiffContext::Decode24bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+bool CTiffContext::Decode24bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                                   int32_t height,
                                   int32_t width,
                                   uint16_t bps,
@@ -438,7 +437,7 @@ bool CTiffContext::Decode24bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
   return true;
 }
 
-bool CTiffContext::Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   uint32_t img_wid = pDIBitmap->GetWidth();
   uint32_t img_hei = pDIBitmap->GetHeight();
   uint32_t width = 0;
@@ -480,7 +479,7 @@ bool CTiffContext::Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
 }
 
 std::unique_ptr<CCodec_TiffModule::Context> CCodec_TiffModule::CreateDecoder(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr) {
+    const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   auto pDecoder = pdfium::MakeUnique<CTiffContext>();
   if (!pDecoder->InitDecoder(file_ptr))
     return nullptr;
@@ -500,7 +499,7 @@ bool CCodec_TiffModule::LoadFrameInfo(Context* pContext,
 }
 
 bool CCodec_TiffModule::Decode(Context* pContext,
-                               const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+                               const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->Decode(pDIBitmap);
 }

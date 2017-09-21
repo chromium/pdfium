@@ -20,7 +20,7 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
  public:
   static std::unique_ptr<CFDF_Document> CreateNewDoc();
   static std::unique_ptr<CFDF_Document> ParseFile(
-      const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
+      const RetainPtr<IFX_SeekableReadStream>& pFile);
   static std::unique_ptr<CFDF_Document> ParseMemory(uint8_t* pData,
                                                     uint32_t size);
 
@@ -31,10 +31,10 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
 
  protected:
-  void ParseStream(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
+  void ParseStream(const RetainPtr<IFX_SeekableReadStream>& pFile);
 
   CFX_UnownedPtr<CPDF_Dictionary> m_pRootDict;
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
+  RetainPtr<IFX_SeekableReadStream> m_pFile;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CFDF_DOCUMENT_H_

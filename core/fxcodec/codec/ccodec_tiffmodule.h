@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 class CFX_DIBAttribute;
@@ -24,7 +24,7 @@ class CCodec_TiffModule {
   };
 
   std::unique_ptr<Context> CreateDecoder(
-      const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr);
+      const RetainPtr<IFX_SeekableReadStream>& file_ptr);
   bool LoadFrameInfo(Context* ctx,
                      int32_t frame,
                      int32_t* width,
@@ -32,7 +32,7 @@ class CCodec_TiffModule {
                      int32_t* comps,
                      int32_t* bpc,
                      CFX_DIBAttribute* pAttribute);
-  bool Decode(Context* ctx, const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  bool Decode(Context* ctx, const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_TIFFMODULE_H_

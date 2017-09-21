@@ -651,7 +651,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   const wchar_t* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
-  CFX_RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
+  RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
   uint32_t dwStyles = pTxtRun->dwStyles;
   CFX_RectF rtText(*pTxtRun->pRect);
   bool bRTLPiece = (pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
@@ -909,7 +909,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   float fFontSize = pTxtRun->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   float fScale = fFontSize / 1000.0f;
-  CFX_RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
+  RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
   if (!pFont)
     bCharBBox = false;
 

@@ -132,7 +132,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
 class CPDF_CustomAccess final : public IFX_SeekableReadStream {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
@@ -171,7 +171,7 @@ bool CPDF_CustomAccess::ReadBlock(void* buffer,
 class CFPDF_FileStream : public IFX_SeekableStream {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   ~CFPDF_FileStream() override;
 
@@ -273,7 +273,7 @@ bool CFPDF_FileStream::Flush() {
 #endif  // PDF_ENABLE_XFA
 
 FPDF_DOCUMENT LoadDocumentImpl(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     FPDF_BYTESTRING password) {
   if (!pFileAccess) {
     ProcessParseError(CPDF_Parser::FILE_ERROR);
@@ -409,13 +409,13 @@ unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
   return len;
 }
 
-CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
+RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
     FPDF_FILEACCESS* pFileAccess) {
   return pdfium::MakeRetain<CPDF_CustomAccess>(pFileAccess);
 }
 
 #ifdef PDF_ENABLE_XFA
-CFX_RetainPtr<IFX_SeekableStream> MakeSeekableStream(
+RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFilehandler) {
   return pdfium::MakeRetain<CFPDF_FileStream>(pFilehandler);
 }
@@ -598,8 +598,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
 
 class CMemFile final : public IFX_SeekableReadStream {
  public:
-  static CFX_RetainPtr<CMemFile> Create(uint8_t* pBuf, FX_FILESIZE size) {
-    return CFX_RetainPtr<CMemFile>(new CMemFile(pBuf, size));
+  static RetainPtr<CMemFile> Create(uint8_t* pBuf, FX_FILESIZE size) {
+    return RetainPtr<CMemFile>(new CMemFile(pBuf, size));
   }
 
   FX_FILESIZE GetSize() override { return m_size; }
@@ -799,15 +799,15 @@ FX_RECT GetMaskDimensionsAndOffsets(CPDF_Page* pPage,
 
 // Get a bitmap of just the mask section defined by |mask_box| from a full page
 // bitmap |pBitmap|.
-CFX_RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
-                                          int start_x,
-                                          int start_y,
-                                          int size_x,
-                                          int size_y,
-                                          int rotate,
-                                          CFX_RetainPtr<CFX_DIBitmap>& pSrc,
-                                          const CFX_FloatRect& mask_box,
-                                          FX_RECT* bitmap_area) {
+RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
+                                      int start_x,
+                                      int start_y,
+                                      int size_x,
+                                      int size_y,
+                                      int rotate,
+                                      RetainPtr<CFX_DIBitmap>& pSrc,
+                                      const CFX_FloatRect& mask_box,
+                                      FX_RECT* bitmap_area) {
   ASSERT(bitmap_area);
   *bitmap_area = GetMaskDimensionsAndOffsets(pPage, start_x, start_y, size_x,
                                              size_y, rotate, mask_box);
@@ -815,7 +815,7 @@ CFX_RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
     return nullptr;
 
   // Create a new bitmap to transfer part of the page bitmap to.
-  CFX_RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
+  RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
   pDst->Create(bitmap_area->Width(), bitmap_area->Height(), FXDIB_Argb);
   pDst->Clear(0x00ffffff);
   pDst->TransferBitmap(0, 0, bitmap_area->Width(), bitmap_area->Height(), pSrc,
@@ -824,7 +824,7 @@ CFX_RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
 }
 
 void RenderBitmap(CFX_RenderDevice* device,
-                  const CFX_RetainPtr<CFX_DIBitmap>& pSrc,
+                  const RetainPtr<CFX_DIBitmap>& pSrc,
                   const FX_RECT& mask_area) {
   int size_x_bm = mask_area.Width();
   int size_y_bm = mask_area.Height();
@@ -832,7 +832,7 @@ void RenderBitmap(CFX_RenderDevice* device,
     return;
 
   // Create a new bitmap from the old one
-  CFX_RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
+  RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
   pDst->Create(size_x_bm, size_y_bm, FXDIB_Rgb32);
   pDst->Clear(0xffffffff);
   pDst->CompositeBitmap(0, 0, size_x_bm, size_y_bm, pSrc, 0, 0,
@@ -862,7 +862,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   pPage->SetRenderContext(pdfium::MakeUnique<CPDF_PageRenderContext>());
   CPDF_PageRenderContext* pContext = pPage->GetRenderContext();
 
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap;
+  RetainPtr<CFX_DIBitmap> pBitmap;
   // Don't render the full page to bitmap for a mask unless there are a lot
   // of masks. Full page bitmaps result in large spool sizes, so they should
   // only be used when necessary. For large numbers of masks, rendering each
@@ -896,7 +896,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     const std::vector<CFX_FloatRect>& mask_boxes =
         pPage->GetMaskBoundingBoxes();
     std::vector<FX_RECT> bitmap_areas(mask_boxes.size());
-    std::vector<CFX_RetainPtr<CFX_DIBitmap>> bitmaps(mask_boxes.size());
+    std::vector<RetainPtr<CFX_DIBitmap>> bitmaps(mask_boxes.size());
     for (size_t i = 0; i < mask_boxes.size(); i++) {
       bitmaps[i] =
           GetMaskBitmap(pPage, start_x, start_y, size_x, size_y, rotate,
@@ -966,7 +966,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
   pContext->m_pDevice.reset(pDevice);
 
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, true, nullptr);
@@ -997,7 +997,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
   pContext->m_pDevice.reset(pDevice);
 
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   CFX_FloatRect clipping_rect;
@@ -1045,7 +1045,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
     return;
 #ifdef PDF_ENABLE_XFA
   // Take it back across the API and throw it away.
-  CFX_RetainPtr<CPDFXFA_Page>().Unleak(pPage);
+  RetainPtr<CPDFXFA_Page>().Unleak(pPage);
 #else   // PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView =
       static_cast<CPDFSDK_PageView*>(pPage->GetView());
@@ -1204,7 +1204,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
     return;
 
   CFX_DefaultRenderDevice device;
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
   device.Attach(pBitmap, false, nullptr, false);
   if (!pBitmap->HasAlpha())
     color |= 0xFF000000;
@@ -1229,7 +1229,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetStride(FPDF_BITMAP bitmap) {
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {
-  CFX_RetainPtr<CFX_DIBitmap> destroyer;
+  RetainPtr<CFX_DIBitmap> destroyer;
   destroyer.Unleak(CFXBitmapFromFPDFBitmap(bitmap));
 }
 
@@ -1265,7 +1265,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   int count = pDoc->GetPageCount();
   if (page_index < 0 || page_index >= count)
     return false;
-  CFX_RetainPtr<CPDFXFA_Page> pPage = pDoc->GetXFAPage(page_index);
+  RetainPtr<CPDFXFA_Page> pPage = pDoc->GetXFAPage(page_index);
   if (!pPage)
     return false;
   *width = pPage->GetPageWidth();

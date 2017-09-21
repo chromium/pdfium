@@ -389,7 +389,7 @@ void CPDF_DocPageData::ReleasePattern(const CPDF_Object* pPatternObj) {
   pPattern->clear();
 }
 
-CFX_RetainPtr<CPDF_Image> CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
+RetainPtr<CPDF_Image> CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
   ASSERT(dwStreamObjNum);
   auto it = m_ImageMap.find(dwStreamObjNum);
   if (it != m_ImageMap.end())
@@ -407,7 +407,7 @@ void CPDF_DocPageData::MaybePurgeImage(uint32_t dwStreamObjNum) {
     m_ImageMap.erase(it);
 }
 
-CFX_RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
+RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
     CPDF_Stream* pProfileStream) {
   if (!pProfileStream)
     return nullptr;
@@ -443,7 +443,7 @@ void CPDF_DocPageData::MaybePurgeIccProfile(CPDF_Stream* pProfileStream) {
     m_IccProfileMap.erase(it);
 }
 
-CFX_RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
+RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
     CPDF_Stream* pFontStream) {
   ASSERT(pFontStream);
   auto it = m_FontFileMap.find(pFontStream);

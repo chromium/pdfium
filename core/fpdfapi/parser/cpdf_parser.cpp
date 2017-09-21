@@ -43,11 +43,11 @@ uint32_t GetVarInt(const uint8_t* p, int32_t n) {
   return result;
 }
 
-int32_t GetStreamNCount(const CFX_RetainPtr<CPDF_StreamAcc>& pObjStream) {
+int32_t GetStreamNCount(const RetainPtr<CPDF_StreamAcc>& pObjStream) {
   return pObjStream->GetDict()->GetIntegerFor("N");
 }
 
-int32_t GetStreamFirst(const CFX_RetainPtr<CPDF_StreamAcc>& pObjStream) {
+int32_t GetStreamFirst(const RetainPtr<CPDF_StreamAcc>& pObjStream) {
   return pObjStream->GetDict()->GetIntegerFor("First");
 }
 
@@ -164,11 +164,11 @@ void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict) {
   m_pEncryptDict = pDict;
 }
 
-CFX_RetainPtr<CPDF_CryptoHandler> CPDF_Parser::GetCryptoHandler() const {
+RetainPtr<CPDF_CryptoHandler> CPDF_Parser::GetCryptoHandler() const {
   return m_pSyntax->m_pCryptoHandler;
 }
 
-CFX_RetainPtr<IFX_SeekableReadStream> CPDF_Parser::GetFileAccess() const {
+RetainPtr<IFX_SeekableReadStream> CPDF_Parser::GetFileAccess() const {
   return m_pSyntax->GetFileAccess();
 }
 
@@ -189,7 +189,7 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
 }
 
 bool CPDF_Parser::InitSyntaxParser(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& file_access) {
+    const RetainPtr<IFX_SeekableReadStream>& file_access) {
   const int32_t header_offset = GetHeaderOffset(file_access);
   if (header_offset == kInvalidHeaderOffset)
     return false;
@@ -218,7 +218,7 @@ bool CPDF_Parser::ParseFileVersion() {
 }
 
 CPDF_Parser::Error CPDF_Parser::StartParse(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     CPDF_Document* pDocument) {
   if (!InitSyntaxParser(pFileAccess))
     return FORMAT_ERROR;
@@ -1211,7 +1211,7 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
   if (GetObjectType(objnum) != ObjectType::kCompressed)
     return nullptr;
 
-  CFX_RetainPtr<CPDF_StreamAcc> pObjStream =
+  RetainPtr<CPDF_StreamAcc> pObjStream =
       GetObjectStream(m_ObjectInfo[objnum].pos);
   if (!pObjStream)
     return nullptr;
@@ -1240,7 +1240,7 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
   return syntax.GetObject(pObjList, 0, 0, false);
 }
 
-CFX_RetainPtr<CPDF_StreamAcc> CPDF_Parser::GetObjectStream(uint32_t objnum) {
+RetainPtr<CPDF_StreamAcc> CPDF_Parser::GetObjectStream(uint32_t objnum) {
   auto it = m_ObjectStreamMap.find(objnum);
   if (it != m_ObjectStreamMap.end())
     return it->second;
@@ -1348,7 +1348,7 @@ bool CPDF_Parser::ParseLinearizedHeader() {
 }
 
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     CPDF_Document* pDocument) {
   ASSERT(!m_bHasParsed);
   m_bXRefStream = false;

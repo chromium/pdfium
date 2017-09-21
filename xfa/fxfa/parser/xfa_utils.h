@@ -155,7 +155,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream,
+    const RetainPtr<CFX_SeekableStreamProxy>& pStream,
     const char* pChecksum = nullptr,
     bool bSaveXML = false);
 

@@ -79,9 +79,9 @@ class CXFA_TextLayout {
   bool LoadRichText(CFX_XMLNode* pXMLNode,
                     const CFX_SizeF& szText,
                     float& fLinePos,
-                    const CFX_RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
+                    const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,
-                    CFX_RetainPtr<CXFA_LinkUserData> pLinkData,
+                    RetainPtr<CXFA_LinkUserData> pLinkData,
                     bool bEndBreak = true,
                     bool bIsOl = false,
                     int32_t iLiCount = 0);

@@ -11,9 +11,9 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_blockbuffer.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 
 enum class FX_XmlSyntaxResult {
@@ -39,7 +39,7 @@ class CFX_XMLSyntaxParser {
   static bool IsXMLNameChar(wchar_t ch, bool bFirstChar);
 
   explicit CFX_XMLSyntaxParser(
-      const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
+      const RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFX_XMLSyntaxParser();
 
   FX_XmlSyntaxResult DoSyntaxParse();
@@ -100,7 +100,7 @@ class CFX_XMLSyntaxParser {
 
   void ParseTextChar(wchar_t ch);
 
-  CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
+  RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   FX_STRSIZE m_iXMLPlaneSize;
   FX_FILESIZE m_iCurrentPos;
   int32_t m_iCurrentNodeNum;

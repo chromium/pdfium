@@ -7,14 +7,14 @@
 #ifndef XFA_FXFA_CXFA_LINKUSERDATA_H_
 #define XFA_FXFA_CXFA_LINKUSERDATA_H_
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
-class CXFA_LinkUserData : public CFX_Retainable {
+class CXFA_LinkUserData : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   const wchar_t* GetLinkURL() const { return m_wsURLContent.c_str(); }
 

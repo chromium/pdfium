@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 
@@ -24,14 +24,14 @@ class CFX_XMLDoc {
   void CloseXML();
 
   CFX_XMLNode* GetRoot() const { return m_pRoot.get(); }
-  void SaveXMLNode(const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
+  void SaveXMLNode(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
                    CFX_XMLNode* pNode);
 
  private:
   int32_t m_iStatus;
   std::unique_ptr<CFX_XMLNode> m_pRoot;
   std::unique_ptr<CFX_XMLParser> m_pXMLParser;
-  CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
+  RetainPtr<CFX_SeekableStreamProxy> m_pStream;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLDOC_H_

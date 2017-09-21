@@ -12,12 +12,12 @@
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 
 CXFA_TextUserData::CXFA_TextUserData(
-    const CFX_RetainPtr<CFX_CSSComputedStyle>& pStyle)
+    const RetainPtr<CFX_CSSComputedStyle>& pStyle)
     : m_pStyle(pStyle) {}
 
 CXFA_TextUserData::CXFA_TextUserData(
-    const CFX_RetainPtr<CFX_CSSComputedStyle>& pStyle,
-    const CFX_RetainPtr<CXFA_LinkUserData>& pLinkData)
+    const RetainPtr<CFX_CSSComputedStyle>& pStyle,
+    const RetainPtr<CXFA_LinkUserData>& pLinkData)
     : m_pStyle(pStyle), m_pLinkData(pLinkData) {}
 
 CXFA_TextUserData::~CXFA_TextUserData() {}

@@ -60,7 +60,7 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
 }
 
 void CPDF_Stream::InitStreamFromFile(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+    const RetainPtr<IFX_SeekableReadStream>& pFile,
     std::unique_ptr<CPDF_Dictionary> pDict) {
   m_pDict = std::move(pDict);
   m_bMemoryBased = false;

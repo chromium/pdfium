@@ -134,7 +134,7 @@ void SwapByteOrder(wchar_t* pStr, FX_STRSIZE iLength) {
 #define BOM_UTF16_LE 0x0000FEFF
 
 CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
-    const CFX_RetainPtr<IFX_SeekableStream>& stream,
+    const RetainPtr<IFX_SeekableStream>& stream,
     bool isWriteStream)
     : m_IsWriteStream(isWriteStream),
       m_wCodePage(FX_CODEPAGE_DefANSI),

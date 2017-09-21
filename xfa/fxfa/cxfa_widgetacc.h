@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_box.h"
@@ -70,14 +70,14 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
   CXFA_TextLayout* GetCaptionTextLayout();
   CXFA_TextLayout* GetTextLayout();
-  CFX_RetainPtr<CFX_DIBitmap> GetImageImage();
-  CFX_RetainPtr<CFX_DIBitmap> GetImageEditImage();
-  void SetImageImage(const CFX_RetainPtr<CFX_DIBitmap>& newImage);
-  void SetImageEditImage(const CFX_RetainPtr<CFX_DIBitmap>& newImage);
+  RetainPtr<CFX_DIBitmap> GetImageImage();
+  RetainPtr<CFX_DIBitmap> GetImageEditImage();
+  void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
+  void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void UpdateUIDisplay(CXFA_FFWidget* pExcept = nullptr);
 
   CXFA_Node* GetDatasets();
-  CFX_RetainPtr<CFGAS_GEFont> GetFDEFont();
+  RetainPtr<CFGAS_GEFont> GetFDEFont();
   float GetFontSize();
   FX_ARGB GetTextColor();
   float GetLineHeight();

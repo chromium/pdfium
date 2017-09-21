@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_
 
 #include "core/fpdfdoc/cpdf_occontext.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 #define RENDER_CLEARTYPE 0x00000001
@@ -44,7 +44,7 @@ class CPDF_RenderOptions {
   uint32_t m_Flags;
   uint32_t m_dwLimitCacheSize;
   bool m_bDrawAnnots;
-  CFX_RetainPtr<CPDF_OCContext> m_pOCContext;
+  RetainPtr<CPDF_OCContext> m_pOCContext;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_

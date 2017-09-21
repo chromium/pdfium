@@ -177,7 +177,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
   void PopulateRanges(CPDF_Dictionary* pDict);
 
   MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
-  CFX_RetainPtr<CPDF_IccProfile> m_pProfile;
+  RetainPtr<CPDF_IccProfile> m_pProfile;
   uint8_t* m_pCache;
   float* m_pRanges;
 };

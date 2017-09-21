@@ -21,7 +21,7 @@ class CFWL_ThemeBackground : public CFWL_ThemePart {
 
   CXFA_Graphics* m_pGraphics;
   CXFA_Path* m_pPath;
-  CFX_RetainPtr<CFX_DIBitmap> m_pImage;
+  RetainPtr<CFX_DIBitmap> m_pImage;
 };
 
 inline CFWL_ThemeBackground::CFWL_ThemeBackground()

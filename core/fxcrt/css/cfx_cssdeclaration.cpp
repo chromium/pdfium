@@ -285,7 +285,7 @@ CFX_CSSDeclaration::CFX_CSSDeclaration() {}
 
 CFX_CSSDeclaration::~CFX_CSSDeclaration() {}
 
-CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::GetProperty(
+RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::GetProperty(
     CFX_CSSProperty eProperty,
     bool* bImportant) const {
   for (const auto& p : properties_) {
@@ -298,7 +298,7 @@ CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::GetProperty(
 }
 
 void CFX_CSSDeclaration::AddPropertyHolder(CFX_CSSProperty eProperty,
-                                           CFX_RetainPtr<CFX_CSSValue> pValue,
+                                           RetainPtr<CFX_CSSValue> pValue,
                                            bool bImportant) {
   auto pHolder = pdfium::MakeUnique<CFX_CSSPropertyHolder>();
   pHolder->bImportant = bImportant;
@@ -335,7 +335,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
         if (dwMatch == 0) {
           continue;
         }
-        CFX_RetainPtr<CFX_CSSValue> pCSSValue;
+        RetainPtr<CFX_CSSValue> pCSSValue;
         switch (dwMatch) {
           case CFX_CSSVALUETYPE_MaybeNumber:
             pCSSValue = ParseNumber(pszValue, iValueLen);
@@ -363,7 +363,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
       break;
     }
     case CFX_CSSVALUETYPE_Shorthand: {
-      CFX_RetainPtr<CFX_CSSValue> pWidth;
+      RetainPtr<CFX_CSSValue> pWidth;
       switch (pTable->eName) {
         case CFX_CSSProperty::Font:
           ParseFontProperty(pszValue, iValueLen, bImportant);
@@ -428,9 +428,8 @@ void CFX_CSSDeclaration::AddProperty(const WideString& prop,
       pdfium::MakeUnique<CFX_CSSCustomProperty>(prop, value));
 }
 
-CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseNumber(
-    const wchar_t* pszValue,
-    int32_t iValueLen) {
+RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseNumber(const wchar_t* pszValue,
+                                                        int32_t iValueLen) {
   float fValue;
   CFX_CSSNumberType eUnit;
   if (!ParseCSSNumber(pszValue, iValueLen, fValue, eUnit))
@@ -438,26 +437,23 @@ CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseNumber(
   return pdfium::MakeRetain<CFX_CSSNumberValue>(eUnit, fValue);
 }
 
-CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseEnum(
-    const wchar_t* pszValue,
-    int32_t iValueLen) {
+RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseEnum(const wchar_t* pszValue,
+                                                      int32_t iValueLen) {
   const CFX_CSSPropertyValueTable* pValue =
       GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
   return pValue ? pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName) : nullptr;
 }
 
-CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseColor(
-    const wchar_t* pszValue,
-    int32_t iValueLen) {
+RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseColor(const wchar_t* pszValue,
+                                                       int32_t iValueLen) {
   FX_ARGB dwColor;
   if (!ParseCSSColor(pszValue, iValueLen, &dwColor))
     return nullptr;
   return pdfium::MakeRetain<CFX_CSSColorValue>(dwColor);
 }
 
-CFX_RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseString(
-    const wchar_t* pszValue,
-    int32_t iValueLen) {
+RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseString(const wchar_t* pszValue,
+                                                        int32_t iValueLen) {
   int32_t iOffset;
   if (!ParseCSSString(pszValue, iValueLen, &iOffset, &iValueLen))
     return nullptr;
@@ -480,7 +476,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
 
   const uint32_t dwType = pTable->dwType;
   CFX_CSSPrimitiveType eType;
-  std::vector<CFX_RetainPtr<CFX_CSSValue>> list;
+  std::vector<RetainPtr<CFX_CSSValue>> list;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
       case CFX_CSSPrimitiveType::Number:
@@ -556,7 +552,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
 }
 
 void CFX_CSSDeclaration::Add4ValuesProperty(
-    const std::vector<CFX_RetainPtr<CFX_CSSValue>>& list,
+    const std::vector<RetainPtr<CFX_CSSValue>>& list,
     bool bImportant,
     CFX_CSSProperty eLeft,
     CFX_CSSProperty eTop,
@@ -595,7 +591,7 @@ void CFX_CSSDeclaration::Add4ValuesProperty(
 bool CFX_CSSDeclaration::ParseBorderProperty(
     const wchar_t* pszValue,
     int32_t iValueLen,
-    CFX_RetainPtr<CFX_CSSValue>& pWidth) const {
+    RetainPtr<CFX_CSSValue>& pWidth) const {
   pWidth.Reset(nullptr);
 
   CFX_CSSValueListParser parser(pszValue, iValueLen, ' ');
@@ -650,12 +646,12 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
                                            int32_t iValueLen,
                                            bool bImportant) {
   CFX_CSSValueListParser parser(pszValue, iValueLen, '/');
-  CFX_RetainPtr<CFX_CSSValue> pStyle;
-  CFX_RetainPtr<CFX_CSSValue> pVariant;
-  CFX_RetainPtr<CFX_CSSValue> pWeight;
-  CFX_RetainPtr<CFX_CSSValue> pFontSize;
-  CFX_RetainPtr<CFX_CSSValue> pLineHeight;
-  std::vector<CFX_RetainPtr<CFX_CSSValue>> familyList;
+  RetainPtr<CFX_CSSValue> pStyle;
+  RetainPtr<CFX_CSSValue> pVariant;
+  RetainPtr<CFX_CSSValue> pWeight;
+  RetainPtr<CFX_CSSValue> pFontSize;
+  RetainPtr<CFX_CSSValue> pLineHeight;
+  std::vector<RetainPtr<CFX_CSSValue>> familyList;
   CFX_CSSPrimitiveType eType;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {

@@ -94,7 +94,7 @@ class CPDF_DataAvail final {
   };
 
   CPDF_DataAvail(FileAvail* pFileAvail,
-                 const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
+                 const RetainPtr<IFX_SeekableReadStream>& pFileRead,
                  bool bSupportHintTable);
   ~CPDF_DataAvail();
 
@@ -105,10 +105,10 @@ class CPDF_DataAvail final {
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
   bool IsLinearized();
-  CFX_RetainPtr<IFX_SeekableReadStream> GetFileRead() const;
+  RetainPtr<IFX_SeekableReadStream> GetFileRead() const;
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
-  CFX_RetainPtr<CPDF_ReadValidator> GetValidator() const;
+  RetainPtr<CPDF_ReadValidator> GetValidator() const;
 
  protected:
   class PageNode {
@@ -178,7 +178,7 @@ class CPDF_DataAvail final {
   bool ValidateForm();
 
   FileAvail* const m_pFileAvail;
-  CFX_RetainPtr<CPDF_ReadValidator> m_pFileRead;
+  RetainPtr<CPDF_ReadValidator> m_pFileRead;
   CPDF_Parser m_parser;
   CPDF_SyntaxParser m_syntaxParser;
   std::unique_ptr<CPDF_Object> m_pRoot;

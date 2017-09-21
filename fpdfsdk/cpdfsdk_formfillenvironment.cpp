@@ -441,8 +441,8 @@ FPDF_FILEHANDLER* CPDFSDK_FormFillEnvironment::OpenFile(int fileType,
   return nullptr;
 }
 
-CFX_RetainPtr<IFX_SeekableReadStream>
-CPDFSDK_FormFillEnvironment::DownloadFromURL(const wchar_t* url) {
+RetainPtr<IFX_SeekableReadStream> CPDFSDK_FormFillEnvironment::DownloadFromURL(
+    const wchar_t* url) {
   if (!m_pInfo || !m_pInfo->FFI_DownloadFromURL)
     return nullptr;
 

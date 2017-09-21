@@ -334,7 +334,7 @@ void CXFA_FFDoc::CloseDoc() {
   m_pApp->ClearEventTargets();
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
+RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
     const WideStringView& wsName,
     int32_t& iImageXDpi,
     int32_t& iImageYDpi) {
@@ -381,18 +381,18 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   pAcc->LoadAllData();
 
-  CFX_RetainPtr<IFX_SeekableStream> pImageFileRead =
+  RetainPtr<IFX_SeekableStream> pImageFileRead =
       pdfium::MakeRetain<CFX_MemoryStream>(
           const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize(), false);
 
-  CFX_RetainPtr<CFX_DIBitmap> pDibSource = XFA_LoadImageFromBuffer(
+  RetainPtr<CFX_DIBitmap> pDibSource = XFA_LoadImageFromBuffer(
       pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
   m_HashToDibDpiMap[dwHash] = {pDibSource, iImageXDpi, iImageYDpi};
   return pDibSource;
 }
 
 bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
-                             const CFX_RetainPtr<IFX_SeekableStream>& pFile,
+                             const RetainPtr<IFX_SeekableStream>& pFile,
                              CFX_ChecksumContext* pCSContext) {
   CXFA_Document* doc = m_pDocumentParser->GetDocument();
   auto pExport = pdfium::MakeUnique<CXFA_DataExporter>(doc);
@@ -409,7 +409,7 @@ bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
       pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
 }
 
-bool CXFA_FFDoc::ImportData(const CFX_RetainPtr<IFX_SeekableStream>& pStream,
+bool CXFA_FFDoc::ImportData(const RetainPtr<IFX_SeekableStream>& pStream,
                             bool bXDP) {
   auto importer =
       pdfium::MakeUnique<CXFA_DataImporter>(m_pDocumentParser->GetDocument());

@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_CMapManager;
 struct FXCMAP_CMap;
@@ -26,7 +26,7 @@ enum CIDCoding : uint8_t {
   CIDCODING_UTF16,
 };
 
-class CPDF_CMap : public CFX_Retainable {
+class CPDF_CMap : public Retainable {
  public:
   enum CodingScheme : uint8_t {
     OneByte,
@@ -48,7 +48,7 @@ class CPDF_CMap : public CFX_Retainable {
   };
 
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   void LoadPredefined(CPDF_CMapManager* pMgr,
                       const ByteString& name,

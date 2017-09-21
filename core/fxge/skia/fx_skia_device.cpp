@@ -54,12 +54,12 @@
 namespace {
 
 #ifdef _SKIA_SUPPORT_PATHS_
-void RgbByteOrderTransferBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                 int dest_left,
                                 int dest_top,
                                 int width,
                                 int height,
-                                const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
   if (!pBitmap)
@@ -262,8 +262,8 @@ void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {}
 #endif  // DRAW_SKIA_CLIP
 
 #ifdef _SKIA_SUPPORT_
-static void DebugValidate(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
-                          const CFX_RetainPtr<CFX_DIBitmap>& device) {
+static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
+                          const RetainPtr<CFX_DIBitmap>& device) {
   if (bitmap) {
     SkASSERT(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
     if (bitmap->GetBPP() == 32) {
@@ -564,7 +564,7 @@ void SetBitmapPaint(bool isAlphaMask,
   paint->setAlpha(bitmap_alpha);
 }
 
-bool Upsample(const CFX_RetainPtr<CFX_DIBSource>& pSource,
+bool Upsample(const RetainPtr<CFX_DIBSource>& pSource,
               std::unique_ptr<uint8_t, FxFreeDeleter>& dst8Storage,
               std::unique_ptr<uint32_t, FxFreeDeleter>& dst32Storage,
               SkBitmap* skBitmap,
@@ -1492,9 +1492,9 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
 }
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    const RetainPtr<CFX_DIBitmap>& pBitmap,
     bool bRgbByteOrder,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+    const RetainPtr<CFX_DIBitmap>& pOriDevice,
     bool bGroupKnockout)
     : m_pBitmap(pBitmap),
       m_pOriDevice(pOriDevice),
@@ -2179,7 +2179,7 @@ bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                      int left,
                                      int top) {
   if (!m_pBitmap)
@@ -2216,7 +2216,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   m_pBitmap->UnPreMultiply();
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
-  CFX_RetainPtr<CFX_DIBitmap> pBack;
+  RetainPtr<CFX_DIBitmap> pBack;
   if (m_pOriDevice) {
     pBack = m_pOriDevice->Clone(&rect);
     if (!pBack)
@@ -2244,17 +2244,16 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
 #endif  // _SKIA_SUPPORT_PATHS_
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
+RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
   return m_pOriDevice;
 }
 
-bool CFX_SkiaDeviceDriver::SetDIBits(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
-    uint32_t argb,
-    const FX_RECT* pSrcRect,
-    int left,
-    int top,
-    int blend_type) {
+bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+                                     uint32_t argb,
+                                     const FX_RECT* pSrcRect,
+                                     int left,
+                                     int top,
+                                     int blend_type) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return true;
 
@@ -2280,7 +2279,7 @@ bool CFX_SkiaDeviceDriver::SetDIBits(
 }
 
 bool CFX_SkiaDeviceDriver::StretchDIBits(
-    const CFX_RetainPtr<CFX_DIBSource>& pSource,
+    const RetainPtr<CFX_DIBSource>& pSource,
     uint32_t argb,
     int dest_left,
     int dest_top,
@@ -2332,7 +2331,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBits(
-    const CFX_RetainPtr<CFX_DIBSource>& pSource,
+    const RetainPtr<CFX_DIBSource>& pSource,
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix* pMatrix,
@@ -2408,7 +2407,7 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
 
 #if defined _SKIA_SUPPORT_
 void CFX_SkiaDeviceDriver::PreMultiply(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+    const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   pDIBitmap->PreMultiply();
 }
 #endif  // _SKIA_SUPPORT_
@@ -2465,8 +2464,8 @@ void CFX_DIBitmap::UnPreMultiply() {
 
 #ifdef _SKIA_SUPPORT_
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
-    const CFX_RetainPtr<CFX_DIBSource>& pSource,
-    const CFX_RetainPtr<CFX_DIBSource>& pMask,
+    const RetainPtr<CFX_DIBSource>& pSource,
+    const RetainPtr<CFX_DIBSource>& pMask,
     int bitmap_alpha,
     const CFX_Matrix* pMatrix,
     int blend_type) {
@@ -2506,8 +2505,8 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
 }
 
 bool CFX_SkiaDeviceDriver::SetBitsWithMask(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
-    const CFX_RetainPtr<CFX_DIBSource>& pMask,
+    const RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBSource>& pMask,
     int dest_left,
     int dest_top,
     int bitmap_alpha,
@@ -2555,11 +2554,10 @@ SkPictureRecorder* CFX_DefaultRenderDevice::CreateRecorder(int size_x,
 }
 #endif  // _SKIA_SUPPORT_
 
-bool CFX_DefaultRenderDevice::Attach(
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
-    bool bRgbByteOrder,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
-    bool bGroupKnockout) {
+bool CFX_DefaultRenderDevice::Attach(const RetainPtr<CFX_DIBitmap>& pBitmap,
+                                     bool bRgbByteOrder,
+                                     const RetainPtr<CFX_DIBitmap>& pOriDevice,
+                                     bool bGroupKnockout) {
   if (!pBitmap)
     return false;
   SetBitmap(pBitmap);
@@ -2581,7 +2579,7 @@ bool CFX_DefaultRenderDevice::Create(
     int width,
     int height,
     FXDIB_Format format,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice) {
+    const RetainPtr<CFX_DIBitmap>& pOriDevice) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, format)) {
     return false;
@@ -2607,8 +2605,8 @@ void CFX_DefaultRenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
 }
 
 bool CFX_DefaultRenderDevice::SetBitsWithMask(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
-    const CFX_RetainPtr<CFX_DIBSource>& pMask,
+    const RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBSource>& pMask,
     int left,
     int top,
     int bitmap_alpha,

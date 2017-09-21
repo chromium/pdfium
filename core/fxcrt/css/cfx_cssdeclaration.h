@@ -34,8 +34,8 @@ class CFX_CSSDeclaration {
   CFX_CSSDeclaration();
   ~CFX_CSSDeclaration();
 
-  CFX_RetainPtr<CFX_CSSValue> GetProperty(CFX_CSSProperty eProperty,
-                                          bool* bImportant) const;
+  RetainPtr<CFX_CSSValue> GetProperty(CFX_CSSProperty eProperty,
+                                      bool* bImportant) const;
 
   const_prop_iterator begin() const { return properties_.begin(); }
   const_prop_iterator end() const { return properties_.end(); }
@@ -63,27 +63,26 @@ class CFX_CSSDeclaration {
                          bool bImportant);
   bool ParseBorderProperty(const wchar_t* pszValue,
                            int32_t iValueLen,
-                           CFX_RetainPtr<CFX_CSSValue>& pWidth) const;
+                           RetainPtr<CFX_CSSValue>& pWidth) const;
   void ParseValueListProperty(const CFX_CSSPropertyTable* pTable,
                               const wchar_t* pszValue,
                               int32_t iValueLen,
                               bool bImportant);
-  void Add4ValuesProperty(const std::vector<CFX_RetainPtr<CFX_CSSValue>>& list,
+  void Add4ValuesProperty(const std::vector<RetainPtr<CFX_CSSValue>>& list,
                           bool bImportant,
                           CFX_CSSProperty eLeft,
                           CFX_CSSProperty eTop,
                           CFX_CSSProperty eRight,
                           CFX_CSSProperty eBottom);
-  CFX_RetainPtr<CFX_CSSValue> ParseNumber(const wchar_t* pszValue,
-                                          int32_t iValueLen);
-  CFX_RetainPtr<CFX_CSSValue> ParseEnum(const wchar_t* pszValue,
-                                        int32_t iValueLen);
-  CFX_RetainPtr<CFX_CSSValue> ParseColor(const wchar_t* pszValue,
-                                         int32_t iValueLen);
-  CFX_RetainPtr<CFX_CSSValue> ParseString(const wchar_t* pszValue,
-                                          int32_t iValueLen);
+  RetainPtr<CFX_CSSValue> ParseNumber(const wchar_t* pszValue,
+                                      int32_t iValueLen);
+  RetainPtr<CFX_CSSValue> ParseEnum(const wchar_t* pszValue, int32_t iValueLen);
+  RetainPtr<CFX_CSSValue> ParseColor(const wchar_t* pszValue,
+                                     int32_t iValueLen);
+  RetainPtr<CFX_CSSValue> ParseString(const wchar_t* pszValue,
+                                      int32_t iValueLen);
   void AddPropertyHolder(CFX_CSSProperty eProperty,
-                         CFX_RetainPtr<CFX_CSSValue> pValue,
+                         RetainPtr<CFX_CSSValue> pValue,
                          bool bImportant);
 
   std::vector<std::unique_ptr<CFX_CSSPropertyHolder>> properties_;

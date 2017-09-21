@@ -10,10 +10,10 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBSource;
 class CFX_DIBitmap;
@@ -22,10 +22,10 @@ class CPDF_Page;
 class IFX_PauseIndicator;
 class IFX_SeekableReadStream;
 
-class CPDF_Image : public CFX_Retainable {
+class CPDF_Image : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   void ConvertStreamToIndirectObject();
 
@@ -44,25 +44,24 @@ class CPDF_Image : public CFX_Retainable {
   bool IsMask() const { return m_bIsMask; }
   bool IsInterpol() const { return m_bInterpolate; }
 
-  CFX_RetainPtr<CFX_DIBSource> LoadDIBSource() const;
+  RetainPtr<CFX_DIBSource> LoadDIBSource() const;
 
-  void SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap);
-  void SetJpegImage(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
-  void SetJpegImageInline(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
+  void SetImage(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  void SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile);
+  void SetJpegImageInline(const RetainPtr<IFX_SeekableReadStream>& pFile);
 
-  void ResetCache(CPDF_Page* pPage,
-                  const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  void ResetCache(CPDF_Page* pPage, const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   bool StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                           CPDF_Dictionary* pPageResource,
                           bool bStdCS = false,
                           uint32_t GroupFamily = 0,
                           bool bLoadMask = false);
   bool Continue(IFX_PauseIndicator* pPause);
-  CFX_RetainPtr<CFX_DIBSource> DetachBitmap();
-  CFX_RetainPtr<CFX_DIBSource> DetachMask();
+  RetainPtr<CFX_DIBSource> DetachBitmap();
+  RetainPtr<CFX_DIBSource> DetachMask();
 
-  CFX_RetainPtr<CFX_DIBSource> m_pDIBSource;
-  CFX_RetainPtr<CFX_DIBSource> m_pMask;
+  RetainPtr<CFX_DIBSource> m_pDIBSource;
+  RetainPtr<CFX_DIBSource> m_pMask;
   uint32_t m_MatteColor = 0;
 
  private:

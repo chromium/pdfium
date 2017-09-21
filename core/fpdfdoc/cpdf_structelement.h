@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
@@ -27,17 +27,17 @@ class CPDF_StructKid {
 
   enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
 
-  CFX_RetainPtr<CPDF_StructElement> m_pElement;  // For Element.
+  RetainPtr<CPDF_StructElement> m_pElement;      // For Element.
   CFX_UnownedPtr<CPDF_Dictionary> m_pDict;       // For Element.
   uint32_t m_PageObjNum;  // For PageContent, StreamContent, Object.
   uint32_t m_RefObjNum;   // For StreamContent, Object.
   uint32_t m_ContentId;   // For PageContent, StreamContent.
 };
 
-class CPDF_StructElement : public CFX_Retainable {
+class CPDF_StructElement : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   const ByteString& GetType() const { return m_Type; }
   const ByteString& GetTitle() const { return m_Title; }

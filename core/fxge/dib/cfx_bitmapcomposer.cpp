@@ -14,7 +14,7 @@ CFX_BitmapComposer::CFX_BitmapComposer()
 
 CFX_BitmapComposer::~CFX_BitmapComposer() {}
 
-void CFX_BitmapComposer::Compose(const CFX_RetainPtr<CFX_DIBitmap>& pDest,
+void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
                                  const CFX_ClipRgn* pClipRgn,
                                  int bitmap_alpha,
                                  uint32_t mask_color,

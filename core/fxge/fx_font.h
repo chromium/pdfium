@@ -100,8 +100,7 @@ class CFX_Font {
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
 
 #ifdef PDF_ENABLE_XFA
-  bool LoadFile(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
-                int nFaceIndex);
+  bool LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile, int nFaceIndex);
 
   bool LoadClone(const CFX_Font* pFont);
   void SetFace(FXFT_Face face);
@@ -205,7 +204,7 @@ class CFX_GlyphBitmap {
 
   int m_Top;
   int m_Left;
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  RetainPtr<CFX_DIBitmap> m_pBitmap;
 };
 
 inline CFX_GlyphBitmap::CFX_GlyphBitmap()

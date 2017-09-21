@@ -462,10 +462,10 @@ static GpBrush* _GdipCreateBrush(DWORD argb) {
   return solidBrush;
 }
 
-static CFX_RetainPtr<CFX_DIBitmap> StretchMonoToGray(
+static RetainPtr<CFX_DIBitmap> StretchMonoToGray(
     int dest_width,
     int dest_height,
-    const CFX_RetainPtr<CFX_DIBitmap>& pSource,
+    const RetainPtr<CFX_DIBitmap>& pSource,
     FX_RECT* pClipRect) {
   bool bFlipX = dest_width < 0;
   if (bFlipX)
@@ -519,7 +519,7 @@ static CFX_RetainPtr<CFX_DIBitmap> StretchMonoToGray(
 
 static void OutputImageMask(GpGraphics* pGraphics,
                             BOOL bMonoDevice,
-                            const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+                            const RetainPtr<CFX_DIBitmap>& pBitmap,
                             int dest_left,
                             int dest_top,
                             int dest_width,
@@ -563,7 +563,7 @@ static void OutputImageMask(GpGraphics* pGraphics,
       return;
 
     image_clip.Offset(-image_rect.left, -image_rect.top);
-    CFX_RetainPtr<CFX_DIBitmap> pStretched;
+    RetainPtr<CFX_DIBitmap> pStretched;
     if (src_width * src_height > 10000) {
       pStretched =
           StretchMonoToGray(dest_width, dest_height, pBitmap, &image_clip);
@@ -606,7 +606,7 @@ static void OutputImageMask(GpGraphics* pGraphics,
   CallFunc(GdipDisposeImage)(bitmap);
 }
 static void OutputImage(GpGraphics* pGraphics,
-                        const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+                        const RetainPtr<CFX_DIBitmap>& pBitmap,
                         const FX_RECT* pSrcRect,
                         int dest_left,
                         int dest_top,
@@ -617,7 +617,7 @@ static void OutputImage(GpGraphics* pGraphics,
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   if (pBitmap->GetBPP() == 1 && (pSrcRect->left % 8)) {
     FX_RECT new_rect(0, 0, src_width, src_height);
-    CFX_RetainPtr<CFX_DIBitmap> pCloned = pBitmap->Clone(pSrcRect);
+    RetainPtr<CFX_DIBitmap> pCloned = pBitmap->Clone(pSrcRect);
     if (!pCloned)
       return;
     OutputImage(pGraphics, pCloned, &new_rect, dest_left, dest_top, dest_width,
@@ -733,7 +733,7 @@ void CGdiplusExt::DeleteMemFont(LPVOID pCollection) {
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   CallFunc(GdipDeletePrivateFontCollection)((GpFontCollection**)&pCollection);
 }
-bool CGdiplusExt::GdipCreateBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CGdiplusExt::GdipCreateBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                    void** bitmap) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
@@ -897,7 +897,7 @@ void CGdiplusExt::GdipDeleteGraphics(void* graphics) {
 }
 bool CGdiplusExt::StretchBitMask(HDC hDC,
                                  BOOL bMonoDevice,
-                                 const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+                                 const RetainPtr<CFX_DIBitmap>& pBitmap,
                                  int dest_left,
                                  int dest_top,
                                  int dest_width,
@@ -923,7 +923,7 @@ bool CGdiplusExt::StretchBitMask(HDC hDC,
   return true;
 }
 bool CGdiplusExt::StretchDIBits(HDC hDC,
-                                const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+                                const RetainPtr<CFX_DIBitmap>& pBitmap,
                                 int dest_left,
                                 int dest_top,
                                 int dest_width,
@@ -1463,11 +1463,11 @@ static void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
 }
 
 // TODO(tsepez): Really? Really? Move to header.
-CFX_RetainPtr<CFX_DIBitmap> _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
-                                                       LPVOID pData,
-                                                       bool bAlpha);
+RetainPtr<CFX_DIBitmap> _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
+                                                   LPVOID pData,
+                                                   bool bAlpha);
 
-CFX_RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
+RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   PREVIEW3_DIBITMAP* pInfo = ::LoadDIBitmap(args);
   if (!pInfo)
     return nullptr;
@@ -1484,7 +1484,7 @@ CFX_RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
              dest_pitch);
     }
   }
-  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = _FX_WindowsDIB_LoadFromBuf(
+  RetainPtr<CFX_DIBitmap> pDIBitmap = _FX_WindowsDIB_LoadFromBuf(
       pInfo->pbmi, pData, pInfo->pbmi->bmiHeader.biBitCount == 32);
   FX_Free(pData);
   FreeDIBitmap(pInfo);

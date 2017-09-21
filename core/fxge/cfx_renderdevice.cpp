@@ -197,8 +197,8 @@ void SetAlpha(bool has_alpha, uint8_t* alpha) {
     alpha[3] = 255;
 }
 
-void DrawNormalTextHelper(const CFX_RetainPtr<CFX_DIBitmap>& bitmap,
-                          const CFX_RetainPtr<CFX_DIBitmap>& pGlyph,
+void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
+                          const RetainPtr<CFX_DIBitmap>& pGlyph,
                           int nrows,
                           int left,
                           int top,
@@ -428,7 +428,7 @@ CFX_Matrix CFX_RenderDevice::GetCTM() const {
 }
 
 bool CFX_RenderDevice::CreateCompatibleBitmap(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIB,
+    const RetainPtr<CFX_DIBitmap>& pDIB,
     int width,
     int height) const {
   if (m_RenderCaps & FXRC_CMYK_OUTPUT) {
@@ -707,19 +707,19 @@ bool CFX_RenderDevice::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                    fill_mode, blend_type);
 }
 
-bool CFX_RenderDevice::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CFX_RenderDevice::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                  int left,
                                  int top) {
   return (m_RenderCaps & FXRC_GET_BITS) &&
          m_pDeviceDriver->GetDIBits(pBitmap, left, top);
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() {
+RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() {
   return m_pDeviceDriver->GetBackDrop();
 }
 
 bool CFX_RenderDevice::SetDIBitsWithBlend(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBSource>& pBitmap,
     int left,
     int top,
     int blend_mode) {
@@ -771,7 +771,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
 }
 
 bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBSource>& pBitmap,
     int left,
     int top,
     int dest_width,
@@ -786,7 +786,7 @@ bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
                                    dest_height, &clip_box, flags, blend_mode);
 }
 
-bool CFX_RenderDevice::SetBitMask(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+bool CFX_RenderDevice::SetBitMask(const RetainPtr<CFX_DIBSource>& pBitmap,
                                   int left,
                                   int top,
                                   uint32_t argb) {
@@ -795,19 +795,18 @@ bool CFX_RenderDevice::SetBitMask(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                                     FXDIB_BLEND_NORMAL);
 }
 
-bool CFX_RenderDevice::StretchBitMask(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
-    int left,
-    int top,
-    int dest_width,
-    int dest_height,
-    uint32_t color) {
+bool CFX_RenderDevice::StretchBitMask(const RetainPtr<CFX_DIBSource>& pBitmap,
+                                      int left,
+                                      int top,
+                                      int dest_width,
+                                      int dest_height,
+                                      uint32_t color) {
   return StretchBitMaskWithFlags(pBitmap, left, top, dest_width, dest_height,
                                  color, 0);
 }
 
 bool CFX_RenderDevice::StretchBitMaskWithFlags(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBSource>& pBitmap,
     int left,
     int top,
     int dest_width,
@@ -823,7 +822,7 @@ bool CFX_RenderDevice::StretchBitMaskWithFlags(
 }
 
 bool CFX_RenderDevice::StartDIBitsWithBlend(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBSource>& pBitmap,
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix* pMatrix,
@@ -844,13 +843,12 @@ void CFX_RenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
   SkASSERT(0);
 }
 
-bool CFX_RenderDevice::SetBitsWithMask(
-    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
-    const CFX_RetainPtr<CFX_DIBSource>& pMask,
-    int left,
-    int top,
-    int bitmap_alpha,
-    int blend_type) {
+bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBSource>& pBitmap,
+                                       const RetainPtr<CFX_DIBSource>& pMask,
+                                       int left,
+                                       int top,
+                                       int bitmap_alpha,
+                                       int blend_type) {
   return m_pDeviceDriver->SetBitsWithMask(pBitmap, pMask, left, top,
                                           bitmap_alpha, blend_type);
 }
@@ -989,7 +987,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
       if (!glyph.m_pGlyph)
         continue;
-      CFX_RetainPtr<CFX_DIBitmap> pGlyph = glyph.m_pGlyph->m_pBitmap;
+      RetainPtr<CFX_DIBitmap> pGlyph = glyph.m_pGlyph->m_pBitmap;
       bitmap->TransferBitmap(
           glyph.m_Origin.x + glyph.m_pGlyph->m_Left - pixel_left,
           glyph.m_Origin.y - glyph.m_pGlyph->m_Top - pixel_top,
@@ -1038,7 +1036,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (!top.IsValid())
       return false;
 
-    CFX_RetainPtr<CFX_DIBitmap> pGlyph = glyph.m_pGlyph->m_pBitmap;
+    RetainPtr<CFX_DIBitmap> pGlyph = glyph.m_pGlyph->m_pBitmap;
     int ncols = pGlyph->GetWidth();
     int nrows = pGlyph->GetHeight();
     if (anti_alias == FXFT_RENDER_MODE_NORMAL) {

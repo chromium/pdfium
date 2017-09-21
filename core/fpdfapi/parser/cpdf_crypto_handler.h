@@ -11,18 +11,18 @@
 
 #include "core/fdrm/crypto/fx_crypt.h"
 #include "core/fxcrt/cfx_binarybuf.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_SecurityHandler;
 
-class CPDF_CryptoHandler : public CFX_Retainable {
+class CPDF_CryptoHandler : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool Init(CPDF_Dictionary* pEncryptDict,
             CPDF_SecurityHandler* pSecurityHandler);

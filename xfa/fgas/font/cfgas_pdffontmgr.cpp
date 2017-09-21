@@ -32,12 +32,11 @@ CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(CPDF_Document* pDoc, CFGAS_FontMgr* pFontMgr)
 
 CFGAS_PDFFontMgr::~CFGAS_PDFFontMgr() {}
 
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(
-    const ByteString& strPsName,
-    bool bBold,
-    bool bItalic,
-    CPDF_Font** pDstPDFFont,
-    bool bStrictMatch) {
+RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
+                                                   bool bBold,
+                                                   bool bItalic,
+                                                   CPDF_Font** pDstPDFFont,
+                                                   bool bStrictMatch) {
   CPDF_Dictionary* pFontSetDict =
       m_pDoc->GetRoot()->GetDictFor("AcroForm")->GetDictFor("DR");
   if (!pFontSetDict)
@@ -73,7 +72,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(
   return nullptr;
 }
 
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
+RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     CPDF_Font** pPDFFont,
@@ -89,7 +88,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
   bool bBold = (dwFontStyles & FX_FONTSTYLE_Bold) == FX_FONTSTYLE_Bold;
   bool bItalic = (dwFontStyles & FX_FONTSTYLE_Italic) == FX_FONTSTYLE_Italic;
   ByteString strFontName = PsNameToFontName(bsPsName, bBold, bItalic);
-  CFX_RetainPtr<CFGAS_GEFont> pFont =
+  RetainPtr<CFGAS_GEFont> pFont =
       FindFont(strFontName, bBold, bItalic, pPDFFont, bStrictMatch);
   if (pFont)
     m_FontMap[strKey] = pFont;
@@ -185,7 +184,7 @@ bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(const ByteStringView& bsPsName,
   return true;
 }
 
-bool CFGAS_PDFFontMgr::GetCharWidth(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+bool CFGAS_PDFFontMgr::GetCharWidth(const RetainPtr<CFGAS_GEFont>& pFont,
                                     wchar_t wUnicode,
                                     bool bCharCode,
                                     int32_t* pWidth) {
@@ -201,7 +200,7 @@ bool CFGAS_PDFFontMgr::GetCharWidth(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
   return true;
 }
 
-void CFGAS_PDFFontMgr::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+void CFGAS_PDFFontMgr::SetFont(const RetainPtr<CFGAS_GEFont>& pFont,
                                CPDF_Font* pPDFFont) {
   m_FDE2PDFFont[pFont] = pPDFFont;
 }

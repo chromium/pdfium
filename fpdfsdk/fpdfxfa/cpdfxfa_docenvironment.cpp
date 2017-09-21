@@ -11,7 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -58,7 +58,7 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (m_pContext->GetDocType() != XFA_DocType::Dynamic)
     return;
 
-  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pPageView);
+  RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pPageView);
   if (!pPage)
     return;
 
@@ -88,7 +88,7 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pPageView);
+  RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pPageView);
   if (!pPage)
     return;
 
@@ -113,7 +113,7 @@ bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
   if (!pXFAPageView)
     return false;
 
-  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pXFAPageView);
+  RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pXFAPageView);
   if (!pPage)
     return false;
 
@@ -225,7 +225,7 @@ bool CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
   if (!pXFAPageView)
     return false;
 
-  CFX_RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pXFAPageView);
+  RetainPtr<CPDFXFA_Page> pPage = m_pContext->GetXFAPage(pXFAPageView);
   if (!pPage)
     return false;
 
@@ -271,8 +271,7 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
 
   for (int iPageIter = 0; iPageIter < m_pContext->GetOriginalPageCount();
        iPageIter++) {
-    CFX_RetainPtr<CPDFXFA_Page> pPage =
-        (*m_pContext->GetXFAPageList())[iPageIter];
+    RetainPtr<CPDFXFA_Page> pPage = (*m_pContext->GetXFAPageList())[iPageIter];
     if (!pPage)
       continue;
 
@@ -297,7 +296,7 @@ void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CFX_RetainPtr<CPDFXFA_Page> pXFAPage = m_pContext->GetXFAPage(pPageView);
+  RetainPtr<CPDFXFA_Page> pXFAPage = m_pContext->GetXFAPage(pPageView);
   if (!pXFAPage)
     return;
 
@@ -315,7 +314,7 @@ void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget,
   if (!pPageView)
     return;
 
-  CFX_RetainPtr<CPDFXFA_Page> pXFAPage = m_pContext->GetXFAPage(pPageView);
+  RetainPtr<CPDFXFA_Page> pXFAPage = m_pContext->GetXFAPage(pPageView);
   if (!pXFAPage)
     return;
 
@@ -436,8 +435,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
   if (!pFileHandler)
     return;
 
-  CFX_RetainPtr<IFX_SeekableStream> fileWrite =
-      MakeSeekableStream(pFileHandler);
+  RetainPtr<IFX_SeekableStream> fileWrite = MakeSeekableStream(pFileHandler);
   ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
@@ -697,7 +695,7 @@ bool CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
   return ret;
 }
 
-CFX_RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
+RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
     CXFA_FFDoc* hDoc,
     const WideString& wsLink) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
@@ -727,8 +725,7 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   if (!pFormFillEnv)
     return false;
 
-  CFX_RetainPtr<IFX_SeekableStream> fileStream =
-      MakeSeekableStream(pFileHandler);
+  RetainPtr<IFX_SeekableStream> fileStream = MakeSeekableStream(pFileHandler);
 
   if (fileType == FXFA_SAVEAS_XML) {
     const char kContent[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";

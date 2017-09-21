@@ -22,7 +22,7 @@ class CXFA_DocumentParser {
   explicit CXFA_DocumentParser(CXFA_FFNotify* pNotify);
   ~CXFA_DocumentParser();
 
-  int32_t StartParse(const CFX_RetainPtr<IFX_SeekableStream>& pStream,
+  int32_t StartParse(const RetainPtr<IFX_SeekableStream>& pStream,
                      XFA_XDPPACKET ePacketID);
   int32_t DoParse();
 

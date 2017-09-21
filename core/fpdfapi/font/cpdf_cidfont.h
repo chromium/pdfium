@@ -11,10 +11,10 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 enum CIDSet : uint8_t {
   CIDSET_UNKNOWN,
@@ -73,13 +73,13 @@ class CPDF_CIDFont : public CPDF_Font {
   void LoadSubstFont();
   wchar_t GetUnicodeFromCharCode(uint32_t charcode) const;
 
-  CFX_RetainPtr<CPDF_CMap> m_pCMap;
+  RetainPtr<CPDF_CMap> m_pCMap;
   CFX_UnownedPtr<CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
   CIDSet m_Charset;
   bool m_bType1;
   bool m_bCIDIsGID;
   uint16_t m_DefaultWidth;
-  CFX_RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
+  RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   bool m_bAnsiWidthsFixed;
   FX_RECT m_CharBBox[256];
   std::vector<uint32_t> m_WidthList;

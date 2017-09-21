@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_breakline.h"
 
@@ -37,7 +37,7 @@ class CFX_Break {
   void SetLayoutStyles(uint32_t dwLayoutStyles);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
 
-  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
+  void SetFont(const RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(float fFontSize);
   void SetTabWidth(float fTabWidth);
   int32_t GetTabWidth() const { return m_iTabWidth; }
@@ -80,7 +80,7 @@ class CFX_Break {
   int32_t m_iCharSpace;
   int32_t m_iDefChar;
   wchar_t m_wDefChar;
-  CFX_RetainPtr<CFGAS_GEFont> m_pFont;
+  RetainPtr<CFGAS_GEFont> m_pFont;
   CFX_BreakLine m_Line[2];
   CFX_BreakLine* m_pCurLine;
   int8_t m_iReadyLineIndex;

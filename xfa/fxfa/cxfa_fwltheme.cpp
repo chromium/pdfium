@@ -185,7 +185,7 @@ float CXFA_FWLTheme::GetFontSize(CFWL_ThemePart* pThemePart) const {
   return FWLTHEME_CAPACITY_FontSize;
 }
 
-CFX_RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
+RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
     CFWL_ThemePart* pThemePart) const {
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
     return pWidget->GetDataAcc()->GetFDEFont();

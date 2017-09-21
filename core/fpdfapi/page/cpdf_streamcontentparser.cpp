@@ -806,7 +806,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(uint32_t streamObjNum) {
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
-    const CFX_RetainPtr<CPDF_Image>& pImage) {
+    const RetainPtr<CPDF_Image>& pImage) {
   if (!pImage)
     return nullptr;
 

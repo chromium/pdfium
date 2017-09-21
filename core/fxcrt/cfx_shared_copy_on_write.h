@@ -7,8 +7,8 @@
 #ifndef CORE_FXCRT_CFX_SHARED_COPY_ON_WRITE_H_
 #define CORE_FXCRT_CFX_SHARED_COPY_ON_WRITE_H_
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 // A shared object with Copy on Write semantics that makes it appear as
 // if each one were independent.
@@ -79,7 +79,7 @@ class CFX_SharedCopyOnWrite {
     intptr_t m_RefCount;
   };
 
-  CFX_RetainPtr<CountedObj> m_pObject;
+  RetainPtr<CountedObj> m_pObject;
 };
 
 #endif  // CORE_FXCRT_CFX_SHARED_COPY_ON_WRITE_H_

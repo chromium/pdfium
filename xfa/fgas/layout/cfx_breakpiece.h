@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_char.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "xfa/fxfa/cxfa_textuserdata.h"
 
 class CFX_BreakPiece {
@@ -41,7 +41,7 @@ class CFX_BreakPiece {
   uint32_t m_dwIdentity;
   uint32_t m_dwCharStyles;
   CFX_UnownedPtr<std::vector<CFX_Char>> m_pChars;
-  CFX_RetainPtr<CXFA_TextUserData> m_pUserData;
+  RetainPtr<CXFA_TextUserData> m_pUserData;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFX_BREAKPIECE_H_

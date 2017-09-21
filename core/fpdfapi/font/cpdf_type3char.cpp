@@ -35,7 +35,7 @@ bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
     // |pSource| actually gets assigned a CPDF_DIBSource, which has pointers
     // into objects owned by |m_pForm|. Make sure it is out of scope before
     // clearing the form.
-    CFX_RetainPtr<CFX_DIBSource> pSource =
+    RetainPtr<CFX_DIBSource> pSource =
         pPageObj->AsImage()->GetImage()->LoadDIBSource();
 
     // Clone() is non-virtual, and can't be overloaded by CPDF_DIBSource to

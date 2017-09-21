@@ -51,7 +51,7 @@ class CPDF_Stream : public CPDF_Object {
   void InitStream(const uint8_t* pData,
                   uint32_t size,
                   std::unique_ptr<CPDF_Dictionary> pDict);
-  void InitStreamFromFile(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+  void InitStreamFromFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
                           std::unique_ptr<CPDF_Dictionary> pDict);
 
   bool ReadRawData(FX_FILESIZE start_pos,
@@ -70,7 +70,7 @@ class CPDF_Stream : public CPDF_Object {
   uint32_t m_dwSize = 0;
   std::unique_ptr<CPDF_Dictionary> m_pDict;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDataBuf;
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
+  RetainPtr<IFX_SeekableReadStream> m_pFile;
 };
 
 inline CPDF_Stream* ToStream(CPDF_Object* obj) {

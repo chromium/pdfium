@@ -9,15 +9,15 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_MemoryStream : public IFX_SeekableStream {
  public:
   enum Type { kConsecutive = 1 << 0, kTakeOver = 1 << 1 };
 
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableStream
   FX_FILESIZE GetSize() override;

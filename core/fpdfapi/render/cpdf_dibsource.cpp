@@ -752,7 +752,7 @@ int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_PauseIndicator* pPause) {
   return 1;
 }
 
-CFX_RetainPtr<CPDF_DIBSource> CPDF_DIBSource::DetachMask() {
+RetainPtr<CPDF_DIBSource> CPDF_DIBSource::DetachMask() {
   return std::move(m_pMask);
 }
 

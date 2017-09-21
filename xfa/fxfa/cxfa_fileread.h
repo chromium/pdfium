@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Stream;
 class CPDF_StreamAcc;
@@ -30,7 +30,7 @@ class CXFA_FileRead : public IFX_SeekableStream {
   bool WriteBlock(const void* pData, FX_FILESIZE offset, size_t size) override;
 
  private:
-  std::vector<CFX_RetainPtr<CPDF_StreamAcc>> m_Data;
+  std::vector<RetainPtr<CPDF_StreamAcc>> m_Data;
 };
 
 #endif  // XFA_FXFA_CXFA_FILEREAD_H_

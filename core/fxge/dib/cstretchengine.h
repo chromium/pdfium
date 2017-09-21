@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class IFX_PauseIndicator;
@@ -24,7 +24,7 @@ class CStretchEngine {
                  int dest_width,
                  int dest_height,
                  const FX_RECT& clip_rect,
-                 const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                 const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                  int flags);
   ~CStretchEngine();
 
@@ -68,7 +68,7 @@ class CStretchEngine {
   std::vector<uint8_t> m_DestScanline;
   std::vector<uint8_t> m_DestMaskScanline;
   FX_RECT m_SrcClip;
-  CFX_RetainPtr<CFX_DIBSource> m_pSource;
+  RetainPtr<CFX_DIBSource> m_pSource;
   uint32_t* m_pSrcPalette;
   int m_SrcWidth;
   int m_SrcHeight;

@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -52,7 +52,7 @@ class CPDF_RenderContext {
               const CPDF_RenderOptions* pOptions,
               const CFX_Matrix* pFinalMatrix);
 
-  void GetBackground(const CFX_RetainPtr<CFX_DIBitmap>& pBuffer,
+  void GetBackground(const RetainPtr<CFX_DIBitmap>& pBuffer,
                      const CPDF_PageObject* pObj,
                      const CPDF_RenderOptions* pOptions,
                      CFX_Matrix* pFinalMatrix);

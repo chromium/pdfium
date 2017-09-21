@@ -43,9 +43,8 @@
 namespace {
 
 #ifdef PDF_ENABLE_XFA
-bool SaveXFADocumentData(
-    CPDFXFA_Context* pContext,
-    std::vector<CFX_RetainPtr<IFX_SeekableStream>>* fileList) {
+bool SaveXFADocumentData(CPDFXFA_Context* pContext,
+                         std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
   if (!pContext)
     return false;
 
@@ -102,7 +101,7 @@ bool SaveXFADocumentData(
     CPDF_Stream* pTemplateStream = pArray->GetStreamAt(iTemplate);
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pTemplateStream);
     pAcc->LoadAllData();
-    CFX_RetainPtr<IFX_SeekableStream> pTemplate =
+    RetainPtr<IFX_SeekableStream> pTemplate =
         pdfium::MakeRetain<CFX_MemoryStream>(
             const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize(), false);
     pChecksum->UpdateChecksum(pTemplate);
@@ -137,7 +136,7 @@ bool SaveXFADocumentData(
   }
   // L"datasets"
   {
-    CFX_RetainPtr<IFX_SeekableStream> pDsfileWrite =
+    RetainPtr<IFX_SeekableStream> pDsfileWrite =
         pdfium::MakeRetain<CFX_MemoryStream>(false);
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Datasets, pDsfileWrite,
                                            nullptr) &&
@@ -165,7 +164,7 @@ bool SaveXFADocumentData(
   }
   // L"form"
   {
-    CFX_RetainPtr<IFX_SeekableStream> pfileWrite =
+    RetainPtr<IFX_SeekableStream> pfileWrite =
         pdfium::MakeRetain<CFX_MemoryStream>(false);
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, pfileWrite,
                                            pChecksum.get()) &&
@@ -214,9 +213,8 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
   return true;
 }
 
-bool SendPreSaveToXFADoc(
-    CPDFXFA_Context* pContext,
-    std::vector<CFX_RetainPtr<IFX_SeekableStream>>* fileList) {
+bool SendPreSaveToXFADoc(CPDFXFA_Context* pContext,
+                         std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
   if (pContext->GetDocType() != XFA_DocType::Dynamic &&
       pContext->GetDocType() != XFA_DocType::Static)
     return true;
@@ -249,7 +247,7 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  std::vector<CFX_RetainPtr<IFX_SeekableStream>> fileList;
+  std::vector<RetainPtr<IFX_SeekableStream>> fileList;
   SendPreSaveToXFADoc(pContext, &fileList);
 #endif  // PDF_ENABLE_XFA
 

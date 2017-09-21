@@ -80,7 +80,7 @@ class CPDF_MeshStream {
   float m_ymax;
   float m_ColorMin[kMaxComponents];
   float m_ColorMax[kMaxComponents];
-  CFX_RetainPtr<CPDF_StreamAcc> m_pStream;
+  RetainPtr<CPDF_StreamAcc> m_pStream;
   std::unique_ptr<CFX_BitStream> m_BitStream;
 };
 

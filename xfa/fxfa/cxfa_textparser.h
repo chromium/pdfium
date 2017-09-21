@@ -10,9 +10,9 @@
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
@@ -32,9 +32,9 @@ class CXFA_TextParser {
   void Reset();
   void DoParse(CFX_XMLNode* pXMLContainer, CXFA_TextProvider* pTextProvider);
 
-  CFX_RetainPtr<CFX_CSSComputedStyle> CreateRootStyle(
+  RetainPtr<CFX_CSSComputedStyle> CreateRootStyle(
       CXFA_TextProvider* pTextProvider);
-  CFX_RetainPtr<CFX_CSSComputedStyle> ComputeStyle(
+  RetainPtr<CFX_CSSComputedStyle> ComputeStyle(
       CFX_XMLNode* pXMLNode,
       CFX_CSSComputedStyle* pParentStyle);
 
@@ -49,8 +49,8 @@ class CXFA_TextParser {
   bool GetTabstops(CFX_CSSComputedStyle* pStyle,
                    CXFA_TextTabstopsContext* pTabstopContext);
 
-  CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_TextProvider* pTextProvider,
-                                      CFX_CSSComputedStyle* pStyle) const;
+  RetainPtr<CFGAS_GEFont> GetFont(CXFA_TextProvider* pTextProvider,
+                                  CFX_CSSComputedStyle* pStyle) const;
   float GetFontSize(CXFA_TextProvider* pTextProvider,
                     CFX_CSSComputedStyle* pStyle) const;
 
@@ -113,7 +113,7 @@ class CXFA_TextParser {
   void ParseRichText(CFX_XMLNode* pXMLNode, CFX_CSSComputedStyle* pParentStyle);
   std::unique_ptr<TagProvider> ParseTagInfo(CFX_XMLNode* pXMLNode);
   std::unique_ptr<CFX_CSSStyleSheet> LoadDefaultSheetStyle();
-  CFX_RetainPtr<CFX_CSSComputedStyle> CreateStyle(
+  RetainPtr<CFX_CSSComputedStyle> CreateStyle(
       CFX_CSSComputedStyle* pParentStyle);
 
   bool m_bParsed;

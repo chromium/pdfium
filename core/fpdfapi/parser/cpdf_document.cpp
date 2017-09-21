@@ -625,8 +625,7 @@ CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict) {
   return m_pDocPage->GetFont(pFontDict);
 }
 
-CFX_RetainPtr<CPDF_StreamAcc> CPDF_Document::LoadFontFile(
-    CPDF_Stream* pStream) {
+RetainPtr<CPDF_StreamAcc> CPDF_Document::LoadFontFile(CPDF_Stream* pStream) {
   return m_pDocPage->GetFontFileStreamAcc(pStream);
 }
 
@@ -641,12 +640,11 @@ CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj,
   return m_pDocPage->GetPattern(pPatternObj, bShading, matrix);
 }
 
-CFX_RetainPtr<CPDF_IccProfile> CPDF_Document::LoadIccProfile(
-    CPDF_Stream* pStream) {
+RetainPtr<CPDF_IccProfile> CPDF_Document::LoadIccProfile(CPDF_Stream* pStream) {
   return m_pDocPage->GetIccProfile(pStream);
 }
 
-CFX_RetainPtr<CPDF_Image> CPDF_Document::LoadImageFromPageData(
+RetainPtr<CPDF_Image> CPDF_Document::LoadImageFromPageData(
     uint32_t dwStreamObjNum) {
   ASSERT(dwStreamObjNum);
   return m_pDocPage->GetImage(dwStreamObjNum);

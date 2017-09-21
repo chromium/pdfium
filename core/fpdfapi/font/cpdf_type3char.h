@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;
 class CPDF_Form;
@@ -25,7 +25,7 @@ class CPDF_Type3Char {
   bool LoadBitmap(CPDF_RenderContext* pContext);
 
   std::unique_ptr<CPDF_Form> m_pForm;
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  RetainPtr<CFX_DIBitmap> m_pBitmap;
   bool m_bColored;
   int m_Width;
   CFX_Matrix m_ImageMatrix;

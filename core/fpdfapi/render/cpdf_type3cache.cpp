@@ -53,8 +53,7 @@ bool IsScanLine8bpp(uint8_t* pBuf, int width) {
   return false;
 }
 
-int DetectFirstLastScan(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
-                        bool bFirst) {
+int DetectFirstLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap, bool bFirst) {
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
   int width = pBitmap->GetWidth();
@@ -123,12 +122,12 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
   if (!pChar || !pChar->m_pBitmap)
     return nullptr;
 
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap = pChar->m_pBitmap;
+  RetainPtr<CFX_DIBitmap> pBitmap = pChar->m_pBitmap;
   CFX_Matrix image_matrix = pChar->m_ImageMatrix;
   CFX_Matrix text_matrix(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
   image_matrix.Concat(text_matrix);
 
-  CFX_RetainPtr<CFX_DIBitmap> pResBitmap;
+  RetainPtr<CFX_DIBitmap> pResBitmap;
   int left = 0;
   int top = 0;
   if (fabs(image_matrix.b) < fabs(image_matrix.a) / 100 &&

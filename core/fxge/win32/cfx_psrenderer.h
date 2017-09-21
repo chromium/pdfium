@@ -10,10 +10,10 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
 
 class CFX_DIBSource;
@@ -30,7 +30,7 @@ class CFX_PSRenderer {
   CFX_PSRenderer();
   ~CFX_PSRenderer();
 
-  void Init(const CFX_RetainPtr<IFX_WriteStream>& stream,
+  void Init(const RetainPtr<IFX_WriteStream>& stream,
             int pslevel,
             int width,
             int height,
@@ -52,18 +52,18 @@ class CFX_PSRenderer {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode);
-  bool SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+  bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
                  uint32_t color,
                  int dest_left,
                  int dest_top);
-  bool StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
                      int dest_width,
                      int dest_height,
                      uint32_t flags);
-  bool DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+  bool DrawDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
                   uint32_t color,
                   const CFX_Matrix* pMatrix,
                   uint32_t flags);
@@ -86,7 +86,7 @@ class CFX_PSRenderer {
                        int* ps_glyphindex);
   void WritePSBinary(const uint8_t* data, int len);
 
-  CFX_RetainPtr<IFX_WriteStream> m_pStream;
+  RetainPtr<IFX_WriteStream> m_pStream;
   int m_PSLevel;
   CFX_GraphStateData m_CurGraphState;
   bool m_bGraphStateSet;

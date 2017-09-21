@@ -330,7 +330,7 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLNode::Clone() {
 }
 
 void CFX_XMLNode::SaveXMLNode(
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
+    const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
   CFX_XMLNode* pNode = (CFX_XMLNode*)this;
   switch (pNode->GetType()) {
     case FX_XMLNODE_Instruction: {

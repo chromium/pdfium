@@ -222,7 +222,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
                                int dest_width,
                                int dest_height,
                                const FX_RECT& clip_rect,
-                               const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                               const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                int flags) {
   m_State = 0;
   m_DestFormat = dest_format;

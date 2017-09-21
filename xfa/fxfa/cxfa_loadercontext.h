@@ -31,7 +31,7 @@ class CXFA_LoaderContext {
   uint32_t m_dwFlags;
   CFX_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
-  CFX_RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
+  RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
   std::vector<float> m_lineHeights;
   std::vector<float> m_BlocksHeight;
 };

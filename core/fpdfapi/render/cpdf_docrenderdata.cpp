@@ -44,7 +44,7 @@ void CPDF_DocRenderData::Clear(bool bRelease) {
   }
 }
 
-CFX_RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
+RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
     CPDF_Type3Font* pFont) {
   auto it = m_Type3FaceMap.find(pFont);
   if (it != m_Type3FaceMap.end())
@@ -61,7 +61,7 @@ void CPDF_DocRenderData::MaybePurgeCachedType3(CPDF_Type3Font* pFont) {
     m_Type3FaceMap.erase(it);
 }
 
-CFX_RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
+RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
     CPDF_Object* pObj) {
   if (!pObj)
     return nullptr;

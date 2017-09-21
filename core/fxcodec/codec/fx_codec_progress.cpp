@@ -396,7 +396,7 @@ bool CCodec_ProgressiveDecoder::PngReadHeader(int width,
 }
 
 bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t*& src_buf) {
-  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
+  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   if (!pDIBitmap) {
     NOTREACHED();
     return false;
@@ -465,7 +465,7 @@ bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t*& src_buf) {
 }
 
 void CCodec_ProgressiveDecoder::PngOneOneMapResampleHorz(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     int32_t des_line,
     uint8_t* src_scan,
     FXCodec_Format src_format) {
@@ -538,7 +538,7 @@ void CCodec_ProgressiveDecoder::PngOneOneMapResampleHorz(
 
 void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
                                                             int line) {
-  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
+  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   ASSERT(pDIBitmap);
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
@@ -645,7 +645,7 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
   m_GifFrameRect = img_rc;
   m_SrcPassNumber = interlace ? 4 : 1;
   int32_t pal_index = m_GifBgIndex;
-  CFX_RetainPtr<CFX_DIBitmap> pDevice = m_pDeviceBitmap;
+  RetainPtr<CFX_DIBitmap> pDevice = m_pDeviceBitmap;
   if (trans_index >= pal_num)
     trans_index = -1;
   if (trans_index != -1) {
@@ -695,7 +695,7 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
 
 void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
                                                 uint8_t* row_buf) {
-  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
+  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   ASSERT(pDIBitmap);
   int32_t img_width = m_GifFrameRect.Width();
   if (!pDIBitmap->HasAlpha()) {
@@ -757,7 +757,7 @@ void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
 }
 
 void CCodec_ProgressiveDecoder::GifDoubleLineResampleVert(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     double scale_y,
     int des_row) {
   int des_Bpp = pDeviceBitmap->GetBPP() >> 3;
@@ -883,7 +883,7 @@ bool CCodec_ProgressiveDecoder::BmpInputImagePositionBuf(uint32_t rcd_pos) {
 void CCodec_ProgressiveDecoder::BmpReadScanline(
     uint32_t row_num,
     const std::vector<uint8_t>& row_buf) {
-  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
+  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   ASSERT(pDIBitmap);
   std::copy(row_buf.begin(), row_buf.begin() + m_ScanlineSize, m_pDecodeBuf);
   int src_top = m_clipBox.top;
@@ -914,7 +914,7 @@ void CCodec_ProgressiveDecoder::BmpReadScanline(
 }
 
 void CCodec_ProgressiveDecoder::ResampleVertBT(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     double scale_y,
     int des_row) {
   int des_Bpp = pDeviceBitmap->GetBPP() >> 3;
@@ -1254,7 +1254,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+    const RetainPtr<IFX_SeekableReadStream>& pFile,
     FXCODEC_IMAGE_TYPE imageType,
     CFX_DIBAttribute* pAttribute,
     bool bSkipImageTypeCheck) {
@@ -1446,7 +1446,7 @@ void CCodec_ProgressiveDecoder::GetTransMethod(FXDIB_Format des_format,
 }
 
 void CCodec_ProgressiveDecoder::ReSampleScanline(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     int des_line,
     uint8_t* src_scan,
     FXCodec_Format src_format) {
@@ -1653,7 +1653,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
 }
 
 void CCodec_ProgressiveDecoder::ResampleVert(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     double scale_y,
     int des_row) {
   int des_Bpp = pDeviceBitmap->GetBPP() >> 3;
@@ -1769,7 +1769,7 @@ void CCodec_ProgressiveDecoder::ResampleVert(
 }
 
 void CCodec_ProgressiveDecoder::Resample(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     int32_t src_line,
     uint8_t* src_scan,
     FXCodec_Format src_format) {
@@ -1837,7 +1837,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames) {
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     int start_x,
     int start_y,
     int size_x,
@@ -2206,7 +2206,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
         m_status = FXCODEC_STATUS_ERROR;
         return m_status;
       }
-      CFX_RetainPtr<CFX_DIBitmap> pClipBitmap =
+      RetainPtr<CFX_DIBitmap> pClipBitmap =
           (m_clipBox.left == 0 && m_clipBox.top == 0 &&
            m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight)
               ? pDIBitmap
@@ -2217,7 +2217,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
       }
-      CFX_RetainPtr<CFX_DIBitmap> pFormatBitmap;
+      RetainPtr<CFX_DIBitmap> pFormatBitmap;
       switch (m_pDeviceBitmap->GetFormat()) {
         case FXDIB_8bppRgb:
           pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -2289,7 +2289,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
       }
-      CFX_RetainPtr<CFX_DIBitmap> pStrechBitmap = pFormatBitmap->StretchTo(
+      RetainPtr<CFX_DIBitmap> pStrechBitmap = pFormatBitmap->StretchTo(
           m_sizeX, m_sizeY, m_bInterpol ? FXDIB_INTERPOL : FXDIB_DOWNSAMPLE,
           nullptr);
       pFormatBitmap = nullptr;

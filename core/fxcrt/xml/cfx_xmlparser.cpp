@@ -13,9 +13,8 @@
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/ptr_util.h"
 
-CFX_XMLParser::CFX_XMLParser(
-    CFX_XMLNode* pParent,
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream)
+CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
+                             const RetainPtr<CFX_SeekableStreamProxy>& pStream)
     : m_nElementStart(0),
       m_dwCheckStatus(0),
       m_dwCurrentCheckStatus(0),

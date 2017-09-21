@@ -11,10 +11,10 @@
 #include <iterator>
 #include <utility>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_string_data_template.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/optional.h"
 
@@ -192,7 +192,7 @@ class WideString {
   // Returns true unless we ran out of space.
   bool TryVSWPrintf(FX_STRSIZE size, const wchar_t* format, va_list argList);
 
-  CFX_RetainPtr<StringData> m_pData;
+  RetainPtr<StringData> m_pData;
 
   friend WideString_ConcatInPlace_Test;
   friend fxcrt_WideStringPool_Test;

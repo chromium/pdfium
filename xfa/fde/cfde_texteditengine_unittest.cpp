@@ -49,7 +49,7 @@ class CFDE_TextEditEngineTest : public testing::Test {
   CFDE_TextEditEngine* engine() const { return engine_.get(); }
 
  private:
-  CFX_RetainPtr<CFGAS_GEFont> font_;
+  RetainPtr<CFGAS_GEFont> font_;
   std::unique_ptr<CFDE_TextEditEngine> engine_;
 };
 

@@ -9,9 +9,9 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Stream;
 
@@ -31,7 +31,7 @@ class CPDF_FlateEncoder {
   uint32_t m_dwSize;
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   MaybeOwned<CPDF_Dictionary> m_pDict;
-  CFX_RetainPtr<CPDF_StreamAcc> m_pAcc;
+  RetainPtr<CPDF_StreamAcc> m_pAcc;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_FLATEENCODER_H_

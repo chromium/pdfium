@@ -111,7 +111,7 @@ class CPDF_Font {
   CFX_Font m_Font;
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
   ByteString m_BaseFont;
-  CFX_RetainPtr<CPDF_StreamAcc> m_pFontFile;
+  RetainPtr<CPDF_StreamAcc> m_pFontFile;
   CPDF_Dictionary* m_pFontDict;
   mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
   mutable bool m_bToUnicodeLoaded;

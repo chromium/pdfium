@@ -65,7 +65,7 @@ class CXFA_Graphics {
   void FillPath(CXFA_Path* path,
                 FX_FillMode fillMode,
                 const CFX_Matrix* matrix);
-  void StretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
+  void StretchImage(const RetainPtr<CFX_DIBSource>& source,
                     const CFX_RectF& rect,
                     const CFX_Matrix& matrix);
   void ConcatMatrix(const CFX_Matrix* matrix);
@@ -91,7 +91,7 @@ class CXFA_Graphics {
   void RenderDeviceFillPath(const CXFA_Path* path,
                             FX_FillMode fillMode,
                             const CFX_Matrix* matrix);
-  void RenderDeviceStretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
+  void RenderDeviceStretchImage(const RetainPtr<CFX_DIBSource>& source,
                                 const CFX_RectF& rect,
                                 const CFX_Matrix& matrix);
 
@@ -102,7 +102,7 @@ class CXFA_Graphics {
                            FX_FillMode fillMode,
                            const CFX_Matrix& matrix);
 
-  void SetDIBitsWithMatrix(const CFX_RetainPtr<CFX_DIBSource>& source,
+  void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBSource>& source,
                            const CFX_Matrix& matrix);
 
   CFX_RenderDevice* const m_renderDevice;  // Not owned.

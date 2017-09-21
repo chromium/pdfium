@@ -44,7 +44,7 @@ struct FX_TXTRUN {
   WideString wsStr;
   int32_t* pWidths;
   int32_t iLength;
-  CFX_RetainPtr<CFGAS_GEFont> pFont;
+  RetainPtr<CFGAS_GEFont> pFont;
   float fFontSize;
   uint32_t dwStyles;
   int32_t iHorizontalScale;

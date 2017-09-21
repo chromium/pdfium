@@ -107,7 +107,7 @@ class CPDF_RenderStatus {
                       const CFX_Matrix* pObj2Device,
                       bool bStroke);
   bool ProcessImage(CPDF_ImageObject* pImageObj, const CFX_Matrix* pObj2Device);
-  void CompositeDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+  void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
                          int top,
                          FX_ARGB mask_argb,
@@ -135,19 +135,19 @@ class CPDF_RenderStatus {
                                bool bStroke);
   bool ProcessForm(const CPDF_FormObject* pFormObj,
                    const CFX_Matrix* pObj2Device);
-  CFX_RetainPtr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* pObj,
-                                          const FX_RECT& rect,
-                                          int& left,
-                                          int& top,
-                                          bool bBackAlphaRequired);
-  CFX_RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
-                                        FX_RECT* pClipRect,
-                                        const CFX_Matrix* pMatrix);
-  static CFX_RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
+  RetainPtr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* pObj,
+                                      const FX_RECT& rect,
+                                      int& left,
+                                      int& top,
+                                      bool bBackAlphaRequired);
+  RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
+                                    FX_RECT* pClipRect,
+                                    const CFX_Matrix* pMatrix);
+  static RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
   static std::unique_ptr<CPDF_GraphicStates> CloneObjStates(
       const CPDF_GraphicStates* pPathObj,
       bool bStroke);
-  CFX_RetainPtr<CPDF_TransferFunc> GetTransferFunc(CPDF_Object* pObject) const;
+  RetainPtr<CPDF_TransferFunc> GetTransferFunc(CPDF_Object* pObject) const;
   FX_ARGB GetFillArgb(CPDF_PageObject* pObj, bool bType3 = false) const;
   FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   bool GetObjectClippedRect(const CPDF_PageObject* pObj,

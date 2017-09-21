@@ -11,8 +11,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -96,8 +96,8 @@ class CFDE_TextEditEngine {
   CFX_RectF GetContentsBoundingBox();
   void SetAvailableWidth(size_t width);
 
-  void SetFont(CFX_RetainPtr<CFGAS_GEFont> font);
-  CFX_RetainPtr<CFGAS_GEFont> GetFont() const { return font_; }
+  void SetFont(RetainPtr<CFGAS_GEFont> font);
+  RetainPtr<CFGAS_GEFont> GetFont() const { return font_; }
   void SetFontSize(float size);
   float GetFontSize() const { return font_size_; }
   void SetFontColor(FX_ARGB color) { font_color_ = color; }
@@ -204,7 +204,7 @@ class CFDE_TextEditEngine {
   std::vector<FDE_TEXTEDITPIECE> text_piece_info_;
   std::vector<size_t> char_widths_;
   CFX_TxtBreak text_break_;
-  CFX_RetainPtr<CFGAS_GEFont> font_;
+  RetainPtr<CFGAS_GEFont> font_;
   FX_ARGB font_color_;
   float font_size_;
   float line_spacing_;

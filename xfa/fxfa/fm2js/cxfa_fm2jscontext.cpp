@@ -4591,7 +4591,7 @@ void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   ByteString urlString = ValueToUTF8String(argOne.get());
-  CFX_RetainPtr<IFX_SeekableReadStream> pFile =
+  RetainPtr<IFX_SeekableReadStream> pFile =
       pAppProvider->DownloadURL(WideString::FromUTF8(urlString.AsStringView()));
   if (!pFile)
     return;

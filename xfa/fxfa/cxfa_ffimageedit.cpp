@@ -64,7 +64,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorder(pGS, borderUI, m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
-  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDataAcc->GetImageEditImage();
+  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDataAcc->GetImageEditImage();
   if (!pDIBitmap)
     return;
 

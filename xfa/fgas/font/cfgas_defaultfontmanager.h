@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
 class CFGAS_DefaultFontManager {
@@ -18,17 +18,17 @@ class CFGAS_DefaultFontManager {
   CFGAS_DefaultFontManager();
   ~CFGAS_DefaultFontManager();
 
-  CFX_RetainPtr<CFGAS_GEFont> GetFont(CFGAS_FontMgr* pFontMgr,
-                                      const WideStringView& wsFontFamily,
-                                      uint32_t dwFontStyles,
-                                      uint16_t wCodePage = 0xFFFF);
-  CFX_RetainPtr<CFGAS_GEFont> GetDefaultFont(CFGAS_FontMgr* pFontMgr,
-                                             const WideStringView& wsFontFamily,
-                                             uint32_t dwFontStyles,
-                                             uint16_t wCodePage = 0xFFFF);
+  RetainPtr<CFGAS_GEFont> GetFont(CFGAS_FontMgr* pFontMgr,
+                                  const WideStringView& wsFontFamily,
+                                  uint32_t dwFontStyles,
+                                  uint16_t wCodePage = 0xFFFF);
+  RetainPtr<CFGAS_GEFont> GetDefaultFont(CFGAS_FontMgr* pFontMgr,
+                                         const WideStringView& wsFontFamily,
+                                         uint32_t dwFontStyles,
+                                         uint16_t wCodePage = 0xFFFF);
 
  private:
-  std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_CacheFonts;
+  std::vector<RetainPtr<CFGAS_GEFont>> m_CacheFonts;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_

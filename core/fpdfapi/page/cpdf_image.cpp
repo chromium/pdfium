@@ -117,8 +117,7 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
   return pDict;
 }
 
-void CPDF_Image::SetJpegImage(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile) {
+void CPDF_Image::SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile) {
   uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
   if (!size)
     return;
@@ -142,7 +141,7 @@ void CPDF_Image::SetJpegImage(
 }
 
 void CPDF_Image::SetJpegImageInline(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile) {
+    const RetainPtr<IFX_SeekableReadStream>& pFile) {
   uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
   if (!size)
     return;
@@ -158,7 +157,7 @@ void CPDF_Image::SetJpegImageInline(
   m_pStream->InitStream(&(data[0]), size, std::move(pDict));
 }
 
-void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
+void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   int32_t BitmapWidth = pBitmap->GetWidth();
   int32_t BitmapHeight = pBitmap->GetHeight();
   if (BitmapWidth < 1 || BitmapHeight < 1)
@@ -250,7 +249,7 @@ void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
     bCopyWithoutAlpha = false;
   }
 
-  CFX_RetainPtr<CFX_DIBitmap> pMaskBitmap;
+  RetainPtr<CFX_DIBitmap> pMaskBitmap;
   if (pBitmap->HasAlpha())
     pMaskBitmap = pBitmap->CloneAlphaMask();
 
@@ -323,12 +322,12 @@ void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
 }
 
 void CPDF_Image::ResetCache(CPDF_Page* pPage,
-                            const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
-  CFX_RetainPtr<CPDF_Image> pHolder(this);
+                            const RetainPtr<CFX_DIBitmap>& pBitmap) {
+  RetainPtr<CPDF_Image> pHolder(this);
   pPage->GetRenderCache()->ResetBitmap(pHolder, pBitmap);
 }
 
-CFX_RetainPtr<CFX_DIBSource> CPDF_Image::LoadDIBSource() const {
+RetainPtr<CFX_DIBSource> CPDF_Image::LoadDIBSource() const {
   auto source = pdfium::MakeRetain<CPDF_DIBSource>();
   if (!source->Load(m_pDocument.Get(), m_pStream.Get()))
     return nullptr;
@@ -336,11 +335,11 @@ CFX_RetainPtr<CFX_DIBSource> CPDF_Image::LoadDIBSource() const {
   return source;
 }
 
-CFX_RetainPtr<CFX_DIBSource> CPDF_Image::DetachBitmap() {
+RetainPtr<CFX_DIBSource> CPDF_Image::DetachBitmap() {
   return std::move(m_pDIBSource);
 }
 
-CFX_RetainPtr<CFX_DIBSource> CPDF_Image::DetachMask() {
+RetainPtr<CFX_DIBSource> CPDF_Image::DetachMask() {
   return std::move(m_pMask);
 }
 
@@ -367,7 +366,7 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
 }
 
 bool CPDF_Image::Continue(IFX_PauseIndicator* pPause) {
-  CFX_RetainPtr<CPDF_DIBSource> pSource = m_pDIBSource.As<CPDF_DIBSource>();
+  RetainPtr<CPDF_DIBSource> pSource = m_pDIBSource.As<CPDF_DIBSource>();
   int ret = pSource->ContinueLoadDIBSource(pPause);
   if (!ret) {
     m_pDIBSource.Reset();

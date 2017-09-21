@@ -64,7 +64,7 @@ class BarcodeTest : public testing::Test {
   CFX_Matrix matrix_;
   std::unique_ptr<CFX_Barcode> barcode_;
   std::unique_ptr<CFX_RenderDevice> device_;
-  CFX_RetainPtr<CFX_DIBitmap> bitmap_;
+  RetainPtr<CFX_DIBitmap> bitmap_;
 };
 
 TEST_F(BarcodeTest, Code39) {

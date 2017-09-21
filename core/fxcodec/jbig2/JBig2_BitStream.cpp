@@ -11,8 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 
-CJBig2_BitStream::CJBig2_BitStream(
-    const CFX_RetainPtr<CPDF_StreamAcc>& pSrcStream)
+CJBig2_BitStream::CJBig2_BitStream(const RetainPtr<CPDF_StreamAcc>& pSrcStream)
     : m_pBuf(pSrcStream->GetData()),
       m_dwLength(pSrcStream->GetSize()),
       m_dwByteIdx(0),

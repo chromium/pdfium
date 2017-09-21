@@ -27,8 +27,8 @@ class CPDF_ImageObject : public CPDF_PageObject {
   const CPDF_ImageObject* AsImage() const override;
 
   void CalcBoundingBox();
-  CFX_RetainPtr<CPDF_Image> GetImage() const { return m_pImage; }
-  void SetImage(const CFX_RetainPtr<CPDF_Image>& pImage);
+  RetainPtr<CPDF_Image> GetImage() const { return m_pImage; }
+  void SetImage(const RetainPtr<CPDF_Image>& pImage);
   void set_matrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
   const CFX_Matrix& matrix() const { return m_Matrix; }
 
@@ -36,7 +36,7 @@ class CPDF_ImageObject : public CPDF_PageObject {
   void MaybePurgeCache();
 
   CFX_Matrix m_Matrix;
-  CFX_RetainPtr<CPDF_Image> m_pImage;
+  RetainPtr<CPDF_Image> m_pImage;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGEOBJECT_H_

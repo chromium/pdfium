@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/retain_ptr.h"
 
 enum FX_XMLNODETYPE {
   FX_XMLNODE_Unknown = 0,
@@ -64,7 +64,7 @@ class CFX_XMLNode {
   bool InsertNodeItem(CFX_XMLNode::NodeItem eItem, CFX_XMLNode* pNode);
   CFX_XMLNode* RemoveNodeItem(CFX_XMLNode::NodeItem eItem);
 
-  void SaveXMLNode(const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream);
+  void SaveXMLNode(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream);
 
   CFX_XMLNode* m_pParent;
   CFX_XMLNode* m_pChild;

@@ -9,11 +9,11 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
-class CFX_SeekableStreamProxy : public CFX_Retainable {
+class CFX_SeekableStreamProxy : public Retainable {
  public:
   enum class From {
     Begin = 0,
@@ -21,7 +21,7 @@ class CFX_SeekableStreamProxy : public CFX_Retainable {
   };
 
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   FX_FILESIZE GetLength() const { return m_pStream->GetSize(); }
   FX_FILESIZE GetPosition() { return m_iPosition; }
@@ -37,7 +37,7 @@ class CFX_SeekableStreamProxy : public CFX_Retainable {
   void SetCodePage(uint16_t wCodePage);
 
  private:
-  CFX_SeekableStreamProxy(const CFX_RetainPtr<IFX_SeekableStream>& stream,
+  CFX_SeekableStreamProxy(const RetainPtr<IFX_SeekableStream>& stream,
                           bool isWriteSteam);
   CFX_SeekableStreamProxy(uint8_t* data, FX_STRSIZE size);
   ~CFX_SeekableStreamProxy() override;
@@ -48,7 +48,7 @@ class CFX_SeekableStreamProxy : public CFX_Retainable {
   uint16_t m_wCodePage;
   FX_STRSIZE m_wBOMLength;
   FX_FILESIZE m_iPosition;
-  CFX_RetainPtr<IFX_SeekableStream> m_pStream;
+  RetainPtr<IFX_SeekableStream> m_pStream;
 };
 
 #endif  // CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_

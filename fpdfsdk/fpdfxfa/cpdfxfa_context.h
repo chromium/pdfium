@@ -51,8 +51,8 @@ class CPDFXFA_Context : public IXFA_AppProvider {
 
   int GetPageCount() const;
   void DeletePage(int page_index);
-  CFX_RetainPtr<CPDFXFA_Page> GetXFAPage(int page_index);
-  CFX_RetainPtr<CPDFXFA_Page> GetXFAPage(CXFA_FFPageView* pPage) const;
+  RetainPtr<CPDFXFA_Page> GetXFAPage(int page_index);
+  RetainPtr<CPDFXFA_Page> GetXFAPage(CXFA_FFPageView* pPage) const;
   void ClearChangeMark();
 
   // IFXA_AppProvider:
@@ -70,7 +70,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
                       const WideString& wsTitle,
                       const WideString& wsDefaultAnswer,
                       bool bMark) override;
-  CFX_RetainPtr<IFX_SeekableReadStream> DownloadURL(
+  RetainPtr<IFX_SeekableReadStream> DownloadURL(
       const WideString& wsURL) override;
   bool PostRequestURL(const WideString& wsURL,
                       const WideString& wsData,
@@ -94,7 +94,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   }
 
   LoadStatus GetLoadStatus() const { return m_nLoadStatus; }
-  std::vector<CFX_RetainPtr<CPDFXFA_Page>>* GetXFAPageList() {
+  std::vector<RetainPtr<CPDFXFA_Page>>* GetXFAPageList() {
     return &m_XFAPageList;
   }
 
@@ -108,7 +108,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   CFX_UnownedPtr<CXFA_FFDocView> m_pXFADocView;
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   std::unique_ptr<CJS_Runtime> m_pRuntime;
-  std::vector<CFX_RetainPtr<CPDFXFA_Page>> m_XFAPageList;
+  std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
   LoadStatus m_nLoadStatus;
   int m_nPageCount;
 

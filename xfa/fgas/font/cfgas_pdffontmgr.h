@@ -11,9 +11,9 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observable.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFGAS_FontMgr;
 class CFGAS_GEFont;
@@ -25,22 +25,22 @@ class CFGAS_PDFFontMgr : public Observable<CFGAS_PDFFontMgr> {
   explicit CFGAS_PDFFontMgr(CPDF_Document* pDoc, CFGAS_FontMgr* pFontMgr);
   ~CFGAS_PDFFontMgr();
 
-  CFX_RetainPtr<CFGAS_GEFont> GetFont(const WideStringView& wsFontFamily,
-                                      uint32_t dwFontStyles,
-                                      CPDF_Font** pPDFFont,
-                                      bool bStrictMatch);
-  bool GetCharWidth(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+  RetainPtr<CFGAS_GEFont> GetFont(const WideStringView& wsFontFamily,
+                                  uint32_t dwFontStyles,
+                                  CPDF_Font** pPDFFont,
+                                  bool bStrictMatch);
+  bool GetCharWidth(const RetainPtr<CFGAS_GEFont>& pFont,
                     wchar_t wUnicode,
                     bool bCharCode,
                     int32_t* pWidth);
-  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);
+  void SetFont(const RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);
 
  private:
-  CFX_RetainPtr<CFGAS_GEFont> FindFont(const ByteString& strFamilyName,
-                                       bool bBold,
-                                       bool bItalic,
-                                       CPDF_Font** pPDFFont,
-                                       bool bStrictMatch);
+  RetainPtr<CFGAS_GEFont> FindFont(const ByteString& strFamilyName,
+                                   bool bBold,
+                                   bool bItalic,
+                                   CPDF_Font** pPDFFont,
+                                   bool bStrictMatch);
   ByteString PsNameToFontName(const ByteString& strPsName,
                               bool bBold,
                               bool bItalic);
@@ -52,8 +52,8 @@ class CFGAS_PDFFontMgr : public Observable<CFGAS_PDFFontMgr> {
 
   CFX_UnownedPtr<CPDF_Document> const m_pDoc;
   CFX_UnownedPtr<CFGAS_FontMgr> const m_pFontMgr;
-  std::map<CFX_RetainPtr<CFGAS_GEFont>, CPDF_Font*> m_FDE2PDFFont;
-  std::map<ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
+  std::map<RetainPtr<CFGAS_GEFont>, CPDF_Font*> m_FDE2PDFFont;
+  std::map<ByteString, RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_PDFFONTMGR_H_

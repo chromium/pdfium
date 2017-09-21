@@ -10,8 +10,8 @@
 #include <memory>
 #include <stack>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/xml/cfx_xmlsyntaxparser.h"
 
 class CFX_XMLElement;
@@ -21,7 +21,7 @@ class CFX_SeekableStreamProxy;
 class CFX_XMLParser {
  public:
   CFX_XMLParser(CFX_XMLNode* pParent,
-                const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
+                const RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFX_XMLParser();
 
   int32_t DoParser();
@@ -33,7 +33,7 @@ class CFX_XMLParser {
   uint16_t m_dwCurrentCheckStatus;
 
  private:
-  CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
+  RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   std::unique_ptr<CFX_XMLSyntaxParser> m_pParser;
   CFX_XMLNode* m_pParent;
   CFX_XMLNode* m_pChild;

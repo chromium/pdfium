@@ -101,7 +101,7 @@ CFX_PSRenderer::CFX_PSRenderer()
 
 CFX_PSRenderer::~CFX_PSRenderer() {}
 
-void CFX_PSRenderer::Init(const CFX_RetainPtr<IFX_WriteStream>& pStream,
+void CFX_PSRenderer::Init(const RetainPtr<IFX_WriteStream>& pStream,
                           int pslevel,
                           int width,
                           int height,
@@ -342,7 +342,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
     m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
 }
 
-bool CFX_PSRenderer::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBSource>& pSource,
                                uint32_t color,
                                int left,
                                int top) {
@@ -353,7 +353,7 @@ bool CFX_PSRenderer::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
   return DrawDIBits(pSource, color, &matrix, 0);
 }
 
-bool CFX_PSRenderer::StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBSource>& pSource,
                                    uint32_t color,
                                    int dest_left,
                                    int dest_top,
@@ -366,7 +366,7 @@ bool CFX_PSRenderer::StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
   return DrawDIBits(pSource, color, &matrix, flags);
 }
 
-bool CFX_PSRenderer::DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBSource>& pSource,
                                 uint32_t color,
                                 const CFX_Matrix* pMatrix,
                                 uint32_t flags) {
@@ -428,7 +428,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
     output_buf.release();
   } else {
     CFX_DIBExtractor source_extractor(pSource);
-    CFX_RetainPtr<CFX_DIBSource> pConverted = source_extractor.GetBitmap();
+    RetainPtr<CFX_DIBSource> pConverted = source_extractor.GetBitmap();
     if (!pConverted)
       return false;
     switch (pSource->GetFormat()) {

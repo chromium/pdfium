@@ -44,8 +44,8 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
     uint32_t width,
     uint32_t height,
-    const CFX_RetainPtr<CPDF_StreamAcc>& src_stream,
-    const CFX_RetainPtr<CPDF_StreamAcc>& global_stream,
+    const RetainPtr<CPDF_StreamAcc>& src_stream,
+    const RetainPtr<CPDF_StreamAcc>& global_stream,
     uint8_t* dest_buf,
     uint32_t dest_pitch,
     IFX_PauseIndicator* pPause) {

@@ -721,7 +721,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
 }
 
 void CPDF_SyntaxParser::InitParser(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     uint32_t HeaderOffset) {
   ASSERT(pFileAccess);
   return InitParserWithValidator(
@@ -730,7 +730,7 @@ void CPDF_SyntaxParser::InitParser(
 }
 
 void CPDF_SyntaxParser::InitParserWithValidator(
-    const CFX_RetainPtr<CPDF_ReadValidator>& validator,
+    const RetainPtr<CPDF_ReadValidator>& validator,
     uint32_t HeaderOffset) {
   ASSERT(validator);
   FX_Free(m_pFileBuf);
@@ -843,10 +843,10 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(const ByteStringView& tag,
 }
 
 void CPDF_SyntaxParser::SetEncrypt(
-    const CFX_RetainPtr<CPDF_CryptoHandler>& pCryptoHandler) {
+    const RetainPtr<CPDF_CryptoHandler>& pCryptoHandler) {
   m_pCryptoHandler = pCryptoHandler;
 }
 
-CFX_RetainPtr<IFX_SeekableReadStream> CPDF_SyntaxParser::GetFileAccess() const {
+RetainPtr<IFX_SeekableReadStream> CPDF_SyntaxParser::GetFileAccess() const {
   return m_pFileAccess;
 }

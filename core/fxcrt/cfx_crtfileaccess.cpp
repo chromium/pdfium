@@ -11,7 +11,7 @@ CFX_CRTFileAccess::CFX_CRTFileAccess(const WideStringView& wsPath)
 
 CFX_CRTFileAccess::~CFX_CRTFileAccess() {}
 
-CFX_RetainPtr<IFX_SeekableStream> CFX_CRTFileAccess::CreateFileStream(
+RetainPtr<IFX_SeekableStream> CFX_CRTFileAccess::CreateFileStream(
     uint32_t dwModes) {
   return IFX_SeekableStream::CreateFromFilename(m_path.c_str(), dwModes);
 }

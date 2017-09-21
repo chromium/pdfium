@@ -13,14 +13,14 @@
 
 class CFX_CSSValueList : public CFX_CSSValue {
  public:
-  explicit CFX_CSSValueList(std::vector<CFX_RetainPtr<CFX_CSSValue>>& list);
+  explicit CFX_CSSValueList(std::vector<RetainPtr<CFX_CSSValue>>& list);
   ~CFX_CSSValueList() override;
 
   int32_t CountValues() const;
-  CFX_RetainPtr<CFX_CSSValue> GetValue(int32_t index) const;
+  RetainPtr<CFX_CSSValue> GetValue(int32_t index) const;
 
  protected:
-  std::vector<CFX_RetainPtr<CFX_CSSValue>> m_ppList;
+  std::vector<RetainPtr<CFX_CSSValue>> m_ppList;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSVALUELIST_H_

@@ -33,8 +33,8 @@ class CXFA_TextPiece {
   FX_ARGB dwColor;
   float fFontSize;
   CFX_RectF rtPiece;
-  CFX_RetainPtr<CFGAS_GEFont> pFont;
-  CFX_RetainPtr<CXFA_LinkUserData> pLinkData;
+  RetainPtr<CFGAS_GEFont> pFont;
+  RetainPtr<CXFA_LinkUserData> pLinkData;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTPIECE_H_

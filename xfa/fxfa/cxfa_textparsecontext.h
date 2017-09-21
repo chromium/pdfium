@@ -29,7 +29,7 @@ class CXFA_TextParseContext {
   }
   const std::vector<const CFX_CSSDeclaration*>& GetDecls() { return decls_; }
 
-  CFX_RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
+  RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
 
  private:
   std::vector<const CFX_CSSDeclaration*> decls_;

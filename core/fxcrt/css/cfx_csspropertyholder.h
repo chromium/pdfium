@@ -7,9 +7,9 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSPROPERTYHOLDER_H_
 #define CORE_FXCRT_CSS_CFX_CSSPROPERTYHOLDER_H_
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_cssvalue.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_CSSPropertyHolder {
  public:
@@ -18,7 +18,7 @@ class CFX_CSSPropertyHolder {
 
   CFX_CSSProperty eProperty;
   bool bImportant;
-  CFX_RetainPtr<CFX_CSSValue> pValue;
+  RetainPtr<CFX_CSSValue> pValue;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSPROPERTYHOLDER_H_

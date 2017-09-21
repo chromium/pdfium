@@ -76,7 +76,7 @@ bool CFX_XMLSyntaxParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
 }
 
 CFX_XMLSyntaxParser::CFX_XMLSyntaxParser(
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream)
+    const RetainPtr<CFX_SeekableStreamProxy>& pStream)
     : m_pStream(pStream),
       m_iXMLPlaneSize(32 * 1024),
       m_iCurrentPos(0),

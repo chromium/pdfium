@@ -65,7 +65,7 @@ class MockDownloadHints : public CPDF_DataAvail::DownloadHints {
 class InvalidReader : public IFX_SeekableReadStream {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream overrides:
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {

@@ -538,7 +538,7 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
                            const CFX_Matrix& mt) {
   ASSERT(pRenderDev);
 
-  CFX_RetainPtr<CFGAS_GEFont> font = m_EdtEngine.GetFont();
+  RetainPtr<CFGAS_GEFont> font = m_EdtEngine.GetFont();
   if (!font)
     return;
 
@@ -635,7 +635,7 @@ void CFWL_Edit::UpdateEditParams() {
   }
   m_fFontSize = theme->GetFontSize(&part);
 
-  CFX_RetainPtr<CFGAS_GEFont> pFont = theme->GetFont(&part);
+  RetainPtr<CFGAS_GEFont> pFont = theme->GetFont(&part);
   if (!pFont)
     return;
 

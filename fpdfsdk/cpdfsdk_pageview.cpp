@@ -426,7 +426,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   m_bLocked = true;
 
 #ifdef PDF_ENABLE_XFA
-  CFX_RetainPtr<CPDFXFA_Page> protector(m_page);
+  RetainPtr<CPDFXFA_Page> protector(m_page);
   if (m_pFormFillEnv->GetXFAContext()->GetDocType() == XFA_DocType::Dynamic) {
     CXFA_FFPageView* pageView = m_page->GetXFAPageView();
     std::unique_ptr<IXFA_WidgetIterator> pWidgetHandler(

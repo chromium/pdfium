@@ -54,8 +54,8 @@ class CPDF_ContentParser {
   bool m_bForm;
   CFX_UnownedPtr<CPDF_Type3Char> m_pType3Char;
   uint32_t m_nStreams;
-  CFX_RetainPtr<CPDF_StreamAcc> m_pSingleStream;
-  std::vector<CFX_RetainPtr<CPDF_StreamAcc>> m_StreamArray;
+  RetainPtr<CPDF_StreamAcc> m_pSingleStream;
+  std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
   uint8_t* m_pData;
   uint32_t m_Size;
   uint32_t m_CurrentOffset;

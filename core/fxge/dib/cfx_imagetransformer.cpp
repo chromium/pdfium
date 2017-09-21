@@ -101,7 +101,7 @@ void bicubic_get_pos_weight(int pos_pixel[],
   v_w[3] = SDP_Table[512 - res_y];
 }
 
-FXDIB_Format GetTransformedFormat(const CFX_RetainPtr<CFX_DIBSource>& pDrc) {
+FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBSource>& pDrc) {
   FXDIB_Format format = pDrc->GetFormat();
   if (pDrc->IsAlphaMask()) {
     format = FXDIB_8bppMask;
@@ -177,11 +177,10 @@ class CFX_BilinearMatrix : public CPDF_FixedMatrix {
 
 }  // namespace
 
-CFX_ImageTransformer::CFX_ImageTransformer(
-    const CFX_RetainPtr<CFX_DIBSource>& pSrc,
-    const CFX_Matrix* pMatrix,
-    int flags,
-    const FX_RECT* pClip)
+CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBSource>& pSrc,
+                                           const CFX_Matrix* pMatrix,
+                                           int flags,
+                                           const FX_RECT* pClip)
     : m_pSrc(pSrc),
       m_pMatrix(pMatrix),
       m_pClip(pClip),
@@ -818,6 +817,6 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
   return false;
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
+RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
   return m_Storer.Detach();
 }

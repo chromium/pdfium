@@ -35,7 +35,7 @@ CFX_PointF HardClip(const CFX_PointF& pos) {
                     pdfium::clamp(pos.y, -kMaxPos, kMaxPos));
 }
 
-void RgbByteOrderSetPixel(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void RgbByteOrderSetPixel(const RetainPtr<CFX_DIBitmap>& pBitmap,
                           int x,
                           int y,
                           uint32_t argb) {
@@ -55,7 +55,7 @@ void RgbByteOrderSetPixel(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   pos[2] = (FXARGB_B(argb) * alpha + pos[2] * (255 - alpha)) / 255;
 }
 
-void RgbByteOrderCompositeRect(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                int left,
                                int top,
                                int width,
@@ -130,12 +130,12 @@ void RgbByteOrderCompositeRect(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 }
 
-void RgbByteOrderTransferBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                 int dest_left,
                                 int dest_top,
                                 int width,
                                 int height,
-                                const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
   if (!pBitmap)
@@ -228,7 +228,7 @@ void RgbByteOrderTransferBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 }
 
-bool DibSetPixel(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
+bool DibSetPixel(const RetainPtr<CFX_DIBitmap>& pDevice,
                  int x,
                  int y,
                  uint32_t color) {
@@ -377,8 +377,8 @@ class CFX_Renderer {
                          uint8_t* clip_scan,
                          uint8_t* dest_extra_alpha_scan);
 
-  bool Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
-            const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+  bool Init(const RetainPtr<CFX_DIBitmap>& pDevice,
+            const RetainPtr<CFX_DIBitmap>& pOriDevice,
             const CFX_ClipRgn* pClipRgn,
             uint32_t color,
             bool bFullCover,
@@ -434,9 +434,9 @@ class CFX_Renderer {
   bool m_bFullCover;
   bool m_bRgbByteOrder;
   FX_RECT m_ClipBox;
-  CFX_RetainPtr<CFX_DIBitmap> m_pOriDevice;
-  CFX_RetainPtr<CFX_DIBitmap> m_pClipMask;
-  CFX_RetainPtr<CFX_DIBitmap> m_pDevice;
+  RetainPtr<CFX_DIBitmap> m_pOriDevice;
+  RetainPtr<CFX_DIBitmap> m_pClipMask;
+  RetainPtr<CFX_DIBitmap> m_pDevice;
   CFX_UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
 };
 
@@ -876,8 +876,8 @@ void CFX_Renderer::CompositeSpanCMYK(uint8_t* dest_scan,
   }
 }
 
-bool CFX_Renderer::Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
-                        const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
+                        const RetainPtr<CFX_DIBitmap>& pOriDevice,
                         const CFX_ClipRgn* pClipRgn,
                         uint32_t color,
                         bool bFullCover,
@@ -938,7 +938,7 @@ void CFX_Renderer::render(const Scanline& sl) {
 
   uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * y;
   uint8_t* dest_scan_extra_alpha = nullptr;
-  CFX_RetainPtr<CFX_DIBitmap> pAlphaMask = m_pDevice->m_pAlphaMask;
+  RetainPtr<CFX_DIBitmap> pAlphaMask = m_pDevice->m_pAlphaMask;
   if (pAlphaMask) {
     dest_scan_extra_alpha =
         pAlphaMask->GetBuffer() + pAlphaMask->GetPitch() * y;
@@ -1104,9 +1104,9 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
 }
 
 CFX_AggDeviceDriver::CFX_AggDeviceDriver(
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    const RetainPtr<CFX_DIBitmap>& pBitmap,
     bool bRgbByteOrder,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+    const RetainPtr<CFX_DIBitmap>& pOriDevice,
     bool bGroupKnockout)
     : m_pBitmap(pBitmap),
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -1283,7 +1283,7 @@ bool CFX_AggDeviceDriver::RenderRasterizer(
     uint32_t color,
     bool bFullCover,
     bool bGroupKnockout) {
-  CFX_RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pOriDevice : nullptr;
+  RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pOriDevice : nullptr;
   CFX_Renderer render;
   if (!render.Init(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
                    m_bRgbByteOrder)) {
@@ -1445,7 +1445,7 @@ bool CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CFX_AggDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                     int left,
                                     int top) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
@@ -1453,7 +1453,7 @@ bool CFX_AggDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
 
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
-  CFX_RetainPtr<CFX_DIBitmap> pBack;
+  RetainPtr<CFX_DIBitmap> pBack;
   if (m_pOriDevice) {
     pBack = m_pOriDevice->Clone(&rect);
     if (!pBack)
@@ -1478,11 +1478,11 @@ bool CFX_AggDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                                  top);
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {
+RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {
   return m_pOriDevice;
 }
 
-bool CFX_AggDeviceDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
                                     uint32_t argb,
                                     const FX_RECT* pSrcRect,
                                     int left,
@@ -1502,16 +1502,15 @@ bool CFX_AggDeviceDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
       pSrcRect->top, blend_type, m_pClipRgn.get(), m_bRgbByteOrder);
 }
 
-bool CFX_AggDeviceDriver::StretchDIBits(
-    const CFX_RetainPtr<CFX_DIBSource>& pSource,
-    uint32_t argb,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    const FX_RECT* pClipRect,
-    uint32_t flags,
-    int blend_type) {
+bool CFX_AggDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBSource>& pSource,
+                                        uint32_t argb,
+                                        int dest_left,
+                                        int dest_top,
+                                        int dest_width,
+                                        int dest_height,
+                                        const FX_RECT* pClipRect,
+                                        uint32_t flags,
+                                        int blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 
@@ -1537,7 +1536,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(
 }
 
 bool CFX_AggDeviceDriver::StartDIBits(
-    const CFX_RetainPtr<CFX_DIBSource>& pSource,
+    const RetainPtr<CFX_DIBSource>& pSource,
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix* pMatrix,
@@ -1563,11 +1562,10 @@ CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
 
 CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() {}
 
-bool CFX_DefaultRenderDevice::Attach(
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
-    bool bRgbByteOrder,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
-    bool bGroupKnockout) {
+bool CFX_DefaultRenderDevice::Attach(const RetainPtr<CFX_DIBitmap>& pBitmap,
+                                     bool bRgbByteOrder,
+                                     const RetainPtr<CFX_DIBitmap>& pOriDevice,
+                                     bool bGroupKnockout) {
   if (!pBitmap)
     return false;
 
@@ -1581,7 +1579,7 @@ bool CFX_DefaultRenderDevice::Create(
     int width,
     int height,
     FXDIB_Format format,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice) {
+    const RetainPtr<CFX_DIBitmap>& pOriDevice) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, format))
     return false;

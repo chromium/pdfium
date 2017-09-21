@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;
 class CFX_RenderDevice;
@@ -29,14 +29,14 @@ class CPDF_DeviceBuffer {
                   const CPDF_PageObject* pObj,
                   int max_dpi);
   void OutputToDevice();
-  CFX_RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
+  RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
   const CFX_Matrix* GetMatrix() const { return &m_Matrix; }
 
  private:
   CFX_UnownedPtr<CFX_RenderDevice> m_pDevice;
   CFX_UnownedPtr<CPDF_RenderContext> m_pContext;
   CFX_UnownedPtr<const CPDF_PageObject> m_pObject;
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  RetainPtr<CFX_DIBitmap> m_pBitmap;
   FX_RECT m_Rect;
   CFX_Matrix m_Matrix;
 };

@@ -77,7 +77,7 @@ class CFDE_TextOut {
  public:
   static bool DrawString(CFX_RenderDevice* device,
                          FX_ARGB color,
-                         const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+                         const RetainPtr<CFGAS_GEFont>& pFont,
                          FXTEXT_CHARPOS* pCharPos,
                          int32_t iCount,
                          float fFontSize,
@@ -86,7 +86,7 @@ class CFDE_TextOut {
   CFDE_TextOut();
   ~CFDE_TextOut();
 
-  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
+  void SetFont(const RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(float fFontSize);
   void SetTextColor(FX_ARGB color) { m_TxtColor = color; }
   void SetStyles(const FDE_TextStyle& dwStyles);
@@ -121,7 +121,7 @@ class CFDE_TextOut {
   int32_t GetDisplayPos(FDE_TTOPIECE* pPiece);
 
   std::unique_ptr<CFX_TxtBreak> m_pTxtBreak;
-  CFX_RetainPtr<CFGAS_GEFont> m_pFont;
+  RetainPtr<CFGAS_GEFont> m_pFont;
   float m_fFontSize;
   float m_fLineSpace;
   float m_fLinePos;

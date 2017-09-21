@@ -54,7 +54,7 @@ CFX_SAXFile::CFX_SAXFile()
 
 CFX_SAXFile::~CFX_SAXFile() {}
 
-bool CFX_SAXFile::StartFile(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+bool CFX_SAXFile::StartFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
                             uint32_t dwStart,
                             uint32_t dwLen) {
   ASSERT(!m_pFile && pFile);
@@ -186,7 +186,7 @@ bool CFX_SAXReader::SkipSpace(uint8_t ch) {
 }
 
 int32_t CFX_SAXReader::StartParse(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+    const RetainPtr<IFX_SeekableReadStream>& pFile,
     uint32_t dwStart,
     uint32_t dwLen,
     uint32_t dwParseMode) {

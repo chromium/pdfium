@@ -41,8 +41,7 @@ void CFX_RTFBreak::AddPositionedTab(float fTabPos) {
   m_PositionedTabs.insert(it, iTabPos);
 }
 
-void CFX_RTFBreak::SetUserData(
-    const CFX_RetainPtr<CXFA_TextUserData>& pUserData) {
+void CFX_RTFBreak::SetUserData(const RetainPtr<CXFA_TextUserData>& pUserData) {
   if (m_pUserData == pUserData)
     return;
 
@@ -668,7 +667,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
 
   ASSERT(pText->pFont && pText->pRect);
 
-  CFX_RetainPtr<CFGAS_GEFont> pFont = pText->pFont;
+  RetainPtr<CFGAS_GEFont> pFont = pText->pFont;
   CFX_RectF rtText(*pText->pRect);
   bool bRTLPiece = FX_IsOdd(pText->iBidiLevel);
   float fFontSize = pText->fFontSize;

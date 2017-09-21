@@ -30,7 +30,7 @@ class CFX_RTFBreakTest : public testing::Test {
   }
 
  private:
-  CFX_RetainPtr<CFGAS_GEFont> font_;
+  RetainPtr<CFGAS_GEFont> font_;
 };
 
 // As soon as you get one of the control characters the break is complete

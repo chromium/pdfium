@@ -7,13 +7,13 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_
 
-#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_StreamAcc;
 
 class CJBig2_BitStream {
  public:
-  explicit CJBig2_BitStream(const CFX_RetainPtr<CPDF_StreamAcc>& pSrcStream);
+  explicit CJBig2_BitStream(const RetainPtr<CPDF_StreamAcc>& pSrcStream);
   ~CJBig2_BitStream();
 
   // TODO(thestig): readFoo() should return bool.

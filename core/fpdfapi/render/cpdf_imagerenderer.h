@@ -35,7 +35,7 @@ class CPDF_ImageRenderer {
              int blendType);
 
   bool Start(CPDF_RenderStatus* pStatus,
-             const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
+             const RetainPtr<CFX_DIBSource>& pDIBSource,
              FX_ARGB bitmap_argb,
              int bitmap_alpha,
              const CFX_Matrix* pImage2Device,
@@ -58,7 +58,7 @@ class CPDF_ImageRenderer {
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
   void CalculateDrawImage(CFX_DefaultRenderDevice* bitmap_device1,
                           CFX_DefaultRenderDevice* bitmap_device2,
-                          const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
+                          const RetainPtr<CFX_DIBSource>& pDIBSource,
                           CFX_Matrix* pNewMatrix,
                           const FX_RECT& rect) const;
   void HandleFilters();
@@ -69,8 +69,8 @@ class CPDF_ImageRenderer {
   CFX_UnownedPtr<const CFX_Matrix> m_pObj2Device;
   CFX_Matrix m_ImageMatrix;
   CPDF_ImageLoader m_Loader;
-  CFX_RetainPtr<CFX_DIBSource> m_pDIBSource;
-  CFX_RetainPtr<CFX_DIBitmap> m_pClone;
+  RetainPtr<CFX_DIBSource> m_pDIBSource;
+  RetainPtr<CFX_DIBitmap> m_pClone;
   int m_BitmapAlpha;
   bool m_bPatternColor;
   CFX_UnownedPtr<CPDF_Pattern> m_pPattern;

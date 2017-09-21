@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/ifx_scanlinecomposer.h"
 #include "third_party/base/stl_util.h"
@@ -30,12 +30,12 @@ class CFX_BitmapStorer : public IFX_ScanlineComposer {
                FXDIB_Format src_format,
                uint32_t* pSrcPalette) override;
 
-  CFX_RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
-  CFX_RetainPtr<CFX_DIBitmap> Detach();
-  void Replace(CFX_RetainPtr<CFX_DIBitmap>&& pBitmap);
+  RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
+  RetainPtr<CFX_DIBitmap> Detach();
+  void Replace(RetainPtr<CFX_DIBitmap>&& pBitmap);
 
  private:
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  RetainPtr<CFX_DIBitmap> m_pBitmap;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_BITMAPSTORER_H_

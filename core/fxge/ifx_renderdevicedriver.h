@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;
 class CFX_DIBSource;
@@ -60,17 +60,17 @@ class IFX_RenderDeviceDriver {
                                 int blend_type);
 
   virtual bool GetClipBox(FX_RECT* pRect) = 0;
-  virtual bool GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+  virtual bool GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                          int left,
                          int top);
-  virtual CFX_RetainPtr<CFX_DIBitmap> GetBackDrop();
-  virtual bool SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+  virtual RetainPtr<CFX_DIBitmap> GetBackDrop();
+  virtual bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
                          uint32_t color,
                          const FX_RECT* pSrcRect,
                          int dest_left,
                          int dest_top,
                          int blend_type) = 0;
-  virtual bool StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+  virtual bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
                              uint32_t color,
                              int dest_left,
                              int dest_top,
@@ -79,7 +79,7 @@ class IFX_RenderDeviceDriver {
                              const FX_RECT* pClipRect,
                              uint32_t flags,
                              int blend_type) = 0;
-  virtual bool StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+  virtual bool StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
                            int bitmap_alpha,
                            uint32_t color,
                            const CFX_Matrix* pMatrix,
@@ -101,8 +101,8 @@ class IFX_RenderDeviceDriver {
                            const FX_RECT& clip_rect,
                            int alpha,
                            bool bAlphaMode);
-  virtual bool SetBitsWithMask(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
-                               const CFX_RetainPtr<CFX_DIBSource>& pMask,
+  virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBSource>& pBitmap,
+                               const RetainPtr<CFX_DIBSource>& pMask,
                                int left,
                                int top,
                                int bitmap_alpha,

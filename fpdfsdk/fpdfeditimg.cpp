@@ -51,8 +51,7 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
   if (!image_object || !fileAccess)
     return false;
 
-  CFX_RetainPtr<IFX_SeekableReadStream> pFile =
-      MakeSeekableReadStream(fileAccess);
+  RetainPtr<IFX_SeekableReadStream> pFile = MakeSeekableReadStream(fileAccess);
   CPDF_ImageObject* pImgObj = static_cast<CPDF_ImageObject*>(image_object);
 
   if (pages) {
@@ -134,7 +133,7 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
     if (pPage)
       pImgObj->GetImage()->ResetCache(pPage, nullptr);
   }
-  CFX_RetainPtr<CFX_DIBitmap> holder(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> holder(CFXBitmapFromFPDFBitmap(bitmap));
   pImgObj->GetImage()->SetImage(holder);
   pImgObj->CalcBoundingBox();
   pImgObj->SetDirty(true);
@@ -147,15 +146,15 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   if (!pObj || !pObj->IsImage())
     return nullptr;
 
-  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
   if (!pImg)
     return nullptr;
 
-  CFX_RetainPtr<CFX_DIBSource> pSource = pImg->LoadDIBSource();
+  RetainPtr<CFX_DIBSource> pSource = pImg->LoadDIBSource();
   if (!pSource)
     return nullptr;
 
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap;
+  RetainPtr<CFX_DIBitmap> pBitmap;
   // If the source image has a representation of 1 bit per pixel, then convert
   // it to a grayscale bitmap having 1 byte per pixel, since bitmaps have no
   // concept of bits. Otherwise, convert the source image to a bitmap directly,
@@ -176,7 +175,7 @@ FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
   if (!pObj || !pObj->IsImage())
     return 0;
 
-  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
   if (!pImg)
     return 0;
 
@@ -195,7 +194,7 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
   if (!pObj || !pObj->IsImage())
     return 0;
 
-  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
   if (!pImg)
     return 0;
 
@@ -216,7 +215,7 @@ FPDFImageObj_GetImageFilterCount(FPDF_PAGEOBJECT image_object) {
   if (!pObj || !pObj->IsImage())
     return 0;
 
-  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
   if (!pImg)
     return 0;
 
@@ -264,7 +263,7 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   if (!pObj || !pObj->IsImage() || !metadata)
     return false;
 
-  CFX_RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
+  RetainPtr<CPDF_Image> pImg = pObj->AsImage()->GetImage();
   if (!pImg)
     return false;
 

@@ -7,16 +7,16 @@
 #ifndef CORE_FXCRT_CFX_CRTFILEACCESS_H_
 #define CORE_FXCRT_CFX_CRTFILEACCESS_H_
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 
-class CFX_CRTFileAccess : public CFX_Retainable {
+class CFX_CRTFileAccess : public Retainable {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  CFX_RetainPtr<IFX_SeekableStream> CreateFileStream(uint32_t dwModes);
+  RetainPtr<IFX_SeekableStream> CreateFileStream(uint32_t dwModes);
 
  private:
   explicit CFX_CRTFileAccess(const WideStringView& wsPath);

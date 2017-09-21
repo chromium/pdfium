@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/css/cfx_css.h"
 
-class CFX_CSSValue : public CFX_Retainable {
+class CFX_CSSValue : public Retainable {
  public:
   CFX_CSSPrimitiveType GetType() const { return m_value; }
 

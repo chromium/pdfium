@@ -458,7 +458,7 @@ void WideString::ReallocBeforeWrite(FX_STRSIZE nNewLength) {
     return;
   }
 
-  CFX_RetainPtr<StringData> pNewData(StringData::Create(nNewLength));
+  RetainPtr<StringData> pNewData(StringData::Create(nNewLength));
   if (m_pData) {
     FX_STRSIZE nCopyLength = std::min(m_pData->m_nDataLength, nNewLength);
     pNewData->CopyContents(m_pData->m_String, nCopyLength);
@@ -525,7 +525,7 @@ wchar_t* WideString::GetBuffer(FX_STRSIZE nMinBufLength) {
   if (nMinBufLength == 0)
     return nullptr;
 
-  CFX_RetainPtr<StringData> pNewData(StringData::Create(nMinBufLength));
+  RetainPtr<StringData> pNewData(StringData::Create(nMinBufLength));
   pNewData->CopyContents(*m_pData);
   pNewData->m_nDataLength = m_pData->m_nDataLength;
   m_pData.Swap(pNewData);
@@ -568,7 +568,7 @@ void WideString::Concat(const wchar_t* pSrcData, FX_STRSIZE nSrcLen) {
     return;
   }
 
-  CFX_RetainPtr<StringData> pNewData(
+  RetainPtr<StringData> pNewData(
       StringData::Create(m_pData->m_nDataLength + nSrcLen));
   pNewData->CopyContents(*m_pData);
   pNewData->CopyContentsAt(m_pData->m_nDataLength, pSrcData, nSrcLen);
@@ -635,7 +635,7 @@ void WideString::AllocCopy(WideString& dest,
   if (nCopyLen == 0)
     return;
 
-  CFX_RetainPtr<StringData> pNewData(
+  RetainPtr<StringData> pNewData(
       StringData::Create(m_pData->m_String + nCopyIndex, nCopyLen));
   dest.m_pData.Swap(pNewData);
 }
@@ -816,7 +816,7 @@ FX_STRSIZE WideString::Replace(const WideStringView& pOld,
     return count;
   }
 
-  CFX_RetainPtr<StringData> pNewData(StringData::Create(nNewLength));
+  RetainPtr<StringData> pNewData(StringData::Create(nNewLength));
   pStart = m_pData->m_String;
   wchar_t* pDest = pNewData->m_String;
   for (FX_STRSIZE i = 0; i < count; i++) {

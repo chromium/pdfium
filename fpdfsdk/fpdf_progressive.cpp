@@ -50,7 +50,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   CPDF_PageRenderContext* pContext = pOwnedContext.get();
   pPage->SetRenderContext(std::move(pOwnedContext));
 
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
   auto pOwnedDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
   CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
   pContext->m_pDevice = std::move(pOwnedDevice);

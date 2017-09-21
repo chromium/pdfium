@@ -11,8 +11,8 @@
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
@@ -62,7 +62,7 @@ class CFPDF_FileAvailWrap : public CPDF_DataAvail::FileAvail {
 class CFPDF_FileAccessWrap : public IFX_SeekableReadStream {
  public:
   template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   ~CFPDF_FileAccessWrap() override {}
 
@@ -107,7 +107,7 @@ class CFPDF_DataAvail {
   ~CFPDF_DataAvail() {}
 
   std::unique_ptr<CFPDF_FileAvailWrap> m_FileAvail;
-  CFX_RetainPtr<CFPDF_FileAccessWrap> m_FileRead;
+  RetainPtr<CFPDF_FileAccessWrap> m_FileRead;
   std::unique_ptr<CPDF_DataAvail> m_pDataAvail;
 };
 

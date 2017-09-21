@@ -12,13 +12,13 @@ CFGAS_DefaultFontManager::CFGAS_DefaultFontManager() {}
 
 CFGAS_DefaultFontManager::~CFGAS_DefaultFontManager() {}
 
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
+RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
     CFGAS_FontMgr* pFontMgr,
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
   WideString wsFontName(wsFontFamily);
-  CFX_RetainPtr<CFGAS_GEFont> pFont =
+  RetainPtr<CFGAS_GEFont> pFont =
       pFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
   if (!pFont) {
     const FGAS_FontInfo* pCurFont =
@@ -54,12 +54,12 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
   return pFont;
 }
 
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetDefaultFont(
+RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetDefaultFont(
     CFGAS_FontMgr* pFontMgr,
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
-  CFX_RetainPtr<CFGAS_GEFont> pFont =
+  RetainPtr<CFGAS_GEFont> pFont =
       pFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
   if (!pFont) {
     pFont = pFontMgr->LoadFont(static_cast<const wchar_t*>(nullptr),

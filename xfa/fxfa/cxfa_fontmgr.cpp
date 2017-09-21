@@ -23,7 +23,7 @@ CXFA_FontMgr::CXFA_FontMgr() {}
 
 CXFA_FontMgr::~CXFA_FontMgr() {}
 
-CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
+RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     CXFA_FFDoc* hDoc,
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles,
@@ -39,7 +39,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
 
   CFGAS_PDFFontMgr* pMgr = hDoc->GetPDFFontMgr();
   CPDF_Font* pPDFFont = nullptr;
-  CFX_RetainPtr<CFGAS_GEFont> pFont;
+  RetainPtr<CFGAS_GEFont> pFont;
   if (pMgr) {
     pFont = pMgr->GetFont(wsEnglishName.AsStringView(), dwFontStyles, &pPDFFont,
                           true);

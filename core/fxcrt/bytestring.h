@@ -12,9 +12,9 @@
 #include <sstream>
 #include <utility>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_string_data_template.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/optional.h"
 
@@ -195,7 +195,7 @@ class ByteString {
   void AssignCopy(const char* pSrcData, FX_STRSIZE nSrcLen);
   void Concat(const char* lpszSrcData, FX_STRSIZE nSrcLen);
 
-  CFX_RetainPtr<StringData> m_pData;
+  RetainPtr<StringData> m_pData;
 
   friend ByteString_Concat_Test;
   friend fxcrt_ByteStringPool_Test;

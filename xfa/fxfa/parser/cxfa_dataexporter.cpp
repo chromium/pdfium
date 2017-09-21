@@ -328,7 +328,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
 void RegenerateFormFile_Container(
     CXFA_Node* pNode,
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream,
+    const RetainPtr<CFX_SeekableStreamProxy>& pStream,
     bool bSaveXML) {
   XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::Field || eType == XFA_Element::Draw ||
@@ -385,7 +385,7 @@ void RegenerateFormFile_Container(
 
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream,
+    const RetainPtr<CFX_SeekableStreamProxy>& pStream,
     const char* pChecksum,
     bool bSaveXML) {
   if (pNode->IsModelNode()) {
@@ -460,12 +460,11 @@ CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
 
 CXFA_DataExporter::~CXFA_DataExporter() {}
 
-bool CXFA_DataExporter::Export(
-    const CFX_RetainPtr<IFX_SeekableStream>& pWrite) {
+bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pWrite) {
   return Export(pWrite, m_pDocument->GetRoot(), 0, nullptr);
 }
 
-bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFX_SeekableStream>& pWrite,
+bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pWrite,
                                CXFA_Node* pNode,
                                uint32_t dwFlag,
                                const char* pChecksum) {
@@ -479,7 +478,7 @@ bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFX_SeekableStream>& pWrite,
 }
 
 bool CXFA_DataExporter::Export(
-    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream,
+    const RetainPtr<CFX_SeekableStreamProxy>& pStream,
     CXFA_Node* pNode,
     uint32_t dwFlag,
     const char* pChecksum) {

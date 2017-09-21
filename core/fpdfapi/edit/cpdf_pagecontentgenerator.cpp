@@ -175,7 +175,7 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
   }
   *buf << "q " << pImageObj->matrix() << " cm ";
 
-  CFX_RetainPtr<CPDF_Image> pImage = pImageObj->GetImage();
+  RetainPtr<CPDF_Image> pImage = pImageObj->GetImage();
   if (pImage->IsInline())
     return;
 

@@ -25,7 +25,7 @@ class CXFA_SimpleParser {
   CXFA_SimpleParser(CXFA_Document* pFactory, bool bDocumentParser);
   ~CXFA_SimpleParser();
 
-  int32_t StartParse(const CFX_RetainPtr<IFX_SeekableStream>& pStream,
+  int32_t StartParse(const RetainPtr<IFX_SeekableStream>& pStream,
                      XFA_XDPPACKET ePacketID);
   int32_t DoParse();
   CFX_XMLNode* ParseXMLData(const ByteString& wsXML);
@@ -77,8 +77,8 @@ class CXFA_SimpleParser {
 
   CFX_XMLParser* m_pXMLParser;
   std::unique_ptr<CFX_XMLDoc> m_pXMLDoc;
-  CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
-  CFX_RetainPtr<IFX_SeekableStream> m_pFileRead;
+  RetainPtr<CFX_SeekableStreamProxy> m_pStream;
+  RetainPtr<IFX_SeekableStream> m_pFileRead;
   CXFA_Document* m_pFactory;
   CXFA_Node* m_pRootNode;
   XFA_XDPPACKET m_ePacketID;

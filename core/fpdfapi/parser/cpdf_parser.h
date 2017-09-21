@@ -14,10 +14,10 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Array;
 class CPDF_CryptoHandler;
@@ -57,9 +57,9 @@ class CPDF_Parser {
   CPDF_Parser();
   ~CPDF_Parser();
 
-  Error StartParse(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+  Error StartParse(const RetainPtr<IFX_SeekableReadStream>& pFile,
                    CPDF_Document* pDocument);
-  Error StartLinearizedParse(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+  Error StartLinearizedParse(const RetainPtr<IFX_SeekableReadStream>& pFile,
                              CPDF_Document* pDocument);
 
   void SetPassword(const char* password) { m_Password = password; }
@@ -84,8 +84,8 @@ class CPDF_Parser {
   ObjectType GetObjectType(uint32_t objnum) const;
   uint16_t GetObjectGenNum(uint32_t objnum) const;
   bool IsObjectFreeOrNull(uint32_t objnum) const;
-  CFX_RetainPtr<CPDF_CryptoHandler> GetCryptoHandler() const;
-  CFX_RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
+  RetainPtr<CPDF_CryptoHandler> GetCryptoHandler() const;
+  RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
 
   FX_FILESIZE GetObjectOffset(uint32_t objnum) const;
 
@@ -164,7 +164,7 @@ class CPDF_Parser {
   bool LoadLinearizedCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
   bool LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
   Error LoadLinearizedMainXRefTable();
-  CFX_RetainPtr<CPDF_StreamAcc> GetObjectStream(uint32_t number);
+  RetainPtr<CPDF_StreamAcc> GetObjectStream(uint32_t number);
   bool ParseLinearizedHeader();
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
   void ShrinkObjectMap(uint32_t size);
@@ -188,8 +188,7 @@ class CPDF_Parser {
       CPDF_SyntaxParser::ParseType parse_type,
       FX_FILESIZE* pResultPos);
 
-  bool InitSyntaxParser(
-      const CFX_RetainPtr<IFX_SeekableReadStream>& file_access);
+  bool InitSyntaxParser(const RetainPtr<IFX_SeekableReadStream>& file_access);
   bool ParseFileVersion();
 
   CFX_UnownedPtr<CPDF_Document> m_pDocument;
@@ -205,7 +204,7 @@ class CPDF_Parser {
   uint32_t m_dwLinearizedFirstPageXRefStartObjNum;
 
   // A map of object numbers to indirect streams.
-  std::map<uint32_t, CFX_RetainPtr<CPDF_StreamAcc>> m_ObjectStreamMap;
+  std::map<uint32_t, RetainPtr<CPDF_StreamAcc>> m_ObjectStreamMap;
 
   // Mapping of object numbers to offsets. The offsets are relative to the first
   // object in the stream.
@@ -213,7 +212,7 @@ class CPDF_Parser {
 
   // Mapping of streams to their object caches. This is valid as long as the
   // streams in |m_ObjectStreamMap| are valid.
-  std::map<CFX_RetainPtr<CPDF_StreamAcc>, StreamObjectCache> m_ObjCache;
+  std::map<RetainPtr<CPDF_StreamAcc>, StreamObjectCache> m_ObjCache;
 
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;

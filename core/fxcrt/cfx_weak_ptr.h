@@ -11,8 +11,8 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 template <class T, class D = std::default_delete<T>>
 class CFX_WeakPtr {
@@ -80,7 +80,7 @@ class CFX_WeakPtr {
     std::unique_ptr<T, D> m_pObj;
   };
 
-  CFX_RetainPtr<Handle> m_pHandle;
+  RetainPtr<Handle> m_pHandle;
 };
 
 #endif  // CORE_FXCRT_CFX_WEAK_PTR_H_

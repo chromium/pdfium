@@ -100,7 +100,7 @@ uint32_t CountOutputs(
   return total;
 }
 
-void DrawAxialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       CFX_Matrix* pObject2Bitmap,
                       CPDF_Dictionary* pDict,
                       const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
@@ -185,7 +185,7 @@ void DrawAxialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 }
 
-void DrawRadialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        CFX_Matrix* pObject2Bitmap,
                        CPDF_Dictionary* pDict,
                        const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
@@ -317,7 +317,7 @@ void DrawRadialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 }
 
-void DrawFuncShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                      CFX_Matrix* pObject2Bitmap,
                      CPDF_Dictionary* pDict,
                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
@@ -388,7 +388,7 @@ bool GetScanlineIntersect(int y,
   return true;
 }
 
-void DrawGouraud(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int alpha,
                  CPDF_MeshVertex triangle[3]) {
   float min_y = triangle[0].position.y;
@@ -470,7 +470,7 @@ void DrawGouraud(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
 }
 
 void DrawFreeGouraudShading(
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    const RetainPtr<CFX_DIBitmap>& pBitmap,
     CFX_Matrix* pObject2Bitmap,
     CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
@@ -511,7 +511,7 @@ void DrawFreeGouraudShading(
 }
 
 void DrawLatticeGouraudShading(
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    const RetainPtr<CFX_DIBitmap>& pBitmap,
     CFX_Matrix* pObject2Bitmap,
     CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
@@ -827,7 +827,7 @@ struct CPDF_PatchDrawer {
 
 void DrawCoonPatchMeshes(
     ShadingType type,
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    const RetainPtr<CFX_DIBitmap>& pBitmap,
     CFX_Matrix* pObject2Bitmap,
     CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
@@ -911,13 +911,13 @@ void DrawCoonPatchMeshes(
   }
 }
 
-CFX_RetainPtr<CFX_DIBitmap> DrawPatternBitmap(CPDF_Document* pDoc,
-                                              CPDF_PageRenderCache* pCache,
-                                              CPDF_TilingPattern* pPattern,
-                                              const CFX_Matrix* pObject2Device,
-                                              int width,
-                                              int height,
-                                              int flags) {
+RetainPtr<CFX_DIBitmap> DrawPatternBitmap(CPDF_Document* pDoc,
+                                          CPDF_PageRenderCache* pCache,
+                                          CPDF_TilingPattern* pPattern,
+                                          const CFX_Matrix* pObject2Device,
+                                          int width,
+                                          int height,
+                                          int flags) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height,
                        pPattern->colored() ? FXDIB_Argb : FXDIB_8bppMask)) {
@@ -1319,7 +1319,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
       fill_argb, stroke_argb, FillType, m_curBlend);
 }
 
-CFX_RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
+RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
     CPDF_Object* pObj) const {
   ASSERT(pObj);
   CPDF_DocRenderData* pDocCache = m_pContext->GetDocument()->GetRenderData();
@@ -1557,7 +1557,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   int width = FXSYS_round((float)rect.Width() * scaleX);
   int height = FXSYS_round((float)rect.Height() * scaleY);
   CFX_DefaultRenderDevice bitmap_device;
-  CFX_RetainPtr<CFX_DIBitmap> oriDevice;
+  RetainPtr<CFX_DIBitmap> oriDevice;
   if (!isolated && (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
     oriDevice = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!m_pDevice->CreateCompatibleBitmap(oriDevice, width, height))
@@ -1567,14 +1567,14 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (!bitmap_device.Create(width, height, FXDIB_Argb, oriDevice))
     return true;
 
-  CFX_RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
+  RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
   bitmap->Clear(0);
 
   CFX_Matrix new_matrix = *pObj2Device;
   new_matrix.Translate(-rect.left, -rect.top);
   new_matrix.Scale(scaleX, scaleY);
 
-  CFX_RetainPtr<CFX_DIBitmap> pTextMask;
+  RetainPtr<CFX_DIBitmap> pTextMask;
   if (bTextClip) {
     pTextMask = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!pTextMask->Create(width, height, FXDIB_8bppMask))
@@ -1609,7 +1609,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (pSMaskDict) {
     CFX_Matrix smask_matrix = *pPageObj->m_GeneralState.GetSMaskMatrix();
     smask_matrix.Concat(*pObj2Device);
-    CFX_RetainPtr<CFX_DIBSource> pSMaskSource =
+    RetainPtr<CFX_DIBSource> pSMaskSource =
         LoadSMask(pSMaskDict, &rect, &smask_matrix);
     if (pSMaskSource)
       bitmap->MultiplyAlpha(pSMaskSource);
@@ -1638,7 +1638,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   return true;
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
+RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
     const CPDF_PageObject* pObj,
     const FX_RECT& rect,
     int& left,
@@ -1815,7 +1815,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                            &text_matrix, fill_argb, &m_Options);
 }
 
-CFX_RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
+RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
     CPDF_Type3Font* pFont) {
   CPDF_Document* pDoc = pFont->GetDocument();
   if (!pDoc)
@@ -1923,7 +1923,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       }
     } else if (pType3Char->m_pBitmap) {
       if (device_class == FXDC_DISPLAY) {
-        CFX_RetainPtr<CPDF_Type3Cache> pCache = GetCachedType3(pType3Font);
+        RetainPtr<CPDF_Type3Cache> pCache = GetCachedType3(pType3Font);
         refTypeCache.m_dwCount++;
         CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix, sa, sd);
         if (!pBitmap)
@@ -2086,7 +2086,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   buffer.Initialize(m_pContext.Get(), m_pDevice, &clip_rect, m_pCurObj, 150);
   CFX_Matrix FinalMatrix = *pMatrix;
   FinalMatrix.Concat(*buffer.GetMatrix());
-  CFX_RetainPtr<CFX_DIBitmap> pBitmap = buffer.GetBitmap();
+  RetainPtr<CFX_DIBitmap> pBitmap = buffer.GetBitmap();
   if (!pBitmap->GetBuffer())
     return;
 
@@ -2290,9 +2290,9 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   }
   float left_offset = cell_bbox.left - mtPattern2Device.e;
   float top_offset = cell_bbox.bottom - mtPattern2Device.f;
-  CFX_RetainPtr<CFX_DIBitmap> pPatternBitmap;
+  RetainPtr<CFX_DIBitmap> pPatternBitmap;
   if (width * height < 16) {
-    CFX_RetainPtr<CFX_DIBitmap> pEnlargedBitmap =
+    RetainPtr<CFX_DIBitmap> pEnlargedBitmap =
         DrawPatternBitmap(m_pContext->GetDocument(), m_pContext->GetPageCache(),
                           pPattern, pObj2Device, 8, 8, m_Options.m_Flags);
     pPatternBitmap = pEnlargedBitmap->StretchTo(width, height, 0, nullptr);
@@ -2409,7 +2409,7 @@ bool CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
 }
 
 void CPDF_RenderStatus::CompositeDIBitmap(
-    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     int left,
     int top,
     FX_ARGB mask_argb,
@@ -2466,10 +2466,10 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
       rect.Intersect(m_pDevice->GetClipBox());
-      CFX_RetainPtr<CFX_DIBitmap> pClone;
+      RetainPtr<CFX_DIBitmap> pClone;
       if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
         pClone = m_pDevice->GetBackDrop()->Clone(&rect);
-        CFX_RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
+        RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                                 pForeBitmap, rect.left, rect.top);
         left = left >= 0 ? 0 : left;
@@ -2497,7 +2497,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   int back_left, back_top;
   FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                top + pDIBitmap->GetHeight());
-  CFX_RetainPtr<CFX_DIBitmap> pBackdrop =
+  RetainPtr<CFX_DIBitmap> pBackdrop =
       GetBackdrop(m_pCurObj, rect, back_left, back_top,
                   blend_mode > FXDIB_BLEND_NORMAL && bIsolated);
   if (!pBackdrop)
@@ -2523,7 +2523,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   m_pDevice->SetDIBits(pBackdrop, back_left, back_top);
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
+RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     CPDF_Dictionary* pSMaskDict,
     FX_RECT* pClipRect,
     const CFX_Matrix* pMatrix) {

@@ -29,12 +29,11 @@ class CPDF_SyntaxParser {
   explicit CPDF_SyntaxParser(const CFX_WeakPtr<ByteStringPool>& pPool);
   ~CPDF_SyntaxParser();
 
-  void InitParser(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+  void InitParser(const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
                   uint32_t HeaderOffset);
 
-  void InitParserWithValidator(
-      const CFX_RetainPtr<CPDF_ReadValidator>& pValidator,
-      uint32_t HeaderOffset);
+  void InitParserWithValidator(const RetainPtr<CPDF_ReadValidator>& pValidator,
+                               uint32_t HeaderOffset);
 
   FX_FILESIZE GetPos() const { return m_Pos; }
   void SetPos(FX_FILESIZE pos) { m_Pos = std::min(pos, m_FileLen); }
@@ -61,15 +60,15 @@ class CPDF_SyntaxParser {
   void ToNextWord();
   bool BackwardsSearchToWord(const ByteStringView& word, FX_FILESIZE limit);
   FX_FILESIZE FindTag(const ByteStringView& tag, FX_FILESIZE limit);
-  void SetEncrypt(const CFX_RetainPtr<CPDF_CryptoHandler>& pCryptoHandler);
+  void SetEncrypt(const RetainPtr<CPDF_CryptoHandler>& pCryptoHandler);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   ByteString GetNextWord(bool* bIsNumber);
   ByteString PeekNextWord(bool* bIsNumber);
 
-  CFX_RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
+  RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
 
-  const CFX_RetainPtr<CPDF_ReadValidator>& GetValidator() const {
+  const RetainPtr<CPDF_ReadValidator>& GetValidator() const {
     return m_pFileAccess;
   }
 
@@ -113,13 +112,13 @@ class CPDF_SyntaxParser {
 
   FX_FILESIZE m_Pos;
   uint32_t m_MetadataObjnum;
-  CFX_RetainPtr<CPDF_ReadValidator> m_pFileAccess;
+  RetainPtr<CPDF_ReadValidator> m_pFileAccess;
   FX_FILESIZE m_HeaderOffset;
   FX_FILESIZE m_FileLen;
   uint8_t* m_pFileBuf;
   uint32_t m_BufSize;
   FX_FILESIZE m_BufOffset;
-  CFX_RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
+  RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   uint32_t m_WordSize;
   CFX_WeakPtr<ByteStringPool> m_pPool;
