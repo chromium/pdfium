@@ -15,7 +15,7 @@
 #include "core/fxcodec/codec/ccodec_flatemodule.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/cfx_maybe_owned.h"
+#include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_gemodule.h"

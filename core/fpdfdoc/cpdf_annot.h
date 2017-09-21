@@ -10,10 +10,10 @@
 #include <map>
 #include <memory>
 
-#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/maybe_owned.h"
 
 class CFX_RenderDevice;
 class CPDF_Dictionary;
@@ -110,7 +110,7 @@ class CPDF_Annot {
 
   CFX_FloatRect RectForDrawing() const;
 
-  CFX_MaybeOwned<CPDF_Dictionary> m_pAnnotDict;
+  MaybeOwned<CPDF_Dictionary> m_pAnnotDict;
   CFX_UnownedPtr<CPDF_Document> const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;

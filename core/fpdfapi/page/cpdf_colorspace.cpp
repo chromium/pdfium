@@ -31,8 +31,8 @@
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_fixedbufgrow.h"
-#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/maybe_owned.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -176,7 +176,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
   bool IsValidComponents(int32_t nComps) const;
   void PopulateRanges(CPDF_Dictionary* pDict);
 
-  CFX_MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
+  MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
   CFX_RetainPtr<CPDF_IccProfile> m_pProfile;
   uint8_t* m_pCache;
   float* m_pRanges;

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_CFX_MAYBE_OWNED_H_
-#define CORE_FXCRT_CFX_MAYBE_OWNED_H_
+#ifndef CORE_FXCRT_MAYBE_OWNED_H_
+#define CORE_FXCRT_MAYBE_OWNED_H_
 
 #include <algorithm>
 #include <memory>
@@ -12,20 +12,22 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 
+namespace fxcrt {
+
 // A template that can hold either owned or unowned references, and cleans up
 // appropriately.  Possibly the most pernicious anti-pattern imaginable, but
 // it crops up throughout the codebase due to a desire to avoid copying-in
 // objects or data.
 template <typename T, typename D = std::default_delete<T>>
-class CFX_MaybeOwned {
+class MaybeOwned {
  public:
-  CFX_MaybeOwned() : m_pObj(nullptr) {}
-  explicit CFX_MaybeOwned(T* ptr) : m_pObj(ptr) {}
-  explicit CFX_MaybeOwned(std::unique_ptr<T, D> ptr)
+  MaybeOwned() : m_pObj(nullptr) {}
+  explicit MaybeOwned(T* ptr) : m_pObj(ptr) {}
+  explicit MaybeOwned(std::unique_ptr<T, D> ptr)
       : m_pOwnedObj(std::move(ptr)), m_pObj(m_pOwnedObj.get()) {}
 
-  CFX_MaybeOwned(const CFX_MaybeOwned& that) = delete;
-  CFX_MaybeOwned(CFX_MaybeOwned&& that) noexcept
+  MaybeOwned(const MaybeOwned& that) = delete;
+  MaybeOwned(MaybeOwned&& that) noexcept
       : m_pOwnedObj(that.m_pOwnedObj.release()), m_pObj(that.m_pObj) {
     that.m_pObj = nullptr;
   }
@@ -46,31 +48,29 @@ class CFX_MaybeOwned {
     return std::move(m_pOwnedObj);
   }
 
-  CFX_MaybeOwned& operator=(const CFX_MaybeOwned& that) = delete;
-  CFX_MaybeOwned& operator=(CFX_MaybeOwned&& that) {
+  MaybeOwned& operator=(const MaybeOwned& that) = delete;
+  MaybeOwned& operator=(MaybeOwned&& that) {
     m_pOwnedObj = std::move(that.m_pOwnedObj);
     m_pObj = that.m_pObj;
     that.m_pObj = nullptr;
     return *this;
   }
-  CFX_MaybeOwned& operator=(T* ptr) {
+  MaybeOwned& operator=(T* ptr) {
     Reset(ptr);
     return *this;
   }
-  CFX_MaybeOwned& operator=(std::unique_ptr<T, D> ptr) {
+  MaybeOwned& operator=(std::unique_ptr<T, D> ptr) {
     Reset(std::move(ptr));
     return *this;
   }
 
-  bool operator==(const CFX_MaybeOwned& that) const {
-    return Get() == that.Get();
-  }
+  bool operator==(const MaybeOwned& that) const { return Get() == that.Get(); }
   bool operator==(const std::unique_ptr<T, D>& ptr) const {
     return Get() == ptr.get();
   }
   bool operator==(T* ptr) const { return Get() == ptr; }
 
-  bool operator!=(const CFX_MaybeOwned& that) const { return !(*this == that); }
+  bool operator!=(const MaybeOwned& that) const { return !(*this == that); }
   bool operator!=(const std::unique_ptr<T, D> ptr) const {
     return !(*this == ptr);
   }
@@ -85,4 +85,8 @@ class CFX_MaybeOwned {
   T* m_pObj;
 };
 
-#endif  // CORE_FXCRT_CFX_MAYBE_OWNED_H_
+}  // namespace fxcrt
+
+using fxcrt::MaybeOwned;
+
+#endif  // CORE_FXCRT_MAYBE_OWNED_H_

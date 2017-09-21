@@ -12,7 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_GrrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
-#include "core/fxcrt/cfx_maybe_owned.h"
+#include "core/fxcrt/maybe_owned.h"
 #include "third_party/base/ptr_util.h"
 
 CJBig2_TRDProc::CJBig2_TRDProc() {}
@@ -101,7 +101,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
       if (SBREFINE != 0 && pStream->read1Bit(&RI) != 0)
         return nullptr;
 
-      CFX_MaybeOwned<CJBig2_Image> IBI;
+      MaybeOwned<CJBig2_Image> IBI;
       if (RI == 0) {
         IBI = SBSYMS[IDI];
       } else {
@@ -214,16 +214,16 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext,
     JBig2IntDecoderState* pIDS) {
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIADT;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIAFS;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIADS;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIAIT;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIARI;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIARDW;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIARDH;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIARDX;
-  CFX_MaybeOwned<CJBig2_ArithIntDecoder> pIARDY;
-  CFX_MaybeOwned<CJBig2_ArithIaidDecoder> pIAID;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIADT;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIAFS;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIADS;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIAIT;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIARI;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIARDW;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIARDH;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIARDX;
+  MaybeOwned<CJBig2_ArithIntDecoder> pIARDY;
+  MaybeOwned<CJBig2_ArithIaidDecoder> pIAID;
   if (pIDS) {
     pIADT = pIDS->IADT;
     pIAFS = pIDS->IAFS;
@@ -299,7 +299,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
       else
         pIARI->decode(pArithDecoder, &RI);
 
-      CFX_MaybeOwned<CJBig2_Image> pIBI;
+      MaybeOwned<CJBig2_Image> pIBI;
       if (RI == 0) {
         pIBI = SBSYMS[IDI];
       } else {

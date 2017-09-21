@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/cfx_maybe_owned.h"
+#include "core/fxcrt/maybe_owned.h"
 
 #include <memory>
 #include <utility>
@@ -10,6 +10,8 @@
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
+
+namespace fxcrt {
 
 namespace {
 
@@ -27,29 +29,29 @@ class PseudoDeletable {
 
 }  // namespace
 
-TEST(fxcrt, MaybeOwnedNull) {
-  CFX_MaybeOwned<PseudoDeletable> ptr1;
+TEST(MaybeOwned, Null) {
+  MaybeOwned<PseudoDeletable> ptr1;
   EXPECT_FALSE(ptr1.IsOwned());
   EXPECT_FALSE(ptr1);
   EXPECT_EQ(nullptr, ptr1.Get());
 
-  CFX_MaybeOwned<PseudoDeletable> ptr2;
+  MaybeOwned<PseudoDeletable> ptr2;
   EXPECT_TRUE(ptr1 == ptr2);
   EXPECT_FALSE(ptr1 != ptr2);
 }
 
-TEST(fxcrt, MaybeOwnedNotOwned) {
+TEST(MaybeOwned, NotOwned) {
   int delete_count = 0;
   PseudoDeletable thing1(100, &delete_count);
   {
-    CFX_MaybeOwned<PseudoDeletable> ptr(&thing1);
+    MaybeOwned<PseudoDeletable> ptr(&thing1);
     EXPECT_FALSE(ptr.IsOwned());
     EXPECT_EQ(ptr.Get(), &thing1);
     EXPECT_EQ(100, ptr->GetID());
     EXPECT_TRUE(ptr == &thing1);
     EXPECT_FALSE(ptr != &thing1);
 
-    CFX_MaybeOwned<PseudoDeletable> empty;
+    MaybeOwned<PseudoDeletable> empty;
     EXPECT_FALSE(ptr == empty);
     EXPECT_TRUE(ptr != empty);
   }
@@ -58,7 +60,7 @@ TEST(fxcrt, MaybeOwnedNotOwned) {
   delete_count = 0;
   PseudoDeletable thing2(200, &delete_count);
   {
-    CFX_MaybeOwned<PseudoDeletable> ptr(&thing1);
+    MaybeOwned<PseudoDeletable> ptr(&thing1);
     ptr = &thing2;
     EXPECT_FALSE(ptr.IsOwned());
     EXPECT_EQ(ptr.Get(), &thing2);
@@ -69,7 +71,7 @@ TEST(fxcrt, MaybeOwnedNotOwned) {
   delete_count = 0;
   int owned_delete_count = 0;
   {
-    CFX_MaybeOwned<PseudoDeletable> ptr(&thing1);
+    MaybeOwned<PseudoDeletable> ptr(&thing1);
     EXPECT_EQ(100, ptr->GetID());
     ptr = pdfium::MakeUnique<PseudoDeletable>(300, &owned_delete_count);
     EXPECT_TRUE(ptr.IsOwned());
@@ -79,15 +81,15 @@ TEST(fxcrt, MaybeOwnedNotOwned) {
   EXPECT_EQ(1, owned_delete_count);
 }
 
-TEST(fxcrt, MaybeOwnedOwned) {
+TEST(MaybeOwned, Owned) {
   int delete_count = 0;
   {
-    CFX_MaybeOwned<PseudoDeletable> ptr(
+    MaybeOwned<PseudoDeletable> ptr(
         pdfium::MakeUnique<PseudoDeletable>(100, &delete_count));
     EXPECT_TRUE(ptr.IsOwned());
     EXPECT_EQ(100, ptr->GetID());
 
-    CFX_MaybeOwned<PseudoDeletable> empty;
+    MaybeOwned<PseudoDeletable> empty;
     EXPECT_FALSE(ptr == empty);
     EXPECT_TRUE(ptr != empty);
   }
@@ -95,7 +97,7 @@ TEST(fxcrt, MaybeOwnedOwned) {
 
   delete_count = 0;
   {
-    CFX_MaybeOwned<PseudoDeletable> ptr(
+    MaybeOwned<PseudoDeletable> ptr(
         pdfium::MakeUnique<PseudoDeletable>(200, &delete_count));
     ptr = pdfium::MakeUnique<PseudoDeletable>(300, &delete_count);
     EXPECT_TRUE(ptr.IsOwned());
@@ -108,7 +110,7 @@ TEST(fxcrt, MaybeOwnedOwned) {
   int unowned_delete_count = 0;
   PseudoDeletable thing2(400, &unowned_delete_count);
   {
-    CFX_MaybeOwned<PseudoDeletable> ptr(
+    MaybeOwned<PseudoDeletable> ptr(
         pdfium::MakeUnique<PseudoDeletable>(500, &delete_count));
     ptr = &thing2;
     EXPECT_FALSE(ptr.IsOwned());
@@ -120,12 +122,12 @@ TEST(fxcrt, MaybeOwnedOwned) {
   EXPECT_EQ(0, unowned_delete_count);
 }
 
-TEST(fxcrt, MaybeOwnedRelease) {
+TEST(MaybeOwned, Release) {
   int delete_count = 0;
   {
     std::unique_ptr<PseudoDeletable> stolen;
     {
-      CFX_MaybeOwned<PseudoDeletable> ptr(
+      MaybeOwned<PseudoDeletable> ptr(
           pdfium::MakeUnique<PseudoDeletable>(100, &delete_count));
       EXPECT_TRUE(ptr.IsOwned());
       stolen = ptr.Release();
@@ -138,18 +140,18 @@ TEST(fxcrt, MaybeOwnedRelease) {
   EXPECT_EQ(1, delete_count);
 }
 
-TEST(fxcrt, MaybeOwnedMove) {
+TEST(MaybeOwned, Move) {
   int delete_count = 0;
   PseudoDeletable thing1(100, &delete_count);
   {
-    CFX_MaybeOwned<PseudoDeletable> ptr1(&thing1);
-    CFX_MaybeOwned<PseudoDeletable> ptr2(
+    MaybeOwned<PseudoDeletable> ptr1(&thing1);
+    MaybeOwned<PseudoDeletable> ptr2(
         pdfium::MakeUnique<PseudoDeletable>(200, &delete_count));
     EXPECT_FALSE(ptr1.IsOwned());
     EXPECT_TRUE(ptr2.IsOwned());
 
-    CFX_MaybeOwned<PseudoDeletable> ptr3(std::move(ptr1));
-    CFX_MaybeOwned<PseudoDeletable> ptr4(std::move(ptr2));
+    MaybeOwned<PseudoDeletable> ptr3(std::move(ptr1));
+    MaybeOwned<PseudoDeletable> ptr4(std::move(ptr2));
     EXPECT_FALSE(ptr1.IsOwned());
     EXPECT_FALSE(ptr2.IsOwned());
     EXPECT_FALSE(ptr3.IsOwned());
@@ -160,8 +162,8 @@ TEST(fxcrt, MaybeOwnedMove) {
     EXPECT_EQ(100, ptr3->GetID());
     EXPECT_EQ(200, ptr4->GetID());
 
-    CFX_MaybeOwned<PseudoDeletable> ptr5;
-    CFX_MaybeOwned<PseudoDeletable> ptr6;
+    MaybeOwned<PseudoDeletable> ptr5;
+    MaybeOwned<PseudoDeletable> ptr6;
     ptr5 = std::move(ptr3);
     ptr6 = std::move(ptr4);
     EXPECT_FALSE(ptr3.IsOwned());
@@ -176,3 +178,5 @@ TEST(fxcrt, MaybeOwnedMove) {
   }
   EXPECT_EQ(1, delete_count);
 }
+
+}  // namespace fxcrt

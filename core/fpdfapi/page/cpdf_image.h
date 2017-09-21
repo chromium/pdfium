@@ -10,10 +10,10 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/maybe_owned.h"
 
 class CFX_DIBSource;
 class CFX_DIBitmap;
@@ -80,8 +80,8 @@ class CPDF_Image : public CFX_Retainable {
   bool m_bIsMask = false;
   bool m_bInterpolate = false;
   CFX_UnownedPtr<CPDF_Document> const m_pDocument;
-  CFX_MaybeOwned<CPDF_Stream> m_pStream;
-  CFX_MaybeOwned<CPDF_Dictionary> m_pDict;
+  MaybeOwned<CPDF_Stream> m_pStream;
+  MaybeOwned<CPDF_Dictionary> m_pDict;
   CFX_UnownedPtr<CPDF_Dictionary> m_pOC;
 };
 
