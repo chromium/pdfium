@@ -14,10 +14,10 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_crtfileaccess.h"
-#include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/observable.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ifx_systemfontinfo.h"
@@ -81,7 +81,7 @@ typedef void (*FX_LPEnumAllFonts)(std::deque<FX_FONTDESCRIPTOR>* fonts,
 
 FX_LPEnumAllFonts FX_GetDefFontEnumerator();
 
-class CFGAS_FontMgr : public CFX_Observable<CFGAS_FontMgr> {
+class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
  public:
   static std::unique_ptr<CFGAS_FontMgr> Create(FX_LPEnumAllFonts pEnumerator);
 
@@ -180,7 +180,7 @@ class CFX_FontSourceEnum_File {
   std::vector<ByteString> m_FolderPaths;
 };
 
-class CFGAS_FontMgr : public CFX_Observable<CFGAS_FontMgr> {
+class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
  public:
   static std::unique_ptr<CFGAS_FontMgr> Create(
       CFX_FontSourceEnum_File* pFontEnum);

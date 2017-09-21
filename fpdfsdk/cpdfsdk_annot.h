@@ -10,8 +10,8 @@
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
-#include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/observable.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/fsdk_common.h"
 #include "fpdfsdk/fsdk_define.h"
@@ -22,7 +22,7 @@ class CPDF_Page;
 class CPDF_RenderOptions;
 class CPDFSDK_PageView;
 
-class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
+class CPDFSDK_Annot : public Observable<CPDFSDK_Annot> {
  public:
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
   virtual ~CPDFSDK_Annot();

@@ -46,7 +46,7 @@ CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 
 CPWL_Wnd::CreateParams::~CreateParams() = default;
 
-class CPWL_MsgControl : public CFX_Observable<CPWL_MsgControl> {
+class CPWL_MsgControl : public Observable<CPWL_MsgControl> {
   friend class CPWL_Wnd;
 
  public:

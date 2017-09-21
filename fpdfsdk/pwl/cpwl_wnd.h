@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
-#include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/observable.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -100,14 +100,14 @@ inline bool operator!=(const CFX_Color& c1, const CFX_Color& c2) {
 #define PWL_DEFAULT_BLACKCOLOR CFX_Color(COLORTYPE_GRAY, 0)
 #define PWL_DEFAULT_WHITECOLOR CFX_Color(COLORTYPE_GRAY, 1)
 
-class CPWL_Wnd : public CPWL_TimerHandler, public CFX_Observable<CPWL_Wnd> {
+class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
  public:
   class PrivateData {
    protected:
     ~PrivateData() {}
   };
 
-  class ProviderIface : public CFX_Observable<ProviderIface> {
+  class ProviderIface : public Observable<ProviderIface> {
    public:
     virtual ~ProviderIface() {}
 

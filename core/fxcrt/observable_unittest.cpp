@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/cfx_observable.h"
+#include "core/fxcrt/observable.h"
 
 #include <utility>
 #include <vector>
@@ -11,7 +11,7 @@
 
 namespace {
 
-class PseudoObservable : public CFX_Observable<PseudoObservable> {
+class PseudoObservable : public Observable<PseudoObservable> {
  public:
   PseudoObservable() {}
   int SomeMethod() { return 42; }
@@ -20,12 +20,12 @@ class PseudoObservable : public CFX_Observable<PseudoObservable> {
 
 }  // namespace
 
-TEST(fxcrt, ObservePtrNull) {
+TEST(ObservePtr, Null) {
   PseudoObservable::ObservedPtr ptr;
   EXPECT_EQ(nullptr, ptr.Get());
 }
 
-TEST(fxcrt, ObservePtrLivesLonger) {
+TEST(ObservePtr, LivesLonger) {
   PseudoObservable* pObs = new PseudoObservable;
   PseudoObservable::ObservedPtr ptr(pObs);
   EXPECT_NE(nullptr, ptr.Get());
@@ -34,7 +34,7 @@ TEST(fxcrt, ObservePtrLivesLonger) {
   EXPECT_EQ(nullptr, ptr.Get());
 }
 
-TEST(fxcrt, ObservePtrLivesShorter) {
+TEST(ObservePtr, LivesShorter) {
   PseudoObservable obs;
   {
     PseudoObservable::ObservedPtr ptr(&obs);
@@ -44,7 +44,7 @@ TEST(fxcrt, ObservePtrLivesShorter) {
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
 }
 
-TEST(fxcrt, ObserveCopyConstruct) {
+TEST(ObservePtr, CopyConstruct) {
   PseudoObservable obs;
   {
     PseudoObservable::ObservedPtr ptr(&obs);
@@ -60,7 +60,7 @@ TEST(fxcrt, ObserveCopyConstruct) {
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
 }
 
-TEST(fxcrt, ObserveCopyAssign) {
+TEST(ObservePtr, CopyAssign) {
   PseudoObservable obs;
   {
     PseudoObservable::ObservedPtr ptr(&obs);
@@ -77,7 +77,7 @@ TEST(fxcrt, ObserveCopyAssign) {
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
 }
 
-TEST(fxcrt, ObserveVector) {
+TEST(ObservePtr, Vector) {
   PseudoObservable obs;
   {
     std::vector<PseudoObservable::ObservedPtr> vec1;
@@ -101,7 +101,7 @@ TEST(fxcrt, ObserveVector) {
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
 }
 
-TEST(fxcrt, ObserveVectorAutoClear) {
+TEST(ObservePtr, VectorAutoClear) {
   std::vector<PseudoObservable::ObservedPtr> vec1;
   {
     PseudoObservable obs;
@@ -115,7 +115,7 @@ TEST(fxcrt, ObserveVectorAutoClear) {
   EXPECT_EQ(nullptr, vec1[1].Get());
 }
 
-TEST(fxcrt, ObservePtrResetNull) {
+TEST(ObservePtr, ResetNull) {
   PseudoObservable obs;
   PseudoObservable::ObservedPtr ptr(&obs);
   EXPECT_EQ(1u, obs.ActiveObservedPtrs());
@@ -123,7 +123,7 @@ TEST(fxcrt, ObservePtrResetNull) {
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
 }
 
-TEST(fxcrt, ObservePtrReset) {
+TEST(ObservePtr, Reset) {
   PseudoObservable obs1;
   PseudoObservable obs2;
   PseudoObservable::ObservedPtr ptr(&obs1);
@@ -134,7 +134,7 @@ TEST(fxcrt, ObservePtrReset) {
   EXPECT_EQ(1u, obs2.ActiveObservedPtrs());
 }
 
-TEST(fxcrt, ObservePtrEquals) {
+TEST(ObservePtr, Equals) {
   PseudoObservable obj1;
   PseudoObservable obj2;
   PseudoObservable::ObservedPtr null_ptr1;
@@ -155,7 +155,7 @@ TEST(fxcrt, ObservePtrEquals) {
   EXPECT_FALSE(obj1_ptr1 == obj2_ptr1);
 }
 
-TEST(fxcrt, ObservePtrNotEquals) {
+TEST(ObservePtr, NotEquals) {
   PseudoObservable obj1;
   PseudoObservable obj2;
   PseudoObservable::ObservedPtr null_ptr1;
@@ -174,7 +174,7 @@ TEST(fxcrt, ObservePtrNotEquals) {
   EXPECT_TRUE(obj1_ptr1 != obj2_ptr1);
 }
 
-TEST(fxcrt, ObservePtrBool) {
+TEST(ObservePtr, Bool) {
   PseudoObservable obj1;
   PseudoObservable::ObservedPtr null_ptr;
   PseudoObservable::ObservedPtr obj1_ptr(&obj1);

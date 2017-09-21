@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_observable.h"
+#include "core/fxcrt/observable.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
@@ -23,7 +23,7 @@ class CJS_EventContext;
 
 class CJS_Runtime : public IJS_Runtime,
                     public CFXJS_Engine,
-                    public CFX_Observable<CJS_Runtime> {
+                    public Observable<CJS_Runtime> {
  public:
   using FieldEvent = std::pair<WideString, JS_EVENT_T>;
 

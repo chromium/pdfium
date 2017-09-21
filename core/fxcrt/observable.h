@@ -2,16 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_CFX_OBSERVABLE_H_
-#define CORE_FXCRT_CFX_OBSERVABLE_H_
+#ifndef CORE_FXCRT_OBSERVABLE_H_
+#define CORE_FXCRT_OBSERVABLE_H_
 
 #include <set>
 
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/stl_util.h"
 
+namespace fxcrt {
+
 template <class T>
-class CFX_Observable {
+class Observable {
  public:
   class ObservedPtr {
    public:
@@ -53,9 +55,9 @@ class CFX_Observable {
     T* m_pObservable;
   };
 
-  CFX_Observable() {}
-  CFX_Observable(const CFX_Observable& that) = delete;
-  ~CFX_Observable() { NotifyObservedPtrs(); }
+  Observable() {}
+  Observable(const Observable& that) = delete;
+  ~Observable() { NotifyObservedPtrs(); }
   void AddObservedPtr(ObservedPtr* pObservedPtr) {
     ASSERT(!pdfium::ContainsKey(m_ObservedPtrs, pObservedPtr));
     m_ObservedPtrs.insert(pObservedPtr);
@@ -69,7 +71,7 @@ class CFX_Observable {
       pObservedPtr->OnDestroy();
     m_ObservedPtrs.clear();
   }
-  CFX_Observable& operator=(const CFX_Observable& that) = delete;
+  Observable& operator=(const Observable& that) = delete;
 
  protected:
   size_t ActiveObservedPtrsForTesting() const { return m_ObservedPtrs.size(); }
@@ -78,4 +80,8 @@ class CFX_Observable {
   std::set<ObservedPtr*> m_ObservedPtrs;
 };
 
-#endif  // CORE_FXCRT_CFX_OBSERVABLE_H_
+}  // namespace fxcrt
+
+using fxcrt::Observable;
+
+#endif  // CORE_FXCRT_OBSERVABLE_H_

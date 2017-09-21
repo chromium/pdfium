@@ -14,7 +14,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
-#include "core/fxcrt/cfx_observable.h"
+#include "core/fxcrt/observable.h"
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/fsdk_define.h"
@@ -41,7 +41,7 @@ class IJS_Runtime;
 // lingering lifetime issues via the memory tools.
 
 class CPDFSDK_FormFillEnvironment
-    : public CFX_Observable<CPDFSDK_FormFillEnvironment> {
+    : public Observable<CPDFSDK_FormFillEnvironment> {
  public:
   CPDFSDK_FormFillEnvironment(UnderlyingDocumentType* pDoc,
                               FPDF_FORMFILLINFO* pFFinfo);
