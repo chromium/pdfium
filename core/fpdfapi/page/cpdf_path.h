@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -43,7 +43,7 @@ class CPDF_Path {
   const CFX_PathData* GetObject() const { return m_Ref.GetObject(); }
 
  private:
-  CFX_SharedCopyOnWrite<CFX_PathData> m_Ref;
+  SharedCopyOnWrite<CFX_PathData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATH_H_

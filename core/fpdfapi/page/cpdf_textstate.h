@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_TEXTSTATE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_TEXTSTATE_H_
 
-#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
+#include "core/fxcrt/shared_copy_on_write.h"
 
 class CPDF_Document;
 class CPDF_Font;
@@ -84,7 +84,7 @@ class CPDF_TextState {
     void ReleaseFont();
   };
 
-  CFX_SharedCopyOnWrite<TextData> m_Ref;
+  SharedCopyOnWrite<TextData> m_Ref;
 };
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode);

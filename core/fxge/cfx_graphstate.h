@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_CFX_GRAPHSTATE_H_
 #define CORE_FXGE_CFX_GRAPHSTATE_H_
 
-#include "core/fxcrt/cfx_shared_copy_on_write.h"
+#include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxge/cfx_graphstatedata.h"
 
 class CPDF_Array;
@@ -38,7 +38,7 @@ class CFX_GraphState {
   const CFX_GraphStateData* GetObject() const { return m_Ref.GetObject(); }
 
  private:
-  CFX_SharedCopyOnWrite<CFX_GraphStateData> m_Ref;
+  SharedCopyOnWrite<CFX_GraphStateData> m_Ref;
 };
 
 #endif  // CORE_FXGE_CFX_GRAPHSTATE_H_

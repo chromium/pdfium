@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_path.h"
-#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/shared_copy_on_write.h"
 
 class CPDF_Path;
 class CPDF_TextObject;
@@ -56,7 +56,7 @@ class CPDF_ClipPath {
     std::vector<std::unique_ptr<CPDF_TextObject>> m_TextList;
   };
 
-  CFX_SharedCopyOnWrite<PathData> m_Ref;
+  SharedCopyOnWrite<PathData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CLIPPATH_H_

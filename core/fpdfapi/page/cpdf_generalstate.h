@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
 
-#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/cfx_unowned_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Object;
@@ -106,7 +106,7 @@ class CPDF_GeneralState {
     float m_Smoothness;
   };
 
-  CFX_SharedCopyOnWrite<StateData> m_Ref;
+  SharedCopyOnWrite<StateData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
