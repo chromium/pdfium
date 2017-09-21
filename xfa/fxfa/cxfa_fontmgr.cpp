@@ -1748,7 +1748,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
 
   WideString wsEnglishName = XFA_LocalFontNameToEnglishName(wsFontFamily);
   auto it = m_PDFFontMgrMap.find(hDoc);
-  CXFA_PDFFontMgr* pMgr =
+  CFGAS_PDFFontMgr* pMgr =
       it != m_PDFFontMgrMap.end() ? it->second.get() : nullptr;
   CPDF_Font* pPDFFont = nullptr;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
@@ -1784,7 +1784,8 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
 
 void CXFA_FontMgr::LoadDocFonts(CXFA_FFDoc* hDoc) {
   if (!m_PDFFontMgrMap[hDoc])
-    m_PDFFontMgrMap[hDoc] = pdfium::MakeUnique<CXFA_PDFFontMgr>(hDoc);
+    m_PDFFontMgrMap[hDoc] = pdfium::MakeUnique<CFGAS_PDFFontMgr>(
+        hDoc->GetPDFDoc(), hDoc->GetApp()->GetFDEFontMgr());
 }
 
 void CXFA_FontMgr::ReleaseDocFonts(CXFA_FFDoc* hDoc) {

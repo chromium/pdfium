@@ -10,6 +10,7 @@
 
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_notedriver.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 
 CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFTextEdit(pDataAcc) {}

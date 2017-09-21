@@ -15,8 +15,8 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
+#include "xfa/fgas/font/cfgas_pdffontmgr.h"
 #include "xfa/fxfa/cxfa_deffontmgr.h"
-#include "xfa/fxfa/cxfa_pdffontmgr.h"
 #include "xfa/fxfa/fxfa.h"
 
 class CPDF_Font;
@@ -47,7 +47,7 @@ class CXFA_FontMgr {
 
  private:
   std::unique_ptr<CXFA_DefFontMgr> m_pDefFontMgr;
-  std::map<CXFA_FFDoc*, std::unique_ptr<CXFA_PDFFontMgr>> m_PDFFontMgrMap;
+  std::map<CXFA_FFDoc*, std::unique_ptr<CFGAS_PDFFontMgr>> m_PDFFontMgrMap;
   std::map<ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 

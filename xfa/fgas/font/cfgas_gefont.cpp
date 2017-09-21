@@ -15,7 +15,6 @@
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
-#include "xfa/fxfa/cxfa_fontmgr.h"
 
 // static
 CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
