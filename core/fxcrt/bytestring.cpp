@@ -20,7 +20,7 @@
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
 
-template class CFX_StringDataTemplate<char>;
+template class fxcrt::StringDataTemplate<char>;
 template class fxcrt::StringViewTemplate<char>;
 template class CFX_StringPoolTemplate<ByteString>;
 template struct std::hash<ByteString>;

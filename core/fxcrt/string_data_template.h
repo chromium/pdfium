@@ -4,23 +4,24 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CFX_STRING_DATA_TEMPLATE_H_
-#define CORE_FXCRT_CFX_STRING_DATA_TEMPLATE_H_
+#ifndef CORE_FXCRT_STRING_DATA_TEMPLATE_H_
+#define CORE_FXCRT_STRING_DATA_TEMPLATE_H_
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
 
+namespace fxcrt {
+
 template <typename CharType>
-class CFX_StringDataTemplate {
+class StringDataTemplate {
  public:
-  static CFX_StringDataTemplate* Create(FX_STRSIZE nLen) {
+  static StringDataTemplate* Create(FX_STRSIZE nLen) {
     ASSERT(nLen > 0);
 
     // Calculate space needed for the fixed portion of the struct plus the
     // NUL char that is not included in |m_nAllocLength|.
-    int overhead =
-        offsetof(CFX_StringDataTemplate, m_String) + sizeof(CharType);
+    int overhead = offsetof(StringDataTemplate, m_String) + sizeof(CharType);
     pdfium::base::CheckedNumeric<FX_STRSIZE> nSize = nLen;
     nSize *= sizeof(CharType);
     nSize += overhead;
@@ -36,18 +37,18 @@ class CFX_StringDataTemplate {
     ASSERT(usableLen >= nLen);
 
     void* pData = pdfium::base::PartitionAllocGeneric(
-        gStringPartitionAllocator.root(), totalSize, "CFX_StringDataTemplate");
-    return new (pData) CFX_StringDataTemplate(nLen, usableLen);
+        gStringPartitionAllocator.root(), totalSize, "StringDataTemplate");
+    return new (pData) StringDataTemplate(nLen, usableLen);
   }
 
-  static CFX_StringDataTemplate* Create(const CFX_StringDataTemplate& other) {
-    CFX_StringDataTemplate* result = Create(other.m_nDataLength);
+  static StringDataTemplate* Create(const StringDataTemplate& other) {
+    StringDataTemplate* result = Create(other.m_nDataLength);
     result->CopyContents(other);
     return result;
   }
 
-  static CFX_StringDataTemplate* Create(const CharType* pStr, FX_STRSIZE nLen) {
-    CFX_StringDataTemplate* result = Create(nLen);
+  static StringDataTemplate* Create(const CharType* pStr, FX_STRSIZE nLen) {
+    StringDataTemplate* result = Create(nLen);
     result->CopyContents(pStr, nLen);
     return result;
   }
@@ -63,7 +64,7 @@ class CFX_StringDataTemplate {
     return m_nRefs <= 1 && nTotalLen <= m_nAllocLength;
   }
 
-  void CopyContents(const CFX_StringDataTemplate& other) {
+  void CopyContents(const StringDataTemplate& other) {
     ASSERT(other.m_nDataLength <= m_nAllocLength);
     memcpy(m_String, other.m_String,
            (other.m_nDataLength + 1) * sizeof(CharType));
@@ -102,17 +103,21 @@ class CFX_StringDataTemplate {
   CharType m_String[1];
 
  private:
-  CFX_StringDataTemplate(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
+  StringDataTemplate(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
       : m_nRefs(0), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
     ASSERT(dataLen >= 0);
     ASSERT(dataLen <= allocLen);
     m_String[dataLen] = 0;
   }
 
-  ~CFX_StringDataTemplate() = delete;
+  ~StringDataTemplate() = delete;
 };
 
-extern template class CFX_StringDataTemplate<char>;
-extern template class CFX_StringDataTemplate<wchar_t>;
+extern template class StringDataTemplate<char>;
+extern template class StringDataTemplate<wchar_t>;
 
-#endif  // CORE_FXCRT_CFX_STRING_DATA_TEMPLATE_H_
+}  // namespace fxcrt
+
+using fxcrt::StringDataTemplate;
+
+#endif  // CORE_FXCRT_STRING_DATA_TEMPLATE_H_

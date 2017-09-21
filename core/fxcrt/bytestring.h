@@ -12,9 +12,9 @@
 #include <sstream>
 #include <utility>
 
-#include "core/fxcrt/cfx_string_data_template.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/optional.h"
 
@@ -185,7 +185,7 @@ class ByteString {
   static ByteString FormatFloat(float f, int precision = 0);
 
  protected:
-  using StringData = CFX_StringDataTemplate<char>;
+  using StringData = StringDataTemplate<char>;
 
   void ReallocBeforeWrite(FX_STRSIZE nNewLen);
   void AllocBeforeWrite(FX_STRSIZE nNewLen);

@@ -11,10 +11,10 @@
 #include <iterator>
 #include <utility>
 
-#include "core/fxcrt/cfx_string_data_template.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/optional.h"
 
@@ -179,7 +179,7 @@ class WideString {
   ByteString UTF16LE_Encode() const;
 
  protected:
-  using StringData = CFX_StringDataTemplate<wchar_t>;
+  using StringData = StringDataTemplate<wchar_t>;
 
   void ReallocBeforeWrite(FX_STRSIZE nLen);
   void AllocBeforeWrite(FX_STRSIZE nLen);
