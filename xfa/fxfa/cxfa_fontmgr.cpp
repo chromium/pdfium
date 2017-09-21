@@ -36,9 +36,8 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     return iter->second;
 
   WideString wsEnglishName = FGAS_FontNameToEnglishName(wsFontFamily);
-  auto it = m_PDFFontMgrMap.find(hDoc);
-  CFGAS_PDFFontMgr* pMgr =
-      it != m_PDFFontMgrMap.end() ? it->second.get() : nullptr;
+
+  CFGAS_PDFFontMgr* pMgr = hDoc->GetPDFFontMgr();
   CPDF_Font* pPDFFont = nullptr;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
   if (pMgr) {
@@ -62,6 +61,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     pFont = m_pDefFontMgr->GetDefaultFont(
         hDoc->GetApp()->GetFDEFontMgr(), wsFontFamily, dwFontStyles, wCodePage);
   }
+
   if (pFont) {
     if (pPDFFont) {
       pMgr->SetFont(pFont, pPDFFont);
@@ -70,16 +70,6 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     m_FontMap[bsKey] = pFont;
   }
   return pFont;
-}
-
-void CXFA_FontMgr::LoadDocFonts(CXFA_FFDoc* hDoc) {
-  if (!m_PDFFontMgrMap[hDoc])
-    m_PDFFontMgrMap[hDoc] = pdfium::MakeUnique<CFGAS_PDFFontMgr>(
-        hDoc->GetPDFDoc(), hDoc->GetApp()->GetFDEFontMgr());
-}
-
-void CXFA_FontMgr::ReleaseDocFonts(CXFA_FFDoc* hDoc) {
-  m_PDFFontMgrMap.erase(hDoc);
 }
 
 void CXFA_FontMgr::SetDefFontMgr(

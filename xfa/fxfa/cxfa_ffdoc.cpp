@@ -241,7 +241,9 @@ int32_t CXFA_FFDoc::DoLoad() {
 }
 
 void CXFA_FFDoc::StopLoad() {
-  m_pApp->GetXFAFontMgr()->LoadDocFonts(this);
+  m_pPDFFontMgr = pdfium::MakeUnique<CFGAS_PDFFontMgr>(
+      GetPDFDoc(), GetApp()->GetFDEFontMgr());
+
   m_dwDocType = XFA_DocType::Static;
   CXFA_Node* pConfig = ToNode(
       m_pDocumentParser->GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
@@ -327,7 +329,7 @@ void CXFA_FFDoc::CloseDoc() {
     doc->ClearLayoutData();
 
   m_pNotify.reset();
-  m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
+  m_pPDFFontMgr.reset();
   m_HashToDibDpiMap.clear();
   m_pApp->ClearEventTargets();
 }

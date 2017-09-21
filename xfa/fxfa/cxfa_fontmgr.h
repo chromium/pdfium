@@ -30,13 +30,10 @@ class CXFA_FontMgr {
                                       const WideStringView& wsFontFamily,
                                       uint32_t dwFontStyles,
                                       uint16_t wCodePage = 0xFFFF);
-  void LoadDocFonts(CXFA_FFDoc* hDoc);
-  void ReleaseDocFonts(CXFA_FFDoc* hDoc);
   void SetDefFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
  private:
   std::unique_ptr<CFGAS_DefaultFontManager> m_pDefFontMgr;
-  std::map<CXFA_FFDoc*, std::unique_ptr<CFGAS_PDFFontMgr>> m_PDFFontMgrMap;
   std::map<ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 

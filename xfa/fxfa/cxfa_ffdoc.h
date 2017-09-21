@@ -15,6 +15,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 
+class CFGAS_PDFFontMgr;
 class CFX_ChecksumContext;
 class CXFA_FFApp;
 class CXFA_FFNotify;
@@ -72,6 +73,7 @@ class CXFA_FFDoc {
   CFX_RetainPtr<CFX_DIBitmap> GetPDFNamedImage(const WideStringView& wsName,
                                                int32_t& iImageXDpi,
                                                int32_t& iImageYDpi);
+  CFGAS_PDFFontMgr* GetPDFFontMgr() const { return m_pPDFFontMgr.get(); }
 
   bool SavePackage(XFA_HashCode code,
                    const CFX_RetainPtr<IFX_SeekableStream>& pFile,
@@ -88,6 +90,7 @@ class CXFA_FFDoc {
   CFX_UnownedPtr<CPDF_Document> m_pPDFDoc;
   std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
   std::unique_ptr<CXFA_FFDocView> m_DocView;
+  std::unique_ptr<CFGAS_PDFFontMgr> m_pPDFFontMgr;
   XFA_DocType m_dwDocType;
 };
 
