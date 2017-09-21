@@ -12,7 +12,6 @@
 #include "third_party/base/ptr_util.h"
 
 namespace fxcrt {
-
 namespace {
 
 class PseudoDeletable {

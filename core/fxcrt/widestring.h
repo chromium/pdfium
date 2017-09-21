@@ -18,12 +18,12 @@
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/optional.h"
 
-class WideString_ConcatInPlace_Test;
-class fxcrt_WideStringPool_Test;
 
 namespace fxcrt {
 
 class ByteString;
+class StringPool_WideString_Test;
+class WideString_ConcatInPlace_Test;
 
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
@@ -195,7 +195,7 @@ class WideString {
   RetainPtr<StringData> m_pData;
 
   friend WideString_ConcatInPlace_Test;
-  friend fxcrt_WideStringPool_Test;
+  friend StringPool_WideString_Test;
 };
 
 inline WideString operator+(const WideStringView& str1,

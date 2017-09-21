@@ -9,6 +9,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace fxcrt {
 namespace {
 
 class PseudoRetainable {
@@ -298,3 +299,5 @@ TEST(RetainPtr, VectorMove) {
   EXPECT_EQ(1, obj.retain_count());
   EXPECT_EQ(1, obj.release_count());
 }
+
+}  // namespace fxcrt

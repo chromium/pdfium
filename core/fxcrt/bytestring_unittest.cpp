@@ -11,6 +11,8 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 
+namespace fxcrt {
+
 TEST(ByteString, ElementAccess) {
   const ByteString abc("abc");
   EXPECT_EQ('a', abc[0]);
@@ -1640,3 +1642,5 @@ TEST(ByteString, FormatInteger) {
   EXPECT_EQ("2147483647", ByteString::FormatInteger(INT_MAX));
   EXPECT_EQ("-2147483648", ByteString::FormatInteger(INT_MIN));
 }
+
+}  // namespace fxcrt

@@ -13,10 +13,10 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/string_pool_template.h"
 #include "third_party/base/ptr_util.h"
 
 class CPDF_IndirectObjectHolder;

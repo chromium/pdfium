@@ -2,11 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(fxcrt, ByteStringPool) {
+namespace fxcrt {
+
+TEST(StringPool, ByteString) {
   ByteStringPool pool;
 
   ByteString null1;
@@ -49,7 +51,7 @@ TEST(fxcrt, ByteStringPool) {
   EXPECT_EQ(goats2.m_pData, reinterned_goats2.m_pData);
 }
 
-TEST(fxcrt, WideStringPool) {
+TEST(StringPool, WideString) {
   WideStringPool pool;
 
   WideString null1;
@@ -91,3 +93,5 @@ TEST(fxcrt, WideStringPool) {
   EXPECT_EQ(goats2.m_pData, reinterned_goats1.m_pData);
   EXPECT_EQ(goats2.m_pData, reinterned_goats2.m_pData);
 }
+
+}  // namespace fxcrt

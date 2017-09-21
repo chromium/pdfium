@@ -10,6 +10,8 @@
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace fxcrt {
+
 TEST(WideString, ElementAccess) {
   const WideString abc(L"abc");
   EXPECT_EQ(L'a', abc[0]);
@@ -1603,3 +1605,5 @@ TEST(WideStringView, WideOStreamOverload) {
     EXPECT_EQ(L"abcdef", stream.str());
   }
 }
+
+}  // namespace fxcrt

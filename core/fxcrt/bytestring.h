@@ -18,11 +18,10 @@
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/optional.h"
 
-class ByteString_Concat_Test;
-class fxcrt_ByteStringPool_Test;
-
 namespace fxcrt {
 
+class ByteString_Concat_Test;
+class StringPool_ByteString_Test;
 class WideString;
 
 // A mutable string with shared buffers using copy-on-write semantics that
@@ -198,7 +197,7 @@ class ByteString {
   RetainPtr<StringData> m_pData;
 
   friend ByteString_Concat_Test;
-  friend fxcrt_ByteStringPool_Test;
+  friend class StringPool_ByteString_Test;
 };
 
 inline bool operator==(const char* lhs, const ByteString& rhs) {

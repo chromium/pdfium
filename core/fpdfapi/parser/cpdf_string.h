@@ -10,10 +10,10 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/string_pool_template.h"
 
 class CPDF_String : public CPDF_Object {
  public:

@@ -12,17 +12,17 @@
 #include <cctype>
 #include <cwctype>
 
-#include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/string_pool_template.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
 
 template class fxcrt::StringDataTemplate<wchar_t>;
 template class fxcrt::StringViewTemplate<wchar_t>;
-template class CFX_StringPoolTemplate<WideString>;
+template class fxcrt::StringPoolTemplate<WideString>;
 template struct std::hash<WideString>;
 
 #define FORCE_ANSI 0x10000

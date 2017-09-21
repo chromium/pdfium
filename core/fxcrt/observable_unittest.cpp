@@ -9,6 +9,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace fxcrt {
 namespace {
 
 class PseudoObservable : public Observable<PseudoObservable> {
@@ -183,3 +184,5 @@ TEST(ObservePtr, Bool) {
   EXPECT_FALSE(null_bool);
   EXPECT_TRUE(obj1_bool);
 }
+
+}  // namespace fxcrt

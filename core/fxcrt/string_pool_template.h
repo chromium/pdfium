@@ -4,15 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CFX_STRING_POOL_TEMPLATE_H_
-#define CORE_FXCRT_CFX_STRING_POOL_TEMPLATE_H_
+#ifndef CORE_FXCRT_STRING_POOL_TEMPLATE_H_
+#define CORE_FXCRT_STRING_POOL_TEMPLATE_H_
 
 #include <unordered_set>
 
 #include "core/fxcrt/fx_string.h"
 
+namespace fxcrt {
+
 template <typename StringType>
-class CFX_StringPoolTemplate {
+class StringPoolTemplate {
  public:
   StringType Intern(const StringType& str) { return *m_Pool.insert(str).first; }
   void Clear() { m_Pool.clear(); }
@@ -21,10 +23,14 @@ class CFX_StringPoolTemplate {
   std::unordered_set<StringType> m_Pool;
 };
 
-using ByteStringPool = CFX_StringPoolTemplate<ByteString>;
-using WideStringPool = CFX_StringPoolTemplate<WideString>;
+extern template class StringPoolTemplate<ByteString>;
+extern template class StringPoolTemplate<WideString>;
 
-extern template class CFX_StringPoolTemplate<ByteString>;
-extern template class CFX_StringPoolTemplate<WideString>;
+}  // namespace fxcrt
 
-#endif  // CORE_FXCRT_CFX_STRING_POOL_TEMPLATE_H_
+using fxcrt::StringPoolTemplate;
+
+using ByteStringPool = StringPoolTemplate<ByteString>;
+using WideStringPool = StringPoolTemplate<WideString>;
+
+#endif  // CORE_FXCRT_STRING_POOL_TEMPLATE_H_

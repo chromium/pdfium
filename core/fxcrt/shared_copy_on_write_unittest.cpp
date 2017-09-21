@@ -9,6 +9,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace fxcrt {
 namespace {
 
 class Observer {
@@ -126,3 +127,5 @@ TEST(SharedCopyOnWrite, GetModify) {
   }
   EXPECT_EQ(2, observer.GetDestructionCount("one"));
 }
+
+}  // namespace fxcrt
