@@ -10,12 +10,12 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "core/fxcrt/weak_ptr.h"
 
 class CPDF_Name : public CPDF_Object {
  public:
-  CPDF_Name(CFX_WeakPtr<ByteStringPool> pPool, const ByteString& str);
+  CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str);
   ~CPDF_Name() override;
 
   // CPDF_Object:

@@ -14,8 +14,8 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "core/fxcrt/weak_ptr.h"
 
 class CPDF_StreamParser {
  public:
@@ -24,7 +24,7 @@ class CPDF_StreamParser {
   CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize);
   CPDF_StreamParser(const uint8_t* pData,
                     uint32_t dwSize,
-                    const CFX_WeakPtr<ByteStringPool>& pPool);
+                    const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_StreamParser();
 
   SyntaxType ParseNextElement();
@@ -56,7 +56,7 @@ class CPDF_StreamParser {
   uint8_t m_WordBuffer[256];
   uint32_t m_WordSize;
   std::unique_ptr<CPDF_Object> m_pLastObj;
-  CFX_WeakPtr<ByteStringPool> m_pPool;
+  WeakPtr<ByteStringPool> m_pPool;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_

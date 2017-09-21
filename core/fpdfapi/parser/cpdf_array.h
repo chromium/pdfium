@@ -24,7 +24,7 @@ class CPDF_Array : public CPDF_Object {
       std::vector<std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Array();
-  explicit CPDF_Array(const CFX_WeakPtr<ByteStringPool>& pPool);
+  explicit CPDF_Array(const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_Array() override;
 
   // CPDF_Object:
@@ -112,7 +112,7 @@ class CPDF_Array : public CPDF_Object {
       std::set<const CPDF_Object*>* pVisited) const override;
 
   std::vector<std::unique_ptr<CPDF_Object>> m_Objects;
-  CFX_WeakPtr<ByteStringPool> m_pPool;
+  WeakPtr<ByteStringPool> m_pPool;
 };
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {

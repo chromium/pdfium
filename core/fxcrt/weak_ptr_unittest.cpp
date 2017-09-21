@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/cfx_weak_ptr.h"
+#include "core/fxcrt/weak_ptr.h"
 
 #include <memory>
 #include <utility>
@@ -10,11 +10,12 @@
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace fxcrt {
 namespace {
 
 class PseudoDeletable;
-using WeakPtr = CFX_WeakPtr<PseudoDeletable, ReleaseDeleter<PseudoDeletable>>;
-using UniquePtr =
+using WeakTestPtr = WeakPtr<PseudoDeletable, ReleaseDeleter<PseudoDeletable>>;
+using UniqueTestPtr =
     std::unique_ptr<PseudoDeletable, ReleaseDeleter<PseudoDeletable>>;
 
 class PseudoDeletable {
@@ -24,52 +25,52 @@ class PseudoDeletable {
     ++delete_count_;
     next_.Reset();
   }
-  void SetNext(const WeakPtr& next) { next_ = next; }
+  void SetNext(const WeakTestPtr& next) { next_ = next; }
   int delete_count() const { return delete_count_; }
 
  private:
   int delete_count_;
-  WeakPtr next_;
+  WeakTestPtr next_;
 };
 
 }  // namespace
 
-TEST(fxcrt, WeakPtrNull) {
-  WeakPtr ptr1;
+TEST(WeakPtr, Null) {
+  WeakTestPtr ptr1;
   EXPECT_FALSE(ptr1);
 
-  WeakPtr ptr2;
+  WeakTestPtr ptr2;
   EXPECT_TRUE(ptr1 == ptr2);
   EXPECT_FALSE(ptr1 != ptr2);
 
-  WeakPtr ptr3(ptr1);
+  WeakTestPtr ptr3(ptr1);
   EXPECT_TRUE(ptr1 == ptr3);
   EXPECT_FALSE(ptr1 != ptr3);
 
-  WeakPtr ptr4 = ptr1;
+  WeakTestPtr ptr4 = ptr1;
   EXPECT_TRUE(ptr1 == ptr4);
   EXPECT_FALSE(ptr1 != ptr4);
 }
 
-TEST(fxcrt, WeakPtrNonNull) {
+TEST(WeakPtr, NonNull) {
   PseudoDeletable thing;
   EXPECT_EQ(0, thing.delete_count());
   {
-    UniquePtr unique(&thing);
-    WeakPtr ptr1(std::move(unique));
+    UniqueTestPtr unique(&thing);
+    WeakTestPtr ptr1(std::move(unique));
     EXPECT_TRUE(ptr1);
     EXPECT_EQ(&thing, ptr1.Get());
 
-    WeakPtr ptr2;
+    WeakTestPtr ptr2;
     EXPECT_FALSE(ptr1 == ptr2);
     EXPECT_TRUE(ptr1 != ptr2);
     {
-      WeakPtr ptr3(ptr1);
+      WeakTestPtr ptr3(ptr1);
       EXPECT_TRUE(ptr1 == ptr3);
       EXPECT_FALSE(ptr1 != ptr3);
       EXPECT_EQ(&thing, ptr3.Get());
       {
-        WeakPtr ptr4 = ptr1;
+        WeakTestPtr ptr4 = ptr1;
         EXPECT_TRUE(ptr1 == ptr4);
         EXPECT_FALSE(ptr1 != ptr4);
         EXPECT_EQ(&thing, ptr4.Get());
@@ -80,12 +81,12 @@ TEST(fxcrt, WeakPtrNonNull) {
   EXPECT_EQ(1, thing.delete_count());
 }
 
-TEST(fxcrt, WeakPtrResetNull) {
+TEST(WeakPtr, ResetNull) {
   PseudoDeletable thing;
   {
-    UniquePtr unique(&thing);
-    WeakPtr ptr1(std::move(unique));
-    WeakPtr ptr2 = ptr1;
+    UniqueTestPtr unique(&thing);
+    WeakTestPtr ptr1(std::move(unique));
+    WeakTestPtr ptr2 = ptr1;
     ptr1.Reset();
     EXPECT_FALSE(ptr1);
     EXPECT_EQ(nullptr, ptr1.Get());
@@ -98,14 +99,14 @@ TEST(fxcrt, WeakPtrResetNull) {
   EXPECT_EQ(1, thing.delete_count());
 }
 
-TEST(fxcrt, WeakPtrResetNonNull) {
+TEST(WeakPtr, ResetNonNull) {
   PseudoDeletable thing1;
   PseudoDeletable thing2;
   {
-    UniquePtr unique1(&thing1);
-    WeakPtr ptr1(std::move(unique1));
-    WeakPtr ptr2 = ptr1;
-    UniquePtr unique2(&thing2);
+    UniqueTestPtr unique1(&thing1);
+    WeakTestPtr ptr1(std::move(unique1));
+    WeakTestPtr ptr2 = ptr1;
+    UniqueTestPtr unique2(&thing2);
     ptr2.Reset(std::move(unique2));
     EXPECT_TRUE(ptr1);
     EXPECT_EQ(&thing1, ptr1.Get());
@@ -120,12 +121,12 @@ TEST(fxcrt, WeakPtrResetNonNull) {
   EXPECT_EQ(1, thing2.delete_count());
 }
 
-TEST(fxcrt, WeakPtrDeleteObject) {
+TEST(WeakPtr, DeleteObject) {
   PseudoDeletable thing;
   {
-    UniquePtr unique(&thing);
-    WeakPtr ptr1(std::move(unique));
-    WeakPtr ptr2 = ptr1;
+    UniqueTestPtr unique(&thing);
+    WeakTestPtr ptr1(std::move(unique));
+    WeakTestPtr ptr2 = ptr1;
     ptr1.DeleteObject();
     EXPECT_FALSE(ptr1);
     EXPECT_EQ(nullptr, ptr1.Get());
@@ -138,14 +139,14 @@ TEST(fxcrt, WeakPtrDeleteObject) {
   EXPECT_EQ(1, thing.delete_count());
 }
 
-TEST(fxcrt, WeakPtrCyclic) {
+TEST(WeakPtr, Cyclic) {
   PseudoDeletable thing1;
   PseudoDeletable thing2;
   {
-    UniquePtr unique1(&thing1);
-    UniquePtr unique2(&thing2);
-    WeakPtr ptr1(std::move(unique1));
-    WeakPtr ptr2(std::move(unique2));
+    UniqueTestPtr unique1(&thing1);
+    UniqueTestPtr unique2(&thing2);
+    WeakTestPtr ptr1(std::move(unique1));
+    WeakTestPtr ptr2(std::move(unique2));
     ptr1->SetNext(ptr2);
     ptr2->SetNext(ptr1);
   }
@@ -154,14 +155,14 @@ TEST(fxcrt, WeakPtrCyclic) {
   EXPECT_EQ(0, thing2.delete_count());
 }
 
-TEST(fxcrt, WeakPtrCyclicDeleteObject) {
+TEST(WeakPtr, CyclicDeleteObject) {
   PseudoDeletable thing1;
   PseudoDeletable thing2;
   {
-    UniquePtr unique1(&thing1);
-    UniquePtr unique2(&thing2);
-    WeakPtr ptr1(std::move(unique1));
-    WeakPtr ptr2(std::move(unique2));
+    UniqueTestPtr unique1(&thing1);
+    UniqueTestPtr unique2(&thing2);
+    WeakTestPtr ptr1(std::move(unique1));
+    WeakTestPtr ptr2(std::move(unique2));
     ptr1->SetNext(ptr2);
     ptr2->SetNext(ptr1);
     ptr1.DeleteObject();
@@ -171,3 +172,5 @@ TEST(fxcrt, WeakPtrCyclicDeleteObject) {
   EXPECT_EQ(1, thing1.delete_count());
   EXPECT_EQ(1, thing2.delete_count());
 }
+
+}  // namespace fxcrt

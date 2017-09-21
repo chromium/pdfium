@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"
 
-CPDF_Name::CPDF_Name(CFX_WeakPtr<ByteStringPool> pPool, const ByteString& str)
+CPDF_Name::CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str)
     : m_Name(str) {
   if (pPool)
     m_Name = pPool->Intern(m_Name);

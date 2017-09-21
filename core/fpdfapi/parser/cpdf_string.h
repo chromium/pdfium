@@ -10,18 +10,16 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "core/fxcrt/weak_ptr.h"
 
 class CPDF_String : public CPDF_Object {
  public:
   CPDF_String();
-  CPDF_String(CFX_WeakPtr<ByteStringPool> pPool,
-              const ByteString& str,
-              bool bHex);
-  CPDF_String(CFX_WeakPtr<ByteStringPool> pPool, const WideString& str);
+  CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str, bool bHex);
+  CPDF_String(WeakPtr<ByteStringPool> pPool, const WideString& str);
   ~CPDF_String() override;
 
   // CPDF_Object:

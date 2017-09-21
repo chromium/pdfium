@@ -22,9 +22,9 @@
 #include "third_party/base/stl_util.h"
 
 CPDF_Dictionary::CPDF_Dictionary()
-    : CPDF_Dictionary(CFX_WeakPtr<ByteStringPool>()) {}
+    : CPDF_Dictionary(WeakPtr<ByteStringPool>()) {}
 
-CPDF_Dictionary::CPDF_Dictionary(const CFX_WeakPtr<ByteStringPool>& pPool)
+CPDF_Dictionary::CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool)
     : m_pPool(pPool) {}
 
 CPDF_Dictionary::~CPDF_Dictionary() {

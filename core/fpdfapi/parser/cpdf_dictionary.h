@@ -13,10 +13,10 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "core/fxcrt/weak_ptr.h"
 #include "third_party/base/ptr_util.h"
 
 class CPDF_IndirectObjectHolder;
@@ -27,7 +27,7 @@ class CPDF_Dictionary : public CPDF_Object {
       std::map<ByteString, std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Dictionary();
-  explicit CPDF_Dictionary(const CFX_WeakPtr<ByteStringPool>& pPool);
+  explicit CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_Dictionary() override;
 
   // CPDF_Object:
@@ -97,7 +97,7 @@ class CPDF_Dictionary : public CPDF_Object {
   const_iterator begin() const { return m_Map.begin(); }
   const_iterator end() const { return m_Map.end(); }
 
-  CFX_WeakPtr<ByteStringPool> GetByteStringPool() const { return m_pPool; }
+  WeakPtr<ByteStringPool> GetByteStringPool() const { return m_pPool; }
 
  protected:
   ByteString MaybeIntern(const ByteString& str);
@@ -105,7 +105,7 @@ class CPDF_Dictionary : public CPDF_Object {
       bool bDirect,
       std::set<const CPDF_Object*>* visited) const override;
 
-  CFX_WeakPtr<ByteStringPool> m_pPool;
+  WeakPtr<ByteStringPool> m_pPool;
   std::map<ByteString, std::unique_ptr<CPDF_Object>> m_Map;
 };
 

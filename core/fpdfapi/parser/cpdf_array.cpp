@@ -20,8 +20,7 @@
 
 CPDF_Array::CPDF_Array() {}
 
-CPDF_Array::CPDF_Array(const CFX_WeakPtr<ByteStringPool>& pPool)
-    : m_pPool(pPool) {}
+CPDF_Array::CPDF_Array(const WeakPtr<ByteStringPool>& pPool) : m_pPool(pPool) {}
 
 CPDF_Array::~CPDF_Array() {
   // Break cycles for cyclic references.

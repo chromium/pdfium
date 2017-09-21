@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <memory>
 
-#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
+#include "core/fxcrt/weak_ptr.h"
 
 class CPDF_CryptoHandler;
 class CPDF_Dictionary;
@@ -26,7 +26,7 @@ class CPDF_SyntaxParser {
   enum class ParseType { kStrict, kLoose };
 
   CPDF_SyntaxParser();
-  explicit CPDF_SyntaxParser(const CFX_WeakPtr<ByteStringPool>& pPool);
+  explicit CPDF_SyntaxParser(const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_SyntaxParser();
 
   void InitParser(const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
@@ -121,7 +121,7 @@ class CPDF_SyntaxParser {
   RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   uint32_t m_WordSize;
-  CFX_WeakPtr<ByteStringPool> m_pPool;
+  WeakPtr<ByteStringPool> m_pPool;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_

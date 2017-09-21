@@ -14,7 +14,7 @@
 
 CPDF_String::CPDF_String() : m_bHex(false) {}
 
-CPDF_String::CPDF_String(CFX_WeakPtr<ByteStringPool> pPool,
+CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool,
                          const ByteString& str,
                          bool bHex)
     : m_String(str), m_bHex(bHex) {
@@ -22,8 +22,7 @@ CPDF_String::CPDF_String(CFX_WeakPtr<ByteStringPool> pPool,
     m_String = pPool->Intern(m_String);
 }
 
-CPDF_String::CPDF_String(CFX_WeakPtr<ByteStringPool> pPool,
-                         const WideString& str)
+CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool, const WideString& str)
     : m_String(PDF_EncodeText(str)), m_bHex(false) {
   if (pPool)
     m_String = pPool->Intern(m_String);

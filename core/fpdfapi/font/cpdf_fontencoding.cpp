@@ -1672,7 +1672,7 @@ bool CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
 }
 
 std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
-    CFX_WeakPtr<ByteStringPool> pPool) {
+    WeakPtr<ByteStringPool> pPool) {
   int predefined = 0;
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
        cs++) {

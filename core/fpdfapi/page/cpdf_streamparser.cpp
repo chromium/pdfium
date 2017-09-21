@@ -107,7 +107,7 @@ CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize)
 
 CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData,
                                      uint32_t dwSize,
-                                     const CFX_WeakPtr<ByteStringPool>& pPool)
+                                     const WeakPtr<ByteStringPool>& pPool)
     : m_pBuf(pData), m_Size(dwSize), m_Pos(0), m_pPool(pPool) {}
 
 CPDF_StreamParser::~CPDF_StreamParser() {}
