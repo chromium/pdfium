@@ -152,7 +152,7 @@ TEST(cpdf_syntax_parser, GetInvalidReference) {
   uint8_t data[] = "4294967295 0 R";
   parser.InitParser(pdfium::MakeRetain<CFX_MemoryStream>(data, 14, false), 0);
   std::unique_ptr<CPDF_Object> ref =
-      parser.GetObject(nullptr, CPDF_Object::kInvalidObjNum, 0, false);
+      parser.GetObjectBody(nullptr, CPDF_Object::kInvalidObjNum, 0, false);
   EXPECT_FALSE(ref);
 }
 

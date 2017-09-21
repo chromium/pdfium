@@ -360,20 +360,20 @@ ByteString CPDF_SyntaxParser::GetKeyword() {
   return GetNextWord(nullptr);
 }
 
-std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
+std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBody(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t objnum,
     uint32_t gennum,
     bool bDecrypt) {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  auto result =
-      GetObjectInternal(pObjList, objnum, gennum, bDecrypt, ParseType::kLoose);
+  auto result = GetObjectBodyInternal(pObjList, objnum, gennum, bDecrypt,
+                                      ParseType::kLoose);
   if (GetValidator()->has_read_problems())
     return nullptr;
   return result;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
+std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t objnum,
     uint32_t gennum,
@@ -425,8 +425,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
   }
   if (word == "[") {
     auto pArray = pdfium::MakeUnique<CPDF_Array>();
-    while (std::unique_ptr<CPDF_Object> pObj =
-               GetObject(pObjList, objnum, gennum, true)) {
+    while (std::unique_ptr<CPDF_Object> pObj = GetObjectBodyInternal(
+               pObjList, objnum, gennum, true, ParseType::kLoose)) {
       pArray->Add(std::move(pObj));
     }
     return (parse_type == ParseType::kLoose || m_WordBuffer[0] == ']')
@@ -465,8 +465,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
       if (key.IsEmpty() && parse_type == ParseType::kLoose)
         continue;
 
-      std::unique_ptr<CPDF_Object> pObj =
-          GetObject(pObjList, objnum, gennum, true);
+      std::unique_ptr<CPDF_Object> pObj = GetObjectBodyInternal(
+          pObjList, objnum, gennum, true, ParseType::kLoose);
       if (!pObj) {
         if (parse_type == ParseType::kLoose)
           continue;
@@ -487,7 +487,9 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
         dwSignValuePos) {
       AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
       m_Pos = dwSignValuePos;
-      pDict->SetFor("Contents", GetObject(pObjList, objnum, gennum, false));
+      pDict->SetFor("Contents",
+                    GetObjectBodyInternal(pObjList, objnum, gennum, false,
+                                          ParseType::kLoose));
     }
 
     FX_FILESIZE SavedPos = m_Pos;
@@ -504,14 +506,14 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectInternal(
   return nullptr;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
+std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyForStrict(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t objnum,
     uint32_t gennum,
     bool bDecrypt) {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  auto result =
-      GetObjectInternal(pObjList, objnum, gennum, bDecrypt, ParseType::kStrict);
+  auto result = GetObjectBodyInternal(pObjList, objnum, gennum, bDecrypt,
+                                      ParseType::kStrict);
   if (GetValidator()->has_read_problems())
     return nullptr;
   return result;
@@ -549,8 +551,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetIndirectObject(
     return nullptr;
   }
 
-  std::unique_ptr<CPDF_Object> pObj =
-      GetObjectInternal(pObjList, objnum, parser_gennum, bDecrypt, parse_type);
+  std::unique_ptr<CPDF_Object> pObj = GetObjectBodyInternal(
+      pObjList, objnum, parser_gennum, bDecrypt, parse_type);
   if (pObj) {
     if (!objnum)
       pObj->m_ObjNum = parser_objnum;

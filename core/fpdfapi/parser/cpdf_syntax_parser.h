@@ -38,12 +38,13 @@ class CPDF_SyntaxParser {
   FX_FILESIZE GetPos() const { return m_Pos; }
   void SetPos(FX_FILESIZE pos) { m_Pos = std::min(pos, m_FileLen); }
 
-  std::unique_ptr<CPDF_Object> GetObject(CPDF_IndirectObjectHolder* pObjList,
-                                         uint32_t objnum,
-                                         uint32_t gennum,
-                                         bool bDecrypt);
+  std::unique_ptr<CPDF_Object> GetObjectBody(
+      CPDF_IndirectObjectHolder* pObjList,
+      uint32_t objnum,
+      uint32_t gennum,
+      bool bDecrypt);
 
-  std::unique_ptr<CPDF_Object> GetObjectForStrict(
+  std::unique_ptr<CPDF_Object> GetObjectBodyForStrict(
       CPDF_IndirectObjectHolder* pObjList,
       uint32_t objnum,
       uint32_t gennum,
@@ -103,7 +104,7 @@ class CPDF_SyntaxParser {
            static_cast<FX_FILESIZE>(m_BufOffset + m_BufSize) <= pos;
   }
 
-  std::unique_ptr<CPDF_Object> GetObjectInternal(
+  std::unique_ptr<CPDF_Object> GetObjectBodyInternal(
       CPDF_IndirectObjectHolder* pObjList,
       uint32_t objnum,
       uint32_t gennum,

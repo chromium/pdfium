@@ -876,7 +876,7 @@ bool CPDF_Parser::RebuildCrossRef() {
               m_pSyntax->SetPos(pos + i - m_pSyntax->m_HeaderOffset);
 
               std::unique_ptr<CPDF_Object> pObj =
-                  m_pSyntax->GetObject(m_pDocument.Get(), 0, 0, false);
+                  m_pSyntax->GetObjectBody(m_pDocument.Get(), 0, 0, false);
               if (pObj) {
                 if (pObj->IsDictionary() || pObj->AsStream()) {
                   CPDF_Stream* pStream = pObj->AsStream();
@@ -1237,7 +1237,7 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
     return nullptr;
 
   syntax.SetPos(offset + it->second);
-  return syntax.GetObject(pObjList, 0, 0, false);
+  return syntax.GetObjectBody(pObjList, 0, 0, false);
 }
 
 RetainPtr<CPDF_StreamAcc> CPDF_Parser::GetObjectStream(uint32_t objnum) {
@@ -1300,7 +1300,7 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Parser::LoadTrailerV4() {
   if (m_pSyntax->GetKeyword() != "trailer")
     return nullptr;
 
-  return ToDictionary(m_pSyntax->GetObject(m_pDocument.Get(), 0, 0, false));
+  return ToDictionary(m_pSyntax->GetObjectBody(m_pDocument.Get(), 0, 0, false));
 }
 
 uint32_t CPDF_Parser::GetPermissions() const {
@@ -1337,7 +1337,7 @@ bool CPDF_Parser::ParseLinearizedHeader() {
   }
 
   m_pLinearized = CPDF_LinearizedHeader::CreateForObject(
-      m_pSyntax->GetObject(nullptr, objnum, gennum, false));
+      m_pSyntax->GetObjectBody(nullptr, objnum, gennum, false));
   if (!m_pLinearized)
     return false;
 
