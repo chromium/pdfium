@@ -243,7 +243,7 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
                 m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round);
   CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
+  GetApp()->GetFWLWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
 }
 
 bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,

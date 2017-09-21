@@ -29,7 +29,8 @@ struct FWL_NEEDREPAINTHITDATA {
 }  // namespace
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
-    : m_dwCapability(0), m_pAdapter(pAdapterNative->GetWidgetMgr(this)) {
+    : m_dwCapability(0),
+      m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr(this)) {
   ASSERT(m_pAdapter);
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)

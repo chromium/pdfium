@@ -36,7 +36,10 @@ class CXFA_FFApp {
   void SetDefaultFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
   CXFA_FFDocHandler* GetDocHandler();
-  CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgr* pDelegate);
+
+  CXFA_FWLAdapterWidgetMgr* GetFWLAdapterWidgetMgr(CFWL_WidgetMgr* pDelegate);
+  CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pWidgetMgr.Get(); }
+
   CFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
 
@@ -44,7 +47,6 @@ class CXFA_FFApp {
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   IFWL_AdapterTimerMgr* GetTimerMgr() const;
   CXFA_FontMgr* GetXFAFontMgr() const;
-  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.Get(); }
 
   void ClearEventTargets();
 

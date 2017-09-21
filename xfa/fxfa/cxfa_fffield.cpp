@@ -73,7 +73,7 @@ void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
+  GetApp()->GetFWLWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
 }
 
 void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
@@ -732,7 +732,7 @@ bool CXFA_FFField::IsDataChanged() {
 }
 
 void CXFA_FFField::TranslateFWLMessage(CFWL_Message* pMessage) {
-  GetApp()->GetWidgetMgr()->OnProcessMessageToForm(pMessage);
+  GetApp()->GetFWLWidgetMgr()->OnProcessMessageToForm(pMessage);
 }
 
 void CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {}
