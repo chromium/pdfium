@@ -164,15 +164,4 @@ class CGifLZWDecoder {
   char* err_msg_ptr;
 };
 
-static const int32_t s_gif_interlace_step[4] = {8, 8, 4, 2};
-
-GifDecodeStatus gif_read_header(CGifContext* gif_ptr);
-GifDecodeStatus gif_get_frame(CGifContext* gif_ptr);
-int32_t gif_get_frame_num(CGifContext* gif_ptr);
-GifDecodeStatus gif_load_frame(CGifContext* gif_ptr, int32_t frame_num);
-void gif_input_buffer(CGifContext* gif_ptr,
-                      uint8_t* src_buf,
-                      uint32_t src_size);
-uint32_t gif_get_avail_input(CGifContext* gif_ptr, uint8_t** avail_buf_ptr);
-
 #endif  // CORE_FXCODEC_LGIF_FX_GIF_H_

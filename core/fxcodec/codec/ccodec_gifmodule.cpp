@@ -30,7 +30,7 @@ GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
                                              int* bg_index,
                                              CFX_DIBAttribute* pAttribute) {
   auto* context = static_cast<CGifContext*>(pContext);
-  GifDecodeStatus ret = gif_read_header(context);
+  GifDecodeStatus ret = context->ReadHeader();
   if (ret != GifDecodeStatus::Success)
     return ret;
 
@@ -46,11 +46,11 @@ GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
 GifDecodeStatus CCodec_GifModule::LoadFrameInfo(Context* pContext,
                                                 int* frame_num) {
   auto* context = static_cast<CGifContext*>(pContext);
-  GifDecodeStatus ret = gif_get_frame(context);
+  GifDecodeStatus ret = context->GetFrame();
   if (ret != GifDecodeStatus::Success)
     return ret;
 
-  *frame_num = gif_get_frame_num(context);
+  *frame_num = context->GetFrameNum();
   return GifDecodeStatus::Success;
 }
 
@@ -58,7 +58,7 @@ GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
                                             int frame_num,
                                             CFX_DIBAttribute* pAttribute) {
   auto* context = static_cast<CGifContext*>(pContext);
-  GifDecodeStatus ret = gif_load_frame(context, frame_num);
+  GifDecodeStatus ret = context->LoadFrame(frame_num);
   if (ret != GifDecodeStatus::Success || !pAttribute)
     return ret;
 
@@ -81,12 +81,12 @@ GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
 uint32_t CCodec_GifModule::GetAvailInput(Context* pContext,
                                          uint8_t** avail_buf_ptr) {
   auto* context = static_cast<CGifContext*>(pContext);
-  return gif_get_avail_input(context, avail_buf_ptr);
+  return context->GetAvailInput(avail_buf_ptr);
 }
 
 void CCodec_GifModule::Input(Context* pContext,
                              const uint8_t* src_buf,
                              uint32_t src_size) {
   auto* context = static_cast<CGifContext*>(pContext);
-  gif_input_buffer(context, (uint8_t*)src_buf, src_size);
+  context->SetInputBuffer((uint8_t*)src_buf, src_size);
 }

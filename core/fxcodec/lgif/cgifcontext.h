@@ -36,6 +36,12 @@ class CGifContext : public CCodec_GifModule::Context {
                          int32_t trans_index,
                          int32_t disposal_method,
                          bool interlace);
+  GifDecodeStatus ReadHeader();
+  GifDecodeStatus GetFrame();
+  GifDecodeStatus LoadFrame(int32_t frame_num);
+  void SetInputBuffer(uint8_t* src_buf, uint32_t src_size);
+  uint32_t GetAvailInput(uint8_t** avail_buf_ptr) const;
+  int32_t GetFrameNum() const;
 
   UnownedPtr<CCodec_GifModule> m_pModule;
   UnownedPtr<CCodec_GifModule::Delegate> m_pDelegate;
@@ -59,6 +65,13 @@ class CGifContext : public CCodec_GifModule::Context {
   uint8_t global_color_resolution;
   uint8_t img_pass_num;
   char m_szLastError[GIF_MAX_ERROR_SIZE];
+
+ private:
+  uint8_t* ReadData(uint8_t** des_buf_pp, uint32_t data_size);
+  void SaveDecodingStatus(int32_t status);
+  GifDecodeStatus DecodeExtension();
+  GifDecodeStatus DecodeImageInfo();
+  void DecodingFailureAtTailCleanup(GifImage* gif_image_ptr);
 };
 
 #endif  // CORE_FXCODEC_LGIF_CGIFCONTEXT_H_
