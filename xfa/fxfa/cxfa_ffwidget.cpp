@@ -899,6 +899,17 @@ void XFA_DrawBox(CXFA_Box box,
   XFA_BOX_Stroke(box, strokes, pGS, rtWidget, matrix, dwFlags);
 }
 
+bool IsFXCodecErrorStatus(FXCODEC_STATUS status) {
+  return (status == FXCODEC_STATUS_ERROR ||
+#ifdef PDF_ENABLE_XFA
+          status == FXCODEC_STATUS_ERR_MEMORY ||
+#endif  // PDF_ENABLE_XFA
+          status == FXCODEC_STATUS_ERR_READ ||
+          status == FXCODEC_STATUS_ERR_FLUSH ||
+          status == FXCODEC_STATUS_ERR_FORMAT ||
+          status == FXCODEC_STATUS_ERR_PARAMS);
+}
+
 }  // namespace
 
 CXFA_FFWidget::CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc)
@@ -2001,14 +2012,29 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   pBitmap->Create(pProgressiveDecoder->GetWidth(),
                   pProgressiveDecoder->GetHeight(), dibFormat);
   pBitmap->Clear(0xffffffff);
+
   int32_t nFrames;
-  if ((pProgressiveDecoder->GetFrames(nFrames) ==
-       FXCODEC_STATUS_DECODE_READY) &&
-      (nFrames > 0)) {
-    pProgressiveDecoder->StartDecode(pBitmap, 0, 0, pBitmap->GetWidth(),
-                                     pBitmap->GetHeight());
-    pProgressiveDecoder->ContinueDecode();
+  if (pProgressiveDecoder->GetFrames(&nFrames) != FXCODEC_STATUS_DECODE_READY ||
+      nFrames <= 0) {
+    pBitmap = nullptr;
+    return pBitmap;
   }
+
+  FXCODEC_STATUS status = pProgressiveDecoder->StartDecode(
+      pBitmap, 0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
+  if (IsFXCodecErrorStatus(status)) {
+    pBitmap = nullptr;
+    return pBitmap;
+  }
+
+  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
+    status = pProgressiveDecoder->ContinueDecode();
+    if (IsFXCodecErrorStatus(status)) {
+      pBitmap = nullptr;
+      return pBitmap;
+    }
+  }
+
   return pBitmap;
 }
 

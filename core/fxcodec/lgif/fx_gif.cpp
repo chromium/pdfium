@@ -147,6 +147,7 @@ GifDecodeStatus gif_decode_image_info(CGifContext* context) {
   }
   GifLF* gif_img_info_lf_ptr = (GifLF*)&gif_img_info_ptr->local_flag;
   if (gif_img_info_lf_ptr->local_pal) {
+    gif_image->local_pallette_exp = gif_img_info_lf_ptr->pal_bits;
     int32_t loc_pal_size = (2 << gif_img_info_lf_ptr->pal_bits) * 3;
     uint8_t* loc_pal_ptr = nullptr;
     if (!gif_read_data(context, &loc_pal_ptr, loc_pal_size)) {
@@ -162,7 +163,7 @@ GifDecodeStatus gif_decode_image_info(CGifContext* context) {
     context->skip_size = skip_size_org;
     return GifDecodeStatus::Unfinished;
   }
-  gif_image->image_code_size = *code_size_ptr;
+  gif_image->image_code_exp = *code_size_ptr;
   context->RecordCurrentPosition(&gif_image->image_data_pos);
   gif_image->image_data_pos += context->skip_size;
   gif_image->m_ImageGCE = nullptr;
@@ -214,10 +215,13 @@ CGifLZWDecoder::CGifLZWDecoder(char* error_ptr)
 
 CGifLZWDecoder::~CGifLZWDecoder() {}
 
-void CGifLZWDecoder::InitTable(uint8_t code_len) {
-  code_size = code_len;
-  ASSERT(code_size < 13);
-  code_clear = 1 << code_size;
+void CGifLZWDecoder::InitTable(uint8_t color_exp, uint8_t code_exp) {
+  // TODO(rharrison): Refactor all of this, so that initializing the table with
+  // bad values will kill the decompress.
+  ASSERT(code_exp <= GIF_MAX_LZW_EXP);
+  code_color_end = std::min(2 << color_exp, 1 << code_exp);
+  code_size = code_exp;
+  code_clear = 1 << code_exp;
   code_end = code_clear + 1;
   bits_left = 0;
   code_store = 0;
@@ -247,6 +251,9 @@ bool CGifLZWDecoder::DecodeString(uint16_t code) {
     stack[GIF_MAX_LZW_CODE - 1 - stack_size++] = code_table[code].suffix;
     code = code_table[code].prefix;
   }
+  if (code >= code_color_end)
+    return false;
+
   stack[GIF_MAX_LZW_CODE - 1 - stack_size++] = static_cast<uint8_t>(code);
   code_first = static_cast<uint8_t>(code);
   return true;
@@ -282,7 +289,7 @@ GifDecodeStatus CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t* des_size) {
   }
   ASSERT(err_msg_ptr);
   while (i <= *des_size && (avail_in > 0 || bits_left >= code_size_cur)) {
-    if (code_size_cur > 12) {
+    if (code_size_cur > GIF_MAX_LZW_EXP) {
       strncpy(err_msg_ptr, "Code Length Out Of Range", GIF_MAX_ERROR_SIZE - 1);
       return GifDecodeStatus::Error;
     }
@@ -383,9 +390,9 @@ GifDecodeStatus gif_read_header(CGifContext* context) {
     return GifDecodeStatus::Unfinished;
   }
   if (reinterpret_cast<GifGF*>(&gif_lsd_ptr->global_flag)->global_pal) {
-    context->global_pal_num =
-        2 << reinterpret_cast<GifGF*>(&gif_lsd_ptr->global_flag)->pal_bits;
-    int32_t global_pal_size = context->global_pal_num * 3;
+    context->global_pal_exp =
+        reinterpret_cast<GifGF*>(&gif_lsd_ptr->global_flag)->pal_bits;
+    int32_t global_pal_size = (2 << context->global_pal_exp) * 3;
     uint8_t* global_pal_ptr = nullptr;
     if (!gif_read_data(context, &global_pal_ptr, global_pal_size)) {
       context->skip_size = skip_size_org;
@@ -558,7 +565,7 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
         return GifDecodeStatus::Error;
       }
     }
-    if (gif_image_ptr->image_code_size >= 13) {
+    if (gif_image_ptr->image_code_exp > GIF_MAX_LZW_EXP) {
       gif_image_ptr->m_ImageRowBuf.clear();
       context->AddError("Error Invalid Code Size");
       return GifDecodeStatus::Error;
@@ -566,7 +573,10 @@ GifDecodeStatus gif_load_frame(CGifContext* context, int32_t frame_num) {
     if (!context->m_ImgDecoder.get())
       context->m_ImgDecoder =
           pdfium::MakeUnique<CGifLZWDecoder>(context->m_szLastError);
-    context->m_ImgDecoder->InitTable(gif_image_ptr->image_code_size);
+    context->m_ImgDecoder->InitTable(!gif_image_ptr->m_LocalPalettes.empty()
+                                         ? gif_image_ptr->local_pallette_exp
+                                         : context->global_pal_exp,
+                                     gif_image_ptr->image_code_exp);
     context->img_row_offset = 0;
     context->img_row_avail_size = 0;
     context->img_pass_num = 0;

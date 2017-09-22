@@ -1791,7 +1791,7 @@ void CCodec_ProgressiveDecoder::Resample(
   }
 }
 
-FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames) {
+FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t* frames) {
   if (!(m_status == FXCODEC_STATUS_FRAME_READY ||
         m_status == FXCODEC_STATUS_FRAME_TOBECONTINUE)) {
     return FXCODEC_STATUS_ERROR;
@@ -1801,7 +1801,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames) {
     case FXCODEC_IMAGE_BMP:
     case FXCODEC_IMAGE_PNG:
     case FXCODEC_IMAGE_TIF:
-      frames = m_FrameNumber = 1;
+      *frames = 1;
+      m_FrameNumber = 1;
       m_status = FXCODEC_STATUS_DECODE_READY;
       return m_status;
     case FXCODEC_IMAGE_GIF: {
@@ -1822,7 +1823,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames) {
               pGifModule->LoadFrameInfo(m_pGifContext.get(), &m_FrameNumber);
         }
         if (readResult == GifDecodeStatus::Success) {
-          frames = m_FrameNumber;
+          *frames = m_FrameNumber;
           m_status = FXCODEC_STATUS_DECODE_READY;
           return m_status;
         }
@@ -2108,34 +2109,37 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
     case FXCODEC_IMAGE_GIF: {
       CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
       if (!pGifModule) {
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
       }
-      while (true) {
-        GifDecodeStatus readRes =
-            pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
-        while (readRes == GifDecodeStatus::Unfinished) {
-          FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-          if (!GifReadMoreData(pGifModule, error_status)) {
-            m_pDeviceBitmap = nullptr;
-            m_pFile = nullptr;
-            m_status = error_status;
-            return m_status;
-          }
-          readRes =
-              pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
-        }
-        if (readRes == GifDecodeStatus::Success) {
+
+      GifDecodeStatus readRes =
+          pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
+      while (readRes == GifDecodeStatus::Unfinished) {
+        FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
+        if (!GifReadMoreData(pGifModule, error_status)) {
           m_pDeviceBitmap = nullptr;
           m_pFile = nullptr;
-          m_status = FXCODEC_STATUS_DECODE_FINISH;
+          m_status = error_status;
           return m_status;
         }
+        readRes =
+            pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
+      }
+
+      if (readRes == GifDecodeStatus::Success) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERROR;
+        m_status = FXCODEC_STATUS_DECODE_FINISH;
         return m_status;
       }
+
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = FXCODEC_STATUS_ERROR;
+      return m_status;
     }
     case FXCODEC_IMAGE_BMP: {
       CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();

@@ -17,7 +17,7 @@ CGifContext::CGifContext(CCodec_GifModule* gif_module,
                          CCodec_GifModule::Delegate* pDelegate)
     : m_pModule(gif_module),
       m_pDelegate(pDelegate),
-      global_pal_num(0),
+      global_pal_exp(0),
       img_row_offset(0),
       img_row_avail_size(0),
       avail_in(0),

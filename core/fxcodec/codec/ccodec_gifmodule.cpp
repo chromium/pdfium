@@ -36,7 +36,7 @@ GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
 
   *width = context->width;
   *height = context->height;
-  *pal_num = context->global_pal_num;
+  *pal_num = (2 << context->global_pal_exp);
   *pal_pp = context->m_GlobalPalette.empty() ? nullptr
                                              : context->m_GlobalPalette.data();
   *bg_index = context->bc_index;

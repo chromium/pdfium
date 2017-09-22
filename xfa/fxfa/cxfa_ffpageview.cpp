@@ -208,7 +208,8 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetWidget(
 
   if (!pWidget->IsLoaded() &&
       !!(pWidget->GetStatus() & XFA_WidgetStatus_Visible)) {
-    pWidget->LoadWidget();
+    if (!pWidget->LoadWidget())
+      return nullptr;
   }
   return pWidget;
 }

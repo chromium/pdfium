@@ -56,7 +56,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   int32_t GetBPC() const { return m_SrcBPC; }
   void SetClipBox(FX_RECT* clip);
 
-  FXCODEC_STATUS GetFrames(int32_t& frames);
+  FXCODEC_STATUS GetFrames(int32_t* frames);
   FXCODEC_STATUS StartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                              int start_x,
                              int start_y,

@@ -21,6 +21,7 @@ class CGifContext;
 #define GIF_BLOCK_CE 0xFE
 #define GIF_BLOCK_AE 0xFF
 #define GIF_BLOCK_TERMINAL 0x00
+#define GIF_MAX_LZW_EXP 12
 #define GIF_MAX_LZW_CODE 4096
 #define GIF_DATA_BLOCK 255
 #define GIF_MAX_ERROR_SIZE 256
@@ -116,7 +117,8 @@ class GifImage {
   std::vector<GifPalette> m_LocalPalettes;
   std::vector<uint8_t> m_ImageRowBuf;
   GifImageInfo m_ImageInfo;
-  uint8_t image_code_size;
+  uint8_t local_pallette_exp;
+  uint8_t image_code_exp;
   uint32_t image_data_pos;
   int32_t image_row_num;
 };
@@ -131,7 +133,7 @@ class CGifLZWDecoder {
   explicit CGifLZWDecoder(char* error_ptr);
   ~CGifLZWDecoder();
 
-  void InitTable(uint8_t code_len);
+  void InitTable(uint8_t color_exp, uint8_t code_exp);
   GifDecodeStatus Decode(uint8_t* des_buf, uint32_t* des_size);
   void Input(uint8_t* src_buf, uint32_t src_size);
   uint32_t GetAvailInput();
@@ -143,6 +145,7 @@ class CGifLZWDecoder {
 
   uint8_t code_size;
   uint8_t code_size_cur;
+  uint16_t code_color_end;
   uint16_t code_clear;
   uint16_t code_end;
   uint16_t code_next;

@@ -37,7 +37,7 @@ class XFACodecFuzzer {
     bitmap->Create(decoder->GetWidth(), decoder->GetHeight(), FXDIB_Argb);
 
     int32_t frames;
-    if (decoder->GetFrames(frames) != FXCODEC_STATUS_DECODE_READY ||
+    if (decoder->GetFrames(&frames) != FXCODEC_STATUS_DECODE_READY ||
         frames == 0) {
       return 0;
     }

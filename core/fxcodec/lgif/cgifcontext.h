@@ -40,7 +40,7 @@ class CGifContext : public CCodec_GifModule::Context {
   UnownedPtr<CCodec_GifModule> m_pModule;
   UnownedPtr<CCodec_GifModule::Delegate> m_pDelegate;
   std::vector<GifPalette> m_GlobalPalette;
-  int32_t global_pal_num;
+  uint8_t global_pal_exp;
   uint32_t img_row_offset;
   uint32_t img_row_avail_size;
   uint32_t avail_in;
