@@ -260,6 +260,8 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag) {
   if (!m_pFillerNotify)
     return false;
 
+  CPWL_Wnd::ObservedPtr thisObserved(this);
+
   WideString swChange = GetText();
   WideString strChangeEx;
   int nSelStart = 0;
@@ -269,6 +271,10 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag) {
   std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
       GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, bKeyDown,
       nFlag);
+
+  if (!thisObserved)
+    return false;
+
   return bExit;
 }
 
