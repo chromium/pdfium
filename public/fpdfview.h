@@ -1012,7 +1012,8 @@ FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document);
 //          be of type "name".
 // Parameters:
 //          document    -   Handle to the loaded document.
-//          key         -   Name of the key in the viewer pref dictionary.
+//          key         -   Name of the key in the viewer pref dictionary,
+//                          encoded in UTF-8.
 //          buffer      -   A string to write the contents of the key to.
 //          length      -   Length of the buffer.
 // Return value:

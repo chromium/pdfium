@@ -77,7 +77,7 @@ FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
 // Check if the params dictionary of |attachment| has |key| as a key.
 //
 //   attachment - handle to an attachment.
-//   key        - the key to look for.
+//   key        - the key to look for, encoded in UTF-8.
 //
 // Returns true if |key| exists.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -88,7 +88,7 @@ FPDFAttachment_HasKey(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key);
 // the embedded |attachment|.
 //
 //   attachment - handle to an attachment.
-//   key        - the key to look for.
+//   key        - the key to look for, encoded in UTF-8.
 //
 // Returns the type of the dictionary value.
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
@@ -100,7 +100,7 @@ FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key);
 // type should be FPDF_OBJECT_STRING after this function call succeeds.
 //
 //   attachment - handle to an attachment.
-//   key        - the key to the dictionary entry, encoded in UTF16-LE.
+//   key        - the key to the dictionary entry, encoded in UTF-8.
 //   value      - the string value to be set, encoded in UTF16-LE.
 //
 // Returns true if successful.
@@ -120,7 +120,7 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
 // and the return value would be 0.
 //
 //   attachment - handle to an attachment.
-//   key        - the key to the requested string value.
+//   key        - the key to the requested string value, encoded in UTF-8.
 //   buffer     - buffer for holding the string value encoded in UTF16-LE.
 //   buflen     - length of the buffer.
 //

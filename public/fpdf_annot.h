@@ -343,7 +343,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
 // Check if |annot|'s dictionary has |key| as a key.
 //
 //   annot  - handle to an annotation.
-//   key    - the key to look for.
+//   key    - the key to look for, encoded in UTF-8.
 //
 // Returns true if |key| exists.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
@@ -353,7 +353,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_HasKey(FPDF_ANNOTATION annot,
 // Get the type of the value corresponding to |key| in |annot|'s dictionary.
 //
 //   annot  - handle to an annotation.
-//   key    - the key to look for.
+//   key    - the key to look for, encoded in UTF-8.
 //
 // Returns the type of the dictionary value.
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
@@ -365,7 +365,7 @@ FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_BYTESTRING key);
 // FPDF_OBJECT_STRING after this function call succeeds.
 //
 //   annot  - handle to an annotation.
-//   key    - the key to the dictionary entry to be set, encoded in UTF16-LE.
+//   key    - the key to the dictionary entry to be set, encoded in UTF-8.
 //   value  - the string value to be set, encoded in UTF16-LE.
 //
 // Returns true if successful.
@@ -384,7 +384,7 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
 // be added to |buffer| and the return value would be 0.
 //
 //   annot  - handle to an annotation.
-//   key    - the key to the requested dictionary entry.
+//   key    - the key to the requested dictionary entry, encoded in UTF-8.
 //   buffer - buffer for holding the value string, encoded in UTF16-LE.
 //   buflen - length of the buffer.
 //
@@ -402,7 +402,7 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
 // longer needed.
 //
 //   annot  - handle to an annotation.
-//   key    - the key to the requested dictionary entry.
+//   key    - the key to the requested dictionary entry, encoded in UTF-8.
 //
 // Returns a handle to the linked annotation object, or NULL on failure.
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
