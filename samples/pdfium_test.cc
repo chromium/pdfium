@@ -1136,7 +1136,7 @@ void SaveAttachments(FPDF_DOCUMENT doc, const std::string& name) {
 }
 
 void SaveImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
-  for (int i = 0; i < FPDFPage_CountObject(page); ++i) {
+  for (int i = 0; i < FPDFPage_CountObjects(page); ++i) {
     FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
     if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE)
       continue;

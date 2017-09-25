@@ -16,17 +16,17 @@ class PDFEditTest : public testing::Test {
 TEST_F(PDFEditTest, InsertObjectWithInvalidPage) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
-  EXPECT_EQ(0, FPDFPage_CountObject(page));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
   FPDFPage_InsertObject(nullptr, nullptr);
-  EXPECT_EQ(0, FPDFPage_CountObject(page));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
   FPDFPage_InsertObject(page, nullptr);
-  EXPECT_EQ(0, FPDFPage_CountObject(page));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
   FPDF_PAGEOBJECT page_image = FPDFPageObj_NewImageObj(doc);
   FPDFPage_InsertObject(nullptr, page_image);
-  EXPECT_EQ(0, FPDFPage_CountObject(page));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
   FPDF_ClosePage(page);
   FPDF_CloseDocument(doc);
@@ -35,11 +35,11 @@ TEST_F(PDFEditTest, InsertObjectWithInvalidPage) {
 TEST_F(PDFEditTest, NewImageObj) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
-  EXPECT_EQ(0, FPDFPage_CountObject(page));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
   FPDF_PAGEOBJECT page_image = FPDFPageObj_NewImageObj(doc);
   FPDFPage_InsertObject(page, page_image);
-  EXPECT_EQ(1, FPDFPage_CountObject(page));
+  EXPECT_EQ(1, FPDFPage_CountObjects(page));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   FPDF_ClosePage(page);
@@ -49,7 +49,7 @@ TEST_F(PDFEditTest, NewImageObj) {
 TEST_F(PDFEditTest, NewImageObjGenerateContent) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
-  EXPECT_EQ(0, FPDFPage_CountObject(page));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
   constexpr int kBitmapSize = 50;
   FPDF_BITMAP bitmap = FPDFBitmap_Create(kBitmapSize, kBitmapSize, 0);
@@ -62,7 +62,7 @@ TEST_F(PDFEditTest, NewImageObjGenerateContent) {
   ASSERT_TRUE(
       FPDFImageObj_SetMatrix(page_image, kBitmapSize, 0, 0, kBitmapSize, 0, 0));
   FPDFPage_InsertObject(page, page_image);
-  EXPECT_EQ(1, FPDFPage_CountObject(page));
+  EXPECT_EQ(1, FPDFPage_CountObjects(page));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   FPDFBitmap_Destroy(bitmap);

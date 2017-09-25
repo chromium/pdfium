@@ -1021,7 +1021,7 @@ TEST_F(FPDFEditEmbeddertest, ExtractImageBitmap) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  ASSERT_EQ(39, FPDFPage_CountObject(page));
+  ASSERT_EQ(39, FPDFPage_CountObjects(page));
 
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 32);
   EXPECT_NE(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
@@ -1075,7 +1075,7 @@ TEST_F(FPDFEditEmbeddertest, GetImageData) {
   EXPECT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  ASSERT_EQ(39, FPDFPage_CountObject(page));
+  ASSERT_EQ(39, FPDFPage_CountObjects(page));
 
   // Retrieve an image object with flate-encoded data stream.
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 33);
