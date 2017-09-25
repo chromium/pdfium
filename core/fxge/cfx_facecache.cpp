@@ -77,6 +77,24 @@ void ContrastAdjust(uint8_t* pDataIn,
   }
 }
 
+struct UniqueKeyGen {
+  void Generate(int count, ...);
+
+  char key_[128];
+  int key_len_;
+};
+
+void UniqueKeyGen::Generate(int count, ...) {
+  va_list argList;
+  va_start(argList, count);
+  for (int i = 0; i < count; i++) {
+    int p = va_arg(argList, int);
+    reinterpret_cast<uint32_t*>(key_)[i] = p;
+  }
+  va_end(argList);
+  key_len_ = count * sizeof(uint32_t);
+}
+
 }  // namespace
 
 CFX_FaceCache::CFX_FaceCache(FXFT_Face face)
@@ -262,7 +280,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   if (glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
-  CFX_UniqueKeyGen keygen;
+  UniqueKeyGen keygen;
   int nMatrixA = static_cast<int>(pMatrix->a * 10000);
   int nMatrixB = static_cast<int>(pMatrix->b * 10000);
   int nMatrixC = static_cast<int>(pMatrix->c * 10000);
@@ -299,7 +317,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
     }
   }
 #endif
-  ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
+  ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_ || \
     defined _SKIA_SUPPORT_PATHS_
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
@@ -344,7 +362,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
     keygen.Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
                     anti_alias);
   }
-  ByteString FaceGlyphsKey2(keygen.m_Key, keygen.m_KeyLen);
+  ByteString FaceGlyphsKey2(keygen.key_, keygen.key_len_);
   text_flags |= FXTEXT_NO_NATIVETEXT;
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);

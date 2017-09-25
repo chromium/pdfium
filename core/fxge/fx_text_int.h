@@ -13,13 +13,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 
-struct CFX_UniqueKeyGen {
-  void Generate(int count, ...);
-
-  char m_Key[128];
-  int m_KeyLen;
-};
-
 class CFX_SizeGlyphCache {
  public:
   CFX_SizeGlyphCache();
