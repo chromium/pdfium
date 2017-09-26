@@ -83,9 +83,7 @@ FX_LPEnumAllFonts FX_GetDefFontEnumerator();
 
 class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
  public:
-  static std::unique_ptr<CFGAS_FontMgr> Create(FX_LPEnumAllFonts pEnumerator);
-
-  explicit CFGAS_FontMgr(FX_LPEnumAllFonts pEnumerator);
+  CFGAS_FontMgr();
   ~CFGAS_FontMgr();
 
   RetainPtr<CFGAS_GEFont> GetFontByCodePage(uint16_t wCodePage,
@@ -98,6 +96,8 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
                                    uint32_t dwFontStyles,
                                    uint16_t wCodePage);
   void RemoveFont(const RetainPtr<CFGAS_GEFont>& pFont);
+
+  bool EnumFonts() { return true; }
 
  private:
   RetainPtr<CFGAS_GEFont> LoadFont(const RetainPtr<CFGAS_GEFont>& pSrcFont,
@@ -181,10 +181,7 @@ class CFX_FontSourceEnum_File {
 
 class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
  public:
-  static std::unique_ptr<CFGAS_FontMgr> Create(
-      CFX_FontSourceEnum_File* pFontEnum);
-
-  explicit CFGAS_FontMgr(CFX_FontSourceEnum_File* pFontEnum);
+  CFGAS_FontMgr();
   ~CFGAS_FontMgr();
 
   RetainPtr<CFGAS_GEFont> GetFontByCodePage(uint16_t wCodePage,
@@ -198,8 +195,9 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
                                    uint16_t wCodePage);
   void RemoveFont(const RetainPtr<CFGAS_GEFont>& pFont);
 
- private:
   bool EnumFonts();
+
+ private:
   bool EnumFontsFromFontMapper();
   bool EnumFontsFromFiles();
   void RegisterFace(FXFT_Face pFace, const WideString* pFaceName);
@@ -234,7 +232,7 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
   RetainPtr<IFX_SeekableReadStream> CreateFontStream(
       const ByteString& bsFaceName);
 
-  CFX_FontSourceEnum_File* const m_pFontSource;
+  std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
   std::vector<std::unique_ptr<CFX_FontDescriptor>> m_InstalledFonts;
   std::map<uint32_t, std::unique_ptr<std::vector<CFX_FontDescriptorInfo>>>
       m_Hash2CandidateList;

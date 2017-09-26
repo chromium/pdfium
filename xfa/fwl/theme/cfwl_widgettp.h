@@ -118,9 +118,6 @@ class CFWL_FontData {
   WideString m_wsFamily;
   uint32_t m_dwStyles;
   uint32_t m_dwCodePage;
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
-#endif
   std::unique_ptr<CFGAS_FontMgr> m_pFontMgr;
   RetainPtr<CFGAS_GEFont> m_pFont;
 };

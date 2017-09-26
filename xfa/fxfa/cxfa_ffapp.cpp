@@ -62,12 +62,9 @@ CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() const {
 
 CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    m_pFDEFontMgr = CFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
-#else
-    m_pFontSource = pdfium::MakeUnique<CFX_FontSourceEnum_File>();
-    m_pFDEFontMgr = CFGAS_FontMgr::Create(m_pFontSource.get());
-#endif
+    m_pFDEFontMgr = pdfium::MakeUnique<CFGAS_FontMgr>();
+    if (!m_pFDEFontMgr->EnumFonts())
+      m_pFDEFontMgr = nullptr;
   }
   return m_pFDEFontMgr.get();
 }

@@ -67,9 +67,6 @@ class CXFA_FFApp {
   std::unique_ptr<CFGAS_FontMgr> m_pFDEFontMgr;
   std::unique_ptr<CXFA_FontMgr> m_pFontMgr;
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
-#endif
   std::unique_ptr<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
 
   // |m_pFWLApp| has to be released first, then |m_pFWLTheme| since the former

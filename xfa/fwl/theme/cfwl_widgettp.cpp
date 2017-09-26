@@ -274,13 +274,11 @@ bool CFWL_FontData::LoadFont(const WideStringView& wsFontFamily,
   m_dwStyles = dwFontStyles;
   m_dwCodePage = dwCodePage;
   if (!m_pFontMgr) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    m_pFontMgr = CFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
-#else
-    m_pFontSource = pdfium::MakeUnique<CFX_FontSourceEnum_File>();
-    m_pFontMgr = CFGAS_FontMgr::Create(m_pFontSource.get());
-#endif
+    m_pFontMgr = pdfium::MakeUnique<CFGAS_FontMgr>();
+    if (!m_pFontMgr->EnumFonts())
+      m_pFontMgr = nullptr;
   }
+
   // TODO(tsepez): check usage of c_str() below.
   m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.unterminated_c_str(),
                                    dwFontStyles, dwCodePage, m_pFontMgr.get());

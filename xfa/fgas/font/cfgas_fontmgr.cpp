@@ -184,13 +184,8 @@ uint32_t GetFontFamilyHash(const wchar_t* pszFontFamily,
 
 }  // namespace
 
-std::unique_ptr<CFGAS_FontMgr> CFGAS_FontMgr::Create(
-    FX_LPEnumAllFonts pEnumerator) {
-  return pdfium::MakeUnique<CFGAS_FontMgr>(pEnumerator);
-}
-
-CFGAS_FontMgr::CFGAS_FontMgr(FX_LPEnumAllFonts pEnumerator)
-    : m_pEnumerator(pEnumerator), m_FontFaces(100) {
+CFGAS_FontMgr::CFGAS_FontMgr()
+    : m_pEnumerator(FX_GetDefFontEnumerator()), m_FontFaces(100) {
   if (m_pEnumerator)
     m_pEnumerator(&m_FontFaces, nullptr, 0xFEFF);
 }
@@ -688,19 +683,8 @@ RetainPtr<CFX_CRTFileAccess> CFX_FontSourceEnum_File::GetNext() {
   return pAccess;
 }
 
-std::unique_ptr<CFGAS_FontMgr> CFGAS_FontMgr::Create(
-    CFX_FontSourceEnum_File* pFontEnum) {
-  if (!pFontEnum)
-    return nullptr;
-
-  auto pFontMgr = pdfium::MakeUnique<CFGAS_FontMgr>(pFontEnum);
-  if (!pFontMgr->EnumFonts())
-    return nullptr;
-  return pFontMgr;
-}
-
-CFGAS_FontMgr::CFGAS_FontMgr(CFX_FontSourceEnum_File* pFontEnum)
-    : m_pFontSource(pFontEnum) {}
+CFGAS_FontMgr::CFGAS_FontMgr()
+    : m_pFontSource(pdfium::MakeUnique<CFX_FontSourceEnum_File>()) {}
 
 CFGAS_FontMgr::~CFGAS_FontMgr() {}
 

@@ -26,26 +26,17 @@ class Environment : public testing::Environment {
     CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
         IFX_SystemFontInfo::CreateDefault(nullptr));
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    font_mgr_ = CFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
-#else
-    font_source_ = pdfium::MakeUnique<CFX_FontSourceEnum_File>();
-    font_mgr_ = CFGAS_FontMgr::Create(font_source_.get());
-#endif
+    font_mgr_ = pdfium::MakeUnique<CFGAS_FontMgr>();
+    if (!font_mgr_->EnumFonts())
+      font_mgr_ = nullptr;
   }
 
   void TearDown() override {
     font_mgr_.reset();
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-    font_source_.reset();
-#endif
   }
   CFGAS_FontMgr* FontManager() const { return font_mgr_.get(); }
 
  private:
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  std::unique_ptr<CFX_FontSourceEnum_File> font_source_;
-#endif
   std::unique_ptr<CFGAS_FontMgr> font_mgr_;
 };
 
