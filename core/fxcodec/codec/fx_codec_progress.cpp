@@ -22,11 +22,11 @@
 
 namespace {
 
-#if _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
+#if _FX_OS_ == _FX_MACOSX_
 const double kPngGamma = 1.7;
-#else  // _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
+#else  // _FX_OS_ == _FX_MACOSX_
 const double kPngGamma = 2.2;
-#endif  // _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
+#endif  // _FX_OS_ == _FX_MACOSX_
 
 void RGB2BGR(uint8_t* buffer, int width = 1) {
   if (buffer && width > 0) {

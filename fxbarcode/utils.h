@@ -21,15 +21,14 @@ void BC_FX_ByteString_Append(ByteString& dst, const std::vector<uint8_t>& ba);
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <limits>
-#elif _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_LINUX_DESKTOP_ || \
-    _FX_OS_ == _FX_IOS_
+#elif _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_LINUX_DESKTOP_
 #include <limits.h>
 #endif
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #define FXSYS_isnan(x) _isnan(x)
-#elif _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_ || \
-    _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_
+#elif _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_LINUX_DESKTOP_ || \
+    _FX_OS_ == _FX_ANDROID_
 #include <cmath>
 #define FXSYS_isnan(x) std::isnan(x)
 #endif
@@ -37,7 +36,7 @@ void BC_FX_ByteString_Append(ByteString& dst, const std::vector<uint8_t>& ba);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #define FXSYS_nan() (std::numeric_limits<float>::quiet_NaN())
 #elif _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_LINUX_DESKTOP_ || \
-    _FX_OS_ == _FX_IOS_ || _FX_OS_ == _FX_ANDROID_
+    _FX_OS_ == _FX_ANDROID_
 #define FXSYS_nan() NAN
 #endif
 

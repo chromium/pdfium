@@ -8,7 +8,7 @@
 #include "core/fxcrt/fx_system.h"
 
 #if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_ || \
-    _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
+    _FX_OS_ == _FX_MACOSX_
 #include <sys/time.h>
 #include <time.h>
 #endif
