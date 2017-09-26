@@ -106,8 +106,8 @@ bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus) {
 }
 
 void CFWL_NoteDriver::Run() {
-#if (_FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_WIN32_DESKTOP_ || \
-     _FX_OS_ == _FX_WIN64_)
+#if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_WIN32_DESKTOP_ || \
+    _FX_OS_ == _FX_WIN64_DESKTOP_
   for (;;) {
     CFWL_NoteLoop* pTopLoop = GetTopLoop();
     if (!pTopLoop || !pTopLoop->ContinueModal())
