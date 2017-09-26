@@ -22,7 +22,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
-#include "core/fxge/fx_text_int.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "third_party/base/ptr_util.h"
 

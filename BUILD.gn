@@ -1071,7 +1071,6 @@ static_library("fxge") {
     "core/fxge/fx_ge_fontmap.cpp",
     "core/fxge/fx_ge_linux.cpp",
     "core/fxge/fx_ge_text.cpp",
-    "core/fxge/fx_text_int.h",
     "core/fxge/ifx_renderdevicedriver.cpp",
     "core/fxge/ifx_renderdevicedriver.h",
     "core/fxge/ifx_systemfontinfo.h",

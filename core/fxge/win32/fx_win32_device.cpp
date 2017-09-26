@@ -22,7 +22,6 @@
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
-#include "core/fxge/fx_text_int.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/dwrite_int.h"

@@ -24,7 +24,6 @@ typedef void* FXFT_Library;
 class CFX_FaceCache;
 class CFX_GlyphBitmap;
 class CFX_PathData;
-class CFX_SizeGlyphCache;
 class IFX_SeekableReadStream;
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
