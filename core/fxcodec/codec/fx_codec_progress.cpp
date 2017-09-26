@@ -625,6 +625,8 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
   if (pal_num != 0 && pal_ptr) {
     pPalette = (uint8_t*)pal_ptr;
   } else {
+    if (!m_pGifPalette)
+      return false;
     pal_num = m_GifPltNumber;
     pPalette = m_pGifPalette;
   }
@@ -1207,6 +1209,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       while (readResult == GifDecodeStatus::Unfinished) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
         if (!GifReadMoreData(pGifModule, error_status)) {
+          m_pGifContext = nullptr;
           m_status = error_status;
           return false;
         }
