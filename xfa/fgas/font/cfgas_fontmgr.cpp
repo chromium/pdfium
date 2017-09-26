@@ -192,6 +192,10 @@ CFGAS_FontMgr::CFGAS_FontMgr()
 
 CFGAS_FontMgr::~CFGAS_FontMgr() {}
 
+bool CFGAS_FontMgr::EnumFonts() {
+  return true;
+}
+
 RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     uint16_t wCodePage,
     uint32_t dwFontStyles,
