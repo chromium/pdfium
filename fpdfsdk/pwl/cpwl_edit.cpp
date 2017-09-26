@@ -473,11 +473,17 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
       if (nSelStart == nSelEnd)
         nSelEnd = nSelStart + 1;
 
+      CPWL_Wnd::ObservedPtr thisObserved(this);
+
       bool bRC;
       bool bExit;
       std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
           GetAttachedData(), strChange, strChangeEx, nSelStart, nSelEnd, true,
           nFlag);
+
+      if (!thisObserved)
+        return false;
+
       if (!bRC)
         return false;
       if (bExit)
@@ -550,10 +556,15 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
           break;
       }
 
+      CPWL_Wnd::ObservedPtr thisObserved(this);
+
       CFX_WideString strChangeEx;
       std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(
           GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, true,
           nFlag);
+
+      if (!thisObserved)
+        return false;
     }
   }
 
