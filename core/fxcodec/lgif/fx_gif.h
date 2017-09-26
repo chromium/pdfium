@@ -35,6 +35,7 @@ class CGifContext;
 #define GIF_D_STATUS_EXT_UNE 0x08
 #define GIF_D_STATUS_IMG_INFO 0x09
 #define GIF_D_STATUS_IMG_DATA 0x0A
+
 #pragma pack(1)
 typedef struct tagGifGF {
   uint8_t pal_bits : 3;
@@ -42,6 +43,7 @@ typedef struct tagGifGF {
   uint8_t color_resolution : 3;
   uint8_t global_pal : 1;
 } GifGF;
+
 typedef struct tagGifLF {
   uint8_t pal_bits : 3;
   uint8_t reserved : 2;
@@ -49,10 +51,12 @@ typedef struct tagGifLF {
   uint8_t interlace : 1;
   uint8_t local_pal : 1;
 } GifLF;
+
 typedef struct tagGifHeader {
   char signature[3];
   char version[3];
 } GifHeader;
+
 typedef struct tagGifLSD {
   uint16_t width;
   uint16_t height;
@@ -60,6 +64,7 @@ typedef struct tagGifLSD {
   uint8_t bc_index;
   uint8_t pixel_aspect;
 } GifLSD;
+
 typedef struct tagGifImageInfo {
   uint16_t left;
   uint16_t top;
@@ -68,18 +73,21 @@ typedef struct tagGifImageInfo {
 
   uint8_t local_flag;
 } GifImageInfo;
+
 typedef struct tagGifCEF {
   uint8_t transparency : 1;
   uint8_t user_input : 1;
   uint8_t disposal_method : 3;
   uint8_t reserved : 3;
 } GifCEF;
+
 typedef struct tagGifGCE {
   uint8_t block_size;
   uint8_t gce_flag;
   uint16_t delay_time;
   uint8_t trans_index;
 } GifGCE;
+
 typedef struct tagGifPTE {
   uint8_t block_size;
   uint16_t grid_left;
@@ -93,11 +101,13 @@ typedef struct tagGifPTE {
   uint8_t fc_index;
   uint8_t bc_index;
 } GifPTE;
+
 typedef struct tagGifAE {
   uint8_t block_size;
   uint8_t app_identify[8];
   uint8_t app_authentication[3];
 } GifAE;
+
 typedef struct tagGifPalette { uint8_t r, g, b; } GifPalette;
 #pragma pack()
 
@@ -121,47 +131,6 @@ class GifImage {
   uint8_t image_code_exp;
   uint32_t image_data_pos;
   int32_t image_row_num;
-};
-
-class CGifLZWDecoder {
- public:
-  struct tag_Table {
-    uint16_t prefix;
-    uint8_t suffix;
-  };
-
-  explicit CGifLZWDecoder(char* error_ptr);
-  ~CGifLZWDecoder();
-
-  void InitTable(uint8_t color_exp, uint8_t code_exp);
-  GifDecodeStatus Decode(uint8_t* des_buf, uint32_t* des_size);
-  void Input(uint8_t* src_buf, uint32_t src_size);
-  uint32_t GetAvailInput();
-
- private:
-  void ClearTable();
-  void AddCode(uint16_t prefix_code, uint8_t append_char);
-  bool DecodeString(uint16_t code);
-
-  uint8_t code_size;
-  uint8_t code_size_cur;
-  uint16_t code_color_end;
-  uint16_t code_clear;
-  uint16_t code_end;
-  uint16_t code_next;
-  uint8_t code_first;
-  uint8_t stack[GIF_MAX_LZW_CODE];
-  uint16_t stack_size;
-  tag_Table code_table[GIF_MAX_LZW_CODE];
-  uint16_t code_old;
-
-  uint8_t* next_in;
-  uint32_t avail_in;
-
-  uint8_t bits_left;
-  uint32_t code_store;
-
-  char* err_msg_ptr;
 };
 
 #endif  // CORE_FXCODEC_LGIF_FX_GIF_H_

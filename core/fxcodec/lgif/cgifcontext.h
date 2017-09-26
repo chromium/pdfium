@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/lgif/cfx_lzwdecoder.h"
 #include "core/fxcodec/lgif/fx_gif.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -56,7 +57,7 @@ class CGifContext : public CCodec_GifModule::Context {
   std::unique_ptr<GifGCE> m_GifGCE;
   uint8_t* next_in;
   std::vector<std::unique_ptr<GifImage>> m_Images;
-  std::unique_ptr<CGifLZWDecoder> m_ImgDecoder;
+  std::unique_ptr<CFX_LZWDecoder> m_ImgDecoder;
   int width;
   int height;
   uint8_t bc_index;

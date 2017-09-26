@@ -267,19 +267,14 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
       AddError("Error Invalid Code Size");
       return GifDecodeStatus::Error;
     }
-    if (!m_ImgDecoder.get())
-      m_ImgDecoder = pdfium::MakeUnique<CGifLZWDecoder>(m_szLastError);
-    m_ImgDecoder->InitTable(!gif_image_ptr->m_LocalPalettes.empty()
-                                ? gif_image_ptr->local_pallette_exp
-                                : global_pal_exp,
-                            gif_image_ptr->image_code_exp);
+
     img_row_offset = 0;
     img_row_avail_size = 0;
     img_pass_num = 0;
     gif_image_ptr->image_row_num = 0;
     SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
   }
-  CGifLZWDecoder* img_decoder_ptr = m_ImgDecoder.get();
+
   if (decode_status == GIF_D_STATUS_IMG_DATA) {
     if (!ReadData(&data_size_ptr, 1))
       return GifDecodeStatus::Unfinished;
@@ -289,13 +284,22 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
         skip_size = skip_size_org;
         return GifDecodeStatus::Unfinished;
       }
-      img_decoder_ptr->Input(data_ptr, *data_size_ptr);
+      if (!m_ImgDecoder.get())
+        m_ImgDecoder =
+            CFX_LZWDecoder::Create(gif_image_ptr->m_LocalPalettes.empty()
+                                       ? gif_image_ptr->local_pallette_exp
+                                       : global_pal_exp,
+                                   gif_image_ptr->image_code_exp);
       SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
       img_row_offset += img_row_avail_size;
       img_row_avail_size = gif_img_row_bytes - img_row_offset;
-      GifDecodeStatus ret = img_decoder_ptr->Decode(
-          gif_image_ptr->m_ImageRowBuf.data() + img_row_offset,
-          &img_row_avail_size);
+      GifDecodeStatus ret =
+          m_ImgDecoder.get()
+              ? m_ImgDecoder->Decode(
+                    data_ptr, *data_size_ptr,
+                    gif_image_ptr->m_ImageRowBuf.data() + img_row_offset,
+                    &img_row_avail_size)
+              : GifDecodeStatus::Error;
       if (ret == GifDecodeStatus::Error) {
         DecodingFailureAtTailCleanup(gif_image_ptr);
         return GifDecodeStatus::Error;
@@ -309,7 +313,6 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
           return GifDecodeStatus::Success;
         }
         if (ret == GifDecodeStatus::Unfinished) {
-          ASSERT(img_decoder_ptr->GetAvailInput() == 0);
           skip_size_org = skip_size;
           if (!ReadData(&data_size_ptr, 1))
             return GifDecodeStatus::Unfinished;
@@ -319,13 +322,22 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
               skip_size = skip_size_org;
               return GifDecodeStatus::Unfinished;
             }
-            img_decoder_ptr->Input(data_ptr, *data_size_ptr);
+            if (!m_ImgDecoder.get())
+              m_ImgDecoder =
+                  CFX_LZWDecoder::Create(!gif_image_ptr->m_LocalPalettes.empty()
+                                             ? gif_image_ptr->local_pallette_exp
+                                             : global_pal_exp,
+                                         gif_image_ptr->image_code_exp);
             SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
             img_row_offset += img_row_avail_size;
             img_row_avail_size = gif_img_row_bytes - img_row_offset;
-            ret = img_decoder_ptr->Decode(
-                gif_image_ptr->m_ImageRowBuf.data() + img_row_offset,
-                &img_row_avail_size);
+            ret =
+                m_ImgDecoder.get()
+                    ? m_ImgDecoder->Decode(
+                          data_ptr, *data_size_ptr,
+                          gif_image_ptr->m_ImageRowBuf.data() + img_row_offset,
+                          &img_row_avail_size)
+                    : GifDecodeStatus::Error;
           }
         }
         if (ret == GifDecodeStatus::InsufficientDestSize) {
@@ -349,9 +361,12 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
           }
           img_row_offset = 0;
           img_row_avail_size = gif_img_row_bytes;
-          ret = img_decoder_ptr->Decode(
-              gif_image_ptr->m_ImageRowBuf.data() + img_row_offset,
-              &img_row_avail_size);
+          ret = m_ImgDecoder.get()
+                    ? m_ImgDecoder->Decode(
+                          data_ptr, *data_size_ptr,
+                          gif_image_ptr->m_ImageRowBuf.data() + img_row_offset,
+                          &img_row_avail_size)
+                    : GifDecodeStatus::Error;
         }
         if (ret == GifDecodeStatus::Error) {
           DecodingFailureAtTailCleanup(gif_image_ptr);
