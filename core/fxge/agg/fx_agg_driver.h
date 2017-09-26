@@ -112,7 +112,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   void* m_pPlatformGraphics;
 #endif
   int m_FillFlags;

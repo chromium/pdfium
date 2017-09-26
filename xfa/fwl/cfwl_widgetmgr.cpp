@@ -33,7 +33,7 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
       m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr()) {
   ASSERT(m_pAdapter);
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
+#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
   m_rtScreen.Reset();
 #endif
 }
@@ -407,7 +407,7 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   else
     pNoteDriver->QueueMessage(pMessage->Clone());
 
-#if (_FX_OS_ == _FX_MACOSX_)
+#if (_FX_OS_ == _FX_OS_MACOSX_)
   CFWL_NoteLoop* pTopLoop = pNoteDriver->GetTopLoop();
   if (pTopLoop)
     pNoteDriver->UnqueueMessageAndProcess(pTopLoop);
@@ -423,15 +423,15 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
   CFX_RectF clipCopy(0, 0, pWidget->GetWidgetRect().Size());
   CFX_RectF clipBounds;
 
-#if _FX_OS_ == _FX_MACOSX_
+#if _FX_OS_ == _FX_OS_MACOSX_
   if (IsFormDisabled()) {
-#endif  // _FX_OS_ == _FX_MACOSX_
+#endif  // _FX_OS_ == _FX_OS_MACOSX_
 
     pWidget->GetDelegate()->OnDrawWidget(pGraphics, matrix);
     clipBounds = pGraphics->GetClipRect();
     clipCopy = clipBounds;
 
-#if _FX_OS_ == _FX_MACOSX_
+#if _FX_OS_ == _FX_OS_MACOSX_
   } else {
     clipBounds = CFX_RectF(matrix.a, matrix.b, matrix.c, matrix.d);
     // FIXME: const cast
@@ -439,7 +439,7 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
     pMatrixHack->SetIdentity();
     pWidget->GetDelegate()->OnDrawWidget(pGraphics, *pMatrixHack);
   }
-#endif  // _FX_OS_ == _FX_MACOSX_
+#endif  // _FX_OS_ == _FX_OS_MACOSX_
 
   if (!IsFormDisabled())
     clipBounds.Intersect(pWidget->GetClientRect());
@@ -606,7 +606,7 @@ CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget)
       pNext(nullptr),
       pWidget(widget),
       iRedrawCounter(0)
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
+#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
       ,
       bOutsideChanged(false)
 #endif

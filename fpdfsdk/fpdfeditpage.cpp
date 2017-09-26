@@ -34,7 +34,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
-#if _FX_OS_ == _FX_ANDROID_
+#if _FX_OS_ == _FX_OS_ANDROID_
 #include <time.h>
 #else
 #include <ctime>

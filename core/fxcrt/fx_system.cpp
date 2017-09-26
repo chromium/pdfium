@@ -106,7 +106,7 @@ const char* FXSYS_i64toa(int64_t value, char* str, int radix) {
   return FXSYS_IntToStr<int64_t, uint64_t, char*>(value, str, radix);
 }
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
 int FXSYS_GetACP() {
   return 0;
@@ -219,7 +219,7 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
   return wlen;
 }
 
-#else  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
 size_t FXSYS_wcsftime(wchar_t* strDest,
                       size_t maxsize,
@@ -239,4 +239,4 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
   return wcsftime(strDest, maxsize, format, timeptr);
 }
 
-#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_

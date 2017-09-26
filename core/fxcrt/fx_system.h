@@ -18,34 +18,34 @@
 #include <wchar.h>
 
 // _FX_OS_ values:
-#define _FX_WIN32_DESKTOP_ 1
-#define _FX_WIN64_DESKTOP_ 2
-#define _FX_LINUX_DESKTOP_ 4
-#define _FX_MACOSX_ 7
-#define _FX_ANDROID_ 12
+#define _FX_OS_WIN32_ 1
+#define _FX_OS_WIN64_ 2
+#define _FX_OS_LINUX_ 4
+#define _FX_OS_MACOSX_ 7
+#define _FX_OS_ANDROID_ 12
 
-// _FXM_PLATFORM_ values;
-#define _FXM_PLATFORM_WINDOWS_ 1  // _FX_WIN32_DESKTOP_ or _FX_WIN64_DESKTOP_.
-#define _FXM_PLATFORM_LINUX_ 2    // _FX_LINUX_DESKTOP_ always.
-#define _FXM_PLATFORM_APPLE_ 3    // _FX_MACOSX_ always.
-#define _FXM_PLATFORM_ANDROID_ 4  // _FX_ANDROID_ always.
+// _FX_PLATFORM_ values;
+#define _FX_PLATFORM_WINDOWS_ 1  // _FX_OS_WIN32_ or _FX_OS_WIN64_.
+#define _FX_PLATFORM_LINUX_ 2    // _FX_OS_LINUX_ always.
+#define _FX_PLATFORM_APPLE_ 3    // _FX_OS_MACOSX_ always.
+#define _FX_PLATFORM_ANDROID_ 4  // _FX_OS_ANDROID_ always.
 
 #ifndef _FX_OS_
 #if defined(__ANDROID__)
-#define _FX_OS_ _FX_ANDROID_
-#define _FXM_PLATFORM_ _FXM_PLATFORM_ANDROID_
+#define _FX_OS_ _FX_OS_ANDROID_
+#define _FX_PLATFORM_ _FX_PLATFORM_ANDROID_
 #elif defined(_WIN32)
-#define _FX_OS_ _FX_WIN32_DESKTOP_
-#define _FXM_PLATFORM_ _FXM_PLATFORM_WINDOWS_
+#define _FX_OS_ _FX_OS_WIN32_
+#define _FX_PLATFORM_ _FX_PLATFORM_WINDOWS_
 #elif defined(_WIN64)
-#define _FX_OS_ _FX_WIN64_DESKTOP_
-#define _FXM_PLATFORM_ _FXM_PLATFORM_WINDOWS_
+#define _FX_OS_ _FX_OS_WIN64_
+#define _FX_PLATFORM_ _FX_PLATFORM_WINDOWS_
 #elif defined(__linux__)
-#define _FX_OS_ _FX_LINUX_DESKTOP_
-#define _FXM_PLATFORM_ _FXM_PLATFORM_LINUX_
+#define _FX_OS_ _FX_OS_LINUX_
+#define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
 #elif defined(__APPLE__)
-#define _FX_OS_ _FX_MACOSX_
-#define _FXM_PLATFORM_ _FXM_PLATFORM_APPLE_
+#define _FX_OS_ _FX_OS_MACOSX_
+#define _FX_PLATFORM_ _FX_PLATFORM_APPLE_
 #endif
 #endif  // _FX_OS_
 
@@ -57,15 +57,15 @@
 #error Sorry, VC++ 2015 or later is required to compile PDFium.
 #endif  // defined(_MSC_VER) && _MSC_VER < 1900
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <windows.h>
 #include <sal.h>
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
 #include <Carbon/Carbon.h>
 #include <libkern/OSAtomic.h>
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,11 +84,11 @@ typedef size_t FX_STRSIZE;
 // files larger than 2GB even if the platform does. The value must be signed
 // to support -1 error returns.
 // TODO(tsepez): support larger files.
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define FX_FILESIZE int32_t
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define FX_FILESIZE off_t
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 #ifndef ASSERT
 #ifndef NDEBUG
@@ -154,7 +154,7 @@ extern "C" {
 #define FXSYS_wcslen(ptr) ((FX_STRSIZE)wcslen(ptr))
 #endif  // __cplusplus
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define FXSYS_GetACP GetACP
 #define FXSYS_itoa _itoa
 #define FXSYS_strlwr _strlwr
@@ -181,7 +181,7 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
 #define FXSYS_wcsupr _wcsupr
 #endif  // _NATIVE_WCHAR_T_DEFINED
 
-#else   // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 int FXSYS_GetACP();
 char* FXSYS_itoa(int value, char* str, int radix);
@@ -207,7 +207,7 @@ wchar_t* FXSYS_wcslwr(wchar_t* str);
 wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_pow(a, b) (float)pow(a, b)
 #define FXSYS_wcsftime wcsftime
-#endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 #define FXDWORD_GET_LSBFIRST(p)                                                \
   ((static_cast<uint32_t>(p[3]) << 24) | (static_cast<uint32_t>(p[2]) << 16) | \
@@ -230,7 +230,7 @@ int FXSYS_round(float f);
 //   size_t size;
 //   printf("xyz: %" PRIuS, size);
 // The "u" in the macro corresponds to %u, and S is for "size".
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
 #if (defined(_INTTYPES_H) || defined(_INTTYPES_H_)) && !defined(PRId64)
 #error "inttypes.h has already been included before this header file, but "
@@ -247,20 +247,20 @@ int FXSYS_round(float f);
 #define PRIuS "zu"
 #endif
 
-#else  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
 #if !defined(PRIuS)
 #define PRIuS "Iu"
 #endif
 
-#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
 // Prevent a function from ever being inlined, typically because we'd
 // like it to appear in stack traces.
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define NEVER_INLINE __declspec(noinline)
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define NEVER_INLINE __attribute__((__noinline__))
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 #endif  // CORE_FXCRT_FX_SYSTEM_H_

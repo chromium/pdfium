@@ -52,7 +52,7 @@
 #include "public/fpdf_formfill.h"
 #endif  // PDF_ENABLE_XFA
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include "core/fxge/cfx_windowsrenderdevice.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.

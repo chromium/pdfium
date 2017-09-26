@@ -42,13 +42,13 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, OwnerPassword) {
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   const char md5[] = "e4a3701ca5b2a759e06455aa8d97d46e";
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "6951b6c9891dfe0332a5b1983e484400";
 #else
   const char md5[] = "50985f3440d3f66c3b599ab138214015";
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   {
     ASSERT_TRUE(OpenDocument("encrypted.pdf", "5678", true));
     FPDF_PAGE page = LoadPage(0);

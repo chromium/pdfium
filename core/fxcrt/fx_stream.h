@@ -11,13 +11,13 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <direct.h>
 
 class CFindFileDataA;
 typedef CFindFileDataA FX_FileHandle;
 
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 #include <dirent.h>
 #include <fcntl.h>
@@ -26,7 +26,7 @@ typedef CFindFileDataA FX_FileHandle;
 #include <unistd.h>
 
 typedef DIR FX_FileHandle;
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 FX_FileHandle* FX_OpenFolder(const char* path);
 bool FX_GetNextFile(FX_FileHandle* handle, ByteString* filename, bool* bFolder);
@@ -109,7 +109,7 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
   bool Flush() override = 0;
 };
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 class CFindFileData {
  public:
   virtual ~CFindFileData() {}

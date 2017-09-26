@@ -26,7 +26,7 @@ class CCodec_FaxModule {
                                                         bool BlackIs1,
                                                         int Columns,
                                                         int Rows);
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
+#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
   static void FaxEncode(const uint8_t* src_buf,
                         int width,
                         int height,

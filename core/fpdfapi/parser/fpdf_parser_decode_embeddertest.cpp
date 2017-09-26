@@ -112,9 +112,9 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_455199) {
   EXPECT_TRUE(OpenDocument("bug_455199.pdf"));
   FPDF_PAGE page = LoadPage(0);
   FPDF_BITMAP bitmap = RenderPage(page);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char kExpectedMd5sum[] = "b90475ca64d1348c3bf5e2b77ad9187a";
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kExpectedMd5sum[] = "9a2637b73fd5265309bfddd9c69476cd";
 #else
   const char kExpectedMd5sum[] = "f7e129d97c58e91adeace32a4327b925";

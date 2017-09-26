@@ -412,7 +412,7 @@ TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
 
   // Render and check the result. Text is slightly different on Mac.
   FPDF_BITMAP bitmap = RenderPage(page);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "f9e6fa74230f234286bfcada9f7606d8";
 #else
   const char md5[] = "bc6e6eb50dda4695ba0fb4d04ed82ada";
@@ -538,7 +538,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
   FPDFPage_InsertObject(page, text_object1);
   FPDF_BITMAP page_bitmap = RenderPage(page);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
 #else
   const char md5[] = "7a35771853a1cbba38f6775807878625";
@@ -556,9 +556,9 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 600);
   FPDFPage_InsertObject(page, text_object2);
   page_bitmap = RenderPage(page);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5_2[] = "b231b329a4b566fb9b42bfc15fe59bb7";
 #else
   const char md5_2[] = "f85fae151851436072b7b3c6703e506a";
@@ -576,9 +576,9 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFPageObj_Transform(text_object3, 1, 1.5, 2, 0.5, 200, 200);
   FPDFPage_InsertObject(page, text_object3);
   page_bitmap = RenderPage(page);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_3[] = "40b3ef04f915ff4c4208948001763544";
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5_3[] = "ba874b3b137f984510c4e287ed4ba7ae";
 #else
   const char md5_3[] = "c5aed6a8ef05558c8c47d58c87cbcb46";
@@ -879,11 +879,11 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
     FPDFPage_InsertObject(page, text_object);
     FPDF_BITMAP page_bitmap = RenderPage(page);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
 #else
     const char md5[] = "1722c6a9deed953d730de9cd13dcbd55";
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     CompareBitmap(page_bitmap, 612, 792, md5);
     FPDFBitmap_Destroy(page_bitmap);
 
@@ -897,11 +897,11 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
     FPDFPage_InsertObject(page, text_object2);
   }
   FPDF_BITMAP page_bitmap2 = RenderPage(page);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_2[] = "8eded4193ff1f0f77b8b600a825e97ea";
 #else
   const char md5_2[] = "9d7885072058f6c3e68ecaf32e917f30";
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   CompareBitmap(page_bitmap2, 612, 792, md5_2);
   FPDFBitmap_Destroy(page_bitmap2);
 
@@ -930,7 +930,7 @@ TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
 }
 
 // TODO(npm): Add tests using Japanese fonts in other OS.
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
@@ -984,7 +984,7 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   FPDF_ClosePage(page);
   TestAndCloseSaved(612, 792, md5);
 }
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 
 TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
   const char md5[] = "3c20472b0552c0c22b88ab1ed8c6202b";

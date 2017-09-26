@@ -332,7 +332,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
 }
 
 bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   if (text_flags & FXFONT_CIDFONT)
     return false;
 
@@ -352,7 +352,7 @@ FXTEXT_CHARPOS::FXTEXT_CHARPOS()
     : m_Unicode(0),
       m_GlyphIndex(0),
       m_FontCharWidth(0),
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
       m_ExtGID(0),
 #endif
       m_FallbackFontPosition(0),
@@ -438,7 +438,7 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
   }
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
     return pDIB->Create(width, height, FXDIB_8bppMask);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_PATHS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_PATHS_
   return pDIB->Create(
       width, height,
       m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb32);

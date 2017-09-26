@@ -9,9 +9,9 @@
 
 #include "core/fxcrt/ifx_fileaccess.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
+#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_ || \
+    _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
+    _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
 class CFX_FileAccess_Posix : public IFX_FileAccess {
  public:
   CFX_FileAccess_Posix();

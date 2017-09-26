@@ -36,7 +36,7 @@
 class CFX_FontSourceEnum_File;
 class CFGAS_GEFont;
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define FX_FONTMATCHPARA_MatchStyle 0x01
 
 struct FX_FONTMATCHPARAMS {
@@ -81,7 +81,7 @@ typedef void (*FX_LPEnumAllFonts)(std::deque<FX_FONTDESCRIPTOR>* fonts,
 
 FX_LPEnumAllFonts FX_GetDefFontEnumerator();
 
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 class CFX_FontDescriptor {
  public:
   CFX_FontDescriptor();
@@ -137,7 +137,7 @@ class CFX_FontSourceEnum_File {
   std::vector<ByteString> m_FolderPaths;
 };
 
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
  public:
@@ -158,7 +158,7 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
   bool EnumFonts();
 
  private:
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   RetainPtr<CFGAS_GEFont> LoadFont(const RetainPtr<CFGAS_GEFont>& pSrcFont,
                                    uint32_t dwFontStyles,
                                    uint16_t wCodePage);
@@ -180,7 +180,7 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
   std::map<uint32_t, RetainPtr<CFGAS_GEFont>> m_BufferFonts;
   std::map<uint32_t, RetainPtr<CFGAS_GEFont>> m_StreamFonts;
   std::map<uint32_t, RetainPtr<CFGAS_GEFont>> m_DeriveFonts;
-#else   // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   bool EnumFontsFromFontMapper();
   bool EnumFontsFromFiles();
   void RegisterFace(FXFT_Face pFace, const WideString* pFaceName);
@@ -223,7 +223,7 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
   std::map<RetainPtr<CFGAS_GEFont>, RetainPtr<IFX_SeekableReadStream>>
       m_IFXFont2FileRead;
   std::set<wchar_t> m_FailedUnicodesSet;
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_FONTMGR_H_

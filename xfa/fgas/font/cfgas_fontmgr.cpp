@@ -21,7 +21,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
 
@@ -437,17 +437,17 @@ FX_LPEnumAllFonts FX_GetDefFontEnumerator() {
   return FX_EnumGdiFonts;
 }
 
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
 
 constexpr const char* g_FontFolders[] = {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
     "/usr/share/fonts", "/usr/share/X11/fonts/Type1",
     "/usr/share/X11/fonts/TTF", "/usr/local/share/fonts",
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     "~/Library/Fonts", "/Library/Fonts", "/System/Library/Fonts",
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
     "/system/fonts",
 #endif
 };
@@ -1256,4 +1256,4 @@ int32_t CFGAS_FontMgr::IsPartName(const WideString& Name1,
   return 0;
 }
 
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

@@ -209,7 +209,7 @@ void InsertWidthArrayImpl(int* widths, int size, CPDF_Array* pWidthArray) {
   FX_Free(widths);
 }
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
   int size = end - start + 1;
   int* widths = FX_Alloc(int, size);
@@ -228,7 +228,7 @@ ByteString FPDF_GetPSNameFromTT(HDC hDC) {
   }
   return result;
 }
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 void InsertWidthArray1(CFX_Font* pFont,
                        CFX_UnicodeEncoding* pEncoding,
@@ -950,7 +950,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   return LoadFont(pBaseDict);
 }
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
                                          bool bVert,
                                          bool bTranslateName) {
@@ -1049,4 +1049,4 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   DeleteDC(hDC);
   return LoadFont(pBaseDict);
 }
-#endif  //  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  //  _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

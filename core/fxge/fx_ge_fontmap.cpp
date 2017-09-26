@@ -72,7 +72,7 @@ unsigned long _FTStreamRead(FXFT_Stream stream,
 void _FTStreamClose(FXFT_Stream stream);
 };
 
-#if _FX_OS_ == _FX_ANDROID_
+#if _FX_OS_ == _FX_OS_ANDROID_
 std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     const char** pUnused) {
   return nullptr;

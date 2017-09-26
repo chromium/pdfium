@@ -52,7 +52,7 @@ class CFGAS_GEFont : public Retainable {
   void SetFontProvider(CFGAS_PDFFontMgr* pProvider) {
     m_pProvider.Reset(pProvider);
   }
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
     m_bUseLogFontStyle = true;
     m_dwLogFontStyle = dwLogFontStyle;
@@ -64,7 +64,7 @@ class CFGAS_GEFont : public Retainable {
   CFGAS_GEFont(const RetainPtr<CFGAS_GEFont>& src, uint32_t dwFontStyles);
   ~CFGAS_GEFont() override;
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   bool LoadFontInternal(const wchar_t* pszFontFamily,
                         uint32_t dwFontStyles,
                         uint16_t wCodePage);
@@ -89,7 +89,7 @@ class CFGAS_GEFont : public Retainable {
                         bool bCharCode = false);
   WideString GetFamilyName() const;
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   bool m_bUseLogFontStyle;
   uint32_t m_dwLogFontStyle;
 #endif

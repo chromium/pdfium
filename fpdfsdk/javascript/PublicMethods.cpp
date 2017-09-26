@@ -90,7 +90,7 @@ void AlertIfPossible(CJS_EventContext* pContext, const wchar_t* swMsg) {
     pFormFillEnv->JS_appAlert(swMsg, nullptr, 0, 3);
 }
 
-#if _FX_OS_ != _FX_ANDROID_
+#if _FX_OS_ != _FX_OS_ANDROID_
 ByteString CalculateString(double dValue,
                            int iDec,
                            int* iDec2,
@@ -752,7 +752,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
                                         const std::vector<CJS_Value>& params,
                                         CJS_Value& vRet,
                                         WideString& sError) {
-#if _FX_OS_ != _FX_ANDROID_
+#if _FX_OS_ != _FX_OS_ANDROID_
   if (params.size() != 6) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
@@ -994,7 +994,7 @@ bool CJS_PublicMethods::AFPercent_Format(CJS_Runtime* pRuntime,
                                          const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          WideString& sError) {
-#if _FX_OS_ != _FX_ANDROID_
+#if _FX_OS_ != _FX_OS_ANDROID_
   if (params.size() != 2) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;

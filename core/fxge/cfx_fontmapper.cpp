@@ -577,13 +577,13 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
         bItalic = italic_angle != 0;
         weight = old_weight;
       }
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
       const char* narrow_family = "LiberationSansNarrow";
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
       const char* narrow_family = "RobotoCondensed";
 #else
       const char* narrow_family = "ArialNarrow";
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
       auto pos = SubstName.Find("Narrow");
       if (pos.has_value() && pos.value() != 0)
         family = narrow_family;
@@ -644,8 +644,8 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
       }
     } else {
       if (Charset == FX_CHARSET_Symbol) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
-    _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
+    _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
         if (SubstName == "Symbol") {
           pSubstFont->m_Family = "Chrome Symbol";
           pSubstFont->m_Charset = FX_CHARSET_Symbol;

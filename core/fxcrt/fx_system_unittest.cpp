@@ -11,7 +11,7 @@
 // Unit test covering cases where PDFium replaces well-known library
 // functionality on any given platformn.
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
 namespace {
 
@@ -158,7 +158,7 @@ TEST(fxcrt, FXSYS_i64toa) {
       "111111111111111111111111111111111111111111111111111111111111111");
 }
 
-#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
 TEST(fxcrt, FXSYS_wcsftime) {
   struct tm good_time = {};

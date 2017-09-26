@@ -188,7 +188,7 @@ const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
     {0xFFA0, 0xFFEF, 68, 0xFFFF},
 };
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, L"SimSun", L"Arial", 0, 936},
     {0x01e4f102, L"YouYuan", L"Arial", 1, 936},
@@ -436,7 +436,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
     {0xfe209a82, L"LucidaCalligraphy", L"Arial", 0, 1252},
     {0xfef135f8, L"AdobeHeitiStd-Regular", L"Batang,Century,Dotum", 0, 936},
 };
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, L"SimSun",
      L"WenQuanYi Zen Hei Mono,AR PL UMing CN,AR PL UMing HK,AR PL UMing TW,AR "
@@ -1025,7 +1025,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
      L"Sharp,WenQuanYi Micro Hei",
      0, 936},
 };
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, L"SimSun", L"STHeiti,Heiti TC,STFangsong", 0, 936},
     {0x01e4f102, L"YouYuan", L"STHeiti,Heiti TC,STFangsong", 1, 936},
@@ -1426,7 +1426,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
      L"Kokonor,Damascus,STIXNonUnicode,STHeiti,Arial Black", 0, 1252},
     {0xfef135f8, L"AdobeHeitiStd-Regular", L"Heiti TC,STHeiti", 0, 936},
 };
-#elif _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
+#elif _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, L"SimSun", L"Droid Sans Fallback", 0, 936},
     {0x01e4f102, L"YouYuan", L"Droid Sans Fallback", 1, 936},

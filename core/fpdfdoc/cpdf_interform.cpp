@@ -322,7 +322,7 @@ class CFieldNameExtractor {
   const wchar_t* m_pEnd;
 };
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 typedef struct {
   bool bFind;
   LOGFONTA lf;
@@ -368,7 +368,7 @@ bool RetrieveSpecificFont(uint8_t charSet,
   }
   return RetrieveSpecificFont(lf);
 }
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 int CompareFieldName(const WideString& name1, const WideString& name2) {
   const wchar_t* ptr1 = name1.c_str();
@@ -578,7 +578,7 @@ CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
 
 // static
 uint8_t CPDF_InterForm::GetNativeCharSet() {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   uint8_t charSet = FX_CHARSET_ANSI;
   UINT iCodePage = ::GetACP();
   switch (iCodePage) {
@@ -738,7 +738,7 @@ CPDF_Font* CPDF_InterForm::AddStandardFont(CPDF_Document* pDocument,
 
 ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
   ByteString csFontName;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   LOGFONTA lf = {};
   if (charSet == FX_CHARSET_ANSI) {
     csFontName = "Helvetica";
@@ -783,7 +783,7 @@ CPDF_Font* CPDF_InterForm::AddNativeFont(uint8_t charSet,
   if (!pDocument)
     return nullptr;
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   LOGFONTA lf;
   ByteString csFontName = GetNativeFont(charSet, &lf);
   if (!csFontName.IsEmpty()) {

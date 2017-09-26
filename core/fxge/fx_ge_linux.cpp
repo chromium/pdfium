@@ -13,7 +13,7 @@
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "third_party/base/ptr_util.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 namespace {
 
 const size_t kLinuxGpNameSize = 6;
@@ -162,4 +162,4 @@ void CFX_GEModule::InitPlatform() {
 }
 
 void CFX_GEModule::DestroyPlatform() {}
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_

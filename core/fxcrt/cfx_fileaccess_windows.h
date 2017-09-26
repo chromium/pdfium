@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/ifx_fileaccess.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 class CFX_FileAccess_Windows : public IFX_FileAccess {
  public:
   CFX_FileAccess_Windows();

@@ -11,7 +11,7 @@
 static bool g_bProviderTimeZoneSet = false;
 
 CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   if (!g_bProviderTimeZoneSet) {
     g_bProviderTimeZoneSet = true;
     _tzset();

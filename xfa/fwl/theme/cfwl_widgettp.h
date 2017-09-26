@@ -25,7 +25,7 @@ class CFWL_ThemeText;
 class CFGAS_FontMgr;
 class CFWL_Widget;
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 class CFX_FontSourceEnum_File;
 #endif
 

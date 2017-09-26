@@ -114,7 +114,7 @@ CFWL_Widget* CFWL_Form::DoModal() {
   RemoveStates(FWL_WGTSTATE_Invisible);
   pDriver->Run();
 
-#if _FX_OS_ != _FX_MACOSX_
+#if _FX_OS_ != _FX_OS_MACOSX_
   pDriver->PopNoteLoop();
 #endif
 
@@ -126,7 +126,7 @@ void CFWL_Form::EndDoModal() {
   if (!m_pNoteLoop)
     return;
 
-#if (_FX_OS_ == _FX_MACOSX_)
+#if (_FX_OS_ == _FX_OS_MACOSX_)
   m_pNoteLoop->EndModalLoop();
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)

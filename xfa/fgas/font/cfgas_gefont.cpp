@@ -21,7 +21,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
                                                uint32_t dwFontStyles,
                                                uint16_t wCodePage,
                                                CFGAS_FontMgr* pFontMgr) {
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   if (!pFontMgr)
     return nullptr;
 
@@ -55,7 +55,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
 
 CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr)
     :
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(false),
       m_dwLogFontStyle(0),
 #endif
@@ -67,7 +67,7 @@ CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr)
 CFGAS_GEFont::CFGAS_GEFont(const RetainPtr<CFGAS_GEFont>& src,
                            uint32_t dwFontStyles)
     :
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(false),
       m_dwLogFontStyle(0),
 #endif
@@ -95,7 +95,7 @@ CFGAS_GEFont::~CFGAS_GEFont() {
     delete m_pFont;
 }
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     uint16_t wCodePage) {
@@ -133,7 +133,7 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
     return false;
   return InitFont();
 }
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 bool CFGAS_GEFont::LoadFontInternal(CFX_Font* pExternalFont) {
   if (m_pFont || !pExternalFont)
@@ -183,7 +183,7 @@ WideString CFGAS_GEFont::GetFamilyName() const {
 
 uint32_t CFGAS_GEFont::GetFontStyles() const {
   ASSERT(m_pFont);
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   if (m_bUseLogFontStyle)
     return m_dwLogFontStyle;
 #endif
@@ -332,7 +332,7 @@ int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode,
   WideString wsFamily = GetFamilyName();
   RetainPtr<CFGAS_GEFont> pFont =
       m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), wsFamily.c_str());
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   if (!pFont)
     pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
 #endif

@@ -29,7 +29,7 @@
 //fx_system.h already include the string.h in ANSIC
 
 /* Define to 1 if you have the <search.h> header file. */
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER >= 1900
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_ && _MSC_VER >= 1900
 // search.h is always available in VS 2015 and above, and may be
 // available in earlier versions.
 #define HAVE_SEARCH_H 1

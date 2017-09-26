@@ -34,7 +34,7 @@
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
 #endif
 
-#if _FX_OS_ == _FX_ANDROID_
+#if _FX_OS_ == _FX_OS_ANDROID_
 #include <time.h>
 #else
 #include <ctime>

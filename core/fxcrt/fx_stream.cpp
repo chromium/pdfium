@@ -100,7 +100,7 @@ bool IFX_SeekableStream::WriteString(const ByteStringView& str) {
 }
 
 FX_FileHandle* FX_OpenFolder(const char* path) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   auto pData = pdfium::MakeUnique<CFindFileDataA>();
   pData->m_Handle =
       FindFirstFileExA((ByteString(path) + "/*.*").c_str(), FindExInfoStandard,
@@ -121,7 +121,7 @@ bool FX_GetNextFile(FX_FileHandle* handle,
   if (!handle)
     return false;
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   if (handle->m_bEnd)
     return false;
 
@@ -145,7 +145,7 @@ void FX_CloseFolder(FX_FileHandle* handle) {
   if (!handle)
     return;
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   FindClose(handle->m_Handle);
   delete handle;
 #else

@@ -16,12 +16,12 @@
 #define MT_Upper_Mask 0x80000000
 #define MT_Lower_Mask 0x7fffffff
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <wincrypt.h>
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <sys/time.h>
 #include <unistd.h>
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
 
@@ -33,7 +33,7 @@ struct MTContext {
 bool g_bHaveGlobalSeed = false;
 uint32_t g_nGlobalSeed = 0;
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 bool GenerateSeedFromCryptoRandom(uint32_t* pSeed) {
   HCRYPTPROV hCP = 0;
   if (!::CryptAcquireContext(&hCP, nullptr, nullptr, PROV_RSA_FULL, 0) ||
@@ -50,30 +50,30 @@ uint32_t GenerateSeedFromEnvironment() {
   char c;
   uintptr_t p = reinterpret_cast<uintptr_t>(&c);
   uint32_t seed = ~static_cast<uint32_t>(p >> 3);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   SYSTEMTIME st;
   GetSystemTime(&st);
   seed ^= static_cast<uint32_t>(st.wSecond) * 1000000;
   seed ^= static_cast<uint32_t>(st.wMilliseconds) * 1000;
   seed ^= GetCurrentProcessId();
-#else   // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   struct timeval tv;
   gettimeofday(&tv, 0);
   seed ^= static_cast<uint32_t>(tv.tv_sec) * 1000000;
   seed ^= static_cast<uint32_t>(tv.tv_usec);
   seed ^= static_cast<uint32_t>(getpid());
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   return seed;
 }
 
 void* ContextFromNextGlobalSeed() {
   if (!g_bHaveGlobalSeed) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     if (!GenerateSeedFromCryptoRandom(&g_nGlobalSeed))
       g_nGlobalSeed = GenerateSeedFromEnvironment();
-#else   // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     g_nGlobalSeed = GenerateSeedFromEnvironment();
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     g_bHaveGlobalSeed = true;
   }
   return FX_Random_MT_Start(++g_nGlobalSeed);

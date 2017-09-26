@@ -32,7 +32,7 @@ class CFGAS_FormatStringTest : public testing::Test {
   }
 
   void SetTZ(const char* tz) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     _putenv_s("TZ", tz);
     _tzset();
 #else

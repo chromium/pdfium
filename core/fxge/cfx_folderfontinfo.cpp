@@ -136,7 +136,7 @@ void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
     }
 
     ByteString fullpath = path;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     fullpath += "\\";
 #else
     fullpath += "/";

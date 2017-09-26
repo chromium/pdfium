@@ -217,7 +217,7 @@ CFX_Font::CFX_Font()
       m_pFontData(nullptr),
       m_pGsubData(nullptr),
       m_dwSize(0),
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
       m_pPlatformFont(nullptr),
 #endif
       m_bEmbedded(false),
@@ -244,7 +244,7 @@ bool CFX_Font::LoadClone(const CFX_Font* pFont) {
   m_dwSize = pFont->m_dwSize;
   m_pFontData = pFont->m_pFontData;
   m_pGsubData = pFont->m_pGsubData;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   m_pPlatformFont = pFont->m_pPlatformFont;
 #endif
   m_pOwnedStream = pFont->m_pOwnedStream;
@@ -276,7 +276,7 @@ CFX_Font::~CFX_Font() {
   delete m_pOwnedStream;
 #endif  // PDF_ENABLE_XFA
   FX_Free(m_pGsubData);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ && !defined _SKIA_SUPPORT_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ && !defined _SKIA_SUPPORT_
   ReleasePlatformResource();
 #endif
 }

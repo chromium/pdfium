@@ -7,8 +7,8 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_system.h"
 
-#if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_ || \
-    _FX_OS_ == _FX_MACOSX_
+#if _FX_OS_ == _FX_OS_LINUX_ || _FX_OS_ == _FX_OS_ANDROID_ || \
+    _FX_OS_ == _FX_OS_MACOSX_
 #include <sys/time.h>
 #include <time.h>
 #endif
@@ -92,9 +92,9 @@ bool FX_IsLeapYear(int32_t iYear) {
 
 void CFX_DateTime::Now() {
   FXUT_SYSTEMTIME utLocal;
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
+#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
   ::GetLocalTime((LPSYSTEMTIME)&utLocal);
-#else   // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
+#else   // _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
   timeval curTime;
   gettimeofday(&curTime, nullptr);
 
@@ -108,7 +108,7 @@ void CFX_DateTime::Now() {
   utLocal.wMinute = st.tm_min;
   utLocal.wSecond = st.tm_sec;
   utLocal.wMillisecond = curTime.tv_usec / 1000;
-#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
+#endif  // _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
 
   year_ = utLocal.wYear;
   month_ = static_cast<uint8_t>(utLocal.wMonth);

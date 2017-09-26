@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/ptr_util.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
 

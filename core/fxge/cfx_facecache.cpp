@@ -24,7 +24,7 @@
 #include "third_party/skia/include/core/SkStream.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include "third_party/skia/include/ports/SkFontMgr.h"
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"
 #endif
@@ -284,7 +284,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   int nMatrixB = static_cast<int>(pMatrix->b * 10000);
   int nMatrixC = static_cast<int>(pMatrix->c * 10000);
   int nMatrixD = static_cast<int>(pMatrix->d * 10000);
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
   if (pFont->GetSubstFont()) {
     keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
                     anti_alias, pFont->GetSubstFont()->m_Weight,
@@ -317,7 +317,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   }
 #endif
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_ || \
+#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_ || \
     defined _SKIA_SUPPORT_PATHS_
   return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
                            bFontStyle, dest_width, anti_alias);
@@ -375,7 +375,7 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
     m_pTypeface = SkTypeface::MakeFromStream(
         new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()));
   }
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   if (!m_pTypeface) {
     sk_sp<SkFontMgr> customMgr(SkFontMgr_New_Custom_Empty());
     m_pTypeface.reset(customMgr->createFromStream(
@@ -386,7 +386,7 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
 }
 #endif
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
+#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
 void CFX_FaceCache::InitPlatform() {}
 #endif
 

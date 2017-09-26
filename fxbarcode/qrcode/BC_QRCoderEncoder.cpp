@@ -443,7 +443,7 @@ void SplitString(const ByteString& content,
     uint8_t c = static_cast<uint8_t>(content[index]);
     if (((c >= 0xA1 && c <= 0xAA) || (c >= 0xB0 && c <= 0xFA)))
       break;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     bool high = !!IsDBCSLeadByte(content[index]);
 #else
     bool high = content[index] > 127;
