@@ -207,11 +207,11 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     return it->second ? LoadFont(it->second, dwFontStyles, wCodePage) : nullptr;
   }
   const FX_FONTDESCRIPTOR* pFD =
-      FindFont(pszFontFamily, dwFontStyles, true, wCodePage);
+      FindFont(pszFontFamily, dwFontStyles, true, wCodePage, 999, 0);
   if (!pFD)
-    pFD = FindFont(nullptr, dwFontStyles, true, wCodePage);
+    pFD = FindFont(nullptr, dwFontStyles, true, wCodePage, 999, 0);
   if (!pFD)
-    pFD = FindFont(nullptr, dwFontStyles, false, wCodePage);
+    pFD = FindFont(nullptr, dwFontStyles, false, wCodePage, 999, 0);
   if (!pFD)
     return nullptr;
 
@@ -276,9 +276,9 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const wchar_t* pszFontFamily,
     return it->second ? LoadFont(it->second, dwFontStyles, wCodePage) : nullptr;
 
   const FX_FONTDESCRIPTOR* pFD =
-      FindFont(pszFontFamily, dwFontStyles, true, wCodePage);
+      FindFont(pszFontFamily, dwFontStyles, true, wCodePage, 999, 0);
   if (!pFD)
-    pFD = FindFont(pszFontFamily, dwFontStyles, false, wCodePage);
+    pFD = FindFont(pszFontFamily, dwFontStyles, false, wCodePage, 999, 0);
   if (!pFD)
     return nullptr;
 

@@ -109,8 +109,8 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
                                     uint32_t dwFontStyles,
                                     uint32_t dwMatchFlags,
                                     uint16_t wCodePage,
-                                    uint32_t dwUSB = 999,
-                                    wchar_t wUnicode = 0);
+                                    uint32_t dwUSB,
+                                    wchar_t wUnicode);
 
   FX_LPEnumAllFonts m_pEnumerator;
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
