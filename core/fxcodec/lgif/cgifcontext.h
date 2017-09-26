@@ -54,7 +54,7 @@ class CGifContext : public CCodec_GifModule::Context {
   int32_t decode_status;
   uint32_t skip_size;
   ByteString cmt_data;
-  std::unique_ptr<GifGCE> m_GifGCE;
+  std::unique_ptr<GifGraphicControlExtension> m_GraphicControlExtension;
   uint8_t* next_in;
   std::vector<std::unique_ptr<GifImage>> m_Images;
   std::unique_ptr<CFX_LZWDecoder> m_ImgDecoder;

@@ -37,58 +37,57 @@ class CGifContext;
 #define GIF_D_STATUS_IMG_DATA 0x0A
 
 #pragma pack(1)
-typedef struct tagGifGF {
+typedef struct {
   uint8_t pal_bits : 3;
   uint8_t sort_flag : 1;
   uint8_t color_resolution : 3;
   uint8_t global_pal : 1;
-} GifGF;
+} GifGlobalFlags;
 
-typedef struct tagGifLF {
+typedef struct {
   uint8_t pal_bits : 3;
   uint8_t reserved : 2;
   uint8_t sort_flag : 1;
   uint8_t interlace : 1;
   uint8_t local_pal : 1;
-} GifLF;
+} GifLocalFlags;
 
-typedef struct tagGifHeader {
+typedef struct {
   char signature[3];
   char version[3];
 } GifHeader;
 
-typedef struct tagGifLSD {
+typedef struct {
   uint16_t width;
   uint16_t height;
-  uint8_t global_flag;
+  GifGlobalFlags global_flags;
   uint8_t bc_index;
   uint8_t pixel_aspect;
-} GifLSD;
+} GifLocalScreenDescriptor;
 
-typedef struct tagGifImageInfo {
+typedef struct {
   uint16_t left;
   uint16_t top;
   uint16_t width;
   uint16_t height;
-
-  uint8_t local_flag;
+  GifLocalFlags local_flags;
 } GifImageInfo;
 
-typedef struct tagGifCEF {
+typedef struct {
   uint8_t transparency : 1;
   uint8_t user_input : 1;
   uint8_t disposal_method : 3;
   uint8_t reserved : 3;
-} GifCEF;
+} GifControlExtensionFlags;
 
-typedef struct tagGifGCE {
+typedef struct {
   uint8_t block_size;
-  uint8_t gce_flag;
+  GifControlExtensionFlags gce_flags;
   uint16_t delay_time;
   uint8_t trans_index;
-} GifGCE;
+} GifGraphicControlExtension;
 
-typedef struct tagGifPTE {
+typedef struct {
   uint8_t block_size;
   uint16_t grid_left;
   uint16_t grid_top;
@@ -100,15 +99,15 @@ typedef struct tagGifPTE {
 
   uint8_t fc_index;
   uint8_t bc_index;
-} GifPTE;
+} GifPlainTextExtension;
 
-typedef struct tagGifAE {
+typedef struct {
   uint8_t block_size;
   uint8_t app_identify[8];
   uint8_t app_authentication[3];
-} GifAE;
+} GifApplicationExtension;
 
-typedef struct tagGifPalette { uint8_t r, g, b; } GifPalette;
+typedef struct { uint8_t r, g, b; } GifPalette;
 #pragma pack()
 
 enum class GifDecodeStatus {
@@ -118,12 +117,8 @@ enum class GifDecodeStatus {
   InsufficientDestSize,  // Only used internally by CGifLZWDecoder::Decode()
 };
 
-class GifImage {
- public:
-  GifImage();
-  ~GifImage();
-
-  std::unique_ptr<GifGCE> m_ImageGCE;
+typedef struct {
+  std::unique_ptr<GifGraphicControlExtension> m_ImageGCE;
   std::vector<GifPalette> m_LocalPalettes;
   std::vector<uint8_t> m_ImageRowBuf;
   GifImageInfo m_ImageInfo;
@@ -131,6 +126,6 @@ class GifImage {
   uint8_t image_code_exp;
   uint32_t image_data_pos;
   int32_t image_row_num;
-};
+} GifImage;
 
 #endif  // CORE_FXCODEC_LGIF_FX_GIF_H_

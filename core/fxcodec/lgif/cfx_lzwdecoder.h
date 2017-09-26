@@ -14,10 +14,10 @@
 
 class CFX_LZWDecoder {
  public:
-  struct tag_Table {
+  typedef struct {
     uint16_t prefix;
     uint8_t suffix;
-  };
+  } CodeEntry;
 
   // Returns nullptr on error
   static std::unique_ptr<CFX_LZWDecoder> Create(uint8_t color_exp,
@@ -44,7 +44,7 @@ class CFX_LZWDecoder {
   uint8_t code_first_;
   uint8_t stack_[GIF_MAX_LZW_CODE];
   size_t stack_size_;
-  tag_Table code_table_[GIF_MAX_LZW_CODE];
+  CodeEntry code_table_[GIF_MAX_LZW_CODE];
   uint16_t code_old_;
   uint8_t* next_in_;
   uint32_t avail_in_;
