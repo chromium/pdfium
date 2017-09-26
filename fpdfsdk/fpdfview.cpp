@@ -168,12 +168,12 @@ bool CPDF_CustomAccess::ReadBlock(void* buffer,
 }
 
 #ifdef PDF_ENABLE_XFA
-class CFPDF_FileStream : public IFX_SeekableStream {
+class FPDF_FileHandlerContext : public IFX_SeekableStream {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~CFPDF_FileStream() override;
+  ~FPDF_FileHandlerContext() override;
 
   // IFX_SeekableStream:
   FX_FILESIZE GetSize() override;
@@ -187,39 +187,39 @@ class CFPDF_FileStream : public IFX_SeekableStream {
   void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
 
  protected:
-  explicit CFPDF_FileStream(FPDF_FILEHANDLER* pFS);
+  explicit FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS);
 
   FPDF_FILEHANDLER* m_pFS;
   FX_FILESIZE m_nCurPos;
 };
 
-CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
+FPDF_FileHandlerContext::FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS) {
   m_pFS = pFS;
   m_nCurPos = 0;
 }
 
-CFPDF_FileStream::~CFPDF_FileStream() {
+FPDF_FileHandlerContext::~FPDF_FileHandlerContext() {
   if (m_pFS && m_pFS->Release)
     m_pFS->Release(m_pFS->clientData);
 }
 
-FX_FILESIZE CFPDF_FileStream::GetSize() {
+FX_FILESIZE FPDF_FileHandlerContext::GetSize() {
   if (m_pFS && m_pFS->GetSize)
     return (FX_FILESIZE)m_pFS->GetSize(m_pFS->clientData);
   return 0;
 }
 
-bool CFPDF_FileStream::IsEOF() {
+bool FPDF_FileHandlerContext::IsEOF() {
   return m_nCurPos >= GetSize();
 }
 
-FX_FILESIZE CFPDF_FileStream::GetPosition() {
+FX_FILESIZE FPDF_FileHandlerContext::GetPosition() {
   return m_nCurPos;
 }
 
-bool CFPDF_FileStream::ReadBlock(void* buffer,
-                                 FX_FILESIZE offset,
-                                 size_t size) {
+bool FPDF_FileHandlerContext::ReadBlock(void* buffer,
+                                        FX_FILESIZE offset,
+                                        size_t size) {
   if (!buffer || !size || !m_pFS->ReadBlock)
     return false;
 
@@ -231,7 +231,7 @@ bool CFPDF_FileStream::ReadBlock(void* buffer,
   return false;
 }
 
-size_t CFPDF_FileStream::ReadBlock(void* buffer, size_t size) {
+size_t FPDF_FileHandlerContext::ReadBlock(void* buffer, size_t size) {
   if (!buffer || !size || !m_pFS->ReadBlock)
     return 0;
 
@@ -250,9 +250,9 @@ size_t CFPDF_FileStream::ReadBlock(void* buffer, size_t size) {
   return 0;
 }
 
-bool CFPDF_FileStream::WriteBlock(const void* buffer,
-                                  FX_FILESIZE offset,
-                                  size_t size) {
+bool FPDF_FileHandlerContext::WriteBlock(const void* buffer,
+                                         FX_FILESIZE offset,
+                                         size_t size) {
   if (!m_pFS || !m_pFS->WriteBlock)
     return false;
 
@@ -264,7 +264,7 @@ bool CFPDF_FileStream::WriteBlock(const void* buffer,
   return false;
 }
 
-bool CFPDF_FileStream::Flush() {
+bool FPDF_FileHandlerContext::Flush() {
   if (!m_pFS || !m_pFS->Flush)
     return true;
 
@@ -417,7 +417,7 @@ RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
 #ifdef PDF_ENABLE_XFA
 RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFilehandler) {
-  return pdfium::MakeRetain<CFPDF_FileStream>(pFilehandler);
+  return pdfium::MakeRetain<FPDF_FileHandlerContext>(pFilehandler);
 }
 #endif  // PDF_ENABLE_XFA
 
