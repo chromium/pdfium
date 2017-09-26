@@ -111,16 +111,6 @@ class CFX_FontDescriptorInfo {
   }
 };
 
-struct FX_HandleParentPath {
-  FX_HandleParentPath() {}
-  FX_HandleParentPath(const FX_HandleParentPath& x) {
-    pFileHandle = x.pFileHandle;
-    bsParentPath = x.bsParentPath;
-  }
-  FX_FileHandle* pFileHandle;
-  ByteString bsParentPath;
-};
-
 class CFX_FontSourceEnum_File {
  public:
   CFX_FontSourceEnum_File();
@@ -130,10 +120,20 @@ class CFX_FontSourceEnum_File {
   RetainPtr<CFX_CRTFileAccess> GetNext();
 
  private:
+  struct HandleParentPath {
+    HandleParentPath() {}
+    HandleParentPath(const HandleParentPath& x) {
+      pFileHandle = x.pFileHandle;
+      bsParentPath = x.bsParentPath;
+    }
+    FX_FileHandle* pFileHandle;
+    ByteString bsParentPath;
+  };
+
   ByteString GetNextFile();
 
   WideString m_wsNext;
-  std::vector<FX_HandleParentPath> m_FolderQueue;
+  std::vector<HandleParentPath> m_FolderQueue;
   std::vector<ByteString> m_FolderPaths;
 };
 

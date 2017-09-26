@@ -632,7 +632,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
     if (m_FolderPaths.empty())
       return "";
     pCurHandle = FX_OpenFolder(m_FolderPaths.back().c_str());
-    FX_HandleParentPath hpp;
+    HandleParentPath hpp;
     hpp.pFileHandle = pCurHandle;
     hpp.bsParentPath = m_FolderPaths.back();
     m_FolderQueue.push_back(hpp);
@@ -657,7 +657,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
     if (bsName == "." || bsName == "..")
       continue;
     if (bFolder) {
-      FX_HandleParentPath hpp;
+      HandleParentPath hpp;
       hpp.bsParentPath =
           m_FolderQueue.back().bsParentPath + bsFolderSeparator + bsName;
       hpp.pFileHandle = FX_OpenFolder(hpp.bsParentPath.c_str());
