@@ -106,7 +106,7 @@ CFX_XMLSyntaxParser::CFX_XMLSyntaxParser(
                pdfium::base::checked_cast<size_t>(m_pStream->GetLength()));
   m_iCurrentPos = m_pStream->GetBOMLength();
 
-  FX_SAFE_STRSIZE alloc_size_safe = m_iXMLPlaneSize;
+  FX_SAFE_SIZE_T alloc_size_safe = m_iXMLPlaneSize;
   alloc_size_safe += 1;  // For NUL.
   if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0) {
     m_syntaxParserResult = FX_XmlSyntaxResult::Error;

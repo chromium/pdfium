@@ -49,7 +49,7 @@ void CFX_BinaryBuf::EstimateSize(size_t size, size_t step) {
 }
 
 void CFX_BinaryBuf::ExpandBuf(size_t add_size) {
-  FX_SAFE_STRSIZE new_size = m_DataSize;
+  FX_SAFE_SIZE_T new_size = m_DataSize;
   new_size += add_size;
   if (m_AllocSize >= new_size.ValueOrDie())
     return;

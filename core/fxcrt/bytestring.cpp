@@ -125,7 +125,7 @@ ByteString::ByteString(const ByteStringView& stringSrc) {
 }
 
 ByteString::ByteString(const ByteStringView& str1, const ByteStringView& str2) {
-  FX_SAFE_STRSIZE nSafeLen = str1.GetLength();
+  FX_SAFE_SIZE_T nSafeLen = str1.GetLength();
   nSafeLen += str2.GetLength();
 
   size_t nNewLen = nSafeLen.ValueOrDie();
@@ -139,7 +139,7 @@ ByteString::ByteString(const ByteStringView& str1, const ByteStringView& str2) {
 }
 
 ByteString::ByteString(const std::initializer_list<ByteStringView>& list) {
-  FX_SAFE_STRSIZE nSafeLen = 0;
+  FX_SAFE_SIZE_T nSafeLen = 0;
   for (const auto& item : list)
     nSafeLen += item.GetLength();
 

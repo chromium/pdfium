@@ -46,7 +46,7 @@ CFX_XMLNode* XFA_FDEExtension_GetDocumentNode(
 }  // namespace
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  FX_SAFE_STRSIZE safe_size = size;
+  FX_SAFE_SIZE_T safe_size = size;
   if (!safe_size.IsValid())
     return 0;
 

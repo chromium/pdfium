@@ -314,7 +314,7 @@ WideString::WideString(const WideStringView& stringSrc) {
 }
 
 WideString::WideString(const WideStringView& str1, const WideStringView& str2) {
-  FX_SAFE_STRSIZE nSafeLen = str1.GetLength();
+  FX_SAFE_SIZE_T nSafeLen = str1.GetLength();
   nSafeLen += str2.GetLength();
 
   size_t nNewLen = nSafeLen.ValueOrDie();
@@ -328,7 +328,7 @@ WideString::WideString(const WideStringView& str1, const WideStringView& str2) {
 }
 
 WideString::WideString(const std::initializer_list<WideStringView>& list) {
-  FX_SAFE_STRSIZE nSafeLen = 0;
+  FX_SAFE_SIZE_T nSafeLen = 0;
   for (const auto& item : list)
     nSafeLen += item.GetLength();
 
