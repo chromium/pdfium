@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_LGIF_FX_GIF_H_
-#define CORE_FXCODEC_LGIF_FX_GIF_H_
+#ifndef CORE_FXCODEC_GIF_CFX_GIF_H_
+#define CORE_FXCODEC_GIF_CFX_GIF_H_
 
 #include <memory>
 #include <vector>
 
-class CGifContext;
+class CFX_GifContext;
 
 #define GIF_SIGNATURE "GIF"
 #define GIF_SIG_EXTENSION 0x21
@@ -42,7 +42,7 @@ typedef struct {
   uint8_t sort_flag : 1;
   uint8_t color_resolution : 3;
   uint8_t global_pal : 1;
-} GifGlobalFlags;
+} CFX_GifGlobalFlags;
 
 typedef struct {
   uint8_t pal_bits : 3;
@@ -50,42 +50,42 @@ typedef struct {
   uint8_t sort_flag : 1;
   uint8_t interlace : 1;
   uint8_t local_pal : 1;
-} GifLocalFlags;
+} CFX_GifLocalFlags;
 
 typedef struct {
   char signature[3];
   char version[3];
-} GifHeader;
+} CFX_GifHeader;
 
 typedef struct {
   uint16_t width;
   uint16_t height;
-  GifGlobalFlags global_flags;
+  CFX_GifGlobalFlags global_flags;
   uint8_t bc_index;
   uint8_t pixel_aspect;
-} GifLocalScreenDescriptor;
+} CFX_GifLocalScreenDescriptor;
 
 typedef struct {
   uint16_t left;
   uint16_t top;
   uint16_t width;
   uint16_t height;
-  GifLocalFlags local_flags;
-} GifImageInfo;
+  CFX_GifLocalFlags local_flags;
+} CFX_CFX_GifImageInfo;
 
 typedef struct {
   uint8_t transparency : 1;
   uint8_t user_input : 1;
   uint8_t disposal_method : 3;
   uint8_t reserved : 3;
-} GifControlExtensionFlags;
+} CFX_GifControlExtensionFlags;
 
 typedef struct {
   uint8_t block_size;
-  GifControlExtensionFlags gce_flags;
+  CFX_GifControlExtensionFlags gce_flags;
   uint16_t delay_time;
   uint8_t trans_index;
-} GifGraphicControlExtension;
+} CFX_GifGraphicControlExtension;
 
 typedef struct {
   uint8_t block_size;
@@ -99,7 +99,7 @@ typedef struct {
 
   uint8_t fc_index;
   uint8_t bc_index;
-} GifPlainTextExtension;
+} CFX_GifPlainTextExtension;
 
 typedef struct {
   uint8_t block_size;
@@ -107,10 +107,10 @@ typedef struct {
   uint8_t app_authentication[3];
 } GifApplicationExtension;
 
-typedef struct { uint8_t r, g, b; } GifPalette;
+typedef struct { uint8_t r, g, b; } CFX_GifPalette;
 #pragma pack()
 
-enum class GifDecodeStatus {
+enum class CFX_GifDecodeStatus {
   Error,
   Success,
   Unfinished,
@@ -118,14 +118,14 @@ enum class GifDecodeStatus {
 };
 
 typedef struct {
-  std::unique_ptr<GifGraphicControlExtension> m_ImageGCE;
-  std::vector<GifPalette> m_LocalPalettes;
-  std::vector<uint8_t> m_ImageRowBuf;
-  GifImageInfo m_ImageInfo;
+  std::unique_ptr<CFX_GifGraphicControlExtension> image_GCE;
+  std::vector<CFX_GifPalette> local_palettes;
+  std::vector<uint8_t> row_buffer;
+  CFX_CFX_GifImageInfo image_info;
   uint8_t local_pallette_exp;
-  uint8_t image_code_exp;
-  uint32_t image_data_pos;
-  int32_t image_row_num;
-} GifImage;
+  uint8_t code_exp;
+  uint32_t data_pos;
+  int32_t row_num;
+} CFX_GifImage;
 
-#endif  // CORE_FXCODEC_LGIF_FX_GIF_H_
+#endif  // CORE_FXCODEC_GIF_CFX_GIF_H_

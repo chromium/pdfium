@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcodec/lgif/fx_gif.h"
+#include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -43,17 +43,17 @@ class CCodec_GifModule {
   std::unique_ptr<Context> Start(Delegate* pDelegate);
   uint32_t GetAvailInput(Context* context, uint8_t** avail_buf_ptr = nullptr);
   void Input(Context* context, const uint8_t* src_buf, uint32_t src_size);
-  GifDecodeStatus ReadHeader(Context* context,
-                             int* width,
-                             int* height,
-                             int* pal_num,
-                             void** pal_pp,
-                             int* bg_index,
-                             CFX_DIBAttribute* pAttribute);
-  GifDecodeStatus LoadFrameInfo(Context* context, int* frame_num);
-  GifDecodeStatus LoadFrame(Context* context,
-                            int frame_num,
-                            CFX_DIBAttribute* pAttribute);
+  CFX_GifDecodeStatus ReadHeader(Context* context,
+                                 int* width,
+                                 int* height,
+                                 int* pal_num,
+                                 void** pal_pp,
+                                 int* bg_index,
+                                 CFX_DIBAttribute* pAttribute);
+  CFX_GifDecodeStatus LoadFrameInfo(Context* context, int* frame_num);
+  CFX_GifDecodeStatus LoadFrame(Context* context,
+                                int frame_num,
+                                CFX_DIBAttribute* pAttribute);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_

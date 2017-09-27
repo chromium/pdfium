@@ -775,14 +775,14 @@ static_library("fxcodec") {
       "core/fxcodec/codec/ccodec_tiffmodule.cpp",
       "core/fxcodec/codec/ccodec_tiffmodule.h",
       "core/fxcodec/codec/fx_codec_progress.cpp",
+      "core/fxcodec/gif/cfx_gif.cpp",
+      "core/fxcodec/gif/cfx_gif.h",
+      "core/fxcodec/gif/cfx_gifcontext.cpp",
+      "core/fxcodec/gif/cfx_gifcontext.h",
+      "core/fxcodec/gif/cfx_lzwdecompressor.cpp",
+      "core/fxcodec/gif/cfx_lzwdecompressor.h",
       "core/fxcodec/lbmp/fx_bmp.cpp",
       "core/fxcodec/lbmp/fx_bmp.h",
-      "core/fxcodec/lgif/cfx_lzwdecoder.cpp",
-      "core/fxcodec/lgif/cfx_lzwdecoder.h",
-      "core/fxcodec/lgif/cgifcontext.cpp",
-      "core/fxcodec/lgif/cgifcontext.h",
-      "core/fxcodec/lgif/fx_gif.cpp",
-      "core/fxcodec/lgif/fx_gif.h",
     ]
     deps += [
       "third_party:fx_lpng",
@@ -1950,7 +1950,7 @@ test("pdfium_unittests") {
   include_dirs = []
   if (pdf_enable_xfa) {
     sources += [
-      "core/fxcodec/lgif/cfx_lzwdecoder_unittest.cpp",
+      "core/fxcodec/gif/cfx_lzwdecompressor_unittest.cpp",
       "core/fxcrt/css/cfx_cssdeclaration_unittest.cpp",
       "core/fxcrt/css/cfx_cssstylesheet_unittest.cpp",
       "core/fxcrt/css/cfx_cssvaluelistparser_unittest.cpp",

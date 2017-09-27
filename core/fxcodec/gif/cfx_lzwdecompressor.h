@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_LGIF_CFX_LZWDECODER_H_
-#define CORE_FXCODEC_LGIF_CFX_LZWDECODER_H_
+#ifndef CORE_FXCODEC_GIF_CFX_LZWDECOMPRESSOR_H_
+#define CORE_FXCODEC_GIF_CFX_LZWDECOMPRESSOR_H_
 
 #include <memory>
 #include <vector>
 
-#include "core/fxcodec/lgif/fx_gif.h"
+#include "core/fxcodec/gif/cfx_gif.h"
 
-class CFX_LZWDecoder {
+class CFX_LZWDecompressor {
  public:
   typedef struct {
     uint16_t prefix;
@@ -20,17 +20,17 @@ class CFX_LZWDecoder {
   } CodeEntry;
 
   // Returns nullptr on error
-  static std::unique_ptr<CFX_LZWDecoder> Create(uint8_t color_exp,
-                                                uint8_t code_exp);
-  ~CFX_LZWDecoder();
+  static std::unique_ptr<CFX_LZWDecompressor> Create(uint8_t color_exp,
+                                                     uint8_t code_exp);
+  ~CFX_LZWDecompressor();
 
-  GifDecodeStatus Decode(uint8_t* src_buf,
-                         uint32_t src_size,
-                         uint8_t* des_buf,
-                         uint32_t* des_size);
+  CFX_GifDecodeStatus Decode(uint8_t* src_buf,
+                             uint32_t src_size,
+                             uint8_t* des_buf,
+                             uint32_t* des_size);
 
  private:
-  CFX_LZWDecoder(uint8_t color_exp, uint8_t code_exp);
+  CFX_LZWDecompressor(uint8_t color_exp, uint8_t code_exp);
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
   bool DecodeString(uint16_t code);
@@ -52,4 +52,4 @@ class CFX_LZWDecoder {
   uint32_t code_store_;
 };
 
-#endif  // CORE_FXCODEC_LGIF_CFX_LZWDECODER_H_
+#endif  // CORE_FXCODEC_GIF_CFX_LZWDECOMPRESSOR_H_
