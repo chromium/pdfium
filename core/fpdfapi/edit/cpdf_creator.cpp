@@ -102,7 +102,7 @@ bool CFX_FileBufferArchive::WriteByte(uint8_t byte) {
 bool CFX_FileBufferArchive::WriteDWord(uint32_t i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
-  return WriteBlock(buf, static_cast<size_t>(FXSYS_strlen(buf)));
+  return WriteBlock(buf, static_cast<size_t>(strlen(buf)));
 }
 
 bool CFX_FileBufferArchive::WriteString(const ByteStringView& str) {
@@ -687,7 +687,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
       char offset_buf[20];
       memset(offset_buf, 0, sizeof(offset_buf));
       FXSYS_i64toa(prev, offset_buf, 10);
-      if (!m_Archive->WriteBlock(offset_buf, FXSYS_strlen(offset_buf)))
+      if (!m_Archive->WriteBlock(offset_buf, strlen(offset_buf)))
         return -1;
     }
   }
@@ -749,7 +749,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
   char offset_buf[20];
   memset(offset_buf, 0, sizeof(offset_buf));
   FXSYS_i64toa(m_XrefStart, offset_buf, 10);
-  if (!m_Archive->WriteBlock(offset_buf, FXSYS_strlen(offset_buf)) ||
+  if (!m_Archive->WriteBlock(offset_buf, strlen(offset_buf)) ||
       !m_Archive->WriteString("\r\n%%EOF\r\n")) {
     return -1;
   }

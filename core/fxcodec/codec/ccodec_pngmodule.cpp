@@ -80,11 +80,11 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
     png_textp text = nullptr;
     png_get_text(png_ptr, info_ptr, &text, &num_text);
     for (i = 0; i < num_text; i++) {
-      len = FXSYS_strlen(text[i].key);
+      len = strlen(text[i].key);
       buf = "Time";
-      if (memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
+      if (memcmp(buf, text[i].key, std::min(len, strlen(buf)))) {
         buf = "Author";
-        if (!memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
+        if (!memcmp(buf, text[i].key, std::min(len, strlen(buf)))) {
           pAttribute->m_strAuthor =
               text[i].text_length > 0
                   ? ByteString(reinterpret_cast<uint8_t*>(text[i].text),

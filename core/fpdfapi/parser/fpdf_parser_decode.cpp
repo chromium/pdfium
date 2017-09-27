@@ -465,7 +465,7 @@ WideString PDF_DecodeText(const ByteString& bstr) {
 
 ByteString PDF_EncodeText(const wchar_t* pString, int len) {
   if (len == -1)
-    len = FXSYS_wcslen(pString);
+    len = wcslen(pString);
 
   ByteString result;
   char* dest_buf1 = result.GetBuffer(len);

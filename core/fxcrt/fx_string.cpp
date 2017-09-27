@@ -214,7 +214,7 @@ size_t FX_ftoa(float d, char* buf) {
   }
   int i = scaled / scale;
   FXSYS_itoa(i, buf2, 10);
-  size_t len = FXSYS_strlen(buf2);
+  size_t len = strlen(buf2);
   memcpy(buf + buf_size, buf2, len);
   buf_size += len;
   int fraction = scaled % scale;

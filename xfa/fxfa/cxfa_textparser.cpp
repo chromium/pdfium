@@ -84,8 +84,8 @@ std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
       L"sub{vertical-align:-15em;font-size:.66em}";
 
   auto sheet = pdfium::MakeUnique<CFX_CSSStyleSheet>();
-  return sheet->LoadBuffer(s_pStyle, FXSYS_wcslen(s_pStyle)) ? std::move(sheet)
-                                                             : nullptr;
+  return sheet->LoadBuffer(s_pStyle, wcslen(s_pStyle)) ? std::move(sheet)
+                                                       : nullptr;
 }
 
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(

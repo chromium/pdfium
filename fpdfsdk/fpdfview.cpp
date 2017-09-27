@@ -1398,7 +1398,7 @@ FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* str,
   if (!bstr || !length)
     return -1;
   if (length == -1)
-    length = FXSYS_strlen(bstr);
+    length = strlen(bstr);
 
   if (length == 0) {
     if (str->str) {

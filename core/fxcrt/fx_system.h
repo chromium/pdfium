@@ -116,16 +116,13 @@ extern "C" {
 
 #include "third_party/base/numerics/safe_conversions.h"
 
-#define FXSYS_strlen(ptr) (strlen(ptr))
-#define FXSYS_wcslen(ptr) (wcslen(ptr))
-
 // Overloaded functions for C++ templates
 inline size_t FXSYS_len(const char* ptr) {
-  return FXSYS_strlen(ptr);
+  return strlen(ptr);
 }
 
 inline size_t FXSYS_len(const wchar_t* ptr) {
-  return FXSYS_wcslen(ptr);
+  return wcslen(ptr);
 }
 
 inline int FXSYS_cmp(const char* ptr1, const char* ptr2, size_t len) {
@@ -145,9 +142,6 @@ inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
 }
 
 extern "C" {
-#else
-#define FXSYS_strlen(ptr) (strlen(ptr))
-#define FXSYS_wcslen(ptr) (wcslen(ptr))
 #endif  // __cplusplus
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

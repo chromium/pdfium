@@ -25,7 +25,7 @@ int32_t CFPF_SkiaFontDescriptor::GetType() const {
 
 void CFPF_SkiaFontDescriptor::SetFamily(const char* pFamily) {
   FX_Free(m_pFamily);
-  int32_t iSize = FXSYS_strlen(pFamily);
+  int32_t iSize = strlen(pFamily);
   m_pFamily = FX_Alloc(char, iSize + 1);
   memcpy(m_pFamily, pFamily, iSize * sizeof(char));
   m_pFamily[iSize] = 0;

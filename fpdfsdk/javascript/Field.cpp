@@ -2610,8 +2610,7 @@ bool Field::value(CJS_Runtime* pRuntime,
           iIndex = pFormField->GetSelectedIndex(i);
           ElementValue =
               CJS_Value(pRuntime, pFormField->GetOptionValue(iIndex).c_str());
-          if (FXSYS_wcslen(ElementValue.ToCFXWideString(pRuntime).c_str()) ==
-              0) {
+          if (wcslen(ElementValue.ToCFXWideString(pRuntime).c_str()) == 0) {
             ElementValue =
                 CJS_Value(pRuntime, pFormField->GetOptionLabel(iIndex).c_str());
           }

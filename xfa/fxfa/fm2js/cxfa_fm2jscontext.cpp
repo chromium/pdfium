@@ -3342,8 +3342,7 @@ WideString CXFA_FM2JSContext::DecodeXML(const WideString& wsXMLString) {
     const wchar_t* const strName[] = {L"quot", L"amp", L"apos", L"lt", L"gt"};
     int32_t iIndex = 0;
     while (iIndex < 5) {
-      if (memcmp(strString, strName[iIndex], FXSYS_wcslen(strName[iIndex])) ==
-          0) {
+      if (memcmp(strString, strName[iIndex], wcslen(strName[iIndex])) == 0) {
         break;
       }
       ++iIndex;

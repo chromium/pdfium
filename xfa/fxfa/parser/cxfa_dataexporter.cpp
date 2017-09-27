@@ -399,7 +399,7 @@ void XFA_DataExporter_RegenerateFormFile(
     pStream->WriteString(L" xmlns=\"");
 
     const wchar_t* pURI = XFA_GetPacketByIndex(XFA_PACKET_Form)->pURI;
-    pStream->WriteString(WideStringView(pURI, FXSYS_wcslen(pURI)));
+    pStream->WriteString(WideStringView(pURI, wcslen(pURI)));
 
     WideString wsVersionNumber;
     RecognizeXFAVersionNumber(

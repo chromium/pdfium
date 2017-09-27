@@ -12,7 +12,7 @@
 float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pwsStr);
   if (iLength < 0)
-    iLength = static_cast<int32_t>(FXSYS_wcslen(pwsStr));
+    iLength = static_cast<int32_t>(wcslen(pwsStr));
   if (iLength == 0)
     return 0.0f;
 

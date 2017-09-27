@@ -79,7 +79,7 @@ CFX_XMLNode* CFX_XMLNode::GetPath(const wchar_t* pPath,
                                   bool bQualifiedName) const {
   ASSERT(pPath);
   if (iLength < 0) {
-    iLength = FXSYS_wcslen(pPath);
+    iLength = wcslen(pPath);
   }
   if (iLength == 0) {
     return nullptr;

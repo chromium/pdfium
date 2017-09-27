@@ -116,7 +116,7 @@ ByteString::ByteString(char ch) {
 }
 
 ByteString::ByteString(const char* ptr)
-    : ByteString(ptr, ptr ? FXSYS_strlen(ptr) : 0) {}
+    : ByteString(ptr, ptr ? strlen(ptr) : 0) {}
 
 ByteString::ByteString(const ByteStringView& stringSrc) {
   if (!stringSrc.IsEmpty())
@@ -169,7 +169,7 @@ const ByteString& ByteString::operator=(const char* pStr) {
   if (!pStr || !pStr[0])
     clear();
   else
-    AssignCopy(pStr, FXSYS_strlen(pStr));
+    AssignCopy(pStr, strlen(pStr));
 
   return *this;
 }
@@ -192,7 +192,7 @@ const ByteString& ByteString::operator=(const ByteString& stringSrc) {
 
 const ByteString& ByteString::operator+=(const char* pStr) {
   if (pStr)
-    Concat(pStr, FXSYS_strlen(pStr));
+    Concat(pStr, strlen(pStr));
 
   return *this;
 }
@@ -223,7 +223,7 @@ bool ByteString::operator==(const char* ptr) const {
   if (!ptr)
     return m_pData->m_nDataLength == 0;
 
-  return FXSYS_strlen(ptr) == m_pData->m_nDataLength &&
+  return strlen(ptr) == m_pData->m_nDataLength &&
          memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 

@@ -93,7 +93,7 @@ uint32_t FPF_GetHashCode_StringA(const char* pStr, int32_t iLength) {
   if (!pStr)
     return 0;
   if (iLength < 0)
-    iLength = FXSYS_strlen(pStr);
+    iLength = strlen(pStr);
   const char* pStrEnd = pStr + iLength;
   uint32_t uHashCode = 0;
   while (pStr < pStrEnd)

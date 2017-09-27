@@ -32,7 +32,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
                          size_t decl_count) {
     ASSERT(sheet_);
 
-    EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+    EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
     EXPECT_EQ(sheet_->CountRules(), 1);
 
     CFX_CSSStyleRule* style = sheet_->GetRule(0);
@@ -89,7 +89,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   const wchar_t* buf =
       L"a { border: 10px; }\nb { text-decoration: underline; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
   EXPECT_EQ(2, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
@@ -137,7 +137,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   const wchar_t* buf = L"a b c { border: 10px; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
   EXPECT_EQ(1, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
@@ -172,19 +172,19 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseUnhandledSelectors) {
   const wchar_t* buf = L"a > b { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
   EXPECT_EQ(0, sheet_->CountRules());
 
   buf = L"a[first] { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
   EXPECT_EQ(0, sheet_->CountRules());
 
   buf = L"a+b { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
   EXPECT_EQ(0, sheet_->CountRules());
 
   buf = L"a ^ b { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
   EXPECT_EQ(0, sheet_->CountRules());
 }
 

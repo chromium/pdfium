@@ -20,7 +20,7 @@ int32_t CFPF_SkiaPathFont::GetType() const {
 
 void CFPF_SkiaPathFont::SetPath(const char* pPath) {
   FX_Free(m_pPath);
-  int32_t iSize = FXSYS_strlen(pPath);
+  int32_t iSize = strlen(pPath);
   m_pPath = FX_Alloc(char, iSize + 1);
   memcpy(m_pPath, pPath, iSize * sizeof(char));
   m_pPath[iSize] = 0;

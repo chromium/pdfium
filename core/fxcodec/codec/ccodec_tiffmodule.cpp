@@ -201,7 +201,7 @@ void Tiff_Exif_GetStringInfo(TIFF* tif_ctx,
   TIFFGetField(tif_ctx, tag, &buf);
   if (!buf)
     return;
-  size_t size = FXSYS_strlen(buf);
+  size_t size = strlen(buf);
   uint8_t* ptr = FX_Alloc(uint8_t, size + 1);
   memcpy(ptr, buf, size);
   ptr[size] = 0;

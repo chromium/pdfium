@@ -30,7 +30,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
         dwStyle |= FX_FONTSTYLE_Italic;
 
       const wchar_t* pReplace = pCurFont->pReplaceFont;
-      int32_t iLength = FXSYS_wcslen(pReplace);
+      int32_t iLength = wcslen(pReplace);
       while (iLength > 0) {
         const wchar_t* pNameText = pReplace;
         while (*pNameText != L',' && iLength > 0) {

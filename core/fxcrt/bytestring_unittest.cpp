@@ -1421,7 +1421,7 @@ TEST(ByteString, Empty) {
   EXPECT_TRUE(empty_str.IsEmpty());
   EXPECT_EQ(0u, empty_str.GetLength());
   const char* cstr = empty_str.c_str();
-  EXPECT_EQ(0u, FXSYS_strlen(cstr));
+  EXPECT_EQ(0u, strlen(cstr));
 }
 
 TEST(ByteString, InitializerList) {

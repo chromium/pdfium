@@ -1268,7 +1268,7 @@ TEST(WideString, Empty) {
   EXPECT_TRUE(empty_str.IsEmpty());
   EXPECT_EQ(0u, empty_str.GetLength());
   const wchar_t* cstr = empty_str.c_str();
-  EXPECT_EQ(0u, FXSYS_wcslen(cstr));
+  EXPECT_EQ(0u, wcslen(cstr));
 }
 
 TEST(CFX_WidString, InitializerList) {

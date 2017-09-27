@@ -29,7 +29,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const WideString& str) {
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
-  size_t len = FXSYS_strlen(buf);
+  size_t len = strlen(buf);
   ExpandBuf(len * sizeof(wchar_t));
   wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
   for (size_t j = 0; j < len; j++) {
@@ -52,7 +52,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const wchar_t* lpsz) {
-  AppendBlock(lpsz, FXSYS_wcslen(lpsz) * sizeof(wchar_t));
+  AppendBlock(lpsz, wcslen(lpsz) * sizeof(wchar_t));
   return *this;
 }
 

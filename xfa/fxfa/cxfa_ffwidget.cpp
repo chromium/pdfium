@@ -1780,7 +1780,7 @@ static uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
   uint8_t* pCP;
   int32_t i = 0, j = 0;
   if (iLen == 0) {
-    iLen = FXSYS_strlen((char*)pStr);
+    iLen = strlen((char*)pStr);
   }
   pCP = FX_Alloc(uint8_t, iLen + 1);
   for (; i < iLen; i++) {
@@ -1799,11 +1799,11 @@ static int32_t XFA_Base64Decode(const char* pStr, uint8_t* pOutBuffer) {
     return 0;
   }
   uint8_t* pBuffer =
-      XFA_RemoveBase64Whitespace((uint8_t*)pStr, FXSYS_strlen((char*)pStr));
+      XFA_RemoveBase64Whitespace((uint8_t*)pStr, strlen((char*)pStr));
   if (!pBuffer) {
     return 0;
   }
-  int32_t iLen = FXSYS_strlen((char*)pBuffer);
+  int32_t iLen = strlen((char*)pBuffer);
   int32_t i = 0, j = 0;
   uint32_t dwLimb = 0;
   for (; i + 3 < iLen; i += 4) {

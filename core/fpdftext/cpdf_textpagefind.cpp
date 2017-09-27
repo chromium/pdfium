@@ -376,8 +376,8 @@ bool CPDF_TextPageFind::ExtractSubString(WideString& rString,
       lpszFullString++;
   }
   const wchar_t* lpchEnd = std::wcschr(lpszFullString, chSep);
-  int nLen = lpchEnd ? (int)(lpchEnd - lpszFullString)
-                     : (int)FXSYS_wcslen(lpszFullString);
+  int nLen =
+      lpchEnd ? (int)(lpchEnd - lpszFullString) : (int)wcslen(lpszFullString);
   ASSERT(nLen >= 0);
   memcpy(rString.GetBuffer(nLen), lpszFullString, nLen * sizeof(wchar_t));
   rString.ReleaseBuffer(rString.GetStringLength());

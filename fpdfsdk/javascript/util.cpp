@@ -206,7 +206,7 @@ bool util::printd(CJS_Runtime* pRuntime,
       int iEnd;
       while ((iEnd = cFormat.find(TbConvertTable[i].lpszJSMark, iStart)) !=
              -1) {
-        cFormat.replace(iEnd, FXSYS_wcslen(TbConvertTable[i].lpszJSMark),
+        cFormat.replace(iEnd, wcslen(TbConvertTable[i].lpszJSMark),
                         TbConvertTable[i].lpszCppMark);
         iStart = iEnd;
       }
@@ -243,8 +243,7 @@ bool util::printd(CJS_Runtime* pRuntime,
             continue;
           }
         }
-        cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[i].lpszJSMark),
-                        sValue.c_str());
+        cFormat.replace(iEnd, wcslen(cTableAd[i].lpszJSMark), sValue.c_str());
         iStart = iEnd;
       }
     }

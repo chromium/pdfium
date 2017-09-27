@@ -135,7 +135,7 @@ pdfium::Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 's': {
         const wchar_t* pstrNextArg = va_arg(argList, const wchar_t*);
         if (pstrNextArg) {
-          nItemLen = FXSYS_wcslen(pstrNextArg);
+          nItemLen = wcslen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -146,7 +146,7 @@ pdfium::Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 'S': {
         const char* pstrNextArg = va_arg(argList, const char*);
         if (pstrNextArg) {
-          nItemLen = FXSYS_strlen(pstrNextArg);
+          nItemLen = strlen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -158,7 +158,7 @@ pdfium::Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 'S' | FORCE_ANSI: {
         const char* pstrNextArg = va_arg(argList, const char*);
         if (pstrNextArg) {
-          nItemLen = FXSYS_strlen(pstrNextArg);
+          nItemLen = strlen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -170,7 +170,7 @@ pdfium::Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 'S' | FORCE_UNICODE: {
         const wchar_t* pstrNextArg = va_arg(argList, wchar_t*);
         if (pstrNextArg) {
-          nItemLen = FXSYS_wcslen(pstrNextArg);
+          nItemLen = wcslen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -225,7 +225,7 @@ pdfium::Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
             f = va_arg(argList, double);
             FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth,
                            nPrecision + 6, f);
-            nItemLen = FXSYS_strlen(pszTemp);
+            nItemLen = strlen(pszTemp);
           }
           break;
         case 'p':
@@ -304,7 +304,7 @@ WideString::WideString(wchar_t ch) {
 }
 
 WideString::WideString(const wchar_t* ptr)
-    : WideString(ptr, ptr ? FXSYS_wcslen(ptr) : 0) {}
+    : WideString(ptr, ptr ? wcslen(ptr) : 0) {}
 
 WideString::WideString(const WideStringView& stringSrc) {
   if (!stringSrc.IsEmpty()) {
@@ -352,7 +352,7 @@ const WideString& WideString::operator=(const wchar_t* pStr) {
   if (!pStr || !pStr[0])
     clear();
   else
-    AssignCopy(pStr, FXSYS_wcslen(pStr));
+    AssignCopy(pStr, wcslen(pStr));
 
   return *this;
 }
@@ -375,7 +375,7 @@ const WideString& WideString::operator=(const WideString& stringSrc) {
 
 const WideString& WideString::operator+=(const wchar_t* pStr) {
   if (pStr)
-    Concat(pStr, FXSYS_wcslen(pStr));
+    Concat(pStr, wcslen(pStr));
 
   return *this;
 }

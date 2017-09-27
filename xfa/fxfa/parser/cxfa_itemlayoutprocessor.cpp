@@ -36,7 +36,7 @@ std::vector<WideString> SeparateStringW(const wchar_t* pStr,
   if (!pStr)
     return ret;
   if (iStrLen < 0)
-    iStrLen = FXSYS_wcslen(pStr);
+    iStrLen = wcslen(pStr);
 
   const wchar_t* pToken = pStr;
   const wchar_t* pEnd = pStr + iStrLen;

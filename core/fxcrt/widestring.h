@@ -91,7 +91,7 @@ class WideString {
 
   size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
   size_t GetStringLength() const {
-    return m_pData ? FXSYS_wcslen(m_pData->m_String) : 0;
+    return m_pData ? wcslen(m_pData->m_String) : 0;
   }
   bool IsEmpty() const { return !GetLength(); }
   bool IsValidIndex(size_t index) const { return index < GetLength(); }
