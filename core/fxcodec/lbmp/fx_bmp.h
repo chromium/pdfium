@@ -35,7 +35,6 @@
 #define BMP_BITFIELDS 3L
 #define BMP_BIT_555 0
 #define BMP_BIT_565 1
-#define BMP_MAX_ERROR_SIZE 256
 // Limit width to (MAXINT32 - 31) / 32
 #define BMP_MAX_WIDTH 67108863
 #pragma pack(1)
@@ -73,14 +72,13 @@ class BMPDecompressor {
   BMPDecompressor();
   ~BMPDecompressor();
 
-  void Error(const char* err_msg);
+  void Error();
   int32_t DecodeImage();
   int32_t ReadHeader();
   void SetInputBuffer(uint8_t* src_buf, uint32_t src_size);
   uint32_t GetAvailInput(uint8_t** avail_buf);
 
   jmp_buf jmpbuf;
-  char* err_ptr;
 
   void* context_ptr;
 
@@ -136,7 +134,6 @@ class CBmpContext : public CCodec_BmpModule::Context {
   BMPDecompressor m_Bmp;
   UnownedPtr<CCodec_BmpModule> const m_pModule;
   UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
-  char m_szLastError[256];
 };
 
 uint16_t GetWord_LSBFirst(uint8_t* p);
