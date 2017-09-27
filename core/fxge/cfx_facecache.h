@@ -19,6 +19,7 @@
 #endif
 
 class CFX_Font;
+class CFX_PathData;
 
 class CFX_FaceCache {
  public:

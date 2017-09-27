@@ -62,6 +62,8 @@ class IFX_RenderDeviceDriver;
 #define FXTEXT_PRINTIMAGETEXT 0x10
 #define FXTEXT_NOSMOOTH 0x20
 
+class CFX_PathData;
+
 enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
 class FXTEXT_CHARPOS {

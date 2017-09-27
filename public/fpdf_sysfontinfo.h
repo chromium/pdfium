@@ -20,7 +20,7 @@
 #define FXFONT_CHINESEBIG5_CHARSET 136
 
 /* Font pitch and family flags */
-#define FXFONT_FF_FIXEDPITCH 1
+#define FXFONT_FF_FIXEDPITCH (1 << 0)
 #define FXFONT_FF_ROMAN (1 << 4)
 #define FXFONT_FF_SCRIPT (4 << 4)
 

@@ -18,11 +18,6 @@
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_freetype.h"
 
-class CFX_FaceCache;
-class CFX_GlyphBitmap;
-class CFX_PathData;
-class IFX_SeekableReadStream;
-
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 class SkTypeface;
 
@@ -30,7 +25,7 @@ using CFX_TypeFace = SkTypeface;
 #endif
 
 /* Font pitch and family flags */
-#define FXFONT_FF_FIXEDPITCH 1
+#define FXFONT_FF_FIXEDPITCH (1 << 0)
 #define FXFONT_FF_ROMAN (1 << 4)
 #define FXFONT_FF_SCRIPT (4 << 4)
 
@@ -55,13 +50,6 @@ using CFX_TypeFace = SkTypeface;
 #ifdef PDF_ENABLE_XFA
 #define FXFONT_EXACTMATCH 0x80000000
 #endif  // PDF_ENABLE_XFA
-
-#define CHARSET_FLAG_ANSI 1
-#define CHARSET_FLAG_SYMBOL 2
-#define CHARSET_FLAG_SHIFTJIS 4
-#define CHARSET_FLAG_BIG5 8
-#define CHARSET_FLAG_GB 16
-#define CHARSET_FLAG_KOREAN 32
 
 #define GET_TT_SHORT(w) (uint16_t)(((w)[0] << 8) | (w)[1])
 #define GET_TT_LONG(w) \
