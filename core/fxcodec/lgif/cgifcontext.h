@@ -22,7 +22,6 @@ class CGifContext : public CCodec_GifModule::Context {
               CCodec_GifModule::Delegate* pDelegate);
   ~CGifContext() override;
 
-  void AddError(const char* err_msg);
   void RecordCurrentPosition(uint32_t* cur_pos_ptr);
   void ReadScanline(int32_t row_num, uint8_t* row_buf);
   bool GetRecordPosition(uint32_t cur_pos,
@@ -65,7 +64,6 @@ class CGifContext : public CCodec_GifModule::Context {
   uint8_t global_sort_flag;
   uint8_t global_color_resolution;
   uint8_t img_pass_num;
-  char m_szLastError[GIF_MAX_ERROR_SIZE];
 
  private:
   uint8_t* ReadData(uint8_t** des_buf_pp, uint32_t data_size);

@@ -39,14 +39,9 @@ CGifContext::CGifContext(CCodec_GifModule* gif_module,
       global_sort_flag(0),
       global_color_resolution(0),
       img_pass_num(0) {
-  memset(m_szLastError, 0, sizeof(m_szLastError));
 }
 
 CGifContext::~CGifContext() {}
-
-void CGifContext::AddError(const char* err_msg) {
-  strncpy(m_szLastError, err_msg, GIF_MAX_ERROR_SIZE - 1);
-}
 
 void CGifContext::RecordCurrentPosition(uint32_t* cur_pos_ptr) {
   m_pDelegate->GifRecordCurrentPosition(*cur_pos_ptr);
@@ -80,15 +75,15 @@ GifDecodeStatus CGifContext::ReadHeader() {
     return GifDecodeStatus::Unfinished;
 
   if (strncmp(gif_header_ptr->signature, GIF_SIGNATURE, 3) != 0 ||
-      gif_header_ptr->version[0] != '8' || gif_header_ptr->version[2] != 'a') {
-    AddError("Not A Gif Image");
+      gif_header_ptr->version[0] != '8' || gif_header_ptr->version[2] != 'a')
     return GifDecodeStatus::Error;
-  }
+
   GifLocalScreenDescriptor* gif_lsd_ptr = nullptr;
   if (!ReadData(reinterpret_cast<uint8_t**>(&gif_lsd_ptr), 7)) {
     skip_size = skip_size_org;
     return GifDecodeStatus::Unfinished;
   }
+
   if (gif_lsd_ptr->global_flags.global_pal) {
     global_pal_exp = gif_lsd_ptr->global_flags.pal_bits;
     uint32_t global_pal_size = unsigned(2 << global_pal_exp) * 3u;
@@ -97,11 +92,13 @@ GifDecodeStatus CGifContext::ReadHeader() {
       skip_size = skip_size_org;
       return GifDecodeStatus::Unfinished;
     }
+
     global_sort_flag = gif_lsd_ptr->global_flags.sort_flag;
     global_color_resolution = gif_lsd_ptr->global_flags.color_resolution;
     m_GlobalPalette.resize(global_pal_size / 3);
     memcpy(m_GlobalPalette.data(), global_pal_ptr, global_pal_size);
   }
+
   width = static_cast<int>(
       GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&gif_lsd_ptr->width)));
   height = static_cast<int>(
@@ -186,6 +183,7 @@ GifDecodeStatus CGifContext::GetFrame() {
             skip_size = skip_size_org;
             return GifDecodeStatus::Unfinished;
           }
+
           SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
           skip_size_org = skip_size;
           if (!ReadData(&data_size_ptr, 1))
@@ -214,10 +212,9 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
   uint32_t skip_size_org = skip_size;
   GifImage* gif_image_ptr = m_Images[frame_num].get();
   uint32_t gif_img_row_bytes = gif_image_ptr->m_ImageInfo.width;
-  if (gif_img_row_bytes == 0) {
-    AddError("Error Invalid Number of Row Bytes");
+  if (gif_img_row_bytes == 0)
     return GifDecodeStatus::Error;
-  }
+
   if (decode_status == GIF_D_STATUS_TAIL) {
     gif_image_ptr->m_ImageRowBuf.resize(gif_img_row_bytes);
     GifGraphicControlExtension* gif_img_gce_ptr =
@@ -238,7 +235,6 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
           -1, 0, gif_image_ptr->m_ImageInfo.local_flags.interlace);
       if (!bRes) {
         gif_image_ptr->m_ImageRowBuf.clear();
-        AddError("Error Read Record Position Data");
         return GifDecodeStatus::Error;
       }
     } else {
@@ -256,13 +252,12 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
           gif_image_ptr->m_ImageInfo.local_flags.interlace);
       if (!bRes) {
         gif_image_ptr->m_ImageRowBuf.clear();
-        AddError("Error Read Record Position Data");
         return GifDecodeStatus::Error;
       }
     }
+
     if (gif_image_ptr->image_code_exp > GIF_MAX_LZW_EXP) {
       gif_image_ptr->m_ImageRowBuf.clear();
-      AddError("Error Invalid Code Size");
       return GifDecodeStatus::Error;
     }
 
@@ -282,6 +277,7 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
         skip_size = skip_size_org;
         return GifDecodeStatus::Unfinished;
       }
+
       if (!m_ImgDecoder.get())
         m_ImgDecoder =
             CFX_LZWDecoder::Create(!gif_image_ptr->m_LocalPalettes.empty()
@@ -374,7 +370,6 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
     }
     SaveDecodingStatus(GIF_D_STATUS_TAIL);
   }
-  AddError("Decode Image Data Error");
   return GifDecodeStatus::Error;
 }
 
@@ -423,6 +418,7 @@ GifDecodeStatus CGifContext::DecodeExtension() {
         skip_size = skip_size_org;
         return GifDecodeStatus::Unfinished;
       }
+
       cmt_data.clear();
       while (*data_size_ptr != GIF_BLOCK_TERMINAL) {
         uint8_t data_size = *data_size_ptr;
@@ -431,6 +427,7 @@ GifDecodeStatus CGifContext::DecodeExtension() {
           skip_size = skip_size_org;
           return GifDecodeStatus::Unfinished;
         }
+
         cmt_data += ByteString(data_ptr, data_size);
       }
       break;
@@ -445,6 +442,7 @@ GifDecodeStatus CGifContext::DecodeExtension() {
         skip_size = skip_size_org;
         return GifDecodeStatus::Unfinished;
       }
+
       while (*data_size_ptr != GIF_BLOCK_TERMINAL) {
         if (!ReadData(&data_ptr, *data_size_ptr) ||
             !ReadData(&data_size_ptr, 1)) {
@@ -489,10 +487,9 @@ GifDecodeStatus CGifContext::DecodeExtension() {
 }
 
 GifDecodeStatus CGifContext::DecodeImageInfo() {
-  if (width == 0 || height == 0) {
-    AddError("No Image Header Info");
+  if (width == 0 || height == 0)
     return GifDecodeStatus::Error;
-  }
+
   uint32_t skip_size_org = skip_size;
   GifImageInfo* gif_img_info_ptr = nullptr;
   if (!ReadData(reinterpret_cast<uint8_t**>(&gif_img_info_ptr), 9))
@@ -509,10 +506,9 @@ GifDecodeStatus CGifContext::DecodeImageInfo() {
       GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&gif_img_info_ptr->height));
   gif_image->m_ImageInfo.local_flags = gif_img_info_ptr->local_flags;
   if (gif_image->m_ImageInfo.left + gif_image->m_ImageInfo.width > width ||
-      gif_image->m_ImageInfo.top + gif_image->m_ImageInfo.height > height) {
-    AddError("Image Data Out Of LSD, The File May Be Corrupt");
+      gif_image->m_ImageInfo.top + gif_image->m_ImageInfo.height > height)
     return GifDecodeStatus::Error;
-  }
+
   GifLocalFlags* gif_img_info_lf_ptr = &gif_img_info_ptr->local_flags;
   if (gif_img_info_lf_ptr->local_pal) {
     gif_image->local_pallette_exp = gif_img_info_lf_ptr->pal_bits;
@@ -522,15 +518,18 @@ GifDecodeStatus CGifContext::DecodeImageInfo() {
       skip_size = skip_size_org;
       return GifDecodeStatus::Unfinished;
     }
+
     gif_image->m_LocalPalettes = std::vector<GifPalette>(loc_pal_size / 3);
     std::copy(loc_pal_ptr, loc_pal_ptr + loc_pal_size,
               reinterpret_cast<uint8_t*>(gif_image->m_LocalPalettes.data()));
   }
+
   uint8_t* code_size_ptr = nullptr;
   if (!ReadData(&code_size_ptr, 1)) {
     skip_size = skip_size_org;
     return GifDecodeStatus::Unfinished;
   }
+
   gif_image->image_code_exp = *code_size_ptr;
   RecordCurrentPosition(&gif_image->image_data_pos);
   gif_image->image_data_pos += skip_size;
@@ -547,5 +546,4 @@ GifDecodeStatus CGifContext::DecodeImageInfo() {
 void CGifContext::DecodingFailureAtTailCleanup(GifImage* gif_image_ptr) {
   gif_image_ptr->m_ImageRowBuf.clear();
   SaveDecodingStatus(GIF_D_STATUS_TAIL);
-  AddError("Decode Image Data Error");
 }
