@@ -78,16 +78,3 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
   return nullptr;
 }
 #endif
-
-CFX_FontFaceInfo::CFX_FontFaceInfo(ByteString filePath,
-                                   ByteString faceName,
-                                   ByteString fontTables,
-                                   uint32_t fontOffset,
-                                   uint32_t fileSize)
-    : m_FilePath(filePath),
-      m_FaceName(faceName),
-      m_FontTables(fontTables),
-      m_FontOffset(fontOffset),
-      m_FileSize(fileSize),
-      m_Styles(0),
-      m_Charsets(0) {}

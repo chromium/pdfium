@@ -78,23 +78,6 @@ class ScopedFontTransform {
   FT_Face m_Face;
 };
 
-class CFX_FontFaceInfo {
- public:
-  CFX_FontFaceInfo(ByteString filePath,
-                   ByteString faceName,
-                   ByteString fontTables,
-                   uint32_t fontOffset,
-                   uint32_t fileSize);
-
-  const ByteString m_FilePath;
-  const ByteString m_FaceName;
-  const ByteString m_FontTables;
-  const uint32_t m_FontOffset;
-  const uint32_t m_FileSize;
-  uint32_t m_Styles;
-  uint32_t m_Charsets;
-};
-
 class CFX_GlyphBitmap {
  public:
   CFX_GlyphBitmap();

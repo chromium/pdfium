@@ -220,8 +220,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (pdfium::ContainsKey(m_FontList, facename))
     return;
 
-  auto pInfo = pdfium::MakeUnique<CFX_FontFaceInfo>(path, facename, tables,
-                                                    offset, filesize);
+  auto pInfo = pdfium::MakeUnique<FontFaceInfo>(path, facename, tables, offset,
+                                                filesize);
   ByteString os2 =
       FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x4f532f32);
   if (os2.GetLength() >= 86) {
@@ -276,7 +276,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
                                    int pitch_family,
                                    const char* family,
                                    bool bMatchName) {
-  CFX_FontFaceInfo* pFind = nullptr;
+  FontFaceInfo* pFind = nullptr;
   if (charset == FX_CHARSET_ANSI && (pitch_family & FXFONT_FF_FIXEDPITCH))
     return GetFont("Courier New");
 
@@ -284,7 +284,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
   int32_t iBestSimilar = 0;
   for (const auto& it : m_FontList) {
     const ByteString& bsName = it.first;
-    CFX_FontFaceInfo* pFont = it.second.get();
+    FontFaceInfo* pFont = it.second.get();
     if (!(pFont->m_Charsets & charset_flag) && charset != FX_CHARSET_Default)
       continue;
 
@@ -331,7 +331,7 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
   if (!hFont)
     return 0;
 
-  const CFX_FontFaceInfo* pFont = static_cast<CFX_FontFaceInfo*>(hFont);
+  const FontFaceInfo* pFont = static_cast<FontFaceInfo*>(hFont);
   uint32_t datasize = 0;
   uint32_t offset = 0;
   if (table == 0) {
@@ -369,10 +369,23 @@ void CFX_FolderFontInfo::DeleteFont(void* hFont) {}
 bool CFX_FolderFontInfo::GetFaceName(void* hFont, ByteString* name) {
   if (!hFont)
     return false;
-  *name = static_cast<CFX_FontFaceInfo*>(hFont)->m_FaceName;
+  *name = static_cast<FontFaceInfo*>(hFont)->m_FaceName;
   return true;
 }
 
 bool CFX_FolderFontInfo::GetFontCharset(void* hFont, int* charset) {
   return false;
 }
+
+CFX_FolderFontInfo::FontFaceInfo::FontFaceInfo(ByteString filePath,
+                                               ByteString faceName,
+                                               ByteString fontTables,
+                                               uint32_t fontOffset,
+                                               uint32_t fileSize)
+    : m_FilePath(filePath),
+      m_FaceName(faceName),
+      m_FontTables(fontTables),
+      m_FontOffset(fontOffset),
+      m_FileSize(fileSize),
+      m_Styles(0),
+      m_Charsets(0) {}

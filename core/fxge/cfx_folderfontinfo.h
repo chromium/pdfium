@@ -47,6 +47,23 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
   bool GetFontCharset(void* hFont, int* charset) override;
 
  protected:
+  class FontFaceInfo {
+   public:
+    FontFaceInfo(ByteString filePath,
+                 ByteString faceName,
+                 ByteString fontTables,
+                 uint32_t fontOffset,
+                 uint32_t fileSize);
+
+    const ByteString m_FilePath;
+    const ByteString m_FaceName;
+    const ByteString m_FontTables;
+    const uint32_t m_FontOffset;
+    const uint32_t m_FileSize;
+    uint32_t m_Styles;
+    uint32_t m_Charsets;
+  };
+
   void ScanPath(const ByteString& path);
   void ScanFile(const ByteString& path);
   void ReportFace(const ByteString& path,
@@ -61,7 +78,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                  const char* family,
                  bool bMatchName);
 
-  std::map<ByteString, std::unique_ptr<CFX_FontFaceInfo>> m_FontList;
+  std::map<ByteString, std::unique_ptr<FontFaceInfo>> m_FontList;
   std::vector<ByteString> m_PathList;
   UnownedPtr<CFX_FontMapper> m_pMapper;
 };
