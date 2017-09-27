@@ -12,7 +12,7 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   WideString input =
-      WideString::FromUTF8(ByteStringView(data, static_cast<FX_STRSIZE>(size)));
+      WideString::FromUTF8(ByteStringView(data, static_cast<size_t>(size)));
 
   // If we convert the input into an empty string bail out.
   if (input.GetLength() == 0)

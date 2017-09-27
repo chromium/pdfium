@@ -306,12 +306,12 @@ class CFieldNameExtractor {
     m_pEnd = m_pCur + m_FullName.GetLength();
   }
 
-  void GetNext(const wchar_t*& pSubName, FX_STRSIZE& size) {
+  void GetNext(const wchar_t*& pSubName, size_t& size) {
     pSubName = m_pCur;
     while (m_pCur < m_pEnd && m_pCur[0] != L'.')
       m_pCur++;
 
-    size = (FX_STRSIZE)(m_pCur - pSubName);
+    size = static_cast<size_t>(m_pCur - pSubName);
     if (m_pCur < m_pEnd && m_pCur[0] == L'.')
       m_pCur++;
   }
@@ -376,7 +376,7 @@ int CompareFieldName(const WideString& name1, const WideString& name2) {
   if (name1.GetLength() == name2.GetLength())
     return name1 == name2 ? 1 : 0;
 
-  FX_STRSIZE i = 0;
+  size_t i = 0;
   while (ptr1[i] == ptr2[i])
     i++;
   if (i == name1.GetLength())
@@ -509,7 +509,7 @@ bool CFieldTree::SetField(const WideString& full_name,
 
   CFieldNameExtractor name_extractor(full_name);
   const wchar_t* pName;
-  FX_STRSIZE nLength;
+  size_t nLength;
   name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
   Node* pLast = nullptr;
@@ -537,7 +537,7 @@ CPDF_FormField* CFieldTree::GetField(const WideString& full_name) {
 
   CFieldNameExtractor name_extractor(full_name);
   const wchar_t* pName;
-  FX_STRSIZE nLength;
+  size_t nLength;
   name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
   Node* pLast = nullptr;
@@ -556,7 +556,7 @@ CFieldTree::Node* CFieldTree::FindNode(const WideString& full_name) {
 
   CFieldNameExtractor name_extractor(full_name);
   const wchar_t* pName;
-  FX_STRSIZE nLength;
+  size_t nLength;
   name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
   Node* pLast = nullptr;

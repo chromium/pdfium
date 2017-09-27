@@ -115,7 +115,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   int BeforeFormImportData(CPDF_InterForm* pForm) override;
   void AfterFormImportData(CPDF_InterForm* pForm) override;
 
-  bool FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize);
+  bool FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize);
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
                               CPDF_Dictionary* pAnnotDict) const;
 

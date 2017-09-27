@@ -846,8 +846,8 @@ std::vector<WideString> CXFA_WidgetData::GetSelectedItemsValue() {
   WideString wsValue = GetRawValue();
   if (GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
     if (!wsValue.IsEmpty()) {
-      FX_STRSIZE iStart = 0;
-      FX_STRSIZE iLength = wsValue.GetLength();
+      size_t iStart = 0;
+      size_t iLength = wsValue.GetLength();
       auto iEnd = wsValue.Find(L'\n', iStart);
       iEnd = (!iEnd.has_value()) ? iLength : iEnd;
       while (iEnd >= iStart) {
@@ -1766,22 +1766,22 @@ void CXFA_WidgetData::FormatNumStr(const WideString& wsValue,
     bNeg = true;
     wsSrcNum.Delete(0, 1);
   }
-  FX_STRSIZE len = wsSrcNum.GetLength();
+
   auto dot_index = wsSrcNum.Find('.');
-  dot_index = !dot_index.has_value() ? len : dot_index;
+  dot_index = !dot_index.has_value() ? wsSrcNum.GetLength() : dot_index;
 
   if (dot_index.value() >= 1) {
-    FX_STRSIZE nPos = dot_index.value() % 3;
+    size_t nPos = dot_index.value() % 3;
     wsOutput.clear();
-    for (FX_STRSIZE i = 0; i < dot_index.value(); i++) {
+    for (size_t i = 0; i < dot_index.value(); i++) {
       if (i % 3 == nPos && i != 0)
         wsOutput += wsGroupSymbol;
 
       wsOutput += wsSrcNum[i];
     }
-    if (dot_index.value() < len) {
+    if (dot_index.value() < wsSrcNum.GetLength()) {
       wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
-      wsOutput += wsSrcNum.Right(len - dot_index.value() - 1);
+      wsOutput += wsSrcNum.Right(wsSrcNum.GetLength() - dot_index.value() - 1);
     }
     if (bNeg) {
       wsOutput =

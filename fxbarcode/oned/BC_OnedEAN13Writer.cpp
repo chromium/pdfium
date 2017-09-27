@@ -63,7 +63,7 @@ bool CBC_OnedEAN13Writer::CheckContentValidity(const WideStringView& contents) {
 WideString CBC_OnedEAN13Writer::FilterContents(const WideStringView& contents) {
   WideString filtercontents;
   wchar_t ch;
-  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
+  for (size_t i = 0; i < contents.GetLength(); i++) {
     ch = contents[i];
     if (ch > 175) {
       i++;

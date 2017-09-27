@@ -224,12 +224,12 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
 }
 
 int CJS_PublicMethods::ParseStringInteger(const WideString& str,
-                                          FX_STRSIZE nStart,
-                                          FX_STRSIZE& nSkip,
-                                          FX_STRSIZE nMaxStep) {
+                                          size_t nStart,
+                                          size_t& nSkip,
+                                          size_t nMaxStep) {
   int nRet = 0;
   nSkip = 0;
-  for (FX_STRSIZE i = nStart, sz = str.GetLength(); i < sz; i++) {
+  for (size_t i = nStart, sz = str.GetLength(); i < sz; i++) {
     if (i - nStart > 10)
       break;
 
@@ -247,11 +247,11 @@ int CJS_PublicMethods::ParseStringInteger(const WideString& str,
 }
 
 WideString CJS_PublicMethods::ParseStringString(const WideString& str,
-                                                FX_STRSIZE nStart,
-                                                FX_STRSIZE& nSkip) {
+                                                size_t nStart,
+                                                size_t& nSkip) {
   WideString swRet;
   nSkip = 0;
-  for (FX_STRSIZE i = nStart, sz = str.GetLength(); i < sz; i++) {
+  for (size_t i = nStart, sz = str.GetLength(); i < sz; i++) {
     wchar_t c = str[i];
     if (!std::iswdigit(c))
       break;
@@ -276,10 +276,10 @@ double CJS_PublicMethods::ParseNormalDate(const WideString& value,
 
   int number[3];
 
-  FX_STRSIZE nSkip = 0;
-  FX_STRSIZE nLen = value.GetLength();
-  FX_STRSIZE nIndex = 0;
-  FX_STRSIZE i = 0;
+  size_t nSkip = 0;
+  size_t nLen = value.GetLength();
+  size_t nIndex = 0;
+  size_t i = 0;
   while (i < nLen) {
     if (nIndex > 2)
       break;
@@ -364,8 +364,8 @@ double CJS_PublicMethods::MakeRegularDate(const WideString& value,
   bool bExit = false;
   bool bBadFormat = false;
 
-  FX_STRSIZE i = 0;
-  FX_STRSIZE j = 0;
+  size_t i = 0;
+  size_t j = 0;
 
   while (i < format.GetLength()) {
     if (bExit)
@@ -390,9 +390,9 @@ double CJS_PublicMethods::MakeRegularDate(const WideString& value,
       case 'M':
       case 's':
       case 't': {
-        FX_STRSIZE oldj = j;
-        FX_STRSIZE nSkip = 0;
-        FX_STRSIZE remaining = format.GetLength() - i - 1;
+        size_t oldj = j;
+        size_t nSkip = 0;
+        size_t remaining = format.GetLength() - i - 1;
 
         if (remaining == 0 || format[i + 1] != c) {
           switch (c) {
@@ -626,10 +626,10 @@ WideString CJS_PublicMethods::MakeFormatDate(double dDate,
   int nMin = JS_GetMinFromTime(dDate);
   int nSec = JS_GetSecFromTime(dDate);
 
-  FX_STRSIZE i = 0;
+  size_t i = 0;
   while (i < format.GetLength()) {
     wchar_t c = format[i];
-    FX_STRSIZE remaining = format.GetLength() - i - 1;
+    size_t remaining = format.GetLength() - i - 1;
     sPart = L"";
     switch (c) {
       case 'y':
@@ -804,7 +804,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
   }
 
   // Processing separator style
-  if (static_cast<FX_STRSIZE>(iDec2) < strValue.GetLength()) {
+  if (static_cast<size_t>(iDec2) < strValue.GetLength()) {
     if (iSepStyle == 2 || iSepStyle == 3)
       strValue.Replace(".", ",");
 
@@ -946,7 +946,7 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
   const wchar_t cSep = iSepStyle < 2 ? L'.' : L',';
 
   bool bHasSep = wstrValue.Contains(cSep);
-  for (FX_STRSIZE i = 0; i < wstrChange.GetLength(); ++i) {
+  for (size_t i = 0; i < wstrChange.GetLength(); ++i) {
     if (wstrChange[i] == cSep) {
       if (bHasSep) {
         pEvent->Rc() = false;
@@ -982,9 +982,9 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
   WideString wprefix = wstrValue.Left(pEvent->SelStart());
   WideString wpostfix;
   if (pEvent->SelEnd() >= 0 &&
-      static_cast<FX_STRSIZE>(pEvent->SelEnd()) < wstrValue.GetLength())
+      static_cast<size_t>(pEvent->SelEnd()) < wstrValue.GetLength())
     wpostfix = wstrValue.Right(wstrValue.GetLength() -
-                               static_cast<FX_STRSIZE>(pEvent->SelEnd()));
+                               static_cast<size_t>(pEvent->SelEnd()));
   val = wprefix + wstrChange + wpostfix;
   return true;
 }
@@ -1410,7 +1410,7 @@ bool CJS_PublicMethods::AFSpecial_KeystrokeEx(
     if (valEvent.IsEmpty())
       return true;
 
-    FX_STRSIZE iIndexMask = 0;
+    size_t iIndexMask = 0;
     for (; iIndexMask < valEvent.GetLength(); ++iIndexMask) {
       if (!maskSatisfied(valEvent[iIndexMask], wstrMask[iIndexMask]))
         break;
@@ -1430,9 +1430,9 @@ bool CJS_PublicMethods::AFSpecial_KeystrokeEx(
     return true;
 
   WideString wChange = wideChange;
-  FX_STRSIZE iIndexMask = pEvent->SelStart();
-  FX_STRSIZE combined_len = valEvent.GetLength() + wChange.GetLength() +
-                            pEvent->SelStart() - pEvent->SelEnd();
+  size_t iIndexMask = pEvent->SelStart();
+  size_t combined_len = valEvent.GetLength() + wChange.GetLength() +
+                        pEvent->SelStart() - pEvent->SelEnd();
   if (combined_len > wstrMask.GetLength()) {
     AlertIfPossible(pContext,
                     JSGetStringFromID(IDS_STRING_JSPARAM_TOOLONG).c_str());
@@ -1447,7 +1447,7 @@ bool CJS_PublicMethods::AFSpecial_KeystrokeEx(
     return true;
   }
 
-  for (FX_STRSIZE i = 0; i < wChange.GetLength(); ++i) {
+  for (size_t i = 0; i < wChange.GetLength(); ++i) {
     if (iIndexMask >= wstrMask.GetLength()) {
       AlertIfPossible(pContext,
                       JSGetStringFromID(IDS_STRING_JSPARAM_TOOLONG).c_str());
@@ -1537,9 +1537,9 @@ bool CJS_PublicMethods::AFMergeChange(CJS_Runtime* pRuntime,
     prefix = L"";
 
   if (pEventHandler->SelEnd() >= 0 &&
-      static_cast<FX_STRSIZE>(pEventHandler->SelEnd()) <= swValue.GetLength())
+      static_cast<size_t>(pEventHandler->SelEnd()) <= swValue.GetLength())
     postfix = swValue.Right(swValue.GetLength() -
-                            static_cast<FX_STRSIZE>(pEventHandler->SelEnd()));
+                            static_cast<size_t>(pEventHandler->SelEnd()));
   else
     postfix = L"";
 

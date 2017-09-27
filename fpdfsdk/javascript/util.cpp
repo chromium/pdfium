@@ -297,8 +297,8 @@ static wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
 WideString util::printx(const WideString& wsFormat,
                         const WideString& wsSource) {
   WideString wsResult;
-  FX_STRSIZE iSourceIdx = 0;
-  FX_STRSIZE iFormatIdx = 0;
+  size_t iSourceIdx = 0;
+  size_t iFormatIdx = 0;
   CaseMode eCaseMode = kPreserveCase;
   bool bEscaped = false;
   while (iFormatIdx < wsFormat.GetLength()) {

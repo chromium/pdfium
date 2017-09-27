@@ -134,7 +134,7 @@ void Append8BitBytes(const ByteString& content,
                      CBC_QRCoderBitVector* bits,
                      ByteString encoding,
                      int32_t& e) {
-  for (FX_STRSIZE i = 0; i < content.GetLength(); i++)
+  for (size_t i = 0; i < content.GetLength(); i++)
     bits->AppendBits(content[i], 8);
 }
 
@@ -381,7 +381,7 @@ void MergeString(std::vector<ModeStringPair>* result,
       if (e != BCExceptionNO)
         return;
       if (element2.first == CBC_QRCoderMode::sBYTE && tmp >= 0 &&
-          element1.second.GetLength() < static_cast<FX_STRSIZE>(tmp)) {
+          element1.second.GetLength() < static_cast<size_t>(tmp)) {
         element2.second = element1.second + element2.second;
         result->erase(result->begin() + i);
         i--;
@@ -400,7 +400,7 @@ void MergeString(std::vector<ModeStringPair>* result,
       if (e != BCExceptionNO)
         return;
       if (element2.first == CBC_QRCoderMode::sBYTE && tmp >= 0 &&
-          element1.second.GetLength() < static_cast<FX_STRSIZE>(tmp)) {
+          element1.second.GetLength() < static_cast<size_t>(tmp)) {
         element2.second = element1.second + element2.second;
         result->erase(result->begin() + i);
         i--;
@@ -411,7 +411,7 @@ void MergeString(std::vector<ModeStringPair>* result,
       if (e != BCExceptionNO)
         return;
       if (element2.first == CBC_QRCoderMode::sALPHANUMERIC && tmp >= 0 &&
-          element1.second.GetLength() < static_cast<FX_STRSIZE>(tmp)) {
+          element1.second.GetLength() < static_cast<size_t>(tmp)) {
         element2.second = element1.second + element2.second;
         result->erase(result->begin() + i);
         i--;
@@ -425,7 +425,7 @@ void MergeString(std::vector<ModeStringPair>* result,
 
 void SplitString(const ByteString& content,
                  std::vector<ModeStringPair>* result) {
-  FX_STRSIZE index = 0;
+  size_t index = 0;
   while (index < content.GetLength()) {
     uint8_t c = static_cast<uint8_t>(content[index]);
     if (!((c >= 0xA1 && c <= 0xAA) || (c >= 0xB0 && c <= 0xFA)))
@@ -437,7 +437,7 @@ void SplitString(const ByteString& content,
   if (index >= content.GetLength())
     return;
 
-  FX_STRSIZE flag = index;
+  size_t flag = index;
   while (GetAlphaNumericCode(content[index]) == -1 &&
          index < content.GetLength()) {
     uint8_t c = static_cast<uint8_t>(content[index]);
@@ -490,7 +490,7 @@ CBC_QRCoderMode* ChooseMode(const ByteString& content, ByteString encoding) {
 
   bool hasNumeric = false;
   bool hasAlphaNumeric = false;
-  for (FX_STRSIZE i = 0; i < content.GetLength(); i++) {
+  for (size_t i = 0; i < content.GetLength(); i++) {
     if (isdigit(content[i])) {
       hasNumeric = true;
     } else if (GetAlphaNumericCode(content[i]) != -1) {

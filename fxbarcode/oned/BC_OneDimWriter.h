@@ -91,7 +91,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   int32_t m_iFontStyle;
   uint32_t m_fontColor;
   BC_TEXT_LOC m_locTextLoc;
-  FX_STRSIZE m_iContentLen;
+  size_t m_iContentLen;
   bool m_bLeftPadding;
   bool m_bRightPadding;
   std::vector<CFX_PathData> m_output;

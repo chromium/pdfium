@@ -37,7 +37,8 @@ static unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
   if (!pFileRead)
     return 0;
 
-  if (!pFileRead->ReadBlock(buffer, (FX_FILESIZE)offset, (size_t)count))
+  if (!pFileRead->ReadBlock(buffer, (FX_FILESIZE)offset,
+                            static_cast<size_t>(count)))
     return 0;
 
   return count;

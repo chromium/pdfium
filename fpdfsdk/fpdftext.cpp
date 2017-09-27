@@ -175,8 +175,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
   if (str.GetLength() <= 0)
     return 0;
 
-  if (str.GetLength() > static_cast<FX_STRSIZE>(count))
-    str = str.Left(static_cast<FX_STRSIZE>(count));
+  if (str.GetLength() > static_cast<size_t>(count))
+    str = str.Left(static_cast<size_t>(count));
 
   // UFT16LE_Encode doesn't handle surrogate pairs properly, so it is expected
   // the number of items to stay the same.
@@ -256,11 +256,11 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
 
   CPDF_TextPageFind* textpageFind =
       new CPDF_TextPageFind(CPDFTextPageFromFPDFTextPage(text_page));
-  FX_STRSIZE len = WideString::WStringLength(findwhat);
+  size_t len = WideString::WStringLength(findwhat);
   textpageFind->FindFirst(WideString::FromUTF16LE(findwhat, len), flags,
                           start_index >= 0
-                              ? pdfium::Optional<FX_STRSIZE>(start_index)
-                              : pdfium::Optional<FX_STRSIZE>());
+                              ? pdfium::Optional<size_t>(start_index)
+                              : pdfium::Optional<size_t>());
   return textpageFind;
 }
 

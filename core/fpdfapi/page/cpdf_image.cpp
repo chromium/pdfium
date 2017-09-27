@@ -171,7 +171,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   pDict->SetNewFor<CPDF_Number>("Height", BitmapHeight);
 
   const int32_t bpp = pBitmap->GetBPP();
-  FX_STRSIZE dest_pitch = 0;
+  size_t dest_pitch = 0;
   bool bCopyWithoutAlpha = true;
   if (bpp == 1) {
     int32_t reset_a = 0;
@@ -285,7 +285,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   int32_t src_pitch = pBitmap->GetPitch();
   uint8_t* dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
   // Safe as checked alloc returned.
-  FX_STRSIZE dest_size = dest_pitch * BitmapHeight;
+  size_t dest_size = dest_pitch * BitmapHeight;
   uint8_t* pDest = dest_buf;
   if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {

@@ -48,7 +48,7 @@ const wchar_t* const g_BuiltInFuncs[] = {
     L"Within",       L"WordNum",
 };
 
-const FX_STRSIZE g_BuiltInFuncsMaxLen = 12;
+const size_t g_BuiltInFuncsMaxLen = 12;
 
 struct XFA_FMSOMMethod {
   const wchar_t* m_wsSomMethodName;
@@ -133,7 +133,7 @@ bool CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     return true;
   }
   javascript.AppendChar(L'\"');
-  for (FX_STRSIZE i = 1; i < tempStr.GetLength() - 1; i++) {
+  for (size_t i = 1; i < tempStr.GetLength() - 1; i++) {
     wchar_t oneChar = tempStr[i];
     switch (oneChar) {
       case L'\"':

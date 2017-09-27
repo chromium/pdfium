@@ -101,14 +101,14 @@ class CFX_XMLSyntaxParser {
   void ParseTextChar(wchar_t ch);
 
   RetainPtr<CFX_SeekableStreamProxy> m_pStream;
-  FX_STRSIZE m_iXMLPlaneSize;
+  size_t m_iXMLPlaneSize;
   FX_FILESIZE m_iCurrentPos;
   int32_t m_iCurrentNodeNum;
   int32_t m_iLastNodeNum;
   int32_t m_iParsedBytes;
   FX_FILESIZE m_ParsedChars;
   std::vector<wchar_t> m_Buffer;
-  FX_STRSIZE m_iBufferChars;
+  size_t m_iBufferChars;
   bool m_bEOS;
   FX_FILESIZE m_Start;  // Start position in m_Buffer
   FX_FILESIZE m_End;    // End position in m_Buffer

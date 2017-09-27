@@ -148,7 +148,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   bool bTargetAllFind = true;
   while (iSplitIndex != -1) {
     WideString wsExpr;
-    pdfium::Optional<FX_STRSIZE> iSplitNextIndex = 0;
+    pdfium::Optional<size_t> iSplitNextIndex = 0;
     if (!bTargetAllFind) {
       iSplitNextIndex = wsTargetAll.Find(' ', iSplitIndex);
       if (!iSplitNextIndex.has_value())

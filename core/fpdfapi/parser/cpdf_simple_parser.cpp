@@ -103,7 +103,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       m_dwCurPos++;
     }
     return ByteStringView(pStart,
-                          (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
+                          static_cast<size_t>(m_dwCurPos - (pStart - m_pData)));
   }
   if (dwSize == 1 && pStart[0] == '(') {
     int level = 1;
@@ -131,7 +131,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       m_dwCurPos++;
     }
     return ByteStringView(pStart,
-                          (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
+                          static_cast<size_t>(m_dwCurPos - (pStart - m_pData)));
   }
   return ByteStringView(pStart, dwSize);
 }

@@ -106,7 +106,7 @@ ByteString PDF_NameDecode(const ByteStringView& bstr) {
       *pDest++ = bstr[i];
     }
   }
-  result.ReleaseBuffer((FX_STRSIZE)(pDest - pDestStart));
+  result.ReleaseBuffer(static_cast<size_t>(pDest - pDestStart));
   return result;
 }
 

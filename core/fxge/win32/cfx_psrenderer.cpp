@@ -458,7 +458,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBSource>& pSource,
 
     int bpp = pConverted->GetBPP() / 8;
     uint8_t* output_buf = nullptr;
-    FX_STRSIZE output_size = 0;
+    size_t output_size = 0;
     const char* filter = nullptr;
     if ((m_PSLevel == 2 || flags & FXRENDER_IMAGE_LOSSY) &&
         CCodec_JpegModule::JpegEncode(pConverted, &output_buf, &output_size)) {

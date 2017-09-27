@@ -119,7 +119,7 @@ bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(const ByteStringView& bsPsName,
                                              bool bStrictMatch) {
   ByteString bsDRName = bsDRFontName;
   bsDRName.Remove('-');
-  FX_STRSIZE iPsLen = bsPsName.GetLength();
+  size_t iPsLen = bsPsName.GetLength();
   auto nIndex = bsDRName.Find(bsPsName);
   if (nIndex.has_value() && !bStrictMatch)
     return true;
@@ -127,7 +127,7 @@ bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(const ByteStringView& bsPsName,
   if (!nIndex.has_value() || nIndex.value() != 0)
     return false;
 
-  FX_STRSIZE iDifferLength = bsDRName.GetLength() - iPsLen;
+  size_t iDifferLength = bsDRName.GetLength() - iPsLen;
   if (iDifferLength > 1 || (bBold || bItalic)) {
     auto iBoldIndex = bsDRName.Find("Bold");
     if (bBold != iBoldIndex.has_value())

@@ -240,7 +240,7 @@ size_t FPDF_FileHandlerContext::ReadBlock(void* buffer, size_t size) {
     return 0;
   FX_FILESIZE dwAvail = nSize - m_nCurPos;
   if (dwAvail < (FX_FILESIZE)size)
-    size = (size_t)dwAvail;
+    size = static_cast<size_t>(dwAvail);
   if (m_pFS->ReadBlock(m_pFS->clientData, (FPDF_DWORD)m_nCurPos, buffer,
                        (FPDF_DWORD)size) == 0) {
     m_nCurPos += size;

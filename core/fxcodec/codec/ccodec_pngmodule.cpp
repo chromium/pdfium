@@ -74,7 +74,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
 #endif
 #if defined(PNG_TEXT_SUPPORTED)
     int i;
-    FX_STRSIZE len;
+    size_t len;
     const char* buf;
     int num_text;
     png_textp text = nullptr;
@@ -86,8 +86,10 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
         buf = "Author";
         if (!memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
           pAttribute->m_strAuthor =
-              ByteString(reinterpret_cast<uint8_t*>(text[i].text),
-                         static_cast<FX_STRSIZE>(text[i].text_length));
+              text[i].text_length > 0
+                  ? ByteString(reinterpret_cast<uint8_t*>(text[i].text),
+                               static_cast<size_t>(text[i].text_length))
+                  : ByteString();
         }
       }
     }

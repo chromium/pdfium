@@ -9,8 +9,8 @@
 int32_t EANCalcChecksum(const ByteString& contents) {
   int32_t odd = 0;
   int32_t even = 0;
-  FX_STRSIZE parity = 1;
-  for (FX_STRSIZE i = contents.GetLength(); i > 0; i--) {
+  size_t parity = 1;
+  for (size_t i = contents.GetLength(); i > 0; i--) {
     if (parity % 2)
       odd += FXSYS_DecimalCharToInt(contents[i - 1]);
     else

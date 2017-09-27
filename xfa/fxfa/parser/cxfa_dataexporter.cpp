@@ -225,7 +225,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
           break;
 
         std::vector<WideString> wsSelTextArray;
-        FX_STRSIZE iStart = 0;
+        size_t iStart = 0;
         auto iEnd = wsRawValue.Find(L'\n', iStart);
         iEnd = !iEnd.has_value() ? wsRawValue.GetLength() : iEnd;
         while (iEnd.has_value() && iEnd >= iStart) {
@@ -335,7 +335,7 @@ void RegenerateFormFile_Container(
       !pNode->IsContainerNode()) {
     CFX_WideTextBuf buf;
     RegenerateFormFile_Changed(pNode, buf, bSaveXML);
-    FX_STRSIZE nLen = buf.GetLength();
+    size_t nLen = buf.GetLength();
     if (nLen > 0)
       pStream->WriteString(buf.AsStringView());
     return;

@@ -25,11 +25,11 @@ class CFX_SeekableStreamProxy : public Retainable {
 
   FX_FILESIZE GetLength() const { return m_pStream->GetSize(); }
   FX_FILESIZE GetPosition() { return m_iPosition; }
-  FX_STRSIZE GetBOMLength() const { return m_wBOMLength; }
+  size_t GetBOMLength() const { return m_wBOMLength; }
   bool IsEOF() const { return m_iPosition >= GetLength(); }
 
   void Seek(From eSeek, FX_FILESIZE iOffset);
-  FX_STRSIZE ReadString(wchar_t* pStr, FX_STRSIZE iMaxLength, bool* bEOS);
+  size_t ReadString(wchar_t* pStr, size_t iMaxLength, bool* bEOS);
 
   void WriteString(const WideStringView& str);
 
@@ -39,14 +39,14 @@ class CFX_SeekableStreamProxy : public Retainable {
  private:
   CFX_SeekableStreamProxy(const RetainPtr<IFX_SeekableStream>& stream,
                           bool isWriteSteam);
-  CFX_SeekableStreamProxy(uint8_t* data, FX_STRSIZE size);
+  CFX_SeekableStreamProxy(uint8_t* data, size_t size);
   ~CFX_SeekableStreamProxy() override;
 
-  FX_STRSIZE ReadData(uint8_t* pBuffer, FX_STRSIZE iBufferSize);
+  size_t ReadData(uint8_t* pBuffer, size_t iBufferSize);
 
   bool m_IsWriteStream;
   uint16_t m_wCodePage;
-  FX_STRSIZE m_wBOMLength;
+  size_t m_wBOMLength;
   FX_FILESIZE m_iPosition;
   RetainPtr<IFX_SeekableStream> m_pStream;
 };

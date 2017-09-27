@@ -62,7 +62,7 @@ class CFX_UTF8Encoder {
 }  // namespace
 
 ByteString FX_UTF8Encode(const WideStringView& wsStr) {
-  FX_STRSIZE len = wsStr.GetLength();
+  size_t len = wsStr.GetLength();
   const wchar_t* pStr = wsStr.unterminated_c_str();
   CFX_UTF8Encoder encoder;
   while (len-- > 0)
@@ -99,7 +99,7 @@ bool FX_atonum(const ByteStringView& strc, void* pData) {
   pdfium::base::CheckedNumeric<uint32_t> integer = 0;
   bool bNegative = false;
   bool bSigned = false;
-  FX_STRSIZE cc = 0;
+  size_t cc = 0;
   if (strc[0] == '+') {
     cc++;
     bSigned = true;
@@ -184,7 +184,7 @@ float FX_atof(const WideStringView& wsStr) {
   return FX_atof(FX_UTF8Encode(wsStr).c_str());
 }
 
-FX_STRSIZE FX_ftoa(float d, char* buf) {
+size_t FX_ftoa(float d, char* buf) {
   buf[0] = '0';
   buf[1] = '\0';
   if (d == 0.0f) {
@@ -208,13 +208,13 @@ FX_STRSIZE FX_ftoa(float d, char* buf) {
     return 1;
   }
   char buf2[32];
-  FX_STRSIZE buf_size = 0;
+  size_t buf_size = 0;
   if (bNegative) {
     buf[buf_size++] = '-';
   }
   int i = scaled / scale;
   FXSYS_itoa(i, buf2, 10);
-  FX_STRSIZE len = FXSYS_strlen(buf2);
+  size_t len = FXSYS_strlen(buf2);
   memcpy(buf + buf_size, buf2, len);
   buf_size += len;
   int fraction = scaled % scale;

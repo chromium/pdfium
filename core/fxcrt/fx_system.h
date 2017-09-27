@@ -76,10 +76,6 @@ extern "C" {
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
-// Unsigned value used to represent a location or range in a string.
-// TODO(rharrison): Remove and use size_t directly once int->size_t stabilizes.
-typedef size_t FX_STRSIZE;
-
 // PDFium file sizes match the platform, but PDFium itself does not support
 // files larger than 2GB even if the platform does. The value must be signed
 // to support -1 error returns.
@@ -120,15 +116,15 @@ typedef size_t FX_STRSIZE;
 
 #include "third_party/base/numerics/safe_conversions.h"
 
-#define FXSYS_strlen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(strlen(ptr))
-#define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
+#define FXSYS_strlen(ptr) (strlen(ptr))
+#define FXSYS_wcslen(ptr) (wcslen(ptr))
 
 // Overloaded functions for C++ templates
-inline FX_STRSIZE FXSYS_len(const char* ptr) {
+inline size_t FXSYS_len(const char* ptr) {
   return FXSYS_strlen(ptr);
 }
 
-inline FX_STRSIZE FXSYS_len(const wchar_t* ptr) {
+inline size_t FXSYS_len(const wchar_t* ptr) {
   return FXSYS_wcslen(ptr);
 }
 
@@ -150,8 +146,8 @@ inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
 
 extern "C" {
 #else
-#define FXSYS_strlen(ptr) ((FX_STRSIZE)strlen(ptr))
-#define FXSYS_wcslen(ptr) ((FX_STRSIZE)wcslen(ptr))
+#define FXSYS_strlen(ptr) (strlen(ptr))
+#define FXSYS_wcslen(ptr) (wcslen(ptr))
 #endif  // __cplusplus
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

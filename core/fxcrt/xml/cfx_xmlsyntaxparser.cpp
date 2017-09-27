@@ -103,7 +103,7 @@ CFX_XMLSyntaxParser::CFX_XMLSyntaxParser(
 
   m_iXMLPlaneSize =
       std::min(m_iXMLPlaneSize,
-               pdfium::base::checked_cast<FX_STRSIZE>(m_pStream->GetLength()));
+               pdfium::base::checked_cast<size_t>(m_pStream->GetLength()));
   m_iCurrentPos = m_pStream->GetBOMLength();
 
   FX_SAFE_STRSIZE alloc_size_safe = m_iXMLPlaneSize;

@@ -18,6 +18,6 @@ ByteString FX_UTF8Encode(const WideStringView& wsStr);
 float FX_atof(const ByteStringView& str);
 float FX_atof(const WideStringView& wsStr);
 bool FX_atonum(const ByteStringView& str, void* pData);
-FX_STRSIZE FX_ftoa(float f, char* buf);
+size_t FX_ftoa(float f, char* buf);
 
 #endif  // CORE_FXCRT_FX_STRING_H_

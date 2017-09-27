@@ -49,7 +49,7 @@ void CQuartz2D::destroyGraphics(void* graphics) {
 
 void* CQuartz2D::CreateFont(const uint8_t* pFontData, uint32_t dwFontSize) {
   CGDataProviderRef pDataProvider = CGDataProviderCreateWithData(
-      nullptr, pFontData, (size_t)dwFontSize, nullptr);
+      nullptr, pFontData, static_cast<size_t>(dwFontSize), nullptr);
   if (!pDataProvider)
     return nullptr;
 

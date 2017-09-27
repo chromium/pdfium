@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/cfx_widetextbuf.h"
 
-FX_STRSIZE CFX_WideTextBuf::GetLength() const {
+size_t CFX_WideTextBuf::GetLength() const {
   return m_DataSize / sizeof(wchar_t);
 }
 
@@ -29,10 +29,10 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const WideString& str) {
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
-  FX_STRSIZE len = FXSYS_strlen(buf);
+  size_t len = FXSYS_strlen(buf);
   ExpandBuf(len * sizeof(wchar_t));
   wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
-  for (FX_STRSIZE j = 0; j < len; j++) {
+  for (size_t j = 0; j < len; j++) {
     *str++ = buf[j];
   }
   m_DataSize += len * sizeof(wchar_t);
@@ -41,10 +41,10 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   char buf[32];
-  FX_STRSIZE len = FX_ftoa((float)f, buf);
+  size_t len = FX_ftoa((float)f, buf);
   ExpandBuf(len * sizeof(wchar_t));
   wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
-  for (FX_STRSIZE i = 0; i < len; i++) {
+  for (size_t i = 0; i < len; i++) {
     *str++ = buf[i];
   }
   m_DataSize += len * sizeof(wchar_t);

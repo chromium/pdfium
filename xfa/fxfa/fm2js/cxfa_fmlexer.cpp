@@ -378,7 +378,7 @@ void CXFA_FMLexer::AdvanceForNumber() {
   }
 
   m_token->m_string =
-      WideStringView(m_cursor, static_cast<FX_STRSIZE>(end - m_cursor));
+      WideStringView(m_cursor, static_cast<size_t>(end - m_cursor));
   m_cursor = end;
 }
 
@@ -395,7 +395,7 @@ void CXFA_FMLexer::AdvanceForString() {
       // If the end of the input has been reached it was not escaped.
       if (m_cursor > m_end) {
         m_token->m_string =
-            WideStringView(start, static_cast<FX_STRSIZE>(m_cursor - start));
+            WideStringView(start, static_cast<size_t>(m_cursor - start));
         return;
       }
       // If the next character is not a " then the end of the string has been
@@ -430,7 +430,7 @@ void CXFA_FMLexer::AdvanceForIdentifier() {
     ++m_cursor;
   }
   m_token->m_string =
-      WideStringView(start, static_cast<FX_STRSIZE>(m_cursor - start));
+      WideStringView(start, static_cast<size_t>(m_cursor - start));
   m_token->m_type = TokenizeIdentifier(m_token->m_string);
 }
 

@@ -96,7 +96,7 @@ bool CBC_OnedCode128Writer::CheckContentValidity(
 WideString CBC_OnedCode128Writer::FilterContents(
     const WideStringView& contents) {
   WideString filterChineseChar;
-  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
+  for (size_t i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
     if (ch > 175) {
       i++;
@@ -173,7 +173,7 @@ int32_t CBC_OnedCode128Writer::Encode128B(const ByteString& contents,
   int32_t checkWeight = 1;
   patterns->push_back(CODE_START_B);
   int32_t checkSum = CODE_START_B * checkWeight;
-  for (FX_STRSIZE position = 0; position < contents.GetLength(); position++) {
+  for (size_t position = 0; position < contents.GetLength(); position++) {
     int32_t patternIndex = contents[position] - ' ';
     patterns->push_back(patternIndex);
     checkSum += patternIndex * checkWeight++;
@@ -187,7 +187,7 @@ int32_t CBC_OnedCode128Writer::Encode128C(const ByteString& contents,
   int32_t checkWeight = 1;
   patterns->push_back(CODE_START_C);
   int32_t checkSum = CODE_START_C * checkWeight;
-  FX_STRSIZE position = 0;
+  size_t position = 0;
   while (position < contents.GetLength()) {
     int32_t patternIndex;
     char ch = contents[position];

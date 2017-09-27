@@ -16,17 +16,17 @@
 class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
-  explicit CFX_BinaryBuf(FX_STRSIZE size);
+  explicit CFX_BinaryBuf(size_t size);
   virtual ~CFX_BinaryBuf();
 
   uint8_t* GetBuffer() const { return m_pBuffer.get(); }
-  FX_STRSIZE GetSize() const { return m_DataSize; }
-  virtual FX_STRSIZE GetLength() const;
+  size_t GetSize() const { return m_DataSize; }
+  virtual size_t GetLength() const;
   bool IsEmpty() const { return GetLength() == 0; }
 
   void Clear();
-  void EstimateSize(FX_STRSIZE size, FX_STRSIZE alloc_step = 0);
-  void AppendBlock(const void* pBuf, FX_STRSIZE size);
+  void EstimateSize(size_t size, size_t alloc_step = 0);
+  void AppendBlock(const void* pBuf, size_t size);
   void AppendString(const ByteString& str) {
     AppendBlock(str.c_str(), str.GetLength());
   }
@@ -36,18 +36,18 @@ class CFX_BinaryBuf {
     m_pBuffer.get()[m_DataSize++] = byte;
   }
 
-  void InsertBlock(FX_STRSIZE pos, const void* pBuf, FX_STRSIZE size);
-  void Delete(FX_STRSIZE start_index, FX_STRSIZE count);
+  void InsertBlock(size_t pos, const void* pBuf, size_t size);
+  void Delete(size_t start_index, size_t count);
 
   // Releases ownership of |m_pBuffer| and returns it.
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachBuffer();
 
  protected:
-  void ExpandBuf(FX_STRSIZE size);
+  void ExpandBuf(size_t size);
 
-  FX_STRSIZE m_AllocStep;
-  FX_STRSIZE m_AllocSize;
-  FX_STRSIZE m_DataSize;
+  size_t m_AllocStep;
+  size_t m_AllocSize;
+  size_t m_DataSize;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
 };
 

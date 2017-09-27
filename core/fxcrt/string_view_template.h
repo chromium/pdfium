@@ -39,13 +39,13 @@ class StringViewTemplate {
       : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)),
         m_Length(ptr ? FXSYS_len(ptr) : 0) {}
 
-  StringViewTemplate(const CharType* ptr, FX_STRSIZE len)
+  StringViewTemplate(const CharType* ptr, size_t len)
       : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)), m_Length(len) {}
 
   template <typename U = UnsignedType>
   StringViewTemplate(
       const UnsignedType* ptr,
-      FX_STRSIZE size,
+      size_t size,
       typename std::enable_if<!std::is_same<U, CharType>::value>::type* = 0)
       : m_Ptr(ptr), m_Length(size) {}
 
@@ -64,7 +64,7 @@ class StringViewTemplate {
 
   // Any changes to |vec| invalidate the string.
   explicit StringViewTemplate(const std::vector<UnsignedType>& vec) {
-    m_Length = pdfium::CollectionSize<FX_STRSIZE>(vec);
+    m_Length = pdfium::CollectionSize<size_t>(vec);
     m_Ptr = m_Length ? vec.data() : nullptr;
   }
 
@@ -116,8 +116,8 @@ class StringViewTemplate {
       return 0;
 
     uint32_t strid = 0;
-    FX_STRSIZE size = std::min(static_cast<FX_STRSIZE>(4), m_Length);
-    for (FX_STRSIZE i = 0; i < size; i++)
+    size_t size = std::min(static_cast<size_t>(4), m_Length);
+    for (size_t i = 0; i < size; i++)
       strid = strid * 256 + m_Ptr.Get()[i];
 
     return strid << ((4 - size) * 8);
@@ -128,12 +128,12 @@ class StringViewTemplate {
     return reinterpret_cast<const CharType*>(m_Ptr.Get());
   }
 
-  FX_STRSIZE GetLength() const { return m_Length; }
+  size_t GetLength() const { return m_Length; }
   bool IsEmpty() const { return m_Length == 0; }
-  bool IsValidIndex(FX_STRSIZE index) const { return index < GetLength(); }
-  bool IsValidLength(FX_STRSIZE length) const { return length <= GetLength(); }
+  bool IsValidIndex(size_t index) const { return index < GetLength(); }
+  bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
-  const UnsignedType& operator[](const FX_STRSIZE index) const {
+  const UnsignedType& operator[](const size_t index) const {
     ASSERT(IsValidIndex(index));
     return m_Ptr.Get()[index];
   }
@@ -144,22 +144,22 @@ class StringViewTemplate {
     return GetLength() ? (*this)[GetLength() - 1] : 0;
   }
 
-  const CharType CharAt(const FX_STRSIZE index) const {
+  const CharType CharAt(const size_t index) const {
     ASSERT(IsValidIndex(index));
     return static_cast<CharType>(m_Ptr.Get()[index]);
   }
 
-  pdfium::Optional<FX_STRSIZE> Find(CharType ch) const {
+  pdfium::Optional<size_t> Find(CharType ch) const {
     const UnsignedType* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
         reinterpret_cast<const CharType*>(m_Ptr.Get()), ch, m_Length));
 
-    return found ? pdfium::Optional<FX_STRSIZE>(found - m_Ptr.Get())
-                 : pdfium::Optional<FX_STRSIZE>();
+    return found ? pdfium::Optional<size_t>(found - m_Ptr.Get())
+                 : pdfium::Optional<size_t>();
   }
 
   bool Contains(CharType ch) const { return Find(ch).has_value(); }
 
-  StringViewTemplate Mid(FX_STRSIZE first, FX_STRSIZE count) const {
+  StringViewTemplate Mid(size_t first, size_t count) const {
     if (!m_Ptr.Get())
       return StringViewTemplate();
 
@@ -175,13 +175,13 @@ class StringViewTemplate {
     return StringViewTemplate(m_Ptr.Get() + first, count);
   }
 
-  StringViewTemplate Left(FX_STRSIZE count) const {
+  StringViewTemplate Left(size_t count) const {
     if (count == 0 || !IsValidLength(count))
       return StringViewTemplate();
     return Mid(0, count);
   }
 
-  StringViewTemplate Right(FX_STRSIZE count) const {
+  StringViewTemplate Right(size_t count) const {
     if (count == 0 || !IsValidLength(count))
       return StringViewTemplate();
     return Mid(GetLength() - count, count);
@@ -191,7 +191,7 @@ class StringViewTemplate {
     if (IsEmpty())
       return StringViewTemplate();
 
-    FX_STRSIZE pos = GetLength();
+    size_t pos = GetLength();
     while (pos && CharAt(pos - 1) == ch)
       pos--;
 
@@ -217,7 +217,7 @@ class StringViewTemplate {
 
  protected:
   UnownedPtr<const UnsignedType> m_Ptr;
-  FX_STRSIZE m_Length;
+  size_t m_Length;
 
  private:
   void* operator new(size_t) throw() { return nullptr; }

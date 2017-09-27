@@ -60,7 +60,7 @@ class CCodec_JpegModule {
 #if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
   static bool JpegEncode(const RetainPtr<CFX_DIBSource>& pSource,
                          uint8_t** dest_buf,
-                         FX_STRSIZE* dest_size);
+                         size_t* dest_size);
 #endif
 };
 

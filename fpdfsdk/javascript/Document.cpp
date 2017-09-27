@@ -386,7 +386,7 @@ bool Document::mailForm(CJS_Runtime* pRuntime,
   if (sTextBuf.GetLength() == 0)
     return false;
 
-  FX_STRSIZE nBufSize = sTextBuf.GetLength();
+  size_t nBufSize = sTextBuf.GetLength();
   char* pMutableBuf = FX_Alloc(char, nBufSize);
   memcpy(pMutableBuf, sTextBuf.c_str(), nBufSize);
 
@@ -1015,7 +1015,7 @@ bool Document::documentFileName(CJS_Runtime* pRuntime,
     return false;
   }
   WideString wsFilePath = m_pFormFillEnv->JS_docGetFilePath();
-  FX_STRSIZE i = wsFilePath.GetLength();
+  size_t i = wsFilePath.GetLength();
   for (; i > 0; i--) {
     if (wsFilePath[i - 1] == L'\\' || wsFilePath[i - 1] == L'/')
       break;

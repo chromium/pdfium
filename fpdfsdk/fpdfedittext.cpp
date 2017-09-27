@@ -420,7 +420,7 @@ FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
   if (!pTextObj)
     return false;
 
-  FX_STRSIZE len = WideString::WStringLength(text);
+  size_t len = WideString::WStringLength(text);
   WideString encodedText = WideString::FromUTF16LE(text, len);
   ByteString byteText;
   for (wchar_t wc : encodedText) {

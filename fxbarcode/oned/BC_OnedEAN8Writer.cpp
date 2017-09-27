@@ -70,7 +70,7 @@ bool CBC_OnedEAN8Writer::CheckContentValidity(const WideStringView& contents) {
 WideString CBC_OnedEAN8Writer::FilterContents(const WideStringView& contents) {
   WideString filtercontents;
   wchar_t ch;
-  for (FX_STRSIZE i = 0; i < contents.GetLength(); i++) {
+  for (size_t i = 0; i < contents.GetLength(); i++) {
     ch = contents[i];
     if (ch > 175) {
       i++;
@@ -145,10 +145,10 @@ bool CBC_OnedEAN8Writer::ShowChars(const WideStringView& contents,
 
   int32_t leftPosition = 3 * multiple;
   ByteString str = FX_UTF8Encode(contents);
-  FX_STRSIZE iLength = str.GetLength();
+  size_t iLength = str.GetLength();
   std::vector<FXTEXT_CHARPOS> charpos(iLength);
   ByteString tempStr = str.Left(4);
-  FX_STRSIZE iLen = tempStr.GetLength();
+  size_t iLen = tempStr.GetLength();
   int32_t strWidth = 7 * multiple * 4;
   float blank = 0.0;
 

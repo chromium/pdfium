@@ -34,8 +34,8 @@ CBC_EncoderContext::CBC_EncoderContext(const WideString& msg,
   ByteString dststr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, dststr);
   WideString sb;
-  FX_STRSIZE c = dststr.GetLength();
-  for (FX_STRSIZE i = 0; i < c; i++) {
+  size_t c = dststr.GetLength();
+  for (size_t i = 0; i < c; i++) {
     wchar_t ch = static_cast<wchar_t>(dststr[i] & 0xff);
     if (ch == '?' && dststr[i] != '?') {
       e = BCExceptionCharactersOutsideISO88591Encoding;
@@ -73,7 +73,7 @@ void CBC_EncoderContext::writeCodewords(const WideString& codewords) {
 void CBC_EncoderContext::writeCodeword(wchar_t codeword) {
   m_codewords += codeword;
 }
-FX_STRSIZE CBC_EncoderContext::getCodewordCount() {
+size_t CBC_EncoderContext::getCodewordCount() {
   return m_codewords.GetLength();
 }
 void CBC_EncoderContext::signalEncoderChange(int32_t encoding) {
@@ -85,7 +85,7 @@ void CBC_EncoderContext::resetEncoderSignal() {
 bool CBC_EncoderContext::hasMoreCharacters() {
   return m_pos < getTotalMessageCharCount();
 }
-FX_STRSIZE CBC_EncoderContext::getRemainingCharacters() {
+size_t CBC_EncoderContext::getRemainingCharacters() {
   return getTotalMessageCharCount() - m_pos;
 }
 void CBC_EncoderContext::updateSymbolInfo(int32_t& e) {
@@ -103,6 +103,6 @@ void CBC_EncoderContext::resetSymbolInfo() {
   m_allowRectangular = true;
 }
 
-FX_STRSIZE CBC_EncoderContext::getTotalMessageCharCount() {
+size_t CBC_EncoderContext::getTotalMessageCharCount() {
   return m_msg.GetLength() - m_skipAtEnd;
 }

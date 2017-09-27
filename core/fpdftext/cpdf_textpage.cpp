@@ -66,7 +66,7 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   return baseSpace;
 }
 
-FX_STRSIZE Unicode_GetNormalization(wchar_t wch, wchar_t* pDst) {
+size_t Unicode_GetNormalization(wchar_t wch, wchar_t* pDst) {
   wch = wch & 0xFFFF;
   wchar_t wFind = g_UnicodeData_Normalization[wch];
   if (!wFind) {
@@ -93,7 +93,7 @@ FX_STRSIZE Unicode_GetNormalization(wchar_t wch, wchar_t* pDst) {
     while (n--)
       *pDst++ = *pMap++;
   }
-  return (FX_STRSIZE)wFind;
+  return static_cast<size_t>(wFind);
 }
 
 float MaskPercentFilled(const std::vector<bool>& mask,
@@ -649,11 +649,11 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
   info.m_Index = m_TextBuf.GetLength();
   if (wChar >= 0xFB00 && wChar <= 0xFB06) {
     wchar_t* pDst = nullptr;
-    FX_STRSIZE nCount = Unicode_GetNormalization(wChar, pDst);
+    size_t nCount = Unicode_GetNormalization(wChar, pDst);
     if (nCount >= 1) {
       pDst = FX_Alloc(wchar_t, nCount);
       Unicode_GetNormalization(wChar, pDst);
-      for (FX_STRSIZE nIndex = 0; nIndex < nCount; nIndex++) {
+      for (size_t nIndex = 0; nIndex < nCount; nIndex++) {
         PAGECHAR_INFO info2 = info;
         info2.m_Unicode = pDst[nIndex];
         info2.m_Flag = FPDFTEXT_CHAR_PIECE;
@@ -679,11 +679,11 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   info.m_Index = m_TextBuf.GetLength();
   wChar = FX_GetMirrorChar(wChar);
   wchar_t* pDst = nullptr;
-  FX_STRSIZE nCount = Unicode_GetNormalization(wChar, pDst);
+  size_t nCount = Unicode_GetNormalization(wChar, pDst);
   if (nCount >= 1) {
     pDst = FX_Alloc(wchar_t, nCount);
     Unicode_GetNormalization(wChar, pDst);
-    for (FX_STRSIZE nIndex = 0; nIndex < nCount; nIndex++) {
+    for (size_t nIndex = 0; nIndex < nCount; nIndex++) {
       PAGECHAR_INFO info2 = info;
       info2.m_Unicode = pDst[nIndex];
       info2.m_Flag = FPDFTEXT_CHAR_PIECE;
@@ -704,7 +704,7 @@ void CPDF_TextPage::CloseTempLine() {
 
   WideString str = m_TempTextBuf.MakeString();
   bool bPrevSpace = false;
-  for (FX_STRSIZE i = 0; i < str.GetLength(); i++) {
+  for (size_t i = 0; i < str.GetLength(); i++) {
     if (str[i] != ' ') {
       bPrevSpace = false;
       continue;
@@ -838,13 +838,12 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
     return FPDFText_MarkedContent::Done;
   }
 
-  FX_STRSIZE nItems = actText.GetLength();
-  if (nItems < 1)
+  if (actText.IsEmpty())
     return FPDFText_MarkedContent::Pass;
 
   CPDF_Font* pFont = pTextObj->GetFont();
   bExist = false;
-  for (FX_STRSIZE i = 0; i < nItems; i++) {
+  for (size_t i = 0; i < actText.GetLength(); i++) {
     if (pFont->CharCodeFromUnicode(actText[i]) != CPDF_Font::kInvalidCharCode) {
       bExist = true;
       break;
@@ -854,7 +853,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
     return FPDFText_MarkedContent::Pass;
 
   bExist = false;
-  for (FX_STRSIZE i = 0; i < nItems; i++) {
+  for (size_t i = 0; i < actText.GetLength(); i++) {
     wchar_t wChar = actText[i];
     if ((wChar > 0x80 && wChar < 0xFFFD) || (wChar <= 0x80 && isprint(wChar))) {
       bExist = true;
@@ -883,15 +882,14 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
     if (pDict)
       actText = pDict->GetUnicodeTextFor("ActualText");
   }
-  FX_STRSIZE nItems = actText.GetLength();
-  if (nItems < 1)
+  if (actText.IsEmpty())
     return;
 
   CPDF_Font* pFont = pTextObj->GetFont();
   CFX_Matrix matrix = pTextObj->GetTextMatrix();
   matrix.Concat(Obj.m_formMatrix);
 
-  for (FX_STRSIZE k = 0; k < nItems; k++) {
+  for (size_t k = 0; k < actText.GetLength(); k++) {
     wchar_t wChar = actText[k];
     if (wChar <= 0x80 && !isprint(wChar))
       wChar = 0x20;

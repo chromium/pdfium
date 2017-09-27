@@ -442,7 +442,7 @@ bool CPDFSDK_InterForm::SubmitFields(const WideString& csDestination,
                                      bool bUrlEncoded) {
   ByteString textBuf = ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude);
 
-  FX_STRSIZE nBufSize = textBuf.GetLength();
+  size_t nBufSize = textBuf.GetLength();
   if (nBufSize == 0)
     return false;
 
@@ -465,8 +465,7 @@ bool CPDFSDK_InterForm::SubmitFields(const WideString& csDestination,
   return true;
 }
 
-bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
-                                            FX_STRSIZE& nBufSize) {
+bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
   std::unique_ptr<CFDF_Document> pFDF =
       CFDF_Document::ParseMemory(pBuf, nBufSize);
   if (!pFDF)
@@ -538,14 +537,14 @@ bool CPDFSDK_InterForm::SubmitForm(const WideString& sDestination,
 
   ByteString fdfBuffer = pFDFDoc->WriteToString();
 
-  FX_STRSIZE nBufSize = fdfBuffer.GetLength();
-  if (nBufSize == 0)
+  if (fdfBuffer.IsEmpty())
     return false;
 
-  uint8_t* pLocalBuffer = FX_Alloc(uint8_t, nBufSize);
-  memcpy(pLocalBuffer, fdfBuffer.c_str(), nBufSize);
+  uint8_t* pLocalBuffer = FX_Alloc(uint8_t, fdfBuffer.GetLength());
+  memcpy(pLocalBuffer, fdfBuffer.c_str(), fdfBuffer.GetLength());
   uint8_t* pBuffer = pLocalBuffer;
 
+  size_t nBufSize = fdfBuffer.GetLength();
   if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize)) {
     FX_Free(pLocalBuffer);
     return false;

@@ -77,16 +77,16 @@ bool ParserPageRangeString(ByteString rangstring,
     return true;
 
   rangstring.Remove(' ');
-  FX_STRSIZE nLength = rangstring.GetLength();
+  size_t nLength = rangstring.GetLength();
   ByteString cbCompareString("0123456789-,");
-  for (FX_STRSIZE i = 0; i < nLength; ++i) {
+  for (size_t i = 0; i < nLength; ++i) {
     if (!cbCompareString.Contains(rangstring[i]))
       return false;
   }
 
   ByteString cbMidRange;
-  FX_STRSIZE nStringFrom = 0;
-  pdfium::Optional<FX_STRSIZE> nStringTo = 0;
+  size_t nStringFrom = 0;
+  pdfium::Optional<size_t> nStringTo = 0;
   while (nStringTo < nLength) {
     nStringTo = rangstring.Find(',', nStringFrom);
     if (!nStringTo.has_value())
@@ -106,7 +106,7 @@ bool ParserPageRangeString(ByteString rangstring,
         return false;
 
       nMid = nMid.value() + 1;
-      FX_STRSIZE nEnd = cbMidRange.GetLength() - nMid.value();
+      size_t nEnd = cbMidRange.GetLength() - nMid.value();
       if (nEnd == 0)
         return false;
 

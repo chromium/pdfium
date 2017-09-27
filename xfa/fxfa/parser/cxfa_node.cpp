@@ -4037,8 +4037,8 @@ bool CXFA_Node::SetScriptContent(const WideString& wsContent,
           std::vector<WideString> wsSaveTextArray;
           size_t iSize = 0;
           if (!wsContent.IsEmpty()) {
-            FX_STRSIZE iStart = 0;
-            FX_STRSIZE iLength = wsContent.GetLength();
+            size_t iStart = 0;
+            size_t iLength = wsContent.GetLength();
             auto iEnd = wsContent.Find(L'\n', iStart);
             iEnd = !iEnd.has_value() ? iLength : iEnd;
             while (iEnd.value() >= iStart) {
