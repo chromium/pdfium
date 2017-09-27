@@ -182,10 +182,61 @@ uint32_t GetFontFamilyHash(const wchar_t* pszFontFamily,
   return FX_HashCode_GetW(wsFont.AsStringView(), false);
 }
 
+uint32_t GetGdiFontStyles(const LOGFONTW& lf) {
+  uint32_t dwStyles = 0;
+  if ((lf.lfPitchAndFamily & 0x03) == FIXED_PITCH)
+    dwStyles |= FX_FONTSTYLE_FixedPitch;
+  uint8_t nFamilies = lf.lfPitchAndFamily & 0xF0;
+  if (nFamilies == FF_ROMAN)
+    dwStyles |= FX_FONTSTYLE_Serif;
+  if (nFamilies == FF_SCRIPT)
+    dwStyles |= FX_FONTSTYLE_Script;
+  if (lf.lfCharSet == SYMBOL_CHARSET)
+    dwStyles |= FX_FONTSTYLE_Symbolic;
+  return dwStyles;
+}
+
+int32_t CALLBACK GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
+                                 NEWTEXTMETRICEX* lpntme,
+                                 DWORD dwFontType,
+                                 LPARAM lParam) {
+  if (dwFontType != TRUETYPE_FONTTYPE)
+    return 1;
+  const LOGFONTW& lf = ((LPENUMLOGFONTEXW)lpelfe)->elfLogFont;
+  if (lf.lfFaceName[0] == L'@')
+    return 1;
+  FX_FONTDESCRIPTOR* pFont = FX_Alloc(FX_FONTDESCRIPTOR, 1);
+  memset(pFont, 0, sizeof(FX_FONTDESCRIPTOR));
+  pFont->uCharSet = lf.lfCharSet;
+  pFont->dwFontStyles = GetGdiFontStyles(lf);
+  FXSYS_wcsncpy(pFont->wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
+  pFont->wsFontFace[31] = 0;
+  memcpy(&pFont->FontSignature, &lpntme->ntmFontSig,
+         sizeof(lpntme->ntmFontSig));
+  reinterpret_cast<std::deque<FX_FONTDESCRIPTOR>*>(lParam)->push_back(*pFont);
+  FX_Free(pFont);
+  return 1;
+}
+
+void EnumGdiFonts(std::deque<FX_FONTDESCRIPTOR>* fonts,
+                  const wchar_t* pwsFaceName,
+                  wchar_t wUnicode) {
+  HDC hDC = ::GetDC(nullptr);
+  LOGFONTW lfFind;
+  memset(&lfFind, 0, sizeof(lfFind));
+  lfFind.lfCharSet = DEFAULT_CHARSET;
+  if (pwsFaceName) {
+    FXSYS_wcsncpy(lfFind.lfFaceName, pwsFaceName, 31);
+    lfFind.lfFaceName[31] = 0;
+  }
+  EnumFontFamiliesExW(hDC, (LPLOGFONTW)&lfFind, (FONTENUMPROCW)GdiFontEnumProc,
+                      (LPARAM)fonts, 0);
+  ::ReleaseDC(nullptr, hDC);
+}
+
 }  // namespace
 
-CFGAS_FontMgr::CFGAS_FontMgr()
-    : m_pEnumerator(FX_GetDefFontEnumerator()), m_FontFaces(100) {
+CFGAS_FontMgr::CFGAS_FontMgr() : m_pEnumerator(EnumGdiFonts), m_FontFaces(100) {
   if (m_pEnumerator)
     m_pEnumerator(&m_FontFaces, nullptr, 0xFEFF);
 }
@@ -381,62 +432,6 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
   return &m_FontFaces.back();
 }
 
-uint32_t FX_GetGdiFontStyles(const LOGFONTW& lf) {
-  uint32_t dwStyles = 0;
-  if ((lf.lfPitchAndFamily & 0x03) == FIXED_PITCH)
-    dwStyles |= FX_FONTSTYLE_FixedPitch;
-  uint8_t nFamilies = lf.lfPitchAndFamily & 0xF0;
-  if (nFamilies == FF_ROMAN)
-    dwStyles |= FX_FONTSTYLE_Serif;
-  if (nFamilies == FF_SCRIPT)
-    dwStyles |= FX_FONTSTYLE_Script;
-  if (lf.lfCharSet == SYMBOL_CHARSET)
-    dwStyles |= FX_FONTSTYLE_Symbolic;
-  return dwStyles;
-}
-
-static int32_t CALLBACK FX_GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
-                                           NEWTEXTMETRICEX* lpntme,
-                                           DWORD dwFontType,
-                                           LPARAM lParam) {
-  if (dwFontType != TRUETYPE_FONTTYPE)
-    return 1;
-  const LOGFONTW& lf = ((LPENUMLOGFONTEXW)lpelfe)->elfLogFont;
-  if (lf.lfFaceName[0] == L'@')
-    return 1;
-  FX_FONTDESCRIPTOR* pFont = FX_Alloc(FX_FONTDESCRIPTOR, 1);
-  memset(pFont, 0, sizeof(FX_FONTDESCRIPTOR));
-  pFont->uCharSet = lf.lfCharSet;
-  pFont->dwFontStyles = FX_GetGdiFontStyles(lf);
-  FXSYS_wcsncpy(pFont->wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
-  pFont->wsFontFace[31] = 0;
-  memcpy(&pFont->FontSignature, &lpntme->ntmFontSig,
-         sizeof(lpntme->ntmFontSig));
-  reinterpret_cast<std::deque<FX_FONTDESCRIPTOR>*>(lParam)->push_back(*pFont);
-  FX_Free(pFont);
-  return 1;
-}
-
-static void FX_EnumGdiFonts(std::deque<FX_FONTDESCRIPTOR>* fonts,
-                            const wchar_t* pwsFaceName,
-                            wchar_t wUnicode) {
-  HDC hDC = ::GetDC(nullptr);
-  LOGFONTW lfFind;
-  memset(&lfFind, 0, sizeof(lfFind));
-  lfFind.lfCharSet = DEFAULT_CHARSET;
-  if (pwsFaceName) {
-    FXSYS_wcsncpy(lfFind.lfFaceName, pwsFaceName, 31);
-    lfFind.lfFaceName[31] = 0;
-  }
-  EnumFontFamiliesExW(hDC, (LPLOGFONTW)&lfFind,
-                      (FONTENUMPROCW)FX_GdiFontEnumProc, (LPARAM)fonts, 0);
-  ::ReleaseDC(nullptr, hDC);
-}
-
-FX_LPEnumAllFonts FX_GetDefFontEnumerator() {
-  return FX_EnumGdiFonts;
-}
-
 #else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
@@ -610,6 +605,27 @@ const FX_BIT2CHARSET g_FX_Bit2Charset[4][16] = {
      {1 << 15, FX_CHARSET_US}}};
 
 constexpr wchar_t kFolderSeparator = L'/';
+
+extern "C" {
+
+unsigned long ftStreamRead(FXFT_Stream stream,
+                           unsigned long offset,
+                           unsigned char* buffer,
+                           unsigned long count) {
+  if (count == 0)
+    return 0;
+
+  IFX_SeekableReadStream* pFile =
+      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
+  if (!pFile->ReadBlock(buffer, offset, count))
+    return 0;
+
+  return count;
+}
+
+void ftStreamClose(FXFT_Stream stream) {}
+
+};  // extern "C"
 
 }  // namespace
 
@@ -892,27 +908,6 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const WideString& wsFaceName,
   return pFont;
 }
 
-extern "C" {
-
-unsigned long _ftStreamRead(FXFT_Stream stream,
-                            unsigned long offset,
-                            unsigned char* buffer,
-                            unsigned long count) {
-  if (count == 0)
-    return 0;
-
-  IFX_SeekableReadStream* pFile =
-      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-  if (!pFile->ReadBlock(buffer, offset, count))
-    return 0;
-
-  return count;
-}
-
-void _ftStreamClose(FXFT_Stream stream) {}
-
-};  // extern "C"
-
 FXFT_Face CFGAS_FontMgr::LoadFace(
     const RetainPtr<IFX_SeekableReadStream>& pFontStream,
     int32_t iFaceIndex) {
@@ -937,8 +932,8 @@ FXFT_Face CFGAS_FontMgr::LoadFace(
   ftStream->descriptor.pointer = static_cast<void*>(pFontStream.Get());
   ftStream->pos = 0;
   ftStream->size = static_cast<unsigned long>(pFontStream->GetSize());
-  ftStream->read = _ftStreamRead;
-  ftStream->close = _ftStreamClose;
+  ftStream->read = ftStreamRead;
+  ftStream->close = ftStreamClose;
 
   FXFT_Open_Args ftArgs;
   memset(&ftArgs, 0, sizeof(FXFT_Open_Args));
