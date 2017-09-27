@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/cfx_unicodeencodingex.h"

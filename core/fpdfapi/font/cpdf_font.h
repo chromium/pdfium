@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/fx_font.h"
 
 class CFX_SubstFont;

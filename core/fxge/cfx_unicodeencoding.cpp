@@ -7,6 +7,7 @@
 #include "core/fxge/cfx_unicodeencoding.h"
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 

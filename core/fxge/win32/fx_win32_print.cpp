@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"

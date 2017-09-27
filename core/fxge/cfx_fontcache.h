@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 

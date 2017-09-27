@@ -18,6 +18,8 @@
 #include "third_party/skia/include/core/SkTypeface.h"
 #endif
 
+class CFX_Font;
+
 class CFX_FaceCache {
  public:
   explicit CFX_FaceCache(FXFT_Face face);

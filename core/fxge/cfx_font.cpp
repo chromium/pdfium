@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/fx_font.h"
+#include "core/fxge/cfx_font.h"
 
 #include <algorithm>
 #include <limits>

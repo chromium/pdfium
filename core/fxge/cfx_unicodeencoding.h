@@ -32,6 +32,8 @@
 #define FXFM_ENCODING_APPLE_ROMAN FXFM_ENC_TAG('a', 'r', 'm', 'n')
 #endif  // PDF_ENABLE_XFA
 
+class CFX_Font;
+
 class CFX_UnicodeEncoding {
  public:
   explicit CFX_UnicodeEncoding(CFX_Font* pFont);
