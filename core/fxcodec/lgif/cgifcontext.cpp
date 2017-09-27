@@ -286,7 +286,7 @@ GifDecodeStatus CGifContext::LoadFrame(int32_t frame_num) {
       }
       if (!m_ImgDecoder.get())
         m_ImgDecoder =
-            CFX_LZWDecoder::Create(gif_image_ptr->m_LocalPalettes.empty()
+            CFX_LZWDecoder::Create(!gif_image_ptr->m_LocalPalettes.empty()
                                        ? gif_image_ptr->local_pallette_exp
                                        : global_pal_exp,
                                    gif_image_ptr->image_code_exp);
