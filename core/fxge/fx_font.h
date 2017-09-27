@@ -18,9 +18,6 @@
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_freetype.h"
 
-typedef struct FT_FaceRec_* FXFT_Face;
-typedef void* FXFT_Library;
-
 class CFX_FaceCache;
 class CFX_GlyphBitmap;
 class CFX_PathData;
