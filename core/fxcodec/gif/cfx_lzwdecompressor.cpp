@@ -18,7 +18,9 @@
 std::unique_ptr<CFX_LZWDecompressor> CFX_LZWDecompressor::Create(
     uint8_t color_exp,
     uint8_t code_exp) {
-  if (code_exp > GIF_MAX_LZW_EXP || code_exp + 1 < color_exp)
+  // color_exp generates 2^(n + 1) codes, where as the code_exp reserves 2^n.
+  // This is a quirk of the GIF spec.
+  if (code_exp > GIF_MAX_LZW_EXP || code_exp < color_exp + 1)
     return nullptr;
   return std::unique_ptr<CFX_LZWDecompressor>(
       new CFX_LZWDecompressor(color_exp, code_exp));
@@ -27,12 +29,11 @@ std::unique_ptr<CFX_LZWDecompressor> CFX_LZWDecompressor::Create(
 CFX_LZWDecompressor::CFX_LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
     : code_size_(code_exp),
       code_size_cur_(0),
-      code_color_end_(static_cast<uint16_t>(2 << color_exp)),
+      code_color_end_(static_cast<uint16_t>(1 << (color_exp + 1))),
       code_clear_(static_cast<uint16_t>(1 << code_exp)),
       code_end_(static_cast<uint16_t>((1 << code_exp) + 1)),
       code_next_(0),
       code_first_(0),
-      stack_size_(0),
       code_old_(0),
       next_in_(nullptr),
       avail_in_(0),
@@ -57,17 +58,13 @@ CFX_GifDecodeStatus CFX_LZWDecompressor::Decode(uint8_t* src_buf,
   ClearTable();
 
   uint32_t i = 0;
-  if (stack_size_ != 0) {
-    if (*des_size < stack_size_) {
-      memcpy(des_buf, &stack_[GIF_MAX_LZW_CODE - stack_size_], *des_size);
-      stack_size_ -= static_cast<uint16_t>(*des_size);
+  if (decompressed_next_ != 0) {
+    uint32_t extracted_size = ExtractData(des_buf, *des_size);
+    if (decompressed_next_ != 0)
       return CFX_GifDecodeStatus::InsufficientDestSize;
-    }
 
-    memcpy(des_buf, &stack_[GIF_MAX_LZW_CODE - stack_size_], stack_size_);
-    des_buf += stack_size_;
-    i += stack_size_;
-    stack_size_ = 0;
+    des_buf += extracted_size;
+    i += extracted_size;
   }
 
   while (i <= *des_size && (avail_in_ > 0 || bits_left_ >= code_size_cur_)) {
@@ -115,7 +112,7 @@ CFX_GifDecodeStatus CFX_LZWDecompressor::Decode(uint8_t* src_buf,
             if (!DecodeString(code))
               return CFX_GifDecodeStatus::Error;
 
-            uint8_t append_char = stack_[GIF_MAX_LZW_CODE - stack_size_];
+            uint8_t append_char = decompressed_[decompressed_next_ - 1];
             AddCode(code_old_, append_char);
           }
         }
@@ -125,16 +122,12 @@ CFX_GifDecodeStatus CFX_LZWDecompressor::Decode(uint8_t* src_buf,
       }
 
       code_old_ = code;
-      if (i + stack_size_ > *des_size) {
-        memcpy(des_buf, &stack_[GIF_MAX_LZW_CODE - stack_size_], *des_size - i);
-        stack_size_ -= static_cast<uint16_t>(*des_size - i);
+      uint32_t extracted_size = ExtractData(des_buf, *des_size - i);
+      if (decompressed_next_ != 0)
         return CFX_GifDecodeStatus::InsufficientDestSize;
-      }
 
-      memcpy(des_buf, &stack_[GIF_MAX_LZW_CODE - stack_size_], stack_size_);
-      des_buf += stack_size_;
-      i += stack_size_;
-      stack_size_ = 0;
+      des_buf += extracted_size;
+      i += extracted_size;
     }
   }
 
@@ -150,9 +143,10 @@ void CFX_LZWDecompressor::ClearTable() {
   code_next_ = code_end_ + 1;
   code_old_ = static_cast<uint16_t>(-1);
   memset(code_table_, 0, sizeof(code_table_));
-  memset(stack_, 0, sizeof(stack_));
   for (uint16_t i = 0; i < code_clear_; i++)
     code_table_[i].suffix = static_cast<uint8_t>(i);
+  decompressed_.resize(code_next_ - code_clear_ + 1);
+  decompressed_next_ = 0;
 }
 
 void CFX_LZWDecompressor::AddCode(uint16_t prefix_code, uint8_t append_char) {
@@ -168,18 +162,35 @@ void CFX_LZWDecompressor::AddCode(uint16_t prefix_code, uint8_t append_char) {
 }
 
 bool CFX_LZWDecompressor::DecodeString(uint16_t code) {
-  stack_size_ = 0;
+  decompressed_.resize(code_next_ - code_clear_ + 1);
+  decompressed_next_ = 0;
+
   while (code >= code_clear_ && code <= code_next_) {
-    if (code == code_table_[code].prefix || stack_size_ == GIF_MAX_LZW_CODE - 1)
+    if (code == code_table_[code].prefix ||
+        decompressed_next_ >= decompressed_.size())
       return false;
 
-    stack_[GIF_MAX_LZW_CODE - 1 - stack_size_++] = code_table_[code].suffix;
+    decompressed_[decompressed_next_++] = code_table_[code].suffix;
     code = code_table_[code].prefix;
   }
+
   if (code >= code_color_end_)
     return false;
 
-  stack_[GIF_MAX_LZW_CODE - 1 - stack_size_++] = static_cast<uint8_t>(code);
+  decompressed_[decompressed_next_++] = static_cast<uint8_t>(code);
   code_first_ = static_cast<uint8_t>(code);
   return true;
+}
+
+uint32_t CFX_LZWDecompressor::ExtractData(uint8_t* des_buf, uint32_t des_size) {
+  if (des_size == 0)
+    return 0;
+
+  uint32_t copy_size = des_size <= decompressed_next_
+                           ? des_size
+                           : static_cast<uint32_t>(decompressed_next_);
+  std::reverse_copy(decompressed_.data() + decompressed_next_ - copy_size,
+                    decompressed_.data() + decompressed_next_, des_buf);
+  decompressed_next_ -= copy_size;
+  return copy_size;
 }
