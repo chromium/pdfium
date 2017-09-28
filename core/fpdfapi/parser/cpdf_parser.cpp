@@ -1459,7 +1459,8 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
         (FX_FILESIZE)(m_pSyntax->GetPos() + m_pSyntax->m_HeaderOffset)) {
       break;
     }
-    m_pSyntax->GetNextChar(ch);
+    if (!m_pSyntax->GetNextChar(ch))
+      return HANDLER_ERROR;
   }
   m_LastXRefOffset += dwCount;
   m_ObjectStreamMap.clear();

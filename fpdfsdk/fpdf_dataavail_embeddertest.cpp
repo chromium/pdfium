@@ -63,6 +63,13 @@ class TestAsyncLoader : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
     return available_ranges_.empty() ? 0 : available_ranges_.rbegin()->second;
   }
 
+  void FlushRequestedData() {
+    for (const auto& it : requested_segments_) {
+      SetDataAvailable(it.first, it.second);
+    }
+    ClearRequestedSegments();
+  }
+
  private:
   void SetDataAvailable(size_t start, size_t size) {
     if (size == 0)
@@ -197,6 +204,26 @@ TEST_F(FPDFDataAvailEmbeddertest, LoadUsingHintTables) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 1);
   EXPECT_TRUE(page);
   FPDF_ClosePage(page);
+}
+
+TEST_F(FPDFDataAvailEmbeddertest, CheckFormAvailIfLinearized) {
+  TestAsyncLoader loader("feature_linearized_loading.pdf");
+  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
+  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  ASSERT_TRUE(document_);
+
+  // Prevent access to non requested data to coerce the parser to send new
+  // request for non available (non requested before) data.
+  loader.set_is_new_data_available(false);
+  loader.ClearRequestedSegments();
+
+  int status = PDF_FORM_NOTAVAIL;
+  while (status == PDF_FORM_NOTAVAIL) {
+    loader.FlushRequestedData();
+    status = FPDFAvail_IsFormAvail(avail_, loader.hints());
+  }
+  EXPECT_NE(PDF_FORM_ERROR, status);
 }
 
 TEST_F(FPDFDataAvailEmbeddertest,
