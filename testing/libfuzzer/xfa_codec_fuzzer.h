@@ -13,8 +13,8 @@
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 #include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/fx_stream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "testing/fx_string_testhelpers.h"
 #include "third_party/base/ptr_util.h"
 
 class XFACodecFuzzer {
@@ -28,7 +28,7 @@ class XFACodecFuzzer {
 
     std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
         mgr->CreateProgressiveDecoder();
-    auto source = pdfium::MakeRetain<Reader>(data, size);
+    auto source = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(data, size);
     FXCODEC_STATUS status = decoder->LoadImageInfo(source, type, nullptr, true);
     if (status != FXCODEC_STATUS_FRAME_READY)
       return 0;
@@ -49,31 +49,6 @@ class XFACodecFuzzer {
 
     return 0;
   }
-
- private:
-  class Reader : public IFX_SeekableReadStream {
-   public:
-    Reader(const uint8_t* data, size_t size) : m_data(data), m_size(size) {}
-    ~Reader() {}
-
-    bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-      if (offset < 0 || static_cast<size_t>(offset) >= m_size)
-        return false;
-      if (offset + size > m_size)
-        size = m_size - offset;
-      if (size == 0)
-        return false;
-
-      memcpy(buffer, m_data + offset, size);
-      return true;
-    }
-
-    FX_FILESIZE GetSize() override { return static_cast<FX_FILESIZE>(m_size); }
-
-   private:
-    const uint8_t* const m_data;
-    const size_t m_size;
-  };
 };
 
 #endif  // TESTING_LIBFUZZER_XFA_CODEC_FUZZER_H_

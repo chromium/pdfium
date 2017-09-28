@@ -14,26 +14,11 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_stream.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
-
-class InvalidReader : public IFX_SeekableReadStream {
- public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  // IFX_SeekableReadStream overrides:
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-    return false;
-  }
-  FX_FILESIZE GetSize() override { return 100; }
-
- private:
-  InvalidReader() {}
-  ~InvalidReader() override {}
-};
 
 class TestReadValidator : public CPDF_ReadValidator {
  public:
@@ -44,7 +29,9 @@ class TestReadValidator : public CPDF_ReadValidator {
 
  protected:
   TestReadValidator()
-      : CPDF_ReadValidator(pdfium::MakeRetain<InvalidReader>(), nullptr) {}
+      : CPDF_ReadValidator(
+            pdfium::MakeRetain<CFX_InvalidSeekableReadStream>(100),
+            nullptr) {}
   ~TestReadValidator() override {}
 };
 

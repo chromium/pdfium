@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_stream.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -60,22 +61,6 @@ class MockDownloadHints : public CPDF_DataAvail::DownloadHints {
 
  private:
   std::pair<FX_FILESIZE, FX_FILESIZE> last_requested_range_;
-};
-
-class InvalidReader : public IFX_SeekableReadStream {
- public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  // IFX_SeekableReadStream overrides:
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-    return false;
-  }
-  FX_FILESIZE GetSize() override { return kTestDataSize; }
-
- private:
-  InvalidReader() {}
-  ~InvalidReader() override {}
 };
 
 }  // namespace
@@ -149,7 +134,7 @@ TEST(CPDF_ReadValidatorTest, UnavailableDataWithHints) {
 }
 
 TEST(CPDF_ReadValidatorTest, ReadError) {
-  auto file = pdfium::MakeRetain<InvalidReader>();
+  auto file = pdfium::MakeRetain<CFX_InvalidSeekableReadStream>(kTestDataSize);
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, nullptr);
 
   static const uint32_t kBufferSize = 3 * 1000;
@@ -182,7 +167,7 @@ TEST(CPDF_ReadValidatorTest, IntOverflow) {
 TEST(CPDF_ReadValidatorTest, Session) {
   std::vector<uint8_t> test_data(kTestDataSize);
 
-  auto file = pdfium::MakeRetain<InvalidReader>();
+  auto file = pdfium::MakeRetain<CFX_InvalidSeekableReadStream>(kTestDataSize);
   MockFileAvail file_avail;
   MockDownloadHints hints;
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
@@ -220,7 +205,7 @@ TEST(CPDF_ReadValidatorTest, Session) {
 TEST(CPDF_ReadValidatorTest, SessionReset) {
   std::vector<uint8_t> test_data(kTestDataSize);
 
-  auto file = pdfium::MakeRetain<InvalidReader>();
+  auto file = pdfium::MakeRetain<CFX_InvalidSeekableReadStream>(kTestDataSize);
   MockFileAvail file_avail;
   MockDownloadHints hints;
   auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
