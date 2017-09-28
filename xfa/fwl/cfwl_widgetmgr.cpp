@@ -33,9 +33,9 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
       m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr()) {
   ASSERT(m_pAdapter);
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   m_rtScreen.Reset();
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 }
 
 CFWL_WidgetMgr::~CFWL_WidgetMgr() {}
@@ -606,10 +606,10 @@ CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget)
       pNext(nullptr),
       pWidget(widget),
       iRedrawCounter(0)
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
       ,
       bOutsideChanged(false)
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 {
 }
 

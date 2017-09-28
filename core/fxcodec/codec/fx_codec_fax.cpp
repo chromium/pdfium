@@ -607,7 +607,7 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
       EncodedByteAlign, BlackIs1);
 }
 
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 namespace {
 const uint8_t BlackRunTerminator[128] = {
     0x37, 10, 0x02, 3,  0x03, 2,  0x02, 2,  0x03, 3,  0x03, 4,  0x02, 4,
@@ -801,4 +801,4 @@ void CCodec_FaxModule::FaxEncode(
   encoder.Encode(dest_buf, dest_size);
 }
 
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

@@ -19,26 +19,23 @@ bool BC_FX_ByteString_Replace(ByteString& dst,
 void BC_FX_ByteString_Append(ByteString& dst, int32_t count, char c);
 void BC_FX_ByteString_Append(ByteString& dst, const std::vector<uint8_t>& ba);
 
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <limits>
-#elif _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_
-#include <limits.h>
-#endif
-
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
 #define FXSYS_isnan(x) _isnan(x)
-#elif _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_ || \
+#define FXSYS_nan() (std::numeric_limits<float>::quiet_NaN())
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+
+#if _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_ || \
     _FX_OS_ == _FX_OS_ANDROID_
+#if _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_
+#include <limits.h>
+#endif  // _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_
+
 #include <cmath>
 #define FXSYS_isnan(x) std::isnan(x)
-#endif
-
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
-#define FXSYS_nan() (std::numeric_limits<float>::quiet_NaN())
-#elif _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_ || \
-    _FX_OS_ == _FX_OS_ANDROID_
 #define FXSYS_nan() NAN
-#endif
+#endif  // _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_ || \
+        // _FX_OS_ == _FX_OS_ANDROID_
 
 enum BCFORMAT {
   BCFORMAT_UNSPECIFY = -1,

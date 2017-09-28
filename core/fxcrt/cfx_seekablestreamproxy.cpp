@@ -6,9 +6,9 @@
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <io.h>
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 #include <algorithm>
 #include <limits>

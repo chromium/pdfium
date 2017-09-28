@@ -81,9 +81,9 @@ class CFWL_WidgetMgr {
     CFWL_Widget* const pWidget;
     std::unique_ptr<CXFA_Graphics> pOffscreen;
     int32_t iRedrawCounter;
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     bool bOutsideChanged;
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   };
 
   CFWL_Widget* GetFirstSiblingWidget(CFWL_Widget* pWidget) const;
@@ -114,9 +114,9 @@ class CFWL_WidgetMgr {
   uint32_t m_dwCapability;
   std::map<CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
   UnownedPtr<CXFA_FWLAdapterWidgetMgr> const m_pAdapter;
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   CFX_RectF m_rtScreen;
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETMGR_H_

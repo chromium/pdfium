@@ -88,13 +88,13 @@ static void _error_do_nothing1(j_common_ptr cinfo, int) {}
 
 static void _error_do_nothing2(j_common_ptr cinfo, char*) {}
 
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 static void _dest_do_nothing(j_compress_ptr cinfo) {}
 
 static boolean _dest_empty(j_compress_ptr cinfo) {
   return false;
 }
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 }  // extern "C"
 
 #define JPEG_MARKER_ICC (JPEG_APP0 + 2)
@@ -506,7 +506,7 @@ uint32_t CCodec_JpegModule::GetAvailInput(Context* pContext,
   return (uint32_t)ctx->m_SrcMgr.bytes_in_buffer;
 }
 
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define JPEG_BLOCK_SIZE 1048576
 bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBSource>& pSource,
                                    uint8_t** dest_buf,
@@ -607,4 +607,4 @@ bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBSource>& pSource,
 
   return true;
 }
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

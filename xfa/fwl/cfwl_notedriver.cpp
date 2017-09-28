@@ -106,15 +106,14 @@ bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus) {
 }
 
 void CFWL_NoteDriver::Run() {
-#if _FX_OS_ == _FX_OS_LINUX_ || _FX_OS_ == _FX_OS_WIN32_ || \
-    _FX_OS_ == _FX_OS_WIN64_
+#if _FX_OS_ == _FX_OS_LINUX_ || _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   for (;;) {
     CFWL_NoteLoop* pTopLoop = GetTopLoop();
     if (!pTopLoop || !pTopLoop->ContinueModal())
       break;
     UnqueueMessageAndProcess(pTopLoop);
   }
-#endif
+#endif  // _FX_OS_ == _FX_OS_LINUX_ || _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 }
 
 void CFWL_NoteDriver::NotifyTargetHide(CFWL_Widget* pNoteTarget) {

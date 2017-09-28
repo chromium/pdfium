@@ -26,14 +26,14 @@ class CCodec_FaxModule {
                                                         bool BlackIs1,
                                                         int Columns,
                                                         int Rows);
-#if _FX_OS_ == _FX_OS_WIN32_ || _FX_OS_ == _FX_OS_WIN64_
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   static void FaxEncode(const uint8_t* src_buf,
                         int width,
                         int height,
                         int pitch,
                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                         uint32_t* dest_size);
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
