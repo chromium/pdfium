@@ -25,15 +25,14 @@ class CFGAS_PDFFontMgr : public Observable<CFGAS_PDFFontMgr> {
   explicit CFGAS_PDFFontMgr(CPDF_Document* pDoc, CFGAS_FontMgr* pFontMgr);
   ~CFGAS_PDFFontMgr();
 
+  void SetFont(const RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);
   RetainPtr<CFGAS_GEFont> GetFont(const WideStringView& wsFontFamily,
                                   uint32_t dwFontStyles,
                                   CPDF_Font** pPDFFont,
                                   bool bStrictMatch);
   bool GetCharWidth(const RetainPtr<CFGAS_GEFont>& pFont,
                     wchar_t wUnicode,
-                    bool bCharCode,
                     int32_t* pWidth);
-  void SetFont(const RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);
 
  private:
   RetainPtr<CFGAS_GEFont> FindFont(const ByteString& strFamilyName,

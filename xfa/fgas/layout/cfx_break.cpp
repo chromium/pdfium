@@ -112,7 +112,7 @@ void CFX_Break::FontChanged() {
   if (!m_pFont || m_wDefChar == 0xFEFF)
     return;
 
-  m_pFont->GetCharWidth(m_wDefChar, m_iDefChar, false);
+  m_pFont->GetCharWidth(m_wDefChar, m_iDefChar);
   m_iDefChar *= m_iFontSize;
 }
 
@@ -129,7 +129,7 @@ void CFX_Break::SetDefaultChar(wchar_t wch) {
   if (m_wDefChar == 0xFEFF || !m_pFont)
     return;
 
-  m_pFont->GetCharWidth(m_wDefChar, m_iDefChar, false);
+  m_pFont->GetCharWidth(m_wDefChar, m_iDefChar);
   if (m_iDefChar < 0)
     m_iDefChar = 0;
   else

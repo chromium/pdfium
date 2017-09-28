@@ -165,6 +165,7 @@ bool CFGAS_GEFont::InitFont() {
   return !!m_pFontEncoding;
 }
 
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 RetainPtr<CFGAS_GEFont> CFGAS_GEFont::Derive(uint32_t dwFontStyles,
                                              uint16_t wCodePage) {
   RetainPtr<CFGAS_GEFont> pFont(this);
@@ -172,6 +173,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::Derive(uint32_t dwFontStyles,
     return pFont;
   return pdfium::MakeRetain<CFGAS_GEFont>(pFont, dwFontStyles);
 }
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 WideString CFGAS_GEFont::GetFamilyName() const {
   if (!m_pFont->GetSubstFont() ||
@@ -205,16 +207,7 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   return dwStyles;
 }
 
-bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode,
-                                int32_t& iWidth,
-                                bool bCharCode) {
-  return GetCharWidthInternal(wUnicode, iWidth, true, bCharCode);
-}
-
-bool CFGAS_GEFont::GetCharWidthInternal(wchar_t wUnicode,
-                                        int32_t& iWidth,
-                                        bool bRecursive,
-                                        bool bCharCode) {
+bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode, int32_t& iWidth) {
   auto it = m_CharWidthMap.find(wUnicode);
   iWidth = it != m_CharWidthMap.end() ? it->second : 0;
   if (iWidth == 65535)
@@ -223,18 +216,17 @@ bool CFGAS_GEFont::GetCharWidthInternal(wchar_t wUnicode,
   if (iWidth > 0)
     return true;
 
-  if (!m_pProvider ||
-      !m_pProvider->GetCharWidth(RetainPtr<CFGAS_GEFont>(this), wUnicode,
-                                 bCharCode, &iWidth)) {
+  if (!m_pProvider || !m_pProvider->GetCharWidth(RetainPtr<CFGAS_GEFont>(this),
+                                                 wUnicode, &iWidth)) {
     RetainPtr<CFGAS_GEFont> pFont;
-    int32_t iGlyph = GetGlyphIndex(wUnicode, true, &pFont, bCharCode);
+    int32_t iGlyph;
+    std::tie(iGlyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
     if (iGlyph != 0xFFFF && pFont) {
       if (pFont.Get() == this) {
         iWidth = m_pFont->GetGlyphWidth(iGlyph);
         if (iWidth < 0)
           iWidth = -1;
-      } else if (pFont->GetCharWidthInternal(wUnicode, iWidth, false,
-                                             bCharCode)) {
+      } else if (pFont->GetCharWidth(wUnicode, iWidth)) {
         return true;
       }
     } else {
@@ -245,16 +237,7 @@ bool CFGAS_GEFont::GetCharWidthInternal(wchar_t wUnicode,
   return iWidth > 0;
 }
 
-bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode,
-                               CFX_Rect* bbox,
-                               bool bCharCode) {
-  return GetCharBBoxInternal(wUnicode, bbox, true, bCharCode);
-}
-
-bool CFGAS_GEFont::GetCharBBoxInternal(wchar_t wUnicode,
-                                       CFX_Rect* bbox,
-                                       bool bRecursive,
-                                       bool bCharCode) {
+bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode, CFX_Rect* bbox) {
   auto it = m_BBoxMap.find(wUnicode);
   if (it != m_BBoxMap.end()) {
     *bbox = it->second;
@@ -262,12 +245,13 @@ bool CFGAS_GEFont::GetCharBBoxInternal(wchar_t wUnicode,
   }
 
   RetainPtr<CFGAS_GEFont> pFont;
-  int32_t iGlyph = GetGlyphIndex(wUnicode, true, &pFont, bCharCode);
+  int32_t iGlyph;
+  std::tie(iGlyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
   if (!pFont || iGlyph == 0xFFFF)
     return false;
 
   if (pFont.Get() != this)
-    return pFont->GetCharBBoxInternal(wUnicode, bbox, false, bCharCode);
+    return pFont->GetCharBBox(wUnicode, bbox);
 
   FX_RECT rtBBox;
   if (!m_pFont->GetGlyphBBox(iGlyph, rtBBox))
@@ -291,44 +275,42 @@ bool CFGAS_GEFont::GetBBox(CFX_Rect* bbox) {
   return true;
 }
 
-int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode, bool bCharCode) {
-  return GetGlyphIndex(wUnicode, true, nullptr, bCharCode);
+int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode) {
+  int32_t glyph;
+  RetainPtr<CFGAS_GEFont> font;
+  std::tie(glyph, font) = GetGlyphIndexAndFont(wUnicode, true);
+  return glyph;
 }
 
-int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode,
-                                    bool bRecursive,
-                                    RetainPtr<CFGAS_GEFont>* ppFont,
-                                    bool bCharCode) {
+std::pair<int32_t, RetainPtr<CFGAS_GEFont>> CFGAS_GEFont::GetGlyphIndexAndFont(
+    wchar_t wUnicode,
+    bool bRecursive) {
   int32_t iGlyphIndex = m_pFontEncoding->GlyphFromCharCode(wUnicode);
-  if (iGlyphIndex > 0) {
-    if (ppFont)
-      ppFont->Reset(this);
-    return iGlyphIndex;
-  }
+  if (iGlyphIndex > 0)
+    return {iGlyphIndex, RetainPtr<CFGAS_GEFont>(this)};
+
   const FGAS_FONTUSB* pFontUSB = FGAS_GetUnicodeBitField(wUnicode);
   if (!pFontUSB)
-    return 0xFFFF;
+    return {0xFFFF, nullptr};
 
   uint16_t wBitField = pFontUSB->wBitField;
   if (wBitField >= 128)
-    return 0xFFFF;
+    return {0xFFFF, nullptr};
 
   auto it = m_FontMapper.find(wUnicode);
   if (it != m_FontMapper.end() && it->second && it->second.Get() != this) {
-    iGlyphIndex =
-        it->second->GetGlyphIndex(wUnicode, false, nullptr, bCharCode);
+    RetainPtr<CFGAS_GEFont> font;
+    std::tie(iGlyphIndex, font) =
+        it->second->GetGlyphIndexAndFont(wUnicode, false);
     if (iGlyphIndex != 0xFFFF) {
       for (size_t i = 0; i < m_SubstFonts.size(); ++i) {
-        if (m_SubstFonts[i] == it->second) {
-          if (ppFont)
-            *ppFont = it->second;
-          return (iGlyphIndex | ((i + 1) << 24));
-        }
+        if (m_SubstFonts[i] == it->second)
+          return {(iGlyphIndex | ((i + 1) << 24)), it->second};
       }
     }
   }
   if (!m_pFontMgr || !bRecursive)
-    return 0xFFFF;
+    return {0xFFFF, nullptr};
 
   WideString wsFamily = GetFamilyName();
   RetainPtr<CFGAS_GEFont> pFont =
@@ -338,17 +320,17 @@ int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode,
     pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
 #endif
   if (!pFont || pFont.Get() == this)  // Avoids direct cycles below.
-    return 0xFFFF;
+    return {0xFFFF, nullptr};
 
   m_FontMapper[wUnicode] = pFont;
   m_SubstFonts.push_back(pFont);
-  iGlyphIndex = pFont->GetGlyphIndex(wUnicode, false, nullptr, bCharCode);
-  if (iGlyphIndex == 0xFFFF)
-    return 0xFFFF;
 
-  if (ppFont)
-    *ppFont = pFont;
-  return (iGlyphIndex | (m_SubstFonts.size() << 24));
+  RetainPtr<CFGAS_GEFont> font;
+  std::tie(iGlyphIndex, font) = pFont->GetGlyphIndexAndFont(wUnicode, false);
+  if (iGlyphIndex == 0xFFFF)
+    return {0xFFFF, nullptr};
+
+  return {(iGlyphIndex | (m_SubstFonts.size() << 24)), pFont};
 }
 
 int32_t CFGAS_GEFont::GetAscent() const {

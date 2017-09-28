@@ -121,7 +121,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
 
 void CFX_RTFBreak::AppendChar_Combination(CFX_Char* pCurChar) {
   int32_t iCharWidth = 0;
-  if (!m_pFont->GetCharWidth(pCurChar->char_code(), iCharWidth, false))
+  if (!m_pFont->GetCharWidth(pCurChar->char_code(), iCharWidth))
     iCharWidth = 0;
 
   iCharWidth *= m_iFontSize;
@@ -190,8 +190,8 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
       wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
-      if (!m_pFont->GetCharWidth(wForm, iCharWidth, false) &&
-          !m_pFont->GetCharWidth(pLastChar->char_code(), iCharWidth, false)) {
+      if (!m_pFont->GetCharWidth(wForm, iCharWidth) &&
+          !m_pFont->GetCharWidth(pLastChar->char_code(), iCharWidth)) {
         iCharWidth = m_iDefChar;
       }
 
@@ -205,8 +205,8 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
 
   wForm = pdfium::arabic::GetFormChar(pCurChar, bAlef ? nullptr : pLastChar,
                                       nullptr);
-  if (!m_pFont->GetCharWidth(wForm, iCharWidth, false) &&
-      !m_pFont->GetCharWidth(pCurChar->char_code(), iCharWidth, false)) {
+  if (!m_pFont->GetCharWidth(wForm, iCharWidth) &&
+      !m_pFont->GetCharWidth(pCurChar->char_code(), iCharWidth)) {
     iCharWidth = m_iDefChar;
   }
 
@@ -225,7 +225,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   wchar_t wForm = pCurChar->char_code();
   int32_t iCharWidth = 0;
-  if (!m_pFont->GetCharWidth(wForm, iCharWidth, false))
+  if (!m_pFont->GetCharWidth(wForm, iCharWidth))
     iCharWidth = m_iDefChar;
 
   iCharWidth *= m_iFontSize;
@@ -726,9 +726,9 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
         if (bCharCode) {
           pCharPos->m_GlyphIndex = wch;
         } else {
-          pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm, false);
+          pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm);
           if (pCharPos->m_GlyphIndex == 0xFFFF)
-            pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wch, false);
+            pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wch);
         }
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
         pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;

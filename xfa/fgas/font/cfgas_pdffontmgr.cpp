@@ -186,9 +186,8 @@ bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(const ByteStringView& bsPsName,
 
 bool CFGAS_PDFFontMgr::GetCharWidth(const RetainPtr<CFGAS_GEFont>& pFont,
                                     wchar_t wUnicode,
-                                    bool bCharCode,
                                     int32_t* pWidth) {
-  if (wUnicode != 0x20 || bCharCode)
+  if (wUnicode != 0x20)
     return false;
 
   auto it = m_FDE2PDFFont.find(pFont);

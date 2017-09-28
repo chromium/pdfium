@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"
@@ -39,25 +40,30 @@ class CFGAS_GEFont : public Retainable {
       std::unique_ptr<CFX_Font> pInternalFont,
       CFGAS_FontMgr* pFontMgr);
 
-  RetainPtr<CFGAS_GEFont> Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   uint32_t GetFontStyles() const;
-  bool GetCharWidth(wchar_t wUnicode, int32_t& iWidth, bool bCharCode);
-  int32_t GetGlyphIndex(wchar_t wUnicode, bool bCharCode = false);
+  bool GetCharWidth(wchar_t wUnicode, int32_t& iWidth);
+  int32_t GetGlyphIndex(wchar_t wUnicode);
   int32_t GetAscent() const;
   int32_t GetDescent() const;
-  bool GetCharBBox(wchar_t wUnicode, CFX_Rect* bbox, bool bCharCode = false);
+
+  bool GetCharBBox(wchar_t wUnicode, CFX_Rect* bbox);
   bool GetBBox(CFX_Rect* bbox);
+
   RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
   CFX_Font* GetDevFont() const { return m_pFont; }
+
   void SetFontProvider(CFGAS_PDFFontMgr* pProvider) {
     m_pProvider.Reset(pProvider);
   }
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  RetainPtr<CFGAS_GEFont> Derive(uint32_t dwFontStyles, uint16_t wCodePage);
+#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
     m_bUseLogFontStyle = true;
     m_dwLogFontStyle = dwLogFontStyle;
   }
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
  private:
   explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
@@ -75,18 +81,9 @@ class CFGAS_GEFont : public Retainable {
   bool LoadFontInternal(CFX_Font* pExternalFont);
   bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
   bool InitFont();
-  bool GetCharBBoxInternal(wchar_t wUnicode,
-                           CFX_Rect* bbox,
-                           bool bRecursive,
-                           bool bCharCode = false);
-  bool GetCharWidthInternal(wchar_t wUnicode,
-                            int32_t& iWidth,
-                            bool bRecursive,
-                            bool bCharCode);
-  int32_t GetGlyphIndex(wchar_t wUnicode,
-                        bool bRecursive,
-                        RetainPtr<CFGAS_GEFont>* ppFont,
-                        bool bCharCode = false);
+  std::pair<int32_t, RetainPtr<CFGAS_GEFont>> GetGlyphIndexAndFont(
+      wchar_t wUnicode,
+      bool bRecursive);
   WideString GetFamilyName() const;
 
 #if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
