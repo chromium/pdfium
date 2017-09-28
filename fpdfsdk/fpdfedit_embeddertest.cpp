@@ -58,7 +58,15 @@ class FPDFEditEmbeddertest : public EmbedderTest {
       EXPECT_FALSE(font_flags & FXFONT_ITALIC);
     EXPECT_TRUE(font_flags & FXFONT_NONSYMBOLIC);
     ASSERT_TRUE(font_desc->KeyExist("FontBBox"));
-    EXPECT_EQ(4U, font_desc->GetArrayFor("FontBBox")->GetCount());
+
+    CPDF_Array* fontBBox = font_desc->GetArrayFor("FontBBox");
+    ASSERT_TRUE(fontBBox);
+    EXPECT_EQ(4U, fontBBox->GetCount());
+    // Check that the coordinates are in the preferred order according to spec
+    // 1.7 Section 3.8.4
+    EXPECT_TRUE(fontBBox->GetIntegerAt(0) < fontBBox->GetIntegerAt(2));
+    EXPECT_TRUE(fontBBox->GetIntegerAt(1) < fontBBox->GetIntegerAt(3));
+
     EXPECT_TRUE(font_desc->KeyExist("ItalicAngle"));
     EXPECT_TRUE(font_desc->KeyExist("Ascent"));
     EXPECT_TRUE(font_desc->KeyExist("Descent"));

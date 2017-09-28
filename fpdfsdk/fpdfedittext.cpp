@@ -54,9 +54,9 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   pFont->GetBBox(bbox);
   auto pBBox = pdfium::MakeUnique<CPDF_Array>();
   pBBox->AddNew<CPDF_Number>(bbox.left);
-  pBBox->AddNew<CPDF_Number>(bbox.bottom);
-  pBBox->AddNew<CPDF_Number>(bbox.right);
   pBBox->AddNew<CPDF_Number>(bbox.top);
+  pBBox->AddNew<CPDF_Number>(bbox.right);
+  pBBox->AddNew<CPDF_Number>(bbox.bottom);
   fontDesc->SetFor("FontBBox", std::move(pBBox));
 
   // TODO(npm): calculate italic angle correctly
