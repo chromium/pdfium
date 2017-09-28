@@ -82,6 +82,10 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     // Check that the font stream is the one that was provided
     CPDF_Stream* font_stream = font_desc->GetStreamFor(present);
     ASSERT_EQ(size, font_stream->GetRawSize());
+    if (font_type == FPDF_FONT_TRUETYPE) {
+      ASSERT_EQ(static_cast<int>(size),
+                font_stream->GetDict()->GetIntegerFor("Length1"));
+    }
     uint8_t* stream_data = font_stream->GetRawData();
     for (size_t j = 0; j < size; j++)
       EXPECT_EQ(data[j], stream_data[j]) << " at byte " << j;

@@ -71,6 +71,11 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
 
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
   pStream->SetData(data, size);
+  // TODO(npm): Lengths for Type1 fonts.
+  if (font_type == FPDF_FONT_TRUETYPE) {
+    pStream->GetDict()->SetNewFor<CPDF_Number>("Length1",
+                                               static_cast<int>(size));
+  }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
   fontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
   return fontDesc;
