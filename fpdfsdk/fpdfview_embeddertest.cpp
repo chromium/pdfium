@@ -12,6 +12,23 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
+namespace {
+
+class MockDownloadHints : public FX_DOWNLOADHINTS {
+ public:
+  static void SAddSegment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
+  }
+
+  MockDownloadHints() {
+    FX_DOWNLOADHINTS::version = 1;
+    FX_DOWNLOADHINTS::AddSegment = SAddSegment;
+  }
+
+  ~MockDownloadHints() {}
+};
+
+}  // namespace
+
 TEST(fpdf, CApiTest) {
   EXPECT_TRUE(CheckPDFiumCApi());
 }
@@ -319,12 +336,13 @@ TEST_F(FPDFViewEmbeddertest, Hang_298) {
 // reference loop. Cross references will be rebuilt successfully.
 TEST_F(FPDFViewEmbeddertest, CrossRefV4Loop) {
   EXPECT_TRUE(OpenDocument("bug_xrefv4_loop.pdf"));
+  MockDownloadHints hints;
 
   // Make sure calling FPDFAvail_IsDocAvail() on this file does not infinite
   // loop either. See bug 875.
   int ret = PDF_DATA_NOTAVAIL;
   while (ret == PDF_DATA_NOTAVAIL)
-    ret = FPDFAvail_IsDocAvail(avail_, &hints_);
+    ret = FPDFAvail_IsDocAvail(avail_, &hints);
   EXPECT_EQ(PDF_DATA_AVAIL, ret);
 }
 

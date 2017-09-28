@@ -248,6 +248,10 @@ TEST_F(FPDFDocEmbeddertest, GetPageLabels) {
   EXPECT_TRUE(OpenDocument("page_labels.pdf"));
   EXPECT_EQ(7, FPDF_GetPageCount(document()));
 
+  // We do not request labels, when use FPDFAvail_IsXXXAvail.
+  // Flush all data, to allow read labels.
+  SetWholeFileAvailable();
+
   unsigned short buf[128];
   EXPECT_EQ(0u, FPDF_GetPageLabel(document(), -2, buf, sizeof(buf)));
   EXPECT_EQ(0u, FPDF_GetPageLabel(document(), -1, buf, sizeof(buf)));
