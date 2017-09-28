@@ -41,7 +41,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   if (m_pFontFile && m_Font.GetFace()->num_charmaps > 0 &&
       (baseEncoding == PDFFONT_ENCODING_MACROMAN ||
        baseEncoding == PDFFONT_ENCODING_WINANSI) &&
-      (m_Flags & FXFONT_SYMBOLIC)) {
+      FontStyleIsSymbolic(m_Flags)) {
     bool bSupportWin = false;
     bool bSupportMac = false;
     for (int i = 0; i < FXFT_Get_Face_CharmapCount(m_Font.GetFace()); i++) {
@@ -64,7 +64,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   if (((baseEncoding == PDFFONT_ENCODING_MACROMAN ||
         baseEncoding == PDFFONT_ENCODING_WINANSI) &&
        m_CharNames.empty()) ||
-      (m_Flags & FXFONT_NONSYMBOLIC)) {
+      FontStyleIsNonSymbolic(m_Flags)) {
     if (!FXFT_Has_Glyph_Names(m_Font.GetFace()) &&
         (!m_Font.GetFace()->num_charmaps || !m_Font.GetFace()->charmaps)) {
       int nStartChar = m_pFontDict->GetIntegerFor("FirstChar");
@@ -83,7 +83,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     bool bMacRoman = false;
     bool bMSSymbol = false;
     if (!bMSUnicode) {
-      if (m_Flags & FXFONT_NONSYMBOLIC) {
+      if (FontStyleIsNonSymbolic(m_Flags)) {
         bMacRoman = FT_UseTTCharmap(m_Font.GetFace(), 1, 0);
         bMSSymbol = !bMacRoman && FT_UseTTCharmap(m_Font.GetFace(), 3, 0);
       } else {

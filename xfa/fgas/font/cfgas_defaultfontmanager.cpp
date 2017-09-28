@@ -25,9 +25,9 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
     if (pCurFont && pCurFont->pReplaceFont) {
       uint32_t dwStyle = 0;
       // TODO(dsinclair): Why doesn't this check the other flags?
-      if (dwFontStyles & FXFONT_BOLD)
+      if (FontStyleIsBold(dwFontStyles))
         dwStyle |= FXFONT_BOLD;
-      if (dwFontStyles & FXFONT_ITALIC)
+      if (FontStyleIsItalic(dwFontStyles))
         dwStyle |= FXFONT_ITALIC;
 
       const wchar_t* pReplace = pCurFont->pReplaceFont;

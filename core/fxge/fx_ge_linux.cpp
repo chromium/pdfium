@@ -59,7 +59,7 @@ size_t GetJapanesePreference(const char* facearr,
     }
     return 3;
   }
-  if (!(pitch_family & FXFONT_FF_ROMAN) && weight > 400)
+  if (!FontFamilyIsRoman(pitch_family) && weight > 400)
     return 0;
 
   return 2;

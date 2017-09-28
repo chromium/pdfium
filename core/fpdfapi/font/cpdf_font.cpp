@@ -375,7 +375,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
         iBaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
       return;
     }
-    if ((m_Flags & FXFONT_SYMBOLIC) && m_BaseFont == "Symbol") {
+    if (FontStyleIsSymbolic(m_Flags) && m_BaseFont == "Symbol") {
       if (!bTrueType)
         iBaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
       return;

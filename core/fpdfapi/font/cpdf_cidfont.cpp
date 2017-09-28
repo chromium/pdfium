@@ -618,7 +618,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
 #if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
       return cid;
 #else
-      if (m_Flags & FXFONT_SYMBOLIC)
+      if (FontStyleIsSymbolic(m_Flags))
         return cid;
 
       WideString uni_str = UnicodeFromCharCode(charcode);

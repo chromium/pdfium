@@ -79,15 +79,17 @@ CFGAS_GEFont::CFGAS_GEFont(const RetainPtr<CFGAS_GEFont>& src,
   ASSERT(m_pSrcFont->m_pFont);
   m_pFont = new CFX_Font;
   m_pFont->LoadClone(m_pSrcFont->m_pFont);
+
   CFX_SubstFont* pSubst = m_pFont->GetSubstFont();
   if (!pSubst) {
     pSubst = new CFX_SubstFont;
     m_pFont->SetSubstFont(std::unique_ptr<CFX_SubstFont>(pSubst));
   }
   pSubst->m_Weight =
-      (dwFontStyles & FXFONT_BOLD) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  if (dwFontStyles & FXFONT_ITALIC)
+      FontStyleIsBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
+  if (FontStyleIsItalic(dwFontStyles))
     pSubst->m_bFlagItalic = true;
+
   InitFont();
 }
 
@@ -107,13 +109,13 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
     csFontFamily = ByteString::FromUnicode(pszFontFamily);
 
   int32_t iWeight =
-      (dwFontStyles & FXFONT_BOLD) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
+      FontStyleIsBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
   m_pFont = new CFX_Font;
-  if ((dwFontStyles & FXFONT_ITALIC) && (dwFontStyles & FXFONT_BOLD))
+  if (FontStyleIsItalic(dwFontStyles) && FontStyleIsBold(dwFontStyles))
     csFontFamily += ",BoldItalic";
-  else if (dwFontStyles & FXFONT_BOLD)
+  else if (FontStyleIsBold(dwFontStyles))
     csFontFamily += ",Bold";
-  else if (dwFontStyles & FXFONT_ITALIC)
+  else if (FontStyleIsItalic(dwFontStyles))
     csFontFamily += ",Italic";
 
   m_pFont->LoadSubst(csFontFamily, true, dwFontStyles, iWeight, 0, wCodePage,

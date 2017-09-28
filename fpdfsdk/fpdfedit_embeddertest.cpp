@@ -47,16 +47,11 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     // Check that the font descriptor has the required keys according to spec
     // 1.7 Table 5.19
     ASSERT_TRUE(font_desc->KeyExist("Flags"));
+
     int font_flags = font_desc->GetIntegerFor("Flags");
-    if (bold)
-      EXPECT_TRUE(font_flags & FXFONT_BOLD);
-    else
-      EXPECT_FALSE(font_flags & FXFONT_BOLD);
-    if (italic)
-      EXPECT_TRUE(font_flags & FXFONT_ITALIC);
-    else
-      EXPECT_FALSE(font_flags & FXFONT_ITALIC);
-    EXPECT_TRUE(font_flags & FXFONT_NONSYMBOLIC);
+    EXPECT_EQ(bold, FontStyleIsBold(font_flags));
+    EXPECT_EQ(italic, FontStyleIsItalic(font_flags));
+    EXPECT_TRUE(FontStyleIsNonSymbolic(font_flags));
     ASSERT_TRUE(font_desc->KeyExist("FontBBox"));
 
     CPDF_Array* fontBBox = font_desc->GetArrayFor("FontBBox");

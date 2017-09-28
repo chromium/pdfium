@@ -40,11 +40,11 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
     dwStyle |= FXFONT_BOLD;
   if (bItalic)
     dwStyle |= FXFONT_ITALIC;
-  if (pitch_family & FXFONT_FF_FIXEDPITCH)
+  if (FontFamilyIsFixedPitch(pitch_family))
     dwStyle |= FXFONT_FIXED_PITCH;
-  if (pitch_family & FXFONT_FF_SCRIPT)
+  if (FontFamilyIsScript(pitch_family))
     dwStyle |= FXFONT_SCRIPT;
-  if (pitch_family & FXFONT_FF_ROMAN)
+  if (FontFamilyIsRoman(pitch_family))
     dwStyle |= FXFONT_SERIF;
   return m_pFontMgr->CreateFont(face, charset, dwStyle,
                                 FPF_MATCHFONT_REPLACEANSI);

@@ -92,18 +92,16 @@ int32_t GetSimilarValue(int weight,
                         int pitch_family,
                         uint32_t style) {
   int32_t iSimilarValue = 0;
-  if (!!(style & FXFONT_BOLD) == (weight > 400))
+  if (FontStyleIsBold(style) == (weight > 400))
     iSimilarValue += 16;
-  if (!!(style & FXFONT_ITALIC) == bItalic)
+  if (FontStyleIsItalic(style) == bItalic)
     iSimilarValue += 16;
-  if (!!(style & FXFONT_SERIF) == !!(pitch_family & FXFONT_FF_ROMAN))
+  if (FontStyleIsSerif(style) == FontFamilyIsRoman(pitch_family))
     iSimilarValue += 16;
-  if (!!(style & FXFONT_SCRIPT) == !!(pitch_family & FXFONT_FF_SCRIPT))
+  if (FontStyleIsScript(style) == FontFamilyIsScript(pitch_family))
     iSimilarValue += 8;
-  if (!!(style & FXFONT_FIXED_PITCH) ==
-      !!(pitch_family & FXFONT_FF_FIXEDPITCH)) {
+  if (FontStyleIsFixedPitch(style) == FontFamilyIsFixedPitch(pitch_family))
     iSimilarValue += 8;
-  }
   return iSimilarValue;
 }
 
@@ -284,7 +282,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
                                    const char* family,
                                    bool bMatchName) {
   FontFaceInfo* pFind = nullptr;
-  if (charset == FX_CHARSET_ANSI && (pitch_family & FXFONT_FF_FIXEDPITCH))
+  if (charset == FX_CHARSET_ANSI && FontFamilyIsFixedPitch(pitch_family))
     return GetFont("Courier New");
 
   uint32_t charset_flag = GetCharset(charset);

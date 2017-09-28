@@ -32,6 +32,7 @@ using CFX_TypeFace = SkTypeface;
 /* Typical weight values */
 #define FXFONT_FW_NORMAL 400
 #define FXFONT_FW_BOLD 700
+#define FXFONT_FW_BOLD_BOLD 900
 
 /* Font styles as defined in PDF 1.7 Table 5.20 */
 #define FXFONT_NORMAL (0)
@@ -44,7 +45,6 @@ using CFX_TypeFace = SkTypeface;
 #define FXFONT_ALLCAP (1 << 16)
 #define FXFONT_SMALLCAP (1 << 17)
 #define FXFONT_BOLD (1 << 18)
-#define FXFONT_BOLD_ITALIC (FXFONT_BOLD | FXFONT_ITALIC)
 
 /* Other font flags */
 #define FXFONT_USEEXTERNATTR 0x80000
@@ -104,5 +104,40 @@ ByteString GetNameFromTT(const uint8_t* name_table,
                          uint32_t name);
 
 int PDF_GetStandardFontName(ByteString* name);
+
+inline bool FontStyleIsBold(uint32_t style) {
+  return !!(style & FXFONT_BOLD);
+}
+inline bool FontStyleIsItalic(uint32_t style) {
+  return !!(style & FXFONT_ITALIC);
+}
+inline bool FontStyleIsFixedPitch(uint32_t style) {
+  return !!(style & FXFONT_FIXED_PITCH);
+}
+inline bool FontStyleIsSymbolic(uint32_t style) {
+  return !!(style & FXFONT_SYMBOLIC);
+}
+inline bool FontStyleIsNonSymbolic(uint32_t style) {
+  return !!(style & FXFONT_NONSYMBOLIC);
+}
+inline bool FontStyleIsAllCaps(uint32_t style) {
+  return !!(style & FXFONT_ALLCAP);
+}
+inline bool FontStyleIsSerif(uint32_t style) {
+  return !!(style & FXFONT_SERIF);
+}
+inline bool FontStyleIsScript(uint32_t style) {
+  return !!(style & FXFONT_SCRIPT);
+}
+
+inline bool FontFamilyIsFixedPitch(uint32_t family) {
+  return !!(family & FXFONT_FF_FIXEDPITCH);
+}
+inline bool FontFamilyIsRoman(uint32_t family) {
+  return !!(family & FXFONT_FF_ROMAN);
+}
+inline bool FontFamilyIsScript(int32_t family) {
+  return !!(family & FXFONT_FF_SCRIPT);
+}
 
 #endif  // CORE_FXGE_FX_FONT_H_

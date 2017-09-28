@@ -176,11 +176,11 @@ uint32_t FPF_SKIAGetFamilyHash(const ByteStringView& bsFamily,
                                uint32_t dwStyle,
                                uint8_t uCharset) {
   ByteString bsFont(bsFamily);
-  if (dwStyle & FXFONT_BOLD)
+  if (FontStyleIsBold(dwStyle))
     bsFont += "Bold";
-  if (dwStyle & FXFONT_ITALIC)
+  if (FontStyleIsItalic(dwStyle))
     bsFont += "Italic";
-  if (dwStyle & FXFONT_SERIF)
+  if (FontStyleIsSerif(dwStyle))
     bsFont += "Serif";
   bsFont += uCharset;
   return FPF_GetHashCode_StringA(bsFont.c_str(), bsFont.GetLength());
@@ -317,17 +317,17 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
     if (dwFaceName == dwSysFontName)
       nFind += FPF_SKIAMATCHWEIGHT_NAME1;
     bool bMatchedName = (nFind == FPF_SKIAMATCHWEIGHT_NAME1);
-    if ((dwStyle & FXFONT_BOLD) == (pFontDes->m_dwStyle & FXFONT_BOLD))
+    if (FontStyleIsBold(dwStyle) == FontStyleIsBold(pFontDes->m_dwStyle))
       nFind += FPF_SKIAMATCHWEIGHT_1;
-    if ((dwStyle & FXFONT_ITALIC) == (pFontDes->m_dwStyle & FXFONT_ITALIC))
+    if (FontStyleIsItalic(dwStyle) == FontStyleIsItalic(pFontDes->m_dwStyle))
       nFind += FPF_SKIAMATCHWEIGHT_1;
-    if ((dwStyle & FXFONT_FIXED_PITCH) ==
-        (pFontDes->m_dwStyle & FXFONT_FIXED_PITCH)) {
+    if (FontStyleIsFixedPitch(dwStyle) ==
+        FontStyleIsFixedPitch(pFontDes->m_dwStyle)) {
       nFind += FPF_SKIAMATCHWEIGHT_2;
     }
-    if ((dwStyle & FXFONT_SERIF) == (pFontDes->m_dwStyle & FXFONT_SERIF))
+    if (FontStyleIsSerif(dwStyle) == FontStyleIsSerif(pFontDes->m_dwStyle))
       nFind += FPF_SKIAMATCHWEIGHT_1;
-    if ((dwStyle & FXFONT_SCRIPT) == (pFontDes->m_dwStyle & FXFONT_SCRIPT))
+    if (FontStyleIsScript(dwStyle) == FontStyleIsScript(pFontDes->m_dwStyle))
       nFind += FPF_SKIAMATCHWEIGHT_2;
     if (dwSubst == dwSysFontName || dwSubstSans == dwSysFontName) {
       nFind += FPF_SKIAMATCHWEIGHT_NAME2;

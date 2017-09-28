@@ -56,8 +56,8 @@ void GetJapanesePreference(ByteString* face, int weight, int pitch_family) {
     *face = JAPAN_GOTHIC;
     return;
   }
-  *face = ((pitch_family & FXFONT_FF_ROMAN) || weight <= 400) ? JAPAN_MINCHO
-                                                              : JAPAN_GOTHIC;
+  *face = (FontFamilyIsRoman(pitch_family) || weight <= 400) ? JAPAN_MINCHO
+                                                             : JAPAN_GOTHIC;
 }
 
 void* CFX_MacFontInfo::MapFont(int weight,
@@ -97,7 +97,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
   if (it != m_FontList.end())
     return it->second.get();
 
-  if (charset == FX_CHARSET_ANSI && (pitch_family & FXFONT_FF_FIXEDPITCH))
+  if (charset == FX_CHARSET_ANSI && FontFamilyIsFixedPitch(pitch_family))
     return GetFont("Courier New");
 
   if (charset == FX_CHARSET_ANSI || charset == FX_CHARSET_Symbol)
