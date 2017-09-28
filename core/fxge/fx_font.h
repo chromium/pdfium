@@ -34,6 +34,7 @@ using CFX_TypeFace = SkTypeface;
 #define FXFONT_FW_BOLD 700
 
 /* Font styles as defined in PDF 1.7 Table 5.20 */
+#define FXFONT_NORMAL (0)
 #define FXFONT_FIXED_PITCH (1 << 0)
 #define FXFONT_SERIF (1 << 1)
 #define FXFONT_SYMBOLIC (1 << 2)
@@ -43,6 +44,7 @@ using CFX_TypeFace = SkTypeface;
 #define FXFONT_ALLCAP (1 << 16)
 #define FXFONT_SMALLCAP (1 << 17)
 #define FXFONT_BOLD (1 << 18)
+#define FXFONT_BOLD_ITALIC (FXFONT_BOLD | FXFONT_ITALIC)
 
 /* Other font flags */
 #define FXFONT_USEEXTERNATTR 0x80000

@@ -70,7 +70,7 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
 
     float scalingFactor = 1.0f;
     if (!pFont->IsEmbedded() && pFont->HasFontWidths() && !bVertWriting &&
-        !(pCurrentFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_MM)) {
+        !pCurrentFont->GetSubstFont()->m_bFlagMM) {
       int pdfGlyphWidth = pFont->GetCharWidthF(CharCode);
       int ftGlyphWidth =
           pCurrentFont ? pCurrentFont->GetGlyphWidth(charpos.m_GlyphIndex) : 0;

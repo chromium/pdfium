@@ -42,8 +42,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   ASSERT(pFont && pCharPos && iCount > 0);
 
   CFX_Font* pFxFont = pFont->GetDevFont();
-  if ((pFont->GetFontStyles() & FX_FONTSTYLE_Italic) != 0 &&
-      !pFxFont->IsItalic()) {
+  if ((pFont->GetFontStyles() & FXFONT_ITALIC) != 0 && !pFxFont->IsItalic()) {
     for (int32_t i = 0; i < iCount; ++i) {
       static const float mc = 0.267949f;
       float* pAM = pCharPos->m_AdjustMatrix;
@@ -57,10 +56,10 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
   auto SubstFxFont = pdfium::MakeUnique<CFX_SubstFont>();
-  SubstFxFont->m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
-  SubstFxFont->m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
+  SubstFxFont->m_Weight = dwFontStyle & FXFONT_BOLD ? 700 : 400;
+  SubstFxFont->m_ItalicAngle = dwFontStyle & FXFONT_ITALIC ? -12 : 0;
   SubstFxFont->m_WeightCJK = SubstFxFont->m_Weight;
-  SubstFxFont->m_bItalicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
+  SubstFxFont->m_bItalicCJK = !!(dwFontStyle & FXFONT_ITALIC);
   FxFont.SetSubstFont(std::move(SubstFxFont));
 #endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 

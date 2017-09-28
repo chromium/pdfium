@@ -1497,9 +1497,9 @@ RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
   uint32_t dwFontStyle = 0;
   if (CXFA_Font font = GetFont(false)) {
     if (font.IsBold())
-      dwFontStyle |= FX_FONTSTYLE_Bold;
+      dwFontStyle |= FXFONT_BOLD;
     if (font.IsItalic())
-      dwFontStyle |= FX_FONTSTYLE_Italic;
+      dwFontStyle |= FXFONT_ITALIC;
     font.GetTypeface(wsFontName);
   }
 

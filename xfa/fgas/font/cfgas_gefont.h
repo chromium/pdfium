@@ -18,8 +18,6 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
-#define FXFONT_SUBST_ITALIC 0x02
-
 class CFGAS_FontMgr;
 class CFX_UnicodeEncoding;
 
@@ -77,9 +75,9 @@ class CFGAS_GEFont : public Retainable {
   bool LoadFontInternal(const uint8_t* pBuffer, int32_t length);
   bool LoadFontInternal(const RetainPtr<CFX_SeekableStreamProxy>& pFontStream,
                         bool bSaveStream);
-#endif
-  bool LoadFontInternal(CFX_Font* pExternalFont);
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
+  bool LoadFontInternal(CFX_Font* pExternalFont);
   bool InitFont();
   std::pair<int32_t, RetainPtr<CFGAS_GEFont>> GetGlyphIndexAndFont(
       wchar_t wUnicode,

@@ -85,8 +85,8 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
     return it->second;
 
   ByteString bsPsName = ByteString::FromUnicode(WideString(wsFontFamily));
-  bool bBold = (dwFontStyles & FX_FONTSTYLE_Bold) == FX_FONTSTYLE_Bold;
-  bool bItalic = (dwFontStyles & FX_FONTSTYLE_Italic) == FX_FONTSTYLE_Italic;
+  bool bBold = (dwFontStyles & FXFONT_BOLD) == FXFONT_BOLD;
+  bool bItalic = (dwFontStyles & FXFONT_ITALIC) == FXFONT_ITALIC;
   ByteString strFontName = PsNameToFontName(bsPsName, bBold, bItalic);
   RetainPtr<CFGAS_GEFont> pFont =
       FindFont(strFontName, bBold, bItalic, pPDFFont, bStrictMatch);

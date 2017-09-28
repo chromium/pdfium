@@ -9,21 +9,23 @@
 
 #include "core/fxcrt/fx_string.h"
 
-#define FXFONT_SUBST_MM 0x01
-#define FXFONT_SUBST_EXACT 0x40
-
 class CFX_SubstFont {
  public:
   CFX_SubstFont();
 
   ByteString m_Family;
   int m_Charset;
-  uint32_t m_SubstFlags;
   int m_Weight;
   int m_ItalicAngle;
-  bool m_bSubstCJK;
   int m_WeightCJK;
+  bool m_bSubstCJK;
   bool m_bItalicCJK;
+
+#ifdef PDF_ENABLE_XFA
+  bool m_bFlagItalic;
+#endif  // PDF_ENABLE_XFA
+  bool m_bFlagMM;
+  bool m_bFlagExact;
 };
 
 #endif  // CORE_FXGE_CFX_SUBSTFONT_H_

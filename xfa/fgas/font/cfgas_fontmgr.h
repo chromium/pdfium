@@ -23,27 +23,15 @@
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
-#define FX_FONTSTYLE_Normal 0x00
-#define FX_FONTSTYLE_FixedPitch 0x01
-#define FX_FONTSTYLE_Serif 0x02
-#define FX_FONTSTYLE_Symbolic 0x04
-#define FX_FONTSTYLE_Script 0x08
-#define FX_FONTSTYLE_Italic 0x40
-#define FX_FONTSTYLE_Bold 0x40000
-#define FX_FONTSTYLE_BoldItalic (FX_FONTSTYLE_Bold | FX_FONTSTYLE_Italic)
-#define FX_FONTSTYLE_ExactMatch 0x80000000
-
 class CFX_FontSourceEnum_File;
 class CFGAS_GEFont;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-#define FX_FONTMATCHPARA_MatchStyle 0x01
-
 struct FX_FONTMATCHPARAMS {
   const wchar_t* pwsFamily;
   uint32_t dwFontStyles;
   uint32_t dwUSB;
-  uint32_t dwMatchFlags;
+  bool matchParagraphStyle;
   wchar_t wUnicode;
   uint16_t wCodePage;
 };
@@ -165,7 +153,7 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
                   const RetainPtr<CFGAS_GEFont>& pFont);
   const FX_FONTDESCRIPTOR* FindFont(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
-                                    uint32_t dwMatchFlags,
+                                    bool matchParagraphStyle,
                                     uint16_t wCodePage,
                                     uint32_t dwUSB,
                                     wchar_t wUnicode);

@@ -233,7 +233,11 @@ bool CFX_Font::LoadClone(const CFX_Font* pFont) {
   if (pFont->m_pSubstFont) {
     m_pSubstFont = pdfium::MakeUnique<CFX_SubstFont>();
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
-    m_pSubstFont->m_SubstFlags = pFont->m_pSubstFont->m_SubstFlags;
+    m_pSubstFont->m_bFlagMM = pFont->m_pSubstFont->m_bFlagMM;
+    m_pSubstFont->m_bFlagExact = pFont->m_pSubstFont->m_bFlagExact;
+#ifdef PDF_ENABLE_XFA
+    m_pSubstFont->m_bFlagItalic = pFont->m_pSubstFont->m_bFlagItalic;
+#endif  // PDF_ENABLE_XFA
     m_pSubstFont->m_Weight = pFont->m_pSubstFont->m_Weight;
     m_pSubstFont->m_Family = pFont->m_pSubstFont->m_Family;
     m_pSubstFont->m_ItalicAngle = pFont->m_pSubstFont->m_ItalicAngle;
@@ -331,7 +335,7 @@ bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
 int CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
   if (!m_Face)
     return 0;
-  if (m_pSubstFont && (m_pSubstFont->m_SubstFlags & FXFONT_SUBST_MM))
+  if (m_pSubstFont && m_pSubstFont->m_bFlagMM)
     AdjustMMParams(glyph_index, 0, 0);
   int err = FXFT_Load_Glyph(
       m_Face, glyph_index,
@@ -590,7 +594,7 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
       else
         ft_matrix.xy -= ft_matrix.xx * skew / 100;
     }
-    if (m_pSubstFont->m_SubstFlags & FXFONT_SUBST_MM)
+    if (m_pSubstFont->m_bFlagMM)
       AdjustMMParams(glyph_index, dest_width, m_pSubstFont->m_Weight);
   }
   ScopedFontTransform scoped_transform(m_Face, &ft_matrix);
@@ -599,7 +603,7 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
     load_flags |= FT_LOAD_NO_HINTING;
   if (FXFT_Load_Glyph(m_Face, glyph_index, load_flags))
     return nullptr;
-  if (m_pSubstFont && !(m_pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) &&
+  if (m_pSubstFont && !m_pSubstFont->m_bFlagMM &&
       m_pSubstFont->m_Weight > 400) {
     uint32_t index = (m_pSubstFont->m_Weight - 400) / 10;
     index = std::min(index, static_cast<uint32_t>(kWeightPowArraySize - 1));

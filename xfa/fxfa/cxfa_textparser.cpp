@@ -324,9 +324,9 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   if (font) {
     font.GetTypeface(wsFamily);
     if (font.IsBold())
-      dwStyle |= FX_FONTSTYLE_Bold;
+      dwStyle |= FXFONT_BOLD;
     if (font.IsItalic())
-      dwStyle |= FX_FONTSTYLE_Italic;
+      dwStyle |= FXFONT_BOLD;
   }
 
   if (pStyle) {
@@ -336,9 +336,9 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
 
     dwStyle = 0;
     if (pStyle->GetFontWeight() > FXFONT_FW_NORMAL)
-      dwStyle |= FX_FONTSTYLE_Bold;
+      dwStyle |= FXFONT_BOLD;
     if (pStyle->GetFontStyle() == CFX_CSSFontStyle::Italic)
-      dwStyle |= FX_FONTSTYLE_Italic;
+      dwStyle |= FXFONT_ITALIC;
   }
 
   CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();

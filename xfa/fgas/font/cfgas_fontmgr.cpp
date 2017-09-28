@@ -16,6 +16,7 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -23,7 +24,6 @@
 #include "xfa/fgas/font/fgas_fontutils.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-
 namespace {
 
 struct FX_CHARSET_MAP {
@@ -86,22 +86,18 @@ uint16_t GetCodePageFromCharset(uint8_t charset) {
 int32_t GetSimilarityScore(FX_FONTDESCRIPTOR const* pFont,
                            uint32_t dwFontStyles) {
   int32_t iValue = 0;
-  if ((dwFontStyles & FX_FONTSTYLE_Symbolic) ==
-      (pFont->dwFontStyles & FX_FONTSTYLE_Symbolic)) {
+  if ((dwFontStyles & FXFONT_SYMBOLIC) ==
+      (pFont->dwFontStyles & FXFONT_SYMBOLIC)) {
     iValue += 64;
   }
-  if ((dwFontStyles & FX_FONTSTYLE_FixedPitch) ==
-      (pFont->dwFontStyles & FX_FONTSTYLE_FixedPitch)) {
+  if ((dwFontStyles & FXFONT_FIXED_PITCH) ==
+      (pFont->dwFontStyles & FXFONT_FIXED_PITCH)) {
     iValue += 32;
   }
-  if ((dwFontStyles & FX_FONTSTYLE_Serif) ==
-      (pFont->dwFontStyles & FX_FONTSTYLE_Serif)) {
+  if ((dwFontStyles & FXFONT_SERIF) == (pFont->dwFontStyles & FXFONT_SERIF))
     iValue += 16;
-  }
-  if ((dwFontStyles & FX_FONTSTYLE_Script) ==
-      (pFont->dwFontStyles & FX_FONTSTYLE_Script)) {
+  if ((dwFontStyles & FXFONT_SCRIPT) == (pFont->dwFontStyles & FXFONT_SCRIPT))
     iValue += 8;
-  }
   return iValue;
 }
 
@@ -110,12 +106,10 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
     const std::deque<FX_FONTDESCRIPTOR>& fonts) {
   const FX_FONTDESCRIPTOR* pBestFont = nullptr;
   int32_t iBestSimilar = 0;
-  bool bMatchStyle = (pParams->dwMatchFlags & FX_FONTMATCHPARA_MatchStyle) > 0;
   for (const auto& font : fonts) {
-    if ((font.dwFontStyles & FX_FONTSTYLE_BoldItalic) ==
-        FX_FONTSTYLE_BoldItalic) {
+    if ((font.dwFontStyles & FXFONT_BOLD_ITALIC) == FXFONT_BOLD_ITALIC)
       continue;
-    }
+
     if (pParams->pwsFamily) {
       if (FXSYS_wcsicmp(pParams->pwsFamily, font.wsFontFace))
         continue;
@@ -135,7 +129,7 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
           continue;
       }
     }
-    if (bMatchStyle) {
+    if (pParams->matchParagraphStyle) {
       if ((font.dwFontStyles & 0x0F) == (pParams->dwFontStyles & 0x0F))
         return &font;
       continue;
@@ -155,17 +149,17 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
 
 uint32_t GetFontHashCode(uint16_t wCodePage, uint32_t dwFontStyles) {
   uint32_t dwHash = wCodePage;
-  if (dwFontStyles & FX_FONTSTYLE_FixedPitch)
+  if (dwFontStyles & FXFONT_FIXED_PITCH)
     dwHash |= 0x00010000;
-  if (dwFontStyles & FX_FONTSTYLE_Serif)
+  if (dwFontStyles & FXFONT_SERIF)
     dwHash |= 0x00020000;
-  if (dwFontStyles & FX_FONTSTYLE_Symbolic)
+  if (dwFontStyles & FXFONT_SYMBOLIC)
     dwHash |= 0x00040000;
-  if (dwFontStyles & FX_FONTSTYLE_Script)
+  if (dwFontStyles & FXFONT_SCRIPT)
     dwHash |= 0x00080000;
-  if (dwFontStyles & FX_FONTSTYLE_Italic)
+  if (dwFontStyles & FXFONT_ITALIC)
     dwHash |= 0x00100000;
-  if (dwFontStyles & FX_FONTSTYLE_Bold)
+  if (dwFontStyles & FXFONT_BOLD)
     dwHash |= 0x00200000;
   return dwHash;
 }
@@ -174,9 +168,9 @@ uint32_t GetFontFamilyHash(const wchar_t* pszFontFamily,
                            uint32_t dwFontStyles,
                            uint16_t wCodePage) {
   WideString wsFont(pszFontFamily);
-  if (dwFontStyles & FX_FONTSTYLE_Bold)
+  if (dwFontStyles & FXFONT_BOLD)
     wsFont += L"Bold";
-  if (dwFontStyles & FX_FONTSTYLE_Italic)
+  if (dwFontStyles & FXFONT_ITALIC)
     wsFont += L"Italic";
 
   wsFont += wCodePage;
@@ -186,14 +180,14 @@ uint32_t GetFontFamilyHash(const wchar_t* pszFontFamily,
 uint32_t GetGdiFontStyles(const LOGFONTW& lf) {
   uint32_t dwStyles = 0;
   if ((lf.lfPitchAndFamily & 0x03) == FIXED_PITCH)
-    dwStyles |= FX_FONTSTYLE_FixedPitch;
+    dwStyles |= FXFONT_FIXED_PITCH;
   uint8_t nFamilies = lf.lfPitchAndFamily & 0xF0;
   if (nFamilies == FF_ROMAN)
-    dwStyles |= FX_FONTSTYLE_Serif;
+    dwStyles |= FXFONT_SERIF;
   if (nFamilies == FF_SCRIPT)
-    dwStyles |= FX_FONTSTYLE_Script;
+    dwStyles |= FXFONT_SCRIPT;
   if (lf.lfCharSet == SYMBOL_CHARSET)
-    dwStyles |= FX_FONTSTYLE_Symbolic;
+    dwStyles |= FXFONT_SYMBOLIC;
   return dwStyles;
 }
 
@@ -399,7 +393,7 @@ void CFGAS_FontMgr::RemoveFont(const RetainPtr<CFGAS_GEFont>& pFont) {
 
 const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
                                                  uint32_t dwFontStyles,
-                                                 uint32_t dwMatchFlags,
+                                                 bool matchParagraphStyle,
                                                  uint16_t wCodePage,
                                                  uint32_t dwUSB,
                                                  wchar_t wUnicode) {
@@ -410,7 +404,7 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
   params.wCodePage = wCodePage;
   params.pwsFamily = pszFontFamily;
   params.dwFontStyles = dwFontStyles;
-  params.dwMatchFlags = dwMatchFlags;
+  params.matchParagraphStyle = matchParagraphStyle;
   const FX_FONTDESCRIPTOR* pDesc = MatchDefaultFont(&params, m_FontFaces);
   if (pDesc)
     return pDesc;
@@ -1046,15 +1040,15 @@ int32_t CFGAS_FontMgr::CalcPenalty(CFX_FontDescriptor* pInstalled,
     }
   }
   uint32_t dwStyleMask = pInstalled->m_dwFontStyles ^ dwFontStyles;
-  if (dwStyleMask & FX_FONTSTYLE_Bold)
+  if (dwStyleMask & FXFONT_BOLD)
     nPenalty += 4500;
-  if (dwStyleMask & FX_FONTSTYLE_FixedPitch)
+  if (dwStyleMask & FXFONT_FIXED_PITCH)
     nPenalty += 10000;
-  if (dwStyleMask & FX_FONTSTYLE_Italic)
+  if (dwStyleMask & FXFONT_ITALIC)
     nPenalty += 10000;
-  if (dwStyleMask & FX_FONTSTYLE_Serif)
+  if (dwStyleMask & FXFONT_SERIF)
     nPenalty += 500;
-  if (dwStyleMask & FX_FONTSTYLE_Symbolic)
+  if (dwStyleMask & FXFONT_SYMBOLIC)
     nPenalty += 0xFFFF;
   if (nPenalty >= 0xFFFF)
     return 0xFFFF;
@@ -1107,8 +1101,8 @@ void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace, const WideString* pFaceName) {
     return;
 
   auto pFont = pdfium::MakeUnique<CFX_FontDescriptor>();
-  pFont->m_dwFontStyles |= FXFT_Is_Face_Bold(pFace) ? FX_FONTSTYLE_Bold : 0;
-  pFont->m_dwFontStyles |= FXFT_Is_Face_Italic(pFace) ? FX_FONTSTYLE_Italic : 0;
+  pFont->m_dwFontStyles |= FXFT_Is_Face_Bold(pFace) ? FXFONT_BOLD : 0;
+  pFont->m_dwFontStyles |= FXFT_Is_Face_Italic(pFace) ? FXFONT_ITALIC : 0;
   pFont->m_dwFontStyles |= GetFlags(pFace);
 
   std::vector<uint16_t> charsets = GetCharsets(pFace);
@@ -1156,17 +1150,17 @@ void CFGAS_FontMgr::RegisterFaces(
 uint32_t CFGAS_FontMgr::GetFlags(FXFT_Face pFace) {
   uint32_t flag = 0;
   if (FT_IS_FIXED_WIDTH(pFace))
-    flag |= FX_FONTSTYLE_FixedPitch;
+    flag |= FXFONT_FIXED_PITCH;
   TT_OS2* pOS2 = (TT_OS2*)FT_Get_Sfnt_Table(pFace, ft_sfnt_os2);
   if (!pOS2)
     return flag;
 
   if (pOS2->ulCodePageRange1 & (1 << 31))
-    flag |= FX_FONTSTYLE_Symbolic;
+    flag |= FXFONT_SYMBOLIC;
   if (pOS2->panose[0] == 2) {
     uint8_t uSerif = pOS2->panose[1];
     if ((uSerif > 1 && uSerif < 10) || uSerif > 13)
-      flag |= FX_FONTSTYLE_Serif;
+      flag |= FXFONT_SERIF;
   }
   return flag;
 }

@@ -146,7 +146,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
       else
         ft_matrix.xy -= ft_matrix.xx * skew / 100;
     }
-    if (pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) {
+    if (pSubstFont->m_bFlagMM) {
       pFont->AdjustMMParams(glyph_index, dest_width,
                             pFont->GetSubstFont()->m_Weight);
     }
@@ -172,8 +172,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
     weight = pSubstFont->m_WeightCJK;
   else
     weight = pSubstFont ? pSubstFont->m_Weight : 0;
-  if (pSubstFont && !(pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) &&
-      weight > 400) {
+  if (pSubstFont && !pSubstFont->m_bFlagMM && weight > 400) {
     uint32_t index = (weight - 400) / 10;
     if (index >= CFX_Font::kWeightPowArraySize)
       return nullptr;

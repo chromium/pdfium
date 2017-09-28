@@ -24,10 +24,11 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
         FGAS_FontInfoByFontName(wsFontName.AsStringView());
     if (pCurFont && pCurFont->pReplaceFont) {
       uint32_t dwStyle = 0;
-      if (dwFontStyles & FX_FONTSTYLE_Bold)
-        dwStyle |= FX_FONTSTYLE_Bold;
-      if (dwFontStyles & FX_FONTSTYLE_Italic)
-        dwStyle |= FX_FONTSTYLE_Italic;
+      // TODO(dsinclair): Why doesn't this check the other flags?
+      if (dwFontStyles & FXFONT_BOLD)
+        dwStyle |= FXFONT_BOLD;
+      if (dwFontStyles & FXFONT_ITALIC)
+        dwStyle |= FXFONT_ITALIC;
 
       const wchar_t* pReplace = pCurFont->pReplaceFont;
       int32_t iLength = wcslen(pReplace);

@@ -391,7 +391,7 @@ FXFT_Face CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
       return m_FoxitFaces[iBaseFont];
     }
   }
-  pSubstFont->m_SubstFlags |= FXFONT_SUBST_MM;
+  pSubstFont->m_bFlagMM = true;
   pSubstFont->m_ItalicAngle = italic_angle;
   if (weight)
     pSubstFont->m_Weight = weight;
@@ -626,7 +626,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
   void* hFont = m_pFontInfo->MapFont(weight, bItalic, Charset, PitchFamily,
                                      family.c_str(), iExact);
   if (iExact)
-    pSubstFont->m_SubstFlags |= FXFONT_SUBST_EXACT;
+    pSubstFont->m_bFlagExact = true;
   if (!hFont) {
 #ifdef PDF_ENABLE_XFA
     if (flags & FXFONT_EXACTMATCH)
