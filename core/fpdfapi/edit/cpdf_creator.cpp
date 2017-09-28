@@ -102,7 +102,7 @@ bool CFX_FileBufferArchive::WriteByte(uint8_t byte) {
 bool CFX_FileBufferArchive::WriteDWord(uint32_t i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
-  return WriteBlock(buf, static_cast<size_t>(strlen(buf)));
+  return WriteBlock(buf, strlen(buf));
 }
 
 bool CFX_FileBufferArchive::WriteString(const ByteStringView& str) {
