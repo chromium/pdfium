@@ -265,3 +265,31 @@ TEST_F(FPDFDataAvailEmbeddertest,
   EXPECT_TRUE(page);
   FPDF_ClosePage(page);
 }
+
+TEST_F(FPDFDataAvailEmbeddertest, LoadSecondPageIfLinearizedWithHints) {
+  TestAsyncLoader loader("feature_linearized_loading.pdf");
+  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
+  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  ASSERT_TRUE(document_);
+
+  static constexpr uint32_t kSecondPageNum = 1;
+
+  // Prevent access to non requested data to coerce the parser to send new
+  // request for non available (non requested before) data.
+  loader.set_is_new_data_available(false);
+  loader.ClearRequestedSegments();
+
+  int status = PDF_DATA_NOTAVAIL;
+  while (status == PDF_DATA_NOTAVAIL) {
+    loader.FlushRequestedData();
+    status = FPDFAvail_IsPageAvail(avail_, kSecondPageNum, loader.hints());
+  }
+  EXPECT_EQ(PDF_DATA_AVAIL, status);
+
+  // Prevent loading data, while page loading.
+  loader.set_is_new_data_available(false);
+  FPDF_PAGE page = FPDF_LoadPage(document(), kSecondPageNum);
+  EXPECT_TRUE(page);
+  FPDF_ClosePage(page);
+}
