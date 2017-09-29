@@ -92,7 +92,8 @@ class FPDF_DownloadHintsContext : public CPDF_DataAvail::DownloadHints {
  public:
   // IFX_DownloadHints
   void AddSegment(FX_FILESIZE offset, uint32_t size) override {
-    m_pDownloadHints->AddSegment(m_pDownloadHints, offset, size);
+    if (m_pDownloadHints)
+      m_pDownloadHints->AddSegment(m_pDownloadHints, offset, size);
   }
 
  private:
@@ -134,7 +135,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFAvail_Destroy(FPDF_AVAIL avail) {
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
                                                    FX_DOWNLOADHINTS* hints) {
-  if (!avail || !hints)
+  if (!avail)
     return PDF_DATA_ERROR;
   FPDF_DownloadHintsContext hints_context(hints);
   return FPDFAvailContextFromFPDFAvail(avail)->m_pDataAvail->IsDocAvail(
@@ -170,7 +171,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
                                                     int page_index,
                                                     FX_DOWNLOADHINTS* hints) {
-  if (!avail || !hints)
+  if (!avail)
     return PDF_DATA_ERROR;
   if (page_index < 0)
     return PDF_DATA_NOTAVAIL;
@@ -181,7 +182,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
                                                     FX_DOWNLOADHINTS* hints) {
-  if (!avail || !hints)
+  if (!avail)
     return PDF_FORM_ERROR;
   FPDF_DownloadHintsContext hints_context(hints);
   return FPDFAvailContextFromFPDFAvail(avail)->m_pDataAvail->IsFormAvail(

@@ -103,6 +103,7 @@ typedef struct _FX_DOWNLOADHINTS {
 // Applications should call this function whenever new data arrives, and process
 // all the generated download hints, if any, until the function returns
 // |PDF_DATA_ERROR| or |PDF_DATA_AVAIL|.
+// if hints is nullptr, the function just check current document availability.
 //
 // Once all data is available, call |FPDFAvail_GetDocument| to get a document
 // handle.
@@ -150,6 +151,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc);
 // all the generated download |hints|, if any, until this function returns
 // |PDF_DATA_ERROR| or |PDF_DATA_AVAIL|. Applications can then perform page
 // loading.
+// if hints is nullptr, the function just check current availability of
+// specified page.
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
                                                     int page_index,
                                                     FX_DOWNLOADHINTS* hints);
@@ -171,6 +174,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
 // The application should call this function whenever new data arrives and
 // process all the generated download |hints|, if any, until the function
 // |PDF_FORM_ERROR|, |PDF_FORM_AVAIL| or |PDF_FORM_NOTEXIST|.
+// if hints is nullptr, the function just check current form availability.
+//
 // Applications can then perform page loading. It is recommend to call
 // |FPDFDOC_InitFormFillEnvironment| when |PDF_FORM_AVAIL| is returned.
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
