@@ -133,6 +133,4 @@ class CBmpContext : public CCodec_BmpModule::Context {
   UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
 };
 
-uint16_t GetWord_LSBFirst(uint8_t* p);
-
 #endif  // CORE_FXCODEC_LBMP_FX_BMP_H_

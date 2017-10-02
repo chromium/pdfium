@@ -199,6 +199,12 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_wcsftime wcsftime
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
+#define FXWORD_GET_LSBFIRST(p)                                \
+  (static_cast<uint16_t>((static_cast<uint16_t>(p[1]) << 8) | \
+                         (static_cast<uint16_t>(p[0]))))
+#define FXWORD_GET_MSBFIRST(p)                                \
+  (static_cast<uint16_t>((static_cast<uint16_t>(p[0]) << 8) | \
+                         (static_cast<uint16_t>(p[1]))))
 #define FXDWORD_GET_LSBFIRST(p)                                                \
   ((static_cast<uint32_t>(p[3]) << 24) | (static_cast<uint32_t>(p[2]) << 16) | \
    (static_cast<uint32_t>(p[1]) << 8) | (static_cast<uint32_t>(p[0])))

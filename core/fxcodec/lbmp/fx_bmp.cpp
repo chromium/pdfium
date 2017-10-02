@@ -28,10 +28,6 @@ uint8_t HalfRoundUp(uint8_t value) {
 
 }  // namespace
 
-uint16_t GetWord_LSBFirst(uint8_t* p) {
-  return p[0] | (p[1] << 8);
-}
-
 BMPDecompressor::BMPDecompressor()
     : context_ptr(nullptr),
       next_in(nullptr),
@@ -88,7 +84,7 @@ int32_t BMPDecompressor::ReadHeader() {
     }
 
     pBmp_header->bfType =
-        GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&pBmp_header->bfType));
+        FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&pBmp_header->bfType));
     pBmp_header->bfOffBits = FXDWORD_GET_LSBFIRST(
         reinterpret_cast<uint8_t*>(&pBmp_header->bfOffBits));
     data_size =
@@ -117,11 +113,11 @@ int32_t BMPDecompressor::ReadHeader() {
           skip_size = skip_size_org;
           return 2;
         }
-        width = GetWord_LSBFirst(
+        width = FXWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&pBmp_core_header->bcWidth));
-        height = GetWord_LSBFirst(
+        height = FXWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&pBmp_core_header->bcHeight));
-        bitCounts = GetWord_LSBFirst(
+        bitCounts = FXWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&pBmp_core_header->bcBitCount));
         compress_flag = BMP_RGB;
         imgTB_flag = false;
@@ -137,7 +133,7 @@ int32_t BMPDecompressor::ReadHeader() {
             reinterpret_cast<uint8_t*>(&pBmp_info_header->biWidth));
         int32_t signed_height = FXDWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&pBmp_info_header->biHeight));
-        bitCounts = GetWord_LSBFirst(
+        bitCounts = FXWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&pBmp_info_header->biBitCount));
         compress_flag = FXDWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&pBmp_info_header->biCompression));
@@ -163,13 +159,13 @@ int32_t BMPDecompressor::ReadHeader() {
               reinterpret_cast<uint8_t*>(&pBmp_info_header->biWidth));
           int32_t signed_height = FXDWORD_GET_LSBFIRST(
               reinterpret_cast<uint8_t*>(&pBmp_info_header->biHeight));
-          bitCounts = GetWord_LSBFirst(
+          bitCounts = FXWORD_GET_LSBFIRST(
               reinterpret_cast<uint8_t*>(&pBmp_info_header->biBitCount));
           compress_flag = FXDWORD_GET_LSBFIRST(
               reinterpret_cast<uint8_t*>(&pBmp_info_header->biCompression));
           color_used = FXDWORD_GET_LSBFIRST(
               reinterpret_cast<uint8_t*>(&pBmp_info_header->biClrUsed));
-          biPlanes = GetWord_LSBFirst(
+          biPlanes = FXWORD_GET_LSBFIRST(
               reinterpret_cast<uint8_t*>(&pBmp_info_header->biPlanes));
           dpi_x = FXDWORD_GET_LSBFIRST(
               reinterpret_cast<uint8_t*>(&pBmp_info_header->biXPelsPerMeter));
@@ -385,7 +381,7 @@ int32_t BMPDecompressor::DecodeRGB() {
         green_bits -= 8;
         red_bits -= 8;
         for (uint32_t col = 0; col < width; ++col) {
-          *buf = GetWord_LSBFirst(reinterpret_cast<uint8_t*>(buf));
+          *buf = FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(buf));
           out_row_buffer[idx++] =
               static_cast<uint8_t>((*buf & mask_blue) << blue_bits);
           out_row_buffer[idx++] =

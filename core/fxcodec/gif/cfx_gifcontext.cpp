@@ -11,7 +11,6 @@
 
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
 #include "core/fxcodec/gif/cfx_gif.h"
-#include "core/fxcodec/lbmp/fx_bmp.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -99,9 +98,9 @@ CFX_GifDecodeStatus CFX_GifContext::ReadHeader() {
   }
 
   width_ = static_cast<int>(
-      GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&gif_lsd->width)));
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&gif_lsd->width)));
   height_ = static_cast<int>(
-      GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&gif_lsd->height)));
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&gif_lsd->height)));
   bc_index_ = gif_lsd->bc_index;
   pixel_aspect_ = gif_lsd->pixel_aspect;
   return CFX_GifDecodeStatus::Success;
@@ -209,7 +208,7 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
   uint8_t* img_data_size = nullptr;
   uint8_t* img_data = nullptr;
   uint32_t skip_size_org = skip_size_;
-  CFX_GifImage* gif_image = images_[frame_num].get();
+  CFX_GifImage* gif_image = images_[static_cast<size_t>(frame_num)].get();
   uint32_t gif_img_row_bytes = gif_image->image_info.width;
   if (gif_img_row_bytes == 0)
     return CFX_GifDecodeStatus::Error;
@@ -452,7 +451,7 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeExtension() {
       graphic_control_extension_->block_size = gif_gce->block_size;
       graphic_control_extension_->gce_flags = gif_gce->gce_flags;
       graphic_control_extension_->delay_time =
-          GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&gif_gce->delay_time));
+          FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&gif_gce->delay_time));
       graphic_control_extension_->trans_index = gif_gce->trans_index;
       break;
     }
@@ -485,13 +484,13 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeImageInfo() {
 
   auto gif_image = pdfium::MakeUnique<CFX_GifImage>();
   gif_image->image_info.left =
-      GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&img_info->left));
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info->left));
   gif_image->image_info.top =
-      GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&img_info->top));
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info->top));
   gif_image->image_info.width =
-      GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&img_info->width));
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info->width));
   gif_image->image_info.height =
-      GetWord_LSBFirst(reinterpret_cast<uint8_t*>(&img_info->height));
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info->height));
   gif_image->image_info.local_flags = img_info->local_flags;
   if (gif_image->image_info.left + gif_image->image_info.width > width_ ||
       gif_image->image_info.top + gif_image->image_info.height > height_)
