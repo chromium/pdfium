@@ -62,6 +62,8 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
 
   bool read_error_;
   bool has_unavailable_data_;
+  bool whole_file_already_available_;
+  const FX_FILESIZE file_size_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_READ_VALIDATOR_H_
