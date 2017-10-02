@@ -15,9 +15,6 @@
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 
-#define JBIG2_GET_INT32(buf) \
-  (((buf)[0] << 24) | ((buf)[1] << 16) | ((buf)[2] << 8) | (buf)[3])
-#define JBIG2_GET_INT16(buf) (((buf)[0] << 8) | (buf)[1])
 typedef enum {
   JBIG2_SEGMENT_HEADER_UNPARSED,
   JBIG2_SEGMENT_DATA_UNPARSED,

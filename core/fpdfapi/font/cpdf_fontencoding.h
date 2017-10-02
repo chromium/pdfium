@@ -22,7 +22,6 @@
 #define PDFFONT_ENCODING_ZAPFDINGBATS 6
 #define PDFFONT_ENCODING_PDFDOC 7
 #define PDFFONT_ENCODING_MS_SYMBOL 8
-#define PDFFONT_ENCODING_UNICODE 9
 
 uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode);
 wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode);

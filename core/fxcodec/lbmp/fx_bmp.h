@@ -23,7 +23,6 @@
 #define BMP_D_STATUS_DATA 0x04
 #define BMP_D_STATUS_TAIL 0x00
 #define BMP_SIGNATURE 0x4D42
-#define BMP_PAL_NEW 0
 #define BMP_PAL_OLD 1
 #define RLE_MARKER 0
 #define RLE_EOL 0
@@ -33,8 +32,6 @@
 #define BMP_RLE8 1L
 #define BMP_RLE4 2L
 #define BMP_BITFIELDS 3L
-#define BMP_BIT_555 0
-#define BMP_BIT_565 1
 // Limit width to (MAXINT32 - 31) / 32
 #define BMP_MAX_WIDTH 67108863
 #pragma pack(1)

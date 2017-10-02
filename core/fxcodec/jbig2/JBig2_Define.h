@@ -10,7 +10,6 @@
 #include "core/fxcrt/fx_system.h"
 
 #define JBIG2_memset memset
-#define JBIG2_memcmp memcmp
 #define JBIG2_memcpy memcpy
 #define JBIG2_OOB 1
 

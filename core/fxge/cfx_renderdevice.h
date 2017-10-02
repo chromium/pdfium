@@ -31,7 +31,6 @@ class IFX_RenderDeviceDriver;
 
 #define FXRC_GET_BITS 0x01
 #define FXRC_BIT_MASK 0x02
-#define FXRC_ALPHA_MASK 0x04
 #define FXRC_ALPHA_PATH 0x10
 #define FXRC_ALPHA_IMAGE 0x20
 #define FXRC_ALPHA_OUTPUT 0x40

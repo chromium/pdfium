@@ -17,7 +17,6 @@ struct CRYPT_rc4_context {
 };
 
 #define MAX_NR 14
-#define MAX_NK 8
 #define MAX_NB 8
 struct CRYPT_aes_context {
   void (*encrypt)(CRYPT_aes_context* ctx, unsigned int* block);

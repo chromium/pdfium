@@ -32,7 +32,6 @@ FX_FileHandle* FX_OpenFolder(const char* path);
 bool FX_GetNextFile(FX_FileHandle* handle, ByteString* filename, bool* bFolder);
 void FX_CloseFolder(FX_FileHandle* handle);
 
-#define FX_FILEMODE_Write 0
 #define FX_FILEMODE_ReadOnly 1
 #define FX_FILEMODE_Truncate 2
 

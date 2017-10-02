@@ -9,9 +9,6 @@
 
 #include "core/fxge/fx_font.h"
 
-#define ENCODING_INTERNAL 0
-#define ENCODING_UNICODE 1
-
 #ifdef PDF_ENABLE_XFA
 #define FXFM_ENC_TAG(a, b, c, d)                                          \
   (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | \

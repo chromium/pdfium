@@ -19,12 +19,10 @@ class CFX_GifContext;
 #define GIF_BLOCK_GCE 0xF9
 #define GIF_BLOCK_PTE 0x01
 #define GIF_BLOCK_CE 0xFE
-#define GIF_BLOCK_AE 0xFF
 #define GIF_BLOCK_TERMINAL 0x00
 #define GIF_MAX_LZW_EXP 12
 #define GIF_MAX_LZW_CODE 4096
 #define GIF_DATA_BLOCK 255
-#define GIF_MAX_ERROR_SIZE 256
 #define GIF_D_STATUS_SIG 0x01
 #define GIF_D_STATUS_TAIL 0x02
 #define GIF_D_STATUS_EXT 0x03

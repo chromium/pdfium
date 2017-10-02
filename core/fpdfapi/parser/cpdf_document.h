@@ -32,14 +32,11 @@ class CPDF_Pattern;
 class CPDF_StreamAcc;
 class JBig2_DocumentContext;
 
-#define FPDFPERM_PRINT 0x0004
 #define FPDFPERM_MODIFY 0x0008
-#define FPDFPERM_EXTRACT 0x0010
 #define FPDFPERM_ANNOT_FORM 0x0020
 #define FPDFPERM_FILL_FORM 0x0100
 #define FPDFPERM_EXTRACT_ACCESS 0x0200
-#define FPDFPERM_ASSEMBLE 0x0400
-#define FPDFPERM_PRINT_HIGH 0x0800
+
 #define FPDF_PAGE_MAX_NUM 0xFFFFF
 
 class CPDF_Document : public CPDF_IndirectObjectHolder {
