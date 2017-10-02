@@ -243,7 +243,7 @@ const struct FX_FontStyle {
 std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
                                                 bool bReverse) {
   if (bsStyle.IsEmpty())
-    return {false, FXFONT_NORMAL, 0};
+    return std::make_tuple(false, FXFONT_NORMAL, 0);
 
   for (int i = FX_ArraySize(g_FontStyles) - 1; i >= 0; --i) {
     const FX_FontStyle* pStyle = g_FontStyles + i;
@@ -252,13 +252,13 @@ std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
 
     if (bReverse) {
       if (bsStyle.Right(pStyle->len).Compare(pStyle->name) == 0)
-        return {true, pStyle->style, pStyle->len};
+        return std::make_tuple(true, pStyle->style, pStyle->len);
     } else {
       if (bsStyle.Left(pStyle->len).Compare(pStyle->name) == 0)
-        return {true, pStyle->style, pStyle->len};
+        return std::make_tuple(true, pStyle->style, pStyle->len);
     }
   }
-  return {false, FXFONT_NORMAL, 0};
+  return std::make_tuple(false, FXFONT_NORMAL, 0);
 }
 
 bool CheckSupportThirdPartFont(ByteString name, int& PitchFamily) {
