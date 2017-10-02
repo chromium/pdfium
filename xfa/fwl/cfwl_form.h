@@ -16,10 +16,6 @@
 #define FWL_CLASS_Form L"FWL_FORM"
 #define FWL_CLASS_FormProxy L"FWL_FORMPROXY"
 
-#if (_FX_OS_ == _FX_OS_MACOSX_)
-#define FWL_UseMacSystemBorder
-#endif
-
 class CFWL_MessageMouse;
 class CFWL_NoteLoop;
 class CFWL_Widget;

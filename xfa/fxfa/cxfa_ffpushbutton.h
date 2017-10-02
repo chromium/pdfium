@@ -11,10 +11,9 @@
 
 #include "xfa/fxfa/cxfa_fffield.h"
 
-#define XFA_FWL_PSBSTYLEEXT_HiliteNone (0L << 0)
 #define XFA_FWL_PSBSTYLEEXT_HiliteInverted (1L << 0)
-#define XFA_FWL_PSBSTYLEEXT_HilitePush (2L << 0)
-#define XFA_FWL_PSBSTYLEEXT_HiliteOutLine (4L << 0)
+#define XFA_FWL_PSBSTYLEEXT_HilitePush (1L << 1)
+#define XFA_FWL_PSBSTYLEEXT_HiliteOutLine (1L << 2)
 
 class CXFA_TextProvider;
 

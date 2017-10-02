@@ -26,7 +26,6 @@ class CFX_GifContext;
 #define GIF_D_STATUS_SIG 0x01
 #define GIF_D_STATUS_TAIL 0x02
 #define GIF_D_STATUS_EXT 0x03
-#define GIF_D_STATUS_EXT_AE 0x04
 #define GIF_D_STATUS_EXT_CE 0x05
 #define GIF_D_STATUS_EXT_GCE 0x06
 #define GIF_D_STATUS_EXT_PTE 0x07

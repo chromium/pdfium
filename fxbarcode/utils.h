@@ -7,6 +7,8 @@
 #ifndef FXBARCODE_UTILS_H_
 #define FXBARCODE_UTILS_H_
 
+#include <ctype.h>
+
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -21,21 +23,9 @@ void BC_FX_ByteString_Append(ByteString& dst, const std::vector<uint8_t>& ba);
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <limits>
-#define FXSYS_isnan(x) _isnan(x)
-#define FXSYS_nan() (std::numeric_limits<float>::quiet_NaN())
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-
-#if _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_ || \
-    _FX_OS_ == _FX_OS_ANDROID_
-#if _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_
+#elif _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_
 #include <limits.h>
-#endif  // _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_
-
-#include <cmath>
-#define FXSYS_isnan(x) std::isnan(x)
-#define FXSYS_nan() NAN
-#endif  // _FX_OS_ == _FX_OS_MACOSX_ || _FX_OS_ == _FX_OS_LINUX_ || \
-        // _FX_OS_ == _FX_OS_ANDROID_
+#endif
 
 enum BCFORMAT {
   BCFORMAT_UNSPECIFY = -1,
@@ -51,11 +41,7 @@ enum BCFORMAT {
   BCFORMAT_DATAMATRIX,
   BCFORMAT_QR_CODE
 };
-#define BCFORMAT_ECLEVEL_L 0
-#define BCFORMAT_ECLEVEL_M 1
-#define BCFORMAT_ECLEVEL_Q 2
-#define BCFORMAT_ECLEVEL_H 3
-#include <ctype.h>
+
 #define BCExceptionNO 0
 #define BCExceptionIllegalArgument 16
 #define BCExceptionDegreeIsNegative 31

@@ -28,8 +28,6 @@ class CPWL_CBListBox : public CPWL_ListBox {
   bool OnCharNotify(uint16_t nChar, uint32_t nFlag);
 };
 
-#define PWL_COMBOBOX_BUTTON_WIDTH 13
-
 class CPWL_CBButton : public CPWL_Wnd {
  public:
   CPWL_CBButton() {}

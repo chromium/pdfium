@@ -83,7 +83,7 @@ void CFWL_Form::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   DrawBackground(pGraphics, pTheme);
 
-#ifdef FWL_UseMacSystemBorder
+#if _FX_OS_ == _FX_OS_MACOSX_
   return;
 #endif
   CFWL_ThemeBackground param;
@@ -177,7 +177,7 @@ void CFWL_Form::SetWorkAreaRect() {
 void CFWL_Form::Layout() {
   m_rtRelative = GetRelativeRect();
 
-#ifndef FWL_UseMacSystemBorder
+#if _FX_OS_ == _FX_OS_MACOSX_
   IFWL_ThemeProvider* theme = GetAvailableTheme();
   m_fCXBorder = theme ? theme->GetCXBorderSize() : 0.0f;
   m_fCYBorder = theme ? theme->GetCYBorderSize() : 0.0f;
@@ -211,7 +211,7 @@ void CFWL_Form::UnRegisterForm() {
 }
 
 void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
-#ifndef FWL_UseMacSystemBorder
+#if _FX_OS_ == _FX_OS_MACOSX_
   if (!pMessage)
     return;
 
@@ -233,7 +233,7 @@ void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-#endif  // FWL_UseMacSystemBorder
+#endif  // _FX_OS_ == _FX_OS_MACOSX_
 }
 
 void CFWL_Form::OnDrawWidget(CXFA_Graphics* pGraphics,

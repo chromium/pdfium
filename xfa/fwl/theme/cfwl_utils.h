@@ -32,7 +32,6 @@ enum FWLTHEME_DIRECTION {
 #define FWLTHEME_COLOR_EDGERB1 (ArgbEncode(255, 241, 239, 226))
 #define FWLTHEME_COLOR_Background (ArgbEncode(255, 236, 233, 216))
 #define FWLTHEME_COLOR_BKSelected (ArgbEncode(255, 153, 193, 218))
-#define FWLTHEME_COLOR_Green_BKSelected (ArgbEncode(255, 147, 160, 112))
 
 #define FWLTHEME_CAPACITY_FontSize 12.0f
 #define FWLTHEME_CAPACITY_TextColor (ArgbEncode(255, 0, 0, 0))

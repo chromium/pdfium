@@ -15,7 +15,6 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-#define FWL_ITEMSTATE_MCD_Nomal 0
 #define FWL_ITEMSTATE_MCD_Flag (1L << 0)
 #define FWL_ITEMSTATE_MCD_Selected (1L << 1)
 

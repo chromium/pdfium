@@ -22,6 +22,7 @@ namespace {
 
 constexpr float kDefaultFontSize = 12.0f;
 constexpr float kTriangleHalfLength = 3.0f;
+constexpr int kDefaultButtonWidth = 13;
 
 }  // namespace
 
@@ -324,7 +325,7 @@ void CPWL_ComboBox::RePosChildWnd() {
     CFX_FloatRect rcList = CPWL_Wnd::GetWindowRect();
     CFX_FloatRect rcButton = rcClient;
     rcButton.left =
-        std::max(rcButton.right - PWL_COMBOBOX_BUTTON_WIDTH, rcClient.left);
+        std::max(rcButton.right - kDefaultButtonWidth, rcClient.left);
     CFX_FloatRect rcEdit = rcClient;
     rcEdit.right = std::max(rcButton.left - 1.0f, rcEdit.left);
     if (m_bBottom) {
@@ -352,8 +353,7 @@ void CPWL_ComboBox::RePosChildWnd() {
   }
 
   CFX_FloatRect rcButton = rcClient;
-  rcButton.left =
-      std::max(rcButton.right - PWL_COMBOBOX_BUTTON_WIDTH, rcClient.left);
+  rcButton.left = std::max(rcButton.right - kDefaultButtonWidth, rcClient.left);
 
   if (m_pButton)
     m_pButton->Move(rcButton, true, false);

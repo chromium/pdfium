@@ -16,8 +16,6 @@
 class CFWL_WidgetProperties;
 class CFWL_Widget;
 
-#define FWL_STATE_CAT_HightLight 1
-
 class CFWL_Caret : public CFWL_Widget {
  public:
   CFWL_Caret(const CFWL_App* app,

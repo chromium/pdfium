@@ -95,8 +95,6 @@ inline bool operator!=(const CFX_Color& c1, const CFX_Color& c2) {
 
 #define PWL_SCROLLBAR_WIDTH 12.0f
 #define PWL_SCROLLBAR_TRANSPARENCY 150
-#define PWL_DEFAULT_SELBACKCOLOR \
-  CFX_Color(COLORTYPE_RGB, 0, 51.0f / 255.0f, 113.0f / 255.0f)
 #define PWL_DEFAULT_BLACKCOLOR CFX_Color(COLORTYPE_GRAY, 0)
 #define PWL_DEFAULT_WHITECOLOR CFX_Color(COLORTYPE_GRAY, 1)
 

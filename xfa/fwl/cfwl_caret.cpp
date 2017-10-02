@@ -19,6 +19,8 @@ namespace {
 
 const uint32_t kFrequency = 400;
 
+constexpr int kStateHighlight = (1 << 0);
+
 }  // namespace
 
 CFWL_Caret::CFWL_Caret(const CFWL_App* app,
@@ -27,7 +29,7 @@ CFWL_Caret::CFWL_Caret(const CFWL_App* app,
     : CFWL_Widget(app, std::move(properties), pOuter),
       m_pTimer(pdfium::MakeUnique<CFWL_Caret::Timer>(this)),
       m_pTimerInfo(nullptr) {
-  SetStates(FWL_STATE_CAT_HightLight);
+  SetStates(kStateHighlight);
 }
 
 CFWL_Caret::~CFWL_Caret() {
@@ -73,7 +75,7 @@ void CFWL_Caret::HideCaret() {
 void CFWL_Caret::DrawCaretBK(CXFA_Graphics* pGraphics,
                              IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix* pMatrix) {
-  if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
+  if (!(m_pProperties->m_dwStates & kStateHighlight))
     return;
 
   CFWL_ThemeBackground param;
@@ -98,10 +100,10 @@ CFWL_Caret::Timer::Timer(CFWL_Caret* pCaret) : CFWL_Timer(pCaret) {}
 
 void CFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   CFWL_Caret* pCaret = static_cast<CFWL_Caret*>(m_pWidget.Get());
-  if (!(pCaret->GetStates() & FWL_STATE_CAT_HightLight))
-    pCaret->SetStates(FWL_STATE_CAT_HightLight);
+  if (!(pCaret->GetStates() & kStateHighlight))
+    pCaret->SetStates(kStateHighlight);
   else
-    pCaret->RemoveStates(FWL_STATE_CAT_HightLight);
+    pCaret->RemoveStates(kStateHighlight);
 
   CFX_RectF rt = pCaret->GetWidgetRect();
   pCaret->RepaintRect(CFX_RectF(0, 0, rt.width + 1, rt.height));
