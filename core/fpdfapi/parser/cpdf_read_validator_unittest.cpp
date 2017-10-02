@@ -26,7 +26,7 @@ class MockFileAvail : public CPDF_DataAvail::FileAvail {
   MockFileAvail() : available_range_(0, 0) {}
   ~MockFileAvail() override {}
 
-  bool IsDataAvail(FX_FILESIZE offset, uint32_t size) override {
+  bool IsDataAvail(FX_FILESIZE offset, size_t size) override {
     return available_range_.first <= offset &&
            available_range_.second >= static_cast<FX_FILESIZE>(offset + size);
   }
@@ -48,7 +48,7 @@ class MockDownloadHints : public CPDF_DataAvail::DownloadHints {
   MockDownloadHints() : last_requested_range_(0, 0) {}
   ~MockDownloadHints() override {}
 
-  void AddSegment(FX_FILESIZE offset, uint32_t size) override {
+  void AddSegment(FX_FILESIZE offset, size_t size) override {
     last_requested_range_.first = offset;
     last_requested_range_.second = offset + size;
   }

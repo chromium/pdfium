@@ -322,11 +322,10 @@ bool CPDF_DataAvail::CheckPageStatus() {
 }
 
 bool CPDF_DataAvail::LoadAllFile() {
-  if (GetValidator()->IsWholeFileAvailable()) {
+  if (GetValidator()->CheckWholeFileAndRequestIfUnavailable()) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return true;
   }
-  GetValidator()->ScheduleDownloadWholeFile();
   return false;
 }
 
@@ -590,18 +589,17 @@ bool CPDF_DataAvail::CheckFirstPage() {
     dwEnd = (uint32_t)m_dwFileLen;
 
   const FX_FILESIZE start_pos = m_dwFileLen > 1024 ? 1024 : m_dwFileLen;
-  const uint32_t data_size = dwEnd > 1024 ? dwEnd - 1024 : 0;
-  if (!GetValidator()->IsDataRangeAvailable(start_pos, data_size)) {
-    GetValidator()->ScheduleDataDownload(start_pos, data_size);
+  const size_t data_size = dwEnd > 1024 ? static_cast<size_t>(dwEnd - 1024) : 0;
+  if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(start_pos,
+                                                             data_size))
     return false;
-  }
 
   m_docStatus =
       m_bSupportHintTable ? PDF_DATAAVAIL_HINTTABLE : PDF_DATAAVAIL_DONE;
   return true;
 }
 
-bool CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset, uint32_t size) {
+bool CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset, size_t size) {
   if (offset < 0 || offset > m_dwFileLen)
     return true;
 
@@ -613,10 +611,9 @@ bool CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset, uint32_t size) {
   else
     size += 512;
 
-  if (!GetValidator()->IsDataRangeAvailable(offset, size)) {
-    GetValidator()->ScheduleDataDownload(offset, size);
+  if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(offset, size))
     return false;
-  }
+
   return true;
 }
 
@@ -1207,17 +1204,14 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
     return DataError;
 
   if (!m_bMainXRefLoadTried) {
-    FX_SAFE_UINT32 data_size = m_dwFileLen;
+    FX_SAFE_SIZE_T data_size = m_dwFileLen;
     data_size -= m_pLinearized->GetLastXRefOffset();
     if (!data_size.IsValid())
       return DataError;
 
-    if (!GetValidator()->IsDataRangeAvailable(
-            m_pLinearized->GetLastXRefOffset(), data_size.ValueOrDie())) {
-      GetValidator()->ScheduleDataDownload(m_pLinearized->GetLastXRefOffset(),
-                                           data_size.ValueOrDie());
+    if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(
+            m_pLinearized->GetLastXRefOffset(), data_size.ValueOrDie()))
       return DataNotAvailable;
-    }
 
     CPDF_Parser::Error eRet =
         m_pDocument->GetParser()->LoadLinearizedMainXRefTable();

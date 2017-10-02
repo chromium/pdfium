@@ -84,13 +84,13 @@ class CPDF_DataAvail final {
   class FileAvail {
    public:
     virtual ~FileAvail();
-    virtual bool IsDataAvail(FX_FILESIZE offset, uint32_t size) = 0;
+    virtual bool IsDataAvail(FX_FILESIZE offset, size_t size) = 0;
   };
 
   class DownloadHints {
    public:
     virtual ~DownloadHints();
-    virtual void AddSegment(FX_FILESIZE offset, uint32_t size) = 0;
+    virtual void AddSegment(FX_FILESIZE offset, size_t size) = 0;
   };
 
   CPDF_DataAvail(FileAvail* pFileAvail,
@@ -98,7 +98,7 @@ class CPDF_DataAvail final {
                  bool bSupportHintTable);
   ~CPDF_DataAvail();
 
-  bool IsDataAvail(FX_FILESIZE offset, uint32_t size);
+  bool IsDataAvail(FX_FILESIZE offset, size_t size);
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
   void SetDocument(CPDF_Document* pDoc);
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
