@@ -102,8 +102,7 @@ CPDF_Parser::CPDF_Parser()
       m_bXRefStream(false),
       m_FileVersion(0),
       m_pEncryptDict(nullptr),
-      m_TrailerData(pdfium::MakeUnique<TrailerData>()),
-      m_dwLinearizedFirstPageXRefStartObjNum(0) {}
+      m_TrailerData(pdfium::MakeUnique<TrailerData>()) {}
 
 CPDF_Parser::~CPDF_Parser() {
   ReleaseEncryptHandler();
@@ -421,9 +420,8 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   return true;
 }
 
-bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
-                                              uint32_t dwObjCount) {
-  if (!LoadLinearizedCrossRefV4(xrefpos, dwObjCount))
+bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos) {
+  if (!LoadCrossRefV4(xrefpos, false))
     return false;
 
   std::unique_ptr<CPDF_Dictionary> trailer = LoadTrailerV4();
@@ -474,18 +472,6 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
     if (XRefStreamList[i] && !LoadCrossRefV5(&XRefStreamList[i], false))
       return false;
   }
-  return true;
-}
-
-bool CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
-                                           uint32_t dwObjCount) {
-  FX_FILESIZE dwStartPos = pos - m_pSyntax->m_HeaderOffset;
-
-  m_pSyntax->SetPos(dwStartPos);
-  std::vector<CrossRefObjData> objects;
-  if (!ParseAndAppendCrossRefSubsectionData(0, dwObjCount, &objects))
-    return false;
-  MergeCrossRefObjectsData(objects);
   return true;
 }
 
@@ -1318,9 +1304,10 @@ bool CPDF_Parser::ParseLinearizedHeader() {
   if (!m_pLinearized)
     return false;
 
-  m_LastXRefOffset = m_pLinearized->GetLastXRefOffset();
   // Move parser onto first page xref table start.
   m_pSyntax->GetNextWord(nullptr);
+
+  m_LastXRefOffset = m_pSyntax->GetPos();
   return true;
 }
 
@@ -1340,7 +1327,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   m_bHasParsed = true;
   m_pDocument = pDocument;
 
-  FX_FILESIZE dwFirstXRefOffset = m_pSyntax->GetPos();
+  FX_FILESIZE dwFirstXRefOffset = m_LastXRefOffset;
   bool bXRefRebuilt = false;
   bool bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, false);
   if (!bLoadV4 && !LoadCrossRefV5(&dwFirstXRefOffset, true)) {
@@ -1350,8 +1337,6 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     bXRefRebuilt = true;
     m_LastXRefOffset = 0;
   }
-  m_dwLinearizedFirstPageXRefStartObjNum =
-      m_ObjectInfo.empty() ? 0 : m_ObjectInfo.begin()->first;
   if (bLoadV4) {
     std::unique_ptr<CPDF_Dictionary> trailer = LoadTrailerV4();
     if (!trailer)
@@ -1423,33 +1408,20 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
 }
 
 CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
+  const FX_SAFE_FILESIZE main_xref_offset = GetTrailer()->GetIntegerFor("Prev");
+  if (!main_xref_offset.IsValid())
+    return FORMAT_ERROR;
+
+  if (main_xref_offset.ValueOrDie() == 0)
+    return SUCCESS;
+
   const AutoRestorer<uint32_t> save_metadata_objnum(&m_MetadataObjnum);
   m_MetadataObjnum = 0;
-  m_pSyntax->SetPos(m_LastXRefOffset - m_pSyntax->m_HeaderOffset);
-
-  uint8_t ch = 0;
-  uint32_t dwCount = 0;
-  m_pSyntax->GetNextChar(ch);
-  while (PDFCharIsWhitespace(ch)) {
-    ++dwCount;
-    if (m_pSyntax->m_FileLen <=
-        (FX_FILESIZE)(m_pSyntax->GetPos() + m_pSyntax->m_HeaderOffset)) {
-      break;
-    }
-    if (!m_pSyntax->GetNextChar(ch))
-      return HANDLER_ERROR;
-  }
-  m_LastXRefOffset += dwCount;
   m_ObjectStreamMap.clear();
   m_ObjCache.clear();
 
-  // In linearized document, the main cross ref always should start from 0
-  // objnum.
-  // And should have count equals to first obj number of first page cross ref
-  // table.
-  if (!LoadLinearizedAllCrossRefV4(m_LastXRefOffset,
-                                   m_dwLinearizedFirstPageXRefStartObjNum) &&
-      !LoadLinearizedAllCrossRefV5(m_LastXRefOffset)) {
+  if (!LoadLinearizedAllCrossRefV4(main_xref_offset.ValueOrDie()) &&
+      !LoadLinearizedAllCrossRefV5(main_xref_offset.ValueOrDie())) {
     m_LastXRefOffset = 0;
     return FORMAT_ERROR;
   }

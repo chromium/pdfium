@@ -162,8 +162,7 @@ class CPDF_Parser {
   std::unique_ptr<CPDF_Dictionary> LoadTrailerV4();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();
-  bool LoadLinearizedAllCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
-  bool LoadLinearizedCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
+  bool LoadLinearizedAllCrossRefV4(FX_FILESIZE pos);
   bool LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
   Error LoadLinearizedMainXRefTable();
   RetainPtr<CPDF_StreamAcc> GetObjectStream(uint32_t number);
@@ -207,7 +206,6 @@ class CPDF_Parser {
   ByteString m_Password;
   std::unique_ptr<TrailerData> m_TrailerData;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
-  uint32_t m_dwLinearizedFirstPageXRefStartObjNum;
 
   // A map of object numbers to indirect streams.
   std::map<uint32_t, RetainPtr<CPDF_StreamAcc>> m_ObjectStreamMap;

@@ -57,3 +57,19 @@ TEST_F(CPDFParserEmbeddertest, Bug_602650) {
 TEST_F(CPDFParserEmbeddertest, Bug_757705) {
   EXPECT_TRUE(OpenDocument("bug_757705.pdf"));
 }
+
+TEST_F(CPDFParserEmbeddertest, LoadMainCrossRefTable) {
+  EXPECT_TRUE(OpenDocument("feature_linearized_loading.pdf", nullptr, true));
+  // To check that main cross ref table is loaded correctly,will be enough to
+  // check that the second page was correctly loaded. Because it is contains
+  // crossrefs for second page.
+  EXPECT_EQ(2, GetPageCount());
+  FPDF_PAGE page = LoadPage(1);
+  EXPECT_NE(nullptr, page);
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  EXPECT_NE(nullptr, text_page);
+  // The page should not be blank.
+  EXPECT_LT(0, FPDFText_CountChars(text_page));
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
+}
