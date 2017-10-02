@@ -40,21 +40,13 @@ class CPDF_SyntaxParser {
   void SetPos(FX_FILESIZE pos) { m_Pos = std::min(pos, m_FileLen); }
 
   std::unique_ptr<CPDF_Object> GetObjectBody(
-      CPDF_IndirectObjectHolder* pObjList,
-      uint32_t objnum,
-      uint32_t gennum,
-      bool bDecrypt);
+      CPDF_IndirectObjectHolder* pObjList);
 
   std::unique_ptr<CPDF_Object> GetObjectBodyForStrict(
-      CPDF_IndirectObjectHolder* pObjList,
-      uint32_t objnum,
-      uint32_t gennum,
-      bool bDecrypt);
+      CPDF_IndirectObjectHolder* pObjList);
 
   std::unique_ptr<CPDF_Object> GetIndirectObject(
       CPDF_IndirectObjectHolder* pObjList,
-      uint32_t objnum,
-      bool bDecrypt,
       ParseType parse_type);
 
   ByteString GetKeyword();
@@ -62,7 +54,6 @@ class CPDF_SyntaxParser {
   void ToNextWord();
   bool BackwardsSearchToWord(const ByteStringView& word, FX_FILESIZE limit);
   FX_FILESIZE FindTag(const ByteStringView& tag, FX_FILESIZE limit);
-  void SetEncrypt(const RetainPtr<CPDF_CryptoHandler>& pCryptoHandler);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   ByteString GetNextWord(bool* bIsNumber);
@@ -96,27 +87,20 @@ class CPDF_SyntaxParser {
   ByteString ReadHexString();
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
   std::unique_ptr<CPDF_Stream> ReadStream(
-      std::unique_ptr<CPDF_Dictionary> pDict,
-      uint32_t objnum,
-      uint32_t gennum);
+      std::unique_ptr<CPDF_Dictionary> pDict);
 
   bool IsPositionRead(FX_FILESIZE pos) const;
 
   std::unique_ptr<CPDF_Object> GetObjectBodyInternal(
       CPDF_IndirectObjectHolder* pObjList,
-      uint32_t objnum,
-      uint32_t gennum,
-      bool bDecrypt,
       ParseType parse_type);
 
   FX_FILESIZE m_Pos;
-  uint32_t m_MetadataObjnum;
   RetainPtr<CPDF_ReadValidator> m_pFileAccess;
   FX_FILESIZE m_HeaderOffset;
   FX_FILESIZE m_FileLen;
   std::vector<uint8_t> m_pFileBuf;
   FX_FILESIZE m_BufOffset;
-  RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   uint32_t m_WordSize;
   WeakPtr<ByteStringPool> m_pPool;

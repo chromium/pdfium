@@ -216,6 +216,9 @@ class CPDF_Parser {
 
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;
+
+  RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
+  uint32_t m_MetadataObjnum = 0;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_PARSER_H_

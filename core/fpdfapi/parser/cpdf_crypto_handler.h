@@ -17,6 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;
+class CPDF_Object;
 class CPDF_SecurityHandler;
 
 class CPDF_CryptoHandler : public Retainable {
@@ -24,16 +25,14 @@ class CPDF_CryptoHandler : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  static bool IsSignatureDictionary(const CPDF_Dictionary* dictionary);
+
   bool Init(CPDF_Dictionary* pEncryptDict,
             CPDF_SecurityHandler* pSecurityHandler);
-  uint32_t DecryptGetSize(uint32_t src_size);
-  void* DecryptStart(uint32_t objnum, uint32_t gennum);
-  ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
-  bool DecryptStream(void* context,
-                     const uint8_t* src_buf,
-                     uint32_t src_size,
-                     CFX_BinaryBuf& dest_buf);
-  bool DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
+
+  std::unique_ptr<CPDF_Object> DecryptObjectTree(
+      std::unique_ptr<CPDF_Object> object);
+
   uint32_t EncryptGetSize(uint32_t objnum,
                           uint32_t version,
                           const uint8_t* src_buf,
@@ -51,6 +50,15 @@ class CPDF_CryptoHandler : public Retainable {
  private:
   CPDF_CryptoHandler();
   ~CPDF_CryptoHandler() override;
+
+  uint32_t DecryptGetSize(uint32_t src_size);
+  void* DecryptStart(uint32_t objnum, uint32_t gennum);
+  ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
+  bool DecryptStream(void* context,
+                     const uint8_t* src_buf,
+                     uint32_t src_size,
+                     CFX_BinaryBuf& dest_buf);
+  bool DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
 
   void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key);
   void CryptBlock(bool bEncrypt,
