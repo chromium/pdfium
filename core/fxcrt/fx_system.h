@@ -213,7 +213,7 @@ const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_round(float f);
 #define FXSYS_sqrt2(a, b) (float)sqrt((a) * (a) + (b) * (b))
 #ifdef __cplusplus
-};      // extern C
+}  // extern C
 #endif  // __cplusplus
 
 // To print a size_t value in a portable way:

@@ -419,7 +419,7 @@ ChkMathOp(const L lhs, const R rhs, const Args... args) {
   auto tmp = ChkMathOp<M>(lhs, rhs);
   return tmp.IsValid() ? ChkMathOp<M>(tmp, args...)
                        : decltype(ChkMathOp<M>(tmp, args...))(tmp);
-};
+}
 
 // The following macros are just boilerplate for the standard arithmetic
 // operator overloads and variadic function templates. A macro isn't the nicest

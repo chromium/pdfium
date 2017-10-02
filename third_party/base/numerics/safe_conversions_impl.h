@@ -725,7 +725,7 @@ constexpr bool SafeCompare(const L lhs, const R rhs) {
                    static_cast<BigType>(static_cast<R>(rhs)))
              // Let the template functions figure it out for mixed types.
              : C<L, R>::Test(lhs, rhs);
-};
+}
 
 }  // namespace internal
 }  // namespace base
