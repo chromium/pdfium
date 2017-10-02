@@ -472,15 +472,6 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
   return nullptr;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyForStrict(
-    CPDF_IndirectObjectHolder* pObjList) {
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  auto result = GetObjectBodyInternal(pObjList, ParseType::kStrict);
-  if (GetValidator()->has_read_problems())
-    return nullptr;
-  return result;
-}
-
 std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetIndirectObject(
     CPDF_IndirectObjectHolder* pObjList,
     ParseType parse_type) {

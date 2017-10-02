@@ -42,9 +42,6 @@ class CPDF_SyntaxParser {
   std::unique_ptr<CPDF_Object> GetObjectBody(
       CPDF_IndirectObjectHolder* pObjList);
 
-  std::unique_ptr<CPDF_Object> GetObjectBodyForStrict(
-      CPDF_IndirectObjectHolder* pObjList);
-
   std::unique_ptr<CPDF_Object> GetIndirectObject(
       CPDF_IndirectObjectHolder* pObjList,
       ParseType parse_type);
