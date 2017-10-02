@@ -391,7 +391,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
       continue;
     }
     if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
-        m_pParser->GetObjectType(objnum) != CPDF_Parser::ObjectType::kFree) {
+        !m_pParser->IsObjectFree(objnum)) {
       continue;
     }
     m_NewObjNumArray.insert(std::lower_bound(m_NewObjNumArray.begin(),

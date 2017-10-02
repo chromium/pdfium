@@ -94,13 +94,13 @@ TEST(cpdf_parser, LoadCrossRefV4) {
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 17, 81, 0, 331, 409};
-    const CPDF_Parser::ObjectType types[] = {
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kNotCompressed};
+    const CPDF_TestParser::ObjectType types[] = {
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
       EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
@@ -126,20 +126,20 @@ TEST(cpdf_parser, LoadCrossRefV4) {
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 0,     0,     25325, 0, 0,    0,
                                    0, 25518, 25635, 0,     0, 25777};
-    const CPDF_Parser::ObjectType types[] = {
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed};
+    const CPDF_TestParser::ObjectType types[] = {
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
       EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
@@ -165,20 +165,20 @@ TEST(cpdf_parser, LoadCrossRefV4) {
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 0, 0,     25325, 0, 0,    0,
                                    0, 0, 25635, 0,     0, 25777};
-    const CPDF_Parser::ObjectType types[] = {
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed};
+    const CPDF_TestParser::ObjectType types[] = {
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
       EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
@@ -202,14 +202,14 @@ TEST(cpdf_parser, LoadCrossRefV4) {
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 23, 0, 0, 0, 45, 179};
-    const CPDF_Parser::ObjectType types[] = {
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kFree,
-        CPDF_Parser::ObjectType::kNotCompressed,
-        CPDF_Parser::ObjectType::kNotCompressed};
+    const CPDF_TestParser::ObjectType types[] = {
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kFree,
+        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
       EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);

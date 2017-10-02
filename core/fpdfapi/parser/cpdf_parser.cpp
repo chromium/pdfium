@@ -52,20 +52,6 @@ int32_t GetStreamFirst(const RetainPtr<CPDF_StreamAcc>& pObjStream) {
   return pObjStream->GetDict()->GetIntegerFor("First");
 }
 
-CPDF_Parser::ObjectType GetObjectTypeFromCrossRefStreamType(
-    int cross_ref_stream_type) {
-  switch (cross_ref_stream_type) {
-    case 0:
-      return CPDF_Parser::ObjectType::kFree;
-    case 1:
-      return CPDF_Parser::ObjectType::kNotCompressed;
-    case 2:
-      return CPDF_Parser::ObjectType::kCompressed;
-    default:
-      return CPDF_Parser::ObjectType::kNull;
-  }
-}
-
 }  // namespace
 
 class CPDF_Parser::TrailerData {
@@ -159,6 +145,10 @@ bool CPDF_Parser::IsObjectFreeOrNull(uint32_t objnum) const {
   }
   ASSERT(false);  // NOTREACHED();
   return false;
+}
+
+bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
+  return GetObjectType(objnum) == ObjectType::kFree;
 }
 
 void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict) {
@@ -1485,4 +1475,18 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   }
 
   return SUCCESS;
+}
+
+CPDF_Parser::ObjectType CPDF_Parser::GetObjectTypeFromCrossRefStreamType(
+    int cross_ref_stream_type) const {
+  switch (cross_ref_stream_type) {
+    case 0:
+      return CPDF_Parser::ObjectType::kFree;
+    case 1:
+      return CPDF_Parser::ObjectType::kNotCompressed;
+    case 2:
+      return CPDF_Parser::ObjectType::kCompressed;
+    default:
+      return CPDF_Parser::ObjectType::kNull;
+  }
 }
