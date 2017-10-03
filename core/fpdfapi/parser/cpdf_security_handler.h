@@ -38,23 +38,17 @@ class CPDF_SecurityHandler {
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,
-                const uint8_t* user_pass,
-                uint32_t user_size,
-                const uint8_t* owner_pass,
-                uint32_t owner_size,
+                const ByteString& user_password,
+                const ByteString& owner_password,
                 uint32_t type = PDF_ENCRYPT_CONTENT);
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,
-                const uint8_t* user_pass,
-                uint32_t user_size,
+                const ByteString& user_password,
                 uint32_t type = PDF_ENCRYPT_CONTENT);
 
-  ByteString GetUserPassword(const uint8_t* owner_pass,
-                             uint32_t pass_size,
-                             int32_t key_len);
-  bool CheckPassword(const uint8_t* password,
-                     uint32_t pass_size,
+  ByteString GetUserPassword(const ByteString& owner_password, int32_t key_len);
+  bool CheckPassword(const ByteString& user_password,
                      bool bOwner,
                      uint8_t* key,
                      int key_len);
@@ -71,23 +65,19 @@ class CPDF_SecurityHandler {
                 int& cipher,
                 int& key_len);
 
-  bool CheckUserPassword(const uint8_t* password,
-                         uint32_t pass_size,
+  bool CheckUserPassword(const ByteString& password,
                          bool bIgnoreEncryptMeta,
                          uint8_t* key,
                          int32_t key_len);
 
-  bool CheckOwnerPassword(const uint8_t* password,
-                          uint32_t pass_size,
+  bool CheckOwnerPassword(const ByteString& password,
                           uint8_t* key,
                           int32_t key_len);
-  bool AES256_CheckPassword(const uint8_t* password,
-                            uint32_t size,
+  bool AES256_CheckPassword(const ByteString& password,
                             bool bOwner,
                             uint8_t* key);
   void AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
-                          const uint8_t* password,
-                          uint32_t size,
+                          const ByteString& password,
                           bool bOwner,
                           const uint8_t* key);
   void AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
@@ -96,19 +86,16 @@ class CPDF_SecurityHandler {
                        const uint8_t* key);
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,
-                const uint8_t* user_pass,
-                uint32_t user_size,
-                const uint8_t* owner_pass,
-                uint32_t owner_size,
+                const ByteString& user_password,
+                const ByteString& owner_password,
                 bool bDefault,
                 uint32_t type);
-  bool CheckSecurity(int32_t key_len);
+  bool CheckSecurity(const ByteString& password);
 
   int m_Version;
   int m_Revision;
   UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   UnownedPtr<const CPDF_Array> m_pIdArray;
-  ByteString m_Password;
   uint32_t m_Permissions;
   int m_Cipher;
   uint8_t m_EncryptKey[32];
