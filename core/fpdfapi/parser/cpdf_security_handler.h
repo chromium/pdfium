@@ -33,7 +33,6 @@ class CPDF_SecurityHandler {
               const CPDF_Array* pIdArray,
               const ByteString& password);
   uint32_t GetPermissions();
-  bool GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen);
   bool IsMetadataEncrypted() const;
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,
@@ -53,7 +52,6 @@ class CPDF_SecurityHandler {
                      uint8_t* key,
                      int key_len);
 
-  bool InitCryptoHandler();
   CPDF_CryptoHandler* GetCryptoHandler() const {
     return m_pCryptoHandler.get();
   }
@@ -84,13 +82,15 @@ class CPDF_SecurityHandler {
                        uint32_t permission,
                        bool bEncryptMetadata,
                        const uint8_t* key);
-  void OnCreate(CPDF_Dictionary* pEncryptDict,
-                CPDF_Array* pIdArray,
-                const ByteString& user_password,
-                const ByteString& owner_password,
-                bool bDefault,
-                uint32_t type);
+  void OnCreateInternal(CPDF_Dictionary* pEncryptDict,
+                        CPDF_Array* pIdArray,
+                        const ByteString& user_password,
+                        const ByteString& owner_password,
+                        bool bDefault,
+                        uint32_t type);
   bool CheckSecurity(const ByteString& password);
+
+  void InitCryptoHandler();
 
   int m_Version;
   int m_Revision;

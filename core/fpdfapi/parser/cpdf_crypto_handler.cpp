@@ -8,6 +8,7 @@
 
 #include <time.h>
 
+#include <algorithm>
 #include <stack>
 #include <utility>
 
@@ -278,56 +279,6 @@ uint32_t CPDF_CryptoHandler::DecryptGetSize(uint32_t src_size) {
   return m_Cipher == FXCIPHER_AES ? src_size - 16 : src_size;
 }
 
-bool CPDF_CryptoHandler::Init(CPDF_Dictionary* pEncryptDict,
-                              CPDF_SecurityHandler* pSecurityHandler) {
-  const uint8_t* key;
-  if (!pSecurityHandler->GetCryptInfo(m_Cipher, key, m_KeyLen))
-    return false;
-
-  if (m_KeyLen > 32 || m_KeyLen < 0)
-    return false;
-
-  if (m_Cipher != FXCIPHER_NONE)
-    memcpy(m_EncryptKey, key, m_KeyLen);
-
-  if (m_Cipher == FXCIPHER_AES)
-    m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
-
-  return true;
-}
-
-bool CPDF_CryptoHandler::Init(int cipher, const uint8_t* key, int keylen) {
-  if (cipher == FXCIPHER_AES) {
-    switch (keylen) {
-      case 16:
-      case 24:
-      case 32:
-        break;
-      default:
-        return false;
-    }
-  } else if (cipher == FXCIPHER_AES2) {
-    if (keylen != 32) {
-      return false;
-    }
-  } else if (cipher == FXCIPHER_RC4) {
-    if (keylen < 5 || keylen > 16) {
-      return false;
-    }
-  } else {
-    if (keylen > 32) {
-      keylen = 32;
-    }
-  }
-  m_Cipher = cipher;
-  m_KeyLen = keylen;
-  memcpy(m_EncryptKey, key, keylen);
-  if (m_Cipher == FXCIPHER_AES)
-    m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
-
-  return true;
-}
-
 bool CPDF_CryptoHandler::IsCipherAES() const {
   return m_Cipher == FXCIPHER_AES;
 }
@@ -444,8 +395,21 @@ bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
   return true;
 }
 
-CPDF_CryptoHandler::CPDF_CryptoHandler()
-    : m_KeyLen(0), m_Cipher(FXCIPHER_NONE) {}
+CPDF_CryptoHandler::CPDF_CryptoHandler(int cipher,
+                                       const uint8_t* key,
+                                       int keylen)
+    : m_KeyLen(std::min(keylen, 32)), m_Cipher(cipher) {
+  ASSERT(cipher != FXCIPHER_AES || keylen == 16 || keylen == 24 ||
+         keylen == 32);
+  ASSERT(cipher != FXCIPHER_AES2 || keylen == 32);
+  ASSERT(cipher != FXCIPHER_RC4 || (keylen >= 5 && keylen <= 16));
+
+  if (m_Cipher != FXCIPHER_NONE)
+    memcpy(m_EncryptKey, key, m_KeyLen);
+
+  if (m_Cipher == FXCIPHER_AES)
+    m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
+}
 
 CPDF_CryptoHandler::~CPDF_CryptoHandler() {}
 

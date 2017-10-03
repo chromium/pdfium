@@ -311,9 +311,6 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
                                   m_Password))
       return PASSWORD_ERROR;
 
-    if (!pSecurityHandler->InitCryptoHandler())
-      return HANDLER_ERROR;
-
     m_pSecurityHandler = std::move(pSecurityHandler);
   }
   return SUCCESS;

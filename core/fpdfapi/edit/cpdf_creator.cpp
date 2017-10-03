@@ -807,7 +807,6 @@ void CPDF_Creator::InitID() {
       m_pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
       m_pSecurityHandler->OnCreate(m_pEncryptDict.Get(), m_pIDArray.get(),
                                    user_pass, flag);
-      m_pSecurityHandler->InitCryptoHandler();
       m_bSecurityChanged = true;
     }
   }
