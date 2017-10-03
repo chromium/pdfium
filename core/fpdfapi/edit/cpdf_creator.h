@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -85,7 +86,7 @@ class CPDF_Creator {
   bool m_bSecurityChanged;
   UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   uint32_t m_dwEncryptObjNum;
-  RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
+  fxcrt::MaybeOwned<CPDF_CryptoHandler> m_pCryptoHandler;
   UnownedPtr<CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;

@@ -20,10 +20,10 @@ class CPDF_Dictionary;
 class CPDF_Object;
 class CPDF_SecurityHandler;
 
-class CPDF_CryptoHandler : public Retainable {
+class CPDF_CryptoHandler {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CPDF_CryptoHandler();
+  ~CPDF_CryptoHandler();
 
   static bool IsSignatureDictionary(const CPDF_Dictionary* dictionary);
 
@@ -48,9 +48,6 @@ class CPDF_CryptoHandler : public Retainable {
   bool IsCipherAES() const;
 
  private:
-  CPDF_CryptoHandler();
-  ~CPDF_CryptoHandler() override;
-
   uint32_t DecryptGetSize(uint32_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
