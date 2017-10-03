@@ -29,7 +29,7 @@ class CPDF_SecurityHandler {
   CPDF_SecurityHandler();
   ~CPDF_SecurityHandler();
 
-  bool OnInit(CPDF_Dictionary* pEncryptDict,
+  bool OnInit(const CPDF_Dictionary* pEncryptDict,
               const CPDF_Array* pIdArray,
               const ByteString& password);
   uint32_t GetPermissions();
@@ -57,8 +57,8 @@ class CPDF_SecurityHandler {
   }
 
  private:
-  bool LoadDict(CPDF_Dictionary* pEncryptDict);
-  bool LoadDict(CPDF_Dictionary* pEncryptDict,
+  bool LoadDict(const CPDF_Dictionary* pEncryptDict);
+  bool LoadDict(const CPDF_Dictionary* pEncryptDict,
                 uint32_t type,
                 int& cipher,
                 int& key_len);
@@ -94,7 +94,7 @@ class CPDF_SecurityHandler {
 
   int m_Version;
   int m_Revision;
-  UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
+  UnownedPtr<const CPDF_Dictionary> m_pEncryptDict;
   UnownedPtr<const CPDF_Array> m_pIdArray;
   uint32_t m_Permissions;
   int m_Cipher;

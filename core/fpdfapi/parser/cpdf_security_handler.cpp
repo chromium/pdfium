@@ -26,7 +26,7 @@ const uint8_t defpasscode[32] = {
     0x56, 0xff, 0xfa, 0x01, 0x08, 0x2e, 0x2e, 0x00, 0xb6, 0xd0, 0x68,
     0x3e, 0x80, 0x2f, 0x0c, 0xa9, 0xfe, 0x64, 0x53, 0x69, 0x7a};
 
-void CalcEncryptKey(CPDF_Dictionary* pEncrypt,
+void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     const ByteString& password,
                     uint8_t* key,
                     int keylen,
@@ -99,7 +99,7 @@ CPDF_SecurityHandler::CPDF_SecurityHandler()
 
 CPDF_SecurityHandler::~CPDF_SecurityHandler() {}
 
-bool CPDF_SecurityHandler::OnInit(CPDF_Dictionary* pEncryptDict,
+bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
                                   const CPDF_Array* pIdArray,
                                   const ByteString& password) {
   m_pIdArray = pIdArray;
@@ -129,7 +129,7 @@ uint32_t CPDF_SecurityHandler::GetPermissions() {
   return m_bOwnerUnlocked ? 0xFFFFFFFF : m_Permissions;
 }
 
-static bool LoadCryptInfo(CPDF_Dictionary* pEncryptDict,
+static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
                           const ByteString& name,
                           int& cipher,
                           int& keylen) {
@@ -175,7 +175,7 @@ static bool LoadCryptInfo(CPDF_Dictionary* pEncryptDict,
   return IsValidKeyLengthForCipher(cipher, keylen);
 }
 
-bool CPDF_SecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict) {
+bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict) {
   m_pEncryptDict = pEncryptDict;
   m_Version = pEncryptDict->GetIntegerFor("V");
   m_Revision = pEncryptDict->GetIntegerFor("R");
@@ -191,7 +191,7 @@ bool CPDF_SecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict) {
   return LoadCryptInfo(pEncryptDict, strf_name, m_Cipher, m_KeyLen);
 }
 
-bool CPDF_SecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict,
+bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
                                     uint32_t type,
                                     int& cipher,
                                     int& key_len) {
