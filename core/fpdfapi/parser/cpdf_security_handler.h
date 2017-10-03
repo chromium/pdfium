@@ -27,7 +27,9 @@ class CPDF_SecurityHandler {
   CPDF_SecurityHandler();
   ~CPDF_SecurityHandler();
 
-  bool OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict);
+  bool OnInit(CPDF_Dictionary* pEncryptDict,
+              const CPDF_Array* pIdArray,
+              const ByteString& password);
   uint32_t GetPermissions();
   bool GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen);
   bool IsMetadataEncrypted() const;
@@ -97,8 +99,9 @@ class CPDF_SecurityHandler {
 
   int m_Version;
   int m_Revision;
-  UnownedPtr<CPDF_Parser> m_pParser;
   UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
+  UnownedPtr<const CPDF_Array> m_pIdArray;
+  ByteString m_Password;
   uint32_t m_Permissions;
   int m_Cipher;
   uint8_t m_EncryptKey[32];

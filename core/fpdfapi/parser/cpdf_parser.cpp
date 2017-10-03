@@ -311,7 +311,8 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
 
     std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler =
         pdfium::MakeUnique<CPDF_SecurityHandler>();
-    if (!pSecurityHandler->OnInit(this, m_pEncryptDict.Get()))
+    if (!pSecurityHandler->OnInit(m_pEncryptDict.Get(), GetIDArray(),
+                                  m_Password))
       return PASSWORD_ERROR;
 
     m_pSecurityHandler = std::move(pSecurityHandler);

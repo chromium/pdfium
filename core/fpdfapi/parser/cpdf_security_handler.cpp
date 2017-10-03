@@ -17,7 +17,6 @@
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 
 namespace {
@@ -33,7 +32,7 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt,
                     uint8_t* key,
                     int keylen,
                     bool bIgnoreMeta,
-                    CPDF_Array* pIdArray) {
+                    const CPDF_Array* pIdArray) {
   int revision = pEncrypt->GetIntegerFor("R");
   uint8_t passcode[32];
   for (uint32_t i = 0; i < 32; i++) {
@@ -75,7 +74,6 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt,
 CPDF_SecurityHandler::CPDF_SecurityHandler()
     : m_Version(0),
       m_Revision(0),
-      m_pParser(nullptr),
       m_pEncryptDict(nullptr),
       m_Permissions(0),
       m_Cipher(FXCIPHER_NONE),
@@ -84,9 +82,11 @@ CPDF_SecurityHandler::CPDF_SecurityHandler()
 
 CPDF_SecurityHandler::~CPDF_SecurityHandler() {}
 
-bool CPDF_SecurityHandler::OnInit(CPDF_Parser* pParser,
-                                  CPDF_Dictionary* pEncryptDict) {
-  m_pParser = pParser;
+bool CPDF_SecurityHandler::OnInit(CPDF_Dictionary* pEncryptDict,
+                                  const CPDF_Array* pIdArray,
+                                  const ByteString& password) {
+  m_pIdArray = pIdArray;
+  m_Password = password;
   if (!LoadDict(pEncryptDict)) {
     return false;
   }
@@ -97,14 +97,13 @@ bool CPDF_SecurityHandler::OnInit(CPDF_Parser* pParser,
 }
 
 bool CPDF_SecurityHandler::CheckSecurity(int32_t key_len) {
-  ByteString password = m_pParser->GetPassword();
-  if (!password.IsEmpty() &&
-      CheckPassword(password.raw_str(), password.GetLength(), true,
+  if (!m_Password.IsEmpty() &&
+      CheckPassword(m_Password.raw_str(), m_Password.GetLength(), true,
                     m_EncryptKey, key_len)) {
     m_bOwnerUnlocked = true;
     return true;
   }
-  return CheckPassword(password.raw_str(), password.GetLength(), false,
+  return CheckPassword(m_Password.raw_str(), m_Password.GetLength(), false,
                        m_EncryptKey, key_len);
 }
 
@@ -414,7 +413,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const uint8_t* password,
                                              uint8_t* key,
                                              int32_t key_len) {
   CalcEncryptKey(m_pEncryptDict.Get(), password, pass_size, key, key_len,
-                 bIgnoreEncryptMeta, m_pParser->GetIDArray());
+                 bIgnoreEncryptMeta, m_pIdArray.Get());
   ByteString ukey =
       m_pEncryptDict ? m_pEncryptDict->GetStringFor("U") : ByteString();
   if (ukey.GetLength() < 16) {
@@ -441,9 +440,8 @@ bool CPDF_SecurityHandler::CheckUserPassword(const uint8_t* password,
     CRYPT_md5_context md5;
     CRYPT_MD5Start(&md5);
     CRYPT_MD5Update(&md5, defpasscode, 32);
-    CPDF_Array* pIdArray = m_pParser->GetIDArray();
-    if (pIdArray) {
-      ByteString id = pIdArray->GetStringAt(0);
+    if (m_pIdArray) {
+      ByteString id = m_pIdArray->GetStringAt(0);
       CRYPT_MD5Update(&md5, (uint8_t*)id.c_str(), id.GetLength());
     }
     CRYPT_MD5Finish(&md5, ukeybuf);
