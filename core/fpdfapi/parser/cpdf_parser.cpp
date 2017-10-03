@@ -155,10 +155,6 @@ void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict) {
   m_pEncryptDict = pDict;
 }
 
-CPDF_CryptoHandler* CPDF_Parser::GetCryptoHandler() const {
-  return m_pCryptoHandler.get();
-}
-
 RetainPtr<IFX_SeekableReadStream> CPDF_Parser::GetFileAccess() const {
   return m_pSyntax->GetFileAccess();
 }
@@ -315,17 +311,15 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
                                   m_Password))
       return PASSWORD_ERROR;
 
-    m_pSecurityHandler = std::move(pSecurityHandler);
-    auto pCryptoHandler = pdfium::MakeUnique<CPDF_CryptoHandler>();
-    if (!pCryptoHandler->Init(m_pEncryptDict.Get(), m_pSecurityHandler.get()))
+    if (!pSecurityHandler->InitCryptoHandler())
       return HANDLER_ERROR;
-    m_pCryptoHandler = std::move(pCryptoHandler);
+
+    m_pSecurityHandler = std::move(pSecurityHandler);
   }
   return SUCCESS;
 }
 
 void CPDF_Parser::ReleaseEncryptHandler() {
-  m_pCryptoHandler.reset();
   m_pSecurityHandler.reset();
   SetEncryptDictionary(nullptr);
 }
@@ -1276,9 +1270,12 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAtInternal(
   if (result && objnum && result->GetObjNum() != objnum)
     return nullptr;
 
-  const bool should_decrypt = m_pCryptoHandler && objnum != m_MetadataObjnum;
+  const bool should_decrypt = m_pSecurityHandler &&
+                              m_pSecurityHandler->GetCryptoHandler() &&
+                              objnum != m_MetadataObjnum;
   if (should_decrypt)
-    result = m_pCryptoHandler->DecryptObjectTree(std::move(result));
+    result = m_pSecurityHandler->GetCryptoHandler()->DecryptObjectTree(
+        std::move(result));
 
   return result;
 }

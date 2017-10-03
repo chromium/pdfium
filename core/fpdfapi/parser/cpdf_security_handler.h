@@ -7,7 +7,8 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_
 
-#include "core/fpdfapi/parser/cpdf_crypto_handler.h"
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -19,6 +20,7 @@
 #define PDF_ENCRYPT_CONTENT 0
 
 class CPDF_Array;
+class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Parser;
 
@@ -56,6 +58,11 @@ class CPDF_SecurityHandler {
                      bool bOwner,
                      uint8_t* key,
                      int key_len);
+
+  bool InitCryptoHandler();
+  CPDF_CryptoHandler* GetCryptoHandler() const {
+    return m_pCryptoHandler.get();
+  }
 
  private:
   bool LoadDict(CPDF_Dictionary* pEncryptDict);
@@ -107,6 +114,7 @@ class CPDF_SecurityHandler {
   uint8_t m_EncryptKey[32];
   int m_KeyLen;
   bool m_bOwnerUnlocked;
+  std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_

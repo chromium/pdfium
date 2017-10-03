@@ -145,7 +145,7 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
       m_bSecurityChanged(false),
       m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),
       m_dwEncryptObjNum(0),
-      m_pCryptoHandler(m_pParser ? m_pParser->GetCryptoHandler() : nullptr),
+      m_pSecurityHandler(m_pParser ? m_pParser->GetSecurityHandler() : nullptr),
       m_pMetadata(nullptr),
       m_dwLastObjNum(m_pDocument->GetLastObjNum()),
       m_Archive(pdfium::MakeUnique<CFX_FileBufferArchive>(archive)),
@@ -196,7 +196,7 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
 
   if (pObj->IsStream()) {
     CPDF_CryptoHandler* pHandler =
-        pObj != m_pMetadata ? m_pCryptoHandler.Get() : nullptr;
+        pObj != m_pMetadata ? GetCryptoHandler() : nullptr;
     if (!WriteStream(pObj, objnum, pHandler))
       return false;
   } else if (!WriteDirectObj(objnum, pObj, true)) {
@@ -222,12 +222,12 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
     case CPDF_Object::STRING: {
       ByteString str = pObj->GetString();
       bool bHex = pObj->AsString()->IsHex();
-      if (!m_pCryptoHandler || !bEncrypt) {
+      if (!GetCryptoHandler() || !bEncrypt) {
         if (!pObj->WriteTo(m_Archive.get()))
           return false;
         break;
       }
-      CPDF_Encryptor encryptor(m_pCryptoHandler.Get(), objnum,
+      CPDF_Encryptor encryptor(GetCryptoHandler(), objnum,
                                (uint8_t*)str.c_str(), str.GetLength());
       ByteString content = PDF_EncodeString(
           ByteString(encryptor.GetData(), encryptor.GetSize()), bHex);
@@ -238,8 +238,8 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
     case CPDF_Object::STREAM: {
       CPDF_FlateEncoder encoder(const_cast<CPDF_Stream*>(pObj->AsStream()),
                                 true);
-      CPDF_Encryptor encryptor(m_pCryptoHandler.Get(), objnum,
-                               encoder.GetData(), encoder.GetSize());
+      CPDF_Encryptor encryptor(GetCryptoHandler(), objnum, encoder.GetData(),
+                               encoder.GetSize());
       if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
           encryptor.GetSize()) {
         encoder.CloneDict();
@@ -277,7 +277,7 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
       break;
     }
     case CPDF_Object::DICTIONARY: {
-      if (!m_pCryptoHandler || pObj == m_pEncryptDict) {
+      if (!GetCryptoHandler() || pObj == m_pEncryptDict) {
         if (!pObj->WriteTo(m_Archive.get()))
           return false;
         break;
@@ -804,11 +804,11 @@ void CPDF_Creator::InitID() {
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       ByteString user_pass = m_pParser->GetPassword();
       uint32_t flag = PDF_ENCRYPT_CONTENT;
-      CPDF_SecurityHandler handler;
-      handler.OnCreate(m_pEncryptDict.Get(), m_pIDArray.get(),
-                       user_pass.raw_str(), user_pass.GetLength(), flag);
-      m_pCryptoHandler = pdfium::MakeUnique<CPDF_CryptoHandler>();
-      m_pCryptoHandler->Init(m_pEncryptDict.Get(), &handler);
+      m_pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
+      m_pSecurityHandler->OnCreate(m_pEncryptDict.Get(), m_pIDArray.get(),
+                                   user_pass.raw_str(), user_pass.GetLength(),
+                                   flag);
+      m_pSecurityHandler->InitCryptoHandler();
       m_bSecurityChanged = true;
     }
   }
@@ -848,7 +848,11 @@ bool CPDF_Creator::SetFileVersion(int32_t fileVersion) {
 }
 
 void CPDF_Creator::RemoveSecurity() {
-  m_pCryptoHandler.Reset();
+  m_pSecurityHandler.Reset();
   m_bSecurityChanged = true;
   m_pEncryptDict = nullptr;
+}
+
+CPDF_CryptoHandler* CPDF_Creator::GetCryptoHandler() {
+  return m_pSecurityHandler ? m_pSecurityHandler->GetCryptoHandler() : nullptr;
 }

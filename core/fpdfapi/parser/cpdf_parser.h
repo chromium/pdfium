@@ -76,7 +76,9 @@ class CPDF_Parser {
   FX_FILESIZE GetObjectPositionOrZero(uint32_t objnum) const;
   uint16_t GetObjectGenNum(uint32_t objnum) const;
   bool IsObjectFreeOrNull(uint32_t objnum) const;
-  CPDF_CryptoHandler* GetCryptoHandler() const;
+  CPDF_SecurityHandler* GetSecurityHandler() const {
+    return m_pSecurityHandler.get();
+  }
   RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
   bool IsObjectFree(uint32_t objnum) const;
 
@@ -221,7 +223,6 @@ class CPDF_Parser {
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;
 
-  std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint32_t m_MetadataObjnum = 0;
 };
 

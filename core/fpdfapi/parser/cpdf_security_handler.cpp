@@ -706,3 +706,8 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
   CRYPT_AESEncrypt(&aes, buf1, buf, 16);
   pEncryptDict->SetNewFor<CPDF_String>("Perms", ByteString(buf1, 16), false);
 }
+
+bool CPDF_SecurityHandler::InitCryptoHandler() {
+  m_pCryptoHandler = pdfium::MakeUnique<CPDF_CryptoHandler>();
+  return m_pCryptoHandler->Init(m_pEncryptDict.Get(), this);
+}

@@ -18,6 +18,7 @@
 
 class CPDF_Array;
 class CPDF_CryptoHandler;
+class CPDF_SecurityHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Object;
@@ -41,7 +42,7 @@ class CPDF_Creator {
 
   uint32_t GetNextObjectNumber() { return ++m_dwLastObjNum; }
   uint32_t GetLastObjectNumber() const { return m_dwLastObjNum; }
-  CPDF_CryptoHandler* GetCryptoHandler() { return m_pCryptoHandler.Get(); }
+  CPDF_CryptoHandler* GetCryptoHandler();
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   CPDF_Array* GetIDArray() const { return m_pIDArray.get(); }
   CPDF_Dictionary* GetEncryptDict() const { return m_pEncryptDict.Get(); }
@@ -86,7 +87,7 @@ class CPDF_Creator {
   bool m_bSecurityChanged;
   UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   uint32_t m_dwEncryptObjNum;
-  fxcrt::MaybeOwned<CPDF_CryptoHandler> m_pCryptoHandler;
+  fxcrt::MaybeOwned<CPDF_SecurityHandler> m_pSecurityHandler;
   UnownedPtr<CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
