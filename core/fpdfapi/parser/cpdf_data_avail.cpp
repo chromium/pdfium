@@ -599,24 +599,6 @@ bool CPDF_DataAvail::CheckFirstPage() {
   return true;
 }
 
-bool CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset, size_t size) {
-  if (offset < 0 || offset > m_dwFileLen)
-    return true;
-
-  FX_SAFE_FILESIZE safeSize = offset;
-  safeSize += size;
-  safeSize += 512;
-  if (!safeSize.IsValid() || safeSize.ValueOrDie() > m_dwFileLen)
-    size = m_dwFileLen - offset;
-  else
-    size += 512;
-
-  if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(offset, size))
-    return false;
-
-  return true;
-}
-
 bool CPDF_DataAvail::CheckHintTables() {
   if (m_pLinearized->GetPageCount() <= 1) {
     m_docStatus = PDF_DATAAVAIL_DONE;
@@ -630,13 +612,14 @@ bool CPDF_DataAvail::CheckHintTables() {
   const FX_FILESIZE szHintStart = m_pLinearized->GetHintStart();
   const uint32_t szHintLength = m_pLinearized->GetHintLength();
 
-  if (!IsDataAvail(szHintStart, szHintLength))
+  if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(szHintStart,
+                                                             szHintLength))
     return false;
 
   m_syntaxParser.InitParser(m_pFileRead, m_dwHeaderOffset);
 
-  auto pHintTables =
-      pdfium::MakeUnique<CPDF_HintTables>(this, m_pLinearized.get());
+  auto pHintTables = pdfium::MakeUnique<CPDF_HintTables>(GetValidator().Get(),
+                                                         m_pLinearized.get());
   std::unique_ptr<CPDF_Object> pHintStream =
       ParseIndirectObjectAt(szHintStart, 0);
   CPDF_Stream* pStream = ToStream(pHintStream.get());

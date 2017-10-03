@@ -16,10 +16,11 @@
 class CFX_BitStream;
 class CPDF_LinearizedHeader;
 class CPDF_Stream;
+class CPDF_ReadValidator;
 
 class CPDF_HintTables {
  public:
-  CPDF_HintTables(CPDF_DataAvail* pDataAvail,
+  CPDF_HintTables(CPDF_ReadValidator* pValidator,
                   CPDF_LinearizedHeader* pLinearized);
   virtual ~CPDF_HintTables();
 
@@ -48,8 +49,8 @@ class CPDF_HintTables {
   uint32_t GetItemLength(uint32_t index,
                          const std::vector<FX_FILESIZE>& szArray);
 
-  // Owner, outlives this object.
-  UnownedPtr<CPDF_DataAvail> const m_pDataAvail;
+  // Owned by |m_pDataAvail|.
+  UnownedPtr<CPDF_ReadValidator> m_pValidator;
 
   // Owned by |m_pDataAvail|.
   UnownedPtr<CPDF_LinearizedHeader> const m_pLinearized;

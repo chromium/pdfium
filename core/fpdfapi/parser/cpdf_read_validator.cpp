@@ -6,11 +6,12 @@
 
 #include <algorithm>
 
+#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "third_party/base/logging.h"
 
 namespace {
 
-constexpr FX_FILESIZE kAlignBlockValue = 512;
+constexpr FX_FILESIZE kAlignBlockValue = CPDF_ModuleMgr::kFileBufSize;
 
 FX_FILESIZE AlignDown(FX_FILESIZE offset) {
   return offset > 0 ? (offset - offset % kAlignBlockValue) : 0;
@@ -64,8 +65,10 @@ bool CPDF_ReadValidator::ReadBlock(void* buffer,
   if (!end_offset.IsValid() || end_offset.ValueOrDie() > file_size_)
     return false;
 
-  if (!CheckDataRangeAndRequestIfUnavailable(offset, size))
+  if (!IsDataRangeAvailable(offset, size)) {
+    ScheduleDownload(offset, size);
     return false;
+  }
 
   if (file_read_->ReadBlock(buffer, offset, size))
     return true;
@@ -122,10 +125,27 @@ bool CPDF_ReadValidator::IsWholeFileAvailable() {
 bool CPDF_ReadValidator::CheckDataRangeAndRequestIfUnavailable(
     FX_FILESIZE offset,
     size_t size) {
-  if (IsDataRangeAvailable(offset, size))
+  FX_SAFE_FILESIZE end_segment_offset = offset;
+  end_segment_offset += size;
+  // Increase checked range to allow CPDF_SyntaxParser read whole buffer.
+  end_segment_offset += CPDF_ModuleMgr::kFileBufSize;
+  if (!end_segment_offset.IsValid()) {
+    NOTREACHED();
+    return false;
+  }
+  end_segment_offset = std::min(
+      file_size_, static_cast<FX_FILESIZE>(end_segment_offset.ValueOrDie()));
+  FX_SAFE_SIZE_T segment_size = end_segment_offset;
+  segment_size -= offset;
+  if (!segment_size.IsValid()) {
+    NOTREACHED();
+    return false;
+  }
+
+  if (IsDataRangeAvailable(offset, segment_size.ValueOrDie()))
     return true;
 
-  ScheduleDownload(offset, size);
+  ScheduleDownload(offset, segment_size.ValueOrDie());
   return false;
 }
 

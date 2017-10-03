@@ -98,7 +98,6 @@ class CPDF_DataAvail final {
                  bool bSupportHintTable);
   ~CPDF_DataAvail();
 
-  bool IsDataAvail(FX_FILESIZE offset, size_t size);
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
   void SetDocument(CPDF_Document* pDoc);
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);

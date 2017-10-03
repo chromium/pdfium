@@ -243,3 +243,51 @@ TEST(CPDF_ReadValidatorTest, SessionReset) {
   EXPECT_TRUE(validator->has_unavailable_data());
   EXPECT_FALSE(validator->read_error());
 }
+
+TEST(CPDF_ReadValidatorTest, CheckDataRangeAndRequestIfUnavailable) {
+  std::vector<uint8_t> test_data(kTestDataSize);
+  auto file = pdfium::MakeRetain<CFX_MemoryStream>(test_data.data(),
+                                                   test_data.size(), false);
+  MockFileAvail file_avail;
+  auto validator = pdfium::MakeRetain<CPDF_ReadValidator>(file, &file_avail);
+
+  MockDownloadHints hints;
+  validator->SetDownloadHints(&hints);
+
+  EXPECT_FALSE(validator->CheckDataRangeAndRequestIfUnavailable(5000, 100));
+  EXPECT_FALSE(validator->read_error());
+  EXPECT_TRUE(validator->has_unavailable_data());
+
+  // Requested range should be enlarged and aligned.
+  EXPECT_EQ(MakeRange(4608, 5632), hints.GetLastRequstedRange());
+
+  file_avail.SetAvailableRange(hints.GetLastRequstedRange());
+  hints.Reset();
+
+  validator->ResetErrors();
+  EXPECT_TRUE(validator->CheckDataRangeAndRequestIfUnavailable(5000, 100));
+  // No new request on already available data.
+  EXPECT_EQ(MakeRange(0, 0), hints.GetLastRequstedRange());
+  EXPECT_FALSE(validator->read_error());
+  EXPECT_FALSE(validator->has_unavailable_data());
+
+  std::vector<uint8_t> read_buffer(100);
+  EXPECT_TRUE(
+      validator->ReadBlock(read_buffer.data(), 5000, read_buffer.size()));
+  // No new request on already available data.
+  EXPECT_EQ(MakeRange(0, 0), hints.GetLastRequstedRange());
+  EXPECT_FALSE(validator->read_error());
+  EXPECT_FALSE(validator->has_unavailable_data());
+
+  validator->ResetErrors();
+  // Try request unavailable data at file end.
+  EXPECT_FALSE(validator->CheckDataRangeAndRequestIfUnavailable(
+      validator->GetSize() - 100, 100));
+
+  // Should not enlarge request at file end.
+  EXPECT_EQ(validator->GetSize(), hints.GetLastRequstedRange().second);
+  EXPECT_FALSE(validator->read_error());
+  EXPECT_TRUE(validator->has_unavailable_data());
+
+  validator->SetDownloadHints(nullptr);
+}
