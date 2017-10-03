@@ -65,8 +65,12 @@ class CFX_GifContext : public CCodec_GifModule::Context {
   uint8_t global_color_resolution_;
   uint8_t img_pass_num_;
 
- private:
+ protected:
   uint8_t* ReadData(uint8_t** des_buf_pp, uint32_t data_size);
+  CFX_GifDecodeStatus ReadGifSignature();
+  CFX_GifDecodeStatus ReadLogicalScreenDescriptor();
+
+ private:
   void SaveDecodingStatus(int32_t status);
   CFX_GifDecodeStatus DecodeExtension();
   CFX_GifDecodeStatus DecodeImageInfo();

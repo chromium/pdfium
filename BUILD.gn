@@ -1950,6 +1950,7 @@ test("pdfium_unittests") {
   include_dirs = []
   if (pdf_enable_xfa) {
     sources += [
+      "core/fxcodec/gif/cfx_gifcontext_unittest.cpp",
       "core/fxcodec/gif/cfx_lzwdecompressor_unittest.cpp",
       "core/fxcrt/css/cfx_cssdeclaration_unittest.cpp",
       "core/fxcrt/css/cfx_cssstylesheet_unittest.cpp",

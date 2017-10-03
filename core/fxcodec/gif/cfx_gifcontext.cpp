@@ -67,43 +67,10 @@ bool CFX_GifContext::GetRecordPosition(uint32_t cur_pos,
 }
 
 CFX_GifDecodeStatus CFX_GifContext::ReadHeader() {
-  uint32_t skip_size_org = skip_size_;
-  CFX_GifHeader* gif_header = nullptr;
-  if (!ReadData(reinterpret_cast<uint8_t**>(&gif_header), 6))
-    return CFX_GifDecodeStatus::Unfinished;
-
-  if (strncmp(gif_header->signature, GIF_SIGNATURE, 3) != 0 ||
-      gif_header->version[0] != '8' || gif_header->version[2] != 'a')
-    return CFX_GifDecodeStatus::Error;
-
-  CFX_GifLocalScreenDescriptor* gif_lsd = nullptr;
-  if (!ReadData(reinterpret_cast<uint8_t**>(&gif_lsd), 7)) {
-    skip_size_ = skip_size_org;
-    return CFX_GifDecodeStatus::Unfinished;
-  }
-
-  if (gif_lsd->global_flags.global_pal) {
-    global_pal_exp_ = gif_lsd->global_flags.pal_bits;
-    uint32_t global_pal_size = unsigned(2 << global_pal_exp_) * 3u;
-    uint8_t* global_pal = nullptr;
-    if (!ReadData(&global_pal, global_pal_size)) {
-      skip_size_ = skip_size_org;
-      return CFX_GifDecodeStatus::Unfinished;
-    }
-
-    global_sort_flag_ = gif_lsd->global_flags.sort_flag;
-    global_color_resolution_ = gif_lsd->global_flags.color_resolution;
-    global_palette_.resize(global_pal_size / 3);
-    memcpy(global_palette_.data(), global_pal, global_pal_size);
-  }
-
-  width_ = static_cast<int>(
-      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&gif_lsd->width)));
-  height_ = static_cast<int>(
-      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&gif_lsd->height)));
-  bc_index_ = gif_lsd->bc_index;
-  pixel_aspect_ = gif_lsd->pixel_aspect;
-  return CFX_GifDecodeStatus::Success;
+  CFX_GifDecodeStatus status = ReadGifSignature();
+  if (status != CFX_GifDecodeStatus::Success)
+    return status;
+  return ReadLogicalScreenDescriptor();
 }
 
 CFX_GifDecodeStatus CFX_GifContext::GetFrame() {
@@ -383,12 +350,67 @@ int32_t CFX_GifContext::GetFrameNum() const {
 }
 
 uint8_t* CFX_GifContext::ReadData(uint8_t** des_buf_pp, uint32_t data_size) {
-  if (avail_in_ < skip_size_ + data_size)
+  if (!next_in_)
+    return nullptr;
+  if (avail_in_ <= skip_size_)
+    return nullptr;
+  if (!des_buf_pp)
+    return nullptr;
+  if (data_size == 0)
+    return nullptr;
+  if (avail_in_ - skip_size_ < data_size)
     return nullptr;
 
   *des_buf_pp = next_in_ + skip_size_;
   skip_size_ += data_size;
   return *des_buf_pp;
+}
+
+CFX_GifDecodeStatus CFX_GifContext::ReadGifSignature() {
+  CFX_GifHeader* header = nullptr;
+  uint32_t skip_size_org = skip_size_;
+  if (!ReadData(reinterpret_cast<uint8_t**>(&header), 6)) {
+    skip_size_ = skip_size_org;
+    return CFX_GifDecodeStatus::Unfinished;
+  }
+
+  if (strncmp(header->signature, kGifSignature87, 6) != 0 &&
+      strncmp(header->signature, kGifSignature89, 6) != 0)
+    return CFX_GifDecodeStatus::Error;
+
+  return CFX_GifDecodeStatus::Success;
+}
+
+CFX_GifDecodeStatus CFX_GifContext::ReadLogicalScreenDescriptor() {
+  CFX_GifLocalScreenDescriptor* lsd = nullptr;
+  uint32_t skip_size_org = skip_size_;
+  if (!ReadData(reinterpret_cast<uint8_t**>(&lsd), 7)) {
+    skip_size_ = skip_size_org;
+    return CFX_GifDecodeStatus::Unfinished;
+  }
+
+  if (lsd->global_flags.global_pal) {
+    uint32_t global_pal_size = unsigned(2 << lsd->global_flags.pal_bits) * 3u;
+    uint8_t* global_pal = nullptr;
+    if (!ReadData(&global_pal, global_pal_size)) {
+      skip_size_ = skip_size_org;
+      return CFX_GifDecodeStatus::Unfinished;
+    }
+
+    global_pal_exp_ = lsd->global_flags.pal_bits;
+    global_sort_flag_ = lsd->global_flags.sort_flag;
+    global_color_resolution_ = lsd->global_flags.color_resolution;
+    global_palette_.resize(global_pal_size / 3);
+    memcpy(global_palette_.data(), global_pal, global_pal_size);
+  }
+
+  width_ = static_cast<int>(
+      FXWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&lsd->width)));
+  height_ = static_cast<int>(
+      FXWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&lsd->height)));
+  bc_index_ = lsd->bc_index;
+  pixel_aspect_ = lsd->pixel_aspect;
+  return CFX_GifDecodeStatus::Success;
 }
 
 void CFX_GifContext::SaveDecodingStatus(int32_t status) {

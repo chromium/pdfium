@@ -12,7 +12,9 @@
 
 class CFX_GifContext;
 
-#define GIF_SIGNATURE "GIF"
+extern const char* kGifSignature87;
+extern const char* kGifSignature89;
+
 #define GIF_SIG_EXTENSION 0x21
 #define GIF_SIG_IMAGE 0x2C
 #define GIF_SIG_TRAILER 0x3B
@@ -49,10 +51,7 @@ typedef struct {
   uint8_t local_pal : 1;
 } CFX_GifLocalFlags;
 
-typedef struct {
-  char signature[3];
-  char version[3];
-} CFX_GifHeader;
+typedef struct { char signature[6]; } CFX_GifHeader;
 
 typedef struct {
   uint16_t width;

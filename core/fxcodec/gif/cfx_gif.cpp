@@ -6,6 +6,9 @@
 
 #include "core/fxcodec/gif/cfx_gif.h"
 
+const char* kGifSignature87 = "GIF87a";
+const char* kGifSignature89 = "GIF89a";
+
 static_assert(sizeof(CFX_CFX_GifImageInfo) == 9,
               "CFX_CFX_GifImageInfo should have a size of 9");
 static_assert(sizeof(CFX_GifPalette) == 3,
