@@ -770,7 +770,7 @@ bool CPDF_Creator::Create(uint32_t flags) {
 }
 
 void CPDF_Creator::InitID() {
-  CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
+  const CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
 
   bool idArrayPreExisting = !!m_pIDArray;
   if (!idArrayPreExisting) {

@@ -1140,23 +1140,8 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   return true;
 }
 
-CPDF_Array* CPDF_Parser::GetIDArray() {
-  if (!GetTrailer())
-    return nullptr;
-
-  CPDF_Object* pID = GetTrailer()->GetObjectFor("ID");
-  if (!pID)
-    return nullptr;
-
-  CPDF_Reference* pRef = pID->AsReference();
-  if (!pRef)
-    return ToArray(pID);
-
-  std::unique_ptr<CPDF_Object> pNewObj =
-      ParseIndirectObject(nullptr, pRef->GetRefObjNum());
-  pID = pNewObj.get();
-  GetTrailer()->SetFor("ID", std::move(pNewObj));
-  return ToArray(pID);
+const CPDF_Array* CPDF_Parser::GetIDArray() const {
+  return GetTrailer() ? GetTrailer()->GetArrayFor("ID") : nullptr;
 }
 
 uint32_t CPDF_Parser::GetRootObjNum() {

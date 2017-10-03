@@ -63,7 +63,7 @@ class CPDF_Parser {
   uint32_t GetPermissions() const;
   uint32_t GetRootObjNum();
   uint32_t GetInfoObjNum();
-  CPDF_Array* GetIDArray();
+  const CPDF_Array* GetIDArray() const;
 
   CPDF_Dictionary* GetEncryptDict() const { return m_pEncryptDict.Get(); }
 
