@@ -175,7 +175,9 @@ void CPWL_Wnd::Create(const CreateParams& cp) {
   CreateChildWnd(ccp);
   m_bVisible = HasFlag(PWS_VISIBLE);
   OnCreated();
-  RePosChildWnd();
+  if (!RePosChildWnd())
+    return;
+
   m_bCreated = true;
 }
 
@@ -201,7 +203,8 @@ void CPWL_Wnd::Destroy() {
   if (m_bCreated) {
     m_pVScrollBar = nullptr;
     for (auto it = m_Children.rbegin(); it != m_Children.rend(); ++it) {
-      if (CPWL_Wnd* pChild = *it) {
+      CPWL_Wnd* pChild = *it;
+      if (pChild) {
         *it = nullptr;
         pChild->Destroy();
         delete pChild;
@@ -216,9 +219,9 @@ void CPWL_Wnd::Destroy() {
   m_Children.clear();
 }
 
-void CPWL_Wnd::Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh) {
+bool CPWL_Wnd::Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh) {
   if (!IsValid())
-    return;
+    return true;
 
   CFX_FloatRect rcOld = GetWindowRect();
   m_rcWindow = rcNew;
@@ -227,21 +230,23 @@ void CPWL_Wnd::Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh) {
   if (bReset) {
     if (rcOld.left != rcNew.left || rcOld.right != rcNew.right ||
         rcOld.top != rcNew.top || rcOld.bottom != rcNew.bottom) {
-      RePosChildWnd();
+      if (!RePosChildWnd())
+        return false;
     }
   }
-  if (bRefresh)
-    InvalidateRectMove(rcOld, rcNew);
+  if (bRefresh && !InvalidateRectMove(rcOld, rcNew))
+    return false;
 
   m_CreationParams.rcRectWnd = m_rcWindow;
+  return true;
 }
 
-void CPWL_Wnd::InvalidateRectMove(const CFX_FloatRect& rcOld,
+bool CPWL_Wnd::InvalidateRectMove(const CFX_FloatRect& rcOld,
                                   const CFX_FloatRect& rcNew) {
   CFX_FloatRect rcUnion = rcOld;
   rcUnion.Union(rcNew);
 
-  InvalidateRect(&rcUnion);
+  return InvalidateRect(&rcUnion);
 }
 
 void CPWL_Wnd::DrawAppearance(CFX_RenderDevice* pDevice,
@@ -289,9 +294,10 @@ void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
+bool CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
+  ObservedPtr thisObserved(this);
   if (!IsValid())
-    return;
+    return true;
 
   CFX_FloatRect rcRefresh = pRect ? *pRect : GetWindowRect();
 
@@ -310,8 +316,12 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
     if (CPDFSDK_Widget* widget = static_cast<CPDFSDK_Widget*>(
             m_CreationParams.pAttachedWidget.Get())) {
       pSH->InvalidateRect(widget, rcWin);
+      if (!thisObserved)
+        return false;
     }
   }
+
+  return true;
 }
 
 #define PWL_IMPLEMENT_KEY_METHOD(key_method_name)                  \
@@ -563,19 +573,29 @@ const CPWL_Wnd* CPWL_Wnd::GetRootWnd() const {
   return pParent ? pParent->GetRootWnd() : this;
 }
 
-void CPWL_Wnd::SetVisible(bool bVisible) {
+bool CPWL_Wnd::SetVisible(bool bVisible) {
   if (!IsValid())
-    return;
+    return true;
+
+  ObservedPtr thisObserved(this);
 
   for (auto* pChild : m_Children) {
-    if (pChild)
+    if (pChild) {
       pChild->SetVisible(bVisible);
+      if (!thisObserved)
+        return false;
+    }
   }
+
   if (bVisible != m_bVisible) {
     m_bVisible = bVisible;
-    RePosChildWnd();
-    InvalidateRect(nullptr);
+    if (!RePosChildWnd())
+      return false;
+
+    if (!InvalidateRect(nullptr))
+      return false;
   }
+  return true;
 }
 
 void CPWL_Wnd::SetClipRect(const CFX_FloatRect& rect) {
@@ -591,10 +611,10 @@ bool CPWL_Wnd::IsReadOnly() const {
   return HasFlag(PWS_READONLY);
 }
 
-void CPWL_Wnd::RePosChildWnd() {
+bool CPWL_Wnd::RePosChildWnd() {
   CPWL_ScrollBar* pVSB = GetVScrollBar();
   if (!pVSB)
-    return;
+    return true;
 
   CFX_FloatRect rcContent = GetWindowRect();
   if (!rcContent.IsEmpty()) {
@@ -605,7 +625,14 @@ void CPWL_Wnd::RePosChildWnd() {
   CFX_FloatRect rcVScroll =
       CFX_FloatRect(rcContent.right - PWL_SCROLLBAR_WIDTH, rcContent.bottom,
                     rcContent.right - 1.0f, rcContent.top);
+
+  ObservedPtr thisObserved(this);
+
   pVSB->Move(rcVScroll, true, false);
+  if (!thisObserved)
+    return false;
+
+  return true;
 }
 
 void CPWL_Wnd::CreateChildWnd(const CreateParams& cp) {}

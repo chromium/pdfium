@@ -151,7 +151,9 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   ~CPWL_Wnd() override;
 
   virtual ByteString GetClassName() const;
-  virtual void InvalidateRect(CFX_FloatRect* pRect);
+
+  // Returns |true| iff this instance is still allocated.
+  virtual bool InvalidateRect(CFX_FloatRect* pRect);
 
   virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
   virtual bool OnChar(uint16_t nChar, uint32_t nFlag);
@@ -173,7 +175,9 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual void SetFocus();
   virtual void KillFocus();
   virtual void SetCursor();
-  virtual void SetVisible(bool bVisible);
+
+  // Returns |true| iff this instance is still allocated.
+  virtual bool SetVisible(bool bVisible);
   virtual void SetFontSize(float fFontSize);
   virtual float GetFontSize() const;
 
@@ -186,7 +190,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   void InvalidateProvider(ProviderIface* provider);
   void Create(const CreateParams& cp);
   void Destroy();
-  void Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
+  bool Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
 
   void SetCapture();
   void ReleaseCapture();
@@ -252,7 +256,9 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   CFX_SystemHandler* GetSystemHandler() const override;
 
   virtual void CreateChildWnd(const CreateParams& cp);
-  virtual void RePosChildWnd();
+
+  // Returns |true| iff this instance is still allocated.
+  virtual bool RePosChildWnd();
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   const CFX_Matrix& mtUser2Device);
@@ -269,7 +275,8 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   bool IsValid() const { return m_bCreated; }
   const CreateParams& GetCreationParams() const { return m_CreationParams; }
 
-  void InvalidateRectMove(const CFX_FloatRect& rcOld,
+  // Returns |true| iff this instance is still allocated.
+  bool InvalidateRectMove(const CFX_FloatRect& rcOld,
                           const CFX_FloatRect& rcNew);
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;

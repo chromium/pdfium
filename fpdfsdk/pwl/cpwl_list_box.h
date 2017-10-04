@@ -61,7 +61,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void ScrollWindowVertically(float pos) override;
-  void RePosChildWnd() override;
+  bool RePosChildWnd() override;
   CFX_FloatRect GetFocusRect() const override;
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;

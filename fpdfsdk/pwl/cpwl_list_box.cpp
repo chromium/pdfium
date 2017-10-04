@@ -250,10 +250,12 @@ void CPWL_ListBox::KillFocus() {
   CPWL_Wnd::KillFocus();
 }
 
-void CPWL_ListBox::RePosChildWnd() {
-  CPWL_Wnd::RePosChildWnd();
+bool CPWL_ListBox::RePosChildWnd() {
+  if (!CPWL_Wnd::RePosChildWnd())
+    return false;
 
   m_pList->SetPlateRect(GetListRect());
+  return true;
 }
 
 bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag) {

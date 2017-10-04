@@ -344,7 +344,7 @@ void CPWL_ScrollBar::OnDestroy() {
   CPWL_Wnd::OnDestroy();
 }
 
-void CPWL_ScrollBar::RePosChildWnd() {
+bool CPWL_ScrollBar::RePosChildWnd() {
   CFX_FloatRect rcClient = GetClientRect();
   CFX_FloatRect rcMinButton, rcMaxButton;
   float fBWidth = 0;
@@ -367,7 +367,8 @@ void CPWL_ScrollBar::RePosChildWnd() {
           rcMaxButton = CFX_FloatRect(rcClient.right - fBWidth, rcClient.bottom,
                                       rcClient.right, rcClient.top);
         } else {
-          SetVisible(false);
+          if (!SetVisible(false))
+            return false;
         }
       }
       break;
@@ -389,17 +390,31 @@ void CPWL_ScrollBar::RePosChildWnd() {
               CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
                             rcClient.bottom + fBWidth);
         } else {
-          SetVisible(false);
+          if (!SetVisible(false))
+            return false;
         }
       }
       break;
   }
 
-  if (m_pMinButton)
+  ObservedPtr thisObserved(this);
+
+  if (m_pMinButton) {
     m_pMinButton->Move(rcMinButton, true, false);
-  if (m_pMaxButton)
+    if (!thisObserved)
+      return false;
+  }
+
+  if (m_pMaxButton) {
     m_pMaxButton->Move(rcMaxButton, true, false);
-  MovePosButton(false);
+    if (!thisObserved)
+      return false;
+  }
+
+  if (!MovePosButton(false))
+    return false;
+
+  return true;
 }
 
 void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -428,7 +443,8 @@ bool CPWL_ScrollBar::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
     if (GetTransparency() != 255) {
       SetTransparency(255);
-      InvalidateRect(nullptr);
+      if (!InvalidateRect(nullptr))
+        return true;
     }
   }
 
@@ -459,13 +475,15 @@ bool CPWL_ScrollBar::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
 
     if (rcMinArea.Contains(point)) {
       m_sData.SubBig();
-      MovePosButton(true);
+      if (!MovePosButton(true))
+        return true;
       NotifyScrollWindow();
     }
 
     if (rcMaxArea.Contains(point)) {
       m_sData.AddBig();
-      MovePosButton(true);
+      if (!MovePosButton(true))
+        return true;
       NotifyScrollWindow();
     }
   }
@@ -479,7 +497,8 @@ bool CPWL_ScrollBar::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
     if (GetTransparency() != PWL_SCROLLBAR_TRANSPARENCY) {
       SetTransparency(PWL_SCROLLBAR_TRANSPARENCY);
-      InvalidateRect(nullptr);
+      if (!InvalidateRect(nullptr))
+        return true;
     }
   }
 
@@ -560,7 +579,10 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
 
   if (!m_pPosButton) {
     m_pPosButton = new CPWL_SBButton(m_sbType, PSBT_POS);
-    m_pPosButton->SetVisible(false);
+
+    ObservedPtr thisObserved(this);
+    if (!m_pPosButton->SetVisible(false) || !thisObserved)
+      return;
     m_pPosButton->Create(scp);
   }
 }
@@ -575,24 +597,37 @@ float CPWL_ScrollBar::GetScrollBarWidth() const {
 void CPWL_ScrollBar::SetScrollRange(float fMin,
                                     float fMax,
                                     float fClientWidth) {
-  if (m_pPosButton) {
-    m_sData.SetScrollRange(fMin, fMax);
-    m_sData.SetClientWidth(fClientWidth);
+  if (!m_pPosButton)
+    return;
 
-    if (IsFloatSmaller(m_sData.ScrollRange.GetWidth(), 0.0f)) {
-      m_pPosButton->SetVisible(false);
-    } else {
-      m_pPosButton->SetVisible(true);
-      MovePosButton(true);
-    }
+  m_sData.SetScrollRange(fMin, fMax);
+  m_sData.SetClientWidth(fClientWidth);
+
+  ObservedPtr thisObserved(this);
+
+  if (IsFloatSmaller(m_sData.ScrollRange.GetWidth(), 0.0f)) {
+    m_pPosButton->SetVisible(false);
+    // Note, |this| may no longer be viable at this point. If more work needs
+    // to be done, check thisObserved.
+    return;
   }
+
+  if (!m_pPosButton->SetVisible(true) || !thisObserved)
+    return;
+
+  MovePosButton(true);
+  // Note, |this| may no longer be viable at this point. If more work needs
+  // to be done, check the return value of MovePosButton().
 }
 
 void CPWL_ScrollBar::SetScrollPos(float fPos) {
   float fOldPos = m_sData.fScrollPos;
   m_sData.SetPos(fPos);
-  if (!IsFloatEqual(m_sData.fScrollPos, fOldPos))
+  if (!IsFloatEqual(m_sData.fScrollPos, fOldPos)) {
     MovePosButton(true);
+    // Note, |this| may no longer be viable at this point. If more work needs
+    // to be done, check the return value of MovePosButton().
+  }
 }
 
 void CPWL_ScrollBar::SetScrollStep(float fBigStep, float fSmallStep) {
@@ -600,7 +635,7 @@ void CPWL_ScrollBar::SetScrollStep(float fBigStep, float fSmallStep) {
   m_sData.SetSmallStep(fSmallStep);
 }
 
-void CPWL_ScrollBar::MovePosButton(bool bRefresh) {
+bool CPWL_ScrollBar::MovePosButton(bool bRefresh) {
   ASSERT(m_pMinButton);
   ASSERT(m_pMaxButton);
 
@@ -648,13 +683,20 @@ void CPWL_ScrollBar::MovePosButton(bool bRefresh) {
         break;
     }
 
+    ObservedPtr thisObserved(this);
+
     m_pPosButton->Move(rcPosButton, true, bRefresh);
+    if (!thisObserved)
+      return false;
   }
+
+  return true;
 }
 
 void CPWL_ScrollBar::OnMinButtonLBDown(const CFX_PointF& point) {
   m_sData.SubSmall();
-  MovePosButton(true);
+  if (!MovePosButton(true))
+    return;
   NotifyScrollWindow();
 
   m_bMinOrMax = true;
@@ -669,7 +711,8 @@ void CPWL_ScrollBar::OnMinButtonMouseMove(const CFX_PointF& point) {}
 
 void CPWL_ScrollBar::OnMaxButtonLBDown(const CFX_PointF& point) {
   m_sData.AddSmall();
-  MovePosButton(true);
+  if (!MovePosButton(true))
+    return;
   NotifyScrollWindow();
 
   m_bMinOrMax = false;
@@ -758,7 +801,8 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
     }
 
     if (!IsFloatEqual(fOldScrollPos, m_sData.fScrollPos)) {
-      MovePosButton(true);
+      if (!MovePosButton(true))
+        return;
 
       if (m_bNotifyForever)
         NotifyScrollWindow();
@@ -875,7 +919,8 @@ void CPWL_ScrollBar::TimerProc() {
     m_sData.AddSmall();
 
   if (sTemp != m_sData) {
-    MovePosButton(true);
+    if (!MovePosButton(true))
+      return;
     NotifyScrollWindow();
   }
 }
