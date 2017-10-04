@@ -90,8 +90,8 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
     }
     if (EndCode < 0x10000) {
       for (uint32_t code = StartCode; code <= EndCode; code++) {
-        m_pCMap->m_DirectCharcodeToCIDTable[code] =
-            static_cast<uint16_t>(StartCID + code - StartCode);
+        m_pCMap->SetDirectCharcodeToCIDTable(
+            code, static_cast<uint16_t>(StartCID + code - StartCode));
       }
     } else {
       m_AdditionalCharcodeToCIDMappings.push_back(
@@ -101,23 +101,23 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
   } else if (m_Status == 3) {
     m_Status = 0;
   } else if (m_Status == 4) {
-    m_pCMap->m_Charset = CharsetFromOrdering(CMap_GetString(word));
+    m_pCMap->SetCharset(CharsetFromOrdering(CMap_GetString(word)));
     m_Status = 0;
   } else if (m_Status == 5) {
     m_Status = 0;
   } else if (m_Status == 6) {
-    m_pCMap->m_bVertical = CMap_GetCode(word) != 0;
+    m_pCMap->SetVertical(CMap_GetCode(word) != 0);
     m_Status = 0;
   } else if (m_Status == 7) {
     if (word == "endcodespacerange") {
       uint32_t nSegs = pdfium::CollectionSize<uint32_t>(m_CodeRanges);
       if (nSegs > 1) {
-        m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
-        m_pCMap->m_MixedFourByteLeadingRanges = m_CodeRanges;
+        m_pCMap->SetCodingScheme(CPDF_CMap::MixedFourBytes);
+        m_pCMap->SetMixedFourByteLeadingRanges(m_CodeRanges);
       } else if (nSegs == 1) {
-        m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2)
-                                      ? CPDF_CMap::TwoBytes
-                                      : CPDF_CMap::OneByte;
+        m_pCMap->SetCodingScheme((m_CodeRanges[0].m_CharSize == 2)
+                                     ? CPDF_CMap::TwoBytes
+                                     : CPDF_CMap::OneByte);
       }
       m_Status = 0;
     } else {

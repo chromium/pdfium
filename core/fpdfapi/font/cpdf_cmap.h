@@ -57,16 +57,33 @@ class CPDF_CMap : public Retainable {
 
   bool IsLoaded() const { return m_bLoaded; }
   bool IsVertWriting() const { return m_bVertical; }
+
   uint16_t CIDFromCharCode(uint32_t charcode) const;
+
   int GetCharSize(uint32_t charcode) const;
   uint32_t GetNextChar(const char* pString, int nStrLen, int& offset) const;
   int CountChar(const char* pString, int size) const;
   int AppendChar(char* str, uint32_t charcode) const;
 
- private:
-  friend class CPDF_CMapParser;
-  friend class CPDF_CIDFont;
+  void SetVertical(bool vert) { m_bVertical = vert; }
+  void SetCodingScheme(CodingScheme scheme) { m_CodingScheme = scheme; }
+  void SetMixedFourByteLeadingRanges(std::vector<CodeRange> range) {
+    m_MixedFourByteLeadingRanges = range;
+  }
 
+  int GetCoding() const { return m_Coding; }
+  const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap; }
+  CIDSet GetCharset() const { return m_Charset; }
+  void SetCharset(CIDSet set) { m_Charset = set; }
+
+  void SetDirectCharcodeToCIDTable(size_t idx, uint16_t val) {
+    m_DirectCharcodeToCIDTable[idx] = val;
+  }
+  bool IsDirectCharcodeToCIDTableIsEmpty() const {
+    return m_DirectCharcodeToCIDTable.empty();
+  }
+
+ private:
   CPDF_CMap();
   ~CPDF_CMap() override;
 
