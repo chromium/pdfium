@@ -11,9 +11,9 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_crtfileaccess.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/observable.h"
@@ -104,7 +104,7 @@ class CFX_FontSourceEnum_File {
   ~CFX_FontSourceEnum_File();
 
   bool HasStartPosition();
-  RetainPtr<CFX_CRTFileAccess> GetNext();
+  std::pair<bool, RetainPtr<IFX_SeekableStream>> GetNext();
 
  private:
   struct HandleParentPath {

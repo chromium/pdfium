@@ -692,13 +692,16 @@ bool CFX_FontSourceEnum_File::HasStartPosition() {
   return m_wsNext.GetLength() != 0;
 }
 
-RetainPtr<CFX_CRTFileAccess> CFX_FontSourceEnum_File::GetNext() {
+// <next exists, stream for next>
+std::pair<bool, RetainPtr<IFX_SeekableStream>>
+CFX_FontSourceEnum_File::GetNext() {
   if (m_wsNext.GetLength() == 0)
-    return nullptr;
+    return {false, nullptr};
 
-  auto pAccess = pdfium::MakeRetain<CFX_CRTFileAccess>(m_wsNext.AsStringView());
+  auto stream = IFX_SeekableStream::CreateFromFilename(m_wsNext.c_str(),
+                                                       FX_FILEMODE_ReadOnly);
   m_wsNext = GetNextFile().UTF8Decode();
-  return pAccess;
+  return {true, stream};
 }
 
 CFGAS_FontMgr::CFGAS_FontMgr()
@@ -735,11 +738,13 @@ bool CFGAS_FontMgr::EnumFontsFromFiles() {
   if (!m_pFontSource->HasStartPosition())
     return !m_InstalledFonts.empty();
 
-  while (RetainPtr<CFX_CRTFileAccess> pFontSource = m_pFontSource->GetNext()) {
-    RetainPtr<IFX_SeekableReadStream> pFontStream =
-        pFontSource->CreateFileStream(FX_FILEMODE_ReadOnly);
-    if (pFontStream)
-      RegisterFaces(pFontStream, nullptr);
+  bool has_next;
+  RetainPtr<IFX_SeekableStream> stream;
+  std::tie(has_next, stream) = m_pFontSource->GetNext();
+  while (has_next) {
+    if (stream)
+      RegisterFaces(stream, nullptr);
+    std::tie(has_next, stream) = m_pFontSource->GetNext();
   }
   return !m_InstalledFonts.empty();
 }
