@@ -390,9 +390,14 @@ CFX_GifDecodeStatus CFX_GifContext::ReadLogicalScreenDescriptor() {
   }
 
   if (lsd->global_flags.global_pal) {
-    uint32_t global_pal_size = unsigned(2 << lsd->global_flags.pal_bits) * 3u;
-    uint8_t* global_pal = nullptr;
-    if (!ReadData(&global_pal, global_pal_size)) {
+    uint32_t palette_count = unsigned(2 << lsd->global_flags.pal_bits);
+    if (lsd->bc_index >= palette_count)
+      return CFX_GifDecodeStatus::Error;
+    bc_index_ = lsd->bc_index;
+
+    uint32_t palette_size = palette_count * 3u;
+    uint8_t* palette = nullptr;
+    if (!ReadData(&palette, palette_size)) {
       skip_size_ = skip_size_org;
       return CFX_GifDecodeStatus::Unfinished;
     }
@@ -400,15 +405,15 @@ CFX_GifDecodeStatus CFX_GifContext::ReadLogicalScreenDescriptor() {
     global_pal_exp_ = lsd->global_flags.pal_bits;
     global_sort_flag_ = lsd->global_flags.sort_flag;
     global_color_resolution_ = lsd->global_flags.color_resolution;
-    global_palette_.resize(global_pal_size / 3);
-    memcpy(global_palette_.data(), global_pal, global_pal_size);
+    global_palette_.resize(palette_count);
+    memcpy(global_palette_.data(), palette, palette_size);
   }
 
   width_ = static_cast<int>(
-      FXWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&lsd->width)));
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd->width)));
   height_ = static_cast<int>(
-      FXWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&lsd->height)));
-  bc_index_ = lsd->bc_index;
+      FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd->height)));
+
   pixel_aspect_ = lsd->pixel_aspect;
   return CFX_GifDecodeStatus::Success;
 }
@@ -544,9 +549,19 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeImageInfo() {
   gif_image->data_pos += skip_size_;
   gif_image->image_GCE = nullptr;
   if (graphic_control_extension_.get()) {
+    if (graphic_control_extension_->gce_flags.transparency) {
+      // Need to test that the color that is going to be transparent is actually
+      // in the palette being used.
+      if (graphic_control_extension_->trans_index >=
+          2 << (gif_image->local_palettes.empty()
+                    ? global_pal_exp_
+                    : gif_image->local_pallette_exp))
+        return CFX_GifDecodeStatus::Error;
+    }
     gif_image->image_GCE = std::move(graphic_control_extension_);
     graphic_control_extension_ = nullptr;
   }
+
   images_.push_back(std::move(gif_image));
   SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
   return CFX_GifDecodeStatus::Success;

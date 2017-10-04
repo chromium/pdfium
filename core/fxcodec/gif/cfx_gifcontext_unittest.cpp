@@ -168,10 +168,9 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
   }
   // LSD with all the values zero'd
   {
-    CFX_GifLocalScreenDescriptor lsd;
+    uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)];
     memset(&lsd, 0, sizeof(CFX_GifLocalScreenDescriptor));
-    context.SetInputBuffer(reinterpret_cast<uint8_t*>(&lsd),
-                           sizeof(CFX_GifLocalScreenDescriptor));
+    context.SetInputBuffer(lsd, sizeof(CFX_GifLocalScreenDescriptor));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Success,
               context.ReadLogicalScreenDescriptor());
@@ -184,9 +183,9 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
   }
   // LSD with no global palette
   {
-    CFX_GifLocalScreenDescriptor lsd{0x0A00, 0x000F, {0, 0, 0, 0}, 1, 2};
-    context.SetInputBuffer(reinterpret_cast<uint8_t*>(&lsd),
-                           sizeof(CFX_GifLocalScreenDescriptor));
+    uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)] = {0x0A, 0x00, 0x00, 0x0F,
+                                                         0x00, 0x01, 0x02};
+    context.SetInputBuffer(lsd, sizeof(CFX_GifLocalScreenDescriptor));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Success,
               context.ReadLogicalScreenDescriptor());
@@ -194,14 +193,14 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(sizeof(CFX_GifLocalScreenDescriptor), context.skip_size_);
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
-    EXPECT_EQ(1u, context.bc_index_);
+    EXPECT_EQ(0u, context.bc_index_);  // bc_index_ is 0 if no global palette
     EXPECT_EQ(2u, context.pixel_aspect_);
   }
   // LSD with global palette bit set, but no global palette
   {
-    CFX_GifLocalScreenDescriptor lsd{0x0A00, 0x000F, {0, 0, 0, 1}, 1, 2};
-    context.SetInputBuffer(reinterpret_cast<uint8_t*>(&lsd),
-                           sizeof(CFX_GifLocalScreenDescriptor));
+    uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)] = {0x0A, 0x00, 0x00, 0x0F,
+                                                         0x80, 0x01, 0x02};
+    context.SetInputBuffer(lsd, sizeof(CFX_GifLocalScreenDescriptor));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Unfinished,
               context.ReadLogicalScreenDescriptor());
@@ -210,14 +209,11 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
   }
   // LSD with global palette
   {
-    CFX_GifLocalScreenDescriptor lsd = {0x0A00, 0x000F, {1, 1, 2, 1}, 1, 2};
-    CFX_GifPalette palette[4] = {{0, 0, 0}, {1, 1, 1}, {1, 0, 0}, {0, 0, 1}};
     struct {
-      CFX_GifLocalScreenDescriptor lsd;
-      CFX_GifPalette palette[4];
-    } data;
-    memcpy(&data.lsd, &lsd, sizeof(data.lsd));
-    memcpy(&data.palette, &palette, sizeof(data.lsd));
+      uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)];
+      uint8_t palette[4 * sizeof(CFX_GifPalette)];
+    } data = {{0x0A, 0x00, 0x00, 0x0F, 0xA9, 0x01, 0x02},
+              {0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1}};
     context.SetInputBuffer(reinterpret_cast<uint8_t*>(&data), sizeof(data));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Success,
@@ -228,6 +224,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(1u, context.bc_index_);
     EXPECT_EQ(2u, context.pixel_aspect_);
+
     EXPECT_EQ(1u, context.global_pal_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
@@ -240,19 +237,16 @@ TEST(CFX_GifContext, ReadHeader) {
   CFX_GifContextForTest context(nullptr, nullptr);
   // Bad signature
   {
-    uint8_t signature[] = {'N', 'O', 'T', 'G', 'I', 'F'};
-    CFX_GifLocalScreenDescriptor lsd{0x0A00, 0x000F, {0, 0, 0, 0}, 1, 2};
     struct {
       uint8_t signature[6];
-      CFX_GifLocalScreenDescriptor lsd;
-    } data;
-    memcpy(&data.signature, signature, sizeof(data.signature));
-    memcpy(&data.lsd, &lsd, sizeof(data.lsd));
+      uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)];
+    } data = {{'N', 'O', 'T', 'G', 'I', 'F'},
+              {0x0A, 0x00, 0x00, 0x0F, 0x00, 0x01, 0x02}};
     context.SetInputBuffer(reinterpret_cast<uint8_t*>(&data), sizeof(data));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadHeader());
 
-    EXPECT_EQ(sizeof(signature), context.skip_size_);
+    EXPECT_EQ(sizeof(data.signature), context.skip_size_);
   }
   // Short after signature
   {
@@ -266,15 +260,11 @@ TEST(CFX_GifContext, ReadHeader) {
   }
   // Success without global palette
   {
-    uint8_t signature[] = {'G', 'I', 'F', '8', '7', 'a'};
-    CFX_GifLocalScreenDescriptor lsd{0x0A00, 0x000F, {0, 0, 0, 0}, 1, 2};
     struct {
       uint8_t signature[6];
-      CFX_GifLocalScreenDescriptor lsd;
-    } data;
-    memcpy(&data.signature, signature, sizeof(data.signature));
-    memcpy(&data.lsd, &lsd, sizeof(data.lsd));
-
+      uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)];
+    } data = {{'G', 'I', 'F', '8', '7', 'a'},
+              {0x0A, 0x00, 0x00, 0x0F, 0x00, 0x01, 0x02}};
     context.SetInputBuffer(reinterpret_cast<uint8_t*>(&data), sizeof(data));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadHeader());
@@ -282,42 +272,31 @@ TEST(CFX_GifContext, ReadHeader) {
     EXPECT_EQ(sizeof(data), context.skip_size_);
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
-    EXPECT_EQ(1u, context.bc_index_);
+    EXPECT_EQ(0u, context.bc_index_);  // bc_index_ is 0 if no global palette
     EXPECT_EQ(2u, context.pixel_aspect_);
   }
   // Missing Global Palette
   {
-    uint8_t signature[] = {'G', 'I', 'F', '8', '7', 'a'};
-    CFX_GifLocalScreenDescriptor lsd{0x0A00, 0x000F, {0, 0, 0, 1}, 1, 2};
-
     struct {
       uint8_t signature[6];
-      CFX_GifLocalScreenDescriptor lsd;
-    } data;
-    memcpy(&data.signature, signature, sizeof(data.signature));
-    memcpy(&data.lsd, &lsd, sizeof(data.lsd));
-
+      uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)];
+    } data = {{'G', 'I', 'F', '8', '7', 'a'},
+              {0x0A, 0x00, 0x00, 0x0F, 0x80, 0x01, 0x02}};
     context.SetInputBuffer(reinterpret_cast<uint8_t*>(&data), sizeof(data));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadHeader());
 
-    EXPECT_EQ(sizeof(signature), context.skip_size_);
+    EXPECT_EQ(sizeof(data.signature), context.skip_size_);
   }
   // Success with global palette
   {
-    uint8_t signature[] = {'G', 'I', 'F', '8', '7', 'a'};
-    CFX_GifLocalScreenDescriptor lsd = {0x0A00, 0x000F, {1, 1, 2, 1}, 1, 2};
-    CFX_GifPalette palette[4] = {{0, 0, 0}, {1, 1, 1}, {1, 0, 0}, {0, 0, 1}};
-
     struct {
       uint8_t signature[6];
-      CFX_GifLocalScreenDescriptor lsd;
-      CFX_GifPalette palette[4];
-    } data;
-    memcpy(&data.signature, signature, sizeof(data.signature));
-    memcpy(&data.lsd, &lsd, sizeof(data.lsd));
-    memcpy(&data.palette, &palette, sizeof(data.lsd));
-
+      uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)];
+      uint8_t palette[4 * sizeof(CFX_GifPalette)];
+    } data = {{'G', 'I', 'F', '8', '7', 'a'},
+              {0x0A, 0x00, 0x00, 0x0F, 0xA9, 0x01, 0x02},
+              {0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1}};
     context.SetInputBuffer(reinterpret_cast<uint8_t*>(&data), sizeof(data));
 
     EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadHeader());
