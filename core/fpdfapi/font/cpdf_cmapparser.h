@@ -28,16 +28,14 @@ class CPDF_CMapParser {
     return std::move(m_AdditionalCharcodeToCIDMappings);
   }
 
+  uint32_t GetCode(const ByteStringView& word) const;
+  bool GetCodeRange(CPDF_CMap::CodeRange& range,
+                    const ByteStringView& first,
+                    const ByteStringView& second) const;
+
   static CIDSet CharsetFromOrdering(const ByteStringView& ordering);
 
  private:
-  friend class cpdf_cmapparser_CMap_GetCode_Test;
-  friend class cpdf_cmapparser_CMap_GetCodeRange_Test;
-
-  static uint32_t CMap_GetCode(const ByteStringView& word);
-  static bool CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
-                                const ByteStringView& first,
-                                const ByteStringView& second);
 
   UnownedPtr<CPDF_CMap> const m_pCMap;
   int m_Status;

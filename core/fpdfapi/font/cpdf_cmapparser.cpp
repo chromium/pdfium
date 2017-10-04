@@ -70,7 +70,7 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
     m_CodeSeq = 0;
   } else if (word == "usecmap") {
   } else if (m_Status == 1 || m_Status == 2) {
-    m_CodePoints[m_CodeSeq] = CMap_GetCode(word);
+    m_CodePoints[m_CodeSeq] = GetCode(word);
     m_CodeSeq++;
     uint32_t StartCode, EndCode;
     uint16_t StartCID;
@@ -106,7 +106,7 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
   } else if (m_Status == 5) {
     m_Status = 0;
   } else if (m_Status == 6) {
-    m_pCMap->SetVertical(CMap_GetCode(word) != 0);
+    m_pCMap->SetVertical(GetCode(word) != 0);
     m_Status = 0;
   } else if (m_Status == 7) {
     if (word == "endcodespacerange") {
@@ -126,7 +126,7 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
       }
       if (m_CodeSeq % 2) {
         CPDF_CMap::CodeRange range;
-        if (CMap_GetCodeRange(range, m_LastWord.AsStringView(), word))
+        if (GetCodeRange(range, m_LastWord.AsStringView(), word))
           m_CodeRanges.push_back(range);
       }
       m_CodeSeq++;
@@ -135,10 +135,10 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
   m_LastWord = word;
 }
 
-// Static.
-uint32_t CPDF_CMapParser::CMap_GetCode(const ByteStringView& word) {
+uint32_t CPDF_CMapParser::GetCode(const ByteStringView& word) const {
   if (word.IsEmpty())
     return 0;
+
   pdfium::base::CheckedNumeric<uint32_t> num = 0;
   if (word[0] == '<') {
     for (size_t i = 1; i < word.GetLength() && std::isxdigit(word[i]); ++i) {
@@ -157,10 +157,9 @@ uint32_t CPDF_CMapParser::CMap_GetCode(const ByteStringView& word) {
   return num.ValueOrDie();
 }
 
-// Static.
-bool CPDF_CMapParser::CMap_GetCodeRange(CPDF_CMap::CodeRange& range,
-                                        const ByteStringView& first,
-                                        const ByteStringView& second) {
+bool CPDF_CMapParser::GetCodeRange(CPDF_CMap::CodeRange& range,
+                                   const ByteStringView& first,
+                                   const ByteStringView& second) const {
   if (first.GetLength() == 0 || first[0] != '<')
     return false;
 
