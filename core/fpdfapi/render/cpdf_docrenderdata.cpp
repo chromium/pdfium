@@ -104,23 +104,23 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
       if (o != v)
         bIdentity = false;
       for (int i = 0; i < 3; ++i)
-        pTransfer->m_Samples[i * 256 + v] = o;
+        pTransfer->GetSamples()[i * 256 + v] = o;
       continue;
     }
     for (int i = 0; i < 3; ++i) {
       if (!pFuncs[i] || pFuncs[i]->CountOutputs() > kMaxOutputs) {
-        pTransfer->m_Samples[i * 256 + v] = v;
+        pTransfer->GetSamples()[i * 256 + v] = v;
         continue;
       }
       pFuncs[i]->Call(&input, 1, output, &noutput);
       int o = FXSYS_round(output[0] * 255);
       if (o != v)
         bIdentity = false;
-      pTransfer->m_Samples[i * 256 + v] = o;
+      pTransfer->GetSamples()[i * 256 + v] = o;
     }
   }
 
-  pTransfer->m_bIdentity = bIdentity;
+  pTransfer->SetIdentity(bIdentity);
   return pTransfer;
 }
 

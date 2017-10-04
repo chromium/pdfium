@@ -14,9 +14,9 @@
 CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
     const RetainPtr<CPDF_TransferFunc>& pTransferFunc)
     : m_pTransferFunc(pTransferFunc) {
-  m_RampR = pTransferFunc->m_Samples;
-  m_RampG = &pTransferFunc->m_Samples[256];
-  m_RampB = &pTransferFunc->m_Samples[512];
+  m_RampR = pTransferFunc->GetSamples();
+  m_RampG = &pTransferFunc->GetSamples()[256];
+  m_RampB = &pTransferFunc->GetSamples()[512];
 }
 
 CPDF_DIBTransferFunc::~CPDF_DIBTransferFunc() {}

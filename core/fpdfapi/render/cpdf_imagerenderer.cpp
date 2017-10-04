@@ -84,7 +84,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
     if (!state.GetTransferFunc())
       state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(state.GetTR()));
 
-    if (state.GetTransferFunc() && !state.GetTransferFunc()->m_bIdentity) {
+    if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity()) {
       m_pDIBSource = m_Loader.m_pBitmap =
           state.GetTransferFunc()->TranslateImage(m_Loader.m_pBitmap);
       if (m_Loader.m_bCached && m_Loader.m_pMask)

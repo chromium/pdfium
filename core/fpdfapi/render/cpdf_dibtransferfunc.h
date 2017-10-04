@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_filtereddib.h"
 #include "core/fxge/fx_dib.h"
 
@@ -35,10 +36,10 @@ class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
   explicit CPDF_DIBTransferFunc(
       const RetainPtr<CPDF_TransferFunc>& pTransferFunc);
 
+  RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
   const uint8_t* m_RampR;
   const uint8_t* m_RampG;
   const uint8_t* m_RampB;
-  RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DIBTRANSFERFUNC_H_
