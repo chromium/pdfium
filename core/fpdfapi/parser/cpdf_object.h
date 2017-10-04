@@ -44,7 +44,9 @@ class CPDF_Object {
 
   virtual Type GetType() const = 0;
   uint32_t GetObjNum() const { return m_ObjNum; }
+  void SetObjNum(uint32_t objnum) { m_ObjNum = objnum; }
   uint32_t GetGenNum() const { return m_GenNum; }
+  void SetGenNum(uint32_t gennum) { m_GenNum = gennum; }
   bool IsInline() const { return m_ObjNum == 0; }
 
   // Create a deep copy of the object.
@@ -92,18 +94,6 @@ class CPDF_Object {
 
   virtual bool WriteTo(IFX_ArchiveStream* archive) const = 0;
 
- protected:
-  friend class CPDF_Array;
-  friend class CPDF_Dictionary;
-  friend class CPDF_IndirectObjectHolder;
-  friend class CPDF_SyntaxParser;
-  friend class CPDF_Reference;
-  friend class CPDF_Stream;
-
-  CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
-
-  std::unique_ptr<CPDF_Object> CloneObjectNonCyclic(bool bDirect) const;
-
   // Create a deep copy of the object with the option to either
   // copy a reference object or directly copy the object it refers to
   // when |bDirect| is true.
@@ -114,11 +104,17 @@ class CPDF_Object {
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const;
 
+ protected:
+  CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
+
+  std::unique_ptr<CPDF_Object> CloneObjectNonCyclic(bool bDirect) const;
+
   uint32_t m_ObjNum;
-  uint32_t m_GenNum;
 
  private:
   CPDF_Object(const CPDF_Object& src) {}
+
+  uint32_t m_GenNum;
 };
 
 template <typename T>

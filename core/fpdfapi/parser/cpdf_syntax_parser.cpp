@@ -500,8 +500,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetIndirectObject(
   std::unique_ptr<CPDF_Object> pObj =
       GetObjectBodyInternal(pObjList, parse_type);
   if (pObj) {
-    pObj->m_ObjNum = parser_objnum;
-    pObj->m_GenNum = parser_gennum;
+    pObj->SetObjNum(parser_objnum);
+    pObj->SetGenNum(parser_gennum);
   }
 
   return GetValidator()->has_read_problems() ? nullptr : std::move(pObj);
