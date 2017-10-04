@@ -926,7 +926,7 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
 std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
     const FDE_TEXTEDITPIECE& piece) {
   if (piece.nCount < 1)
-    return {};
+    return std::vector<CFX_RectF>();
 
   FX_TXTRUN tr;
   tr.pEdtEngine = this;
@@ -1082,7 +1082,7 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharacterRectsInRange(
       break;
   }
   if (it == text_piece_info_.end())
-    return {};
+    return std::vector<CFX_RectF>();
 
   int32_t end_idx = start_idx + count - 1;
   std::vector<CFX_RectF> rects;
