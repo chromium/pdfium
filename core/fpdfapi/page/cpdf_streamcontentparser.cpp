@@ -1262,10 +1262,11 @@ void CPDF_StreamContentParser::AddTextObject(ByteString* pStrs,
       pCTM[3] = m_pCurStates->m_CTM.d;
     }
     pText->SetSegments(pStrs, pKerning, nsegs);
-    pText->m_Pos = m_mtContentToUser.Transform(
-        m_pCurStates->m_CTM.Transform(m_pCurStates->m_TextMatrix.Transform(
-            CFX_PointF(m_pCurStates->m_TextPos.x,
-                       m_pCurStates->m_TextPos.y + m_pCurStates->m_TextRise))));
+    pText->SetPosition(
+        m_mtContentToUser.Transform(m_pCurStates->m_CTM.Transform(
+            m_pCurStates->m_TextMatrix.Transform(CFX_PointF(
+                m_pCurStates->m_TextPos.x,
+                m_pCurStates->m_TextPos.y + m_pCurStates->m_TextRise)))));
 
     m_pCurStates->m_TextPos +=
         pText->CalcPositionData(m_pCurStates->m_TextHorzScale);

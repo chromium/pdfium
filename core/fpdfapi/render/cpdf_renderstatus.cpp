@@ -1590,7 +1590,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
 
       CFX_Matrix text_matrix = textobj->GetTextMatrix();
       CPDF_TextRenderer::DrawTextPath(
-          &text_device, textobj->m_CharCodes, textobj->m_CharPos,
+          &text_device, textobj->GetCharCodes(), textobj->GetCharPositions(),
           textobj->m_TextState.GetFont(), textobj->m_TextState.GetFontSize(),
           &text_matrix, &new_matrix, textobj->m_GraphState.GetObject(),
           (FX_ARGB)-1, 0, nullptr, 0);
@@ -1712,7 +1712,7 @@ void CPDF_RenderStatus::DebugVerifyDeviceIsPreMultiplied() const {
 bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                     const CFX_Matrix* pObj2Device,
                                     CFX_PathData* pClippingPath) {
-  if (textobj->m_CharCodes.empty())
+  if (textobj->GetCharCodes().empty())
     return true;
 
   const TextRenderingMode text_render_mode = textobj->m_TextState.GetTextMode();
@@ -1805,14 +1805,15 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
     if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH)
       flag |= FXFILL_NOPATHSMOOTH;
     return CPDF_TextRenderer::DrawTextPath(
-        m_pDevice, textobj->m_CharCodes, textobj->m_CharPos, pFont, font_size,
-        &text_matrix, pDeviceMatrix, textobj->m_GraphState.GetObject(),
-        fill_argb, stroke_argb, pClippingPath, flag);
+        m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
+        font_size, &text_matrix, pDeviceMatrix,
+        textobj->m_GraphState.GetObject(), fill_argb, stroke_argb,
+        pClippingPath, flag);
   }
   text_matrix.Concat(*pObj2Device);
-  return CPDF_TextRenderer::DrawNormalText(m_pDevice, textobj->m_CharCodes,
-                                           textobj->m_CharPos, pFont, font_size,
-                                           &text_matrix, fill_argb, &m_Options);
+  return CPDF_TextRenderer::DrawNormalText(
+      m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
+      font_size, &text_matrix, fill_argb, &m_Options);
 }
 
 RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
@@ -1844,14 +1845,14 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   int device_class = m_pDevice->GetDeviceClass();
   std::vector<FXTEXT_GLYPHPOS> glyphs;
   if (device_class == FXDC_DISPLAY)
-    glyphs.resize(textobj->m_CharCodes.size());
+    glyphs.resize(textobj->GetCharCodes().size());
   else if (fill_alpha < 255)
     return false;
 
   CPDF_RefType3Cache refTypeCache(pType3Font);
-  for (int iChar = 0; iChar < pdfium::CollectionSize<int>(textobj->m_CharCodes);
-       iChar++) {
-    uint32_t charcode = textobj->m_CharCodes[iChar];
+  for (int iChar = 0;
+       iChar < pdfium::CollectionSize<int>(textobj->GetCharCodes()); iChar++) {
+    uint32_t charcode = textobj->GetCharCodes()[iChar];
     if (charcode == static_cast<uint32_t>(-1))
       continue;
 
@@ -1860,7 +1861,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       continue;
 
     CFX_Matrix matrix = char_matrix;
-    matrix.e += iChar ? textobj->m_CharPos[iChar - 1] : 0;
+    matrix.e += iChar ? textobj->GetCharPositions()[iChar - 1] : 0;
     matrix.Concat(text_matrix);
     matrix.Concat(*pObj2Device);
     if (!pType3Char->LoadBitmap(m_pContext.Get())) {
@@ -2014,7 +2015,8 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     return;
   }
   CPDF_CharPosList CharPosList;
-  CharPosList.Load(textobj->m_CharCodes, textobj->m_CharPos, pFont, font_size);
+  CharPosList.Load(textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
+                   font_size);
   for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
     FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
     auto* font = charpos.m_FallbackFontPosition == -1

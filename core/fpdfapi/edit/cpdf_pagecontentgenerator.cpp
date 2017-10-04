@@ -388,7 +388,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
   *buf << "/" << PDF_NameEncode(dictName) << " " << pTextObj->GetFontSize()
        << " Tf ";
   ByteString text;
-  for (uint32_t charcode : pTextObj->m_CharCodes) {
+  for (uint32_t charcode : pTextObj->GetCharCodes()) {
     if (charcode != CPDF_Font::kInvalidCharCode)
       pFont->AppendChar(&text, charcode);
   }
