@@ -37,6 +37,6 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
 
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  m_pEmbeddedMap = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;
-  m_EmbeddedCount = pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count;
+  std::tie(m_EmbeddedCount, m_pEmbeddedMap) =
+      pFontGlobals->GetEmbeddedToUnicode(charset);
 }

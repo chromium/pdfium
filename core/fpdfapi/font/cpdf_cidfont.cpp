@@ -147,9 +147,14 @@ wchar_t EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
     return 0;
 
   uint16_t cid = FPDFAPI_CIDFromCharCode(pEmbedMap, charcode);
-  const auto& codes = GetFontGlobals()->m_EmbeddedToUnicodes[charset];
-  if (codes.m_pMap && cid && cid < codes.m_Count)
-    return codes.m_pMap[cid];
+  if (!cid)
+    return 0;
+
+  const uint16_t* map;
+  uint32_t count;
+  std::tie(count, map) = GetFontGlobals()->GetEmbeddedToUnicode(charset);
+  if (map && cid < count)
+    return map[cid];
   return 0;
 }
 
@@ -159,16 +164,17 @@ uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
   if (!IsValidEmbeddedCharcodeFromUnicodeCharset(charset))
     return 0;
 
-  const auto& codes = GetFontGlobals()->m_EmbeddedToUnicodes[charset];
-  const uint16_t* pCodes = codes.m_pMap;
-  if (!pCodes)
+  const uint16_t* map;
+  uint32_t count;
+  std::tie(count, map) = GetFontGlobals()->GetEmbeddedToUnicode(charset);
+  if (!map)
     return 0;
 
-  for (uint32_t i = 0; i < codes.m_Count; ++i) {
-    if (pCodes[i] == unicode) {
-      uint32_t CharCode = FPDFAPI_CharCodeFromCID(pEmbedMap, i);
-      if (CharCode)
-        return CharCode;
+  for (uint32_t i = 0; i < count; ++i) {
+    if (map[i] == unicode) {
+      uint32_t charCode = FPDFAPI_CharCodeFromCID(pEmbedMap, i);
+      if (charCode)
+        return charCode;
     }
   }
   return 0;
@@ -359,11 +365,11 @@ bool CPDF_CIDFont::Load() {
   ByteString subtype = pCIDFontDict->GetStringFor("Subtype");
   m_bType1 = (subtype == "CIDFontType0");
 
-  CPDF_CMapManager& manager = GetFontGlobals()->m_CMapManager;
+  CPDF_CMapManager* manager = GetFontGlobals()->GetCMapManager();
   if (pEncoding->IsName()) {
     ByteString cmap = pEncoding->GetString();
     bool bPromptCJK = m_pFontFile && m_bType1;
-    m_pCMap = manager.GetPredefinedCMap(cmap, bPromptCJK);
+    m_pCMap = manager->GetPredefinedCMap(cmap, bPromptCJK);
     if (!m_pCMap)
       return false;
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
@@ -386,7 +392,7 @@ bool CPDF_CIDFont::Load() {
   if (m_Charset != CIDSET_UNKNOWN) {
     bool bPromptCJK = !m_pFontFile && (m_pCMap->m_Coding == CIDCODING_CID ||
                                        pCIDFontDict->KeyExist("W"));
-    m_pCID2UnicodeMap = manager.GetCID2UnicodeMap(m_Charset, bPromptCJK);
+    m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset, bPromptCJK);
   }
   if (m_Font.GetFace()) {
     if (m_bType1)
@@ -841,9 +847,10 @@ void CPDF_CIDFont::LoadGB2312() {
 
   m_Charset = CIDSET_GB1;
   m_bType1 = false;
-  CPDF_CMapManager& manager = GetFontGlobals()->m_CMapManager;
-  m_pCMap = manager.GetPredefinedCMap("GBK-EUC-H", false);
-  m_pCID2UnicodeMap = manager.GetCID2UnicodeMap(m_Charset, false);
+
+  CPDF_CMapManager* manager = GetFontGlobals()->GetCMapManager();
+  m_pCMap = manager->GetPredefinedCMap("GBK-EUC-H", false);
+  m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset, false);
   if (!IsEmbedded())
     LoadSubstFont();
 

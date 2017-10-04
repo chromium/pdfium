@@ -57,11 +57,8 @@ static const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
 void CPDF_ModuleMgr::LoadEmbeddedJapan1CMaps() {
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  pFontGlobals->m_EmbeddedCharsets[CIDSET_JAPAN1].m_pMapList =
-      g_FXCMAP_Japan1_cmaps;
-  pFontGlobals->m_EmbeddedCharsets[CIDSET_JAPAN1].m_Count =
-      FX_ArraySize(g_FXCMAP_Japan1_cmaps);
-  pFontGlobals->m_EmbeddedToUnicodes[CIDSET_JAPAN1].m_pMap =
-      g_FXCMAP_Japan1CID2Unicode_4;
-  pFontGlobals->m_EmbeddedToUnicodes[CIDSET_JAPAN1].m_Count = 15444;
+  pFontGlobals->SetEmbeddedCharset(CIDSET_JAPAN1, g_FXCMAP_Japan1_cmaps,
+                                   FX_ArraySize(g_FXCMAP_Japan1_cmaps));
+  pFontGlobals->SetEmbeddedToUnicode(CIDSET_JAPAN1,
+                                     g_FXCMAP_Japan1CID2Unicode_4, 15444);
 }
