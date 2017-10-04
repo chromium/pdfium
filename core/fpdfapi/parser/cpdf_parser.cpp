@@ -101,7 +101,6 @@ CPDF_Parser::CPDF_Parser()
       m_bHasParsed(false),
       m_bXRefStream(false),
       m_FileVersion(0),
-      m_pEncryptDict(nullptr),
       m_TrailerData(pdfium::MakeUnique<TrailerData>()) {}
 
 CPDF_Parser::~CPDF_Parser() {
