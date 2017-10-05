@@ -8,6 +8,7 @@
 #define CORE_FXCRT_XML_CXML_ELEMENT_H_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/xml/cxml_attrmap.h"
@@ -87,6 +88,10 @@ class CXML_Element : public CXML_Object {
     return attr;
   }
 
+  void AppendChild(std::unique_ptr<CXML_Object> child) {
+    m_Children.push_back(std::move(child));
+  }
+
   uint32_t CountChildren() const { return m_Children.size(); }
   uint32_t CountElements(const ByteStringView& space,
                          const ByteStringView& tag) const;
@@ -98,10 +103,13 @@ class CXML_Element : public CXML_Object {
   void SetTag(const ByteStringView& qTagName);
   void RemoveChild(uint32_t index);
 
- private:
-  friend class CXML_Parser;
-  friend class CXML_Composer;
+  void SetAttribute(const ByteString& space,
+                    const ByteString& name,
+                    const WideString& value) {
+    m_AttrMap.SetAt(space, name, value);
+  }
 
+ private:
   UnownedPtr<const CXML_Element> const m_pParent;
   ByteString m_QSpaceName;
   ByteString m_TagName;

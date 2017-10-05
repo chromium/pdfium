@@ -424,7 +424,7 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
 
       WideString attr_value;
       GetAttrValue(attr_value);
-      pElement->m_AttrMap.SetAt(attr_space, attr_name, attr_value);
+      pElement->SetAttribute(attr_space, attr_name, attr_value);
     }
     m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);
     if (m_dwIndex < m_dwBufferSize || IsEOF())
@@ -498,7 +498,7 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
             if (!pSubElement)
               break;
 
-            pElement->m_Children.push_back(std::move(pSubElement));
+            pElement->AppendChild(std::move(pSubElement));
             SkipWhiteSpaces();
           }
           break;
@@ -541,6 +541,5 @@ void CXML_Parser::InsertContentSegment(bool bCDATA,
   if (content.IsEmpty())
     return;
 
-  pElement->m_Children.push_back(
-      pdfium::MakeUnique<CXML_Content>(bCDATA, content));
+  pElement->AppendChild(pdfium::MakeUnique<CXML_Content>(bCDATA, content));
 }
