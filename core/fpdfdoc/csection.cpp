@@ -172,7 +172,7 @@ CPVT_WordPlace CSection::SearchWordPlace(
 
   CLine* pLine = m_LineArray[lineplace.nLineIndex].get();
   return SearchWordPlace(
-      fx - m_SecInfo.rcSection.left,
+      fx - m_Rect.left,
       CPVT_WordRange(pLine->GetNextWordPlace(pLine->GetBeginWordPlace()),
                      pLine->GetEndWordPlace()));
 }

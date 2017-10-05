@@ -363,8 +363,6 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/cpvt_generateap.h",
     "core/fpdfdoc/cpvt_line.h",
     "core/fpdfdoc/cpvt_lineinfo.h",
-    "core/fpdfdoc/cpvt_sectioninfo.cpp",
-    "core/fpdfdoc/cpvt_sectioninfo.h",
     "core/fpdfdoc/cpvt_word.h",
     "core/fpdfdoc/cpvt_wordinfo.cpp",
     "core/fpdfdoc/cpvt_wordinfo.h",

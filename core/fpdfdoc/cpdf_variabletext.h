@@ -23,8 +23,6 @@
 class CPVT_Word;
 class CSection;
 class IPVT_FontMap;
-struct CPVT_SectionInfo;
-
 struct CPVT_WordInfo;
 
 #define VARIABLETEXT_HALF 0.5f
@@ -178,8 +176,7 @@ class CPDF_VariableText {
   int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);
   bool IsLatinWord(uint16_t word);
 
-  CPVT_WordPlace AddSection(const CPVT_WordPlace& place,
-                            const CPVT_SectionInfo& secinfo);
+  CPVT_WordPlace AddSection(const CPVT_WordPlace& place);
   CPVT_WordPlace AddLine(const CPVT_WordPlace& place,
                          const CPVT_LineInfo& lineinfo);
   CPVT_WordPlace AddWord(const CPVT_WordPlace& place,
@@ -187,7 +184,6 @@ class CPDF_VariableText {
   bool GetWordInfo(const CPVT_WordPlace& place, CPVT_WordInfo& wordinfo);
   bool SetWordInfo(const CPVT_WordPlace& place, const CPVT_WordInfo& wordinfo);
   bool GetLineInfo(const CPVT_WordPlace& place, CPVT_LineInfo& lineinfo);
-  bool GetSectionInfo(const CPVT_WordPlace& place, CPVT_SectionInfo& secinfo);
   float GetWordFontSize();
   int32_t GetWordFontIndex(const CPVT_WordInfo& WordInfo);
 

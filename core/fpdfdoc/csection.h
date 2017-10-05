@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fpdfdoc/cline.h"
-#include "core/fpdfdoc/cpvt_sectioninfo.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fpdfdoc/ctypeset.h"
@@ -48,7 +47,7 @@ class CSection final {
   CPVT_WordPlace SearchWordPlace(float fx, const CPVT_WordRange& range) const;
 
   CPVT_WordPlace SecPlace;
-  CPVT_SectionInfo m_SecInfo;
+  CPVT_FloatRect m_Rect;
   std::vector<std::unique_ptr<CLine>> m_LineArray;
   std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
 
