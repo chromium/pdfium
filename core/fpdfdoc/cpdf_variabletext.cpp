@@ -237,8 +237,6 @@ bool CPDF_VariableText::Iterator::GetSection(CPVT_Section& section) const {
 
   CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
   section.rcSection = m_pVT->InToOut(pSection->m_SecInfo.rcSection);
-  if (pSection->m_SecInfo.pSecProps)
-    section.SecProps = *pSection->m_SecInfo.pSecProps;
   if (pSection->m_SecInfo.pWordProps)
     section.WordProps = *pSection->m_SecInfo.pWordProps;
   return true;
@@ -249,8 +247,6 @@ bool CPDF_VariableText::Iterator::SetSection(const CPVT_Section& section) {
     return false;
 
   CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
-  if (pSection->m_SecInfo.pSecProps)
-    *pSection->m_SecInfo.pSecProps = section.SecProps;
   if (pSection->m_SecInfo.pWordProps)
     *pSection->m_SecInfo.pWordProps = section.WordProps;
   return true;

@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fpdfdoc/cpvt_floatrect.h"
-#include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
 
 struct CPVT_SectionInfo {
@@ -22,7 +21,6 @@ struct CPVT_SectionInfo {
 
   CPVT_FloatRect rcSection;
   int32_t nTotalLine;
-  std::unique_ptr<CPVT_SecProps> pSecProps;
   std::unique_ptr<CPVT_WordProps> pWordProps;
 };
 

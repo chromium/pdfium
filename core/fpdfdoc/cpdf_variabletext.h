@@ -23,7 +23,6 @@
 class CPVT_Word;
 class CSection;
 class IPVT_FontMap;
-struct CPVT_SecProps;
 struct CPVT_Section;
 struct CPVT_SectionInfo;
 

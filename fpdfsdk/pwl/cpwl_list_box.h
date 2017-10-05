@@ -16,7 +16,6 @@ class CPWL_ListCtrl;
 class CPWL_List_Notify;
 class CPWL_ListBox;
 class IPWL_Filler_Notify;
-struct CPVT_SecProps;
 struct CPVT_WordPlace;
 struct CPVT_WordProps;
 
