@@ -59,9 +59,6 @@ class CPDF_ApSettings {
   CPDF_IconFit GetIconFit() const;
   int GetTextPosition() const;
 
- private:
-  friend class CPDF_FormControl;
-
   FX_ARGB GetColor(int& iColorType, const ByteString& csEntry) const;
   float GetOriginalColor(int index, const ByteString& csEntry) const;
   void GetOriginalColor(int& iColorType,
@@ -71,6 +68,7 @@ class CPDF_ApSettings {
   WideString GetCaption(const ByteString& csEntry) const;
   CPDF_Stream* GetIcon(const ByteString& csEntry) const;
 
+ private:
   UnownedPtr<CPDF_Dictionary> const m_pDict;
 };
 
