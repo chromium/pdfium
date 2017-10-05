@@ -1535,8 +1535,8 @@ bool CPWL_EditImpl::InsertWord(uint16_t word,
     return false;
 
   m_pVT->UpdateWordPlace(m_wpCaret);
-  SetCaret(m_pVT->InsertWord(m_wpCaret, word,
-                             GetCharSetFromUnicode(word, charset), pWordProps));
+  SetCaret(
+      m_pVT->InsertWord(m_wpCaret, word, GetCharSetFromUnicode(word, charset)));
   m_SelState.Set(m_wpCaret, m_wpCaret);
   if (m_wpCaret == m_wpOldCaret)
     return false;
@@ -1562,7 +1562,7 @@ bool CPWL_EditImpl::InsertReturn(const CPVT_SecProps* pSecProps,
     return false;
 
   m_pVT->UpdateWordPlace(m_wpCaret);
-  SetCaret(m_pVT->InsertSection(m_wpCaret, pSecProps, pWordProps));
+  SetCaret(m_pVT->InsertSection(m_wpCaret));
   m_SelState.Set(m_wpCaret, m_wpCaret);
   if (m_wpCaret == m_wpOldCaret)
     return false;
@@ -1846,18 +1846,18 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
       uint16_t word = sText[i];
       switch (word) {
         case 0x0D:
-          wp = m_pVT->InsertSection(wp, nullptr, nullptr);
+          wp = m_pVT->InsertSection(wp);
           if (i + 1 < sz && sText[i + 1] == 0x0A)
             i++;
           break;
         case 0x0A:
-          wp = m_pVT->InsertSection(wp, nullptr, nullptr);
+          wp = m_pVT->InsertSection(wp);
           break;
         case 0x09:
           word = 0x20;
         default:
-          wp = m_pVT->InsertWord(wp, word, GetCharSetFromUnicode(word, charset),
-                                 nullptr);
+          wp =
+              m_pVT->InsertWord(wp, word, GetCharSetFromUnicode(word, charset));
           break;
       }
     }

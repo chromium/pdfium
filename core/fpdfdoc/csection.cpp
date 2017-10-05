@@ -133,7 +133,7 @@ CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
   while (nLeft <= nRight) {
     CLine* pLine = m_LineArray[nMid].get();
     float fTop = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineAscent -
-                 m_pVT->GetLineLeading(m_SecInfo);
+                 m_pVT->GetLineLeading();
     float fBottom = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineDescent;
     if (IsFloatBigger(point.y, fTop))
       bUp = false;
