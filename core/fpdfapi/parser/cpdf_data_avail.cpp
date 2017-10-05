@@ -1168,11 +1168,12 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
   if (m_bLinearedDataOK)
     return DataAvailable;
   ASSERT(m_pLinearized);
-  if (!m_pLinearized->GetMainXRefTableFirstEntryOffset())
+  if (!m_pLinearized->GetMainXRefTableFirstEntryOffset() || !m_pDocument ||
+      !m_pDocument->GetParser() || !m_pDocument->GetParser()->GetTrailer()) {
     return DataError;
+  }
 
   if (!m_bMainXRefLoadTried) {
-    ASSERT(m_pDocument->GetParser()->GetTrailer());
     const FX_SAFE_FILESIZE main_xref_offset =
         m_pDocument->GetParser()->GetTrailer()->GetIntegerFor("Prev");
     if (!main_xref_offset.IsValid())
