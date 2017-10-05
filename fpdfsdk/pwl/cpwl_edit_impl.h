@@ -11,7 +11,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -135,8 +134,7 @@ class CFXEU_InsertWord : public IFX_Edit_UndoItem {
                    const CPVT_WordPlace& wpOldPlace,
                    const CPVT_WordPlace& wpNewPlace,
                    uint16_t word,
-                   int32_t charset,
-                   const CPVT_WordProps* pWordProps);
+                   int32_t charset);
   ~CFXEU_InsertWord() override;
 
   // IFX_Edit_UndoItem:
@@ -150,16 +148,13 @@ class CFXEU_InsertWord : public IFX_Edit_UndoItem {
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
   int32_t m_nCharset;
-  CPVT_WordProps m_WordProps;
 };
 
 class CFXEU_InsertReturn : public IFX_Edit_UndoItem {
  public:
   CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
                      const CPVT_WordPlace& wpOldPlace,
-                     const CPVT_WordPlace& wpNewPlace,
-                     const CPVT_SecProps* pSecProps,
-                     const CPVT_WordProps* pWordProps);
+                     const CPVT_WordPlace& wpNewPlace);
   ~CFXEU_InsertReturn() override;
 
   // IFX_Edit_UndoItem:
@@ -171,8 +166,6 @@ class CFXEU_InsertReturn : public IFX_Edit_UndoItem {
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
-  CPVT_SecProps m_SecProps;
-  CPVT_WordProps m_WordProps;
 };
 
 class CFXEU_Backspace : public IFX_Edit_UndoItem {
@@ -181,9 +174,7 @@ class CFXEU_Backspace : public IFX_Edit_UndoItem {
                   const CPVT_WordPlace& wpOldPlace,
                   const CPVT_WordPlace& wpNewPlace,
                   uint16_t word,
-                  int32_t charset,
-                  const CPVT_SecProps& SecProps,
-                  const CPVT_WordProps& WordProps);
+                  int32_t charset);
   ~CFXEU_Backspace() override;
 
   // IFX_Edit_UndoItem:
@@ -197,8 +188,6 @@ class CFXEU_Backspace : public IFX_Edit_UndoItem {
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
   int32_t m_nCharset;
-  CPVT_SecProps m_SecProps;
-  CPVT_WordProps m_WordProps;
 };
 
 class CFXEU_Delete : public IFX_Edit_UndoItem {
@@ -208,8 +197,6 @@ class CFXEU_Delete : public IFX_Edit_UndoItem {
                const CPVT_WordPlace& wpNewPlace,
                uint16_t word,
                int32_t charset,
-               const CPVT_SecProps& SecProps,
-               const CPVT_WordProps& WordProps,
                bool bSecEnd);
   ~CFXEU_Delete() override;
 
@@ -224,8 +211,6 @@ class CFXEU_Delete : public IFX_Edit_UndoItem {
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
   int32_t m_nCharset;
-  CPVT_SecProps m_SecProps;
-  CPVT_WordProps m_WordProps;
   bool m_bSecEnd;
 };
 
@@ -398,13 +383,9 @@ class CPWL_EditImpl {
 
   bool InsertWord(uint16_t word,
                   int32_t charset,
-                  const CPVT_WordProps* pWordProps,
                   bool bAddUndo,
                   bool bPaint);
-  bool InsertReturn(const CPVT_SecProps* pSecProps,
-                    const CPVT_WordProps* pWordProps,
-                    bool bAddUndo,
-                    bool bPaint);
+  bool InsertReturn(bool bAddUndo, bool bPaint);
   bool Backspace(bool bAddUndo, bool bPaint);
   bool Delete(bool bAddUndo, bool bPaint);
   bool Clear(bool bAddUndo, bool bPaint);
