@@ -445,7 +445,6 @@ void CTypeset::OutputLines() {
   int32_t nTotalLines =
       pdfium::CollectionSize<int32_t>(m_pSection->m_LineArray);
   if (nTotalLines > 0) {
-    m_pSection->m_SecInfo.nTotalLine = nTotalLines;
     for (int32_t l = 0; l < nTotalLines; l++) {
       CLine* pLine = m_pSection->m_LineArray[l].get();
       switch (m_pVT->GetAlignment()) {

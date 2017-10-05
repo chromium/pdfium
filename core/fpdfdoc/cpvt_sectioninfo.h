@@ -19,7 +19,6 @@ struct CPVT_SectionInfo {
   void operator=(const CPVT_SectionInfo& other);
 
   CPVT_FloatRect rcSection;
-  int32_t nTotalLine;
 };
 
 #endif  // CORE_FPDFDOC_CPVT_SECTIONINFO_H_

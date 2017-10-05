@@ -7,7 +7,7 @@
 #include "core/fpdfdoc/cpvt_sectioninfo.h"
 #include "third_party/base/ptr_util.h"
 
-CPVT_SectionInfo::CPVT_SectionInfo() : rcSection(), nTotalLine(0) {}
+CPVT_SectionInfo::CPVT_SectionInfo() : rcSection() {}
 
 CPVT_SectionInfo::~CPVT_SectionInfo() {}
 
@@ -18,7 +18,5 @@ CPVT_SectionInfo::CPVT_SectionInfo(const CPVT_SectionInfo& other) {
 void CPVT_SectionInfo::operator=(const CPVT_SectionInfo& other) {
   if (this == &other)
     return;
-
   rcSection = other.rcSection;
-  nTotalLine = other.nTotalLine;
 }
