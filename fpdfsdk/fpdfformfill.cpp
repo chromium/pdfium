@@ -120,25 +120,27 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     pDevice->SetClip_Rect(clip);
 
     CPDF_RenderOptions options;
+    uint32_t option_flags = options.GetFlags();
     if (flags & FPDF_LCD_TEXT)
-      options.m_Flags |= RENDER_CLEARTYPE;
+      option_flags |= RENDER_CLEARTYPE;
     else
-      options.m_Flags &= ~RENDER_CLEARTYPE;
+      option_flags &= ~RENDER_CLEARTYPE;
+    options.SetFlags(option_flags);
 
     // Grayscale output
     if (flags & FPDF_GRAYSCALE)
-      options.m_ColorMode = CPDF_RenderOptions::kGray;
+      options.SetColorMode(CPDF_RenderOptions::kGray);
 
-    options.m_bDrawAnnots = flags & FPDF_ANNOT;
+    options.SetDrawAnnots(flags & FPDF_ANNOT);
 
 #ifdef PDF_ENABLE_XFA
-    options.m_pOCContext =
-        pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View);
+    options.SetOCContext(
+        pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View));
     if (CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true))
       pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 #else   // PDF_ENABLE_XFA
-    options.m_pOCContext = pdfium::MakeRetain<CPDF_OCContext>(
-        pPage->m_pDocument.Get(), CPDF_OCContext::View);
+    options.SetOCContext(pdfium::MakeRetain<CPDF_OCContext>(
+        pPage->m_pDocument.Get(), CPDF_OCContext::View));
     if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))
       pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
 #endif  // PDF_ENABLE_XFA

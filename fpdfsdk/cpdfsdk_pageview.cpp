@@ -117,7 +117,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   CPDFSDK_AnnotIteration annotIteration(this, true);
   for (const auto& pSDKAnnot : annotIteration) {
     m_pFormFillEnv->GetAnnotHandlerMgr()->Annot_OnDraw(
-        this, pSDKAnnot.Get(), pDevice, pUser2Device, pOptions->m_bDrawAnnots);
+        this, pSDKAnnot.Get(), pDevice, pUser2Device,
+        pOptions->GetDrawAnnots());
   }
 }
 

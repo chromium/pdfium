@@ -40,6 +40,24 @@ class CPDF_RenderOptions {
 
   FX_ARGB TranslateColor(FX_ARGB argb) const;
 
+  void SetColorMode(Type mode) { m_ColorMode = mode; }
+  bool ColorModeIs(Type mode) const { return m_ColorMode == mode; }
+
+  bool HasFlag(uint32_t flag) const { return !!(m_Flags & flag); }
+  uint32_t GetFlags() const { return m_Flags; }
+  void SetFlags(uint32_t flags) { m_Flags = flags; }
+
+  uint32_t GetCacheSizeLimit() const { return m_dwLimitCacheSize; }
+
+  void SetDrawAnnots(bool draw) { m_bDrawAnnots = draw; }
+  bool GetDrawAnnots() const { return m_bDrawAnnots; }
+
+  void SetOCContext(RetainPtr<CPDF_OCContext> context) {
+    m_pOCContext = context;
+  }
+  CPDF_OCContext* GetOCContext() const { return m_pOCContext.Get(); }
+
+ private:
   Type m_ColorMode;
   uint32_t m_Flags;
   uint32_t m_dwLimitCacheSize;

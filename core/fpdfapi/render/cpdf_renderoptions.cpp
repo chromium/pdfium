@@ -22,9 +22,9 @@ CPDF_RenderOptions::CPDF_RenderOptions(const CPDF_RenderOptions& rhs)
 CPDF_RenderOptions::~CPDF_RenderOptions() {}
 
 FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
-  if (m_ColorMode == kNormal)
+  if (ColorModeIs(kNormal))
     return argb;
-  if (m_ColorMode == kAlpha)
+  if (ColorModeIs(kAlpha))
     return argb;
 
   int a;

@@ -76,8 +76,8 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
   CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
   m_BitmapAlpha = FXSYS_round(255 * state.GetFillAlpha());
   m_pDIBSource = m_Loader.m_pBitmap;
-  if (m_pRenderStatus->GetRenderOptions()->m_ColorMode ==
-          CPDF_RenderOptions::kAlpha &&
+  if (m_pRenderStatus->GetRenderOptions()->ColorModeIs(
+          CPDF_RenderOptions::kAlpha) &&
       !m_Loader.m_pMask) {
     return StartBitmapAlpha();
   }
@@ -104,22 +104,22 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
         m_bPatternColor = true;
     }
     m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject.Get());
-  } else if (m_pRenderStatus->GetRenderOptions()->m_ColorMode ==
-             CPDF_RenderOptions::kGray) {
+  } else if (m_pRenderStatus->GetRenderOptions()->ColorModeIs(
+                 CPDF_RenderOptions::kGray)) {
     m_pClone = m_pDIBSource->Clone(nullptr);
     m_pClone->ConvertColorScale(0xffffff, 0);
     m_pDIBSource = m_pClone;
   }
   m_Flags = 0;
-  if (m_pRenderStatus->GetRenderOptions()->m_Flags & RENDER_FORCE_DOWNSAMPLE)
+  if (m_pRenderStatus->GetRenderOptions()->HasFlag(RENDER_FORCE_DOWNSAMPLE))
     m_Flags |= RENDER_FORCE_DOWNSAMPLE;
-  else if (m_pRenderStatus->GetRenderOptions()->m_Flags & RENDER_FORCE_HALFTONE)
+  else if (m_pRenderStatus->GetRenderOptions()->HasFlag(RENDER_FORCE_HALFTONE))
     m_Flags |= RENDER_FORCE_HALFTONE;
 
   if (m_pRenderStatus->GetRenderDevice()->GetDeviceClass() != FXDC_DISPLAY)
     HandleFilters();
 
-  if (m_pRenderStatus->GetRenderOptions()->m_Flags & RENDER_NOIMAGESMOOTH)
+  if (m_pRenderStatus->GetRenderOptions()->HasFlag(RENDER_NOIMAGESMOOTH))
     m_Flags |= FXDIB_NOSMOOTH;
   else if (m_pImageObject->GetImage()->IsInterpol())
     m_Flags |= FXDIB_INTERPOL;
@@ -173,8 +173,8 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
   m_BlendType = blendType;
   m_pObj2Device = pObj2Device;
   CPDF_Dictionary* pOC = m_pImageObject->GetImage()->GetOC();
-  if (pOC && m_pRenderStatus->GetRenderOptions()->m_pOCContext &&
-      !m_pRenderStatus->GetRenderOptions()->m_pOCContext->CheckOCGVisible(
+  if (pOC && m_pRenderStatus->GetRenderOptions()->GetOCContext() &&
+      !m_pRenderStatus->GetRenderOptions()->GetOCContext()->CheckOCGVisible(
           pOC)) {
     return false;
   }

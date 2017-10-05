@@ -125,19 +125,18 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
     return true;
   int FXGE_flags = 0;
   if (pOptions) {
-    uint32_t dwFlags = pOptions->m_Flags;
-    if (dwFlags & RENDER_CLEARTYPE) {
+    if (pOptions->HasFlag(RENDER_CLEARTYPE)) {
       FXGE_flags |= FXTEXT_CLEARTYPE;
-      if (dwFlags & RENDER_BGR_STRIPE)
+      if (pOptions->HasFlag(RENDER_BGR_STRIPE))
         FXGE_flags |= FXTEXT_BGR_STRIPE;
     }
-    if (dwFlags & RENDER_NOTEXTSMOOTH)
+    if (pOptions->HasFlag(RENDER_NOTEXTSMOOTH))
       FXGE_flags |= FXTEXT_NOSMOOTH;
-    if (dwFlags & RENDER_PRINTGRAPHICTEXT)
+    if (pOptions->HasFlag(RENDER_PRINTGRAPHICTEXT))
       FXGE_flags |= FXTEXT_PRINTGRAPHICTEXT;
-    if (dwFlags & RENDER_NO_NATIVETEXT)
+    if (pOptions->HasFlag(RENDER_NO_NATIVETEXT))
       FXGE_flags |= FXTEXT_NO_NATIVETEXT;
-    if (dwFlags & RENDER_PRINTIMAGETEXT)
+    if (pOptions->HasFlag(RENDER_PRINTIMAGETEXT))
       FXGE_flags |= FXTEXT_PRINTIMAGETEXT;
   } else {
     FXGE_flags = FXTEXT_CLEARTYPE;

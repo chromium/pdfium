@@ -59,8 +59,9 @@ void DrawTextString(CFX_RenderDevice* pDevice,
   }
 
   CPDF_RenderOptions ro;
-  ro.m_Flags = RENDER_CLEARTYPE;
-  ro.m_ColorMode = CPDF_RenderOptions::kNormal;
+  ro.SetFlags(RENDER_CLEARTYPE);
+
+  ro.SetColorMode(CPDF_RenderOptions::kNormal);
   CPDF_TextRenderer::DrawTextString(pDevice, pos.x, pos.y, pFont, fFontSize,
                                     &mt, str, crTextFill, nullptr, &ro);
 }

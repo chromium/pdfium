@@ -937,10 +937,11 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(CPDF_Document* pDoc,
   mtPattern2Bitmap.Concat(mtAdjust);
   CPDF_RenderOptions options;
   if (!pPattern->colored())
-    options.m_ColorMode = CPDF_RenderOptions::kAlpha;
+    options.SetColorMode(CPDF_RenderOptions::kAlpha);
 
   flags |= RENDER_FORCE_HALFTONE;
-  options.m_Flags = flags;
+  options.SetFlags(flags);
+
   CPDF_RenderContext context(pDoc, pCache);
   context.AppendLayer(pPattern->form(), &mtPattern2Bitmap);
   context.Render(&bitmap_device, &options, nullptr);
@@ -1084,8 +1085,8 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
     return;
   }
   m_pCurObj = pObj;
-  if (m_Options.m_pOCContext && pObj->m_ContentMark.HasRef()) {
-    if (!m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
+  if (m_Options.GetOCContext() && pObj->m_ContentMark.HasRef()) {
+    if (!m_Options.GetOCContext()->CheckObjectVisible(pObj)) {
       return;
     }
   }
@@ -1113,8 +1114,8 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
   }
 
   m_pCurObj = pObj;
-  if (m_Options.m_pOCContext && pObj->m_ContentMark.HasRef() &&
-      !m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
+  if (m_Options.GetOCContext() && pObj->m_ContentMark.HasRef() &&
+      !m_Options.GetOCContext()->CheckObjectVisible(pObj)) {
     return false;
   }
 
@@ -1254,8 +1255,8 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   DebugVerifyDeviceIsPreMultiplied();
 #endif
   CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDictFor("OC");
-  if (pOC && m_Options.m_pOCContext &&
-      !m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
+  if (pOC && m_Options.GetOCContext() &&
+      !m_Options.GetOCContext()->CheckOCGVisible(pOC)) {
     return true;
   }
   CFX_Matrix matrix = pFormObj->m_FormMatrix;
@@ -1295,11 +1296,11 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
   if (!IsAvailableMatrix(path_matrix))
     return true;
 
-  if (FillType && (m_Options.m_Flags & RENDER_RECT_AA))
+  if (FillType && (m_Options.HasFlag(RENDER_RECT_AA)))
     FillType |= FXFILL_RECT_AA;
-  if (m_Options.m_Flags & RENDER_FILL_FULLCOVER)
+  if (m_Options.HasFlag(RENDER_FILL_FULLCOVER))
     FillType |= FXFILL_FULLCOVER;
-  if (m_Options.m_Flags & RENDER_NOPATHSMOOTH)
+  if (m_Options.HasFlag(RENDER_NOPATHSMOOTH))
     FillType |= FXFILL_NOPATHSMOOTH;
   if (bStroke)
     FillType |= FX_FILL_STROKE;
@@ -1312,7 +1313,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
     FillType |= FX_FILL_TEXT_MODE;
 
   CFX_GraphState graphState = pPathObj->m_GraphState;
-  if (m_Options.m_Flags & RENDER_THINLINE)
+  if (m_Options.HasFlag(RENDER_THINLINE))
     graphState.SetLineWidth(0);
   return m_pDevice->DrawPathWithBlend(
       pPathObj->m_Path.GetObject(), &path_matrix, graphState.GetObject(),
@@ -1436,7 +1437,7 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
       continue;
 
     int fill_mode = FXFILL_WINDING;
-    if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH)
+    if (m_Options.HasFlag(RENDER_NOTEXTSMOOTH))
       fill_mode |= FXFILL_NOPATHSMOOTH;
     m_pDevice->SetClip_PathFill(pTextClippingPath.get(), nullptr, fill_mode);
     pTextClippingPath.reset();
@@ -1450,13 +1451,13 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
   path_matrix.Concat(*pObj2Device);
   if (bStroke) {
     CFX_GraphState graphState = pPathObj->m_GraphState;
-    if (m_Options.m_Flags & RENDER_THINLINE)
+    if (m_Options.HasFlag(RENDER_THINLINE))
       graphState.SetLineWidth(0);
     return m_pDevice->SetClip_PathStroke(pPathObj->m_Path.GetObject(),
                                          &path_matrix, graphState.GetObject());
   }
   int fill_mode = pPathObj->m_FillType;
-  if (m_Options.m_Flags & RENDER_NOPATHSMOOTH) {
+  if (m_Options.HasFlag(RENDER_NOPATHSMOOTH)) {
     fill_mode |= FXFILL_NOPATHSMOOTH;
   }
   return m_pDevice->SetClip_PathFill(pPathObj->m_Path.GetObject(), &path_matrix,
@@ -1497,7 +1498,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       (pPageObj->m_ClipPath.HasRef() && pPageObj->m_ClipPath.GetTextCount() &&
        m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
-  if ((m_Options.m_Flags & RENDER_OVERPRINT) && pPageObj->IsImage() &&
+  if ((m_Options.HasFlag(RENDER_OVERPRINT)) && pPageObj->IsImage() &&
       pPageObj->m_GeneralState.GetFillOP() &&
       pPageObj->m_GeneralState.GetStrokeOP()) {
     CPDF_Document* pDocument = nullptr;
@@ -1802,7 +1803,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
     }
     if (textobj->m_GeneralState.GetStrokeAdjust())
       flag |= FX_STROKE_ADJUST;
-    if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH)
+    if (m_Options.HasFlag(RENDER_NOTEXTSMOOTH))
       flag |= FXFILL_NOPATHSMOOTH;
     return CPDF_TextRenderer::DrawTextPath(
         m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
@@ -1880,9 +1881,12 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       }
       std::unique_ptr<CPDF_GraphicStates> pStates =
           CloneObjStates(textobj, false);
-      CPDF_RenderOptions Options = m_Options;
-      Options.m_Flags |= RENDER_FORCE_HALFTONE | RENDER_RECT_AA;
-      Options.m_Flags &= ~RENDER_FORCE_DOWNSAMPLE;
+      CPDF_RenderOptions options = m_Options;
+      uint32_t option_flags = options.GetFlags();
+      option_flags |= RENDER_FORCE_HALFTONE | RENDER_RECT_AA;
+      option_flags &= ~RENDER_FORCE_DOWNSAMPLE;
+      options.SetFlags(option_flags);
+
       CPDF_Dictionary* pFormResource = nullptr;
       if (pType3Char->m_pForm && pType3Char->m_pForm->m_pFormDict) {
         pFormResource =
@@ -1891,7 +1895,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       if (fill_alpha == 255) {
         CPDF_RenderStatus status;
         status.Initialize(m_pContext.Get(), m_pDevice, nullptr, nullptr, this,
-                          pStates.get(), &Options,
+                          pStates.get(), &options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
@@ -1912,7 +1916,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         bitmap_device.GetBitmap()->Clear(0);
         CPDF_RenderStatus status;
         status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr,
-                          this, pStates.get(), &Options,
+                          this, pStates.get(), &options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
@@ -2093,7 +2097,6 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
     return;
 
   pBitmap->Clear(background);
-  int fill_mode = m_Options.m_Flags;
   switch (pPattern->GetShadingType()) {
     case kInvalidShading:
     case kMaxShading:
@@ -2130,14 +2133,15 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
       // the case of dictionary at the moment.
       if (CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject())) {
         DrawCoonPatchMeshes(pPattern->GetShadingType(), pBitmap, &FinalMatrix,
-                            pStream, funcs, pColorSpace, fill_mode, alpha);
+                            pStream, funcs, pColorSpace, m_Options.GetFlags(),
+                            alpha);
       }
     } break;
   }
   if (bAlphaMode)
     pBitmap->LoadChannel(FXDIB_Red, pBitmap, FXDIB_Alpha);
 
-  if (m_Options.m_ColorMode == CPDF_RenderOptions::kGray)
+  if (m_Options.ColorModeIs(CPDF_RenderOptions::kGray))
     pBitmap->ConvertColorScale(0, 0xffffff);
   buffer.OutputToDevice();
 }
@@ -2169,7 +2173,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
       FXSYS_round(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
                                  : pPageObj->m_GeneralState.GetFillAlpha()));
   DrawShading(pattern, &matrix, rect, alpha,
-              m_Options.m_ColorMode == CPDF_RenderOptions::kAlpha);
+              m_Options.ColorModeIs(CPDF_RenderOptions::kAlpha));
 }
 
 void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
@@ -2184,7 +2188,7 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
   matrix.Concat(*pObj2Device);
   DrawShading(pShadingObj->m_pShading.Get(), &matrix, rect,
               FXSYS_round(255 * pShadingObj->m_GeneralState.GetFillAlpha()),
-              m_Options.m_ColorMode == CPDF_RenderOptions::kAlpha);
+              m_Options.ColorModeIs(CPDF_RenderOptions::kAlpha));
 }
 
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
@@ -2296,19 +2300,19 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   if (width * height < 16) {
     RetainPtr<CFX_DIBitmap> pEnlargedBitmap =
         DrawPatternBitmap(m_pContext->GetDocument(), m_pContext->GetPageCache(),
-                          pPattern, pObj2Device, 8, 8, m_Options.m_Flags);
+                          pPattern, pObj2Device, 8, 8, m_Options.GetFlags());
     pPatternBitmap = pEnlargedBitmap->StretchTo(width, height, 0, nullptr);
   } else {
     pPatternBitmap = DrawPatternBitmap(
         m_pContext->GetDocument(), m_pContext->GetPageCache(), pPattern,
-        pObj2Device, width, height, m_Options.m_Flags);
+        pObj2Device, width, height, m_Options.GetFlags());
   }
   if (!pPatternBitmap)
     return;
 
-  if (m_Options.m_ColorMode == CPDF_RenderOptions::kGray) {
+  if (m_Options.ColorModeIs(CPDF_RenderOptions::kGray))
     pPatternBitmap->ConvertColorScale(0, 0xffffff);
-  }
+
   FX_ARGB fill_argb = GetFillArgb(pPageObj);
   int clip_width = clip_box.right - clip_box.left;
   int clip_height = clip_box.bottom - clip_box.top;
@@ -2611,8 +2615,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     pFormResource = form.m_pFormDict->GetDictFor("Resources");
   }
   CPDF_RenderOptions options;
-  options.m_ColorMode =
-      bLuminosity ? CPDF_RenderOptions::kNormal : CPDF_RenderOptions::kAlpha;
+  options.SetColorMode(bLuminosity ? CPDF_RenderOptions::kNormal
+                                   : CPDF_RenderOptions::kAlpha);
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr, nullptr,
                     nullptr, &options, 0, m_bDropObjects, pFormResource, true,

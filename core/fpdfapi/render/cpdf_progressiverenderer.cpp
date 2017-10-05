@@ -80,7 +80,7 @@ void CPDF_ProgressiveRenderer::Continue(IFX_PauseIndicator* pPause) {
           pCurObj->m_Right >= m_ClipRect.left &&
           pCurObj->m_Bottom <= m_ClipRect.top &&
           pCurObj->m_Top >= m_ClipRect.bottom) {
-        if (m_pOptions->m_Flags & RENDER_BREAKFORMASKS && pCurObj->IsImage() &&
+        if (m_pOptions->HasFlag(RENDER_BREAKFORMASKS) && pCurObj->IsImage() &&
             pCurObj->AsImage()->GetImage()->IsMask()) {
           if (m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
             m_LastObjectRendered = iter;
@@ -94,10 +94,10 @@ void CPDF_ProgressiveRenderer::Continue(IFX_PauseIndicator* pPause) {
                 pCurObj, &m_pCurrentLayer->m_Matrix, pPause)) {
           return;
         }
-        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions()->m_Flags &
-                                      RENDER_LIMITEDIMAGECACHE) {
+        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions()->HasFlag(
+                                      RENDER_LIMITEDIMAGECACHE)) {
           m_pContext->GetPageCache()->CacheOptimization(
-              m_pRenderStatus->GetRenderOptions()->m_dwLimitCacheSize);
+              m_pRenderStatus->GetRenderOptions()->GetCacheSizeLimit());
         }
         if (pCurObj->IsForm() || pCurObj->IsShading())
           nObjsToGo = 0;
