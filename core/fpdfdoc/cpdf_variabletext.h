@@ -42,9 +42,6 @@ class CPDF_VariableText {
     bool NextWord();
     bool PrevWord();
     bool NextLine();
-    bool PrevLine();
-    bool NextSection();
-    bool PrevSection();
     bool GetWord(CPVT_Word& word) const;
     bool GetLine(CPVT_Line& line) const;
     bool GetSection(CPVT_Section& section) const;

@@ -132,42 +132,6 @@ bool CPDF_VariableText::Iterator::NextLine() {
   return false;
 }
 
-bool CPDF_VariableText::Iterator::PrevLine() {
-  if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
-    return false;
-
-  if (m_CurPos.nLineIndex > 0) {
-    m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex - 1, -1);
-    return true;
-  }
-  if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex - 1))
-    return false;
-
-  CSection* pLastSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex - 1].get();
-  m_CurPos = CPVT_WordPlace(
-      m_CurPos.nSecIndex - 1,
-      pdfium::CollectionSize<int32_t>(pLastSection->m_LineArray) - 1, -1);
-  return true;
-}
-
-bool CPDF_VariableText::Iterator::NextSection() {
-  if (m_CurPos.nSecIndex <
-      pdfium::CollectionSize<int32_t>(m_pVT->m_SectionArray) - 1) {
-    m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex + 1, 0, -1);
-    return true;
-  }
-  return false;
-}
-
-bool CPDF_VariableText::Iterator::PrevSection() {
-  ASSERT(m_pVT);
-  if (m_CurPos.nSecIndex > 0) {
-    m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex - 1, 0, -1);
-    return true;
-  }
-  return false;
-}
-
 bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   word.WordPlace = m_CurPos;
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
