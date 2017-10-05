@@ -78,9 +78,11 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
                         nullptr);
       status.RenderObjectList(layer.m_pObjectHolder.Get(), &layer.m_Matrix);
     }
-    if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE)
-      m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
-    if (status.m_bStopped)
+    if (status.GetRenderOptions()->m_Flags & RENDER_LIMITEDIMAGECACHE) {
+      m_pPageCache->CacheOptimization(
+          status.GetRenderOptions()->m_dwLimitCacheSize);
+    }
+    if (status.IsStopped())
       break;
   }
 }

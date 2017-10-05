@@ -94,10 +94,10 @@ void CPDF_ProgressiveRenderer::Continue(IFX_PauseIndicator* pPause) {
                 pCurObj, &m_pCurrentLayer->m_Matrix, pPause)) {
           return;
         }
-        if (pCurObj->IsImage() &&
-            m_pRenderStatus->m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE) {
+        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions()->m_Flags &
+                                      RENDER_LIMITEDIMAGECACHE) {
           m_pContext->GetPageCache()->CacheOptimization(
-              m_pRenderStatus->m_Options.m_dwLimitCacheSize);
+              m_pRenderStatus->GetRenderOptions()->m_dwLimitCacheSize);
         }
         if (pCurObj->IsForm() || pCurObj->IsShading())
           nObjsToGo = 0;

@@ -35,8 +35,8 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
                                        GroupFamily, bLoadMask, pRenderStatus);
   } else {
     ret = m_pImageObject->GetImage()->StartLoadDIBSource(
-        pRenderStatus->m_pFormResource.Get(),
-        pRenderStatus->m_pPageResource.Get(), bStdCS, GroupFamily, bLoadMask);
+        pRenderStatus->GetFormResource(), pRenderStatus->GetPageResource(),
+        bStdCS, GroupFamily, bLoadMask);
   }
   if (!ret)
     HandleFailure();
