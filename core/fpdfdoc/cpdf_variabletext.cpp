@@ -11,7 +11,6 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cline.h"
-#include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
@@ -175,15 +174,6 @@ bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   line.fLineAscent = pLine->m_LineInfo.fLineAscent;
   line.fLineDescent = pLine->m_LineInfo.fLineDescent;
   line.lineEnd = pLine->GetEndWordPlace();
-  return true;
-}
-
-bool CPDF_VariableText::Iterator::GetSection(CPVT_Section& section) const {
-  if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
-    return false;
-
-  CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
-  section.rcSection = m_pVT->InToOut(pSection->m_SecInfo.rcSection);
   return true;
 }
 

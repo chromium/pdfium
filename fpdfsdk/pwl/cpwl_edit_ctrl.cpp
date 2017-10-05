@@ -6,7 +6,6 @@
 
 #include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 
-#include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/pwl/cpwl_caret.h"

@@ -23,7 +23,6 @@
 class CPVT_Word;
 class CSection;
 class IPVT_FontMap;
-struct CPVT_Section;
 struct CPVT_SectionInfo;
 
 struct CPVT_WordInfo;
@@ -44,7 +43,6 @@ class CPDF_VariableText {
     bool NextLine();
     bool GetWord(CPVT_Word& word) const;
     bool GetLine(CPVT_Line& line) const;
-    bool GetSection(CPVT_Section& section) const;
     void SetAt(int32_t nWordIndex);
     void SetAt(const CPVT_WordPlace& place);
     const CPVT_WordPlace& GetAt() const { return m_CurPos; }

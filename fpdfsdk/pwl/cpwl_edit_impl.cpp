@@ -19,7 +19,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
-#include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/autorestorer.h"
@@ -1562,12 +1561,10 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo, bool bPaint) {
   if (!m_pVT->IsValid() || m_wpCaret == m_pVT->GetBeginWordPlace())
     return false;
 
-  CPVT_Section section;
   CPVT_Word word;
   if (bAddUndo) {
     CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
     pIterator->SetAt(m_wpCaret);
-    pIterator->GetSection(section);
     pIterator->GetWord(word);
   }
   m_pVT->UpdateWordPlace(m_wpCaret);
@@ -1602,12 +1599,10 @@ bool CPWL_EditImpl::Delete(bool bAddUndo, bool bPaint) {
   if (!m_pVT->IsValid() || m_wpCaret == m_pVT->GetEndWordPlace())
     return false;
 
-  CPVT_Section section;
   CPVT_Word word;
   if (bAddUndo) {
     CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
     pIterator->SetAt(m_pVT->GetNextWordPlace(m_wpCaret));
-    pIterator->GetSection(section);
     pIterator->GetWord(word);
   }
   m_pVT->UpdateWordPlace(m_wpCaret);
