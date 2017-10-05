@@ -8,7 +8,6 @@
 #define CORE_FPDFDOC_CPVT_WORD_H_
 
 #include "core/fpdfdoc/cpvt_wordplace.h"
-#include "core/fpdfdoc/cpvt_wordprops.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPVT_Word {
@@ -24,7 +23,6 @@ class CPVT_Word {
   float fWidth;
   int32_t nFontIndex;
   float fFontSize;
-  CPVT_WordProps WordProps;
 };
 
 inline CPVT_Word::CPVT_Word()

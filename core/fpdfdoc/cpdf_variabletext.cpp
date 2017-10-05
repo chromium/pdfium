@@ -188,24 +188,8 @@ bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
                  pWord->fWordY + pSection->m_SecInfo.rcSection.top));
   word.fAscent = m_pVT->GetWordAscent(*pWord);
   word.fDescent = m_pVT->GetWordDescent(*pWord);
-  if (pWord->pWordProps)
-    word.WordProps = *pWord->pWordProps;
   word.nFontIndex = m_pVT->GetWordFontIndex(*pWord);
   word.fFontSize = m_pVT->GetWordFontSize();
-  return true;
-}
-
-bool CPDF_VariableText::Iterator::SetWord(const CPVT_Word& word) {
-  if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
-    return false;
-
-  CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
-  if (!pdfium::IndexInBounds(pSection->m_WordArray, m_CurPos.nWordIndex))
-    return false;
-
-  CPVT_WordInfo* pWord = pSection->m_WordArray[m_CurPos.nWordIndex].get();
-  if (pWord->pWordProps)
-    *pWord->pWordProps = word.WordProps;
   return true;
 }
 
@@ -237,18 +221,6 @@ bool CPDF_VariableText::Iterator::GetSection(CPVT_Section& section) const {
 
   CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
   section.rcSection = m_pVT->InToOut(pSection->m_SecInfo.rcSection);
-  if (pSection->m_SecInfo.pWordProps)
-    section.WordProps = *pSection->m_SecInfo.pWordProps;
-  return true;
-}
-
-bool CPDF_VariableText::Iterator::SetSection(const CPVT_Section& section) {
-  if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
-    return false;
-
-  CSection* pSection = m_pVT->m_SectionArray[m_CurPos.nSecIndex].get();
-  if (pSection->m_SecInfo.pWordProps)
-    *pSection->m_SecInfo.pWordProps = section.WordProps;
   return true;
 }
 
@@ -310,7 +282,7 @@ CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace& place,
   int32_t nFontIndex =
       GetSubWord() > 0 ? GetDefaultFontIndex()
                        : GetWordFontIndex(word, charset, GetDefaultFontIndex());
-  return AddWord(newplace, CPVT_WordInfo(word, charset, nFontIndex, nullptr));
+  return AddWord(newplace, CPVT_WordInfo(word, charset, nFontIndex));
 }
 
 CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace& place) {

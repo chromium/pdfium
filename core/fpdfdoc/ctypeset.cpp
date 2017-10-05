@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfdoc/cline.h"
+#include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
 #include "third_party/base/stl_util.h"
@@ -470,22 +471,8 @@ void CTypeset::OutputLines() {
         if (pdfium::IndexInBounds(m_pSection->m_WordArray, w)) {
           CPVT_WordInfo* pWord = m_pSection->m_WordArray[w].get();
           pWord->fWordX = fPosX - fMinX;
-          if (pWord->pWordProps) {
-            switch (pWord->pWordProps->nScriptType) {
-              default:
-              case CPDF_VariableText::ScriptType::Normal:
-                pWord->fWordY = fPosY - fMinY;
-                break;
-              case CPDF_VariableText::ScriptType::Super:
-                pWord->fWordY = fPosY - m_pVT->GetWordAscent(*pWord) - fMinY;
-                break;
-              case CPDF_VariableText::ScriptType::Sub:
-                pWord->fWordY = fPosY - m_pVT->GetWordDescent(*pWord) - fMinY;
-                break;
-            }
-          } else {
-            pWord->fWordY = fPosY - fMinY;
-          }
+          pWord->fWordY = fPosY - fMinY;
+
           fPosX += m_pVT->GetWordWidth(*pWord);
         }
       }

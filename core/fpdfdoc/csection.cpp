@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfdoc/cline.h"
+#include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

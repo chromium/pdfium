@@ -16,10 +16,7 @@ CPVT_WordInfo::CPVT_WordInfo()
       fWordTail(0.0f),
       nFontIndex(-1) {}
 
-CPVT_WordInfo::CPVT_WordInfo(uint16_t word,
-                             int32_t charset,
-                             int32_t fontIndex,
-                             CPVT_WordProps* pProps)
+CPVT_WordInfo::CPVT_WordInfo(uint16_t word, int32_t charset, int32_t fontIndex)
     : Word(word),
       nCharset(charset),
       fWordX(0.0f),
@@ -49,8 +46,4 @@ void CPVT_WordInfo::operator=(const CPVT_WordInfo& word) {
   fWordX = word.fWordX;
   fWordY = word.fWordY;
   fWordTail = word.fWordTail;
-  if (word.pWordProps)
-    pWordProps = pdfium::MakeUnique<CPVT_WordProps>(*word.pWordProps);
-  else
-    pWordProps.reset();
 }

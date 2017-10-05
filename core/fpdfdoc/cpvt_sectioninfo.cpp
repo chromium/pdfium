@@ -21,8 +21,4 @@ void CPVT_SectionInfo::operator=(const CPVT_SectionInfo& other) {
 
   rcSection = other.rcSection;
   nTotalLine = other.nTotalLine;
-  if (other.pWordProps)
-    pWordProps = pdfium::MakeUnique<CPVT_WordProps>(*other.pWordProps);
-  else
-    pWordProps.reset();
 }

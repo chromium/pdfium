@@ -27,7 +27,6 @@ struct CPVT_Section;
 struct CPVT_SectionInfo;
 
 struct CPVT_WordInfo;
-struct CPVT_WordProps;
 
 #define VARIABLETEXT_HALF 0.5f
 
@@ -46,11 +45,9 @@ class CPDF_VariableText {
     bool PrevLine();
     bool NextSection();
     bool PrevSection();
-    bool SetWord(const CPVT_Word& word);
     bool GetWord(CPVT_Word& word) const;
     bool GetLine(CPVT_Line& line) const;
     bool GetSection(CPVT_Section& section) const;
-    bool SetSection(const CPVT_Section& section);
     void SetAt(int32_t nWordIndex);
     void SetAt(const CPVT_WordPlace& place);
     const CPVT_WordPlace& GetAt() const { return m_CurPos; }

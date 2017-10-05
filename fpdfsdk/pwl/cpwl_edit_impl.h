@@ -11,7 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfdoc/cpvt_wordprops.h"
+#include "core/fpdfdoc/cpdf_variabletext.h"
+#include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 #define FX_EDIT_ISLATINWORD(u)                  \

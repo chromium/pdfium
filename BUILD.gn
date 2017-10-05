@@ -370,7 +370,6 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/cpvt_wordinfo.cpp",
     "core/fpdfdoc/cpvt_wordinfo.h",
     "core/fpdfdoc/cpvt_wordplace.h",
-    "core/fpdfdoc/cpvt_wordprops.h",
     "core/fpdfdoc/cpvt_wordrange.h",
     "core/fpdfdoc/csection.cpp",
     "core/fpdfdoc/csection.h",

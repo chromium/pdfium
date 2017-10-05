@@ -12,6 +12,8 @@
 
 #include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpvt_sectioninfo.h"
+#include "core/fpdfdoc/cpvt_wordinfo.h"
+#include "core/fpdfdoc/cpvt_wordrange.h"
 #include "core/fpdfdoc/ctypeset.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
