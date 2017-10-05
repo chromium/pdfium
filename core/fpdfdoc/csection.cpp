@@ -45,7 +45,7 @@ CPVT_WordPlace CSection::AddLine(const CPVT_LineInfo& lineinfo) {
 }
 
 CPVT_FloatRect CSection::Rearrange() {
-  if (m_pVT->m_nCharArray > 0)
+  if (m_pVT->GetCharArray() > 0)
     return CTypeset(this).CharArray();
   return CTypeset(this).Typeset();
 }

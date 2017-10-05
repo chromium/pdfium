@@ -185,7 +185,7 @@ CPVT_FloatRect CTypeset::CharArray() {
     return m_rcRet;
 
   float fNodeWidth = m_pVT->GetPlateWidth() /
-                     (m_pVT->m_nCharArray <= 0 ? 1 : m_pVT->m_nCharArray);
+                     (m_pVT->GetCharArray() <= 0 ? 1 : m_pVT->GetCharArray());
   float fLineAscent =
       m_pVT->GetFontAscent(m_pVT->GetDefaultFontIndex(), m_pVT->GetFontSize());
   float fLineDescent =
@@ -199,14 +199,14 @@ CPVT_FloatRect CTypeset::CharArray() {
       pLine->m_LineInfo.fLineX = fNodeWidth * VARIABLETEXT_HALF;
       break;
     case 1:
-      nStart = (m_pVT->m_nCharArray -
+      nStart = (m_pVT->GetCharArray() -
                 pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray)) /
                2;
       pLine->m_LineInfo.fLineX =
           fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
       break;
     case 2:
-      nStart = m_pVT->m_nCharArray -
+      nStart = m_pVT->GetCharArray() -
                pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray);
       pLine->m_LineInfo.fLineX =
           fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
@@ -215,7 +215,7 @@ CPVT_FloatRect CTypeset::CharArray() {
   for (int32_t w = 0,
                sz = pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray);
        w < sz; w++) {
-    if (w >= m_pVT->m_nCharArray)
+    if (w >= m_pVT->GetCharArray())
       break;
 
     float fNextWidth = 0;
@@ -314,8 +314,8 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
           fLineDescent =
               std::min(fLineDescent, m_pVT->GetWordDescent(*pWord, fFontSize));
           fWordWidth = m_pVT->GetWordWidth(
-              pWord->nFontIndex, pWord->Word, m_pVT->m_wSubWord,
-              m_pVT->m_fCharSpace, m_pVT->m_nHorzScale, fFontSize,
+              pWord->nFontIndex, pWord->Word, m_pVT->GetSubWord(),
+              m_pVT->GetCharSpace(), m_pVT->GetHorzScale(), fFontSize,
               pWord->fWordTail);
         }
         if (!bOpened) {
@@ -344,7 +344,7 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
         }
         nCharIndex++;
       }
-      if (m_pVT->m_bLimitWidth && fTypesetWidth > 0 &&
+      if (m_pVT->IsAutoReturn() && fTypesetWidth > 0 &&
           fLineWidth + fWordWidth > fTypesetWidth) {
         if (nLineFullWordIndex > 0) {
           i = nWordStartPos;

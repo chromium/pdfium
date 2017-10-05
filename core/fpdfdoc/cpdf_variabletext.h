@@ -128,6 +128,8 @@ class CPDF_VariableText {
   bool IsMultiLine() const { return m_bMultiLine; }
   int32_t GetHorzScale() const { return m_nHorzScale; }
   float GetCharSpace() const { return m_fCharSpace; }
+  bool IsAutoReturn() const { return m_bLimitWidth; }
+
   CPVT_WordPlace GetBeginWordPlace() const;
   CPVT_WordPlace GetEndWordPlace() const;
   CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
@@ -160,15 +162,32 @@ class CPDF_VariableText {
   CFX_FloatRect InToOut(const CPVT_FloatRect& rect) const;
   CPVT_FloatRect OutToIn(const CFX_FloatRect& rect) const;
 
- private:
-  friend class CTypeset;
-  friend class CSection;
+  float GetFontAscent(int32_t nFontIndex, float fFontSize);
+  float GetFontDescent(int32_t nFontIndex, float fFontSize);
+  int32_t GetDefaultFontIndex();
+  float GetLineLeading(const CPVT_SectionInfo& SecInfo);
+  int32_t GetAlignment(const CPVT_SectionInfo& SecInfo);
+  float GetWordWidth(const CPVT_WordInfo& WordInfo);
+  float GetWordWidth(int32_t nFontIndex,
+                     uint16_t Word,
+                     uint16_t SubWord,
+                     float fCharSpace,
+                     int32_t nHorzScale,
+                     float fFontSize,
+                     float fWordTail);
+  float GetWordAscent(const CPVT_WordInfo& WordInfo);
+  float GetWordDescent(const CPVT_WordInfo& WordInfo);
+  float GetWordAscent(const CPVT_WordInfo& WordInfo, float fFontSize);
+  float GetWordDescent(const CPVT_WordInfo& WordInfo, float fFontSize);
+  float GetLineAscent(const CPVT_SectionInfo& SecInfo);
+  float GetLineDescent(const CPVT_SectionInfo& SecInfo);
+  float GetLineIndent(const CPVT_SectionInfo& SecInfo);
 
+ private:
   int32_t GetCharWidth(int32_t nFontIndex, uint16_t Word, uint16_t SubWord);
   int32_t GetTypeAscent(int32_t nFontIndex);
   int32_t GetTypeDescent(int32_t nFontIndex);
   int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);
-  int32_t GetDefaultFontIndex();
   bool IsLatinWord(uint16_t word);
 
   CPVT_WordPlace AddSection(const CPVT_WordPlace& place,
@@ -182,28 +201,9 @@ class CPDF_VariableText {
   bool GetLineInfo(const CPVT_WordPlace& place, CPVT_LineInfo& lineinfo);
   bool GetSectionInfo(const CPVT_WordPlace& place, CPVT_SectionInfo& secinfo);
   float GetWordFontSize(const CPVT_WordInfo& WordInfo);
-  float GetWordWidth(int32_t nFontIndex,
-                     uint16_t Word,
-                     uint16_t SubWord,
-                     float fCharSpace,
-                     int32_t nHorzScale,
-                     float fFontSize,
-                     float fWordTail);
-  float GetWordWidth(const CPVT_WordInfo& WordInfo);
-  float GetWordAscent(const CPVT_WordInfo& WordInfo, float fFontSize);
-  float GetWordDescent(const CPVT_WordInfo& WordInfo, float fFontSize);
-  float GetWordAscent(const CPVT_WordInfo& WordInfo);
-  float GetWordDescent(const CPVT_WordInfo& WordInfo);
-  float GetLineAscent(const CPVT_SectionInfo& SecInfo);
-  float GetLineDescent(const CPVT_SectionInfo& SecInfo);
-  float GetFontAscent(int32_t nFontIndex, float fFontSize);
-  float GetFontDescent(int32_t nFontIndex, float fFontSize);
   int32_t GetWordFontIndex(const CPVT_WordInfo& WordInfo);
   float GetCharSpace(const CPVT_WordInfo& WordInfo);
   int32_t GetHorzScale(const CPVT_WordInfo& WordInfo);
-  float GetLineLeading(const CPVT_SectionInfo& SecInfo);
-  float GetLineIndent(const CPVT_SectionInfo& SecInfo);
-  int32_t GetAlignment(const CPVT_SectionInfo& SecInfo);
 
   void ClearSectionRightWords(const CPVT_WordPlace& place);
 
