@@ -215,7 +215,6 @@ bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
 }
 
 bool CPDF_VariableText::Iterator::GetSection(CPVT_Section& section) const {
-  section.secplace = CPVT_WordPlace(m_CurPos.nSecIndex, 0, -1);
   if (!pdfium::IndexInBounds(m_pVT->m_SectionArray, m_CurPos.nSecIndex))
     return false;
 

@@ -11,7 +11,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 
 struct CPVT_Section {
-  CPVT_WordPlace secplace;
   CFX_FloatRect rcSection;
 };
 
