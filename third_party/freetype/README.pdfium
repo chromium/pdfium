@@ -12,3 +12,5 @@ FreeType library.
 Local Modifications:
 
 0000-include.patch: Modifications to configuration header files.
+
+Most of the updating can be automated will roll-freetype.sh.
