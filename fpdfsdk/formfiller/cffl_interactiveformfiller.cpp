@@ -672,9 +672,10 @@ void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
     return;
 
   CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot->Get());
-  ASSERT(pWidget);
-  CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
-  pInterForm->OnCalculate(pWidget->GetFormField());
+  if (pWidget) {
+    CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
+    pInterForm->OnCalculate(pWidget->GetFormField());
+  }
   m_bNotifying = false;
 }
 
