@@ -180,8 +180,8 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
   CFX_Matrix matrix;
   matrix.MatchRect(arect, form_bbox);
   matrix.Concat(*pMatrix);
-  CPDF_Form form(m_pField->GetForm()->m_pDocument.Get(),
-                 m_pField->GetForm()->m_pFormDict->GetDictFor("DR"), pStream);
+  CPDF_Form form(m_pField->GetForm()->GetDocument(),
+                 m_pField->GetForm()->GetFormDict()->GetDictFor("DR"), pStream);
   form.ParseContent();
   CPDF_RenderContext context(pPage);
   context.AppendLayer(&form, &matrix);
@@ -292,7 +292,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
     if (pFonts) {
       CPDF_Dictionary* pElement = pFonts->GetDictFor(csFontNameTag);
       if (pElement) {
-        CPDF_Font* pFont = m_pField->GetForm()->m_pDocument->LoadFont(pElement);
+        CPDF_Font* pFont =
+            m_pField->GetForm()->GetDocument()->LoadFont(pElement);
         if (pFont)
           return pFont;
       }
@@ -308,7 +309,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
     if (pFonts) {
       CPDF_Dictionary* pElement = pFonts->GetDictFor(csFontNameTag);
       if (pElement) {
-        CPDF_Font* pFont = m_pField->GetForm()->m_pDocument->LoadFont(pElement);
+        CPDF_Font* pFont =
+            m_pField->GetForm()->GetDocument()->LoadFont(pElement);
         if (pFont)
           return pFont;
       }

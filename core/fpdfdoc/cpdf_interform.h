@@ -89,10 +89,11 @@ class CPDF_InterForm {
   bool HasXFAForm() const;
   void FixPageFields(const CPDF_Page* pPage);
 
- private:
-  friend class CPDF_FormControl;
-  friend class CPDF_FormField;
+  IPDF_FormNotify* GetFormNotify() const { return m_pFormNotify.Get(); }
+  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
+  CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
 
+ private:
   void LoadField(CPDF_Dictionary* pFieldDict, int nLevel);
   void AddTerminalField(CPDF_Dictionary* pFieldDict);
   CPDF_FormControl* AddControl(CPDF_FormField* pField,

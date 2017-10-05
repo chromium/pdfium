@@ -110,13 +110,11 @@ class CPDF_FormControl {
   CPDF_Font* GetDefaultControlFont();
   int GetControlAlignment();
 
- private:
-  friend class CPDF_InterForm;
-  friend class CPDF_FormField;
-
   ByteString GetOnStateName() const;
-  void SetOnStateName(const ByteString& csOn);
   void CheckControl(bool bChecked);
+
+ private:
+  void SetOnStateName(const ByteString& csOn);
   FX_ARGB GetColor(int& iColorType, const ByteString& csEntry);
   float GetOriginalColor(int index, const ByteString& csEntry);
   void GetOriginalColor(int& iColorType,
