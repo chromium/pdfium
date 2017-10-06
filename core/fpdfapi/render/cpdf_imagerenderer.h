@@ -70,7 +70,6 @@ class CPDF_ImageRenderer {
   CFX_Matrix m_ImageMatrix;
   CPDF_ImageLoader m_Loader;
   RetainPtr<CFX_DIBSource> m_pDIBSource;
-  RetainPtr<CFX_DIBitmap> m_pClone;
   int m_BitmapAlpha;
   bool m_bPatternColor;
   UnownedPtr<CPDF_Pattern> m_pPattern;

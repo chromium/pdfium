@@ -106,9 +106,12 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
     m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject.Get());
   } else if (m_pRenderStatus->GetRenderOptions()->ColorModeIs(
                  CPDF_RenderOptions::kGray)) {
-    m_pClone = m_pDIBSource->Clone(nullptr);
-    m_pClone->ConvertColorScale(0xffffff, 0);
-    m_pDIBSource = m_pClone;
+    RetainPtr<CFX_DIBitmap> pClone = m_pDIBSource->Clone(nullptr);
+    if (!pClone)
+      return false;
+
+    pClone->ConvertColorScale(0xffffff, 0);
+    m_pDIBSource = pClone;
   }
   m_Flags = 0;
   if (m_pRenderStatus->GetRenderOptions()->HasFlag(RENDER_FORCE_DOWNSAMPLE))
