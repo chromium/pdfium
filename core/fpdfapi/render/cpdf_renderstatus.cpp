@@ -1642,13 +1642,13 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
 RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
     const CPDF_PageObject* pObj,
     const FX_RECT& rect,
-    int& left,
-    int& top,
-    bool bBackAlphaRequired) {
+    bool bBackAlphaRequired,
+    int* left,
+    int* top) {
   FX_RECT bbox = rect;
   bbox.Intersect(m_pDevice->GetClipBox());
-  left = bbox.left;
-  top = bbox.top;
+  *left = bbox.left;
+  *top = bbox.top;
   CFX_Matrix deviceCTM = m_pDevice->GetCTM();
   float scaleX = fabs(deviceCTM.a);
   float scaleY = fabs(deviceCTM.d);
@@ -1670,11 +1670,11 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
     bNeedDraw = !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS);
 
   if (!bNeedDraw) {
-    m_pDevice->GetDIBits(pBackdrop, left, top);
+    m_pDevice->GetDIBits(pBackdrop, *left, *top);
     return pBackdrop;
   }
   CFX_Matrix FinalMatrix = m_DeviceMatrix;
-  FinalMatrix.Translate(-left, -top);
+  FinalMatrix.Translate(-*left, -*top);
   FinalMatrix.Scale(scaleX, scaleY);
   pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
 
@@ -2447,8 +2447,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     } else {
       uint32_t fill_argb = m_Options.TranslateColor(mask_argb);
       if (bitmap_alpha < 255) {
-        ((uint8_t*)&fill_argb)[3] =
-            ((uint8_t*)&fill_argb)[3] * bitmap_alpha / 255;
+        uint8_t* fill_argb8 = reinterpret_cast<uint8_t*>(&fill_argb);
+        fill_argb8[3] *= bitmap_alpha / 255;
       }
       if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb)) {
         return;
@@ -2464,59 +2464,63 @@ void CPDF_RenderStatus::CompositeDIBitmap(
        (m_pDevice->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);
   if (bGetBackGround) {
     if (bIsolated || !bGroup) {
-      if (pDIBitmap->IsAlphaMask()) {
+      if (!pDIBitmap->IsAlphaMask())
+        m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, blend_mode);
+      return;
+    }
+
+    FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
+                 top + pDIBitmap->GetHeight());
+    rect.Intersect(m_pDevice->GetClipBox());
+    RetainPtr<CFX_DIBitmap> pClone;
+    if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
+      pClone = m_pDevice->GetBackDrop()->Clone(&rect);
+      if (!pClone)
         return;
-      }
-      m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, blend_mode);
-    } else {
-      FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
-                   top + pDIBitmap->GetHeight());
-      rect.Intersect(m_pDevice->GetClipBox());
-      RetainPtr<CFX_DIBitmap> pClone;
-      if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
-        pClone = m_pDevice->GetBackDrop()->Clone(&rect);
-        RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
+
+      RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
+      pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
+                              pForeBitmap, rect.left, rect.top);
+      left = std::min(left, 0);
+      top = std::min(top, 0);
+      if (pDIBitmap->IsAlphaMask()) {
+        pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
+                              pDIBitmap, mask_argb, left, top, blend_mode);
+      } else {
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                pForeBitmap, rect.left, rect.top);
-        left = left >= 0 ? 0 : left;
-        top = top >= 0 ? 0 : top;
-        if (!pDIBitmap->IsAlphaMask())
-          pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                  pDIBitmap, left, top, blend_mode);
-        else
-          pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                pDIBitmap, mask_argb, left, top, blend_mode);
-      } else {
-        pClone = pDIBitmap;
+                                pDIBitmap, left, top, blend_mode);
       }
-      if (m_pDevice->GetBackDrop()) {
-        m_pDevice->SetDIBits(pClone, rect.left, rect.top);
-      } else {
-        if (pDIBitmap->IsAlphaMask())
-          return;
+    } else {
+      pClone = pDIBitmap;
+    }
+    if (m_pDevice->GetBackDrop()) {
+      m_pDevice->SetDIBits(pClone, rect.left, rect.top);
+    } else {
+      if (!pDIBitmap->IsAlphaMask()) {
         m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
                                       blend_mode);
       }
     }
     return;
   }
-  int back_left, back_top;
+  int back_left;
+  int back_top;
   FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                top + pDIBitmap->GetHeight());
   RetainPtr<CFX_DIBitmap> pBackdrop =
-      GetBackdrop(m_pCurObj, rect, back_left, back_top,
-                  blend_mode > FXDIB_BLEND_NORMAL && bIsolated);
+      GetBackdrop(m_pCurObj, rect, blend_mode > FXDIB_BLEND_NORMAL && bIsolated,
+                  &back_left, &back_top);
   if (!pBackdrop)
     return;
 
-  if (!pDIBitmap->IsAlphaMask()) {
-    pBackdrop->CompositeBitmap(left - back_left, top - back_top,
-                               pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
-                               pDIBitmap, 0, 0, blend_mode);
-  } else {
+  if (pDIBitmap->IsAlphaMask()) {
     pBackdrop->CompositeMask(left - back_left, top - back_top,
                              pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
                              pDIBitmap, mask_argb, 0, 0, blend_mode);
+  } else {
+    pBackdrop->CompositeBitmap(left - back_left, top - back_top,
+                               pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
+                               pDIBitmap, 0, 0, blend_mode);
   }
 
   auto pBackdrop1 = pdfium::MakeRetain<CFX_DIBitmap>();
