@@ -125,6 +125,9 @@ bool CPDF_ReadValidator::IsWholeFileAvailable() {
 bool CPDF_ReadValidator::CheckDataRangeAndRequestIfUnavailable(
     FX_FILESIZE offset,
     size_t size) {
+  if (offset > file_size_)
+    return true;
+
   FX_SAFE_FILESIZE end_segment_offset = offset;
   end_segment_offset += size;
   // Increase checked range to allow CPDF_SyntaxParser read whole buffer.

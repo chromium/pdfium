@@ -289,5 +289,13 @@ TEST(CPDF_ReadValidatorTest, CheckDataRangeAndRequestIfUnavailable) {
   EXPECT_FALSE(validator->read_error());
   EXPECT_TRUE(validator->has_unavailable_data());
 
+  validator->ResetErrors();
+  // Offset > file size should yield |true| and not cause a fetch.
+  EXPECT_TRUE(
+      validator->CheckDataRangeAndRequestIfUnavailable(kTestDataSize + 1, 1));
+  // No new request on already available data.
+  EXPECT_FALSE(validator->read_error());
+  EXPECT_FALSE(validator->has_unavailable_data());
+
   validator->SetDownloadHints(nullptr);
 }
