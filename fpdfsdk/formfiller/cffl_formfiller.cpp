@@ -491,7 +491,10 @@ bool CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
   if (!pObserved)
     return false;
 
-  SaveData(pPageView);
+  SaveData(pPageView); // may invoking JS to delete this widget.
+  if (!pObserved)
+    return false;
+
   pFormFiller->OnCalculate(&pObserved, pPageView, nFlag);
   if (!pObserved)
     return false;

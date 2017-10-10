@@ -141,13 +141,17 @@ void CFFL_TextField::SaveData(CPDFSDK_PageView* pPageView) {
 
   CPDFSDK_Widget::ObservedPtr observed_widget(m_pWidget.Get());
   CFFL_TextField::ObservedPtr observed_this(this);
+
   m_pWidget->SetValue(sNewValue, false);
-  if (observed_widget)
-    m_pWidget->ResetFieldAppearance(true);
-  if (observed_widget)
-    m_pWidget->UpdateField();
-  if (observed_this)
-    SetChangeMark();
+  if (!observed_widget)
+    return;
+  m_pWidget->ResetFieldAppearance(true);
+  if (!observed_widget)
+    return;
+  m_pWidget->UpdateField();
+  if (!observed_widget || !observed_this)
+    return;
+  SetChangeMark();
 }
 
 void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
