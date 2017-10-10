@@ -95,7 +95,7 @@ class CPDF_SecurityHandler {
   int m_Version;
   int m_Revision;
   UnownedPtr<const CPDF_Dictionary> m_pEncryptDict;
-  UnownedPtr<const CPDF_Array> m_pIdArray;
+  ByteString m_FileId;
   uint32_t m_Permissions;
   int m_Cipher;
   uint8_t m_EncryptKey[32];

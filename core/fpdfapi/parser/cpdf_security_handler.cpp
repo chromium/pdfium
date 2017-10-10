@@ -31,7 +31,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     uint8_t* key,
                     int keylen,
                     bool bIgnoreMeta,
-                    const CPDF_Array* pIdArray) {
+                    const ByteString& fileId) {
   int revision = pEncrypt->GetIntegerFor("R");
   uint8_t passcode[32];
   for (uint32_t i = 0; i < 32; i++) {
@@ -46,10 +46,8 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   CRYPT_MD5Update(&md5, (uint8_t*)okey.c_str(), okey.GetLength());
   uint32_t perm = pEncrypt->GetIntegerFor("P");
   CRYPT_MD5Update(&md5, (uint8_t*)&perm, 4);
-  if (pIdArray) {
-    ByteString id = pIdArray->GetStringAt(0);
-    CRYPT_MD5Update(&md5, (uint8_t*)id.c_str(), id.GetLength());
-  }
+  if (!fileId.IsEmpty())
+    CRYPT_MD5Update(&md5, (uint8_t*)fileId.c_str(), fileId.GetLength());
   if (!bIgnoreMeta && revision >= 3 &&
       !pEncrypt->GetIntegerFor("EncryptMetadata", 1)) {
     uint32_t tag = 0xFFFFFFFF;
@@ -58,13 +56,11 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
   uint32_t copy_len = keylen;
-  if (copy_len > sizeof(digest)) {
+  if (copy_len > sizeof(digest))
     copy_len = sizeof(digest);
-  }
   if (revision >= 3) {
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 50; i++)
       CRYPT_MD5Generate(digest, copy_len, digest);
-    }
   }
   memset(key, 0, keylen);
   memcpy(key, digest, copy_len);
@@ -102,13 +98,11 @@ CPDF_SecurityHandler::~CPDF_SecurityHandler() {}
 bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
                                   const CPDF_Array* pIdArray,
                                   const ByteString& password) {
-  m_pIdArray = pIdArray;
-  if (!LoadDict(pEncryptDict)) {
+  m_FileId = pIdArray ? pIdArray->GetStringAt(0) : "";
+  if (!LoadDict(pEncryptDict))
     return false;
-  }
-  if (m_Cipher == FXCIPHER_NONE) {
+  if (m_Cipher == FXCIPHER_NONE)
     return true;
-  }
   if (!CheckSecurity(password))
     return false;
 
@@ -420,7 +414,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
                                              uint8_t* key,
                                              int32_t key_len) {
   CalcEncryptKey(m_pEncryptDict.Get(), password, key, key_len,
-                 bIgnoreEncryptMeta, m_pIdArray.Get());
+                 bIgnoreEncryptMeta, m_FileId);
   ByteString ukey =
       m_pEncryptDict ? m_pEncryptDict->GetStringFor("U") : ByteString();
   if (ukey.GetLength() < 16) {
@@ -447,9 +441,8 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
     CRYPT_md5_context md5;
     CRYPT_MD5Start(&md5);
     CRYPT_MD5Update(&md5, defpasscode, 32);
-    if (m_pIdArray) {
-      ByteString id = m_pIdArray->GetStringAt(0);
-      CRYPT_MD5Update(&md5, (uint8_t*)id.c_str(), id.GetLength());
+    if (!m_FileId.IsEmpty()) {
+      CRYPT_MD5Update(&md5, (uint8_t*)m_FileId.c_str(), m_FileId.GetLength());
     }
     CRYPT_MD5Finish(&md5, ukeybuf);
     return memcmp(test, ukeybuf, 16) == 0;
@@ -581,8 +574,14 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     }
     pEncryptDict->SetNewFor<CPDF_String>("O", ByteString(passcode, 32), false);
   }
+
+  ByteString fileId;
+  if (pIdArray) {
+    fileId = pIdArray->GetStringAt(0);
+  }
+
   CalcEncryptKey(m_pEncryptDict.Get(), user_password, m_EncryptKey, key_len,
-                 false, pIdArray);
+                 false, fileId);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
     memcpy(tempbuf, defpasscode, 32);
@@ -592,9 +591,8 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     CRYPT_md5_context md5;
     CRYPT_MD5Start(&md5);
     CRYPT_MD5Update(&md5, defpasscode, 32);
-    if (pIdArray) {
-      ByteString id = pIdArray->GetStringAt(0);
-      CRYPT_MD5Update(&md5, (uint8_t*)id.c_str(), id.GetLength());
+    if (!fileId.IsEmpty()) {
+      CRYPT_MD5Update(&md5, (uint8_t*)fileId.c_str(), fileId.GetLength());
     }
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
