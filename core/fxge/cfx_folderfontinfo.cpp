@@ -54,13 +54,17 @@ ByteString FPDF_ReadStringFromFile(FILE* pFile, uint32_t size) {
 ByteString FPDF_LoadTableFromTT(FILE* pFile,
                                 const uint8_t* pTables,
                                 uint32_t nTables,
-                                uint32_t tag) {
+                                uint32_t tag,
+                                uint32_t fileSize) {
   for (uint32_t i = 0; i < nTables; i++) {
     const uint8_t* p = pTables + i * 16;
     if (GET_TT_LONG(p) == tag) {
       uint32_t offset = GET_TT_LONG(p + 8);
       uint32_t size = GET_TT_LONG(p + 12);
-      fseek(pFile, offset, SEEK_SET);
+      if (offset > std::numeric_limits<uint32_t>::max() - size ||
+          offset + size > fileSize || fseek(pFile, offset, SEEK_SET) < 0) {
+        return ByteString();
+      }
       return FPDF_ReadStringFromFile(pFile, size);
     }
   }
@@ -199,9 +203,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
                                     FILE* pFile,
                                     uint32_t filesize,
                                     uint32_t offset) {
-  fseek(pFile, offset, SEEK_SET);
   char buffer[16];
-  if (!fread(buffer, 12, 1, pFile))
+  if (fseek(pFile, offset, SEEK_SET) < 0 || !fread(buffer, 12, 1, pFile))
     return;
 
   uint32_t nTables = GET_TT_SHORT(buffer + 4);
@@ -209,8 +212,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (tables.IsEmpty())
     return;
 
-  ByteString names =
-      FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x6e616d65);
+  ByteString names = FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables,
+                                          0x6e616d65, filesize);
   if (names.IsEmpty())
     return;
 
@@ -227,8 +230,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
 
   auto pInfo = pdfium::MakeUnique<FontFaceInfo>(path, facename, tables, offset,
                                                 filesize);
-  ByteString os2 =
-      FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x4f532f32);
+  ByteString os2 = FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables,
+                                        0x4f532f32, filesize);
   if (os2.GetLength() >= 86) {
     const uint8_t* p = os2.raw_str() + 78;
     uint32_t codepages = GET_TT_LONG(p);
