@@ -279,7 +279,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   CreateParams bcp = cp;
   bcp.pParentWnd = this;
   bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
-  bcp.sBackgroundColor = CFX_Color(COLORTYPE_RGB, 220.0f / 255.0f,
+  bcp.sBackgroundColor = CFX_Color(CFX_Color::kRGB, 220.0f / 255.0f,
                                    220.0f / 255.0f, 220.0f / 255.0f);
   bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
   bcp.dwBorderWidth = 2;
@@ -309,10 +309,10 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   else
     lcp.fFontSize = cp.fFontSize;
 
-  if (cp.sBorderColor.nColorType == COLORTYPE_TRANSPARENT)
+  if (cp.sBorderColor.nColorType == CFX_Color::kTransparent)
     lcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
 
-  if (cp.sBackgroundColor.nColorType == COLORTYPE_TRANSPARENT)
+  if (cp.sBackgroundColor.nColorType == CFX_Color::kTransparent)
     lcp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
 
   m_pList->Create(lcp);

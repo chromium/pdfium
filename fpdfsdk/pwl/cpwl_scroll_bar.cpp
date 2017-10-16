@@ -22,7 +22,7 @@ constexpr float kTriangleHalfLength = 2.0f;
 
 }  // namespace
 
-#define PWL_DEFAULT_HEAVYGRAYCOLOR CFX_Color(COLORTYPE_GRAY, 0.50)
+#define PWL_DEFAULT_HEAVYGRAYCOLOR CFX_Color(CFX_Color::kGray, 0.50)
 
 PWL_FLOATRANGE::PWL_FLOATRANGE() {
   Default();

@@ -716,9 +716,9 @@ IPVT_FontMap* CPWL_Wnd::GetFontMap() const {
 CFX_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
     case BorderStyle::BEVELED:
-      return CFX_Color(COLORTYPE_GRAY, 1);
+      return CFX_Color(CFX_Color::kGray, 1);
     case BorderStyle::INSET:
-      return CFX_Color(COLORTYPE_GRAY, 0.5f);
+      return CFX_Color(CFX_Color::kGray, 0.5f);
     default:
       return CFX_Color();
   }
@@ -729,7 +729,7 @@ CFX_Color CPWL_Wnd::GetBorderRightBottomColor(BorderStyle nBorderStyle) const {
     case BorderStyle::BEVELED:
       return GetBackgroundColor() / 2.0f;
     case BorderStyle::INSET:
-      return CFX_Color(COLORTYPE_GRAY, 0.75f);
+      return CFX_Color(CFX_Color::kGray, 0.75f);
     default:
       return CFX_Color();
   }

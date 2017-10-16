@@ -20,8 +20,8 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
+#include "core/fxge/cfx_color.h"
 #include "fpdfsdk/fsdk_define.h"
 
 namespace {
@@ -536,24 +536,25 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
     }
     return true;
   }
-  CPVT_Color color = CPVT_Color::ParseColor(*pColor);
+
+  CFX_Color color = CFX_Color::ParseColor(*pColor);
   switch (color.nColorType) {
-    case CPVT_Color::kRGB:
+    case CFX_Color::kRGB:
       *R = color.fColor1 * 255.f;
       *G = color.fColor2 * 255.f;
       *B = color.fColor3 * 255.f;
       break;
-    case CPVT_Color::kGray:
+    case CFX_Color::kGray:
       *R = 255.f * color.fColor1;
       *G = 255.f * color.fColor1;
       *B = 255.f * color.fColor1;
       break;
-    case CPVT_Color::kCMYK:
+    case CFX_Color::kCMYK:
       *R = 255.f * (1 - color.fColor1) * (1 - color.fColor4);
       *G = 255.f * (1 - color.fColor2) * (1 - color.fColor4);
       *B = 255.f * (1 - color.fColor3) * (1 - color.fColor4);
       break;
-    case CPVT_Color::kTransparent:
+    case CFX_Color::kTransparent:
       *R = 0;
       *G = 0;
       *B = 0;

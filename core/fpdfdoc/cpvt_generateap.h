@@ -11,11 +11,11 @@
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"
-#include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_dash.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_color.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -55,12 +55,12 @@ class CPVT_GenerateAP {
                                    uint16_t SubWord);
   static ByteString GenerateBorderAP(const CFX_FloatRect& rect,
                                      float fWidth,
-                                     const CPVT_Color& color,
-                                     const CPVT_Color& crLeftTop,
-                                     const CPVT_Color& crRightBottom,
+                                     const CFX_Color& color,
+                                     const CFX_Color& crLeftTop,
+                                     const CFX_Color& crRightBottom,
                                      BorderStyle nStyle,
                                      const CPVT_Dash& dash);
-  static ByteString GenerateColorAP(const CPVT_Color& color,
+  static ByteString GenerateColorAP(const CFX_Color& color,
                                     PaintOperation nOperation);
   static std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
       const CPDF_Dictionary& pAnnotDict,

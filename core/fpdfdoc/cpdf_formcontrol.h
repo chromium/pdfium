@@ -28,11 +28,6 @@
 #define TEXTPOS_LEFT 5
 #define TEXTPOS_OVERLAID 6
 
-#define COLORTYPE_TRANSPARENT 0
-#define COLORTYPE_GRAY 1
-#define COLORTYPE_RGB 2
-#define COLORTYPE_CMYK 3
-
 class CFX_RenderDevice;
 class CPDF_Dictionary;
 class CPDF_Font;

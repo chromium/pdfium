@@ -1453,19 +1453,19 @@ bool Field::fillColor(CJS_Runtime* pRuntime,
   pFormControl->GetBackgroundColor(iColorType);
 
   CFX_Color color;
-  if (iColorType == COLORTYPE_TRANSPARENT) {
-    color = CFX_Color(COLORTYPE_TRANSPARENT);
-  } else if (iColorType == COLORTYPE_GRAY) {
+  if (iColorType == CFX_Color::kTransparent) {
+    color = CFX_Color(CFX_Color::kTransparent);
+  } else if (iColorType == CFX_Color::kGray) {
+    color = CFX_Color(CFX_Color::kGray,
+                      pFormControl->GetOriginalBackgroundColor(0));
+  } else if (iColorType == CFX_Color::kRGB) {
     color =
-        CFX_Color(COLORTYPE_GRAY, pFormControl->GetOriginalBackgroundColor(0));
-  } else if (iColorType == COLORTYPE_RGB) {
-    color =
-        CFX_Color(COLORTYPE_RGB, pFormControl->GetOriginalBackgroundColor(0),
+        CFX_Color(CFX_Color::kRGB, pFormControl->GetOriginalBackgroundColor(0),
                   pFormControl->GetOriginalBackgroundColor(1),
                   pFormControl->GetOriginalBackgroundColor(2));
-  } else if (iColorType == COLORTYPE_CMYK) {
+  } else if (iColorType == CFX_Color::kCMYK) {
     color =
-        CFX_Color(COLORTYPE_CMYK, pFormControl->GetOriginalBackgroundColor(0),
+        CFX_Color(CFX_Color::kCMYK, pFormControl->GetOriginalBackgroundColor(0),
                   pFormControl->GetOriginalBackgroundColor(1),
                   pFormControl->GetOriginalBackgroundColor(2),
                   pFormControl->GetOriginalBackgroundColor(3));
@@ -2227,16 +2227,17 @@ bool Field::strokeColor(CJS_Runtime* pRuntime,
   pFormControl->GetBorderColor(iColorType);
 
   CFX_Color color;
-  if (iColorType == COLORTYPE_TRANSPARENT) {
-    color = CFX_Color(COLORTYPE_TRANSPARENT);
-  } else if (iColorType == COLORTYPE_GRAY) {
-    color = CFX_Color(COLORTYPE_GRAY, pFormControl->GetOriginalBorderColor(0));
-  } else if (iColorType == COLORTYPE_RGB) {
-    color = CFX_Color(COLORTYPE_RGB, pFormControl->GetOriginalBorderColor(0),
+  if (iColorType == CFX_Color::kTransparent) {
+    color = CFX_Color(CFX_Color::kTransparent);
+  } else if (iColorType == CFX_Color::kGray) {
+    color =
+        CFX_Color(CFX_Color::kGray, pFormControl->GetOriginalBorderColor(0));
+  } else if (iColorType == CFX_Color::kRGB) {
+    color = CFX_Color(CFX_Color::kRGB, pFormControl->GetOriginalBorderColor(0),
                       pFormControl->GetOriginalBorderColor(1),
                       pFormControl->GetOriginalBorderColor(2));
-  } else if (iColorType == COLORTYPE_CMYK) {
-    color = CFX_Color(COLORTYPE_CMYK, pFormControl->GetOriginalBorderColor(0),
+  } else if (iColorType == CFX_Color::kCMYK) {
+    color = CFX_Color(CFX_Color::kCMYK, pFormControl->GetOriginalBorderColor(0),
                       pFormControl->GetOriginalBorderColor(1),
                       pFormControl->GetOriginalBorderColor(2),
                       pFormControl->GetOriginalBorderColor(3));
@@ -2375,10 +2376,10 @@ bool Field::textColor(CJS_Runtime* pRuntime,
   std::tie(a, r, g, b) = ArgbDecode(color);
 
   CFX_Color crRet =
-      CFX_Color(COLORTYPE_RGB, r / 255.0f, g / 255.0f, b / 255.0f);
+      CFX_Color(CFX_Color::kRGB, r / 255.0f, g / 255.0f, b / 255.0f);
 
-  if (iColorType == COLORTYPE_TRANSPARENT)
-    crRet = CFX_Color(COLORTYPE_TRANSPARENT);
+  if (iColorType == CFX_Color::kTransparent)
+    crRet = CFX_Color(CFX_Color::kTransparent);
 
   color::ConvertPWLColorToArray(pRuntime, crRet, &crArray);
   vp << crArray;

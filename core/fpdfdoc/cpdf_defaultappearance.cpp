@@ -10,7 +10,7 @@
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
-#include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fxge/cfx_color.h"
 
 bool CPDF_DefaultAppearance::HasFont() {
   if (m_csDA.IsEmpty())
@@ -110,7 +110,7 @@ ByteString CPDF_DefaultAppearance::GetColorString(PaintOperation nOperation) {
 void CPDF_DefaultAppearance::GetColor(int& iColorType,
                                       float fc[4],
                                       PaintOperation nOperation) {
-  iColorType = COLORTYPE_TRANSPARENT;
+  iColorType = CFX_Color::kTransparent;
   for (int c = 0; c < 4; c++)
     fc[c] = 0;
 
@@ -120,13 +120,13 @@ void CPDF_DefaultAppearance::GetColor(int& iColorType,
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "G" : "g"), 1)) {
-    iColorType = COLORTYPE_GRAY;
+    iColorType = CFX_Color::kGray;
     fc[0] = FX_atof(syntax.GetWord());
     return;
   }
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "RG" : "rg"), 3)) {
-    iColorType = COLORTYPE_RGB;
+    iColorType = CFX_Color::kRGB;
     fc[0] = FX_atof(syntax.GetWord());
     fc[1] = FX_atof(syntax.GetWord());
     fc[2] = FX_atof(syntax.GetWord());
@@ -134,7 +134,7 @@ void CPDF_DefaultAppearance::GetColor(int& iColorType,
   }
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "K" : "k"), 4)) {
-    iColorType = COLORTYPE_CMYK;
+    iColorType = CFX_Color::kCMYK;
     fc[0] = FX_atof(syntax.GetWord());
     fc[1] = FX_atof(syntax.GetWord());
     fc[2] = FX_atof(syntax.GetWord());
@@ -146,21 +146,21 @@ void CPDF_DefaultAppearance::GetColor(FX_ARGB& color,
                                       int& iColorType,
                                       PaintOperation nOperation) {
   color = 0;
-  iColorType = COLORTYPE_TRANSPARENT;
+  iColorType = CFX_Color::kTransparent;
   if (m_csDA.IsEmpty())
     return;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "G" : "g"), 1)) {
-    iColorType = COLORTYPE_GRAY;
+    iColorType = CFX_Color::kGray;
     float g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
     color = ArgbEncode(255, (int)g, (int)g, (int)g);
     return;
   }
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "RG" : "rg"), 3)) {
-    iColorType = COLORTYPE_RGB;
+    iColorType = CFX_Color::kRGB;
     float r = FX_atof(syntax.GetWord()) * 255 + 0.5f;
     float g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
     float b = FX_atof(syntax.GetWord()) * 255 + 0.5f;
@@ -169,7 +169,7 @@ void CPDF_DefaultAppearance::GetColor(FX_ARGB& color,
   }
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "K" : "k"), 4)) {
-    iColorType = COLORTYPE_CMYK;
+    iColorType = CFX_Color::kCMYK;
     float c = FX_atof(syntax.GetWord());
     float m = FX_atof(syntax.GetWord());
     float y = FX_atof(syntax.GetWord());

@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -24,7 +25,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "third_party/base/ptr_util.h"
@@ -58,7 +58,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     return false;
 
   float fFontSize = FX_atof(syntax.GetWord());
-  CPVT_Color crText = CPVT_Color::ParseColor(DA);
+  CFX_Color crText = CFX_Color::ParseColor(DA);
   CPDF_Dictionary* pDRDict = pFormDict->GetDictFor("DR");
   if (!pDRDict)
     return false;
@@ -116,8 +116,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
   BorderStyle nBorderStyle = BorderStyle::SOLID;
   float fBorderWidth = 1;
   CPVT_Dash dsBorder(3, 0, 0);
-  CPVT_Color crLeftTop;
-  CPVT_Color crRightBottom;
+  CFX_Color crLeftTop;
+  CFX_Color crRightBottom;
   if (CPDF_Dictionary* pBSDict = pAnnotDict->GetDictFor("BS")) {
     if (pBSDict->KeyExist("W"))
       fBorderWidth = pBSDict->GetNumberFor("W");
@@ -137,14 +137,14 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
         case 'B':
           nBorderStyle = BorderStyle::BEVELED;
           fBorderWidth *= 2;
-          crLeftTop = CPVT_Color(CPVT_Color::kGray, 1);
-          crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.5);
+          crLeftTop = CFX_Color(CFX_Color::kGray, 1);
+          crRightBottom = CFX_Color(CFX_Color::kGray, 0.5);
           break;
         case 'I':
           nBorderStyle = BorderStyle::INSET;
           fBorderWidth *= 2;
-          crLeftTop = CPVT_Color(CPVT_Color::kGray, 0.5);
-          crRightBottom = CPVT_Color(CPVT_Color::kGray, 0.75);
+          crLeftTop = CFX_Color(CFX_Color::kGray, 0.5);
+          crRightBottom = CFX_Color(CFX_Color::kGray, 0.75);
           break;
         case 'U':
           nBorderStyle = BorderStyle::UNDERLINE;
@@ -152,13 +152,13 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       }
     }
   }
-  CPVT_Color crBorder;
-  CPVT_Color crBG;
+  CFX_Color crBorder;
+  CFX_Color crBG;
   if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDictFor("MK")) {
     if (CPDF_Array* pArray = pMKDict->GetArrayFor("BC"))
-      crBorder = CPVT_Color::ParseColor(*pArray);
+      crBorder = CFX_Color::ParseColor(*pArray);
     if (CPDF_Array* pArray = pMKDict->GetArrayFor("BG"))
-      crBG = CPVT_Color::ParseColor(*pArray);
+      crBG = CFX_Color::ParseColor(*pArray);
   }
   std::ostringstream sAppStream;
   ByteString sBG = CPVT_GenerateAP::GenerateColorAP(crBG, PaintOperation::FILL);
@@ -320,8 +320,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
                    << "Q\nEMC\n";
       }
       ByteString sButton = CPVT_GenerateAP::GenerateColorAP(
-          CPVT_Color(CPVT_Color::kRGB, 220.0f / 255.0f, 220.0f / 255.0f,
-                     220.0f / 255.0f),
+          CFX_Color(CFX_Color::kRGB, 220.0f / 255.0f, 220.0f / 255.0f,
+                    220.0f / 255.0f),
           PaintOperation::FILL);
       if (sButton.GetLength() > 0 && !rcButton.IsEmpty()) {
         sAppStream << "q\n" << sButton;
@@ -329,10 +329,9 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
                    << rcButton.Width() << " " << rcButton.Height() << " re f\n";
         sAppStream << "Q\n";
         ByteString sButtonBorder = CPVT_GenerateAP::GenerateBorderAP(
-            rcButton, 2, CPVT_Color(CPVT_Color::kGray, 0),
-            CPVT_Color(CPVT_Color::kGray, 1),
-            CPVT_Color(CPVT_Color::kGray, 0.5), BorderStyle::BEVELED,
-            CPVT_Dash(3, 0, 0));
+            rcButton, 2, CFX_Color(CFX_Color::kGray, 0),
+            CFX_Color(CFX_Color::kGray, 1), CFX_Color(CFX_Color::kGray, 0.5),
+            BorderStyle::BEVELED, CPVT_Dash(3, 0, 0));
         if (sButtonBorder.GetLength() > 0)
           sAppStream << "q\n" << sButtonBorder << "Q\n";
 
@@ -398,16 +397,15 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
                   rcBody.left, fy - fItemHeight, rcBody.right, fy);
               sBody << "q\n"
                     << CPVT_GenerateAP::GenerateColorAP(
-                           CPVT_Color(CPVT_Color::kRGB, 0, 51.0f / 255.0f,
-                                      113.0f / 255.0f),
+                           CFX_Color(CFX_Color::kRGB, 0, 51.0f / 255.0f,
+                                     113.0f / 255.0f),
                            PaintOperation::FILL)
                     << rcItem.left << " " << rcItem.bottom << " "
                     << rcItem.Width() << " " << rcItem.Height() << " re f\n"
                     << "Q\n";
               sBody << "BT\n"
                     << CPVT_GenerateAP::GenerateColorAP(
-                           CPVT_Color(CPVT_Color::kGray, 1),
-                           PaintOperation::FILL)
+                           CFX_Color(CFX_Color::kGray, 1), PaintOperation::FILL)
                     << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
                                                        CFX_PointF(0.0f, fy),
                                                        true, 0)
@@ -461,10 +459,10 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
 }
 
 ByteString GetColorStringWithDefault(CPDF_Array* pColor,
-                                     const CPVT_Color& crDefaultColor,
+                                     const CFX_Color& crDefaultColor,
                                      PaintOperation nOperation) {
   if (pColor) {
-    CPVT_Color color = CPVT_Color::ParseColor(*pColor);
+    CFX_Color color = CFX_Color::ParseColor(*pColor);
     return CPVT_GenerateAP::GenerateColorAP(color, nOperation);
   }
 
@@ -546,7 +544,7 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
   std::ostringstream sAppStream;
   sAppStream << "BT\n"
              << CPVT_GenerateAP::GenerateColorAP(
-                    CPVT_Color(CPVT_Color::kRGB, 0, 0, 0), PaintOperation::FILL)
+                    CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::FILL)
              << sContent << "ET\n"
              << "Q\n";
   return ByteString(sAppStream);
@@ -577,9 +575,9 @@ ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
 ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
   std::ostringstream sAppStream;
   sAppStream << CPVT_GenerateAP::GenerateColorAP(
-      CPVT_Color(CPVT_Color::kRGB, 1, 1, 0), PaintOperation::FILL);
+      CFX_Color(CFX_Color::kRGB, 1, 1, 0), PaintOperation::FILL);
   sAppStream << CPVT_GenerateAP::GenerateColorAP(
-      CPVT_Color(CPVT_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
+      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
 
   const float fBorderWidth = 1;
   sAppStream << fBorderWidth << " w\n";
@@ -687,12 +685,11 @@ bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
   sAppStream << "/" << sExtGSDictName << " gs ";
 
   CPDF_Array* pInteriorColor = pAnnotDict->GetArrayFor("IC");
-  sAppStream << GetColorStringWithDefault(pInteriorColor,
-                                          CPVT_Color(CPVT_Color::kTransparent),
-                                          PaintOperation::FILL);
+  sAppStream << GetColorStringWithDefault(
+      pInteriorColor, CFX_Color(CFX_Color::kTransparent), PaintOperation::FILL);
 
   sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
   float fBorderWidth = GetBorderWidth(*pAnnotDict);
@@ -761,7 +758,7 @@ bool CPVT_GenerateAP::GenerateHighlightAP(CPDF_Document* pDoc,
   sAppStream << "/" << sExtGSDictName << " gs ";
 
   sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CPVT_Color(CPVT_Color::kRGB, 1, 1, 0),
+                                          CFX_Color(CFX_Color::kRGB, 1, 1, 0),
                                           PaintOperation::FILL);
 
   CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
@@ -799,7 +796,7 @@ bool CPVT_GenerateAP::GenerateInkAP(CPDF_Document* pDoc,
   sAppStream << "/" << sExtGSDictName << " gs ";
 
   sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
   sAppStream << fBorderWidth << " w ";
@@ -866,7 +863,7 @@ bool CPVT_GenerateAP::GenerateUnderlineAP(CPDF_Document* pDoc,
   sAppStream << "/" << sExtGSDictName << " gs ";
 
   sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
   CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
@@ -892,9 +889,9 @@ bool CPVT_GenerateAP::GeneratePopupAP(CPDF_Document* pDoc,
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs\n";
 
-  sAppStream << GenerateColorAP(CPVT_Color(CPVT_Color::kRGB, 1, 1, 0),
+  sAppStream << GenerateColorAP(CFX_Color(CFX_Color::kRGB, 1, 1, 0),
                                 PaintOperation::FILL);
-  sAppStream << GenerateColorAP(CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+  sAppStream << GenerateColorAP(CFX_Color(CFX_Color::kRGB, 0, 0, 0),
                                 PaintOperation::STROKE);
 
   const float fBorderWidth = 1;
@@ -931,12 +928,11 @@ bool CPVT_GenerateAP::GenerateSquareAP(CPDF_Document* pDoc,
   sAppStream << "/" << sExtGSDictName << " gs ";
 
   CPDF_Array* pInteriorColor = pAnnotDict->GetArrayFor("IC");
-  sAppStream << GetColorStringWithDefault(pInteriorColor,
-                                          CPVT_Color(CPVT_Color::kTransparent),
-                                          PaintOperation::FILL);
+  sAppStream << GetColorStringWithDefault(
+      pInteriorColor, CFX_Color(CFX_Color::kTransparent), PaintOperation::FILL);
 
   sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
   float fBorderWidth = GetBorderWidth(*pAnnotDict);
@@ -979,7 +975,7 @@ bool CPVT_GenerateAP::GenerateSquigglyAP(CPDF_Document* pDoc,
   sAppStream << "/" << sExtGSDictName << " gs ";
 
   sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
   CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
@@ -1028,7 +1024,7 @@ bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
   sAppStream << "/" << sExtGSDictName << " gs ";
 
   sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CPVT_Color(CPVT_Color::kRGB, 0, 0, 0),
+                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
                                           PaintOperation::STROKE);
 
   CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
@@ -1135,9 +1131,9 @@ ByteString CPVT_GenerateAP::GenerateEditAP(
 // Static.
 ByteString CPVT_GenerateAP::GenerateBorderAP(const CFX_FloatRect& rect,
                                              float fWidth,
-                                             const CPVT_Color& color,
-                                             const CPVT_Color& crLeftTop,
-                                             const CPVT_Color& crRightBottom,
+                                             const CFX_Color& color,
+                                             const CFX_Color& crLeftTop,
+                                             const CFX_Color& crRightBottom,
                                              BorderStyle nStyle,
                                              const CPVT_Dash& dash) {
   std::ostringstream sAppStream;
@@ -1240,28 +1236,28 @@ ByteString CPVT_GenerateAP::GenerateBorderAP(const CFX_FloatRect& rect,
 }
 
 // Static.
-ByteString CPVT_GenerateAP::GenerateColorAP(const CPVT_Color& color,
+ByteString CPVT_GenerateAP::GenerateColorAP(const CFX_Color& color,
                                             PaintOperation nOperation) {
   std::ostringstream sColorStream;
   switch (color.nColorType) {
-    case CPVT_Color::kRGB:
+    case CFX_Color::kRGB:
       sColorStream << color.fColor1 << " " << color.fColor2 << " "
                    << color.fColor3 << " "
                    << (nOperation == PaintOperation::STROKE ? "RG" : "rg")
                    << "\n";
       break;
-    case CPVT_Color::kGray:
+    case CFX_Color::kGray:
       sColorStream << color.fColor1 << " "
                    << (nOperation == PaintOperation::STROKE ? "G" : "g")
                    << "\n";
       break;
-    case CPVT_Color::kCMYK:
+    case CFX_Color::kCMYK:
       sColorStream << color.fColor1 << " " << color.fColor2 << " "
                    << color.fColor3 << " " << color.fColor4 << " "
                    << (nOperation == PaintOperation::STROKE ? "K" : "k")
                    << "\n";
       break;
-    case CPVT_Color::kTransparent:
+    case CFX_Color::kTransparent:
       break;
   }
   return ByteString(sColorStream);
