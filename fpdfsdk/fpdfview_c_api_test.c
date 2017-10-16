@@ -11,6 +11,7 @@
 
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
+#include "public/fpdf_catalog.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_edit.h"
@@ -77,6 +78,9 @@ int CheckPDFiumCApi() {
     CHK(FPDFAttachment_GetStringValue);
     CHK(FPDFAttachment_SetFile);
     CHK(FPDFAttachment_GetFile);
+
+    // fpdf_catalog.h
+    CHK(FPDFCatalog_IsTagged);
 
     // fpdf_dataavail.h
     CHK(FPDFAvail_Create);
