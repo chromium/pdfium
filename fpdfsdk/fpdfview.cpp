@@ -39,6 +39,7 @@
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
+#include "public/fpdf_formfill.h"
 #include "public/fpdf_progressive.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
@@ -49,7 +50,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "fxbarcode/BC_Library.h"
-#include "public/fpdf_formfill.h"
 #endif  // PDF_ENABLE_XFA
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -565,14 +565,12 @@ FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password) {
       password);
 }
 
-#ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_HasXFAField(FPDF_DOCUMENT document,
                                                      int* docType) {
   if (!document)
     return false;
 
-  const CPDF_Document* pDoc =
-      static_cast<CPDFXFA_Context*>(document)->GetPDFDoc();
+  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return false;
 
@@ -593,6 +591,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_HasXFAField(FPDF_DOCUMENT document,
   return true;
 }
 
+#ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
   return document && static_cast<CPDFXFA_Context*>(document)->LoadXFADoc();
 }

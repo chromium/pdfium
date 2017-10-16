@@ -206,8 +206,8 @@ int CheckPDFiumCApi() {
     CHK(FPDF_SetFormFieldHighlightAlpha);
     CHK(FPDF_RemoveFormFieldHighlight);
     CHK(FPDF_FFLDraw);
-#ifdef PDF_ENABLE_XFA
     CHK(FPDF_HasXFAField);
+#ifdef PDF_ENABLE_XFA
     CHK(FPDF_LoadXFA);
     CHK(FPDF_Widget_Undo);
     CHK(FPDF_Widget_Redo);

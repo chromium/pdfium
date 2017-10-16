@@ -12,11 +12,9 @@
 
 typedef void* FPDF_FORMHANDLE;
 
-#ifdef PDF_ENABLE_XFA
 #define DOCTYPE_PDF 0          // Normal pdf Document
-#define DOCTYPE_DYNAMIC_XFA 1  // Dynamic xfa Document Type
-#define DOCTYPE_STATIC_XFA 2   // Static xfa Document Type
-#endif  // PDF_ENABLE_XFA
+#define DOCTYPE_DYNAMIC_XFA 1  // Dynamic XFA Document Type
+#define DOCTYPE_STATIC_XFA 2   // Static XFA Document Type
 
 // Exported Functions
 #ifdef __cplusplus
@@ -1607,7 +1605,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
                                               int flags);
 #endif
 
-#ifdef PDF_ENABLE_XFA
 /**
  * Function: FPDF_HasXFAField
  *                      This method is designed to check whether a pdf document
@@ -1624,6 +1621,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_HasXFAField(FPDF_DOCUMENT document,
                                                      int* docType);
 
+#ifdef PDF_ENABLE_XFA
 /**
  * Function: FPDF_LoadXFA
  *          If the document consists of XFA fields, there should call this
