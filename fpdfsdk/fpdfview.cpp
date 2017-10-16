@@ -587,7 +587,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_HasXFAField(FPDF_DOCUMENT document,
     return false;
 
   bool bDynamicXFA = pRoot->GetBooleanFor("NeedsRendering", false);
-  *docType = bDynamicXFA ? DOCTYPE_DYNAMIC_XFA : DOCTYPE_STATIC_XFA;
+  *docType = bDynamicXFA ? XFADOCTYPE_FULL : XFADOCTYPE_FOREGROUNDONLY;
   return true;
 }
 

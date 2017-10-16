@@ -48,8 +48,8 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pContext)
     return false;
 
-  if (pContext->GetDocType() != XFA_DocType::Dynamic &&
-      pContext->GetDocType() != XFA_DocType::Static) {
+  if (pContext->GetDocType() != XFA_DocType::kFull &&
+      pContext->GetDocType() != XFA_DocType::kForegroundOnly) {
     return true;
   }
 
@@ -192,8 +192,8 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
   if (!pContext)
     return false;
 
-  if (pContext->GetDocType() != XFA_DocType::Dynamic &&
-      pContext->GetDocType() != XFA_DocType::Static)
+  if (pContext->GetDocType() != XFA_DocType::kFull &&
+      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
     return true;
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
@@ -215,8 +215,8 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
 
 bool SendPreSaveToXFADoc(CPDFXFA_Context* pContext,
                          std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
-  if (pContext->GetDocType() != XFA_DocType::Dynamic &&
-      pContext->GetDocType() != XFA_DocType::Static)
+  if (pContext->GetDocType() != XFA_DocType::kFull &&
+      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
     return true;
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();

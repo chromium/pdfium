@@ -622,7 +622,7 @@ void CXFA_FFDocView::DestroyDocView() {
 }
 
 bool CXFA_FFDocView::IsStaticNotify() {
-  return m_pDoc->GetDocType() == XFA_DocType::Static;
+  return m_pDoc->GetDocType() == XFA_DocType::kForegroundOnly;
 }
 
 void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {

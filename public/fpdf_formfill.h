@@ -12,9 +12,10 @@
 
 typedef void* FPDF_FORMHANDLE;
 
-#define DOCTYPE_PDF 0          // Normal pdf Document
-#define DOCTYPE_DYNAMIC_XFA 1  // Dynamic XFA Document Type
-#define DOCTYPE_STATIC_XFA 2   // Static XFA Document Type
+#define XFADOCTYPE_NONE 0  // Document contains no XFA forms
+#define XFADOCTYPE_FULL 1  // XFA forms are specified using the entire XFA spec
+#define XFADOCTYPE_FOREGROUNDONLY \
+  2  // XFA forms are specified using the XFAF subset
 
 // Exported Functions
 #ifdef __cplusplus
@@ -1613,7 +1614,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
  *                      document                -       Handle to document.
  *Returned by FPDF_LoadDocument function.
  *                      docType                 -       Document type defined as
- *DOCTYPE_xxx.
+ *XFADOCTYPE_xxx.
  * Return Value:
  *                      TRUE indicates that the input document has XFA fields,
  *otherwise FALSE.
