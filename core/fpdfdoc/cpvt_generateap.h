@@ -19,7 +19,6 @@
 class CPDF_Dictionary;
 class CPDF_Document;
 struct CPVT_Dash;
-class IPVT_FontMap;
 
 class CPVT_GenerateAP {
  public:
@@ -44,20 +43,7 @@ class CPVT_GenerateAP {
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateUnderlineAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
-  static ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
-                                   CPDF_VariableText::Iterator* pIterator,
-                                   const CFX_PointF& ptOffset,
-                                   bool bContinuous,
-                                   uint16_t SubWord);
-  static ByteString GenerateBorderAP(const CFX_FloatRect& rect,
-                                     float fWidth,
-                                     const CFX_Color& color,
-                                     const CFX_Color& crLeftTop,
-                                     const CFX_Color& crRightBottom,
-                                     BorderStyle nStyle,
-                                     const CPVT_Dash& dash);
-  static ByteString GenerateColorAP(const CFX_Color& color,
-                                    PaintOperation nOperation);
+
   static std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
       const CPDF_Dictionary& pAnnotDict,
       const ByteString& sExtGSDictName,

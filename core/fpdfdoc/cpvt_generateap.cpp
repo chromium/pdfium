@@ -40,6 +40,264 @@ struct CPVT_Dash {
 
 namespace {
 
+ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
+                            int32_t nFontIndex,
+                            uint16_t Word,
+                            uint16_t SubWord) {
+  ByteString sWord;
+  if (SubWord > 0) {
+    sWord.Format("%c", SubWord);
+    return sWord;
+  }
+
+  if (!pFontMap)
+    return sWord;
+
+  if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
+    if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
+        pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
+      sWord.Format("%c", Word);
+    } else {
+      uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
+      if (dwCharCode != CPDF_Font::kInvalidCharCode)
+        pPDFFont->AppendChar(&sWord, dwCharCode);
+    }
+  }
+  return sWord;
+}
+
+ByteString GetWordRenderString(const ByteString& strWords) {
+  if (strWords.GetLength() > 0)
+    return PDF_EncodeString(strWords, false) + " Tj\n";
+  return "";
+}
+
+ByteString GetFontSetString(IPVT_FontMap* pFontMap,
+                            int32_t nFontIndex,
+                            float fFontSize) {
+  std::ostringstream sRet;
+  if (pFontMap) {
+    ByteString sFontAlias = pFontMap->GetPDFFontAlias(nFontIndex);
+    if (sFontAlias.GetLength() > 0 && fFontSize > 0)
+      sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
+  }
+  return ByteString(sRet);
+}
+
+ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
+                          CPDF_VariableText::Iterator* pIterator,
+                          const CFX_PointF& ptOffset,
+                          bool bContinuous,
+                          uint16_t SubWord) {
+  std::ostringstream sEditStream;
+  std::ostringstream sLineStream;
+  std::ostringstream sWords;
+  CFX_PointF ptOld;
+  CFX_PointF ptNew;
+  int32_t nCurFontIndex = -1;
+  CPVT_WordPlace oldplace;
+
+  pIterator->SetAt(0);
+  while (pIterator->NextWord()) {
+    CPVT_WordPlace place = pIterator->GetAt();
+    if (bContinuous) {
+      if (place.LineCmp(oldplace) != 0) {
+        if (sWords.tellp() > 0) {
+          sLineStream << GetWordRenderString(ByteString(sWords));
+          sEditStream << sLineStream.str();
+          sLineStream.str("");
+          sWords.str("");
+        }
+        CPVT_Word word;
+        if (pIterator->GetWord(word)) {
+          ptNew = CFX_PointF(word.ptWord.x + ptOffset.x,
+                             word.ptWord.y + ptOffset.y);
+        } else {
+          CPVT_Line line;
+          pIterator->GetLine(line);
+          ptNew = CFX_PointF(line.ptLine.x + ptOffset.x,
+                             line.ptLine.y + ptOffset.y);
+        }
+        if (ptNew != ptOld) {
+          sLineStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
+                      << " Td\n";
+          ptOld = ptNew;
+        }
+      }
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        if (word.nFontIndex != nCurFontIndex) {
+          if (sWords.tellp() > 0) {
+            sLineStream << GetWordRenderString(ByteString(sWords));
+            sWords.str("");
+          }
+          sLineStream << GetFontSetString(pFontMap, word.nFontIndex,
+                                          word.fFontSize);
+          nCurFontIndex = word.nFontIndex;
+        }
+        sWords << GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord);
+      }
+      oldplace = place;
+    } else {
+      CPVT_Word word;
+      if (pIterator->GetWord(word)) {
+        ptNew =
+            CFX_PointF(word.ptWord.x + ptOffset.x, word.ptWord.y + ptOffset.y);
+        if (ptNew != ptOld) {
+          sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
+                      << " Td\n";
+          ptOld = ptNew;
+        }
+        if (word.nFontIndex != nCurFontIndex) {
+          sEditStream << GetFontSetString(pFontMap, word.nFontIndex,
+                                          word.fFontSize);
+          nCurFontIndex = word.nFontIndex;
+        }
+        sEditStream << GetWordRenderString(
+            GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord));
+      }
+    }
+  }
+  if (sWords.tellp() > 0) {
+    sLineStream << GetWordRenderString(ByteString(sWords));
+    sEditStream << sLineStream.str();
+    sWords.str("");
+  }
+  return ByteString(sEditStream);
+}
+
+ByteString GenerateColorAP(const CFX_Color& color, PaintOperation nOperation) {
+  std::ostringstream sColorStream;
+  switch (color.nColorType) {
+    case CFX_Color::kRGB:
+      sColorStream << color.fColor1 << " " << color.fColor2 << " "
+                   << color.fColor3 << " "
+                   << (nOperation == PaintOperation::STROKE ? "RG" : "rg")
+                   << "\n";
+      break;
+    case CFX_Color::kGray:
+      sColorStream << color.fColor1 << " "
+                   << (nOperation == PaintOperation::STROKE ? "G" : "g")
+                   << "\n";
+      break;
+    case CFX_Color::kCMYK:
+      sColorStream << color.fColor1 << " " << color.fColor2 << " "
+                   << color.fColor3 << " " << color.fColor4 << " "
+                   << (nOperation == PaintOperation::STROKE ? "K" : "k")
+                   << "\n";
+      break;
+    case CFX_Color::kTransparent:
+      break;
+  }
+  return ByteString(sColorStream);
+}
+
+ByteString GenerateBorderAP(const CFX_FloatRect& rect,
+                            float fWidth,
+                            const CFX_Color& color,
+                            const CFX_Color& crLeftTop,
+                            const CFX_Color& crRightBottom,
+                            BorderStyle nStyle,
+                            const CPVT_Dash& dash) {
+  std::ostringstream sAppStream;
+  ByteString sColor;
+  float fLeft = rect.left;
+  float fRight = rect.right;
+  float fTop = rect.top;
+  float fBottom = rect.bottom;
+  if (fWidth > 0.0f) {
+    float fHalfWidth = fWidth / 2.0f;
+    switch (nStyle) {
+      default:
+      case BorderStyle::SOLID:
+        sColor = GenerateColorAP(color, PaintOperation::FILL);
+        if (sColor.GetLength() > 0) {
+          sAppStream << sColor;
+          sAppStream << fLeft << " " << fBottom << " " << fRight - fLeft << " "
+                     << fTop - fBottom << " re\n";
+          sAppStream << fLeft + fWidth << " " << fBottom + fWidth << " "
+                     << fRight - fLeft - fWidth * 2 << " "
+                     << fTop - fBottom - fWidth * 2 << " re\n";
+          sAppStream << "f*\n";
+        }
+        break;
+      case BorderStyle::DASH:
+        sColor = GenerateColorAP(color, PaintOperation::STROKE);
+        if (sColor.GetLength() > 0) {
+          sAppStream << sColor;
+          sAppStream << fWidth << " w"
+                     << " [" << dash.nDash << " " << dash.nGap << "] "
+                     << dash.nPhase << " d\n";
+          sAppStream << fLeft + fWidth / 2 << " " << fBottom + fWidth / 2
+                     << " m\n";
+          sAppStream << fLeft + fWidth / 2 << " " << fTop - fWidth / 2
+                     << " l\n";
+          sAppStream << fRight - fWidth / 2 << " " << fTop - fWidth / 2
+                     << " l\n";
+          sAppStream << fRight - fWidth / 2 << " " << fBottom + fWidth / 2
+                     << " l\n";
+          sAppStream << fLeft + fWidth / 2 << " " << fBottom + fWidth / 2
+                     << " l S\n";
+        }
+        break;
+      case BorderStyle::BEVELED:
+      case BorderStyle::INSET:
+        sColor = GenerateColorAP(crLeftTop, PaintOperation::FILL);
+        if (sColor.GetLength() > 0) {
+          sAppStream << sColor;
+          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth
+                     << " m\n";
+          sAppStream << fLeft + fHalfWidth << " " << fTop - fHalfWidth
+                     << " l\n";
+          sAppStream << fRight - fHalfWidth << " " << fTop - fHalfWidth
+                     << " l\n";
+          sAppStream << fRight - fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
+                     << " l\n";
+          sAppStream << fLeft + fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
+                     << " l\n";
+          sAppStream << fLeft + fHalfWidth * 2 << " "
+                     << fBottom + fHalfWidth * 2 << " l f\n";
+        }
+        sColor = GenerateColorAP(crRightBottom, PaintOperation::FILL);
+        if (sColor.GetLength() > 0) {
+          sAppStream << sColor;
+          sAppStream << fRight - fHalfWidth << " " << fTop - fHalfWidth
+                     << " m\n";
+          sAppStream << fRight - fHalfWidth << " " << fBottom + fHalfWidth
+                     << " l\n";
+          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth
+                     << " l\n";
+          sAppStream << fLeft + fHalfWidth * 2 << " "
+                     << fBottom + fHalfWidth * 2 << " l\n";
+          sAppStream << fRight - fHalfWidth * 2 << " "
+                     << fBottom + fHalfWidth * 2 << " l\n";
+          sAppStream << fRight - fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
+                     << " l f\n";
+        }
+        sColor = GenerateColorAP(color, PaintOperation::FILL);
+        if (sColor.GetLength() > 0) {
+          sAppStream << sColor;
+          sAppStream << fLeft << " " << fBottom << " " << fRight - fLeft << " "
+                     << fTop - fBottom << " re\n";
+          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth << " "
+                     << fRight - fLeft - fHalfWidth * 2 << " "
+                     << fTop - fBottom - fHalfWidth * 2 << " re f*\n";
+        }
+        break;
+      case BorderStyle::UNDERLINE:
+        sColor = GenerateColorAP(color, PaintOperation::STROKE);
+        if (sColor.GetLength() > 0) {
+          sAppStream << sColor;
+          sAppStream << fWidth << " w\n";
+          sAppStream << fLeft << " " << fBottom + fWidth / 2 << " m\n";
+          sAppStream << fRight << " " << fBottom + fWidth / 2 << " l S\n";
+        }
+        break;
+    }
+  }
+  return ByteString(sAppStream);
+}
+
 bool GenerateWidgetAP(CPDF_Document* pDoc,
                       CPDF_Dictionary* pAnnotDict,
                       const int32_t& nWidgetType) {
@@ -170,15 +428,15 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       crBG = CFX_Color::ParseColor(*pArray);
   }
   std::ostringstream sAppStream;
-  ByteString sBG = CPVT_GenerateAP::GenerateColorAP(crBG, PaintOperation::FILL);
+  ByteString sBG = GenerateColorAP(crBG, PaintOperation::FILL);
   if (sBG.GetLength() > 0) {
     sAppStream << "q\n" << sBG << rcBBox.left << " " << rcBBox.bottom << " "
                << rcBBox.Width() << " " << rcBBox.Height() << " re f\n"
                << "Q\n";
   }
-  ByteString sBorderStream = CPVT_GenerateAP::GenerateBorderAP(
-      rcBBox, fBorderWidth, crBorder, crLeftTop, crRightBottom, nBorderStyle,
-      dsBorder);
+  ByteString sBorderStream =
+      GenerateBorderAP(rcBBox, fBorderWidth, crBorder, crLeftTop, crRightBottom,
+                       nBorderStyle, dsBorder);
   if (sBorderStream.GetLength() > 0)
     sAppStream << "q\n" << sBorderStream << "Q\n";
 
@@ -268,8 +526,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
         ptOffset =
             CFX_PointF(0.0f, (rcContent.Height() - rcBody.Height()) / 2.0f);
       }
-      ByteString sBody = CPVT_GenerateAP::GenerateEditAP(
-          &map, vt.GetIterator(), ptOffset, !bCharArray, subWord);
+      ByteString sBody = GenerateEditAP(&map, vt.GetIterator(), ptOffset,
+                                        !bCharArray, subWord);
       if (sBody.GetLength() > 0) {
         sAppStream << "/Tx BMC\n"
                    << "q\n";
@@ -280,9 +538,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
                      << " re\nW\nn\n";
         }
         sAppStream << "BT\n"
-                   << CPVT_GenerateAP::GenerateColorAP(crText,
-                                                       PaintOperation::FILL)
-                   << sBody << "ET\n"
+                   << GenerateColorAP(crText, PaintOperation::FILL) << sBody
+                   << "ET\n"
                    << "Q\nEMC\n";
       }
     } break;
@@ -315,29 +572,28 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       CFX_FloatRect rcContent = vt.GetContentRect();
       CFX_PointF ptOffset =
           CFX_PointF(0.0f, (rcContent.Height() - rcEdit.Height()) / 2.0f);
-      ByteString sEdit = CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
-                                                         ptOffset, true, 0);
+      ByteString sEdit =
+          GenerateEditAP(&map, vt.GetIterator(), ptOffset, true, 0);
       if (sEdit.GetLength() > 0) {
         sAppStream << "/Tx BMC\n"
                    << "q\n";
         sAppStream << rcEdit.left << " " << rcEdit.bottom << " "
                    << rcEdit.Width() << " " << rcEdit.Height() << " re\nW\nn\n";
         sAppStream << "BT\n"
-                   << CPVT_GenerateAP::GenerateColorAP(crText,
-                                                       PaintOperation::FILL)
-                   << sEdit << "ET\n"
+                   << GenerateColorAP(crText, PaintOperation::FILL) << sEdit
+                   << "ET\n"
                    << "Q\nEMC\n";
       }
-      ByteString sButton = CPVT_GenerateAP::GenerateColorAP(
-          CFX_Color(CFX_Color::kRGB, 220.0f / 255.0f, 220.0f / 255.0f,
-                    220.0f / 255.0f),
-          PaintOperation::FILL);
+      ByteString sButton =
+          GenerateColorAP(CFX_Color(CFX_Color::kRGB, 220.0f / 255.0f,
+                                    220.0f / 255.0f, 220.0f / 255.0f),
+                          PaintOperation::FILL);
       if (sButton.GetLength() > 0 && !rcButton.IsEmpty()) {
         sAppStream << "q\n" << sButton;
         sAppStream << rcButton.left << " " << rcButton.bottom << " "
                    << rcButton.Width() << " " << rcButton.Height() << " re f\n";
         sAppStream << "Q\n";
-        ByteString sButtonBorder = CPVT_GenerateAP::GenerateBorderAP(
+        ByteString sButtonBorder = GenerateBorderAP(
             rcButton, 2, CFX_Color(CFX_Color::kGray, 0),
             CFX_Color(CFX_Color::kGray, 1), CFX_Color(CFX_Color::kGray, 0.5),
             BorderStyle::BEVELED, CPVT_Dash(3, 0, 0));
@@ -405,7 +661,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
               CFX_FloatRect rcItem = CFX_FloatRect(
                   rcBody.left, fy - fItemHeight, rcBody.right, fy);
               sBody << "q\n"
-                    << CPVT_GenerateAP::GenerateColorAP(
+                    << GenerateColorAP(
                            CFX_Color(CFX_Color::kRGB, 0, 51.0f / 255.0f,
                                      113.0f / 255.0f),
                            PaintOperation::FILL)
@@ -413,19 +669,16 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
                     << rcItem.Width() << " " << rcItem.Height() << " re f\n"
                     << "Q\n";
               sBody << "BT\n"
-                    << CPVT_GenerateAP::GenerateColorAP(
-                           CFX_Color(CFX_Color::kGray, 1), PaintOperation::FILL)
-                    << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
-                                                       CFX_PointF(0.0f, fy),
-                                                       true, 0)
+                    << GenerateColorAP(CFX_Color(CFX_Color::kGray, 1),
+                                       PaintOperation::FILL)
+                    << GenerateEditAP(&map, vt.GetIterator(),
+                                      CFX_PointF(0.0f, fy), true, 0)
                     << "ET\n";
             } else {
               sBody << "BT\n"
-                    << CPVT_GenerateAP::GenerateColorAP(crText,
-                                                        PaintOperation::FILL)
-                    << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
-                                                       CFX_PointF(0.0f, fy),
-                                                       true, 0)
+                    << GenerateColorAP(crText, PaintOperation::FILL)
+                    << GenerateEditAP(&map, vt.GetIterator(),
+                                      CFX_PointF(0.0f, fy), true, 0)
                     << "ET\n";
             }
             fy -= fItemHeight;
@@ -472,10 +725,10 @@ ByteString GetColorStringWithDefault(CPDF_Array* pColor,
                                      PaintOperation nOperation) {
   if (pColor) {
     CFX_Color color = CFX_Color::ParseColor(*pColor);
-    return CPVT_GenerateAP::GenerateColorAP(color, nOperation);
+    return GenerateColorAP(color, nOperation);
   }
 
-  return CPVT_GenerateAP::GenerateColorAP(crDefaultColor, nOperation);
+  return GenerateColorAP(crDefaultColor, nOperation);
 }
 
 float GetBorderWidth(const CPDF_Dictionary& pAnnotDict) {
@@ -544,16 +797,16 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
   vt.SetText(swValue);
   vt.RearrangeAll();
   CFX_PointF ptOffset(3.0f, -3.0f);
-  ByteString sContent = CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
-                                                        ptOffset, false, 0);
+  ByteString sContent =
+      GenerateEditAP(&map, vt.GetIterator(), ptOffset, false, 0);
 
   if (sContent.IsEmpty())
     return ByteString();
 
   std::ostringstream sAppStream;
   sAppStream << "BT\n"
-             << CPVT_GenerateAP::GenerateColorAP(
-                    CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::FILL)
+             << GenerateColorAP(CFX_Color(CFX_Color::kRGB, 0, 0, 0),
+                                PaintOperation::FILL)
              << sContent << "ET\n"
              << "Q\n";
   return ByteString(sAppStream);
@@ -583,10 +836,10 @@ ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
 
 ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
   std::ostringstream sAppStream;
-  sAppStream << CPVT_GenerateAP::GenerateColorAP(
-      CFX_Color(CFX_Color::kRGB, 1, 1, 0), PaintOperation::FILL);
-  sAppStream << CPVT_GenerateAP::GenerateColorAP(
-      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
+  sAppStream << GenerateColorAP(CFX_Color(CFX_Color::kRGB, 1, 1, 0),
+                                PaintOperation::FILL);
+  sAppStream << GenerateColorAP(CFX_Color(CFX_Color::kRGB, 0, 0, 0),
+                                PaintOperation::STROKE);
 
   const float fBorderWidth = 1;
   sAppStream << fBorderWidth << " w\n";
@@ -629,50 +882,6 @@ ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
   sAppStream << "B*\n";
 
   return ByteString(sAppStream);
-}
-
-ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
-                            int32_t nFontIndex,
-                            uint16_t Word,
-                            uint16_t SubWord) {
-  ByteString sWord;
-  if (SubWord > 0) {
-    sWord.Format("%c", SubWord);
-    return sWord;
-  }
-
-  if (!pFontMap)
-    return sWord;
-
-  if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
-    if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
-        pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
-      sWord.Format("%c", Word);
-    } else {
-      uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
-      if (dwCharCode != CPDF_Font::kInvalidCharCode)
-        pPDFFont->AppendChar(&sWord, dwCharCode);
-    }
-  }
-  return sWord;
-}
-
-ByteString GetWordRenderString(const ByteString& strWords) {
-  if (strWords.GetLength() > 0)
-    return PDF_EncodeString(strWords, false) + " Tj\n";
-  return "";
-}
-
-ByteString GetFontSetString(IPVT_FontMap* pFontMap,
-                            int32_t nFontIndex,
-                            float fFontSize) {
-  std::ostringstream sRet;
-  if (pFontMap) {
-    ByteString sFontAlias = pFontMap->GetPDFFontAlias(nFontIndex);
-    if (sFontAlias.GetLength() > 0 && fFontSize > 0)
-      sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
-  }
-  return ByteString(sRet);
 }
 
 }  // namespace
@@ -1059,225 +1268,6 @@ bool CPVT_GenerateAP::GenerateStrikeOutAP(CPDF_Document* pDoc,
   GenerateAndSetAPDict(pDoc, pAnnotDict, &sAppStream, std::move(pResourceDict),
                        true /*IsTextMarkupAnnotation*/);
   return true;
-}
-
-// Static.
-ByteString CPVT_GenerateAP::GenerateEditAP(
-    IPVT_FontMap* pFontMap,
-    CPDF_VariableText::Iterator* pIterator,
-    const CFX_PointF& ptOffset,
-    bool bContinuous,
-    uint16_t SubWord) {
-  std::ostringstream sEditStream;
-  std::ostringstream sLineStream;
-  std::ostringstream sWords;
-  CFX_PointF ptOld;
-  CFX_PointF ptNew;
-  int32_t nCurFontIndex = -1;
-  CPVT_WordPlace oldplace;
-
-  pIterator->SetAt(0);
-  while (pIterator->NextWord()) {
-    CPVT_WordPlace place = pIterator->GetAt();
-    if (bContinuous) {
-      if (place.LineCmp(oldplace) != 0) {
-        if (sWords.tellp() > 0) {
-          sLineStream << GetWordRenderString(ByteString(sWords));
-          sEditStream << sLineStream.str();
-          sLineStream.str("");
-          sWords.str("");
-        }
-        CPVT_Word word;
-        if (pIterator->GetWord(word)) {
-          ptNew = CFX_PointF(word.ptWord.x + ptOffset.x,
-                             word.ptWord.y + ptOffset.y);
-        } else {
-          CPVT_Line line;
-          pIterator->GetLine(line);
-          ptNew = CFX_PointF(line.ptLine.x + ptOffset.x,
-                             line.ptLine.y + ptOffset.y);
-        }
-        if (ptNew != ptOld) {
-          sLineStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
-                      << " Td\n";
-          ptOld = ptNew;
-        }
-      }
-      CPVT_Word word;
-      if (pIterator->GetWord(word)) {
-        if (word.nFontIndex != nCurFontIndex) {
-          if (sWords.tellp() > 0) {
-            sLineStream << GetWordRenderString(ByteString(sWords));
-            sWords.str("");
-          }
-          sLineStream << GetFontSetString(pFontMap, word.nFontIndex,
-                                          word.fFontSize);
-          nCurFontIndex = word.nFontIndex;
-        }
-        sWords << GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord);
-      }
-      oldplace = place;
-    } else {
-      CPVT_Word word;
-      if (pIterator->GetWord(word)) {
-        ptNew =
-            CFX_PointF(word.ptWord.x + ptOffset.x, word.ptWord.y + ptOffset.y);
-        if (ptNew != ptOld) {
-          sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
-                      << " Td\n";
-          ptOld = ptNew;
-        }
-        if (word.nFontIndex != nCurFontIndex) {
-          sEditStream << GetFontSetString(pFontMap, word.nFontIndex,
-                                          word.fFontSize);
-          nCurFontIndex = word.nFontIndex;
-        }
-        sEditStream << GetWordRenderString(
-            GetPDFWordString(pFontMap, nCurFontIndex, word.Word, SubWord));
-      }
-    }
-  }
-  if (sWords.tellp() > 0) {
-    sLineStream << GetWordRenderString(ByteString(sWords));
-    sEditStream << sLineStream.str();
-    sWords.str("");
-  }
-  return ByteString(sEditStream);
-}
-
-// Static.
-ByteString CPVT_GenerateAP::GenerateBorderAP(const CFX_FloatRect& rect,
-                                             float fWidth,
-                                             const CFX_Color& color,
-                                             const CFX_Color& crLeftTop,
-                                             const CFX_Color& crRightBottom,
-                                             BorderStyle nStyle,
-                                             const CPVT_Dash& dash) {
-  std::ostringstream sAppStream;
-  ByteString sColor;
-  float fLeft = rect.left;
-  float fRight = rect.right;
-  float fTop = rect.top;
-  float fBottom = rect.bottom;
-  if (fWidth > 0.0f) {
-    float fHalfWidth = fWidth / 2.0f;
-    switch (nStyle) {
-      default:
-      case BorderStyle::SOLID:
-        sColor = GenerateColorAP(color, PaintOperation::FILL);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          sAppStream << fLeft << " " << fBottom << " " << fRight - fLeft << " "
-                     << fTop - fBottom << " re\n";
-          sAppStream << fLeft + fWidth << " " << fBottom + fWidth << " "
-                     << fRight - fLeft - fWidth * 2 << " "
-                     << fTop - fBottom - fWidth * 2 << " re\n";
-          sAppStream << "f*\n";
-        }
-        break;
-      case BorderStyle::DASH:
-        sColor = GenerateColorAP(color, PaintOperation::STROKE);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          sAppStream << fWidth << " w"
-                     << " [" << dash.nDash << " " << dash.nGap << "] "
-                     << dash.nPhase << " d\n";
-          sAppStream << fLeft + fWidth / 2 << " " << fBottom + fWidth / 2
-                     << " m\n";
-          sAppStream << fLeft + fWidth / 2 << " " << fTop - fWidth / 2
-                     << " l\n";
-          sAppStream << fRight - fWidth / 2 << " " << fTop - fWidth / 2
-                     << " l\n";
-          sAppStream << fRight - fWidth / 2 << " " << fBottom + fWidth / 2
-                     << " l\n";
-          sAppStream << fLeft + fWidth / 2 << " " << fBottom + fWidth / 2
-                     << " l S\n";
-        }
-        break;
-      case BorderStyle::BEVELED:
-      case BorderStyle::INSET:
-        sColor = GenerateColorAP(crLeftTop, PaintOperation::FILL);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth
-                     << " m\n";
-          sAppStream << fLeft + fHalfWidth << " " << fTop - fHalfWidth
-                     << " l\n";
-          sAppStream << fRight - fHalfWidth << " " << fTop - fHalfWidth
-                     << " l\n";
-          sAppStream << fRight - fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
-                     << " l\n";
-          sAppStream << fLeft + fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
-                     << " l\n";
-          sAppStream << fLeft + fHalfWidth * 2 << " "
-                     << fBottom + fHalfWidth * 2 << " l f\n";
-        }
-        sColor = GenerateColorAP(crRightBottom, PaintOperation::FILL);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          sAppStream << fRight - fHalfWidth << " " << fTop - fHalfWidth
-                     << " m\n";
-          sAppStream << fRight - fHalfWidth << " " << fBottom + fHalfWidth
-                     << " l\n";
-          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth
-                     << " l\n";
-          sAppStream << fLeft + fHalfWidth * 2 << " "
-                     << fBottom + fHalfWidth * 2 << " l\n";
-          sAppStream << fRight - fHalfWidth * 2 << " "
-                     << fBottom + fHalfWidth * 2 << " l\n";
-          sAppStream << fRight - fHalfWidth * 2 << " " << fTop - fHalfWidth * 2
-                     << " l f\n";
-        }
-        sColor = GenerateColorAP(color, PaintOperation::FILL);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          sAppStream << fLeft << " " << fBottom << " " << fRight - fLeft << " "
-                     << fTop - fBottom << " re\n";
-          sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth << " "
-                     << fRight - fLeft - fHalfWidth * 2 << " "
-                     << fTop - fBottom - fHalfWidth * 2 << " re f*\n";
-        }
-        break;
-      case BorderStyle::UNDERLINE:
-        sColor = GenerateColorAP(color, PaintOperation::STROKE);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          sAppStream << fWidth << " w\n";
-          sAppStream << fLeft << " " << fBottom + fWidth / 2 << " m\n";
-          sAppStream << fRight << " " << fBottom + fWidth / 2 << " l S\n";
-        }
-        break;
-    }
-  }
-  return ByteString(sAppStream);
-}
-
-// Static.
-ByteString CPVT_GenerateAP::GenerateColorAP(const CFX_Color& color,
-                                            PaintOperation nOperation) {
-  std::ostringstream sColorStream;
-  switch (color.nColorType) {
-    case CFX_Color::kRGB:
-      sColorStream << color.fColor1 << " " << color.fColor2 << " "
-                   << color.fColor3 << " "
-                   << (nOperation == PaintOperation::STROKE ? "RG" : "rg")
-                   << "\n";
-      break;
-    case CFX_Color::kGray:
-      sColorStream << color.fColor1 << " "
-                   << (nOperation == PaintOperation::STROKE ? "G" : "g")
-                   << "\n";
-      break;
-    case CFX_Color::kCMYK:
-      sColorStream << color.fColor1 << " " << color.fColor2 << " "
-                   << color.fColor3 << " " << color.fColor4 << " "
-                   << (nOperation == PaintOperation::STROKE ? "K" : "k")
-                   << "\n";
-      break;
-    case CFX_Color::kTransparent:
-      break;
-  }
-  return ByteString(sColorStream);
 }
 
 // Static.
