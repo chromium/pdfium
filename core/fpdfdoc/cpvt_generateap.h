@@ -11,7 +11,6 @@
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"
-#include "core/fpdfdoc/cpvt_dash.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -19,6 +18,7 @@
 
 class CPDF_Dictionary;
 class CPDF_Document;
+struct CPVT_Dash;
 class IPVT_FontMap;
 
 struct CPVT_WordRange;

@@ -29,6 +29,15 @@
 #include "core/fpdfdoc/cpvt_word.h"
 #include "third_party/base/ptr_util.h"
 
+struct CPVT_Dash {
+  CPVT_Dash(int32_t dash, int32_t gap, int32_t phase)
+      : nDash(dash), nGap(gap), nPhase(phase) {}
+
+  int32_t nDash;
+  int32_t nGap;
+  int32_t nPhase;
+};
+
 namespace {
 
 bool GenerateWidgetAP(CPDF_Document* pDoc,
