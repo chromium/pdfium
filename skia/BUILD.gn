@@ -23,6 +23,7 @@ config("skia_config") {
     "config",
     "ext",
     "//third_party/skia/include/c",
+    "//third_party/skia/include/codec",
     "//third_party/skia/include/config",
     "//third_party/skia/include/core",
     "//third_party/skia/include/effects",
