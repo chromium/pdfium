@@ -631,60 +631,68 @@ ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
   return ByteString(sAppStream);
 }
 
-}  // namespace
-
-bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
-  if (!pAnnotDict || pAnnotDict->GetStringFor("Subtype") != "Widget")
-    return false;
-
-  CPDF_Object* pFieldTypeObj = FPDF_GetFieldAttr(pAnnotDict, "FT");
-  if (!pFieldTypeObj)
-    return false;
-
-  ByteString field_type = pFieldTypeObj->GetString();
-  if (field_type == "Tx")
-    return CPVT_GenerateAP::GenerateTextFieldAP(pDoc, pAnnotDict);
-
-  CPDF_Object* pFieldFlagsObj = FPDF_GetFieldAttr(pAnnotDict, "Ff");
-  uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
-  if (field_type == "Ch") {
-    return (flags & (1 << 17))
-               ? CPVT_GenerateAP::GenerateComboBoxAP(pDoc, pAnnotDict)
-               : CPVT_GenerateAP::GenerateListBoxAP(pDoc, pAnnotDict);
+ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
+                            int32_t nFontIndex,
+                            uint16_t Word,
+                            uint16_t SubWord) {
+  ByteString sWord;
+  if (SubWord > 0) {
+    sWord.Format("%c", SubWord);
+    return sWord;
   }
 
-  if (field_type == "Btn") {
-    if (!(flags & (1 << 16))) {
-      if (!pAnnotDict->KeyExist("AS")) {
-        if (CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent")) {
-          if (pParentDict->KeyExist("AS")) {
-            pAnnotDict->SetNewFor<CPDF_String>(
-                "AS", pParentDict->GetStringFor("AS"), false);
-          }
-        }
-      }
+  if (!pFontMap)
+    return sWord;
+
+  if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
+    if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
+        pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
+      sWord.Format("%c", Word);
+    } else {
+      uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
+      if (dwCharCode != CPDF_Font::kInvalidCharCode)
+        pPDFFont->AppendChar(&sWord, dwCharCode);
     }
   }
-
-  return false;
+  return sWord;
 }
 
+ByteString GetWordRenderString(const ByteString& strWords) {
+  if (strWords.GetLength() > 0)
+    return PDF_EncodeString(strWords, false) + " Tj\n";
+  return "";
+}
+
+ByteString GetFontSetString(IPVT_FontMap* pFontMap,
+                            int32_t nFontIndex,
+                            float fFontSize) {
+  std::ostringstream sRet;
+  if (pFontMap) {
+    ByteString sFontAlias = pFontMap->GetPDFFontAlias(nFontIndex);
+    if (sFontAlias.GetLength() > 0 && fFontSize > 0)
+      sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
+  }
+  return ByteString(sRet);
+}
+
+}  // namespace
+
 // Static.
-bool CPVT_GenerateAP::GenerateComboBoxAP(CPDF_Document* pDoc,
+void CPVT_GenerateAP::GenerateComboBoxAP(CPDF_Document* pDoc,
                                          CPDF_Dictionary* pAnnotDict) {
-  return GenerateWidgetAP(pDoc, pAnnotDict, 1);
+  GenerateWidgetAP(pDoc, pAnnotDict, 1);
 }
 
 // Static.
-bool CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc,
+void CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc,
                                         CPDF_Dictionary* pAnnotDict) {
-  return GenerateWidgetAP(pDoc, pAnnotDict, 2);
+  GenerateWidgetAP(pDoc, pAnnotDict, 2);
 }
 
 // Static.
-bool CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
+void CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc,
                                           CPDF_Dictionary* pAnnotDict) {
-  return GenerateWidgetAP(pDoc, pAnnotDict, 0);
+  GenerateWidgetAP(pDoc, pAnnotDict, 0);
 }
 
 bool CPVT_GenerateAP::GenerateCircleAP(CPDF_Document* pDoc,
@@ -1334,51 +1342,4 @@ void CPVT_GenerateAP::GenerateAndSetAPDict(
                            : pAnnotDict->GetRectFor("Rect");
   pStreamDict->SetRectFor("BBox", rect);
   pStreamDict->SetFor("Resources", std::move(pResourceDict));
-}
-
-// Static.
-ByteString CPVT_GenerateAP::GetPDFWordString(IPVT_FontMap* pFontMap,
-                                             int32_t nFontIndex,
-                                             uint16_t Word,
-                                             uint16_t SubWord) {
-  ByteString sWord;
-  if (SubWord > 0) {
-    sWord.Format("%c", SubWord);
-    return sWord;
-  }
-
-  if (!pFontMap)
-    return sWord;
-
-  if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
-    if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
-        pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
-      sWord.Format("%c", Word);
-    } else {
-      uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
-      if (dwCharCode != CPDF_Font::kInvalidCharCode)
-        pPDFFont->AppendChar(&sWord, dwCharCode);
-    }
-  }
-  return sWord;
-}
-
-// Static.
-ByteString CPVT_GenerateAP::GetWordRenderString(const ByteString& strWords) {
-  if (strWords.GetLength() > 0)
-    return PDF_EncodeString(strWords, false) + " Tj\n";
-  return "";
-}
-
-// Static.
-ByteString CPVT_GenerateAP::GetFontSetString(IPVT_FontMap* pFontMap,
-                                             int32_t nFontIndex,
-                                             float fFontSize) {
-  std::ostringstream sRet;
-  if (pFontMap) {
-    ByteString sFontAlias = pFontMap->GetPDFFontAlias(nFontIndex);
-    if (sFontAlias.GetLength() > 0 && fFontSize > 0)
-      sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
-  }
-  return ByteString(sRet);
 }

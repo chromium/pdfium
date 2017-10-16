@@ -21,20 +21,16 @@ class CPDF_Document;
 struct CPVT_Dash;
 class IPVT_FontMap;
 
-struct CPVT_WordRange;
-
-bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-
 class CPVT_GenerateAP {
  public:
   static bool GenerateCircleAP(CPDF_Document* pDoc,
                                CPDF_Dictionary* pAnnotDict);
-  static bool GenerateComboBoxAP(CPDF_Document* pDoc,
+  static void GenerateComboBoxAP(CPDF_Document* pDoc,
                                  CPDF_Dictionary* pAnnotDict);
   static bool GenerateHighlightAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-  static bool GenerateListBoxAP(CPDF_Document* pDoc,
+  static void GenerateListBoxAP(CPDF_Document* pDoc,
                                 CPDF_Dictionary* pAnnotDict);
   static bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
   static bool GenerateSquareAP(CPDF_Document* pDoc,
@@ -44,7 +40,7 @@ class CPVT_GenerateAP {
   static bool GenerateStrikeOutAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateTextAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-  static bool GenerateTextFieldAP(CPDF_Document* pDoc,
+  static void GenerateTextFieldAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
   static bool GenerateUnderlineAP(CPDF_Document* pDoc,
                                   CPDF_Dictionary* pAnnotDict);
@@ -76,15 +72,6 @@ class CPVT_GenerateAP {
       std::ostringstream* psAppStream,
       std::unique_ptr<CPDF_Dictionary> pResourceDict,
       bool bIsTextMarkupAnnotation);
-
-  static ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
-                                     int32_t nFontIndex,
-                                     uint16_t Word,
-                                     uint16_t SubWord);
-  static ByteString GetWordRenderString(const ByteString& strWords);
-  static ByteString GetFontSetString(IPVT_FontMap* pFontMap,
-                                     int32_t nFontIndex,
-                                     float fFontSize);
 };
 
 #endif  // CORE_FPDFDOC_CPVT_GENERATEAP_H_
