@@ -22,42 +22,16 @@ struct CPVT_Dash;
 
 class CPVT_GenerateAP {
  public:
-  static bool GenerateCircleAP(CPDF_Document* pDoc,
-                               CPDF_Dictionary* pAnnotDict);
-  static void GenerateComboBoxAP(CPDF_Document* pDoc,
-                                 CPDF_Dictionary* pAnnotDict);
-  static bool GenerateHighlightAP(CPDF_Document* pDoc,
-                                  CPDF_Dictionary* pAnnotDict);
-  static bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-  static void GenerateListBoxAP(CPDF_Document* pDoc,
-                                CPDF_Dictionary* pAnnotDict);
-  static bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-  static bool GenerateSquareAP(CPDF_Document* pDoc,
-                               CPDF_Dictionary* pAnnotDict);
-  static bool GenerateSquigglyAP(CPDF_Document* pDoc,
-                                 CPDF_Dictionary* pAnnotDict);
-  static bool GenerateStrikeOutAP(CPDF_Document* pDoc,
-                                  CPDF_Dictionary* pAnnotDict);
-  static bool GenerateTextAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-  static void GenerateTextFieldAP(CPDF_Document* pDoc,
-                                  CPDF_Dictionary* pAnnotDict);
-  static bool GenerateUnderlineAP(CPDF_Document* pDoc,
-                                  CPDF_Dictionary* pAnnotDict);
+  enum Type { kTextField, kComboBox, kListBox };
 
-  static std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
-      const CPDF_Dictionary& pAnnotDict,
-      const ByteString& sExtGSDictName,
-      const ByteString& sBlendMode);
-  static std::unique_ptr<CPDF_Dictionary> GenerateResourceDict(
-      CPDF_Document* pDoc,
-      std::unique_ptr<CPDF_Dictionary> pExtGStateDict,
-      std::unique_ptr<CPDF_Dictionary> pResourceFontDict);
-  static void GenerateAndSetAPDict(
-      CPDF_Document* pDoc,
-      CPDF_Dictionary* pAnnotDict,
-      std::ostringstream* psAppStream,
-      std::unique_ptr<CPDF_Dictionary> pResourceDict,
-      bool bIsTextMarkupAnnotation);
+  static void GenerateFormAP(Type type,
+                             CPDF_Document* pDoc,
+                             CPDF_Dictionary* pAnnotDict);
+  static void GenerateEmptyAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
+
+  static bool GenerateAnnotAP(CPDF_Annot::Subtype subtype,
+                              CPDF_Document* pDoc,
+                              CPDF_Dictionary* pAnnotDict);
 };
 
 #endif  // CORE_FPDFDOC_CPVT_GENERATEAP_H_

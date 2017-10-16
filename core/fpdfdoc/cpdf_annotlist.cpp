@@ -85,15 +85,18 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   ByteString field_type = pFieldTypeObj->GetString();
   if (field_type == "Tx") {
-    CPVT_GenerateAP::GenerateTextFieldAP(pDoc, pAnnotDict);
+    CPVT_GenerateAP::GenerateFormAP(CPVT_GenerateAP::kTextField, pDoc,
+                                    pAnnotDict);
     return;
   }
 
   CPDF_Object* pFieldFlagsObj = FPDF_GetFieldAttr(pAnnotDict, "Ff");
   uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
   if (field_type == "Ch") {
-    (flags & (1 << 17)) ? CPVT_GenerateAP::GenerateComboBoxAP(pDoc, pAnnotDict)
-                        : CPVT_GenerateAP::GenerateListBoxAP(pDoc, pAnnotDict);
+    CPVT_GenerateAP::GenerateFormAP((flags & (1 << 17))
+                                        ? CPVT_GenerateAP::kComboBox
+                                        : CPVT_GenerateAP::kListBox,
+                                    pDoc, pAnnotDict);
     return;
   }
 

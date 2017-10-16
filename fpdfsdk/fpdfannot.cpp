@@ -357,14 +357,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(pAnnot->GetAnnotDict(),
                                             CPDF_Annot::AppearanceMode::Normal);
   if (!pStream) {
-    auto pExtGStateDict =
-        CPVT_GenerateAP::GenerateExtGStateDict(*pAnnotDict, "GS", "Normal");
-    auto pResourceDict = CPVT_GenerateAP::GenerateResourceDict(
-        pPage->m_pDocument.Get(), std::move(pExtGStateDict), nullptr);
-    std::ostringstream sStream;
-    CPVT_GenerateAP::GenerateAndSetAPDict(pPage->m_pDocument.Get(), pAnnotDict,
-                                          &sStream, std::move(pResourceDict),
-                                          false);
+    CPVT_GenerateAP::GenerateEmptyAP(pPage->m_pDocument.Get(), pAnnotDict);
     pStream =
         FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
     if (!pStream)

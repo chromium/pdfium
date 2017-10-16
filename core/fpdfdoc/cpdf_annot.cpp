@@ -87,32 +87,13 @@ void CPDF_Annot::Init() {
 void CPDF_Annot::GenerateAPIfNeeded() {
   if (!ShouldGenerateAPForAnnotation(m_pAnnotDict.Get()))
     return;
-
-  CPDF_Dictionary* pDict = m_pAnnotDict.Get();
-  bool result = false;
-  if (m_nSubtype == CPDF_Annot::Subtype::CIRCLE)
-    result = CPVT_GenerateAP::GenerateCircleAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
-    result = CPVT_GenerateAP::GenerateHighlightAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::INK)
-    result = CPVT_GenerateAP::GenerateInkAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::POPUP)
-    result = CPVT_GenerateAP::GeneratePopupAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::SQUARE)
-    result = CPVT_GenerateAP::GenerateSquareAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::SQUIGGLY)
-    result = CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::STRIKEOUT)
-    result = CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::TEXT)
-    result = CPVT_GenerateAP::GenerateTextAP(m_pDocument.Get(), pDict);
-  else if (m_nSubtype == CPDF_Annot::Subtype::UNDERLINE)
-    result = CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument.Get(), pDict);
-
-  if (result) {
-    m_pAnnotDict->SetNewFor<CPDF_Boolean>(kPDFiumKey_HasGeneratedAP, result);
-    m_bHasGeneratedAP = result;
+  if (!CPVT_GenerateAP::GenerateAnnotAP(m_nSubtype, m_pDocument.Get(),
+                                        m_pAnnotDict.Get())) {
+    return;
   }
+
+  m_pAnnotDict->SetNewFor<CPDF_Boolean>(kPDFiumKey_HasGeneratedAP, true);
+  m_bHasGeneratedAP = true;
 }
 
 bool CPDF_Annot::ShouldDrawAnnotation() {
