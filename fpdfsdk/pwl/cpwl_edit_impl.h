@@ -362,17 +362,22 @@ class CPWL_EditImpl {
                               uint16_t Word,
                               uint16_t SubWord);
 
- private:
-  friend class CPWL_EditImpl_Iterator;
-  friend class CFXEU_InsertWord;
-  friend class CFXEU_InsertReturn;
-  friend class CFXEU_Backspace;
-  friend class CFXEU_Delete;
-  friend class CFXEU_Clear;
-  friend class CFXEU_InsertText;
-
   void SetSelection(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
 
+  bool Delete(bool bAddUndo, bool bPaint);
+  bool Clear(bool bAddUndo, bool bPaint);
+  bool InsertText(const WideString& sText,
+                  int32_t charset,
+                  bool bAddUndo,
+                  bool bPaint);
+  bool InsertWord(uint16_t word, int32_t charset, bool bAddUndo, bool bPaint);
+  bool InsertReturn(bool bAddUndo, bool bPaint);
+  bool Backspace(bool bAddUndo, bool bPaint);
+  void SetCaret(const CPVT_WordPlace& place);
+
+  CFX_PointF VTToEdit(const CFX_PointF& point) const;
+
+ private:
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& range);
   void ScrollToCaret();
@@ -382,35 +387,20 @@ class CPWL_EditImpl {
   void SetScrollLimit();
   void SetContentChanged();
 
-  bool InsertWord(uint16_t word,
-                  int32_t charset,
-                  bool bAddUndo,
-                  bool bPaint);
-  bool InsertReturn(bool bAddUndo, bool bPaint);
-  bool Backspace(bool bAddUndo, bool bPaint);
-  bool Delete(bool bAddUndo, bool bPaint);
-  bool Clear(bool bAddUndo, bool bPaint);
-  bool InsertText(const WideString& sText,
-                  int32_t charset,
-                  bool bAddUndo,
-                  bool bPaint);
   void PaintInsertText(const CPVT_WordPlace& wpOld,
                        const CPVT_WordPlace& wpNew);
 
-  inline CFX_PointF VTToEdit(const CFX_PointF& point) const;
-  inline CFX_PointF EditToVT(const CFX_PointF& point) const;
-  inline CFX_FloatRect VTToEdit(const CFX_FloatRect& rect) const;
+  CFX_PointF EditToVT(const CFX_PointF& point) const;
+  CFX_FloatRect VTToEdit(const CFX_FloatRect& rect) const;
 
   void Refresh();
   void RefreshPushLineRects(const CPVT_WordRange& wr);
 
-  void SetCaret(const CPVT_WordPlace& place);
   void SetCaretInfo();
   void SetCaretOrigin();
 
   void AddEditUndoItem(std::unique_ptr<IFX_Edit_UndoItem> pEditUndoItem);
 
- private:
   std::unique_ptr<CPDF_VariableText> m_pVT;
   UnownedPtr<CPWL_EditCtrl> m_pNotify;
   UnownedPtr<CPWL_Edit> m_pOperationNotify;

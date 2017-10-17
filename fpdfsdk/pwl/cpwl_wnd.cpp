@@ -47,29 +47,12 @@ CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 CPWL_Wnd::CreateParams::~CreateParams() = default;
 
 class CPWL_MsgControl : public Observable<CPWL_MsgControl> {
-  friend class CPWL_Wnd;
-
  public:
-  explicit CPWL_MsgControl(CPWL_Wnd* pWnd) {
-    m_pCreatedWnd = pWnd;
-    Default();
-  }
-
-  ~CPWL_MsgControl() { Default(); }
-
-  void Default() {
-    m_aMousePath.clear();
-    m_aKeyboardPath.clear();
-    m_pMainMouseWnd = nullptr;
-    m_pMainKeyboardWnd = nullptr;
-  }
+  explicit CPWL_MsgControl(CPWL_Wnd* pWnd) : m_pCreatedWnd(pWnd) {}
+  ~CPWL_MsgControl() {}
 
   bool IsWndCreated(const CPWL_Wnd* pWnd) const {
     return m_pCreatedWnd == pWnd;
-  }
-
-  bool IsMainCaptureMouse(const CPWL_Wnd* pWnd) const {
-    return pWnd == m_pMainMouseWnd;
   }
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
@@ -114,7 +97,6 @@ class CPWL_MsgControl : public Observable<CPWL_MsgControl> {
   void SetCapture(CPWL_Wnd* pWnd) {
     m_aMousePath.clear();
     if (pWnd) {
-      m_pMainMouseWnd = pWnd;
       CPWL_Wnd* pParent = pWnd;
       while (pParent) {
         m_aMousePath.push_back(pParent);
@@ -124,15 +106,15 @@ class CPWL_MsgControl : public Observable<CPWL_MsgControl> {
   }
 
   void ReleaseCapture() {
-    m_pMainMouseWnd = nullptr;
     m_aMousePath.clear();
   }
+
+  CPWL_Wnd* GetFocusedWindow() const { return m_pMainKeyboardWnd.Get(); }
 
  private:
   std::vector<CPWL_Wnd*> m_aMousePath;
   std::vector<CPWL_Wnd*> m_aKeyboardPath;
   UnownedPtr<CPWL_Wnd> m_pCreatedWnd;
-  UnownedPtr<CPWL_Wnd> m_pMainMouseWnd;
   UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
 };
 
@@ -804,7 +786,7 @@ void CPWL_Wnd::SetChildMatrix(const CFX_Matrix& mt) {
 
 const CPWL_Wnd* CPWL_Wnd::GetFocused() const {
   CPWL_MsgControl* pMsgCtrl = GetMsgControl();
-  return pMsgCtrl ? pMsgCtrl->m_pMainKeyboardWnd.Get() : nullptr;
+  return pMsgCtrl ? pMsgCtrl->GetFocusedWindow() : nullptr;
 }
 
 void CPWL_Wnd::EnableWindow(bool bEnable) {

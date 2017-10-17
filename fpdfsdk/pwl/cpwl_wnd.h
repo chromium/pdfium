@@ -249,9 +249,10 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   void SetChildMatrix(const CFX_Matrix& mt);
   CFX_Matrix GetWindowMatrix() const;
 
- protected:
-  friend class CPWL_MsgControl;
+  virtual void OnSetFocus();
+  virtual void OnKillFocus();
 
+ protected:
   // CPWL_TimerHandler
   CFX_SystemHandler* GetSystemHandler() const override;
 
@@ -266,9 +267,6 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual void OnCreate(CreateParams* pParamsToAdjust);
   virtual void OnCreated();
   virtual void OnDestroy();
-
-  virtual void OnSetFocus();
-  virtual void OnKillFocus();
 
   void SetNotifyFlag(bool bNotifying = true) { m_bNotifying = bNotifying; }
   bool IsNotifying() const { return m_bNotifying; }
