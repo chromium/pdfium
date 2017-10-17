@@ -156,9 +156,9 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void DebugVerifyBitmapIsPreMultiplied() const;
   void Dump() const;
 
- private:
-  friend class SkiaState;
+  bool GetGroupKnockout() const { return m_bGroupKnockout; }
 
+ private:
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   RetainPtr<CFX_DIBitmap> m_pOriDevice;
   SkCanvas* m_pCanvas;

@@ -714,7 +714,7 @@ class SkiaState {
     if (Accumulator::kText == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kPath == m_type &&
          DrawChanged(pMatrix, pDrawState, fill_color, stroke_color, fill_mode,
-                     blend_type, m_pDriver->m_bGroupKnockout))) {
+                     blend_type, m_pDriver->GetGroupKnockout()))) {
       Flush();
     }
     if (Accumulator::kPath != m_type) {
@@ -729,7 +729,7 @@ class SkiaState {
       m_fillColor = fill_color;
       m_strokeColor = stroke_color;
       m_blendType = blend_type;
-      m_groupKnockout = m_pDriver->m_bGroupKnockout;
+      m_groupKnockout = m_pDriver->GetGroupKnockout();
       if (pMatrix)
         m_drawMatrix = *pMatrix;
       m_drawIndex = m_commandIndex;

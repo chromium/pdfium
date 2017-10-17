@@ -89,6 +89,8 @@ class CFX_Font {
   uint32_t GetSize() const { return m_dwSize; }
   void AdjustMMParams(int glyph_index, int width, int weight) const;
 
+  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index, int dest_width) const;
+
   static const size_t kAngleSkewArraySize = 30;
   static const char s_AngleSkew[kAngleSkewArraySize];
   static const size_t kWeightPowArraySize = 100;
@@ -103,8 +105,6 @@ class CFX_Font {
 #endif  // PDF_ENABLE_XFA
 
  private:
-  friend class CFX_FaceCache;
-  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index, int dest_width) const;
   CFX_FaceCache* GetFaceCache() const;
   void ReleasePlatformResource();
   void DeleteFace();
