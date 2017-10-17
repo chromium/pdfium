@@ -1091,7 +1091,7 @@ bool CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
   if (pAltCS == m_pArray)
     return false;
 
-  m_pAltCS = Load(pDoc, pAltCS);
+  m_pAltCS = Load(pDoc, pAltCS, pVisited);
   if (!m_pAltCS)
     return false;
 
@@ -1169,7 +1169,7 @@ bool CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
   if (!pAltCS || pAltCS == m_pArray)
     return false;
 
-  m_pAltCS = Load(pDoc, pAltCS);
+  m_pAltCS = Load(pDoc, pAltCS, pVisited);
   m_pFunc = CPDF_Function::Load(pArray->GetDirectObjectAt(3));
   if (!m_pAltCS || !m_pFunc)
     return false;
