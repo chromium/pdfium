@@ -36,7 +36,7 @@ extern int GetLastError();
 #endif
 
 CPDFXFA_Context::CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc)
-    : m_iDocType(XFA_DocType::kNone),
+    : m_FormType(FormType::kNone),
       m_pPDFDoc(std::move(pPDFDoc)),
       m_pFormFillEnv(nullptr),
       m_pXFADocView(nullptr),
@@ -117,10 +117,10 @@ bool CPDFXFA_Context::LoadXFADoc() {
   m_pXFADoc->StopLoad();
   m_pXFADoc->GetXFADoc()->InitScriptContext(GetJSERuntime());
 
-  if (m_pXFADoc->GetDocType() == XFA_DocType::kFull)
-    m_iDocType = XFA_DocType::kFull;
+  if (m_pXFADoc->GetFormType() == FormType::kXFAFull)
+    m_FormType = FormType::kXFAFull;
   else
-    m_iDocType = XFA_DocType::kForegroundOnly;
+    m_FormType = FormType::kXFAForeground;
 
   m_pXFADocView = m_pXFADoc->CreateDocView();
   if (m_pXFADocView->StartLayout() < 0) {
@@ -140,17 +140,17 @@ int CPDFXFA_Context::GetPageCount() const {
   if (!m_pPDFDoc && !m_pXFADoc)
     return 0;
 
-  switch (m_iDocType) {
-    case XFA_DocType::kNone:
-    case XFA_DocType::kForegroundOnly:
+  switch (m_FormType) {
+    case FormType::kNone:
+    case FormType::kAcroForm:
+    case FormType::kXFAForeground:
       if (m_pPDFDoc)
         return m_pPDFDoc->GetPageCount();
-    case XFA_DocType::kFull:
+    case FormType::kXFAFull:
       if (m_pXFADoc)
         return m_pXFADocView->CountPageViews();
-    default:
-      return 0;
   }
+  return 0;
 }
 
 RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
@@ -183,7 +183,7 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
   if (!m_pXFADoc)
     return nullptr;
 
-  if (m_iDocType != XFA_DocType::kFull)
+  if (m_FormType != FormType::kXFAFull)
     return nullptr;
 
   for (auto& pTempPage : m_XFAPageList) {

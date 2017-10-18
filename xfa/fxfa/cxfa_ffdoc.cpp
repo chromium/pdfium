@@ -160,7 +160,7 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment)
       m_pApp(pApp),
       m_pNotify(nullptr),
       m_pPDFDoc(nullptr),
-      m_dwDocType(XFA_DocType::kForegroundOnly) {}
+      m_FormType(FormType::kXFAForeground) {}
 
 CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
@@ -244,7 +244,7 @@ void CXFA_FFDoc::StopLoad() {
   m_pPDFFontMgr = pdfium::MakeUnique<CFGAS_PDFFontMgr>(
       GetPDFDoc(), GetApp()->GetFDEFontMgr());
 
-  m_dwDocType = XFA_DocType::kForegroundOnly;
+  m_FormType = FormType::kXFAForeground;
   CXFA_Node* pConfig = ToNode(
       m_pDocumentParser->GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig)
@@ -265,7 +265,7 @@ void CXFA_FFDoc::StopLoad() {
 
   WideString wsType;
   if (pDynamicRender->TryContent(wsType) && wsType == L"required")
-    m_dwDocType = XFA_DocType::kFull;
+    m_FormType = FormType::kXFAFull;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {

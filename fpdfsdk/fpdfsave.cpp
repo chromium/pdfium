@@ -48,10 +48,8 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pContext)
     return false;
 
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly) {
+  if (!pContext->ContainsXFAForm())
     return true;
-  }
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
   if (!pXFADocView)
@@ -192,8 +190,7 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
   if (!pContext)
     return false;
 
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return true;
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
@@ -215,8 +212,7 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
 
 bool SendPreSaveToXFADoc(CPDFXFA_Context* pContext,
                          std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return true;
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();

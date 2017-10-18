@@ -205,11 +205,9 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
   }
   *form_handle = SetupFormFillEnvironment(*document);
 #ifdef PDF_ENABLE_XFA
-  int docType = XFADOCTYPE_NONE;
-  if (FPDF_HasXFAField(*document, &docType)) {
-    if (docType != XFADOCTYPE_NONE)
-      (void)FPDF_LoadXFA(*document);
-  }
+  int doc_type = FPDF_GetFormType(*document);
+  if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND)
+    FPDF_LoadXFA(*document);
 #endif  // PDF_ENABLE_XFA
   (void)FPDF_GetDocPermissions(*document);
   return true;

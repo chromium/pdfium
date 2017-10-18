@@ -1430,10 +1430,10 @@ void RenderPdf(const std::string& name,
   form_callbacks.form_handle = form.get();
 
 #ifdef PDF_ENABLE_XFA
-  int doc_type = XFADOCTYPE_NONE;
-  if (FPDF_HasXFAField(doc.get(), &doc_type) && doc_type != XFADOCTYPE_NONE &&
-      !FPDF_LoadXFA(doc.get())) {
-    fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
+  int doc_type = FPDF_GetFormType(doc.get());
+  if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND) {
+    if (!FPDF_LoadXFA(doc.get()))
+      fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
   }
 #endif  // PDF_ENABLE_XFA
 

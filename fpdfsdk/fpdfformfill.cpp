@@ -33,13 +33,15 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-static_assert(static_cast<int>(XFA_DocType::kNone) == XFADOCTYPE_NONE,
-              "PDF doctype must match");
-static_assert(static_cast<int>(XFA_DocType::kFull) == XFADOCTYPE_FULL,
-              "Dynamic XFA doctype must match");
-static_assert(static_cast<int>(XFA_DocType::kForegroundOnly) ==
-                  XFADOCTYPE_FOREGROUNDONLY,
-              "Static XFA doctype must match");
+static_assert(static_cast<int>(FormType::kNone) == FORMTYPE_NONE,
+              "None form types must match");
+static_assert(static_cast<int>(FormType::kAcroForm) == FORMTYPE_ACRO_FORM,
+              "AcroForm form types must match");
+static_assert(static_cast<int>(FormType::kXFAFull) == FORMTYPE_XFA_FULL,
+              "XFA full form types must match");
+static_assert(static_cast<int>(FormType::kXFAForeground) ==
+                  FORMTYPE_XFA_FOREGROUND,
+              "XFA foreground form types must match");
 #endif  // PDF_ENABLE_XFA
 
 namespace {
@@ -457,10 +459,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Undo(FPDF_DOCUMENT document,
     return;
 
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly) {
+  if (!pContext->ContainsXFAForm())
     return;
-  }
 
   static_cast<CXFA_FFWidget*>(hWidget)->Undo();
 }
@@ -471,8 +471,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Redo(FPDF_DOCUMENT document,
     return;
 
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return;
 
   static_cast<CXFA_FFWidget*>(hWidget)->Redo();
@@ -484,8 +483,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_SelectAll(FPDF_DOCUMENT document,
     return;
 
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return;
 
   static_cast<CXFA_FFWidget*>(hWidget)->SelectAll();
@@ -499,8 +497,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Copy(FPDF_DOCUMENT document,
     return;
 
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return;
 
   WideString wsCpText;
@@ -531,8 +528,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Cut(FPDF_DOCUMENT document,
     return;
 
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return;
 
   WideString wsCpText;
@@ -563,8 +559,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Paste(FPDF_DOCUMENT document,
     return;
 
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return;
 
   WideString wstr = WideString::FromUTF16LE(wsText, size);
@@ -581,8 +576,7 @@ FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
     return;
 
   CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return;
 
   CFX_PointF ptPopup;
@@ -602,8 +596,7 @@ FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
     return;
 
   auto* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (pContext->GetDocType() != XFA_DocType::kFull &&
-      pContext->GetDocType() != XFA_DocType::kForegroundOnly)
+  if (!pContext->ContainsXFAForm())
     return;
 
   CFX_PointF ptPopup;

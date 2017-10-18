@@ -40,7 +40,11 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView.Get(); }
-  XFA_DocType GetDocType() const { return m_iDocType; }
+  FormType GetFormType() const { return m_FormType; }
+  bool ContainsXFAForm() const {
+    return m_FormType == FormType::kXFAFull ||
+           m_FormType == FormType::kXFAForeground;
+  }
   v8::Isolate* GetJSERuntime() const;
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
@@ -101,7 +105,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
  private:
   void CloseXFADoc();
 
-  XFA_DocType m_iDocType;
+  FormType m_FormType;
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   Observable<CPDFSDK_FormFillEnvironment>::ObservedPtr m_pFormFillEnv;
