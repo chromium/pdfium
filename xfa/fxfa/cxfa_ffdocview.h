@@ -47,7 +47,7 @@ class CXFA_FFDocView {
   int32_t StartLayout(int32_t iStartPage = 0);
   int32_t DoLayout();
   void StopLayout();
-  int32_t GetLayoutStatus();
+  int32_t GetLayoutStatus() const { return m_iStatus; }
   void UpdateDocView();
   int32_t CountPageViews() const;
   CXFA_FFPageView* GetPageView(int32_t nIndex) const;
@@ -57,7 +57,7 @@ class CXFA_FFDocView {
                              CXFA_WidgetAcc* pWidgetAcc);
   CXFA_FFWidgetHandler* GetWidgetHandler();
   std::unique_ptr<CXFA_WidgetAccIterator> CreateWidgetAccIterator();
-  CXFA_FFWidget* GetFocusWidget() const;
+  CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget.Get(); }
   void KillFocus();
   bool SetFocus(CXFA_FFWidget* hWidget);
   CXFA_FFWidget* GetWidgetByName(const WideString& wsName,
@@ -66,10 +66,10 @@ class CXFA_FFDocView {
                                      CXFA_WidgetAcc* pRefWidgetAcc);
   CXFA_LayoutProcessor* GetXFALayout() const;
   void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);
-  void LockUpdate();
-  void UnlockUpdate();
-  bool IsUpdateLocked();
-  void ClearInvalidateList();
+  void LockUpdate() { m_iLock++; }
+  void UnlockUpdate() { m_iLock--; }
+  bool IsUpdateLocked() { return m_iLock > 0; }
+  void ClearInvalidateList() { m_mapPageInvalidate.clear(); }
   void AddInvalidateRect(CXFA_FFWidget* pWidget, const CFX_RectF& rtInvalidate);
   void AddInvalidateRect(CXFA_FFPageView* pPageView,
                          const CFX_RectF& rtInvalidate);
@@ -86,12 +86,14 @@ class CXFA_FFDocView {
   void AddCalculateNodeNotify(CXFA_Node* pNodeChange);
   void AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
   int32_t RunCalculateWidgets();
-  bool IsStaticNotify();
+  bool IsStaticNotify() {
+    return m_pDoc->GetFormType() == FormType::kXFAForeground;
+  }
   bool RunLayout();
   void RunSubformIndexChange();
   void AddNewFormNode(CXFA_Node* pNode);
   void AddIndexChangedSubform(CXFA_Node* pNode);
-  CXFA_WidgetAcc* GetFocusWidgetAcc();
+  CXFA_WidgetAcc* GetFocusWidgetAcc() const { return m_pFocusAcc.Get(); }
   void SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
   void DeleteLayoutItem(CXFA_FFWidget* pWidget);
   int32_t ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
@@ -109,7 +111,7 @@ class CXFA_FFDocView {
 
   bool RunEventLayoutReady();
   void RunBindItems();
-  bool InitCalculate(CXFA_Node* pNode);
+  void InitCalculate(CXFA_Node* pNode);
   void InitLayout(CXFA_Node* pNode);
   size_t RunCalculateRecursive(size_t index);
   void ShowNullTestMsg();
