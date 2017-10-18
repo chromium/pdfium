@@ -562,7 +562,7 @@ TEST_F(FPDFFormFillEmbeddertest, FormText) {
     UnloadPage(page);
   }
   // Check saved document
-  TestAndCloseSaved(300, 300, md5_3);
+  VerifySavedDocument(300, 300, md5_3);
 }
 
 TEST_F(FPDFFormFillEmbeddertest, HasFormInfoNone) {

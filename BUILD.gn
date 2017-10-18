@@ -2008,6 +2008,7 @@ test("pdfium_embeddertests") {
     "fpdfsdk/fpdfattachment_embeddertest.cpp",
     "fpdfsdk/fpdfdoc_embeddertest.cpp",
     "fpdfsdk/fpdfedit_embeddertest.cpp",
+    "fpdfsdk/fpdfeditpath_embeddertest.cpp",
     "fpdfsdk/fpdfext_embeddertest.cpp",
     "fpdfsdk/fpdfformfill_embeddertest.cpp",
     "fpdfsdk/fpdfppo_embeddertest.cpp",

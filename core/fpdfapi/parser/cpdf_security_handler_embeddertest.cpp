@@ -73,14 +73,20 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
   file_access.m_GetBlock = GetBlockFromString;
   file_access.m_Param = &new_file;
   EXPECT_FALSE(FPDF_LoadCustomDocument(&file_access, nullptr));
+
   struct {
     const char* password;
     const unsigned long permissions;
   } tests[] = {{"1234", 0xFFFFF2C0}, {"5678", 0xFFFFFFFC}};
+
   for (const auto& test : tests) {
-    TestSaved(612, 792, md5, test.password);
+    OpenSavedDocument(test.password);
+    LoadSavedPage();
+    VerifySavedRendering(612, 792, md5);
     EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(m_SavedDocument));
-    CloseSaved();
+
+    CloseSavedPage();
+    CloseSavedDocument();
   }
 }
 

@@ -143,12 +143,12 @@ class EmbedderTest : public ::testing::Test,
                                 unsigned char* buf,
                                 unsigned long size);
 
-  void TestSaved(int width,
-                 int height,
-                 const char* md5,
-                 const char* password = nullptr);
-  void CloseSaved();
-  void TestAndCloseSaved(int width, int height, const char* md5);
+  FPDF_DOCUMENT OpenSavedDocument(const char* password = nullptr);
+  void CloseSavedDocument();
+  FPDF_PAGE LoadSavedPage();
+  void CloseSavedPage();
+  void VerifySavedRendering(int width, int height, const char* md5);
+  void VerifySavedDocument(int width, int height, const char* md5);
 
   void SetWholeFileAvailable();
 

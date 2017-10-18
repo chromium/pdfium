@@ -85,8 +85,8 @@ FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
   *R = FXSYS_GetRValue(strokeRGB);
   *G = FXSYS_GetGValue(strokeRGB);
   *B = FXSYS_GetBValue(strokeRGB);
-  *A = static_cast<unsigned int>(pPathObj->m_GeneralState.GetStrokeAlpha() *
-                                 255.f);
+  *A = static_cast<unsigned int>(
+      (pPathObj->m_GeneralState.GetStrokeAlpha() * 255.f) + 0.5f);
   return true;
 }
 
@@ -122,8 +122,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
   *R = FXSYS_GetRValue(fillRGB);
   *G = FXSYS_GetGValue(fillRGB);
   *B = FXSYS_GetBValue(fillRGB);
-  *A = static_cast<unsigned int>(pPathObj->m_GeneralState.GetFillAlpha() *
-                                 255.f);
+  *A = static_cast<unsigned int>(
+      (pPathObj->m_GeneralState.GetFillAlpha() * 255.f) + 0.5f);
   return true;
 }
 

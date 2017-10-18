@@ -310,10 +310,7 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   page_reverse_map_.erase(it);
 }
 
-void EmbedderTest::TestSaved(int width,
-                             int height,
-                             const char* md5,
-                             const char* password) {
+FPDF_DOCUMENT EmbedderTest::OpenSavedDocument(const char* password) {
   memset(&saved_file_access_, 0, sizeof(saved_file_access_));
   saved_file_access_.m_FileLen = m_String.size();
   saved_file_access_.m_GetBlock = GetBlockFromString;
@@ -322,28 +319,59 @@ void EmbedderTest::TestSaved(int width,
   saved_fake_file_access_ =
       pdfium::MakeUnique<FakeFileAccess>(&saved_file_access_);
 
-  ASSERT_TRUE(OpenDocumentHelper(password, false, saved_fake_file_access_.get(),
+  EXPECT_TRUE(OpenDocumentHelper(password, false, saved_fake_file_access_.get(),
                                  &m_SavedDocument, &m_SavedAvail,
                                  &m_SavedForm));
+  return m_SavedDocument;
+}
+
+void EmbedderTest::CloseSavedDocument() {
+  ASSERT(!m_SavedPage);
+  ASSERT(m_SavedDocument);
+
+  FPDFDOC_ExitFormFillEnvironment(m_SavedForm);
+  FPDF_CloseDocument(m_SavedDocument);
+  FPDFAvail_Destroy(m_SavedAvail);
+
+  m_SavedForm = nullptr;
+  m_SavedDocument = nullptr;
+  m_SavedAvail = nullptr;
+}
+
+FPDF_PAGE EmbedderTest::LoadSavedPage() {
+  ASSERT(m_SavedDocument);
+
   EXPECT_EQ(1, FPDF_GetPageCount(m_SavedDocument));
   m_SavedPage = FPDF_LoadPage(m_SavedDocument, 0);
-  ASSERT_TRUE(m_SavedPage);
+
+  ASSERT(m_SavedPage);
+  return m_SavedPage;
+}
+
+void EmbedderTest::CloseSavedPage() {
+  ASSERT(m_SavedPage);
+  FPDF_ClosePage(m_SavedPage);
+  m_SavedPage = nullptr;
+}
+
+void EmbedderTest::VerifySavedRendering(int width,
+                                        int height,
+                                        const char* md5) {
+  ASSERT(m_SavedDocument);
+  ASSERT(m_SavedPage);
+
   FPDF_BITMAP new_bitmap =
       RenderPageWithFlags(m_SavedPage, m_SavedForm, FPDF_ANNOT);
   CompareBitmap(new_bitmap, width, height, md5);
   FPDFBitmap_Destroy(new_bitmap);
 }
 
-void EmbedderTest::CloseSaved() {
-  FPDF_ClosePage(m_SavedPage);
-  FPDFDOC_ExitFormFillEnvironment(m_SavedForm);
-  FPDF_CloseDocument(m_SavedDocument);
-  FPDFAvail_Destroy(m_SavedAvail);
-}
-
-void EmbedderTest::TestAndCloseSaved(int width, int height, const char* md5) {
-  TestSaved(width, height, md5);
-  CloseSaved();
+void EmbedderTest::VerifySavedDocument(int width, int height, const char* md5) {
+  OpenSavedDocument();
+  LoadSavedPage();
+  VerifySavedRendering(width, height, md5);
+  CloseSavedPage();
+  CloseSavedDocument();
 }
 
 void EmbedderTest::SetWholeFileAvailable() {

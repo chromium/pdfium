@@ -223,7 +223,7 @@ TEST_F(FPDFEditEmbeddertest, RasterizePDF) {
   // Get the generated content. Make sure it is at least as big as the original
   // PDF.
   EXPECT_GT(GetString().size(), 923U);
-  TestAndCloseSaved(612, 792, kAllBlackMd5sum);
+  VerifySavedDocument(612, 792, kAllBlackMd5sum);
 }
 
 TEST_F(FPDFEditEmbeddertest, AddPaths) {
@@ -366,7 +366,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   FPDF_ClosePage(page);
 
   // Render the saved result
-  TestAndCloseSaved(612, 792, last_md5);
+  VerifySavedDocument(612, 792, last_md5);
 }
 
 TEST_F(FPDFEditEmbeddertest, PathsPoints) {
@@ -456,8 +456,9 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
-  // Render the saved result without closing the page and document
-  TestSaved(612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
+  OpenSavedDocument();
+  LoadSavedPage();
+  VerifySavedRendering(612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
 
   ClearString();
   // Add another opaque rectangle on top of the existing content
@@ -479,10 +480,12 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
 
   // Now save the result, closing the page and document
   EXPECT_TRUE(FPDF_SaveAsCopy(m_SavedDocument, this, 0));
-  CloseSaved();
+
+  CloseSavedPage();
+  CloseSavedDocument();
 
   // Render the saved result
-  TestAndCloseSaved(612, 792, last_md5);
+  VerifySavedDocument(612, 792, last_md5);
 }
 
 TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
@@ -915,7 +918,8 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
-  TestAndCloseSaved(612, 792, md5_2);
+
+  VerifySavedDocument(612, 792, md5_2);
 }
 
 TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
@@ -989,7 +993,8 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
-  TestAndCloseSaved(612, 792, md5);
+
+  VerifySavedDocument(612, 792, md5);
 }
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 
@@ -1021,7 +1026,8 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
     UnloadPage(page);
   }
-  TestAndCloseSaved(612, 792, md5);
+
+  VerifySavedDocument(612, 792, md5);
 }
 
 TEST_F(FPDFEditEmbeddertest, ExtractImageBitmap) {

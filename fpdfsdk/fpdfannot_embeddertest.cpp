@@ -284,7 +284,10 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
 
   // Open the saved document.
   const char md5[] = "184b67b322edaee27994b3232544b8b3";
-  TestSaved(612, 792, md5);
+
+  OpenSavedDocument();
+  LoadSavedPage();
+  VerifySavedRendering(612, 792, md5);
 
   // Check that the saved document has 2 annotations on the first page
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(m_SavedPage));
@@ -302,7 +305,9 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   EXPECT_NEAR(quadpoints.y4, new_quadpoints.y4, 0.001f);
 
   FPDFPage_CloseAnnot(new_annot);
-  CloseSaved();
+
+  CloseSavedPage();
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
@@ -449,7 +454,7 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
-  // TODO(npm): TestSaved changes annot rect dimensions by 1??
+  // TODO(npm): VerifySavedRendering changes annot rect dimensions by 1??
   // Open the saved document.
   std::string new_file = GetString();
   FPDF_FILEACCESS file_access;
@@ -590,7 +595,9 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   FPDF_ClosePage(page);
 
   // Open the saved document.
-  TestSaved(595, 842, md5_new_annot);
+  OpenSavedDocument();
+  LoadSavedPage();
+  VerifySavedRendering(595, 842, md5_new_annot);
 
   // Check that the document has a correct count of annotations and objects.
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(m_SavedPage));
@@ -606,7 +613,8 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   EXPECT_EQ(rect.top, new_rect.top);
 
   FPDFPage_CloseAnnot(annot);
-  CloseSaved();
+  CloseSavedPage();
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
@@ -730,12 +738,10 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
+  FPDFBitmap_Destroy(image_bitmap);
 
   // Test that the saved document renders the modified image object correctly.
-  TestSaved(595, 842, md5_modified_image);
-
-  FPDFBitmap_Destroy(image_bitmap);
-  CloseSaved();
+  VerifySavedDocument(595, 842, md5_modified_image);
 }
 
 TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
@@ -878,7 +884,9 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 #else
   const char md5[] = "0e3710ea6476f5bcba2cd39eb42d54e2";
 #endif
-  TestSaved(595, 842, md5);
+  OpenSavedDocument();
+  LoadSavedPage();
+  VerifySavedRendering(595, 842, md5);
   FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 0);
 
   // Check that the string value of the modified date is the newly-set value.
@@ -893,7 +901,8 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
                    .c_str());
 
   FPDFPage_CloseAnnot(new_annot);
-  CloseSaved();
+  CloseSavedPage();
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
