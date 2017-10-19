@@ -50,45 +50,203 @@ class Document : public CJS_EmbedObj {
   explicit Document(CJS_Object* pJSObject);
   ~Document() override;
 
-  bool ADBE(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool author(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool baseURL(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool bookmarkRoot(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool calculate(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool Collab(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool creationDate(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool creator(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool delay(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool dirty(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool documentFileName(CJS_Runtime* pRuntime,
-                        CJS_PropValue& vp,
-                        WideString& sError);
-  bool external(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool filesize(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool icons(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool info(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool keywords(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool layout(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool media(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool modDate(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool mouseX(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool mouseY(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool numFields(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool numPages(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool pageNum(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool pageWindowRect(CJS_Runtime* pRuntime,
-                      CJS_PropValue& vp,
-                      WideString& sError);
-  bool path(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool producer(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool subject(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool title(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool zoom(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool zoomType(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool get_ADBE(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_ADBE(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_author(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_author(CJS_Runtime* pRuntime,
+                  const CJS_PropValue& vp,
+                  WideString* sError);
+
+  bool get_base_URL(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_base_URL(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_bookmark_root(CJS_Runtime* pRuntime,
+                         CJS_PropValue* vp,
+                         WideString* sError);
+  bool set_bookmark_root(CJS_Runtime* pRuntime,
+                         const CJS_PropValue& vp,
+                         WideString* sError);
+
+  bool get_calculate(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_calculate(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_collab(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_collab(CJS_Runtime* pRuntime,
+                  const CJS_PropValue& vp,
+                  WideString* sError);
+
+  bool get_creation_date(CJS_Runtime* pRuntime,
+                         CJS_PropValue* vp,
+                         WideString* sError);
+  bool set_creation_date(CJS_Runtime* pRuntime,
+                         const CJS_PropValue& vp,
+                         WideString* sError);
+
+  bool get_creator(CJS_Runtime* pRuntime,
+                   CJS_PropValue* vp,
+                   WideString* sError);
+  bool set_creator(CJS_Runtime* pRuntime,
+                   const CJS_PropValue& vp,
+                   WideString* sError);
+
+  bool get_delay(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_delay(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_dirty(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_dirty(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_document_file_name(CJS_Runtime* pRuntime,
+                              CJS_PropValue* vp,
+                              WideString* sError);
+  bool set_document_file_name(CJS_Runtime* pRuntime,
+                              const CJS_PropValue& vp,
+                              WideString* sError);
+
+  bool get_external(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_external(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_filesize(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_filesize(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_icons(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_icons(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_info(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_info(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_keywords(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_keywords(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_layout(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_layout(CJS_Runtime* pRuntime,
+                  const CJS_PropValue& vp,
+                  WideString* sError);
+
+  bool get_media(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_media(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_mod_date(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_mod_date(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_mouse_x(CJS_Runtime* pRuntime,
+                   CJS_PropValue* vp,
+                   WideString* sError);
+  bool set_mouse_x(CJS_Runtime* pRuntime,
+                   const CJS_PropValue& vp,
+                   WideString* sError);
+
+  bool get_mouse_y(CJS_Runtime* pRuntime,
+                   CJS_PropValue* vp,
+                   WideString* sError);
+  bool set_mouse_y(CJS_Runtime* pRuntime,
+                   const CJS_PropValue& vp,
+                   WideString* sError);
+
+  bool get_num_fields(CJS_Runtime* pRuntime,
+                      CJS_PropValue* vp,
+                      WideString* sError);
+  bool set_num_fields(CJS_Runtime* pRuntime,
+                      const CJS_PropValue& vp,
+                      WideString* sError);
+
+  bool get_num_pages(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_num_pages(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_page_num(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_page_num(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_page_window_rect(CJS_Runtime* pRuntime,
+                            CJS_PropValue* vp,
+                            WideString* sError);
+  bool set_page_window_rect(CJS_Runtime* pRuntime,
+                            const CJS_PropValue& vp,
+                            WideString* sError);
+
+  bool get_path(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_path(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_producer(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_producer(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_subject(CJS_Runtime* pRuntime,
+                   CJS_PropValue* vp,
+                   WideString* sError);
+  bool set_subject(CJS_Runtime* pRuntime,
+                   const CJS_PropValue& vp,
+                   WideString* sError);
+
+  bool get_title(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_title(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_zoom(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_zoom(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_zoom_type(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_zoom_type(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_URL(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_URL(CJS_Runtime* pRuntime,
+               const CJS_PropValue& vp,
+               WideString* sError);
 
   bool addAnnot(CJS_Runtime* pRuntime,
                 const std::vector<CJS_Value>& params,
@@ -258,7 +416,6 @@ class Document : public CJS_EmbedObj {
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   WideString& sError);
-  bool URL(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
 
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
@@ -274,9 +431,13 @@ class Document : public CJS_EmbedObj {
   WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
 
   bool getPropertyInternal(CJS_Runtime* pRuntime,
-                           CJS_PropValue& vp,
+                           CJS_PropValue* vp,
                            const ByteString& propName,
-                           WideString& sError);
+                           WideString* sError);
+  bool setPropertyInternal(CJS_Runtime* pRuntime,
+                           const CJS_PropValue& vp,
+                           const ByteString& propName,
+                           WideString* sError);
 
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   WideString m_cwBaseURL;
@@ -296,38 +457,38 @@ class CJS_Document : public CJS_Object {
 
   DECLARE_JS_CLASS();
 
-  JS_STATIC_PROP(ADBE, Document);
-  JS_STATIC_PROP(author, Document);
-  JS_STATIC_PROP(baseURL, Document);
-  JS_STATIC_PROP(bookmarkRoot, Document);
-  JS_STATIC_PROP(calculate, Document);
-  JS_STATIC_PROP(Collab, Document);
-  JS_STATIC_PROP(creationDate, Document);
-  JS_STATIC_PROP(creator, Document);
-  JS_STATIC_PROP(delay, Document);
-  JS_STATIC_PROP(dirty, Document);
-  JS_STATIC_PROP(documentFileName, Document);
-  JS_STATIC_PROP(external, Document);
-  JS_STATIC_PROP(filesize, Document);
-  JS_STATIC_PROP(icons, Document);
-  JS_STATIC_PROP(info, Document);
-  JS_STATIC_PROP(keywords, Document);
-  JS_STATIC_PROP(layout, Document);
-  JS_STATIC_PROP(media, Document);
-  JS_STATIC_PROP(modDate, Document);
-  JS_STATIC_PROP(mouseX, Document);
-  JS_STATIC_PROP(mouseY, Document);
-  JS_STATIC_PROP(numFields, Document);
-  JS_STATIC_PROP(numPages, Document);
-  JS_STATIC_PROP(pageNum, Document);
-  JS_STATIC_PROP(pageWindowRect, Document);
-  JS_STATIC_PROP(path, Document);
-  JS_STATIC_PROP(producer, Document);
-  JS_STATIC_PROP(subject, Document);
-  JS_STATIC_PROP(title, Document);
-  JS_STATIC_PROP(URL, Document);
-  JS_STATIC_PROP(zoom, Document);
-  JS_STATIC_PROP(zoomType, Document);
+  JS_STATIC_PROP(ADBE, ADBE, Document);
+  JS_STATIC_PROP(author, author, Document);
+  JS_STATIC_PROP(baseURL, base_URL, Document);
+  JS_STATIC_PROP(bookmarkRoot, bookmark_root, Document);
+  JS_STATIC_PROP(calculate, calculate, Document);
+  JS_STATIC_PROP(Collab, collab, Document);
+  JS_STATIC_PROP(creationDate, creation_date, Document);
+  JS_STATIC_PROP(creator, creator, Document);
+  JS_STATIC_PROP(delay, delay, Document);
+  JS_STATIC_PROP(dirty, dirty, Document);
+  JS_STATIC_PROP(documentFileName, document_file_name, Document);
+  JS_STATIC_PROP(external, external, Document);
+  JS_STATIC_PROP(filesize, filesize, Document);
+  JS_STATIC_PROP(icons, icons, Document);
+  JS_STATIC_PROP(info, info, Document);
+  JS_STATIC_PROP(keywords, keywords, Document);
+  JS_STATIC_PROP(layout, layout, Document);
+  JS_STATIC_PROP(media, media, Document);
+  JS_STATIC_PROP(modDate, mod_date, Document);
+  JS_STATIC_PROP(mouseX, mouse_x, Document);
+  JS_STATIC_PROP(mouseY, mouse_y, Document);
+  JS_STATIC_PROP(numFields, num_fields, Document);
+  JS_STATIC_PROP(numPages, num_pages, Document);
+  JS_STATIC_PROP(pageNum, page_num, Document);
+  JS_STATIC_PROP(pageWindowRect, page_window_rect, Document);
+  JS_STATIC_PROP(path, path, Document);
+  JS_STATIC_PROP(producer, producer, Document);
+  JS_STATIC_PROP(subject, subject, Document);
+  JS_STATIC_PROP(title, title, Document);
+  JS_STATIC_PROP(URL, URL, Document);
+  JS_STATIC_PROP(zoom, zoom, Document);
+  JS_STATIC_PROP(zoomType, zoom_type, Document);
 
   JS_STATIC_METHOD(addAnnot, Document);
   JS_STATIC_METHOD(addField, Document);

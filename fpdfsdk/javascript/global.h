@@ -41,13 +41,13 @@ class JSGlobalAlternate : public CJS_EmbedObj {
                      CJS_Value& vRet,
                      WideString& sError);
   bool QueryProperty(const wchar_t* propname);
-  bool DoProperty(CJS_Runtime* pRuntime,
-                  const wchar_t* propname,
-                  CJS_PropValue& vp,
-                  WideString& sError);
-  bool DelProperty(CJS_Runtime* pRuntime,
+  bool GetProperty(CJS_Runtime* pRuntime,
                    const wchar_t* propname,
-                   WideString& sError);
+                   CJS_PropValue* vp);
+  bool SetProperty(CJS_Runtime* pRuntime,
+                   const wchar_t* propname,
+                   const CJS_PropValue& vp);
+  bool DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
  private:

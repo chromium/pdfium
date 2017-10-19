@@ -41,26 +41,85 @@ class app : public CJS_EmbedObj {
   explicit app(CJS_Object* pJSObject);
   ~app() override;
 
-  bool activeDocs(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool calculate(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool formsVersion(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool fs(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool fullscreen(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool language(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool media(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool platform(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool runtimeHighlight(CJS_Runtime* pRuntime,
-                        CJS_PropValue& vp,
-                        WideString& sError);
-  bool viewerType(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool viewerVariation(CJS_Runtime* pRuntime,
-                       CJS_PropValue& vp,
-                       WideString& sError);
-  bool viewerVersion(CJS_Runtime* pRuntime,
-                     CJS_PropValue& vp,
-                     WideString& sError);
+  bool get_active_docs(CJS_Runtime* pRuntime,
+                       CJS_PropValue* vp,
+                       WideString* sError);
+  bool set_active_docs(CJS_Runtime* pRuntime,
+                       const CJS_PropValue& vp,
+                       WideString* sError);
+
+  bool get_calculate(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_calculate(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_forms_version(CJS_Runtime* pRuntime,
+                         CJS_PropValue* vp,
+                         WideString* sError);
+  bool set_forms_version(CJS_Runtime* pRuntime,
+                         const CJS_PropValue& vp,
+                         WideString* sError);
+
+  bool get_fs(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_fs(CJS_Runtime* pRuntime,
+              const CJS_PropValue& vp,
+              WideString* sError);
+
+  bool get_fullscreen(CJS_Runtime* pRuntime,
+                      CJS_PropValue* vp,
+                      WideString* sError);
+  bool set_fullscreen(CJS_Runtime* pRuntime,
+                      const CJS_PropValue& vp,
+                      WideString* sError);
+
+  bool get_language(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_language(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_media(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_media(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_platform(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_platform(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_runtime_highlight(CJS_Runtime* pRuntime,
+                             CJS_PropValue* vp,
+                             WideString* sError);
+  bool set_runtime_highlight(CJS_Runtime* pRuntime,
+                             const CJS_PropValue& vp,
+                             WideString* sError);
+
+  bool get_viewer_type(CJS_Runtime* pRuntime,
+                       CJS_PropValue* vp,
+                       WideString* sError);
+  bool set_viewer_type(CJS_Runtime* pRuntime,
+                       const CJS_PropValue& vp,
+                       WideString* sError);
+
+  bool get_viewer_variation(CJS_Runtime* pRuntime,
+                            CJS_PropValue* vp,
+                            WideString* sError);
+  bool set_viewer_variation(CJS_Runtime* pRuntime,
+                            const CJS_PropValue& vp,
+                            WideString* sError);
+
+  bool get_viewer_version(CJS_Runtime* pRuntime,
+                          CJS_PropValue* vp,
+                          WideString* sError);
+  bool set_viewer_version(CJS_Runtime* pRuntime,
+                          const CJS_PropValue& vp,
+                          WideString* sError);
 
   bool alert(CJS_Runtime* pRuntime,
              const std::vector<CJS_Value>& params,
@@ -170,18 +229,18 @@ class CJS_App : public CJS_Object {
 
   DECLARE_JS_CLASS();
 
-  JS_STATIC_PROP(activeDocs, app);
-  JS_STATIC_PROP(calculate, app);
-  JS_STATIC_PROP(formsVersion, app);
-  JS_STATIC_PROP(fs, app);
-  JS_STATIC_PROP(fullscreen, app);
-  JS_STATIC_PROP(language, app);
-  JS_STATIC_PROP(media, app);
-  JS_STATIC_PROP(platform, app);
-  JS_STATIC_PROP(runtimeHighlight, app);
-  JS_STATIC_PROP(viewerType, app);
-  JS_STATIC_PROP(viewerVariation, app);
-  JS_STATIC_PROP(viewerVersion, app);
+  JS_STATIC_PROP(activeDocs, active_docs, app);
+  JS_STATIC_PROP(calculate, calculate, app);
+  JS_STATIC_PROP(formsVersion, forms_version, app);
+  JS_STATIC_PROP(fs, fs, app);
+  JS_STATIC_PROP(fullscreen, fullscreen, app);
+  JS_STATIC_PROP(language, language, app);
+  JS_STATIC_PROP(media, media, app);
+  JS_STATIC_PROP(platform, platform, app);
+  JS_STATIC_PROP(runtimeHighlight, runtime_highlight, app);
+  JS_STATIC_PROP(viewerType, viewer_type, app);
+  JS_STATIC_PROP(viewerVariation, viewer_variation, app);
+  JS_STATIC_PROP(viewerVersion, viewer_version, app);
 
   JS_STATIC_METHOD(alert, app);
   JS_STATIC_METHOD(beep, app);

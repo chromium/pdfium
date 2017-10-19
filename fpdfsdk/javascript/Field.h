@@ -77,96 +77,345 @@ class Field : public CJS_EmbedObj {
   explicit Field(CJS_Object* pJSObject);
   ~Field() override;
 
-  bool alignment(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool borderStyle(CJS_Runtime* pRuntime,
-                   CJS_PropValue& vp,
-                   WideString& sError);
-  bool buttonAlignX(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool buttonAlignY(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool buttonFitBounds(CJS_Runtime* pRuntime,
-                       CJS_PropValue& vp,
-                       WideString& sError);
-  bool buttonPosition(CJS_Runtime* pRuntime,
-                      CJS_PropValue& vp,
-                      WideString& sError);
-  bool buttonScaleHow(CJS_Runtime* pRuntime,
-                      CJS_PropValue& vp,
-                      WideString& sError);
-  bool buttonScaleWhen(CJS_Runtime* pRuntime,
-                       CJS_PropValue& vp,
-                       WideString& sError);
-  bool calcOrderIndex(CJS_Runtime* pRuntime,
-                      CJS_PropValue& vp,
-                      WideString& sError);
-  bool charLimit(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool comb(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool commitOnSelChange(CJS_Runtime* pRuntime,
-                         CJS_PropValue& vp,
-                         WideString& sError);
-  bool currentValueIndices(CJS_Runtime* pRuntime,
-                           CJS_PropValue& vp,
-                           WideString& sError);
-  bool defaultStyle(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool defaultValue(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool doNotScroll(CJS_Runtime* pRuntime,
-                   CJS_PropValue& vp,
-                   WideString& sError);
-  bool doNotSpellCheck(CJS_Runtime* pRuntime,
-                       CJS_PropValue& vp,
-                       WideString& sError);
-  bool delay(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool display(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool doc(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool editable(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool exportValues(CJS_Runtime* pRuntime,
-                    CJS_PropValue& vp,
-                    WideString& sError);
-  bool fileSelect(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool fillColor(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool hidden(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool highlight(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool lineWidth(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool multiline(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool multipleSelection(CJS_Runtime* pRuntime,
-                         CJS_PropValue& vp,
-                         WideString& sError);
-  bool name(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool numItems(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool page(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool password(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool print(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool radiosInUnison(CJS_Runtime* pRuntime,
-                      CJS_PropValue& vp,
-                      WideString& sError);
-  bool readonly(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool rect(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool required(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool richText(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool richValue(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool rotation(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool strokeColor(CJS_Runtime* pRuntime,
-                   CJS_PropValue& vp,
-                   WideString& sError);
-  bool style(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool submitName(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool textColor(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool textFont(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool textSize(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool type(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool userName(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool value(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool valueAsString(CJS_Runtime* pRuntime,
-                     CJS_PropValue& vp,
-                     WideString& sError);
-  bool source(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool get_alignment(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_alignment(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_border_style(CJS_Runtime* pRuntime,
+                        CJS_PropValue* vp,
+                        WideString* sError);
+  bool set_border_style(CJS_Runtime* pRuntime,
+                        const CJS_PropValue& vp,
+                        WideString* sError);
+
+  bool get_button_align_x(CJS_Runtime* pRuntime,
+                          CJS_PropValue* vp,
+                          WideString* sError);
+  bool set_button_align_x(CJS_Runtime* pRuntime,
+                          const CJS_PropValue& vp,
+                          WideString* sError);
+
+  bool get_button_align_y(CJS_Runtime* pRuntime,
+                          CJS_PropValue* vp,
+                          WideString* sError);
+  bool set_button_align_y(CJS_Runtime* pRuntime,
+                          const CJS_PropValue& vp,
+                          WideString* sError);
+
+  bool get_button_fit_bounds(CJS_Runtime* pRuntime,
+                             CJS_PropValue* vp,
+                             WideString* sError);
+  bool set_button_fit_bounds(CJS_Runtime* pRuntime,
+                             const CJS_PropValue& vp,
+                             WideString* sError);
+
+  bool get_button_position(CJS_Runtime* pRuntime,
+                           CJS_PropValue* vp,
+                           WideString* sError);
+  bool set_button_position(CJS_Runtime* pRuntime,
+                           const CJS_PropValue& vp,
+                           WideString* sError);
+
+  bool get_button_scale_how(CJS_Runtime* pRuntime,
+                            CJS_PropValue* vp,
+                            WideString* sError);
+  bool set_button_scale_how(CJS_Runtime* pRuntime,
+                            const CJS_PropValue& vp,
+                            WideString* sError);
+
+  bool get_button_scale_when(CJS_Runtime* pRuntime,
+                             CJS_PropValue* vp,
+                             WideString* sError);
+  bool set_button_scale_when(CJS_Runtime* pRuntime,
+                             const CJS_PropValue& vp,
+                             WideString* sError);
+
+  bool get_calc_order_index(CJS_Runtime* pRuntime,
+                            CJS_PropValue* vp,
+                            WideString* sError);
+  bool set_calc_order_index(CJS_Runtime* pRuntime,
+                            const CJS_PropValue& vp,
+                            WideString* sError);
+
+  bool get_char_limit(CJS_Runtime* pRuntime,
+                      CJS_PropValue* vp,
+                      WideString* sError);
+  bool set_char_limit(CJS_Runtime* pRuntime,
+                      const CJS_PropValue& vp,
+                      WideString* sError);
+
+  bool get_comb(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_comb(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_commit_on_sel_change(CJS_Runtime* pRuntime,
+                                CJS_PropValue* vp,
+                                WideString* sError);
+  bool set_commit_on_sel_change(CJS_Runtime* pRuntime,
+                                const CJS_PropValue& vp,
+                                WideString* sError);
+
+  bool get_current_value_indices(CJS_Runtime* pRuntime,
+                                 CJS_PropValue* vp,
+                                 WideString* sError);
+  bool set_current_value_indices(CJS_Runtime* pRuntime,
+                                 const CJS_PropValue& vp,
+                                 WideString* sError);
+
+  bool get_default_style(CJS_Runtime* pRuntime,
+                         CJS_PropValue* vp,
+                         WideString* sError);
+  bool set_default_style(CJS_Runtime* pRuntime,
+                         const CJS_PropValue& vp,
+                         WideString* sError);
+
+  bool get_default_value(CJS_Runtime* pRuntime,
+                         CJS_PropValue* vp,
+                         WideString* sError);
+  bool set_default_value(CJS_Runtime* pRuntime,
+                         const CJS_PropValue& vp,
+                         WideString* sError);
+
+  bool get_do_not_scroll(CJS_Runtime* pRuntime,
+                         CJS_PropValue* vp,
+                         WideString* sError);
+  bool set_do_not_scroll(CJS_Runtime* pRuntime,
+                         const CJS_PropValue& vp,
+                         WideString* sError);
+
+  bool get_do_not_spell_check(CJS_Runtime* pRuntime,
+                              CJS_PropValue* vp,
+                              WideString* sError);
+  bool set_do_not_spell_check(CJS_Runtime* pRuntime,
+                              const CJS_PropValue& vp,
+                              WideString* sError);
+
+  bool get_delay(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_delay(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_display(CJS_Runtime* pRuntime,
+                   CJS_PropValue* vp,
+                   WideString* sError);
+  bool set_display(CJS_Runtime* pRuntime,
+                   const CJS_PropValue& vp,
+                   WideString* sError);
+
+  bool get_doc(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_doc(CJS_Runtime* pRuntime,
+               const CJS_PropValue& vp,
+               WideString* sError);
+
+  bool get_editable(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_editable(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_export_values(CJS_Runtime* pRuntime,
+                         CJS_PropValue* vp,
+                         WideString* sError);
+  bool set_export_values(CJS_Runtime* pRuntime,
+                         const CJS_PropValue& vp,
+                         WideString* sError);
+
+  bool get_file_select(CJS_Runtime* pRuntime,
+                       CJS_PropValue* vp,
+                       WideString* sError);
+  bool set_file_select(CJS_Runtime* pRuntime,
+                       const CJS_PropValue& vp,
+                       WideString* sError);
+
+  bool get_fill_color(CJS_Runtime* pRuntime,
+                      CJS_PropValue* vp,
+                      WideString* sError);
+  bool set_fill_color(CJS_Runtime* pRuntime,
+                      const CJS_PropValue& vp,
+                      WideString* sError);
+
+  bool get_hidden(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_hidden(CJS_Runtime* pRuntime,
+                  const CJS_PropValue& vp,
+                  WideString* sError);
+
+  bool get_highlight(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_highlight(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_line_width(CJS_Runtime* pRuntime,
+                      CJS_PropValue* vp,
+                      WideString* sError);
+  bool set_line_width(CJS_Runtime* pRuntime,
+                      const CJS_PropValue& vp,
+                      WideString* sError);
+
+  bool get_multiline(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_multiline(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_multiple_selection(CJS_Runtime* pRuntime,
+                              CJS_PropValue* vp,
+                              WideString* sError);
+  bool set_multiple_selection(CJS_Runtime* pRuntime,
+                              const CJS_PropValue& vp,
+                              WideString* sError);
+
+  bool get_name(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_name(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_num_items(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_num_items(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_page(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_page(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_password(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_password(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_print(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_print(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_radios_in_unison(CJS_Runtime* pRuntime,
+                            CJS_PropValue* vp,
+                            WideString* sError);
+  bool set_radios_in_unison(CJS_Runtime* pRuntime,
+                            const CJS_PropValue& vp,
+                            WideString* sError);
+
+  bool get_readonly(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_readonly(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_rect(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_rect(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_required(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_required(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_rich_text(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_rich_text(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_rich_value(CJS_Runtime* pRuntime,
+                      CJS_PropValue* vp,
+                      WideString* sError);
+  bool set_rich_value(CJS_Runtime* pRuntime,
+                      const CJS_PropValue& vp,
+                      WideString* sError);
+
+  bool get_rotation(CJS_Runtime* pRuntime,
+                    CJS_PropValue* vp,
+                    WideString* sError);
+  bool set_rotation(CJS_Runtime* pRuntime,
+                    const CJS_PropValue& vp,
+                    WideString* sError);
+
+  bool get_stroke_color(CJS_Runtime* pRuntime,
+                        CJS_PropValue* vp,
+                        WideString* sError);
+  bool set_stroke_color(CJS_Runtime* pRuntime,
+                        const CJS_PropValue& vp,
+                        WideString* sError);
+
+  bool get_style(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_style(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_submit_name(CJS_Runtime* pRuntime,
+                       CJS_PropValue* vp,
+                       WideString* sError);
+  bool set_submit_name(CJS_Runtime* pRuntime,
+                       const CJS_PropValue& vp,
+                       WideString* sError);
+
+  bool get_text_color(CJS_Runtime* pRuntime,
+                      CJS_PropValue* vp,
+                      WideString* sError);
+  bool set_text_color(CJS_Runtime* pRuntime,
+                      const CJS_PropValue& vp,
+                      WideString* sError);
+
+  bool get_text_font(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_text_font(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_text_size(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_text_size(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_type(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_type(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_user_name(CJS_Runtime* pRuntime,
+                     CJS_PropValue* vp,
+                     WideString* sError);
+  bool set_user_name(CJS_Runtime* pRuntime,
+                     const CJS_PropValue& vp,
+                     WideString* sError);
+
+  bool get_value(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_value(CJS_Runtime* pRuntime,
+                 const CJS_PropValue& vp,
+                 WideString* sError);
+
+  bool get_value_as_string(CJS_Runtime* pRuntime,
+                           CJS_PropValue* vp,
+                           WideString* sError);
+  bool set_value_as_string(CJS_Runtime* pRuntime,
+                           const CJS_PropValue& vp,
+                           WideString* sError);
+
+  bool get_source(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_source(CJS_Runtime* pRuntime,
+                  const CJS_PropValue& vp,
+                  WideString* sError);
 
   bool browseForFileToSubmit(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
@@ -472,58 +721,58 @@ class CJS_Field : public CJS_Object {
   void InitInstance(IJS_Runtime* pIRuntime) override;
 
   DECLARE_JS_CLASS();
-  JS_STATIC_PROP(alignment, Field);
-  JS_STATIC_PROP(borderStyle, Field);
-  JS_STATIC_PROP(buttonAlignX, Field);
-  JS_STATIC_PROP(buttonAlignY, Field);
-  JS_STATIC_PROP(buttonFitBounds, Field);
-  JS_STATIC_PROP(buttonPosition, Field);
-  JS_STATIC_PROP(buttonScaleHow, Field);
-  JS_STATIC_PROP(buttonScaleWhen, Field);
-  JS_STATIC_PROP(calcOrderIndex, Field);
-  JS_STATIC_PROP(charLimit, Field);
-  JS_STATIC_PROP(comb, Field);
-  JS_STATIC_PROP(commitOnSelChange, Field);
-  JS_STATIC_PROP(currentValueIndices, Field);
-  JS_STATIC_PROP(defaultStyle, Field);
-  JS_STATIC_PROP(defaultValue, Field);
-  JS_STATIC_PROP(doNotScroll, Field);
-  JS_STATIC_PROP(doNotSpellCheck, Field);
-  JS_STATIC_PROP(delay, Field);
-  JS_STATIC_PROP(display, Field);
-  JS_STATIC_PROP(doc, Field);
-  JS_STATIC_PROP(editable, Field);
-  JS_STATIC_PROP(exportValues, Field);
-  JS_STATIC_PROP(fileSelect, Field);
-  JS_STATIC_PROP(fillColor, Field);
-  JS_STATIC_PROP(hidden, Field);
-  JS_STATIC_PROP(highlight, Field);
-  JS_STATIC_PROP(lineWidth, Field);
-  JS_STATIC_PROP(multiline, Field);
-  JS_STATIC_PROP(multipleSelection, Field);
-  JS_STATIC_PROP(name, Field);
-  JS_STATIC_PROP(numItems, Field);
-  JS_STATIC_PROP(page, Field);
-  JS_STATIC_PROP(password, Field);
-  JS_STATIC_PROP(print, Field);
-  JS_STATIC_PROP(radiosInUnison, Field);
-  JS_STATIC_PROP(readonly, Field);
-  JS_STATIC_PROP(rect, Field);
-  JS_STATIC_PROP(required, Field);
-  JS_STATIC_PROP(richText, Field);
-  JS_STATIC_PROP(richValue, Field);
-  JS_STATIC_PROP(rotation, Field);
-  JS_STATIC_PROP(strokeColor, Field);
-  JS_STATIC_PROP(style, Field);
-  JS_STATIC_PROP(submitName, Field);
-  JS_STATIC_PROP(textColor, Field);
-  JS_STATIC_PROP(textFont, Field);
-  JS_STATIC_PROP(textSize, Field);
-  JS_STATIC_PROP(type, Field);
-  JS_STATIC_PROP(userName, Field);
-  JS_STATIC_PROP(value, Field);
-  JS_STATIC_PROP(valueAsString, Field);
-  JS_STATIC_PROP(source, Field);
+  JS_STATIC_PROP(alignment, alignment, Field);
+  JS_STATIC_PROP(borderStyle, border_style, Field);
+  JS_STATIC_PROP(buttonAlignX, button_align_x, Field);
+  JS_STATIC_PROP(buttonAlignY, button_align_y, Field);
+  JS_STATIC_PROP(buttonFitBounds, button_fit_bounds, Field);
+  JS_STATIC_PROP(buttonPosition, button_position, Field);
+  JS_STATIC_PROP(buttonScaleHow, button_scale_how, Field);
+  JS_STATIC_PROP(ButtonScaleWhen, button_scale_when, Field);
+  JS_STATIC_PROP(calcOrderIndex, calc_order_index, Field);
+  JS_STATIC_PROP(charLimit, char_limit, Field);
+  JS_STATIC_PROP(comb, comb, Field);
+  JS_STATIC_PROP(commitOnSelChange, commit_on_sel_change, Field);
+  JS_STATIC_PROP(currentValueIndices, current_value_indices, Field);
+  JS_STATIC_PROP(defaultStyle, default_style, Field);
+  JS_STATIC_PROP(defaultValue, default_value, Field);
+  JS_STATIC_PROP(doNotScroll, do_not_scroll, Field);
+  JS_STATIC_PROP(doNotSpellCheck, do_not_spell_check, Field);
+  JS_STATIC_PROP(delay, delay, Field);
+  JS_STATIC_PROP(display, display, Field);
+  JS_STATIC_PROP(doc, doc, Field);
+  JS_STATIC_PROP(editable, editable, Field);
+  JS_STATIC_PROP(exportValues, export_values, Field);
+  JS_STATIC_PROP(fileSelect, file_select, Field);
+  JS_STATIC_PROP(fillColor, fill_color, Field);
+  JS_STATIC_PROP(hidden, hidden, Field);
+  JS_STATIC_PROP(highlight, highlight, Field);
+  JS_STATIC_PROP(lineWidth, line_width, Field);
+  JS_STATIC_PROP(multiline, multiline, Field);
+  JS_STATIC_PROP(multipleSelection, multiple_selection, Field);
+  JS_STATIC_PROP(name, name, Field);
+  JS_STATIC_PROP(numItems, num_items, Field);
+  JS_STATIC_PROP(page, page, Field);
+  JS_STATIC_PROP(password, password, Field);
+  JS_STATIC_PROP(print, print, Field);
+  JS_STATIC_PROP(radiosInUnison, radios_in_unison, Field);
+  JS_STATIC_PROP(readonly, readonly, Field);
+  JS_STATIC_PROP(rect, rect, Field);
+  JS_STATIC_PROP(required, required, Field);
+  JS_STATIC_PROP(richText, rich_text, Field);
+  JS_STATIC_PROP(richValue, rich_value, Field);
+  JS_STATIC_PROP(rotation, rotation, Field);
+  JS_STATIC_PROP(strokeColor, stroke_color, Field);
+  JS_STATIC_PROP(style, style, Field);
+  JS_STATIC_PROP(submitName, submit_name, Field);
+  JS_STATIC_PROP(textColor, text_color, Field);
+  JS_STATIC_PROP(textFont, text_font, Field);
+  JS_STATIC_PROP(textSize, text_size, Field);
+  JS_STATIC_PROP(type, type, Field);
+  JS_STATIC_PROP(userName, user_name, Field);
+  JS_STATIC_PROP(value, value, Field);
+  JS_STATIC_PROP(valueAsString, value_as_string, Field);
+  JS_STATIC_PROP(source, source, Field);
 
   JS_STATIC_METHOD(browseForFileToSubmit, Field);
   JS_STATIC_METHOD(buttonGetCaption, Field);

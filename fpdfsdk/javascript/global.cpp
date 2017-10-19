@@ -66,8 +66,7 @@ bool JSGlobalAlternate::QueryProperty(const wchar_t* propname) {
 }
 
 bool JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
-                                    const wchar_t* propname,
-                                    WideString& sError) {
+                                    const wchar_t* propname) {
   auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
   if (it == m_MapGlobal.end())
     return false;
@@ -76,81 +75,73 @@ bool JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool JSGlobalAlternate::DoProperty(CJS_Runtime* pRuntime,
-                                   const wchar_t* propname,
-                                   CJS_PropValue& vp,
-                                   WideString& sError) {
-  if (vp.IsSetting()) {
-    ByteString sPropName = ByteString::FromUnicode(propname);
-    switch (vp.GetJSValue()->GetType()) {
-      case CJS_Value::VT_number: {
-        double dData;
-        vp >> dData;
-        return SetGlobalVariables(sPropName, JS_GlobalDataType::NUMBER, dData,
-                                  false, "", v8::Local<v8::Object>(), false);
-      }
-      case CJS_Value::VT_boolean: {
-        bool bData;
-        vp >> bData;
-        return SetGlobalVariables(sPropName, JS_GlobalDataType::BOOLEAN, 0,
-                                  bData, "", v8::Local<v8::Object>(), false);
-      }
-      case CJS_Value::VT_string: {
-        ByteString sData;
-        vp >> sData;
-        return SetGlobalVariables(sPropName, JS_GlobalDataType::STRING, 0,
-                                  false, sData, v8::Local<v8::Object>(), false);
-      }
-      case CJS_Value::VT_object: {
-        v8::Local<v8::Object> pData;
-        vp >> pData;
-        return SetGlobalVariables(sPropName, JS_GlobalDataType::OBJECT, 0,
-                                  false, "", pData, false);
-      }
-      case CJS_Value::VT_null: {
-        return SetGlobalVariables(sPropName, JS_GlobalDataType::NULLOBJ, 0,
-                                  false, "", v8::Local<v8::Object>(), false);
-      }
-      case CJS_Value::VT_undefined: {
-        DelProperty(pRuntime, propname, sError);
-        return true;
-      }
-      default:
-        break;
-    }
-  } else {
-    auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
-    if (it == m_MapGlobal.end()) {
-      vp.GetJSValue()->SetNull(pRuntime);
+bool JSGlobalAlternate::GetProperty(CJS_Runtime* pRuntime,
+                                    const wchar_t* propname,
+                                    CJS_PropValue* vp) {
+  auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
+  if (it == m_MapGlobal.end()) {
+    vp->GetJSValue()->SetNull(pRuntime);
+    return true;
+  }
+
+  JSGlobalData* pData = it->second.get();
+  if (pData->bDeleted) {
+    vp->GetJSValue()->SetNull(pRuntime);
+    return true;
+  }
+
+  switch (pData->nType) {
+    case JS_GlobalDataType::NUMBER:
+      vp->Set(pData->dData);
+      return true;
+    case JS_GlobalDataType::BOOLEAN:
+      vp->Set(pData->bData);
+      return true;
+    case JS_GlobalDataType::STRING:
+      vp->Set(pData->sData);
+      return true;
+    case JS_GlobalDataType::OBJECT: {
+      vp->Set(v8::Local<v8::Object>::New(vp->GetJSRuntime()->GetIsolate(),
+                                         pData->pData));
       return true;
     }
-    JSGlobalData* pData = it->second.get();
-    if (pData->bDeleted) {
-      vp.GetJSValue()->SetNull(pRuntime);
+    case JS_GlobalDataType::NULLOBJ:
+      vp->GetJSValue()->SetNull(pRuntime);
       return true;
-    }
-    switch (pData->nType) {
-      case JS_GlobalDataType::NUMBER:
-        vp << pData->dData;
-        return true;
-      case JS_GlobalDataType::BOOLEAN:
-        vp << pData->bData;
-        return true;
-      case JS_GlobalDataType::STRING:
-        vp << pData->sData;
-        return true;
-      case JS_GlobalDataType::OBJECT: {
-        v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
-            vp.GetJSRuntime()->GetIsolate(), pData->pData);
-        vp << obj;
-        return true;
-      }
-      case JS_GlobalDataType::NULLOBJ:
-        vp.GetJSValue()->SetNull(pRuntime);
-        return true;
-      default:
-        break;
-    }
+    default:
+      break;
+  }
+  return false;
+}
+
+bool JSGlobalAlternate::SetProperty(CJS_Runtime* pRuntime,
+                                    const wchar_t* propname,
+                                    const CJS_PropValue& vp) {
+  ByteString sPropName = ByteString::FromUnicode(propname);
+  switch (vp.GetJSValue()->GetType()) {
+    case CJS_Value::VT_number:
+      return SetGlobalVariables(sPropName, JS_GlobalDataType::NUMBER,
+                                vp.ToDouble(), false, "",
+                                v8::Local<v8::Object>(), false);
+    case CJS_Value::VT_boolean:
+      return SetGlobalVariables(sPropName, JS_GlobalDataType::BOOLEAN, 0,
+                                vp.ToBool(), "", v8::Local<v8::Object>(),
+                                false);
+    case CJS_Value::VT_string:
+      return SetGlobalVariables(sPropName, JS_GlobalDataType::STRING, 0, false,
+                                vp.ToByteString(), v8::Local<v8::Object>(),
+                                false);
+    case CJS_Value::VT_object:
+      return SetGlobalVariables(sPropName, JS_GlobalDataType::OBJECT, 0, false,
+                                "", vp.ToV8Object(), false);
+    case CJS_Value::VT_null:
+      return SetGlobalVariables(sPropName, JS_GlobalDataType::NULLOBJ, 0, false,
+                                "", v8::Local<v8::Object>(), false);
+    case CJS_Value::VT_undefined:
+      DelProperty(pRuntime, propname);
+      return true;
+    default:
+      break;
   }
   return false;
 }

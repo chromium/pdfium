@@ -34,7 +34,7 @@ struct JSMethodSpec {
   v8::FunctionCallback pMethodCall;
 };
 
-template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, WideString&)>
+template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue*, WideString*)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -43,15 +43,18 @@ void JSPropGetter(const char* prop_name_string,
       CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
+
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   if (!pJSObj)
     return;
+
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   WideString sError;
+
   CJS_PropValue value(pRuntime);
   value.StartGetting();
-  if (!(pObj->*M)(pRuntime, value, sError)) {
+  if (!(pObj->*M)(pRuntime, &value, &sError)) {
     pRuntime->Error(
         JSFormatErrorString(class_name_string, prop_name_string, sError));
     return;
@@ -59,7 +62,8 @@ void JSPropGetter(const char* prop_name_string,
   info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(pRuntime));
 }
 
-template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, WideString&)>
+template <class C,
+          bool (C::*M)(CJS_Runtime*, const CJS_PropValue&, WideString*)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -69,32 +73,35 @@ void JSPropSetter(const char* prop_name_string,
       CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
+
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   if (!pJSObj)
     return;
+
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   WideString sError;
+
   CJS_PropValue propValue(pRuntime, CJS_Value(pRuntime, value));
   propValue.StartSetting();
-  if (!(pObj->*M)(pRuntime, propValue, sError)) {
+  if (!(pObj->*M)(pRuntime, propValue, &sError)) {
     pRuntime->Error(
         JSFormatErrorString(class_name_string, prop_name_string, sError));
   }
 }
 
-#define JS_STATIC_PROP(prop_name, class_name)                                 \
-  static void get_##prop_name##_static(                                       \
-      v8::Local<v8::String> property,                                         \
-      const v8::PropertyCallbackInfo<v8::Value>& info) {                      \
-    JSPropGetter<class_name, &class_name::prop_name>(#prop_name, #class_name, \
-                                                     property, info);         \
-  }                                                                           \
-  static void set_##prop_name##_static(                                       \
-      v8::Local<v8::String> property, v8::Local<v8::Value> value,             \
-      const v8::PropertyCallbackInfo<void>& info) {                           \
-    JSPropSetter<class_name, &class_name::prop_name>(#prop_name, #class_name, \
-                                                     property, value, info);  \
+#define JS_STATIC_PROP(err_name, prop_name, class_name)           \
+  static void get_##prop_name##_static(                           \
+      v8::Local<v8::String> property,                             \
+      const v8::PropertyCallbackInfo<v8::Value>& info) {          \
+    JSPropGetter<class_name, &class_name::get_##prop_name>(       \
+        #err_name, #class_name, property, info);                  \
+  }                                                               \
+  static void set_##prop_name##_static(                           \
+      v8::Local<v8::String> property, v8::Local<v8::Value> value, \
+      const v8::PropertyCallbackInfo<void>& info) {               \
+    JSPropSetter<class_name, &class_name::set_##prop_name>(       \
+        #err_name, #class_name, property, value, info);           \
   }
 
 template <class C,
@@ -349,11 +356,11 @@ void JSSpecialPropGet(const char* class_name,
   v8::String::Utf8Value utf8_value(property);
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
-  WideString sError;
+
   CJS_PropValue value(pRuntime);
   value.StartGetting();
-  if (!pObj->DoProperty(pRuntime, propname.c_str(), value, sError)) {
-    pRuntime->Error(JSFormatErrorString(class_name, "GetProperty", sError));
+  if (!pObj->GetProperty(pRuntime, propname.c_str(), &value)) {
+    pRuntime->Error(JSFormatErrorString(class_name, "GetProperty", L""));
     return;
   }
   info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(pRuntime));
@@ -378,11 +385,10 @@ void JSSpecialPropPut(const char* class_name,
   v8::String::Utf8Value utf8_value(property);
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
-  WideString sError;
   CJS_PropValue PropValue(pRuntime, CJS_Value(pRuntime, value));
   PropValue.StartSetting();
-  if (!pObj->DoProperty(pRuntime, propname.c_str(), PropValue, sError)) {
-    pRuntime->Error(JSFormatErrorString(class_name, "PutProperty", sError));
+  if (!pObj->SetProperty(pRuntime, propname.c_str(), PropValue)) {
+    pRuntime->Error(JSFormatErrorString(class_name, "PutProperty", L""));
   }
 }
 
@@ -404,8 +410,7 @@ void JSSpecialPropDel(const char* class_name,
   v8::String::Utf8Value utf8_value(property);
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
-  WideString sError;
-  if (!pObj->DelProperty(pRuntime, propname.c_str(), sError)) {
+  if (!pObj->DelProperty(pRuntime, propname.c_str())) {
     ByteString cbName;
     cbName.Format("%s.%s", class_name, "DelProperty");
     // Probably a missing call to JSFX_Error().

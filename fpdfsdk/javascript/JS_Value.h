@@ -90,29 +90,39 @@ class CJS_PropValue {
   bool IsGetting() const { return !m_bIsSetting; }
   CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime.Get(); }
   CJS_Value* GetJSValue() { return &m_Value; }
+  const CJS_Value* GetJSValue() const { return &m_Value; }
 
   // These calls may re-enter JS (and hence invalidate objects).
-  void operator<<(int val);
-  void operator>>(int&) const;
-  void operator<<(bool val);
-  void operator>>(bool&) const;
-  void operator<<(double val);
-  void operator>>(double&) const;
-  void operator<<(CJS_Object* pObj);
-  void operator>>(CJS_Object*& ppObj) const;
-  void operator<<(CJS_Document* pJsDoc);
-  void operator>>(CJS_Document*& ppJsDoc) const;
-  void operator<<(ByteString);
-  void operator>>(ByteString&) const;
-  void operator<<(WideString);
-  void operator>>(WideString&) const;
-  void operator<<(const wchar_t* c_string);
-  void operator<<(v8::Local<v8::Object>);
-  void operator>>(v8::Local<v8::Object>&) const;
-  void operator>>(CJS_Array& array) const;
-  void operator<<(CJS_Array& array);
-  void operator<<(CJS_Date& date);
-  void operator>>(CJS_Date& date) const;
+  void Set(int val);
+  int ToInt() const;
+
+  void Set(bool val);
+  bool ToBool() const;
+
+  void Set(double val);
+  double ToDouble() const;
+
+  void Set(CJS_Object* pObj);
+  CJS_Object* ToObject() const;
+
+  void Set(CJS_Document* pJsDoc);
+  CJS_Document* ToDocument() const;
+
+  void Set(const ByteString&);
+  ByteString ToByteString() const;
+
+  void Set(const WideString&);
+  void Set(const wchar_t* c_string);
+  WideString ToWideString() const;
+
+  void Set(v8::Local<v8::Object>);
+  v8::Local<v8::Object> ToV8Object() const;
+
+  void Set(const CJS_Array& array);
+  CJS_Array ToArray() const;
+
+  void Set(const CJS_Date& date);
+  CJS_Date ToDate() const;
 
  private:
   bool m_bIsSetting;
@@ -154,6 +164,7 @@ class CJS_Date {
            int hour,
            int min,
            int sec);
+  CJS_Date(const CJS_Date&);
   virtual ~CJS_Date();
 
   void Attach(v8::Local<v8::Date> pDate);

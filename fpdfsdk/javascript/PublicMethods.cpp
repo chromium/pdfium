@@ -850,9 +850,9 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
 
         CJS_PropValue vProp(pRuntime);
         vProp.StartGetting();
-        vProp << arColor;
+        vProp.Set(arColor);
         vProp.StartSetting();
-        fTarget->textColor(pRuntime, vProp, sError);  // red
+        fTarget->set_text_color(pRuntime, vProp, &sError);  // red
       }
     }
   } else {
@@ -869,7 +869,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
 
         CJS_PropValue vProp(pRuntime);
         vProp.StartGetting();
-        fTarget->textColor(pRuntime, vProp, sError);
+        fTarget->get_text_color(pRuntime, &vProp, &sError);
 
         CJS_Array aProp;
         vProp.GetJSValue()->ConvertToArray(pRuntime, aProp);
@@ -882,9 +882,9 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
         if (crColor != crProp) {
           CJS_PropValue vProp2(pRuntime);
           vProp2.StartGetting();
-          vProp2 << arColor;
+          vProp2.Set(arColor);
           vProp2.StartSetting();
-          fTarget->textColor(pRuntime, vProp2, sError);
+          fTarget->set_text_color(pRuntime, vProp2, &sError);
         }
       }
     }

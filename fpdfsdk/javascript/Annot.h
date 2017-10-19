@@ -17,9 +17,20 @@ class Annot : public CJS_EmbedObj {
   explicit Annot(CJS_Object* pJSObject);
   ~Annot() override;
 
-  bool hidden(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool name(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
-  bool type(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool get_hidden(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_hidden(CJS_Runtime* pRuntime,
+                  const CJS_PropValue& vp,
+                  WideString* sError);
+
+  bool get_name(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_name(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
+  bool get_type(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_type(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
 
   void SetSDKAnnot(CPDFSDK_BAAnnot* annot);
 
@@ -33,9 +44,9 @@ class CJS_Annot : public CJS_Object {
   ~CJS_Annot() override {}
 
   DECLARE_JS_CLASS();
-  JS_STATIC_PROP(hidden, Annot);
-  JS_STATIC_PROP(name, Annot);
-  JS_STATIC_PROP(type, Annot);
+  JS_STATIC_PROP(hidden, hidden, Annot);
+  JS_STATIC_PROP(name, name, Annot);
+  JS_STATIC_PROP(type, type, Annot);
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_ANNOT_H_

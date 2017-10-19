@@ -16,7 +16,11 @@ class Icon : public CJS_EmbedObj {
   explicit Icon(CJS_Object* pJSObject);
   ~Icon() override;
 
-  bool name(CJS_Runtime* pRuntime, CJS_PropValue& vp, WideString& sError);
+  bool get_name(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool set_name(CJS_Runtime* pRuntime,
+                const CJS_PropValue& vp,
+                WideString* sError);
+
   WideString GetIconName() const { return m_swIconName; }
   void SetIconName(WideString name) { m_swIconName = name; }
 
@@ -30,7 +34,7 @@ class CJS_Icon : public CJS_Object {
   ~CJS_Icon() override {}
 
   DECLARE_JS_CLASS();
-  JS_STATIC_PROP(name, Icon);
+  JS_STATIC_PROP(name, name, Icon);
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_ICON_H_
