@@ -28,6 +28,9 @@
 
 namespace {
 
+constexpr int kThousandthMinInt = std::numeric_limits<int>::min() / 1000;
+constexpr int kThousandthMaxInt = std::numeric_limits<int>::max() / 1000;
+
 struct OUTLINE_PARAMS {
   CFX_PathData* m_pPath;
   int m_CurX;
@@ -343,9 +346,11 @@ int CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
   if (err)
     return 0;
 
-  int width = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                        FXFT_Get_Glyph_HoriAdvance(m_Face));
-  return width;
+  int horiAdvance = FXFT_Get_Glyph_HoriAdvance(m_Face);
+  if (horiAdvance < kThousandthMinInt || horiAdvance > kThousandthMaxInt)
+    return 0;
+
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), horiAdvance);
 }
 
 bool CFX_Font::LoadEmbedded(const uint8_t* data, uint32_t size) {
@@ -366,16 +371,22 @@ int CFX_Font::GetAscent() const {
   if (!m_Face)
     return 0;
 
-  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                   FXFT_Get_Face_Ascender(m_Face));
+  int ascender = FXFT_Get_Face_Ascender(m_Face);
+  if (ascender < kThousandthMinInt || ascender > kThousandthMaxInt)
+    return 0;
+
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), ascender);
 }
 
 int CFX_Font::GetDescent() const {
   if (!m_Face)
     return 0;
 
-  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                   FXFT_Get_Face_Descender(m_Face));
+  int descender = FXFT_Get_Face_Descender(m_Face);
+  if (descender < kThousandthMinInt || descender > kThousandthMaxInt)
+    return 0;
+
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), descender);
 }
 
 bool CFX_Font::GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox) {
