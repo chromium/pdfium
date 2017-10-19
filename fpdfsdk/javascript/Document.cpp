@@ -1805,18 +1805,18 @@ void Document::AddDelayData(CJS_DelayData* pData) {
 }
 
 void Document::DoFieldDelay(const WideString& sFieldName, int nControlIndex) {
-  std::vector<std::unique_ptr<CJS_DelayData>> DelayDataForFieldAndControlIndex;
+  std::vector<std::unique_ptr<CJS_DelayData>> delayed_data;
   auto iter = m_DelayData.begin();
   while (iter != m_DelayData.end()) {
     auto old = iter++;
     if ((*old)->sFieldName == sFieldName &&
         (*old)->nControlIndex == nControlIndex) {
-      DelayDataForFieldAndControlIndex.push_back(std::move(*old));
+      delayed_data.push_back(std::move(*old));
       m_DelayData.erase(old);
     }
   }
 
-  for (const auto& pData : DelayDataForFieldAndControlIndex)
+  for (const auto& pData : delayed_data)
     Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
 }
 

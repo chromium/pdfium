@@ -74,6 +74,9 @@ struct CJS_DelayData {
 
 class Field : public CJS_EmbedObj {
  public:
+  static void DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                      CJS_DelayData* pData);
+
   explicit Field(CJS_Object* pJSObject);
   ~Field() override;
 
@@ -522,6 +525,9 @@ class Field : public CJS_EmbedObj {
                          CJS_Value& vRet,
                          WideString& sError);
 
+  bool AttachField(Document* pDocument, const WideString& csFieldName);
+
+ private:
   static void SetAlignment(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                            const WideString& swFieldName,
                            int nControlIndex,
@@ -677,13 +683,7 @@ class Field : public CJS_EmbedObj {
       CPDFSDK_FormFillEnvironment* pFormFillEnv,
       const WideString& csFieldName);
 
-  static void DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                      CJS_DelayData* pData);
-
-  bool AttachField(Document* pDocument, const WideString& csFieldName);
   void SetDelay(bool bDelay);
-
- protected:
   void ParseFieldName(const std::wstring& strFieldNameParsed,
                       std::wstring& strFieldName,
                       int& iControlNo);
@@ -704,7 +704,6 @@ class Field : public CJS_EmbedObj {
 
   void DoDelay();
 
- public:
   Document* m_pJSDoc;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   WideString m_FieldName;
