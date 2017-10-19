@@ -46,6 +46,7 @@ group("libfuzzer") {
       ":pdf_codec_tiff_fuzzer",
       ":pdf_css_fuzzer",
       ":pdf_fm2js_fuzzer",
+      ":pdf_lzw_fuzzer",
       ":pdf_xml_fuzzer",
     ]
   }
@@ -126,6 +127,12 @@ if (pdf_enable_xfa) {
   pdfium_fuzzer("pdf_fm2js_fuzzer") {
     sources = [
       "pdf_fm2js_fuzzer.cc",
+    ]
+  }
+
+  pdfium_fuzzer("pdf_lzw_fuzzer") {
+    sources = [
+      "pdf_lzw_fuzzer.cc",
     ]
   }
 
