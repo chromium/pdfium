@@ -12,11 +12,14 @@
 
 typedef void* FPDF_FORMHANDLE;
 
+// These values are return values for a public API, so should not be changed
+// other than the count when adding new values.
 #define FORMTYPE_NONE 0       // Document contains no forms
 #define FORMTYPE_ACRO_FORM 1  // Forms are specified using AcroForm spec
 #define FORMTYPE_XFA_FULL 2   // Forms are specified using the entire XFA spec
 #define FORMTYPE_XFA_FOREGROUND \
   3  // Forms are specified using the XFAF subset of XFA spec
+#define FORMTYPE_COUNT 4  // The number of form types
 
 // Exported Functions
 #ifdef __cplusplus

@@ -45,7 +45,7 @@ enum class FormType {
   kNone = 0,
   kAcroForm = 1,
   kXFAFull = 2,
-  kXFAForeground = 3
+  kXFAForeground = 3,
 };
 
 #define XFA_PARSESTATUS_StatusErr -3
