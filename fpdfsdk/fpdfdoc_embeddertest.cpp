@@ -237,6 +237,13 @@ TEST_F(FPDFDocEmbeddertest, GetMetaTextInAttachmentFile) {
             WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
 }
 
+TEST_F(FPDFDocEmbeddertest, GetMetaTextFromNewDocument) {
+  FPDF_DOCUMENT empty_doc = FPDF_CreateNewDocument();
+  unsigned short buf[128];
+  EXPECT_EQ(2u, FPDF_GetMetaText(empty_doc, "Title", buf, sizeof(buf)));
+  FPDF_CloseDocument(empty_doc);
+}
+
 TEST_F(FPDFDocEmbeddertest, NoPageLabels) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
