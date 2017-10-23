@@ -81,7 +81,7 @@ bool util::printf(CJS_Runtime* pRuntime,
   if (iSize < 1)
     return false;
 
-  std::wstring unsafe_fmt_string(params[0].ToCFXWideString(pRuntime).c_str());
+  std::wstring unsafe_fmt_string(params[0].ToWideString(pRuntime).c_str());
   std::vector<std::wstring> unsafe_conversion_specifiers;
   int iOffset = 0;
   int iOffend = 0;
@@ -122,7 +122,7 @@ bool util::printf(CJS_Runtime* pRuntime,
         break;
       case UTIL_STRING:
         strSegment.Format(c_strFormat.c_str(),
-                          params[iIndex].ToCFXWideString(pRuntime).c_str());
+                          params[iIndex].ToWideString(pRuntime).c_str());
         break;
       default:
         strSegment.Format(L"%ls", c_strFormat.c_str());
@@ -146,12 +146,12 @@ bool util::printd(CJS_Runtime* pRuntime,
 
   const CJS_Value& p1 = params[0];
   const CJS_Value& p2 = params[1];
-  CJS_Date jsDate;
-  if (!p2.ConvertToDate(pRuntime, jsDate)) {
+  if (!p2.IsDateObject()) {
     sError = JSGetStringFromID(IDS_STRING_JSPRINT1);
     return false;
   }
 
+  CJS_Date jsDate = p2.ToDate(pRuntime);
   if (!jsDate.IsValidDate(pRuntime)) {
     sError = JSGetStringFromID(IDS_STRING_JSPRINT2);
     return false;
@@ -197,7 +197,7 @@ bool util::printd(CJS_Runtime* pRuntime,
 
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
-    std::basic_string<wchar_t> cFormat = p1.ToCFXWideString(pRuntime).c_str();
+    std::basic_string<wchar_t> cFormat = p1.ToWideString(pRuntime).c_str();
     cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                   cFormat.end());
 
@@ -276,8 +276,8 @@ bool util::printx(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vRet = CJS_Value(pRuntime, printx(params[0].ToCFXWideString(pRuntime),
-                                    params[1].ToCFXWideString(pRuntime))
+  vRet = CJS_Value(pRuntime, printx(params[0].ToWideString(pRuntime),
+                                    params[1].ToWideString(pRuntime))
                                  .c_str());
 
   return true;
@@ -388,8 +388,8 @@ bool util::scand(CJS_Runtime* pRuntime,
   if (params.size() < 2)
     return false;
 
-  WideString sFormat = params[0].ToCFXWideString(pRuntime);
-  WideString sDate = params[1].ToCFXWideString(pRuntime);
+  WideString sFormat = params[0].ToWideString(pRuntime);
+  WideString sDate = params[1].ToWideString(pRuntime);
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0) {
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);

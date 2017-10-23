@@ -307,7 +307,7 @@ bool Document::getField(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  WideString wideName = params[0].ToCFXWideString(pRuntime);
+  WideString wideName = params[0].ToWideString(pRuntime);
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (pPDFForm->CountFields(wideName) <= 0) {
@@ -397,11 +397,11 @@ bool Document::mailForm(CJS_Runtime* pRuntime,
   }
   int iLength = params.size();
   bool bUI = iLength > 0 ? params[0].ToBool(pRuntime) : true;
-  WideString cTo = iLength > 1 ? params[1].ToCFXWideString(pRuntime) : L"";
-  WideString cCc = iLength > 2 ? params[2].ToCFXWideString(pRuntime) : L"";
-  WideString cBcc = iLength > 3 ? params[3].ToCFXWideString(pRuntime) : L"";
-  WideString cSubject = iLength > 4 ? params[4].ToCFXWideString(pRuntime) : L"";
-  WideString cMsg = iLength > 5 ? params[5].ToCFXWideString(pRuntime) : L"";
+  WideString cTo = iLength > 1 ? params[1].ToWideString(pRuntime) : L"";
+  WideString cCc = iLength > 2 ? params[2].ToWideString(pRuntime) : L"";
+  WideString cBcc = iLength > 3 ? params[3].ToWideString(pRuntime) : L"";
+  WideString cSubject = iLength > 4 ? params[4].ToWideString(pRuntime) : L"";
+  WideString cMsg = iLength > 5 ? params[5].ToWideString(pRuntime) : L"";
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   ByteString sTextBuf = pInterForm->ExportFormToFDFTextBuf();
   if (sTextBuf.GetLength() == 0)
@@ -443,7 +443,7 @@ bool Document::print(CJS_Runtime* pRuntime,
       v8::Local<v8::Object> pObj = params[8].ToV8Object(pRuntime);
       if (CFXJS_Engine::GetObjDefnID(pObj) ==
           CJS_PrintParamsObj::g_nObjDefnID) {
-        if (CJS_Object* pJSObj = params[8].ToCJSObject(pRuntime)) {
+        if (CJS_Object* pJSObj = params[8].ToObject(pRuntime)) {
           if (PrintParamsObj* pprintparamsObj =
                   static_cast<PrintParamsObj*>(pJSObj->GetEmbedObject())) {
             bUI = pprintparamsObj->bUI;
@@ -506,7 +506,7 @@ bool Document::removeField(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return false;
   }
-  WideString sFieldName = params[0].ToCFXWideString(pRuntime);
+  WideString sFieldName = params[0].ToWideString(pRuntime);
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
@@ -575,7 +575,7 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
 
   switch (params[0].GetType()) {
     default:
-      aName.Attach(params[0].ToV8Array(pRuntime));
+      aName = CJS_Array(params[0].ToV8Array(pRuntime));
       break;
     case CJS_Value::VT_string:
       aName.SetElement(pRuntime, 0, params[0]);
@@ -584,9 +584,8 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
 
   std::vector<CPDF_FormField*> aFields;
   for (int i = 0, isz = aName.GetLength(pRuntime); i < isz; ++i) {
-    CJS_Value valElement(pRuntime);
-    aName.GetElement(pRuntime, i, valElement);
-    WideString swVal = valElement.ToCFXWideString(pRuntime);
+    CJS_Value valElement = aName.GetElement(pRuntime, i);
+    WideString swVal = valElement.ToWideString(pRuntime);
     for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
       aFields.push_back(pPDFForm->GetField(j, swVal));
   }
@@ -634,18 +633,18 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
   bool bEmpty = false;
   CJS_Value v = params[0];
   if (v.GetType() == CJS_Value::VT_string) {
-    strURL = params[0].ToCFXWideString(pRuntime);
+    strURL = params[0].ToWideString(pRuntime);
     if (nSize > 1)
       bFDF = params[1].ToBool(pRuntime);
     if (nSize > 2)
       bEmpty = params[2].ToBool(pRuntime);
     if (nSize > 3)
-      aFields.Attach(params[3].ToV8Array(pRuntime));
+      aFields = CJS_Array(params[3].ToV8Array(pRuntime));
   } else if (v.GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
     v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"cURL");
     if (!pValue.IsEmpty())
-      strURL = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
+      strURL = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"bFDF");
     bFDF = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
@@ -654,7 +653,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
     bEmpty = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"aFields");
-    aFields.Attach(CJS_Value(pRuntime, pValue).ToV8Array(pRuntime));
+    aFields = CJS_Array(CJS_Value(pRuntime, pValue).ToV8Array(pRuntime));
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
@@ -670,10 +669,8 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
 
   std::vector<CPDF_FormField*> fieldObjects;
   for (int i = 0, sz = aFields.GetLength(pRuntime); i < sz; ++i) {
-    CJS_Value valName(pRuntime);
-    aFields.GetElement(pRuntime, i, valName);
-
-    WideString sName = valName.ToCFXWideString(pRuntime);
+    CJS_Value valName = aFields.GetElement(pRuntime, i);
+    WideString sName = valName.ToWideString(pRuntime);
     CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
     for (int j = 0, jsz = pPDFForm->CountFields(sName); j < jsz; ++j) {
       CPDF_FormField* pField = pPDFForm->GetField(j, sName);
@@ -723,15 +720,15 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
   if (params.size() >= 1)
     bUI = params[0].ToBool(pRuntime);
   if (params.size() >= 2)
-    cTo = params[1].ToCFXWideString(pRuntime);
+    cTo = params[1].ToWideString(pRuntime);
   if (params.size() >= 3)
-    cCc = params[2].ToCFXWideString(pRuntime);
+    cCc = params[2].ToWideString(pRuntime);
   if (params.size() >= 4)
-    cBcc = params[3].ToCFXWideString(pRuntime);
+    cBcc = params[3].ToWideString(pRuntime);
   if (params.size() >= 5)
-    cSubject = params[4].ToCFXWideString(pRuntime);
+    cSubject = params[4].ToWideString(pRuntime);
   if (params.size() >= 6)
-    cMsg = params[5].ToCFXWideString(pRuntime);
+    cMsg = params[5].ToWideString(pRuntime);
 
   if (params.size() >= 1 && params[0].GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
@@ -740,19 +737,19 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
     bUI = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cTo");
-    cTo = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
+    cTo = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cCc");
-    cCc = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
+    cCc = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cBcc");
-    cBcc = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
+    cBcc = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cSubject");
-    cSubject = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
+    cSubject = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cMsg");
-    cMsg = CJS_Value(pRuntime, pValue).ToCFXWideString(pRuntime);
+    cMsg = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
   }
 
   pRuntime->BeginBlock();
@@ -1251,7 +1248,7 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
     return false;
   }
   int nPageNo = params[0].ToInt(pRuntime);
-  WideString swAnnotName = params[1].ToCFXWideString(pRuntime);
+  WideString swAnnotName = params[1].ToWideString(pRuntime);
   CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(nPageNo);
   if (!pPageView)
     return false;
@@ -1366,7 +1363,7 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString swIconName = params[0].ToCFXWideString(pRuntime);
+  WideString swIconName = params[0].ToWideString(pRuntime);
   if (params[1].GetType() != CJS_Value::VT_object) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
@@ -1378,7 +1375,7 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
     return false;
   }
 
-  if (!params[1].ToCJSObject(pRuntime)->GetEmbedObject()) {
+  if (!params[1].ToObject(pRuntime)->GetEmbedObject()) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
   }
@@ -1430,7 +1427,7 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString swIconName = params[0].ToCFXWideString(pRuntime);
+  WideString swIconName = params[0].ToWideString(pRuntime);
   auto it = std::find(m_IconNames.begin(), m_IconNames.end(), swIconName);
   if (it == m_IconNames.end())
     return false;
@@ -1775,7 +1772,7 @@ bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  WideString wideName = params[0].ToCFXWideString(pRuntime);
+  WideString wideName = params[0].ToWideString(pRuntime);
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (!pDocument)
     return false;

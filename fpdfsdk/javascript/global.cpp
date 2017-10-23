@@ -154,7 +154,7 @@ bool JSGlobalAlternate::setPersistent(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
-  auto it = m_MapGlobal.find(params[0].ToCFXByteString(pRuntime));
+  auto it = m_MapGlobal.find(params[0].ToByteString(pRuntime));
   if (it == m_MapGlobal.end() || it->second->bDeleted) {
     sError = JSGetStringFromID(IDS_STRING_JSNOGLOBAL);
     return false;
@@ -278,7 +278,7 @@ void JSGlobalAlternate::ObjectToArray(CJS_Runtime* pRuntime,
         array.Add(pObjElement);
       } break;
       case CJS_Value::VT_string: {
-        ByteString sValue = CJS_Value(pRuntime, v).ToCFXByteString(pRuntime);
+        ByteString sValue = CJS_Value(pRuntime, v).ToByteString(pRuntime);
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GlobalDataType::STRING;
         pObjElement->sKey = sKey;

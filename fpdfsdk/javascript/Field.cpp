@@ -874,11 +874,8 @@ bool Field::set_current_value_indices(CJS_Runtime* pRuntime,
     array.push_back(vp.ToInt());
   } else if (vp.GetJSValue()->IsArrayObject()) {
     CJS_Array SelArray = vp.ToArray();
-    CJS_Value SelValue(pRuntime);
-    for (int i = 0, sz = SelArray.GetLength(pRuntime); i < sz; i++) {
-      SelArray.GetElement(pRuntime, i, SelValue);
-      array.push_back(SelValue.ToInt(pRuntime));
-    }
+    for (int i = 0, sz = SelArray.GetLength(pRuntime); i < sz; i++)
+      array.push_back(SelArray.GetElement(pRuntime, i).ToInt(pRuntime));
   }
 
   if (m_bDelay) {
@@ -1771,16 +1768,11 @@ bool Field::set_rect(CJS_Runtime* pRuntime,
   if (!vp.GetJSValue()->IsArrayObject())
     return false;
 
-  CJS_Value Upper_Leftx(pRuntime);
-  CJS_Value Upper_Lefty(pRuntime);
-  CJS_Value Lower_Rightx(pRuntime);
-  CJS_Value Lower_Righty(pRuntime);
-
   CJS_Array rcArray = vp.ToArray();
-  rcArray.GetElement(pRuntime, 0, Upper_Leftx);
-  rcArray.GetElement(pRuntime, 1, Upper_Lefty);
-  rcArray.GetElement(pRuntime, 2, Lower_Rightx);
-  rcArray.GetElement(pRuntime, 3, Lower_Righty);
+  CJS_Value Upper_Leftx = rcArray.GetElement(pRuntime, 0);
+  CJS_Value Upper_Lefty = rcArray.GetElement(pRuntime, 1);
+  CJS_Value Lower_Rightx = rcArray.GetElement(pRuntime, 2);
+  CJS_Value Lower_Righty = rcArray.GetElement(pRuntime, 3);
 
   float pArray[4];
   pArray[0] = static_cast<float>(Upper_Leftx.ToInt(pRuntime));
@@ -2263,7 +2255,7 @@ bool Field::get_value(CJS_Runtime* pRuntime,
           iIndex = pFormField->GetSelectedIndex(i);
           ElementValue =
               CJS_Value(pRuntime, pFormField->GetOptionValue(iIndex).c_str());
-          if (wcslen(ElementValue.ToCFXWideString(pRuntime).c_str()) == 0) {
+          if (wcslen(ElementValue.ToWideString(pRuntime).c_str()) == 0) {
             ElementValue =
                 CJS_Value(pRuntime, pFormField->GetOptionLabel(iIndex).c_str());
           }
@@ -2308,9 +2300,8 @@ bool Field::set_value(CJS_Runtime* pRuntime,
   if (vp.GetJSValue()->IsArrayObject()) {
     CJS_Array ValueArray = vp.ToArray();
     for (int i = 0, sz = ValueArray.GetLength(pRuntime); i < sz; i++) {
-      CJS_Value ElementValue(pRuntime);
-      ValueArray.GetElement(pRuntime, i, ElementValue);
-      strArray.push_back(ElementValue.ToCFXWideString(pRuntime));
+      CJS_Value ElementValue = ValueArray.GetElement(pRuntime, i);
+      strArray.push_back(ElementValue.ToWideString(pRuntime));
     }
   } else {
     strArray.push_back(vp.ToWideString());

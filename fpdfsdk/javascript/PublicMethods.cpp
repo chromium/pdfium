@@ -189,18 +189,17 @@ double CJS_PublicMethods::AF_Simple(const wchar_t* sFuction,
 
 CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                   CJS_Value val) {
-  CJS_Array StrArray;
-  if (val.IsArrayObject()) {
-    val.ConvertToArray(pRuntime, StrArray);
-    return StrArray;
-  }
-  WideString wsStr = val.ToCFXWideString(pRuntime);
+  if (val.IsArrayObject())
+    return val.ToArray(pRuntime);
+
+  WideString wsStr = val.ToWideString(pRuntime);
   ByteString t = ByteString::FromUnicode(wsStr);
   const char* p = t.c_str();
 
   int ch = ',';
   int nIndex = 0;
 
+  CJS_Array StrArray;
   while (*p) {
     const char* pTemp = strchr(p, ch);
     if (!pTemp) {
@@ -772,7 +771,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
   int iSepStyle = params[1].ToInt(pRuntime);
   int iNegStyle = params[2].ToInt(pRuntime);
   // params[3] is iCurrStyle, it's not used.
-  WideString wstrCurrency = params[4].ToCFXWideString(pRuntime);
+  WideString wstrCurrency = params[4].ToWideString(pRuntime);
   bool bCurrencyPrepend = params[5].ToBool(pRuntime);
 
   if (iDec < 0)
@@ -871,9 +870,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
         vProp.StartGetting();
         fTarget->get_text_color(pRuntime, &vProp, &sError);
 
-        CJS_Array aProp;
-        vProp.GetJSValue()->ConvertToArray(pRuntime, aProp);
-
+        CJS_Array aProp = vProp.GetJSValue()->ToArray(pRuntime);
         CFX_Color crProp;
         CFX_Color crColor;
         color::ConvertArrayToPWLColor(pRuntime, aProp, &crProp);
@@ -1109,7 +1106,7 @@ bool CJS_PublicMethods::AFDate_FormatEx(CJS_Runtime* pRuntime,
   if (strValue.IsEmpty())
     return true;
 
-  WideString sFormat = params[0].ToCFXWideString(pRuntime);
+  WideString sFormat = params[0].ToWideString(pRuntime);
   double dDate = 0.0f;
 
   if (strValue.Contains(L"GMT")) {
@@ -1207,7 +1204,7 @@ bool CJS_PublicMethods::AFDate_KeystrokeEx(CJS_Runtime* pRuntime,
     if (strValue.IsEmpty())
       return true;
 
-    WideString sFormat = params[0].ToCFXWideString(pRuntime);
+    WideString sFormat = params[0].ToWideString(pRuntime);
     bool bWrongFormat = false;
     double dRet = MakeRegularDate(strValue, sFormat, &bWrongFormat);
     if (bWrongFormat || std::isnan(dRet)) {
@@ -1402,7 +1399,7 @@ bool CJS_PublicMethods::AFSpecial_KeystrokeEx(
     return false;
 
   WideString& valEvent = pEvent->Value();
-  WideString wstrMask = params[0].ToCFXWideString(pRuntime);
+  WideString wstrMask = params[0].ToWideString(pRuntime);
   if (wstrMask.IsEmpty())
     return true;
 
@@ -1557,8 +1554,8 @@ bool CJS_PublicMethods::AFParseDateEx(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString sValue = params[0].ToCFXWideString(pRuntime);
-  WideString sFormat = params[1].ToCFXWideString(pRuntime);
+  WideString sValue = params[0].ToWideString(pRuntime);
+  WideString sFormat = params[1].ToWideString(pRuntime);
   double dDate = MakeRegularDate(sValue, sFormat, nullptr);
   if (std::isnan(dDate)) {
     WideString swMsg;
@@ -1582,7 +1579,7 @@ bool CJS_PublicMethods::AFSimple(CJS_Runtime* pRuntime,
   }
 
   vRet = CJS_Value(pRuntime, static_cast<double>(AF_Simple(
-                                 params[0].ToCFXWideString(pRuntime).c_str(),
+                                 params[0].ToWideString(pRuntime).c_str(),
                                  params[1].ToDouble(pRuntime),
                                  params[2].ToDouble(pRuntime))));
 
@@ -1598,7 +1595,7 @@ bool CJS_PublicMethods::AFMakeNumber(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString ws = params[0].ToCFXWideString(pRuntime);
+  WideString ws = params[0].ToWideString(pRuntime);
   ws.Replace(L",", L".");
   vRet = CJS_Value(pRuntime, ws.c_str());
   vRet.MaybeCoerceToNumber(pRuntime);
@@ -1626,16 +1623,15 @@ bool CJS_PublicMethods::AFSimple_Calculate(CJS_Runtime* pRuntime,
       pRuntime->GetFormFillEnv()->GetInterForm();
   CPDF_InterForm* pInterForm = pReaderInterForm->GetInterForm();
 
-  WideString sFunction = params[0].ToCFXWideString(pRuntime);
+  WideString sFunction = params[0].ToWideString(pRuntime);
   double dValue = wcscmp(sFunction.c_str(), L"PRD") == 0 ? 1.0 : 0.0;
 
   CJS_Array FieldNameArray = AF_MakeArrayFromList(pRuntime, params1);
   int nFieldsCount = 0;
 
   for (int i = 0, isz = FieldNameArray.GetLength(pRuntime); i < isz; i++) {
-    CJS_Value jsValue(pRuntime);
-    FieldNameArray.GetElement(pRuntime, i, jsValue);
-    WideString wsFieldName = jsValue.ToCFXWideString(pRuntime);
+    CJS_Value jsValue(FieldNameArray.GetElement(pRuntime, i));
+    WideString wsFieldName = jsValue.ToWideString(pRuntime);
 
     for (int j = 0, jsz = pInterForm->CountFields(wsFieldName); j < jsz; j++) {
       if (CPDF_FormField* pFormField = pInterForm->GetField(j, wsFieldName)) {
@@ -1698,7 +1694,7 @@ bool CJS_PublicMethods::AFSimple_Calculate(CJS_Runtime* pRuntime,
   CJS_Value jsValue(pRuntime, dValue);
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   if (pContext->GetEventHandler()->m_pValue)
-    pContext->GetEventHandler()->Value() = jsValue.ToCFXWideString(pRuntime);
+    pContext->GetEventHandler()->Value() = jsValue.ToWideString(pRuntime);
 
   return true;
 }
@@ -1732,16 +1728,16 @@ bool CJS_PublicMethods::AFRange_Validate(CJS_Runtime* pRuntime,
   if (bGreaterThan && bLessThan) {
     if (dEentValue < dGreaterThan || dEentValue > dLessThan)
       swMsg.Format(JSGetStringFromID(IDS_STRING_JSRANGE1).c_str(),
-                   params[1].ToCFXWideString(pRuntime).c_str(),
-                   params[3].ToCFXWideString(pRuntime).c_str());
+                   params[1].ToWideString(pRuntime).c_str(),
+                   params[3].ToWideString(pRuntime).c_str());
   } else if (bGreaterThan) {
     if (dEentValue < dGreaterThan)
       swMsg.Format(JSGetStringFromID(IDS_STRING_JSRANGE2).c_str(),
-                   params[1].ToCFXWideString(pRuntime).c_str());
+                   params[1].ToWideString(pRuntime).c_str());
   } else if (bLessThan) {
     if (dEentValue > dLessThan)
       swMsg.Format(JSGetStringFromID(IDS_STRING_JSRANGE3).c_str(),
-                   params[3].ToCFXWideString(pRuntime).c_str());
+                   params[3].ToWideString(pRuntime).c_str());
   }
 
   if (!swMsg.IsEmpty()) {
@@ -1760,7 +1756,7 @@ bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString str = params[0].ToCFXWideString(pRuntime);
+  WideString str = params[0].ToWideString(pRuntime);
   if (str.GetLength() > 0 && (str[0] == L'.' || str[0] == L','))
     str = L"0" + str;
 

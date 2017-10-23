@@ -172,6 +172,10 @@ int DateFromTime(double t) {
   }
 }
 
+double JS_LocalTime(double d) {
+  return d + GetLocalTZA() + GetDaylightSavingTA(d);
+}
+
 }  // namespace
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime) {}
@@ -179,16 +183,16 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime) {}
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue)
     : m_pValue(pValue) {}
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const int& iValue)
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, int iValue)
     : m_pValue(pRuntime->NewNumber(iValue)) {}
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const bool& bValue)
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, bool bValue)
     : m_pValue(pRuntime->NewBoolean(bValue)) {}
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const float& fValue)
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, float fValue)
     : m_pValue(pRuntime->NewNumber(fValue)) {}
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const double& dValue)
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, double dValue)
     : m_pValue(pRuntime->NewNumber(dValue)) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj) {
@@ -212,12 +216,8 @@ CJS_Value::~CJS_Value() {}
 
 CJS_Value::CJS_Value(const CJS_Value& other) = default;
 
-void CJS_Value::Attach(v8::Local<v8::Value> pValue) {
+void CJS_Value::Set(v8::Local<v8::Value> pValue) {
   m_pValue = pValue;
-}
-
-void CJS_Value::Detach() {
-  m_pValue = v8::Local<v8::Value>();
 }
 
 int CJS_Value::ToInt(CJS_Runtime* pRuntime) const {
@@ -233,24 +233,35 @@ double CJS_Value::ToDouble(CJS_Runtime* pRuntime) const {
 }
 
 float CJS_Value::ToFloat(CJS_Runtime* pRuntime) const {
-  return (float)ToDouble(pRuntime);
+  return static_cast<float>(ToDouble(pRuntime));
 }
 
-CJS_Object* CJS_Value::ToCJSObject(CJS_Runtime* pRuntime) const {
+CJS_Object* CJS_Value::ToObject(CJS_Runtime* pRuntime) const {
   v8::Local<v8::Object> pObj = pRuntime->ToObject(m_pValue);
   return static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
+}
+
+CJS_Array CJS_Value::ToArray(CJS_Runtime* pRuntime) const {
+  ASSERT(IsArrayObject());
+  return CJS_Array(pRuntime->ToArray(m_pValue));
+}
+
+CJS_Date CJS_Value::ToDate(CJS_Runtime* pRuntime) const {
+  ASSERT(IsDateObject());
+  v8::Local<v8::Value> mutable_value = m_pValue;
+  return CJS_Date(mutable_value.As<v8::Date>());
 }
 
 v8::Local<v8::Object> CJS_Value::ToV8Object(CJS_Runtime* pRuntime) const {
   return pRuntime->ToObject(m_pValue);
 }
 
-WideString CJS_Value::ToCFXWideString(CJS_Runtime* pRuntime) const {
+WideString CJS_Value::ToWideString(CJS_Runtime* pRuntime) const {
   return pRuntime->ToWideString(m_pValue);
 }
 
-ByteString CJS_Value::ToCFXByteString(CJS_Runtime* pRuntime) const {
-  return ByteString::FromUnicode(ToCFXWideString(pRuntime));
+ByteString CJS_Value::ToByteString(CJS_Runtime* pRuntime) const {
+  return ByteString::FromUnicode(ToWideString(pRuntime));
 }
 
 v8::Local<v8::Value> CJS_Value::ToV8Value(CJS_Runtime* pRuntime) const {
@@ -268,7 +279,7 @@ void CJS_Value::SetNull(CJS_Runtime* pRuntime) {
 void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
   bool bAllowNaN = false;
   if (GetType() == VT_string) {
-    ByteString bstr = ToCFXByteString(pRuntime);
+    ByteString bstr = ToByteString(pRuntime);
     if (bstr.GetLength() == 0)
       return;
     if (bstr == "NaN")
@@ -313,21 +324,6 @@ bool CJS_Value::IsArrayObject() const {
 
 bool CJS_Value::IsDateObject() const {
   return !m_pValue.IsEmpty() && m_pValue->IsDate();
-}
-
-bool CJS_Value::ConvertToArray(CJS_Runtime* pRuntime, CJS_Array& array) const {
-  if (!IsArrayObject())
-    return false;
-  array.Attach(pRuntime->ToArray(m_pValue));
-  return true;
-}
-
-bool CJS_Value::ConvertToDate(CJS_Runtime* pRuntime, CJS_Date& date) const {
-  if (!IsDateObject())
-    return false;
-  v8::Local<v8::Value> mutable_value = m_pValue;
-  date.Attach(mutable_value.As<v8::Date>());
-  return true;
 }
 
 CJS_PropValue::CJS_PropValue(CJS_Runtime* pRuntime)
@@ -375,7 +371,7 @@ void CJS_PropValue::Set(CJS_Object* pObj) {
 
 CJS_Object* CJS_PropValue::ToObject() const {
   ASSERT(m_bIsSetting);
-  return m_Value.ToCJSObject(m_pJSRuntime.Get());
+  return m_Value.ToObject(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::Set(CJS_Document* pJsDoc) {
@@ -385,7 +381,7 @@ void CJS_PropValue::Set(CJS_Document* pJsDoc) {
 
 CJS_Document* CJS_PropValue::ToDocument() const {
   ASSERT(m_bIsSetting);
-  return static_cast<CJS_Document*>(m_Value.ToCJSObject(m_pJSRuntime.Get()));
+  return static_cast<CJS_Document*>(m_Value.ToObject(m_pJSRuntime.Get()));
 }
 
 void CJS_PropValue::Set(v8::Local<v8::Object> pObj) {
@@ -405,7 +401,7 @@ void CJS_PropValue::Set(const ByteString& str) {
 
 ByteString CJS_PropValue::ToByteString() const {
   ASSERT(m_bIsSetting);
-  return m_Value.ToCFXByteString(m_pJSRuntime.Get());
+  return m_Value.ToByteString(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::Set(const wchar_t* str) {
@@ -415,7 +411,7 @@ void CJS_PropValue::Set(const wchar_t* str) {
 
 WideString CJS_PropValue::ToWideString() const {
   ASSERT(m_bIsSetting);
-  return m_Value.ToCFXWideString(m_pJSRuntime.Get());
+  return m_Value.ToWideString(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::Set(const WideString& wide_string) {
@@ -425,21 +421,21 @@ void CJS_PropValue::Set(const WideString& wide_string) {
 
 CJS_Array CJS_PropValue::ToArray() const {
   ASSERT(m_bIsSetting);
-  CJS_Array ary;
-  m_Value.ConvertToArray(m_pJSRuntime.Get(), ary);
-  return ary;
+  if (!m_Value.IsArrayObject())
+    return CJS_Array();
+  return m_Value.ToArray(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::Set(const CJS_Array& array) {
   ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), array.ToV8Array(m_pJSRuntime.Get()));
+  m_Value = CJS_Value(m_pJSRuntime.Get(), array);
 }
 
 CJS_Date CJS_PropValue::ToDate() const {
   ASSERT(m_bIsSetting);
-  CJS_Date date;
-  m_Value.ConvertToDate(m_pJSRuntime.Get(), date);
-  return date;
+  if (!m_Value.IsDateObject())
+    return CJS_Date();
+  return m_Value.ToDate(m_pJSRuntime.Get());
 }
 
 void CJS_PropValue::Set(const CJS_Date& date) {
@@ -449,19 +445,17 @@ void CJS_PropValue::Set(const CJS_Date& date) {
 
 CJS_Array::CJS_Array() {}
 
+CJS_Array::CJS_Array(v8::Local<v8::Array> pArray) : m_pArray(pArray) {}
+
 CJS_Array::CJS_Array(const CJS_Array& other) = default;
 
 CJS_Array::~CJS_Array() {}
 
-void CJS_Array::Attach(v8::Local<v8::Array> pArray) {
-  m_pArray = pArray;
-}
-
-void CJS_Array::GetElement(CJS_Runtime* pRuntime,
-                           unsigned index,
-                           CJS_Value& value) const {
+CJS_Value CJS_Array::GetElement(CJS_Runtime* pRuntime, unsigned index) const {
   if (!m_pArray.IsEmpty())
-    value.Attach(pRuntime->GetArrayElement(m_pArray, index));
+    return CJS_Value(pRuntime, pRuntime->GetArrayElement(m_pArray, index));
+
+  return CJS_Value(pRuntime);
 }
 
 void CJS_Array::SetElement(CJS_Runtime* pRuntime,
@@ -488,6 +482,8 @@ v8::Local<v8::Array> CJS_Array::ToV8Array(CJS_Runtime* pRuntime) const {
 
 CJS_Date::CJS_Date() {}
 
+CJS_Date::CJS_Date(v8::Local<v8::Date> pDate) : m_pDate(pDate) {}
+
 CJS_Date::CJS_Date(CJS_Runtime* pRuntime, double dMsecTime)
     : m_pDate(pRuntime->NewDate(dMsecTime)) {}
 
@@ -508,10 +504,6 @@ bool CJS_Date::IsValidDate(CJS_Runtime* pRuntime) const {
   return !m_pDate.IsEmpty() && !std::isnan(pRuntime->ToDouble(m_pDate));
 }
 
-void CJS_Date::Attach(v8::Local<v8::Date> pDate) {
-  m_pDate = pDate;
-}
-
 int CJS_Date::GetYear(CJS_Runtime* pRuntime) const {
   if (!IsValidDate(pRuntime))
     return 0;
@@ -519,23 +511,10 @@ int CJS_Date::GetYear(CJS_Runtime* pRuntime) const {
   return JS_GetYearFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
 }
 
-void CJS_Date::SetYear(CJS_Runtime* pRuntime, int iYear) {
-  m_pDate = pRuntime->NewDate(
-      MakeDate(iYear, GetMonth(pRuntime), GetDay(pRuntime), GetHours(pRuntime),
-               GetMinutes(pRuntime), GetSeconds(pRuntime), 0));
-}
-
 int CJS_Date::GetMonth(CJS_Runtime* pRuntime) const {
   if (!IsValidDate(pRuntime))
     return 0;
-
   return JS_GetMonthFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-void CJS_Date::SetMonth(CJS_Runtime* pRuntime, int iMonth) {
-  m_pDate = pRuntime->NewDate(
-      MakeDate(GetYear(pRuntime), iMonth, GetDay(pRuntime), GetHours(pRuntime),
-               GetMinutes(pRuntime), GetSeconds(pRuntime), 0));
 }
 
 int CJS_Date::GetDay(CJS_Runtime* pRuntime) const {
@@ -545,23 +524,11 @@ int CJS_Date::GetDay(CJS_Runtime* pRuntime) const {
   return JS_GetDayFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
 }
 
-void CJS_Date::SetDay(CJS_Runtime* pRuntime, int iDay) {
-  m_pDate = pRuntime->NewDate(
-      MakeDate(GetYear(pRuntime), GetMonth(pRuntime), iDay, GetHours(pRuntime),
-               GetMinutes(pRuntime), GetSeconds(pRuntime), 0));
-}
-
 int CJS_Date::GetHours(CJS_Runtime* pRuntime) const {
   if (!IsValidDate(pRuntime))
     return 0;
 
   return JS_GetHourFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-void CJS_Date::SetHours(CJS_Runtime* pRuntime, int iHours) {
-  m_pDate = pRuntime->NewDate(
-      MakeDate(GetYear(pRuntime), GetMonth(pRuntime), GetDay(pRuntime), iHours,
-               GetMinutes(pRuntime), GetSeconds(pRuntime), 0));
 }
 
 int CJS_Date::GetMinutes(CJS_Runtime* pRuntime) const {
@@ -571,31 +538,11 @@ int CJS_Date::GetMinutes(CJS_Runtime* pRuntime) const {
   return JS_GetMinFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
 }
 
-void CJS_Date::SetMinutes(CJS_Runtime* pRuntime, int minutes) {
-  m_pDate = pRuntime->NewDate(MakeDate(GetYear(pRuntime), GetMonth(pRuntime),
-                                       GetDay(pRuntime), GetHours(pRuntime),
-                                       minutes, GetSeconds(pRuntime), 0));
-}
-
 int CJS_Date::GetSeconds(CJS_Runtime* pRuntime) const {
   if (!IsValidDate(pRuntime))
     return 0;
 
   return JS_GetSecFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-void CJS_Date::SetSeconds(CJS_Runtime* pRuntime, int seconds) {
-  m_pDate = pRuntime->NewDate(MakeDate(GetYear(pRuntime), GetMonth(pRuntime),
-                                       GetDay(pRuntime), GetHours(pRuntime),
-                                       GetMinutes(pRuntime), seconds, 0));
-}
-
-double CJS_Date::ToDouble(CJS_Runtime* pRuntime) const {
-  return !m_pDate.IsEmpty() ? pRuntime->ToDouble(m_pDate) : 0.0;
-}
-
-WideString CJS_Date::ToString(CJS_Runtime* pRuntime) const {
-  return !m_pDate.IsEmpty() ? pRuntime->ToWideString(m_pDate) : WideString();
 }
 
 v8::Local<v8::Date> CJS_Date::ToV8Date(CJS_Runtime* pRuntime) const {
@@ -706,11 +653,7 @@ double JS_MakeDate(double day, double time) {
   return day * 86400000 + time;
 }
 
-double JS_LocalTime(double d) {
-  return d + GetLocalTZA() + GetDaylightSavingTA(d);
-}
-
-std::vector<CJS_Value> JS_ExpandKeywordParams(
+std::vector<CJS_Value> ExpandKeywordParams(
     CJS_Runtime* pRuntime,
     const std::vector<CJS_Value>& originals,
     size_t nKeywords,
