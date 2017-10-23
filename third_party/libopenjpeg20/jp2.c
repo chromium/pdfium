@@ -162,7 +162,7 @@ static OPJ_BOOL opj_jp2_read_ftyp(opj_jp2_t *jp2,
                                   opj_event_mgr_t * p_manager);
 
 static OPJ_BOOL opj_jp2_skip_jp2c(opj_jp2_t *jp2,
-                                  opj_stream_private_t *cio,
+                                  opj_stream_private_t *stream,
                                   opj_event_mgr_t * p_manager);
 
 /**
@@ -959,25 +959,34 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color,
         }
         /* verify that no component is targeted more than once */
         for (i = 0; i < nr_channels; i++) {
-            OPJ_UINT16 pcol = cmap[i].pcol;
+            OPJ_BYTE mtyp = cmap[i].mtyp;
+            OPJ_BYTE pcol = cmap[i].pcol;
             /* See ISO 15444-1 Table I.14 – MTYPi field values */
-            if (cmap[i].mtyp != 0 && cmap[i].mtyp != 1) {
+            if (mtyp != 0 && mtyp != 1) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid value for cmap[%d].mtyp = %d.\n", i,
-                              cmap[i].mtyp);
+                              mtyp);
                 is_sane = OPJ_FALSE;
             } else if (pcol >= nr_channels) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid component/palette index for direct mapping %d.\n", pcol);
                 is_sane = OPJ_FALSE;
-            } else if (pcol_usage[pcol] && cmap[i].mtyp != 0) {
+            } else if (pcol_usage[pcol] && mtyp == 1) {
                 opj_event_msg(p_manager, EVT_ERROR, "Component %d is mapped twice.\n", pcol);
                 is_sane = OPJ_FALSE;
-            } else if (cmap[i].mtyp == 0 && cmap[i].pcol != 0) {
+            } else if (mtyp == 0 && pcol != 0) {
                 /* I.5.3.5 PCOL: If the value of the MTYP field for this channel is 0, then
                  * the value of this field shall be 0. */
                 opj_event_msg(p_manager, EVT_ERROR, "Direct use at #%d however pcol=%d.\n", i,
                               pcol);
+                is_sane = OPJ_FALSE;
+            } else if (mtyp == 1 && pcol != i) {
+                /* OpenJPEG implementation limitation. See assert(i == pcol); */
+                /* in opj_jp2_apply_pclr() */
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Implementation limitation: for palette mapping, "
+                              "pcol[%d] should be equal to %d, but is equal "
+                              "to %d.\n", i, i, pcol);
                 is_sane = OPJ_FALSE;
             } else {
                 pcol_usage[pcol] = OPJ_TRUE;
@@ -1146,8 +1155,6 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
     opj_free(old_comps);
     image->comps = new_comps;
     image->numcomps = nr_channels;
-
-    opj_jp2_free_pclr(color);
 
     return OPJ_TRUE;
 }/* apply_pclr() */
@@ -1613,6 +1620,11 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
         opj_event_msg(p_manager, EVT_ERROR,
                       "Failed to decode the codestream in the JP2 file\n");
         return OPJ_FALSE;
+    }
+
+    if (jp2->j2k->m_specific_param.m_decoder.m_numcomps_to_decode) {
+        /* Bypass all JP2 component transforms */
+        return OPJ_TRUE;
     }
 
     if (!jp2->ignore_pclr_cmap_cdef) {
@@ -3078,6 +3090,16 @@ void opj_jp2_destroy(opj_jp2_t *jp2)
     }
 }
 
+OPJ_BOOL opj_jp2_set_decoded_components(opj_jp2_t *p_jp2,
+                                        OPJ_UINT32 numcomps,
+                                        const OPJ_UINT32* comps_indices,
+                                        opj_event_mgr_t * p_manager)
+{
+    return opj_j2k_set_decoded_components(p_jp2->j2k,
+                                          numcomps, comps_indices,
+                                          p_manager);
+}
+
 OPJ_BOOL opj_jp2_set_decode_area(opj_jp2_t *p_jp2,
                                  opj_image_t* p_image,
                                  OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
@@ -3107,6 +3129,11 @@ OPJ_BOOL opj_jp2_get_tile(opj_jp2_t *p_jp2,
         opj_event_msg(p_manager, EVT_ERROR,
                       "Failed to decode the codestream in the JP2 file\n");
         return OPJ_FALSE;
+    }
+
+    if (p_jp2->j2k->m_specific_param.m_decoder.m_numcomps_to_decode) {
+        /* Bypass all JP2 component transforms */
+        return OPJ_TRUE;
     }
 
     if (!opj_jp2_check_color(p_image, &(p_jp2->color), p_manager)) {

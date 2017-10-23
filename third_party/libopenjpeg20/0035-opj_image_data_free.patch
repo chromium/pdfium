@@ -1,30 +1,8 @@
-diff --git a/third_party/libopenjpeg20/image.c b/third_party/libopenjpeg20/image.c
-index e29172b2b..bf7a70194 100644
---- a/third_party/libopenjpeg20/image.c
-+++ b/third_party/libopenjpeg20/image.c
-@@ -180,7 +180,7 @@ void opj_copy_image_header(const opj_image_t* p_image_src,
-         for (compno = 0; compno < p_image_dest->numcomps; compno++) {
-             opj_image_comp_t *image_comp = &(p_image_dest->comps[compno]);
-             if (image_comp->data) {
--                opj_free(image_comp->data);
-+                opj_image_data_free(image_comp->data);
-             }
-         }
-         opj_free(p_image_dest->comps);
 diff --git a/third_party/libopenjpeg20/jp2.c b/third_party/libopenjpeg20/jp2.c
-index 9178f3fd6..e7e2db8bb 100644
+index 298648a77..2374d459f 100644
 --- a/third_party/libopenjpeg20/jp2.c
 +++ b/third_party/libopenjpeg20/jp2.c
-@@ -1083,7 +1083,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
-         if (!new_comps[i].data) {
-             while (i > 0) {
-                 -- i;
--                opj_free(new_comps[i].data);
-+                opj_image_data_free(new_comps[i].data);
-             }
-             opj_free(new_comps);
-             opj_event_msg(p_manager, EVT_ERROR,
-@@ -1107,7 +1107,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+@@ -1116,7 +1116,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
          /* Prevent null pointer access */
          if (!src || !dst) {
            for (j = 0; j < nr_channels; ++j) {

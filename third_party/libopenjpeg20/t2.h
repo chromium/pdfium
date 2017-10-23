@@ -13,6 +13,7 @@
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2017, IntoPIX SA <support@intopix.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,7 +76,8 @@ Encode the packets of a tile to a destination buffer
 @param tpnum            Tile part number of the current tile
 @param tppos            The position of the tile part flag in the progression order
 @param pino             FIXME DOC
-@param t2_mode          If == 0 In Threshold calculation ,If == 1 Final pass
+@param t2_mode          If == THRESH_CALC In Threshold calculation ,If == FINAL_PASS Final pass
+@param p_manager        the user event manager
 */
 OPJ_BOOL opj_t2_encode_packets(opj_t2_t* t2,
                                OPJ_UINT32 tileno,
@@ -88,10 +90,12 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* t2,
                                OPJ_UINT32 tpnum,
                                OPJ_INT32 tppos,
                                OPJ_UINT32 pino,
-                               J2K_T2_MODE t2_mode);
+                               J2K_T2_MODE t2_mode,
+                               opj_event_mgr_t *p_manager);
 
 /**
 Decode the packets of a tile from a source buffer
+@param tcd TCD handle
 @param t2 T2 handle
 @param tileno number that identifies the tile for which to decode the packets
 @param tile tile for which to decode the packets
@@ -103,7 +107,8 @@ Decode the packets of a tile from a source buffer
 
 @return FIXME DOC
  */
-OPJ_BOOL opj_t2_decode_packets(opj_t2_t *t2,
+OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
+                               opj_t2_t *t2,
                                OPJ_UINT32 tileno,
                                opj_tcd_tile_t *tile,
                                OPJ_BYTE *src,

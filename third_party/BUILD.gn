@@ -388,6 +388,8 @@ static_library("fx_libopenjpeg") {
     "libopenjpeg20/openjpeg.c",
     "libopenjpeg20/opj_clock.c",
     "libopenjpeg20/pi.c",
+    "libopenjpeg20/sparse_array.c",
+    "libopenjpeg20/sparse_array.h",
     "libopenjpeg20/t1.c",
     "libopenjpeg20/t2.c",
     "libopenjpeg20/tcd.c",

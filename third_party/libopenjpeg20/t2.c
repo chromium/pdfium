@@ -13,6 +13,7 @@
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2017, IntoPIX SA <support@intopix.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,6 +69,8 @@ Encode a packet of a tile to a destination buffer
 @param p_data_written   FIXME DOC
 @param len Length of the destination buffer
 @param cstr_info Codestream information structure
+@param p_t2_mode If == THRESH_CALC In Threshold calculation ,If == FINAL_PASS Final pass
+@param p_manager the user event manager
 @return
 */
 static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
@@ -77,7 +80,9 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
                                      OPJ_BYTE *dest,
                                      OPJ_UINT32 * p_data_written,
                                      OPJ_UINT32 len,
-                                     opj_codestream_info_t *cstr_info);
+                                     opj_codestream_info_t *cstr_info,
+                                     J2K_T2_MODE p_t2_mode,
+                                     opj_event_mgr_t *p_manager);
 
 /**
 Decode a packet of a tile from a source buffer
@@ -222,7 +227,8 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* p_t2,
                                OPJ_UINT32 p_tp_num,
                                OPJ_INT32 p_tp_pos,
                                OPJ_UINT32 p_pino,
-                               J2K_T2_MODE p_t2_mode)
+                               J2K_T2_MODE p_t2_mode,
+                               opj_event_mgr_t *p_manager)
 {
     OPJ_BYTE *l_current_data = p_dest;
     OPJ_UINT32 l_nb_bytes = 0;
@@ -268,7 +274,10 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* p_t2,
                         l_nb_bytes = 0;
 
                         if (! opj_t2_encode_packet(p_tile_no, p_tile, l_tcp, l_current_pi,
-                                                   l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
+                                                   l_current_data, &l_nb_bytes,
+                                                   p_max_len, cstr_info,
+                                                   p_t2_mode,
+                                                   p_manager)) {
                             opj_pi_destroy(l_pi, l_nb_pocs);
                             return OPJ_FALSE;
                         }
@@ -306,7 +315,8 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* p_t2,
                 l_nb_bytes = 0;
 
                 if (! opj_t2_encode_packet(p_tile_no, p_tile, l_tcp, l_current_pi,
-                                           l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
+                                           l_current_data, &l_nb_bytes, p_max_len,
+                                           cstr_info, p_t2_mode, p_manager)) {
                     opj_pi_destroy(l_pi, l_nb_pocs);
                     return OPJ_FALSE;
                 }
@@ -360,7 +370,8 @@ static void opj_null_jas_fprintf(FILE* file, const char * format, ...)
 #define JAS_FPRINTF opj_null_jas_fprintf
 #endif
 
-OPJ_BOOL opj_t2_decode_packets(opj_t2_t *p_t2,
+OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
+                               opj_t2_t *p_t2,
                                OPJ_UINT32 p_tile_no,
                                opj_tcd_tile_t *p_tile,
                                OPJ_BYTE *p_src,
@@ -425,14 +436,54 @@ OPJ_BOOL opj_t2_decode_packets(opj_t2_t *p_t2,
         memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(OPJ_BOOL));
 
         while (opj_pi_next(l_current_pi)) {
+            OPJ_BOOL skip_packet = OPJ_FALSE;
             JAS_FPRINTF(stderr,
                         "packet offset=00000166 prg=%d cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d\n\n",
                         l_current_pi->poc.prg1, l_current_pi->compno, l_current_pi->resno,
                         l_current_pi->precno, l_current_pi->layno);
 
-            if (l_tcp->num_layers_to_decode > l_current_pi->layno
-                    && l_current_pi->resno <
-                    p_tile->comps[l_current_pi->compno].minimum_num_resolutions) {
+            /* If the packet layer is greater or equal than the maximum */
+            /* number of layers, skip the packet */
+            if (l_current_pi->layno >= l_tcp->num_layers_to_decode) {
+                skip_packet = OPJ_TRUE;
+            }
+            /* If the packet resolution number is greater than the minimum */
+            /* number of resolution allowed, skip the packet */
+            else if (l_current_pi->resno >=
+                     p_tile->comps[l_current_pi->compno].minimum_num_resolutions) {
+                skip_packet = OPJ_TRUE;
+            } else {
+                /* If no precincts of any band intersects the area of interest, */
+                /* skip the packet */
+                OPJ_UINT32 bandno;
+                opj_tcd_tilecomp_t *tilec = &p_tile->comps[l_current_pi->compno];
+                opj_tcd_resolution_t *res = &tilec->resolutions[l_current_pi->resno];
+
+                skip_packet = OPJ_TRUE;
+                for (bandno = 0; bandno < res->numbands; ++bandno) {
+                    opj_tcd_band_t* band = &res->bands[bandno];
+                    opj_tcd_precinct_t* prec = &band->precincts[l_current_pi->precno];
+
+                    if (opj_tcd_is_subband_area_of_interest(tcd,
+                                                            l_current_pi->compno,
+                                                            l_current_pi->resno,
+                                                            band->bandno,
+                                                            (OPJ_UINT32)prec->x0,
+                                                            (OPJ_UINT32)prec->y0,
+                                                            (OPJ_UINT32)prec->x1,
+                                                            (OPJ_UINT32)prec->y1)) {
+                        skip_packet = OPJ_FALSE;
+                        break;
+                    }
+                }
+                /*
+                                printf("packet cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d -> %s\n",
+                                    l_current_pi->compno, l_current_pi->resno,
+                                    l_current_pi->precno, l_current_pi->layno, skip_packet ? "skipped" : "kept");
+                */
+            }
+
+            if (!skip_packet) {
                 l_nb_bytes_read = 0;
 
                 first_pass_failed[l_current_pi->compno] = OPJ_FALSE;
@@ -596,7 +647,9 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
                                      OPJ_BYTE *dest,
                                      OPJ_UINT32 * p_data_written,
                                      OPJ_UINT32 length,
-                                     opj_codestream_info_t *cstr_info)
+                                     opj_codestream_info_t *cstr_info,
+                                     J2K_T2_MODE p_t2_mode,
+                                     opj_event_mgr_t *p_manager)
 {
     OPJ_UINT32 bandno, cblkno;
     OPJ_BYTE* c = dest;
@@ -618,6 +671,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
     /* <SOP 0xff91> */
     if (tcp->csty & J2K_CP_CSTY_SOP) {
+        if (length < 6) {
+            if (p_t2_mode == FINAL_PASS) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "opj_t2_encode_packet(): only %u bytes remaining in "
+                              "output buffer. %u needed.\n",
+                              length, 6);
+            }
+            return OPJ_FALSE;
+        }
         c[0] = 255;
         c[1] = 145;
         c[2] = 0;
@@ -806,6 +868,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
     /* <EPH 0xff92> */
     if (tcp->csty & J2K_CP_CSTY_EPH) {
+        if (length < 2) {
+            if (p_t2_mode == FINAL_PASS) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "opj_t2_encode_packet(): only %u bytes remaining in "
+                              "output buffer. %u needed.\n",
+                              length, 2);
+            }
+            return OPJ_FALSE;
+        }
         c[0] = 255;
         c[1] = 146;
         c += 2;
@@ -845,6 +916,12 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
             }
 
             if (layer->len > length) {
+                if (p_t2_mode == FINAL_PASS) {
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "opj_t2_encode_packet(): only %u bytes remaining in "
+                                  "output buffer. %u needed.\n",
+                                  length, layer->len);
+                }
                 return OPJ_FALSE;
             }
 

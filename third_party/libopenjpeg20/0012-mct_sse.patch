@@ -1,5 +1,5 @@
 diff --git a/third_party/libopenjpeg20/mct.c b/third_party/libopenjpeg20/mct.c
-index 8c82ee20a..20b9e121b 100644
+index b79d4b87c..81ec223d8 100644
 --- a/third_party/libopenjpeg20/mct.c
 +++ b/third_party/libopenjpeg20/mct.c
 @@ -37,13 +37,16 @@
@@ -50,7 +50,7 @@ index 8c82ee20a..20b9e121b 100644
      OPJ_INT32* OPJ_RESTRICT c0,
      OPJ_INT32* OPJ_RESTRICT c1,
 @@ -389,7 +392,7 @@ void opj_mct_decode_real(
-     OPJ_UINT32 n)
+     OPJ_SIZE_T n)
  {
      OPJ_UINT32 i;
 -#ifdef __SSE__
