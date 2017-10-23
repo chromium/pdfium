@@ -7,6 +7,8 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 
 #include <algorithm>
+#include <cmath>
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -2229,11 +2231,21 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated());
 
   CFX_FloatRect cell_bbox = mtPattern2Device.TransformRect(pPattern->bbox());
-  int width = static_cast<int>(ceil(cell_bbox.Width()));
-  int height = static_cast<int>(ceil(cell_bbox.Height()));
-  if (width == 0)
+
+  float ceil_height = std::ceil(cell_bbox.Height());
+  float ceil_width = std::ceil(cell_bbox.Width());
+
+  // Validate the float will fit into the int when the conversion is done.
+  if (!pdfium::base::IsValueInRangeForNumericType<int>(ceil_height) ||
+      !pdfium::base::IsValueInRangeForNumericType<int>(ceil_width)) {
+    return;
+  }
+
+  int width = static_cast<int>(ceil_width);
+  int height = static_cast<int>(ceil_height);
+  if (width <= 0)
     width = 1;
-  if (height == 0)
+  if (height <= 0)
     height = 1;
 
   CFX_FloatRect clip_box_p =
@@ -2246,6 +2258,10 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                           pPattern->y_step());
   int max_row = (int)floor((clip_box_p.top - pPattern->bbox().bottom) /
                            pPattern->y_step());
+
+  // Make sure we can fit the needed width * height into an int.
+  if (height > std::numeric_limits<int>::max() / width)
+    return;
 
   if (width > clip_box.Width() || height > clip_box.Height() ||
       width * height > clip_box.Width() * clip_box.Height()) {
