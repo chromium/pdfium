@@ -176,6 +176,9 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
   uint8_t* img_data = nullptr;
   uint32_t skip_size_org = skip_size_;
   CFX_GifImage* gif_image = images_[static_cast<size_t>(frame_num)].get();
+  if (gif_image->image_info.height == 0)
+    return CFX_GifDecodeStatus::Error;
+
   uint32_t gif_img_row_bytes = gif_image->image_info.width;
   if (gif_img_row_bytes == 0)
     return CFX_GifDecodeStatus::Error;
