@@ -249,10 +249,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
   }
   auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
   SBREG->fill(SBDEFPIXEL);
-  int32_t STRIPT;
-  if (!pIADT->decode(pArithDecoder, &STRIPT))
+  int32_t INITIAL_STRIPT;
+  if (!pIADT->decode(pArithDecoder, &INITIAL_STRIPT))
     return nullptr;
 
+  FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
   int32_t FIRSTS = 0;
@@ -287,7 +288,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
       if (SBSTRIPS != 1)
         pIAIT->decode(pArithDecoder, &CURT);
 
-      int32_t TI = STRIPT + CURT;
+      FX_SAFE_INT32 SAFE_TI = STRIPT + CURT;
+      if (!SAFE_TI.IsValid())
+        return nullptr;
+
+      int32_t TI = SAFE_TI.ValueOrDie();
       uint32_t IDI;
       pIAID->decode(pArithDecoder, &IDI);
       if (IDI >= SBNUMSYMS)
