@@ -209,7 +209,7 @@ app::~app() {
 }
 
 bool app::get_active_docs(CJS_Runtime* pRuntime,
-                          CJS_PropValue* vp,
+                          CJS_Value* vp,
                           WideString* sError) {
   CJS_Document* pJSDocument = nullptr;
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
@@ -219,95 +219,95 @@ bool app::get_active_docs(CJS_Runtime* pRuntime,
   CJS_Array aDocs;
   aDocs.SetElement(pRuntime, 0, CJS_Value(pRuntime, pJSDocument));
   if (aDocs.GetLength(pRuntime) > 0)
-    vp->Set(aDocs);
+    vp->Set(pRuntime, aDocs);
   else
-    vp->GetJSValue()->SetNull(pRuntime);
+    vp->SetNull(pRuntime);
 
   return true;
 }
 
 bool app::set_active_docs(CJS_Runtime* pRuntime,
-                          const CJS_PropValue& vp,
+                          const CJS_Value& vp,
                           WideString* sError) {
   return false;
 }
 
 bool app::get_calculate(CJS_Runtime* pRuntime,
-                        CJS_PropValue* vp,
+                        CJS_Value* vp,
                         WideString* sError) {
-  vp->Set(m_bCalculate);
+  vp->Set(pRuntime, m_bCalculate);
   return true;
 }
 
 bool app::set_calculate(CJS_Runtime* pRuntime,
-                        const CJS_PropValue& vp,
+                        const CJS_Value& vp,
                         WideString* sError) {
-  m_bCalculate = vp.ToBool();
+  m_bCalculate = vp.ToBool(pRuntime);
   pRuntime->GetFormFillEnv()->GetInterForm()->EnableCalculate(m_bCalculate);
   return true;
 }
 
 bool app::get_forms_version(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
-  vp->Set(JS_NUM_FORMSVERSION);
+  vp->Set(pRuntime, JS_NUM_FORMSVERSION);
   return true;
 }
 
 bool app::set_forms_version(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
   return false;
 }
 
 bool app::get_viewer_type(CJS_Runtime* pRuntime,
-                          CJS_PropValue* vp,
+                          CJS_Value* vp,
                           WideString* sError) {
-  vp->Set(JS_STR_VIEWERTYPE);
+  vp->Set(pRuntime, JS_STR_VIEWERTYPE);
   return true;
 }
 
 bool app::set_viewer_type(CJS_Runtime* pRuntime,
-                          const CJS_PropValue& vp,
+                          const CJS_Value& vp,
                           WideString* sError) {
   return false;
 }
 
 bool app::get_viewer_variation(CJS_Runtime* pRuntime,
-                               CJS_PropValue* vp,
+                               CJS_Value* vp,
                                WideString* sError) {
-  vp->Set(JS_STR_VIEWERVARIATION);
+  vp->Set(pRuntime, JS_STR_VIEWERVARIATION);
   return true;
 }
 
 bool app::set_viewer_variation(CJS_Runtime* pRuntime,
-                               const CJS_PropValue& vp,
+                               const CJS_Value& vp,
                                WideString* sError) {
   return false;
 }
 
 bool app::get_viewer_version(CJS_Runtime* pRuntime,
-                             CJS_PropValue* vp,
+                             CJS_Value* vp,
                              WideString* sError) {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* pXFAContext = pRuntime->GetFormFillEnv()->GetXFAContext();
   if (pXFAContext->ContainsXFAForm()) {
-    vp->Set(JS_NUM_VIEWERVERSION_XFA);
+    vp->Set(pRuntime, JS_NUM_VIEWERVERSION_XFA);
     return true;
   }
 #endif  // PDF_ENABLE_XFA
-  vp->Set(JS_NUM_VIEWERVERSION);
+  vp->Set(pRuntime, JS_NUM_VIEWERVERSION);
   return true;
 }
 
 bool app::set_viewer_version(CJS_Runtime* pRuntime,
-                             const CJS_PropValue& vp,
+                             const CJS_Value& vp,
                              WideString* sError) {
   return false;
 }
 
 bool app::get_platform(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError) {
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
@@ -316,22 +316,22 @@ bool app::get_platform(CJS_Runtime* pRuntime,
 
   WideString platfrom = pFormFillEnv->GetPlatform();
   if (!platfrom.IsEmpty()) {
-    vp->Set(platfrom);
+    vp->Set(pRuntime, platfrom);
     return true;
   }
 #endif
-  vp->Set(JS_STR_PLATFORM);
+  vp->Set(pRuntime, JS_STR_PLATFORM);
   return true;
 }
 
 bool app::set_platform(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError) {
   return false;
 }
 
 bool app::get_language(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError) {
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
@@ -340,16 +340,16 @@ bool app::get_language(CJS_Runtime* pRuntime,
 
   WideString language = pFormFillEnv->GetLanguage();
   if (!language.IsEmpty()) {
-    vp->Set(language);
+    vp->Set(pRuntime, language);
     return true;
   }
 #endif
-  vp->Set(JS_STR_LANGUAGE);
+  vp->Set(pRuntime, JS_STR_LANGUAGE);
   return true;
 }
 
 bool app::set_language(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError) {
   return false;
 }
@@ -466,12 +466,12 @@ bool app::popUpMenuEx(CJS_Runtime* pRuntime,
   return false;
 }
 
-bool app::get_fs(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError) {
+bool app::get_fs(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   return false;
 }
 
 bool app::set_fs(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError) {
   return false;
 }
@@ -692,27 +692,27 @@ bool app::launchURL(CJS_Runtime* pRuntime,
 }
 
 bool app::get_runtime_highlight(CJS_Runtime* pRuntime,
-                                CJS_PropValue* vp,
+                                CJS_Value* vp,
                                 WideString* sError) {
-  vp->Set(m_bRuntimeHighLight);
+  vp->Set(pRuntime, m_bRuntimeHighLight);
   return true;
 }
 
 bool app::set_runtime_highlight(CJS_Runtime* pRuntime,
-                                const CJS_PropValue& vp,
+                                const CJS_Value& vp,
                                 WideString* sError) {
-  m_bRuntimeHighLight = vp.ToBool();
+  m_bRuntimeHighLight = vp.ToBool(pRuntime);
   return true;
 }
 
 bool app::get_fullscreen(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError) {
   return false;
 }
 
 bool app::set_fullscreen(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError) {
   return false;
 }
@@ -804,14 +804,12 @@ bool app::response(CJS_Runtime* pRuntime,
   return true;
 }
 
-bool app::get_media(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError) {
+bool app::get_media(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   return false;
 }
 
 bool app::set_media(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError) {
   return false;
 }

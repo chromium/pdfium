@@ -34,7 +34,7 @@ struct JSMethodSpec {
   v8::FunctionCallback pMethodCall;
 };
 
-template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue*, WideString*)>
+template <class C, bool (C::*M)(CJS_Runtime*, CJS_Value*, WideString*)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -52,18 +52,16 @@ void JSPropGetter(const char* prop_name_string,
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   WideString sError;
 
-  CJS_PropValue value(pRuntime);
-  value.StartGetting();
-  if (!(pObj->*M)(pRuntime, &value, &sError)) {
+  CJS_Value prop_value(pRuntime);
+  if (!(pObj->*M)(pRuntime, &prop_value, &sError)) {
     pRuntime->Error(
         JSFormatErrorString(class_name_string, prop_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(pRuntime));
+  info.GetReturnValue().Set(prop_value.ToV8Value(pRuntime));
 }
 
-template <class C,
-          bool (C::*M)(CJS_Runtime*, const CJS_PropValue&, WideString*)>
+template <class C, bool (C::*M)(CJS_Runtime*, const CJS_Value&, WideString*)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -82,9 +80,8 @@ void JSPropSetter(const char* prop_name_string,
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   WideString sError;
 
-  CJS_PropValue propValue(pRuntime, CJS_Value(pRuntime, value));
-  propValue.StartSetting();
-  if (!(pObj->*M)(pRuntime, propValue, &sError)) {
+  CJS_Value prop_value(pRuntime, value);
+  if (!(pObj->*M)(pRuntime, prop_value, &sError)) {
     pRuntime->Error(
         JSFormatErrorString(class_name_string, prop_name_string, sError));
   }
@@ -357,13 +354,12 @@ void JSSpecialPropGet(const char* class_name,
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
 
-  CJS_PropValue value(pRuntime);
-  value.StartGetting();
+  CJS_Value value(pRuntime);
   if (!pObj->GetProperty(pRuntime, propname.c_str(), &value)) {
     pRuntime->Error(JSFormatErrorString(class_name, "GetProperty", L""));
     return;
   }
-  info.GetReturnValue().Set(value.GetJSValue()->ToV8Value(pRuntime));
+  info.GetReturnValue().Set(value.ToV8Value(pRuntime));
 }
 
 template <class Alt>
@@ -385,9 +381,8 @@ void JSSpecialPropPut(const char* class_name,
   v8::String::Utf8Value utf8_value(property);
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
-  CJS_PropValue PropValue(pRuntime, CJS_Value(pRuntime, value));
-  PropValue.StartSetting();
-  if (!pObj->SetProperty(pRuntime, propname.c_str(), PropValue)) {
+  CJS_Value prop_value(pRuntime, value);
+  if (!pObj->SetProperty(pRuntime, propname.c_str(), prop_value)) {
     pRuntime->Error(JSFormatErrorString(class_name, "PutProperty", L""));
   }
 }

@@ -15,128 +15,106 @@ class event : public CJS_EmbedObj {
   ~event() override;
 
  public:
-  bool get_change(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_change(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_change(CJS_Runtime* pRuntime,
-                  const CJS_PropValue& vp,
+                  const CJS_Value& vp,
                   WideString* sError);
 
-  bool get_change_ex(CJS_Runtime* pRuntime,
-                     CJS_PropValue* vp,
-                     WideString* sError);
+  bool get_change_ex(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_change_ex(CJS_Runtime* pRuntime,
-                     const CJS_PropValue& vp,
+                     const CJS_Value& vp,
                      WideString* sError);
 
-  bool get_commit_key(CJS_Runtime* pRuntime,
-                      CJS_PropValue* vp,
-                      WideString* sError);
+  bool get_commit_key(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_commit_key(CJS_Runtime* pRuntime,
-                      const CJS_PropValue& vp,
+                      const CJS_Value& vp,
                       WideString* sError);
 
-  bool get_field_full(CJS_Runtime* pRuntime,
-                      CJS_PropValue* vp,
-                      WideString* sError);
+  bool get_field_full(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_field_full(CJS_Runtime* pRuntime,
-                      const CJS_PropValue& vp,
+                      const CJS_Value& vp,
                       WideString* sError);
 
-  bool get_key_down(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_key_down(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_key_down(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_modifier(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_modifier(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_modifier(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_name(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_name(CJS_Runtime* pRuntime,
-                const CJS_PropValue& vp,
-                WideString* sError);
+  bool get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_name(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
-  bool get_rc(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_rc(CJS_Runtime* pRuntime,
-              const CJS_PropValue& vp,
-              WideString* sError);
+  bool get_rc(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_rc(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
   bool get_rich_change(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError);
   bool set_rich_change(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError);
 
   bool get_rich_change_ex(CJS_Runtime* pRuntime,
-                          CJS_PropValue* vp,
+                          CJS_Value* vp,
                           WideString* sError);
   bool set_rich_change_ex(CJS_Runtime* pRuntime,
-                          const CJS_PropValue& vp,
+                          const CJS_Value& vp,
                           WideString* sError);
 
-  bool get_rich_value(CJS_Runtime* pRuntime,
-                      CJS_PropValue* vp,
-                      WideString* sError);
+  bool get_rich_value(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_rich_value(CJS_Runtime* pRuntime,
-                      const CJS_PropValue& vp,
+                      const CJS_Value& vp,
                       WideString* sError);
 
-  bool get_sel_end(CJS_Runtime* pRuntime,
-                   CJS_PropValue* vp,
-                   WideString* sError);
+  bool get_sel_end(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_sel_end(CJS_Runtime* pRuntime,
-                   const CJS_PropValue& vp,
+                   const CJS_Value& vp,
                    WideString* sError);
 
-  bool get_sel_start(CJS_Runtime* pRuntime,
-                     CJS_PropValue* vp,
-                     WideString* sError);
+  bool get_sel_start(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_sel_start(CJS_Runtime* pRuntime,
-                     const CJS_PropValue& vp,
+                     const CJS_Value& vp,
                      WideString* sError);
 
-  bool get_shift(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_shift(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_shift(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
-  bool get_source(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_source(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_source(CJS_Runtime* pRuntime,
-                  const CJS_PropValue& vp,
+                  const CJS_Value& vp,
                   WideString* sError);
 
-  bool get_target(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_target(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_target(CJS_Runtime* pRuntime,
-                  const CJS_PropValue& vp,
+                  const CJS_Value& vp,
                   WideString* sError);
 
   bool get_target_name(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError);
   bool set_target_name(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError);
 
-  bool get_type(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_type(CJS_Runtime* pRuntime,
-                const CJS_PropValue& vp,
-                WideString* sError);
+  bool get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_type(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
-  bool get_value(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_value(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_value(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
   bool get_will_commit(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError);
   bool set_will_commit(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError);
 };
 

@@ -36,7 +36,6 @@ class CJS_Value {
   CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue);
   CJS_Value(CJS_Runtime* pRuntime, int iValue);
   CJS_Value(CJS_Runtime* pRuntime, double dValue);
-  CJS_Value(CJS_Runtime* pRuntime, float fValue);
   CJS_Value(CJS_Runtime* pRuntime, bool bValue);
   CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj);
   CJS_Value(CJS_Runtime* pRuntime, const char* pStr);
@@ -48,8 +47,19 @@ class CJS_Value {
 
   ~CJS_Value();
 
+  // These calls may re-enter JS (and hence invalidate objects).
+  void Set(CJS_Runtime* pRuntime, int val);
+  void Set(CJS_Runtime* pRuntime, bool val);
+  void Set(CJS_Runtime* pRuntime, double val);
+  void Set(CJS_Runtime* pRuntime, CJS_Object* pObj);
+  void Set(CJS_Runtime* pRuntime, CJS_Document* pJsDoc);
+  void Set(CJS_Runtime* pRuntime, const ByteString&);
+  void Set(CJS_Runtime* pRuntime, const WideString&);
+  void Set(CJS_Runtime* pRuntime, const wchar_t* c_string);
+  void Set(CJS_Runtime* pRuntime, const CJS_Array& array);
+  void Set(CJS_Runtime* pRuntime, const CJS_Date& date);
+  void Set(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue);
   void SetNull(CJS_Runtime* pRuntime);
-  void Set(v8::Local<v8::Value> pValue);
 
   Type GetType() const { return GetValueType(m_pValue); }
 
@@ -58,6 +68,7 @@ class CJS_Value {
   double ToDouble(CJS_Runtime* pRuntime) const;
   float ToFloat(CJS_Runtime* pRuntime) const;
   CJS_Object* ToObject(CJS_Runtime* pRuntime) const;
+  CJS_Document* ToDocument(CJS_Runtime* pRuntime) const;
   CJS_Array ToArray(CJS_Runtime* pRuntime) const;
   CJS_Date ToDate(CJS_Runtime* pRuntime) const;
   WideString ToWideString(CJS_Runtime* pRuntime) const;
@@ -75,58 +86,6 @@ class CJS_Value {
 
  private:
   v8::Local<v8::Value> m_pValue;
-};
-
-class CJS_PropValue {
- public:
-  explicit CJS_PropValue(CJS_Runtime* pRuntime);
-  CJS_PropValue(CJS_Runtime* pRuntime, const CJS_Value&);
-  ~CJS_PropValue();
-
-  void StartSetting() { m_bIsSetting = true; }
-  void StartGetting() { m_bIsSetting = false; }
-  bool IsSetting() const { return m_bIsSetting; }
-  bool IsGetting() const { return !m_bIsSetting; }
-  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime.Get(); }
-  CJS_Value* GetJSValue() { return &m_Value; }
-  const CJS_Value* GetJSValue() const { return &m_Value; }
-
-  // These calls may re-enter JS (and hence invalidate objects).
-  void Set(int val);
-  int ToInt() const;
-
-  void Set(bool val);
-  bool ToBool() const;
-
-  void Set(double val);
-  double ToDouble() const;
-
-  void Set(CJS_Object* pObj);
-  CJS_Object* ToObject() const;
-
-  void Set(CJS_Document* pJsDoc);
-  CJS_Document* ToDocument() const;
-
-  void Set(const ByteString&);
-  ByteString ToByteString() const;
-
-  void Set(const WideString&);
-  void Set(const wchar_t* c_string);
-  WideString ToWideString() const;
-
-  void Set(v8::Local<v8::Object>);
-  v8::Local<v8::Object> ToV8Object() const;
-
-  void Set(const CJS_Array& array);
-  CJS_Array ToArray() const;
-
-  void Set(const CJS_Date& date);
-  CJS_Date ToDate() const;
-
- private:
-  bool m_bIsSetting;
-  CJS_Value m_Value;
-  UnownedPtr<CJS_Runtime> const m_pJSRuntime;
 };
 
 class CJS_Array {

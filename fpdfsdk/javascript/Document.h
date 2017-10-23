@@ -50,203 +50,163 @@ class Document : public CJS_EmbedObj {
   explicit Document(CJS_Object* pJSObject);
   ~Document() override;
 
-  bool get_ADBE(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_ADBE(CJS_Runtime* pRuntime,
-                const CJS_PropValue& vp,
-                WideString* sError);
+  bool get_ADBE(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_ADBE(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
-  bool get_author(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_author(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_author(CJS_Runtime* pRuntime,
-                  const CJS_PropValue& vp,
+                  const CJS_Value& vp,
                   WideString* sError);
 
-  bool get_base_URL(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_base_URL(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_base_URL(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
   bool get_bookmark_root(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError);
   bool set_bookmark_root(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError);
 
-  bool get_calculate(CJS_Runtime* pRuntime,
-                     CJS_PropValue* vp,
-                     WideString* sError);
+  bool get_calculate(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_calculate(CJS_Runtime* pRuntime,
-                     const CJS_PropValue& vp,
+                     const CJS_Value& vp,
                      WideString* sError);
 
-  bool get_collab(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_collab(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_collab(CJS_Runtime* pRuntime,
-                  const CJS_PropValue& vp,
+                  const CJS_Value& vp,
                   WideString* sError);
 
   bool get_creation_date(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError);
   bool set_creation_date(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError);
 
-  bool get_creator(CJS_Runtime* pRuntime,
-                   CJS_PropValue* vp,
-                   WideString* sError);
+  bool get_creator(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_creator(CJS_Runtime* pRuntime,
-                   const CJS_PropValue& vp,
+                   const CJS_Value& vp,
                    WideString* sError);
 
-  bool get_delay(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_delay(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_delay(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
-  bool get_dirty(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_dirty(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_dirty(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
   bool get_document_file_name(CJS_Runtime* pRuntime,
-                              CJS_PropValue* vp,
+                              CJS_Value* vp,
                               WideString* sError);
   bool set_document_file_name(CJS_Runtime* pRuntime,
-                              const CJS_PropValue& vp,
+                              const CJS_Value& vp,
                               WideString* sError);
 
-  bool get_external(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_external(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_external(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_filesize(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_filesize(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_filesize(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_icons(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_icons(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_icons(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
-  bool get_info(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_info(CJS_Runtime* pRuntime,
-                const CJS_PropValue& vp,
-                WideString* sError);
+  bool get_info(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_info(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
-  bool get_keywords(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_keywords(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_keywords(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_layout(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_layout(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_layout(CJS_Runtime* pRuntime,
-                  const CJS_PropValue& vp,
+                  const CJS_Value& vp,
                   WideString* sError);
 
-  bool get_media(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_media(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_media(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
-  bool get_mod_date(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_mod_date(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_mod_date(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_mouse_x(CJS_Runtime* pRuntime,
-                   CJS_PropValue* vp,
-                   WideString* sError);
+  bool get_mouse_x(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_mouse_x(CJS_Runtime* pRuntime,
-                   const CJS_PropValue& vp,
+                   const CJS_Value& vp,
                    WideString* sError);
 
-  bool get_mouse_y(CJS_Runtime* pRuntime,
-                   CJS_PropValue* vp,
-                   WideString* sError);
+  bool get_mouse_y(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_mouse_y(CJS_Runtime* pRuntime,
-                   const CJS_PropValue& vp,
+                   const CJS_Value& vp,
                    WideString* sError);
 
-  bool get_num_fields(CJS_Runtime* pRuntime,
-                      CJS_PropValue* vp,
-                      WideString* sError);
+  bool get_num_fields(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_num_fields(CJS_Runtime* pRuntime,
-                      const CJS_PropValue& vp,
+                      const CJS_Value& vp,
                       WideString* sError);
 
-  bool get_num_pages(CJS_Runtime* pRuntime,
-                     CJS_PropValue* vp,
-                     WideString* sError);
+  bool get_num_pages(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_num_pages(CJS_Runtime* pRuntime,
-                     const CJS_PropValue& vp,
+                     const CJS_Value& vp,
                      WideString* sError);
 
-  bool get_page_num(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_page_num(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_page_num(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
   bool get_page_window_rect(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError);
   bool set_page_window_rect(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError);
 
-  bool get_path(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_path(CJS_Runtime* pRuntime,
-                const CJS_PropValue& vp,
-                WideString* sError);
+  bool get_path(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_path(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
-  bool get_producer(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_producer(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_producer(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_subject(CJS_Runtime* pRuntime,
-                   CJS_PropValue* vp,
-                   WideString* sError);
+  bool get_subject(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_subject(CJS_Runtime* pRuntime,
-                   const CJS_PropValue& vp,
+                   const CJS_Value& vp,
                    WideString* sError);
 
-  bool get_title(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_title(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_title(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
-  bool get_zoom(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_zoom(CJS_Runtime* pRuntime,
-                const CJS_PropValue& vp,
-                WideString* sError);
+  bool get_zoom(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_zoom(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
-  bool get_zoom_type(CJS_Runtime* pRuntime,
-                     CJS_PropValue* vp,
-                     WideString* sError);
+  bool get_zoom_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_zoom_type(CJS_Runtime* pRuntime,
-                     const CJS_PropValue& vp,
+                     const CJS_Value& vp,
                      WideString* sError);
 
-  bool get_URL(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_URL(CJS_Runtime* pRuntime,
-               const CJS_PropValue& vp,
-               WideString* sError);
+  bool get_URL(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_URL(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
   bool addAnnot(CJS_Runtime* pRuntime,
                 const std::vector<CJS_Value>& params,
@@ -431,11 +391,11 @@ class Document : public CJS_EmbedObj {
   WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
 
   bool getPropertyInternal(CJS_Runtime* pRuntime,
-                           CJS_PropValue* vp,
+                           CJS_Value* vp,
                            const ByteString& propName,
                            WideString* sError);
   bool setPropertyInternal(CJS_Runtime* pRuntime,
-                           const CJS_PropValue& vp,
+                           const CJS_Value& vp,
                            const ByteString& propName,
                            WideString* sError);
 

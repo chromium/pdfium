@@ -847,10 +847,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
         arColor.SetElement(pRuntime, 2, vColElm);
         arColor.SetElement(pRuntime, 3, vColElm);
 
-        CJS_PropValue vProp(pRuntime);
-        vProp.StartGetting();
-        vProp.Set(arColor);
-        vProp.StartSetting();
+        CJS_Value vProp(pRuntime, arColor);
         fTarget->set_text_color(pRuntime, vProp, &sError);  // red
       }
     }
@@ -866,21 +863,18 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
         arColor.SetElement(pRuntime, 2, vColElm);
         arColor.SetElement(pRuntime, 3, vColElm);
 
-        CJS_PropValue vProp(pRuntime);
-        vProp.StartGetting();
+        CJS_Value vProp(pRuntime);
         fTarget->get_text_color(pRuntime, &vProp, &sError);
 
-        CJS_Array aProp = vProp.GetJSValue()->ToArray(pRuntime);
+        CJS_Array aProp = vProp.ToArray(pRuntime);
         CFX_Color crProp;
         CFX_Color crColor;
         color::ConvertArrayToPWLColor(pRuntime, aProp, &crProp);
         color::ConvertArrayToPWLColor(pRuntime, arColor, &crColor);
 
         if (crColor != crProp) {
-          CJS_PropValue vProp2(pRuntime);
-          vProp2.StartGetting();
-          vProp2.Set(arColor);
-          vProp2.StartSetting();
+          CJS_Value vProp2(pRuntime, arColor);
+
           fTarget->set_text_color(pRuntime, vProp2, &sError);
         }
       }

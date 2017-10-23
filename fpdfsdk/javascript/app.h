@@ -42,83 +42,73 @@ class app : public CJS_EmbedObj {
   ~app() override;
 
   bool get_active_docs(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError);
   bool set_active_docs(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError);
 
-  bool get_calculate(CJS_Runtime* pRuntime,
-                     CJS_PropValue* vp,
-                     WideString* sError);
+  bool get_calculate(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_calculate(CJS_Runtime* pRuntime,
-                     const CJS_PropValue& vp,
+                     const CJS_Value& vp,
                      WideString* sError);
 
   bool get_forms_version(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError);
   bool set_forms_version(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError);
 
-  bool get_fs(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
-  bool set_fs(CJS_Runtime* pRuntime,
-              const CJS_PropValue& vp,
-              WideString* sError);
+  bool get_fs(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
+  bool set_fs(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
 
-  bool get_fullscreen(CJS_Runtime* pRuntime,
-                      CJS_PropValue* vp,
-                      WideString* sError);
+  bool get_fullscreen(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_fullscreen(CJS_Runtime* pRuntime,
-                      const CJS_PropValue& vp,
+                      const CJS_Value& vp,
                       WideString* sError);
 
-  bool get_language(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_language(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_language(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
-  bool get_media(CJS_Runtime* pRuntime, CJS_PropValue* vp, WideString* sError);
+  bool get_media(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_media(CJS_Runtime* pRuntime,
-                 const CJS_PropValue& vp,
+                 const CJS_Value& vp,
                  WideString* sError);
 
-  bool get_platform(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError);
+  bool get_platform(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_platform(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError);
 
   bool get_runtime_highlight(CJS_Runtime* pRuntime,
-                             CJS_PropValue* vp,
+                             CJS_Value* vp,
                              WideString* sError);
   bool set_runtime_highlight(CJS_Runtime* pRuntime,
-                             const CJS_PropValue& vp,
+                             const CJS_Value& vp,
                              WideString* sError);
 
   bool get_viewer_type(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError);
   bool set_viewer_type(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError);
 
   bool get_viewer_variation(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError);
   bool set_viewer_variation(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError);
 
   bool get_viewer_version(CJS_Runtime* pRuntime,
-                          CJS_PropValue* vp,
+                          CJS_Value* vp,
                           WideString* sError);
   bool set_viewer_version(CJS_Runtime* pRuntime,
-                          const CJS_PropValue& vp,
+                          const CJS_Value& vp,
                           WideString* sError);
 
   bool alert(CJS_Runtime* pRuntime,

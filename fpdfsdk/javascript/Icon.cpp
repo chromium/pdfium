@@ -25,15 +25,13 @@ Icon::Icon(CJS_Object* pJSObject)
 
 Icon::~Icon() {}
 
-bool Icon::get_name(CJS_Runtime* pRuntime,
-                    CJS_PropValue* vp,
-                    WideString* sError) {
-  vp->Set(m_swIconName);
+bool Icon::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
+  vp->Set(pRuntime, m_swIconName);
   return true;
 }
 
 bool Icon::set_name(CJS_Runtime* pRuntime,
-                    const CJS_PropValue& vp,
+                    const CJS_Value& vp,
                     WideString* sError) {
   return false;
 }

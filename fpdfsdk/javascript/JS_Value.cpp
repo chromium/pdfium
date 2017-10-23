@@ -184,16 +184,13 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue)
     : m_pValue(pValue) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, int iValue)
-    : m_pValue(pRuntime->NewNumber(iValue)) {}
+    : CJS_Value(pRuntime, pRuntime->NewNumber(iValue)) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, bool bValue)
-    : m_pValue(pRuntime->NewBoolean(bValue)) {}
-
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, float fValue)
-    : m_pValue(pRuntime->NewNumber(fValue)) {}
+    : CJS_Value(pRuntime, pRuntime->NewBoolean(bValue)) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, double dValue)
-    : m_pValue(pRuntime->NewNumber(dValue)) {}
+    : CJS_Value(pRuntime, pRuntime->NewNumber(dValue)) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj) {
   if (pObj)
@@ -201,23 +198,68 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj) {
 }
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const wchar_t* pWstr)
-    : m_pValue(pRuntime->NewString(pWstr)) {}
+    : CJS_Value(pRuntime, pRuntime->NewString(pWstr)) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const char* pStr)
-    : m_pValue(pRuntime->NewString(WideString::FromLocal(pStr).c_str())) {}
+    : CJS_Value(pRuntime,
+                pRuntime->NewString(WideString::FromLocal(pStr).c_str())) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array)
-    : m_pValue(array.ToV8Array(pRuntime)) {}
+    : CJS_Value(pRuntime, array.ToV8Array(pRuntime)) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const CJS_Date& date)
-    : m_pValue(date.ToV8Date(pRuntime)) {}
+    : CJS_Value(pRuntime, date.ToV8Date(pRuntime)) {}
 
 CJS_Value::~CJS_Value() {}
 
 CJS_Value::CJS_Value(const CJS_Value& other) = default;
 
-void CJS_Value::Set(v8::Local<v8::Value> pValue) {
+void CJS_Value::SetNull(CJS_Runtime* pRuntime) {
+  m_pValue = pRuntime->NewNull();
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue) {
   m_pValue = pValue;
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, int val) {
+  m_pValue = pRuntime->NewNumber(val);
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, bool val) {
+  m_pValue = pRuntime->NewBoolean(val);
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, double val) {
+  m_pValue = pRuntime->NewNumber(val);
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, CJS_Object* pObj) {
+  m_pValue = pObj->ToV8Object();
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, CJS_Document* pJsDoc) {
+  m_pValue = pJsDoc->ToV8Object();
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, const ByteString& str) {
+  m_pValue = pRuntime->NewString(WideString::FromLocal(str.c_str()).c_str());
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, const WideString& str) {
+  m_pValue = pRuntime->NewString(str.c_str());
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, const wchar_t* c_string) {
+  m_pValue = pRuntime->NewString(c_string);
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, const CJS_Array& array) {
+  m_pValue = array.ToV8Array(pRuntime);
+}
+
+void CJS_Value::Set(CJS_Runtime* pRuntime, const CJS_Date& date) {
+  m_pValue = date.ToV8Date(pRuntime);
 }
 
 int CJS_Value::ToInt(CJS_Runtime* pRuntime) const {
@@ -239,6 +281,10 @@ float CJS_Value::ToFloat(CJS_Runtime* pRuntime) const {
 CJS_Object* CJS_Value::ToObject(CJS_Runtime* pRuntime) const {
   v8::Local<v8::Object> pObj = pRuntime->ToObject(m_pValue);
   return static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
+}
+
+CJS_Document* CJS_Value::ToDocument(CJS_Runtime* pRuntime) const {
+  return static_cast<CJS_Document*>(ToObject(pRuntime));
 }
 
 CJS_Array CJS_Value::ToArray(CJS_Runtime* pRuntime) const {
@@ -270,10 +316,6 @@ v8::Local<v8::Value> CJS_Value::ToV8Value(CJS_Runtime* pRuntime) const {
 
 v8::Local<v8::Array> CJS_Value::ToV8Array(CJS_Runtime* pRuntime) const {
   return pRuntime->ToArray(m_pValue);
-}
-
-void CJS_Value::SetNull(CJS_Runtime* pRuntime) {
-  m_pValue = pRuntime->NewNull();
 }
 
 void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
@@ -324,123 +366,6 @@ bool CJS_Value::IsArrayObject() const {
 
 bool CJS_Value::IsDateObject() const {
   return !m_pValue.IsEmpty() && m_pValue->IsDate();
-}
-
-CJS_PropValue::CJS_PropValue(CJS_Runtime* pRuntime)
-    : m_bIsSetting(0), m_Value(pRuntime), m_pJSRuntime(pRuntime) {}
-
-CJS_PropValue::CJS_PropValue(CJS_Runtime* pRuntime, const CJS_Value& value)
-    : m_bIsSetting(0), m_Value(value), m_pJSRuntime(pRuntime) {}
-
-CJS_PropValue::~CJS_PropValue() {}
-
-void CJS_PropValue::Set(int iValue) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), iValue);
-}
-
-int CJS_PropValue::ToInt() const {
-  ASSERT(m_bIsSetting);
-  return m_Value.ToInt(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(bool bValue) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), bValue);
-}
-
-bool CJS_PropValue::ToBool() const {
-  ASSERT(m_bIsSetting);
-  return m_Value.ToBool(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(double dValue) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), dValue);
-}
-
-double CJS_PropValue::ToDouble() const {
-  ASSERT(m_bIsSetting);
-  return m_Value.ToDouble(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(CJS_Object* pObj) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), pObj);
-}
-
-CJS_Object* CJS_PropValue::ToObject() const {
-  ASSERT(m_bIsSetting);
-  return m_Value.ToObject(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(CJS_Document* pJsDoc) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), pJsDoc);
-}
-
-CJS_Document* CJS_PropValue::ToDocument() const {
-  ASSERT(m_bIsSetting);
-  return static_cast<CJS_Document*>(m_Value.ToObject(m_pJSRuntime.Get()));
-}
-
-void CJS_PropValue::Set(v8::Local<v8::Object> pObj) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), pObj);
-}
-
-v8::Local<v8::Object> CJS_PropValue::ToV8Object() const {
-  ASSERT(m_bIsSetting);
-  return m_Value.ToV8Object(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(const ByteString& str) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), str.c_str());
-}
-
-ByteString CJS_PropValue::ToByteString() const {
-  ASSERT(m_bIsSetting);
-  return m_Value.ToByteString(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(const wchar_t* str) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), str);
-}
-
-WideString CJS_PropValue::ToWideString() const {
-  ASSERT(m_bIsSetting);
-  return m_Value.ToWideString(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(const WideString& wide_string) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), wide_string.c_str());
-}
-
-CJS_Array CJS_PropValue::ToArray() const {
-  ASSERT(m_bIsSetting);
-  if (!m_Value.IsArrayObject())
-    return CJS_Array();
-  return m_Value.ToArray(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(const CJS_Array& array) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), array);
-}
-
-CJS_Date CJS_PropValue::ToDate() const {
-  ASSERT(m_bIsSetting);
-  if (!m_Value.IsDateObject())
-    return CJS_Date();
-  return m_Value.ToDate(m_pJSRuntime.Get());
-}
-
-void CJS_PropValue::Set(const CJS_Date& date) {
-  ASSERT(!m_bIsSetting);
-  m_Value = CJS_Value(m_pJSRuntime.Get(), date);
 }
 
 CJS_Array::CJS_Array() {}

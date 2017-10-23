@@ -163,7 +163,7 @@ Document::~Document() {}
 
 // the total number of fields in document.
 bool Document::get_num_fields(CJS_Runtime* pRuntime,
-                              CJS_PropValue* vp,
+                              CJS_Value* vp,
                               WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -172,58 +172,58 @@ bool Document::get_num_fields(CJS_Runtime* pRuntime,
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  vp->Set(static_cast<int>(pPDFForm->CountFields(WideString())));
+  vp->Set(pRuntime, static_cast<int>(pPDFForm->CountFields(WideString())));
   return true;
 }
 
 bool Document::set_num_fields(CJS_Runtime* pRuntime,
-                              const CJS_PropValue& vp,
+                              const CJS_Value& vp,
                               WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
 }
 
 bool Document::get_dirty(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
 
-  vp->Set(!!m_pFormFillEnv->GetChangeMark());
+  vp->Set(pRuntime, !!m_pFormFillEnv->GetChangeMark());
   return true;
 }
 
 bool Document::set_dirty(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
 
-  vp.ToBool() ? m_pFormFillEnv->SetChangeMark()
-              : m_pFormFillEnv->ClearChangeMark();
+  vp.ToBool(pRuntime) ? m_pFormFillEnv->SetChangeMark()
+                      : m_pFormFillEnv->ClearChangeMark();
 
   return true;
 }
 
 bool Document::get_ADBE(CJS_Runtime* pRuntime,
-                        CJS_PropValue* vp,
+                        CJS_Value* vp,
                         WideString* sError) {
-  vp->GetJSValue()->SetNull(pRuntime);
+  vp->SetNull(pRuntime);
   return true;
 }
 
 bool Document::set_ADBE(CJS_Runtime* pRuntime,
-                        const CJS_PropValue& vp,
+                        const CJS_Value& vp,
                         WideString* sError) {
   return true;
 }
 
 bool Document::get_page_num(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -231,12 +231,12 @@ bool Document::get_page_num(CJS_Runtime* pRuntime,
   }
 
   if (CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetCurrentView())
-    vp->Set(pPageView->GetPageIndex());
+    vp->Set(pRuntime, pPageView->GetPageIndex());
   return true;
 }
 
 bool Document::set_page_num(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -244,7 +244,7 @@ bool Document::set_page_num(CJS_Runtime* pRuntime,
   }
 
   int iPageCount = m_pFormFillEnv->GetPageCount();
-  int iPageNum = vp.ToInt();
+  int iPageNum = vp.ToInt(pRuntime);
   if (iPageNum >= 0 && iPageNum < iPageCount)
     m_pFormFillEnv->JS_docgotoPage(iPageNum);
   else if (iPageNum >= iPageCount)
@@ -694,13 +694,13 @@ void Document::SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
 }
 
 bool Document::get_bookmark_root(CJS_Runtime* pRuntime,
-                                 CJS_PropValue* vp,
+                                 CJS_Value* vp,
                                  WideString* sError) {
   return true;
 }
 
 bool Document::set_bookmark_root(CJS_Runtime* pRuntime,
-                                 const CJS_PropValue& vp,
+                                 const CJS_Value& vp,
                                  WideString* sError) {
   return true;
 }
@@ -761,19 +761,19 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
 }
 
 bool Document::get_author(CJS_Runtime* pRuntime,
-                          CJS_PropValue* vp,
+                          CJS_Value* vp,
                           WideString* sError) {
   return getPropertyInternal(pRuntime, vp, "Author", sError);
 }
 
 bool Document::set_author(CJS_Runtime* pRuntime,
-                          const CJS_PropValue& vp,
+                          const CJS_Value& vp,
                           WideString* sError) {
   return setPropertyInternal(pRuntime, vp, "Author", sError);
 }
 
 bool Document::get_info(CJS_Runtime* pRuntime,
-                        CJS_PropValue* vp,
+                        CJS_Value* vp,
                         WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -832,19 +832,19 @@ bool Document::get_info(CJS_Runtime* pRuntime,
           pObj, wsKey, pRuntime->NewBoolean(!!pValueObj->GetInteger()));
     }
   }
-  vp->Set(pObj);
+  vp->Set(pRuntime, pObj);
   return true;
 }
 
 bool Document::set_info(CJS_Runtime* pRuntime,
-                        const CJS_PropValue& vp,
+                        const CJS_Value& vp,
                         WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
 }
 
 bool Document::getPropertyInternal(CJS_Runtime* pRuntime,
-                                   CJS_PropValue* vp,
+                                   CJS_Value* vp,
                                    const ByteString& propName,
                                    WideString* sError) {
   if (!m_pFormFillEnv) {
@@ -856,12 +856,12 @@ bool Document::getPropertyInternal(CJS_Runtime* pRuntime,
   if (!pDictionary)
     return false;
 
-  vp->Set(pDictionary->GetUnicodeTextFor(propName));
+  vp->Set(pRuntime, pDictionary->GetUnicodeTextFor(propName));
   return true;
 }
 
 bool Document::setPropertyInternal(CJS_Runtime* pRuntime,
-                                   const CJS_PropValue& vp,
+                                   const CJS_Value& vp,
                                    const ByteString& propName,
                                    WideString* sError) {
   if (!m_pFormFillEnv) {
@@ -877,7 +877,7 @@ bool Document::setPropertyInternal(CJS_Runtime* pRuntime,
     *sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return false;
   }
-  WideString csProperty = vp.ToWideString();
+  WideString csProperty = vp.ToWideString(pRuntime);
   pDictionary->SetNewFor<CPDF_String>(propName, PDF_EncodeText(csProperty),
                                       false);
   m_pFormFillEnv->SetChangeMark();
@@ -885,42 +885,42 @@ bool Document::setPropertyInternal(CJS_Runtime* pRuntime,
 }
 
 bool Document::get_creation_date(CJS_Runtime* pRuntime,
-                                 CJS_PropValue* vp,
+                                 CJS_Value* vp,
                                  WideString* sError) {
   return getPropertyInternal(pRuntime, vp, "CreationDate", sError);
 }
 
 bool Document::set_creation_date(CJS_Runtime* pRuntime,
-                                 const CJS_PropValue& vp,
+                                 const CJS_Value& vp,
                                  WideString* sError) {
   return setPropertyInternal(pRuntime, vp, "CreationDate", sError);
 }
 
 bool Document::get_creator(CJS_Runtime* pRuntime,
-                           CJS_PropValue* vp,
+                           CJS_Value* vp,
                            WideString* sError) {
   return getPropertyInternal(pRuntime, vp, "Creator", sError);
 }
 
 bool Document::set_creator(CJS_Runtime* pRuntime,
-                           const CJS_PropValue& vp,
+                           const CJS_Value& vp,
                            WideString* sError) {
   return setPropertyInternal(pRuntime, vp, "Creator", sError);
 }
 
 bool Document::get_delay(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(m_bDelay);
+  vp->Set(pRuntime, m_bDelay);
   return true;
 }
 
 bool Document::set_delay(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -932,7 +932,7 @@ bool Document::set_delay(CJS_Runtime* pRuntime,
     return false;
   }
 
-  m_bDelay = vp.ToBool();
+  m_bDelay = vp.ToBool(pRuntime);
   if (m_bDelay) {
     m_DelayData.clear();
     return true;
@@ -947,55 +947,55 @@ bool Document::set_delay(CJS_Runtime* pRuntime,
 }
 
 bool Document::get_keywords(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
   return getPropertyInternal(pRuntime, vp, "Keywords", sError);
 }
 
 bool Document::set_keywords(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
   return setPropertyInternal(pRuntime, vp, "Keywords", sError);
 }
 
 bool Document::get_mod_date(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
   return getPropertyInternal(pRuntime, vp, "ModDate", sError);
 }
 
 bool Document::set_mod_date(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
   return setPropertyInternal(pRuntime, vp, "ModDate", sError);
 }
 
 bool Document::get_producer(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
   return getPropertyInternal(pRuntime, vp, "Producer", sError);
 }
 
 bool Document::set_producer(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
   return setPropertyInternal(pRuntime, vp, "Producer", sError);
 }
 
 bool Document::get_subject(CJS_Runtime* pRuntime,
-                           CJS_PropValue* vp,
+                           CJS_Value* vp,
                            WideString* sError) {
   return getPropertyInternal(pRuntime, vp, "Subject", sError);
 }
 
 bool Document::set_subject(CJS_Runtime* pRuntime,
-                           const CJS_PropValue& vp,
+                           const CJS_Value& vp,
                            WideString* sError) {
   return setPropertyInternal(pRuntime, vp, "Subject", sError);
 }
 
 bool Document::get_title(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError) {
   if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument()) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -1005,7 +1005,7 @@ bool Document::get_title(CJS_Runtime* pRuntime,
 }
 
 bool Document::set_title(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError) {
   if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument()) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -1015,109 +1015,109 @@ bool Document::set_title(CJS_Runtime* pRuntime,
 }
 
 bool Document::get_num_pages(CJS_Runtime* pRuntime,
-                             CJS_PropValue* vp,
+                             CJS_Value* vp,
                              WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(m_pFormFillEnv->GetPageCount());
+  vp->Set(pRuntime, m_pFormFillEnv->GetPageCount());
   return true;
 }
 
 bool Document::set_num_pages(CJS_Runtime* pRuntime,
-                             const CJS_PropValue& vp,
+                             const CJS_Value& vp,
                              WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
 }
 
 bool Document::get_external(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
   // In Chrome case, should always return true.
-  vp->Set(true);
+  vp->Set(pRuntime, true);
   return true;
 }
 
 bool Document::set_external(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
   return true;
 }
 
 bool Document::get_filesize(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
-  vp->Set(0);
+  vp->Set(pRuntime, 0);
   return true;
 }
 
 bool Document::set_filesize(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
 }
 
 bool Document::get_mouse_x(CJS_Runtime* pRuntime,
-                           CJS_PropValue* vp,
+                           CJS_Value* vp,
                            WideString* sError) {
   return true;
 }
 
 bool Document::set_mouse_x(CJS_Runtime* pRuntime,
-                           const CJS_PropValue& vp,
+                           const CJS_Value& vp,
                            WideString* sError) {
   return true;
 }
 
 bool Document::get_mouse_y(CJS_Runtime* pRuntime,
-                           CJS_PropValue* vp,
+                           CJS_Value* vp,
                            WideString* sError) {
   return true;
 }
 
 bool Document::set_mouse_y(CJS_Runtime* pRuntime,
-                           const CJS_PropValue& vp,
+                           const CJS_Value& vp,
                            WideString* sError) {
   return true;
 }
 
 bool Document::get_URL(CJS_Runtime* pRuntime,
-                       CJS_PropValue* vp,
+                       CJS_Value* vp,
                        WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(m_pFormFillEnv->JS_docGetFilePath());
+  vp->Set(pRuntime, m_pFormFillEnv->JS_docGetFilePath());
   return true;
 }
 
 bool Document::set_URL(CJS_Runtime* pRuntime,
-                       const CJS_PropValue& vp,
+                       const CJS_Value& vp,
                        WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
 }
 
 bool Document::get_base_URL(CJS_Runtime* pRuntime,
-                            CJS_PropValue* vp,
+                            CJS_Value* vp,
                             WideString* sError) {
-  vp->Set(m_cwBaseURL);
+  vp->Set(pRuntime, m_cwBaseURL);
   return true;
 }
 
 bool Document::set_base_URL(CJS_Runtime* pRuntime,
-                            const CJS_PropValue& vp,
+                            const CJS_Value& vp,
                             WideString* sError) {
-  m_cwBaseURL = vp.ToWideString();
+  m_cwBaseURL = vp.ToWideString(pRuntime);
   return true;
 }
 
 bool Document::get_calculate(CJS_Runtime* pRuntime,
-                             CJS_PropValue* vp,
+                             CJS_Value* vp,
                              WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -1125,12 +1125,12 @@ bool Document::get_calculate(CJS_Runtime* pRuntime,
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  vp->Set(!!pInterForm->IsCalculateEnabled());
+  vp->Set(pRuntime, !!pInterForm->IsCalculateEnabled());
   return true;
 }
 
 bool Document::set_calculate(CJS_Runtime* pRuntime,
-                             const CJS_PropValue& vp,
+                             const CJS_Value& vp,
                              WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -1138,12 +1138,12 @@ bool Document::set_calculate(CJS_Runtime* pRuntime,
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  pInterForm->EnableCalculate(vp.ToBool());
+  pInterForm->EnableCalculate(vp.ToBool(pRuntime));
   return true;
 }
 
 bool Document::get_document_file_name(CJS_Runtime* pRuntime,
-                                      CJS_PropValue* vp,
+                                      CJS_Value* vp,
                                       WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -1158,58 +1158,58 @@ bool Document::get_document_file_name(CJS_Runtime* pRuntime,
   }
 
   if (i > 0 && i < wsFilePath.GetLength())
-    vp->Set(wsFilePath.GetBuffer(wsFilePath.GetLength()) + i);
+    vp->Set(pRuntime, wsFilePath.GetBuffer(wsFilePath.GetLength()) + i);
   else
-    vp->Set(L"");
+    vp->Set(pRuntime, L"");
 
   return true;
 }
 
 bool Document::set_document_file_name(CJS_Runtime* pRuntime,
-                                      const CJS_PropValue& vp,
+                                      const CJS_Value& vp,
                                       WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
 }
 
 bool Document::get_path(CJS_Runtime* pRuntime,
-                        CJS_PropValue* vp,
+                        CJS_Value* vp,
                         WideString* sError) {
   if (!m_pFormFillEnv) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(app::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()));
+  vp->Set(pRuntime, app::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()));
   return true;
 }
 
 bool Document::set_path(CJS_Runtime* pRuntime,
-                        const CJS_PropValue& vp,
+                        const CJS_Value& vp,
                         WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
 }
 
 bool Document::get_page_window_rect(CJS_Runtime* pRuntime,
-                                    CJS_PropValue* vp,
+                                    CJS_Value* vp,
                                     WideString* sError) {
   return true;
 }
 
 bool Document::set_page_window_rect(CJS_Runtime* pRuntime,
-                                    const CJS_PropValue& vp,
+                                    const CJS_Value& vp,
                                     WideString* sError) {
   return true;
 }
 
 bool Document::get_layout(CJS_Runtime* pRuntime,
-                          CJS_PropValue* vp,
+                          CJS_Value* vp,
                           WideString* sError) {
   return true;
 }
 
 bool Document::set_layout(CJS_Runtime* pRuntime,
-                          const CJS_PropValue& vp,
+                          const CJS_Value& vp,
                           WideString* sError) {
   return true;
 }
@@ -1385,10 +1385,10 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
 }
 
 bool Document::get_icons(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError) {
   if (m_IconNames.empty()) {
-    vp->GetJSValue()->SetNull(pRuntime);
+    vp->SetNull(pRuntime);
     return true;
   }
 
@@ -1407,12 +1407,12 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
     Icons.SetElement(pRuntime, i++, CJS_Value(pRuntime, pJS_Icon));
   }
 
-  vp->Set(Icons);
+  vp->Set(pRuntime, Icons);
   return true;
 }
 
 bool Document::set_icons(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
@@ -1461,13 +1461,13 @@ bool Document::createDataObject(CJS_Runtime* pRuntime,
 }
 
 bool Document::get_media(CJS_Runtime* pRuntime,
-                         CJS_PropValue* vp,
+                         CJS_Value* vp,
                          WideString* sError) {
   return true;
 }
 
 bool Document::set_media(CJS_Runtime* pRuntime,
-                         const CJS_PropValue& vp,
+                         const CJS_Value& vp,
                          WideString* sError) {
   return true;
 }
@@ -1491,13 +1491,13 @@ bool Document::calculateNow(CJS_Runtime* pRuntime,
 }
 
 bool Document::get_collab(CJS_Runtime* pRuntime,
-                          CJS_PropValue* vp,
+                          CJS_Value* vp,
                           WideString* sError) {
   return true;
 }
 
 bool Document::set_collab(CJS_Runtime* pRuntime,
-                          const CJS_PropValue& vp,
+                          const CJS_Value& vp,
                           WideString* sError) {
   return true;
 }
@@ -1698,24 +1698,24 @@ WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex) {
 }
 
 bool Document::get_zoom(CJS_Runtime* pRuntime,
-                        CJS_PropValue* vp,
+                        CJS_Value* vp,
                         WideString* sError) {
   return true;
 }
 
 bool Document::set_zoom(CJS_Runtime* pRuntime,
-                        const CJS_PropValue& vp,
+                        const CJS_Value& vp,
                         WideString* sError) {
   return true;
 }
 
 bool Document::get_zoom_type(CJS_Runtime* pRuntime,
-                             CJS_PropValue* vp,
+                             CJS_Value* vp,
                              WideString* sError) {
   return true;
 }
 bool Document::set_zoom_type(CJS_Runtime* pRuntime,
-                             const CJS_PropValue& vp,
+                             const CJS_Value& vp,
                              WideString* sError) {
   return true;
 }
