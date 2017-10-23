@@ -14,6 +14,11 @@
 
 class color : public CJS_EmbedObj {
  public:
+  static CJS_Array ConvertPWLColorToArray(CJS_Runtime* pRuntime,
+                                          const CFX_Color& color);
+  static CFX_Color ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
+                                          const CJS_Array& array);
+
   explicit color(CJS_Object* pJSObject);
   ~color() override;
 
@@ -79,13 +84,6 @@ class color : public CJS_EmbedObj {
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
              WideString& sError);
-
-  static void ConvertPWLColorToArray(CJS_Runtime* pRuntime,
-                                     const CFX_Color& color,
-                                     CJS_Array* array);
-  static void ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
-                                     const CJS_Array& array,
-                                     CFX_Color* color);
 
  private:
   bool GetPropertyHelper(CJS_Runtime* pRuntime, CJS_Value* vp, CFX_Color* val);

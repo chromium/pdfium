@@ -924,16 +924,12 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
         CJS_Value vProp(pRuntime);
         fTarget->get_text_color(pRuntime, &vProp, &sError);
 
-        CJS_Array aProp = vProp.ToArray(pRuntime);
-        CFX_Color crProp;
-        CFX_Color crColor;
-        color::ConvertArrayToPWLColor(pRuntime, aProp, &crProp);
-        color::ConvertArrayToPWLColor(pRuntime, arColor, &crColor);
-
+        CFX_Color crProp =
+            color::ConvertArrayToPWLColor(pRuntime, vProp.ToArray(pRuntime));
+        CFX_Color crColor = color::ConvertArrayToPWLColor(pRuntime, arColor);
         if (crColor != crProp) {
-          CJS_Value vProp2(pRuntime, arColor);
-
-          fTarget->set_text_color(pRuntime, vProp2, &sError);
+          fTarget->set_text_color(pRuntime, CJS_Value(pRuntime, arColor),
+                                  &sError);
         }
       }
     }

@@ -1229,7 +1229,6 @@ bool Field::set_file_select(CJS_Runtime* pRuntime,
 bool Field::get_fill_color(CJS_Runtime* pRuntime,
                            CJS_Value* vp,
                            WideString* sError) {
-  CJS_Array crArray;
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -1264,8 +1263,7 @@ bool Field::get_fill_color(CJS_Runtime* pRuntime,
     return false;
   }
 
-  color::ConvertPWLColorToArray(pRuntime, color, &crArray);
-  vp->Set(pRuntime, crArray);
+  vp->Set(pRuntime, color::ConvertPWLColorToArray(pRuntime, color));
   return true;
 }
 
@@ -1963,9 +1961,7 @@ bool Field::get_stroke_color(CJS_Runtime* pRuntime,
     return false;
   }
 
-  CJS_Array crArray;
-  color::ConvertPWLColorToArray(pRuntime, color, &crArray);
-  vp->Set(pRuntime, crArray);
+  vp->Set(pRuntime, color::ConvertPWLColorToArray(pRuntime, color));
   return true;
 }
 
@@ -2073,9 +2069,7 @@ bool Field::get_text_color(CJS_Runtime* pRuntime,
   if (iColorType == CFX_Color::kTransparent)
     crRet = CFX_Color(CFX_Color::kTransparent);
 
-  CJS_Array crArray;
-  color::ConvertPWLColorToArray(pRuntime, crRet, &crArray);
-  vp->Set(pRuntime, crArray);
+  vp->Set(pRuntime, color::ConvertPWLColorToArray(pRuntime, crRet));
   return true;
 }
 

@@ -37,6 +37,8 @@ struct CFX_Color {
         fColor3(b / 255.0f),
         fColor4(0) {}
 
+  CFX_Color(const CFX_Color&) = default;
+
   CFX_Color operator/(float fColorDivide) const;
   CFX_Color operator-(float fColorSub) const;
 
