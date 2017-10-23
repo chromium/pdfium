@@ -20,7 +20,7 @@ JSMethodSpec CJS_Report::MethodSpecs[] = {{"save", save_static},
                                           {"writeText", writeText_static},
                                           {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Report, Report)
+IMPLEMENT_JS_CLASS(CJS_Report, Report, Report)
 
 Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 

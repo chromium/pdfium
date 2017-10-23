@@ -40,7 +40,7 @@ JSPropertySpec CJS_Event::PropertySpecs[] = {
 
 JSMethodSpec CJS_Event::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Event, event)
+IMPLEMENT_JS_CLASS(CJS_Event, event, event)
 
 event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
 

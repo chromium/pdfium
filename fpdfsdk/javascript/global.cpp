@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/javascript/global.h"
 
+#include <map>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -13,10 +15,208 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_GlobalData.h"
+#include "fpdfsdk/javascript/JS_KeyValue.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/resource.h"
+
+#define IMPLEMENT_SPECIAL_JS_CLASS(js_class_name, class_alternate, class_name) \
+  IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)                      \
+  IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)                     \
+  IMPLEMENT_JS_CLASS_PART(js_class_name, class_alternate, class_name)          \
+  void js_class_name::queryprop_static(                                        \
+      v8::Local<v8::String> property,                                          \
+      const v8::PropertyCallbackInfo<v8::Integer>& info) {                     \
+    JSSpecialPropQuery<class_alternate>(#class_name, property, info);          \
+  }                                                                            \
+  void js_class_name::getprop_static(                                          \
+      v8::Local<v8::String> property,                                          \
+      const v8::PropertyCallbackInfo<v8::Value>& info) {                       \
+    JSSpecialPropGet<class_alternate>(#class_name, property, info);            \
+  }                                                                            \
+  void js_class_name::putprop_static(                                          \
+      v8::Local<v8::String> property, v8::Local<v8::Value> value,              \
+      const v8::PropertyCallbackInfo<v8::Value>& info) {                       \
+    JSSpecialPropPut<class_alternate>(#class_name, property, value, info);     \
+  }                                                                            \
+  void js_class_name::delprop_static(                                          \
+      v8::Local<v8::String> property,                                          \
+      const v8::PropertyCallbackInfo<v8::Boolean>& info) {                     \
+    JSSpecialPropDel<class_alternate>(#class_name, property, info);            \
+  }                                                                            \
+  void js_class_name::DefineAllProperties(CFXJS_Engine* pEngine) {             \
+    pEngine->DefineObjAllProperties(                                           \
+        g_nObjDefnID, js_class_name::queryprop_static,                         \
+        js_class_name::getprop_static, js_class_name::putprop_static,          \
+        js_class_name::delprop_static);                                        \
+  }                                                                            \
+  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine,                   \
+                                      FXJSOBJTYPE eObjType) {                  \
+    g_nObjDefnID = pEngine->DefineObj(js_class_name::g_pClassName, eObjType,   \
+                                      JSConstructor, JSDestructor);            \
+    DefineConsts(pEngine);                                                     \
+    DefineProps(pEngine);                                                      \
+    DefineMethods(pEngine);                                                    \
+    DefineAllProperties(pEngine);                                              \
+  }
+
+namespace {
+
+template <class Alt>
+void JSSpecialPropQuery(const char*,
+                        v8::Local<v8::String> property,
+                        const v8::PropertyCallbackInfo<v8::Integer>& info) {
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+  if (!pRuntime)
+    return;
+
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  v8::String::Utf8Value utf8_value(property);
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
+  bool bRet = pObj->QueryProperty(propname.c_str());
+  info.GetReturnValue().Set(bRet ? 4 : 0);
+}
+
+template <class Alt>
+void JSSpecialPropGet(const char* class_name,
+                      v8::Local<v8::String> property,
+                      const v8::PropertyCallbackInfo<v8::Value>& info) {
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+  if (!pRuntime)
+    return;
+
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  v8::String::Utf8Value utf8_value(property);
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
+
+  CJS_Value value(pRuntime);
+  if (!pObj->GetProperty(pRuntime, propname.c_str(), &value)) {
+    pRuntime->Error(JSFormatErrorString(class_name, "GetProperty", L""));
+    return;
+  }
+  info.GetReturnValue().Set(value.ToV8Value(pRuntime));
+}
+
+template <class Alt>
+void JSSpecialPropPut(const char* class_name,
+                      v8::Local<v8::String> property,
+                      v8::Local<v8::Value> value,
+                      const v8::PropertyCallbackInfo<v8::Value>& info) {
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+  if (!pRuntime)
+    return;
+
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  v8::String::Utf8Value utf8_value(property);
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
+  CJS_Value prop_value(pRuntime, value);
+  if (!pObj->SetProperty(pRuntime, propname.c_str(), prop_value)) {
+    pRuntime->Error(JSFormatErrorString(class_name, "PutProperty", L""));
+  }
+}
+
+template <class Alt>
+void JSSpecialPropDel(const char* class_name,
+                      v8::Local<v8::String> property,
+                      const v8::PropertyCallbackInfo<v8::Boolean>& info) {
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+  if (!pRuntime)
+    return;
+
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  v8::String::Utf8Value utf8_value(property);
+  WideString propname =
+      WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
+  if (!pObj->DelProperty(pRuntime, propname.c_str())) {
+    ByteString cbName;
+    cbName.Format("%s.%s", class_name, "DelProperty");
+    // Probably a missing call to JSFX_Error().
+  }
+}
+
+struct JSGlobalData {
+  JSGlobalData();
+  ~JSGlobalData();
+
+  JS_GlobalDataType nType;
+  double dData;
+  bool bData;
+  ByteString sData;
+  v8::Global<v8::Object> pData;
+  bool bPersistent;
+  bool bDeleted;
+};
+
+class JSGlobalAlternate : public CJS_EmbedObj {
+ public:
+  explicit JSGlobalAlternate(CJS_Object* pJSObject);
+  ~JSGlobalAlternate() override;
+
+  bool setPersistent(CJS_Runtime* pRuntime,
+                     const std::vector<CJS_Value>& params,
+                     CJS_Value& vRet,
+                     WideString& sError);
+  bool QueryProperty(const wchar_t* propname);
+  bool GetProperty(CJS_Runtime* pRuntime,
+                   const wchar_t* propname,
+                   CJS_Value* vp);
+  bool SetProperty(CJS_Runtime* pRuntime,
+                   const wchar_t* propname,
+                   const CJS_Value& vp);
+  bool DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
+  void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+
+ private:
+  void UpdateGlobalPersistentVariables();
+  void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
+  void DestroyGlobalPersisitentVariables();
+  bool SetGlobalVariables(const ByteString& propname,
+                          JS_GlobalDataType nType,
+                          double dData,
+                          bool bData,
+                          const ByteString& sData,
+                          v8::Local<v8::Object> pData,
+                          bool bDefaultPersistent);
+  void ObjectToArray(CJS_Runtime* pRuntime,
+                     v8::Local<v8::Object> pObj,
+                     CJS_GlobalVariableArray& array);
+  void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
+
+  std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
+  WideString m_sFilePath;
+  CJS_GlobalData* m_pGlobalData;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
+};
+
+}  // namespace
 
 JSConstSpec CJS_Global::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
@@ -27,6 +227,13 @@ JSMethodSpec CJS_Global::MethodSpecs[] = {
     {0, 0}};
 
 IMPLEMENT_SPECIAL_JS_CLASS(CJS_Global, JSGlobalAlternate, global);
+
+// static
+void CJS_Global::setPersistent_static(
+    const v8::FunctionCallbackInfo<v8::Value>& info) {
+  JSMethod<JSGlobalAlternate, &JSGlobalAlternate::setPersistent>(
+      "setPersistent", "global", info);
+}
 
 void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);

@@ -37,7 +37,7 @@ JSMethodSpec CJS_Util::MethodSpecs[] = {
     {"printx", printx_static},         {"scand", scand_static},
     {"byteToChar", byteToChar_static}, {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Util, util)
+IMPLEMENT_JS_CLASS(CJS_Util, util, util)
 
 namespace {
 

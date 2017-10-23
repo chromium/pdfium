@@ -167,7 +167,7 @@ JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"signatureValidate", signatureValidate_static},
     {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Field, Field)
+IMPLEMENT_JS_CLASS(CJS_Field, Field, Field)
 
 CJS_DelayData::CJS_DelayData(FIELD_PROP prop, int idx, const WideString& name)
     : eProp(prop), nControlIndex(idx), sFieldName(name) {}

@@ -57,8 +57,6 @@ JSMethodSpec CJS_PublicMethods::GlobalFunctionSpecs[] = {
     {"AFExtractNums", AFExtractNums_static},
     {0, 0}};
 
-IMPLEMENT_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
-
 namespace {
 
 const wchar_t* const months[] = {L"Jan", L"Feb", L"Mar", L"Apr",
@@ -113,7 +111,67 @@ ByteString CalculateString(double dValue,
 }
 #endif
 
+// NOLINTNEXTLINE(whitespace/parens)
+template <bool (
+    *F)(CJS_Runtime*, const std::vector<CJS_Value>&, CJS_Value&, WideString&)>
+void JSGlobalFunc(const char* func_name_string,
+                  const v8::FunctionCallbackInfo<v8::Value>& info) {
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+  if (!pRuntime)
+    return;
+  std::vector<CJS_Value> parameters;
+  for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
+    parameters.push_back(CJS_Value(pRuntime, info[i]));
+  }
+  CJS_Value valueRes(pRuntime);
+  WideString sError;
+  if (!(*F)(pRuntime, parameters, valueRes, sError)) {
+    pRuntime->Error(JSFormatErrorString(func_name_string, nullptr, sError));
+    return;
+  }
+  info.GetReturnValue().Set(valueRes.ToV8Value(pRuntime));
+}
+
 }  // namespace
+
+// static
+void CJS_PublicMethods::DefineJSObjects(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(GlobalFunctionSpecs) - 1; ++i) {
+    pEngine->DefineGlobalMethod(
+        CJS_PublicMethods::GlobalFunctionSpecs[i].pName,
+        CJS_PublicMethods::GlobalFunctionSpecs[i].pMethodCall);
+  }
+}
+
+#define JS_STATIC_GLOBAL_FUN(fun_name)                   \
+  void CJS_PublicMethods::fun_name##_static(             \
+      const v8::FunctionCallbackInfo<v8::Value>& info) { \
+    JSGlobalFunc<fun_name>(#fun_name, info);             \
+  }
+
+JS_STATIC_GLOBAL_FUN(AFNumber_Format);
+JS_STATIC_GLOBAL_FUN(AFNumber_Keystroke);
+JS_STATIC_GLOBAL_FUN(AFPercent_Format);
+JS_STATIC_GLOBAL_FUN(AFPercent_Keystroke);
+JS_STATIC_GLOBAL_FUN(AFDate_FormatEx);
+JS_STATIC_GLOBAL_FUN(AFDate_KeystrokeEx);
+JS_STATIC_GLOBAL_FUN(AFDate_Format);
+JS_STATIC_GLOBAL_FUN(AFDate_Keystroke);
+JS_STATIC_GLOBAL_FUN(AFTime_FormatEx);
+JS_STATIC_GLOBAL_FUN(AFTime_KeystrokeEx);
+JS_STATIC_GLOBAL_FUN(AFTime_Format);
+JS_STATIC_GLOBAL_FUN(AFTime_Keystroke);
+JS_STATIC_GLOBAL_FUN(AFSpecial_Format);
+JS_STATIC_GLOBAL_FUN(AFSpecial_Keystroke);
+JS_STATIC_GLOBAL_FUN(AFSpecial_KeystrokeEx);
+JS_STATIC_GLOBAL_FUN(AFSimple);
+JS_STATIC_GLOBAL_FUN(AFMakeNumber);
+JS_STATIC_GLOBAL_FUN(AFSimple_Calculate);
+JS_STATIC_GLOBAL_FUN(AFRange_Validate);
+JS_STATIC_GLOBAL_FUN(AFMergeChange);
+JS_STATIC_GLOBAL_FUN(AFParseDateEx);
+JS_STATIC_GLOBAL_FUN(AFExtractNums);
 
 bool CJS_PublicMethods::IsNumber(const WideString& str) {
   WideString sTrim = StrTrim(str);

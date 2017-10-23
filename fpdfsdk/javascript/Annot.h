@@ -7,8 +7,6 @@
 #ifndef FPDFSDK_JAVASCRIPT_ANNOT_H_
 #define FPDFSDK_JAVASCRIPT_ANNOT_H_
 
-#include <memory>
-
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 

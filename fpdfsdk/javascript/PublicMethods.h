@@ -107,31 +107,52 @@ class CJS_PublicMethods : public CJS_Object {
                             CJS_Value& vRet,
                             WideString& sError);
 
-  JS_STATIC_GLOBAL_FUN(AFNumber_Format);
-  JS_STATIC_GLOBAL_FUN(AFNumber_Keystroke);
-  JS_STATIC_GLOBAL_FUN(AFPercent_Format);
-  JS_STATIC_GLOBAL_FUN(AFPercent_Keystroke);
-  JS_STATIC_GLOBAL_FUN(AFDate_FormatEx);
-  JS_STATIC_GLOBAL_FUN(AFDate_KeystrokeEx);
-  JS_STATIC_GLOBAL_FUN(AFDate_Format);
-  JS_STATIC_GLOBAL_FUN(AFDate_Keystroke);
-  JS_STATIC_GLOBAL_FUN(AFTime_FormatEx);
-  JS_STATIC_GLOBAL_FUN(AFTime_KeystrokeEx);
-  JS_STATIC_GLOBAL_FUN(AFTime_Format);
-  JS_STATIC_GLOBAL_FUN(AFTime_Keystroke);
-  JS_STATIC_GLOBAL_FUN(AFSpecial_Format);
-  JS_STATIC_GLOBAL_FUN(AFSpecial_Keystroke);
-  JS_STATIC_GLOBAL_FUN(AFSpecial_KeystrokeEx);
-  JS_STATIC_GLOBAL_FUN(AFSimple);
-  JS_STATIC_GLOBAL_FUN(AFMakeNumber);
-  JS_STATIC_GLOBAL_FUN(AFSimple_Calculate);
-  JS_STATIC_GLOBAL_FUN(AFRange_Validate);
-  JS_STATIC_GLOBAL_FUN(AFMergeChange);
-  JS_STATIC_GLOBAL_FUN(AFParseDateEx);
-  JS_STATIC_GLOBAL_FUN(AFExtractNums);
+  static void AFNumber_Format_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFNumber_Keystroke_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFPercent_Format_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFPercent_Keystroke_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFDate_FormatEx_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFDate_KeystrokeEx_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFDate_Format_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFDate_Keystroke_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFTime_FormatEx_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFTime_KeystrokeEx_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFTime_Format_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFTime_Keystroke_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFSpecial_Format_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFSpecial_Keystroke_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFSpecial_KeystrokeEx_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFSimple_static(const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFMakeNumber_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFSimple_Calculate_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFRange_Validate_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFMergeChange_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFParseDateEx_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
+  static void AFExtractNums_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  JS_STATIC_DECLARE_GLOBAL_FUN();
-
+  static JSMethodSpec GlobalFunctionSpecs[];
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
   static int ParseStringInteger(const WideString& string,
                                 size_t nStart,
                                 size_t& nSkip,

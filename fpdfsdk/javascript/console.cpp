@@ -24,7 +24,7 @@ JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
                                            {"show", show_static},
                                            {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Console, console)
+IMPLEMENT_JS_CLASS(CJS_Console, console, console)
 
 console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 

@@ -44,7 +44,7 @@ JSPropertySpec CJS_PrintParamsObj::PropertySpecs[] = {{0, 0, 0}};
 
 JSMethodSpec CJS_PrintParamsObj::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_PrintParamsObj, PrintParamsObj)
+IMPLEMENT_JS_CLASS(CJS_PrintParamsObj, PrintParamsObj, PrintParamsObj)
 
 PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject) {
@@ -145,7 +145,7 @@ JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"mailDoc", mailDoc_static},
     {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Document, Document)
+IMPLEMENT_JS_CLASS(CJS_Document, Document, Document)
 
 void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);

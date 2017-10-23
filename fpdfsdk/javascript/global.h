@@ -7,70 +7,7 @@
 #ifndef FPDFSDK_JAVASCRIPT_GLOBAL_H_
 #define FPDFSDK_JAVASCRIPT_GLOBAL_H_
 
-#include <map>
-#include <memory>
-#include <vector>
-
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_KeyValue.h"
-
-class CJS_GlobalData;
-class CJS_GlobalVariableArray;
-class CJS_KeyValue;
-
-struct JSGlobalData {
-  JSGlobalData();
-  ~JSGlobalData();
-
-  JS_GlobalDataType nType;
-  double dData;
-  bool bData;
-  ByteString sData;
-  v8::Global<v8::Object> pData;
-  bool bPersistent;
-  bool bDeleted;
-};
-
-class JSGlobalAlternate : public CJS_EmbedObj {
- public:
-  explicit JSGlobalAlternate(CJS_Object* pJSObject);
-  ~JSGlobalAlternate() override;
-
-  bool setPersistent(CJS_Runtime* pRuntime,
-                     const std::vector<CJS_Value>& params,
-                     CJS_Value& vRet,
-                     WideString& sError);
-  bool QueryProperty(const wchar_t* propname);
-  bool GetProperty(CJS_Runtime* pRuntime,
-                   const wchar_t* propname,
-                   CJS_Value* vp);
-  bool SetProperty(CJS_Runtime* pRuntime,
-                   const wchar_t* propname,
-                   const CJS_Value& vp);
-  bool DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
-  void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-
- private:
-  void UpdateGlobalPersistentVariables();
-  void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
-  void DestroyGlobalPersisitentVariables();
-  bool SetGlobalVariables(const ByteString& propname,
-                          JS_GlobalDataType nType,
-                          double dData,
-                          bool bData,
-                          const ByteString& sData,
-                          v8::Local<v8::Object> pData,
-                          bool bDefaultPersistent);
-  void ObjectToArray(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Object> pObj,
-                     CJS_GlobalVariableArray& array);
-  void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
-
-  std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
-  WideString m_sFilePath;
-  CJS_GlobalData* m_pGlobalData;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
-};
 
 class CJS_Global : public CJS_Object {
  public:
@@ -80,8 +17,23 @@ class CJS_Global : public CJS_Object {
   // CJS_Object
   void InitInstance(IJS_Runtime* pIRuntime) override;
 
-  DECLARE_SPECIAL_JS_CLASS();
-  JS_SPECIAL_STATIC_METHOD(setPersistent, JSGlobalAlternate, global);
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
+  DECLARE_JS_CLASS_PART();
+  static void queryprop_static(
+      v8::Local<v8::String> property,
+      const v8::PropertyCallbackInfo<v8::Integer>& info);
+  static void getprop_static(v8::Local<v8::String> property,
+                             const v8::PropertyCallbackInfo<v8::Value>& info);
+  static void putprop_static(v8::Local<v8::String> property,
+                             v8::Local<v8::Value> value,
+                             const v8::PropertyCallbackInfo<v8::Value>& info);
+  static void delprop_static(v8::Local<v8::String> property,
+                             const v8::PropertyCallbackInfo<v8::Boolean>& info);
+  static void DefineAllProperties(CFXJS_Engine* pEngine);
+
+  static void setPersistent_static(
+      const v8::FunctionCallbackInfo<v8::Value>& info);
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_GLOBAL_H_

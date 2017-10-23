@@ -36,7 +36,7 @@ JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
                                          {"equal", equal_static},
                                          {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Color, color)
+IMPLEMENT_JS_CLASS(CJS_Color, color, color)
 
 color::color(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {
   m_crTransparent = CFX_Color(CFX_Color::kTransparent);

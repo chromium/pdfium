@@ -29,7 +29,7 @@ JSPropertySpec CJS_Annot::PropertySpecs[] = {
 
 JSMethodSpec CJS_Annot::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Annot, Annot)
+IMPLEMENT_JS_CLASS(CJS_Annot, Annot, Annot)
 
 Annot::Annot(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 

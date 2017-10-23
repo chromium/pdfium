@@ -10,6 +10,16 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 
+#define IMPLEMENT_JS_CLASS_CONST(js_class_name, class_name)                  \
+  IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)                    \
+  IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)                   \
+  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine,                 \
+                                      FXJSOBJTYPE eObjType) {                \
+    g_nObjDefnID = pEngine->DefineObj(js_class_name::g_pClassName, eObjType, \
+                                      nullptr, nullptr);                     \
+    DefineConsts(pEngine);                                                   \
+  }
+
 JSConstSpec CJS_Border::ConstSpecs[] = {
     {"s", JSConstSpec::String, 0, "solid"},
     {"b", JSConstSpec::String, 0, "beveled"},

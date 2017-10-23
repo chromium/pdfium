@@ -14,7 +14,8 @@ class CJS_Border : public CJS_Object {
   explicit CJS_Border(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Border() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_Display : public CJS_Object {
@@ -22,7 +23,8 @@ class CJS_Display : public CJS_Object {
   explicit CJS_Display(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Display() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_Font : public CJS_Object {
@@ -30,7 +32,8 @@ class CJS_Font : public CJS_Object {
   explicit CJS_Font(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Font() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_Highlight : public CJS_Object {
@@ -38,7 +41,8 @@ class CJS_Highlight : public CJS_Object {
   explicit CJS_Highlight(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Highlight() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_Position : public CJS_Object {
@@ -46,7 +50,8 @@ class CJS_Position : public CJS_Object {
   explicit CJS_Position(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Position() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_ScaleHow : public CJS_Object {
@@ -54,7 +59,8 @@ class CJS_ScaleHow : public CJS_Object {
   explicit CJS_ScaleHow(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_ScaleHow() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_ScaleWhen : public CJS_Object {
@@ -62,7 +68,8 @@ class CJS_ScaleWhen : public CJS_Object {
   explicit CJS_ScaleWhen(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_ScaleWhen() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_Style : public CJS_Object {
@@ -70,7 +77,8 @@ class CJS_Style : public CJS_Object {
   explicit CJS_Style(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Style() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_Zoomtype : public CJS_Object {
@@ -78,7 +86,8 @@ class CJS_Zoomtype : public CJS_Object {
   explicit CJS_Zoomtype(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Zoomtype() override {}
 
-  DECLARE_JS_CLASS_CONST();
+  DECLARE_JS_CLASS_BASE_PART();
+  DECLARE_JS_CLASS_CONST_PART();
 };
 
 class CJS_GlobalConsts : public CJS_Object {

@@ -18,7 +18,7 @@ JSPropertySpec CJS_Icon::PropertySpecs[] = {
 
 JSMethodSpec CJS_Icon::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Icon, Icon)
+IMPLEMENT_JS_CLASS(CJS_Icon, Icon, Icon)
 
 Icon::Icon(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_swIconName(L"") {}

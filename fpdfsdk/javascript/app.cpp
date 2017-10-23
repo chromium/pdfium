@@ -137,7 +137,7 @@ JSPropertySpec CJS_TimerObj::PropertySpecs[] = {{0, 0, 0}};
 
 JSMethodSpec CJS_TimerObj::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_TimerObj, TimerObj)
+IMPLEMENT_JS_CLASS(CJS_TimerObj, TimerObj, TimerObj)
 
 TimerObj::TimerObj(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_nTimerID(0) {}
@@ -200,7 +200,7 @@ JSMethodSpec CJS_App::MethodSpecs[] = {{"alert", alert_static},
                                        {"setTimeOut", setTimeOut_static},
                                        {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_App, app)
+IMPLEMENT_JS_CLASS(CJS_App, app, app)
 
 app::app(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_bCalculate(true), m_bRuntimeHighLight(false) {}
