@@ -1660,7 +1660,7 @@ bool CJS_PublicMethods::AFMakeNumber(CJS_Runtime* pRuntime,
   ws.Replace(L",", L".");
   vRet = CJS_Value(pRuntime->NewString(ws.c_str()));
   vRet.MaybeCoerceToNumber(pRuntime);
-  if (vRet.GetType() != CJS_Value::VT_number)
+  if (!vRet.ToV8Value()->IsNumber())
     vRet = CJS_Value(pRuntime->NewNumber(0));
   return true;
 }
@@ -1675,7 +1675,7 @@ bool CJS_PublicMethods::AFSimple_Calculate(CJS_Runtime* pRuntime,
   }
 
   CJS_Value params1(params[1]);
-  if (!params1.IsArrayObject() && params1.GetType() != CJS_Value::VT_string) {
+  if (!params1.IsArrayObject() && !params1.ToV8Value()->IsString()) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }

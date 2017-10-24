@@ -447,7 +447,7 @@ bool Document::print(CJS_Runtime* pRuntime,
   bool bAnnotations = false;
   int nlength = params.size();
   if (nlength == 9) {
-    if (params[8].GetType() == CJS_Value::VT_object) {
+    if (params[8].ToV8Value()->IsObject()) {
       v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8].ToV8Value());
       if (CFXJS_Engine::GetObjDefnID(pObj) ==
           CJS_PrintParamsObj::g_nObjDefnID) {
@@ -584,14 +584,10 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
     return true;
   }
 
-  switch (params[0].GetType()) {
-    default:
-      aName = CJS_Array(pRuntime->ToArray(params[0].ToV8Value()));
-      break;
-    case CJS_Value::VT_string:
-      aName.SetElement(pRuntime, 0, params[0]);
-      break;
-  }
+  if (params[0].ToV8Value()->IsString())
+    aName.SetElement(pRuntime, 0, params[0]);
+  else
+    aName = CJS_Array(pRuntime->ToArray(params[0].ToV8Value()));
 
   std::vector<CPDF_FormField*> aFields;
   for (int i = 0, isz = aName.GetLength(pRuntime); i < isz; ++i) {
@@ -643,7 +639,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
   bool bFDF = true;
   bool bEmpty = false;
   CJS_Value v(params[0]);
-  if (v.GetType() == CJS_Value::VT_string) {
+  if (v.ToV8Value()->IsString()) {
     strURL = pRuntime->ToWideString(params[0].ToV8Value());
     if (nSize > 1)
       bFDF = pRuntime->ToBoolean(params[1].ToV8Value());
@@ -651,7 +647,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
       bEmpty = pRuntime->ToBoolean(params[2].ToV8Value());
     if (nSize > 3)
       aFields = CJS_Array(pRuntime->ToArray(params[3].ToV8Value()));
-  } else if (v.GetType() == CJS_Value::VT_object) {
+  } else if (v.ToV8Value()->IsObject()) {
     v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0].ToV8Value());
     v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"cURL");
     if (!pValue.IsEmpty())
@@ -737,7 +733,7 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
   if (params.size() >= 6)
     cMsg = pRuntime->ToWideString(params[5].ToV8Value());
 
-  if (params.size() >= 1 && params[0].GetType() == CJS_Value::VT_object) {
+  if (params.size() >= 1 && params[0].ToV8Value()->IsObject()) {
     v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0].ToV8Value());
     bUI = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bUI"));
     cTo = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cTo"));
@@ -1371,7 +1367,7 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
   }
 
   WideString swIconName = pRuntime->ToWideString(params[0].ToV8Value());
-  if (params[1].GetType() != CJS_Value::VT_object) {
+  if (!params[1].ToV8Value()->IsObject()) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
   }

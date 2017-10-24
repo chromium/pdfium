@@ -19,19 +19,6 @@ class CJS_Runtime;
 
 class CJS_Value {
  public:
-  enum Type {
-    VT_unknown,
-    VT_string,
-    VT_number,
-    VT_boolean,
-    VT_date,
-    VT_object,
-    VT_null,
-    VT_undefined
-  };
-
-  static Type GetValueType(v8::Local<v8::Value> value);
-
   CJS_Value();
   explicit CJS_Value(v8::Local<v8::Value> pValue);
   CJS_Value(const CJS_Value& other);
@@ -39,8 +26,6 @@ class CJS_Value {
 
   // These calls may re-enter JS (and hence invalidate objects).
   void Set(v8::Local<v8::Value> pValue);
-
-  Type GetType() const { return GetValueType(m_pValue); }
 
   v8::Local<v8::Value> ToV8Value() const;
 

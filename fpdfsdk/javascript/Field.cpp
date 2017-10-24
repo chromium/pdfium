@@ -877,7 +877,7 @@ bool Field::set_current_value_indices(CJS_Runtime* pRuntime,
     return false;
 
   std::vector<uint32_t> array;
-  if (vp.GetType() == CJS_Value::VT_number) {
+  if (vp.ToV8Value()->IsNumber()) {
     array.push_back(pRuntime->ToInt32(vp.ToV8Value()));
   } else if (vp.IsArrayObject()) {
     CJS_Array SelArray(pRuntime->ToArray(vp.ToV8Value()));

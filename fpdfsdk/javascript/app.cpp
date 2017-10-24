@@ -22,6 +22,17 @@
 #include "fpdfsdk/javascript/resource.h"
 #include "third_party/base/stl_util.h"
 
+namespace {
+
+bool IsTypeKnown(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() &&
+         (value->IsString() || value->IsNumber() || value->IsBoolean() ||
+          value->IsDate() || value->IsObject() || value->IsNull() ||
+          value->IsUndefined());
+}
+
+}  // namespace
+
 class GlobalTimer {
  public:
   GlobalTimer(app* pObj,
@@ -391,7 +402,7 @@ bool app::alert(CJS_Runtime* pRuntime,
   std::vector<CJS_Value> newParams = ExpandKeywordParams(
       pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
 
-  if (newParams[0].GetType() == CJS_Value::VT_unknown) {
+  if (!IsTypeKnown(newParams[0].ToV8Value())) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
@@ -403,7 +414,7 @@ bool app::alert(CJS_Runtime* pRuntime,
   }
 
   WideString swMsg;
-  if (newParams[0].GetType() == CJS_Value::VT_object) {
+  if (newParams[0].ToV8Value()->IsObject()) {
     if (newParams[0].IsArrayObject()) {
       CJS_Array carray(pRuntime->ToArray(newParams[0].ToV8Value()));
       swMsg = L"[";
@@ -423,15 +434,15 @@ bool app::alert(CJS_Runtime* pRuntime,
   }
 
   int iIcon = 0;
-  if (newParams[1].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[1].ToV8Value()))
     iIcon = pRuntime->ToInt32(newParams[1].ToV8Value());
 
   int iType = 0;
-  if (newParams[2].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[2].ToV8Value()))
     iType = pRuntime->ToInt32(newParams[2].ToV8Value());
 
   WideString swTitle;
-  if (newParams[3].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[3].ToV8Value()))
     swTitle = pRuntime->ToWideString(newParams[3].ToV8Value());
   else
     swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
@@ -582,7 +593,7 @@ bool app::clearInterval(CJS_Runtime* pRuntime,
 }
 
 void app::ClearTimerCommon(CJS_Runtime* pRuntime, const CJS_Value& param) {
-  if (param.GetType() != CJS_Value::VT_object)
+  if (!param.ToV8Value()->IsObject())
     return;
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(param.ToV8Value());
@@ -652,14 +663,14 @@ bool app::mailMsg(CJS_Runtime* pRuntime,
       ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
                           L"cSubject", L"cMsg");
 
-  if (newParams[0].GetType() == CJS_Value::VT_unknown) {
+  if (!IsTypeKnown(newParams[0].ToV8Value())) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
   bool bUI = pRuntime->ToBoolean(newParams[0].ToV8Value());
 
   WideString cTo;
-  if (newParams[1].GetType() != CJS_Value::VT_unknown) {
+  if (IsTypeKnown(newParams[1].ToV8Value())) {
     cTo = pRuntime->ToWideString(newParams[1].ToV8Value());
   } else {
     if (!bUI) {
@@ -670,19 +681,19 @@ bool app::mailMsg(CJS_Runtime* pRuntime,
   }
 
   WideString cCc;
-  if (newParams[2].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[2].ToV8Value()))
     cCc = pRuntime->ToWideString(newParams[2].ToV8Value());
 
   WideString cBcc;
-  if (newParams[3].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[3].ToV8Value()))
     cBcc = pRuntime->ToWideString(newParams[3].ToV8Value());
 
   WideString cSubject;
-  if (newParams[4].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[4].ToV8Value()))
     cSubject = pRuntime->ToWideString(newParams[4].ToV8Value());
 
   WideString cMsg;
-  if (newParams[5].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[5].ToV8Value()))
     cMsg = pRuntime->ToWideString(newParams[5].ToV8Value());
 
   pRuntime->BeginBlock();
@@ -773,26 +784,26 @@ bool app::response(CJS_Runtime* pRuntime,
       ExpandKeywordParams(pRuntime, params, 5, L"cQuestion", L"cTitle",
                           L"cDefault", L"bPassword", L"cLabel");
 
-  if (newParams[0].GetType() == CJS_Value::VT_unknown) {
+  if (!IsTypeKnown(newParams[0].ToV8Value())) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
   WideString swQuestion = pRuntime->ToWideString(newParams[0].ToV8Value());
 
   WideString swTitle = L"PDF";
-  if (newParams[1].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[1].ToV8Value()))
     swTitle = pRuntime->ToWideString(newParams[1].ToV8Value());
 
   WideString swDefault;
-  if (newParams[2].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[2].ToV8Value()))
     swDefault = pRuntime->ToWideString(newParams[2].ToV8Value());
 
   bool bPassword = false;
-  if (newParams[3].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[3].ToV8Value()))
     bPassword = pRuntime->ToBoolean(newParams[3].ToV8Value());
 
   WideString swLabel;
-  if (newParams[4].GetType() != CJS_Value::VT_unknown)
+  if (IsTypeKnown(newParams[4].ToV8Value()))
     swLabel = pRuntime->ToWideString(newParams[4].ToV8Value());
 
   const int MAX_INPUT_BYTES = 2048;

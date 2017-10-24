@@ -162,7 +162,7 @@ bool util::printd(CJS_Runtime* pRuntime,
     return false;
   }
 
-  if (p1.GetType() == CJS_Value::VT_number) {
+  if (p1.ToV8Value()->IsNumber()) {
     WideString swResult;
     switch (pRuntime->ToInt32(p1.ToV8Value())) {
       case 0:
@@ -194,7 +194,7 @@ bool util::printd(CJS_Runtime* pRuntime,
     return true;
   }
 
-  if (p1.GetType() == CJS_Value::VT_string) {
+  if (p1.ToV8Value()->IsString()) {
     if (iSize > 2 && pRuntime->ToBoolean(params[2].ToV8Value())) {
       sError = JSGetStringFromID(IDS_STRING_JSNOTSUPPORT);
       return false;  // currently, it doesn't support XFAPicture.

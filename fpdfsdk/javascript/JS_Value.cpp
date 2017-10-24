@@ -196,7 +196,7 @@ v8::Local<v8::Value> CJS_Value::ToV8Value() const {
 
 void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
   bool bAllowNaN = false;
-  if (GetType() == VT_string) {
+  if (ToV8Value()->IsString()) {
     ByteString bstr =
         ByteString::FromUnicode(pRuntime->ToWideString(ToV8Value()));
     if (bstr.GetLength() == 0)
@@ -214,27 +214,6 @@ void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
   if (std::isnan(num->Value()) && !bAllowNaN)
     return;
   m_pValue = num;
-}
-
-// static
-CJS_Value::Type CJS_Value::GetValueType(v8::Local<v8::Value> value) {
-  if (value.IsEmpty())
-    return VT_unknown;
-  if (value->IsString())
-    return VT_string;
-  if (value->IsNumber())
-    return VT_number;
-  if (value->IsBoolean())
-    return VT_boolean;
-  if (value->IsDate())
-    return VT_date;
-  if (value->IsObject())
-    return VT_object;
-  if (value->IsNull())
-    return VT_null;
-  if (value->IsUndefined())
-    return VT_undefined;
-  return VT_unknown;
 }
 
 bool CJS_Value::IsArrayObject() const {
@@ -456,7 +435,7 @@ std::vector<CJS_Value> ExpandKeywordParams(
   for (size_t i = 0; i < size; ++i)
     result[i] = originals[i];
 
-  if (originals.size() != 1 || originals[0].GetType() != CJS_Value::VT_object ||
+  if (originals.size() != 1 || !originals[0].ToV8Value()->IsObject() ||
       originals[0].IsArrayObject()) {
     return result;
   }

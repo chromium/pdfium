@@ -61,7 +61,7 @@ bool event::set_change(CJS_Runtime* pRuntime,
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (vp.GetType() == CJS_Value::VT_string) {
+  if (vp.ToV8Value()->IsString()) {
     WideString& wChange = pEvent->Change();
     wChange = pRuntime->ToWideString(vp.ToV8Value());
   }
