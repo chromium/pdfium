@@ -63,7 +63,7 @@ bool event::set_change(CJS_Runtime* pRuntime,
 
   if (vp.GetType() == CJS_Value::VT_string) {
     WideString& wChange = pEvent->Change();
-    wChange = vp.ToWideString(pRuntime);
+    wChange = pRuntime->ToWideString(vp.ToV8Value());
   }
   return true;
 }
@@ -174,7 +174,7 @@ bool event::set_rc(CJS_Runtime* pRuntime,
                    WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  pEvent->Rc() = vp.ToBool(pRuntime);
+  pEvent->Rc() = pRuntime->ToBoolean(vp.ToV8Value());
   return true;
 }
 
@@ -236,7 +236,7 @@ bool event::set_sel_end(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
 
-  pEvent->SelEnd() = vp.ToInt(pRuntime);
+  pEvent->SelEnd() = pRuntime->ToInt32(vp.ToV8Value());
   return true;
 }
 
@@ -262,7 +262,7 @@ bool event::set_sel_start(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
 
-  pEvent->SelStart() = vp.ToInt(pRuntime);
+  pEvent->SelStart() = pRuntime->ToInt32(vp.ToV8Value());
   return true;
 }
 
@@ -367,7 +367,7 @@ bool event::set_value(CJS_Runtime* pRuntime,
   if (!pEvent->m_pValue)
     return false;
 
-  pEvent->Value() = vp.ToWideString(pRuntime);
+  pEvent->Value() = pRuntime->ToWideString(vp.ToV8Value());
   return true;
 }
 

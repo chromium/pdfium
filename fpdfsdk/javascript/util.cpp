@@ -81,7 +81,8 @@ bool util::printf(CJS_Runtime* pRuntime,
   if (iSize < 1)
     return false;
 
-  std::wstring unsafe_fmt_string(params[0].ToWideString(pRuntime).c_str());
+  std::wstring unsafe_fmt_string(
+      pRuntime->ToWideString(params[0].ToV8Value()).c_str());
   std::vector<std::wstring> unsafe_conversion_specifiers;
   int iOffset = 0;
   int iOffend = 0;
@@ -114,15 +115,17 @@ bool util::printf(CJS_Runtime* pRuntime,
     WideString strSegment;
     switch (ParseDataType(&c_strFormat)) {
       case UTIL_INT:
-        strSegment.Format(c_strFormat.c_str(), params[iIndex].ToInt(pRuntime));
+        strSegment.Format(c_strFormat.c_str(),
+                          pRuntime->ToInt32(params[iIndex].ToV8Value()));
         break;
       case UTIL_DOUBLE:
         strSegment.Format(c_strFormat.c_str(),
-                          params[iIndex].ToDouble(pRuntime));
+                          pRuntime->ToDouble(params[iIndex].ToV8Value()));
         break;
       case UTIL_STRING:
-        strSegment.Format(c_strFormat.c_str(),
-                          params[iIndex].ToWideString(pRuntime).c_str());
+        strSegment.Format(
+            c_strFormat.c_str(),
+            pRuntime->ToWideString(params[iIndex].ToV8Value()).c_str());
         break;
       default:
         strSegment.Format(L"%ls", c_strFormat.c_str());
@@ -151,7 +154,9 @@ bool util::printd(CJS_Runtime* pRuntime,
     return false;
   }
 
-  CJS_Date jsDate = p2.ToDate();
+  ASSERT(p2.IsDateObject());
+  v8::Local<v8::Value> mutable_value = p2.ToV8Value();
+  CJS_Date jsDate(mutable_value.As<v8::Date>());
   if (!jsDate.IsValidDate(pRuntime)) {
     sError = JSGetStringFromID(IDS_STRING_JSPRINT2);
     return false;
@@ -159,7 +164,7 @@ bool util::printd(CJS_Runtime* pRuntime,
 
   if (p1.GetType() == CJS_Value::VT_number) {
     WideString swResult;
-    switch (p1.ToInt(pRuntime)) {
+    switch (pRuntime->ToInt32(p1.ToV8Value())) {
       case 0:
         swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", jsDate.GetYear(pRuntime),
                         jsDate.GetMonth(pRuntime) + 1, jsDate.GetDay(pRuntime),
@@ -190,14 +195,15 @@ bool util::printd(CJS_Runtime* pRuntime,
   }
 
   if (p1.GetType() == CJS_Value::VT_string) {
-    if (iSize > 2 && params[2].ToBool(pRuntime)) {
+    if (iSize > 2 && pRuntime->ToBoolean(params[2].ToV8Value())) {
       sError = JSGetStringFromID(IDS_STRING_JSNOTSUPPORT);
       return false;  // currently, it doesn't support XFAPicture.
     }
 
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
-    std::basic_string<wchar_t> cFormat = p1.ToWideString(pRuntime).c_str();
+    std::basic_string<wchar_t> cFormat =
+        pRuntime->ToWideString(p1.ToV8Value()).c_str();
     cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                   cFormat.end());
 
@@ -276,9 +282,10 @@ bool util::printx(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vRet = CJS_Value(pRuntime->NewString(
-      printx(params[0].ToWideString(pRuntime), params[1].ToWideString(pRuntime))
-          .c_str()));
+  vRet = CJS_Value(
+      pRuntime->NewString(printx(pRuntime->ToWideString(params[0].ToV8Value()),
+                                 pRuntime->ToWideString(params[1].ToV8Value()))
+                              .c_str()));
 
   return true;
 }
@@ -388,15 +395,15 @@ bool util::scand(CJS_Runtime* pRuntime,
   if (params.size() < 2)
     return false;
 
-  WideString sFormat = params[0].ToWideString(pRuntime);
-  WideString sDate = params[1].ToWideString(pRuntime);
+  WideString sFormat = pRuntime->ToWideString(params[0].ToV8Value());
+  WideString sDate = pRuntime->ToWideString(params[1].ToV8Value());
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0) {
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
   }
 
   if (!std::isnan(dDate)) {
-    vRet = CJS_Value(CJS_Date(pRuntime, dDate).ToV8Date());
+    vRet = CJS_Value(CJS_Date(pRuntime, dDate).ToV8Value());
   } else {
     vRet.Set(pRuntime->NewNull());
   }
@@ -413,7 +420,7 @@ bool util::byteToChar(CJS_Runtime* pRuntime,
     return false;
   }
 
-  int arg = params[0].ToInt(pRuntime);
+  int arg = pRuntime->ToInt32(params[0].ToV8Value());
   if (arg < 0 || arg > 255) {
     sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
     return false;

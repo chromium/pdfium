@@ -52,7 +52,8 @@ bool Annot::get_hidden(CJS_Runtime* pRuntime,
 bool Annot::set_hidden(CJS_Runtime* pRuntime,
                        const CJS_Value& vp,
                        WideString* sError) {
-  bool bHidden = vp.ToBool(pRuntime);  // May invalidate m_pAnnot.
+  // May invalidate m_pAnnot.
+  bool bHidden = pRuntime->ToBoolean(vp.ToV8Value());
   if (!m_pAnnot) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -89,7 +90,8 @@ bool Annot::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 bool Annot::set_name(CJS_Runtime* pRuntime,
                      const CJS_Value& vp,
                      WideString* sError) {
-  WideString annotName = vp.ToWideString(pRuntime);  // May invalidate m_pAnnot.
+  // May invalidate m_pAnnot.
+  WideString annotName = pRuntime->ToWideString(vp.ToV8Value());
   if (!m_pAnnot) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;

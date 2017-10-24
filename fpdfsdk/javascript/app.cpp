@@ -220,10 +220,14 @@ bool app::get_active_docs(CJS_Runtime* pRuntime,
   aDocs.SetElement(
       pRuntime, 0,
       pJSDocument ? CJS_Value(pJSDocument->ToV8Object()) : CJS_Value());
-  if (aDocs.GetLength(pRuntime) > 0)
-    vp->Set(aDocs.ToV8Array(pRuntime));
-  else
+  if (aDocs.GetLength(pRuntime) > 0) {
+    if (aDocs.ToV8Value().IsEmpty())
+      vp->Set(pRuntime->NewArray());
+    else
+      vp->Set(aDocs.ToV8Value());
+  } else {
     vp->Set(pRuntime->NewNull());
+  }
 
   return true;
 }
@@ -244,7 +248,7 @@ bool app::get_calculate(CJS_Runtime* pRuntime,
 bool app::set_calculate(CJS_Runtime* pRuntime,
                         const CJS_Value& vp,
                         WideString* sError) {
-  m_bCalculate = vp.ToBool(pRuntime);
+  m_bCalculate = pRuntime->ToBoolean(vp.ToV8Value());
   pRuntime->GetFormFillEnv()->GetInterForm()->EnableCalculate(m_bCalculate);
   return true;
 }
@@ -401,34 +405,34 @@ bool app::alert(CJS_Runtime* pRuntime,
   WideString swMsg;
   if (newParams[0].GetType() == CJS_Value::VT_object) {
     if (newParams[0].IsArrayObject()) {
-      CJS_Array carray = newParams[0].ToArray(pRuntime);
+      CJS_Array carray(pRuntime->ToArray(newParams[0].ToV8Value()));
       swMsg = L"[";
       for (int i = 0; i < carray.GetLength(pRuntime); ++i) {
         if (i)
           swMsg += L", ";
 
         CJS_Value element(carray.GetElement(pRuntime, i));
-        swMsg += element.ToWideString(pRuntime);
+        swMsg += pRuntime->ToWideString(element.ToV8Value());
       }
       swMsg += L"]";
     } else {
-      swMsg = newParams[0].ToWideString(pRuntime);
+      swMsg = pRuntime->ToWideString(newParams[0].ToV8Value());
     }
   } else {
-    swMsg = newParams[0].ToWideString(pRuntime);
+    swMsg = pRuntime->ToWideString(newParams[0].ToV8Value());
   }
 
   int iIcon = 0;
   if (newParams[1].GetType() != CJS_Value::VT_unknown)
-    iIcon = newParams[1].ToInt(pRuntime);
+    iIcon = pRuntime->ToInt32(newParams[1].ToV8Value());
 
   int iType = 0;
   if (newParams[2].GetType() != CJS_Value::VT_unknown)
-    iType = newParams[2].ToInt(pRuntime);
+    iType = pRuntime->ToInt32(newParams[2].ToV8Value());
 
   WideString swTitle;
   if (newParams[3].GetType() != CJS_Value::VT_unknown)
-    swTitle = newParams[3].ToWideString(pRuntime);
+    swTitle = pRuntime->ToWideString(newParams[3].ToV8Value());
   else
     swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
 
@@ -446,7 +450,8 @@ bool app::beep(CJS_Runtime* pRuntime,
                CJS_Value& vRet,
                WideString& sError) {
   if (params.size() == 1) {
-    pRuntime->GetFormFillEnv()->JS_appBeep(params[0].ToInt(pRuntime));
+    pRuntime->GetFormFillEnv()->JS_appBeep(
+        pRuntime->ToInt32(params[0].ToV8Value()));
     return true;
   }
 
@@ -488,13 +493,14 @@ bool app::setInterval(CJS_Runtime* pRuntime,
   }
 
   WideString script =
-      params.size() > 0 ? params[0].ToWideString(pRuntime) : L"";
+      params.size() > 0 ? pRuntime->ToWideString(params[0].ToV8Value()) : L"";
   if (script.IsEmpty()) {
     sError = JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE);
     return true;
   }
 
-  uint32_t dwInterval = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
+  uint32_t dwInterval =
+      params.size() > 1 ? pRuntime->ToInt32(params[1].ToV8Value()) : 1000;
 
   GlobalTimer* timerRef = new GlobalTimer(this, pRuntime->GetFormFillEnv(),
                                           pRuntime, 0, script, dwInterval, 0);
@@ -523,13 +529,14 @@ bool app::setTimeOut(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString script = params[0].ToWideString(pRuntime);
+  WideString script = pRuntime->ToWideString(params[0].ToV8Value());
   if (script.IsEmpty()) {
     sError = JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE);
     return true;
   }
 
-  uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt(pRuntime) : 1000;
+  uint32_t dwTimeOut =
+      params.size() > 1 ? pRuntime->ToInt32(params[1].ToV8Value()) : 1000;
   GlobalTimer* timerRef =
       new GlobalTimer(this, pRuntime->GetFormFillEnv(), pRuntime, 1, script,
                       dwTimeOut, dwTimeOut);
@@ -578,11 +585,12 @@ void app::ClearTimerCommon(CJS_Runtime* pRuntime, const CJS_Value& param) {
   if (param.GetType() != CJS_Value::VT_object)
     return;
 
-  v8::Local<v8::Object> pObj = param.ToV8Object(pRuntime);
+  v8::Local<v8::Object> pObj = pRuntime->ToObject(param.ToV8Value());
   if (CFXJS_Engine::GetObjDefnID(pObj) != CJS_TimerObj::g_nObjDefnID)
     return;
 
-  CJS_Object* pJSObj = param.ToObject(pRuntime);
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
   if (!pJSObj)
     return;
 
@@ -648,11 +656,11 @@ bool app::mailMsg(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
-  bool bUI = newParams[0].ToBool(pRuntime);
+  bool bUI = pRuntime->ToBoolean(newParams[0].ToV8Value());
 
   WideString cTo;
   if (newParams[1].GetType() != CJS_Value::VT_unknown) {
-    cTo = newParams[1].ToWideString(pRuntime);
+    cTo = pRuntime->ToWideString(newParams[1].ToV8Value());
   } else {
     if (!bUI) {
       // cTo parameter required when UI not invoked.
@@ -663,19 +671,19 @@ bool app::mailMsg(CJS_Runtime* pRuntime,
 
   WideString cCc;
   if (newParams[2].GetType() != CJS_Value::VT_unknown)
-    cCc = newParams[2].ToWideString(pRuntime);
+    cCc = pRuntime->ToWideString(newParams[2].ToV8Value());
 
   WideString cBcc;
   if (newParams[3].GetType() != CJS_Value::VT_unknown)
-    cBcc = newParams[3].ToWideString(pRuntime);
+    cBcc = pRuntime->ToWideString(newParams[3].ToV8Value());
 
   WideString cSubject;
   if (newParams[4].GetType() != CJS_Value::VT_unknown)
-    cSubject = newParams[4].ToWideString(pRuntime);
+    cSubject = pRuntime->ToWideString(newParams[4].ToV8Value());
 
   WideString cMsg;
   if (newParams[5].GetType() != CJS_Value::VT_unknown)
-    cMsg = newParams[5].ToWideString(pRuntime);
+    cMsg = pRuntime->ToWideString(newParams[5].ToV8Value());
 
   pRuntime->BeginBlock();
   pRuntime->GetFormFillEnv()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
@@ -703,7 +711,7 @@ bool app::get_runtime_highlight(CJS_Runtime* pRuntime,
 bool app::set_runtime_highlight(CJS_Runtime* pRuntime,
                                 const CJS_Value& vp,
                                 WideString* sError) {
-  m_bRuntimeHighLight = vp.ToBool(pRuntime);
+  m_bRuntimeHighLight = pRuntime->ToBoolean(vp.ToV8Value());
   return true;
 }
 
@@ -769,23 +777,23 @@ bool app::response(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
-  WideString swQuestion = newParams[0].ToWideString(pRuntime);
+  WideString swQuestion = pRuntime->ToWideString(newParams[0].ToV8Value());
 
   WideString swTitle = L"PDF";
   if (newParams[1].GetType() != CJS_Value::VT_unknown)
-    swTitle = newParams[1].ToWideString(pRuntime);
+    swTitle = pRuntime->ToWideString(newParams[1].ToV8Value());
 
   WideString swDefault;
   if (newParams[2].GetType() != CJS_Value::VT_unknown)
-    swDefault = newParams[2].ToWideString(pRuntime);
+    swDefault = pRuntime->ToWideString(newParams[2].ToV8Value());
 
   bool bPassword = false;
   if (newParams[3].GetType() != CJS_Value::VT_unknown)
-    bPassword = newParams[3].ToBool(pRuntime);
+    bPassword = pRuntime->ToBoolean(newParams[3].ToV8Value());
 
   WideString swLabel;
   if (newParams[4].GetType() != CJS_Value::VT_unknown)
-    swLabel = newParams[4].ToWideString(pRuntime);
+    swLabel = pRuntime->ToWideString(newParams[4].ToV8Value());
 
   const int MAX_INPUT_BYTES = 2048;
   std::vector<uint8_t> pBuff(MAX_INPUT_BYTES + 2);

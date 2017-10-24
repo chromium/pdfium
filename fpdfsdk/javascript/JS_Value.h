@@ -42,18 +42,6 @@ class CJS_Value {
 
   Type GetType() const { return GetValueType(m_pValue); }
 
-  int ToInt(CJS_Runtime* pRuntime) const;
-  bool ToBool(CJS_Runtime* pRuntime) const;
-  double ToDouble(CJS_Runtime* pRuntime) const;
-  float ToFloat(CJS_Runtime* pRuntime) const;
-  CJS_Object* ToObject(CJS_Runtime* pRuntime) const;
-  CJS_Document* ToDocument(CJS_Runtime* pRuntime) const;
-  CJS_Array ToArray(CJS_Runtime* pRuntime) const;
-  CJS_Date ToDate() const;
-  WideString ToWideString(CJS_Runtime* pRuntime) const;
-  ByteString ToByteString(CJS_Runtime* pRuntime) const;
-  v8::Local<v8::Object> ToV8Object(CJS_Runtime* pRuntime) const;
-  v8::Local<v8::Array> ToV8Array(CJS_Runtime* pRuntime) const;
   v8::Local<v8::Value> ToV8Value() const;
 
   // Replace the current |m_pValue| with a v8::Number if possible
@@ -82,7 +70,7 @@ class CJS_Array {
                   unsigned index,
                   const CJS_Value& value);
 
-  v8::Local<v8::Array> ToV8Array(CJS_Runtime* pRuntime) const;
+  v8::Local<v8::Value> ToV8Value() const { return m_pArray; }
 
  private:
   mutable v8::Local<v8::Array> m_pArray;
@@ -112,10 +100,9 @@ class CJS_Date {
   int GetMinutes(CJS_Runtime* pRuntime) const;
   int GetSeconds(CJS_Runtime* pRuntime) const;
 
-  v8::Local<v8::Date> ToV8Date() const;
-  WideString ToWideString(int style) const;
+  v8::Local<v8::Value> ToV8Value() const { return m_pDate; }
 
- protected:
+ private:
   v8::Local<v8::Date> m_pDate;
 };
 

@@ -471,11 +471,13 @@ bool Field::set_border_style(CJS_Runtime* pRuntime,
   if (!m_bCanSet)
     return false;
 
+  ByteString byte_str =
+      ByteString::FromUnicode(pRuntime->ToWideString(vp.ToV8Value()));
   if (m_bDelay) {
-    AddDelay_String(FP_BORDERSTYLE, vp.ToByteString(pRuntime));
+    AddDelay_String(FP_BORDERSTYLE, byte_str);
   } else {
     Field::SetBorderStyle(m_pFormFillEnv.Get(), m_FieldName,
-                          m_nFormControlIndex, vp.ToByteString(pRuntime));
+                          m_nFormControlIndex, byte_str);
   }
   return true;
 }
@@ -860,7 +862,10 @@ bool Field::get_current_value_indices(CJS_Runtime* pRuntime,
         pRuntime, i,
         CJS_Value(pRuntime->NewNumber(pFormField->GetSelectedIndex(i))));
   }
-  vp->Set(SelArray.ToV8Array(pRuntime));
+  if (SelArray.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(SelArray.ToV8Value());
 
   return true;
 }
@@ -873,11 +878,12 @@ bool Field::set_current_value_indices(CJS_Runtime* pRuntime,
 
   std::vector<uint32_t> array;
   if (vp.GetType() == CJS_Value::VT_number) {
-    array.push_back(vp.ToInt(pRuntime));
+    array.push_back(pRuntime->ToInt32(vp.ToV8Value()));
   } else if (vp.IsArrayObject()) {
-    CJS_Array SelArray = vp.ToArray(pRuntime);
+    CJS_Array SelArray(pRuntime->ToArray(vp.ToV8Value()));
     for (int i = 0, sz = SelArray.GetLength(pRuntime); i < sz; i++)
-      array.push_back(SelArray.GetElement(pRuntime, i).ToInt(pRuntime));
+      array.push_back(
+          pRuntime->ToInt32(SelArray.GetElement(pRuntime, i).ToV8Value()));
   }
 
   if (m_bDelay) {
@@ -1027,7 +1033,7 @@ bool Field::set_delay(CJS_Runtime* pRuntime,
   if (!m_bCanSet)
     return false;
 
-  SetDelay(vp.ToBool(pRuntime));
+  SetDelay(pRuntime->ToBoolean(vp.ToV8Value()));
   return true;
 }
 
@@ -1070,10 +1076,10 @@ bool Field::set_display(CJS_Runtime* pRuntime,
     return false;
 
   if (m_bDelay) {
-    AddDelay_Int(FP_DISPLAY, vp.ToInt(pRuntime));
+    AddDelay_Int(FP_DISPLAY, pRuntime->ToInt32(vp.ToV8Value()));
   } else {
     Field::SetDisplay(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex,
-                      vp.ToInt(pRuntime));
+                      pRuntime->ToInt32(vp.ToV8Value()));
   }
   return true;
 }
@@ -1160,13 +1166,14 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
     return false;
   }
 
-  CJS_Array ExportValusArray;
+  CJS_Array ExportValuesArray;
   if (m_nFormControlIndex < 0) {
     for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
       CPDF_FormControl* pFormControl = pFormField->GetControl(i);
-      ExportValusArray.SetElement(pRuntime, i,
-                                  CJS_Value(pRuntime->NewString(
-                                      pFormControl->GetExportValue().c_str())));
+      ExportValuesArray.SetElement(
+          pRuntime, i,
+          CJS_Value(
+              pRuntime->NewString(pFormControl->GetExportValue().c_str())));
     }
   } else {
     if (m_nFormControlIndex >= pFormField->CountControls())
@@ -1177,12 +1184,16 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
     if (!pFormControl)
       return false;
 
-    ExportValusArray.SetElement(
+    ExportValuesArray.SetElement(
         pRuntime, 0,
         CJS_Value(pRuntime->NewString(pFormControl->GetExportValue().c_str())));
   }
 
-  vp->Set(ExportValusArray.ToV8Array(pRuntime));
+  if (ExportValuesArray.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(ExportValuesArray.ToV8Value());
+
   return true;
 }
 
@@ -1269,7 +1280,12 @@ bool Field::get_fill_color(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(color::ConvertPWLColorToArray(pRuntime, color).ToV8Array(pRuntime));
+  CJS_Array array = color::ConvertPWLColorToArray(pRuntime, color);
+  if (array.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(array.ToV8Value());
+
   return true;
 }
 
@@ -1315,10 +1331,10 @@ bool Field::set_hidden(CJS_Runtime* pRuntime,
     return false;
 
   if (m_bDelay) {
-    AddDelay_Bool(FP_HIDDEN, vp.ToBool(pRuntime));
+    AddDelay_Bool(FP_HIDDEN, pRuntime->ToBoolean(vp.ToV8Value()));
   } else {
     Field::SetHidden(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex,
-                     vp.ToBool(pRuntime));
+                     pRuntime->ToBoolean(vp.ToV8Value()));
   }
   return true;
 }
@@ -1409,10 +1425,10 @@ bool Field::set_line_width(CJS_Runtime* pRuntime,
     return false;
 
   if (m_bDelay) {
-    AddDelay_Int(FP_LINEWIDTH, vp.ToInt(pRuntime));
+    AddDelay_Int(FP_LINEWIDTH, pRuntime->ToInt32(vp.ToV8Value()));
   } else {
     Field::SetLineWidth(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex,
-                        vp.ToInt(pRuntime));
+                        pRuntime->ToInt32(vp.ToV8Value()));
   }
   return true;
 }
@@ -1578,7 +1594,11 @@ bool Field::get_page(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
     ++i;
   }
 
-  vp->Set(PageArray.ToV8Array(pRuntime));
+  if (PageArray.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(PageArray.ToV8Value());
+
   return true;
 }
 
@@ -1650,7 +1670,7 @@ bool Field::set_print(CJS_Runtime* pRuntime,
           if (CPDFSDK_Widget* pWidget =
                   pInterForm->GetWidget(pFormField->GetControl(i))) {
             uint32_t dwFlags = pWidget->GetFlags();
-            if (vp.ToBool(pRuntime))
+            if (pRuntime->ToBoolean(vp.ToV8Value()))
               dwFlags |= ANNOTFLAG_PRINT;
             else
               dwFlags &= ~ANNOTFLAG_PRINT;
@@ -1674,7 +1694,7 @@ bool Field::set_print(CJS_Runtime* pRuntime,
               pFormField->GetControl(m_nFormControlIndex)) {
         if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
           uint32_t dwFlags = pWidget->GetFlags();
-          if (vp.ToBool(pRuntime))
+          if (pRuntime->ToBoolean(vp.ToV8Value()))
             dwFlags |= ANNOTFLAG_PRINT;
           else
             dwFlags &= ~ANNOTFLAG_PRINT;
@@ -1763,7 +1783,12 @@ bool Field::get_rect(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   rcArray.SetElement(
       pRuntime, 3,
       CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.bottom))));
-  vp->Set(rcArray.ToV8Array(pRuntime));
+
+  if (rcArray.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(rcArray.ToV8Value());
+
   return true;
 }
 
@@ -1775,16 +1800,16 @@ bool Field::set_rect(CJS_Runtime* pRuntime,
   if (!vp.IsArrayObject())
     return false;
 
-  CJS_Array rcArray = vp.ToArray(pRuntime);
+  CJS_Array rcArray(pRuntime->ToArray(vp.ToV8Value()));
   float pArray[4];
-  pArray[0] =
-      static_cast<float>(rcArray.GetElement(pRuntime, 0).ToInt(pRuntime));
-  pArray[1] =
-      static_cast<float>(rcArray.GetElement(pRuntime, 1).ToInt(pRuntime));
-  pArray[2] =
-      static_cast<float>(rcArray.GetElement(pRuntime, 2).ToInt(pRuntime));
-  pArray[3] =
-      static_cast<float>(rcArray.GetElement(pRuntime, 3).ToInt(pRuntime));
+  pArray[0] = static_cast<float>(
+      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 0).ToV8Value()));
+  pArray[1] = static_cast<float>(
+      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 1).ToV8Value()));
+  pArray[2] = static_cast<float>(
+      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 2).ToV8Value()));
+  pArray[3] = static_cast<float>(
+      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 3).ToV8Value()));
 
   CFX_FloatRect crRect(pArray);
   if (m_bDelay) {
@@ -1978,7 +2003,12 @@ bool Field::get_stroke_color(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(color::ConvertPWLColorToArray(pRuntime, color).ToV8Array(pRuntime));
+  CJS_Array array = color::ConvertPWLColorToArray(pRuntime, color);
+  if (array.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(array.ToV8Value());
+
   return true;
 }
 
@@ -2087,7 +2117,12 @@ bool Field::get_text_color(CJS_Runtime* pRuntime,
   if (iColorType == CFX_Color::kTransparent)
     crRet = CFX_Color(CFX_Color::kTransparent);
 
-  vp->Set(color::ConvertPWLColorToArray(pRuntime, crRet).ToV8Array(pRuntime));
+  CJS_Array array = color::ConvertPWLColorToArray(pRuntime, crRet);
+  if (array.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(array.ToV8Value());
+
   return true;
 }
 
@@ -2137,9 +2172,8 @@ bool Field::set_text_font(CJS_Runtime* pRuntime,
 
   if (!m_bCanSet)
     return false;
-
-  ByteString fontName = vp.ToByteString(pRuntime);
-  return !fontName.IsEmpty();
+  return !ByteString::FromUnicode(pRuntime->ToWideString(vp.ToV8Value()))
+              .IsEmpty();
 }
 
 bool Field::get_text_size(CJS_Runtime* pRuntime,
@@ -2259,13 +2293,19 @@ bool Field::get_value(CJS_Runtime* pRuntime,
           iIndex = pFormField->GetSelectedIndex(i);
           ElementValue = CJS_Value(
               pRuntime->NewString(pFormField->GetOptionValue(iIndex).c_str()));
-          if (wcslen(ElementValue.ToWideString(pRuntime).c_str()) == 0) {
+          if (wcslen(
+                  pRuntime->ToWideString(ElementValue.ToV8Value()).c_str()) ==
+              0) {
             ElementValue = CJS_Value(pRuntime->NewString(
                 pFormField->GetOptionLabel(iIndex).c_str()));
           }
           ValueArray.SetElement(pRuntime, i, ElementValue);
         }
-        vp->Set(ValueArray.ToV8Array(pRuntime));
+
+        if (ValueArray.ToV8Value().IsEmpty())
+          vp->Set(pRuntime->NewArray());
+        else
+          vp->Set(ValueArray.ToV8Value());
       } else {
         vp->Set(pRuntime->NewString(pFormField->GetValue().c_str()));
       }
@@ -2303,13 +2343,13 @@ bool Field::set_value(CJS_Runtime* pRuntime,
 
   std::vector<WideString> strArray;
   if (vp.IsArrayObject()) {
-    CJS_Array ValueArray(vp.ToArray(pRuntime));
+    CJS_Array ValueArray(pRuntime->ToArray(vp.ToV8Value()));
     for (int i = 0, sz = ValueArray.GetLength(pRuntime); i < sz; i++) {
       CJS_Value ElementValue(ValueArray.GetElement(pRuntime, i));
-      strArray.push_back(ElementValue.ToWideString(pRuntime));
+      strArray.push_back(pRuntime->ToWideString(ElementValue.ToV8Value()));
     }
   } else {
-    strArray.push_back(vp.ToWideString(pRuntime));
+    strArray.push_back(pRuntime->ToWideString(vp.ToV8Value()));
   }
 
   if (m_bDelay) {
@@ -2453,7 +2493,7 @@ bool Field::buttonGetCaption(CJS_Runtime* pRuntime,
   int nface = 0;
   int iSize = params.size();
   if (iSize >= 1)
-    nface = params[0].ToInt(pRuntime);
+    nface = pRuntime->ToInt32(params[0].ToV8Value());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2487,7 +2527,7 @@ bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
                           CJS_Value& vRet,
                           WideString& sError) {
   if (params.size() >= 1) {
-    int nFace = params[0].ToInt(pRuntime);
+    int nFace = pRuntime->ToInt32(params[0].ToV8Value());
     if (nFace < 0 || nFace > 2)
       return false;
   }
@@ -2548,10 +2588,10 @@ bool Field::checkThisBox(CJS_Runtime* pRuntime,
   if (!m_bCanSet)
     return false;
 
-  int nWidget = params[0].ToInt(pRuntime);
+  int nWidget = pRuntime->ToInt32(params[0].ToV8Value());
   bool bCheckit = true;
   if (iSize >= 2)
-    bCheckit = params[1].ToBool(pRuntime);
+    bCheckit = pRuntime->ToBoolean(params[1].ToV8Value());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2592,7 +2632,7 @@ bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
   if (iSize < 1)
     return false;
 
-  int nWidget = params[0].ToInt(pRuntime);
+  int nWidget = pRuntime->ToInt32(params[0].ToV8Value());
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -2651,7 +2691,11 @@ bool Field::getArray(CJS_Runtime* pRuntime,
         pJSField ? CJS_Value(pJSField->ToV8Object()) : CJS_Value());
   }
 
-  vRet = CJS_Value(FormFieldArray.ToV8Array(pRuntime));
+  if (FormFieldArray.ToV8Value().IsEmpty())
+    vRet = CJS_Value(pRuntime->NewArray());
+  else
+    vRet = CJS_Value(FormFieldArray.ToV8Value());
+
   return true;
 }
 
@@ -2662,11 +2706,11 @@ bool Field::getItemAt(CJS_Runtime* pRuntime,
   int iSize = params.size();
   int nIdx = -1;
   if (iSize >= 1)
-    nIdx = params[0].ToInt(pRuntime);
+    nIdx = pRuntime->ToInt32(params[0].ToV8Value());
 
   bool bExport = true;
   if (iSize >= 2)
-    bExport = params[1].ToBool(pRuntime);
+    bExport = pRuntime->ToBoolean(params[1].ToV8Value());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2715,7 +2759,7 @@ bool Field::isBoxChecked(CJS_Runtime* pRuntime,
                          WideString& sError) {
   int nIndex = -1;
   if (params.size() >= 1)
-    nIndex = params[0].ToInt(pRuntime);
+    nIndex = pRuntime->ToInt32(params[0].ToV8Value());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2738,7 +2782,7 @@ bool Field::isDefaultChecked(CJS_Runtime* pRuntime,
                              WideString& sError) {
   int nIndex = -1;
   if (params.size() >= 1)
-    nIndex = params[0].ToInt(pRuntime);
+    nIndex = pRuntime->ToInt32(params[0].ToV8Value());
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())

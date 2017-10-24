@@ -328,19 +328,20 @@ bool JSGlobalAlternate::SetProperty(CJS_Runtime* pRuntime,
   switch (vp.GetType()) {
     case CJS_Value::VT_number:
       return SetGlobalVariables(sPropName, JS_GlobalDataType::NUMBER,
-                                vp.ToDouble(pRuntime), false, "",
+                                pRuntime->ToDouble(vp.ToV8Value()), false, "",
                                 v8::Local<v8::Object>(), false);
     case CJS_Value::VT_boolean:
       return SetGlobalVariables(sPropName, JS_GlobalDataType::BOOLEAN, 0,
-                                vp.ToBool(pRuntime), "",
+                                pRuntime->ToBoolean(vp.ToV8Value()), "",
                                 v8::Local<v8::Object>(), false);
     case CJS_Value::VT_string:
-      return SetGlobalVariables(sPropName, JS_GlobalDataType::STRING, 0, false,
-                                vp.ToByteString(pRuntime),
-                                v8::Local<v8::Object>(), false);
+      return SetGlobalVariables(
+          sPropName, JS_GlobalDataType::STRING, 0, false,
+          ByteString::FromUnicode(pRuntime->ToWideString(vp.ToV8Value())),
+          v8::Local<v8::Object>(), false);
     case CJS_Value::VT_object:
       return SetGlobalVariables(sPropName, JS_GlobalDataType::OBJECT, 0, false,
-                                "", vp.ToV8Object(pRuntime), false);
+                                "", pRuntime->ToObject(vp.ToV8Value()), false);
     case CJS_Value::VT_null:
       return SetGlobalVariables(sPropName, JS_GlobalDataType::NULLOBJ, 0, false,
                                 "", v8::Local<v8::Object>(), false);
@@ -361,12 +362,13 @@ bool JSGlobalAlternate::setPersistent(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
-  auto it = m_MapGlobal.find(params[0].ToByteString(pRuntime));
+  auto it = m_MapGlobal.find(
+      ByteString::FromUnicode(pRuntime->ToWideString(params[0].ToV8Value())));
   if (it == m_MapGlobal.end() || it->second->bDeleted) {
     sError = JSGetStringFromID(IDS_STRING_JSNOGLOBAL);
     return false;
   }
-  it->second->bPersistent = params[1].ToBool(pRuntime);
+  it->second->bPersistent = pRuntime->ToBoolean(params[1].ToV8Value());
   return true;
 }
 
@@ -485,7 +487,7 @@ void JSGlobalAlternate::ObjectToArray(CJS_Runtime* pRuntime,
         array.Add(pObjElement);
       } break;
       case CJS_Value::VT_string: {
-        ByteString sValue = CJS_Value(v).ToByteString(pRuntime);
+        ByteString sValue = ByteString::FromUnicode(pRuntime->ToWideString(v));
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GlobalDataType::STRING;
         pObjElement->sKey = sKey;

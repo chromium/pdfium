@@ -204,8 +204,8 @@ bool Document::set_dirty(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp.ToBool(pRuntime) ? m_pFormFillEnv->SetChangeMark()
-                      : m_pFormFillEnv->ClearChangeMark();
+  pRuntime->ToBoolean(vp.ToV8Value()) ? m_pFormFillEnv->SetChangeMark()
+                                      : m_pFormFillEnv->ClearChangeMark();
 
   return true;
 }
@@ -245,7 +245,7 @@ bool Document::set_page_num(CJS_Runtime* pRuntime,
   }
 
   int iPageCount = m_pFormFillEnv->GetPageCount();
-  int iPageNum = vp.ToInt(pRuntime);
+  int iPageNum = pRuntime->ToInt32(vp.ToV8Value());
   if (iPageNum >= 0 && iPageNum < iPageCount)
     m_pFormFillEnv->JS_docgotoPage(iPageNum);
   else if (iPageNum >= iPageCount)
@@ -308,7 +308,7 @@ bool Document::getField(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  WideString wideName = params[0].ToWideString(pRuntime);
+  WideString wideName = pRuntime->ToWideString(params[0].ToV8Value());
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (pPDFForm->CountFields(wideName) <= 0) {
@@ -344,7 +344,7 @@ bool Document::getNthFieldName(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  int nIndex = params[0].ToInt(pRuntime);
+  int nIndex = pRuntime->ToInt32(params[0].ToV8Value());
   if (nIndex < 0) {
     sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
     return false;
@@ -399,12 +399,17 @@ bool Document::mailForm(CJS_Runtime* pRuntime,
     return false;
   }
   int iLength = params.size();
-  bool bUI = iLength > 0 ? params[0].ToBool(pRuntime) : true;
-  WideString cTo = iLength > 1 ? params[1].ToWideString(pRuntime) : L"";
-  WideString cCc = iLength > 2 ? params[2].ToWideString(pRuntime) : L"";
-  WideString cBcc = iLength > 3 ? params[3].ToWideString(pRuntime) : L"";
-  WideString cSubject = iLength > 4 ? params[4].ToWideString(pRuntime) : L"";
-  WideString cMsg = iLength > 5 ? params[5].ToWideString(pRuntime) : L"";
+  bool bUI = iLength > 0 ? pRuntime->ToBoolean(params[0].ToV8Value()) : true;
+  WideString cTo =
+      iLength > 1 ? pRuntime->ToWideString(params[1].ToV8Value()) : L"";
+  WideString cCc =
+      iLength > 2 ? pRuntime->ToWideString(params[2].ToV8Value()) : L"";
+  WideString cBcc =
+      iLength > 3 ? pRuntime->ToWideString(params[3].ToV8Value()) : L"";
+  WideString cSubject =
+      iLength > 4 ? pRuntime->ToWideString(params[4].ToV8Value()) : L"";
+  WideString cMsg =
+      iLength > 5 ? pRuntime->ToWideString(params[5].ToV8Value()) : L"";
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   ByteString sTextBuf = pInterForm->ExportFormToFDFTextBuf();
   if (sTextBuf.GetLength() == 0)
@@ -443,10 +448,13 @@ bool Document::print(CJS_Runtime* pRuntime,
   int nlength = params.size();
   if (nlength == 9) {
     if (params[8].GetType() == CJS_Value::VT_object) {
-      v8::Local<v8::Object> pObj = params[8].ToV8Object(pRuntime);
+      v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8].ToV8Value());
       if (CFXJS_Engine::GetObjDefnID(pObj) ==
           CJS_PrintParamsObj::g_nObjDefnID) {
-        if (CJS_Object* pJSObj = params[8].ToObject(pRuntime)) {
+        v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8].ToV8Value());
+        CJS_Object* pJSObj =
+            static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
+        if (pJSObj) {
           if (PrintParamsObj* pprintparamsObj =
                   static_cast<PrintParamsObj*>(pJSObj->GetEmbedObject())) {
             bUI = pprintparamsObj->bUI;
@@ -463,21 +471,21 @@ bool Document::print(CJS_Runtime* pRuntime,
     }
   } else {
     if (nlength >= 1)
-      bUI = params[0].ToBool(pRuntime);
+      bUI = pRuntime->ToBoolean(params[0].ToV8Value());
     if (nlength >= 2)
-      nStart = params[1].ToInt(pRuntime);
+      nStart = pRuntime->ToInt32(params[1].ToV8Value());
     if (nlength >= 3)
-      nEnd = params[2].ToInt(pRuntime);
+      nEnd = pRuntime->ToInt32(params[2].ToV8Value());
     if (nlength >= 4)
-      bSilent = params[3].ToBool(pRuntime);
+      bSilent = pRuntime->ToBoolean(params[3].ToV8Value());
     if (nlength >= 5)
-      bShrinkToFit = params[4].ToBool(pRuntime);
+      bShrinkToFit = pRuntime->ToBoolean(params[4].ToV8Value());
     if (nlength >= 6)
-      bPrintAsImage = params[5].ToBool(pRuntime);
+      bPrintAsImage = pRuntime->ToBoolean(params[5].ToV8Value());
     if (nlength >= 7)
-      bReverse = params[6].ToBool(pRuntime);
+      bReverse = pRuntime->ToBoolean(params[6].ToV8Value());
     if (nlength >= 8)
-      bAnnotations = params[7].ToBool(pRuntime);
+      bAnnotations = pRuntime->ToBoolean(params[7].ToV8Value());
   }
 
   if (m_pFormFillEnv) {
@@ -509,7 +517,7 @@ bool Document::removeField(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return false;
   }
-  WideString sFieldName = params[0].ToWideString(pRuntime);
+  WideString sFieldName = pRuntime->ToWideString(params[0].ToV8Value());
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
@@ -578,7 +586,7 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
 
   switch (params[0].GetType()) {
     default:
-      aName = CJS_Array(params[0].ToV8Array(pRuntime));
+      aName = CJS_Array(pRuntime->ToArray(params[0].ToV8Value()));
       break;
     case CJS_Value::VT_string:
       aName.SetElement(pRuntime, 0, params[0]);
@@ -587,8 +595,8 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
 
   std::vector<CPDF_FormField*> aFields;
   for (int i = 0, isz = aName.GetLength(pRuntime); i < isz; ++i) {
-    CJS_Value valElement(aName.GetElement(pRuntime, i));
-    WideString swVal = valElement.ToWideString(pRuntime);
+    WideString swVal =
+        pRuntime->ToWideString(aName.GetElement(pRuntime, i).ToV8Value());
     for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
       aFields.push_back(pPDFForm->GetField(j, swVal));
   }
@@ -636,27 +644,23 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
   bool bEmpty = false;
   CJS_Value v(params[0]);
   if (v.GetType() == CJS_Value::VT_string) {
-    strURL = params[0].ToWideString(pRuntime);
+    strURL = pRuntime->ToWideString(params[0].ToV8Value());
     if (nSize > 1)
-      bFDF = params[1].ToBool(pRuntime);
+      bFDF = pRuntime->ToBoolean(params[1].ToV8Value());
     if (nSize > 2)
-      bEmpty = params[2].ToBool(pRuntime);
+      bEmpty = pRuntime->ToBoolean(params[2].ToV8Value());
     if (nSize > 3)
-      aFields = CJS_Array(params[3].ToV8Array(pRuntime));
+      aFields = CJS_Array(pRuntime->ToArray(params[3].ToV8Value()));
   } else if (v.GetType() == CJS_Value::VT_object) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
+    v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0].ToV8Value());
     v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"cURL");
     if (!pValue.IsEmpty())
-      strURL = CJS_Value(pValue).ToWideString(pRuntime);
+      strURL = pRuntime->ToWideString(pValue);
 
-    pValue = pRuntime->GetObjectProperty(pObj, L"bFDF");
-    bFDF = CJS_Value(pValue).ToBool(pRuntime);
-
-    pValue = pRuntime->GetObjectProperty(pObj, L"bEmpty");
-    bEmpty = CJS_Value(pValue).ToBool(pRuntime);
-
-    pValue = pRuntime->GetObjectProperty(pObj, L"aFields");
-    aFields = CJS_Array(CJS_Value(pValue).ToV8Array(pRuntime));
+    bFDF = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bFDF"));
+    bEmpty = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bEmpty"));
+    aFields = CJS_Array(
+        pRuntime->ToArray(pRuntime->GetObjectProperty(pObj, L"aFields")));
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
@@ -672,8 +676,8 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
 
   std::vector<CPDF_FormField*> fieldObjects;
   for (int i = 0, sz = aFields.GetLength(pRuntime); i < sz; ++i) {
-    CJS_Value valName(aFields.GetElement(pRuntime, i));
-    WideString sName = valName.ToWideString(pRuntime);
+    WideString sName =
+        pRuntime->ToWideString(aFields.GetElement(pRuntime, i).ToV8Value());
     CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
     for (int j = 0, jsz = pPDFForm->CountFields(sName); j < jsz; ++j) {
       CPDF_FormField* pField = pPDFForm->GetField(j, sName);
@@ -721,38 +725,27 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
   WideString cMsg = L"";
 
   if (params.size() >= 1)
-    bUI = params[0].ToBool(pRuntime);
+    bUI = pRuntime->ToBoolean(params[0].ToV8Value());
   if (params.size() >= 2)
-    cTo = params[1].ToWideString(pRuntime);
+    cTo = pRuntime->ToWideString(params[1].ToV8Value());
   if (params.size() >= 3)
-    cCc = params[2].ToWideString(pRuntime);
+    cCc = pRuntime->ToWideString(params[2].ToV8Value());
   if (params.size() >= 4)
-    cBcc = params[3].ToWideString(pRuntime);
+    cBcc = pRuntime->ToWideString(params[3].ToV8Value());
   if (params.size() >= 5)
-    cSubject = params[4].ToWideString(pRuntime);
+    cSubject = pRuntime->ToWideString(params[4].ToV8Value());
   if (params.size() >= 6)
-    cMsg = params[5].ToWideString(pRuntime);
+    cMsg = pRuntime->ToWideString(params[5].ToV8Value());
 
   if (params.size() >= 1 && params[0].GetType() == CJS_Value::VT_object) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
-
-    v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"bUI");
-    bUI = CJS_Value(pValue).ToBool(pRuntime);
-
-    pValue = pRuntime->GetObjectProperty(pObj, L"cTo");
-    cTo = CJS_Value(pValue).ToWideString(pRuntime);
-
-    pValue = pRuntime->GetObjectProperty(pObj, L"cCc");
-    cCc = CJS_Value(pValue).ToWideString(pRuntime);
-
-    pValue = pRuntime->GetObjectProperty(pObj, L"cBcc");
-    cBcc = CJS_Value(pValue).ToWideString(pRuntime);
-
-    pValue = pRuntime->GetObjectProperty(pObj, L"cSubject");
-    cSubject = CJS_Value(pValue).ToWideString(pRuntime);
-
-    pValue = pRuntime->GetObjectProperty(pObj, L"cMsg");
-    cMsg = CJS_Value(pValue).ToWideString(pRuntime);
+    v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0].ToV8Value());
+    bUI = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bUI"));
+    cTo = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cTo"));
+    cCc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cCc"));
+    cBcc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cBcc"));
+    cSubject =
+        pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cSubject"));
+    cMsg = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cMsg"));
   }
 
   pRuntime->BeginBlock();
@@ -881,7 +874,7 @@ bool Document::setPropertyInternal(CJS_Runtime* pRuntime,
     *sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return false;
   }
-  WideString csProperty = vp.ToWideString(pRuntime);
+  WideString csProperty = pRuntime->ToWideString(vp.ToV8Value());
   pDictionary->SetNewFor<CPDF_String>(propName, PDF_EncodeText(csProperty),
                                       false);
   m_pFormFillEnv->SetChangeMark();
@@ -936,7 +929,7 @@ bool Document::set_delay(CJS_Runtime* pRuntime,
     return false;
   }
 
-  m_bDelay = vp.ToBool(pRuntime);
+  m_bDelay = pRuntime->ToBoolean(vp.ToV8Value());
   if (m_bDelay) {
     m_DelayData.clear();
     return true;
@@ -1116,7 +1109,7 @@ bool Document::get_base_URL(CJS_Runtime* pRuntime,
 bool Document::set_base_URL(CJS_Runtime* pRuntime,
                             const CJS_Value& vp,
                             WideString* sError) {
-  m_cwBaseURL = vp.ToWideString(pRuntime);
+  m_cwBaseURL = pRuntime->ToWideString(vp.ToV8Value());
   return true;
 }
 
@@ -1142,7 +1135,7 @@ bool Document::set_calculate(CJS_Runtime* pRuntime,
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  pInterForm->EnableCalculate(vp.ToBool(pRuntime));
+  pInterForm->EnableCalculate(pRuntime->ToBoolean(vp.ToV8Value()));
   return true;
 }
 
@@ -1253,8 +1246,9 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  int nPageNo = params[0].ToInt(pRuntime);
-  WideString swAnnotName = params[1].ToWideString(pRuntime);
+
+  int nPageNo = pRuntime->ToInt32(params[0].ToV8Value());
+  WideString swAnnotName = pRuntime->ToWideString(params[1].ToV8Value());
   CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(nPageNo);
   if (!pPageView)
     return false;
@@ -1326,7 +1320,10 @@ bool Document::getAnnots(CJS_Runtime* pRuntime,
           pJS_Annot ? CJS_Value(pJS_Annot->ToV8Object()) : CJS_Value());
     }
   }
-  vRet = CJS_Value(annots.ToV8Array(pRuntime));
+  if (annots.ToV8Value().IsEmpty())
+    vRet = CJS_Value(pRuntime->NewArray());
+  else
+    vRet = CJS_Value(annots.ToV8Value());
   return true;
 }
 
@@ -1373,19 +1370,21 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString swIconName = params[0].ToWideString(pRuntime);
+  WideString swIconName = pRuntime->ToWideString(params[0].ToV8Value());
   if (params[1].GetType() != CJS_Value::VT_object) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
   }
 
-  v8::Local<v8::Object> pJSIcon = params[1].ToV8Object(pRuntime);
+  v8::Local<v8::Object> pJSIcon = pRuntime->ToObject(params[1].ToV8Value());
   if (CFXJS_Engine::GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
   }
 
-  if (!params[1].ToObject(pRuntime)->GetEmbedObject()) {
+  v8::Local<v8::Object> pObj = pRuntime->ToObject(params[1].ToV8Value());
+  CJS_Object* obj = static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
+  if (!obj->GetEmbedObject()) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
   }
@@ -1419,7 +1418,11 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
         pJS_Icon ? CJS_Value(pJS_Icon->ToV8Object()) : CJS_Value());
   }
 
-  vp->Set(Icons.ToV8Array(pRuntime));
+  if (Icons.ToV8Value().IsEmpty())
+    vp->Set(pRuntime->NewArray());
+  else
+    vp->Set(Icons.ToV8Value());
+
   return true;
 }
 
@@ -1439,7 +1442,7 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
     return false;
   }
 
-  WideString swIconName = params[0].ToWideString(pRuntime);
+  WideString swIconName = pRuntime->ToWideString(params[0].ToV8Value());
   auto it = std::find(m_IconNames.begin(), m_IconNames.end(), swIconName);
   if (it == m_IconNames.end())
     return false;
@@ -1531,9 +1534,12 @@ bool Document::getPageNthWord(CJS_Runtime* pRuntime,
 
   // TODO(tsepez): check maximum allowable params.
 
-  int nPageNo = params.size() > 0 ? params[0].ToInt(pRuntime) : 0;
-  int nWordNo = params.size() > 1 ? params[1].ToInt(pRuntime) : 0;
-  bool bStrip = params.size() > 2 ? params[2].ToBool(pRuntime) : true;
+  int nPageNo =
+      params.size() > 0 ? pRuntime->ToInt32(params[0].ToV8Value()) : 0;
+  int nWordNo =
+      params.size() > 1 ? pRuntime->ToInt32(params[1].ToV8Value()) : 0;
+  bool bStrip =
+      params.size() > 2 ? pRuntime->ToBoolean(params[2].ToV8Value()) : true;
 
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (!pDocument)
@@ -1601,7 +1607,8 @@ bool Document::getPageNumWords(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
     return false;
   }
-  int nPageNo = params.size() > 0 ? params[0].ToInt(pRuntime) : 0;
+  int nPageNo =
+      params.size() > 0 ? pRuntime->ToInt32(params[0].ToV8Value()) : 0;
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
     sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
@@ -1786,7 +1793,8 @@ bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  WideString wideName = params[0].ToWideString(pRuntime);
+
+  WideString wideName = pRuntime->ToWideString(params[0].ToV8Value());
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (!pDocument)
     return false;

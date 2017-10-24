@@ -190,66 +190,15 @@ void CJS_Value::Set(v8::Local<v8::Value> pValue) {
   m_pValue = pValue;
 }
 
-int CJS_Value::ToInt(CJS_Runtime* pRuntime) const {
-  return pRuntime->ToInt32(m_pValue);
-}
-
-bool CJS_Value::ToBool(CJS_Runtime* pRuntime) const {
-  return pRuntime->ToBoolean(m_pValue);
-}
-
-double CJS_Value::ToDouble(CJS_Runtime* pRuntime) const {
-  return pRuntime->ToDouble(m_pValue);
-}
-
-float CJS_Value::ToFloat(CJS_Runtime* pRuntime) const {
-  return static_cast<float>(ToDouble(pRuntime));
-}
-
-CJS_Object* CJS_Value::ToObject(CJS_Runtime* pRuntime) const {
-  v8::Local<v8::Object> pObj = pRuntime->ToObject(m_pValue);
-  return static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
-}
-
-CJS_Document* CJS_Value::ToDocument(CJS_Runtime* pRuntime) const {
-  return static_cast<CJS_Document*>(ToObject(pRuntime));
-}
-
-CJS_Array CJS_Value::ToArray(CJS_Runtime* pRuntime) const {
-  ASSERT(IsArrayObject());
-  return CJS_Array(pRuntime->ToArray(m_pValue));
-}
-
-CJS_Date CJS_Value::ToDate() const {
-  ASSERT(IsDateObject());
-  v8::Local<v8::Value> mutable_value = m_pValue;
-  return CJS_Date(mutable_value.As<v8::Date>());
-}
-
-v8::Local<v8::Object> CJS_Value::ToV8Object(CJS_Runtime* pRuntime) const {
-  return pRuntime->ToObject(m_pValue);
-}
-
-WideString CJS_Value::ToWideString(CJS_Runtime* pRuntime) const {
-  return pRuntime->ToWideString(m_pValue);
-}
-
-ByteString CJS_Value::ToByteString(CJS_Runtime* pRuntime) const {
-  return ByteString::FromUnicode(ToWideString(pRuntime));
-}
-
 v8::Local<v8::Value> CJS_Value::ToV8Value() const {
   return m_pValue;
-}
-
-v8::Local<v8::Array> CJS_Value::ToV8Array(CJS_Runtime* pRuntime) const {
-  return pRuntime->ToArray(m_pValue);
 }
 
 void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
   bool bAllowNaN = false;
   if (GetType() == VT_string) {
-    ByteString bstr = ToByteString(pRuntime);
+    ByteString bstr =
+        ByteString::FromUnicode(pRuntime->ToWideString(ToV8Value()));
     if (bstr.GetLength() == 0)
       return;
     if (bstr == "NaN")
@@ -326,13 +275,6 @@ int CJS_Array::GetLength(CJS_Runtime* pRuntime) const {
   return pRuntime->GetArrayLength(m_pArray);
 }
 
-v8::Local<v8::Array> CJS_Array::ToV8Array(CJS_Runtime* pRuntime) const {
-  if (m_pArray.IsEmpty())
-    m_pArray = pRuntime->NewArray();
-
-  return m_pArray;
-}
-
 CJS_Date::CJS_Date() {}
 
 CJS_Date::CJS_Date(v8::Local<v8::Date> pDate) : m_pDate(pDate) {}
@@ -396,10 +338,6 @@ int CJS_Date::GetSeconds(CJS_Runtime* pRuntime) const {
     return 0;
 
   return JS_GetSecFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-v8::Local<v8::Date> CJS_Date::ToV8Date() const {
-  return m_pDate;
 }
 
 double JS_GetDateTime() {
@@ -522,7 +460,7 @@ std::vector<CJS_Value> ExpandKeywordParams(
       originals[0].IsArrayObject()) {
     return result;
   }
-  v8::Local<v8::Object> pObj = originals[0].ToV8Object(pRuntime);
+  v8::Local<v8::Object> pObj = pRuntime->ToObject(originals[0].ToV8Value());
   result[0] = CJS_Value();  // Make unknown.
 
   va_list ap;
