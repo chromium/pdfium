@@ -494,3 +494,34 @@ TEST_F(FPDFTextEmbeddertest, ToUnicode) {
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbeddertest, Bug_921) {
+  EXPECT_TRUE(OpenDocument("bug_921.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  EXPECT_TRUE(textpage);
+
+  static constexpr unsigned int kData[] = {
+      1095, 1077, 1083, 1086, 1074, 1077, 1095, 1077, 1089, 1082, 1086, 1077,
+      32,   1089, 1090, 1088, 1072, 1076, 1072, 1085, 1080, 1077, 46,   32};
+  static constexpr int kStartIndex = 238;
+
+  ASSERT_EQ(268, FPDFText_CountChars(textpage));
+  for (size_t i = 0; i < FX_ArraySize(kData); ++i)
+    EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage, kStartIndex + i));
+
+  unsigned short buffer[FX_ArraySize(kData) + 1];
+  memset(buffer, 0xbd, sizeof(buffer));
+  int count =
+      FPDFText_GetText(textpage, kStartIndex, FX_ArraySize(buffer), buffer);
+  ASSERT_GT(count, 0);
+  ASSERT_EQ(FX_ArraySize(kData) + 1, static_cast<size_t>(count));
+  for (size_t i = 0; i < FX_ArraySize(kData); ++i)
+    EXPECT_EQ(kData[i], buffer[i]);
+  EXPECT_EQ(0, buffer[FX_ArraySize(kData)]);
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
