@@ -29,10 +29,6 @@ class CJS_Value {
 
   v8::Local<v8::Value> ToV8Value() const;
 
-  // Replace the current |m_pValue| with a v8::Number if possible
-  // to make one from the current |m_pValue|.
-  void MaybeCoerceToNumber(CJS_Runtime* pRuntime);
-
  private:
   v8::Local<v8::Value> m_pValue;
 };

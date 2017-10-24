@@ -1658,8 +1658,8 @@ bool CJS_PublicMethods::AFMakeNumber(CJS_Runtime* pRuntime,
 
   WideString ws = pRuntime->ToWideString(params[0].ToV8Value());
   ws.Replace(L",", L".");
-  vRet = CJS_Value(pRuntime->NewString(ws.c_str()));
-  vRet.MaybeCoerceToNumber(pRuntime);
+  vRet =
+      CJS_Value(pRuntime->MaybeCoerceToNumber(pRuntime->NewString(ws.c_str())));
   if (!vRet.ToV8Value()->IsNumber())
     vRet = CJS_Value(pRuntime->NewNumber(0));
   return true;

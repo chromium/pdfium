@@ -2331,7 +2331,7 @@ bool Field::get_value(CJS_Runtime* pRuntime,
       vp->Set(pRuntime->NewString(pFormField->GetValue().c_str()));
       break;
   }
-  vp->MaybeCoerceToNumber(pRuntime);
+  vp->Set(pRuntime->MaybeCoerceToNumber(vp->ToV8Value()));
   return true;
 }
 

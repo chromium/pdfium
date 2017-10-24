@@ -254,3 +254,28 @@ bool CJS_Runtime::SetValueByName(const ByteStringView& utf8Name,
   return true;
 }
 #endif
+
+v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
+    const v8::Local<v8::Value>& value) {
+  bool bAllowNaN = false;
+  if (value->IsString()) {
+    ByteString bstr = ByteString::FromUnicode(ToWideString(value));
+    if (bstr.GetLength() == 0)
+      return value;
+    if (bstr == "NaN")
+      bAllowNaN = true;
+  }
+
+  v8::Isolate* pIsolate = GetIsolate();
+  v8::TryCatch try_catch(pIsolate);
+  v8::MaybeLocal<v8::Number> maybeNum =
+      value->ToNumber(pIsolate->GetCurrentContext());
+  if (maybeNum.IsEmpty())
+    return value;
+
+  v8::Local<v8::Number> num = maybeNum.ToLocalChecked();
+  if (std::isnan(num->Value()) && !bAllowNaN)
+    return value;
+
+  return num;
+}

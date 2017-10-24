@@ -194,28 +194,6 @@ v8::Local<v8::Value> CJS_Value::ToV8Value() const {
   return m_pValue;
 }
 
-void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
-  bool bAllowNaN = false;
-  if (ToV8Value()->IsString()) {
-    ByteString bstr =
-        ByteString::FromUnicode(pRuntime->ToWideString(ToV8Value()));
-    if (bstr.GetLength() == 0)
-      return;
-    if (bstr == "NaN")
-      bAllowNaN = true;
-  }
-  v8::Isolate* pIsolate = pRuntime->GetIsolate();
-  v8::TryCatch try_catch(pIsolate);
-  v8::MaybeLocal<v8::Number> maybeNum =
-      m_pValue->ToNumber(pIsolate->GetCurrentContext());
-  if (maybeNum.IsEmpty())
-    return;
-  v8::Local<v8::Number> num = maybeNum.ToLocalChecked();
-  if (std::isnan(num->Value()) && !bAllowNaN)
-    return;
-  m_pValue = num;
-}
-
 CJS_Array::CJS_Array() {}
 
 CJS_Array::CJS_Array(v8::Local<v8::Array> pArray) : m_pArray(pArray) {}

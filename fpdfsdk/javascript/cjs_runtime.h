@@ -48,6 +48,10 @@ class CJS_Runtime : public IJS_Runtime,
   void EndBlock() { m_bBlocking = false; }
   bool IsBlocking() const { return m_bBlocking; }
 
+  // Attempt to convert the |value| into a number. If successful the number
+  // value will be returned, otherwise |value| is returned.
+  v8::Local<v8::Value> MaybeCoerceToNumber(const v8::Local<v8::Value>& value);
+
 #ifdef PDF_ENABLE_XFA
   bool GetValueByName(const ByteStringView& utf8Name,
                       CFXJSE_Value* pValue) override;
