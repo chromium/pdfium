@@ -44,7 +44,8 @@ bool Annot::get_hidden(CJS_Runtime* pRuntime,
   }
 
   CPDF_Annot* pPDFAnnot = ToBAAnnot(m_pAnnot.Get())->GetPDFAnnot();
-  vp->Set(pRuntime, CPDF_Annot::IsAnnotationHidden(pPDFAnnot->GetAnnotDict()));
+  vp->Set(pRuntime->NewBoolean(
+      CPDF_Annot::IsAnnotationHidden(pPDFAnnot->GetAnnotDict())));
   return true;
 }
 
@@ -80,7 +81,8 @@ bool Annot::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
     return false;
   }
 
-  vp->Set(pRuntime, ToBAAnnot(m_pAnnot.Get())->GetAnnotName());
+  vp->Set(
+      pRuntime->NewString(ToBAAnnot(m_pAnnot.Get())->GetAnnotName().c_str()));
   return true;
 }
 
@@ -103,8 +105,11 @@ bool Annot::get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
     return false;
   }
 
-  vp->Set(pRuntime, CPDF_Annot::AnnotSubtypeToString(
-                        ToBAAnnot(m_pAnnot.Get())->GetAnnotSubtype()));
+  vp->Set(pRuntime->NewString(
+      WideString::FromLocal(CPDF_Annot::AnnotSubtypeToString(
+                                ToBAAnnot(m_pAnnot.Get())->GetAnnotSubtype())
+                                .c_str())
+          .c_str()));
   return true;
 }
 

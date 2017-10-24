@@ -261,7 +261,7 @@ bool color::set_light_gray(CJS_Runtime* pRuntime,
 bool color::GetPropertyHelper(CJS_Runtime* pRuntime,
                               CJS_Value* vp,
                               CFX_Color* var) {
-  vp->Set(pRuntime, ConvertPWLColorToArray(pRuntime, *var));
+  vp->Set(ConvertPWLColorToArray(pRuntime, *var).ToV8Array(pRuntime));
   return true;
 }
 

@@ -151,7 +151,7 @@ bool util::printd(CJS_Runtime* pRuntime,
     return false;
   }
 
-  CJS_Date jsDate = p2.ToDate(pRuntime);
+  CJS_Date jsDate = p2.ToDate();
   if (!jsDate.IsValidDate(pRuntime)) {
     sError = JSGetStringFromID(IDS_STRING_JSPRINT2);
     return false;
@@ -396,9 +396,9 @@ bool util::scand(CJS_Runtime* pRuntime,
   }
 
   if (!std::isnan(dDate)) {
-    vRet = CJS_Value(pRuntime, CJS_Date(pRuntime, dDate));
+    vRet = CJS_Value(CJS_Date(pRuntime, dDate));
   } else {
-    vRet.SetNull(pRuntime);
+    vRet.Set(pRuntime->NewNull());
   }
 
   return true;

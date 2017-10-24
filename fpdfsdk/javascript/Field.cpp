@@ -400,16 +400,16 @@ bool Field::get_alignment(CJS_Runtime* pRuntime,
 
   switch (pFormControl->GetControlAlignment()) {
     case 1:
-      vp->Set(pRuntime, L"center");
+      vp->Set(pRuntime->NewString(L"center"));
       break;
     case 0:
-      vp->Set(pRuntime, L"left");
+      vp->Set(pRuntime->NewString(L"left"));
       break;
     case 2:
-      vp->Set(pRuntime, L"right");
+      vp->Set(pRuntime->NewString(L"right"));
       break;
     default:
-      vp->Set(pRuntime, L"");
+      vp->Set(pRuntime->NewString(L""));
   }
 
   return true;
@@ -442,22 +442,22 @@ bool Field::get_border_style(CJS_Runtime* pRuntime,
 
   switch (pWidget->GetBorderStyle()) {
     case BorderStyle::SOLID:
-      vp->Set(pRuntime, L"solid");
+      vp->Set(pRuntime->NewString(L"solid"));
       break;
     case BorderStyle::DASH:
-      vp->Set(pRuntime, L"dashed");
+      vp->Set(pRuntime->NewString(L"dashed"));
       break;
     case BorderStyle::BEVELED:
-      vp->Set(pRuntime, L"beveled");
+      vp->Set(pRuntime->NewString(L"beveled"));
       break;
     case BorderStyle::INSET:
-      vp->Set(pRuntime, L"inset");
+      vp->Set(pRuntime->NewString(L"inset"));
       break;
     case BorderStyle::UNDERLINE:
-      vp->Set(pRuntime, L"underline");
+      vp->Set(pRuntime->NewString(L"underline"));
       break;
     default:
-      vp->Set(pRuntime, L"");
+      vp->Set(pRuntime->NewString(L""));
       break;
   }
   return true;
@@ -555,7 +555,7 @@ bool Field::get_button_align_x(CJS_Runtime* pRuntime,
   float fBottom;
   IconFit.GetIconPosition(fLeft, fBottom);
 
-  vp->Set(pRuntime, static_cast<int32_t>(fLeft));
+  vp->Set(pRuntime->NewNumber(static_cast<int32_t>(fLeft)));
   return true;
 }
 
@@ -589,7 +589,7 @@ bool Field::get_button_align_y(CJS_Runtime* pRuntime,
   float fBottom;
   IconFit.GetIconPosition(fLeft, fBottom);
 
-  vp->Set(pRuntime, static_cast<int32_t>(fBottom));
+  vp->Set(pRuntime->NewNumber(static_cast<int32_t>(fBottom)));
   return true;
 }
 
@@ -617,7 +617,7 @@ bool Field::get_button_fit_bounds(CJS_Runtime* pRuntime,
   if (!pFormControl)
     return false;
 
-  vp->Set(pRuntime, pFormControl->GetIconFit().GetFittingBounds());
+  vp->Set(pRuntime->NewBoolean(pFormControl->GetIconFit().GetFittingBounds()));
   return true;
 }
 
@@ -645,7 +645,7 @@ bool Field::get_button_position(CJS_Runtime* pRuntime,
   if (!pFormControl)
     return false;
 
-  vp->Set(pRuntime, pFormControl->GetTextPosition());
+  vp->Set(pRuntime->NewNumber(pFormControl->GetTextPosition()));
   return true;
 }
 
@@ -673,7 +673,8 @@ bool Field::get_button_scale_how(CJS_Runtime* pRuntime,
   if (!pFormControl)
     return false;
 
-  vp->Set(pRuntime, pFormControl->GetIconFit().IsProportionalScale() ? 0 : 1);
+  vp->Set(pRuntime->NewBoolean(
+      pFormControl->GetIconFit().IsProportionalScale() ? 0 : 1));
   return true;
 }
 
@@ -705,16 +706,16 @@ bool Field::get_button_scale_when(CJS_Runtime* pRuntime,
   int ScaleM = IconFit.GetScaleMethod();
   switch (ScaleM) {
     case CPDF_IconFit::Always:
-      vp->Set(pRuntime, static_cast<int32_t>(CPDF_IconFit::Always));
+      vp->Set(pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Always)));
       break;
     case CPDF_IconFit::Bigger:
-      vp->Set(pRuntime, static_cast<int32_t>(CPDF_IconFit::Bigger));
+      vp->Set(pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Bigger)));
       break;
     case CPDF_IconFit::Never:
-      vp->Set(pRuntime, static_cast<int32_t>(CPDF_IconFit::Never));
+      vp->Set(pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Never)));
       break;
     case CPDF_IconFit::Smaller:
-      vp->Set(pRuntime, static_cast<int32_t>(CPDF_IconFit::Smaller));
+      vp->Set(pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Smaller)));
       break;
   }
   return true;
@@ -744,8 +745,8 @@ bool Field::get_calc_order_index(CJS_Runtime* pRuntime,
 
   CPDFSDK_InterForm* pRDInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pInterForm = pRDInterForm->GetInterForm();
-  vp->Set(pRuntime, static_cast<int32_t>(
-                        pInterForm->FindFieldInCalculationOrder(pFormField)));
+  vp->Set(pRuntime->NewNumber(static_cast<int32_t>(
+      pInterForm->FindFieldInCalculationOrder(pFormField))));
   return true;
 }
 
@@ -769,7 +770,7 @@ bool Field::get_char_limit(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
     return false;
 
-  vp->Set(pRuntime, static_cast<int32_t>(pFormField->GetMaxLen()));
+  vp->Set(pRuntime->NewNumber(static_cast<int32_t>(pFormField->GetMaxLen())));
   return true;
 }
 
@@ -791,7 +792,8 @@ bool Field::get_comb(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_COMB));
+  vp->Set(
+      pRuntime->NewBoolean(!!(pFormField->GetFieldFlags() & FIELDFLAG_COMB)));
   return true;
 }
 
@@ -817,8 +819,8 @@ bool Field::get_commit_on_sel_change(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(pRuntime,
-          !!(pFormField->GetFieldFlags() & FIELDFLAG_COMMITONSELCHANGE));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_COMMITONSELCHANGE)));
   return true;
 }
 
@@ -844,11 +846,11 @@ bool Field::get_current_value_indices(CJS_Runtime* pRuntime,
 
   int count = pFormField->CountSelectedItems();
   if (count <= 0) {
-    vp->Set(pRuntime, -1);
+    vp->Set(pRuntime->NewNumber(-1));
     return true;
   }
   if (count == 1) {
-    vp->Set(pRuntime, pFormField->GetSelectedIndex(0));
+    vp->Set(pRuntime->NewNumber(pFormField->GetSelectedIndex(0)));
     return true;
   }
 
@@ -857,7 +859,7 @@ bool Field::get_current_value_indices(CJS_Runtime* pRuntime,
     SelArray.SetElement(pRuntime, i,
                         CJS_Value(pRuntime, pFormField->GetSelectedIndex(i)));
   }
-  vp->Set(pRuntime, SelArray);
+  vp->Set(SelArray.ToV8Array(pRuntime));
 
   return true;
 }
@@ -939,7 +941,7 @@ bool Field::get_default_value(CJS_Runtime* pRuntime,
       return false;
     }
 
-    vp->Set(pRuntime, pFormField->GetDefaultValue());
+    vp->Set(pRuntime->NewString(pFormField->GetDefaultValue().c_str()));
     return true;
 }
 
@@ -963,7 +965,8 @@ bool Field::get_do_not_scroll(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_DONOTSCROLL));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_DONOTSCROLL)));
   return true;
 }
 
@@ -989,8 +992,8 @@ bool Field::get_do_not_spell_check(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(pRuntime,
-          !!(pFormField->GetFieldFlags() & FIELDFLAG_DONOTSPELLCHECK));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_DONOTSPELLCHECK)));
   return true;
 }
 
@@ -1013,7 +1016,7 @@ void Field::SetDelay(bool bDelay) {
 bool Field::get_delay(CJS_Runtime* pRuntime,
                       CJS_Value* vp,
                       WideString* sError) {
-  vp->Set(pRuntime, m_bDelay);
+  vp->Set(pRuntime->NewBoolean(m_bDelay));
   return true;
 }
 
@@ -1045,16 +1048,16 @@ bool Field::get_display(CJS_Runtime* pRuntime,
 
   uint32_t dwFlag = pWidget->GetFlags();
   if (ANNOTFLAG_INVISIBLE & dwFlag || ANNOTFLAG_HIDDEN & dwFlag) {
-    vp->Set(pRuntime, 1);
+    vp->Set(pRuntime->NewNumber(1));
     return true;
   }
   if (ANNOTFLAG_PRINT & dwFlag) {
     if (ANNOTFLAG_NOVIEW & dwFlag)
-      vp->Set(pRuntime, 3);
+      vp->Set(pRuntime->NewNumber(3));
     else
-      vp->Set(pRuntime, 0);
+      vp->Set(pRuntime->NewNumber(0));
   } else {
-    vp->Set(pRuntime, 2);
+    vp->Set(pRuntime->NewNumber(2));
   }
   return true;
 }
@@ -1111,7 +1114,7 @@ void Field::SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 }
 
 bool Field::get_doc(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
-  vp->Set(pRuntime, m_pJSDoc->GetCJSDoc());
+  vp->Set(m_pJSDoc->GetCJSDoc()->ToV8Object());
   return true;
 }
 
@@ -1132,7 +1135,8 @@ bool Field::get_editable(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_COMBOBOX)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_EDIT));
+  vp->Set(
+      pRuntime->NewBoolean(!!(pFormField->GetFieldFlags() & FIELDFLAG_EDIT)));
   return true;
 }
 
@@ -1177,7 +1181,7 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
         CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
   }
 
-  vp->Set(pRuntime, ExportValusArray);
+  vp->Set(ExportValusArray.ToV8Array(pRuntime));
   return true;
 }
 
@@ -1208,7 +1212,8 @@ bool Field::get_file_select(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT)));
   return true;
 }
 
@@ -1263,7 +1268,7 @@ bool Field::get_fill_color(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(pRuntime, color::ConvertPWLColorToArray(pRuntime, color));
+  vp->Set(color::ConvertPWLColorToArray(pRuntime, color).ToV8Array(pRuntime));
   return true;
 }
 
@@ -1297,8 +1302,8 @@ bool Field::get_hidden(CJS_Runtime* pRuntime,
     return false;
 
   uint32_t dwFlags = pWidget->GetFlags();
-  vp->Set(pRuntime,
-          ANNOTFLAG_INVISIBLE & dwFlags || ANNOTFLAG_HIDDEN & dwFlags);
+  vp->Set(pRuntime->NewBoolean(ANNOTFLAG_INVISIBLE & dwFlags ||
+                               ANNOTFLAG_HIDDEN & dwFlags));
   return true;
 }
 
@@ -1345,19 +1350,19 @@ bool Field::get_highlight(CJS_Runtime* pRuntime,
   int eHM = pFormControl->GetHighlightingMode();
   switch (eHM) {
     case CPDF_FormControl::None:
-      vp->Set(pRuntime, L"none");
+      vp->Set(pRuntime->NewString(L"none"));
       break;
     case CPDF_FormControl::Push:
-      vp->Set(pRuntime, L"push");
+      vp->Set(pRuntime->NewString(L"push"));
       break;
     case CPDF_FormControl::Invert:
-      vp->Set(pRuntime, L"invert");
+      vp->Set(pRuntime->NewString(L"invert"));
       break;
     case CPDF_FormControl::Outline:
-      vp->Set(pRuntime, L"outline");
+      vp->Set(pRuntime->NewString(L"outline"));
       break;
     case CPDF_FormControl::Toggle:
-      vp->Set(pRuntime, L"toggle");
+      vp->Set(pRuntime->NewString(L"toggle"));
       break;
   }
   return true;
@@ -1392,7 +1397,7 @@ bool Field::get_line_width(CJS_Runtime* pRuntime,
   if (!pWidget)
     return false;
 
-  vp->Set(pRuntime, pWidget->GetBorderWidth());
+  vp->Set(pRuntime->NewNumber(pWidget->GetBorderWidth()));
   return true;
 }
 
@@ -1463,7 +1468,8 @@ bool Field::get_multiline(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_MULTILINE));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_MULTILINE)));
   return true;
 }
 
@@ -1486,7 +1492,8 @@ bool Field::get_multiple_selection(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_LISTBOX)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_MULTISELECT));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_MULTISELECT)));
   return true;
 }
 
@@ -1502,7 +1509,7 @@ bool Field::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   if (FieldArray.empty())
     return false;
 
-  vp->Set(pRuntime, m_FieldName);
+  vp->Set(pRuntime->NewString(m_FieldName.c_str()));
   return true;
 }
 
@@ -1525,7 +1532,7 @@ bool Field::get_num_items(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(pRuntime, pFormField->CountOptions());
+  vp->Set(pRuntime->NewNumber(pFormField->CountOptions()));
   return true;
 }
 
@@ -1547,7 +1554,7 @@ bool Field::get_page(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   m_pFormFillEnv->GetInterForm()->GetWidgets(pFormField, &widgets);
   if (widgets.empty()) {
-    vp->Set(pRuntime, -1);
+    vp->Set(pRuntime->NewNumber(-1));
     return true;
   }
 
@@ -1569,7 +1576,7 @@ bool Field::get_page(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
     ++i;
   }
 
-  vp->Set(pRuntime, PageArray);
+  vp->Set(PageArray.ToV8Array(pRuntime));
   return true;
 }
 
@@ -1593,7 +1600,8 @@ bool Field::get_password(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_PASSWORD));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_PASSWORD)));
   return true;
 }
 
@@ -1618,7 +1626,7 @@ bool Field::get_print(CJS_Runtime* pRuntime,
   if (!pWidget)
     return false;
 
-  vp->Set(pRuntime, !!(pWidget->GetFlags() & ANNOTFLAG_PRINT));
+  vp->Set(pRuntime->NewBoolean(!!(pWidget->GetFlags() & ANNOTFLAG_PRINT)));
   return true;
 }
 
@@ -1692,7 +1700,8 @@ bool Field::get_radios_in_unison(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_RADIOSINUNISON));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_RADIOSINUNISON)));
   return true;
 }
 
@@ -1712,7 +1721,8 @@ bool Field::get_readonly(CJS_Runtime* pRuntime,
   if (FieldArray.empty())
     return false;
 
-  vp->Set(pRuntime, !!(FieldArray[0]->GetFieldFlags() & FIELDFLAG_READONLY));
+  vp->Set(pRuntime->NewBoolean(
+      !!(FieldArray[0]->GetFieldFlags() & FIELDFLAG_READONLY)));
   return true;
 }
 
@@ -1747,7 +1757,7 @@ bool Field::get_rect(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
                      CJS_Value(pRuntime, static_cast<int32_t>(crRect.right)));
   rcArray.SetElement(pRuntime, 3,
                      CJS_Value(pRuntime, static_cast<int32_t>(crRect.bottom)));
-  vp->Set(pRuntime, rcArray);
+  vp->Set(rcArray.ToV8Array(pRuntime));
   return true;
 }
 
@@ -1760,16 +1770,15 @@ bool Field::set_rect(CJS_Runtime* pRuntime,
     return false;
 
   CJS_Array rcArray = vp.ToArray(pRuntime);
-  CJS_Value Upper_Leftx = rcArray.GetElement(pRuntime, 0);
-  CJS_Value Upper_Lefty = rcArray.GetElement(pRuntime, 1);
-  CJS_Value Lower_Rightx = rcArray.GetElement(pRuntime, 2);
-  CJS_Value Lower_Righty = rcArray.GetElement(pRuntime, 3);
-
   float pArray[4];
-  pArray[0] = static_cast<float>(Upper_Leftx.ToInt(pRuntime));
-  pArray[1] = static_cast<float>(Lower_Righty.ToInt(pRuntime));
-  pArray[2] = static_cast<float>(Lower_Rightx.ToInt(pRuntime));
-  pArray[3] = static_cast<float>(Upper_Lefty.ToInt(pRuntime));
+  pArray[0] =
+      static_cast<float>(rcArray.GetElement(pRuntime, 0).ToInt(pRuntime));
+  pArray[1] =
+      static_cast<float>(rcArray.GetElement(pRuntime, 1).ToInt(pRuntime));
+  pArray[2] =
+      static_cast<float>(rcArray.GetElement(pRuntime, 2).ToInt(pRuntime));
+  pArray[3] =
+      static_cast<float>(rcArray.GetElement(pRuntime, 3).ToInt(pRuntime));
 
   CFX_FloatRect crRect(pArray);
   if (m_bDelay) {
@@ -1852,7 +1861,8 @@ bool Field::get_required(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() == FIELDTYPE_PUSHBUTTON)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_REQUIRED));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_REQUIRED)));
   return true;
 }
 
@@ -1879,7 +1889,8 @@ bool Field::get_rich_text(CJS_Runtime* pRuntime,
   if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
     return false;
 
-  vp->Set(pRuntime, !!(pFormField->GetFieldFlags() & FIELDFLAG_RICHTEXT));
+  vp->Set(pRuntime->NewBoolean(
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_RICHTEXT)));
   return true;
 }
 
@@ -1916,7 +1927,7 @@ bool Field::get_rotation(CJS_Runtime* pRuntime,
   if (!pFormControl)
     return false;
 
-  vp->Set(pRuntime, pFormControl->GetRotation());
+  vp->Set(pRuntime->NewNumber(pFormControl->GetRotation()));
   return true;
 }
 
@@ -1961,7 +1972,7 @@ bool Field::get_stroke_color(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(pRuntime, color::ConvertPWLColorToArray(pRuntime, color));
+  vp->Set(color::ConvertPWLColorToArray(pRuntime, color).ToV8Array(pRuntime));
   return true;
 }
 
@@ -2017,7 +2028,8 @@ bool Field::get_style(CJS_Runtime* pRuntime,
       csBCaption = "check";
       break;
   }
-  vp->Set(pRuntime, csBCaption);
+  vp->Set(
+      pRuntime->NewString(WideString::FromLocal(csBCaption.c_str()).c_str()));
   return true;
 }
 
@@ -2069,7 +2081,7 @@ bool Field::get_text_color(CJS_Runtime* pRuntime,
   if (iColorType == CFX_Color::kTransparent)
     crRet = CFX_Color(CFX_Color::kTransparent);
 
-  vp->Set(pRuntime, color::ConvertPWLColorToArray(pRuntime, crRet));
+  vp->Set(color::ConvertPWLColorToArray(pRuntime, crRet).ToV8Array(pRuntime));
   return true;
 }
 
@@ -2107,7 +2119,8 @@ bool Field::get_text_font(CJS_Runtime* pRuntime,
   if (!pFont)
     return false;
 
-  vp->Set(pRuntime, pFont->GetBaseFont());
+  vp->Set(pRuntime->NewString(
+      WideString::FromLocal(pFont->GetBaseFont().c_str()).c_str()));
   return true;
 }
 
@@ -2141,7 +2154,7 @@ bool Field::get_text_size(CJS_Runtime* pRuntime,
   float fFontSize;
   CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
   FieldAppearance.GetFont(&fFontSize);
-  vp->Set(pRuntime, static_cast<int>(fFontSize));
+  vp->Set(pRuntime->NewNumber(static_cast<int>(fFontSize)));
   return true;
 }
 
@@ -2160,31 +2173,31 @@ bool Field::get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   CPDF_FormField* pFormField = FieldArray[0];
   switch (pFormField->GetFieldType()) {
     case FIELDTYPE_UNKNOWN:
-      vp->Set(pRuntime, L"unknown");
+      vp->Set(pRuntime->NewString(L"unknown"));
       break;
     case FIELDTYPE_PUSHBUTTON:
-      vp->Set(pRuntime, L"button");
+      vp->Set(pRuntime->NewString(L"button"));
       break;
     case FIELDTYPE_CHECKBOX:
-      vp->Set(pRuntime, L"checkbox");
+      vp->Set(pRuntime->NewString(L"checkbox"));
       break;
     case FIELDTYPE_RADIOBUTTON:
-      vp->Set(pRuntime, L"radiobutton");
+      vp->Set(pRuntime->NewString(L"radiobutton"));
       break;
     case FIELDTYPE_COMBOBOX:
-      vp->Set(pRuntime, L"combobox");
+      vp->Set(pRuntime->NewString(L"combobox"));
       break;
     case FIELDTYPE_LISTBOX:
-      vp->Set(pRuntime, L"listbox");
+      vp->Set(pRuntime->NewString(L"listbox"));
       break;
     case FIELDTYPE_TEXTFIELD:
-      vp->Set(pRuntime, L"text");
+      vp->Set(pRuntime->NewString(L"text"));
       break;
     case FIELDTYPE_SIGNATURE:
-      vp->Set(pRuntime, L"signature");
+      vp->Set(pRuntime->NewString(L"signature"));
       break;
     default:
-      vp->Set(pRuntime, L"unknown");
+      vp->Set(pRuntime->NewString(L"unknown"));
       break;
   }
   return true;
@@ -2205,7 +2218,7 @@ bool Field::get_user_name(CJS_Runtime* pRuntime,
   if (FieldArray.empty())
     return false;
 
-  vp->Set(pRuntime, FieldArray[0]->GetAlternateName());
+  vp->Set(pRuntime->NewString(FieldArray[0]->GetAlternateName().c_str()));
   return true;
 }
 
@@ -2229,12 +2242,12 @@ bool Field::get_value(CJS_Runtime* pRuntime,
       return false;
     case FIELDTYPE_COMBOBOX:
     case FIELDTYPE_TEXTFIELD:
-      vp->Set(pRuntime, pFormField->GetValue());
+      vp->Set(pRuntime->NewString(pFormField->GetValue().c_str()));
       break;
     case FIELDTYPE_LISTBOX: {
       if (pFormField->CountSelectedItems() > 1) {
         CJS_Array ValueArray;
-        CJS_Value ElementValue(pRuntime);
+        CJS_Value ElementValue;
         int iIndex;
         for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
           iIndex = pFormField->GetSelectedIndex(i);
@@ -2246,9 +2259,9 @@ bool Field::get_value(CJS_Runtime* pRuntime,
           }
           ValueArray.SetElement(pRuntime, i, ElementValue);
         }
-        vp->Set(pRuntime, ValueArray);
+        vp->Set(ValueArray.ToV8Array(pRuntime));
       } else {
-        vp->Set(pRuntime, pFormField->GetValue());
+        vp->Set(pRuntime->NewString(pFormField->GetValue().c_str()));
       }
       break;
     }
@@ -2257,18 +2270,19 @@ bool Field::get_value(CJS_Runtime* pRuntime,
       bool bFind = false;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
         if (pFormField->GetControl(i)->IsChecked()) {
-          vp->Set(pRuntime, pFormField->GetControl(i)->GetExportValue());
+          vp->Set(pRuntime->NewString(
+              pFormField->GetControl(i)->GetExportValue().c_str()));
           bFind = true;
           break;
         }
       }
       if (!bFind)
-        vp->Set(pRuntime, L"Off");
+        vp->Set(pRuntime->NewString(L"Off"));
 
       break;
     }
     default:
-      vp->Set(pRuntime, pFormField->GetValue());
+      vp->Set(pRuntime->NewString(pFormField->GetValue().c_str()));
       break;
   }
   vp->MaybeCoerceToNumber(pRuntime);
@@ -2283,9 +2297,9 @@ bool Field::set_value(CJS_Runtime* pRuntime,
 
   std::vector<WideString> strArray;
   if (vp.IsArrayObject()) {
-    CJS_Array ValueArray = vp.ToArray(pRuntime);
+    CJS_Array ValueArray(vp.ToArray(pRuntime));
     for (int i = 0, sz = ValueArray.GetLength(pRuntime); i < sz; i++) {
-      CJS_Value ElementValue = ValueArray.GetElement(pRuntime, i);
+      CJS_Value ElementValue(ValueArray.GetElement(pRuntime, i));
       strArray.push_back(ElementValue.ToWideString(pRuntime));
     }
   } else {
@@ -2370,7 +2384,8 @@ bool Field::get_value_as_string(CJS_Runtime* pRuntime,
     if (!pFormField->CountControls())
       return false;
 
-    vp->Set(pRuntime, pFormField->GetControl(0)->IsChecked() ? L"Yes" : L"Off");
+    vp->Set(pRuntime->NewString(
+        pFormField->GetControl(0)->IsChecked() ? L"Yes" : L"Off"));
     return true;
   }
 
@@ -2378,10 +2393,11 @@ bool Field::get_value_as_string(CJS_Runtime* pRuntime,
       !(pFormField->GetFieldFlags() & FIELDFLAG_RADIOSINUNISON)) {
     for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
       if (pFormField->GetControl(i)->IsChecked()) {
-        vp->Set(pRuntime, pFormField->GetControl(i)->GetExportValue().c_str());
+        vp->Set(pRuntime->NewString(
+            pFormField->GetControl(i)->GetExportValue().c_str()));
         break;
       } else {
-        vp->Set(pRuntime, L"Off");
+        vp->Set(pRuntime->NewString(L"Off"));
       }
     }
     return true;
@@ -2389,9 +2405,9 @@ bool Field::get_value_as_string(CJS_Runtime* pRuntime,
 
   if (pFormField->GetFieldType() == FIELDTYPE_LISTBOX &&
       (pFormField->CountSelectedItems() > 1)) {
-    vp->Set(pRuntime, L"");
+    vp->Set(pRuntime->NewString(L""));
   } else {
-    vp->Set(pRuntime, pFormField->GetValue().c_str());
+    vp->Set(pRuntime->NewString(pFormField->GetValue().c_str()));
   }
 
   return true;
@@ -2485,7 +2501,7 @@ bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
     return false;
 
   CJS_Icon* pJS_Icon = static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-  vRet = CJS_Value(pRuntime, pJS_Icon);
+  vRet = CJS_Value(pJS_Icon);
   return true;
 }
 
@@ -2619,7 +2635,7 @@ bool Field::getArray(CJS_Runtime* pRuntime,
         static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pObj));
     Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
     pField->AttachField(m_pJSDoc, *pStr);
-    FormFieldArray.SetElement(pRuntime, j++, CJS_Value(pRuntime, pJSField));
+    FormFieldArray.SetElement(pRuntime, j++, CJS_Value(pJSField));
   }
 
   vRet = CJS_Value(pRuntime, FormFieldArray);
@@ -2835,7 +2851,7 @@ bool Field::signatureValidate(CJS_Runtime* pRuntime,
 bool Field::get_source(CJS_Runtime* pRuntime,
                        CJS_Value* vp,
                        WideString* sError) {
-  vp->Set(pRuntime, static_cast<CJS_Object*>(nullptr));
+  vp->Set(v8::Local<v8::Value>());
   return true;
 }
 

@@ -122,15 +122,15 @@ void JSGlobalFunc(const char* func_name_string,
     return;
   std::vector<CJS_Value> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
-    parameters.push_back(CJS_Value(pRuntime, info[i]));
+    parameters.push_back(CJS_Value(info[i]));
   }
-  CJS_Value valueRes(pRuntime);
+  CJS_Value valueRes;
   WideString sError;
   if (!(*F)(pRuntime, parameters, valueRes, sError)) {
     pRuntime->Error(JSFormatErrorString(func_name_string, nullptr, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToV8Value(pRuntime));
+  info.GetReturnValue().Set(valueRes.ToV8Value());
 }
 
 }  // namespace
@@ -896,7 +896,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
         CJS_Array arColor;
-        CJS_Value vColElm(pRuntime);
+        CJS_Value vColElm;
         vColElm = CJS_Value(pRuntime, L"RGB");
         arColor.SetElement(pRuntime, 0, vColElm);
         vColElm = CJS_Value(pRuntime, 1);
@@ -913,7 +913,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
         CJS_Array arColor;
-        CJS_Value vColElm(pRuntime);
+        CJS_Value vColElm;
         vColElm = CJS_Value(pRuntime, L"RGB");
         arColor.SetElement(pRuntime, 0, vColElm);
         vColElm = CJS_Value(pRuntime, 0);
@@ -921,7 +921,7 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
         arColor.SetElement(pRuntime, 2, vColElm);
         arColor.SetElement(pRuntime, 3, vColElm);
 
-        CJS_Value vProp(pRuntime);
+        CJS_Value vProp;
         fTarget->get_text_color(pRuntime, &vProp, &sError);
 
         CFX_Color crProp =
@@ -1661,7 +1661,7 @@ bool CJS_PublicMethods::AFSimple_Calculate(CJS_Runtime* pRuntime,
     return false;
   }
 
-  CJS_Value params1 = params[1];
+  CJS_Value params1(params[1]);
   if (!params1.IsArrayObject() && params1.GetType() != CJS_Value::VT_string) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
@@ -1826,7 +1826,7 @@ bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
   if (nums.GetLength(pRuntime) > 0)
     vRet = CJS_Value(pRuntime, nums);
   else
-    vRet.SetNull(pRuntime);
+    vRet.Set(pRuntime->NewNull());
 
   return true;
 }

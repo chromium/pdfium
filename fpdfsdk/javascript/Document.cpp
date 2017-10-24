@@ -172,7 +172,8 @@ bool Document::get_num_fields(CJS_Runtime* pRuntime,
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  vp->Set(pRuntime, static_cast<int>(pPDFForm->CountFields(WideString())));
+  vp->Set(pRuntime->NewNumber(
+      static_cast<int>(pPDFForm->CountFields(WideString()))));
   return true;
 }
 
@@ -191,7 +192,7 @@ bool Document::get_dirty(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vp->Set(pRuntime, !!m_pFormFillEnv->GetChangeMark());
+  vp->Set(pRuntime->NewBoolean(!!m_pFormFillEnv->GetChangeMark()));
   return true;
 }
 
@@ -212,7 +213,7 @@ bool Document::set_dirty(CJS_Runtime* pRuntime,
 bool Document::get_ADBE(CJS_Runtime* pRuntime,
                         CJS_Value* vp,
                         WideString* sError) {
-  vp->SetNull(pRuntime);
+  vp->Set(pRuntime->NewNull());
   return true;
 }
 
@@ -231,7 +232,7 @@ bool Document::get_page_num(CJS_Runtime* pRuntime,
   }
 
   if (CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetCurrentView())
-    vp->Set(pRuntime, pPageView->GetPageIndex());
+    vp->Set(pRuntime->NewNumber(pPageView->GetPageIndex()));
   return true;
 }
 
@@ -311,7 +312,7 @@ bool Document::getField(CJS_Runtime* pRuntime,
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (pPDFForm->CountFields(wideName) <= 0) {
-    vRet.SetNull(pRuntime);
+    vRet.Set(pRuntime->NewNull());
     return true;
   }
 
@@ -324,7 +325,7 @@ bool Document::getField(CJS_Runtime* pRuntime,
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
   Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
   pField->AttachField(this, wideName);
-  vRet = CJS_Value(pRuntime, pJSField);
+  vRet = CJS_Value(pJSField);
   return true;
 }
 
@@ -584,7 +585,7 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
 
   std::vector<CPDF_FormField*> aFields;
   for (int i = 0, isz = aName.GetLength(pRuntime); i < isz; ++i) {
-    CJS_Value valElement = aName.GetElement(pRuntime, i);
+    CJS_Value valElement(aName.GetElement(pRuntime, i));
     WideString swVal = valElement.ToWideString(pRuntime);
     for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
       aFields.push_back(pPDFForm->GetField(j, swVal));
@@ -631,7 +632,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
   WideString strURL;
   bool bFDF = true;
   bool bEmpty = false;
-  CJS_Value v = params[0];
+  CJS_Value v(params[0]);
   if (v.GetType() == CJS_Value::VT_string) {
     strURL = params[0].ToWideString(pRuntime);
     if (nSize > 1)
@@ -644,16 +645,16 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
     v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
     v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"cURL");
     if (!pValue.IsEmpty())
-      strURL = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
+      strURL = CJS_Value(pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"bFDF");
-    bFDF = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
+    bFDF = CJS_Value(pValue).ToBool(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"bEmpty");
-    bEmpty = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
+    bEmpty = CJS_Value(pValue).ToBool(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"aFields");
-    aFields = CJS_Array(CJS_Value(pRuntime, pValue).ToV8Array(pRuntime));
+    aFields = CJS_Array(CJS_Value(pValue).ToV8Array(pRuntime));
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
@@ -669,7 +670,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
 
   std::vector<CPDF_FormField*> fieldObjects;
   for (int i = 0, sz = aFields.GetLength(pRuntime); i < sz; ++i) {
-    CJS_Value valName = aFields.GetElement(pRuntime, i);
+    CJS_Value valName(aFields.GetElement(pRuntime, i));
     WideString sName = valName.ToWideString(pRuntime);
     CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
     for (int j = 0, jsz = pPDFForm->CountFields(sName); j < jsz; ++j) {
@@ -734,22 +735,22 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
     v8::Local<v8::Object> pObj = params[0].ToV8Object(pRuntime);
 
     v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"bUI");
-    bUI = CJS_Value(pRuntime, pValue).ToBool(pRuntime);
+    bUI = CJS_Value(pValue).ToBool(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cTo");
-    cTo = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
+    cTo = CJS_Value(pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cCc");
-    cCc = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
+    cCc = CJS_Value(pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cBcc");
-    cBcc = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
+    cBcc = CJS_Value(pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cSubject");
-    cSubject = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
+    cSubject = CJS_Value(pValue).ToWideString(pRuntime);
 
     pValue = pRuntime->GetObjectProperty(pObj, L"cMsg");
-    cMsg = CJS_Value(pRuntime, pValue).ToWideString(pRuntime);
+    cMsg = CJS_Value(pValue).ToWideString(pRuntime);
   }
 
   pRuntime->BeginBlock();
@@ -832,7 +833,7 @@ bool Document::get_info(CJS_Runtime* pRuntime,
           pObj, wsKey, pRuntime->NewBoolean(!!pValueObj->GetInteger()));
     }
   }
-  vp->Set(pRuntime, pObj);
+  vp->Set(pObj);
   return true;
 }
 
@@ -856,7 +857,8 @@ bool Document::getPropertyInternal(CJS_Runtime* pRuntime,
   if (!pDictionary)
     return false;
 
-  vp->Set(pRuntime, pDictionary->GetUnicodeTextFor(propName));
+  vp->Set(
+      pRuntime->NewString(pDictionary->GetUnicodeTextFor(propName).c_str()));
   return true;
 }
 
@@ -915,7 +917,7 @@ bool Document::get_delay(CJS_Runtime* pRuntime,
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(pRuntime, m_bDelay);
+  vp->Set(pRuntime->NewBoolean(m_bDelay));
   return true;
 }
 
@@ -1021,7 +1023,7 @@ bool Document::get_num_pages(CJS_Runtime* pRuntime,
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(pRuntime, m_pFormFillEnv->GetPageCount());
+  vp->Set(pRuntime->NewNumber(m_pFormFillEnv->GetPageCount()));
   return true;
 }
 
@@ -1036,7 +1038,7 @@ bool Document::get_external(CJS_Runtime* pRuntime,
                             CJS_Value* vp,
                             WideString* sError) {
   // In Chrome case, should always return true.
-  vp->Set(pRuntime, true);
+  vp->Set(pRuntime->NewBoolean(true));
   return true;
 }
 
@@ -1049,7 +1051,7 @@ bool Document::set_external(CJS_Runtime* pRuntime,
 bool Document::get_filesize(CJS_Runtime* pRuntime,
                             CJS_Value* vp,
                             WideString* sError) {
-  vp->Set(pRuntime, 0);
+  vp->Set(pRuntime->NewNumber(0));
   return true;
 }
 
@@ -1091,7 +1093,7 @@ bool Document::get_URL(CJS_Runtime* pRuntime,
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(pRuntime, m_pFormFillEnv->JS_docGetFilePath());
+  vp->Set(pRuntime->NewString(m_pFormFillEnv->JS_docGetFilePath().c_str()));
   return true;
 }
 
@@ -1105,7 +1107,7 @@ bool Document::set_URL(CJS_Runtime* pRuntime,
 bool Document::get_base_URL(CJS_Runtime* pRuntime,
                             CJS_Value* vp,
                             WideString* sError) {
-  vp->Set(pRuntime, m_cwBaseURL);
+  vp->Set(pRuntime->NewString(m_cwBaseURL.c_str()));
   return true;
 }
 
@@ -1125,7 +1127,7 @@ bool Document::get_calculate(CJS_Runtime* pRuntime,
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  vp->Set(pRuntime, !!pInterForm->IsCalculateEnabled());
+  vp->Set(pRuntime->NewBoolean(!!pInterForm->IsCalculateEnabled()));
   return true;
 }
 
@@ -1158,9 +1160,10 @@ bool Document::get_document_file_name(CJS_Runtime* pRuntime,
   }
 
   if (i > 0 && i < wsFilePath.GetLength())
-    vp->Set(pRuntime, wsFilePath.GetBuffer(wsFilePath.GetLength()) + i);
+    vp->Set(
+        pRuntime->NewString(wsFilePath.GetBuffer(wsFilePath.GetLength()) + i));
   else
-    vp->Set(pRuntime, L"");
+    vp->Set(pRuntime->NewString(L""));
 
   return true;
 }
@@ -1179,7 +1182,8 @@ bool Document::get_path(CJS_Runtime* pRuntime,
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
   }
-  vp->Set(pRuntime, app::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()));
+  vp->Set(pRuntime->NewString(
+      app::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()).c_str()));
   return true;
 }
 
@@ -1275,7 +1279,7 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
       static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
   Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
   pAnnot->SetSDKAnnot(pSDKBAAnnot);
-  vRet = CJS_Value(pRuntime, pJS_Annot);
+  vRet = CJS_Value(pJS_Annot);
   return true;
 }
 
@@ -1313,7 +1317,7 @@ bool Document::getAnnots(CJS_Runtime* pRuntime,
           static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
       Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
       pAnnot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
-      annots.SetElement(pRuntime, i, CJS_Value(pRuntime, pJS_Annot));
+      annots.SetElement(pRuntime, i, CJS_Value(pJS_Annot));
     }
   }
   vRet = CJS_Value(pRuntime, annots);
@@ -1324,7 +1328,7 @@ bool Document::getAnnot3D(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           WideString& sError) {
-  vRet.SetNull(pRuntime);
+  vRet.Set(pRuntime->NewNull());
   return true;
 }
 
@@ -1388,7 +1392,7 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
                          CJS_Value* vp,
                          WideString* sError) {
   if (m_IconNames.empty()) {
-    vp->SetNull(pRuntime);
+    vp->Set(pRuntime->NewNull());
     return true;
   }
 
@@ -1404,10 +1408,10 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
     Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
     pIcon->SetIconName(name);
-    Icons.SetElement(pRuntime, i++, CJS_Value(pRuntime, pJS_Icon));
+    Icons.SetElement(pRuntime, i++, CJS_Value(pJS_Icon));
   }
 
-  vp->Set(pRuntime, Icons);
+  vp->Set(Icons.ToV8Array(pRuntime));
   return true;
 }
 
@@ -1440,7 +1444,7 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
   CJS_Icon* pJS_Icon = static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
   Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
   pIcon->SetIconName(*it);
-  vRet = CJS_Value(pRuntime, pJS_Icon);
+  vRet = CJS_Value(pJS_Icon);
   return true;
 }
 
@@ -1622,7 +1626,7 @@ bool Document::getPrintParams(CJS_Runtime* pRuntime,
 
   // Not implemented yet.
 
-  vRet = CJS_Value(pRuntime, pRetObj);
+  vRet = CJS_Value(pRetObj);
   return true;
 }
 

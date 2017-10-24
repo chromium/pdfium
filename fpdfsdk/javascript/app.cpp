@@ -217,11 +217,11 @@ bool app::get_active_docs(CJS_Runtime* pRuntime,
     pJSDocument = static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
 
   CJS_Array aDocs;
-  aDocs.SetElement(pRuntime, 0, CJS_Value(pRuntime, pJSDocument));
+  aDocs.SetElement(pRuntime, 0, CJS_Value(pJSDocument));
   if (aDocs.GetLength(pRuntime) > 0)
-    vp->Set(pRuntime, aDocs);
+    vp->Set(aDocs.ToV8Array(pRuntime));
   else
-    vp->SetNull(pRuntime);
+    vp->Set(pRuntime->NewNull());
 
   return true;
 }
@@ -235,7 +235,7 @@ bool app::set_active_docs(CJS_Runtime* pRuntime,
 bool app::get_calculate(CJS_Runtime* pRuntime,
                         CJS_Value* vp,
                         WideString* sError) {
-  vp->Set(pRuntime, m_bCalculate);
+  vp->Set(pRuntime->NewBoolean(m_bCalculate));
   return true;
 }
 
@@ -250,7 +250,7 @@ bool app::set_calculate(CJS_Runtime* pRuntime,
 bool app::get_forms_version(CJS_Runtime* pRuntime,
                             CJS_Value* vp,
                             WideString* sError) {
-  vp->Set(pRuntime, JS_NUM_FORMSVERSION);
+  vp->Set(pRuntime->NewNumber(JS_NUM_FORMSVERSION));
   return true;
 }
 
@@ -263,7 +263,7 @@ bool app::set_forms_version(CJS_Runtime* pRuntime,
 bool app::get_viewer_type(CJS_Runtime* pRuntime,
                           CJS_Value* vp,
                           WideString* sError) {
-  vp->Set(pRuntime, JS_STR_VIEWERTYPE);
+  vp->Set(pRuntime->NewString(JS_STR_VIEWERTYPE));
   return true;
 }
 
@@ -276,7 +276,7 @@ bool app::set_viewer_type(CJS_Runtime* pRuntime,
 bool app::get_viewer_variation(CJS_Runtime* pRuntime,
                                CJS_Value* vp,
                                WideString* sError) {
-  vp->Set(pRuntime, JS_STR_VIEWERVARIATION);
+  vp->Set(pRuntime->NewString(JS_STR_VIEWERVARIATION));
   return true;
 }
 
@@ -292,11 +292,11 @@ bool app::get_viewer_version(CJS_Runtime* pRuntime,
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* pXFAContext = pRuntime->GetFormFillEnv()->GetXFAContext();
   if (pXFAContext->ContainsXFAForm()) {
-    vp->Set(pRuntime, JS_NUM_VIEWERVERSION_XFA);
+    vp->Set(pRuntime->NewNumber(JS_NUM_VIEWERVERSION_XFA));
     return true;
   }
 #endif  // PDF_ENABLE_XFA
-  vp->Set(pRuntime, JS_NUM_VIEWERVERSION);
+  vp->Set(pRuntime->NewNumber(JS_NUM_VIEWERVERSION));
   return true;
 }
 
@@ -316,11 +316,11 @@ bool app::get_platform(CJS_Runtime* pRuntime,
 
   WideString platfrom = pFormFillEnv->GetPlatform();
   if (!platfrom.IsEmpty()) {
-    vp->Set(pRuntime, platfrom);
+    vp->Set(pRuntime->NewString(platfrom.c_str()));
     return true;
   }
 #endif
-  vp->Set(pRuntime, JS_STR_PLATFORM);
+  vp->Set(pRuntime->NewString(JS_STR_PLATFORM));
   return true;
 }
 
@@ -340,11 +340,11 @@ bool app::get_language(CJS_Runtime* pRuntime,
 
   WideString language = pFormFillEnv->GetLanguage();
   if (!language.IsEmpty()) {
-    vp->Set(pRuntime, language);
+    vp->Set(pRuntime->NewString(language.c_str()));
     return true;
   }
 #endif
-  vp->Set(pRuntime, JS_STR_LANGUAGE);
+  vp->Set(pRuntime->NewString(JS_STR_LANGUAGE));
   return true;
 }
 
@@ -508,7 +508,7 @@ bool app::setInterval(CJS_Runtime* pRuntime,
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
   pTimerObj->SetTimer(timerRef);
 
-  vRet = CJS_Value(pRuntime, pRetObj);
+  vRet = CJS_Value(pRetObj);
   return true;
 }
 
@@ -542,7 +542,7 @@ bool app::setTimeOut(CJS_Runtime* pRuntime,
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
   pTimerObj->SetTimer(timerRef);
-  vRet = CJS_Value(pRuntime, pRetObj);
+  vRet = CJS_Value(pRetObj);
   return true;
 }
 
@@ -694,7 +694,7 @@ bool app::launchURL(CJS_Runtime* pRuntime,
 bool app::get_runtime_highlight(CJS_Runtime* pRuntime,
                                 CJS_Value* vp,
                                 WideString* sError) {
-  vp->Set(pRuntime, m_bRuntimeHighLight);
+  vp->Set(pRuntime->NewBoolean(m_bRuntimeHighLight));
   return true;
 }
 

@@ -51,7 +51,7 @@ bool event::get_change(CJS_Runtime* pRuntime,
                        WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Change());
+  vp->Set(pRuntime->NewString(pEvent->Change().c_str()));
   return true;
 }
 
@@ -74,7 +74,7 @@ bool event::get_change_ex(CJS_Runtime* pRuntime,
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  vp->Set(pRuntime, pEvent->ChangeEx());
+  vp->Set(pRuntime->NewString(pEvent->ChangeEx().c_str()));
   return true;
 }
 
@@ -90,7 +90,7 @@ bool event::get_commit_key(CJS_Runtime* pRuntime,
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  vp->Set(pRuntime, pEvent->CommitKey());
+  vp->Set(pRuntime->NewNumber(pEvent->CommitKey()));
   return true;
 }
 
@@ -109,7 +109,7 @@ bool event::get_field_full(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return false;
 
-  vp->Set(pRuntime, pEvent->FieldFull());
+  vp->Set(pRuntime->NewBoolean(pEvent->FieldFull()));
   return true;
 }
 
@@ -124,7 +124,7 @@ bool event::get_key_down(CJS_Runtime* pRuntime,
                          WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->KeyDown());
+  vp->Set(pRuntime->NewBoolean(pEvent->KeyDown()));
   return true;
 }
 
@@ -139,7 +139,7 @@ bool event::get_modifier(CJS_Runtime* pRuntime,
                          WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Modifier());
+  vp->Set(pRuntime->NewBoolean(pEvent->Modifier()));
   return true;
 }
 
@@ -152,7 +152,7 @@ bool event::set_modifier(CJS_Runtime* pRuntime,
 bool event::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Name());
+  vp->Set(pRuntime->NewString(pEvent->Name()));
   return true;
 }
 
@@ -165,7 +165,7 @@ bool event::set_name(CJS_Runtime* pRuntime,
 bool event::get_rc(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Rc());
+  vp->Set(pRuntime->NewBoolean(pEvent->Rc()));
   return true;
 }
 
@@ -223,7 +223,7 @@ bool event::get_sel_end(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
 
-  vp->Set(pRuntime, pEvent->SelEnd());
+  vp->Set(pRuntime->NewNumber(pEvent->SelEnd()));
   return true;
 }
 
@@ -249,7 +249,7 @@ bool event::get_sel_start(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
 
-  vp->Set(pRuntime, pEvent->SelStart());
+  vp->Set(pRuntime->NewNumber(pEvent->SelStart()));
   return true;
 }
 
@@ -271,7 +271,7 @@ bool event::get_shift(CJS_Runtime* pRuntime,
                       WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Shift());
+  vp->Set(pRuntime->NewBoolean(pEvent->Shift()));
   return true;
 }
 
@@ -286,7 +286,7 @@ bool event::get_source(CJS_Runtime* pRuntime,
                        WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Source()->GetJSObject());
+  vp->Set(pEvent->Source()->GetJSObject()->ToV8Object());
   return true;
 }
 
@@ -301,7 +301,7 @@ bool event::get_target(CJS_Runtime* pRuntime,
                        WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Target_Field()->GetJSObject());
+  vp->Set(pEvent->Target_Field()->GetJSObject()->ToV8Object());
   return true;
 }
 
@@ -316,7 +316,7 @@ bool event::get_target_name(CJS_Runtime* pRuntime,
                             WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->TargetName());
+  vp->Set(pRuntime->NewString(pEvent->TargetName().c_str()));
   return true;
 }
 
@@ -329,7 +329,7 @@ bool event::set_target_name(CJS_Runtime* pRuntime,
 bool event::get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->Type());
+  vp->Set(pRuntime->NewString(pEvent->Type()));
   return true;
 }
 
@@ -351,7 +351,7 @@ bool event::get_value(CJS_Runtime* pRuntime,
   if (!pEvent->m_pValue)
     return false;
 
-  vp->Set(pRuntime, pEvent->Value());
+  vp->Set(pRuntime->NewString(pEvent->Value().c_str()));
   return true;
 }
 
@@ -376,7 +376,7 @@ bool event::get_will_commit(CJS_Runtime* pRuntime,
                             WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime, pEvent->WillCommit());
+  vp->Set(pRuntime->NewBoolean(pEvent->WillCommit()));
   return true;
 }
 

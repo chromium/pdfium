@@ -104,12 +104,12 @@ void JSSpecialPropGet(const char* class_name,
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
 
-  CJS_Value value(pRuntime);
+  CJS_Value value;
   if (!pObj->GetProperty(pRuntime, propname.c_str(), &value)) {
     pRuntime->Error(JSFormatErrorString(class_name, "GetProperty", L""));
     return;
   }
-  info.GetReturnValue().Set(value.ToV8Value(pRuntime));
+  info.GetReturnValue().Set(value.ToV8Value());
 }
 
 template <class Alt>
@@ -131,7 +131,7 @@ void JSSpecialPropPut(const char* class_name,
   v8::String::Utf8Value utf8_value(property);
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
-  CJS_Value prop_value(pRuntime, value);
+  CJS_Value prop_value(value);
   if (!pObj->SetProperty(pRuntime, propname.c_str(), prop_value)) {
     pRuntime->Error(JSFormatErrorString(class_name, "PutProperty", L""));
   }
@@ -287,33 +287,33 @@ bool JSGlobalAlternate::GetProperty(CJS_Runtime* pRuntime,
                                     CJS_Value* vp) {
   auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
   if (it == m_MapGlobal.end()) {
-    vp->SetNull(pRuntime);
+    vp->Set(pRuntime->NewNull());
     return true;
   }
 
   JSGlobalData* pData = it->second.get();
   if (pData->bDeleted) {
-    vp->SetNull(pRuntime);
+    vp->Set(pRuntime->NewNull());
     return true;
   }
 
   switch (pData->nType) {
     case JS_GlobalDataType::NUMBER:
-      vp->Set(pRuntime, pData->dData);
+      vp->Set(pRuntime->NewNumber(pData->dData));
       return true;
     case JS_GlobalDataType::BOOLEAN:
-      vp->Set(pRuntime, pData->bData);
+      vp->Set(pRuntime->NewBoolean(pData->bData));
       return true;
     case JS_GlobalDataType::STRING:
-      vp->Set(pRuntime, pData->sData);
+      vp->Set(pRuntime->NewString(
+          WideString::FromLocal(pData->sData.c_str()).c_str()));
       return true;
     case JS_GlobalDataType::OBJECT: {
-      vp->Set(pRuntime,
-              v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData));
+      vp->Set(v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData));
       return true;
     }
     case JS_GlobalDataType::NULLOBJ:
-      vp->SetNull(pRuntime);
+      vp->Set(pRuntime->NewNull());
       return true;
     default:
       break;
@@ -485,7 +485,7 @@ void JSGlobalAlternate::ObjectToArray(CJS_Runtime* pRuntime,
         array.Add(pObjElement);
       } break;
       case CJS_Value::VT_string: {
-        ByteString sValue = CJS_Value(pRuntime, v).ToByteString(pRuntime);
+        ByteString sValue = CJS_Value(v).ToByteString(pRuntime);
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GlobalDataType::STRING;
         pObjElement->sKey = sKey;
