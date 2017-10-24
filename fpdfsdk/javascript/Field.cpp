@@ -879,7 +879,7 @@ bool Field::set_current_value_indices(CJS_Runtime* pRuntime,
   std::vector<uint32_t> array;
   if (vp.ToV8Value()->IsNumber()) {
     array.push_back(pRuntime->ToInt32(vp.ToV8Value()));
-  } else if (vp.IsArrayObject()) {
+  } else if (!vp.ToV8Value().IsEmpty() && vp.ToV8Value()->IsArray()) {
     CJS_Array SelArray(pRuntime->ToArray(vp.ToV8Value()));
     for (int i = 0, sz = SelArray.GetLength(pRuntime); i < sz; i++)
       array.push_back(
@@ -1210,7 +1210,7 @@ bool Field::set_export_values(CJS_Runtime* pRuntime,
     return false;
   }
 
-  return m_bCanSet && vp.IsArrayObject();
+  return m_bCanSet && !vp.ToV8Value().IsEmpty() && vp.ToV8Value()->IsArray();
 }
 
 bool Field::get_file_select(CJS_Runtime* pRuntime,
@@ -1297,7 +1297,7 @@ bool Field::set_fill_color(CJS_Runtime* pRuntime,
     return false;
   if (!m_bCanSet)
     return false;
-  if (!vp.IsArrayObject())
+  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
     return false;
   return true;
 }
@@ -1797,7 +1797,7 @@ bool Field::set_rect(CJS_Runtime* pRuntime,
                      WideString* sError) {
   if (!m_bCanSet)
     return false;
-  if (!vp.IsArrayObject())
+  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
     return false;
 
   CJS_Array rcArray(pRuntime->ToArray(vp.ToV8Value()));
@@ -2017,7 +2017,7 @@ bool Field::set_stroke_color(CJS_Runtime* pRuntime,
                              WideString* sError) {
   if (!m_bCanSet)
     return false;
-  if (!vp.IsArrayObject())
+  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
     return false;
   return true;
 }
@@ -2131,7 +2131,7 @@ bool Field::set_text_color(CJS_Runtime* pRuntime,
                            WideString* sError) {
   if (!m_bCanSet)
     return false;
-  if (!vp.IsArrayObject())
+  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
     return false;
   return true;
 }
@@ -2342,7 +2342,7 @@ bool Field::set_value(CJS_Runtime* pRuntime,
     return false;
 
   std::vector<WideString> strArray;
-  if (vp.IsArrayObject()) {
+  if (!vp.ToV8Value().IsEmpty() && vp.ToV8Value()->IsArray()) {
     CJS_Array ValueArray(pRuntime->ToArray(vp.ToV8Value()));
     for (int i = 0, sz = ValueArray.GetLength(pRuntime); i < sz; i++) {
       CJS_Value ElementValue(ValueArray.GetElement(pRuntime, i));

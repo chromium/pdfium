@@ -247,7 +247,7 @@ double CJS_PublicMethods::AF_Simple(const wchar_t* sFuction,
 
 CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                   CJS_Value val) {
-  if (val.IsArrayObject())
+  if (!val.ToV8Value().IsEmpty() && val.ToV8Value()->IsArray())
     return CJS_Array(pRuntime->ToArray(val.ToV8Value()));
 
   WideString wsStr = pRuntime->ToWideString(val.ToV8Value());
@@ -1675,7 +1675,8 @@ bool CJS_PublicMethods::AFSimple_Calculate(CJS_Runtime* pRuntime,
   }
 
   CJS_Value params1(params[1]);
-  if (!params1.IsArrayObject() && !params1.ToV8Value()->IsString()) {
+  if ((params[1].ToV8Value().IsEmpty() || !params[1].ToV8Value()->IsArray()) &&
+      !params1.ToV8Value()->IsString()) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }

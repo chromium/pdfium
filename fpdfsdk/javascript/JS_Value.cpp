@@ -216,14 +216,6 @@ void CJS_Value::MaybeCoerceToNumber(CJS_Runtime* pRuntime) {
   m_pValue = num;
 }
 
-bool CJS_Value::IsArrayObject() const {
-  return !m_pValue.IsEmpty() && m_pValue->IsArray();
-}
-
-bool CJS_Value::IsDateObject() const {
-  return !m_pValue.IsEmpty() && m_pValue->IsDate();
-}
-
 CJS_Array::CJS_Array() {}
 
 CJS_Array::CJS_Array(v8::Local<v8::Array> pArray) : m_pArray(pArray) {}
@@ -436,7 +428,7 @@ std::vector<CJS_Value> ExpandKeywordParams(
     result[i] = originals[i];
 
   if (originals.size() != 1 || !originals[0].ToV8Value()->IsObject() ||
-      originals[0].IsArrayObject()) {
+      originals[0].ToV8Value()->IsArray()) {
     return result;
   }
   v8::Local<v8::Object> pObj = pRuntime->ToObject(originals[0].ToV8Value());

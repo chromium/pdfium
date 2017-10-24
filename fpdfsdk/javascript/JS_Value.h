@@ -33,9 +33,6 @@ class CJS_Value {
   // to make one from the current |m_pValue|.
   void MaybeCoerceToNumber(CJS_Runtime* pRuntime);
 
-  bool IsArrayObject() const;
-  bool IsDateObject() const;
-
  private:
   v8::Local<v8::Value> m_pValue;
 };

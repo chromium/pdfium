@@ -289,7 +289,7 @@ bool color::GetPropertyHelper(CJS_Runtime* pRuntime,
 bool color::SetPropertyHelper(CJS_Runtime* pRuntime,
                               const CJS_Value& vp,
                               CFX_Color* var) {
-  if (!vp.IsArrayObject())
+  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
     return false;
 
   *var = ConvertArrayToPWLColor(pRuntime,
@@ -304,7 +304,7 @@ bool color::convert(CJS_Runtime* pRuntime,
   int iSize = params.size();
   if (iSize < 2)
     return false;
-  if (!params[0].IsArrayObject())
+  if (params[0].ToV8Value().IsEmpty() || !params[0].ToV8Value()->IsArray())
     return false;
 
   WideString sDestSpace = pRuntime->ToWideString(params[1].ToV8Value());
@@ -337,8 +337,10 @@ bool color::equal(CJS_Runtime* pRuntime,
                   WideString& sError) {
   if (params.size() < 2)
     return false;
-  if (!params[0].IsArrayObject() || !params[1].IsArrayObject())
+  if (params[0].ToV8Value().IsEmpty() || !params[0].ToV8Value()->IsArray() ||
+      params[1].ToV8Value().IsEmpty() || !params[1].ToV8Value()->IsArray()) {
     return false;
+  }
 
   CFX_Color color1 = ConvertArrayToPWLColor(
       pRuntime, CJS_Array(pRuntime->ToArray(params[0].ToV8Value())));

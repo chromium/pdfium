@@ -149,12 +149,12 @@ bool util::printd(CJS_Runtime* pRuntime,
 
   const CJS_Value& p1 = params[0];
   const CJS_Value& p2 = params[1];
-  if (!p2.IsDateObject()) {
+  if (p2.ToV8Value().IsEmpty() || !p2.ToV8Value()->IsDate()) {
     sError = JSGetStringFromID(IDS_STRING_JSPRINT1);
     return false;
   }
 
-  ASSERT(p2.IsDateObject());
+  ASSERT(!p2.ToV8Value().IsEmpty() && p2.ToV8Value()->IsDate());
   v8::Local<v8::Value> mutable_value = p2.ToV8Value();
   CJS_Date jsDate(mutable_value.As<v8::Date>());
   if (!jsDate.IsValidDate(pRuntime)) {

@@ -414,21 +414,17 @@ bool app::alert(CJS_Runtime* pRuntime,
   }
 
   WideString swMsg;
-  if (newParams[0].ToV8Value()->IsObject()) {
-    if (newParams[0].IsArrayObject()) {
-      CJS_Array carray(pRuntime->ToArray(newParams[0].ToV8Value()));
-      swMsg = L"[";
-      for (int i = 0; i < carray.GetLength(pRuntime); ++i) {
-        if (i)
-          swMsg += L", ";
+  if (newParams[0].ToV8Value()->IsArray()) {
+    CJS_Array carray(pRuntime->ToArray(newParams[0].ToV8Value()));
+    swMsg = L"[";
+    for (int i = 0; i < carray.GetLength(pRuntime); ++i) {
+      if (i)
+        swMsg += L", ";
 
-        CJS_Value element(carray.GetElement(pRuntime, i));
-        swMsg += pRuntime->ToWideString(element.ToV8Value());
-      }
-      swMsg += L"]";
-    } else {
-      swMsg = pRuntime->ToWideString(newParams[0].ToV8Value());
+      CJS_Value element(carray.GetElement(pRuntime, i));
+      swMsg += pRuntime->ToWideString(element.ToV8Value());
     }
+    swMsg += L"]";
   } else {
     swMsg = pRuntime->ToWideString(newParams[0].ToV8Value());
   }
