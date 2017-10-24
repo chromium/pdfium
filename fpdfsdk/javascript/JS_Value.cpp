@@ -182,31 +182,6 @@ CJS_Value::CJS_Value() {}
 
 CJS_Value::CJS_Value(v8::Local<v8::Value> pValue) : m_pValue(pValue) {}
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, int iValue)
-    : CJS_Value(pRuntime->NewNumber(iValue)) {}
-
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, bool bValue)
-    : CJS_Value(pRuntime->NewBoolean(bValue)) {}
-
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, double dValue)
-    : CJS_Value(pRuntime->NewNumber(dValue)) {}
-
-CJS_Value::CJS_Value(CJS_Object* pObj) {
-  if (pObj)
-    m_pValue = pObj->ToV8Object();
-}
-
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const wchar_t* pWstr)
-    : CJS_Value(pRuntime->NewString(pWstr)) {}
-
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const char* pStr)
-    : CJS_Value(pRuntime->NewString(WideString::FromLocal(pStr).c_str())) {}
-
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array)
-    : CJS_Value(array.ToV8Array(pRuntime)) {}
-
-CJS_Value::CJS_Value(const CJS_Date& date) : CJS_Value(date.ToV8Date()) {}
-
 CJS_Value::~CJS_Value() {}
 
 CJS_Value::CJS_Value(const CJS_Value& other) = default;

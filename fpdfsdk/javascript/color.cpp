@@ -44,24 +44,32 @@ CJS_Array color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
   CJS_Array array;
   switch (color.nColorType) {
     case CFX_Color::kTransparent:
-      array.SetElement(pRuntime, 0, CJS_Value(pRuntime, "T"));
+      array.SetElement(pRuntime, 0, CJS_Value(pRuntime->NewString(L"T")));
       break;
     case CFX_Color::kGray:
-      array.SetElement(pRuntime, 0, CJS_Value(pRuntime, "G"));
-      array.SetElement(pRuntime, 1, CJS_Value(pRuntime, color.fColor1));
+      array.SetElement(pRuntime, 0, CJS_Value(pRuntime->NewString(L"G")));
+      array.SetElement(pRuntime, 1,
+                       CJS_Value(pRuntime->NewNumber(color.fColor1)));
       break;
     case CFX_Color::kRGB:
-      array.SetElement(pRuntime, 0, CJS_Value(pRuntime, "RGB"));
-      array.SetElement(pRuntime, 1, CJS_Value(pRuntime, color.fColor1));
-      array.SetElement(pRuntime, 2, CJS_Value(pRuntime, color.fColor2));
-      array.SetElement(pRuntime, 3, CJS_Value(pRuntime, color.fColor3));
+      array.SetElement(pRuntime, 0, CJS_Value(pRuntime->NewString(L"RGB")));
+      array.SetElement(pRuntime, 1,
+                       CJS_Value(pRuntime->NewNumber(color.fColor1)));
+      array.SetElement(pRuntime, 2,
+                       CJS_Value(pRuntime->NewNumber(color.fColor2)));
+      array.SetElement(pRuntime, 3,
+                       CJS_Value(pRuntime->NewNumber(color.fColor3)));
       break;
     case CFX_Color::kCMYK:
-      array.SetElement(pRuntime, 0, CJS_Value(pRuntime, "CMYK"));
-      array.SetElement(pRuntime, 1, CJS_Value(pRuntime, color.fColor1));
-      array.SetElement(pRuntime, 2, CJS_Value(pRuntime, color.fColor2));
-      array.SetElement(pRuntime, 3, CJS_Value(pRuntime, color.fColor3));
-      array.SetElement(pRuntime, 4, CJS_Value(pRuntime, color.fColor4));
+      array.SetElement(pRuntime, 0, CJS_Value(pRuntime->NewString(L"CMYK")));
+      array.SetElement(pRuntime, 1,
+                       CJS_Value(pRuntime->NewNumber(color.fColor1)));
+      array.SetElement(pRuntime, 2,
+                       CJS_Value(pRuntime->NewNumber(color.fColor2)));
+      array.SetElement(pRuntime, 3,
+                       CJS_Value(pRuntime->NewNumber(color.fColor3)));
+      array.SetElement(pRuntime, 4,
+                       CJS_Value(pRuntime->NewNumber(color.fColor4)));
       break;
   }
   return array;
@@ -300,8 +308,9 @@ bool color::convert(CJS_Runtime* pRuntime,
 
   CFX_Color color =
       ConvertArrayToPWLColor(pRuntime, params[0].ToArray(pRuntime));
-  vRet = CJS_Value(pRuntime, ConvertPWLColorToArray(
-                                 pRuntime, color.ConvertColorType(nColorType)));
+  vRet = CJS_Value(
+      ConvertPWLColorToArray(pRuntime, color.ConvertColorType(nColorType))
+          .ToV8Array(pRuntime));
 
   return true;
 }
@@ -321,6 +330,6 @@ bool color::equal(CJS_Runtime* pRuntime,
       ConvertArrayToPWLColor(pRuntime, params[1].ToArray(pRuntime));
 
   color1 = color1.ConvertColorType(color2.nColorType);
-  vRet = CJS_Value(pRuntime, color1 == color2);
+  vRet = CJS_Value(pRuntime->NewBoolean(color1 == color2));
   return true;
 }

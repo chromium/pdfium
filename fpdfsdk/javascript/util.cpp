@@ -132,7 +132,7 @@ bool util::printf(CJS_Runtime* pRuntime,
   }
 
   c_strResult.erase(c_strResult.begin());
-  vRet = CJS_Value(pRuntime, c_strResult.c_str());
+  vRet = CJS_Value(pRuntime->NewString(c_strResult.c_str()));
   return true;
 }
 
@@ -185,7 +185,7 @@ bool util::printd(CJS_Runtime* pRuntime,
         return false;
     }
 
-    vRet = CJS_Value(pRuntime, swResult.c_str());
+    vRet = CJS_Value(pRuntime->NewString(swResult.c_str()));
     return true;
   }
 
@@ -259,7 +259,7 @@ bool util::printd(CJS_Runtime* pRuntime,
     wchar_t buf[64] = {};
     FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
     cFormat = buf;
-    vRet = CJS_Value(pRuntime, cFormat.c_str());
+    vRet = CJS_Value(pRuntime->NewString(cFormat.c_str()));
     return true;
   }
 
@@ -276,9 +276,9 @@ bool util::printx(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vRet = CJS_Value(pRuntime, printx(params[0].ToWideString(pRuntime),
-                                    params[1].ToWideString(pRuntime))
-                                 .c_str());
+  vRet = CJS_Value(pRuntime->NewString(
+      printx(params[0].ToWideString(pRuntime), params[1].ToWideString(pRuntime))
+          .c_str()));
 
   return true;
 }
@@ -396,7 +396,7 @@ bool util::scand(CJS_Runtime* pRuntime,
   }
 
   if (!std::isnan(dDate)) {
-    vRet = CJS_Value(CJS_Date(pRuntime, dDate));
+    vRet = CJS_Value(CJS_Date(pRuntime, dDate).ToV8Date());
   } else {
     vRet.Set(pRuntime->NewNull());
   }
@@ -420,7 +420,7 @@ bool util::byteToChar(CJS_Runtime* pRuntime,
   }
 
   WideString wStr(static_cast<wchar_t>(arg));
-  vRet = CJS_Value(pRuntime, wStr.c_str());
+  vRet = CJS_Value(pRuntime->NewString(wStr.c_str()));
   return true;
 }
 

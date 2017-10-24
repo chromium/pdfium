@@ -217,7 +217,9 @@ bool app::get_active_docs(CJS_Runtime* pRuntime,
     pJSDocument = static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
 
   CJS_Array aDocs;
-  aDocs.SetElement(pRuntime, 0, CJS_Value(pJSDocument));
+  aDocs.SetElement(
+      pRuntime, 0,
+      pJSDocument ? CJS_Value(pJSDocument->ToV8Object()) : CJS_Value());
   if (aDocs.GetLength(pRuntime) > 0)
     vp->Set(aDocs.ToV8Array(pRuntime));
   else
@@ -392,7 +394,7 @@ bool app::alert(CJS_Runtime* pRuntime,
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (!pFormFillEnv) {
-    vRet = CJS_Value(pRuntime, 0);
+    vRet = CJS_Value(pRuntime->NewNumber(0));
     return true;
   }
 
@@ -433,8 +435,8 @@ bool app::alert(CJS_Runtime* pRuntime,
   pRuntime->BeginBlock();
   pFormFillEnv->KillFocusAnnot(0);
 
-  vRet = CJS_Value(pRuntime, pFormFillEnv->JS_appAlert(
-                                 swMsg.c_str(), swTitle.c_str(), iType, iIcon));
+  vRet = CJS_Value(pRuntime->NewNumber(
+      pFormFillEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(), iType, iIcon)));
   pRuntime->EndBlock();
   return true;
 }
@@ -796,10 +798,10 @@ bool app::response(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vRet = CJS_Value(pRuntime, WideString::FromUTF16LE(
-                                 reinterpret_cast<uint16_t*>(pBuff.data()),
-                                 nLengthBytes / sizeof(uint16_t))
-                                 .c_str());
+  vRet = CJS_Value(pRuntime->NewString(
+      WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
+                              nLengthBytes / sizeof(uint16_t))
+          .c_str()));
 
   return true;
 }

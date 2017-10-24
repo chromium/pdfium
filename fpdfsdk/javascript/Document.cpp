@@ -325,7 +325,9 @@ bool Document::getField(CJS_Runtime* pRuntime,
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
   Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
   pField->AttachField(this, wideName);
-  vRet = CJS_Value(pJSField);
+
+  if (pJSField)
+    vRet = CJS_Value(pJSField->ToV8Object());
   return true;
 }
 
@@ -353,7 +355,7 @@ bool Document::getNthFieldName(CJS_Runtime* pRuntime,
   if (!pField)
     return false;
 
-  vRet = CJS_Value(pRuntime, pField->GetFullName().c_str());
+  vRet = CJS_Value(pRuntime->NewString(pField->GetFullName().c_str()));
   return true;
 }
 
@@ -1279,7 +1281,9 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
       static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
   Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
   pAnnot->SetSDKAnnot(pSDKBAAnnot);
-  vRet = CJS_Value(pJS_Annot);
+  if (pJS_Annot)
+    vRet = CJS_Value(pJS_Annot->ToV8Object());
+
   return true;
 }
 
@@ -1317,10 +1321,12 @@ bool Document::getAnnots(CJS_Runtime* pRuntime,
           static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
       Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
       pAnnot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
-      annots.SetElement(pRuntime, i, CJS_Value(pJS_Annot));
+      annots.SetElement(
+          pRuntime, i,
+          pJS_Annot ? CJS_Value(pJS_Annot->ToV8Object()) : CJS_Value());
     }
   }
-  vRet = CJS_Value(pRuntime, annots);
+  vRet = CJS_Value(annots.ToV8Array(pRuntime));
   return true;
 }
 
@@ -1408,7 +1414,9 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
     Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
     pIcon->SetIconName(name);
-    Icons.SetElement(pRuntime, i++, CJS_Value(pJS_Icon));
+    Icons.SetElement(
+        pRuntime, i++,
+        pJS_Icon ? CJS_Value(pJS_Icon->ToV8Object()) : CJS_Value());
   }
 
   vp->Set(Icons.ToV8Array(pRuntime));
@@ -1444,7 +1452,9 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
   CJS_Icon* pJS_Icon = static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
   Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
   pIcon->SetIconName(*it);
-  vRet = CJS_Value(pJS_Icon);
+  if (pJS_Icon)
+    vRet = CJS_Value(pJS_Icon->ToV8Object());
+
   return true;
 }
 
@@ -1560,7 +1570,7 @@ bool Document::getPageNthWord(CJS_Runtime* pRuntime,
     swRet.TrimRight();
   }
 
-  vRet = CJS_Value(pRuntime, swRet.c_str());
+  vRet = CJS_Value(pRuntime->NewString(swRet.c_str()));
   return true;
 }
 
@@ -1611,7 +1621,7 @@ bool Document::getPageNumWords(CJS_Runtime* pRuntime,
       nWords += CountWords(pPageObj->AsText());
   }
 
-  vRet = CJS_Value(pRuntime, nWords);
+  vRet = CJS_Value(pRuntime->NewNumber(nWords));
   return true;
 }
 

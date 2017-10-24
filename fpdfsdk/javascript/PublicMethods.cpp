@@ -261,8 +261,9 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
   while (*p) {
     const char* pTemp = strchr(p, ch);
     if (!pTemp) {
-      StrArray.SetElement(pRuntime, nIndex,
-                          CJS_Value(pRuntime, StrTrim(ByteString(p)).c_str()));
+      StrArray.SetElement(
+          pRuntime, nIndex,
+          CJS_Value(pRuntime->NewString(StrTrim(ByteString(p)).c_str())));
       break;
     }
 
@@ -270,8 +271,9 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     strncpy(pSub, p, pTemp - p);
     *(pSub + (pTemp - p)) = '\0';
 
-    StrArray.SetElement(pRuntime, nIndex,
-                        CJS_Value(pRuntime, StrTrim(ByteString(pSub)).c_str()));
+    StrArray.SetElement(
+        pRuntime, nIndex,
+        CJS_Value(pRuntime->NewString(StrTrim(ByteString(pSub)).c_str())));
     delete[] pSub;
 
     nIndex++;
@@ -896,16 +898,17 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
         CJS_Array arColor;
-        CJS_Value vColElm;
-        vColElm = CJS_Value(pRuntime, L"RGB");
+        CJS_Value vColElm(pRuntime->NewString(L"RGB"));
         arColor.SetElement(pRuntime, 0, vColElm);
-        vColElm = CJS_Value(pRuntime, 1);
+
+        vColElm = CJS_Value(pRuntime->NewNumber(1));
         arColor.SetElement(pRuntime, 1, vColElm);
-        vColElm = CJS_Value(pRuntime, 0);
+
+        vColElm = CJS_Value(pRuntime->NewNumber(0));
         arColor.SetElement(pRuntime, 2, vColElm);
         arColor.SetElement(pRuntime, 3, vColElm);
 
-        CJS_Value vProp(pRuntime, arColor);
+        CJS_Value vProp(arColor.ToV8Array(pRuntime));
         fTarget->set_text_color(pRuntime, vProp, &sError);  // red
       }
     }
@@ -913,10 +916,10 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
         CJS_Array arColor;
-        CJS_Value vColElm;
-        vColElm = CJS_Value(pRuntime, L"RGB");
+        CJS_Value vColElm(pRuntime->NewString(L"RGB"));
         arColor.SetElement(pRuntime, 0, vColElm);
-        vColElm = CJS_Value(pRuntime, 0);
+
+        vColElm = CJS_Value(pRuntime->NewNumber(0));
         arColor.SetElement(pRuntime, 1, vColElm);
         arColor.SetElement(pRuntime, 2, vColElm);
         arColor.SetElement(pRuntime, 3, vColElm);
@@ -928,8 +931,8 @@ bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
             color::ConvertArrayToPWLColor(pRuntime, vProp.ToArray(pRuntime));
         CFX_Color crColor = color::ConvertArrayToPWLColor(pRuntime, arColor);
         if (crColor != crProp) {
-          fTarget->set_text_color(pRuntime, CJS_Value(pRuntime, arColor),
-                                  &sError);
+          fTarget->set_text_color(
+              pRuntime, CJS_Value(arColor.ToV8Array(pRuntime)), &sError);
         }
       }
     }
@@ -1296,7 +1299,7 @@ bool CJS_PublicMethods::AFDate_Format(CJS_Runtime* pRuntime,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  newParams.push_back(CJS_Value(pRuntime->NewString(cFormats[iIndex])));
   return AFDate_FormatEx(pRuntime, newParams, vRet, sError);
 }
 
@@ -1330,7 +1333,7 @@ bool CJS_PublicMethods::AFDate_Keystroke(CJS_Runtime* pRuntime,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  newParams.push_back(CJS_Value(pRuntime->NewString(cFormats[iIndex])));
   return AFDate_KeystrokeEx(pRuntime, newParams, vRet, sError);
 }
 
@@ -1352,7 +1355,7 @@ bool CJS_PublicMethods::AFTime_Format(CJS_Runtime* pRuntime,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  newParams.push_back(CJS_Value(pRuntime->NewString(cFormats[iIndex])));
   return AFDate_FormatEx(pRuntime, newParams, vRet, sError);
 }
 
@@ -1373,7 +1376,7 @@ bool CJS_PublicMethods::AFTime_Keystroke(CJS_Runtime* pRuntime,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  newParams.push_back(CJS_Value(pRuntime->NewString(cFormats[iIndex])));
   return AFDate_KeystrokeEx(pRuntime, newParams, vRet, sError);
 }
 
@@ -1549,7 +1552,7 @@ bool CJS_PublicMethods::AFSpecial_Keystroke(
   }
 
   std::vector<CJS_Value> params2;
-  params2.push_back(CJS_Value(pRuntime, cFormat));
+  params2.push_back(CJS_Value(pRuntime->NewString(cFormat)));
   return AFSpecial_KeystrokeEx(pRuntime, params2, vRet, sError);
 }
 
@@ -1570,7 +1573,7 @@ bool CJS_PublicMethods::AFMergeChange(CJS_Runtime* pRuntime,
     swValue = pEventHandler->Value();
 
   if (pEventHandler->WillCommit()) {
-    vRet = CJS_Value(pRuntime, swValue.c_str());
+    vRet = CJS_Value(pRuntime->NewString(swValue.c_str()));
     return true;
   }
 
@@ -1588,8 +1591,8 @@ bool CJS_PublicMethods::AFMergeChange(CJS_Runtime* pRuntime,
   else
     postfix = L"";
 
-  vRet =
-      CJS_Value(pRuntime, (prefix + pEventHandler->Change() + postfix).c_str());
+  vRet = CJS_Value(pRuntime->NewString(
+      (prefix + pEventHandler->Change() + postfix).c_str()));
   return true;
 }
 
@@ -1613,7 +1616,7 @@ bool CJS_PublicMethods::AFParseDateEx(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vRet = CJS_Value(pRuntime, dDate);
+  vRet = CJS_Value(pRuntime->NewNumber(dDate));
   return true;
 }
 
@@ -1626,10 +1629,9 @@ bool CJS_PublicMethods::AFSimple(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vRet = CJS_Value(pRuntime, static_cast<double>(AF_Simple(
-                                 params[0].ToWideString(pRuntime).c_str(),
-                                 params[1].ToDouble(pRuntime),
-                                 params[2].ToDouble(pRuntime))));
+  vRet = CJS_Value(pRuntime->NewNumber(static_cast<double>(
+      AF_Simple(params[0].ToWideString(pRuntime).c_str(),
+                params[1].ToDouble(pRuntime), params[2].ToDouble(pRuntime)))));
 
   return true;
 }
@@ -1645,10 +1647,10 @@ bool CJS_PublicMethods::AFMakeNumber(CJS_Runtime* pRuntime,
 
   WideString ws = params[0].ToWideString(pRuntime);
   ws.Replace(L",", L".");
-  vRet = CJS_Value(pRuntime, ws.c_str());
+  vRet = CJS_Value(pRuntime->NewString(ws.c_str()));
   vRet.MaybeCoerceToNumber(pRuntime);
   if (vRet.GetType() != CJS_Value::VT_number)
-    vRet = CJS_Value(pRuntime, 0);
+    vRet = CJS_Value(pRuntime->NewNumber(0));
   return true;
 }
 
@@ -1739,7 +1741,7 @@ bool CJS_PublicMethods::AFSimple_Calculate(CJS_Runtime* pRuntime,
   dValue = (double)floor(dValue * FXSYS_pow((double)10, (double)6) + 0.49) /
            FXSYS_pow((double)10, (double)6);
 
-  CJS_Value jsValue(pRuntime, dValue);
+  CJS_Value jsValue(pRuntime->NewNumber(dValue));
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   if (pContext->GetEventHandler()->m_pValue)
     pContext->GetEventHandler()->Value() = jsValue.ToWideString(pRuntime);
@@ -1815,16 +1817,18 @@ bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
     if (std::iswdigit(wc)) {
       sPart += wc;
     } else if (sPart.GetLength() > 0) {
-      nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));
+      nums.SetElement(pRuntime, nIndex,
+                      CJS_Value(pRuntime->NewString(sPart.c_str())));
       sPart = L"";
       nIndex++;
     }
   }
   if (sPart.GetLength() > 0)
-    nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));
+    nums.SetElement(pRuntime, nIndex,
+                    CJS_Value(pRuntime->NewString(sPart.c_str())));
 
   if (nums.GetLength(pRuntime) > 0)
-    vRet = CJS_Value(pRuntime, nums);
+    vRet = CJS_Value(nums.ToV8Array(pRuntime));
   else
     vRet.Set(pRuntime->NewNull());
 

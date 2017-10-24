@@ -34,16 +34,7 @@ class CJS_Value {
 
   CJS_Value();
   explicit CJS_Value(v8::Local<v8::Value> pValue);
-  CJS_Value(CJS_Runtime* pRuntime, int iValue);
-  CJS_Value(CJS_Runtime* pRuntime, double dValue);
-  CJS_Value(CJS_Runtime* pRuntime, bool bValue);
-  explicit CJS_Value(CJS_Object* pObj);
-  CJS_Value(CJS_Runtime* pRuntime, const char* pStr);
-  CJS_Value(CJS_Runtime* pRuntime, const wchar_t* pWstr);
-  CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array);
-  explicit CJS_Value(const CJS_Date& date);
   CJS_Value(const CJS_Value& other);
-
   ~CJS_Value();
 
   // These calls may re-enter JS (and hence invalidate objects).

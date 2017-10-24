@@ -856,8 +856,9 @@ bool Field::get_current_value_indices(CJS_Runtime* pRuntime,
 
   CJS_Array SelArray;
   for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
-    SelArray.SetElement(pRuntime, i,
-                        CJS_Value(pRuntime, pFormField->GetSelectedIndex(i)));
+    SelArray.SetElement(
+        pRuntime, i,
+        CJS_Value(pRuntime->NewNumber(pFormField->GetSelectedIndex(i))));
   }
   vp->Set(SelArray.ToV8Array(pRuntime));
 
@@ -1163,9 +1164,9 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
   if (m_nFormControlIndex < 0) {
     for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
       CPDF_FormControl* pFormControl = pFormField->GetControl(i);
-      ExportValusArray.SetElement(
-          pRuntime, i,
-          CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
+      ExportValusArray.SetElement(pRuntime, i,
+                                  CJS_Value(pRuntime->NewString(
+                                      pFormControl->GetExportValue().c_str())));
     }
   } else {
     if (m_nFormControlIndex >= pFormField->CountControls())
@@ -1178,7 +1179,7 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
 
     ExportValusArray.SetElement(
         pRuntime, 0,
-        CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
+        CJS_Value(pRuntime->NewString(pFormControl->GetExportValue().c_str())));
   }
 
   vp->Set(ExportValusArray.ToV8Array(pRuntime));
@@ -1571,8 +1572,9 @@ bool Field::get_page(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
     if (!pPageView)
       return false;
 
-    PageArray.SetElement(
-        pRuntime, i, CJS_Value(pRuntime, (int32_t)pPageView->GetPageIndex()));
+    PageArray.SetElement(pRuntime, i,
+                         CJS_Value(pRuntime->NewNumber(
+                             static_cast<int32_t>(pPageView->GetPageIndex()))));
     ++i;
   }
 
@@ -1749,14 +1751,18 @@ bool Field::get_rect(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 
   CFX_FloatRect crRect = pWidget->GetRect();
   CJS_Array rcArray;
-  rcArray.SetElement(pRuntime, 0,
-                     CJS_Value(pRuntime, static_cast<int32_t>(crRect.left)));
-  rcArray.SetElement(pRuntime, 1,
-                     CJS_Value(pRuntime, static_cast<int32_t>(crRect.top)));
-  rcArray.SetElement(pRuntime, 2,
-                     CJS_Value(pRuntime, static_cast<int32_t>(crRect.right)));
-  rcArray.SetElement(pRuntime, 3,
-                     CJS_Value(pRuntime, static_cast<int32_t>(crRect.bottom)));
+  rcArray.SetElement(
+      pRuntime, 0,
+      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.left))));
+  rcArray.SetElement(
+      pRuntime, 1,
+      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.top))));
+  rcArray.SetElement(
+      pRuntime, 2,
+      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.right))));
+  rcArray.SetElement(
+      pRuntime, 3,
+      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.bottom))));
   vp->Set(rcArray.ToV8Array(pRuntime));
   return true;
 }
@@ -2251,11 +2257,11 @@ bool Field::get_value(CJS_Runtime* pRuntime,
         int iIndex;
         for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
           iIndex = pFormField->GetSelectedIndex(i);
-          ElementValue =
-              CJS_Value(pRuntime, pFormField->GetOptionValue(iIndex).c_str());
+          ElementValue = CJS_Value(
+              pRuntime->NewString(pFormField->GetOptionValue(iIndex).c_str()));
           if (wcslen(ElementValue.ToWideString(pRuntime).c_str()) == 0) {
-            ElementValue =
-                CJS_Value(pRuntime, pFormField->GetOptionLabel(iIndex).c_str());
+            ElementValue = CJS_Value(pRuntime->NewString(
+                pFormField->GetOptionLabel(iIndex).c_str()));
           }
           ValueArray.SetElement(pRuntime, i, ElementValue);
         }
@@ -2462,11 +2468,14 @@ bool Field::buttonGetCaption(CJS_Runtime* pRuntime,
     return false;
 
   if (nface == 0)
-    vRet = CJS_Value(pRuntime, pFormControl->GetNormalCaption().c_str());
+    vRet = CJS_Value(
+        pRuntime->NewString(pFormControl->GetNormalCaption().c_str()));
   else if (nface == 1)
-    vRet = CJS_Value(pRuntime, pFormControl->GetDownCaption().c_str());
+    vRet =
+        CJS_Value(pRuntime->NewString(pFormControl->GetDownCaption().c_str()));
   else if (nface == 2)
-    vRet = CJS_Value(pRuntime, pFormControl->GetRolloverCaption().c_str());
+    vRet = CJS_Value(
+        pRuntime->NewString(pFormControl->GetRolloverCaption().c_str()));
   else
     return false;
 
@@ -2501,7 +2510,9 @@ bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
     return false;
 
   CJS_Icon* pJS_Icon = static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-  vRet = CJS_Value(pJS_Icon);
+  if (pJS_Icon)
+    vRet = CJS_Value(pJS_Icon->ToV8Object());
+
   return true;
 }
 
@@ -2590,9 +2601,9 @@ bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return false;
 
-  vRet = CJS_Value(pRuntime,
-                   pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
-                       pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON);
+  vRet = CJS_Value(pRuntime->NewBoolean(
+      pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
+      pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON));
 
   return true;
 }
@@ -2635,10 +2646,12 @@ bool Field::getArray(CJS_Runtime* pRuntime,
         static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pObj));
     Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
     pField->AttachField(m_pJSDoc, *pStr);
-    FormFieldArray.SetElement(pRuntime, j++, CJS_Value(pJSField));
+    FormFieldArray.SetElement(
+        pRuntime, j++,
+        pJSField ? CJS_Value(pJSField->ToV8Object()) : CJS_Value());
   }
 
-  vRet = CJS_Value(pRuntime, FormFieldArray);
+  vRet = CJS_Value(FormFieldArray.ToV8Array(pRuntime));
   return true;
 }
 
@@ -2667,11 +2680,13 @@ bool Field::getItemAt(CJS_Runtime* pRuntime,
     if (bExport) {
       WideString strval = pFormField->GetOptionValue(nIdx);
       if (strval.IsEmpty())
-        vRet = CJS_Value(pRuntime, pFormField->GetOptionLabel(nIdx).c_str());
+        vRet = CJS_Value(
+            pRuntime->NewString(pFormField->GetOptionLabel(nIdx).c_str()));
       else
-        vRet = CJS_Value(pRuntime, strval.c_str());
+        vRet = CJS_Value(pRuntime->NewString(strval.c_str()));
     } else {
-      vRet = CJS_Value(pRuntime, pFormField->GetOptionLabel(nIdx).c_str());
+      vRet = CJS_Value(
+          pRuntime->NewString(pFormField->GetOptionLabel(nIdx).c_str()));
     }
   } else {
     return false;
@@ -2710,10 +2725,10 @@ bool Field::isBoxChecked(CJS_Runtime* pRuntime,
   if (nIndex < 0 || nIndex >= pFormField->CountControls())
     return false;
 
-  vRet = CJS_Value(pRuntime,
-                   ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
-                     pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
-                    pFormField->GetControl(nIndex)->IsChecked() != 0));
+  vRet = CJS_Value(pRuntime->NewBoolean(
+      ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
+        pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
+       pFormField->GetControl(nIndex)->IsChecked() != 0)));
   return true;
 }
 
@@ -2733,10 +2748,10 @@ bool Field::isDefaultChecked(CJS_Runtime* pRuntime,
   if (nIndex < 0 || nIndex >= pFormField->CountControls())
     return false;
 
-  vRet = CJS_Value(pRuntime,
-                   ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
-                     pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
-                    pFormField->GetControl(nIndex)->IsDefaultChecked() != 0));
+  vRet = CJS_Value(pRuntime->NewBoolean(
+      ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
+        pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
+       pFormField->GetControl(nIndex)->IsDefaultChecked() != 0)));
   return true;
 }
 
