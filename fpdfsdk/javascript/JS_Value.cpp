@@ -189,22 +189,6 @@ CJS_Return::CJS_Return(const CJS_Return&) = default;
 
 CJS_Return::~CJS_Return() = default;
 
-CJS_Value::CJS_Value() {}
-
-CJS_Value::CJS_Value(v8::Local<v8::Value> pValue) : m_pValue(pValue) {}
-
-CJS_Value::~CJS_Value() {}
-
-CJS_Value::CJS_Value(const CJS_Value& other) = default;
-
-void CJS_Value::Set(v8::Local<v8::Value> pValue) {
-  m_pValue = pValue;
-}
-
-v8::Local<v8::Value> CJS_Value::ToV8Value() const {
-  return m_pValue;
-}
-
 CJS_Array::CJS_Array() {}
 
 CJS_Array::CJS_Array(v8::Local<v8::Array> pArray) : m_pArray(pArray) {}

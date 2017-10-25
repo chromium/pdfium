@@ -39,22 +39,6 @@ class CJS_Return {
   v8::Local<v8::Value> return_;
 };
 
-class CJS_Value {
- public:
-  CJS_Value();
-  explicit CJS_Value(v8::Local<v8::Value> pValue);
-  CJS_Value(const CJS_Value& other);
-  ~CJS_Value();
-
-  // These calls may re-enter JS (and hence invalidate objects).
-  void Set(v8::Local<v8::Value> pValue);
-
-  v8::Local<v8::Value> ToV8Value() const;
-
- private:
-  v8::Local<v8::Value> m_pValue;
-};
-
 class CJS_Array {
  public:
   CJS_Array();
