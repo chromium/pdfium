@@ -62,27 +62,9 @@ class CJS_Array {
 
 class CJS_Date {
  public:
-  CJS_Date();
   explicit CJS_Date(v8::Local<v8::Date> pDate);
-  CJS_Date(CJS_Runtime* pRuntime, double dMsec_time);
-  CJS_Date(CJS_Runtime* pRuntime,
-           int year,
-           int mon,
-           int day,
-           int hour,
-           int min,
-           int sec);
   CJS_Date(const CJS_Date&);
   virtual ~CJS_Date();
-
-  bool IsValidDate(CJS_Runtime* pRuntime) const;
-
-  int GetYear(CJS_Runtime* pRuntime) const;
-  int GetMonth(CJS_Runtime* pRuntime) const;
-  int GetDay(CJS_Runtime* pRuntime) const;
-  int GetHours(CJS_Runtime* pRuntime) const;
-  int GetMinutes(CJS_Runtime* pRuntime) const;
-  int GetSeconds(CJS_Runtime* pRuntime) const;
 
   v8::Local<v8::Value> ToV8Value() const { return m_pDate; }
 
@@ -97,6 +79,7 @@ int JS_GetDayFromTime(double dt);
 int JS_GetHourFromTime(double dt);
 int JS_GetMinFromTime(double dt);
 int JS_GetSecFromTime(double dt);
+double JS_LocalTime(double d);
 double JS_DateParse(const WideString& str);
 double JS_MakeDay(int nYear, int nMonth, int nDay);
 double JS_MakeTime(int nHour, int nMin, int nSec, int nMs);

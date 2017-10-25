@@ -19,12 +19,6 @@
 
 namespace {
 
-double
-MakeDate(int year, int mon, int day, int hour, int min, int sec, int ms) {
-  return JS_MakeDate(JS_MakeDay(year, mon, day),
-                     JS_MakeTime(hour, min, sec, ms));
-}
-
 double GetLocalTZA() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
@@ -172,10 +166,6 @@ int DateFromTime(double t) {
   }
 }
 
-double JS_LocalTime(double d) {
-  return d + GetLocalTZA() + GetDaylightSavingTA(d);
-}
-
 }  // namespace
 
 CJS_Return::CJS_Return(bool result) : is_error_(!result) {}
@@ -219,70 +209,11 @@ int CJS_Array::GetLength(CJS_Runtime* pRuntime) const {
   return pRuntime->GetArrayLength(m_pArray);
 }
 
-CJS_Date::CJS_Date() {}
-
 CJS_Date::CJS_Date(v8::Local<v8::Date> pDate) : m_pDate(pDate) {}
-
-CJS_Date::CJS_Date(CJS_Runtime* pRuntime, double dMsecTime)
-    : m_pDate(pRuntime->NewDate(dMsecTime)) {}
-
-CJS_Date::CJS_Date(CJS_Runtime* pRuntime,
-                   int year,
-                   int mon,
-                   int day,
-                   int hour,
-                   int min,
-                   int sec)
-    : m_pDate(pRuntime->NewDate(MakeDate(year, mon, day, hour, min, sec, 0))) {}
 
 CJS_Date::CJS_Date(const CJS_Date& other) = default;
 
 CJS_Date::~CJS_Date() {}
-
-bool CJS_Date::IsValidDate(CJS_Runtime* pRuntime) const {
-  return !m_pDate.IsEmpty() && !std::isnan(pRuntime->ToDouble(m_pDate));
-}
-
-int CJS_Date::GetYear(CJS_Runtime* pRuntime) const {
-  if (!IsValidDate(pRuntime))
-    return 0;
-
-  return JS_GetYearFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-int CJS_Date::GetMonth(CJS_Runtime* pRuntime) const {
-  if (!IsValidDate(pRuntime))
-    return 0;
-  return JS_GetMonthFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-int CJS_Date::GetDay(CJS_Runtime* pRuntime) const {
-  if (!IsValidDate(pRuntime))
-    return 0;
-
-  return JS_GetDayFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-int CJS_Date::GetHours(CJS_Runtime* pRuntime) const {
-  if (!IsValidDate(pRuntime))
-    return 0;
-
-  return JS_GetHourFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-int CJS_Date::GetMinutes(CJS_Runtime* pRuntime) const {
-  if (!IsValidDate(pRuntime))
-    return 0;
-
-  return JS_GetMinFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
-
-int CJS_Date::GetSeconds(CJS_Runtime* pRuntime) const {
-  if (!IsValidDate(pRuntime))
-    return 0;
-
-  return JS_GetSecFromTime(JS_LocalTime(pRuntime->ToDouble(m_pDate)));
-}
 
 double JS_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
@@ -319,6 +250,10 @@ int JS_GetMinFromTime(double dt) {
 
 int JS_GetSecFromTime(double dt) {
   return (int)Mod(floor(dt / 1000), 60);
+}
+
+double JS_LocalTime(double d) {
+  return d + GetLocalTZA() + GetDaylightSavingTA(d);
 }
 
 double JS_DateParse(const WideString& str) {

@@ -144,31 +144,33 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
     return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT1));
 
   CJS_Date jsDate(params[1].As<v8::Date>());
-  if (!jsDate.IsValidDate(pRuntime))
+  if (jsDate.ToV8Value().IsEmpty() ||
+      std::isnan(pRuntime->ToDouble(jsDate.ToV8Value()))) {
     return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT2));
+  }
+
+  double date = JS_LocalTime(pRuntime->ToDouble(jsDate.ToV8Value()));
+  int year = JS_GetYearFromTime(date);
+  int month = JS_GetMonthFromTime(date) + 1;  // One-based.
+  int day = JS_GetDayFromTime(date);
+  int hour = JS_GetHourFromTime(date);
+  int min = JS_GetMinFromTime(date);
+  int sec = JS_GetSecFromTime(date);
 
   if (params[0]->IsNumber()) {
     WideString swResult;
     switch (pRuntime->ToInt32(params[0])) {
       case 0:
-        swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", jsDate.GetYear(pRuntime),
-                        jsDate.GetMonth(pRuntime) + 1, jsDate.GetDay(pRuntime),
-                        jsDate.GetHours(pRuntime), jsDate.GetMinutes(pRuntime),
-                        jsDate.GetSeconds(pRuntime));
+        swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", year, month, day, hour,
+                        min, sec);
         break;
       case 1:
-        swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d",
-                        jsDate.GetYear(pRuntime), jsDate.GetMonth(pRuntime) + 1,
-                        jsDate.GetDay(pRuntime), jsDate.GetHours(pRuntime),
-                        jsDate.GetMinutes(pRuntime),
-                        jsDate.GetSeconds(pRuntime));
+        swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d", year, month, day,
+                        hour, min, sec);
         break;
       case 2:
-        swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d",
-                        jsDate.GetYear(pRuntime), jsDate.GetMonth(pRuntime) + 1,
-                        jsDate.GetDay(pRuntime), jsDate.GetHours(pRuntime),
-                        jsDate.GetMinutes(pRuntime),
-                        jsDate.GetSeconds(pRuntime));
+        swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d", year, month, day,
+                        hour, min, sec);
         break;
       default:
         return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
@@ -200,20 +202,13 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
       }
     }
 
-    int iYear = jsDate.GetYear(pRuntime);
-    if (iYear < 0)
+    if (year < 0)
       return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
 
-    int iMonth = jsDate.GetMonth(pRuntime);
-    int iDay = jsDate.GetDay(pRuntime);
-    int iHour = jsDate.GetHours(pRuntime);
-    int iMin = jsDate.GetMinutes(pRuntime);
-    int iSec = jsDate.GetSeconds(pRuntime);
-
     static const TbConvertAdditional cTableAd[] = {
-        {L"m", iMonth + 1}, {L"d", iDay},
-        {L"H", iHour},      {L"h", iHour > 12 ? iHour - 12 : iHour},
-        {L"M", iMin},       {L"s", iSec},
+        {L"m", month}, {L"d", day},
+        {L"H", hour},  {L"h", hour > 12 ? hour - 12 : hour},
+        {L"M", min},   {L"s", sec},
     };
 
     for (size_t i = 0; i < FX_ArraySize(cTableAd); ++i) {
@@ -235,12 +230,12 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
     }
 
     struct tm time = {};
-    time.tm_year = iYear - 1900;
-    time.tm_mon = iMonth;
-    time.tm_mday = iDay;
-    time.tm_hour = iHour;
-    time.tm_min = iMin;
-    time.tm_sec = iSec;
+    time.tm_year = year - 1900;
+    time.tm_mon = month - 1;
+    time.tm_mday = day;
+    time.tm_hour = hour;
+    time.tm_min = min;
+    time.tm_sec = sec;
 
     wchar_t buf[64] = {};
     FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
@@ -373,7 +368,7 @@ CJS_Return util::scand(CJS_Runtime* pRuntime,
 
   if (std::isnan(dDate))
     return CJS_Return(pRuntime->NewUndefined());
-  return CJS_Return(CJS_Date(pRuntime, dDate).ToV8Value());
+  return CJS_Return(pRuntime->NewDate(dDate));
 }
 
 CJS_Return util::byteToChar(CJS_Runtime* pRuntime,
