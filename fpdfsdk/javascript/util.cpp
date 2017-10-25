@@ -143,13 +143,11 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
   if (params[1].IsEmpty() || !params[1]->IsDate())
     return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT1));
 
-  CJS_Date jsDate(params[1].As<v8::Date>());
-  if (jsDate.ToV8Value().IsEmpty() ||
-      std::isnan(pRuntime->ToDouble(jsDate.ToV8Value()))) {
+  v8::Local<v8::Date> v8_date = params[1].As<v8::Date>();
+  if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date)))
     return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT2));
-  }
 
-  double date = JS_LocalTime(pRuntime->ToDouble(jsDate.ToV8Value()));
+  double date = JS_LocalTime(pRuntime->ToDouble(v8_date));
   int year = JS_GetYearFromTime(date);
   int month = JS_GetMonthFromTime(date) + 1;  // One-based.
   int day = JS_GetDayFromTime(date);

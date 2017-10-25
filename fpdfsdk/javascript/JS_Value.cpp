@@ -209,12 +209,6 @@ int CJS_Array::GetLength(CJS_Runtime* pRuntime) const {
   return pRuntime->GetArrayLength(m_pArray);
 }
 
-CJS_Date::CJS_Date(v8::Local<v8::Date> pDate) : m_pDate(pDate) {}
-
-CJS_Date::CJS_Date(const CJS_Date& other) = default;
-
-CJS_Date::~CJS_Date() {}
-
 double JS_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;

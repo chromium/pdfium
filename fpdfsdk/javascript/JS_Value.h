@@ -60,18 +60,6 @@ class CJS_Array {
   mutable v8::Local<v8::Array> m_pArray;
 };
 
-class CJS_Date {
- public:
-  explicit CJS_Date(v8::Local<v8::Date> pDate);
-  CJS_Date(const CJS_Date&);
-  virtual ~CJS_Date();
-
-  v8::Local<v8::Value> ToV8Value() const { return m_pDate; }
-
- private:
-  v8::Local<v8::Date> m_pDate;
-};
-
 double JS_GetDateTime();
 int JS_GetYearFromTime(double dt);
 int JS_GetMonthFromTime(double dt);
