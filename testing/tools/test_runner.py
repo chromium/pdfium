@@ -81,6 +81,11 @@ class TestRunner:
     if actual_images:
       if self.image_differ.HasDifferences(input_filename, source_dir,
                                           self.working_dir):
+        if (self.options.regenerate_expected
+            and not self.test_suppressor.IsResultSuppressed(input_filename)
+            and not self.test_suppressor.IsImageDiffSuppressed(input_filename)):
+          self.image_differ.Regenerate(input_filename, source_dir,
+                                       self.working_dir)
         return False, results
     else:
       if (self.enforce_expected_images
@@ -171,12 +176,15 @@ class TestRunner:
     parser.add_option('--gold_ignore_hashes', default='', dest="gold_ignore_hashes",
                       help='Path to a file with MD5 hashes we wish to ignore.')
 
+    parser.add_option('--regenerate_expected', action="store_true", dest="regenerate_expected",
+                      help='Regenerates expected images.')
+
     parser.add_option('--ignore_errors', action="store_true", dest="ignore_errors",
                       help='Prevents the return value from being non-zero when image comparison fails.')
 
-    options, args = parser.parse_args()
+    self.options, self.args = parser.parse_args()
 
-    finder = common.DirectoryFinder(options.build_dir)
+    finder = common.DirectoryFinder(self.options.build_dir)
     self.fixup_path = finder.ScriptPath('fixup_pdf_template.py')
     self.text_diff_path = finder.ScriptPath('text_diff.py')
 
@@ -206,8 +214,8 @@ class TestRunner:
     self.test_cases = []
     self.execution_suppressed_cases = []
     input_file_re = re.compile('^.+[.](in|pdf)$')
-    if args:
-      for file_name in args:
+    if self.args:
+      for file_name in self.args:
         file_name.replace('.pdf', '.in')
         input_path = os.path.join(walk_from_dir, file_name)
         if not os.path.isfile(input_path):
@@ -233,16 +241,16 @@ class TestRunner:
 
     # Collect Gold results if an output directory was named.
     self.gold_results = None
-    if options.gold_output_dir:
+    if self.options.gold_output_dir:
       self.gold_results = gold.GoldResults('pdfium',
-                                           options.gold_output_dir,
-                                           options.gold_properties,
-                                           options.gold_key,
-                                           options.gold_ignore_hashes)
+                                           self.options.gold_output_dir,
+                                           self.options.gold_properties,
+                                           self.options.gold_key,
+                                           self.options.gold_ignore_hashes)
 
-    if options.num_workers > 1 and len(self.test_cases) > 1:
+    if self.options.num_workers > 1 and len(self.test_cases) > 1:
       try:
-        pool = multiprocessing.Pool(options.num_workers)
+        pool = multiprocessing.Pool(self.options.num_workers)
         worker_func = functools.partial(TestOneFileParallel, self)
 
         worker_results = pool.imap(worker_func, self.test_cases)
@@ -282,7 +290,7 @@ class TestRunner:
     self._PrintSummary()
 
     if self.failures:
-      if not options.ignore_errors:
+      if not self.options.ignore_errors:
         return 1
 
     return 0
