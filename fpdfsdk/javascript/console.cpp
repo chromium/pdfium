@@ -30,33 +30,22 @@ console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 console::~console() {}
 
-bool console::clear(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError) {
-  return true;
+CJS_Return console::clear(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool console::hide(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError) {
-  return true;
+CJS_Return console::hide(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool console::println(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError) {
-  if (params.size() < 1) {
-    return false;
-  }
-  return true;
+CJS_Return console::println(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(params.size() > 0);
 }
 
-bool console::show(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError) {
-  return true;
+CJS_Return console::show(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }

@@ -18,101 +18,71 @@ class CJS_PublicMethods : public CJS_Object {
       : CJS_Object(pObject) {}
   ~CJS_PublicMethods() override {}
 
-  static bool AFNumber_Format(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params,
-                              CJS_Value& vRet,
-                              WideString& sError);
-  static bool AFNumber_Keystroke(
+  static CJS_Return AFNumber_Format(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params,
-      CJS_Value& vRet,
-      WideString& sError);
-  static bool AFPercent_Format(CJS_Runtime* pRuntime,
-                               const std::vector<v8::Local<v8::Value>>& params,
-                               CJS_Value& vRet,
-                               WideString& sError);
-  static bool AFPercent_Keystroke(
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFNumber_Keystroke(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params,
-      CJS_Value& vRet,
-      WideString& sError);
-  static bool AFDate_FormatEx(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params,
-                              CJS_Value& vRet,
-                              WideString& sError);
-  static bool AFDate_KeystrokeEx(
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFPercent_Format(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params,
-      CJS_Value& vRet,
-      WideString& sError);
-  static bool AFDate_Format(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError);
-  static bool AFDate_Keystroke(CJS_Runtime* pRuntime,
-                               const std::vector<v8::Local<v8::Value>>& params,
-                               CJS_Value& vRet,
-                               WideString& sError);
-  static bool AFTime_FormatEx(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params,
-                              CJS_Value& vRet,
-                              WideString& sError);
-  static bool AFTime_KeystrokeEx(
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFPercent_Keystroke(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params,
-      CJS_Value& vRet,
-      WideString& sError);
-  static bool AFTime_Format(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError);
-  static bool AFTime_Keystroke(CJS_Runtime* pRuntime,
-                               const std::vector<v8::Local<v8::Value>>& params,
-                               CJS_Value& vRet,
-                               WideString& sError);
-  static bool AFSpecial_Format(CJS_Runtime* pRuntime,
-                               const std::vector<v8::Local<v8::Value>>& params,
-                               CJS_Value& vRet,
-                               WideString& sError);
-  static bool AFSpecial_Keystroke(
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFDate_FormatEx(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params,
-      CJS_Value& vRet,
-      WideString& sError);
-  static bool AFSpecial_KeystrokeEx(
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFDate_KeystrokeEx(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params,
-      CJS_Value& vRet,
-      WideString& sError);  //
-  static bool AFSimple(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError);
-  static bool AFMakeNumber(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError);
-  static bool AFSimple_Calculate(
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFDate_Format(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params,
-      CJS_Value& vRet,
-      WideString& sError);
-  static bool AFRange_Validate(CJS_Runtime* pRuntime,
-                               const std::vector<v8::Local<v8::Value>>& params,
-                               CJS_Value& vRet,
-                               WideString& sError);
-  static bool AFMergeChange(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError);
-  static bool AFParseDateEx(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError);
-  static bool AFExtractNums(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError);
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFDate_Keystroke(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFTime_FormatEx(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFTime_KeystrokeEx(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFTime_Format(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFTime_Keystroke(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFSpecial_Format(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFSpecial_Keystroke(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFSpecial_KeystrokeEx(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFSimple(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFMakeNumber(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFSimple_Calculate(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFRange_Validate(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFMergeChange(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFParseDateEx(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Return AFExtractNums(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
 
   static void AFNumber_Format_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);

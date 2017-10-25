@@ -50,342 +50,189 @@ class Document : public CJS_EmbedObj {
   explicit Document(CJS_Object* pJSObject);
   ~Document() override;
 
-  bool get_ADBE(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_ADBE(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_ADBE(CJS_Runtime* pRuntime);
+  CJS_Return set_ADBE(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_author(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_author(CJS_Runtime* pRuntime,
-                  v8::Local<v8::Value> vp,
-                  WideString* sError);
+  CJS_Return get_author(CJS_Runtime* pRuntime);
+  CJS_Return set_author(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_base_URL(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_base_URL(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_base_URL(CJS_Runtime* pRuntime);
+  CJS_Return set_base_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_bookmark_root(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError);
-  bool set_bookmark_root(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError);
+  CJS_Return get_bookmark_root(CJS_Runtime* pRuntime);
+  CJS_Return set_bookmark_root(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_calculate(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_calculate(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Value> vp,
-                     WideString* sError);
+  CJS_Return get_calculate(CJS_Runtime* pRuntime);
+  CJS_Return set_calculate(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_collab(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_collab(CJS_Runtime* pRuntime,
-                  v8::Local<v8::Value> vp,
-                  WideString* sError);
+  CJS_Return get_collab(CJS_Runtime* pRuntime);
+  CJS_Return set_collab(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_creation_date(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError);
-  bool set_creation_date(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError);
+  CJS_Return get_creation_date(CJS_Runtime* pRuntime);
+  CJS_Return set_creation_date(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_creator(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_creator(CJS_Runtime* pRuntime,
-                   v8::Local<v8::Value> vp,
-                   WideString* sError);
+  CJS_Return get_creator(CJS_Runtime* pRuntime);
+  CJS_Return set_creator(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_delay(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_delay(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError);
+  CJS_Return get_delay(CJS_Runtime* pRuntime);
+  CJS_Return set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_dirty(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_dirty(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError);
+  CJS_Return get_dirty(CJS_Runtime* pRuntime);
+  CJS_Return set_dirty(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_document_file_name(CJS_Runtime* pRuntime,
-                              CJS_Value* vp,
-                              WideString* sError);
-  bool set_document_file_name(CJS_Runtime* pRuntime,
-                              v8::Local<v8::Value> vp,
-                              WideString* sError);
+  CJS_Return get_document_file_name(CJS_Runtime* pRuntime);
+  CJS_Return set_document_file_name(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp);
 
-  bool get_external(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_external(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_external(CJS_Runtime* pRuntime);
+  CJS_Return set_external(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_filesize(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_filesize(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_filesize(CJS_Runtime* pRuntime);
+  CJS_Return set_filesize(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_icons(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_icons(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError);
+  CJS_Return get_icons(CJS_Runtime* pRuntime);
+  CJS_Return set_icons(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_info(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_info(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_info(CJS_Runtime* pRuntime);
+  CJS_Return set_info(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_keywords(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_keywords(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_keywords(CJS_Runtime* pRuntime);
+  CJS_Return set_keywords(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_layout(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_layout(CJS_Runtime* pRuntime,
-                  v8::Local<v8::Value> vp,
-                  WideString* sError);
+  CJS_Return get_layout(CJS_Runtime* pRuntime);
+  CJS_Return set_layout(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_media(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_media(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError);
+  CJS_Return get_media(CJS_Runtime* pRuntime);
+  CJS_Return set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_mod_date(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_mod_date(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_mod_date(CJS_Runtime* pRuntime);
+  CJS_Return set_mod_date(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_mouse_x(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_mouse_x(CJS_Runtime* pRuntime,
-                   v8::Local<v8::Value> vp,
-                   WideString* sError);
+  CJS_Return get_mouse_x(CJS_Runtime* pRuntime);
+  CJS_Return set_mouse_x(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_mouse_y(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_mouse_y(CJS_Runtime* pRuntime,
-                   v8::Local<v8::Value> vp,
-                   WideString* sError);
+  CJS_Return get_mouse_y(CJS_Runtime* pRuntime);
+  CJS_Return set_mouse_y(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_num_fields(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_num_fields(CJS_Runtime* pRuntime,
-                      v8::Local<v8::Value> vp,
-                      WideString* sError);
+  CJS_Return get_num_fields(CJS_Runtime* pRuntime);
+  CJS_Return set_num_fields(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_num_pages(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_num_pages(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Value> vp,
-                     WideString* sError);
+  CJS_Return get_num_pages(CJS_Runtime* pRuntime);
+  CJS_Return set_num_pages(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_page_num(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_page_num(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_page_num(CJS_Runtime* pRuntime);
+  CJS_Return set_page_num(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_page_window_rect(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError);
-  bool set_page_window_rect(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError);
+  CJS_Return get_page_window_rect(CJS_Runtime* pRuntime);
+  CJS_Return set_page_window_rect(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp);
 
-  bool get_path(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_path(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_path(CJS_Runtime* pRuntime);
+  CJS_Return set_path(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_producer(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_producer(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_producer(CJS_Runtime* pRuntime);
+  CJS_Return set_producer(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_subject(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_subject(CJS_Runtime* pRuntime,
-                   v8::Local<v8::Value> vp,
-                   WideString* sError);
+  CJS_Return get_subject(CJS_Runtime* pRuntime);
+  CJS_Return set_subject(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_title(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_title(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError);
+  CJS_Return get_title(CJS_Runtime* pRuntime);
+  CJS_Return set_title(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_zoom(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_zoom(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_zoom(CJS_Runtime* pRuntime);
+  CJS_Return set_zoom(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_zoom_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_zoom_type(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Value> vp,
-                     WideString* sError);
+  CJS_Return get_zoom_type(CJS_Runtime* pRuntime);
+  CJS_Return set_zoom_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_URL(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_URL(CJS_Runtime* pRuntime,
-               v8::Local<v8::Value> vp,
-               WideString* sError);
+  CJS_Return get_URL(CJS_Runtime* pRuntime);
+  CJS_Return set_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool addAnnot(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError);
-  bool addField(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError);
-  bool addLink(CJS_Runtime* pRuntime,
-               const std::vector<v8::Local<v8::Value>>& params,
-               CJS_Value& vRet,
-               WideString& sError);
-  bool addIcon(CJS_Runtime* pRuntime,
-               const std::vector<v8::Local<v8::Value>>& params,
-               CJS_Value& vRet,
-               WideString& sError);
-  bool calculateNow(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError);
-  bool closeDoc(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError);
-  bool createDataObject(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError);
-  bool deletePages(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError);
-  bool exportAsText(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError);
-  bool exportAsFDF(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError);
-  bool exportAsXFDF(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError);
-  bool extractPages(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError);
-  bool getAnnot(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError);
-  bool getAnnots(CJS_Runtime* pRuntime,
-                 const std::vector<v8::Local<v8::Value>>& params,
-                 CJS_Value& vRet,
-                 WideString& sError);
-  bool getAnnot3D(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError);
-  bool getAnnots3D(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError);
-  bool getField(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError);
-  bool getIcon(CJS_Runtime* pRuntime,
-               const std::vector<v8::Local<v8::Value>>& params,
-               CJS_Value& vRet,
-               WideString& sError);
-  bool getLinks(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError);
-  bool getNthFieldName(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError);
-  bool getOCGs(CJS_Runtime* pRuntime,
-               const std::vector<v8::Local<v8::Value>>& params,
-               CJS_Value& vRet,
-               WideString& sError);
-  bool getPageBox(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError);
-  bool getPageNthWord(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError);
-  bool getPageNthWordQuads(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError);
-  bool getPageNumWords(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError);
-  bool getPrintParams(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError);
-  bool getURL(CJS_Runtime* pRuntime,
-              const std::vector<v8::Local<v8::Value>>& params,
-              CJS_Value& vRet,
-              WideString& sError);
-  bool gotoNamedDest(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params,
-                     CJS_Value& vRet,
-                     WideString& sError);
-  bool importAnFDF(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError);
-  bool importAnXFDF(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError);
-  bool importTextData(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError);
-  bool insertPages(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError);
-  bool mailForm(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError);
-  bool print(CJS_Runtime* pRuntime,
-             const std::vector<v8::Local<v8::Value>>& params,
-             CJS_Value& vRet,
-             WideString& sError);
-  bool removeField(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError);
-  bool replacePages(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError);
-  bool resetForm(CJS_Runtime* pRuntime,
-                 const std::vector<v8::Local<v8::Value>>& params,
-                 CJS_Value& vRet,
-                 WideString& sError);
-  bool saveAs(CJS_Runtime* pRuntime,
-              const std::vector<v8::Local<v8::Value>>& params,
-              CJS_Value& vRet,
-              WideString& sError);
-  bool submitForm(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError);
-  bool syncAnnotScan(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params,
-                     CJS_Value& vRet,
-                     WideString& sError);
-  bool mailDoc(CJS_Runtime* pRuntime,
-               const std::vector<v8::Local<v8::Value>>& params,
-               CJS_Value& vRet,
-               WideString& sError);
-  bool removeIcon(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError);
+  CJS_Return addAnnot(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return addField(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return addLink(CJS_Runtime* pRuntime,
+                     const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return addIcon(CJS_Runtime* pRuntime,
+                     const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return calculateNow(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return closeDoc(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return createDataObject(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return deletePages(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return exportAsText(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return exportAsFDF(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return exportAsXFDF(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return extractPages(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getAnnot(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getAnnots(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getAnnot3D(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getAnnots3D(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getField(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getIcon(CJS_Runtime* pRuntime,
+                     const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getLinks(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getNthFieldName(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getOCGs(CJS_Runtime* pRuntime,
+                     const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getPageBox(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getPageNthWord(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getPageNthWordQuads(
+      CJS_Runtime* pRuntime,
+      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getPageNumWords(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getPrintParams(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return getURL(CJS_Runtime* pRuntime,
+                    const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return gotoNamedDest(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return importAnFDF(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return importAnXFDF(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return importTextData(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return insertPages(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return mailForm(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return print(CJS_Runtime* pRuntime,
+                   const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return removeField(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return replacePages(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return resetForm(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return saveAs(CJS_Runtime* pRuntime,
+                    const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return submitForm(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return syncAnnotScan(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return mailDoc(CJS_Runtime* pRuntime,
+                     const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return removeIcon(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params);
 
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
@@ -400,14 +247,11 @@ class Document : public CJS_EmbedObj {
   int CountWords(CPDF_TextObject* pTextObj);
   WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
 
-  bool getPropertyInternal(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           const ByteString& propName,
-                           WideString* sError);
-  bool setPropertyInternal(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           const ByteString& propName,
-                           WideString* sError);
+  CJS_Return getPropertyInternal(CJS_Runtime* pRuntime,
+                                 const ByteString& propName);
+  CJS_Return setPropertyInternal(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp,
+                                 const ByteString& propName);
 
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   WideString m_cwBaseURL;

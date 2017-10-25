@@ -178,6 +178,17 @@ double JS_LocalTime(double d) {
 
 }  // namespace
 
+CJS_Return::CJS_Return(bool result) : is_error_(!result) {}
+
+CJS_Return::CJS_Return(const WideString& err) : is_error_(true), error_(err) {}
+
+CJS_Return::CJS_Return(v8::Local<v8::Value> ret)
+    : is_error_(false), return_(ret) {}
+
+CJS_Return::CJS_Return(const CJS_Return&) = default;
+
+CJS_Return::~CJS_Return() = default;
+
 CJS_Value::CJS_Value() {}
 
 CJS_Value::CJS_Value(v8::Local<v8::Value> pValue) : m_pValue(pValue) {}

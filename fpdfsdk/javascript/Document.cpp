@@ -161,88 +161,59 @@ Document::Document(CJS_Object* pJSObject)
 
 Document::~Document() {}
 
-// the total number of fields in document.
-bool Document::get_num_fields(CJS_Runtime* pRuntime,
-                              CJS_Value* vp,
-                              WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+// The total number of fields in document.
+CJS_Return Document::get_num_fields(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  vp->Set(pRuntime->NewNumber(
+  return CJS_Return(pRuntime->NewNumber(
       static_cast<int>(pPDFForm->CountFields(WideString()))));
-  return true;
 }
 
-bool Document::set_num_fields(CJS_Runtime* pRuntime,
-                              v8::Local<v8::Value> vp,
-                              WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
+CJS_Return Document::set_num_fields(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
 }
 
-bool Document::get_dirty(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-
-  vp->Set(pRuntime->NewBoolean(!!m_pFormFillEnv->GetChangeMark()));
-  return true;
+CJS_Return Document::get_dirty(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return CJS_Return(pRuntime->NewBoolean(!!m_pFormFillEnv->GetChangeMark()));
 }
 
-bool Document::set_dirty(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::set_dirty(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   pRuntime->ToBoolean(vp) ? m_pFormFillEnv->SetChangeMark()
                           : m_pFormFillEnv->ClearChangeMark();
-
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_ADBE(CJS_Runtime* pRuntime,
-                        CJS_Value* vp,
-                        WideString* sError) {
-  vp->Set(pRuntime->NewUndefined());
-  return true;
+CJS_Return Document::get_ADBE(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewUndefined());
 }
 
-bool Document::set_ADBE(CJS_Runtime* pRuntime,
-                        v8::Local<v8::Value> vp,
-                        WideString* sError) {
-  return true;
+CJS_Return Document::set_ADBE(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::get_page_num(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::get_page_num(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
-  if (CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetCurrentView())
-    vp->Set(pRuntime->NewNumber(pPageView->GetPageIndex()));
-  return true;
+  CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetCurrentView();
+  if (!pPageView)
+    return CJS_Return(pRuntime->NewUndefined());
+  return CJS_Return(pRuntime->NewNumber(pPageView->GetPageIndex()));
 }
 
-bool Document::set_page_num(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::set_page_num(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   int iPageCount = m_pFormFillEnv->GetPageCount();
   int iPageNum = pRuntime->ToInt32(vp);
@@ -253,152 +224,122 @@ bool Document::set_page_num(CJS_Runtime* pRuntime,
   else if (iPageNum < 0)
     m_pFormFillEnv->JS_docgotoPage(0);
 
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::addAnnot(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
+CJS_Return Document::addAnnot(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
   // Not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::addField(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
+CJS_Return Document::addField(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
   // Not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::exportAsText(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError) {
+CJS_Return Document::exportAsText(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::exportAsFDF(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError) {
+CJS_Return Document::exportAsFDF(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::exportAsXFDF(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError) {
+CJS_Return Document::exportAsXFDF(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::getField(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
-  if (params.size() < 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::getField(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() < 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+
   WideString wideName = pRuntime->ToWideString(params[0]);
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  if (pPDFForm->CountFields(wideName) <= 0) {
-    vRet.Set(pRuntime->NewUndefined());
-    return true;
-  }
+  if (pPDFForm->CountFields(wideName) <= 0)
+    return CJS_Return(pRuntime->NewUndefined());
 
   v8::Local<v8::Object> pFieldObj =
       pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
   if (pFieldObj.IsEmpty())
-    return false;
+    return CJS_Return(false);
 
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
   Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
   pField->AttachField(this, wideName);
+  if (!pJSField)
+    return CJS_Return(false);
 
-  if (pJSField)
-    vRet = CJS_Value(pJSField->ToV8Object());
-  return true;
+  return CJS_Return(pJSField->ToV8Object());
 }
 
 // Gets the name of the nth field in the document
-bool Document::getNthFieldName(CJS_Runtime* pRuntime,
-                               const std::vector<v8::Local<v8::Value>>& params,
-                               CJS_Value& vRet,
-                               WideString& sError) {
-  if (params.size() != 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  int nIndex = pRuntime->ToInt32(params[0]);
+CJS_Return Document::getNthFieldName(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
-  if (nIndex < 0) {
-    sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
-    return false;
-  }
+  int nIndex = pRuntime->ToInt32(params[0]);
+  if (nIndex < 0)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
+
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   CPDF_FormField* pField = pPDFForm->GetField(nIndex, WideString());
   if (!pField)
-    return false;
-
-  vRet = CJS_Value(pRuntime->NewString(pField->GetFullName().c_str()));
-  return true;
+    return CJS_Return(false);
+  return CJS_Return(pRuntime->NewString(pField->GetFullName().c_str()));
 }
 
-bool Document::importAnFDF(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError) {
+CJS_Return Document::importAnFDF(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::importAnXFDF(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError) {
+CJS_Return Document::importAnXFDF(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::importTextData(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params,
-                              CJS_Value& vRet,
-                              WideString& sError) {
+CJS_Return Document::importTextData(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
 // exports the form data and mails the resulting fdf file as an attachment to
 // all recipients.
 // comment: need reader supports
-bool Document::mailForm(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
-    sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
-  }
+CJS_Return Document::mailForm(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
+
   int iLength = params.size();
   bool bUI = iLength > 0 ? pRuntime->ToBoolean(params[0]) : true;
   WideString cTo = iLength > 1 ? pRuntime->ToWideString(params[1]) : L"";
@@ -409,7 +350,7 @@ bool Document::mailForm(CJS_Runtime* pRuntime,
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   ByteString sTextBuf = pInterForm->ExportFormToFDFTextBuf();
   if (sTextBuf.GetLength() == 0)
-    return false;
+    return CJS_Return(false);
 
   size_t nBufSize = sTextBuf.GetLength();
   char* pMutableBuf = FX_Alloc(char, nBufSize);
@@ -422,17 +363,14 @@ bool Document::mailForm(CJS_Runtime* pRuntime,
                                cMsg.c_str());
   pRuntime->EndBlock();
   FX_Free(pMutableBuf);
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::print(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params,
-                     CJS_Value& vRet,
-                     WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::print(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+
   bool bUI = true;
   int nStart = 0;
   int nEnd = 0;
@@ -484,41 +422,36 @@ bool Document::print(CJS_Runtime* pRuntime,
       bAnnotations = pRuntime->ToBoolean(params[7]);
   }
 
-  if (m_pFormFillEnv) {
-    m_pFormFillEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit,
-                                bPrintAsImage, bReverse, bAnnotations);
-    return true;
-  }
-  return false;
+  if (!m_pFormFillEnv)
+    return CJS_Return(false);
+
+  m_pFormFillEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit,
+                              bPrintAsImage, bReverse, bAnnotations);
+  return CJS_Return(true);
 }
 
 // removes the specified field from the document.
 // comment:
 // note: if the filed name is not rational, adobe is dumb for it.
 
-bool Document::removeField(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError) {
-  if (params.size() != 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::removeField(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+
   if (!(m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM))) {
-    sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
-  }
+        m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM)))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
+
   WideString sFieldName = pRuntime->ToWideString(params[0]);
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
   if (widgets.empty())
-    return true;
+    return CJS_Return(true);
 
   for (const auto& pAnnot : widgets) {
     CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot.Get());
@@ -548,38 +481,33 @@ bool Document::removeField(CJS_Runtime* pRuntime,
   }
   m_pFormFillEnv->SetChangeMark();
 
-  return true;
+  return CJS_Return(true);
 }
 
 // reset filed values within a document.
 // comment:
 // note: if the fields names r not rational, aodbe is dumb for it.
 
-bool Document::resetForm(CJS_Runtime* pRuntime,
-                         const std::vector<v8::Local<v8::Value>>& params,
-                         CJS_Value& vRet,
-                         WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::resetForm(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
   if (!(m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY) ||
         m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
         m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM))) {
-    sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  CJS_Array aName;
-
   if (params.empty()) {
     pPDFForm->ResetForm(true);
     m_pFormFillEnv->SetChangeMark();
-    return true;
+    return CJS_Return(true);
   }
 
+  CJS_Array aName;
   if (params[0]->IsString())
     aName.SetElement(pRuntime, 0, params[0]);
   else
@@ -597,37 +525,29 @@ bool Document::resetForm(CJS_Runtime* pRuntime,
     m_pFormFillEnv->SetChangeMark();
   }
 
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::saveAs(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError) {
+CJS_Return Document::saveAs(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::syncAnnotScan(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params,
-                             CJS_Value& vRet,
-                             WideString& sError) {
-  return true;
+CJS_Return Document::syncAnnotScan(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool Document::submitForm(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params,
-                          CJS_Value& vRet,
-                          WideString& sError) {
+CJS_Return Document::submitForm(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   int nSize = params.size();
-  if (nSize < 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+  if (nSize < 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   CJS_Array aFields;
   WideString strURL;
@@ -661,7 +581,7 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
       pInterForm->SubmitForm(strURL, false);
       pRuntime->EndBlock();
     }
-    return true;
+    return CJS_Return(true);
   }
 
   std::vector<CPDF_FormField*> fieldObjects;
@@ -682,29 +602,24 @@ bool Document::submitForm(CJS_Runtime* pRuntime,
     pInterForm->SubmitFields(strURL, fieldObjects, true, !bFDF);
     pRuntime->EndBlock();
   }
-  return true;
+  return CJS_Return(true);
 }
 
 void Document::SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   m_pFormFillEnv.Reset(pFormFillEnv);
 }
 
-bool Document::get_bookmark_root(CJS_Runtime* pRuntime,
-                                 CJS_Value* vp,
-                                 WideString* sError) {
-  return true;
+CJS_Return Document::get_bookmark_root(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_bookmark_root(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp,
-                                 WideString* sError) {
-  return true;
+CJS_Return Document::set_bookmark_root(CJS_Runtime* pRuntime,
+                                       v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::mailDoc(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
+CJS_Return Document::mailDoc(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
   // TODO(tsepez): Check maximum number of allowed params.
   bool bUI = true;
   WideString cTo = L"";
@@ -742,32 +657,25 @@ bool Document::mailDoc(CJS_Runtime* pRuntime,
   pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
                                cCc.c_str(), cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_author(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError) {
-  return getPropertyInternal(pRuntime, vp, "Author", sError);
+CJS_Return Document::get_author(CJS_Runtime* pRuntime) {
+  return getPropertyInternal(pRuntime, "Author");
 }
 
-bool Document::set_author(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError) {
-  return setPropertyInternal(pRuntime, vp, "Author", sError);
+CJS_Return Document::set_author(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
+  return setPropertyInternal(pRuntime, vp, "Author");
 }
 
-bool Document::get_info(CJS_Runtime* pRuntime,
-                        CJS_Value* vp,
-                        WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::get_info(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   const auto* pDictionary = m_pFormFillEnv->GetPDFDocument()->GetInfo();
   if (!pDictionary)
-    return false;
+    return CJS_Return(false);
 
   WideString cwAuthor = pDictionary->GetUnicodeTextFor("Author");
   WideString cwTitle = pDictionary->GetUnicodeTextFor("Title");
@@ -817,111 +725,79 @@ bool Document::get_info(CJS_Runtime* pRuntime,
           pObj, wsKey, pRuntime->NewBoolean(!!pValueObj->GetInteger()));
     }
   }
-  vp->Set(pObj);
-  return true;
+  return CJS_Return(pObj);
 }
 
-bool Document::set_info(CJS_Runtime* pRuntime,
-                        v8::Local<v8::Value> vp,
-                        WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
+CJS_Return Document::set_info(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
 }
 
-bool Document::getPropertyInternal(CJS_Runtime* pRuntime,
-                                   CJS_Value* vp,
-                                   const ByteString& propName,
-                                   WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::getPropertyInternal(CJS_Runtime* pRuntime,
+                                         const ByteString& propName) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   CPDF_Dictionary* pDictionary = m_pFormFillEnv->GetPDFDocument()->GetInfo();
   if (!pDictionary)
-    return false;
-
-  vp->Set(
+    return CJS_Return(false);
+  return CJS_Return(
       pRuntime->NewString(pDictionary->GetUnicodeTextFor(propName).c_str()));
-  return true;
 }
 
-bool Document::setPropertyInternal(CJS_Runtime* pRuntime,
-                                   v8::Local<v8::Value> vp,
-                                   const ByteString& propName,
-                                   WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::setPropertyInternal(CJS_Runtime* pRuntime,
+                                         v8::Local<v8::Value> vp,
+                                         const ByteString& propName) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   CPDF_Dictionary* pDictionary = m_pFormFillEnv->GetPDFDocument()->GetInfo();
   if (!pDictionary)
-    return false;
+    return CJS_Return(false);
 
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY)) {
-    *sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
-  }
+  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
+
   WideString csProperty = pRuntime->ToWideString(vp);
   pDictionary->SetNewFor<CPDF_String>(propName, PDF_EncodeText(csProperty),
                                       false);
   m_pFormFillEnv->SetChangeMark();
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_creation_date(CJS_Runtime* pRuntime,
-                                 CJS_Value* vp,
-                                 WideString* sError) {
-  return getPropertyInternal(pRuntime, vp, "CreationDate", sError);
+CJS_Return Document::get_creation_date(CJS_Runtime* pRuntime) {
+  return getPropertyInternal(pRuntime, "CreationDate");
 }
 
-bool Document::set_creation_date(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp,
-                                 WideString* sError) {
-  return setPropertyInternal(pRuntime, vp, "CreationDate", sError);
+CJS_Return Document::set_creation_date(CJS_Runtime* pRuntime,
+                                       v8::Local<v8::Value> vp) {
+  return setPropertyInternal(pRuntime, vp, "CreationDate");
 }
 
-bool Document::get_creator(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           WideString* sError) {
-  return getPropertyInternal(pRuntime, vp, "Creator", sError);
+CJS_Return Document::get_creator(CJS_Runtime* pRuntime) {
+  return getPropertyInternal(pRuntime, "Creator");
 }
 
-bool Document::set_creator(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           WideString* sError) {
-  return setPropertyInternal(pRuntime, vp, "Creator", sError);
+CJS_Return Document::set_creator(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return setPropertyInternal(pRuntime, vp, "Creator");
 }
 
-bool Document::get_delay(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  vp->Set(pRuntime->NewBoolean(m_bDelay));
-  return true;
+CJS_Return Document::get_delay(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return CJS_Return(pRuntime->NewBoolean(m_bDelay));
 }
 
-bool Document::set_delay(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY)) {
-    *sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
-  }
+CJS_Return Document::set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
 
   m_bDelay = pRuntime->ToBoolean(vp);
   if (m_bDelay) {
     m_DelayData.clear();
-    return true;
+    return CJS_Return(true);
   }
 
   std::list<std::unique_ptr<CJS_DelayData>> DelayDataToProcess;
@@ -929,212 +805,147 @@ bool Document::set_delay(CJS_Runtime* pRuntime,
   for (const auto& pData : DelayDataToProcess)
     Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
 
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_keywords(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  return getPropertyInternal(pRuntime, vp, "Keywords", sError);
+CJS_Return Document::get_keywords(CJS_Runtime* pRuntime) {
+  return getPropertyInternal(pRuntime, "Keywords");
 }
 
-bool Document::set_keywords(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return setPropertyInternal(pRuntime, vp, "Keywords", sError);
+CJS_Return Document::set_keywords(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return setPropertyInternal(pRuntime, vp, "Keywords");
 }
 
-bool Document::get_mod_date(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  return getPropertyInternal(pRuntime, vp, "ModDate", sError);
+CJS_Return Document::get_mod_date(CJS_Runtime* pRuntime) {
+  return getPropertyInternal(pRuntime, "ModDate");
 }
 
-bool Document::set_mod_date(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return setPropertyInternal(pRuntime, vp, "ModDate", sError);
+CJS_Return Document::set_mod_date(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return setPropertyInternal(pRuntime, vp, "ModDate");
 }
 
-bool Document::get_producer(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  return getPropertyInternal(pRuntime, vp, "Producer", sError);
+CJS_Return Document::get_producer(CJS_Runtime* pRuntime) {
+  return getPropertyInternal(pRuntime, "Producer");
 }
 
-bool Document::set_producer(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return setPropertyInternal(pRuntime, vp, "Producer", sError);
+CJS_Return Document::set_producer(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return setPropertyInternal(pRuntime, vp, "Producer");
 }
 
-bool Document::get_subject(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           WideString* sError) {
-  return getPropertyInternal(pRuntime, vp, "Subject", sError);
+CJS_Return Document::get_subject(CJS_Runtime* pRuntime) {
+  return getPropertyInternal(pRuntime, "Subject");
 }
 
-bool Document::set_subject(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           WideString* sError) {
-  return setPropertyInternal(pRuntime, vp, "Subject", sError);
+CJS_Return Document::set_subject(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return setPropertyInternal(pRuntime, vp, "Subject");
 }
 
-bool Document::get_title(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
-  if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument()) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  return getPropertyInternal(pRuntime, vp, "Title", sError);
+CJS_Return Document::get_title(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return getPropertyInternal(pRuntime, "Title");
 }
 
-bool Document::set_title(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument()) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  return setPropertyInternal(pRuntime, vp, "Title", sError);
+CJS_Return Document::set_title(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return setPropertyInternal(pRuntime, vp, "Title");
 }
 
-bool Document::get_num_pages(CJS_Runtime* pRuntime,
-                             CJS_Value* vp,
-                             WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  vp->Set(pRuntime->NewNumber(m_pFormFillEnv->GetPageCount()));
-  return true;
+CJS_Return Document::get_num_pages(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return CJS_Return(pRuntime->NewNumber(m_pFormFillEnv->GetPageCount()));
 }
 
-bool Document::set_num_pages(CJS_Runtime* pRuntime,
-                             v8::Local<v8::Value> vp,
-                             WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
+CJS_Return Document::set_num_pages(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
 }
 
-bool Document::get_external(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
+CJS_Return Document::get_external(CJS_Runtime* pRuntime) {
   // In Chrome case, should always return true.
-  vp->Set(pRuntime->NewBoolean(true));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(true));
 }
 
-bool Document::set_external(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return true;
+CJS_Return Document::set_external(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::get_filesize(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  vp->Set(pRuntime->NewNumber(0));
-  return true;
+CJS_Return Document::get_filesize(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewNumber(0));
 }
 
-bool Document::set_filesize(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
+CJS_Return Document::set_filesize(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
 }
 
-bool Document::get_mouse_x(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           WideString* sError) {
-  return true;
+CJS_Return Document::get_mouse_x(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_mouse_x(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           WideString* sError) {
-  return true;
+CJS_Return Document::set_mouse_x(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::get_mouse_y(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           WideString* sError) {
-  return true;
+CJS_Return Document::get_mouse_y(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_mouse_y(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           WideString* sError) {
-  return true;
+CJS_Return Document::set_mouse_y(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::get_URL(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  vp->Set(pRuntime->NewString(m_pFormFillEnv->JS_docGetFilePath().c_str()));
-  return true;
+CJS_Return Document::get_URL(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return CJS_Return(
+      pRuntime->NewString(m_pFormFillEnv->JS_docGetFilePath().c_str()));
 }
 
-bool Document::set_URL(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
+CJS_Return Document::set_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
 }
 
-bool Document::get_base_URL(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  vp->Set(pRuntime->NewString(m_cwBaseURL.c_str()));
-  return true;
+CJS_Return Document::get_base_URL(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewString(m_cwBaseURL.c_str()));
 }
 
-bool Document::set_base_URL(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
+CJS_Return Document::set_base_URL(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
   m_cwBaseURL = pRuntime->ToWideString(vp);
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_calculate(CJS_Runtime* pRuntime,
-                             CJS_Value* vp,
-                             WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::get_calculate(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  vp->Set(pRuntime->NewBoolean(!!pInterForm->IsCalculateEnabled()));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(!!pInterForm->IsCalculateEnabled()));
 }
 
-bool Document::set_calculate(CJS_Runtime* pRuntime,
-                             v8::Local<v8::Value> vp,
-                             WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::set_calculate(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   pInterForm->EnableCalculate(pRuntime->ToBoolean(vp));
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_document_file_name(CJS_Runtime* pRuntime,
-                                      CJS_Value* vp,
-                                      WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::get_document_file_name(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   WideString wsFilePath = m_pFormFillEnv->JS_docGetFilePath();
   size_t i = wsFilePath.GetLength();
@@ -1143,104 +954,75 @@ bool Document::get_document_file_name(CJS_Runtime* pRuntime,
       break;
   }
 
-  if (i > 0 && i < wsFilePath.GetLength())
-    vp->Set(
+  if (i > 0 && i < wsFilePath.GetLength()) {
+    return CJS_Return(
         pRuntime->NewString(wsFilePath.GetBuffer(wsFilePath.GetLength()) + i));
-  else
-    vp->Set(pRuntime->NewString(L""));
-
-  return true;
-}
-
-bool Document::set_document_file_name(CJS_Runtime* pRuntime,
-                                      v8::Local<v8::Value> vp,
-                                      WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
-}
-
-bool Document::get_path(CJS_Runtime* pRuntime,
-                        CJS_Value* vp,
-                        WideString* sError) {
-  if (!m_pFormFillEnv) {
-    *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
   }
-  vp->Set(pRuntime->NewString(
+  return CJS_Return(pRuntime->NewString(L""));
+}
+
+CJS_Return Document::set_document_file_name(CJS_Runtime* pRuntime,
+                                            v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
+}
+
+CJS_Return Document::get_path(CJS_Runtime* pRuntime) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return CJS_Return(pRuntime->NewString(
       app::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()).c_str()));
-  return true;
 }
 
-bool Document::set_path(CJS_Runtime* pRuntime,
-                        v8::Local<v8::Value> vp,
-                        WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
+CJS_Return Document::set_path(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
 }
 
-bool Document::get_page_window_rect(CJS_Runtime* pRuntime,
-                                    CJS_Value* vp,
-                                    WideString* sError) {
-  return true;
+CJS_Return Document::get_page_window_rect(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_page_window_rect(CJS_Runtime* pRuntime,
-                                    v8::Local<v8::Value> vp,
-                                    WideString* sError) {
-  return true;
+CJS_Return Document::set_page_window_rect(CJS_Runtime* pRuntime,
+                                          v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::get_layout(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError) {
-  return true;
+CJS_Return Document::get_layout(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_layout(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError) {
-  return true;
+CJS_Return Document::set_layout(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::addLink(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
-  return true;
+CJS_Return Document::addLink(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool Document::closeDoc(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
-  return true;
+CJS_Return Document::closeDoc(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool Document::getPageBox(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params,
-                          CJS_Value& vRet,
-                          WideString& sError) {
-  return true;
+CJS_Return Document::getPageBox(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool Document::getAnnot(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
-  if (params.size() != 2) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::getAnnot(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 2)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   int nPageNo = pRuntime->ToInt32(params[0]);
   WideString swAnnotName = pRuntime->ToWideString(params[1]);
   CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(nPageNo);
   if (!pPageView)
-    return false;
+    return CJS_Return(false);
 
   CPDFSDK_AnnotIteration annotIteration(pPageView, false);
   CPDFSDK_BAAnnot* pSDKBAAnnot = nullptr;
@@ -1253,31 +1035,30 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
     }
   }
   if (!pSDKBAAnnot)
-    return false;
+    return CJS_Return(false);
 
   v8::Local<v8::Object> pObj =
       pRuntime->NewFxDynamicObj(CJS_Annot::g_nObjDefnID);
   if (pObj.IsEmpty())
-    return false;
+    return CJS_Return(false);
 
   CJS_Annot* pJS_Annot =
       static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
+  if (!pJS_Annot)
+    return CJS_Return(false);
+
   Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
   pAnnot->SetSDKAnnot(pSDKBAAnnot);
-  if (pJS_Annot)
-    vRet = CJS_Value(pJS_Annot->ToV8Object());
 
-  return true;
+  return CJS_Return(pJS_Annot->ToV8Object());
 }
 
-bool Document::getAnnots(CJS_Runtime* pRuntime,
-                         const std::vector<v8::Local<v8::Value>>& params,
-                         CJS_Value& vRet,
-                         WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::getAnnots(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+
   // TODO(tonikitoo): Add support supported parameters as per
   // the PDF spec.
 
@@ -1287,18 +1068,17 @@ bool Document::getAnnots(CJS_Runtime* pRuntime,
   for (int i = 0; i < nPageNo; ++i) {
     CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(i);
     if (!pPageView)
-      return false;
+      return CJS_Return(false);
 
     CPDFSDK_AnnotIteration annotIteration(pPageView, false);
     for (const auto& pSDKAnnotCur : annotIteration) {
-      if (!pSDKAnnotCur) {
-        sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-        return false;
-      }
+      if (!pSDKAnnotCur)
+        return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+
       v8::Local<v8::Object> pObj =
           pRuntime->NewFxDynamicObj(CJS_Annot::g_nObjDefnID);
       if (pObj.IsEmpty())
-        return false;
+        return CJS_Return(false);
 
       CJS_Annot* pJS_Annot =
           static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
@@ -1311,39 +1091,30 @@ bool Document::getAnnots(CJS_Runtime* pRuntime,
     }
   }
   if (annots.ToV8Value().IsEmpty())
-    vRet = CJS_Value(pRuntime->NewArray());
-  else
-    vRet = CJS_Value(annots.ToV8Value());
-  return true;
+    return CJS_Return(pRuntime->NewArray());
+  return CJS_Return(annots.ToV8Value());
 }
 
-bool Document::getAnnot3D(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params,
-                          CJS_Value& vRet,
-                          WideString& sError) {
-  vRet.Set(pRuntime->NewUndefined());
-  return true;
+CJS_Return Document::getAnnot3D(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(pRuntime->NewUndefined());
 }
 
-bool Document::getAnnots3D(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError) {
-  return true;
+CJS_Return Document::getAnnots3D(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool Document::getOCGs(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
-  return true;
+CJS_Return Document::getOCGs(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool Document::getLinks(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
-  return true;
+CJS_Return Document::getLinks(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
 bool Document::IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect) {
@@ -1351,45 +1122,31 @@ bool Document::IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect) {
           rect.right >= LinkRect.right && rect.bottom >= LinkRect.bottom);
 }
 
-bool Document::addIcon(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
-  if (params.size() != 2) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return Document::addIcon(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 2)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   WideString swIconName = pRuntime->ToWideString(params[0]);
-  if (!params[1]->IsObject()) {
-    sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
-    return false;
-  }
+  if (!params[1]->IsObject())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSTYPEERROR));
 
   v8::Local<v8::Object> pJSIcon = pRuntime->ToObject(params[1]);
-  if (CFXJS_Engine::GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID) {
-    sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
-    return false;
-  }
+  if (CFXJS_Engine::GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSTYPEERROR));
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(params[1]);
   CJS_Object* obj = static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
-  if (!obj->GetEmbedObject()) {
-    sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
-    return false;
-  }
+  if (!obj->GetEmbedObject())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSTYPEERROR));
 
   m_IconNames.push_back(swIconName);
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_icons(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
-  if (m_IconNames.empty()) {
-    vp->Set(pRuntime->NewUndefined());
-    return true;
-  }
+CJS_Return Document::get_icons(CJS_Runtime* pRuntime) {
+  if (m_IconNames.empty())
+    return CJS_Return(pRuntime->NewUndefined());
 
   CJS_Array Icons;
   int i = 0;
@@ -1397,7 +1154,7 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
     v8::Local<v8::Object> pObj =
         pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
     if (pObj.IsEmpty())
-      return false;
+      return CJS_Return(false);
 
     CJS_Icon* pJS_Icon =
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
@@ -1409,118 +1166,92 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
   }
 
   if (Icons.ToV8Value().IsEmpty())
-    vp->Set(pRuntime->NewArray());
-  else
-    vp->Set(Icons.ToV8Value());
-
-  return true;
+    return CJS_Return(pRuntime->NewArray());
+  return CJS_Return(Icons.ToV8Value());
 }
 
-bool Document::set_icons(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
-  return false;
+CJS_Return Document::set_icons(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
 }
 
-bool Document::getIcon(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
-  if (params.size() != 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return Document::getIcon(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   WideString swIconName = pRuntime->ToWideString(params[0]);
   auto it = std::find(m_IconNames.begin(), m_IconNames.end(), swIconName);
   if (it == m_IconNames.end())
-    return false;
+    return CJS_Return(false);
 
   v8::Local<v8::Object> pObj =
       pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
   if (pObj.IsEmpty())
-    return false;
+    return CJS_Return(false);
 
   CJS_Icon* pJS_Icon = static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
+  if (!pJS_Icon)
+    return CJS_Return(false);
+
   Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
   pIcon->SetIconName(*it);
-  if (pJS_Icon)
-    vRet = CJS_Value(pJS_Icon->ToV8Object());
-
-  return true;
+  return CJS_Return(pJS_Icon->ToV8Object());
 }
 
-bool Document::removeIcon(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params,
-                          CJS_Value& vRet,
-                          WideString& sError) {
+CJS_Return Document::removeIcon(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, no supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::createDataObject(CJS_Runtime* pRuntime,
-                                const std::vector<v8::Local<v8::Value>>& params,
-                                CJS_Value& vRet,
-                                WideString& sError) {
+CJS_Return Document::createDataObject(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not implemented.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_media(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
-  return true;
+CJS_Return Document::get_media(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_media(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  return true;
+CJS_Return Document::set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::calculateNow(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::calculateNow(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+
   if (!(m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY) ||
         m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
         m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM))) {
-    sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
   }
+
   m_pFormFillEnv->GetInterForm()->OnCalculate();
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::get_collab(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError) {
-  return true;
+CJS_Return Document::get_collab(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_collab(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError) {
-  return true;
+CJS_Return Document::set_collab(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::getPageNthWord(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params,
-                              CJS_Value& vRet,
-                              WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
-    sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
-  }
+CJS_Return Document::getPageNthWord(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
 
   // TODO(tsepez): check maximum allowable params.
 
@@ -1530,16 +1261,14 @@ bool Document::getPageNthWord(CJS_Runtime* pRuntime,
 
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (!pDocument)
-    return false;
+    return CJS_Return(false);
 
-  if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
-    sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
-    return false;
-  }
+  if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
 
   CPDF_Dictionary* pPageDict = pDocument->GetPage(nPageNo);
   if (!pPageDict)
-    return false;
+    return CJS_Return(false);
 
   CPDF_Page page(pDocument, pPageDict, true);
   page.ParseContent();
@@ -1562,49 +1291,35 @@ bool Document::getPageNthWord(CJS_Runtime* pRuntime,
     swRet.TrimLeft();
     swRet.TrimRight();
   }
-
-  vRet = CJS_Value(pRuntime->NewString(swRet.c_str()));
-  return true;
+  return CJS_Return(pRuntime->NewString(swRet.c_str()));
 }
 
-bool Document::getPageNthWordQuads(
+CJS_Return Document::getPageNthWordQuads(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params,
-    CJS_Value& vRet,
-    WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  return false;
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  return CJS_Return(false);
 }
 
-bool Document::getPageNumWords(CJS_Runtime* pRuntime,
-                               const std::vector<v8::Local<v8::Value>>& params,
-                               CJS_Value& vRet,
-                               WideString& sError) {
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) {
-    sError = JSGetStringFromID(IDS_STRING_JSNOPERMISSION);
-    return false;
-  }
+CJS_Return Document::getPageNumWords(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOPERMISSION));
+
   int nPageNo = params.size() > 0 ? pRuntime->ToInt32(params[0]) : 0;
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
-  if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
-    sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
-    return false;
-  }
+  if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
 
   CPDF_Dictionary* pPageDict = pDocument->GetPage(nPageNo);
   if (!pPageDict)
-    return false;
+    return CJS_Return(false);
 
   CPDF_Page page(pDocument, pPageDict, true);
   page.ParseContent();
@@ -1615,23 +1330,20 @@ bool Document::getPageNumWords(CJS_Runtime* pRuntime,
       nWords += CountWords(pPageObj->AsText());
   }
 
-  vRet = CJS_Value(pRuntime->NewNumber(nWords));
-  return true;
+  return CJS_Return(pRuntime->NewNumber(nWords));
 }
 
-bool Document::getPrintParams(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params,
-                              CJS_Value& vRet,
-                              WideString& sError) {
+CJS_Return Document::getPrintParams(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_PrintParamsObj::g_nObjDefnID);
   if (pRetObj.IsEmpty())
-    return false;
+    return CJS_Return(false);
 
   // Not implemented yet.
 
-  vRet = CJS_Value(pRetObj);
-  return true;
+  return CJS_Return(pRetObj);
 }
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
@@ -1705,91 +1417,74 @@ WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex) {
   return swRet;
 }
 
-bool Document::get_zoom(CJS_Runtime* pRuntime,
-                        CJS_Value* vp,
-                        WideString* sError) {
-  return true;
+CJS_Return Document::get_zoom(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::set_zoom(CJS_Runtime* pRuntime,
-                        v8::Local<v8::Value> vp,
-                        WideString* sError) {
-  return true;
+CJS_Return Document::set_zoom(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::get_zoom_type(CJS_Runtime* pRuntime,
-                             CJS_Value* vp,
-                             WideString* sError) {
-  return true;
-}
-bool Document::set_zoom_type(CJS_Runtime* pRuntime,
-                             v8::Local<v8::Value> vp,
-                             WideString* sError) {
-  return true;
+CJS_Return Document::get_zoom_type(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool Document::deletePages(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError) {
-  // Unsafe, no supported.
-  return true;
+CJS_Return Document::set_zoom_type(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool Document::extractPages(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError) {
+CJS_Return Document::deletePages(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::insertPages(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params,
-                           CJS_Value& vRet,
-                           WideString& sError) {
+CJS_Return Document::extractPages(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::replacePages(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params,
-                            CJS_Value& vRet,
-                            WideString& sError) {
+CJS_Return Document::insertPages(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::getURL(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError) {
+CJS_Return Document::replacePages(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params,
-                             CJS_Value& vRet,
-                             WideString& sError) {
-  if (params.size() != 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  if (!m_pFormFillEnv) {
-    sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
-    return false;
-  }
+CJS_Return Document::getURL(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  // Unsafe, not supported.
+  return CJS_Return(true);
+}
+
+CJS_Return Document::gotoNamedDest(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+  if (!m_pFormFillEnv)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
   WideString wideName = pRuntime->ToWideString(params[0]);
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   if (!pDocument)
-    return false;
+    return CJS_Return(false);
 
   CPDF_NameTree nameTree(pDocument, "Dests");
   CPDF_Array* destArray = nameTree.LookupNamedDest(pDocument, wideName);
   if (!destArray)
-    return false;
+    return CJS_Return(false);
 
   CPDF_Dest dest(destArray);
   const CPDF_Array* arrayObject = ToArray(dest.GetObject());
@@ -1803,7 +1498,7 @@ bool Document::gotoNamedDest(CJS_Runtime* pRuntime,
                                scrollPositionArray.data(),
                                scrollPositionArray.size());
   pRuntime->EndBlock();
-  return true;
+  return CJS_Return(true);
 }
 
 void Document::AddDelayData(CJS_DelayData* pData) {

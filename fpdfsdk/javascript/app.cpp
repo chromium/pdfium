@@ -216,12 +216,9 @@ IMPLEMENT_JS_CLASS(CJS_App, app, app)
 app::app(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_bCalculate(true), m_bRuntimeHighLight(false) {}
 
-app::~app() {
-}
+app::~app() {}
 
-bool app::get_active_docs(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError) {
+CJS_Return app::get_active_docs(CJS_Runtime* pRuntime) {
   CJS_Document* pJSDocument = nullptr;
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
   if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID)
@@ -233,154 +230,111 @@ bool app::get_active_docs(CJS_Runtime* pRuntime,
                                : v8::Local<v8::Value>());
   if (aDocs.GetLength(pRuntime) > 0) {
     if (aDocs.ToV8Value().IsEmpty())
-      vp->Set(pRuntime->NewArray());
-    else
-      vp->Set(aDocs.ToV8Value());
-  } else {
-    vp->Set(pRuntime->NewUndefined());
+      return CJS_Return(pRuntime->NewArray());
+    return CJS_Return(aDocs.ToV8Value());
   }
-
-  return true;
+  return CJS_Return(pRuntime->NewUndefined());
 }
 
-bool app::set_active_docs(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError) {
-  return false;
+CJS_Return app::set_active_docs(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::get_calculate(CJS_Runtime* pRuntime,
-                        CJS_Value* vp,
-                        WideString* sError) {
-  vp->Set(pRuntime->NewBoolean(m_bCalculate));
-  return true;
+CJS_Return app::get_calculate(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewBoolean(m_bCalculate));
 }
 
-bool app::set_calculate(CJS_Runtime* pRuntime,
-                        v8::Local<v8::Value> vp,
-                        WideString* sError) {
+CJS_Return app::set_calculate(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   m_bCalculate = pRuntime->ToBoolean(vp);
   pRuntime->GetFormFillEnv()->GetInterForm()->EnableCalculate(m_bCalculate);
-  return true;
+  return CJS_Return(true);
 }
 
-bool app::get_forms_version(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  vp->Set(pRuntime->NewNumber(JS_NUM_FORMSVERSION));
-  return true;
+CJS_Return app::get_forms_version(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewNumber(JS_NUM_FORMSVERSION));
 }
 
-bool app::set_forms_version(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return false;
+CJS_Return app::set_forms_version(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::get_viewer_type(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError) {
-  vp->Set(pRuntime->NewString(JS_STR_VIEWERTYPE));
-  return true;
+CJS_Return app::get_viewer_type(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewString(JS_STR_VIEWERTYPE));
 }
 
-bool app::set_viewer_type(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError) {
-  return false;
+CJS_Return app::set_viewer_type(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::get_viewer_variation(CJS_Runtime* pRuntime,
-                               CJS_Value* vp,
-                               WideString* sError) {
-  vp->Set(pRuntime->NewString(JS_STR_VIEWERVARIATION));
-  return true;
+CJS_Return app::get_viewer_variation(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewString(JS_STR_VIEWERVARIATION));
 }
 
-bool app::set_viewer_variation(CJS_Runtime* pRuntime,
-                               v8::Local<v8::Value> vp,
-                               WideString* sError) {
-  return false;
+CJS_Return app::set_viewer_variation(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::get_viewer_version(CJS_Runtime* pRuntime,
-                             CJS_Value* vp,
-                             WideString* sError) {
+CJS_Return app::get_viewer_version(CJS_Runtime* pRuntime) {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* pXFAContext = pRuntime->GetFormFillEnv()->GetXFAContext();
-  if (pXFAContext->ContainsXFAForm()) {
-    vp->Set(pRuntime->NewNumber(JS_NUM_VIEWERVERSION_XFA));
-    return true;
-  }
+  if (pXFAContext->ContainsXFAForm())
+    return CJS_Return(pRuntime->NewNumber(JS_NUM_VIEWERVERSION_XFA));
 #endif  // PDF_ENABLE_XFA
-  vp->Set(pRuntime->NewNumber(JS_NUM_VIEWERVERSION));
-  return true;
+  return CJS_Return(pRuntime->NewNumber(JS_NUM_VIEWERVERSION));
 }
 
-bool app::set_viewer_version(CJS_Runtime* pRuntime,
-                             v8::Local<v8::Value> vp,
-                             WideString* sError) {
-  return false;
+CJS_Return app::set_viewer_version(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::get_platform(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError) {
+CJS_Return app::get_platform(CJS_Runtime* pRuntime) {
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (!pFormFillEnv)
-    return false;
+    return CJS_Return(false);
 
   WideString platfrom = pFormFillEnv->GetPlatform();
-  if (!platfrom.IsEmpty()) {
-    vp->Set(pRuntime->NewString(platfrom.c_str()));
-    return true;
-  }
+  if (!platfrom.IsEmpty())
+    return CJS_Return(pRuntime->NewString(platfrom.c_str()));
 #endif
-  vp->Set(pRuntime->NewString(JS_STR_PLATFORM));
-  return true;
+  return CJS_Return(pRuntime->NewString(JS_STR_PLATFORM));
 }
 
-bool app::set_platform(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError) {
-  return false;
+CJS_Return app::set_platform(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::get_language(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError) {
+CJS_Return app::get_language(CJS_Runtime* pRuntime) {
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (!pFormFillEnv)
-    return false;
+    return CJS_Return(false);
 
   WideString language = pFormFillEnv->GetLanguage();
-  if (!language.IsEmpty()) {
-    vp->Set(pRuntime->NewString(language.c_str()));
-    return true;
-  }
+  if (!language.IsEmpty())
+    return CJS_Return(pRuntime->NewString(language.c_str()));
 #endif
-  vp->Set(pRuntime->NewString(JS_STR_LANGUAGE));
-  return true;
+  return CJS_Return(pRuntime->NewString(JS_STR_LANGUAGE));
 }
 
-bool app::set_language(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError) {
-  return false;
+CJS_Return app::set_language(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
 // creates a new fdf object that contains no data
 // comment: need reader support
 // note:
 // CFDF_Document * CPDFSDK_FormFillEnvironment::NewFDF();
-bool app::newFDF(CJS_Runtime* pRuntime,
-                 const std::vector<v8::Local<v8::Value>>& params,
-                 CJS_Value& vRet,
-                 WideString& sError) {
-  return true;
+CJS_Return app::newFDF(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
+
 // opens a specified pdf document and returns its document object
 // comment:need reader support
 // note: as defined in js reference, the proto of this function's fourth
@@ -388,30 +342,22 @@ bool app::newFDF(CJS_Runtime* pRuntime,
 // CFDF_Document * CPDFSDK_FormFillEnvironment::OpenFDF(string strPath,bool
 // bUserConv);
 
-bool app::openFDF(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError) {
-  return true;
+CJS_Return app::openFDF(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool app::alert(CJS_Runtime* pRuntime,
-                const std::vector<v8::Local<v8::Value>>& params,
-                CJS_Value& vRet,
-                WideString& sError) {
+CJS_Return app::alert(CJS_Runtime* pRuntime,
+                      const std::vector<v8::Local<v8::Value>>& params) {
   std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
       pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
 
-  if (!IsTypeKnown(newParams[0])) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+  if (!IsTypeKnown(newParams[0]))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
-  if (!pFormFillEnv) {
-    vRet = CJS_Value(pRuntime->NewNumber(0));
-    return true;
-  }
+  if (!pFormFillEnv)
+    return CJS_Return(pRuntime->NewNumber(0));
 
   WideString swMsg;
   if (newParams[0]->IsArray()) {
@@ -445,67 +391,51 @@ bool app::alert(CJS_Runtime* pRuntime,
   pRuntime->BeginBlock();
   pFormFillEnv->KillFocusAnnot(0);
 
-  vRet = CJS_Value(pRuntime->NewNumber(
-      pFormFillEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(), iType, iIcon)));
+  v8::Local<v8::Value> ret = pRuntime->NewNumber(
+      pFormFillEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(), iType, iIcon));
   pRuntime->EndBlock();
-  return true;
+
+  return CJS_Return(ret);
 }
 
-bool app::beep(CJS_Runtime* pRuntime,
-               const std::vector<v8::Local<v8::Value>>& params,
-               CJS_Value& vRet,
-               WideString& sError) {
+CJS_Return app::beep(CJS_Runtime* pRuntime,
+                     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() == 1) {
     pRuntime->GetFormFillEnv()->JS_appBeep(pRuntime->ToInt32(params[0]));
-    return true;
+    return CJS_Return(true);
   }
-
-  sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-  return false;
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 }
 
-bool app::findComponent(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
-  return true;
+CJS_Return app::findComponent(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-bool app::popUpMenuEx(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError) {
-  return false;
+CJS_Return app::popUpMenuEx(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(false);
 }
 
-bool app::get_fs(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
-  return false;
+CJS_Return app::get_fs(CJS_Runtime* pRuntime) {
+  return CJS_Return(false);
 }
 
-bool app::set_fs(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError) {
-  return false;
+CJS_Return app::set_fs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::setInterval(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError) {
-  if (params.size() > 2 || params.size() == 0) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return app::setInterval(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() > 2 || params.size() == 0)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   WideString script =
       params.size() > 0 ? pRuntime->ToWideString(params[0]) : L"";
-  if (script.IsEmpty()) {
-    sError = JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE);
-    return true;
-  }
+  if (script.IsEmpty())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE));
 
   uint32_t dwInterval = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
-
   GlobalTimer* timerRef = new GlobalTimer(this, pRuntime->GetFormFillEnv(),
                                           pRuntime, 0, script, dwInterval, 0);
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
@@ -513,31 +443,24 @@ bool app::setInterval(CJS_Runtime* pRuntime,
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
   if (pRetObj.IsEmpty())
-    return false;
+    return CJS_Return(false);
 
   CJS_TimerObj* pJS_TimerObj =
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
   pTimerObj->SetTimer(timerRef);
 
-  vRet = CJS_Value(pRetObj);
-  return true;
+  return CJS_Return(pRetObj);
 }
 
-bool app::setTimeOut(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params,
-                     CJS_Value& vRet,
-                     WideString& sError) {
-  if (params.size() > 2 || params.size() == 0) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return app::setTimeOut(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() > 2 || params.size() == 0)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   WideString script = pRuntime->ToWideString(params[0]);
-  if (script.IsEmpty()) {
-    sError = JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE);
-    return true;
-  }
+  if (script.IsEmpty())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE));
 
   uint32_t dwTimeOut = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
   GlobalTimer* timerRef =
@@ -548,40 +471,32 @@ bool app::setTimeOut(CJS_Runtime* pRuntime,
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
   if (pRetObj.IsEmpty())
-    return false;
+    return CJS_Return(false);
 
   CJS_TimerObj* pJS_TimerObj =
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
   pTimerObj->SetTimer(timerRef);
-  vRet = CJS_Value(pRetObj);
-  return true;
+
+  return CJS_Return(pRetObj);
 }
 
-bool app::clearTimeOut(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
-  if (params.size() != 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return app::clearTimeOut(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   app::ClearTimerCommon(pRuntime, params[0]);
-  return true;
+  return CJS_Return(true);
 }
 
-bool app::clearInterval(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params,
-                        CJS_Value& vRet,
-                        WideString& sError) {
-  if (params.size() != 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return app::clearInterval(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   app::ClearTimerCommon(pRuntime, params[0]);
-  return true;
+  return CJS_Return(true);
 }
 
 void app::ClearTimerCommon(CJS_Runtime* pRuntime, v8::Local<v8::Value> param) {
@@ -604,11 +519,9 @@ void app::ClearTimerCommon(CJS_Runtime* pRuntime, v8::Local<v8::Value> param) {
   GlobalTimer::Cancel(pTimerObj->GetTimerID());
 }
 
-bool app::execMenuItem(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
-  return false;
+CJS_Return app::execMenuItem(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(false);
 }
 
 void app::TimerProc(GlobalTimer* pTimer) {
@@ -631,45 +544,35 @@ void app::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
   }
 }
 
-bool app::goBack(CJS_Runtime* pRuntime,
-                 const std::vector<v8::Local<v8::Value>>& params,
-                 CJS_Value& vRet,
-                 WideString& sError) {
+CJS_Return app::goBack(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params) {
   // Not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool app::goForward(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError) {
+CJS_Return app::goForward(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params) {
   // Not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool app::mailMsg(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError) {
+CJS_Return app::mailMsg(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params) {
   std::vector<v8::Local<v8::Value>> newParams =
       ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
                           L"cSubject", L"cMsg");
 
-  if (!IsTypeKnown(newParams[0])) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  bool bUI = pRuntime->ToBoolean(newParams[0]);
+  if (!IsTypeKnown(newParams[0]))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
+  bool bUI = pRuntime->ToBoolean(newParams[0]);
   WideString cTo;
   if (IsTypeKnown(newParams[1])) {
     cTo = pRuntime->ToWideString(newParams[1]);
   } else {
-    if (!bUI) {
-      // cTo parameter required when UI not invoked.
-      sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-      return false;
-    }
+    // cTo parameter required when UI not invoked.
+    if (!bUI)
+      return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
   }
 
   WideString cCc;
@@ -693,56 +596,42 @@ bool app::mailMsg(CJS_Runtime* pRuntime,
                                              cSubject.c_str(), cCc.c_str(),
                                              cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
-  return true;
+  return CJS_Return(true);
 }
 
-bool app::launchURL(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError) {
+CJS_Return app::launchURL(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool app::get_runtime_highlight(CJS_Runtime* pRuntime,
-                                CJS_Value* vp,
-                                WideString* sError) {
-  vp->Set(pRuntime->NewBoolean(m_bRuntimeHighLight));
-  return true;
+CJS_Return app::get_runtime_highlight(CJS_Runtime* pRuntime) {
+  return CJS_Return(pRuntime->NewBoolean(m_bRuntimeHighLight));
 }
 
-bool app::set_runtime_highlight(CJS_Runtime* pRuntime,
-                                v8::Local<v8::Value> vp,
-                                WideString* sError) {
+CJS_Return app::set_runtime_highlight(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   m_bRuntimeHighLight = pRuntime->ToBoolean(vp);
-  return true;
+  return CJS_Return(true);
 }
 
-bool app::get_fullscreen(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
-  return false;
+CJS_Return app::get_fullscreen(CJS_Runtime* pRuntime) {
+  return CJS_Return(false);
 }
 
-bool app::set_fullscreen(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  return false;
+CJS_Return app::set_fullscreen(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::popUpMenu(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params,
-                    CJS_Value& vRet,
-                    WideString& sError) {
-  return false;
+CJS_Return app::popUpMenu(CJS_Runtime* pRuntime,
+                          const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(false);
 }
 
-bool app::browseForDoc(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
+CJS_Return app::browseForDoc(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
 WideString app::SysPathToPDFPath(const WideString& sOldPath) {
@@ -754,34 +643,26 @@ WideString app::SysPathToPDFPath(const WideString& sOldPath) {
   return sRet;
 }
 
-bool app::newDoc(CJS_Runtime* pRuntime,
-                 const std::vector<v8::Local<v8::Value>>& params,
-                 CJS_Value& vRet,
-                 WideString& sError) {
-  return false;
+CJS_Return app::newDoc(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(false);
 }
 
-bool app::openDoc(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError) {
-  return false;
+CJS_Return app::openDoc(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(false);
 }
 
-bool app::response(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params,
-                   CJS_Value& vRet,
-                   WideString& sError) {
+CJS_Return app::response(CJS_Runtime* pRuntime,
+                         const std::vector<v8::Local<v8::Value>>& params) {
   std::vector<v8::Local<v8::Value>> newParams =
       ExpandKeywordParams(pRuntime, params, 5, L"cQuestion", L"cTitle",
                           L"cDefault", L"bPassword", L"cLabel");
 
-  if (!IsTypeKnown(newParams[0])) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
-  WideString swQuestion = pRuntime->ToWideString(newParams[0]);
+  if (!IsTypeKnown(newParams[0]))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
+  WideString swQuestion = pRuntime->ToWideString(newParams[0]);
   WideString swTitle = L"PDF";
   if (IsTypeKnown(newParams[1]))
     swTitle = pRuntime->ToWideString(newParams[1]);
@@ -804,32 +685,24 @@ bool app::response(CJS_Runtime* pRuntime,
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
       bPassword, pBuff.data(), MAX_INPUT_BYTES);
 
-  if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAM_TOOLONG);
-    return false;
-  }
+  if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAM_TOOLONG));
 
-  vRet = CJS_Value(pRuntime->NewString(
+  return CJS_Return(pRuntime->NewString(
       WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
                               nLengthBytes / sizeof(uint16_t))
           .c_str()));
-
-  return true;
 }
 
-bool app::get_media(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
-  return false;
+CJS_Return app::get_media(CJS_Runtime* pRuntime) {
+  return CJS_Return(false);
 }
 
-bool app::set_media(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError) {
-  return false;
+CJS_Return app::set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool app::execDialog(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params,
-                     CJS_Value& vRet,
-                     WideString& sError) {
-  return true;
+CJS_Return app::execDialog(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }

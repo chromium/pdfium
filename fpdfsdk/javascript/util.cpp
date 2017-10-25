@@ -73,13 +73,11 @@ util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 util::~util() {}
 
-bool util::printf(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError) {
+CJS_Return util::printf(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 1)
-    return false;
+    return CJS_Return(false);
 
   std::wstring unsafe_fmt_string(pRuntime->ToWideString(params[0]).c_str());
   std::vector<std::wstring> unsafe_conversion_specifiers;
@@ -133,28 +131,21 @@ bool util::printf(CJS_Runtime* pRuntime,
   }
 
   c_strResult.erase(c_strResult.begin());
-  vRet = CJS_Value(pRuntime->NewString(c_strResult.c_str()));
-  return true;
+  return CJS_Return(pRuntime->NewString(c_strResult.c_str()));
 }
 
-bool util::printd(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError) {
+CJS_Return util::printd(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 2)
-    return false;
+    return CJS_Return(false);
 
-  if (params[1].IsEmpty() || !params[1]->IsDate()) {
-    sError = JSGetStringFromID(IDS_STRING_JSPRINT1);
-    return false;
-  }
+  if (params[1].IsEmpty() || !params[1]->IsDate())
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT1));
 
   CJS_Date jsDate(params[1].As<v8::Date>());
-  if (!jsDate.IsValidDate(pRuntime)) {
-    sError = JSGetStringFromID(IDS_STRING_JSPRINT2);
-    return false;
-  }
+  if (!jsDate.IsValidDate(pRuntime))
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT2));
 
   if (params[0]->IsNumber()) {
     WideString swResult;
@@ -180,19 +171,16 @@ bool util::printd(CJS_Runtime* pRuntime,
                         jsDate.GetSeconds(pRuntime));
         break;
       default:
-        sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
-        return false;
+        return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
     }
 
-    vRet = CJS_Value(pRuntime->NewString(swResult.c_str()));
-    return true;
+    return CJS_Return(pRuntime->NewString(swResult.c_str()));
   }
 
   if (params[0]->IsString()) {
-    if (iSize > 2 && pRuntime->ToBoolean(params[2])) {
-      sError = JSGetStringFromID(IDS_STRING_JSNOTSUPPORT);
-      return false;  // currently, it doesn't support XFAPicture.
-    }
+    // We don't support XFAPicture at the moment.
+    if (iSize > 2 && pRuntime->ToBoolean(params[2]))
+      return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOTSUPPORT));
 
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
@@ -213,10 +201,8 @@ bool util::printd(CJS_Runtime* pRuntime,
     }
 
     int iYear = jsDate.GetYear(pRuntime);
-    if (iYear < 0) {
-      sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
-      return false;
-    }
+    if (iYear < 0)
+      return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
 
     int iMonth = jsDate.GetMonth(pRuntime);
     int iDay = jsDate.GetDay(pRuntime);
@@ -259,28 +245,21 @@ bool util::printd(CJS_Runtime* pRuntime,
     wchar_t buf[64] = {};
     FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
     cFormat = buf;
-    vRet = CJS_Value(pRuntime->NewString(cFormat.c_str()));
-    return true;
+    return CJS_Return(pRuntime->NewString(cFormat.c_str()));
   }
 
-  sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
-  return false;
+  return CJS_Return(JSGetStringFromID(IDS_STRING_JSTYPEERROR));
 }
 
-bool util::printx(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError) {
-  if (params.size() < 2) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return util::printx(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() < 2)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
-  vRet = CJS_Value(pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
-                                              pRuntime->ToWideString(params[1]))
-                                           .c_str()));
-
-  return true;
+  return CJS_Return(
+      pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
+                                 pRuntime->ToWideString(params[1]))
+                              .c_str()));
 }
 
 enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
@@ -381,47 +360,33 @@ WideString util::printx(const WideString& wsFormat,
   return wsResult;
 }
 
-bool util::scand(CJS_Runtime* pRuntime,
-                 const std::vector<v8::Local<v8::Value>>& params,
-                 CJS_Value& vRet,
-                 WideString& sError) {
+CJS_Return util::scand(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
-    return false;
+    return CJS_Return(false);
 
   WideString sFormat = pRuntime->ToWideString(params[0]);
   WideString sDate = pRuntime->ToWideString(params[1]);
   double dDate = JS_GetDateTime();
-  if (sDate.GetLength() > 0) {
+  if (sDate.GetLength() > 0)
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
-  }
 
-  if (!std::isnan(dDate)) {
-    vRet = CJS_Value(CJS_Date(pRuntime, dDate).ToV8Value());
-  } else {
-    vRet.Set(pRuntime->NewUndefined());
-  }
-
-  return true;
+  if (std::isnan(dDate))
+    return CJS_Return(pRuntime->NewUndefined());
+  return CJS_Return(CJS_Date(pRuntime, dDate).ToV8Value());
 }
 
-bool util::byteToChar(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params,
-                      CJS_Value& vRet,
-                      WideString& sError) {
-  if (params.size() < 1) {
-    sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return false;
-  }
+CJS_Return util::byteToChar(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() < 1)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
 
   int arg = pRuntime->ToInt32(params[0]);
-  if (arg < 0 || arg > 255) {
-    sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
-    return false;
-  }
+  if (arg < 0 || arg > 255)
+    return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
 
   WideString wStr(static_cast<wchar_t>(arg));
-  vRet = CJS_Value(pRuntime->NewString(wStr.c_str()));
-  return true;
+  return CJS_Return(pRuntime->NewString(wStr.c_str()));
 }
 
 // Ensure that sFormat contains at most one well-understood printf formatting

@@ -34,7 +34,7 @@ struct JSMethodSpec {
   v8::FunctionCallback pMethodCall;
 };
 
-template <class C, bool (C::*M)(CJS_Runtime*, CJS_Value*, WideString*)>
+template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -50,20 +50,18 @@ void JSPropGetter(const char* prop_name_string,
     return;
 
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
-  WideString sError;
-
-  CJS_Value prop_value;
-  if (!(pObj->*M)(pRuntime, &prop_value, &sError)) {
-    pRuntime->Error(
-        JSFormatErrorString(class_name_string, prop_name_string, sError));
+  CJS_Return result = (pObj->*M)(pRuntime);
+  if (result.HasError()) {
+    pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
+                                        result.Error()));
     return;
   }
-  if (!prop_value.ToV8Value().IsEmpty())
-    info.GetReturnValue().Set(prop_value.ToV8Value());
+
+  if (result.HasReturn())
+    info.GetReturnValue().Set(result.Return());
 }
 
-template <class C,
-          bool (C::*M)(CJS_Runtime*, v8::Local<v8::Value>, WideString*)>
+template <class C, CJS_Return (C::*M)(CJS_Runtime*, v8::Local<v8::Value>)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -80,11 +78,10 @@ void JSPropSetter(const char* prop_name_string,
     return;
 
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
-  WideString sError;
-
-  if (!(pObj->*M)(pRuntime, value, &sError)) {
-    pRuntime->Error(
-        JSFormatErrorString(class_name_string, prop_name_string, sError));
+  CJS_Return result = (pObj->*M)(pRuntime, value);
+  if (result.HasError()) {
+    pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
+                                        result.Error()));
   }
 }
 
@@ -103,10 +100,8 @@ void JSPropSetter(const char* prop_name_string,
   }
 
 template <class C,
-          bool (C::*M)(CJS_Runtime*,
-                       const std::vector<v8::Local<v8::Value>>&,
-                       CJS_Value&,
-                       WideString&)>
+          CJS_Return (C::*M)(CJS_Runtime*,
+                             const std::vector<v8::Local<v8::Value>>&)>
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
@@ -115,25 +110,25 @@ void JSMethod(const char* method_name_string,
   if (!pRuntime)
     return;
 
-  std::vector<v8::Local<v8::Value>> parameters;
-  for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
-    parameters.push_back(info[i]);
-
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
   if (!pJSObj)
     return;
 
+  std::vector<v8::Local<v8::Value>> parameters;
+  for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
+    parameters.push_back(info[i]);
+
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
-  WideString sError;
-  CJS_Value valueRes;
-  if (!(pObj->*M)(pRuntime, parameters, valueRes, sError)) {
-    pRuntime->Error(
-        JSFormatErrorString(class_name_string, method_name_string, sError));
+  CJS_Return result = (pObj->*M)(pRuntime, parameters);
+  if (result.HasError()) {
+    pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,
+                                        result.Error()));
     return;
   }
-  if (!valueRes.ToV8Value().IsEmpty())
-    info.GetReturnValue().Set(valueRes.ToV8Value());
+
+  if (result.HasReturn())
+    info.GetReturnValue().Set(result.Return());
 }
 
 #define JS_STATIC_METHOD(method_name, class_name)                             \

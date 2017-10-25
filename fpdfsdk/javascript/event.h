@@ -14,114 +14,65 @@ class event : public CJS_EmbedObj {
   explicit event(CJS_Object* pJSObject);
   ~event() override;
 
- public:
-  bool get_change(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_change(CJS_Runtime* pRuntime,
-                  v8::Local<v8::Value> vp,
-                  WideString* sError);
+  CJS_Return get_change(CJS_Runtime* pRuntime);
+  CJS_Return set_change(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_change_ex(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_change_ex(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Value> vp,
-                     WideString* sError);
+  CJS_Return get_change_ex(CJS_Runtime* pRuntime);
+  CJS_Return set_change_ex(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_commit_key(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_commit_key(CJS_Runtime* pRuntime,
-                      v8::Local<v8::Value> vp,
-                      WideString* sError);
+  CJS_Return get_commit_key(CJS_Runtime* pRuntime);
+  CJS_Return set_commit_key(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_field_full(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_field_full(CJS_Runtime* pRuntime,
-                      v8::Local<v8::Value> vp,
-                      WideString* sError);
+  CJS_Return get_field_full(CJS_Runtime* pRuntime);
+  CJS_Return set_field_full(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_key_down(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_key_down(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_key_down(CJS_Runtime* pRuntime);
+  CJS_Return set_key_down(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_modifier(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_modifier(CJS_Runtime* pRuntime,
-                    v8::Local<v8::Value> vp,
-                    WideString* sError);
+  CJS_Return get_modifier(CJS_Runtime* pRuntime);
+  CJS_Return set_modifier(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_name(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_name(CJS_Runtime* pRuntime);
+  CJS_Return set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_rc(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_rc(CJS_Runtime* pRuntime,
-              v8::Local<v8::Value> vp,
-              WideString* sError);
+  CJS_Return get_rc(CJS_Runtime* pRuntime);
+  CJS_Return set_rc(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_rich_change(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError);
-  bool set_rich_change(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError);
+  CJS_Return get_rich_change(CJS_Runtime* pRuntime);
+  CJS_Return set_rich_change(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_rich_change_ex(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError);
-  bool set_rich_change_ex(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError);
+  CJS_Return get_rich_change_ex(CJS_Runtime* pRuntime);
+  CJS_Return set_rich_change_ex(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_rich_value(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_rich_value(CJS_Runtime* pRuntime,
-                      v8::Local<v8::Value> vp,
-                      WideString* sError);
+  CJS_Return get_rich_value(CJS_Runtime* pRuntime);
+  CJS_Return set_rich_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_sel_end(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_sel_end(CJS_Runtime* pRuntime,
-                   v8::Local<v8::Value> vp,
-                   WideString* sError);
+  CJS_Return get_sel_end(CJS_Runtime* pRuntime);
+  CJS_Return set_sel_end(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_sel_start(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_sel_start(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Value> vp,
-                     WideString* sError);
+  CJS_Return get_sel_start(CJS_Runtime* pRuntime);
+  CJS_Return set_sel_start(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_shift(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_shift(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError);
+  CJS_Return get_shift(CJS_Runtime* pRuntime);
+  CJS_Return set_shift(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_source(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_source(CJS_Runtime* pRuntime,
-                  v8::Local<v8::Value> vp,
-                  WideString* sError);
+  CJS_Return get_source(CJS_Runtime* pRuntime);
+  CJS_Return set_source(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_target(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_target(CJS_Runtime* pRuntime,
-                  v8::Local<v8::Value> vp,
-                  WideString* sError);
+  CJS_Return get_target(CJS_Runtime* pRuntime);
+  CJS_Return set_target(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_target_name(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError);
-  bool set_target_name(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError);
+  CJS_Return get_target_name(CJS_Runtime* pRuntime);
+  CJS_Return set_target_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_type(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_type(CJS_Runtime* pRuntime);
+  CJS_Return set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_value(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_value(CJS_Runtime* pRuntime,
-                 v8::Local<v8::Value> vp,
-                 WideString* sError);
+  CJS_Return get_value(CJS_Runtime* pRuntime);
+  CJS_Return set_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_will_commit(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError);
-  bool set_will_commit(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError);
+  CJS_Return get_will_commit(CJS_Runtime* pRuntime);
+  CJS_Return set_will_commit(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 };
 
 class CJS_Event : public CJS_Object {

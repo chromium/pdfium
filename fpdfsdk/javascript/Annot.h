@@ -15,20 +15,14 @@ class Annot : public CJS_EmbedObj {
   explicit Annot(CJS_Object* pJSObject);
   ~Annot() override;
 
-  bool get_hidden(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_hidden(CJS_Runtime* pRuntime,
-                  v8::Local<v8::Value> vp,
-                  WideString* sError);
+  CJS_Return get_hidden(CJS_Runtime* pRuntime);
+  CJS_Return set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_name(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_name(CJS_Runtime* pRuntime);
+  CJS_Return set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  bool get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_type(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_type(CJS_Runtime* pRuntime);
+  CJS_Return set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
   void SetSDKAnnot(CPDFSDK_BAAnnot* annot);
 

@@ -46,18 +46,13 @@ event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
 
 event::~event() {}
 
-bool event::get_change(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError) {
+CJS_Return event::get_change(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewString(pEvent->Change().c_str()));
-  return true;
+  return CJS_Return(pRuntime->NewString(pEvent->Change().c_str()));
 }
 
-bool event::set_change(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError) {
+CJS_Return event::set_change(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -65,323 +60,246 @@ bool event::set_change(CJS_Runtime* pRuntime,
     WideString& wChange = pEvent->Change();
     wChange = pRuntime->ToWideString(vp);
   }
-  return true;
+  return CJS_Return(true);
 }
 
-bool event::get_change_ex(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError) {
+CJS_Return event::get_change_ex(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  vp->Set(pRuntime->NewString(pEvent->ChangeEx().c_str()));
-  return true;
+  return CJS_Return(pRuntime->NewString(pEvent->ChangeEx().c_str()));
 }
 
-bool event::set_change_ex(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError) {
-  return false;
+CJS_Return event::set_change_ex(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_commit_key(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           WideString* sError) {
+CJS_Return event::get_commit_key(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  vp->Set(pRuntime->NewNumber(pEvent->CommitKey()));
-  return true;
+  return CJS_Return(pRuntime->NewNumber(pEvent->CommitKey()));
 }
 
-bool event::set_commit_key(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           WideString* sError) {
-  return false;
+CJS_Return event::set_commit_key(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_field_full(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           WideString* sError) {
+CJS_Return event::get_field_full(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
-    return false;
+    return CJS_Return(false);
 
-  vp->Set(pRuntime->NewBoolean(pEvent->FieldFull()));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(pEvent->FieldFull()));
 }
 
-bool event::set_field_full(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           WideString* sError) {
-  return false;
+CJS_Return event::set_field_full(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_key_down(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
+CJS_Return event::get_key_down(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewBoolean(pEvent->KeyDown()));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(pEvent->KeyDown()));
 }
 
-bool event::set_key_down(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  return false;
+CJS_Return event::set_key_down(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_modifier(CJS_Runtime* pRuntime,
-                         CJS_Value* vp,
-                         WideString* sError) {
+CJS_Return event::get_modifier(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewBoolean(pEvent->Modifier()));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(pEvent->Modifier()));
 }
 
-bool event::set_modifier(CJS_Runtime* pRuntime,
-                         v8::Local<v8::Value> vp,
-                         WideString* sError) {
-  return false;
+CJS_Return event::set_modifier(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
+CJS_Return event::get_name(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewString(pEvent->Name()));
-  return true;
+  return CJS_Return(pRuntime->NewString(pEvent->Name()));
 }
 
-bool event::set_name(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Value> vp,
-                     WideString* sError) {
-  return false;
+CJS_Return event::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_rc(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
+CJS_Return event::get_rc(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewBoolean(pEvent->Rc()));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(pEvent->Rc()));
 }
 
-bool event::set_rc(CJS_Runtime* pRuntime,
-                   v8::Local<v8::Value> vp,
-                   WideString* sError) {
+CJS_Return event::set_rc(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   pEvent->Rc() = pRuntime->ToBoolean(vp);
-  return true;
+  return CJS_Return(true);
 }
 
-bool event::get_rich_change(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
-  return true;
+CJS_Return event::get_rich_change(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool event::set_rich_change(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return true;
+CJS_Return event::set_rich_change(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool event::get_rich_change_ex(CJS_Runtime* pRuntime,
-                               CJS_Value* vp,
-                               WideString* sError) {
-  return true;
+CJS_Return event::get_rich_change_ex(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool event::set_rich_change_ex(CJS_Runtime* pRuntime,
-                               v8::Local<v8::Value> vp,
-                               WideString* sError) {
-  return true;
+CJS_Return event::set_rich_change_ex(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool event::get_rich_value(CJS_Runtime* pRuntime,
-                           CJS_Value* vp,
-                           WideString* sError) {
-  return true;
+CJS_Return event::get_rich_value(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
 }
 
-bool event::set_rich_value(CJS_Runtime* pRuntime,
-                           v8::Local<v8::Value> vp,
-                           WideString* sError) {
-  return true;
+CJS_Return event::set_rich_value(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
 }
 
-bool event::get_sel_end(CJS_Runtime* pRuntime,
-                        CJS_Value* vp,
-                        WideString* sError) {
+CJS_Return event::get_sel_end(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
-    return true;
+    return CJS_Return(true);
 
-  vp->Set(pRuntime->NewNumber(pEvent->SelEnd()));
-  return true;
+  return CJS_Return(pRuntime->NewNumber(pEvent->SelEnd()));
 }
 
-bool event::set_sel_end(CJS_Runtime* pRuntime,
-                        v8::Local<v8::Value> vp,
-                        WideString* sError) {
+CJS_Return event::set_sel_end(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
-    return true;
+    return CJS_Return(true);
 
   pEvent->SelEnd() = pRuntime->ToInt32(vp);
-  return true;
+  return CJS_Return(true);
 }
 
-bool event::get_sel_start(CJS_Runtime* pRuntime,
-                          CJS_Value* vp,
-                          WideString* sError) {
+CJS_Return event::get_sel_start(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
-    return true;
+    return CJS_Return(true);
 
-  vp->Set(pRuntime->NewNumber(pEvent->SelStart()));
-  return true;
+  return CJS_Return(pRuntime->NewNumber(pEvent->SelStart()));
 }
 
-bool event::set_sel_start(CJS_Runtime* pRuntime,
-                          v8::Local<v8::Value> vp,
-                          WideString* sError) {
+CJS_Return event::set_sel_start(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
-    return true;
+    return CJS_Return(true);
 
   pEvent->SelStart() = pRuntime->ToInt32(vp);
-  return true;
+  return CJS_Return(true);
 }
 
-bool event::get_shift(CJS_Runtime* pRuntime,
-                      CJS_Value* vp,
-                      WideString* sError) {
+CJS_Return event::get_shift(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewBoolean(pEvent->Shift()));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(pEvent->Shift()));
 }
 
-bool event::set_shift(CJS_Runtime* pRuntime,
-                      v8::Local<v8::Value> vp,
-                      WideString* sError) {
-  return false;
+CJS_Return event::set_shift(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_source(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError) {
+CJS_Return event::get_source(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pEvent->Source()->GetJSObject()->ToV8Object());
-  return true;
+  return CJS_Return(pEvent->Source()->GetJSObject()->ToV8Object());
 }
 
-bool event::set_source(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError) {
-  return false;
+CJS_Return event::set_source(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_target(CJS_Runtime* pRuntime,
-                       CJS_Value* vp,
-                       WideString* sError) {
+CJS_Return event::get_target(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pEvent->Target_Field()->GetJSObject()->ToV8Object());
-  return true;
+  return CJS_Return(pEvent->Target_Field()->GetJSObject()->ToV8Object());
 }
 
-bool event::set_target(CJS_Runtime* pRuntime,
-                       v8::Local<v8::Value> vp,
-                       WideString* sError) {
-  return false;
+CJS_Return event::set_target(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_target_name(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
+CJS_Return event::get_target_name(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewString(pEvent->TargetName().c_str()));
-  return true;
+  return CJS_Return(pRuntime->NewString(pEvent->TargetName().c_str()));
 }
 
-bool event::set_target_name(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return false;
+CJS_Return event::set_target_name(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
+CJS_Return event::get_type(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewString(pEvent->Type()));
-  return true;
+  return CJS_Return(pRuntime->NewString(pEvent->Type()));
 }
 
-bool event::set_type(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Value> vp,
-                     WideString* sError) {
-  return false;
+CJS_Return event::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }
 
-bool event::get_value(CJS_Runtime* pRuntime,
-                      CJS_Value* vp,
-                      WideString* sError) {
+CJS_Return event::get_value(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Type(), L"Field") != 0)
-    return false;
+    return CJS_Return(false);
 
   if (!pEvent->m_pValue)
-    return false;
+    return CJS_Return(false);
 
-  vp->Set(pRuntime->NewString(pEvent->Value().c_str()));
-  return true;
+  return CJS_Return(pRuntime->NewString(pEvent->Value().c_str()));
 }
 
-bool event::set_value(CJS_Runtime* pRuntime,
-                      v8::Local<v8::Value> vp,
-                      WideString* sError) {
+CJS_Return event::set_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Type(), L"Field") != 0)
-    return false;
+    return CJS_Return(false);
 
   if (!pEvent->m_pValue)
-    return false;
+    return CJS_Return(false);
 
   pEvent->Value() = pRuntime->ToWideString(vp);
-  return true;
+  return CJS_Return(true);
 }
 
-bool event::get_will_commit(CJS_Runtime* pRuntime,
-                            CJS_Value* vp,
-                            WideString* sError) {
+CJS_Return event::get_will_commit(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  vp->Set(pRuntime->NewBoolean(pEvent->WillCommit()));
-  return true;
+  return CJS_Return(pRuntime->NewBoolean(pEvent->WillCommit()));
 }
 
-bool event::set_will_commit(CJS_Runtime* pRuntime,
-                            v8::Local<v8::Value> vp,
-                            WideString* sError) {
-  return false;
+CJS_Return event::set_will_commit(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
+  return CJS_Return(false);
 }

@@ -17,14 +17,10 @@ class Report : public CJS_EmbedObj {
   ~Report() override;
 
  public:
-  bool save(CJS_Runtime* pRuntime,
-            const std::vector<v8::Local<v8::Value>>& params,
-            CJS_Value& vRet,
-            WideString& sError);
-  bool writeText(CJS_Runtime* pRuntime,
-                 const std::vector<v8::Local<v8::Value>>& params,
-                 CJS_Value& vRet,
-                 WideString& sError);
+  CJS_Return save(CJS_Runtime* pRuntime,
+                  const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return writeText(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params);
 };
 
 class CJS_Report : public CJS_Object {

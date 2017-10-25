@@ -17,22 +17,14 @@ class console : public CJS_EmbedObj {
   ~console() override;
 
  public:
-  bool clear(CJS_Runtime* pRuntime,
-             const std::vector<v8::Local<v8::Value>>& params,
-             CJS_Value& vRet,
-             WideString& sError);
-  bool hide(CJS_Runtime* pRuntime,
-            const std::vector<v8::Local<v8::Value>>& params,
-            CJS_Value& vRet,
-            WideString& sError);
-  bool println(CJS_Runtime* pRuntime,
-               const std::vector<v8::Local<v8::Value>>& params,
-               CJS_Value& vRet,
-               WideString& sError);
-  bool show(CJS_Runtime* pRuntime,
-            const std::vector<v8::Local<v8::Value>>& params,
-            CJS_Value& vRet,
-            WideString& sError);
+  CJS_Return clear(CJS_Runtime* pRuntime,
+                   const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return hide(CJS_Runtime* pRuntime,
+                  const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return println(CJS_Runtime* pRuntime,
+                     const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return show(CJS_Runtime* pRuntime,
+                  const std::vector<v8::Local<v8::Value>>& params);
 };
 
 class CJS_Console : public CJS_Object {

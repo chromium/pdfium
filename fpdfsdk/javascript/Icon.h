@@ -16,10 +16,8 @@ class Icon : public CJS_EmbedObj {
   explicit Icon(CJS_Object* pJSObject);
   ~Icon() override;
 
-  bool get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_name(CJS_Runtime* pRuntime,
-                v8::Local<v8::Value> vp,
-                WideString* sError);
+  CJS_Return get_name(CJS_Runtime* pRuntime);
+  CJS_Return set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
   WideString GetIconName() const { return m_swIconName; }
   void SetIconName(WideString name) { m_swIconName = name; }

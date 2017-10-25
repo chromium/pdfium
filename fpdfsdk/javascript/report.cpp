@@ -26,18 +26,14 @@ Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 Report::~Report() {}
 
-bool Report::writeText(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params,
-                       CJS_Value& vRet,
-                       WideString& sError) {
+CJS_Return Report::writeText(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }
 
-bool Report::save(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params,
-                  CJS_Value& vRet,
-                  WideString& sError) {
+CJS_Return Report::save(CJS_Runtime* pRuntime,
+                        const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return true;
+  return CJS_Return(true);
 }

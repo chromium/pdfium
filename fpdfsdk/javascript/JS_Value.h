@@ -17,6 +17,28 @@ class CJS_Document;
 class CJS_Object;
 class CJS_Runtime;
 
+class CJS_Return {
+ public:
+  explicit CJS_Return(bool);
+  explicit CJS_Return(const WideString&);
+  explicit CJS_Return(v8::Local<v8::Value>);
+  CJS_Return(const CJS_Return&);
+  ~CJS_Return();
+
+  bool HasError() const { return is_error_; }
+  WideString Error() const { return error_; }
+
+  bool HasReturn() const { return !return_.IsEmpty(); }
+  v8::Local<v8::Value> Return() const { return return_; }
+
+ private:
+  CJS_Return() = delete;
+
+  bool is_error_ = false;
+  WideString error_;
+  v8::Local<v8::Value> return_;
+};
+
 class CJS_Value {
  public:
   CJS_Value();
