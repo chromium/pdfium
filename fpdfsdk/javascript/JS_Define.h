@@ -58,7 +58,8 @@ void JSPropGetter(const char* prop_name_string,
         JSFormatErrorString(class_name_string, prop_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set(prop_value.ToV8Value());
+  if (!prop_value.ToV8Value().IsEmpty())
+    info.GetReturnValue().Set(prop_value.ToV8Value());
 }
 
 template <class C,
@@ -131,7 +132,8 @@ void JSMethod(const char* method_name_string,
         JSFormatErrorString(class_name_string, method_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToV8Value());
+  if (!valueRes.ToV8Value().IsEmpty())
+    info.GetReturnValue().Set(valueRes.ToV8Value());
 }
 
 #define JS_STATIC_METHOD(method_name, class_name)                             \
