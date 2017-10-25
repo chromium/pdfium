@@ -98,7 +98,7 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript) {
       ret = expr->ToImpliedReturnJS(javascript);
     else
       ret = expr->ToJavaScript(javascript);
-    if (!ret || CFXA_IsTooBig(javascript))
+    if (!ret || CXFA_IsTooBig(javascript))
       return false;
   }
   javascript << L"return ";
@@ -257,7 +257,7 @@ bool CXFA_FMBlockExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 
   javascript << L"{\n";
   for (const auto& expr : m_ExpressionList) {
-    if (!expr->ToJavaScript(javascript) || CFXA_IsTooBig(javascript))
+    if (!expr->ToJavaScript(javascript) || CXFA_IsTooBig(javascript))
       return false;
   }
   javascript << L"}\n";
@@ -276,7 +276,7 @@ bool CXFA_FMBlockExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
       ret = expr->ToImpliedReturnJS(javascript);
     else
       ret = expr->ToJavaScript(javascript);
-    if (!ret || CFXA_IsTooBig(javascript))
+    if (!ret || CXFA_IsTooBig(javascript))
       return false;
   }
   javascript << L"}\n";
@@ -332,13 +332,13 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << L")";
   }
   javascript << L")\n";
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   if (m_pIfExpression) {
     if (!m_pIfExpression->ToJavaScript(javascript))
       return false;
-    if (CFXA_IsTooBig(javascript))
+    if (CXFA_IsTooBig(javascript))
       return false;
   }
 
@@ -355,7 +355,7 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
         return false;
     }
   }
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }
 
 bool CXFA_FMIfExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
@@ -374,13 +374,13 @@ bool CXFA_FMIfExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
     javascript << L")";
   }
   javascript << L")\n";
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   if (m_pIfExpression) {
     if (!m_pIfExpression->ToImpliedReturnJS(javascript))
       return false;
-    if (CFXA_IsTooBig(javascript))
+    if (CXFA_IsTooBig(javascript))
       return false;
   }
   if (m_pElseExpression) {
@@ -396,7 +396,7 @@ bool CXFA_FMIfExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
         return false;
     }
   }
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }
 
 CXFA_FMLoopExpression::~CXFA_FMLoopExpression() {}
@@ -430,12 +430,12 @@ bool CXFA_FMWhileExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   if (!m_pCondition->ToJavaScript(javascript))
     return false;
   javascript << L")\n";
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   if (!m_pExpression->ToJavaScript(javascript))
     return false;
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }
 
 bool CXFA_FMWhileExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
@@ -449,12 +449,12 @@ bool CXFA_FMWhileExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   if (!m_pCondition->ToJavaScript(javascript))
     return false;
   javascript << L")\n";
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   if (!m_pExpression->ToImpliedReturnJS(javascript))
     return false;
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }
 
 CXFA_FMBreakExpression::CXFA_FMBreakExpression(uint32_t line)
@@ -554,7 +554,7 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     return false;
   javascript << L"); ";
   javascript << tempVariant;
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   javascript << (m_bDirection ? kLessEqual : kGreaterEqual);
@@ -565,7 +565,7 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << L"); ";
   javascript << tempVariant;
   javascript << (m_bDirection ? kPlusEqual : kMinusEqual);
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   if (m_pStep) {
@@ -574,7 +574,7 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     if (!m_pStep->ToJavaScript(javascript))
       return false;
     javascript << L")";
-    if (CFXA_IsTooBig(javascript))
+    if (CXFA_IsTooBig(javascript))
       return false;
   } else {
     javascript << L"1";
@@ -583,7 +583,7 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   if (!m_pList->ToJavaScript(javascript))
     return false;
   javascript << L"}\n";
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }
 
 bool CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
@@ -613,7 +613,7 @@ bool CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
     return false;
   javascript << L"); ";
   javascript << tempVariant;
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   javascript << (m_bDirection ? kLessEqual : kGreaterEqual);
@@ -625,7 +625,7 @@ bool CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << tempVariant;
   javascript << L" += ";
   javascript << (m_bDirection ? kPlusEqual : kMinusEqual);
-  if (CFXA_IsTooBig(javascript))
+  if (CXFA_IsTooBig(javascript))
     return false;
 
   if (m_pStep) {
@@ -634,7 +634,7 @@ bool CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
     if (!m_pStep->ToJavaScript(javascript))
       return false;
     javascript << L")";
-    if (CFXA_IsTooBig(javascript))
+    if (CXFA_IsTooBig(javascript))
       return false;
   } else {
     javascript << L"1";
@@ -643,7 +643,7 @@ bool CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   if (!m_pList->ToImpliedReturnJS(javascript))
     return false;
   javascript << L"}\n";
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }
 
 CXFA_FMForeachExpression::CXFA_FMForeachExpression(
@@ -685,7 +685,7 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       return false;
     if (expr != m_pAccessors.back())
       javascript << L", ";
-    if (CFXA_IsTooBig(javascript))
+    if (CXFA_IsTooBig(javascript))
       return false;
   }
   javascript << L");\n";
@@ -714,7 +714,7 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     return false;
   javascript << L"}\n";
   javascript << L"}\n";
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }
 
 bool CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
@@ -745,7 +745,7 @@ bool CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
       return false;
     if (expr != m_pAccessors.back())
       javascript << L", ";
-    if (CFXA_IsTooBig(javascript))
+    if (CXFA_IsTooBig(javascript))
       return false;
   }
   javascript << L");\n";
@@ -774,5 +774,5 @@ bool CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
     return false;
   javascript << L"}\n";
   javascript << L"}\n";
-  return !CFXA_IsTooBig(javascript);
+  return !CXFA_IsTooBig(javascript);
 }

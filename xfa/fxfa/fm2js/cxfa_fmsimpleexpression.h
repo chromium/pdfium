@@ -303,6 +303,6 @@ class CXFA_FMMethodCallExpression : public CXFA_FMBinExpression {
   bool ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
-bool CFXA_IsTooBig(const CFX_WideTextBuf& javascript);
+bool CXFA_IsTooBig(const CFX_WideTextBuf& javascript);
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMSIMPLEEXPRESSION_H_
