@@ -35,6 +35,7 @@ class CJBig2_ArithDecoder {
   void ReadValueA();
 
   bool m_Complete;
+  bool m_FinishedStream;
   uint8_t m_B;
   unsigned int m_C;
   unsigned int m_A;
