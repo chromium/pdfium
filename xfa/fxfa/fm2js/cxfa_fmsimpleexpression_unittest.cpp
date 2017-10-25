@@ -13,6 +13,7 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
+#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 
 TEST(FMCallExpressionTest, more_than_32_arguments) {
   // Use sign as it has 3 object parameters at positions 0, 5, and 6.
@@ -22,6 +23,7 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
   for (size_t i = 0; i < 50; i++)
     args.push_back(pdfium::MakeUnique<CXFA_FMSimpleExpression>(0, TOKnan));
 
+  CXFA_FMToJavaScriptDepth::Reset();
   CXFA_FMCallExpression callExp(0, std::move(exp), std::move(args), true);
   CFX_WideTextBuf js;
   callExp.ToJavaScript(js);
@@ -45,24 +47,28 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
 }
 
 TEST(FMStringExpressionTest, Empty) {
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(1, WideStringView()).ToJavaScript(accumulator);
   EXPECT_EQ(L"", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Short) {
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(1, L"a").ToJavaScript(accumulator);
   EXPECT_EQ(L"a", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Medium) {
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(1, L".abcd.").ToJavaScript(accumulator);
   EXPECT_EQ(L"\"abcd\"", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Long) {
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
   std::vector<WideStringView::UnsignedType> vec(140000, L'A');
   CXFA_FMStringExpression(1, WideStringView(vec)).ToJavaScript(accumulator);
@@ -70,6 +76,7 @@ TEST(FMStringExpressionTest, Long) {
 }
 
 TEST(FMStringExpressionTest, Quoted) {
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(1, L".Simon says \"\"run\"\".")
       .ToJavaScript(accumulator);

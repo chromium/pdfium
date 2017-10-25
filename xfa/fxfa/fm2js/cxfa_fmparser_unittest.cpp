@@ -10,6 +10,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 
 TEST(CXFA_FMParserTest, Empty) {
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(L"");
@@ -17,6 +18,7 @@ TEST(CXFA_FMParserTest, Empty) {
   ASSERT(ast != nullptr);
   EXPECT_FALSE(parser->HasError());
 
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
   // TODO(dsinclair): This is a little weird .....
@@ -31,6 +33,7 @@ TEST(CXFA_FMParserTest, CommentOnlyIsError) {
   EXPECT_FALSE(parser->HasError());
   // EXPECT_TRUE(parser->HasError());
 
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
   EXPECT_EQ(L"// comments only", buf.AsStringView());
@@ -49,6 +52,7 @@ TEST(CXFA_FMParserTest, CommentThenValue) {
   ASSERT(ast != nullptr);
   EXPECT_FALSE(parser->HasError());
 
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
   EXPECT_EQ(ret, buf.AsStringView());
@@ -104,6 +108,7 @@ TEST(CXFA_FMParserTest, Parse) {
   ASSERT(ast != nullptr);
   EXPECT_FALSE(parser->HasError());
 
+  CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
   EXPECT_TRUE(ast->ToJavaScript(buf));
   EXPECT_EQ(ret, buf.AsStringView());

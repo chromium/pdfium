@@ -1717,6 +1717,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/fm2js/cxfa_fmparser.h",
       "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.cpp",
       "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.h",
+      "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.cpp",
+      "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h",
       "xfa/fxfa/fxfa.h",
       "xfa/fxfa/fxfa_basic.h",
       "xfa/fxfa/parser/cscript_datawindow.cpp",

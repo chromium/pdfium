@@ -7,11 +7,14 @@
 #include "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.h"
 
 #include <algorithm>
+#include <iostream>
 #include <utility>
 
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/logging.h"
+#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 
 namespace {
 
@@ -90,11 +93,13 @@ CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(uint32_t line, XFA_FM_TOKEN op)
     : m_line(line), m_op(op) {}
 
 bool CXFA_FMSimpleExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
-  return true;
+  CXFA_FMToJavaScriptDepth depthManager;
+  return depthManager.IsWithinMaxDepth();
 }
 
 bool CXFA_FMSimpleExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
-  return true;
+  CXFA_FMToJavaScriptDepth depthManager;
+  return depthManager.IsWithinMaxDepth();
 }
 
 XFA_FM_TOKEN CXFA_FMSimpleExpression::GetOperatorToken() const {
@@ -105,6 +110,10 @@ CXFA_FMNullExpression::CXFA_FMNullExpression(uint32_t line)
     : CXFA_FMSimpleExpression(line, TOKnull) {}
 
 bool CXFA_FMNullExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << L"null";
   return true;
 }
@@ -116,6 +125,10 @@ CXFA_FMNumberExpression::CXFA_FMNumberExpression(uint32_t line,
 CXFA_FMNumberExpression::~CXFA_FMNumberExpression() {}
 
 bool CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << m_wsNumber;
   return true;
 }
@@ -127,6 +140,10 @@ CXFA_FMStringExpression::CXFA_FMStringExpression(uint32_t line,
 CXFA_FMStringExpression::~CXFA_FMStringExpression() {}
 
 bool CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   WideString tempStr(m_wsString);
   if (tempStr.GetLength() <= 2) {
     javascript << tempStr;
@@ -163,6 +180,10 @@ CXFA_FMIdentifierExpression::CXFA_FMIdentifierExpression(
 CXFA_FMIdentifierExpression::~CXFA_FMIdentifierExpression() {}
 
 bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   WideString tempStr(m_wsIdentifier);
   if (tempStr == L"$") {
     tempStr = L"this";
@@ -197,7 +218,8 @@ CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(
 CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() {}
 
 bool CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
-  return true;
+  CXFA_FMToJavaScriptDepth depthManager;
+  return depthManager.IsWithinMaxDepth();
 }
 
 CXFA_FMBinExpression::CXFA_FMBinExpression(
@@ -212,7 +234,8 @@ CXFA_FMBinExpression::CXFA_FMBinExpression(
 CXFA_FMBinExpression::~CXFA_FMBinExpression() {}
 
 bool CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
-  return true;
+  CXFA_FMToJavaScriptDepth depthManager;
+  return depthManager.IsWithinMaxDepth();
 }
 
 CXFA_FMAssignExpression::CXFA_FMAssignExpression(
@@ -223,6 +246,10 @@ CXFA_FMAssignExpression::CXFA_FMAssignExpression(
     : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
 
 bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << L"if (";
   javascript << gs_lpStrExpFuncName[ISFMOBJECT];
   javascript << L"(";
@@ -259,6 +286,10 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 bool CXFA_FMAssignExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << L"if (";
   javascript << gs_lpStrExpFuncName[ISFMOBJECT];
   javascript << L"(";
@@ -306,6 +337,10 @@ CXFA_FMLogicalOrExpression::CXFA_FMLogicalOrExpression(
     : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
 
 bool CXFA_FMLogicalOrExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << gs_lpStrExpFuncName[LOGICALOR];
   javascript << L"(";
   if (!m_pExp1->ToJavaScript(javascript))
@@ -325,6 +360,10 @@ CXFA_FMLogicalAndExpression::CXFA_FMLogicalAndExpression(
     : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
 
 bool CXFA_FMLogicalAndExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << gs_lpStrExpFuncName[LOGICALAND];
   javascript << L"(";
   if (!m_pExp1->ToJavaScript(javascript))
@@ -344,6 +383,10 @@ CXFA_FMEqualityExpression::CXFA_FMEqualityExpression(
     : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
 
 bool CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   switch (m_op) {
     case TOKeq:
     case TOKkseq:
@@ -375,6 +418,10 @@ CXFA_FMRelationalExpression::CXFA_FMRelationalExpression(
     : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
 
 bool CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   switch (m_op) {
     case TOKlt:
     case TOKkslt:
@@ -414,6 +461,10 @@ CXFA_FMAdditiveExpression::CXFA_FMAdditiveExpression(
     : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
 
 bool CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   switch (m_op) {
     case TOKplus:
       javascript << gs_lpStrExpFuncName[PLUS];
@@ -444,6 +495,10 @@ CXFA_FMMultiplicativeExpression::CXFA_FMMultiplicativeExpression(
 
 bool CXFA_FMMultiplicativeExpression::ToJavaScript(
     CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   switch (m_op) {
     case TOKmul:
       javascript << gs_lpStrExpFuncName[MULTIPLE];
@@ -471,6 +526,10 @@ CXFA_FMPosExpression::CXFA_FMPosExpression(
     : CXFA_FMUnaryExpression(line, TOKplus, std::move(pExp)) {}
 
 bool CXFA_FMPosExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << gs_lpStrExpFuncName[POSITIVE];
   javascript << L"(";
   if (!m_pExp->ToJavaScript(javascript))
@@ -485,6 +544,10 @@ CXFA_FMNegExpression::CXFA_FMNegExpression(
     : CXFA_FMUnaryExpression(line, TOKminus, std::move(pExp)) {}
 
 bool CXFA_FMNegExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << gs_lpStrExpFuncName[NEGATIVE];
   javascript << L"(";
   if (!m_pExp->ToJavaScript(javascript))
@@ -499,6 +562,10 @@ CXFA_FMNotExpression::CXFA_FMNotExpression(
     : CXFA_FMUnaryExpression(line, TOKksnot, std::move(pExp)) {}
 
 bool CXFA_FMNotExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << gs_lpStrExpFuncName[NOT];
   javascript << L"(";
   if (!m_pExp->ToJavaScript(javascript))
@@ -553,6 +620,10 @@ uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
 }
 
 bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   CFX_WideTextBuf funcName;
   if (!m_pExp->ToJavaScript(funcName))
     return false;
@@ -666,6 +737,10 @@ CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
 CXFA_FMDotAccessorExpression::~CXFA_FMDotAccessorExpression() {}
 
 bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << gs_lpStrExpFuncName[DOT];
   javascript << L"(";
   CFX_WideTextBuf tempExp1;
@@ -713,6 +788,10 @@ CXFA_FMIndexExpression::CXFA_FMIndexExpression(
       m_bIsStarIndex(bIsStarIndex) {}
 
 bool CXFA_FMIndexExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   switch (m_accessorIndex) {
     case ACCESSOR_NO_INDEX:
       javascript << L"0";
@@ -757,6 +836,10 @@ CXFA_FMDotDotAccessorExpression::~CXFA_FMDotDotAccessorExpression() {}
 
 bool CXFA_FMDotDotAccessorExpression::ToJavaScript(
     CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << gs_lpStrExpFuncName[DOTDOT];
   javascript << L"(";
   CFX_WideTextBuf tempExp1;
@@ -790,6 +873,10 @@ CXFA_FMMethodCallExpression::CXFA_FMMethodCallExpression(
                            std::move(pCallExp)) {}
 
 bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
+  CXFA_FMToJavaScriptDepth depthManager;
+  if (!depthManager.IsWithinMaxDepth())
+    return false;
+
   javascript << L"(\nfunction ()\n{\n";
   javascript << L"var method_return_value = null;\n";
   javascript << L"var accessor_object = ";

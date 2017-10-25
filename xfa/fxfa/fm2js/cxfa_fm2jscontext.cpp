@@ -22,6 +22,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/cxfa_fmparser.h"
+#include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -6081,6 +6082,7 @@ bool CXFA_FM2JSContext::Translate(const WideStringView& wsFormcalc,
   if (!func || parser.HasError())
     return false;
 
+  CXFA_FMToJavaScriptDepth::Reset();
   if (!func->ToJavaScript(*wsJavascript))
     return false;
 
