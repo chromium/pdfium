@@ -23,23 +23,23 @@ class util : public CJS_EmbedObj {
   ~util() override;
 
   bool printd(CJS_Runtime* pRuntime,
-              const std::vector<CJS_Value>& params,
+              const std::vector<v8::Local<v8::Value>>& params,
               CJS_Value& vRet,
               WideString& sError);
   bool printf(CJS_Runtime* pRuntime,
-              const std::vector<CJS_Value>& params,
+              const std::vector<v8::Local<v8::Value>>& params,
               CJS_Value& vRet,
               WideString& sError);
   bool printx(CJS_Runtime* pRuntime,
-              const std::vector<CJS_Value>& params,
+              const std::vector<v8::Local<v8::Value>>& params,
               CJS_Value& vRet,
               WideString& sError);
   bool scand(CJS_Runtime* pRuntime,
-             const std::vector<CJS_Value>& params,
+             const std::vector<v8::Local<v8::Value>>& params,
              CJS_Value& vRet,
              WideString& sError);
   bool byteToChar(CJS_Runtime* pRuntime,
-                  const std::vector<CJS_Value>& params,
+                  const std::vector<v8::Local<v8::Value>>& params,
                   CJS_Value& vRet,
                   WideString& sError);
 

@@ -18,11 +18,11 @@ class Report : public CJS_EmbedObj {
 
  public:
   bool save(CJS_Runtime* pRuntime,
-            const std::vector<CJS_Value>& params,
+            const std::vector<v8::Local<v8::Value>>& params,
             CJS_Value& vRet,
             WideString& sError);
   bool writeText(CJS_Runtime* pRuntime,
-                 const std::vector<CJS_Value>& params,
+                 const std::vector<v8::Local<v8::Value>>& params,
                  CJS_Value& vRet,
                  WideString& sError);
 };

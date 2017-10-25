@@ -202,20 +202,20 @@ CJS_Array::CJS_Array(const CJS_Array& other) = default;
 
 CJS_Array::~CJS_Array() {}
 
-CJS_Value CJS_Array::GetElement(CJS_Runtime* pRuntime, unsigned index) const {
+v8::Local<v8::Value> CJS_Array::GetElement(CJS_Runtime* pRuntime,
+                                           unsigned index) const {
   if (!m_pArray.IsEmpty())
-    return CJS_Value(
-        v8::Local<v8::Value>(pRuntime->GetArrayElement(m_pArray, index)));
+    return {pRuntime->GetArrayElement(m_pArray, index)};
   return {};
 }
 
 void CJS_Array::SetElement(CJS_Runtime* pRuntime,
                            unsigned index,
-                           const CJS_Value& value) {
+                           v8::Local<v8::Value> value) {
   if (m_pArray.IsEmpty())
     m_pArray = pRuntime->NewArray();
 
-  pRuntime->PutArrayElement(m_pArray, index, value.ToV8Value());
+  pRuntime->PutArrayElement(m_pArray, index, value);
 }
 
 int CJS_Array::GetLength(CJS_Runtime* pRuntime) const {
@@ -393,33 +393,34 @@ double JS_MakeDate(double day, double time) {
   return day * 86400000 + time;
 }
 
-std::vector<CJS_Value> ExpandKeywordParams(
+std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
     CJS_Runtime* pRuntime,
-    const std::vector<CJS_Value>& originals,
+    const std::vector<v8::Local<v8::Value>>& originals,
     size_t nKeywords,
     ...) {
   ASSERT(nKeywords);
 
-  std::vector<CJS_Value> result(nKeywords, CJS_Value());
+  std::vector<v8::Local<v8::Value>> result(nKeywords, v8::Local<v8::Value>());
   size_t size = std::min(originals.size(), nKeywords);
   for (size_t i = 0; i < size; ++i)
     result[i] = originals[i];
 
-  if (originals.size() != 1 || !originals[0].ToV8Value()->IsObject() ||
-      originals[0].ToV8Value()->IsArray()) {
+  if (originals.size() != 1 || !originals[0]->IsObject() ||
+      originals[0]->IsArray()) {
     return result;
   }
-  v8::Local<v8::Object> pObj = pRuntime->ToObject(originals[0].ToV8Value());
-  result[0] = CJS_Value();  // Make unknown.
+  result[0] = v8::Local<v8::Value>();  // Make unknown.
 
+  v8::Local<v8::Object> pObj = pRuntime->ToObject(originals[0]);
   va_list ap;
   va_start(ap, nKeywords);
   for (size_t i = 0; i < nKeywords; ++i) {
     const wchar_t* property = va_arg(ap, const wchar_t*);
     v8::Local<v8::Value> v8Value = pRuntime->GetObjectProperty(pObj, property);
     if (!v8Value->IsUndefined())
-      result[i] = CJS_Value(v8Value);
+      result[i] = v8Value;
   }
   va_end(ap);
+
   return result;
 }

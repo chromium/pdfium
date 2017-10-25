@@ -43,10 +43,10 @@ class CJS_Array {
   int GetLength(CJS_Runtime* pRuntime) const;
 
   // These two calls may re-enter JS (and hence invalidate objects).
-  CJS_Value GetElement(CJS_Runtime* pRuntime, unsigned index) const;
+  v8::Local<v8::Value> GetElement(CJS_Runtime* pRuntime, unsigned index) const;
   void SetElement(CJS_Runtime* pRuntime,
                   unsigned index,
-                  const CJS_Value& value);
+                  v8::Local<v8::Value> value);
 
   v8::Local<v8::Value> ToV8Value() const { return m_pArray; }
 
@@ -102,9 +102,9 @@ double JS_MakeDate(double day, double time);
 // names as wchar_t string literals corresponding to each positional argument.
 // The result will always contain |nKeywords| value, with unspecified ones
 // being set to type VT_unknown.
-std::vector<CJS_Value> ExpandKeywordParams(
+std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
     CJS_Runtime* pRuntime,
-    const std::vector<CJS_Value>& originals,
+    const std::vector<v8::Local<v8::Value>>& originals,
     size_t nKeywords,
     ...);
 

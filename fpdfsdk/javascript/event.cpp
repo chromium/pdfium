@@ -56,14 +56,14 @@ bool event::get_change(CJS_Runtime* pRuntime,
 }
 
 bool event::set_change(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (vp.ToV8Value()->IsString()) {
+  if (vp->IsString()) {
     WideString& wChange = pEvent->Change();
-    wChange = pRuntime->ToWideString(vp.ToV8Value());
+    wChange = pRuntime->ToWideString(vp);
   }
   return true;
 }
@@ -79,7 +79,7 @@ bool event::get_change_ex(CJS_Runtime* pRuntime,
 }
 
 bool event::set_change_ex(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   return false;
 }
@@ -95,7 +95,7 @@ bool event::get_commit_key(CJS_Runtime* pRuntime,
 }
 
 bool event::set_commit_key(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   return false;
 }
@@ -114,7 +114,7 @@ bool event::get_field_full(CJS_Runtime* pRuntime,
 }
 
 bool event::set_field_full(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   return false;
 }
@@ -129,7 +129,7 @@ bool event::get_key_down(CJS_Runtime* pRuntime,
 }
 
 bool event::set_key_down(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError) {
   return false;
 }
@@ -144,7 +144,7 @@ bool event::get_modifier(CJS_Runtime* pRuntime,
 }
 
 bool event::set_modifier(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError) {
   return false;
 }
@@ -157,7 +157,7 @@ bool event::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool event::set_name(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   return false;
 }
@@ -170,11 +170,11 @@ bool event::get_rc(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool event::set_rc(CJS_Runtime* pRuntime,
-                   const CJS_Value& vp,
+                   v8::Local<v8::Value> vp,
                    WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  pEvent->Rc() = pRuntime->ToBoolean(vp.ToV8Value());
+  pEvent->Rc() = pRuntime->ToBoolean(vp);
   return true;
 }
 
@@ -185,7 +185,7 @@ bool event::get_rich_change(CJS_Runtime* pRuntime,
 }
 
 bool event::set_rich_change(CJS_Runtime* pRuntime,
-                            const CJS_Value& vp,
+                            v8::Local<v8::Value> vp,
                             WideString* sError) {
   return true;
 }
@@ -197,7 +197,7 @@ bool event::get_rich_change_ex(CJS_Runtime* pRuntime,
 }
 
 bool event::set_rich_change_ex(CJS_Runtime* pRuntime,
-                               const CJS_Value& vp,
+                               v8::Local<v8::Value> vp,
                                WideString* sError) {
   return true;
 }
@@ -209,7 +209,7 @@ bool event::get_rich_value(CJS_Runtime* pRuntime,
 }
 
 bool event::set_rich_value(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   return true;
 }
@@ -228,7 +228,7 @@ bool event::get_sel_end(CJS_Runtime* pRuntime,
 }
 
 bool event::set_sel_end(CJS_Runtime* pRuntime,
-                        const CJS_Value& vp,
+                        v8::Local<v8::Value> vp,
                         WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
@@ -236,7 +236,7 @@ bool event::set_sel_end(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
 
-  pEvent->SelEnd() = pRuntime->ToInt32(vp.ToV8Value());
+  pEvent->SelEnd() = pRuntime->ToInt32(vp);
   return true;
 }
 
@@ -254,7 +254,7 @@ bool event::get_sel_start(CJS_Runtime* pRuntime,
 }
 
 bool event::set_sel_start(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
@@ -262,7 +262,7 @@ bool event::set_sel_start(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
 
-  pEvent->SelStart() = pRuntime->ToInt32(vp.ToV8Value());
+  pEvent->SelStart() = pRuntime->ToInt32(vp);
   return true;
 }
 
@@ -276,7 +276,7 @@ bool event::get_shift(CJS_Runtime* pRuntime,
 }
 
 bool event::set_shift(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError) {
   return false;
 }
@@ -291,7 +291,7 @@ bool event::get_source(CJS_Runtime* pRuntime,
 }
 
 bool event::set_source(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError) {
   return false;
 }
@@ -306,7 +306,7 @@ bool event::get_target(CJS_Runtime* pRuntime,
 }
 
 bool event::set_target(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError) {
   return false;
 }
@@ -321,7 +321,7 @@ bool event::get_target_name(CJS_Runtime* pRuntime,
 }
 
 bool event::set_target_name(CJS_Runtime* pRuntime,
-                            const CJS_Value& vp,
+                            v8::Local<v8::Value> vp,
                             WideString* sError) {
   return false;
 }
@@ -334,7 +334,7 @@ bool event::get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool event::set_type(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   return false;
 }
@@ -356,7 +356,7 @@ bool event::get_value(CJS_Runtime* pRuntime,
 }
 
 bool event::set_value(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
@@ -367,7 +367,7 @@ bool event::set_value(CJS_Runtime* pRuntime,
   if (!pEvent->m_pValue)
     return false;
 
-  pEvent->Value() = pRuntime->ToWideString(vp.ToV8Value());
+  pEvent->Value() = pRuntime->ToWideString(vp);
   return true;
 }
 
@@ -381,7 +381,7 @@ bool event::get_will_commit(CJS_Runtime* pRuntime,
 }
 
 bool event::set_will_commit(CJS_Runtime* pRuntime,
-                            const CJS_Value& vp,
+                            v8::Local<v8::Value> vp,
                             WideString* sError) {
   return false;
 }

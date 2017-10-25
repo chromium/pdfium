@@ -50,10 +50,10 @@ bool Annot::get_hidden(CJS_Runtime* pRuntime,
 }
 
 bool Annot::set_hidden(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError) {
   // May invalidate m_pAnnot.
-  bool bHidden = pRuntime->ToBoolean(vp.ToV8Value());
+  bool bHidden = pRuntime->ToBoolean(vp);
   if (!m_pAnnot) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -88,10 +88,10 @@ bool Annot::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Annot::set_name(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   // May invalidate m_pAnnot.
-  WideString annotName = pRuntime->ToWideString(vp.ToV8Value());
+  WideString annotName = pRuntime->ToWideString(vp);
   if (!m_pAnnot) {
     *sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
     return false;
@@ -116,7 +116,7 @@ bool Annot::get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Annot::set_type(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;

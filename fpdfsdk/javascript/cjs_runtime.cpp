@@ -256,7 +256,7 @@ bool CJS_Runtime::SetValueByName(const ByteStringView& utf8Name,
 #endif
 
 v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
-    const v8::Local<v8::Value>& value) {
+    v8::Local<v8::Value> value) {
   bool bAllowNaN = false;
   if (value->IsString()) {
     ByteString bstr = ByteString::FromUnicode(ToWideString(value));

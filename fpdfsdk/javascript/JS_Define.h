@@ -61,7 +61,8 @@ void JSPropGetter(const char* prop_name_string,
   info.GetReturnValue().Set(prop_value.ToV8Value());
 }
 
-template <class C, bool (C::*M)(CJS_Runtime*, const CJS_Value&, WideString*)>
+template <class C,
+          bool (C::*M)(CJS_Runtime*, v8::Local<v8::Value>, WideString*)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -80,8 +81,7 @@ void JSPropSetter(const char* prop_name_string,
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   WideString sError;
 
-  CJS_Value prop_value(value);
-  if (!(pObj->*M)(pRuntime, prop_value, &sError)) {
+  if (!(pObj->*M)(pRuntime, value, &sError)) {
     pRuntime->Error(
         JSFormatErrorString(class_name_string, prop_name_string, sError));
   }
@@ -103,7 +103,7 @@ void JSPropSetter(const char* prop_name_string,
 
 template <class C,
           bool (C::*M)(CJS_Runtime*,
-                       const std::vector<CJS_Value>&,
+                       const std::vector<v8::Local<v8::Value>>&,
                        CJS_Value&,
                        WideString&)>
 void JSMethod(const char* method_name_string,
@@ -114,9 +114,9 @@ void JSMethod(const char* method_name_string,
   if (!pRuntime)
     return;
 
-  std::vector<CJS_Value> parameters;
+  std::vector<v8::Local<v8::Value>> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
-    parameters.push_back(CJS_Value(info[i]));
+    parameters.push_back(info[i]);
 
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));

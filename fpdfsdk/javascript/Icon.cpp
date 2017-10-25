@@ -31,7 +31,7 @@ bool Icon::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Icon::set_name(CJS_Runtime* pRuntime,
-                    const CJS_Value& vp,
+                    v8::Local<v8::Value> vp,
                     WideString* sError) {
   return false;
 }

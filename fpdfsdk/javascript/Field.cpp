@@ -416,7 +416,7 @@ bool Field::get_alignment(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_alignment(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -464,15 +464,14 @@ bool Field::get_border_style(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_border_style(CJS_Runtime* pRuntime,
-                             const CJS_Value& vp,
+                             v8::Local<v8::Value> vp,
                              WideString* sError) {
   ASSERT(m_pFormFillEnv);
 
   if (!m_bCanSet)
     return false;
 
-  ByteString byte_str =
-      ByteString::FromUnicode(pRuntime->ToWideString(vp.ToV8Value()));
+  ByteString byte_str = ByteString::FromUnicode(pRuntime->ToWideString(vp));
   if (m_bDelay) {
     AddDelay_String(FP_BORDERSTYLE, byte_str);
   } else {
@@ -562,7 +561,7 @@ bool Field::get_button_align_x(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_button_align_x(CJS_Runtime* pRuntime,
-                               const CJS_Value& vp,
+                               v8::Local<v8::Value> vp,
                                WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -596,7 +595,7 @@ bool Field::get_button_align_y(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_button_align_y(CJS_Runtime* pRuntime,
-                               const CJS_Value& vp,
+                               v8::Local<v8::Value> vp,
                                WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -624,7 +623,7 @@ bool Field::get_button_fit_bounds(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_button_fit_bounds(CJS_Runtime* pRuntime,
-                                  const CJS_Value& vp,
+                                  v8::Local<v8::Value> vp,
                                   WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -652,7 +651,7 @@ bool Field::get_button_position(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_button_position(CJS_Runtime* pRuntime,
-                                const CJS_Value& vp,
+                                v8::Local<v8::Value> vp,
                                 WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -681,7 +680,7 @@ bool Field::get_button_scale_how(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_button_scale_how(CJS_Runtime* pRuntime,
-                                 const CJS_Value& vp,
+                                 v8::Local<v8::Value> vp,
                                  WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -724,7 +723,7 @@ bool Field::get_button_scale_when(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_button_scale_when(CJS_Runtime* pRuntime,
-                                  const CJS_Value& vp,
+                                  v8::Local<v8::Value> vp,
                                   WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -753,7 +752,7 @@ bool Field::get_calc_order_index(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_calc_order_index(CJS_Runtime* pRuntime,
-                                 const CJS_Value& vp,
+                                 v8::Local<v8::Value> vp,
                                  WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -777,7 +776,7 @@ bool Field::get_char_limit(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_char_limit(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -800,7 +799,7 @@ bool Field::get_comb(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Field::set_comb(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -827,7 +826,7 @@ bool Field::get_commit_on_sel_change(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_commit_on_sel_change(CJS_Runtime* pRuntime,
-                                     const CJS_Value& vp,
+                                     v8::Local<v8::Value> vp,
                                      WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -858,9 +857,8 @@ bool Field::get_current_value_indices(CJS_Runtime* pRuntime,
 
   CJS_Array SelArray;
   for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
-    SelArray.SetElement(
-        pRuntime, i,
-        CJS_Value(pRuntime->NewNumber(pFormField->GetSelectedIndex(i))));
+    SelArray.SetElement(pRuntime, i,
+                        pRuntime->NewNumber(pFormField->GetSelectedIndex(i)));
   }
   if (SelArray.ToV8Value().IsEmpty())
     vp->Set(pRuntime->NewArray());
@@ -871,19 +869,18 @@ bool Field::get_current_value_indices(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_current_value_indices(CJS_Runtime* pRuntime,
-                                      const CJS_Value& vp,
+                                      v8::Local<v8::Value> vp,
                                       WideString* sError) {
   if (!m_bCanSet)
     return false;
 
   std::vector<uint32_t> array;
-  if (vp.ToV8Value()->IsNumber()) {
-    array.push_back(pRuntime->ToInt32(vp.ToV8Value()));
-  } else if (!vp.ToV8Value().IsEmpty() && vp.ToV8Value()->IsArray()) {
-    CJS_Array SelArray(pRuntime->ToArray(vp.ToV8Value()));
+  if (vp->IsNumber()) {
+    array.push_back(pRuntime->ToInt32(vp));
+  } else if (!vp.IsEmpty() && vp->IsArray()) {
+    CJS_Array SelArray(pRuntime->ToArray(vp));
     for (int i = 0, sz = SelArray.GetLength(pRuntime); i < sz; i++)
-      array.push_back(
-          pRuntime->ToInt32(SelArray.GetElement(pRuntime, i).ToV8Value()));
+      array.push_back(pRuntime->ToInt32(SelArray.GetElement(pRuntime, i)));
   }
 
   if (m_bDelay) {
@@ -928,7 +925,7 @@ bool Field::get_default_style(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_default_style(CJS_Runtime* pRuntime,
-                              const CJS_Value& vp,
+                              v8::Local<v8::Value> vp,
                               WideString* sError) {
   return false;
 }
@@ -953,7 +950,7 @@ bool Field::get_default_value(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_default_value(CJS_Runtime* pRuntime,
-                              const CJS_Value& vp,
+                              v8::Local<v8::Value> vp,
                               WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -978,7 +975,7 @@ bool Field::get_do_not_scroll(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_do_not_scroll(CJS_Runtime* pRuntime,
-                              const CJS_Value& vp,
+                              v8::Local<v8::Value> vp,
                               WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -1005,7 +1002,7 @@ bool Field::get_do_not_spell_check(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_do_not_spell_check(CJS_Runtime* pRuntime,
-                                   const CJS_Value& vp,
+                                   v8::Local<v8::Value> vp,
                                    WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -1028,12 +1025,12 @@ bool Field::get_delay(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_delay(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError) {
   if (!m_bCanSet)
     return false;
 
-  SetDelay(pRuntime->ToBoolean(vp.ToV8Value()));
+  SetDelay(pRuntime->ToBoolean(vp));
   return true;
 }
 
@@ -1070,16 +1067,16 @@ bool Field::get_display(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_display(CJS_Runtime* pRuntime,
-                        const CJS_Value& vp,
+                        v8::Local<v8::Value> vp,
                         WideString* sError) {
   if (!m_bCanSet)
     return false;
 
   if (m_bDelay) {
-    AddDelay_Int(FP_DISPLAY, pRuntime->ToInt32(vp.ToV8Value()));
+    AddDelay_Int(FP_DISPLAY, pRuntime->ToInt32(vp));
   } else {
     Field::SetDisplay(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex,
-                      pRuntime->ToInt32(vp.ToV8Value()));
+                      pRuntime->ToInt32(vp));
   }
   return true;
 }
@@ -1126,7 +1123,7 @@ bool Field::get_doc(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Field::set_doc(CJS_Runtime* pRuntime,
-                    const CJS_Value& vp,
+                    v8::Local<v8::Value> vp,
                     WideString* sError) {
   return false;
 }
@@ -1148,7 +1145,7 @@ bool Field::get_editable(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_editable(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError) {
   return m_bCanSet;
 }
@@ -1172,8 +1169,7 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
       CPDF_FormControl* pFormControl = pFormField->GetControl(i);
       ExportValuesArray.SetElement(
           pRuntime, i,
-          CJS_Value(
-              pRuntime->NewString(pFormControl->GetExportValue().c_str())));
+          pRuntime->NewString(pFormControl->GetExportValue().c_str()));
     }
   } else {
     if (m_nFormControlIndex >= pFormField->CountControls())
@@ -1186,7 +1182,7 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
 
     ExportValuesArray.SetElement(
         pRuntime, 0,
-        CJS_Value(pRuntime->NewString(pFormControl->GetExportValue().c_str())));
+        pRuntime->NewString(pFormControl->GetExportValue().c_str()));
   }
 
   if (ExportValuesArray.ToV8Value().IsEmpty())
@@ -1198,7 +1194,7 @@ bool Field::get_export_values(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_export_values(CJS_Runtime* pRuntime,
-                              const CJS_Value& vp,
+                              v8::Local<v8::Value> vp,
                               WideString* sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1210,7 +1206,7 @@ bool Field::set_export_values(CJS_Runtime* pRuntime,
     return false;
   }
 
-  return m_bCanSet && !vp.ToV8Value().IsEmpty() && vp.ToV8Value()->IsArray();
+  return m_bCanSet && !vp.IsEmpty() && vp->IsArray();
 }
 
 bool Field::get_file_select(CJS_Runtime* pRuntime,
@@ -1230,7 +1226,7 @@ bool Field::get_file_select(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_file_select(CJS_Runtime* pRuntime,
-                            const CJS_Value& vp,
+                            v8::Local<v8::Value> vp,
                             WideString* sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1290,14 +1286,14 @@ bool Field::get_fill_color(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_fill_color(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
   if (!m_bCanSet)
     return false;
-  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
+  if (vp.IsEmpty() || !vp->IsArray())
     return false;
   return true;
 }
@@ -1325,16 +1321,16 @@ bool Field::get_hidden(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_hidden(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError) {
   if (!m_bCanSet)
     return false;
 
   if (m_bDelay) {
-    AddDelay_Bool(FP_HIDDEN, pRuntime->ToBoolean(vp.ToV8Value()));
+    AddDelay_Bool(FP_HIDDEN, pRuntime->ToBoolean(vp));
   } else {
     Field::SetHidden(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex,
-                     pRuntime->ToBoolean(vp.ToV8Value()));
+                     pRuntime->ToBoolean(vp));
   }
   return true;
 }
@@ -1386,7 +1382,7 @@ bool Field::get_highlight(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_highlight(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -1419,16 +1415,16 @@ bool Field::get_line_width(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_line_width(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   if (!m_bCanSet)
     return false;
 
   if (m_bDelay) {
-    AddDelay_Int(FP_LINEWIDTH, pRuntime->ToInt32(vp.ToV8Value()));
+    AddDelay_Int(FP_LINEWIDTH, pRuntime->ToInt32(vp));
   } else {
     Field::SetLineWidth(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex,
-                        pRuntime->ToInt32(vp.ToV8Value()));
+                        pRuntime->ToInt32(vp));
   }
   return true;
 }
@@ -1491,7 +1487,7 @@ bool Field::get_multiline(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_multiline(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -1515,7 +1511,7 @@ bool Field::get_multiple_selection(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_multiple_selection(CJS_Runtime* pRuntime,
-                                   const CJS_Value& vp,
+                                   v8::Local<v8::Value> vp,
                                    WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -1531,7 +1527,7 @@ bool Field::get_name(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Field::set_name(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   return false;
 }
@@ -1554,7 +1550,7 @@ bool Field::get_num_items(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_num_items(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   return false;
 }
@@ -1588,9 +1584,9 @@ bool Field::get_page(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
     if (!pPageView)
       return false;
 
-    PageArray.SetElement(pRuntime, i,
-                         CJS_Value(pRuntime->NewNumber(
-                             static_cast<int32_t>(pPageView->GetPageIndex()))));
+    PageArray.SetElement(
+        pRuntime, i,
+        pRuntime->NewNumber(static_cast<int32_t>(pPageView->GetPageIndex())));
     ++i;
   }
 
@@ -1603,7 +1599,7 @@ bool Field::get_page(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Field::set_page(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   *sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
   return false;
@@ -1628,7 +1624,7 @@ bool Field::get_password(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_password(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -1653,7 +1649,7 @@ bool Field::get_print(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_print(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError) {
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -1670,7 +1666,7 @@ bool Field::set_print(CJS_Runtime* pRuntime,
           if (CPDFSDK_Widget* pWidget =
                   pInterForm->GetWidget(pFormField->GetControl(i))) {
             uint32_t dwFlags = pWidget->GetFlags();
-            if (pRuntime->ToBoolean(vp.ToV8Value()))
+            if (pRuntime->ToBoolean(vp))
               dwFlags |= ANNOTFLAG_PRINT;
             else
               dwFlags &= ~ANNOTFLAG_PRINT;
@@ -1694,7 +1690,7 @@ bool Field::set_print(CJS_Runtime* pRuntime,
               pFormField->GetControl(m_nFormControlIndex)) {
         if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
           uint32_t dwFlags = pWidget->GetFlags();
-          if (pRuntime->ToBoolean(vp.ToV8Value()))
+          if (pRuntime->ToBoolean(vp))
             dwFlags |= ANNOTFLAG_PRINT;
           else
             dwFlags &= ~ANNOTFLAG_PRINT;
@@ -1728,7 +1724,7 @@ bool Field::get_radios_in_unison(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_radios_in_unison(CJS_Runtime* pRuntime,
-                                 const CJS_Value& vp,
+                                 v8::Local<v8::Value> vp,
                                  WideString* sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1749,7 +1745,7 @@ bool Field::get_readonly(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_readonly(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1771,18 +1767,14 @@ bool Field::get_rect(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 
   CFX_FloatRect crRect = pWidget->GetRect();
   CJS_Array rcArray;
-  rcArray.SetElement(
-      pRuntime, 0,
-      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.left))));
-  rcArray.SetElement(
-      pRuntime, 1,
-      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.top))));
-  rcArray.SetElement(
-      pRuntime, 2,
-      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.right))));
-  rcArray.SetElement(
-      pRuntime, 3,
-      CJS_Value(pRuntime->NewNumber(static_cast<int32_t>(crRect.bottom))));
+  rcArray.SetElement(pRuntime, 0,
+                     pRuntime->NewNumber(static_cast<int32_t>(crRect.left)));
+  rcArray.SetElement(pRuntime, 1,
+                     pRuntime->NewNumber(static_cast<int32_t>(crRect.top)));
+  rcArray.SetElement(pRuntime, 2,
+                     pRuntime->NewNumber(static_cast<int32_t>(crRect.right)));
+  rcArray.SetElement(pRuntime, 3,
+                     pRuntime->NewNumber(static_cast<int32_t>(crRect.bottom)));
 
   if (rcArray.ToV8Value().IsEmpty())
     vp->Set(pRuntime->NewArray());
@@ -1793,23 +1785,23 @@ bool Field::get_rect(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Field::set_rect(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   if (!m_bCanSet)
     return false;
-  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
+  if (vp.IsEmpty() || !vp->IsArray())
     return false;
 
-  CJS_Array rcArray(pRuntime->ToArray(vp.ToV8Value()));
+  CJS_Array rcArray(pRuntime->ToArray(vp));
   float pArray[4];
-  pArray[0] = static_cast<float>(
-      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 0).ToV8Value()));
-  pArray[1] = static_cast<float>(
-      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 1).ToV8Value()));
-  pArray[2] = static_cast<float>(
-      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 2).ToV8Value()));
-  pArray[3] = static_cast<float>(
-      pRuntime->ToInt32(rcArray.GetElement(pRuntime, 3).ToV8Value()));
+  pArray[0] =
+      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 0)));
+  pArray[1] =
+      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 1)));
+  pArray[2] =
+      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 2)));
+  pArray[3] =
+      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 3)));
 
   CFX_FloatRect crRect(pArray);
   if (m_bDelay) {
@@ -1898,7 +1890,7 @@ bool Field::get_required(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_required(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1926,7 +1918,7 @@ bool Field::get_rich_text(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_rich_text(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -1939,7 +1931,7 @@ bool Field::get_rich_value(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_rich_value(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   return true;
 }
@@ -1963,7 +1955,7 @@ bool Field::get_rotation(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_rotation(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -2013,11 +2005,11 @@ bool Field::get_stroke_color(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_stroke_color(CJS_Runtime* pRuntime,
-                             const CJS_Value& vp,
+                             v8::Local<v8::Value> vp,
                              WideString* sError) {
   if (!m_bCanSet)
     return false;
-  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
+  if (vp.IsEmpty() || !vp->IsArray())
     return false;
   return true;
 }
@@ -2070,7 +2062,7 @@ bool Field::get_style(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_style(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -2083,7 +2075,7 @@ bool Field::get_submit_name(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_submit_name(CJS_Runtime* pRuntime,
-                            const CJS_Value& vp,
+                            v8::Local<v8::Value> vp,
                             WideString* sError) {
   return true;
 }
@@ -2127,11 +2119,11 @@ bool Field::get_text_color(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_text_color(CJS_Runtime* pRuntime,
-                           const CJS_Value& vp,
+                           v8::Local<v8::Value> vp,
                            WideString* sError) {
   if (!m_bCanSet)
     return false;
-  if (vp.ToV8Value().IsEmpty() || !vp.ToV8Value()->IsArray())
+  if (vp.IsEmpty() || !vp->IsArray())
     return false;
   return true;
 }
@@ -2166,14 +2158,13 @@ bool Field::get_text_font(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_text_font(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   ASSERT(m_pFormFillEnv);
 
   if (!m_bCanSet)
     return false;
-  return !ByteString::FromUnicode(pRuntime->ToWideString(vp.ToV8Value()))
-              .IsEmpty();
+  return !ByteString::FromUnicode(pRuntime->ToWideString(vp)).IsEmpty();
 }
 
 bool Field::get_text_size(CJS_Runtime* pRuntime,
@@ -2199,7 +2190,7 @@ bool Field::get_text_size(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_text_size(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -2244,7 +2235,7 @@ bool Field::get_type(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError) {
 }
 
 bool Field::set_type(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError) {
   return false;
 }
@@ -2263,7 +2254,7 @@ bool Field::get_user_name(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_user_name(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError) {
   ASSERT(m_pFormFillEnv);
   return m_bCanSet;
@@ -2287,17 +2278,15 @@ bool Field::get_value(CJS_Runtime* pRuntime,
     case FIELDTYPE_LISTBOX: {
       if (pFormField->CountSelectedItems() > 1) {
         CJS_Array ValueArray;
-        CJS_Value ElementValue;
+        v8::Local<v8::Value> ElementValue;
         int iIndex;
         for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
           iIndex = pFormField->GetSelectedIndex(i);
-          ElementValue = CJS_Value(
-              pRuntime->NewString(pFormField->GetOptionValue(iIndex).c_str()));
-          if (wcslen(
-                  pRuntime->ToWideString(ElementValue.ToV8Value()).c_str()) ==
-              0) {
-            ElementValue = CJS_Value(pRuntime->NewString(
-                pFormField->GetOptionLabel(iIndex).c_str()));
+          ElementValue =
+              pRuntime->NewString(pFormField->GetOptionValue(iIndex).c_str());
+          if (wcslen(pRuntime->ToWideString(ElementValue).c_str()) == 0) {
+            ElementValue =
+                pRuntime->NewString(pFormField->GetOptionLabel(iIndex).c_str());
           }
           ValueArray.SetElement(pRuntime, i, ElementValue);
         }
@@ -2336,20 +2325,20 @@ bool Field::get_value(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_value(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError) {
   if (!m_bCanSet)
     return false;
 
   std::vector<WideString> strArray;
-  if (!vp.ToV8Value().IsEmpty() && vp.ToV8Value()->IsArray()) {
-    CJS_Array ValueArray(pRuntime->ToArray(vp.ToV8Value()));
+  if (!vp.IsEmpty() && vp->IsArray()) {
+    CJS_Array ValueArray(pRuntime->ToArray(vp));
     for (int i = 0, sz = ValueArray.GetLength(pRuntime); i < sz; i++) {
-      CJS_Value ElementValue(ValueArray.GetElement(pRuntime, i));
-      strArray.push_back(pRuntime->ToWideString(ElementValue.ToV8Value()));
+      strArray.push_back(
+          pRuntime->ToWideString(ValueArray.GetElement(pRuntime, i)));
     }
   } else {
-    strArray.push_back(pRuntime->ToWideString(vp.ToV8Value()));
+    strArray.push_back(pRuntime->ToWideString(vp));
   }
 
   if (m_bDelay) {
@@ -2460,15 +2449,16 @@ bool Field::get_value_as_string(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_value_as_string(CJS_Runtime* pRuntime,
-                                const CJS_Value& vp,
+                                v8::Local<v8::Value> vp,
                                 WideString* sError) {
   return false;
 }
 
-bool Field::browseForFileToSubmit(CJS_Runtime* pRuntime,
-                                  const std::vector<CJS_Value>& params,
-                                  CJS_Value& vRet,
-                                  WideString& sError) {
+bool Field::browseForFileToSubmit(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params,
+    CJS_Value& vRet,
+    WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -2487,13 +2477,13 @@ bool Field::browseForFileToSubmit(CJS_Runtime* pRuntime,
 }
 
 bool Field::buttonGetCaption(CJS_Runtime* pRuntime,
-                             const std::vector<CJS_Value>& params,
+                             const std::vector<v8::Local<v8::Value>>& params,
                              CJS_Value& vRet,
                              WideString& sError) {
   int nface = 0;
   int iSize = params.size();
   if (iSize >= 1)
-    nface = pRuntime->ToInt32(params[0].ToV8Value());
+    nface = pRuntime->ToInt32(params[0]);
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2523,11 +2513,11 @@ bool Field::buttonGetCaption(CJS_Runtime* pRuntime,
 }
 
 bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
-                          const std::vector<CJS_Value>& params,
+                          const std::vector<v8::Local<v8::Value>>& params,
                           CJS_Value& vRet,
                           WideString& sError) {
   if (params.size() >= 1) {
-    int nFace = pRuntime->ToInt32(params[0].ToV8Value());
+    int nFace = pRuntime->ToInt32(params[0]);
     if (nFace < 0 || nFace > 2)
       return false;
   }
@@ -2557,28 +2547,28 @@ bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
 }
 
 bool Field::buttonImportIcon(CJS_Runtime* pRuntime,
-                             const std::vector<CJS_Value>& params,
+                             const std::vector<v8::Local<v8::Value>>& params,
                              CJS_Value& vRet,
                              WideString& sError) {
   return true;
 }
 
 bool Field::buttonSetCaption(CJS_Runtime* pRuntime,
-                             const std::vector<CJS_Value>& params,
+                             const std::vector<v8::Local<v8::Value>>& params,
                              CJS_Value& vRet,
                              WideString& sError) {
   return false;
 }
 
 bool Field::buttonSetIcon(CJS_Runtime* pRuntime,
-                          const std::vector<CJS_Value>& params,
+                          const std::vector<v8::Local<v8::Value>>& params,
                           CJS_Value& vRet,
                           WideString& sError) {
   return false;
 }
 
 bool Field::checkThisBox(CJS_Runtime* pRuntime,
-                         const std::vector<CJS_Value>& params,
+                         const std::vector<v8::Local<v8::Value>>& params,
                          CJS_Value& vRet,
                          WideString& sError) {
   int iSize = params.size();
@@ -2588,10 +2578,10 @@ bool Field::checkThisBox(CJS_Runtime* pRuntime,
   if (!m_bCanSet)
     return false;
 
-  int nWidget = pRuntime->ToInt32(params[0].ToV8Value());
+  int nWidget = pRuntime->ToInt32(params[0]);
   bool bCheckit = true;
   if (iSize >= 2)
-    bCheckit = pRuntime->ToBoolean(params[1].ToV8Value());
+    bCheckit = pRuntime->ToBoolean(params[1]);
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2615,14 +2605,14 @@ bool Field::checkThisBox(CJS_Runtime* pRuntime,
 }
 
 bool Field::clearItems(CJS_Runtime* pRuntime,
-                       const std::vector<CJS_Value>& params,
+                       const std::vector<v8::Local<v8::Value>>& params,
                        CJS_Value& vRet,
                        WideString& sError) {
   return true;
 }
 
 bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
-                             const std::vector<CJS_Value>& params,
+                             const std::vector<v8::Local<v8::Value>>& params,
                              CJS_Value& vRet,
                              WideString& sError) {
   if (!m_bCanSet)
@@ -2632,7 +2622,7 @@ bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
   if (iSize < 1)
     return false;
 
-  int nWidget = pRuntime->ToInt32(params[0].ToV8Value());
+  int nWidget = pRuntime->ToInt32(params[0]);
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -2649,14 +2639,14 @@ bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
 }
 
 bool Field::deleteItemAt(CJS_Runtime* pRuntime,
-                         const std::vector<CJS_Value>& params,
+                         const std::vector<v8::Local<v8::Value>>& params,
                          CJS_Value& vRet,
                          WideString& sError) {
   return true;
 }
 
 bool Field::getArray(CJS_Runtime* pRuntime,
-                     const std::vector<CJS_Value>& params,
+                     const std::vector<v8::Local<v8::Value>>& params,
                      CJS_Value& vRet,
                      WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -2686,9 +2676,10 @@ bool Field::getArray(CJS_Runtime* pRuntime,
         static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pObj));
     Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
     pField->AttachField(m_pJSDoc, *pStr);
-    FormFieldArray.SetElement(
-        pRuntime, j++,
-        pJSField ? CJS_Value(pJSField->ToV8Object()) : CJS_Value());
+    FormFieldArray.SetElement(pRuntime, j++,
+                              pJSField
+                                  ? v8::Local<v8::Value>(pJSField->ToV8Object())
+                                  : v8::Local<v8::Value>());
   }
 
   if (FormFieldArray.ToV8Value().IsEmpty())
@@ -2700,17 +2691,17 @@ bool Field::getArray(CJS_Runtime* pRuntime,
 }
 
 bool Field::getItemAt(CJS_Runtime* pRuntime,
-                      const std::vector<CJS_Value>& params,
+                      const std::vector<v8::Local<v8::Value>>& params,
                       CJS_Value& vRet,
                       WideString& sError) {
   int iSize = params.size();
   int nIdx = -1;
   if (iSize >= 1)
-    nIdx = pRuntime->ToInt32(params[0].ToV8Value());
+    nIdx = pRuntime->ToInt32(params[0]);
 
   bool bExport = true;
   if (iSize >= 2)
-    bExport = pRuntime->ToBoolean(params[1].ToV8Value());
+    bExport = pRuntime->ToBoolean(params[1]);
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2740,26 +2731,26 @@ bool Field::getItemAt(CJS_Runtime* pRuntime,
 }
 
 bool Field::getLock(CJS_Runtime* pRuntime,
-                    const std::vector<CJS_Value>& params,
+                    const std::vector<v8::Local<v8::Value>>& params,
                     CJS_Value& vRet,
                     WideString& sError) {
   return false;
 }
 
 bool Field::insertItemAt(CJS_Runtime* pRuntime,
-                         const std::vector<CJS_Value>& params,
+                         const std::vector<v8::Local<v8::Value>>& params,
                          CJS_Value& vRet,
                          WideString& sError) {
   return true;
 }
 
 bool Field::isBoxChecked(CJS_Runtime* pRuntime,
-                         const std::vector<CJS_Value>& params,
+                         const std::vector<v8::Local<v8::Value>>& params,
                          CJS_Value& vRet,
                          WideString& sError) {
   int nIndex = -1;
   if (params.size() >= 1)
-    nIndex = pRuntime->ToInt32(params[0].ToV8Value());
+    nIndex = pRuntime->ToInt32(params[0]);
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2777,12 +2768,12 @@ bool Field::isBoxChecked(CJS_Runtime* pRuntime,
 }
 
 bool Field::isDefaultChecked(CJS_Runtime* pRuntime,
-                             const std::vector<CJS_Value>& params,
+                             const std::vector<v8::Local<v8::Value>>& params,
                              CJS_Value& vRet,
                              WideString& sError) {
   int nIndex = -1;
   if (params.size() >= 1)
-    nIndex = pRuntime->ToInt32(params[0].ToV8Value());
+    nIndex = pRuntime->ToInt32(params[0]);
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -2800,14 +2791,14 @@ bool Field::isDefaultChecked(CJS_Runtime* pRuntime,
 }
 
 bool Field::setAction(CJS_Runtime* pRuntime,
-                      const std::vector<CJS_Value>& params,
+                      const std::vector<v8::Local<v8::Value>>& params,
                       CJS_Value& vRet,
                       WideString& sError) {
   return true;
 }
 
 bool Field::setFocus(CJS_Runtime* pRuntime,
-                     const std::vector<CJS_Value>& params,
+                     const std::vector<v8::Local<v8::Value>>& params,
                      CJS_Value& vRet,
                      WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -2852,56 +2843,59 @@ bool Field::setFocus(CJS_Runtime* pRuntime,
 }
 
 bool Field::setItems(CJS_Runtime* pRuntime,
-                     const std::vector<CJS_Value>& params,
+                     const std::vector<v8::Local<v8::Value>>& params,
                      CJS_Value& vRet,
                      WideString& sError) {
   return true;
 }
 
 bool Field::setLock(CJS_Runtime* pRuntime,
-                    const std::vector<CJS_Value>& params,
+                    const std::vector<v8::Local<v8::Value>>& params,
                     CJS_Value& vRet,
                     WideString& sError) {
   return false;
 }
 
-bool Field::signatureGetModifications(CJS_Runtime* pRuntime,
-                                      const std::vector<CJS_Value>& params,
-                                      CJS_Value& vRet,
-                                      WideString& sError) {
+bool Field::signatureGetModifications(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params,
+    CJS_Value& vRet,
+    WideString& sError) {
   return false;
 }
 
-bool Field::signatureGetSeedValue(CJS_Runtime* pRuntime,
-                                  const std::vector<CJS_Value>& params,
-                                  CJS_Value& vRet,
-                                  WideString& sError) {
+bool Field::signatureGetSeedValue(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params,
+    CJS_Value& vRet,
+    WideString& sError) {
   return false;
 }
 
 bool Field::signatureInfo(CJS_Runtime* pRuntime,
-                          const std::vector<CJS_Value>& params,
+                          const std::vector<v8::Local<v8::Value>>& params,
                           CJS_Value& vRet,
                           WideString& sError) {
   return false;
 }
 
-bool Field::signatureSetSeedValue(CJS_Runtime* pRuntime,
-                                  const std::vector<CJS_Value>& params,
-                                  CJS_Value& vRet,
-                                  WideString& sError) {
+bool Field::signatureSetSeedValue(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params,
+    CJS_Value& vRet,
+    WideString& sError) {
   return false;
 }
 
 bool Field::signatureSign(CJS_Runtime* pRuntime,
-                          const std::vector<CJS_Value>& params,
+                          const std::vector<v8::Local<v8::Value>>& params,
                           CJS_Value& vRet,
                           WideString& sError) {
   return false;
 }
 
 bool Field::signatureValidate(CJS_Runtime* pRuntime,
-                              const std::vector<CJS_Value>& params,
+                              const std::vector<v8::Local<v8::Value>>& params,
                               CJS_Value& vRet,
                               WideString& sError) {
   return false;
@@ -2915,7 +2909,7 @@ bool Field::get_source(CJS_Runtime* pRuntime,
 }
 
 bool Field::set_source(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError) {
   return true;
 }

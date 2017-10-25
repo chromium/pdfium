@@ -27,7 +27,7 @@ Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 Report::~Report() {}
 
 bool Report::writeText(CJS_Runtime* pRuntime,
-                       const std::vector<CJS_Value>& params,
+                       const std::vector<v8::Local<v8::Value>>& params,
                        CJS_Value& vRet,
                        WideString& sError) {
   // Unsafe, not supported.
@@ -35,7 +35,7 @@ bool Report::writeText(CJS_Runtime* pRuntime,
 }
 
 bool Report::save(CJS_Runtime* pRuntime,
-                  const std::vector<CJS_Value>& params,
+                  const std::vector<v8::Local<v8::Value>>& params,
                   CJS_Value& vRet,
                   WideString& sError) {
   // Unsafe, not supported.

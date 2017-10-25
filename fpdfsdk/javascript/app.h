@@ -45,154 +45,156 @@ class app : public CJS_EmbedObj {
                        CJS_Value* vp,
                        WideString* sError);
   bool set_active_docs(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError);
 
   bool get_calculate(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_calculate(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError);
 
   bool get_forms_version(CJS_Runtime* pRuntime,
                          CJS_Value* vp,
                          WideString* sError);
   bool set_forms_version(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          WideString* sError);
 
   bool get_fs(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_fs(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
+  bool set_fs(CJS_Runtime* pRuntime,
+              v8::Local<v8::Value> vp,
+              WideString* sError);
 
   bool get_fullscreen(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_fullscreen(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError);
 
   bool get_language(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_language(CJS_Runtime* pRuntime,
-                    const CJS_Value& vp,
+                    v8::Local<v8::Value> vp,
                     WideString* sError);
 
   bool get_media(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_media(CJS_Runtime* pRuntime,
-                 const CJS_Value& vp,
+                 v8::Local<v8::Value> vp,
                  WideString* sError);
 
   bool get_platform(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_platform(CJS_Runtime* pRuntime,
-                    const CJS_Value& vp,
+                    v8::Local<v8::Value> vp,
                     WideString* sError);
 
   bool get_runtime_highlight(CJS_Runtime* pRuntime,
                              CJS_Value* vp,
                              WideString* sError);
   bool set_runtime_highlight(CJS_Runtime* pRuntime,
-                             const CJS_Value& vp,
+                             v8::Local<v8::Value> vp,
                              WideString* sError);
 
   bool get_viewer_type(CJS_Runtime* pRuntime,
                        CJS_Value* vp,
                        WideString* sError);
   bool set_viewer_type(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError);
 
   bool get_viewer_variation(CJS_Runtime* pRuntime,
                             CJS_Value* vp,
                             WideString* sError);
   bool set_viewer_variation(CJS_Runtime* pRuntime,
-                            const CJS_Value& vp,
+                            v8::Local<v8::Value> vp,
                             WideString* sError);
 
   bool get_viewer_version(CJS_Runtime* pRuntime,
                           CJS_Value* vp,
                           WideString* sError);
   bool set_viewer_version(CJS_Runtime* pRuntime,
-                          const CJS_Value& vp,
+                          v8::Local<v8::Value> vp,
                           WideString* sError);
 
   bool alert(CJS_Runtime* pRuntime,
-             const std::vector<CJS_Value>& params,
+             const std::vector<v8::Local<v8::Value>>& params,
              CJS_Value& vRet,
              WideString& sError);
   bool beep(CJS_Runtime* pRuntime,
-            const std::vector<CJS_Value>& params,
+            const std::vector<v8::Local<v8::Value>>& params,
             CJS_Value& vRet,
             WideString& sError);
   bool browseForDoc(CJS_Runtime* pRuntime,
-                    const std::vector<CJS_Value>& params,
+                    const std::vector<v8::Local<v8::Value>>& params,
                     CJS_Value& vRet,
                     WideString& sError);
   bool clearInterval(CJS_Runtime* pRuntime,
-                     const std::vector<CJS_Value>& params,
+                     const std::vector<v8::Local<v8::Value>>& params,
                      CJS_Value& vRet,
                      WideString& sError);
   bool clearTimeOut(CJS_Runtime* pRuntime,
-                    const std::vector<CJS_Value>& params,
+                    const std::vector<v8::Local<v8::Value>>& params,
                     CJS_Value& vRet,
                     WideString& sError);
   bool execDialog(CJS_Runtime* pRuntime,
-                  const std::vector<CJS_Value>& params,
+                  const std::vector<v8::Local<v8::Value>>& params,
                   CJS_Value& vRet,
                   WideString& sError);
   bool execMenuItem(CJS_Runtime* pRuntime,
-                    const std::vector<CJS_Value>& params,
+                    const std::vector<v8::Local<v8::Value>>& params,
                     CJS_Value& vRet,
                     WideString& sError);
   bool findComponent(CJS_Runtime* pRuntime,
-                     const std::vector<CJS_Value>& params,
+                     const std::vector<v8::Local<v8::Value>>& params,
                      CJS_Value& vRet,
                      WideString& sError);
   bool goBack(CJS_Runtime* pRuntime,
-              const std::vector<CJS_Value>& params,
+              const std::vector<v8::Local<v8::Value>>& params,
               CJS_Value& vRet,
               WideString& sError);
   bool goForward(CJS_Runtime* pRuntime,
-                 const std::vector<CJS_Value>& params,
+                 const std::vector<v8::Local<v8::Value>>& params,
                  CJS_Value& vRet,
                  WideString& sError);
   bool launchURL(CJS_Runtime* pRuntime,
-                 const std::vector<CJS_Value>& params,
+                 const std::vector<v8::Local<v8::Value>>& params,
                  CJS_Value& vRet,
                  WideString& sError);
   bool mailMsg(CJS_Runtime* pRuntime,
-               const std::vector<CJS_Value>& params,
+               const std::vector<v8::Local<v8::Value>>& params,
                CJS_Value& vRet,
                WideString& sError);
   bool newFDF(CJS_Runtime* pRuntime,
-              const std::vector<CJS_Value>& params,
+              const std::vector<v8::Local<v8::Value>>& params,
               CJS_Value& vRet,
               WideString& sError);
   bool newDoc(CJS_Runtime* pRuntime,
-              const std::vector<CJS_Value>& params,
+              const std::vector<v8::Local<v8::Value>>& params,
               CJS_Value& vRet,
               WideString& sError);
   bool openDoc(CJS_Runtime* pRuntime,
-               const std::vector<CJS_Value>& params,
+               const std::vector<v8::Local<v8::Value>>& params,
                CJS_Value& vRet,
                WideString& sError);
   bool openFDF(CJS_Runtime* pRuntime,
-               const std::vector<CJS_Value>& params,
+               const std::vector<v8::Local<v8::Value>>& params,
                CJS_Value& vRet,
                WideString& sError);
   bool popUpMenuEx(CJS_Runtime* pRuntime,
-                   const std::vector<CJS_Value>& params,
+                   const std::vector<v8::Local<v8::Value>>& params,
                    CJS_Value& vRet,
                    WideString& sError);
   bool popUpMenu(CJS_Runtime* pRuntime,
-                 const std::vector<CJS_Value>& params,
+                 const std::vector<v8::Local<v8::Value>>& params,
                  CJS_Value& vRet,
                  WideString& sError);
   bool response(CJS_Runtime* pRuntime,
-                const std::vector<CJS_Value>& params,
+                const std::vector<v8::Local<v8::Value>>& params,
                 CJS_Value& vRet,
                 WideString& sError);
   bool setInterval(CJS_Runtime* pRuntime,
-                   const std::vector<CJS_Value>& params,
+                   const std::vector<v8::Local<v8::Value>>& params,
                    CJS_Value& vRet,
                    WideString& sError);
   bool setTimeOut(CJS_Runtime* pRuntime,
-                  const std::vector<CJS_Value>& params,
+                  const std::vector<v8::Local<v8::Value>>& params,
                   CJS_Value& vRet,
                   WideString& sError);
 
@@ -205,7 +207,7 @@ class app : public CJS_EmbedObj {
   // CJS_EmbedObj
   void RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript);
 
-  void ClearTimerCommon(CJS_Runtime* pRuntime, const CJS_Value& param);
+  void ClearTimerCommon(CJS_Runtime* pRuntime, v8::Local<v8::Value> param);
 
   bool m_bCalculate;
   bool m_bRuntimeHighLight;

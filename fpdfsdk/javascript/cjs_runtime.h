@@ -50,7 +50,7 @@ class CJS_Runtime : public IJS_Runtime,
 
   // Attempt to convert the |value| into a number. If successful the number
   // value will be returned, otherwise |value| is returned.
-  v8::Local<v8::Value> MaybeCoerceToNumber(const v8::Local<v8::Value>& value);
+  v8::Local<v8::Value> MaybeCoerceToNumber(v8::Local<v8::Value> value);
 
 #ifdef PDF_ENABLE_XFA
   bool GetValueByName(const ByteStringView& utf8Name,

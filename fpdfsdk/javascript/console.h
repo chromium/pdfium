@@ -18,19 +18,19 @@ class console : public CJS_EmbedObj {
 
  public:
   bool clear(CJS_Runtime* pRuntime,
-             const std::vector<CJS_Value>& params,
+             const std::vector<v8::Local<v8::Value>>& params,
              CJS_Value& vRet,
              WideString& sError);
   bool hide(CJS_Runtime* pRuntime,
-            const std::vector<CJS_Value>& params,
+            const std::vector<v8::Local<v8::Value>>& params,
             CJS_Value& vRet,
             WideString& sError);
   bool println(CJS_Runtime* pRuntime,
-               const std::vector<CJS_Value>& params,
+               const std::vector<v8::Local<v8::Value>>& params,
                CJS_Value& vRet,
                WideString& sError);
   bool show(CJS_Runtime* pRuntime,
-            const std::vector<CJS_Value>& params,
+            const std::vector<v8::Local<v8::Value>>& params,
             CJS_Value& vRet,
             WideString& sError);
 };

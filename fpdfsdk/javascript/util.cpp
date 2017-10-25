@@ -74,15 +74,14 @@ util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 util::~util() {}
 
 bool util::printf(CJS_Runtime* pRuntime,
-                  const std::vector<CJS_Value>& params,
+                  const std::vector<v8::Local<v8::Value>>& params,
                   CJS_Value& vRet,
                   WideString& sError) {
   const size_t iSize = params.size();
   if (iSize < 1)
     return false;
 
-  std::wstring unsafe_fmt_string(
-      pRuntime->ToWideString(params[0].ToV8Value()).c_str());
+  std::wstring unsafe_fmt_string(pRuntime->ToWideString(params[0]).c_str());
   std::vector<std::wstring> unsafe_conversion_specifiers;
   int iOffset = 0;
   int iOffend = 0;
@@ -116,16 +115,15 @@ bool util::printf(CJS_Runtime* pRuntime,
     switch (ParseDataType(&c_strFormat)) {
       case UTIL_INT:
         strSegment.Format(c_strFormat.c_str(),
-                          pRuntime->ToInt32(params[iIndex].ToV8Value()));
+                          pRuntime->ToInt32(params[iIndex]));
         break;
       case UTIL_DOUBLE:
         strSegment.Format(c_strFormat.c_str(),
-                          pRuntime->ToDouble(params[iIndex].ToV8Value()));
+                          pRuntime->ToDouble(params[iIndex]));
         break;
       case UTIL_STRING:
-        strSegment.Format(
-            c_strFormat.c_str(),
-            pRuntime->ToWideString(params[iIndex].ToV8Value()).c_str());
+        strSegment.Format(c_strFormat.c_str(),
+                          pRuntime->ToWideString(params[iIndex]).c_str());
         break;
       default:
         strSegment.Format(L"%ls", c_strFormat.c_str());
@@ -140,31 +138,27 @@ bool util::printf(CJS_Runtime* pRuntime,
 }
 
 bool util::printd(CJS_Runtime* pRuntime,
-                  const std::vector<CJS_Value>& params,
+                  const std::vector<v8::Local<v8::Value>>& params,
                   CJS_Value& vRet,
                   WideString& sError) {
   const size_t iSize = params.size();
   if (iSize < 2)
     return false;
 
-  const CJS_Value& p1 = params[0];
-  const CJS_Value& p2 = params[1];
-  if (p2.ToV8Value().IsEmpty() || !p2.ToV8Value()->IsDate()) {
+  if (params[1].IsEmpty() || !params[1]->IsDate()) {
     sError = JSGetStringFromID(IDS_STRING_JSPRINT1);
     return false;
   }
 
-  ASSERT(!p2.ToV8Value().IsEmpty() && p2.ToV8Value()->IsDate());
-  v8::Local<v8::Value> mutable_value = p2.ToV8Value();
-  CJS_Date jsDate(mutable_value.As<v8::Date>());
+  CJS_Date jsDate(params[1].As<v8::Date>());
   if (!jsDate.IsValidDate(pRuntime)) {
     sError = JSGetStringFromID(IDS_STRING_JSPRINT2);
     return false;
   }
 
-  if (p1.ToV8Value()->IsNumber()) {
+  if (params[0]->IsNumber()) {
     WideString swResult;
-    switch (pRuntime->ToInt32(p1.ToV8Value())) {
+    switch (pRuntime->ToInt32(params[0])) {
       case 0:
         swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", jsDate.GetYear(pRuntime),
                         jsDate.GetMonth(pRuntime) + 1, jsDate.GetDay(pRuntime),
@@ -194,8 +188,8 @@ bool util::printd(CJS_Runtime* pRuntime,
     return true;
   }
 
-  if (p1.ToV8Value()->IsString()) {
-    if (iSize > 2 && pRuntime->ToBoolean(params[2].ToV8Value())) {
+  if (params[0]->IsString()) {
+    if (iSize > 2 && pRuntime->ToBoolean(params[2])) {
       sError = JSGetStringFromID(IDS_STRING_JSNOTSUPPORT);
       return false;  // currently, it doesn't support XFAPicture.
     }
@@ -203,7 +197,7 @@ bool util::printd(CJS_Runtime* pRuntime,
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
     std::basic_string<wchar_t> cFormat =
-        pRuntime->ToWideString(p1.ToV8Value()).c_str();
+        pRuntime->ToWideString(params[0]).c_str();
     cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                   cFormat.end());
 
@@ -274,7 +268,7 @@ bool util::printd(CJS_Runtime* pRuntime,
 }
 
 bool util::printx(CJS_Runtime* pRuntime,
-                  const std::vector<CJS_Value>& params,
+                  const std::vector<v8::Local<v8::Value>>& params,
                   CJS_Value& vRet,
                   WideString& sError) {
   if (params.size() < 2) {
@@ -282,10 +276,9 @@ bool util::printx(CJS_Runtime* pRuntime,
     return false;
   }
 
-  vRet = CJS_Value(
-      pRuntime->NewString(printx(pRuntime->ToWideString(params[0].ToV8Value()),
-                                 pRuntime->ToWideString(params[1].ToV8Value()))
-                              .c_str()));
+  vRet = CJS_Value(pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
+                                              pRuntime->ToWideString(params[1]))
+                                           .c_str()));
 
   return true;
 }
@@ -389,14 +382,14 @@ WideString util::printx(const WideString& wsFormat,
 }
 
 bool util::scand(CJS_Runtime* pRuntime,
-                 const std::vector<CJS_Value>& params,
+                 const std::vector<v8::Local<v8::Value>>& params,
                  CJS_Value& vRet,
                  WideString& sError) {
   if (params.size() < 2)
     return false;
 
-  WideString sFormat = pRuntime->ToWideString(params[0].ToV8Value());
-  WideString sDate = pRuntime->ToWideString(params[1].ToV8Value());
+  WideString sFormat = pRuntime->ToWideString(params[0]);
+  WideString sDate = pRuntime->ToWideString(params[1]);
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0) {
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
@@ -412,7 +405,7 @@ bool util::scand(CJS_Runtime* pRuntime,
 }
 
 bool util::byteToChar(CJS_Runtime* pRuntime,
-                      const std::vector<CJS_Value>& params,
+                      const std::vector<v8::Local<v8::Value>>& params,
                       CJS_Value& vRet,
                       WideString& sError) {
   if (params.size() < 1) {
@@ -420,7 +413,7 @@ bool util::byteToChar(CJS_Runtime* pRuntime,
     return false;
   }
 
-  int arg = pRuntime->ToInt32(params[0].ToV8Value());
+  int arg = pRuntime->ToInt32(params[0]);
   if (arg < 0 || arg > 255) {
     sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);
     return false;

@@ -24,71 +24,79 @@ class color : public CJS_EmbedObj {
 
   bool get_black(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_black(CJS_Runtime* pRuntime,
-                 const CJS_Value& vp,
+                 v8::Local<v8::Value> vp,
                  WideString* sError);
 
   bool get_blue(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_blue(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
+  bool set_blue(CJS_Runtime* pRuntime,
+                v8::Local<v8::Value> vp,
+                WideString* sError);
 
   bool get_cyan(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_cyan(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
+  bool set_cyan(CJS_Runtime* pRuntime,
+                v8::Local<v8::Value> vp,
+                WideString* sError);
 
   bool get_dark_gray(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_dark_gray(CJS_Runtime* pRuntime,
-                     const CJS_Value& vp,
+                     v8::Local<v8::Value> vp,
                      WideString* sError);
 
   bool get_gray(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_gray(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
+  bool set_gray(CJS_Runtime* pRuntime,
+                v8::Local<v8::Value> vp,
+                WideString* sError);
 
   bool get_green(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_green(CJS_Runtime* pRuntime,
-                 const CJS_Value& vp,
+                 v8::Local<v8::Value> vp,
                  WideString* sError);
 
   bool get_light_gray(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_light_gray(CJS_Runtime* pRuntime,
-                      const CJS_Value& vp,
+                      v8::Local<v8::Value> vp,
                       WideString* sError);
 
   bool get_magenta(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_magenta(CJS_Runtime* pRuntime,
-                   const CJS_Value& vp,
+                   v8::Local<v8::Value> vp,
                    WideString* sError);
 
   bool get_red(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
-  bool set_red(CJS_Runtime* pRuntime, const CJS_Value& vp, WideString* sError);
+  bool set_red(CJS_Runtime* pRuntime,
+               v8::Local<v8::Value> vp,
+               WideString* sError);
 
   bool get_transparent(CJS_Runtime* pRuntime,
                        CJS_Value* vp,
                        WideString* sError);
   bool set_transparent(CJS_Runtime* pRuntime,
-                       const CJS_Value& vp,
+                       v8::Local<v8::Value> vp,
                        WideString* sError);
 
   bool get_white(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_white(CJS_Runtime* pRuntime,
-                 const CJS_Value& vp,
+                 v8::Local<v8::Value> vp,
                  WideString* sError);
 
   bool get_yellow(CJS_Runtime* pRuntime, CJS_Value* vp, WideString* sError);
   bool set_yellow(CJS_Runtime* pRuntime,
-                  const CJS_Value& vp,
+                  v8::Local<v8::Value> vp,
                   WideString* sError);
 
   bool convert(CJS_Runtime* pRuntime,
-               const std::vector<CJS_Value>& params,
+               const std::vector<v8::Local<v8::Value>>& params,
                CJS_Value& vRet,
                WideString& sError);
   bool equal(CJS_Runtime* pRuntime,
-             const std::vector<CJS_Value>& params,
+             const std::vector<v8::Local<v8::Value>>& params,
              CJS_Value& vRet,
              WideString& sError);
 
  private:
   bool GetPropertyHelper(CJS_Runtime* pRuntime, CJS_Value* vp, CFX_Color* val);
   bool SetPropertyHelper(CJS_Runtime* pRuntime,
-                         const CJS_Value& vp,
+                         v8::Local<v8::Value> vp,
                          CFX_Color* val);
 
   CFX_Color m_crTransparent;

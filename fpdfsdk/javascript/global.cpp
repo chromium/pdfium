@@ -131,10 +131,8 @@ void JSSpecialPropPut(const char* class_name,
   v8::String::Utf8Value utf8_value(property);
   WideString propname =
       WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
-  CJS_Value prop_value(value);
-  if (!pObj->SetProperty(pRuntime, propname.c_str(), prop_value)) {
+  if (!pObj->SetProperty(pRuntime, propname.c_str(), value))
     pRuntime->Error(JSFormatErrorString(class_name, "PutProperty", L""));
-  }
 }
 
 template <class Alt>
@@ -181,7 +179,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   ~JSGlobalAlternate() override;
 
   bool setPersistent(CJS_Runtime* pRuntime,
-                     const std::vector<CJS_Value>& params,
+                     const std::vector<v8::Local<v8::Value>>& params,
                      CJS_Value& vRet,
                      WideString& sError);
   bool QueryProperty(const wchar_t* propname);
@@ -190,7 +188,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
                    CJS_Value* vp);
   bool SetProperty(CJS_Runtime* pRuntime,
                    const wchar_t* propname,
-                   const CJS_Value& vp);
+                   v8::Local<v8::Value> vp);
   bool DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
@@ -323,54 +321,55 @@ bool JSGlobalAlternate::GetProperty(CJS_Runtime* pRuntime,
 
 bool JSGlobalAlternate::SetProperty(CJS_Runtime* pRuntime,
                                     const wchar_t* propname,
-                                    const CJS_Value& vp) {
+                                    v8::Local<v8::Value> vp) {
   ByteString sPropName = ByteString::FromUnicode(propname);
-  if (vp.ToV8Value()->IsNumber()) {
+  if (vp->IsNumber()) {
     return SetGlobalVariables(sPropName, JS_GlobalDataType::NUMBER,
-                              pRuntime->ToDouble(vp.ToV8Value()), false, "",
+                              pRuntime->ToDouble(vp), false, "",
                               v8::Local<v8::Object>(), false);
   }
-  if (vp.ToV8Value()->IsBoolean()) {
+  if (vp->IsBoolean()) {
     return SetGlobalVariables(sPropName, JS_GlobalDataType::BOOLEAN, 0,
-                              pRuntime->ToBoolean(vp.ToV8Value()), "",
+                              pRuntime->ToBoolean(vp), "",
                               v8::Local<v8::Object>(), false);
   }
-  if (vp.ToV8Value()->IsString()) {
+  if (vp->IsString()) {
     return SetGlobalVariables(
         sPropName, JS_GlobalDataType::STRING, 0, false,
-        ByteString::FromUnicode(pRuntime->ToWideString(vp.ToV8Value())),
+        ByteString::FromUnicode(pRuntime->ToWideString(vp)),
         v8::Local<v8::Object>(), false);
   }
-  if (vp.ToV8Value()->IsObject()) {
+  if (vp->IsObject()) {
     return SetGlobalVariables(sPropName, JS_GlobalDataType::OBJECT, 0, false,
-                              "", pRuntime->ToObject(vp.ToV8Value()), false);
+                              "", pRuntime->ToObject(vp), false);
   }
-  if (vp.ToV8Value()->IsNull()) {
+  if (vp->IsNull()) {
     return SetGlobalVariables(sPropName, JS_GlobalDataType::NULLOBJ, 0, false,
                               "", v8::Local<v8::Object>(), false);
   }
-  if (vp.ToV8Value()->IsUndefined()) {
+  if (vp->IsUndefined()) {
     DelProperty(pRuntime, propname);
     return true;
   }
   return false;
 }
 
-bool JSGlobalAlternate::setPersistent(CJS_Runtime* pRuntime,
-                                      const std::vector<CJS_Value>& params,
-                                      CJS_Value& vRet,
-                                      WideString& sError) {
+bool JSGlobalAlternate::setPersistent(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params,
+    CJS_Value& vRet,
+    WideString& sError) {
   if (params.size() != 2) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
   auto it = m_MapGlobal.find(
-      ByteString::FromUnicode(pRuntime->ToWideString(params[0].ToV8Value())));
+      ByteString::FromUnicode(pRuntime->ToWideString(params[0])));
   if (it == m_MapGlobal.end() || it->second->bDeleted) {
     sError = JSGetStringFromID(IDS_STRING_JSNOGLOBAL);
     return false;
   }
-  it->second->bPersistent = pRuntime->ToBoolean(params[1].ToV8Value());
+  it->second->bPersistent = pRuntime->ToBoolean(params[1]);
   return true;
 }
 

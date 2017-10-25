@@ -74,7 +74,7 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
 };
 
 v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
-    const v8::Local<v8::Context>& hContext) {
+    v8::Local<v8::Context> hContext) {
   return hContext->Global()->GetPrototype().As<v8::Object>();
 }
 
@@ -86,9 +86,8 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
   hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
 }
 
-CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
-    const v8::Local<v8::Object>& hJSObject,
-    CFXJSE_Class* lpClass) {
+CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
+                                               CFXJSE_Class* lpClass) {
   ASSERT(!hJSObject.IsEmpty());
   if (!hJSObject->IsObject())
     return nullptr;
