@@ -109,7 +109,8 @@ void JSSpecialPropGet(const char* class_name,
     pRuntime->Error(JSFormatErrorString(class_name, "GetProperty", L""));
     return;
   }
-  info.GetReturnValue().Set(value.ToV8Value());
+  if (!value.ToV8Value().IsEmpty())
+    info.GetReturnValue().Set(value.ToV8Value());
 }
 
 template <class Alt>
@@ -284,16 +285,12 @@ bool JSGlobalAlternate::GetProperty(CJS_Runtime* pRuntime,
                                     const wchar_t* propname,
                                     CJS_Value* vp) {
   auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
-  if (it == m_MapGlobal.end()) {
-    vp->Set(pRuntime->NewNull());
+  if (it == m_MapGlobal.end())
     return true;
-  }
 
   JSGlobalData* pData = it->second.get();
-  if (pData->bDeleted) {
-    vp->Set(pRuntime->NewNull());
+  if (pData->bDeleted)
     return true;
-  }
 
   switch (pData->nType) {
     case JS_GlobalDataType::NUMBER:

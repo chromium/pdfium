@@ -664,7 +664,11 @@ v8::Local<v8::String> CFXJS_Engine::NewString(const WideStringView& str) {
 }
 
 v8::Local<v8::Value> CFXJS_Engine::NewNull() {
-  return v8::Local<v8::Value>();
+  return v8::Null(m_isolate);
+}
+
+v8::Local<v8::Value> CFXJS_Engine::NewUndefined() {
+  return v8::Undefined(m_isolate);
 }
 
 v8::Local<v8::Date> CFXJS_Engine::NewDate(double d) {

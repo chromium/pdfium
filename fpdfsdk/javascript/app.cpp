@@ -237,7 +237,7 @@ bool app::get_active_docs(CJS_Runtime* pRuntime,
     else
       vp->Set(aDocs.ToV8Value());
   } else {
-    vp->Set(pRuntime->NewNull());
+    vp->Set(pRuntime->NewUndefined());
   }
 
   return true;

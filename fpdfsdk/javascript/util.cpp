@@ -398,7 +398,7 @@ bool util::scand(CJS_Runtime* pRuntime,
   if (!std::isnan(dDate)) {
     vRet = CJS_Value(CJS_Date(pRuntime, dDate).ToV8Value());
   } else {
-    vRet.Set(pRuntime->NewNull());
+    vRet.Set(pRuntime->NewUndefined());
   }
 
   return true;

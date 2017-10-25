@@ -1840,7 +1840,7 @@ bool CJS_PublicMethods::AFExtractNums(
     else
       vRet = CJS_Value(nums.ToV8Value());
   } else {
-    vRet.Set(pRuntime->NewNull());
+    vRet.Set(pRuntime->NewUndefined());
   }
 
   return true;

@@ -98,9 +98,23 @@ TEST_F(FXJSV8EmbedderTest, NewNull) {
   EXPECT_FALSE(engine()->ToBoolean(nullz));
   EXPECT_EQ(0, engine()->ToInt32(nullz));
   EXPECT_EQ(0.0, engine()->ToDouble(nullz));
-  EXPECT_EQ(L"", engine()->ToWideString(nullz));
+  EXPECT_EQ(L"null", engine()->ToWideString(nullz));
   EXPECT_TRUE(engine()->ToObject(nullz).IsEmpty());
   EXPECT_TRUE(engine()->ToArray(nullz).IsEmpty());
+}
+
+TEST_F(FXJSV8EmbedderTest, NewUndefined) {
+  v8::Isolate::Scope isolate_scope(isolate());
+  v8::HandleScope handle_scope(isolate());
+  v8::Context::Scope context_scope(GetV8Context());
+
+  auto undef = engine()->NewUndefined();
+  EXPECT_FALSE(engine()->ToBoolean(undef));
+  EXPECT_EQ(0, engine()->ToInt32(undef));
+  EXPECT_TRUE(std::isnan(engine()->ToDouble(undef)));
+  EXPECT_EQ(L"undefined", engine()->ToWideString(undef));
+  EXPECT_TRUE(engine()->ToObject(undef).IsEmpty());
+  EXPECT_TRUE(engine()->ToArray(undef).IsEmpty());
 }
 
 TEST_F(FXJSV8EmbedderTest, NewBoolean) {

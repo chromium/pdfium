@@ -213,7 +213,7 @@ bool Document::set_dirty(CJS_Runtime* pRuntime,
 bool Document::get_ADBE(CJS_Runtime* pRuntime,
                         CJS_Value* vp,
                         WideString* sError) {
-  vp->Set(pRuntime->NewNull());
+  vp->Set(pRuntime->NewUndefined());
   return true;
 }
 
@@ -312,7 +312,7 @@ bool Document::getField(CJS_Runtime* pRuntime,
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (pPDFForm->CountFields(wideName) <= 0) {
-    vRet.Set(pRuntime->NewNull());
+    vRet.Set(pRuntime->NewUndefined());
     return true;
   }
 
@@ -1321,7 +1321,7 @@ bool Document::getAnnot3D(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params,
                           CJS_Value& vRet,
                           WideString& sError) {
-  vRet.Set(pRuntime->NewNull());
+  vRet.Set(pRuntime->NewUndefined());
   return true;
 }
 
@@ -1387,7 +1387,7 @@ bool Document::get_icons(CJS_Runtime* pRuntime,
                          CJS_Value* vp,
                          WideString* sError) {
   if (m_IconNames.empty()) {
-    vp->Set(pRuntime->NewNull());
+    vp->Set(pRuntime->NewUndefined());
     return true;
   }
 
