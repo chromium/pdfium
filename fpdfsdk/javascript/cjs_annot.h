@@ -32,17 +32,19 @@ class Annot : public CJS_EmbedObj {
 
 class CJS_Annot : public CJS_Object {
  public:
+  static int GetObjDefnID();
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
   explicit CJS_Annot(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Annot() override {}
-
-  static int g_nObjDefnID;
-  static JSPropertySpec PropertySpecs[];
-
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   JS_STATIC_PROP(hidden, hidden, Annot);
   JS_STATIC_PROP(name, name, Annot);
   JS_STATIC_PROP(type, type, Annot);
+
+ private:
+  static int ObjDefnID;
+  static JSPropertySpec PropertySpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_ANNOT_H_

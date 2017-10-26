@@ -11,17 +11,6 @@
 
 class CJS_Global : public CJS_Object {
  public:
-  explicit CJS_Global(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Global() override {}
-
-  // CJS_Object
-  void InitInstance(IJS_Runtime* pIRuntime) override;
-
-  static int g_nObjDefnID;
-  static JSConstSpec ConstSpecs[];
-  static JSPropertySpec PropertySpecs[];
-  static JSMethodSpec MethodSpecs[];
-
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
   static void DefineAllProperties(CFXJS_Engine* pEngine);
 
@@ -38,6 +27,16 @@ class CJS_Global : public CJS_Object {
 
   static void setPersistent_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
+
+  explicit CJS_Global(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  ~CJS_Global() override {}
+
+  // CJS_Object
+  void InitInstance(IJS_Runtime* pIRuntime) override;
+
+ private:
+  static int ObjDefnID;
+  static JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_GLOBAL_H_

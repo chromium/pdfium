@@ -16,10 +16,11 @@ JSConstSpec CJS_Position::ConstSpecs[] = {
     {"overlay", JSConstSpec::Number, 6, 0},
     {0, JSConstSpec::Number, 0, 0}};
 
-int CJS_Position::g_nObjDefnID = -1;
+int CJS_Position::ObjDefnID = -1;
 
+// static
 void CJS_Position::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj("position", eObjType, nullptr, nullptr);
-  DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
+  ObjDefnID = pEngine->DefineObj("position", eObjType, nullptr, nullptr);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }

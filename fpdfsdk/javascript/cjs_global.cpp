@@ -174,15 +174,11 @@ class JSGlobalAlternate : public CJS_EmbedObj {
 
 }  // namespace
 
-JSConstSpec CJS_Global::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
-
-JSPropertySpec CJS_Global::PropertySpecs[] = {{0, 0, 0}};
-
 JSMethodSpec CJS_Global::MethodSpecs[] = {
     {"setPersistent", setPersistent_static},
     {0, 0}};
 
-int CJS_Global::g_nObjDefnID = -1;
+int CJS_Global::ObjDefnID = -1;
 
 // static
 void CJS_Global::setPersistent_static(
@@ -191,25 +187,21 @@ void CJS_Global::setPersistent_static(
       "setPersistent", "global", info);
 }
 
-void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
-  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
-  JSGlobalAlternate* pGlobal =
-      static_cast<JSGlobalAlternate*>(GetEmbedObject());
-  pGlobal->Initial(pRuntime->GetFormFillEnv());
-}
-
+// static
 void CJS_Global::queryprop_static(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
   JSSpecialPropQuery<JSGlobalAlternate>("global", property, info);
 }
 
+// static
 void CJS_Global::getprop_static(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
   JSSpecialPropGet<JSGlobalAlternate>("global", property, info);
 }
 
+// static
 void CJS_Global::putprop_static(
     v8::Local<v8::String> property,
     v8::Local<v8::Value> value,
@@ -217,26 +209,34 @@ void CJS_Global::putprop_static(
   JSSpecialPropPut<JSGlobalAlternate>("global", property, value, info);
 }
 
+// static
 void CJS_Global::delprop_static(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   JSSpecialPropDel<JSGlobalAlternate>("global", property, info);
 }
 
+// static
 void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
   pEngine->DefineObjAllProperties(
-      g_nObjDefnID, CJS_Global::queryprop_static, CJS_Global::getprop_static,
+      ObjDefnID, CJS_Global::queryprop_static, CJS_Global::getprop_static,
       CJS_Global::putprop_static, CJS_Global::delprop_static);
 }
 
+// static
 void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(
-      "global", eObjType, JSConstructor<CJS_Global, JSGlobalAlternate>,
-      JSDestructor<CJS_Global>);
-  DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
-  DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
-  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
+  ObjDefnID = pEngine->DefineObj("global", eObjType,
+                                 JSConstructor<CJS_Global, JSGlobalAlternate>,
+                                 JSDestructor<CJS_Global>);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
   DefineAllProperties(pEngine);
+}
+
+void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
+  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
+  JSGlobalAlternate* pGlobal =
+      static_cast<JSGlobalAlternate*>(GetEmbedObject());
+  pGlobal->Initial(pRuntime->GetFormFillEnv());
 }
 
 JSGlobalData::JSGlobalData()

@@ -142,13 +142,19 @@ GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
   return s_TimerMap;
 }
 
-int CJS_TimerObj::g_nObjDefnID = -1;
+int CJS_TimerObj::ObjDefnID = -1;
 
+// static
+int CJS_TimerObj::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj("TimerObj", eObjType,
-                                    JSConstructor<CJS_TimerObj, TimerObj>,
-                                    JSDestructor<CJS_TimerObj>);
+  ObjDefnID = pEngine->DefineObj("TimerObj", eObjType,
+                                 JSConstructor<CJS_TimerObj, TimerObj>,
+                                 JSDestructor<CJS_TimerObj>);
 }
 
 TimerObj::TimerObj(CJS_Object* pJSObject)
@@ -210,13 +216,14 @@ JSMethodSpec CJS_App::MethodSpecs[] = {{"alert", alert_static},
                                        {"setTimeOut", setTimeOut_static},
                                        {0, 0}};
 
-int CJS_App::g_nObjDefnID = -1;
+int CJS_App::ObjDefnID = -1;
 
+// static
 void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(
-      "app", eObjType, JSConstructor<CJS_App, app>, JSDestructor<CJS_App>);
-  DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
-  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
+  ObjDefnID = pEngine->DefineObj("app", eObjType, JSConstructor<CJS_App, app>,
+                                 JSDestructor<CJS_App>);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
 
 app::app(CJS_Object* pJSObject)
@@ -227,7 +234,7 @@ app::~app() {}
 CJS_Return app::get_active_docs(CJS_Runtime* pRuntime) {
   CJS_Document* pJSDocument = nullptr;
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID)
+  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::GetObjDefnID())
     pJSDocument = static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
 
   v8::Local<v8::Array> aDocs = pRuntime->NewArray();
@@ -445,7 +452,7 @@ CJS_Return app::setInterval(CJS_Runtime* pRuntime,
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
-      pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
+      pRuntime->NewFxDynamicObj(CJS_TimerObj::GetObjDefnID());
   if (pRetObj.IsEmpty())
     return CJS_Return(false);
 
@@ -473,7 +480,7 @@ CJS_Return app::setTimeOut(CJS_Runtime* pRuntime,
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
-      pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
+      pRuntime->NewFxDynamicObj(CJS_TimerObj::GetObjDefnID());
   if (pRetObj.IsEmpty())
     return CJS_Return(false);
 
@@ -508,7 +515,7 @@ void app::ClearTimerCommon(CJS_Runtime* pRuntime, v8::Local<v8::Value> param) {
     return;
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(param);
-  if (CFXJS_Engine::GetObjDefnID(pObj) != CJS_TimerObj::g_nObjDefnID)
+  if (CFXJS_Engine::GetObjDefnID(pObj) != CJS_TimerObj::GetObjDefnID())
     return;
 
   CJS_Object* pJSObj =

@@ -184,7 +184,7 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   if (pThis.IsEmpty())
     return;
 
-  if (CFXJS_Engine::GetObjDefnID(pThis) != CJS_Document::g_nObjDefnID)
+  if (CFXJS_Engine::GetObjDefnID(pThis) != CJS_Document::GetObjDefnID())
     return;
 
   CJS_Document* pJSDocument =

@@ -11,10 +11,11 @@ JSConstSpec CJS_ScaleHow::ConstSpecs[] = {
     {"anamorphic", JSConstSpec::Number, 1, 0},
     {0, JSConstSpec::Number, 0, 0}};
 
-int CJS_ScaleHow::g_nObjDefnID = -1;
+int CJS_ScaleHow::ObjDefnID = -1;
 
+// static
 void CJS_ScaleHow::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj("scaleHow", eObjType, nullptr, nullptr);
-  DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
+  ObjDefnID = pEngine->DefineObj("scaleHow", eObjType, nullptr, nullptr);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }

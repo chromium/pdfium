@@ -14,6 +14,7 @@
                 ->NewString(value));                                  \
       })
 
+// static
 void CJS_GlobalConsts::DefineJSObjects(CJS_Runtime* pRuntime) {
   GLOBAL_STRING(pRuntime, L"IDS_GREATER_THAN",
                 L"Invalid value: must be greater than or equal to % s.");

@@ -589,12 +589,12 @@ bool CJS_EventHandler::Shift() {
 Field* CJS_EventHandler::Source() {
   CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
-      pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
+      pRuntime->NewFxDynamicObj(CJS_Document::GetObjDefnID());
   if (pDocObj.IsEmpty())
     return nullptr;
 
   v8::Local<v8::Object> pFieldObj =
-      pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
+      pRuntime->NewFxDynamicObj(CJS_Field::GetObjDefnID());
   if (pFieldObj.IsEmpty())
     return nullptr;
 
@@ -616,12 +616,12 @@ Field* CJS_EventHandler::Source() {
 Field* CJS_EventHandler::Target_Field() {
   CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
-      pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
+      pRuntime->NewFxDynamicObj(CJS_Document::GetObjDefnID());
   if (pDocObj.IsEmpty())
     return nullptr;
 
   v8::Local<v8::Object> pFieldObj =
-      pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
+      pRuntime->NewFxDynamicObj(CJS_Field::GetObjDefnID());
   if (pFieldObj.IsEmpty())
     return nullptr;
 

@@ -20,13 +20,14 @@ JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
                                            {"show", show_static},
                                            {0, 0}};
 
-int CJS_Console::g_nObjDefnID = -1;
+int CJS_Console::ObjDefnID = -1;
 
+// static
 void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj("console", eObjType,
-                                    JSConstructor<CJS_Console, console>,
-                                    JSDestructor<CJS_Console>);
-  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
+  ObjDefnID = pEngine->DefineObj("console", eObjType,
+                                 JSConstructor<CJS_Console, console>,
+                                 JSDestructor<CJS_Console>);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
 
 console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

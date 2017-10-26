@@ -36,13 +36,14 @@ JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"willCommit", get_will_commit_static, set_will_commit_static},
     {0, 0, 0}};
 
-int CJS_Event::g_nObjDefnID = -1;
+int CJS_Event::ObjDefnID = -1;
 
+// static
 void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
+  ObjDefnID =
       pEngine->DefineObj("event", eObjType, JSConstructor<CJS_Event, event>,
                          JSDestructor<CJS_Event>);
-  DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs);
 }
 
 event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}

@@ -44,19 +44,20 @@ class util : public CJS_EmbedObj {
 
 class CJS_Util : public CJS_Object {
  public:
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
   explicit CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Util() override {}
-
-  static int g_nObjDefnID;
-  static JSMethodSpec MethodSpecs[];
-
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   JS_STATIC_METHOD(printd, util);
   JS_STATIC_METHOD(printf, util);
   JS_STATIC_METHOD(printx, util);
   JS_STATIC_METHOD(scand, util);
   JS_STATIC_METHOD(byteToChar, util);
+
+ private:
+  static int ObjDefnID;
+  static JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_UTIL_H_

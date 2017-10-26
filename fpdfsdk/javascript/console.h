@@ -29,18 +29,19 @@ class console : public CJS_EmbedObj {
 
 class CJS_Console : public CJS_Object {
  public:
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
   explicit CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Console() override {}
-
-  static int g_nObjDefnID;
-  static JSMethodSpec MethodSpecs[];
-
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   JS_STATIC_METHOD(clear, console);
   JS_STATIC_METHOD(hide, console);
   JS_STATIC_METHOD(println, console);
   JS_STATIC_METHOD(show, console);
+
+ private:
+  static int ObjDefnID;
+  static JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CONSOLE_H_

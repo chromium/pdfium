@@ -25,16 +25,17 @@ class Report : public CJS_EmbedObj {
 
 class CJS_Report : public CJS_Object {
  public:
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
   explicit CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Report() override {}
 
-  static int g_nObjDefnID;
-  static JSMethodSpec MethodSpecs[];
-
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
-
   JS_STATIC_METHOD(save, Report)
   JS_STATIC_METHOD(writeText, Report);
+
+ private:
+  static int ObjDefnID;
+  static JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_REPORT_H_

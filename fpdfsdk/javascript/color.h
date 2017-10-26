@@ -85,14 +85,10 @@ class color : public CJS_EmbedObj {
 
 class CJS_Color : public CJS_Object {
  public:
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
   explicit CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Color() override {}
-
-  static int g_nObjDefnID;
-  static JSPropertySpec PropertySpecs[];
-  static JSMethodSpec MethodSpecs[];
-
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   JS_STATIC_PROP(black, black, color);
   JS_STATIC_PROP(blue, blue, color);
@@ -109,6 +105,11 @@ class CJS_Color : public CJS_Object {
 
   JS_STATIC_METHOD(convert, color);
   JS_STATIC_METHOD(equal, color);
+
+ private:
+  static int ObjDefnID;
+  static JSPropertySpec PropertySpecs[];
+  static JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_COLOR_H_

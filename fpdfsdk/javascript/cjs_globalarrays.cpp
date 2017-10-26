@@ -22,6 +22,7 @@
         });                                                                  \
   }
 
+// static
 void CJS_GlobalArrays::DefineJSObjects(CJS_Runtime* pRuntime) {
   GLOBAL_ARRAY(pRuntime, L"RE_NUMBER_ENTRY_DOT_SEP", L"[+-]?\\d*\\.?\\d*");
   GLOBAL_ARRAY(pRuntime, L"RE_NUMBER_COMMIT_DOT_SEP",

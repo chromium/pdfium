@@ -77,13 +77,10 @@ class event : public CJS_EmbedObj {
 
 class CJS_Event : public CJS_Object {
  public:
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
   explicit CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Event() override {}
-
-  static int g_nObjDefnID;
-  static JSPropertySpec PropertySpecs[];
-
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   JS_STATIC_PROP(change, change, event);
   JS_STATIC_PROP(changeEx, change_ex, event);
@@ -105,6 +102,10 @@ class CJS_Event : public CJS_Object {
   JS_STATIC_PROP(type, type, event);
   JS_STATIC_PROP(value, value, event);
   JS_STATIC_PROP(willCommit, will_commit, event);
+
+ private:
+  static int ObjDefnID;
+  static JSPropertySpec PropertySpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_EVENT_H_

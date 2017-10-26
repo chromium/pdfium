@@ -15,9 +15,10 @@ JSConstSpec CJS_Style::ConstSpecs[] = {
     {"sq", JSConstSpec::String, 0, "square"},
     {0, JSConstSpec::Number, 0, 0}};
 
-int CJS_Style::g_nObjDefnID = -1;
+int CJS_Style::ObjDefnID = -1;
 
+// static
 void CJS_Style::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj("style", eObjType, nullptr, nullptr);
-  DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
+  ObjDefnID = pEngine->DefineObj("style", eObjType, nullptr, nullptr);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }

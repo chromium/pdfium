@@ -359,16 +359,13 @@ class Field : public CJS_EmbedObj {
 
 class CJS_Field : public CJS_Object {
  public:
+  static int GetObjDefnID();
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
   explicit CJS_Field(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Field() override {}
 
   void InitInstance(IJS_Runtime* pIRuntime) override;
-
-  static int g_nObjDefnID;
-  static JSPropertySpec PropertySpecs[];
-  static JSMethodSpec MethodSpecs[];
-
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   JS_STATIC_PROP(alignment, alignment, Field);
   JS_STATIC_PROP(borderStyle, border_style, Field);
@@ -449,6 +446,11 @@ class CJS_Field : public CJS_Object {
   JS_STATIC_METHOD(signatureSetSeedValue, Field);
   JS_STATIC_METHOD(signatureSign, Field);
   JS_STATIC_METHOD(signatureValidate, Field);
+
+ private:
+  static int ObjDefnID;
+  static JSPropertySpec PropertySpecs[];
+  static JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_FIELD_H_

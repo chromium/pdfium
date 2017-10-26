@@ -16,13 +16,14 @@ JSMethodSpec CJS_Report::MethodSpecs[] = {{"save", save_static},
                                           {"writeText", writeText_static},
                                           {0, 0}};
 
-int CJS_Report::g_nObjDefnID = -1;
+int CJS_Report::ObjDefnID = -1;
 
+// static
 void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
+  ObjDefnID =
       pEngine->DefineObj("Report", eObjType, JSConstructor<CJS_Report, Report>,
                          JSDestructor<CJS_Report>);
-  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
 
 Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

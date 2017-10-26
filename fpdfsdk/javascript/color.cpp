@@ -30,18 +30,19 @@ JSPropertySpec CJS_Color::PropertySpecs[] = {
     {"yellow", get_yellow_static, set_yellow_static},
     {0, 0, 0}};
 
+int CJS_Color::ObjDefnID = -1;
+
 JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
                                          {"equal", equal_static},
                                          {0, 0}};
 
-int CJS_Color::g_nObjDefnID = -1;
-
+// static
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
+  ObjDefnID =
       pEngine->DefineObj("color", eObjType, JSConstructor<CJS_Color, color>,
                          JSDestructor<CJS_Color>);
-  DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
-  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
 
 // static
