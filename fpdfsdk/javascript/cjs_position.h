@@ -14,7 +14,6 @@ class CJS_Position : public CJS_Object {
   explicit CJS_Position(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Position() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSConstSpec ConstSpecs[];
 

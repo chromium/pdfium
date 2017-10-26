@@ -182,7 +182,6 @@ JSMethodSpec CJS_Global::MethodSpecs[] = {
     {"setPersistent", setPersistent_static},
     {0, 0}};
 
-const char* CJS_Global::g_pClassName = "global";
 int CJS_Global::g_nObjDefnID = -1;
 
 // static
@@ -232,8 +231,8 @@ void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
 
 void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(
-      CJS_Global::g_pClassName, eObjType,
-      JSConstructor<CJS_Global, JSGlobalAlternate>, JSDestructor<CJS_Global>);
+      "global", eObjType, JSConstructor<CJS_Global, JSGlobalAlternate>,
+      JSDestructor<CJS_Global>);
   DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
   DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
   DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);

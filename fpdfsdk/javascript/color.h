@@ -88,7 +88,6 @@ class CJS_Color : public CJS_Object {
   explicit CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Color() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
   static JSMethodSpec MethodSpecs[];

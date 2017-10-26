@@ -14,13 +14,11 @@ JSPropertySpec CJS_Icon::PropertySpecs[] = {
     {"name", get_name_static, set_name_static},
     {0, 0, 0}};
 
-const char* CJS_Icon::g_pClassName = "Icon";
 int CJS_Icon::g_nObjDefnID = -1;
 
 void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
-      pEngine->DefineObj(CJS_Icon::g_pClassName, eObjType,
-                         JSConstructor<CJS_Icon, Icon>, JSDestructor<CJS_Icon>);
+  g_nObjDefnID = pEngine->DefineObj(
+      "Icon", eObjType, JSConstructor<CJS_Icon, Icon>, JSDestructor<CJS_Icon>);
   DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
 }
 

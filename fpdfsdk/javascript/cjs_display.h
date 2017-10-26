@@ -14,7 +14,6 @@ class CJS_Display : public CJS_Object {
   explicit CJS_Display(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Display() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSConstSpec ConstSpecs[];
 

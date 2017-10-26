@@ -38,13 +38,12 @@
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
-const char* CJS_PrintParamsObj::g_pClassName = "PrintParamsObj";
 int CJS_PrintParamsObj::g_nObjDefnID = -1;
 
 void CJS_PrintParamsObj::DefineJSObjects(CFXJS_Engine* pEngine,
                                          FXJSOBJTYPE eObjType) {
   g_nObjDefnID =
-      pEngine->DefineObj(CJS_PrintParamsObj::g_pClassName, eObjType,
+      pEngine->DefineObj("PrintParamsObj", eObjType,
                          JSConstructor<CJS_PrintParamsObj, PrintParamsObj>,
                          JSDestructor<CJS_PrintParamsObj>);
 }
@@ -146,12 +145,11 @@ JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"mailDoc", mailDoc_static},
     {0, 0}};
 
-const char* CJS_Document::g_pClassName = "Document";
 int CJS_Document::g_nObjDefnID = -1;
 
 void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Document::g_pClassName, eObjType,
+  g_nObjDefnID = pEngine->DefineObj("Document", eObjType,
                                     JSConstructor<CJS_Document, Document>,
                                     JSDestructor<CJS_Document>);
   DefineProps(pEngine, g_nObjDefnID, PropertySpecs);

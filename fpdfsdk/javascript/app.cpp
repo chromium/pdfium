@@ -142,12 +142,11 @@ GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
   return s_TimerMap;
 }
 
-const char* CJS_TimerObj::g_pClassName = "TimerObj";
 int CJS_TimerObj::g_nObjDefnID = -1;
 
 void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_TimerObj::g_pClassName, eObjType,
+  g_nObjDefnID = pEngine->DefineObj("TimerObj", eObjType,
                                     JSConstructor<CJS_TimerObj, TimerObj>,
                                     JSDestructor<CJS_TimerObj>);
 }
@@ -211,13 +210,11 @@ JSMethodSpec CJS_App::MethodSpecs[] = {{"alert", alert_static},
                                        {"setTimeOut", setTimeOut_static},
                                        {0, 0}};
 
-const char* CJS_App::g_pClassName = "app";
 int CJS_App::g_nObjDefnID = -1;
 
 void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
-      pEngine->DefineObj(CJS_App::g_pClassName, eObjType,
-                         JSConstructor<CJS_App, app>, JSDestructor<CJS_App>);
+  g_nObjDefnID = pEngine->DefineObj(
+      "app", eObjType, JSConstructor<CJS_App, app>, JSDestructor<CJS_App>);
   DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
   DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }

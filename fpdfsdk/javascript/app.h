@@ -33,7 +33,6 @@ class CJS_TimerObj : public CJS_Object {
   explicit CJS_TimerObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_TimerObj() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
 
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
@@ -146,7 +145,6 @@ class CJS_App : public CJS_Object {
   explicit CJS_App(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_App() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
   static JSMethodSpec MethodSpecs[];

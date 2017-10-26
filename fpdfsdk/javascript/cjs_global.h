@@ -17,7 +17,6 @@ class CJS_Global : public CJS_Object {
   // CJS_Object
   void InitInstance(IJS_Runtime* pIRuntime) override;
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSConstSpec ConstSpecs[];
   static JSPropertySpec PropertySpecs[];

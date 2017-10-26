@@ -16,12 +16,10 @@ JSConstSpec CJS_Zoomtype::ConstSpecs[] = {
     {"refW", JSConstSpec::String, 0, "ReflowWidth"},
     {0, JSConstSpec::Number, 0, 0}};
 
-const char* CJS_Zoomtype::g_pClassName = "zoomtype";
 int CJS_Zoomtype::g_nObjDefnID = -1;
 
 void CJS_Zoomtype::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Zoomtype::g_pClassName, eObjType,
-                                    nullptr, nullptr);
+  g_nObjDefnID = pEngine->DefineObj("zoomtype", eObjType, nullptr, nullptr);
   DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
 }

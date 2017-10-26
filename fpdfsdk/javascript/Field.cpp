@@ -165,13 +165,12 @@ JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"signatureValidate", signatureValidate_static},
     {0, 0}};
 
-const char* CJS_Field::g_pClassName = "Field";
 int CJS_Field::g_nObjDefnID = -1;
 
 void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Field::g_pClassName, eObjType,
-                                    JSConstructor<CJS_Field, Field>,
-                                    JSDestructor<CJS_Field>);
+  g_nObjDefnID =
+      pEngine->DefineObj("Field", eObjType, JSConstructor<CJS_Field, Field>,
+                         JSDestructor<CJS_Field>);
   DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
   DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }

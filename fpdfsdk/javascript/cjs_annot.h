@@ -35,7 +35,6 @@ class CJS_Annot : public CJS_Object {
   explicit CJS_Annot(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Annot() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
 

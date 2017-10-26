@@ -31,7 +31,6 @@ class CJS_Icon : public CJS_Object {
   explicit CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Icon() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
 

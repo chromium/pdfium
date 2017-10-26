@@ -14,11 +14,9 @@ JSConstSpec CJS_Border::ConstSpecs[] = {
     {"u", JSConstSpec::String, 0, "underline"},
     {0, JSConstSpec::Number, 0, 0}};
 
-const char* CJS_Border::g_pClassName = "border";
 int CJS_Border::g_nObjDefnID = -1;
 
 void CJS_Border::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
-      pEngine->DefineObj(CJS_Border::g_pClassName, eObjType, nullptr, nullptr);
+  g_nObjDefnID = pEngine->DefineObj("border", eObjType, nullptr, nullptr);
   DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
 }

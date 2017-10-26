@@ -23,11 +23,9 @@ JSConstSpec CJS_Font::ConstSpecs[] = {
     {"ZapfD", JSConstSpec::String, 0, "ZapfDingbats"},
     {0, JSConstSpec::Number, 0, 0}};
 
-const char* CJS_Font::g_pClassName = "font";
 int CJS_Font::g_nObjDefnID = -1;
 
 void CJS_Font::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
-      pEngine->DefineObj(CJS_Font::g_pClassName, eObjType, nullptr, nullptr);
+  g_nObjDefnID = pEngine->DefineObj("font", eObjType, nullptr, nullptr);
   DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
 }

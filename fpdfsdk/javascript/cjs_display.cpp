@@ -12,11 +12,9 @@ JSConstSpec CJS_Display::ConstSpecs[] = {{"visible", JSConstSpec::Number, 0, 0},
                                          {"noView", JSConstSpec::Number, 3, 0},
                                          {0, JSConstSpec::Number, 0, 0}};
 
-const char* CJS_Display::g_pClassName = "display";
 int CJS_Display::g_nObjDefnID = -1;
 
 void CJS_Display::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
-      pEngine->DefineObj(CJS_Display::g_pClassName, eObjType, nullptr, nullptr);
+  g_nObjDefnID = pEngine->DefineObj("display", eObjType, nullptr, nullptr);
   DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
 }

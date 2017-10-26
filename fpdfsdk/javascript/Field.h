@@ -364,7 +364,6 @@ class CJS_Field : public CJS_Object {
 
   void InitInstance(IJS_Runtime* pIRuntime) override;
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
   static JSMethodSpec MethodSpecs[];

@@ -13,12 +13,10 @@ JSConstSpec CJS_Highlight::ConstSpecs[] = {
     {"o", JSConstSpec::String, 0, "outline"},
     {0, JSConstSpec::Number, 0, 0}};
 
-const char* CJS_Highlight::g_pClassName = "highlight";
 int CJS_Highlight::g_nObjDefnID = -1;
 
 void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine,
                                     FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Highlight::g_pClassName, eObjType,
-                                    nullptr, nullptr);
+  g_nObjDefnID = pEngine->DefineObj("highlight", eObjType, nullptr, nullptr);
   DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
 }

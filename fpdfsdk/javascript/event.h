@@ -80,7 +80,6 @@ class CJS_Event : public CJS_Object {
   explicit CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Event() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
 

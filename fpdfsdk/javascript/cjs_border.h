@@ -14,7 +14,6 @@ class CJS_Border : public CJS_Object {
   explicit CJS_Border(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Border() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSConstSpec ConstSpecs[];
 

@@ -34,13 +34,12 @@ JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
                                          {"equal", equal_static},
                                          {0, 0}};
 
-const char* CJS_Color::g_pClassName = "color";
 int CJS_Color::g_nObjDefnID = -1;
 
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Color::g_pClassName, eObjType,
-                                    JSConstructor<CJS_Color, color>,
-                                    JSDestructor<CJS_Color>);
+  g_nObjDefnID =
+      pEngine->DefineObj("color", eObjType, JSConstructor<CJS_Color, color>,
+                         JSDestructor<CJS_Color>);
   DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
   DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }

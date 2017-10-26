@@ -20,11 +20,10 @@ JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
                                            {"show", show_static},
                                            {0, 0}};
 
-const char* CJS_Console::g_pClassName = "console";
 int CJS_Console::g_nObjDefnID = -1;
 
 void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Console::g_pClassName, eObjType,
+  g_nObjDefnID = pEngine->DefineObj("console", eObjType,
                                     JSConstructor<CJS_Console, console>,
                                     JSDestructor<CJS_Console>);
   DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);

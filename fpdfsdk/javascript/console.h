@@ -32,7 +32,6 @@ class CJS_Console : public CJS_Object {
   explicit CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Console() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSMethodSpec MethodSpecs[];
 

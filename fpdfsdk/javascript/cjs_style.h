@@ -14,7 +14,6 @@ class CJS_Style : public CJS_Object {
   explicit CJS_Style(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Style() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSConstSpec ConstSpecs[];
 

@@ -38,7 +38,6 @@ class CJS_PrintParamsObj : public CJS_Object {
       : CJS_Object(pObject) {}
   ~CJS_PrintParamsObj() override {}
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
 
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
@@ -272,7 +271,6 @@ class CJS_Document : public CJS_Object {
   // CJS_Object
   void InitInstance(IJS_Runtime* pIRuntime) override;
 
-  static const char* g_pClassName;
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
   static JSMethodSpec MethodSpecs[];

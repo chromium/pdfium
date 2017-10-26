@@ -33,13 +33,11 @@ JSMethodSpec CJS_Util::MethodSpecs[] = {
     {"printx", printx_static},         {"scand", scand_static},
     {"byteToChar", byteToChar_static}, {0, 0}};
 
-const char* CJS_Util::g_pClassName = "util";
 int CJS_Util::g_nObjDefnID = -1;
 
 void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID =
-      pEngine->DefineObj(CJS_Util::g_pClassName, eObjType,
-                         JSConstructor<CJS_Util, util>, JSDestructor<CJS_Util>);
+  g_nObjDefnID = pEngine->DefineObj(
+      "util", eObjType, JSConstructor<CJS_Util, util>, JSDestructor<CJS_Util>);
   DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }
 

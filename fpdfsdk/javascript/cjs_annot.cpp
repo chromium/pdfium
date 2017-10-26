@@ -25,13 +25,12 @@ JSPropertySpec CJS_Annot::PropertySpecs[] = {
     {"type", get_type_static, set_type_static},
     {0, 0, 0}};
 
-const char* CJS_Annot::g_pClassName = "Annot";
 int CJS_Annot::g_nObjDefnID = -1;
 
 void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Annot::g_pClassName, eObjType,
-                                    JSConstructor<CJS_Annot, Annot>,
-                                    JSDestructor<CJS_Annot>);
+  g_nObjDefnID =
+      pEngine->DefineObj("Annot", eObjType, JSConstructor<CJS_Annot, Annot>,
+                         JSDestructor<CJS_Annot>);
   DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
 }
 
