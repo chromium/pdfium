@@ -179,36 +179,6 @@ CJS_Return::CJS_Return(const CJS_Return&) = default;
 
 CJS_Return::~CJS_Return() = default;
 
-CJS_Array::CJS_Array() {}
-
-CJS_Array::CJS_Array(v8::Local<v8::Array> pArray) : m_pArray(pArray) {}
-
-CJS_Array::CJS_Array(const CJS_Array& other) = default;
-
-CJS_Array::~CJS_Array() {}
-
-v8::Local<v8::Value> CJS_Array::GetElement(CJS_Runtime* pRuntime,
-                                           unsigned index) const {
-  if (!m_pArray.IsEmpty())
-    return {pRuntime->GetArrayElement(m_pArray, index)};
-  return {};
-}
-
-void CJS_Array::SetElement(CJS_Runtime* pRuntime,
-                           unsigned index,
-                           v8::Local<v8::Value> value) {
-  if (m_pArray.IsEmpty())
-    m_pArray = pRuntime->NewArray();
-
-  pRuntime->PutArrayElement(m_pArray, index, value);
-}
-
-int CJS_Array::GetLength(CJS_Runtime* pRuntime) const {
-  if (m_pArray.IsEmpty())
-    return 0;
-  return pRuntime->GetArrayLength(m_pArray);
-}
-
 double JS_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;

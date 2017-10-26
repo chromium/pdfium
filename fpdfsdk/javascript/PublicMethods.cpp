@@ -247,10 +247,11 @@ double CJS_PublicMethods::AF_Simple(const wchar_t* sFuction,
   return dValue1;
 }
 
-CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
-                                                  v8::Local<v8::Value> val) {
+v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
+    CJS_Runtime* pRuntime,
+    v8::Local<v8::Value> val) {
   if (!val.IsEmpty() && val->IsArray())
-    return CJS_Array(pRuntime->ToArray(val));
+    return pRuntime->ToArray(val);
 
   WideString wsStr = pRuntime->ToWideString(val);
   ByteString t = ByteString::FromUnicode(wsStr);
@@ -259,12 +260,13 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
   int ch = ',';
   int nIndex = 0;
 
-  CJS_Array StrArray;
+  v8::Local<v8::Array> StrArray = pRuntime->NewArray();
   while (*p) {
     const char* pTemp = strchr(p, ch);
     if (!pTemp) {
-      StrArray.SetElement(pRuntime, nIndex,
-                          pRuntime->NewString(StrTrim(ByteString(p)).c_str()));
+      pRuntime->PutArrayElement(
+          StrArray, nIndex,
+          pRuntime->NewString(StrTrim(ByteString(p)).c_str()));
       break;
     }
 
@@ -272,8 +274,9 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     strncpy(pSub, p, pTemp - p);
     *(pSub + (pTemp - p)) = '\0';
 
-    StrArray.SetElement(pRuntime, nIndex,
-                        pRuntime->NewString(StrTrim(ByteString(pSub)).c_str()));
+    pRuntime->PutArrayElement(
+        StrArray, nIndex,
+        pRuntime->NewString(StrTrim(ByteString(pSub)).c_str()));
     delete[] pSub;
 
     nIndex++;
@@ -893,29 +896,29 @@ CJS_Return CJS_PublicMethods::AFNumber_Format(
       Value = L"(" + Value + L")";
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
-        CJS_Array arColor;
-        arColor.SetElement(pRuntime, 0, pRuntime->NewString(L"RGB"));
-        arColor.SetElement(pRuntime, 1, pRuntime->NewNumber(1));
-        arColor.SetElement(pRuntime, 2, pRuntime->NewNumber(0));
-        arColor.SetElement(pRuntime, 3, pRuntime->NewNumber(0));
-        fTarget->set_text_color(pRuntime, arColor.ToV8Value());
+        v8::Local<v8::Array> arColor = pRuntime->NewArray();
+        pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString(L"RGB"));
+        pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(1));
+        pRuntime->PutArrayElement(arColor, 2, pRuntime->NewNumber(0));
+        pRuntime->PutArrayElement(arColor, 3, pRuntime->NewNumber(0));
+        fTarget->set_text_color(pRuntime, arColor);
       }
     }
   } else {
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
-        CJS_Array arColor;
-        arColor.SetElement(pRuntime, 0, pRuntime->NewString(L"RGB"));
-        arColor.SetElement(pRuntime, 1, pRuntime->NewNumber(0));
-        arColor.SetElement(pRuntime, 2, pRuntime->NewNumber(0));
-        arColor.SetElement(pRuntime, 3, pRuntime->NewNumber(0));
+        v8::Local<v8::Array> arColor = pRuntime->NewArray();
+        pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString(L"RGB"));
+        pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(0));
+        pRuntime->PutArrayElement(arColor, 2, pRuntime->NewNumber(0));
+        pRuntime->PutArrayElement(arColor, 3, pRuntime->NewNumber(0));
 
         CJS_Return result = fTarget->get_text_color(pRuntime);
         CFX_Color crProp = color::ConvertArrayToPWLColor(
-            pRuntime, CJS_Array(pRuntime->ToArray(result.Return())));
+            pRuntime, pRuntime->ToArray(result.Return()));
         CFX_Color crColor = color::ConvertArrayToPWLColor(pRuntime, arColor);
         if (crColor != crProp)
-          fTarget->set_text_color(pRuntime, arColor.ToV8Value());
+          fTarget->set_text_color(pRuntime, arColor);
       }
     }
   }
@@ -1602,12 +1605,12 @@ CJS_Return CJS_PublicMethods::AFSimple_Calculate(
   WideString sFunction = pRuntime->ToWideString(params[0]);
   double dValue = wcscmp(sFunction.c_str(), L"PRD") == 0 ? 1.0 : 0.0;
 
-  CJS_Array FieldNameArray = AF_MakeArrayFromList(pRuntime, params[0]);
+  v8::Local<v8::Array> FieldNameArray =
+      AF_MakeArrayFromList(pRuntime, params[0]);
   int nFieldsCount = 0;
-
-  for (int i = 0, isz = FieldNameArray.GetLength(pRuntime); i < isz; i++) {
+  for (size_t i = 0; i < pRuntime->GetArrayLength(FieldNameArray); i++) {
     WideString wsFieldName =
-        pRuntime->ToWideString(FieldNameArray.GetElement(pRuntime, i));
+        pRuntime->ToWideString(pRuntime->GetArrayElement(FieldNameArray, i));
 
     for (int j = 0, jsz = pInterForm->CountFields(wsFieldName); j < jsz; j++) {
       if (CPDF_FormField* pFormField = pInterForm->GetField(j, wsFieldName)) {
@@ -1735,24 +1738,22 @@ CJS_Return CJS_PublicMethods::AFExtractNums(
     str = L"0" + str;
 
   WideString sPart;
-  CJS_Array nums;
+  v8::Local<v8::Array> nums = pRuntime->NewArray();
   int nIndex = 0;
   for (const auto& wc : str) {
     if (std::iswdigit(wc)) {
       sPart += wc;
     } else if (sPart.GetLength() > 0) {
-      nums.SetElement(pRuntime, nIndex, pRuntime->NewString(sPart.c_str()));
+      pRuntime->PutArrayElement(nums, nIndex,
+                                pRuntime->NewString(sPart.c_str()));
       sPart = L"";
       nIndex++;
     }
   }
   if (sPart.GetLength() > 0)
-    nums.SetElement(pRuntime, nIndex, pRuntime->NewString(sPart.c_str()));
+    pRuntime->PutArrayElement(nums, nIndex, pRuntime->NewString(sPart.c_str()));
 
-  if (nums.GetLength(pRuntime) > 0) {
-    if (nums.ToV8Value().IsEmpty())
-      return CJS_Return(pRuntime->NewArray());
-    return CJS_Return(nums.ToV8Value());
-  }
+  if (pRuntime->GetArrayLength(nums) > 0)
+    return CJS_Return(nums);
   return CJS_Return(pRuntime->NewUndefined());
 }

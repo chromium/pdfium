@@ -14,10 +14,10 @@
 
 class color : public CJS_EmbedObj {
  public:
-  static CJS_Array ConvertPWLColorToArray(CJS_Runtime* pRuntime,
-                                          const CFX_Color& color);
+  static v8::Local<v8::Array> ConvertPWLColorToArray(CJS_Runtime* pRuntime,
+                                                     const CFX_Color& color);
   static CFX_Color ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
-                                          const CJS_Array& array);
+                                          v8::Local<v8::Array> array);
 
   explicit color(CJS_Object* pJSObject);
   ~color() override;

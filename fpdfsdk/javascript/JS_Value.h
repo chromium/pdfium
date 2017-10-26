@@ -11,8 +11,6 @@
 
 #include "fxjs/fxjs_v8.h"
 
-class CJS_Array;
-class CJS_Date;
 class CJS_Document;
 class CJS_Object;
 class CJS_Runtime;
@@ -37,27 +35,6 @@ class CJS_Return {
   bool is_error_ = false;
   WideString error_;
   v8::Local<v8::Value> return_;
-};
-
-class CJS_Array {
- public:
-  CJS_Array();
-  explicit CJS_Array(v8::Local<v8::Array> pArray);
-  CJS_Array(const CJS_Array& other);
-  virtual ~CJS_Array();
-
-  int GetLength(CJS_Runtime* pRuntime) const;
-
-  // These two calls may re-enter JS (and hence invalidate objects).
-  v8::Local<v8::Value> GetElement(CJS_Runtime* pRuntime, unsigned index) const;
-  void SetElement(CJS_Runtime* pRuntime,
-                  unsigned index,
-                  v8::Local<v8::Value> value);
-
-  v8::Local<v8::Value> ToV8Value() const { return m_pArray; }
-
- private:
-  mutable v8::Local<v8::Array> m_pArray;
 };
 
 double JS_GetDateTime();

@@ -152,8 +152,8 @@ class CJS_PublicMethods : public CJS_Object {
   static double AF_Simple(const wchar_t* sFuction,
                           double dValue1,
                           double dValue2);
-  static CJS_Array AF_MakeArrayFromList(CJS_Runtime* pRuntime,
-                                        v8::Local<v8::Value> val);
+  static v8::Local<v8::Array> AF_MakeArrayFromList(CJS_Runtime* pRuntime,
+                                                   v8::Local<v8::Value> val);
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_PUBLICMETHODS_H_

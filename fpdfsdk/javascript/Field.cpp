@@ -792,14 +792,14 @@ CJS_Return Field::get_current_value_indices(CJS_Runtime* pRuntime) {
   if (count == 1)
     return CJS_Return(pRuntime->NewNumber(pFormField->GetSelectedIndex(0)));
 
-  CJS_Array SelArray;
-  for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
-    SelArray.SetElement(pRuntime, i,
-                        pRuntime->NewNumber(pFormField->GetSelectedIndex(i)));
+  v8::Local<v8::Array> SelArray = pRuntime->NewArray();
+  for (int i = 0; i < count; i++) {
+    pRuntime->PutArrayElement(
+        SelArray, i, pRuntime->NewNumber(pFormField->GetSelectedIndex(i)));
   }
-  if (SelArray.ToV8Value().IsEmpty())
+  if (SelArray.IsEmpty())
     return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(SelArray.ToV8Value());
+  return CJS_Return(SelArray);
 }
 
 CJS_Return Field::set_current_value_indices(CJS_Runtime* pRuntime,
@@ -811,9 +811,11 @@ CJS_Return Field::set_current_value_indices(CJS_Runtime* pRuntime,
   if (vp->IsNumber()) {
     array.push_back(pRuntime->ToInt32(vp));
   } else if (!vp.IsEmpty() && vp->IsArray()) {
-    CJS_Array SelArray(pRuntime->ToArray(vp));
-    for (int i = 0, sz = SelArray.GetLength(pRuntime); i < sz; i++)
-      array.push_back(pRuntime->ToInt32(SelArray.GetElement(pRuntime, i)));
+    v8::Local<v8::Array> SelArray = pRuntime->ToArray(vp);
+    for (size_t i = 0; i < pRuntime->GetArrayLength(SelArray); i++) {
+      array.push_back(
+          pRuntime->ToInt32(pRuntime->GetArrayElement(SelArray, i)));
+    }
   }
 
   if (m_bDelay) {
@@ -1058,12 +1060,12 @@ CJS_Return Field::get_export_values(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
   }
 
-  CJS_Array ExportValuesArray;
+  v8::Local<v8::Array> ExportValuesArray = pRuntime->NewArray();
   if (m_nFormControlIndex < 0) {
     for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
       CPDF_FormControl* pFormControl = pFormField->GetControl(i);
-      ExportValuesArray.SetElement(
-          pRuntime, i,
+      pRuntime->PutArrayElement(
+          ExportValuesArray, i,
           pRuntime->NewString(pFormControl->GetExportValue().c_str()));
     }
   } else {
@@ -1075,14 +1077,11 @@ CJS_Return Field::get_export_values(CJS_Runtime* pRuntime) {
     if (!pFormControl)
       return CJS_Return(false);
 
-    ExportValuesArray.SetElement(
-        pRuntime, 0,
+    pRuntime->PutArrayElement(
+        ExportValuesArray, 0,
         pRuntime->NewString(pFormControl->GetExportValue().c_str()));
   }
-
-  if (ExportValuesArray.ToV8Value().IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(ExportValuesArray.ToV8Value());
+  return CJS_Return(ExportValuesArray);
 }
 
 CJS_Return Field::set_export_values(CJS_Runtime* pRuntime,
@@ -1160,10 +1159,10 @@ CJS_Return Field::get_fill_color(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
   }
 
-  CJS_Array array = color::ConvertPWLColorToArray(pRuntime, color);
-  if (array.ToV8Value().IsEmpty())
+  v8::Local<v8::Value> array = color::ConvertPWLColorToArray(pRuntime, color);
+  if (array.IsEmpty())
     return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(array.ToV8Value());
+  return CJS_Return(array);
 }
 
 CJS_Return Field::set_fill_color(CJS_Runtime* pRuntime,
@@ -1417,7 +1416,7 @@ CJS_Return Field::get_page(CJS_Runtime* pRuntime) {
   if (widgets.empty())
     return CJS_Return(pRuntime->NewNumber(-1));
 
-  CJS_Array PageArray;
+  v8::Local<v8::Array> PageArray = pRuntime->NewArray();
   int i = 0;
   for (const auto& pObserved : widgets) {
     if (!pObserved)
@@ -1428,15 +1427,12 @@ CJS_Return Field::get_page(CJS_Runtime* pRuntime) {
     if (!pPageView)
       return CJS_Return(false);
 
-    PageArray.SetElement(
-        pRuntime, i,
+    pRuntime->PutArrayElement(
+        PageArray, i,
         pRuntime->NewNumber(static_cast<int32_t>(pPageView->GetPageIndex())));
     ++i;
   }
-
-  if (PageArray.ToV8Value().IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(PageArray.ToV8Value());
+  return CJS_Return(PageArray);
 }
 
 CJS_Return Field::set_page(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
@@ -1587,19 +1583,17 @@ CJS_Return Field::get_rect(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CFX_FloatRect crRect = pWidget->GetRect();
-  CJS_Array rcArray;
-  rcArray.SetElement(pRuntime, 0,
-                     pRuntime->NewNumber(static_cast<int32_t>(crRect.left)));
-  rcArray.SetElement(pRuntime, 1,
-                     pRuntime->NewNumber(static_cast<int32_t>(crRect.top)));
-  rcArray.SetElement(pRuntime, 2,
-                     pRuntime->NewNumber(static_cast<int32_t>(crRect.right)));
-  rcArray.SetElement(pRuntime, 3,
-                     pRuntime->NewNumber(static_cast<int32_t>(crRect.bottom)));
+  v8::Local<v8::Array> rcArray = pRuntime->NewArray();
+  pRuntime->PutArrayElement(
+      rcArray, 0, pRuntime->NewNumber(static_cast<int32_t>(crRect.left)));
+  pRuntime->PutArrayElement(
+      rcArray, 1, pRuntime->NewNumber(static_cast<int32_t>(crRect.top)));
+  pRuntime->PutArrayElement(
+      rcArray, 2, pRuntime->NewNumber(static_cast<int32_t>(crRect.right)));
+  pRuntime->PutArrayElement(
+      rcArray, 3, pRuntime->NewNumber(static_cast<int32_t>(crRect.bottom)));
 
-  if (rcArray.ToV8Value().IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(rcArray.ToV8Value());
+  return CJS_Return(rcArray);
 }
 
 CJS_Return Field::set_rect(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
@@ -1608,16 +1602,19 @@ CJS_Return Field::set_rect(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   if (vp.IsEmpty() || !vp->IsArray())
     return CJS_Return(false);
 
-  CJS_Array rcArray(pRuntime->ToArray(vp));
+  v8::Local<v8::Array> rcArray = pRuntime->ToArray(vp);
+  if (pRuntime->GetArrayLength(rcArray) < 4)
+    return CJS_Return(false);
+
   float pArray[4];
-  pArray[0] =
-      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 0)));
-  pArray[1] =
-      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 1)));
-  pArray[2] =
-      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 2)));
-  pArray[3] =
-      static_cast<float>(pRuntime->ToInt32(rcArray.GetElement(pRuntime, 3)));
+  pArray[0] = static_cast<float>(
+      pRuntime->ToInt32(pRuntime->GetArrayElement(rcArray, 0)));
+  pArray[1] = static_cast<float>(
+      pRuntime->ToInt32(pRuntime->GetArrayElement(rcArray, 1)));
+  pArray[2] = static_cast<float>(
+      pRuntime->ToInt32(pRuntime->GetArrayElement(rcArray, 2)));
+  pArray[3] = static_cast<float>(
+      pRuntime->ToInt32(pRuntime->GetArrayElement(rcArray, 3)));
 
   CFX_FloatRect crRect(pArray);
   if (m_bDelay) {
@@ -1791,10 +1788,10 @@ CJS_Return Field::get_stroke_color(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
   }
 
-  CJS_Array array = color::ConvertPWLColorToArray(pRuntime, color);
-  if (array.ToV8Value().IsEmpty())
+  v8::Local<v8::Value> array = color::ConvertPWLColorToArray(pRuntime, color);
+  if (array.IsEmpty())
     return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(array.ToV8Value());
+  return CJS_Return(array);
 }
 
 CJS_Return Field::set_stroke_color(CJS_Runtime* pRuntime,
@@ -1891,10 +1888,10 @@ CJS_Return Field::get_text_color(CJS_Runtime* pRuntime) {
   if (iColorType == CFX_Color::kTransparent)
     crRet = CFX_Color(CFX_Color::kTransparent);
 
-  CJS_Array array = color::ConvertPWLColorToArray(pRuntime, crRet);
-  if (array.ToV8Value().IsEmpty())
+  v8::Local<v8::Value> array = color::ConvertPWLColorToArray(pRuntime, crRet);
+  if (array.IsEmpty())
     return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(array.ToV8Value());
+  return CJS_Return(array);
 }
 
 CJS_Return Field::set_text_color(CJS_Runtime* pRuntime,
@@ -2033,7 +2030,7 @@ CJS_Return Field::get_value(CJS_Runtime* pRuntime) {
       break;
     case FIELDTYPE_LISTBOX: {
       if (pFormField->CountSelectedItems() > 1) {
-        CJS_Array ValueArray;
+        v8::Local<v8::Array> ValueArray = pRuntime->NewArray();
         v8::Local<v8::Value> ElementValue;
         int iIndex;
         for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
@@ -2044,13 +2041,9 @@ CJS_Return Field::get_value(CJS_Runtime* pRuntime) {
             ElementValue =
                 pRuntime->NewString(pFormField->GetOptionLabel(iIndex).c_str());
           }
-          ValueArray.SetElement(pRuntime, i, ElementValue);
+          pRuntime->PutArrayElement(ValueArray, i, ElementValue);
         }
-
-        if (ValueArray.ToV8Value().IsEmpty())
-          ret = pRuntime->NewArray();
-        else
-          ret = ValueArray.ToV8Value();
+        ret = ValueArray;
       } else {
         ret = pRuntime->NewString(pFormField->GetValue().c_str());
       }
@@ -2085,10 +2078,10 @@ CJS_Return Field::set_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 
   std::vector<WideString> strArray;
   if (!vp.IsEmpty() && vp->IsArray()) {
-    CJS_Array ValueArray(pRuntime->ToArray(vp));
-    for (int i = 0, sz = ValueArray.GetLength(pRuntime); i < sz; i++) {
+    v8::Local<v8::Array> ValueArray = pRuntime->ToArray(vp);
+    for (size_t i = 0; i < pRuntime->GetArrayLength(ValueArray); i++) {
       strArray.push_back(
-          pRuntime->ToWideString(ValueArray.GetElement(pRuntime, i)));
+          pRuntime->ToWideString(pRuntime->GetArrayElement(ValueArray, i)));
     }
   } else {
     strArray.push_back(pRuntime->ToWideString(vp));
@@ -2388,8 +2381,7 @@ CJS_Return Field::getArray(CJS_Runtime* pRuntime,
             [](const std::unique_ptr<WideString>& p1,
                const std::unique_ptr<WideString>& p2) { return *p1 < *p2; });
 
-  CJS_Array FormFieldArray;
-
+  v8::Local<v8::Array> FormFieldArray = pRuntime->NewArray();
   int j = 0;
   for (const auto& pStr : swSort) {
     v8::Local<v8::Object> pObj =
@@ -2401,15 +2393,12 @@ CJS_Return Field::getArray(CJS_Runtime* pRuntime,
         static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pObj));
     Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
     pField->AttachField(m_pJSDoc, *pStr);
-    FormFieldArray.SetElement(pRuntime, j++,
+    pRuntime->PutArrayElement(FormFieldArray, j++,
                               pJSField
                                   ? v8::Local<v8::Value>(pJSField->ToV8Object())
                                   : v8::Local<v8::Value>());
   }
-
-  if (FormFieldArray.ToV8Value().IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(FormFieldArray.ToV8Value());
+  return CJS_Return(FormFieldArray);
 }
 
 CJS_Return Field::getItemAt(CJS_Runtime* pRuntime,

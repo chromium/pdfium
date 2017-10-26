@@ -507,15 +507,18 @@ CJS_Return Document::resetForm(
     return CJS_Return(true);
   }
 
-  CJS_Array aName;
-  if (params[0]->IsString())
-    aName.SetElement(pRuntime, 0, params[0]);
-  else
-    aName = CJS_Array(pRuntime->ToArray(params[0]));
+  v8::Local<v8::Array> array;
+  if (params[0]->IsString()) {
+    array = pRuntime->NewArray();
+    pRuntime->PutArrayElement(array, 0, params[0]);
+  } else {
+    array = pRuntime->ToArray(params[0]);
+  }
 
   std::vector<CPDF_FormField*> aFields;
-  for (int i = 0, isz = aName.GetLength(pRuntime); i < isz; ++i) {
-    WideString swVal = pRuntime->ToWideString(aName.GetElement(pRuntime, i));
+  for (size_t i = 0; i < pRuntime->GetArrayLength(array); ++i) {
+    WideString swVal =
+        pRuntime->ToWideString(pRuntime->GetArrayElement(array, i));
     for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
       aFields.push_back(pPDFForm->GetField(j, swVal));
   }
@@ -549,7 +552,7 @@ CJS_Return Document::submitForm(
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
 
-  CJS_Array aFields;
+  v8::Local<v8::Array> aFields;
   WideString strURL;
   bool bFDF = true;
   bool bEmpty = false;
@@ -560,7 +563,7 @@ CJS_Return Document::submitForm(
     if (nSize > 2)
       bEmpty = pRuntime->ToBoolean(params[2]);
     if (nSize > 3)
-      aFields = CJS_Array(pRuntime->ToArray(params[3]));
+      aFields = pRuntime->ToArray(params[3]);
   } else if (params[0]->IsObject()) {
     v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0]);
     v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"cURL");
@@ -569,13 +572,13 @@ CJS_Return Document::submitForm(
 
     bFDF = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bFDF"));
     bEmpty = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bEmpty"));
-    aFields = CJS_Array(
-        pRuntime->ToArray(pRuntime->GetObjectProperty(pObj, L"aFields")));
+    aFields = pRuntime->ToArray(pRuntime->GetObjectProperty(pObj, L"aFields"));
   }
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  if (aFields.GetLength(pRuntime) == 0 && bEmpty) {
+
+  if (pRuntime->GetArrayLength(aFields) == 0 && bEmpty) {
     if (pPDFInterForm->CheckRequiredFields(nullptr, true)) {
       pRuntime->BeginBlock();
       pInterForm->SubmitForm(strURL, false);
@@ -585,8 +588,9 @@ CJS_Return Document::submitForm(
   }
 
   std::vector<CPDF_FormField*> fieldObjects;
-  for (int i = 0, sz = aFields.GetLength(pRuntime); i < sz; ++i) {
-    WideString sName = pRuntime->ToWideString(aFields.GetElement(pRuntime, i));
+  for (size_t i = 0; i < pRuntime->GetArrayLength(aFields); ++i) {
+    WideString sName =
+        pRuntime->ToWideString(pRuntime->GetArrayElement(aFields, i));
     CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
     for (int j = 0, jsz = pPDFForm->CountFields(sName); j < jsz; ++j) {
       CPDF_FormField* pField = pPDFForm->GetField(j, sName);
@@ -1063,8 +1067,7 @@ CJS_Return Document::getAnnots(
   // the PDF spec.
 
   int nPageNo = m_pFormFillEnv->GetPageCount();
-  CJS_Array annots;
-
+  v8::Local<v8::Array> annots = pRuntime->NewArray();
   for (int i = 0; i < nPageNo; ++i) {
     CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(i);
     if (!pPageView)
@@ -1084,15 +1087,13 @@ CJS_Return Document::getAnnots(
           static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
       Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
       pAnnot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
-      annots.SetElement(pRuntime, i,
-                        pJS_Annot
-                            ? v8::Local<v8::Value>(pJS_Annot->ToV8Object())
-                            : v8::Local<v8::Value>());
+      pRuntime->PutArrayElement(
+          annots, i,
+          pJS_Annot ? v8::Local<v8::Value>(pJS_Annot->ToV8Object())
+                    : v8::Local<v8::Value>());
     }
   }
-  if (annots.ToV8Value().IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(annots.ToV8Value());
+  return CJS_Return(annots);
 }
 
 CJS_Return Document::getAnnot3D(
@@ -1148,7 +1149,7 @@ CJS_Return Document::get_icons(CJS_Runtime* pRuntime) {
   if (m_IconNames.empty())
     return CJS_Return(pRuntime->NewUndefined());
 
-  CJS_Array Icons;
+  v8::Local<v8::Array> Icons = pRuntime->NewArray();
   int i = 0;
   for (const auto& name : m_IconNames) {
     v8::Local<v8::Object> pObj =
@@ -1160,14 +1161,12 @@ CJS_Return Document::get_icons(CJS_Runtime* pRuntime) {
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
     Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
     pIcon->SetIconName(name);
-    Icons.SetElement(pRuntime, i++,
-                     pJS_Icon ? v8::Local<v8::Value>(pJS_Icon->ToV8Object())
-                              : v8::Local<v8::Value>());
+    pRuntime->PutArrayElement(Icons, i++,
+                              pJS_Icon
+                                  ? v8::Local<v8::Value>(pJS_Icon->ToV8Object())
+                                  : v8::Local<v8::Value>());
   }
-
-  if (Icons.ToV8Value().IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(Icons.ToV8Value());
+  return CJS_Return(Icons);
 }
 
 CJS_Return Document::set_icons(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {

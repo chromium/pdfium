@@ -224,15 +224,13 @@ CJS_Return app::get_active_docs(CJS_Runtime* pRuntime) {
   if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID)
     pJSDocument = static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
 
-  CJS_Array aDocs;
-  aDocs.SetElement(pRuntime, 0,
-                   pJSDocument ? v8::Local<v8::Value>(pJSDocument->ToV8Object())
-                               : v8::Local<v8::Value>());
-  if (aDocs.GetLength(pRuntime) > 0) {
-    if (aDocs.ToV8Value().IsEmpty())
-      return CJS_Return(pRuntime->NewArray());
-    return CJS_Return(aDocs.ToV8Value());
-  }
+  v8::Local<v8::Array> aDocs = pRuntime->NewArray();
+  pRuntime->PutArrayElement(
+      aDocs, 0,
+      pJSDocument ? v8::Local<v8::Value>(pJSDocument->ToV8Object())
+                  : v8::Local<v8::Value>());
+  if (pRuntime->GetArrayLength(aDocs) > 0)
+    return CJS_Return(aDocs);
   return CJS_Return(pRuntime->NewUndefined());
 }
 
@@ -361,13 +359,13 @@ CJS_Return app::alert(CJS_Runtime* pRuntime,
 
   WideString swMsg;
   if (newParams[0]->IsArray()) {
-    CJS_Array carray(pRuntime->ToArray(newParams[0]));
+    v8::Local<v8::Array> carray = pRuntime->ToArray(newParams[0]);
     swMsg = L"[";
-    for (int i = 0; i < carray.GetLength(pRuntime); ++i) {
+    for (size_t i = 0; i < pRuntime->GetArrayLength(carray); ++i) {
       if (i)
         swMsg += L", ";
 
-      swMsg += pRuntime->ToWideString(carray.GetElement(pRuntime, i));
+      swMsg += pRuntime->ToWideString(pRuntime->GetArrayElement(carray, i));
     }
     swMsg += L"]";
   } else {

@@ -39,29 +39,33 @@ JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
 IMPLEMENT_JS_CLASS(CJS_Color, color, color)
 
 // static
-CJS_Array color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
-                                        const CFX_Color& color) {
-  CJS_Array array;
+v8::Local<v8::Array> color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
+                                                   const CFX_Color& color) {
+  v8::Local<v8::Array> array;
   switch (color.nColorType) {
     case CFX_Color::kTransparent:
-      array.SetElement(pRuntime, 0, pRuntime->NewString(L"T"));
+      array = pRuntime->NewArray();
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"T"));
       break;
     case CFX_Color::kGray:
-      array.SetElement(pRuntime, 0, pRuntime->NewString(L"G"));
-      array.SetElement(pRuntime, 1, pRuntime->NewNumber(color.fColor1));
+      array = pRuntime->NewArray();
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"G"));
+      pRuntime->PutArrayElement(array, 1, pRuntime->NewNumber(color.fColor1));
       break;
     case CFX_Color::kRGB:
-      array.SetElement(pRuntime, 0, pRuntime->NewString(L"RGB"));
-      array.SetElement(pRuntime, 1, pRuntime->NewNumber(color.fColor1));
-      array.SetElement(pRuntime, 2, pRuntime->NewNumber(color.fColor2));
-      array.SetElement(pRuntime, 3, pRuntime->NewNumber(color.fColor3));
+      array = pRuntime->NewArray();
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"RGB"));
+      pRuntime->PutArrayElement(array, 1, pRuntime->NewNumber(color.fColor1));
+      pRuntime->PutArrayElement(array, 2, pRuntime->NewNumber(color.fColor2));
+      pRuntime->PutArrayElement(array, 3, pRuntime->NewNumber(color.fColor3));
       break;
     case CFX_Color::kCMYK:
-      array.SetElement(pRuntime, 0, pRuntime->NewString(L"CMYK"));
-      array.SetElement(pRuntime, 1, pRuntime->NewNumber(color.fColor1));
-      array.SetElement(pRuntime, 2, pRuntime->NewNumber(color.fColor2));
-      array.SetElement(pRuntime, 3, pRuntime->NewNumber(color.fColor3));
-      array.SetElement(pRuntime, 4, pRuntime->NewNumber(color.fColor4));
+      array = pRuntime->NewArray();
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"CMYK"));
+      pRuntime->PutArrayElement(array, 1, pRuntime->NewNumber(color.fColor1));
+      pRuntime->PutArrayElement(array, 2, pRuntime->NewNumber(color.fColor2));
+      pRuntime->PutArrayElement(array, 3, pRuntime->NewNumber(color.fColor3));
+      pRuntime->PutArrayElement(array, 4, pRuntime->NewNumber(color.fColor4));
       break;
   }
   return array;
@@ -69,18 +73,20 @@ CJS_Array color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
 
 // static
 CFX_Color color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
-                                        const CJS_Array& array) {
-  int nArrayLen = array.GetLength(pRuntime);
+                                        v8::Local<v8::Array> array) {
+  int nArrayLen = pRuntime->GetArrayLength(array);
   if (nArrayLen < 1)
     return CFX_Color();
 
-  WideString sSpace = pRuntime->ToWideString(array.GetElement(pRuntime, 0));
+  WideString sSpace =
+      pRuntime->ToWideString(pRuntime->GetArrayElement(array, 0));
   if (sSpace == L"T")
     return CFX_Color(CFX_Color::kTransparent);
 
   float d1 = 0;
   if (nArrayLen > 1) {
-    d1 = static_cast<float>(pRuntime->ToDouble(array.GetElement(pRuntime, 1)));
+    d1 = static_cast<float>(
+        pRuntime->ToDouble(pRuntime->GetArrayElement(array, 1)));
   }
 
   if (sSpace == L"G")
@@ -88,17 +94,23 @@ CFX_Color color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
 
   float d2 = 0;
   float d3 = 0;
-  if (nArrayLen > 2)
-    d2 = static_cast<float>(pRuntime->ToDouble(array.GetElement(pRuntime, 2)));
-  if (nArrayLen > 3)
-    d3 = static_cast<float>(pRuntime->ToDouble(array.GetElement(pRuntime, 3)));
+  if (nArrayLen > 2) {
+    d2 = static_cast<float>(
+        pRuntime->ToDouble(pRuntime->GetArrayElement(array, 2)));
+  }
+  if (nArrayLen > 3) {
+    d3 = static_cast<float>(
+        pRuntime->ToDouble(pRuntime->GetArrayElement(array, 3)));
+  }
 
   if (sSpace == L"RGB")
     return CFX_Color(CFX_Color::kRGB, d1, d2, d3);
 
   float d4 = 0;
-  if (nArrayLen > 4)
-    d4 = static_cast<float>(pRuntime->ToDouble(array.GetElement(pRuntime, 4)));
+  if (nArrayLen > 4) {
+    d4 = static_cast<float>(
+        pRuntime->ToDouble(pRuntime->GetArrayElement(array, 4)));
+  }
   if (sSpace == L"CMYK")
     return CFX_Color(CFX_Color::kCMYK, d1, d2, d3, d4);
 
@@ -222,10 +234,10 @@ CJS_Return color::set_light_gray(CJS_Runtime* pRuntime,
 }
 
 CJS_Return color::GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* var) {
-  CJS_Array array = ConvertPWLColorToArray(pRuntime, *var);
-  if (array.ToV8Value().IsEmpty())
+  v8::Local<v8::Value> array = ConvertPWLColorToArray(pRuntime, *var);
+  if (array.IsEmpty())
     return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(array.ToV8Value());
+  return CJS_Return(array);
 }
 
 CJS_Return color::SetPropertyHelper(CJS_Runtime* pRuntime,
@@ -234,7 +246,7 @@ CJS_Return color::SetPropertyHelper(CJS_Runtime* pRuntime,
   if (vp.IsEmpty() || !vp->IsArray())
     return CJS_Return(false);
 
-  *var = ConvertArrayToPWLColor(pRuntime, CJS_Array(pRuntime->ToArray(vp)));
+  *var = ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(vp));
   return CJS_Return(true);
 }
 
@@ -258,13 +270,13 @@ CJS_Return color::convert(CJS_Runtime* pRuntime,
     nColorType = CFX_Color::kCMYK;
 
   CFX_Color color =
-      ConvertArrayToPWLColor(pRuntime, CJS_Array(pRuntime->ToArray(params[0])));
+      ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[0]));
 
-  CJS_Array array =
+  v8::Local<v8::Value> array =
       ConvertPWLColorToArray(pRuntime, color.ConvertColorType(nColorType));
-  if (array.ToV8Value().IsEmpty())
+  if (array.IsEmpty())
     return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(array.ToV8Value());
+  return CJS_Return(array);
 }
 
 CJS_Return color::equal(CJS_Runtime* pRuntime,
@@ -277,9 +289,9 @@ CJS_Return color::equal(CJS_Runtime* pRuntime,
   }
 
   CFX_Color color1 =
-      ConvertArrayToPWLColor(pRuntime, CJS_Array(pRuntime->ToArray(params[0])));
+      ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[0]));
   CFX_Color color2 =
-      ConvertArrayToPWLColor(pRuntime, CJS_Array(pRuntime->ToArray(params[1])));
+      ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[1]));
 
   color1 = color1.ConvertColorType(color2.nColorType);
   return CJS_Return(pRuntime->NewBoolean(color1 == color2));
