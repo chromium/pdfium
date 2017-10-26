@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_ANNOT_H_
-#define FPDFSDK_JAVASCRIPT_ANNOT_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_ANNOT_H_
+#define FPDFSDK_JAVASCRIPT_CJS_ANNOT_H_
 
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/javascript/JS_Define.h"
@@ -41,4 +41,4 @@ class CJS_Annot : public CJS_Object {
   JS_STATIC_PROP(type, type, Annot);
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_ANNOT_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_ANNOT_H_

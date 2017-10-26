@@ -1188,8 +1188,6 @@ static_library("javascript") {
 
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/Annot.cpp",
-      "fpdfsdk/javascript/Annot.h",
       "fpdfsdk/javascript/Document.cpp",
       "fpdfsdk/javascript/Document.h",
       "fpdfsdk/javascript/Field.cpp",
@@ -1211,6 +1209,8 @@ static_library("javascript") {
       "fpdfsdk/javascript/PublicMethods.h",
       "fpdfsdk/javascript/app.cpp",
       "fpdfsdk/javascript/app.h",
+      "fpdfsdk/javascript/cjs_annot.cpp",
+      "fpdfsdk/javascript/cjs_annot.h",
       "fpdfsdk/javascript/cjs_border.cpp",
       "fpdfsdk/javascript/cjs_border.h",
       "fpdfsdk/javascript/cjs_display.cpp",

@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/javascript/Annot.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
@@ -20,6 +19,7 @@
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/PublicMethods.h"
 #include "fpdfsdk/javascript/app.h"
+#include "fpdfsdk/javascript/cjs_annot.h"
 #include "fpdfsdk/javascript/cjs_border.h"
 #include "fpdfsdk/javascript/cjs_display.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
