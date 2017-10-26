@@ -84,8 +84,9 @@ class TestRunner:
         if (self.options.regenerate_expected
             and not self.test_suppressor.IsResultSuppressed(input_filename)
             and not self.test_suppressor.IsImageDiffSuppressed(input_filename)):
+          platform_only = (self.options.regenerate_expected == 'platform')
           self.image_differ.Regenerate(input_filename, source_dir,
-                                       self.working_dir)
+                                       self.working_dir, platform_only)
         return False, results
     else:
       if (self.enforce_expected_images
@@ -165,24 +166,39 @@ class TestRunner:
                       help='run NUM_WORKERS jobs in parallel')
 
     parser.add_option('--gold_properties', default='', dest="gold_properties",
-                      help='Key value pairs that are written to the top level of the JSON file that is ingested by Gold.')
+                      help='Key value pairs that are written to the top level '
+                           'of the JSON file that is ingested by Gold.')
 
     parser.add_option('--gold_key', default='', dest="gold_key",
-                      help='Key value pairs that are added to the "key" field of the JSON file that is ingested by Gold.')
+                      help='Key value pairs that are added to the "key" field '
+                           'of the JSON file that is ingested by Gold.')
 
     parser.add_option('--gold_output_dir', default='', dest="gold_output_dir",
-                      help='Path of where to write the JSON output to be uploaded to Gold.')
+                      help='Path of where to write the JSON output to be '
+                           'uploaded to Gold.')
 
-    parser.add_option('--gold_ignore_hashes', default='', dest="gold_ignore_hashes",
+    parser.add_option('--gold_ignore_hashes', default='',
+                      dest="gold_ignore_hashes",
                       help='Path to a file with MD5 hashes we wish to ignore.')
 
-    parser.add_option('--regenerate_expected', action="store_true", dest="regenerate_expected",
-                      help='Regenerates expected images.')
+    parser.add_option('--regenerate_expected', default='',
+                      dest="regenerate_expected",
+                      help='Regenerates expected images. Valid values are '
+                           '"all" to regenerate all expected pngs, and '
+                           '"platform" to regenerate only platform-specific '
+                           'expected pngs.')
 
-    parser.add_option('--ignore_errors', action="store_true", dest="ignore_errors",
-                      help='Prevents the return value from being non-zero when image comparison fails.')
+    parser.add_option('--ignore_errors', action="store_true",
+                      dest="ignore_errors",
+                      help='Prevents the return value from being non-zero '
+                           'when image comparison fails.')
 
     self.options, self.args = parser.parse_args()
+
+    if (self.options.regenerate_expected
+        and self.options.regenerate_expected not in ['all', 'platform']) :
+      print 'FAILURE: --regenerate_expected must be "all" or "platform"'
+      return 1
 
     finder = common.DirectoryFinder(self.options.build_dir)
     self.fixup_path = finder.ScriptPath('fixup_pdf_template.py')
