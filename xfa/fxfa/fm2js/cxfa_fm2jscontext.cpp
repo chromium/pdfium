@@ -6087,7 +6087,8 @@ bool CXFA_FM2JSContext::Translate(const WideStringView& wsFormcalc,
     return false;
 
   wsJavascript->AppendChar(0);
-  return true;
+
+  return !CXFA_IsTooBig(*wsJavascript);
 }
 
 CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
