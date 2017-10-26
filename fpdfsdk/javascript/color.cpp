@@ -15,8 +15,6 @@
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 
-JSConstSpec CJS_Color::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
-
 JSPropertySpec CJS_Color::PropertySpecs[] = {
     {"black", get_black_static, set_black_static},
     {"blue", get_blue_static, set_blue_static},
@@ -38,16 +36,6 @@ JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
 
 const char* CJS_Color::g_pClassName = "color";
 int CJS_Color::g_nObjDefnID = -1;
-
-void CJS_Color::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
 
 void CJS_Color::JSConstructor(CFXJS_Engine* pEngine,
                               v8::Local<v8::Object> obj) {
@@ -79,7 +67,6 @@ void CJS_Color::DefineMethods(CFXJS_Engine* pEngine) {
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Color::g_pClassName, eObjType,
                                     JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
   DefineProps(pEngine);
   DefineMethods(pEngine);
 }

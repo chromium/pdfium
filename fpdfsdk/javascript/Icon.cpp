@@ -10,26 +10,12 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 
-JSConstSpec CJS_Icon::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
-
 JSPropertySpec CJS_Icon::PropertySpecs[] = {
     {"name", get_name_static, set_name_static},
     {0, 0, 0}};
 
-JSMethodSpec CJS_Icon::MethodSpecs[] = {{0, 0}};
-
 const char* CJS_Icon::g_pClassName = "Icon";
 int CJS_Icon::g_nObjDefnID = -1;
-
-void CJS_Icon::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
 
 void CJS_Icon::JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
   CJS_Object* pObj = new CJS_Icon(obj);
@@ -50,19 +36,10 @@ void CJS_Icon::DefineProps(CFXJS_Engine* pEngine) {
   }
 }
 
-void CJS_Icon::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Icon::g_pClassName, eObjType,
                                     JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
   DefineProps(pEngine);
-  DefineMethods(pEngine);
 }
 
 Icon::Icon(CJS_Object* pJSObject)

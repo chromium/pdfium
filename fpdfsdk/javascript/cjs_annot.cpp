@@ -19,28 +19,14 @@ CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* annot) {
 
 }  // namespace
 
-JSConstSpec CJS_Annot::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
-
 JSPropertySpec CJS_Annot::PropertySpecs[] = {
     {"hidden", get_hidden_static, set_hidden_static},
     {"name", get_name_static, set_name_static},
     {"type", get_type_static, set_type_static},
     {0, 0, 0}};
 
-JSMethodSpec CJS_Annot::MethodSpecs[] = {{0, 0}};
-
 const char* CJS_Annot::g_pClassName = "Annot";
 int CJS_Annot::g_nObjDefnID = -1;
-
-void CJS_Annot::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
 
 void CJS_Annot::JSConstructor(CFXJS_Engine* pEngine,
                               v8::Local<v8::Object> obj) {
@@ -62,19 +48,10 @@ void CJS_Annot::DefineProps(CFXJS_Engine* pEngine) {
   }
 }
 
-void CJS_Annot::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Annot::g_pClassName, eObjType,
                                     JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
   DefineProps(pEngine);
-  DefineMethods(pEngine);
 }
 
 Annot::Annot(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

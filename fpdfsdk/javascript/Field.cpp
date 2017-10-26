@@ -72,8 +72,6 @@ bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
 
 }  // namespace
 
-JSConstSpec CJS_Field::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
-
 JSPropertySpec CJS_Field::PropertySpecs[] = {
     {"alignment", get_alignment_static, set_alignment_static},
     {"borderStyle", get_border_style_static, set_border_style_static},
@@ -170,16 +168,6 @@ JSMethodSpec CJS_Field::MethodSpecs[] = {
 const char* CJS_Field::g_pClassName = "Field";
 int CJS_Field::g_nObjDefnID = -1;
 
-void CJS_Field::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
-
 void CJS_Field::JSConstructor(CFXJS_Engine* pEngine,
                               v8::Local<v8::Object> obj) {
   CJS_Object* pObj = new CJS_Field(obj);
@@ -210,7 +198,6 @@ void CJS_Field::DefineMethods(CFXJS_Engine* pEngine) {
 void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Field::g_pClassName, eObjType,
                                     JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
   DefineProps(pEngine);
   DefineMethods(pEngine);
 }

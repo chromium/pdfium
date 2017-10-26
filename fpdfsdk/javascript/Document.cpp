@@ -38,24 +38,8 @@
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
-JSConstSpec CJS_PrintParamsObj::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
-
-JSPropertySpec CJS_PrintParamsObj::PropertySpecs[] = {{0, 0, 0}};
-
-JSMethodSpec CJS_PrintParamsObj::MethodSpecs[] = {{0, 0}};
-
 const char* CJS_PrintParamsObj::g_pClassName = "PrintParamsObj";
 int CJS_PrintParamsObj::g_nObjDefnID = -1;
-
-void CJS_PrintParamsObj::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
 
 void CJS_PrintParamsObj::JSConstructor(CFXJS_Engine* pEngine,
                                        v8::Local<v8::Object> obj) {
@@ -70,28 +54,10 @@ void CJS_PrintParamsObj::JSDestructor(CFXJS_Engine* pEngine,
   delete static_cast<CJS_PrintParamsObj*>(pEngine->GetObjectPrivate(obj));
 }
 
-void CJS_PrintParamsObj::DefineProps(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
-    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
-                               PropertySpecs[i].pPropGet,
-                               PropertySpecs[i].pPropPut);
-  }
-}
-
-void CJS_PrintParamsObj::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_PrintParamsObj::DefineJSObjects(CFXJS_Engine* pEngine,
                                          FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_PrintParamsObj::g_pClassName, eObjType,
                                     JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
-  DefineProps(pEngine);
-  DefineMethods(pEngine);
 }
 
 PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
@@ -108,8 +74,6 @@ PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
 
 #define MINWIDTH 5.0f
 #define MINHEIGHT 5.0f
-
-JSConstSpec CJS_Document::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
 JSPropertySpec CJS_Document::PropertySpecs[] = {
     {"ADBE", get_ADBE_static, set_ADBE_static},
@@ -196,16 +160,6 @@ JSMethodSpec CJS_Document::MethodSpecs[] = {
 const char* CJS_Document::g_pClassName = "Document";
 int CJS_Document::g_nObjDefnID = -1;
 
-void CJS_Document::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
-
 void CJS_Document::JSConstructor(CFXJS_Engine* pEngine,
                                  v8::Local<v8::Object> obj) {
   CJS_Object* pObj = new CJS_Document(obj);
@@ -238,7 +192,6 @@ void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Document::g_pClassName, eObjType,
                                     JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
   DefineProps(pEngine);
   DefineMethods(pEngine);
 }

@@ -13,8 +13,6 @@
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 
-JSConstSpec CJS_Event::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
-
 JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"change", get_change_static, set_change_static},
     {"changeEx", get_change_ex_static, set_change_ex_static},
@@ -38,20 +36,8 @@ JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"willCommit", get_will_commit_static, set_will_commit_static},
     {0, 0, 0}};
 
-JSMethodSpec CJS_Event::MethodSpecs[] = {{0, 0}};
-
 const char* CJS_Event::g_pClassName = "event";
 int CJS_Event::g_nObjDefnID = -1;
-
-void CJS_Event::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
 
 void CJS_Event::JSConstructor(CFXJS_Engine* pEngine,
                               v8::Local<v8::Object> obj) {
@@ -73,19 +59,10 @@ void CJS_Event::DefineProps(CFXJS_Engine* pEngine) {
   }
 }
 
-void CJS_Event::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Event::g_pClassName, eObjType,
                                     JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
   DefineProps(pEngine);
-  DefineMethods(pEngine);
 }
 
 event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
