@@ -7,7 +7,7 @@
 #include "fpdfsdk/javascript/cjs_event_context.h"
 
 #include "core/fxcrt/autorestorer.h"
-#include "fpdfsdk/javascript/JS_EventHandler.h"
+#include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
 

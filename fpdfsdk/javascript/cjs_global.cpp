@@ -13,12 +13,12 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_GlobalData.h"
 #include "fpdfsdk/javascript/JS_KeyValue.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
+#include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/resource.h"
 
 #define IMPLEMENT_SPECIAL_JS_CLASS(js_class_name, class_alternate, class_name) \

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
-#define FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_EVENTHANDLER_H_
+#define FPDFSDK_JAVASCRIPT_CJS_EVENTHANDLER_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -140,7 +140,6 @@ class CJS_EventHandler {
   void OnConsole_Exec();
   void OnExternal_Exec();
 
- public:
   void Initial(JS_EVENT_T type);
   void Destroy();
   bool IsValid();
@@ -165,7 +164,6 @@ class CJS_EventHandler {
 
   JS_EVENT_T EventType() { return m_eEventType; }
 
- public:
   UnownedPtr<CJS_EventContext> const m_pJSEventContext;
   JS_EVENT_T m_eEventType;
   bool m_bValid;
@@ -194,4 +192,4 @@ class CJS_EventHandler {
   CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_EVENTHANDLER_H_
