@@ -16,10 +16,10 @@ class CJS_ScaleWhen : public CJS_Object {
 
   static const char* g_pClassName;
   static int g_nObjDefnID;
+  static JSConstSpec ConstSpecs[];
+
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
-  static JSConstSpec ConstSpecs[];
-  static void DefineConsts(CFXJS_Engine* pEngine);
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_SCALEWHEN_H_

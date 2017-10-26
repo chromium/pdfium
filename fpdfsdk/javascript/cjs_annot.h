@@ -39,11 +39,7 @@ class CJS_Annot : public CJS_Object {
   static int g_nObjDefnID;
   static JSPropertySpec PropertySpecs[];
 
-  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
-  static void DefineProps(CFXJS_Engine* pEngine);
 
   JS_STATIC_PROP(hidden, hidden, Annot);
   JS_STATIC_PROP(name, name, Annot);

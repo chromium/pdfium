@@ -168,38 +168,12 @@ JSMethodSpec CJS_Field::MethodSpecs[] = {
 const char* CJS_Field::g_pClassName = "Field";
 int CJS_Field::g_nObjDefnID = -1;
 
-void CJS_Field::JSConstructor(CFXJS_Engine* pEngine,
-                              v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new CJS_Field(obj);
-  pObj->SetEmbedObject(new Field(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
-  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
-}
-
-void CJS_Field::JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-  delete static_cast<CJS_Field*>(pEngine->GetObjectPrivate(obj));
-}
-
-void CJS_Field::DefineProps(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
-    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
-                               PropertySpecs[i].pPropGet,
-                               PropertySpecs[i].pPropPut);
-  }
-}
-
-void CJS_Field::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Field::g_pClassName, eObjType,
-                                    JSConstructor, JSDestructor);
-  DefineProps(pEngine);
-  DefineMethods(pEngine);
+                                    JSConstructor<CJS_Field, Field>,
+                                    JSDestructor<CJS_Field>);
+  DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
+  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }
 
 CJS_DelayData::CJS_DelayData(FIELD_PROP prop, int idx, const WideString& name)

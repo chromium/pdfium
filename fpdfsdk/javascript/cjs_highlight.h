@@ -16,10 +16,9 @@ class CJS_Highlight : public CJS_Object {
 
   static const char* g_pClassName;
   static int g_nObjDefnID;
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
-
   static JSConstSpec ConstSpecs[];
-  static void DefineConsts(CFXJS_Engine* pEngine);
+
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_HIGHLIGHT_H_

@@ -145,23 +145,11 @@ GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
 const char* CJS_TimerObj::g_pClassName = "TimerObj";
 int CJS_TimerObj::g_nObjDefnID = -1;
 
-void CJS_TimerObj::JSConstructor(CFXJS_Engine* pEngine,
-                                 v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new CJS_TimerObj(obj);
-  pObj->SetEmbedObject(new TimerObj(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
-  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
-}
-
-void CJS_TimerObj::JSDestructor(CFXJS_Engine* pEngine,
-                                v8::Local<v8::Object> obj) {
-  delete static_cast<CJS_TimerObj*>(pEngine->GetObjectPrivate(obj));
-}
-
 void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine,
                                    FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_TimerObj::g_pClassName, eObjType,
-                                    JSConstructor, JSDestructor);
+                                    JSConstructor<CJS_TimerObj, TimerObj>,
+                                    JSDestructor<CJS_TimerObj>);
 }
 
 TimerObj::TimerObj(CJS_Object* pJSObject)
@@ -226,37 +214,12 @@ JSMethodSpec CJS_App::MethodSpecs[] = {{"alert", alert_static},
 const char* CJS_App::g_pClassName = "app";
 int CJS_App::g_nObjDefnID = -1;
 
-void CJS_App::JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new CJS_App(obj);
-  pObj->SetEmbedObject(new app(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
-  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
-}
-
-void CJS_App::JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-  delete static_cast<CJS_App*>(pEngine->GetObjectPrivate(obj));
-}
-
-void CJS_App::DefineProps(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
-    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
-                               PropertySpecs[i].pPropGet,
-                               PropertySpecs[i].pPropPut);
-  }
-}
-
-void CJS_App::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_App::g_pClassName, eObjType,
-                                    JSConstructor, JSDestructor);
-  DefineProps(pEngine);
-  DefineMethods(pEngine);
+  g_nObjDefnID =
+      pEngine->DefineObj(CJS_App::g_pClassName, eObjType,
+                         JSConstructor<CJS_App, app>, JSDestructor<CJS_App>);
+  DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
+  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }
 
 app::app(CJS_Object* pJSObject)

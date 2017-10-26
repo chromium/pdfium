@@ -18,6 +18,26 @@ class CJS_EventContext;
 class CJS_Object;
 class CPDFSDK_FormFillEnvironment;
 
+struct JSConstSpec {
+  enum Type { Number = 0, String = 1 };
+
+  const char* pName;
+  Type eType;
+  double number;
+  const char* pStr;
+};
+
+struct JSPropertySpec {
+  const char* pName;
+  v8::AccessorGetterCallback pPropGet;
+  v8::AccessorSetterCallback pPropPut;
+};
+
+struct JSMethodSpec {
+  const char* pName;
+  v8::FunctionCallback pMethodCall;
+};
+
 class CJS_EmbedObj {
  public:
   explicit CJS_EmbedObj(CJS_Object* pJSObject);
@@ -31,6 +51,16 @@ class CJS_EmbedObj {
 
 class CJS_Object {
  public:
+  static void DefineConsts(CFXJS_Engine* pEngine,
+                           int objId,
+                           const JSConstSpec consts[]);
+  static void DefineProps(CFXJS_Engine* pEngine,
+                          int objId,
+                          const JSPropertySpec props[]);
+  static void DefineMethods(CFXJS_Engine* pEngine,
+                            int objId,
+                            const JSMethodSpec methods[]);
+
   explicit CJS_Object(v8::Local<v8::Object> pObject);
   virtual ~CJS_Object();
 

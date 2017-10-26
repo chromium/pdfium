@@ -36,28 +36,11 @@ JSMethodSpec CJS_Util::MethodSpecs[] = {
 const char* CJS_Util::g_pClassName = "util";
 int CJS_Util::g_nObjDefnID = -1;
 
-void CJS_Util::JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new CJS_Util(obj);
-  pObj->SetEmbedObject(new util(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
-  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
-}
-
-void CJS_Util::JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-  delete static_cast<CJS_Util*>(pEngine->GetObjectPrivate(obj));
-}
-
-void CJS_Util::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Util::g_pClassName, eObjType,
-                                    JSConstructor, JSDestructor);
-  DefineMethods(pEngine);
+  g_nObjDefnID =
+      pEngine->DefineObj(CJS_Util::g_pClassName, eObjType,
+                         JSConstructor<CJS_Util, util>, JSDestructor<CJS_Util>);
+  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }
 
 namespace {

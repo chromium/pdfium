@@ -36,9 +36,6 @@ class CJS_TimerObj : public CJS_Object {
   static const char* g_pClassName;
   static int g_nObjDefnID;
 
-  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 };
 
@@ -154,12 +151,7 @@ class CJS_App : public CJS_Object {
   static JSPropertySpec PropertySpecs[];
   static JSMethodSpec MethodSpecs[];
 
-  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
-  static void DefineProps(CFXJS_Engine* pEngine);
-  static void DefineMethods(CFXJS_Engine* pEngine);
 
   JS_STATIC_PROP(activeDocs, active_docs, app);
   JS_STATIC_PROP(calculate, calculate, app);

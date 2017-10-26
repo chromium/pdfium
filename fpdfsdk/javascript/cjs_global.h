@@ -19,17 +19,12 @@ class CJS_Global : public CJS_Object {
 
   static const char* g_pClassName;
   static int g_nObjDefnID;
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
-
   static JSConstSpec ConstSpecs[];
-  static void DefineConsts(CFXJS_Engine* pEngine);
-
-  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-  static void DefineProps(CFXJS_Engine* pEngine);
-  static void DefineMethods(CFXJS_Engine* pEngine);
   static JSPropertySpec PropertySpecs[];
   static JSMethodSpec MethodSpecs[];
+
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineAllProperties(CFXJS_Engine* pEngine);
 
   static void queryprop_static(
       v8::Local<v8::String> property,
@@ -41,7 +36,6 @@ class CJS_Global : public CJS_Object {
                              const v8::PropertyCallbackInfo<v8::Value>& info);
   static void delprop_static(v8::Local<v8::String> property,
                              const v8::PropertyCallbackInfo<v8::Boolean>& info);
-  static void DefineAllProperties(CFXJS_Engine* pEngine);
 
   static void setPersistent_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);

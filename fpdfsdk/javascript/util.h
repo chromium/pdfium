@@ -51,11 +51,7 @@ class CJS_Util : public CJS_Object {
   static int g_nObjDefnID;
   static JSMethodSpec MethodSpecs[];
 
-  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
-
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
-  static void DefineMethods(CFXJS_Engine* pEngine);
 
   JS_STATIC_METHOD(printd, util);
   JS_STATIC_METHOD(printf, util);

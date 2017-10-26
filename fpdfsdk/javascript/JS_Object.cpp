@@ -11,7 +11,37 @@
 
 CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
 
-CJS_EmbedObj::~CJS_EmbedObj() {
+CJS_EmbedObj::~CJS_EmbedObj() {}
+
+// static
+void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,
+                              int objId,
+                              const JSConstSpec consts[]) {
+  for (size_t i = 0; consts[i].pName != 0; ++i) {
+    pEngine->DefineObjConst(
+        objId, consts[i].pName,
+        consts[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(consts[i].number).As<v8::Value>()
+            : pEngine->NewString(consts[i].pStr).As<v8::Value>());
+  }
+}
+
+// static
+void CJS_Object::DefineProps(CFXJS_Engine* pEngine,
+                             int objId,
+                             const JSPropertySpec props[]) {
+  for (size_t i = 0; props[i].pName != 0; ++i) {
+    pEngine->DefineObjProperty(objId, props[i].pName, props[i].pPropGet,
+                               props[i].pPropPut);
+  }
+}
+
+// static
+void CJS_Object::DefineMethods(CFXJS_Engine* pEngine,
+                               int objId,
+                               const JSMethodSpec methods[]) {
+  for (size_t i = 0; methods[i].pName != 0; ++i)
+    pEngine->DefineObjMethod(objId, methods[i].pName, methods[i].pMethodCall);
 }
 
 CJS_Object::CJS_Object(v8::Local<v8::Object> pObject) {

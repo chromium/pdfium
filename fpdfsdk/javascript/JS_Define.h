@@ -21,25 +21,18 @@
 // Rich JS classes provide constants, methods, properties, and the ability
 // to construct native object state.
 
-struct JSConstSpec {
-  enum Type { Number = 0, String = 1 };
+template <class T, class A>
+static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new T(obj);
+  pObj->SetEmbedObject(new A(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
 
-  const char* pName;
-  Type eType;
-  double number;
-  const char* pStr;
-};
-
-struct JSPropertySpec {
-  const char* pName;
-  v8::AccessorGetterCallback pPropGet;
-  v8::AccessorSetterCallback pPropPut;
-};
-
-struct JSMethodSpec {
-  const char* pName;
-  v8::FunctionCallback pMethodCall;
-};
+template <class T>
+static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  delete static_cast<T*>(pEngine->GetObjectPrivate(obj));
+}
 
 template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,

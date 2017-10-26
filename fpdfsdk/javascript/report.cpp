@@ -19,30 +19,11 @@ JSMethodSpec CJS_Report::MethodSpecs[] = {{"save", save_static},
 const char* CJS_Report::g_pClassName = "Report";
 int CJS_Report::g_nObjDefnID = -1;
 
-void CJS_Report::JSConstructor(CFXJS_Engine* pEngine,
-                               v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new CJS_Report(obj);
-  pObj->SetEmbedObject(new Report(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
-  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
-}
-
-void CJS_Report::JSDestructor(CFXJS_Engine* pEngine,
-                              v8::Local<v8::Object> obj) {
-  delete static_cast<CJS_Report*>(pEngine->GetObjectPrivate(obj));
-}
-
-void CJS_Report::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Report::g_pClassName, eObjType,
-                                    JSConstructor, JSDestructor);
-  DefineMethods(pEngine);
+                                    JSConstructor<CJS_Report, Report>,
+                                    JSDestructor<CJS_Report>);
+  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }
 
 Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

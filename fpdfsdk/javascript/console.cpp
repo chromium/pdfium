@@ -23,30 +23,11 @@ JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
 const char* CJS_Console::g_pClassName = "console";
 int CJS_Console::g_nObjDefnID = -1;
 
-void CJS_Console::JSConstructor(CFXJS_Engine* pEngine,
-                                v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new CJS_Console(obj);
-  pObj->SetEmbedObject(new console(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
-  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
-}
-
-void CJS_Console::JSDestructor(CFXJS_Engine* pEngine,
-                               v8::Local<v8::Object> obj) {
-  delete static_cast<CJS_Console*>(pEngine->GetObjectPrivate(obj));
-}
-
-void CJS_Console::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   g_nObjDefnID = pEngine->DefineObj(CJS_Console::g_pClassName, eObjType,
-                                    JSConstructor, JSDestructor);
-  DefineMethods(pEngine);
+                                    JSConstructor<CJS_Console, console>,
+                                    JSDestructor<CJS_Console>);
+  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
 }
 
 console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

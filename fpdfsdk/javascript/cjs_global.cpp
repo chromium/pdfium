@@ -199,44 +199,6 @@ void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
   pGlobal->Initial(pRuntime->GetFormFillEnv());
 }
 
-void CJS_Global::DefineConsts(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
-    pEngine->DefineObjConst(
-        g_nObjDefnID, ConstSpecs[i].pName,
-        ConstSpecs[i].eType == JSConstSpec::Number
-            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
-            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
-  }
-}
-
-void CJS_Global::JSConstructor(CFXJS_Engine* pEngine,
-                               v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new CJS_Global(obj);
-  pObj->SetEmbedObject(new JSGlobalAlternate(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
-  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
-}
-
-void CJS_Global::JSDestructor(CFXJS_Engine* pEngine,
-                              v8::Local<v8::Object> obj) {
-  delete static_cast<CJS_Global*>(pEngine->GetObjectPrivate(obj));
-}
-
-void CJS_Global::DefineProps(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
-    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
-                               PropertySpecs[i].pPropGet,
-                               PropertySpecs[i].pPropPut);
-  }
-}
-
-void CJS_Global::DefineMethods(CFXJS_Engine* pEngine) {
-  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
-    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
-                             MethodSpecs[i].pMethodCall);
-  }
-}
-
 void CJS_Global::queryprop_static(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
@@ -269,11 +231,12 @@ void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
 }
 
 void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  g_nObjDefnID = pEngine->DefineObj(CJS_Global::g_pClassName, eObjType,
-                                    JSConstructor, JSDestructor);
-  DefineConsts(pEngine);
-  DefineProps(pEngine);
-  DefineMethods(pEngine);
+  g_nObjDefnID = pEngine->DefineObj(
+      CJS_Global::g_pClassName, eObjType,
+      JSConstructor<CJS_Global, JSGlobalAlternate>, JSDestructor<CJS_Global>);
+  DefineConsts(pEngine, g_nObjDefnID, ConstSpecs);
+  DefineProps(pEngine, g_nObjDefnID, PropertySpecs);
+  DefineMethods(pEngine, g_nObjDefnID, MethodSpecs);
   DefineAllProperties(pEngine);
 }
 
