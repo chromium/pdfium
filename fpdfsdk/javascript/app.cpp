@@ -148,7 +148,55 @@ JSPropertySpec CJS_TimerObj::PropertySpecs[] = {{0, 0, 0}};
 
 JSMethodSpec CJS_TimerObj::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_TimerObj, TimerObj, TimerObj)
+const char* CJS_TimerObj::g_pClassName = "TimerObj";
+int CJS_TimerObj::g_nObjDefnID = -1;
+
+void CJS_TimerObj::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_TimerObj::JSConstructor(CFXJS_Engine* pEngine,
+                                 v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_TimerObj(obj);
+  pObj->SetEmbedObject(new TimerObj(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_TimerObj::JSDestructor(CFXJS_Engine* pEngine,
+                                v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_TimerObj*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_TimerObj::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_TimerObj::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine,
+                                   FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_TimerObj::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+}
 
 TimerObj::TimerObj(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_nTimerID(0) {}
@@ -211,7 +259,52 @@ JSMethodSpec CJS_App::MethodSpecs[] = {{"alert", alert_static},
                                        {"setTimeOut", setTimeOut_static},
                                        {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_App, app, app)
+const char* CJS_App::g_pClassName = "app";
+int CJS_App::g_nObjDefnID = -1;
+
+void CJS_App::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_App::JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_App(obj);
+  pObj->SetEmbedObject(new app(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_App::JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_App*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_App::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_App::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_App::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+}
 
 app::app(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_bCalculate(true), m_bRuntimeHighLight(false) {}

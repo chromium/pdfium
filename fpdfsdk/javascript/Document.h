@@ -38,7 +38,17 @@ class CJS_PrintParamsObj : public CJS_Object {
       : CJS_Object(pObject) {}
   ~CJS_PrintParamsObj() override {}
 
-  DECLARE_JS_CLASS();
+  static const char* g_pClassName;
+  static int g_nObjDefnID;
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static JSConstSpec ConstSpecs[];
+  static void DefineConsts(CFXJS_Engine* pEngine);
+  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void DefineProps(CFXJS_Engine* pEngine);
+  static void DefineMethods(CFXJS_Engine* pEngine);
+  static JSPropertySpec PropertySpecs[];
+  static JSMethodSpec MethodSpecs[];
 };
 
 struct CJS_AnnotObj;
@@ -269,7 +279,17 @@ class CJS_Document : public CJS_Object {
   // CJS_Object
   void InitInstance(IJS_Runtime* pIRuntime) override;
 
-  DECLARE_JS_CLASS();
+  static const char* g_pClassName;
+  static int g_nObjDefnID;
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static JSConstSpec ConstSpecs[];
+  static void DefineConsts(CFXJS_Engine* pEngine);
+  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void DefineProps(CFXJS_Engine* pEngine);
+  static void DefineMethods(CFXJS_Engine* pEngine);
+  static JSPropertySpec PropertySpecs[];
+  static JSMethodSpec MethodSpecs[];
 
   JS_STATIC_PROP(ADBE, ADBE, Document);
   JS_STATIC_PROP(author, author, Document);

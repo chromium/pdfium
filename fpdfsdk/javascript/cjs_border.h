@@ -14,8 +14,12 @@ class CJS_Border : public CJS_Object {
   explicit CJS_Border(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Border() override {}
 
-  DECLARE_JS_CLASS_BASE_PART();
-  DECLARE_JS_CLASS_CONST_PART();
+  static const char* g_pClassName;
+  static int g_nObjDefnID;
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+
+  static JSConstSpec ConstSpecs[];
+  static void DefineConsts(CFXJS_Engine* pEngine);
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_BORDER_H_

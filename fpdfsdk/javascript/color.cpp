@@ -36,7 +36,53 @@ JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
                                          {"equal", equal_static},
                                          {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Color, color, color)
+const char* CJS_Color::g_pClassName = "color";
+int CJS_Color::g_nObjDefnID = -1;
+
+void CJS_Color::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_Color::JSConstructor(CFXJS_Engine* pEngine,
+                              v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_Color(obj);
+  pObj->SetEmbedObject(new color(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_Color::JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_Color*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_Color::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_Color::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_Color::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+}
 
 // static
 v8::Local<v8::Array> color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,

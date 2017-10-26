@@ -31,7 +31,18 @@ class CJS_Icon : public CJS_Object {
   explicit CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Icon() override {}
 
-  DECLARE_JS_CLASS();
+  static const char* g_pClassName;
+  static int g_nObjDefnID;
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static JSConstSpec ConstSpecs[];
+  static void DefineConsts(CFXJS_Engine* pEngine);
+  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void DefineProps(CFXJS_Engine* pEngine);
+  static void DefineMethods(CFXJS_Engine* pEngine);
+  static JSPropertySpec PropertySpecs[];
+  static JSMethodSpec MethodSpecs[];
+
   JS_STATIC_PROP(name, name, Icon);
 };
 

@@ -40,7 +40,53 @@ JSPropertySpec CJS_Event::PropertySpecs[] = {
 
 JSMethodSpec CJS_Event::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Event, event, event)
+const char* CJS_Event::g_pClassName = "event";
+int CJS_Event::g_nObjDefnID = -1;
+
+void CJS_Event::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_Event::JSConstructor(CFXJS_Engine* pEngine,
+                              v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_Event(obj);
+  pObj->SetEmbedObject(new event(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_Event::JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_Event*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_Event::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_Event::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_Event::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+}
 
 event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
 

@@ -21,46 +21,6 @@
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/resource.h"
 
-#define IMPLEMENT_SPECIAL_JS_CLASS(js_class_name, class_alternate, class_name) \
-  IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)                      \
-  IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)                     \
-  IMPLEMENT_JS_CLASS_PART(js_class_name, class_alternate, class_name)          \
-  void js_class_name::queryprop_static(                                        \
-      v8::Local<v8::String> property,                                          \
-      const v8::PropertyCallbackInfo<v8::Integer>& info) {                     \
-    JSSpecialPropQuery<class_alternate>(#class_name, property, info);          \
-  }                                                                            \
-  void js_class_name::getprop_static(                                          \
-      v8::Local<v8::String> property,                                          \
-      const v8::PropertyCallbackInfo<v8::Value>& info) {                       \
-    JSSpecialPropGet<class_alternate>(#class_name, property, info);            \
-  }                                                                            \
-  void js_class_name::putprop_static(                                          \
-      v8::Local<v8::String> property, v8::Local<v8::Value> value,              \
-      const v8::PropertyCallbackInfo<v8::Value>& info) {                       \
-    JSSpecialPropPut<class_alternate>(#class_name, property, value, info);     \
-  }                                                                            \
-  void js_class_name::delprop_static(                                          \
-      v8::Local<v8::String> property,                                          \
-      const v8::PropertyCallbackInfo<v8::Boolean>& info) {                     \
-    JSSpecialPropDel<class_alternate>(#class_name, property, info);            \
-  }                                                                            \
-  void js_class_name::DefineAllProperties(CFXJS_Engine* pEngine) {             \
-    pEngine->DefineObjAllProperties(                                           \
-        g_nObjDefnID, js_class_name::queryprop_static,                         \
-        js_class_name::getprop_static, js_class_name::putprop_static,          \
-        js_class_name::delprop_static);                                        \
-  }                                                                            \
-  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine,                   \
-                                      FXJSOBJTYPE eObjType) {                  \
-    g_nObjDefnID = pEngine->DefineObj(js_class_name::g_pClassName, eObjType,   \
-                                      JSConstructor, JSDestructor);            \
-    DefineConsts(pEngine);                                                     \
-    DefineProps(pEngine);                                                      \
-    DefineMethods(pEngine);                                                    \
-    DefineAllProperties(pEngine);                                              \
-  }
-
 namespace {
 
 WideString PropFromV8Prop(v8::Local<v8::String> property) {
@@ -222,7 +182,8 @@ JSMethodSpec CJS_Global::MethodSpecs[] = {
     {"setPersistent", setPersistent_static},
     {0, 0}};
 
-IMPLEMENT_SPECIAL_JS_CLASS(CJS_Global, JSGlobalAlternate, global);
+const char* CJS_Global::g_pClassName = "global";
+int CJS_Global::g_nObjDefnID = -1;
 
 // static
 void CJS_Global::setPersistent_static(
@@ -236,6 +197,84 @@ void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
   JSGlobalAlternate* pGlobal =
       static_cast<JSGlobalAlternate*>(GetEmbedObject());
   pGlobal->Initial(pRuntime->GetFormFillEnv());
+}
+
+void CJS_Global::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_Global::JSConstructor(CFXJS_Engine* pEngine,
+                               v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_Global(obj);
+  pObj->SetEmbedObject(new JSGlobalAlternate(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_Global::JSDestructor(CFXJS_Engine* pEngine,
+                              v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_Global*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_Global::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_Global::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_Global::queryprop_static(
+    v8::Local<v8::String> property,
+    const v8::PropertyCallbackInfo<v8::Integer>& info) {
+  JSSpecialPropQuery<JSGlobalAlternate>("global", property, info);
+}
+
+void CJS_Global::getprop_static(
+    v8::Local<v8::String> property,
+    const v8::PropertyCallbackInfo<v8::Value>& info) {
+  JSSpecialPropGet<JSGlobalAlternate>("global", property, info);
+}
+
+void CJS_Global::putprop_static(
+    v8::Local<v8::String> property,
+    v8::Local<v8::Value> value,
+    const v8::PropertyCallbackInfo<v8::Value>& info) {
+  JSSpecialPropPut<JSGlobalAlternate>("global", property, value, info);
+}
+
+void CJS_Global::delprop_static(
+    v8::Local<v8::String> property,
+    const v8::PropertyCallbackInfo<v8::Boolean>& info) {
+  JSSpecialPropDel<JSGlobalAlternate>("global", property, info);
+}
+
+void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
+  pEngine->DefineObjAllProperties(
+      g_nObjDefnID, CJS_Global::queryprop_static, CJS_Global::getprop_static,
+      CJS_Global::putprop_static, CJS_Global::delprop_static);
+}
+
+void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_Global::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+  DefineAllProperties(pEngine);
 }
 
 JSGlobalData::JSGlobalData()

@@ -13,4 +13,22 @@ JSConstSpec CJS_Highlight::ConstSpecs[] = {
     {"o", JSConstSpec::String, 0, "outline"},
     {0, JSConstSpec::Number, 0, 0}};
 
-IMPLEMENT_JS_CLASS_CONST(CJS_Highlight, highlight)
+const char* CJS_Highlight::g_pClassName = "highlight";
+int CJS_Highlight::g_nObjDefnID = -1;
+
+void CJS_Highlight::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine,
+                                    FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_Highlight::g_pClassName, eObjType,
+                                    nullptr, nullptr);
+  DefineConsts(pEngine);
+}

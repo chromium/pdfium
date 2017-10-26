@@ -44,7 +44,55 @@ JSPropertySpec CJS_PrintParamsObj::PropertySpecs[] = {{0, 0, 0}};
 
 JSMethodSpec CJS_PrintParamsObj::MethodSpecs[] = {{0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_PrintParamsObj, PrintParamsObj, PrintParamsObj)
+const char* CJS_PrintParamsObj::g_pClassName = "PrintParamsObj";
+int CJS_PrintParamsObj::g_nObjDefnID = -1;
+
+void CJS_PrintParamsObj::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_PrintParamsObj::JSConstructor(CFXJS_Engine* pEngine,
+                                       v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_PrintParamsObj(obj);
+  pObj->SetEmbedObject(new PrintParamsObj(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_PrintParamsObj::JSDestructor(CFXJS_Engine* pEngine,
+                                      v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_PrintParamsObj*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_PrintParamsObj::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_PrintParamsObj::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_PrintParamsObj::DefineJSObjects(CFXJS_Engine* pEngine,
+                                         FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_PrintParamsObj::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+}
 
 PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject) {
@@ -145,7 +193,55 @@ JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"mailDoc", mailDoc_static},
     {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Document, Document, Document)
+const char* CJS_Document::g_pClassName = "Document";
+int CJS_Document::g_nObjDefnID = -1;
+
+void CJS_Document::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_Document::JSConstructor(CFXJS_Engine* pEngine,
+                                 v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_Document(obj);
+  pObj->SetEmbedObject(new Document(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_Document::JSDestructor(CFXJS_Engine* pEngine,
+                                v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_Document*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_Document::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_Document::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine,
+                                   FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_Document::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+}
 
 void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
   CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);

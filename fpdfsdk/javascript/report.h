@@ -28,7 +28,17 @@ class CJS_Report : public CJS_Object {
   explicit CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Report() override {}
 
-  DECLARE_JS_CLASS();
+  static const char* g_pClassName;
+  static int g_nObjDefnID;
+  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static JSConstSpec ConstSpecs[];
+  static void DefineConsts(CFXJS_Engine* pEngine);
+  static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  static void DefineProps(CFXJS_Engine* pEngine);
+  static void DefineMethods(CFXJS_Engine* pEngine);
+  static JSPropertySpec PropertySpecs[];
+  static JSMethodSpec MethodSpecs[];
 
   JS_STATIC_METHOD(save, Report)
   JS_STATIC_METHOD(writeText, Report);

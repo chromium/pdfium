@@ -167,7 +167,53 @@ JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"signatureValidate", signatureValidate_static},
     {0, 0}};
 
-IMPLEMENT_JS_CLASS(CJS_Field, Field, Field)
+const char* CJS_Field::g_pClassName = "Field";
+int CJS_Field::g_nObjDefnID = -1;
+
+void CJS_Field::DefineConsts(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {
+    pEngine->DefineObjConst(
+        g_nObjDefnID, ConstSpecs[i].pName,
+        ConstSpecs[i].eType == JSConstSpec::Number
+            ? pEngine->NewNumber(ConstSpecs[i].number).As<v8::Value>()
+            : pEngine->NewString(ConstSpecs[i].pStr).As<v8::Value>());
+  }
+}
+
+void CJS_Field::JSConstructor(CFXJS_Engine* pEngine,
+                              v8::Local<v8::Object> obj) {
+  CJS_Object* pObj = new CJS_Field(obj);
+  pObj->SetEmbedObject(new Field(pObj));
+  pEngine->SetObjectPrivate(obj, pObj);
+  pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+}
+
+void CJS_Field::JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  delete static_cast<CJS_Field*>(pEngine->GetObjectPrivate(obj));
+}
+
+void CJS_Field::DefineProps(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {
+    pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,
+                               PropertySpecs[i].pPropGet,
+                               PropertySpecs[i].pPropPut);
+  }
+}
+
+void CJS_Field::DefineMethods(CFXJS_Engine* pEngine) {
+  for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {
+    pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,
+                             MethodSpecs[i].pMethodCall);
+  }
+}
+
+void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
+  g_nObjDefnID = pEngine->DefineObj(CJS_Field::g_pClassName, eObjType,
+                                    JSConstructor, JSDestructor);
+  DefineConsts(pEngine);
+  DefineProps(pEngine);
+  DefineMethods(pEngine);
+}
 
 CJS_DelayData::CJS_DelayData(FIELD_PROP prop, int idx, const WideString& name)
     : eProp(prop), nControlIndex(idx), sFieldName(name) {}
