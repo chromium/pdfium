@@ -173,10 +173,10 @@ int CJS_Field::GetObjDefnID() {
 }
 
 // static
-void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID =
-      pEngine->DefineObj("Field", eObjType, JSConstructor<CJS_Field, Field>,
-                         JSDestructor<CJS_Field>);
+void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID = pEngine->DefineObj("Field", FXJSOBJTYPE_DYNAMIC,
+                                 JSConstructor<CJS_Field, Field>,
+                                 JSDestructor<CJS_Field>);
   DefineProps(pEngine, ObjDefnID, PropertySpecs);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }

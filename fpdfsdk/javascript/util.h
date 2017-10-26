@@ -44,7 +44,7 @@ class util : public CJS_EmbedObj {
 
 class CJS_Util : public CJS_Object {
  public:
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Util() override {}

@@ -11,7 +11,7 @@
 
 class CJS_Position : public CJS_Object {
  public:
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_Position(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Position() override {}

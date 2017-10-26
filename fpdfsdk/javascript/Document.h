@@ -35,7 +35,7 @@ class PrintParamsObj : public CJS_EmbedObj {
 class CJS_PrintParamsObj : public CJS_Object {
  public:
   static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_PrintParamsObj(v8::Local<v8::Object> pObject)
       : CJS_Object(pObject) {}
@@ -268,7 +268,7 @@ class Document : public CJS_EmbedObj {
 class CJS_Document : public CJS_Object {
  public:
   static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_Document(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Document() override {}

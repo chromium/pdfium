@@ -37,10 +37,10 @@ const JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
 int CJS_Color::ObjDefnID = -1;
 
 // static
-void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID =
-      pEngine->DefineObj("color", eObjType, JSConstructor<CJS_Color, color>,
-                         JSDestructor<CJS_Color>);
+void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID = pEngine->DefineObj("color", FXJSOBJTYPE_STATIC,
+                                 JSConstructor<CJS_Color, color>,
+                                 JSDestructor<CJS_Color>);
   DefineProps(pEngine, ObjDefnID, PropertySpecs);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }

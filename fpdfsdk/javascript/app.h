@@ -31,7 +31,7 @@ class TimerObj : public CJS_EmbedObj {
 class CJS_TimerObj : public CJS_Object {
  public:
   static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_TimerObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_TimerObj() override {}
@@ -144,7 +144,7 @@ class app : public CJS_EmbedObj {
 
 class CJS_App : public CJS_Object {
  public:
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_App(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_App() override {}

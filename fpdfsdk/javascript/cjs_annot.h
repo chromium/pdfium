@@ -33,7 +33,7 @@ class Annot : public CJS_EmbedObj {
 class CJS_Annot : public CJS_Object {
  public:
   static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_Annot(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Annot() override {}

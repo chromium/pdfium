@@ -33,10 +33,10 @@ int CJS_Annot::GetObjDefnID() {
 }
 
 // static
-void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID =
-      pEngine->DefineObj("Annot", eObjType, JSConstructor<CJS_Annot, Annot>,
-                         JSDestructor<CJS_Annot>);
+void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID = pEngine->DefineObj("Annot", FXJSOBJTYPE_DYNAMIC,
+                                 JSConstructor<CJS_Annot, Annot>,
+                                 JSDestructor<CJS_Annot>);
   DefineProps(pEngine, ObjDefnID, PropertySpecs);
 }
 

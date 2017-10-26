@@ -16,8 +16,8 @@ const JSConstSpec CJS_Highlight::ConstSpecs[] = {
 int CJS_Highlight::ObjDefnID = -1;
 
 // static
-void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine,
-                                    FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("highlight", eObjType, nullptr, nullptr);
+void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID =
+      pEngine->DefineObj("highlight", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }

@@ -16,8 +16,8 @@ const JSConstSpec CJS_ScaleWhen::ConstSpecs[] = {
 int CJS_ScaleWhen::ObjDefnID = -1;
 
 // static
-void CJS_ScaleWhen::DefineJSObjects(CFXJS_Engine* pEngine,
-                                    FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("scaleWhen", eObjType, nullptr, nullptr);
+void CJS_ScaleWhen::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID =
+      pEngine->DefineObj("scaleWhen", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }

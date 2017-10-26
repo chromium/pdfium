@@ -22,9 +22,10 @@ int CJS_Icon::GetObjDefnID() {
 }
 
 // static
-void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj(
-      "Icon", eObjType, JSConstructor<CJS_Icon, Icon>, JSDestructor<CJS_Icon>);
+void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID =
+      pEngine->DefineObj("Icon", FXJSOBJTYPE_DYNAMIC,
+                         JSConstructor<CJS_Icon, Icon>, JSDestructor<CJS_Icon>);
   DefineProps(pEngine, ObjDefnID, PropertySpecs);
 }
 

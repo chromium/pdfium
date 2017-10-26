@@ -66,10 +66,11 @@ const JSMethodSpec CJS_Util::MethodSpecs[] = {
 int CJS_Util::ObjDefnID = -1;
 
 // static
-void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj(
-      "util", eObjType, JSConstructor<CJS_Util, util>, JSDestructor<CJS_Util>);
-  CJS_Object::DefineMethods(pEngine, ObjDefnID, MethodSpecs);
+void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID =
+      pEngine->DefineObj("util", FXJSOBJTYPE_STATIC,
+                         JSConstructor<CJS_Util, util>, JSDestructor<CJS_Util>);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
 
 util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

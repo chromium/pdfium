@@ -116,34 +116,34 @@ void CJS_Runtime::DefineJSObjects() {
 
   // The call order determines the "ObjDefID" assigned to each class.
   // ObjDefIDs 0 - 2
-  CJS_Border::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Display::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Font::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Border::DefineJSObjects(this);
+  CJS_Display::DefineJSObjects(this);
+  CJS_Font::DefineJSObjects(this);
 
   // ObjDefIDs 3 - 5
-  CJS_Highlight::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Position::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_ScaleHow::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Highlight::DefineJSObjects(this);
+  CJS_Position::DefineJSObjects(this);
+  CJS_ScaleHow::DefineJSObjects(this);
 
   // ObjDefIDs 6 - 8
-  CJS_ScaleWhen::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Style::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Zoomtype::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_ScaleWhen::DefineJSObjects(this);
+  CJS_Style::DefineJSObjects(this);
+  CJS_Zoomtype::DefineJSObjects(this);
 
   // ObjDefIDs 9 - 11
-  CJS_App::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Color::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Console::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_App::DefineJSObjects(this);
+  CJS_Color::DefineJSObjects(this);
+  CJS_Console::DefineJSObjects(this);
 
   // ObjDefIDs 12 - 14
-  CJS_Document::DefineJSObjects(this, FXJSOBJTYPE_GLOBAL);
-  CJS_Event::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Field::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
+  CJS_Document::DefineJSObjects(this);
+  CJS_Event::DefineJSObjects(this);
+  CJS_Field::DefineJSObjects(this);
 
   // ObjDefIDs 15 - 17
-  CJS_Global::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
-  CJS_Icon::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
-  CJS_Util::DefineJSObjects(this, FXJSOBJTYPE_STATIC);
+  CJS_Global::DefineJSObjects(this);
+  CJS_Icon::DefineJSObjects(this);
+  CJS_Util::DefineJSObjects(this);
 
   // ObjDefIDs 18 - 20 (these can't fail, return void).
   CJS_PublicMethods::DefineJSObjects(this);
@@ -151,9 +151,9 @@ void CJS_Runtime::DefineJSObjects() {
   CJS_GlobalArrays::DefineJSObjects(this);
 
   // ObjDefIDs 21 - 23.
-  CJS_TimerObj::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
-  CJS_PrintParamsObj::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
-  CJS_Annot::DefineJSObjects(this, FXJSOBJTYPE_DYNAMIC);
+  CJS_TimerObj::DefineJSObjects(this);
+  CJS_PrintParamsObj::DefineJSObjects(this);
+  CJS_Annot::DefineJSObjects(this);
 }
 
 IJS_EventContext* CJS_Runtime::NewEventContext() {

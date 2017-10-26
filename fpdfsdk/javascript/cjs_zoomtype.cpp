@@ -19,8 +19,8 @@ const JSConstSpec CJS_Zoomtype::ConstSpecs[] = {
 int CJS_Zoomtype::ObjDefnID = -1;
 
 // static
-void CJS_Zoomtype::DefineJSObjects(CFXJS_Engine* pEngine,
-                                   FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("zoomtype", eObjType, nullptr, nullptr);
+void CJS_Zoomtype::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID =
+      pEngine->DefineObj("zoomtype", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }

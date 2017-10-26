@@ -150,9 +150,8 @@ int CJS_TimerObj::GetObjDefnID() {
 }
 
 // static
-void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine,
-                                   FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("TimerObj", eObjType,
+void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID = pEngine->DefineObj("TimerObj", FXJSOBJTYPE_DYNAMIC,
                                  JSConstructor<CJS_TimerObj, TimerObj>,
                                  JSDestructor<CJS_TimerObj>);
 }
@@ -220,9 +219,10 @@ const JSMethodSpec CJS_App::MethodSpecs[] = {
 int CJS_App::ObjDefnID = -1;
 
 // static
-void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("app", eObjType, JSConstructor<CJS_App, app>,
-                                 JSDestructor<CJS_App>);
+void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID =
+      pEngine->DefineObj("app", FXJSOBJTYPE_STATIC, JSConstructor<CJS_App, app>,
+                         JSDestructor<CJS_App>);
   DefineProps(pEngine, ObjDefnID, PropertySpecs);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }

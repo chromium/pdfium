@@ -26,7 +26,7 @@ const JSConstSpec CJS_Font::ConstSpecs[] = {
 int CJS_Font::ObjDefnID = -1;
 
 // static
-void CJS_Font::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("font", eObjType, nullptr, nullptr);
+void CJS_Font::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID = pEngine->DefineObj("font", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }

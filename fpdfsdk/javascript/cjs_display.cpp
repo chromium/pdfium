@@ -16,7 +16,8 @@ const JSConstSpec CJS_Display::ConstSpecs[] = {
 int CJS_Display::ObjDefnID = -1;
 
 // static
-void CJS_Display::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("display", eObjType, nullptr, nullptr);
+void CJS_Display::DefineJSObjects(CFXJS_Engine* pEngine) {
+  ObjDefnID =
+      pEngine->DefineObj("display", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }
