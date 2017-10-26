@@ -36,7 +36,7 @@ class CJS_Global : public CJS_Object {
 
  private:
   static int ObjDefnID;
-  static JSMethodSpec MethodSpecs[];
+  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_GLOBAL_H_

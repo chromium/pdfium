@@ -41,7 +41,7 @@ class CJS_Console : public CJS_Object {
 
  private:
   static int ObjDefnID;
-  static JSMethodSpec MethodSpecs[];
+  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CONSOLE_H_

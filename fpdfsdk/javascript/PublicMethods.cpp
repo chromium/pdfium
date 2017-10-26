@@ -32,7 +32,7 @@
 
 #define DOUBLE_CORRECT 0.000000000000001
 
-JSMethodSpec CJS_PublicMethods::GlobalFunctionSpecs[] = {
+const JSMethodSpec CJS_PublicMethods::GlobalFunctionSpecs[] = {
     {"AFNumber_Format", AFNumber_Format_static},
     {"AFNumber_Keystroke", AFNumber_Keystroke_static},
     {"AFPercent_Format", AFPercent_Format_static},

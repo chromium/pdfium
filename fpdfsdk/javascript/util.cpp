@@ -58,7 +58,7 @@ const TbConvert TbConvertTable[] = {
 
 }  // namespace
 
-JSMethodSpec CJS_Util::MethodSpecs[] = {
+const JSMethodSpec CJS_Util::MethodSpecs[] = {
     {"printd", printd_static},         {"printf", printf_static},
     {"printx", printx_static},         {"scand", scand_static},
     {"byteToChar", byteToChar_static}, {0, 0}};

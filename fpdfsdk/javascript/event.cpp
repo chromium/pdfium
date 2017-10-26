@@ -13,7 +13,7 @@
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 
-JSPropertySpec CJS_Event::PropertySpecs[] = {
+const JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"change", get_change_static, set_change_static},
     {"changeEx", get_change_ex_static, set_change_ex_static},
     {"commitKey", get_commit_key_static, set_commit_key_static},

@@ -69,7 +69,7 @@ PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
 #define MINWIDTH 5.0f
 #define MINHEIGHT 5.0f
 
-JSPropertySpec CJS_Document::PropertySpecs[] = {
+const JSPropertySpec CJS_Document::PropertySpecs[] = {
     {"ADBE", get_ADBE_static, set_ADBE_static},
     {"author", get_author_static, set_author_static},
     {"baseURL", get_base_URL_static, set_base_URL_static},
@@ -106,7 +106,7 @@ JSPropertySpec CJS_Document::PropertySpecs[] = {
     {"zoomType", get_zoom_type_static, set_zoom_type_static},
     {0, 0, 0}};
 
-JSMethodSpec CJS_Document::MethodSpecs[] = {
+const JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"addAnnot", addAnnot_static},
     {"addField", addField_static},
     {"addLink", addLink_static},

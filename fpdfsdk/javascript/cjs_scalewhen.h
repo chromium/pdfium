@@ -18,7 +18,7 @@ class CJS_ScaleWhen : public CJS_Object {
 
  private:
   static int ObjDefnID;
-  static JSConstSpec ConstSpecs[];
+  static const JSConstSpec ConstSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_SCALEWHEN_H_

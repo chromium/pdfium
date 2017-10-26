@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/cjs_font.h"
 
-JSConstSpec CJS_Font::ConstSpecs[] = {
+const JSConstSpec CJS_Font::ConstSpecs[] = {
     {"Times", JSConstSpec::String, 0, "Times-Roman"},
     {"TimesB", JSConstSpec::String, 0, "Times-Bold"},
     {"TimesI", JSConstSpec::String, 0, "Times-Italic"},

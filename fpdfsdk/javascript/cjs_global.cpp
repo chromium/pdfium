@@ -174,7 +174,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
 
 }  // namespace
 
-JSMethodSpec CJS_Global::MethodSpecs[] = {
+const JSMethodSpec CJS_Global::MethodSpecs[] = {
     {"setPersistent", setPersistent_static},
     {0, 0}};
 

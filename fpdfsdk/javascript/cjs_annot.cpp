@@ -19,7 +19,7 @@ CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* annot) {
 
 }  // namespace
 
-JSPropertySpec CJS_Annot::PropertySpecs[] = {
+const JSPropertySpec CJS_Annot::PropertySpecs[] = {
     {"hidden", get_hidden_static, set_hidden_static},
     {"name", get_name_static, set_name_static},
     {"type", get_type_static, set_type_static},

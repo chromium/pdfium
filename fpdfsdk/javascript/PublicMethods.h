@@ -128,7 +128,7 @@ class CJS_PublicMethods : public CJS_Object {
   static void AFExtractNums_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static JSMethodSpec GlobalFunctionSpecs[];
+  static const JSMethodSpec GlobalFunctionSpecs[];
   static void DefineJSObjects(CFXJS_Engine* pEngine);
   static int ParseStringInteger(const WideString& string,
                                 size_t nStart,

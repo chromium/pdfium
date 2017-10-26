@@ -57,7 +57,7 @@ class CJS_Util : public CJS_Object {
 
  private:
   static int ObjDefnID;
-  static JSMethodSpec MethodSpecs[];
+  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_UTIL_H_

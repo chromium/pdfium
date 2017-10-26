@@ -449,8 +449,8 @@ class CJS_Field : public CJS_Object {
 
  private:
   static int ObjDefnID;
-  static JSPropertySpec PropertySpecs[];
-  static JSMethodSpec MethodSpecs[];
+  static const JSPropertySpec PropertySpecs[];
+  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_FIELD_H_

@@ -10,7 +10,7 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 
-JSPropertySpec CJS_Icon::PropertySpecs[] = {
+const JSPropertySpec CJS_Icon::PropertySpecs[] = {
     {"name", get_name_static, set_name_static},
     {0, 0, 0}};
 

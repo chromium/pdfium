@@ -15,7 +15,7 @@
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 
-JSPropertySpec CJS_Color::PropertySpecs[] = {
+const JSPropertySpec CJS_Color::PropertySpecs[] = {
     {"black", get_black_static, set_black_static},
     {"blue", get_blue_static, set_blue_static},
     {"cyan", get_cyan_static, set_cyan_static},
@@ -30,11 +30,11 @@ JSPropertySpec CJS_Color::PropertySpecs[] = {
     {"yellow", get_yellow_static, set_yellow_static},
     {0, 0, 0}};
 
-int CJS_Color::ObjDefnID = -1;
+const JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
+                                               {"equal", equal_static},
+                                               {0, 0}};
 
-JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
-                                         {"equal", equal_static},
-                                         {0, 0}};
+int CJS_Color::ObjDefnID = -1;
 
 // static
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {

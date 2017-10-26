@@ -18,7 +18,7 @@ class CJS_Font : public CJS_Object {
 
  private:
   static int ObjDefnID;
-  static JSConstSpec ConstSpecs[];
+  static const JSConstSpec ConstSpecs[];
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_FONT_H_

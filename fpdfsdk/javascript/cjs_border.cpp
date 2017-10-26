@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/cjs_border.h"
 
-JSConstSpec CJS_Border::ConstSpecs[] = {
+const JSConstSpec CJS_Border::ConstSpecs[] = {
     {"s", JSConstSpec::String, 0, "solid"},
     {"b", JSConstSpec::String, 0, "beveled"},
     {"d", JSConstSpec::String, 0, "dashed"},

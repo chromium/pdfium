@@ -14,11 +14,11 @@
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 
-JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
-                                           {"hide", hide_static},
-                                           {"println", println_static},
-                                           {"show", show_static},
-                                           {0, 0}};
+const JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
+                                                 {"hide", hide_static},
+                                                 {"println", println_static},
+                                                 {"show", show_static},
+                                                 {0, 0}};
 
 int CJS_Console::ObjDefnID = -1;
 

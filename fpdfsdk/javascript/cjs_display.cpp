@@ -6,11 +6,12 @@
 
 #include "fpdfsdk/javascript/cjs_display.h"
 
-JSConstSpec CJS_Display::ConstSpecs[] = {{"visible", JSConstSpec::Number, 0, 0},
-                                         {"hidden", JSConstSpec::Number, 1, 0},
-                                         {"noPrint", JSConstSpec::Number, 2, 0},
-                                         {"noView", JSConstSpec::Number, 3, 0},
-                                         {0, JSConstSpec::Number, 0, 0}};
+const JSConstSpec CJS_Display::ConstSpecs[] = {
+    {"visible", JSConstSpec::Number, 0, 0},
+    {"hidden", JSConstSpec::Number, 1, 0},
+    {"noPrint", JSConstSpec::Number, 2, 0},
+    {"noView", JSConstSpec::Number, 3, 0},
+    {0, JSConstSpec::Number, 0, 0}};
 
 int CJS_Display::ObjDefnID = -1;
 

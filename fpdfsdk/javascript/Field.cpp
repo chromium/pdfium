@@ -72,7 +72,7 @@ bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
 
 }  // namespace
 
-JSPropertySpec CJS_Field::PropertySpecs[] = {
+const JSPropertySpec CJS_Field::PropertySpecs[] = {
     {"alignment", get_alignment_static, set_alignment_static},
     {"borderStyle", get_border_style_static, set_border_style_static},
     {"buttonAlignX", get_button_align_x_static, set_button_align_x_static},
@@ -136,7 +136,7 @@ JSPropertySpec CJS_Field::PropertySpecs[] = {
     {"source", get_source_static, set_source_static},
     {0, 0, 0}};
 
-JSMethodSpec CJS_Field::MethodSpecs[] = {
+const JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"browseForFileToSubmit", browseForFileToSubmit_static},
     {"buttonGetCaption", buttonGetCaption_static},
     {"buttonGetIcon", buttonGetIcon_static},

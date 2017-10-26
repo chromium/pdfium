@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/javascript/cjs_position.h"
 
-JSConstSpec CJS_Position::ConstSpecs[] = {
+const JSConstSpec CJS_Position::ConstSpecs[] = {
     {"textOnly", JSConstSpec::Number, 0, 0},
     {"iconOnly", JSConstSpec::Number, 1, 0},
     {"iconTextV", JSConstSpec::Number, 2, 0},

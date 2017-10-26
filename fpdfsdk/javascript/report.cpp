@@ -12,9 +12,9 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 
-JSMethodSpec CJS_Report::MethodSpecs[] = {{"save", save_static},
-                                          {"writeText", writeText_static},
-                                          {0, 0}};
+const JSMethodSpec CJS_Report::MethodSpecs[] = {{"save", save_static},
+                                                {"writeText", writeText_static},
+                                                {0, 0}};
 
 int CJS_Report::ObjDefnID = -1;
 

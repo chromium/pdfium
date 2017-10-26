@@ -176,7 +176,7 @@ void TimerObj::SetTimer(GlobalTimer* pTimer) {
 #endif  // PDF_ENABLE_XFA
 #define JS_NUM_FORMSVERSION 7
 
-JSPropertySpec CJS_App::PropertySpecs[] = {
+const JSPropertySpec CJS_App::PropertySpecs[] = {
     {"activeDocs", get_active_docs_static, set_active_docs_static},
     {"calculate", get_calculate_static, set_calculate_static},
     {"formsVersion", get_forms_version_static, set_forms_version_static},
@@ -193,28 +193,29 @@ JSPropertySpec CJS_App::PropertySpecs[] = {
     {"viewerVersion", get_viewer_version_static, set_viewer_version_static},
     {0, 0, 0}};
 
-JSMethodSpec CJS_App::MethodSpecs[] = {{"alert", alert_static},
-                                       {"beep", beep_static},
-                                       {"browseForDoc", browseForDoc_static},
-                                       {"clearInterval", clearInterval_static},
-                                       {"clearTimeOut", clearTimeOut_static},
-                                       {"execDialog", execDialog_static},
-                                       {"execMenuItem", execMenuItem_static},
-                                       {"findComponent", findComponent_static},
-                                       {"goBack", goBack_static},
-                                       {"goForward", goForward_static},
-                                       {"launchURL", launchURL_static},
-                                       {"mailMsg", mailMsg_static},
-                                       {"newFDF", newFDF_static},
-                                       {"newDoc", newDoc_static},
-                                       {"openDoc", openDoc_static},
-                                       {"openFDF", openFDF_static},
-                                       {"popUpMenuEx", popUpMenuEx_static},
-                                       {"popUpMenu", popUpMenu_static},
-                                       {"response", response_static},
-                                       {"setInterval", setInterval_static},
-                                       {"setTimeOut", setTimeOut_static},
-                                       {0, 0}};
+const JSMethodSpec CJS_App::MethodSpecs[] = {
+    {"alert", alert_static},
+    {"beep", beep_static},
+    {"browseForDoc", browseForDoc_static},
+    {"clearInterval", clearInterval_static},
+    {"clearTimeOut", clearTimeOut_static},
+    {"execDialog", execDialog_static},
+    {"execMenuItem", execMenuItem_static},
+    {"findComponent", findComponent_static},
+    {"goBack", goBack_static},
+    {"goForward", goForward_static},
+    {"launchURL", launchURL_static},
+    {"mailMsg", mailMsg_static},
+    {"newFDF", newFDF_static},
+    {"newDoc", newDoc_static},
+    {"openDoc", openDoc_static},
+    {"openFDF", openFDF_static},
+    {"popUpMenuEx", popUpMenuEx_static},
+    {"popUpMenu", popUpMenu_static},
+    {"response", response_static},
+    {"setInterval", setInterval_static},
+    {"setTimeOut", setTimeOut_static},
+    {0, 0}};
 
 int CJS_App::ObjDefnID = -1;
 
