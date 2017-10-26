@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/global.h"
+#include "fpdfsdk/javascript/cjs_global.h"
 
 #include <map>
 #include <memory>

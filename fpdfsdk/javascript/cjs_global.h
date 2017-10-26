@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_GLOBAL_H_
-#define FPDFSDK_JAVASCRIPT_GLOBAL_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_GLOBAL_H_
+#define FPDFSDK_JAVASCRIPT_CJS_GLOBAL_H_
 
 #include "fpdfsdk/javascript/JS_Define.h"
 
@@ -36,4 +36,4 @@ class CJS_Global : public CJS_Object {
       const v8::FunctionCallbackInfo<v8::Value>& info);
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_GLOBAL_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_GLOBAL_H_
