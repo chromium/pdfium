@@ -17,6 +17,10 @@
 #include "testing/fx_string_testhelpers.h"
 #include "third_party/base/ptr_util.h"
 
+// Arbitrarily picked to support up to 1000x1000 images. This is far below where
+// OOM issues are occuring.
+const int kXFACodecFuzzerPixelLimit = 1000000;
+
 class XFACodecFuzzer {
  public:
   static int Fuzz(const uint8_t* data, size_t size, FXCODEC_IMAGE_TYPE type) {
@@ -33,14 +37,18 @@ class XFACodecFuzzer {
     if (status != FXCODEC_STATUS_FRAME_READY)
       return 0;
 
+    // Skipping very large images, since they will take a long time and may lead
+    // to OOM.
+    if (decoder->GetWidth() * decoder->GetHeight() > kXFACodecFuzzerPixelLimit)
+      return 0;
+
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     bitmap->Create(decoder->GetWidth(), decoder->GetHeight(), FXDIB_Argb);
 
     int32_t frames;
     if (decoder->GetFrames(&frames) != FXCODEC_STATUS_DECODE_READY ||
-        frames == 0) {
+        frames == 0)
       return 0;
-    }
 
     status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
                                   bitmap->GetHeight());
