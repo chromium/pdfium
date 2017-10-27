@@ -283,7 +283,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   FPDF_ClosePage(page);
 
   // Open the saved document.
-  const char md5[] = "184b67b322edaee27994b3232544b8b3";
+  const char md5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
 
   OpenSavedDocument();
   LoadSavedPage();
@@ -316,13 +316,13 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   const char md5_modified_highlight[] = "aec26075011349dec9bace891856b5f2";
   const char md5_modified_square[] = "057f57a32be95975775e5ec513fdcb56";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "ade6762a70e85605546ce067e7d2148f";
-  const char md5_modified_highlight[] = "fb8440ed1a070b53ed5598ce7451cfad";
-  const char md5_modified_square[] = "7925f6726b343393f258e8b4e93dd65d";
+  const char md5_original[] = "0e27376094f11490f74c65f3dc3a42c5";
+  const char md5_modified_highlight[] = "66f3caef3a7d488a4fa1ad37fc06310e";
+  const char md5_modified_square[] = "a456dad0bc6801ee2d6408a4394af563";
 #else
-  const char md5_original[] = "ade6762a70e85605546ce067e7d2148f";
-  const char md5_modified_highlight[] = "fb8440ed1a070b53ed5598ce7451cfad";
-  const char md5_modified_square[] = "7925f6726b343393f258e8b4e93dd65d";
+  const char md5_original[] = "0e27376094f11490f74c65f3dc3a42c5";
+  const char md5_modified_highlight[] = "66f3caef3a7d488a4fa1ad37fc06310e";
+  const char md5_modified_square[] = "a456dad0bc6801ee2d6408a4394af563";
 #endif
 
   // Open a file with four annotations and load its first page.
@@ -492,15 +492,15 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   const char md5_two_paths[] = "e8994452fc4385337bae5522354e10ff";
   const char md5_new_annot[] = "ee5372b31fede117fc83b9384598aa25";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_modified_path[] = "681f0d0738dded0722e146f6c219bfac";
-  const char md5_two_paths[] = "67c7e90fc3b64e20f6b69a1744f7f4f0";
-  const char md5_new_annot[] = "262187984451bae2fe826067d68623ff";
+  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  const char md5_modified_path[] = "3f77b88ce6048e08e636c9a03921b2e5";
+  const char md5_two_paths[] = "bffbf5ecd15862b9fe553c795400ff8e";
+  const char md5_new_annot[] = "e020534c7eeea76be537c70d6e359a40";
 #else
-  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_modified_path[] = "681f0d0738dded0722e146f6c219bfac";
-  const char md5_two_paths[] = "67c7e90fc3b64e20f6b69a1744f7f4f0";
-  const char md5_new_annot[] = "262187984451bae2fe826067d68623ff";
+  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  const char md5_modified_path[] = "3f77b88ce6048e08e636c9a03921b2e5";
+  const char md5_two_paths[] = "bffbf5ecd15862b9fe553c795400ff8e";
+  const char md5_new_annot[] = "e020534c7eeea76be537c70d6e359a40";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -673,13 +673,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   const char md5_new_image[] = "ff012f5697436dfcaec25b32d1333596";
   const char md5_modified_image[] = "86cf8cb2755a7a2046a543e66d9c1e61";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_new_image[] = "6fb176c20996cc554d0210d8c8b6138f";
-  const char md5_modified_image[] = "546959714dfb0dcd7e7b00259e8d178c";
+  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  const char md5_new_image[] = "9ea8732dc9d579f68853f16892856208";
+  const char md5_modified_image[] = "74239d2a8c55c9de1dbb9cd8781895aa";
 #else
-  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_new_image[] = "6fb176c20996cc554d0210d8c8b6138f";
-  const char md5_modified_image[] = "546959714dfb0dcd7e7b00259e8d178c";
+  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  const char md5_new_image[] = "9ea8732dc9d579f68853f16892856208";
+  const char md5_modified_image[] = "74239d2a8c55c9de1dbb9cd8781895aa";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -750,13 +750,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   const char md5_new_text[] = "e5680ed048c2cfd9a1d27212cdf41286";
   const char md5_modified_text[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_new_text[] = "998abae4962f8f41e094e7612d8339fc";
-  const char md5_modified_text[] = "e89b82ca4589b8f0b45fff42ca3a96a4";
+  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  const char md5_new_text[] = "00b14fa2dc1c90d1b0d034e1608efef5";
+  const char md5_modified_text[] = "076c8f24a09ddc0e49f7e758edead6f0";
 #else
-  const char md5_original[] = "4f64add0190ede63f7bb9eb1e2e83edb";
-  const char md5_new_text[] = "998abae4962f8f41e094e7612d8339fc";
-  const char md5_modified_text[] = "e89b82ca4589b8f0b45fff42ca3a96a4";
+  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  const char md5_new_text[] = "00b14fa2dc1c90d1b0d034e1608efef5";
+  const char md5_modified_text[] = "076c8f24a09ddc0e49f7e758edead6f0";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -880,9 +880,9 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5[] = "0e3710ea6476f5bcba2cd39eb42d54e2";
+  const char md5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
 #else
-  const char md5[] = "0e3710ea6476f5bcba2cd39eb42d54e2";
+  const char md5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
 #endif
   OpenSavedDocument();
   LoadSavedPage();

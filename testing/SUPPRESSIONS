@@ -132,12 +132,12 @@ example_006.pdf mac,win * *
 example_007.pdf mac * *
 example_008.pdf mac * *
 example_009.pdf mac * *
-example_010.pdf mac,win * *
+example_010.pdf mac * *
 example_011.pdf mac * *
 example_012.pdf mac * *
 example_013.pdf mac * *
 example_014.pdf mac * *
-example_015.pdf mac,win * *
+example_015.pdf mac * *
 example_016.pdf mac * *
 example_017.pdf mac * *
 example_018.pdf mac * *
@@ -145,7 +145,7 @@ example_019.pdf mac * *
 example_020.pdf mac * *
 example_021.pdf mac * *
 example_022.pdf mac * *
-example_023.pdf mac,win * *
+example_023.pdf mac * *
 example_024.pdf mac * *
 example_025.pdf mac * *
 example_026.pdf mac * *
@@ -175,7 +175,7 @@ example_049.pdf mac * *
 example_050.pdf mac * *
 example_051.pdf mac * *
 example_052.pdf mac * *
-example_053.pdf mac,win * *
+example_053.pdf mac * *
 example_054.pdf mac * *
 example_055.pdf mac,win * *
 example_056.pdf mac * *
