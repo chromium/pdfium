@@ -524,9 +524,9 @@ TEST_F(FPDFFormFillEmbeddertest, FormText) {
   const char md5_2[] = "35b1a4b679eafc749a0b6fda750c0e8d";
   const char md5_3[] = "65c64a7c355388f719a752aa1e23f6fe";
 #else
-  const char md5_1[] = "b890950d4b9bc163b1a96797f3004b53";
-  const char md5_2[] = "11487d5597599a26e8912b9c1d9422cb";
-  const char md5_3[] = "bffe0ecea9a533f217047ee41d6be466";
+  const char md5_1[] = "a5e3ac74c2ee123ec6710e2f0ef8424a";
+  const char md5_2[] = "4526b09382e144d5506ad92149399de6";
+  const char md5_3[] = "80356067d860088864cf50ff85d8459e";
 #endif
   {
     EXPECT_TRUE(OpenDocument("text_form.pdf"));

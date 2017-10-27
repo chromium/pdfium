@@ -35,7 +35,47 @@ namespace {
 
 constexpr uint32_t kInvalidGlyphIndex = static_cast<uint32_t>(-1);
 
+constexpr int kMinPixel = 0;
+constexpr int kMaxPixel = 255;
+
 constexpr int kMaxGlyphDimension = 2048;
+
+void ContrastAdjust(uint8_t* pDataIn,
+                    uint8_t* pDataOut,
+                    int nWidth,
+                    int nHeight,
+                    int nSrcRowBytes,
+                    int nDstRowBytes) {
+  int max = kMinPixel;
+  int min = kMaxPixel;
+  for (int row = 0; row < nHeight; row++) {
+    uint8_t* pRow = pDataIn + row * nSrcRowBytes;
+    for (int col = 0; col < nWidth; col++) {
+      int val = pRow[col];
+      max = std::max(val, max);
+      min = std::min(val, min);
+    }
+  }
+  int diff = max - min;
+  if (diff == kMinPixel || diff == kMaxPixel) {
+    int rowbytes = std::min(abs(nSrcRowBytes), nDstRowBytes);
+    for (int row = 0; row < nHeight; row++) {
+      memcpy(pDataOut + row * nDstRowBytes, pDataIn + row * nSrcRowBytes,
+             rowbytes);
+    }
+    return;
+  }
+  float rate = 255.f / diff;
+  for (int row = 0; row < nHeight; row++) {
+    uint8_t* pSrcRow = pDataIn + row * nSrcRowBytes;
+    uint8_t* pDstRow = pDataOut + row * nDstRowBytes;
+    for (int col = 0; col < nWidth; col++) {
+      int val = static_cast<int>((pSrcRow[col] - min) * rate + 0.5);
+      pDstRow[col] =
+          static_cast<uint8_t>(pdfium::clamp(val, kMinPixel, kMaxPixel));
+    }
+  }
+}
 
 struct UniqueKeyGen {
   void Generate(int count, ...);
@@ -184,9 +224,18 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
     }
   } else {
     memset(pDestBuf, 0, dest_pitch * bmheight);
-    int rowbytes = std::min(abs(src_pitch), dest_pitch);
-    for (int row = 0; row < bmheight; row++)
-      memcpy(pDestBuf + row * dest_pitch, pSrcBuf + row * src_pitch, rowbytes);
+    if (anti_alias == FXFT_RENDER_MODE_MONO &&
+        FXFT_Get_Bitmap_PixelMode(FXFT_Get_Glyph_Bitmap(m_Face)) ==
+            FXFT_PIXEL_MODE_MONO) {
+      int rowbytes = abs(src_pitch) > dest_pitch ? dest_pitch : abs(src_pitch);
+      for (int row = 0; row < bmheight; row++) {
+        memcpy(pDestBuf + row * dest_pitch, pSrcBuf + row * src_pitch,
+               rowbytes);
+      }
+    } else {
+      ContrastAdjust(pSrcBuf, pDestBuf, bmwidth, bmheight, src_pitch,
+                     dest_pitch);
+    }
   }
   return pGlyphBitmap;
 }

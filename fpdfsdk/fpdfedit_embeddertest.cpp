@@ -422,7 +422,7 @@ TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "f9e6fa74230f234286bfcada9f7606d8";
 #else
-  const char md5[] = "aa71b09b93b55f467f1290e5111babee";
+  const char md5[] = "bc6e6eb50dda4695ba0fb4d04ed82ada";
 #endif
   CompareBitmap(bitmap, 200, 200, md5);
   FPDFBitmap_Destroy(bitmap);
@@ -551,7 +551,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
 #else
-  const char md5[] = "eacaa24573b8ce997b3882595f096f00";
+  const char md5[] = "7a35771853a1cbba38f6775807878625";
 #endif
   CompareBitmap(page_bitmap, 612, 792, md5);
   FPDFBitmap_Destroy(page_bitmap);
@@ -569,9 +569,9 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_2[] = "2587eac9a787e97a37636d54d11bd28d";
+  const char md5_2[] = "b231b329a4b566fb9b42bfc15fe59bb7";
 #else
-  const char md5_2[] = "76fcc7d08aa15445efd2e2ceb7c6cc3b";
+  const char md5_2[] = "f85fae151851436072b7b3c6703e506a";
 #endif
   CompareBitmap(page_bitmap, 612, 792, md5_2);
   FPDFBitmap_Destroy(page_bitmap);
@@ -589,9 +589,9 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_3[] = "40b3ef04f915ff4c4208948001763544";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_3[] = "7cb61ec112cf400b489360d443ffc9d2";
+  const char md5_3[] = "ba874b3b137f984510c4e287ed4ba7ae";
 #else
-  const char md5_3[] = "b8a21668f1dab625af7c072e07fcefc4";
+  const char md5_3[] = "c5aed6a8ef05558c8c47d58c87cbcb46";
 #endif
   CompareBitmap(page_bitmap, 612, 792, md5_3);
   FPDFBitmap_Destroy(page_bitmap);
@@ -892,7 +892,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
 #else
-    const char md5[] = "70592859010ffbf532a2237b8118bcc4";
+    const char md5[] = "1722c6a9deed953d730de9cd13dcbd55";
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     CompareBitmap(page_bitmap, 612, 792, md5);
     FPDFBitmap_Destroy(page_bitmap);
@@ -910,7 +910,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_2[] = "8eded4193ff1f0f77b8b600a825e97ea";
 #else
-  const char md5_2[] = "c1d10cce1761c4a998a16b2562030568";
+  const char md5_2[] = "9d7885072058f6c3e68ecaf32e917f30";
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   CompareBitmap(page_bitmap2, 612, 792, md5_2);
   FPDFBitmap_Destroy(page_bitmap2);
@@ -985,7 +985,7 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
 
   // Check that the text renders properly.
   FPDF_BITMAP page_bitmap = RenderPage(page);
-  const char md5[] = "c68cd79aa72bf83a7b25271370d46b21";
+  const char md5[] = "2bc6c1aaa2252e73246a75775ccf38c2";
   CompareBitmap(page_bitmap, 612, 792, md5);
   FPDFBitmap_Destroy(page_bitmap);
 
