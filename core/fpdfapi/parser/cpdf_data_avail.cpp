@@ -33,13 +33,13 @@
 namespace {
 
 // static
-CPDF_Object* GetResourceObject(CPDF_Dictionary* pDict) {
+const CPDF_Object* GetResourceObject(const CPDF_Dictionary* pDict) {
   constexpr size_t kMaxHierarchyDepth = 64;
   size_t depth = 0;
 
-  CPDF_Dictionary* dictionary_to_check = pDict;
+  const CPDF_Dictionary* dictionary_to_check = pDict;
   while (dictionary_to_check) {
-    CPDF_Object* result = dictionary_to_check->GetObjectFor("Resources");
+    const CPDF_Object* result = dictionary_to_check->GetObjectFor("Resources");
     if (result)
       return result;
     const CPDF_Object* parent = dictionary_to_check->GetObjectFor("Parent");
@@ -103,11 +103,9 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_bMainXRefLoadedOK = false;
   m_bAnnotsLoad = false;
   m_bPageLoadedOK = false;
-  m_bNeedDownLoadResource = false;
   m_pTrailer = nullptr;
   m_pCurrentParser = nullptr;
   m_pPageDict = nullptr;
-  m_pPageResource = nullptr;
   m_docStatus = PDF_DATAAVAIL_HEADER;
   m_bTotalLoadPageTree = false;
   m_bCurPageDictLoadOK = false;
@@ -1195,7 +1193,6 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     m_bCurPageDictLoadOK = false;
     m_bPageLoadedOK = false;
     m_bAnnotsLoad = false;
-    m_bNeedDownLoadResource = false;
     m_objs_array.clear();
     m_ObjectSet.clear();
   }
@@ -1285,16 +1282,9 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     m_bAnnotsLoad = true;
   }
 
-  if (m_pPageDict && !m_bNeedDownLoadResource) {
-    m_pPageResource = GetResourceObject(m_pPageDict);
-    m_bNeedDownLoadResource = !!m_pPageResource;
-  }
-
-  if (m_bNeedDownLoadResource) {
-    if (!CheckResources())
-      return DataNotAvailable;
-    m_bNeedDownLoadResource = false;
-  }
+  const DocAvailStatus resources_status = CheckResources(m_pPageDict);
+  if (resources_status != DocAvailStatus::DataAvailable)
+    return resources_status;
 
   m_bPageLoadedOK = false;
   m_bAnnotsLoad = false;
@@ -1307,23 +1297,26 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   return DataAvailable;
 }
 
-bool CPDF_DataAvail::CheckResources() {
-  if (m_objs_array.empty()) {
-    std::vector<CPDF_Object*> obj_array;
-    obj_array.push_back(m_pPageResource);
-    if (!AreObjectsAvailable(obj_array, true, m_objs_array))
-      return false;
+CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
+    const CPDF_Dictionary* page) {
+  if (!page)
+    return DocAvailStatus::DataAvailable;
 
-    m_objs_array.clear();
-    return true;
-  }
-  std::vector<CPDF_Object*> new_objs_array;
-  if (!AreObjectsAvailable(m_objs_array, false, new_objs_array)) {
-    m_objs_array = new_objs_array;
-    return false;
-  }
-  m_objs_array.clear();
-  return true;
+  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  const CPDF_Object* resources = GetResourceObject(page);
+  if (GetValidator()->has_read_problems())
+    return DocAvailStatus::DataNotAvailable;
+
+  if (!resources)
+    return DocAvailStatus::DataAvailable;
+
+  CPDF_PageObjectAvail* resource_avail =
+      m_PagesResourcesAvail
+          .insert(std::make_pair(
+              resources, pdfium::MakeUnique<CPDF_PageObjectAvail>(
+                             GetValidator().Get(), m_pDocument, resources)))
+          .first->second.get();
+  return resource_avail->CheckAvail();
 }
 
 RetainPtr<IFX_SeekableReadStream> CPDF_DataAvail::GetFileRead() const {

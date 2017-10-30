@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 #define CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 
+#include <map>
 #include <memory>
 #include <set>
 #include <vector>
@@ -138,7 +139,7 @@ class CPDF_DataAvail final {
   bool CheckInfo();
   bool CheckPages();
   bool CheckPage();
-  bool CheckResources();
+  DocAvailStatus CheckResources(const CPDF_Dictionary* page);
   DocFormStatus CheckAcroForm();
   bool CheckPageStatus();
 
@@ -212,8 +213,6 @@ class CPDF_DataAvail final {
   FX_FILESIZE m_dwCurrentXRefSteam;
   bool m_bAnnotsLoad;
   CPDF_Dictionary* m_pPageDict;
-  CPDF_Object* m_pPageResource;
-  bool m_bNeedDownLoadResource;
   bool m_bPageLoadedOK;
   std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
   std::vector<std::unique_ptr<CPDF_Object>> m_PagesArray;
@@ -227,6 +226,8 @@ class CPDF_DataAvail final {
   std::set<uint32_t> m_SeenPrevPositions;
   std::unique_ptr<CPDF_HintTables> m_pHintTables;
   bool m_bSupportHintTable;
+  std::map<const CPDF_Object*, std::unique_ptr<CPDF_PageObjectAvail>>
+      m_PagesResourcesAvail;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
