@@ -25,10 +25,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
   auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
   auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
   SBREG->fill(SBDEFPIXEL);
-  int32_t STRIPT;
-  if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &STRIPT) != 0)
+  int32_t INITIAL_STRIPT;
+  if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &INITIAL_STRIPT) != 0)
     return nullptr;
 
+  FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
   int32_t FIRSTS = 0;
@@ -39,9 +40,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
       return nullptr;
 
     DT *= SBSTRIPS;
-    STRIPT = STRIPT + DT;
+    STRIPT += DT;
     bool bFirst = true;
-    int32_t CURS = 0;
+    FX_SAFE_INT32 CURS = 0;
     for (;;) {
       if (bFirst) {
         int32_t DFS;
@@ -60,7 +61,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
         if (nVal != 0)
           return nullptr;
 
-        CURS = CURS + IDS + SBDSOFFSET;
+        CURS += IDS;
+        CURS += SBDSOFFSET;
       }
       uint8_t CURT = 0;
       if (SBSTRIPS != 1) {
@@ -73,7 +75,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
 
         CURT = nVal;
       }
-      int32_t TI = STRIPT + CURT;
+      FX_SAFE_INT32 SAFE_TI = STRIPT + CURT;
+      if (!SAFE_TI.IsValid())
+        return nullptr;
+
+      int32_t TI = SAFE_TI.ValueOrDie();
       pdfium::base::CheckedNumeric<int32_t> nVal = 0;
       int32_t nBits = 0;
       uint32_t IDI;
@@ -160,12 +166,15 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
       uint32_t HI = IBI->height();
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
-        CURS = CURS + WI - 1;
+        CURS += WI - 1;
       } else if (TRANSPOSED == 1 && ((REFCORNER == JBIG2_CORNER_BOTTOMLEFT) ||
                                      (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
-        CURS = CURS + HI - 1;
+        CURS += HI - 1;
       }
-      int32_t SI = CURS;
+      if (!CURS.IsValid())
+        return nullptr;
+
+      int32_t SI = CURS.ValueOrDie();
       if (TRANSPOSED == 0) {
         switch (REFCORNER) {
           case JBIG2_CORNER_TOPLEFT:
@@ -199,10 +208,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
       }
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMLEFT))) {
-        CURS = CURS + WI - 1;
+        CURS += WI - 1;
       } else if (TRANSPOSED == 1 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
                                      (REFCORNER == JBIG2_CORNER_TOPRIGHT))) {
-        CURS = CURS + HI - 1;
+        CURS += HI - 1;
       }
       NINSTANCES = NINSTANCES + 1;
     }
@@ -259,7 +268,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
   int32_t FIRSTS = 0;
   uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
-    int32_t CURS = 0;
+    FX_SAFE_INT32 CURS = 0;
     int32_t DT;
     if (!pIADT->decode(pArithDecoder, &DT))
       return nullptr;
@@ -279,7 +288,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
         if (!pIADS->decode(pArithDecoder, &IDS))
           break;
 
-        CURS += IDS + SBDSOFFSET;
+        CURS += IDS;
+        CURS += SBDSOFFSET;
       }
       if (NINSTANCES >= SBNUMINSTANCES)
         break;
@@ -353,7 +363,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
                                      (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
         CURS += HI - 1;
       }
-      int32_t SI = CURS;
+      if (!CURS.IsValid())
+        return nullptr;
+
+      int32_t SI = CURS.ValueOrDie();
       if (TRANSPOSED == 0) {
         switch (REFCORNER) {
           case JBIG2_CORNER_TOPLEFT:
