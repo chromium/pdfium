@@ -36,7 +36,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fsdk_pauseadapter.h"
-#include "fpdfsdk/javascript/ijs_runtime.h"
+#include "fxjs/ijs_runtime.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"

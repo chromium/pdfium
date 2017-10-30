@@ -191,7 +191,7 @@ static_library("pdfium") {
     ":fxcodec",
     ":fxcrt",
     ":fxge",
-    ":javascript",
+    ":fxjs",
     ":pwl",
     "third_party:bigint",
     "third_party:pdfium_base",
@@ -1176,10 +1176,10 @@ static_library("pwl") {
   ]
 }
 
-static_library("javascript") {
+static_library("fxjs") {
   sources = [
-    "fpdfsdk/javascript/ijs_event_context.h",
-    "fpdfsdk/javascript/ijs_runtime.h",
+    "fxjs/ijs_event_context.h",
+    "fxjs/ijs_runtime.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [
@@ -1188,88 +1188,119 @@ static_library("javascript") {
 
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/JS_Define.cpp",
-      "fpdfsdk/javascript/JS_Define.h",
-      "fpdfsdk/javascript/JS_GlobalData.cpp",
-      "fpdfsdk/javascript/JS_GlobalData.h",
-      "fpdfsdk/javascript/JS_KeyValue.cpp",
-      "fpdfsdk/javascript/JS_KeyValue.h",
-      "fpdfsdk/javascript/cjs_annot.cpp",
-      "fpdfsdk/javascript/cjs_annot.h",
-      "fpdfsdk/javascript/cjs_app.cpp",
-      "fpdfsdk/javascript/cjs_app.h",
-      "fpdfsdk/javascript/cjs_border.cpp",
-      "fpdfsdk/javascript/cjs_border.h",
-      "fpdfsdk/javascript/cjs_color.cpp",
-      "fpdfsdk/javascript/cjs_color.h",
-      "fpdfsdk/javascript/cjs_console.cpp",
-      "fpdfsdk/javascript/cjs_console.h",
-      "fpdfsdk/javascript/cjs_delaydata.cpp",
-      "fpdfsdk/javascript/cjs_delaydata.h",
-      "fpdfsdk/javascript/cjs_display.cpp",
-      "fpdfsdk/javascript/cjs_display.h",
-      "fpdfsdk/javascript/cjs_document.cpp",
-      "fpdfsdk/javascript/cjs_document.h",
-      "fpdfsdk/javascript/cjs_embedobj.cpp",
-      "fpdfsdk/javascript/cjs_embedobj.h",
-      "fpdfsdk/javascript/cjs_event.cpp",
-      "fpdfsdk/javascript/cjs_event.h",
-      "fpdfsdk/javascript/cjs_event_context.cpp",
-      "fpdfsdk/javascript/cjs_event_context.h",
-      "fpdfsdk/javascript/cjs_eventhandler.cpp",
-      "fpdfsdk/javascript/cjs_eventhandler.h",
-      "fpdfsdk/javascript/cjs_field.cpp",
-      "fpdfsdk/javascript/cjs_field.h",
-      "fpdfsdk/javascript/cjs_font.cpp",
-      "fpdfsdk/javascript/cjs_font.h",
-      "fpdfsdk/javascript/cjs_global.cpp",
-      "fpdfsdk/javascript/cjs_global.h",
-      "fpdfsdk/javascript/cjs_globalarrays.cpp",
-      "fpdfsdk/javascript/cjs_globalarrays.h",
-      "fpdfsdk/javascript/cjs_globalconsts.cpp",
-      "fpdfsdk/javascript/cjs_globalconsts.h",
-      "fpdfsdk/javascript/cjs_highlight.cpp",
-      "fpdfsdk/javascript/cjs_highlight.h",
-      "fpdfsdk/javascript/cjs_icon.cpp",
-      "fpdfsdk/javascript/cjs_icon.h",
-      "fpdfsdk/javascript/cjs_object.cpp",
-      "fpdfsdk/javascript/cjs_object.h",
-      "fpdfsdk/javascript/cjs_position.cpp",
-      "fpdfsdk/javascript/cjs_position.h",
-      "fpdfsdk/javascript/cjs_printparamsobj.cpp",
-      "fpdfsdk/javascript/cjs_printparamsobj.h",
-      "fpdfsdk/javascript/cjs_publicmethods.cpp",
-      "fpdfsdk/javascript/cjs_publicmethods.h",
-      "fpdfsdk/javascript/cjs_report.cpp",
-      "fpdfsdk/javascript/cjs_report.h",
-      "fpdfsdk/javascript/cjs_return.cpp",
-      "fpdfsdk/javascript/cjs_return.h",
-      "fpdfsdk/javascript/cjs_runtime.cpp",
-      "fpdfsdk/javascript/cjs_runtime.h",
-      "fpdfsdk/javascript/cjs_scalehow.cpp",
-      "fpdfsdk/javascript/cjs_scalehow.h",
-      "fpdfsdk/javascript/cjs_scalewhen.cpp",
-      "fpdfsdk/javascript/cjs_scalewhen.h",
-      "fpdfsdk/javascript/cjs_style.cpp",
-      "fpdfsdk/javascript/cjs_style.h",
-      "fpdfsdk/javascript/cjs_timerobj.cpp",
-      "fpdfsdk/javascript/cjs_timerobj.h",
-      "fpdfsdk/javascript/cjs_util.cpp",
-      "fpdfsdk/javascript/cjs_util.h",
-      "fpdfsdk/javascript/cjs_zoomtype.cpp",
-      "fpdfsdk/javascript/cjs_zoomtype.h",
-      "fpdfsdk/javascript/global_timer.cpp",
-      "fpdfsdk/javascript/global_timer.h",
-      "fpdfsdk/javascript/js_resources.cpp",
-      "fpdfsdk/javascript/js_resources.h",
+      "fxjs/JS_Define.cpp",
+      "fxjs/JS_Define.h",
+      "fxjs/JS_GlobalData.cpp",
+      "fxjs/JS_GlobalData.h",
+      "fxjs/JS_KeyValue.cpp",
+      "fxjs/JS_KeyValue.h",
+      "fxjs/cjs_annot.cpp",
+      "fxjs/cjs_annot.h",
+      "fxjs/cjs_app.cpp",
+      "fxjs/cjs_app.h",
+      "fxjs/cjs_border.cpp",
+      "fxjs/cjs_border.h",
+      "fxjs/cjs_color.cpp",
+      "fxjs/cjs_color.h",
+      "fxjs/cjs_console.cpp",
+      "fxjs/cjs_console.h",
+      "fxjs/cjs_delaydata.cpp",
+      "fxjs/cjs_delaydata.h",
+      "fxjs/cjs_display.cpp",
+      "fxjs/cjs_display.h",
+      "fxjs/cjs_document.cpp",
+      "fxjs/cjs_document.h",
+      "fxjs/cjs_embedobj.cpp",
+      "fxjs/cjs_embedobj.h",
+      "fxjs/cjs_event.cpp",
+      "fxjs/cjs_event.h",
+      "fxjs/cjs_event_context.cpp",
+      "fxjs/cjs_event_context.h",
+      "fxjs/cjs_eventhandler.cpp",
+      "fxjs/cjs_eventhandler.h",
+      "fxjs/cjs_field.cpp",
+      "fxjs/cjs_field.h",
+      "fxjs/cjs_font.cpp",
+      "fxjs/cjs_font.h",
+      "fxjs/cjs_global.cpp",
+      "fxjs/cjs_global.h",
+      "fxjs/cjs_globalarrays.cpp",
+      "fxjs/cjs_globalarrays.h",
+      "fxjs/cjs_globalconsts.cpp",
+      "fxjs/cjs_globalconsts.h",
+      "fxjs/cjs_highlight.cpp",
+      "fxjs/cjs_highlight.h",
+      "fxjs/cjs_icon.cpp",
+      "fxjs/cjs_icon.h",
+      "fxjs/cjs_object.cpp",
+      "fxjs/cjs_object.h",
+      "fxjs/cjs_position.cpp",
+      "fxjs/cjs_position.h",
+      "fxjs/cjs_printparamsobj.cpp",
+      "fxjs/cjs_printparamsobj.h",
+      "fxjs/cjs_publicmethods.cpp",
+      "fxjs/cjs_publicmethods.h",
+      "fxjs/cjs_report.cpp",
+      "fxjs/cjs_report.h",
+      "fxjs/cjs_return.cpp",
+      "fxjs/cjs_return.h",
+      "fxjs/cjs_runtime.cpp",
+      "fxjs/cjs_runtime.h",
+      "fxjs/cjs_scalehow.cpp",
+      "fxjs/cjs_scalehow.h",
+      "fxjs/cjs_scalewhen.cpp",
+      "fxjs/cjs_scalewhen.h",
+      "fxjs/cjs_style.cpp",
+      "fxjs/cjs_style.h",
+      "fxjs/cjs_timerobj.cpp",
+      "fxjs/cjs_timerobj.h",
+      "fxjs/cjs_util.cpp",
+      "fxjs/cjs_util.h",
+      "fxjs/cjs_zoomtype.cpp",
+      "fxjs/cjs_zoomtype.h",
+      "fxjs/fxjs_v8.cpp",
+      "fxjs/fxjs_v8.h",
+      "fxjs/global_timer.cpp",
+      "fxjs/global_timer.h",
+      "fxjs/js_resources.cpp",
+      "fxjs/js_resources.h",
     ]
-    deps += [ ":fxjs" ]
+    deps += [
+      ":fxcrt",
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
     configs += [ "//v8:external_startup_data" ]
+    include_dirs = [
+      "//v8",
+      "//v8/include",
+    ]
+    public_deps = [
+      "//v8",
+    ]
+
+    if (pdf_enable_xfa) {
+      sources += [
+        "fxjs/cfxjse_arguments.cpp",
+        "fxjs/cfxjse_arguments.h",
+        "fxjs/cfxjse_class.cpp",
+        "fxjs/cfxjse_class.h",
+        "fxjs/cfxjse_context.cpp",
+        "fxjs/cfxjse_context.h",
+        "fxjs/cfxjse_isolatetracker.cpp",
+        "fxjs/cfxjse_isolatetracker.h",
+        "fxjs/cfxjse_runtimedata.cpp",
+        "fxjs/cfxjse_runtimedata.h",
+        "fxjs/cfxjse_value.cpp",
+        "fxjs/cfxjse_value.h",
+        "fxjs/fxjse.h",
+      ]
+    }
   } else {
     sources += [
-      "fpdfsdk/javascript/cjs_event_context_stub.cpp",
-      "fpdfsdk/javascript/cjs_event_context_stub.h",
-      "fpdfsdk/javascript/cjs_runtimestub.cpp",
+      "fxjs/cjs_event_context_stub.cpp",
+      "fxjs/cjs_event_context_stub.h",
+      "fxjs/cjs_runtimestub.cpp",
     ]
   }
 }
@@ -1303,46 +1334,6 @@ static_library("formfiller") {
   deps = [
     ":fxcrt",
   ]
-}
-
-if (pdf_enable_v8) {
-  static_library("fxjs") {
-    sources = [
-      "fxjs/fxjs_v8.cpp",
-      "fxjs/fxjs_v8.h",
-    ]
-    configs += [ ":pdfium_core_config" ]
-    deps = [
-      ":fxcrt",
-      "//v8",
-      "//v8:v8_libplatform",
-    ]
-    include_dirs = [
-      "//v8",
-      "//v8/include",
-    ]
-    public_deps = [
-      "//v8",
-    ]
-
-    if (pdf_enable_xfa) {
-      sources += [
-        "fxjs/cfxjse_arguments.cpp",
-        "fxjs/cfxjse_arguments.h",
-        "fxjs/cfxjse_class.cpp",
-        "fxjs/cfxjse_class.h",
-        "fxjs/cfxjse_context.cpp",
-        "fxjs/cfxjse_context.h",
-        "fxjs/cfxjse_isolatetracker.cpp",
-        "fxjs/cfxjse_isolatetracker.h",
-        "fxjs/cfxjse_runtimedata.cpp",
-        "fxjs/cfxjse_runtimedata.h",
-        "fxjs/cfxjse_value.cpp",
-        "fxjs/cfxjse_value.h",
-        "fxjs/fxjse.h",
-      ]
-    }
-  }
 }
 
 if (pdf_enable_xfa) {
@@ -2014,8 +2005,8 @@ test("pdfium_unittests") {
   }
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/cjs_publicmethods_unittest.cpp",
-      "fpdfsdk/javascript/cjs_util_unittest.cpp",
+      "fxjs/cjs_publicmethods_unittest.cpp",
+      "fxjs/cjs_util_unittest.cpp",
     ]
     include_dirs += [
       "//v8",
@@ -2078,7 +2069,7 @@ test("pdfium_embeddertests") {
 
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/cjs_publicmethods_embeddertest.cpp",
+      "fxjs/cjs_publicmethods_embeddertest.cpp",
       "fxjs/fxjs_v8_embeddertest.cpp",
       "testing/js_embedder_test.cpp",
       "testing/js_embedder_test.h",
