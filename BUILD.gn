@@ -1261,7 +1261,11 @@ static_library("javascript") {
     deps += [ ":fxjs" ]
     configs += [ "//v8:external_startup_data" ]
   } else {
-    sources += [ "fpdfsdk/javascript/JS_Runtime_Stub.cpp" ]
+    sources += [
+      "fpdfsdk/javascript/cjs_event_context_stub.cpp",
+      "fpdfsdk/javascript/cjs_event_context_stub.h",
+      "fpdfsdk/javascript/cjs_runtimestub.cpp",
+    ]
   }
 }
 
