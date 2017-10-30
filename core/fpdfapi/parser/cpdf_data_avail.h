@@ -19,6 +19,7 @@ class CPDF_Dictionary;
 class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
 class CPDF_LinearizedHeader;
+class CPDF_PageObjectAvail;
 class CPDF_Parser;
 class CPDF_ReadValidator;
 
@@ -33,8 +34,6 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_LOADALLCROSSREF,
   PDF_DATAAVAIL_ROOT,
   PDF_DATAAVAIL_INFO,
-  PDF_DATAAVAIL_ACROFORM,
-  PDF_DATAAVAIL_ACROFORM_SUBOBJECT,
   PDF_DATAAVAIL_PAGETREE,
   PDF_DATAAVAIL_PAGE,
   PDF_DATAAVAIL_PAGE_LATERLOAD,
@@ -140,8 +139,7 @@ class CPDF_DataAvail final {
   bool CheckPages();
   bool CheckPage();
   bool CheckResources();
-  bool CheckAcroForm();
-  bool CheckAcroFormSubObject();
+  DocFormStatus CheckAcroForm();
   bool CheckPageStatus();
 
   bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
@@ -176,7 +174,6 @@ class CPDF_DataAvail final {
   bool IsFirstCheck(uint32_t dwPage);
   void ResetFirstCheck(uint32_t dwPage);
   bool ValidatePage(uint32_t dwPage);
-  bool ValidateForm();
 
   FileAvail* const m_pFileAvail;
   RetainPtr<CPDF_ReadValidator> m_pFileRead;
@@ -214,15 +211,11 @@ class CPDF_DataAvail final {
   CPDF_Parser* m_pCurrentParser;
   FX_FILESIZE m_dwCurrentXRefSteam;
   bool m_bAnnotsLoad;
-  bool m_bHaveAcroForm;
-  uint32_t m_dwAcroFormObjNum;
-  bool m_bAcroFormLoad;
-  std::vector<std::unique_ptr<CPDF_Object>> m_Acroforms;
   CPDF_Dictionary* m_pPageDict;
   CPDF_Object* m_pPageResource;
   bool m_bNeedDownLoadResource;
   bool m_bPageLoadedOK;
-  bool m_bLinearizedFormParamLoad;
+  std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
   std::vector<std::unique_ptr<CPDF_Object>> m_PagesArray;
   uint32_t m_dwEncryptObjNum;
   FX_FILESIZE m_dwPrevXRefOffset;

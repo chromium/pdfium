@@ -90,7 +90,6 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_bufferSize = 0;
   m_PagesObjNum = 0;
   m_dwCurrentXRefSteam = 0;
-  m_dwAcroFormObjNum = 0;
   m_dwInfoObjNum = 0;
   m_pDocument = 0;
   m_dwEncryptObjNum = 0;
@@ -103,11 +102,8 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_bPagesTreeLoad = false;
   m_bMainXRefLoadedOK = false;
   m_bAnnotsLoad = false;
-  m_bHaveAcroForm = false;
-  m_bAcroFormLoad = false;
   m_bPageLoadedOK = false;
   m_bNeedDownLoadResource = false;
-  m_bLinearizedFormParamLoad = false;
   m_pTrailer = nullptr;
   m_pCurrentParser = nullptr;
   m_pPageDict = nullptr;
@@ -214,53 +210,6 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
   return DataAvailable;
 }
 
-bool CPDF_DataAvail::CheckAcroFormSubObject() {
-  if (m_objs_array.empty()) {
-    std::vector<CPDF_Object*> obj_array(m_Acroforms.size());
-    std::transform(
-        m_Acroforms.begin(), m_Acroforms.end(), obj_array.begin(),
-        [](const std::unique_ptr<CPDF_Object>& pObj) { return pObj.get(); });
-
-    m_ObjectSet.clear();
-    if (!AreObjectsAvailable(obj_array, false, m_objs_array))
-      return false;
-
-    m_objs_array.clear();
-    return true;
-  }
-
-  std::vector<CPDF_Object*> new_objs_array;
-  if (!AreObjectsAvailable(m_objs_array, false, new_objs_array)) {
-    m_objs_array = new_objs_array;
-    return false;
-  }
-
-  m_Acroforms.clear();
-  return true;
-}
-
-bool CPDF_DataAvail::CheckAcroForm() {
-  bool bExist = false;
-  std::unique_ptr<CPDF_Object> pAcroForm =
-      GetObject(m_dwAcroFormObjNum, &bExist);
-  if (!bExist) {
-    m_docStatus = PDF_DATAAVAIL_PAGETREE;
-    return true;
-  }
-
-  if (!pAcroForm) {
-    if (m_docStatus != PDF_DATAAVAIL_ERROR)
-      return false;
-
-    m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-    return true;
-  }
-
-  m_Acroforms.push_back(std::move(pAcroForm));
-  m_docStatus = PDF_DATAAVAIL_PAGETREE;
-  return true;
-}
-
 bool CPDF_DataAvail::CheckDocStatus() {
   switch (m_docStatus) {
     case PDF_DATAAVAIL_HEADER:
@@ -285,8 +234,6 @@ bool CPDF_DataAvail::CheckDocStatus() {
       return CheckRoot();
     case PDF_DATAAVAIL_INFO:
       return CheckInfo();
-    case PDF_DATAAVAIL_ACROFORM:
-      return CheckAcroForm();
     case PDF_DATAAVAIL_PAGETREE:
       if (m_bTotalLoadPageTree)
         return CheckPages();
@@ -379,8 +326,7 @@ bool CPDF_DataAvail::CheckInfo() {
       m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
-  m_docStatus =
-      m_bHaveAcroForm ? PDF_DATAAVAIL_ACROFORM : PDF_DATAAVAIL_PAGETREE;
+  m_docStatus = PDF_DATAAVAIL_PAGETREE;
   return true;
 }
 
@@ -413,19 +359,8 @@ bool CPDF_DataAvail::CheckRoot() {
   }
 
   m_PagesObjNum = pRef->GetRefObjNum();
-  CPDF_Reference* pAcroFormRef =
-      ToReference(m_pRoot->GetDict()->GetObjectFor("AcroForm"));
-  if (pAcroFormRef) {
-    m_bHaveAcroForm = true;
-    m_dwAcroFormObjNum = pAcroFormRef->GetRefObjNum();
-  }
 
-  if (m_dwInfoObjNum) {
-    m_docStatus = PDF_DATAAVAIL_INFO;
-  } else {
-    m_docStatus =
-        m_bHaveAcroForm ? PDF_DATAAVAIL_ACROFORM : PDF_DATAAVAIL_PAGETREE;
-  }
+  m_docStatus = m_dwInfoObjNum ? PDF_DATAAVAIL_INFO : PDF_DATAAVAIL_PAGETREE;
   return true;
 }
 
@@ -1312,11 +1247,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     }
   }
 
-  if (m_bHaveAcroForm && !m_bAcroFormLoad) {
-    if (!CheckAcroFormSubObject())
-      return DataNotAvailable;
-    m_bAcroFormLoad = true;
-  }
+  if (CheckAcroForm() == DocFormStatus::FormNotAvailable)
+    return DataNotAvailable;
 
   if (!m_bPageLoadedOK) {
     if (m_objs_array.empty()) {
@@ -1442,10 +1374,14 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
 
 CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
     DownloadHints* pHints) {
+  const HintsScope hints_scope(GetValidator().Get(), pHints);
+  return CheckAcroForm();
+}
+
+CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
   if (!m_pDocument)
     return FormAvailable;
 
-  const HintsScope hints_scope(GetValidator().Get(), pHints);
   if (m_pLinearized) {
     DocAvailStatus nDocStatus = CheckLinearizedData();
     if (nDocStatus == DataError)
@@ -1454,7 +1390,7 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
       return FormNotAvailable;
   }
 
-  if (!m_bLinearizedFormParamLoad) {
+  if (!m_pFormAvail) {
     const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
     if (!pRoot)
       return FormAvailable;
@@ -1463,20 +1399,20 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
     if (!pAcroForm)
       return FormNotExist;
 
-    m_objs_array.push_back(pAcroForm->GetDict());
-    m_bLinearizedFormParamLoad = true;
+    m_pFormAvail = pdfium::MakeUnique<CPDF_PageObjectAvail>(
+        GetValidator().Get(), m_pDocument, pAcroForm);
   }
-
-  std::vector<CPDF_Object*> new_objs_array;
-  if (!AreObjectsAvailable(m_objs_array, false, new_objs_array)) {
-    m_objs_array = new_objs_array;
-    return FormNotAvailable;
+  switch (m_pFormAvail->CheckAvail()) {
+    case DocAvailStatus::DataError:
+      return DocFormStatus::FormError;
+    case DocAvailStatus::DataNotAvailable:
+      return DocFormStatus::FormNotAvailable;
+    case DocAvailStatus::DataAvailable:
+      return DocFormStatus::FormAvailable;
+    default:
+      NOTREACHED();
   }
-
-  m_objs_array.clear();
-  if (!ValidateForm())
-    return FormError;
-  return FormAvailable;
+  return DocFormStatus::FormError;
 }
 
 bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) {
@@ -1485,17 +1421,6 @@ bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) {
   if (!pPageDict)
     return false;
   CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument, pPageDict);
-  return obj_avail.CheckAvail() == DocAvailStatus::DataAvailable;
-}
-
-bool CPDF_DataAvail::ValidateForm() {
-  const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  if (!pRoot)
-    return true;
-  CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
-  if (!pAcroForm)
-    return false;
-  CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument, pAcroForm);
   return obj_avail.CheckAvail() == DocAvailStatus::DataAvailable;
 }
 

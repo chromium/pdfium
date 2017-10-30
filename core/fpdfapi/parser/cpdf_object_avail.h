@@ -43,7 +43,8 @@ class CPDF_ObjectAvail {
   bool HasObjectParsed(uint32_t obj_num) const;
 
   UnownedPtr<CPDF_ReadValidator> validator_;
-  UnownedPtr<CPDF_IndirectObjectHolder> holder_;
+  // TODO(art-snake): Make it UnownedPtr<, after fix document owning issue.
+  CPDF_IndirectObjectHolder* holder_;
   MaybeOwned<const CPDF_Object> root_;
   std::set<uint32_t> parsed_objnums_;
   std::stack<uint32_t> non_parsed_objects_;
