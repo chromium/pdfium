@@ -1188,8 +1188,6 @@ static_library("javascript") {
 
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/Icon.cpp",
-      "fpdfsdk/javascript/Icon.h",
       "fpdfsdk/javascript/JS_Define.h",
       "fpdfsdk/javascript/JS_GlobalData.cpp",
       "fpdfsdk/javascript/JS_GlobalData.h",
@@ -1229,6 +1227,8 @@ static_library("javascript") {
       "fpdfsdk/javascript/cjs_globalconsts.h",
       "fpdfsdk/javascript/cjs_highlight.cpp",
       "fpdfsdk/javascript/cjs_highlight.h",
+      "fpdfsdk/javascript/cjs_icon.cpp",
+      "fpdfsdk/javascript/cjs_icon.h",
       "fpdfsdk/javascript/cjs_position.cpp",
       "fpdfsdk/javascript/cjs_position.h",
       "fpdfsdk/javascript/cjs_printparamsobj.cpp",

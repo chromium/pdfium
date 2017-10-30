@@ -4,12 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_ICON_H_
-#define FPDFSDK_JAVASCRIPT_ICON_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_ICON_H_
+#define FPDFSDK_JAVASCRIPT_CJS_ICON_H_
 
 #include "fpdfsdk/javascript/JS_Define.h"
-
-class CPDF_Stream;
 
 class Icon : public CJS_EmbedObj {
  public:
@@ -41,4 +39,4 @@ class CJS_Icon : public CJS_Object {
   static const JSPropertySpec PropertySpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_ICON_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_ICON_H_

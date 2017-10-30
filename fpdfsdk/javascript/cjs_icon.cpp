@@ -4,11 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/Icon.h"
-
-#include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Value.h"
+#include "fpdfsdk/javascript/cjs_icon.h"
 
 const JSPropertySpec CJS_Icon::PropertySpecs[] = {
     {"name", get_name_static, set_name_static},
