@@ -14,8 +14,8 @@
 #include <vector>
 
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/cjs_document.h"
+#include "fpdfsdk/javascript/cjs_object.h"
 
 namespace {
 

@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
+#include "fpdfsdk/javascript/cjs_object.h"
 #include "fpdfsdk/javascript/resource.h"
 #include "fxjs/fxjs_v8.h"
 

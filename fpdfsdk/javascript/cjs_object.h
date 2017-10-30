@@ -4,19 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_JS_OBJECT_H_
-#define FPDFSDK_JAVASCRIPT_JS_OBJECT_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_OBJECT_H_
+#define FPDFSDK_JAVASCRIPT_CJS_OBJECT_H_
 
-#include <map>
 #include <memory>
 
 #include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/javascript/cjs_embedobj.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fxjs/fxjs_v8.h"
-
-class CJS_EventContext;
-class CJS_Object;
-class CPDFSDK_FormFillEnvironment;
 
 struct JSConstSpec {
   enum Type { Number = 0, String = 1 };
@@ -36,17 +32,6 @@ struct JSPropertySpec {
 struct JSMethodSpec {
   const char* pName;
   v8::FunctionCallback pMethodCall;
-};
-
-class CJS_EmbedObj {
- public:
-  explicit CJS_EmbedObj(CJS_Object* pJSObject);
-  virtual ~CJS_EmbedObj();
-
-  CJS_Object* GetJSObject() const { return m_pJSObject.Get(); }
-
- protected:
-  UnownedPtr<CJS_Object> const m_pJSObject;
 };
 
 class CJS_Object {
@@ -80,5 +65,4 @@ class CJS_Object {
   v8::Isolate* m_pIsolate;
 };
 
-
-#endif  // FPDFSDK_JAVASCRIPT_JS_OBJECT_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_OBJECT_H_

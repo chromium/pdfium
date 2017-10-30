@@ -4,14 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/JS_Object.h"
-
-#include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/cjs_event_context.h"
-
-CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
-
-CJS_EmbedObj::~CJS_EmbedObj() {}
+#include "fpdfsdk/javascript/cjs_object.h"
 
 // static
 void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,

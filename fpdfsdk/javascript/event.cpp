@@ -7,11 +7,11 @@
 #include "fpdfsdk/javascript/event.h"
 
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_field.h"
+#include "fpdfsdk/javascript/cjs_object.h"
 
 const JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"change", get_change_static, set_change_static},

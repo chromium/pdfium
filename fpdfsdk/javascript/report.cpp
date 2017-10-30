@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
+#include "fpdfsdk/javascript/cjs_object.h"
 
 const JSMethodSpec CJS_Report::MethodSpecs[] = {{"save", save_static},
                                                 {"writeText", writeText_static},
