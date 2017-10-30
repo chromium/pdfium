@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_PUBLICMETHODS_H_
-#define FPDFSDK_JAVASCRIPT_PUBLICMETHODS_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_PUBLICMETHODS_H_
+#define FPDFSDK_JAVASCRIPT_CJS_PUBLICMETHODS_H_
 
 #include <string>
 #include <vector>
@@ -156,4 +156,4 @@ class CJS_PublicMethods : public CJS_Object {
                                                    v8::Local<v8::Value> val);
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_PUBLICMETHODS_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_PUBLICMETHODS_H_

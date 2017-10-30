@@ -1194,8 +1194,6 @@ static_library("javascript") {
       "fpdfsdk/javascript/JS_GlobalData.h",
       "fpdfsdk/javascript/JS_KeyValue.cpp",
       "fpdfsdk/javascript/JS_KeyValue.h",
-      "fpdfsdk/javascript/PublicMethods.cpp",
-      "fpdfsdk/javascript/PublicMethods.h",
       "fpdfsdk/javascript/app.cpp",
       "fpdfsdk/javascript/app.h",
       "fpdfsdk/javascript/cjs_annot.cpp",
@@ -1234,6 +1232,8 @@ static_library("javascript") {
       "fpdfsdk/javascript/cjs_position.h",
       "fpdfsdk/javascript/cjs_printparamsobj.cpp",
       "fpdfsdk/javascript/cjs_printparamsobj.h",
+      "fpdfsdk/javascript/cjs_publicmethods.cpp",
+      "fpdfsdk/javascript/cjs_publicmethods.h",
       "fpdfsdk/javascript/cjs_return.cpp",
       "fpdfsdk/javascript/cjs_return.h",
       "fpdfsdk/javascript/cjs_runtime.cpp",
@@ -2010,7 +2010,7 @@ test("pdfium_unittests") {
   }
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/public_methods_unittest.cpp",
+      "fpdfsdk/javascript/cjs_publicmethods_unittest.cpp",
       "fpdfsdk/javascript/util_unittest.cpp",
     ]
     include_dirs += [
@@ -2074,7 +2074,7 @@ test("pdfium_embeddertests") {
 
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/public_methods_embeddertest.cpp",
+      "fpdfsdk/javascript/cjs_publicmethods_embeddertest.cpp",
       "fxjs/fxjs_v8_embeddertest.cpp",
       "testing/js_embedder_test.cpp",
       "testing/js_embedder_test.h",

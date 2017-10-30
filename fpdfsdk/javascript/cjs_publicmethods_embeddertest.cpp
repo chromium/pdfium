@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include "core/fxcrt/fx_string.h"
-#include "fpdfsdk/javascript/PublicMethods.h"
+#include "fpdfsdk/javascript/cjs_publicmethods.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/js_embedder_test.h"
 
@@ -17,9 +17,9 @@ double RoundDownDate(double date) {
 
 }  // namespace
 
-class PublicMethodsEmbedderTest : public JSEmbedderTest {};
+class CJS_PublicMethodsEmbedderTest : public JSEmbedderTest {};
 
-TEST_F(PublicMethodsEmbedderTest, MakeRegularDate) {
+TEST_F(CJS_PublicMethodsEmbedderTest, MakeRegularDate) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
@@ -99,7 +99,7 @@ TEST_F(PublicMethodsEmbedderTest, MakeRegularDate) {
   EXPECT_FALSE(bWrongFormat);
 }
 
-TEST_F(PublicMethodsEmbedderTest, MakeFormatDate) {
+TEST_F(CJS_PublicMethodsEmbedderTest, MakeFormatDate) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());

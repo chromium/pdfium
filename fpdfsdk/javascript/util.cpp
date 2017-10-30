@@ -16,10 +16,10 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/PublicMethods.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_object.h"
+#include "fpdfsdk/javascript/cjs_publicmethods.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
 

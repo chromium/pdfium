@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "fpdfsdk/javascript/PublicMethods.h"
+#include "fpdfsdk/javascript/cjs_publicmethods.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
