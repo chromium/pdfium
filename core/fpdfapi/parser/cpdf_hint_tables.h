@@ -27,7 +27,7 @@ class CPDF_HintTables {
   bool GetPagePos(uint32_t index,
                   FX_FILESIZE* szPageStartPos,
                   FX_FILESIZE* szPageLength,
-                  uint32_t* dwObjNum);
+                  uint32_t* dwObjNum) const;
 
   CPDF_DataAvail::DocAvailStatus CheckPage(uint32_t index);
 
@@ -47,7 +47,7 @@ class CPDF_HintTables {
   virtual int ReadPrimaryHintStreamLength() const;
 
   uint32_t GetItemLength(uint32_t index,
-                         const std::vector<FX_FILESIZE>& szArray);
+                         const std::vector<FX_FILESIZE>& szArray) const;
 
   // Owned by |m_pDataAvail|.
   UnownedPtr<CPDF_ReadValidator> m_pValidator;

@@ -49,7 +49,7 @@ CPDF_HintTables::~CPDF_HintTables() {}
 
 uint32_t CPDF_HintTables::GetItemLength(
     uint32_t index,
-    const std::vector<FX_FILESIZE>& szArray) {
+    const std::vector<FX_FILESIZE>& szArray) const {
   if (szArray.size() < 2 || index > szArray.size() - 2 ||
       szArray[index] > szArray[index + 1]) {
     return 0;
@@ -373,7 +373,10 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
 bool CPDF_HintTables::GetPagePos(uint32_t index,
                                  FX_FILESIZE* szPageStartPos,
                                  FX_FILESIZE* szPageLength,
-                                 uint32_t* dwObjNum) {
+                                 uint32_t* dwObjNum) const {
+  if (index >= m_pLinearized->GetPageCount())
+    return false;
+
   *szPageStartPos = m_szPageOffsetArray[index];
   *szPageLength = GetItemLength(index, m_szPageOffsetArray);
 

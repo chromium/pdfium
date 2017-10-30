@@ -109,6 +109,8 @@ class CPDF_DataAvail final {
   CPDF_Dictionary* GetPage(int index);
   RetainPtr<CPDF_ReadValidator> GetValidator() const;
 
+  const CPDF_HintTables* GetHintTables() const { return m_pHintTables.get(); }
+
  protected:
   class PageNode {
    public:
