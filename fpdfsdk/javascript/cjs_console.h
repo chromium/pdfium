@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_CONSOLE_H_
-#define FPDFSDK_JAVASCRIPT_CONSOLE_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_CONSOLE_H_
+#define FPDFSDK_JAVASCRIPT_CJS_CONSOLE_H_
 
 #include <vector>
 
@@ -44,4 +44,4 @@ class CJS_Console : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_CONSOLE_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_CONSOLE_H_
