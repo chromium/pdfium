@@ -124,9 +124,6 @@ class CPDF_DataAvail final {
 
   static const int kMaxPageRecursionDepth = 1024;
 
-  bool AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
-                           bool bParsePage,
-                           std::vector<CPDF_Object*>& ret_array);
   bool CheckDocStatus();
   bool CheckHeader();
   bool CheckFirstPage();
@@ -159,9 +156,7 @@ class CPDF_DataAvail final {
   bool LoadAllXref();
   bool LoadAllFile();
   DocAvailStatus CheckLinearizedData();
-  bool CheckPageAnnots(uint32_t dwPage);
 
-  DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage);
   bool CheckPage(uint32_t dwPage);
   bool LoadDocPages();
   bool LoadDocPage(uint32_t dwPage);
@@ -194,8 +189,6 @@ class CPDF_DataAvail final {
   PDF_DATAAVAIL_STATUS m_docStatus;
   FX_FILESIZE m_dwFileLen;
   CPDF_Document* m_pDocument;
-  std::set<uint32_t> m_ObjectSet;
-  std::vector<CPDF_Object*> m_objs_array;
   FX_FILESIZE m_Pos;
   FX_FILESIZE m_bufferOffset;
   uint32_t m_bufferSize;

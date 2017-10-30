@@ -118,78 +118,6 @@ void CPDF_DataAvail::SetDocument(CPDF_Document* pDoc) {
   m_pDocument = pDoc;
 }
 
-bool CPDF_DataAvail::AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
-                                         bool bParsePage,
-                                         std::vector<CPDF_Object*>& ret_array) {
-  if (obj_array.empty())
-    return true;
-
-  uint32_t count = 0;
-  std::vector<CPDF_Object*> new_obj_array;
-  for (CPDF_Object* pObj : obj_array) {
-    if (!pObj)
-      continue;
-
-    int32_t type = pObj->GetType();
-    switch (type) {
-      case CPDF_Object::ARRAY: {
-        CPDF_Array* pArray = pObj->AsArray();
-        for (size_t k = 0; k < pArray->GetCount(); ++k)
-          new_obj_array.push_back(pArray->GetObjectAt(k));
-        break;
-      }
-      case CPDF_Object::STREAM:
-        pObj = pObj->GetDict();
-      case CPDF_Object::DICTIONARY: {
-        CPDF_Dictionary* pDict = pObj->GetDict();
-        if (pDict && pDict->GetStringFor("Type") == "Page" && !bParsePage)
-          continue;
-
-        for (const auto& it : *pDict) {
-          if (it.first != "Parent")
-            new_obj_array.push_back(it.second.get());
-        }
-        break;
-      }
-      case CPDF_Object::REFERENCE: {
-        const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-
-        CPDF_Reference* pRef = pObj->AsReference();
-        const uint32_t dwNum = pRef->GetRefObjNum();
-
-        if (pdfium::ContainsKey(m_ObjectSet, dwNum))
-          break;
-
-        CPDF_Object* pReferred = m_pDocument->GetOrParseIndirectObject(dwNum);
-        if (GetValidator()->has_read_problems()) {
-          ASSERT(!pReferred);
-          ret_array.push_back(pObj);
-          ++count;
-          break;
-        }
-        m_ObjectSet.insert(dwNum);
-        if (pReferred)
-          new_obj_array.push_back(pReferred);
-
-        break;
-      }
-    }
-  }
-
-  if (count > 0) {
-    for (CPDF_Object* pObj : new_obj_array) {
-      CPDF_Reference* pRef = pObj->AsReference();
-      if (pRef && pdfium::ContainsKey(m_ObjectSet, pRef->GetRefObjNum()))
-        continue;
-      ret_array.push_back(pObj);
-    }
-    return false;
-  }
-
-  obj_array = new_obj_array;
-  return AreObjectsAvailable(obj_array, false, ret_array);
-}
-
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
     DownloadHints* pHints) {
   if (!m_dwFileLen)
@@ -1135,44 +1063,6 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
   }
 
   return m_bLinearedDataOK ? DataAvailable : DataNotAvailable;
-}
-
-bool CPDF_DataAvail::CheckPageAnnots(uint32_t dwPage) {
-  if (m_objs_array.empty()) {
-    m_ObjectSet.clear();
-
-    FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
-    CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
-    if (!pPageDict)
-      return true;
-
-    CPDF_Object* pAnnots = pPageDict->GetObjectFor("Annots");
-    if (!pAnnots)
-      return true;
-
-    std::vector<CPDF_Object*> obj_array;
-    obj_array.push_back(pAnnots);
-    if (!AreObjectsAvailable(obj_array, false, m_objs_array))
-      return false;
-
-    m_objs_array.clear();
-    return true;
-  }
-
-  std::vector<CPDF_Object*> new_objs_array;
-  if (!AreObjectsAvailable(m_objs_array, false, new_objs_array)) {
-    m_objs_array = new_objs_array;
-    return false;
-  }
-  m_objs_array.clear();
-  return true;
-}
-
-CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedFirstPage(
-    uint32_t dwPage) {
-  if (!ValidatePage(dwPage))
-    return DataError;
-  return DataAvailable;
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
