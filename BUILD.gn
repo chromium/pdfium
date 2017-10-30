@@ -1188,8 +1188,6 @@ static_library("javascript") {
 
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/javascript/Field.cpp",
-      "fpdfsdk/javascript/Field.h",
       "fpdfsdk/javascript/Icon.cpp",
       "fpdfsdk/javascript/Icon.h",
       "fpdfsdk/javascript/JS_Define.h",
@@ -1209,6 +1207,8 @@ static_library("javascript") {
       "fpdfsdk/javascript/cjs_annot.h",
       "fpdfsdk/javascript/cjs_border.cpp",
       "fpdfsdk/javascript/cjs_border.h",
+      "fpdfsdk/javascript/cjs_delaydata.cpp",
+      "fpdfsdk/javascript/cjs_delaydata.h",
       "fpdfsdk/javascript/cjs_display.cpp",
       "fpdfsdk/javascript/cjs_display.h",
       "fpdfsdk/javascript/cjs_document.cpp",
@@ -1217,6 +1217,8 @@ static_library("javascript") {
       "fpdfsdk/javascript/cjs_event_context.h",
       "fpdfsdk/javascript/cjs_eventhandler.cpp",
       "fpdfsdk/javascript/cjs_eventhandler.h",
+      "fpdfsdk/javascript/cjs_field.cpp",
+      "fpdfsdk/javascript/cjs_field.h",
       "fpdfsdk/javascript/cjs_font.cpp",
       "fpdfsdk/javascript/cjs_font.h",
       "fpdfsdk/javascript/cjs_global.cpp",

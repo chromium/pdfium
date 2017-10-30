@@ -4,30 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/Field.h"
+#include "fpdfsdk/javascript/cjs_field.h"
 
 #include <algorithm>
 #include <memory>
-#include <string>
-#include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/javascript/Icon.h"
-#include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Value.h"
-#include "fpdfsdk/javascript/PublicMethods.h"
+#include "fpdfsdk/javascript/cjs_delaydata.h"
 #include "fpdfsdk/javascript/cjs_document.h"
-#include "fpdfsdk/javascript/cjs_event_context.h"
-#include "fpdfsdk/javascript/cjs_eventhandler.h"
-#include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/color.h"
 
 namespace {
@@ -180,11 +170,6 @@ void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineProps(pEngine, ObjDefnID, PropertySpecs);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
-
-CJS_DelayData::CJS_DelayData(FIELD_PROP prop, int idx, const WideString& name)
-    : eProp(prop), nControlIndex(idx), sFieldName(name) {}
-
-CJS_DelayData::~CJS_DelayData() {}
 
 void CJS_Field::InitInstance(IJS_Runtime* pIRuntime) {}
 

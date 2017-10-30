@@ -19,10 +19,11 @@
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
 #include "fpdfsdk/javascript/app.h"
 #include "fpdfsdk/javascript/cjs_annot.h"
+#include "fpdfsdk/javascript/cjs_delaydata.h"
+#include "fpdfsdk/javascript/cjs_field.h"
 #include "fpdfsdk/javascript/cjs_printparamsobj.h"
 
 const JSPropertySpec CJS_Document::PropertySpecs[] = {

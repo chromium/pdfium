@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_GlobalData.h"
@@ -23,6 +22,7 @@
 #include "fpdfsdk/javascript/cjs_document.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
+#include "fpdfsdk/javascript/cjs_field.h"
 #include "fpdfsdk/javascript/cjs_font.h"
 #include "fpdfsdk/javascript/cjs_global.h"
 #include "fpdfsdk/javascript/cjs_globalarrays.h"

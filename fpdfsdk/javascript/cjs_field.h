@@ -4,19 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_FIELD_H_
-#define FPDFSDK_JAVASCRIPT_FIELD_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_FIELD_H_
+#define FPDFSDK_JAVASCRIPT_CJS_FIELD_H_
 
 #include <string>
 #include <vector>
 
-#include "core/fxcrt/observable.h"
-#include "core/fxge/cfx_color.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 
+class CPDF_FormControl;
 class CPDFSDK_Widget;
 class Document;
+struct CJS_DelayData;
 
 enum FIELD_PROP {
   FP_BORDERSTYLE,
@@ -26,23 +25,6 @@ enum FIELD_PROP {
   FP_LINEWIDTH,
   FP_RECT,
   FP_VALUE
-};
-
-struct CJS_DelayData {
-  CJS_DelayData(FIELD_PROP prop, int idx, const WideString& name);
-  ~CJS_DelayData();
-
-  FIELD_PROP eProp;
-  int nControlIndex;
-  WideString sFieldName;
-  int32_t num;
-  bool b;
-  ByteString string;
-  WideString widestring;
-  CFX_FloatRect rect;
-  CFX_Color color;
-  std::vector<uint32_t> wordarray;
-  std::vector<WideString> widestringarray;
 };
 
 class Field : public CJS_EmbedObj {
@@ -453,4 +435,4 @@ class CJS_Field : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_FIELD_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_FIELD_H_
