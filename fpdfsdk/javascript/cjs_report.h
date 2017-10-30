@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_REPORT_H_
-#define FPDFSDK_JAVASCRIPT_REPORT_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_REPORT_H_
+#define FPDFSDK_JAVASCRIPT_CJS_REPORT_H_
 
 #include <vector>
 
@@ -38,4 +38,4 @@ class CJS_Report : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_REPORT_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_REPORT_H_
