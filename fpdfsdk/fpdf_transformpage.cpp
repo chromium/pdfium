@@ -54,6 +54,16 @@ bool GetBoundingBox(CPDF_Page* page,
   return true;
 }
 
+CPDF_Object* GetPageContent(CPDF_Dictionary* pPageDict) {
+  if (!pPageDict)
+    return nullptr;
+
+  CPDF_Object* pContentObj = pPageDict->GetObjectFor("Contents");
+  if (!pContentObj)
+    pContentObj = pPageDict->GetArrayFor("Contents");
+  return pContentObj;
+}
+
 }  // namespace
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetMediaBox(FPDF_PAGE page,
@@ -121,11 +131,8 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
                  matrix->d, matrix->e, matrix->f);
   textBuf << bsMatix;
 
-  CPDF_Dictionary* pPageDic = pPage->m_pFormDict.Get();
-  CPDF_Object* pContentObj =
-      pPageDic ? pPageDic->GetObjectFor("Contents") : nullptr;
-  if (!pContentObj)
-    pContentObj = pPageDic ? pPageDic->GetArrayFor("Contents") : nullptr;
+  CPDF_Dictionary* pPageDict = pPage->m_pFormDict.Get();
+  CPDF_Object* pContentObj = GetPageContent(pPageDict);
   if (!pContentObj)
     return false;
 
@@ -163,14 +170,14 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
         pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
         pContentArray->AddNew<CPDF_Reference>(pDoc, pDirectObj->GetObjNum());
         pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
-        pPageDic->SetNewFor<CPDF_Reference>("Contents", pDoc,
-                                            pContentArray->GetObjNum());
+        pPageDict->SetNewFor<CPDF_Reference>("Contents", pDoc,
+                                             pContentArray->GetObjNum());
       }
     }
   }
 
   // Need to transform the patterns as well.
-  CPDF_Dictionary* pRes = pPageDic->GetDictFor("Resources");
+  CPDF_Dictionary* pRes = pPageDict->GetDictFor("Resources");
   if (pRes) {
     CPDF_Dictionary* pPattenDict = pRes->GetDictFor("Pattern");
     if (pPattenDict) {
@@ -278,11 +285,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  CPDF_Dictionary* pPageDic = pPage->m_pFormDict.Get();
-  CPDF_Object* pContentObj =
-      pPageDic ? pPageDic->GetObjectFor("Contents") : nullptr;
-  if (!pContentObj)
-    pContentObj = pPageDic ? pPageDic->GetArrayFor("Contents") : nullptr;
+  CPDF_Dictionary* pPageDict = pPage->m_pFormDict.Get();
+  CPDF_Object* pContentObj = GetPageContent(pPageDict);
   if (!pContentObj)
     return;
 
@@ -334,7 +338,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
     CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
     pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
     pContentArray->AddNew<CPDF_Reference>(pDoc, pDirectObj->GetObjNum());
-    pPageDic->SetNewFor<CPDF_Reference>("Contents", pDoc,
-                                        pContentArray->GetObjNum());
+    pPageDict->SetNewFor<CPDF_Reference>("Contents", pDoc,
+                                         pContentArray->GetObjNum());
   }
 }
