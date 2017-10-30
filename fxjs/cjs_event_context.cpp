@@ -32,7 +32,7 @@ bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
   v8::Context::Scope context_scope(context);
 
   if (m_bBusy) {
-    *info = JSGetStringFromID(IDS_STRING_JSBUSY);
+    *info = JSGetStringFromID(JSMessage::kBusyError);
     return false;
   }
 
@@ -43,7 +43,7 @@ bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
   CJS_Runtime::FieldEvent event(m_pEventHandler->TargetName(),
                                 m_pEventHandler->EventType());
   if (!m_pRuntime->AddEventToSet(event)) {
-    *info = JSGetStringFromID(IDS_STRING_JSEVENT);
+    *info = JSGetStringFromID(JSMessage::kDuplicateEventError);
     return false;
   }
 
@@ -55,7 +55,7 @@ bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
   if (nRet < 0)
     *info += sErrorMessage;
   else
-    *info = JSGetStringFromID(IDS_STRING_RUN);
+    *info = JSGetStringFromID(JSMessage::kRunSuccess);
 
   m_pRuntime->RemoveEventFromSet(event);
   m_pEventHandler->Destroy();

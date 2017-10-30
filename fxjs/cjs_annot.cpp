@@ -46,7 +46,7 @@ Annot::~Annot() {}
 
 CJS_Return Annot::get_hidden(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+    return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
   CPDF_Annot* pPDFAnnot = ToBAAnnot(m_pAnnot.Get())->GetPDFAnnot();
   return CJS_Return(pRuntime->NewBoolean(
@@ -57,7 +57,7 @@ CJS_Return Annot::set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   // May invalidate m_pAnnot.
   bool bHidden = pRuntime->ToBoolean(vp);
   if (!m_pAnnot)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+    return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
   uint32_t flags = ToBAAnnot(m_pAnnot.Get())->GetFlags();
   if (bHidden) {
@@ -78,7 +78,7 @@ CJS_Return Annot::set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 
 CJS_Return Annot::get_name(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+    return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(
       pRuntime->NewString(ToBAAnnot(m_pAnnot.Get())->GetAnnotName().c_str()));
 }
@@ -87,7 +87,7 @@ CJS_Return Annot::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   // May invalidate m_pAnnot.
   WideString annotName = pRuntime->ToWideString(vp);
   if (!m_pAnnot)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+    return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
   ToBAAnnot(m_pAnnot.Get())->SetAnnotName(annotName);
   return CJS_Return(true);
@@ -95,7 +95,7 @@ CJS_Return Annot::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 
 CJS_Return Annot::get_type(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+    return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(pRuntime->NewString(
       WideString::FromLocal(CPDF_Annot::AnnotSubtypeToString(
                                 ToBAAnnot(m_pAnnot.Get())->GetAnnotSubtype())
@@ -104,7 +104,7 @@ CJS_Return Annot::get_type(CJS_Runtime* pRuntime) {
 }
 
 CJS_Return Annot::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
-  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
+  return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
 void Annot::SetSDKAnnot(CPDFSDK_BAAnnot* annot) {

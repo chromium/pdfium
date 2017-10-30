@@ -346,12 +346,12 @@ CJS_Return JSGlobalAlternate::setPersistent(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   auto it = m_MapGlobal.find(
       ByteString::FromUnicode(pRuntime->ToWideString(params[0])));
   if (it == m_MapGlobal.end() || it->second->bDeleted)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOGLOBAL));
+    return CJS_Return(JSGetStringFromID(JSMessage::kGlobalNotFoundError));
 
   it->second->bPersistent = pRuntime->ToBoolean(params[1]);
   return CJS_Return(true);

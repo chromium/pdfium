@@ -224,7 +224,7 @@ CJS_Return app::alert(CJS_Runtime* pRuntime,
       pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
 
   if (!IsTypeKnown(newParams[0]))
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (!pFormFillEnv)
@@ -257,7 +257,7 @@ CJS_Return app::alert(CJS_Runtime* pRuntime,
   if (IsTypeKnown(newParams[3]))
     swTitle = pRuntime->ToWideString(newParams[3]);
   else
-    swTitle = JSGetStringFromID(IDS_STRING_JSALERT);
+    swTitle = JSGetStringFromID(JSMessage::kAlert);
 
   pRuntime->BeginBlock();
   pFormFillEnv->KillFocusAnnot(0);
@@ -275,7 +275,7 @@ CJS_Return app::beep(CJS_Runtime* pRuntime,
     pRuntime->GetFormFillEnv()->JS_appBeep(pRuntime->ToInt32(params[0]));
     return CJS_Return(true);
   }
-  return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+  return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 }
 
 CJS_Return app::findComponent(CJS_Runtime* pRuntime,
@@ -299,12 +299,12 @@ CJS_Return app::set_fs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 CJS_Return app::setInterval(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() > 2 || params.size() == 0)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   WideString script =
       params.size() > 0 ? pRuntime->ToWideString(params[0]) : L"";
   if (script.IsEmpty())
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE));
+    return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
   uint32_t dwInterval = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
   GlobalTimer* timerRef = new GlobalTimer(this, pRuntime->GetFormFillEnv(),
@@ -327,11 +327,11 @@ CJS_Return app::setInterval(CJS_Runtime* pRuntime,
 CJS_Return app::setTimeOut(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() > 2 || params.size() == 0)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   WideString script = pRuntime->ToWideString(params[0]);
   if (script.IsEmpty())
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE));
+    return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
   uint32_t dwTimeOut = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
   GlobalTimer* timerRef =
@@ -355,7 +355,7 @@ CJS_Return app::setTimeOut(CJS_Runtime* pRuntime,
 CJS_Return app::clearTimeOut(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   app::ClearTimerCommon(pRuntime, params[0]);
   return CJS_Return(true);
@@ -364,7 +364,7 @@ CJS_Return app::clearTimeOut(CJS_Runtime* pRuntime,
 CJS_Return app::clearInterval(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   app::ClearTimerCommon(pRuntime, params[0]);
   return CJS_Return(true);
@@ -434,7 +434,7 @@ CJS_Return app::mailMsg(CJS_Runtime* pRuntime,
                           L"cSubject", L"cMsg");
 
   if (!IsTypeKnown(newParams[0]))
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   bool bUI = pRuntime->ToBoolean(newParams[0]);
   WideString cTo;
@@ -443,7 +443,7 @@ CJS_Return app::mailMsg(CJS_Runtime* pRuntime,
   } else {
     // cTo parameter required when UI not invoked.
     if (!bUI)
-      return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+      return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   }
 
   WideString cCc;
@@ -531,7 +531,7 @@ CJS_Return app::response(CJS_Runtime* pRuntime,
                           L"cDefault", L"bPassword", L"cLabel");
 
   if (!IsTypeKnown(newParams[0]))
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   WideString swQuestion = pRuntime->ToWideString(newParams[0]);
   WideString swTitle = L"PDF";
@@ -557,7 +557,7 @@ CJS_Return app::response(CJS_Runtime* pRuntime,
       bPassword, pBuff.data(), MAX_INPUT_BYTES);
 
   if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAM_TOOLONG));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamTooLongError));
 
   return CJS_Return(pRuntime->NewString(
       WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),

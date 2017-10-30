@@ -144,11 +144,13 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
     return CJS_Return(false);
 
   if (params[1].IsEmpty() || !params[1]->IsDate())
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT1));
+    return CJS_Return(JSGetStringFromID(JSMessage::kSecondParamNotDateError));
 
   v8::Local<v8::Date> v8_date = params[1].As<v8::Date>();
-  if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date)))
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPRINT2));
+  if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date))) {
+    return CJS_Return(
+        JSGetStringFromID(JSMessage::kSecondParamInvalidDateError));
+  }
 
   double date = JS_LocalTime(pRuntime->ToDouble(v8_date));
   int year = JS_GetYearFromTime(date);
@@ -174,7 +176,7 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
                         hour, min, sec);
         break;
       default:
-        return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
+        return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
     }
 
     return CJS_Return(pRuntime->NewString(swResult.c_str()));
@@ -183,7 +185,7 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
   if (params[0]->IsString()) {
     // We don't support XFAPicture at the moment.
     if (iSize > 2 && pRuntime->ToBoolean(params[2]))
-      return CJS_Return(JSGetStringFromID(IDS_STRING_JSNOTSUPPORT));
+      return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
 
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
@@ -204,7 +206,7 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
     }
 
     if (year < 0)
-      return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
+      return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
     static const TbConvertAdditional cTableAd[] = {
         {L"m", month}, {L"d", day},
@@ -244,13 +246,13 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
     return CJS_Return(pRuntime->NewString(cFormat.c_str()));
   }
 
-  return CJS_Return(JSGetStringFromID(IDS_STRING_JSTYPEERROR));
+  return CJS_Return(JSGetStringFromID(JSMessage::kTypeError));
 }
 
 CJS_Return util::printx(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   return CJS_Return(
       pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
@@ -375,11 +377,11 @@ CJS_Return util::scand(CJS_Runtime* pRuntime,
 CJS_Return util::byteToChar(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 1)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSPARAMERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   int arg = pRuntime->ToInt32(params[0]);
   if (arg < 0 || arg > 255)
-    return CJS_Return(JSGetStringFromID(IDS_STRING_JSVALUEERROR));
+    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
   WideString wStr(static_cast<wchar_t>(arg));
   return CJS_Return(pRuntime->NewString(wStr.c_str()));

@@ -1418,7 +1418,7 @@ CJS_Return Field::get_page(CJS_Runtime* pRuntime) {
   int i = 0;
   for (const auto& pObserved : widgets) {
     if (!pObserved)
-      return CJS_Return(JSGetStringFromID(IDS_STRING_JSBADOBJECT));
+      return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
     auto* pWidget = static_cast<CPDFSDK_Widget*>(pObserved.Get());
     CPDFSDK_PageView* pPageView = pWidget->GetPageView();
@@ -1434,7 +1434,7 @@ CJS_Return Field::get_page(CJS_Runtime* pRuntime) {
 }
 
 CJS_Return Field::set_page(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
-  return CJS_Return(JSGetStringFromID(IDS_STRING_JSREADONLY));
+  return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
 CJS_Return Field::get_password(CJS_Runtime* pRuntime) {
