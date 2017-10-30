@@ -15,7 +15,6 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_GlobalData.h"
 #include "fpdfsdk/javascript/JS_KeyValue.h"
-#include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_object.h"

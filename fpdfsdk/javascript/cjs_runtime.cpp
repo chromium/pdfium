@@ -11,7 +11,6 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_GlobalData.h"
-#include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/PublicMethods.h"
 #include "fpdfsdk/javascript/app.h"
 #include "fpdfsdk/javascript/cjs_annot.h"

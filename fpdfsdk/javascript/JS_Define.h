@@ -9,10 +9,35 @@
 
 #include <vector>
 
-#include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/cjs_object.h"
+#include "fpdfsdk/javascript/cjs_return.h"
 #include "fpdfsdk/javascript/resource.h"
 #include "fxjs/fxjs_v8.h"
+
+double JS_GetDateTime();
+int JS_GetYearFromTime(double dt);
+int JS_GetMonthFromTime(double dt);
+int JS_GetDayFromTime(double dt);
+int JS_GetHourFromTime(double dt);
+int JS_GetMinFromTime(double dt);
+int JS_GetSecFromTime(double dt);
+double JS_LocalTime(double d);
+double JS_DateParse(const WideString& str);
+double JS_MakeDay(int nYear, int nMonth, int nDay);
+double JS_MakeTime(int nHour, int nMin, int nSec, int nMs);
+double JS_MakeDate(double day, double time);
+
+// Some JS methods have the bizarre convention that they may also be called
+// with a single argument which is an object containing the actual arguments
+// as its properties. The varying arguments to this method are the property
+// names as wchar_t string literals corresponding to each positional argument.
+// The result will always contain |nKeywords| value, with unspecified ones
+// being set to type VT_unknown.
+std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& originals,
+    size_t nKeywords,
+    ...);
 
 // All JS classes have a name, an object defintion ID, and the ability to
 // register themselves with FXJS_V8. We never make a BASE class on its own

@@ -13,6 +13,7 @@
 
 #include "fpdfsdk/javascript/JS_Define.h"
 
+class CJS_Document;
 class CPDF_TextObject;
 
 struct CJS_DelayData;
