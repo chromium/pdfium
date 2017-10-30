@@ -37,8 +37,8 @@
 #include "fpdfsdk/javascript/cjs_scalewhen.h"
 #include "fpdfsdk/javascript/cjs_style.h"
 #include "fpdfsdk/javascript/cjs_timerobj.h"
+#include "fpdfsdk/javascript/cjs_util.h"
 #include "fpdfsdk/javascript/cjs_zoomtype.h"
-#include "fpdfsdk/javascript/util.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"
 

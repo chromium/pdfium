@@ -1254,14 +1254,14 @@ static_library("javascript") {
       "fpdfsdk/javascript/cjs_style.h",
       "fpdfsdk/javascript/cjs_timerobj.cpp",
       "fpdfsdk/javascript/cjs_timerobj.h",
+      "fpdfsdk/javascript/cjs_util.cpp",
+      "fpdfsdk/javascript/cjs_util.h",
       "fpdfsdk/javascript/cjs_zoomtype.cpp",
       "fpdfsdk/javascript/cjs_zoomtype.h",
       "fpdfsdk/javascript/global_timer.cpp",
       "fpdfsdk/javascript/global_timer.h",
       "fpdfsdk/javascript/js_resources.cpp",
       "fpdfsdk/javascript/js_resources.h",
-      "fpdfsdk/javascript/util.cpp",
-      "fpdfsdk/javascript/util.h",
     ]
     deps += [ ":fxjs" ]
     configs += [ "//v8:external_startup_data" ]
@@ -2015,7 +2015,7 @@ test("pdfium_unittests") {
   if (pdf_enable_v8) {
     sources += [
       "fpdfsdk/javascript/cjs_publicmethods_unittest.cpp",
-      "fpdfsdk/javascript/util_unittest.cpp",
+      "fpdfsdk/javascript/cjs_util_unittest.cpp",
     ]
     include_dirs += [
       "//v8",
