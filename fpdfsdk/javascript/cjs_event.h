@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_EVENT_H_
-#define FPDFSDK_JAVASCRIPT_EVENT_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_EVENT_H_
+#define FPDFSDK_JAVASCRIPT_CJS_EVENT_H_
 
 #include "fpdfsdk/javascript/JS_Define.h"
 
@@ -108,4 +108,4 @@ class CJS_Event : public CJS_Object {
   static const JSPropertySpec PropertySpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_EVENT_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_EVENT_H_

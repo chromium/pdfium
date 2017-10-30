@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/event.h"
+#include "fpdfsdk/javascript/cjs_event.h"
 
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
