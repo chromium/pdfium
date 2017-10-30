@@ -211,9 +211,6 @@ class CPDF_DataAvail final {
   bool m_bPagesLoad;
   CPDF_Parser* m_pCurrentParser;
   FX_FILESIZE m_dwCurrentXRefSteam;
-  bool m_bAnnotsLoad;
-  CPDF_Dictionary* m_pPageDict;
-  bool m_bPageLoadedOK;
   std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
   std::vector<std::unique_ptr<CPDF_Object>> m_PagesArray;
   uint32_t m_dwEncryptObjNum;
@@ -226,6 +223,7 @@ class CPDF_DataAvail final {
   std::set<uint32_t> m_SeenPrevPositions;
   std::unique_ptr<CPDF_HintTables> m_pHintTables;
   bool m_bSupportHintTable;
+  std::map<uint32_t, std::unique_ptr<CPDF_PageObjectAvail>> m_PagesObjAvail;
   std::map<const CPDF_Object*, std::unique_ptr<CPDF_PageObjectAvail>>
       m_PagesResourcesAvail;
 };

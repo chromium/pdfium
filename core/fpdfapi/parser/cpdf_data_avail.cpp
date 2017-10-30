@@ -101,11 +101,8 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_bPagesLoad = false;
   m_bPagesTreeLoad = false;
   m_bMainXRefLoadedOK = false;
-  m_bAnnotsLoad = false;
-  m_bPageLoadedOK = false;
   m_pTrailer = nullptr;
   m_pCurrentParser = nullptr;
-  m_pPageDict = nullptr;
   m_docStatus = PDF_DATAAVAIL_HEADER;
   m_bTotalLoadPageTree = false;
   m_bCurPageDictLoadOK = false;
@@ -1173,11 +1170,6 @@ bool CPDF_DataAvail::CheckPageAnnots(uint32_t dwPage) {
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedFirstPage(
     uint32_t dwPage) {
-  if (!m_bAnnotsLoad) {
-    if (!CheckPageAnnots(dwPage))
-      return DataNotAvailable;
-    m_bAnnotsLoad = true;
-  }
   if (!ValidatePage(dwPage))
     return DataError;
   return DataAvailable;
@@ -1189,12 +1181,17 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   if (!m_pDocument)
     return DataError;
 
+  const FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
+  if (!safePage.IsValid())
+    return DataError;
+
+  if (safePage.ValueOrDie() >= m_pDocument->GetPageCount()) {
+    // This is XFA page.
+    return DataAvailable;
+  }
+
   if (IsFirstCheck(dwPage)) {
     m_bCurPageDictLoadOK = false;
-    m_bPageLoadedOK = false;
-    m_bAnnotsLoad = false;
-    m_objs_array.clear();
-    m_ObjectSet.clear();
   }
 
   if (pdfium::ContainsKey(m_pagesLoadState, dwPage))
@@ -1204,10 +1201,18 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
 
   if (m_pLinearized) {
     if (dwPage == m_pLinearized->GetFirstPageNo()) {
-      DocAvailStatus nRet = CheckLinearizedFirstPage(dwPage);
-      if (nRet == DataAvailable)
-        m_pagesLoadState.insert(dwPage);
-      return nRet;
+      CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
+      if (!pPageDict)
+        return DataError;
+
+      auto page_num_obj = std::make_pair(
+          dwPage, pdfium::MakeUnique<CPDF_PageObjectAvail>(
+                      GetValidator().Get(), m_pDocument, pPageDict));
+
+      CPDF_PageObjectAvail* page_obj_avail =
+          m_PagesObjAvail.insert(std::move(page_num_obj)).first->second.get();
+      // TODO(art-snake): Check resources.
+      return page_obj_avail->CheckAvail();
     }
 
     DocAvailStatus nResult = CheckLinearizedData();
@@ -1247,61 +1252,34 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   if (CheckAcroForm() == DocFormStatus::FormNotAvailable)
     return DataNotAvailable;
 
-  if (!m_bPageLoadedOK) {
-    if (m_objs_array.empty()) {
-      m_ObjectSet.clear();
+  CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
+  if (!pPageDict)
+    return DataError;
 
-      FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
-      m_pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
-      if (!m_pPageDict) {
-        ResetFirstCheck(dwPage);
-        // This is XFA page.
-        return DataAvailable;
-      }
-
-      std::vector<CPDF_Object*> obj_array;
-      obj_array.push_back(m_pPageDict);
-      if (!AreObjectsAvailable(obj_array, true, m_objs_array))
-        return DataNotAvailable;
-
-      m_objs_array.clear();
-    } else {
-      std::vector<CPDF_Object*> new_objs_array;
-      if (!AreObjectsAvailable(m_objs_array, false, new_objs_array)) {
-        m_objs_array = new_objs_array;
-        return DataNotAvailable;
-      }
-    }
-    m_objs_array.clear();
-    m_bPageLoadedOK = true;
+  {
+    auto page_num_obj = std::make_pair(
+        dwPage, pdfium::MakeUnique<CPDF_PageObjectAvail>(
+                    GetValidator().Get(), m_pDocument, pPageDict));
+    CPDF_PageObjectAvail* page_obj_avail =
+        m_PagesObjAvail.insert(std::move(page_num_obj)).first->second.get();
+    const DocAvailStatus status = page_obj_avail->CheckAvail();
+    if (status != DocAvailStatus::DataAvailable)
+      return status;
   }
 
-  if (!m_bAnnotsLoad) {
-    if (!CheckPageAnnots(dwPage))
-      return DataNotAvailable;
-    m_bAnnotsLoad = true;
-  }
-
-  const DocAvailStatus resources_status = CheckResources(m_pPageDict);
+  const DocAvailStatus resources_status = CheckResources(pPageDict);
   if (resources_status != DocAvailStatus::DataAvailable)
     return resources_status;
 
-  m_bPageLoadedOK = false;
-  m_bAnnotsLoad = false;
   m_bCurPageDictLoadOK = false;
-
   ResetFirstCheck(dwPage);
   m_pagesLoadState.insert(dwPage);
-  if (!ValidatePage(dwPage))
-    return DataError;
   return DataAvailable;
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
     const CPDF_Dictionary* page) {
-  if (!page)
-    return DocAvailStatus::DataAvailable;
-
+  ASSERT(page);
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
   const CPDF_Object* resources = GetResourceObject(page);
   if (GetValidator()->has_read_problems())
