@@ -20,12 +20,12 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/javascript/JS_Define.h"
+#include "fpdfsdk/javascript/cjs_color.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_field.h"
 #include "fpdfsdk/javascript/cjs_object.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
-#include "fpdfsdk/javascript/color.h"
 #include "fpdfsdk/javascript/resource.h"
 #include "fpdfsdk/javascript/util.h"
 

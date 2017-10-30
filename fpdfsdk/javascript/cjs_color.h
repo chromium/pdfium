@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_COLOR_H_
-#define FPDFSDK_JAVASCRIPT_COLOR_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_COLOR_H_
+#define FPDFSDK_JAVASCRIPT_CJS_COLOR_H_
 
 #include <vector>
 
@@ -112,4 +112,4 @@ class CJS_Color : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_COLOR_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_COLOR_H_

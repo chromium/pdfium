@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/color.h"
+#include "fpdfsdk/javascript/cjs_color.h"
 
 #include <vector>
 
