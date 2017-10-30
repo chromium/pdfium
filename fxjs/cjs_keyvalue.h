@@ -4,31 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_JS_KEYVALUE_H_
-#define FXJS_JS_KEYVALUE_H_
-
-#include <memory>
-#include <vector>
+#ifndef FXJS_CJS_KEYVALUE_H_
+#define FXJS_CJS_KEYVALUE_H_
 
 #include "core/fxcrt/fx_string.h"
+#include "fxjs/cjs_globalvariablearray.h"
 
 enum class JS_GlobalDataType { NUMBER = 0, BOOLEAN, STRING, OBJECT, NULLOBJ };
-
-class CJS_KeyValue;
-
-class CJS_GlobalVariableArray {
- public:
-  CJS_GlobalVariableArray();
-  ~CJS_GlobalVariableArray();
-
-  void Add(CJS_KeyValue* p);
-  int Count() const;
-  CJS_KeyValue* GetAt(int index) const;
-  void Copy(const CJS_GlobalVariableArray& array);
-
- private:
-  std::vector<std::unique_ptr<CJS_KeyValue>> m_Array;
-};
 
 class CJS_KeyValue {
  public:
@@ -43,4 +25,4 @@ class CJS_KeyValue {
   CJS_GlobalVariableArray objData;
 };
 
-#endif  // FXJS_JS_KEYVALUE_H_
+#endif  // FXJS_CJS_KEYVALUE_H_

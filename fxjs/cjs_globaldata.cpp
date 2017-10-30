@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/JS_GlobalData.h"
+#include "fxjs/cjs_globaldata.h"
 
 #include <utility>
 

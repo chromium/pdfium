@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_JS_GLOBALDATA_H_
-#define FXJS_JS_GLOBALDATA_H_
+#ifndef FXJS_CJS_GLOBALDATA_H_
+#define FXJS_CJS_GLOBALDATA_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/cfx_binarybuf.h"
-#include "fxjs/JS_KeyValue.h"
+#include "fxjs/cjs_keyvalue.h"
 
 class CPDFSDK_FormFillEnvironment;
 
@@ -74,4 +74,4 @@ class CJS_GlobalData {
   WideString m_sFilePath;
 };
 
-#endif  // FXJS_JS_GLOBALDATA_H_
+#endif  // FXJS_CJS_GLOBALDATA_H_

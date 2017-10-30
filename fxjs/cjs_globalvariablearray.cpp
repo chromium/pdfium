@@ -1,10 +1,12 @@
-// Copyright 2016 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/JS_KeyValue.h"
+#include "fxjs/cjs_globalvariablearray.h"
+
+#include "fxjs/cjs_keyvalue.h"
 
 CJS_GlobalVariableArray::CJS_GlobalVariableArray() {}
 
@@ -64,7 +66,3 @@ int CJS_GlobalVariableArray::Count() const {
 CJS_KeyValue* CJS_GlobalVariableArray::GetAt(int index) const {
   return m_Array.at(index).get();
 }
-
-CJS_KeyValue::CJS_KeyValue() {}
-
-CJS_KeyValue::~CJS_KeyValue() {}
