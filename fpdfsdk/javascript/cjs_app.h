@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_APP_H_
-#define FPDFSDK_JAVASCRIPT_APP_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_APP_H_
+#define FPDFSDK_JAVASCRIPT_CJS_APP_H_
 
 #include <memory>
 #include <set>
@@ -15,30 +15,6 @@
 
 class CJS_Runtime;
 class GlobalTimer;
-
-class TimerObj : public CJS_EmbedObj {
- public:
-  explicit TimerObj(CJS_Object* pJSObject);
-  ~TimerObj() override;
-
-  void SetTimer(GlobalTimer* pTimer);
-  int GetTimerID() const { return m_nTimerID; }
-
- private:
-  int m_nTimerID;  // Weak reference to GlobalTimer through global map.
-};
-
-class CJS_TimerObj : public CJS_Object {
- public:
-  static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
-
-  explicit CJS_TimerObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_TimerObj() override {}
-
- private:
-  static int ObjDefnID;
-};
 
 class app : public CJS_EmbedObj {
  public:
@@ -190,4 +166,4 @@ class CJS_App : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_APP_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_APP_H_

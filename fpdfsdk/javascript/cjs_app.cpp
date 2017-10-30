@@ -4,22 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/app.h"
+#include "fpdfsdk/javascript/cjs_app.h"
 
-#include <map>
-#include <memory>
-#include <vector>
-
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
-#include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/cjs_document.h"
-#include "fpdfsdk/javascript/cjs_event_context.h"
-#include "fpdfsdk/javascript/cjs_eventhandler.h"
-#include "fpdfsdk/javascript/cjs_object.h"
-#include "fpdfsdk/javascript/cjs_runtime.h"
-#include "fpdfsdk/javascript/resource.h"
-#include "third_party/base/stl_util.h"
+#include "fpdfsdk/javascript/cjs_timerobj.h"
+#include "fpdfsdk/javascript/global_timer.h"
+#include "fpdfsdk/javascript/ijs_event_context.h"
 
 namespace {
 
@@ -31,138 +22,6 @@ bool IsTypeKnown(v8::Local<v8::Value> value) {
 }
 
 }  // namespace
-
-class GlobalTimer {
- public:
-  GlobalTimer(app* pObj,
-              CPDFSDK_FormFillEnvironment* pFormFillEnv,
-              CJS_Runtime* pRuntime,
-              int nType,
-              const WideString& script,
-              uint32_t dwElapse,
-              uint32_t dwTimeOut);
-  ~GlobalTimer();
-
-  static void Trigger(int nTimerID);
-  static void Cancel(int nTimerID);
-
-  bool IsOneShot() const { return m_nType == 1; }
-  uint32_t GetTimeOut() const { return m_dwTimeOut; }
-  int GetTimerID() const { return m_nTimerID; }
-  CJS_Runtime* GetRuntime() const { return m_pRuntime.Get(); }
-  WideString GetJScript() const { return m_swJScript; }
-
- private:
-  using TimerMap = std::map<uint32_t, GlobalTimer*>;
-  static TimerMap* GetGlobalTimerMap();
-
-  uint32_t m_nTimerID;
-  app* const m_pEmbedObj;
-  bool m_bProcessing;
-
-  // data
-  const int m_nType;  // 0:Interval; 1:TimeOut
-  const uint32_t m_dwTimeOut;
-  const WideString m_swJScript;
-  CJS_Runtime::ObservedPtr m_pRuntime;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
-};
-
-GlobalTimer::GlobalTimer(app* pObj,
-                         CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         CJS_Runtime* pRuntime,
-                         int nType,
-                         const WideString& script,
-                         uint32_t dwElapse,
-                         uint32_t dwTimeOut)
-    : m_nTimerID(0),
-      m_pEmbedObj(pObj),
-      m_bProcessing(false),
-      m_nType(nType),
-      m_dwTimeOut(dwTimeOut),
-      m_swJScript(script),
-      m_pRuntime(pRuntime),
-      m_pFormFillEnv(pFormFillEnv) {
-  CFX_SystemHandler* pHandler = m_pFormFillEnv->GetSysHandler();
-  m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
-  if (m_nTimerID)
-    (*GetGlobalTimerMap())[m_nTimerID] = this;
-}
-
-GlobalTimer::~GlobalTimer() {
-  if (!m_nTimerID)
-    return;
-
-  if (GetRuntime())
-    m_pFormFillEnv->GetSysHandler()->KillTimer(m_nTimerID);
-
-  GetGlobalTimerMap()->erase(m_nTimerID);
-}
-
-// static
-void GlobalTimer::Trigger(int nTimerID) {
-  auto it = GetGlobalTimerMap()->find(nTimerID);
-  if (it == GetGlobalTimerMap()->end())
-    return;
-
-  GlobalTimer* pTimer = it->second;
-  if (pTimer->m_bProcessing)
-    return;
-
-  pTimer->m_bProcessing = true;
-  if (pTimer->m_pEmbedObj)
-    pTimer->m_pEmbedObj->TimerProc(pTimer);
-
-  // Timer proc may have destroyed timer, find it again.
-  it = GetGlobalTimerMap()->find(nTimerID);
-  if (it == GetGlobalTimerMap()->end())
-    return;
-
-  pTimer = it->second;
-  pTimer->m_bProcessing = false;
-  if (pTimer->IsOneShot())
-    pTimer->m_pEmbedObj->CancelProc(pTimer);
-}
-
-// static
-void GlobalTimer::Cancel(int nTimerID) {
-  auto it = GetGlobalTimerMap()->find(nTimerID);
-  if (it == GetGlobalTimerMap()->end())
-    return;
-
-  GlobalTimer* pTimer = it->second;
-  pTimer->m_pEmbedObj->CancelProc(pTimer);
-}
-
-// static
-GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
-  // Leak the timer array at shutdown.
-  static auto* s_TimerMap = new TimerMap;
-  return s_TimerMap;
-}
-
-int CJS_TimerObj::ObjDefnID = -1;
-
-// static
-int CJS_TimerObj::GetObjDefnID() {
-  return ObjDefnID;
-}
-
-// static
-void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("TimerObj", FXJSOBJTYPE_DYNAMIC,
-                                 JSConstructor<CJS_TimerObj, TimerObj>,
-                                 JSDestructor<CJS_TimerObj>);
-}
-
-TimerObj::TimerObj(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_nTimerID(0) {}
-
-TimerObj::~TimerObj() {}
-
-void TimerObj::SetTimer(GlobalTimer* pTimer) {
-  m_nTimerID = pTimer->GetTimerID();
-}
 
 #define JS_STR_VIEWERTYPE L"pdfium"
 #define JS_STR_VIEWERVARIATION L"Full"
