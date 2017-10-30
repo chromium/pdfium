@@ -1,52 +1,20 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_DOCUMENT_H_
-#define FPDFSDK_JAVASCRIPT_DOCUMENT_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_DOCUMENT_H_
+#define FPDFSDK_JAVASCRIPT_CJS_DOCUMENT_H_
 
 #include <list>
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_pageobject.h"
-#include "core/fpdfapi/page/cpdf_textobject.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 
-class PrintParamsObj : public CJS_EmbedObj {
- public:
-  explicit PrintParamsObj(CJS_Object* pJSObject);
-  ~PrintParamsObj() override {}
+class CPDF_TextObject;
 
- public:
-  bool bUI;
-  int nStart;
-  int nEnd;
-  bool bSilent;
-  bool bShrinkToFit;
-  bool bPrintAsImage;
-  bool bReverse;
-  bool bAnnotations;
-};
-
-class CJS_PrintParamsObj : public CJS_Object {
- public:
-  static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
-
-  explicit CJS_PrintParamsObj(v8::Local<v8::Object> pObject)
-      : CJS_Object(pObject) {}
-  ~CJS_PrintParamsObj() override {}
-
- private:
-  static int ObjDefnID;
-};
-
-struct CJS_AnnotObj;
-struct CJS_DelayAnnot;
 struct CJS_DelayData;
 
 class Document : public CJS_EmbedObj {
@@ -358,4 +326,4 @@ class CJS_Document : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_DOCUMENT_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_DOCUMENT_H_

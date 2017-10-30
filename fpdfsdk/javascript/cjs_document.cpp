@@ -1,72 +1,29 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/Document.h"
+#include "fpdfsdk/javascript/cjs_document.h"
 
-#include <algorithm>
-#include <sstream>
 #include <utility>
-#include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_pageobject.h"
+#include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
-#include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/app.h"
 #include "fpdfsdk/javascript/cjs_annot.h"
-#include "fpdfsdk/javascript/cjs_event_context.h"
-#include "fpdfsdk/javascript/cjs_eventhandler.h"
-#include "fpdfsdk/javascript/cjs_runtime.h"
-#include "fpdfsdk/javascript/resource.h"
-#include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/ptr_util.h"
-
-int CJS_PrintParamsObj::ObjDefnID = -1;
-
-// static
-int CJS_PrintParamsObj::GetObjDefnID() {
-  return ObjDefnID;
-}
-
-// static
-void CJS_PrintParamsObj::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID =
-      pEngine->DefineObj("PrintParamsObj", FXJSOBJTYPE_DYNAMIC,
-                         JSConstructor<CJS_PrintParamsObj, PrintParamsObj>,
-                         JSDestructor<CJS_PrintParamsObj>);
-}
-
-PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject) {
-  bUI = true;
-  nStart = 0;
-  nEnd = 0;
-  bSilent = false;
-  bShrinkToFit = false;
-  bPrintAsImage = false;
-  bReverse = false;
-  bAnnotations = true;
-}
-
-#define MINWIDTH 5.0f
-#define MINHEIGHT 5.0f
+#include "fpdfsdk/javascript/cjs_printparamsobj.h"
 
 const JSPropertySpec CJS_Document::PropertySpecs[] = {
     {"ADBE", get_ADBE_static, set_ADBE_static},
