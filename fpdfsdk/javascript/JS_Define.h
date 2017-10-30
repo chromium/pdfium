@@ -11,7 +11,7 @@
 
 #include "fpdfsdk/javascript/cjs_object.h"
 #include "fpdfsdk/javascript/cjs_return.h"
-#include "fpdfsdk/javascript/resource.h"
+#include "fpdfsdk/javascript/js_resources.h"
 #include "fxjs/fxjs_v8.h"
 
 double JS_GetDateTime();

@@ -1258,8 +1258,8 @@ static_library("javascript") {
       "fpdfsdk/javascript/cjs_zoomtype.h",
       "fpdfsdk/javascript/global_timer.cpp",
       "fpdfsdk/javascript/global_timer.h",
-      "fpdfsdk/javascript/resource.cpp",
-      "fpdfsdk/javascript/resource.h",
+      "fpdfsdk/javascript/js_resources.cpp",
+      "fpdfsdk/javascript/js_resources.h",
       "fpdfsdk/javascript/util.cpp",
       "fpdfsdk/javascript/util.h",
     ]

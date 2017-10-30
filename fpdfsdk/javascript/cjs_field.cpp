@@ -19,6 +19,7 @@
 #include "fpdfsdk/javascript/cjs_delaydata.h"
 #include "fpdfsdk/javascript/cjs_document.h"
 #include "fpdfsdk/javascript/cjs_icon.h"
+#include "fpdfsdk/javascript/js_resources.h"
 
 namespace {
 

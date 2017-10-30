@@ -11,6 +11,7 @@
 #include "fpdfsdk/javascript/cjs_timerobj.h"
 #include "fpdfsdk/javascript/global_timer.h"
 #include "fpdfsdk/javascript/ijs_event_context.h"
+#include "fpdfsdk/javascript/js_resources.h"
 
 namespace {
 

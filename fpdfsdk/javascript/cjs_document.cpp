@@ -25,6 +25,7 @@
 #include "fpdfsdk/javascript/cjs_field.h"
 #include "fpdfsdk/javascript/cjs_icon.h"
 #include "fpdfsdk/javascript/cjs_printparamsobj.h"
+#include "fpdfsdk/javascript/js_resources.h"
 
 const JSPropertySpec CJS_Document::PropertySpecs[] = {
     {"ADBE", get_ADBE_static, set_ADBE_static},

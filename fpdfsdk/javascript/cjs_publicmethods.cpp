@@ -26,7 +26,7 @@
 #include "fpdfsdk/javascript/cjs_field.h"
 #include "fpdfsdk/javascript/cjs_object.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
-#include "fpdfsdk/javascript/resource.h"
+#include "fpdfsdk/javascript/js_resources.h"
 #include "fpdfsdk/javascript/util.h"
 
 #define DOUBLE_CORRECT 0.000000000000001

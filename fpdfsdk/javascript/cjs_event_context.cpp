@@ -7,9 +7,10 @@
 #include "fpdfsdk/javascript/cjs_event_context.h"
 
 #include "core/fxcrt/autorestorer.h"
+#include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/cjs_eventhandler.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
-#include "fpdfsdk/javascript/resource.h"
+#include "fpdfsdk/javascript/js_resources.h"
 
 CJS_EventContext::CJS_EventContext(CJS_Runtime* pRuntime)
     : m_pRuntime(pRuntime),

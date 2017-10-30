@@ -1,10 +1,10 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/resource.h"
+#include "fpdfsdk/javascript/js_resources.h"
 
 WideString JSGetStringFromID(uint32_t id) {
   switch (id) {

@@ -1,15 +1,13 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_RESOURCE_H_
-#define FPDFSDK_JAVASCRIPT_RESOURCE_H_
+#ifndef FPDFSDK_JAVASCRIPT_JS_RESOURCES_H_
+#define FPDFSDK_JAVASCRIPT_JS_RESOURCES_H_
 
-#include "core/fxcrt/fx_string.h"
-
-class CJS_EventContext;
+#include "core/fxcrt/widestring.h"
 
 #define IDS_STRING_JSALERT 25613
 #define IDS_STRING_JSPARAMERROR 25614
@@ -37,4 +35,4 @@ WideString JSFormatErrorString(const char* class_name,
                                const char* property_name,
                                const WideString& details);
 
-#endif  // FPDFSDK_JAVASCRIPT_RESOURCE_H_
+#endif  // FPDFSDK_JAVASCRIPT_JS_RESOURCES_H_
