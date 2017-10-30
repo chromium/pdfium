@@ -491,11 +491,6 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   const char md5_modified_path[] = "cf3cea74bd46497520ff6c4d1ea228c8";
   const char md5_two_paths[] = "e8994452fc4385337bae5522354e10ff";
   const char md5_new_annot[] = "ee5372b31fede117fc83b9384598aa25";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_modified_path[] = "3f77b88ce6048e08e636c9a03921b2e5";
-  const char md5_two_paths[] = "bffbf5ecd15862b9fe553c795400ff8e";
-  const char md5_new_annot[] = "e020534c7eeea76be537c70d6e359a40";
 #else
   const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
   const char md5_modified_path[] = "3f77b88ce6048e08e636c9a03921b2e5";
@@ -672,10 +667,6 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
   const char md5_new_image[] = "ff012f5697436dfcaec25b32d1333596";
   const char md5_modified_image[] = "86cf8cb2755a7a2046a543e66d9c1e61";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_new_image[] = "9ea8732dc9d579f68853f16892856208";
-  const char md5_modified_image[] = "74239d2a8c55c9de1dbb9cd8781895aa";
 #else
   const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
   const char md5_new_image[] = "9ea8732dc9d579f68853f16892856208";
@@ -749,10 +740,6 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
   const char md5_new_text[] = "e5680ed048c2cfd9a1d27212cdf41286";
   const char md5_modified_text[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_new_text[] = "00b14fa2dc1c90d1b0d034e1608efef5";
-  const char md5_modified_text[] = "076c8f24a09ddc0e49f7e758edead6f0";
 #else
   const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
   const char md5_new_text[] = "00b14fa2dc1c90d1b0d034e1608efef5";
@@ -879,8 +866,6 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   // Open the saved annotation.
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
 #else
   const char md5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
 #endif
