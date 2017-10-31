@@ -55,13 +55,7 @@ bool GetBoundingBox(CPDF_Page* page,
 }
 
 CPDF_Object* GetPageContent(CPDF_Dictionary* pPageDict) {
-  if (!pPageDict)
-    return nullptr;
-
-  CPDF_Object* pContentObj = pPageDict->GetObjectFor("Contents");
-  if (!pContentObj)
-    pContentObj = pPageDict->GetArrayFor("Contents");
-  return pContentObj;
+  return pPageDict ? pPageDict->GetDirectObjectFor("Contents") : nullptr;
 }
 
 }  // namespace
@@ -150,30 +144,16 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
   pEndStream->SetData((const uint8_t*)" Q", 2);
 
-  CPDF_Array* pContentArray = nullptr;
-  CPDF_Array* pArray = ToArray(pContentObj);
-  if (pArray) {
-    pContentArray = pArray;
+  if (CPDF_Array* pContentArray = ToArray(pContentObj)) {
     pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
     pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
-  } else if (CPDF_Reference* pReference = ToReference(pContentObj)) {
-    CPDF_Object* pDirectObj = pReference->GetDirect();
-    if (pDirectObj) {
-      CPDF_Array* pObjArray = pDirectObj->AsArray();
-      if (pObjArray) {
-        pContentArray = pObjArray;
-        pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc,
-                                                   pStream->GetObjNum());
-        pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
-      } else if (pDirectObj->IsStream()) {
-        pContentArray = pDoc->NewIndirect<CPDF_Array>();
-        pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
-        pContentArray->AddNew<CPDF_Reference>(pDoc, pDirectObj->GetObjNum());
-        pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
-        pPageDict->SetNewFor<CPDF_Reference>("Contents", pDoc,
-                                             pContentArray->GetObjNum());
-      }
-    }
+  } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
+    CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pContentObj->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
+    pPageDict->SetNewFor<CPDF_Reference>("Contents", pDoc,
+                                         pContentArray->GetObjNum());
   }
 
   // Need to transform the patterns as well.
@@ -316,28 +296,12 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
   pStream->SetData(&strClip);
 
-  CPDF_Array* pArray = ToArray(pContentObj);
-  if (pArray) {
+  if (CPDF_Array* pArray = ToArray(pContentObj)) {
     pArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
-    return;
-  }
-  CPDF_Reference* pReference = ToReference(pContentObj);
-  if (!pReference)
-    return;
-
-  CPDF_Object* pDirectObj = pReference->GetDirect();
-  if (!pDirectObj)
-    return;
-
-  CPDF_Array* pObjArray = pDirectObj->AsArray();
-  if (pObjArray) {
-    pObjArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
-    return;
-  }
-  if (pDirectObj->IsStream()) {
+  } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
     CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
     pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
-    pContentArray->AddNew<CPDF_Reference>(pDoc, pDirectObj->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pContentObj->GetObjNum());
     pPageDict->SetNewFor<CPDF_Reference>("Contents", pDoc,
                                          pContentArray->GetObjNum());
   }
