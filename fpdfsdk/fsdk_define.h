@@ -75,6 +75,9 @@ ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 
+CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect);
+void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect);
+
 const FX_PATHPOINT* FXPathPointFromFPDFPathSegment(FPDF_PATHSEGMENT segment);
 
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,

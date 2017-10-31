@@ -112,8 +112,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   std::ostringstream textBuf;
   textBuf << "q ";
-  CFX_FloatRect rect(clipRect->left, clipRect->bottom, clipRect->right,
-                     clipRect->top);
+  CFX_FloatRect rect = CFXFloatRectFromFSRECTF(*clipRect);
   rect.Normalize();
   ByteString bsClipping;
   bsClipping.Format("%f %f %f %f re W* n ", rect.left, rect.bottom,

@@ -644,7 +644,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  CFX_FloatRect newRect(rect->left, rect->bottom, rect->right, rect->top);
+  CFX_FloatRect newRect = CFXFloatRectFromFSRECTF(*rect);
 
   // Update the "Rect" entry in the annotation dictionary.
   pAnnotDict->SetRectFor("Rect", newRect);
@@ -674,11 +674,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  CFX_FloatRect rt = pAnnotDict->GetRectFor("Rect");
-  rect->left = rt.left;
-  rect->bottom = rt.bottom;
-  rect->right = rt.right;
-  rect->top = rt.top;
+  FSRECTFFromCFXFloatRect(pAnnotDict->GetRectFor("Rect"), rect);
   return true;
 }
 

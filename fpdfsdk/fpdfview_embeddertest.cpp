@@ -388,23 +388,18 @@ TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
   CompareBitmap(bitmap, initial_width, initial_height, kRotatedMD5[0]);
   FPDFBitmap_Destroy(bitmap);
 
-  int width;
-  int height;
-  FS_RECTF rect;
-  rect.left = 0;
-  rect.top = 0;
-  FS_MATRIX matrix;
-
   // Try the easy rotations: 0, 90, 180, 270 clockwise. The output should be the
   // same as FPDF_RenderPageBitmap with the appropriate rotation flag. Per PDF
   // spec section 4.2.2, a t degree rotation is represented by [cos(t) sin(t)
   // -sin(t) cos(t) 0 0] (matrix goes on the right in the multiplication).
-  rect.right = initial_width;
-  rect.bottom = initial_height;
+  FS_RECTF rect = {0, 0, initial_width, initial_height};
   CFX_Matrix rot_matrices[4] = {
       CFX_Matrix(1, 0, 0, 1, 0, 0), CFX_Matrix(0, -1, 1, 0, 0, 0),
       CFX_Matrix(-1, 0, 0, -1, 0, 0), CFX_Matrix(0, 1, -1, 0, 0, 0)};
   for (int rot = 0; rot < 4; ++rot) {
+    int width;
+    int height;
+    FS_MATRIX matrix;
     matrix.a = rot_matrices[rot].a;
     matrix.b = rot_matrices[rot].b;
     matrix.c = rot_matrices[rot].c;
@@ -438,12 +433,9 @@ TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
   // out). pdfium:849
 
   // Now render again with the image scaled smaller.
-  width = initial_width / 2;
-  height = initial_height / 2;
-  matrix.a = 0.5;
-  matrix.b = 0;
-  matrix.c = 0;
-  matrix.d = 0.5;
+  int width = initial_width / 2;
+  int height = initial_height / 2;
+  FS_MATRIX matrix = {0.5, 0, 0, 0.5, 0, 0};
 
   rect.right = width;
   rect.bottom = height;

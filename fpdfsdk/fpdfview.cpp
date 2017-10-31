@@ -359,6 +359,17 @@ CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
   return static_cast<CFX_DIBitmap*>(bitmap);
 }
 
+CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect) {
+  return CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top);
+}
+
+void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect) {
+  out_rect->left = rect.left;
+  out_rect->top = rect.top;
+  out_rect->right = rect.right;
+  out_rect->bottom = rect.bottom;
+}
+
 const FX_PATHPOINT* FXPathPointFromFPDFPathSegment(FPDF_PATHSEGMENT segment) {
   return static_cast<const FX_PATHPOINT*>(segment);
 }
@@ -1008,12 +1019,8 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   CFX_FloatRect clipping_rect;
-  if (clipping) {
-    clipping_rect.left = clipping->left;
-    clipping_rect.bottom = clipping->bottom;
-    clipping_rect.right = clipping->right;
-    clipping_rect.top = clipping->top;
-  }
+  if (clipping)
+    clipping_rect = CFXFloatRectFromFSRECTF(*clipping);
   FX_RECT clip_rect = clipping_rect.ToFxRect();
   RenderPageImpl(
       pContext, pPage,

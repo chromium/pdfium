@@ -329,11 +329,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK linkAnnot,
     return false;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CFX_FloatRect rt = pAnnotDict->GetRectFor("Rect");
-  rect->left = rt.left;
-  rect->bottom = rt.bottom;
-  rect->right = rt.right;
-  rect->top = rt.top;
+  FSRECTFFromCFXFloatRect(pAnnotDict->GetRectFor("Rect"), rect);
   return true;
 }
 
