@@ -39,7 +39,8 @@ class XFACodecFuzzer {
 
     // Skipping very large images, since they will take a long time and may lead
     // to OOM.
-    if (decoder->GetWidth() > kXFACodecFuzzerPixelLimit / decoder->GetHeight())
+    if (decoder->GetHeight() != 0 &&
+        decoder->GetWidth() > kXFACodecFuzzerPixelLimit / decoder->GetHeight())
       return 0;
 
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
