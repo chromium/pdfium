@@ -1317,6 +1317,8 @@ static_library("fxjs") {
         "fxjs/cjx_object.h",
         "fxjs/cjx_signaturepseudomodel.cpp",
         "fxjs/cjx_signaturepseudomodel.h",
+        "fxjs/cjx_thisproxy.cpp",
+        "fxjs/cjx_thisproxy.h",
         "fxjs/fxjse.h",
       ]
     }

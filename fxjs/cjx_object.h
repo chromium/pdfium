@@ -16,7 +16,6 @@ class CXFA_Object;
 
 class CJX_Object {
  public:
-  explicit CJX_Object(CXFA_Object* object);
   virtual ~CJX_Object();
 
   CXFA_Object* GetXFAObject() { return object_.Get(); }
@@ -31,7 +30,9 @@ class CJX_Object {
   void ThrowIndexOutOfBoundsException() const;
   void ThrowParamCountMismatchException(const WideString& method) const;
 
-  // Make this protected when the cscript_* objects are converted to CJX.
+ protected:
+  explicit CJX_Object(CXFA_Object* object);
+
   void ThrowException(const wchar_t* str, ...) const;
 
  private:
