@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "fxjs/cfxjse_engine.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -23,7 +24,6 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 class CXFA_WidgetLayoutData {
@@ -618,7 +618,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
     return XFA_EVENTERROR_Success;
 
   CXFA_FFDoc* pDoc = GetDoc();
-  CXFA_ScriptContext* pContext = pDoc->GetXFADoc()->GetScriptContext();
+  CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
   pContext->SetEventParam(*pEventParam);
   pContext->SetRunAtType((XFA_ATTRIBUTEENUM)script.GetRunAt());
   std::vector<CXFA_Node*> refNodes;

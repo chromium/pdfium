@@ -5,11 +5,11 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
-class FM2JSContextEmbedderTest : public XFAJSEmbedderTest {};
+class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {};
 
 // TODO(dsinclair): Comment out tests are broken and need to be fixed.
 
-TEST_F(FM2JSContextEmbedderTest, TranslateEmpty) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, TranslateEmpty) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const char input[] = "";
@@ -18,7 +18,7 @@ TEST_F(FM2JSContextEmbedderTest, TranslateEmpty) {
   // is invalid.
 }
 
-TEST_F(FM2JSContextEmbedderTest, TranslateNumber) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, TranslateNumber) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const char input[] = "123";
@@ -29,7 +29,7 @@ TEST_F(FM2JSContextEmbedderTest, TranslateNumber) {
   EXPECT_EQ(123, value->ToInteger()) << "Program: " << input;
 }
 
-TEST_F(FM2JSContextEmbedderTest, Numeric) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Numeric) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -70,7 +70,7 @@ TEST_F(FM2JSContextEmbedderTest, Numeric) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Strings) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Strings) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -92,7 +92,7 @@ TEST_F(FM2JSContextEmbedderTest, Strings) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Booleans) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Booleans) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -132,7 +132,7 @@ TEST_F(FM2JSContextEmbedderTest, Booleans) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Abs) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Abs) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -150,7 +150,7 @@ TEST_F(FM2JSContextEmbedderTest, Abs) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Avg) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Avg) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -168,7 +168,7 @@ TEST_F(FM2JSContextEmbedderTest, Avg) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Ceil) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ceil) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -186,7 +186,7 @@ TEST_F(FM2JSContextEmbedderTest, Ceil) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Count) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Count) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -204,7 +204,7 @@ TEST_F(FM2JSContextEmbedderTest, Count) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Floor) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Floor) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -224,7 +224,7 @@ TEST_F(FM2JSContextEmbedderTest, Floor) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Max) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Max) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -244,7 +244,7 @@ TEST_F(FM2JSContextEmbedderTest, Max) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Min) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Min) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -266,7 +266,7 @@ TEST_F(FM2JSContextEmbedderTest, Min) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Mod) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Mod) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -284,7 +284,7 @@ TEST_F(FM2JSContextEmbedderTest, Mod) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Round) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Round) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -305,7 +305,7 @@ TEST_F(FM2JSContextEmbedderTest, Round) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Sum) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Sum) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -325,7 +325,7 @@ TEST_F(FM2JSContextEmbedderTest, Sum) {
   }
 }
 
-// TEST_F(FM2JSContextEmbedderTest, DISABLED_Date) {
+// TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Date) {
 //   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 //
 //   TODO(dsinclair): Make compatible with windows.
@@ -339,7 +339,7 @@ TEST_F(FM2JSContextEmbedderTest, Sum) {
 //   EXPECT_EQ(days, value->ToInteger());
 // }
 
-TEST_F(FM2JSContextEmbedderTest, Date2Num) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Date2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -364,7 +364,7 @@ TEST_F(FM2JSContextEmbedderTest, Date2Num) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DateFmt) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DateFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -388,7 +388,7 @@ TEST_F(FM2JSContextEmbedderTest, DateFmt) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, IsoDate2Num) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, IsoDate2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -410,7 +410,7 @@ TEST_F(FM2JSContextEmbedderTest, IsoDate2Num) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_IsoTime2Num) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_IsoTime2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -428,7 +428,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_IsoTime2Num) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, LocalDateFmt) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, LocalDateFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -450,7 +450,7 @@ TEST_F(FM2JSContextEmbedderTest, LocalDateFmt) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_LocalTimeFmt) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_LocalTimeFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -472,7 +472,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_LocalTimeFmt) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Num2Date) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Num2Date) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -497,7 +497,7 @@ TEST_F(FM2JSContextEmbedderTest, Num2Date) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Num2GMTime) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2GMTime) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -522,7 +522,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Num2GMTime) {
 }
 
 // TODO(dsinclair): Broken on Mac ...
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Num2Time) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2Time) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -541,7 +541,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Num2Time) {
   }
 }
 
-// TEST_F(FM2JSContextEmbedderTest, DISABLED_Time) {
+// TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Time) {
 //   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 //   TODO(dsinclair): Make compatible with windows.
 //   struct timeval tp;
@@ -555,7 +555,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Num2Time) {
 //       << "Program: Time()";
 // }
 
-TEST_F(FM2JSContextEmbedderTest, Time2Num) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -575,7 +575,7 @@ TEST_F(FM2JSContextEmbedderTest, Time2Num) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, TimeFmt) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, TimeFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -599,7 +599,7 @@ TEST_F(FM2JSContextEmbedderTest, TimeFmt) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Apr) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Apr) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -618,7 +618,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Apr) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, CTerm) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, CTerm) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -640,7 +640,7 @@ TEST_F(FM2JSContextEmbedderTest, CTerm) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, FV) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, FV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -659,7 +659,7 @@ TEST_F(FM2JSContextEmbedderTest, FV) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, IPmt) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, IPmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -679,7 +679,7 @@ TEST_F(FM2JSContextEmbedderTest, IPmt) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_NPV) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_NPV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -699,7 +699,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_NPV) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Pmt) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Pmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -718,7 +718,7 @@ TEST_F(FM2JSContextEmbedderTest, Pmt) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, PPmt) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, PPmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -740,7 +740,7 @@ TEST_F(FM2JSContextEmbedderTest, PPmt) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, PV) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, PV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -761,7 +761,7 @@ TEST_F(FM2JSContextEmbedderTest, PV) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Rate) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Rate) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -780,7 +780,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Rate) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Term) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Term) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -799,7 +799,7 @@ TEST_F(FM2JSContextEmbedderTest, Term) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Choose) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Choose) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -822,7 +822,7 @@ TEST_F(FM2JSContextEmbedderTest, Choose) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Exists) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Exists) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_TRUE(Execute("Exists(\"hello world\")"));
@@ -831,7 +831,7 @@ TEST_F(FM2JSContextEmbedderTest, Exists) {
   EXPECT_FALSE(value->ToBoolean());
 }
 
-TEST_F(FM2JSContextEmbedderTest, HasValue) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, HasValue) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -849,7 +849,7 @@ TEST_F(FM2JSContextEmbedderTest, HasValue) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Oneof) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Oneof) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -874,7 +874,7 @@ TEST_F(FM2JSContextEmbedderTest, Oneof) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Within) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Within) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -894,7 +894,7 @@ TEST_F(FM2JSContextEmbedderTest, Within) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Eval) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Eval) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -912,7 +912,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Eval) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Null) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Null) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -938,7 +938,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Null) {
   EXPECT_EQ(5, value->ToInteger());
 }
 
-TEST_F(FM2JSContextEmbedderTest, Ref) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ref) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -957,7 +957,7 @@ TEST_F(FM2JSContextEmbedderTest, Ref) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, UnitType) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitType) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -981,7 +981,7 @@ TEST_F(FM2JSContextEmbedderTest, UnitType) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, UnitValue) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitValue) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1004,7 +1004,7 @@ TEST_F(FM2JSContextEmbedderTest, UnitValue) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, At) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, At) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1024,7 +1024,7 @@ TEST_F(FM2JSContextEmbedderTest, At) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Concat) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Concat) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1047,7 +1047,7 @@ TEST_F(FM2JSContextEmbedderTest, Concat) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Decode) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Decode) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1072,7 +1072,7 @@ TEST_F(FM2JSContextEmbedderTest, Decode) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Encode) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Encode) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1094,7 +1094,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Encode) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Format) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Format) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1114,7 +1114,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Format) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Left) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Left) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1134,7 +1134,7 @@ TEST_F(FM2JSContextEmbedderTest, Left) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Len) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Len) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1153,7 +1153,7 @@ TEST_F(FM2JSContextEmbedderTest, Len) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Lower) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Lower) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1174,7 +1174,7 @@ TEST_F(FM2JSContextEmbedderTest, Lower) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Ltrim) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ltrim) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1194,7 +1194,7 @@ TEST_F(FM2JSContextEmbedderTest, Ltrim) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, DISABLED_Parse) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Parse) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1218,7 +1218,7 @@ TEST_F(FM2JSContextEmbedderTest, DISABLED_Parse) {
   EXPECT_FLOAT_EQ(1234567.89f, value->ToFloat());
 }
 
-TEST_F(FM2JSContextEmbedderTest, Replace) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Replace) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1239,7 +1239,7 @@ TEST_F(FM2JSContextEmbedderTest, Replace) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Right) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Right) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1259,7 +1259,7 @@ TEST_F(FM2JSContextEmbedderTest, Right) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Rtrim) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rtrim) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1279,7 +1279,7 @@ TEST_F(FM2JSContextEmbedderTest, Rtrim) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Space) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Space) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1299,7 +1299,7 @@ TEST_F(FM2JSContextEmbedderTest, Space) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Str) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1321,7 +1321,7 @@ TEST_F(FM2JSContextEmbedderTest, Str) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Stuff) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Stuff) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1343,7 +1343,7 @@ TEST_F(FM2JSContextEmbedderTest, Stuff) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Substr) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1365,7 +1365,7 @@ TEST_F(FM2JSContextEmbedderTest, Substr) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Uuid) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Uuid) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_TRUE(Execute("Uuid()"));
@@ -1374,7 +1374,7 @@ TEST_F(FM2JSContextEmbedderTest, Uuid) {
   EXPECT_TRUE(value->IsString());
 }
 
-TEST_F(FM2JSContextEmbedderTest, Upper) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Upper) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1395,7 +1395,7 @@ TEST_F(FM2JSContextEmbedderTest, Upper) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, WordNum) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, WordNum) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -1421,19 +1421,19 @@ TEST_F(FM2JSContextEmbedderTest, WordNum) {
   }
 }
 
-TEST_F(FM2JSContextEmbedderTest, Get) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Get) {
   // TODO(dsinclair): Is this supported?
 }
 
-TEST_F(FM2JSContextEmbedderTest, Post) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Post) {
   // TODO(dsinclair): Is this supported?
 }
 
-TEST_F(FM2JSContextEmbedderTest, Put) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Put) {
   // TODO(dsinclair): Is this supported?
 }
 
-TEST_F(FM2JSContextEmbedderTest, InvalidFunctions) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, InvalidFunctions) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const char* const tests[] = {

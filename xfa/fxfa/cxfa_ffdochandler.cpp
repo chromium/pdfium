@@ -7,9 +7,9 @@
 #include "xfa/fxfa/cxfa_ffdochandler.h"
 
 #include "core/fxcrt/cfx_checksumcontext.h"
+#include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 CXFA_FFDocHandler::CXFA_FFDocHandler() {}
@@ -21,7 +21,7 @@ CFXJSE_Value* CXFA_FFDocHandler::GetXFAScriptObject(CXFA_FFDoc* hDoc) {
   if (!pXFADoc)
     return nullptr;
 
-  CXFA_ScriptContext* pScriptContext = pXFADoc->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = pXFADoc->GetScriptContext();
   if (!pScriptContext)
     return nullptr;
   return pScriptContext->GetJSValueFromMap(pXFADoc->GetRoot());
@@ -51,11 +51,11 @@ bool CXFA_FFDocHandler::RunDocScript(CXFA_FFDoc* hDoc,
   if (!pXFADoc)
     return false;
 
-  CXFA_ScriptContext* pScriptContext = pXFADoc->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = pXFADoc->GetScriptContext();
   if (!pScriptContext)
     return false;
 
   return pScriptContext->RunScript(
       (XFA_SCRIPTLANGTYPE)eScriptType, wsScript, pRetValue,
-      pThisValue ? CXFA_ScriptContext::ToObject(pThisValue, nullptr) : nullptr);
+      pThisValue ? CFXJSE_Engine::ToObject(pThisValue, nullptr) : nullptr);
 }

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
+#include "fxjs/cfxjse_engine.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -18,7 +19,6 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -669,7 +669,7 @@ void CXFA_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
     return;
   }
 
-  CXFA_ScriptContext* pContext = rnd.m_pSC;
+  CFXJSE_Engine* pContext = rnd.m_pSC;
   wsExpression = wsCondition.Mid(2, wsCondition.GetLength() - 3);
   for (int32_t i = iFoundCount - 1; i >= 0; i--) {
     auto pRetValue = pdfium::MakeUnique<CFXJSE_Value>(rnd.m_pSC->GetRuntime());
@@ -781,7 +781,7 @@ void CXFA_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
   }
 }
 
-CXFA_ResolveNodesData::CXFA_ResolveNodesData(CXFA_ScriptContext* pSC)
+CXFA_ResolveNodesData::CXFA_ResolveNodesData(CFXJSE_Engine* pSC)
     : m_pSC(pSC),
       m_CurObject(nullptr),
       m_wsName(),

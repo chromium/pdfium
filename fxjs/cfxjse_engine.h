@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_SCRIPTCONTEXT_H_
-#define XFA_FXFA_PARSER_CXFA_SCRIPTCONTEXT_H_
+#ifndef FXJS_CFXJSE_ENGINE_H_
+#define FXJS_CFXJSE_ENGINE_H_
 
 #include <map>
 #include <memory>
 #include <vector>
 
 #include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_formcalc_context.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
-#include "xfa/fxfa/fm2js/cxfa_fm2jscontext.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
@@ -21,10 +21,10 @@
 
 class CXFA_ResolveProcessor;
 
-class CXFA_ScriptContext {
+class CFXJSE_Engine {
  public:
-  explicit CXFA_ScriptContext(CXFA_Document* pDocument);
-  ~CXFA_ScriptContext();
+  explicit CFXJSE_Engine(CXFA_Document* pDocument);
+  ~CFXJSE_Engine();
 
   void Initialize(v8::Isolate* pIsolate);
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
@@ -117,10 +117,10 @@ class CXFA_ScriptContext {
   std::vector<std::unique_ptr<CXFA_NodeList>> m_CacheList;
   std::vector<CXFA_Node*>* m_pScriptNodeArray;
   std::unique_ptr<CXFA_ResolveProcessor> m_ResolveProcessor;
-  std::unique_ptr<CXFA_FM2JSContext> m_FM2JSContext;
+  std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;
   CXFA_Object* m_pThisObject;
   uint32_t m_dwBuiltInInFlags;
   XFA_ATTRIBUTEENUM m_eRunAtType;
 };
 
-#endif  //  XFA_FXFA_PARSER_CXFA_SCRIPTCONTEXT_H_
+#endif  //  FXJS_CFXJSE_ENGINE_H_

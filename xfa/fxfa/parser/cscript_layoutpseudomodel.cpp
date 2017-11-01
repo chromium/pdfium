@@ -9,6 +9,7 @@
 #include <set>
 
 #include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_engine.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -20,7 +21,6 @@
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_contentlayoutitem.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 

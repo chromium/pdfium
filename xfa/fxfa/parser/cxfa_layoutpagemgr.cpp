@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 
+#include "fxjs/cfxjse_engine.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
@@ -17,7 +18,6 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_contentareacontainerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"

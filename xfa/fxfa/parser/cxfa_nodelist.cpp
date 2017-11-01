@@ -9,9 +9,9 @@
 #include <memory>
 
 #include "core/fxcrt/fx_extension.h"
+#include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
 CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,

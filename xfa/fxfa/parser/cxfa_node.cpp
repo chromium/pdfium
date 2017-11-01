@@ -19,6 +19,7 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
@@ -32,7 +33,6 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
@@ -970,7 +970,7 @@ void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
   }
   WideString wsExpression =
       WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext)
     return;
   CXFA_Node* refNode = this;
@@ -1029,7 +1029,7 @@ void CXFA_Node::Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
                                            WideString wsExpression,
                                            uint32_t dwFlag,
                                            CXFA_Node* refNode) {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext)
     return;
   XFA_RESOLVENODE_RS resoveNodeRS;
@@ -1073,7 +1073,7 @@ void CXFA_Node::Script_TreeClass_All(CFXJSE_Value* pValue,
 void CXFA_Node::Script_TreeClass_Nodes(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext)
     return;
   if (bSetting) {
@@ -4259,7 +4259,7 @@ bool CXFA_Node::TryContent(WideString& wsContent,
   }
   if (pNode) {
     if (bScriptModify) {
-      CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+      CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
       if (pScriptContext) {
         m_pDocument->GetScriptContext()->AddNodesOfRunScript(this);
       }
@@ -4622,7 +4622,7 @@ CXFA_Node* CXFA_Node::GetNextSameClassSibling(XFA_Element eType) const {
 }
 
 int32_t CXFA_Node::GetNodeSameNameIndex() const {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return -1;
   }
@@ -4630,7 +4630,7 @@ int32_t CXFA_Node::GetNodeSameNameIndex() const {
 }
 
 int32_t CXFA_Node::GetNodeSameClassIndex() const {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return -1;
   }
@@ -4638,7 +4638,7 @@ int32_t CXFA_Node::GetNodeSameClassIndex() const {
 }
 
 void CXFA_Node::GetSOMExpression(WideString& wsSOMExpression) {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }

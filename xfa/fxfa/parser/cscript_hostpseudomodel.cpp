@@ -9,12 +9,12 @@
 #include <memory>
 
 #include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -244,7 +244,7 @@ void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
     if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
     } else if (pValue->IsString()) {
-      CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+      CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
       if (!pScriptContext)
         return;
 
@@ -364,7 +364,7 @@ void CScript_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
   int32_t iExpLength = wsExpression.GetLength();
   while (iStart < iExpLength) {
     iStart = XFA_FilterName(wsExpression.AsStringView(), iStart, wsName);
-    CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+    CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
     if (!pScriptContext)
       return;
 
@@ -425,7 +425,7 @@ void CScript_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
     if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
     } else if (pValue->IsString()) {
-      CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+      CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
       if (!pScriptContext)
         return;
 

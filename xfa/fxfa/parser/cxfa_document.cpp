@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_datawindow.h"
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
@@ -18,7 +19,6 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -284,15 +284,15 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   return m_pLocalMgr.get();
 }
 
-CXFA_ScriptContext* CXFA_Document::InitScriptContext(v8::Isolate* pIsolate) {
-  CXFA_ScriptContext* result = GetScriptContext();
+CFXJSE_Engine* CXFA_Document::InitScriptContext(v8::Isolate* pIsolate) {
+  CFXJSE_Engine* result = GetScriptContext();
   result->Initialize(pIsolate);
   return result;
 }
 
-CXFA_ScriptContext* CXFA_Document::GetScriptContext() {
+CFXJSE_Engine* CXFA_Document::GetScriptContext() {
   if (!m_pScriptContext)
-    m_pScriptContext = pdfium::MakeUnique<CXFA_ScriptContext>(this);
+    m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this);
   return m_pScriptContext.get();
 }
 

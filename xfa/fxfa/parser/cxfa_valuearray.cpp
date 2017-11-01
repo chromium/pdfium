@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
+#include "fxjs/cfxjse_engine.h"
 
 CXFA_ValueArray::CXFA_ValueArray(v8::Isolate* pIsolate)
     : m_pIsolate(pIsolate) {}
@@ -19,7 +19,7 @@ std::vector<CXFA_Object*> CXFA_ValueArray::GetAttributeObject() {
   std::vector<CXFA_Object*> result(m_Values.size());
   std::transform(m_Values.begin(), m_Values.end(), result.begin(),
                  [](const std::unique_ptr<CFXJSE_Value>& value) {
-                   return CXFA_ScriptContext::ToObject(value.get(), nullptr);
+                   return CFXJSE_Engine::ToObject(value.get(), nullptr);
                  });
   return result;
 }

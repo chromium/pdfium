@@ -7,10 +7,10 @@
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -313,11 +313,10 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(WideString& wsCondition) {
   return false;
 }
 
-bool CXFA_NodeHelper::ResolveNodes_CreateNode(
-    WideString wsName,
-    WideString wsCondition,
-    bool bLastNode,
-    CXFA_ScriptContext* pScriptContext) {
+bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
+                                              WideString wsCondition,
+                                              bool bLastNode,
+                                              CFXJSE_Engine* pScriptContext) {
   if (!m_pCreateParent) {
     return false;
   }

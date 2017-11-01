@@ -15,7 +15,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
-class CXFA_ScriptContext;
+class CFXJSE_Engine;
 
 class XFAJSEmbedderTest : public EmbedderTest {
  public:
@@ -41,7 +41,7 @@ class XFAJSEmbedderTest : public EmbedderTest {
   std::unique_ptr<FXJS_ArrayBufferAllocator> array_buffer_allocator_;
   std::unique_ptr<CFXJSE_Value> value_;
   v8::Isolate* isolate_;
-  CXFA_ScriptContext* script_context_;
+  CFXJSE_Engine* script_context_;
 
   bool ExecuteHelper(const ByteStringView& input);
 };

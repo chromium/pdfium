@@ -55,14 +55,14 @@ class CXFA_LayoutProcessor;
 class CXFA_DocumentParser;
 class CXFA_ContainerLayoutItem;
 class CXFA_FFNotify;
-class CXFA_ScriptContext;
+class CFXJSE_Engine;
 
 class CXFA_Document {
  public:
   explicit CXFA_Document(CXFA_DocumentParser* pParser);
   ~CXFA_Document();
 
-  CXFA_ScriptContext* InitScriptContext(v8::Isolate* pIsolate);
+  CFXJSE_Engine* InitScriptContext(v8::Isolate* pIsolate);
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
 
@@ -74,7 +74,7 @@ class CXFA_Document {
   CXFA_Node* GetNotBindNode(const std::vector<CXFA_Object*>& arrayNodes);
   CXFA_LayoutProcessor* GetLayoutProcessor();
   CXFA_LayoutProcessor* GetDocLayout();
-  CXFA_ScriptContext* GetScriptContext();
+  CFXJSE_Engine* GetScriptContext();
 
   void SetRoot(CXFA_Node* pNewRoot);
 
@@ -111,7 +111,7 @@ class CXFA_Document {
  private:
   CXFA_DocumentParser* m_pParser;
   CXFA_Node* m_pRootNode;
-  std::unique_ptr<CXFA_ScriptContext> m_pScriptContext;
+  std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
   std::unique_ptr<CXFA_LayoutProcessor> m_pLayoutProcessor;
   std::unique_ptr<CXFA_LocaleMgr> m_pLocalMgr;
   std::unique_ptr<CScript_DataWindow> m_pScriptDataWindow;

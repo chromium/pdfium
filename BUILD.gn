@@ -1289,6 +1289,10 @@ static_library("fxjs") {
         "fxjs/cfxjse_class.h",
         "fxjs/cfxjse_context.cpp",
         "fxjs/cfxjse_context.h",
+        "fxjs/cfxjse_engine.cpp",
+        "fxjs/cfxjse_engine.h",
+        "fxjs/cfxjse_formcalc_context.cpp",
+        "fxjs/cfxjse_formcalc_context.h",
         "fxjs/cfxjse_isolatetracker.cpp",
         "fxjs/cfxjse_isolatetracker.h",
         "fxjs/cfxjse_runtimedata.cpp",
@@ -1735,8 +1739,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_widgetacc.h",
       "xfa/fxfa/cxfa_widgetacciterator.cpp",
       "xfa/fxfa/cxfa_widgetacciterator.h",
-      "xfa/fxfa/fm2js/cxfa_fm2jscontext.cpp",
-      "xfa/fxfa/fm2js/cxfa_fm2jscontext.h",
       "xfa/fxfa/fm2js/cxfa_fmexpression.cpp",
       "xfa/fxfa/fm2js/cxfa_fmexpression.h",
       "xfa/fxfa/fm2js/cxfa_fmlexer.cpp",
@@ -1843,8 +1845,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_resolveprocessor.h",
       "xfa/fxfa/parser/cxfa_script.cpp",
       "xfa/fxfa/parser/cxfa_script.h",
-      "xfa/fxfa/parser/cxfa_scriptcontext.cpp",
-      "xfa/fxfa/parser/cxfa_scriptcontext.h",
       "xfa/fxfa/parser/cxfa_simple_parser.cpp",
       "xfa/fxfa/parser/cxfa_simple_parser.h",
       "xfa/fxfa/parser/cxfa_stroke.cpp",
@@ -2081,10 +2081,10 @@ test("pdfium_embeddertests") {
   }
   if (pdf_enable_xfa) {
     sources += [
+      "fxjs/cfxjse_formcalc_context_embeddertest.cpp",
       "testing/xfa_js_embedder_test.cpp",
       "testing/xfa_js_embedder_test.h",
       "xfa/fwl/cfwl_edit_embeddertest.cpp",
-      "xfa/fxfa/fm2js/cxfa_fm2jscontext_embeddertest.cpp",
       "xfa/fxfa/parser/cxfa_simple_parser_embeddertest.cpp",
     ]
   }

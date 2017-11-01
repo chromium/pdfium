@@ -7,10 +7,10 @@
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 
 #include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(

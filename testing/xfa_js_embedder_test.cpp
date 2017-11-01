@@ -8,9 +8,9 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fsdk_define.h"
+#include "fxjs/cfxjse_engine.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
 XFAJSEmbedderTest::XFAJSEmbedderTest()
     : array_buffer_allocator_(pdfium::MakeUnique<FXJS_ArrayBufferAllocator>()) {

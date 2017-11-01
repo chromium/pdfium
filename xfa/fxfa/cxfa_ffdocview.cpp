@@ -7,6 +7,7 @@
 #include "xfa/fxfa/cxfa_ffdocview.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "fxjs/cfxjse_engine.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -30,7 +31,6 @@
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_binditems.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 #define XFA_CalcRefCount (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'R')
@@ -491,7 +491,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   WideString wsExpression;
   uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
-  CXFA_ScriptContext* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
   if (!pScriptContext)
     return nullptr;
 
@@ -716,7 +716,7 @@ void CXFA_FFDocView::RunBindItems() {
       continue;
 
     CXFA_BindItems binditems(item);
-    CXFA_ScriptContext* pScriptContext =
+    CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
     WideStringView wsRef;
     binditems.GetRef(wsRef);

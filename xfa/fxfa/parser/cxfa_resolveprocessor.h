@@ -13,14 +13,14 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CXFA_NodeHelper;
-class CXFA_ScriptContext;
+class CFXJSE_Engine;
 
 class CXFA_ResolveNodesData {
  public:
-  explicit CXFA_ResolveNodesData(CXFA_ScriptContext* pSC = nullptr);
+  explicit CXFA_ResolveNodesData(CFXJSE_Engine* pSC = nullptr);
   ~CXFA_ResolveNodesData();
 
-  CXFA_ScriptContext* m_pSC;
+  CFXJSE_Engine* m_pSC;
   CXFA_Object* m_CurObject;
   WideString m_wsName;
   XFA_HashCode m_uHashName;

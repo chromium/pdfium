@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FM2JS_CXFA_FM2JSCONTEXT_H_
-#define XFA_FXFA_FM2JS_CXFA_FM2JSCONTEXT_H_
+#ifndef FXJS_CFXJSE_FORMCALC_CONTEXT_H_
+#define FXJS_CFXJSE_FORMCALC_CONTEXT_H_
 
 #include <memory>
 #include <vector>
@@ -17,12 +17,12 @@
 class CFX_WideTextBuf;
 class CXFA_Document;
 
-class CXFA_FM2JSContext : public CFXJSE_HostObject {
+class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
  public:
-  CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
-                    CFXJSE_Context* pScriptContext,
-                    CXFA_Document* pDoc);
-  ~CXFA_FM2JSContext() override;
+  CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
+                         CFXJSE_Context* pScriptContext,
+                         CXFA_Document* pDoc);
+  ~CFXJSE_FormCalcContext() override;
 
   static void Abs(CFXJSE_Value* pThis,
                   const ByteStringView& szFuncName,
@@ -442,4 +442,4 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   UnownedPtr<CXFA_Document> const m_pDocument;
 };
 
-#endif  // XFA_FXFA_FM2JS_CXFA_FM2JSCONTEXT_H_
+#endif  // FXJS_CFXJSE_FORMCALC_CONTEXT_H_

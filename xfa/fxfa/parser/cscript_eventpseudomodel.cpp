@@ -7,12 +7,12 @@
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
 
 #include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -54,7 +54,7 @@ CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
 void CScript_EventPseudoModel::Property(CFXJSE_Value* pValue,
                                         XFA_Event dwFlag,
                                         bool bSetting) {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext)
     return;
 
@@ -198,7 +198,7 @@ void CScript_EventPseudoModel::Target(CFXJSE_Value* pValue,
   Property(pValue, XFA_Event::Target, bSetting);
 }
 void CScript_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }
@@ -217,7 +217,7 @@ void CScript_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
   pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
 }
 void CScript_EventPseudoModel::Reset(CFXJSE_Arguments* pArguments) {
-  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }

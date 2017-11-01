@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/fm2js/cxfa_fm2jscontext.h"
+#include "fxjs/cfxjse_formcalc_context.h"
 
 #include <time.h>
 
@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_random.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
+#include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -26,7 +27,6 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -216,97 +216,97 @@ const XFA_FMHtmlReserveCode reservesForEncode[] = {
 };
 
 const FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
-    {"Abs", CXFA_FM2JSContext::Abs},
-    {"Avg", CXFA_FM2JSContext::Avg},
-    {"Ceil", CXFA_FM2JSContext::Ceil},
-    {"Count", CXFA_FM2JSContext::Count},
-    {"Floor", CXFA_FM2JSContext::Floor},
-    {"Max", CXFA_FM2JSContext::Max},
-    {"Min", CXFA_FM2JSContext::Min},
-    {"Mod", CXFA_FM2JSContext::Mod},
-    {"Round", CXFA_FM2JSContext::Round},
-    {"Sum", CXFA_FM2JSContext::Sum},
-    {"Date", CXFA_FM2JSContext::Date},
-    {"Date2Num", CXFA_FM2JSContext::Date2Num},
-    {"DateFmt", CXFA_FM2JSContext::DateFmt},
-    {"IsoDate2Num", CXFA_FM2JSContext::IsoDate2Num},
-    {"IsoTime2Num", CXFA_FM2JSContext::IsoTime2Num},
-    {"LocalDateFmt", CXFA_FM2JSContext::LocalDateFmt},
-    {"LocalTimeFmt", CXFA_FM2JSContext::LocalTimeFmt},
-    {"Num2Date", CXFA_FM2JSContext::Num2Date},
-    {"Num2GMTime", CXFA_FM2JSContext::Num2GMTime},
-    {"Num2Time", CXFA_FM2JSContext::Num2Time},
-    {"Time", CXFA_FM2JSContext::Time},
-    {"Time2Num", CXFA_FM2JSContext::Time2Num},
-    {"TimeFmt", CXFA_FM2JSContext::TimeFmt},
-    {"Apr", CXFA_FM2JSContext::Apr},
-    {"Cterm", CXFA_FM2JSContext::CTerm},
-    {"FV", CXFA_FM2JSContext::FV},
-    {"Ipmt", CXFA_FM2JSContext::IPmt},
-    {"NPV", CXFA_FM2JSContext::NPV},
-    {"Pmt", CXFA_FM2JSContext::Pmt},
-    {"PPmt", CXFA_FM2JSContext::PPmt},
-    {"PV", CXFA_FM2JSContext::PV},
-    {"Rate", CXFA_FM2JSContext::Rate},
-    {"Term", CXFA_FM2JSContext::Term},
-    {"Choose", CXFA_FM2JSContext::Choose},
-    {"Exists", CXFA_FM2JSContext::Exists},
-    {"HasValue", CXFA_FM2JSContext::HasValue},
-    {"Oneof", CXFA_FM2JSContext::Oneof},
-    {"Within", CXFA_FM2JSContext::Within},
-    {"If", CXFA_FM2JSContext::If},
-    {"Eval", CXFA_FM2JSContext::Eval},
-    {"Translate", CXFA_FM2JSContext::eval_translation},
-    {"Ref", CXFA_FM2JSContext::Ref},
-    {"UnitType", CXFA_FM2JSContext::UnitType},
-    {"UnitValue", CXFA_FM2JSContext::UnitValue},
-    {"At", CXFA_FM2JSContext::At},
-    {"Concat", CXFA_FM2JSContext::Concat},
-    {"Decode", CXFA_FM2JSContext::Decode},
-    {"Encode", CXFA_FM2JSContext::Encode},
-    {"Format", CXFA_FM2JSContext::Format},
-    {"Left", CXFA_FM2JSContext::Left},
-    {"Len", CXFA_FM2JSContext::Len},
-    {"Lower", CXFA_FM2JSContext::Lower},
-    {"Ltrim", CXFA_FM2JSContext::Ltrim},
-    {"Parse", CXFA_FM2JSContext::Parse},
-    {"Replace", CXFA_FM2JSContext::Replace},
-    {"Right", CXFA_FM2JSContext::Right},
-    {"Rtrim", CXFA_FM2JSContext::Rtrim},
-    {"Space", CXFA_FM2JSContext::Space},
-    {"Str", CXFA_FM2JSContext::Str},
-    {"Stuff", CXFA_FM2JSContext::Stuff},
-    {"Substr", CXFA_FM2JSContext::Substr},
-    {"Uuid", CXFA_FM2JSContext::Uuid},
-    {"Upper", CXFA_FM2JSContext::Upper},
-    {"WordNum", CXFA_FM2JSContext::WordNum},
-    {"Get", CXFA_FM2JSContext::Get},
-    {"Post", CXFA_FM2JSContext::Post},
-    {"Put", CXFA_FM2JSContext::Put},
-    {"pos_op", CXFA_FM2JSContext::positive_operator},
-    {"neg_op", CXFA_FM2JSContext::negative_operator},
-    {"log_or_op", CXFA_FM2JSContext::logical_or_operator},
-    {"log_and_op", CXFA_FM2JSContext::logical_and_operator},
-    {"log_not_op", CXFA_FM2JSContext::logical_not_operator},
-    {"eq_op", CXFA_FM2JSContext::equality_operator},
-    {"neq_op", CXFA_FM2JSContext::notequality_operator},
-    {"lt_op", CXFA_FM2JSContext::less_operator},
-    {"le_op", CXFA_FM2JSContext::lessequal_operator},
-    {"gt_op", CXFA_FM2JSContext::greater_operator},
-    {"ge_op", CXFA_FM2JSContext::greaterequal_operator},
-    {"plus_op", CXFA_FM2JSContext::plus_operator},
-    {"minus_op", CXFA_FM2JSContext::minus_operator},
-    {"mul_op", CXFA_FM2JSContext::multiple_operator},
-    {"div_op", CXFA_FM2JSContext::divide_operator},
-    {"asgn_val_op", CXFA_FM2JSContext::assign_value_operator},
-    {"dot_acc", CXFA_FM2JSContext::dot_accessor},
-    {"dotdot_acc", CXFA_FM2JSContext::dotdot_accessor},
-    {"concat_obj", CXFA_FM2JSContext::concat_fm_object},
-    {"is_obj", CXFA_FM2JSContext::is_fm_object},
-    {"is_ary", CXFA_FM2JSContext::is_fm_array},
-    {"get_val", CXFA_FM2JSContext::get_fm_value},
-    {"get_jsobj", CXFA_FM2JSContext::get_fm_jsobj},
-    {"var_filter", CXFA_FM2JSContext::fm_var_filter},
+    {"Abs", CFXJSE_FormCalcContext::Abs},
+    {"Avg", CFXJSE_FormCalcContext::Avg},
+    {"Ceil", CFXJSE_FormCalcContext::Ceil},
+    {"Count", CFXJSE_FormCalcContext::Count},
+    {"Floor", CFXJSE_FormCalcContext::Floor},
+    {"Max", CFXJSE_FormCalcContext::Max},
+    {"Min", CFXJSE_FormCalcContext::Min},
+    {"Mod", CFXJSE_FormCalcContext::Mod},
+    {"Round", CFXJSE_FormCalcContext::Round},
+    {"Sum", CFXJSE_FormCalcContext::Sum},
+    {"Date", CFXJSE_FormCalcContext::Date},
+    {"Date2Num", CFXJSE_FormCalcContext::Date2Num},
+    {"DateFmt", CFXJSE_FormCalcContext::DateFmt},
+    {"IsoDate2Num", CFXJSE_FormCalcContext::IsoDate2Num},
+    {"IsoTime2Num", CFXJSE_FormCalcContext::IsoTime2Num},
+    {"LocalDateFmt", CFXJSE_FormCalcContext::LocalDateFmt},
+    {"LocalTimeFmt", CFXJSE_FormCalcContext::LocalTimeFmt},
+    {"Num2Date", CFXJSE_FormCalcContext::Num2Date},
+    {"Num2GMTime", CFXJSE_FormCalcContext::Num2GMTime},
+    {"Num2Time", CFXJSE_FormCalcContext::Num2Time},
+    {"Time", CFXJSE_FormCalcContext::Time},
+    {"Time2Num", CFXJSE_FormCalcContext::Time2Num},
+    {"TimeFmt", CFXJSE_FormCalcContext::TimeFmt},
+    {"Apr", CFXJSE_FormCalcContext::Apr},
+    {"Cterm", CFXJSE_FormCalcContext::CTerm},
+    {"FV", CFXJSE_FormCalcContext::FV},
+    {"Ipmt", CFXJSE_FormCalcContext::IPmt},
+    {"NPV", CFXJSE_FormCalcContext::NPV},
+    {"Pmt", CFXJSE_FormCalcContext::Pmt},
+    {"PPmt", CFXJSE_FormCalcContext::PPmt},
+    {"PV", CFXJSE_FormCalcContext::PV},
+    {"Rate", CFXJSE_FormCalcContext::Rate},
+    {"Term", CFXJSE_FormCalcContext::Term},
+    {"Choose", CFXJSE_FormCalcContext::Choose},
+    {"Exists", CFXJSE_FormCalcContext::Exists},
+    {"HasValue", CFXJSE_FormCalcContext::HasValue},
+    {"Oneof", CFXJSE_FormCalcContext::Oneof},
+    {"Within", CFXJSE_FormCalcContext::Within},
+    {"If", CFXJSE_FormCalcContext::If},
+    {"Eval", CFXJSE_FormCalcContext::Eval},
+    {"Translate", CFXJSE_FormCalcContext::eval_translation},
+    {"Ref", CFXJSE_FormCalcContext::Ref},
+    {"UnitType", CFXJSE_FormCalcContext::UnitType},
+    {"UnitValue", CFXJSE_FormCalcContext::UnitValue},
+    {"At", CFXJSE_FormCalcContext::At},
+    {"Concat", CFXJSE_FormCalcContext::Concat},
+    {"Decode", CFXJSE_FormCalcContext::Decode},
+    {"Encode", CFXJSE_FormCalcContext::Encode},
+    {"Format", CFXJSE_FormCalcContext::Format},
+    {"Left", CFXJSE_FormCalcContext::Left},
+    {"Len", CFXJSE_FormCalcContext::Len},
+    {"Lower", CFXJSE_FormCalcContext::Lower},
+    {"Ltrim", CFXJSE_FormCalcContext::Ltrim},
+    {"Parse", CFXJSE_FormCalcContext::Parse},
+    {"Replace", CFXJSE_FormCalcContext::Replace},
+    {"Right", CFXJSE_FormCalcContext::Right},
+    {"Rtrim", CFXJSE_FormCalcContext::Rtrim},
+    {"Space", CFXJSE_FormCalcContext::Space},
+    {"Str", CFXJSE_FormCalcContext::Str},
+    {"Stuff", CFXJSE_FormCalcContext::Stuff},
+    {"Substr", CFXJSE_FormCalcContext::Substr},
+    {"Uuid", CFXJSE_FormCalcContext::Uuid},
+    {"Upper", CFXJSE_FormCalcContext::Upper},
+    {"WordNum", CFXJSE_FormCalcContext::WordNum},
+    {"Get", CFXJSE_FormCalcContext::Get},
+    {"Post", CFXJSE_FormCalcContext::Post},
+    {"Put", CFXJSE_FormCalcContext::Put},
+    {"pos_op", CFXJSE_FormCalcContext::positive_operator},
+    {"neg_op", CFXJSE_FormCalcContext::negative_operator},
+    {"log_or_op", CFXJSE_FormCalcContext::logical_or_operator},
+    {"log_and_op", CFXJSE_FormCalcContext::logical_and_operator},
+    {"log_not_op", CFXJSE_FormCalcContext::logical_not_operator},
+    {"eq_op", CFXJSE_FormCalcContext::equality_operator},
+    {"neq_op", CFXJSE_FormCalcContext::notequality_operator},
+    {"lt_op", CFXJSE_FormCalcContext::less_operator},
+    {"le_op", CFXJSE_FormCalcContext::lessequal_operator},
+    {"gt_op", CFXJSE_FormCalcContext::greater_operator},
+    {"ge_op", CFXJSE_FormCalcContext::greaterequal_operator},
+    {"plus_op", CFXJSE_FormCalcContext::plus_operator},
+    {"minus_op", CFXJSE_FormCalcContext::minus_operator},
+    {"mul_op", CFXJSE_FormCalcContext::multiple_operator},
+    {"div_op", CFXJSE_FormCalcContext::divide_operator},
+    {"asgn_val_op", CFXJSE_FormCalcContext::assign_value_operator},
+    {"dot_acc", CFXJSE_FormCalcContext::dot_accessor},
+    {"dotdot_acc", CFXJSE_FormCalcContext::dotdot_accessor},
+    {"concat_obj", CFXJSE_FormCalcContext::concat_fm_object},
+    {"is_obj", CFXJSE_FormCalcContext::is_fm_object},
+    {"is_ary", CFXJSE_FormCalcContext::is_fm_array},
+    {"get_val", CFXJSE_FormCalcContext::get_fm_value},
+    {"get_jsobj", CFXJSE_FormCalcContext::get_fm_jsobj},
+    {"var_filter", CFXJSE_FormCalcContext::fm_var_filter},
 };
 
 const FXJSE_CLASS_DESCRIPTOR formcalc_fm2js_descriptor = {
@@ -460,11 +460,12 @@ bool PatternStringType(const ByteStringView& szPattern, uint32_t& patternType) {
   return false;
 }
 
-CXFA_FM2JSContext* ToJSContext(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
+CFXJSE_FormCalcContext* ToJSContext(CFXJSE_Value* pValue,
+                                    CFXJSE_Class* pClass) {
   CFXJSE_HostObject* pHostObj = pValue->ToHostObject(pClass);
   if (!pHostObj || pHostObj->type() != CFXJSE_HostObject::kFM2JS)
     return nullptr;
-  return static_cast<CXFA_FM2JSContext*>(pHostObj);
+  return static_cast<CFXJSE_FormCalcContext*>(pHostObj);
 }
 
 bool IsWhitespace(char c) {
@@ -534,9 +535,9 @@ ByteString GUIDString(bool bSeparator) {
 }  // namespace
 
 // static
-void CXFA_FM2JSContext::Abs(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Abs(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Abs");
     return;
@@ -556,9 +557,9 @@ void CXFA_FM2JSContext::Abs(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Avg(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1) {
     args.GetReturnValue()->SetNull();
@@ -623,9 +624,9 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Ceil(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Ceil(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Ceil");
     return;
@@ -641,10 +642,10 @@ void CXFA_FM2JSContext::Ceil(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Count(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t iCount = 0;
   for (int32_t i = 0; i < args.GetLength(); i++) {
@@ -695,9 +696,9 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Floor(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Floor(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Floor");
     return;
@@ -713,10 +714,10 @@ void CXFA_FM2JSContext::Floor(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Max(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
   double dMaxValue = 0.0;
@@ -787,10 +788,10 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Min(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
   double dMinValue = 0.0;
@@ -861,10 +862,10 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Mod(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Mod(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 2) {
     pContext->ThrowParamCountMismatchException(L"Mod");
     return;
@@ -896,10 +897,10 @@ void CXFA_FM2JSContext::Mod(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Round(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
     pContext->ThrowParamCountMismatchException(L"Round");
@@ -942,16 +943,16 @@ void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Sum(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc == 0) {
     args.GetReturnValue()->SetNull();
     return;
   }
 
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
   double dSum = 0.0;
@@ -1017,9 +1018,9 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Date(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Date(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 0) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Date");
     return;
@@ -1042,9 +1043,9 @@ void CXFA_FM2JSContext::Date(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Date2Num(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
-                                 CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Date2Num(CFXJSE_Value* pThis,
+                                      const ByteStringView& szFuncName,
+                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Date2Num");
@@ -1086,9 +1087,9 @@ void CXFA_FM2JSContext::Date2Num(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::DateFmt(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
-                                CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::DateFmt(CFXJSE_Value* pThis,
+                                     const ByteStringView& szFuncName,
+                                     CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Date2Num");
@@ -1124,9 +1125,9 @@ void CXFA_FM2JSContext::DateFmt(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::IsoDate2Num(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
-                                    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::IsoDate2Num(CFXJSE_Value* pThis,
+                                         const ByteStringView& szFuncName,
+                                         CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)
         ->ThrowParamCountMismatchException(L"IsoDate2Num");
@@ -1142,10 +1143,10 @@ void CXFA_FM2JSContext::IsoDate2Num(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
-                                    CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::IsoTime2Num(CFXJSE_Value* pThis,
+                                         const ByteStringView& szFuncName,
+                                         CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 1) {
     pContext->ThrowParamCountMismatchException(L"IsoTime2Num");
     return;
@@ -1196,9 +1197,9 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::LocalDateFmt(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
-                                     CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::LocalDateFmt(CFXJSE_Value* pThis,
+                                          const ByteStringView& szFuncName,
+                                          CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
     ToJSContext(pThis, nullptr)
@@ -1234,9 +1235,9 @@ void CXFA_FM2JSContext::LocalDateFmt(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::LocalTimeFmt(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
-                                     CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::LocalTimeFmt(CFXJSE_Value* pThis,
+                                          const ByteStringView& szFuncName,
+                                          CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
     ToJSContext(pThis, nullptr)
@@ -1272,9 +1273,9 @@ void CXFA_FM2JSContext::LocalTimeFmt(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Num2Date(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
-                                 CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Num2Date(CFXJSE_Value* pThis,
+                                      const ByteStringView& szFuncName,
+                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Num2Date");
@@ -1413,9 +1414,9 @@ void CXFA_FM2JSContext::Num2Date(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
-                                   CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Num2GMTime(CFXJSE_Value* pThis,
+                                        const ByteStringView& szFuncName,
+                                        CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
     ToJSContext(pThis, nullptr)
@@ -1461,9 +1462,9 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
-                                 CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Num2Time(CFXJSE_Value* pThis,
+                                      const ByteStringView& szFuncName,
+                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Num2Time");
@@ -1508,9 +1509,9 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Time(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Time(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 0) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Time");
     return;
@@ -1525,9 +1526,9 @@ void CXFA_FM2JSContext::Time(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
-                                 CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Time2Num(CFXJSE_Value* pThis,
+                                      const ByteStringView& szFuncName,
+                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Time2Num");
@@ -1611,9 +1612,9 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
-                                CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::TimeFmt(CFXJSE_Value* pThis,
+                                     const ByteStringView& szFuncName,
+                                     CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"TimeFmt");
@@ -1648,12 +1649,12 @@ void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
 }
 
 // static
-bool CXFA_FM2JSContext::IsIsoDateFormat(const char* pData,
-                                        int32_t iLength,
-                                        int32_t& iStyle,
-                                        int32_t& iYear,
-                                        int32_t& iMonth,
-                                        int32_t& iDay) {
+bool CFXJSE_FormCalcContext::IsIsoDateFormat(const char* pData,
+                                             int32_t iLength,
+                                             int32_t& iStyle,
+                                             int32_t& iYear,
+                                             int32_t& iMonth,
+                                             int32_t& iDay) {
   iYear = 0;
   iMonth = 1;
   iDay = 1;
@@ -1725,14 +1726,14 @@ bool CXFA_FM2JSContext::IsIsoDateFormat(const char* pData,
 }
 
 // static
-bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
-                                        int32_t iLength,
-                                        int32_t& iHour,
-                                        int32_t& iMinute,
-                                        int32_t& iSecond,
-                                        int32_t& iMilliSecond,
-                                        int32_t& iZoneHour,
-                                        int32_t& iZoneMinute) {
+bool CFXJSE_FormCalcContext::IsIsoTimeFormat(const char* pData,
+                                             int32_t iLength,
+                                             int32_t& iHour,
+                                             int32_t& iMinute,
+                                             int32_t& iSecond,
+                                             int32_t& iMilliSecond,
+                                             int32_t& iZoneHour,
+                                             int32_t& iZoneMinute) {
   iHour = 0;
   iMinute = 0;
   iSecond = 0;
@@ -1870,17 +1871,17 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
 }
 
 // static
-bool CXFA_FM2JSContext::IsIsoDateTimeFormat(const char* pData,
-                                            int32_t iLength,
-                                            int32_t& iYear,
-                                            int32_t& iMonth,
-                                            int32_t& iDay,
-                                            int32_t& iHour,
-                                            int32_t& iMinute,
-                                            int32_t& iSecond,
-                                            int32_t& iMillionSecond,
-                                            int32_t& iZoneHour,
-                                            int32_t& iZoneMinute) {
+bool CFXJSE_FormCalcContext::IsIsoDateTimeFormat(const char* pData,
+                                                 int32_t iLength,
+                                                 int32_t& iYear,
+                                                 int32_t& iMonth,
+                                                 int32_t& iDay,
+                                                 int32_t& iHour,
+                                                 int32_t& iMinute,
+                                                 int32_t& iSecond,
+                                                 int32_t& iMillionSecond,
+                                                 int32_t& iZoneHour,
+                                                 int32_t& iZoneMinute) {
   iYear = 0;
   iMonth = 0;
   iDay = 0;
@@ -1915,10 +1916,11 @@ bool CXFA_FM2JSContext::IsIsoDateTimeFormat(const char* pData,
 }
 
 // static
-ByteString CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
-                                            const ByteStringView& szDate,
-                                            const ByteStringView& szFormat,
-                                            const ByteStringView& szLocale) {
+ByteString CFXJSE_FormCalcContext::Local2IsoDate(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szDate,
+    const ByteStringView& szFormat,
+    const ByteStringView& szLocale) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -1939,10 +1941,11 @@ ByteString CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
 }
 
 // static
-ByteString CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
-                                            const ByteStringView& szDate,
-                                            const ByteStringView& szFormat,
-                                            const ByteStringView& szLocale) {
+ByteString CFXJSE_FormCalcContext::IsoDate2Local(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szDate,
+    const ByteStringView& szFormat,
+    const ByteStringView& szLocale) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -1960,10 +1963,11 @@ ByteString CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
 }
 
 // static
-ByteString CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
-                                            const ByteStringView& szTime,
-                                            const ByteStringView& szFormat,
-                                            const ByteStringView& szLocale) {
+ByteString CFXJSE_FormCalcContext::IsoTime2Local(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szTime,
+    const ByteStringView& szFormat,
+    const ByteStringView& szLocale) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -1983,7 +1987,8 @@ ByteString CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
 }
 
 // static
-int32_t CXFA_FM2JSContext::DateString2Num(const ByteStringView& szDateString) {
+int32_t CFXJSE_FormCalcContext::DateString2Num(
+    const ByteStringView& szDateString) {
   int32_t iLength = szDateString.GetLength();
   int32_t iYear = 0;
   int32_t iMonth = 0;
@@ -2040,10 +2045,11 @@ int32_t CXFA_FM2JSContext::DateString2Num(const ByteStringView& szDateString) {
 }
 
 // static
-ByteString CXFA_FM2JSContext::GetLocalDateFormat(CFXJSE_Value* pThis,
-                                                 int32_t iStyle,
-                                                 const ByteStringView& szLocale,
-                                                 bool bStandard) {
+ByteString CFXJSE_FormCalcContext::GetLocalDateFormat(
+    CFXJSE_Value* pThis,
+    int32_t iStyle,
+    const ByteStringView& szLocale,
+    bool bStandard) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -2062,10 +2068,11 @@ ByteString CXFA_FM2JSContext::GetLocalDateFormat(CFXJSE_Value* pThis,
 }
 
 // static
-ByteString CXFA_FM2JSContext::GetLocalTimeFormat(CFXJSE_Value* pThis,
-                                                 int32_t iStyle,
-                                                 const ByteStringView& szLocale,
-                                                 bool bStandard) {
+ByteString CFXJSE_FormCalcContext::GetLocalTimeFormat(
+    CFXJSE_Value* pThis,
+    int32_t iStyle,
+    const ByteStringView& szLocale,
+    bool bStandard) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -2084,7 +2091,7 @@ ByteString CXFA_FM2JSContext::GetLocalTimeFormat(CFXJSE_Value* pThis,
 }
 
 // static
-ByteString CXFA_FM2JSContext::GetStandardDateFormat(
+ByteString CFXJSE_FormCalcContext::GetStandardDateFormat(
     CFXJSE_Value* pThis,
     int32_t iStyle,
     const ByteStringView& szLocalStr) {
@@ -2092,7 +2099,7 @@ ByteString CXFA_FM2JSContext::GetStandardDateFormat(
 }
 
 // static
-ByteString CXFA_FM2JSContext::GetStandardTimeFormat(
+ByteString CFXJSE_FormCalcContext::GetStandardTimeFormat(
     CFXJSE_Value* pThis,
     int32_t iStyle,
     const ByteStringView& szLocalStr) {
@@ -2100,11 +2107,11 @@ ByteString CXFA_FM2JSContext::GetStandardTimeFormat(
 }
 
 // static
-ByteString CXFA_FM2JSContext::Num2AllTime(CFXJSE_Value* pThis,
-                                          int32_t iTime,
-                                          const ByteStringView& szFormat,
-                                          const ByteStringView& szLocale,
-                                          bool bGM) {
+ByteString CFXJSE_FormCalcContext::Num2AllTime(CFXJSE_Value* pThis,
+                                               int32_t iTime,
+                                               const ByteStringView& szFormat,
+                                               const ByteStringView& szLocale,
+                                               bool bGM) {
   int32_t iHour = 0;
   int32_t iMin = 0;
   int32_t iSec = 0;
@@ -2128,9 +2135,9 @@ ByteString CXFA_FM2JSContext::Num2AllTime(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::GetLocalTimeZone(int32_t& iHour,
-                                         int32_t& iMin,
-                                         int32_t& iSec) {
+void CFXJSE_FormCalcContext::GetLocalTimeZone(int32_t& iHour,
+                                              int32_t& iMin,
+                                              int32_t& iSec) {
   time_t now;
   time(&now);
 
@@ -2142,10 +2149,10 @@ void CXFA_FM2JSContext::GetLocalTimeZone(int32_t& iHour,
 }
 
 // static
-void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Apr(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 3) {
     pContext->ThrowParamCountMismatchException(L"Apr");
     return;
@@ -2195,10 +2202,10 @@ void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::CTerm(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::CTerm(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 3) {
     pContext->ThrowParamCountMismatchException(L"CTerm");
     return;
@@ -2226,10 +2233,10 @@ void CXFA_FM2JSContext::CTerm(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::FV(CFXJSE_Value* pThis,
-                           const ByteStringView& szFuncName,
-                           CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::FV(CFXJSE_Value* pThis,
+                                const ByteStringView& szFuncName,
+                                CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 3) {
     pContext->ThrowParamCountMismatchException(L"FV");
     return;
@@ -2267,10 +2274,10 @@ void CXFA_FM2JSContext::FV(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::IPmt(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 5) {
     pContext->ThrowParamCountMismatchException(L"IPmt");
     return;
@@ -2324,10 +2331,10 @@ void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::NPV(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::NPV(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc < 3) {
     pContext->ThrowParamCountMismatchException(L"NPV");
@@ -2367,10 +2374,10 @@ void CXFA_FM2JSContext::NPV(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Pmt(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Pmt(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 3) {
     pContext->ThrowParamCountMismatchException(L"Pmt");
     return;
@@ -2402,10 +2409,10 @@ void CXFA_FM2JSContext::Pmt(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::PPmt(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::PPmt(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 5) {
     pContext->ThrowParamCountMismatchException(L"PPmt");
     return;
@@ -2460,10 +2467,10 @@ void CXFA_FM2JSContext::PPmt(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::PV(CFXJSE_Value* pThis,
-                           const ByteStringView& szFuncName,
-                           CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::PV(CFXJSE_Value* pThis,
+                                const ByteStringView& szFuncName,
+                                CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 3) {
     pContext->ThrowParamCountMismatchException(L"PV");
     return;
@@ -2495,10 +2502,10 @@ void CXFA_FM2JSContext::PV(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Rate(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Rate(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 3) {
     pContext->ThrowParamCountMismatchException(L"Rate");
     return;
@@ -2526,10 +2533,10 @@ void CXFA_FM2JSContext::Rate(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Term(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Term(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 3) {
     pContext->ThrowParamCountMismatchException(L"Term");
     return;
@@ -2557,10 +2564,10 @@ void CXFA_FM2JSContext::Term(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Choose(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc < 2) {
     pContext->ThrowParamCountMismatchException(L"Choose");
@@ -2626,9 +2633,9 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Exists(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Exists(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Exists");
     return;
@@ -2637,9 +2644,9 @@ void CXFA_FM2JSContext::Exists(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::HasValue(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
-                                 CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::HasValue(CFXJSE_Value* pThis,
+                                      const ByteStringView& szFuncName,
+                                      CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"HasValue");
     return;
@@ -2658,9 +2665,9 @@ void CXFA_FM2JSContext::HasValue(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Oneof(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Oneof(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   if (args.GetLength() < 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Oneof");
     return;
@@ -2681,9 +2688,9 @@ void CXFA_FM2JSContext::Oneof(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Within(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Within(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Within");
     return;
@@ -2715,9 +2722,9 @@ void CXFA_FM2JSContext::Within(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::If(CFXJSE_Value* pThis,
-                           const ByteStringView& szFuncName,
-                           CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::If(CFXJSE_Value* pThis,
+                                const ByteStringView& szFuncName,
+                                CFXJSE_Arguments& args) {
   if (args.GetLength() != 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"If");
     return;
@@ -2729,10 +2736,10 @@ void CXFA_FM2JSContext::If(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Eval(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 1) {
     pContext->ThrowParamCountMismatchException(L"Eval");
     return;
@@ -2747,7 +2754,7 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
   }
 
   CFX_WideTextBuf wsJavaScriptBuf;
-  if (!CXFA_FM2JSContext::Translate(
+  if (!CFXJSE_FormCalcContext::Translate(
           WideString::FromUTF8(utf8ScriptString.AsStringView()).AsStringView(),
           &wsJavaScriptBuf)) {
     pContext->ThrowCompilerErrorException();
@@ -2765,10 +2772,10 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Ref(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (args.GetLength() != 1) {
     pContext->ThrowParamCountMismatchException(L"Ref");
@@ -2823,9 +2830,9 @@ void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
-                                 CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::UnitType(CFXJSE_Value* pThis,
+                                      const ByteStringView& szFuncName,
+                                      CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"UnitType");
     return;
@@ -2930,9 +2937,9 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
-                                  CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::UnitValue(CFXJSE_Value* pThis,
+                                       const ByteStringView& szFuncName,
+                                       CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"UnitValue");
@@ -3069,9 +3076,9 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::At(CFXJSE_Value* pThis,
-                           const ByteStringView& szFuncName,
-                           CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::At(CFXJSE_Value* pThis,
+                                const ByteStringView& szFuncName,
+                                CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"At");
     return;
@@ -3096,9 +3103,9 @@ void CXFA_FM2JSContext::At(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Concat(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Concat(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Concat");
@@ -3125,9 +3132,9 @@ void CXFA_FM2JSContext::Concat(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Decode(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Decode");
@@ -3175,7 +3182,7 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
 }
 
 // static
-WideString CXFA_FM2JSContext::DecodeURL(const WideString& wsURLString) {
+WideString CFXJSE_FormCalcContext::DecodeURL(const WideString& wsURLString) {
   const wchar_t* pData = wsURLString.c_str();
   size_t i = 0;
   CFX_WideTextBuf wsResultBuf;
@@ -3212,7 +3219,7 @@ WideString CXFA_FM2JSContext::DecodeURL(const WideString& wsURLString) {
 }
 
 // static
-WideString CXFA_FM2JSContext::DecodeHTML(const WideString& wsHTMLString) {
+WideString CFXJSE_FormCalcContext::DecodeHTML(const WideString& wsHTMLString) {
   wchar_t strString[9];
   size_t iStrIndex = 0;
   size_t iLen = wsHTMLString.GetLength();
@@ -3283,7 +3290,7 @@ WideString CXFA_FM2JSContext::DecodeHTML(const WideString& wsHTMLString) {
 }
 
 // static
-WideString CXFA_FM2JSContext::DecodeXML(const WideString& wsXMLString) {
+WideString CFXJSE_FormCalcContext::DecodeXML(const WideString& wsXMLString) {
   wchar_t strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsXMLString.GetLength();
@@ -3378,9 +3385,9 @@ WideString CXFA_FM2JSContext::DecodeXML(const WideString& wsXMLString) {
 }
 
 // static
-void CXFA_FM2JSContext::Encode(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Encode(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Encode");
@@ -3422,7 +3429,7 @@ void CXFA_FM2JSContext::Encode(CFXJSE_Value* pThis,
 }
 
 // static
-WideString CXFA_FM2JSContext::EncodeURL(const ByteString& szURLString) {
+WideString CFXJSE_FormCalcContext::EncodeURL(const ByteString& szURLString) {
   WideString wsURLString = WideString::FromUTF8(szURLString.AsStringView());
   CFX_WideTextBuf wsResultBuf;
   wchar_t strEncode[4];
@@ -3520,7 +3527,7 @@ WideString CXFA_FM2JSContext::EncodeURL(const ByteString& szURLString) {
 }
 
 // static
-WideString CXFA_FM2JSContext::EncodeHTML(const ByteString& szHTMLString) {
+WideString CFXJSE_FormCalcContext::EncodeHTML(const ByteString& szHTMLString) {
   WideString wsHTMLString = WideString::FromUTF8(szHTMLString.AsStringView());
   const wchar_t* strCode = L"0123456789abcdef";
   wchar_t strEncode[9];
@@ -3567,7 +3574,7 @@ WideString CXFA_FM2JSContext::EncodeHTML(const ByteString& szHTMLString) {
 }
 
 // static
-WideString CXFA_FM2JSContext::EncodeXML(const ByteString& szXMLString) {
+WideString CFXJSE_FormCalcContext::EncodeXML(const ByteString& szXMLString) {
   WideString wsXMLString = WideString::FromUTF8(szXMLString.AsStringView());
   CFX_WideTextBuf wsResultBuf;
   wchar_t strEncode[9];
@@ -3634,8 +3641,8 @@ WideString CXFA_FM2JSContext::EncodeXML(const ByteString& szXMLString) {
 }
 
 // static
-bool CXFA_FM2JSContext::HTMLSTR2Code(const WideStringView& pData,
-                                     uint32_t* iCode) {
+bool CFXJSE_FormCalcContext::HTMLSTR2Code(const WideStringView& pData,
+                                          uint32_t* iCode) {
   auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter,
                     const WideStringView& val) {
     // TODO(tsepez): check usage of c_str() below.
@@ -3653,8 +3660,8 @@ bool CXFA_FM2JSContext::HTMLSTR2Code(const WideStringView& pData,
 }
 
 // static
-bool CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
-                                     WideString* wsHTMLReserve) {
+bool CFXJSE_FormCalcContext::HTMLCode2STR(uint32_t iCode,
+                                          WideString* wsHTMLReserve) {
   auto cmpFunc = [](const XFA_FMHtmlReserveCode iter, const uint32_t& val) {
     return iter.m_uCode < val;
   };
@@ -3669,10 +3676,10 @@ bool CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
 }
 
 // static
-void CXFA_FM2JSContext::Format(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Format(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() < 2) {
     pContext->ThrowParamCountMismatchException(L"Format");
     return;
@@ -3751,9 +3758,9 @@ void CXFA_FM2JSContext::Format(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Left(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Left(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Left");
     return;
@@ -3773,9 +3780,9 @@ void CXFA_FM2JSContext::Left(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Len(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Len(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Len");
     return;
@@ -3792,9 +3799,9 @@ void CXFA_FM2JSContext::Len(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Lower(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Lower(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Lower");
@@ -3829,9 +3836,9 @@ void CXFA_FM2JSContext::Lower(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Ltrim(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Ltrim(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Ltrim");
     return;
@@ -3849,10 +3856,10 @@ void CXFA_FM2JSContext::Ltrim(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 2) {
     pContext->ThrowParamCountMismatchException(L"Parse");
     return;
@@ -3984,9 +3991,9 @@ void CXFA_FM2JSContext::Parse(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
-                                CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Replace(CFXJSE_Value* pThis,
+                                     const ByteStringView& szFuncName,
+                                     CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 2 || argc > 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Replace");
@@ -4043,9 +4050,9 @@ void CXFA_FM2JSContext::Replace(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Right(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Right(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Right");
     return;
@@ -4065,9 +4072,9 @@ void CXFA_FM2JSContext::Right(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Rtrim(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Rtrim(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Rtrim");
     return;
@@ -4085,9 +4092,9 @@ void CXFA_FM2JSContext::Rtrim(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Space(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Space(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Space");
     return;
@@ -4111,9 +4118,9 @@ void CXFA_FM2JSContext::Space(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Str(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Str");
@@ -4227,9 +4234,9 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Stuff(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Stuff(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 3 || argc > 4) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Stuff");
@@ -4278,9 +4285,9 @@ void CXFA_FM2JSContext::Stuff(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Substr(CFXJSE_Value* pThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
+                                    const ByteStringView& szFuncName,
+                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Substr");
     return;
@@ -4316,9 +4323,9 @@ void CXFA_FM2JSContext::Substr(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Uuid(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Uuid(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 0 || argc > 1) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Uuid");
@@ -4334,9 +4341,9 @@ void CXFA_FM2JSContext::Uuid(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Upper(CFXJSE_Value* pThis,
-                              const ByteStringView& szFuncName,
-                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::Upper(CFXJSE_Value* pThis,
+                                   const ByteStringView& szFuncName,
+                                   CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"Upper");
@@ -4371,9 +4378,9 @@ void CXFA_FM2JSContext::Upper(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::WordNum(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
-                                CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::WordNum(CFXJSE_Value* pThis,
+                                     const ByteStringView& szFuncName,
+                                     CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
     ToJSContext(pThis, nullptr)->ThrowParamCountMismatchException(L"WordNum");
@@ -4422,7 +4429,7 @@ void CXFA_FM2JSContext::WordNum(CFXJSE_Value* pThis,
 }
 
 // static
-ByteString CXFA_FM2JSContext::TrillionUS(const ByteStringView& szData) {
+ByteString CFXJSE_FormCalcContext::TrillionUS(const ByteStringView& szData) {
   std::ostringstream strBuf;
   ByteStringView pUnits[] = {"zero", "one", "two",   "three", "four",
                              "five", "six", "seven", "eight", "nine"};
@@ -4522,7 +4529,8 @@ ByteString CXFA_FM2JSContext::TrillionUS(const ByteStringView& szData) {
 }
 
 // static
-ByteString CXFA_FM2JSContext::WordUS(const ByteString& szData, int32_t iStyle) {
+ByteString CFXJSE_FormCalcContext::WordUS(const ByteString& szData,
+                                          int32_t iStyle) {
   const char* pData = szData.c_str();
   int32_t iLength = szData.GetLength();
   if (iStyle < 0 || iStyle > 2) {
@@ -4572,10 +4580,10 @@ ByteString CXFA_FM2JSContext::WordUS(const ByteString& szData, int32_t iStyle) {
 }
 
 // static
-void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Get(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 1) {
     pContext->ThrowParamCountMismatchException(L"Get");
     return;
@@ -4603,10 +4611,10 @@ void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Post(CFXJSE_Value* pThis,
-                             const ByteStringView& szFuncName,
-                             CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Post(CFXJSE_Value* pThis,
+                                  const ByteStringView& szFuncName,
+                                  CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc < 2 || argc > 5) {
     pContext->ThrowParamCountMismatchException(L"Post");
@@ -4659,10 +4667,10 @@ void CXFA_FM2JSContext::Post(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::Put(CFXJSE_Value* pThis,
-                            const ByteStringView& szFuncName,
-                            CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::Put(CFXJSE_Value* pThis,
+                                 const ByteStringView& szFuncName,
+                                 CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   int32_t argc = args.GetLength();
   if (argc < 2 || argc > 3) {
     pContext->ThrowParamCountMismatchException(L"Put");
@@ -4701,10 +4709,11 @@ void CXFA_FM2JSContext::Put(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
-                                              const ByteStringView& szFuncName,
-                                              CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::assign_value_operator(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szFuncName,
+    CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 2) {
     pContext->ThrowCompilerErrorException();
     return;
@@ -4745,9 +4754,10 @@ void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::logical_or_operator(CFXJSE_Value* pThis,
-                                            const ByteStringView& szFuncName,
-                                            CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::logical_or_operator(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szFuncName,
+    CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4766,9 +4776,10 @@ void CXFA_FM2JSContext::logical_or_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::logical_and_operator(CFXJSE_Value* pThis,
-                                             const ByteStringView& szFuncName,
-                                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::logical_and_operator(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szFuncName,
+    CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4787,9 +4798,9 @@ void CXFA_FM2JSContext::logical_and_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::equality_operator(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
-                                          CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::equality_operator(CFXJSE_Value* pThis,
+                                               const ByteStringView& szFuncName,
+                                               CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4820,9 +4831,10 @@ void CXFA_FM2JSContext::equality_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
-                                             const ByteStringView& szFuncName,
-                                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::notequality_operator(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szFuncName,
+    CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4853,8 +4865,8 @@ void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
 }
 
 // static
-bool CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
-                                     CFXJSE_Arguments& args) {
+bool CFXJSE_FormCalcContext::fm_ref_equal(CFXJSE_Value* pThis,
+                                          CFXJSE_Arguments& args) {
   std::unique_ptr<CFXJSE_Value> argFirst = args.GetValue(0);
   std::unique_ptr<CFXJSE_Value> argSecond = args.GetValue(1);
   if (!argFirst->IsArray() || !argSecond->IsArray())
@@ -4880,9 +4892,9 @@ bool CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::less_operator(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
-                                      CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::less_operator(CFXJSE_Value* pThis,
+                                           const ByteStringView& szFuncName,
+                                           CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4908,9 +4920,10 @@ void CXFA_FM2JSContext::less_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::lessequal_operator(CFXJSE_Value* pThis,
-                                           const ByteStringView& szFuncName,
-                                           CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::lessequal_operator(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szFuncName,
+    CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4937,9 +4950,9 @@ void CXFA_FM2JSContext::lessequal_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::greater_operator(CFXJSE_Value* pThis,
-                                         const ByteStringView& szFuncName,
-                                         CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::greater_operator(CFXJSE_Value* pThis,
+                                              const ByteStringView& szFuncName,
+                                              CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4965,9 +4978,10 @@ void CXFA_FM2JSContext::greater_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::greaterequal_operator(CFXJSE_Value* pThis,
-                                              const ByteStringView& szFuncName,
-                                              CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::greaterequal_operator(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szFuncName,
+    CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -4994,9 +5008,9 @@ void CXFA_FM2JSContext::greaterequal_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::plus_operator(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
-                                      CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::plus_operator(CFXJSE_Value* pThis,
+                                           const ByteStringView& szFuncName,
+                                           CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -5016,9 +5030,9 @@ void CXFA_FM2JSContext::plus_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::minus_operator(CFXJSE_Value* pThis,
-                                       const ByteStringView& szFuncName,
-                                       CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::minus_operator(CFXJSE_Value* pThis,
+                                            const ByteStringView& szFuncName,
+                                            CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -5037,9 +5051,9 @@ void CXFA_FM2JSContext::minus_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::multiple_operator(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
-                                          CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::multiple_operator(CFXJSE_Value* pThis,
+                                               const ByteStringView& szFuncName,
+                                               CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -5058,10 +5072,10 @@ void CXFA_FM2JSContext::multiple_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::divide_operator(CFXJSE_Value* pThis,
-                                        const ByteStringView& szFuncName,
-                                        CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::divide_operator(CFXJSE_Value* pThis,
+                                             const ByteStringView& szFuncName,
+                                             CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 2) {
     pContext->ThrowCompilerErrorException();
     return;
@@ -5085,9 +5099,9 @@ void CXFA_FM2JSContext::divide_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::positive_operator(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
-                                          CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::positive_operator(CFXJSE_Value* pThis,
+                                               const ByteStringView& szFuncName,
+                                               CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -5102,9 +5116,9 @@ void CXFA_FM2JSContext::positive_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::negative_operator(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
-                                          CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::negative_operator(CFXJSE_Value* pThis,
+                                               const ByteStringView& szFuncName,
+                                               CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -5119,9 +5133,10 @@ void CXFA_FM2JSContext::negative_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::logical_not_operator(CFXJSE_Value* pThis,
-                                             const ByteStringView& szFuncName,
-                                             CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::logical_not_operator(
+    CFXJSE_Value* pThis,
+    const ByteStringView& szFuncName,
+    CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -5138,10 +5153,10 @@ void CXFA_FM2JSContext::logical_not_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
-                                     CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::dot_accessor(CFXJSE_Value* pThis,
+                                          const ByteStringView& szFuncName,
+                                          CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc < 4 || argc > 5) {
@@ -5256,10 +5271,10 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
-                                        const ByteStringView& szFuncName,
-                                        CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::dotdot_accessor(CFXJSE_Value* pThis,
+                                             const ByteStringView& szFuncName,
+                                             CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc < 4 || argc > 5) {
@@ -5374,10 +5389,10 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::eval_translation(CFXJSE_Value* pThis,
-                                         const ByteStringView& szFuncName,
-                                         CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::eval_translation(CFXJSE_Value* pThis,
+                                              const ByteStringView& szFuncName,
+                                              CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 1) {
     pContext->ThrowParamCountMismatchException(L"Eval");
     return;
@@ -5392,8 +5407,8 @@ void CXFA_FM2JSContext::eval_translation(CFXJSE_Value* pThis,
 
   WideString scriptString = WideString::FromUTF8(argString.AsStringView());
   CFX_WideTextBuf wsJavaScriptBuf;
-  if (!CXFA_FM2JSContext::Translate(scriptString.AsStringView(),
-                                    &wsJavaScriptBuf)) {
+  if (!CFXJSE_FormCalcContext::Translate(scriptString.AsStringView(),
+                                         &wsJavaScriptBuf)) {
     pContext->ThrowCompilerErrorException();
     return;
   }
@@ -5403,9 +5418,9 @@ void CXFA_FM2JSContext::eval_translation(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::is_fm_object(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
-                                     CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::is_fm_object(CFXJSE_Value* pThis,
+                                          const ByteStringView& szFuncName,
+                                          CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     args.GetReturnValue()->SetBoolean(false);
     return;
@@ -5416,9 +5431,9 @@ void CXFA_FM2JSContext::is_fm_object(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::is_fm_array(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
-                                    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::is_fm_array(CFXJSE_Value* pThis,
+                                         const ByteStringView& szFuncName,
+                                         CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     args.GetReturnValue()->SetBoolean(false);
     return;
@@ -5429,10 +5444,10 @@ void CXFA_FM2JSContext::is_fm_array(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::get_fm_value(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
-                                     CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::get_fm_value(CFXJSE_Value* pThis,
+                                          const ByteStringView& szFuncName,
+                                          CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 1) {
     pContext->ThrowCompilerErrorException();
     return;
@@ -5464,9 +5479,9 @@ void CXFA_FM2JSContext::get_fm_value(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
-                                     CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::get_fm_jsobj(CFXJSE_Value* pThis,
+                                          const ByteStringView& szFuncName,
+                                          CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToJSContext(pThis, nullptr)->ThrowCompilerErrorException();
     return;
@@ -5479,7 +5494,7 @@ void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
   }
 
 #ifndef NDEBUG
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   argOne->GetObjectProperty("length", lengthValue.get());
@@ -5490,10 +5505,10 @@ void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
-                                      CFXJSE_Arguments& args) {
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+void CFXJSE_FormCalcContext::fm_var_filter(CFXJSE_Value* pThis,
+                                           const ByteStringView& szFuncName,
+                                           CFXJSE_Arguments& args) {
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   if (args.GetLength() != 1) {
     pContext->ThrowCompilerErrorException();
     return;
@@ -5544,9 +5559,9 @@ void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
-                                         const ByteStringView& szFuncName,
-                                         CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::concat_fm_object(CFXJSE_Value* pThis,
+                                              const ByteStringView& szFuncName,
+                                              CFXJSE_Arguments& args) {
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   uint32_t iLength = 0;
   int32_t argc = args.GetLength();
@@ -5585,7 +5600,7 @@ void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
 }
 
 // static
-std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
+std::unique_ptr<CFXJSE_Value> CFXJSE_FormCalcContext::GetSimpleValue(
     CFXJSE_Value* pThis,
     CFXJSE_Arguments& args,
     uint32_t index) {
@@ -5626,7 +5641,8 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
 }
 
 // static
-bool CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
+bool CFXJSE_FormCalcContext::ValueIsNull(CFXJSE_Value* pThis,
+                                         CFXJSE_Value* arg) {
   if (!arg || arg->IsNull())
     return true;
 
@@ -5661,8 +5677,8 @@ bool CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
 }
 
 // static
-int32_t CXFA_FM2JSContext::hvalue_get_array_length(CFXJSE_Value* pThis,
-                                                   CFXJSE_Value* arg) {
+int32_t CFXJSE_FormCalcContext::hvalue_get_array_length(CFXJSE_Value* pThis,
+                                                        CFXJSE_Value* arg) {
   if (!arg || !arg->IsArray())
     return 0;
 
@@ -5673,9 +5689,9 @@ int32_t CXFA_FM2JSContext::hvalue_get_array_length(CFXJSE_Value* pThis,
 }
 
 // static
-bool CXFA_FM2JSContext::simpleValueCompare(CFXJSE_Value* pThis,
-                                           CFXJSE_Value* firstValue,
-                                           CFXJSE_Value* secondValue) {
+bool CFXJSE_FormCalcContext::simpleValueCompare(CFXJSE_Value* pThis,
+                                                CFXJSE_Value* firstValue,
+                                                CFXJSE_Value* secondValue) {
   if (!firstValue)
     return false;
 
@@ -5696,7 +5712,7 @@ bool CXFA_FM2JSContext::simpleValueCompare(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::unfoldArgs(
+void CFXJSE_FormCalcContext::unfoldArgs(
     CFXJSE_Value* pThis,
     CFXJSE_Arguments& args,
     std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
@@ -5761,9 +5777,10 @@ void CXFA_FM2JSContext::unfoldArgs(
 }
 
 // static
-void CXFA_FM2JSContext::GetObjectDefaultValue(CFXJSE_Value* pValue,
-                                              CFXJSE_Value* pDefaultValue) {
-  CXFA_Node* pNode = ToNode(CXFA_ScriptContext::ToObject(pValue, nullptr));
+void CFXJSE_FormCalcContext::GetObjectDefaultValue(
+    CFXJSE_Value* pValue,
+    CFXJSE_Value* pDefaultValue) {
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue, nullptr));
   if (!pNode) {
     pDefaultValue->SetNull();
     return;
@@ -5772,9 +5789,9 @@ void CXFA_FM2JSContext::GetObjectDefaultValue(CFXJSE_Value* pValue,
 }
 
 // static
-bool CXFA_FM2JSContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
-                                              CFXJSE_Value* hNewValue) {
-  CXFA_Node* pNode = ToNode(CXFA_ScriptContext::ToObject(pValue, nullptr));
+bool CFXJSE_FormCalcContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
+                                                   CFXJSE_Value* hNewValue) {
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue, nullptr));
   if (!pNode)
     return false;
 
@@ -5783,7 +5800,7 @@ bool CXFA_FM2JSContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
 }
 
 // static
-ByteString CXFA_FM2JSContext::GenerateSomExpression(
+ByteString CFXJSE_FormCalcContext::GenerateSomExpression(
     const ByteStringView& szName,
     int32_t iIndexFlags,
     int32_t iIndexValue,
@@ -5814,14 +5831,15 @@ ByteString CXFA_FM2JSContext::GenerateSomExpression(
 }
 
 // static
-bool CXFA_FM2JSContext::GetObjectForName(CFXJSE_Value* pThis,
-                                         CFXJSE_Value* accessorValue,
-                                         const ByteStringView& szAccessorName) {
+bool CFXJSE_FormCalcContext::GetObjectForName(
+    CFXJSE_Value* pThis,
+    CFXJSE_Value* accessorValue,
+    const ByteStringView& szAccessorName) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return false;
 
-  CXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   XFA_RESOLVENODE_RS resoveNodeRS;
   uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
@@ -5838,18 +5856,18 @@ bool CXFA_FM2JSContext::GetObjectForName(CFXJSE_Value* pThis,
 }
 
 // static
-int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
-                                          CFXJSE_Value* pRefValue,
-                                          const ByteStringView& bsSomExp,
-                                          XFA_RESOLVENODE_RS& resoveNodeRS,
-                                          bool bdotAccessor,
-                                          bool bHasNoResolveName) {
+int32_t CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
+                                               CFXJSE_Value* pRefValue,
+                                               const ByteStringView& bsSomExp,
+                                               XFA_RESOLVENODE_RS& resoveNodeRS,
+                                               bool bdotAccessor,
+                                               bool bHasNoResolveName) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return -1;
 
   WideString wsSomExpression = WideString::FromUTF8(bsSomExp);
-  CXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   CXFA_Object* pNode = nullptr;
   uint32_t dFlags = 0UL;
   if (bdotAccessor) {
@@ -5857,7 +5875,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
       pNode = pScriptContext->GetThisObject();
       dFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
     } else {
-      pNode = CXFA_ScriptContext::ToObject(pRefValue, nullptr);
+      pNode = CFXJSE_Engine::ToObject(pRefValue, nullptr);
       ASSERT(pNode);
       if (bHasNoResolveName) {
         WideString wsName;
@@ -5876,7 +5894,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
       }
     }
   } else {
-    pNode = CXFA_ScriptContext::ToObject(pRefValue, nullptr);
+    pNode = CFXJSE_Engine::ToObject(pRefValue, nullptr);
     dFlags = XFA_RESOLVENODE_AnyChild;
   }
   return pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringView(),
@@ -5884,7 +5902,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
 }
 
 // static
-void CXFA_FM2JSContext::ParseResolveResult(
+void CFXJSE_FormCalcContext::ParseResolveResult(
     CFXJSE_Value* pThis,
     const XFA_RESOLVENODE_RS& resoveNodeRS,
     CFXJSE_Value* pParentValue,
@@ -5894,13 +5912,12 @@ void CXFA_FM2JSContext::ParseResolveResult(
 
   resultValues->clear();
 
-  CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
+  CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
 
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     *bAttribute = false;
-    CXFA_ScriptContext* pScriptContext =
-        pContext->GetDocument()->GetScriptContext();
+    CFXJSE_Engine* pScriptContext = pContext->GetDocument()->GetScriptContext();
     for (CXFA_Object* pObject : resoveNodeRS.objects) {
       resultValues->push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
       resultValues->back()->Assign(pScriptContext->GetJSValueFromMap(pObject));
@@ -5928,8 +5945,8 @@ void CXFA_FM2JSContext::ParseResolveResult(
 }
 
 // static
-int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
-                                          CFXJSE_Value* pValue) {
+int32_t CFXJSE_FormCalcContext::ValueToInteger(CFXJSE_Value* pThis,
+                                               CFXJSE_Value* pValue) {
   if (!pValue)
     return 0;
 
@@ -5960,7 +5977,8 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
 }
 
 // static
-float CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
+float CFXJSE_FormCalcContext::ValueToFloat(CFXJSE_Value* pThis,
+                                           CFXJSE_Value* arg) {
   if (!arg)
     return 0.0f;
 
@@ -5993,8 +6011,8 @@ float CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
 }
 
 // static
-double CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
-                                        CFXJSE_Value* arg) {
+double CFXJSE_FormCalcContext::ValueToDouble(CFXJSE_Value* pThis,
+                                             CFXJSE_Value* arg) {
   if (!arg)
     return 0;
 
@@ -6026,9 +6044,9 @@ double CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
 }
 
 // static.
-double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
-                                        CFXJSE_Value* src,
-                                        bool* ret) {
+double CFXJSE_FormCalcContext::ExtractDouble(CFXJSE_Value* pThis,
+                                             CFXJSE_Value* src,
+                                             bool* ret) {
   ASSERT(ret);
   *ret = true;
 
@@ -6061,7 +6079,7 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
 }
 
 // static
-ByteString CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg) {
+ByteString CFXJSE_FormCalcContext::ValueToUTF8String(CFXJSE_Value* arg) {
   if (!arg || arg->IsNull() || arg->IsUndefined())
     return ByteString();
   if (arg->IsBoolean())
@@ -6070,8 +6088,8 @@ ByteString CXFA_FM2JSContext::ValueToUTF8String(CFXJSE_Value* arg) {
 }
 
 // static.
-bool CXFA_FM2JSContext::Translate(const WideStringView& wsFormcalc,
-                                  CFX_WideTextBuf* wsJavascript) {
+bool CFXJSE_FormCalcContext::Translate(const WideStringView& wsFormcalc,
+                                       CFX_WideTextBuf* wsJavascript) {
   if (wsFormcalc.IsEmpty()) {
     wsJavascript->Clear();
     return true;
@@ -6091,9 +6109,9 @@ bool CXFA_FM2JSContext::Translate(const WideStringView& wsFormcalc,
   return !CXFA_IsTooBig(*wsJavascript);
 }
 
-CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
-                                     CFXJSE_Context* pScriptContext,
-                                     CXFA_Document* pDoc)
+CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
+                                               CFXJSE_Context* pScriptContext,
+                                               CXFA_Document* pDoc)
     : CFXJSE_HostObject(kFM2JS),
       m_pIsolate(pScriptIsolate),
       m_pFMClass(CFXJSE_Class::Create(pScriptContext,
@@ -6104,32 +6122,32 @@ CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
   m_pValue.get()->SetObject(this, m_pFMClass);
 }
 
-CXFA_FM2JSContext::~CXFA_FM2JSContext() {}
+CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() {}
 
-void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
+void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
   pValue->Assign(m_pValue.get());
 }
 
-void CXFA_FM2JSContext::ThrowNoDefaultPropertyException(
+void CFXJSE_FormCalcContext::ThrowNoDefaultPropertyException(
     const ByteStringView& name) const {
   // TODO(tsepez): check usage of c_str() below.
   ThrowException(L"%.16S doesn't have a default property.",
                  name.unterminated_c_str());
 }
 
-void CXFA_FM2JSContext::ThrowCompilerErrorException() const {
+void CFXJSE_FormCalcContext::ThrowCompilerErrorException() const {
   ThrowException(L"Compiler error.");
 }
 
-void CXFA_FM2JSContext::ThrowDivideByZeroException() const {
+void CFXJSE_FormCalcContext::ThrowDivideByZeroException() const {
   ThrowException(L"Divide by zero.");
 }
 
-void CXFA_FM2JSContext::ThrowServerDeniedException() const {
+void CFXJSE_FormCalcContext::ThrowServerDeniedException() const {
   ThrowException(L"Server does not permit operation.");
 }
 
-void CXFA_FM2JSContext::ThrowPropertyNotInObjectException(
+void CFXJSE_FormCalcContext::ThrowPropertyNotInObjectException(
     const WideString& name,
     const WideString& exp) const {
   ThrowException(
@@ -6138,17 +6156,17 @@ void CXFA_FM2JSContext::ThrowPropertyNotInObjectException(
       name.c_str(), exp.c_str());
 }
 
-void CXFA_FM2JSContext::ThrowParamCountMismatchException(
+void CFXJSE_FormCalcContext::ThrowParamCountMismatchException(
     const WideString& method) const {
   ThrowException(L"Incorrect number of parameters calling method '%.16s'.",
                  method.c_str());
 }
 
-void CXFA_FM2JSContext::ThrowArgumentMismatchException() const {
+void CFXJSE_FormCalcContext::ThrowArgumentMismatchException() const {
   ThrowException(L"Argument mismatch in property or function argument.");
 }
 
-void CXFA_FM2JSContext::ThrowException(const wchar_t* str, ...) const {
+void CFXJSE_FormCalcContext::ThrowException(const wchar_t* str, ...) const {
   WideString wsMessage;
   va_list arg_ptr;
   va_start(arg_ptr, str);

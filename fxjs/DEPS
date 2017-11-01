@@ -7,4 +7,5 @@ include_rules = [
   '+public',
   '+fpdfsdk',
   '+v8/include',
+  '+xfa/fxfa'
 ]
