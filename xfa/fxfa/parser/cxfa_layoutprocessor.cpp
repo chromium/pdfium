@@ -63,8 +63,10 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
 
   XFA_ItemLayoutProcessorResult eStatus;
   CXFA_Node* pFormNode = m_pRootItemLayoutProcessor->GetFormNode();
-  float fPosX = pFormNode->GetMeasure(XFA_ATTRIBUTE_X).ToUnit(XFA_UNIT_Pt);
-  float fPosY = pFormNode->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
+  float fPosX =
+      pFormNode->JSNode()->GetMeasure(XFA_ATTRIBUTE_X).ToUnit(XFA_UNIT_Pt);
+  float fPosY =
+      pFormNode->JSNode()->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
   do {
     float fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
     eStatus = m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight,
@@ -121,7 +123,7 @@ CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetPage(int32_t index) const {
 
 CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
   return static_cast<CXFA_LayoutItem*>(
-      pFormItem->GetUserData(XFA_LAYOUTITEMKEY));
+      pFormItem->JSNode()->GetUserData(XFA_LAYOUTITEMKEY));
 }
 
 void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {

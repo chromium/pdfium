@@ -12,5 +12,5 @@ CXFA_Bind::CXFA_Bind(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 void CXFA_Bind::GetPicture(WideString& wsPicture) {
   if (CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_Element::Picture))
-    pPicture->TryContent(wsPicture);
+    pPicture->JSNode()->TryContent(wsPicture);
 }

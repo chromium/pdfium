@@ -152,11 +152,11 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
           continue;
 
         WideString wsNamespaceURI;
-        if (!pDatasetsChild->TryNamespace(wsNamespaceURI))
+        if (!pDatasetsChild->JSNode()->TryNamespace(wsNamespaceURI))
           continue;
 
         WideString wsDatasetsURI;
-        if (!pDatasetsNode->TryNamespace(wsDatasetsURI))
+        if (!pDatasetsNode->JSNode()->TryNamespace(wsDatasetsURI))
           continue;
         if (wsNamespaceURI == wsDatasetsURI)
           return pDatasetsChild;
@@ -267,7 +267,8 @@ bool CXFA_Document::IsInteractive() {
   CXFA_Node* pFormFiller = pPDF->GetChild(0, XFA_Element::Interactive);
   if (pFormFiller) {
     m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
-    if (pFormFiller->TryContent(wsInteractive) && wsInteractive == L"1") {
+    if (pFormFiller->JSNode()->TryContent(wsInteractive) &&
+        wsInteractive == L"1") {
       m_dwDocFlags |= XFA_DOCFLAG_Interactive;
       return true;
     }
@@ -333,7 +334,8 @@ CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     WideStringView wsIDVal;
-    if (pNode->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) && !wsIDVal.IsEmpty()) {
+    if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) &&
+        !wsIDVal.IsEmpty()) {
       if (wsIDVal == wsID)
         return pNode;
     }
@@ -352,13 +354,15 @@ void CXFA_Document::DoProtoMerge() {
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     WideStringView wsIDVal;
-    if (pNode->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) && !wsIDVal.IsEmpty()) {
+    if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) &&
+        !wsIDVal.IsEmpty()) {
       mIDMap[FX_HashCode_GetW(wsIDVal, false)] = pNode;
     }
     WideStringView wsUseVal;
-    if (pNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) && !wsUseVal.IsEmpty()) {
+    if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) &&
+        !wsUseVal.IsEmpty()) {
       sUseNodes.insert(pNode);
-    } else if (pNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
+    } else if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
                !wsUseVal.IsEmpty()) {
       sUseNodes.insert(pNode);
     }
@@ -367,7 +371,7 @@ void CXFA_Document::DoProtoMerge() {
   for (CXFA_Node* pUseHrefNode : sUseNodes) {
     WideString wsUseVal;
     WideStringView wsURI, wsID, wsSOM;
-    if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
+    if (pUseHrefNode->JSNode()->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal) &&
         !wsUseVal.IsEmpty()) {
       auto uSharpPos = wsUseVal.Find('#');
       if (!uSharpPos.has_value()) {
@@ -386,7 +390,7 @@ void CXFA_Document::DoProtoMerge() {
                                 uLen - uSharpPos.value() - 1);
         }
       }
-    } else if (pUseHrefNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) &&
+    } else if (pUseHrefNode->JSNode()->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) &&
                !wsUseVal.IsEmpty()) {
       if (wsUseVal[0] == '#')
         wsID = WideStringView(wsUseVal.c_str() + 1, wsUseVal.GetLength() - 1);

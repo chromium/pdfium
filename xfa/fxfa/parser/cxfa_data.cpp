@@ -69,7 +69,7 @@ bool CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,
                            float& fValue,
                            bool bUseDefault) const {
   CXFA_Measurement ms;
-  if (m_pNode->TryMeasure(eAttr, ms, bUseDefault)) {
+  if (m_pNode->JSNode()->TryMeasure(eAttr, ms, bUseDefault)) {
     fValue = ms.ToUnit(XFA_UNIT_Pt);
     return true;
   }
@@ -78,5 +78,5 @@ bool CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,
 
 bool CXFA_Data::SetMeasure(XFA_ATTRIBUTE eAttr, float fValue) {
   CXFA_Measurement ms(fValue, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(eAttr, ms);
+  return m_pNode->JSNode()->SetMeasure(eAttr, ms);
 }

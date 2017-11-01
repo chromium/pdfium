@@ -12,7 +12,7 @@
 CXFA_Validate::CXFA_Validate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_Validate::GetFormatTest() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_FormatTest);
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_FormatTest);
 }
 
 bool CXFA_Validate::SetTestValue(int32_t iType,
@@ -23,7 +23,7 @@ bool CXFA_Validate::SetTestValue(int32_t iType,
   if (pInfo)
     eName = pInfo->eName;
 
-  m_pNode->SetEnum((XFA_ATTRIBUTE)iType, eName, false);
+  m_pNode->JSNode()->SetEnum((XFA_ATTRIBUTE)iType, eName, false);
   return true;
 }
 
@@ -33,16 +33,17 @@ bool CXFA_Validate::SetNullTest(WideString wsValue) {
 }
 
 int32_t CXFA_Validate::GetNullTest() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_NullTest);
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_NullTest);
 }
 
 int32_t CXFA_Validate::GetScriptTest() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_ScriptTest);
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_ScriptTest);
 }
 
 void CXFA_Validate::GetMessageText(WideString& wsMessage,
                                    const WideString& wsMessageType) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, false);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Message, false);
   if (!pNode)
     return;
 
@@ -53,9 +54,9 @@ void CXFA_Validate::GetMessageText(WideString& wsMessage,
       continue;
 
     WideStringView wsName;
-    pItemNode->TryCData(XFA_ATTRIBUTE_Name, wsName);
+    pItemNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
-      pItemNode->TryContent(wsMessage);
+      pItemNode->JSNode()->TryContent(wsMessage);
       return;
     }
   }
@@ -79,7 +80,8 @@ void CXFA_Validate::GetNullMessageText(WideString& wsMessage) {
 
 void CXFA_Validate::SetMessageText(WideString& wsMessage,
                                    const WideString& wsMessageType) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, true);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Message, true);
   if (!pNode)
     return;
 
@@ -90,16 +92,16 @@ void CXFA_Validate::SetMessageText(WideString& wsMessage,
       continue;
 
     WideStringView wsName;
-    pItemNode->TryCData(XFA_ATTRIBUTE_Name, wsName);
+    pItemNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
-      pItemNode->SetContent(wsMessage, wsMessage, false);
+      pItemNode->JSNode()->SetContent(wsMessage, wsMessage, false);
       return;
     }
   }
   CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_Element::Text);
   pNode->InsertChild(pTextNode);
-  pTextNode->SetCData(XFA_ATTRIBUTE_Name, wsMessageType, false);
-  pTextNode->SetContent(wsMessage, wsMessage, false);
+  pTextNode->JSNode()->SetCData(XFA_ATTRIBUTE_Name, wsMessageType, false);
+  pTextNode->JSNode()->SetContent(wsMessage, wsMessage, false);
 }
 
 void CXFA_Validate::GetScriptMessageText(WideString& wsMessage) {
@@ -112,7 +114,7 @@ void CXFA_Validate::SetScriptMessageText(WideString wsMessage) {
 
 void CXFA_Validate::GetPicture(WideString& wsPicture) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Picture))
-    pNode->TryContent(wsPicture);
+    pNode->JSNode()->TryContent(wsPicture);
 }
 
 CXFA_Script CXFA_Validate::GetScript() {

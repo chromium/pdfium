@@ -9,11 +9,12 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 int32_t CXFA_Line::GetHand() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Hand);
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Hand);
 }
 
 bool CXFA_Line::GetSlope() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Slope) == XFA_ATTRIBUTEENUM_Slash;
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Slope) ==
+         XFA_ATTRIBUTEENUM_Slash;
 }
 
 CXFA_Edge CXFA_Line::GetEdge() {

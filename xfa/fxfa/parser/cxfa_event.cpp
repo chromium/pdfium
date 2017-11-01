@@ -11,7 +11,7 @@
 CXFA_Event::CXFA_Event(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_Event::GetActivity() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Activity);
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Activity);
 }
 
 XFA_Element CXFA_Event::GetEventType() const {
@@ -27,7 +27,7 @@ XFA_Element CXFA_Event::GetEventType() const {
 }
 
 void CXFA_Event::GetRef(WideStringView& wsRef) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Ref, wsRef);
+  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Ref, wsRef);
 }
 
 CXFA_Script CXFA_Event::GetScript() const {
@@ -39,11 +39,11 @@ CXFA_Submit CXFA_Event::GetSubmit() const {
 }
 
 void CXFA_Event::GetSignDataTarget(WideString& wsTarget) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::SignData);
+  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::SignData);
   if (!pNode)
     return;
 
   WideStringView wsCData;
-  pNode->TryCData(XFA_ATTRIBUTE_Target, wsCData);
+  pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Target, wsCData);
   wsTarget = wsCData;
 }

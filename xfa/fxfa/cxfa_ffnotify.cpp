@@ -353,7 +353,8 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   XFA_Element eType = pNode->GetElementType();
   if (XFA_IsCreateWidget(eType)) {
     CXFA_WidgetAcc* pAcc = new CXFA_WidgetAcc(pDocView, pNode);
-    pNode->SetObject(XFA_ATTRIBUTE_WidgetData, pAcc, &gs_XFADeleteWidgetAcc);
+    pNode->JSNode()->SetObject(XFA_ATTRIBUTE_WidgetData, pAcc,
+                               &gs_XFADeleteWidgetAcc);
     return;
   }
   switch (eType) {

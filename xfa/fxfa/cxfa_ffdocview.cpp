@@ -281,7 +281,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
                             : nullptr;
       }
       if (pValidateNode)
-        wsValidateStr = pValidateNode->GetContent();
+        wsValidateStr = pValidateNode->JSNode()->GetContent();
     }
 
     if (!wsValidateStr.Contains(L"preSubmit"))
@@ -618,8 +618,8 @@ void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 }
 
 void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
-  auto* pGlobalData =
-      static_cast<CXFA_CalcData*>(pNodeChange->GetUserData(XFA_CalcData));
+  auto* pGlobalData = static_cast<CXFA_CalcData*>(
+      pNodeChange->JSNode()->GetUserData(XFA_CalcData));
   if (!pGlobalData)
     return;
 
@@ -634,10 +634,11 @@ size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
     CXFA_WidgetAcc* pCurAcc = m_CalculateAccs[index];
     AddCalculateNodeNotify(pCurAcc->GetNode());
     int32_t iRefCount =
-        (int32_t)(uintptr_t)pCurAcc->GetNode()->GetUserData(XFA_CalcRefCount);
+        (int32_t)(uintptr_t)pCurAcc->GetNode()->JSNode()->GetUserData(
+            XFA_CalcRefCount);
     iRefCount++;
-    pCurAcc->GetNode()->SetUserData(XFA_CalcRefCount,
-                                    (void*)(uintptr_t)iRefCount);
+    pCurAcc->GetNode()->JSNode()->SetUserData(XFA_CalcRefCount,
+                                              (void*)(uintptr_t)iRefCount);
     if (iRefCount > 11)
       break;
     if (pCurAcc->ProcessCalculate() == XFA_EVENTERROR_Success)
@@ -655,7 +656,8 @@ int32_t CXFA_FFDocView::RunCalculateWidgets() {
     RunCalculateRecursive(0);
 
   for (CXFA_WidgetAcc* pCurAcc : m_CalculateAccs)
-    pCurAcc->GetNode()->SetUserData(XFA_CalcRefCount, (void*)(uintptr_t)0);
+    pCurAcc->GetNode()->JSNode()->SetUserData(XFA_CalcRefCount,
+                                              (void*)(uintptr_t)0);
 
   m_CalculateAccs.clear();
   return XFA_EVENTERROR_Success;
@@ -744,19 +746,20 @@ void CXFA_FFDocView::RunBindItems() {
         continue;
 
       if (bValueUseContent) {
-        wsValue = refNode->GetContent();
+        wsValue = refNode->JSNode()->GetContent();
       } else {
         CXFA_Node* nodeValue = refNode->GetFirstChildByName(uValueHash);
-        wsValue = nodeValue ? nodeValue->GetContent() : refNode->GetContent();
+        wsValue = nodeValue ? nodeValue->JSNode()->GetContent()
+                            : refNode->JSNode()->GetContent();
       }
 
       if (!bUseValue) {
         if (bLabelUseContent) {
-          wsLabel = refNode->GetContent();
+          wsLabel = refNode->JSNode()->GetContent();
         } else {
           CXFA_Node* nodeLabel = refNode->GetFirstChildByName(wsLabelRef);
           if (nodeLabel)
-            wsLabel = nodeLabel->GetContent();
+            wsLabel = nodeLabel->JSNode()->GetContent();
         }
       } else {
         wsLabel = wsValue;

@@ -162,7 +162,7 @@ CXFA_WidgetAcc::~CXFA_WidgetAcc() {}
 
 bool CXFA_WidgetAcc::GetName(WideString& wsName, int32_t iNameType) {
   if (iNameType == 0) {
-    m_pNode->TryCData(XFA_ATTRIBUTE_Name, wsName);
+    m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
     return !wsName.IsEmpty();
   }
   m_pNode->GetSOMExpression(wsName);
@@ -223,8 +223,11 @@ void CXFA_WidgetAcc::ResetData() {
             continue;
 
           WideString itemText;
-          if (pItems->CountChildren(XFA_Element::Unknown) > 1)
-            itemText = pItems->GetChild(1, XFA_Element::Unknown)->GetContent();
+          if (pItems->CountChildren(XFA_Element::Unknown) > 1) {
+            itemText = pItems->GetChild(1, XFA_Element::Unknown)
+                           ->JSNode()
+                           ->GetContent();
+          }
 
           pAcc->SetValue(itemText, XFA_VALUEPICTURE_Raw);
         }
@@ -254,16 +257,16 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
   }
   WideString wsFormatValue(wsData);
   GetFormatDataValue(wsData, wsFormatValue);
-  m_pNode->SetContent(wsData, wsFormatValue, true);
+  m_pNode->JSNode()->SetContent(wsData, wsFormatValue, true);
   CXFA_Node* pBind = GetDatasets();
   if (!pBind) {
     image.SetTransferEncoding(XFA_ATTRIBUTEENUM_Base64);
     return;
   }
-  pBind->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
+  pBind->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
   CXFA_Node* pHrefNode = pBind->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pHrefNode) {
-    pHrefNode->SetCData(XFA_ATTRIBUTE_Value, wsHref);
+    pHrefNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsHref);
   } else {
     CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element);
@@ -656,12 +659,12 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
         if (static_cast<CXFA_WidgetAcc*>(pRefNode->GetWidgetData()) == this)
           continue;
 
-        auto* pGlobalData =
-            static_cast<CXFA_CalcData*>(pRefNode->GetUserData(XFA_CalcData));
+        auto* pGlobalData = static_cast<CXFA_CalcData*>(
+            pRefNode->JSNode()->GetUserData(XFA_CalcData));
         if (!pGlobalData) {
           pGlobalData = new CXFA_CalcData;
-          pRefNode->SetUserData(XFA_CalcData, pGlobalData,
-                                &gs_XFADeleteCalcData);
+          pRefNode->JSNode()->SetUserData(XFA_CalcData, pGlobalData,
+                                          &gs_XFADeleteCalcData);
         }
         if (!pdfium::ContainsValue(pGlobalData->m_Globals, this))
           pGlobalData->m_Globals.push_back(this);
@@ -1280,6 +1283,7 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   XFA_ATTRIBUTEENUM eLayoutMode;
   GetNode()
       ->GetNodeItem(XFA_NODEITEM_Parent)
+      ->JSNode()
       ->TryEnum(XFA_ATTRIBUTE_Layout, eLayoutMode, true);
   if ((eLayoutMode == XFA_ATTRIBUTEENUM_Position ||
        eLayoutMode == XFA_ATTRIBUTEENUM_Tb ||

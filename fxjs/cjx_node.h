@@ -4,149 +4,166 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_NODE_H_
-#define XFA_FXFA_PARSER_CXFA_NODE_H_
+#ifndef FXJS_CJX_NODE_H_
+#define FXJS_CJX_NODE_H_
 
 #include <map>
-#include <vector>
 
-#include "core/fxcrt/fx_string.h"
-#include "fxjs/cjx_node.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
+#include "core/fxcrt/unowned_ptr.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
-class CFX_XMLNode;
-class CFXJSE_Argument;
-class CXFA_WidgetData;
+typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
+typedef void (*PD_CALLBACK_DUPLICATEDATA)(void*& pData);
 
-#define XFA_NODEFILTER_Children 0x01
-#define XFA_NODEFILTER_Properties 0x02
-#define XFA_NODEFILTER_OneOfProperty 0x04
-
-enum XFA_NodeFlag {
-  XFA_NodeFlag_None = 0,
-  XFA_NodeFlag_Initialized = 1 << 0,
-  XFA_NodeFlag_HasRemovedChildren = 1 << 1,
-  XFA_NodeFlag_NeedsInitApp = 1 << 2,
-  XFA_NodeFlag_BindFormItems = 1 << 3,
-  XFA_NodeFlag_UserInteractive = 1 << 4,
-  XFA_NodeFlag_SkipDataBinding = 1 << 5,
-  XFA_NodeFlag_OwnXMLNode = 1 << 6,
-  XFA_NodeFlag_UnusedNode = 1 << 7,
-  XFA_NodeFlag_LayoutGeneratedNode = 1 << 8
+struct XFA_MAPDATABLOCKCALLBACKINFO {
+  PD_CALLBACK_FREEDATA pFree;
+  PD_CALLBACK_DUPLICATEDATA pCopy;
 };
 
-enum XFA_NODEITEM {
-  XFA_NODEITEM_Parent,
-  XFA_NODEITEM_FirstChild,
-  XFA_NODEITEM_NextSibling,
-  XFA_NODEITEM_PrevSibling,
+struct XFA_MAPDATABLOCK {
+  uint8_t* GetData() const { return (uint8_t*)this + sizeof(XFA_MAPDATABLOCK); }
+  XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
+  int32_t iBytes;
 };
 
-const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName);
+struct XFA_MAPMODULEDATA {
+  XFA_MAPMODULEDATA();
+  ~XFA_MAPMODULEDATA();
 
-class CXFA_Node : public CXFA_Object {
+  std::map<void*, void*> m_ValueMap;
+  std::map<void*, XFA_MAPDATABLOCK*> m_BufferMap;
+};
+
+enum XFA_SOM_MESSAGETYPE {
+  XFA_SOM_ValidationMessage,
+  XFA_SOM_FormatMessage,
+  XFA_SOM_MandatoryMessage
+};
+
+class CFXJSE_Arguments;
+class CXFA_Node;
+
+class CJX_Node {
  public:
-  ~CXFA_Node() override;
+  explicit CJX_Node(CXFA_Node* node);
+  ~CJX_Node();
 
-  uint32_t GetPacketID() const { return m_ePacket; }
+  bool HasAttribute(XFA_ATTRIBUTE eAttr, bool bCanInherit = false);
+  bool SetAttribute(XFA_ATTRIBUTE eAttr,
+                    const WideStringView& wsValue,
+                    bool bNotify = false);
 
-  void SetFlag(uint32_t dwFlag, bool bNotify);
-  void ClearFlag(uint32_t dwFlag);
+  bool SetAttribute(const WideStringView& wsAttr,
+                    const WideStringView& wsValue,
+                    bool bNotify = false);
+  bool GetAttribute(const WideStringView& wsAttr,
+                    WideString& wsValue,
+                    bool bUseDefault = true);
+  bool GetAttribute(XFA_ATTRIBUTE eAttr,
+                    WideString& wsValue,
+                    bool bUseDefault = true);
+  bool SetAttributeValue(const WideString& wsValue,
+                         const WideString& wsXMLValue,
+                         bool bNotify = false,
+                         bool bScriptModify = false);
+  bool RemoveAttribute(const WideStringView& wsAttr);
 
-  CJX_Node* JSNode() { return &m_JSNode; }
-  const CJX_Node* JSNode() const { return &m_JSNode; }
-  CXFA_Node* GetParent() { return m_pParent; }
-  CXFA_Node* GetChildNode() { return m_pChild; }
+  CXFA_Node* GetProperty(int32_t index,
+                         XFA_Element eType,
+                         bool bCreateProperty = true);
 
-  CXFA_Node* CreateInstance(CXFA_Node* pInstMgrNode, bool bDataMerge);
-  int32_t GetCount(CXFA_Node* pInstMgrNode);
-  CXFA_Node* GetItem(CXFA_Node* pInstMgrNode, int32_t iIndex);
-  void RemoveItem(CXFA_Node* pInstMgrNode,
-                  CXFA_Node* pRemoveInstance,
-                  bool bRemoveDataBinding = true);
-  void InsertItem(CXFA_Node* pInstMgrNode,
-                  CXFA_Node* pNewInstance,
-                  int32_t iPos,
-                  int32_t iCount = -1,
-                  bool bMoveDataBindingNodes = true);
+  bool SetContent(const WideString& wsContent,
+                  const WideString& wsXMLValue,
+                  bool bNotify = false,
+                  bool bScriptModify = false,
+                  bool bSyncData = true);
+  WideString GetContent();
 
-  bool IsInitialized() const { return HasFlag(XFA_NodeFlag_Initialized); }
-  bool IsOwnXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }
-  bool IsUserInteractive() const {
-    return HasFlag(XFA_NodeFlag_UserInteractive);
+  bool TryInteger(XFA_ATTRIBUTE eAttr,
+                  int32_t& iValue,
+                  bool bUseDefault = true);
+  bool SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify = false) {
+    return SetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, (void*)(uintptr_t)iValue,
+                    bNotify);
   }
-  bool IsUnusedNode() const { return HasFlag(XFA_NodeFlag_UnusedNode); }
-  bool IsLayoutGeneratedNode() const {
-    return HasFlag(XFA_NodeFlag_LayoutGeneratedNode);
+  int32_t GetInteger(XFA_ATTRIBUTE eAttr) {
+    int32_t iValue;
+    return TryInteger(eAttr, iValue, true) ? iValue : 0;
   }
-  bool BindsFormItems() const { return HasFlag(XFA_NodeFlag_BindFormItems); }
-  bool HasRemovedChildren() const {
-    return HasFlag(XFA_NodeFlag_HasRemovedChildren);
+
+  bool TryCData(XFA_ATTRIBUTE eAttr,
+                WideStringView& wsValue,
+                bool bUseDefault = true,
+                bool bProto = true);
+  bool TryCData(XFA_ATTRIBUTE eAttr,
+                WideString& wsValue,
+                bool bUseDefault = true,
+                bool bProto = true);
+  bool SetCData(XFA_ATTRIBUTE eAttr,
+                const WideString& wsValue,
+                bool bNotify = false,
+                bool bScriptModify = false);
+  WideStringView GetCData(XFA_ATTRIBUTE eAttr) {
+    WideStringView wsValue;
+    return TryCData(eAttr, wsValue) ? wsValue : WideStringView();
   }
-  bool NeedsInitApp() const { return HasFlag(XFA_NodeFlag_NeedsInitApp); }
 
-  bool IsAttributeInXML();
-  bool IsFormContainer() const {
-    return m_ePacket == XFA_XDPPACKET_Form && IsContainerNode();
+  bool TryContent(WideString& wsContent,
+                  bool bScriptModify = false,
+                  bool bProto = true);
+
+  bool TryEnum(XFA_ATTRIBUTE eAttr,
+               XFA_ATTRIBUTEENUM& eValue,
+               bool bUseDefault = true);
+  bool SetEnum(XFA_ATTRIBUTE eAttr,
+               XFA_ATTRIBUTEENUM eValue,
+               bool bNotify = false) {
+    return SetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, (void*)(uintptr_t)eValue,
+                    bNotify);
   }
-  void SetXMLMappingNode(CFX_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
-  CFX_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
-  CFX_XMLNode* CreateXMLMappingNode();
-  bool IsNeedSavingXMLNode();
-  uint32_t GetNameHash() const { return m_dwNameHash; }
-  bool IsUnnamed() const { return m_dwNameHash == 0; }
-  CXFA_Node* GetModelNode();
-  void UpdateNameHash();
+  XFA_ATTRIBUTEENUM GetEnum(XFA_ATTRIBUTE eAttr) {
+    XFA_ATTRIBUTEENUM eValue;
+    return TryEnum(eAttr, eValue, true) ? eValue : XFA_ATTRIBUTEENUM_Unknown;
+  }
 
-  int32_t CountChildren(XFA_Element eType, bool bOnlyChild = false);
-  CXFA_Node* GetChild(int32_t index,
-                      XFA_Element eType,
-                      bool bOnlyChild = false);
-  int32_t InsertChild(int32_t index, CXFA_Node* pNode);
-  bool InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = nullptr);
-  bool RemoveChild(CXFA_Node* pNode, bool bNotify = true);
-  CXFA_Node* Clone(bool bRecursive);
-  CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
-  CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_ObjectType eType) const;
-  std::vector<CXFA_Node*> GetNodeList(
-      uint32_t dwTypeFilter = XFA_NODEFILTER_Children |
-                              XFA_NODEFILTER_Properties,
-      XFA_Element eTypeFilter = XFA_Element::Unknown);
-  CXFA_Node* CreateSamePacketNode(XFA_Element eType,
-                                  uint32_t dwFlags = XFA_NodeFlag_Initialized);
-  CXFA_Node* CloneTemplateToForm(bool bRecursive);
-  CXFA_Node* GetTemplateNode() const;
-  void SetTemplateNode(CXFA_Node* pTemplateNode);
-  CXFA_Node* GetDataDescriptionNode();
-  void SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode);
-  CXFA_Node* GetBindData();
-  std::vector<CXFA_Node*> GetBindItems();
-  int32_t AddBindItem(CXFA_Node* pFormNode);
-  int32_t RemoveBindItem(CXFA_Node* pFormNode);
-  bool HasBindItem();
-  CXFA_WidgetData* GetWidgetData();
-  CXFA_WidgetData* GetContainerWidgetData();
-  bool GetLocaleName(WideString& wsLocaleName);
-  XFA_ATTRIBUTEENUM GetIntact();
-  CXFA_Node* GetFirstChildByName(const WideStringView& wsNodeName) const;
-  CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
-  CXFA_Node* GetFirstChildByClass(XFA_Element eType) const;
-  CXFA_Node* GetNextSameNameSibling(uint32_t dwNodeNameHash) const;
-  CXFA_Node* GetNextSameNameSibling(const WideStringView& wsNodeName) const;
-  CXFA_Node* GetNextSameClassSibling(XFA_Element eType) const;
-  int32_t GetNodeSameNameIndex() const;
-  int32_t GetNodeSameClassIndex() const;
-  void GetSOMExpression(WideString& wsSOMExpression);
-  CXFA_Node* GetInstanceMgrOfSubform();
+  bool TryBoolean(XFA_ATTRIBUTE eAttr, bool& bValue, bool bUseDefault = true);
+  bool SetBoolean(XFA_ATTRIBUTE eAttr, bool bValue, bool bNotify = false) {
+    return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (void*)(uintptr_t)bValue,
+                    bNotify);
+  }
+  bool GetBoolean(XFA_ATTRIBUTE eAttr) {
+    bool bValue;
+    return TryBoolean(eAttr, bValue, true) ? bValue : false;
+  }
 
-  CXFA_Node* GetOccurNode();
+  bool TryMeasure(XFA_ATTRIBUTE eAttr,
+                  CXFA_Measurement& mValue,
+                  bool bUseDefault = true) const;
+  bool SetMeasure(XFA_ATTRIBUTE eAttr,
+                  CXFA_Measurement mValue,
+                  bool bNotify = false);
+  CXFA_Measurement GetMeasure(XFA_ATTRIBUTE eAttr) const;
 
-  int32_t Subform_and_SubformSet_InstanceIndex();
-  int32_t InstanceManager_SetInstances(int32_t iCount);
-  int32_t InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom);
+  bool SetUserData(void* pKey,
+                   void* pData,
+                   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
+  void* GetUserData(void* pKey, bool bProtoAlso = false) {
+    void* pData;
+    return TryUserData(pKey, pData, bProtoAlso) ? pData : nullptr;
+  }
 
-  void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, bool bScriptModify);
-  void OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify);
+  bool TryObject(XFA_ATTRIBUTE eAttr, void*& pData);
+  bool SetObject(XFA_ATTRIBUTE eAttr,
+                 void* pData,
+                 XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
+  void* GetObject(XFA_ATTRIBUTE eAttr) {
+    void* pData;
+    return TryObject(eAttr, pData) ? pData : nullptr;
+  }
+
+  bool TryNamespace(WideString& wsNamespace);
+
+  void MergeAllData(void* pDstModule);
 
   void Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments);
   void Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments);
@@ -344,7 +361,6 @@ class CXFA_Node : public CXFA_Object {
   void Script_Subform_ExecCalculate(CFXJSE_Arguments* pArguments);
   void Script_Subform_ExecValidate(CFXJSE_Arguments* pArguments);
   void Script_Subform_GetInvalidObjects(CFXJSE_Arguments* pArguments);
-
   void Script_Template_FormNodes(CFXJSE_Arguments* pArguments);
   void Script_Template_Remerge(CFXJSE_Arguments* pArguments);
   void Script_Template_ExecInitialize(CFXJSE_Arguments* pArguments);
@@ -367,7 +383,6 @@ class CXFA_Node : public CXFA_Object {
   void Script_InstanceManager_SetInstances(CFXJSE_Arguments* pArguments);
   void Script_InstanceManager_AddInstance(CFXJSE_Arguments* pArguments);
   void Script_InstanceManager_InsertInstance(CFXJSE_Arguments* pArguments);
-
   void Script_Occur_Max(CFXJSE_Value* pValue,
                         bool bSetting,
                         XFA_ATTRIBUTE eAttribute);
@@ -429,34 +444,53 @@ class CXFA_Node : public CXFA_Object {
                                bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
 
-  void ThrowMissingPropertyException(const WideString& obj,
-                                     const WideString& prop) const;
-  void ThrowTooManyOccurancesException(const WideString& obj) const;
-
  private:
-  friend class CXFA_Document;
+  bool SetValue(XFA_ATTRIBUTE eAttr,
+                XFA_ATTRIBUTETYPE eType,
+                void* pValue,
+                bool bNotify);
+  bool GetValue(XFA_ATTRIBUTE eAttr,
+                XFA_ATTRIBUTETYPE eType,
+                bool bUseDefault,
+                void*& pValue);
 
-  CXFA_Node(CXFA_Document* pDoc,
-            uint16_t ePacket,
-            XFA_ObjectType oType,
-            XFA_Element eType,
-            const WideStringView& elementName);
+  bool TryUserData(void* pKey, void*& pData, bool bProtoAlso = false);
 
-  bool HasFlag(XFA_NodeFlag dwFlag) const;
-  CXFA_Node* Deprecated_GetPrevSibling();
+  bool SetScriptContent(const WideString& wsContent,
+                        const WideString& wsXMLValue,
+                        bool bNotify = true,
+                        bool bScriptModify = false,
+                        bool bSyncData = true);
+  WideString GetScriptContent(bool bScriptModify = false);
 
-  void OnRemoved(bool bNotify);
+  XFA_MAPMODULEDATA* CreateMapModuleData();
+  XFA_MAPMODULEDATA* GetMapModuleData() const;
+  void SetMapModuleValue(void* pKey, void* pValue);
+  bool GetMapModuleValue(void* pKey, void*& pValue);
+  void SetMapModuleString(void* pKey, const WideStringView& wsValue);
+  bool GetMapModuleString(void* pKey, WideStringView& wsValue);
+  void SetMapModuleBuffer(
+      void* pKey,
+      void* pValue,
+      int32_t iBytes,
+      XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
+  bool GetMapModuleBuffer(void* pKey,
+                          void*& pValue,
+                          int32_t& iBytes,
+                          bool bProtoAlso = true) const;
+  bool HasMapModuleKey(void* pKey, bool bProtoAlso = false);
+  void RemoveMapModuleKey(void* pKey = nullptr);
+  void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
+  void MoveBufferMapData(CXFA_Node* pSrcModule,
+                         CXFA_Node* pDstModule,
+                         void* pKey,
+                         bool bRecursive = false);
 
-  CXFA_Node* m_pNext;
-  CXFA_Node* m_pChild;
-  CXFA_Node* m_pLastChild;
-  CXFA_Node* m_pParent;
-  CFX_XMLNode* m_pXMLNode;
-  uint16_t m_ePacket;
-  uint16_t m_uNodeFlags;
-  uint32_t m_dwNameHash;
-  CXFA_Node* m_pAuxNode;
-  CJX_Node m_JSNode;
+  int32_t execSingleEventByName(const WideStringView& wsEventName,
+                                XFA_Element eType);
+
+  UnownedPtr<CXFA_Node> node_;
+  XFA_MAPMODULEDATA* map_module_data_;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_NODE_H_
+#endif  // FXJS_CJX_NODE_H_

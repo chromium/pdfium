@@ -343,13 +343,14 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
       CXFA_Node* pInstanceManager =
           curNode->AsNode()->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
-        pProp = pInstanceManager->GetProperty(0, XFA_Element::Occur, true);
+        pProp = pInstanceManager->JSNode()->GetProperty(0, XFA_Element::Occur,
+                                                        true);
       }
     } else {
       XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringView());
       if (eType != XFA_Element::Unknown) {
-        pProp = curNode->AsNode()->GetProperty(0, eType,
-                                               eType != XFA_Element::PageSet);
+        pProp = curNode->AsNode()->JSNode()->GetProperty(
+            0, eType, eType != XFA_Element::PageSet);
       }
     }
     if (pProp) {

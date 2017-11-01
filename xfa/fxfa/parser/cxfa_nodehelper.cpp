@@ -256,7 +256,7 @@ void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
                   GetIndex(refNode, eLogicType, bIsProperty, true));
     return;
   }
-  ws = refNode->GetCData(XFA_ATTRIBUTE_Name);
+  ws = refNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
   ws.Replace(L".", L"\\.");
   wsName.Format(L"%s[%d]", ws.c_str(),
                 GetIndex(refNode, eLogicType, bIsProperty, false));
@@ -357,7 +357,8 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
     for (int32_t iIndex = 0; iIndex < m_iCreateCount; iIndex++) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eClassType);
       if (pNewNode) {
-        pNewNode->SetAttribute(XFA_ATTRIBUTE_Name, wsName.AsStringView());
+        pNewNode->JSNode()->SetAttribute(XFA_ATTRIBUTE_Name,
+                                         wsName.AsStringView());
         pNewNode->CreateXMLMappingNode();
         m_pCreateParent->InsertChild(pNewNode);
         if (iIndex == m_iCreateCount - 1) {

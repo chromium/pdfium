@@ -349,7 +349,7 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
       CXFA_Node* pPropOrChild = nullptr;
       XFA_Element eType = XFA_GetElementTypeForName(wsPropName.AsStringView());
       if (eType != XFA_Element::Unknown)
-        pPropOrChild = pNode->GetProperty(0, eType);
+        pPropOrChild = pNode->JSNode()->GetProperty(0, eType);
       else
         pPropOrChild = pNode->GetFirstChildByName(wsPropName.AsStringView());
 
@@ -483,7 +483,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
     return false;
 
   WideStringView wsScript;
-  if (!pTextNode->TryCData(XFA_ATTRIBUTE_Value, wsScript))
+  if (!pTextNode->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsScript))
     return false;
 
   ByteString btScript = FX_UTF8Encode(wsScript);

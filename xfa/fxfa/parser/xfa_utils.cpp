@@ -221,7 +221,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
     CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pFirstChild &&
         pFirstChild->GetElementType() == XFA_Element::ChoiceList) {
-      bRet = pFirstChild->GetEnum(XFA_ATTRIBUTE_Open) ==
+      bRet = pFirstChild->JSNode()->GetEnum(XFA_ATTRIBUTE_Open) ==
              XFA_ATTRIBUTEENUM_MultiSelect;
     }
   }

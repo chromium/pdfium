@@ -91,8 +91,9 @@ void SaveAttribute(CXFA_Node* pNode,
                    bool bProto,
                    WideString& wsOutput) {
   WideString wsValue;
-  if ((!bProto && !pNode->HasAttribute((XFA_ATTRIBUTE)eName, bProto)) ||
-      !pNode->GetAttribute((XFA_ATTRIBUTE)eName, wsValue, false)) {
+  if ((!bProto &&
+       !pNode->JSNode()->HasAttribute((XFA_ATTRIBUTE)eName, bProto)) ||
+      !pNode->JSNode()->GetAttribute((XFA_ATTRIBUTE)eName, wsValue, false)) {
     return;
   }
   wsValue = ExportEncodeAttribute(wsValue);
@@ -122,7 +123,7 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_ATTRIBUTE eAttribute) {
 
 bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   WideString wsContent;
-  if (!pContentNode->TryContent(wsContent, false, false))
+  if (!pContentNode->JSNode()->TryContent(wsContent, false, false))
     return false;
 
   ASSERT(pContentNode->IsContentNode());
@@ -150,7 +151,7 @@ void RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot,
     return;
 
   WideString wsTemplateNS;
-  if (!pTemplateRoot->TryNamespace(wsTemplateNS))
+  if (!pTemplateRoot->JSNode()->TryNamespace(wsTemplateNS))
     return;
 
   XFA_VERSION eVersion =
@@ -197,7 +198,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         break;
 
       WideString wsContentType;
-      pNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, false);
+      pNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
+                                    false);
       if (pRawValueNode->GetElementType() == XFA_Element::SharpxHTML &&
           wsContentType == L"text/html") {
         CFX_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
@@ -220,7 +222,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  wsContentType == L"text/xml") {
         WideString wsRawValue;
-        pRawValueNode->GetAttribute(XFA_ATTRIBUTE_Value, wsRawValue, false);
+        pRawValueNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_Value, wsRawValue,
+                                              false);
         if (wsRawValue.IsEmpty())
           break;
 
@@ -242,7 +245,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
             pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
         ASSERT(pGrandparentNode);
         WideString bodyTagName;
-        bodyTagName = pGrandparentNode->GetCData(XFA_ATTRIBUTE_Name);
+        bodyTagName = pGrandparentNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
         if (bodyTagName.IsEmpty())
           bodyTagName = L"ListBox1";
 
@@ -261,7 +264,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         wsChildren += buf.AsStringView();
         buf.Clear();
       } else {
-        WideStringView wsValue = pRawValueNode->GetCData(XFA_ATTRIBUTE_Value);
+        WideStringView wsValue =
+            pRawValueNode->JSNode()->GetCData(XFA_ATTRIBUTE_Value);
         wsChildren += ExportEncodeContent(wsValue);
       }
       break;
@@ -269,7 +273,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     case XFA_ObjectType::TextNode:
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::NodeV: {
-      WideStringView wsValue = pNode->GetCData(XFA_ATTRIBUTE_Value);
+      WideStringView wsValue = pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Value);
       wsChildren += ExportEncodeContent(wsValue);
       break;
     }
@@ -306,7 +310,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
   }
 
   if (!wsChildren.IsEmpty() || !wsAttrs.IsEmpty() ||
-      pNode->HasAttribute(XFA_ATTRIBUTE_Name)) {
+      pNode->JSNode()->HasAttribute(XFA_ATTRIBUTE_Name)) {
     WideStringView wsElement = pNode->GetClassName();
     WideString wsName;
     SaveAttribute(pNode, XFA_ATTRIBUTE_Name, L"name", true, wsName);

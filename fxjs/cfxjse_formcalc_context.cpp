@@ -5880,7 +5880,7 @@ int32_t CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
       if (bHasNoResolveName) {
         WideString wsName;
         if (CXFA_Node* pXFANode = pNode->AsNode())
-          pXFANode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
+          pXFANode->JSNode()->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
         if (wsName.IsEmpty())
           wsName = L"#" + pNode->GetClassName();
 

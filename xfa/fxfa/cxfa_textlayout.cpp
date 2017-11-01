@@ -241,7 +241,7 @@ int32_t CXFA_TextLayout::GetText(WideString& wsText) {
   GetTextDataNode();
   wsText.clear();
   if (!m_bRichText)
-    wsText = m_pTextDataNode->GetContent();
+    wsText = m_pTextDataNode->JSNode()->GetContent();
   return wsText.GetLength();
 }
 
@@ -676,7 +676,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
     }
   }
 
-  WideString wsText = pNode->GetContent();
+  WideString wsText = pNode->JSNode()->GetContent();
   wsText.TrimRight(L" ");
   bool bRet = AppendChar(wsText, fLinePos, fSpaceAbove, bSavePieces);
   if (bRet && m_pLoader)

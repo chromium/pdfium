@@ -43,8 +43,8 @@ CXFA_NodeLocale::CXFA_NodeLocale(CXFA_Node* pLocale) : m_pLocale(pLocale) {}
 CXFA_NodeLocale::~CXFA_NodeLocale() {}
 
 WideString CXFA_NodeLocale::GetName() const {
-  return WideString(m_pLocale ? m_pLocale->GetCData(XFA_ATTRIBUTE_Name)
-                              : nullptr);
+  return WideString(
+      m_pLocale ? m_pLocale->JSNode()->GetCData(XFA_ATTRIBUTE_Name) : nullptr);
 }
 
 WideString CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const {
@@ -71,7 +71,7 @@ WideString CXFA_NodeLocale::GetDateTimeSymbols() const {
   CXFA_Node* pSymbols =
       m_pLocale ? m_pLocale->GetChild(0, XFA_Element::DateTimeSymbols)
                 : nullptr;
-  return pSymbols ? pSymbols->GetContent() : WideString();
+  return pSymbols ? pSymbols->JSNode()->GetContent() : WideString();
 }
 
 WideString CXFA_NodeLocale::GetMonthName(int32_t nMonth, bool bAbbr) const {
@@ -136,7 +136,7 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
       pParent ? pParent->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr;
   while (pChild) {
     WideString wsChild;
-    if (pChild->GetAttribute(XFA_ATTRIBUTE_Name, wsChild)) {
+    if (pChild->JSNode()->GetAttribute(XFA_ATTRIBUTE_Name, wsChild)) {
       if (wsChild == wsName)
         return pChild;
     }
@@ -149,7 +149,7 @@ WideString CXFA_NodeLocale::GetSymbol(XFA_Element eElement,
                                       const WideStringView& symbol_type) const {
   CXFA_Node* pSymbols = m_pLocale ? m_pLocale->GetChild(0, eElement) : nullptr;
   CXFA_Node* pSymbol = GetNodeByName(pSymbols, symbol_type);
-  return pSymbol ? pSymbol->GetContent() : WideString();
+  return pSymbol ? pSymbol->JSNode()->GetContent() : WideString();
 }
 
 WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
@@ -163,9 +163,9 @@ WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
 
   CXFA_Node* pNode = pCalendar->GetFirstChildByClass(eElement);
   for (; pNode; pNode = pNode->GetNextSameClassSibling(eElement)) {
-    if (pNode->GetBoolean(XFA_ATTRIBUTE_Abbr) == bAbbr) {
+    if (pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_Abbr) == bAbbr) {
       CXFA_Node* pSymbol = pNode->GetChild(index, XFA_Element::Unknown);
-      return pSymbol ? pSymbol->GetContent() : WideString();
+      return pSymbol ? pSymbol->JSNode()->GetContent() : WideString();
     }
   }
   return WideString();

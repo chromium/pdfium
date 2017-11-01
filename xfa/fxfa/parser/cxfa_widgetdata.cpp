@@ -69,7 +69,8 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
 
   eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
-  CXFA_Value defValue(pNode->GetProperty(0, XFA_Element::Value, true));
+  CXFA_Value defValue(
+      pNode->JSNode()->GetProperty(0, XFA_Element::Value, true));
   XFA_Element eValueType = defValue.GetChildValueClassID();
   switch (eValueType) {
     case XFA_Element::Boolean:
@@ -105,7 +106,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   }
 
   CXFA_Node* pUIChild = nullptr;
-  CXFA_Node* pUI = pNode->GetProperty(0, XFA_Element::Ui, true);
+  CXFA_Node* pUI = pNode->JSNode()->GetProperty(0, XFA_Element::Ui, true);
   CXFA_Node* pChild = pUI->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     XFA_Element eChildType = pChild->GetElementType();
@@ -150,9 +151,9 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   if (!pUIChild) {
     if (eUIType == XFA_Element::Unknown) {
       eUIType = XFA_Element::TextEdit;
-      defValue.GetNode()->GetProperty(0, XFA_Element::Text, true);
+      defValue.GetNode()->JSNode()->GetProperty(0, XFA_Element::Text, true);
     }
-    return pUI->GetProperty(0, eUIType, true);
+    return pUI->JSNode()->GetProperty(0, eUIType, true);
   }
 
   if (eUIType != XFA_Element::Unknown)
@@ -177,7 +178,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
       eValueType = XFA_Element::Float;
       break;
     case XFA_Element::ChoiceList: {
-      eValueType = (pUIChild->GetEnum(XFA_ATTRIBUTE_Open) ==
+      eValueType = (pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_Open) ==
                     XFA_ATTRIBUTEENUM_MultiSelect)
                        ? XFA_Element::ExData
                        : XFA_Element::Text;
@@ -192,7 +193,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
       eValueType = XFA_Element::Text;
       break;
   }
-  defValue.GetNode()->GetProperty(0, eValueType, true);
+  defValue.GetNode()->JSNode()->GetProperty(0, eValueType, true);
 
   return pUIChild;
 }
@@ -252,13 +253,13 @@ XFA_Element CXFA_WidgetData::GetUIType() {
 }
 
 WideString CXFA_WidgetData::GetRawValue() {
-  return m_pNode->GetContent();
+  return m_pNode->JSNode()->GetContent();
 }
 
 int32_t CXFA_WidgetData::GetAccess() {
   CXFA_Node* pNode = m_pNode;
   while (pNode) {
-    int32_t iAcc = pNode->GetEnum(XFA_ATTRIBUTE_Access);
+    int32_t iAcc = pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Access);
     if (iAcc != XFA_ATTRIBUTEENUM_Open)
       return iAcc;
 
@@ -270,7 +271,7 @@ int32_t CXFA_WidgetData::GetAccess() {
 
 int32_t CXFA_WidgetData::GetRotate() {
   CXFA_Measurement ms;
-  if (!m_pNode->TryMeasure(XFA_ATTRIBUTE_Rotate, ms, false))
+  if (!m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_Rotate, ms, false))
     return 0;
 
   int32_t iRotate = FXSYS_round(ms.GetValue());
@@ -279,23 +280,27 @@ int32_t CXFA_WidgetData::GetRotate() {
 }
 
 CXFA_Border CXFA_WidgetData::GetBorder(bool bModified) {
-  return CXFA_Border(m_pNode->GetProperty(0, XFA_Element::Border, bModified));
+  return CXFA_Border(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Border, bModified));
 }
 
 CXFA_Caption CXFA_WidgetData::GetCaption() {
-  return CXFA_Caption(m_pNode->GetProperty(0, XFA_Element::Caption, false));
+  return CXFA_Caption(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Caption, false));
 }
 
 CXFA_Font CXFA_WidgetData::GetFont(bool bModified) {
-  return CXFA_Font(m_pNode->GetProperty(0, XFA_Element::Font, bModified));
+  return CXFA_Font(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Font, bModified));
 }
 
 CXFA_Margin CXFA_WidgetData::GetMargin() {
-  return CXFA_Margin(m_pNode->GetProperty(0, XFA_Element::Margin, false));
+  return CXFA_Margin(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Margin, false));
 }
 
 CXFA_Para CXFA_WidgetData::GetPara() {
-  return CXFA_Para(m_pNode->GetProperty(0, XFA_Element::Para, false));
+  return CXFA_Para(m_pNode->JSNode()->GetProperty(0, XFA_Element::Para, false));
 }
 
 std::vector<CXFA_Node*> CXFA_WidgetData::GetEventList() {
@@ -329,28 +334,32 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
 CXFA_Value CXFA_WidgetData::GetDefaultValue() {
   CXFA_Node* pTemNode = m_pNode->GetTemplateNode();
   return CXFA_Value(
-      pTemNode ? pTemNode->GetProperty(0, XFA_Element::Value, false) : nullptr);
+      pTemNode ? pTemNode->JSNode()->GetProperty(0, XFA_Element::Value, false)
+               : nullptr);
 }
 
 CXFA_Value CXFA_WidgetData::GetFormValue() {
-  return CXFA_Value(m_pNode->GetProperty(0, XFA_Element::Value, false));
+  return CXFA_Value(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Value, false));
 }
 
 CXFA_Calculate CXFA_WidgetData::GetCalculate() {
-  return CXFA_Calculate(m_pNode->GetProperty(0, XFA_Element::Calculate, false));
+  return CXFA_Calculate(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Calculate, false));
 }
 
 CXFA_Validate CXFA_WidgetData::GetValidate(bool bModified) {
   return CXFA_Validate(
-      m_pNode->GetProperty(0, XFA_Element::Validate, bModified));
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Validate, bModified));
 }
 
 CXFA_Bind CXFA_WidgetData::GetBind() {
-  return CXFA_Bind(m_pNode->GetProperty(0, XFA_Element::Bind, false));
+  return CXFA_Bind(m_pNode->JSNode()->GetProperty(0, XFA_Element::Bind, false));
 }
 
 CXFA_Assist CXFA_WidgetData::GetAssist() {
-  return CXFA_Assist(m_pNode->GetProperty(0, XFA_Element::Assist, false));
+  return CXFA_Assist(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Assist, false));
 }
 
 bool CXFA_WidgetData::GetWidth(float& fWidth) {
@@ -379,15 +388,15 @@ bool CXFA_WidgetData::GetMaxHeight(float& fMaxHeight) {
 
 CXFA_Border CXFA_WidgetData::GetUIBorder() {
   CXFA_Node* pUIChild = GetUIChild();
-  return CXFA_Border(pUIChild
-                         ? pUIChild->GetProperty(0, XFA_Element::Border, false)
-                         : nullptr);
+  return CXFA_Border(
+      pUIChild ? pUIChild->JSNode()->GetProperty(0, XFA_Element::Border, false)
+               : nullptr);
 }
 
 CFX_RectF CXFA_WidgetData::GetUIMargin() {
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_Margin mgUI = CXFA_Margin(
-      pUIChild ? pUIChild->GetProperty(0, XFA_Element::Margin, false)
+      pUIChild ? pUIChild->JSNode()->GetProperty(0, XFA_Element::Margin, false)
                : nullptr);
 
   if (!mgUI)
@@ -425,7 +434,7 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
 int32_t CXFA_WidgetData::GetButtonHighlight() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetEnum(XFA_ATTRIBUTE_Highlight);
+    return pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_Highlight);
   return GetAttributeDefaultValue_Enum(
       XFA_Element::Button, XFA_ATTRIBUTE_Highlight, XFA_XDPPACKET_Form);
 }
@@ -436,9 +445,9 @@ bool CXFA_WidgetData::GetButtonRollover(WideString& wsRollover,
     CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pText) {
       WideStringView wsName;
-      pText->TryCData(XFA_ATTRIBUTE_Name, wsName);
+      pText->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
       if (wsName == L"rollover") {
-        pText->TryContent(wsRollover);
+        pText->JSNode()->TryContent(wsRollover);
         bRichText = pText->GetElementType() == XFA_Element::ExData;
         return !wsRollover.IsEmpty();
       }
@@ -453,9 +462,9 @@ bool CXFA_WidgetData::GetButtonDown(WideString& wsDown, bool& bRichText) {
     CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pText) {
       WideStringView wsName;
-      pText->TryCData(XFA_ATTRIBUTE_Name, wsName);
+      pText->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
       if (wsName == L"down") {
-        pText->TryContent(wsDown);
+        pText->JSNode()->TryContent(wsDown);
         bRichText = pText->GetElementType() == XFA_Element::ExData;
         return !wsDown.IsEmpty();
       }
@@ -468,7 +477,7 @@ bool CXFA_WidgetData::GetButtonDown(WideString& wsDown, bool& bRichText) {
 int32_t CXFA_WidgetData::GetCheckButtonShape() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetEnum(XFA_ATTRIBUTE_Shape);
+    return pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_Shape);
   return GetAttributeDefaultValue_Enum(XFA_Element::CheckButton,
                                        XFA_ATTRIBUTE_Shape, XFA_XDPPACKET_Form);
 }
@@ -476,7 +485,7 @@ int32_t CXFA_WidgetData::GetCheckButtonShape() {
 int32_t CXFA_WidgetData::GetCheckButtonMark() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetEnum(XFA_ATTRIBUTE_Mark);
+    return pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_Mark);
   return GetAttributeDefaultValue_Enum(XFA_Element::CheckButton,
                                        XFA_ATTRIBUTE_Mark, XFA_XDPPACKET_Form);
 }
@@ -490,7 +499,9 @@ bool CXFA_WidgetData::IsRadioButton() {
 float CXFA_WidgetData::GetCheckButtonSize() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetMeasure(XFA_ATTRIBUTE_Size).ToUnit(XFA_UNIT_Pt);
+    return pUIChild->JSNode()
+        ->GetMeasure(XFA_ATTRIBUTE_Size)
+        .ToUnit(XFA_UNIT_Pt);
   return XFA_GetAttributeDefaultValue_Measure(
              XFA_Element::CheckButton, XFA_ATTRIBUTE_Size, XFA_XDPPACKET_Form)
       .ToUnit(XFA_UNIT_Pt);
@@ -499,7 +510,7 @@ float CXFA_WidgetData::GetCheckButtonSize() {
 bool CXFA_WidgetData::IsAllowNeutral() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetBoolean(XFA_ATTRIBUTE_AllowNeutral);
+    return pUIChild->JSNode()->GetBoolean(XFA_ATTRIBUTE_AllowNeutral);
   return GetAttributeDefaultValue_Boolean(
       XFA_Element::CheckButton, XFA_ATTRIBUTE_AllowNeutral, XFA_XDPPACKET_Form);
 }
@@ -514,7 +525,7 @@ XFA_CHECKSTATE CXFA_WidgetData::GetCheckState() {
     int32_t i = 0;
     while (pText) {
       WideString wsContent;
-      if (pText->TryContent(wsContent) && (wsContent == wsValue))
+      if (pText->JSNode()->TryContent(wsContent) && (wsContent == wsValue))
         return (XFA_CHECKSTATE)i;
 
       i++;
@@ -532,7 +543,7 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       if (CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items)) {
         CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
         if (pText)
-          pText->TryContent(wsValue);
+          pText->JSNode()->TryContent(wsValue);
       }
     }
     CXFA_Node* pChild =
@@ -549,12 +560,12 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       if (!pItemchild)
         continue;
 
-      WideString text = pItemchild->GetContent();
+      WideString text = pItemchild->JSNode()->GetContent();
       WideString wsChildValue = text;
       if (wsValue != text) {
         pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
         if (pItemchild)
-          wsChildValue = pItemchild->GetContent();
+          wsChildValue = pItemchild->JSNode()->GetContent();
         else
           wsChildValue.clear();
       }
@@ -573,7 +584,7 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
     while (pText) {
       i++;
       if (i == eCheckState) {
-        pText->TryContent(wsContent);
+        pText->JSNode()->TryContent(wsContent);
         break;
       }
       pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling);
@@ -638,22 +649,22 @@ void CXFA_WidgetData::SetSelectedMemberByValue(const WideStringView& wsValue,
     if (!pItemchild)
       continue;
 
-    WideString wsChildValue = pItemchild->GetContent();
+    WideString wsChildValue = pItemchild->JSNode()->GetContent();
     if (wsValue != wsChildValue) {
       pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
       if (pItemchild)
-        wsChildValue = pItemchild->GetContent();
+        wsChildValue = pItemchild->JSNode()->GetContent();
       else
         wsChildValue.clear();
     } else {
       wsExclGroup = wsValue;
     }
-    pNode->SetContent(wsChildValue, wsChildValue, bNotify, bScriptModify,
-                      false);
+    pNode->JSNode()->SetContent(wsChildValue, wsChildValue, bNotify,
+                                bScriptModify, false);
   }
   if (m_pNode) {
-    m_pNode->SetContent(wsExclGroup, wsExclGroup, bNotify, bScriptModify,
-                        bSyncData);
+    m_pNode->JSNode()->SetContent(wsExclGroup, wsExclGroup, bNotify,
+                                  bScriptModify, bSyncData);
   }
 }
 
@@ -688,7 +699,7 @@ CXFA_Node* CXFA_WidgetData::GetExclGroupNextMember(CXFA_Node* pNode) {
 int32_t CXFA_WidgetData::GetChoiceListCommitOn() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetEnum(XFA_ATTRIBUTE_CommitOn);
+    return pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_CommitOn);
   return GetAttributeDefaultValue_Enum(
       XFA_Element::ChoiceList, XFA_ATTRIBUTE_CommitOn, XFA_XDPPACKET_Form);
 }
@@ -696,7 +707,7 @@ int32_t CXFA_WidgetData::GetChoiceListCommitOn() {
 bool CXFA_WidgetData::IsChoiceListAllowTextEntry() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetBoolean(XFA_ATTRIBUTE_TextEntry);
+    return pUIChild->JSNode()->GetBoolean(XFA_ATTRIBUTE_TextEntry);
   return GetAttributeDefaultValue_Boolean(
       XFA_Element::ChoiceList, XFA_ATTRIBUTE_TextEntry, XFA_XDPPACKET_Form);
 }
@@ -704,7 +715,7 @@ bool CXFA_WidgetData::IsChoiceListAllowTextEntry() {
 int32_t CXFA_WidgetData::GetChoiceListOpen() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetEnum(XFA_ATTRIBUTE_Open);
+    return pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_Open);
   return GetAttributeDefaultValue_Enum(XFA_Element::ChoiceList,
                                        XFA_ATTRIBUTE_Open, XFA_XDPPACKET_Form);
 }
@@ -732,8 +743,8 @@ int32_t CXFA_WidgetData::CountChoiceListItems(bool bSaveValue) {
 
   CXFA_Node* pItem = pItems[0];
   if (iCount > 1) {
-    bool bItemOneHasSave = pItems[0]->GetBoolean(XFA_ATTRIBUTE_Save);
-    bool bItemTwoHasSave = pItems[1]->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bItemOneHasSave = pItems[0]->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bItemTwoHasSave = pItems[1]->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
     if (bItemOneHasSave != bItemTwoHasSave && bSaveValue == bItemTwoHasSave)
       pItem = pItems[1];
   }
@@ -761,15 +772,17 @@ bool CXFA_WidgetData::GetChoiceListItem(WideString& wsText,
 
   pItems = pItemsArray[0];
   if (iCount > 1) {
-    bool bItemOneHasSave = pItemsArray[0]->GetBoolean(XFA_ATTRIBUTE_Save);
-    bool bItemTwoHasSave = pItemsArray[1]->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bItemOneHasSave =
+        pItemsArray[0]->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bItemTwoHasSave =
+        pItemsArray[1]->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
     if (bItemOneHasSave != bItemTwoHasSave && bSaveValue == bItemTwoHasSave)
       pItems = pItemsArray[1];
   }
   if (pItems) {
     CXFA_Node* pItem = pItems->GetChild(nIndex, XFA_Element::Unknown);
     if (pItem) {
-      pItem->TryContent(wsText);
+      pItem->JSNode()->TryContent(wsText);
       return true;
     }
   }
@@ -789,8 +802,8 @@ std::vector<WideString> CXFA_WidgetData::GetChoiceListItems(bool bSaveValue) {
 
   CXFA_Node* pItem = items.front();
   if (items.size() > 1) {
-    bool bItemOneHasSave = items[0]->GetBoolean(XFA_ATTRIBUTE_Save);
-    bool bItemTwoHasSave = items[1]->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bItemOneHasSave = items[0]->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bItemTwoHasSave = items[1]->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
     if (bItemOneHasSave != bItemTwoHasSave && bSaveValue == bItemTwoHasSave)
       pItem = items[1];
   }
@@ -799,7 +812,7 @@ std::vector<WideString> CXFA_WidgetData::GetChoiceListItems(bool bSaveValue) {
   for (CXFA_Node* pNode = pItem->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     wsTextArray.emplace_back();
-    pNode->TryContent(wsTextArray.back());
+    pNode->JSNode()->TryContent(wsTextArray.back());
   }
   return wsTextArray;
 }
@@ -897,8 +910,8 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
           wsValue += L"\n";
         }
         wsValue += wsSaveTextArray[nIndex];
-        m_pNode->SetContent(wsValue, wsValue, bNotify, bScriptModify,
-                            bSyncData);
+        m_pNode->JSNode()->SetContent(wsValue, wsValue, bNotify, bScriptModify,
+                                      bSyncData);
       }
     } else if (iSel >= 0) {
       std::vector<int32_t> iSelArray = GetSelectedItems();
@@ -913,12 +926,12 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
         WideString wsSaveText = wsSaveTextArray[nIndex];
         WideString wsFormatText(wsSaveText);
         GetFormatDataValue(wsSaveText, wsFormatText);
-        m_pNode->SetContent(wsSaveText, wsFormatText, bNotify, bScriptModify,
-                            bSyncData);
+        m_pNode->JSNode()->SetContent(wsSaveText, wsFormatText, bNotify,
+                                      bScriptModify, bSyncData);
       }
     } else if (iSel >= 0) {
-      m_pNode->SetContent(WideString(), WideString(), bNotify, bScriptModify,
-                          bSyncData);
+      m_pNode->JSNode()->SetContent(WideString(), WideString(), bNotify,
+                                    bScriptModify, bSyncData);
     }
   }
 }
@@ -942,7 +955,8 @@ void CXFA_WidgetData::SetSelectedItems(const std::vector<int32_t>& iSelArray,
   if (GetChoiceListOpen() != XFA_ATTRIBUTEENUM_MultiSelect)
     GetFormatDataValue(wsValue, wsFormat);
 
-  m_pNode->SetContent(wsValue, wsFormat, bNotify, bScriptModify, bSyncData);
+  m_pNode->JSNode()->SetContent(wsValue, wsFormat, bNotify, bScriptModify,
+                                bSyncData);
 }
 
 void CXFA_WidgetData::ClearAllSelections() {
@@ -976,12 +990,12 @@ void CXFA_WidgetData::InsertItem(const WideString& wsLabel,
     InsertListTextItem(pItems, wsLabel, nIndex);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_Element::Items);
     m_pNode->InsertChild(-1, pSaveItems);
-    pSaveItems->SetBoolean(XFA_ATTRIBUTE_Save, true);
+    pSaveItems->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, true);
     InsertListTextItem(pSaveItems, wsNewValue, nIndex);
   } else if (listitems.size() > 1) {
     for (int32_t i = 0; i < 2; i++) {
       CXFA_Node* pNode = listitems[i];
-      bool bHasSave = pNode->GetBoolean(XFA_ATTRIBUTE_Save);
+      bool bHasSave = pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
       if (bHasSave)
         InsertListTextItem(pNode, wsNewValue, nIndex);
       else
@@ -989,17 +1003,18 @@ void CXFA_WidgetData::InsertItem(const WideString& wsLabel,
     }
   } else {
     CXFA_Node* pNode = listitems[0];
-    pNode->SetBoolean(XFA_ATTRIBUTE_Save, false);
-    pNode->SetEnum(XFA_ATTRIBUTE_Presence, XFA_ATTRIBUTEENUM_Visible);
+    pNode->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, false);
+    pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_Presence, XFA_ATTRIBUTEENUM_Visible);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_Element::Items);
     m_pNode->InsertChild(-1, pSaveItems);
-    pSaveItems->SetBoolean(XFA_ATTRIBUTE_Save, true);
-    pSaveItems->SetEnum(XFA_ATTRIBUTE_Presence, XFA_ATTRIBUTEENUM_Hidden);
+    pSaveItems->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, true);
+    pSaveItems->JSNode()->SetEnum(XFA_ATTRIBUTE_Presence,
+                                  XFA_ATTRIBUTEENUM_Hidden);
     CXFA_Node* pListNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     int32_t i = 0;
     while (pListNode) {
       WideString wsOldValue;
-      pListNode->TryContent(wsOldValue);
+      pListNode->JSNode()->TryContent(wsOldValue);
       InsertListTextItem(pSaveItems, wsOldValue, i);
       i++;
       pListNode = pListNode->GetNodeItem(XFA_NODEITEM_NextSibling);
@@ -1029,7 +1044,7 @@ void CXFA_WidgetData::GetItemLabel(const WideStringView& wsValue,
     wsLabel = wsValue;
   } else {
     CXFA_Node* pLabelItems = listitems[0];
-    bool bSave = pLabelItems->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bSave = pLabelItems->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
     CXFA_Node* pSaveItems = nullptr;
     if (bSave) {
       pSaveItems = pLabelItems;
@@ -1043,7 +1058,7 @@ void CXFA_WidgetData::GetItemLabel(const WideStringView& wsValue,
     CXFA_Node* pChildItem = pSaveItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     for (; pChildItem;
          pChildItem = pChildItem->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      pChildItem->TryContent(wsContent);
+      pChildItem->JSNode()->TryContent(wsContent);
       if (wsContent == wsValue) {
         iSearch = iCount;
         break;
@@ -1054,7 +1069,7 @@ void CXFA_WidgetData::GetItemLabel(const WideStringView& wsValue,
       return;
     if (CXFA_Node* pText =
             pLabelItems->GetChild(iSearch, XFA_Element::Unknown)) {
-      pText->TryContent(wsLabel);
+      pText->JSNode()->TryContent(wsLabel);
     }
   }
 }
@@ -1074,7 +1089,7 @@ void CXFA_WidgetData::GetItemValue(const WideStringView& wsLabel,
     wsValue = wsLabel;
   } else {
     CXFA_Node* pLabelItems = listitems[0];
-    bool bSave = pLabelItems->GetBoolean(XFA_ATTRIBUTE_Save);
+    bool bSave = pLabelItems->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save);
     CXFA_Node* pSaveItems = nullptr;
     if (bSave) {
       pSaveItems = pLabelItems;
@@ -1088,7 +1103,7 @@ void CXFA_WidgetData::GetItemValue(const WideStringView& wsLabel,
     CXFA_Node* pChildItem = pLabelItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     for (; pChildItem;
          pChildItem = pChildItem->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      pChildItem->TryContent(wsContent);
+      pChildItem->JSNode()->TryContent(wsContent);
       if (wsContent == wsLabel) {
         iSearch = iCount;
         break;
@@ -1098,7 +1113,7 @@ void CXFA_WidgetData::GetItemValue(const WideStringView& wsLabel,
     if (iSearch < 0)
       return;
     if (CXFA_Node* pText = pSaveItems->GetChild(iSearch, XFA_Element::Unknown))
-      pText->TryContent(wsValue);
+      pText->JSNode()->TryContent(wsValue);
   }
 }
 
@@ -1116,7 +1131,7 @@ bool CXFA_WidgetData::DeleteItem(int32_t nIndex,
         pItems->RemoveChild(pNode);
       }
     } else {
-      if (!bSetValue && pItems->GetBoolean(XFA_ATTRIBUTE_Save)) {
+      if (!bSetValue && pItems->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save)) {
         SetItemState(nIndex, false, true, bScriptModify, true);
         bSetValue = true;
       }
@@ -1140,7 +1155,7 @@ bool CXFA_WidgetData::DeleteItem(int32_t nIndex,
 int32_t CXFA_WidgetData::GetHorizontalScrollPolicy() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetEnum(XFA_ATTRIBUTE_HScrollPolicy);
+    return pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_HScrollPolicy);
   return XFA_ATTRIBUTEENUM_Auto;
 }
 
@@ -1149,20 +1164,21 @@ int32_t CXFA_WidgetData::GetNumberOfCells() {
   if (!pUIChild)
     return -1;
   if (CXFA_Node* pNode = pUIChild->GetChild(0, XFA_Element::Comb))
-    return pNode->GetInteger(XFA_ATTRIBUTE_NumberOfCells);
+    return pNode->JSNode()->GetInteger(XFA_ATTRIBUTE_NumberOfCells);
   return -1;
 }
 
 WideString CXFA_WidgetData::GetBarcodeType() {
   CXFA_Node* pUIChild = GetUIChild();
-  return pUIChild ? WideString(pUIChild->GetCData(XFA_ATTRIBUTE_Type))
+  return pUIChild ? WideString(pUIChild->JSNode()->GetCData(XFA_ATTRIBUTE_Type))
                   : WideString();
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsCharEncoding;
-  if (pUIChild->TryCData(XFA_ATTRIBUTE_CharEncoding, wsCharEncoding)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_CharEncoding,
+                                   wsCharEncoding)) {
     if (wsCharEncoding.CompareNoCase(L"UTF-16")) {
       *val = CHAR_ENCODING_UNICODE;
       return true;
@@ -1178,7 +1194,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_Checksum(bool* val) {
   CXFA_Node* pUIChild = GetUIChild();
   XFA_ATTRIBUTEENUM eChecksum;
-  if (pUIChild->TryEnum(XFA_ATTRIBUTE_Checksum, eChecksum)) {
+  if (pUIChild->JSNode()->TryEnum(XFA_ATTRIBUTE_Checksum, eChecksum)) {
     switch (eChecksum) {
       case XFA_ATTRIBUTEENUM_None:
         *val = false;
@@ -1202,7 +1218,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_Checksum(bool* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_DataLength(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsDataLength;
-  if (pUIChild->TryCData(XFA_ATTRIBUTE_DataLength, wsDataLength)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_DataLength, wsDataLength)) {
     *val = FXSYS_wtoi(wsDataLength.c_str());
     return true;
   }
@@ -1212,7 +1228,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_DataLength(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideStringView wsStartEndChar;
-  if (pUIChild->TryCData(XFA_ATTRIBUTE_StartChar, wsStartEndChar)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_StartChar, wsStartEndChar)) {
     if (wsStartEndChar.GetLength()) {
       *val = static_cast<char>(wsStartEndChar[0]);
       return true;
@@ -1224,7 +1240,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_EndChar(char* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideStringView wsStartEndChar;
-  if (pUIChild->TryCData(XFA_ATTRIBUTE_EndChar, wsStartEndChar)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_EndChar, wsStartEndChar)) {
     if (wsStartEndChar.GetLength()) {
       *val = static_cast<char>(wsStartEndChar[0]);
       return true;
@@ -1236,7 +1252,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_EndChar(char* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_ECLevel(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsECLevel;
-  if (pUIChild->TryCData(XFA_ATTRIBUTE_ErrorCorrectionLevel, wsECLevel)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_ErrorCorrectionLevel,
+                                   wsECLevel)) {
     *val = FXSYS_wtoi(wsECLevel.c_str());
     return true;
   }
@@ -1246,7 +1263,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ECLevel(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_ModuleWidth(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_Measurement mModuleWidthHeight;
-  if (pUIChild->TryMeasure(XFA_ATTRIBUTE_ModuleWidth, mModuleWidthHeight)) {
+  if (pUIChild->JSNode()->TryMeasure(XFA_ATTRIBUTE_ModuleWidth,
+                                     mModuleWidthHeight)) {
     *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_UNIT_Pt));
     return true;
   }
@@ -1256,7 +1274,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ModuleWidth(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_ModuleHeight(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_Measurement mModuleWidthHeight;
-  if (pUIChild->TryMeasure(XFA_ATTRIBUTE_ModuleHeight, mModuleWidthHeight)) {
+  if (pUIChild->JSNode()->TryMeasure(XFA_ATTRIBUTE_ModuleHeight,
+                                     mModuleWidthHeight)) {
     *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_UNIT_Pt));
     return true;
   }
@@ -1266,7 +1285,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ModuleHeight(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum(bool* val) {
   CXFA_Node* pUIChild = GetUIChild();
   bool bPrintCheckDigit;
-  if (pUIChild->TryBoolean(XFA_ATTRIBUTE_PrintCheckDigit, bPrintCheckDigit)) {
+  if (pUIChild->JSNode()->TryBoolean(XFA_ATTRIBUTE_PrintCheckDigit,
+                                     bPrintCheckDigit)) {
     *val = bPrintCheckDigit;
     return true;
   }
@@ -1276,7 +1296,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum(bool* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_TextLocation(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   XFA_ATTRIBUTEENUM eTextLocation;
-  if (pUIChild->TryEnum(XFA_ATTRIBUTE_TextLocation, eTextLocation)) {
+  if (pUIChild->JSNode()->TryEnum(XFA_ATTRIBUTE_TextLocation, eTextLocation)) {
     switch (eTextLocation) {
       case XFA_ATTRIBUTEENUM_None:
         *val = BC_TEXT_LOC_NONE;
@@ -1303,7 +1323,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_TextLocation(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_Truncate(bool* val) {
   CXFA_Node* pUIChild = GetUIChild();
   bool bTruncate;
-  if (!pUIChild->TryBoolean(XFA_ATTRIBUTE_Truncate, bTruncate))
+  if (!pUIChild->JSNode()->TryBoolean(XFA_ATTRIBUTE_Truncate, bTruncate))
     return false;
 
   *val = bTruncate;
@@ -1313,7 +1333,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_Truncate(bool* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsWideNarrowRatio;
-  if (pUIChild->TryCData(XFA_ATTRIBUTE_WideNarrowRatio, wsWideNarrowRatio)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_WideNarrowRatio,
+                                   wsWideNarrowRatio)) {
     auto ptPos = wsWideNarrowRatio.Find(':');
     float fRatio = 0;
     if (!ptPos.has_value()) {
@@ -1337,7 +1358,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float* val) {
 void CXFA_WidgetData::GetPasswordChar(WideString& wsPassWord) {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild) {
-    pUIChild->TryCData(XFA_ATTRIBUTE_PasswordChar, wsPassWord);
+    pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_PasswordChar, wsPassWord);
   } else {
     wsPassWord = GetAttributeDefaultValue_Cdata(XFA_Element::PasswordEdit,
                                                 XFA_ATTRIBUTE_PasswordChar,
@@ -1348,7 +1369,7 @@ void CXFA_WidgetData::GetPasswordChar(WideString& wsPassWord) {
 bool CXFA_WidgetData::IsMultiLine() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetBoolean(XFA_ATTRIBUTE_MultiLine);
+    return pUIChild->JSNode()->GetBoolean(XFA_ATTRIBUTE_MultiLine);
   return GetAttributeDefaultValue_Boolean(
       XFA_Element::TextEdit, XFA_ATTRIBUTE_MultiLine, XFA_XDPPACKET_Form);
 }
@@ -1356,7 +1377,7 @@ bool CXFA_WidgetData::IsMultiLine() {
 int32_t CXFA_WidgetData::GetVerticalScrollPolicy() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
-    return pUIChild->GetEnum(XFA_ATTRIBUTE_VScrollPolicy);
+    return pUIChild->JSNode()->GetEnum(XFA_ATTRIBUTE_VScrollPolicy);
   return GetAttributeDefaultValue_Enum(
       XFA_Element::TextEdit, XFA_ATTRIBUTE_VScrollPolicy, XFA_XDPPACKET_Form);
 }
@@ -1367,10 +1388,10 @@ int32_t CXFA_WidgetData::GetMaxChars(XFA_Element& eType) {
       switch (pChild->GetElementType()) {
         case XFA_Element::Text:
           eType = XFA_Element::Text;
-          return pChild->GetInteger(XFA_ATTRIBUTE_MaxChars);
+          return pChild->JSNode()->GetInteger(XFA_ATTRIBUTE_MaxChars);
         case XFA_Element::ExData: {
           eType = XFA_Element::ExData;
-          int32_t iMax = pChild->GetInteger(XFA_ATTRIBUTE_MaxLength);
+          int32_t iMax = pChild->JSNode()->GetInteger(XFA_ATTRIBUTE_MaxLength);
           return iMax < 0 ? 0 : iMax;
         }
         default:
@@ -1384,7 +1405,8 @@ int32_t CXFA_WidgetData::GetMaxChars(XFA_Element& eType) {
 bool CXFA_WidgetData::GetFracDigits(int32_t& iFracDigits) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value)) {
     if (CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal))
-      return pChild->TryInteger(XFA_ATTRIBUTE_FracDigits, iFracDigits);
+      return pChild->JSNode()->TryInteger(XFA_ATTRIBUTE_FracDigits,
+                                          iFracDigits);
   }
   iFracDigits = -1;
   return false;
@@ -1393,7 +1415,8 @@ bool CXFA_WidgetData::GetFracDigits(int32_t& iFracDigits) {
 bool CXFA_WidgetData::GetLeadDigits(int32_t& iLeadDigits) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value)) {
     if (CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal))
-      return pChild->TryInteger(XFA_ATTRIBUTE_LeadDigits, iLeadDigits);
+      return pChild->JSNode()->TryInteger(XFA_ATTRIBUTE_LeadDigits,
+                                          iLeadDigits);
   }
   iLeadDigits = -1;
   return false;
@@ -1464,7 +1487,7 @@ bool CXFA_WidgetData::GetPictureContent(WideString& wsPicture,
     case XFA_VALUEPICTURE_Display: {
       if (CXFA_Node* pFormat = m_pNode->GetChild(0, XFA_Element::Format)) {
         if (CXFA_Node* pPicture = pFormat->GetChild(0, XFA_Element::Picture)) {
-          if (pPicture->TryContent(wsPicture))
+          if (pPicture->JSNode()->TryContent(wsPicture))
             return true;
         }
       }
@@ -1501,7 +1524,7 @@ bool CXFA_WidgetData::GetPictureContent(WideString& wsPicture,
       CXFA_Node* pUI = m_pNode->GetChild(0, XFA_Element::Ui);
       if (pUI) {
         if (CXFA_Node* pPicture = pUI->GetChild(0, XFA_Element::Picture)) {
-          if (pPicture->TryContent(wsPicture))
+          if (pPicture->JSNode()->TryContent(wsPicture))
             return true;
         }
       }
@@ -1558,7 +1581,7 @@ IFX_Locale* CXFA_WidgetData::GetLocal() {
 
 bool CXFA_WidgetData::GetValue(WideString& wsValue,
                                XFA_VALUEPICTURE eValueType) {
-  wsValue = m_pNode->GetContent();
+  wsValue = m_pNode->JSNode()->GetContent();
 
   if (eValueType == XFA_VALUEPICTURE_Display)
     GetItemLabel(wsValue.AsStringView(), wsValue);
@@ -1799,7 +1822,7 @@ void CXFA_WidgetData::SyncValue(const WideString& wsValue, bool bNotify) {
   if (pContainerWidgetData)
     pContainerWidgetData->GetFormatDataValue(wsValue, wsFormatValue);
 
-  m_pNode->SetContent(wsValue, wsFormatValue, bNotify);
+  m_pNode->JSNode()->SetContent(wsValue, wsFormatValue, bNotify);
 }
 
 void CXFA_WidgetData::InsertListTextItem(CXFA_Node* pItems,
@@ -1807,7 +1830,7 @@ void CXFA_WidgetData::InsertListTextItem(CXFA_Node* pItems,
                                          int32_t nIndex) {
   CXFA_Node* pText = pItems->CreateSamePacketNode(XFA_Element::Text);
   pItems->InsertChild(nIndex, pText);
-  pText->SetContent(wsText, wsText, false, false, false);
+  pText->JSNode()->SetContent(wsText, wsText, false, false, false);
 }
 
 WideString CXFA_WidgetData::NumericLimit(const WideString& wsValue,

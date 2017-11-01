@@ -15,6 +15,6 @@ CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(CXFA_Node* pNode)
       m_dwStatus(0) {}
 
 CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() {
-  if (m_pFormNode->GetUserData(XFA_LAYOUTITEMKEY) == this)
-    m_pFormNode->SetUserData(XFA_LAYOUTITEMKEY, nullptr);
+  if (m_pFormNode->JSNode()->GetUserData(XFA_LAYOUTITEMKEY) == this)
+    m_pFormNode->JSNode()->SetUserData(XFA_LAYOUTITEMKEY, nullptr);
 }

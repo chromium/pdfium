@@ -22,8 +22,8 @@ void GetStrokesInternal(CXFA_Node* pNode,
   strokes->resize(8);
   int32_t i, j;
   for (i = 0, j = 0; i < 4; i++) {
-    CXFA_Corner corner =
-        CXFA_Corner(pNode->GetProperty(i, XFA_Element::Corner, i == 0));
+    CXFA_Corner corner = CXFA_Corner(
+        pNode->JSNode()->GetProperty(i, XFA_Element::Corner, i == 0));
     if (corner || i == 0) {
       (*strokes)[j] = corner;
     } else if (!bNull) {
@@ -34,7 +34,7 @@ void GetStrokesInternal(CXFA_Node* pNode,
     }
     j++;
     CXFA_Edge edge =
-        CXFA_Edge(pNode->GetProperty(i, XFA_Element::Edge, i == 0));
+        CXFA_Edge(pNode->JSNode()->GetProperty(i, XFA_Element::Edge, i == 0));
     if (edge || i == 0) {
       (*strokes)[j] = edge;
     } else if (!bNull) {
@@ -78,13 +78,13 @@ static int32_t Style3D(const std::vector<CXFA_Stroke>& strokes,
 int32_t CXFA_Box::GetHand() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Even;
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Hand);
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Hand);
 }
 
 int32_t CXFA_Box::GetPresence() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Hidden;
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Presence);
+  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Presence);
 }
 
 int32_t CXFA_Box::CountEdges() const {
@@ -94,9 +94,9 @@ int32_t CXFA_Box::CountEdges() const {
 }
 
 CXFA_Edge CXFA_Box::GetEdge(int32_t nIndex) const {
-  return CXFA_Edge(
-      m_pNode ? m_pNode->GetProperty(nIndex, XFA_Element::Edge, nIndex == 0)
-              : nullptr);
+  return CXFA_Edge(m_pNode ? m_pNode->JSNode()->GetProperty(
+                                 nIndex, XFA_Element::Edge, nIndex == 0)
+                           : nullptr);
 }
 
 void CXFA_Box::GetStrokes(std::vector<CXFA_Stroke>* strokes) const {
@@ -106,7 +106,7 @@ void CXFA_Box::GetStrokes(std::vector<CXFA_Stroke>* strokes) const {
 bool CXFA_Box::IsCircular() const {
   if (!m_pNode)
     return false;
-  return m_pNode->GetBoolean(XFA_ATTRIBUTE_Circular);
+  return m_pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_Circular);
 }
 
 bool CXFA_Box::GetStartAngle(float& fStartAngle) const {
@@ -115,7 +115,8 @@ bool CXFA_Box::GetStartAngle(float& fStartAngle) const {
     return false;
 
   CXFA_Measurement ms;
-  bool bRet = m_pNode->TryMeasure(XFA_ATTRIBUTE_StartAngle, ms, false);
+  bool bRet =
+      m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_StartAngle, ms, false);
   if (bRet)
     fStartAngle = ms.GetValue();
 
@@ -128,7 +129,8 @@ bool CXFA_Box::GetSweepAngle(float& fSweepAngle) const {
     return false;
 
   CXFA_Measurement ms;
-  bool bRet = m_pNode->TryMeasure(XFA_ATTRIBUTE_SweepAngle, ms, false);
+  bool bRet =
+      m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SweepAngle, ms, false);
   if (bRet)
     fSweepAngle = ms.GetValue();
 
@@ -139,7 +141,8 @@ CXFA_Fill CXFA_Box::GetFill(bool bModified) const {
   if (!m_pNode)
     return CXFA_Fill(nullptr);
 
-  CXFA_Node* pFillNode = m_pNode->GetProperty(0, XFA_Element::Fill, bModified);
+  CXFA_Node* pFillNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Fill, bModified);
   return CXFA_Fill(pFillNode);
 }
 

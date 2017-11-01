@@ -13,19 +13,19 @@ CXFA_Caption::CXFA_Caption(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_Caption::GetPresence() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Visible;
-  m_pNode->TryEnum(XFA_ATTRIBUTE_Presence, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Presence, eAttr);
   return eAttr;
 }
 
 int32_t CXFA_Caption::GetPlacementType() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Left;
-  m_pNode->TryEnum(XFA_ATTRIBUTE_Placement, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Placement, eAttr);
   return eAttr;
 }
 
 float CXFA_Caption::GetReserve() {
   CXFA_Measurement ms;
-  m_pNode->TryMeasure(XFA_ATTRIBUTE_Reserve, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_Reserve, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 

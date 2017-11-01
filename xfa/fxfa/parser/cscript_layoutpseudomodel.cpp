@@ -153,7 +153,7 @@ void CScript_LayoutPseudoModel::NumberedPageCount(CFXJSE_Arguments* pArguments,
         continue;
       }
       CXFA_Node* pMasterPage = pLayoutPage->GetMasterPage();
-      if (pMasterPage->GetInteger(XFA_ATTRIBUTE_Numbered)) {
+      if (pMasterPage->JSNode()->GetInteger(XFA_ATTRIBUTE_Numbered)) {
         iPageCount++;
       }
     }
