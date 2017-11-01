@@ -19,8 +19,6 @@ class CJX_HostPseudoModel : public CJX_Object {
   explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
   ~CJX_HostPseudoModel() override;
 
-  CScript_HostPseudoModel* GetXFAHostPseudoModel();
-
   void AppType(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void CalculationsEnabled(CFXJSE_Value* pValue,
                            bool bSetting,

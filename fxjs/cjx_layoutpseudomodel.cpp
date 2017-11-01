@@ -29,15 +29,10 @@ CJX_LayoutPseudoModel::CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model)
 
 CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() {}
 
-CScript_LayoutPseudoModel* CJX_LayoutPseudoModel::GetXFALayoutPseudoModel() {
-  return static_cast<CScript_LayoutPseudoModel*>(GetXFAObject());
-}
-
 void CJX_LayoutPseudoModel::Ready(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify =
-      GetXFALayoutPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
   if (bSetting) {
@@ -85,8 +80,7 @@ void CJX_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
 
   int32_t iIndex = iLength >= 3 ? pArguments->GetInt32(2) : 0;
 
-  CXFA_LayoutProcessor* pDocLayout =
-      GetXFALayoutPseudoModel()->GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
   if (!pDocLayout)
     return;
 
@@ -146,8 +140,7 @@ void CJX_LayoutPseudoModel::Y(CFXJSE_Arguments* pArguments) {
 
 void CJX_LayoutPseudoModel::NumberedPageCount(CFXJSE_Arguments* pArguments,
                                               bool bNumbered) {
-  CXFA_LayoutProcessor* pDocLayout =
-      GetXFALayoutPseudoModel()->GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
   if (!pDocLayout)
     return;
 
@@ -187,8 +180,7 @@ void CJX_LayoutPseudoModel::PageSpan(CFXJSE_Arguments* pArguments) {
   if (!pNode)
     return;
 
-  CXFA_LayoutProcessor* pDocLayout =
-      GetXFALayoutPseudoModel()->GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
   if (!pDocLayout)
     return;
 
@@ -363,25 +355,20 @@ void CJX_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
   if (iLength >= 3)
     bOnPageArea = pArguments->GetInt32(2) == 0 ? false : true;
 
-  CXFA_FFNotify* pNotify =
-      GetXFALayoutPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
-  CXFA_LayoutProcessor* pDocLayout =
-      GetXFALayoutPseudoModel()->GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
   if (!pDocLayout)
     return;
 
-  auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(
-      GetXFALayoutPseudoModel()->GetDocument());
+  auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(GetDocument());
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
-  pArguments->GetReturnValue()->SetObject(pArrayNodeList.release(),
-                                          GetXFALayoutPseudoModel()
-                                              ->GetDocument()
-                                              ->GetScriptContext()
-                                              ->GetJseNormalClass());
+  pArguments->GetReturnValue()->SetObject(
+      pArrayNodeList.release(),
+      GetDocument()->GetScriptContext()->GetJseNormalClass());
 }
 
 void CJX_LayoutPseudoModel::AbsPageCount(CFXJSE_Arguments* pArguments) {
@@ -397,11 +384,10 @@ void CJX_LayoutPseudoModel::SheetCountInBatch(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_LayoutPseudoModel::Relayout(CFXJSE_Arguments* pArguments) {
-  CXFA_Node* pRootNode = GetXFALayoutPseudoModel()->GetDocument()->GetRoot();
+  CXFA_Node* pRootNode = GetDocument()->GetRoot();
   CXFA_Node* pFormRoot = pRootNode->GetFirstChildByClass(XFA_Element::Form);
   CXFA_Node* pContentRootNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
-  CXFA_LayoutProcessor* pLayoutProcessor =
-      GetXFALayoutPseudoModel()->GetDocument()->GetLayoutProcessor();
+  CXFA_LayoutProcessor* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
   if (pContentRootNode)
     pLayoutProcessor->AddChangedContainer(pContentRootNode);
 
@@ -457,8 +443,7 @@ void CJX_LayoutPseudoModel::PageInternals(CFXJSE_Arguments* pArguments,
   if (!pNode)
     pValue->SetInteger(0);
 
-  CXFA_LayoutProcessor* pDocLayout =
-      GetXFALayoutPseudoModel()->GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
   if (!pDocLayout)
     return;
 

@@ -38,8 +38,6 @@ class CJX_EventPseudoModel : public CJX_Object {
   explicit CJX_EventPseudoModel(CScript_EventPseudoModel* model);
   ~CJX_EventPseudoModel() override;
 
-  CScript_EventPseudoModel* GetXFAEventPseudoModel();
-
   void Change(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void CommitKey(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void FullText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);

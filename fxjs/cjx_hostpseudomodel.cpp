@@ -55,14 +55,10 @@ CJX_HostPseudoModel::CJX_HostPseudoModel(CScript_HostPseudoModel* model)
 
 CJX_HostPseudoModel::~CJX_HostPseudoModel() {}
 
-CScript_HostPseudoModel* CJX_HostPseudoModel::GetXFAHostPseudoModel() {
-  return static_cast<CScript_HostPseudoModel*>(GetXFAObject());
-}
-
 void CJX_HostPseudoModel::AppType(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -76,7 +72,7 @@ void CJX_HostPseudoModel::AppType(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
                                               bool bSetting,
                                               XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -92,7 +88,7 @@ void CJX_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -107,7 +103,7 @@ void CJX_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::Language(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -122,7 +118,7 @@ void CJX_HostPseudoModel::Language(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -137,7 +133,7 @@ void CJX_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::Platform(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -152,13 +148,10 @@ void CJX_HostPseudoModel::Platform(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::Title(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_ATTRIBUTE eAttribute) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -176,7 +169,7 @@ void CJX_HostPseudoModel::Title(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::ValidationsEnabled(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -194,13 +187,10 @@ void CJX_HostPseudoModel::ValidationsEnabled(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::Variation(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -214,7 +204,7 @@ void CJX_HostPseudoModel::Variation(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::Version(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -228,7 +218,7 @@ void CJX_HostPseudoModel::Version(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::Name(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_ATTRIBUTE eAttribute) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -241,10 +231,7 @@ void CJX_HostPseudoModel::Name(CFXJSE_Value* pValue,
 }
 
 void CJX_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
   int32_t iLength = pArguments->GetLength();
@@ -253,7 +240,7 @@ void CJX_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -267,10 +254,7 @@ void CJX_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
   int32_t iLength = pArguments->GetLength();
@@ -279,7 +263,7 @@ void CJX_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -289,8 +273,7 @@ void CJX_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
     if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
     } else if (pValue->IsString()) {
-      CFXJSE_Engine* pScriptContext =
-          GetXFAHostPseudoModel()->GetDocument()->GetScriptContext();
+      CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
       if (!pScriptContext)
         return;
 
@@ -310,8 +293,7 @@ void CJX_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
     }
   }
 
-  CXFA_LayoutProcessor* pDocLayout =
-      GetXFAHostPseudoModel()->GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
   if (!pDocLayout)
     return;
 
@@ -331,7 +313,7 @@ void CJX_HostPseudoModel::Response(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -374,7 +356,7 @@ void CJX_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -394,8 +376,7 @@ void CJX_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
   int32_t iExpLength = wsExpression.GetLength();
   while (iStart < iExpLength) {
     iStart = FilterName(wsExpression.AsStringView(), iStart, wsName);
-    CFXJSE_Engine* pScriptContext =
-        GetXFAHostPseudoModel()->GetDocument()->GetScriptContext();
+    CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
     if (!pScriptContext)
       return;
 
@@ -419,10 +400,7 @@ void CJX_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::Beep(CFXJSE_Arguments* pArguments) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
   int32_t iLength = pArguments->GetLength();
@@ -431,7 +409,7 @@ void CJX_HostPseudoModel::Beep(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -443,10 +421,7 @@ void CJX_HostPseudoModel::Beep(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
   int32_t iLength = pArguments->GetLength();
@@ -455,7 +430,7 @@ void CJX_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -465,8 +440,7 @@ void CJX_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
     if (pValue->IsObject()) {
       pNode = ToNode(pValue.get(), nullptr);
     } else if (pValue->IsString()) {
-      CFXJSE_Engine* pScriptContext =
-          GetXFAHostPseudoModel()->GetDocument()->GetScriptContext();
+      CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
       if (!pScriptContext)
         return;
 
@@ -489,7 +463,7 @@ void CJX_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::GetFocus(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -497,17 +471,12 @@ void CJX_HostPseudoModel::GetFocus(CFXJSE_Arguments* pArguments) {
   if (!pNode)
     return;
 
-  pArguments->GetReturnValue()->Assign(GetXFAHostPseudoModel()
-                                           ->GetDocument()
-                                           ->GetScriptContext()
-                                           ->GetJSValueFromMap(pNode));
+  pArguments->GetReturnValue()->Assign(
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
 }
 
 void CJX_HostPseudoModel::MessageBox(CFXJSE_Arguments* pArguments) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
   int32_t iLength = pArguments->GetLength();
@@ -516,7 +485,7 @@ void CJX_HostPseudoModel::MessageBox(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -557,7 +526,7 @@ bool CJX_HostPseudoModel::ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
     return false;
 
   bool bIsJsType = false;
-  if (GetXFAHostPseudoModel()->GetDocument()->GetScriptContext()->GetType() ==
+  if (GetDocument()->GetScriptContext()->GetType() ==
       XFA_SCRIPTLANGTYPE_Javascript) {
     bIsJsType = true;
   }
@@ -577,10 +546,7 @@ void CJX_HostPseudoModel::DocumentCountInBatch(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
-  if (!GetXFAHostPseudoModel()
-           ->GetDocument()
-           ->GetScriptContext()
-           ->IsRunAtClient())
+  if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
   int32_t iLength = pArguments->GetLength();
@@ -589,7 +555,7 @@ void CJX_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -660,7 +626,7 @@ void CJX_HostPseudoModel::ExportData(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -678,7 +644,7 @@ void CJX_HostPseudoModel::ExportData(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::PageUp(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -693,7 +659,7 @@ void CJX_HostPseudoModel::PageUp(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::PageDown(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -713,7 +679,7 @@ void CJX_HostPseudoModel::PageDown(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_HostPseudoModel::CurrentDateTime(CFXJSE_Arguments* pArguments) {
-  CXFA_FFNotify* pNotify = GetXFAHostPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 

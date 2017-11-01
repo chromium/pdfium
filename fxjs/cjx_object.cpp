@@ -13,6 +13,10 @@ CJX_Object::CJX_Object(CXFA_Object* obj) : object_(obj) {}
 
 CJX_Object::~CJX_Object() {}
 
+CXFA_Document* CJX_Object::GetDocument() const {
+  return object_->GetDocument();
+}
+
 void CJX_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                               bool bSetting,
                                               XFA_ATTRIBUTE eAttribute) {

@@ -10,6 +10,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/fxfa_basic.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 
 class CFXJSE_Value;
 class CXFA_Object;
@@ -20,6 +21,8 @@ class CJX_Object {
 
   CXFA_Object* GetXFAObject() { return object_.Get(); }
   const CXFA_Object* GetXFAObject() const { return object_.Get(); }
+
+  CXFA_Document* GetDocument() const;
 
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                     bool bSetting,

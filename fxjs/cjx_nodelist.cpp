@@ -80,7 +80,7 @@ void CJX_NodeList::Script_ListClass_Item(CFXJSE_Arguments* pArguments) {
     return;
   }
   pArguments->GetReturnValue()->Assign(
-      GetXFANodeList()->GetDocument()->GetScriptContext()->GetJSValueFromMap(
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(
           GetXFANodeList()->Item(iIndex)));
 }
 
@@ -99,8 +99,7 @@ void CJX_NodeList::Script_TreelistClass_NamedItem(
     return;
 
   pArguments->GetReturnValue()->Assign(
-      GetXFANodeList()->GetDocument()->GetScriptContext()->GetJSValueFromMap(
-          pNode));
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
 }
 
 void CJX_NodeList::Script_ListClass_Length(CFXJSE_Value* pValue,

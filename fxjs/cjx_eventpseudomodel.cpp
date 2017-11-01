@@ -47,10 +47,6 @@ CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
 
 CJX_EventPseudoModel::~CJX_EventPseudoModel() {}
 
-CScript_EventPseudoModel* CJX_EventPseudoModel::GetXFAEventPseudoModel() {
-  return static_cast<CScript_EventPseudoModel*>(GetXFAObject());
-}
-
 void CJX_EventPseudoModel::Change(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_ATTRIBUTE eAttribute) {
@@ -148,8 +144,7 @@ void CJX_EventPseudoModel::Target(CFXJSE_Value* pValue,
 }
 
 void CJX_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
-  CFXJSE_Engine* pScriptContext =
-      GetXFAEventPseudoModel()->GetDocument()->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;
 
@@ -157,7 +152,7 @@ void CJX_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
   if (!pEventParam)
     return;
 
-  CXFA_FFNotify* pNotify = GetXFAEventPseudoModel()->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
 
@@ -169,8 +164,7 @@ void CJX_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
 }
 
 void CJX_EventPseudoModel::Reset(CFXJSE_Arguments* pArguments) {
-  CFXJSE_Engine* pScriptContext =
-      GetXFAEventPseudoModel()->GetDocument()->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;
 
@@ -184,8 +178,7 @@ void CJX_EventPseudoModel::Reset(CFXJSE_Arguments* pArguments) {
 void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,
                                     XFA_Event dwFlag,
                                     bool bSetting) {
-  CFXJSE_Engine* pScriptContext =
-      GetXFAEventPseudoModel()->GetDocument()->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;
 
