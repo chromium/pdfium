@@ -1782,12 +1782,11 @@ bool CXFA_Node::IsNeedSavingXMLNode() {
                         GetElementType() == XFA_Element::Xfa);
 }
 
-CXFA_Node* CXFA_Node::GetItem(CXFA_Node* pInstMgrNode, int32_t iIndex) {
-  ASSERT(pInstMgrNode);
+CXFA_Node* CXFA_Node::GetItem(int32_t iIndex) {
   int32_t iCount = 0;
   uint32_t dwNameHash = 0;
-  for (CXFA_Node* pNode = pInstMgrNode->GetNodeItem(XFA_NODEITEM_NextSibling);
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_NextSibling); pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     XFA_Element eCurType = pNode->GetElementType();
     if (eCurType == XFA_Element::InstanceManager)
       break;
@@ -1797,8 +1796,7 @@ CXFA_Node* CXFA_Node::GetItem(CXFA_Node* pInstMgrNode, int32_t iIndex) {
     }
     if (iCount == 0) {
       WideStringView wsName = pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
-      WideStringView wsInstName =
-          pInstMgrNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+      WideStringView wsInstName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
       if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
           wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
         return nullptr;
@@ -1815,12 +1813,11 @@ CXFA_Node* CXFA_Node::GetItem(CXFA_Node* pInstMgrNode, int32_t iIndex) {
   return nullptr;
 }
 
-int32_t CXFA_Node::GetCount(CXFA_Node* pInstMgrNode) {
-  ASSERT(pInstMgrNode);
+int32_t CXFA_Node::GetCount() {
   int32_t iCount = 0;
   uint32_t dwNameHash = 0;
-  for (CXFA_Node* pNode = pInstMgrNode->GetNodeItem(XFA_NODEITEM_NextSibling);
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_NextSibling); pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     XFA_Element eCurType = pNode->GetElementType();
     if (eCurType == XFA_Element::InstanceManager)
       break;
@@ -1830,8 +1827,7 @@ int32_t CXFA_Node::GetCount(CXFA_Node* pInstMgrNode) {
     }
     if (iCount == 0) {
       WideStringView wsName = pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
-      WideStringView wsInstName =
-          pInstMgrNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+      WideStringView wsInstName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
       if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
           wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
         return iCount;
@@ -1846,22 +1842,19 @@ int32_t CXFA_Node::GetCount(CXFA_Node* pInstMgrNode) {
   return iCount;
 }
 
-void CXFA_Node::InsertItem(CXFA_Node* pInstMgrNode,
-                           CXFA_Node* pNewInstance,
+void CXFA_Node::InsertItem(CXFA_Node* pNewInstance,
                            int32_t iPos,
                            int32_t iCount,
                            bool bMoveDataBindingNodes) {
   if (iCount < 0)
-    iCount = GetCount(pInstMgrNode);
+    iCount = GetCount();
   if (iPos < 0)
     iPos = iCount;
   if (iPos == iCount) {
     CXFA_Node* pNextSibling =
-        iCount > 0 ? pInstMgrNode->GetItem(pInstMgrNode, iCount - 1)
-                         ->GetNodeItem(XFA_NODEITEM_NextSibling)
-                   : pInstMgrNode->GetNodeItem(XFA_NODEITEM_NextSibling);
-    pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent)
-        ->InsertChild(pNewInstance, pNextSibling);
+        iCount > 0 ? GetItem(iCount - 1)->GetNodeItem(XFA_NODEITEM_NextSibling)
+                   : GetNodeItem(XFA_NODEITEM_NextSibling);
+    GetNodeItem(XFA_NODEITEM_Parent)->InsertChild(pNewInstance, pNextSibling);
     if (bMoveDataBindingNodes) {
       std::set<CXFA_Node*> sNew;
       std::set<CXFA_Node*> sAfter;
@@ -1890,8 +1883,8 @@ void CXFA_Node::InsertItem(CXFA_Node* pInstMgrNode,
       ReorderDataNodes(sNew, sAfter, false);
     }
   } else {
-    CXFA_Node* pBeforeInstance = GetItem(pInstMgrNode, iPos);
-    pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent)
+    CXFA_Node* pBeforeInstance = GetItem(iPos);
+    GetNodeItem(XFA_NODEITEM_Parent)
         ->InsertChild(pNewInstance, pBeforeInstance);
     if (bMoveDataBindingNodes) {
       std::set<CXFA_Node*> sNew;
@@ -1923,10 +1916,9 @@ void CXFA_Node::InsertItem(CXFA_Node* pInstMgrNode,
   }
 }
 
-void CXFA_Node::RemoveItem(CXFA_Node* pInstMgrNode,
-                           CXFA_Node* pRemoveInstance,
+void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
                            bool bRemoveDataBinding) {
-  pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pRemoveInstance);
+  GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pRemoveInstance);
   if (!bRemoveDataBinding)
     return;
 
@@ -1948,10 +1940,10 @@ void CXFA_Node::RemoveItem(CXFA_Node* pInstMgrNode,
   }
 }
 
-CXFA_Node* CXFA_Node::CreateInstance(CXFA_Node* pInstMgrNode, bool bDataMerge) {
-  CXFA_Document* pDocument = pInstMgrNode->GetDocument();
-  CXFA_Node* pTemplateNode = pInstMgrNode->GetTemplateNode();
-  CXFA_Node* pFormParent = pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent);
+CXFA_Node* CXFA_Node::CreateInstance(bool bDataMerge) {
+  CXFA_Document* pDocument = GetDocument();
+  CXFA_Node* pTemplateNode = GetTemplateNode();
+  CXFA_Node* pFormParent = GetNodeItem(XFA_NODEITEM_Parent);
   CXFA_Node* pDataScope = nullptr;
   for (CXFA_Node* pRootBoundNode = pFormParent;
        pRootBoundNode && pRootBoundNode->IsContainerNode();

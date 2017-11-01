@@ -60,14 +60,11 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetParent() { return m_pParent; }
   CXFA_Node* GetChildNode() { return m_pChild; }
 
-  CXFA_Node* CreateInstance(CXFA_Node* pInstMgrNode, bool bDataMerge);
-  int32_t GetCount(CXFA_Node* pInstMgrNode);
-  CXFA_Node* GetItem(CXFA_Node* pInstMgrNode, int32_t iIndex);
-  void RemoveItem(CXFA_Node* pInstMgrNode,
-                  CXFA_Node* pRemoveInstance,
-                  bool bRemoveDataBinding = true);
-  void InsertItem(CXFA_Node* pInstMgrNode,
-                  CXFA_Node* pNewInstance,
+  CXFA_Node* CreateInstance(bool bDataMerge);
+  int32_t GetCount();
+  CXFA_Node* GetItem(int32_t iIndex);
+  void RemoveItem(CXFA_Node* pRemoveInstance, bool bRemoveDataBinding = true);
+  void InsertItem(CXFA_Node* pNewInstance,
                   int32_t iPos,
                   int32_t iCount = -1,
                   bool bMoveDataBindingNodes = true);

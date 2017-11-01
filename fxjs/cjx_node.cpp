@@ -352,7 +352,7 @@ int32_t CJX_Node::InstanceManager_SetInstances(int32_t iDesired) {
     ThrowTooManyOccurancesException(L"max");
     return 2;
   }
-  int32_t iCount = GetXFANode()->GetCount(GetXFANode());
+  int32_t iCount = GetXFANode()->GetCount();
   if (iDesired == iCount)
     return 0;
 
@@ -365,8 +365,7 @@ int32_t CJX_Node::InstanceManager_SetInstances(int32_t iDesired) {
     uint32_t dInstanceNameHash =
         FX_HashCode_GetW(wsInstanceName.AsStringView(), false);
     CXFA_Node* pPrevSibling =
-        (iDesired == 0) ? GetXFANode()
-                        : GetXFANode()->GetItem(GetXFANode(), iDesired - 1);
+        (iDesired == 0) ? GetXFANode() : GetXFANode()->GetItem(iDesired - 1);
     while (iCount > iDesired) {
       CXFA_Node* pRemoveInstance =
           pPrevSibling->GetNodeItem(XFA_NODEITEM_NextSibling);
@@ -379,16 +378,14 @@ int32_t CJX_Node::InstanceManager_SetInstances(int32_t iDesired) {
         break;
       }
       if (pRemoveInstance->GetNameHash() == dInstanceNameHash) {
-        GetXFANode()->RemoveItem(GetXFANode(), pRemoveInstance);
+        GetXFANode()->RemoveItem(pRemoveInstance);
         iCount--;
       }
     }
-  } else if (iDesired > iCount) {
+  } else {
     while (iCount < iDesired) {
-      CXFA_Node* pNewInstance =
-          GetXFANode()->CreateInstance(GetXFANode(), true);
-      GetXFANode()->InsertItem(GetXFANode(), pNewInstance, iCount, iCount,
-                               false);
+      CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(true);
+      GetXFANode()->InsertItem(pNewInstance, iCount, iCount, false);
       iCount++;
       CXFA_FFNotify* pNotify = GetXFANode()->GetDocument()->GetNotify();
       if (!pNotify) {
@@ -408,7 +405,7 @@ int32_t CJX_Node::InstanceManager_SetInstances(int32_t iDesired) {
 }
 
 int32_t CJX_Node::InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom) {
-  int32_t iCount = GetXFANode()->GetCount(GetXFANode());
+  int32_t iCount = GetXFANode()->GetCount();
   if (iFrom > iCount || iTo > iCount - 1) {
     ThrowIndexOutOfBoundsException();
     return 1;
@@ -416,9 +413,9 @@ int32_t CJX_Node::InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom) {
   if (iFrom < 0 || iTo < 0 || iFrom == iTo)
     return 0;
 
-  CXFA_Node* pMoveInstance = GetXFANode()->GetItem(GetXFANode(), iFrom);
-  GetXFANode()->RemoveItem(GetXFANode(), pMoveInstance, false);
-  GetXFANode()->InsertItem(GetXFANode(), pMoveInstance, iTo, iCount - 1, true);
+  CXFA_Node* pMoveInstance = GetXFANode()->GetItem(iFrom);
+  GetXFANode()->RemoveItem(pMoveInstance, false);
+  GetXFANode()->InsertItem(pMoveInstance, iTo, iCount - 1, true);
   CXFA_LayoutProcessor* pLayoutPro =
       GetXFANode()->GetDocument()->GetLayoutProcessor();
   if (pLayoutPro) {
@@ -2196,12 +2193,12 @@ void CJX_Node::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
       if (!pNotify) {
         return;
       }
-      CXFA_Node* pToInstance = GetXFANode()->GetItem(pManagerNode, iTo);
+      CXFA_Node* pToInstance = pManagerNode->GetItem(iTo);
       if (pToInstance &&
           pToInstance->GetElementType() == XFA_Element::Subform) {
         pNotify->RunSubformIndexChange(pToInstance);
       }
-      CXFA_Node* pFromInstance = GetXFANode()->GetItem(pManagerNode, iFrom);
+      CXFA_Node* pFromInstance = pManagerNode->GetItem(iFrom);
       if (pFromInstance &&
           pFromInstance->GetElementType() == XFA_Element::Subform) {
         pNotify->RunSubformIndexChange(pFromInstance);
@@ -2475,7 +2472,7 @@ void CJX_Node::Script_InstanceManager_Count(CFXJSE_Value* pValue,
     int32_t iDesired = pValue->ToInteger();
     InstanceManager_SetInstances(iDesired);
   } else {
-    pValue->SetInteger(GetXFANode()->GetCount(GetXFANode()));
+    pValue->SetInteger(GetXFANode()->GetCount());
   }
 }
 
@@ -2492,11 +2489,11 @@ void CJX_Node::Script_InstanceManager_MoveInstance(
   if (!pNotify) {
     return;
   }
-  CXFA_Node* pToInstance = GetXFANode()->GetItem(GetXFANode(), iTo);
+  CXFA_Node* pToInstance = GetXFANode()->GetItem(iTo);
   if (pToInstance && pToInstance->GetElementType() == XFA_Element::Subform) {
     pNotify->RunSubformIndexChange(pToInstance);
   }
-  CXFA_Node* pFromInstance = GetXFANode()->GetItem(GetXFANode(), iFrom);
+  CXFA_Node* pFromInstance = GetXFANode()->GetItem(iFrom);
   if (pFromInstance &&
       pFromInstance->GetElementType() == XFA_Element::Subform) {
     pNotify->RunSubformIndexChange(pFromInstance);
@@ -2510,7 +2507,7 @@ void CJX_Node::Script_InstanceManager_RemoveInstance(
     return;
   }
   int32_t iIndex = pArguments->GetInt32(0);
-  int32_t iCount = GetXFANode()->GetCount(GetXFANode());
+  int32_t iCount = GetXFANode()->GetCount();
   if (iIndex < 0 || iIndex >= iCount) {
     ThrowIndexOutOfBoundsException();
     return;
@@ -2521,12 +2518,12 @@ void CJX_Node::Script_InstanceManager_RemoveInstance(
     ThrowTooManyOccurancesException(L"min");
     return;
   }
-  CXFA_Node* pRemoveInstance = GetXFANode()->GetItem(GetXFANode(), iIndex);
-  GetXFANode()->RemoveItem(GetXFANode(), pRemoveInstance);
+  CXFA_Node* pRemoveInstance = GetXFANode()->GetItem(iIndex);
+  GetXFANode()->RemoveItem(pRemoveInstance);
   CXFA_FFNotify* pNotify = GetXFANode()->GetDocument()->GetNotify();
   if (pNotify) {
     for (int32_t i = iIndex; i < iCount - 1; i++) {
-      CXFA_Node* pSubformInstance = GetXFANode()->GetItem(GetXFANode(), i);
+      CXFA_Node* pSubformInstance = GetXFANode()->GetItem(i);
       if (pSubformInstance &&
           pSubformInstance->GetElementType() == XFA_Element::Subform) {
         pNotify->RunSubformIndexChange(pSubformInstance);
@@ -2563,15 +2560,15 @@ void CJX_Node::Script_InstanceManager_AddInstance(
   if (argc == 1) {
     fFlags = pArguments->GetInt32(0) == 0 ? false : true;
   }
-  int32_t iCount = GetXFANode()->GetCount(GetXFANode());
+  int32_t iCount = GetXFANode()->GetCount();
   CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
   int32_t iMax = nodeOccur.GetMax();
   if (iMax >= 0 && iCount >= iMax) {
     ThrowTooManyOccurancesException(L"max");
     return;
   }
-  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(GetXFANode(), fFlags);
-  GetXFANode()->InsertItem(GetXFANode(), pNewInstance, iCount, iCount, false);
+  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(fFlags);
+  GetXFANode()->InsertItem(pNewInstance, iCount, iCount, false);
   pArguments->GetReturnValue()->Assign(
       GetXFANode()->GetDocument()->GetScriptContext()->GetJSValueFromMap(
           pNewInstance));
@@ -2602,7 +2599,7 @@ void CJX_Node::Script_InstanceManager_InsertInstance(
     bBind = pArguments->GetInt32(1) == 0 ? false : true;
   }
   CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
-  int32_t iCount = GetXFANode()->GetCount(GetXFANode());
+  int32_t iCount = GetXFANode()->GetCount();
   if (iIndex < 0 || iIndex > iCount) {
     ThrowIndexOutOfBoundsException();
     return;
@@ -2612,8 +2609,8 @@ void CJX_Node::Script_InstanceManager_InsertInstance(
     ThrowTooManyOccurancesException(L"max");
     return;
   }
-  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(GetXFANode(), bBind);
-  GetXFANode()->InsertItem(GetXFANode(), pNewInstance, iIndex, iCount, true);
+  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(bBind);
+  GetXFANode()->InsertItem(pNewInstance, iIndex, iCount, true);
   pArguments->GetReturnValue()->Assign(
       GetXFANode()->GetDocument()->GetScriptContext()->GetJSValueFromMap(
           pNewInstance));
