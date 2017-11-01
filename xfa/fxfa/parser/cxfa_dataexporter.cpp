@@ -91,9 +91,8 @@ void SaveAttribute(CXFA_Node* pNode,
                    bool bProto,
                    WideString& wsOutput) {
   WideString wsValue;
-  if ((!bProto &&
-       !pNode->JSNode()->HasAttribute((XFA_ATTRIBUTE)eName, bProto)) ||
-      !pNode->JSNode()->GetAttribute((XFA_ATTRIBUTE)eName, wsValue, false)) {
+  if ((!bProto && !pNode->JSNode()->HasAttribute(eName)) ||
+      !pNode->JSNode()->GetAttribute(eName, wsValue, false)) {
     return;
   }
   wsValue = ExportEncodeAttribute(wsValue);

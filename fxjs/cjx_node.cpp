@@ -191,9 +191,9 @@ const CXFA_Node* CJX_Node::GetXFANode() const {
   return static_cast<const CXFA_Node*>(GetXFAObject());
 }
 
-bool CJX_Node::HasAttribute(XFA_ATTRIBUTE eAttr, bool bCanInherit) {
+bool CJX_Node::HasAttribute(XFA_ATTRIBUTE eAttr) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  return HasMapModuleKey(pKey, bCanInherit);
+  return HasMapModuleKey(pKey);
 }
 
 bool CJX_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
@@ -3709,23 +3709,10 @@ bool CJX_Node::GetMapModuleBuffer(void* pKey,
   return true;
 }
 
-bool CJX_Node::HasMapModuleKey(void* pKey, bool bProtoAlso) {
-  for (CXFA_Node* pNode = GetXFANode(); pNode;
-       pNode = pNode->GetTemplateNode()) {
-    XFA_MAPMODULEDATA* pModule = pNode->JSNode()->GetMapModuleData();
-    if (pModule) {
-      auto it1 = pModule->m_ValueMap.find(pKey);
-      if (it1 != pModule->m_ValueMap.end())
-        return true;
-
-      auto it2 = pModule->m_BufferMap.find(pKey);
-      if (it2 != pModule->m_BufferMap.end())
-        return true;
-    }
-    if (!bProtoAlso || pNode->GetPacketID() == XFA_XDPPACKET_Datasets)
-      break;
-  }
-  return false;
+bool CJX_Node::HasMapModuleKey(void* pKey) {
+  XFA_MAPMODULEDATA* pModule = GetXFANode()->JSNode()->GetMapModuleData();
+  return pModule && (pdfium::ContainsKey(pModule->m_ValueMap, pKey) ||
+                     pdfium::ContainsKey(pModule->m_BufferMap, pKey));
 }
 
 void CJX_Node::RemoveMapModuleKey(void* pKey) {
