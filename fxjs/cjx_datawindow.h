@@ -1,25 +1,23 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
-#define XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
+#ifndef FXJS_CJX_DATAWINDOW_H_
+#define FXJS_CJX_DATAWINDOW_H_
 
-#include "fxjs/cjx_datawindow.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
+#include "fxjs/cjx_object.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CFXJSE_Arguments;
+class CFXJSE_Value;
+class CScript_DataWindow;
 
-class CScript_DataWindow : public CXFA_Object {
+class CJX_DataWindow : public CJX_Object {
  public:
-  explicit CScript_DataWindow(CXFA_Document* pDocument);
-  ~CScript_DataWindow() override;
-
-  CJX_DataWindow* JSDataWindow() {
-    return static_cast<CJX_DataWindow*>(JSObject());
-  }
+  explicit CJX_DataWindow(CScript_DataWindow* window);
+  ~CJX_DataWindow() override;
 
   void MoveCurrentRecord(CFXJSE_Arguments* pArguments);
   void Record(CFXJSE_Arguments* pArguments);
@@ -37,4 +35,4 @@ class CScript_DataWindow : public CXFA_Object {
   void IsDefined(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
 };
 
-#endif  // XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
+#endif  // FXJS_CJX_DATAWINDOW_H_

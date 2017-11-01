@@ -1,26 +1,35 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
-#define XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
+#ifndef FXJS_CJX_LAYOUTPSEUDOMODEL_H_
+#define FXJS_CJX_LAYOUTPSEUDOMODEL_H_
 
-#include "fxjs/cjx_layoutpseudomodel.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
+#include <vector>
+
+#include "fxjs/cjx_object.h"
+
+enum XFA_LAYOUTMODEL_HWXY {
+  XFA_LAYOUTMODEL_H,
+  XFA_LAYOUTMODEL_W,
+  XFA_LAYOUTMODEL_X,
+  XFA_LAYOUTMODEL_Y
+};
 
 class CFXJSE_Arguments;
+class CFXJSE_Value;
+class CScript_LayoutPseudoModel;
 class CXFA_LayoutProcessor;
+class CXFA_Node;
 
-class CScript_LayoutPseudoModel : public CXFA_Object {
+class CJX_LayoutPseudoModel : public CJX_Object {
  public:
-  explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
-  ~CScript_LayoutPseudoModel() override;
+  explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
+  ~CJX_LayoutPseudoModel() override;
 
-  CJX_LayoutPseudoModel* JSLayoutPseudoModel() {
-    return static_cast<CJX_LayoutPseudoModel*>(JSObject());
-  }
+  CScript_LayoutPseudoModel* GetXFALayoutPseudoModel();
 
   void Ready(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
 
@@ -43,6 +52,15 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
   void RelayoutPageArea(CFXJSE_Arguments* pArguments);
   void SheetCount(CFXJSE_Arguments* pArguments);
   void AbsPage(CFXJSE_Arguments* pArguments);
+
+ private:
+  void NumberedPageCount(CFXJSE_Arguments* pArguments, bool bNumbered);
+  void HWXY(CFXJSE_Arguments* pArguments, XFA_LAYOUTMODEL_HWXY layoutModel);
+  std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
+                                      int32_t iPageNo,
+                                      const WideString& wsType,
+                                      bool bOnPageArea);
+  void PageInternals(CFXJSE_Arguments* pArguments, bool bAbsPage);
 };
 
-#endif  // XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
+#endif  // FXJS_CJX_LAYOUTPSEUDOMODEL_H_

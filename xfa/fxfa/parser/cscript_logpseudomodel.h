@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
 
+#include "fxjs/cjx_logpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFXJSE_Arguments;
@@ -15,6 +16,10 @@ class CScript_LogPseudoModel : public CXFA_Object {
  public:
   explicit CScript_LogPseudoModel(CXFA_Document* pDocument);
   ~CScript_LogPseudoModel() override;
+
+  CJX_LogPseudoModel* JSLogPseudoModel() {
+    return static_cast<CJX_LogPseudoModel*>(JSObject());
+  }
 
   void Message(CFXJSE_Arguments* pArguments);
   void TraceEnabled(CFXJSE_Arguments* pArguments);

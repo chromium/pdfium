@@ -1,26 +1,44 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
-#define XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
+#ifndef FXJS_CJX_EVENTPSEUDOMODEL_H_
+#define FXJS_CJX_EVENTPSEUDOMODEL_H_
 
-#include "fxjs/cjx_eventpseudomodel.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
+#include "fxjs/cjx_object.h"
 
 class CFXJSE_Arguments;
 class CFXJSE_Value;
+class CScript_EventPseudoModel;
 
-class CScript_EventPseudoModel : public CXFA_Object {
+enum class XFA_Event {
+  Change = 0,
+  CommitKey,
+  FullText,
+  Keydown,
+  Modifier,
+  NewContentType,
+  NewText,
+  PreviousContentType,
+  PreviousText,
+  Reenter,
+  SelectionEnd,
+  SelectionStart,
+  Shift,
+  SoapFaultCode,
+  SoapFaultString,
+  Target,
+  CancelAction
+};
+
+class CJX_EventPseudoModel : public CJX_Object {
  public:
-  explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
-  ~CScript_EventPseudoModel() override;
+  explicit CJX_EventPseudoModel(CScript_EventPseudoModel* model);
+  ~CJX_EventPseudoModel() override;
 
-  CJX_EventPseudoModel* JSEventPseudoModel() {
-    return static_cast<CJX_EventPseudoModel*>(JSObject());
-  }
+  CScript_EventPseudoModel* GetXFAEventPseudoModel();
 
   void Change(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void CommitKey(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
@@ -49,6 +67,9 @@ class CScript_EventPseudoModel : public CXFA_Object {
 
   void Emit(CFXJSE_Arguments* pArguments);
   void Reset(CFXJSE_Arguments* pArguments);
+
+ private:
+  void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, bool bSetting);
 };
 
-#endif  // XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
+#endif  // FXJS_CJX_EVENTPSEUDOMODEL_H_

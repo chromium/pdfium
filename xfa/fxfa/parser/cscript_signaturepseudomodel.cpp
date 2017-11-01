@@ -7,13 +7,7 @@
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 
 #include "fxjs/cfxjse_arguments.h"
-#include "fxjs/cfxjse_engine.h"
-#include "fxjs/cjx_object.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     CXFA_Document* pDocument)
@@ -21,50 +15,22 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
                   XFA_ObjectType::Object,
                   XFA_Element::SignaturePseudoModel,
                   WideStringView(L"signaturePseudoModel"),
-                  pdfium::MakeUnique<CJX_Object>(this)) {}
+                  pdfium::MakeUnique<CJX_SignaturePseudoModel>(this)) {}
 
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
 
 void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 4) {
-    JSObject()->ThrowParamCountMismatchException(L"verify");
-    return;
-  }
-
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetInteger(0);
+  JSSignaturePseudoModel()->Verify(pArguments);
 }
 
 void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 3 || iLength > 7) {
-    JSObject()->ThrowParamCountMismatchException(L"sign");
-    return;
-  }
-
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetBoolean(false);
+  JSSignaturePseudoModel()->Sign(pArguments);
 }
 
 void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    JSObject()->ThrowParamCountMismatchException(L"enumerate");
-    return;
-  }
-  return;
+  JSSignaturePseudoModel()->Enumerate(pArguments);
 }
 
 void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 2) {
-    JSObject()->ThrowParamCountMismatchException(L"clear");
-    return;
-  }
-
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetBoolean(false);
+  JSSignaturePseudoModel()->Clear(pArguments);
 }

@@ -1,26 +1,25 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_
-#define XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_
+#ifndef FXJS_CJX_HOSTPSEUDOMODEL_H_
+#define FXJS_CJX_HOSTPSEUDOMODEL_H_
 
-#include "fxjs/cjx_hostpseudomodel.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
+#include "fxjs/cjx_object.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CFXJSE_Arguments;
-class CXFA_Document;
+class CFXJSE_Value;
+class CScript_HostPseudoModel;
 
-class CScript_HostPseudoModel : public CXFA_Object {
+class CJX_HostPseudoModel : public CJX_Object {
  public:
-  explicit CScript_HostPseudoModel(CXFA_Document* pDocument);
-  ~CScript_HostPseudoModel() override;
+  explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
+  ~CJX_HostPseudoModel() override;
 
-  CJX_HostPseudoModel* JSHostPseudoModel() {
-    return static_cast<CJX_HostPseudoModel*>(JSObject());
-  }
+  CScript_HostPseudoModel* GetXFAHostPseudoModel();
 
   void AppType(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void CalculationsEnabled(CFXJSE_Value* pValue,
@@ -55,6 +54,11 @@ class CScript_HostPseudoModel : public CXFA_Object {
   void PageUp(CFXJSE_Arguments* pArguments);
   void PageDown(CFXJSE_Arguments* pArguments);
   void CurrentDateTime(CFXJSE_Arguments* pArguments);
+
+ private:
+  bool ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
+                          int32_t iArgIndex,
+                          WideString& wsValue);
 };
 
-#endif  // XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_
+#endif  // FXJS_CJX_HOSTPSEUDOMODEL_H_

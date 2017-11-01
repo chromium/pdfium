@@ -7,27 +7,33 @@
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 
 #include "fxjs/cfxjse_arguments.h"
-#include "fxjs/cjx_object.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::LogPseudoModel,
                   WideStringView(L"logPseudoModel"),
-                  pdfium::MakeUnique<CJX_Object>(this)) {}
+                  pdfium::MakeUnique<CJX_LogPseudoModel>(this)) {}
 
 CScript_LogPseudoModel::~CScript_LogPseudoModel() {}
 
-void CScript_LogPseudoModel::Message(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::Message(CFXJSE_Arguments* pArguments) {
+  JSLogPseudoModel()->Message(pArguments);
+}
 
-void CScript_LogPseudoModel::TraceEnabled(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::TraceEnabled(CFXJSE_Arguments* pArguments) {
+  JSLogPseudoModel()->TraceEnabled(pArguments);
+}
 
-void CScript_LogPseudoModel::TraceActivate(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::TraceActivate(CFXJSE_Arguments* pArguments) {
+  JSLogPseudoModel()->TraceActivate(pArguments);
+}
 
-void CScript_LogPseudoModel::TraceDeactivate(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::TraceDeactivate(CFXJSE_Arguments* pArguments) {
+  JSLogPseudoModel()->TraceDeactivate(pArguments);
+}
 
-void CScript_LogPseudoModel::Trace(CFXJSE_Arguments* pArguments) {}
+void CScript_LogPseudoModel::Trace(CFXJSE_Arguments* pArguments) {
+  JSLogPseudoModel()->Trace(pArguments);
+}
