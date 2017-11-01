@@ -148,7 +148,11 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      XFA_ObjectType oType,
                      XFA_Element eType,
                      const WideStringView& elementName)
-    : CXFA_Object(pDoc, oType, eType, elementName),
+    : CXFA_Object(pDoc,
+                  oType,
+                  eType,
+                  elementName,
+                  pdfium::MakeUnique<CJX_Node>(this)),
       m_pNext(nullptr),
       m_pChild(nullptr),
       m_pLastChild(nullptr),
@@ -157,8 +161,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
       m_ePacket(ePacket),
       m_uNodeFlags(XFA_NodeFlag_None),
       m_dwNameHash(0),
-      m_pAuxNode(nullptr),
-      m_JSNode(this) {
+      m_pAuxNode(nullptr) {
   ASSERT(m_pDocument);
 }
 
@@ -180,15 +183,15 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
   if (!pClone)
     return nullptr;
 
-  m_JSNode.MergeAllData(pClone);
+  JSNode()->MergeAllData(pClone);
   pClone->UpdateNameHash();
   if (IsNeedSavingXMLNode()) {
     std::unique_ptr<CFX_XMLNode> pCloneXML;
     if (IsAttributeInXML()) {
       WideString wsName;
-      m_JSNode.GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
+      JSNode()->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
       auto pCloneXMLElement = pdfium::MakeUnique<CFX_XMLElement>(wsName);
-      WideStringView wsValue = m_JSNode.GetCData(XFA_ATTRIBUTE_Value);
+      WideStringView wsValue = JSNode()->GetCData(XFA_ATTRIBUTE_Value);
       if (!wsValue.IsEmpty()) {
         pCloneXMLElement->SetTextData(WideString(wsValue));
       }
@@ -371,18 +374,19 @@ void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
 
 CXFA_Node* CXFA_Node::GetBindData() {
   ASSERT(GetPacketID() == XFA_XDPPACKET_Form);
-  return static_cast<CXFA_Node*>(m_JSNode.GetObject(XFA_ATTRIBUTE_BindingNode));
+  return static_cast<CXFA_Node*>(
+      JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
 }
 
 std::vector<CXFA_Node*> CXFA_Node::GetBindItems() {
   if (BindsFormItems()) {
     void* pBinding = nullptr;
-    m_JSNode.TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
+    JSNode()->TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
     return *static_cast<std::vector<CXFA_Node*>*>(pBinding);
   }
   std::vector<CXFA_Node*> result;
   CXFA_Node* pFormNode =
-      static_cast<CXFA_Node*>(m_JSNode.GetObject(XFA_ATTRIBUTE_BindingNode));
+      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
   if (pFormNode)
     result.push_back(pFormNode);
   return result;
@@ -392,24 +396,24 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
   if (BindsFormItems()) {
     void* pBinding = nullptr;
-    m_JSNode.TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
+    JSNode()->TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
     auto* pItems = static_cast<std::vector<CXFA_Node*>*>(pBinding);
     if (!pdfium::ContainsValue(*pItems, pFormNode))
       pItems->push_back(pFormNode);
     return pdfium::CollectionSize<int32_t>(*pItems);
   }
   CXFA_Node* pOldFormItem =
-      static_cast<CXFA_Node*>(m_JSNode.GetObject(XFA_ATTRIBUTE_BindingNode));
+      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
   if (!pOldFormItem) {
-    m_JSNode.SetObject(XFA_ATTRIBUTE_BindingNode, pFormNode);
+    JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pFormNode);
     return 1;
   }
   if (pOldFormItem == pFormNode)
     return 1;
 
   std::vector<CXFA_Node*>* pItems = new std::vector<CXFA_Node*>;
-  m_JSNode.SetObject(XFA_ATTRIBUTE_BindingNode, pItems,
-                     &deleteBindItemCallBack);
+  JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pItems,
+                      &deleteBindItemCallBack);
   pItems->push_back(pOldFormItem);
   pItems->push_back(pFormNode);
   m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
@@ -419,15 +423,15 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
 int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (BindsFormItems()) {
     void* pBinding = nullptr;
-    m_JSNode.TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
+    JSNode()->TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
     auto* pItems = static_cast<std::vector<CXFA_Node*>*>(pBinding);
     auto iter = std::find(pItems->begin(), pItems->end(), pFormNode);
     if (iter != pItems->end()) {
       *iter = pItems->back();
       pItems->pop_back();
       if (pItems->size() == 1) {
-        m_JSNode.SetObject(XFA_ATTRIBUTE_BindingNode,
-                           (*pItems)[0]);  // Invalidates pItems.
+        JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode,
+                            (*pItems)[0]);  // Invalidates pItems.
         m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
         return 1;
       }
@@ -435,21 +439,21 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
     return pdfium::CollectionSize<int32_t>(*pItems);
   }
   CXFA_Node* pOldFormItem =
-      static_cast<CXFA_Node*>(m_JSNode.GetObject(XFA_ATTRIBUTE_BindingNode));
+      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
   if (pOldFormItem != pFormNode)
     return pOldFormItem ? 1 : 0;
 
-  m_JSNode.SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
+  JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
   return 0;
 }
 
 bool CXFA_Node::HasBindItem() {
   return GetPacketID() == XFA_XDPPACKET_Datasets &&
-         m_JSNode.GetObject(XFA_ATTRIBUTE_BindingNode);
+         JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode);
 }
 
 CXFA_WidgetData* CXFA_Node::GetWidgetData() {
-  return (CXFA_WidgetData*)m_JSNode.GetObject(XFA_ATTRIBUTE_WidgetData);
+  return (CXFA_WidgetData*)JSNode()->GetObject(XFA_ATTRIBUTE_WidgetData);
 }
 
 CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
@@ -546,7 +550,7 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
 
 XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
   CXFA_Node* pKeep = GetFirstChildByClass(XFA_Element::Keep);
-  XFA_ATTRIBUTEENUM eLayoutType = m_JSNode.GetEnum(XFA_ATTRIBUTE_Layout);
+  XFA_ATTRIBUTEENUM eLayoutType = JSNode()->GetEnum(XFA_ATTRIBUTE_Layout);
   if (pKeep) {
     XFA_ATTRIBUTEENUM eIntact;
     if (pKeep->JSNode()->TryEnum(XFA_ATTRIBUTE_Intact, eIntact, false)) {
@@ -607,7 +611,7 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
         XFA_VERSION version = m_pDocument->GetCurVersionMode();
         if (eParLayout == XFA_ATTRIBUTEENUM_Tb && version < XFA_VERSION_208) {
           CXFA_Measurement measureH;
-          if (m_JSNode.TryMeasure(XFA_ATTRIBUTE_H, measureH, false))
+          if (JSNode()->TryMeasure(XFA_ATTRIBUTE_H, measureH, false))
             return XFA_ATTRIBUTEENUM_ContentArea;
         }
         return XFA_ATTRIBUTEENUM_None;
@@ -633,830 +637,734 @@ void CXFA_Node::SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode) {
   m_pAuxNode = pDataDescriptionNode;
 }
 
-int32_t CXFA_Node::Subform_and_SubformSet_InstanceIndex() {
-  int32_t index = 0;
-  for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling); pNode;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
-    if ((pNode->GetElementType() == XFA_Element::Subform) ||
-        (pNode->GetElementType() == XFA_Element::SubformSet)) {
-      index++;
-    } else {
-      break;
-    }
-  }
-  return index;
-}
-
-int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
-  CXFA_Occur nodeOccur(GetOccurNode());
-  int32_t iMax = nodeOccur.GetMax();
-  int32_t iMin = nodeOccur.GetMin();
-  if (iDesired < iMin) {
-    ThrowTooManyOccurancesException(L"min");
-    return 1;
-  }
-  if ((iMax >= 0) && (iDesired > iMax)) {
-    ThrowTooManyOccurancesException(L"max");
-    return 2;
-  }
-  int32_t iCount = GetCount(this);
-  if (iDesired == iCount) {
-    return 0;
-  }
-  if (iDesired < iCount) {
-    WideStringView wsInstManagerName = m_JSNode.GetCData(XFA_ATTRIBUTE_Name);
-    WideString wsInstanceName = WideString(
-        wsInstManagerName.IsEmpty()
-            ? wsInstManagerName
-            : wsInstManagerName.Right(wsInstManagerName.GetLength() - 1));
-    uint32_t dInstanceNameHash =
-        FX_HashCode_GetW(wsInstanceName.AsStringView(), false);
-    CXFA_Node* pPrevSibling =
-        (iDesired == 0) ? this : GetItem(this, iDesired - 1);
-    while (iCount > iDesired) {
-      CXFA_Node* pRemoveInstance =
-          pPrevSibling->GetNodeItem(XFA_NODEITEM_NextSibling);
-      if (pRemoveInstance->GetElementType() != XFA_Element::Subform &&
-          pRemoveInstance->GetElementType() != XFA_Element::SubformSet) {
-        continue;
-      }
-      if (pRemoveInstance->GetElementType() == XFA_Element::InstanceManager) {
-        NOTREACHED();
-        break;
-      }
-      if (pRemoveInstance->GetNameHash() == dInstanceNameHash) {
-        RemoveItem(this, pRemoveInstance);
-        iCount--;
-      }
-    }
-  } else if (iDesired > iCount) {
-    while (iCount < iDesired) {
-      CXFA_Node* pNewInstance = CreateInstance(this, true);
-      InsertItem(this, pNewInstance, iCount, iCount, false);
-      iCount++;
-      CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-      if (!pNotify) {
-        return 0;
-      }
-      pNotify->RunNodeInitialize(pNewInstance);
-    }
-  }
-  CXFA_LayoutProcessor* pLayoutPro = m_pDocument->GetLayoutProcessor();
-  if (pLayoutPro) {
-    pLayoutPro->AddChangedContainer(
-        ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form)));
-  }
-  return 0;
-}
-
-int32_t CXFA_Node::InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom) {
-  int32_t iCount = GetCount(this);
-  if (iFrom > iCount || iTo > iCount - 1) {
-    ThrowIndexOutOfBoundsException();
-    return 1;
-  }
-  if (iFrom < 0 || iTo < 0 || iFrom == iTo) {
-    return 0;
-  }
-  CXFA_Node* pMoveInstance = GetItem(this, iFrom);
-  RemoveItem(this, pMoveInstance, false);
-  InsertItem(this, pMoveInstance, iTo, iCount - 1, true);
-  CXFA_LayoutProcessor* pLayoutPro = m_pDocument->GetLayoutProcessor();
-  if (pLayoutPro) {
-    pLayoutPro->AddChangedContainer(
-        ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form)));
-  }
-  return 0;
-}
-
 void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_TreeClass_ResolveNode(pArguments);
+  JSNode()->Script_TreeClass_ResolveNode(pArguments);
 }
 
 void CXFA_Node::Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_TreeClass_ResolveNodes(pArguments);
+  JSNode()->Script_TreeClass_ResolveNodes(pArguments);
 }
 
 void CXFA_Node::Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
                                            WideString wsExpression,
                                            uint32_t dwFlag,
                                            CXFA_Node* refNode) {
-  m_JSNode.Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag, refNode);
+  JSNode()->Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag, refNode);
 }
 
 void CXFA_Node::Script_TreeClass_All(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_TreeClass_All(pValue, bSetting, eAttribute);
+  JSNode()->Script_TreeClass_All(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_TreeClass_Nodes(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_TreeClass_Nodes(pValue, bSetting, eAttribute);
+  JSNode()->Script_TreeClass_Nodes(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_TreeClass_ClassAll(CFXJSE_Value* pValue,
                                           bool bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_TreeClass_ClassAll(pValue, bSetting, eAttribute);
+  JSNode()->Script_TreeClass_ClassAll(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_TreeClass_Parent(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_TreeClass_Parent(pValue, bSetting, eAttribute);
+  JSNode()->Script_TreeClass_Parent(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_TreeClass_Index(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_TreeClass_Index(pValue, bSetting, eAttribute);
+  JSNode()->Script_TreeClass_Index(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_TreeClass_ClassIndex(CFXJSE_Value* pValue,
                                             bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_TreeClass_ClassIndex(pValue, bSetting, eAttribute);
+  JSNode()->Script_TreeClass_ClassIndex(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_TreeClass_SomExpression(CFXJSE_Value* pValue,
                                                bool bSetting,
                                                XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_TreeClass_SomExpression(pValue, bSetting, eAttribute);
+  JSNode()->Script_TreeClass_SomExpression(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_NodeClass_ApplyXSL(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_ApplyXSL(pArguments);
+  JSNode()->Script_NodeClass_ApplyXSL(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_AssignNode(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_AssignNode(pArguments);
+  JSNode()->Script_NodeClass_AssignNode(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_Clone(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_Clone(pArguments);
+  JSNode()->Script_NodeClass_Clone(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_GetAttribute(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_GetAttribute(pArguments);
+  JSNode()->Script_NodeClass_GetAttribute(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_GetElement(pArguments);
+  JSNode()->Script_NodeClass_GetElement(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_IsPropertySpecified(
     CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_IsPropertySpecified(pArguments);
+  JSNode()->Script_NodeClass_IsPropertySpecified(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_LoadXML(pArguments);
+  JSNode()->Script_NodeClass_LoadXML(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_SaveFilteredXML(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_SaveFilteredXML(pArguments);
+  JSNode()->Script_NodeClass_SaveFilteredXML(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_SaveXML(pArguments);
+  JSNode()->Script_NodeClass_SaveXML(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_SetAttribute(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_SetAttribute(pArguments);
+  JSNode()->Script_NodeClass_SetAttribute(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_SetElement(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_NodeClass_SetElement(pArguments);
+  JSNode()->Script_NodeClass_SetElement(pArguments);
 }
 
 void CXFA_Node::Script_NodeClass_Ns(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_NodeClass_Ns(pValue, bSetting, eAttribute);
+  JSNode()->Script_NodeClass_Ns(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_NodeClass_Model(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_NodeClass_Model(pValue, bSetting, eAttribute);
+  JSNode()->Script_NodeClass_Model(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_NodeClass_IsContainer(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_NodeClass_IsContainer(pValue, bSetting, eAttribute);
+  JSNode()->Script_NodeClass_IsContainer(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_NodeClass_IsNull(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_NodeClass_IsNull(pValue, bSetting, eAttribute);
+  JSNode()->Script_NodeClass_IsNull(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
                                             bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_NodeClass_OneOfChild(pValue, bSetting, eAttribute);
+  JSNode()->Script_NodeClass_OneOfChild(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_ContainerClass_GetDelta(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ContainerClass_GetDelta(pArguments);
+  JSNode()->Script_ContainerClass_GetDelta(pArguments);
 }
 
 void CXFA_Node::Script_ContainerClass_GetDeltas(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ContainerClass_GetDeltas(pArguments);
+  JSNode()->Script_ContainerClass_GetDeltas(pArguments);
 }
 
 void CXFA_Node::Script_ModelClass_ClearErrorList(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ModelClass_ClearErrorList(pArguments);
+  JSNode()->Script_ModelClass_ClearErrorList(pArguments);
 }
 
 void CXFA_Node::Script_ModelClass_CreateNode(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ModelClass_CreateNode(pArguments);
+  JSNode()->Script_ModelClass_CreateNode(pArguments);
 }
 
 void CXFA_Node::Script_ModelClass_IsCompatibleNS(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ModelClass_IsCompatibleNS(pArguments);
+  JSNode()->Script_ModelClass_IsCompatibleNS(pArguments);
 }
 
 void CXFA_Node::Script_ModelClass_Context(CFXJSE_Value* pValue,
                                           bool bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_ModelClass_Context(pValue, bSetting, eAttribute);
+  JSNode()->Script_ModelClass_Context(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_ModelClass_AliasNode(CFXJSE_Value* pValue,
                                             bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_ModelClass_AliasNode(pValue, bSetting, eAttribute);
+  JSNode()->Script_ModelClass_AliasNode(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Attribute_Integer(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Attribute_Integer(pValue, bSetting, eAttribute);
+  JSNode()->Script_Attribute_Integer(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Attribute_IntegerRead(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Attribute_IntegerRead(pValue, bSetting, eAttribute);
+  JSNode()->Script_Attribute_IntegerRead(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Attribute_BOOL(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Attribute_BOOL(pValue, bSetting, eAttribute);
+  JSNode()->Script_Attribute_BOOL(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
                                           bool bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Attribute_BOOLRead(pValue, bSetting, eAttribute);
+  JSNode()->Script_Attribute_BOOLRead(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Attribute_SendAttributeChangeMessage(
     XFA_ATTRIBUTE eAttribute,
     bool bScriptModify) {
-  m_JSNode.Script_Attribute_SendAttributeChangeMessage(eAttribute,
-                                                       bScriptModify);
+  JSNode()->Script_Attribute_SendAttributeChangeMessage(eAttribute,
+                                                        bScriptModify);
 }
 
 void CXFA_Node::Script_Attribute_String(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Attribute_String(pValue, bSetting, eAttribute);
+  JSNode()->Script_Attribute_String(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Attribute_StringRead(CFXJSE_Value* pValue,
                                             bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Attribute_StringRead(pValue, bSetting, eAttribute);
+  JSNode()->Script_Attribute_StringRead(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_WsdlConnection_Execute(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_WsdlConnection_Execute(pArguments);
+  JSNode()->Script_WsdlConnection_Execute(pArguments);
 }
 
 void CXFA_Node::Script_Delta_Restore(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Delta_Restore(pArguments);
+  JSNode()->Script_Delta_Restore(pArguments);
 }
 
 void CXFA_Node::Script_Delta_CurrentValue(CFXJSE_Value* pValue,
                                           bool bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Delta_CurrentValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_Delta_CurrentValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Delta_SavedValue(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Delta_SavedValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_Delta_SavedValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Delta_Target(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Delta_Target(pValue, bSetting, eAttribute);
+  JSNode()->Script_Delta_Target(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_Message(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_SOM_MESSAGETYPE iMessageType) {
-  m_JSNode.Script_Som_Message(pValue, bSetting, iMessageType);
+  JSNode()->Script_Som_Message(pValue, bSetting, iMessageType);
 }
 
 void CXFA_Node::Script_Som_ValidationMessage(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_ValidationMessage(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_ValidationMessage(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_Length(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Field_Length(pValue, bSetting, eAttribute);
+  JSNode()->Script_Field_Length(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_DefaultValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_DefaultValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_DefaultValue_Read(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_DefaultValue_Read(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Boolean_Value(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Boolean_Value(pValue, bSetting, eAttribute);
+  JSNode()->Script_Boolean_Value(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_BorderColor(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_BorderColor(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_BorderColor(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_BorderWidth(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_BorderWidth(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_BorderWidth(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_FillColor(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_FillColor(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_DataNode(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_DataNode(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_DataNode(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Draw_DefaultValue(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Draw_DefaultValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_Draw_DefaultValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
                                           bool bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Field_DefaultValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_Field_DefaultValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_EditValue(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Field_EditValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_Field_EditValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_FontColor(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_FontColor(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_FontColor(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_FormatMessage(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Field_FormatMessage(pValue, bSetting, eAttribute);
+  JSNode()->Script_Field_FormatMessage(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_FormattedValue(CFXJSE_Value* pValue,
                                             bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Field_FormattedValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_Field_FormattedValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_Mandatory(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_Mandatory(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_Mandatory(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
                                             bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_MandatoryMessage(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_MandatoryMessage(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_ParentSubform(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Field_ParentSubform(pValue, bSetting, eAttribute);
+  JSNode()->Script_Field_ParentSubform(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_SelectedIndex(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Field_SelectedIndex(pValue, bSetting, eAttribute);
+  JSNode()->Script_Field_SelectedIndex(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Field_ClearItems(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_ClearItems(pArguments);
+  JSNode()->Script_Field_ClearItems(pArguments);
 }
 
 void CXFA_Node::Script_Field_ExecEvent(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_ExecEvent(pArguments);
+  JSNode()->Script_Field_ExecEvent(pArguments);
 }
 
 void CXFA_Node::Script_Field_ExecInitialize(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_ExecInitialize(pArguments);
+  JSNode()->Script_Field_ExecInitialize(pArguments);
 }
 
 void CXFA_Node::Script_Field_DeleteItem(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_DeleteItem(pArguments);
+  JSNode()->Script_Field_DeleteItem(pArguments);
 }
 
 void CXFA_Node::Script_Field_GetSaveItem(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_GetSaveItem(pArguments);
+  JSNode()->Script_Field_GetSaveItem(pArguments);
 }
 
 void CXFA_Node::Script_Field_BoundItem(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_BoundItem(pArguments);
+  JSNode()->Script_Field_BoundItem(pArguments);
 }
 
 void CXFA_Node::Script_Field_GetItemState(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_GetItemState(pArguments);
+  JSNode()->Script_Field_GetItemState(pArguments);
 }
 
 void CXFA_Node::Script_Field_ExecCalculate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_ExecCalculate(pArguments);
+  JSNode()->Script_Field_ExecCalculate(pArguments);
 }
 
 void CXFA_Node::Script_Field_SetItems(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_SetItems(pArguments);
+  JSNode()->Script_Field_SetItems(pArguments);
 }
 
 void CXFA_Node::Script_Field_GetDisplayItem(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_GetDisplayItem(pArguments);
+  JSNode()->Script_Field_GetDisplayItem(pArguments);
 }
 
 void CXFA_Node::Script_Field_SetItemState(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_SetItemState(pArguments);
+  JSNode()->Script_Field_SetItemState(pArguments);
 }
 
 void CXFA_Node::Script_Field_AddItem(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_AddItem(pArguments);
+  JSNode()->Script_Field_AddItem(pArguments);
 }
 
 void CXFA_Node::Script_Field_ExecValidate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Field_ExecValidate(pArguments);
+  JSNode()->Script_Field_ExecValidate(pArguments);
 }
 
 void CXFA_Node::Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_ExclGroup_ErrorText(pValue, bSetting, eAttribute);
+  JSNode()->Script_ExclGroup_ErrorText(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_ExclGroup_DefaultAndRawValue(CFXJSE_Value* pValue,
                                                     bool bSetting,
                                                     XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_ExclGroup_DefaultAndRawValue(pValue, bSetting, eAttribute);
+  JSNode()->Script_ExclGroup_DefaultAndRawValue(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_ExclGroup_Transient(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_ExclGroup_Transient(pValue, bSetting, eAttribute);
+  JSNode()->Script_ExclGroup_Transient(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_ExclGroup_ExecEvent(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ExclGroup_ExecEvent(pArguments);
+  JSNode()->Script_ExclGroup_ExecEvent(pArguments);
 }
 
 void CXFA_Node::Script_ExclGroup_SelectedMember(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ExclGroup_SelectedMember(pArguments);
+  JSNode()->Script_ExclGroup_SelectedMember(pArguments);
 }
 
 void CXFA_Node::Script_ExclGroup_ExecInitialize(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ExclGroup_ExecInitialize(pArguments);
+  JSNode()->Script_ExclGroup_ExecInitialize(pArguments);
 }
 
 void CXFA_Node::Script_ExclGroup_ExecCalculate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ExclGroup_ExecCalculate(pArguments);
+  JSNode()->Script_ExclGroup_ExecCalculate(pArguments);
 }
 
 void CXFA_Node::Script_ExclGroup_ExecValidate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_ExclGroup_ExecValidate(pArguments);
+  JSNode()->Script_ExclGroup_ExecValidate(pArguments);
 }
 
 void CXFA_Node::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Som_InstanceIndex(pValue, bSetting, eAttribute);
+  JSNode()->Script_Som_InstanceIndex(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Subform_InstanceManager(CFXJSE_Value* pValue,
                                                bool bSetting,
                                                XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Subform_InstanceManager(pValue, bSetting, eAttribute);
+  JSNode()->Script_Subform_InstanceManager(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Subform_Locale(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Subform_Locale(pValue, bSetting, eAttribute);
+  JSNode()->Script_Subform_Locale(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Subform_ExecEvent(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Subform_ExecEvent(pArguments);
+  JSNode()->Script_Subform_ExecEvent(pArguments);
 }
 
 void CXFA_Node::Script_Subform_ExecInitialize(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Subform_ExecInitialize(pArguments);
+  JSNode()->Script_Subform_ExecInitialize(pArguments);
 }
 
 void CXFA_Node::Script_Subform_ExecCalculate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Subform_ExecInitialize(pArguments);
+  JSNode()->Script_Subform_ExecInitialize(pArguments);
 }
 
 void CXFA_Node::Script_Subform_ExecValidate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Subform_ExecValidate(pArguments);
+  JSNode()->Script_Subform_ExecValidate(pArguments);
 }
 
 void CXFA_Node::Script_Subform_GetInvalidObjects(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Subform_GetInvalidObjects(pArguments);
+  JSNode()->Script_Subform_GetInvalidObjects(pArguments);
 }
 
 void CXFA_Node::Script_Template_FormNodes(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Template_FormNodes(pArguments);
+  JSNode()->Script_Template_FormNodes(pArguments);
 }
 
 void CXFA_Node::Script_Template_Remerge(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Template_Remerge(pArguments);
+  JSNode()->Script_Template_Remerge(pArguments);
 }
 
 void CXFA_Node::Script_Template_ExecInitialize(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Template_ExecInitialize(pArguments);
+  JSNode()->Script_Template_ExecInitialize(pArguments);
 }
 
 void CXFA_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Template_CreateNode(pArguments);
+  JSNode()->Script_Template_CreateNode(pArguments);
 }
 
 void CXFA_Node::Script_Template_Recalculate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Template_Recalculate(pArguments);
+  JSNode()->Script_Template_Recalculate(pArguments);
 }
 
 void CXFA_Node::Script_Template_ExecCalculate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Template_ExecCalculate(pArguments);
+  JSNode()->Script_Template_ExecCalculate(pArguments);
 }
 
 void CXFA_Node::Script_Template_ExecValidate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Template_ExecValidate(pArguments);
+  JSNode()->Script_Template_ExecValidate(pArguments);
 }
 
 void CXFA_Node::Script_Manifest_Evaluate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Manifest_Evaluate(pArguments);
+  JSNode()->Script_Manifest_Evaluate(pArguments);
 }
 
 void CXFA_Node::Script_InstanceManager_Max(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_InstanceManager_Max(pValue, bSetting, eAttribute);
+  JSNode()->Script_InstanceManager_Max(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_InstanceManager_Min(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_InstanceManager_Min(pValue, bSetting, eAttribute);
+  JSNode()->Script_InstanceManager_Min(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_InstanceManager_Count(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_InstanceManager_Count(pValue, bSetting, eAttribute);
+  JSNode()->Script_InstanceManager_Count(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_InstanceManager_MoveInstance(
     CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_InstanceManager_MoveInstance(pArguments);
+  JSNode()->Script_InstanceManager_MoveInstance(pArguments);
 }
 
 void CXFA_Node::Script_InstanceManager_RemoveInstance(
     CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_InstanceManager_RemoveInstance(pArguments);
+  JSNode()->Script_InstanceManager_RemoveInstance(pArguments);
 }
 
 void CXFA_Node::Script_InstanceManager_SetInstances(
     CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_InstanceManager_SetInstances(pArguments);
+  JSNode()->Script_InstanceManager_SetInstances(pArguments);
 }
 
 void CXFA_Node::Script_InstanceManager_AddInstance(
     CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_InstanceManager_AddInstance(pArguments);
+  JSNode()->Script_InstanceManager_AddInstance(pArguments);
 }
 
 void CXFA_Node::Script_InstanceManager_InsertInstance(
     CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_InstanceManager_InsertInstance(pArguments);
+  JSNode()->Script_InstanceManager_InsertInstance(pArguments);
 }
 
 void CXFA_Node::Script_Occur_Max(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Occur_Max(pValue, bSetting, eAttribute);
+  JSNode()->Script_Occur_Max(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Occur_Min(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Occur_Min(pValue, bSetting, eAttribute);
+  JSNode()->Script_Occur_Min(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Desc_Metadata(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Desc_Metadata(pArguments);
+  JSNode()->Script_Desc_Metadata(pArguments);
 }
 
 void CXFA_Node::Script_Form_FormNodes(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Form_FormNodes(pArguments);
+  JSNode()->Script_Form_FormNodes(pArguments);
 }
 
 void CXFA_Node::Script_Form_Remerge(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Form_Remerge(pArguments);
+  JSNode()->Script_Form_Remerge(pArguments);
 }
 
 void CXFA_Node::Script_Form_ExecInitialize(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Form_ExecInitialize(pArguments);
+  JSNode()->Script_Form_ExecInitialize(pArguments);
 }
 
 void CXFA_Node::Script_Form_Recalculate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Form_Recalculate(pArguments);
+  JSNode()->Script_Form_Recalculate(pArguments);
 }
 
 void CXFA_Node::Script_Form_ExecCalculate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Form_ExecCalculate(pArguments);
+  JSNode()->Script_Form_ExecCalculate(pArguments);
 }
 
 void CXFA_Node::Script_Form_ExecValidate(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Form_ExecValidate(pArguments);
+  JSNode()->Script_Form_ExecValidate(pArguments);
 }
 
 void CXFA_Node::Script_Form_Checksum(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Form_Checksum(pValue, bSetting, eAttribute);
+  JSNode()->Script_Form_Checksum(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Packet_GetAttribute(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Packet_GetAttribute(pArguments);
+  JSNode()->Script_Packet_GetAttribute(pArguments);
 }
 
 void CXFA_Node::Script_Packet_SetAttribute(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Packet_SetAttribute(pArguments);
+  JSNode()->Script_Packet_SetAttribute(pArguments);
 }
 
 void CXFA_Node::Script_Packet_RemoveAttribute(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Packet_RemoveAttribute(pArguments);
+  JSNode()->Script_Packet_RemoveAttribute(pArguments);
 }
 
 void CXFA_Node::Script_Packet_Content(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Packet_Content(pValue, bSetting, eAttribute);
+  JSNode()->Script_Packet_Content(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Source_Next(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Next(pArguments);
+  JSNode()->Script_Source_Next(pArguments);
 }
 
 void CXFA_Node::Script_Source_CancelBatch(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_CancelBatch(pArguments);
+  JSNode()->Script_Source_CancelBatch(pArguments);
 }
 
 void CXFA_Node::Script_Source_First(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_First(pArguments);
+  JSNode()->Script_Source_First(pArguments);
 }
 
 void CXFA_Node::Script_Source_UpdateBatch(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_UpdateBatch(pArguments);
+  JSNode()->Script_Source_UpdateBatch(pArguments);
 }
 
 void CXFA_Node::Script_Source_Previous(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Previous(pArguments);
+  JSNode()->Script_Source_Previous(pArguments);
 }
 
 void CXFA_Node::Script_Source_IsBOF(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_IsBOF(pArguments);
+  JSNode()->Script_Source_IsBOF(pArguments);
 }
 
 void CXFA_Node::Script_Source_IsEOF(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_IsEOF(pArguments);
+  JSNode()->Script_Source_IsEOF(pArguments);
 }
 
 void CXFA_Node::Script_Source_Cancel(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Cancel(pArguments);
+  JSNode()->Script_Source_Cancel(pArguments);
 }
 
 void CXFA_Node::Script_Source_Update(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Update(pArguments);
+  JSNode()->Script_Source_Update(pArguments);
 }
 
 void CXFA_Node::Script_Source_Open(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Open(pArguments);
+  JSNode()->Script_Source_Open(pArguments);
 }
 
 void CXFA_Node::Script_Source_Delete(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Delete(pArguments);
+  JSNode()->Script_Source_Delete(pArguments);
 }
 
 void CXFA_Node::Script_Source_AddNew(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_AddNew(pArguments);
+  JSNode()->Script_Source_AddNew(pArguments);
 }
 
 void CXFA_Node::Script_Source_Requery(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Requery(pArguments);
+  JSNode()->Script_Source_Requery(pArguments);
 }
 
 void CXFA_Node::Script_Source_Resync(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Resync(pArguments);
+  JSNode()->Script_Source_Resync(pArguments);
 }
 
 void CXFA_Node::Script_Source_Close(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Close(pArguments);
+  JSNode()->Script_Source_Close(pArguments);
 }
 
 void CXFA_Node::Script_Source_Last(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_Last(pArguments);
+  JSNode()->Script_Source_Last(pArguments);
 }
 
 void CXFA_Node::Script_Source_HasDataChanged(CFXJSE_Arguments* pArguments) {
-  m_JSNode.Script_Source_HasDataChanged(pArguments);
+  JSNode()->Script_Source_HasDataChanged(pArguments);
 }
 
 void CXFA_Node::Script_Source_Db(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Source_Db(pValue, bSetting, eAttribute);
+  JSNode()->Script_Source_Db(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Xfa_This(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Xfa_This(pValue, bSetting, eAttribute);
+  JSNode()->Script_Xfa_This(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Handler_Version(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Handler_Version(pValue, bSetting, eAttribute);
+  JSNode()->Script_Handler_Version(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_SubmitFormat_Mode(pValue, bSetting, eAttribute);
+  JSNode()->Script_SubmitFormat_Mode(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Extras_Type(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Extras_Type(pValue, bSetting, eAttribute);
+  JSNode()->Script_Extras_Type(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Script_Stateless(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Script_Stateless(pValue, bSetting, eAttribute);
+  JSNode()->Script_Script_Stateless(pValue, bSetting, eAttribute);
 }
 
 void CXFA_Node::Script_Encrypt_Format(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
-  m_JSNode.Script_Encrypt_Format(pValue, bSetting, eAttribute);
+  JSNode()->Script_Encrypt_Format(pValue, bSetting, eAttribute);
 }
 
 CXFA_Node* CXFA_Node::GetModelNode() {
@@ -1673,7 +1581,7 @@ bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
       WideString wsName;
       pNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
       CFX_XMLElement* pNewXMLElement = new CFX_XMLElement(wsName);
-      WideStringView wsValue = m_JSNode.GetCData(XFA_ATTRIBUTE_Value);
+      WideStringView wsValue = JSNode()->GetCData(XFA_ATTRIBUTE_Value);
       if (!wsValue.IsEmpty()) {
         pNewXMLElement->SetTextData(WideString(wsValue));
       }
@@ -1776,7 +1684,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
         break;
       }
       if (eType == XFA_Element::InstanceManager) {
-        WideStringView wsName = m_JSNode.GetCData(XFA_ATTRIBUTE_Name);
+        WideStringView wsName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
         WideStringView wsInstName =
             pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
         if (wsInstName.GetLength() > 0 && wsInstName[0] == '_' &&
@@ -1817,7 +1725,8 @@ void CXFA_Node::ClearFlag(uint32_t dwFlag) {
 }
 
 bool CXFA_Node::IsAttributeInXML() {
-  return m_JSNode.GetEnum(XFA_ATTRIBUTE_Contains) == XFA_ATTRIBUTEENUM_MetaData;
+  return JSNode()->GetEnum(XFA_ATTRIBUTE_Contains) ==
+         XFA_ATTRIBUTEENUM_MetaData;
 }
 
 void CXFA_Node::OnRemoved(bool bNotify) {
@@ -1851,17 +1760,17 @@ void CXFA_Node::UpdateNameHash() {
       XFA_GetNotsureAttribute(GetElementType(), XFA_ATTRIBUTE_Name);
   WideStringView wsName;
   if (!pNotsure || pNotsure->eType == XFA_ATTRIBUTETYPE_Cdata) {
-    wsName = m_JSNode.GetCData(XFA_ATTRIBUTE_Name);
+    wsName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
     m_dwNameHash = FX_HashCode_GetW(wsName, false);
   } else if (pNotsure->eType == XFA_ATTRIBUTETYPE_Enum) {
-    wsName = GetAttributeEnumByID(m_JSNode.GetEnum(XFA_ATTRIBUTE_Name))->pName;
+    wsName = GetAttributeEnumByID(JSNode()->GetEnum(XFA_ATTRIBUTE_Name))->pName;
     m_dwNameHash = FX_HashCode_GetW(wsName, false);
   }
 }
 
 CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
   if (!m_pXMLNode) {
-    WideString wsTag(m_JSNode.GetCData(XFA_ATTRIBUTE_Name));
+    WideString wsTag(JSNode()->GetCData(XFA_ATTRIBUTE_Name));
     m_pXMLNode = new CFX_XMLElement(wsTag);
     SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
@@ -1871,18 +1780,6 @@ CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
 bool CXFA_Node::IsNeedSavingXMLNode() {
   return m_pXMLNode && (GetPacketID() == XFA_XDPPACKET_Datasets ||
                         GetElementType() == XFA_Element::Xfa);
-}
-
-void CXFA_Node::ThrowMissingPropertyException(const WideString& obj,
-                                              const WideString& prop) const {
-  ThrowException(L"'%s' doesn't have property '%s'.", obj.c_str(),
-                 prop.c_str());
-}
-
-void CXFA_Node::ThrowTooManyOccurancesException(const WideString& obj) const {
-  ThrowException(
-      L"The element [%s] has violated its allowable number of occurrences.",
-      obj.c_str());
 }
 
 CXFA_Node* CXFA_Node::GetItem(CXFA_Node* pInstMgrNode, int32_t iIndex) {

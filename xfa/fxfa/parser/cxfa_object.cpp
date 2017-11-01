@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_object.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -16,52 +18,22 @@
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,
                          XFA_Element elementType,
-                         const WideStringView& elementName)
+                         const WideStringView& elementName,
+                         std::unique_ptr<CJX_Object> jsObject)
     : CFXJSE_HostObject(kXFA),
       m_pDocument(pDocument),
       m_objectType(objectType),
       m_elementType(elementType),
       m_elementNameHash(FX_HashCode_GetW(elementName, false)),
-      m_elementName(elementName) {}
+      m_elementName(elementName),
+      m_pJSObject(std::move(jsObject)) {}
 
 CXFA_Object::~CXFA_Object() {}
 
 void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                                bool bSetting,
                                                XFA_ATTRIBUTE eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetString(FX_UTF8Encode(GetClassName()).AsStringView());
-}
-
-void CXFA_Object::ThrowInvalidPropertyException() const {
-  ThrowException(L"Invalid property set operation.");
-}
-
-void CXFA_Object::ThrowIndexOutOfBoundsException() const {
-  ThrowException(L"Index value is out of bounds.");
-}
-
-void CXFA_Object::ThrowParamCountMismatchException(
-    const WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '%.16s'.",
-                 method.c_str());
-}
-
-void CXFA_Object::ThrowArgumentMismatchException() const {
-  ThrowException(L"Argument mismatch in property or function argument.");
-}
-
-void CXFA_Object::ThrowException(const wchar_t* str, ...) const {
-  WideString wsMessage;
-  va_list arg_ptr;
-  va_start(arg_ptr, str);
-  wsMessage.FormatV(str, arg_ptr);
-  va_end(arg_ptr);
-  ASSERT(!wsMessage.IsEmpty());
-  FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringView());
+  JSObject()->Script_ObjectClass_ClassName(pValue, bSetting, eAttribute);
 }
 
 CXFA_Node* CXFA_Object::AsNode() {

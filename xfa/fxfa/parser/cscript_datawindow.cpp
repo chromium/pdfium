@@ -7,6 +7,8 @@
 #include "xfa/fxfa/parser/cscript_datawindow.h"
 
 #include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cjx_object.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -15,7 +17,8 @@ CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::DataWindow,
-                  WideStringView(L"dataWindow")) {}
+                  WideStringView(L"dataWindow"),
+                  pdfium::MakeUnique<CJX_Object>(this)) {}
 
 CScript_DataWindow::~CScript_DataWindow() {}
 

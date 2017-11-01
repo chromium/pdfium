@@ -8,6 +8,8 @@
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
+#include "fxjs/cjx_object.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -18,14 +20,15 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::SignaturePseudoModel,
-                  WideStringView(L"signaturePseudoModel")) {}
+                  WideStringView(L"signaturePseudoModel"),
+                  pdfium::MakeUnique<CJX_Object>(this)) {}
 
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
 
 void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 4) {
-    ThrowParamCountMismatchException(L"verify");
+    JSObject()->ThrowParamCountMismatchException(L"verify");
     return;
   }
 
@@ -37,7 +40,7 @@ void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
 void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 3 || iLength > 7) {
-    ThrowParamCountMismatchException(L"sign");
+    JSObject()->ThrowParamCountMismatchException(L"sign");
     return;
   }
 
@@ -48,7 +51,7 @@ void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
 
 void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"enumerate");
+    JSObject()->ThrowParamCountMismatchException(L"enumerate");
     return;
   }
   return;
@@ -57,7 +60,7 @@ void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
 void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 2) {
-    ThrowParamCountMismatchException(L"clear");
+    JSObject()->ThrowParamCountMismatchException(L"clear");
     return;
   }
 

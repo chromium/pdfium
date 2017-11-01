@@ -8,6 +8,8 @@
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
+#include "fxjs/cjx_object.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
@@ -47,7 +49,8 @@ CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::EventPseudoModel,
-                  WideStringView(L"eventPseudoModel")) {}
+                  WideStringView(L"eventPseudoModel"),
+                  pdfium::MakeUnique<CJX_Object>(this)) {}
 
 CScript_EventPseudoModel::~CScript_EventPseudoModel() {}
 

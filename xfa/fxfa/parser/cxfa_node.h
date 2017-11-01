@@ -53,8 +53,10 @@ class CXFA_Node : public CXFA_Object {
   void SetFlag(uint32_t dwFlag, bool bNotify);
   void ClearFlag(uint32_t dwFlag);
 
-  CJX_Node* JSNode() { return &m_JSNode; }
-  const CJX_Node* JSNode() const { return &m_JSNode; }
+  CJX_Node* JSNode() { return static_cast<CJX_Node*>(JSObject()); }
+  const CJX_Node* JSNode() const {
+    return static_cast<const CJX_Node*>(JSObject());
+  }
   CXFA_Node* GetParent() { return m_pParent; }
   CXFA_Node* GetChildNode() { return m_pChild; }
 
@@ -140,10 +142,6 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetInstanceMgrOfSubform();
 
   CXFA_Node* GetOccurNode();
-
-  int32_t Subform_and_SubformSet_InstanceIndex();
-  int32_t InstanceManager_SetInstances(int32_t iCount);
-  int32_t InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom);
 
   void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify);
@@ -429,10 +427,6 @@ class CXFA_Node : public CXFA_Object {
                                bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
 
-  void ThrowMissingPropertyException(const WideString& obj,
-                                     const WideString& prop) const;
-  void ThrowTooManyOccurancesException(const WideString& obj) const;
-
  private:
   friend class CXFA_Document;
 
@@ -456,7 +450,6 @@ class CXFA_Node : public CXFA_Object {
   uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;
-  CJX_Node m_JSNode;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_

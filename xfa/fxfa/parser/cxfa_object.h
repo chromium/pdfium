@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_OBJECT_H_
 #define XFA_FXFA_PARSER_CXFA_OBJECT_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/fxjse.h"
 #include "xfa/fxfa/fxfa_basic.h"
@@ -26,16 +28,13 @@ enum class XFA_ObjectType {
 };
 
 class CFXJSE_Value;
+class CJX_Object;
 class CXFA_Document;
 class CXFA_Node;
 class CXFA_NodeList;
 
 class CXFA_Object : public CFXJSE_HostObject {
  public:
-  CXFA_Object(CXFA_Document* pDocument,
-              XFA_ObjectType objectType,
-              XFA_Element eType,
-              const WideStringView& elementName);
   ~CXFA_Object() override;
 
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
@@ -70,6 +69,9 @@ class CXFA_Object : public CFXJSE_HostObject {
   const CXFA_Node* AsNode() const;
   const CXFA_NodeList* AsNodeList() const;
 
+  CJX_Object* JSObject() { return m_pJSObject.get(); }
+  const CJX_Object* JSObject() const { return m_pJSObject.get(); }
+
   XFA_Element GetElementType() const { return m_elementType; }
   WideStringView GetClassName() const { return m_elementName; }
   uint32_t GetClassHashCode() const { return m_elementNameHash; }
@@ -78,13 +80,12 @@ class CXFA_Object : public CFXJSE_HostObject {
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
 
-  void ThrowInvalidPropertyException() const;
-  void ThrowArgumentMismatchException() const;
-  void ThrowIndexOutOfBoundsException() const;
-  void ThrowParamCountMismatchException(const WideString& method) const;
-
  protected:
-  void ThrowException(const wchar_t* str, ...) const;
+  CXFA_Object(CXFA_Document* pDocument,
+              XFA_ObjectType objectType,
+              XFA_Element eType,
+              const WideStringView& elementName,
+              std::unique_ptr<CJX_Object> jsObject);
 
   UnownedPtr<CXFA_Document> const m_pDocument;
   const XFA_ObjectType m_objectType;
@@ -92,6 +93,8 @@ class CXFA_Object : public CFXJSE_HostObject {
 
   const uint32_t m_elementNameHash;
   const WideStringView m_elementName;
+
+  std::unique_ptr<CJX_Object> m_pJSObject;
 };
 
 CXFA_Node* ToNode(CXFA_Object* pObj);

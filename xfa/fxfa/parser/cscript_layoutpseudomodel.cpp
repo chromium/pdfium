@@ -10,6 +10,8 @@
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
+#include "fxjs/cjx_object.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -28,7 +30,8 @@ CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::LayoutPseudoModel,
-                  WideStringView(L"layoutPseudoModel")) {}
+                  WideStringView(L"layoutPseudoModel"),
+                  pdfium::MakeUnique<CJX_Object>(this)) {}
 
 CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
 
@@ -40,7 +43,7 @@ void CScript_LayoutPseudoModel::Ready(CFXJSE_Value* pValue,
     return;
   }
   if (bSetting) {
-    ThrowSetReadyException();
+    JSObject()->ThrowException(L"Unable to set ready value.");
     return;
   }
   int32_t iStatus = pNotify->GetLayoutStatus();
@@ -66,7 +69,7 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
         methodName = L"y";
         break;
     }
-    ThrowParamCountMismatchException(methodName);
+    JSObject()->ThrowParamCountMismatchException(methodName);
     return;
   }
   CXFA_Node* pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
@@ -170,7 +173,7 @@ void CScript_LayoutPseudoModel::PageCount(CFXJSE_Arguments* pArguments) {
 void CScript_LayoutPseudoModel::PageSpan(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
-    ThrowParamCountMismatchException(L"pageSpan");
+    JSObject()->ThrowParamCountMismatchException(L"pageSpan");
     return;
   }
   CXFA_Node* pNode = nullptr;
@@ -334,7 +337,7 @@ std::vector<CXFA_Node*> CScript_LayoutPseudoModel::GetObjArray(
 void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 3) {
-    ThrowParamCountMismatchException(L"pageContent");
+    JSObject()->ThrowParamCountMismatchException(L"pageContent");
     return;
   }
   int32_t iIndex = 0;
@@ -398,7 +401,7 @@ void CScript_LayoutPseudoModel::AbsPageSpan(CFXJSE_Arguments* pArguments) {
 
 void CScript_LayoutPseudoModel::AbsPageInBatch(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"absPageInBatch");
+    JSObject()->ThrowParamCountMismatchException(L"absPageInBatch");
     return;
   }
 
@@ -407,7 +410,7 @@ void CScript_LayoutPseudoModel::AbsPageInBatch(CFXJSE_Arguments* pArguments) {
 
 void CScript_LayoutPseudoModel::SheetInBatch(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"sheetInBatch");
+    JSObject()->ThrowParamCountMismatchException(L"sheetInBatch");
     return;
   }
 
@@ -433,7 +436,8 @@ void CScript_LayoutPseudoModel::PageInternals(CFXJSE_Arguments* pArguments,
                                               bool bAbsPage) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
-    ThrowParamCountMismatchException(bAbsPage ? L"absPage" : L"page");
+    JSObject()->ThrowParamCountMismatchException(bAbsPage ? L"absPage"
+                                                          : L"page");
     return;
   }
 
@@ -453,8 +457,4 @@ void CScript_LayoutPseudoModel::PageInternals(CFXJSE_Arguments* pArguments,
   }
   int32_t iPage = pLayoutItem->GetFirst()->GetPage()->GetPageIndex();
   pValue->SetInteger(bAbsPage ? iPage : iPage + 1);
-}
-
-void CScript_LayoutPseudoModel::ThrowSetReadyException() const {
-  ThrowException(L"Unable to set ready value.");
 }

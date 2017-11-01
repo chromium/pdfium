@@ -1301,6 +1301,8 @@ static_library("fxjs") {
         "fxjs/cfxjse_value.h",
         "fxjs/cjx_node.cpp",
         "fxjs/cjx_node.h",
+        "fxjs/cjx_object.cpp",
+        "fxjs/cjx_object.h",
         "fxjs/fxjse.h",
       ]
     }

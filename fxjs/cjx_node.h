@@ -10,6 +10,7 @@
 #include <map>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/cjx_object.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
@@ -43,10 +44,13 @@ enum XFA_SOM_MESSAGETYPE {
 class CFXJSE_Arguments;
 class CXFA_Node;
 
-class CJX_Node {
+class CJX_Node : public CJX_Object {
  public:
   explicit CJX_Node(CXFA_Node* node);
-  ~CJX_Node();
+  ~CJX_Node() override;
+
+  CXFA_Node* GetXFANode();
+  const CXFA_Node* GetXFANode() const;
 
   bool HasAttribute(XFA_ATTRIBUTE eAttr, bool bCanInherit = false);
   bool SetAttribute(XFA_ATTRIBUTE eAttr,
@@ -164,6 +168,14 @@ class CJX_Node {
   bool TryNamespace(WideString& wsNamespace);
 
   void MergeAllData(void* pDstModule);
+
+  void ThrowMissingPropertyException(const WideString& obj,
+                                     const WideString& prop) const;
+  void ThrowTooManyOccurancesException(const WideString& obj) const;
+
+  int32_t Subform_and_SubformSet_InstanceIndex();
+  int32_t InstanceManager_SetInstances(int32_t iDesired);
+  int32_t InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom);
 
   void Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments);
   void Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments);
@@ -489,7 +501,6 @@ class CJX_Node {
   int32_t execSingleEventByName(const WideStringView& wsEventName,
                                 XFA_Element eType);
 
-  UnownedPtr<CXFA_Node> node_;
   XFA_MAPMODULEDATA* map_module_data_;
 };
 

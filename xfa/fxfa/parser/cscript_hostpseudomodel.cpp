@@ -10,6 +10,8 @@
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
+#include "fxjs/cjx_object.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
@@ -30,7 +32,8 @@ CScript_HostPseudoModel::CScript_HostPseudoModel(CXFA_Document* pDocument)
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::HostPseudoModel,
-                  WideStringView(L"hostPseudoModel")) {}
+                  WideStringView(L"hostPseudoModel"),
+                  pdfium::MakeUnique<CJX_Object>(this)) {}
 
 CScript_HostPseudoModel::~CScript_HostPseudoModel() {}
 
@@ -41,7 +44,7 @@ void CScript_HostPseudoModel::AppType(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    JSObject()->ThrowInvalidPropertyException();
     return;
   }
   pValue->SetString("Exchange");
@@ -85,7 +88,7 @@ void CScript_HostPseudoModel::Language(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
   if (bSetting) {
-    ThrowSetLanguageException();
+    JSObject()->ThrowException(L"Unable to set language value.");
     return;
   }
   pValue->SetString(
@@ -101,7 +104,7 @@ void CScript_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    ThrowSetNumPagesException();
+    JSObject()->ThrowException(L"Unable to set numPages value.");
     return;
   }
   pValue->SetInteger(pNotify->GetDocEnvironment()->CountPages(hDoc));
@@ -114,7 +117,7 @@ void CScript_HostPseudoModel::Platform(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
   if (bSetting) {
-    ThrowSetPlatformException();
+    JSObject()->ThrowException(L"Unable to set platform value.");
     return;
   }
   pValue->SetString(
@@ -168,7 +171,7 @@ void CScript_HostPseudoModel::Variation(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
   if (bSetting) {
-    ThrowSetVariationException();
+    JSObject()->ThrowException(L"Unable to set variation value.");
     return;
   }
   pValue->SetString("Full");
@@ -182,7 +185,7 @@ void CScript_HostPseudoModel::Version(CFXJSE_Value* pValue,
     return;
   }
   if (bSetting) {
-    ThrowSetVersionException();
+    JSObject()->ThrowException(L"Unable to set version value.");
     return;
   }
   pValue->SetString("11");
@@ -196,7 +199,7 @@ void CScript_HostPseudoModel::Name(CFXJSE_Value* pValue,
     return;
   }
   if (bSetting) {
-    ThrowInvalidPropertyException();
+    JSObject()->ThrowInvalidPropertyException();
     return;
   }
   pValue->SetString(
@@ -209,7 +212,7 @@ void CScript_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
   }
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
-    ThrowParamCountMismatchException(L"gotoURL");
+    JSObject()->ThrowParamCountMismatchException(L"gotoURL");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -231,7 +234,7 @@ void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
   }
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
-    ThrowParamCountMismatchException(L"openList");
+    JSObject()->ThrowParamCountMismatchException(L"openList");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -278,7 +281,7 @@ void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
 void CScript_HostPseudoModel::Response(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 4) {
-    ThrowParamCountMismatchException(L"response");
+    JSObject()->ThrowParamCountMismatchException(L"response");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -315,6 +318,7 @@ void CScript_HostPseudoModel::DocumentInBatch(CFXJSE_Arguments* pArguments) {
   if (CFXJSE_Value* pValue = pArguments->GetReturnValue())
     pValue->SetInteger(0);
 }
+
 static int32_t XFA_FilterName(const WideStringView& wsExpression,
                               int32_t nStart,
                               WideString& wsFilter) {
@@ -339,10 +343,11 @@ static int32_t XFA_FilterName(const WideStringView& wsExpression,
   wsFilter.TrimRight();
   return nStart;
 }
+
 void CScript_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 0 || iLength > 1) {
-    ThrowParamCountMismatchException(L"resetData");
+    JSObject()->ThrowParamCountMismatchException(L"resetData");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -387,13 +392,14 @@ void CScript_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
     pNotify->ResetData();
   }
 }
+
 void CScript_HostPseudoModel::Beep(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
     return;
   }
   int32_t iLength = pArguments->GetLength();
   if (iLength < 0 || iLength > 1) {
-    ThrowParamCountMismatchException(L"beep");
+    JSObject()->ThrowParamCountMismatchException(L"beep");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -406,13 +412,14 @@ void CScript_HostPseudoModel::Beep(CFXJSE_Arguments* pArguments) {
   }
   pNotify->GetAppProvider()->Beep(dwType);
 }
+
 void CScript_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
     return;
   }
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
-    ThrowParamCountMismatchException(L"setFocus");
+    JSObject()->ThrowParamCountMismatchException(L"setFocus");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -465,7 +472,7 @@ void CScript_HostPseudoModel::MessageBox(CFXJSE_Arguments* pArguments) {
   }
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 4) {
-    ThrowParamCountMismatchException(L"messageBox");
+    JSObject()->ThrowParamCountMismatchException(L"messageBox");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -504,6 +511,7 @@ void CScript_HostPseudoModel::MessageBox(CFXJSE_Arguments* pArguments) {
   if (pValue)
     pValue->SetInteger(iValue);
 }
+
 bool CScript_HostPseudoModel::ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
                                                  int32_t iArgIndex,
                                                  WideString& wsValue) {
@@ -517,7 +525,7 @@ bool CScript_HostPseudoModel::ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
   }
   std::unique_ptr<CFXJSE_Value> pValueArg(pArguments->GetValue(iArgIndex));
   if (!pValueArg->IsString() && bIsJsType) {
-    ThrowArgumentMismatchException();
+    JSObject()->ThrowArgumentMismatchException();
     return false;
   }
   if (pValueArg->IsNull()) {
@@ -527,18 +535,20 @@ bool CScript_HostPseudoModel::ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
   }
   return true;
 }
+
 void CScript_HostPseudoModel::DocumentCountInBatch(
     CFXJSE_Arguments* pArguments) {
   if (CFXJSE_Value* pValue = pArguments->GetReturnValue())
     pValue->SetInteger(0);
 }
+
 void CScript_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
     return;
   }
   int32_t iLength = pArguments->GetLength();
   if (iLength != 8) {
-    ThrowParamCountMismatchException(L"print");
+    JSObject()->ThrowParamCountMismatchException(L"print");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -604,7 +614,7 @@ void CScript_HostPseudoModel::Print(CFXJSE_Arguments* pArguments) {
 void CScript_HostPseudoModel::ImportData(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 0 || iLength > 1) {
-    ThrowParamCountMismatchException(L"importData");
+    JSObject()->ThrowParamCountMismatchException(L"importData");
     return;
   }
   // Not implemented.
@@ -613,7 +623,7 @@ void CScript_HostPseudoModel::ImportData(CFXJSE_Arguments* pArguments) {
 void CScript_HostPseudoModel::ExportData(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 0 || iLength > 2) {
-    ThrowParamCountMismatchException(L"exportData");
+    JSObject()->ThrowParamCountMismatchException(L"exportData");
     return;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
@@ -677,24 +687,4 @@ void CScript_HostPseudoModel::CurrentDateTime(CFXJSE_Arguments* pArguments) {
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
     pValue->SetString(wsDataTime.UTF8Encode().AsStringView());
-}
-
-void CScript_HostPseudoModel::ThrowSetLanguageException() const {
-  ThrowException(L"Unable to set language value.");
-}
-
-void CScript_HostPseudoModel::ThrowSetNumPagesException() const {
-  ThrowException(L"Unable to set numPages value.");
-}
-
-void CScript_HostPseudoModel::ThrowSetPlatformException() const {
-  ThrowException(L"Unable to set platform value.");
-}
-
-void CScript_HostPseudoModel::ThrowSetVariationException() const {
-  ThrowException(L"Unable to set variation value.");
-}
-
-void CScript_HostPseudoModel::ThrowSetVersionException() const {
-  ThrowException(L"Unable to set version value.");
 }
