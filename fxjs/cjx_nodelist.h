@@ -4,30 +4,22 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_NODELIST_H_
-#define XFA_FXFA_PARSER_CXFA_NODELIST_H_
+#ifndef FXJS_CJX_NODELIST_H_
+#define FXJS_CJX_NODELIST_H_
 
-#include "fxjs/cjx_nodelist.h"
+#include "fxjs/cjx_object.h"
 #include "xfa/fxfa/fxfa_basic.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
 
-class CXFA_Node;
 class CFXJSE_Arguments;
 class CFXJSE_Value;
+class CXFA_NodeList;
 
-class CXFA_NodeList : public CXFA_Object {
+class CJX_NodeList : public CJX_Object {
  public:
-  explicit CXFA_NodeList(CXFA_Document* pDocument);
-  ~CXFA_NodeList() override;
+  explicit CJX_NodeList(CXFA_NodeList* list);
+  ~CJX_NodeList() override;
 
-  CJX_NodeList* JSNodeList() { return static_cast<CJX_NodeList*>(JSObject()); }
-
-  CXFA_Node* NamedItem(const WideStringView& wsName);
-  virtual int32_t GetLength() = 0;
-  virtual bool Append(CXFA_Node* pNode) = 0;
-  virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
-  virtual bool Remove(CXFA_Node* pNode) = 0;
-  virtual CXFA_Node* Item(int32_t iIndex) = 0;
+  CXFA_NodeList* GetXFANodeList();
 
   void Script_ListClass_Append(CFXJSE_Arguments* pArguments);
   void Script_ListClass_Insert(CFXJSE_Arguments* pArguments);
@@ -40,4 +32,4 @@ class CXFA_NodeList : public CXFA_Object {
                                XFA_ATTRIBUTE eAttribute);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_NODELIST_H_
+#endif  // FXJS_CJX_NODELIST_H_
