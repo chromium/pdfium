@@ -68,7 +68,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
       break;
   }
 
-  m_Transparency = PDFTRANS_ISOLATED;
+  m_iTransparency = PDFTRANS_ISOLATED;
   LoadTransInfo();
 }
 

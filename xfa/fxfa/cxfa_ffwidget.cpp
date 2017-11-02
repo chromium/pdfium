@@ -1441,7 +1441,7 @@ class CXFA_ImageRenderer {
                          FX_ARGB mask_argb,
                          int bitmap_alpha,
                          int blend_mode,
-                         int Transparency);
+                         int iTransparency);
 
   CFX_RenderDevice* m_pDevice;
   int m_Status;
@@ -1606,12 +1606,12 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
     FX_ARGB mask_argb,
     int bitmap_alpha,
     int blend_mode,
-    int Transparency) {
+    int iTransparency) {
   if (!pDIBitmap) {
     return;
   }
-  bool bIsolated = !!(Transparency & PDFTRANS_ISOLATED);
-  bool bGroup = !!(Transparency & PDFTRANS_GROUP);
+  bool bIsolated = !!(iTransparency & PDFTRANS_ISOLATED);
+  bool bGroup = !!(iTransparency & PDFTRANS_GROUP);
   if (blend_mode == FXDIB_BLEND_NORMAL) {
     if (!pDIBitmap->IsAlphaMask()) {
       if (bitmap_alpha < 255) {

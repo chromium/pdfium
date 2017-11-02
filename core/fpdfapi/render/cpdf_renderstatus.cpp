@@ -978,7 +978,7 @@ CPDF_RenderStatus::CPDF_RenderStatus()
       m_pCurObj(nullptr),
       m_pStopObj(nullptr),
       m_bPrint(false),
-      m_Transparency(0),
+      m_iTransparency(0),
       m_bDropObjects(false),
       m_bStdCS(false),
       m_GroupFamily(0),
@@ -1042,7 +1042,7 @@ bool CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
     m_InitialStates.DefaultStates();
   }
   m_pImageRenderer.reset();
-  m_Transparency = transparency;
+  m_iTransparency = transparency;
   return true;
 }
 
@@ -1245,7 +1245,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   }
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), buffer.GetDevice(), buffer.GetMatrix(),
-                    nullptr, nullptr, nullptr, &m_Options, m_Transparency,
+                    nullptr, nullptr, nullptr, &m_Options, m_iTransparency,
                     m_bDropObjects, pFormResource);
   status.RenderSingleObject(pObj, &matrix);
   buffer.OutputToDevice();
@@ -1269,7 +1269,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   }
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), m_pDevice, nullptr, m_pStopObj, this,
-                    pFormObj, &m_Options, m_Transparency, m_bDropObjects,
+                    pFormObj, &m_Options, m_iTransparency, m_bDropObjects,
                     pResources, false);
   status.m_curBlend = m_curBlend;
   {
@@ -1485,13 +1485,13 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
   CPDF_Dictionary* pFormResource = nullptr;
   float group_alpha = 1.0f;
-  int Transparency = m_Transparency;
+  int iTransparency = m_iTransparency;
   bool bGroupTransparent = false;
   if (pPageObj->IsForm()) {
     const CPDF_FormObject* pFormObj = pPageObj->AsForm();
     group_alpha = pFormObj->m_GeneralState.GetFillAlpha();
-    Transparency = pFormObj->m_pForm->m_Transparency;
-    bGroupTransparent = !!(Transparency & PDFTRANS_ISOLATED);
+    iTransparency = pFormObj->m_pForm->m_iTransparency;
+    bGroupTransparent = !!(iTransparency & PDFTRANS_ISOLATED);
     if (pFormObj->m_pForm->m_pFormDict) {
       pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
     }
@@ -1533,11 +1533,11 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       !bTextClip && !bGroupTransparent) {
     return false;
   }
-  bool isolated = !!(Transparency & PDFTRANS_ISOLATED);
+  bool isolated = !!(iTransparency & PDFTRANS_ISOLATED);
   if (m_bPrint) {
     bool bRet = false;
     int rendCaps = m_pDevice->GetRenderCaps();
-    if (!((Transparency & PDFTRANS_ISOLATED) || pSMaskDict || bTextClip) &&
+    if (!((iTransparency & PDFTRANS_ISOLATED) || pSMaskDict || bTextClip) &&
         (rendCaps & FXRC_BLEND_MODE)) {
       int oldBlend = m_curBlend;
       m_curBlend = blend_type;
@@ -1622,19 +1622,19 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     pTextMask.Reset();
   }
   int32_t blitAlpha = 255;
-  if (Transparency & PDFTRANS_GROUP && group_alpha != 1.0f) {
+  if (iTransparency & PDFTRANS_GROUP && group_alpha != 1.0f) {
     blitAlpha = (int32_t)(group_alpha * 255);
 #ifndef _SKIA_SUPPORT_
     bitmap->MultiplyAlpha(blitAlpha);
     blitAlpha = 255;
 #endif
   }
-  Transparency = m_Transparency;
+  iTransparency = m_iTransparency;
   if (pPageObj->IsForm()) {
-    Transparency |= PDFTRANS_GROUP;
+    iTransparency |= PDFTRANS_GROUP;
   }
   CompositeDIBitmap(bitmap, rect.left, rect.top, 0, blitAlpha, blend_type,
-                    Transparency);
+                    iTransparency);
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
@@ -1898,7 +1898,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         CPDF_RenderStatus status;
         status.Initialize(m_pContext.Get(), m_pDevice, nullptr, nullptr, this,
                           pStates.get(), &options,
-                          pType3Char->m_pForm->m_Transparency, m_bDropObjects,
+                          pType3Char->m_pForm->m_iTransparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
@@ -1919,7 +1919,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         CPDF_RenderStatus status;
         status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr,
                           this, pStates.get(), &options,
-                          pType3Char->m_pForm->m_Transparency, m_bDropObjects,
+                          pType3Char->m_pForm->m_iTransparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
@@ -2284,7 +2284,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         CPDF_RenderStatus status;
         status.Initialize(m_pContext.Get(), m_pDevice, nullptr, nullptr, this,
                           pStates.get(), &m_Options,
-                          pPattern->form()->m_Transparency, m_bDropObjects,
+                          pPattern->form()->m_iTransparency, m_bDropObjects,
                           pFormResource);
         status.RenderObjectList(pPattern->form(), &matrix);
       }
@@ -2437,7 +2437,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     FX_ARGB mask_argb,
     int bitmap_alpha,
     int blend_mode,
-    int Transparency) {
+    int iTransparency) {
   if (!pDIBitmap)
     return;
 
@@ -2471,8 +2471,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       }
     }
   }
-  bool bIsolated = !!(Transparency & PDFTRANS_ISOLATED);
-  bool bGroup = !!(Transparency & PDFTRANS_GROUP);
+  bool bIsolated = !!(iTransparency & PDFTRANS_ISOLATED);
+  bool bGroup = !!(iTransparency & PDFTRANS_GROUP);
   bool bBackAlphaRequired = blend_mode && bIsolated && !m_bDropObjects;
   bool bGetBackGround =
       ((m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||

@@ -2846,12 +2846,12 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
       return true;
 
     InitSourcePalette(src_format, dest_format, pSrcPalette);
-    m_Transparency =
+    m_iTransparency =
         (dest_format == FXDIB_Argb ? 1 : 0) + (dest_format & 0x0200 ? 2 : 0) +
         (dest_format & 0x0400 ? 4 : 0) + ((src_format & 0xff) == 1 ? 8 : 0);
     return true;
   }
-  m_Transparency =
+  m_iTransparency =
       (src_format & 0x0200 ? 0 : 1) + (dest_format & 0x0200 ? 0 : 2) +
       (blend_type == FXDIB_BLEND_NORMAL ? 4 : 0) + (bClip ? 8 : 0) +
       (src_format & 0x0400 ? 16 : 0) + (dest_format & 0x0400 ? 32 : 0);
@@ -3001,7 +3001,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
   int src_Bpp = (m_SrcFormat & 0xff) >> 3;
   int dest_Bpp = (m_DestFormat & 0xff) >> 3;
   if (m_bRgbByteOrder) {
-    switch (m_Transparency) {
+    switch (m_iTransparency) {
       case 0:
       case 4:
       case 8:
@@ -3097,7 +3097,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       }
     }
   } else {
-    switch (m_Transparency) {
+    switch (m_iTransparency) {
       case 0:
       case 4:
       case 8:
@@ -3194,7 +3194,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     return;
   }
   if ((m_DestFormat & 0xff) == 8) {
-    if (m_Transparency & 8) {
+    if (m_iTransparency & 8) {
       if (m_DestFormat & 0x0200) {
         CompositeRow_1bppPal2Graya(
             dest_scan, src_scan, src_left,
@@ -3219,7 +3219,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
             m_BlendType, clip_scan, src_extra_alpha);
     }
   } else {
-    switch (m_Transparency) {
+    switch (m_iTransparency) {
       case 1 + 2:
         CompositeRow_8bppRgb2Argb_NoBlend(dest_scan, src_scan, width,
                                           m_pSrcPalette.get(), clip_scan,

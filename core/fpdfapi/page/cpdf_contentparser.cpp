@@ -108,7 +108,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
     m_pParser->GetCurStates()->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING,
                                                      true);
   }
-  if (pForm->m_Transparency & PDFTRANS_GROUP) {
+  if (pForm->m_iTransparency & PDFTRANS_GROUP) {
     CPDF_GeneralState* pState = &m_pParser->GetCurStates()->m_GeneralState;
     pState->SetBlendType(FXDIB_BLEND_NORMAL);
     pState->SetStrokeAlpha(1.0f);

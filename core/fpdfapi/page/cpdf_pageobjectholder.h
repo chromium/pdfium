@@ -79,7 +79,7 @@ class CPDF_PageObjectHolder {
   std::map<GraphicsData, ByteString> m_GraphicsMap;
   std::map<FontData, ByteString> m_FontsMap;
   CFX_FloatRect m_BBox;
-  int m_Transparency;
+  int m_iTransparency;
 
  protected:
   enum ParseState { CONTENT_NOT_PARSED, CONTENT_PARSING, CONTENT_PARSED };

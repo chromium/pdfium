@@ -62,7 +62,7 @@ class CFX_ScanlineCompositor {
 
   void InitSourceMask(int alpha_flag, uint32_t mask_color);
 
-  int m_Transparency;
+  int m_iTransparency;
   FXDIB_Format m_SrcFormat;
   FXDIB_Format m_DestFormat;
   std::unique_ptr<uint32_t, FxFreeDeleter> m_pSrcPalette;
