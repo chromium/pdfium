@@ -283,7 +283,7 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
         m_MixedTwoByteLeadingBytes[b] = true;
     }
   }
-  FPDFAPI_FindEmbeddedCMap(bsName, m_Charset, m_Coding, m_pEmbedMap);
+  m_pEmbedMap = FPDFAPI_FindEmbeddedCMap(bsName, m_Charset, m_Coding);
   if (!m_pEmbedMap)
     return;
 

@@ -53,11 +53,17 @@ static int compareDWordSingle(const void* p1, const void* p2) {
 
 };  // extern "C"
 
-void FPDFAPI_FindEmbeddedCMap(const ByteString& bsName,
-                              int charset,
-                              int coding,
-                              const FXCMAP_CMap*& pMap) {
-  pMap = nullptr;
+namespace {
+
+const FXCMAP_CMap* FindNextCMap(const FXCMAP_CMap* pMap) {
+  return pMap->m_UseOffset ? pMap + pMap->m_UseOffset : nullptr;
+}
+
+}  // namespace
+
+const FXCMAP_CMap* FPDFAPI_FindEmbeddedCMap(const ByteString& bsName,
+                                            int charset,
+                                            int coding) {
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
 
@@ -65,16 +71,16 @@ void FPDFAPI_FindEmbeddedCMap(const ByteString& bsName,
   uint32_t count;
   std::tie(count, pCMaps) = pFontGlobals->GetEmbeddedCharset(charset);
   for (uint32_t i = 0; i < count; i++) {
-    if (bsName == pCMaps[i].m_Name) {
-      pMap = &pCMaps[i];
-      break;
-    }
+    if (bsName == pCMaps[i].m_Name)
+      return &pCMaps[i];
   }
+  return nullptr;
 }
 
 uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
+  ASSERT(pMap);
   if (charcode >> 16) {
-    while (1) {
+    while (pMap) {
       if (pMap->m_DWordMapType == FXCMAP_CMap::Range) {
         uint16_t* found = static_cast<uint16_t*>(
             bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount, 8,
@@ -89,16 +95,13 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
         if (found)
           return found[2];
       }
-      if (pMap->m_UseOffset == 0)
-        return 0;
-
-      pMap = pMap + pMap->m_UseOffset;
+      pMap = FindNextCMap(pMap);
     }
     return 0;
   }
 
   uint16_t code = (uint16_t)charcode;
-  while (1) {
+  while (pMap) {
     if (!pMap->m_pWordMap)
       return 0;
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {
@@ -113,10 +116,7 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
       if (found)
         return found[2] + code - found[0];
     }
-    if (pMap->m_UseOffset == 0)
-      return 0;
-
-    pMap = pMap + pMap->m_UseOffset;
+    pMap = FindNextCMap(pMap);
   }
   return 0;
 }
@@ -127,7 +127,8 @@ uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
   // the first always returns. Investigate and determine how this should
   // really be working. (https://codereview.chromium.org/2235743003 removed the
   // second while loop.)
-  while (1) {
+  ASSERT(pMap);
+  while (pMap) {
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {
       const uint16_t* pCur = pMap->m_pWordMap;
       const uint16_t* pEnd = pMap->m_pWordMap + pMap->m_WordCount * 2;
@@ -147,9 +148,7 @@ uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
         pCur += 3;
       }
     }
-    if (pMap->m_UseOffset == 0)
-      return 0;
-
-    pMap = pMap + pMap->m_UseOffset;
+    pMap = FindNextCMap(pMap);
   }
+  return 0;
 }
