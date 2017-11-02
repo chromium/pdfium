@@ -2943,6 +2943,26 @@ bool CJX_Node::TryBoolean(XFA_ATTRIBUTE eAttr, bool& bValue, bool bUseDefault) {
   return true;
 }
 
+bool CJX_Node::SetBoolean(XFA_ATTRIBUTE eAttr, bool bValue, bool bNotify) {
+  return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (void*)(uintptr_t)bValue,
+                  bNotify);
+}
+
+bool CJX_Node::GetBoolean(XFA_ATTRIBUTE eAttr) {
+  bool bValue;
+  return TryBoolean(eAttr, bValue, true) ? bValue : false;
+}
+
+bool CJX_Node::SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify) {
+  return SetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, (void*)(uintptr_t)iValue,
+                  bNotify);
+}
+
+int32_t CJX_Node::GetInteger(XFA_ATTRIBUTE eAttr) {
+  int32_t iValue;
+  return TryInteger(eAttr, iValue, true) ? iValue : 0;
+}
+
 bool CJX_Node::TryInteger(XFA_ATTRIBUTE eAttr,
                           int32_t& iValue,
                           bool bUseDefault) {
@@ -2961,6 +2981,18 @@ bool CJX_Node::TryEnum(XFA_ATTRIBUTE eAttr,
     return false;
   eValue = (XFA_ATTRIBUTEENUM)(uintptr_t)pValue;
   return true;
+}
+
+bool CJX_Node::SetEnum(XFA_ATTRIBUTE eAttr,
+                       XFA_ATTRIBUTEENUM eValue,
+                       bool bNotify) {
+  return SetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, (void*)(uintptr_t)eValue,
+                  bNotify);
+}
+
+XFA_ATTRIBUTEENUM CJX_Node::GetEnum(XFA_ATTRIBUTE eAttr) {
+  XFA_ATTRIBUTEENUM eValue;
+  return TryEnum(eAttr, eValue, true) ? eValue : XFA_ATTRIBUTEENUM_Unknown;
 }
 
 bool CJX_Node::SetMeasure(XFA_ATTRIBUTE eAttr,
@@ -2996,6 +3028,11 @@ bool CJX_Node::TryMeasure(XFA_ATTRIBUTE eAttr,
 CXFA_Measurement CJX_Node::GetMeasure(XFA_ATTRIBUTE eAttr) const {
   CXFA_Measurement mValue;
   return TryMeasure(eAttr, mValue, true) ? mValue : CXFA_Measurement();
+}
+
+WideStringView CJX_Node::GetCData(XFA_ATTRIBUTE eAttr) {
+  WideStringView wsValue;
+  return TryCData(eAttr, wsValue) ? wsValue : WideStringView();
 }
 
 bool CJX_Node::SetCData(XFA_ATTRIBUTE eAttr,
@@ -3195,6 +3232,11 @@ bool CJX_Node::SetObject(XFA_ATTRIBUTE eAttr,
   return SetUserData(pKey, pData, pCallbackInfo);
 }
 
+void* CJX_Node::GetObject(XFA_ATTRIBUTE eAttr) {
+  void* pData;
+  return TryObject(eAttr, pData) ? pData : nullptr;
+}
+
 bool CJX_Node::TryObject(XFA_ATTRIBUTE eAttr, void*& pData) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   pData = GetUserData(pKey);
@@ -3255,6 +3297,11 @@ bool CJX_Node::GetValue(XFA_ATTRIBUTE eAttr,
   return XFA_GetAttributeDefaultValue(pValue, GetXFANode()->GetElementType(),
                                       eAttr, eType,
                                       GetXFANode()->GetPacketID());
+}
+
+void* CJX_Node::GetUserData(void* pKey, bool bProtoAlso) {
+  void* pData;
+  return TryUserData(pKey, pData, bProtoAlso) ? pData : nullptr;
 }
 
 bool CJX_Node::SetUserData(void* pKey,

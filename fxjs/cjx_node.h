@@ -86,14 +86,8 @@ class CJX_Node : public CJX_Object {
   bool TryInteger(XFA_ATTRIBUTE eAttr,
                   int32_t& iValue,
                   bool bUseDefault = true);
-  bool SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify = false) {
-    return SetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, (void*)(uintptr_t)iValue,
-                    bNotify);
-  }
-  int32_t GetInteger(XFA_ATTRIBUTE eAttr) {
-    int32_t iValue;
-    return TryInteger(eAttr, iValue, true) ? iValue : 0;
-  }
+  bool SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify = false);
+  int32_t GetInteger(XFA_ATTRIBUTE eAttr);
 
   bool TryCData(XFA_ATTRIBUTE eAttr,
                 WideStringView& wsValue,
@@ -107,10 +101,7 @@ class CJX_Node : public CJX_Object {
                 const WideString& wsValue,
                 bool bNotify = false,
                 bool bScriptModify = false);
-  WideStringView GetCData(XFA_ATTRIBUTE eAttr) {
-    WideStringView wsValue;
-    return TryCData(eAttr, wsValue) ? wsValue : WideStringView();
-  }
+  WideStringView GetCData(XFA_ATTRIBUTE eAttr);
 
   bool TryContent(WideString& wsContent,
                   bool bScriptModify = false,
@@ -121,24 +112,12 @@ class CJX_Node : public CJX_Object {
                bool bUseDefault = true);
   bool SetEnum(XFA_ATTRIBUTE eAttr,
                XFA_ATTRIBUTEENUM eValue,
-               bool bNotify = false) {
-    return SetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, (void*)(uintptr_t)eValue,
-                    bNotify);
-  }
-  XFA_ATTRIBUTEENUM GetEnum(XFA_ATTRIBUTE eAttr) {
-    XFA_ATTRIBUTEENUM eValue;
-    return TryEnum(eAttr, eValue, true) ? eValue : XFA_ATTRIBUTEENUM_Unknown;
-  }
+               bool bNotify = false);
+  XFA_ATTRIBUTEENUM GetEnum(XFA_ATTRIBUTE eAttr);
 
   bool TryBoolean(XFA_ATTRIBUTE eAttr, bool& bValue, bool bUseDefault = true);
-  bool SetBoolean(XFA_ATTRIBUTE eAttr, bool bValue, bool bNotify = false) {
-    return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (void*)(uintptr_t)bValue,
-                    bNotify);
-  }
-  bool GetBoolean(XFA_ATTRIBUTE eAttr) {
-    bool bValue;
-    return TryBoolean(eAttr, bValue, true) ? bValue : false;
-  }
+  bool SetBoolean(XFA_ATTRIBUTE eAttr, bool bValue, bool bNotify = false);
+  bool GetBoolean(XFA_ATTRIBUTE eAttr);
 
   bool TryMeasure(XFA_ATTRIBUTE eAttr,
                   CXFA_Measurement& mValue,
@@ -151,19 +130,13 @@ class CJX_Node : public CJX_Object {
   bool SetUserData(void* pKey,
                    void* pData,
                    XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
-  void* GetUserData(void* pKey, bool bProtoAlso = false) {
-    void* pData;
-    return TryUserData(pKey, pData, bProtoAlso) ? pData : nullptr;
-  }
+  void* GetUserData(void* pKey, bool bProtoAlso = false);
 
   bool TryObject(XFA_ATTRIBUTE eAttr, void*& pData);
   bool SetObject(XFA_ATTRIBUTE eAttr,
                  void* pData,
                  XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
-  void* GetObject(XFA_ATTRIBUTE eAttr) {
-    void* pData;
-    return TryObject(eAttr, pData) ? pData : nullptr;
-  }
+  void* GetObject(XFA_ATTRIBUTE eAttr);
 
   bool TryNamespace(WideString& wsNamespace);
 
