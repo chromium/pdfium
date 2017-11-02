@@ -26,7 +26,7 @@
 #elif defined(COMPILER_GCC) || defined(__clang__)
 #if defined(ARCH_CPU_X86_64) || defined(ARCH_CPU_X86)
 #define YIELD_PROCESSOR __asm__ __volatile__("pause")
-#elif defined(ARCH_CPU_ARMEL) || defined(ARCH_CPU_ARM64)
+#elif (defined(ARCH_CPU_ARMEL) && __ARM_ARCH >= 6) || defined(ARCH_CPU_ARM64)
 #define YIELD_PROCESSOR __asm__ __volatile__("yield")
 #elif defined(ARCH_CPU_MIPSEL)
 // The MIPS32 docs state that the PAUSE instruction is a no-op on older
