@@ -13,13 +13,13 @@ CXFA_Caption::CXFA_Caption(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_Caption::GetPresence() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Visible;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Presence, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Presence, eAttr, true);
   return eAttr;
 }
 
 int32_t CXFA_Caption::GetPlacementType() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Left;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Placement, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Placement, eAttr, true);
   return eAttr;
 }
 

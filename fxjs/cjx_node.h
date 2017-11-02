@@ -96,10 +96,8 @@ class CJX_Node : public CJX_Object {
 
   bool TryEnum(XFA_ATTRIBUTE eAttr,
                XFA_ATTRIBUTEENUM& eValue,
-               bool bUseDefault = true);
-  bool SetEnum(XFA_ATTRIBUTE eAttr,
-               XFA_ATTRIBUTEENUM eValue,
-               bool bNotify = false);
+               bool bUseDefault);
+  bool SetEnum(XFA_ATTRIBUTE eAttr, XFA_ATTRIBUTEENUM eValue, bool bNotify);
   XFA_ATTRIBUTEENUM GetEnum(XFA_ATTRIBUTE eAttr);
 
   bool TryBoolean(XFA_ATTRIBUTE eAttr, bool& bValue, bool bUseDefault = true);

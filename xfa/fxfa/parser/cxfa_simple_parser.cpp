@@ -1092,7 +1092,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
           pXFAMetaData->JSNode()->SetCData(XFA_ATTRIBUTE_Value, it.second,
                                            false, false);
           pXFAMetaData->JSNode()->SetEnum(XFA_ATTRIBUTE_Contains,
-                                          XFA_ATTRIBUTEENUM_MetaData);
+                                          XFA_ATTRIBUTEENUM_MetaData, false);
           pXFAChild->InsertChild(pXFAMetaData);
           pXFAMetaData->SetXMLMappingNode(pXMLElement);
           pXFAMetaData->SetFlag(XFA_NodeFlag_Initialized, false);

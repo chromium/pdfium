@@ -52,7 +52,8 @@ bool CXFA_Image::SetHref(const WideString& wsHref) {
 bool CXFA_Image::SetTransferEncoding(int32_t iTransferEncoding) {
   if (m_bDefValue) {
     return m_pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_TransferEncoding,
-                                      (XFA_ATTRIBUTEENUM)iTransferEncoding);
+                                      (XFA_ATTRIBUTEENUM)iTransferEncoding,
+                                      false);
   }
   return true;
 }

@@ -58,7 +58,7 @@ int32_t CXFA_Font::GetUnderline() {
 
 int32_t CXFA_Font::GetUnderlinePeriod() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_All;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_UnderlinePeriod, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_UnderlinePeriod, eAttr, true);
   return eAttr;
 }
 
@@ -74,13 +74,13 @@ void CXFA_Font::GetTypeface(WideStringView& wsTypeFace) {
 
 bool CXFA_Font::IsBold() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Weight, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Weight, eAttr, true);
   return eAttr == XFA_ATTRIBUTEENUM_Bold;
 }
 
 bool CXFA_Font::IsItalic() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Posture, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Posture, eAttr, true);
   return eAttr == XFA_ATTRIBUTEENUM_Italic;
 }
 

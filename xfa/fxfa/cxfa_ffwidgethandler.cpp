@@ -336,7 +336,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
                              false);
 
   CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
-  pBind->JSNode()->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None);
+  pBind->JSNode()->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None, false);
 
   return pField;
 }
@@ -356,7 +356,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateRadioButton(CXFA_Node* pParent,
   CXFA_Node* pField = CreateField(XFA_Element::CheckButton, pParent, pBefore);
   CXFA_Node* pUi = pField->GetFirstChildByClass(XFA_Element::Ui);
   CXFA_Node* pWidget = pUi->GetFirstChildByClass(XFA_Element::CheckButton);
-  pWidget->JSNode()->SetEnum(XFA_ATTRIBUTE_Shape, XFA_ATTRIBUTEENUM_Round);
+  pWidget->JSNode()->SetEnum(XFA_ATTRIBUTE_Shape, XFA_ATTRIBUTEENUM_Round,
+                             false);
   return pField;
 }
 
@@ -399,8 +400,10 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateListBox(CXFA_Node* pParent,
   CXFA_Node* pField = CreateDropdownList(pParent, pBefore);
   CXFA_Node* pUi = pField->GetNodeItem(XFA_NODEITEM_FirstChild);
   CXFA_Node* pListBox = pUi->GetNodeItem(XFA_NODEITEM_FirstChild);
-  pListBox->JSNode()->SetEnum(XFA_ATTRIBUTE_Open, XFA_ATTRIBUTEENUM_Always);
-  pListBox->JSNode()->SetEnum(XFA_ATTRIBUTE_CommitOn, XFA_ATTRIBUTEENUM_Exit);
+  pListBox->JSNode()->SetEnum(XFA_ATTRIBUTE_Open, XFA_ATTRIBUTEENUM_Always,
+                              false);
+  pListBox->JSNode()->SetEnum(XFA_ATTRIBUTE_CommitOn, XFA_ATTRIBUTEENUM_Exit,
+                              false);
   return pField;
 }
 

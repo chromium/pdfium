@@ -1006,12 +1006,13 @@ void CXFA_WidgetData::InsertItem(const WideString& wsLabel,
   } else {
     CXFA_Node* pNode = listitems[0];
     pNode->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, false);
-    pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_Presence, XFA_ATTRIBUTEENUM_Visible);
+    pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_Presence, XFA_ATTRIBUTEENUM_Visible,
+                             false);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_Element::Items);
     m_pNode->InsertChild(-1, pSaveItems);
     pSaveItems->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, true);
     pSaveItems->JSNode()->SetEnum(XFA_ATTRIBUTE_Presence,
-                                  XFA_ATTRIBUTEENUM_Hidden);
+                                  XFA_ATTRIBUTEENUM_Hidden, false);
     CXFA_Node* pListNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     int32_t i = 0;
     while (pListNode) {
@@ -1196,7 +1197,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_Checksum(bool* val) {
   CXFA_Node* pUIChild = GetUIChild();
   XFA_ATTRIBUTEENUM eChecksum;
-  if (pUIChild->JSNode()->TryEnum(XFA_ATTRIBUTE_Checksum, eChecksum)) {
+  if (pUIChild->JSNode()->TryEnum(XFA_ATTRIBUTE_Checksum, eChecksum, true)) {
     switch (eChecksum) {
       case XFA_ATTRIBUTEENUM_None:
         *val = false;
@@ -1301,7 +1302,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum(bool* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_TextLocation(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   XFA_ATTRIBUTEENUM eTextLocation;
-  if (pUIChild->JSNode()->TryEnum(XFA_ATTRIBUTE_TextLocation, eTextLocation)) {
+  if (pUIChild->JSNode()->TryEnum(XFA_ATTRIBUTE_TextLocation, eTextLocation,
+                                  true)) {
     switch (eTextLocation) {
       case XFA_ATTRIBUTEENUM_None:
         *val = BC_TEXT_LOC_NONE;

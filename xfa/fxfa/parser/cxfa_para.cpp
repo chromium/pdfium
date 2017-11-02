@@ -13,13 +13,13 @@ CXFA_Para::CXFA_Para(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_Para::GetHorizontalAlign() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Left;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_HAlign, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_HAlign, eAttr, true);
   return eAttr;
 }
 
 int32_t CXFA_Para::GetVerticalAlign() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Top;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_VAlign, eAttr);
+  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_VAlign, eAttr, true);
   return eAttr;
 }
 

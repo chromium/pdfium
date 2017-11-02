@@ -197,7 +197,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       }
       pCloneXML.reset(pCloneXMLElement.release());
       pClone->JSNode()->SetEnum(XFA_ATTRIBUTE_Contains,
-                                XFA_ATTRIBUTEENUM_Unknown);
+                                XFA_ATTRIBUTEENUM_Unknown, false);
     } else {
       pCloneXML = m_pXMLNode->Clone();
     }
@@ -1587,7 +1587,7 @@ bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
       }
       pNode->m_pXMLNode = pNewXMLElement;
       pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_Contains,
-                               XFA_ATTRIBUTEENUM_Unknown);
+                               XFA_ATTRIBUTEENUM_Unknown, false);
     } else {
       m_pXMLNode->RemoveChildNode(pNode->m_pXMLNode);
     }

@@ -646,7 +646,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
               pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_PagePosition);
           if (eCurChoice == XFA_ATTRIBUTEENUM_Last) {
             XFA_ATTRIBUTEENUM eOddOrEven = XFA_ATTRIBUTEENUM_Any;
-            pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_OddOrEven, eOddOrEven);
+            pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_OddOrEven, eOddOrEven, true);
             XFA_ATTRIBUTEENUM eLastChoice =
                 pLastPageAreaLayoutItem->m_pFormNode->JSNode()->GetEnum(
                     XFA_ATTRIBUTE_PagePosition);
@@ -1313,7 +1313,7 @@ bool CXFA_LayoutPageMgr::MatchPageAreaOddOrEven(CXFA_Node* pPageArea,
     return true;
 
   XFA_ATTRIBUTEENUM eOddOrEven = XFA_ATTRIBUTEENUM_Any;
-  pPageArea->JSNode()->TryEnum(XFA_ATTRIBUTE_OddOrEven, eOddOrEven);
+  pPageArea->JSNode()->TryEnum(XFA_ATTRIBUTE_OddOrEven, eOddOrEven, true);
   if (eOddOrEven != XFA_ATTRIBUTEENUM_Any) {
     int32_t iPageCount = GetPageCount();
     if (bLastMatch) {

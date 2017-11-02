@@ -84,7 +84,7 @@ int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Linear, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToRight;
-  pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
+  pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Type, eAttr, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
@@ -99,7 +99,7 @@ int32_t CXFA_Fill::GetRadial(FX_ARGB& endColor) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Radial, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToEdge;
-  pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
+  pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Type, eAttr, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);

@@ -1067,7 +1067,7 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
         pDDNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Contains) ==
             XFA_ATTRIBUTEENUM_MetaData) {
       pDataNode->JSNode()->SetEnum(XFA_ATTRIBUTE_Contains,
-                                   XFA_ATTRIBUTEENUM_MetaData);
+                                   XFA_ATTRIBUTEENUM_MetaData, false);
     }
     pDataParent->InsertChild(pDataNode);
     pDataNode->SetDataDescriptionNode(pDDNode);
