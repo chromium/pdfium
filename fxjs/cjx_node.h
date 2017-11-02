@@ -112,13 +112,13 @@ class CJX_Node : public CJX_Object {
 
   bool SetUserData(void* pKey,
                    void* pData,
-                   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
-  void* GetUserData(void* pKey, bool bProtoAlso = false);
+                   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
+  void* GetUserData(void* pKey, bool bProtoAlso);
 
   bool TryObject(XFA_ATTRIBUTE eAttr, void*& pData);
   bool SetObject(XFA_ATTRIBUTE eAttr,
                  void* pData,
-                 XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
+                 XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
   void* GetObject(XFA_ATTRIBUTE eAttr);
 
   bool TryNamespace(WideString& wsNamespace);

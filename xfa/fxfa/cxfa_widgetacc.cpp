@@ -661,7 +661,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
           continue;
 
         auto* pGlobalData = static_cast<CXFA_CalcData*>(
-            pRefNode->JSNode()->GetUserData(XFA_CalcData));
+            pRefNode->JSNode()->GetUserData(XFA_CalcData, false));
         if (!pGlobalData) {
           pGlobalData = new CXFA_CalcData;
           pRefNode->JSNode()->SetUserData(XFA_CalcData, pGlobalData,

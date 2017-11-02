@@ -211,7 +211,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
     }
   }
   pClone->SetFlag(XFA_NodeFlag_Initialized, true);
-  pClone->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
+  pClone->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
   return pClone;
 }
 
@@ -405,7 +405,7 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   CXFA_Node* pOldFormItem =
       static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
   if (!pOldFormItem) {
-    JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pFormNode);
+    JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pFormNode, nullptr);
     return 1;
   }
   if (pOldFormItem == pFormNode)
@@ -430,8 +430,8 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
       *iter = pItems->back();
       pItems->pop_back();
       if (pItems->size() == 1) {
-        JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode,
-                            (*pItems)[0]);  // Invalidates pItems.
+        JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, (*pItems)[0],
+                            nullptr);  // Invalidates pItems.
         m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
         return 1;
       }
@@ -443,7 +443,7 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (pOldFormItem != pFormNode)
     return pOldFormItem ? 1 : 0;
 
-  JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
+  JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
   return 0;
 }
 
@@ -1936,7 +1936,7 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
         pDataParent->RemoveChild(pDataNode);
       }
     }
-    pFormNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
+    pFormNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
   }
 }
 

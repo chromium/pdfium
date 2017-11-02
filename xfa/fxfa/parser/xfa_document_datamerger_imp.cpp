@@ -122,7 +122,7 @@ bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
 void CreateDataBinding(CXFA_Node* pFormNode,
                        CXFA_Node* pDataNode,
                        bool bDataToForm) {
-  pFormNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pDataNode);
+  pFormNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pDataNode, nullptr);
   pDataNode->AddBindItem(pFormNode);
   XFA_Element eType = pFormNode->GetElementType();
   if (eType != XFA_Element::Field && eType != XFA_Element::ExclGroup)
@@ -1536,7 +1536,7 @@ void CXFA_Document::DoDataRemerge(bool bDoDataMerge) {
   if (pFormRoot) {
     while (CXFA_Node* pNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild))
       pFormRoot->RemoveChild(pNode);
-    pFormRoot->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
+    pFormRoot->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
   }
   m_rgGlobalBinding.clear();
   if (bDoDataMerge)

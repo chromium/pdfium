@@ -3236,7 +3236,7 @@ void* CJX_Node::GetObject(XFA_ATTRIBUTE eAttr) {
 
 bool CJX_Node::TryObject(XFA_ATTRIBUTE eAttr, void*& pData) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  pData = GetUserData(pKey);
+  pData = GetUserData(pKey, false);
   return !!pData;
 }
 

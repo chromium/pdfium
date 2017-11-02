@@ -123,7 +123,7 @@ CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetPage(int32_t index) const {
 
 CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
   return static_cast<CXFA_LayoutItem*>(
-      pFormItem->JSNode()->GetUserData(XFA_LAYOUTITEMKEY));
+      pFormItem->JSNode()->GetUserData(XFA_LAYOUTITEMKEY, false));
 }
 
 void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {

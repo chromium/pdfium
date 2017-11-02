@@ -597,8 +597,8 @@ void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     CXFA_ContentLayoutItem* pCurLayoutItem =
-        (CXFA_ContentLayoutItem*)pNode->JSNode()->GetUserData(
-            XFA_LAYOUTITEMKEY);
+        (CXFA_ContentLayoutItem*)pNode->JSNode()->GetUserData(XFA_LAYOUTITEMKEY,
+                                                              false);
     CXFA_ContentLayoutItem* pNextLayoutItem = nullptr;
     while (pCurLayoutItem) {
       pNextLayoutItem = pCurLayoutItem->m_pNext;
@@ -1142,7 +1142,7 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
                          m_pFormNode->GetElementType() == XFA_Element::Form));
   m_pOldLayoutItem =
       (CXFA_ContentLayoutItem*)m_pFormNode->JSNode()->GetUserData(
-          XFA_LAYOUTITEMKEY);
+          XFA_LAYOUTITEMKEY, false);
 }
 
 CXFA_ItemLayoutProcessor::~CXFA_ItemLayoutProcessor() {}
@@ -1163,7 +1163,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
                     ->OnCreateLayoutItem(pFormNode);
   CXFA_ContentLayoutItem* pPrevLayoutItem =
       (CXFA_ContentLayoutItem*)pFormNode->JSNode()->GetUserData(
-          XFA_LAYOUTITEMKEY);
+          XFA_LAYOUTITEMKEY, false);
   if (pPrevLayoutItem) {
     while (pPrevLayoutItem->m_pNext)
       pPrevLayoutItem = pPrevLayoutItem->m_pNext;
@@ -1171,7 +1171,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     pPrevLayoutItem->m_pNext = pLayoutItem;
     pLayoutItem->m_pPrev = pPrevLayoutItem;
   } else {
-    pFormNode->JSNode()->SetUserData(XFA_LAYOUTITEMKEY, pLayoutItem);
+    pFormNode->JSNode()->SetUserData(XFA_LAYOUTITEMKEY, pLayoutItem, nullptr);
   }
   return pLayoutItem;
 }
@@ -2090,7 +2090,7 @@ void CXFA_ItemLayoutProcessor::ProcessUnUseBinds(CXFA_Node* pFormNode) {
       CXFA_Node* pBindNode = pNode->GetBindData();
       if (pBindNode) {
         pBindNode->RemoveBindItem(pNode);
-        pNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr);
+        pNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
       }
     }
     pNode->SetFlag(XFA_NodeFlag_UnusedNode, true);

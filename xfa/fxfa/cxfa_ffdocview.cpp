@@ -619,7 +619,7 @@ void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 
 void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
   auto* pGlobalData = static_cast<CXFA_CalcData*>(
-      pNodeChange->JSNode()->GetUserData(XFA_CalcData));
+      pNodeChange->JSNode()->GetUserData(XFA_CalcData, false));
   if (!pGlobalData)
     return;
 
@@ -635,10 +635,10 @@ size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
     AddCalculateNodeNotify(pCurAcc->GetNode());
     int32_t iRefCount =
         (int32_t)(uintptr_t)pCurAcc->GetNode()->JSNode()->GetUserData(
-            XFA_CalcRefCount);
+            XFA_CalcRefCount, false);
     iRefCount++;
-    pCurAcc->GetNode()->JSNode()->SetUserData(XFA_CalcRefCount,
-                                              (void*)(uintptr_t)iRefCount);
+    pCurAcc->GetNode()->JSNode()->SetUserData(
+        XFA_CalcRefCount, (void*)(uintptr_t)iRefCount, nullptr);
     if (iRefCount > 11)
       break;
     if (pCurAcc->ProcessCalculate() == XFA_EVENTERROR_Success)
@@ -656,8 +656,8 @@ int32_t CXFA_FFDocView::RunCalculateWidgets() {
     RunCalculateRecursive(0);
 
   for (CXFA_WidgetAcc* pCurAcc : m_CalculateAccs)
-    pCurAcc->GetNode()->JSNode()->SetUserData(XFA_CalcRefCount,
-                                              (void*)(uintptr_t)0);
+    pCurAcc->GetNode()->JSNode()->SetUserData(XFA_CalcRefCount, nullptr,
+                                              nullptr);
 
   m_CalculateAccs.clear();
   return XFA_EVENTERROR_Success;
