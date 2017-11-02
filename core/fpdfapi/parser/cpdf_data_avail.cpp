@@ -108,6 +108,7 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_bCurPageDictLoadOK = false;
   m_bLinearedDataOK = false;
   m_bSupportHintTable = bSupportHintTable;
+  m_bHeaderAvail = false;
 }
 
 CPDF_DataAvail::~CPDF_DataAvail() {
@@ -413,25 +414,19 @@ bool CPDF_DataAvail::CheckPages() {
 }
 
 bool CPDF_DataAvail::CheckHeader() {
-  ASSERT(m_dwFileLen >= 0);
-  const uint32_t kReqSize = std::min(static_cast<uint32_t>(m_dwFileLen), 1024U);
-  std::vector<uint8_t> buffer(kReqSize);
-  {
-    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-    m_pFileRead->ReadBlock(buffer.data(), 0, kReqSize);
-    if (GetValidator()->has_read_problems())
+  switch (CheckHeaderAndLinearized()) {
+    case DocAvailStatus::DataAvailable:
+      m_docStatus = m_pLinearized ? PDF_DATAAVAIL_FIRSTPAGE : PDF_DATAAVAIL_END;
+      return true;
+    case DocAvailStatus::DataNotAvailable:
+      return false;
+    case DocAvailStatus::DataError:
+      m_docStatus = PDF_DATAAVAIL_ERROR;
+      return true;
+    default:
+      NOTREACHED();
       return false;
   }
-
-  if (IsLinearizedFile(buffer.data(), kReqSize)) {
-    m_docStatus = PDF_DATAAVAIL_FIRSTPAGE;
-    return true;
-  }
-  if (m_docStatus == PDF_DATAAVAIL_ERROR)
-    return false;
-
-  m_docStatus = PDF_DATAAVAIL_END;
-  return true;
 }
 
 bool CPDF_DataAvail::CheckFirstPage() {
@@ -504,56 +499,41 @@ std::unique_ptr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
 }
 
 CPDF_DataAvail::DocLinearizationStatus CPDF_DataAvail::IsLinearizedPDF() {
-  const uint32_t kReqSize = 1024;
-  if (!m_pFileAvail->IsDataAvail(0, kReqSize))
-    return LinearizationUnknown;
-
-  FX_FILESIZE dwSize = m_pFileRead->GetSize();
-  if (dwSize < (FX_FILESIZE)kReqSize)
-    return LinearizationUnknown;
-
-  std::vector<uint8_t> buffer(kReqSize);
-  m_pFileRead->ReadBlock(buffer.data(), 0, kReqSize);
-  if (IsLinearizedFile(buffer.data(), kReqSize))
-    return Linearized;
-
-  return NotLinearized;
+  switch (CheckHeaderAndLinearized()) {
+    case DocAvailStatus::DataAvailable:
+      return m_pLinearized ? DocLinearizationStatus::Linearized
+                           : DocLinearizationStatus::NotLinearized;
+    case DocAvailStatus::DataNotAvailable:
+      return DocLinearizationStatus::LinearizationUnknown;
+    case DocAvailStatus::DataError:
+      return DocLinearizationStatus::NotLinearized;
+    default:
+      NOTREACHED();
+      return DocLinearizationStatus::LinearizationUnknown;
+  }
 }
 
-bool CPDF_DataAvail::IsLinearized() {
-  return !!m_pLinearized;
-}
+CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
+  if (m_bHeaderAvail)
+    return DocAvailStatus::DataAvailable;
 
-bool CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
-  if (m_pLinearized)
-    return true;
+  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  const int32_t header_offset = GetHeaderOffset(GetValidator());
+  if (GetValidator()->has_read_problems())
+    return DocAvailStatus::DataNotAvailable;
 
-  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
-      pData, static_cast<size_t>(dwLen), false);
-  int32_t offset = GetHeaderOffset(file);
-  if (offset == kInvalidHeaderOffset) {
-    m_docStatus = PDF_DATAAVAIL_ERROR;
-    return false;
-  }
+  if (header_offset == kInvalidHeaderOffset)
+    return DocAvailStatus::DataError;
 
-  m_dwHeaderOffset = offset;
-  m_syntaxParser.InitParser(file, offset);
-  m_syntaxParser.SetPos(m_syntaxParser.m_HeaderOffset + 9);
+  m_dwHeaderOffset = header_offset;
 
-  bool bNumber;
-  ByteString wordObjNum = m_syntaxParser.GetNextWord(&bNumber);
-  if (!bNumber)
-    return false;
+  m_syntaxParser.InitParserWithValidator(GetValidator(), header_offset);
+  m_pLinearized = CPDF_LinearizedHeader::Parse(&m_syntaxParser);
+  if (GetValidator()->has_read_problems())
+    return DocAvailStatus::DataNotAvailable;
 
-  uint32_t objnum = FXSYS_atoui(wordObjNum.c_str());
-  m_pLinearized = CPDF_LinearizedHeader::CreateForObject(
-      ParseIndirectObjectAt(m_syntaxParser.m_HeaderOffset + 9, objnum));
-  if (!m_pLinearized ||
-      m_pLinearized->GetFileSize() != m_pFileRead->GetSize()) {
-    m_pLinearized.reset();
-    return false;
-  }
-  return true;
+  m_bHeaderAvail = true;
+  return DocAvailStatus::DataAvailable;
 }
 
 bool CPDF_DataAvail::CheckEnd() {

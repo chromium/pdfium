@@ -103,7 +103,6 @@ class CPDF_DataAvail final {
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
-  bool IsLinearized();
   RetainPtr<IFX_SeekableReadStream> GetFileRead() const;
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
@@ -140,7 +139,7 @@ class CPDF_DataAvail final {
   DocFormStatus CheckAcroForm();
   bool CheckPageStatus();
 
-  bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
+  DocAvailStatus CheckHeaderAndLinearized();
   void SetStartOffset(FX_FILESIZE dwOffset);
   bool GetNextToken(ByteString* token);
   bool GetNextChar(uint8_t& ch);
@@ -219,6 +218,7 @@ class CPDF_DataAvail final {
   std::map<uint32_t, std::unique_ptr<CPDF_PageObjectAvail>> m_PagesObjAvail;
   std::map<const CPDF_Object*, std::unique_ptr<CPDF_PageObjectAvail>>
       m_PagesResourcesAvail;
+  bool m_bHeaderAvail;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_

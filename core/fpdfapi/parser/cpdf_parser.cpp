@@ -1280,34 +1280,8 @@ uint32_t CPDF_Parser::GetPermissions() const {
   return dwPermission;
 }
 
-bool CPDF_Parser::ParseLinearizedHeader() {
-  m_pSyntax->SetPos(m_pSyntax->m_HeaderOffset + 9);
-
-  FX_FILESIZE SavedPos = m_pSyntax->GetPos();
-  bool bIsNumber;
-  ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
-  if (!bIsNumber)
-    return false;
-
-  word = m_pSyntax->GetNextWord(&bIsNumber);
-  if (!bIsNumber)
-    return false;
-
-  if (m_pSyntax->GetKeyword() != "obj") {
-    m_pSyntax->SetPos(SavedPos);
-    return false;
-  }
-
-  m_pLinearized =
-      CPDF_LinearizedHeader::CreateForObject(m_pSyntax->GetObjectBody(nullptr));
-  if (!m_pLinearized)
-    return false;
-
-  // Move parser onto first page xref table start.
-  m_pSyntax->GetNextWord(nullptr);
-
-  m_LastXRefOffset = m_pSyntax->GetPos();
-  return true;
+std::unique_ptr<CPDF_LinearizedHeader> CPDF_Parser::ParseLinearizedHeader() {
+  return CPDF_LinearizedHeader::Parse(m_pSyntax.get());
 }
 
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
@@ -1320,12 +1294,14 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   if (!InitSyntaxParser(pFileAccess))
     return FORMAT_ERROR;
 
-  if (!ParseLinearizedHeader())
+  m_pLinearized = ParseLinearizedHeader();
+  if (!m_pLinearized)
     return StartParseInternal(std::move(pDocument));
 
   m_bHasParsed = true;
   m_pDocument = pDocument;
 
+  m_LastXRefOffset = m_pLinearized->GetLastXRefOffset();
   FX_FILESIZE dwFirstXRefOffset = m_LastXRefOffset;
   bool bXRefRebuilt = false;
   bool bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, false);

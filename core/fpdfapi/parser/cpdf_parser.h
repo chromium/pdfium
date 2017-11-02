@@ -166,7 +166,7 @@ class CPDF_Parser {
   bool LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
   Error LoadLinearizedMainXRefTable();
   RetainPtr<CPDF_StreamAcc> GetObjectStream(uint32_t number);
-  bool ParseLinearizedHeader();
+  std::unique_ptr<CPDF_LinearizedHeader> ParseLinearizedHeader();
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
   void ShrinkObjectMap(uint32_t size);
   // A simple check whether the cross reference table matches with

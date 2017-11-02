@@ -12,9 +12,12 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
+
+constexpr FX_FILESIZE kLinearizedHeaderOffset = 9;
 
 template <class T>
 bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
@@ -32,21 +35,48 @@ bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
   return static_cast<T>(raw_value) >= min_value;
 }
 
+bool IsLinearizedHeaderValid(const CPDF_LinearizedHeader* header,
+                             FX_FILESIZE file_size) {
+  ASSERT(header);
+  return header->GetFileSize() == file_size &&
+         header->GetMainXRefTableFirstEntryOffset() < file_size &&
+         header->GetPageCount() > 0 &&
+         header->GetFirstPageEndOffset() < file_size &&
+         header->GetLastXRefOffset() < file_size &&
+         header->GetHintStart() < file_size;
+}
+
 }  // namespace
 
 // static
-std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::CreateForObject(
-    std::unique_ptr<CPDF_Object> pObj) {
-  auto pDict = ToDictionary(std::move(pObj));
+std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
+    CPDF_SyntaxParser* parser) {
+  parser->SetPos(kLinearizedHeaderOffset);
+
+  const auto pDict = ToDictionary(
+      parser->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose));
+
   if (!pDict || !pDict->KeyExist("Linearized") ||
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "L", 1) ||
       !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "P", 0, false) ||
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "T", 1) ||
       !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "N", 0) ||
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "E", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "O", 1))
+      !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "O", 1)) {
     return nullptr;
-  return pdfium::WrapUnique(new CPDF_LinearizedHeader(pDict.get()));
+  }
+  // Move parser to the start of the xref table for the documents first page.
+  // (skpping endobj keyword)
+  if (parser->GetNextWord(nullptr) != "endobj")
+    return nullptr;
+
+  auto result = pdfium::WrapUnique(new CPDF_LinearizedHeader(pDict.get()));
+  result->m_szLastXRefOffset = parser->GetPos();
+
+  return IsLinearizedHeaderValid(result.get(),
+                                 parser->GetFileAccess()->GetSize())
+             ? std::move(result)
+             : nullptr;
 }
 
 CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict) {
