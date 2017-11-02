@@ -434,15 +434,14 @@ class CJX_Node : public CJX_Object {
   bool GetMapModuleValue(void* pKey, void*& pValue);
   void SetMapModuleString(void* pKey, const WideStringView& wsValue);
   bool GetMapModuleString(void* pKey, WideStringView& wsValue);
-  void SetMapModuleBuffer(
-      void* pKey,
-      void* pValue,
-      int32_t iBytes,
-      XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
+  void SetMapModuleBuffer(void* pKey,
+                          void* pValue,
+                          int32_t iBytes,
+                          XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
   bool GetMapModuleBuffer(void* pKey,
                           void*& pValue,
                           int32_t& iBytes,
-                          bool bProtoAlso = true) const;
+                          bool bProtoAlso) const;
   bool HasMapModuleKey(void* pKey);
   void RemoveMapModuleKey(void* pKey = nullptr);
   void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);

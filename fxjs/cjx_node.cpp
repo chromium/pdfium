@@ -3014,7 +3014,7 @@ bool CJX_Node::SetMeasure(XFA_ATTRIBUTE eAttr,
                           bool bNotify) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   OnChanging(eAttr, bNotify);
-  SetMapModuleBuffer(pKey, &mValue, sizeof(CXFA_Measurement));
+  SetMapModuleBuffer(pKey, &mValue, sizeof(CXFA_Measurement), nullptr);
   OnChanged(eAttr, bNotify, false);
   return true;
 }
@@ -3025,7 +3025,8 @@ bool CJX_Node::TryMeasure(XFA_ATTRIBUTE eAttr,
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   void* pValue;
   int32_t iBytes;
-  if (GetMapModuleBuffer(pKey, pValue, iBytes) && iBytes == sizeof(mValue)) {
+  if (GetMapModuleBuffer(pKey, pValue, iBytes, true) &&
+      iBytes == sizeof(mValue)) {
     memcpy(&mValue, pValue, sizeof(mValue));
     return true;
   }
@@ -3692,13 +3693,13 @@ bool CJX_Node::GetMapModuleValue(void* pKey, void*& pValue) {
 
 void CJX_Node::SetMapModuleString(void* pKey, const WideStringView& wsValue) {
   SetMapModuleBuffer(pKey, (void*)wsValue.unterminated_c_str(),
-                     wsValue.GetLength() * sizeof(wchar_t));
+                     wsValue.GetLength() * sizeof(wchar_t), nullptr);
 }
 
 bool CJX_Node::GetMapModuleString(void* pKey, WideStringView& wsValue) {
   void* pValue;
   int32_t iBytes;
-  if (!GetMapModuleBuffer(pKey, pValue, iBytes))
+  if (!GetMapModuleBuffer(pKey, pValue, iBytes, true))
     return false;
   // Defensive measure: no out-of-bounds pointers even if zero length.
   int32_t iChars = iBytes / sizeof(wchar_t);
