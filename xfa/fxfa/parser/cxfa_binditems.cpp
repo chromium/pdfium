@@ -23,5 +23,6 @@ void CXFA_BindItems::GetRef(WideStringView& wsRef) {
 }
 
 bool CXFA_BindItems::SetConnection(const WideString& wsConnection) {
-  return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Connection, wsConnection);
+  return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Connection, wsConnection,
+                                     false, false);
 }

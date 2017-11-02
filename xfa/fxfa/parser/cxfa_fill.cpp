@@ -26,7 +26,7 @@ void CXFA_Fill::SetColor(FX_ARGB color) {
   int b;
   std::tie(a, r, g, b) = ArgbDecode(color);
   wsColor.Format(L"%d,%d,%d", r, g, b);
-  pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsColor);
+  pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsColor, false, false);
 }
 
 FX_ARGB CXFA_Fill::GetColor(bool bText) {

@@ -37,12 +37,14 @@ bool CXFA_Image::GetContent(WideString& wsText) {
 }
 
 bool CXFA_Image::SetContentType(const WideString& wsContentType) {
-  return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
+  return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType,
+                                     false, false);
 }
 
 bool CXFA_Image::SetHref(const WideString& wsHref) {
   if (m_bDefValue)
-    return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Href, wsHref);
+    return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Href, wsHref, false,
+                                       false);
   return m_pNode->JSNode()->SetAttribute(XFA_ATTRIBUTE_Href,
                                          wsHref.AsStringView(), false);
 }

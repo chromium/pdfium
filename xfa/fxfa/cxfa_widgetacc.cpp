@@ -263,10 +263,11 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
     image.SetTransferEncoding(XFA_ATTRIBUTEENUM_Base64);
     return;
   }
-  pBind->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
+  pBind->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType, false,
+                            false);
   CXFA_Node* pHrefNode = pBind->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pHrefNode) {
-    pHrefNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsHref);
+    pHrefNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsHref, false, false);
   } else {
     CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element);

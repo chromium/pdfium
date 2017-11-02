@@ -70,7 +70,7 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
   int b;
   std::tie(a, r, g, b) = ArgbDecode(argb);
   wsColor.Format(L"%d,%d,%d", r, g, b);
-  pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsColor);
+  pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsColor, false, false);
 }
 
 int32_t CXFA_Stroke::GetJoinType() const {

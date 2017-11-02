@@ -88,8 +88,8 @@ class CJX_Node : public CJX_Object {
   bool TryCData(XFA_ATTRIBUTE eAttr, WideString& wsValue, bool bUseDefault);
   bool SetCData(XFA_ATTRIBUTE eAttr,
                 const WideString& wsValue,
-                bool bNotify = false,
-                bool bScriptModify = false);
+                bool bNotify,
+                bool bScriptModify);
   WideStringView GetCData(XFA_ATTRIBUTE eAttr);
 
   bool TryContent(WideString& wsContent,

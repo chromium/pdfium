@@ -11,5 +11,6 @@
 CXFA_ExData::CXFA_ExData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 bool CXFA_ExData::SetContentType(const WideString& wsContentType) {
-  return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
+  return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType,
+                                     false, false);
 }

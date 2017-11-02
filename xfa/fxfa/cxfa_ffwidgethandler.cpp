@@ -332,7 +332,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
 
   CXFA_Node* pFill = CreateCopyNode(XFA_Element::Fill, pBorder);
   CXFA_Node* pColor = CreateCopyNode(XFA_Element::Color, pFill);
-  pColor->JSNode()->SetCData(XFA_ATTRIBUTE_Value, L"212, 208, 200", false);
+  pColor->JSNode()->SetCData(XFA_ATTRIBUTE_Value, L"212, 208, 200", false,
+                             false);
 
   CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
   pBind->JSNode()->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None);
@@ -506,7 +507,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_Element eElement,
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {
   CXFA_Node* pFont = CreateCopyNode(XFA_Element::Font, pParent);
-  pFont->JSNode()->SetCData(XFA_ATTRIBUTE_Typeface, L"Myriad Pro", false);
+  pFont->JSNode()->SetCData(XFA_ATTRIBUTE_Typeface, L"Myriad Pro", false,
+                            false);
   return pFont;
 }
 

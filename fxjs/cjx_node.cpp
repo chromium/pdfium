@@ -218,7 +218,7 @@ bool CJX_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
                      bNotify);
     } break;
     case XFA_ATTRIBUTETYPE_Cdata:
-      return SetCData(pAttr->eName, WideString(wsValue), bNotify);
+      return SetCData(pAttr->eName, WideString(wsValue), bNotify, false);
     case XFA_ATTRIBUTETYPE_Boolean:
       return SetBoolean(pAttr->eName, wsValue != L"0", bNotify);
     case XFA_ATTRIBUTETYPE_Integer:
@@ -752,7 +752,7 @@ void CJX_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
   WideStringView wsContentType = GetCData(XFA_ATTRIBUTE_ContentType);
   if (!wsContentType.IsEmpty()) {
     pFakeRoot->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType,
-                                  WideString(wsContentType));
+                                  WideString(wsContentType), false, false);
   }
 
   std::unique_ptr<CFX_XMLNode> pFakeXMLRoot(pFakeRoot->GetXMLMappingNode());
@@ -3333,7 +3333,8 @@ bool CJX_Node::SetScriptContent(const WideString& wsContent,
 
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
         ASSERT(pChildValue);
-        pChildValue->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, L"text/xml");
+        pChildValue->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, L"text/xml",
+                                        false, false);
         pChildValue->JSNode()->SetScriptContent(wsContent, wsContent, bNotify,
                                                 bScriptModify, false);
         CXFA_Node* pBind = GetXFANode()->GetBindData();
@@ -3375,7 +3376,8 @@ bool CJX_Node::SetScriptContent(const WideString& wsContent,
               while (iAddNodes-- > 0) {
                 pValueNodes =
                     pBind->CreateSamePacketNode(XFA_Element::DataValue);
-                pValueNodes->JSNode()->SetCData(XFA_ATTRIBUTE_Name, L"value");
+                pValueNodes->JSNode()->SetCData(XFA_ATTRIBUTE_Name, L"value",
+                                                false, false);
                 pValueNodes->CreateXMLMappingNode();
                 pBind->InsertChild(pValueNodes);
               }
