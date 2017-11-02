@@ -61,10 +61,8 @@ class CJX_Node : public CJX_Object {
                     bool bNotify);
   bool GetAttribute(const WideStringView& wsAttr,
                     WideString& wsValue,
-                    bool bUseDefault = true);
-  bool GetAttribute(XFA_ATTRIBUTE eAttr,
-                    WideString& wsValue,
-                    bool bUseDefault = true);
+                    bool bUseDefault);
+  bool GetAttribute(XFA_ATTRIBUTE eAttr, WideString& wsValue, bool bUseDefault);
   bool SetAttributeValue(const WideString& wsValue,
                          const WideString& wsXMLValue,
                          bool bNotify = false,

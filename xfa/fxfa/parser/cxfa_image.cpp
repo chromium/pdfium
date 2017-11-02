@@ -22,7 +22,7 @@ bool CXFA_Image::GetContentType(WideString& wsContentType) {
 bool CXFA_Image::GetHref(WideString& wsHref) {
   if (m_bDefValue)
     return m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Href, wsHref);
-  return m_pNode->JSNode()->GetAttribute(L"href", wsHref);
+  return m_pNode->JSNode()->GetAttribute(L"href", wsHref, true);
 }
 
 int32_t CXFA_Image::GetTransferEncoding() {

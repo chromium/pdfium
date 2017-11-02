@@ -526,7 +526,7 @@ void CJX_Node::Script_TreeClass_All(CFXJSE_Value* pValue,
 
   uint32_t dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
   WideString wsName;
-  GetAttribute(XFA_ATTRIBUTE_Name, wsName);
+  GetAttribute(XFA_ATTRIBUTE_Name, wsName, true);
   WideString wsExpression = wsName + L"[*]";
   Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag);
 }
@@ -665,7 +665,7 @@ void CJX_Node::Script_NodeClass_GetAttribute(CFXJSE_Arguments* pArguments) {
   WideString wsExpression =
       WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
   WideString wsValue;
-  GetAttribute(wsExpression.AsStringView(), wsValue);
+  GetAttribute(wsExpression.AsStringView(), wsValue, true);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
     pValue->SetString(wsValue.UTF8Encode().AsStringView());
@@ -1279,7 +1279,7 @@ void CJX_Node::Script_Attribute_String(CFXJSE_Value* pValue,
     }
   } else {
     WideString wsValue;
-    GetAttribute(eAttribute, wsValue);
+    GetAttribute(eAttribute, wsValue, true);
     pValue->SetString(wsValue.UTF8Encode().AsStringView());
   }
 }
@@ -1293,7 +1293,7 @@ void CJX_Node::Script_Attribute_StringRead(CFXJSE_Value* pValue,
   }
 
   WideString wsValue;
-  GetAttribute(eAttribute, wsValue);
+  GetAttribute(eAttribute, wsValue, true);
   pValue->SetString(wsValue.UTF8Encode().AsStringView());
 }
 
