@@ -281,7 +281,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
                             : nullptr;
       }
       if (pValidateNode)
-        wsValidateStr = pValidateNode->JSNode()->GetContent();
+        wsValidateStr = pValidateNode->JSNode()->GetContent(false);
     }
 
     if (!wsValidateStr.Contains(L"preSubmit"))
@@ -746,20 +746,20 @@ void CXFA_FFDocView::RunBindItems() {
         continue;
 
       if (bValueUseContent) {
-        wsValue = refNode->JSNode()->GetContent();
+        wsValue = refNode->JSNode()->GetContent(false);
       } else {
         CXFA_Node* nodeValue = refNode->GetFirstChildByName(uValueHash);
-        wsValue = nodeValue ? nodeValue->JSNode()->GetContent()
-                            : refNode->JSNode()->GetContent();
+        wsValue = nodeValue ? nodeValue->JSNode()->GetContent(false)
+                            : refNode->JSNode()->GetContent(false);
       }
 
       if (!bUseValue) {
         if (bLabelUseContent) {
-          wsLabel = refNode->JSNode()->GetContent();
+          wsLabel = refNode->JSNode()->GetContent(false);
         } else {
           CXFA_Node* nodeLabel = refNode->GetFirstChildByName(wsLabelRef);
           if (nodeLabel)
-            wsLabel = nodeLabel->JSNode()->GetContent();
+            wsLabel = nodeLabel->JSNode()->GetContent(false);
         }
       } else {
         wsLabel = wsValue;

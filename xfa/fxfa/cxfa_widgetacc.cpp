@@ -226,7 +226,7 @@ void CXFA_WidgetAcc::ResetData() {
           if (pItems->CountChildren(XFA_Element::Unknown) > 1) {
             itemText = pItems->GetChild(1, XFA_Element::Unknown)
                            ->JSNode()
-                           ->GetContent();
+                           ->GetContent(false);
           }
 
           pAcc->SetValue(itemText, XFA_VALUEPICTURE_Raw);

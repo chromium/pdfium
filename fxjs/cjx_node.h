@@ -78,7 +78,7 @@ class CJX_Node : public CJX_Object {
                   bool bNotify,
                   bool bScriptModify,
                   bool bSyncData);
-  WideString GetContent();
+  WideString GetContent(bool bScriptModify);
 
   bool TryInteger(XFA_ATTRIBUTE eAttr, int32_t& iValue, bool bUseDefault);
   bool SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify);
@@ -427,13 +427,6 @@ class CJX_Node : public CJX_Object {
                 void*& pValue);
 
   bool TryUserData(void* pKey, void*& pData, bool bProtoAlso);
-
-  bool SetScriptContent(const WideString& wsContent,
-                        const WideString& wsXMLValue,
-                        bool bNotify,
-                        bool bScriptModify,
-                        bool bSyncData);
-  WideString GetScriptContent(bool bScriptModify);
 
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;

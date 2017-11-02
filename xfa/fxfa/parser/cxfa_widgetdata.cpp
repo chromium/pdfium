@@ -253,7 +253,7 @@ XFA_Element CXFA_WidgetData::GetUIType() {
 }
 
 WideString CXFA_WidgetData::GetRawValue() {
-  return m_pNode->JSNode()->GetContent();
+  return m_pNode->JSNode()->GetContent(false);
 }
 
 int32_t CXFA_WidgetData::GetAccess() {
@@ -562,12 +562,12 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       if (!pItemchild)
         continue;
 
-      WideString text = pItemchild->JSNode()->GetContent();
+      WideString text = pItemchild->JSNode()->GetContent(false);
       WideString wsChildValue = text;
       if (wsValue != text) {
         pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
         if (pItemchild)
-          wsChildValue = pItemchild->JSNode()->GetContent();
+          wsChildValue = pItemchild->JSNode()->GetContent(false);
         else
           wsChildValue.clear();
       }
@@ -651,11 +651,11 @@ void CXFA_WidgetData::SetSelectedMemberByValue(const WideStringView& wsValue,
     if (!pItemchild)
       continue;
 
-    WideString wsChildValue = pItemchild->JSNode()->GetContent();
+    WideString wsChildValue = pItemchild->JSNode()->GetContent(false);
     if (wsValue != wsChildValue) {
       pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
       if (pItemchild)
-        wsChildValue = pItemchild->JSNode()->GetContent();
+        wsChildValue = pItemchild->JSNode()->GetContent(false);
       else
         wsChildValue.clear();
     } else {
@@ -1598,7 +1598,7 @@ IFX_Locale* CXFA_WidgetData::GetLocal() {
 
 bool CXFA_WidgetData::GetValue(WideString& wsValue,
                                XFA_VALUEPICTURE eValueType) {
-  wsValue = m_pNode->JSNode()->GetContent();
+  wsValue = m_pNode->JSNode()->GetContent(false);
 
   if (eValueType == XFA_VALUEPICTURE_Display)
     GetItemLabel(wsValue.AsStringView(), wsValue);
