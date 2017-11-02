@@ -608,7 +608,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
 
 class CMemFile final : public IFX_SeekableReadStream {
  public:
-  static RetainPtr<CMemFile> Create(uint8_t* pBuf, FX_FILESIZE size) {
+  static RetainPtr<CMemFile> Create(const uint8_t* pBuf, FX_FILESIZE size) {
     return RetainPtr<CMemFile>(new CMemFile(pBuf, size));
   }
 
@@ -627,15 +627,17 @@ class CMemFile final : public IFX_SeekableReadStream {
   }
 
  private:
-  CMemFile(uint8_t* pBuf, FX_FILESIZE size) : m_pBuf(pBuf), m_size(size) {}
+  CMemFile(const uint8_t* pBuf, FX_FILESIZE size)
+      : m_pBuf(pBuf), m_size(size) {}
 
-  uint8_t* const m_pBuf;
+  const uint8_t* const m_pBuf;
   const FX_FILESIZE m_size;
 };
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {
-  return LoadDocumentImpl(CMemFile::Create((uint8_t*)data_buf, size), password);
+  return LoadDocumentImpl(
+      CMemFile::Create(static_cast<const uint8_t*>(data_buf), size), password);
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
@@ -815,7 +817,7 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
                                       int size_x,
                                       int size_y,
                                       int rotate,
-                                      RetainPtr<CFX_DIBitmap>& pSrc,
+                                      const RetainPtr<CFX_DIBitmap>& pSrc,
                                       const CFX_FloatRect& mask_box,
                                       FX_RECT* bitmap_area) {
   ASSERT(bitmap_area);
@@ -1184,7 +1186,8 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
       return nullptr;
   }
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  pBitmap->Create(width, height, fx_format, (uint8_t*)first_scan, stride);
+  pBitmap->Create(width, height, fx_format, static_cast<uint8_t*>(first_scan),
+                  stride);
   return pBitmap.Leak();
 }
 
