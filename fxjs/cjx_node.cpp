@@ -180,7 +180,7 @@ CJX_Node::CJX_Node(CXFA_Node* node)
     : CJX_Object(node), map_module_data_(nullptr) {}
 
 CJX_Node::~CJX_Node() {
-  RemoveMapModuleKey();
+  ClearMapModuleBuffer();
 }
 
 CXFA_Node* CJX_Node::GetXFANode() {
@@ -320,10 +320,10 @@ bool CJX_Node::GetAttribute(const WideStringView& wsAttr,
   return true;
 }
 
-bool CJX_Node::RemoveAttribute(const WideStringView& wsAttr) {
+void CJX_Node::RemoveAttribute(const WideStringView& wsAttr) {
   void* pKey = GetMapKey_Custom(wsAttr);
-  RemoveMapModuleKey(pKey);
-  return true;
+  if (pKey)
+    RemoveMapModuleKey(pKey);
 }
 
 int32_t CJX_Node::Subform_and_SubformSet_InstanceIndex() {
@@ -3765,25 +3765,10 @@ bool CJX_Node::HasMapModuleKey(void* pKey) {
                      pdfium::ContainsKey(pModule->m_BufferMap, pKey));
 }
 
-void CJX_Node::RemoveMapModuleKey(void* pKey) {
+void CJX_Node::ClearMapModuleBuffer() {
   XFA_MAPMODULEDATA* pModule = GetMapModuleData();
   if (!pModule)
     return;
-
-  if (pKey) {
-    auto it = pModule->m_BufferMap.find(pKey);
-    if (it != pModule->m_BufferMap.end()) {
-      XFA_MAPDATABLOCK* pBuffer = it->second;
-      if (pBuffer) {
-        if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
-          pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
-        FX_Free(pBuffer);
-      }
-      pModule->m_BufferMap.erase(it);
-    }
-    pModule->m_ValueMap.erase(pKey);
-    return;
-  }
 
   for (auto& pair : pModule->m_BufferMap) {
     XFA_MAPDATABLOCK* pBuffer = pair.second;
@@ -3796,6 +3781,27 @@ void CJX_Node::RemoveMapModuleKey(void* pKey) {
   pModule->m_BufferMap.clear();
   pModule->m_ValueMap.clear();
   delete pModule;
+}
+
+void CJX_Node::RemoveMapModuleKey(void* pKey) {
+  ASSERT(pKey);
+
+  XFA_MAPMODULEDATA* pModule = GetMapModuleData();
+  if (!pModule)
+    return;
+
+  auto it = pModule->m_BufferMap.find(pKey);
+  if (it != pModule->m_BufferMap.end()) {
+    XFA_MAPDATABLOCK* pBuffer = it->second;
+    if (pBuffer) {
+      if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
+        pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
+      FX_Free(pBuffer);
+    }
+    pModule->m_BufferMap.erase(it);
+  }
+  pModule->m_ValueMap.erase(pKey);
+  return;
 }
 
 void CJX_Node::MergeAllData(void* pDstModule) {

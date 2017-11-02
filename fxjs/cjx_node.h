@@ -67,7 +67,7 @@ class CJX_Node : public CJX_Object {
                          const WideString& wsXMLValue,
                          bool bNotify,
                          bool bScriptModify);
-  bool RemoveAttribute(const WideStringView& wsAttr);
+  void RemoveAttribute(const WideStringView& wsAttr);
 
   CXFA_Node* GetProperty(int32_t index,
                          XFA_Element eType,
@@ -443,7 +443,8 @@ class CJX_Node : public CJX_Object {
                           int32_t& iBytes,
                           bool bProtoAlso) const;
   bool HasMapModuleKey(void* pKey);
-  void RemoveMapModuleKey(void* pKey = nullptr);
+  void ClearMapModuleBuffer();
+  void RemoveMapModuleKey(void* pKey);
   void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
   void MoveBufferMapData(CXFA_Node* pSrcModule,
                          CXFA_Node* pDstModule,
