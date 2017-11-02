@@ -445,7 +445,7 @@ bool CXFA_WidgetData::GetButtonRollover(WideString& wsRollover,
     CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pText) {
       WideStringView wsName;
-      pText->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
+      pText->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
       if (wsName == L"rollover") {
         pText->JSNode()->TryContent(wsRollover);
         bRichText = pText->GetElementType() == XFA_Element::ExData;
@@ -462,7 +462,7 @@ bool CXFA_WidgetData::GetButtonDown(WideString& wsDown, bool& bRichText) {
     CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pText) {
       WideStringView wsName;
-      pText->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
+      pText->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
       if (wsName == L"down") {
         pText->JSNode()->TryContent(wsDown);
         bRichText = pText->GetElementType() == XFA_Element::ExData;
@@ -1177,8 +1177,8 @@ WideString CXFA_WidgetData::GetBarcodeType() {
 bool CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsCharEncoding;
-  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_CharEncoding,
-                                   wsCharEncoding)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_CharEncoding, wsCharEncoding,
+                                   true)) {
     if (wsCharEncoding.CompareNoCase(L"UTF-16")) {
       *val = CHAR_ENCODING_UNICODE;
       return true;
@@ -1218,7 +1218,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_Checksum(bool* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_DataLength(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsDataLength;
-  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_DataLength, wsDataLength)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_DataLength, wsDataLength,
+                                   true)) {
     *val = FXSYS_wtoi(wsDataLength.c_str());
     return true;
   }
@@ -1228,7 +1229,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_DataLength(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideStringView wsStartEndChar;
-  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_StartChar, wsStartEndChar)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_StartChar, wsStartEndChar,
+                                   true)) {
     if (wsStartEndChar.GetLength()) {
       *val = static_cast<char>(wsStartEndChar[0]);
       return true;
@@ -1240,7 +1242,8 @@ bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_EndChar(char* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideStringView wsStartEndChar;
-  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_EndChar, wsStartEndChar)) {
+  if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_EndChar, wsStartEndChar,
+                                   true)) {
     if (wsStartEndChar.GetLength()) {
       *val = static_cast<char>(wsStartEndChar[0]);
       return true;
@@ -1253,7 +1256,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ECLevel(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsECLevel;
   if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_ErrorCorrectionLevel,
-                                   wsECLevel)) {
+                                   wsECLevel, true)) {
     *val = FXSYS_wtoi(wsECLevel.c_str());
     return true;
   }
@@ -1334,7 +1337,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float* val) {
   CXFA_Node* pUIChild = GetUIChild();
   WideString wsWideNarrowRatio;
   if (pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_WideNarrowRatio,
-                                   wsWideNarrowRatio)) {
+                                   wsWideNarrowRatio, true)) {
     auto ptPos = wsWideNarrowRatio.Find(':');
     float fRatio = 0;
     if (!ptPos.has_value()) {
@@ -1358,7 +1361,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float* val) {
 void CXFA_WidgetData::GetPasswordChar(WideString& wsPassWord) {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild) {
-    pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_PasswordChar, wsPassWord);
+    pUIChild->JSNode()->TryCData(XFA_ATTRIBUTE_PasswordChar, wsPassWord, true);
   } else {
     wsPassWord = GetAttributeDefaultValue_Cdata(XFA_Element::PasswordEdit,
                                                 XFA_ATTRIBUTE_PasswordChar,

@@ -53,7 +53,7 @@ FX_ARGB CXFA_Stroke::GetColor() const {
     return 0xFF000000;
 
   WideStringView wsColor;
-  pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsColor);
+  pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsColor, true);
   return CXFA_Data::ToColor(wsColor);
 }
 

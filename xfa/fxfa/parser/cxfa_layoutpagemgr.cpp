@@ -66,7 +66,7 @@ class PageSetContainerLayoutItem {
 uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
   uint32_t dwRelevant = XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
   WideStringView wsRelevant;
-  if (pFormItem->JSNode()->TryCData(XFA_ATTRIBUTE_Relevant, wsRelevant)) {
+  if (pFormItem->JSNode()->TryCData(XFA_ATTRIBUTE_Relevant, wsRelevant, true)) {
     if (wsRelevant == L"+print" || wsRelevant == L"print")
       dwRelevant &= ~XFA_WidgetStatus_Viewable;
     else if (wsRelevant == L"-print")
@@ -950,11 +950,11 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
     WideStringView wsOverflowTarget;
     WideStringView wsOverflowTrailer;
     pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_OverflowLeader,
-                                      wsOverflowLeader);
+                                      wsOverflowLeader, true);
     pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_OverflowTrailer,
-                                      wsOverflowTrailer);
+                                      wsOverflowTrailer, true);
     pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_OverflowTarget,
-                                      wsOverflowTarget);
+                                      wsOverflowTarget, true);
     if (!wsOverflowLeader.IsEmpty() || !wsOverflowTrailer.IsEmpty() ||
         !wsOverflowTarget.IsEmpty()) {
       if (!wsOverflowTarget.IsEmpty() && bCreatePage &&
@@ -994,9 +994,12 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
   WideStringView wsOverflowLeader;
   WideStringView wsOverflowTrailer;
   WideStringView wsOverflowTarget;
-  pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_Leader, wsOverflowLeader);
-  pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_Trailer, wsOverflowTrailer);
-  pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_Target, wsOverflowTarget);
+  pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_Leader, wsOverflowLeader,
+                                    true);
+  pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_Trailer, wsOverflowTrailer,
+                                    true);
+  pOverflowNode->JSNode()->TryCData(XFA_ATTRIBUTE_Target, wsOverflowTarget,
+                                    true);
   if (!wsOverflowTarget.IsEmpty() && bCreatePage && !m_bCreateOverFlowPage) {
     CXFA_Node* pTarget =
         ResolveBreakTarget(m_pTemplatePageSetRoot, true, wsOverflowTarget);
@@ -1088,7 +1091,7 @@ bool CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
   if (pBookendNode->GetElementType() == XFA_Element::Break) {
     pBookendNode->JSNode()->TryCData(
         bLeader ? XFA_ATTRIBUTE_BookendLeader : XFA_ATTRIBUTE_BookendTrailer,
-        wsBookendLeader);
+        wsBookendLeader, true);
     if (!wsBookendLeader.IsEmpty()) {
       pBookendAppendTemplate =
           ResolveBreakTarget(pContainer, false, wsBookendLeader);
@@ -1097,8 +1100,8 @@ bool CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
     return false;
   } else if (pBookendNode->GetElementType() == XFA_Element::Bookend) {
     pBookendNode->JSNode()->TryCData(
-        bLeader ? XFA_ATTRIBUTE_Leader : XFA_ATTRIBUTE_Trailer,
-        wsBookendLeader);
+        bLeader ? XFA_ATTRIBUTE_Leader : XFA_ATTRIBUTE_Trailer, wsBookendLeader,
+        true);
     pBookendAppendTemplate =
         ResolveBreakTarget(pContainer, true, wsBookendLeader);
     return true;
@@ -1664,11 +1667,11 @@ CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(CXFA_Node* pFormNode) {
       WideStringView wsOverflowTarget;
       WideStringView wsOverflowTrailer;
       pCurNode->JSNode()->TryCData(XFA_ATTRIBUTE_OverflowLeader,
-                                   wsOverflowLeader);
+                                   wsOverflowLeader, true);
       pCurNode->JSNode()->TryCData(XFA_ATTRIBUTE_OverflowTrailer,
-                                   wsOverflowTrailer);
+                                   wsOverflowTrailer, true);
       pCurNode->JSNode()->TryCData(XFA_ATTRIBUTE_OverflowTarget,
-                                   wsOverflowTarget);
+                                   wsOverflowTarget, true);
       if (!wsOverflowLeader.IsEmpty() || !wsOverflowTrailer.IsEmpty() ||
           !wsOverflowTarget.IsEmpty()) {
         return pCurNode;

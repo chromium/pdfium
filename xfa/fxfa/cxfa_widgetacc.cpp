@@ -162,7 +162,7 @@ CXFA_WidgetAcc::~CXFA_WidgetAcc() {}
 
 bool CXFA_WidgetAcc::GetName(WideString& wsName, int32_t iNameType) {
   if (iNameType == 0) {
-    m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
+    m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
     return !wsName.IsEmpty();
   }
   m_pNode->GetSOMExpression(wsName);

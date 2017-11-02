@@ -11,15 +11,15 @@
 CXFA_BindItems::CXFA_BindItems(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 void CXFA_BindItems::GetLabelRef(WideStringView& wsLabelRef) {
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_LabelRef, wsLabelRef);
+  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_LabelRef, wsLabelRef, true);
 }
 
 void CXFA_BindItems::GetValueRef(WideStringView& wsValueRef) {
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_ValueRef, wsValueRef);
+  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_ValueRef, wsValueRef, true);
 }
 
 void CXFA_BindItems::GetRef(WideStringView& wsRef) {
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Ref, wsRef);
+  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Ref, wsRef, true);
 }
 
 bool CXFA_BindItems::SetConnection(const WideString& wsConnection) {

@@ -21,21 +21,21 @@ float CXFA_Font::GetBaselineShift() {
 
 float CXFA_Font::GetHorizontalScale() {
   WideString wsValue;
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue);
+  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue, true);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_Font::GetVerticalScale() {
   WideString wsValue;
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue);
+  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue, true);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_Font::GetLetterSpacing() {
   WideStringView wsValue;
-  if (!m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_LetterSpacing, wsValue))
+  if (!m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_LetterSpacing, wsValue, true))
     return 0;
 
   CXFA_Measurement ms(wsValue);
@@ -69,7 +69,7 @@ float CXFA_Font::GetFontSize() {
 }
 
 void CXFA_Font::GetTypeface(WideStringView& wsTypeFace) {
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Typeface, wsTypeFace);
+  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Typeface, wsTypeFace, true);
 }
 
 bool CXFA_Font::IsBold() {

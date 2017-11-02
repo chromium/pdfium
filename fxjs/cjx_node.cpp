@@ -3031,7 +3031,7 @@ CXFA_Measurement CJX_Node::GetMeasure(XFA_ATTRIBUTE eAttr) const {
 
 WideStringView CJX_Node::GetCData(XFA_ATTRIBUTE eAttr) {
   WideStringView wsValue;
-  return TryCData(eAttr, wsValue) ? wsValue : WideStringView();
+  return TryCData(eAttr, wsValue, true) ? wsValue : WideStringView();
 }
 
 bool CJX_Node::SetCData(XFA_ATTRIBUTE eAttr,
@@ -3166,11 +3166,10 @@ bool CJX_Node::SetAttributeValue(const WideString& wsValue,
 
 bool CJX_Node::TryCData(XFA_ATTRIBUTE eAttr,
                         WideString& wsValue,
-                        bool bUseDefault,
-                        bool bProto) {
+                        bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   if (eAttr == XFA_ATTRIBUTE_Value) {
-    WideString* pStr = (WideString*)GetUserData(pKey, bProto);
+    WideString* pStr = (WideString*)GetUserData(pKey, true);
     if (pStr) {
       wsValue = *pStr;
       return true;
@@ -3197,11 +3196,10 @@ bool CJX_Node::TryCData(XFA_ATTRIBUTE eAttr,
 
 bool CJX_Node::TryCData(XFA_ATTRIBUTE eAttr,
                         WideStringView& wsValue,
-                        bool bUseDefault,
-                        bool bProto) {
+                        bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   if (eAttr == XFA_ATTRIBUTE_Value) {
-    WideString* pStr = (WideString*)GetUserData(pKey, bProto);
+    WideString* pStr = (WideString*)GetUserData(pKey, true);
     if (pStr) {
       wsValue = pStr->AsStringView();
       return true;
@@ -3556,7 +3554,7 @@ bool CJX_Node::TryContent(WideString& wsContent,
         GetXFANode()->InsertChild(pContentRawDataNode);
       }
       return pContentRawDataNode->JSNode()->TryContent(wsContent, bScriptModify,
-                                                       bProto);
+                                                       true);
     }
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::NodeV:
@@ -3575,7 +3573,7 @@ bool CJX_Node::TryContent(WideString& wsContent,
         GetDocument()->GetScriptContext()->AddNodesOfRunScript(GetXFANode());
       }
     }
-    return TryCData(XFA_ATTRIBUTE_Value, wsContent, false, bProto);
+    return TryCData(XFA_ATTRIBUTE_Value, wsContent, false);
   }
   return false;
 }
