@@ -85,7 +85,7 @@ bool CXFA_Font::IsItalic() {
 }
 
 void CXFA_Font::SetColor(FX_ARGB color) {
-  CXFA_Fill fill(m_pNode->JSNode()->GetProperty(0, XFA_Element::Fill));
+  CXFA_Fill fill(m_pNode->JSNode()->GetProperty(0, XFA_Element::Fill, true));
   fill.SetColor(color);
 }
 

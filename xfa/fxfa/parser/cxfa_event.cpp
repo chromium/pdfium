@@ -39,7 +39,8 @@ CXFA_Submit CXFA_Event::GetSubmit() const {
 }
 
 void CXFA_Event::GetSignDataTarget(WideString& wsTarget) {
-  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::SignData);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::SignData, true);
   if (!pNode)
     return;
 

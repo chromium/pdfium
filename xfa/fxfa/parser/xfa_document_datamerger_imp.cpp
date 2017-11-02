@@ -61,7 +61,7 @@ CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {
   if (!pChildNode) {
     if (iType == XFA_Element::Unknown)
       return nullptr;
-    pChildNode = pValueNode->JSNode()->GetProperty(0, iType);
+    pChildNode = pValueNode->JSNode()->GetProperty(0, iType, true);
   }
   return pChildNode;
 }
@@ -129,7 +129,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
   CXFA_WidgetData* pWidgetData = pFormNode->GetWidgetData();
   ASSERT(pWidgetData);
   XFA_Element eUIType = pWidgetData->GetUIType();
-  CXFA_Value defValue(pFormNode->JSNode()->GetProperty(0, XFA_Element::Value));
+  CXFA_Value defValue(
+      pFormNode->JSNode()->GetProperty(0, XFA_Element::Value, true));
   if (!bDataToForm) {
     WideString wsValue;
     WideString wsFormattedValue;
@@ -236,7 +237,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             continue;
 
           CXFA_Node* pValue =
-              pChild->JSNode()->GetProperty(0, XFA_Element::Value);
+              pChild->JSNode()->GetProperty(0, XFA_Element::Value, true);
           CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items);
           CXFA_Node* pText =
               pItems ? pItems->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr;
@@ -263,7 +264,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         pDataNode->JSNode()->SetAttributeValue(wsValue, wsFormattedValue, false,
                                                false);
         CXFA_Node* pValue =
-            pFormNode->JSNode()->GetProperty(0, XFA_Element::Value);
+            pFormNode->JSNode()->GetProperty(0, XFA_Element::Value, true);
         FormValueNode_SetChildContent(pValue, wsValue, XFA_Element::Float);
         break;
       }

@@ -71,7 +71,7 @@ class CJX_Node : public CJX_Object {
 
   CXFA_Node* GetProperty(int32_t index,
                          XFA_Element eType,
-                         bool bCreateProperty = true);
+                         bool bCreateProperty);
 
   bool SetContent(const WideString& wsContent,
                   const WideString& wsXMLValue,

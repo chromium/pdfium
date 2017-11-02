@@ -17,7 +17,8 @@ int32_t CXFA_Fill::GetPresence() {
 }
 
 void CXFA_Fill::SetColor(FX_ARGB color) {
-  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::Color);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Color, true);
   WideString wsColor;
   int a;
   int r;
@@ -52,7 +53,8 @@ XFA_Element CXFA_Fill::GetFillType() {
 }
 
 int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
-  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::Pattern);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Pattern, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
@@ -64,7 +66,8 @@ int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
 }
 
 int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
-  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::Stipple);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Stipple, true);
   int32_t eAttr = 50;
   pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Rate, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
@@ -78,7 +81,8 @@ int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
 }
 
 int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
-  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::Linear);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Linear, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToRight;
   pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
@@ -92,7 +96,8 @@ int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
 }
 
 int32_t CXFA_Fill::GetRadial(FX_ARGB& endColor) {
-  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::Radial);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Radial, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToEdge;
   pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {

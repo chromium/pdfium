@@ -684,7 +684,7 @@ void CJX_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments) {
   if (iLength >= 2)
     iValue = pArguments->GetInt32(1);
   CXFA_Node* pNode = GetProperty(
-      iValue, XFA_GetElementTypeForName(wsExpression.AsStringView()));
+      iValue, XFA_GetElementTypeForName(wsExpression.AsStringView()), true);
   pArguments->GetReturnValue()->Assign(
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
 }
@@ -710,14 +710,12 @@ void CJX_Node::Script_NodeClass_IsPropertySpecified(
     bool bParent = iLength < 2 || pArguments->GetInt32(1);
     int32_t iIndex = iLength == 3 ? pArguments->GetInt32(2) : 0;
     XFA_Element eType = XFA_GetElementTypeForName(wsExpression.AsStringView());
-    bHas = !!GetProperty(iIndex, eType);
+    bHas = !!GetProperty(iIndex, eType, true);
     if (!bHas && bParent && GetXFANode()->GetParent()) {
       // Also check on the parent.
-      bHas = GetXFANode()->GetParent()->JSNode()->HasAttribute(
-          pAttributeInfo->eName);
-      if (!bHas)
-        bHas =
-            !!GetXFANode()->GetParent()->JSNode()->GetProperty(iIndex, eType);
+      auto* jsnode = GetXFANode()->GetParent()->JSNode();
+      bHas = jsnode->HasAttribute(pAttributeInfo->eName) ||
+             !!jsnode->GetProperty(iIndex, eType, true);
     }
   }
   pValue->SetBoolean(bHas);
@@ -3331,7 +3329,7 @@ bool CJX_Node::SetScriptContent(const WideString& wsContent,
   switch (GetXFANode()->GetObjectType()) {
     case XFA_ObjectType::ContainerNode: {
       if (XFA_FieldIsMultiListBox(GetXFANode())) {
-        CXFA_Node* pValue = GetProperty(0, XFA_Element::Value);
+        CXFA_Node* pValue = GetProperty(0, XFA_Element::Value, true);
         if (!pValue)
           break;
 
@@ -3412,7 +3410,7 @@ bool CJX_Node::SetScriptContent(const WideString& wsContent,
       if (GetXFANode()->GetElementType() == XFA_Element::ExclGroup) {
         pNode = GetXFANode();
       } else {
-        CXFA_Node* pValue = GetProperty(0, XFA_Element::Value);
+        CXFA_Node* pValue = GetProperty(0, XFA_Element::Value, true);
         if (!pValue)
           break;
 

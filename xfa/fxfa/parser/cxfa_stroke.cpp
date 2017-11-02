@@ -61,7 +61,8 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
   if (!m_pNode)
     return;
 
-  CXFA_Node* pNode = m_pNode->JSNode()->GetProperty(0, XFA_Element::Color);
+  CXFA_Node* pNode =
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Color, true);
   WideString wsColor;
   int a;
   int r;

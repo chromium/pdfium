@@ -273,7 +273,7 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     return false;
 
   m_pTemplatePageSetRoot =
-      pTemplateNode->JSNode()->GetProperty(0, XFA_Element::PageSet);
+      pTemplateNode->JSNode()->GetProperty(0, XFA_Element::PageSet, true);
   ASSERT(m_pTemplatePageSetRoot);
   if (m_pPageSetLayoutItemRoot) {
     m_pPageSetLayoutItemRoot->m_pParent = nullptr;
