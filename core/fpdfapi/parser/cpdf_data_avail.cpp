@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_cross_ref_avail.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_hint_tables.h"
@@ -83,18 +84,12 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_pFileRead = pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail);
   m_Pos = 0;
   m_dwFileLen = m_pFileRead->GetSize();
-  m_dwCurrentOffset = 0;
-  m_dwXRefOffset = 0;
-  m_dwTrailerOffset = 0;
   m_bufferOffset = 0;
   m_bufferSize = 0;
   m_PagesObjNum = 0;
-  m_dwCurrentXRefSteam = 0;
   m_dwInfoObjNum = 0;
   m_pDocument = 0;
   m_dwEncryptObjNum = 0;
-  m_dwPrevXRefOffset = 0;
-  m_dwLastXRefOffset = 0;
   m_bDocAvail = false;
   m_bMainXRefLoadTried = false;
   m_bDocAvail = false;
@@ -142,16 +137,8 @@ bool CPDF_DataAvail::CheckDocStatus() {
       return CheckFirstPage();
     case PDF_DATAAVAIL_HINTTABLE:
       return CheckHintTables();
-    case PDF_DATAAVAIL_END:
-      return CheckEnd();
-    case PDF_DATAAVAIL_CROSSREF:
-      return CheckCrossRef();
-    case PDF_DATAAVAIL_CROSSREF_ITEM:
-      return CheckCrossRefItem();
-    case PDF_DATAAVAIL_TRAILER:
-      return CheckTrailer();
     case PDF_DATAAVAIL_LOADALLCROSSREF:
-      return LoadAllXref();
+      return CheckAndLoadAllXref();
     case PDF_DATAAVAIL_LOADALLFILE:
       return LoadAllFile();
     case PDF_DATAAVAIL_ROOT:
@@ -200,9 +187,37 @@ bool CPDF_DataAvail::LoadAllFile() {
   return false;
 }
 
-bool CPDF_DataAvail::LoadAllXref() {
-  if (!m_parser.LoadAllCrossRefV4(m_dwLastXRefOffset) &&
-      !m_parser.LoadAllCrossRefV5(m_dwLastXRefOffset)) {
+bool CPDF_DataAvail::CheckAndLoadAllXref() {
+  if (!m_pCrossRefAvail) {
+    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+    const FX_FILESIZE last_xref_offset = m_parser.ParseStartXRef();
+    if (GetValidator()->has_read_problems())
+      return false;
+
+    if (last_xref_offset <= 0) {
+      m_docStatus = PDF_DATAAVAIL_ERROR;
+      return false;
+    }
+
+    m_pCrossRefAvail = pdfium::MakeUnique<CPDF_CrossRefAvail>(GetSyntaxParser(),
+                                                              last_xref_offset);
+  }
+
+  switch (m_pCrossRefAvail->CheckAvail()) {
+    case DocAvailStatus::DataAvailable:
+      break;
+    case DocAvailStatus::DataNotAvailable:
+      return false;
+    case DocAvailStatus::DataError:
+      m_docStatus = PDF_DATAAVAIL_ERROR;
+      return false;
+    default:
+      NOTREACHED();
+      return false;
+  }
+
+  if (!m_parser.LoadAllCrossRefV4(m_pCrossRefAvail->last_crossref_offset()) &&
+      !m_parser.LoadAllCrossRefV5(m_pCrossRefAvail->last_crossref_offset())) {
     m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
     return false;
   }
@@ -415,7 +430,8 @@ bool CPDF_DataAvail::CheckPages() {
 bool CPDF_DataAvail::CheckHeader() {
   switch (CheckHeaderAndLinearized()) {
     case DocAvailStatus::DataAvailable:
-      m_docStatus = m_pLinearized ? PDF_DATAAVAIL_FIRSTPAGE : PDF_DATAAVAIL_END;
+      m_docStatus = m_pLinearized ? PDF_DATAAVAIL_FIRSTPAGE
+                                  : PDF_DATAAVAIL_LOADALLCROSSREF;
       return true;
     case DocAvailStatus::DataNotAvailable:
       return false;
@@ -531,25 +547,6 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
   return DocAvailStatus::DataAvailable;
 }
 
-bool CPDF_DataAvail::CheckEnd() {
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  const FX_FILESIZE last_xref_offset = m_parser.ParseStartXRef();
-
-  if (GetValidator()->has_read_problems())
-    return false;
-
-  m_dwLastXRefOffset = last_xref_offset;
-  m_dwXRefOffset = last_xref_offset;
-  SetStartOffset(last_xref_offset);
-  m_docStatus =
-      (last_xref_offset > 0) ? PDF_DATAAVAIL_CROSSREF : PDF_DATAAVAIL_ERROR;
-  return true;
-}
-
-void CPDF_DataAvail::SetStartOffset(FX_FILESIZE dwOffset) {
-  m_Pos = dwOffset;
-}
-
 bool CPDF_DataAvail::GetNextToken(ByteString* token) {
   uint8_t ch;
   if (!GetNextChar(ch))
@@ -650,87 +647,6 @@ bool CPDF_DataAvail::GetNextChar(uint8_t& ch) {
   }
   ch = m_bufferData[pos - m_bufferOffset];
   m_Pos++;
-  return true;
-}
-
-bool CPDF_DataAvail::CheckCrossRefItem() {
-  ByteString token;
-  while (1) {
-    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-    if (!GetNextToken(&token)) {
-      if (!GetValidator()->has_read_problems())
-        m_docStatus = PDF_DATAAVAIL_ERROR;
-      return false;
-    }
-
-    if (token == "trailer") {
-      m_dwTrailerOffset = m_Pos;
-      m_docStatus = PDF_DATAAVAIL_TRAILER;
-      return true;
-    }
-  }
-}
-
-bool CPDF_DataAvail::CheckCrossRef() {
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  ByteString token;
-  if (!GetNextToken(&token)) {
-    if (!GetValidator()->has_read_problems())
-      m_docStatus = PDF_DATAAVAIL_ERROR;
-    return false;
-  }
-
-  if (token != "xref") {
-    m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-    return true;
-  }
-
-  m_docStatus = PDF_DATAAVAIL_CROSSREF_ITEM;
-  return true;
-}
-
-bool CPDF_DataAvail::CheckTrailer() {
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  GetSyntaxParser()->SetPos(m_dwTrailerOffset);
-  const std::unique_ptr<CPDF_Object> pTrailer =
-      GetSyntaxParser()->GetObjectBody(nullptr);
-  if (!pTrailer) {
-    if (!GetValidator()->has_read_problems())
-      m_docStatus = PDF_DATAAVAIL_ERROR;
-    return false;
-  }
-
-  if (!pTrailer->IsDictionary())
-    return false;
-
-  CPDF_Dictionary* pTrailerDict = pTrailer->GetDict();
-  CPDF_Object* pEncrypt = pTrailerDict->GetObjectFor("Encrypt");
-  if (ToReference(pEncrypt)) {
-    m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-    return true;
-  }
-
-  // Prevent infinite-looping between Prev entries.
-  uint32_t xrefpos = GetDirectInteger(pTrailerDict, "Prev");
-  if (!xrefpos || !m_SeenPrevPositions.insert(xrefpos).second) {
-    m_dwPrevXRefOffset = 0;
-    m_docStatus = PDF_DATAAVAIL_LOADALLCROSSREF;
-    return true;
-  }
-
-  m_dwPrevXRefOffset = GetDirectInteger(pTrailerDict, "XRefStm");
-  if (m_dwPrevXRefOffset) {
-    m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-    return true;
-  }
-
-  m_dwPrevXRefOffset = xrefpos;
-  if (m_dwPrevXRefOffset >= m_dwFileLen) {
-    m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-  } else {
-    SetStartOffset(m_dwPrevXRefOffset);
-    m_docStatus = PDF_DATAAVAIL_CROSSREF;
-  }
   return true;
 }
 

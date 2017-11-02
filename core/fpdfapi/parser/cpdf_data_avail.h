@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+class CPDF_CrossRefAvail;
 class CPDF_Dictionary;
 class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
@@ -28,10 +29,6 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_HEADER = 0,
   PDF_DATAAVAIL_FIRSTPAGE,
   PDF_DATAAVAIL_HINTTABLE,
-  PDF_DATAAVAIL_END,
-  PDF_DATAAVAIL_CROSSREF,
-  PDF_DATAAVAIL_CROSSREF_ITEM,
-  PDF_DATAAVAIL_TRAILER,
   PDF_DATAAVAIL_LOADALLCROSSREF,
   PDF_DATAAVAIL_ROOT,
   PDF_DATAAVAIL_INFO,
@@ -127,10 +124,6 @@ class CPDF_DataAvail final {
   bool CheckHeader();
   bool CheckFirstPage();
   bool CheckHintTables();
-  bool CheckEnd();
-  bool CheckCrossRef();
-  bool CheckCrossRefItem();
-  bool CheckTrailer();
   bool CheckRoot();
   bool CheckInfo();
   bool CheckPages();
@@ -152,7 +145,7 @@ class CPDF_DataAvail final {
   bool GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
   bool PreparePageItem();
   bool LoadPages();
-  bool LoadAllXref();
+  bool CheckAndLoadAllXref();
   bool LoadAllFile();
   DocAvailStatus CheckLinearizedData();
 
@@ -180,10 +173,7 @@ class CPDF_DataAvail final {
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   UnownedPtr<CPDF_Object> m_pTrailer;
   bool m_bDocAvail;
-  FX_FILESIZE m_dwLastXRefOffset;
-  FX_FILESIZE m_dwXRefOffset;
-  FX_FILESIZE m_dwTrailerOffset;
-  FX_FILESIZE m_dwCurrentOffset;
+  std::unique_ptr<CPDF_CrossRefAvail> m_pCrossRefAvail;
   PDF_DATAAVAIL_STATUS m_docStatus;
   FX_FILESIZE m_dwFileLen;
   CPDF_Document* m_pDocument;
@@ -201,11 +191,9 @@ class CPDF_DataAvail final {
   bool m_bPagesTreeLoad;
   bool m_bPagesLoad;
   CPDF_Parser* m_pCurrentParser;
-  FX_FILESIZE m_dwCurrentXRefSteam;
   std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
   std::vector<std::unique_ptr<CPDF_Object>> m_PagesArray;
   uint32_t m_dwEncryptObjNum;
-  FX_FILESIZE m_dwPrevXRefOffset;
   bool m_bTotalLoadPageTree;
   bool m_bCurPageDictLoadOK;
   PageNode m_PageNode;
