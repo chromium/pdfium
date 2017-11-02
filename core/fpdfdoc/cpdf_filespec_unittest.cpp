@@ -17,7 +17,7 @@
 #include "third_party/base/ptr_util.h"
 
 TEST(cpdf_filespec, EncodeDecodeFileName) {
-  std::vector<pdfium::NullTermWstrFuncTestData> test_data = {
+  static const std::vector<pdfium::NullTermWstrFuncTestData> test_data = {
     // Empty src string.
     {L"", L""},
     // only file name.
@@ -59,7 +59,7 @@ TEST(cpdf_filespec, EncodeDecodeFileName) {
 TEST(cpdf_filespec, GetFileName) {
   {
     // String object.
-    pdfium::NullTermWstrFuncTestData test_data = {
+    static const pdfium::NullTermWstrFuncTestData test_data = {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
       L"/C/docs/test.pdf",
       L"C:\\docs\\test.pdf"
@@ -77,7 +77,7 @@ TEST(cpdf_filespec, GetFileName) {
   }
   {
     // Dictionary object.
-    pdfium::NullTermWstrFuncTestData test_data[5] = {
+    static const pdfium::NullTermWstrFuncTestData test_data[] = {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
       {L"/C/docs/test.pdf", L"C:\\docs\\test.pdf"},
       {L"/D/docs/test.pdf", L"D:\\docs\\test.pdf"},
@@ -99,11 +99,13 @@ TEST(cpdf_filespec, GetFileName) {
 #endif
     };
     // Keyword fields in reverse order of precedence to retrieve the file name.
-    const char* const keywords[5] = {"Unix", "Mac", "DOS", "F", "UF"};
+    const char* const keywords[] = {"Unix", "Mac", "DOS", "F", "UF"};
+    static_assert(FX_ArraySize(test_data) == FX_ArraySize(keywords),
+                  "size mismatch");
     auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
     CPDF_FileSpec file_spec(dict_obj.get());
     EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
-    for (int i = 0; i < 5; ++i) {
+    for (size_t i = 0; i < FX_ArraySize(keywords); ++i) {
       dict_obj->SetNewFor<CPDF_String>(keywords[i], test_data[i].input);
       EXPECT_STREQ(test_data[i].expected, file_spec.GetFileName().c_str());
     }
@@ -122,7 +124,7 @@ TEST(cpdf_filespec, GetFileName) {
 }
 
 TEST(cpdf_filespec, SetFileName) {
-  pdfium::NullTermWstrFuncTestData test_data = {
+  static const pdfium::NullTermWstrFuncTestData test_data = {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     L"C:\\docs\\test.pdf",
     L"/C/docs/test.pdf"
@@ -180,9 +182,10 @@ TEST(cpdf_filespec, GetFileStream) {
     dict_obj->SetNewFor<CPDF_Dictionary>("EF");
     CPDF_FileSpec file_spec(dict_obj.get());
 
-    const char* const keys[5] = {"Unix", "Mac", "DOS", "F", "UF"};
     const wchar_t file_name[] = L"test.pdf";
-    const char* const stream[5] = {"test1", "test2", "test3", "test4", "test5"};
+    const char* const keys[] = {"Unix", "Mac", "DOS", "F", "UF"};
+    const char* const streams[] = {"test1", "test2", "test3", "test4", "test5"};
+    static_assert(FX_ArraySize(keys) == FX_ArraySize(streams), "size mismatch");
     CPDF_Dictionary* file_dict =
         file_spec.GetObj()->AsDictionary()->GetDictFor("EF");
 
@@ -193,15 +196,15 @@ TEST(cpdf_filespec, GetFileStream) {
 
       // Set the file stream.
       auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
-      size_t buf_len = strlen(stream[i]) + 1;
+      size_t buf_len = strlen(streams[i]) + 1;
       std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_len));
-      memcpy(buf.get(), stream[i], buf_len);
+      memcpy(buf.get(), streams[i], buf_len);
       file_dict->SetNewFor<CPDF_Stream>(keys[i], std::move(buf), buf_len,
                                         std::move(pDict));
 
       // Check that the file content stream is as expected.
       EXPECT_STREQ(
-          stream[i],
+          streams[i],
           file_spec.GetFileStream()->GetUnicodeText().UTF8Encode().c_str());
 
       if (i == 2) {

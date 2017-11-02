@@ -200,8 +200,7 @@ void SetPageContents(const ByteString& key,
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
     pAcc->LoadAllData();
     ByteString sStream = "q\n";
-    ByteString sBody =
-        ByteString((const char*)pAcc->GetData(), pAcc->GetSize());
+    ByteString sBody = ByteString(pAcc->GetData(), pAcc->GetSize());
     sStream = sStream + sBody + "\nQ";
     pContentsStream->SetDataAndRemoveFilter(sStream.raw_str(),
                                             sStream.GetLength());

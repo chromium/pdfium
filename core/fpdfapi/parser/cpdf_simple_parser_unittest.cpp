@@ -11,7 +11,7 @@
 #include "testing/test_support.h"
 
 TEST(SimpleParserTest, GetWord) {
-  pdfium::StrFuncTestData test_data[] = {
+  static const pdfium::StrFuncTestData test_data[] = {
       // Empty src string.
       STR_IN_OUT_CASE("", ""),
       // Content with whitespaces only.
@@ -51,15 +51,17 @@ TEST(SimpleParserTest, GetWord) {
     const pdfium::StrFuncTestData& data = test_data[i];
     CPDF_SimpleParser parser(data.input, data.input_size);
     ByteStringView word = parser.GetWord();
-    EXPECT_EQ(std::string(reinterpret_cast<const char*>(data.expected),
-                          data.expected_size),
-              std::string(word.unterminated_c_str(), word.GetLength()))
+    EXPECT_EQ(data.expected_size, word.GetLength()) << " for case " << i;
+    if (data.expected_size != word.GetLength())
+      continue;
+    EXPECT_EQ(
+        0, memcmp(data.expected, word.unterminated_c_str(), data.expected_size))
         << " for case " << i;
   }
 }
 
 TEST(SimpleParserTest, FindTagParamFromStart) {
-  struct FindTagTestStruct {
+  static const struct FindTagTestStruct {
     const unsigned char* input;
     unsigned int input_size;
     const char* token;

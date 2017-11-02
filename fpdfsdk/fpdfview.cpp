@@ -571,9 +571,8 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password) {
   // NOTE: the creation of the file needs to be by the embedder on the
   // other side of this API.
-  return LoadDocumentImpl(
-      IFX_SeekableReadStream::CreateFromFilename((const char*)file_path),
-      password);
+  return LoadDocumentImpl(IFX_SeekableReadStream::CreateFromFilename(file_path),
+                          password);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {

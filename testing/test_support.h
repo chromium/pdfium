@@ -19,33 +19,34 @@
 
 namespace pdfium {
 
-#define STR_IN_TEST_CASE(input_literal, ...)                         \
-  {                                                                  \
-    (const unsigned char*) input_literal, sizeof(input_literal) - 1, \
-        __VA_ARGS__                                                  \
+#define STR_IN_TEST_CASE(input_literal, ...)               \
+  {                                                        \
+    reinterpret_cast<const unsigned char*>(input_literal), \
+        sizeof(input_literal) - 1, __VA_ARGS__             \
   }
 
-#define STR_IN_OUT_CASE(input_literal, expected_literal, ...)                 \
-  {                                                                           \
-    (const unsigned char*) input_literal, sizeof(input_literal) - 1,          \
-        (const unsigned char*)expected_literal, sizeof(expected_literal) - 1, \
-        __VA_ARGS__                                                           \
+#define STR_IN_OUT_CASE(input_literal, expected_literal, ...)     \
+  {                                                               \
+    reinterpret_cast<const unsigned char*>(input_literal),        \
+        sizeof(input_literal) - 1,                                \
+        reinterpret_cast<const unsigned char*>(expected_literal), \
+        sizeof(expected_literal) - 1, __VA_ARGS__                 \
   }
 
 struct StrFuncTestData {
   const unsigned char* input;
-  unsigned int input_size;
+  uint32_t input_size;
   const unsigned char* expected;
-  unsigned int expected_size;
+  uint32_t expected_size;
 };
 
 struct DecodeTestData {
   const unsigned char* input;
-  unsigned int input_size;
+  uint32_t input_size;
   const unsigned char* expected;
-  unsigned int expected_size;
+  uint32_t expected_size;
   // The size of input string being processed.
-  unsigned int processed_size;
+  uint32_t processed_size;
 };
 
 struct NullTermWstrFuncTestData {

@@ -337,9 +337,10 @@ void CPDF_SyntaxParser::ToNextWord() {
 ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
   GetNextWordInternal(bIsNumber);
-  return GetValidator()->has_read_problems()
-             ? ByteString()
-             : ByteString((const char*)m_WordBuffer, m_WordSize);
+  ByteString ret;
+  if (!GetValidator()->has_read_problems())
+    ret = ByteString(m_WordBuffer, m_WordSize);
+  return ret;
 }
 
 ByteString CPDF_SyntaxParser::PeekNextWord(bool* bIsNumber) {

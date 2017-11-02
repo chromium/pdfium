@@ -337,8 +337,8 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables() {
 
   CRYPT_ArcFourCryptBlock(sFile.GetBuffer(), sFile.GetSize(), JS_RC4KEY,
                           sizeof(JS_RC4KEY));
-  WriteFileBuffer(m_sFilePath.c_str(), (const char*)sFile.GetBuffer(),
-                  sFile.GetSize());
+  WriteFileBuffer(m_sFilePath.c_str(),
+                  reinterpret_cast<char*>(sFile.GetBuffer()), sFile.GetSize());
 }
 
 void CJS_GlobalData::LoadFileBuffer(const wchar_t* sFilePath,
