@@ -212,7 +212,7 @@ bool CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   return true;
 }
 
-int CPDF_DIBSource::ContinueToLoadMask() {
+bool CPDF_DIBSource::ContinueToLoadMask() {
   if (m_bImageMask) {
     m_bpp = 1;
     m_bpc = 1;
@@ -226,12 +226,12 @@ int CPDF_DIBSource::ContinueToLoadMask() {
     m_bpp = 24;
   }
   if (!m_bpc || !m_nComponents) {
-    return 0;
+    return false;
   }
   FX_SAFE_UINT32 pitch = CalculatePitch32(m_bpp, m_Width);
-  if (!pitch.IsValid()) {
-    return 0;
-  }
+  if (!pitch.IsValid())
+    return false;
+
   m_pLineBuf = FX_Alloc(uint8_t, pitch.ValueOrDie());
   if (m_pColorSpace && m_bStdCS) {
     m_pColorSpace->EnableStdConversion(true);
@@ -241,13 +241,12 @@ int CPDF_DIBSource::ContinueToLoadMask() {
     m_bpp = 32;
     m_AlphaFlag = 2;
     pitch = CalculatePitch32(m_bpp, m_Width);
-    if (!pitch.IsValid()) {
-      return 0;
-    }
+    if (!pitch.IsValid())
+      return false;
     m_pMaskedLine = FX_Alloc(uint8_t, pitch.ValueOrDie());
   }
   m_Pitch = pitch.ValueOrDie();
-  return 1;
+  return true;
 }
 
 int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
@@ -258,9 +257,9 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
                                        bool bStdCS,
                                        uint32_t GroupFamily,
                                        bool bLoadMask) {
-  if (!pStream) {
+  if (!pStream)
     return 0;
-  }
+
   m_pDocument = pDoc;
   m_pDict = pStream->GetDict();
   m_pStream = pStream;
@@ -278,118 +277,88 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
                      pPageResources)) {
     return 0;
   }
-  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
+  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
     return 0;
-  }
+
   FX_SAFE_UINT32 src_size =
       CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
-  if (!src_size.IsValid()) {
+  if (!src_size.IsValid())
     return 0;
-  }
+
   m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   m_pStreamAcc->LoadAllData(false, src_size.ValueOrDie(), true);
-  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData()) {
+  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return 0;
-  }
-  int ret = CreateDecoder();
-  if (!ret)
-    return ret;
 
-  if (ret != 1) {
-    if (!ContinueToLoadMask()) {
-      return 0;
-    }
-    if (m_bHasMask) {
-      StartLoadMask();
-    }
-    return ret;
-  }
-  if (!ContinueToLoadMask()) {
+  int iCreatedDecoder = CreateDecoder();
+  if (!iCreatedDecoder)
     return 0;
-  }
-  if (m_bHasMask) {
-    ret = StartLoadMask();
-  }
-  if (ret == 2) {
-    return ret;
-  }
-  if (m_pColorSpace && m_bStdCS) {
+
+  if (!ContinueToLoadMask())
+    return 0;
+
+  int iLoadedMask = m_bHasMask ? StartLoadMask() : 1;
+  if (iCreatedDecoder == 2 || iLoadedMask == 2)
+    return 2;
+
+  ASSERT(iCreatedDecoder == 1);
+  ASSERT(iLoadedMask == 1);
+  if (m_pColorSpace && m_bStdCS)
     m_pColorSpace->EnableStdConversion(false);
-  }
-  return ret;
+  return 1;
 }
 
 int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
-  FXCODEC_STATUS ret;
-  if (m_Status == 1) {
-    const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
-    if (decoder == "JPXDecode") {
-      return 0;
-    }
-    CCodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
-    if (!m_pJbig2Context) {
-      m_pJbig2Context = pdfium::MakeUnique<CCodec_Jbig2Context>();
-      if (m_pStreamAcc->GetImageParam()) {
-        CPDF_Stream* pGlobals =
-            m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
-        if (pGlobals) {
-          m_pGlobalStream = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals);
-          m_pGlobalStream->LoadAllData(false);
-        }
-      }
-      ret = pJbig2Module->StartDecode(
-          m_pJbig2Context.get(), m_pDocument->CodecContext(), m_Width, m_Height,
-          m_pStreamAcc, m_pGlobalStream, m_pCachedBitmap->GetBuffer(),
-          m_pCachedBitmap->GetPitch(), pPause);
-      if (ret < 0) {
-        m_pCachedBitmap.Reset();
-        m_pGlobalStream.Reset();
-        m_pJbig2Context.reset();
-        return 0;
-      }
-      if (ret == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-        return 2;
-      }
-      int ret1 = 1;
-      if (m_bHasMask) {
-        ret1 = ContinueLoadMaskDIB(pPause);
-        m_Status = 2;
-      }
-      if (ret1 == 2) {
-        return ret1;
-      }
-      if (m_pColorSpace && m_bStdCS) {
-        m_pColorSpace->EnableStdConversion(false);
-      }
-      return ret1;
-    }
-    ret = pJbig2Module->ContinueDecode(m_pJbig2Context.get(), pPause);
-    if (ret < 0) {
-      m_pCachedBitmap.Reset();
-      m_pGlobalStream.Reset();
-      m_pJbig2Context.reset();
-      return 0;
-    }
-    if (ret == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-      return 2;
-    }
-    int ret1 = 1;
-    if (m_bHasMask) {
-      ret1 = ContinueLoadMaskDIB(pPause);
-      m_Status = 2;
-    }
-    if (ret1 == 2) {
-      return ret1;
-    }
-    if (m_pColorSpace && m_bStdCS) {
-      m_pColorSpace->EnableStdConversion(false);
-    }
-    return ret1;
-  }
-  if (m_Status == 2) {
+  if (m_Status == 2)
     return ContinueLoadMaskDIB(pPause);
+
+  if (m_Status != 1)
+    return 0;
+
+  const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
+  if (decoder == "JPXDecode")
+    return 0;
+
+  FXCODEC_STATUS iDecodeStatus;
+  CCodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
+  if (!m_pJbig2Context) {
+    m_pJbig2Context = pdfium::MakeUnique<CCodec_Jbig2Context>();
+    if (m_pStreamAcc->GetImageParam()) {
+      CPDF_Stream* pGlobals =
+          m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
+      if (pGlobals) {
+        m_pGlobalStream = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals);
+        m_pGlobalStream->LoadAllData(false);
+      }
+    }
+    iDecodeStatus = pJbig2Module->StartDecode(
+        m_pJbig2Context.get(), m_pDocument->CodecContext(), m_Width, m_Height,
+        m_pStreamAcc, m_pGlobalStream, m_pCachedBitmap->GetBuffer(),
+        m_pCachedBitmap->GetPitch(), pPause);
+  } else {
+    iDecodeStatus = pJbig2Module->ContinueDecode(m_pJbig2Context.get(), pPause);
   }
-  return 0;
+
+  if (iDecodeStatus < 0) {
+    m_pCachedBitmap.Reset();
+    m_pGlobalStream.Reset();
+    m_pJbig2Context.reset();
+    return 0;
+  }
+  if (iDecodeStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)
+    return 2;
+
+  int iContinueStatus = 1;
+  if (m_bHasMask) {
+    iContinueStatus = ContinueLoadMaskDIB(pPause);
+    m_Status = 2;
+  }
+  if (iContinueStatus == 2)
+    return 2;
+
+  if (m_pColorSpace && m_bStdCS)
+    m_pColorSpace->EnableStdConversion(false);
+  return iContinueStatus;
 }
 
 bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
@@ -740,14 +709,14 @@ int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_PauseIndicator* pPause) {
 
   int ret = m_pMask->ContinueLoadDIBSource(pPause);
   if (ret == 2)
-    return ret;
+    return 2;
 
   if (m_pColorSpace && m_bStdCS)
     m_pColorSpace->EnableStdConversion(false);
 
   if (!ret) {
     m_pMask.Reset();
-    return ret;
+    return 0;
   }
   return 1;
 }

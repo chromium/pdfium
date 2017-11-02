@@ -75,7 +75,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   int StartLoadMask();
   int StartLoadMaskDIB();
   int ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
-  int ContinueToLoadMask();
+  bool ContinueToLoadMask();
   RetainPtr<CPDF_DIBSource> DetachMask();
 
  private:
