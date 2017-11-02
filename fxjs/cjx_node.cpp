@@ -2732,7 +2732,8 @@ void CJX_Node::Script_Form_Checksum(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
   if (bSetting) {
-    SetAttribute(XFA_ATTRIBUTE_Checksum, pValue->ToWideString().AsStringView());
+    SetAttribute(XFA_ATTRIBUTE_Checksum, pValue->ToWideString().AsStringView(),
+                 false);
     return;
   }
   WideString wsChecksum;
@@ -3440,7 +3441,8 @@ bool CJX_Node::SetScriptContent(const WideString& wsContent,
         GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, false);
         if (wsContentType == L"text/html") {
           wsContentType = L"";
-          SetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType.AsStringView());
+          SetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType.AsStringView(),
+                       false);
         }
       }
       CXFA_Node* pContentRawDataNode =
@@ -3531,7 +3533,7 @@ bool CJX_Node::TryContent(WideString& wsContent,
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
         if (pChildValue && XFA_FieldIsMultiListBox(GetXFANode())) {
           pChildValue->JSNode()->SetAttribute(XFA_ATTRIBUTE_ContentType,
-                                              L"text/xml");
+                                              L"text/xml", false);
         }
         return pChildValue ? pChildValue->JSNode()->TryContent(
                                  wsContent, bScriptModify, bProto)

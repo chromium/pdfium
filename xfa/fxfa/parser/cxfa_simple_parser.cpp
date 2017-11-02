@@ -651,7 +651,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
       pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Name,
                                 XFA_GetPacketByIndex(XFA_PACKET_Form)->pName);
       pNode->JSNode()->SetAttribute(XFA_ATTRIBUTE_Checksum,
-                                    wsChecksum.AsStringView());
+                                    wsChecksum.AsStringView(), false);
       CXFA_Node* pTemplateRoot =
           m_pRootNode->GetFirstChildByClass(XFA_Element::Template);
       CXFA_Node* pTemplateChosen =
@@ -877,7 +877,7 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
           return nullptr;
         if (ePacketID == XFA_XDPPACKET_Config) {
           pXFAChild->JSNode()->SetAttribute(XFA_ATTRIBUTE_Name,
-                                            wsTagName.AsStringView());
+                                            wsTagName.AsStringView(), false);
         }
 
         bool IsNeedValue = true;
@@ -897,7 +897,7 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
             continue;
           }
           pXFAChild->JSNode()->SetAttribute(lpAttrInfo->eName,
-                                            it.second.AsStringView());
+                                            it.second.AsStringView(), false);
         }
         pXFANode->InsertChild(pXFAChild);
         if (eType == XFA_Element::Validate || eType == XFA_Element::Locale) {

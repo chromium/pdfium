@@ -43,7 +43,7 @@ bool CXFA_Image::SetHref(const WideString& wsHref) {
   if (m_bDefValue)
     return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Href, wsHref);
   return m_pNode->JSNode()->SetAttribute(XFA_ATTRIBUTE_Href,
-                                         wsHref.AsStringView());
+                                         wsHref.AsStringView(), false);
 }
 
 bool CXFA_Image::SetTransferEncoding(int32_t iTransferEncoding) {

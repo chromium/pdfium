@@ -358,7 +358,7 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eClassType);
       if (pNewNode) {
         pNewNode->JSNode()->SetAttribute(XFA_ATTRIBUTE_Name,
-                                         wsName.AsStringView());
+                                         wsName.AsStringView(), false);
         pNewNode->CreateXMLMappingNode();
         m_pCreateParent->InsertChild(pNewNode);
         if (iIndex == m_iCreateCount - 1) {
