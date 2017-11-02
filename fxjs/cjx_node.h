@@ -75,9 +75,9 @@ class CJX_Node : public CJX_Object {
 
   bool SetContent(const WideString& wsContent,
                   const WideString& wsXMLValue,
-                  bool bNotify = false,
-                  bool bScriptModify = false,
-                  bool bSyncData = true);
+                  bool bNotify,
+                  bool bScriptModify,
+                  bool bSyncData);
   WideString GetContent();
 
   bool TryInteger(XFA_ATTRIBUTE eAttr,

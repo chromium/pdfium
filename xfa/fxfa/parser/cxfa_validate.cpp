@@ -94,14 +94,14 @@ void CXFA_Validate::SetMessageText(WideString& wsMessage,
     WideStringView wsName;
     pItemNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
-      pItemNode->JSNode()->SetContent(wsMessage, wsMessage, false);
+      pItemNode->JSNode()->SetContent(wsMessage, wsMessage, false, false, true);
       return;
     }
   }
   CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_Element::Text);
   pNode->InsertChild(pTextNode);
   pTextNode->JSNode()->SetCData(XFA_ATTRIBUTE_Name, wsMessageType, false);
-  pTextNode->JSNode()->SetContent(wsMessage, wsMessage, false);
+  pTextNode->JSNode()->SetContent(wsMessage, wsMessage, false, false, true);
 }
 
 void CXFA_Validate::GetScriptMessageText(WideString& wsMessage) {

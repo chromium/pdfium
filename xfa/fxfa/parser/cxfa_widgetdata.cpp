@@ -1822,7 +1822,7 @@ void CXFA_WidgetData::SyncValue(const WideString& wsValue, bool bNotify) {
   if (pContainerWidgetData)
     pContainerWidgetData->GetFormatDataValue(wsValue, wsFormatValue);
 
-  m_pNode->JSNode()->SetContent(wsValue, wsFormatValue, bNotify);
+  m_pNode->JSNode()->SetContent(wsValue, wsFormatValue, bNotify, false, true);
 }
 
 void CXFA_WidgetData::InsertListTextItem(CXFA_Node* pItems,

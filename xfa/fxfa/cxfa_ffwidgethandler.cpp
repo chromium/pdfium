@@ -313,7 +313,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
   CXFA_Node* pCaption = CreateCopyNode(XFA_Element::Caption, pField);
   CXFA_Node* pValue = CreateCopyNode(XFA_Element::Value, pCaption);
   CXFA_Node* pText = CreateCopyNode(XFA_Element::Text, pValue);
-  pText->JSNode()->SetContent(L"Button", L"Button", false);
+  pText->JSNode()->SetContent(L"Button", L"Button", false, false, true);
 
   CXFA_Node* pPara = CreateCopyNode(XFA_Element::Para, pCaption);
   pPara->JSNode()->SetEnum(XFA_ATTRIBUTE_VAlign, XFA_ATTRIBUTEENUM_Middle,

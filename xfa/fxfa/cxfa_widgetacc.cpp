@@ -257,7 +257,7 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
   }
   WideString wsFormatValue(wsData);
   GetFormatDataValue(wsData, wsFormatValue);
-  m_pNode->JSNode()->SetContent(wsData, wsFormatValue, true);
+  m_pNode->JSNode()->SetContent(wsData, wsFormatValue, true, false, true);
   CXFA_Node* pBind = GetDatasets();
   if (!pBind) {
     image.SetTransferEncoding(XFA_ATTRIBUTEENUM_Base64);
