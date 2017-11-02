@@ -11,5 +11,5 @@
 CXFA_ToolTip::CXFA_ToolTip(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 bool CXFA_ToolTip::GetTip(WideString& wsTip) {
-  return m_pNode->JSNode()->TryContent(wsTip);
+  return m_pNode->JSNode()->TryContent(wsTip, false, true);
 }

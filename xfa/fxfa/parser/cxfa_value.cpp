@@ -20,7 +20,7 @@ bool CXFA_Value::GetChildValueContent(WideString& wsContent) {
   if (!m_pNode)
     return false;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
-    return pNode->JSNode()->TryContent(wsContent);
+    return pNode->JSNode()->TryContent(wsContent, false, true);
   return false;
 }
 

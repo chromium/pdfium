@@ -33,7 +33,7 @@ int32_t CXFA_Image::GetTransferEncoding() {
 }
 
 bool CXFA_Image::GetContent(WideString& wsText) {
-  return m_pNode->JSNode()->TryContent(wsText);
+  return m_pNode->JSNode()->TryContent(wsText, false, true);
 }
 
 bool CXFA_Image::SetContentType(const WideString& wsContentType) {

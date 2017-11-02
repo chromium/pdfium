@@ -480,7 +480,7 @@ float CXFA_LayoutPageMgr::GetAvailHeight() {
 
 bool XFA_LayoutPageMgr_RunBreakTestScript(CXFA_Node* pTestScript) {
   WideString wsExpression;
-  pTestScript->JSNode()->TryContent(wsExpression);
+  pTestScript->JSNode()->TryContent(wsExpression, false, true);
   if (wsExpression.IsEmpty())
     return true;
   return pTestScript->GetDocument()->GetNotify()->RunScript(

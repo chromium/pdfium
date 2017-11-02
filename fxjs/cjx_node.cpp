@@ -959,7 +959,7 @@ void CJX_Node::Script_NodeClass_IsNull(CFXJSE_Value* pValue,
     return;
   }
   WideString strValue;
-  pValue->SetBoolean(!TryContent(strValue) || strValue.IsEmpty());
+  pValue->SetBoolean(!TryContent(strValue, false, true) || strValue.IsEmpty());
 }
 
 void CJX_Node::Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
@@ -3508,7 +3508,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
 
 WideString CJX_Node::GetScriptContent(bool bScriptModify) {
   WideString wsContent;
-  return TryContent(wsContent, bScriptModify) ? wsContent : WideString();
+  return TryContent(wsContent, bScriptModify, true) ? wsContent : WideString();
 }
 
 WideString CJX_Node::GetContent() {

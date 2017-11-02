@@ -92,9 +92,7 @@ class CJX_Node : public CJX_Object {
                 bool bScriptModify);
   WideStringView GetCData(XFA_ATTRIBUTE eAttr);
 
-  bool TryContent(WideString& wsContent,
-                  bool bScriptModify = false,
-                  bool bProto = true);
+  bool TryContent(WideString& wsContent, bool bScriptModify, bool bProto);
 
   bool TryEnum(XFA_ATTRIBUTE eAttr,
                XFA_ATTRIBUTEENUM& eValue,

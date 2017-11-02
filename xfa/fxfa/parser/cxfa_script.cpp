@@ -27,5 +27,5 @@ int32_t CXFA_Script::GetRunAt() {
 }
 
 void CXFA_Script::GetExpression(WideString& wsExpression) {
-  m_pNode->JSNode()->TryContent(wsExpression);
+  m_pNode->JSNode()->TryContent(wsExpression, false, true);
 }

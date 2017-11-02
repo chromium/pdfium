@@ -267,7 +267,7 @@ bool CXFA_Document::IsInteractive() {
   CXFA_Node* pFormFiller = pPDF->GetChild(0, XFA_Element::Interactive);
   if (pFormFiller) {
     m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
-    if (pFormFiller->JSNode()->TryContent(wsInteractive) &&
+    if (pFormFiller->JSNode()->TryContent(wsInteractive, false, true) &&
         wsInteractive == L"1") {
       m_dwDocFlags |= XFA_DOCFLAG_Interactive;
       return true;

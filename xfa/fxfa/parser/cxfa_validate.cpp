@@ -56,7 +56,7 @@ void CXFA_Validate::GetMessageText(WideString& wsMessage,
     WideStringView wsName;
     pItemNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
-      pItemNode->JSNode()->TryContent(wsMessage);
+      pItemNode->JSNode()->TryContent(wsMessage, false, true);
       return;
     }
   }
@@ -115,7 +115,7 @@ void CXFA_Validate::SetScriptMessageText(WideString wsMessage) {
 
 void CXFA_Validate::GetPicture(WideString& wsPicture) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Picture))
-    pNode->JSNode()->TryContent(wsPicture);
+    pNode->JSNode()->TryContent(wsPicture, false, true);
 }
 
 CXFA_Script CXFA_Validate::GetScript() {
