@@ -3527,7 +3527,7 @@ WideString CJX_Node::GetScriptContent(bool bScriptModify) {
 }
 
 WideString CJX_Node::GetContent() {
-  return GetScriptContent();
+  return GetScriptContent(false);
 }
 
 bool CJX_Node::TryContent(WideString& wsContent,

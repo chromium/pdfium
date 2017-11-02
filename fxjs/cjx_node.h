@@ -426,14 +426,14 @@ class CJX_Node : public CJX_Object {
                 bool bUseDefault,
                 void*& pValue);
 
-  bool TryUserData(void* pKey, void*& pData, bool bProtoAlso = false);
+  bool TryUserData(void* pKey, void*& pData, bool bProtoAlso);
 
   bool SetScriptContent(const WideString& wsContent,
                         const WideString& wsXMLValue,
                         bool bNotify,
                         bool bScriptModify,
                         bool bSyncData);
-  WideString GetScriptContent(bool bScriptModify = false);
+  WideString GetScriptContent(bool bScriptModify);
 
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
