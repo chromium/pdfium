@@ -1403,23 +1403,33 @@ int32_t CXFA_WidgetData::GetMaxChars(XFA_Element& eType) {
 }
 
 bool CXFA_WidgetData::GetFracDigits(int32_t& iFracDigits) {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value)) {
-    if (CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal))
-      return pChild->JSNode()->TryInteger(XFA_ATTRIBUTE_FracDigits,
-                                          iFracDigits);
-  }
   iFracDigits = -1;
-  return false;
+
+  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value);
+  if (!pNode)
+    return false;
+
+  CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal);
+  if (!pChild)
+    return false;
+
+  return pChild->JSNode()->TryInteger(XFA_ATTRIBUTE_FracDigits, iFracDigits,
+                                      true);
 }
 
 bool CXFA_WidgetData::GetLeadDigits(int32_t& iLeadDigits) {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value)) {
-    if (CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal))
-      return pChild->JSNode()->TryInteger(XFA_ATTRIBUTE_LeadDigits,
-                                          iLeadDigits);
-  }
   iLeadDigits = -1;
-  return false;
+
+  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value);
+  if (!pNode)
+    return false;
+
+  CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal);
+  if (!pChild)
+    return false;
+
+  return pChild->JSNode()->TryInteger(XFA_ATTRIBUTE_LeadDigits, iLeadDigits,
+                                      true);
 }
 
 bool CXFA_WidgetData::SetValue(const WideString& wsValue,

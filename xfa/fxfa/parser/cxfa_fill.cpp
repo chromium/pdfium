@@ -69,7 +69,7 @@ int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Stipple, true);
   int32_t eAttr = 50;
-  pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Rate, eAttr);
+  pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Rate, eAttr, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);

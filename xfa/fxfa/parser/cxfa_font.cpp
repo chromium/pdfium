@@ -46,13 +46,13 @@ float CXFA_Font::GetLetterSpacing() {
 
 int32_t CXFA_Font::GetLineThrough() {
   int32_t iValue = 0;
-  m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_LineThrough, iValue);
+  m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_LineThrough, iValue, true);
   return iValue;
 }
 
 int32_t CXFA_Font::GetUnderline() {
   int32_t iValue = 0;
-  m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Underline, iValue);
+  m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Underline, iValue, true);
   return iValue;
 }
 
