@@ -65,8 +65,8 @@ class CJX_Node : public CJX_Object {
   bool GetAttribute(XFA_ATTRIBUTE eAttr, WideString& wsValue, bool bUseDefault);
   bool SetAttributeValue(const WideString& wsValue,
                          const WideString& wsXMLValue,
-                         bool bNotify = false,
-                         bool bScriptModify = false);
+                         bool bNotify,
+                         bool bScriptModify);
   bool RemoveAttribute(const WideStringView& wsAttr);
 
   CXFA_Node* GetProperty(int32_t index,

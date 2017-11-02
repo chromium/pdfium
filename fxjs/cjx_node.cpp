@@ -3396,7 +3396,7 @@ bool CJX_Node::SetScriptContent(const WideString& wsContent,
                  pValueNode; pValueNode = pValueNode->GetNodeItem(
                                  XFA_NODEITEM_NextSibling)) {
               pValueNode->JSNode()->SetAttributeValue(
-                  wsSaveTextArray[i], wsSaveTextArray[i], false);
+                  wsSaveTextArray[i], wsSaveTextArray[i], false, false);
               i++;
             }
           }
