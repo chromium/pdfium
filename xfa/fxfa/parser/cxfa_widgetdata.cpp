@@ -992,7 +992,7 @@ void CXFA_WidgetData::InsertItem(const WideString& wsLabel,
     InsertListTextItem(pItems, wsLabel, nIndex);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_Element::Items);
     m_pNode->InsertChild(-1, pSaveItems);
-    pSaveItems->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, true);
+    pSaveItems->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, true, false);
     InsertListTextItem(pSaveItems, wsNewValue, nIndex);
   } else if (listitems.size() > 1) {
     for (int32_t i = 0; i < 2; i++) {
@@ -1005,12 +1005,12 @@ void CXFA_WidgetData::InsertItem(const WideString& wsLabel,
     }
   } else {
     CXFA_Node* pNode = listitems[0];
-    pNode->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, false);
+    pNode->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, false, false);
     pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_Presence, XFA_ATTRIBUTEENUM_Visible,
                              false);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_Element::Items);
     m_pNode->InsertChild(-1, pSaveItems);
-    pSaveItems->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, true);
+    pSaveItems->JSNode()->SetBoolean(XFA_ATTRIBUTE_Save, true, false);
     pSaveItems->JSNode()->SetEnum(XFA_ATTRIBUTE_Presence,
                                   XFA_ATTRIBUTEENUM_Hidden, false);
     CXFA_Node* pListNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -1292,7 +1292,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum(bool* val) {
   CXFA_Node* pUIChild = GetUIChild();
   bool bPrintCheckDigit;
   if (pUIChild->JSNode()->TryBoolean(XFA_ATTRIBUTE_PrintCheckDigit,
-                                     bPrintCheckDigit)) {
+                                     bPrintCheckDigit, true)) {
     *val = bPrintCheckDigit;
     return true;
   }
@@ -1330,7 +1330,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_TextLocation(int32_t* val) {
 bool CXFA_WidgetData::GetBarcodeAttribute_Truncate(bool* val) {
   CXFA_Node* pUIChild = GetUIChild();
   bool bTruncate;
-  if (!pUIChild->JSNode()->TryBoolean(XFA_ATTRIBUTE_Truncate, bTruncate))
+  if (!pUIChild->JSNode()->TryBoolean(XFA_ATTRIBUTE_Truncate, bTruncate, true))
     return false;
 
   *val = bTruncate;
