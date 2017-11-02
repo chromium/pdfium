@@ -41,7 +41,7 @@ void CXFA_Stroke::SetMSThickness(CXFA_Measurement msThinkness) {
   if (!m_pNode)
     return;
 
-  m_pNode->JSNode()->SetMeasure(XFA_ATTRIBUTE_Thickness, msThinkness);
+  m_pNode->JSNode()->SetMeasure(XFA_ATTRIBUTE_Thickness, msThinkness, false);
 }
 
 FX_ARGB CXFA_Stroke::GetColor() const {

@@ -25,36 +25,36 @@ int32_t CXFA_Para::GetVerticalAlign() {
 
 float CXFA_Para::GetLineHeight() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_LineHeight, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_LineHeight, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_Para::GetMarginLeft() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginLeft, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginLeft, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_Para::GetMarginRight() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginRight, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginRight, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_Para::GetSpaceAbove() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceAbove, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceAbove, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_Para::GetSpaceBelow() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceBelow, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceBelow, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_Para::GetTextIndent() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_TextIndent, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_TextIndent, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }

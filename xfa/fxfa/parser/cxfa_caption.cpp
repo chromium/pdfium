@@ -25,7 +25,7 @@ int32_t CXFA_Caption::GetPlacementType() {
 
 float CXFA_Caption::GetReserve() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_Reserve, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_Reserve, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 

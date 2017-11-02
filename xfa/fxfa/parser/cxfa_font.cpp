@@ -64,7 +64,7 @@ int32_t CXFA_Font::GetUnderlinePeriod() {
 
 float CXFA_Font::GetFontSize() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_Size, ms);
+  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_Size, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 

@@ -1270,7 +1270,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ModuleWidth(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_Measurement mModuleWidthHeight;
   if (pUIChild->JSNode()->TryMeasure(XFA_ATTRIBUTE_ModuleWidth,
-                                     mModuleWidthHeight)) {
+                                     mModuleWidthHeight, true)) {
     *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_UNIT_Pt));
     return true;
   }
@@ -1281,7 +1281,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ModuleHeight(int32_t* val) {
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_Measurement mModuleWidthHeight;
   if (pUIChild->JSNode()->TryMeasure(XFA_ATTRIBUTE_ModuleHeight,
-                                     mModuleWidthHeight)) {
+                                     mModuleWidthHeight, true)) {
     *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_UNIT_Pt));
     return true;
   }

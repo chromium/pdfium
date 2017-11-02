@@ -327,14 +327,14 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
 
     pPageArea->InsertChild(pContentArea, nullptr);
     pContentArea->SetFlag(XFA_NodeFlag_Initialized, true);
-    pContentArea->JSNode()->SetMeasure(XFA_ATTRIBUTE_X,
-                                       CXFA_Measurement(0.25f, XFA_UNIT_In));
-    pContentArea->JSNode()->SetMeasure(XFA_ATTRIBUTE_Y,
-                                       CXFA_Measurement(0.25f, XFA_UNIT_In));
-    pContentArea->JSNode()->SetMeasure(XFA_ATTRIBUTE_W,
-                                       CXFA_Measurement(8.0f, XFA_UNIT_In));
-    pContentArea->JSNode()->SetMeasure(XFA_ATTRIBUTE_H,
-                                       CXFA_Measurement(10.5f, XFA_UNIT_In));
+    pContentArea->JSNode()->SetMeasure(
+        XFA_ATTRIBUTE_X, CXFA_Measurement(0.25f, XFA_UNIT_In), false);
+    pContentArea->JSNode()->SetMeasure(
+        XFA_ATTRIBUTE_Y, CXFA_Measurement(0.25f, XFA_UNIT_In), false);
+    pContentArea->JSNode()->SetMeasure(
+        XFA_ATTRIBUTE_W, CXFA_Measurement(8.0f, XFA_UNIT_In), false);
+    pContentArea->JSNode()->SetMeasure(
+        XFA_ATTRIBUTE_H, CXFA_Measurement(10.5f, XFA_UNIT_In), false);
   }
   CXFA_Node* pMedium = pPageArea->GetChild(0, XFA_Element::Medium);
   if (!pMedium) {
@@ -346,9 +346,9 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     pPageArea->InsertChild(pMedium, nullptr);
     pMedium->SetFlag(XFA_NodeFlag_Initialized, true);
     pMedium->JSNode()->SetMeasure(XFA_ATTRIBUTE_Short,
-                                  CXFA_Measurement(8.5f, XFA_UNIT_In));
+                                  CXFA_Measurement(8.5f, XFA_UNIT_In), false);
     pMedium->JSNode()->SetMeasure(XFA_ATTRIBUTE_Long,
-                                  CXFA_Measurement(11.0f, XFA_UNIT_In));
+                                  CXFA_Measurement(11.0f, XFA_UNIT_In), false);
   }
   return true;
 }

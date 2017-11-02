@@ -78,5 +78,5 @@ bool CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,
 
 bool CXFA_Data::SetMeasure(XFA_ATTRIBUTE eAttr, float fValue) {
   CXFA_Measurement ms(fValue, XFA_UNIT_Pt);
-  return m_pNode->JSNode()->SetMeasure(eAttr, ms);
+  return m_pNode->JSNode()->SetMeasure(eAttr, ms, false);
 }

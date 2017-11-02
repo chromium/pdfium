@@ -106,10 +106,8 @@ class CJX_Node : public CJX_Object {
 
   bool TryMeasure(XFA_ATTRIBUTE eAttr,
                   CXFA_Measurement& mValue,
-                  bool bUseDefault = true) const;
-  bool SetMeasure(XFA_ATTRIBUTE eAttr,
-                  CXFA_Measurement mValue,
-                  bool bNotify = false);
+                  bool bUseDefault) const;
+  bool SetMeasure(XFA_ATTRIBUTE eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_ATTRIBUTE eAttr) const;
 
   bool SetUserData(void* pKey,
