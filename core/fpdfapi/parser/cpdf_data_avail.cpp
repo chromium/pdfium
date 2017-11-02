@@ -82,10 +82,7 @@ CPDF_DataAvail::CPDF_DataAvail(
     : m_pFileAvail(pFileAvail) {
   ASSERT(pFileRead);
   m_pFileRead = pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail);
-  m_Pos = 0;
   m_dwFileLen = m_pFileRead->GetSize();
-  m_bufferOffset = 0;
-  m_bufferSize = 0;
   m_PagesObjNum = 0;
   m_dwInfoObjNum = 0;
   m_pDocument = 0;
@@ -96,7 +93,6 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_bPagesLoad = false;
   m_bPagesTreeLoad = false;
   m_bMainXRefLoadedOK = false;
-  m_pTrailer = nullptr;
   m_pCurrentParser = nullptr;
   m_docStatus = PDF_DATAAVAIL_HEADER;
   m_bTotalLoadPageTree = false;
@@ -260,8 +256,6 @@ bool CPDF_DataAvail::CheckInfo() {
       m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
       return true;
     }
-    if (m_Pos == m_dwFileLen)
-      m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
   m_docStatus = PDF_DATAAVAIL_PAGETREE;
@@ -545,109 +539,6 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
 
   m_bHeaderAvail = true;
   return DocAvailStatus::DataAvailable;
-}
-
-bool CPDF_DataAvail::GetNextToken(ByteString* token) {
-  uint8_t ch;
-  if (!GetNextChar(ch))
-    return false;
-
-  while (1) {
-    while (PDFCharIsWhitespace(ch)) {
-      if (!GetNextChar(ch))
-        return false;
-    }
-
-    if (ch != '%')
-      break;
-
-    while (1) {
-      if (!GetNextChar(ch))
-        return false;
-      if (PDFCharIsLineEnding(ch))
-        break;
-    }
-  }
-
-  uint8_t buffer[256];
-  uint32_t index = 0;
-  if (PDFCharIsDelimiter(ch)) {
-    buffer[index++] = ch;
-    if (ch == '/') {
-      while (1) {
-        if (!GetNextChar(ch))
-          return false;
-
-        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
-          m_Pos--;
-          *token = ByteString(buffer, index);
-          return true;
-        }
-        if (index < sizeof(buffer))
-          buffer[index++] = ch;
-      }
-    } else if (ch == '<') {
-      if (!GetNextChar(ch))
-        return false;
-
-      if (ch == '<')
-        buffer[index++] = ch;
-      else
-        m_Pos--;
-    } else if (ch == '>') {
-      if (!GetNextChar(ch))
-        return false;
-
-      if (ch == '>')
-        buffer[index++] = ch;
-      else
-        m_Pos--;
-    }
-    *token = ByteString(buffer, index);
-    return true;
-  }
-
-  while (1) {
-    if (index < sizeof(buffer))
-      buffer[index++] = ch;
-
-    if (!GetNextChar(ch))
-      return false;
-
-    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
-      m_Pos--;
-      break;
-    }
-  }
-
-  *token = ByteString(buffer, index);
-  return true;
-}
-
-bool CPDF_DataAvail::GetNextChar(uint8_t& ch) {
-  FX_FILESIZE pos = m_Pos;
-  if (pos >= m_dwFileLen)
-    return false;
-
-  if (m_bufferOffset >= pos ||
-      (FX_FILESIZE)(m_bufferOffset + m_bufferSize) <= pos) {
-    FX_FILESIZE read_pos = pos;
-    uint32_t read_size = 512;
-    if ((FX_FILESIZE)read_size > m_dwFileLen)
-      read_size = (uint32_t)m_dwFileLen;
-
-    if ((FX_FILESIZE)(read_pos + read_size) > m_dwFileLen)
-      read_pos = m_dwFileLen - read_size;
-
-    if (!m_pFileRead->ReadBlock(m_bufferData, read_pos, read_size))
-      return false;
-
-    m_bufferOffset = read_pos;
-    m_bufferSize = read_size;
-  }
-  ch = m_bufferData[pos - m_bufferOffset];
-  m_Pos++;
-  return true;
 }
 
 bool CPDF_DataAvail::CheckPage(uint32_t dwPage) {

@@ -133,9 +133,6 @@ class CPDF_DataAvail final {
   bool CheckPageStatus();
 
   DocAvailStatus CheckHeaderAndLinearized();
-  void SetStartOffset(FX_FILESIZE dwOffset);
-  bool GetNextToken(ByteString* token);
-  bool GetNextChar(uint8_t& ch);
   std::unique_ptr<CPDF_Object> ParseIndirectObjectAt(
       FX_FILESIZE pos,
       uint32_t objnum,
@@ -171,18 +168,11 @@ class CPDF_DataAvail final {
   uint32_t m_dwRootObjNum;
   uint32_t m_dwInfoObjNum;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
-  UnownedPtr<CPDF_Object> m_pTrailer;
   bool m_bDocAvail;
   std::unique_ptr<CPDF_CrossRefAvail> m_pCrossRefAvail;
   PDF_DATAAVAIL_STATUS m_docStatus;
   FX_FILESIZE m_dwFileLen;
   CPDF_Document* m_pDocument;
-  FX_FILESIZE m_Pos;
-  FX_FILESIZE m_bufferOffset;
-  uint32_t m_bufferSize;
-  ByteString m_WordBuf;
-  uint8_t m_bufferData[512];
-  std::vector<uint32_t> m_XRefStreamList;
   std::vector<uint32_t> m_PageObjList;
   uint32_t m_PagesObjNum;
   bool m_bLinearedDataOK;
