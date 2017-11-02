@@ -214,21 +214,14 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal(CPDF_Document* pDocument) {
   ASSERT(!m_bHasParsed);
   m_bHasParsed = true;
   m_bXRefStream = false;
-  m_LastXRefOffset = 0;
 
-  m_pSyntax->SetPos(m_pSyntax->m_FileLen - m_pSyntax->m_HeaderOffset - 9);
   m_pDocument = pDocument;
 
   bool bXRefRebuilt = false;
-  if (m_pSyntax->BackwardsSearchToWord("startxref", 4096)) {
-    m_pSyntax->GetKeyword();
 
-    bool bNumber;
-    ByteString xrefpos_str = m_pSyntax->GetNextWord(&bNumber);
-    if (!bNumber)
-      return FORMAT_ERROR;
+  m_LastXRefOffset = ParseStartXRef();
 
-    m_LastXRefOffset = (FX_FILESIZE)FXSYS_atoi64(xrefpos_str.c_str());
+  if (m_LastXRefOffset > 0) {
     if (!LoadAllCrossRefV4(m_LastXRefOffset) &&
         !LoadAllCrossRefV5(m_LastXRefOffset)) {
       if (!RebuildCrossRef())
@@ -280,6 +273,29 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal(CPDF_Document* pDocument) {
       m_MetadataObjnum = pMetadata->GetRefObjNum();
   }
   return SUCCESS;
+}
+
+FX_FILESIZE CPDF_Parser::ParseStartXRef() {
+  static constexpr char kStartXRefKeyword[] = "startxref";
+  m_pSyntax->SetPos(m_pSyntax->m_FileLen - m_pSyntax->m_HeaderOffset -
+                    strlen(kStartXRefKeyword));
+  if (!m_pSyntax->BackwardsSearchToWord(kStartXRefKeyword, 4096))
+    return 0;
+
+  // Skip "startxref" keyword.
+  m_pSyntax->GetKeyword();
+
+  // Read XRef offset.
+  bool bNumber;
+  const ByteString xrefpos_str = m_pSyntax->GetNextWord(&bNumber);
+  if (!bNumber || xrefpos_str.IsEmpty())
+    return 0;
+
+  const FX_SAFE_FILESIZE result = FXSYS_atoi64(xrefpos_str.c_str());
+  if (!result.IsValid() || result.ValueOrDie() >= GetFileAccess()->GetSize())
+    return 0;
+
+  return result.ValueOrDie();
 }
 
 CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {

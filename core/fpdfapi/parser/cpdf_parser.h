@@ -155,7 +155,7 @@ class CPDF_Parser {
   };
 
   Error StartParseInternal(CPDF_Document* pDocument);
-  CPDF_Object* ParseDirect(CPDF_Object* pObj);
+  FX_FILESIZE ParseStartXRef();
   bool LoadAllCrossRefV4(FX_FILESIZE pos);
   bool LoadAllCrossRefV5(FX_FILESIZE pos);
   bool LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef);
