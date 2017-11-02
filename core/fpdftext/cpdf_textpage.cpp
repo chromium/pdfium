@@ -605,12 +605,12 @@ void CPDF_TextPage::ProcessObject() {
 
 void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
                                       const CFX_Matrix& formMatrix) {
-  CPDF_PageObjectList* pObjectList = pFormObj->m_pForm->GetPageObjectList();
+  const CPDF_PageObjectList* pObjectList =
+      pFormObj->form()->GetPageObjectList();
   if (pObjectList->empty())
     return;
 
-  CFX_Matrix curFormMatrix;
-  curFormMatrix = pFormObj->m_FormMatrix;
+  CFX_Matrix curFormMatrix = pFormObj->form_matrix();
   curFormMatrix.Concat(formMatrix);
 
   for (auto it = pObjectList->begin(); it != pObjectList->end(); ++it) {

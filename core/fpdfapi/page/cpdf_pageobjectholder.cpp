@@ -22,7 +22,10 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder(CPDF_Document* pDoc,
       m_pResources(nullptr),
       m_iTransparency(0),
       m_bBackgroundAlphaNeeded(false),
-      m_ParseState(CONTENT_NOT_PARSED) {}
+      m_ParseState(CONTENT_NOT_PARSED) {
+  // TODO(thestig): Check if |m_pFormDict| is never a nullptr and simplify
+  // callers that checks for that.
+}
 
 CPDF_PageObjectHolder::~CPDF_PageObjectHolder() {}
 

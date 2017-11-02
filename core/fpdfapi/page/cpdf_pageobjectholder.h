@@ -71,7 +71,7 @@ class CPDF_PageObjectHolder {
   void Transform(const CFX_Matrix& matrix);
   CFX_FloatRect CalcBoundingBox() const;
 
-  UnownedPtr<CPDF_Dictionary> m_pFormDict;
+  const UnownedPtr<CPDF_Dictionary> m_pFormDict;
   UnownedPtr<CPDF_Stream> m_pFormStream;
   UnownedPtr<CPDF_Document> m_pDocument;
   UnownedPtr<CPDF_Dictionary> m_pPageResources;

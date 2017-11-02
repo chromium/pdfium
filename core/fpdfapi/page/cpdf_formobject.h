@@ -16,7 +16,7 @@ class CPDF_Form;
 
 class CPDF_FormObject : public CPDF_PageObject {
  public:
-  CPDF_FormObject();
+  CPDF_FormObject(std::unique_ptr<CPDF_Form> pForm, const CFX_Matrix& matrix);
   ~CPDF_FormObject() override;
 
   // CPDF_PageObject:
@@ -28,8 +28,10 @@ class CPDF_FormObject : public CPDF_PageObject {
 
   void CalcBoundingBox();
   const CPDF_Form* form() const { return m_pForm.get(); }
+  const CFX_Matrix& form_matrix() const { return m_FormMatrix; }
 
-  std::unique_ptr<CPDF_Form> m_pForm;
+ private:
+  const std::unique_ptr<CPDF_Form> m_pForm;
   CFX_Matrix m_FormMatrix;
 };
 

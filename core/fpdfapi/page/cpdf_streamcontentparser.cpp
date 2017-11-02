@@ -767,20 +767,21 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 }
 
 void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
-  auto pFormObj = pdfium::MakeUnique<CPDF_FormObject>();
-  pFormObj->m_pForm = pdfium::MakeUnique<CPDF_Form>(
-      m_pDocument.Get(), m_pPageResources.Get(), pStream, m_pResources.Get());
-  pFormObj->m_FormMatrix = m_pCurStates->m_CTM;
-  pFormObj->m_FormMatrix.Concat(m_mtContentToUser);
   CPDF_AllStates status;
   status.m_GeneralState = m_pCurStates->m_GeneralState;
   status.m_GraphState = m_pCurStates->m_GraphState;
   status.m_ColorState = m_pCurStates->m_ColorState;
   status.m_TextState = m_pCurStates->m_TextState;
-  pFormObj->m_pForm->ParseContentWithParams(&status, nullptr, nullptr,
-                                            m_ParsedSet.Get());
+  auto form = pdfium::MakeUnique<CPDF_Form>(
+      m_pDocument.Get(), m_pPageResources.Get(), pStream, m_pResources.Get());
+  form->ParseContentWithParams(&status, nullptr, nullptr, m_ParsedSet.Get());
+
+  CFX_Matrix matrix = m_pCurStates->m_CTM;
+  matrix.Concat(m_mtContentToUser);
+
+  auto pFormObj = pdfium::MakeUnique<CPDF_FormObject>(std::move(form), matrix);
   if (!m_pObjectHolder->BackgroundAlphaNeeded() &&
-      pFormObj->m_pForm->BackgroundAlphaNeeded()) {
+      pFormObj->form()->BackgroundAlphaNeeded()) {
     m_pObjectHolder->SetBackgroundAlphaNeeded(true);
   }
   pFormObj->CalcBoundingBox();

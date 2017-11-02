@@ -1237,11 +1237,11 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   matrix.Concat(*buffer.GetMatrix());
   GetScaledMatrix(matrix);
   CPDF_Dictionary* pFormResource = nullptr;
-  if (pObj->IsForm()) {
-    const CPDF_FormObject* pFormObj = pObj->AsForm();
-    if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
-    }
+  const CPDF_FormObject* pFormObj = pObj->AsForm();
+  if (pFormObj) {
+    const auto& pFormDict = pFormObj->form()->m_pFormDict;
+    if (pFormDict)
+      pFormResource = pFormDict->GetDictFor("Resources");
   }
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), buffer.GetDevice(), buffer.GetMatrix(),
@@ -1256,17 +1256,16 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDictFor("OC");
+  CPDF_Dictionary* pOC = pFormObj->form()->m_pFormDict->GetDictFor("OC");
   if (pOC && m_Options.GetOCContext() &&
       !m_Options.GetOCContext()->CheckOCGVisible(pOC)) {
     return true;
   }
-  CFX_Matrix matrix = pFormObj->m_FormMatrix;
+  CFX_Matrix matrix = pFormObj->form_matrix();
   matrix.Concat(*pObj2Device);
-  CPDF_Dictionary* pResources = nullptr;
-  if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-    pResources = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
-  }
+  const auto& pFormDict = pFormObj->form()->m_pFormDict;
+  CPDF_Dictionary* pResources =
+      pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), m_pDevice, nullptr, m_pStopObj, this,
                     pFormObj, &m_Options, m_iTransparency, m_bDropObjects,
@@ -1274,7 +1273,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   status.m_curBlend = m_curBlend;
   {
     CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-    status.RenderObjectList(pFormObj->m_pForm.get(), &matrix);
+    status.RenderObjectList(pFormObj->form(), &matrix);
     m_bStopped = status.m_bStopped;
   }
 #if defined _SKIA_SUPPORT_
@@ -1487,14 +1486,14 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   float group_alpha = 1.0f;
   int iTransparency = m_iTransparency;
   bool bGroupTransparent = false;
-  if (pPageObj->IsForm()) {
-    const CPDF_FormObject* pFormObj = pPageObj->AsForm();
+  const CPDF_FormObject* pFormObj = pPageObj->AsForm();
+  if (pFormObj) {
     group_alpha = pFormObj->m_GeneralState.GetFillAlpha();
-    iTransparency = pFormObj->m_pForm->m_iTransparency;
+    iTransparency = pFormObj->form()->m_iTransparency;
     bGroupTransparent = !!(iTransparency & PDFTRANS_ISOLATED);
-    if (pFormObj->m_pForm->m_pFormDict) {
-      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictFor("Resources");
-    }
+    const auto& pFormDict = pFormObj->form()->m_pFormDict;
+    if (pFormDict)
+      pFormResource = pFormDict->GetDictFor("Resources");
   }
   bool bTextClip =
       (pPageObj->m_ClipPath.HasRef() && pPageObj->m_ClipPath.GetTextCount() &&
@@ -2269,10 +2268,9 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     if (!pPattern->colored())
       pStates = CloneObjStates(pPageObj, bStroke);
 
-    CPDF_Dictionary* pFormResource = nullptr;
-    if (pPattern->form()->m_pFormDict)
-      pFormResource = pPattern->form()->m_pFormDict->GetDictFor("Resources");
-
+    auto& pFormDict = pPattern->form()->m_pFormDict;
+    CPDF_Dictionary* pFormResource =
+        pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
     for (int col = min_col; col <= max_col; col++) {
       for (int row = min_row; row <= max_row; row++) {
         CFX_PointF original = mtPattern2Device.Transform(
