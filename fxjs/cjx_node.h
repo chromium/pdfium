@@ -81,7 +81,7 @@ class CJX_Node : public CJX_Object {
   WideString GetContent();
 
   bool TryInteger(XFA_ATTRIBUTE eAttr, int32_t& iValue, bool bUseDefault);
-  bool SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify = false);
+  bool SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_ATTRIBUTE eAttr);
 
   bool TryCData(XFA_ATTRIBUTE eAttr,
