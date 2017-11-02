@@ -1441,7 +1441,7 @@ void CJX_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
     if (pContainerWidgetData) {
       pContainerWidgetData->GetFormatDataValue(wsNewValue, wsFormatValue);
     }
-    SetScriptContent(wsNewValue, wsFormatValue, true, true);
+    SetScriptContent(wsNewValue, wsFormatValue, true, true, true);
   } else {
     WideString content = GetScriptContent(true);
     if (content.IsEmpty() && eType != XFA_Element::Text &&
@@ -1490,7 +1490,7 @@ void CJX_Node::Script_Boolean_Value(CFXJSE_Value* pValue,
     if (pContainerWidgetData) {
       pContainerWidgetData->GetFormatDataValue(wsNewValue, wsFormatValue);
     }
-    SetScriptContent(wsNewValue, wsFormatValue, true, true);
+    SetScriptContent(wsNewValue, wsFormatValue, true, true, true);
   } else {
     WideString wsValue = GetScriptContent(true);
     pValue->SetBoolean(wsValue == L"1");
@@ -1617,7 +1617,7 @@ void CJX_Node::Script_Draw_DefaultValue(CFXJSE_Value* pValue,
       if (uiType == XFA_Element::Text) {
         WideString wsNewValue = pValue->ToWideString();
         WideString wsFormatValue(wsNewValue);
-        SetScriptContent(wsNewValue, wsFormatValue, true, true);
+        SetScriptContent(wsNewValue, wsFormatValue, true, true, true);
       }
     }
   } else {
@@ -1663,7 +1663,7 @@ void CJX_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
     if (pContainerWidgetData) {
       pContainerWidgetData->GetFormatDataValue(wsNewText, wsFormatText);
     }
-    SetScriptContent(wsNewText, wsFormatText, true, true);
+    SetScriptContent(wsNewText, wsFormatText, true, true, true);
   } else {
     WideString content = GetScriptContent(true);
     if (content.IsEmpty()) {
@@ -3879,7 +3879,8 @@ void CJX_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
     if (pWidgetData) {
       pWidgetData->GetFormatDataValue(wsValue, wsFormatValue);
     }
-    pDstModule->JSNode()->SetScriptContent(wsValue, wsFormatValue, true, true);
+    pDstModule->JSNode()->SetScriptContent(wsValue, wsFormatValue, true, true,
+                                           true);
   }
 }
 

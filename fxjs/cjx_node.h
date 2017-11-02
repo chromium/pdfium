@@ -440,9 +440,9 @@ class CJX_Node : public CJX_Object {
 
   bool SetScriptContent(const WideString& wsContent,
                         const WideString& wsXMLValue,
-                        bool bNotify = true,
-                        bool bScriptModify = false,
-                        bool bSyncData = true);
+                        bool bNotify,
+                        bool bScriptModify,
+                        bool bSyncData);
   WideString GetScriptContent(bool bScriptModify = false);
 
   XFA_MAPMODULEDATA* CreateMapModuleData();
