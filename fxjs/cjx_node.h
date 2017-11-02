@@ -135,10 +135,7 @@ class CJX_Node : public CJX_Object {
 
   void Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments);
   void Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments);
-  void Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
-                                  WideString wsExpression,
-                                  uint32_t dwFlag,
-                                  CXFA_Node* refNode = nullptr);
+
   void Script_TreeClass_All(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_ATTRIBUTE eAttribute);
@@ -208,8 +205,6 @@ class CJX_Node : public CJX_Object {
   void Script_Delta_Target(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_ATTRIBUTE eAttribute);
-  void Script_Attribute_SendAttributeChangeMessage(XFA_ATTRIBUTE eAttribute,
-                                                   bool bScriptModify);
   void Script_Attribute_Integer(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_ATTRIBUTE eAttribute);
@@ -413,6 +408,15 @@ class CJX_Node : public CJX_Object {
                                XFA_ATTRIBUTE eAttribute);
 
  private:
+  void ResolveNodeList(CFXJSE_Value* pValue,
+                       WideString wsExpression,
+                       uint32_t dwFlag,
+                       CXFA_Node* refNode);
+
+  void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, bool bScriptModify);
+  void OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify);
+  void SendAttributeChangeMessage(XFA_ATTRIBUTE eAttribute, bool bScriptModify);
+
   bool SetValue(XFA_ATTRIBUTE eAttr,
                 XFA_ATTRIBUTETYPE eType,
                 void* pValue,

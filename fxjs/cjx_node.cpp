@@ -483,13 +483,13 @@ void CJX_Node::Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments) {
   CXFA_Node* refNode = GetXFANode();
   if (refNode->GetElementType() == XFA_Element::Xfa)
     refNode = ToNode(GetDocument()->GetScriptContext()->GetThisObject());
-  Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag, refNode);
+  ResolveNodeList(pValue, wsExpression, dwFlag, refNode);
 }
 
-void CJX_Node::Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
-                                          WideString wsExpression,
-                                          uint32_t dwFlag,
-                                          CXFA_Node* refNode) {
+void CJX_Node::ResolveNodeList(CFXJSE_Value* pValue,
+                               WideString wsExpression,
+                               uint32_t dwFlag,
+                               CXFA_Node* refNode) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;
@@ -528,7 +528,7 @@ void CJX_Node::Script_TreeClass_All(CFXJSE_Value* pValue,
   WideString wsName;
   GetAttribute(XFA_ATTRIBUTE_Name, wsName, true);
   WideString wsExpression = wsName + L"[*]";
-  Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag);
+  ResolveNodeList(pValue, wsExpression, dwFlag, nullptr);
 }
 
 void CJX_Node::Script_TreeClass_Nodes(CFXJSE_Value* pValue,
@@ -557,7 +557,7 @@ void CJX_Node::Script_TreeClass_ClassAll(CFXJSE_Value* pValue,
   }
   uint32_t dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
   WideString wsExpression = L"#" + GetXFANode()->GetClassName() + L"[*]";
-  Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag);
+  ResolveNodeList(pValue, wsExpression, dwFlag, nullptr);
 }
 
 void CJX_Node::Script_TreeClass_Parent(CFXJSE_Value* pValue,
@@ -1056,9 +1056,24 @@ void CJX_Node::Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
   pValue->SetString(GetBoolean(eAttribute) ? "1" : "0");
 }
 
-void CJX_Node::Script_Attribute_SendAttributeChangeMessage(
-    XFA_ATTRIBUTE eAttribute,
-    bool bScriptModify) {
+void CJX_Node::OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify) {
+  if (!bNotify || !GetXFANode()->IsInitialized())
+    return;
+
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
+  if (pNotify)
+    pNotify->OnValueChanging(GetXFANode(), eAttr);
+}
+
+void CJX_Node::OnChanged(XFA_ATTRIBUTE eAttr,
+                         bool bNotify,
+                         bool bScriptModify) {
+  if (bNotify && GetXFANode()->IsInitialized())
+    SendAttributeChangeMessage(eAttr, bScriptModify);
+}
+
+void CJX_Node::SendAttributeChangeMessage(XFA_ATTRIBUTE eAttribute,
+                                          bool bScriptModify) {
   CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
   if (!pLayoutPro)
     return;
@@ -2998,9 +3013,9 @@ bool CJX_Node::SetMeasure(XFA_ATTRIBUTE eAttr,
                           CXFA_Measurement mValue,
                           bool bNotify) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  GetXFANode()->OnChanging(eAttr, bNotify);
+  OnChanging(eAttr, bNotify);
   SetMapModuleBuffer(pKey, &mValue, sizeof(CXFA_Measurement));
-  GetXFANode()->OnChanged(eAttr, bNotify, false);
+  OnChanged(eAttr, bNotify, false);
   return true;
 }
 
@@ -3039,7 +3054,7 @@ bool CJX_Node::SetCData(XFA_ATTRIBUTE eAttr,
                         bool bNotify,
                         bool bScriptModify) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  GetXFANode()->OnChanging(eAttr, bNotify);
+  OnChanging(eAttr, bNotify);
   if (eAttr == XFA_ATTRIBUTE_Value) {
     WideString* pClone = new WideString(wsValue);
     SetUserData(pKey, pClone, &deleteWideStringCallBack);
@@ -3048,7 +3063,7 @@ bool CJX_Node::SetCData(XFA_ATTRIBUTE eAttr,
     if (eAttr == XFA_ATTRIBUTE_Name)
       GetXFANode()->UpdateNameHash();
   }
-  GetXFANode()->OnChanged(eAttr, bNotify, bScriptModify);
+  OnChanged(eAttr, bNotify, bScriptModify);
 
   if (!GetXFANode()->IsNeedSavingXMLNode() ||
       eAttr == XFA_ATTRIBUTE_QualifiedName ||
@@ -3120,10 +3135,10 @@ bool CJX_Node::SetAttributeValue(const WideString& wsValue,
                                  bool bScriptModify) {
   void* pKey =
       GetMapKey_Element(GetXFANode()->GetElementType(), XFA_ATTRIBUTE_Value);
-  GetXFANode()->OnChanging(XFA_ATTRIBUTE_Value, bNotify);
+  OnChanging(XFA_ATTRIBUTE_Value, bNotify);
   WideString* pClone = new WideString(wsValue);
   SetUserData(pKey, pClone, &deleteWideStringCallBack);
-  GetXFANode()->OnChanged(XFA_ATTRIBUTE_Value, bNotify, bScriptModify);
+  OnChanged(XFA_ATTRIBUTE_Value, bNotify, bScriptModify);
   if (GetXFANode()->IsNeedSavingXMLNode()) {
     FX_XMLNODETYPE eXMLType = GetXFANode()->GetXMLMappingNode()->GetType();
     switch (eXMLType) {
@@ -3245,9 +3260,9 @@ bool CJX_Node::SetValue(XFA_ATTRIBUTE eAttr,
                         void* pValue,
                         bool bNotify) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  GetXFANode()->OnChanging(eAttr, bNotify);
+  OnChanging(eAttr, bNotify);
   SetMapModuleValue(pKey, pValue);
-  GetXFANode()->OnChanged(eAttr, bNotify, false);
+  OnChanged(eAttr, bNotify, false);
   if (GetXFANode()->IsNeedSavingXMLNode()) {
     ASSERT(GetXFANode()->GetXMLMappingNode()->GetType() == FX_XMLNODE_Element);
     const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);

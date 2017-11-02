@@ -645,13 +645,6 @@ void CXFA_Node::Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments) {
   JSNode()->Script_TreeClass_ResolveNodes(pArguments);
 }
 
-void CXFA_Node::Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
-                                           WideString wsExpression,
-                                           uint32_t dwFlag,
-                                           CXFA_Node* refNode) {
-  JSNode()->Script_Som_ResolveNodeList(pValue, wsExpression, dwFlag, refNode);
-}
-
 void CXFA_Node::Script_TreeClass_All(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_ATTRIBUTE eAttribute) {
@@ -823,13 +816,6 @@ void CXFA_Node::Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
                                           bool bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
   JSNode()->Script_Attribute_BOOLRead(pValue, bSetting, eAttribute);
-}
-
-void CXFA_Node::Script_Attribute_SendAttributeChangeMessage(
-    XFA_ATTRIBUTE eAttribute,
-    bool bScriptModify) {
-  JSNode()->Script_Attribute_SendAttributeChangeMessage(eAttribute,
-                                                        bScriptModify);
 }
 
 void CXFA_Node::Script_Attribute_String(CFXJSE_Value* pValue,
@@ -1736,23 +1722,6 @@ void CXFA_Node::OnRemoved(bool bNotify) {
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (pNotify)
     pNotify->OnChildRemoved();
-}
-
-void CXFA_Node::OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify) {
-  if (bNotify && IsInitialized()) {
-    CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
-    if (pNotify) {
-      pNotify->OnValueChanging(this, eAttr);
-    }
-  }
-}
-
-void CXFA_Node::OnChanged(XFA_ATTRIBUTE eAttr,
-                          bool bNotify,
-                          bool bScriptModify) {
-  if (bNotify && IsInitialized()) {
-    Script_Attribute_SendAttributeChangeMessage(eAttr, bScriptModify);
-  }
 }
 
 void CXFA_Node::UpdateNameHash() {
