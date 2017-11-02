@@ -147,20 +147,15 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   auto* pDataAvail = FPDFAvailContextFromFPDFAvail(avail);
   if (!pDataAvail)
     return nullptr;
-
-  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
-  pParser->SetPassword(password);
-
-  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
-  CPDF_Parser::Error error = pDocument->GetParser()->StartLinearizedParse(
-      pDataAvail->m_pDataAvail->GetFileRead(), pDocument.get());
+  CPDF_Parser::Error error;
+  std::unique_ptr<CPDF_Document> document;
+  std::tie(error, document) = pDataAvail->m_pDataAvail->ParseDocument(password);
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;
   }
-  pDataAvail->m_pDataAvail->SetDocument(pDocument.get());
-  CheckUnSupportError(pDocument.get(), FPDF_ERR_SUCCESS);
-  return FPDFDocumentFromCPDFDocument(pDocument.release());
+  CheckUnSupportError(document.get(), FPDF_ERR_SUCCESS);
+  return FPDFDocumentFromCPDFDocument(document.release());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {

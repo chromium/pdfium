@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
@@ -96,7 +97,6 @@ class CPDF_DataAvail final {
   ~CPDF_DataAvail();
 
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
-  void SetDocument(CPDF_Document* pDoc);
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
@@ -104,6 +104,9 @@ class CPDF_DataAvail final {
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
   RetainPtr<CPDF_ReadValidator> GetValidator() const;
+
+  std::pair<CPDF_Parser::Error, std::unique_ptr<CPDF_Document>> ParseDocument(
+      const char* password);
 
   const CPDF_HintTables* GetHintTables() const { return m_pHintTables.get(); }
 

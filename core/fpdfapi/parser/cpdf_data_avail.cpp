@@ -106,10 +106,6 @@ CPDF_DataAvail::~CPDF_DataAvail() {
   m_pHintTables.reset();
 }
 
-void CPDF_DataAvail::SetDocument(CPDF_Document* pDoc) {
-  m_pDocument = pDoc;
-}
-
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
     DownloadHints* pHints) {
   if (!m_dwFileLen)
@@ -1042,6 +1038,33 @@ bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) {
     return false;
   CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument, pPageDict);
   return obj_avail.CheckAvail() == DocAvailStatus::DataAvailable;
+}
+
+std::pair<CPDF_Parser::Error, std::unique_ptr<CPDF_Document>>
+CPDF_DataAvail::ParseDocument(const char* password) {
+  if (m_pDocument) {
+    // We already returned parsed document.
+    return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
+  }
+  auto parser = pdfium::MakeUnique<CPDF_Parser>();
+  parser->SetPassword(password);
+  auto document = pdfium::MakeUnique<CPDF_Document>(std::move(parser));
+
+  CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  CPDF_Parser::Error error = document->GetParser()->StartLinearizedParse(
+      GetFileRead(), document.get());
+
+  // Additional check, that all ok.
+  if (GetValidator()->has_read_problems()) {
+    NOTREACHED();
+    return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
+  }
+
+  if (error != CPDF_Parser::SUCCESS)
+    return std::make_pair(error, nullptr);
+
+  m_pDocument = document.get();
+  return std::make_pair(CPDF_Parser::SUCCESS, std::move(document));
 }
 
 CPDF_DataAvail::PageNode::PageNode() : m_type(PDF_PAGENODE_UNKNOWN) {}
