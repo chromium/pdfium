@@ -197,7 +197,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
 
   CPDF_ColorSpace* m_pBaseCS;
   UnownedPtr<CPDF_CountedColorSpace> m_pCountedBaseCS;
-  int m_nBaseComponents;
+  uint32_t m_nBaseComponents;
   int m_MaxIndex;
   ByteString m_Table;
   float* m_pCompMinMax;
@@ -1013,7 +1013,7 @@ bool CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   m_nBaseComponents = m_pBaseCS->CountComponents();
   m_pCompMinMax = FX_Alloc2D(float, m_nBaseComponents, 2);
   float defvalue;
-  for (int i = 0; i < m_nBaseComponents; i++) {
+  for (uint32_t i = 0; i < m_nBaseComponents; i++) {
     m_pBaseCS->GetDefaultValue(i, &defvalue, &m_pCompMinMax[i * 2],
                                &m_pCompMinMax[i * 2 + 1]);
     m_pCompMinMax[i * 2 + 1] -= m_pCompMinMax[i * 2];
@@ -1035,21 +1035,25 @@ bool CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
 }
 
 bool CPDF_IndexedCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
-  int index = static_cast<int32_t>(*pBuf);
+  int32_t index = static_cast<int32_t>(*pBuf);
   if (index < 0 || index > m_MaxIndex)
     return false;
 
   if (m_nBaseComponents) {
-    if (index == INT_MAX || (index + 1) > INT_MAX / m_nBaseComponents ||
-        (index + 1) * m_nBaseComponents > (int)m_Table.GetLength()) {
-      R = G = B = 0;
+    FX_SAFE_SIZE_T length = index;
+    length += 1;
+    length *= m_nBaseComponents;
+    if (!length.IsValid() || length.ValueOrDie() > m_Table.GetLength()) {
+      *R = 0;
+      *G = 0;
+      *B = 0;
       return false;
     }
   }
   CFX_FixedBufGrow<float, 16> Comps(m_nBaseComponents);
   float* comps = Comps;
   const uint8_t* pTable = m_Table.raw_str();
-  for (int i = 0; i < m_nBaseComponents; i++) {
+  for (uint32_t i = 0; i < m_nBaseComponents; i++) {
     comps[i] =
         m_pCompMinMax[i * 2] +
         m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
