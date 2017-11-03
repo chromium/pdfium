@@ -51,7 +51,7 @@ index 700152ee3..3c3848b2a 100644
 +// Generic allocate
 +void* CMSEXPORT _cmsMalloc(cmsContext ContextID, cmsUInt32Number size)
 +{
-+    return FXMEM_DefaultAlloc(size, 1);
++    return FXMEM_DefaultAlloc(size);
  }
  
  // Generic allocate & zero
@@ -64,7 +64,7 @@ index 700152ee3..3c3848b2a 100644
 -
 -    memset(pt, 0, size);
 -    return pt;
-+    void* p = FXMEM_DefaultAlloc(size, 1);
++    void* p = FXMEM_DefaultAlloc(size);
 +    if (p) memset(p, 0, size);
 +    return p;
  }
@@ -101,7 +101,7 @@ index 700152ee3..3c3848b2a 100644
 -    return realloc(Ptr, size);
 -
 -    cmsUNUSED_PARAMETER(ContextID);
-+    return FXMEM_DefaultRealloc(Ptr, size, 1);
++    return FXMEM_DefaultRealloc(Ptr, size);
  }
  
 -
@@ -128,7 +128,7 @@ index 700152ee3..3c3848b2a 100644
 -    if (Total > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never alloc over 512Mb
 -
 -    return _cmsMallocZero(ContextID, Total);
-+    if (Ptr != NULL) FXMEM_DefaultFree(Ptr, 0);
++    if (Ptr != NULL) FXMEM_DefaultFree(Ptr);
  }
  
  // Generic block duplication
@@ -146,7 +146,7 @@ index 700152ee3..3c3848b2a 100644
 -        memmove(mem, Org, size);
 -
 -    return mem;
-+    void* p = FXMEM_DefaultAlloc(size, 1);
++    void* p = FXMEM_DefaultAlloc(size);
 +    memmove(p, Org, size);
 +    return p;
  }

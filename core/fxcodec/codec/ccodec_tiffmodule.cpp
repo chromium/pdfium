@@ -69,16 +69,16 @@ void* _TIFFcalloc(tmsize_t nmemb, tmsize_t siz) {
 }
 
 void* _TIFFmalloc(tmsize_t size) {
-  return FXMEM_DefaultAlloc(size, 0);
+  return FXMEM_DefaultAlloc(size);
 }
 
 void _TIFFfree(void* ptr) {
   if (ptr)
-    FXMEM_DefaultFree(ptr, 0);
+    FXMEM_DefaultFree(ptr);
 }
 
 void* _TIFFrealloc(void* ptr, tmsize_t size) {
-  return FXMEM_DefaultRealloc(ptr, size, 0);
+  return FXMEM_DefaultRealloc(ptr, size);
 }
 
 void _TIFFmemset(void* ptr, int val, tmsize_t size) {

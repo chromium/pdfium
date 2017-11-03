@@ -24,8 +24,7 @@ void FXMEM_InitializePartitionAlloc() {
   }
 }
 
-// TODO(palmer): Remove the |flags| argument.
-void* FXMEM_DefaultAlloc(size_t byte_size, int flags) {
+void* FXMEM_DefaultAlloc(size_t byte_size) {
   return pdfium::base::PartitionAllocGenericFlags(
       gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
       byte_size, "GeneralPartition");
@@ -35,14 +34,12 @@ void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
   return FX_SafeAlloc(num_elems, byte_size);
 }
 
-// TODO(palmer): Remove the |flags| argument.
-void* FXMEM_DefaultRealloc(void* pointer, size_t new_size, int flags) {
+void* FXMEM_DefaultRealloc(void* pointer, size_t new_size) {
   return pdfium::base::PartitionReallocGeneric(
       gGeneralPartitionAllocator.root(), pointer, new_size, "GeneralPartition");
 }
 
-// TODO(palmer): Remove the |flags| argument.
-void FXMEM_DefaultFree(void* pointer, int flags) {
+void FXMEM_DefaultFree(void* pointer) {
   pdfium::base::PartitionFree(pointer);
 }
 

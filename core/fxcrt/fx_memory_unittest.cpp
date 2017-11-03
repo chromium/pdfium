@@ -72,10 +72,10 @@ TEST(fxcrt, FX_TryAllocOverflow) {
 }
 
 TEST(fxcrt, DISABLED_FXMEM_DefaultOOM) {
-  EXPECT_FALSE(FXMEM_DefaultAlloc(kMaxByteAlloc, 0));
+  EXPECT_FALSE(FXMEM_DefaultAlloc(kMaxByteAlloc));
 
-  void* ptr = FXMEM_DefaultAlloc(1, 0);
+  void* ptr = FXMEM_DefaultAlloc(1);
   EXPECT_TRUE(ptr);
-  EXPECT_FALSE(FXMEM_DefaultRealloc(ptr, kMaxByteAlloc, 0));
-  FXMEM_DefaultFree(ptr, 0);
+  EXPECT_FALSE(FXMEM_DefaultRealloc(ptr, kMaxByteAlloc));
+  FXMEM_DefaultFree(ptr);
 }
