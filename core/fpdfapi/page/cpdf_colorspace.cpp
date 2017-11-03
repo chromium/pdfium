@@ -178,7 +178,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
 
   MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
   RetainPtr<CPDF_IccProfile> m_pProfile;
-  uint8_t* m_pCache;
+  mutable uint8_t* m_pCache;
   float* m_pRanges;
 };
 
@@ -474,16 +474,14 @@ void CPDF_ColorSpace::Release() {
 }
 
 int CPDF_ColorSpace::GetBufSize() const {
-  if (m_Family == PDFCS_PATTERN) {
+  if (m_Family == PDFCS_PATTERN)
     return sizeof(PatternValue);
-  }
   return m_nComponents * sizeof(float);
 }
 
 float* CPDF_ColorSpace::CreateBuf() {
   int size = GetBufSize();
-  uint8_t* pBuf = FX_Alloc(uint8_t, size);
-  return (float*)pBuf;
+  return reinterpret_cast<float*>(FX_Alloc(uint8_t, size));
 }
 
 void CPDF_ColorSpace::GetDefaultColor(float* buf) const {
@@ -644,9 +642,9 @@ bool CPDF_CalRGB::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   float B_ = pBuf[1];
   float C_ = pBuf[2];
   if (m_bGamma) {
-    A_ = (float)FXSYS_pow(A_, m_Gamma[0]);
-    B_ = (float)FXSYS_pow(B_, m_Gamma[1]);
-    C_ = (float)FXSYS_pow(C_, m_Gamma[2]);
+    A_ = FXSYS_pow(A_, m_Gamma[0]);
+    B_ = FXSYS_pow(B_, m_Gamma[1]);
+    C_ = FXSYS_pow(C_, m_Gamma[2]);
   }
 
   float X;
@@ -773,12 +771,13 @@ void CPDF_LabCS::TranslateImageLine(uint8_t* pDestBuf,
                                     bool bTransMask) const {
   for (int i = 0; i < pixels; i++) {
     float lab[3];
+    lab[0] = pSrcBuf[0] * 100 / 255.0f;
+    lab[1] = pSrcBuf[1] - 128;
+    lab[2] = pSrcBuf[2] - 128;
+
     float R;
     float G;
     float B;
-    lab[0] = (pSrcBuf[0] * 100 / 255.0f);
-    lab[1] = (float)(pSrcBuf[1] - 128);
-    lab[2] = (float)(pSrcBuf[2] - 128);
     GetRGB(lab, &R, &G, &B);
     pDestBuf[0] = static_cast<int32_t>(B * 255);
     pDestBuf[1] = static_cast<int32_t>(G * 255);
@@ -790,7 +789,6 @@ void CPDF_LabCS::TranslateImageLine(uint8_t* pDestBuf,
 
 CPDF_ICCBasedCS::CPDF_ICCBasedCS(CPDF_Document* pDoc)
     : CPDF_ColorSpace(pDoc, PDFCS_ICCBASED, 0),
-      m_pProfile(nullptr),
       m_pCache(nullptr),
       m_pRanges(nullptr) {}
 
@@ -889,45 +887,50 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
                                          bool bTransMask) const {
   if (IsSRGB()) {
     ReverseRGB(pDestBuf, pSrcBuf, pixels);
-  } else if (m_pProfile->transform()) {
+    return;
+  }
+  if (m_pProfile->transform()) {
     int nMaxColors = 1;
-    for (uint32_t i = 0; i < m_nComponents; i++) {
+    for (uint32_t i = 0; i < m_nComponents; i++)
       nMaxColors *= 52;
-    }
+
     if (m_nComponents > 3 || image_width * image_height < nMaxColors * 3 / 2) {
       CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
           m_pProfile->transform(), pDestBuf, pSrcBuf, pixels);
-    } else {
-      if (!m_pCache) {
-        ((CPDF_ICCBasedCS*)this)->m_pCache = FX_Alloc2D(uint8_t, nMaxColors, 3);
-        uint8_t* temp_src = FX_Alloc2D(uint8_t, nMaxColors, m_nComponents);
-        uint8_t* pSrc = temp_src;
-        for (int i = 0; i < nMaxColors; i++) {
-          uint32_t color = i;
-          uint32_t order = nMaxColors / 52;
-          for (uint32_t c = 0; c < m_nComponents; c++) {
-            *pSrc++ = (uint8_t)(color / order * 5);
-            color %= order;
-            order /= 52;
-          }
-        }
-        CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
-            m_pProfile->transform(), m_pCache, temp_src, nMaxColors);
-        FX_Free(temp_src);
-      }
-      for (int i = 0; i < pixels; i++) {
-        int index = 0;
-        for (uint32_t c = 0; c < m_nComponents; c++) {
-          index = index * 52 + (*pSrcBuf) / 5;
-          pSrcBuf++;
-        }
-        index *= 3;
-        *pDestBuf++ = m_pCache[index];
-        *pDestBuf++ = m_pCache[index + 1];
-        *pDestBuf++ = m_pCache[index + 2];
-      }
+      return;
     }
-  } else if (m_pAlterCS) {
+
+    if (!m_pCache) {
+      m_pCache = FX_Alloc2D(uint8_t, nMaxColors, 3);
+      uint8_t* temp_src = FX_Alloc2D(uint8_t, nMaxColors, m_nComponents);
+      uint8_t* pSrc = temp_src;
+      for (int i = 0; i < nMaxColors; i++) {
+        uint32_t color = i;
+        uint32_t order = nMaxColors / 52;
+        for (uint32_t c = 0; c < m_nComponents; c++) {
+          *pSrc++ = static_cast<uint8_t>(color / order * 5);
+          color %= order;
+          order /= 52;
+        }
+      }
+      CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
+          m_pProfile->transform(), m_pCache, temp_src, nMaxColors);
+      FX_Free(temp_src);
+    }
+    for (int i = 0; i < pixels; i++) {
+      int index = 0;
+      for (uint32_t c = 0; c < m_nComponents; c++) {
+        index = index * 52 + (*pSrcBuf) / 5;
+        pSrcBuf++;
+      }
+      index *= 3;
+      *pDestBuf++ = m_pCache[index];
+      *pDestBuf++ = m_pCache[index + 1];
+      *pDestBuf++ = m_pCache[index + 2];
+    }
+    return;
+  }
+  if (m_pAlterCS) {
     m_pAlterCS->TranslateImageLine(pDestBuf, pSrcBuf, pixels, image_width,
                                    image_height, false);
   }
