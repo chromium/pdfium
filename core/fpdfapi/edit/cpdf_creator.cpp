@@ -803,10 +803,9 @@ void CPDF_Creator::InitID() {
   if (m_pEncryptDict && !pOldIDArray && m_pParser && !idArrayPreExisting) {
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       ByteString user_pass = m_pParser->GetPassword();
-      uint32_t flag = PDF_ENCRYPT_CONTENT;
       m_pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
       m_pSecurityHandler->OnCreate(m_pEncryptDict.Get(), m_pIDArray.get(),
-                                   user_pass, flag);
+                                   user_pass);
       m_bSecurityChanged = true;
     }
   }

@@ -17,8 +17,6 @@
 #define FXCIPHER_AES 2
 #define FXCIPHER_AES2 3
 
-#define PDF_ENCRYPT_CONTENT 0
-
 class CPDF_Array;
 class CPDF_CryptoHandler;
 class CPDF_Dictionary;
@@ -32,21 +30,19 @@ class CPDF_SecurityHandler {
   bool OnInit(const CPDF_Dictionary* pEncryptDict,
               const CPDF_Array* pIdArray,
               const ByteString& password);
-  uint32_t GetPermissions();
+  void OnCreate(CPDF_Dictionary* pEncryptDict,
+                const CPDF_Array* pIdArray,
+                const ByteString& user_password,
+                const ByteString& owner_password);
+  void OnCreate(CPDF_Dictionary* pEncryptDict,
+                const CPDF_Array* pIdArray,
+                const ByteString& user_password);
+
+  uint32_t GetPermissions() const;
   bool IsMetadataEncrypted() const;
 
-  void OnCreate(CPDF_Dictionary* pEncryptDict,
-                CPDF_Array* pIdArray,
-                const ByteString& user_password,
-                const ByteString& owner_password,
-                uint32_t type = PDF_ENCRYPT_CONTENT);
-
-  void OnCreate(CPDF_Dictionary* pEncryptDict,
-                CPDF_Array* pIdArray,
-                const ByteString& user_password,
-                uint32_t type = PDF_ENCRYPT_CONTENT);
-
-  ByteString GetUserPassword(const ByteString& owner_password, int32_t key_len);
+  ByteString GetUserPassword(const ByteString& owner_password,
+                             int32_t key_len) const;
   bool CheckPassword(const ByteString& user_password,
                      bool bOwner,
                      uint8_t* key,
@@ -59,7 +55,6 @@ class CPDF_SecurityHandler {
  private:
   bool LoadDict(const CPDF_Dictionary* pEncryptDict);
   bool LoadDict(const CPDF_Dictionary* pEncryptDict,
-                uint32_t type,
                 int& cipher,
                 int& key_len);
 
@@ -83,11 +78,10 @@ class CPDF_SecurityHandler {
                        bool bEncryptMetadata,
                        const uint8_t* key);
   void OnCreateInternal(CPDF_Dictionary* pEncryptDict,
-                        CPDF_Array* pIdArray,
+                        const CPDF_Array* pIdArray,
                         const ByteString& user_password,
                         const ByteString& owner_password,
-                        bool bDefault,
-                        uint32_t type);
+                        bool bDefault);
   bool CheckSecurity(const ByteString& password);
 
   void InitCryptoHandler();
