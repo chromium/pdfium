@@ -73,7 +73,8 @@ void* _TIFFmalloc(tmsize_t size) {
 }
 
 void _TIFFfree(void* ptr) {
-  FXMEM_DefaultFree(ptr, 0);
+  if (ptr)
+    FXMEM_DefaultFree(ptr, 0);
 }
 
 void* _TIFFrealloc(void* ptr, tmsize_t size) {
