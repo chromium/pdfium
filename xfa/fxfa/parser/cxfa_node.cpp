@@ -337,10 +337,9 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   return nodes;
 }
 
-CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType,
-                                           uint32_t dwFlags) {
+CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
   CXFA_Node* pNode = m_pDocument->CreateNode(m_ePacket, eType);
-  pNode->SetFlag(dwFlags, true);
+  pNode->SetFlag(XFA_NodeFlag_Initialized, true);
   return pNode;
 }
 
