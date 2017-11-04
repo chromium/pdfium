@@ -319,7 +319,9 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     }
     case XFA_Element::ChoiceList:
       if (pWidgetData->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
-        std::vector<CXFA_Node*> items = pDataNode->GetNodeList();
+        std::vector<CXFA_Node*> items = pDataNode->GetNodeList(
+            XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties,
+            XFA_Element::Unknown);
         if (!items.empty()) {
           bool single = items.size() == 1;
           wsNormalizeValue.clear();

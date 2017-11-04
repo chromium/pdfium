@@ -969,8 +969,8 @@ void CJX_Node::Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  std::vector<CXFA_Node*> properties =
-      GetXFANode()->GetNodeList(XFA_NODEFILTER_OneOfProperty);
+  std::vector<CXFA_Node*> properties = GetXFANode()->GetNodeList(
+      XFA_NODEFILTER_OneOfProperty, XFA_Element::Unknown);
   if (!properties.empty()) {
     pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(
         properties.front()));

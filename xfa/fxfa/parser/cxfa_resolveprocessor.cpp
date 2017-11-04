@@ -475,7 +475,8 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
 int32_t CXFA_ResolveProcessor::ResolveAsterisk(CXFA_ResolveNodesData& rnd) {
   CXFA_Node* curNode = ToNode(rnd.m_CurObject);
   std::vector<CXFA_Node*> array =
-      curNode->GetNodeList(XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties);
+      curNode->GetNodeList(XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties,
+                           XFA_Element::Unknown);
   rnd.m_Objects.insert(rnd.m_Objects.end(), array.begin(), array.end());
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }

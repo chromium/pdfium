@@ -69,7 +69,8 @@ int32_t CXFA_NodeHelper::NodeAcc_TraverseAnySiblings(
     return 0;
 
   int32_t nCount = 0;
-  for (CXFA_Node* child : parent->GetNodeList(XFA_NODEFILTER_Properties)) {
+  for (CXFA_Node* child :
+       parent->GetNodeList(XFA_NODEFILTER_Properties, XFA_Element::Unknown)) {
     if (bIsClassName) {
       if (child->GetClassHashCode() == dNameHash) {
         pSiblings->push_back(child);
@@ -87,7 +88,8 @@ int32_t CXFA_NodeHelper::NodeAcc_TraverseAnySiblings(
     nCount +=
         NodeAcc_TraverseAnySiblings(child, dNameHash, pSiblings, bIsClassName);
   }
-  for (CXFA_Node* child : parent->GetNodeList(XFA_NODEFILTER_Children)) {
+  for (CXFA_Node* child :
+       parent->GetNodeList(XFA_NODEFILTER_Children, XFA_Element::Unknown)) {
     if (bIsClassName) {
       if (child->GetClassHashCode() == dNameHash) {
         pSiblings->push_back(child);
@@ -120,7 +122,8 @@ int32_t CXFA_NodeHelper::NodeAcc_TraverseSiblings(
 
   int32_t nCount = 0;
   if (bIsFindProperty) {
-    for (CXFA_Node* child : parent->GetNodeList(XFA_NODEFILTER_Properties)) {
+    for (CXFA_Node* child :
+         parent->GetNodeList(XFA_NODEFILTER_Properties, XFA_Element::Unknown)) {
       if (bIsClassName) {
         if (child->GetClassHashCode() == dNameHash) {
           pSiblings->push_back(child);
@@ -145,7 +148,8 @@ int32_t CXFA_NodeHelper::NodeAcc_TraverseSiblings(
     if (nCount > 0)
       return nCount;
   }
-  for (CXFA_Node* child : parent->GetNodeList(XFA_NODEFILTER_Children)) {
+  for (CXFA_Node* child :
+       parent->GetNodeList(XFA_NODEFILTER_Children, XFA_Element::Unknown)) {
     if (child->GetElementType() == XFA_Element::Variables)
       continue;
 
