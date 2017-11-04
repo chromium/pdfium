@@ -97,13 +97,12 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetModelNode();
   void UpdateNameHash();
 
-  int32_t CountChildren(XFA_Element eType, bool bOnlyChild = false);
-  CXFA_Node* GetChild(int32_t index,
-                      XFA_Element eType,
-                      bool bOnlyChild = false);
+  int32_t CountChildren(XFA_Element eType, bool bOnlyChild);
+  CXFA_Node* GetChild(int32_t index, XFA_Element eType, bool bOnlyChild);
   int32_t InsertChild(int32_t index, CXFA_Node* pNode);
   bool InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = nullptr);
   bool RemoveChild(CXFA_Node* pNode, bool bNotify = true);
+
   CXFA_Node* Clone(bool bRecursive);
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_ObjectType eType) const;

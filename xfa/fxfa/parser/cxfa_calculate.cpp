@@ -18,15 +18,15 @@ int32_t CXFA_Calculate::GetOverride() {
 }
 
 CXFA_Script CXFA_Calculate::GetScript() {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script));
+  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
 void CXFA_Calculate::GetMessageText(WideString& wsMessage) {
-  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Message);
+  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Message, false);
   if (!pNode)
     return;
 
-  CXFA_Text text(pNode->GetChild(0, XFA_Element::Text));
+  CXFA_Text text(pNode->GetChild(0, XFA_Element::Text, false));
   if (text)
     text.GetContent(wsMessage);
 }

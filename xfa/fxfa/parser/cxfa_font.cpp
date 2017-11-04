@@ -90,6 +90,6 @@ void CXFA_Font::SetColor(FX_ARGB color) {
 }
 
 FX_ARGB CXFA_Font::GetColor() {
-  CXFA_Fill fill(m_pNode->GetChild(0, XFA_Element::Fill));
+  CXFA_Fill fill(m_pNode->GetChild(0, XFA_Element::Fill, false));
   return fill ? fill.GetColor(true) : 0xFF000000;
 }

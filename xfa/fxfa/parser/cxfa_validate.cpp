@@ -114,10 +114,10 @@ void CXFA_Validate::SetScriptMessageText(WideString wsMessage) {
 }
 
 void CXFA_Validate::GetPicture(WideString& wsPicture) {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Picture))
+  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Picture, false))
     pNode->JSNode()->TryContent(wsPicture, false, true);
 }
 
 CXFA_Script CXFA_Validate::GetScript() {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script));
+  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script, false));
 }

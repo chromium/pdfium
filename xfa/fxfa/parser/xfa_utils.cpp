@@ -130,7 +130,7 @@ int XFA_GetMaxFractionalScale() {
 
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
   CXFA_Node* pNodeValue =
-      pWidgetData->GetNode()->GetChild(0, XFA_Element::Value);
+      pWidgetData->GetNode()->GetChild(0, XFA_Element::Value, false);
   if (!pNodeValue) {
     return CXFA_LocaleValue();
   }
@@ -216,7 +216,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
   if (!pFieldNode)
     return bRet;
 
-  CXFA_Node* pUIChild = pFieldNode->GetChild(0, XFA_Element::Ui);
+  CXFA_Node* pUIChild = pFieldNode->GetChild(0, XFA_Element::Ui, false);
   if (pUIChild) {
     CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pFirstChild &&

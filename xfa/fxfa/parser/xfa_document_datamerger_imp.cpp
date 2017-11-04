@@ -203,7 +203,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (pChild->GetElementType() != XFA_Element::Field)
             continue;
 
-          CXFA_Node* pValue = pChild->GetChild(0, XFA_Element::Value);
+          CXFA_Node* pValue = pChild->GetChild(0, XFA_Element::Value, false);
           if (!pValue)
             continue;
 
@@ -212,7 +212,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (wsValue.IsEmpty())
             continue;
 
-          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items);
+          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items, false);
           if (!pItems)
             continue;
 
@@ -244,7 +244,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
           CXFA_Node* pValue =
               pChild->JSNode()->GetProperty(0, XFA_Element::Value, true);
-          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items);
+          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items, false);
           CXFA_Node* pText =
               pItems ? pItems->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr;
           if (pText)

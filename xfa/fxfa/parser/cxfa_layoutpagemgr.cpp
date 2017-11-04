@@ -308,7 +308,7 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     return false;
 
   CXFA_Document* pDocument = pTemplateNode->GetDocument();
-  pPageArea = m_pTemplatePageSetRoot->GetChild(0, XFA_Element::PageArea);
+  pPageArea = m_pTemplatePageSetRoot->GetChild(0, XFA_Element::PageArea, false);
   if (!pPageArea) {
     pPageArea = pDocument->CreateNode(m_pTemplatePageSetRoot->GetPacketID(),
                                       XFA_Element::PageArea);
@@ -318,7 +318,8 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     m_pTemplatePageSetRoot->InsertChild(pPageArea, nullptr);
     pPageArea->SetFlag(XFA_NodeFlag_Initialized, true);
   }
-  CXFA_Node* pContentArea = pPageArea->GetChild(0, XFA_Element::ContentArea);
+  CXFA_Node* pContentArea =
+      pPageArea->GetChild(0, XFA_Element::ContentArea, false);
   if (!pContentArea) {
     pContentArea = pDocument->CreateNode(pPageArea->GetPacketID(),
                                          XFA_Element::ContentArea);
@@ -336,7 +337,7 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     pContentArea->JSNode()->SetMeasure(
         XFA_ATTRIBUTE_H, CXFA_Measurement(10.5f, XFA_UNIT_In), false);
   }
-  CXFA_Node* pMedium = pPageArea->GetChild(0, XFA_Element::Medium);
+  CXFA_Node* pMedium = pPageArea->GetChild(0, XFA_Element::Medium, false);
   if (!pMedium) {
     pMedium =
         pDocument->CreateNode(pPageArea->GetPacketID(), XFA_Element::Medium);

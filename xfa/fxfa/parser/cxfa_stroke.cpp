@@ -48,7 +48,7 @@ FX_ARGB CXFA_Stroke::GetColor() const {
   if (!m_pNode)
     return 0xFF000000;
 
-  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color);
+  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color, false);
   if (!pNode)
     return 0xFF000000;
 

@@ -18,5 +18,5 @@ bool CXFA_Line::GetSlope() {
 }
 
 CXFA_Edge CXFA_Line::GetEdge() {
-  return CXFA_Edge(m_pNode->GetChild(0, XFA_Element::Edge));
+  return CXFA_Edge(m_pNode->GetChild(0, XFA_Element::Edge, false));
 }

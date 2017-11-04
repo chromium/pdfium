@@ -218,13 +218,13 @@ void CXFA_WidgetAcc::ResetData() {
           SetValue(wsValue, XFA_VALUEPICTURE_Raw);
           pAcc->SetValue(wsValue, XFA_VALUEPICTURE_Raw);
         } else {
-          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items);
+          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items, false);
           if (!pItems)
             continue;
 
           WideString itemText;
-          if (pItems->CountChildren(XFA_Element::Unknown) > 1) {
-            itemText = pItems->GetChild(1, XFA_Element::Unknown)
+          if (pItems->CountChildren(XFA_Element::Unknown, false) > 1) {
+            itemText = pItems->GetChild(1, XFA_Element::Unknown, false)
                            ->JSNode()
                            ->GetContent(false);
           }

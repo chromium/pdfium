@@ -113,7 +113,7 @@ void CXFA_FFDocView::StopLayout() {
   if (!pRootItem)
     return;
 
-  CXFA_Node* pSubformNode = pRootItem->GetChild(0, XFA_Element::Subform);
+  CXFA_Node* pSubformNode = pRootItem->GetChild(0, XFA_Element::Subform, false);
   if (!pSubformNode)
     return;
 
@@ -269,16 +269,17 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
         ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Config));
     if (pConfigItem) {
       CXFA_Node* pValidateNode = nullptr;
-      CXFA_Node* pAcrobatNode = pConfigItem->GetChild(0, XFA_Element::Acrobat);
-      pValidateNode = pAcrobatNode
-                          ? pAcrobatNode->GetChild(0, XFA_Element::Validate)
-                          : nullptr;
+      CXFA_Node* pAcrobatNode =
+          pConfigItem->GetChild(0, XFA_Element::Acrobat, false);
+      pValidateNode =
+          pAcrobatNode ? pAcrobatNode->GetChild(0, XFA_Element::Validate, false)
+                       : nullptr;
       if (!pValidateNode) {
         CXFA_Node* pPresentNode =
-            pConfigItem->GetChild(0, XFA_Element::Present);
-        pValidateNode = pPresentNode
-                            ? pPresentNode->GetChild(0, XFA_Element::Validate)
-                            : nullptr;
+            pConfigItem->GetChild(0, XFA_Element::Present, false);
+        pValidateNode = pPresentNode ? pPresentNode->GetChild(
+                                           0, XFA_Element::Validate, false)
+                                     : nullptr;
       }
       if (pValidateNode)
         wsValidateStr = pValidateNode->JSNode()->GetContent(false);
@@ -295,7 +296,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
     if (!pRootItem)
       return XFA_EVENTERROR_Error;
 
-    pNode = pRootItem->GetChild(0, XFA_Element::Subform);
+    pNode = pRootItem->GetChild(0, XFA_Element::Subform, false);
   }
 
   ExecEventActivityByDeepFirst(pNode, pParam->m_eType, pParam->m_bIsFormReady,

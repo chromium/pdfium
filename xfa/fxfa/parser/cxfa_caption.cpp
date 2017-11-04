@@ -30,15 +30,16 @@ float CXFA_Caption::GetReserve() {
 }
 
 CXFA_Margin CXFA_Caption::GetMargin() {
-  return CXFA_Margin(m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin)
+  return CXFA_Margin(m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false)
                              : nullptr);
 }
 
 CXFA_Font CXFA_Caption::GetFont() {
-  return CXFA_Font(m_pNode ? m_pNode->GetChild(0, XFA_Element::Font) : nullptr);
+  return CXFA_Font(m_pNode ? m_pNode->GetChild(0, XFA_Element::Font, false)
+                           : nullptr);
 }
 
 CXFA_Value CXFA_Caption::GetValue() {
-  return CXFA_Value(m_pNode ? m_pNode->GetChild(0, XFA_Element::Value)
+  return CXFA_Value(m_pNode ? m_pNode->GetChild(0, XFA_Element::Value, false)
                             : nullptr);
 }

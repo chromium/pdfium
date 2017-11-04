@@ -37,7 +37,8 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
     CXFA_Node* pElementNode = m_pWidgetAcc->GetNode();
-    CXFA_Node* pValueNode = pElementNode->GetChild(0, XFA_Element::Value);
+    CXFA_Node* pValueNode =
+        pElementNode->GetChild(0, XFA_Element::Value, false);
     if (!pValueNode)
       return nullptr;
 
@@ -71,11 +72,12 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
   if (m_eType == XFA_TEXTPROVIDERTYPE_Caption) {
     CXFA_Node* pCaptionNode =
-        m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
+        m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption, false);
     if (!pCaptionNode)
       return nullptr;
 
-    CXFA_Node* pValueNode = pCaptionNode->GetChild(0, XFA_Element::Value);
+    CXFA_Node* pValueNode =
+        pCaptionNode->GetChild(0, XFA_Element::Value, false);
     if (!pValueNode)
       return nullptr;
 
@@ -91,7 +93,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   }
 
   CXFA_Node* pItemNode =
-      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Items);
+      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Items, false);
   if (!pItemNode)
     return nullptr;
 
@@ -113,16 +115,18 @@ CXFA_Para CXFA_TextProvider::GetParaNode() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
     return m_pWidgetAcc->GetPara();
 
-  CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
-  return CXFA_Para(pNode->GetChild(0, XFA_Element::Para));
+  CXFA_Node* pNode =
+      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption, false);
+  return CXFA_Para(pNode->GetChild(0, XFA_Element::Para, false));
 }
 
 CXFA_Font CXFA_TextProvider::GetFontNode() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
     return m_pWidgetAcc->GetFont(false);
 
-  CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption);
-  pNode = pNode->GetChild(0, XFA_Element::Font);
+  CXFA_Node* pNode =
+      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption, false);
+  pNode = pNode->GetChild(0, XFA_Element::Font, false);
   return pNode ? CXFA_Font(pNode) : m_pWidgetAcc->GetFont(false);
 }
 

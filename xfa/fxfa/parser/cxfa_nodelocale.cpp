@@ -69,7 +69,7 @@ WideString CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const {
 
 WideString CXFA_NodeLocale::GetDateTimeSymbols() const {
   CXFA_Node* pSymbols =
-      m_pLocale ? m_pLocale->GetChild(0, XFA_Element::DateTimeSymbols)
+      m_pLocale ? m_pLocale->GetChild(0, XFA_Element::DateTimeSymbols, false)
                 : nullptr;
   return pSymbols ? pSymbols->JSNode()->GetContent(false) : WideString();
 }
@@ -147,7 +147,8 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
 
 WideString CXFA_NodeLocale::GetSymbol(XFA_Element eElement,
                                       const WideStringView& symbol_type) const {
-  CXFA_Node* pSymbols = m_pLocale ? m_pLocale->GetChild(0, eElement) : nullptr;
+  CXFA_Node* pSymbols =
+      m_pLocale ? m_pLocale->GetChild(0, eElement, false) : nullptr;
   CXFA_Node* pSymbol = GetNodeByName(pSymbols, symbol_type);
   return pSymbol ? pSymbol->JSNode()->GetContent(false) : WideString();
 }
@@ -156,7 +157,7 @@ WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
                                               int index,
                                               bool bAbbr) const {
   CXFA_Node* pCalendar =
-      m_pLocale ? m_pLocale->GetChild(0, XFA_Element::CalendarSymbols)
+      m_pLocale ? m_pLocale->GetChild(0, XFA_Element::CalendarSymbols, false)
                 : nullptr;
   if (!pCalendar)
     return WideString();
@@ -164,7 +165,7 @@ WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
   CXFA_Node* pNode = pCalendar->GetFirstChildByClass(eElement);
   for (; pNode; pNode = pNode->GetNextSameClassSibling(eElement)) {
     if (pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_Abbr) == bAbbr) {
-      CXFA_Node* pSymbol = pNode->GetChild(index, XFA_Element::Unknown);
+      CXFA_Node* pSymbol = pNode->GetChild(index, XFA_Element::Unknown, false);
       return pSymbol ? pSymbol->JSNode()->GetContent(false) : WideString();
     }
   }

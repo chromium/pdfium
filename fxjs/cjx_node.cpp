@@ -3527,7 +3527,8 @@ bool CJX_Node::TryContent(WideString& wsContent,
       if (GetXFANode()->GetElementType() == XFA_Element::ExclGroup) {
         pNode = GetXFANode();
       } else {
-        CXFA_Node* pValue = GetXFANode()->GetChild(0, XFA_Element::Value);
+        CXFA_Node* pValue =
+            GetXFANode()->GetChild(0, XFA_Element::Value, false);
         if (!pValue) {
           return false;
         }

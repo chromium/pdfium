@@ -90,7 +90,7 @@ int32_t CXFA_Box::GetPresence() const {
 int32_t CXFA_Box::CountEdges() const {
   if (!m_pNode)
     return 0;
-  return m_pNode->CountChildren(XFA_Element::Edge);
+  return m_pNode->CountChildren(XFA_Element::Edge, false);
 }
 
 CXFA_Edge CXFA_Box::GetEdge(int32_t nIndex) const {
@@ -147,7 +147,7 @@ CXFA_Fill CXFA_Box::GetFill(bool bModified) const {
 }
 
 CXFA_Margin CXFA_Box::GetMargin() const {
-  return CXFA_Margin(m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin)
+  return CXFA_Margin(m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false)
                              : nullptr);
 }
 

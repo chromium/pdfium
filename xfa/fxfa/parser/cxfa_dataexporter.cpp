@@ -280,8 +280,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       if (pNode->GetElementType() == XFA_Element::Items) {
         CXFA_Node* pTemplateNode = pNode->GetTemplateNode();
         if (!pTemplateNode ||
-            pTemplateNode->CountChildren(XFA_Element::Unknown) !=
-                pNode->CountChildren(XFA_Element::Unknown)) {
+            pTemplateNode->CountChildren(XFA_Element::Unknown, false) !=
+                pNode->CountChildren(XFA_Element::Unknown, false)) {
           bSaveXML = true;
         }
       }

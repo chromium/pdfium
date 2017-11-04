@@ -31,11 +31,11 @@ void CXFA_Event::GetRef(WideStringView& wsRef) {
 }
 
 CXFA_Script CXFA_Event::GetScript() const {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script));
+  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
 CXFA_Submit CXFA_Event::GetSubmit() const {
-  return CXFA_Submit(m_pNode->GetChild(0, XFA_Element::Submit));
+  return CXFA_Submit(m_pNode->GetChild(0, XFA_Element::Submit, false));
 }
 
 void CXFA_Event::GetSignDataTarget(WideString& wsTarget) {
