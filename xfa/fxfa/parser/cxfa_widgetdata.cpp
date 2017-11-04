@@ -969,7 +969,7 @@ void CXFA_WidgetData::ClearAllSelections() {
   }
 
   while (CXFA_Node* pChildNode = pBind->GetNodeItem(XFA_NODEITEM_FirstChild))
-    pBind->RemoveChild(pChildNode);
+    pBind->RemoveChild(pChildNode, true);
 }
 
 void CXFA_WidgetData::InsertItem(const WideString& wsLabel,
@@ -1133,7 +1133,7 @@ bool CXFA_WidgetData::DeleteItem(int32_t nIndex,
 
     if (nIndex < 0) {
       while (CXFA_Node* pNode = pItems->GetNodeItem(XFA_NODEITEM_FirstChild)) {
-        pItems->RemoveChild(pNode);
+        pItems->RemoveChild(pNode, true);
       }
     } else {
       if (!bSetValue && pItems->JSNode()->GetBoolean(XFA_ATTRIBUTE_Save)) {
@@ -1144,7 +1144,7 @@ bool CXFA_WidgetData::DeleteItem(int32_t nIndex,
       CXFA_Node* pNode = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
       while (pNode) {
         if (i == nIndex) {
-          pItems->RemoveChild(pNode);
+          pItems->RemoveChild(pNode, true);
           break;
         }
         i++;

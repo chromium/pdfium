@@ -100,8 +100,8 @@ class CXFA_Node : public CXFA_Object {
   int32_t CountChildren(XFA_Element eType, bool bOnlyChild);
   CXFA_Node* GetChild(int32_t index, XFA_Element eType, bool bOnlyChild);
   int32_t InsertChild(int32_t index, CXFA_Node* pNode);
-  bool InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = nullptr);
-  bool RemoveChild(CXFA_Node* pNode, bool bNotify = true);
+  bool InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode);
+  bool RemoveChild(CXFA_Node* pNode, bool bNotify);
 
   CXFA_Node* Clone(bool bRecursive);
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;

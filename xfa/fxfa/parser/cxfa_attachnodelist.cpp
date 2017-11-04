@@ -23,21 +23,21 @@ int32_t CXFA_AttachNodeList::GetLength() {
 bool CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
   CXFA_Node* pParent = pNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParent)
-    pParent->RemoveChild(pNode);
+    pParent->RemoveChild(pNode, true);
 
-  return m_pAttachNode->InsertChild(pNode);
+  return m_pAttachNode->InsertChild(pNode, nullptr);
 }
 
 bool CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   CXFA_Node* pParent = pNewNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParent)
-    pParent->RemoveChild(pNewNode);
+    pParent->RemoveChild(pNewNode, true);
 
   return m_pAttachNode->InsertChild(pNewNode, pBeforeNode);
 }
 
 bool CXFA_AttachNodeList::Remove(CXFA_Node* pNode) {
-  return m_pAttachNode->RemoveChild(pNode);
+  return m_pAttachNode->RemoveChild(pNode, true);
 }
 
 CXFA_Node* CXFA_AttachNodeList::Item(int32_t iIndex) {

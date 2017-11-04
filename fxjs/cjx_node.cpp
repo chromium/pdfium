@@ -792,15 +792,15 @@ void CJX_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     int32_t index = 0;
     while (pNewChild) {
       CXFA_Node* pItem = pNewChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-      pFakeRoot->RemoveChild(pNewChild);
+      pFakeRoot->RemoveChild(pNewChild, true);
       GetXFANode()->InsertChild(index++, pNewChild);
       pNewChild->SetFlag(XFA_NodeFlag_Initialized, true);
       pNewChild = pItem;
     }
     while (pChild) {
       CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-      GetXFANode()->RemoveChild(pChild);
-      pFakeRoot->InsertChild(pChild);
+      GetXFANode()->RemoveChild(pChild, true);
+      pFakeRoot->InsertChild(pChild, nullptr);
       pChild = pItem;
     }
     if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Form &&
@@ -818,8 +818,8 @@ void CJX_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     CXFA_Node* pChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pChild) {
       CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-      pFakeRoot->RemoveChild(pChild);
-      GetXFANode()->InsertChild(pChild);
+      pFakeRoot->RemoveChild(pChild, true);
+      GetXFANode()->InsertChild(pChild, nullptr);
       pChild->SetFlag(XFA_NodeFlag_Initialized, true);
       pChild = pItem;
     }
@@ -1274,7 +1274,7 @@ void CJX_Node::Script_Attribute_String(CFXJSE_Value* pValue,
         while (pHeadChild) {
           CXFA_Node* pSibling =
               pHeadChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-          GetXFANode()->RemoveChild(pHeadChild);
+          GetXFANode()->RemoveChild(pHeadChild, true);
           pHeadChild = pSibling;
         }
         CXFA_Node* pProtoForm = pProtoNode->CloneTemplateToForm(true);
@@ -1282,8 +1282,8 @@ void CJX_Node::Script_Attribute_String(CFXJSE_Value* pValue,
         while (pHeadChild) {
           CXFA_Node* pSibling =
               pHeadChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-          pProtoForm->RemoveChild(pHeadChild);
-          GetXFANode()->InsertChild(pHeadChild);
+          pProtoForm->RemoveChild(pHeadChild, true);
+          GetXFANode()->InsertChild(pHeadChild, nullptr);
           pHeadChild = pSibling;
         }
         GetDocument()->RemovePurgeNode(pProtoForm);
@@ -3380,7 +3380,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
           if (iSize == 0) {
             while (CXFA_Node* pChildNode =
                        pBind->GetNodeItem(XFA_NODEITEM_FirstChild)) {
-              pBind->RemoveChild(pChildNode);
+              pBind->RemoveChild(pChildNode, true);
             }
           } else {
             std::vector<CXFA_Node*> valueNodes = pBind->GetNodeList(
@@ -3395,13 +3395,14 @@ bool CJX_Node::SetContent(const WideString& wsContent,
                 pValueNodes->JSNode()->SetCData(XFA_ATTRIBUTE_Name, L"value",
                                                 false, false);
                 pValueNodes->CreateXMLMappingNode();
-                pBind->InsertChild(pValueNodes);
+                pBind->InsertChild(pValueNodes, nullptr);
               }
               pValueNodes = nullptr;
             } else if (iDatas > iSize) {
               size_t iDelNodes = iDatas - iSize;
               while (iDelNodes-- > 0) {
-                pBind->RemoveChild(pBind->GetNodeItem(XFA_NODEITEM_FirstChild));
+                pBind->RemoveChild(pBind->GetNodeItem(XFA_NODEITEM_FirstChild),
+                                   true);
               }
             }
             int32_t i = 0;
@@ -3465,7 +3466,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
         pContentRawDataNode = GetXFANode()->CreateSamePacketNode(
             (wsContentType == L"text/xml") ? XFA_Element::Sharpxml
                                            : XFA_Element::Sharptext);
-        GetXFANode()->InsertChild(pContentRawDataNode);
+        GetXFANode()->InsertChild(pContentRawDataNode, nullptr);
       }
       return pContentRawDataNode->JSNode()->SetContent(
           wsContent, wsXMLValue, bNotify, bScriptModify, bSyncData);
@@ -3557,7 +3558,7 @@ bool CJX_Node::TryContent(WideString& wsContent,
           }
         }
         pContentRawDataNode = GetXFANode()->CreateSamePacketNode(element);
-        GetXFANode()->InsertChild(pContentRawDataNode);
+        GetXFANode()->InsertChild(pContentRawDataNode, nullptr);
       }
       return pContentRawDataNode->JSNode()->TryContent(wsContent, bScriptModify,
                                                        true);

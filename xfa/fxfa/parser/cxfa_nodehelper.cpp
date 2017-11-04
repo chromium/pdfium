@@ -342,7 +342,7 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
     for (int32_t iIndex = 0; iIndex < m_iCreateCount; iIndex++) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eType);
       if (pNewNode) {
-        m_pCreateParent->InsertChild(pNewNode);
+        m_pCreateParent->InsertChild(pNewNode, nullptr);
         if (iIndex == m_iCreateCount - 1) {
           m_pCreateParent = pNewNode;
         }
@@ -360,7 +360,7 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
         pNewNode->JSNode()->SetAttribute(XFA_ATTRIBUTE_Name,
                                          wsName.AsStringView(), false);
         pNewNode->CreateXMLMappingNode();
-        m_pCreateParent->InsertChild(pNewNode);
+        m_pCreateParent->InsertChild(pNewNode, nullptr);
         if (iIndex == m_iCreateCount - 1) {
           m_pCreateParent = pNewNode;
         }

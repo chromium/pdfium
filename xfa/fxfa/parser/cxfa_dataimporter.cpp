@@ -46,20 +46,20 @@ bool CXFA_DataImporter::ImportData(
 
   CXFA_Node* pDataNode = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Data));
   if (pDataNode)
-    pDataModel->RemoveChild(pDataNode);
+    pDataModel->RemoveChild(pDataNode, true);
 
   if (pImportDataRoot->GetElementType() == XFA_Element::DataModel) {
     while (CXFA_Node* pChildNode =
                pImportDataRoot->GetNodeItem(XFA_NODEITEM_FirstChild)) {
-      pImportDataRoot->RemoveChild(pChildNode);
-      pDataModel->InsertChild(pChildNode);
+      pImportDataRoot->RemoveChild(pChildNode, true);
+      pDataModel->InsertChild(pChildNode, nullptr);
     }
   } else {
     CFX_XMLNode* pXMLNode = pImportDataRoot->GetXMLMappingNode();
     CFX_XMLNode* pParentXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::Parent);
     if (pParentXMLNode)
       pParentXMLNode->RemoveChildNode(pXMLNode);
-    pDataModel->InsertChild(pImportDataRoot);
+    pDataModel->InsertChild(pImportDataRoot, nullptr);
   }
   m_pDocument->DoDataRemerge(false);
   return true;

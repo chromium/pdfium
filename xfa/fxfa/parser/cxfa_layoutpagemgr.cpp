@@ -1791,7 +1791,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
                 }
               }
               if (pExistingNode) {
-                pParentNode->RemoveChild(pExistingNode);
+                pParentNode->RemoveChild(pExistingNode, true);
               }
             }
             pContainerItem->m_pOldSubform = pNewSubform;
@@ -1825,7 +1825,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           pDocument->GetXFAObject(XFA_HASHCODE_Form)
               ->AsNode()
               ->GetFirstChildByClass(XFA_Element::Subform);
-      pFormToplevelSubform->InsertChild(pPendingPageSet);
+      pFormToplevelSubform->InsertChild(pPendingPageSet, nullptr);
     }
     pDocument->DataMerge_UpdateBindingRelations(pPendingPageSet);
     pPendingPageSet->SetFlag(XFA_NodeFlag_Initialized, true);
@@ -1862,7 +1862,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
             }
           }
           CXFA_Node* pNext = sIterator.SkipChildrenAndMoveToNext();
-          pNode->GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pNode);
+          pNode->GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pNode, true);
           pNode = pNext;
         } else {
           pNode->ClearFlag(XFA_NodeFlag_UnusedNode);

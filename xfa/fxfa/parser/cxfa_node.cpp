@@ -128,7 +128,7 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
           pBeforeNode = pLastNode->GetNodeItem(XFA_NODEITEM_NextSibling);
         }
         for (auto* pCurNode : rgNodeArray1) {
-          pParentNode->RemoveChild(pCurNode);
+          pParentNode->RemoveChild(pCurNode, true);
           pParentNode->InsertChild(pCurNode, pBeforeNode);
         }
       }
@@ -207,7 +207,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
   if (bRecursive) {
     for (CXFA_Node* pChild = GetNodeItem(XFA_NODEITEM_FirstChild); pChild;
          pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      pClone->InsertChild(pChild->Clone(bRecursive));
+      pClone->InsertChild(pChild->Clone(bRecursive), nullptr);
     }
   }
   pClone->SetFlag(XFA_NodeFlag_Initialized, true);
@@ -357,7 +357,7 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
   if (bRecursive) {
     for (CXFA_Node* pChild = GetNodeItem(XFA_NODEITEM_FirstChild); pChild;
          pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      pClone->InsertChild(pChild->CloneTemplateToForm(bRecursive));
+      pClone->InsertChild(pChild->CloneTemplateToForm(bRecursive), nullptr);
     }
   }
   pClone->SetFlag(XFA_NodeFlag_Initialized, true);
@@ -1887,7 +1887,7 @@ void CXFA_Node::InsertItem(CXFA_Node* pNewInstance,
 
 void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
                            bool bRemoveDataBinding) {
-  GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pRemoveInstance);
+  GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pRemoveInstance, true);
   if (!bRemoveDataBinding)
     return;
 
@@ -1902,7 +1902,7 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
     if (pDataNode->RemoveBindItem(pFormNode) == 0) {
       if (CXFA_Node* pDataParent =
               pDataNode->GetNodeItem(XFA_NODEITEM_Parent)) {
-        pDataParent->RemoveChild(pDataNode);
+        pDataParent->RemoveChild(pDataNode, true);
       }
     }
     pFormNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
@@ -1929,7 +1929,7 @@ CXFA_Node* CXFA_Node::CreateInstance(bool bDataMerge) {
       pTemplateNode, pFormParent, pDataScope, true, bDataMerge, true);
   if (pInstance) {
     pDocument->DataMerge_UpdateBindingRelations(pInstance);
-    pFormParent->RemoveChild(pInstance);
+    pFormParent->RemoveChild(pInstance, true);
   }
   return pInstance;
 }
