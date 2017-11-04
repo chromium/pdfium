@@ -63,11 +63,11 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* CreateInstance(bool bDataMerge);
   int32_t GetCount();
   CXFA_Node* GetItem(int32_t iIndex);
-  void RemoveItem(CXFA_Node* pRemoveInstance, bool bRemoveDataBinding = true);
+  void RemoveItem(CXFA_Node* pRemoveInstance, bool bRemoveDataBinding);
   void InsertItem(CXFA_Node* pNewInstance,
                   int32_t iPos,
-                  int32_t iCount = -1,
-                  bool bMoveDataBindingNodes = true);
+                  int32_t iCount,
+                  bool bMoveDataBindingNodes);
 
   bool IsInitialized() const { return HasFlag(XFA_NodeFlag_Initialized); }
   bool IsOwnXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }

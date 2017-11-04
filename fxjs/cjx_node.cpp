@@ -378,7 +378,7 @@ int32_t CJX_Node::InstanceManager_SetInstances(int32_t iDesired) {
         break;
       }
       if (pRemoveInstance->GetNameHash() == dInstanceNameHash) {
-        GetXFANode()->RemoveItem(pRemoveInstance);
+        GetXFANode()->RemoveItem(pRemoveInstance, true);
         iCount--;
       }
     }
@@ -2510,7 +2510,7 @@ void CJX_Node::Script_InstanceManager_RemoveInstance(
     return;
   }
   CXFA_Node* pRemoveInstance = GetXFANode()->GetItem(iIndex);
-  GetXFANode()->RemoveItem(pRemoveInstance);
+  GetXFANode()->RemoveItem(pRemoveInstance, true);
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     for (int32_t i = iIndex; i < iCount - 1; i++) {
