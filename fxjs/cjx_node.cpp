@@ -3894,9 +3894,9 @@ void CJX_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
                                  CXFA_Node* pDstModule,
                                  void* pKey,
                                  bool bRecursive) {
-  if (!pSrcModule || !pDstModule || !pKey) {
+  if (!pSrcModule || !pDstModule || !pKey)
     return;
-  }
+
   if (bRecursive) {
     CXFA_Node* pSrcChild = pSrcModule->GetNodeItem(XFA_NODEITEM_FirstChild);
     CXFA_Node* pDstChild = pDstModule->GetNodeItem(XFA_NODEITEM_FirstChild);
