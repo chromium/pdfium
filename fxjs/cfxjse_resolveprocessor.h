@@ -29,7 +29,7 @@ class CFXJSE_ResolveNodeData {
   std::vector<CXFA_Object*> m_Objects;  // Not owned.
   uint32_t m_dwStyles;
   const XFA_SCRIPTATTRIBUTEINFO* m_pScriptAttribute;
-  XFA_RESOVENODE_RSTYPE m_dwFlag;
+  XFA_RESOLVENODE_RSTYPE m_dwFlag;
 };
 
 class CFXJSE_ResolveProcessor {

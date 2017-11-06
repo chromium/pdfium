@@ -10,6 +10,8 @@
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/fxjse.h"
 
+class CFXJSE_Arguments;
+class CJX_Object;
 class CXFA_Measurement;
 enum class XFA_ObjectType;
 
@@ -998,19 +1000,16 @@ struct XFA_NOTSUREATTRIBUTE {
   void* pValue;
 };
 
-class CFXJSE_Arguments;
-class CXFA_Object;
-
-typedef void (CXFA_Object::*XFA_METHOD_CALLBACK)(CFXJSE_Arguments* pArguments);
+typedef void (CJX_Object::*XFA_METHOD_CALLBACK)(CFXJSE_Arguments* pArguments);
 struct XFA_METHODINFO {
   uint32_t uHash;
   const wchar_t* pName;
-  XFA_METHOD_CALLBACK lpfnCallback;
+  XFA_METHOD_CALLBACK callback;
 };
 
-typedef void (CXFA_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
-                                                    bool bSetting,
-                                                    XFA_ATTRIBUTE eAttribute);
+typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
+                                                   bool bSetting,
+                                                   XFA_ATTRIBUTE eAttribute);
 enum XFA_SCRIPT_TYPE {
   XFA_SCRIPT_Basic,
   XFA_SCRIPT_Object,
@@ -1018,7 +1017,7 @@ enum XFA_SCRIPT_TYPE {
 struct XFA_SCRIPTATTRIBUTEINFO {
   uint32_t uHash;
   const wchar_t* pName;
-  XFA_ATTRIBUTE_CALLBACK lpfnCallback;
+  XFA_ATTRIBUTE_CALLBACK callback;
   int32_t eAttribute;
   uint16_t eValueType;
 };

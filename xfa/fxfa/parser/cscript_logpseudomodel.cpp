@@ -17,23 +17,3 @@ CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
                   pdfium::MakeUnique<CJX_LogPseudoModel>(this)) {}
 
 CScript_LogPseudoModel::~CScript_LogPseudoModel() {}
-
-void CScript_LogPseudoModel::Message(CFXJSE_Arguments* pArguments) {
-  JSLogPseudoModel()->Message(pArguments);
-}
-
-void CScript_LogPseudoModel::TraceEnabled(CFXJSE_Arguments* pArguments) {
-  JSLogPseudoModel()->TraceEnabled(pArguments);
-}
-
-void CScript_LogPseudoModel::TraceActivate(CFXJSE_Arguments* pArguments) {
-  JSLogPseudoModel()->TraceActivate(pArguments);
-}
-
-void CScript_LogPseudoModel::TraceDeactivate(CFXJSE_Arguments* pArguments) {
-  JSLogPseudoModel()->TraceDeactivate(pArguments);
-}
-
-void CScript_LogPseudoModel::Trace(CFXJSE_Arguments* pArguments) {
-  JSLogPseudoModel()->Trace(pArguments);
-}

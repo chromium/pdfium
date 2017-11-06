@@ -36,30 +36,3 @@ CXFA_Node* CXFA_NodeList::NamedItem(const WideStringView& wsName) {
   }
   return nullptr;
 }
-
-void CXFA_NodeList::Script_ListClass_Append(CFXJSE_Arguments* pArguments) {
-  JSNodeList()->Script_ListClass_Append(pArguments);
-}
-
-void CXFA_NodeList::Script_ListClass_Insert(CFXJSE_Arguments* pArguments) {
-  JSNodeList()->Script_ListClass_Insert(pArguments);
-}
-
-void CXFA_NodeList::Script_ListClass_Remove(CFXJSE_Arguments* pArguments) {
-  JSNodeList()->Script_ListClass_Remove(pArguments);
-}
-
-void CXFA_NodeList::Script_ListClass_Item(CFXJSE_Arguments* pArguments) {
-  JSNodeList()->Script_ListClass_Item(pArguments);
-}
-
-void CXFA_NodeList::Script_TreelistClass_NamedItem(
-    CFXJSE_Arguments* pArguments) {
-  JSNodeList()->Script_TreelistClass_NamedItem(pArguments);
-}
-
-void CXFA_NodeList::Script_ListClass_Length(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_ATTRIBUTE eAttribute) {
-  JSNodeList()->Script_ListClass_Length(pValue, bSetting, eAttribute);
-}

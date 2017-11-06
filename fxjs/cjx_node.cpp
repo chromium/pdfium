@@ -450,24 +450,25 @@ void CJX_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
   uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                     XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                     XFA_RESOLVENODE_Siblings;
-  XFA_RESOLVENODE_RS resoveNodeRS;
+  XFA_RESOLVENODE_RS resolveNodeRS;
   int32_t iRet = pScriptContext->ResolveObjects(
-      refNode, wsExpression.AsStringView(), resoveNodeRS, dwFlag);
+      refNode, wsExpression.AsStringView(), resolveNodeRS, dwFlag);
   if (iRet < 1) {
     pArguments->GetReturnValue()->SetNull();
     return;
   }
-  if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-    CXFA_Object* pObject = resoveNodeRS.objects.front();
+  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+    CXFA_Object* pObject = resolveNodeRS.objects.front();
     pArguments->GetReturnValue()->Assign(
         pScriptContext->GetJSValueFromMap(pObject));
   } else {
     const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
-        resoveNodeRS.pScriptAttribute;
+        resolveNodeRS.pScriptAttribute;
     if (lpAttributeInfo && lpAttributeInfo->eValueType == XFA_SCRIPT_Object) {
       auto pValue =
           pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetRuntime());
-      (resoveNodeRS.objects.front()->*(lpAttributeInfo->lpfnCallback))(
+      CJX_Object* jsObject = resolveNodeRS.objects.front()->JSObject();
+      (jsObject->*(lpAttributeInfo->callback))(
           pValue.get(), false, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
       pArguments->GetReturnValue()->Assign(pValue.get());
     } else {
@@ -503,20 +504,20 @@ void CJX_Node::ResolveNodeList(CFXJSE_Value* pValue,
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;
-  XFA_RESOLVENODE_RS resoveNodeRS;
+  XFA_RESOLVENODE_RS resolveNodeRS;
   if (!refNode)
     refNode = GetXFANode();
   pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
-                                 resoveNodeRS, dwFlag);
+                                 resolveNodeRS, dwFlag);
   CXFA_ArrayNodeList* pNodeList = new CXFA_ArrayNodeList(GetDocument());
-  if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-    for (CXFA_Object* pObject : resoveNodeRS.objects) {
+  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+    for (CXFA_Object* pObject : resolveNodeRS.objects) {
       if (pObject->IsNode())
         pNodeList->Append(pObject->AsNode());
     }
   } else {
     CXFA_ValueArray valueArray(pScriptContext->GetRuntime());
-    if (resoveNodeRS.GetAttributeResult(&valueArray) > 0) {
+    if (resolveNodeRS.GetAttributeResult(&valueArray) > 0) {
       for (CXFA_Object* pObject : valueArray.GetAttributeObject()) {
         if (pObject->IsNode())
           pNodeList->Append(pObject->AsNode());
@@ -1268,11 +1269,11 @@ void CJX_Node::Script_Attribute_String(CFXJSE_Value* pValue,
                           XFA_RESOLVENODE_Attributes |
                           XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                           XFA_RESOLVENODE_Siblings;
-        XFA_RESOLVENODE_RS resoveNodeRS;
+        XFA_RESOLVENODE_RS resolveNodeRS;
         int32_t iRet = GetDocument()->GetScriptContext()->ResolveObjects(
-            pProtoRoot, wsSOM.AsStringView(), resoveNodeRS, dwFlag);
-        if (iRet > 0 && resoveNodeRS.objects.front()->IsNode()) {
-          pProtoNode = resoveNodeRS.objects.front()->AsNode();
+            pProtoRoot, wsSOM.AsStringView(), resolveNodeRS, dwFlag);
+        if (iRet > 0 && resolveNodeRS.objects.front()->IsNode()) {
+          pProtoNode = resolveNodeRS.objects.front()->AsNode();
         }
       } else if (!wsID.IsEmpty()) {
         pProtoNode =

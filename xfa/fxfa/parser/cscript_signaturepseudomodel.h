@@ -10,8 +10,6 @@
 #include "fxjs/cjx_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
-class CFXJSE_Arguments;
-
 class CScript_SignaturePseudoModel : public CXFA_Object {
  public:
   explicit CScript_SignaturePseudoModel(CXFA_Document* pDocument);
@@ -20,11 +18,6 @@ class CScript_SignaturePseudoModel : public CXFA_Object {
   CJX_SignaturePseudoModel* JSSignaturePseudoModel() {
     return static_cast<CJX_SignaturePseudoModel*>(JSObject());
   }
-
-  void Verify(CFXJSE_Arguments* pArguments);
-  void Sign(CFXJSE_Arguments* pArguments);
-  void Enumerate(CFXJSE_Arguments* pArguments);
-  void Clear(CFXJSE_Arguments* pArguments);
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_SIGNATUREPSEUDOMODEL_H_

@@ -283,13 +283,14 @@ void CJX_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
 
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
-      XFA_RESOLVENODE_RS resoveNodeRS;
+      XFA_RESOLVENODE_RS resolveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
-          pObject, pValue->ToWideString().AsStringView(), resoveNodeRS, dwFlag);
-      if (iRet < 1 || !resoveNodeRS.objects.front()->IsNode())
+          pObject, pValue->ToWideString().AsStringView(), resolveNodeRS,
+          dwFlag);
+      if (iRet < 1 || !resolveNodeRS.objects.front()->IsNode())
         return;
 
-      pNode = resoveNodeRS.objects.front()->AsNode();
+      pNode = resolveNodeRS.objects.front()->AsNode();
     }
   }
 
@@ -386,13 +387,13 @@ void CJX_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
 
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
-    XFA_RESOLVENODE_RS resoveNodeRS;
+    XFA_RESOLVENODE_RS resolveNodeRS;
     int32_t iRet = pScriptContext->ResolveObjects(
-        pObject, wsName.AsStringView(), resoveNodeRS, dwFlag);
-    if (iRet < 1 || !resoveNodeRS.objects.front()->IsNode())
+        pObject, wsName.AsStringView(), resolveNodeRS, dwFlag);
+    if (iRet < 1 || !resolveNodeRS.objects.front()->IsNode())
       continue;
 
-    pNode = resoveNodeRS.objects.front()->AsNode();
+    pNode = resolveNodeRS.objects.front()->AsNode();
     pNotify->ResetData(pNode->GetWidgetData());
   }
   if (!pNode)
@@ -450,13 +451,14 @@ void CJX_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
 
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
-      XFA_RESOLVENODE_RS resoveNodeRS;
+      XFA_RESOLVENODE_RS resolveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
-          pObject, pValue->ToWideString().AsStringView(), resoveNodeRS, dwFlag);
-      if (iRet < 1 || !resoveNodeRS.objects.front()->IsNode())
+          pObject, pValue->ToWideString().AsStringView(), resolveNodeRS,
+          dwFlag);
+      if (iRet < 1 || !resolveNodeRS.objects.front()->IsNode())
         return;
 
-      pNode = resoveNodeRS.objects.front()->AsNode();
+      pNode = resolveNodeRS.objects.front()->AsNode();
     }
   }
   pNotify->SetFocusWidgetNode(pNode);

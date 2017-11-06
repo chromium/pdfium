@@ -409,11 +409,11 @@ void CXFA_Document::DoProtoMerge() {
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                         XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
-      XFA_RESOLVENODE_RS resoveNodeRS;
+      XFA_RESOLVENODE_RS resolveNodeRS;
       int32_t iRet = m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM,
-                                                      resoveNodeRS, dwFlag);
-      if (iRet > 0 && resoveNodeRS.objects.front()->IsNode())
-        pProtoNode = resoveNodeRS.objects.front()->AsNode();
+                                                      resolveNodeRS, dwFlag);
+      if (iRet > 0 && resolveNodeRS.objects.front()->IsNode())
+        pProtoNode = resolveNodeRS.objects.front()->AsNode();
     } else if (!wsID.IsEmpty()) {
       auto it = mIDMap.find(FX_HashCode_GetW(wsID, false));
       if (it == mIDMap.end())

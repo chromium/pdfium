@@ -14,6 +14,7 @@
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fxfa.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
 #include "xfa/fxfa/parser/cxfa_valuearray.h"
 
 #define XFA_RESOLVENODE_Children 0x0001
@@ -33,13 +34,13 @@ enum XFA_SCRIPTLANGTYPE {
   XFA_SCRIPTLANGTYPE_Unkown = XFA_SCRIPTTYPE_Unkown,
 };
 
-enum XFA_RESOVENODE_RSTYPE {
-  XFA_RESOVENODE_RSTYPE_Nodes,
-  XFA_RESOVENODE_RSTYPE_Attribute,
+enum XFA_RESOLVENODE_RSTYPE {
+  XFA_RESOLVENODE_RSTYPE_Nodes,
+  XFA_RESOLVENODE_RSTYPE_Attribute,
   XFA_RESOLVENODE_RSTYPE_CreateNodeOne,
   XFA_RESOLVENODE_RSTYPE_CreateNodeAll,
   XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll,
-  XFA_RESOVENODE_RSTYPE_ExistNodes,
+  XFA_RESOLVENODE_RSTYPE_ExistNodes,
 };
 
 struct XFA_RESOLVENODE_RS {
@@ -50,7 +51,8 @@ struct XFA_RESOLVENODE_RS {
     if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
       for (CXFA_Object* pObject : objects) {
         auto pValue = pdfium::MakeUnique<CFXJSE_Value>(valueArray->m_pIsolate);
-        (pObject->*(pScriptAttribute->lpfnCallback))(
+        CJX_Object* jsObject = pObject->JSObject();
+        (jsObject->*(pScriptAttribute->callback))(
             pValue.get(), false,
             static_cast<XFA_ATTRIBUTE>(pScriptAttribute->eAttribute));
         valueArray->m_Values.push_back(std::move(pValue));
@@ -60,12 +62,12 @@ struct XFA_RESOLVENODE_RS {
   }
 
   std::vector<CXFA_Object*> objects;  // Not owned.
-  XFA_RESOVENODE_RSTYPE dwFlags;
+  XFA_RESOLVENODE_RSTYPE dwFlags;
   const XFA_SCRIPTATTRIBUTEINFO* pScriptAttribute;
 };
 
 inline XFA_RESOLVENODE_RS::XFA_RESOLVENODE_RS()
-    : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(nullptr) {}
+    : dwFlags(XFA_RESOLVENODE_RSTYPE_Nodes), pScriptAttribute(nullptr) {}
 
 inline XFA_RESOLVENODE_RS::~XFA_RESOLVENODE_RS() {}
 

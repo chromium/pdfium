@@ -504,14 +504,14 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
     wsExpression = L"$form." + wsName;
   }
 
-  XFA_RESOLVENODE_RS resoveNodeRS;
+  XFA_RESOLVENODE_RS resolveNodeRS;
   int32_t iRet = pScriptContext->ResolveObjects(
-      refNode, wsExpression.AsStringView(), resoveNodeRS, dwStyle);
+      refNode, wsExpression.AsStringView(), resolveNodeRS, dwStyle);
   if (iRet < 1)
     return nullptr;
 
-  if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-    CXFA_Node* pNode = resoveNodeRS.objects.front()->AsNode();
+  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+    CXFA_Node* pNode = resolveNodeRS.objects.front()->AsNode();
     if (pNode)
       return static_cast<CXFA_WidgetAcc*>(pNode->GetWidgetData());
   }
@@ -729,7 +729,7 @@ void CXFA_FFDocView::RunBindItems() {
     XFA_RESOLVENODE_RS rs;
     pScriptContext->ResolveObjects(pWidgetNode, wsRef, rs, dwStyle);
     pAcc->DeleteItem(-1, false, false);
-    if (rs.dwFlags != XFA_RESOVENODE_RSTYPE_Nodes || rs.objects.empty())
+    if (rs.dwFlags != XFA_RESOLVENODE_RSTYPE_Nodes || rs.objects.empty())
       continue;
 
     WideStringView wsValueRef, wsLabelRef;

@@ -13,6 +13,8 @@
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/fxfa.h"
 
+class CXFA_Object;
+
 class CXFA_ValueArray {
  public:
   explicit CXFA_ValueArray(v8::Isolate* pIsolate);

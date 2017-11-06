@@ -10,10 +10,10 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/fxfa_basic.h"
-#include "xfa/fxfa/parser/cxfa_document.h"
 
 class CFXJSE_Value;
 class CXFA_Object;
+class CXFA_Document;
 
 class CJX_Object {
  public:

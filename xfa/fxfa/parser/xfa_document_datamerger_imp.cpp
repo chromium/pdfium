@@ -1178,7 +1178,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
           pDataNode = ToNode(pObject);
           if (pDataNode) {
             CreateDataBinding(pFormNode, pDataNode,
-                              rs.dwFlags == XFA_RESOVENODE_RSTYPE_ExistNodes);
+                              rs.dwFlags == XFA_RESOLVENODE_RSTYPE_ExistNodes);
           } else {
             FormValueNode_MatchNoneCreateChild(pFormNode);
           }

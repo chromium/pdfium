@@ -7,6 +7,7 @@
 #include "fxjs/cjx_object.h"
 
 #include "fxjs/cfxjse_value.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 CJX_Object::CJX_Object(CXFA_Object* obj) : object_(obj) {}

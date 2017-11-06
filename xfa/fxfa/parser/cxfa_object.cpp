@@ -30,12 +30,6 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
 
 CXFA_Object::~CXFA_Object() {}
 
-void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
-                                               bool bSetting,
-                                               XFA_ATTRIBUTE eAttribute) {
-  JSObject()->Script_ObjectClass_ClassName(pValue, bSetting, eAttribute);
-}
-
 CXFA_Node* CXFA_Object::AsNode() {
   return IsNode() ? static_cast<CXFA_Node*>(this) : nullptr;
 }

@@ -12,8 +12,6 @@
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CXFA_Node;
-class CFXJSE_Arguments;
-class CFXJSE_Value;
 
 class CXFA_NodeList : public CXFA_Object {
  public:
@@ -28,16 +26,6 @@ class CXFA_NodeList : public CXFA_Object {
   virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
   virtual bool Remove(CXFA_Node* pNode) = 0;
   virtual CXFA_Node* Item(int32_t iIndex) = 0;
-
-  void Script_ListClass_Append(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Insert(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Remove(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Item(CFXJSE_Arguments* pArguments);
-
-  void Script_TreelistClass_NamedItem(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Length(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_ATTRIBUTE eAttribute);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODELIST_H_

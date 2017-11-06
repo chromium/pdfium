@@ -18,19 +18,3 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
                   pdfium::MakeUnique<CJX_SignaturePseudoModel>(this)) {}
 
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
-
-void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
-  JSSignaturePseudoModel()->Verify(pArguments);
-}
-
-void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
-  JSSignaturePseudoModel()->Sign(pArguments);
-}
-
-void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
-  JSSignaturePseudoModel()->Enumerate(pArguments);
-}
-
-void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
-  JSSignaturePseudoModel()->Clear(pArguments);
-}

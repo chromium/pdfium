@@ -27,7 +27,6 @@ enum class XFA_ObjectType {
   VariablesThis
 };
 
-class CFXJSE_Value;
 class CJX_Object;
 class CXFA_Document;
 class CXFA_Node;
@@ -75,10 +74,6 @@ class CXFA_Object : public CFXJSE_HostObject {
   XFA_Element GetElementType() const { return m_elementType; }
   WideStringView GetClassName() const { return m_elementName; }
   uint32_t GetClassHashCode() const { return m_elementNameHash; }
-
-  void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_ATTRIBUTE eAttribute);
 
  protected:
   CXFA_Object(CXFA_Document* pDocument,

@@ -41,21 +41,20 @@ enum XFA_DocFlag {
 };
 
 class CFX_XMLDoc;
+class CFXJSE_Engine;
 class CScript_DataWindow;
 class CScript_EventPseudoModel;
 class CScript_HostPseudoModel;
 class CScript_LogPseudoModel;
 class CScript_LayoutPseudoModel;
 class CScript_SignaturePseudoModel;
-class CXFA_Document;
+class CXFA_ContainerLayoutItem;
+class CXFA_DocumentParser;
+class CXFA_FFNotify;
 class CXFA_LayoutItem;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
-class CXFA_LayoutProcessor;
-class CXFA_DocumentParser;
-class CXFA_ContainerLayoutItem;
-class CXFA_FFNotify;
-class CFXJSE_Engine;
+class CXFA_Object;
 
 class CXFA_Document {
  public:

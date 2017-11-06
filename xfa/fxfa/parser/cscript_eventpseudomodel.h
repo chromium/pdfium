@@ -10,9 +10,6 @@
 #include "fxjs/cjx_eventpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
-class CFXJSE_Arguments;
-class CFXJSE_Value;
-
 class CScript_EventPseudoModel : public CXFA_Object {
  public:
   explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
@@ -21,34 +18,6 @@ class CScript_EventPseudoModel : public CXFA_Object {
   CJX_EventPseudoModel* JSEventPseudoModel() {
     return static_cast<CJX_EventPseudoModel*>(JSObject());
   }
-
-  void Change(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void CommitKey(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void FullText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void KeyDown(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Modifier(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void NewContentType(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_ATTRIBUTE eAttribute);
-  void NewText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void PrevContentType(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_ATTRIBUTE eAttribute);
-  void PrevText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Reenter(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void SelEnd(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void SelStart(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Shift(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void SoapFaultCode(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_ATTRIBUTE eAttribute);
-  void SoapFaultString(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_ATTRIBUTE eAttribute);
-  void Target(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-
-  void Emit(CFXJSE_Arguments* pArguments);
-  void Reset(CFXJSE_Arguments* pArguments);
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
