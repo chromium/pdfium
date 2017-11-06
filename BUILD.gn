@@ -1687,8 +1687,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_ffdatetimeedit.h",
       "xfa/fxfa/cxfa_ffdoc.cpp",
       "xfa/fxfa/cxfa_ffdoc.h",
-      "xfa/fxfa/cxfa_ffdochandler.cpp",
-      "xfa/fxfa/cxfa_ffdochandler.h",
       "xfa/fxfa/cxfa_ffdocview.cpp",
       "xfa/fxfa/cxfa_ffdocview.h",
       "xfa/fxfa/cxfa_ffdraw.cpp",

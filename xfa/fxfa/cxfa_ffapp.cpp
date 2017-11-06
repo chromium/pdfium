@@ -17,7 +17,6 @@
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
-#include "xfa/fxfa/cxfa_ffdochandler.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
@@ -29,12 +28,6 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
 }
 
 CXFA_FFApp::~CXFA_FFApp() {}
-
-CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
-  if (!m_pDocHandler)
-    m_pDocHandler = pdfium::MakeUnique<CXFA_FFDocHandler>();
-  return m_pDocHandler.get();
-}
 
 std::unique_ptr<CXFA_FFDoc> CXFA_FFApp::CreateDoc(
     IXFA_DocEnvironment* pDocEnvironment,

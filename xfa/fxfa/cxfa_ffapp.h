@@ -35,8 +35,6 @@ class CXFA_FFApp {
                                         CPDF_Document* pPDFDoc);
   void SetDefaultFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
-  CXFA_FFDocHandler* GetDocHandler();
-
   CXFA_FWLAdapterWidgetMgr* GetFWLAdapterWidgetMgr();
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
 
@@ -51,7 +49,6 @@ class CXFA_FFApp {
   void ClearEventTargets();
 
  private:
-  std::unique_ptr<CXFA_FFDocHandler> m_pDocHandler;
   UnownedPtr<IXFA_AppProvider> const m_pProvider;
 
   // The fonts stored in the font manager may have been created by the default

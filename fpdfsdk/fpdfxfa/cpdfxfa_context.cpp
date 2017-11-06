@@ -101,12 +101,6 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
-  CXFA_FFDocHandler* pDocHandler = pApp->GetDocHandler();
-  if (!pDocHandler) {
-    SetLastError(FPDF_ERR_XFALOAD);
-    return false;
-  }
-
   m_pXFADoc->StartLoad();
   int iStatus = m_pXFADoc->DoLoad();
   if (iStatus != XFA_PARSESTATUS_Done) {
