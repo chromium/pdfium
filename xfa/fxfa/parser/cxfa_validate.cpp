@@ -15,21 +15,13 @@ int32_t CXFA_Validate::GetFormatTest() {
   return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_FormatTest);
 }
 
-bool CXFA_Validate::SetTestValue(int32_t iType,
-                                 WideString& wsValue,
-                                 XFA_ATTRIBUTEENUM eName) {
+bool CXFA_Validate::SetNullTest(WideString wsValue) {
   const XFA_ATTRIBUTEENUMINFO* pInfo =
       XFA_GetAttributeEnumByName(wsValue.AsStringView());
-  if (pInfo)
-    eName = pInfo->eName;
-
-  m_pNode->JSNode()->SetEnum((XFA_ATTRIBUTE)iType, eName, false);
+  m_pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_NullTest,
+                             pInfo ? pInfo->eName : XFA_ATTRIBUTEENUM_Disabled,
+                             false);
   return true;
-}
-
-bool CXFA_Validate::SetNullTest(WideString wsValue) {
-  return SetTestValue(XFA_ATTRIBUTE_NullTest, wsValue,
-                      XFA_ATTRIBUTEENUM_Disabled);
 }
 
 int32_t CXFA_Validate::GetNullTest() {
