@@ -102,14 +102,14 @@ bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
       if (i == 0 || m_Operators[i - 1]->GetOp() != PSOP_PROC)
         return false;
 
-      if (static_cast<int>(pEngine->Pop()))
+      if (pEngine->PopInt())
         m_Operators[i - 1]->GetProc()->Execute(pEngine);
     } else if (op == PSOP_IFELSE) {
       if (i < 2 || m_Operators[i - 1]->GetOp() != PSOP_PROC ||
           m_Operators[i - 2]->GetOp() != PSOP_PROC) {
         return false;
       }
-      size_t offset = static_cast<int>(pEngine->Pop()) ? 2 : 1;
+      size_t offset = pEngine->PopInt() ? 2 : 1;
       m_Operators[i - offset]->GetProc()->Execute(pEngine);
     } else {
       pEngine->DoOperator(op);
@@ -123,12 +123,16 @@ CPDF_PSEngine::CPDF_PSEngine() : m_StackCount(0) {}
 CPDF_PSEngine::~CPDF_PSEngine() {}
 
 void CPDF_PSEngine::Push(float v) {
-  if (m_StackCount < PSENGINE_STACKSIZE)
+  if (m_StackCount < kPSEngineStackSize)
     m_Stack[m_StackCount++] = v;
 }
 
 float CPDF_PSEngine::Pop() {
   return m_StackCount > 0 ? m_Stack[--m_StackCount] : 0;
+}
+
+int CPDF_PSEngine::PopInt() {
+  return static_cast<int>(Pop());
 }
 
 bool CPDF_PSEngine::Parse(const char* str, int size) {
@@ -197,8 +201,8 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       Push(d1 / d2);
       break;
     case PSOP_IDIV:
-      i2 = static_cast<int>(Pop());
-      i1 = static_cast<int>(Pop());
+      i2 = PopInt();
+      i1 = PopInt();
       if (i2) {
         result = i1;
         result /= i2;
@@ -208,8 +212,8 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       }
       break;
     case PSOP_MOD:
-      i2 = static_cast<int>(Pop());
-      i1 = static_cast<int>(Pop());
+      i2 = PopInt();
+      i1 = PopInt();
       if (i2) {
         result = i1;
         result %= i2;
@@ -224,40 +228,40 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     case PSOP_ABS:
       d1 = Pop();
-      Push((float)fabs(d1));
+      Push(fabs(d1));
       break;
     case PSOP_CEILING:
       d1 = Pop();
-      Push((float)ceil(d1));
+      Push(ceil(d1));
       break;
     case PSOP_FLOOR:
       d1 = Pop();
-      Push((float)floor(d1));
+      Push(floor(d1));
       break;
     case PSOP_ROUND:
       d1 = Pop();
       Push(FXSYS_round(d1));
       break;
     case PSOP_TRUNCATE:
-      i1 = (int)Pop();
+      i1 = PopInt();
       Push(i1);
       break;
     case PSOP_SQRT:
       d1 = Pop();
-      Push((float)sqrt(d1));
+      Push(sqrt(d1));
       break;
     case PSOP_SIN:
       d1 = Pop();
-      Push((float)sin(d1 * FX_PI / 180.0f));
+      Push(sin(d1 * FX_PI / 180.0f));
       break;
     case PSOP_COS:
       d1 = Pop();
-      Push((float)cos(d1 * FX_PI / 180.0f));
+      Push(cos(d1 * FX_PI / 180.0f));
       break;
     case PSOP_ATAN:
       d2 = Pop();
       d1 = Pop();
-      d1 = (float)(atan2(d1, d2) * 180.0 / FX_PI);
+      d1 = atan2(d1, d2) * 180.0 / FX_PI;
       if (d1 < 0) {
         d1 += 360;
       }
@@ -266,18 +270,18 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
     case PSOP_EXP:
       d2 = Pop();
       d1 = Pop();
-      Push((float)FXSYS_pow(d1, d2));
+      Push(FXSYS_pow(d1, d2));
       break;
     case PSOP_LN:
       d1 = Pop();
-      Push((float)log(d1));
+      Push(log(d1));
       break;
     case PSOP_LOG:
       d1 = Pop();
-      Push((float)log10(d1));
+      Push(log10(d1));
       break;
     case PSOP_CVI:
-      i1 = (int)Pop();
+      i1 = PopInt();
       Push(i1);
       break;
     case PSOP_CVR:
@@ -285,55 +289,55 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
     case PSOP_EQ:
       d2 = Pop();
       d1 = Pop();
-      Push((int)(d1 == d2));
+      Push(d1 == d2);
       break;
     case PSOP_NE:
       d2 = Pop();
       d1 = Pop();
-      Push((int)(d1 != d2));
+      Push(d1 != d2);
       break;
     case PSOP_GT:
       d2 = Pop();
       d1 = Pop();
-      Push((int)(d1 > d2));
+      Push(d1 > d2);
       break;
     case PSOP_GE:
       d2 = Pop();
       d1 = Pop();
-      Push((int)(d1 >= d2));
+      Push(d1 >= d2);
       break;
     case PSOP_LT:
       d2 = Pop();
       d1 = Pop();
-      Push((int)(d1 < d2));
+      Push(d1 < d2);
       break;
     case PSOP_LE:
       d2 = Pop();
       d1 = Pop();
-      Push((int)(d1 <= d2));
+      Push(d1 <= d2);
       break;
     case PSOP_AND:
-      i1 = (int)Pop();
-      i2 = (int)Pop();
+      i1 = PopInt();
+      i2 = PopInt();
       Push(i1 & i2);
       break;
     case PSOP_OR:
-      i1 = (int)Pop();
-      i2 = (int)Pop();
+      i1 = PopInt();
+      i2 = PopInt();
       Push(i1 | i2);
       break;
     case PSOP_XOR:
-      i1 = (int)Pop();
-      i2 = (int)Pop();
+      i1 = PopInt();
+      i2 = PopInt();
       Push(i1 ^ i2);
       break;
     case PSOP_NOT:
-      i1 = (int)Pop();
-      Push((int)!i1);
+      i1 = PopInt();
+      Push(!i1);
       break;
     case PSOP_BITSHIFT: {
-      int shift = (int)Pop();
-      result = (int)Pop();
+      int shift = PopInt();
+      result = PopInt();
       if (shift > 0) {
         result <<= shift;
       } else {
@@ -365,8 +369,8 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       Push(d1);
       break;
     case PSOP_COPY: {
-      int n = static_cast<int>(Pop());
-      if (n < 0 || m_StackCount + n > PSENGINE_STACKSIZE ||
+      int n = PopInt();
+      if (n < 0 || m_StackCount + n > kPSEngineStackSize ||
           n > static_cast<int>(m_StackCount))
         break;
       for (int i = 0; i < n; i++)
@@ -375,15 +379,15 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     }
     case PSOP_INDEX: {
-      int n = static_cast<int>(Pop());
+      int n = PopInt();
       if (n < 0 || n >= static_cast<int>(m_StackCount))
         break;
       Push(m_Stack[m_StackCount - n - 1]);
       break;
     }
     case PSOP_ROLL: {
-      int j = static_cast<int>(Pop());
-      int n = static_cast<int>(Pop());
+      int j = PopInt();
+      int n = PopInt();
       if (j == 0 || n == 0 || m_StackCount == 0)
         break;
       if (n < 0 || n > static_cast<int>(m_StackCount))

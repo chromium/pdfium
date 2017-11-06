@@ -16,7 +16,7 @@ class CPDF_PSEngine;
 class CPDF_PSOP;
 class CPDF_SimpleParser;
 
-enum PDF_PSOP {
+enum PDF_PSOP : uint8_t {
   PSOP_ADD,
   PSOP_SUB,
   PSOP_MUL,
@@ -63,8 +63,6 @@ enum PDF_PSOP {
   PSOP_CONST
 };
 
-constexpr uint32_t PSENGINE_STACKSIZE = 100;
-
 class CPDF_PSProc {
  public:
   CPDF_PSProc();
@@ -89,10 +87,12 @@ class CPDF_PSEngine {
   void Reset() { m_StackCount = 0; }
   void Push(float value);
   float Pop();
+  int PopInt();
   uint32_t GetStackSize() const { return m_StackCount; }
 
  private:
-  float m_Stack[PSENGINE_STACKSIZE];
+  static constexpr uint32_t kPSEngineStackSize = 100;
+  float m_Stack[kPSEngineStackSize];
   uint32_t m_StackCount;
   CPDF_PSProc m_MainProc;
 };
