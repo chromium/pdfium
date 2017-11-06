@@ -24,9 +24,6 @@ extern const int32_t g_iXFANotsureCount;
 extern const XFA_ELEMENTINFO g_XFAElementData[];
 extern const int32_t g_iXFAElementCount;
 
-extern const XFA_ELEMENTHIERARCHY g_XFAElementChildrenIndex[];
-extern const uint16_t g_XFAElementChildrenData[];
-
 extern const XFA_ELEMENTHIERARCHY g_XFAElementAttributeIndex[];
 extern const uint8_t g_XFAElementAttributeData[];
 
