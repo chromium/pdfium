@@ -7,7 +7,7 @@
 #ifndef FXJS_CJX_NODE_H_
 #define FXJS_CJX_NODE_H_
 
-#include <map>
+#include <memory>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cjx_object.h"
@@ -21,20 +21,6 @@ struct XFA_MAPDATABLOCKCALLBACKINFO {
   PD_CALLBACK_DUPLICATEDATA pCopy;
 };
 
-struct XFA_MAPDATABLOCK {
-  uint8_t* GetData() const { return (uint8_t*)this + sizeof(XFA_MAPDATABLOCK); }
-  XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
-  int32_t iBytes;
-};
-
-struct XFA_MAPMODULEDATA {
-  XFA_MAPMODULEDATA();
-  ~XFA_MAPMODULEDATA();
-
-  std::map<void*, void*> m_ValueMap;
-  std::map<void*, XFA_MAPDATABLOCK*> m_BufferMap;
-};
-
 enum XFA_SOM_MESSAGETYPE {
   XFA_SOM_ValidationMessage,
   XFA_SOM_FormatMessage,
@@ -43,6 +29,8 @@ enum XFA_SOM_MESSAGETYPE {
 
 class CFXJSE_Arguments;
 class CXFA_Node;
+
+struct XFA_MAPMODULEDATA;
 
 class CJX_Node : public CJX_Object {
  public:
@@ -123,7 +111,7 @@ class CJX_Node : public CJX_Object {
 
   bool TryNamespace(WideString& wsNamespace);
 
-  void MergeAllData(void* pDstModule);
+  void MergeAllData(CXFA_Node* pDstModule);
 
   void ThrowMissingPropertyException(const WideString& obj,
                                      const WideString& prop) const;
@@ -453,7 +441,7 @@ class CJX_Node : public CJX_Object {
   int32_t execSingleEventByName(const WideStringView& wsEventName,
                                 XFA_Element eType);
 
-  XFA_MAPMODULEDATA* map_module_data_;
+  std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
 };
 
 #endif  // FXJS_CJX_NODE_H_
