@@ -434,13 +434,39 @@ bool WideString::operator==(const WideString& other) const {
                  m_pData->m_nDataLength) == 0;
 }
 
-bool WideString::operator<(const WideString& str) const {
-  if (m_pData == str.m_pData)
+bool WideString::operator<(const wchar_t* ptr) const {
+  if (!m_pData && !ptr)
+    return false;
+  if (c_str() == ptr)
     return false;
 
+  size_t len = GetLength();
+  size_t other_len = ptr ? wcslen(ptr) : 0;
+  int result = wmemcmp(c_str(), ptr, std::min(len, other_len));
+  return result < 0 || (result == 0 && len < other_len);
+}
+
+bool WideString::operator<(const WideStringView& str) const {
+  if (!m_pData && !str.unterminated_c_str())
+    return false;
+  if (c_str() == str.unterminated_c_str())
+    return false;
+
+  size_t len = GetLength();
+  size_t other_len = str.GetLength();
   int result =
-      wmemcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
-  return result < 0 || (result == 0 && GetLength() < str.GetLength());
+      wmemcmp(c_str(), str.unterminated_c_str(), std::min(len, other_len));
+  return result < 0 || (result == 0 && len < other_len);
+}
+
+bool WideString::operator<(const WideString& other) const {
+  if (m_pData == other.m_pData)
+    return false;
+
+  size_t len = GetLength();
+  size_t other_len = other.GetLength();
+  int result = wmemcmp(c_str(), other.c_str(), std::min(len, other_len));
+  return result < 0 || (result == 0 && len < other_len);
 }
 
 void WideString::AssignCopy(const wchar_t* pSrcData, size_t nSrcLen) {
@@ -880,45 +906,36 @@ void WideString::SetAt(size_t index, wchar_t c) {
 
 int WideString::Compare(const wchar_t* lpsz) const {
   if (m_pData)
-    return wcscmp(m_pData->m_String, lpsz);
+    return lpsz ? wcscmp(m_pData->m_String, lpsz) : 1;
   return (!lpsz || lpsz[0] == 0) ? 0 : -1;
 }
 
 int WideString::Compare(const WideString& str) const {
-  if (!m_pData) {
-    if (!str.m_pData) {
-      return 0;
-    }
-    return -1;
-  }
-  if (!str.m_pData) {
+  if (!m_pData)
+    return str.m_pData ? -1 : 0;
+  if (!str.m_pData)
     return 1;
-  }
+
   size_t this_len = m_pData->m_nDataLength;
   size_t that_len = str.m_pData->m_nDataLength;
   size_t min_len = std::min(this_len, that_len);
   for (size_t i = 0; i < min_len; i++) {
-    if (m_pData->m_String[i] < str.m_pData->m_String[i]) {
+    if (m_pData->m_String[i] < str.m_pData->m_String[i])
       return -1;
-    }
-    if (m_pData->m_String[i] > str.m_pData->m_String[i]) {
+    if (m_pData->m_String[i] > str.m_pData->m_String[i])
       return 1;
-    }
   }
-  if (this_len < that_len) {
+  if (this_len < that_len)
     return -1;
-  }
-  if (this_len > that_len) {
+  if (this_len > that_len)
     return 1;
-  }
   return 0;
 }
 
 int WideString::CompareNoCase(const wchar_t* lpsz) const {
-  if (!m_pData) {
-    return (!lpsz || lpsz[0] == 0) ? 0 : -1;
-  }
-  return FXSYS_wcsicmp(m_pData->m_String, lpsz);
+  if (m_pData)
+    return lpsz ? FXSYS_wcsicmp(m_pData->m_String, lpsz) : 1;
+  return (!lpsz || lpsz[0] == 0) ? 0 : -1;
 }
 
 size_t WideString::WStringLength(const unsigned short* str) {

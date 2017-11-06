@@ -110,7 +110,9 @@ class ByteString {
   bool operator!=(const ByteStringView& str) const { return !(*this == str); }
   bool operator!=(const ByteString& other) const { return !(*this == other); }
 
-  bool operator<(const ByteString& str) const;
+  bool operator<(const char* ptr) const;
+  bool operator<(const ByteStringView& str) const;
+  bool operator<(const ByteString& other) const;
 
   const ByteString& operator=(const char* str);
   const ByteString& operator=(const ByteStringView& bstrc);
@@ -208,6 +210,9 @@ inline bool operator!=(const char* lhs, const ByteString& rhs) {
 }
 inline bool operator!=(const ByteStringView& lhs, const ByteString& rhs) {
   return rhs != lhs;
+}
+inline bool operator<(const char* lhs, const ByteString& rhs) {
+  return rhs.Compare(lhs) > 0;
 }
 
 inline ByteString operator+(const ByteStringView& str1,

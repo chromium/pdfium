@@ -251,13 +251,39 @@ bool ByteString::operator==(const ByteString& other) const {
                 m_pData->m_nDataLength) == 0;
 }
 
-bool ByteString::operator<(const ByteString& str) const {
-  if (m_pData == str.m_pData)
+bool ByteString::operator<(const char* ptr) const {
+  if (!m_pData && !ptr)
+    return false;
+  if (c_str() == ptr)
     return false;
 
+  size_t len = GetLength();
+  size_t other_len = ptr ? strlen(ptr) : 0;
+  int result = memcmp(c_str(), ptr, std::min(len, other_len));
+  return result < 0 || (result == 0 && len < other_len);
+}
+
+bool ByteString::operator<(const ByteStringView& str) const {
+  if (!m_pData && !str.unterminated_c_str())
+    return false;
+  if (c_str() == str.unterminated_c_str())
+    return false;
+
+  size_t len = GetLength();
+  size_t other_len = str.GetLength();
   int result =
-      memcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
-  return result < 0 || (result == 0 && GetLength() < str.GetLength());
+      memcmp(c_str(), str.unterminated_c_str(), std::min(len, other_len));
+  return result < 0 || (result == 0 && len < other_len);
+}
+
+bool ByteString::operator<(const ByteString& other) const {
+  if (m_pData == other.m_pData)
+    return false;
+
+  size_t len = GetLength();
+  size_t other_len = other.GetLength();
+  int result = memcmp(c_str(), other.c_str(), std::min(len, other_len));
+  return result < 0 || (result == 0 && len < other_len);
 }
 
 bool ByteString::EqualNoCase(const ByteStringView& str) const {
@@ -668,26 +694,22 @@ ByteString ByteString::FromUnicode(const WideString& str) {
 }
 
 int ByteString::Compare(const ByteStringView& str) const {
-  if (!m_pData) {
+  if (!m_pData)
     return str.IsEmpty() ? 0 : -1;
-  }
+
   size_t this_len = m_pData->m_nDataLength;
   size_t that_len = str.GetLength();
   size_t min_len = std::min(this_len, that_len);
   for (size_t i = 0; i < min_len; i++) {
-    if (static_cast<uint8_t>(m_pData->m_String[i]) < str[i]) {
+    if (static_cast<uint8_t>(m_pData->m_String[i]) < str[i])
       return -1;
-    }
-    if (static_cast<uint8_t>(m_pData->m_String[i]) > str[i]) {
+    if (static_cast<uint8_t>(m_pData->m_String[i]) > str[i])
       return 1;
-    }
   }
-  if (this_len < that_len) {
+  if (this_len < that_len)
     return -1;
-  }
-  if (this_len > that_len) {
+  if (this_len > that_len)
     return 1;
-  }
   return 0;
 }
 

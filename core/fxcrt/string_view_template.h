@@ -227,10 +227,13 @@ template <typename T>
 inline bool operator==(const T* lhs, const StringViewTemplate<T>& rhs) {
   return rhs == lhs;
 }
-
 template <typename T>
 inline bool operator!=(const T* lhs, const StringViewTemplate<T>& rhs) {
   return rhs != lhs;
+}
+template <typename T>
+inline bool operator<(const T* lhs, const StringViewTemplate<T>& rhs) {
+  return rhs > lhs;
 }
 
 extern template class StringViewTemplate<char>;

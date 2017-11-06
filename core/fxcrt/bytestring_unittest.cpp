@@ -55,29 +55,94 @@ TEST(ByteString, OperatorLT) {
   ByteString a("a");
   ByteString abc("abc");
   ByteString def("def");
+  ByteStringView v_empty;
+  ByteStringView v_a("a");
+  ByteStringView v_abc("abc");
+  ByteStringView v_def("def");
+  const char* const c_null = nullptr;
+  const char* const c_empty = "";
+  const char* const c_a = "a";
+  const char* const c_abc = "abc";
+  const char* const c_def = "def";
 
   EXPECT_FALSE(empty < empty);
   EXPECT_FALSE(a < a);
   EXPECT_FALSE(abc < abc);
   EXPECT_FALSE(def < def);
+  EXPECT_FALSE(c_null < empty);
+  EXPECT_FALSE(c_empty < empty);
+  EXPECT_FALSE(c_a < a);
+  EXPECT_FALSE(c_abc < abc);
+  EXPECT_FALSE(c_def < def);
+  EXPECT_FALSE(empty < c_null);
+  EXPECT_FALSE(empty < c_empty);
+  EXPECT_FALSE(a < c_a);
+  EXPECT_FALSE(abc < c_abc);
+  EXPECT_FALSE(def < c_def);
+  EXPECT_FALSE(empty < v_empty);
+  EXPECT_FALSE(a < v_a);
+  EXPECT_FALSE(abc < v_abc);
+  EXPECT_FALSE(def < v_def);
 
   EXPECT_TRUE(empty < a);
   EXPECT_FALSE(a < empty);
+  EXPECT_TRUE(c_null < a);
+  EXPECT_TRUE(c_empty < a);
+  EXPECT_FALSE(c_a < empty);
+  EXPECT_TRUE(empty < c_a);
+  EXPECT_FALSE(a < c_null);
+  EXPECT_FALSE(a < c_empty);
+  EXPECT_TRUE(empty < v_a);
+  EXPECT_FALSE(a < v_empty);
 
   EXPECT_TRUE(empty < abc);
   EXPECT_FALSE(abc < empty);
+  EXPECT_TRUE(c_null < abc);
+  EXPECT_TRUE(c_empty < abc);
+  EXPECT_FALSE(c_abc < empty);
+  EXPECT_TRUE(empty < c_abc);
+  EXPECT_FALSE(abc < c_null);
+  EXPECT_FALSE(abc < c_empty);
+  EXPECT_TRUE(empty < v_abc);
+  EXPECT_FALSE(abc < v_empty);
 
   EXPECT_TRUE(empty < def);
   EXPECT_FALSE(def < empty);
+  EXPECT_TRUE(c_null < def);
+  EXPECT_TRUE(c_empty < def);
+  EXPECT_FALSE(c_def < empty);
+  EXPECT_TRUE(empty < c_def);
+  EXPECT_FALSE(def < c_null);
+  EXPECT_FALSE(def < c_empty);
+  EXPECT_TRUE(empty < v_def);
+  EXPECT_FALSE(def < v_empty);
 
   EXPECT_TRUE(a < abc);
   EXPECT_FALSE(abc < a);
+  EXPECT_TRUE(c_a < abc);
+  EXPECT_FALSE(c_abc < a);
+  EXPECT_TRUE(a < c_abc);
+  EXPECT_FALSE(abc < c_a);
+  EXPECT_TRUE(a < v_abc);
+  EXPECT_FALSE(abc < v_a);
 
   EXPECT_TRUE(a < def);
   EXPECT_FALSE(def < a);
+  EXPECT_TRUE(c_a < def);
+  EXPECT_FALSE(c_def < a);
+  EXPECT_TRUE(a < c_def);
+  EXPECT_FALSE(def < c_a);
+  EXPECT_TRUE(a < v_def);
+  EXPECT_FALSE(def < v_a);
 
   EXPECT_TRUE(abc < def);
   EXPECT_FALSE(def < abc);
+  EXPECT_TRUE(c_abc < def);
+  EXPECT_FALSE(c_def < abc);
+  EXPECT_TRUE(abc < c_def);
+  EXPECT_FALSE(def < c_abc);
+  EXPECT_TRUE(abc < v_def);
+  EXPECT_FALSE(def < v_abc);
 }
 
 TEST(ByteString, OperatorEQ) {
@@ -1092,29 +1157,59 @@ TEST(ByteStringView, OperatorLT) {
   ByteStringView a("a");
   ByteStringView abc("abc");
   ByteStringView def("def");
+  const char* const c_null = nullptr;
+  const char* const c_empty = "";
+  const char* const c_a = "a";
+  const char* const c_abc = "abc";
+  const char* const c_def = "def";
 
   EXPECT_FALSE(empty < empty);
   EXPECT_FALSE(a < a);
   EXPECT_FALSE(abc < abc);
   EXPECT_FALSE(def < def);
+  EXPECT_FALSE(c_null < empty);
+  EXPECT_FALSE(c_empty < empty);
+  EXPECT_FALSE(c_a < a);
+  EXPECT_FALSE(c_abc < abc);
+  EXPECT_FALSE(c_def < def);
+  EXPECT_FALSE(empty < c_null);
+  EXPECT_FALSE(empty < c_empty);
+  EXPECT_FALSE(a < c_a);
+  EXPECT_FALSE(abc < c_abc);
+  EXPECT_FALSE(def < c_def);
 
   EXPECT_TRUE(empty < a);
   EXPECT_FALSE(a < empty);
+  EXPECT_TRUE(empty < c_a);
+  EXPECT_FALSE(a < c_null);
+  EXPECT_FALSE(a < c_empty);
 
   EXPECT_TRUE(empty < abc);
   EXPECT_FALSE(abc < empty);
+  EXPECT_TRUE(empty < c_abc);
+  EXPECT_FALSE(abc < c_null);
+  EXPECT_FALSE(abc < c_empty);
 
   EXPECT_TRUE(empty < def);
   EXPECT_FALSE(def < empty);
+  EXPECT_TRUE(empty < c_def);
+  EXPECT_FALSE(def < c_null);
+  EXPECT_FALSE(def < c_empty);
 
   EXPECT_TRUE(a < abc);
   EXPECT_FALSE(abc < a);
+  EXPECT_TRUE(a < c_abc);
+  EXPECT_FALSE(abc < c_a);
 
   EXPECT_TRUE(a < def);
   EXPECT_FALSE(def < a);
+  EXPECT_TRUE(a < c_def);
+  EXPECT_FALSE(def < c_a);
 
   EXPECT_TRUE(abc < def);
   EXPECT_FALSE(def < abc);
+  EXPECT_TRUE(abc < c_def);
+  EXPECT_FALSE(def < c_abc);
 }
 
 TEST(ByteStringView, OperatorEQ) {

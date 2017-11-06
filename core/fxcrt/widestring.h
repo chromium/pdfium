@@ -114,7 +114,9 @@ class WideString {
   bool operator!=(const WideStringView& str) const { return !(*this == str); }
   bool operator!=(const WideString& other) const { return !(*this == other); }
 
-  bool operator<(const WideString& str) const;
+  bool operator<(const wchar_t* ptr) const;
+  bool operator<(const WideStringView& str) const;
+  bool operator<(const WideString& other) const;
 
   CharType operator[](const size_t index) const {
     ASSERT(IsValidIndex(index));
@@ -246,6 +248,9 @@ inline bool operator!=(const wchar_t* lhs, const WideString& rhs) {
 }
 inline bool operator!=(const WideStringView& lhs, const WideString& rhs) {
   return rhs != lhs;
+}
+inline bool operator<(const wchar_t* lhs, const WideString& rhs) {
+  return rhs.Compare(lhs) > 0;
 }
 
 std::wostream& operator<<(std::wostream& os, const WideString& str);
