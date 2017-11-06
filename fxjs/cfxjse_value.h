@@ -51,10 +51,8 @@ class CFXJSE_Value {
   void SetDouble(double dDouble);
   void SetString(const ByteStringView& szString);
   void SetFloat(float fFloat);
-  void SetJSObject();
 
   void SetObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* pClass);
-  void SetHostObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* lpClass);
   void SetArray(const std::vector<std::unique_ptr<CFXJSE_Value>>& values);
   void SetDate(double dDouble);
 

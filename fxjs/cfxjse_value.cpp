@@ -83,20 +83,9 @@ CFXJSE_HostObject* CFXJSE_Value::ToHostObject(CFXJSE_Class* lpClass) const {
 
 void CFXJSE_Value::SetObject(CFXJSE_HostObject* lpObject,
                              CFXJSE_Class* pClass) {
-  if (!pClass) {
-    ASSERT(!lpObject);
-    SetJSObject();
-    return;
-  }
-  SetHostObject(lpObject, pClass);
-}
-
-void CFXJSE_Value::SetHostObject(CFXJSE_HostObject* lpObject,
-                                 CFXJSE_Class* lpClass) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
-  ASSERT(lpClass);
   v8::Local<v8::FunctionTemplate> hClass =
-      v8::Local<v8::FunctionTemplate>::New(m_pIsolate, lpClass->m_hTemplate);
+      v8::Local<v8::FunctionTemplate>::New(m_pIsolate, pClass->m_hTemplate);
   v8::Local<v8::Object> hObject = hClass->InstanceTemplate()->NewInstance();
   FXJSE_UpdateObjectBinding(hObject, lpObject);
   m_hValue.Reset(m_pIsolate, hObject);
@@ -510,8 +499,3 @@ void CFXJSE_Value::SetString(const ByteStringView& szString) {
   m_hValue.Reset(m_pIsolate, hValue);
 }
 
-void CFXJSE_Value::SetJSObject() {
-  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
-  v8::Local<v8::Value> hValue = v8::Object::New(m_pIsolate);
-  m_hValue.Reset(m_pIsolate, hValue);
-}
