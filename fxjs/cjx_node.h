@@ -448,8 +448,7 @@ class CJX_Node : public CJX_Object {
   void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
   void MoveBufferMapData(CXFA_Node* pSrcModule,
                          CXFA_Node* pDstModule,
-                         void* pKey,
-                         bool bRecursive);
+                         void* pKey);
 
   int32_t execSingleEventByName(const WideStringView& wsEventName,
                                 XFA_Element eType);

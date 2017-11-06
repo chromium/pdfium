@@ -813,7 +813,7 @@ void CJX_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
       else
         pFakeXMLRoot = nullptr;
     }
-    MoveBufferMapData(pFakeRoot, GetXFANode(), XFA_CalcData, true);
+    MoveBufferMapData(pFakeRoot, GetXFANode(), XFA_CalcData);
   } else {
     CXFA_Node* pChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pChild) {
@@ -3894,19 +3894,17 @@ void CJX_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
 
 void CJX_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
                                  CXFA_Node* pDstModule,
-                                 void* pKey,
-                                 bool bRecursive) {
+                                 void* pKey) {
   if (!pSrcModule || !pDstModule || !pKey)
     return;
 
-  if (bRecursive) {
-    CXFA_Node* pSrcChild = pSrcModule->GetNodeItem(XFA_NODEITEM_FirstChild);
-    CXFA_Node* pDstChild = pDstModule->GetNodeItem(XFA_NODEITEM_FirstChild);
-    for (; pSrcChild && pDstChild;
-         pSrcChild = pSrcChild->GetNodeItem(XFA_NODEITEM_NextSibling),
-         pDstChild = pDstChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      MoveBufferMapData(pSrcChild, pDstChild, pKey, true);
-    }
+  CXFA_Node* pSrcChild = pSrcModule->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pDstChild = pDstModule->GetNodeItem(XFA_NODEITEM_FirstChild);
+  while (pSrcChild && pDstChild) {
+    MoveBufferMapData(pSrcChild, pDstChild, pKey);
+
+    pSrcChild = pSrcChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pDstChild = pDstChild->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
   pSrcModule->JSNode()->MoveBufferMapData(pDstModule, pKey);
 }
