@@ -23,10 +23,9 @@ class CFXJSE_ResolveProcessor;
 
 class CFXJSE_Engine {
  public:
-  explicit CFXJSE_Engine(CXFA_Document* pDocument);
+  explicit CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate);
   ~CFXJSE_Engine();
 
-  void Initialize(v8::Isolate* pIsolate);
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() { return &m_eventParam; }
   bool RunScript(XFA_SCRIPTLANGTYPE eScriptType,
@@ -97,10 +96,8 @@ class CFXJSE_Engine {
   static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
 
  private:
-  void DefineJsContext();
   CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,
                                          CXFA_Node* pSubform);
-  void DefineJsClass();
   void RemoveBuiltInObjs(CFXJSE_Context* pContext) const;
 
   UnownedPtr<CXFA_Document> const m_pDocument;

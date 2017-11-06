@@ -286,14 +286,15 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
 }
 
 CFXJSE_Engine* CXFA_Document::InitScriptContext(v8::Isolate* pIsolate) {
-  CFXJSE_Engine* result = GetScriptContext();
-  result->Initialize(pIsolate);
-  return result;
+  ASSERT(!m_pScriptContext);
+  m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this, pIsolate);
+  return m_pScriptContext.get();
 }
 
+// We have to call |InitScriptContext| before any calls to |GetScriptContext|
+// or the context won't have an isolate set into it.
 CFXJSE_Engine* CXFA_Document::GetScriptContext() {
-  if (!m_pScriptContext)
-    m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this);
+  ASSERT(m_pScriptContext);
   return m_pScriptContext.get();
 }
 

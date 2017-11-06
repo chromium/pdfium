@@ -123,26 +123,31 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue,
   return static_cast<CXFA_Object*>(pHostObj);
 }
 
-CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument)
+CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate)
     : m_pDocument(pDocument),
-      m_pIsolate(nullptr),
+      m_JsContext(CFXJSE_Context::Create(pIsolate,
+                                         &GlobalClassDescriptor,
+                                         pDocument->GetRoot())),
+      m_pIsolate(pIsolate),
       m_pJsClass(nullptr),
       m_eScriptType(XFA_SCRIPTLANGTYPE_Unkown),
       m_pScriptNodeArray(nullptr),
+      m_ResolveProcessor(pdfium::MakeUnique<CFXJSE_ResolveProcessor>()),
       m_pThisObject(nullptr),
       m_dwBuiltInInFlags(0),
-      m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {}
+      m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {
+  RemoveBuiltInObjs(m_JsContext.get());
+  m_JsContext->EnableCompatibleMode();
+
+  // Don't know if this can happen before we remove the builtin objs and set
+  // compatibility mode.
+  m_pJsClass =
+      CFXJSE_Class::Create(m_JsContext.get(), &NormalClassDescriptor, false);
+}
 
 CFXJSE_Engine::~CFXJSE_Engine() {
   for (const auto& pair : m_mapVariableToContext)
     delete ToThisProxy(pair.second->GetGlobalObject().get(), nullptr);
-}
-
-void CFXJSE_Engine::Initialize(v8::Isolate* pIsolate) {
-  m_pIsolate = pIsolate;
-  DefineJsContext();
-  DefineJsClass();
-  m_ResolveProcessor = pdfium::MakeUnique<CFXJSE_ResolveProcessor>();
 }
 
 bool CFXJSE_Engine::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
@@ -453,13 +458,6 @@ XFA_SCRIPTLANGTYPE CFXJSE_Engine::GetType() {
   return m_eScriptType;
 }
 
-void CFXJSE_Engine::DefineJsContext() {
-  m_JsContext = CFXJSE_Context::Create(m_pIsolate, &GlobalClassDescriptor,
-                                       m_pDocument->GetRoot());
-  RemoveBuiltInObjs(m_JsContext.get());
-  m_JsContext->EnableCompatibleMode();
-}
-
 CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
                                                       CXFA_Node* pSubform) {
   if (!pScriptNode || !pSubform)
@@ -551,11 +549,6 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
     return true;
   }
   return false;
-}
-
-void CFXJSE_Engine::DefineJsClass() {
-  m_pJsClass =
-      CFXJSE_Class::Create(m_JsContext.get(), &NormalClassDescriptor, false);
 }
 
 void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
