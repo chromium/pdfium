@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
+#include "fxjs/cfxjse_resolveprocessor.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -24,7 +25,6 @@
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_nodelist.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
-#include "xfa/fxfa/parser/cxfa_resolveprocessor.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
@@ -142,7 +142,7 @@ void CFXJSE_Engine::Initialize(v8::Isolate* pIsolate) {
   m_pIsolate = pIsolate;
   DefineJsContext();
   DefineJsClass();
-  m_ResolveProcessor = pdfium::MakeUnique<CXFA_ResolveProcessor>();
+  m_ResolveProcessor = pdfium::MakeUnique<CFXJSE_ResolveProcessor>();
 }
 
 bool CFXJSE_Engine::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
@@ -574,11 +574,11 @@ int32_t CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   m_ResolveProcessor->GetNodeHelper()->m_pCreateParent = nullptr;
   m_ResolveProcessor->GetNodeHelper()->m_iCurAllStart = -1;
 
-  CXFA_ResolveNodesData rndFind;
+  CFXJSE_ResolveNodeData rndFind(this);
   int32_t nStart = 0;
   int32_t nLevel = 0;
   int32_t nRet = -1;
-  rndFind.m_pSC = this;
+
   std::vector<CXFA_Object*> findObjects;
   findObjects.push_back(refObject ? refObject : m_pDocument->GetRoot());
   int32_t nNodes = 0;
@@ -633,7 +633,7 @@ int32_t CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       if (((dwStyles & XFA_RESOLVENODE_Bind) ||
            (dwStyles & XFA_RESOLVENODE_CreateNode)) &&
           nNodes > 1) {
-        CXFA_ResolveNodesData rndBind;
+        CFXJSE_ResolveNodeData rndBind(nullptr);
         m_ResolveProcessor->GetFilter(wsExpression, nStart, rndBind);
         m_ResolveProcessor->SetIndexDataBind(rndBind.m_wsCondition, i, nNodes);
         bDataBind = true;

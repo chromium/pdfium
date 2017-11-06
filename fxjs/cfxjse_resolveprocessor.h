@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
-#define XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
+#ifndef FXJS_CFXJSE_RESOLVEPROCESSOR_H_
+#define FXJS_CFXJSE_RESOLVEPROCESSOR_H_
 
 #include <memory>
 #include <vector>
@@ -15,10 +15,10 @@
 class CXFA_NodeHelper;
 class CFXJSE_Engine;
 
-class CXFA_ResolveNodesData {
+class CFXJSE_ResolveNodeData {
  public:
-  explicit CXFA_ResolveNodesData(CFXJSE_Engine* pSC = nullptr);
-  ~CXFA_ResolveNodesData();
+  explicit CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC);
+  ~CFXJSE_ResolveNodeData();
 
   CFXJSE_Engine* m_pSC;
   CXFA_Object* m_CurObject;
@@ -32,15 +32,15 @@ class CXFA_ResolveNodesData {
   XFA_RESOVENODE_RSTYPE m_dwFlag;
 };
 
-class CXFA_ResolveProcessor {
+class CFXJSE_ResolveProcessor {
  public:
-  CXFA_ResolveProcessor();
-  ~CXFA_ResolveProcessor();
+  CFXJSE_ResolveProcessor();
+  ~CFXJSE_ResolveProcessor();
 
-  int32_t Resolve(CXFA_ResolveNodesData& rnd);
+  int32_t Resolve(CFXJSE_ResolveNodeData& rnd);
   int32_t GetFilter(const WideStringView& wsExpression,
                     int32_t nStart,
-                    CXFA_ResolveNodesData& rnd);
+                    CFXJSE_ResolveNodeData& rnd);
   int32_t SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS,
                               WideString& wsLastCondition);
   void SetIndexDataBind(WideString& wsNextCondition,
@@ -52,29 +52,29 @@ class CXFA_ResolveProcessor {
 
  private:
   int32_t ResolveForAttributeRs(CXFA_Object* curNode,
-                                CXFA_ResolveNodesData& rnd,
+                                CFXJSE_ResolveNodeData& rnd,
                                 const WideStringView& strAttr);
-  int32_t ResolveAnyChild(CXFA_ResolveNodesData& rnd);
-  int32_t ResolveDollar(CXFA_ResolveNodesData& rnd);
-  int32_t ResolveExcalmatory(CXFA_ResolveNodesData& rnd);
-  int32_t ResolveNumberSign(CXFA_ResolveNodesData& rnd);
-  int32_t ResolveAsterisk(CXFA_ResolveNodesData& rnd);
-  int32_t ResolveNormal(CXFA_ResolveNodesData& rnd);
+  int32_t ResolveAnyChild(CFXJSE_ResolveNodeData& rnd);
+  int32_t ResolveDollar(CFXJSE_ResolveNodeData& rnd);
+  int32_t ResolveExcalmatory(CFXJSE_ResolveNodeData& rnd);
+  int32_t ResolveNumberSign(CFXJSE_ResolveNodeData& rnd);
+  int32_t ResolveAsterisk(CFXJSE_ResolveNodeData& rnd);
+  int32_t ResolveNormal(CFXJSE_ResolveNodeData& rnd);
   int32_t ResolvePopStack(std::vector<int32_t>* stack);
-  void SetStylesForChild(uint32_t dwParentStyles, CXFA_ResolveNodesData& rnd);
+  void SetStylesForChild(uint32_t dwParentStyles, CFXJSE_ResolveNodeData& rnd);
 
   void ConditionArray(int32_t iCurIndex,
                       WideString wsCondition,
                       int32_t iFoundCount,
-                      CXFA_ResolveNodesData& rnd);
+                      CFXJSE_ResolveNodeData& rnd);
   void DoPredicateFilter(int32_t iCurIndex,
                          WideString wsCondition,
                          int32_t iFoundCount,
-                         CXFA_ResolveNodesData& rnd);
-  void FilterCondition(CXFA_ResolveNodesData& rnd, WideString wsCondition);
+                         CFXJSE_ResolveNodeData& rnd);
+  void FilterCondition(CFXJSE_ResolveNodeData& rnd, WideString wsCondition);
 
   int32_t m_iCurStart;
   std::unique_ptr<CXFA_NodeHelper> m_pNodeHelper;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_RESOLVEPROCESSOR_H_
+#endif  // FXJS_CFXJSE_RESOLVEPROCESSOR_H_

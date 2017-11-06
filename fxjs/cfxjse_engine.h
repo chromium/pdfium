@@ -19,7 +19,7 @@
 
 #define XFA_RESOLVENODE_TagName 0x0002
 
-class CXFA_ResolveProcessor;
+class CFXJSE_ResolveProcessor;
 
 class CFXJSE_Engine {
  public:
@@ -116,7 +116,7 @@ class CFXJSE_Engine {
   // CacheList holds the NodeList items so we can clean them up when we're done.
   std::vector<std::unique_ptr<CXFA_NodeList>> m_CacheList;
   std::vector<CXFA_Node*>* m_pScriptNodeArray;
-  std::unique_ptr<CXFA_ResolveProcessor> m_ResolveProcessor;
+  std::unique_ptr<CFXJSE_ResolveProcessor> m_ResolveProcessor;
   std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;
   CXFA_Object* m_pThisObject;
   uint32_t m_dwBuiltInInFlags;

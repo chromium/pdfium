@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_resolveprocessor.h"
+#include "fxjs/cfxjse_resolveprocessor.h"
 
 #include <algorithm>
 #include <utility>
@@ -22,12 +22,12 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_ResolveProcessor::CXFA_ResolveProcessor()
+CFXJSE_ResolveProcessor::CFXJSE_ResolveProcessor()
     : m_iCurStart(0), m_pNodeHelper(pdfium::MakeUnique<CXFA_NodeHelper>()) {}
 
-CXFA_ResolveProcessor::~CXFA_ResolveProcessor() {}
+CFXJSE_ResolveProcessor::~CFXJSE_ResolveProcessor() {}
 
-int32_t CXFA_ResolveProcessor::Resolve(CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::Resolve(CFXJSE_ResolveNodeData& rnd) {
   if (!rnd.m_CurObject)
     return -1;
 
@@ -86,7 +86,7 @@ int32_t CXFA_ResolveProcessor::Resolve(CXFA_ResolveNodesData& rnd) {
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }
 
-int32_t CXFA_ResolveProcessor::ResolveAnyChild(CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
   WideString wsName = rnd.m_wsName;
   WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* findNode = nullptr;
@@ -114,7 +114,7 @@ int32_t CXFA_ResolveProcessor::ResolveAnyChild(CXFA_ResolveNodesData& rnd) {
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }
 
-int32_t CXFA_ResolveProcessor::ResolveDollar(CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::ResolveDollar(CFXJSE_ResolveNodeData& rnd) {
   WideString wsName = rnd.m_wsName;
   WideString wsCondition = rnd.m_wsCondition;
   int32_t iNameLen = wsName.GetLength();
@@ -140,7 +140,8 @@ int32_t CXFA_ResolveProcessor::ResolveDollar(CXFA_ResolveNodesData& rnd) {
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }
 
-int32_t CXFA_ResolveProcessor::ResolveExcalmatory(CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::ResolveExcalmatory(
+    CFXJSE_ResolveNodeData& rnd) {
   if (rnd.m_nLevel > 0)
     return 0;
 
@@ -149,8 +150,7 @@ int32_t CXFA_ResolveProcessor::ResolveExcalmatory(CXFA_ResolveNodesData& rnd) {
   if (!datasets)
     return 0;
 
-  CXFA_ResolveNodesData rndFind;
-  rndFind.m_pSC = rnd.m_pSC;
+  CFXJSE_ResolveNodeData rndFind(rnd.m_pSC);
   rndFind.m_CurObject = datasets;
   rndFind.m_wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
   rndFind.m_uHashName = static_cast<XFA_HashCode>(
@@ -164,15 +164,15 @@ int32_t CXFA_ResolveProcessor::ResolveExcalmatory(CXFA_ResolveNodesData& rnd) {
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }
 
-int32_t CXFA_ResolveProcessor::ResolveNumberSign(CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::ResolveNumberSign(
+    CFXJSE_ResolveNodeData& rnd) {
   WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
   WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* curNode = ToNode(rnd.m_CurObject);
   if (ResolveForAttributeRs(curNode, rnd, wsName.AsStringView()))
     return 1;
 
-  CXFA_ResolveNodesData rndFind;
-  rndFind.m_pSC = rnd.m_pSC;
+  CFXJSE_ResolveNodeData rndFind(rnd.m_pSC);
   rndFind.m_nLevel = rnd.m_nLevel + 1;
   rndFind.m_dwStyles = rnd.m_dwStyles;
   rndFind.m_dwStyles |= XFA_RESOLVENODE_TagName;
@@ -196,9 +196,9 @@ int32_t CXFA_ResolveProcessor::ResolveNumberSign(CXFA_ResolveNodesData& rnd) {
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }
 
-int32_t CXFA_ResolveProcessor::ResolveForAttributeRs(
+int32_t CFXJSE_ResolveProcessor::ResolveForAttributeRs(
     CXFA_Object* curNode,
-    CXFA_ResolveNodesData& rnd,
+    CFXJSE_ResolveNodeData& rnd,
     const WideStringView& strAttr) {
   const XFA_SCRIPTATTRIBUTEINFO* lpScriptAttribute =
       XFA_GetScriptAttributeByName(curNode->GetElementType(), strAttr);
@@ -211,7 +211,7 @@ int32_t CXFA_ResolveProcessor::ResolveForAttributeRs(
   return 1;
 }
 
-int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
   if (rnd.m_nLevel > 32 || !rnd.m_CurObject->IsNode())
     return 0;
 
@@ -221,12 +221,13 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
   WideString& wsName = rnd.m_wsName;
   XFA_HashCode uNameHash = rnd.m_uHashName;
   WideString& wsCondition = rnd.m_wsCondition;
-  CXFA_ResolveNodesData rndFind;
+
+  CFXJSE_ResolveNodeData rndFind(rnd.m_pSC);
   rndFind.m_wsName = rnd.m_wsName;
   rndFind.m_wsCondition = rnd.m_wsCondition;
-  rndFind.m_pSC = rnd.m_pSC;
   rndFind.m_nLevel = rnd.m_nLevel + 1;
   rndFind.m_uHashName = uNameHash;
+
   std::vector<CXFA_Node*> children;
   std::vector<CXFA_Node*> properties;
   CXFA_Node* pVariablesNode = nullptr;
@@ -472,7 +473,7 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
   return 0;
 }
 
-int32_t CXFA_ResolveProcessor::ResolveAsterisk(CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::ResolveAsterisk(CFXJSE_ResolveNodeData& rnd) {
   CXFA_Node* curNode = ToNode(rnd.m_CurObject);
   std::vector<CXFA_Node*> array =
       curNode->GetNodeList(XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties,
@@ -481,7 +482,7 @@ int32_t CXFA_ResolveProcessor::ResolveAsterisk(CXFA_ResolveNodesData& rnd) {
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }
 
-int32_t CXFA_ResolveProcessor::ResolvePopStack(std::vector<int32_t>* stack) {
+int32_t CFXJSE_ResolveProcessor::ResolvePopStack(std::vector<int32_t>* stack) {
   if (stack->empty())
     return -1;
 
@@ -490,9 +491,9 @@ int32_t CXFA_ResolveProcessor::ResolvePopStack(std::vector<int32_t>* stack) {
   return nType;
 }
 
-int32_t CXFA_ResolveProcessor::GetFilter(const WideStringView& wsExpression,
-                                         int32_t nStart,
-                                         CXFA_ResolveNodesData& rnd) {
+int32_t CFXJSE_ResolveProcessor::GetFilter(const WideStringView& wsExpression,
+                                           int32_t nStart,
+                                           CFXJSE_ResolveNodeData& rnd) {
   ASSERT(nStart > -1);
   int32_t iLength = wsExpression.GetLength();
   if (nStart >= iLength) {
@@ -590,10 +591,10 @@ int32_t CXFA_ResolveProcessor::GetFilter(const WideStringView& wsExpression,
       static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView(), false));
   return nStart;
 }
-void CXFA_ResolveProcessor::ConditionArray(int32_t iCurIndex,
-                                           WideString wsCondition,
-                                           int32_t iFoundCount,
-                                           CXFA_ResolveNodesData& rnd) {
+void CFXJSE_ResolveProcessor::ConditionArray(int32_t iCurIndex,
+                                             WideString wsCondition,
+                                             int32_t iFoundCount,
+                                             CFXJSE_ResolveNodeData& rnd) {
   int32_t iLen = wsCondition.GetLength();
   bool bRelative = false;
   bool bAll = false;
@@ -656,10 +657,10 @@ void CXFA_ResolveProcessor::ConditionArray(int32_t iCurIndex,
   }
 }
 
-void CXFA_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
-                                              WideString wsCondition,
-                                              int32_t iFoundCount,
-                                              CXFA_ResolveNodesData& rnd) {
+void CFXJSE_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
+                                                WideString wsCondition,
+                                                int32_t iFoundCount,
+                                                CFXJSE_ResolveNodeData& rnd) {
   ASSERT(iFoundCount == pdfium::CollectionSize<int32_t>(rnd.m_Objects));
   WideString wsExpression;
   XFA_SCRIPTLANGTYPE eLangType = XFA_SCRIPTLANGTYPE_Unkown;
@@ -682,8 +683,8 @@ void CXFA_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
   }
 }
 
-void CXFA_ResolveProcessor::FilterCondition(CXFA_ResolveNodesData& rnd,
-                                            WideString wsCondition) {
+void CFXJSE_ResolveProcessor::FilterCondition(CFXJSE_ResolveNodeData& rnd,
+                                              WideString wsCondition) {
   int32_t iCurrIndex = 0;
   const std::vector<CXFA_Node*>* pArray = rnd.m_pSC->GetUpObjectArray();
   if (!pArray->empty()) {
@@ -740,8 +741,8 @@ void CXFA_ResolveProcessor::FilterCondition(CXFA_ResolveNodesData& rnd,
       return;
   }
 }
-void CXFA_ResolveProcessor::SetStylesForChild(uint32_t dwParentStyles,
-                                              CXFA_ResolveNodesData& rnd) {
+void CFXJSE_ResolveProcessor::SetStylesForChild(uint32_t dwParentStyles,
+                                                CFXJSE_ResolveNodeData& rnd) {
   uint32_t dwSubStyles = XFA_RESOLVENODE_Children;
   if (dwParentStyles & XFA_RESOLVENODE_TagName) {
     dwSubStyles |= XFA_RESOLVENODE_TagName;
@@ -753,7 +754,7 @@ void CXFA_ResolveProcessor::SetStylesForChild(uint32_t dwParentStyles,
   rnd.m_dwStyles = dwSubStyles;
 }
 
-int32_t CXFA_ResolveProcessor::SetResultCreateNode(
+int32_t CFXJSE_ResolveProcessor::SetResultCreateNode(
     XFA_RESOLVENODE_RS& resolveNodeRS,
     WideString& wsLastCondition) {
   if (m_pNodeHelper->m_pCreateParent)
@@ -769,9 +770,9 @@ int32_t CXFA_ResolveProcessor::SetResultCreateNode(
   return pdfium::CollectionSize<int32_t>(resolveNodeRS.objects);
 }
 
-void CXFA_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
-                                             int32_t& iIndex,
-                                             int32_t iCount) {
+void CFXJSE_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
+                                               int32_t& iIndex,
+                                               int32_t iCount) {
   if (m_pNodeHelper->CreateNode_ForCondition(wsNextCondition)) {
     if (m_pNodeHelper->m_eLastCreateType == XFA_Element::DataGroup) {
       iIndex = 0;
@@ -783,7 +784,7 @@ void CXFA_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
   }
 }
 
-CXFA_ResolveNodesData::CXFA_ResolveNodesData(CFXJSE_Engine* pSC)
+CFXJSE_ResolveNodeData::CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC)
     : m_pSC(pSC),
       m_CurObject(nullptr),
       m_wsName(),
@@ -795,4 +796,4 @@ CXFA_ResolveNodesData::CXFA_ResolveNodesData(CFXJSE_Engine* pSC)
       m_pScriptAttribute(nullptr),
       m_dwFlag(XFA_RESOVENODE_RSTYPE_Nodes) {}
 
-CXFA_ResolveNodesData::~CXFA_ResolveNodesData() {}
+CFXJSE_ResolveNodeData::~CFXJSE_ResolveNodeData() {}
