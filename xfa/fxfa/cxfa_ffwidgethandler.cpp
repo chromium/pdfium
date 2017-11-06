@@ -216,7 +216,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
     case XFA_EVENT_Validate:
       if (m_pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
               m_pDocView->GetDoc())) {
-        return pWidgetAcc->ProcessValidate();
+        return pWidgetAcc->ProcessValidate(0);
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {

@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffnotify.h"
 
-#include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffarc.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"
@@ -208,25 +207,22 @@ bool CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
 }
 
 bool CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
-  bool bRet = false;
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
-    return bRet;
+    return false;
 
   CXFA_WidgetAcc* pWidgetAcc = ToWidgetAcc(pFormItem->GetWidgetData());
   if (!pWidgetAcc)
-    return bRet;
+    return false;
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Unknown;
-  CFXJSE_Value* pRetValue = nullptr;
-  int32_t iRet =
-      pWidgetAcc->ExecuteScript(CXFA_Script(pScript), &EventParam, &pRetValue);
-  if (iRet == XFA_EVENTERROR_Success && pRetValue) {
-    bRet = pRetValue->ToBoolean();
-    delete pRetValue;
-  }
-  return bRet;
+
+  int32_t iRet;
+  bool bRet;
+  std::tie(iRet, bRet) =
+      pWidgetAcc->ExecuteBoolScript(CXFA_Script(pScript), &EventParam);
+  return iRet == XFA_EVENTERROR_Success && bRet;
 }
 
 int32_t CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,

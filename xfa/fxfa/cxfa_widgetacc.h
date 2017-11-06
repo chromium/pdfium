@@ -8,6 +8,7 @@
 #define XFA_FXFA_CXFA_WIDGETACC_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -37,41 +38,40 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode);
   ~CXFA_WidgetAcc();
 
-  bool GetName(WideString& wsName, int32_t iNameType = 0);
-  bool ProcessValueChanged();
   void ResetData();
 
-  void SetImageEdit(const WideString& wsContentType,
-                    const WideString& wsHref,
-                    const WideString& wsData);
-
   CXFA_WidgetAcc* GetExclGroup();
-  CXFA_FFDocView* GetDocView();
   CXFA_FFDoc* GetDoc();
-  CXFA_FFApp* GetApp();
-  IXFA_AppProvider* GetAppProvider();
 
+  bool ProcessValueChanged();
   int32_t ProcessEvent(int32_t iActivity, CXFA_EventParam* pEventParam);
   int32_t ProcessEvent(const CXFA_Event& event, CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate();
-  int32_t ProcessValidate(int32_t iFlags = 0);
-  int32_t ExecuteScript(CXFA_Script script,
-                        CXFA_EventParam* pEventParam,
-                        CFXJSE_Value** pRetValue = nullptr);
+  int32_t ProcessValidate(int32_t iFlags);
+  int32_t ExecuteScript(CXFA_Script script, CXFA_EventParam* pEventParam);
+  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_Script script,
+                                             CXFA_EventParam* pEventParam);
 
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
   void StartWidgetLayout(float& fCalcWidth, float& fCalcHeight);
   bool FindSplitPos(int32_t iBlockIndex, float& fCalcHeight);
+
   bool LoadCaption();
+  CXFA_TextLayout* GetCaptionTextLayout();
+
   void LoadText();
+  CXFA_TextLayout* GetTextLayout();
+
   bool LoadImageImage();
   bool LoadImageEditImage();
   void GetImageDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
   void GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
-  CXFA_TextLayout* GetCaptionTextLayout();
-  CXFA_TextLayout* GetTextLayout();
+
   RetainPtr<CFX_DIBitmap> GetImageImage();
   RetainPtr<CFX_DIBitmap> GetImageEditImage();
+  void SetImageEdit(const WideString& wsContentType,
+                    const WideString& wsHref,
+                    const WideString& wsData);
   void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void UpdateUIDisplay(CXFA_FFWidget* pExcept = nullptr);
@@ -81,12 +81,12 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   float GetFontSize();
   FX_ARGB GetTextColor();
   float GetLineHeight();
-  CXFA_WidgetLayoutData* GetWidgetLayoutData();
 
  private:
+  IXFA_AppProvider* GetAppProvider();
   void ProcessScriptTestValidate(CXFA_Validate validate,
                                  int32_t iRet,
-                                 CFXJSE_Value* pRetValue,
+                                 bool pRetValue,
                                  bool bVersionFlag);
   int32_t ProcessFormatTestValidate(CXFA_Validate validate, bool bVersionFlag);
   int32_t ProcessNullTestValidate(CXFA_Validate validate,

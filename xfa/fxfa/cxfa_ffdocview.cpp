@@ -689,7 +689,7 @@ bool CXFA_FFDocView::RunValidate() {
 
   for (CXFA_WidgetAcc* pAcc : m_ValidateAccs) {
     if (!pAcc->GetNode()->HasRemovedChildren())
-      pAcc->ProcessValidate();
+      pAcc->ProcessValidate(0);
   }
   m_ValidateAccs.clear();
   return true;

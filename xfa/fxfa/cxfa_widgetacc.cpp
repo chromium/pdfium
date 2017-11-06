@@ -160,20 +160,6 @@ CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode)
 
 CXFA_WidgetAcc::~CXFA_WidgetAcc() {}
 
-bool CXFA_WidgetAcc::GetName(WideString& wsName, int32_t iNameType) {
-  if (iNameType == 0) {
-    m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
-    return !wsName.IsEmpty();
-  }
-  m_pNode->GetSOMExpression(wsName);
-  if (iNameType == 2 && wsName.GetLength() >= 15) {
-    WideStringView wsPre = L"xfa[0].form[0].";
-    if (wsPre == WideStringView(wsName.c_str(), wsPre.GetLength()))
-      wsName.Delete(0, wsPre.GetLength());
-  }
-  return true;
-}
-
 CXFA_Node* CXFA_WidgetAcc::GetDatasets() {
   return m_pNode->GetBindData();
 }
@@ -282,20 +268,12 @@ CXFA_WidgetAcc* CXFA_WidgetAcc::GetExclGroup() {
   return static_cast<CXFA_WidgetAcc*>(pExcl->GetWidgetData());
 }
 
-CXFA_FFDocView* CXFA_WidgetAcc::GetDocView() {
-  return m_pDocView;
-}
-
 CXFA_FFDoc* CXFA_WidgetAcc::GetDoc() {
   return m_pDocView->GetDoc();
 }
 
-CXFA_FFApp* CXFA_WidgetAcc::GetApp() {
-  return GetDoc()->GetApp();
-}
-
 IXFA_AppProvider* CXFA_WidgetAcc::GetAppProvider() {
-  return GetApp()->GetAppProvider();
+  return GetDoc()->GetApp()->GetAppProvider();
 }
 
 int32_t CXFA_WidgetAcc::ProcessEvent(int32_t iActivity,
@@ -363,40 +341,41 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
 
 void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
                                                int32_t iRet,
-                                               CFXJSE_Value* pRetValue,
+                                               bool bRetValue,
                                                bool bVersionFlag) {
-  if (iRet == XFA_EVENTERROR_Success && pRetValue) {
-    if (pRetValue->IsBoolean() && !pRetValue->ToBoolean()) {
-      IXFA_AppProvider* pAppProvider = GetAppProvider();
-      if (!pAppProvider) {
-        return;
-      }
-      WideString wsTitle = pAppProvider->GetAppTitle();
-      WideString wsScriptMsg;
-      validate.GetScriptMessageText(wsScriptMsg);
-      int32_t eScriptTest = validate.GetScriptTest();
-      if (eScriptTest == XFA_ATTRIBUTEENUM_Warning) {
-        if (GetNode()->IsUserInteractive())
-          return;
-        if (wsScriptMsg.IsEmpty())
-          wsScriptMsg = GetValidateMessage(false, bVersionFlag);
+  if (iRet != XFA_EVENTERROR_Success)
+    return;
+  if (bRetValue)
+    return;
 
-        if (bVersionFlag) {
-          pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
-                               XFA_MB_OK);
-          return;
-        }
-        if (pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
-                                 XFA_MB_YesNo) == XFA_IDYes) {
-          GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
-        }
-      } else {
-        if (wsScriptMsg.IsEmpty())
-          wsScriptMsg = GetValidateMessage(true, bVersionFlag);
-        pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
-      }
+  IXFA_AppProvider* pAppProvider = GetAppProvider();
+  if (!pAppProvider)
+    return;
+
+  WideString wsTitle = pAppProvider->GetAppTitle();
+  WideString wsScriptMsg;
+  validate.GetScriptMessageText(wsScriptMsg);
+  int32_t eScriptTest = validate.GetScriptTest();
+  if (eScriptTest == XFA_ATTRIBUTEENUM_Warning) {
+    if (GetNode()->IsUserInteractive())
+      return;
+    if (wsScriptMsg.IsEmpty())
+      wsScriptMsg = GetValidateMessage(false, bVersionFlag);
+
+    if (bVersionFlag) {
+      pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning, XFA_MB_OK);
+      return;
     }
+    if (pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
+                             XFA_MB_YesNo) == XFA_IDYes) {
+      GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
+    }
+    return;
   }
+
+  if (wsScriptMsg.IsEmpty())
+    wsScriptMsg = GetValidateMessage(true, bVersionFlag);
+  pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
 }
 
 int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
@@ -530,7 +509,7 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
     }
   }
   if (wsCaptionName.IsEmpty())
-    GetName(wsCaptionName);
+    m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsCaptionName, true);
 
   return wsCaptionName;
 }
@@ -565,18 +544,17 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   bool bInitDoc = validate.GetNode()->NeedsInitApp();
   bool bStatus = m_pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
-  CFXJSE_Value* pRetValue = nullptr;
   int32_t iRet = XFA_EVENTERROR_NotExist;
   CXFA_Script script = validate.GetScript();
+  bool bRet = false;
+  bool hasBoolResult = (bInitDoc || bStatus) && GetRawValue().IsEmpty();
   if (script) {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_Validate;
     eParam.m_pTarget = this;
-    iRet = ExecuteScript(script, &eParam,
-                         ((bInitDoc || bStatus) && GetRawValue().IsEmpty())
-                             ? nullptr
-                             : &pRetValue);
+    std::tie(iRet, bRet) = ExecuteBoolScript(script, &eParam);
   }
+
   XFA_VERSION version = GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bVersionFlag = false;
   if (version < XFA_VERSION_208)
@@ -591,45 +569,54 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
 
     iRet |= ProcessNullTestValidate(validate, iFlags, bVersionFlag);
   }
-  if (iFormat != XFA_EVENTERROR_Success)
-    ProcessScriptTestValidate(validate, iRet, pRetValue, bVersionFlag);
 
-  delete pRetValue;
+  if (iFormat != XFA_EVENTERROR_Success && hasBoolResult)
+    ProcessScriptTestValidate(validate, iRet, bRet, bVersionFlag);
 
   return iRet | iFormat;
 }
 
 int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
-                                      CXFA_EventParam* pEventParam,
-                                      CFXJSE_Value** pRetValue) {
+                                      CXFA_EventParam* pEventParam) {
+  bool bRet;
+  int32_t iRet;
+  std::tie(iRet, bRet) = ExecuteBoolScript(script, pEventParam);
+  return iRet;
+}
+
+std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
+    CXFA_Script script,
+    CXFA_EventParam* pEventParam) {
   static const uint32_t MAX_RECURSION_DEPTH = 2;
   if (m_nRecursionDepth > MAX_RECURSION_DEPTH)
-    return XFA_EVENTERROR_Success;
+    return {XFA_EVENTERROR_Success, false};
 
   ASSERT(pEventParam);
   if (!script)
-    return XFA_EVENTERROR_NotExist;
+    return {XFA_EVENTERROR_NotExist, false};
   if (script.GetRunAt() == XFA_ATTRIBUTEENUM_Server)
-    return XFA_EVENTERROR_Disabled;
+    return {XFA_EVENTERROR_Disabled, false};
 
   WideString wsExpression;
   script.GetExpression(wsExpression);
   if (wsExpression.IsEmpty())
-    return XFA_EVENTERROR_NotExist;
+    return {XFA_EVENTERROR_NotExist, false};
 
   XFA_SCRIPTTYPE eScriptType = script.GetContentType();
   if (eScriptType == XFA_SCRIPTTYPE_Unkown)
-    return XFA_EVENTERROR_Success;
+    return {XFA_EVENTERROR_Success, false};
 
   CXFA_FFDoc* pDoc = GetDoc();
   CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
   pContext->SetEventParam(*pEventParam);
   pContext->SetRunAtType((XFA_ATTRIBUTEENUM)script.GetRunAt());
+
   std::vector<CXFA_Node*> refNodes;
   if (pEventParam->m_eType == XFA_EVENT_InitCalculate ||
       pEventParam->m_eType == XFA_EVENT_Calculate) {
     pContext->SetNodesOfRunScript(&refNodes);
   }
+
   auto pTmpRetValue = pdfium::MakeUnique<CFXJSE_Value>(pContext->GetRuntime());
   ++m_nRecursionDepth;
   bool bRet = pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
@@ -672,11 +659,9 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
       }
     }
   }
-  if (pRetValue)
-    *pRetValue = pTmpRetValue.release();
-
   pContext->SetNodesOfRunScript(nullptr);
-  return iRet;
+
+  return {iRet, pTmpRetValue->IsBoolean() ? pTmpRetValue->ToBoolean() : false};
 }
 
 CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
@@ -1491,10 +1476,6 @@ void CXFA_WidgetAcc::SetImageEditImage(
       static_cast<CXFA_ImageEditData*>(m_pLayoutData.get());
   if (pData->m_pDIBitmap != newImage)
     pData->m_pDIBitmap = newImage;
-}
-
-CXFA_WidgetLayoutData* CXFA_WidgetAcc::GetWidgetLayoutData() {
-  return m_pLayoutData.get();
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
