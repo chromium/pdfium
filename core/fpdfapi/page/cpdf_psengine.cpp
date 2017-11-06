@@ -46,39 +46,32 @@ const PDF_PSOpName kPsOpNames[] = {
 
 }  // namespace
 
-class CPDF_PSOP {
- public:
-  explicit CPDF_PSOP(PDF_PSOP op) : m_op(op), m_value(0) {
-    ASSERT(m_op != PSOP_CONST);
-    ASSERT(m_op != PSOP_PROC);
-  }
-  explicit CPDF_PSOP(float value) : m_op(PSOP_CONST), m_value(value) {}
-  CPDF_PSOP()
-      : m_op(PSOP_PROC),
-        m_value(0),
-        m_proc(pdfium::MakeUnique<CPDF_PSProc>()) {}
+CPDF_PSOP::CPDF_PSOP()
+    : m_op(PSOP_PROC), m_value(0), m_proc(pdfium::MakeUnique<CPDF_PSProc>()) {}
 
-  float GetFloatValue() const {
-    if (m_op == PSOP_CONST)
-      return m_value;
+CPDF_PSOP::CPDF_PSOP(PDF_PSOP op) : m_op(op), m_value(0) {
+  ASSERT(m_op != PSOP_CONST);
+  ASSERT(m_op != PSOP_PROC);
+}
 
-    NOTREACHED();
-    return 0;
-  }
-  CPDF_PSProc* GetProc() const {
-    if (m_op == PSOP_PROC)
-      return m_proc.get();
-    NOTREACHED();
-    return nullptr;
-  }
+CPDF_PSOP::CPDF_PSOP(float value) : m_op(PSOP_CONST), m_value(value) {}
 
-  PDF_PSOP GetOp() const { return m_op; }
+CPDF_PSOP::~CPDF_PSOP() {}
 
- private:
-  const PDF_PSOP m_op;
-  const float m_value;
-  std::unique_ptr<CPDF_PSProc> m_proc;
-};
+float CPDF_PSOP::GetFloatValue() const {
+  if (m_op == PSOP_CONST)
+    return m_value;
+
+  NOTREACHED();
+  return 0;
+}
+
+CPDF_PSProc* CPDF_PSOP::GetProc() const {
+  if (m_op == PSOP_PROC)
+    return m_proc.get();
+  NOTREACHED();
+  return nullptr;
+}
 
 bool CPDF_PSEngine::Execute() {
   return m_MainProc.Execute(this);
@@ -86,6 +79,29 @@ bool CPDF_PSEngine::Execute() {
 
 CPDF_PSProc::CPDF_PSProc() {}
 CPDF_PSProc::~CPDF_PSProc() {}
+
+bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
+  if (depth > kMaxDepth)
+    return false;
+
+  while (1) {
+    ByteStringView word = parser->GetWord();
+    if (word.IsEmpty())
+      return false;
+
+    if (word == "}")
+      return true;
+
+    if (word == "{") {
+      m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>());
+      if (!m_Operators.back()->GetProc()->Parse(parser, depth + 1))
+        return false;
+      continue;
+    }
+
+    AddOperator(word);
+  }
+}
 
 bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
   for (size_t i = 0; i < m_Operators.size(); ++i) {
@@ -118,6 +134,23 @@ bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
   return true;
 }
 
+void CPDF_PSProc::AddOperatorForTesting(const ByteStringView& word) {
+  AddOperator(word);
+}
+
+void CPDF_PSProc::AddOperator(const ByteStringView& word) {
+  std::unique_ptr<CPDF_PSOP> op;
+  for (const PDF_PSOpName& op_name : kPsOpNames) {
+    if (word == ByteStringView(op_name.name)) {
+      op = pdfium::MakeUnique<CPDF_PSOP>(op_name.op);
+      break;
+    }
+  }
+  if (!op)
+    op = pdfium::MakeUnique<CPDF_PSOP>(FX_atof(word));
+  m_Operators.push_back(std::move(op));
+}
+
 CPDF_PSEngine::CPDF_PSEngine() : m_StackCount(0) {}
 
 CPDF_PSEngine::~CPDF_PSEngine() {}
@@ -139,38 +172,6 @@ bool CPDF_PSEngine::Parse(const char* str, int size) {
   CPDF_SimpleParser parser(reinterpret_cast<const uint8_t*>(str), size);
   ByteStringView word = parser.GetWord();
   return word == "{" ? m_MainProc.Parse(&parser, 0) : false;
-}
-
-bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
-  if (depth > kMaxDepth)
-    return false;
-
-  while (1) {
-    ByteStringView word = parser->GetWord();
-    if (word.IsEmpty())
-      return false;
-
-    if (word == "}")
-      return true;
-
-    if (word == "{") {
-      m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>());
-      if (!m_Operators.back()->GetProc()->Parse(parser, depth + 1))
-        return false;
-      continue;
-    }
-
-    std::unique_ptr<CPDF_PSOP> op;
-    for (const PDF_PSOpName& op_name : kPsOpNames) {
-      if (word == ByteStringView(op_name.name)) {
-        op = pdfium::MakeUnique<CPDF_PSOP>(op_name.op);
-        break;
-      }
-    }
-    if (!op)
-      op = pdfium::MakeUnique<CPDF_PSOP>(FX_atof(word));
-    m_Operators.push_back(std::move(op));
-  }
 }
 
 bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {

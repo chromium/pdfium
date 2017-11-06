@@ -1938,6 +1938,7 @@ test("pdfium_unittests") {
     "core/fpdfapi/font/cpdf_cmapparser_unittest.cpp",
     "core/fpdfapi/font/cpdf_tounicodemap_unittest.cpp",
     "core/fpdfapi/page/cpdf_devicecs_unittest.cpp",
+    "core/fpdfapi/page/cpdf_psengine_unittest.cpp",
     "core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp",
     "core/fpdfapi/page/cpdf_streamparser_unittest.cpp",
     "core/fpdfapi/parser/cpdf_array_unittest.cpp",
