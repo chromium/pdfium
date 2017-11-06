@@ -256,14 +256,12 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_ParamStartPos(0),
       m_ParamCount(0),
       m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()),
-      m_pLastTextObject(nullptr),
       m_DefFontSize(0),
       m_PathStartX(0.0f),
       m_PathStartY(0.0f),
       m_PathCurrentX(0.0f),
       m_PathCurrentY(0.0f),
       m_PathClipType(0),
-      m_pLastImage(nullptr),
       m_bColored(false),
       m_bResourceMissing(false) {
   if (pmtContentToUser)
@@ -412,12 +410,12 @@ float CPDF_StreamContentParser::GetNumber(uint32_t index) {
   }
   ContentParam& param = m_ParamBuf[real_index];
   if (param.m_Type == ContentParam::NUMBER) {
-    return param.m_Number.m_bInteger ? (float)param.m_Number.m_Integer
-                                     : param.m_Number.m_Float;
+    return param.m_Number.m_bInteger
+               ? static_cast<float>(param.m_Number.m_Integer)
+               : param.m_Number.m_Float;
   }
-  if (param.m_Type == 0 && param.m_pObject) {
+  if (param.m_Type == 0 && param.m_pObject)
     return param.m_pObject->GetNumber();
-  }
   return 0;
 }
 
@@ -1619,7 +1617,8 @@ void CPDF_StreamContentParser::ParsePathObject() {
 
         int value;
         bool bInteger = FX_atonum(m_pSyntax->GetWord(), &value);
-        params[nParams++] = bInteger ? (float)value : *(float*)&value;
+        params[nParams++] = bInteger ? static_cast<float>(value)
+                                     : *reinterpret_cast<float*>(&value);
         break;
       }
       default:

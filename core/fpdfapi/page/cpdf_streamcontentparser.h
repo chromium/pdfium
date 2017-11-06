@@ -194,11 +194,11 @@ class CPDF_StreamContentParser {
   void Handle_Invalid();
 
   UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Dictionary> m_pPageResources;
-  UnownedPtr<CPDF_Dictionary> m_pParentResources;
+  UnownedPtr<CPDF_Dictionary> const m_pPageResources;
+  UnownedPtr<CPDF_Dictionary> const m_pParentResources;
   UnownedPtr<CPDF_Dictionary> m_pResources;
-  UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
-  UnownedPtr<std::set<const uint8_t*>> m_ParsedSet;
+  UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
+  UnownedPtr<std::set<const uint8_t*>> const m_ParsedSet;
   CFX_Matrix m_mtContentToUser;
   const CFX_FloatRect m_BBox;
   ContentParam m_ParamBuf[kParamBufSize];
