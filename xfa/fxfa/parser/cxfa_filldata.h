@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_FILL_H_
-#define XFA_FXFA_PARSER_CXFA_FILL_H_
+#ifndef XFA_FXFA_PARSER_CXFA_FILLDATA_H_
+#define XFA_FXFA_PARSER_CXFA_FILLDATA_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
@@ -13,10 +13,10 @@
 
 class CXFA_Node;
 
-class CXFA_Fill : public CXFA_Data {
+class CXFA_FillData : public CXFA_Data {
  public:
-  explicit CXFA_Fill(CXFA_Node* pNode);
-  ~CXFA_Fill();
+  explicit CXFA_FillData(CXFA_Node* pNode);
+  ~CXFA_FillData();
 
   int32_t GetPresence();
   FX_ARGB GetColor(bool bText = false);
@@ -28,4 +28,4 @@ class CXFA_Fill : public CXFA_Data {
   void SetColor(FX_ARGB color);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_FILL_H_
+#endif  // XFA_FXFA_PARSER_CXFA_FILLDATA_H_

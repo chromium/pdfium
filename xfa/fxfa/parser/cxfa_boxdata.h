@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_edgedata.h"
-#include "xfa/fxfa/parser/cxfa_fill.h"
+#include "xfa/fxfa/parser/cxfa_filldata.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 
 class CXFA_Node;
@@ -46,7 +46,7 @@ class CXFA_BoxData : public CXFA_Data {
     return fSweepAngle;
   }
 
-  CXFA_Fill GetFill(bool bModified = false) const;
+  CXFA_FillData GetFillData(bool bModified = false) const;
   CXFA_Margin GetMargin() const;
   int32_t Get3DStyle(bool& bVisible, float& fThickness) const;
 };

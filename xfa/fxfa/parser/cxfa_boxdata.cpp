@@ -137,13 +137,13 @@ bool CXFA_BoxData::GetSweepAngle(float& fSweepAngle) const {
   return bRet;
 }
 
-CXFA_Fill CXFA_BoxData::GetFill(bool bModified) const {
+CXFA_FillData CXFA_BoxData::GetFillData(bool bModified) const {
   if (!m_pNode)
-    return CXFA_Fill(nullptr);
+    return CXFA_FillData(nullptr);
 
   CXFA_Node* pFillNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Fill, bModified);
-  return CXFA_Fill(pFillNode);
+  return CXFA_FillData(pFillNode);
 }
 
 CXFA_Margin CXFA_BoxData::GetMargin() const {

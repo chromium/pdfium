@@ -388,10 +388,10 @@ void XFA_BOX_Fill_Radial(CXFA_BoxData boxData,
                          CXFA_Path& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_Fill fill = boxData.GetFill();
+  CXFA_FillData fillData = boxData.GetFillData();
   FX_ARGB crStart, crEnd;
-  crStart = fill.GetColor();
-  int32_t iType = fill.GetRadial(crEnd);
+  crStart = fillData.GetColor();
+  int32_t iType = fillData.GetRadial(crEnd);
   if (iType != XFA_ATTRIBUTEENUM_ToEdge) {
     FX_ARGB temp = crEnd;
     crEnd = crStart;
@@ -411,10 +411,10 @@ void XFA_BOX_Fill_Pattern(CXFA_BoxData boxData,
                           CXFA_Path& fillPath,
                           CFX_RectF rtFill,
                           const CFX_Matrix& matrix) {
-  CXFA_Fill fill = boxData.GetFill();
+  CXFA_FillData fillData = boxData.GetFillData();
   FX_ARGB crStart, crEnd;
-  crStart = fill.GetColor();
-  int32_t iType = fill.GetPattern(crEnd);
+  crStart = fillData.GetColor();
+  int32_t iType = fillData.GetPattern(crEnd);
   FX_HatchStyle iHatch = FX_HatchStyle::Cross;
   switch (iType) {
     case XFA_ATTRIBUTEENUM_CrossDiagonal:
@@ -446,10 +446,10 @@ void XFA_BOX_Fill_Linear(CXFA_BoxData boxData,
                          CXFA_Path& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_Fill fill = boxData.GetFill();
-  FX_ARGB crStart = fill.GetColor();
+  CXFA_FillData fillData = boxData.GetFillData();
+  FX_ARGB crStart = fillData.GetColor();
   FX_ARGB crEnd;
-  int32_t iType = fill.GetLinear(crEnd);
+  int32_t iType = fillData.GetLinear(crEnd);
   CFX_PointF ptStart;
   CFX_PointF ptEnd;
   switch (iType) {
@@ -483,8 +483,8 @@ void XFA_BOX_Fill(CXFA_BoxData boxData,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix,
                   uint32_t dwFlags) {
-  CXFA_Fill fill = boxData.GetFill();
-  if (!fill || fill.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  CXFA_FillData fillData = boxData.GetFillData();
+  if (!fillData || fillData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
 
   pGS->SaveGraphState();
@@ -492,7 +492,7 @@ void XFA_BOX_Fill(CXFA_BoxData boxData,
   XFA_BOX_GetFillPath(boxData, strokes, rtWidget, fillPath,
                       (dwFlags & XFA_DRAWBOX_ForceRound) != 0);
   fillPath.Close();
-  XFA_Element eType = fill.GetFillType();
+  XFA_Element eType = fillData.GetFillType();
   switch (eType) {
     case XFA_Element::Radial:
       XFA_BOX_Fill_Radial(boxData, pGS, fillPath, rtWidget, matrix);
@@ -506,7 +506,7 @@ void XFA_BOX_Fill(CXFA_BoxData boxData,
     default: {
       FX_ARGB cr;
       if (eType == XFA_Element::Stipple) {
-        int32_t iRate = fill.GetStipple(cr);
+        int32_t iRate = fillData.GetStipple(cr);
         if (iRate == 0)
           iRate = 100;
         int32_t a;
@@ -514,7 +514,7 @@ void XFA_BOX_Fill(CXFA_BoxData boxData,
         std::tie(a, rgb) = ArgbToColorRef(cr);
         cr = ArgbEncode(iRate * a / 100, rgb);
       } else {
-        cr = fill.GetColor();
+        cr = fillData.GetColor();
       }
       pGS->SetFillColor(CXFA_Color(cr));
       pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);

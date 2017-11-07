@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_fill.h"
+#include "xfa/fxfa/parser/cxfa_filldata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_Fill::CXFA_Fill(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_FillData::CXFA_FillData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-CXFA_Fill::~CXFA_Fill() {}
+CXFA_FillData::~CXFA_FillData() {}
 
-int32_t CXFA_Fill::GetPresence() {
+int32_t CXFA_FillData::GetPresence() {
   return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Presence);
 }
 
-void CXFA_Fill::SetColor(FX_ARGB color) {
+void CXFA_FillData::SetColor(FX_ARGB color) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Color, true);
   WideString wsColor;
@@ -29,7 +29,7 @@ void CXFA_Fill::SetColor(FX_ARGB color) {
   pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsColor, false, false);
 }
 
-FX_ARGB CXFA_Fill::GetColor(bool bText) {
+FX_ARGB CXFA_FillData::GetColor(bool bText) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color, false)) {
     WideStringView wsColor;
     if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsColor, false))
@@ -40,7 +40,7 @@ FX_ARGB CXFA_Fill::GetColor(bool bText) {
   return 0xFFFFFFFF;
 }
 
-XFA_Element CXFA_Fill::GetFillType() {
+XFA_Element CXFA_FillData::GetFillType() {
   CXFA_Node* pChild = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pChild) {
     XFA_Element eType = pChild->GetElementType();
@@ -52,7 +52,7 @@ XFA_Element CXFA_Fill::GetFillType() {
   return XFA_Element::Solid;
 }
 
-int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
+int32_t CXFA_FillData::GetPattern(FX_ARGB& foreColor) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Pattern, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
@@ -65,7 +65,7 @@ int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
   return pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Type);
 }
 
-int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
+int32_t CXFA_FillData::GetStipple(FX_ARGB& stippleColor) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Stipple, true);
   int32_t eAttr = 50;
@@ -80,7 +80,7 @@ int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
   return eAttr;
 }
 
-int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
+int32_t CXFA_FillData::GetLinear(FX_ARGB& endColor) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Linear, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToRight;
@@ -95,7 +95,7 @@ int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
   return eAttr;
 }
 
-int32_t CXFA_Fill::GetRadial(FX_ARGB& endColor) {
+int32_t CXFA_FillData::GetRadial(FX_ARGB& endColor) {
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Radial, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToEdge;

@@ -1580,24 +1580,24 @@ void CJX_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
   CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData) {
+  if (!pWidgetData)
     return;
-  }
+
   CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
-  CXFA_Fill borderfill = borderData.GetFill(true);
-  CXFA_Node* pNode = borderfill.GetNode();
-  if (!pNode) {
+  CXFA_FillData borderfillData = borderData.GetFillData(true);
+  CXFA_Node* pNode = borderfillData.GetNode();
+  if (!pNode)
     return;
-  }
+
   if (bSetting) {
     int32_t r;
     int32_t g;
     int32_t b;
     StrToRGB(pValue->ToWideString(), r, g, b);
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
-    borderfill.SetColor(color);
+    borderfillData.SetColor(color);
   } else {
-    FX_ARGB color = borderfill.GetColor();
+    FX_ARGB color = borderfillData.GetColor();
     int32_t a;
     int32_t r;
     int32_t g;

@@ -7,7 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_font.h"
 
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxfa/parser/cxfa_fill.h"
+#include "xfa/fxfa/parser/cxfa_filldata.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -85,11 +85,11 @@ bool CXFA_Font::IsItalic() {
 }
 
 void CXFA_Font::SetColor(FX_ARGB color) {
-  CXFA_Fill fill(m_pNode->JSNode()->GetProperty(0, XFA_Element::Fill, true));
-  fill.SetColor(color);
+  CXFA_FillData(m_pNode->JSNode()->GetProperty(0, XFA_Element::Fill, true))
+      .SetColor(color);
 }
 
 FX_ARGB CXFA_Font::GetColor() {
-  CXFA_Fill fill(m_pNode->GetChild(0, XFA_Element::Fill, false));
-  return fill ? fill.GetColor(true) : 0xFF000000;
+  CXFA_FillData fillData(m_pNode->GetChild(0, XFA_Element::Fill, false));
+  return fillData ? fillData.GetColor(true) : 0xFF000000;
 }
