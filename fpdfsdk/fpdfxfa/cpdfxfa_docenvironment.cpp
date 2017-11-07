@@ -680,12 +680,13 @@ void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
   m_pContext->GetXFADocView()->UpdateDocView();
 }
 
-bool CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
+bool CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc,
+                                        CXFA_SubmitData submitData) {
   if (!NotifySubmit(true) || !m_pContext->GetXFADocView())
     return false;
 
   m_pContext->GetXFADocView()->UpdateDocView();
-  bool ret = SubmitDataInternal(hDoc, submit);
+  bool ret = SubmitDataInternal(hDoc, submitData);
   NotifySubmit(false);
   return ret;
 }
@@ -889,13 +890,13 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
 }
 
 bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
-                                                CXFA_Submit submit) {
+                                                CXFA_SubmitData submitData) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return false;
 
   WideStringView csURLC;
-  submit.GetSubmitTarget(csURLC);
+  submitData.GetSubmitTarget(csURLC);
   WideString csURL(csURLC);
   if (csURL.IsEmpty()) {
     WideString ws;
@@ -910,10 +911,10 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
 
   FPDF_FILEHANDLER* pFileHandler = nullptr;
   int fileFlag = -1;
-  switch (submit.GetSubmitFormat()) {
+  switch (submitData.GetSubmitFormat()) {
     case XFA_ATTRIBUTEENUM_Xdp: {
       WideStringView csContentC;
-      submit.GetSubmitXDPContent(csContentC);
+      submitData.GetSubmitXDPContent(csContentC);
       WideString csContent;
       csContent = csContentC;
       csContent.TrimLeft();
@@ -922,7 +923,7 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
       space.FromLocal(" ");
       csContent = space + csContent + space;
       FPDF_DWORD flag = 0;
-      if (submit.IsSubmitEmbedPDF())
+      if (submitData.IsSubmitEmbedPDF())
         flag |= FXFA_PDF;
 
       ToXFAContentFlags(csContent, flag);

@@ -76,7 +76,7 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
    * @param[in] bEmbedPDF, specifies whether PDF is embedded in the submitted
    *content or not.
    */
-  bool SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) override;
+  bool SubmitData(CXFA_FFDoc* hDoc, CXFA_SubmitData submitData) override;
 
   bool GetGlobalProperty(CXFA_FFDoc* hDoc,
                          const ByteStringView& szPropName,
@@ -93,7 +93,7 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
   bool OnBeforeNotifySubmit();
   void OnAfterNotifySubmit();
   bool NotifySubmit(bool bPrevOrPost);
-  bool SubmitDataInternal(CXFA_FFDoc* hDoc, CXFA_Submit submit);
+  bool SubmitDataInternal(CXFA_FFDoc* hDoc, CXFA_SubmitData submitData);
   bool MailToInfo(WideString& csURL,
                   WideString& csToAddress,
                   WideString& csCCAddress,

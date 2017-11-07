@@ -34,8 +34,8 @@ CXFA_ScriptData CXFA_EventData::GetScriptData() const {
   return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
-CXFA_Submit CXFA_EventData::GetSubmit() const {
-  return CXFA_Submit(m_pNode->GetChild(0, XFA_Element::Submit, false));
+CXFA_SubmitData CXFA_EventData::GetSubmitData() const {
+  return CXFA_SubmitData(m_pNode->GetChild(0, XFA_Element::Submit, false));
 }
 
 void CXFA_EventData::GetSignDataTarget(WideString& wsTarget) {

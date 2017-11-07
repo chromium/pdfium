@@ -257,7 +257,7 @@ class IXFA_DocEnvironment {
                      uint32_t dwOptions) = 0;
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
-  virtual bool SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) = 0;
+  virtual bool SubmitData(CXFA_FFDoc* hDoc, CXFA_SubmitData submitData) = 0;
   virtual bool GetGlobalProperty(CXFA_FFDoc* hDoc,
                                  const ByteStringView& szPropName,
                                  CFXJSE_Value* pValue) = 0;

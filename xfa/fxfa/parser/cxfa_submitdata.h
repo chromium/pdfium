@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_SUBMIT_H_
-#define XFA_FXFA_PARSER_CXFA_SUBMIT_H_
+#ifndef XFA_FXFA_PARSER_CXFA_SUBMITDATA_H_
+#define XFA_FXFA_PARSER_CXFA_SUBMITDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -13,9 +13,9 @@
 
 class CXFA_Node;
 
-class CXFA_Submit : public CXFA_Data {
+class CXFA_SubmitData : public CXFA_Data {
  public:
-  explicit CXFA_Submit(CXFA_Node* pNode);
+  explicit CXFA_SubmitData(CXFA_Node* pNode);
 
   bool IsSubmitEmbedPDF();
   int32_t GetSubmitFormat();
@@ -23,4 +23,4 @@ class CXFA_Submit : public CXFA_Data {
   void GetSubmitXDPContent(WideStringView& wsContent);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_SUBMIT_H_
+#endif  // XFA_FXFA_PARSER_CXFA_SUBMITDATA_H_
