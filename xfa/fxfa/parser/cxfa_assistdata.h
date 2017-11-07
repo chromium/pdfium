@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_ASSISTDATA_H_
 
 #include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/fxfa/parser/cxfa_tooltip.h"
+#include "xfa/fxfa/parser/cxfa_tooltipdata.h"
 
 class CXFA_Node;
 
@@ -16,7 +16,7 @@ class CXFA_AssistData : public CXFA_Data {
  public:
   explicit CXFA_AssistData(CXFA_Node* pNode);
 
-  CXFA_ToolTip GetToolTip();
+  CXFA_ToolTipData GetToolTipData();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ASSISTDATA_H_

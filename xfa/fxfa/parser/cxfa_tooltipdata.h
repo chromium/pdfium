@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_TOOLTIP_H_
-#define XFA_FXFA_PARSER_CXFA_TOOLTIP_H_
+#ifndef XFA_FXFA_PARSER_CXFA_TOOLTIPDATA_H_
+#define XFA_FXFA_PARSER_CXFA_TOOLTIPDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;
 
-class CXFA_ToolTip : public CXFA_Data {
+class CXFA_ToolTipData : public CXFA_Data {
  public:
-  explicit CXFA_ToolTip(CXFA_Node* pNode);
+  explicit CXFA_ToolTipData(CXFA_Node* pNode);
 
   bool GetTip(WideString& wsTip);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_TOOLTIP_H_
+#endif  // XFA_FXFA_PARSER_CXFA_TOOLTIPDATA_H_

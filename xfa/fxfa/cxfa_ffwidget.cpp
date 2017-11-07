@@ -974,9 +974,9 @@ CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
 bool CXFA_FFWidget::GetToolTip(WideString& wsToolTip) {
   CXFA_AssistData assist = m_pDataAcc->GetAssistData();
   if (assist) {
-    CXFA_ToolTip toolTip = assist.GetToolTip();
-    if (toolTip)
-      return toolTip.GetTip(wsToolTip);
+    CXFA_ToolTipData toolTipData = assist.GetToolTipData();
+    if (toolTipData)
+      return toolTipData.GetTip(wsToolTip);
   }
   return GetCaptionText(wsToolTip);
 }

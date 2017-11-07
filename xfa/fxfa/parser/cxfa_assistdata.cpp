@@ -10,6 +10,6 @@
 
 CXFA_AssistData::CXFA_AssistData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-CXFA_ToolTip CXFA_AssistData::GetToolTip() {
-  return CXFA_ToolTip(m_pNode->GetChild(0, XFA_Element::ToolTip, false));
+CXFA_ToolTipData CXFA_AssistData::GetToolTipData() {
+  return CXFA_ToolTipData(m_pNode->GetChild(0, XFA_Element::ToolTip, false));
 }

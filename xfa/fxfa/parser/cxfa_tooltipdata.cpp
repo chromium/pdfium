@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_tooltip.h"
+#include "xfa/fxfa/parser/cxfa_tooltipdata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_ToolTip::CXFA_ToolTip(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_ToolTipData::CXFA_ToolTipData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-bool CXFA_ToolTip::GetTip(WideString& wsTip) {
+bool CXFA_ToolTipData::GetTip(WideString& wsTip) {
   return m_pNode->JSNode()->TryContent(wsTip, false, true);
 }
