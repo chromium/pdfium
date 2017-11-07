@@ -32,13 +32,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
   FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
-  int32_t FIRSTS = 0;
+  FX_SAFE_INT32 FIRSTS = 0;
   uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
-    int32_t DT;
-    if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &DT) != 0)
+    int32_t INITIAL_DT;
+    if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &INITIAL_DT) != 0)
       return nullptr;
 
+    FX_SAFE_INT32 DT = INITIAL_DT;
     DT *= SBSTRIPS;
     STRIPT += DT;
     bool bFirst = true;
@@ -49,7 +50,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
         if (pHuffmanDecoder->decodeAValue(SBHUFFFS, &DFS) != 0)
           return nullptr;
 
-        FIRSTS = FIRSTS + DFS;
+        FIRSTS += DFS;
         CURS = FIRSTS;
         bFirst = false;
       } else {
@@ -265,14 +266,15 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
   FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
-  int32_t FIRSTS = 0;
+  FX_SAFE_INT32 FIRSTS = 0;
   uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     FX_SAFE_INT32 CURS = 0;
-    int32_t DT;
-    if (!pIADT->decode(pArithDecoder, &DT))
+    int32_t INITIAL_DT;
+    if (!pIADT->decode(pArithDecoder, &INITIAL_DT))
       return nullptr;
 
+    FX_SAFE_INT32 DT = INITIAL_DT;
     DT *= SBSTRIPS;
     STRIPT += DT;
     bool bFirst = true;
