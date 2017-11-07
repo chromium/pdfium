@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_BINDITEMS_H_
-#define XFA_FXFA_PARSER_CXFA_BINDITEMS_H_
+#ifndef XFA_FXFA_PARSER_CXFA_BINDITEMSDATA_H_
+#define XFA_FXFA_PARSER_CXFA_BINDITEMSDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;
 
-class CXFA_BindItems : public CXFA_Data {
+class CXFA_BindItemsData : public CXFA_Data {
  public:
-  explicit CXFA_BindItems(CXFA_Node* pNode);
+  explicit CXFA_BindItemsData(CXFA_Node* pNode);
 
   void GetLabelRef(WideStringView& wsLabelRef);
   void GetValueRef(WideStringView& wsValueRef);
@@ -22,4 +22,4 @@ class CXFA_BindItems : public CXFA_Data {
   bool SetConnection(const WideString& wsConnection);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_BINDITEMS_H_
+#endif  // XFA_FXFA_PARSER_CXFA_BINDITEMSDATA_H_

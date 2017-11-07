@@ -29,7 +29,7 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
-#include "xfa/fxfa/parser/cxfa_binditems.h"
+#include "xfa/fxfa/parser/cxfa_binditemsdata.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
@@ -718,11 +718,11 @@ void CXFA_FFDocView::RunBindItems() {
     if (!pAcc)
       continue;
 
-    CXFA_BindItems binditems(item);
+    CXFA_BindItemsData bindItemsData(item);
     CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
     WideStringView wsRef;
-    binditems.GetRef(wsRef);
+    bindItemsData.GetRef(wsRef);
     uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
                        XFA_RESOLVENODE_ALL;
@@ -733,8 +733,8 @@ void CXFA_FFDocView::RunBindItems() {
       continue;
 
     WideStringView wsValueRef, wsLabelRef;
-    binditems.GetValueRef(wsValueRef);
-    binditems.GetLabelRef(wsLabelRef);
+    bindItemsData.GetValueRef(wsValueRef);
+    bindItemsData.GetLabelRef(wsLabelRef);
     const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
     const bool bLabelUseContent = wsLabelRef.IsEmpty() || wsLabelRef == L"$";
     const bool bValueUseContent = wsValueRef.IsEmpty() || wsValueRef == L"$";
