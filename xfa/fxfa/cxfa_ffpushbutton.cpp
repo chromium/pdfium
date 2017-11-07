@@ -114,10 +114,9 @@ bool CXFA_FFPushButton::PerformLayout() {
 }
 float CXFA_FFPushButton::GetLineWidth() {
   CXFA_BorderData borderData = m_pDataAcc->GetBorderData(false);
-  if (borderData && borderData.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
-    CXFA_Edge edge = borderData.GetEdge(0);
-    return edge.GetThickness();
-  }
+  if (borderData && borderData.GetPresence() == XFA_ATTRIBUTEENUM_Visible)
+    return borderData.GetEdgeData(0).GetThickness();
+
   return 0;
 }
 

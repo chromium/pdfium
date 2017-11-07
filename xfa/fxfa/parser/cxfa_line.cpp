@@ -17,6 +17,6 @@ bool CXFA_Line::GetSlope() {
          XFA_ATTRIBUTEENUM_Slash;
 }
 
-CXFA_Edge CXFA_Line::GetEdge() {
-  return CXFA_Edge(m_pNode->GetChild(0, XFA_Element::Edge, false));
+CXFA_EdgeData CXFA_Line::GetEdgeData() {
+  return CXFA_EdgeData(m_pNode->GetChild(0, XFA_Element::Edge, false));
 }

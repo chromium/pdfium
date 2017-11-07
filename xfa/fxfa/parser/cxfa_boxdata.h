@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/fxfa/parser/cxfa_edge.h"
+#include "xfa/fxfa/parser/cxfa_edgedata.h"
 #include "xfa/fxfa/parser/cxfa_fill.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 
@@ -29,7 +29,7 @@ class CXFA_BoxData : public CXFA_Data {
   int32_t GetHand() const;
   int32_t GetPresence() const;
   int32_t CountEdges() const;
-  CXFA_Edge GetEdge(int32_t nIndex = 0) const;
+  CXFA_EdgeData GetEdgeData(int32_t nIndex = 0) const;
   void GetStrokes(std::vector<CXFA_Stroke>* strokes) const;
   bool IsCircular() const;
   bool GetStartAngle(float& fStartAngle) const;

@@ -25,10 +25,10 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;
     if (borderUIData) {
-      CXFA_Edge edge = borderUIData.GetEdge(0);
-      if (edge) {
-        cr = edge.GetColor();
-        fWidth = edge.GetThickness();
+      CXFA_EdgeData edgeData = borderUIData.GetEdgeData(0);
+      if (edgeData) {
+        cr = edgeData.GetColor();
+        fWidth = edgeData.GetThickness();
       }
     }
     pParams->m_pGraphics->SetStrokeColor(CXFA_Color(cr));

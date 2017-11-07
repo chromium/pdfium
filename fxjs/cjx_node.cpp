@@ -1536,13 +1536,11 @@ void CJX_Node::Script_Som_BorderColor(CFXJSE_Value* pValue,
     int32_t b = 0;
     StrToRGB(pValue->ToWideString(), r, g, b);
     FX_ARGB rgb = ArgbEncode(100, r, g, b);
-    for (int32_t i = 0; i < iSize; ++i) {
-      CXFA_Edge edge = borderData.GetEdge(i);
-      edge.SetColor(rgb);
-    }
+    for (int32_t i = 0; i < iSize; ++i)
+      borderData.GetEdgeData(i).SetColor(rgb);
+
   } else {
-    CXFA_Edge edge = borderData.GetEdge(0);
-    FX_ARGB color = edge.GetColor();
+    FX_ARGB color = borderData.GetEdgeData(0).GetColor();
     int32_t a;
     int32_t r;
     int32_t g;
@@ -1567,14 +1565,13 @@ void CJX_Node::Script_Som_BorderWidth(CFXJSE_Value* pValue,
   if (bSetting) {
     wsThickness = pValue->ToWideString();
     for (int32_t i = 0; i < iSize; ++i) {
-      CXFA_Edge edge = borderData.GetEdge(i);
-      CXFA_Measurement thickness(wsThickness.AsStringView());
-      edge.SetMSThickness(thickness);
+      borderData.GetEdgeData(i).SetMSThickness(
+          CXFA_Measurement(wsThickness.AsStringView()));
     }
   } else {
-    CXFA_Edge edge = borderData.GetEdge(0);
-    CXFA_Measurement thickness = edge.GetMSThickness();
+    CXFA_Measurement thickness = borderData.GetEdgeData(0).GetMSThickness();
     thickness.ToString(&wsThickness);
+
     pValue->SetString(wsThickness.UTF8Encode().AsStringView());
   }
 }

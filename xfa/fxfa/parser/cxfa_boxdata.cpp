@@ -33,10 +33,10 @@ void GetStrokesInternal(CXFA_Node* pNode,
         (*strokes)[j] = (*strokes)[2];
     }
     j++;
-    CXFA_Edge edge =
-        CXFA_Edge(pNode->JSNode()->GetProperty(i, XFA_Element::Edge, i == 0));
-    if (edge || i == 0) {
-      (*strokes)[j] = edge;
+    CXFA_EdgeData edgeData = CXFA_EdgeData(
+        pNode->JSNode()->GetProperty(i, XFA_Element::Edge, i == 0));
+    if (edgeData || i == 0) {
+      (*strokes)[j] = edgeData;
     } else if (!bNull) {
       if (i == 1 || i == 2)
         (*strokes)[j] = (*strokes)[1];
@@ -93,10 +93,10 @@ int32_t CXFA_BoxData::CountEdges() const {
   return m_pNode->CountChildren(XFA_Element::Edge, false);
 }
 
-CXFA_Edge CXFA_BoxData::GetEdge(int32_t nIndex) const {
-  return CXFA_Edge(m_pNode ? m_pNode->JSNode()->GetProperty(
-                                 nIndex, XFA_Element::Edge, nIndex == 0)
-                           : nullptr);
+CXFA_EdgeData CXFA_BoxData::GetEdgeData(int32_t nIndex) const {
+  return CXFA_EdgeData(m_pNode ? m_pNode->JSNode()->GetProperty(
+                                     nIndex, XFA_Element::Edge, nIndex == 0)
+                               : nullptr);
 }
 
 void CXFA_BoxData::GetStrokes(std::vector<CXFA_Stroke>* strokes) const {

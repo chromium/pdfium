@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/fxfa/parser/cxfa_edge.h"
+#include "xfa/fxfa/parser/cxfa_edgedata.h"
 
 class CXFA_Node;
 
@@ -19,7 +19,7 @@ class CXFA_Line : public CXFA_Data {
 
   int32_t GetHand();
   bool GetSlope();
-  CXFA_Edge GetEdge();
+  CXFA_EdgeData GetEdgeData();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LINE_H_

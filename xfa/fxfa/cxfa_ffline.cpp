@@ -62,15 +62,15 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   int32_t iStrokeType = 0;
   float fLineWidth = 1.0f;
   int32_t iCap = 0;
-  CXFA_Edge edge = lineObj.GetEdge();
-  if (edge) {
-    if (edge.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  CXFA_EdgeData edgeData = lineObj.GetEdgeData();
+  if (edgeData) {
+    if (edgeData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
       return;
 
-    lineColor = edge.GetColor();
-    iStrokeType = edge.GetStrokeType();
-    fLineWidth = edge.GetThickness();
-    iCap = edge.GetCapType();
+    lineColor = edgeData.GetColor();
+    iStrokeType = edgeData.GetStrokeType();
+    fLineWidth = edgeData.GetThickness();
+    iCap = edgeData.GetCapType();
   }
 
   CFX_Matrix mtRotate = GetRotateMatrix();

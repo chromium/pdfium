@@ -7,6 +7,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <vector>
 
@@ -85,24 +86,23 @@ void XFA_BOX_GetPath(const std::vector<CXFA_Stroke>& strokes,
   float halfBefore = 0.0f;
   CXFA_Stroke stroke = strokes[nIndex];
   if (stroke.IsCorner()) {
-    CXFA_Stroke edgeBefore = strokes[(nIndex + 1 * 8 - 1) % 8];
-    CXFA_Stroke edgeAfter = strokes[nIndex + 1];
+    CXFA_Stroke strokeBefore = strokes[(nIndex + 1 * 8 - 1) % 8];
+    CXFA_Stroke strokeAfter = strokes[nIndex + 1];
     if (stroke.IsInverted()) {
-      if (!stroke.SameStyles(edgeBefore)) {
-        halfBefore = edgeBefore.GetThickness() / 2;
-      }
-      if (!stroke.SameStyles(edgeAfter)) {
-        halfAfter = edgeAfter.GetThickness() / 2;
-      }
+      if (!stroke.SameStyles(strokeBefore))
+        halfBefore = strokeBefore.GetThickness() / 2;
+      if (!stroke.SameStyles(strokeAfter))
+        halfAfter = strokeAfter.GetThickness() / 2;
     }
   } else {
-    CXFA_Stroke edgeBefore = strokes[(nIndex + 8 - 2) % 8];
-    CXFA_Stroke edgeAfter = strokes[(nIndex + 2) % 8];
+    CXFA_Stroke strokeBefore = strokes[(nIndex + 8 - 2) % 8];
+    CXFA_Stroke strokeAfter = strokes[(nIndex + 2) % 8];
     if (!bRound && !bInverted) {
-      halfBefore = edgeBefore.GetThickness() / 2;
-      halfAfter = edgeAfter.GetThickness() / 2;
+      halfBefore = strokeBefore.GetThickness() / 2;
+      halfAfter = strokeAfter.GetThickness() / 2;
     }
   }
+
   float offsetEX = 0.0f;
   float offsetEY = 0.0f;
   float sx = 0.0f;
@@ -240,21 +240,18 @@ void XFA_BOX_GetFillPath(CXFA_BoxData boxData,
                          CXFA_Path& fillPath,
                          uint16_t dwFlags) {
   if (boxData.IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
-    CXFA_Edge edge = boxData.GetEdge(0);
-    float fThickness = edge.GetThickness();
-    if (fThickness < 0) {
-      fThickness = 0;
-    }
+    float fThickness = std::fmax(0.0, boxData.GetEdgeData(0).GetThickness());
     float fHalf = fThickness / 2;
     int32_t iHand = boxData.GetHand();
-    if (iHand == XFA_ATTRIBUTEENUM_Left) {
+    if (iHand == XFA_ATTRIBUTEENUM_Left)
       rtWidget.Inflate(fHalf, fHalf);
-    } else if (iHand == XFA_ATTRIBUTEENUM_Right) {
+    else if (iHand == XFA_ATTRIBUTEENUM_Right)
       rtWidget.Deflate(fHalf, fHalf);
-    }
+
     XFA_BOX_GetPath_Arc(boxData, rtWidget, fillPath, dwFlags);
     return;
   }
+
   bool bSameStyles = true;
   CXFA_Stroke stroke1 = strokes[0];
   for (int32_t i = 1; i < 8; i++) {
@@ -556,10 +553,10 @@ void XFA_BOX_StrokeArc(CXFA_BoxData boxData,
                        CFX_RectF rtWidget,
                        const CFX_Matrix& matrix,
                        uint32_t dwFlags) {
-  CXFA_Edge edge = boxData.GetEdge(0);
-  if (!edge || !edge.IsVisible()) {
+  CXFA_EdgeData edgeData = boxData.GetEdgeData(0);
+  if (!edgeData || !edgeData.IsVisible())
     return;
-  }
+
   bool bVisible = false;
   float fThickness = 0;
   int32_t i3DType = boxData.Get3DStyle(bVisible, fThickness);
@@ -568,7 +565,7 @@ void XFA_BOX_StrokeArc(CXFA_BoxData boxData,
       dwFlags |= XFA_DRAWBOX_Lowered3D;
     }
   }
-  float fHalf = edge.GetThickness() / 2;
+  float fHalf = edgeData.GetThickness() / 2;
   if (fHalf < 0) {
     fHalf = 0;
   }
@@ -585,7 +582,7 @@ void XFA_BOX_StrokeArc(CXFA_BoxData boxData,
 
     CXFA_Path arcPath;
     XFA_BOX_GetPath_Arc(boxData, rtWidget, arcPath, dwFlags);
-    XFA_BOX_StrokePath(edge, &arcPath, pGS, matrix);
+    XFA_BOX_StrokePath(edgeData, &arcPath, pGS, matrix);
     return;
   }
   pGS->SaveGraphState();
@@ -832,11 +829,8 @@ void XFA_BOX_Stroke(CXFA_BoxData boxData,
     return;
   }
   for (int32_t i = 1; i < 8; i += 2) {
-    CXFA_Edge edge(strokes[i].GetNode());
-    float fThickness = edge.GetThickness();
-    if (fThickness < 0) {
-      fThickness = 0;
-    }
+    float fThickness =
+        std::fmax(0.0, CXFA_EdgeData(strokes[i].GetNode()).GetThickness());
     float fHalf = fThickness / 2;
     int32_t iHand = boxData.GetHand();
     switch (i) {
