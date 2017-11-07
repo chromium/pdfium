@@ -1807,7 +1807,7 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_containerlayoutitem.h",
       "xfa/fxfa/parser/cxfa_contentlayoutitem.cpp",
       "xfa/fxfa/parser/cxfa_contentlayoutitem.h",
-      "xfa/fxfa/parser/cxfa_corner.h",
+      "xfa/fxfa/parser/cxfa_cornerdata.h",
       "xfa/fxfa/parser/cxfa_data.cpp",
       "xfa/fxfa/parser/cxfa_data.h",
       "xfa/fxfa/parser/cxfa_dataexporter.cpp",

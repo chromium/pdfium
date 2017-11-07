@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_CORNER_H_
-#define XFA_FXFA_PARSER_CXFA_CORNER_H_
+#ifndef XFA_FXFA_PARSER_CXFA_CORNERDATA_H_
+#define XFA_FXFA_PARSER_CXFA_CORNERDATA_H_
 
 #include "xfa/fxfa/parser/cxfa_stroke.h"
 
 class CXFA_Node;
 
-class CXFA_Corner : public CXFA_Stroke {
+class CXFA_CornerData : public CXFA_Stroke {
  public:
-  explicit CXFA_Corner(CXFA_Node* pNode) : CXFA_Stroke(pNode) {}
+  explicit CXFA_CornerData(CXFA_Node* pNode) : CXFA_Stroke(pNode) {}
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_CORNER_H_
+#endif  // XFA_FXFA_PARSER_CXFA_CORNERDATA_H_

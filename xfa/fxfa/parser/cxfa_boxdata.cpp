@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_boxdata.h"
 
-#include "xfa/fxfa/parser/cxfa_corner.h"
+#include "xfa/fxfa/parser/cxfa_cornerdata.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -22,10 +22,10 @@ void GetStrokesInternal(CXFA_Node* pNode,
   strokes->resize(8);
   int32_t i, j;
   for (i = 0, j = 0; i < 4; i++) {
-    CXFA_Corner corner = CXFA_Corner(
+    CXFA_CornerData cornerData = CXFA_CornerData(
         pNode->JSNode()->GetProperty(i, XFA_Element::Corner, i == 0));
-    if (corner || i == 0) {
-      (*strokes)[j] = corner;
+    if (cornerData || i == 0) {
+      (*strokes)[j] = cornerData;
     } else if (!bNull) {
       if (i == 1 || i == 2)
         (*strokes)[j] = (*strokes)[0];

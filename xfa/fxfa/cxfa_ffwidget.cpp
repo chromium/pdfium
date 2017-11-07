@@ -28,7 +28,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_widgetacc.h"
-#include "xfa/fxfa/parser/cxfa_corner.h"
+#include "xfa/fxfa/parser/cxfa_cornerdata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxgraphics/cxfa_color.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
@@ -73,14 +73,14 @@ void XFA_BOX_GetPath(const std::vector<CXFA_Stroke>& strokes,
                      bool bCorner) {
   ASSERT(nIndex >= 0 && nIndex < 8);
   int32_t n = (nIndex & 1) ? nIndex - 1 : nIndex;
-  CXFA_Corner corner1(strokes[n].GetNode());
-  CXFA_Corner corner2(strokes[(n + 2) % 8].GetNode());
-  float fRadius1 = bCorner ? corner1.GetRadius() : 0.0f;
-  float fRadius2 = bCorner ? corner2.GetRadius() : 0.0f;
-  bool bInverted = corner1.IsInverted();
+  CXFA_CornerData cornerData1(strokes[n].GetNode());
+  CXFA_CornerData cornerData2(strokes[(n + 2) % 8].GetNode());
+  float fRadius1 = bCorner ? cornerData1.GetRadius() : 0.0f;
+  float fRadius2 = bCorner ? cornerData2.GetRadius() : 0.0f;
+  bool bInverted = cornerData1.IsInverted();
   float offsetY = 0.0f;
   float offsetX = 0.0f;
-  bool bRound = corner1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
+  bool bRound = cornerData1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
   float halfAfter = 0.0f;
   float halfBefore = 0.0f;
   CXFA_Stroke stroke = strokes[nIndex];
@@ -300,12 +300,12 @@ void XFA_BOX_GetFillPath(CXFA_BoxData boxData,
     float nx = 1.0f;
     float ny = 1.0f;
     CFX_PointF cp1, cp2;
-    CXFA_Corner corner1(strokes[i].GetNode());
-    CXFA_Corner corner2(strokes[(i + 2) % 8].GetNode());
-    float fRadius1 = corner1.GetRadius();
-    float fRadius2 = corner2.GetRadius();
-    bool bInverted = corner1.IsInverted();
-    bool bRound = corner1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
+    CXFA_CornerData cornerData1(strokes[i].GetNode());
+    CXFA_CornerData cornerData2(strokes[(i + 2) % 8].GetNode());
+    float fRadius1 = cornerData1.GetRadius();
+    float fRadius2 = cornerData2.GetRadius();
+    bool bInverted = cornerData1.IsInverted();
+    bool bRound = cornerData1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
     if (bRound) {
       sy = FX_PI / 2;
     }
