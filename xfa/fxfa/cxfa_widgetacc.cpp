@@ -77,11 +77,11 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
     if (m_pDIBitmap)
       return true;
 
-    CXFA_Value value = pAcc->GetFormValue();
-    if (!value)
+    CXFA_ValueData valueData = pAcc->GetFormValueData();
+    if (!valueData)
       return false;
 
-    CXFA_ImageData imageData = value.GetImageData();
+    CXFA_ImageData imageData = valueData.GetImageData();
     if (!imageData)
       return false;
 
@@ -137,11 +137,11 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
     if (m_pDIBitmap)
       return true;
 
-    CXFA_Value value = pAcc->GetFormValue();
-    if (!value)
+    CXFA_ValueData valueData = pAcc->GetFormValueData();
+    if (!valueData)
       return false;
 
-    CXFA_ImageData imageData = value.GetImageData();
+    CXFA_ImageData imageData = valueData.GetImageData();
     CXFA_FFDoc* pFFDoc = pAcc->GetDoc();
     pAcc->SetImageEditImage(XFA_LoadImageData(pFFDoc, &imageData, m_bNamedImage,
                                               m_iImageXDpi, m_iImageYDpi));
@@ -178,8 +178,8 @@ void CXFA_WidgetAcc::ResetData() {
   XFA_Element eUIType = GetUIType();
   switch (eUIType) {
     case XFA_Element::ImageEdit: {
-      CXFA_Value imageValue = GetDefaultValue();
-      CXFA_ImageData imageData = imageValue.GetImageData();
+      CXFA_ValueData imageValueData = GetDefaultValueData();
+      CXFA_ImageData imageData = imageValueData.GetImageData();
       WideString wsContentType, wsHref;
       if (imageData) {
         imageData.GetContent(wsValue);
@@ -199,9 +199,9 @@ void CXFA_WidgetAcc::ResetData() {
         if (!pAcc)
           continue;
 
-        CXFA_Value defValue(nullptr);
-        if (wsValue.IsEmpty() && (defValue = pAcc->GetDefaultValue())) {
-          defValue.GetChildValueContent(wsValue);
+        CXFA_ValueData defValueData(nullptr);
+        if (wsValue.IsEmpty() && (defValueData = pAcc->GetDefaultValueData())) {
+          defValueData.GetChildValueContent(wsValue);
           SetValue(wsValue, XFA_VALUEPICTURE_Raw);
           pAcc->SetValue(wsValue, XFA_VALUEPICTURE_Raw);
         } else {
@@ -226,8 +226,8 @@ void CXFA_WidgetAcc::ResetData() {
     case XFA_Element::ChoiceList:
       ClearAllSelections();
     default:
-      if (CXFA_Value defValue = GetDefaultValue())
-        defValue.GetChildValueContent(wsValue);
+      if (CXFA_ValueData defValueData = GetDefaultValueData())
+        defValueData.GetChildValueContent(wsValue);
 
       SetValue(wsValue, XFA_VALUEPICTURE_Raw);
       break;
@@ -237,7 +237,7 @@ void CXFA_WidgetAcc::ResetData() {
 void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
                                   const WideString& wsHref,
                                   const WideString& wsData) {
-  CXFA_ImageData imageData = GetFormValue().GetImageData();
+  CXFA_ImageData imageData = GetFormValueData().GetImageData();
   if (imageData) {
     imageData.SetContentType(WideString(wsContentType));
     imageData.SetHref(wsHref);
@@ -505,7 +505,7 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
 
   if (!bVersionFlag) {
     if (CXFA_CaptionData captionData = GetCaptionData()) {
-      if (CXFA_Value capValue = captionData.GetValue()) {
+      if (CXFA_ValueData capValue = captionData.GetValueData()) {
         if (CXFA_TextData captionTextData = capValue.GetTextData())
           captionTextData.GetContent(wsCaptionName);
       }

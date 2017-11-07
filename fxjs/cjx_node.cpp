@@ -1691,8 +1691,8 @@ void CJX_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
       pValue->SetNull();
     } else {
       CXFA_Node* pUIChild = pWidgetData->GetUIChild();
-      CXFA_Value defVal = pWidgetData->GetFormValue();
-      CXFA_Node* pNode = defVal.GetNode()->GetNodeItem(XFA_NODEITEM_FirstChild);
+      CXFA_Node* pNode = pWidgetData->GetFormValueData().GetNode()->GetNodeItem(
+          XFA_NODEITEM_FirstChild);
       if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
         if (pUIChild->GetElementType() == XFA_Element::NumericEdit &&
             (pNode->JSNode()->GetInteger(XFA_ATTRIBUTE_FracDigits) == -1)) {

@@ -53,11 +53,11 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Value value = m_pDataAcc->GetFormValue();
-  if (!value)
+  CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
+  if (!valueData)
     return;
 
-  CXFA_LineData lineData = value.GetLineData();
+  CXFA_LineData lineData = valueData.GetLineData();
   FX_ARGB lineColor = 0xFF000000;
   int32_t iStrokeType = 0;
   float fLineWidth = 1.0f;

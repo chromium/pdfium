@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_VALUE_H_
-#define XFA_FXFA_PARSER_CXFA_VALUE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_VALUEDATA_H_
+#define XFA_FXFA_PARSER_CXFA_VALUEDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_arcdata.h"
@@ -18,9 +18,9 @@
 
 class CXFA_Node;
 
-class CXFA_Value : public CXFA_Data {
+class CXFA_ValueData : public CXFA_Data {
  public:
-  explicit CXFA_Value(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_ValueData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   XFA_Element GetChildValueClassID();
   bool GetChildValueContent(WideString& wsContent);
@@ -32,4 +32,4 @@ class CXFA_Value : public CXFA_Data {
   CXFA_ImageData GetImageData();
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_VALUE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_VALUEDATA_H_

@@ -39,7 +39,7 @@ CXFA_FontData CXFA_CaptionData::GetFontData() {
                                : nullptr);
 }
 
-CXFA_Value CXFA_CaptionData::GetValue() {
-  return CXFA_Value(m_pNode ? m_pNode->GetChild(0, XFA_Element::Value, false)
-                            : nullptr);
+CXFA_ValueData CXFA_CaptionData::GetValueData() {
+  return CXFA_ValueData(
+      m_pNode ? m_pNode->GetChild(0, XFA_Element::Value, false) : nullptr);
 }

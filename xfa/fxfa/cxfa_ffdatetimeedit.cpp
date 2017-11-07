@@ -49,8 +49,8 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
   WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
-  if (CXFA_Value value = m_pDataAcc->GetFormValue()) {
-    switch (value.GetChildValueClassID()) {
+  if (CXFA_ValueData valueData = m_pDataAcc->GetFormValueData()) {
+    switch (valueData.GetChildValueClassID()) {
       case XFA_Element::Date: {
         if (!wsText.IsEmpty()) {
           CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc.Get());

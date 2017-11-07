@@ -128,14 +128,14 @@ void CreateDataBinding(CXFA_Node* pFormNode,
   CXFA_WidgetData* pWidgetData = pFormNode->GetWidgetData();
   ASSERT(pWidgetData);
   XFA_Element eUIType = pWidgetData->GetUIType();
-  CXFA_Value defValue(
+  CXFA_ValueData defValueData(
       pFormNode->JSNode()->GetProperty(0, XFA_Element::Value, true));
   if (!bDataToForm) {
     WideString wsValue;
     WideString wsFormattedValue;
     switch (eUIType) {
       case XFA_Element::ImageEdit: {
-        CXFA_ImageData imageData = defValue.GetImageData();
+        CXFA_ImageData imageData = defValueData.GetImageData();
         WideString wsContentType;
         WideString wsHref;
         if (imageData) {
@@ -157,7 +157,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       case XFA_Element::ChoiceList:
-        defValue.GetChildValueContent(wsValue);
+        defValueData.GetChildValueContent(wsValue);
         if (pWidgetData->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
           std::vector<WideString> wsSelTextArray =
               pWidgetData->GetSelectedItemsValue();
@@ -185,7 +185,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         }
         break;
       case XFA_Element::CheckButton:
-        defValue.GetChildValueContent(wsValue);
+        defValueData.GetChildValueContent(wsValue);
         if (wsValue.IsEmpty())
           break;
 
@@ -204,8 +204,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (!pValue)
             continue;
 
-          CXFA_Value valueChild(pValue);
-          valueChild.GetChildValueContent(wsValue);
+          CXFA_ValueData(pValue).GetChildValueContent(wsValue);
           if (wsValue.IsEmpty())
             continue;
 
@@ -256,7 +255,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       case XFA_Element::NumericEdit: {
-        defValue.GetChildValueContent(wsValue);
+        defValueData.GetChildValueContent(wsValue);
         if (wsValue.IsEmpty())
           break;
 
@@ -272,7 +271,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       default:
-        defValue.GetChildValueContent(wsValue);
+        defValueData.GetChildValueContent(wsValue);
         if (wsValue.IsEmpty())
           break;
 
@@ -292,9 +291,9 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                          false);
   switch (eUIType) {
     case XFA_Element::ImageEdit: {
-      FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
+      FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                     XFA_Element::Image);
-      CXFA_ImageData imageData = defValue.GetImageData();
+      CXFA_ImageData imageData = defValueData.GetImageData();
       if (imageData) {
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
@@ -328,19 +327,19 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             wsItem = single ? wsItem : wsItem + L"\n";
             wsNormalizeValue += wsItem;
           }
-          CXFA_ExData exData = defValue.GetExData();
+          CXFA_ExData exData = defValueData.GetExData();
           ASSERT(exData);
           exData.SetContentType(single ? L"text/plain" : L"text/xml");
         }
-        FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
+        FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                       XFA_Element::ExData);
       } else {
-        FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
+        FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                       XFA_Element::Text);
       }
       break;
     case XFA_Element::CheckButton:
-      FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
+      FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                     XFA_Element::Text);
       break;
     case XFA_Element::ExclGroup: {
@@ -349,7 +348,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       break;
     }
     case XFA_Element::DateTimeEdit:
-      FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
+      FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                     XFA_Element::DateTime);
       break;
     case XFA_Element::NumericEdit: {
@@ -360,7 +359,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         pWidgetData->NormalizeNumStr(wsNormalizeValue, wsOutput);
         wsNormalizeValue = wsOutput;
       }
-      FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
+      FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                     XFA_Element::Float);
       break;
     }
@@ -370,7 +369,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     case XFA_Element::Signature:
     case XFA_Element::TextEdit:
     default:
-      FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
+      FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                     XFA_Element::Text);
       break;
   }

@@ -58,8 +58,8 @@ class CXFA_WidgetData : public CXFA_Data {
   std::vector<CXFA_Node*> GetEventList();
   std::vector<CXFA_Node*> GetEventByActivity(int32_t iActivity,
                                              bool bIsFormReady);
-  CXFA_Value GetDefaultValue();
-  CXFA_Value GetFormValue();
+  CXFA_ValueData GetDefaultValueData();
+  CXFA_ValueData GetFormValueData();
   CXFA_CalculateData GetCalculateData();
   CXFA_ValidateData GetValidateData(bool bModified);
 

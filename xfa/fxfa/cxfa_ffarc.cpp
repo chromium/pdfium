@@ -16,8 +16,8 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Value value = m_pDataAcc->GetFormValue();
-  if (!value)
+  CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
+  if (!valueData)
     return;
 
   CFX_RectF rtArc = GetRectWithoutRotate();
@@ -27,5 +27,5 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, value.GetArcData(), rtArc, mtRotate);
+  DrawBorder(pGS, valueData.GetArcData(), rtArc, mtRotate);
 }

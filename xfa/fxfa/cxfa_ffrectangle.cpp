@@ -17,8 +17,8 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Value value = m_pDataAcc->GetFormValue();
-  if (!value)
+  CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
+  if (!valueData)
     return;
 
   CFX_RectF rect = GetRectWithoutRotate();
@@ -28,5 +28,5 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, value.GetRectangleData(), rect, mtRotate);
+  DrawBorder(pGS, valueData.GetRectangleData(), rect, mtRotate);
 }

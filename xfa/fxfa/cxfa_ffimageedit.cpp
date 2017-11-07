@@ -76,8 +76,8 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   }
 
   int32_t iAspect = XFA_ATTRIBUTEENUM_Fit;
-  if (CXFA_Value value = m_pDataAcc->GetFormValue()) {
-    if (CXFA_ImageData imageData = value.GetImageData())
+  if (CXFA_ValueData valueData = m_pDataAcc->GetFormValueData()) {
+    if (CXFA_ImageData imageData = valueData.GetImageData())
       iAspect = imageData.GetAspect();
   }
 

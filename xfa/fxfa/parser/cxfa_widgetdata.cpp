@@ -69,9 +69,9 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
 
   eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
-  CXFA_Value defValue(
+  CXFA_ValueData defValueData(
       pNode->JSNode()->GetProperty(0, XFA_Element::Value, true));
-  XFA_Element eValueType = defValue.GetChildValueClassID();
+  XFA_Element eValueType = defValueData.GetChildValueClassID();
   switch (eValueType) {
     case XFA_Element::Boolean:
       eUIType = XFA_Element::CheckButton;
@@ -151,7 +151,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   if (!pUIChild) {
     if (eUIType == XFA_Element::Unknown) {
       eUIType = XFA_Element::TextEdit;
-      defValue.GetNode()->JSNode()->GetProperty(0, XFA_Element::Text, true);
+      defValueData.GetNode()->JSNode()->GetProperty(0, XFA_Element::Text, true);
     }
     return pUI->JSNode()->GetProperty(0, eUIType, true);
   }
@@ -193,7 +193,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
       eValueType = XFA_Element::Text;
       break;
   }
-  defValue.GetNode()->JSNode()->GetProperty(0, eValueType, true);
+  defValueData.GetNode()->JSNode()->GetProperty(0, eValueType, true);
 
   return pUIChild;
 }
@@ -332,15 +332,15 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
   return events;
 }
 
-CXFA_Value CXFA_WidgetData::GetDefaultValue() {
+CXFA_ValueData CXFA_WidgetData::GetDefaultValueData() {
   CXFA_Node* pTemNode = m_pNode->GetTemplateNode();
-  return CXFA_Value(
+  return CXFA_ValueData(
       pTemNode ? pTemNode->JSNode()->GetProperty(0, XFA_Element::Value, false)
                : nullptr);
 }
 
-CXFA_Value CXFA_WidgetData::GetFormValue() {
-  return CXFA_Value(
+CXFA_ValueData CXFA_WidgetData::GetFormValueData() {
+  return CXFA_ValueData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Value, false));
 }
 

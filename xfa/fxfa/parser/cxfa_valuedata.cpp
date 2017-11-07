@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_value.h"
+#include "xfa/fxfa/parser/cxfa_valuedata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-XFA_Element CXFA_Value::GetChildValueClassID() {
+XFA_Element CXFA_ValueData::GetChildValueClassID() {
   if (!m_pNode)
     return XFA_Element::Unknown;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
@@ -16,7 +16,7 @@ XFA_Element CXFA_Value::GetChildValueClassID() {
   return XFA_Element::Unknown;
 }
 
-bool CXFA_Value::GetChildValueContent(WideString& wsContent) {
+bool CXFA_ValueData::GetChildValueContent(WideString& wsContent) {
   if (!m_pNode)
     return false;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
@@ -24,32 +24,32 @@ bool CXFA_Value::GetChildValueContent(WideString& wsContent) {
   return false;
 }
 
-CXFA_ArcData CXFA_Value::GetArcData() {
+CXFA_ArcData CXFA_ValueData::GetArcData() {
   return CXFA_ArcData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                               : nullptr);
 }
 
-CXFA_LineData CXFA_Value::GetLineData() {
+CXFA_LineData CXFA_ValueData::GetLineData() {
   return CXFA_LineData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                                : nullptr);
 }
 
-CXFA_RectangleData CXFA_Value::GetRectangleData() {
+CXFA_RectangleData CXFA_ValueData::GetRectangleData() {
   return CXFA_RectangleData(
       m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr);
 }
 
-CXFA_TextData CXFA_Value::GetTextData() {
+CXFA_TextData CXFA_ValueData::GetTextData() {
   return CXFA_TextData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                                : nullptr);
 }
 
-CXFA_ExData CXFA_Value::GetExData() {
+CXFA_ExData CXFA_ValueData::GetExData() {
   return CXFA_ExData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                              : nullptr);
 }
 
-CXFA_ImageData CXFA_Value::GetImageData() {
+CXFA_ImageData CXFA_ValueData::GetImageData() {
   return CXFA_ImageData(
       m_pNode ? (m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)) : nullptr,
       true);
