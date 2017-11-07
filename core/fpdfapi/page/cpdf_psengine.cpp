@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_psengine.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
@@ -21,28 +22,50 @@ struct PDF_PSOpName {
   PDF_PSOP op;
 };
 
-const PDF_PSOpName kPsOpNames[] = {
-    {"add", PSOP_ADD},         {"sub", PSOP_SUB},
-    {"mul", PSOP_MUL},         {"div", PSOP_DIV},
-    {"idiv", PSOP_IDIV},       {"mod", PSOP_MOD},
-    {"neg", PSOP_NEG},         {"abs", PSOP_ABS},
-    {"ceiling", PSOP_CEILING}, {"floor", PSOP_FLOOR},
-    {"round", PSOP_ROUND},     {"truncate", PSOP_TRUNCATE},
-    {"sqrt", PSOP_SQRT},       {"sin", PSOP_SIN},
-    {"cos", PSOP_COS},         {"atan", PSOP_ATAN},
-    {"exp", PSOP_EXP},         {"ln", PSOP_LN},
-    {"log", PSOP_LOG},         {"cvi", PSOP_CVI},
-    {"cvr", PSOP_CVR},         {"eq", PSOP_EQ},
-    {"ne", PSOP_NE},           {"gt", PSOP_GT},
-    {"ge", PSOP_GE},           {"lt", PSOP_LT},
-    {"le", PSOP_LE},           {"and", PSOP_AND},
-    {"or", PSOP_OR},           {"xor", PSOP_XOR},
-    {"not", PSOP_NOT},         {"bitshift", PSOP_BITSHIFT},
-    {"true", PSOP_TRUE},       {"false", PSOP_FALSE},
-    {"if", PSOP_IF},           {"ifelse", PSOP_IFELSE},
-    {"pop", PSOP_POP},         {"exch", PSOP_EXCH},
-    {"dup", PSOP_DUP},         {"copy", PSOP_COPY},
-    {"index", PSOP_INDEX},     {"roll", PSOP_ROLL}};
+constexpr PDF_PSOpName kPsOpNames[] = {
+    {"abs", PSOP_ABS},
+    {"add", PSOP_ADD},
+    {"and", PSOP_AND},
+    {"atan", PSOP_ATAN},
+    {"bitshift", PSOP_BITSHIFT},
+    {"ceiling", PSOP_CEILING},
+    {"copy", PSOP_COPY},
+    {"cos", PSOP_COS},
+    {"cvi", PSOP_CVI},
+    {"cvr", PSOP_CVR},
+    {"div", PSOP_DIV},
+    {"dup", PSOP_DUP},
+    {"eq", PSOP_EQ},
+    {"exch", PSOP_EXCH},
+    {"exp", PSOP_EXP},
+    {"false", PSOP_FALSE},
+    {"floor", PSOP_FLOOR},
+    {"ge", PSOP_GE},
+    {"gt", PSOP_GT},
+    {"idiv", PSOP_IDIV},
+    {"if", PSOP_IF},
+    {"ifelse", PSOP_IFELSE},
+    {"index", PSOP_INDEX},
+    {"le", PSOP_LE},
+    {"ln", PSOP_LN},
+    {"log", PSOP_LOG},
+    {"lt", PSOP_LT},
+    {"mod", PSOP_MOD},
+    {"mul", PSOP_MUL},
+    {"ne", PSOP_NE},
+    {"neg", PSOP_NEG},
+    {"not", PSOP_NOT},
+    {"or", PSOP_OR},
+    {"pop", PSOP_POP},
+    {"roll", PSOP_ROLL},
+    {"round", PSOP_ROUND},
+    {"sin", PSOP_SIN},
+    {"sqrt", PSOP_SQRT},
+    {"sub", PSOP_SUB},
+    {"true", PSOP_TRUE},
+    {"truncate", PSOP_TRUNCATE},
+    {"xor", PSOP_XOR},
+};
 
 }  // namespace
 
@@ -139,16 +162,15 @@ void CPDF_PSProc::AddOperatorForTesting(const ByteStringView& word) {
 }
 
 void CPDF_PSProc::AddOperator(const ByteStringView& word) {
-  std::unique_ptr<CPDF_PSOP> op;
-  for (const PDF_PSOpName& op_name : kPsOpNames) {
-    if (word == ByteStringView(op_name.name)) {
-      op = pdfium::MakeUnique<CPDF_PSOP>(op_name.op);
-      break;
-    }
-  }
-  if (!op)
-    op = pdfium::MakeUnique<CPDF_PSOP>(FX_atof(word));
-  m_Operators.push_back(std::move(op));
+  const auto* pFound = std::lower_bound(
+      std::begin(kPsOpNames), std::end(kPsOpNames), word,
+      [](const PDF_PSOpName& name, const ByteStringView& word) {
+        return name.name < word;
+      });
+  if (pFound != std::end(kPsOpNames) && pFound->name == word)
+    m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>(pFound->op));
+  else
+    m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>(FX_atof(word)));
 }
 
 CPDF_PSEngine::CPDF_PSEngine() : m_StackCount(0) {}
