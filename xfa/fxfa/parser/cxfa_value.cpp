@@ -24,9 +24,9 @@ bool CXFA_Value::GetChildValueContent(WideString& wsContent) {
   return false;
 }
 
-CXFA_Arc CXFA_Value::GetArc() {
-  return CXFA_Arc(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
-                          : nullptr);
+CXFA_ArcData CXFA_Value::GetArcData() {
+  return CXFA_ArcData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
+                              : nullptr);
 }
 
 CXFA_Line CXFA_Value::GetLine() {

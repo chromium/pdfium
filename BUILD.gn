@@ -1785,7 +1785,7 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cscript_logpseudomodel.h",
       "xfa/fxfa/parser/cscript_signaturepseudomodel.cpp",
       "xfa/fxfa/parser/cscript_signaturepseudomodel.h",
-      "xfa/fxfa/parser/cxfa_arc.h",
+      "xfa/fxfa/parser/cxfa_arcdata.h",
       "xfa/fxfa/parser/cxfa_arraynodelist.cpp",
       "xfa/fxfa/parser/cxfa_arraynodelist.h",
       "xfa/fxfa/parser/cxfa_assist.cpp",

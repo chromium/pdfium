@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_VALUE_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/parser/cxfa_arc.h"
+#include "xfa/fxfa/parser/cxfa_arcdata.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_exdata.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
@@ -24,7 +24,7 @@ class CXFA_Value : public CXFA_Data {
 
   XFA_Element GetChildValueClassID();
   bool GetChildValueContent(WideString& wsContent);
-  CXFA_Arc GetArc();
+  CXFA_ArcData GetArcData();
   CXFA_Line GetLine();
   CXFA_Rectangle GetRectangle();
   CXFA_Text GetText();

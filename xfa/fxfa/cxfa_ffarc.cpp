@@ -20,13 +20,12 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   if (!value)
     return;
 
-  CXFA_Arc arcObj = value.GetArc();
-  CFX_Matrix mtRotate = GetRotateMatrix();
-  mtRotate.Concat(matrix);
-
   CFX_RectF rtArc = GetRectWithoutRotate();
   if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
     XFA_RectWidthoutMargin(rtArc, mgWidget);
 
-  DrawBorder(pGS, arcObj, rtArc, mtRotate);
+  CFX_Matrix mtRotate = GetRotateMatrix();
+  mtRotate.Concat(matrix);
+
+  DrawBorder(pGS, value.GetArcData(), rtArc, mtRotate);
 }
