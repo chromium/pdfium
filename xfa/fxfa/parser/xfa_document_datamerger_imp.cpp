@@ -138,13 +138,13 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     WideString wsFormattedValue;
     switch (eUIType) {
       case XFA_Element::ImageEdit: {
-        CXFA_Image image = defValue.GetImage();
+        CXFA_ImageData imageData = defValue.GetImageData();
         WideString wsContentType;
         WideString wsHref;
-        if (image) {
-          image.GetContent(wsValue);
-          image.GetContentType(wsContentType);
-          image.GetHref(wsHref);
+        if (imageData) {
+          imageData.GetContent(wsValue);
+          imageData.GetContentType(wsContentType);
+          imageData.GetHref(wsHref);
         }
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
@@ -297,8 +297,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     case XFA_Element::ImageEdit: {
       FormValueNode_SetChildContent(defValue.GetNode(), wsNormalizeValue,
                                     XFA_Element::Image);
-      CXFA_Image image = defValue.GetImage();
-      if (image) {
+      CXFA_ImageData imageData = defValue.GetImageData();
+      if (imageData) {
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
@@ -308,12 +308,12 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         if (!wsContentType.IsEmpty()) {
           pDataNode->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType,
                                         wsContentType, false, false);
-          image.SetContentType(wsContentType);
+          imageData.SetContentType(wsContentType);
         }
 
         WideString wsHref = pXMLDataElement->GetString(L"href");
         if (!wsHref.IsEmpty())
-          image.SetHref(wsHref);
+          imageData.SetHref(wsHref);
       }
       break;
     }

@@ -81,12 +81,12 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
     if (!value)
       return false;
 
-    CXFA_Image imageObj = value.GetImage();
-    if (!imageObj)
+    CXFA_ImageData imageData = value.GetImageData();
+    if (!imageData)
       return false;
 
     CXFA_FFDoc* pFFDoc = pAcc->GetDoc();
-    pAcc->SetImageImage(XFA_LoadImageData(pFFDoc, &imageObj, m_bNamedImage,
+    pAcc->SetImageImage(XFA_LoadImageData(pFFDoc, &imageData, m_bNamedImage,
                                           m_iImageXDpi, m_iImageYDpi));
     return !!m_pDIBitmap;
   }
@@ -141,9 +141,9 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
     if (!value)
       return false;
 
-    CXFA_Image imageObj = value.GetImage();
+    CXFA_ImageData imageData = value.GetImageData();
     CXFA_FFDoc* pFFDoc = pAcc->GetDoc();
-    pAcc->SetImageEditImage(XFA_LoadImageData(pFFDoc, &imageObj, m_bNamedImage,
+    pAcc->SetImageEditImage(XFA_LoadImageData(pFFDoc, &imageData, m_bNamedImage,
                                               m_iImageXDpi, m_iImageYDpi));
     return !!m_pDIBitmap;
   }
@@ -179,12 +179,12 @@ void CXFA_WidgetAcc::ResetData() {
   switch (eUIType) {
     case XFA_Element::ImageEdit: {
       CXFA_Value imageValue = GetDefaultValue();
-      CXFA_Image image = imageValue.GetImage();
+      CXFA_ImageData imageData = imageValue.GetImageData();
       WideString wsContentType, wsHref;
-      if (image) {
-        image.GetContent(wsValue);
-        image.GetContentType(wsContentType);
-        image.GetHref(wsHref);
+      if (imageData) {
+        imageData.GetContent(wsValue);
+        imageData.GetContentType(wsContentType);
+        imageData.GetHref(wsHref);
       }
       SetImageEdit(wsContentType, wsHref, wsValue);
       break;
@@ -237,17 +237,19 @@ void CXFA_WidgetAcc::ResetData() {
 void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
                                   const WideString& wsHref,
                                   const WideString& wsData) {
-  CXFA_Image image = GetFormValue().GetImage();
-  if (image) {
-    image.SetContentType(WideString(wsContentType));
-    image.SetHref(wsHref);
+  CXFA_ImageData imageData = GetFormValue().GetImageData();
+  if (imageData) {
+    imageData.SetContentType(WideString(wsContentType));
+    imageData.SetHref(wsHref);
   }
+
   WideString wsFormatValue(wsData);
   GetFormatDataValue(wsData, wsFormatValue);
   m_pNode->JSNode()->SetContent(wsData, wsFormatValue, true, false, true);
+
   CXFA_Node* pBind = GetDatasets();
   if (!pBind) {
-    image.SetTransferEncoding(XFA_ATTRIBUTEENUM_Base64);
+    imageData.SetTransferEncoding(XFA_ATTRIBUTEENUM_Base64);
     return;
   }
   pBind->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType, false,

@@ -50,7 +50,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top);
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
-                                          CXFA_Image* pImage,
+                                          CXFA_ImageData* pImageData,
                                           bool& bNameImage,
                                           int32_t& iImageXDpi,
                                           int32_t& iImageYDpi);

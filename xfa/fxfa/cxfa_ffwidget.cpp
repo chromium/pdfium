@@ -1890,26 +1890,26 @@ FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
 }
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
-                                          CXFA_Image* pImage,
+                                          CXFA_ImageData* pImageData,
                                           bool& bNameImage,
                                           int32_t& iImageXDpi,
                                           int32_t& iImageYDpi) {
   WideString wsHref;
   WideString wsImage;
-  pImage->GetHref(wsHref);
-  pImage->GetContent(wsImage);
+  pImageData->GetHref(wsHref);
+  pImageData->GetContent(wsImage);
   if (wsHref.IsEmpty() && wsImage.IsEmpty())
     return nullptr;
 
   WideString wsContentType;
-  pImage->GetContentType(wsContentType);
+  pImageData->GetContentType(wsContentType);
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
   ByteString bsContent;
   uint8_t* pImageBuffer = nullptr;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
     XFA_ATTRIBUTEENUM iEncoding =
-        (XFA_ATTRIBUTEENUM)pImage->GetTransferEncoding();
+        (XFA_ATTRIBUTEENUM)pImageData->GetTransferEncoding();
     if (iEncoding == XFA_ATTRIBUTEENUM_Base64) {
       ByteString bsData = wsImage.UTF8Encode();
       int32_t iLength = bsData.GetLength();
@@ -1947,6 +1947,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
   FX_Free(pImageBuffer);
   return pBitmap;
 }
+
 static FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
                                      int32_t iComponents,
                                      int32_t iBitsPerComponent) {

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_IMAGE_H_
-#define XFA_FXFA_PARSER_CXFA_IMAGE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_IMAGEDATA_H_
+#define XFA_FXFA_PARSER_CXFA_IMAGEDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -13,9 +13,9 @@
 
 class CXFA_Node;
 
-class CXFA_Image : public CXFA_Data {
+class CXFA_ImageData : public CXFA_Data {
  public:
-  CXFA_Image(CXFA_Node* pNode, bool bDefValue);
+  CXFA_ImageData(CXFA_Node* pNode, bool bDefValue);
 
   int32_t GetAspect();
   bool GetContentType(WideString& wsContentType);
@@ -30,4 +30,4 @@ class CXFA_Image : public CXFA_Data {
   bool m_bDefValue;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_IMAGE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_IMAGEDATA_H_
