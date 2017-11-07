@@ -15,7 +15,7 @@
 #include "xfa/fxfa/parser/cxfa_assistdata.h"
 #include "xfa/fxfa/parser/cxfa_binddata.h"
 #include "xfa/fxfa/parser/cxfa_borderdata.h"
-#include "xfa/fxfa/parser/cxfa_calculate.h"
+#include "xfa/fxfa/parser/cxfa_calculatedata.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
@@ -60,7 +60,7 @@ class CXFA_WidgetData : public CXFA_Data {
                                              bool bIsFormReady);
   CXFA_Value GetDefaultValue();
   CXFA_Value GetFormValue();
-  CXFA_Calculate GetCalculate();
+  CXFA_CalculateData GetCalculateData();
   CXFA_Validate GetValidate(bool bModified);
 
   bool GetWidth(float& fWidth);

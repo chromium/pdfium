@@ -319,15 +319,15 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_Calculate calc = GetCalculate();
-  if (!calc)
+  CXFA_CalculateData calcData = GetCalculateData();
+  if (!calcData)
     return XFA_EVENTERROR_NotExist;
   if (GetNode()->IsUserInteractive())
     return XFA_EVENTERROR_Disabled;
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Calculate;
-  CXFA_Script script = calc.GetScript();
+  CXFA_Script script = calcData.GetScript();
   int32_t iRet = ExecuteScript(script, &EventParam);
   if (iRet != XFA_EVENTERROR_Success)
     return iRet;

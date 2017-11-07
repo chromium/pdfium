@@ -662,12 +662,12 @@ int32_t CXFA_FFField::CalculateOverride() {
 }
 
 int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
-  CXFA_Calculate calc = pAcc->GetCalculate();
-  if (!calc)
+  CXFA_CalculateData calcData = pAcc->GetCalculateData();
+  if (!calcData)
     return 1;
 
   XFA_VERSION version = pAcc->GetDoc()->GetXFADoc()->GetCurVersionMode();
-  switch (calc.GetOverride()) {
+  switch (calcData.GetOverride()) {
     case XFA_ATTRIBUTEENUM_Error: {
       if (version <= XFA_VERSION_204)
         return 1;
@@ -682,7 +682,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
     }
     case XFA_ATTRIBUTEENUM_Warning: {
       if (version <= XFA_VERSION_204) {
-        CXFA_Script script = calc.GetScript();
+        CXFA_Script script = calcData.GetScript();
         if (!script)
           return 1;
 
@@ -700,7 +700,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
         return 0;
 
       WideString wsMessage;
-      calc.GetMessageText(wsMessage);
+      calcData.GetMessageText(wsMessage);
       if (!wsMessage.IsEmpty())
         wsMessage += L"\r\n";
 

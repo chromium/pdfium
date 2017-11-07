@@ -4,24 +4,24 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_calculate.h"
+#include "xfa/fxfa/parser/cxfa_calculatedata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
 
-CXFA_Calculate::CXFA_Calculate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-int32_t CXFA_Calculate::GetOverride() {
+int32_t CXFA_CalculateData::GetOverride() {
   XFA_ATTRIBUTEENUM eAtt = XFA_ATTRIBUTEENUM_Error;
   m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Override, eAtt, false);
   return eAtt;
 }
 
-CXFA_Script CXFA_Calculate::GetScript() {
+CXFA_Script CXFA_CalculateData::GetScript() {
   return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
-void CXFA_Calculate::GetMessageText(WideString& wsMessage) {
+void CXFA_CalculateData::GetMessageText(WideString& wsMessage) {
   CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Message, false);
   if (!pNode)
     return;

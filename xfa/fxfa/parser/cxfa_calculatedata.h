@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_CALCULATE_H_
-#define XFA_FXFA_PARSER_CXFA_CALCULATE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_CALCULATEDATA_H_
+#define XFA_FXFA_PARSER_CXFA_CALCULATEDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
@@ -13,13 +13,13 @@
 
 class CXFA_Node;
 
-class CXFA_Calculate : public CXFA_Data {
+class CXFA_CalculateData : public CXFA_Data {
  public:
-  explicit CXFA_Calculate(CXFA_Node* pNode);
+  explicit CXFA_CalculateData(CXFA_Node* pNode);
 
   int32_t GetOverride();
   CXFA_Script GetScript();
   void GetMessageText(WideString& wsMessage);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_CALCULATE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_CALCULATEDATA_H_

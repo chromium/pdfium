@@ -343,8 +343,8 @@ CXFA_Value CXFA_WidgetData::GetFormValue() {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Value, false));
 }
 
-CXFA_Calculate CXFA_WidgetData::GetCalculate() {
-  return CXFA_Calculate(
+CXFA_CalculateData CXFA_WidgetData::GetCalculateData() {
+  return CXFA_CalculateData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Calculate, false));
 }
 
