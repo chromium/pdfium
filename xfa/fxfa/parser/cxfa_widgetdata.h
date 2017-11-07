@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/parser/cxfa_assist.h"
+#include "xfa/fxfa/parser/cxfa_assistdata.h"
 #include "xfa/fxfa/parser/cxfa_bind.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
@@ -49,7 +49,7 @@ class CXFA_WidgetData : public CXFA_Data {
   int32_t GetAccess();
   int32_t GetRotate();
 
-  CXFA_Assist GetAssist();
+  CXFA_AssistData GetAssistData();
   CXFA_Border GetBorder(bool bModified);
   CXFA_Caption GetCaption();
   CXFA_Font GetFont(bool bModified);

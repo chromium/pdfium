@@ -978,10 +978,11 @@ CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
 }
 
 bool CXFA_FFWidget::GetToolTip(WideString& wsToolTip) {
-  if (CXFA_Assist assist = m_pDataAcc->GetAssist()) {
-    if (CXFA_ToolTip toolTip = assist.GetToolTip()) {
+  CXFA_AssistData assist = m_pDataAcc->GetAssistData();
+  if (assist) {
+    CXFA_ToolTip toolTip = assist.GetToolTip();
+    if (toolTip)
       return toolTip.GetTip(wsToolTip);
-    }
   }
   return GetCaptionText(wsToolTip);
 }

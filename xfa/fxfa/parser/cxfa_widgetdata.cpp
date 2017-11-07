@@ -357,8 +357,8 @@ CXFA_Bind CXFA_WidgetData::GetBind() {
   return CXFA_Bind(m_pNode->JSNode()->GetProperty(0, XFA_Element::Bind, false));
 }
 
-CXFA_Assist CXFA_WidgetData::GetAssist() {
-  return CXFA_Assist(
+CXFA_AssistData CXFA_WidgetData::GetAssistData() {
+  return CXFA_AssistData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Assist, false));
 }
 
