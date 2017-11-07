@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_EVENT_H_
-#define XFA_FXFA_PARSER_CXFA_EVENT_H_
+#ifndef XFA_FXFA_PARSER_CXFA_EVENTDATA_H_
+#define XFA_FXFA_PARSER_CXFA_EVENTDATA_H_
 
 #include <stdint.h>
 
@@ -16,9 +16,9 @@
 
 class CXFA_Node;
 
-class CXFA_Event : public CXFA_Data {
+class CXFA_EventData : public CXFA_Data {
  public:
-  explicit CXFA_Event(CXFA_Node* pNode);
+  explicit CXFA_EventData(CXFA_Node* pNode);
 
   int32_t GetActivity();
   XFA_Element GetEventType() const;
@@ -28,4 +28,4 @@ class CXFA_Event : public CXFA_Data {
   void GetSignDataTarget(WideString& wsTarget);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_EVENT_H_
+#endif  // XFA_FXFA_PARSER_CXFA_EVENTDATA_H_

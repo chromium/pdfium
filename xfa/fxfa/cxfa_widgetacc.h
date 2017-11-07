@@ -15,7 +15,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_boxdata.h"
-#include "xfa/fxfa/parser/cxfa_event.h"
+#include "xfa/fxfa/parser/cxfa_eventdata.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
@@ -45,7 +45,8 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
 
   bool ProcessValueChanged();
   int32_t ProcessEvent(int32_t iActivity, CXFA_EventParam* pEventParam);
-  int32_t ProcessEvent(const CXFA_Event& event, CXFA_EventParam* pEventParam);
+  int32_t ProcessEvent(const CXFA_EventData& eventData,
+                       CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate();
   int32_t ProcessValidate(int32_t iFlags);
   int32_t ExecuteScript(CXFA_Script script, CXFA_EventParam* pEventParam);

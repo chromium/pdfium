@@ -12,7 +12,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_event.h"
+#include "xfa/fxfa/parser/cxfa_eventdata.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -311,11 +311,11 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
                                                             bool bIsFormReady) {
   std::vector<CXFA_Node*> events;
   for (CXFA_Node* pNode : GetEventList()) {
-    CXFA_Event event(pNode);
-    if (event.GetActivity() == iActivity) {
+    CXFA_EventData eventData(pNode);
+    if (eventData.GetActivity() == iActivity) {
       if (iActivity == XFA_ATTRIBUTEENUM_Ready) {
         WideStringView wsRef;
-        event.GetRef(wsRef);
+        eventData.GetRef(wsRef);
         if (bIsFormReady) {
           if (wsRef == WideStringView(L"$form"))
             events.push_back(pNode);

@@ -287,7 +287,7 @@ int32_t CXFA_WidgetAcc::ProcessEvent(int32_t iActivity,
   bool first = true;
   int32_t iRet = XFA_EVENTERROR_NotExist;
   for (CXFA_Node* pNode : eventArray) {
-    int32_t result = ProcessEvent(CXFA_Event(pNode), pEventParam);
+    int32_t result = ProcessEvent(CXFA_EventData(pNode), pEventParam);
     if (first || result == XFA_EVENTERROR_Success)
       iRet = result;
     first = false;
@@ -295,21 +295,21 @@ int32_t CXFA_WidgetAcc::ProcessEvent(int32_t iActivity,
   return iRet;
 }
 
-int32_t CXFA_WidgetAcc::ProcessEvent(const CXFA_Event& event,
+int32_t CXFA_WidgetAcc::ProcessEvent(const CXFA_EventData& eventData,
                                      CXFA_EventParam* pEventParam) {
-  if (!event)
+  if (!eventData)
     return XFA_EVENTERROR_NotExist;
 
-  switch (event.GetEventType()) {
+  switch (eventData.GetEventType()) {
     case XFA_Element::Execute:
       break;
     case XFA_Element::Script:
-      return ExecuteScript(event.GetScript(), pEventParam);
+      return ExecuteScript(eventData.GetScript(), pEventParam);
     case XFA_Element::SignData:
       break;
     case XFA_Element::Submit:
       return GetDoc()->GetDocEnvironment()->SubmitData(GetDoc(),
-                                                       event.GetSubmit());
+                                                       eventData.GetSubmit());
     default:
       break;
   }
