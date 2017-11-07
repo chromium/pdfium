@@ -341,7 +341,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
   return XFA_EVENTERROR_Success;
 }
 
-void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
+void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_ValidateData validateData,
                                                int32_t iRet,
                                                bool bRetValue,
                                                bool bVersionFlag) {
@@ -356,8 +356,8 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
 
   WideString wsTitle = pAppProvider->GetAppTitle();
   WideString wsScriptMsg;
-  validate.GetScriptMessageText(wsScriptMsg);
-  int32_t eScriptTest = validate.GetScriptTest();
+  validateData.GetScriptMessageText(wsScriptMsg);
+  int32_t eScriptTest = validateData.GetScriptTest();
   if (eScriptTest == XFA_ATTRIBUTEENUM_Warning) {
     if (GetNode()->IsUserInteractive())
       return;
@@ -380,12 +380,13 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
   pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
 }
 
-int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
-                                                  bool bVersionFlag) {
+int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(
+    CXFA_ValidateData validateData,
+    bool bVersionFlag) {
   WideString wsRawValue = GetRawValue();
   if (!wsRawValue.IsEmpty()) {
     WideString wsPicture;
-    validate.GetPicture(wsPicture);
+    validateData.GetPicture(wsPicture);
     if (wsPicture.IsEmpty())
       return XFA_EVENTERROR_NotExist;
 
@@ -401,9 +402,9 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
         return XFA_EVENTERROR_NotExist;
 
       WideString wsFormatMsg;
-      validate.GetFormatMessageText(wsFormatMsg);
+      validateData.GetFormatMessageText(wsFormatMsg);
       WideString wsTitle = pAppProvider->GetAppTitle();
-      int32_t eFormatTest = validate.GetFormatTest();
+      int32_t eFormatTest = validateData.GetFormatTest();
       if (eFormatTest == XFA_ATTRIBUTEENUM_Error) {
         if (wsFormatMsg.IsEmpty())
           wsFormatMsg = GetValidateMessage(true, bVersionFlag);
@@ -430,7 +431,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
   return XFA_EVENTERROR_NotExist;
 }
 
-int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
+int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
                                                 int32_t iFlags,
                                                 bool bVersionFlag) {
   WideString wsValue;
@@ -440,9 +441,9 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
   if (m_bIsNull && (m_bPreNull == m_bIsNull))
     return XFA_EVENTERROR_Success;
 
-  int32_t eNullTest = validate.GetNullTest();
+  int32_t eNullTest = validateData.GetNullTest();
   WideString wsNullMsg;
-  validate.GetNullMessageText(wsNullMsg);
+  validateData.GetNullMessageText(wsNullMsg);
   if (iFlags & 0x01) {
     int32_t iRet = XFA_EVENTERROR_Success;
     if (eNullTest != XFA_ATTRIBUTEENUM_Disabled)
@@ -539,15 +540,15 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_Validate validate = GetValidate(false);
-  if (!validate)
+  CXFA_ValidateData validateData = GetValidateData(false);
+  if (!validateData)
     return XFA_EVENTERROR_NotExist;
 
-  bool bInitDoc = validate.GetNode()->NeedsInitApp();
+  bool bInitDoc = validateData.GetNode()->NeedsInitApp();
   bool bStatus = m_pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
   int32_t iRet = XFA_EVENTERROR_NotExist;
-  CXFA_ScriptData scriptData = validate.GetScriptData();
+  CXFA_ScriptData scriptData = validateData.GetScriptData();
   bool bRet = false;
   bool hasBoolResult = (bInitDoc || bStatus) && GetRawValue().IsEmpty();
   if (scriptData) {
@@ -563,17 +564,17 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
     bVersionFlag = true;
 
   if (bInitDoc) {
-    validate.GetNode()->ClearFlag(XFA_NodeFlag_NeedsInitApp);
+    validateData.GetNode()->ClearFlag(XFA_NodeFlag_NeedsInitApp);
   } else {
-    iFormat = ProcessFormatTestValidate(validate, bVersionFlag);
+    iFormat = ProcessFormatTestValidate(validateData, bVersionFlag);
     if (!bVersionFlag)
       bVersionFlag = GetDoc()->GetXFADoc()->HasFlag(XFA_DOCFLAG_Scripting);
 
-    iRet |= ProcessNullTestValidate(validate, iFlags, bVersionFlag);
+    iRet |= ProcessNullTestValidate(validateData, iFlags, bVersionFlag);
   }
 
   if (iFormat != XFA_EVENTERROR_Success && hasBoolResult)
-    ProcessScriptTestValidate(validate, iRet, bRet, bVersionFlag);
+    ProcessScriptTestValidate(validateData, iRet, bRet, bVersionFlag);
 
   return iRet | iFormat;
 }

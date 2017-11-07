@@ -225,9 +225,9 @@ bool CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
 
   pWidgetAcc->ResetData();
   pWidgetAcc->UpdateUIDisplay();
-  if (CXFA_Validate validate = pWidgetAcc->GetValidate(false)) {
+  if (CXFA_ValidateData validateData = pWidgetAcc->GetValidateData(false)) {
     AddValidateWidget(pWidgetAcc);
-    validate.GetNode()->SetFlag(XFA_NodeFlag_NeedsInitApp, false);
+    validateData.GetNode()->SetFlag(XFA_NodeFlag_NeedsInitApp, false);
   }
   return true;
 }

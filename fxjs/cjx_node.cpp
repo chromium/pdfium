@@ -1355,21 +1355,21 @@ void CJX_Node::Script_Som_Message(CFXJSE_Value* pValue,
     return;
   }
   bool bNew = false;
-  CXFA_Validate validate = pWidgetData->GetValidate(false);
-  if (!validate) {
-    validate = pWidgetData->GetValidate(true);
+  CXFA_ValidateData validateData = pWidgetData->GetValidateData(false);
+  if (!validateData) {
+    validateData = pWidgetData->GetValidateData(true);
     bNew = true;
   }
   if (bSetting) {
     switch (iMessageType) {
       case XFA_SOM_ValidationMessage:
-        validate.SetScriptMessageText(pValue->ToWideString());
+        validateData.SetScriptMessageText(pValue->ToWideString());
         break;
       case XFA_SOM_FormatMessage:
-        validate.SetFormatMessageText(pValue->ToWideString());
+        validateData.SetFormatMessageText(pValue->ToWideString());
         break;
       case XFA_SOM_MandatoryMessage:
-        validate.SetNullMessageText(pValue->ToWideString());
+        validateData.SetNullMessageText(pValue->ToWideString());
         break;
       default:
         break;
@@ -1385,13 +1385,13 @@ void CJX_Node::Script_Som_Message(CFXJSE_Value* pValue,
     WideString wsMessage;
     switch (iMessageType) {
       case XFA_SOM_ValidationMessage:
-        validate.GetScriptMessageText(wsMessage);
+        validateData.GetScriptMessageText(wsMessage);
         break;
       case XFA_SOM_FormatMessage:
-        validate.GetFormatMessageText(wsMessage);
+        validateData.GetFormatMessageText(wsMessage);
         break;
       case XFA_SOM_MandatoryMessage:
-        validate.GetNullMessageText(wsMessage);
+        validateData.GetNullMessageText(wsMessage);
         break;
       default:
         break;
@@ -1789,14 +1789,14 @@ void CJX_Node::Script_Som_Mandatory(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
   CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData) {
+  if (!pWidgetData)
     return;
-  }
-  CXFA_Validate validate = pWidgetData->GetValidate(true);
+
+  CXFA_ValidateData validateData = pWidgetData->GetValidateData(true);
   if (bSetting) {
-    validate.SetNullTest(pValue->ToWideString());
+    validateData.SetNullTest(pValue->ToWideString());
   } else {
-    int32_t iValue = validate.GetNullTest();
+    int32_t iValue = validateData.GetNullTest();
     const XFA_ATTRIBUTEENUMINFO* pInfo =
         GetAttributeEnumByID((XFA_ATTRIBUTEENUM)iValue);
     WideString wsValue;

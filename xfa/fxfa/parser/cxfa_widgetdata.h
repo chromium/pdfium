@@ -21,7 +21,7 @@
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
 #include "xfa/fxfa/parser/cxfa_paradata.h"
-#include "xfa/fxfa/parser/cxfa_validate.h"
+#include "xfa/fxfa/parser/cxfa_validatedata.h"
 
 enum XFA_CHECKSTATE {
   XFA_CHECKSTATE_On = 0,
@@ -61,7 +61,7 @@ class CXFA_WidgetData : public CXFA_Data {
   CXFA_Value GetDefaultValue();
   CXFA_Value GetFormValue();
   CXFA_CalculateData GetCalculateData();
-  CXFA_Validate GetValidate(bool bModified);
+  CXFA_ValidateData GetValidateData(bool bModified);
 
   bool GetWidth(float& fWidth);
   bool GetHeight(float& fHeight);

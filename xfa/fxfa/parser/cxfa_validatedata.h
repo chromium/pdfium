@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_VALIDATE_H_
-#define XFA_FXFA_PARSER_CXFA_VALIDATE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_VALIDATEDATA_H_
+#define XFA_FXFA_PARSER_CXFA_VALIDATEDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -14,9 +14,9 @@
 
 class CXFA_Node;
 
-class CXFA_Validate : public CXFA_Data {
+class CXFA_ValidateData : public CXFA_Data {
  public:
-  explicit CXFA_Validate(CXFA_Node* pNode);
+  explicit CXFA_ValidateData(CXFA_Node* pNode);
 
   int32_t GetFormatTest();
   int32_t GetNullTest();
@@ -36,4 +36,4 @@ class CXFA_Validate : public CXFA_Data {
   void SetMessageText(WideString& wsMessage, const WideString& wsMessageType);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_VALIDATE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_VALIDATEDATA_H_

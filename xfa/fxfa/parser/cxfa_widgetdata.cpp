@@ -349,8 +349,8 @@ CXFA_CalculateData CXFA_WidgetData::GetCalculateData() {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Calculate, false));
 }
 
-CXFA_Validate CXFA_WidgetData::GetValidate(bool bModified) {
-  return CXFA_Validate(
+CXFA_ValidateData CXFA_WidgetData::GetValidateData(bool bModified) {
+  return CXFA_ValidateData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Validate, bModified));
 }
 

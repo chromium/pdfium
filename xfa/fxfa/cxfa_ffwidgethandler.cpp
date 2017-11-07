@@ -193,8 +193,8 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
       return calcData && calcData.GetScriptData();
     }
     case XFA_EVENT_Validate: {
-      CXFA_Validate val = pWidgetAcc->GetValidate(false);
-      return val && val.GetScriptData();
+      CXFA_ValidateData validateData = pWidgetAcc->GetValidateData(false);
+      return validateData && validateData.GetScriptData();
     }
     default:
       break;
