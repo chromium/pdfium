@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_SCRIPT_H_
-#define XFA_FXFA_PARSER_CXFA_SCRIPT_H_
+#ifndef XFA_FXFA_PARSER_CXFA_SCRIPTDATA_H_
+#define XFA_FXFA_PARSER_CXFA_SCRIPTDATA_H_
 
 #include <stdint.h>
 
@@ -20,13 +20,13 @@ enum XFA_SCRIPTTYPE {
 
 class CXFA_Node;
 
-class CXFA_Script : public CXFA_Data {
+class CXFA_ScriptData : public CXFA_Data {
  public:
-  explicit CXFA_Script(CXFA_Node* pNode);
+  explicit CXFA_ScriptData(CXFA_Node* pNode);
 
   XFA_SCRIPTTYPE GetContentType();
   int32_t GetRunAt();
   void GetExpression(WideString& wsExpression);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_SCRIPT_H_
+#endif  // XFA_FXFA_PARSER_CXFA_SCRIPTDATA_H_

@@ -306,7 +306,7 @@ int32_t CXFA_WidgetAcc::ProcessEvent(const CXFA_EventData& eventData,
     case XFA_Element::Execute:
       break;
     case XFA_Element::Script:
-      return ExecuteScript(eventData.GetScript(), pEventParam);
+      return ExecuteScript(eventData.GetScriptData(), pEventParam);
     case XFA_Element::SignData:
       break;
     case XFA_Element::Submit:
@@ -330,8 +330,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Calculate;
-  CXFA_Script script = calcData.GetScript();
-  int32_t iRet = ExecuteScript(script, &EventParam);
+  int32_t iRet = ExecuteScript(calcData.GetScriptData(), &EventParam);
   if (iRet != XFA_EVENTERROR_Success)
     return iRet;
 
@@ -548,14 +547,14 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   bool bStatus = m_pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
   int32_t iRet = XFA_EVENTERROR_NotExist;
-  CXFA_Script script = validate.GetScript();
+  CXFA_ScriptData scriptData = validate.GetScriptData();
   bool bRet = false;
   bool hasBoolResult = (bInitDoc || bStatus) && GetRawValue().IsEmpty();
-  if (script) {
+  if (scriptData) {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_Validate;
     eParam.m_pTarget = this;
-    std::tie(iRet, bRet) = ExecuteBoolScript(script, &eParam);
+    std::tie(iRet, bRet) = ExecuteBoolScript(scriptData, &eParam);
   }
 
   XFA_VERSION version = GetDoc()->GetXFADoc()->GetCurVersionMode();
@@ -579,40 +578,40 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   return iRet | iFormat;
 }
 
-int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
+int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_ScriptData scriptData,
                                       CXFA_EventParam* pEventParam) {
   bool bRet;
   int32_t iRet;
-  std::tie(iRet, bRet) = ExecuteBoolScript(script, pEventParam);
+  std::tie(iRet, bRet) = ExecuteBoolScript(scriptData, pEventParam);
   return iRet;
 }
 
 std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
-    CXFA_Script script,
+    CXFA_ScriptData scriptData,
     CXFA_EventParam* pEventParam) {
   static const uint32_t MAX_RECURSION_DEPTH = 2;
   if (m_nRecursionDepth > MAX_RECURSION_DEPTH)
     return {XFA_EVENTERROR_Success, false};
 
   ASSERT(pEventParam);
-  if (!script)
+  if (!scriptData)
     return {XFA_EVENTERROR_NotExist, false};
-  if (script.GetRunAt() == XFA_ATTRIBUTEENUM_Server)
+  if (scriptData.GetRunAt() == XFA_ATTRIBUTEENUM_Server)
     return {XFA_EVENTERROR_Disabled, false};
 
   WideString wsExpression;
-  script.GetExpression(wsExpression);
+  scriptData.GetExpression(wsExpression);
   if (wsExpression.IsEmpty())
     return {XFA_EVENTERROR_NotExist, false};
 
-  XFA_SCRIPTTYPE eScriptType = script.GetContentType();
+  XFA_SCRIPTTYPE eScriptType = scriptData.GetContentType();
   if (eScriptType == XFA_SCRIPTTYPE_Unkown)
     return {XFA_EVENTERROR_Success, false};
 
   CXFA_FFDoc* pDoc = GetDoc();
   CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
   pContext->SetEventParam(*pEventParam);
-  pContext->SetRunAtType((XFA_ATTRIBUTEENUM)script.GetRunAt());
+  pContext->SetRunAtType((XFA_ATTRIBUTEENUM)scriptData.GetRunAt());
 
   std::vector<CXFA_Node*> refNodes;
   if (pEventParam->m_eType == XFA_EVENT_InitCalculate ||

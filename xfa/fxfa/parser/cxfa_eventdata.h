@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/cxfa_scriptdata.h"
 #include "xfa/fxfa/parser/cxfa_submit.h"
 
 class CXFA_Node;
@@ -22,7 +22,7 @@ class CXFA_EventData : public CXFA_Data {
 
   int32_t GetActivity();
   XFA_Element GetEventType() const;
-  CXFA_Script GetScript() const;
+  CXFA_ScriptData GetScriptData() const;
   CXFA_Submit GetSubmit() const;
   void GetRef(WideStringView& wsRef);
   void GetSignDataTarget(WideString& wsTarget);

@@ -18,7 +18,7 @@
 #include "xfa/fxfa/parser/cxfa_eventdata.h"
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
-#include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/cxfa_scriptdata.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
@@ -49,8 +49,9 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
                        CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate();
   int32_t ProcessValidate(int32_t iFlags);
-  int32_t ExecuteScript(CXFA_Script script, CXFA_EventParam* pEventParam);
-  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_Script script,
+  int32_t ExecuteScript(CXFA_ScriptData scriptData,
+                        CXFA_EventParam* pEventParam);
+  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_ScriptData scriptData,
                                              CXFA_EventParam* pEventParam);
 
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);

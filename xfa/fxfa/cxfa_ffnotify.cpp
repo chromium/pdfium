@@ -221,7 +221,7 @@ bool CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
   int32_t iRet;
   bool bRet;
   std::tie(iRet, bRet) =
-      pWidgetAcc->ExecuteBoolScript(CXFA_Script(pScript), &EventParam);
+      pWidgetAcc->ExecuteBoolScript(CXFA_ScriptData(pScript), &EventParam);
   return iRet == XFA_EVENTERROR_Success && bRet;
 }
 

@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/cxfa_scriptdata.h"
 
 class CXFA_Node;
 
@@ -18,7 +18,7 @@ class CXFA_CalculateData : public CXFA_Data {
   explicit CXFA_CalculateData(CXFA_Node* pNode);
 
   int32_t GetOverride();
-  CXFA_Script GetScript();
+  CXFA_ScriptData GetScriptData();
   void GetMessageText(WideString& wsMessage);
 };
 

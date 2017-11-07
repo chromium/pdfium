@@ -190,11 +190,11 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
       CXFA_CalculateData calcData = pWidgetAcc->GetCalculateData();
-      return calcData && calcData.GetScript();
+      return calcData && calcData.GetScriptData();
     }
     case XFA_EVENT_Validate: {
       CXFA_Validate val = pWidgetAcc->GetValidate(false);
-      return val && val.GetScript();
+      return val && val.GetScriptData();
     }
     default:
       break;
@@ -226,7 +226,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
 
-      CXFA_Script script = calcData.GetScript();
+      CXFA_ScriptData script = calcData.GetScriptData();
       return pWidgetAcc->ExecuteScript(script, pParam);
     }
     default:

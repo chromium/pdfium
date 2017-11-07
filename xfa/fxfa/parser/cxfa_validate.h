@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/cxfa_scriptdata.h"
 
 class CXFA_Node;
 
@@ -29,7 +29,7 @@ class CXFA_Validate : public CXFA_Data {
   void GetScriptMessageText(WideString& wsMessage);
   void SetScriptMessageText(WideString wsMessage);
   void GetPicture(WideString& wsPicture);
-  CXFA_Script GetScript();
+  CXFA_ScriptData GetScriptData();
 
  private:
   void GetMessageText(WideString& wsMessage, const WideString& wsMessageType);

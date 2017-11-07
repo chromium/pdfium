@@ -17,8 +17,8 @@ int32_t CXFA_CalculateData::GetOverride() {
   return eAtt;
 }
 
-CXFA_Script CXFA_CalculateData::GetScript() {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script, false));
+CXFA_ScriptData CXFA_CalculateData::GetScriptData() {
+  return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
 void CXFA_CalculateData::GetMessageText(WideString& wsMessage) {

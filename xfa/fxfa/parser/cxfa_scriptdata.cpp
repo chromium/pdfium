@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/cxfa_scriptdata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_Script::CXFA_Script(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_ScriptData::CXFA_ScriptData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-XFA_SCRIPTTYPE CXFA_Script::GetContentType() {
+XFA_SCRIPTTYPE CXFA_ScriptData::GetContentType() {
   WideStringView cData;
   if (m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_ContentType, cData, false)) {
     if (cData == L"application/x-javascript")
@@ -22,10 +22,10 @@ XFA_SCRIPTTYPE CXFA_Script::GetContentType() {
   return XFA_SCRIPTTYPE_Formcalc;
 }
 
-int32_t CXFA_Script::GetRunAt() {
+int32_t CXFA_ScriptData::GetRunAt() {
   return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_RunAt);
 }
 
-void CXFA_Script::GetExpression(WideString& wsExpression) {
+void CXFA_ScriptData::GetExpression(WideString& wsExpression) {
   m_pNode->JSNode()->TryContent(wsExpression, false, true);
 }

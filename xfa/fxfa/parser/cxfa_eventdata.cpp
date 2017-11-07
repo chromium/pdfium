@@ -30,8 +30,8 @@ void CXFA_EventData::GetRef(WideStringView& wsRef) {
   m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Ref, wsRef, true);
 }
 
-CXFA_Script CXFA_EventData::GetScript() const {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script, false));
+CXFA_ScriptData CXFA_EventData::GetScriptData() const {
+  return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
 CXFA_Submit CXFA_EventData::GetSubmit() const {

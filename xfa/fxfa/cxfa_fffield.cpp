@@ -682,12 +682,12 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
     }
     case XFA_ATTRIBUTEENUM_Warning: {
       if (version <= XFA_VERSION_204) {
-        CXFA_Script script = calcData.GetScript();
-        if (!script)
+        CXFA_ScriptData scriptData = calcData.GetScriptData();
+        if (!scriptData)
           return 1;
 
         WideString wsExpression;
-        script.GetExpression(wsExpression);
+        scriptData.GetExpression(wsExpression);
         if (wsExpression.IsEmpty())
           return 1;
       }

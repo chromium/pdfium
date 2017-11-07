@@ -110,6 +110,6 @@ void CXFA_Validate::GetPicture(WideString& wsPicture) {
     pNode->JSNode()->TryContent(wsPicture, false, true);
 }
 
-CXFA_Script CXFA_Validate::GetScript() {
-  return CXFA_Script(m_pNode->GetChild(0, XFA_Element::Script, false));
+CXFA_ScriptData CXFA_Validate::GetScriptData() {
+  return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
