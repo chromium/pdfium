@@ -13,7 +13,7 @@
 #include "xfa/fxfa/parser/cxfa_exdata.h"
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
 #include "xfa/fxfa/parser/cxfa_linedata.h"
-#include "xfa/fxfa/parser/cxfa_rectangle.h"
+#include "xfa/fxfa/parser/cxfa_rectangledata.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
 
 class CXFA_Node;
@@ -26,7 +26,7 @@ class CXFA_Value : public CXFA_Data {
   bool GetChildValueContent(WideString& wsContent);
   CXFA_ArcData GetArcData();
   CXFA_LineData GetLineData();
-  CXFA_Rectangle GetRectangle();
+  CXFA_RectangleData GetRectangleData();
   CXFA_Text GetText();
   CXFA_ExData GetExData();
   CXFA_ImageData GetImageData();

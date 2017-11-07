@@ -21,7 +21,6 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   if (!value)
     return;
 
-  CXFA_Rectangle rtObj = value.GetRectangle();
   CFX_RectF rect = GetRectWithoutRotate();
   if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
     XFA_RectWidthoutMargin(rect, marginData);
@@ -29,5 +28,5 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, rtObj, rect, mtRotate);
+  DrawBorder(pGS, value.GetRectangleData(), rect, mtRotate);
 }

@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_RECTANGLE_H_
-#define XFA_FXFA_PARSER_CXFA_RECTANGLE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_RECTANGLEDATA_H_
+#define XFA_FXFA_PARSER_CXFA_RECTANGLEDATA_H_
 
 #include "xfa/fxfa/parser/cxfa_boxdata.h"
 
 class CXFA_Node;
 
-class CXFA_Rectangle : public CXFA_BoxData {
+class CXFA_RectangleData : public CXFA_BoxData {
  public:
-  explicit CXFA_Rectangle(CXFA_Node* pNode) : CXFA_BoxData(pNode) {}
+  explicit CXFA_RectangleData(CXFA_Node* pNode) : CXFA_BoxData(pNode) {}
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_RECTANGLE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_RECTANGLEDATA_H_
