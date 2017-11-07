@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_LINE_H_
-#define XFA_FXFA_PARSER_CXFA_LINE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_LINEDATA_H_
+#define XFA_FXFA_PARSER_CXFA_LINEDATA_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
@@ -13,13 +13,13 @@
 
 class CXFA_Node;
 
-class CXFA_Line : public CXFA_Data {
+class CXFA_LineData : public CXFA_Data {
  public:
-  explicit CXFA_Line(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_LineData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   int32_t GetHand();
   bool GetSlope();
   CXFA_EdgeData GetEdgeData();
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_LINE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_LINEDATA_H_

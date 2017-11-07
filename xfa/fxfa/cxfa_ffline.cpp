@@ -57,12 +57,12 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (!value)
     return;
 
-  CXFA_Line lineObj = value.GetLine();
+  CXFA_LineData lineData = value.GetLineData();
   FX_ARGB lineColor = 0xFF000000;
   int32_t iStrokeType = 0;
   float fLineWidth = 1.0f;
   int32_t iCap = 0;
-  CXFA_EdgeData edgeData = lineObj.GetEdgeData();
+  CXFA_EdgeData edgeData = lineData.GetEdgeData();
   if (edgeData) {
     if (edgeData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
       return;
@@ -80,9 +80,9 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
     XFA_RectWidthoutMargin(rtLine, mgWidget);
 
-  GetRectFromHand(rtLine, lineObj.GetHand(), fLineWidth);
+  GetRectFromHand(rtLine, lineData.GetHand(), fLineWidth);
   CXFA_Path linePath;
-  if (lineObj.GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
+  if (lineData.GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
     linePath.AddLine(rtLine.TopRight(), rtLine.BottomLeft());
   else
     linePath.AddLine(rtLine.TopLeft(), rtLine.BottomRight());
