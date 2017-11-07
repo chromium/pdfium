@@ -41,6 +41,7 @@
 
 #include "tiffiop.h"
 #include <float.h>
+#include <limits.h>
 
 #define IGNORE 0          /* tag placeholder used below */
 #define FAILED_FII    ((uint32) -1)
@@ -3635,6 +3636,13 @@ TIFFReadDirectory(TIFF* tif)
 	if (!tif->tif_dir.td_nstrips) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 		    "Cannot handle zero number of %s",
+		    isTiled(tif) ? "tiles" : "strips");
+		goto bad;
+	}
+	if (tif->tif_dir.td_nstrips > INT_MAX) {
+		TIFFErrorExt(tif->tif_clientdata, module,
+		    "Cannot handle %u number of %s",
+		    tif->tif_dir.td_nstrips,
 		    isTiled(tif) ? "tiles" : "strips");
 		goto bad;
 	}
