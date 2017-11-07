@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_TEXT_H_
-#define XFA_FXFA_PARSER_CXFA_TEXT_H_
+#ifndef XFA_FXFA_PARSER_CXFA_TEXTDATA_H_
+#define XFA_FXFA_PARSER_CXFA_TEXTDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;
 
-class CXFA_Text : public CXFA_Data {
+class CXFA_TextData : public CXFA_Data {
  public:
-  explicit CXFA_Text(CXFA_Node* pNode);
+  explicit CXFA_TextData(CXFA_Node* pNode);
 
   void GetContent(WideString& wsText);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_TEXT_H_
+#endif  // XFA_FXFA_PARSER_CXFA_TEXTDATA_H_

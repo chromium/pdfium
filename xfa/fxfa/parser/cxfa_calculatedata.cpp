@@ -7,7 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_calculatedata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_text.h"
+#include "xfa/fxfa/parser/cxfa_textdata.h"
 
 CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
@@ -26,7 +26,7 @@ void CXFA_CalculateData::GetMessageText(WideString& wsMessage) {
   if (!pNode)
     return;
 
-  CXFA_Text text(pNode->GetChild(0, XFA_Element::Text, false));
-  if (text)
-    text.GetContent(wsMessage);
+  CXFA_TextData textData(pNode->GetChild(0, XFA_Element::Text, false));
+  if (textData)
+    textData.GetContent(wsMessage);
 }

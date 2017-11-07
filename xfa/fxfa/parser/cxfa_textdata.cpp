@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_text.h"
+#include "xfa/fxfa/parser/cxfa_textdata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_Text::CXFA_Text(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_TextData::CXFA_TextData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-void CXFA_Text::GetContent(WideString& wsText) {
+void CXFA_TextData::GetContent(WideString& wsText) {
   m_pNode->JSNode()->TryContent(wsText, false, true);
 }

@@ -39,9 +39,9 @@ CXFA_RectangleData CXFA_Value::GetRectangleData() {
       m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr);
 }
 
-CXFA_Text CXFA_Value::GetText() {
-  return CXFA_Text(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
-                           : nullptr);
+CXFA_TextData CXFA_Value::GetTextData() {
+  return CXFA_TextData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
+                               : nullptr);
 }
 
 CXFA_ExData CXFA_Value::GetExData() {
