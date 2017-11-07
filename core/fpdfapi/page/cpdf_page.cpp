@@ -82,8 +82,7 @@ void CPDF_Page::StartParse() {
   if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING)
     return;
 
-  m_pParser = pdfium::MakeUnique<CPDF_ContentParser>();
-  m_pParser->Start(this);
+  m_pParser = pdfium::MakeUnique<CPDF_ContentParser>(this);
   m_ParseState = CONTENT_PARSING;
 }
 

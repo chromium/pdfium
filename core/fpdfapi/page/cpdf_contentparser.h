@@ -24,22 +24,19 @@ class CPDF_Type3Char;
 
 class CPDF_ContentParser {
  public:
-  enum ParseStatus { Ready, ToBeContinued, Done };
-
-  CPDF_ContentParser();
+  explicit CPDF_ContentParser(CPDF_Page* pPage);
+  CPDF_ContentParser(CPDF_Form* pForm,
+                     CPDF_AllStates* pGraphicStates,
+                     const CFX_Matrix* pParentMatrix,
+                     CPDF_Type3Char* pType3Char,
+                     std::set<const uint8_t*>* parsedSet);
   ~CPDF_ContentParser();
 
-  ParseStatus GetStatus() const { return m_Status; }
   const CPDF_AllStates* GetCurStates() const {
     return m_pParser ? m_pParser->GetCurStates() : nullptr;
   }
-  void Start(CPDF_Page* pPage);
-  void Start(CPDF_Form* pForm,
-             CPDF_AllStates* pGraphicStates,
-             const CFX_Matrix* pParentMatrix,
-             CPDF_Type3Char* pType3Char,
-             std::set<const uint8_t*>* parsedSet);
-  void Continue(IFX_PauseIndicator* pPause);
+  // Returns whether to continue or not.
+  bool Continue(IFX_PauseIndicator* pPause);
 
  private:
   enum InternalStage {
@@ -48,19 +45,21 @@ class CPDF_ContentParser {
     STAGE_CHECKCLIP,
   };
 
-  ParseStatus m_Status;
+  bool m_bIsDone = false;
   InternalStage m_InternalStage;
-  UnownedPtr<CPDF_PageObjectHolder> m_pObjectHolder;
-  bool m_bForm;
-  UnownedPtr<CPDF_Type3Char> m_pType3Char;
-  uint32_t m_nStreams;
+  UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
+  UnownedPtr<CPDF_Type3Char> m_pType3Char;  // Only used when parsing forms.
+  uint32_t m_nStreams = 0;
   RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
-  uint8_t* m_pData;
-  uint32_t m_Size;
-  uint32_t m_CurrentOffset;
+  uint8_t* m_pData = nullptr;
+  uint32_t m_Size = 0;
+  uint32_t m_CurrentOffset = 0;
+
+  // Only used when parsing pages.
   std::unique_ptr<std::set<const uint8_t*>> m_parsedSet;
-  // m_pParser has a reference to m_parsedSet, so must be below and thus
+
+  // |m_pParser| has a reference to |m_parsedSet|, so must be below and thus
   // destroyed first.
   std::unique_ptr<CPDF_StreamContentParser> m_pParser;
 };

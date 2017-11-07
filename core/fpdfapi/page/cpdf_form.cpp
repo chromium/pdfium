@@ -44,8 +44,8 @@ void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
     parsedSet = m_ParsedSet.get();
   }
 
-  m_pParser = pdfium::MakeUnique<CPDF_ContentParser>();
-  m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, parsedSet);
+  m_pParser = pdfium::MakeUnique<CPDF_ContentParser>(
+      this, pGraphicStates, pParentMatrix, pType3Char, parsedSet);
   m_ParseState = CONTENT_PARSING;
 }
 

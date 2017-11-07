@@ -37,8 +37,7 @@ void CPDF_PageObjectHolder::ContinueParse(IFX_PauseIndicator* pPause) {
   if (!m_pParser)
     return;
 
-  m_pParser->Continue(pPause);
-  if (m_pParser->GetStatus() != CPDF_ContentParser::Done)
+  if (m_pParser->Continue(pPause))
     return;
 
   m_ParseState = CONTENT_PARSED;
