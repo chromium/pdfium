@@ -74,11 +74,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->m_pData)
+  if (!GBREG->data())
     return nullptr;
 
   int LTP = 0;
-  uint8_t* pLine = GBREG->m_pData;
+  uint8_t* pLine = GBREG->data();
   int32_t nStride = GBREG->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
@@ -223,11 +223,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->m_pData)
+  if (!GBREG->data())
     return nullptr;
 
   int LTP = 0;
-  uint8_t* pLine = GBREG->m_pData;
+  uint8_t* pLine = GBREG->data();
   int32_t nStride = GBREG->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
@@ -369,11 +369,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->m_pData)
+  if (!GBREG->data())
     return nullptr;
 
   int LTP = 0;
-  uint8_t* pLine = GBREG->m_pData;
+  uint8_t* pLine = GBREG->data();
   int32_t nStride = GBREG->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
@@ -513,11 +513,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->m_pData)
+  if (!GBREG->data())
     return nullptr;
 
   int LTP = 0;
-  uint8_t* pLine = GBREG->m_pData;
+  uint8_t* pLine = GBREG->data();
   int32_t nStride = GBREG->stride();
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
@@ -650,7 +650,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_READY;
   if (!*pImage)
     *pImage = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!(*pImage)->m_pData) {
+  if (!(*pImage)->data()) {
     *pImage = nullptr;
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
@@ -717,17 +717,17 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(
     CJBig2_BitStream* pStream) {
   int bitpos, i;
   auto image = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!image->m_pData) {
+  if (!image->data()) {
     *pImage = nullptr;
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return m_ProssiveStatus;
   }
   bitpos = static_cast<int>(pStream->getBitPos());
-  FaxG4Decode(pStream->getBuf(), pStream->getLength(), &bitpos, image->m_pData,
+  FaxG4Decode(pStream->getBuf(), pStream->getLength(), &bitpos, image->data(),
               GBW, GBH, image->stride());
   pStream->setBitPos(bitpos);
   for (i = 0; (uint32_t)i < image->stride() * GBH; ++i)
-    image->m_pData[i] = ~image->m_pData[i];
+    image->data()[i] = ~image->data()[i];
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   *pImage = std::move(image);
   return m_ProssiveStatus;
@@ -751,9 +751,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     IFX_PauseIndicator* pPause) {
-  if (!m_pLine) {
-    m_pLine = pImage->m_pData;
-  }
+  if (!m_pLine)
+    m_pLine = pImage->data();
   int32_t nStride = pImage->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
@@ -913,9 +912,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     IFX_PauseIndicator* pPause) {
-  if (!m_pLine) {
-    m_pLine = pImage->m_pData;
-  }
+  if (!m_pLine)
+    m_pLine = pImage->data();
   int32_t nStride = pImage->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
@@ -1069,9 +1067,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     IFX_PauseIndicator* pPause) {
-  if (!m_pLine) {
-    m_pLine = pImage->m_pData;
-  }
+  if (!m_pLine)
+    m_pLine = pImage->data();
   int32_t nStride = pImage->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
@@ -1226,8 +1223,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
     JBig2ArithCtx* gbContext,
     IFX_PauseIndicator* pPause) {
   if (!m_pLine)
-    m_pLine = pImage->m_pData;
-
+    m_pLine = pImage->data();
   int32_t nStride = pImage->stride();
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);

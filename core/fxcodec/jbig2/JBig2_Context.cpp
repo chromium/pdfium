@@ -388,7 +388,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
             pdfium::MakeUnique<CJBig2_Image>(pPageInfo->m_dwWidth, height);
       }
 
-      if (!m_pPage->m_pData) {
+      if (!m_pPage->data()) {
         m_ProcessingStatus = FXCODEC_STATUS_ERROR;
         return JBIG2_ERROR_TOO_SHORT;
       }

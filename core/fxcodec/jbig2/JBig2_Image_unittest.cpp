@@ -34,7 +34,7 @@ TEST(fxcodec, JBig2ImageCreateTooBig) {
   CJBig2_Image img(kWidthPixels, kTooLargeHeightLines);
   EXPECT_EQ(0, img.width());
   EXPECT_EQ(0, img.height());
-  EXPECT_EQ(nullptr, img.m_pData);
+  EXPECT_EQ(nullptr, img.data());
 }
 
 TEST(fxcodec, JBig2ImageCreateExternal) {
@@ -53,7 +53,7 @@ TEST(fxcodec, JBig2ImageCreateExternalTooBig) {
   CJBig2_Image img(kWidthPixels, kTooLargeHeightLines, kStrideBytes, buf);
   EXPECT_EQ(0, img.width());
   EXPECT_EQ(0, img.height());
-  EXPECT_EQ(nullptr, img.m_pData);
+  EXPECT_EQ(nullptr, img.data());
 }
 
 TEST(fxcodec, JBig2ImageExpand) {

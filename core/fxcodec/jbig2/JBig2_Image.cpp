@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits.h>
+#include <memory>
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -20,11 +21,7 @@ const int kMaxImageBytes = kMaxImagePixels / 8;
 }  // namespace
 
 CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
-    : m_pData(nullptr),
-      m_nWidth(0),
-      m_nHeight(0),
-      m_nStride(0),
-      m_bOwnsBuffer(true) {
+    : m_pData(nullptr), m_nWidth(0), m_nHeight(0), m_nStride(0) {
   if (w <= 0 || h <= 0 || w > kMaxImagePixels)
     return;
 
@@ -35,15 +32,12 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
   m_nWidth = w;
   m_nHeight = h;
   m_nStride = stride_pixels / 8;
-  m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
+  m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+      FX_Alloc2D(uint8_t, m_nStride, m_nHeight)));
 }
 
 CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t* pBuf)
-    : m_pData(nullptr),
-      m_nWidth(0),
-      m_nHeight(0),
-      m_nStride(0),
-      m_bOwnsBuffer(false) {
+    : m_pData(nullptr), m_nWidth(0), m_nHeight(0), m_nStride(0) {
   if (w < 0 || h < 0 || stride < 0 || stride > kMaxImageBytes)
     return;
 
@@ -54,26 +48,22 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t* pBuf)
   m_nWidth = w;
   m_nHeight = h;
   m_nStride = stride;
-  m_pData = pBuf;
+  m_pData.Reset(pBuf);
 }
 
 CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
     : m_pData(nullptr),
       m_nWidth(other.m_nWidth),
       m_nHeight(other.m_nHeight),
-      m_nStride(other.m_nStride),
-      m_bOwnsBuffer(true) {
+      m_nStride(other.m_nStride) {
   if (other.m_pData) {
-    m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
-    JBIG2_memcpy(m_pData, other.m_pData, m_nStride * m_nHeight);
+    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+        FX_Alloc2D(uint8_t, m_nStride, m_nHeight)));
+    JBIG2_memcpy(data(), other.data(), m_nStride * m_nHeight);
   }
 }
 
-CJBig2_Image::~CJBig2_Image() {
-  if (m_bOwnsBuffer) {
-    FX_Free(m_pData);
-  }
-}
+CJBig2_Image::~CJBig2_Image() {}
 
 int CJBig2_Image::getPixel(int32_t x, int32_t y) const {
   if (!m_pData)
@@ -87,7 +77,7 @@ int CJBig2_Image::getPixel(int32_t x, int32_t y) const {
 
   int32_t m = y * m_nStride + (x >> 3);
   int32_t n = x & 7;
-  return ((m_pData[m] >> (7 - n)) & 1);
+  return ((data()[m] >> (7 - n)) & 1);
 }
 
 int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, int v) {
@@ -103,37 +93,37 @@ int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, int v) {
   int32_t m = y * m_nStride + (x >> 3);
   int32_t n = x & 7;
   if (v)
-    m_pData[m] |= 1 << (7 - n);
+    data()[m] |= 1 << (7 - n);
   else
-    m_pData[m] &= ~(1 << (7 - n));
+    data()[m] &= ~(1 << (7 - n));
 
   return 1;
 }
 
 void CJBig2_Image::copyLine(int32_t hTo, int32_t hFrom) {
-  if (!m_pData) {
+  if (!m_pData)
     return;
-  }
+
   if (hFrom < 0 || hFrom >= m_nHeight) {
-    JBIG2_memset(m_pData + hTo * m_nStride, 0, m_nStride);
+    JBIG2_memset(data() + hTo * m_nStride, 0, m_nStride);
   } else {
-    JBIG2_memcpy(m_pData + hTo * m_nStride, m_pData + hFrom * m_nStride,
+    JBIG2_memcpy(data() + hTo * m_nStride, data() + hFrom * m_nStride,
                  m_nStride);
   }
 }
 void CJBig2_Image::fill(bool v) {
-  if (!m_pData) {
+  if (!m_pData)
     return;
-  }
-  JBIG2_memset(m_pData, v ? 0xff : 0, m_nStride * m_nHeight);
+
+  JBIG2_memset(data(), v ? 0xff : 0, m_nStride * m_nHeight);
 }
 bool CJBig2_Image::composeTo(CJBig2_Image* pDst,
                              int32_t x,
                              int32_t y,
                              JBig2ComposeOp op) {
-  if (!m_pData) {
+  if (!m_pData)
     return false;
-  }
+
   return composeTo_opt2(pDst, x, y, op);
 }
 bool CJBig2_Image::composeTo(CJBig2_Image* pDst,
@@ -154,9 +144,9 @@ bool CJBig2_Image::composeFrom(int32_t x,
                                int32_t y,
                                CJBig2_Image* pSrc,
                                JBig2ComposeOp op) {
-  if (!m_pData) {
+  if (!m_pData)
     return false;
-  }
+
   return pSrc->composeTo(this, x, y, op);
 }
 bool CJBig2_Image::composeFrom(int32_t x,
@@ -195,8 +185,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::subImage(int32_t x,
   if (!pImage->m_pData)
     return pImage;
 
-  pLineSrc = m_pData + m_nStride * y;
-  pLineDst = pImage->m_pData;
+  pLineSrc = data() + m_nStride * y;
+  pLineDst = pImage->data();
   m = (x >> 5) << 2;
   n = x & 31;
   if (n == 0) {
@@ -240,15 +230,16 @@ void CJBig2_Image::expand(int32_t h, bool v) {
   if (!m_pData || h <= m_nHeight || h > kMaxImageBytes / m_nStride)
     return;
 
-  if (m_bOwnsBuffer) {
-    m_pData = FX_Realloc(uint8_t, m_pData, h * m_nStride);
+  if (m_pData.IsOwned()) {
+    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+        FX_Realloc(uint8_t, m_pData.Release().release(), h * m_nStride)));
   } else {
-    uint8_t* pExternalBuffer = m_pData;
-    m_pData = FX_Alloc(uint8_t, h * m_nStride);
-    JBIG2_memcpy(m_pData, pExternalBuffer, m_nHeight * m_nStride);
-    m_bOwnsBuffer = true;
+    uint8_t* pExternalBuffer = data();
+    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+        FX_Alloc(uint8_t, h * m_nStride)));
+    JBIG2_memcpy(data(), pExternalBuffer, m_nHeight * m_nStride);
   }
-  JBIG2_memset(m_pData + m_nHeight * m_nStride, v ? 0xff : 0,
+  JBIG2_memset(data() + m_nHeight * m_nStride, v ? 0xff : 0,
                (h - m_nHeight) * m_nStride);
   m_nHeight = h;
 }
@@ -304,9 +295,9 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
   maskL = 0xffffffff >> d1;
   maskR = 0xffffffff << ((32 - (xd1 & 31)) % 32);
   maskM = maskL & maskR;
-  uint8_t* lineSrc = m_pData + ys0 * m_nStride + ((xs0 >> 5) << 2);
+  uint8_t* lineSrc = data() + ys0 * m_nStride + ((xs0 >> 5) << 2);
   lineLeft = m_nStride - ((xs0 >> 5) << 2);
-  uint8_t* lineDst = pDst->m_pData + yd0 * pDst->m_nStride + ((xd0 >> 5) << 2);
+  uint8_t* lineDst = pDst->data() + yd0 * pDst->m_nStride + ((xd0 >> 5) << 2);
   if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
     if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
       if (s1 > d1) {
@@ -686,9 +677,9 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
                                   int32_t y,
                                   JBig2ComposeOp op,
                                   const FX_RECT* pSrcRect) {
-  if (!m_pData) {
+  if (!m_pData)
     return false;
-  }
+
   // TODO(weili): Check whether the range check is correct. Should x>=1048576?
   if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576) {
     return false;
@@ -714,10 +705,10 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
   int32_t maskL = 0xffffffff >> d1;
   int32_t maskR = 0xffffffff << ((32 - (xd1 & 31)) % 32);
   int32_t maskM = maskL & maskR;
-  uint8_t* lineSrc = m_pData + (pSrcRect->top + ys0) * m_nStride +
+  uint8_t* lineSrc = data() + (pSrcRect->top + ys0) * m_nStride +
                      (((xs0 + pSrcRect->left) >> 5) << 2);
   int32_t lineLeft = m_nStride - ((xs0 >> 5) << 2);
-  uint8_t* lineDst = pDst->m_pData + yd0 * pDst->m_nStride + ((xd0 >> 5) << 2);
+  uint8_t* lineDst = pDst->data() + yd0 * pDst->m_nStride + ((xd0 >> 5) << 2);
   if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
     if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
       if (s1 > d1) {

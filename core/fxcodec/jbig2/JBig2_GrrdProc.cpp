@@ -130,18 +130,18 @@ void CJBig2_GRRDProc::decode_Template0_unopt_SetPixel(CJBig2_Image* GRREG,
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode_Template0_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
-  if (!GRREFERENCE->m_pData)
+  if (!GRREFERENCE->data())
     return nullptr;
 
   int32_t iGRW = static_cast<int32_t>(GRW);
   int32_t iGRH = static_cast<int32_t>(GRH);
   auto GRREG = pdfium::MakeUnique<CJBig2_Image>(iGRW, iGRH);
-  if (!GRREG->m_pData)
+  if (!GRREG->data())
     return nullptr;
 
   int LTP = 0;
-  uint8_t* pLine = GRREG->m_pData;
-  uint8_t* pLineR = GRREFERENCE->m_pData;
+  uint8_t* pLine = GRREG->data();
+  uint8_t* pLineR = GRREFERENCE->data();
   intptr_t nStride = GRREG->stride();
   intptr_t nStrideR = GRREFERENCE->stride();
   int32_t GRWR = GRREFERENCE->width();
@@ -363,18 +363,18 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode_Template1_unopt(
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::decode_Template1_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
-  if (!GRREFERENCE->m_pData)
+  if (!GRREFERENCE->data())
     return nullptr;
 
   int32_t iGRW = static_cast<int32_t>(GRW);
   int32_t iGRH = static_cast<int32_t>(GRH);
   auto GRREG = pdfium::MakeUnique<CJBig2_Image>(iGRW, iGRH);
-  if (!GRREG->m_pData)
+  if (!GRREG->data())
     return nullptr;
 
   int LTP = 0;
-  uint8_t* pLine = GRREG->m_pData;
-  uint8_t* pLineR = GRREFERENCE->m_pData;
+  uint8_t* pLine = GRREG->data();
+  uint8_t* pLineR = GRREFERENCE->data();
   intptr_t nStride = GRREG->stride();
   intptr_t nStrideR = GRREFERENCE->stride();
   int32_t GRWR = GRREFERENCE->width();
