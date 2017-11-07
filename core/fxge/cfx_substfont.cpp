@@ -19,6 +19,5 @@ CFX_SubstFont::CFX_SubstFont()
 #ifdef PDF_ENABLE_XFA
       m_bFlagItalic(false),
 #endif  // PDF_ENABLE_XFA
-      m_bFlagMM(false),
-      m_bFlagExact(false) {
+      m_bFlagMM(false) {
 }

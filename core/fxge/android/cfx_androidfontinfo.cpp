@@ -30,8 +30,7 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
                                    bool bItalic,
                                    int charset,
                                    int pitch_family,
-                                   const char* face,
-                                   int& iExact) {
+                                   const char* face) {
   if (!m_pFontMgr)
     return nullptr;
 

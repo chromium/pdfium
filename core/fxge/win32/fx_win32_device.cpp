@@ -325,8 +325,7 @@ class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const char* family,
-                int& iExact) override;
+                const char* family) override;
 };
 
 class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
@@ -340,8 +339,7 @@ class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const char* face,
-                int& iExact) override;
+                const char* face) override;
   void* GetFont(const char* face) override { return nullptr; }
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
@@ -475,13 +473,11 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
                                          bool bItalic,
                                          int charset,
                                          int pitch_family,
-                                         const char* cstr_face,
-                                         int& iExact) {
+                                         const char* cstr_face) {
   void* font = GetSubstFont(cstr_face);
-  if (font) {
-    iExact = 1;
+  if (font)
     return font;
-  }
+
   bool bCJK = true;
   switch (charset) {
     case FX_CHARSET_ShiftJIS:
@@ -567,18 +563,17 @@ void* CFX_Win32FontInfo::MapFont(int weight,
                                  bool bItalic,
                                  int charset,
                                  int pitch_family,
-                                 const char* cstr_face,
-                                 int& iExact) {
+                                 const char* cstr_face) {
   ByteString face = cstr_face;
   int iBaseFont;
-  for (iBaseFont = 0; iBaseFont < 12; iBaseFont++)
+  for (iBaseFont = 0; iBaseFont < 12; iBaseFont++) {
     if (face == ByteStringView(g_Base14Substs[iBaseFont].m_pName)) {
       face = g_Base14Substs[iBaseFont].m_pWinName;
       weight = g_Base14Substs[iBaseFont].m_bBold ? FW_BOLD : FW_NORMAL;
       bItalic = g_Base14Substs[iBaseFont].m_bItalic;
-      iExact = true;
       break;
     }
+  }
   if (charset == FX_CHARSET_ANSI || charset == FX_CHARSET_Symbol)
     charset = FX_CHARSET_Default;
 

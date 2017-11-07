@@ -313,8 +313,7 @@ void* CFX_FolderFontInfo::MapFont(int weight,
                                   bool bItalic,
                                   int charset,
                                   int pitch_family,
-                                  const char* family,
-                                  int& iExact) {
+                                  const char* family) {
   return nullptr;
 }
 

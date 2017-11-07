@@ -25,7 +25,6 @@ class CFX_SubstFont {
   bool m_bFlagItalic;
 #endif  // PDF_ENABLE_XFA
   bool m_bFlagMM;
-  bool m_bFlagExact;
 };
 
 #endif  // CORE_FXGE_CFX_SUBSTFONT_H_

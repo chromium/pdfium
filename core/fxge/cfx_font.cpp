@@ -237,7 +237,6 @@ bool CFX_Font::LoadClone(const CFX_Font* pFont) {
     m_pSubstFont = pdfium::MakeUnique<CFX_SubstFont>();
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
     m_pSubstFont->m_bFlagMM = pFont->m_pSubstFont->m_bFlagMM;
-    m_pSubstFont->m_bFlagExact = pFont->m_pSubstFont->m_bFlagExact;
 #ifdef PDF_ENABLE_XFA
     m_pSubstFont->m_bFlagItalic = pFont->m_pSubstFont->m_bFlagItalic;
 #endif  // PDF_ENABLE_XFA

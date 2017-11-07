@@ -337,9 +337,7 @@ void CFX_FontMapper::AddInstalledFont(const ByteString& name, int charset) {
   if (bLocalized) {
     void* hFont = m_pFontInfo->GetFont(name.c_str());
     if (!hFont) {
-      int iExact;
-      hFont = m_pFontInfo->MapFont(0, 0, FX_CHARSET_Default, 0, name.c_str(),
-                                   iExact);
+      hFont = m_pFontInfo->MapFont(0, 0, FX_CHARSET_Default, 0, name.c_str());
       if (!hFont)
         return;
     }
@@ -554,7 +552,6 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
   if (FontStyleIsItalic(nStyle))
     bItalic = true;
 
-  int iExact = 0;
   int Charset = FX_CHARSET_ANSI;
   if (WindowCP)
     Charset = GetCharsetFromCodePage(WindowCP);
@@ -622,11 +619,8 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
   } else if (FontStyleIsItalic(flags)) {
     bItalic = true;
   }
-  iExact = !match.IsEmpty();
   void* hFont = m_pFontInfo->MapFont(weight, bItalic, Charset, PitchFamily,
-                                     family.c_str(), iExact);
-  if (iExact)
-    pSubstFont->m_bFlagExact = true;
+                                     family.c_str());
   if (!hFont) {
 #ifdef PDF_ENABLE_XFA
     if (flags & FXFONT_EXACTMATCH)

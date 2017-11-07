@@ -44,8 +44,7 @@ class CFX_MacFontInfo : public CFX_FolderFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const char* family,
-                int& iExact) override;
+                const char* family) override;
 };
 
 const char JAPAN_GOTHIC[] = "Hiragino Kaku Gothic Pro W6";
@@ -64,13 +63,11 @@ void* CFX_MacFontInfo::MapFont(int weight,
                                bool bItalic,
                                int charset,
                                int pitch_family,
-                               const char* cstr_face,
-                               int& iExact) {
+                               const char* cstr_face) {
   ByteString face = cstr_face;
   for (size_t i = 0; i < FX_ArraySize(g_Base14Substs); ++i) {
     if (face == ByteStringView(g_Base14Substs[i].m_pName)) {
       face = g_Base14Substs[i].m_pSubstName;
-      iExact = true;
       return GetFont(face.c_str());
     }
   }

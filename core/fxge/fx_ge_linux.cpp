@@ -74,8 +74,7 @@ class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const char* family,
-                int& iExact) override;
+                const char* family) override;
   bool ParseFontCfg(const char** pUserPaths);
 };
 
@@ -83,13 +82,11 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
                                  bool bItalic,
                                  int charset,
                                  int pitch_family,
-                                 const char* cstr_face,
-                                 int& iExact) {
+                                 const char* cstr_face) {
   void* font = GetSubstFont(cstr_face);
-  if (font) {
-    iExact = 1;
+  if (font)
     return font;
-  }
+
   bool bCJK = true;
   switch (charset) {
     case FX_CHARSET_ShiftJIS: {

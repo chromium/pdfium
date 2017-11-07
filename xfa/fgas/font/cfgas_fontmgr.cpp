@@ -957,10 +957,8 @@ RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
     CFX_FontMapper* pFontMapper,
     IFX_SystemFontInfo* pSystemFontInfo,
     uint32_t index) {
-  int iExact = 0;
-  void* hFont =
-      pSystemFontInfo->MapFont(0, 0, FX_CHARSET_Default, 0,
-                               pFontMapper->GetFaceName(index).c_str(), iExact);
+  void* hFont = pSystemFontInfo->MapFont(
+      0, 0, FX_CHARSET_Default, 0, pFontMapper->GetFaceName(index).c_str());
   if (!hFont)
     return nullptr;
 

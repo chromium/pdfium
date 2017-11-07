@@ -27,8 +27,7 @@ class IFX_SystemFontInfo {
                         bool bItalic,
                         int charset,
                         int pitch_family,
-                        const char* face,
-                        int& iExact) = 0;
+                        const char* face) = 0;
 
 #ifdef PDF_ENABLE_XFA
   virtual void* MapFontByUnicode(uint32_t dwUnicode,

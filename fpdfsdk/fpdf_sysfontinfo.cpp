@@ -50,10 +50,11 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const char* family,
-                int& iExact) override {
+                const char* family) override {
     if (!m_pInfo->MapFont)
       return nullptr;
+
+    int iExact;
     return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family,
                             family, &iExact);
   }
@@ -146,7 +147,7 @@ static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,
                             int* bExact) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
   return pDefault->m_pFontInfo->MapFont(weight, !!bItalic, charset,
-                                        pitch_family, family, *bExact);
+                                        pitch_family, family);
 }
 
 void* DefaultGetFont(struct _FPDF_SYSFONTINFO* pThis, const char* family) {
