@@ -182,7 +182,7 @@ class ByteString {
   uint32_t GetID() const { return AsStringView().GetID(); }
 
   static ByteString FormatInteger(int i);
-  static ByteString FormatFloat(float f, int precision = 0);
+  static ByteString FormatFloat(float f);
 
  protected:
   using StringData = StringDataTemplate<char>;

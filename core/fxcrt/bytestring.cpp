@@ -783,7 +783,7 @@ void ByteString::TrimLeft() {
   TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
 }
 
-ByteString ByteString::FormatFloat(float d, int precision) {
+ByteString ByteString::FormatFloat(float d) {
   char buf[32];
   return ByteString(buf, FX_ftoa(d, buf));
 }
