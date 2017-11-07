@@ -172,9 +172,9 @@ bool CXFA_FFCheckButton::PerformLayout() {
   m_rtUI.height = fCheckSize;
   AddUIMargin(iCapPlacement);
   m_rtCheckBox = m_rtUI;
-  CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
-  if (borderUI) {
-    CXFA_Margin margin = borderUI.GetMargin();
+  CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
+  if (borderUIData) {
+    CXFA_Margin margin = borderUIData.GetMargin();
     if (margin)
       XFA_RectWidthoutMargin(m_rtUI, margin);
   }
@@ -232,9 +232,8 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorderWithFlags(
-      pGS, borderUI, m_rtUI, mtRotate,
+      pGS, m_pDataAcc->GetUIBorderData(), m_rtUI, mtRotate,
       m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round
           ? XFA_DRAWBOX_ForceRound
           : 0);

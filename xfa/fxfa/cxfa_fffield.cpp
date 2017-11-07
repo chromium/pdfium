@@ -65,8 +65,7 @@ void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
-  DrawBorder(pGS, borderUI, m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pDataAcc->GetUIBorderData(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
 
@@ -267,9 +266,9 @@ void CXFA_FFField::CapPlacement() {
       break;
   }
 
-  CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
-  if (borderUI) {
-    CXFA_Margin margin = borderUI.GetMargin();
+  CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
+  if (borderUIData) {
+    CXFA_Margin margin = borderUIData.GetMargin();
     if (margin)
       XFA_RectWidthoutMargin(m_rtUI, margin);
   }

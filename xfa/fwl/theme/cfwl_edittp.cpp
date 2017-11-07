@@ -21,10 +21,11 @@ CFWL_EditTP::~CFWL_EditTP() {}
 void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (CFWL_Part::CombTextLine == pParams->m_iPart) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
+    CXFA_BorderData borderUIData = pWidget->GetDataAcc()->GetUIBorderData();
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;
-    if (CXFA_Border borderUI = pWidget->GetDataAcc()->GetUIBorder()) {
-      CXFA_Edge edge = borderUI.GetEdge(0);
+    if (borderUIData) {
+      CXFA_Edge edge = borderUIData.GetEdge(0);
       if (edge) {
         cr = edge.GetColor();
         fWidth = edge.GetThickness();

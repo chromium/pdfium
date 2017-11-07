@@ -1528,8 +1528,8 @@ void CJX_Node::Script_Som_BorderColor(CFXJSE_Value* pValue,
   if (!pWidgetData) {
     return;
   }
-  CXFA_Border border = pWidgetData->GetBorder(true);
-  int32_t iSize = border.CountEdges();
+  CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
+  int32_t iSize = borderData.CountEdges();
   if (bSetting) {
     int32_t r = 0;
     int32_t g = 0;
@@ -1537,11 +1537,11 @@ void CJX_Node::Script_Som_BorderColor(CFXJSE_Value* pValue,
     StrToRGB(pValue->ToWideString(), r, g, b);
     FX_ARGB rgb = ArgbEncode(100, r, g, b);
     for (int32_t i = 0; i < iSize; ++i) {
-      CXFA_Edge edge = border.GetEdge(i);
+      CXFA_Edge edge = borderData.GetEdge(i);
       edge.SetColor(rgb);
     }
   } else {
-    CXFA_Edge edge = border.GetEdge(0);
+    CXFA_Edge edge = borderData.GetEdge(0);
     FX_ARGB color = edge.GetColor();
     int32_t a;
     int32_t r;
@@ -1561,18 +1561,18 @@ void CJX_Node::Script_Som_BorderWidth(CFXJSE_Value* pValue,
   if (!pWidgetData) {
     return;
   }
-  CXFA_Border border = pWidgetData->GetBorder(true);
-  int32_t iSize = border.CountEdges();
+  CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
+  int32_t iSize = borderData.CountEdges();
   WideString wsThickness;
   if (bSetting) {
     wsThickness = pValue->ToWideString();
     for (int32_t i = 0; i < iSize; ++i) {
-      CXFA_Edge edge = border.GetEdge(i);
+      CXFA_Edge edge = borderData.GetEdge(i);
       CXFA_Measurement thickness(wsThickness.AsStringView());
       edge.SetMSThickness(thickness);
     }
   } else {
-    CXFA_Edge edge = border.GetEdge(0);
+    CXFA_Edge edge = borderData.GetEdge(0);
     CXFA_Measurement thickness = edge.GetMSThickness();
     thickness.ToString(&wsThickness);
     pValue->SetString(wsThickness.UTF8Encode().AsStringView());
@@ -1586,8 +1586,8 @@ void CJX_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
   if (!pWidgetData) {
     return;
   }
-  CXFA_Border border = pWidgetData->GetBorder(true);
-  CXFA_Fill borderfill = border.GetFill(true);
+  CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
+  CXFA_Fill borderfill = borderData.GetFill(true);
   CXFA_Node* pNode = borderfill.GetNode();
   if (!pNode) {
     return;

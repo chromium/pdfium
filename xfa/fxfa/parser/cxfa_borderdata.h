@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_BORDER_H_
-#define XFA_FXFA_PARSER_CXFA_BORDER_H_
+#ifndef XFA_FXFA_PARSER_CXFA_BORDERDATA_H_
+#define XFA_FXFA_PARSER_CXFA_BORDERDATA_H_
 
 #include "xfa/fxfa/parser/cxfa_box.h"
 
 class CXFA_Node;
 
-class CXFA_Border : public CXFA_Box {
+class CXFA_BorderData : public CXFA_Box {
  public:
-  explicit CXFA_Border(CXFA_Node* pNode) : CXFA_Box(pNode) {}
+  explicit CXFA_BorderData(CXFA_Node* pNode) : CXFA_Box(pNode) {}
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_BORDER_H_
+#endif  // XFA_FXFA_PARSER_CXFA_BORDERDATA_H_

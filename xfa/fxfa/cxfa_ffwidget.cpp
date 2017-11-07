@@ -993,17 +993,17 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Border border = m_pDataAcc->GetBorder(false);
-  if (!border)
+  CXFA_BorderData borderData = m_pDataAcc->GetBorderData(false);
+  if (!borderData)
     return;
 
   CFX_RectF rtBorder = GetRectWithoutRotate();
-  CXFA_Margin margin = border.GetMargin();
+  CXFA_Margin margin = borderData.GetMargin();
   if (margin)
     XFA_RectWidthoutMargin(rtBorder, margin);
 
   rtBorder.Normalize();
-  DrawBorder(pGS, border, rtBorder, matrix);
+  DrawBorder(pGS, borderData, rtBorder, matrix);
 }
 
 bool CXFA_FFWidget::IsLoaded() {

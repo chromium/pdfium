@@ -279,8 +279,8 @@ int32_t CXFA_WidgetData::GetRotate() {
   return iRotate / 90 * 90;
 }
 
-CXFA_Border CXFA_WidgetData::GetBorder(bool bModified) {
-  return CXFA_Border(
+CXFA_BorderData CXFA_WidgetData::GetBorderData(bool bModified) {
+  return CXFA_BorderData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Border, bModified));
 }
 
@@ -387,9 +387,9 @@ bool CXFA_WidgetData::GetMaxHeight(float& fMaxHeight) {
   return TryMeasure(XFA_ATTRIBUTE_MaxH, fMaxHeight);
 }
 
-CXFA_Border CXFA_WidgetData::GetUIBorder() {
+CXFA_BorderData CXFA_WidgetData::GetUIBorderData() {
   CXFA_Node* pUIChild = GetUIChild();
-  return CXFA_Border(
+  return CXFA_BorderData(
       pUIChild ? pUIChild->JSNode()->GetProperty(0, XFA_Element::Border, false)
                : nullptr);
 }
@@ -403,8 +403,8 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
   if (!mgUI)
     return CFX_RectF();
 
-  CXFA_Border border = GetUIBorder();
-  if (border && border.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  CXFA_BorderData borderData = GetUIBorderData();
+  if (borderData && borderData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return CFX_RectF();
 
   float fLeftInset, fTopInset, fRightInset, fBottomInset;
@@ -412,13 +412,13 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
   bool bTop = mgUI.GetTopInset(fTopInset);
   bool bRight = mgUI.GetRightInset(fRightInset);
   bool bBottom = mgUI.GetBottomInset(fBottomInset);
-  if (border) {
+  if (borderData) {
     bool bVisible = false;
     float fThickness = 0;
-    border.Get3DStyle(bVisible, fThickness);
+    borderData.Get3DStyle(bVisible, fThickness);
     if (!bLeft || !bTop || !bRight || !bBottom) {
       std::vector<CXFA_Stroke> strokes;
-      border.GetStrokes(&strokes);
+      borderData.GetStrokes(&strokes);
       if (!bTop)
         fTopInset = GetEdgeThickness(strokes, bVisible, 0);
       if (!bRight)

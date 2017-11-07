@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_assistdata.h"
 #include "xfa/fxfa/parser/cxfa_binddata.h"
-#include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_borderdata.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
@@ -50,7 +50,7 @@ class CXFA_WidgetData : public CXFA_Data {
   int32_t GetRotate();
 
   CXFA_AssistData GetAssistData();
-  CXFA_Border GetBorder(bool bModified);
+  CXFA_BorderData GetBorderData(bool bModified);
   CXFA_Caption GetCaption();
   CXFA_Font GetFont(bool bModified);
   CXFA_Margin GetMargin();
@@ -70,7 +70,7 @@ class CXFA_WidgetData : public CXFA_Data {
   bool GetMaxWidth(float& fMaxWidth);
   bool GetMaxHeight(float& fMaxHeight);
 
-  CXFA_Border GetUIBorder();
+  CXFA_BorderData GetUIBorderData();
   CFX_RectF GetUIMargin();
   int32_t GetButtonHighlight();
   bool GetButtonRollover(WideString& wsRollover, bool& bRichText);
