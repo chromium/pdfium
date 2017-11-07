@@ -29,7 +29,7 @@
 #include "xfa/fxfa/cxfa_textuserdata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_para.h"
+#include "xfa/fxfa/parser/cxfa_paradata.h"
 
 #define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
 
@@ -102,12 +102,12 @@ std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
 }
 
 void CXFA_TextLayout::InitBreak(float fLineWidth) {
-  CXFA_Para para = m_pTextProvider->GetParaNode();
+  CXFA_ParaData paraData = m_pTextProvider->GetParaData();
   float fStart = 0;
   float fStartPos = 0;
-  if (para) {
+  if (paraData) {
     CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
-    switch (para.GetHorizontalAlign()) {
+    switch (paraData.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
         iAlign = CFX_RTFLineAlignment::Center;
         break;
@@ -123,18 +123,18 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
     }
     m_pBreak->SetAlignment(iAlign);
 
-    fStart = para.GetMarginLeft();
+    fStart = paraData.GetMarginLeft();
     if (m_pTextProvider->IsCheckButtonAndAutoWidth()) {
       if (iAlign != CFX_RTFLineAlignment::Left)
-        fLineWidth -= para.GetMarginRight();
+        fLineWidth -= paraData.GetMarginRight();
     } else {
-      fLineWidth -= para.GetMarginRight();
+      fLineWidth -= paraData.GetMarginRight();
     }
     if (fLineWidth < 0)
       fLineWidth = fStart;
 
     fStartPos = fStart;
-    float fIndent = para.GetTextIndent();
+    float fIndent = paraData.GetTextIndent();
     if (fIndent > 0)
       fStartPos += fIndent;
   }
@@ -661,14 +661,14 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
                                bool bSavePieces) {
   InitBreak(szText.width);
 
-  CXFA_Para para = m_pTextProvider->GetParaNode();
+  CXFA_ParaData paraData = m_pTextProvider->GetParaData();
   float fSpaceAbove = 0;
-  if (para) {
-    fSpaceAbove = para.GetSpaceAbove();
+  if (paraData) {
+    fSpaceAbove = paraData.GetSpaceAbove();
     if (fSpaceAbove < 0.1f) {
       fSpaceAbove = 0;
     }
-    int32_t verAlign = para.GetVerticalAlign();
+    int32_t verAlign = paraData.GetVerticalAlign();
     switch (verAlign) {
       case XFA_ATTRIBUTEENUM_Top:
       case XFA_ATTRIBUTEENUM_Middle:
@@ -1107,14 +1107,14 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
   if (dwStatus == CFX_BreakType::Paragraph) {
     m_pBreak->Reset();
     if (!pStyle && bEndBreak) {
-      CXFA_Para para = m_pTextProvider->GetParaNode();
-      if (para) {
-        float fStartPos = para.GetMarginLeft();
-        float fIndent = para.GetTextIndent();
+      CXFA_ParaData paraData = m_pTextProvider->GetParaData();
+      if (paraData) {
+        float fStartPos = paraData.GetMarginLeft();
+        float fIndent = paraData.GetTextIndent();
         if (fIndent > 0)
           fStartPos += fIndent;
 
-        float fSpaceBelow = para.GetSpaceBelow();
+        float fSpaceBelow = paraData.GetSpaceBelow();
         if (fSpaceBelow < 0.1f)
           fSpaceBelow = 0;
 

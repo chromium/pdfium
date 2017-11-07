@@ -154,10 +154,10 @@ CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
   CXFA_LayoutItem* pItem = pWidget;
   CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
   rect = pWidgetAcc->GetUIMargin();
-  if (CXFA_Para para = pWidgetAcc->GetPara()) {
-    rect.left += para.GetMarginLeft();
+  if (CXFA_ParaData paraData = pWidgetAcc->GetParaData()) {
+    rect.left += paraData.GetMarginLeft();
     if (pWidgetAcc->IsMultiLine())
-      rect.width += para.GetMarginRight();
+      rect.width += paraData.GetMarginRight();
   }
   if (!pItem->GetPrev()) {
     if (pItem->GetNext())
@@ -212,9 +212,9 @@ CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
   CFX_SizeF sizeAboveBelow;
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
     CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
-    if (CXFA_Para para = pWidgetAcc->GetPara()) {
-      sizeAboveBelow.width = para.GetSpaceAbove();
-      sizeAboveBelow.height = para.GetSpaceBelow();
+    if (CXFA_ParaData paraData = pWidgetAcc->GetParaData()) {
+      sizeAboveBelow.width = paraData.GetSpaceAbove();
+      sizeAboveBelow.height = paraData.GetSpaceBelow();
     }
   }
   return sizeAboveBelow;

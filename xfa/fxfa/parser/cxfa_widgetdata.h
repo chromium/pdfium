@@ -20,7 +20,7 @@
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
-#include "xfa/fxfa/parser/cxfa_para.h"
+#include "xfa/fxfa/parser/cxfa_paradata.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 
 enum XFA_CHECKSTATE {
@@ -54,7 +54,7 @@ class CXFA_WidgetData : public CXFA_Data {
   CXFA_CaptionData GetCaptionData();
   CXFA_FontData GetFontData(bool bModified);
   CXFA_MarginData GetMarginData();
-  CXFA_Para GetPara();
+  CXFA_ParaData GetParaData();
   std::vector<CXFA_Node*> GetEventList();
   std::vector<CXFA_Node*> GetEventByActivity(int32_t iActivity,
                                              bool bIsFormReady);

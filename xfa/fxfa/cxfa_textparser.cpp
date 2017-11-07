@@ -90,18 +90,18 @@ std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
 
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     CXFA_TextProvider* pTextProvider) {
-  CXFA_Para para = pTextProvider->GetParaNode();
+  CXFA_ParaData paraData = pTextProvider->GetParaData();
   auto pStyle = m_pSelector->CreateComputedStyle(nullptr);
   float fLineHeight = 0;
   float fFontSize = 10;
 
-  if (para) {
-    fLineHeight = para.GetLineHeight();
+  if (paraData) {
+    fLineHeight = paraData.GetLineHeight();
     CFX_CSSLength indent;
-    indent.Set(CFX_CSSLengthUnit::Point, para.GetTextIndent());
+    indent.Set(CFX_CSSLengthUnit::Point, paraData.GetTextIndent());
     pStyle->SetTextIndent(indent);
     CFX_CSSTextAlign hAlign = CFX_CSSTextAlign::Left;
-    switch (para.GetHorizontalAlign()) {
+    switch (paraData.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
         hAlign = CFX_CSSTextAlign::Center;
         break;
@@ -117,10 +117,12 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     }
     pStyle->SetTextAlign(hAlign);
     CFX_CSSRect rtMarginWidth;
-    rtMarginWidth.left.Set(CFX_CSSLengthUnit::Point, para.GetMarginLeft());
-    rtMarginWidth.top.Set(CFX_CSSLengthUnit::Point, para.GetSpaceAbove());
-    rtMarginWidth.right.Set(CFX_CSSLengthUnit::Point, para.GetMarginRight());
-    rtMarginWidth.bottom.Set(CFX_CSSLengthUnit::Point, para.GetSpaceBelow());
+    rtMarginWidth.left.Set(CFX_CSSLengthUnit::Point, paraData.GetMarginLeft());
+    rtMarginWidth.top.Set(CFX_CSSLengthUnit::Point, paraData.GetSpaceAbove());
+    rtMarginWidth.right.Set(CFX_CSSLengthUnit::Point,
+                            paraData.GetMarginRight());
+    rtMarginWidth.bottom.Set(CFX_CSSLengthUnit::Point,
+                             paraData.GetSpaceBelow());
     pStyle->SetMarginWidth(rtMarginWidth);
   }
 
@@ -289,8 +291,8 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
 }
 
 int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
-  CXFA_Para para = pTextProvider->GetParaNode();
-  return para ? para.GetVerticalAlign() : XFA_ATTRIBUTEENUM_Top;
+  CXFA_ParaData paraData = pTextProvider->GetParaData();
+  return paraData ? paraData.GetVerticalAlign() : XFA_ATTRIBUTEENUM_Top;
 }
 
 float CXFA_TextParser::GetTabInterval(CFX_CSSComputedStyle* pStyle) const {
@@ -465,8 +467,8 @@ float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
   float fLineHeight = 0;
   if (pStyle)
     fLineHeight = pStyle->GetLineHeight();
-  else if (CXFA_Para para = pTextProvider->GetParaNode())
-    fLineHeight = para.GetLineHeight();
+  else if (CXFA_ParaData paraData = pTextProvider->GetParaData())
+    fLineHeight = paraData.GetLineHeight();
 
   if (bFirst) {
     float fFontSize = GetFontSize(pTextProvider, pStyle);

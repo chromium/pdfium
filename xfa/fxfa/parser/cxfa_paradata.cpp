@@ -4,56 +4,56 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_para.h"
+#include "xfa/fxfa/parser/cxfa_paradata.h"
 
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_Para::CXFA_Para(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_ParaData::CXFA_ParaData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-int32_t CXFA_Para::GetHorizontalAlign() {
+int32_t CXFA_ParaData::GetHorizontalAlign() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Left;
   m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_HAlign, eAttr, true);
   return eAttr;
 }
 
-int32_t CXFA_Para::GetVerticalAlign() {
+int32_t CXFA_ParaData::GetVerticalAlign() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Top;
   m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_VAlign, eAttr, true);
   return eAttr;
 }
 
-float CXFA_Para::GetLineHeight() {
+float CXFA_ParaData::GetLineHeight() {
   CXFA_Measurement ms;
   m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_LineHeight, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-float CXFA_Para::GetMarginLeft() {
+float CXFA_ParaData::GetMarginLeft() {
   CXFA_Measurement ms;
   m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginLeft, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-float CXFA_Para::GetMarginRight() {
+float CXFA_ParaData::GetMarginRight() {
   CXFA_Measurement ms;
   m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginRight, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-float CXFA_Para::GetSpaceAbove() {
+float CXFA_ParaData::GetSpaceAbove() {
   CXFA_Measurement ms;
   m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceAbove, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-float CXFA_Para::GetSpaceBelow() {
+float CXFA_ParaData::GetSpaceBelow() {
   CXFA_Measurement ms;
   m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceBelow, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-float CXFA_Para::GetTextIndent() {
+float CXFA_ParaData::GetTextIndent() {
   CXFA_Measurement ms;
   m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_TextIndent, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);

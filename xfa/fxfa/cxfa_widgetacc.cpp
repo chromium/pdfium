@@ -781,9 +781,9 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
     size.height += fTopInset + fBottomInset;
   }
 
-  CXFA_Para para = GetPara();
-  if (para)
-    size.width += para.GetMarginLeft() + para.GetTextIndent();
+  CXFA_ParaData paraData = GetParaData();
+  if (paraData)
+    size.width += paraData.GetMarginLeft() + paraData.GetTextIndent();
 
   float fVal = 0;
   float fMin = 0;
@@ -1245,11 +1245,11 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   if (fHeight > 0.1f && iBlockIndex == 0) {
     fStartOffset = fTopInset;
     fHeight -= (fTopInset + fBottomInset);
-    if (CXFA_Para para = GetPara()) {
-      fSpaceAbove = para.GetSpaceAbove();
-      float fSpaceBelow = para.GetSpaceBelow();
+    if (CXFA_ParaData paraData = GetParaData()) {
+      fSpaceAbove = paraData.GetSpaceAbove();
+      float fSpaceBelow = paraData.GetSpaceBelow();
       fHeight -= (fSpaceAbove + fSpaceBelow);
-      switch (para.GetVerticalAlign()) {
+      switch (paraData.GetVerticalAlign()) {
         case XFA_ATTRIBUTEENUM_Top:
           fStartOffset += fSpaceAbove;
           break;
@@ -1512,8 +1512,8 @@ float CXFA_WidgetAcc::GetFontSize() {
 
 float CXFA_WidgetAcc::GetLineHeight() {
   float fLineHeight = 0;
-  if (CXFA_Para para = GetPara())
-    fLineHeight = para.GetLineHeight();
+  if (CXFA_ParaData paraData = GetParaData())
+    fLineHeight = paraData.GetLineHeight();
   if (fLineHeight < 1)
     fLineHeight = GetFontSize() * 1.2f;
   return fLineHeight;

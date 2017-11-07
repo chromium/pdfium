@@ -54,9 +54,9 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
 
   int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
   int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
-  if (CXFA_Para para = m_pDataAcc->GetPara()) {
-    iHorzAlign = para.GetHorizontalAlign();
-    iVertAlign = para.GetVerticalAlign();
+  if (CXFA_ParaData paraData = m_pDataAcc->GetParaData()) {
+    iHorzAlign = paraData.GetHorizontalAlign();
+    iVertAlign = paraData.GetVerticalAlign();
   }
 
   CXFA_Value value = m_pDataAcc->GetFormValue();

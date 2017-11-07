@@ -104,12 +104,12 @@ bool CXFA_FFListBox::IsDataChanged() {
 }
 
 uint32_t CXFA_FFListBox::GetAlignment() {
-  CXFA_Para para = m_pDataAcc->GetPara();
-  if (!para)
+  CXFA_ParaData paraData = m_pDataAcc->GetParaData();
+  if (!paraData)
     return 0;
 
   uint32_t dwExtendedStyle = 0;
-  switch (para.GetHorizontalAlign()) {
+  switch (paraData.GetHorizontalAlign()) {
     case XFA_ATTRIBUTEENUM_Center:
       dwExtendedStyle |= FWL_STYLEEXT_LTB_CenterAlign;
       break;
