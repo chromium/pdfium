@@ -100,9 +100,9 @@ bool CXFA_FFPushButton::PerformLayout() {
   if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
     XFA_RectWidthoutMargin(rtWidget, mgWidget);
 
-  CXFA_Caption caption = m_pDataAcc->GetCaption();
+  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
   m_rtCaption = rtWidget;
-  if (CXFA_Margin mgCap = caption.GetMargin())
+  if (CXFA_Margin mgCap = captionData.GetMargin())
     XFA_RectWidthoutMargin(m_rtCaption, mgCap);
 
   LayoutHighlightCaption();
@@ -130,8 +130,8 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 }
 
 void CXFA_FFPushButton::LoadHighlightCaption() {
-  CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (!caption || caption.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
+  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
+  if (!captionData || captionData.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
     return;
 
   bool bRichText;
@@ -167,8 +167,8 @@ void CXFA_FFPushButton::LayoutHighlightCaption() {
 void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
-  CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (!caption || caption.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
+  if (!captionData || captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();

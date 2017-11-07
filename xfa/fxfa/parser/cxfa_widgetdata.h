@@ -16,7 +16,7 @@
 #include "xfa/fxfa/parser/cxfa_binddata.h"
 #include "xfa/fxfa/parser/cxfa_borderdata.h"
 #include "xfa/fxfa/parser/cxfa_calculatedata.h"
-#include "xfa/fxfa/parser/cxfa_caption.h"
+#include "xfa/fxfa/parser/cxfa_captiondata.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
@@ -51,7 +51,7 @@ class CXFA_WidgetData : public CXFA_Data {
 
   CXFA_AssistData GetAssistData();
   CXFA_BorderData GetBorderData(bool bModified);
-  CXFA_Caption GetCaption();
+  CXFA_CaptionData GetCaptionData();
   CXFA_Font GetFont(bool bModified);
   CXFA_Margin GetMargin();
   CXFA_Para GetPara();

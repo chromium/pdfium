@@ -98,11 +98,11 @@ bool CXFA_FFCheckButton::PerformLayout() {
 
   int32_t iCapPlacement = -1;
   float fCapReserve = 0;
-  CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption && caption.GetPresence()) {
+  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
+  if (captionData && captionData.GetPresence()) {
     m_rtCaption = rtWidget;
-    iCapPlacement = caption.GetPlacementType();
-    fCapReserve = caption.GetReserve();
+    iCapPlacement = captionData.GetPlacementType();
+    fCapReserve = captionData.GetReserve();
     if (fCapReserve <= 0) {
       if (iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
           iCapPlacement == XFA_ATTRIBUTEENUM_Bottom) {
@@ -121,7 +121,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   }
 
   m_rtUI = rtWidget;
-  CXFA_Margin mgCap = caption.GetMargin();
+  CXFA_Margin mgCap = captionData.GetMargin();
   switch (iCapPlacement) {
     case XFA_ATTRIBUTEENUM_Left: {
       m_rtCaption.width = fCapReserve;

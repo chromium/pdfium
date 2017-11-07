@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_CAPTION_H_
-#define XFA_FXFA_PARSER_CXFA_CAPTION_H_
+#ifndef XFA_FXFA_PARSER_CXFA_CAPTIONDATA_H_
+#define XFA_FXFA_PARSER_CXFA_CAPTIONDATA_H_
 
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
@@ -14,9 +14,9 @@
 
 class CXFA_Node;
 
-class CXFA_Caption : public CXFA_Data {
+class CXFA_CaptionData : public CXFA_Data {
  public:
-  explicit CXFA_Caption(CXFA_Node* pNode);
+  explicit CXFA_CaptionData(CXFA_Node* pNode);
 
   int32_t GetPresence();
   int32_t GetPlacementType();
@@ -26,4 +26,4 @@ class CXFA_Caption : public CXFA_Data {
   CXFA_Value GetValue();
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_CAPTION_H_
+#endif  // XFA_FXFA_PARSER_CXFA_CAPTIONDATA_H_

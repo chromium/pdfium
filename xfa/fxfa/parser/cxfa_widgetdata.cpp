@@ -284,8 +284,8 @@ CXFA_BorderData CXFA_WidgetData::GetBorderData(bool bModified) {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Border, bModified));
 }
 
-CXFA_Caption CXFA_WidgetData::GetCaption() {
-  return CXFA_Caption(
+CXFA_CaptionData CXFA_WidgetData::GetCaptionData() {
+  return CXFA_CaptionData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Caption, false));
 }
 

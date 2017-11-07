@@ -191,15 +191,15 @@ void CXFA_FFField::CapPlacement() {
 
   XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
   float fCapReserve = 0;
-  CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
-    iCapPlacement = (XFA_ATTRIBUTEENUM)caption.GetPlacementType();
+  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
+  if (captionData && captionData.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
+    iCapPlacement = (XFA_ATTRIBUTEENUM)captionData.GetPlacementType();
     if (iCapPlacement == XFA_ATTRIBUTEENUM_Top && GetPrev()) {
       m_rtCaption.Reset();
     } else if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom && GetNext()) {
       m_rtCaption.Reset();
     } else {
-      fCapReserve = caption.GetReserve();
+      fCapReserve = captionData.GetReserve();
       CXFA_LayoutItem* pItem = this;
       if (!pItem->GetPrev() && !pItem->GetNext()) {
         m_rtCaption = rtWidget;
@@ -234,14 +234,14 @@ void CXFA_FFField::CapPlacement() {
   switch (iCapPlacement) {
     case XFA_ATTRIBUTEENUM_Left: {
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(caption, rtWidget, iCapPlacement);
+      CapLeftRightPlacement(captionData, rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
       m_rtUI.left += fCapReserve;
       break;
     }
     case XFA_ATTRIBUTEENUM_Top: {
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(caption, rtWidget, iCapPlacement);
+      CapTopBottomPlacement(captionData, rtWidget, iCapPlacement);
       m_rtUI.top += fCapReserve;
       m_rtUI.height -= fCapReserve;
       break;
@@ -249,14 +249,14 @@ void CXFA_FFField::CapPlacement() {
     case XFA_ATTRIBUTEENUM_Right: {
       m_rtCaption.left = m_rtCaption.right() - fCapReserve;
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(caption, rtWidget, iCapPlacement);
+      CapLeftRightPlacement(captionData, rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
       break;
     }
     case XFA_ATTRIBUTEENUM_Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(caption, rtWidget, iCapPlacement);
+      CapTopBottomPlacement(captionData, rtWidget, iCapPlacement);
       m_rtUI.height -= fCapReserve;
       break;
     }
@@ -275,12 +275,12 @@ void CXFA_FFField::CapPlacement() {
   m_rtUI.Normalize();
 }
 
-void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption,
+void CXFA_FFField::CapTopBottomPlacement(CXFA_CaptionData captionData,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.left += rtUIMargin.left;
-  if (CXFA_Margin mgCap = caption.GetMargin()) {
+  if (CXFA_Margin mgCap = captionData.GetMargin()) {
     XFA_RectWidthoutMargin(m_rtCaption, mgCap);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
@@ -301,13 +301,13 @@ void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption,
   }
 }
 
-void CXFA_FFField::CapLeftRightPlacement(CXFA_Caption caption,
+void CXFA_FFField::CapLeftRightPlacement(CXFA_CaptionData captionData,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.top += rtUIMargin.top;
   m_rtCaption.height -= rtUIMargin.top;
-  if (CXFA_Margin mgCap = caption.GetMargin()) {
+  if (CXFA_Margin mgCap = captionData.GetMargin()) {
     XFA_RectWidthoutMargin(m_rtCaption, mgCap);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
@@ -604,8 +604,8 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   if (!pCapTextLayout)
     return;
 
-  CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (!caption || caption.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
+  if (!captionData || captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
 
   if (!pCapTextLayout->IsLoaded())

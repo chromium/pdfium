@@ -105,9 +105,10 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   bool LoadCaption(CXFA_WidgetAcc* pAcc) {
     if (m_pCapTextLayout)
       return true;
-    CXFA_Caption caption = pAcc->GetCaption();
-    if (!caption || caption.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
+    CXFA_CaptionData captionData = pAcc->GetCaptionData();
+    if (!captionData || captionData.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
       return false;
+
     m_pCapTextProvider = pdfium::MakeUnique<CXFA_TextProvider>(
         pAcc, XFA_TEXTPROVIDERTYPE_Caption);
     m_pCapTextLayout =
@@ -501,8 +502,8 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
   WideString wsCaptionName;
 
   if (!bVersionFlag) {
-    if (CXFA_Caption caption = GetCaption()) {
-      if (CXFA_Value capValue = caption.GetValue()) {
+    if (CXFA_CaptionData captionData = GetCaptionData()) {
+      if (CXFA_Value capValue = captionData.GetValue()) {
         if (CXFA_Text capText = capValue.GetText())
           capText.GetContent(wsCaptionName);
       }
@@ -687,14 +688,14 @@ void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
 }
 
 void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
-  CXFA_Caption caption = GetCaption();
-  if (!caption || caption.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  CXFA_CaptionData captionData = GetCaptionData();
+  if (!captionData || captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
 
   LoadCaption();
   XFA_Element eUIType = GetUIType();
-  int32_t iCapPlacement = caption.GetPlacementType();
-  float fCapReserve = caption.GetReserve();
+  int32_t iCapPlacement = captionData.GetPlacementType();
+  float fCapReserve = captionData.GetReserve();
   const bool bVert = iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
                      iCapPlacement == XFA_ATTRIBUTEENUM_Bottom;
   const bool bReserveExit = fCapReserve > 0.01;
@@ -711,7 +712,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
   } else {
     float fFontSize = 10.0f;
-    if (CXFA_Font font = caption.GetFont())
+    if (CXFA_Font font = captionData.GetFont())
       fFontSize = font.GetFontSize();
     else if (CXFA_Font widgetfont = GetFont(false))
       fFontSize = widgetfont.GetFontSize();
@@ -723,7 +724,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       szCap.height = fFontSize;
     }
   }
-  if (CXFA_Margin mgCap = caption.GetMargin()) {
+  if (CXFA_Margin mgCap = captionData.GetMargin()) {
     float fLeftInset, fTopInset, fRightInset, fBottomInset;
     mgCap.GetLeftInset(fLeftInset);
     mgCap.GetTopInset(fTopInset);
@@ -746,7 +747,7 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
   size.width += rtUIMargin.left + rtUIMargin.width;
   size.height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
-    int32_t iCapPlacement = GetCaption().GetPlacementType();
+    int32_t iCapPlacement = GetCaptionData().GetPlacementType();
     switch (iCapPlacement) {
       case XFA_ATTRIBUTEENUM_Left:
       case XFA_ATTRIBUTEENUM_Right:
@@ -848,7 +849,7 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     bool bCapExit = szCap.width > 0.01 && szCap.height > 0.01;
     int32_t iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
     if (bCapExit) {
-      iCapPlacement = GetCaption().GetPlacementType();
+      iCapPlacement = GetCaptionData().GetPlacementType();
       switch (iCapPlacement) {
         case XFA_ATTRIBUTEENUM_Left:
         case XFA_ATTRIBUTEENUM_Right:
@@ -1184,10 +1185,10 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
   float fCapReserve = 0;
   if (iBlockIndex == 0) {
-    CXFA_Caption caption = GetCaption();
-    if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
-      iCapPlacement = (XFA_ATTRIBUTEENUM)caption.GetPlacementType();
-      fCapReserve = caption.GetReserve();
+    CXFA_CaptionData captionData = GetCaptionData();
+    if (captionData && captionData.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
+      iCapPlacement = (XFA_ATTRIBUTEENUM)captionData.GetPlacementType();
+      fCapReserve = captionData.GetReserve();
     }
     if (iCapPlacement == XFA_ATTRIBUTEENUM_Top &&
         fCalcHeight < fCapReserve + fTopInset) {
