@@ -1735,23 +1735,23 @@ void CJX_Node::Script_Som_FontColor(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute) {
   CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData) {
+  if (!pWidgetData)
     return;
-  }
-  CXFA_Font font = pWidgetData->GetFont(true);
-  CXFA_Node* pNode = font.GetNode();
-  if (!pNode) {
+
+  CXFA_FontData fontData = pWidgetData->GetFontData(true);
+  CXFA_Node* pNode = fontData.GetNode();
+  if (!pNode)
     return;
-  }
+
   if (bSetting) {
     int32_t r;
     int32_t g;
     int32_t b;
     StrToRGB(pValue->ToWideString(), r, g, b);
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
-    font.SetColor(color);
+    fontData.SetColor(color);
   } else {
-    FX_ARGB color = font.GetColor();
+    FX_ARGB color = fontData.GetColor();
     int32_t a;
     int32_t r;
     int32_t g;

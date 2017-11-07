@@ -27,7 +27,7 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_texttabstopscontext.h"
 #include "xfa/fxfa/cxfa_textuserdata.h"
-#include "xfa/fxfa/parser/cxfa_font.h"
+#include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
@@ -102,7 +102,6 @@ std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
 }
 
 void CXFA_TextLayout::InitBreak(float fLineWidth) {
-  CXFA_Font font = m_pTextProvider->GetFontNode();
   CXFA_Para para = m_pTextProvider->GetParaNode();
   float fStart = 0;
   float fStartPos = 0;
@@ -142,10 +141,14 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
 
   m_pBreak->SetLineBoundary(fStart, fLineWidth);
   m_pBreak->SetLineStartPos(fStartPos);
-  if (font) {
-    m_pBreak->SetHorizontalScale((int32_t)font.GetHorizontalScale());
-    m_pBreak->SetVerticalScale((int32_t)font.GetVerticalScale());
-    m_pBreak->SetCharSpace(font.GetLetterSpacing());
+
+  CXFA_FontData fontData = m_pTextProvider->GetFontData();
+  if (fontData) {
+    m_pBreak->SetHorizontalScale(
+        static_cast<int32_t>(fontData.GetHorizontalScale()));
+    m_pBreak->SetVerticalScale(
+        static_cast<int32_t>(fontData.GetVerticalScale()));
+    m_pBreak->SetCharSpace(fontData.GetLetterSpacing());
   }
 
   float fFontSize = m_textParser.GetFontSize(m_pTextProvider, nullptr);

@@ -712,10 +712,10 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
   } else {
     float fFontSize = 10.0f;
-    if (CXFA_Font font = captionData.GetFont())
-      fFontSize = font.GetFontSize();
-    else if (CXFA_Font widgetfont = GetFont(false))
-      fFontSize = widgetfont.GetFontSize();
+    if (CXFA_FontData fontData = captionData.GetFontData())
+      fFontSize = fontData.GetFontSize();
+    else if (CXFA_FontData widgetfontData = GetFontData(false))
+      fFontSize = widgetfontData.GetFontSize();
 
     if (bVert) {
       szCap.height = fCapReserve > 0 ? fCapReserve : fFontSize;
@@ -1482,12 +1482,12 @@ void CXFA_WidgetAcc::SetImageEditImage(
 RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
   WideStringView wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
-  if (CXFA_Font font = GetFont(false)) {
-    if (font.IsBold())
+  if (CXFA_FontData fontData = GetFontData(false)) {
+    if (fontData.IsBold())
       dwFontStyle |= FXFONT_BOLD;
-    if (font.IsItalic())
+    if (fontData.IsItalic())
       dwFontStyle |= FXFONT_ITALIC;
-    font.GetTypeface(wsFontName);
+    fontData.GetTypeface(wsFontName);
   }
 
   auto* pDoc = GetDoc();
@@ -1496,9 +1496,8 @@ RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
 }
 
 float CXFA_WidgetAcc::GetFontSize() {
-  float fFontSize = 10.0f;
-  if (CXFA_Font font = GetFont(false))
-    fFontSize = font.GetFontSize();
+  CXFA_FontData fontData = GetFontData(false);
+  float fFontSize = fontData ? fontData.GetFontSize() : 10.0f;
   return fFontSize < 0.1f ? 10.0f : fFontSize;
 }
 
@@ -1512,7 +1511,6 @@ float CXFA_WidgetAcc::GetLineHeight() {
 }
 
 FX_ARGB CXFA_WidgetAcc::GetTextColor() {
-  if (CXFA_Font font = GetFont(false))
-    return font.GetColor();
-  return 0xFF000000;
+  CXFA_FontData fontData = GetFontData(false);
+  return fontData ? fontData.GetColor() : 0xFF000000;
 }

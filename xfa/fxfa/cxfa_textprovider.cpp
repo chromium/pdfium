@@ -120,14 +120,14 @@ CXFA_Para CXFA_TextProvider::GetParaNode() {
   return CXFA_Para(pNode->GetChild(0, XFA_Element::Para, false));
 }
 
-CXFA_Font CXFA_TextProvider::GetFontNode() {
+CXFA_FontData CXFA_TextProvider::GetFontData() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
-    return m_pWidgetAcc->GetFont(false);
+    return m_pWidgetAcc->GetFontData(false);
 
   CXFA_Node* pNode =
       m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption, false);
   pNode = pNode->GetChild(0, XFA_Element::Font, false);
-  return pNode ? CXFA_Font(pNode) : m_pWidgetAcc->GetFont(false);
+  return pNode ? CXFA_FontData(pNode) : m_pWidgetAcc->GetFontData(false);
 }
 
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {

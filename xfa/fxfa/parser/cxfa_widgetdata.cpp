@@ -289,8 +289,8 @@ CXFA_CaptionData CXFA_WidgetData::GetCaptionData() {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Caption, false));
 }
 
-CXFA_Font CXFA_WidgetData::GetFont(bool bModified) {
-  return CXFA_Font(
+CXFA_FontData CXFA_WidgetData::GetFontData(bool bModified) {
+  return CXFA_FontData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Font, bModified));
 }
 

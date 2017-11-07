@@ -34,9 +34,9 @@ CXFA_Margin CXFA_CaptionData::GetMargin() {
                              : nullptr);
 }
 
-CXFA_Font CXFA_CaptionData::GetFont() {
-  return CXFA_Font(m_pNode ? m_pNode->GetChild(0, XFA_Element::Font, false)
-                           : nullptr);
+CXFA_FontData CXFA_CaptionData::GetFontData() {
+  return CXFA_FontData(m_pNode ? m_pNode->GetChild(0, XFA_Element::Font, false)
+                               : nullptr);
 }
 
 CXFA_Value CXFA_CaptionData::GetValue() {

@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_FONT_H_
-#define XFA_FXFA_PARSER_CXFA_FONT_H_
+#ifndef XFA_FXFA_PARSER_CXFA_FONTDATA_H_
+#define XFA_FXFA_PARSER_CXFA_FONTDATA_H_
 
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;
 
-class CXFA_Font : public CXFA_Data {
+class CXFA_FontData : public CXFA_Data {
  public:
-  explicit CXFA_Font(CXFA_Node* pNode);
+  explicit CXFA_FontData(CXFA_Node* pNode);
 
   float GetBaselineShift();
   float GetHorizontalScale();
@@ -33,4 +33,4 @@ class CXFA_Font : public CXFA_Data {
   void SetColor(FX_ARGB color);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_FONT_H_
+#endif  // XFA_FXFA_PARSER_CXFA_FONTDATA_H_
