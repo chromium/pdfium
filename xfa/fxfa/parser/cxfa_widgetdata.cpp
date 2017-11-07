@@ -353,8 +353,9 @@ CXFA_Validate CXFA_WidgetData::GetValidate(bool bModified) {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Validate, bModified));
 }
 
-CXFA_Bind CXFA_WidgetData::GetBind() {
-  return CXFA_Bind(m_pNode->JSNode()->GetProperty(0, XFA_Element::Bind, false));
+CXFA_BindData CXFA_WidgetData::GetBindData() {
+  return CXFA_BindData(
+      m_pNode->JSNode()->GetProperty(0, XFA_Element::Bind, false));
 }
 
 CXFA_AssistData CXFA_WidgetData::GetAssistData() {
@@ -1577,8 +1578,9 @@ bool CXFA_WidgetData::GetPictureContent(WideString& wsPicture,
       return true;
     }
     case XFA_VALUEPICTURE_DataBind: {
-      if (CXFA_Bind bind = GetBind()) {
-        bind.GetPicture(wsPicture);
+      CXFA_BindData bindData = GetBindData();
+      if (bindData) {
+        bindData.GetPicture(wsPicture);
         return true;
       }
       break;

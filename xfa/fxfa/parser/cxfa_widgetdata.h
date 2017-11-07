@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_assistdata.h"
-#include "xfa/fxfa/parser/cxfa_bind.h"
+#include "xfa/fxfa/parser/cxfa_binddata.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
@@ -160,7 +160,7 @@ class CXFA_WidgetData : public CXFA_Data {
   bool m_bPreNull;
 
  private:
-  CXFA_Bind GetBind();
+  CXFA_BindData GetBindData();
   void SyncValue(const WideString& wsValue, bool bNotify);
   void InsertListTextItem(CXFA_Node* pItems,
                           const WideString& wsText,

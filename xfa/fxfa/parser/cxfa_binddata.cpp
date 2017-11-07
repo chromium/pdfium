@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_bind.h"
+#include "xfa/fxfa/parser/cxfa_binddata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_Bind::CXFA_Bind(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_BindData::CXFA_BindData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-void CXFA_Bind::GetPicture(WideString& wsPicture) {
+void CXFA_BindData::GetPicture(WideString& wsPicture) {
   if (CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_Element::Picture, false))
     pPicture->JSNode()->TryContent(wsPicture, false, true);
 }

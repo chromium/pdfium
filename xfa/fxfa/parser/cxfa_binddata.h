@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_BIND_H_
-#define XFA_FXFA_PARSER_CXFA_BIND_H_
+#ifndef XFA_FXFA_PARSER_CXFA_BINDDATA_H_
+#define XFA_FXFA_PARSER_CXFA_BINDDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;
 
-class CXFA_Bind : public CXFA_Data {
+class CXFA_BindData : public CXFA_Data {
  public:
-  explicit CXFA_Bind(CXFA_Node* pNode);
+  explicit CXFA_BindData(CXFA_Node* pNode);
 
   void GetPicture(WideString& wsPicture);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_BIND_H_
+#endif  // XFA_FXFA_PARSER_CXFA_BINDDATA_H_
