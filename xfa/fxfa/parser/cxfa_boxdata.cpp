@@ -12,59 +12,58 @@
 
 namespace {
 
-void GetStrokesInternal(CXFA_Node* pNode,
-                        std::vector<CXFA_Stroke>* strokes,
-                        bool bNull) {
-  strokes->clear();
+std::vector<CXFA_StrokeData> GetStrokesInternal(CXFA_Node* pNode, bool bNull) {
   if (!pNode)
-    return;
+    return {};
 
-  strokes->resize(8);
+  std::vector<CXFA_StrokeData> strokes;
+  strokes.resize(8);
   int32_t i, j;
   for (i = 0, j = 0; i < 4; i++) {
     CXFA_CornerData cornerData = CXFA_CornerData(
         pNode->JSNode()->GetProperty(i, XFA_Element::Corner, i == 0));
     if (cornerData || i == 0) {
-      (*strokes)[j] = cornerData;
+      strokes[j] = cornerData;
     } else if (!bNull) {
       if (i == 1 || i == 2)
-        (*strokes)[j] = (*strokes)[0];
+        strokes[j] = strokes[0];
       else
-        (*strokes)[j] = (*strokes)[2];
+        strokes[j] = strokes[2];
     }
     j++;
     CXFA_EdgeData edgeData = CXFA_EdgeData(
         pNode->JSNode()->GetProperty(i, XFA_Element::Edge, i == 0));
     if (edgeData || i == 0) {
-      (*strokes)[j] = edgeData;
+      strokes[j] = edgeData;
     } else if (!bNull) {
       if (i == 1 || i == 2)
-        (*strokes)[j] = (*strokes)[1];
+        strokes[j] = strokes[1];
       else
-        (*strokes)[j] = (*strokes)[3];
+        strokes[j] = strokes[3];
     }
     j++;
   }
+  return strokes;
 }
 
-static int32_t Style3D(const std::vector<CXFA_Stroke>& strokes,
-                       CXFA_Stroke& stroke) {
+static int32_t Style3D(const std::vector<CXFA_StrokeData>& strokes,
+                       CXFA_StrokeData& strokeData) {
   if (strokes.empty())
     return 0;
 
-  stroke = strokes[0];
+  strokeData = strokes[0];
   for (size_t i = 1; i < strokes.size(); i++) {
-    CXFA_Stroke find = strokes[i];
+    CXFA_StrokeData find = strokes[i];
     if (!find)
       continue;
 
-    if (!stroke)
-      stroke = find;
-    else if (stroke.GetStrokeType() != find.GetStrokeType())
-      stroke = find;
+    if (!strokeData)
+      strokeData = find;
+    else if (strokeData.GetStrokeType() != find.GetStrokeType())
+      strokeData = find;
     break;
   }
-  int32_t iType = stroke.GetStrokeType();
+  int32_t iType = strokeData.GetStrokeType();
   if (iType == XFA_ATTRIBUTEENUM_Lowered || iType == XFA_ATTRIBUTEENUM_Raised ||
       iType == XFA_ATTRIBUTEENUM_Etched ||
       iType == XFA_ATTRIBUTEENUM_Embossed) {
@@ -99,8 +98,8 @@ CXFA_EdgeData CXFA_BoxData::GetEdgeData(int32_t nIndex) const {
                                : nullptr);
 }
 
-void CXFA_BoxData::GetStrokes(std::vector<CXFA_Stroke>* strokes) const {
-  GetStrokesInternal(m_pNode, strokes, false);
+std::vector<CXFA_StrokeData> CXFA_BoxData::GetStrokes() const {
+  return GetStrokesInternal(m_pNode, false);
 }
 
 bool CXFA_BoxData::IsCircular() const {
@@ -155,13 +154,12 @@ int32_t CXFA_BoxData::Get3DStyle(bool& bVisible, float& fThickness) const {
   if (IsArc())
     return 0;
 
-  std::vector<CXFA_Stroke> strokes;
-  GetStrokesInternal(m_pNode, &strokes, true);
-  CXFA_Stroke stroke(nullptr);
-  int32_t iType = Style3D(strokes, stroke);
+  std::vector<CXFA_StrokeData> strokes = GetStrokesInternal(m_pNode, true);
+  CXFA_StrokeData strokeData(nullptr);
+  int32_t iType = Style3D(strokes, strokeData);
   if (iType) {
-    bVisible = stroke.IsVisible();
-    fThickness = stroke.GetThickness();
+    bVisible = strokeData.IsVisible();
+    fThickness = strokeData.GetThickness();
   }
   return iType;
 }

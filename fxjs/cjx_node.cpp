@@ -2590,6 +2590,10 @@ void CJX_Node::Script_InstanceManager_InsertInstance(
   }
 
   int32_t iIndex = pArguments->GetInt32(0);
+  bool bBind = false;
+  if (argc == 2)
+    bBind = pArguments->GetInt32(1) == 0 ? false : true;
+
   int32_t iCount = GetXFANode()->GetCount();
   if (iIndex < 0 || iIndex > iCount) {
     ThrowIndexOutOfBoundsException();
@@ -2602,8 +2606,7 @@ void CJX_Node::Script_InstanceManager_InsertInstance(
     return;
   }
 
-  CXFA_Node* pNewInstance =
-      GetXFANode()->CreateInstance(argc == 2 && pArguments->GetInt32(1) != 0);
+  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(bBind);
   GetXFANode()->InsertItem(pNewInstance, iIndex, iCount, true);
   pArguments->GetReturnValue()->Assign(
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewInstance));

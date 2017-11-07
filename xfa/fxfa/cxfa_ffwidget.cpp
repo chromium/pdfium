@@ -66,7 +66,7 @@ void XFA_BOX_GetPath_Arc(CXFA_BoxData boxData,
   fillPath.AddArc(rtDraw.TopLeft(), rtDraw.Size(), startAngle, sweepAngle);
 }
 
-void XFA_BOX_GetPath(const std::vector<CXFA_Stroke>& strokes,
+void XFA_BOX_GetPath(const std::vector<CXFA_StrokeData>& strokes,
                      CFX_RectF rtWidget,
                      CXFA_Path& path,
                      int32_t nIndex,
@@ -84,22 +84,22 @@ void XFA_BOX_GetPath(const std::vector<CXFA_Stroke>& strokes,
   bool bRound = cornerData1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
   float halfAfter = 0.0f;
   float halfBefore = 0.0f;
-  CXFA_Stroke stroke = strokes[nIndex];
-  if (stroke.IsCorner()) {
-    CXFA_Stroke strokeBefore = strokes[(nIndex + 1 * 8 - 1) % 8];
-    CXFA_Stroke strokeAfter = strokes[nIndex + 1];
-    if (stroke.IsInverted()) {
-      if (!stroke.SameStyles(strokeBefore))
-        halfBefore = strokeBefore.GetThickness() / 2;
-      if (!stroke.SameStyles(strokeAfter))
-        halfAfter = strokeAfter.GetThickness() / 2;
+  CXFA_StrokeData strokeData = strokes[nIndex];
+  if (strokeData.IsCorner()) {
+    CXFA_StrokeData strokeBeforeData = strokes[(nIndex + 1 * 8 - 1) % 8];
+    CXFA_StrokeData strokeAfterData = strokes[nIndex + 1];
+    if (strokeData.IsInverted()) {
+      if (!strokeData.SameStyles(strokeBeforeData))
+        halfBefore = strokeBeforeData.GetThickness() / 2;
+      if (!strokeData.SameStyles(strokeAfterData))
+        halfAfter = strokeAfterData.GetThickness() / 2;
     }
   } else {
-    CXFA_Stroke strokeBefore = strokes[(nIndex + 8 - 2) % 8];
-    CXFA_Stroke strokeAfter = strokes[(nIndex + 2) % 8];
+    CXFA_StrokeData strokeBeforeData = strokes[(nIndex + 8 - 2) % 8];
+    CXFA_StrokeData strokeAfterData = strokes[(nIndex + 2) % 8];
     if (!bRound && !bInverted) {
-      halfBefore = strokeBefore.GetThickness() / 2;
-      halfAfter = strokeAfter.GetThickness() / 2;
+      halfBefore = strokeBeforeData.GetThickness() / 2;
+      halfAfter = strokeAfterData.GetThickness() / 2;
     }
   }
 
@@ -235,7 +235,7 @@ void XFA_BOX_GetPath(const std::vector<CXFA_Stroke>& strokes,
 }
 
 void XFA_BOX_GetFillPath(CXFA_BoxData boxData,
-                         const std::vector<CXFA_Stroke>& strokes,
+                         const std::vector<CXFA_StrokeData>& strokes,
                          CFX_RectF rtWidget,
                          CXFA_Path& fillPath,
                          uint16_t dwFlags) {
@@ -253,32 +253,33 @@ void XFA_BOX_GetFillPath(CXFA_BoxData boxData,
   }
 
   bool bSameStyles = true;
-  CXFA_Stroke stroke1 = strokes[0];
+  CXFA_StrokeData strokeData1 = strokes[0];
   for (int32_t i = 1; i < 8; i++) {
-    CXFA_Stroke stroke2 = strokes[i];
-    if (!stroke1.SameStyles(stroke2)) {
+    CXFA_StrokeData strokeData2 = strokes[i];
+    if (!strokeData1.SameStyles(strokeData2)) {
       bSameStyles = false;
       break;
     }
-    stroke1 = stroke2;
+    strokeData1 = strokeData2;
   }
   if (bSameStyles) {
-    stroke1 = strokes[0];
+    strokeData1 = strokes[0];
     for (int32_t i = 2; i < 8; i += 2) {
-      CXFA_Stroke stroke2 = strokes[i];
-      if (!stroke1.SameStyles(stroke2, XFA_STROKE_SAMESTYLE_NoPresence |
-                                           XFA_STROKE_SAMESTYLE_Corner)) {
+      CXFA_StrokeData strokeData2 = strokes[i];
+      if (!strokeData1.SameStyles(
+              strokeData2,
+              XFA_STROKE_SAMESTYLE_NoPresence | XFA_STROKE_SAMESTYLE_Corner)) {
         bSameStyles = false;
         break;
       }
-      stroke1 = stroke2;
+      strokeData1 = strokeData2;
     }
     if (bSameStyles) {
-      stroke1 = strokes[0];
-      if (stroke1.IsInverted()) {
+      strokeData1 = strokes[0];
+      if (strokeData1.IsInverted()) {
         bSameStyles = false;
       }
-      if (stroke1.GetJoinType() != XFA_ATTRIBUTEENUM_Square) {
+      if (strokeData1.GetJoinType() != XFA_ATTRIBUTEENUM_Square) {
         bSameStyles = false;
       }
     }
@@ -478,7 +479,7 @@ void XFA_BOX_Fill_Linear(CXFA_BoxData boxData,
 }
 
 void XFA_BOX_Fill(CXFA_BoxData boxData,
-                  const std::vector<CXFA_Stroke>& strokes,
+                  const std::vector<CXFA_StrokeData>& strokes,
                   CXFA_Graphics* pGS,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix,
@@ -523,27 +524,27 @@ void XFA_BOX_Fill(CXFA_BoxData boxData,
   pGS->RestoreGraphState();
 }
 
-void XFA_BOX_StrokePath(CXFA_Stroke stroke,
+void XFA_BOX_StrokePath(CXFA_StrokeData strokeData,
                         CXFA_Path* pPath,
                         CXFA_Graphics* pGS,
                         const CFX_Matrix& matrix) {
-  if (!stroke || !stroke.IsVisible()) {
+  if (!strokeData || !strokeData.IsVisible())
     return;
-  }
-  float fThickness = stroke.GetThickness();
-  if (fThickness < 0.001f) {
+
+  float fThickness = strokeData.GetThickness();
+  if (fThickness < 0.001f)
     return;
-  }
+
   pGS->SaveGraphState();
-  if (stroke.IsCorner() && fThickness > 2 * stroke.GetRadius()) {
-    fThickness = 2 * stroke.GetRadius();
-  }
+  if (strokeData.IsCorner() && fThickness > 2 * strokeData.GetRadius())
+    fThickness = 2 * strokeData.GetRadius();
+
   pGS->SetLineWidth(fThickness);
   pGS->EnableActOnDash();
   pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
-  XFA_StrokeTypeSetLineDash(pGS, stroke.GetStrokeType(),
+  XFA_StrokeTypeSetLineDash(pGS, strokeData.GetStrokeType(),
                             XFA_ATTRIBUTEENUM_Butt);
-  pGS->SetStrokeColor(CXFA_Color(stroke.GetColor()));
+  pGS->SetStrokeColor(CXFA_Color(strokeData.GetColor()));
   pGS->StrokePath(pPath, &matrix);
   pGS->RestoreGraphState();
 }
@@ -720,7 +721,7 @@ void XFA_BOX_Stroke_3DRect_Embossed(CXFA_Graphics* pGS,
 }
 
 void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
-                         const std::vector<CXFA_Stroke>& strokes,
+                         const std::vector<CXFA_StrokeData>& strokes,
                          CXFA_Graphics* pGS,
                          CFX_RectF rtWidget,
                          const CFX_Matrix& matrix) {
@@ -749,53 +750,53 @@ void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
   }
   bool bClose = false;
   bool bSameStyles = true;
-  CXFA_Stroke stroke1 = strokes[0];
+  CXFA_StrokeData strokeData1 = strokes[0];
   for (int32_t i = 1; i < 8; i++) {
-    CXFA_Stroke stroke2 = strokes[i];
-    if (!stroke1.SameStyles(stroke2)) {
+    CXFA_StrokeData strokeData2 = strokes[i];
+    if (!strokeData1.SameStyles(strokeData2)) {
       bSameStyles = false;
       break;
     }
-    stroke1 = stroke2;
+    strokeData1 = strokeData2;
   }
   if (bSameStyles) {
-    stroke1 = strokes[0];
+    strokeData1 = strokes[0];
     bClose = true;
     for (int32_t i = 2; i < 8; i += 2) {
-      CXFA_Stroke stroke2 = strokes[i];
-      if (!stroke1.SameStyles(stroke2, XFA_STROKE_SAMESTYLE_NoPresence |
-                                           XFA_STROKE_SAMESTYLE_Corner)) {
+      CXFA_StrokeData strokeData2 = strokes[i];
+      if (!strokeData1.SameStyles(
+              strokeData2,
+              XFA_STROKE_SAMESTYLE_NoPresence | XFA_STROKE_SAMESTYLE_Corner)) {
         bSameStyles = false;
         break;
       }
-      stroke1 = stroke2;
+      strokeData1 = strokeData2;
     }
     if (bSameStyles) {
-      stroke1 = strokes[0];
-      if (stroke1.IsInverted())
+      strokeData1 = strokes[0];
+      if (strokeData1.IsInverted())
         bSameStyles = false;
-      if (stroke1.GetJoinType() != XFA_ATTRIBUTEENUM_Square)
+      if (strokeData1.GetJoinType() != XFA_ATTRIBUTEENUM_Square)
         bSameStyles = false;
     }
   }
   bool bStart = true;
   CXFA_Path path;
   for (int32_t i = 0; i < 8; i++) {
-    CXFA_Stroke stroke = strokes[i];
-    if ((i % 1) == 0 && stroke.GetRadius() < 0) {
+    CXFA_StrokeData strokeData = strokes[i];
+    if ((i % 1) == 0 && strokeData.GetRadius() < 0) {
       bool bEmpty = path.IsEmpty();
       if (!bEmpty) {
-        XFA_BOX_StrokePath(stroke, &path, pGS, matrix);
+        XFA_BOX_StrokePath(strokeData, &path, pGS, matrix);
         path.Clear();
       }
       bStart = true;
       continue;
     }
     XFA_BOX_GetPath(strokes, rtWidget, path, i, bStart, !bSameStyles);
-    CXFA_Stroke stroke2 = strokes[(i + 1) % 8];
-    bStart = !stroke.SameStyles(stroke2);
+    bStart = !strokeData.SameStyles(strokes[(i + 1) % 8]);
     if (bStart) {
-      XFA_BOX_StrokePath(stroke, &path, pGS, matrix);
+      XFA_BOX_StrokePath(strokeData, &path, pGS, matrix);
       path.Clear();
     }
   }
@@ -809,7 +810,7 @@ void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
 }
 
 void XFA_BOX_Stroke(CXFA_BoxData boxData,
-                    const std::vector<CXFA_Stroke>& strokes,
+                    const std::vector<CXFA_StrokeData>& strokes,
                     CXFA_Graphics* pGS,
                     CFX_RectF rtWidget,
                     const CFX_Matrix& matrix,
@@ -884,9 +885,9 @@ void XFA_DrawBox(CXFA_BoxData boxData,
       eType != XFA_Element::Rectangle) {
     return;
   }
-  std::vector<CXFA_Stroke> strokes;
+  std::vector<CXFA_StrokeData> strokes;
   if (!(dwFlags & XFA_DRAWBOX_ForceRound) && eType != XFA_Element::Arc)
-    boxData.GetStrokes(&strokes);
+    strokes = boxData.GetStrokes();
 
   XFA_BOX_Fill(boxData, strokes, pGS, rtWidget, matrix, dwFlags);
   XFA_BOX_Stroke(boxData, strokes, pGS, rtWidget, matrix, dwFlags);

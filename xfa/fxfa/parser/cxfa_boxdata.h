@@ -30,7 +30,7 @@ class CXFA_BoxData : public CXFA_Data {
   int32_t GetPresence() const;
   int32_t CountEdges() const;
   CXFA_EdgeData GetEdgeData(int32_t nIndex = 0) const;
-  void GetStrokes(std::vector<CXFA_Stroke>* strokes) const;
+  std::vector<CXFA_StrokeData> GetStrokes() const;
   bool IsCircular() const;
   bool GetStartAngle(float& fStartAngle) const;
   float GetStartAngle() const {

@@ -49,8 +49,8 @@ bool GetOccurInfo(CXFA_Node* pOccurNode,
                   int32_t& iMin,
                   int32_t& iMax,
                   int32_t& iInit) {
-  return pOccurNode &&
-         CXFA_OccurData(pOccurNode).GetOccurInfo(iMin, iMax, iInit);
+  return pOccurNode ? CXFA_OccurData(pOccurNode).GetOccurInfo(iMin, iMax, iInit)
+                    : false;
 }
 
 CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {

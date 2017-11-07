@@ -4,47 +4,47 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_stroke.h"
+#include "xfa/fxfa/parser/cxfa_strokedata.h"
 
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-int32_t CXFA_Stroke::GetPresence() const {
+int32_t CXFA_StrokeData::GetPresence() const {
   return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Presence)
                  : XFA_ATTRIBUTEENUM_Invisible;
 }
 
-int32_t CXFA_Stroke::GetCapType() const {
+int32_t CXFA_StrokeData::GetCapType() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Square;
   return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Cap);
 }
 
-int32_t CXFA_Stroke::GetStrokeType() const {
+int32_t CXFA_StrokeData::GetStrokeType() const {
   return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Stroke)
                  : XFA_ATTRIBUTEENUM_Solid;
 }
 
-float CXFA_Stroke::GetThickness() const {
+float CXFA_StrokeData::GetThickness() const {
   return GetMSThickness().ToUnit(XFA_UNIT_Pt);
 }
 
-CXFA_Measurement CXFA_Stroke::GetMSThickness() const {
+CXFA_Measurement CXFA_StrokeData::GetMSThickness() const {
   return m_pNode ? m_pNode->JSNode()->GetMeasure(XFA_ATTRIBUTE_Thickness)
                  : XFA_GetAttributeDefaultValue_Measure(XFA_Element::Edge,
                                                         XFA_ATTRIBUTE_Thickness,
                                                         XFA_XDPPACKET_Form);
 }
 
-void CXFA_Stroke::SetMSThickness(CXFA_Measurement msThinkness) {
+void CXFA_StrokeData::SetMSThickness(CXFA_Measurement msThinkness) {
   if (!m_pNode)
     return;
 
   m_pNode->JSNode()->SetMeasure(XFA_ATTRIBUTE_Thickness, msThinkness, false);
 }
 
-FX_ARGB CXFA_Stroke::GetColor() const {
+FX_ARGB CXFA_StrokeData::GetColor() const {
   if (!m_pNode)
     return 0xFF000000;
 
@@ -57,7 +57,7 @@ FX_ARGB CXFA_Stroke::GetColor() const {
   return CXFA_Data::ToColor(wsColor);
 }
 
-void CXFA_Stroke::SetColor(FX_ARGB argb) {
+void CXFA_StrokeData::SetColor(FX_ARGB argb) {
   if (!m_pNode)
     return;
 
@@ -73,24 +73,25 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
   pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsColor, false, false);
 }
 
-int32_t CXFA_Stroke::GetJoinType() const {
+int32_t CXFA_StrokeData::GetJoinType() const {
   return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Join)
                  : XFA_ATTRIBUTEENUM_Square;
 }
 
-bool CXFA_Stroke::IsInverted() const {
+bool CXFA_StrokeData::IsInverted() const {
   return m_pNode ? m_pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_Inverted)
                  : false;
 }
 
-float CXFA_Stroke::GetRadius() const {
+float CXFA_StrokeData::GetRadius() const {
   return m_pNode ? m_pNode->JSNode()
                        ->GetMeasure(XFA_ATTRIBUTE_Radius)
                        .ToUnit(XFA_UNIT_Pt)
                  : 0;
 }
 
-bool CXFA_Stroke::SameStyles(CXFA_Stroke stroke, uint32_t dwFlags) const {
+bool CXFA_StrokeData::SameStyles(CXFA_StrokeData stroke,
+                                 uint32_t dwFlags) const {
   if (m_pNode == stroke.GetNode())
     return true;
   if (fabs(GetThickness() - stroke.GetThickness()) >= 0.01f)

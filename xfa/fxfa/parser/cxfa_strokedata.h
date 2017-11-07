@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_STROKE_H_
-#define XFA_FXFA_PARSER_CXFA_STROKE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_STROKEDATA_H_
+#define XFA_FXFA_PARSER_CXFA_STROKEDATA_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
@@ -19,10 +19,10 @@ enum StrokeSameStyle {
 
 class CXFA_Node;
 
-class CXFA_Stroke : public CXFA_Data {
+class CXFA_StrokeData : public CXFA_Data {
  public:
-  CXFA_Stroke() : CXFA_Stroke(nullptr) {}
-  explicit CXFA_Stroke(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  CXFA_StrokeData() : CXFA_StrokeData(nullptr) {}
+  explicit CXFA_StrokeData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   bool IsCorner() const { return GetElementType() == XFA_Element::Corner; }
   bool IsEdge() const { return GetElementType() == XFA_Element::Edge; }
@@ -38,7 +38,7 @@ class CXFA_Stroke : public CXFA_Data {
   int32_t GetJoinType() const;
   bool IsInverted() const;
   float GetRadius() const;
-  bool SameStyles(CXFA_Stroke stroke, uint32_t dwFlags = 0) const;
+  bool SameStyles(CXFA_StrokeData stroke, uint32_t dwFlags = 0) const;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_STROKE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_STROKEDATA_H_

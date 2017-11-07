@@ -417,6 +417,7 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
         return XFA_EVENTERROR_NotExist;
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
+
       return pWidgetAcc->ExecuteScript(calcData.GetScriptData(), pParam);
     }
     default:
