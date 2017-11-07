@@ -1065,8 +1065,10 @@ void* PartitionReallocGeneric(PartitionRootGeneric* root,
     // after updating statistics (and cookies, if present).
     PartitionPageSetRawSize(page, PartitionCookieSizeAdjustAdd(new_size));
 #if DCHECK_IS_ON()
-    // Write a new trailing cookie.
-    PartitionCookieWriteValue(static_cast<char*>(ptr) + new_size);
+    // Write a new trailing cookie when it is possible to keep track of
+    // |new_size| via the raw size pointer.
+    if (PartitionPageGetRawSizePtr(page))
+      PartitionCookieWriteValue(static_cast<char*>(ptr) + new_size);
 #endif
     return ptr;
   }
