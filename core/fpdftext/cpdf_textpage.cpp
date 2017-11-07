@@ -1218,25 +1218,29 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::GetTextObjectWritingMode(
 }
 
 bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
-  WideStringView curText;
-  if (!m_TempTextBuf.IsEmpty())
-    curText = m_TempTextBuf.AsStringView();
-  else if (!m_TextBuf.IsEmpty())
+  WideStringView curText = m_TempTextBuf.AsStringView();
+  if (curText.IsEmpty())
     curText = m_TextBuf.AsStringView();
-  else
+
+  if (curText.IsEmpty())
     return false;
 
-  curText = curText.TrimmedRight(0x20);
-  if (curText.GetLength() < 2)
-    return false;
+  auto iter = curText.rbegin();
+  for (; iter != curText.rend() && *iter == 0x20; iter++) {
+    // Do nothing
+  }
 
-  // Extracting the last 2 characters, since they are all that matter
-  curText = curText.Right(2);
-  if (!IsHyphenCode(curText.Last()))
-    return false;
-
-  if (FXSYS_iswalpha(curText.First() && FXSYS_iswalnum(curChar)))
-    return true;
+  if (iter != curText.rend()) {
+    if (!IsHyphenCode(*iter))
+      return false;
+    iter++;
+    if (FXSYS_iswalpha(*iter) && FXSYS_iswalpha(*iter))
+      return true;
+  } else {
+    iter--;
+    if (!IsHyphenCode(*iter))
+      return false;
+  }
 
   const PAGECHAR_INFO* preInfo;
   if (!m_TempCharList.empty())
