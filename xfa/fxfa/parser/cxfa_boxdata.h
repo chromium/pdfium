@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_BOX_H_
-#define XFA_FXFA_PARSER_CXFA_BOX_H_
+#ifndef XFA_FXFA_PARSER_CXFA_BOXDATA_H_
+#define XFA_FXFA_PARSER_CXFA_BOXDATA_H_
 
 #include <vector>
 
@@ -17,9 +17,9 @@
 
 class CXFA_Node;
 
-class CXFA_Box : public CXFA_Data {
+class CXFA_BoxData : public CXFA_Data {
  public:
-  explicit CXFA_Box(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_BoxData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   bool IsArc() const { return GetElementType() == XFA_Element::Arc; }
   bool IsBorder() const { return GetElementType() == XFA_Element::Border; }
@@ -51,4 +51,4 @@ class CXFA_Box : public CXFA_Data {
   int32_t Get3DStyle(bool& bVisible, float& fThickness) const;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_BOX_H_
+#endif  // XFA_FXFA_PARSER_CXFA_BOXDATA_H_

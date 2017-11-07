@@ -7,13 +7,13 @@
 #ifndef XFA_FXFA_PARSER_CXFA_ARCDATA_H_
 #define XFA_FXFA_PARSER_CXFA_ARCDATA_H_
 
-#include "xfa/fxfa/parser/cxfa_box.h"
+#include "xfa/fxfa/parser/cxfa_boxdata.h"
 
 class CXFA_Node;
 
-class CXFA_ArcData : public CXFA_Box {
+class CXFA_ArcData : public CXFA_BoxData {
  public:
-  explicit CXFA_ArcData(CXFA_Node* pNode) : CXFA_Box(pNode) {}
+  explicit CXFA_ArcData(CXFA_Node* pNode) : CXFA_BoxData(pNode) {}
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ARCDATA_H_

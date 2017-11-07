@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_box.h"
+#include "xfa/fxfa/parser/cxfa_boxdata.h"
 
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
@@ -75,41 +75,41 @@ static int32_t Style3D(const std::vector<CXFA_Stroke>& strokes,
 
 }  // namespace
 
-int32_t CXFA_Box::GetHand() const {
+int32_t CXFA_BoxData::GetHand() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Even;
   return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Hand);
 }
 
-int32_t CXFA_Box::GetPresence() const {
+int32_t CXFA_BoxData::GetPresence() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Hidden;
   return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Presence);
 }
 
-int32_t CXFA_Box::CountEdges() const {
+int32_t CXFA_BoxData::CountEdges() const {
   if (!m_pNode)
     return 0;
   return m_pNode->CountChildren(XFA_Element::Edge, false);
 }
 
-CXFA_Edge CXFA_Box::GetEdge(int32_t nIndex) const {
+CXFA_Edge CXFA_BoxData::GetEdge(int32_t nIndex) const {
   return CXFA_Edge(m_pNode ? m_pNode->JSNode()->GetProperty(
                                  nIndex, XFA_Element::Edge, nIndex == 0)
                            : nullptr);
 }
 
-void CXFA_Box::GetStrokes(std::vector<CXFA_Stroke>* strokes) const {
+void CXFA_BoxData::GetStrokes(std::vector<CXFA_Stroke>* strokes) const {
   GetStrokesInternal(m_pNode, strokes, false);
 }
 
-bool CXFA_Box::IsCircular() const {
+bool CXFA_BoxData::IsCircular() const {
   if (!m_pNode)
     return false;
   return m_pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_Circular);
 }
 
-bool CXFA_Box::GetStartAngle(float& fStartAngle) const {
+bool CXFA_BoxData::GetStartAngle(float& fStartAngle) const {
   fStartAngle = 0;
   if (!m_pNode)
     return false;
@@ -123,7 +123,7 @@ bool CXFA_Box::GetStartAngle(float& fStartAngle) const {
   return bRet;
 }
 
-bool CXFA_Box::GetSweepAngle(float& fSweepAngle) const {
+bool CXFA_BoxData::GetSweepAngle(float& fSweepAngle) const {
   fSweepAngle = 360;
   if (!m_pNode)
     return false;
@@ -137,7 +137,7 @@ bool CXFA_Box::GetSweepAngle(float& fSweepAngle) const {
   return bRet;
 }
 
-CXFA_Fill CXFA_Box::GetFill(bool bModified) const {
+CXFA_Fill CXFA_BoxData::GetFill(bool bModified) const {
   if (!m_pNode)
     return CXFA_Fill(nullptr);
 
@@ -146,12 +146,12 @@ CXFA_Fill CXFA_Box::GetFill(bool bModified) const {
   return CXFA_Fill(pFillNode);
 }
 
-CXFA_Margin CXFA_Box::GetMargin() const {
+CXFA_Margin CXFA_BoxData::GetMargin() const {
   return CXFA_Margin(m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false)
                              : nullptr);
 }
 
-int32_t CXFA_Box::Get3DStyle(bool& bVisible, float& fThickness) const {
+int32_t CXFA_BoxData::Get3DStyle(bool& bVisible, float& fThickness) const {
   if (IsArc())
     return 0;
 
