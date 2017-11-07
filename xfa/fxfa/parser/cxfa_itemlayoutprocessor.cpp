@@ -23,7 +23,7 @@
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_occur.h"
+#include "xfa/fxfa/parser/cxfa_occurdata.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -2820,8 +2820,9 @@ bool CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(
   if (!pTemplate)
     pTemplate = pFormNode;
 
-  CXFA_Occur NodeOccur(pTemplate->GetFirstChildByClass(XFA_Element::Occur));
-  int32_t iMax = NodeOccur.GetMax();
+  int32_t iMax =
+      CXFA_OccurData(pTemplate->GetFirstChildByClass(XFA_Element::Occur))
+          .GetMax();
   if (iMax < 0)
     return true;
 

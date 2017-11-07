@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_OCCUR_H_
-#define XFA_FXFA_PARSER_CXFA_OCCUR_H_
+#ifndef XFA_FXFA_PARSER_CXFA_OCCURDATA_H_
+#define XFA_FXFA_PARSER_CXFA_OCCURDATA_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;
 
-class CXFA_Occur : public CXFA_Data {
+class CXFA_OccurData : public CXFA_Data {
  public:
-  explicit CXFA_Occur(CXFA_Node* pNode);
+  explicit CXFA_OccurData(CXFA_Node* pNode);
 
   int32_t GetMax();
   int32_t GetMin();
@@ -23,4 +23,4 @@ class CXFA_Occur : public CXFA_Data {
   void SetMin(int32_t iMin);
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_OCCUR_H_
+#endif  // XFA_FXFA_PARSER_CXFA_OCCURDATA_H_

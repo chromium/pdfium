@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_occur.h"
+#include "xfa/fxfa/parser/cxfa_occurdata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_Occur::CXFA_Occur(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_OccurData::CXFA_OccurData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-int32_t CXFA_Occur::GetMax() {
+int32_t CXFA_OccurData::GetMax() {
   int32_t iMax = 1;
   if (m_pNode) {
     if (!m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Max, iMax, true))
@@ -19,7 +19,7 @@ int32_t CXFA_Occur::GetMax() {
   return iMax;
 }
 
-int32_t CXFA_Occur::GetMin() {
+int32_t CXFA_OccurData::GetMin() {
   int32_t iMin = 1;
   if (m_pNode) {
     if (!m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Min, iMin, true) ||
@@ -29,7 +29,9 @@ int32_t CXFA_Occur::GetMin() {
   return iMin;
 }
 
-bool CXFA_Occur::GetOccurInfo(int32_t& iMin, int32_t& iMax, int32_t& iInit) {
+bool CXFA_OccurData::GetOccurInfo(int32_t& iMin,
+                                  int32_t& iMax,
+                                  int32_t& iInit) {
   if (!m_pNode)
     return false;
   if (!m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Min, iMin, false) ||
@@ -48,7 +50,7 @@ bool CXFA_Occur::GetOccurInfo(int32_t& iMin, int32_t& iMax, int32_t& iInit) {
   return true;
 }
 
-void CXFA_Occur::SetMax(int32_t iMax) {
+void CXFA_OccurData::SetMax(int32_t iMax) {
   iMax = (iMax != -1 && iMax < 1) ? 1 : iMax;
   m_pNode->JSNode()->SetInteger(XFA_ATTRIBUTE_Max, iMax, false);
   int32_t iMin = GetMin();
@@ -58,7 +60,7 @@ void CXFA_Occur::SetMax(int32_t iMax) {
   }
 }
 
-void CXFA_Occur::SetMin(int32_t iMin) {
+void CXFA_OccurData::SetMin(int32_t iMin) {
   iMin = (iMin < 0) ? 1 : iMin;
   m_pNode->JSNode()->SetInteger(XFA_ATTRIBUTE_Min, iMin, false);
   int32_t iMax = GetMax();

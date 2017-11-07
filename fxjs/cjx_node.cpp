@@ -25,7 +25,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_occur.h"
+#include "xfa/fxfa/parser/cxfa_occurdata.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -351,9 +351,9 @@ int32_t CJX_Node::Subform_and_SubformSet_InstanceIndex() {
 }
 
 int32_t CJX_Node::InstanceManager_SetInstances(int32_t iDesired) {
-  CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
-  int32_t iMax = nodeOccur.GetMax();
-  int32_t iMin = nodeOccur.GetMin();
+  CXFA_OccurData occurData(GetXFANode()->GetOccurNode());
+  int32_t iMax = occurData.GetMax();
+  int32_t iMin = occurData.GetMin();
   if (iDesired < iMin) {
     ThrowTooManyOccurancesException(L"min");
     return 1;
@@ -2449,8 +2449,7 @@ void CJX_Node::Script_InstanceManager_Max(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
-  pValue->SetInteger(nodeOccur.GetMax());
+  pValue->SetInteger(CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMax());
 }
 
 void CJX_Node::Script_InstanceManager_Min(CFXJSE_Value* pValue,
@@ -2460,8 +2459,7 @@ void CJX_Node::Script_InstanceManager_Min(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
-  pValue->SetInteger(nodeOccur.GetMin());
+  pValue->SetInteger(CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMin());
 }
 
 void CJX_Node::Script_InstanceManager_Count(CFXJSE_Value* pValue,
@@ -2511,8 +2509,8 @@ void CJX_Node::Script_InstanceManager_RemoveInstance(
     ThrowIndexOutOfBoundsException();
     return;
   }
-  CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
-  int32_t iMin = nodeOccur.GetMin();
+
+  int32_t iMin = CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMin();
   if (iCount - 1 < iMin) {
     ThrowTooManyOccurancesException(L"min");
     return;
@@ -2554,30 +2552,31 @@ void CJX_Node::Script_InstanceManager_AddInstance(
     ThrowParamCountMismatchException(L"addInstance");
     return;
   }
+
   bool fFlags = true;
-  if (argc == 1) {
+  if (argc == 1)
     fFlags = pArguments->GetInt32(0) == 0 ? false : true;
-  }
+
   int32_t iCount = GetXFANode()->GetCount();
-  CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
-  int32_t iMax = nodeOccur.GetMax();
+  int32_t iMax = CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMax();
   if (iMax >= 0 && iCount >= iMax) {
     ThrowTooManyOccurancesException(L"max");
     return;
   }
+
   CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(fFlags);
   GetXFANode()->InsertItem(pNewInstance, iCount, iCount, false);
   pArguments->GetReturnValue()->Assign(
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewInstance));
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify) {
+  if (!pNotify)
     return;
-  }
+
   pNotify->RunNodeInitialize(pNewInstance);
   CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
-  if (!pLayoutPro) {
+  if (!pLayoutPro)
     return;
-  }
+
   pLayoutPro->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
 }
@@ -2589,59 +2588,59 @@ void CJX_Node::Script_InstanceManager_InsertInstance(
     ThrowParamCountMismatchException(L"insertInstance");
     return;
   }
+
   int32_t iIndex = pArguments->GetInt32(0);
-  bool bBind = false;
-  if (argc == 2) {
-    bBind = pArguments->GetInt32(1) == 0 ? false : true;
-  }
-  CXFA_Occur nodeOccur(GetXFANode()->GetOccurNode());
   int32_t iCount = GetXFANode()->GetCount();
   if (iIndex < 0 || iIndex > iCount) {
     ThrowIndexOutOfBoundsException();
     return;
   }
-  int32_t iMax = nodeOccur.GetMax();
+
+  int32_t iMax = CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMax();
   if (iMax >= 0 && iCount >= iMax) {
     ThrowTooManyOccurancesException(L"max");
     return;
   }
-  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(bBind);
+
+  CXFA_Node* pNewInstance =
+      GetXFANode()->CreateInstance(argc == 2 && pArguments->GetInt32(1) != 0);
   GetXFANode()->InsertItem(pNewInstance, iIndex, iCount, true);
   pArguments->GetReturnValue()->Assign(
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewInstance));
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify) {
+  if (!pNotify)
     return;
-  }
+
   pNotify->RunNodeInitialize(pNewInstance);
   CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
-  if (!pLayoutPro) {
+  if (!pLayoutPro)
     return;
-  }
+
   pLayoutPro->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
 }
+
 void CJX_Node::Script_Occur_Max(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_ATTRIBUTE eAttribute) {
-  CXFA_Occur occur(GetXFANode());
+  CXFA_OccurData occurData(GetXFANode());
   if (bSetting) {
     int32_t iMax = pValue->ToInteger();
-    occur.SetMax(iMax);
+    occurData.SetMax(iMax);
   } else {
-    pValue->SetInteger(occur.GetMax());
+    pValue->SetInteger(occurData.GetMax());
   }
 }
 
 void CJX_Node::Script_Occur_Min(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_ATTRIBUTE eAttribute) {
-  CXFA_Occur occur(GetXFANode());
+  CXFA_OccurData occurData(GetXFANode());
   if (bSetting) {
     int32_t iMin = pValue->ToInteger();
-    occur.SetMin(iMin);
+    occurData.SetMin(iMin);
   } else {
-    pValue->SetInteger(occur.GetMin());
+    pValue->SetInteger(occurData.GetMin());
   }
 }
 

@@ -19,7 +19,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_occur.h"
+#include "xfa/fxfa/parser/cxfa_occurdata.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
@@ -49,11 +49,8 @@ bool GetOccurInfo(CXFA_Node* pOccurNode,
                   int32_t& iMin,
                   int32_t& iMax,
                   int32_t& iInit) {
-  if (!pOccurNode)
-    return false;
-
-  CXFA_Occur occur(pOccurNode);
-  return occur.GetOccurInfo(iMin, iMax, iInit);
+  return pOccurNode &&
+         CXFA_OccurData(pOccurNode).GetOccurInfo(iMin, iMax, iInit);
 }
 
 CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {

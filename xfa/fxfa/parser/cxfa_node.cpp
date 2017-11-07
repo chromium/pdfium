@@ -32,7 +32,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
-#include "xfa/fxfa/parser/cxfa_occur.h"
+#include "xfa/fxfa/parser/cxfa_occurdata.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
