@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_MARGIN_H_
-#define XFA_FXFA_PARSER_CXFA_MARGIN_H_
+#ifndef XFA_FXFA_PARSER_CXFA_MARGINDATA_H_
+#define XFA_FXFA_PARSER_CXFA_MARGINDATA_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 
 class CXFA_Node;
 
-class CXFA_Margin : public CXFA_Data {
+class CXFA_MarginData : public CXFA_Data {
  public:
-  explicit CXFA_Margin(CXFA_Node* pNode);
+  explicit CXFA_MarginData(CXFA_Node* pNode);
 
   bool GetLeftInset(float& fInset, float fDefInset = 0) const;
   bool GetTopInset(float& fInset, float fDefInset = 0) const;
@@ -22,4 +22,4 @@ class CXFA_Margin : public CXFA_Data {
   bool GetBottomInset(float& fInset, float fDefInset = 0) const;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_MARGIN_H_
+#endif  // XFA_FXFA_PARSER_CXFA_MARGINDATA_H_

@@ -991,9 +991,9 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CFX_RectF rtBorder = GetRectWithoutRotate();
-  CXFA_Margin margin = borderData.GetMargin();
-  if (margin)
-    XFA_RectWidthoutMargin(rtBorder, margin);
+  CXFA_MarginData marginData = borderData.GetMarginData();
+  if (marginData)
+    XFA_RectWidthoutMargin(rtBorder, marginData);
 
   rtBorder.Normalize();
   DrawBorder(pGS, borderData, rtBorder, matrix);
@@ -2033,15 +2033,20 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   return pBitmap;
 }
 
-void XFA_RectWidthoutMargin(CFX_RectF& rt, const CXFA_Margin& mg, bool bUI) {
-  if (!mg) {
+void XFA_RectWidthoutMargin(CFX_RectF& rt,
+                            const CXFA_MarginData& marginData,
+                            bool bUI) {
+  if (!marginData)
     return;
-  }
-  float fLeftInset, fTopInset, fRightInset, fBottomInset;
-  mg.GetLeftInset(fLeftInset);
-  mg.GetTopInset(fTopInset);
-  mg.GetRightInset(fRightInset);
-  mg.GetBottomInset(fBottomInset);
+
+  float fLeftInset;
+  float fTopInset;
+  float fRightInset;
+  float fBottomInset;
+  marginData.GetLeftInset(fLeftInset);
+  marginData.GetTopInset(fTopInset);
+  marginData.GetRightInset(fRightInset);
+  marginData.GetBottomInset(fBottomInset);
   rt.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
 

@@ -726,12 +726,12 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       szCap.height = fFontSize;
     }
   }
-  if (CXFA_Margin mgCap = captionData.GetMargin()) {
+  if (CXFA_MarginData captionMarginData = captionData.GetMarginData()) {
     float fLeftInset, fTopInset, fRightInset, fBottomInset;
-    mgCap.GetLeftInset(fLeftInset);
-    mgCap.GetTopInset(fTopInset);
-    mgCap.GetRightInset(fRightInset);
-    mgCap.GetBottomInset(fBottomInset);
+    captionMarginData.GetLeftInset(fLeftInset);
+    captionMarginData.GetTopInset(fTopInset);
+    captionMarginData.GetRightInset(fRightInset);
+    captionMarginData.GetBottomInset(fBottomInset);
     if (bReserveExit) {
       bVert ? (szCap.width += fLeftInset + fRightInset)
             : (szCap.height += fTopInset + fBottomInset);
@@ -770,16 +770,17 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
 }
 
 bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
-  CXFA_Margin mgWidget = GetMargin();
-  if (mgWidget) {
+  CXFA_MarginData marginData = GetMarginData();
+  if (marginData) {
     float fLeftInset, fTopInset, fRightInset, fBottomInset;
-    mgWidget.GetLeftInset(fLeftInset);
-    mgWidget.GetTopInset(fTopInset);
-    mgWidget.GetRightInset(fRightInset);
-    mgWidget.GetBottomInset(fBottomInset);
+    marginData.GetLeftInset(fLeftInset);
+    marginData.GetTopInset(fTopInset);
+    marginData.GetRightInset(fRightInset);
+    marginData.GetBottomInset(fBottomInset);
     size.width += fLeftInset + fRightInset;
     size.height += fTopInset + fBottomInset;
   }
+
   CXFA_Para para = GetPara();
   if (para)
     size.width += para.GetMarginLeft() + para.GetTextIndent();
@@ -864,11 +865,12 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     }
     CFX_RectF rtUIMargin = GetUIMargin();
     size.width -= rtUIMargin.left + rtUIMargin.width;
-    CXFA_Margin mgWidget = GetMargin();
-    if (mgWidget) {
-      float fLeftInset, fRightInset;
-      mgWidget.GetLeftInset(fLeftInset);
-      mgWidget.GetRightInset(fRightInset);
+    CXFA_MarginData marginData = GetMarginData();
+    if (marginData) {
+      float fLeftInset;
+      float fRightInset;
+      marginData.GetLeftInset(fLeftInset);
+      marginData.GetRightInset(fRightInset);
       size.width -= fLeftInset + fRightInset;
     }
     CalculateTextContentSize(size);
@@ -1010,11 +1012,12 @@ void CXFA_WidgetAcc::LoadText() {
 }
 
 float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
-  CXFA_Margin mgWidget = GetMargin();
-  if (mgWidget) {
-    float fLeftInset, fRightInset;
-    mgWidget.GetLeftInset(fLeftInset);
-    mgWidget.GetRightInset(fRightInset);
+  CXFA_MarginData marginData = GetMarginData();
+  if (marginData) {
+    float fLeftInset;
+    float fRightInset;
+    marginData.GetLeftInset(fLeftInset);
+    marginData.GetRightInset(fRightInset);
     fWidthCalc += fLeftInset + fRightInset;
   }
 
@@ -1028,22 +1031,24 @@ float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
 }
 
 float CXFA_WidgetAcc::GetWidthWithoutMargin(float fWidthCalc) {
-  CXFA_Margin mgWidget = GetMargin();
-  if (mgWidget) {
-    float fLeftInset, fRightInset;
-    mgWidget.GetLeftInset(fLeftInset);
-    mgWidget.GetRightInset(fRightInset);
+  CXFA_MarginData marginData = GetMarginData();
+  if (marginData) {
+    float fLeftInset;
+    float fRightInset;
+    marginData.GetLeftInset(fLeftInset);
+    marginData.GetRightInset(fRightInset);
     fWidthCalc -= fLeftInset + fRightInset;
   }
   return fWidthCalc;
 }
 
 float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
-  CXFA_Margin mgWidget = GetMargin();
-  if (mgWidget) {
-    float fTopInset, fBottomInset;
-    mgWidget.GetTopInset(fTopInset);
-    mgWidget.GetBottomInset(fBottomInset);
+  CXFA_MarginData marginData = GetMarginData();
+  if (marginData) {
+    float fTopInset;
+    float fBottomInset;
+    marginData.GetTopInset(fTopInset);
+    marginData.GetBottomInset(fBottomInset);
     fHeightCalc += fTopInset + fBottomInset;
   }
 
@@ -1057,11 +1062,12 @@ float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
 }
 
 float CXFA_WidgetAcc::GetHeightWithoutMargin(float fHeightCalc) {
-  CXFA_Margin mgWidget = GetMargin();
-  if (mgWidget) {
-    float fTopInset, fBottomInset;
-    mgWidget.GetTopInset(fTopInset);
-    mgWidget.GetBottomInset(fBottomInset);
+  CXFA_MarginData marginData = GetMarginData();
+  if (marginData) {
+    float fTopInset;
+    float fBottomInset;
+    marginData.GetTopInset(fTopInset);
+    marginData.GetBottomInset(fBottomInset);
     fHeightCalc -= fTopInset + fBottomInset;
   }
   return fHeightCalc;
@@ -1155,11 +1161,12 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   float fTopInset = 0;
   float fBottomInset = 0;
   if (iBlockIndex == 0) {
-    CXFA_Margin mgWidget = GetMargin();
-    if (mgWidget) {
-      mgWidget.GetTopInset(fTopInset);
-      mgWidget.GetBottomInset(fBottomInset);
+    CXFA_MarginData marginData = GetMarginData();
+    if (marginData) {
+      marginData.GetTopInset(fTopInset);
+      marginData.GetBottomInset(fBottomInset);
     }
+
     CFX_RectF rtUIMargin = GetUIMargin();
     fTopInset += rtUIMargin.top;
     fBottomInset += rtUIMargin.width;

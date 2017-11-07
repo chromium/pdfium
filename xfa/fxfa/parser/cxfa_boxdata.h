@@ -13,7 +13,7 @@
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_edgedata.h"
 #include "xfa/fxfa/parser/cxfa_filldata.h"
-#include "xfa/fxfa/parser/cxfa_margin.h"
+#include "xfa/fxfa/parser/cxfa_margindata.h"
 
 class CXFA_Node;
 
@@ -47,7 +47,7 @@ class CXFA_BoxData : public CXFA_Data {
   }
 
   CXFA_FillData GetFillData(bool bModified = false) const;
-  CXFA_Margin GetMargin() const;
+  CXFA_MarginData GetMarginData() const;
   int32_t Get3DStyle(bool& bVisible, float& fThickness) const;
 };
 

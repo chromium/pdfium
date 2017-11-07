@@ -23,8 +23,8 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_Rectangle rtObj = value.GetRectangle();
   CFX_RectF rect = GetRectWithoutRotate();
-  if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
-    XFA_RectWidthoutMargin(rect, mgWidget);
+  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
+    XFA_RectWidthoutMargin(rect, marginData);
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);

@@ -49,8 +49,8 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CFX_RectF rtImage = GetRectWithoutRotate();
-  if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
-    XFA_RectWidthoutMargin(rtImage, mgWidget);
+  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
+    XFA_RectWidthoutMargin(rtImage, marginData);
 
   int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
   int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;

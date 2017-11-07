@@ -169,14 +169,14 @@ bool CXFA_FFField::PerformLayout() {
 
 void CXFA_FFField::CapPlacement() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
-  CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
-  if (mgWidget) {
+  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
+  if (marginData) {
     CXFA_LayoutItem* pItem = this;
     float fLeftInset = 0, fRightInset = 0, fTopInset = 0, fBottomInset = 0;
-    mgWidget.GetLeftInset(fLeftInset);
-    mgWidget.GetRightInset(fRightInset);
-    mgWidget.GetTopInset(fTopInset);
-    mgWidget.GetBottomInset(fBottomInset);
+    marginData.GetLeftInset(fLeftInset);
+    marginData.GetRightInset(fRightInset);
+    marginData.GetTopInset(fTopInset);
+    marginData.GetBottomInset(fBottomInset);
     if (!pItem->GetPrev() && !pItem->GetNext()) {
       rtWidget.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
     } else {
@@ -211,7 +211,7 @@ void CXFA_FFField::CapPlacement() {
           m_rtCaption.height += pItem->GetRect(false).Height();
           pItem = pItem->GetNext();
         }
-        XFA_RectWidthoutMargin(m_rtCaption, mgWidget);
+        XFA_RectWidthoutMargin(m_rtCaption, marginData);
       }
 
       CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
@@ -268,9 +268,9 @@ void CXFA_FFField::CapPlacement() {
 
   CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
   if (borderUIData) {
-    CXFA_Margin margin = borderUIData.GetMargin();
-    if (margin)
-      XFA_RectWidthoutMargin(m_rtUI, margin);
+    CXFA_MarginData borderMarginData = borderUIData.GetMarginData();
+    if (borderMarginData)
+      XFA_RectWidthoutMargin(m_rtUI, borderMarginData);
   }
   m_rtUI.Normalize();
 }
@@ -280,8 +280,8 @@ void CXFA_FFField::CapTopBottomPlacement(CXFA_CaptionData captionData,
                                          int32_t iCapPlacement) {
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.left += rtUIMargin.left;
-  if (CXFA_Margin mgCap = captionData.GetMargin()) {
-    XFA_RectWidthoutMargin(m_rtCaption, mgCap);
+  if (CXFA_MarginData captionMarginData = captionData.GetMarginData()) {
+    XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
   }
@@ -307,8 +307,8 @@ void CXFA_FFField::CapLeftRightPlacement(CXFA_CaptionData captionData,
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.top += rtUIMargin.top;
   m_rtCaption.height -= rtUIMargin.top;
-  if (CXFA_Margin mgCap = captionData.GetMargin()) {
-    XFA_RectWidthoutMargin(m_rtCaption, mgCap);
+  if (CXFA_MarginData captionMarginData = captionData.GetMarginData()) {
+    XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
   }

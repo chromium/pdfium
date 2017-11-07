@@ -146,9 +146,9 @@ CXFA_FillData CXFA_BoxData::GetFillData(bool bModified) const {
   return CXFA_FillData(pFillNode);
 }
 
-CXFA_Margin CXFA_BoxData::GetMargin() const {
-  return CXFA_Margin(m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false)
-                             : nullptr);
+CXFA_MarginData CXFA_BoxData::GetMarginData() const {
+  return CXFA_MarginData(
+      m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false) : nullptr);
 }
 
 int32_t CXFA_BoxData::Get3DStyle(bool& bVisible, float& fThickness) const {

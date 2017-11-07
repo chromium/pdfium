@@ -77,8 +77,8 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
-  if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
-    XFA_RectWidthoutMargin(rtLine, mgWidget);
+  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
+    XFA_RectWidthoutMargin(rtLine, marginData);
 
   GetRectFromHand(rtLine, lineData.GetHand(), fLineWidth);
   CXFA_Path linePath;

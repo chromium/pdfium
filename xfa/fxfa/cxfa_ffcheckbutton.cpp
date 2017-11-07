@@ -91,10 +91,10 @@ bool CXFA_FFCheckButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
 
   float fCheckSize = m_pDataAcc->GetCheckButtonSize();
-  CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
+  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
   CFX_RectF rtWidget = GetRectWithoutRotate();
-  if (mgWidget)
-    XFA_RectWidthoutMargin(rtWidget, mgWidget);
+  if (marginData)
+    XFA_RectWidthoutMargin(rtWidget, marginData);
 
   int32_t iCapPlacement = -1;
   float fCapReserve = 0;
@@ -121,18 +121,18 @@ bool CXFA_FFCheckButton::PerformLayout() {
   }
 
   m_rtUI = rtWidget;
-  CXFA_Margin mgCap = captionData.GetMargin();
+  CXFA_MarginData captionMarginData = captionData.GetMarginData();
   switch (iCapPlacement) {
     case XFA_ATTRIBUTEENUM_Left: {
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(mgCap);
+      CapLeftRightPlacement(captionMarginData);
       m_rtUI.width -= fCapReserve;
       m_rtUI.left += fCapReserve;
       break;
     }
     case XFA_ATTRIBUTEENUM_Top: {
       m_rtCaption.height = fCapReserve;
-      XFA_RectWidthoutMargin(m_rtCaption, mgCap);
+      XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
       m_rtUI.height -= fCapReserve;
       m_rtUI.top += fCapReserve;
       break;
@@ -140,14 +140,14 @@ bool CXFA_FFCheckButton::PerformLayout() {
     case XFA_ATTRIBUTEENUM_Right: {
       m_rtCaption.left = m_rtCaption.right() - fCapReserve;
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(mgCap);
+      CapLeftRightPlacement(captionMarginData);
       m_rtUI.width -= fCapReserve;
       break;
     }
     case XFA_ATTRIBUTEENUM_Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
-      XFA_RectWidthoutMargin(m_rtCaption, mgCap);
+      XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
       m_rtUI.height -= fCapReserve;
       break;
     }
@@ -174,9 +174,9 @@ bool CXFA_FFCheckButton::PerformLayout() {
   m_rtCheckBox = m_rtUI;
   CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
   if (borderUIData) {
-    CXFA_Margin margin = borderUIData.GetMargin();
-    if (margin)
-      XFA_RectWidthoutMargin(m_rtUI, margin);
+    CXFA_MarginData borderMarginData = borderUIData.GetMarginData();
+    if (borderMarginData)
+      XFA_RectWidthoutMargin(m_rtUI, borderMarginData);
   }
 
   m_rtUI.Normalize();
@@ -188,8 +188,9 @@ bool CXFA_FFCheckButton::PerformLayout() {
   return true;
 }
 
-void CXFA_FFCheckButton::CapLeftRightPlacement(CXFA_Margin mgCap) {
-  XFA_RectWidthoutMargin(m_rtCaption, mgCap);
+void CXFA_FFCheckButton::CapLeftRightPlacement(
+    CXFA_MarginData captionMarginData) {
+  XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
   if (m_rtCaption.height < 0)
     m_rtCaption.top += m_rtCaption.height;
   if (m_rtCaption.width < 0) {

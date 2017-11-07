@@ -294,8 +294,8 @@ CXFA_FontData CXFA_WidgetData::GetFontData(bool bModified) {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Font, bModified));
 }
 
-CXFA_Margin CXFA_WidgetData::GetMargin() {
-  return CXFA_Margin(
+CXFA_MarginData CXFA_WidgetData::GetMarginData() {
+  return CXFA_MarginData(
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Margin, false));
 }
 
@@ -396,10 +396,11 @@ CXFA_BorderData CXFA_WidgetData::GetUIBorderData() {
 
 CFX_RectF CXFA_WidgetData::GetUIMargin() {
   CXFA_Node* pUIChild = GetUIChild();
-  CXFA_Margin mgUI = CXFA_Margin(
-      pUIChild ? pUIChild->JSNode()->GetProperty(0, XFA_Element::Margin, false)
-               : nullptr);
+  if (!pUIChild)
+    return CFX_RectF();
 
+  CXFA_MarginData mgUI = CXFA_MarginData(
+      pUIChild->JSNode()->GetProperty(0, XFA_Element::Margin, false));
   if (!mgUI)
     return CFX_RectF();
 

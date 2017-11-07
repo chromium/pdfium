@@ -21,8 +21,8 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CFX_RectF rtArc = GetRectWithoutRotate();
-  if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
-    XFA_RectWidthoutMargin(rtArc, mgWidget);
+  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
+    XFA_RectWidthoutMargin(rtArc, marginData);
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);

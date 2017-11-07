@@ -40,21 +40,21 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtText = GetRectWithoutRotate();
-  if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
+  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData()) {
     CXFA_LayoutItem* pItem = this;
     if (!pItem->GetPrev() && !pItem->GetNext()) {
-      XFA_RectWidthoutMargin(rtText, mgWidget);
+      XFA_RectWidthoutMargin(rtText, marginData);
     } else {
       float fLeftInset;
       float fRightInset;
       float fTopInset = 0;
       float fBottomInset = 0;
-      mgWidget.GetLeftInset(fLeftInset);
-      mgWidget.GetRightInset(fRightInset);
+      marginData.GetLeftInset(fLeftInset);
+      marginData.GetRightInset(fRightInset);
       if (!pItem->GetPrev())
-        mgWidget.GetTopInset(fTopInset);
+        marginData.GetTopInset(fTopInset);
       else if (!pItem->GetNext())
-        mgWidget.GetBottomInset(fBottomInset);
+        marginData.GetBottomInset(fBottomInset);
 
       rtText.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
     }
@@ -87,14 +87,14 @@ bool CXFA_FFText::PerformLayout() {
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetRect(false);
-    if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
+    if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData()) {
       if (!pItem->GetPrev()) {
         float fTopInset;
-        mgWidget.GetTopInset(fTopInset);
+        marginData.GetTopInset(fTopInset);
         rtText.height -= fTopInset;
       } else if (!pItem->GetNext()) {
         float fBottomInset;
-        mgWidget.GetBottomInset(fBottomInset);
+        marginData.GetBottomInset(fBottomInset);
         rtText.height -= fBottomInset;
       }
     }

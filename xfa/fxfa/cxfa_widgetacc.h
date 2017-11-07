@@ -17,7 +17,7 @@
 #include "xfa/fxfa/parser/cxfa_boxdata.h"
 #include "xfa/fxfa/parser/cxfa_eventdata.h"
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
-#include "xfa/fxfa/parser/cxfa_margin.h"
+#include "xfa/fxfa/parser/cxfa_margindata.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"

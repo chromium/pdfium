@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
-#include "xfa/fxfa/parser/cxfa_margin.h"
+#include "xfa/fxfa/parser/cxfa_margindata.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
 class CXFA_Node;
@@ -21,7 +21,7 @@ class CXFA_CaptionData : public CXFA_Data {
   int32_t GetPresence();
   int32_t GetPlacementType();
   float GetReserve();
-  CXFA_Margin GetMargin();
+  CXFA_MarginData GetMarginData();
   CXFA_FontData GetFontData();
   CXFA_Value GetValue();
 };
