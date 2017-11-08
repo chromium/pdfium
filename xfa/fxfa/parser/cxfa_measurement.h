@@ -15,27 +15,27 @@ class CXFA_Measurement {
  public:
   explicit CXFA_Measurement(const WideStringView& wsMeasure);
   CXFA_Measurement();
-  CXFA_Measurement(float fValue, XFA_UNIT eUnit);
+  CXFA_Measurement(float fValue, XFA_Unit eUnit);
 
-  static XFA_UNIT GetUnitFromString(const WideStringView& wsUnit);
+  static XFA_Unit GetUnitFromString(const WideStringView& wsUnit);
 
-  void Set(float fValue, XFA_UNIT eUnit) {
+  void Set(float fValue, XFA_Unit eUnit) {
     m_fValue = fValue;
     m_eUnit = eUnit;
   }
 
-  XFA_UNIT GetUnit() const { return m_eUnit; }
+  XFA_Unit GetUnit() const { return m_eUnit; }
   float GetValue() const { return m_fValue; }
 
   bool ToString(WideString* wsMeasure) const;
-  float ToUnit(XFA_UNIT eUnit) const;
+  float ToUnit(XFA_Unit eUnit) const;
 
  private:
   void SetString(const WideStringView& wsMeasure);
-  bool ToUnitInternal(XFA_UNIT eUnit, float* fValue) const;
+  bool ToUnitInternal(XFA_Unit eUnit, float* fValue) const;
 
   float m_fValue;
-  XFA_UNIT m_eUnit;
+  XFA_Unit m_eUnit;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MEASUREMENT_H_

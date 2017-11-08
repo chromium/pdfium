@@ -103,16 +103,16 @@ void CJX_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
   CFX_RectF rtRect = pLayoutItem->GetRect(true);
   switch (layoutModel) {
     case XFA_LAYOUTMODEL_H:
-      measure.Set(rtRect.height, XFA_UNIT_Pt);
+      measure.Set(rtRect.height, XFA_Unit::Pt);
       break;
     case XFA_LAYOUTMODEL_W:
-      measure.Set(rtRect.width, XFA_UNIT_Pt);
+      measure.Set(rtRect.width, XFA_Unit::Pt);
       break;
     case XFA_LAYOUTMODEL_X:
-      measure.Set(rtRect.left, XFA_UNIT_Pt);
+      measure.Set(rtRect.left, XFA_Unit::Pt);
       break;
     case XFA_LAYOUTMODEL_Y:
-      measure.Set(rtRect.top, XFA_UNIT_Pt);
+      measure.Set(rtRect.top, XFA_Unit::Pt);
       break;
   }
 

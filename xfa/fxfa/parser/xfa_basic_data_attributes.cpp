@@ -10,15 +10,15 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
 static const CXFA_Measurement g_XFAMeasurementData[] = {
-    CXFA_Measurement(0, XFA_UNIT_In),
-    CXFA_Measurement(0, XFA_UNIT_Pt),
-    CXFA_Measurement(5, XFA_UNIT_Mm),
-    CXFA_Measurement(0.25, XFA_UNIT_Mm),
-    CXFA_Measurement(-1, XFA_UNIT_Unknown),
-    CXFA_Measurement(0, XFA_UNIT_Angle),
-    CXFA_Measurement(10, XFA_UNIT_Pt),
-    CXFA_Measurement(360, XFA_UNIT_Angle),
-    CXFA_Measurement(0.5, XFA_UNIT_Pt),
+    CXFA_Measurement(0, XFA_Unit::In),
+    CXFA_Measurement(0, XFA_Unit::Pt),
+    CXFA_Measurement(5, XFA_Unit::Mm),
+    CXFA_Measurement(0.25, XFA_Unit::Mm),
+    CXFA_Measurement(-1, XFA_Unit::Unknown),
+    CXFA_Measurement(0, XFA_Unit::Angle),
+    CXFA_Measurement(10, XFA_Unit::Pt),
+    CXFA_Measurement(360, XFA_Unit::Angle),
+    CXFA_Measurement(0.5, XFA_Unit::Pt),
 };
 
 const XFA_ATTRIBUTEINFO g_XFAAttributeData[] = {

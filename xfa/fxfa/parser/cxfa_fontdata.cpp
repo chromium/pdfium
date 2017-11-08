@@ -16,7 +16,7 @@ CXFA_FontData::CXFA_FontData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 float CXFA_FontData::GetBaselineShift() {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::BaselineShift)
-      .ToUnit(XFA_UNIT_Pt);
+      .ToUnit(XFA_Unit::Pt);
 }
 
 float CXFA_FontData::GetHorizontalScale() {
@@ -40,9 +40,9 @@ float CXFA_FontData::GetLetterSpacing() {
     return 0;
 
   CXFA_Measurement ms(wsValue);
-  if (ms.GetUnit() == XFA_UNIT_Em)
+  if (ms.GetUnit() == XFA_Unit::Em)
     return ms.GetValue() * GetFontSize();
-  return ms.ToUnit(XFA_UNIT_Pt);
+  return ms.ToUnit(XFA_Unit::Pt);
 }
 
 int32_t CXFA_FontData::GetLineThrough() {
@@ -66,7 +66,7 @@ int32_t CXFA_FontData::GetUnderlinePeriod() {
 float CXFA_FontData::GetFontSize() {
   CXFA_Measurement ms;
   m_pNode->JSNode()->TryMeasure(XFA_Attribute::Size, ms, true);
-  return ms.ToUnit(XFA_UNIT_Pt);
+  return ms.ToUnit(XFA_Unit::Pt);
 }
 
 void CXFA_FontData::GetTypeface(WideStringView& wsTypeFace) {

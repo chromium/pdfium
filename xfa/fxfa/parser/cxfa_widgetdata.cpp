@@ -502,10 +502,10 @@ float CXFA_WidgetData::GetCheckButtonSize() {
   if (pUIChild)
     return pUIChild->JSNode()
         ->GetMeasure(XFA_Attribute::Size)
-        .ToUnit(XFA_UNIT_Pt);
+        .ToUnit(XFA_Unit::Pt);
   return XFA_GetAttributeDefaultValue_Measure(
              XFA_Element::CheckButton, XFA_Attribute::Size, XFA_XDPPACKET_Form)
-      .ToUnit(XFA_UNIT_Pt);
+      .ToUnit(XFA_Unit::Pt);
 }
 
 bool CXFA_WidgetData::IsAllowNeutral() {
@@ -1276,7 +1276,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ModuleWidth(int32_t* val) {
   CXFA_Measurement mModuleWidthHeight;
   if (pUIChild->JSNode()->TryMeasure(XFA_Attribute::ModuleWidth,
                                      mModuleWidthHeight, true)) {
-    *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_UNIT_Pt));
+    *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_Unit::Pt));
     return true;
   }
   return false;
@@ -1287,7 +1287,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ModuleHeight(int32_t* val) {
   CXFA_Measurement mModuleWidthHeight;
   if (pUIChild->JSNode()->TryMeasure(XFA_Attribute::ModuleHeight,
                                      mModuleWidthHeight, true)) {
-    *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_UNIT_Pt));
+    *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_Unit::Pt));
     return true;
   }
   return false;

@@ -298,7 +298,7 @@ int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
 float CXFA_TextParser::GetTabInterval(CFX_CSSComputedStyle* pStyle) const {
   WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(L"tab-interval", wsValue))
-    return CXFA_Measurement(wsValue.AsStringView()).ToUnit(XFA_UNIT_Pt);
+    return CXFA_Measurement(wsValue.AsStringView()).ToUnit(XFA_Unit::Pt);
   return 36;
 }
 
@@ -598,7 +598,7 @@ bool CXFA_TextParser::GetTabstops(CFX_CSSComputedStyle* pStyle,
         if (ch == ' ') {
           uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringView(), true);
           CXFA_Measurement ms(WideStringView(pTabStops + iLast, iCur - iLast));
-          float fPos = ms.ToUnit(XFA_UNIT_Pt);
+          float fPos = ms.ToUnit(XFA_Unit::Pt);
           pTabstopContext->Append(dwHashCode, fPos);
           wsAlign.clear();
           eStatus = TabStopStatus::None;
@@ -613,7 +613,7 @@ bool CXFA_TextParser::GetTabstops(CFX_CSSComputedStyle* pStyle,
   if (!wsAlign.IsEmpty()) {
     uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringView(), true);
     CXFA_Measurement ms(WideStringView(pTabStops + iLast, iCur - iLast));
-    float fPos = ms.ToUnit(XFA_UNIT_Pt);
+    float fPos = ms.ToUnit(XFA_Unit::Pt);
     pTabstopContext->Append(dwHashCode, fPos);
   }
   return true;

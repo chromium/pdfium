@@ -984,17 +984,18 @@ struct XFA_ATTRIBUTEENUMINFO {
   XFA_ATTRIBUTEENUM eName;
 };
 
-enum XFA_UNIT {
-  XFA_UNIT_Unknown,
-  XFA_UNIT_Percent,
-  XFA_UNIT_Angle,
-  XFA_UNIT_Em,
-  XFA_UNIT_Pt,
-  XFA_UNIT_In,
-  XFA_UNIT_Pc,
-  XFA_UNIT_Cm,
-  XFA_UNIT_Mm,
-  XFA_UNIT_Mp,
+enum class XFA_Unit : uint8_t {
+  Percent = 0,
+  Angle,
+  Em,
+  Pt,
+  In,
+  Pc,
+  Cm,
+  Mm,
+  Mp,
+
+  Unknown = 255,
 };
 
 struct XFA_NOTSUREATTRIBUTE {

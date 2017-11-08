@@ -521,19 +521,19 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
   CXFA_Node* pMargin = CreateCopyNode(XFA_Element::Margin, pParent);
   if (dwFlags & 0x01)
     pMargin->JSNode()->SetMeasure(XFA_Attribute::LeftInset,
-                                  CXFA_Measurement(fInsets[0], XFA_UNIT_Pt),
+                                  CXFA_Measurement(fInsets[0], XFA_Unit::Pt),
                                   false);
   if (dwFlags & 0x02)
     pMargin->JSNode()->SetMeasure(XFA_Attribute::TopInset,
-                                  CXFA_Measurement(fInsets[1], XFA_UNIT_Pt),
+                                  CXFA_Measurement(fInsets[1], XFA_Unit::Pt),
                                   false);
   if (dwFlags & 0x04)
     pMargin->JSNode()->SetMeasure(XFA_Attribute::RightInset,
-                                  CXFA_Measurement(fInsets[2], XFA_UNIT_Pt),
+                                  CXFA_Measurement(fInsets[2], XFA_Unit::Pt),
                                   false);
   if (dwFlags & 0x08)
     pMargin->JSNode()->SetMeasure(XFA_Attribute::BottomInset,
-                                  CXFA_Measurement(fInsets[3], XFA_UNIT_Pt),
+                                  CXFA_Measurement(fInsets[3], XFA_Unit::Pt),
                                   false);
   return pMargin;
 }
