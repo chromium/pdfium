@@ -52,9 +52,8 @@ struct XFA_RESOLVENODE_RS {
       for (CXFA_Object* pObject : objects) {
         auto pValue = pdfium::MakeUnique<CFXJSE_Value>(valueArray->m_pIsolate);
         CJX_Object* jsObject = pObject->JSObject();
-        (jsObject->*(pScriptAttribute->callback))(
-            pValue.get(), false,
-            static_cast<XFA_ATTRIBUTE>(pScriptAttribute->eAttribute));
+        (jsObject->*(pScriptAttribute->callback))(pValue.get(), false,
+                                                  pScriptAttribute->attribute);
         valueArray->m_Values.push_back(std::move(pValue));
       }
     }

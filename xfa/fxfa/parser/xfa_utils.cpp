@@ -278,7 +278,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
     int32_t iMid = (iStart + iEnd) / 2;
     const XFA_NOTSUREATTRIBUTE* pAttr = g_XFANotsureAttributes + iMid;
     if (eElement == pAttr->eElement) {
-      if (pAttr->eAttribute == eAttribute) {
+      if (pAttr->attribute == eAttribute) {
         if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType)
           return pAttr;
         return nullptr;
@@ -287,7 +287,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
       if (iBefore >= 0) {
         pAttr = g_XFANotsureAttributes + iBefore;
         while (eElement == pAttr->eElement) {
-          if (pAttr->eAttribute == eAttribute) {
+          if (pAttr->attribute == eAttribute) {
             if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType)
               return pAttr;
             return nullptr;
@@ -304,7 +304,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
       if (iAfter <= g_iXFANotsureCount - 1) {
         pAttr = g_XFANotsureAttributes + iAfter;
         while (eElement == pAttr->eElement) {
-          if (pAttr->eAttribute == eAttribute) {
+          if (pAttr->attribute == eAttribute) {
             if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType)
               return pAttr;
             return nullptr;

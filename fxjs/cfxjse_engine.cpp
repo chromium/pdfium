@@ -228,8 +228,8 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
     const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo = resolveRs.pScriptAttribute;
     if (lpAttributeInfo) {
       CJX_Object* jsObject = resolveRs.objects.front()->JSObject();
-      (jsObject->*(lpAttributeInfo->callback))(
-          pValue, bSetting, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
+      (jsObject->*(lpAttributeInfo->callback))(pValue, bSetting,
+                                               lpAttributeInfo->attribute);
     }
   }
   return true;
@@ -354,8 +354,8 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
       pObject->GetElementType(), wsPropName.AsStringView());
   if (lpAttributeInfo) {
     CJX_Object* jsObject = pObject->JSObject();
-    (jsObject->*(lpAttributeInfo->callback))(
-        pReturnValue, true, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
+    (jsObject->*(lpAttributeInfo->callback))(pReturnValue, true,
+                                             lpAttributeInfo->attribute);
     return;
   }
 
@@ -377,8 +377,8 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
           pPropOrChild->GetElementType(), wsDefaultName.AsStringView());
       if (lpAttrInfo) {
         CJX_Node* jsObject = pPropOrChild->JSNode();
-        (jsObject->*(lpAttrInfo->callback))(
-            pReturnValue, true, (XFA_ATTRIBUTE)lpAttrInfo->eAttribute);
+        (jsObject->*(lpAttrInfo->callback))(pReturnValue, true,
+                                            lpAttrInfo->attribute);
         return;
       }
     }
@@ -665,8 +665,7 @@ int32_t CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
         auto pValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
         CJX_Object* jsObject = rndFind.m_Objects.front()->JSObject();
         (jsObject->*(rndFind.m_pScriptAttribute->callback))(
-            pValue.get(), false,
-            (XFA_ATTRIBUTE)rndFind.m_pScriptAttribute->eAttribute);
+            pValue.get(), false, rndFind.m_pScriptAttribute->attribute);
         rndFind.m_Objects.front() = ToObject(pValue.get(), nullptr);
       }
       if (!m_upObjectArray.empty())

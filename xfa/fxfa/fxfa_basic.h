@@ -367,6 +367,8 @@ enum XFA_ATTRIBUTEENUM {
   XFA_ATTRIBUTEENUM_Lowered,
 };
 enum XFA_ATTRIBUTE {
+  XFA_ATTRIBUTE_Unknown = -1,
+
   XFA_ATTRIBUTE_H,
   XFA_ATTRIBUTE_W,
   XFA_ATTRIBUTE_X,
@@ -995,7 +997,7 @@ enum XFA_UNIT {
 
 struct XFA_NOTSUREATTRIBUTE {
   XFA_Element eElement;
-  XFA_ATTRIBUTE eAttribute;
+  XFA_ATTRIBUTE attribute;
   XFA_ATTRIBUTETYPE eType;
   void* pValue;
 };
@@ -1014,11 +1016,12 @@ enum XFA_SCRIPT_TYPE {
   XFA_SCRIPT_Basic,
   XFA_SCRIPT_Object,
 };
+
 struct XFA_SCRIPTATTRIBUTEINFO {
   uint32_t uHash;
   const wchar_t* pName;
   XFA_ATTRIBUTE_CALLBACK callback;
-  int32_t eAttribute;
+  XFA_ATTRIBUTE attribute;
   uint16_t eValueType;
 };
 

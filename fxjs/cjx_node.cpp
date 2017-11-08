@@ -468,8 +468,8 @@ void CJX_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
       auto pValue =
           pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetRuntime());
       CJX_Object* jsObject = resolveNodeRS.objects.front()->JSObject();
-      (jsObject->*(lpAttributeInfo->callback))(
-          pValue.get(), false, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
+      (jsObject->*(lpAttributeInfo->callback))(pValue.get(), false,
+                                               lpAttributeInfo->attribute);
       pArguments->GetReturnValue()->Assign(pValue.get());
     } else {
       pArguments->GetReturnValue()->SetNull();
