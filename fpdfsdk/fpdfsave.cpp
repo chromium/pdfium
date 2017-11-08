@@ -32,6 +32,7 @@
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
 #endif
 
 #if _FX_OS_ == _FX_OS_ANDROID_
@@ -136,8 +137,10 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   {
     RetainPtr<IFX_SeekableStream> pDsfileWrite =
         pdfium::MakeRetain<CFX_MemoryStream>(false);
-    if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Datasets, pDsfileWrite,
-                                           nullptr) &&
+    CXFA_FFDoc* ffdoc = pXFADocView->GetDoc();
+    if (ffdoc->SavePackage(
+            ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Datasets)),
+            pDsfileWrite, nullptr) &&
         pDsfileWrite->GetSize() > 0) {
       // Datasets
       pChecksum->UpdateChecksum(pDsfileWrite);
@@ -164,8 +167,11 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   {
     RetainPtr<IFX_SeekableStream> pfileWrite =
         pdfium::MakeRetain<CFX_MemoryStream>(false);
-    if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, pfileWrite,
-                                           pChecksum.get()) &&
+
+    CXFA_FFDoc* ffdoc = pXFADocView->GetDoc();
+    if (ffdoc->SavePackage(
+            ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form)),
+            pfileWrite, pChecksum.get()) &&
         pfileWrite->GetSize() > 0) {
       auto pDataDict = pdfium::MakeUnique<CPDF_Dictionary>(
           pPDFDocument->GetByteStringPool());

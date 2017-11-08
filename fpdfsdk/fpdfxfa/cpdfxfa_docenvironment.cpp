@@ -439,8 +439,10 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileWrite->WriteBlock(content.c_str(), fileWrite->GetSize(),
                           content.GetLength());
-    m_pContext->GetXFADocView()->GetDoc()->SavePackage(XFA_HASHCODE_Data,
-                                                       fileWrite, nullptr);
+    CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
+    ffdoc->SavePackage(
+        ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Data)), fileWrite,
+        nullptr);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (!m_pContext->GetPDFDoc())
       return;
@@ -470,13 +472,17 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
       if (!pStream)
         continue;
       if (pPrePDFObj->GetString() == "form") {
-        m_pContext->GetXFADocView()->GetDoc()->SavePackage(XFA_HASHCODE_Form,
-                                                           fileWrite, nullptr);
+        CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
+        ffdoc->SavePackage(
+            ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form)),
+            fileWrite, nullptr);
         continue;
       }
       if (pPrePDFObj->GetString() == "datasets") {
-        m_pContext->GetXFADocView()->GetDoc()->SavePackage(
-            XFA_HASHCODE_Datasets, fileWrite, nullptr);
+        CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
+        ffdoc->SavePackage(
+            ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Datasets)),
+            fileWrite, nullptr);
         continue;
       }
       if (i == size - 1) {
@@ -716,18 +722,20 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   if (!m_pContext->GetXFADocView())
     return false;
 
-  ByteString content;
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return false;
 
+  CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
   RetainPtr<IFX_SeekableStream> fileStream = MakeSeekableStream(pFileHandler);
-
   if (fileType == FXFA_SAVEAS_XML) {
-    const char kContent[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
+    static constexpr char kContent[] =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileStream->WriteBlock(kContent, 0, strlen(kContent));
-    m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Data, fileStream,
-                                         nullptr);
+
+    ffdoc->SavePackage(
+        ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Data)), fileStream,
+        nullptr);
     return true;
   }
 
@@ -787,14 +795,15 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       continue;
     if (pPrePDFObj->GetString() == "form" && !(flag & FXFA_FORM))
       continue;
+
     if (pPrePDFObj->GetString() == "form") {
-      m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Form, fileStream,
-                                           nullptr);
+      ffdoc->SavePackage(
+          ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form)),
+          fileStream, nullptr);
     } else if (pPrePDFObj->GetString() == "datasets") {
-      m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Datasets, fileStream,
-                                           nullptr);
-    } else {
-      // PDF,creator.
+      ffdoc->SavePackage(
+          ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Datasets)),
+          fileStream, nullptr);
     }
   }
   return true;

@@ -393,13 +393,10 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
   return pDibSource;
 }
 
-bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
+bool CXFA_FFDoc::SavePackage(CXFA_Node* pNode,
                              const RetainPtr<IFX_SeekableStream>& pFile,
                              CFX_ChecksumContext* pCSContext) {
-  CXFA_Document* doc = m_pDocumentParser->GetDocument();
-  auto pExport = pdfium::MakeUnique<CXFA_DataExporter>(doc);
-  CXFA_Node* pNode = code == XFA_HASHCODE_Xfa ? doc->GetRoot()
-                                              : ToNode(doc->GetXFAObject(code));
+  auto pExport = pdfium::MakeUnique<CXFA_DataExporter>(GetXFADoc());
   if (!pNode)
     return !!pExport->Export(pFile);
 
