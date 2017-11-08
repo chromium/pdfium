@@ -57,7 +57,13 @@ class CPDF_Parser {
 
   void SetPassword(const char* password) { m_Password = password; }
   ByteString GetPassword() { return m_Password; }
+
   CPDF_Dictionary* GetTrailer() const;
+
+  // Returns a new trailer which combines the last read trailer with the /Root
+  // and /Info from previous ones.
+  std::unique_ptr<CPDF_Dictionary> GetCombinedTrailer() const;
+
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
 
   uint32_t GetPermissions() const;

@@ -624,7 +624,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
   }
 
   if (m_pParser) {
-    CPDF_Dictionary* p = m_pParser->GetTrailer();
+    std::unique_ptr<CPDF_Dictionary> p = m_pParser->GetCombinedTrailer();
     for (const auto& it : *p) {
       const ByteString& key = it.first;
       CPDF_Object* pValue = it.second.get();

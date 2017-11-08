@@ -61,6 +61,20 @@ class CPDF_Parser::TrailerData {
 
   CPDF_Dictionary* GetMainTrailer() const { return main_trailer_.get(); }
 
+  std::unique_ptr<CPDF_Dictionary> GetCombinedTrailer() const {
+    std::unique_ptr<CPDF_Dictionary> result =
+        ToDictionary(main_trailer_->Clone());
+
+    // Info is optional.
+    uint32_t info_obj_num = GetInfoObjNum();
+    if (info_obj_num > 0)
+      result->SetNewFor<CPDF_Reference>("Info", nullptr, GetInfoObjNum());
+
+    // Root is required.
+    result->SetNewFor<CPDF_Reference>("Root", nullptr, GetRootObjNum());
+    return result;
+  }
+
   void SetMainTrailer(std::unique_ptr<CPDF_Dictionary> trailer) {
     ASSERT(trailer);
     main_trailer_ = std::move(trailer);
@@ -75,12 +89,19 @@ class CPDF_Parser::TrailerData {
   void Clear() {
     main_trailer_.reset();
     last_info_obj_num_ = 0;
+    last_root_obj_num_ = 0;
   }
 
   uint32_t GetInfoObjNum() const {
     const CPDF_Reference* pRef = ToReference(
         GetMainTrailer() ? GetMainTrailer()->GetObjectFor("Info") : nullptr);
     return pRef ? pRef->GetRefObjNum() : last_info_obj_num_;
+  }
+
+  uint32_t GetRootObjNum() const {
+    const CPDF_Reference* pRef = ToReference(
+        GetMainTrailer() ? GetMainTrailer()->GetObjectFor("Root") : nullptr);
+    return pRef ? pRef->GetRefObjNum() : last_root_obj_num_;
   }
 
  private:
@@ -90,10 +111,15 @@ class CPDF_Parser::TrailerData {
     const auto* pRef = ToReference(dict->GetObjectFor("Info"));
     if (pRef)
       last_info_obj_num_ = pRef->GetRefObjNum();
+
+    const auto* pRoot = ToReference(dict->GetObjectFor("Root"));
+    if (pRoot)
+      last_root_obj_num_ = pRoot->GetRefObjNum();
   }
 
   std::unique_ptr<CPDF_Dictionary> main_trailer_;
   uint32_t last_info_obj_num_ = 0;
+  uint32_t last_root_obj_num_ = 0;
 };
 
 CPDF_Parser::CPDF_Parser()
@@ -1145,18 +1171,20 @@ const CPDF_Array* CPDF_Parser::GetIDArray() const {
   return GetTrailer() ? GetTrailer()->GetArrayFor("ID") : nullptr;
 }
 
-uint32_t CPDF_Parser::GetRootObjNum() {
-  CPDF_Reference* pRef =
-      ToReference(GetTrailer() ? GetTrailer()->GetObjectFor("Root") : nullptr);
-  return pRef ? pRef->GetRefObjNum() : 0;
-}
-
 CPDF_Dictionary* CPDF_Parser::GetTrailer() const {
   return m_TrailerData->GetMainTrailer();
 }
 
+std::unique_ptr<CPDF_Dictionary> CPDF_Parser::GetCombinedTrailer() const {
+  return m_TrailerData->GetCombinedTrailer();
+}
+
 uint32_t CPDF_Parser::GetInfoObjNum() {
   return m_TrailerData->GetInfoObjNum();
+}
+
+uint32_t CPDF_Parser::GetRootObjNum() {
+  return m_TrailerData->GetRootObjNum();
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
