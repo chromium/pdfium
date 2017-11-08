@@ -189,7 +189,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName);
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
     const WideStringView& wsName);
-const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket);
+const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PacketType ePacket);
 const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket);
 
 #endif  // XFA_FXFA_PARSER_XFA_UTILS_H_

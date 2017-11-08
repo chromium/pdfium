@@ -464,8 +464,8 @@ const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
   return nullptr;
 }
 
-const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket) {
-  return g_XFAPacketData + ePacket;
+const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PacketType ePacket) {
+  return g_XFAPacketData + static_cast<uint8_t>(ePacket);
 }
 
 const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket) {

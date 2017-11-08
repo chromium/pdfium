@@ -301,7 +301,7 @@ CFXJSE_Engine* CXFA_Document::GetScriptContext() {
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     const WideString& wsTemplateNS) {
   WideStringView wsTemplateURIPrefix =
-      XFA_GetPacketByIndex(XFA_PACKET_Template)->pURI;
+      XFA_GetPacketByIndex(XFA_PacketType::Template)->pURI;
   size_t nPrefixLength = wsTemplateURIPrefix.GetLength();
   if (WideStringView(wsTemplateNS.c_str(), wsTemplateNS.GetLength()) !=
       wsTemplateURIPrefix) {

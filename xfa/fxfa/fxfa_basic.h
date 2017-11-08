@@ -47,42 +47,48 @@ enum XFA_HashCode : uint32_t {
   XFA_HASHCODE_Xmpmeta = 0x132a8fbc
 };
 
-enum XFA_PACKET {
-  XFA_PACKET_USER,
-  XFA_PACKET_SourceSet,
-  XFA_PACKET_Pdf,
-  XFA_PACKET_Xdc,
-  XFA_PACKET_XDP,
-  XFA_PACKET_Xmpmeta,
-  XFA_PACKET_Xfdf,
-  XFA_PACKET_Config,
-  XFA_PACKET_LocaleSet,
-  XFA_PACKET_Stylesheet,
-  XFA_PACKET_Template,
-  XFA_PACKET_Signature,
-  XFA_PACKET_Datasets,
-  XFA_PACKET_Form,
-  XFA_PACKET_ConnectionSet,
+enum class XFA_PacketType : uint8_t {
+  User,
+  SourceSet,
+  Pdf,
+  Xdc,
+  Xdp,
+  Xmpmeta,
+  Xfdf,
+  Config,
+  LocaleSet,
+  Stylesheet,
+  Template,
+  Signature,
+  Datasets,
+  Form,
+  ConnectionSet,
 };
 
 enum XFA_XDPPACKET {
   XFA_XDPPACKET_UNKNOWN = 0,
-  XFA_XDPPACKET_Config = 1 << XFA_PACKET_Config,
-  XFA_XDPPACKET_Template = 1 << XFA_PACKET_Template,
-  XFA_XDPPACKET_Datasets = 1 << XFA_PACKET_Datasets,
-  XFA_XDPPACKET_Form = 1 << XFA_PACKET_Form,
-  XFA_XDPPACKET_LocaleSet = 1 << XFA_PACKET_LocaleSet,
-  XFA_XDPPACKET_ConnectionSet = 1 << XFA_PACKET_ConnectionSet,
-  XFA_XDPPACKET_SourceSet = 1 << XFA_PACKET_SourceSet,
-  XFA_XDPPACKET_Xdc = 1 << XFA_PACKET_Xdc,
-  XFA_XDPPACKET_Pdf = 1 << XFA_PACKET_Pdf,
-  XFA_XDPPACKET_Xfdf = 1 << XFA_PACKET_Xfdf,
-  XFA_XDPPACKET_Xmpmeta = 1 << XFA_PACKET_Xmpmeta,
-  XFA_XDPPACKET_Signature = 1 << XFA_PACKET_Signature,
-  XFA_XDPPACKET_Stylesheet = 1 << XFA_PACKET_Stylesheet,
-  XFA_XDPPACKET_USER = 1 << XFA_PACKET_USER,
-  XFA_XDPPACKET_XDP = 1 << XFA_PACKET_XDP,
+  XFA_XDPPACKET_Config = 1 << static_cast<uint8_t>(XFA_PacketType::Config),
+  XFA_XDPPACKET_Template = 1 << static_cast<uint8_t>(XFA_PacketType::Template),
+  XFA_XDPPACKET_Datasets = 1 << static_cast<uint8_t>(XFA_PacketType::Datasets),
+  XFA_XDPPACKET_Form = 1 << static_cast<uint8_t>(XFA_PacketType::Form),
+  XFA_XDPPACKET_LocaleSet = 1
+                            << static_cast<uint8_t>(XFA_PacketType::LocaleSet),
+  XFA_XDPPACKET_ConnectionSet =
+      1 << static_cast<uint8_t>(XFA_PacketType::ConnectionSet),
+  XFA_XDPPACKET_SourceSet = 1
+                            << static_cast<uint8_t>(XFA_PacketType::SourceSet),
+  XFA_XDPPACKET_Xdc = 1 << static_cast<uint8_t>(XFA_PacketType::Xdc),
+  XFA_XDPPACKET_Pdf = 1 << static_cast<uint8_t>(XFA_PacketType::Pdf),
+  XFA_XDPPACKET_Xfdf = 1 << static_cast<uint8_t>(XFA_PacketType::Xfdf),
+  XFA_XDPPACKET_Xmpmeta = 1 << static_cast<uint8_t>(XFA_PacketType::Xmpmeta),
+  XFA_XDPPACKET_Signature = 1
+                            << static_cast<uint8_t>(XFA_PacketType::Signature),
+  XFA_XDPPACKET_Stylesheet =
+      1 << static_cast<uint8_t>(XFA_PacketType::Stylesheet),
+  XFA_XDPPACKET_USER = 1 << static_cast<uint8_t>(XFA_PacketType::User),
+  XFA_XDPPACKET_XDP = 1 << static_cast<uint8_t>(XFA_PacketType::Xdp),
 };
+
 enum XFA_XDPPACKET_FLAGS {
   XFA_XDPPACKET_FLAGS_COMPLETEMATCH = 1,
   XFA_XDPPACKET_FLAGS_PREFIXMATCH = 2,
@@ -90,6 +96,7 @@ enum XFA_XDPPACKET_FLAGS {
   XFA_XDPPACKET_FLAGS_SUPPORTONE = 8,
   XFA_XDPPACKET_FLAGS_SUPPORTMANY = 16,
 };
+
 struct XFA_PACKETINFO {
   uint32_t uHash;
   const wchar_t* pName;
@@ -931,6 +938,7 @@ enum class XFA_Element : int32_t {
   Tagged,
   Items
 };
+
 struct XFA_ELEMENTINFO {
   uint32_t uHash;
   const wchar_t* pName;
@@ -1006,6 +1014,7 @@ struct XFA_NOTSUREATTRIBUTE {
 };
 
 typedef void (CJX_Object::*XFA_METHOD_CALLBACK)(CFXJSE_Arguments* pArguments);
+
 struct XFA_METHODINFO {
   uint32_t uHash;
   const wchar_t* pName;
