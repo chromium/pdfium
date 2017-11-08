@@ -104,7 +104,7 @@ void CJX_NodeList::Script_TreelistClass_NamedItem(
 
 void CJX_NodeList::Script_ListClass_Length(CFXJSE_Value* pValue,
                                            bool bSetting,
-                                           XFA_ATTRIBUTE eAttribute) {
+                                           XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;

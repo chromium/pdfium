@@ -20,7 +20,7 @@ CXFA_Document* CJX_Object::GetDocument() const {
 
 void CJX_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                               bool bSetting,
-                                              XFA_ATTRIBUTE eAttribute) {
+                                              XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;

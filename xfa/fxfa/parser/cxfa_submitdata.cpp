@@ -11,17 +11,17 @@
 CXFA_SubmitData::CXFA_SubmitData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 bool CXFA_SubmitData::IsSubmitEmbedPDF() {
-  return m_pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_EmbedPDF);
+  return m_pNode->JSNode()->GetBoolean(XFA_Attribute::EmbedPDF);
 }
 
 int32_t CXFA_SubmitData::GetSubmitFormat() {
-  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Format);
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Format);
 }
 
 void CXFA_SubmitData::GetSubmitTarget(WideStringView& wsTarget) {
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Target, wsTarget, true);
+  m_pNode->JSNode()->TryCData(XFA_Attribute::Target, wsTarget, true);
 }
 
 void CXFA_SubmitData::GetSubmitXDPContent(WideStringView& wsContent) {
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_XdpContent, wsContent, true);
+  m_pNode->JSNode()->TryCData(XFA_Attribute::XdpContent, wsContent, true);
 }

@@ -161,7 +161,7 @@ void XFA_DataExporter_RegenerateFormFile(
 
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
     XFA_Element eElement,
-    XFA_ATTRIBUTE eAttribute,
+    XFA_Attribute eAttribute,
     XFA_ATTRIBUTETYPE eType = XFA_ATTRIBUTETYPE_NOTSURE);
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
@@ -173,19 +173,20 @@ const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
                                              uint32_t dwPacket);
 const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
                                              int32_t& iCount);
-const uint8_t* XFA_GetElementAttributes(XFA_Element eElement, int32_t& iCount);
+const XFA_Attribute* XFA_GetElementAttributes(XFA_Element eElement,
+                                              int32_t& iCount);
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName);
 XFA_Element XFA_GetElementTypeForName(const WideStringView& wsName);
 CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
-                                                      XFA_ATTRIBUTE eAttribute,
+                                                      XFA_Attribute eAttribute,
                                                       uint32_t dwPacket);
 bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_Element eElement,
-                                  XFA_ATTRIBUTE eAttribute,
+                                  XFA_Attribute eAttribute,
                                   XFA_ATTRIBUTETYPE eType,
                                   uint32_t dwPacket);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName);
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName);
+const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName);
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
     const WideStringView& wsName);
 const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PACKET ePacket);

@@ -12,23 +12,23 @@ CXFA_ImageData::CXFA_ImageData(CXFA_Node* pNode, bool bDefValue)
     : CXFA_Data(pNode), m_bDefValue(bDefValue) {}
 
 int32_t CXFA_ImageData::GetAspect() {
-  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Aspect);
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Aspect);
 }
 
 bool CXFA_ImageData::GetContentType(WideString& wsContentType) {
-  return m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_ContentType, wsContentType,
+  return m_pNode->JSNode()->TryCData(XFA_Attribute::ContentType, wsContentType,
                                      true);
 }
 
 bool CXFA_ImageData::GetHref(WideString& wsHref) {
   if (m_bDefValue)
-    return m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Href, wsHref, true);
+    return m_pNode->JSNode()->TryCData(XFA_Attribute::Href, wsHref, true);
   return m_pNode->JSNode()->GetAttribute(L"href", wsHref, true);
 }
 
 int32_t CXFA_ImageData::GetTransferEncoding() {
   if (m_bDefValue)
-    return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_TransferEncoding);
+    return m_pNode->JSNode()->GetEnum(XFA_Attribute::TransferEncoding);
   return XFA_ATTRIBUTEENUM_Base64;
 }
 
@@ -37,21 +37,21 @@ bool CXFA_ImageData::GetContent(WideString& wsText) {
 }
 
 bool CXFA_ImageData::SetContentType(const WideString& wsContentType) {
-  return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType,
+  return m_pNode->JSNode()->SetCData(XFA_Attribute::ContentType, wsContentType,
                                      false, false);
 }
 
 bool CXFA_ImageData::SetHref(const WideString& wsHref) {
   if (m_bDefValue)
-    return m_pNode->JSNode()->SetCData(XFA_ATTRIBUTE_Href, wsHref, false,
+    return m_pNode->JSNode()->SetCData(XFA_Attribute::Href, wsHref, false,
                                        false);
-  return m_pNode->JSNode()->SetAttribute(XFA_ATTRIBUTE_Href,
+  return m_pNode->JSNode()->SetAttribute(XFA_Attribute::Href,
                                          wsHref.AsStringView(), false);
 }
 
 bool CXFA_ImageData::SetTransferEncoding(int32_t iTransferEncoding) {
   if (m_bDefValue) {
-    return m_pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_TransferEncoding,
+    return m_pNode->JSNode()->SetEnum(XFA_Attribute::TransferEncoding,
                                       (XFA_ATTRIBUTEENUM)iTransferEncoding,
                                       false);
   }

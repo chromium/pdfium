@@ -25,7 +25,7 @@ extern const XFA_ELEMENTINFO g_XFAElementData[];
 extern const int32_t g_iXFAElementCount;
 
 extern const XFA_ELEMENTHIERARCHY g_XFAElementAttributeIndex[];
-extern const uint8_t g_XFAElementAttributeData[];
+extern const XFA_Attribute g_XFAElementAttributeData[];
 
 extern const XFA_ELEMENTHIERARCHY g_XFAElementPropertyIndex[];
 extern const XFA_PROPERTY g_XFAElementPropertyData[];

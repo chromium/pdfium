@@ -31,7 +31,7 @@ CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() {}
 
 void CJX_LayoutPseudoModel::Ready(CFXJSE_Value* pValue,
                                   bool bSetting,
-                                  XFA_ATTRIBUTE eAttribute) {
+                                  XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -153,7 +153,7 @@ void CJX_LayoutPseudoModel::NumberedPageCount(CFXJSE_Arguments* pArguments,
         continue;
 
       CXFA_Node* pMasterPage = pLayoutPage->GetMasterPage();
-      if (pMasterPage->JSNode()->GetInteger(XFA_ATTRIBUTE_Numbered))
+      if (pMasterPage->JSNode()->GetInteger(XFA_Attribute::Numbered))
         iPageCount++;
     }
   } else {

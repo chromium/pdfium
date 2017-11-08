@@ -335,7 +335,7 @@ CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     WideStringView wsIDVal;
-    if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Id, wsIDVal, true) &&
+    if (pNode->JSNode()->TryCData(XFA_Attribute::Id, wsIDVal, true) &&
         !wsIDVal.IsEmpty()) {
       if (wsIDVal == wsID)
         return pNode;
@@ -355,15 +355,15 @@ void CXFA_Document::DoProtoMerge() {
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     WideStringView wsIDVal;
-    if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Id, wsIDVal, true) &&
+    if (pNode->JSNode()->TryCData(XFA_Attribute::Id, wsIDVal, true) &&
         !wsIDVal.IsEmpty()) {
       mIDMap[FX_HashCode_GetW(wsIDVal, false)] = pNode;
     }
     WideStringView wsUseVal;
-    if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Use, wsUseVal, true) &&
+    if (pNode->JSNode()->TryCData(XFA_Attribute::Use, wsUseVal, true) &&
         !wsUseVal.IsEmpty()) {
       sUseNodes.insert(pNode);
-    } else if (pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal,
+    } else if (pNode->JSNode()->TryCData(XFA_Attribute::Usehref, wsUseVal,
                                          true) &&
                !wsUseVal.IsEmpty()) {
       sUseNodes.insert(pNode);
@@ -373,7 +373,7 @@ void CXFA_Document::DoProtoMerge() {
   for (CXFA_Node* pUseHrefNode : sUseNodes) {
     WideString wsUseVal;
     WideStringView wsURI, wsID, wsSOM;
-    if (pUseHrefNode->JSNode()->TryCData(XFA_ATTRIBUTE_Usehref, wsUseVal,
+    if (pUseHrefNode->JSNode()->TryCData(XFA_Attribute::Usehref, wsUseVal,
                                          true) &&
         !wsUseVal.IsEmpty()) {
       auto uSharpPos = wsUseVal.Find('#');
@@ -393,7 +393,7 @@ void CXFA_Document::DoProtoMerge() {
                                 uLen - uSharpPos.value() - 1);
         }
       }
-    } else if (pUseHrefNode->JSNode()->TryCData(XFA_ATTRIBUTE_Use, wsUseVal,
+    } else if (pUseHrefNode->JSNode()->TryCData(XFA_Attribute::Use, wsUseVal,
                                                 true) &&
                !wsUseVal.IsEmpty()) {
       if (wsUseVal[0] == '#')

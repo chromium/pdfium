@@ -12,24 +12,24 @@
 CXFA_ValidateData::CXFA_ValidateData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_ValidateData::GetFormatTest() {
-  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_FormatTest);
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::FormatTest);
 }
 
 bool CXFA_ValidateData::SetNullTest(WideString wsValue) {
   const XFA_ATTRIBUTEENUMINFO* pInfo =
       XFA_GetAttributeEnumByName(wsValue.AsStringView());
-  m_pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_NullTest,
+  m_pNode->JSNode()->SetEnum(XFA_Attribute::NullTest,
                              pInfo ? pInfo->eName : XFA_ATTRIBUTEENUM_Disabled,
                              false);
   return true;
 }
 
 int32_t CXFA_ValidateData::GetNullTest() {
-  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_NullTest);
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::NullTest);
 }
 
 int32_t CXFA_ValidateData::GetScriptTest() {
-  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_ScriptTest);
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::ScriptTest);
 }
 
 void CXFA_ValidateData::GetMessageText(WideString& wsMessage,
@@ -46,7 +46,7 @@ void CXFA_ValidateData::GetMessageText(WideString& wsMessage,
       continue;
 
     WideStringView wsName;
-    pItemNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
+    pItemNode->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
       pItemNode->JSNode()->TryContent(wsMessage, false, true);
       return;
@@ -84,7 +84,7 @@ void CXFA_ValidateData::SetMessageText(WideString& wsMessage,
       continue;
 
     WideStringView wsName;
-    pItemNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
+    pItemNode->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
       pItemNode->JSNode()->SetContent(wsMessage, wsMessage, false, false, true);
       return;
@@ -92,7 +92,7 @@ void CXFA_ValidateData::SetMessageText(WideString& wsMessage,
   }
   CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_Element::Text);
   pNode->InsertChild(pTextNode, nullptr);
-  pTextNode->JSNode()->SetCData(XFA_ATTRIBUTE_Name, wsMessageType, false,
+  pTextNode->JSNode()->SetCData(XFA_Attribute::Name, wsMessageType, false,
                                 false);
   pTextNode->JSNode()->SetContent(wsMessage, wsMessage, false, false, true);
 }

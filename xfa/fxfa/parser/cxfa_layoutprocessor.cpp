@@ -64,9 +64,9 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
   XFA_ItemLayoutProcessorResult eStatus;
   CXFA_Node* pFormNode = m_pRootItemLayoutProcessor->GetFormNode();
   float fPosX =
-      pFormNode->JSNode()->GetMeasure(XFA_ATTRIBUTE_X).ToUnit(XFA_UNIT_Pt);
+      pFormNode->JSNode()->GetMeasure(XFA_Attribute::X).ToUnit(XFA_UNIT_Pt);
   float fPosY =
-      pFormNode->JSNode()->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
+      pFormNode->JSNode()->GetMeasure(XFA_Attribute::Y).ToUnit(XFA_UNIT_Pt);
   do {
     float fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
     eStatus = m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight,

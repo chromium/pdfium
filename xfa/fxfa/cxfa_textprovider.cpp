@@ -45,7 +45,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       WideString wsContentType;
-      pChildNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_ContentType,
+      pChildNode->JSNode()->GetAttribute(XFA_Attribute::ContentType,
                                          wsContentType, false);
       if (wsContentType == L"text/html")
         bRichText = true;
@@ -84,7 +84,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       WideString wsContentType;
-      pChildNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_ContentType,
+      pChildNode->JSNode()->GetAttribute(XFA_Attribute::ContentType,
                                          wsContentType, false);
       if (wsContentType == L"text/html")
         bRichText = true;
@@ -100,7 +100,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   CXFA_Node* pNode = pItemNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pNode) {
     WideStringView wsName;
-    pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsName, true);
+    pNode->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
     if (m_eType == XFA_TEXTPROVIDERTYPE_Rollover && wsName == L"rollover")
       return pNode;
     if (m_eType == XFA_TEXTPROVIDERTYPE_Down && wsName == L"down")

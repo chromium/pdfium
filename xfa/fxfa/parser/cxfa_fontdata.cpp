@@ -15,27 +15,28 @@ CXFA_FontData::CXFA_FontData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 float CXFA_FontData::GetBaselineShift() {
   return m_pNode->JSNode()
-      ->GetMeasure(XFA_ATTRIBUTE_BaselineShift)
+      ->GetMeasure(XFA_Attribute::BaselineShift)
       .ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_FontData::GetHorizontalScale() {
   WideString wsValue;
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue, true);
+  m_pNode->JSNode()->TryCData(XFA_Attribute::FontHorizontalScale, wsValue,
+                              true);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_FontData::GetVerticalScale() {
   WideString wsValue;
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue, true);
+  m_pNode->JSNode()->TryCData(XFA_Attribute::FontVerticalScale, wsValue, true);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_FontData::GetLetterSpacing() {
   WideStringView wsValue;
-  if (!m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_LetterSpacing, wsValue, true))
+  if (!m_pNode->JSNode()->TryCData(XFA_Attribute::LetterSpacing, wsValue, true))
     return 0;
 
   CXFA_Measurement ms(wsValue);
@@ -46,41 +47,41 @@ float CXFA_FontData::GetLetterSpacing() {
 
 int32_t CXFA_FontData::GetLineThrough() {
   int32_t iValue = 0;
-  m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_LineThrough, iValue, true);
+  m_pNode->JSNode()->TryInteger(XFA_Attribute::LineThrough, iValue, true);
   return iValue;
 }
 
 int32_t CXFA_FontData::GetUnderline() {
   int32_t iValue = 0;
-  m_pNode->JSNode()->TryInteger(XFA_ATTRIBUTE_Underline, iValue, true);
+  m_pNode->JSNode()->TryInteger(XFA_Attribute::Underline, iValue, true);
   return iValue;
 }
 
 int32_t CXFA_FontData::GetUnderlinePeriod() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_All;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_UnderlinePeriod, eAttr, true);
+  m_pNode->JSNode()->TryEnum(XFA_Attribute::UnderlinePeriod, eAttr, true);
   return eAttr;
 }
 
 float CXFA_FontData::GetFontSize() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_Size, ms, true);
+  m_pNode->JSNode()->TryMeasure(XFA_Attribute::Size, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 void CXFA_FontData::GetTypeface(WideStringView& wsTypeFace) {
-  m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Typeface, wsTypeFace, true);
+  m_pNode->JSNode()->TryCData(XFA_Attribute::Typeface, wsTypeFace, true);
 }
 
 bool CXFA_FontData::IsBold() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Weight, eAttr, true);
+  m_pNode->JSNode()->TryEnum(XFA_Attribute::Weight, eAttr, true);
   return eAttr == XFA_ATTRIBUTEENUM_Bold;
 }
 
 bool CXFA_FontData::IsItalic() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Posture, eAttr, true);
+  m_pNode->JSNode()->TryEnum(XFA_Attribute::Posture, eAttr, true);
   return eAttr == XFA_ATTRIBUTEENUM_Italic;
 }
 

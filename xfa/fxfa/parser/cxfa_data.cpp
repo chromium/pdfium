@@ -65,7 +65,7 @@ XFA_Element CXFA_Data::GetElementType() const {
   return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
 }
 
-bool CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,
+bool CXFA_Data::TryMeasure(XFA_Attribute eAttr,
                            float& fValue,
                            bool bUseDefault) const {
   CXFA_Measurement ms;
@@ -76,7 +76,7 @@ bool CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,
   return false;
 }
 
-bool CXFA_Data::SetMeasure(XFA_ATTRIBUTE eAttr, float fValue) {
+bool CXFA_Data::SetMeasure(XFA_Attribute eAttr, float fValue) {
   CXFA_Measurement ms(fValue, XFA_UNIT_Pt);
   return m_pNode->JSNode()->SetMeasure(eAttr, ms, false);
 }

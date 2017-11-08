@@ -13,48 +13,48 @@ CXFA_ParaData::CXFA_ParaData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_ParaData::GetHorizontalAlign() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Left;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_HAlign, eAttr, true);
+  m_pNode->JSNode()->TryEnum(XFA_Attribute::HAlign, eAttr, true);
   return eAttr;
 }
 
 int32_t CXFA_ParaData::GetVerticalAlign() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Top;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_VAlign, eAttr, true);
+  m_pNode->JSNode()->TryEnum(XFA_Attribute::VAlign, eAttr, true);
   return eAttr;
 }
 
 float CXFA_ParaData::GetLineHeight() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_LineHeight, ms, true);
+  m_pNode->JSNode()->TryMeasure(XFA_Attribute::LineHeight, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_ParaData::GetMarginLeft() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginLeft, ms, true);
+  m_pNode->JSNode()->TryMeasure(XFA_Attribute::MarginLeft, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_ParaData::GetMarginRight() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_MarginRight, ms, true);
+  m_pNode->JSNode()->TryMeasure(XFA_Attribute::MarginRight, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_ParaData::GetSpaceAbove() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceAbove, ms, true);
+  m_pNode->JSNode()->TryMeasure(XFA_Attribute::SpaceAbove, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_ParaData::GetSpaceBelow() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SpaceBelow, ms, true);
+  m_pNode->JSNode()->TryMeasure(XFA_Attribute::SpaceBelow, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
 float CXFA_ParaData::GetTextIndent() {
   CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_TextIndent, ms, true);
+  m_pNode->JSNode()->TryMeasure(XFA_Attribute::TextIndent, ms, true);
   return ms.ToUnit(XFA_UNIT_Pt);
 }

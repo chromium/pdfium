@@ -57,7 +57,7 @@ CJX_HostPseudoModel::~CJX_HostPseudoModel() {}
 
 void CJX_HostPseudoModel::AppType(CFXJSE_Value* pValue,
                                   bool bSetting,
-                                  XFA_ATTRIBUTE eAttribute) {
+                                  XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -71,7 +71,7 @@ void CJX_HostPseudoModel::AppType(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
                                               bool bSetting,
-                                              XFA_ATTRIBUTE eAttribute) {
+                                              XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -87,7 +87,7 @@ void CJX_HostPseudoModel::CalculationsEnabled(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
                                       bool bSetting,
-                                      XFA_ATTRIBUTE eAttribute) {
+                                      XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -102,7 +102,7 @@ void CJX_HostPseudoModel::CurrentPage(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::Language(CFXJSE_Value* pValue,
                                    bool bSetting,
-                                   XFA_ATTRIBUTE eAttribute) {
+                                   XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -117,7 +117,7 @@ void CJX_HostPseudoModel::Language(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
                                    bool bSetting,
-                                   XFA_ATTRIBUTE eAttribute) {
+                                   XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -132,7 +132,7 @@ void CJX_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::Platform(CFXJSE_Value* pValue,
                                    bool bSetting,
-                                   XFA_ATTRIBUTE eAttribute) {
+                                   XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -147,7 +147,7 @@ void CJX_HostPseudoModel::Platform(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::Title(CFXJSE_Value* pValue,
                                 bool bSetting,
-                                XFA_ATTRIBUTE eAttribute) {
+                                XFA_Attribute eAttribute) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
@@ -168,7 +168,7 @@ void CJX_HostPseudoModel::Title(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::ValidationsEnabled(CFXJSE_Value* pValue,
                                              bool bSetting,
-                                             XFA_ATTRIBUTE eAttribute) {
+                                             XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -186,7 +186,7 @@ void CJX_HostPseudoModel::ValidationsEnabled(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::Variation(CFXJSE_Value* pValue,
                                     bool bSetting,
-                                    XFA_ATTRIBUTE eAttribute) {
+                                    XFA_Attribute eAttribute) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return;
 
@@ -203,7 +203,7 @@ void CJX_HostPseudoModel::Variation(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::Version(CFXJSE_Value* pValue,
                                   bool bSetting,
-                                  XFA_ATTRIBUTE eAttribute) {
+                                  XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -217,7 +217,7 @@ void CJX_HostPseudoModel::Version(CFXJSE_Value* pValue,
 
 void CJX_HostPseudoModel::Name(CFXJSE_Value* pValue,
                                bool bSetting,
-                               XFA_ATTRIBUTE eAttribute) {
+                               XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;

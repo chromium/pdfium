@@ -26,7 +26,7 @@ class CJX_Object {
 
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                     bool bSetting,
-                                    XFA_ATTRIBUTE eAttribute);
+                                    XFA_Attribute eAttribute);
 
   void ThrowInvalidPropertyException() const;
   void ThrowArgumentMismatchException() const;

@@ -29,7 +29,7 @@ class CJX_NodeList : public CJX_Object {
   void Script_TreelistClass_NamedItem(CFXJSE_Arguments* pArguments);
   void Script_ListClass_Length(CFXJSE_Value* pValue,
                                bool bSetting,
-                               XFA_ATTRIBUTE eAttribute);
+                               XFA_Attribute eAttribute);
 };
 
 #endif  // FXJS_CJX_NODELIST_H_

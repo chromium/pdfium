@@ -19,23 +19,23 @@ class CJX_HostPseudoModel : public CJX_Object {
   explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
   ~CJX_HostPseudoModel() override;
 
-  void AppType(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void AppType(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void CalculationsEnabled(CFXJSE_Value* pValue,
                            bool bSetting,
-                           XFA_ATTRIBUTE eAttribute);
+                           XFA_Attribute eAttribute);
   void CurrentPage(CFXJSE_Value* pValue,
                    bool bSetting,
-                   XFA_ATTRIBUTE eAttribute);
-  void Language(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void NumPages(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Platform(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Title(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+                   XFA_Attribute eAttribute);
+  void Language(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void NumPages(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void Platform(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void Title(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void ValidationsEnabled(CFXJSE_Value* pValue,
                           bool bSetting,
-                          XFA_ATTRIBUTE eAttribute);
-  void Variation(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Version(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Name(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+                          XFA_Attribute eAttribute);
+  void Variation(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void Version(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void Name(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void GotoURL(CFXJSE_Arguments* pArguments);
   void OpenList(CFXJSE_Arguments* pArguments);
   void Response(CFXJSE_Arguments* pArguments);

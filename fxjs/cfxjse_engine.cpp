@@ -502,7 +502,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
     return false;
 
   WideStringView wsScript;
-  if (!pTextNode->JSNode()->TryCData(XFA_ATTRIBUTE_Value, wsScript, true))
+  if (!pTextNode->JSNode()->TryCData(XFA_Attribute::Value, wsScript, true))
     return false;
 
   ByteString btScript = FX_UTF8Encode(wsScript);

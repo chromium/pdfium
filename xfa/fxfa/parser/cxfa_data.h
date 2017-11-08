@@ -24,10 +24,10 @@ class CXFA_Data {
   XFA_Element GetElementType() const;
 
  protected:
-  bool TryMeasure(XFA_ATTRIBUTE eAttr,
+  bool TryMeasure(XFA_Attribute eAttr,
                   float& fValue,
                   bool bUseDefault = false) const;
-  bool SetMeasure(XFA_ATTRIBUTE eAttr, float fValue);
+  bool SetMeasure(XFA_Attribute eAttr, float fValue);
 
   CXFA_Node* m_pNode;
 };

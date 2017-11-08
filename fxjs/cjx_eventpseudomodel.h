@@ -38,30 +38,30 @@ class CJX_EventPseudoModel : public CJX_Object {
   explicit CJX_EventPseudoModel(CScript_EventPseudoModel* model);
   ~CJX_EventPseudoModel() override;
 
-  void Change(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void CommitKey(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void FullText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void KeyDown(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Modifier(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Change(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void CommitKey(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void FullText(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void KeyDown(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void Modifier(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void NewContentType(CFXJSE_Value* pValue,
                       bool bSetting,
-                      XFA_ATTRIBUTE eAttribute);
-  void NewText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+                      XFA_Attribute eAttribute);
+  void NewText(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void PrevContentType(CFXJSE_Value* pValue,
                        bool bSetting,
-                       XFA_ATTRIBUTE eAttribute);
-  void PrevText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Reenter(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void SelEnd(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void SelStart(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
-  void Shift(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+                       XFA_Attribute eAttribute);
+  void PrevText(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void Reenter(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void SelEnd(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void SelStart(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  void Shift(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void SoapFaultCode(CFXJSE_Value* pValue,
                      bool bSetting,
-                     XFA_ATTRIBUTE eAttribute);
+                     XFA_Attribute eAttribute);
   void SoapFaultString(CFXJSE_Value* pValue,
                        bool bSetting,
-                       XFA_ATTRIBUTE eAttribute);
-  void Target(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+                       XFA_Attribute eAttribute);
+  void Target(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
 
   void Emit(CFXJSE_Arguments* pArguments);
   void Reset(CFXJSE_Arguments* pArguments);

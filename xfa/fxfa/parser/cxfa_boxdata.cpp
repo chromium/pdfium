@@ -77,13 +77,13 @@ static int32_t Style3D(const std::vector<CXFA_StrokeData>& strokes,
 int32_t CXFA_BoxData::GetHand() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Even;
-  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Hand);
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Hand);
 }
 
 int32_t CXFA_BoxData::GetPresence() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Hidden;
-  return m_pNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Presence);
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Presence);
 }
 
 int32_t CXFA_BoxData::CountEdges() const {
@@ -105,7 +105,7 @@ std::vector<CXFA_StrokeData> CXFA_BoxData::GetStrokes() const {
 bool CXFA_BoxData::IsCircular() const {
   if (!m_pNode)
     return false;
-  return m_pNode->JSNode()->GetBoolean(XFA_ATTRIBUTE_Circular);
+  return m_pNode->JSNode()->GetBoolean(XFA_Attribute::Circular);
 }
 
 bool CXFA_BoxData::GetStartAngle(float& fStartAngle) const {
@@ -115,7 +115,7 @@ bool CXFA_BoxData::GetStartAngle(float& fStartAngle) const {
 
   CXFA_Measurement ms;
   bool bRet =
-      m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_StartAngle, ms, false);
+      m_pNode->JSNode()->TryMeasure(XFA_Attribute::StartAngle, ms, false);
   if (bRet)
     fStartAngle = ms.GetValue();
 
@@ -129,7 +129,7 @@ bool CXFA_BoxData::GetSweepAngle(float& fSweepAngle) const {
 
   CXFA_Measurement ms;
   bool bRet =
-      m_pNode->JSNode()->TryMeasure(XFA_ATTRIBUTE_SweepAngle, ms, false);
+      m_pNode->JSNode()->TryMeasure(XFA_Attribute::SweepAngle, ms, false);
   if (bRet)
     fSweepAngle = ms.GetValue();
 

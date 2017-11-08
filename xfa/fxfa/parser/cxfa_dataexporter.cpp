@@ -86,7 +86,7 @@ WideString ExportEncodeContent(const WideStringView& str) {
 }
 
 void SaveAttribute(CXFA_Node* pNode,
-                   XFA_ATTRIBUTE eName,
+                   XFA_Attribute eName,
                    const WideStringView& wsName,
                    bool bProto,
                    WideString& wsOutput) {
@@ -103,7 +103,7 @@ void SaveAttribute(CXFA_Node* pNode,
   wsOutput += L"\"";
 }
 
-bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_ATTRIBUTE eAttribute) {
+bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_Attribute eAttribute) {
   bool bSaveInDataModel = false;
   if (pNode->GetElementType() != XFA_Element::Image)
     return bSaveInDataModel;
@@ -114,7 +114,7 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_ATTRIBUTE eAttribute) {
 
   CXFA_Node* pFieldNode = pValueNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (pFieldNode && pFieldNode->GetBindData() &&
-      eAttribute == XFA_ATTRIBUTE_Href) {
+      eAttribute == XFA_Attribute::Href) {
     bSaveInDataModel = true;
   }
   return bSaveInDataModel;
@@ -166,12 +166,11 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
                                 bool bSaveXML) {
   WideString wsAttrs;
   int32_t iAttrs = 0;
-  const uint8_t* pAttrs =
+  const XFA_Attribute* pAttrs =
       XFA_GetElementAttributes(pNode->GetElementType(), iAttrs);
   while (iAttrs--) {
-    const XFA_ATTRIBUTEINFO* pAttr =
-        XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
-    if (pAttr->eName == XFA_ATTRIBUTE_Name ||
+    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(pAttrs[iAttrs]);
+    if (pAttr->eName == XFA_Attribute::Name ||
         (AttributeSaveInDataModel(pNode, pAttr->eName) && !bSaveXML)) {
       continue;
     }
@@ -197,7 +196,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         break;
 
       WideString wsContentType;
-      pNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
+      pNode->JSNode()->GetAttribute(XFA_Attribute::ContentType, wsContentType,
                                     false);
       if (pRawValueNode->GetElementType() == XFA_Element::SharpxHTML &&
           wsContentType == L"text/html") {
@@ -221,7 +220,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  wsContentType == L"text/xml") {
         WideString wsRawValue;
-        pRawValueNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_Value, wsRawValue,
+        pRawValueNode->JSNode()->GetAttribute(XFA_Attribute::Value, wsRawValue,
                                               false);
         if (wsRawValue.IsEmpty())
           break;
@@ -244,7 +243,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
             pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
         ASSERT(pGrandparentNode);
         WideString bodyTagName;
-        bodyTagName = pGrandparentNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+        bodyTagName = pGrandparentNode->JSNode()->GetCData(XFA_Attribute::Name);
         if (bodyTagName.IsEmpty())
           bodyTagName = L"ListBox1";
 
@@ -264,7 +263,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         buf.Clear();
       } else {
         WideStringView wsValue =
-            pRawValueNode->JSNode()->GetCData(XFA_ATTRIBUTE_Value);
+            pRawValueNode->JSNode()->GetCData(XFA_Attribute::Value);
         wsChildren += ExportEncodeContent(wsValue);
       }
       break;
@@ -272,7 +271,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     case XFA_ObjectType::TextNode:
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::NodeV: {
-      WideStringView wsValue = pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Value);
+      WideStringView wsValue = pNode->JSNode()->GetCData(XFA_Attribute::Value);
       wsChildren += ExportEncodeContent(wsValue);
       break;
     }
@@ -309,10 +308,10 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
   }
 
   if (!wsChildren.IsEmpty() || !wsAttrs.IsEmpty() ||
-      pNode->JSNode()->HasAttribute(XFA_ATTRIBUTE_Name)) {
+      pNode->JSNode()->HasAttribute(XFA_Attribute::Name)) {
     WideStringView wsElement = pNode->GetClassName();
     WideString wsName;
-    SaveAttribute(pNode, XFA_ATTRIBUTE_Name, L"name", true, wsName);
+    SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsName);
     buf << L"<";
     buf << wsElement;
     buf << wsName;
@@ -349,16 +348,15 @@ void RegenerateFormFile_Container(
   pStream->WriteString(wsElement);
 
   WideString wsOutput;
-  SaveAttribute(pNode, XFA_ATTRIBUTE_Name, L"name", true, wsOutput);
+  SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsOutput);
 
   WideString wsAttrs;
   int32_t iAttrs = 0;
-  const uint8_t* pAttrs =
+  const XFA_Attribute* pAttrs =
       XFA_GetElementAttributes(pNode->GetElementType(), iAttrs);
   while (iAttrs--) {
-    const XFA_ATTRIBUTEINFO* pAttr =
-        XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
-    if (pAttr->eName == XFA_ATTRIBUTE_Name)
+    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(pAttrs[iAttrs]);
+    if (pAttr->eName == XFA_Attribute::Name)
       continue;
 
     WideString wsAttr;

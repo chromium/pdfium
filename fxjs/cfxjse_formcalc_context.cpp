@@ -5786,7 +5786,7 @@ void CFXJSE_FormCalcContext::GetObjectDefaultValue(
     return;
   }
   pNode->JSNode()->Script_Som_DefaultValue(pDefaultValue, false,
-                                           (XFA_ATTRIBUTE)-1);
+                                           XFA_Attribute::Unknown);
 }
 
 // static
@@ -5796,7 +5796,8 @@ bool CFXJSE_FormCalcContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
   if (!pNode)
     return false;
 
-  pNode->JSNode()->Script_Som_DefaultValue(hNewValue, true, (XFA_ATTRIBUTE)-1);
+  pNode->JSNode()->Script_Som_DefaultValue(hNewValue, true,
+                                           XFA_Attribute::Unknown);
   return true;
 }
 
@@ -5882,7 +5883,7 @@ int32_t CFXJSE_FormCalcContext::ResolveObjects(
       if (bHasNoResolveName) {
         WideString wsName;
         if (CXFA_Node* pXFANode = pNode->AsNode())
-          pXFANode->JSNode()->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
+          pXFANode->JSNode()->GetAttribute(XFA_Attribute::Name, wsName, false);
         if (wsName.IsEmpty())
           wsName = L"#" + pNode->GetClassName();
 

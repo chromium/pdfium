@@ -13,7 +13,7 @@ CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 int32_t CXFA_CalculateData::GetOverride() {
   XFA_ATTRIBUTEENUM eAtt = XFA_ATTRIBUTEENUM_Error;
-  m_pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Override, eAtt, false);
+  m_pNode->JSNode()->TryEnum(XFA_Attribute::Override, eAtt, false);
   return eAtt;
 }
 

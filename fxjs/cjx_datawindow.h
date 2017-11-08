@@ -25,14 +25,14 @@ class CJX_DataWindow : public CJX_Object {
   void IsRecordGroup(CFXJSE_Arguments* pArguments);
   void RecordsBefore(CFXJSE_Value* pValue,
                      bool bSetting,
-                     XFA_ATTRIBUTE eAttribute);
+                     XFA_Attribute eAttribute);
   void CurrentRecordNumber(CFXJSE_Value* pValue,
                            bool bSetting,
-                           XFA_ATTRIBUTE eAttribute);
+                           XFA_Attribute eAttribute);
   void RecordsAfter(CFXJSE_Value* pValue,
                     bool bSetting,
-                    XFA_ATTRIBUTE eAttribute);
-  void IsDefined(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+                    XFA_Attribute eAttribute);
+  void IsDefined(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
 };
 
 #endif  // FXJS_CJX_DATAWINDOW_H_

@@ -349,7 +349,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   XFA_Element eType = pNode->GetElementType();
   if (XFA_IsCreateWidget(eType)) {
     CXFA_WidgetAcc* pAcc = new CXFA_WidgetAcc(pDocView, pNode);
-    pNode->JSNode()->SetObject(XFA_ATTRIBUTE_WidgetData, pAcc,
+    pNode->JSNode()->SetObject(XFA_Attribute::WidgetData, pAcc,
                                &gs_XFADeleteWidgetAcc);
     return;
   }
@@ -365,8 +365,8 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   }
 }
 
-void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_ATTRIBUTE eAttr) {
-  if (eAttr != XFA_ATTRIBUTE_Presence)
+void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr) {
+  if (eAttr != XFA_Attribute::Presence)
     return;
   if (pSender->GetPacketID() & XFA_XDPPACKET_Datasets)
     return;
@@ -391,7 +391,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_ATTRIBUTE eAttr) {
 }
 
 void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
-                                   XFA_ATTRIBUTE eAttr,
+                                   XFA_Attribute eAttr,
                                    CXFA_Node* pParentNode,
                                    CXFA_Node* pWidgetNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
@@ -399,7 +399,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     return;
 
   if (!(pSender->GetPacketID() & XFA_XDPPACKET_Form)) {
-    if (eAttr == XFA_ATTRIBUTE_Value)
+    if (eAttr == XFA_Attribute::Value)
       pDocView->AddCalculateNodeNotify(pSender);
     return;
   }
@@ -428,10 +428,10 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     default:
       break;
   }
-  if (bIsContainerNode && eAttr == XFA_ATTRIBUTE_Access)
+  if (bIsContainerNode && eAttr == XFA_Attribute::Access)
     bUpdateProperty = true;
 
-  if (eAttr == XFA_ATTRIBUTE_Value) {
+  if (eAttr == XFA_Attribute::Value) {
     pDocView->AddCalculateNodeNotify(pSender);
     if (eType == XFA_Element::Value || bIsContainerNode) {
       if (bIsContainerNode) {

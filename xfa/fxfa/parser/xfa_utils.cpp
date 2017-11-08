@@ -221,7 +221,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
     CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pFirstChild &&
         pFirstChild->GetElementType() == XFA_Element::ChoiceList) {
-      bRet = pFirstChild->JSNode()->GetEnum(XFA_ATTRIBUTE_Open) ==
+      bRet = pFirstChild->JSNode()->GetEnum(XFA_Attribute::Open) ==
              XFA_ATTRIBUTEENUM_MultiSelect;
     }
   }
@@ -271,7 +271,7 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
 }
 
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
-                                                    XFA_ATTRIBUTE eAttribute,
+                                                    XFA_Attribute eAttribute,
                                                     XFA_ATTRIBUTETYPE eType) {
   int32_t iStart = 0, iEnd = g_iXFANotsureCount - 1;
   do {
@@ -360,7 +360,8 @@ const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
   return g_XFAElementPropertyData + pElement->wStart;
 }
 
-const uint8_t* XFA_GetElementAttributes(XFA_Element eElement, int32_t& iCount) {
+const XFA_Attribute* XFA_GetElementAttributes(XFA_Element eElement,
+                                              int32_t& iCount) {
   if (eElement == XFA_Element::Unknown)
     return nullptr;
 
@@ -393,7 +394,7 @@ XFA_Element XFA_GetElementTypeForName(const WideStringView& wsName) {
 }
 
 CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
-                                                      XFA_ATTRIBUTE eAttribute,
+                                                      XFA_Attribute eAttribute,
                                                       uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
@@ -405,7 +406,7 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
 
 bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_Element eElement,
-                                  XFA_ATTRIBUTE eAttribute,
+                                  XFA_Attribute eAttribute,
                                   XFA_ATTRIBUTETYPE eType,
                                   uint32_t dwPacket) {
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
@@ -443,9 +444,10 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName) {
   return nullptr;
 }
 
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName) {
-  return (eName < g_iXFAAttributeCount) ? (g_XFAAttributeData + eName)
-                                        : nullptr;
+const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName) {
+  return (static_cast<uint8_t>(eName) < g_iXFAAttributeCount)
+             ? (g_XFAAttributeData + static_cast<uint8_t>(eName))
+             : nullptr;
 }
 
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(

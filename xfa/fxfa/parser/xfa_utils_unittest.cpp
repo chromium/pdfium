@@ -275,9 +275,9 @@ TEST_F(XFANodeIteratorTest, ChildAsRootNext) {
 TEST(XFAUtilsTest, GetAttributeByName) {
   EXPECT_EQ(nullptr, XFA_GetAttributeByName(L""));
   EXPECT_EQ(nullptr, XFA_GetAttributeByName(L"nonesuch"));
-  EXPECT_EQ(XFA_ATTRIBUTE_H, XFA_GetAttributeByName(L"h")->eName);
-  EXPECT_EQ(XFA_ATTRIBUTE_Short, XFA_GetAttributeByName(L"short")->eName);
-  EXPECT_EQ(XFA_ATTRIBUTE_DecipherOnly,
+  EXPECT_EQ(XFA_Attribute::H, XFA_GetAttributeByName(L"h")->eName);
+  EXPECT_EQ(XFA_Attribute::Short, XFA_GetAttributeByName(L"short")->eName);
+  EXPECT_EQ(XFA_Attribute::DecipherOnly,
             XFA_GetAttributeByName(L"decipherOnly")->eName);
 }
 

@@ -189,14 +189,14 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
     std::unique_ptr<CFX_XMLNode> pCloneXML;
     if (IsAttributeInXML()) {
       WideString wsName;
-      JSNode()->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
+      JSNode()->GetAttribute(XFA_Attribute::Name, wsName, false);
       auto pCloneXMLElement = pdfium::MakeUnique<CFX_XMLElement>(wsName);
-      WideStringView wsValue = JSNode()->GetCData(XFA_ATTRIBUTE_Value);
+      WideStringView wsValue = JSNode()->GetCData(XFA_Attribute::Value);
       if (!wsValue.IsEmpty()) {
         pCloneXMLElement->SetTextData(WideString(wsValue));
       }
       pCloneXML.reset(pCloneXMLElement.release());
-      pClone->JSNode()->SetEnum(XFA_ATTRIBUTE_Contains,
+      pClone->JSNode()->SetEnum(XFA_Attribute::Contains,
                                 XFA_ATTRIBUTEENUM_Unknown, false);
     } else {
       pCloneXML = m_pXMLNode->Clone();
@@ -211,7 +211,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
     }
   }
   pClone->SetFlag(XFA_NodeFlag_Initialized, true);
-  pClone->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
+  pClone->JSNode()->SetObject(XFA_Attribute::BindingNode, nullptr, nullptr);
   return pClone;
 }
 
@@ -374,18 +374,18 @@ void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
 CXFA_Node* CXFA_Node::GetBindData() {
   ASSERT(GetPacketID() == XFA_XDPPACKET_Form);
   return static_cast<CXFA_Node*>(
-      JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
+      JSNode()->GetObject(XFA_Attribute::BindingNode));
 }
 
 std::vector<CXFA_Node*> CXFA_Node::GetBindItems() {
   if (BindsFormItems()) {
     void* pBinding = nullptr;
-    JSNode()->TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
+    JSNode()->TryObject(XFA_Attribute::BindingNode, pBinding);
     return *static_cast<std::vector<CXFA_Node*>*>(pBinding);
   }
   std::vector<CXFA_Node*> result;
   CXFA_Node* pFormNode =
-      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
+      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_Attribute::BindingNode));
   if (pFormNode)
     result.push_back(pFormNode);
   return result;
@@ -395,23 +395,23 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
   if (BindsFormItems()) {
     void* pBinding = nullptr;
-    JSNode()->TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
+    JSNode()->TryObject(XFA_Attribute::BindingNode, pBinding);
     auto* pItems = static_cast<std::vector<CXFA_Node*>*>(pBinding);
     if (!pdfium::ContainsValue(*pItems, pFormNode))
       pItems->push_back(pFormNode);
     return pdfium::CollectionSize<int32_t>(*pItems);
   }
   CXFA_Node* pOldFormItem =
-      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
+      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_Attribute::BindingNode));
   if (!pOldFormItem) {
-    JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pFormNode, nullptr);
+    JSNode()->SetObject(XFA_Attribute::BindingNode, pFormNode, nullptr);
     return 1;
   }
   if (pOldFormItem == pFormNode)
     return 1;
 
   std::vector<CXFA_Node*>* pItems = new std::vector<CXFA_Node*>;
-  JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, pItems,
+  JSNode()->SetObject(XFA_Attribute::BindingNode, pItems,
                       &deleteBindItemCallBack);
   pItems->push_back(pOldFormItem);
   pItems->push_back(pFormNode);
@@ -422,14 +422,14 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
 int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (BindsFormItems()) {
     void* pBinding = nullptr;
-    JSNode()->TryObject(XFA_ATTRIBUTE_BindingNode, pBinding);
+    JSNode()->TryObject(XFA_Attribute::BindingNode, pBinding);
     auto* pItems = static_cast<std::vector<CXFA_Node*>*>(pBinding);
     auto iter = std::find(pItems->begin(), pItems->end(), pFormNode);
     if (iter != pItems->end()) {
       *iter = pItems->back();
       pItems->pop_back();
       if (pItems->size() == 1) {
-        JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, (*pItems)[0],
+        JSNode()->SetObject(XFA_Attribute::BindingNode, (*pItems)[0],
                             nullptr);  // Invalidates pItems.
         m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
         return 1;
@@ -438,21 +438,21 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
     return pdfium::CollectionSize<int32_t>(*pItems);
   }
   CXFA_Node* pOldFormItem =
-      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode));
+      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_Attribute::BindingNode));
   if (pOldFormItem != pFormNode)
     return pOldFormItem ? 1 : 0;
 
-  JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
+  JSNode()->SetObject(XFA_Attribute::BindingNode, nullptr, nullptr);
   return 0;
 }
 
 bool CXFA_Node::HasBindItem() {
   return GetPacketID() == XFA_XDPPACKET_Datasets &&
-         JSNode()->GetObject(XFA_ATTRIBUTE_BindingNode);
+         JSNode()->GetObject(XFA_Attribute::BindingNode);
 }
 
 CXFA_WidgetData* CXFA_Node::GetWidgetData() {
-  return (CXFA_WidgetData*)JSNode()->GetObject(XFA_ATTRIBUTE_WidgetData);
+  return (CXFA_WidgetData*)JSNode()->GetObject(XFA_Attribute::WidgetData);
 }
 
 CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
@@ -523,7 +523,7 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
   CXFA_Node* pLocaleNode = this;
   bool bLocale = false;
   do {
-    bLocale = pLocaleNode->JSNode()->TryCData(XFA_ATTRIBUTE_Locale,
+    bLocale = pLocaleNode->JSNode()->TryCData(XFA_Attribute::Locale,
                                               wsLocaleName, false);
     if (!bLocale) {
       pLocaleNode = pLocaleNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -535,7 +535,7 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
   wsLocaleName = GetDocument()->GetLocalMgr()->GetConfigLocaleName(pConfig);
   if (!wsLocaleName.IsEmpty())
     return true;
-  if (pTopSubform && pTopSubform->JSNode()->TryCData(XFA_ATTRIBUTE_Locale,
+  if (pTopSubform && pTopSubform->JSNode()->TryCData(XFA_Attribute::Locale,
                                                      wsLocaleName, false)) {
     return true;
   }
@@ -549,19 +549,21 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
 
 XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
   CXFA_Node* pKeep = GetFirstChildByClass(XFA_Element::Keep);
-  XFA_ATTRIBUTEENUM eLayoutType = JSNode()->GetEnum(XFA_ATTRIBUTE_Layout);
+  XFA_ATTRIBUTEENUM eLayoutType = JSNode()->GetEnum(XFA_Attribute::Layout);
   if (pKeep) {
     XFA_ATTRIBUTEENUM eIntact;
-    if (pKeep->JSNode()->TryEnum(XFA_ATTRIBUTE_Intact, eIntact, false)) {
+    if (pKeep->JSNode()->TryEnum(XFA_Attribute::Intact, eIntact, false)) {
       if (eIntact == XFA_ATTRIBUTEENUM_None &&
           eLayoutType == XFA_ATTRIBUTEENUM_Row &&
           m_pDocument->GetCurVersionMode() < XFA_VERSION_208) {
         CXFA_Node* pPreviewRow = GetNodeItem(XFA_NODEITEM_PrevSibling,
                                              XFA_ObjectType::ContainerNode);
-        if (pPreviewRow && pPreviewRow->JSNode()->GetEnum(
-                               XFA_ATTRIBUTE_Layout) == XFA_ATTRIBUTEENUM_Row) {
+        if (pPreviewRow &&
+            pPreviewRow->JSNode()->GetEnum(XFA_Attribute::Layout) ==
+                XFA_ATTRIBUTEENUM_Row) {
           XFA_ATTRIBUTEENUM eValue;
-          if (pKeep->JSNode()->TryEnum(XFA_ATTRIBUTE_Previous, eValue, false) &&
+          if (pKeep->JSNode()->TryEnum(XFA_Attribute::Previous, eValue,
+                                       false) &&
               (eValue == XFA_ATTRIBUTEENUM_ContentArea ||
                eValue == XFA_ATTRIBUTEENUM_PageArea)) {
             return XFA_ATTRIBUTEENUM_ContentArea;
@@ -569,7 +571,7 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
           CXFA_Node* pNode =
               pPreviewRow->GetFirstChildByClass(XFA_Element::Keep);
           if (pNode &&
-              pNode->JSNode()->TryEnum(XFA_ATTRIBUTE_Next, eValue, false) &&
+              pNode->JSNode()->TryEnum(XFA_Attribute::Next, eValue, false) &&
               (eValue == XFA_ATTRIBUTEENUM_ContentArea ||
                eValue == XFA_ATTRIBUTEENUM_PageArea)) {
             return XFA_ATTRIBUTEENUM_ContentArea;
@@ -601,7 +603,7 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
         return XFA_ATTRIBUTEENUM_ContentArea;
       if (pParentNode->GetIntact() == XFA_ATTRIBUTEENUM_None) {
         XFA_ATTRIBUTEENUM eParLayout =
-            pParentNode->JSNode()->GetEnum(XFA_ATTRIBUTE_Layout);
+            pParentNode->JSNode()->GetEnum(XFA_Attribute::Layout);
         if (eParLayout == XFA_ATTRIBUTEENUM_Position ||
             eParLayout == XFA_ATTRIBUTEENUM_Row ||
             eParLayout == XFA_ATTRIBUTEENUM_Table) {
@@ -610,7 +612,7 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
         XFA_VERSION version = m_pDocument->GetCurVersionMode();
         if (eParLayout == XFA_ATTRIBUTEENUM_Tb && version < XFA_VERSION_208) {
           CXFA_Measurement measureH;
-          if (JSNode()->TryMeasure(XFA_ATTRIBUTE_H, measureH, false))
+          if (JSNode()->TryMeasure(XFA_Attribute::H, measureH, false))
             return XFA_ATTRIBUTEENUM_ContentArea;
         }
         return XFA_ATTRIBUTEENUM_None;
@@ -843,19 +845,19 @@ bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
         CFX_XMLElement* pXMLElement =
             static_cast<CFX_XMLElement*>(pNode->m_pXMLNode);
         WideStringView wsAttributeName =
-            pNode->JSNode()->GetCData(XFA_ATTRIBUTE_QualifiedName);
+            pNode->JSNode()->GetCData(XFA_Attribute::QualifiedName);
         // TODO(tsepez): check usage of c_str() below.
         pXMLElement->RemoveAttribute(wsAttributeName.unterminated_c_str());
       }
       WideString wsName;
-      pNode->JSNode()->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
+      pNode->JSNode()->GetAttribute(XFA_Attribute::Name, wsName, false);
       CFX_XMLElement* pNewXMLElement = new CFX_XMLElement(wsName);
-      WideStringView wsValue = JSNode()->GetCData(XFA_ATTRIBUTE_Value);
+      WideStringView wsValue = JSNode()->GetCData(XFA_Attribute::Value);
       if (!wsValue.IsEmpty()) {
         pNewXMLElement->SetTextData(WideString(wsValue));
       }
       pNode->m_pXMLNode = pNewXMLElement;
-      pNode->JSNode()->SetEnum(XFA_ATTRIBUTE_Contains,
+      pNode->JSNode()->SetEnum(XFA_Attribute::Contains,
                                XFA_ATTRIBUTEENUM_Unknown, false);
     } else {
       m_pXMLNode->RemoveChildNode(pNode->m_pXMLNode);
@@ -953,9 +955,9 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
         break;
       }
       if (eType == XFA_Element::InstanceManager) {
-        WideStringView wsName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+        WideStringView wsName = JSNode()->GetCData(XFA_Attribute::Name);
         WideStringView wsInstName =
-            pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+            pNode->JSNode()->GetCData(XFA_Attribute::Name);
         if (wsInstName.GetLength() > 0 && wsInstName[0] == '_' &&
             wsInstName.Right(wsInstName.GetLength() - 1) == wsName) {
           pInstanceMgr = pNode;
@@ -994,7 +996,7 @@ void CXFA_Node::ClearFlag(uint32_t dwFlag) {
 }
 
 bool CXFA_Node::IsAttributeInXML() {
-  return JSNode()->GetEnum(XFA_ATTRIBUTE_Contains) ==
+  return JSNode()->GetEnum(XFA_Attribute::Contains) ==
          XFA_ATTRIBUTEENUM_MetaData;
 }
 
@@ -1009,20 +1011,21 @@ void CXFA_Node::OnRemoved(bool bNotify) {
 
 void CXFA_Node::UpdateNameHash() {
   const XFA_NOTSUREATTRIBUTE* pNotsure =
-      XFA_GetNotsureAttribute(GetElementType(), XFA_ATTRIBUTE_Name);
+      XFA_GetNotsureAttribute(GetElementType(), XFA_Attribute::Name);
   WideStringView wsName;
   if (!pNotsure || pNotsure->eType == XFA_ATTRIBUTETYPE_Cdata) {
-    wsName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+    wsName = JSNode()->GetCData(XFA_Attribute::Name);
     m_dwNameHash = FX_HashCode_GetW(wsName, false);
   } else if (pNotsure->eType == XFA_ATTRIBUTETYPE_Enum) {
-    wsName = GetAttributeEnumByID(JSNode()->GetEnum(XFA_ATTRIBUTE_Name))->pName;
+    wsName =
+        GetAttributeEnumByID(JSNode()->GetEnum(XFA_Attribute::Name))->pName;
     m_dwNameHash = FX_HashCode_GetW(wsName, false);
   }
 }
 
 CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
   if (!m_pXMLNode) {
-    WideString wsTag(JSNode()->GetCData(XFA_ATTRIBUTE_Name));
+    WideString wsTag(JSNode()->GetCData(XFA_Attribute::Name));
     m_pXMLNode = new CFX_XMLElement(wsTag);
     SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
@@ -1047,8 +1050,8 @@ CXFA_Node* CXFA_Node::GetItem(int32_t iIndex) {
       continue;
     }
     if (iCount == 0) {
-      WideStringView wsName = pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
-      WideStringView wsInstName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+      WideStringView wsName = pNode->JSNode()->GetCData(XFA_Attribute::Name);
+      WideStringView wsInstName = JSNode()->GetCData(XFA_Attribute::Name);
       if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
           wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
         return nullptr;
@@ -1078,8 +1081,8 @@ int32_t CXFA_Node::GetCount() {
       continue;
     }
     if (iCount == 0) {
-      WideStringView wsName = pNode->JSNode()->GetCData(XFA_ATTRIBUTE_Name);
-      WideStringView wsInstName = JSNode()->GetCData(XFA_ATTRIBUTE_Name);
+      WideStringView wsName = pNode->JSNode()->GetCData(XFA_Attribute::Name);
+      WideStringView wsInstName = JSNode()->GetCData(XFA_Attribute::Name);
       if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
           wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
         return iCount;
@@ -1188,7 +1191,8 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
         pDataParent->RemoveChild(pDataNode, true);
       }
     }
-    pFormNode->JSNode()->SetObject(XFA_ATTRIBUTE_BindingNode, nullptr, nullptr);
+    pFormNode->JSNode()->SetObject(XFA_Attribute::BindingNode, nullptr,
+                                   nullptr);
   }
 }
 

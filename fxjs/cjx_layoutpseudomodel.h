@@ -29,7 +29,7 @@ class CJX_LayoutPseudoModel : public CJX_Object {
   explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
   ~CJX_LayoutPseudoModel() override;
 
-  void Ready(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Ready(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
 
   void H(CFXJSE_Arguments* pArguments);
   void W(CFXJSE_Arguments* pArguments);

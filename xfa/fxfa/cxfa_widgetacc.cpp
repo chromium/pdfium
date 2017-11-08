@@ -252,11 +252,11 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
     imageData.SetTransferEncoding(XFA_ATTRIBUTEENUM_Base64);
     return;
   }
-  pBind->JSNode()->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType, false,
+  pBind->JSNode()->SetCData(XFA_Attribute::ContentType, wsContentType, false,
                             false);
   CXFA_Node* pHrefNode = pBind->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pHrefNode) {
-    pHrefNode->JSNode()->SetCData(XFA_ATTRIBUTE_Value, wsHref, false, false);
+    pHrefNode->JSNode()->SetCData(XFA_Attribute::Value, wsHref, false, false);
   } else {
     CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element);
@@ -512,7 +512,7 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
     }
   }
   if (wsCaptionName.IsEmpty())
-    m_pNode->JSNode()->TryCData(XFA_ATTRIBUTE_Name, wsCaptionName, true);
+    m_pNode->JSNode()->TryCData(XFA_Attribute::Name, wsCaptionName, true);
 
   return wsCaptionName;
 }
@@ -1280,7 +1280,7 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   GetNode()
       ->GetNodeItem(XFA_NODEITEM_Parent)
       ->JSNode()
-      ->TryEnum(XFA_ATTRIBUTE_Layout, eLayoutMode, true);
+      ->TryEnum(XFA_Attribute::Layout, eLayoutMode, true);
   if ((eLayoutMode == XFA_ATTRIBUTEENUM_Position ||
        eLayoutMode == XFA_ATTRIBUTEENUM_Tb ||
        eLayoutMode == XFA_ATTRIBUTEENUM_Row ||

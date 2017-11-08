@@ -27,9 +27,9 @@ class CXFA_FFNotify {
 
   // Node events
   void OnNodeReady(CXFA_Node* pNode);
-  void OnValueChanging(CXFA_Node* pSender, XFA_ATTRIBUTE eAttr);
+  void OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr);
   void OnValueChanged(CXFA_Node* pSender,
-                      XFA_ATTRIBUTE eAttr,
+                      XFA_Attribute eAttr,
                       CXFA_Node* pParentNode,
                       CXFA_Node* pWidgetNode);
   void OnChildAdded(CXFA_Node* pSender);

@@ -77,10 +77,10 @@ CFX_RectF CXFA_LayoutItem::GetRect(bool bRelative) const {
           pLayoutItem->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
       if (pMarginNode) {
         sPos += CFX_PointF(pMarginNode->JSNode()
-                               ->GetMeasure(XFA_ATTRIBUTE_LeftInset)
+                               ->GetMeasure(XFA_Attribute::LeftInset)
                                .ToUnit(XFA_UNIT_Pt),
                            pMarginNode->JSNode()
-                               ->GetMeasure(XFA_ATTRIBUTE_TopInset)
+                               ->GetMeasure(XFA_Attribute::TopInset)
                                .ToUnit(XFA_UNIT_Pt));
       }
       continue;
@@ -89,10 +89,10 @@ CFX_RectF CXFA_LayoutItem::GetRect(bool bRelative) const {
     if (pLayoutItem->m_pFormNode->GetElementType() ==
         XFA_Element::ContentArea) {
       sPos += CFX_PointF(pLayoutItem->m_pFormNode->JSNode()
-                             ->GetMeasure(XFA_ATTRIBUTE_X)
+                             ->GetMeasure(XFA_Attribute::X)
                              .ToUnit(XFA_UNIT_Pt),
                          pLayoutItem->m_pFormNode->JSNode()
-                             ->GetMeasure(XFA_ATTRIBUTE_Y)
+                             ->GetMeasure(XFA_Attribute::Y)
                              .ToUnit(XFA_UNIT_Pt));
       break;
     }

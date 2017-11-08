@@ -25,16 +25,16 @@ void CJX_DataWindow::IsRecordGroup(CFXJSE_Arguments* pArguments) {}
 
 void CJX_DataWindow::RecordsBefore(CFXJSE_Value* pValue,
                                    bool bSetting,
-                                   XFA_ATTRIBUTE eAttribute) {}
+                                   XFA_Attribute eAttribute) {}
 
 void CJX_DataWindow::CurrentRecordNumber(CFXJSE_Value* pValue,
                                          bool bSetting,
-                                         XFA_ATTRIBUTE eAttribute) {}
+                                         XFA_Attribute eAttribute) {}
 
 void CJX_DataWindow::RecordsAfter(CFXJSE_Value* pValue,
                                   bool bSetting,
-                                  XFA_ATTRIBUTE eAttribute) {}
+                                  XFA_Attribute eAttribute) {}
 
 void CJX_DataWindow::IsDefined(CFXJSE_Value* pValue,
                                bool bSetting,
-                               XFA_ATTRIBUTE eAttribute) {}
+                               XFA_Attribute eAttribute) {}
