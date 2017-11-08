@@ -406,11 +406,11 @@ class CJX_Node : public CJX_Object {
   void SendAttributeChangeMessage(XFA_Attribute eAttribute, bool bScriptModify);
 
   bool SetValue(XFA_Attribute eAttr,
-                XFA_ATTRIBUTETYPE eType,
+                XFA_AttributeType eType,
                 void* pValue,
                 bool bNotify);
   bool GetValue(XFA_Attribute eAttr,
-                XFA_ATTRIBUTETYPE eType,
+                XFA_AttributeType eType,
                 bool bUseDefault,
                 void*& pValue);
 

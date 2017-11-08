@@ -214,30 +214,30 @@ bool CJX_Node::SetAttribute(XFA_Attribute eAttr,
   if (!pAttr)
     return false;
 
-  XFA_ATTRIBUTETYPE eType = pAttr->eType;
-  if (eType == XFA_ATTRIBUTETYPE_NOTSURE) {
+  XFA_AttributeType eType = pAttr->eType;
+  if (eType == XFA_AttributeType::NotSure) {
     const XFA_NOTSUREATTRIBUTE* pNotsure =
         XFA_GetNotsureAttribute(GetXFANode()->GetElementType(), pAttr->eName);
-    eType = pNotsure ? pNotsure->eType : XFA_ATTRIBUTETYPE_Cdata;
+    eType = pNotsure ? pNotsure->eType : XFA_AttributeType::CData;
   }
   switch (eType) {
-    case XFA_ATTRIBUTETYPE_Enum: {
+    case XFA_AttributeType::Enum: {
       const XFA_ATTRIBUTEENUMINFO* pEnum = XFA_GetAttributeEnumByName(wsValue);
       return SetEnum(pAttr->eName,
                      pEnum ? pEnum->eName
                            : (XFA_ATTRIBUTEENUM)(intptr_t)(pAttr->pDefValue),
                      bNotify);
     } break;
-    case XFA_ATTRIBUTETYPE_Cdata:
+    case XFA_AttributeType::CData:
       return SetCData(pAttr->eName, WideString(wsValue), bNotify, false);
-    case XFA_ATTRIBUTETYPE_Boolean:
+    case XFA_AttributeType::Boolean:
       return SetBoolean(pAttr->eName, wsValue != L"0", bNotify);
-    case XFA_ATTRIBUTETYPE_Integer:
+    case XFA_AttributeType::Integer:
       return SetInteger(pAttr->eName,
                         FXSYS_round(FXSYS_wcstof(wsValue.unterminated_c_str(),
                                                  wsValue.GetLength(), nullptr)),
                         bNotify);
-    case XFA_ATTRIBUTETYPE_Measure:
+    case XFA_AttributeType::Measure:
       return SetMeasure(pAttr->eName, CXFA_Measurement(wsValue), bNotify);
     default:
       break;
@@ -264,14 +264,14 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
   if (!pAttr)
     return false;
 
-  XFA_ATTRIBUTETYPE eType = pAttr->eType;
-  if (eType == XFA_ATTRIBUTETYPE_NOTSURE) {
+  XFA_AttributeType eType = pAttr->eType;
+  if (eType == XFA_AttributeType::NotSure) {
     const XFA_NOTSUREATTRIBUTE* pNotsure =
         XFA_GetNotsureAttribute(GetXFANode()->GetElementType(), pAttr->eName);
-    eType = pNotsure ? pNotsure->eType : XFA_ATTRIBUTETYPE_Cdata;
+    eType = pNotsure ? pNotsure->eType : XFA_AttributeType::CData;
   }
   switch (eType) {
-    case XFA_ATTRIBUTETYPE_Enum: {
+    case XFA_AttributeType::Enum: {
       XFA_ATTRIBUTEENUM eValue;
       if (!TryEnum(pAttr->eName, eValue, bUseDefault))
         return false;
@@ -279,7 +279,7 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
       wsValue = GetAttributeEnumByID(eValue)->pName;
       return true;
     }
-    case XFA_ATTRIBUTETYPE_Cdata: {
+    case XFA_AttributeType::CData: {
       WideStringView wsValueC;
       if (!TryCData(pAttr->eName, wsValueC, bUseDefault))
         return false;
@@ -287,7 +287,7 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
       wsValue = wsValueC;
       return true;
     }
-    case XFA_ATTRIBUTETYPE_Boolean: {
+    case XFA_AttributeType::Boolean: {
       bool bValue;
       if (!TryBoolean(pAttr->eName, bValue, bUseDefault))
         return false;
@@ -295,7 +295,7 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
       wsValue = bValue ? L"1" : L"0";
       return true;
     }
-    case XFA_ATTRIBUTETYPE_Integer: {
+    case XFA_AttributeType::Integer: {
       int32_t iValue;
       if (!TryInteger(pAttr->eName, iValue, bUseDefault))
         return false;
@@ -303,7 +303,7 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
       wsValue.Format(L"%d", iValue);
       return true;
     }
-    case XFA_ATTRIBUTETYPE_Measure: {
+    case XFA_AttributeType::Measure: {
       CXFA_Measurement mValue;
       if (!TryMeasure(pAttr->eName, mValue, bUseDefault))
         return false;
@@ -2962,14 +2962,14 @@ void CJX_Node::Script_Encrypt_Format(CFXJSE_Value* pValue,
 
 bool CJX_Node::TryBoolean(XFA_Attribute eAttr, bool& bValue, bool bUseDefault) {
   void* pValue = nullptr;
-  if (!GetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, bUseDefault, pValue))
+  if (!GetValue(eAttr, XFA_AttributeType::Boolean, bUseDefault, pValue))
     return false;
   bValue = !!pValue;
   return true;
 }
 
 bool CJX_Node::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
-  return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (void*)(uintptr_t)bValue,
+  return SetValue(eAttr, XFA_AttributeType::Boolean, (void*)(uintptr_t)bValue,
                   bNotify);
 }
 
@@ -2979,7 +2979,7 @@ bool CJX_Node::GetBoolean(XFA_Attribute eAttr) {
 }
 
 bool CJX_Node::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
-  return SetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, (void*)(uintptr_t)iValue,
+  return SetValue(eAttr, XFA_AttributeType::Integer, (void*)(uintptr_t)iValue,
                   bNotify);
 }
 
@@ -2992,7 +2992,7 @@ bool CJX_Node::TryInteger(XFA_Attribute eAttr,
                           int32_t& iValue,
                           bool bUseDefault) {
   void* pValue = nullptr;
-  if (!GetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, bUseDefault, pValue))
+  if (!GetValue(eAttr, XFA_AttributeType::Integer, bUseDefault, pValue))
     return false;
   iValue = (int32_t)(uintptr_t)pValue;
   return true;
@@ -3002,7 +3002,7 @@ bool CJX_Node::TryEnum(XFA_Attribute eAttr,
                        XFA_ATTRIBUTEENUM& eValue,
                        bool bUseDefault) {
   void* pValue = nullptr;
-  if (!GetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, bUseDefault, pValue))
+  if (!GetValue(eAttr, XFA_AttributeType::Enum, bUseDefault, pValue))
     return false;
   eValue = (XFA_ATTRIBUTEENUM)(uintptr_t)pValue;
   return true;
@@ -3011,7 +3011,7 @@ bool CJX_Node::TryEnum(XFA_Attribute eAttr,
 bool CJX_Node::SetEnum(XFA_Attribute eAttr,
                        XFA_ATTRIBUTEENUM eValue,
                        bool bNotify) {
-  return SetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, (void*)(uintptr_t)eValue,
+  return SetValue(eAttr, XFA_AttributeType::Enum, (void*)(uintptr_t)eValue,
                   bNotify);
 }
 
@@ -3043,7 +3043,7 @@ bool CJX_Node::TryMeasure(XFA_Attribute eAttr,
   }
   if (bUseDefault &&
       XFA_GetAttributeDefaultValue(pValue, GetXFANode()->GetElementType(),
-                                   eAttr, XFA_ATTRIBUTETYPE_Measure,
+                                   eAttr, XFA_AttributeType::Measure,
                                    GetXFANode()->GetPacketID())) {
     memcpy(&mValue, pValue, sizeof(mValue));
     return true;
@@ -3213,7 +3213,7 @@ bool CJX_Node::TryCData(XFA_Attribute eAttr,
   }
   void* pValue = nullptr;
   if (XFA_GetAttributeDefaultValue(pValue, GetXFANode()->GetElementType(),
-                                   eAttr, XFA_ATTRIBUTETYPE_Cdata,
+                                   eAttr, XFA_AttributeType::CData,
                                    GetXFANode()->GetPacketID())) {
     wsValue = (const wchar_t*)pValue;
     return true;
@@ -3241,7 +3241,7 @@ bool CJX_Node::TryCData(XFA_Attribute eAttr,
   }
   void* pValue = nullptr;
   if (XFA_GetAttributeDefaultValue(pValue, GetXFANode()->GetElementType(),
-                                   eAttr, XFA_ATTRIBUTETYPE_Cdata,
+                                   eAttr, XFA_AttributeType::CData,
                                    GetXFANode()->GetPacketID())) {
     wsValue = (WideStringView)(const wchar_t*)pValue;
     return true;
@@ -3268,7 +3268,7 @@ bool CJX_Node::TryObject(XFA_Attribute eAttr, void*& pData) {
 }
 
 bool CJX_Node::SetValue(XFA_Attribute eAttr,
-                        XFA_ATTRIBUTETYPE eType,
+                        XFA_AttributeType eType,
                         void* pValue,
                         bool bNotify) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
@@ -3280,18 +3280,18 @@ bool CJX_Node::SetValue(XFA_Attribute eAttr,
     const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
     if (pInfo) {
       switch (eType) {
-        case XFA_ATTRIBUTETYPE_Enum:
+        case XFA_AttributeType::Enum:
           static_cast<CFX_XMLElement*>(GetXFANode()->GetXMLMappingNode())
               ->SetString(
                   pInfo->pName,
                   GetAttributeEnumByID((XFA_ATTRIBUTEENUM)(uintptr_t)pValue)
                       ->pName);
           break;
-        case XFA_ATTRIBUTETYPE_Boolean:
+        case XFA_AttributeType::Boolean:
           static_cast<CFX_XMLElement*>(GetXFANode()->GetXMLMappingNode())
               ->SetString(pInfo->pName, pValue ? L"1" : L"0");
           break;
-        case XFA_ATTRIBUTETYPE_Integer: {
+        case XFA_AttributeType::Integer: {
           WideString wsValue;
           wsValue.Format(
               L"%d", static_cast<int32_t>(reinterpret_cast<uintptr_t>(pValue)));
@@ -3308,7 +3308,7 @@ bool CJX_Node::SetValue(XFA_Attribute eAttr,
 }
 
 bool CJX_Node::GetValue(XFA_Attribute eAttr,
-                        XFA_ATTRIBUTETYPE eType,
+                        XFA_AttributeType eType,
                         bool bUseDefault,
                         void*& pValue) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);

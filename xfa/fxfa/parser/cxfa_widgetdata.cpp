@@ -203,7 +203,7 @@ XFA_ATTRIBUTEENUM GetAttributeDefaultValue_Enum(XFA_Element eElement,
                                                 uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_ATTRIBUTETYPE_Enum, dwPacket)) {
+                                   XFA_AttributeType::Enum, dwPacket)) {
     return (XFA_ATTRIBUTEENUM)(uintptr_t)pValue;
   }
   return XFA_ATTRIBUTEENUM_Unknown;
@@ -214,7 +214,7 @@ WideStringView GetAttributeDefaultValue_Cdata(XFA_Element eElement,
                                               uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_ATTRIBUTETYPE_Cdata, dwPacket)) {
+                                   XFA_AttributeType::CData, dwPacket)) {
     return (const wchar_t*)pValue;
   }
   return nullptr;
@@ -225,7 +225,7 @@ bool GetAttributeDefaultValue_Boolean(XFA_Element eElement,
                                       uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_ATTRIBUTETYPE_Boolean, dwPacket)) {
+                                   XFA_AttributeType::Boolean, dwPacket)) {
     return !!pValue;
   }
   return false;

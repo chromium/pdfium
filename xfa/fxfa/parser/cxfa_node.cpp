@@ -1013,10 +1013,10 @@ void CXFA_Node::UpdateNameHash() {
   const XFA_NOTSUREATTRIBUTE* pNotsure =
       XFA_GetNotsureAttribute(GetElementType(), XFA_Attribute::Name);
   WideStringView wsName;
-  if (!pNotsure || pNotsure->eType == XFA_ATTRIBUTETYPE_Cdata) {
+  if (!pNotsure || pNotsure->eType == XFA_AttributeType::CData) {
     wsName = JSNode()->GetCData(XFA_Attribute::Name);
     m_dwNameHash = FX_HashCode_GetW(wsName, false);
-  } else if (pNotsure->eType == XFA_ATTRIBUTETYPE_Enum) {
+  } else if (pNotsure->eType == XFA_AttributeType::Enum) {
     wsName =
         GetAttributeEnumByID(JSNode()->GetEnum(XFA_Attribute::Name))->pName;
     m_dwNameHash = FX_HashCode_GetW(wsName, false);

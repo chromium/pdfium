@@ -272,14 +272,14 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
 
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
                                                     XFA_Attribute eAttribute,
-                                                    XFA_ATTRIBUTETYPE eType) {
+                                                    XFA_AttributeType eType) {
   int32_t iStart = 0, iEnd = g_iXFANotsureCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
     const XFA_NOTSUREATTRIBUTE* pAttr = g_XFANotsureAttributes + iMid;
     if (eElement == pAttr->eElement) {
       if (pAttr->attribute == eAttribute) {
-        if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType)
+        if (eType == XFA_AttributeType::NotSure || eType == pAttr->eType)
           return pAttr;
         return nullptr;
       }
@@ -288,7 +288,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
         pAttr = g_XFANotsureAttributes + iBefore;
         while (eElement == pAttr->eElement) {
           if (pAttr->attribute == eAttribute) {
-            if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType)
+            if (eType == XFA_AttributeType::NotSure || eType == pAttr->eType)
               return pAttr;
             return nullptr;
           }
@@ -305,7 +305,7 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
         pAttr = g_XFANotsureAttributes + iAfter;
         while (eElement == pAttr->eElement) {
           if (pAttr->attribute == eAttribute) {
-            if (eType == XFA_ATTRIBUTETYPE_NOTSURE || eType == pAttr->eType)
+            if (eType == XFA_AttributeType::NotSure || eType == pAttr->eType)
               return pAttr;
             return nullptr;
           }
@@ -398,7 +398,7 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
                                                       uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_ATTRIBUTETYPE_Measure, dwPacket)) {
+                                   XFA_AttributeType::Measure, dwPacket)) {
     return *(CXFA_Measurement*)pValue;
   }
   return CXFA_Measurement();
@@ -407,7 +407,7 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
 bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_Element eElement,
                                   XFA_Attribute eAttribute,
-                                  XFA_ATTRIBUTETYPE eType,
+                                  XFA_AttributeType eType,
                                   uint32_t dwPacket) {
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
   if (!pInfo)
@@ -418,7 +418,7 @@ bool XFA_GetAttributeDefaultValue(void*& pValue,
     pValue = pInfo->pDefValue;
     return true;
   }
-  if (pInfo->eType == XFA_ATTRIBUTETYPE_NOTSURE) {
+  if (pInfo->eType == XFA_AttributeType::NotSure) {
     const XFA_NOTSUREATTRIBUTE* pAttr =
         XFA_GetNotsureAttribute(eElement, eAttribute, eType);
     if (pAttr) {

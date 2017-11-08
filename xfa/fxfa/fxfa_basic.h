@@ -939,19 +939,20 @@ struct XFA_ELEMENTINFO {
   XFA_ObjectType eObjectType;
 };
 
-enum XFA_ATTRIBUTETYPE {
-  XFA_ATTRIBUTETYPE_NOTSURE,
-  XFA_ATTRIBUTETYPE_Enum,
-  XFA_ATTRIBUTETYPE_Cdata,
-  XFA_ATTRIBUTETYPE_Boolean,
-  XFA_ATTRIBUTETYPE_Integer,
-  XFA_ATTRIBUTETYPE_Measure,
+enum class XFA_AttributeType : uint8_t {
+  NotSure,
+  Enum,
+  CData,
+  Boolean,
+  Integer,
+  Measure,
 };
+
 struct XFA_ATTRIBUTEINFO {
   uint32_t uHash;
   const wchar_t* pName;
   XFA_Attribute eName;
-  XFA_ATTRIBUTETYPE eType;
+  XFA_AttributeType eType;
   uint32_t dwPackets;
   void* pDefValue;
 };
@@ -999,7 +1000,7 @@ enum XFA_UNIT {
 struct XFA_NOTSUREATTRIBUTE {
   XFA_Element eElement;
   XFA_Attribute attribute;
-  XFA_ATTRIBUTETYPE eType;
+  XFA_AttributeType eType;
   void* pValue;
 };
 
