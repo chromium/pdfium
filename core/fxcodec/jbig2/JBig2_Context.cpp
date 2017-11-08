@@ -101,7 +101,10 @@ int32_t CJBig2_Context::decode_SquentialOrgnazation(
     }
     if (m_pSegment->m_dwData_length != 0xffffffff) {
       m_dwOffset += m_pSegment->m_dwData_length;
-      m_pStream->setOffset(m_dwOffset);
+      if (!m_dwOffset.IsValid())
+        return JBIG2_ERROR_FATAL;
+
+      m_pStream->setOffset(m_dwOffset.ValueOrDie());
     } else {
       m_pStream->offset(4);
     }
