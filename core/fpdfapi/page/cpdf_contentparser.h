@@ -14,6 +14,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_AllStates;
@@ -52,7 +53,7 @@ class CPDF_ContentParser {
   uint32_t m_nStreams = 0;
   RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
-  uint8_t* m_pData = nullptr;
+  MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   uint32_t m_Size = 0;
   uint32_t m_CurrentOffset = 0;
 

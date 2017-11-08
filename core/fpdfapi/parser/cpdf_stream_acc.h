@@ -33,6 +33,7 @@ class CPDF_StreamAcc : public Retainable {
   }
 
   const uint8_t* GetData() const;
+  uint8_t* GetData();
   uint32_t GetSize() const;
   const ByteString& GetImageDecoder() const { return m_ImageDecoder; }
   const CPDF_Dictionary* GetImageParam() const { return m_pImageParam; }
@@ -41,6 +42,9 @@ class CPDF_StreamAcc : public Retainable {
  protected:
   explicit CPDF_StreamAcc(const CPDF_Stream* pStream);
   ~CPDF_StreamAcc() override;
+
+ private:
+  uint8_t* GetDataHelper() const;
 
   uint8_t* m_pData;
   uint32_t m_dwSize;

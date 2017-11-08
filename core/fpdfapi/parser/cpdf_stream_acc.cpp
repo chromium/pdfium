@@ -61,9 +61,11 @@ CPDF_StreamAcc::~CPDF_StreamAcc() {
 }
 
 const uint8_t* CPDF_StreamAcc::GetData() const {
-  if (m_bNewBuf)
-    return m_pData;
-  return m_pStream ? m_pStream->GetRawData() : nullptr;
+  return GetDataHelper();
+}
+
+uint8_t* CPDF_StreamAcc::GetData() {
+  return GetDataHelper();
 }
 
 uint32_t CPDF_StreamAcc::GetSize() const {
@@ -82,4 +84,10 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CPDF_StreamAcc::DetachData() {
   std::unique_ptr<uint8_t, FxFreeDeleter> p(FX_Alloc(uint8_t, m_dwSize));
   memcpy(p.get(), m_pData, m_dwSize);
   return p;
+}
+
+uint8_t* CPDF_StreamAcc::GetDataHelper() const {
+  if (m_bNewBuf)
+    return m_pData;
+  return m_pStream ? m_pStream->GetRawData() : nullptr;
 }
