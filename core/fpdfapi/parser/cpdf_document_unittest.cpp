@@ -133,7 +133,7 @@ class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
 class TestLinearized : public CPDF_LinearizedHeader {
  public:
   explicit TestLinearized(CPDF_Dictionary* dict)
-      : CPDF_LinearizedHeader(dict) {}
+      : CPDF_LinearizedHeader(dict, 0) {}
 };
 
 class CPDF_TestDocPagesWithoutKids : public CPDF_Document {

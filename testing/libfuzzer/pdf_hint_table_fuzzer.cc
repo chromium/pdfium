@@ -49,7 +49,7 @@ class HintTableForFuzzing : public CPDF_HintTables {
 class FakeLinearized : public CPDF_LinearizedHeader {
  public:
   explicit FakeLinearized(CPDF_Dictionary* linearized_dict)
-      : CPDF_LinearizedHeader(linearized_dict) {}
+      : CPDF_LinearizedHeader(linearized_dict, 0) {}
 };
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

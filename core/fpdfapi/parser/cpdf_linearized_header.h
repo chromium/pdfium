@@ -43,18 +43,19 @@ class CPDF_LinearizedHeader {
   uint32_t GetHintLength() const { return m_HintLength; }
 
  protected:
-  explicit CPDF_LinearizedHeader(const CPDF_Dictionary* pDict);
+  CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
+                        FX_FILESIZE szLastXRefOffset);
 
  private:
-  FX_FILESIZE m_szFileSize = 0;
-  uint32_t m_dwFirstPageNo = 0;
-  FX_FILESIZE m_szMainXRefTableFirstEntryOffset = 0;
-  uint32_t m_PageCount = 0;
-  FX_FILESIZE m_szFirstPageEndOffset = 0;
-  uint32_t m_FirstPageObjNum = 0;
+  const FX_FILESIZE m_szFileSize;
+  const uint32_t m_dwFirstPageNo;
+  const FX_FILESIZE m_szMainXRefTableFirstEntryOffset;
+  const uint32_t m_PageCount;
+  const FX_FILESIZE m_szFirstPageEndOffset;
+  const uint32_t m_FirstPageObjNum;
+  const FX_FILESIZE m_szLastXRefOffset;
   FX_FILESIZE m_szHintStart = 0;
   uint32_t m_HintLength = 0;
-  FX_FILESIZE m_szLastXRefOffset = 0;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_HEADER_H_

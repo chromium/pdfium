@@ -70,22 +70,25 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
   if (parser->GetNextWord(nullptr) != "endobj")
     return nullptr;
 
-  auto result = pdfium::WrapUnique(new CPDF_LinearizedHeader(pDict.get()));
-  result->m_szLastXRefOffset = parser->GetPos();
+  auto result = pdfium::WrapUnique(
+      new CPDF_LinearizedHeader(pDict.get(), parser->GetPos()));
 
-  return IsLinearizedHeaderValid(result.get(),
-                                 parser->GetFileAccess()->GetSize())
-             ? std::move(result)
-             : nullptr;
+  if (!IsLinearizedHeaderValid(result.get(),
+                               parser->GetFileAccess()->GetSize())) {
+    return nullptr;
+  }
+  return result;
 }
 
-CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict) {
-  m_szFileSize = pDict->GetIntegerFor("L");
-  m_dwFirstPageNo = pDict->GetIntegerFor("P");
-  m_szMainXRefTableFirstEntryOffset = pDict->GetIntegerFor("T");
-  m_PageCount = pDict->GetIntegerFor("N");
-  m_szFirstPageEndOffset = pDict->GetIntegerFor("E");
-  m_FirstPageObjNum = pDict->GetIntegerFor("O");
+CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
+                                             FX_FILESIZE szLastXRefOffset)
+    : m_szFileSize(pDict->GetIntegerFor("L")),
+      m_dwFirstPageNo(pDict->GetIntegerFor("P")),
+      m_szMainXRefTableFirstEntryOffset(pDict->GetIntegerFor("T")),
+      m_PageCount(pDict->GetIntegerFor("N")),
+      m_szFirstPageEndOffset(pDict->GetIntegerFor("E")),
+      m_FirstPageObjNum(pDict->GetIntegerFor("O")),
+      m_szLastXRefOffset(szLastXRefOffset) {
   const CPDF_Array* pHintStreamRange = pDict->GetArrayFor("H");
   const size_t nHintStreamSize =
       pHintStreamRange ? pHintStreamRange->GetCount() : 0;
