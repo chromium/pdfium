@@ -1015,9 +1015,9 @@ struct XFA_METHODINFO {
 typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
                                                    bool bSetting,
                                                    XFA_Attribute eAttribute);
-enum XFA_SCRIPT_TYPE {
-  XFA_SCRIPT_Basic,
-  XFA_SCRIPT_Object,
+enum class XFA_ScriptType : uint8_t {
+  Basic,
+  Object,
 };
 
 struct XFA_SCRIPTATTRIBUTEINFO {
@@ -1025,7 +1025,7 @@ struct XFA_SCRIPTATTRIBUTEINFO {
   const wchar_t* pName;
   XFA_ATTRIBUTE_CALLBACK callback;
   XFA_Attribute attribute;
-  uint16_t eValueType;
+  XFA_ScriptType eValueType;
 };
 
 #endif  // XFA_FXFA_FXFA_BASIC_H_

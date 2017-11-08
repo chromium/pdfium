@@ -465,7 +465,8 @@ void CJX_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
   } else {
     const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
         resolveNodeRS.pScriptAttribute;
-    if (lpAttributeInfo && lpAttributeInfo->eValueType == XFA_SCRIPT_Object) {
+    if (lpAttributeInfo &&
+        lpAttributeInfo->eValueType == XFA_ScriptType::Object) {
       auto pValue =
           pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetRuntime());
       CJX_Object* jsObject = resolveNodeRS.objects.front()->JSObject();

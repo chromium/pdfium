@@ -48,7 +48,8 @@ struct XFA_RESOLVENODE_RS {
   ~XFA_RESOLVENODE_RS();
 
   size_t GetAttributeResult(CXFA_ValueArray* valueArray) const {
-    if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
+    if (pScriptAttribute &&
+        pScriptAttribute->eValueType == XFA_ScriptType::Object) {
       for (CXFA_Object* pObject : objects) {
         auto pValue = pdfium::MakeUnique<CFXJSE_Value>(valueArray->m_pIsolate);
         CJX_Object* jsObject = pObject->JSObject();
