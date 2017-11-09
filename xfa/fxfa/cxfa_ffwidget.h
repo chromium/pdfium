@@ -146,7 +146,6 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
 
   CXFA_WidgetAcc* GetDataAcc();
-  bool GetToolTip(WideString& wsToolTip);
 
   CXFA_FFDocView* GetDocView();
   void SetDocView(CXFA_FFDocView* pDocView);
@@ -154,7 +153,6 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   CXFA_FFApp* GetApp();
   IXFA_AppProvider* GetAppProvider();
   void AddInvalidateRect();
-  bool GetCaptionText(WideString& wsCap);
   bool IsFocused() const { return !!(m_dwStatus & XFA_WidgetStatus_Focused); }
   CFX_PointF Rotate2Normal(const CFX_PointF& point);
   CFX_Matrix GetRotateMatrix();

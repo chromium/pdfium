@@ -240,14 +240,6 @@ void CXFA_TextLayout::InitBreak(CFX_CSSComputedStyle* pStyle,
   m_pBreak->SetCharSpace(pStyle->GetLetterSpacing().GetValue());
 }
 
-int32_t CXFA_TextLayout::GetText(WideString& wsText) {
-  GetTextDataNode();
-  wsText.clear();
-  if (!m_bRichText)
-    wsText = m_pTextDataNode->JSNode()->GetContent(false);
-  return wsText.GetLength();
-}
-
 float CXFA_TextLayout::GetLayoutHeight() {
   if (!m_pLoader)
     return 0;

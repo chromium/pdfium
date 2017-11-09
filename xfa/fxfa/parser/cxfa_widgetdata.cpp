@@ -359,11 +359,6 @@ CXFA_BindData CXFA_WidgetData::GetBindData() {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Bind, false));
 }
 
-CXFA_AssistData CXFA_WidgetData::GetAssistData() {
-  return CXFA_AssistData(
-      m_pNode->JSNode()->GetProperty(0, XFA_Element::Assist, false));
-}
-
 bool CXFA_WidgetData::GetWidth(float& fWidth) {
   return TryMeasure(XFA_Attribute::W, fWidth);
 }

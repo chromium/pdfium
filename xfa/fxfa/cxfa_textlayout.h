@@ -33,7 +33,6 @@ class CXFA_TextLayout {
   explicit CXFA_TextLayout(CXFA_TextProvider* pTextProvider);
   ~CXFA_TextLayout();
 
-  int32_t GetText(WideString& wsText);
   float GetLayoutHeight();
   float StartLayout(float fWidth = -1);
   bool DoLayout(int32_t iBlockIndex,

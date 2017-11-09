@@ -971,16 +971,6 @@ CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
   return m_pDataAcc.Get();
 }
 
-bool CXFA_FFWidget::GetToolTip(WideString& wsToolTip) {
-  CXFA_AssistData assist = m_pDataAcc->GetAssistData();
-  if (assist) {
-    CXFA_ToolTipData toolTipData = assist.GetToolTipData();
-    if (toolTipData)
-      return toolTipData.GetTip(wsToolTip);
-  }
-  return GetCaptionText(wsToolTip);
-}
-
 void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
                                  const CFX_Matrix& matrix,
                                  uint32_t dwStatus) {
@@ -1036,15 +1026,6 @@ void CXFA_FFWidget::AddInvalidateRect() {
   CFX_RectF rtWidget = GetBBox(XFA_WidgetStatus_Focused);
   rtWidget.Inflate(2, 2);
   m_pDocView->AddInvalidateRect(m_pPageView, rtWidget);
-}
-
-bool CXFA_FFWidget::GetCaptionText(WideString& wsCap) {
-  CXFA_TextLayout* pCapTextlayout = m_pDataAcc->GetCaptionTextLayout();
-  if (!pCapTextlayout) {
-    return false;
-  }
-  pCapTextlayout->GetText(wsCap);
-  return true;
 }
 
 bool CXFA_FFWidget::OnMouseEnter() {
