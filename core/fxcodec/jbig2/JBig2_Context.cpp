@@ -69,8 +69,7 @@ CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
 
 CJBig2_Context::~CJBig2_Context() {}
 
-int32_t CJBig2_Context::decode_SquentialOrgnazation(
-    IFX_PauseIndicator* pPause) {
+int32_t CJBig2_Context::decodeSequential(IFX_PauseIndicator* pPause) {
   int32_t nRet;
   if (m_pStream->getByteLeft() <= 0)
     return JBIG2_END_OF_FILE;
@@ -119,21 +118,17 @@ int32_t CJBig2_Context::decode_SquentialOrgnazation(
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::decode_EmbedOrgnazation(IFX_PauseIndicator* pPause) {
-  return decode_SquentialOrgnazation(pPause);
-}
-
-int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(
-    IFX_PauseIndicator* pPause) {
+int32_t CJBig2_Context::decodeRandomFirstPage(IFX_PauseIndicator* pPause) {
   int32_t nRet;
   while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
     auto pSegment = pdfium::MakeUnique<CJBig2_Segment>();
     nRet = parseSegmentHeader(pSegment.get());
-    if (nRet != JBIG2_SUCCESS) {
+    if (nRet != JBIG2_SUCCESS)
       return nRet;
-    } else if (pSegment->m_cFlags.s.type == 51) {
+
+    if (pSegment->m_cFlags.s.type == 51)
       break;
-    }
+
     m_SegmentList.push_back(std::move(pSegment));
     if (pPause && pPause->NeedToPauseNow()) {
       m_PauseStep = 3;
@@ -142,10 +137,10 @@ int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(
     }
   }
   m_nSegmentDecoded = 0;
-  return decode_RandomOrgnazation(pPause);
+  return decodeRandom(pPause);
 }
 
-int32_t CJBig2_Context::decode_RandomOrgnazation(IFX_PauseIndicator* pPause) {
+int32_t CJBig2_Context::decodeRandom(IFX_PauseIndicator* pPause) {
   for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
     int32_t nRet =
         parseSegmentData(m_SegmentList[m_nSegmentDecoded].get(), pPause);
@@ -171,7 +166,7 @@ int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
                                      IFX_PauseIndicator* pPause) {
   int32_t nRet = 0;
   if (m_pGlobalContext) {
-    nRet = m_pGlobalContext->decode_EmbedOrgnazation(pPause);
+    nRet = m_pGlobalContext->decodeSequential(pPause);
     if (nRet != JBIG2_SUCCESS) {
       m_ProcessingStatus = FXCODEC_STATUS_ERROR;
       return nRet;
@@ -191,40 +186,34 @@ int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
 int32_t CJBig2_Context::Continue(IFX_PauseIndicator* pPause) {
   m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
   int32_t nRet = 0;
-  if (m_PauseStep <= 1) {
-    nRet = decode_EmbedOrgnazation(pPause);
-  } else if (m_PauseStep == 2) {
-    nRet = decode_SquentialOrgnazation(pPause);
+  if (m_PauseStep <= 2) {
+    nRet = decodeSequential(pPause);
   } else if (m_PauseStep == 3) {
-    nRet = decode_RandomOrgnazation_FirstPage(pPause);
+    nRet = decodeRandomFirstPage(pPause);
   } else if (m_PauseStep == 4) {
-    nRet = decode_RandomOrgnazation(pPause);
+    nRet = decodeRandom(pPause);
   } else if (m_PauseStep == 5) {
     m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
     return JBIG2_SUCCESS;
   }
-  if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
+  if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)
     return nRet;
-  }
+
   m_PauseStep = 5;
   if (!m_bBufSpecified && nRet == JBIG2_SUCCESS) {
     m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
     return JBIG2_SUCCESS;
   }
-  if (nRet == JBIG2_SUCCESS) {
-    m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
-  } else {
-    m_ProcessingStatus = FXCODEC_STATUS_ERROR;
-  }
+  m_ProcessingStatus = nRet == JBIG2_SUCCESS ? FXCODEC_STATUS_DECODE_FINISH
+                                             : FXCODEC_STATUS_ERROR;
   return nRet;
 }
 
 CJBig2_Segment* CJBig2_Context::findSegmentByNumber(uint32_t dwNumber) {
   if (m_pGlobalContext) {
     CJBig2_Segment* pSeg = m_pGlobalContext->findSegmentByNumber(dwNumber);
-    if (pSeg) {
+    if (pSeg)
       return pSeg;
-    }
   }
   for (const auto& pSeg : m_SegmentList) {
     if (pSeg->m_dwNumber == dwNumber)

@@ -55,10 +55,9 @@ class CJBig2_Context {
   FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
 
  private:
-  int32_t decode_SquentialOrgnazation(IFX_PauseIndicator* pPause);
-  int32_t decode_EmbedOrgnazation(IFX_PauseIndicator* pPause);
-  int32_t decode_RandomOrgnazation_FirstPage(IFX_PauseIndicator* pPause);
-  int32_t decode_RandomOrgnazation(IFX_PauseIndicator* pPause);
+  int32_t decodeSequential(IFX_PauseIndicator* pPause);
+  int32_t decodeRandomFirstPage(IFX_PauseIndicator* pPause);
+  int32_t decodeRandom(IFX_PauseIndicator* pPause);
 
   CJBig2_Segment* findSegmentByNumber(uint32_t dwNumber);
   CJBig2_Segment* findReferredSegmentByTypeAndIndex(CJBig2_Segment* pSegment,
