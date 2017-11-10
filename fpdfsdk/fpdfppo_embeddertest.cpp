@@ -158,7 +158,7 @@ TEST_F(FPDFPPOEmbeddertest, BUG_750568) {
     ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap));
     ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap));
 
-    std::string digest = HashBitmap(bitmap, 200, 200);
+    std::string digest = HashBitmap(bitmap);
     FPDFBitmap_Destroy(bitmap);
     UnloadPage(page);
     EXPECT_EQ(kHashes[i], digest);
@@ -177,7 +177,7 @@ TEST_F(FPDFPPOEmbeddertest, BUG_750568) {
     ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap));
     ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap));
 
-    std::string digest = HashBitmap(bitmap, 200, 200);
+    std::string digest = HashBitmap(bitmap);
     FPDFBitmap_Destroy(bitmap);
     FPDF_ClosePage(page);
     EXPECT_EQ(kHashes[i], digest);
@@ -195,7 +195,7 @@ TEST_F(FPDFPPOEmbeddertest, ImportWithZeroLengthStream) {
   ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap));
   ASSERT_EQ(800, FPDFBitmap_GetStride(bitmap));
 
-  std::string digest = HashBitmap(bitmap, 200, 200);
+  std::string digest = HashBitmap(bitmap);
   FPDFBitmap_Destroy(bitmap);
   FPDF_ClosePage(page);
 
@@ -211,7 +211,7 @@ TEST_F(FPDFPPOEmbeddertest, ImportWithZeroLengthStream) {
   ASSERT_EQ(200, FPDFBitmap_GetHeight(new_bitmap));
   ASSERT_EQ(800, FPDFBitmap_GetStride(new_bitmap));
 
-  std::string new_digest = HashBitmap(new_bitmap, 200, 200);
+  std::string new_digest = HashBitmap(new_bitmap);
   FPDFBitmap_Destroy(new_bitmap);
   FPDF_ClosePage(new_page);
   FPDF_CloseDocument(new_doc);

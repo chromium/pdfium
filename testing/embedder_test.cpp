@@ -106,6 +106,8 @@ void EmbedderTest::SetUp() {
   info->version = 1;
   info->FSDK_UnSupport_Handler = UnsupportedHandlerTrampoline;
   FSDK_SetUnSpObjProcessHandler(info);
+
+  m_SavedDocument = nullptr;
 }
 
 void EmbedderTest::TearDown() {
@@ -347,6 +349,10 @@ FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
   return page;
 }
 
+FPDF_BITMAP EmbedderTest::RenderSavedPage(FPDF_PAGE page) {
+  return RenderPageWithFlags(page, m_SavedForm, 0);
+}
+
 void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
   ASSERT(page);
   FPDF_ClosePage(page);
@@ -424,14 +430,14 @@ FPDF_PAGE EmbedderTest::GetPageTrampoline(FPDF_FORMFILLINFO* info,
                                                               page_index);
 }
 
-std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap,
-                                     int expected_width,
-                                     int expected_height) {
+// static
+std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
   uint8_t digest[16];
-  CRYPT_MD5Generate(
-      static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
-      expected_width * GetBitmapBytesPerPixel(bitmap) * expected_height,
-      digest);
+  CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
+                    FPDFBitmap_GetWidth(bitmap) *
+                        GetBitmapBytesPerPixel(bitmap) *
+                        FPDFBitmap_GetHeight(bitmap),
+                    digest);
   return CryptToBase16(digest);
 }
 
@@ -452,8 +458,7 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
   if (!expected_md5sum)
     return;
 
-  EXPECT_EQ(expected_md5sum,
-            HashBitmap(bitmap, expected_width, expected_height));
+  EXPECT_EQ(expected_md5sum, HashBitmap(bitmap));
 }
 
 // static

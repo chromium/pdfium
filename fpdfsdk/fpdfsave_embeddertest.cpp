@@ -4,7 +4,7 @@
 
 #include "public/fpdf_save.h"
 
-#include <string.h>
+#include <string>
 
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdf_edit.h"
@@ -57,6 +57,39 @@ TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
   FPDF_CloseDocument(output_doc);
 
   UnloadPage(page);
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
+  const int kPageCount = 3;
+  std::string original_md5[kPageCount];
+
+  EXPECT_TRUE(OpenDocument("linearized.pdf"));
+  for (int i = 0; i < kPageCount; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    FPDF_BITMAP bitmap = RenderPage(page);
+    EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap));
+    EXPECT_EQ(792, FPDFBitmap_GetHeight(bitmap));
+    original_md5[i] = HashBitmap(bitmap);
+    FPDFBitmap_Destroy(bitmap);
+    UnloadPage(page);
+  }
+
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.6\r\n"));
+  EXPECT_THAT(GetString(), testing::HasSubstr("/Root "));
+  EXPECT_THAT(GetString(), testing::HasSubstr("/Info "));
+  EXPECT_EQ(8219u, GetString().length());
+
+  // Make sure new document renders the same as the old one.
+  EXPECT_TRUE(OpenSavedDocument());
+  for (int i = 0; i < kPageCount; ++i) {
+    FPDF_PAGE page = LoadSavedPage(i);
+    FPDF_BITMAP bitmap = RenderSavedPage(page);
+    EXPECT_EQ(original_md5[i], HashBitmap(bitmap));
+    FPDFBitmap_Destroy(bitmap);
+    CloseSavedPage(page);
+  }
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFSaveEmbedderTest, BUG_342) {
