@@ -326,7 +326,6 @@ FPDF_DOCUMENT EmbedderTest::OpenSavedDocument(const char* password) {
 }
 
 void EmbedderTest::CloseSavedDocument() {
-  ASSERT(!m_SavedPage);
   ASSERT(m_SavedDocument);
 
   FPDFDOC_ExitFormFillEnvironment(m_SavedForm);
@@ -338,39 +337,38 @@ void EmbedderTest::CloseSavedDocument() {
   m_SavedAvail = nullptr;
 }
 
-FPDF_PAGE EmbedderTest::LoadSavedPage() {
+FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
   ASSERT(m_SavedDocument);
 
-  EXPECT_EQ(1, FPDF_GetPageCount(m_SavedDocument));
-  m_SavedPage = FPDF_LoadPage(m_SavedDocument, 0);
+  EXPECT_LT(page_number, FPDF_GetPageCount(m_SavedDocument));
+  FPDF_PAGE page = FPDF_LoadPage(m_SavedDocument, page_number);
 
-  ASSERT(m_SavedPage);
-  return m_SavedPage;
+  ASSERT(page);
+  return page;
 }
 
-void EmbedderTest::CloseSavedPage() {
-  ASSERT(m_SavedPage);
-  FPDF_ClosePage(m_SavedPage);
-  m_SavedPage = nullptr;
+void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
+  ASSERT(page);
+  FPDF_ClosePage(page);
 }
 
-void EmbedderTest::VerifySavedRendering(int width,
+void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
+                                        int width,
                                         int height,
                                         const char* md5) {
   ASSERT(m_SavedDocument);
-  ASSERT(m_SavedPage);
+  ASSERT(page);
 
-  FPDF_BITMAP new_bitmap =
-      RenderPageWithFlags(m_SavedPage, m_SavedForm, FPDF_ANNOT);
+  FPDF_BITMAP new_bitmap = RenderPageWithFlags(page, m_SavedForm, FPDF_ANNOT);
   CompareBitmap(new_bitmap, width, height, md5);
   FPDFBitmap_Destroy(new_bitmap);
 }
 
 void EmbedderTest::VerifySavedDocument(int width, int height, const char* md5) {
   OpenSavedDocument();
-  LoadSavedPage();
-  VerifySavedRendering(width, height, md5);
-  CloseSavedPage();
+  FPDF_PAGE page = LoadSavedPage(0);
+  VerifySavedRendering(page, width, height, md5);
+  CloseSavedPage(page);
   CloseSavedDocument();
 }
 

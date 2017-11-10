@@ -286,15 +286,15 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   const char md5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
 
   OpenSavedDocument();
-  LoadSavedPage();
-  VerifySavedRendering(612, 792, md5);
+  page = LoadSavedPage(0);
+  VerifySavedRendering(page, 612, 792, md5);
 
   // Check that the saved document has 2 annotations on the first page
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(m_SavedPage));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
   // Check that the second annotation is an underline annotation and verify
   // its quadpoints.
-  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 1);
+  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(page, 1);
   ASSERT_TRUE(new_annot);
   EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot));
   FS_QUADPOINTSF new_quadpoints;
@@ -306,7 +306,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
 
   FPDFPage_CloseAnnot(new_annot);
 
-  CloseSavedPage();
+  CloseSavedPage(page);
   CloseSavedDocument();
 }
 
@@ -591,12 +591,12 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   // Open the saved document.
   OpenSavedDocument();
-  LoadSavedPage();
-  VerifySavedRendering(595, 842, md5_new_annot);
+  page = LoadSavedPage(0);
+  VerifySavedRendering(page, 595, 842, md5_new_annot);
 
   // Check that the document has a correct count of annotations and objects.
-  EXPECT_EQ(3, FPDFPage_GetAnnotCount(m_SavedPage));
-  annot = FPDFPage_GetAnnot(m_SavedPage, 2);
+  EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
+  annot = FPDFPage_GetAnnot(page, 2);
   ASSERT_TRUE(annot);
   EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
 
@@ -608,7 +608,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   EXPECT_EQ(rect.top, new_rect.top);
 
   FPDFPage_CloseAnnot(annot);
-  CloseSavedPage();
+  CloseSavedPage(page);
   CloseSavedDocument();
 }
 
@@ -870,9 +870,9 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   const char md5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
 #endif
   OpenSavedDocument();
-  LoadSavedPage();
-  VerifySavedRendering(595, 842, md5);
-  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(m_SavedPage, 0);
+  page = LoadSavedPage(0);
+  VerifySavedRendering(page, 595, 842, md5);
+  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(page, 0);
 
   // Check that the string value of the modified date is the newly-set value.
   EXPECT_EQ(FPDF_OBJECT_STRING, FPDFAnnot_GetValueType(new_annot, kDateKey));
@@ -886,7 +886,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
                    .c_str());
 
   FPDFPage_CloseAnnot(new_annot);
-  CloseSavedPage();
+  CloseSavedPage(page);
   CloseSavedDocument();
 }
 

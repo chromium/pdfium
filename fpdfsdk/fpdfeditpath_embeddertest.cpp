@@ -32,7 +32,7 @@ TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
   page = nullptr;
 
   OpenSavedDocument();
-  page = LoadSavedPage();
+  page = LoadSavedPage(0);
   ASSERT(page);
 
   for (size_t i = 0; i < 256; ++i) {
@@ -58,6 +58,6 @@ TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
     EXPECT_EQ(i, a);
   }
 
-  CloseSavedPage();
+  CloseSavedPage(page);
   CloseSavedDocument();
 }

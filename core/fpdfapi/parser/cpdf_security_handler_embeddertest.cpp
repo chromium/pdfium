@@ -81,11 +81,11 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
 
   for (const auto& test : tests) {
     OpenSavedDocument(test.password);
-    LoadSavedPage();
-    VerifySavedRendering(612, 792, md5);
+    FPDF_PAGE page = LoadSavedPage(0);
+    VerifySavedRendering(page, 612, 792, md5);
     EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(m_SavedDocument));
 
-    CloseSavedPage();
+    CloseSavedPage(page);
     CloseSavedDocument();
   }
 }

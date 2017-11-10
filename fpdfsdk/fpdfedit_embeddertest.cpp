@@ -457,31 +457,31 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   UnloadPage(page);
 
   OpenSavedDocument();
-  LoadSavedPage();
-  VerifySavedRendering(612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
+  page = LoadSavedPage(0);
+  VerifySavedRendering(page, 612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
 
   ClearString();
   // Add another opaque rectangle on top of the existing content
   FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(150, 700, 25, 50);
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_ALTERNATE, 0));
-  FPDFPage_InsertObject(m_SavedPage, green_rect);
+  FPDFPage_InsertObject(page, green_rect);
 
   // Add another transparent rectangle on top of existing content
   FPDF_PAGEOBJECT green_rect2 = FPDFPageObj_CreateNewRect(175, 700, 25, 50);
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect2, 0, 255, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
-  FPDFPage_InsertObject(m_SavedPage, green_rect2);
-  FPDF_BITMAP new_bitmap = RenderPageWithFlags(m_SavedPage, m_SavedForm, 0);
+  FPDFPage_InsertObject(page, green_rect2);
+  FPDF_BITMAP new_bitmap = RenderPageWithFlags(page, m_SavedForm, 0);
   const char last_md5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
   CompareBitmap(new_bitmap, 612, 792, last_md5);
   FPDFBitmap_Destroy(new_bitmap);
-  EXPECT_TRUE(FPDFPage_GenerateContent(m_SavedPage));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   // Now save the result, closing the page and document
   EXPECT_TRUE(FPDF_SaveAsCopy(m_SavedDocument, this, 0));
 
-  CloseSavedPage();
+  CloseSavedPage(page);
   CloseSavedDocument();
 
   // Render the saved result

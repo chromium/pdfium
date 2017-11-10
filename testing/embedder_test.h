@@ -145,9 +145,12 @@ class EmbedderTest : public ::testing::Test,
 
   FPDF_DOCUMENT OpenSavedDocument(const char* password = nullptr);
   void CloseSavedDocument();
-  FPDF_PAGE LoadSavedPage();
-  void CloseSavedPage();
-  void VerifySavedRendering(int width, int height, const char* md5);
+  FPDF_PAGE LoadSavedPage(int page_number);
+  void CloseSavedPage(FPDF_PAGE page);
+  void VerifySavedRendering(FPDF_PAGE page,
+                            int width,
+                            int height,
+                            const char* md5);
   void VerifySavedDocument(int width, int height, const char* md5);
 
   void SetWholeFileAvailable();
@@ -168,7 +171,6 @@ class EmbedderTest : public ::testing::Test,
   std::map<int, FPDF_PAGE> page_map_;
   std::map<FPDF_PAGE, int> page_reverse_map_;
   FPDF_DOCUMENT m_SavedDocument;
-  FPDF_PAGE m_SavedPage;
   FPDF_FORMHANDLE m_SavedForm;
   FPDF_AVAIL m_SavedAvail;
   FPDF_FILEACCESS saved_file_access_;  // must outlive m_SavedAvail.
