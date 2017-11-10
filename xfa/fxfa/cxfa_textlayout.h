@@ -34,21 +34,19 @@ class CXFA_TextLayout {
   ~CXFA_TextLayout();
 
   float GetLayoutHeight();
-  float StartLayout(float fWidth = -1);
-  bool DoLayout(int32_t iBlockIndex,
-                float& fCalcHeight,
-                float fContentAreaHeight = -1,
-                float fTextHeight = -1);
+  float StartLayout(float fWidth);
+  float DoLayout(int32_t iBlockIndex,
+                 float fCalcHeight,
+                 float fContentAreaHeight,
+                 float fTextHeight);
+  float Layout(const CFX_SizeF& size);
 
-  bool CalcSize(const CFX_SizeF& minSize,
-                const CFX_SizeF& maxSize,
-                CFX_SizeF& defaultSize);
-  bool Layout(const CFX_SizeF& size, float* fHeight = nullptr);
+  CFX_SizeF CalcSize(const CFX_SizeF& minSize, const CFX_SizeF& maxSize);
   void ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex);
   bool DrawString(CFX_RenderDevice* pFxDevice,
                   const CFX_Matrix& tmDoc2Device,
                   const CFX_RectF& rtClip,
-                  int32_t iBlock = 0);
+                  int32_t iBlock);
   bool IsLoaded() const { return !m_pieceLines.empty(); }
   void Unload();
   const std::vector<std::unique_ptr<CXFA_PieceLine>>* GetPieceLines() const {
@@ -67,16 +65,14 @@ class CXFA_TextLayout {
                  CFX_CSSDisplay eDisplay,
                  float fLineWidth,
                  CFX_XMLNode* pXMLNode,
-                 CFX_CSSComputedStyle* pParentStyle = nullptr);
-  bool Loader(const CFX_SizeF& szText,
-              float& fLinePos,
-              bool bSavePieces = true);
+                 CFX_CSSComputedStyle* pParentStyle);
+  bool Loader(float textWidth, float& fLinePos, bool bSavePieces);
   void LoadText(CXFA_Node* pNode,
-                const CFX_SizeF& szText,
+                float textWidth,
                 float& fLinePos,
                 bool bSavePieces);
   bool LoadRichText(CFX_XMLNode* pXMLNode,
-                    const CFX_SizeF& szText,
+                    float textWidth,
                     float& fLinePos,
                     const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,

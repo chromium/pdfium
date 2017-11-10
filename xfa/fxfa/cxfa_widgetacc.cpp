@@ -709,7 +709,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       szCap.width = fCapReserve;
 
     CFX_SizeF minSize;
-    pCapTextLayout->CalcSize(minSize, szCap, szCap);
+    szCap = pCapTextLayout->CalcSize(minSize, szCap);
     if (bReserveExit)
       bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
   } else {
@@ -1181,8 +1181,9 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
 
     CXFA_TextLayout* pTextLayout =
         static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->GetTextLayout();
-    pTextLayout->DoLayout(iBlockIndex, fCalcHeight, fCalcHeight,
-                          m_pLayoutData->m_fWidgetHeight - fTopInset);
+    fCalcHeight =
+        pTextLayout->DoLayout(iBlockIndex, fCalcHeight, fCalcHeight,
+                              m_pLayoutData->m_fWidgetHeight - fTopInset);
     if (fCalcHeight != 0) {
       if (iBlockIndex == 0)
         fCalcHeight = fCalcHeight + fTopInset;

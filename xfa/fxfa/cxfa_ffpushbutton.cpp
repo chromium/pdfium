@@ -182,15 +182,15 @@ void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
   uint32_t dwState = m_pNormalWidget->GetStates();
   if (m_pDownTextLayout && (dwState & FWL_STATE_PSB_Pressed) &&
       (dwState & FWL_STATE_PSB_Hovered)) {
-    if (m_pDownTextLayout->DrawString(pRenderDevice, mt, rtClip))
+    if (m_pDownTextLayout->DrawString(pRenderDevice, mt, rtClip, 0))
       return;
   } else if (m_pRolloverTextLayout && (dwState & FWL_STATE_PSB_Hovered)) {
-    if (m_pRolloverTextLayout->DrawString(pRenderDevice, mt, rtClip))
+    if (m_pRolloverTextLayout->DrawString(pRenderDevice, mt, rtClip, 0))
       return;
   }
 
   if (pCapTextLayout)
-    pCapTextLayout->DrawString(pRenderDevice, mt, rtClip);
+    pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
 }
 
 void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {

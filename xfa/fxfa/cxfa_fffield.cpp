@@ -216,10 +216,9 @@ void CXFA_FFField::CapPlacement() {
 
       CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
       if (fCapReserve <= 0 && pCapTextLayout) {
-        CFX_SizeF size;
         CFX_SizeF minSize;
         CFX_SizeF maxSize;
-        pCapTextLayout->CalcSize(minSize, maxSize, size);
+        CFX_SizeF size = pCapTextLayout->CalcSize(minSize, maxSize);
         if (iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
             iCapPlacement == XFA_ATTRIBUTEENUM_Bottom) {
           fCapReserve = size.height;
@@ -592,9 +591,8 @@ void CXFA_FFField::LayoutCaption() {
   if (!pCapTextLayout)
     return;
 
-  float fHeight = 0;
-  pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height),
-                         &fHeight);
+  float fHeight =
+      pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));
   if (m_rtCaption.height < fHeight)
     m_rtCaption.height = fHeight;
 }
@@ -619,7 +617,7 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
     rtClip = pMatrix->TransformRect(rtClip);
     mt.Concat(*pMatrix);
   }
-  pCapTextLayout->DrawString(pRenderDevice, mt, rtClip);
+  pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
 }
 
 bool CXFA_FFField::ProcessCommittedData() {
