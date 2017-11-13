@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 
 #include <algorithm>
+#include <limits>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -18,6 +19,7 @@
 namespace {
 
 constexpr FX_FILESIZE kLinearizedHeaderOffset = 9;
+constexpr size_t kMaxInt = static_cast<size_t>(std::numeric_limits<int>::max());
 
 template <class T>
 bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
@@ -39,6 +41,8 @@ bool IsLinearizedHeaderValid(const CPDF_LinearizedHeader* header,
                              FX_FILESIZE file_size) {
   ASSERT(header);
   return header->GetFileSize() == file_size &&
+         static_cast<int>(header->GetFirstPageNo()) >= 0 &&
+         header->GetFirstPageNo() < kMaxInt &&
          header->GetMainXRefTableFirstEntryOffset() < file_size &&
          header->GetPageCount() > 0 &&
          header->GetFirstPageEndOffset() < file_size &&
