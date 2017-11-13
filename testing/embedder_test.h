@@ -81,7 +81,7 @@ class EmbedderTest : public ::testing::Test,
 
   // Create an empty document, and its form fill environment. Returns true
   // on success or false on failure.
-  virtual bool CreateEmptyDocument();
+  bool CreateEmptyDocument();
 
   // Open the document specified by |filename|, and create its form fill
   // environment, or return false on failure.
@@ -92,27 +92,27 @@ class EmbedderTest : public ::testing::Test,
                             bool must_linearize = false);
 
   // Perform JavaScript actions that are to run at document open time.
-  virtual void DoOpenActions();
+  void DoOpenActions();
 
   // Determine the page numbers present in the document.
-  virtual int GetFirstPageNum();
-  virtual int GetPageCount();
+  int GetFirstPageNum();
+  int GetPageCount();
 
   // Load a specific page of the open document.
-  virtual FPDF_PAGE LoadPage(int page_number);
+  FPDF_PAGE LoadPage(int page_number);
 
   // Convert a loaded page into a bitmap.
-  virtual FPDF_BITMAP RenderPage(FPDF_PAGE page);
+  FPDF_BITMAP RenderPage(FPDF_PAGE page);
 
   // Convert a loaded page into a bitmap with page rendering flags specified.
   // See public/fpdfview.h for a list of page rendering flags.
-  virtual FPDF_BITMAP RenderPageWithFlags(FPDF_PAGE page,
-                                          FPDF_FORMHANDLE handle,
-                                          int flags);
+  FPDF_BITMAP RenderPageWithFlags(FPDF_PAGE page,
+                                  FPDF_FORMHANDLE handle,
+                                  int flags);
 
   // Relese the resources obtained from LoadPage(). Further use of |page|
   // is prohibited after this call is made.
-  virtual void UnloadPage(FPDF_PAGE page);
+  void UnloadPage(FPDF_PAGE page);
 
  protected:
   bool OpenDocumentHelper(const char* password,
