@@ -233,14 +233,16 @@ void CXFA_FFField::CapPlacement() {
   switch (iCapPlacement) {
     case XFA_ATTRIBUTEENUM_Left: {
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(captionData, rtWidget, iCapPlacement);
+      CapLeftRightPlacement(captionData.GetMarginData(), rtWidget,
+                            iCapPlacement);
       m_rtUI.width -= fCapReserve;
       m_rtUI.left += fCapReserve;
       break;
     }
     case XFA_ATTRIBUTEENUM_Top: {
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(captionData, rtWidget, iCapPlacement);
+      CapTopBottomPlacement(captionData.GetMarginData(), rtWidget,
+                            iCapPlacement);
       m_rtUI.top += fCapReserve;
       m_rtUI.height -= fCapReserve;
       break;
@@ -248,14 +250,16 @@ void CXFA_FFField::CapPlacement() {
     case XFA_ATTRIBUTEENUM_Right: {
       m_rtCaption.left = m_rtCaption.right() - fCapReserve;
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(captionData, rtWidget, iCapPlacement);
+      CapLeftRightPlacement(captionData.GetMarginData(), rtWidget,
+                            iCapPlacement);
       m_rtUI.width -= fCapReserve;
       break;
     }
     case XFA_ATTRIBUTEENUM_Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(captionData, rtWidget, iCapPlacement);
+      CapTopBottomPlacement(captionData.GetMarginData(), rtWidget,
+                            iCapPlacement);
       m_rtUI.height -= fCapReserve;
       break;
     }
@@ -274,13 +278,13 @@ void CXFA_FFField::CapPlacement() {
   m_rtUI.Normalize();
 }
 
-void CXFA_FFField::CapTopBottomPlacement(CXFA_CaptionData captionData,
+void CXFA_FFField::CapTopBottomPlacement(const CXFA_MarginData& marginData,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.left += rtUIMargin.left;
-  if (CXFA_MarginData captionMarginData = captionData.GetMarginData()) {
-    XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
+  if (marginData) {
+    XFA_RectWidthoutMargin(m_rtCaption, marginData);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
   }
@@ -300,14 +304,14 @@ void CXFA_FFField::CapTopBottomPlacement(CXFA_CaptionData captionData,
   }
 }
 
-void CXFA_FFField::CapLeftRightPlacement(CXFA_CaptionData captionData,
+void CXFA_FFField::CapLeftRightPlacement(const CXFA_MarginData& marginData,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.top += rtUIMargin.top;
   m_rtCaption.height -= rtUIMargin.top;
-  if (CXFA_MarginData captionMarginData = captionData.GetMarginData()) {
-    XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
+  if (marginData) {
+    XFA_RectWidthoutMargin(m_rtCaption, marginData);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
   }

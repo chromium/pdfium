@@ -26,9 +26,11 @@ bool CXFA_ImageData::GetHref(WideString& wsHref) {
   return m_pNode->JSNode()->GetAttribute(L"href", wsHref, true);
 }
 
-int32_t CXFA_ImageData::GetTransferEncoding() {
-  if (m_bDefValue)
-    return m_pNode->JSNode()->GetEnum(XFA_Attribute::TransferEncoding);
+XFA_ATTRIBUTEENUM CXFA_ImageData::GetTransferEncoding() {
+  if (m_bDefValue) {
+    return static_cast<XFA_ATTRIBUTEENUM>(
+        m_pNode->JSNode()->GetEnum(XFA_Attribute::TransferEncoding));
+  }
   return XFA_ATTRIBUTEENUM_Base64;
 }
 
@@ -49,11 +51,10 @@ bool CXFA_ImageData::SetHref(const WideString& wsHref) {
                                          wsHref.AsStringView(), false);
 }
 
-bool CXFA_ImageData::SetTransferEncoding(int32_t iTransferEncoding) {
+bool CXFA_ImageData::SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding) {
   if (m_bDefValue) {
     return m_pNode->JSNode()->SetEnum(XFA_Attribute::TransferEncoding,
-                                      (XFA_ATTRIBUTEENUM)iTransferEncoding,
-                                      false);
+                                      iTransferEncoding, false);
   }
   return true;
 }

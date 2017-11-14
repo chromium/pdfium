@@ -39,7 +39,7 @@
 
 namespace {
 
-void XFA_BOX_GetPath_Arc(CXFA_BoxData boxData,
+void XFA_BOX_GetPath_Arc(const CXFA_BoxData& boxData,
                          CFX_RectF rtDraw,
                          CXFA_Path& fillPath,
                          uint32_t dwFlags) {
@@ -234,7 +234,7 @@ void XFA_BOX_GetPath(const std::vector<CXFA_StrokeData>& strokes,
   }
 }
 
-void XFA_BOX_GetFillPath(CXFA_BoxData boxData,
+void XFA_BOX_GetFillPath(const CXFA_BoxData& boxData,
                          const std::vector<CXFA_StrokeData>& strokes,
                          CFX_RectF rtWidget,
                          CXFA_Path& fillPath,
@@ -384,12 +384,12 @@ void XFA_BOX_GetFillPath(CXFA_BoxData boxData,
   }
 }
 
-void XFA_BOX_Fill_Radial(CXFA_BoxData boxData,
+void XFA_BOX_Fill_Radial(const CXFA_BoxData& boxData,
                          CXFA_Graphics* pGS,
                          CXFA_Path& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_FillData fillData = boxData.GetFillData();
+  CXFA_FillData fillData = boxData.GetFillData(false);
   FX_ARGB crStart, crEnd;
   crStart = fillData.GetColor();
   int32_t iType = fillData.GetRadial(crEnd);
@@ -407,12 +407,12 @@ void XFA_BOX_Fill_Radial(CXFA_BoxData boxData,
   pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
-void XFA_BOX_Fill_Pattern(CXFA_BoxData boxData,
+void XFA_BOX_Fill_Pattern(const CXFA_BoxData& boxData,
                           CXFA_Graphics* pGS,
                           CXFA_Path& fillPath,
                           CFX_RectF rtFill,
                           const CFX_Matrix& matrix) {
-  CXFA_FillData fillData = boxData.GetFillData();
+  CXFA_FillData fillData = boxData.GetFillData(false);
   FX_ARGB crStart, crEnd;
   crStart = fillData.GetColor();
   int32_t iType = fillData.GetPattern(crEnd);
@@ -442,12 +442,12 @@ void XFA_BOX_Fill_Pattern(CXFA_BoxData boxData,
   pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
-void XFA_BOX_Fill_Linear(CXFA_BoxData boxData,
+void XFA_BOX_Fill_Linear(const CXFA_BoxData& boxData,
                          CXFA_Graphics* pGS,
                          CXFA_Path& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_FillData fillData = boxData.GetFillData();
+  CXFA_FillData fillData = boxData.GetFillData(false);
   FX_ARGB crStart = fillData.GetColor();
   FX_ARGB crEnd;
   int32_t iType = fillData.GetLinear(crEnd);
@@ -478,13 +478,13 @@ void XFA_BOX_Fill_Linear(CXFA_BoxData boxData,
   pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
-void XFA_BOX_Fill(CXFA_BoxData boxData,
+void XFA_BOX_Fill(const CXFA_BoxData& boxData,
                   const std::vector<CXFA_StrokeData>& strokes,
                   CXFA_Graphics* pGS,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix,
                   uint32_t dwFlags) {
-  CXFA_FillData fillData = boxData.GetFillData();
+  CXFA_FillData fillData = boxData.GetFillData(false);
   if (!fillData || fillData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
 
@@ -524,7 +524,7 @@ void XFA_BOX_Fill(CXFA_BoxData boxData,
   pGS->RestoreGraphState();
 }
 
-void XFA_BOX_StrokePath(CXFA_StrokeData strokeData,
+void XFA_BOX_StrokePath(const CXFA_StrokeData& strokeData,
                         CXFA_Path* pPath,
                         CXFA_Graphics* pGS,
                         const CFX_Matrix& matrix) {
@@ -549,7 +549,7 @@ void XFA_BOX_StrokePath(CXFA_StrokeData strokeData,
   pGS->RestoreGraphState();
 }
 
-void XFA_BOX_StrokeArc(CXFA_BoxData boxData,
+void XFA_BOX_StrokeArc(const CXFA_BoxData& boxData,
                        CXFA_Graphics* pGS,
                        CFX_RectF rtWidget,
                        const CFX_Matrix& matrix,
@@ -1008,14 +1008,14 @@ bool CXFA_FFWidget::UpdateFWLData() {
 void CXFA_FFWidget::UpdateWidgetProperty() {}
 
 void CXFA_FFWidget::DrawBorder(CXFA_Graphics* pGS,
-                               CXFA_BoxData boxData,
+                               const CXFA_BoxData& boxData,
                                const CFX_RectF& rtBorder,
                                const CFX_Matrix& matrix) {
   XFA_DrawBox(boxData, pGS, rtBorder, matrix, 0);
 }
 
 void CXFA_FFWidget::DrawBorderWithFlags(CXFA_Graphics* pGS,
-                                        CXFA_BoxData boxData,
+                                        const CXFA_BoxData& boxData,
                                         const CFX_RectF& rtBorder,
                                         const CFX_Matrix& matrix,
                                         uint32_t dwFlags) {
@@ -1890,8 +1890,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
   uint8_t* pImageBuffer = nullptr;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
-    XFA_ATTRIBUTEENUM iEncoding =
-        (XFA_ATTRIBUTEENUM)pImageData->GetTransferEncoding();
+    XFA_ATTRIBUTEENUM iEncoding = pImageData->GetTransferEncoding();
     if (iEncoding == XFA_ATTRIBUTEENUM_Base64) {
       ByteString bsData = wsImage.UTF8Encode();
       int32_t iLength = bsData.GetLength();

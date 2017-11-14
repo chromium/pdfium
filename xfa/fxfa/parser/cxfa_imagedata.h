@@ -18,13 +18,16 @@ class CXFA_ImageData : public CXFA_Data {
   CXFA_ImageData(CXFA_Node* pNode, bool bDefValue);
 
   int32_t GetAspect();
-  bool GetContentType(WideString& wsContentType);
-  bool GetHref(WideString& wsHref);
-  int32_t GetTransferEncoding();
   bool GetContent(WideString& wsText);
-  bool SetContentType(const WideString& wsContentType);
+
+  bool GetHref(WideString& wsHref);
   bool SetHref(const WideString& wsHref);
-  bool SetTransferEncoding(int32_t iTransferEncoding);
+
+  XFA_ATTRIBUTEENUM GetTransferEncoding();
+  bool SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding);
+
+  bool GetContentType(WideString& wsContentType);
+  bool SetContentType(const WideString& wsContentType);
 
  private:
   bool m_bDefValue;

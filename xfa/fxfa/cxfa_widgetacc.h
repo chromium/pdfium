@@ -49,7 +49,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
                        CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate();
   int32_t ProcessValidate(int32_t iFlags);
-  int32_t ExecuteScript(CXFA_ScriptData scriptData,
+  int32_t ExecuteScript(const CXFA_ScriptData& scriptData,
                         CXFA_EventParam* pEventParam);
   std::pair<int32_t, bool> ExecuteBoolScript(CXFA_ScriptData scriptData,
                                              CXFA_EventParam* pEventParam);

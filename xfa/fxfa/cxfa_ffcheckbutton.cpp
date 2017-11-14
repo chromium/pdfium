@@ -189,7 +189,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
 }
 
 void CXFA_FFCheckButton::CapLeftRightPlacement(
-    CXFA_MarginData captionMarginData) {
+    const CXFA_MarginData& captionMarginData) {
   XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
   if (m_rtCaption.height < 0)
     m_rtCaption.top += m_rtCaption.height;

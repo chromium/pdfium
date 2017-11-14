@@ -10,16 +10,15 @@
 
 CXFA_ScriptData::CXFA_ScriptData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-XFA_SCRIPTTYPE CXFA_ScriptData::GetContentType() {
+XFA_ScriptDataType CXFA_ScriptData::GetContentType() {
   WideStringView cData;
-  if (m_pNode->JSNode()->TryCData(XFA_Attribute::ContentType, cData, false)) {
-    if (cData == L"application/x-javascript")
-      return XFA_SCRIPTTYPE_Javascript;
-    if (cData == L"application/x-formcalc")
-      return XFA_SCRIPTTYPE_Formcalc;
-    return XFA_SCRIPTTYPE_Unkown;
-  }
-  return XFA_SCRIPTTYPE_Formcalc;
+  if (!m_pNode->JSNode()->TryCData(XFA_Attribute::ContentType, cData, false))
+    return XFA_ScriptDataType::Formcalc;
+  if (cData == L"application/x-javascript")
+    return XFA_ScriptDataType::Javascript;
+  if (cData == L"application/x-formcalc")
+    return XFA_ScriptDataType::Formcalc;
+  return XFA_ScriptDataType::Unknown;
 }
 
 int32_t CXFA_ScriptData::GetRunAt() {

@@ -529,7 +529,7 @@ bool CJX_HostPseudoModel::ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
 
   bool bIsJsType = false;
   if (GetDocument()->GetScriptContext()->GetType() ==
-      XFA_SCRIPTLANGTYPE_Javascript) {
+      XFA_ScriptDataType::Javascript) {
     bIsJsType = true;
   }
 

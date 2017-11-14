@@ -579,7 +579,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   return iRet | iFormat;
 }
 
-int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_ScriptData scriptData,
+int32_t CXFA_WidgetAcc::ExecuteScript(const CXFA_ScriptData& scriptData,
                                       CXFA_EventParam* pEventParam) {
   bool bRet;
   int32_t iRet;
@@ -605,8 +605,8 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
   if (wsExpression.IsEmpty())
     return {XFA_EVENTERROR_NotExist, false};
 
-  XFA_SCRIPTTYPE eScriptType = scriptData.GetContentType();
-  if (eScriptType == XFA_SCRIPTTYPE_Unkown)
+  XFA_ScriptDataType eScriptType = scriptData.GetContentType();
+  if (eScriptType == XFA_ScriptDataType::Unknown)
     return {XFA_EVENTERROR_Success, false};
 
   CXFA_FFDoc* pDoc = GetDoc();
@@ -622,8 +622,7 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
 
   auto pTmpRetValue = pdfium::MakeUnique<CFXJSE_Value>(pContext->GetRuntime());
   ++m_nRecursionDepth;
-  bool bRet = pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
-                                  wsExpression.AsStringView(),
+  bool bRet = pContext->RunScript(eScriptType, wsExpression.AsStringView(),
                                   pTmpRetValue.get(), m_pNode);
   --m_nRecursionDepth;
   int32_t iRet = XFA_EVENTERROR_Error;

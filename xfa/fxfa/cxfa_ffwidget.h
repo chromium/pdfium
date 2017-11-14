@@ -165,11 +165,11 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual bool PtInActiveRect(const CFX_PointF& point);
 
   void DrawBorder(CXFA_Graphics* pGS,
-                  CXFA_BoxData boxData,
+                  const CXFA_BoxData& boxData,
                   const CFX_RectF& rtBorder,
                   const CFX_Matrix& matrix);
   void DrawBorderWithFlags(CXFA_Graphics* pGS,
-                           CXFA_BoxData boxData,
+                           const CXFA_BoxData& boxData,
                            const CFX_RectF& rtBorder,
                            const CFX_Matrix& matrix,
                            uint32_t dwFlags);

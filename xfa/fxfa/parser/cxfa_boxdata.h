@@ -29,7 +29,7 @@ class CXFA_BoxData : public CXFA_Data {
   int32_t GetHand() const;
   int32_t GetPresence() const;
   int32_t CountEdges() const;
-  CXFA_EdgeData GetEdgeData(int32_t nIndex = 0) const;
+  CXFA_EdgeData GetEdgeData(int32_t nIndex) const;
   std::vector<CXFA_StrokeData> GetStrokes() const;
   bool IsCircular() const;
   bool GetStartAngle(float& fStartAngle) const;
@@ -46,7 +46,7 @@ class CXFA_BoxData : public CXFA_Data {
     return fSweepAngle;
   }
 
-  CXFA_FillData GetFillData(bool bModified = false) const;
+  CXFA_FillData GetFillData(bool bModified) const;
   CXFA_MarginData GetMarginData() const;
   int32_t Get3DStyle(bool& bVisible, float& fThickness) const;
 };

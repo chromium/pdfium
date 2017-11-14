@@ -28,7 +28,7 @@ class CFXJSE_Engine {
 
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() { return &m_eventParam; }
-  bool RunScript(XFA_SCRIPTLANGTYPE eScriptType,
+  bool RunScript(XFA_ScriptDataType eScriptType,
                  const WideStringView& wsScript,
                  CFXJSE_Value* pRetValue,
                  CXFA_Object* pThisObject);
@@ -89,7 +89,7 @@ class CFXJSE_Engine {
   bool RunVariablesScript(CXFA_Node* pScriptNode);
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject, bool bScriptNode = false);
   bool IsStrictScopeInJavaScript();
-  XFA_SCRIPTLANGTYPE GetType();
+  XFA_ScriptDataType GetType();
   std::vector<CXFA_Node*>* GetUpObjectArray() { return &m_upObjectArray; }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
@@ -104,7 +104,7 @@ class CFXJSE_Engine {
   std::unique_ptr<CFXJSE_Context> m_JsContext;
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pJsClass;
-  XFA_SCRIPTLANGTYPE m_eScriptType;
+  XFA_ScriptDataType m_eScriptType;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Context>>
       m_mapVariableToContext;
