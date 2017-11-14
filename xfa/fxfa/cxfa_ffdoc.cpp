@@ -16,6 +16,7 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/cfx_checksumcontext.h"
 #include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcrt/cfx_seekablemultistream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
@@ -26,7 +27,6 @@
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxfa/cxfa_fileread.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 #include "xfa/fxfa/parser/cxfa_dataimporter.h"
@@ -316,7 +316,7 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
     return false;
 
   m_pPDFDoc = pPDFDoc;
-  m_pStream = pdfium::MakeRetain<CXFA_FileRead>(xfaStreams);
+  m_pStream = pdfium::MakeRetain<CFX_SeekableMultiStream>(xfaStreams);
   return true;
 }
 
