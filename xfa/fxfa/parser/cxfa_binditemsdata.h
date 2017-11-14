@@ -16,9 +16,9 @@ class CXFA_BindItemsData : public CXFA_DataData {
  public:
   explicit CXFA_BindItemsData(CXFA_Node* pNode);
 
-  void GetLabelRef(WideStringView& wsLabelRef);
-  void GetValueRef(WideStringView& wsValueRef);
-  void GetRef(WideStringView& wsRef);
+  void GetLabelRef(WideString& wsLabelRef);
+  void GetValueRef(WideString& wsValueRef);
+  void GetRef(WideString& wsRef);
   bool SetConnection(const WideString& wsConnection);
 };
 

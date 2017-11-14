@@ -60,8 +60,8 @@ CFX_XMLNode* GetDocumentNode(CFX_XMLDoc* pXMLDoc,
 WideString GetElementTagNamespaceURI(CFX_XMLElement* pElement) {
   WideString wsNodeStr = pElement->GetNamespacePrefix();
   WideString wsNamespaceURI;
-  if (!XFA_FDEExtension_ResolveNamespaceQualifier(
-          pElement, wsNodeStr.AsStringView(), &wsNamespaceURI)) {
+  if (!XFA_FDEExtension_ResolveNamespaceQualifier(pElement, wsNodeStr,
+                                                  &wsNamespaceURI)) {
     return WideString();
   }
   return wsNamespaceURI;
@@ -103,21 +103,20 @@ bool GetAttributeLocalName(const WideStringView& wsAttributeName,
 }
 
 bool ResolveAttribute(CFX_XMLElement* pElement,
-                      const WideStringView& wsAttributeName,
+                      const WideString& wsAttrName,
                       WideString& wsLocalAttrName,
                       WideString& wsNamespaceURI) {
-  WideString wsAttrName(wsAttributeName);
   WideString wsNSPrefix;
-  if (GetAttributeLocalName(wsAttributeName, wsLocalAttrName)) {
-    wsNSPrefix = wsAttrName.Left(wsAttributeName.GetLength() -
+  if (GetAttributeLocalName(wsAttrName.AsStringView(), wsLocalAttrName)) {
+    wsNSPrefix = wsAttrName.Left(wsAttrName.GetLength() -
                                  wsLocalAttrName.GetLength() - 1);
   }
   if (wsLocalAttrName == L"xmlns" || wsNSPrefix == L"xmlns" ||
       wsNSPrefix == L"xml") {
     return false;
   }
-  if (!XFA_FDEExtension_ResolveNamespaceQualifier(
-          pElement, wsNSPrefix.AsStringView(), &wsNamespaceURI)) {
+  if (!XFA_FDEExtension_ResolveNamespaceQualifier(pElement, wsNSPrefix,
+                                                  &wsNamespaceURI)) {
     wsNamespaceURI.clear();
     return false;
   }
@@ -147,8 +146,8 @@ bool FindAttributeWithNS(CFX_XMLElement* pElement,
       wsNSPrefix = it.first.Left(pos.value());
     }
 
-    if (!XFA_FDEExtension_ResolveNamespaceQualifier(
-            pElement, wsNSPrefix.AsStringView(), &wsAttrNS)) {
+    if (!XFA_FDEExtension_ResolveNamespaceQualifier(pElement, wsNSPrefix,
+                                                    &wsAttrNS)) {
       continue;
     }
     if (bMatchNSAsPrefix) {
@@ -388,10 +387,9 @@ CFX_XMLDoc* CXFA_SimpleParser::GetXMLDoc() const {
   return m_pXMLDoc.get();
 }
 
-bool XFA_FDEExtension_ResolveNamespaceQualifier(
-    CFX_XMLElement* pNode,
-    const WideStringView& wsQualifier,
-    WideString* wsNamespaceURI) {
+bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
+                                                const WideString& wsQualifier,
+                                                WideString* wsNamespaceURI) {
   if (!pNode)
     return false;
 
@@ -952,7 +950,7 @@ void CXFA_SimpleParser::ParseContentNode(CXFA_Node* pXFANode,
                                          XFA_XDPPACKET ePacketID) {
   XFA_Element element = XFA_Element::Sharptext;
   if (pXFANode->GetElementType() == XFA_Element::ExData) {
-    WideStringView wsContentType =
+    WideString wsContentType =
         pXFANode->JSNode()->GetCData(XFA_Attribute::ContentType);
     if (wsContentType == L"text/html")
       element = XFA_Element::SharpxHTML;
@@ -1072,8 +1070,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
         for (auto it : pXMLElement->GetAttributes()) {
           WideString wsName;
           WideString wsNS;
-          if (!ResolveAttribute(pXMLElement, it.first.AsStringView(), wsName,
-                                wsNS)) {
+          if (!ResolveAttribute(pXMLElement, it.first, wsName, wsNS)) {
             continue;
           }
           if (wsName == L"nil" && it.second == L"true") {
@@ -1205,7 +1202,7 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
       pXFANode->InsertChild(pXFAChild, nullptr);
       pXFAChild->SetXMLMappingNode(pXMLChild);
       pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
-      WideStringView wsCurValue =
+      WideString wsCurValue =
           pXFAChild->JSNode()->GetCData(XFA_Attribute::Value);
       wsValueTextBuf << wsCurValue;
     }

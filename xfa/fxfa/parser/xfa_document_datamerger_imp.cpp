@@ -424,13 +424,13 @@ CXFA_Node* ScopeMatchGlobalBinding(CXFA_Node* pDataScope,
 }
 
 CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
-                              WideStringView wsName,
+                              const WideString& wsName,
                               CXFA_Node* pDataScope,
                               XFA_Element eMatchNodeType) {
   if (wsName.IsEmpty())
     return nullptr;
 
-  uint32_t dwNameHash = FX_HashCode_GetW(wsName, false);
+  uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringView(), false);
   CXFA_Node* pBounded = GetGlobalBinding(pDocument, dwNameHash);
   if (!pBounded) {
     pBounded =
@@ -442,13 +442,13 @@ CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
 }
 
 CXFA_Node* FindOnceDataNode(CXFA_Document* pDocument,
-                            WideStringView wsName,
+                            const WideString& wsName,
                             CXFA_Node* pDataScope,
                             XFA_Element eMatchNodeType) {
   if (wsName.IsEmpty())
     return nullptr;
 
-  uint32_t dwNameHash = FX_HashCode_GetW(wsName, false);
+  uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringView(), false);
   CXFA_Node* pLastDataScope = nullptr;
   for (CXFA_Node* pCurDataScope = pDataScope;
        pCurDataScope && pCurDataScope->GetPacketID() == XFA_XDPPACKET_Datasets;
@@ -469,7 +469,7 @@ CXFA_Node* FindOnceDataNode(CXFA_Document* pDocument,
 }
 
 CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
-                               WideStringView wsRef,
+                               const WideString& wsRef,
                                CXFA_Node* pDataScope,
                                XFA_Element eMatchNodeType,
                                CXFA_Node* pTemplateNode,
@@ -480,8 +480,8 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
     dFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
 
   XFA_RESOLVENODE_RS rs;
-  pDocument->GetScriptContext()->ResolveObjects(pDataScope, wsRef, rs, dFlags,
-                                                pTemplateNode);
+  pDocument->GetScriptContext()->ResolveObjects(
+      pDataScope, wsRef.AsStringView(), rs, dFlags, pTemplateNode);
   if (rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeAll ||
       rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll ||
       rs.objects.size() > 1) {
@@ -513,7 +513,7 @@ CXFA_Node* CloneOrMergeInstanceManager(CXFA_Document* pDocument,
                                        CXFA_Node* pFormParent,
                                        CXFA_Node* pTemplateNode,
                                        std::vector<CXFA_Node*>* subforms) {
-  WideStringView wsSubformName =
+  WideString wsSubformName =
       pTemplateNode->JSNode()->GetCData(XFA_Attribute::Name);
   WideString wsInstMgrNodeName = L"_" + wsSubformName;
   uint32_t dwInstNameHash =
@@ -1165,13 +1165,13 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
         bMatchRef = bDataRef;
         bParentDataRef = true;
         if (!pDataNode && bDataRef) {
-          WideStringView wsRef =
+          WideString wsRef =
               pTemplateNodeBind->JSNode()->GetCData(XFA_Attribute::Ref);
           uint32_t dFlags =
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
           XFA_RESOLVENODE_RS rs;
-          pDocument->GetScriptContext()->ResolveObjects(pDataScope, wsRef, rs,
-                                                        dFlags, pTemplateNode);
+          pDocument->GetScriptContext()->ResolveObjects(
+              pDataScope, wsRef.AsStringView(), rs, dFlags, pTemplateNode);
           CXFA_Object* pObject =
               !rs.objects.empty() ? rs.objects.front() : nullptr;
           pDataNode = ToNode(pObject);
@@ -1465,7 +1465,7 @@ void CXFA_Document::DoDataMerge() {
       this, pFormRoot, pTemplateChosen, false, nullptr);
   ASSERT(pSubformSetNode);
   if (!pDataTopLevel) {
-    WideStringView wsFormName =
+    WideString wsFormName =
         pSubformSetNode->JSNode()->GetCData(XFA_Attribute::Name);
     WideString wsDataTopLevelName(wsFormName.IsEmpty() ? L"form" : wsFormName);
     CFX_XMLElement* pDataTopLevelXMLNode =

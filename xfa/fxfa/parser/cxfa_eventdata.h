@@ -24,7 +24,7 @@ class CXFA_EventData : public CXFA_DataData {
   XFA_Element GetEventType() const;
   CXFA_ScriptData GetScriptData() const;
   CXFA_SubmitData GetSubmitData() const;
-  void GetRef(WideStringView& wsRef);
+  void GetRef(WideString& wsRef);
   void GetSignDataTarget(WideString& wsTarget);
 };
 

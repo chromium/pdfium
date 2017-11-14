@@ -99,7 +99,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
   CXFA_Node* pNode = pItemNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pNode) {
-    WideStringView wsName;
+    WideString wsName;
     pNode->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
     if (m_eType == XFA_TEXTPROVIDERTYPE_Rollover && wsName == L"rollover")
       return pNode;

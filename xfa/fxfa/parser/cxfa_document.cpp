@@ -333,7 +333,7 @@ CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
   CXFA_NodeIterator sIterator(pRoot);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
-    WideStringView wsIDVal;
+    WideString wsIDVal;
     if (pNode->JSNode()->TryCData(XFA_Attribute::Id, wsIDVal, true) &&
         !wsIDVal.IsEmpty()) {
       if (wsIDVal == wsID)
@@ -353,12 +353,12 @@ void CXFA_Document::DoProtoMerge() {
   CXFA_NodeIterator sIterator(pTemplateRoot);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
-    WideStringView wsIDVal;
+    WideString wsIDVal;
     if (pNode->JSNode()->TryCData(XFA_Attribute::Id, wsIDVal, true) &&
         !wsIDVal.IsEmpty()) {
-      mIDMap[FX_HashCode_GetW(wsIDVal, false)] = pNode;
+      mIDMap[FX_HashCode_GetW(wsIDVal.AsStringView(), false)] = pNode;
     }
-    WideStringView wsUseVal;
+    WideString wsUseVal;
     if (pNode->JSNode()->TryCData(XFA_Attribute::Use, wsUseVal, true) &&
         !wsUseVal.IsEmpty()) {
       sUseNodes.insert(pNode);

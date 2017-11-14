@@ -18,10 +18,10 @@ int32_t CXFA_SubmitData::GetSubmitFormat() {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Format);
 }
 
-void CXFA_SubmitData::GetSubmitTarget(WideStringView& wsTarget) {
+void CXFA_SubmitData::GetSubmitTarget(WideString& wsTarget) {
   m_pNode->JSNode()->TryCData(XFA_Attribute::Target, wsTarget, true);
 }
 
-void CXFA_SubmitData::GetSubmitXDPContent(WideStringView& wsContent) {
+void CXFA_SubmitData::GetSubmitXDPContent(WideString& wsContent) {
   m_pNode->JSNode()->TryCData(XFA_Attribute::XdpContent, wsContent, true);
 }

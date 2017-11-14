@@ -1779,10 +1779,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   float fContentWidthLimit =
       bContainerWidthAutoSize ? FLT_MAX
                               : containerSize.width - fLeftInset - fRightInset;
-  WideStringView wsColumnWidths;
+  WideString wsColumnWidths;
   if (pLayoutNode->JSNode()->TryCData(XFA_Attribute::ColumnWidths,
                                       wsColumnWidths, true)) {
-    auto widths = SeparateStringW(wsColumnWidths.unterminated_c_str(),
+    auto widths = SeparateStringW(wsColumnWidths.c_str(),
                                   wsColumnWidths.GetLength(), L' ');
     for (auto& width : widths) {
       width.TrimLeft(L' ');

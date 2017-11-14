@@ -54,7 +54,7 @@ bool IsXMLValidChar(wchar_t ch) {
          (ch >= 0x20 && ch <= 0xD7FF) || (ch >= 0xE000 && ch <= 0xFFFD);
 }
 
-WideString ExportEncodeContent(const WideStringView& str) {
+WideString ExportEncodeContent(const WideString& str) {
   CFX_WideTextBuf textBuf;
   int32_t iLen = str.GetLength();
   for (int32_t i = 0; i < iLen; i++) {
@@ -253,7 +253,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         for (int32_t i = 0; i < pdfium::CollectionSize<int32_t>(wsSelTextArray);
              i++) {
           buf << L"<value\n>";
-          buf << ExportEncodeContent(wsSelTextArray[i].AsStringView());
+          buf << ExportEncodeContent(wsSelTextArray[i]);
           buf << L"</value\n>";
         }
         buf << L"</";
@@ -262,7 +262,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         wsChildren += buf.AsStringView();
         buf.Clear();
       } else {
-        WideStringView wsValue =
+        WideString wsValue =
             pRawValueNode->JSNode()->GetCData(XFA_Attribute::Value);
         wsChildren += ExportEncodeContent(wsValue);
       }
@@ -271,7 +271,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     case XFA_ObjectType::TextNode:
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::NodeV: {
-      WideStringView wsValue = pNode->JSNode()->GetCData(XFA_Attribute::Value);
+      WideString wsValue = pNode->JSNode()->GetCData(XFA_Attribute::Value);
       wsChildren += ExportEncodeContent(wsValue);
       break;
     }

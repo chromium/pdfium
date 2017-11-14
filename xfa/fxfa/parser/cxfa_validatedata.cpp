@@ -45,7 +45,7 @@ void CXFA_ValidateData::GetMessageText(WideString& wsMessage,
     if (pItemNode->GetElementType() != XFA_Element::Text)
       continue;
 
-    WideStringView wsName;
+    WideString wsName;
     pItemNode->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
       pItemNode->JSNode()->TryContent(wsMessage, false, true);
@@ -83,7 +83,7 @@ void CXFA_ValidateData::SetMessageText(WideString& wsMessage,
     if (pItemNode->GetElementType() != XFA_Element::Text)
       continue;
 
-    WideStringView wsName;
+    WideString wsName;
     pItemNode->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
       pItemNode->JSNode()->SetContent(wsMessage, wsMessage, false, false, true);

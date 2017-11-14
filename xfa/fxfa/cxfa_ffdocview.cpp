@@ -720,18 +720,20 @@ void CXFA_FFDocView::RunBindItems() {
     CXFA_BindItemsData bindItemsData(item);
     CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
-    WideStringView wsRef;
+    WideString wsRef;
     bindItemsData.GetRef(wsRef);
     uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
                        XFA_RESOLVENODE_ALL;
     XFA_RESOLVENODE_RS rs;
-    pScriptContext->ResolveObjects(pWidgetNode, wsRef, rs, dwStyle);
+    pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), rs,
+                                   dwStyle);
     pAcc->DeleteItem(-1, false, false);
     if (rs.dwFlags != XFA_RESOLVENODE_RSTYPE_Nodes || rs.objects.empty())
       continue;
 
-    WideStringView wsValueRef, wsLabelRef;
+    WideString wsValueRef;
+    WideString wsLabelRef;
     bindItemsData.GetValueRef(wsValueRef);
     bindItemsData.GetLabelRef(wsLabelRef);
     const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
@@ -739,7 +741,7 @@ void CXFA_FFDocView::RunBindItems() {
     const bool bValueUseContent = wsValueRef.IsEmpty() || wsValueRef == L"$";
     WideString wsValue;
     WideString wsLabel;
-    uint32_t uValueHash = FX_HashCode_GetW(wsValueRef, false);
+    uint32_t uValueHash = FX_HashCode_GetW(wsValueRef.AsStringView(), false);
     for (CXFA_Object* refObject : rs.objects) {
       CXFA_Node* refNode = refObject->AsNode();
       if (!refNode)
@@ -757,7 +759,8 @@ void CXFA_FFDocView::RunBindItems() {
         if (bLabelUseContent) {
           wsLabel = refNode->JSNode()->GetContent(false);
         } else {
-          CXFA_Node* nodeLabel = refNode->GetFirstChildByName(wsLabelRef);
+          CXFA_Node* nodeLabel =
+              refNode->GetFirstChildByName(wsLabelRef.AsStringView());
           if (nodeLabel)
             wsLabel = nodeLabel->JSNode()->GetContent(false);
         }

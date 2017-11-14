@@ -904,16 +904,15 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
   if (!pFormFillEnv)
     return false;
 
-  WideStringView csURLC;
-  submitData.GetSubmitTarget(csURLC);
-  WideString csURL(csURLC);
+  WideString csURL;
+  submitData.GetSubmitTarget(csURL);
   if (csURL.IsEmpty()) {
     WideString ws;
     ws.FromLocal("Submit cancelled.");
     ByteString bs = ws.UTF16LE_Encode();
     int len = bs.GetLength();
-    pFormFillEnv->Alert((FPDF_WIDESTRING)bs.GetBuffer(len),
-                        (FPDF_WIDESTRING)L"", 0, 4);
+    pFormFillEnv->Alert(reinterpret_cast<FPDF_WIDESTRING>(bs.GetBuffer(len)),
+                        reinterpret_cast<FPDF_WIDESTRING>(L""), 0, 4);
     bs.ReleaseBuffer(len);
     return false;
   }
@@ -922,10 +921,8 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
   int fileFlag = -1;
   switch (submitData.GetSubmitFormat()) {
     case XFA_ATTRIBUTEENUM_Xdp: {
-      WideStringView csContentC;
-      submitData.GetSubmitXDPContent(csContentC);
       WideString csContent;
-      csContent = csContentC;
+      submitData.GetSubmitXDPContent(csContent);
       csContent.TrimLeft();
       csContent.TrimRight();
       WideString space;

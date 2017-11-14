@@ -72,13 +72,12 @@ class CJX_Node : public CJX_Object {
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_Attribute eAttr);
 
-  bool TryCData(XFA_Attribute eAttr, WideStringView& wsValue, bool bUseDefault);
   bool TryCData(XFA_Attribute eAttr, WideString& wsValue, bool bUseDefault);
   bool SetCData(XFA_Attribute eAttr,
                 const WideString& wsValue,
                 bool bNotify,
                 bool bScriptModify);
-  WideStringView GetCData(XFA_Attribute eAttr);
+  WideString GetCData(XFA_Attribute eAttr);
 
   bool TryContent(WideString& wsContent, bool bScriptModify, bool bProto);
 
@@ -409,10 +408,6 @@ class CJX_Node : public CJX_Object {
                 XFA_AttributeType eType,
                 void* pValue,
                 bool bNotify);
-  bool GetValue(XFA_Attribute eAttr,
-                XFA_AttributeType eType,
-                bool bUseDefault,
-                void*& pValue);
 
   bool TryUserData(void* pKey, void*& pData, bool bProtoAlso);
 

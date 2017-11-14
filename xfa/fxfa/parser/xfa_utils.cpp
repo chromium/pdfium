@@ -393,17 +393,6 @@ XFA_Element XFA_GetElementTypeForName(const WideStringView& wsName) {
   return XFA_Element::Unknown;
 }
 
-CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
-                                                      XFA_Attribute eAttribute,
-                                                      uint32_t dwPacket) {
-  void* pValue;
-  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_AttributeType::Measure, dwPacket)) {
-    return *(CXFA_Measurement*)pValue;
-  }
-  return CXFA_Measurement();
-}
-
 bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_Element eElement,
                                   XFA_Attribute eAttribute,

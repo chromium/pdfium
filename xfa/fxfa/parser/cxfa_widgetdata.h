@@ -70,11 +70,11 @@ class CXFA_WidgetData : public CXFA_DataData {
 
   CXFA_BorderData GetUIBorderData();
   CFX_RectF GetUIMargin();
-  int32_t GetButtonHighlight();
+  XFA_ATTRIBUTEENUM GetButtonHighlight();
   bool GetButtonRollover(WideString& wsRollover, bool& bRichText);
   bool GetButtonDown(WideString& wsDown, bool& bRichText);
-  int32_t GetCheckButtonShape();
-  int32_t GetCheckButtonMark();
+  XFA_ATTRIBUTEENUM GetCheckButtonShape();
+  XFA_ATTRIBUTEENUM GetCheckButtonMark();
   float GetCheckButtonSize();
   bool IsAllowNeutral();
   bool IsRadioButton();
@@ -89,9 +89,9 @@ class CXFA_WidgetData : public CXFA_DataData {
                                 bool bSyncData);
   CXFA_Node* GetExclGroupFirstMember();
   CXFA_Node* GetExclGroupNextMember(CXFA_Node* pNode);
-  int32_t GetChoiceListCommitOn();
+  XFA_ATTRIBUTEENUM GetChoiceListCommitOn();
   bool IsChoiceListAllowTextEntry();
-  int32_t GetChoiceListOpen();
+  XFA_ATTRIBUTEENUM GetChoiceListOpen();
   bool IsListBox();
   int32_t CountChoiceListItems(bool bSaveValue);
   bool GetChoiceListItem(WideString& wsText, int32_t nIndex, bool bSaveValue);
@@ -145,7 +145,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   void GetPasswordChar(WideString& wsPassWord);
 
   bool IsMultiLine();
-  int32_t GetVerticalScrollPolicy();
+  XFA_ATTRIBUTEENUM GetVerticalScrollPolicy();
   int32_t GetMaxChars(XFA_Element& eType);
   bool GetFracDigits(int32_t& iFracDigits);
   bool GetLeadDigits(int32_t& iLeadDigits);

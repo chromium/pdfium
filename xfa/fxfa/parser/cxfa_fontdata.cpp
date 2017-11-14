@@ -35,11 +35,11 @@ float CXFA_FontData::GetVerticalScale() {
 }
 
 float CXFA_FontData::GetLetterSpacing() {
-  WideStringView wsValue;
+  WideString wsValue;
   if (!m_pNode->JSNode()->TryCData(XFA_Attribute::LetterSpacing, wsValue, true))
     return 0;
 
-  CXFA_Measurement ms(wsValue);
+  CXFA_Measurement ms(wsValue.AsStringView());
   if (ms.GetUnit() == XFA_Unit::Em)
     return ms.GetValue() * GetFontSize();
   return ms.ToUnit(XFA_Unit::Pt);
@@ -69,7 +69,7 @@ float CXFA_FontData::GetFontSize() {
   return ms.ToUnit(XFA_Unit::Pt);
 }
 
-void CXFA_FontData::GetTypeface(WideStringView& wsTypeFace) {
+void CXFA_FontData::GetTypeface(WideString& wsTypeFace) {
   m_pNode->JSNode()->TryCData(XFA_Attribute::Typeface, wsTypeFace, true);
 }
 

@@ -198,39 +198,6 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   return pUIChild;
 }
 
-XFA_ATTRIBUTEENUM GetAttributeDefaultValue_Enum(XFA_Element eElement,
-                                                XFA_Attribute eAttribute,
-                                                uint32_t dwPacket) {
-  void* pValue;
-  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_AttributeType::Enum, dwPacket)) {
-    return (XFA_ATTRIBUTEENUM)(uintptr_t)pValue;
-  }
-  return XFA_ATTRIBUTEENUM_Unknown;
-}
-
-WideStringView GetAttributeDefaultValue_Cdata(XFA_Element eElement,
-                                              XFA_Attribute eAttribute,
-                                              uint32_t dwPacket) {
-  void* pValue;
-  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_AttributeType::CData, dwPacket)) {
-    return (const wchar_t*)pValue;
-  }
-  return nullptr;
-}
-
-bool GetAttributeDefaultValue_Boolean(XFA_Element eElement,
-                                      XFA_Attribute eAttribute,
-                                      uint32_t dwPacket) {
-  void* pValue;
-  if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
-                                   XFA_AttributeType::Boolean, dwPacket)) {
-    return !!pValue;
-  }
-  return false;
-}
-
 }  // namespace
 
 CXFA_WidgetData::CXFA_WidgetData(CXFA_Node* pNode)
@@ -315,7 +282,7 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
     CXFA_EventData eventData(pNode);
     if (eventData.GetActivity() == iActivity) {
       if (iActivity == XFA_ATTRIBUTEENUM_Ready) {
-        WideStringView wsRef;
+        WideString wsRef;
         eventData.GetRef(wsRef);
         if (bIsFormReady) {
           if (wsRef == WideStringView(L"$form"))
@@ -427,12 +394,11 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
   return CFX_RectF(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
 
-int32_t CXFA_WidgetData::GetButtonHighlight() {
+XFA_ATTRIBUTEENUM CXFA_WidgetData::GetButtonHighlight() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Highlight);
-  return GetAttributeDefaultValue_Enum(
-      XFA_Element::Button, XFA_Attribute::Highlight, XFA_XDPPACKET_Form);
+  return XFA_ATTRIBUTEENUM_Inverted;
 }
 
 bool CXFA_WidgetData::GetButtonRollover(WideString& wsRollover,
@@ -440,7 +406,7 @@ bool CXFA_WidgetData::GetButtonRollover(WideString& wsRollover,
   if (CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false)) {
     CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pText) {
-      WideStringView wsName;
+      WideString wsName;
       pText->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
       if (wsName == L"rollover") {
         pText->JSNode()->TryContent(wsRollover, false, true);
@@ -457,7 +423,7 @@ bool CXFA_WidgetData::GetButtonDown(WideString& wsDown, bool& bRichText) {
   if (CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false)) {
     CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pText) {
-      WideStringView wsName;
+      WideString wsName;
       pText->JSNode()->TryCData(XFA_Attribute::Name, wsName, true);
       if (wsName == L"down") {
         pText->JSNode()->TryContent(wsDown, false, true);
@@ -470,46 +436,39 @@ bool CXFA_WidgetData::GetButtonDown(WideString& wsDown, bool& bRichText) {
   return false;
 }
 
-int32_t CXFA_WidgetData::GetCheckButtonShape() {
+XFA_ATTRIBUTEENUM CXFA_WidgetData::GetCheckButtonShape() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Shape);
-  return GetAttributeDefaultValue_Enum(
-      XFA_Element::CheckButton, XFA_Attribute::Shape, XFA_XDPPACKET_Form);
+  return XFA_ATTRIBUTEENUM_Square;
 }
 
-int32_t CXFA_WidgetData::GetCheckButtonMark() {
+XFA_ATTRIBUTEENUM CXFA_WidgetData::GetCheckButtonMark() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Mark);
-  return GetAttributeDefaultValue_Enum(XFA_Element::CheckButton,
-                                       XFA_Attribute::Mark, XFA_XDPPACKET_Form);
+  return XFA_ATTRIBUTEENUM_Default;
 }
 
 bool CXFA_WidgetData::IsRadioButton() {
-  if (CXFA_Node* pParent = m_pNode->GetNodeItem(XFA_NODEITEM_Parent))
-    return pParent->GetElementType() == XFA_Element::ExclGroup;
-  return false;
+  CXFA_Node* pParent = m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  return pParent && pParent->GetElementType() == XFA_Element::ExclGroup;
 }
 
 float CXFA_WidgetData::GetCheckButtonSize() {
   CXFA_Node* pUIChild = GetUIChild();
-  if (pUIChild)
+  if (pUIChild) {
     return pUIChild->JSNode()
         ->GetMeasure(XFA_Attribute::Size)
         .ToUnit(XFA_Unit::Pt);
-  return XFA_GetAttributeDefaultValue_Measure(
-             XFA_Element::CheckButton, XFA_Attribute::Size, XFA_XDPPACKET_Form)
-      .ToUnit(XFA_Unit::Pt);
+  }
+  return CXFA_Measurement(10, XFA_Unit::Pt).ToUnit(XFA_Unit::Pt);
 }
 
 bool CXFA_WidgetData::IsAllowNeutral() {
   CXFA_Node* pUIChild = GetUIChild();
-  if (pUIChild)
-    return pUIChild->JSNode()->GetBoolean(XFA_Attribute::AllowNeutral);
-  return GetAttributeDefaultValue_Boolean(XFA_Element::CheckButton,
-                                          XFA_Attribute::AllowNeutral,
-                                          XFA_XDPPACKET_Form);
+  return pUIChild &&
+         pUIChild->JSNode()->GetBoolean(XFA_Attribute::AllowNeutral);
 }
 
 XFA_CHECKSTATE CXFA_WidgetData::GetCheckState() {
@@ -695,28 +654,23 @@ CXFA_Node* CXFA_WidgetData::GetExclGroupNextMember(CXFA_Node* pNode) {
   return nullptr;
 }
 
-int32_t CXFA_WidgetData::GetChoiceListCommitOn() {
+XFA_ATTRIBUTEENUM CXFA_WidgetData::GetChoiceListCommitOn() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::CommitOn);
-  return GetAttributeDefaultValue_Enum(
-      XFA_Element::ChoiceList, XFA_Attribute::CommitOn, XFA_XDPPACKET_Form);
+  return XFA_ATTRIBUTEENUM_Select;
 }
 
 bool CXFA_WidgetData::IsChoiceListAllowTextEntry() {
   CXFA_Node* pUIChild = GetUIChild();
-  if (pUIChild)
-    return pUIChild->JSNode()->GetBoolean(XFA_Attribute::TextEntry);
-  return GetAttributeDefaultValue_Boolean(
-      XFA_Element::ChoiceList, XFA_Attribute::TextEntry, XFA_XDPPACKET_Form);
+  return pUIChild && pUIChild->JSNode()->GetBoolean(XFA_Attribute::TextEntry);
 }
 
-int32_t CXFA_WidgetData::GetChoiceListOpen() {
+XFA_ATTRIBUTEENUM CXFA_WidgetData::GetChoiceListOpen() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Open);
-  return GetAttributeDefaultValue_Enum(XFA_Element::ChoiceList,
-                                       XFA_Attribute::Open, XFA_XDPPACKET_Form);
+  return XFA_ATTRIBUTEENUM_UserControl;
 }
 
 bool CXFA_WidgetData::IsListBox() {
@@ -1231,7 +1185,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_DataLength(int32_t* val) {
 
 bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char* val) {
   CXFA_Node* pUIChild = GetUIChild();
-  WideStringView wsStartEndChar;
+  WideString wsStartEndChar;
   if (pUIChild->JSNode()->TryCData(XFA_Attribute::StartChar, wsStartEndChar,
                                    true)) {
     if (wsStartEndChar.GetLength()) {
@@ -1244,7 +1198,7 @@ bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char* val) {
 
 bool CXFA_WidgetData::GetBarcodeAttribute_EndChar(char* val) {
   CXFA_Node* pUIChild = GetUIChild();
-  WideStringView wsStartEndChar;
+  WideString wsStartEndChar;
   if (pUIChild->JSNode()->TryCData(XFA_Attribute::EndChar, wsStartEndChar,
                                    true)) {
     if (wsStartEndChar.GetLength()) {
@@ -1364,29 +1318,22 @@ bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float* val) {
 
 void CXFA_WidgetData::GetPasswordChar(WideString& wsPassWord) {
   CXFA_Node* pUIChild = GetUIChild();
-  if (pUIChild) {
+  if (pUIChild)
     pUIChild->JSNode()->TryCData(XFA_Attribute::PasswordChar, wsPassWord, true);
-  } else {
-    wsPassWord = GetAttributeDefaultValue_Cdata(XFA_Element::PasswordEdit,
-                                                XFA_Attribute::PasswordChar,
-                                                XFA_XDPPACKET_Form);
-  }
+  else
+    wsPassWord = L"*";
 }
 
 bool CXFA_WidgetData::IsMultiLine() {
   CXFA_Node* pUIChild = GetUIChild();
-  if (pUIChild)
-    return pUIChild->JSNode()->GetBoolean(XFA_Attribute::MultiLine);
-  return GetAttributeDefaultValue_Boolean(
-      XFA_Element::TextEdit, XFA_Attribute::MultiLine, XFA_XDPPACKET_Form);
+  return pUIChild && pUIChild->JSNode()->GetBoolean(XFA_Attribute::MultiLine);
 }
 
-int32_t CXFA_WidgetData::GetVerticalScrollPolicy() {
+XFA_ATTRIBUTEENUM CXFA_WidgetData::GetVerticalScrollPolicy() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::VScrollPolicy);
-  return GetAttributeDefaultValue_Enum(
-      XFA_Element::TextEdit, XFA_Attribute::VScrollPolicy, XFA_XDPPACKET_Form);
+  return XFA_ATTRIBUTEENUM_Auto;
 }
 
 int32_t CXFA_WidgetData::GetMaxChars(XFA_Element& eType) {

@@ -11,15 +11,15 @@
 CXFA_BindItemsData::CXFA_BindItemsData(CXFA_Node* pNode)
     : CXFA_DataData(pNode) {}
 
-void CXFA_BindItemsData::GetLabelRef(WideStringView& wsLabelRef) {
+void CXFA_BindItemsData::GetLabelRef(WideString& wsLabelRef) {
   m_pNode->JSNode()->TryCData(XFA_Attribute::LabelRef, wsLabelRef, true);
 }
 
-void CXFA_BindItemsData::GetValueRef(WideStringView& wsValueRef) {
+void CXFA_BindItemsData::GetValueRef(WideString& wsValueRef) {
   m_pNode->JSNode()->TryCData(XFA_Attribute::ValueRef, wsValueRef, true);
 }
 
-void CXFA_BindItemsData::GetRef(WideStringView& wsRef) {
+void CXFA_BindItemsData::GetRef(WideString& wsRef) {
   m_pNode->JSNode()->TryCData(XFA_Attribute::Ref, wsRef, true);
 }
 

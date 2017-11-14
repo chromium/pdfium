@@ -140,6 +140,13 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Node* GetOccurNode();
 
+  pdfium::Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
+  pdfium::Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;
+  pdfium::Optional<CXFA_Measurement> GetDefaultMeasurement(
+      XFA_Attribute attr) const;
+  pdfium::Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
+  pdfium::Optional<XFA_ATTRIBUTEENUM> GetDefaultEnum(XFA_Attribute attr) const;
+
  private:
   CXFA_Node(CXFA_Document* pDoc,
             uint16_t ePacket,

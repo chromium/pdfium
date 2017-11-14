@@ -19,8 +19,8 @@ class CXFA_SubmitData : public CXFA_DataData {
 
   bool IsSubmitEmbedPDF();
   int32_t GetSubmitFormat();
-  void GetSubmitTarget(WideStringView& wsTarget);
-  void GetSubmitXDPContent(WideStringView& wsContent);
+  void GetSubmitTarget(WideString& wsTarget);
+  void GetSubmitXDPContent(WideString& wsContent);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBMITDATA_H_

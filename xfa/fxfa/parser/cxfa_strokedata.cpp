@@ -32,9 +32,7 @@ float CXFA_StrokeData::GetThickness() const {
 
 CXFA_Measurement CXFA_StrokeData::GetMSThickness() const {
   return m_pNode ? m_pNode->JSNode()->GetMeasure(XFA_Attribute::Thickness)
-                 : XFA_GetAttributeDefaultValue_Measure(
-                       XFA_Element::Edge, XFA_Attribute::Thickness,
-                       XFA_XDPPACKET_Form);
+                 : CXFA_Measurement(0.5, XFA_Unit::Pt);
 }
 
 void CXFA_StrokeData::SetMSThickness(CXFA_Measurement msThinkness) {
@@ -52,9 +50,9 @@ FX_ARGB CXFA_StrokeData::GetColor() const {
   if (!pNode)
     return 0xFF000000;
 
-  WideStringView wsColor;
+  WideString wsColor;
   pNode->JSNode()->TryCData(XFA_Attribute::Value, wsColor, true);
-  return CXFA_DataData::ToColor(wsColor);
+  return CXFA_DataData::ToColor(wsColor.AsStringView());
 }
 
 void CXFA_StrokeData::SetColor(FX_ARGB argb) {

@@ -19,10 +19,9 @@ class CXFA_WidgetData;
 double XFA_GetFractionalScale(uint32_t idx);
 int XFA_GetMaxFractionalScale();
 
-bool XFA_FDEExtension_ResolveNamespaceQualifier(
-    CFX_XMLElement* pNode,
-    const WideStringView& wsQualifier,
-    WideString* wsNamespaceURI);
+bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
+                                                const WideString& wsQualifier,
+                                                WideString* wsNamespaceURI);
 
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {
@@ -177,9 +176,6 @@ const XFA_Attribute* XFA_GetElementAttributes(XFA_Element eElement,
                                               int32_t& iCount);
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName);
 XFA_Element XFA_GetElementTypeForName(const WideStringView& wsName);
-CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
-                                                      XFA_Attribute eAttribute,
-                                                      uint32_t dwPacket);
 bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_Element eElement,
                                   XFA_Attribute eAttribute,

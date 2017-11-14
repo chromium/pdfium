@@ -501,11 +501,11 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (!pTextNode)
     return false;
 
-  WideStringView wsScript;
+  WideString wsScript;
   if (!pTextNode->JSNode()->TryCData(XFA_Attribute::Value, wsScript, true))
     return false;
 
-  ByteString btScript = FX_UTF8Encode(wsScript);
+  ByteString btScript = wsScript.UTF8Encode();
   auto hRetValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
   CXFA_Node* pThisObject = pParent->GetNodeItem(XFA_NODEITEM_Parent);
   CFXJSE_Context* pVariablesContext =

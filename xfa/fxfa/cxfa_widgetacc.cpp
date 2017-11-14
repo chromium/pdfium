@@ -1489,7 +1489,7 @@ void CXFA_WidgetAcc::SetImageEditImage(
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
-  WideStringView wsFontName = L"Courier";
+  WideString wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
   if (CXFA_FontData fontData = GetFontData(false)) {
     if (fontData.IsBold())
@@ -1500,8 +1500,8 @@ RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
   }
 
   auto* pDoc = GetDoc();
-  return pDoc->GetApp()->GetXFAFontMgr()->GetFont(pDoc, wsFontName,
-                                                  dwFontStyle);
+  return pDoc->GetApp()->GetXFAFontMgr()->GetFont(
+      pDoc, wsFontName.AsStringView(), dwFontStyle);
 }
 
 float CXFA_WidgetAcc::GetFontSize() {
