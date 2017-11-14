@@ -143,6 +143,14 @@ const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName) {
   return g_XFAEnumData + eName;
 }
 
+// static
+std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
+                                             XFA_XDPPACKET packet,
+                                             const XFA_ELEMENTINFO* pElement) {
+  return std::unique_ptr<CXFA_Node>(new CXFA_Node(
+      doc, packet, pElement->eObjectType, pElement->eName, pElement->pName));
+}
+
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      uint16_t ePacket,
                      XFA_ObjectType oType,

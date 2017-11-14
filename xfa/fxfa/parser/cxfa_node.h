@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_NODE_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -45,6 +46,10 @@ const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName);
 
 class CXFA_Node : public CXFA_Object {
  public:
+  static std::unique_ptr<CXFA_Node> Create(CXFA_Document* doc,
+                                           XFA_XDPPACKET packet,
+                                           const XFA_ELEMENTINFO* pElement);
+
   ~CXFA_Node() override;
 
   uint32_t GetPacketID() const { return m_ePacket; }
@@ -136,8 +141,6 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetOccurNode();
 
  private:
-  friend class CXFA_Document;
-
   CXFA_Node(CXFA_Document* pDoc,
             uint16_t ePacket,
             XFA_ObjectType oType,
