@@ -39,85 +39,6 @@ const double fraction_scales[] = {0.1,
                                   0.000000000000001,
                                   0.0000000000000001};
 
-double WideStringToDouble(const WideString& wsStringVal) {
-  WideString wsValue = wsStringVal;
-  wsValue.TrimLeft();
-  wsValue.TrimRight();
-  int64_t nIntegral = 0;
-  uint32_t dwFractional = 0;
-  int32_t nExponent = 0;
-  int32_t cc = 0;
-  bool bNegative = false;
-  bool bExpSign = false;
-  const wchar_t* str = wsValue.c_str();
-  int32_t len = wsValue.GetLength();
-  if (str[0] == '+') {
-    cc++;
-  } else if (str[0] == '-') {
-    bNegative = true;
-    cc++;
-  }
-  int32_t nIntegralLen = 0;
-  while (cc < len) {
-    if (str[cc] == '.' || str[cc] == 'E' || str[cc] == 'e' ||
-        nIntegralLen > 17) {
-      break;
-    }
-    if (!FXSYS_isDecimalDigit(str[cc])) {
-      return 0;
-    }
-    nIntegral = nIntegral * 10 + str[cc] - '0';
-    cc++;
-    nIntegralLen++;
-  }
-  nIntegral = bNegative ? -nIntegral : nIntegral;
-  int32_t scale = 0;
-  double fraction = 0.0;
-  if (cc < len && str[cc] == '.') {
-    cc++;
-    while (cc < len) {
-      fraction += XFA_GetFractionalScale(scale) * (str[cc] - '0');
-      scale++;
-      cc++;
-      if (cc == len)
-        break;
-      if (scale == XFA_GetMaxFractionalScale() || str[cc] == 'E' ||
-          str[cc] == 'e') {
-        break;
-      }
-      if (!FXSYS_isDecimalDigit(str[cc]))
-        return 0;
-    }
-    dwFractional = static_cast<uint32_t>(fraction * 4294967296.0);
-  }
-  if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
-    cc++;
-    if (cc < len) {
-      if (str[cc] == '+') {
-        cc++;
-      } else if (str[cc] == '-') {
-        bExpSign = true;
-        cc++;
-      }
-    }
-    while (cc < len) {
-      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]))
-        return 0;
-
-      nExponent = nExponent * 10 + str[cc] - '0';
-      cc++;
-    }
-    nExponent = bExpSign ? -nExponent : nExponent;
-  }
-
-  double dValue = dwFractional / 4294967296.0;
-  dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
-  if (nExponent != 0)
-    dValue *= FXSYS_pow(10, static_cast<float>(nExponent));
-
-  return dValue;
-}
-
 }  // namespace
 
 double XFA_GetFractionalScale(uint32_t idx) {
@@ -226,11 +147,6 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
     }
   }
   return bRet;
-}
-
-double XFA_ByteStringToDouble(const ByteStringView& szStringVal) {
-  WideString wsValue = WideString::FromUTF8(szStringVal);
-  return WideStringToDouble(wsValue);
 }
 
 int32_t XFA_MapRotation(int32_t nRotation) {

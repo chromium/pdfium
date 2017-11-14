@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_XFACONTAINERNODE_H_
 
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/xfa_utils.h"
+#include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 
 class CXFA_TraverseStrategy_XFAContainerNode {
  public:

@@ -1850,6 +1850,7 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_node.h",
       "xfa/fxfa/parser/cxfa_nodehelper.cpp",
       "xfa/fxfa/parser/cxfa_nodehelper.h",
+      "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h",
       "xfa/fxfa/parser/cxfa_nodelist.cpp",
       "xfa/fxfa/parser/cxfa_nodelist.h",
       "xfa/fxfa/parser/cxfa_nodelocale.cpp",
@@ -2016,6 +2017,7 @@ test("pdfium_unittests") {
       "xfa/fxfa/fm2js/cxfa_fmlexer_unittest.cpp",
       "xfa/fxfa/fm2js/cxfa_fmparser_unittest.cpp",
       "xfa/fxfa/fm2js/cxfa_fmsimpleexpression_unittest.cpp",
+      "xfa/fxfa/parser/cxfa_nodeiteratortemplate_unittest.cpp",
       "xfa/fxfa/parser/xfa_utils_unittest.cpp",
     ]
   }

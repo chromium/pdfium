@@ -31,6 +31,7 @@
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
+#include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   bRichText = false;

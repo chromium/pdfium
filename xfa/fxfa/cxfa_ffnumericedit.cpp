@@ -13,6 +13,7 @@
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
+#include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFTextEdit(pDataAcc) {}
