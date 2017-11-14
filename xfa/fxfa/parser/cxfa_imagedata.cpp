@@ -9,7 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_ImageData::CXFA_ImageData(CXFA_Node* pNode, bool bDefValue)
-    : CXFA_Data(pNode), m_bDefValue(bDefValue) {}
+    : CXFA_DataData(pNode), m_bDefValue(bDefValue) {}
 
 int32_t CXFA_ImageData::GetAspect() {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Aspect);

@@ -8,7 +8,8 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_BindItemsData::CXFA_BindItemsData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_BindItemsData::CXFA_BindItemsData(CXFA_Node* pNode)
+    : CXFA_DataData(pNode) {}
 
 void CXFA_BindItemsData::GetLabelRef(WideStringView& wsLabelRef) {
   m_pNode->JSNode()->TryCData(XFA_Attribute::LabelRef, wsLabelRef, true);

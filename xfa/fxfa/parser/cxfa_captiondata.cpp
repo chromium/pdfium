@@ -9,7 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_CaptionData::CXFA_CaptionData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_CaptionData::CXFA_CaptionData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 int32_t CXFA_CaptionData::GetPresence() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Visible;

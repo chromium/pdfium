@@ -44,9 +44,9 @@ CXFA_TextData CXFA_ValueData::GetTextData() {
                                : nullptr);
 }
 
-CXFA_ExData CXFA_ValueData::GetExData() {
-  return CXFA_ExData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
-                             : nullptr);
+CXFA_ExDataData CXFA_ValueData::GetExData() {
+  return CXFA_ExDataData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
+                                 : nullptr);
 }
 
 CXFA_ImageData CXFA_ValueData::GetImageData() {

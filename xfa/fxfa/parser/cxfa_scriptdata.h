@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 
 enum class XFA_ScriptDataType {
   Formcalc = 0,
@@ -20,7 +20,7 @@ enum class XFA_ScriptDataType {
 
 class CXFA_Node;
 
-class CXFA_ScriptData : public CXFA_Data {
+class CXFA_ScriptData : public CXFA_DataData {
  public:
   explicit CXFA_ScriptData(CXFA_Node* pNode);
 

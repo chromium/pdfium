@@ -8,11 +8,11 @@
 #define XFA_FXFA_PARSER_CXFA_FONTDATA_H_
 
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 
 class CXFA_Node;
 
-class CXFA_FontData : public CXFA_Data {
+class CXFA_FontData : public CXFA_DataData {
  public:
   explicit CXFA_FontData(CXFA_Node* pNode);
 

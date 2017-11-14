@@ -8,12 +8,12 @@
 #define XFA_FXFA_PARSER_CXFA_CALCULATEDATA_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_scriptdata.h"
 
 class CXFA_Node;
 
-class CXFA_CalculateData : public CXFA_Data {
+class CXFA_CalculateData : public CXFA_DataData {
  public:
   explicit CXFA_CalculateData(CXFA_Node* pNode);
 

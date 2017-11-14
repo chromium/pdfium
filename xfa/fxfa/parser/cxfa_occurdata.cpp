@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_OccurData::CXFA_OccurData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_OccurData::CXFA_OccurData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 int32_t CXFA_OccurData::GetMax() {
   int32_t iMax = 1;

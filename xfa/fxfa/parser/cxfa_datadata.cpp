@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 
 #include "core/fxcrt/fx_extension.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 // Static.
-FX_ARGB CXFA_Data::ToColor(const WideStringView& wsValue) {
+FX_ARGB CXFA_DataData::ToColor(const WideStringView& wsValue) {
   uint8_t r = 0, g = 0, b = 0;
   if (wsValue.GetLength() == 0)
     return 0xff000000;
@@ -61,13 +61,13 @@ FX_ARGB CXFA_Data::ToColor(const WideStringView& wsValue) {
   return (0xff << 24) | (r << 16) | (g << 8) | b;
 }
 
-XFA_Element CXFA_Data::GetElementType() const {
+XFA_Element CXFA_DataData::GetElementType() const {
   return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
 }
 
-bool CXFA_Data::TryMeasure(XFA_Attribute eAttr,
-                           float& fValue,
-                           bool bUseDefault) const {
+bool CXFA_DataData::TryMeasure(XFA_Attribute eAttr,
+                               float& fValue,
+                               bool bUseDefault) const {
   CXFA_Measurement ms;
   if (m_pNode->JSNode()->TryMeasure(eAttr, ms, bUseDefault)) {
     fValue = ms.ToUnit(XFA_Unit::Pt);
@@ -76,7 +76,7 @@ bool CXFA_Data::TryMeasure(XFA_Attribute eAttr,
   return false;
 }
 
-bool CXFA_Data::SetMeasure(XFA_Attribute eAttr, float fValue) {
+bool CXFA_DataData::SetMeasure(XFA_Attribute eAttr, float fValue) {
   CXFA_Measurement ms(fValue, XFA_Unit::Pt);
   return m_pNode->JSNode()->SetMeasure(eAttr, ms, false);
 }

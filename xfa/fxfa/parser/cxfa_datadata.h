@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_DATA_H_
-#define XFA_FXFA_PARSER_CXFA_DATA_H_
+#ifndef XFA_FXFA_PARSER_CXFA_DATADATA_H_
+#define XFA_FXFA_PARSER_CXFA_DATADATA_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
@@ -13,11 +13,11 @@
 
 class CXFA_Node;
 
-class CXFA_Data {
+class CXFA_DataData {
  public:
   static FX_ARGB ToColor(const WideStringView& wsValue);
 
-  explicit CXFA_Data(CXFA_Node* pNode) : m_pNode(pNode) {}
+  explicit CXFA_DataData(CXFA_Node* pNode) : m_pNode(pNode) {}
 
   explicit operator bool() const { return !!m_pNode; }
   CXFA_Node* GetNode() const { return m_pNode; }
@@ -32,4 +32,4 @@ class CXFA_Data {
   CXFA_Node* m_pNode;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_DATA_H_
+#endif  // XFA_FXFA_PARSER_CXFA_DATADATA_H_

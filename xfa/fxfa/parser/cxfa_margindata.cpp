@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_margindata.h"
 
-CXFA_MarginData::CXFA_MarginData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_MarginData::CXFA_MarginData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 bool CXFA_MarginData::GetLeftInset(float& fInset, float fDefInset) const {
   fInset = fDefInset;

@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_FillData::CXFA_FillData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_FillData::CXFA_FillData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 CXFA_FillData::~CXFA_FillData() {}
 
@@ -33,7 +33,7 @@ FX_ARGB CXFA_FillData::GetColor(bool bText) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color, false)) {
     WideStringView wsColor;
     if (pNode->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false))
-      return CXFA_Data::ToColor(wsColor);
+      return CXFA_DataData::ToColor(wsColor);
   }
   if (bText)
     return 0xFF000000;
@@ -58,7 +58,7 @@ int32_t CXFA_FillData::GetPattern(FX_ARGB& foreColor) {
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    foreColor = CXFA_Data::ToColor(wsColor);
+    foreColor = CXFA_DataData::ToColor(wsColor);
   } else {
     foreColor = 0xFF000000;
   }
@@ -73,7 +73,7 @@ int32_t CXFA_FillData::GetStipple(FX_ARGB& stippleColor) {
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    stippleColor = CXFA_Data::ToColor(wsColor);
+    stippleColor = CXFA_DataData::ToColor(wsColor);
   } else {
     stippleColor = 0xFF000000;
   }
@@ -88,7 +88,7 @@ int32_t CXFA_FillData::GetLinear(FX_ARGB& endColor) {
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    endColor = CXFA_Data::ToColor(wsColor);
+    endColor = CXFA_DataData::ToColor(wsColor);
   } else {
     endColor = 0xFF000000;
   }
@@ -103,7 +103,7 @@ int32_t CXFA_FillData::GetRadial(FX_ARGB& endColor) {
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
     WideStringView wsColor;
     pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    endColor = CXFA_Data::ToColor(wsColor);
+    endColor = CXFA_DataData::ToColor(wsColor);
   } else {
     endColor = 0xFF000000;
   }

@@ -8,11 +8,11 @@
 #define XFA_FXFA_PARSER_CXFA_MARGINDATA_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 
 class CXFA_Node;
 
-class CXFA_MarginData : public CXFA_Data {
+class CXFA_MarginData : public CXFA_DataData {
  public:
   explicit CXFA_MarginData(CXFA_Node* pNode);
 

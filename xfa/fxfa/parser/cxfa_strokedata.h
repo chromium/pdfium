@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/fxfa_basic.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 
 enum StrokeSameStyle {
   XFA_STROKE_SAMESTYLE_NoPresence = 1,
@@ -19,10 +19,10 @@ enum StrokeSameStyle {
 
 class CXFA_Node;
 
-class CXFA_StrokeData : public CXFA_Data {
+class CXFA_StrokeData : public CXFA_DataData {
  public:
   CXFA_StrokeData() : CXFA_StrokeData(nullptr) {}
-  explicit CXFA_StrokeData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_StrokeData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
   bool IsCorner() const { return GetElementType() == XFA_Element::Corner; }
   bool IsEdge() const { return GetElementType() == XFA_Element::Edge; }

@@ -9,7 +9,8 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_textdata.h"
 
-CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode)
+    : CXFA_DataData(pNode) {}
 
 int32_t CXFA_CalculateData::GetOverride() {
   XFA_ATTRIBUTEENUM eAtt = XFA_ATTRIBUTEENUM_Error;

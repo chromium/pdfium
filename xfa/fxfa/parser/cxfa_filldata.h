@@ -9,11 +9,11 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 
 class CXFA_Node;
 
-class CXFA_FillData : public CXFA_Data {
+class CXFA_FillData : public CXFA_DataData {
  public:
   explicit CXFA_FillData(CXFA_Node* pNode);
   ~CXFA_FillData();

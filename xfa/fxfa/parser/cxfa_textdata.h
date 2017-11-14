@@ -8,11 +8,11 @@
 #define XFA_FXFA_PARSER_CXFA_TEXTDATA_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 
 class CXFA_Node;
 
-class CXFA_TextData : public CXFA_Data {
+class CXFA_TextData : public CXFA_DataData {
  public:
   explicit CXFA_TextData(CXFA_Node* pNode);
 

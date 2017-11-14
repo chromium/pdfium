@@ -9,8 +9,8 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_arcdata.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/fxfa/parser/cxfa_exdata.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
+#include "xfa/fxfa/parser/cxfa_exdatadata.h"
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
 #include "xfa/fxfa/parser/cxfa_linedata.h"
 #include "xfa/fxfa/parser/cxfa_rectangledata.h"
@@ -18,9 +18,9 @@
 
 class CXFA_Node;
 
-class CXFA_ValueData : public CXFA_Data {
+class CXFA_ValueData : public CXFA_DataData {
  public:
-  explicit CXFA_ValueData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_ValueData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
   XFA_Element GetChildValueClassID();
   bool GetChildValueContent(WideString& wsContent);
@@ -28,7 +28,7 @@ class CXFA_ValueData : public CXFA_Data {
   CXFA_LineData GetLineData();
   CXFA_RectangleData GetRectangleData();
   CXFA_TextData GetTextData();
-  CXFA_ExData GetExData();
+  CXFA_ExDataData GetExData();
   CXFA_ImageData GetImageData();
 };
 

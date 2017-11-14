@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_ScriptData::CXFA_ScriptData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_ScriptData::CXFA_ScriptData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 XFA_ScriptDataType CXFA_ScriptData::GetContentType() {
   WideStringView cData;

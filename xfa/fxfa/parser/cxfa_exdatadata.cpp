@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_exdata.h"
+#include "xfa/fxfa/parser/cxfa_exdatadata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_ExData::CXFA_ExData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_ExDataData::CXFA_ExDataData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-bool CXFA_ExData::SetContentType(const WideString& wsContentType) {
+bool CXFA_ExDataData::SetContentType(const WideString& wsContentType) {
   return m_pNode->JSNode()->SetCData(XFA_Attribute::ContentType, wsContentType,
                                      false, false);
 }

@@ -8,14 +8,14 @@
 #define XFA_FXFA_PARSER_CXFA_LINEDATA_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_edgedata.h"
 
 class CXFA_Node;
 
-class CXFA_LineData : public CXFA_Data {
+class CXFA_LineData : public CXFA_DataData {
  public:
-  explicit CXFA_LineData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_LineData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
   int32_t GetHand();
   bool GetSlope();

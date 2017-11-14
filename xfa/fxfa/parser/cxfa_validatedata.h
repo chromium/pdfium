@@ -9,12 +9,12 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_scriptdata.h"
 
 class CXFA_Node;
 
-class CXFA_ValidateData : public CXFA_Data {
+class CXFA_ValidateData : public CXFA_DataData {
  public:
   explicit CXFA_ValidateData(CXFA_Node* pNode);
 

@@ -11,7 +11,7 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_FontData::CXFA_FontData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_FontData::CXFA_FontData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 float CXFA_FontData::GetBaselineShift() {
   return m_pNode->JSNode()

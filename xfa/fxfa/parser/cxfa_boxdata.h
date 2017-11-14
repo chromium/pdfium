@@ -10,16 +10,16 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_edgedata.h"
 #include "xfa/fxfa/parser/cxfa_filldata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
 
 class CXFA_Node;
 
-class CXFA_BoxData : public CXFA_Data {
+class CXFA_BoxData : public CXFA_DataData {
  public:
-  explicit CXFA_BoxData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_BoxData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
   bool IsArc() const { return GetElementType() == XFA_Element::Arc; }
   bool IsBorder() const { return GetElementType() == XFA_Element::Border; }

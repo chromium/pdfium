@@ -9,7 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_ValidateData::CXFA_ValidateData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_ValidateData::CXFA_ValidateData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 int32_t CXFA_ValidateData::GetFormatTest() {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::FormatTest);

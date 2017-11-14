@@ -16,7 +16,7 @@
 #include "xfa/fxfa/parser/cxfa_borderdata.h"
 #include "xfa/fxfa/parser/cxfa_calculatedata.h"
 #include "xfa/fxfa/parser/cxfa_captiondata.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
 #include "xfa/fxfa/parser/cxfa_paradata.h"
@@ -38,7 +38,7 @@ enum XFA_VALUEPICTURE {
 class CXFA_Node;
 class IFX_Locale;
 
-class CXFA_WidgetData : public CXFA_Data {
+class CXFA_WidgetData : public CXFA_DataData {
  public:
   explicit CXFA_WidgetData(CXFA_Node* pNode);
 

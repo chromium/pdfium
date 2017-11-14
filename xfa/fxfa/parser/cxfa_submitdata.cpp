@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_SubmitData::CXFA_SubmitData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_SubmitData::CXFA_SubmitData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 bool CXFA_SubmitData::IsSubmitEmbedPDF() {
   return m_pNode->JSNode()->GetBoolean(XFA_Attribute::EmbedPDF);

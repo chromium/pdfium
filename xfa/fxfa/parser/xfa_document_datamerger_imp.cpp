@@ -328,7 +328,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             wsItem = single ? wsItem : wsItem + L"\n";
             wsNormalizeValue += wsItem;
           }
-          CXFA_ExData exData = defValueData.GetExData();
+          CXFA_ExDataData exData = defValueData.GetExData();
           ASSERT(exData);
           exData.SetContentType(single ? L"text/plain" : L"text/xml");
         }

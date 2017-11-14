@@ -7,14 +7,14 @@
 #ifndef XFA_FXFA_PARSER_CXFA_CAPTIONDATA_H_
 #define XFA_FXFA_PARSER_CXFA_CAPTIONDATA_H_
 
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
 #include "xfa/fxfa/parser/cxfa_valuedata.h"
 
 class CXFA_Node;
 
-class CXFA_CaptionData : public CXFA_Data {
+class CXFA_CaptionData : public CXFA_DataData {
  public:
   explicit CXFA_CaptionData(CXFA_Node* pNode);
 

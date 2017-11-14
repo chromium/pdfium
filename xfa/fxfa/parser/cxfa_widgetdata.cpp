@@ -234,7 +234,7 @@ bool GetAttributeDefaultValue_Boolean(XFA_Element eElement,
 }  // namespace
 
 CXFA_WidgetData::CXFA_WidgetData(CXFA_Node* pNode)
-    : CXFA_Data(pNode),
+    : CXFA_DataData(pNode),
       m_bIsNull(true),
       m_bPreNull(true),
       m_pUiChildNode(nullptr),

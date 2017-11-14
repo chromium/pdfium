@@ -10,13 +10,13 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/parser/cxfa_data.h"
+#include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_scriptdata.h"
 #include "xfa/fxfa/parser/cxfa_submitdata.h"
 
 class CXFA_Node;
 
-class CXFA_EventData : public CXFA_Data {
+class CXFA_EventData : public CXFA_DataData {
  public:
   explicit CXFA_EventData(CXFA_Node* pNode);
 

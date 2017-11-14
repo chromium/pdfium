@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_BindData::CXFA_BindData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+CXFA_BindData::CXFA_BindData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 void CXFA_BindData::GetPicture(WideString& wsPicture) {
   if (CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_Element::Picture, false))
