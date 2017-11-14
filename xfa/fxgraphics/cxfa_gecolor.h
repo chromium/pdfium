@@ -4,47 +4,47 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_CXFA_COLOR_H_
-#define XFA_FXGRAPHICS_CXFA_COLOR_H_
+#ifndef XFA_FXGRAPHICS_CXFA_GECOLOR_H_
+#define XFA_FXGRAPHICS_CXFA_GECOLOR_H_
 
 #include "core/fxge/fx_dib.h"
 
-class CXFA_Pattern;
-class CXFA_Shading;
+class CXFA_GEPattern;
+class CXFA_GEShading;
 
-class CXFA_Color {
+class CXFA_GEColor {
  public:
   enum Type { Invalid, Solid, Pattern, Shading };
 
-  CXFA_Color();
-  explicit CXFA_Color(const FX_ARGB argb);
-  explicit CXFA_Color(CXFA_Shading* shading);
-  CXFA_Color(CXFA_Pattern* pattern, const FX_ARGB argb);
-  ~CXFA_Color();
+  CXFA_GEColor();
+  explicit CXFA_GEColor(const FX_ARGB argb);
+  explicit CXFA_GEColor(CXFA_GEShading* shading);
+  CXFA_GEColor(CXFA_GEPattern* pattern, const FX_ARGB argb);
+  ~CXFA_GEColor();
 
   Type GetType() const { return m_type; }
   FX_ARGB GetArgb() const {
     ASSERT(m_type == Solid || m_type == Pattern);
     return m_argb;
   }
-  CXFA_Pattern* GetPattern() const {
+  CXFA_GEPattern* GetPattern() const {
     ASSERT(m_type == Pattern);
     return m_pointer.pattern;
   }
-  CXFA_Shading* GetShading() const {
+  CXFA_GEShading* GetShading() const {
     ASSERT(m_type == Shading);
     return m_pointer.shading;
   }
 
-  CXFA_Color& operator=(const CXFA_Color& that);
+  CXFA_GEColor& operator=(const CXFA_GEColor& that);
 
  private:
   Type m_type;
   FX_ARGB m_argb;
   union {
-    CXFA_Pattern* pattern;
-    CXFA_Shading* shading;
+    CXFA_GEPattern* pattern;
+    CXFA_GEShading* shading;
   } m_pointer;
 };
 
-#endif  // XFA_FXGRAPHICS_CXFA_COLOR_H_
+#endif  // XFA_FXGRAPHICS_CXFA_GECOLOR_H_

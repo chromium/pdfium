@@ -9,8 +9,8 @@
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cxfa_color.h"
-#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 CFWL_ListBoxTP::CFWL_ListBoxTP() {}
 
@@ -66,9 +66,9 @@ void CFWL_ListBoxTP::DrawListBoxItem(CXFA_Graphics* pGraphics,
                                      CFX_Matrix* pMatrix) {
   if (dwStates & CFWL_PartState_Selected) {
     pGraphics->SaveGraphState();
-    pGraphics->SetFillColor(CXFA_Color(FWLTHEME_COLOR_BKSelected));
+    pGraphics->SetFillColor(CXFA_GEColor(FWLTHEME_COLOR_BKSelected));
     CFX_RectF rt(*prtItem);
-    CXFA_Path path;
+    CXFA_GEPath path;
 #if (_FX_OS_ == _FX_OS_MACOSX_)
     path.AddRectangle(rt.left, rt.top, rt.width - 1, rt.height - 1);
 #else

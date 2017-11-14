@@ -12,7 +12,7 @@
 
 class CFX_DIBitmpa;
 class CXFA_Graphics;
-class CXFA_Path;
+class CXFA_GEPath;
 
 class CFWL_ThemeBackground : public CFWL_ThemePart {
  public:
@@ -20,7 +20,7 @@ class CFWL_ThemeBackground : public CFWL_ThemePart {
   ~CFWL_ThemeBackground();
 
   CXFA_Graphics* m_pGraphics;
-  CXFA_Path* m_pPath;
+  CXFA_GEPath* m_pPath;
   RetainPtr<CFX_DIBitmap> m_pImage;
 };
 

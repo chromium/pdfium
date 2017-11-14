@@ -11,7 +11,7 @@
 
 #include "xfa/fwl/cfwl_timer.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
 
 class CFWL_WidgetProperties;
 class CFWL_Widget;

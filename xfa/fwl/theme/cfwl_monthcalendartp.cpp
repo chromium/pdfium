@@ -12,8 +12,8 @@
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cxfa_color.h"
-#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() : m_pThemeData(new MCThemeData) {
   SetThemeData();
@@ -104,42 +104,42 @@ void CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
 
 void CFWL_MonthCalendarTP::DrawTotalBK(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtTotal(pParams->m_rtPart);
   path.AddRectangle(rtTotal.left, rtTotal.top, rtTotal.width, rtTotal.height);
   pParams->m_pGraphics->SaveGraphState();
-  pParams->m_pGraphics->SetFillColor(CXFA_Color(m_pThemeData->clrBK));
+  pParams->m_pGraphics->SetFillColor(CXFA_GEColor(m_pThemeData->clrBK));
   pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }
 
 void CFWL_MonthCalendarTP::DrawHeadBk(CFWL_ThemeBackground* pParams,
                                       CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtHead = pParams->m_rtPart;
   path.AddRectangle(rtHead.left, rtHead.top, rtHead.width, rtHead.height);
   pParams->m_pGraphics->SaveGraphState();
-  pParams->m_pGraphics->SetFillColor(CXFA_Color(m_pThemeData->clrBK));
+  pParams->m_pGraphics->SetFillColor(CXFA_GEColor(m_pThemeData->clrBK));
   pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }
 
 void CFWL_MonthCalendarTP::DrawLButton(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtLBtn = pParams->m_rtPart;
   path.AddRectangle(rtLBtn.left, rtLBtn.top, rtLBtn.width, rtLBtn.height);
   pParams->m_pGraphics->SaveGraphState();
   pParams->m_pGraphics->SetStrokeColor(
-      CXFA_Color(ArgbEncode(0xff, 205, 219, 243)));
+      CXFA_GEColor(ArgbEncode(0xff, 205, 219, 243)));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   if (pParams->m_dwStates & CFWL_PartState_Pressed) {
     pParams->m_pGraphics->SetFillColor(
-        CXFA_Color(ArgbEncode(0xff, 174, 198, 242)));
+        CXFA_GEColor(ArgbEncode(0xff, 174, 198, 242)));
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   } else {
     pParams->m_pGraphics->SetFillColor(
-        CXFA_Color(ArgbEncode(0xff, 227, 235, 249)));
+        CXFA_GEColor(ArgbEncode(0xff, 227, 235, 249)));
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   }
 
@@ -152,27 +152,27 @@ void CFWL_MonthCalendarTP::DrawLButton(CFWL_ThemeBackground* pParams,
                          rtLBtn.bottom() - rtLBtn.height / 4));
 
   pParams->m_pGraphics->SetStrokeColor(
-      CXFA_Color(ArgbEncode(0xff, 50, 104, 205)));
+      CXFA_GEColor(ArgbEncode(0xff, 50, 104, 205)));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }
 
 void CFWL_MonthCalendarTP::DrawRButton(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtRBtn = pParams->m_rtPart;
   path.AddRectangle(rtRBtn.left, rtRBtn.top, rtRBtn.width, rtRBtn.height);
   pParams->m_pGraphics->SaveGraphState();
   pParams->m_pGraphics->SetStrokeColor(
-      CXFA_Color(ArgbEncode(0xff, 205, 219, 243)));
+      CXFA_GEColor(ArgbEncode(0xff, 205, 219, 243)));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   if (pParams->m_dwStates & CFWL_PartState_Pressed) {
     pParams->m_pGraphics->SetFillColor(
-        CXFA_Color(ArgbEncode(0xff, 174, 198, 242)));
+        CXFA_GEColor(ArgbEncode(0xff, 174, 198, 242)));
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   } else {
     pParams->m_pGraphics->SetFillColor(
-        CXFA_Color(ArgbEncode(0xff, 227, 235, 249)));
+        CXFA_GEColor(ArgbEncode(0xff, 227, 235, 249)));
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   }
 
@@ -185,31 +185,33 @@ void CFWL_MonthCalendarTP::DrawRButton(CFWL_ThemeBackground* pParams,
                          rtRBtn.bottom() - rtRBtn.height / 4));
 
   pParams->m_pGraphics->SetStrokeColor(
-      CXFA_Color(ArgbEncode(0xff, 50, 104, 205)));
+      CXFA_GEColor(ArgbEncode(0xff, 50, 104, 205)));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }
 
 void CFWL_MonthCalendarTP::DrawHSeperator(CFWL_ThemeBackground* pParams,
                                           CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtHSep = pParams->m_rtPart;
   path.MoveTo(CFX_PointF(rtHSep.left, rtHSep.top + rtHSep.height / 2));
   path.LineTo(CFX_PointF(rtHSep.right(), rtHSep.top + rtHSep.height / 2));
   pParams->m_pGraphics->SaveGraphState();
-  pParams->m_pGraphics->SetStrokeColor(CXFA_Color(m_pThemeData->clrSeperator));
+  pParams->m_pGraphics->SetStrokeColor(
+      CXFA_GEColor(m_pThemeData->clrSeperator));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }
 
 void CFWL_MonthCalendarTP::DrawWeekNumSep(CFWL_ThemeBackground* pParams,
                                           CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtWeekSep = pParams->m_rtPart;
   path.MoveTo(rtWeekSep.TopLeft());
   path.LineTo(rtWeekSep.BottomLeft());
   pParams->m_pGraphics->SaveGraphState();
-  pParams->m_pGraphics->SetStrokeColor(CXFA_Color(m_pThemeData->clrSeperator));
+  pParams->m_pGraphics->SetStrokeColor(
+      CXFA_GEColor(m_pThemeData->clrSeperator));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }
@@ -218,20 +220,20 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
                                          CFX_Matrix* pMatrix) {
   pParams->m_pGraphics->SaveGraphState();
   if (pParams->m_dwStates & CFWL_PartState_Selected) {
-    CXFA_Path path;
+    CXFA_GEPath path;
     CFX_RectF rtSelDay = pParams->m_rtPart;
     path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                       rtSelDay.height);
     pParams->m_pGraphics->SetFillColor(
-        CXFA_Color(m_pThemeData->clrDatesSelectedBK));
+        CXFA_GEColor(m_pThemeData->clrDatesSelectedBK));
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   } else if (pParams->m_dwStates & CFWL_PartState_Hovered) {
-    CXFA_Path path;
+    CXFA_GEPath path;
     CFX_RectF rtSelDay = pParams->m_rtPart;
     path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                       rtSelDay.height);
     pParams->m_pGraphics->SetFillColor(
-        CXFA_Color(m_pThemeData->clrDatesHoverBK));
+        CXFA_GEColor(m_pThemeData->clrDatesHoverBK));
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   }
   pParams->m_pGraphics->RestoreGraphState();
@@ -239,26 +241,26 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
 
 void CFWL_MonthCalendarTP::DrawDatesInCircle(CFWL_ThemeBackground* pParams,
                                              CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtSelDay = pParams->m_rtPart;
   path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                     rtSelDay.height);
   pParams->m_pGraphics->SaveGraphState();
   pParams->m_pGraphics->SetStrokeColor(
-      CXFA_Color(m_pThemeData->clrDatesCircle));
+      CXFA_GEColor(m_pThemeData->clrDatesCircle));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }
 
 void CFWL_MonthCalendarTP::DrawTodayCircle(CFWL_ThemeBackground* pParams,
                                            CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rtTodayCircle = pParams->m_rtPart;
   path.AddRectangle(rtTodayCircle.left, rtTodayCircle.top, rtTodayCircle.width,
                     rtTodayCircle.height);
   pParams->m_pGraphics->SaveGraphState();
   pParams->m_pGraphics->SetStrokeColor(
-      CXFA_Color(m_pThemeData->clrDatesCircle));
+      CXFA_GEColor(m_pThemeData->clrDatesCircle));
   pParams->m_pGraphics->StrokePath(&path, pMatrix);
   pParams->m_pGraphics->RestoreGraphState();
 }

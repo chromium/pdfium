@@ -31,7 +31,7 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 namespace {
 
@@ -49,7 +49,7 @@ bool FxEditIsLatinWord(wchar_t c) {
          c == 0x0027;
 }
 
-void AddSquigglyPath(CXFA_Path* pPathData,
+void AddSquigglyPath(CXFA_GEPath* pPathData,
                      float fStartX,
                      float fEndX,
                      float fY,
@@ -163,7 +163,7 @@ FWL_WidgetHit CFWL_Edit::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_Edit::AddSpellCheckObj(CXFA_Path& PathData,
+void CFWL_Edit::AddSpellCheckObj(CXFA_GEPath& PathData,
                                  int32_t nStart,
                                  int32_t nCount,
                                  float fOffSetX,
@@ -190,7 +190,7 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
 
   CFWL_EventCheckWord checkWordEvent(this);
   ByteString sLatinWord;
-  CXFA_Path pathSpell;
+  CXFA_GEPath pathSpell;
   int32_t nStart = 0;
   float fOffSetX = m_rtEngine.left - m_fScrollOffsetX;
   float fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
@@ -230,7 +230,7 @@ void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
       mt.Concat(*pMatrix);
     }
     pGraphics->SetClipRect(rtClip);
-    pGraphics->SetStrokeColor(CXFA_Color(0xFFFF0000));
+    pGraphics->SetStrokeColor(CXFA_GEColor(0xFFFF0000));
     pGraphics->SetLineWidth(0);
     pGraphics->StrokePath(&pathSpell, nullptr);
   }
@@ -486,7 +486,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
     std::vector<CFX_RectF> rects =
         m_EdtEngine.GetCharacterRectsInRange(sel_start, count);
 
-    CXFA_Path path;
+    CXFA_GEPath path;
     for (auto& rect : rects) {
       rect.left += fOffSetX;
       rect.top += fOffSetY;
@@ -512,7 +512,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->RestoreGraphState();
 
-    CXFA_Path path;
+    CXFA_GEPath path;
     int32_t iLimit = m_nLimit > 0 ? m_nLimit : 1;
     float fStep = m_rtEngine.width / iLimit;
     float fLeft = m_rtEngine.left + 1;

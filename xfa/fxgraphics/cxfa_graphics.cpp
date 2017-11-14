@@ -12,10 +12,10 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxgraphics/cxfa_color.h"
-#include "xfa/fxgraphics/cxfa_path.h"
-#include "xfa/fxgraphics/cxfa_pattern.h"
-#include "xfa/fxgraphics/cxfa_shading.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
+#include "xfa/fxgraphics/cxfa_gepattern.h"
+#include "xfa/fxgraphics/cxfa_geshading.h"
 
 namespace {
 
@@ -168,24 +168,24 @@ void CXFA_Graphics::EnableActOnDash() {
     m_info.isActOnDash = true;
 }
 
-void CXFA_Graphics::SetStrokeColor(const CXFA_Color& color) {
+void CXFA_Graphics::SetStrokeColor(const CXFA_GEColor& color) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     m_info.strokeColor = color;
 }
 
-void CXFA_Graphics::SetFillColor(const CXFA_Color& color) {
+void CXFA_Graphics::SetFillColor(const CXFA_GEColor& color) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     m_info.fillColor = color;
 }
 
-void CXFA_Graphics::StrokePath(CXFA_Path* path, const CFX_Matrix* matrix) {
+void CXFA_Graphics::StrokePath(CXFA_GEPath* path, const CFX_Matrix* matrix) {
   if (!path)
     return;
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
     RenderDeviceStrokePath(path, matrix);
 }
 
-void CXFA_Graphics::FillPath(CXFA_Path* path,
+void CXFA_Graphics::FillPath(CXFA_GEPath* path,
                              FX_FillMode fillMode,
                              const CFX_Matrix* matrix) {
   if (!path)
@@ -268,9 +268,9 @@ void CXFA_Graphics::RenderDeviceSetLineDash(FX_DashStyle dashStyle) {
   }
 }
 
-void CXFA_Graphics::RenderDeviceStrokePath(const CXFA_Path* path,
+void CXFA_Graphics::RenderDeviceStrokePath(const CXFA_GEPath* path,
                                            const CFX_Matrix* matrix) {
-  if (m_info.strokeColor.GetType() != CXFA_Color::Solid)
+  if (m_info.strokeColor.GetType() != CXFA_GEColor::Solid)
     return;
 
   CFX_Matrix m = m_info.CTM;
@@ -281,7 +281,7 @@ void CXFA_Graphics::RenderDeviceStrokePath(const CXFA_Path* path,
                            m_info.strokeColor.GetArgb(), 0);
 }
 
-void CXFA_Graphics::RenderDeviceFillPath(const CXFA_Path* path,
+void CXFA_Graphics::RenderDeviceFillPath(const CXFA_GEPath* path,
                                          FX_FillMode fillMode,
                                          const CFX_Matrix* matrix) {
   CFX_Matrix m = m_info.CTM;
@@ -289,14 +289,14 @@ void CXFA_Graphics::RenderDeviceFillPath(const CXFA_Path* path,
     m.Concat(*matrix);
 
   switch (m_info.fillColor.GetType()) {
-    case CXFA_Color::Solid:
+    case CXFA_GEColor::Solid:
       m_renderDevice->DrawPath(path->GetPathData(), &m, &m_info.graphState,
                                m_info.fillColor.GetArgb(), 0x0, fillMode);
       return;
-    case CXFA_Color::Pattern:
+    case CXFA_GEColor::Pattern:
       FillPathWithPattern(path, fillMode, m);
       return;
-    case CXFA_Color::Shading:
+    case CXFA_GEColor::Shading:
       FillPathWithShading(path, fillMode, m);
       return;
     default:
@@ -329,10 +329,10 @@ void CXFA_Graphics::RenderDeviceStretchImage(
                           FXSYS_round(r.left - left), FXSYS_round(r.top - top));
 }
 
-void CXFA_Graphics::FillPathWithPattern(const CXFA_Path* path,
+void CXFA_Graphics::FillPathWithPattern(const CXFA_GEPath* path,
                                         FX_FillMode fillMode,
                                         const CFX_Matrix& matrix) {
-  CXFA_Pattern* pattern = m_info.fillColor.GetPattern();
+  CXFA_GEPattern* pattern = m_info.fillColor.GetPattern();
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
@@ -363,7 +363,7 @@ void CXFA_Graphics::FillPathWithPattern(const CXFA_Path* path,
   SetDIBitsWithMatrix(bmp, pattern->m_matrix);
 }
 
-void CXFA_Graphics::FillPathWithShading(const CXFA_Path* path,
+void CXFA_Graphics::FillPathWithShading(const CXFA_GEPath* path,
                                         FX_FillMode fillMode,
                                         const CFX_Matrix& matrix) {
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();

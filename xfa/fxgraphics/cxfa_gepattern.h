@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_CXFA_PATTERN_H_
-#define XFA_FXGRAPHICS_CXFA_PATTERN_H_
+#ifndef XFA_FXGRAPHICS_CXFA_GEPATTERN_H_
+#define XFA_FXGRAPHICS_CXFA_GEPATTERN_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
@@ -14,14 +14,14 @@
 class CFX_DIBitmap;
 class CFX_Matrix;
 
-class CXFA_Pattern {
+class CXFA_GEPattern {
  public:
-  CXFA_Pattern(FX_HatchStyle hatchStyle,
-               const FX_ARGB foreArgb,
-               const FX_ARGB backArgb,
-               CFX_Matrix* matrix = nullptr);
+  CXFA_GEPattern(FX_HatchStyle hatchStyle,
+                 const FX_ARGB foreArgb,
+                 const FX_ARGB backArgb,
+                 CFX_Matrix* matrix = nullptr);
 
-  virtual ~CXFA_Pattern();
+  virtual ~CXFA_GEPattern();
 
  private:
   friend class CXFA_Graphics;
@@ -33,4 +33,4 @@ class CXFA_Pattern {
   const FX_ARGB m_backArgb;
 };
 
-#endif  // XFA_FXGRAPHICS_CXFA_PATTERN_H_
+#endif  // XFA_FXGRAPHICS_CXFA_GEPATTERN_H_

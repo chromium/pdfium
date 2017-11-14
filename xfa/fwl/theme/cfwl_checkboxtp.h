@@ -68,7 +68,7 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   void InitCheckPath(float fCheckLen);
 
   std::unique_ptr<CKBThemeData> m_pThemeData;
-  std::unique_ptr<CXFA_Path> m_pCheckPath;
+  std::unique_ptr<CXFA_GEPath> m_pCheckPath;
 
  private:
   void SetThemeData();

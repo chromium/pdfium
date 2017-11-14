@@ -10,8 +10,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cxfa_color.h"
-#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 namespace {
 
@@ -80,7 +80,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
   if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
     return;
 
-  CXFA_Path path;
+  CXFA_GEPath path;
   CFX_RectF rect(*pRect);
   if (bVert) {
     rect.Deflate(1, 0);
@@ -94,7 +94,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
                      FXFILL_WINDING, pMatrix);
     pGraphics->SaveGraphState();
     pGraphics->SetStrokeColor(
-        CXFA_Color(m_pThemeData->clrBtnBorder[eState - 1]));
+        CXFA_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
     pGraphics->StrokePath(&path, pMatrix);
     pGraphics->RestoreGraphState();
   } else {
@@ -109,7 +109,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
                      FXFILL_WINDING, pMatrix);
     pGraphics->SaveGraphState();
     pGraphics->SetStrokeColor(
-        CXFA_Color(m_pThemeData->clrBtnBorder[eState - 1]));
+        CXFA_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
     pGraphics->StrokePath(&path, pMatrix);
     pGraphics->RestoreGraphState();
   }
@@ -120,7 +120,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
                                bool bVert,
                                FWLTHEME_STATE eState,
                                CFX_Matrix* pMatrix) {
-  CXFA_Path path;
+  CXFA_GEPath path;
   if (bVert) {
     float fPawLen = kPawLength;
     if (pRect->width / 2 <= fPawLen) {
@@ -140,7 +140,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_Color(m_pThemeData->clrPawColorLight[eState - 1]));
+        CXFA_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
     pGraphics->StrokePath(&path, nullptr);
     fX++;
 
@@ -156,7 +156,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_Color(m_pThemeData->clrPawColorDark[eState - 1]));
+        CXFA_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
     pGraphics->StrokePath(&path, pMatrix);
   } else {
     float fPawLen = kPawLength;
@@ -177,7 +177,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_Color(m_pThemeData->clrPawColorLight[eState - 1]));
+        CXFA_GEColor(m_pThemeData->clrPawColorLight[eState - 1]));
     pGraphics->StrokePath(&path, pMatrix);
     fY++;
 
@@ -193,7 +193,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
 
     pGraphics->SetLineWidth(1);
     pGraphics->SetStrokeColor(
-        CXFA_Color(m_pThemeData->clrPawColorDark[eState - 1]));
+        CXFA_GEColor(m_pThemeData->clrPawColorDark[eState - 1]));
     pGraphics->StrokePath(&path, pMatrix);
   }
 }
@@ -208,7 +208,7 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
     return;
 
   pGraphics->SaveGraphState();
-  CXFA_Path path;
+  CXFA_GEPath path;
   float fRight = pRect->right();
   float fBottom = pRect->bottom();
   if (bVert) {
@@ -218,7 +218,7 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
     path.AddRectangle(pRect->left, pRect->top, pRect->width, 1);
     path.AddRectangle(pRect->left, fBottom - 1, pRect->width, 1);
   }
-  pGraphics->SetFillColor(CXFA_Color(ArgbEncode(255, 238, 237, 229)));
+  pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 238, 237, 229)));
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   path.Clear();
   path.AddRectangle(pRect->left + 1, pRect->top, pRect->width - 2,

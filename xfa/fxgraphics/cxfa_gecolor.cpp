@@ -4,26 +4,27 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
 
-CXFA_Color::CXFA_Color() : m_type(Invalid) {}
+CXFA_GEColor::CXFA_GEColor() : m_type(Invalid) {}
 
-CXFA_Color::CXFA_Color(const FX_ARGB argb) : m_type(Solid), m_argb(argb) {
+CXFA_GEColor::CXFA_GEColor(const FX_ARGB argb) : m_type(Solid), m_argb(argb) {
   m_pointer.pattern = nullptr;
 }
 
-CXFA_Color::CXFA_Color(CXFA_Pattern* pattern, const FX_ARGB argb)
+CXFA_GEColor::CXFA_GEColor(CXFA_GEPattern* pattern, const FX_ARGB argb)
     : m_type(Pattern), m_argb(argb) {
   m_pointer.pattern = pattern;
 }
 
-CXFA_Color::CXFA_Color(CXFA_Shading* shading) : m_type(Shading), m_argb(0) {
+CXFA_GEColor::CXFA_GEColor(CXFA_GEShading* shading)
+    : m_type(Shading), m_argb(0) {
   m_pointer.shading = shading;
 }
 
-CXFA_Color::~CXFA_Color() {}
+CXFA_GEColor::~CXFA_GEColor() {}
 
-CXFA_Color& CXFA_Color::operator=(const CXFA_Color& that) {
+CXFA_GEColor& CXFA_GEColor::operator=(const CXFA_GEColor& that) {
   if (this != &that) {
     m_type = that.m_type;
     switch (m_type) {

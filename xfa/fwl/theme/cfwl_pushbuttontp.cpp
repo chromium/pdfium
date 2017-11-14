@@ -10,8 +10,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxgraphics/cxfa_color.h"
-#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 #define PUSHBUTTON_SIZE_Corner 2
 
@@ -32,7 +32,7 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       float fRight = rect.right();
       float fBottom = rect.bottom();
 
-      CXFA_Path strokePath;
+      CXFA_GEPath strokePath;
       strokePath.MoveTo(
           CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
       strokePath.LineTo(CFX_PointF(fRight - PUSHBUTTON_SIZE_Corner, rect.top));
@@ -48,7 +48,7 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       strokePath.LineTo(
           CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
 
-      CXFA_Path fillPath;
+      CXFA_GEPath fillPath;
       fillPath.AddSubpath(&strokePath);
 
       CXFA_Graphics* pGraphics = pParams->m_pGraphics;
@@ -67,14 +67,14 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                        m_pThemeData->clrEnd[iColor], &fillPath,
                        FXFILL_ALTERNATE, &pParams->m_matrix);
 
-      pGraphics->SetStrokeColor(CXFA_Color(m_pThemeData->clrBorder[iColor]));
+      pGraphics->SetStrokeColor(CXFA_GEColor(m_pThemeData->clrBorder[iColor]));
       pGraphics->StrokePath(&strokePath, &pParams->m_matrix);
 
       fillPath.Clear();
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
-      pGraphics->SetFillColor(CXFA_Color(m_pThemeData->clrFill[iColor]));
+      pGraphics->SetFillColor(CXFA_GEColor(m_pThemeData->clrFill[iColor]));
       pGraphics->FillPath(&fillPath, FXFILL_WINDING, &pParams->m_matrix);
       if (pParams->m_dwStates & CFWL_PartState_Focused) {
         rtInner.Inflate(1, 1, 0, 0);

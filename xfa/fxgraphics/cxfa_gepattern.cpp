@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/cxfa_pattern.h"
+#include "xfa/fxgraphics/cxfa_gepattern.h"
 
-CXFA_Pattern::CXFA_Pattern(FX_HatchStyle hatchStyle,
-                           const FX_ARGB foreArgb,
-                           const FX_ARGB backArgb,
-                           CFX_Matrix* matrix)
+CXFA_GEPattern::CXFA_GEPattern(FX_HatchStyle hatchStyle,
+                               const FX_ARGB foreArgb,
+                               const FX_ARGB backArgb,
+                               CFX_Matrix* matrix)
     : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {
   if (matrix)
     m_matrix = *matrix;
@@ -17,4 +17,4 @@ CXFA_Pattern::CXFA_Pattern(FX_HatchStyle hatchStyle,
     m_matrix.SetIdentity();
 }
 
-CXFA_Pattern::~CXFA_Pattern() {}
+CXFA_GEPattern::~CXFA_GEPattern() {}

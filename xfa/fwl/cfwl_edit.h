@@ -15,7 +15,7 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)
 #define FWL_STYLEEXT_EDT_MultiLine (1L << 1)
@@ -134,7 +134,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   bool ValidateNumberChar(wchar_t cNum);
   bool IsShowScrollBar(bool bVert);
   bool IsContentHeightOverflow();
-  void AddSpellCheckObj(CXFA_Path& PathData,
+  void AddSpellCheckObj(CXFA_GEPath& PathData,
                         int32_t nStart,
                         int32_t nCount,
                         float fOffSetX,

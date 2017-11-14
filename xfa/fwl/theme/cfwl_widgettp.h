@@ -72,7 +72,7 @@ class CFWL_WidgetTP {
                         float fy2,
                         FX_ARGB beginColor,
                         FX_ARGB endColor,
-                        CXFA_Path* path,
+                        CXFA_GEPath* path,
                         int32_t fillMode = FXFILL_WINDING,
                         CFX_Matrix* pMatrix = nullptr);
   void DrawFocus(CXFA_Graphics* pGraphics,

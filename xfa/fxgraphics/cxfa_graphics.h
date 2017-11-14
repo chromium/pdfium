@@ -16,9 +16,9 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_font.h"
-#include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
 
-class CXFA_Path;
+class CXFA_GEPath;
 
 using FX_FillMode = int32_t;
 
@@ -58,11 +58,11 @@ class CXFA_Graphics {
   void SetLineDash(FX_DashStyle dashStyle);
   void SetLineWidth(float lineWidth);
   void EnableActOnDash();
-  void SetStrokeColor(const CXFA_Color& color);
-  void SetFillColor(const CXFA_Color& color);
+  void SetStrokeColor(const CXFA_GEColor& color);
+  void SetFillColor(const CXFA_GEColor& color);
   void SetClipRect(const CFX_RectF& rect);
-  void StrokePath(CXFA_Path* path, const CFX_Matrix* matrix);
-  void FillPath(CXFA_Path* path,
+  void StrokePath(CXFA_GEPath* path, const CFX_Matrix* matrix);
+  void FillPath(CXFA_GEPath* path,
                 FX_FillMode fillMode,
                 const CFX_Matrix* matrix);
   void StretchImage(const RetainPtr<CFX_DIBSource>& source,
@@ -82,23 +82,24 @@ class CXFA_Graphics {
     CFX_GraphStateData graphState;
     CFX_Matrix CTM;
     bool isActOnDash;
-    CXFA_Color strokeColor;
-    CXFA_Color fillColor;
+    CXFA_GEColor strokeColor;
+    CXFA_GEColor fillColor;
   } m_info;
 
   void RenderDeviceSetLineDash(FX_DashStyle dashStyle);
-  void RenderDeviceStrokePath(const CXFA_Path* path, const CFX_Matrix* matrix);
-  void RenderDeviceFillPath(const CXFA_Path* path,
+  void RenderDeviceStrokePath(const CXFA_GEPath* path,
+                              const CFX_Matrix* matrix);
+  void RenderDeviceFillPath(const CXFA_GEPath* path,
                             FX_FillMode fillMode,
                             const CFX_Matrix* matrix);
   void RenderDeviceStretchImage(const RetainPtr<CFX_DIBSource>& source,
                                 const CFX_RectF& rect,
                                 const CFX_Matrix& matrix);
 
-  void FillPathWithPattern(const CXFA_Path* path,
+  void FillPathWithPattern(const CXFA_GEPath* path,
                            FX_FillMode fillMode,
                            const CFX_Matrix& matrix);
-  void FillPathWithShading(const CXFA_Path* path,
+  void FillPathWithShading(const CXFA_GEPath* path,
                            FX_FillMode fillMode,
                            const CFX_Matrix& matrix);
 

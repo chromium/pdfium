@@ -23,8 +23,8 @@
 #include "xfa/fxfa/cxfa_fwltheme.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxgraphics/cxfa_color.h"
-#include "xfa/fxgraphics/cxfa_path.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 namespace {
 
@@ -89,8 +89,8 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
 
   CXFA_FFDoc* pDoc = GetDoc();
   pGS->SetFillColor(
-      CXFA_Color(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc)));
-  CXFA_Path path;
+      CXFA_GEColor(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc)));
+  CXFA_GEPath path;
   if (bEllipse)
     path.AddEllipse(m_rtUI);
   else
@@ -103,13 +103,13 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   if (!(m_dwStatus & XFA_WidgetStatus_Focused))
     return;
 
-  pGS->SetStrokeColor(CXFA_Color(0xFF000000));
+  pGS->SetStrokeColor(CXFA_GEColor(0xFF000000));
 
   float DashPattern[2] = {1, 1};
   pGS->SetLineDash(0.0f, DashPattern, 2);
   pGS->SetLineWidth(0);
 
-  CXFA_Path path;
+  CXFA_GEPath path;
   path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
   pGS->StrokePath(&path, pMatrix);
 }

@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/cxfa_ffline.h"
 
-#include "xfa/fxgraphics/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_gecolor.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
-#include "xfa/fxgraphics/cxfa_path.h"
 
 CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 
@@ -81,7 +81,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
     XFA_RectWidthoutMargin(rtLine, marginData);
 
   GetRectFromHand(rtLine, lineData.GetHand(), fLineWidth);
-  CXFA_Path linePath;
+  CXFA_GEPath linePath;
   if (lineData.GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
     linePath.AddLine(rtLine.TopRight(), rtLine.BottomLeft());
   else
@@ -91,7 +91,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   pGS->SetLineWidth(fLineWidth);
   pGS->EnableActOnDash();
   XFA_StrokeTypeSetLineDash(pGS, iStrokeType, iCap);
-  pGS->SetStrokeColor(CXFA_Color(lineColor));
+  pGS->SetStrokeColor(CXFA_GEColor(lineColor));
   pGS->SetLineCap(XFA_LineCapToFXGE(iCap));
   pGS->StrokePath(&linePath, &mtRotate);
   pGS->RestoreGraphState();
