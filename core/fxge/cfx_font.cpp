@@ -211,10 +211,6 @@ const uint8_t CFX_Font::s_WeightPow_SHIFTJIS[] = {
 
 CFX_Font::CFX_Font()
     :
-#ifdef PDF_ENABLE_XFA
-      m_bShallowCopy(false),
-      m_pOwnedStream(nullptr),
-#endif  // PDF_ENABLE_XFA
       m_Face(nullptr),
       m_FaceCache(nullptr),
       m_pFontData(nullptr),
@@ -228,48 +224,13 @@ CFX_Font::CFX_Font()
 }
 
 #ifdef PDF_ENABLE_XFA
-bool CFX_Font::LoadClone(const CFX_Font* pFont) {
-  if (!pFont)
-    return false;
-
-  m_bShallowCopy = true;
-  if (pFont->m_pSubstFont) {
-    m_pSubstFont = pdfium::MakeUnique<CFX_SubstFont>();
-    m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
-    m_pSubstFont->m_bFlagMM = pFont->m_pSubstFont->m_bFlagMM;
-#ifdef PDF_ENABLE_XFA
-    m_pSubstFont->m_bFlagItalic = pFont->m_pSubstFont->m_bFlagItalic;
-#endif  // PDF_ENABLE_XFA
-    m_pSubstFont->m_Weight = pFont->m_pSubstFont->m_Weight;
-    m_pSubstFont->m_Family = pFont->m_pSubstFont->m_Family;
-    m_pSubstFont->m_ItalicAngle = pFont->m_pSubstFont->m_ItalicAngle;
-  }
-  m_Face = pFont->m_Face;
-  m_bEmbedded = pFont->m_bEmbedded;
-  m_bVertical = pFont->m_bVertical;
-  m_dwSize = pFont->m_dwSize;
-  m_pFontData = pFont->m_pFontData;
-  m_pGsubData = pFont->m_pGsubData;
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  m_pPlatformFont = pFont->m_pPlatformFont;
-#endif
-  m_pOwnedStream = pFont->m_pOwnedStream;
-  m_FaceCache = pFont->GetFaceCache();
-  return true;
-}
-
 void CFX_Font::SetFace(FXFT_Face face) {
   ClearFaceCache();
   m_Face = face;
 }
-
 #endif  // PDF_ENABLE_XFA
 
 CFX_Font::~CFX_Font() {
-#ifdef PDF_ENABLE_XFA
-  if (m_bShallowCopy)
-    return;
-#endif  // PDF_ENABLE_XFA
   if (m_Face) {
 #ifndef PDF_ENABLE_XFA
     if (FXFT_Get_Face_External_Stream(m_Face)) {
@@ -278,11 +239,7 @@ CFX_Font::~CFX_Font() {
 #endif  // PDF_ENABLE_XFA
     DeleteFace();
   }
-#ifdef PDF_ENABLE_XFA
-  delete m_pOwnedStream;
-#endif  // PDF_ENABLE_XFA
-  FX_Free(m_pGsubData);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ && !defined _SKIA_SUPPORT_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   ReleasePlatformResource();
 #endif
 }
@@ -328,7 +285,7 @@ bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
   if (!LoadFileImp(library, &m_Face, pFile, nFaceIndex, &stream))
     return false;
 
-  m_pOwnedStream = stream.release();
+  m_pOwnedStream = std::move(stream);
   FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
   return true;
 }

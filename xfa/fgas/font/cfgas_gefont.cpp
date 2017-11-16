@@ -56,41 +56,11 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
 
 CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr)
     :
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(false),
       m_dwLogFontStyle(0),
-#endif
       m_pFont(nullptr),
       m_bExternalFont(false),
       m_pFontMgr(pFontMgr) {
-}
-
-CFGAS_GEFont::CFGAS_GEFont(const RetainPtr<CFGAS_GEFont>& src,
-                           uint32_t dwFontStyles)
-    :
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
-      m_bUseLogFontStyle(false),
-      m_dwLogFontStyle(0),
-#endif
-      m_pFont(nullptr),
-      m_bExternalFont(false),
-      m_pSrcFont(src),
-      m_pFontMgr(src->m_pFontMgr) {
-  ASSERT(m_pSrcFont->m_pFont);
-  m_pFont = new CFX_Font;
-  m_pFont->LoadClone(m_pSrcFont->m_pFont);
-
-  CFX_SubstFont* pSubst = m_pFont->GetSubstFont();
-  if (!pSubst) {
-    pSubst = new CFX_SubstFont;
-    m_pFont->SetSubstFont(std::unique_ptr<CFX_SubstFont>(pSubst));
-  }
-  pSubst->m_Weight =
-      FontStyleIsBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  if (FontStyleIsItalic(dwFontStyles))
-    pSubst->m_bFlagItalic = true;
-
-  InitFont();
 }
 
 CFGAS_GEFont::~CFGAS_GEFont() {
@@ -155,16 +125,6 @@ bool CFGAS_GEFont::InitFont() {
   return !!m_pFontEncoding;
 }
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-RetainPtr<CFGAS_GEFont> CFGAS_GEFont::Derive(uint32_t dwFontStyles,
-                                             uint16_t wCodePage) {
-  RetainPtr<CFGAS_GEFont> pFont(this);
-  if (GetFontStyles() == dwFontStyles)
-    return pFont;
-  return pdfium::MakeRetain<CFGAS_GEFont>(pFont, dwFontStyles);
-}
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-
 WideString CFGAS_GEFont::GetFamilyName() const {
   if (!m_pFont->GetSubstFont() ||
       m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {
@@ -176,10 +136,8 @@ WideString CFGAS_GEFont::GetFamilyName() const {
 
 uint32_t CFGAS_GEFont::GetFontStyles() const {
   ASSERT(m_pFont);
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   if (m_bUseLogFontStyle)
     return m_dwLogFontStyle;
-#endif
 
   uint32_t dwStyles = 0;
   auto* pSubstFont = m_pFont->GetSubstFont();

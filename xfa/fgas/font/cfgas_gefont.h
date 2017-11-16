@@ -54,18 +54,13 @@ class CFGAS_GEFont : public Retainable {
     m_pProvider.Reset(pProvider);
   }
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  RetainPtr<CFGAS_GEFont> Derive(uint32_t dwFontStyles, uint16_t wCodePage);
-#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
     m_bUseLogFontStyle = true;
     m_dwLogFontStyle = dwLogFontStyle;
   }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
  private:
   explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
-  CFGAS_GEFont(const RetainPtr<CFGAS_GEFont>& src, uint32_t dwFontStyles);
   ~CFGAS_GEFont() override;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -84,10 +79,8 @@ class CFGAS_GEFont : public Retainable {
       bool bRecursive);
   WideString GetFamilyName() const;
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   bool m_bUseLogFontStyle;
   uint32_t m_dwLogFontStyle;
-#endif
   CFX_Font* m_pFont;
   bool m_bExternalFont;
   RetainPtr<CFGAS_GEFont> m_pSrcFont;  // Only set by ctor, so no cycles.
