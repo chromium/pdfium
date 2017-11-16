@@ -1138,11 +1138,16 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet_Ordered(
       iPageSetCount = it->second;
     int32_t iMax = -1;
     CXFA_Node* pOccurNode = pPageSet->GetFirstChildByClass(XFA_Element::Occur);
-    if (pOccurNode)
-      pOccurNode->JSNode()->TryInteger(XFA_Attribute::Max, iMax, false);
+    if (pOccurNode) {
+      pdfium::Optional<int32_t> ret =
+          pOccurNode->JSNode()->TryInteger(XFA_Attribute::Max, false);
+      if (ret)
+        iMax = *ret;
+    }
     if (iMax >= 0 && iMax <= iPageSetCount)
       return false;
   }
+
   bool bRes = false;
   CXFA_Node* pCurrentNode =
       pStartChild ? pStartChild->GetNodeItem(XFA_NODEITEM_NextSibling)
@@ -1338,8 +1343,12 @@ CXFA_Node* CXFA_LayoutPageMgr::GetNextAvailPageArea(
       int32_t iMax = -1;
       CXFA_Node* pOccurNode =
           m_pCurPageArea->GetFirstChildByClass(XFA_Element::Occur);
-      if (pOccurNode)
-        pOccurNode->JSNode()->TryInteger(XFA_Attribute::Max, iMax, false);
+      if (pOccurNode) {
+        pdfium::Optional<int32_t> ret =
+            pOccurNode->JSNode()->TryInteger(XFA_Attribute::Max, false);
+        if (ret)
+          iMax = *ret;
+      }
       if ((iMax < 0 || m_nCurPageCount < iMax)) {
         if (!bQuery) {
           CXFA_ContainerRecord* pNewRecord =
@@ -1439,25 +1448,31 @@ int32_t CXFA_LayoutPageMgr::CreateMinPageRecord(CXFA_Node* pPageArea,
   if (!pPageArea)
     return 0;
 
-  CXFA_Node* pOccurNode = pPageArea->GetFirstChildByClass(XFA_Element::Occur);
   int32_t iMin = 0;
-  if ((pOccurNode &&
-       pOccurNode->JSNode()->TryInteger(XFA_Attribute::Min, iMin, false)) ||
-      bTargetPageArea) {
-    CXFA_Node* pContentArea =
-        pPageArea->GetFirstChildByClass(XFA_Element::ContentArea);
-    if (iMin < 1 && bTargetPageArea && !pContentArea)
-      iMin = 1;
+  pdfium::Optional<int32_t> ret;
+  CXFA_Node* pOccurNode = pPageArea->GetFirstChildByClass(XFA_Element::Occur);
+  if (pOccurNode) {
+    ret = pOccurNode->JSNode()->TryInteger(XFA_Attribute::Min, false);
+    if (ret)
+      iMin = *ret;
+  }
 
-    int32_t i = 0;
-    if (bCreateLast)
-      i = m_nCurPageCount;
+  if (!ret && !bTargetPageArea)
+    return iMin;
 
-    for (; i < iMin; i++) {
-      CXFA_ContainerRecord* pNewRecord = CreateContainerRecord();
-      AddPageAreaLayoutItem(pNewRecord, pPageArea);
-      AddContentAreaLayoutItem(pNewRecord, pContentArea);
-    }
+  CXFA_Node* pContentArea =
+      pPageArea->GetFirstChildByClass(XFA_Element::ContentArea);
+  if (iMin < 1 && bTargetPageArea && !pContentArea)
+    iMin = 1;
+
+  int32_t i = 0;
+  if (bCreateLast)
+    i = m_nCurPageCount;
+
+  for (; i < iMin; i++) {
+    CXFA_ContainerRecord* pNewRecord = CreateContainerRecord();
+    AddPageAreaLayoutItem(pNewRecord, pPageArea);
+    AddContentAreaLayoutItem(pNewRecord, pContentArea);
   }
   return iMin;
 }
@@ -1476,26 +1491,24 @@ void CXFA_LayoutPageMgr::CreateMinPageSetRecord(CXFA_Node* pPageSet,
     iCurSetCount = 0;
 
   CXFA_Node* pOccurNode = pPageSet->GetFirstChildByClass(XFA_Element::Occur);
-  int32_t iMin = 0;
-  if (pOccurNode &&
-      pOccurNode->JSNode()->TryInteger(XFA_Attribute::Min, iMin, false)) {
-    if (iCurSetCount < iMin) {
-      for (int32_t i = 0; i < iMin - iCurSetCount; i++) {
-        for (CXFA_Node* pCurrentPageNode =
-                 pPageSet->GetNodeItem(XFA_NODEITEM_FirstChild);
-             pCurrentPageNode; pCurrentPageNode = pCurrentPageNode->GetNodeItem(
-                                   XFA_NODEITEM_NextSibling)) {
-          if (pCurrentPageNode->GetElementType() == XFA_Element::PageArea) {
-            CreateMinPageRecord(pCurrentPageNode, false);
-          } else if (pCurrentPageNode->GetElementType() ==
-                     XFA_Element::PageSet) {
-            CreateMinPageSetRecord(pCurrentPageNode, true);
-          }
-        }
-      }
-      m_pPageSetMap[pPageSet] = iMin;
+  if (!pOccurNode)
+    return;
+
+  pdfium::Optional<int32_t> iMin =
+      pOccurNode->JSNode()->TryInteger(XFA_Attribute::Min, false);
+  if (!iMin || iCurSetCount >= *iMin)
+    return;
+
+  for (int32_t i = 0; i < *iMin - iCurSetCount; i++) {
+    for (CXFA_Node* node = pPageSet->GetNodeItem(XFA_NODEITEM_FirstChild); node;
+         node = node->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+      if (node->GetElementType() == XFA_Element::PageArea)
+        CreateMinPageRecord(node, false);
+      else if (node->GetElementType() == XFA_Element::PageSet)
+        CreateMinPageSetRecord(node, true);
     }
   }
+  m_pPageSetMap[pPageSet] = *iMin;
 }
 
 void CXFA_LayoutPageMgr::CreateNextMinRecord(CXFA_Node* pRecordNode) {
@@ -1545,8 +1558,13 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(float fChildHeight) {
   CXFA_Node* pPageNode = GetCurrentContainerRecord()->pCurPageArea->m_pFormNode;
   CXFA_Node* pOccurNode = pPageNode->GetFirstChildByClass(XFA_Element::Occur);
   int32_t iMax = 0;
-  if (pOccurNode &&
-      pOccurNode->JSNode()->TryInteger(XFA_Attribute::Max, iMax, false)) {
+  pdfium::Optional<int32_t> ret;
+  if (pOccurNode) {
+    ret = pOccurNode->JSNode()->TryInteger(XFA_Attribute::Max, false);
+    if (ret)
+      iMax = *ret;
+  }
+  if (ret) {
     if (m_nCurPageCount == iMax) {
       CXFA_Node* pSrcPage = m_pCurPageArea;
       int32_t nSrcPageCount = m_nCurPageCount;

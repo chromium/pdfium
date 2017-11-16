@@ -294,11 +294,11 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
       return true;
     }
     case XFA_AttributeType::Integer: {
-      int32_t iValue;
-      if (!TryInteger(pAttr->eName, iValue, bUseDefault))
+      pdfium::Optional<int32_t> iValue = TryInteger(pAttr->eName, bUseDefault);
+      if (!iValue)
         return false;
 
-      wsValue.Format(L"%d", iValue);
+      wsValue.Format(L"%d", *iValue);
       return true;
     }
     case XFA_AttributeType::Measure: {
@@ -3038,28 +3038,19 @@ bool CJX_Node::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
 }
 
 int32_t CJX_Node::GetInteger(XFA_Attribute eAttr) {
-  int32_t iValue;
-  return TryInteger(eAttr, iValue, true) ? iValue : 0;
+  return TryInteger(eAttr, true).value_or(0);
 }
 
-bool CJX_Node::TryInteger(XFA_Attribute eAttr,
-                          int32_t& iValue,
-                          bool bUseDefault) {
+pdfium::Optional<int32_t> CJX_Node::TryInteger(XFA_Attribute eAttr,
+                                               bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   void* pValue = nullptr;
-  if (GetMapModuleValue(pKey, pValue)) {
-    iValue = (int32_t)(uintptr_t)pValue;
-    return true;
-  }
+  if (GetMapModuleValue(pKey, pValue))
+    return {static_cast<int32_t>(reinterpret_cast<uintptr_t>(pValue))};
   if (!bUseDefault)
-    return false;
+    return {};
 
-  pdfium::Optional<int32_t> ret = GetXFANode()->GetDefaultInteger(eAttr);
-  if (!ret)
-    return false;
-
-  iValue = *ret;
-  return true;
+  return GetXFANode()->GetDefaultInteger(eAttr);
 }
 
 bool CJX_Node::TryEnum(XFA_Attribute eAttr,

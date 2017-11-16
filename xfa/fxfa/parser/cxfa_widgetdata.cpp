@@ -1350,8 +1350,13 @@ bool CXFA_WidgetData::GetFracDigits(int32_t& iFracDigits) {
   if (!pChild)
     return false;
 
-  return pChild->JSNode()->TryInteger(XFA_Attribute::FracDigits, iFracDigits,
-                                      true);
+  pdfium::Optional<int32_t> ret =
+      pChild->JSNode()->TryInteger(XFA_Attribute::FracDigits, true);
+  if (!ret)
+    return false;
+
+  iFracDigits = *ret;
+  return true;
 }
 
 bool CXFA_WidgetData::GetLeadDigits(int32_t& iLeadDigits) {
@@ -1365,8 +1370,13 @@ bool CXFA_WidgetData::GetLeadDigits(int32_t& iLeadDigits) {
   if (!pChild)
     return false;
 
-  return pChild->JSNode()->TryInteger(XFA_Attribute::LeadDigits, iLeadDigits,
-                                      true);
+  pdfium::Optional<int32_t> ret =
+      pChild->JSNode()->TryInteger(XFA_Attribute::LeadDigits, true);
+  if (!ret)
+    return false;
+
+  iLeadDigits = *ret;
+  return true;
 }
 
 bool CXFA_WidgetData::SetValue(const WideString& wsValue,

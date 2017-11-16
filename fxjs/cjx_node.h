@@ -69,7 +69,7 @@ class CJX_Node : public CJX_Object {
                   bool bSyncData);
   WideString GetContent(bool bScriptModify);
 
-  bool TryInteger(XFA_Attribute eAttr, int32_t& iValue, bool bUseDefault);
+  pdfium::Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_Attribute eAttr);
 

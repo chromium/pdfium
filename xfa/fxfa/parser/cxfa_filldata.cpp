@@ -72,15 +72,13 @@ int32_t CXFA_FillData::GetStipple(FX_ARGB& stippleColor) {
 
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Stipple, true);
-  int32_t eAttr = 50;
-  pNode->JSNode()->TryInteger(XFA_Attribute::Rate, eAttr, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
     pdfium::Optional<WideString> wsColor =
         pColor->JSNode()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
       stippleColor = CXFA_DataData::ToColor(wsColor->AsStringView());
   }
-  return eAttr;
+  return pNode->JSNode()->TryInteger(XFA_Attribute::Rate, true).value_or(50);
 }
 
 int32_t CXFA_FillData::GetLinear(FX_ARGB& endColor) {

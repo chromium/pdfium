@@ -11,22 +11,21 @@
 CXFA_OccurData::CXFA_OccurData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 int32_t CXFA_OccurData::GetMax() {
-  int32_t iMax = 1;
-  if (m_pNode) {
-    if (!m_pNode->JSNode()->TryInteger(XFA_Attribute::Max, iMax, true))
-      iMax = GetMin();
-  }
-  return iMax;
+  if (!m_pNode)
+    return 1;
+
+  pdfium::Optional<int32_t> max =
+      m_pNode->JSNode()->TryInteger(XFA_Attribute::Max, true);
+  return max ? *max : GetMin();
 }
 
 int32_t CXFA_OccurData::GetMin() {
-  int32_t iMin = 1;
-  if (m_pNode) {
-    if (!m_pNode->JSNode()->TryInteger(XFA_Attribute::Min, iMin, true) ||
-        iMin < 0)
-      iMin = 1;
-  }
-  return iMin;
+  if (!m_pNode)
+    return 1;
+
+  pdfium::Optional<int32_t> min =
+      m_pNode->JSNode()->TryInteger(XFA_Attribute::Min, true);
+  return min && *min >= 0 ? *min : 1;
 }
 
 bool CXFA_OccurData::GetOccurInfo(int32_t& iMin,
@@ -34,19 +33,14 @@ bool CXFA_OccurData::GetOccurInfo(int32_t& iMin,
                                   int32_t& iInit) {
   if (!m_pNode)
     return false;
-  if (!m_pNode->JSNode()->TryInteger(XFA_Attribute::Min, iMin, false) ||
-      iMin < 0)
-    iMin = 1;
-  if (!m_pNode->JSNode()->TryInteger(XFA_Attribute::Max, iMax, false)) {
-    if (iMin == 0)
-      iMax = 1;
-    else
-      iMax = iMin;
-  }
-  if (!m_pNode->JSNode()->TryInteger(XFA_Attribute::Initial, iInit, false) ||
-      iInit < iMin) {
-    iInit = iMin;
-  }
+
+  iMin = GetMin();
+  iMax = GetMax();
+
+  pdfium::Optional<int32_t> init =
+      m_pNode->JSNode()->TryInteger(XFA_Attribute::Initial, false);
+  iInit = init && *init >= iMin ? *init : iMin;
+
   return true;
 }
 
