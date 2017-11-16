@@ -264,16 +264,11 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
 }
 
 ByteString CPDFSDK_DateTime::ToCommonDateTimeString() {
-  ByteString str1;
-  str1.Format("%04d-%02u-%02u %02u:%02u:%02u ", m_year, m_month, m_day, m_hour,
-              m_minute, m_second);
-  if (m_tzHour < 0)
-    str1 += "-";
-  else
-    str1 += "+";
-  ByteString str2;
-  str2.Format("%02d:%02u", std::abs(static_cast<int>(m_tzHour)), m_tzMinute);
-  return str1 + str2;
+  return ByteString::Format("%04d-%02u-%02u %02u:%02u:%02u ", m_year, m_month,
+                            m_day, m_hour, m_minute, m_second) +
+         (m_tzHour < 0 ? "-" : "+") +
+         ByteString::Format("%02d:%02u", std::abs(static_cast<int>(m_tzHour)),
+                            m_tzMinute);
 }
 
 ByteString CPDFSDK_DateTime::ToPDFDateTimeString() {

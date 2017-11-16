@@ -1761,15 +1761,12 @@ void CJX_Node::Script_Som_FontColor(CFXJSE_Value* pValue,
     return;
   }
 
-  FX_ARGB color = fontData.GetColor();
   int32_t a;
   int32_t r;
   int32_t g;
   int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
-  ByteString bsColor;
-  bsColor.Format("%d,%d,%d", r, g, b);
-  pValue->SetString(bsColor.AsStringView());
+  std::tie(a, r, g, b) = ArgbDecode(fontData.GetColor());
+  pValue->SetString(ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
 }
 
 void CJX_Node::Script_Field_FormatMessage(CFXJSE_Value* pValue,

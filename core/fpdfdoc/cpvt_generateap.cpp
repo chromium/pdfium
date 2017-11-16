@@ -44,25 +44,25 @@ ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                             int32_t nFontIndex,
                             uint16_t Word,
                             uint16_t SubWord) {
-  ByteString sWord;
-  if (SubWord > 0) {
-    sWord.Format("%c", SubWord);
-    return sWord;
-  }
+  if (SubWord > 0)
+    return ByteString::Format("%c", SubWord);
 
   if (!pFontMap)
-    return sWord;
+    return "";
 
-  if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
-    if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
-        pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
-      sWord.Format("%c", Word);
-    } else {
-      uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
-      if (dwCharCode != CPDF_Font::kInvalidCharCode)
-        pPDFFont->AppendChar(&sWord, dwCharCode);
-    }
+  CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex);
+  if (!pPDFFont)
+    return "";
+
+  if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
+      pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
+    return ByteString::Format("%c", Word);
   }
+
+  ByteString sWord;
+  uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
+  if (dwCharCode != CPDF_Font::kInvalidCharCode)
+    pPDFFont->AppendChar(&sWord, dwCharCode);
   return sWord;
 }
 

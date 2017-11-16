@@ -78,8 +78,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
     CPDF_Font** pPDFFont,
     bool bStrictMatch) {
   uint32_t dwHashCode = FX_HashCode_GetW(wsFontFamily, false);
-  ByteString strKey;
-  strKey.Format("%u%u", dwHashCode, dwFontStyles);
+  ByteString strKey = ByteString::Format("%u%u", dwHashCode, dwFontStyles);
   auto it = m_FontMap.find(strKey);
   if (it != m_FontMap.end())
     return it->second;

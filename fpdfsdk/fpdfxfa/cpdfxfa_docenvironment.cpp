@@ -434,9 +434,8 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     return;
 
   RetainPtr<IFX_SeekableStream> fileWrite = MakeSeekableStream(pFileHandler);
-  ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
-    content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
+    ByteString content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileWrite->WriteBlock(content.c_str(), fileWrite->GetSize(),
                           content.GetLength());
     CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
@@ -492,7 +491,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         ByteString bPath = wPath.UTF8Encode();
         const char* szFormat =
             "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
-        content.Format(szFormat, bPath.c_str());
+        ByteString content = ByteString::Format(szFormat, bPath.c_str());
         fileWrite->WriteBlock(content.c_str(), fileWrite->GetSize(),
                               content.GetLength());
       }

@@ -28,8 +28,7 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     const WideStringView& wsFontFamily,
     uint32_t dwFontStyles) {
   uint32_t dwHash = FX_HashCode_GetW(wsFontFamily, false);
-  ByteString bsKey;
-  bsKey.Format("%u%u%u", dwHash, dwFontStyles, 0xFFFF);
+  ByteString bsKey = ByteString::Format("%u%u%u", dwHash, dwFontStyles, 0xFFFF);
   auto iter = m_FontMap.find(bsKey);
   if (iter != m_FontMap.end())
     return iter->second;

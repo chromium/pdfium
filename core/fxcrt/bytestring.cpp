@@ -91,6 +91,57 @@ namespace fxcrt {
 static_assert(sizeof(ByteString) <= sizeof(char*),
               "Strings must not require more space than pointers");
 
+#define FORCE_ANSI 0x10000
+#define FORCE_UNICODE 0x20000
+#define FORCE_INT64 0x40000
+
+// static
+ByteString ByteString::FormatInteger(int i) {
+  char buf[32];
+  FXSYS_snprintf(buf, 32, "%d", i);
+  return ByteString(buf);
+}
+
+// static
+ByteString ByteString::FormatFloat(float d) {
+  char buf[32];
+  return ByteString(buf, FX_ftoa(d, buf));
+}
+
+// static
+ByteString ByteString::FormatV(const char* pFormat, va_list argList) {
+  va_list argListCopy;
+  va_copy(argListCopy, argList);
+  int nMaxLen = vsnprintf(nullptr, 0, pFormat, argListCopy);
+  va_end(argListCopy);
+
+  if (nMaxLen <= 0)
+    return "";
+
+  ByteString ret;
+  char* buf = ret.GetBuffer(nMaxLen);
+  if (buf) {
+    // In the following two calls, there's always space in the buffer for
+    // a terminating NUL that's not included in nMaxLen.
+    memset(buf, 0, nMaxLen + 1);
+    va_copy(argListCopy, argList);
+    vsnprintf(buf, nMaxLen + 1, pFormat, argListCopy);
+    va_end(argListCopy);
+    ret.ReleaseBuffer(ret.GetStringLength());
+  }
+  return ret;
+}
+
+// static
+ByteString ByteString::Format(const char* pFormat, ...) {
+  va_list argList;
+  va_start(argList, pFormat);
+  ByteString ret = FormatV(pFormat, argList);
+  va_end(argList);
+
+  return ret;
+}
+
 ByteString::ByteString(const char* pStr, size_t nLen) {
   if (nLen)
     m_pData.Reset(StringData::Create(pStr, nLen));
@@ -485,42 +536,6 @@ void ByteString::AllocCopy(ByteString& dest,
   dest.m_pData.Swap(pNewData);
 }
 
-#define FORCE_ANSI 0x10000
-#define FORCE_UNICODE 0x20000
-#define FORCE_INT64 0x40000
-
-ByteString ByteString::FormatInteger(int i) {
-  char buf[32];
-  FXSYS_snprintf(buf, 32, "%d", i);
-  return ByteString(buf);
-}
-
-void ByteString::FormatV(const char* pFormat, va_list argList) {
-  va_list argListCopy;
-  va_copy(argListCopy, argList);
-  int nMaxLen = vsnprintf(nullptr, 0, pFormat, argListCopy);
-  va_end(argListCopy);
-  if (nMaxLen > 0) {
-    GetBuffer(nMaxLen);
-    if (m_pData) {
-      // In the following two calls, there's always space in the buffer for
-      // a terminating NUL that's not included in nMaxLen.
-      memset(m_pData->m_String, 0, nMaxLen + 1);
-      va_copy(argListCopy, argList);
-      vsnprintf(m_pData->m_String, nMaxLen + 1, pFormat, argListCopy);
-      va_end(argListCopy);
-      ReleaseBuffer(GetStringLength());
-    }
-  }
-}
-
-void ByteString::Format(const char* pFormat, ...) {
-  va_list argList;
-  va_start(argList, pFormat);
-  FormatV(pFormat, argList);
-  va_end(argList);
-}
-
 void ByteString::SetAt(size_t index, char c) {
   ASSERT(IsValidIndex(index));
   ReallocBeforeWrite(m_pData->m_nDataLength);
@@ -781,11 +796,6 @@ void ByteString::TrimLeft(char chTarget) {
 
 void ByteString::TrimLeft() {
   TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
-}
-
-ByteString ByteString::FormatFloat(float d) {
-  char buf[32];
-  return ByteString(buf, FX_ftoa(d, buf));
 }
 
 std::ostream& operator<<(std::ostream& os, const ByteString& str) {

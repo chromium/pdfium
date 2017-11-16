@@ -57,9 +57,7 @@ ByteString KeyNameFromFace(const ByteString& face_name,
 }
 
 ByteString KeyNameFromSize(int ttc_size, uint32_t checksum) {
-  ByteString key;
-  key.Format("%d:%d", ttc_size, checksum);
-  return key;
+  return ByteString::Format("%d:%d", ttc_size, checksum);
 }
 
 int GetTTCIndex(const uint8_t* pFontData,

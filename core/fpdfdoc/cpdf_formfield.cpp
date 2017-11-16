@@ -749,9 +749,7 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
         m_pDict->SetNewFor<CPDF_Name>("V", "Off");
     }
   } else if (bChecked) {
-    ByteString csIndex;
-    csIndex.Format("%d", iControlIndex);
-    m_pDict->SetNewFor<CPDF_Name>("V", csIndex);
+    m_pDict->SetNewFor<CPDF_Name>("V", ByteString::Format("%d", iControlIndex));
   }
   if (bNotify && m_pForm->GetFormNotify())
     m_pForm->GetFormNotify()->AfterCheckedStatusChange(this);

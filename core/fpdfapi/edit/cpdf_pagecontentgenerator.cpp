@@ -138,10 +138,10 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   ByteString name;
   int idnum = 1;
   while (1) {
-    name.Format("FX%c%d", bsType[0], idnum);
-    if (!pResList->KeyExist(name)) {
+    name = ByteString::Format("FX%c%d", bsType[0], idnum);
+    if (!pResList->KeyExist(name))
       break;
-    }
+
     idnum++;
   }
   pResList->SetNewFor<CPDF_Reference>(name, m_pDocument.Get(),

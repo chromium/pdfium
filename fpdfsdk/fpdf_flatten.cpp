@@ -173,8 +173,8 @@ uint32_t NewIndirectContentsStream(const ByteString& key,
   CPDF_Stream* pNewContents = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0,
       pdfium::MakeUnique<CPDF_Dictionary>(pDocument->GetByteStringPool()));
-  ByteString sStream;
-  sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
+  ByteString sStream =
+      ByteString::Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
   pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
   return pNewContents->GetObjNum();
 }
@@ -301,10 +301,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   ByteString key;
   int nStreams = pdfium::CollectionSize<int>(ObjectArray);
   if (nStreams > 0) {
-    ByteString sKey;
     int i = 0;
     while (i < INT_MAX) {
-      sKey.Format("FFT%d", i);
+      ByteString sKey = ByteString::Format("FFT%d", i);
       if (!pPageXObject->KeyExist(sKey)) {
         key = sKey;
         break;
@@ -391,8 +390,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     if (!pXObject)
       pXObject = pNewXORes->SetNewFor<CPDF_Dictionary>("XObject");
 
-    ByteString sFormName;
-    sFormName.Format("F%d", i);
+    ByteString sFormName = ByteString::Format("F%d", i);
     pXObject->SetNewFor<CPDF_Reference>(sFormName, pDocument,
                                         pObj->GetObjNum());
 
@@ -401,10 +399,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     ByteString sStream(pAcc->GetData(), pAcc->GetSize());
     CFX_Matrix matrix = pAPDic->GetMatrixFor("Matrix");
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);
-    ByteString sTemp;
-    sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f,
-                 sFormName.c_str());
-    sStream += sTemp;
+    sStream += ByteString::Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d,
+                                  m.e, m.f, sFormName.c_str());
     pNewXObject->SetDataAndRemoveFilter(sStream.raw_str(), sStream.GetLength());
   }
   pPageDict->RemoveFor("Annots");

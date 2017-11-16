@@ -32,6 +32,11 @@ class ByteString {
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+  static ByteString FormatInteger(int i);
+  static ByteString FormatFloat(float f);
+  static ByteString Format(const char* lpszFormat, ...);
+  static ByteString FormatV(const char* lpszFormat, va_list argList);
+
   ByteString();
   ByteString(const ByteString& other);
   ByteString(ByteString&& other) noexcept;
@@ -138,9 +143,6 @@ class ByteString {
   size_t InsertAtBack(char ch) { return Insert(GetLength(), ch); }
   size_t Delete(size_t index, size_t count = 1);
 
-  void Format(const char* lpszFormat, ...);
-  void FormatV(const char* lpszFormat, va_list argList);
-
   void Reserve(size_t len);
   char* GetBuffer(size_t len);
   void ReleaseBuffer(size_t len);
@@ -180,9 +182,6 @@ class ByteString {
   WideString UTF8Decode() const;
 
   uint32_t GetID() const { return AsStringView().GetID(); }
-
-  static ByteString FormatInteger(int i);
-  static ByteString FormatFloat(float f);
 
  protected:
   using StringData = StringDataTemplate<char>;

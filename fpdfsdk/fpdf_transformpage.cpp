@@ -114,15 +114,11 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   textBuf << "q ";
   CFX_FloatRect rect = CFXFloatRectFromFSRECTF(*clipRect);
   rect.Normalize();
-  ByteString bsClipping;
-  bsClipping.Format("%f %f %f %f re W* n ", rect.left, rect.bottom,
-                    rect.Width(), rect.Height());
-  textBuf << bsClipping;
 
-  ByteString bsMatix;
-  bsMatix.Format("%f %f %f %f %f %f cm ", matrix->a, matrix->b, matrix->c,
-                 matrix->d, matrix->e, matrix->f);
-  textBuf << bsMatix;
+  textBuf << ByteString::Format("%f %f %f %f re W* n ", rect.left, rect.bottom,
+                                rect.Width(), rect.Height());
+  textBuf << ByteString::Format("%f %f %f %f %f %f cm ", matrix->a, matrix->b,
+                                matrix->c, matrix->d, matrix->e, matrix->f);
 
   CPDF_Dictionary* pPageDict = pPage->m_pFormDict.Get();
   CPDF_Object* pContentObj = GetPageContent(pPageDict);

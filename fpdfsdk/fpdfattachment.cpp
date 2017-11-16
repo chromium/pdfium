@@ -232,11 +232,13 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   // Set the creation date of the new attachment in the dictionary.
   CFX_DateTime dateTime;
   dateTime.Now();
-  ByteString bsDateTime;
-  bsDateTime.Format("D:%d%02d%02d%02d%02d%02d", dateTime.GetYear(),
-                    dateTime.GetMonth(), dateTime.GetDay(), dateTime.GetHour(),
-                    dateTime.GetMinute(), dateTime.GetSecond());
-  pParamsDict->SetNewFor<CPDF_String>("CreationDate", bsDateTime, false);
+  pParamsDict->SetNewFor<CPDF_String>(
+      "CreationDate",
+      ByteString::Format("D:%d%02d%02d%02d%02d%02d", dateTime.GetYear(),
+                         dateTime.GetMonth(), dateTime.GetDay(),
+                         dateTime.GetHour(), dateTime.GetMinute(),
+                         dateTime.GetSecond()),
+      false);
 
   // Set the checksum of the new attachment in the dictionary.
   pParamsDict->SetNewFor<CPDF_String>(

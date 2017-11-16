@@ -1114,16 +1114,10 @@ void CFXJSE_FormCalcContext::Date(CFXJSE_Value* pThis,
   time(&currentTime);
   struct tm* pTmStruct = gmtime(&currentTime);
 
-  ByteString bufferYear;
-  ByteString bufferMon;
-  ByteString bufferDay;
-  bufferYear.Format("%d", pTmStruct->tm_year + 1900);
-  bufferMon.Format("%02d", pTmStruct->tm_mon + 1);
-  bufferDay.Format("%02d", pTmStruct->tm_mday);
-
-  ByteString bufferCurrent = bufferYear + bufferMon + bufferDay;
-  args.GetReturnValue()->SetInteger(
-      DateString2Num(bufferCurrent.AsStringView()));
+  args.GetReturnValue()->SetInteger(DateString2Num(
+      ByteString::Format("%d%02d%02d", pTmStruct->tm_year + 1900,
+                         pTmStruct->tm_mon + 1, pTmStruct->tm_mday)
+          .AsStringView()));
 }
 
 // static
@@ -1489,11 +1483,10 @@ void CFXJSE_FormCalcContext::Num2Date(CFXJSE_Value* pThis,
     }
   }
 
-  ByteString szIsoDateString;
-  szIsoDateString.Format("%d%02d%02d", iYear + i, iMonth, iDay);
-  ByteString szLocalDateString =
-      IsoDate2Local(pThis, szIsoDateString.AsStringView(),
-                    formatString.AsStringView(), localString.AsStringView());
+  ByteString szLocalDateString = IsoDate2Local(
+      pThis,
+      ByteString::Format("%d%02d%02d", iYear + i, iMonth, iDay).AsStringView(),
+      formatString.AsStringView(), localString.AsStringView());
   args.GetReturnValue()->SetString(szLocalDateString.AsStringView());
 }
 
@@ -2019,9 +2012,8 @@ ByteString CFXJSE_FormCalcContext::Local2IsoDate(
                                      wsFormat, pLocale, pMgr)
                         .GetDate();
 
-  ByteString strIsoDate;
-  strIsoDate.Format("%4d-%02d-%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay());
-  return strIsoDate;
+  return ByteString::Format("%4d-%02d-%02d", dt.GetYear(), dt.GetMonth(),
+                            dt.GetDay());
 }
 
 // static
@@ -2213,9 +2205,10 @@ ByteString CFXJSE_FormCalcContext::Num2AllTime(CFXJSE_Value* pThis,
     iSec += iZoneSec;
   }
 
-  ByteString strIsoTime;
-  strIsoTime.Format("%02d:%02d:%02d", iHour, iMin, iSec);
-  return IsoTime2Local(pThis, strIsoTime.AsStringView(), szFormat, szLocale);
+  return IsoTime2Local(
+      pThis,
+      ByteString::Format("%02d:%02d:%02d", iHour, iMin, iSec).AsStringView(),
+      szFormat, szLocale);
 }
 
 // static
@@ -4232,14 +4225,13 @@ void CFXJSE_FormCalcContext::Str(CFXJSE_Value* pThis,
         0, static_cast<int32_t>(ValueToFloat(pThis, precisionValue.get())));
   }
 
-  ByteString numberString;
   ByteString formatStr = "%";
   if (iPrecision) {
     formatStr += ".";
     formatStr += ByteString::FormatInteger(iPrecision);
   }
   formatStr += "f";
-  numberString.Format(formatStr.c_str(), fNumber);
+  ByteString numberString = ByteString::Format(formatStr.c_str(), fNumber);
 
   const char* pData = numberString.c_str();
   int32_t iLength = numberString.GetLength();
@@ -4505,11 +4497,8 @@ void CFXJSE_FormCalcContext::WordNum(CFXJSE_Value* pThis,
     return;
   }
 
-  ByteString numberString;
-  numberString.Format("%.2f", fNumber);
-
   args.GetReturnValue()->SetString(
-      WordUS(numberString, iIdentifier).AsStringView());
+      WordUS(ByteString::Format("%.2f", fNumber), iIdentifier).AsStringView());
 }
 
 // static

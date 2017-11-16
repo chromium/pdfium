@@ -105,9 +105,9 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
     if (time(&currentTime) != -1) {
       tm* pTM = localtime(&currentTime);
       if (pTM) {
-        DateStr.Format("D:%04d%02d%02d%02d%02d%02d", pTM->tm_year + 1900,
-                       pTM->tm_mon + 1, pTM->tm_mday, pTM->tm_hour, pTM->tm_min,
-                       pTM->tm_sec);
+        DateStr = ByteString::Format(
+            "D:%04d%02d%02d%02d%02d%02d", pTM->tm_year + 1900, pTM->tm_mon + 1,
+            pTM->tm_mday, pTM->tm_hour, pTM->tm_min, pTM->tm_sec);
       }
     }
   }

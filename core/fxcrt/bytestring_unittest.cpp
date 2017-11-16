@@ -1448,67 +1448,19 @@ TEST(ByteStringView, AnyAllNoneOf) {
 }
 
 TEST(ByteString, FormatWidth) {
-  {
-    ByteString str;
-    str.Format("%5d", 1);
-    EXPECT_EQ("    1", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%d", 1);
-    EXPECT_EQ("1", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%*d", 5, 1);
-    EXPECT_EQ("    1", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%-1d", 1);
-    EXPECT_EQ("1", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%0d", 1);
-    EXPECT_EQ("1", str);
-  }
+  EXPECT_EQ("    1", ByteString::Format("%5d", 1));
+  EXPECT_EQ("1", ByteString::Format("%d", 1));
+  EXPECT_EQ("    1", ByteString::Format("%*d", 5, 1));
+  EXPECT_EQ("1", ByteString::Format("%-1d", 1));
+  EXPECT_EQ("1", ByteString::Format("%0d", 1));
 }
 
 TEST(ByteString, FormatPrecision) {
-  {
-    ByteString str;
-    str.Format("%.2f", 1.12345);
-    EXPECT_EQ("1.12", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%.*f", 3, 1.12345);
-    EXPECT_EQ("1.123", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%f", 1.12345);
-    EXPECT_EQ("1.123450", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%-1f", 1.12345);
-    EXPECT_EQ("1.123450", str);
-  }
-
-  {
-    ByteString str;
-    str.Format("%0f", 1.12345);
-    EXPECT_EQ("1.123450", str);
-  }
+  EXPECT_EQ("1.12", ByteString::Format("%.2f", 1.12345));
+  EXPECT_EQ("1.123", ByteString::Format("%.*f", 3, 1.12345));
+  EXPECT_EQ("1.123450", ByteString::Format("%f", 1.12345));
+  EXPECT_EQ("1.123450", ByteString::Format("%-1f", 1.12345));
+  EXPECT_EQ("1.123450", ByteString::Format("%0f", 1.12345));
 }
 
 TEST(ByteString, Empty) {

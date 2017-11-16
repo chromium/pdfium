@@ -717,7 +717,7 @@ ByteString CPDF_InterForm::GenerateNewResourceName(
     if (m < iCount)
       csTmp += csStr[m++];
     else
-      bsNum.Format("%d", num++);
+      bsNum = ByteString::Format("%d", num++);
 
     m++;
   }

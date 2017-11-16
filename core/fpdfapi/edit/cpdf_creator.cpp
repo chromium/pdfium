@@ -556,15 +556,15 @@ int32_t CPDF_Creator::WriteDoc_Stage3() {
         j++;
 
       if (i == 1)
-        str.Format("0 %d\r\n0000000000 65535 f\r\n", j);
+        str = ByteString::Format("0 %d\r\n0000000000 65535 f\r\n", j);
       else
-        str.Format("%d %d\r\n", i, j - i);
+        str = ByteString::Format("%d %d\r\n", i, j - i);
 
       if (!m_Archive->WriteBlock(str.c_str(), str.GetLength()))
         return -1;
 
       while (i < j) {
-        str.Format("%010d 00000 n\r\n", m_ObjectOffsets[i++]);
+        str = ByteString::Format("%010d 00000 n\r\n", m_ObjectOffsets[i++]);
         if (!m_Archive->WriteBlock(str.c_str(), str.GetLength()))
           return -1;
       }
@@ -590,16 +590,16 @@ int32_t CPDF_Creator::WriteDoc_Stage3() {
       }
       objnum = m_NewObjNumArray[i];
       if (objnum == 1)
-        str.Format("0 %d\r\n0000000000 65535 f\r\n", j - i + 1);
+        str = ByteString::Format("0 %d\r\n0000000000 65535 f\r\n", j - i + 1);
       else
-        str.Format("%d %d\r\n", objnum, j - i);
+        str = ByteString::Format("%d %d\r\n", objnum, j - i);
 
       if (!m_Archive->WriteBlock(str.c_str(), str.GetLength()))
         return -1;
 
       while (i < j) {
         objnum = m_NewObjNumArray[i++];
-        str.Format("%010d 00000 n\r\n", m_ObjectOffsets[objnum]);
+        str = ByteString::Format("%010d 00000 n\r\n", m_ObjectOffsets[objnum]);
         if (!m_Archive->WriteBlock(str.c_str(), str.GetLength()))
           return -1;
       }

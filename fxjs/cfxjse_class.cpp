@@ -108,8 +108,7 @@ void Context_GlobalObjToString(
     return;
 
   if (info.This() == info.Holder() && lpClass->name) {
-    ByteString szStringVal;
-    szStringVal.Format("[object %s]", lpClass->name);
+    ByteString szStringVal = ByteString::Format("[object %s]", lpClass->name);
     info.GetReturnValue().Set(v8::String::NewFromUtf8(
         info.GetIsolate(), szStringVal.c_str(), v8::String::kNormalString,
         szStringVal.GetLength()));

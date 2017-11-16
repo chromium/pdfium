@@ -260,9 +260,7 @@ CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc,
 
 ByteString CPWL_FontMap::EncodeFontAlias(const ByteString& sFontName,
                                          int32_t nCharset) {
-  ByteString sPostfix;
-  sPostfix.Format("_%02X", nCharset);
-  return EncodeFontAlias(sFontName) + sPostfix;
+  return EncodeFontAlias(sFontName) + ByteString::Format("_%02X", nCharset);
 }
 
 ByteString CPWL_FontMap::EncodeFontAlias(const ByteString& sFontName) {

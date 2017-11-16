@@ -101,10 +101,8 @@ ByteString CPDF_FormControl::GetCheckedAPState() {
   ByteString csOn = GetOnStateName();
   if (GetType() == CPDF_FormField::RadioButton ||
       GetType() == CPDF_FormField::CheckBox) {
-    if (ToArray(FPDF_GetFieldAttr(m_pField->GetDict(), "Opt"))) {
-      int iIndex = m_pField->GetControlIndex(this);
-      csOn.Format("%d", iIndex);
-    }
+    if (ToArray(FPDF_GetFieldAttr(m_pField->GetDict(), "Opt")))
+      csOn = ByteString::Format("%d", m_pField->GetControlIndex(this));
   }
   if (csOn.IsEmpty())
     csOn = "Yes";
