@@ -108,7 +108,7 @@ class CJX_Node : public CJX_Object {
                  XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
   void* GetObject(XFA_Attribute eAttr);
 
-  bool TryNamespace(WideString& wsNamespace);
+  pdfium::Optional<WideString> TryNamespace();
 
   void MergeAllData(CXFA_Node* pDstModule);
 

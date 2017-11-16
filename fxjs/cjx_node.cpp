@@ -930,10 +930,8 @@ void CJX_Node::Script_NodeClass_Ns(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-
-  WideString wsNameSpace;
-  TryNamespace(wsNameSpace);
-  pValue->SetString(wsNameSpace.UTF8Encode().AsStringView());
+  pValue->SetString(
+      TryNamespace().value_or(WideString()).UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_NodeClass_Model(CFXJSE_Value* pValue,
@@ -1016,11 +1014,11 @@ void CJX_Node::Script_ModelClass_IsCompatibleNS(CFXJSE_Arguments* pArguments) {
     wsNameSpace = WideString::FromUTF8(bsNameSpace.AsStringView());
   }
 
-  WideString wsNodeNameSpace;
-  TryNamespace(wsNodeNameSpace);
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetBoolean(wsNodeNameSpace == wsNameSpace);
+  if (!pValue)
+    return;
+
+  pValue->SetBoolean(TryNamespace().value_or(WideString()) == wsNameSpace);
 }
 
 void CJX_Node::Script_ModelClass_Context(CFXJSE_Value* pValue,
@@ -3571,35 +3569,34 @@ pdfium::Optional<WideString> CJX_Node::TryContent(bool bScriptModify,
   return {};
 }
 
-bool CJX_Node::TryNamespace(WideString& wsNamespace) {
-  wsNamespace.clear();
+pdfium::Optional<WideString> CJX_Node::TryNamespace() {
   if (GetXFANode()->IsModelNode() ||
       GetXFANode()->GetElementType() == XFA_Element::Packet) {
     CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
     if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
-      return false;
+      return {};
 
-    wsNamespace = static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI();
-    return true;
+    return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
   }
 
   if (GetXFANode()->GetPacketID() != XFA_XDPPACKET_Datasets)
-    return GetXFANode()->GetModelNode()->JSNode()->TryNamespace(wsNamespace);
+    return GetXFANode()->GetModelNode()->JSNode()->TryNamespace();
 
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
-  if (!pXMLNode)
-    return false;
-  if (pXMLNode->GetType() != FX_XMLNODE_Element)
-    return true;
+  if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
+    return {};
 
   if (GetXFANode()->GetElementType() == XFA_Element::DataValue &&
       GetEnum(XFA_Attribute::Contains) == XFA_ATTRIBUTEENUM_MetaData) {
-    return XFA_FDEExtension_ResolveNamespaceQualifier(
+    WideString wsNamespace;
+    bool ret = XFA_FDEExtension_ResolveNamespaceQualifier(
         static_cast<CFX_XMLElement*>(pXMLNode),
         GetCData(XFA_Attribute::QualifiedName), &wsNamespace);
+    if (!ret)
+      return {};
+    return {wsNamespace};
   }
-  wsNamespace = static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI();
-  return true;
+  return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
 }
 
 CXFA_Node* CJX_Node::GetProperty(int32_t index,

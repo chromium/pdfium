@@ -152,12 +152,13 @@ void RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot,
   if (!pTemplateRoot)
     return;
 
-  WideString wsTemplateNS;
-  if (!pTemplateRoot->JSNode()->TryNamespace(wsTemplateNS))
+  pdfium::Optional<WideString> templateNS =
+      pTemplateRoot->JSNode()->TryNamespace();
+  if (!templateNS)
     return;
 
   XFA_VERSION eVersion =
-      pTemplateRoot->GetDocument()->RecognizeXFAVersionNumber(wsTemplateNS);
+      pTemplateRoot->GetDocument()->RecognizeXFAVersionNumber(*templateNS);
   if (eVersion == XFA_VERSION_UNKNOWN)
     eVersion = XFA_VERSION_DEFAULT;
 

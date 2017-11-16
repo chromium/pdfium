@@ -151,14 +151,16 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
         if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data)
           continue;
 
-        WideString wsNamespaceURI;
-        if (!pDatasetsChild->JSNode()->TryNamespace(wsNamespaceURI))
+        pdfium::Optional<WideString> namespaceURI =
+            pDatasetsChild->JSNode()->TryNamespace();
+        if (!namespaceURI)
           continue;
 
-        WideString wsDatasetsURI;
-        if (!pDatasetsNode->JSNode()->TryNamespace(wsDatasetsURI))
+        pdfium::Optional<WideString> datasetsURI =
+            pDatasetsNode->JSNode()->TryNamespace();
+        if (!datasetsURI)
           continue;
-        if (wsNamespaceURI == wsDatasetsURI)
+        if (*namespaceURI == *datasetsURI)
           return pDatasetsChild;
       }
       return nullptr;

@@ -1052,12 +1052,11 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
       if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
         continue;
 
-      WideString wsNamespace;
-      if (!pDDGroupNode->JSNode()->TryNamespace(wsNamespace) ||
-          wsNamespace != L"http://ns.adobe.com/data-description/") {
+      pdfium::Optional<WideString> ns = pDDGroupNode->JSNode()->TryNamespace();
+      if (!ns || *ns != L"http://ns.adobe.com/data-description/")
         continue;
-      }
     }
+
     CXFA_Node* pDDNode =
         pDDGroupNode->GetFirstChildByName(wsName.AsStringView());
     if (!pDDNode)
@@ -1231,12 +1230,12 @@ void UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDataDescriptionNode) {
         if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
           continue;
 
-        WideString wsNamespace;
-        if (!pDDGroupNode->JSNode()->TryNamespace(wsNamespace) ||
-            wsNamespace != L"http://ns.adobe.com/data-description/") {
+        pdfium::Optional<WideString> ns =
+            pDDGroupNode->JSNode()->TryNamespace();
+        if (!ns || *ns != L"http://ns.adobe.com/data-description/")
           continue;
-        }
       }
+
       CXFA_Node* pDDNode = pDDGroupNode->GetFirstChildByName(dwNameHash);
       if (!pDDNode)
         continue;
@@ -1398,8 +1397,8 @@ void CXFA_Document::DoDataMerge() {
     pDatasetsRoot->SetXMLMappingNode(pDatasetsXMLNode);
   }
   CXFA_Node *pDataRoot = nullptr, *pDDRoot = nullptr;
-  WideString wsDatasetsURI;
-  pDatasetsRoot->JSNode()->TryNamespace(wsDatasetsURI);
+  WideString wsDatasetsURI =
+      pDatasetsRoot->JSNode()->TryNamespace().value_or(WideString());
   for (CXFA_Node* pChildNode =
            pDatasetsRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
        pChildNode;
@@ -1407,16 +1406,19 @@ void CXFA_Document::DoDataMerge() {
     if (pChildNode->GetElementType() != XFA_Element::DataGroup)
       continue;
 
-    WideString wsNamespaceURI;
     if (!pDDRoot && pChildNode->GetNameHash() == XFA_HASHCODE_DataDescription) {
-      if (!pChildNode->JSNode()->TryNamespace(wsNamespaceURI))
+      pdfium::Optional<WideString> namespaceURI =
+          pChildNode->JSNode()->TryNamespace();
+      if (!namespaceURI)
         continue;
-      if (wsNamespaceURI == L"http://ns.adobe.com/data-description/")
+      if (*namespaceURI == L"http://ns.adobe.com/data-description/")
         pDDRoot = pChildNode;
     } else if (!pDataRoot && pChildNode->GetNameHash() == XFA_HASHCODE_Data) {
-      if (!pChildNode->JSNode()->TryNamespace(wsNamespaceURI))
+      pdfium::Optional<WideString> namespaceURI =
+          pChildNode->JSNode()->TryNamespace();
+      if (!namespaceURI)
         continue;
-      if (wsNamespaceURI == wsDatasetsURI)
+      if (*namespaceURI == wsDatasetsURI)
         pDataRoot = pChildNode;
     }
     if (pDataRoot && pDDRoot)
