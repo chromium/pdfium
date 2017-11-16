@@ -237,11 +237,12 @@ int32_t CXFA_WidgetData::GetAccess() {
 }
 
 int32_t CXFA_WidgetData::GetRotate() {
-  CXFA_Measurement ms;
-  if (!m_pNode->JSNode()->TryMeasure(XFA_Attribute::Rotate, ms, false))
+  pdfium::Optional<CXFA_Measurement> measure =
+      m_pNode->JSNode()->TryMeasure(XFA_Attribute::Rotate, false);
+  if (!measure)
     return 0;
 
-  int32_t iRotate = FXSYS_round(ms.GetValue());
+  int32_t iRotate = FXSYS_round(measure->GetValue());
   iRotate = XFA_MapRotation(iRotate);
   return iRotate / 90 * 90;
 }
@@ -1206,23 +1207,23 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ECLevel(int32_t* val) {
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_ModuleWidth(int32_t* val) {
-  CXFA_Measurement mModuleWidthHeight;
-  if (GetUIChild()->JSNode()->TryMeasure(XFA_Attribute::ModuleWidth,
-                                         mModuleWidthHeight, true)) {
-    *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_Unit::Pt));
-    return true;
-  }
-  return false;
+  pdfium::Optional<CXFA_Measurement> moduleWidthHeight =
+      GetUIChild()->JSNode()->TryMeasure(XFA_Attribute::ModuleWidth, true);
+  if (!moduleWidthHeight)
+    return false;
+
+  *val = static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt));
+  return true;
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_ModuleHeight(int32_t* val) {
-  CXFA_Measurement mModuleWidthHeight;
-  if (GetUIChild()->JSNode()->TryMeasure(XFA_Attribute::ModuleHeight,
-                                         mModuleWidthHeight, true)) {
-    *val = static_cast<int32_t>(mModuleWidthHeight.ToUnit(XFA_Unit::Pt));
-    return true;
-  }
-  return false;
+  pdfium::Optional<CXFA_Measurement> moduleWidthHeight =
+      GetUIChild()->JSNode()->TryMeasure(XFA_Attribute::ModuleHeight, true);
+  if (!moduleWidthHeight)
+    return false;
+
+  *val = static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt));
+  return true;
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum(bool* val) {

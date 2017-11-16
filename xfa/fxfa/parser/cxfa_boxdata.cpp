@@ -113,13 +113,13 @@ bool CXFA_BoxData::GetStartAngle(float& fStartAngle) const {
   if (!m_pNode)
     return false;
 
-  CXFA_Measurement ms;
-  bool bRet =
-      m_pNode->JSNode()->TryMeasure(XFA_Attribute::StartAngle, ms, false);
-  if (bRet)
-    fStartAngle = ms.GetValue();
+  pdfium::Optional<CXFA_Measurement> measure =
+      m_pNode->JSNode()->TryMeasure(XFA_Attribute::StartAngle, false);
+  if (!measure)
+    return false;
 
-  return bRet;
+  fStartAngle = measure->GetValue();
+  return true;
 }
 
 bool CXFA_BoxData::GetSweepAngle(float& fSweepAngle) const {
@@ -127,13 +127,13 @@ bool CXFA_BoxData::GetSweepAngle(float& fSweepAngle) const {
   if (!m_pNode)
     return false;
 
-  CXFA_Measurement ms;
-  bool bRet =
-      m_pNode->JSNode()->TryMeasure(XFA_Attribute::SweepAngle, ms, false);
-  if (bRet)
-    fSweepAngle = ms.GetValue();
+  pdfium::Optional<CXFA_Measurement> measure =
+      m_pNode->JSNode()->TryMeasure(XFA_Attribute::SweepAngle, false);
+  if (!measure)
+    return false;
 
-  return bRet;
+  fSweepAngle = measure->GetValue();
+  return true;
 }
 
 CXFA_FillData CXFA_BoxData::GetFillData(bool bModified) const {

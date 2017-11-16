@@ -303,11 +303,12 @@ pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
       return {wsValue};
     }
     case XFA_AttributeType::Measure: {
-      CXFA_Measurement mValue;
-      if (!TryMeasure(pAttr->eName, mValue, bUseDefault))
+      pdfium::Optional<CXFA_Measurement> value =
+          TryMeasure(pAttr->eName, bUseDefault);
+      if (!value)
         return {};
 
-      return {mValue.ToString()};
+      return {value->ToString()};
     }
     default:
       break;
@@ -3072,30 +3073,24 @@ bool CJX_Node::SetMeasure(XFA_Attribute eAttr,
   return true;
 }
 
-bool CJX_Node::TryMeasure(XFA_Attribute eAttr,
-                          CXFA_Measurement& mValue,
-                          bool bUseDefault) const {
+pdfium::Optional<CXFA_Measurement> CJX_Node::TryMeasure(
+    XFA_Attribute eAttr,
+    bool bUseDefault) const {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   void* pValue;
   int32_t iBytes;
   if (GetMapModuleBuffer(pKey, pValue, iBytes, true) &&
-      iBytes == sizeof(mValue)) {
-    memcpy(&mValue, pValue, sizeof(mValue));
-    return true;
+      iBytes == sizeof(CXFA_Measurement)) {
+    return {*reinterpret_cast<CXFA_Measurement*>(pValue)};
   }
   if (!bUseDefault)
-    return false;
+    return {};
 
-  pdfium::Optional<CXFA_Measurement> measure =
-      GetXFANode()->GetDefaultMeasurement(eAttr);
-  if (measure)
-    mValue = *measure;
-  return !!measure;
+  return GetXFANode()->GetDefaultMeasurement(eAttr);
 }
 
 CXFA_Measurement CJX_Node::GetMeasure(XFA_Attribute eAttr) const {
-  CXFA_Measurement mValue;
-  return TryMeasure(eAttr, mValue, true) ? mValue : CXFA_Measurement();
+  return TryMeasure(eAttr, true).value_or(CXFA_Measurement());
 }
 
 WideString CJX_Node::GetCData(XFA_Attribute eAttr) {

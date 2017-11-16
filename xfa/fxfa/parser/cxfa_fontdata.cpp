@@ -57,9 +57,9 @@ int32_t CXFA_FontData::GetUnderlinePeriod() {
 }
 
 float CXFA_FontData::GetFontSize() {
-  CXFA_Measurement ms;
-  m_pNode->JSNode()->TryMeasure(XFA_Attribute::Size, ms, true);
-  return ms.ToUnit(XFA_Unit::Pt);
+  return m_pNode->JSNode()
+      ->GetMeasure(XFA_Attribute::Size)
+      .ToUnit(XFA_Unit::Pt);
 }
 
 void CXFA_FontData::GetTypeface(WideString& wsTypeFace) {

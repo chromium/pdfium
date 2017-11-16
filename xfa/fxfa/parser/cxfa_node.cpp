@@ -631,8 +631,9 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
         }
         XFA_VERSION version = m_pDocument->GetCurVersionMode();
         if (eParLayout == XFA_ATTRIBUTEENUM_Tb && version < XFA_VERSION_208) {
-          CXFA_Measurement measureH;
-          if (JSNode()->TryMeasure(XFA_Attribute::H, measureH, false))
+          pdfium::Optional<CXFA_Measurement> measureH =
+              JSNode()->TryMeasure(XFA_Attribute::H, false);
+          if (measureH)
             return XFA_ATTRIBUTEENUM_ContentArea;
         }
         return XFA_ATTRIBUTEENUM_None;

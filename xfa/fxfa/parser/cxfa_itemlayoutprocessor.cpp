@@ -86,31 +86,38 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   *bContainerHeightAutoSize = true;
 
   XFA_Element eType = pFormNode->GetElementType();
-  CXFA_Measurement mTmpValue;
+
   CFX_SizeF containerSize;
-  if ((eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) &&
-      pFormNode->JSNode()->TryMeasure(XFA_Attribute::W, mTmpValue, false) &&
-      mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
-    containerSize.width = mTmpValue.ToUnit(XFA_Unit::Pt);
-    *bContainerWidthAutoSize = false;
+  if (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) {
+    pdfium::Optional<CXFA_Measurement> wValue =
+        pFormNode->JSNode()->TryMeasure(XFA_Attribute::W, false);
+    if (wValue && wValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+      containerSize.width = wValue->ToUnit(XFA_Unit::Pt);
+      *bContainerWidthAutoSize = false;
+    }
+
+    pdfium::Optional<CXFA_Measurement> hValue =
+        pFormNode->JSNode()->TryMeasure(XFA_Attribute::H, false);
+    if (hValue && hValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+      containerSize.height = hValue->ToUnit(XFA_Unit::Pt);
+      *bContainerHeightAutoSize = false;
+    }
   }
-  if ((eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) &&
-      pFormNode->JSNode()->TryMeasure(XFA_Attribute::H, mTmpValue, false) &&
-      mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
-    containerSize.height = mTmpValue.ToUnit(XFA_Unit::Pt);
-    *bContainerHeightAutoSize = false;
-  }
-  if (*bContainerWidthAutoSize && eType == XFA_Element::Subform &&
-      pFormNode->JSNode()->TryMeasure(XFA_Attribute::MaxW, mTmpValue, false) &&
-      mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
-    containerSize.width = mTmpValue.ToUnit(XFA_Unit::Pt);
-    *bContainerWidthAutoSize = false;
-  }
-  if (*bContainerHeightAutoSize && eType == XFA_Element::Subform &&
-      pFormNode->JSNode()->TryMeasure(XFA_Attribute::MaxH, mTmpValue, false) &&
-      mTmpValue.GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
-    containerSize.height = mTmpValue.ToUnit(XFA_Unit::Pt);
-    *bContainerHeightAutoSize = false;
+
+  if (*bContainerWidthAutoSize && eType == XFA_Element::Subform) {
+    pdfium::Optional<CXFA_Measurement> maxW =
+        pFormNode->JSNode()->TryMeasure(XFA_Attribute::MaxW, false);
+    if (maxW && maxW->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+      containerSize.width = maxW->ToUnit(XFA_Unit::Pt);
+      *bContainerWidthAutoSize = false;
+    }
+
+    pdfium::Optional<CXFA_Measurement> maxH =
+        pFormNode->JSNode()->TryMeasure(XFA_Attribute::MaxH, false);
+    if (maxH && maxH->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+      containerSize.height = maxH->ToUnit(XFA_Unit::Pt);
+      *bContainerHeightAutoSize = false;
+    }
   }
   return containerSize;
 }
@@ -124,29 +131,33 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
     const CFX_SizeF& currentContainerSize) {
   CFX_SizeF componentSize = currentContainerSize;
   CXFA_Node* pMarginNode = pFormNode->GetFirstChildByClass(XFA_Element::Margin);
-  CXFA_Measurement mTmpValue;
   if (bContainerWidthAutoSize) {
     componentSize.width = fContentCalculatedWidth;
     if (pMarginNode) {
-      if (pMarginNode->JSNode()->TryMeasure(XFA_Attribute::LeftInset, mTmpValue,
-                                            false))
-        componentSize.width += mTmpValue.ToUnit(XFA_Unit::Pt);
-      if (pMarginNode->JSNode()->TryMeasure(XFA_Attribute::RightInset,
-                                            mTmpValue, false))
-        componentSize.width += mTmpValue.ToUnit(XFA_Unit::Pt);
+      pdfium::Optional<CXFA_Measurement> leftInset =
+          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::LeftInset, false);
+      if (leftInset)
+        componentSize.width += leftInset->ToUnit(XFA_Unit::Pt);
+
+      pdfium::Optional<CXFA_Measurement> rightInset =
+          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::RightInset, false);
+      if (rightInset)
+        componentSize.width += rightInset->ToUnit(XFA_Unit::Pt);
     }
   }
 
   if (bContainerHeightAutoSize) {
     componentSize.height = fContentCalculatedHeight;
     if (pMarginNode) {
-      if (pMarginNode->JSNode()->TryMeasure(XFA_Attribute::TopInset, mTmpValue,
-                                            false))
-        componentSize.height += mTmpValue.ToUnit(XFA_Unit::Pt);
-      if (pMarginNode->JSNode()->TryMeasure(XFA_Attribute::BottomInset,
-                                            mTmpValue, false)) {
-        componentSize.height += mTmpValue.ToUnit(XFA_Unit::Pt);
-      }
+      pdfium::Optional<CXFA_Measurement> topInset =
+          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::TopInset, false);
+      if (topInset)
+        componentSize.height += topInset->ToUnit(XFA_Unit::Pt);
+
+      pdfium::Optional<CXFA_Measurement> bottomInset =
+          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::BottomInset, false);
+      if (bottomInset)
+        componentSize.height += bottomInset->ToUnit(XFA_Unit::Pt);
     }
   }
   return componentSize;

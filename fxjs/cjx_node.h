@@ -92,9 +92,8 @@ class CJX_Node : public CJX_Object {
   bool SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
   bool GetBoolean(XFA_Attribute eAttr);
 
-  bool TryMeasure(XFA_Attribute eAttr,
-                  CXFA_Measurement& mValue,
-                  bool bUseDefault) const;
+  pdfium::Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
+                                                bool bUseDefault) const;
   bool SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
 
