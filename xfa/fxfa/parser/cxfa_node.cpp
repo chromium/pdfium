@@ -568,9 +568,10 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
   CXFA_Node* pKeep = GetFirstChildByClass(XFA_Element::Keep);
   XFA_ATTRIBUTEENUM eLayoutType = JSNode()->GetEnum(XFA_Attribute::Layout);
   if (pKeep) {
-    XFA_ATTRIBUTEENUM eIntact;
-    if (pKeep->JSNode()->TryEnum(XFA_Attribute::Intact, eIntact, false)) {
-      if (eIntact == XFA_ATTRIBUTEENUM_None &&
+    pdfium::Optional<XFA_ATTRIBUTEENUM> intact =
+        pKeep->JSNode()->TryEnum(XFA_Attribute::Intact, false);
+    if (intact) {
+      if (*intact == XFA_ATTRIBUTEENUM_None &&
           eLayoutType == XFA_ATTRIBUTEENUM_Row &&
           m_pDocument->GetCurVersionMode() < XFA_VERSION_208) {
         CXFA_Node* pPreviewRow = GetNodeItem(XFA_NODEITEM_PrevSibling,
@@ -578,24 +579,25 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
         if (pPreviewRow &&
             pPreviewRow->JSNode()->GetEnum(XFA_Attribute::Layout) ==
                 XFA_ATTRIBUTEENUM_Row) {
-          XFA_ATTRIBUTEENUM eValue;
-          if (pKeep->JSNode()->TryEnum(XFA_Attribute::Previous, eValue,
-                                       false) &&
-              (eValue == XFA_ATTRIBUTEENUM_ContentArea ||
-               eValue == XFA_ATTRIBUTEENUM_PageArea)) {
+          pdfium::Optional<XFA_ATTRIBUTEENUM> value =
+              pKeep->JSNode()->TryEnum(XFA_Attribute::Previous, false);
+          if (value && (*value == XFA_ATTRIBUTEENUM_ContentArea ||
+                        *value == XFA_ATTRIBUTEENUM_PageArea)) {
             return XFA_ATTRIBUTEENUM_ContentArea;
           }
+
           CXFA_Node* pNode =
               pPreviewRow->GetFirstChildByClass(XFA_Element::Keep);
-          if (pNode &&
-              pNode->JSNode()->TryEnum(XFA_Attribute::Next, eValue, false) &&
-              (eValue == XFA_ATTRIBUTEENUM_ContentArea ||
-               eValue == XFA_ATTRIBUTEENUM_PageArea)) {
+          pdfium::Optional<XFA_ATTRIBUTEENUM> ret;
+          if (pNode)
+            ret = pNode->JSNode()->TryEnum(XFA_Attribute::Next, false);
+          if (ret && (*ret == XFA_ATTRIBUTEENUM_ContentArea ||
+                      *ret == XFA_ATTRIBUTEENUM_PageArea)) {
             return XFA_ATTRIBUTEENUM_ContentArea;
           }
         }
       }
-      return eIntact;
+      return *intact;
     }
   }
   switch (GetElementType()) {

@@ -12,15 +12,15 @@
 CXFA_ParaData::CXFA_ParaData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 int32_t CXFA_ParaData::GetHorizontalAlign() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Left;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::HAlign, eAttr, true);
-  return eAttr;
+  return m_pNode->JSNode()
+      ->TryEnum(XFA_Attribute::HAlign, true)
+      .value_or(XFA_ATTRIBUTEENUM_Left);
 }
 
 int32_t CXFA_ParaData::GetVerticalAlign() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Top;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::VAlign, eAttr, true);
-  return eAttr;
+  return m_pNode->JSNode()
+      ->TryEnum(XFA_Attribute::VAlign, true)
+      .value_or(XFA_ATTRIBUTEENUM_Top);
 }
 
 float CXFA_ParaData::GetLineHeight() {

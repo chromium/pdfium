@@ -1144,25 +1144,23 @@ bool CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(int32_t* val) {
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_Checksum(bool* val) {
-  CXFA_Node* pUIChild = GetUIChild();
-  XFA_ATTRIBUTEENUM eChecksum;
-  if (pUIChild->JSNode()->TryEnum(XFA_Attribute::Checksum, eChecksum, true)) {
-    switch (eChecksum) {
-      case XFA_ATTRIBUTEENUM_None:
-        *val = false;
-        return true;
-      case XFA_ATTRIBUTEENUM_Auto:
-        *val = true;
-        return true;
-      case XFA_ATTRIBUTEENUM_1mod10:
-        break;
-      case XFA_ATTRIBUTEENUM_1mod10_1mod11:
-        break;
-      case XFA_ATTRIBUTEENUM_2mod10:
-        break;
-      default:
-        break;
-    }
+  pdfium::Optional<XFA_ATTRIBUTEENUM> checksum =
+      GetUIChild()->JSNode()->TryEnum(XFA_Attribute::Checksum, true);
+  if (!checksum)
+    return false;
+
+  switch (*checksum) {
+    case XFA_ATTRIBUTEENUM_None:
+      *val = false;
+      return true;
+    case XFA_ATTRIBUTEENUM_Auto:
+      *val = true;
+      return true;
+    case XFA_ATTRIBUTEENUM_1mod10:
+    case XFA_ATTRIBUTEENUM_1mod10_1mod11:
+    case XFA_ATTRIBUTEENUM_2mod10:
+    default:
+      break;
   }
   return false;
 }
@@ -1238,28 +1236,29 @@ bool CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum(bool* val) {
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_TextLocation(int32_t* val) {
-  XFA_ATTRIBUTEENUM eTextLocation;
-  if (GetUIChild()->JSNode()->TryEnum(XFA_Attribute::TextLocation,
-                                      eTextLocation, true)) {
-    switch (eTextLocation) {
-      case XFA_ATTRIBUTEENUM_None:
-        *val = BC_TEXT_LOC_NONE;
-        return true;
-      case XFA_ATTRIBUTEENUM_Above:
-        *val = BC_TEXT_LOC_ABOVE;
-        return true;
-      case XFA_ATTRIBUTEENUM_Below:
-        *val = BC_TEXT_LOC_BELOW;
-        return true;
-      case XFA_ATTRIBUTEENUM_AboveEmbedded:
-        *val = BC_TEXT_LOC_ABOVEEMBED;
-        return true;
-      case XFA_ATTRIBUTEENUM_BelowEmbedded:
-        *val = BC_TEXT_LOC_BELOWEMBED;
-        return true;
-      default:
-        break;
-    }
+  pdfium::Optional<XFA_ATTRIBUTEENUM> textLocation =
+      GetUIChild()->JSNode()->TryEnum(XFA_Attribute::TextLocation, true);
+  if (!textLocation)
+    return false;
+
+  switch (*textLocation) {
+    case XFA_ATTRIBUTEENUM_None:
+      *val = BC_TEXT_LOC_NONE;
+      return true;
+    case XFA_ATTRIBUTEENUM_Above:
+      *val = BC_TEXT_LOC_ABOVE;
+      return true;
+    case XFA_ATTRIBUTEENUM_Below:
+      *val = BC_TEXT_LOC_BELOW;
+      return true;
+    case XFA_ATTRIBUTEENUM_AboveEmbedded:
+      *val = BC_TEXT_LOC_ABOVEEMBED;
+      return true;
+    case XFA_ATTRIBUTEENUM_BelowEmbedded:
+      *val = BC_TEXT_LOC_BELOWEMBED;
+      return true;
+    default:
+      break;
   }
   return false;
 }

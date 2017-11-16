@@ -112,7 +112,7 @@ class CXFA_LayoutPageMgr {
       bool bNewPage = false,
       bool bQuery = false,
       XFA_ATTRIBUTEENUM ePreferredPosition = XFA_ATTRIBUTEENUM_First);
-  bool MatchPageAreaOddOrEven(CXFA_Node* pPageArea, bool bLastMatch);
+  bool MatchPageAreaOddOrEven(CXFA_Node* pPageArea);
   CXFA_Node* GetNextAvailPageArea(CXFA_Node* pTargetPageArea,
                                   CXFA_Node* pTargetContentArea = nullptr,
                                   bool bNewPage = false,

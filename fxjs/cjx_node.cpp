@@ -270,11 +270,12 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
   }
   switch (eType) {
     case XFA_AttributeType::Enum: {
-      XFA_ATTRIBUTEENUM eValue;
-      if (!TryEnum(pAttr->eName, eValue, bUseDefault))
+      pdfium::Optional<XFA_ATTRIBUTEENUM> value =
+          TryEnum(pAttr->eName, bUseDefault);
+      if (!value)
         return false;
 
-      wsValue = GetAttributeEnumByID(eValue)->pName;
+      wsValue = GetAttributeEnumByID(*value)->pName;
       return true;
     }
     case XFA_AttributeType::CData: {
@@ -3053,24 +3054,18 @@ pdfium::Optional<int32_t> CJX_Node::TryInteger(XFA_Attribute eAttr,
   return GetXFANode()->GetDefaultInteger(eAttr);
 }
 
-bool CJX_Node::TryEnum(XFA_Attribute eAttr,
-                       XFA_ATTRIBUTEENUM& eValue,
-                       bool bUseDefault) {
+pdfium::Optional<XFA_ATTRIBUTEENUM> CJX_Node::TryEnum(XFA_Attribute eAttr,
+                                                      bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   void* pValue = nullptr;
   if (GetMapModuleValue(pKey, pValue)) {
-    eValue = (XFA_ATTRIBUTEENUM)(uintptr_t)pValue;
-    return true;
+    return {
+        static_cast<XFA_ATTRIBUTEENUM>(reinterpret_cast<uintptr_t>(pValue))};
   }
   if (!bUseDefault)
-    return false;
+    return {};
 
-  pdfium::Optional<XFA_ATTRIBUTEENUM> ret = GetXFANode()->GetDefaultEnum(eAttr);
-  if (!ret)
-    return false;
-
-  eValue = *ret;
-  return true;
+  return GetXFANode()->GetDefaultEnum(eAttr);
 }
 
 bool CJX_Node::SetEnum(XFA_Attribute eAttr,
@@ -3081,8 +3076,7 @@ bool CJX_Node::SetEnum(XFA_Attribute eAttr,
 }
 
 XFA_ATTRIBUTEENUM CJX_Node::GetEnum(XFA_Attribute eAttr) {
-  XFA_ATTRIBUTEENUM eValue;
-  return TryEnum(eAttr, eValue, true) ? eValue : XFA_ATTRIBUTEENUM_Unknown;
+  return TryEnum(eAttr, true).value_or(XFA_ATTRIBUTEENUM_Unknown);
 }
 
 bool CJX_Node::SetMeasure(XFA_Attribute eAttr,

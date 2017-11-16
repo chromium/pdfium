@@ -483,9 +483,10 @@ float InsertPendingItems(CXFA_ItemLayoutProcessor* pProcessor,
 
 XFA_ATTRIBUTEENUM GetLayout(CXFA_Node* pFormNode, bool* bRootForceTb) {
   *bRootForceTb = false;
-  XFA_ATTRIBUTEENUM eLayoutMode;
-  if (pFormNode->JSNode()->TryEnum(XFA_Attribute::Layout, eLayoutMode, false))
-    return eLayoutMode;
+  pdfium::Optional<XFA_ATTRIBUTEENUM> layoutMode =
+      pFormNode->JSNode()->TryEnum(XFA_Attribute::Layout, false);
+  if (layoutMode)
+    return *layoutMode;
 
   CXFA_Node* pParentNode = pFormNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParentNode && pParentNode->GetElementType() == XFA_Element::Form) {
@@ -510,14 +511,15 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
 
   CXFA_Node* pKeep = pCurNode->GetFirstChildByClass(XFA_Element::Keep);
   if (pKeep) {
-    XFA_ATTRIBUTEENUM ePrevious;
     XFA_Attribute eKeepType = XFA_Attribute::Previous;
     if (!bPreFind)
       eKeepType = XFA_Attribute::Next;
 
-    if (pKeep->JSNode()->TryEnum(eKeepType, ePrevious, false)) {
-      if (ePrevious == XFA_ATTRIBUTEENUM_ContentArea ||
-          ePrevious == XFA_ATTRIBUTEENUM_PageArea) {
+    pdfium::Optional<XFA_ATTRIBUTEENUM> previous =
+        pKeep->JSNode()->TryEnum(eKeepType, false);
+    if (previous) {
+      if (*previous == XFA_ATTRIBUTEENUM_ContentArea ||
+          *previous == XFA_ATTRIBUTEENUM_PageArea) {
         return true;
       }
     }
@@ -531,11 +533,12 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
   if (!bPreFind)
     eKeepType = XFA_Attribute::Previous;
 
-  XFA_ATTRIBUTEENUM eNext;
-  if (!pKeep->JSNode()->TryEnum(eKeepType, eNext, false))
+  pdfium::Optional<XFA_ATTRIBUTEENUM> next =
+      pKeep->JSNode()->TryEnum(eKeepType, false);
+  if (!next)
     return false;
-  if (eNext == XFA_ATTRIBUTEENUM_ContentArea ||
-      eNext == XFA_ATTRIBUTEENUM_PageArea) {
+  if (*next == XFA_ATTRIBUTEENUM_ContentArea ||
+      *next == XFA_ATTRIBUTEENUM_PageArea) {
     return true;
   }
   return false;

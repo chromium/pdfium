@@ -12,15 +12,15 @@
 CXFA_CaptionData::CXFA_CaptionData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 int32_t CXFA_CaptionData::GetPresence() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Visible;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::Presence, eAttr, true);
-  return eAttr;
+  return m_pNode->JSNode()
+      ->TryEnum(XFA_Attribute::Presence, true)
+      .value_or(XFA_ATTRIBUTEENUM_Visible);
 }
 
 int32_t CXFA_CaptionData::GetPlacementType() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Left;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::Placement, eAttr, true);
-  return eAttr;
+  return m_pNode->JSNode()
+      ->TryEnum(XFA_Attribute::Placement, true)
+      .value_or(XFA_ATTRIBUTEENUM_Left);
 }
 
 float CXFA_CaptionData::GetReserve() {

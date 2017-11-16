@@ -13,9 +13,9 @@ CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode)
     : CXFA_DataData(pNode) {}
 
 int32_t CXFA_CalculateData::GetOverride() {
-  XFA_ATTRIBUTEENUM eAtt = XFA_ATTRIBUTEENUM_Error;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::Override, eAtt, false);
-  return eAtt;
+  return m_pNode->JSNode()
+      ->TryEnum(XFA_Attribute::Override, false)
+      .value_or(XFA_ATTRIBUTEENUM_Error);
 }
 
 CXFA_ScriptData CXFA_CalculateData::GetScriptData() {

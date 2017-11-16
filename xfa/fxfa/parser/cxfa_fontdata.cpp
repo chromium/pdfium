@@ -51,9 +51,9 @@ int32_t CXFA_FontData::GetUnderline() {
 }
 
 int32_t CXFA_FontData::GetUnderlinePeriod() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_All;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::UnderlinePeriod, eAttr, true);
-  return eAttr;
+  return m_pNode->JSNode()
+      ->TryEnum(XFA_Attribute::UnderlinePeriod, true)
+      .value_or(XFA_ATTRIBUTEENUM_All);
 }
 
 float CXFA_FontData::GetFontSize() {
@@ -67,15 +67,13 @@ void CXFA_FontData::GetTypeface(WideString& wsTypeFace) {
 }
 
 bool CXFA_FontData::IsBold() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::Weight, eAttr, true);
-  return eAttr == XFA_ATTRIBUTEENUM_Bold;
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Weight) ==
+         XFA_ATTRIBUTEENUM_Bold;
 }
 
 bool CXFA_FontData::IsItalic() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
-  m_pNode->JSNode()->TryEnum(XFA_Attribute::Posture, eAttr, true);
-  return eAttr == XFA_ATTRIBUTEENUM_Italic;
+  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Posture) ==
+         XFA_ATTRIBUTEENUM_Italic;
 }
 
 void CXFA_FontData::SetColor(FX_ARGB color) {

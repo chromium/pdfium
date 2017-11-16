@@ -80,9 +80,8 @@ class CJX_Node : public CJX_Object {
                 bool bScriptModify);
   WideString GetCData(XFA_Attribute eAttr);
 
-  bool TryEnum(XFA_Attribute eAttr,
-               XFA_ATTRIBUTEENUM& eValue,
-               bool bUseDefault);
+  pdfium::Optional<XFA_ATTRIBUTEENUM> TryEnum(XFA_Attribute eAttr,
+                                              bool bUseDefault);
   bool SetEnum(XFA_Attribute eAttr, XFA_ATTRIBUTEENUM eValue, bool bNotify);
   XFA_ATTRIBUTEENUM GetEnum(XFA_Attribute eAttr);
 

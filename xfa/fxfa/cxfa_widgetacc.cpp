@@ -1275,11 +1275,10 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
 
   XFA_VERSION version = GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bCanSplitNoContent = false;
-  XFA_ATTRIBUTEENUM eLayoutMode;
-  GetNode()
-      ->GetNodeItem(XFA_NODEITEM_Parent)
-      ->JSNode()
-      ->TryEnum(XFA_Attribute::Layout, eLayoutMode, true);
+  XFA_ATTRIBUTEENUM eLayoutMode = GetNode()
+                                      ->GetNodeItem(XFA_NODEITEM_Parent)
+                                      ->JSNode()
+                                      ->GetEnum(XFA_Attribute::Layout);
   if ((eLayoutMode == XFA_ATTRIBUTEENUM_Position ||
        eLayoutMode == XFA_ATTRIBUTEENUM_Tb ||
        eLayoutMode == XFA_ATTRIBUTEENUM_Row ||
