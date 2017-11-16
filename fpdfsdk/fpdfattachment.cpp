@@ -230,8 +230,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   pParamsDict->SetNewFor<CPDF_Number>("Size", static_cast<int>(len));
 
   // Set the creation date of the new attachment in the dictionary.
-  CFX_DateTime dateTime;
-  dateTime.Now();
+  CFX_DateTime dateTime = CFX_DateTime::Now();
   pParamsDict->SetNewFor<CPDF_String>(
       "CreationDate",
       ByteString::Format("D:%d%02d%02d%02d%02d%02d", dateTime.GetYear(),

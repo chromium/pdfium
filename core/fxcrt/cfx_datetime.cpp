@@ -90,7 +90,8 @@ bool FX_IsLeapYear(int32_t iYear) {
   return ((iYear % 4) == 0 && (iYear % 100) != 0) || (iYear % 400) == 0;
 }
 
-void CFX_DateTime::Now() {
+// static
+CFX_DateTime CFX_DateTime::Now() {
   FXUT_SYSTEMTIME utLocal;
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   ::GetLocalTime((LPSYSTEMTIME)&utLocal);
@@ -110,13 +111,12 @@ void CFX_DateTime::Now() {
   utLocal.wMillisecond = curTime.tv_usec / 1000;
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
-  year_ = utLocal.wYear;
-  month_ = static_cast<uint8_t>(utLocal.wMonth);
-  day_ = static_cast<uint8_t>(utLocal.wDay);
-  hour_ = static_cast<uint8_t>(utLocal.wHour);
-  minute_ = static_cast<uint8_t>(utLocal.wMinute);
-  second_ = static_cast<uint8_t>(utLocal.wSecond);
-  millisecond_ = static_cast<uint16_t>(utLocal.wMillisecond);
+  return CFX_DateTime(utLocal.wYear, static_cast<uint8_t>(utLocal.wMonth),
+                      static_cast<uint8_t>(utLocal.wDay),
+                      static_cast<uint8_t>(utLocal.wHour),
+                      static_cast<uint8_t>(utLocal.wMinute),
+                      static_cast<uint8_t>(utLocal.wSecond),
+                      static_cast<uint16_t>(utLocal.wMillisecond));
 }
 
 int32_t CFX_DateTime::GetDayOfWeek() const {
