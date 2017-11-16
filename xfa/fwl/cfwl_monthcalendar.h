@@ -79,7 +79,7 @@ class CFWL_MonthCalendar : public CFWL_Widget {
              int32_t dayofweek,
              uint32_t dwSt,
              CFX_RectF rc,
-             WideString& wsday);
+             const WideString& wsday);
     ~DATEINFO();
 
     int32_t iDay;

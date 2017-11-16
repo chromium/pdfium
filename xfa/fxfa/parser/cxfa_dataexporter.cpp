@@ -162,7 +162,8 @@ void RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot,
   if (eVersion == XFA_VERSION_UNKNOWN)
     eVersion = XFA_VERSION_DEFAULT;
 
-  wsVersionNumber.Format(L"%i.%i", eVersion / 100, eVersion % 100);
+  wsVersionNumber =
+      WideString::Format(L"%i.%i", eVersion / 100, eVersion % 100);
 }
 
 void RegenerateFormFile_Changed(CXFA_Node* pNode,

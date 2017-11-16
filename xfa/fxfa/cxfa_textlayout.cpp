@@ -756,7 +756,7 @@ bool CXFA_TextLayout::LoadRichText(
         } else if (wsName == L"li") {
           bCurLi = true;
           if (bIsOl)
-            wsText.Format(L"%d.  ", iLiCount);
+            wsText = WideString::Format(L"%d.  ", iLiCount);
           else
             wsText = 0x00B7 + WideStringView(L"  ", 1);
         } else if (!bContentNode) {

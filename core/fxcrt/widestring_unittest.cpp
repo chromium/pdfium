@@ -1278,84 +1278,25 @@ TEST(WideStringView, TrimmedRight) {
 }
 
 TEST(WideString, FormatWidth) {
-  {
-    WideString str;
-    str.Format(L"%5d", 1);
-    EXPECT_EQ(L"    1", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%d", 1);
-    EXPECT_EQ(L"1", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%*d", 5, 1);
-    EXPECT_EQ(L"    1", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%-1d", 1);
-    EXPECT_EQ(L"1", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%0d", 1);
-    EXPECT_EQ(L"1", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%1048576d", 1);
-    EXPECT_EQ(L"", str);
-  }
+  EXPECT_EQ(L"    1", WideString::Format(L"%5d", 1));
+  EXPECT_EQ(L"1", WideString::Format(L"%d", 1));
+  EXPECT_EQ(L"    1", WideString::Format(L"%*d", 5, 1));
+  EXPECT_EQ(L"1", WideString::Format(L"%-1d", 1));
+  EXPECT_EQ(L"1", WideString::Format(L"%0d", 1));
+  EXPECT_EQ(L"", WideString::Format(L"%1048576d", 1));
 }
 
 TEST(WideString, FormatPrecision) {
-  {
-    WideString str;
-    str.Format(L"%.2f", 1.12345);
-    EXPECT_EQ(L"1.12", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%.*f", 3, 1.12345);
-    EXPECT_EQ(L"1.123", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%f", 1.12345);
-    EXPECT_EQ(L"1.123450", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%-1f", 1.12345);
-    EXPECT_EQ(L"1.123450", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%0f", 1.12345);
-    EXPECT_EQ(L"1.123450", str);
-  }
-
-  {
-    WideString str;
-    str.Format(L"%.1048576f", 1.2);
-    EXPECT_EQ(L"", str);
-  }
+  EXPECT_EQ(L"1.12", WideString::Format(L"%.2f", 1.12345));
+  EXPECT_EQ(L"1.123", WideString::Format(L"%.*f", 3, 1.12345));
+  EXPECT_EQ(L"1.123450", WideString::Format(L"%f", 1.12345));
+  EXPECT_EQ(L"1.123450", WideString::Format(L"%-1f", 1.12345));
+  EXPECT_EQ(L"1.123450", WideString::Format(L"%0f", 1.12345));
+  EXPECT_EQ(L"", WideString::Format(L"%.1048576f", 1.2));
 }
 
 TEST(WideString, FormatOutOfRangeChar) {
-  WideString str;
-  str.Format(L"unsupported char '%c'", 0x00FF00FF);
+  WideString::Format(L"unsupported char '%c'", 0x00FF00FF);
 }
 
 TEST(WideString, Empty) {

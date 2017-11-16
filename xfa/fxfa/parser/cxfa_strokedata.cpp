@@ -60,14 +60,14 @@ void CXFA_StrokeData::SetColor(FX_ARGB argb) {
 
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Color, true);
-  WideString wsColor;
   int a;
   int r;
   int g;
   int b;
   std::tie(a, r, g, b) = ArgbDecode(argb);
-  wsColor.Format(L"%d,%d,%d", r, g, b);
-  pNode->JSNode()->SetCData(XFA_Attribute::Value, wsColor, false, false);
+  pNode->JSNode()->SetCData(XFA_Attribute::Value,
+                            WideString::Format(L"%d,%d,%d", r, g, b), false,
+                            false);
 }
 
 int32_t CXFA_StrokeData::GetJoinType() const {

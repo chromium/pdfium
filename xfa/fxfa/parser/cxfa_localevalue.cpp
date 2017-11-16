@@ -292,32 +292,27 @@ CFX_DateTime CXFA_LocaleValue::GetTime() const {
 
 bool CXFA_LocaleValue::SetDate(const CFX_DateTime& d) {
   m_dwType = XFA_VT_DATE;
-  m_wsValue.Format(L"%04d-%02d-%02d", d.GetYear(), d.GetMonth(), d.GetDay());
+  m_wsValue = WideString::Format(L"%04d-%02d-%02d", d.GetYear(), d.GetMonth(),
+                                 d.GetDay());
   return true;
 }
 
 bool CXFA_LocaleValue::SetTime(const CFX_DateTime& t) {
   m_dwType = XFA_VT_TIME;
-  m_wsValue.Format(L"%02d:%02d:%02d", t.GetHour(), t.GetMinute(),
-                   t.GetSecond());
-  if (t.GetMillisecond() > 0) {
-    WideString wsTemp;
-    wsTemp.Format(L"%:03d", t.GetMillisecond());
-    m_wsValue += wsTemp;
-  }
+  m_wsValue = WideString::Format(L"%02d:%02d:%02d", t.GetHour(), t.GetMinute(),
+                                 t.GetSecond());
+  if (t.GetMillisecond() > 0)
+    m_wsValue += WideString::Format(L"%:03d", t.GetMillisecond());
   return true;
 }
 
 bool CXFA_LocaleValue::SetDateTime(const CFX_DateTime& dt) {
   m_dwType = XFA_VT_DATETIME;
-  m_wsValue.Format(L"%04d-%02d-%02dT%02d:%02d:%02d", dt.GetYear(),
-                   dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(),
-                   dt.GetSecond());
-  if (dt.GetMillisecond() > 0) {
-    WideString wsTemp;
-    wsTemp.Format(L"%:03d", dt.GetMillisecond());
-    m_wsValue += wsTemp;
-  }
+  m_wsValue = WideString::Format(L"%04d-%02d-%02dT%02d:%02d:%02d", dt.GetYear(),
+                                 dt.GetMonth(), dt.GetDay(), dt.GetHour(),
+                                 dt.GetMinute(), dt.GetSecond());
+  if (dt.GetMillisecond() > 0)
+    m_wsValue += WideString::Format(L"%:03d", dt.GetMillisecond());
   return true;
 }
 

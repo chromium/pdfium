@@ -115,19 +115,20 @@ CJS_Return util::printf(CJS_Runtime* pRuntime,
     WideString strSegment;
     switch (ParseDataType(&c_strFormat)) {
       case UTIL_INT:
-        strSegment.Format(c_strFormat.c_str(),
-                          pRuntime->ToInt32(params[iIndex]));
+        strSegment = WideString::Format(c_strFormat.c_str(),
+                                        pRuntime->ToInt32(params[iIndex]));
         break;
       case UTIL_DOUBLE:
-        strSegment.Format(c_strFormat.c_str(),
-                          pRuntime->ToDouble(params[iIndex]));
+        strSegment = WideString::Format(c_strFormat.c_str(),
+                                        pRuntime->ToDouble(params[iIndex]));
         break;
       case UTIL_STRING:
-        strSegment.Format(c_strFormat.c_str(),
-                          pRuntime->ToWideString(params[iIndex]).c_str());
+        strSegment =
+            WideString::Format(c_strFormat.c_str(),
+                               pRuntime->ToWideString(params[iIndex]).c_str());
         break;
       default:
-        strSegment.Format(L"%ls", c_strFormat.c_str());
+        strSegment = WideString::Format(L"%ls", c_strFormat.c_str());
         break;
     }
     c_strResult += strSegment.c_str();
@@ -164,16 +165,16 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
     WideString swResult;
     switch (pRuntime->ToInt32(params[0])) {
       case 0:
-        swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", year, month, day, hour,
-                        min, sec);
+        swResult = WideString::Format(L"D:%04d%02d%02d%02d%02d%02d", year,
+                                      month, day, hour, min, sec);
         break;
       case 1:
-        swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d", year, month, day,
-                        hour, min, sec);
+        swResult = WideString::Format(L"%04d.%02d.%02d %02d:%02d:%02d", year,
+                                      month, day, hour, min, sec);
         break;
       case 2:
-        swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d", year, month, day,
-                        hour, min, sec);
+        swResult = WideString::Format(L"%04d/%02d/%02d %02d:%02d:%02d", year,
+                                      month, day, hour, min, sec);
         break;
       default:
         return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
@@ -215,9 +216,6 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
     };
 
     for (size_t i = 0; i < FX_ArraySize(cTableAd); ++i) {
-      WideString sValue;
-      sValue.Format(L"%d", cTableAd[i].iValue);
-
       int iStart = 0;
       int iEnd;
       while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {
@@ -227,7 +225,8 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
             continue;
           }
         }
-        cFormat.replace(iEnd, wcslen(cTableAd[i].lpszJSMark), sValue.c_str());
+        cFormat.replace(iEnd, wcslen(cTableAd[i].lpszJSMark),
+                        WideString::Format(L"%d", cTableAd[i].iValue).c_str());
         iStart = iEnd;
       }
     }

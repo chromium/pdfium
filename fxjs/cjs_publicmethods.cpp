@@ -399,9 +399,8 @@ double CJS_PublicMethods::ParseNormalDate(const WideString& value,
     return dt;
   }
 
-  WideString swTemp;
-  swTemp.Format(L"%d/%d/%d %d:%d:%d", nMonth, nDay, nYear, nHour, nMin, nSec);
-  return JS_DateParse(swTemp);
+  return JS_DateParse(WideString::Format(L"%d/%d/%d %d:%d:%d", nMonth, nDay,
+                                         nYear, nHour, nMin, nSec));
 }
 
 double CJS_PublicMethods::MakeRegularDate(const WideString& value,
@@ -707,22 +706,23 @@ WideString CJS_PublicMethods::MakeFormatDate(double dDate,
               sPart += c;
               break;
             case 'm':
-              sPart.Format(L"%d", nMonth);
+              sPart = WideString::Format(L"%d", nMonth);
               break;
             case 'd':
-              sPart.Format(L"%d", nDay);
+              sPart = WideString::Format(L"%d", nDay);
               break;
             case 'H':
-              sPart.Format(L"%d", nHour);
+              sPart = WideString::Format(L"%d", nHour);
               break;
             case 'h':
-              sPart.Format(L"%d", nHour > 12 ? nHour - 12 : nHour);
+              sPart =
+                  WideString::Format(L"%d", nHour > 12 ? nHour - 12 : nHour);
               break;
             case 'M':
-              sPart.Format(L"%d", nMin);
+              sPart = WideString::Format(L"%d", nMin);
               break;
             case 's':
-              sPart.Format(L"%d", nSec);
+              sPart = WideString::Format(L"%d", nSec);
               break;
             case 't':
               sPart += nHour > 12 ? 'p' : 'a';
@@ -732,25 +732,26 @@ WideString CJS_PublicMethods::MakeFormatDate(double dDate,
         } else if (remaining == 1 || format[i + 2] != c) {
           switch (c) {
             case 'y':
-              sPart.Format(L"%02d", nYear - (nYear / 100) * 100);
+              sPart = WideString::Format(L"%02d", nYear - (nYear / 100) * 100);
               break;
             case 'm':
-              sPart.Format(L"%02d", nMonth);
+              sPart = WideString::Format(L"%02d", nMonth);
               break;
             case 'd':
-              sPart.Format(L"%02d", nDay);
+              sPart = WideString::Format(L"%02d", nDay);
               break;
             case 'H':
-              sPart.Format(L"%02d", nHour);
+              sPart = WideString::Format(L"%02d", nHour);
               break;
             case 'h':
-              sPart.Format(L"%02d", nHour > 12 ? nHour - 12 : nHour);
+              sPart =
+                  WideString::Format(L"%02d", nHour > 12 ? nHour - 12 : nHour);
               break;
             case 'M':
-              sPart.Format(L"%02d", nMin);
+              sPart = WideString::Format(L"%02d", nMin);
               break;
             case 's':
-              sPart.Format(L"%02d", nSec);
+              sPart = WideString::Format(L"%02d", nSec);
               break;
             case 't':
               sPart = nHour > 12 ? L"pm" : L"am";
@@ -774,7 +775,7 @@ WideString CJS_PublicMethods::MakeFormatDate(double dDate,
         } else if (remaining == 3 || format[i + 4] != c) {
           switch (c) {
             case 'y':
-              sPart.Format(L"%04d", nYear);
+              sPart = WideString::Format(L"%04d", nYear);
               i += 4;
               break;
             case 'm':
@@ -1148,9 +1149,8 @@ CJS_Return CJS_PublicMethods::AFDate_FormatEx(
   }
 
   if (std::isnan(dDate)) {
-    WideString swMsg;
-    swMsg.Format(JSGetStringFromID(JSMessage::kParseDateError).c_str(),
-                 sFormat.c_str());
+    WideString swMsg = WideString::Format(
+        JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
     AlertIfPossible(pContext, swMsg.c_str());
     return CJS_Return(false);
   }
@@ -1236,9 +1236,9 @@ CJS_Return CJS_PublicMethods::AFDate_KeystrokeEx(
     bool bWrongFormat = false;
     double dRet = MakeRegularDate(strValue, sFormat, &bWrongFormat);
     if (bWrongFormat || std::isnan(dRet)) {
-      WideString swMsg;
-      swMsg.Format(JSGetStringFromID(JSMessage::kParseDateError).c_str(),
-                   sFormat.c_str());
+      WideString swMsg = WideString::Format(
+          JSGetStringFromID(JSMessage::kParseDateError).c_str(),
+          sFormat.c_str());
       AlertIfPossible(pContext, swMsg.c_str());
       pEvent->Rc() = false;
       return CJS_Return(true);
@@ -1552,9 +1552,8 @@ CJS_Return CJS_PublicMethods::AFParseDateEx(
   WideString sFormat = pRuntime->ToWideString(params[1]);
   double dDate = MakeRegularDate(sValue, sFormat, nullptr);
   if (std::isnan(dDate)) {
-    WideString swMsg;
-    swMsg.Format(JSGetStringFromID(JSMessage::kParseDateError).c_str(),
-                 sFormat.c_str());
+    WideString swMsg = WideString::Format(
+        JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
     AlertIfPossible(pRuntime->GetCurrentEventContext(), swMsg.c_str());
     return CJS_Return(false);
   }
@@ -1706,17 +1705,20 @@ CJS_Return CJS_PublicMethods::AFRange_Validate(
 
   if (bGreaterThan && bLessThan) {
     if (dEentValue < dGreaterThan || dEentValue > dLessThan)
-      swMsg.Format(JSGetStringFromID(JSMessage::kRangeBetweenError).c_str(),
-                   pRuntime->ToWideString(params[1]).c_str(),
-                   pRuntime->ToWideString(params[3]).c_str());
+      swMsg = WideString::Format(
+          JSGetStringFromID(JSMessage::kRangeBetweenError).c_str(),
+          pRuntime->ToWideString(params[1]).c_str(),
+          pRuntime->ToWideString(params[3]).c_str());
   } else if (bGreaterThan) {
     if (dEentValue < dGreaterThan)
-      swMsg.Format(JSGetStringFromID(JSMessage::kRangeGreaterError).c_str(),
-                   pRuntime->ToWideString(params[1]).c_str());
+      swMsg = WideString::Format(
+          JSGetStringFromID(JSMessage::kRangeGreaterError).c_str(),
+          pRuntime->ToWideString(params[1]).c_str());
   } else if (bLessThan) {
     if (dEentValue > dLessThan)
-      swMsg.Format(JSGetStringFromID(JSMessage::kRangeLessError).c_str(),
-                   pRuntime->ToWideString(params[3]).c_str());
+      swMsg = WideString::Format(
+          JSGetStringFromID(JSMessage::kRangeLessError).c_str(),
+          pRuntime->ToWideString(params[3]).c_str());
   }
 
   if (!swMsg.IsEmpty()) {

@@ -430,9 +430,8 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   float fDayMaxW = 0.0f;
   float fDayMaxH = 0.0f;
   for (int day = 10; day <= 31; day++) {
-    WideString wsDay;
-    wsDay.Format(L"%d", day);
-    CFX_SizeF sz = CalcTextSize(wsDay, m_pProperties->m_pThemeProvider, false);
+    CFX_SizeF sz = CalcTextSize(WideString::Format(L"%d", day),
+                                m_pProperties->m_pThemeProvider, false);
     fDayMaxW = (fDayMaxW >= sz.width) ? fDayMaxW : sz.width;
     fDayMaxH = (fDayMaxH >= sz.height) ? fDayMaxH : sz.height;
   }
@@ -579,8 +578,6 @@ void CFWL_MonthCalendar::ResetDateItem() {
     if (iDayOfWeek >= 7)
       iDayOfWeek = 0;
 
-    WideString wsDay;
-    wsDay.Format(L"%d", i + 1);
     uint32_t dwStates = 0;
     if (m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == (i + 1))
       dwStates |= FWL_ITEMSTATE_MCD_Flag;
@@ -588,8 +585,8 @@ void CFWL_MonthCalendar::ResetDateItem() {
       dwStates |= FWL_ITEMSTATE_MCD_Selected;
 
     CFX_RectF rtDate;
-    m_arrDates.push_back(pdfium::MakeUnique<DATEINFO>(i + 1, iDayOfWeek,
-                                                      dwStates, rtDate, wsDay));
+    m_arrDates.push_back(pdfium::MakeUnique<DATEINFO>(
+        i + 1, iDayOfWeek, dwStates, rtDate, WideString::Format(L"%d", i + 1)));
     iDayOfWeek++;
   }
 }
@@ -680,17 +677,13 @@ WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
                                           L"April",   L"May",      L"June",
                                           L"July",    L"August",   L"September",
                                           L"October", L"November", L"December"};
-  WideString wsHead;
-  wsHead.Format(L"%s, %d", pMonth[iMonth - 1], iYear);
-  return wsHead;
+  return WideString::Format(L"%s, %d", pMonth[iMonth - 1], iYear);
 }
 
 WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,
                                             int32_t iMonth,
                                             int32_t iDay) {
-  WideString wsToday;
-  wsToday.Format(L", %d/%d/%d", iDay, iMonth, iYear);
-  return wsToday;
+  return WideString::Format(L", %d/%d/%d", iDay, iMonth, iYear);
 }
 
 int32_t CFWL_MonthCalendar::GetDayAtPoint(const CFX_PointF& point) const {
@@ -893,7 +886,7 @@ CFWL_MonthCalendar::DATEINFO::DATEINFO(int32_t day,
                                        int32_t dayofweek,
                                        uint32_t dwSt,
                                        CFX_RectF rc,
-                                       WideString& wsday)
+                                       const WideString& wsday)
     : iDay(day),
       iDayOfWeek(dayofweek),
       dwStates(dwSt),

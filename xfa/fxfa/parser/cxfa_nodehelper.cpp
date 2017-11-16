@@ -256,14 +256,15 @@ void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
     ws = refNode->GetClassName();
-    wsName.Format(L"#%s[%d]", ws.c_str(),
-                  GetIndex(refNode, eLogicType, bIsProperty, true));
+    wsName =
+        WideString::Format(L"#%s[%d]", ws.c_str(),
+                           GetIndex(refNode, eLogicType, bIsProperty, true));
     return;
   }
   ws = refNode->JSNode()->GetCData(XFA_Attribute::Name);
   ws.Replace(L".", L"\\.");
-  wsName.Format(L"%s[%d]", ws.c_str(),
-                GetIndex(refNode, eLogicType, bIsProperty, false));
+  wsName = WideString::Format(
+      L"%s[%d]", ws.c_str(), GetIndex(refNode, eLogicType, bIsProperty, false));
 }
 
 bool CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {

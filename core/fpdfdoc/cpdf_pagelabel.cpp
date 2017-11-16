@@ -50,23 +50,25 @@ WideString MakeLetters(int num) {
 }
 
 WideString GetLabelNumPortion(int num, const ByteString& bsStyle) {
-  WideString wsNumPortion;
   if (bsStyle.IsEmpty())
+    return L"";
+  if (bsStyle == "D")
+    return WideString::Format(L"%d", num);
+  if (bsStyle == "R") {
+    WideString wsNumPortion = MakeRoman(num);
+    wsNumPortion.MakeUpper();
     return wsNumPortion;
-  if (bsStyle == "D") {
-    wsNumPortion.Format(L"%d", num);
-  } else if (bsStyle == "R") {
-    wsNumPortion = MakeRoman(num);
-    wsNumPortion.MakeUpper();
-  } else if (bsStyle == "r") {
-    wsNumPortion = MakeRoman(num);
-  } else if (bsStyle == "A") {
-    wsNumPortion = MakeLetters(num);
-    wsNumPortion.MakeUpper();
-  } else if (bsStyle == "a") {
-    wsNumPortion = MakeLetters(num);
   }
-  return wsNumPortion;
+  if (bsStyle == "r")
+    return MakeRoman(num);
+  if (bsStyle == "A") {
+    WideString wsNumPortion = MakeLetters(num);
+    wsNumPortion.MakeUpper();
+    return wsNumPortion;
+  }
+  if (bsStyle == "a")
+    return MakeLetters(num);
+  return L"";
 }
 
 }  // namespace
@@ -114,7 +116,7 @@ bool CPDF_PageLabel::GetLabel(int nPage, WideString* wsLabel) const {
       return true;
     }
   }
-  wsLabel->Format(L"%d", nPage + 1);
+  *wsLabel = WideString::Format(L"%d", nPage + 1);
   return true;
 }
 

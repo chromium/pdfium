@@ -53,10 +53,9 @@ void CFX_XMLDoc::SaveXMLNode(
   CFX_XMLNode* pNode = (CFX_XMLNode*)pINode;
   switch (pNode->GetType()) {
     case FX_XMLNODE_Instruction: {
-      WideString ws;
       CFX_XMLInstruction* pInstruction = (CFX_XMLInstruction*)pNode;
       if (pInstruction->GetName().CompareNoCase(L"xml") == 0) {
-        ws = L"<?xml version=\"1.0\" encoding=\"";
+        WideString ws = L"<?xml version=\"1.0\" encoding=\"";
         uint16_t wCodePage = pXMLStream->GetCodePage();
         if (wCodePage == FX_CODEPAGE_UTF16LE) {
           ws += L"UTF-16";
@@ -68,7 +67,8 @@ void CFX_XMLDoc::SaveXMLNode(
         ws += L"\"?>";
         pXMLStream->WriteString(ws.AsStringView());
       } else {
-        ws.Format(L"<?%s", pInstruction->GetName().c_str());
+        WideString ws =
+            WideString::Format(L"<?%s", pInstruction->GetName().c_str());
         pXMLStream->WriteString(ws.AsStringView());
 
         for (auto it : pInstruction->GetAttributes()) {

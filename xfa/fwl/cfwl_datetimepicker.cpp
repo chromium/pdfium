@@ -214,10 +214,11 @@ void CFWL_DateTimePicker::FormatDateString(int32_t iYear,
                                            WideString& wsText) {
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat) ==
       FWL_STYLEEXT_DTP_ShortDateFormat) {
-    wsText.Format(L"%d-%d-%d", iYear, iMonth, iDay);
+    wsText = WideString::Format(L"%d-%d-%d", iYear, iMonth, iDay);
   } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_LongDateFormat) ==
              FWL_STYLEEXT_DTP_LongDateFormat) {
-    wsText.Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
+    wsText =
+        WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
   }
 }
 

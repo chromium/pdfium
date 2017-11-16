@@ -349,7 +349,7 @@ void CFX_XMLNode::SaveXMLNode(
         ws += L"\"?>";
         pXMLStream->WriteString(ws.AsStringView());
       } else {
-        ws.Format(L"<?%s", pInstruction->GetName().c_str());
+        ws = WideString::Format(L"<?%s", pInstruction->GetName().c_str());
         pXMLStream->WriteString(ws.AsStringView());
 
         for (auto it : pInstruction->GetAttributes()) {

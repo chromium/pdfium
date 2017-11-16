@@ -554,9 +554,8 @@ uint16_t GetWeekOfYear(uint16_t year, uint16_t month, uint16_t day) {
 }
 
 WideString NumToString(size_t fmt_size, int32_t value) {
-  WideString str;
-  str.Format(fmt_size == 1 ? L"%d" : fmt_size == 2 ? L"%02d" : L"%03d", value);
-  return str;
+  return WideString::Format(
+      fmt_size == 1 ? L"%d" : fmt_size == 2 ? L"%02d" : L"%03d", value);
 }
 
 WideString DateFormat(const WideString& wsDatePattern,
@@ -684,10 +683,8 @@ WideString TimeFormat(const WideString& wsTimePattern,
       FX_TIMEZONE tz = pLocale->GetTimeZone();
       if (tz.tzHour != 0 || tz.tzMinute != 0) {
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
-
-        WideString wsTimezone;
-        wsTimezone.Format(L"%02d:%02d", abs(tz.tzHour), tz.tzMinute);
-        wsResult += wsTimezone;
+        wsResult +=
+            WideString::Format(L"%02d:%02d", abs(tz.tzHour), tz.tzMinute);
       }
     }
   }
@@ -2006,9 +2003,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         ccf--;
         break;
       case 'E': {
-        WideString wsExp;
-        wsExp.Format(L"E%+d", exponent);
-        *wsOutput = wsExp + *wsOutput;
+        *wsOutput = WideString::Format(L"E%+d", exponent) + *wsOutput;
         ccf--;
         break;
       }
@@ -2164,9 +2159,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         ccf++;
         break;
       case 'E': {
-        WideString wsExp;
-        wsExp.Format(L"E%+d", exponent);
-        *wsOutput += wsExp;
+        *wsOutput += WideString::Format(L"E%+d", exponent);
         ccf++;
         break;
       }

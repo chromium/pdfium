@@ -6260,11 +6260,11 @@ void CFXJSE_FormCalcContext::ThrowArgumentMismatchException() const {
 }
 
 void CFXJSE_FormCalcContext::ThrowException(const wchar_t* str, ...) const {
-  WideString wsMessage;
   va_list arg_ptr;
   va_start(arg_ptr, str);
-  wsMessage.FormatV(str, arg_ptr);
+  WideString wsMessage = WideString::FormatV(str, arg_ptr);
   va_end(arg_ptr);
+
   ASSERT(!wsMessage.IsEmpty());
   FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringView());
 }

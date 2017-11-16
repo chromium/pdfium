@@ -33,6 +33,9 @@ class WideString {
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+  static WideString Format(const wchar_t* lpszFormat, ...);
+  static WideString FormatV(const wchar_t* lpszFormat, va_list argList);
+
   WideString();
   WideString(const WideString& other);
   WideString(WideString&& other) noexcept;
@@ -141,9 +144,6 @@ class WideString {
   size_t InsertAtBack(wchar_t ch) { return Insert(GetLength(), ch); }
   size_t Delete(size_t index, size_t count = 1);
 
-  void Format(const wchar_t* lpszFormat, ...);
-  void FormatV(const wchar_t* lpszFormat, va_list argList);
-
   void MakeLower();
   void MakeUpper();
 
@@ -188,9 +188,6 @@ class WideString {
   void AllocCopy(WideString& dest, size_t nCopyLen, size_t nCopyIndex) const;
   void AssignCopy(const wchar_t* pSrcData, size_t nSrcLen);
   void Concat(const wchar_t* lpszSrcData, size_t nSrcLen);
-
-  // Returns true unless we ran out of space.
-  bool TryVSWPrintf(size_t size, const wchar_t* format, va_list argList);
 
   RetainPtr<StringData> m_pData;
 

@@ -297,10 +297,7 @@ pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
       pdfium::Optional<int32_t> iValue = TryInteger(pAttr->eName, bUseDefault);
       if (!iValue)
         return {};
-
-      WideString wsValue;
-      wsValue.Format(L"%d", *iValue);
-      return {wsValue};
+      return {WideString::Format(L"%d", *iValue)};
     }
     case XFA_AttributeType::Measure: {
       pdfium::Optional<CXFA_Measurement> value =
@@ -1555,9 +1552,8 @@ void CJX_Node::Script_Som_BorderColor(CFXJSE_Value* pValue,
   int32_t g;
   int32_t b;
   std::tie(a, r, g, b) = ArgbDecode(color);
-  WideString strColor;
-  strColor.Format(L"%d,%d,%d", r, g, b);
-  pValue->SetString(strColor.UTF8Encode().AsStringView());
+  pValue->SetString(
+      WideString::Format(L"%d,%d,%d", r, g, b).UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_Som_BorderWidth(CFXJSE_Value* pValue,
@@ -1610,9 +1606,8 @@ void CJX_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
   int32_t g;
   int32_t b;
   std::tie(a, r, g, b) = ArgbDecode(color);
-  WideString wsColor;
-  wsColor.Format(L"%d,%d,%d", r, g, b);
-  pValue->SetString(wsColor.UTF8Encode().AsStringView());
+  pValue->SetString(
+      WideString::Format(L"%d,%d,%d", r, g, b).UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_Som_DataNode(CFXJSE_Value* pValue,
@@ -3285,10 +3280,10 @@ bool CJX_Node::SetValue(XFA_Attribute eAttr,
       elem->SetString(pInfo->pName, pValue ? L"1" : L"0");
       break;
     case XFA_AttributeType::Integer: {
-      WideString wsValue;
-      wsValue.Format(L"%d",
-                     static_cast<int32_t>(reinterpret_cast<uintptr_t>(pValue)));
-      elem->SetString(pInfo->pName, wsValue);
+      elem->SetString(
+          pInfo->pName,
+          WideString::Format(L"%d", static_cast<int32_t>(
+                                        reinterpret_cast<uintptr_t>(pValue))));
       break;
     }
     default:

@@ -286,12 +286,10 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
 WideString CXFA_FFNotify::GetCurrentDateTime() {
   CFX_DateTime dataTime;
   dataTime.Now();
-
-  WideString wsDateTime;
-  wsDateTime.Format(L"%d%02d%02dT%02d%02d%02d", dataTime.GetYear(),
-                    dataTime.GetMonth(), dataTime.GetDay(), dataTime.GetHour(),
-                    dataTime.GetMinute(), dataTime.GetSecond());
-  return wsDateTime;
+  return WideString::Format(L"%d%02d%02dT%02d%02d%02d", dataTime.GetYear(),
+                            dataTime.GetMonth(), dataTime.GetDay(),
+                            dataTime.GetHour(), dataTime.GetMinute(),
+                            dataTime.GetSecond());
 }
 
 void CXFA_FFNotify::ResetData(CXFA_WidgetData* pWidgetData) {

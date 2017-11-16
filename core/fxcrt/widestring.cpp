@@ -246,6 +246,30 @@ pdfium::Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
   return pdfium::Optional<size_t>(nMaxLen);
 }
 
+// Returns string unless we ran out of space.
+pdfium::Optional<WideString> TryVSWPrintf(size_t size,
+                                          const wchar_t* pFormat,
+                                          va_list argList) {
+  WideString str;
+  wchar_t* buffer = str.GetBuffer(size);
+
+  // In the following two calls, there's always space in the buffer for
+  // a terminating NUL that's not included in nMaxLen.
+  // For vswprintf(), MSAN won't untaint the buffer on a truncated write's
+  // -1 return code even though the buffer is written. Probably just as well
+  // not to trust the vendor's implementation to write anything anyways.
+  // See https://crbug.com/705912.
+  memset(buffer, 0, (size + 1) * sizeof(wchar_t));
+  int ret = vswprintf(buffer, size + 1, pFormat, argList);
+
+  bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
+  if (!bSufficientBuffer)
+    return {};
+
+  str.ReleaseBuffer(str.GetStringLength());
+  return {str};
+}
+
 #ifndef NDEBUG
 bool IsValidCodePage(uint16_t codepage) {
   switch (codepage) {
@@ -284,6 +308,45 @@ namespace fxcrt {
 
 static_assert(sizeof(WideString) <= sizeof(wchar_t*),
               "Strings must not require more space than pointers");
+
+// static
+WideString WideString::FormatV(const wchar_t* format, va_list argList) {
+  va_list argListCopy;
+  va_copy(argListCopy, argList);
+  int maxLen = vswprintf(nullptr, 0, format, argListCopy);
+  va_end(argListCopy);
+
+  if (maxLen <= 0) {
+    va_copy(argListCopy, argList);
+    auto guess = GuessSizeForVSWPrintf(format, argListCopy);
+    va_end(argListCopy);
+
+    if (!guess.has_value())
+      return L"";
+    maxLen = pdfium::base::checked_cast<int>(guess.value());
+  }
+
+  while (maxLen < 32 * 1024) {
+    va_copy(argListCopy, argList);
+    pdfium::Optional<WideString> ret =
+        TryVSWPrintf(static_cast<size_t>(maxLen), format, argListCopy);
+    va_end(argListCopy);
+
+    if (ret)
+      return *ret;
+    maxLen *= 2;
+  }
+  return L"";
+}
+
+// static
+WideString WideString::Format(const wchar_t* pFormat, ...) {
+  va_list argList;
+  va_start(argList, pFormat);
+  WideString ret = FormatV(pFormat, argList);
+  va_end(argList);
+  return ret;
+}
 
 WideString::WideString() {}
 
@@ -664,57 +727,6 @@ void WideString::AllocCopy(WideString& dest,
   RetainPtr<StringData> pNewData(
       StringData::Create(m_pData->m_String + nCopyIndex, nCopyLen));
   dest.m_pData.Swap(pNewData);
-}
-
-bool WideString::TryVSWPrintf(size_t size,
-                              const wchar_t* pFormat,
-                              va_list argList) {
-  GetBuffer(size);
-  if (!m_pData)
-    return true;
-
-  // In the following two calls, there's always space in the buffer for
-  // a terminating NUL that's not included in nMaxLen.
-  // For vswprintf(), MSAN won't untaint the buffer on a truncated write's
-  // -1 return code even though the buffer is written. Probably just as well
-  // not to trust the vendor's implementation to write anything anyways.
-  // See https://crbug.com/705912.
-  memset(m_pData->m_String, 0, (size + 1) * sizeof(wchar_t));
-  int ret = vswprintf(m_pData->m_String, size + 1, pFormat, argList);
-  bool bSufficientBuffer = ret >= 0 || m_pData->m_String[size - 1] == 0;
-  ReleaseBuffer(GetStringLength());
-  return bSufficientBuffer;
-}
-
-void WideString::FormatV(const wchar_t* format, va_list argList) {
-  va_list argListCopy;
-  va_copy(argListCopy, argList);
-  int maxLen = vswprintf(nullptr, 0, format, argListCopy);
-  va_end(argListCopy);
-  if (maxLen <= 0) {
-    va_copy(argListCopy, argList);
-    auto guess = GuessSizeForVSWPrintf(format, argListCopy);
-    va_end(argListCopy);
-    if (!guess.has_value())
-      return;
-    maxLen = pdfium::base::checked_cast<int>(guess.value());
-  }
-  while (maxLen < 32 * 1024) {
-    va_copy(argListCopy, argList);
-    bool bSufficientBuffer =
-        TryVSWPrintf(static_cast<size_t>(maxLen), format, argListCopy);
-    va_end(argListCopy);
-    if (bSufficientBuffer)
-      break;
-    maxLen *= 2;
-  }
-}
-
-void WideString::Format(const wchar_t* pFormat, ...) {
-  va_list argList;
-  va_start(argList, pFormat);
-  FormatV(pFormat, argList);
-  va_end(argList);
 }
 
 size_t WideString::Insert(size_t location, wchar_t ch) {

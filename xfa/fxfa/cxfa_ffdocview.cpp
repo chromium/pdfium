@@ -163,12 +163,10 @@ void CXFA_FFDocView::ShowNullTestMsg() {
       wsMsg += m_arrNullTestMsg[i] + L"\n";
 
     if (iRemain > 0) {
-      WideString wsTemp;
-      wsTemp.Format(
-          L"Message limit exceeded. Remaining %d "
-          L"validation errors not reported.",
-          iRemain);
-      wsMsg += L"\n" + wsTemp;
+      wsMsg += L"\n" + WideString::Format(
+                           L"Message limit exceeded. Remaining %d "
+                           L"validation errors not reported.",
+                           iRemain);
     }
     pAppProvider->MsgBox(wsMsg, pAppProvider->GetAppTitle(), XFA_MBICON_Status,
                          XFA_MB_OK);
