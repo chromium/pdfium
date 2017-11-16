@@ -88,7 +88,7 @@ class CJX_Node : public CJX_Object {
   bool SetEnum(XFA_Attribute eAttr, XFA_ATTRIBUTEENUM eValue, bool bNotify);
   XFA_ATTRIBUTEENUM GetEnum(XFA_Attribute eAttr);
 
-  bool TryBoolean(XFA_Attribute eAttr, bool& bValue, bool bUseDefault);
+  pdfium::Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault);
   bool SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
   bool GetBoolean(XFA_Attribute eAttr);
 

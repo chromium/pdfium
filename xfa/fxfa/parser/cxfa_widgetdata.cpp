@@ -1226,10 +1226,10 @@ bool CXFA_WidgetData::GetBarcodeAttribute_ModuleHeight(int32_t* val) {
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum(bool* val) {
-  bool bPrintCheckDigit;
-  if (GetUIChild()->JSNode()->TryBoolean(XFA_Attribute::PrintCheckDigit,
-                                         bPrintCheckDigit, true)) {
-    *val = bPrintCheckDigit;
+  pdfium::Optional<bool> printCheckDigit =
+      GetUIChild()->JSNode()->TryBoolean(XFA_Attribute::PrintCheckDigit, true);
+  if (printCheckDigit) {
+    *val = *printCheckDigit;
     return true;
   }
   return false;
@@ -1264,12 +1264,12 @@ bool CXFA_WidgetData::GetBarcodeAttribute_TextLocation(int32_t* val) {
 }
 
 bool CXFA_WidgetData::GetBarcodeAttribute_Truncate(bool* val) {
-  bool bTruncate;
-  if (!GetUIChild()->JSNode()->TryBoolean(XFA_Attribute::Truncate, bTruncate,
-                                          true))
+  pdfium::Optional<bool> truncate =
+      GetUIChild()->JSNode()->TryBoolean(XFA_Attribute::Truncate, true);
+  if (!truncate)
     return false;
 
-  *val = bTruncate;
+  *val = *truncate;
   return true;
 }
 

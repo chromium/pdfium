@@ -288,10 +288,10 @@ pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
       return TryCData(pAttr->eName, bUseDefault);
 
     case XFA_AttributeType::Boolean: {
-      bool bValue;
-      if (!TryBoolean(pAttr->eName, bValue, bUseDefault))
+      pdfium::Optional<bool> value = TryBoolean(pAttr->eName, bUseDefault);
+      if (!value)
         return {};
-      return {bValue ? L"1" : L"0"};
+      return {*value ? L"1" : L"0"};
     }
     case XFA_AttributeType::Integer: {
       pdfium::Optional<int32_t> iValue = TryInteger(pAttr->eName, bUseDefault);
@@ -2995,22 +2995,16 @@ void CJX_Node::Script_Encrypt_Format(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_Attribute eAttribute) {}
 
-bool CJX_Node::TryBoolean(XFA_Attribute eAttr, bool& bValue, bool bUseDefault) {
+pdfium::Optional<bool> CJX_Node::TryBoolean(XFA_Attribute eAttr,
+                                            bool bUseDefault) {
   void* pValue = nullptr;
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  if (GetMapModuleValue(pKey, pValue)) {
-    bValue = !!pValue;
-    return true;
-  }
+  if (GetMapModuleValue(pKey, pValue))
+    return {!!pValue};
   if (!bUseDefault)
-    return false;
+    return {};
 
-  pdfium::Optional<bool> ret = GetXFANode()->GetDefaultBoolean(eAttr);
-  if (!ret)
-    return false;
-
-  bValue = *ret;
-  return true;
+  return GetXFANode()->GetDefaultBoolean(eAttr);
 }
 
 bool CJX_Node::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
@@ -3019,8 +3013,7 @@ bool CJX_Node::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
 }
 
 bool CJX_Node::GetBoolean(XFA_Attribute eAttr) {
-  bool bValue;
-  return TryBoolean(eAttr, bValue, true) ? bValue : false;
+  return TryBoolean(eAttr, true).value_or(false);
 }
 
 bool CJX_Node::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
