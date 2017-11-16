@@ -5966,8 +5966,12 @@ int32_t CFXJSE_FormCalcContext::ResolveObjects(
       ASSERT(pNode);
       if (bHasNoResolveName) {
         WideString wsName;
-        if (CXFA_Node* pXFANode = pNode->AsNode())
-          pXFANode->JSNode()->GetAttribute(XFA_Attribute::Name, wsName, false);
+        if (CXFA_Node* pXFANode = pNode->AsNode()) {
+          pdfium::Optional<WideString> ret =
+              pXFANode->JSNode()->TryAttribute(XFA_Attribute::Name, false);
+          if (ret)
+            wsName = *ret;
+        }
         if (wsName.IsEmpty())
           wsName = L"#" + pNode->GetClassName();
 

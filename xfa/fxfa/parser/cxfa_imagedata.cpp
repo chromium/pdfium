@@ -35,7 +35,13 @@ bool CXFA_ImageData::GetHref(WideString& wsHref) {
     wsHref = *ret;
     return true;
   }
-  return m_pNode->JSNode()->GetAttribute(XFA_Attribute::Href, wsHref, true);
+  pdfium::Optional<WideString> ret =
+      m_pNode->JSNode()->TryAttribute(XFA_Attribute::Href, true);
+  if (!ret)
+    return false;
+
+  wsHref = *ret;
+  return true;
 }
 
 XFA_ATTRIBUTEENUM CXFA_ImageData::GetTransferEncoding() {

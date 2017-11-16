@@ -90,16 +90,18 @@ void SaveAttribute(CXFA_Node* pNode,
                    const WideStringView& wsName,
                    bool bProto,
                    WideString& wsOutput) {
-  WideString wsValue;
-  if ((!bProto && !pNode->JSNode()->HasAttribute(eName)) ||
-      !pNode->JSNode()->GetAttribute(eName, wsValue, false)) {
+  if (!bProto && !pNode->JSNode()->HasAttribute(eName))
     return;
-  }
-  wsValue = ExportEncodeAttribute(wsValue);
+
+  pdfium::Optional<WideString> value =
+      pNode->JSNode()->TryAttribute(eName, false);
+  if (!value)
+    return;
+
   wsOutput += L" ";
   wsOutput += wsName;
   wsOutput += L"=\"";
-  wsOutput += wsValue;
+  wsOutput += ExportEncodeAttribute(*value);
   wsOutput += L"\"";
 }
 
@@ -196,11 +198,10 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       if (!pRawValueNode)
         break;
 
-      WideString wsContentType;
-      pNode->JSNode()->GetAttribute(XFA_Attribute::ContentType, wsContentType,
-                                    false);
+      pdfium::Optional<WideString> contentType =
+          pNode->JSNode()->TryAttribute(XFA_Attribute::ContentType, false);
       if (pRawValueNode->GetElementType() == XFA_Element::SharpxHTML &&
-          wsContentType == L"text/html") {
+          (contentType && *contentType == L"text/html")) {
         CFX_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
         if (!pExDataXML)
           break;
@@ -219,25 +220,25 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         wsChildren += WideString::FromUTF8(
             ByteStringView(pMemStream->GetBuffer(), pMemStream->GetSize()));
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
-                 wsContentType == L"text/xml") {
-        WideString wsRawValue;
-        pRawValueNode->JSNode()->GetAttribute(XFA_Attribute::Value, wsRawValue,
-                                              false);
-        if (wsRawValue.IsEmpty())
+                 (contentType && *contentType == L"text/xml")) {
+        pdfium::Optional<WideString> rawValue =
+            pRawValueNode->JSNode()->TryAttribute(XFA_Attribute::Value, false);
+        if (!rawValue || rawValue->IsEmpty())
           break;
 
         std::vector<WideString> wsSelTextArray;
         size_t iStart = 0;
-        auto iEnd = wsRawValue.Find(L'\n', iStart);
-        iEnd = !iEnd.has_value() ? wsRawValue.GetLength() : iEnd;
+        auto iEnd = rawValue->Find(L'\n', iStart);
+        iEnd = !iEnd.has_value() ? rawValue->GetLength() : iEnd;
         while (iEnd.has_value() && iEnd >= iStart) {
           wsSelTextArray.push_back(
-              wsRawValue.Mid(iStart, iEnd.value() - iStart));
+              rawValue->Mid(iStart, iEnd.value() - iStart));
           iStart = iEnd.value() + 1;
-          if (iStart >= wsRawValue.GetLength())
+          if (iStart >= rawValue->GetLength())
             break;
-          iEnd = wsRawValue.Find(L'\n', iStart);
+          iEnd = rawValue->Find(L'\n', iStart);
         }
+
         CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
         ASSERT(pParentNode);
         CXFA_Node* pGrandparentNode =

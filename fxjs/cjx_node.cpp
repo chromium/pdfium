@@ -255,12 +255,19 @@ bool CJX_Node::SetAttribute(const WideStringView& wsAttr,
   return true;
 }
 
-bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
-                            WideString& wsValue,
-                            bool bUseDefault) {
+WideString CJX_Node::GetAttribute(const WideStringView& attr) {
+  return TryAttribute(attr, true).value_or(WideString());
+}
+
+WideString CJX_Node::GetAttribute(XFA_Attribute attr) {
+  return TryAttribute(attr, true).value_or(WideString());
+}
+
+pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
+                                                    bool bUseDefault) {
   const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
   if (!pAttr)
-    return false;
+    return {};
 
   XFA_AttributeType eType = pAttr->eType;
   if (eType == XFA_AttributeType::NotSure) {
@@ -273,60 +280,54 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
       pdfium::Optional<XFA_ATTRIBUTEENUM> value =
           TryEnum(pAttr->eName, bUseDefault);
       if (!value)
-        return false;
+        return {};
 
-      wsValue = GetAttributeEnumByID(*value)->pName;
-      return true;
+      return {GetAttributeEnumByID(*value)->pName};
     }
-    case XFA_AttributeType::CData: {
-      pdfium::Optional<WideString> ret = TryCData(pAttr->eName, bUseDefault);
-      if (!ret)
-        return false;
+    case XFA_AttributeType::CData:
+      return TryCData(pAttr->eName, bUseDefault);
 
-      wsValue = *ret;
-      return true;
-    }
     case XFA_AttributeType::Boolean: {
       bool bValue;
       if (!TryBoolean(pAttr->eName, bValue, bUseDefault))
-        return false;
-
-      wsValue = bValue ? L"1" : L"0";
-      return true;
+        return {};
+      return {bValue ? L"1" : L"0"};
     }
     case XFA_AttributeType::Integer: {
       pdfium::Optional<int32_t> iValue = TryInteger(pAttr->eName, bUseDefault);
       if (!iValue)
-        return false;
+        return {};
 
+      WideString wsValue;
       wsValue.Format(L"%d", *iValue);
-      return true;
+      return {wsValue};
     }
     case XFA_AttributeType::Measure: {
       CXFA_Measurement mValue;
       if (!TryMeasure(pAttr->eName, mValue, bUseDefault))
-        return false;
+        return {};
 
-      mValue.ToString(&wsValue);
-      return true;
+      return {mValue.ToString()};
     }
     default:
-      return false;
+      break;
   }
+  return {};
 }
 
-bool CJX_Node::GetAttribute(const WideStringView& wsAttr,
-                            WideString& wsValue,
-                            bool bUseDefault) {
+pdfium::Optional<WideString> CJX_Node::TryAttribute(
+    const WideStringView& wsAttr,
+    bool bUseDefault) {
   const XFA_ATTRIBUTEINFO* pAttributeInfo = XFA_GetAttributeByName(wsAttr);
   if (pAttributeInfo)
-    return GetAttribute(pAttributeInfo->eName, wsValue, bUseDefault);
+    return TryAttribute(pAttributeInfo->eName, bUseDefault);
 
   void* pKey = GetMapKey_Custom(wsAttr);
   WideStringView wsValueC;
-  if (GetMapModuleString(pKey, wsValueC))
-    wsValue = wsValueC;
-  return true;
+  if (!GetMapModuleString(pKey, wsValueC))
+    return {};
+
+  return {WideString(wsValueC)};
 }
 
 void CJX_Node::RemoveAttribute(const WideStringView& wsAttr) {
@@ -542,9 +543,7 @@ void CJX_Node::Script_TreeClass_All(CFXJSE_Value* pValue,
   }
 
   uint32_t dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
-  WideString wsName;
-  GetAttribute(XFA_Attribute::Name, wsName, true);
-  WideString wsExpression = wsName + L"[*]";
+  WideString wsExpression = GetAttribute(XFA_Attribute::Name) + L"[*]";
   ResolveNodeList(pValue, wsExpression, dwFlag, nullptr);
 }
 
@@ -667,14 +666,14 @@ void CJX_Node::Script_NodeClass_GetAttribute(CFXJSE_Arguments* pArguments) {
     return;
   }
 
+  CFXJSE_Value* pValue = pArguments->GetReturnValue();
+  if (!pValue)
+    return;
+
   WideString wsExpression =
       WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
-  WideString wsValue;
-  GetAttribute(wsExpression.AsStringView(), wsValue, true);
-
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetString(wsValue.UTF8Encode().AsStringView());
+  pValue->SetString(
+      GetAttribute(wsExpression.AsStringView()).UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments) {
@@ -1251,9 +1250,7 @@ void CJX_Node::Script_Attribute_String(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_Attribute eAttribute) {
   if (!bSetting) {
-    WideString wsValue;
-    GetAttribute(eAttribute, wsValue, true);
-    pValue->SetString(wsValue.UTF8Encode().AsStringView());
+    pValue->SetString(GetAttribute(eAttribute).UTF8Encode().AsStringView());
     return;
   }
 
@@ -1322,10 +1319,7 @@ void CJX_Node::Script_Attribute_StringRead(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-
-  WideString wsValue;
-  GetAttribute(eAttribute, wsValue, true);
-  pValue->SetString(wsValue.UTF8Encode().AsStringView());
+  pValue->SetString(GetAttribute(eAttribute).UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_WsdlConnection_Execute(CFXJSE_Arguments* pArguments) {
@@ -1575,18 +1569,14 @@ void CJX_Node::Script_Som_BorderWidth(CFXJSE_Value* pValue,
     return;
 
   CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
-  int32_t iSize = borderData.CountEdges();
-  WideString wsThickness;
   if (bSetting) {
     CXFA_Measurement thickness = borderData.GetEdgeData(0).GetMSThickness();
-    thickness.ToString(&wsThickness);
-
-    pValue->SetString(wsThickness.UTF8Encode().AsStringView());
+    pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
     return;
   }
 
-  wsThickness = pValue->ToWideString();
-  for (int32_t i = 0; i < iSize; ++i) {
+  WideString wsThickness = pValue->ToWideString();
+  for (int32_t i = 0; i < borderData.CountEdges(); ++i) {
     borderData.GetEdgeData(i).SetMSThickness(
         CXFA_Measurement(wsThickness.AsStringView()));
   }
@@ -2801,9 +2791,9 @@ void CJX_Node::Script_Form_Checksum(CFXJSE_Value* pValue,
     return;
   }
 
-  WideString wsChecksum;
-  GetAttribute(XFA_Attribute::Checksum, wsChecksum, false);
-  pValue->SetString(wsChecksum.UTF8Encode().AsStringView());
+  pdfium::Optional<WideString> checksum =
+      TryAttribute(XFA_Attribute::Checksum, false);
+  pValue->SetString(checksum ? checksum->UTF8Encode().AsStringView() : "");
 }
 
 void CJX_Node::Script_Packet_GetAttribute(CFXJSE_Arguments* pArguments) {
@@ -3461,13 +3451,17 @@ bool CJX_Node::SetContent(const WideString& wsContent,
     case XFA_ObjectType::ContentNode: {
       WideString wsContentType;
       if (GetXFANode()->GetElementType() == XFA_Element::ExData) {
-        GetAttribute(XFA_Attribute::ContentType, wsContentType, false);
+        pdfium::Optional<WideString> ret =
+            TryAttribute(XFA_Attribute::ContentType, false);
+        if (ret)
+          wsContentType = *ret;
         if (wsContentType == L"text/html") {
           wsContentType = L"";
           SetAttribute(XFA_Attribute::ContentType, wsContentType.AsStringView(),
                        false);
         }
       }
+
       CXFA_Node* pContentRawDataNode =
           GetXFANode()->GetNodeItem(XFA_NODEITEM_FirstChild);
       if (!pContentRawDataNode) {
@@ -3555,12 +3549,14 @@ pdfium::Optional<WideString> CJX_Node::TryContent(bool bScriptModify,
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (GetXFANode()->GetElementType() == XFA_Element::ExData) {
-          WideString wsContentType;
-          GetAttribute(XFA_Attribute::ContentType, wsContentType, false);
-          if (wsContentType == L"text/html")
-            element = XFA_Element::SharpxHTML;
-          else if (wsContentType == L"text/xml")
-            element = XFA_Element::Sharpxml;
+          pdfium::Optional<WideString> contentType =
+              TryAttribute(XFA_Attribute::ContentType, false);
+          if (contentType) {
+            if (*contentType == L"text/html")
+              element = XFA_Element::SharpxHTML;
+            else if (*contentType == L"text/xml")
+              element = XFA_Element::Sharpxml;
+          }
         }
         pContentRawDataNode = GetXFANode()->CreateSamePacketNode(element);
         GetXFANode()->InsertChild(pContentRawDataNode, nullptr);

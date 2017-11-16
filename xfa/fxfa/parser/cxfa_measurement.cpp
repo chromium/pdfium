@@ -45,36 +45,38 @@ void CXFA_Measurement::SetString(const WideStringView& wsMeasure) {
   Set(fValue, eUnit);
 }
 
-bool CXFA_Measurement::ToString(WideString* wsMeasure) const {
+WideString CXFA_Measurement::ToString() const {
+  WideString wsMeasure;
   switch (GetUnit()) {
     case XFA_Unit::Mm:
-      wsMeasure->Format(L"%.8gmm", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8gmm", GetValue());
+      break;
     case XFA_Unit::Pt:
-      wsMeasure->Format(L"%.8gpt", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8gpt", GetValue());
+      break;
     case XFA_Unit::In:
-      wsMeasure->Format(L"%.8gin", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8gin", GetValue());
+      break;
     case XFA_Unit::Cm:
-      wsMeasure->Format(L"%.8gcm", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8gcm", GetValue());
+      break;
     case XFA_Unit::Mp:
-      wsMeasure->Format(L"%.8gmp", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8gmp", GetValue());
+      break;
     case XFA_Unit::Pc:
-      wsMeasure->Format(L"%.8gpc", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8gpc", GetValue());
+      break;
     case XFA_Unit::Em:
-      wsMeasure->Format(L"%.8gem", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8gem", GetValue());
+      break;
     case XFA_Unit::Percent:
-      wsMeasure->Format(L"%.8g%%", GetValue());
-      return true;
+      wsMeasure.Format(L"%.8g%%", GetValue());
+      break;
     default:
-      wsMeasure->Format(L"%.8g", GetValue());
-      return false;
+      wsMeasure.Format(L"%.8g", GetValue());
+      break;
   }
+  return wsMeasure;
 }
 
 float CXFA_Measurement::ToUnit(XFA_Unit eUnit) const {

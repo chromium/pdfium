@@ -135,11 +135,9 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
   CXFA_Node* pChild =
       pParent ? pParent->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr;
   while (pChild) {
-    WideString wsChild;
-    if (pChild->JSNode()->GetAttribute(XFA_Attribute::Name, wsChild, true)) {
-      if (wsChild == wsName)
-        return pChild;
-    }
+    if (pChild->JSNode()->GetAttribute(XFA_Attribute::Name) == wsName)
+      return pChild;
+
     pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
   return nullptr;

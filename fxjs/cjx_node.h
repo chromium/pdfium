@@ -47,10 +47,13 @@ class CJX_Node : public CJX_Object {
   bool SetAttribute(const WideStringView& wsAttr,
                     const WideStringView& wsValue,
                     bool bNotify);
-  bool GetAttribute(const WideStringView& wsAttr,
-                    WideString& wsValue,
-                    bool bUseDefault);
-  bool GetAttribute(XFA_Attribute eAttr, WideString& wsValue, bool bUseDefault);
+  WideString GetAttribute(const WideStringView& attr);
+  WideString GetAttribute(XFA_Attribute attr);
+  pdfium::Optional<WideString> TryAttribute(const WideStringView& wsAttr,
+                                            bool bUseDefault);
+  pdfium::Optional<WideString> TryAttribute(XFA_Attribute eAttr,
+                                            bool bUseDefault);
+
   bool SetAttributeValue(const WideString& wsValue,
                          const WideString& wsXMLValue,
                          bool bNotify,

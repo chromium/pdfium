@@ -88,13 +88,15 @@ bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (pChildNode->GetElementType() == XFA_Element::ExData) {
-          WideString wsContentType;
-          pChildNode->JSNode()->GetAttribute(XFA_Attribute::ContentType,
-                                             wsContentType, false);
-          if (wsContentType == L"text/html")
-            element = XFA_Element::SharpxHTML;
-          else if (wsContentType == L"text/xml")
-            element = XFA_Element::Sharpxml;
+          pdfium::Optional<WideString> contentType =
+              pChildNode->JSNode()->TryAttribute(XFA_Attribute::ContentType,
+                                                 false);
+          if (contentType) {
+            if (*contentType == L"text/html")
+              element = XFA_Element::SharpxHTML;
+            else if (*contentType == L"text/xml")
+              element = XFA_Element::Sharpxml;
+          }
         }
         pContentRawDataNode = pChildNode->CreateSamePacketNode(element);
         pChildNode->InsertChild(pContentRawDataNode, nullptr);

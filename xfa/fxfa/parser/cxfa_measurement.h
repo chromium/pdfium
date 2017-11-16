@@ -27,7 +27,7 @@ class CXFA_Measurement {
   XFA_Unit GetUnit() const { return m_eUnit; }
   float GetValue() const { return m_fValue; }
 
-  bool ToString(WideString* wsMeasure) const;
+  WideString ToString() const;
   float ToUnit(XFA_Unit eUnit) const;
 
  private:
