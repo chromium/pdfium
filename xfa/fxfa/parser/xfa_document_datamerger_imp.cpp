@@ -218,9 +218,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (!pText)
             continue;
 
-          WideString wsContent;
-          if (pText->JSNode()->TryContent(wsContent, false, true) &&
-              (wsContent == wsValue)) {
+          WideString wsContent = pText->JSNode()->GetContent(false);
+          if (wsContent == wsValue) {
             pChecked = pChild;
             wsFormattedValue = wsValue;
             pDataNode->JSNode()->SetAttributeValue(wsValue, wsFormattedValue,
@@ -250,7 +249,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
           WideString wsContent;
           if (pText)
-            pText->JSNode()->TryContent(wsContent, false, true);
+            wsContent = pText->JSNode()->GetContent(false);
 
           FormValueNode_SetChildContent(pValue, wsContent, XFA_Element::Text);
         }
@@ -285,10 +284,11 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     return;
   }
 
-  WideString wsXMLValue;
-  pDataNode->JSNode()->TryContent(wsXMLValue, false, true);
+  WideString wsXMLValue = pDataNode->JSNode()->GetContent(false);
+
   WideString wsNormalizeValue;
   pWidgetData->GetNormalizeDataValue(wsXMLValue, wsNormalizeValue);
+
   pDataNode->JSNode()->SetAttributeValue(wsNormalizeValue, wsXMLValue, false,
                                          false);
   switch (eUIType) {
@@ -323,10 +323,12 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         if (!items.empty()) {
           bool single = items.size() == 1;
           wsNormalizeValue.clear();
-          WideString wsItem;
+
           for (CXFA_Node* pNode : items) {
-            pNode->JSNode()->TryContent(wsItem, false, true);
-            wsItem = single ? wsItem : wsItem + L"\n";
+            WideString wsItem = pNode->JSNode()->GetContent(false);
+            if (single)
+              wsItem += L"\n";
+
             wsNormalizeValue += wsItem;
           }
           CXFA_ExDataData exData = defValueData.GetExData();

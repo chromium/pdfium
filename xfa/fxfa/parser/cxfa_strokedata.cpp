@@ -50,9 +50,8 @@ FX_ARGB CXFA_StrokeData::GetColor() const {
   if (!pNode)
     return 0xFF000000;
 
-  WideString wsColor;
-  pNode->JSNode()->TryCData(XFA_Attribute::Value, wsColor, true);
-  return CXFA_DataData::ToColor(wsColor.AsStringView());
+  return CXFA_DataData::ToColor(
+      pNode->JSNode()->GetCData(XFA_Attribute::Value).AsStringView());
 }
 
 void CXFA_StrokeData::SetColor(FX_ARGB argb) {

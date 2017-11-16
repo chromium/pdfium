@@ -19,9 +19,18 @@ XFA_Element CXFA_ValueData::GetChildValueClassID() {
 bool CXFA_ValueData::GetChildValueContent(WideString& wsContent) {
   if (!m_pNode)
     return false;
-  if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
-    return pNode->JSNode()->TryContent(wsContent, false, true);
-  return false;
+
+  CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+  if (!pNode)
+    return false;
+
+  pdfium::Optional<WideString> content =
+      pNode->JSNode()->TryContent(false, true);
+  if (!content)
+    return false;
+
+  wsContent = *content;
+  return true;
 }
 
 CXFA_ArcData CXFA_ValueData::GetArcData() {

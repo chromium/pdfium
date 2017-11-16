@@ -11,5 +11,5 @@
 CXFA_TextData::CXFA_TextData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 void CXFA_TextData::GetContent(WideString& wsText) {
-  m_pNode->JSNode()->TryContent(wsText, false, true);
+  wsText = m_pNode->JSNode()->GetContent(false);
 }

@@ -19,9 +19,9 @@ int32_t CXFA_SubmitData::GetSubmitFormat() {
 }
 
 void CXFA_SubmitData::GetSubmitTarget(WideString& wsTarget) {
-  m_pNode->JSNode()->TryCData(XFA_Attribute::Target, wsTarget, true);
+  wsTarget = m_pNode->JSNode()->GetCData(XFA_Attribute::Target);
 }
 
 void CXFA_SubmitData::GetSubmitXDPContent(WideString& wsContent) {
-  m_pNode->JSNode()->TryCData(XFA_Attribute::XdpContent, wsContent, true);
+  wsContent = m_pNode->JSNode()->GetCData(XFA_Attribute::XdpContent);
 }

@@ -16,14 +16,26 @@ int32_t CXFA_ImageData::GetAspect() {
 }
 
 bool CXFA_ImageData::GetContentType(WideString& wsContentType) {
-  return m_pNode->JSNode()->TryCData(XFA_Attribute::ContentType, wsContentType,
-                                     true);
+  pdfium::Optional<WideString> content =
+      m_pNode->JSNode()->TryCData(XFA_Attribute::ContentType, true);
+  if (!content)
+    return false;
+
+  wsContentType = *content;
+  return true;
 }
 
 bool CXFA_ImageData::GetHref(WideString& wsHref) {
-  if (m_bDefValue)
-    return m_pNode->JSNode()->TryCData(XFA_Attribute::Href, wsHref, true);
-  return m_pNode->JSNode()->GetAttribute(L"href", wsHref, true);
+  if (m_bDefValue) {
+    pdfium::Optional<WideString> ret =
+        m_pNode->JSNode()->TryCData(XFA_Attribute::Href, true);
+    if (!ret)
+      return false;
+
+    wsHref = *ret;
+    return true;
+  }
+  return m_pNode->JSNode()->GetAttribute(XFA_Attribute::Href, wsHref, true);
 }
 
 XFA_ATTRIBUTEENUM CXFA_ImageData::GetTransferEncoding() {
@@ -35,7 +47,12 @@ XFA_ATTRIBUTEENUM CXFA_ImageData::GetTransferEncoding() {
 }
 
 bool CXFA_ImageData::GetContent(WideString& wsText) {
-  return m_pNode->JSNode()->TryContent(wsText, false, true);
+  pdfium::Optional<WideString> ret = m_pNode->JSNode()->TryContent(false, true);
+  if (!ret)
+    return false;
+
+  wsText = *ret;
+  return true;
 }
 
 bool CXFA_ImageData::SetContentType(const WideString& wsContentType) {

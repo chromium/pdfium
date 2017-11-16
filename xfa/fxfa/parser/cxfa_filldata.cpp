@@ -31,9 +31,10 @@ void CXFA_FillData::SetColor(FX_ARGB color) {
 
 FX_ARGB CXFA_FillData::GetColor(bool bText) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color, false)) {
-    WideString wsColor;
-    if (pNode->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false))
-      return CXFA_DataData::ToColor(wsColor.AsStringView());
+    pdfium::Optional<WideString> wsColor =
+        pNode->JSNode()->TryCData(XFA_Attribute::Value, false);
+    if (wsColor)
+      return CXFA_DataData::ToColor(wsColor->AsStringView());
   }
   if (bText)
     return 0xFF000000;
@@ -53,59 +54,63 @@ XFA_Element CXFA_FillData::GetFillType() {
 }
 
 int32_t CXFA_FillData::GetPattern(FX_ARGB& foreColor) {
+  foreColor = 0xFF000000;
+
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Pattern, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
-    WideString wsColor;
-    pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    foreColor = CXFA_DataData::ToColor(wsColor.AsStringView());
-  } else {
-    foreColor = 0xFF000000;
+    pdfium::Optional<WideString> wsColor =
+        pColor->JSNode()->TryCData(XFA_Attribute::Value, false);
+    if (wsColor)
+      foreColor = CXFA_DataData::ToColor(wsColor->AsStringView());
   }
   return pNode->JSNode()->GetEnum(XFA_Attribute::Type);
 }
 
 int32_t CXFA_FillData::GetStipple(FX_ARGB& stippleColor) {
+  stippleColor = 0xFF000000;
+
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Stipple, true);
   int32_t eAttr = 50;
   pNode->JSNode()->TryInteger(XFA_Attribute::Rate, eAttr, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
-    WideString wsColor;
-    pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    stippleColor = CXFA_DataData::ToColor(wsColor.AsStringView());
-  } else {
-    stippleColor = 0xFF000000;
+    pdfium::Optional<WideString> wsColor =
+        pColor->JSNode()->TryCData(XFA_Attribute::Value, false);
+    if (wsColor)
+      stippleColor = CXFA_DataData::ToColor(wsColor->AsStringView());
   }
   return eAttr;
 }
 
 int32_t CXFA_FillData::GetLinear(FX_ARGB& endColor) {
+  endColor = 0xFF000000;
+
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Linear, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToRight;
   pNode->JSNode()->TryEnum(XFA_Attribute::Type, eAttr, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
-    WideString wsColor;
-    pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    endColor = CXFA_DataData::ToColor(wsColor.AsStringView());
-  } else {
-    endColor = 0xFF000000;
+    pdfium::Optional<WideString> wsColor =
+        pColor->JSNode()->TryCData(XFA_Attribute::Value, false);
+    if (wsColor)
+      endColor = CXFA_DataData::ToColor(wsColor->AsStringView());
   }
   return eAttr;
 }
 
 int32_t CXFA_FillData::GetRadial(FX_ARGB& endColor) {
+  endColor = 0xFF000000;
+
   CXFA_Node* pNode =
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Radial, true);
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_ToEdge;
   pNode->JSNode()->TryEnum(XFA_Attribute::Type, eAttr, true);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color, false)) {
-    WideString wsColor;
-    pColor->JSNode()->TryCData(XFA_Attribute::Value, wsColor, false);
-    endColor = CXFA_DataData::ToColor(wsColor.AsStringView());
-  } else {
-    endColor = 0xFF000000;
+    pdfium::Optional<WideString> wsColor =
+        pColor->JSNode()->TryCData(XFA_Attribute::Value, false);
+    if (wsColor)
+      endColor = CXFA_DataData::ToColor(wsColor->AsStringView());
   }
   return eAttr;
 }

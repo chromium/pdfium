@@ -20,25 +20,22 @@ float CXFA_FontData::GetBaselineShift() {
 }
 
 float CXFA_FontData::GetHorizontalScale() {
-  WideString wsValue;
-  m_pNode->JSNode()->TryCData(XFA_Attribute::FontHorizontalScale, wsValue,
-                              true);
+  WideString wsValue =
+      m_pNode->JSNode()->GetCData(XFA_Attribute::FontHorizontalScale);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_FontData::GetVerticalScale() {
-  WideString wsValue;
-  m_pNode->JSNode()->TryCData(XFA_Attribute::FontVerticalScale, wsValue, true);
+  WideString wsValue =
+      m_pNode->JSNode()->GetCData(XFA_Attribute::FontVerticalScale);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
   return iScale > 0 ? (float)iScale : 100.0f;
 }
 
 float CXFA_FontData::GetLetterSpacing() {
-  WideString wsValue;
-  if (!m_pNode->JSNode()->TryCData(XFA_Attribute::LetterSpacing, wsValue, true))
-    return 0;
-
+  WideString wsValue =
+      m_pNode->JSNode()->GetCData(XFA_Attribute::LetterSpacing);
   CXFA_Measurement ms(wsValue.AsStringView());
   if (ms.GetUnit() == XFA_Unit::Em)
     return ms.GetValue() * GetFontSize();
@@ -70,7 +67,7 @@ float CXFA_FontData::GetFontSize() {
 }
 
 void CXFA_FontData::GetTypeface(WideString& wsTypeFace) {
-  m_pNode->JSNode()->TryCData(XFA_Attribute::Typeface, wsTypeFace, true);
+  wsTypeFace = m_pNode->JSNode()->GetCData(XFA_Attribute::Typeface);
 }
 
 bool CXFA_FontData::IsBold() {

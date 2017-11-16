@@ -121,8 +121,9 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_Attribute eAttribute) {
 }
 
 bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
-  WideString wsContent;
-  if (!pContentNode->JSNode()->TryContent(wsContent, false, false))
+  pdfium::Optional<WideString> wsContent =
+      pContentNode->JSNode()->TryContent(false, false);
+  if (!wsContent)
     return false;
 
   ASSERT(pContentNode->IsContentNode());

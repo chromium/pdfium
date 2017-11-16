@@ -27,7 +27,7 @@ XFA_Element CXFA_EventData::GetEventType() const {
 }
 
 void CXFA_EventData::GetRef(WideString& wsRef) {
-  m_pNode->JSNode()->TryCData(XFA_Attribute::Ref, wsRef, true);
+  wsRef = m_pNode->JSNode()->GetCData(XFA_Attribute::Ref);
 }
 
 CXFA_ScriptData CXFA_EventData::GetScriptData() const {
@@ -44,5 +44,5 @@ void CXFA_EventData::GetSignDataTarget(WideString& wsTarget) {
   if (!pNode)
     return;
 
-  pNode->JSNode()->TryCData(XFA_Attribute::Target, wsTarget, true);
+  wsTarget = pNode->JSNode()->GetCData(XFA_Attribute::Target);
 }

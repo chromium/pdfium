@@ -511,10 +511,9 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
       }
     }
   }
-  if (wsCaptionName.IsEmpty())
-    m_pNode->JSNode()->TryCData(XFA_Attribute::Name, wsCaptionName, true);
-
-  return wsCaptionName;
+  if (!wsCaptionName.IsEmpty())
+    return wsCaptionName;
+  return m_pNode->JSNode()->GetCData(XFA_Attribute::Name);
 }
 
 WideString CXFA_WidgetAcc::GetValidateMessage(bool bError, bool bVersionFlag) {

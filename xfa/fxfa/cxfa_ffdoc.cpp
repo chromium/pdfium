@@ -263,11 +263,9 @@ void CXFA_FFDoc::StopLoad() {
   if (!pDynamicRender)
     return;
 
-  WideString wsType;
-  if (pDynamicRender->JSNode()->TryContent(wsType, false, true) &&
-      wsType == L"required") {
+  WideString wsType = pDynamicRender->JSNode()->GetContent(false);
+  if (wsType == L"required")
     m_FormType = FormType::kXFAFull;
-  }
 }
 
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {

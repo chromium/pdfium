@@ -61,6 +61,7 @@ class CJX_Node : public CJX_Object {
                          XFA_Element eType,
                          bool bCreateProperty);
 
+  pdfium::Optional<WideString> TryContent(bool bScriptModify, bool bProto);
   bool SetContent(const WideString& wsContent,
                   const WideString& wsXMLValue,
                   bool bNotify,
@@ -72,14 +73,12 @@ class CJX_Node : public CJX_Object {
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_Attribute eAttr);
 
-  bool TryCData(XFA_Attribute eAttr, WideString& wsValue, bool bUseDefault);
+  pdfium::Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault);
   bool SetCData(XFA_Attribute eAttr,
                 const WideString& wsValue,
                 bool bNotify,
                 bool bScriptModify);
   WideString GetCData(XFA_Attribute eAttr);
-
-  bool TryContent(WideString& wsContent, bool bScriptModify, bool bProto);
 
   bool TryEnum(XFA_Attribute eAttr,
                XFA_ATTRIBUTEENUM& eValue,

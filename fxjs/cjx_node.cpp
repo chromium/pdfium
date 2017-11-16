@@ -278,7 +278,12 @@ bool CJX_Node::GetAttribute(XFA_Attribute eAttr,
       return true;
     }
     case XFA_AttributeType::CData: {
-      return TryCData(pAttr->eName, wsValue, bUseDefault);
+      pdfium::Optional<WideString> ret = TryCData(pAttr->eName, bUseDefault);
+      if (!ret)
+        return false;
+
+      wsValue = *ret;
+      return true;
     }
     case XFA_AttributeType::Boolean: {
       bool bValue;
@@ -964,9 +969,7 @@ void CJX_Node::Script_NodeClass_IsNull(CFXJSE_Value* pValue,
     pValue->SetBoolean(false);
     return;
   }
-
-  WideString strValue;
-  pValue->SetBoolean(!TryContent(strValue, false, true) || strValue.IsEmpty());
+  pValue->SetBoolean(GetContent(false).IsEmpty());
 }
 
 void CJX_Node::Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
@@ -3128,8 +3131,7 @@ CXFA_Measurement CJX_Node::GetMeasure(XFA_Attribute eAttr) const {
 }
 
 WideString CJX_Node::GetCData(XFA_Attribute eAttr) {
-  WideString wsValue;
-  return TryCData(eAttr, wsValue, true) ? wsValue : WideString();
+  return TryCData(eAttr, true).value_or(WideString());
 }
 
 bool CJX_Node::SetCData(XFA_Attribute eAttr,
@@ -3259,30 +3261,22 @@ bool CJX_Node::SetAttributeValue(const WideString& wsValue,
   return true;
 }
 
-bool CJX_Node::TryCData(XFA_Attribute eAttr,
-                        WideString& wsValue,
-                        bool bUseDefault) {
+pdfium::Optional<WideString> CJX_Node::TryCData(XFA_Attribute eAttr,
+                                                bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   if (eAttr == XFA_Attribute::Value) {
     WideString* pStr = (WideString*)GetUserData(pKey, true);
-    if (pStr) {
-      wsValue = *pStr;
-      return true;
-    }
+    if (pStr)
+      return {*pStr};
   } else {
     WideStringView wsValueC;
-    if (GetMapModuleString(pKey, wsValueC)) {
-      wsValue = wsValueC;
-      return true;
-    }
+    if (GetMapModuleString(pKey, wsValueC))
+      return {WideString(wsValueC)};
   }
   if (!bUseDefault)
-    return false;
+    return {};
 
-  pdfium::Optional<WideString> str = GetXFANode()->GetDefaultCData(eAttr);
-  if (str)
-    wsValue = *str;
-  return !!str;
+  return GetXFANode()->GetDefaultCData(eAttr);
 }
 
 bool CJX_Node::SetObject(XFA_Attribute eAttr,
@@ -3544,13 +3538,11 @@ bool CJX_Node::SetContent(const WideString& wsContent,
 }
 
 WideString CJX_Node::GetContent(bool bScriptModify) {
-  WideString wsContent;
-  return TryContent(wsContent, bScriptModify, true) ? wsContent : WideString();
+  return TryContent(bScriptModify, true).value_or(WideString());
 }
 
-bool CJX_Node::TryContent(WideString& wsContent,
-                          bool bScriptModify,
-                          bool bProto) {
+pdfium::Optional<WideString> CJX_Node::TryContent(bool bScriptModify,
+                                                  bool bProto) {
   CXFA_Node* pNode = nullptr;
   switch (GetXFANode()->GetObjectType()) {
     case XFA_ObjectType::ContainerNode:
@@ -3560,16 +3552,16 @@ bool CJX_Node::TryContent(WideString& wsContent,
         CXFA_Node* pValue =
             GetXFANode()->GetChild(0, XFA_Element::Value, false);
         if (!pValue)
-          return false;
+          return {};
 
         CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
         if (pChildValue && XFA_FieldIsMultiListBox(GetXFANode())) {
           pChildValue->JSNode()->SetAttribute(XFA_Attribute::ContentType,
                                               L"text/xml", false);
         }
-        return pChildValue ? pChildValue->JSNode()->TryContent(
-                                 wsContent, bScriptModify, bProto)
-                           : false;
+        if (pChildValue)
+          return pChildValue->JSNode()->TryContent(bScriptModify, bProto);
+        return {};
       }
       break;
     case XFA_ObjectType::ContentNode: {
@@ -3588,8 +3580,7 @@ bool CJX_Node::TryContent(WideString& wsContent,
         pContentRawDataNode = GetXFANode()->CreateSamePacketNode(element);
         GetXFANode()->InsertChild(pContentRawDataNode, nullptr);
       }
-      return pContentRawDataNode->JSNode()->TryContent(wsContent, bScriptModify,
-                                                       true);
+      return pContentRawDataNode->JSNode()->TryContent(bScriptModify, true);
     }
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::NodeV:
@@ -3606,9 +3597,9 @@ bool CJX_Node::TryContent(WideString& wsContent,
       if (pScriptContext)
         GetDocument()->GetScriptContext()->AddNodesOfRunScript(GetXFANode());
     }
-    return TryCData(XFA_Attribute::Value, wsContent, false);
+    return TryCData(XFA_Attribute::Value, false);
   }
-  return false;
+  return {};
 }
 
 bool CJX_Node::TryNamespace(WideString& wsNamespace) {

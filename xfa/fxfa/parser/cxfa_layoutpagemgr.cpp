@@ -65,9 +65,9 @@ class PageSetContainerLayoutItem {
 
 uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
   uint32_t dwRelevant = XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
-  WideString wsRelevant;
-  if (pFormItem->JSNode()->TryCData(XFA_Attribute::Relevant, wsRelevant,
-                                    true)) {
+  WideString wsRelevant =
+      pFormItem->JSNode()->GetCData(XFA_Attribute::Relevant);
+  if (!wsRelevant.IsEmpty()) {
     if (wsRelevant == L"+print" || wsRelevant == L"print")
       dwRelevant &= ~XFA_WidgetStatus_Viewable;
     else if (wsRelevant == L"-print")
@@ -480,8 +480,7 @@ float CXFA_LayoutPageMgr::GetAvailHeight() {
 }
 
 bool XFA_LayoutPageMgr_RunBreakTestScript(CXFA_Node* pTestScript) {
-  WideString wsExpression;
-  pTestScript->JSNode()->TryContent(wsExpression, false, true);
+  WideString wsExpression = pTestScript->JSNode()->GetContent(false);
   if (wsExpression.IsEmpty())
     return true;
   return pTestScript->GetDocument()->GetNotify()->RunScript(
@@ -949,60 +948,49 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
           ->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode)
           ->GetTemplateNode();
   if (pOverflowNode->GetElementType() == XFA_Element::Break) {
-    WideString wsOverflowLeader;
-    WideString wsOverflowTarget;
-    WideString wsOverflowTrailer;
-    pOverflowNode->JSNode()->TryCData(XFA_Attribute::OverflowLeader,
-                                      wsOverflowLeader, true);
-    pOverflowNode->JSNode()->TryCData(XFA_Attribute::OverflowTrailer,
-                                      wsOverflowTrailer, true);
-    pOverflowNode->JSNode()->TryCData(XFA_Attribute::OverflowTarget,
-                                      wsOverflowTarget, true);
-    if (!wsOverflowLeader.IsEmpty() || !wsOverflowTrailer.IsEmpty() ||
-        !wsOverflowTarget.IsEmpty()) {
-      if (!wsOverflowTarget.IsEmpty() && bCreatePage &&
-          !m_bCreateOverFlowPage) {
-        CXFA_Node* pTarget =
-            ResolveBreakTarget(m_pTemplatePageSetRoot, true, wsOverflowTarget);
-        if (pTarget) {
-          m_bCreateOverFlowPage = true;
-          switch (pTarget->GetElementType()) {
-            case XFA_Element::PageArea:
-              RunBreak(XFA_Element::Overflow, XFA_ATTRIBUTEENUM_PageArea,
-                       pTarget, true);
-              break;
-            case XFA_Element::ContentArea:
-              RunBreak(XFA_Element::Overflow, XFA_ATTRIBUTEENUM_ContentArea,
-                       pTarget, true);
-              break;
-            default:
-              break;
-          }
+    WideString wsOverflowLeader =
+        pOverflowNode->JSNode()->GetCData(XFA_Attribute::OverflowLeader);
+    WideString wsOverflowTarget =
+        pOverflowNode->JSNode()->GetCData(XFA_Attribute::OverflowTarget);
+    WideString wsOverflowTrailer =
+        pOverflowNode->JSNode()->GetCData(XFA_Attribute::OverflowTrailer);
+    if (wsOverflowTarget.IsEmpty() && wsOverflowLeader.IsEmpty() &&
+        wsOverflowTrailer.IsEmpty()) {
+      return nullptr;
+    }
+
+    if (!wsOverflowTarget.IsEmpty() && bCreatePage && !m_bCreateOverFlowPage) {
+      CXFA_Node* pTarget =
+          ResolveBreakTarget(m_pTemplatePageSetRoot, true, wsOverflowTarget);
+      if (pTarget) {
+        m_bCreateOverFlowPage = true;
+        switch (pTarget->GetElementType()) {
+          case XFA_Element::PageArea:
+            RunBreak(XFA_Element::Overflow, XFA_ATTRIBUTEENUM_PageArea, pTarget,
+                     true);
+            break;
+          case XFA_Element::ContentArea:
+            RunBreak(XFA_Element::Overflow, XFA_ATTRIBUTEENUM_ContentArea,
+                     pTarget, true);
+            break;
+          default:
+            break;
         }
       }
-      if (!bCreatePage) {
-        pLeaderTemplate =
-            ResolveBreakTarget(pContainer, true, wsOverflowLeader);
-        pTrailerTemplate =
-            ResolveBreakTarget(pContainer, true, wsOverflowTrailer);
-      }
-      return pOverflowNode;
     }
-    return nullptr;
+    if (!bCreatePage) {
+      pLeaderTemplate = ResolveBreakTarget(pContainer, true, wsOverflowLeader);
+      pTrailerTemplate =
+          ResolveBreakTarget(pContainer, true, wsOverflowTrailer);
+    }
+    return pOverflowNode;
   }
 
   if (pOverflowNode->GetElementType() != XFA_Element::Overflow)
     return nullptr;
 
-  WideString wsOverflowLeader;
-  WideString wsOverflowTrailer;
-  WideString wsOverflowTarget;
-  pOverflowNode->JSNode()->TryCData(XFA_Attribute::Leader, wsOverflowLeader,
-                                    true);
-  pOverflowNode->JSNode()->TryCData(XFA_Attribute::Trailer, wsOverflowTrailer,
-                                    true);
-  pOverflowNode->JSNode()->TryCData(XFA_Attribute::Target, wsOverflowTarget,
-                                    true);
+  WideString wsOverflowTarget =
+      pOverflowNode->JSNode()->GetCData(XFA_Attribute::Target);
   if (!wsOverflowTarget.IsEmpty() && bCreatePage && !m_bCreateOverFlowPage) {
     CXFA_Node* pTarget =
         ResolveBreakTarget(m_pTemplatePageSetRoot, true, wsOverflowTarget);
@@ -1023,8 +1011,12 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
     }
   }
   if (!bCreatePage) {
-    pLeaderTemplate = ResolveBreakTarget(pContainer, true, wsOverflowLeader);
-    pTrailerTemplate = ResolveBreakTarget(pContainer, true, wsOverflowTrailer);
+    WideString wsLeader =
+        pOverflowNode->JSNode()->GetCData(XFA_Attribute::Leader);
+    WideString wsTrailer =
+        pOverflowNode->JSNode()->GetCData(XFA_Attribute::Trailer);
+    pLeaderTemplate = ResolveBreakTarget(pContainer, true, wsLeader);
+    pTrailerTemplate = ResolveBreakTarget(pContainer, true, wsTrailer);
   }
   return pOverflowNode;
 }
@@ -1086,27 +1078,24 @@ bool CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
     CXFA_Node* pBookendNode,
     bool bLeader,
     CXFA_Node*& pBookendAppendTemplate) {
-  WideString wsBookendLeader;
   CXFA_Node* pContainer =
       pBookendNode
           ->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode)
           ->GetTemplateNode();
   if (pBookendNode->GetElementType() == XFA_Element::Break) {
-    pBookendNode->JSNode()->TryCData(
-        bLeader ? XFA_Attribute::BookendLeader : XFA_Attribute::BookendTrailer,
-        wsBookendLeader, true);
-    if (!wsBookendLeader.IsEmpty()) {
-      pBookendAppendTemplate =
-          ResolveBreakTarget(pContainer, false, wsBookendLeader);
+    WideString leader = pBookendNode->JSNode()->GetCData(
+        bLeader ? XFA_Attribute::BookendLeader : XFA_Attribute::BookendTrailer);
+    if (!leader.IsEmpty()) {
+      pBookendAppendTemplate = ResolveBreakTarget(pContainer, false, leader);
       return true;
     }
     return false;
-  } else if (pBookendNode->GetElementType() == XFA_Element::Bookend) {
-    pBookendNode->JSNode()->TryCData(
-        bLeader ? XFA_Attribute::Leader : XFA_Attribute::Trailer,
-        wsBookendLeader, true);
-    pBookendAppendTemplate =
-        ResolveBreakTarget(pContainer, true, wsBookendLeader);
+  }
+
+  if (pBookendNode->GetElementType() == XFA_Element::Bookend) {
+    WideString leader = pBookendNode->JSNode()->GetCData(
+        bLeader ? XFA_Attribute::Leader : XFA_Attribute::Trailer);
+    pBookendAppendTemplate = ResolveBreakTarget(pContainer, true, leader);
     return true;
   }
   return false;
@@ -1666,15 +1655,13 @@ CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(CXFA_Node* pFormNode) {
   for (CXFA_Node* pCurNode = pFormNode->GetNodeItem(XFA_NODEITEM_FirstChild);
        pCurNode; pCurNode = pCurNode->GetNodeItem((XFA_NODEITEM_NextSibling))) {
     if (pCurNode->GetElementType() == XFA_Element::Break) {
-      WideString wsOverflowLeader;
-      WideString wsOverflowTarget;
-      WideString wsOverflowTrailer;
-      pCurNode->JSNode()->TryCData(XFA_Attribute::OverflowLeader,
-                                   wsOverflowLeader, true);
-      pCurNode->JSNode()->TryCData(XFA_Attribute::OverflowTrailer,
-                                   wsOverflowTrailer, true);
-      pCurNode->JSNode()->TryCData(XFA_Attribute::OverflowTarget,
-                                   wsOverflowTarget, true);
+      WideString wsOverflowLeader =
+          pCurNode->JSNode()->GetCData(XFA_Attribute::OverflowLeader);
+      WideString wsOverflowTarget =
+          pCurNode->JSNode()->GetCData(XFA_Attribute::OverflowTarget);
+      WideString wsOverflowTrailer =
+          pCurNode->JSNode()->GetCData(XFA_Attribute::OverflowTrailer);
+
       if (!wsOverflowLeader.IsEmpty() || !wsOverflowTrailer.IsEmpty() ||
           !wsOverflowTarget.IsEmpty()) {
         return pCurNode;
