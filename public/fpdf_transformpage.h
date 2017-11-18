@@ -84,15 +84,19 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
                                                         float* top);
 
 /**
-* Transform the whole page with a specified matrix, then clip the page content
-* region.
-*
-* @param[in] page        - A page handle.
-* @param[in] matrix      - The transform matrix.
-* @param[in] clipRect    - A rectangle page area to be clipped.
-* @Note. This function will transform the whole page, and would take effect to
-* all the objects in the page.
-*/
+ * Apply transforms to |page|.
+ *
+ * If |matrix| is provided it will be applied to transform the page.
+ * If |clipRect| is provided it will be used to clip the resulting page.
+ * If neither |matrix| or |clipRect| are provided this method returns |false|.
+ * Returns |true| if transforms are applied.
+ *
+ * @param[in] page        - Page handle.
+ * @param[in] matrix      - Transform matrix.
+ * @param[in] clipRect    - Clipping rectangle.
+ * @Note. This function will transform the whole page, and would take effect to
+ * all the objects in the page.
+ */
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPage_TransFormWithClip(FPDF_PAGE page,
                            FS_MATRIX* matrix,
