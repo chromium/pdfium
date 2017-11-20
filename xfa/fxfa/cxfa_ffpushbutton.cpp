@@ -97,12 +97,14 @@ bool CXFA_FFPushButton::PerformLayout() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
 
   m_rtUI = rtWidget;
-  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
+  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
+  if (marginData.HasValidNode())
     XFA_RectWidthoutMargin(rtWidget, marginData);
 
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
   m_rtCaption = rtWidget;
-  if (CXFA_MarginData captionMarginData = captionData.GetMarginData())
+  CXFA_MarginData captionMarginData = captionData.GetMarginData();
+  if (captionMarginData.HasValidNode())
     XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
 
   LayoutHighlightCaption();
@@ -114,8 +116,10 @@ bool CXFA_FFPushButton::PerformLayout() {
 }
 float CXFA_FFPushButton::GetLineWidth() {
   CXFA_BorderData borderData = m_pDataAcc->GetBorderData(false);
-  if (borderData && borderData.GetPresence() == XFA_ATTRIBUTEENUM_Visible)
+  if (borderData.HasValidNode() &&
+      borderData.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
     return borderData.GetEdgeData(0).GetThickness();
+  }
 
   return 0;
 }
@@ -130,8 +134,10 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 
 void CXFA_FFPushButton::LoadHighlightCaption() {
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData || captionData.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
+  if (!captionData.HasValidNode() ||
+      captionData.GetPresence() == XFA_ATTRIBUTEENUM_Hidden) {
     return;
+  }
 
   bool bRichText;
   WideString wsRollover;
@@ -167,8 +173,10 @@ void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData || captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  if (!captionData.HasValidNode() ||
+      captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
+  }
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtClip = m_rtCaption;

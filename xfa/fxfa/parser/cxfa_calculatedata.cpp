@@ -28,7 +28,7 @@ WideString CXFA_CalculateData::GetMessageText() {
     return L"";
 
   CXFA_TextData textData(pNode->GetChild(0, XFA_Element::Text, false));
-  if (!textData)
+  if (!textData.HasValidNode())
     return L"";
   return textData.GetContent();
 }

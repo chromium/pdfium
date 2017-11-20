@@ -54,7 +54,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
-  if (!valueData)
+  if (!valueData.HasValidNode())
     return;
 
   CXFA_LineData lineData = valueData.GetLineData();
@@ -63,7 +63,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   float fLineWidth = 1.0f;
   int32_t iCap = 0;
   CXFA_EdgeData edgeData = lineData.GetEdgeData();
-  if (edgeData) {
+  if (edgeData.HasValidNode()) {
     if (edgeData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
       return;
 
@@ -77,7 +77,8 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
-  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
+  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
+  if (marginData.HasValidNode())
     XFA_RectWidthoutMargin(rtLine, marginData);
 
   GetRectFromHand(rtLine, lineData.GetHand(), fLineWidth);

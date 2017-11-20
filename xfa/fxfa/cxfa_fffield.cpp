@@ -170,7 +170,7 @@ bool CXFA_FFField::PerformLayout() {
 void CXFA_FFField::CapPlacement() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
   CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
-  if (marginData) {
+  if (marginData.HasValidNode()) {
     CXFA_LayoutItem* pItem = this;
     float fLeftInset = 0, fRightInset = 0, fTopInset = 0, fBottomInset = 0;
     marginData.GetLeftInset(fLeftInset);
@@ -192,7 +192,8 @@ void CXFA_FFField::CapPlacement() {
   XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
   float fCapReserve = 0;
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (captionData && captionData.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
+  if (captionData.HasValidNode() &&
+      captionData.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
     iCapPlacement = (XFA_ATTRIBUTEENUM)captionData.GetPlacementType();
     if (iCapPlacement == XFA_ATTRIBUTEENUM_Top && GetPrev()) {
       m_rtCaption.Reset();
@@ -270,9 +271,9 @@ void CXFA_FFField::CapPlacement() {
   }
 
   CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
-  if (borderUIData) {
+  if (borderUIData.HasValidNode()) {
     CXFA_MarginData borderMarginData = borderUIData.GetMarginData();
-    if (borderMarginData)
+    if (borderMarginData.HasValidNode())
       XFA_RectWidthoutMargin(m_rtUI, borderMarginData);
   }
   m_rtUI.Normalize();
@@ -283,7 +284,7 @@ void CXFA_FFField::CapTopBottomPlacement(const CXFA_MarginData& marginData,
                                          int32_t iCapPlacement) {
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.left += rtUIMargin.left;
-  if (marginData) {
+  if (marginData.HasValidNode()) {
     XFA_RectWidthoutMargin(m_rtCaption, marginData);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
@@ -310,7 +311,7 @@ void CXFA_FFField::CapLeftRightPlacement(const CXFA_MarginData& marginData,
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.top += rtUIMargin.top;
   m_rtCaption.height -= rtUIMargin.top;
-  if (marginData) {
+  if (marginData.HasValidNode()) {
     XFA_RectWidthoutMargin(m_rtCaption, marginData);
     if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
@@ -607,8 +608,10 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
     return;
 
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData || captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  if (!captionData.HasValidNode() ||
+      captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
+  }
 
   if (!pCapTextLayout->IsLoaded())
     pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));
@@ -665,7 +668,7 @@ int32_t CXFA_FFField::CalculateOverride() {
 
 int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
   CXFA_CalculateData calcData = pAcc->GetCalculateData();
-  if (!calcData)
+  if (!calcData.HasValidNode())
     return 1;
 
   XFA_VERSION version = pAcc->GetDoc()->GetXFADoc()->GetCurVersionMode();
@@ -685,7 +688,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
     case XFA_ATTRIBUTEENUM_Warning: {
       if (version <= XFA_VERSION_204) {
         CXFA_ScriptData scriptData = calcData.GetScriptData();
-        if (!scriptData)
+        if (!scriptData.HasValidNode())
           return 1;
 
         WideString wsExpression;

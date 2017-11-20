@@ -141,7 +141,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         CXFA_ImageData imageData = defValueData.GetImageData();
         WideString wsContentType;
         WideString wsHref;
-        if (imageData) {
+        if (imageData.HasValidNode()) {
           imageData.GetContent(wsValue);
           imageData.GetContentType(wsContentType);
           imageData.GetHref(wsHref);
@@ -297,7 +297,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,
                                     XFA_Element::Image);
       CXFA_ImageData imageData = defValueData.GetImageData();
-      if (imageData) {
+      if (imageData.HasValidNode()) {
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
@@ -333,7 +333,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             wsNormalizeValue += wsItem;
           }
           CXFA_ExDataData exData = defValueData.GetExData();
-          ASSERT(exData);
+          ASSERT(exData.HasValidNode());
+
           exData.SetContentType(single ? L"text/plain" : L"text/xml");
         }
         FormValueNode_SetChildContent(defValueData.GetNode(), wsNormalizeValue,

@@ -20,7 +20,7 @@ class CXFA_DataData {
   explicit CXFA_DataData(CXFA_Node* pNode);
   virtual ~CXFA_DataData();
 
-  explicit operator bool() const { return !!m_pNode; }
+  bool HasValidNode() const { return !!m_pNode; }
   CXFA_Node* GetNode() const { return m_pNode; }
   XFA_Element GetElementType() const;
 

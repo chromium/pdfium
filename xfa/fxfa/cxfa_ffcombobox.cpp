@@ -146,7 +146,7 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
 
 uint32_t CXFA_FFComboBox::GetAlignment() {
   CXFA_ParaData paraData = m_pDataAcc->GetParaData();
-  if (!paraData)
+  if (!paraData.HasValidNode())
     return 0;
 
   uint32_t dwExtendedStyle = 0;

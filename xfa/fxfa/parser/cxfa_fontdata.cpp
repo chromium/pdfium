@@ -83,5 +83,5 @@ void CXFA_FontData::SetColor(FX_ARGB color) {
 
 FX_ARGB CXFA_FontData::GetColor() {
   CXFA_FillData fillData(m_pNode->GetChild(0, XFA_Element::Fill, false));
-  return fillData ? fillData.GetColor(true) : 0xFF000000;
+  return fillData.HasValidNode() ? fillData.GetColor(true) : 0xFF000000;
 }

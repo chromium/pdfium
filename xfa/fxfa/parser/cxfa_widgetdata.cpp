@@ -364,19 +364,21 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
       pUIChild ? pUIChild->JSNode()->GetProperty(0, XFA_Element::Margin, false)
                : nullptr);
 
-  if (!mgUI)
+  if (!mgUI.HasValidNode())
     return CFX_RectF();
 
   CXFA_BorderData borderData = GetUIBorderData();
-  if (borderData && borderData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  if (borderData.HasValidNode() &&
+      borderData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return CFX_RectF();
+  }
 
   float fLeftInset, fTopInset, fRightInset, fBottomInset;
   bool bLeft = mgUI.GetLeftInset(fLeftInset);
   bool bTop = mgUI.GetTopInset(fTopInset);
   bool bRight = mgUI.GetRightInset(fRightInset);
   bool bBottom = mgUI.GetBottomInset(fBottomInset);
-  if (borderData) {
+  if (borderData.HasValidNode()) {
     bool bVisible = false;
     float fThickness = 0;
     int32_t iType = 0;
@@ -492,7 +494,7 @@ XFA_CHECKSTATE CXFA_WidgetData::GetCheckState() {
 
 void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
   CXFA_WidgetData exclGroup(GetExclGroupNode());
-  if (exclGroup) {
+  if (exclGroup.HasValidNode()) {
     WideString wsValue;
     if (eCheckState != XFA_CHECKSTATE_Off) {
       if (CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false)) {
@@ -1504,7 +1506,7 @@ WideString CXFA_WidgetData::GetPictureContent(XFA_VALUEPICTURE ePicture) {
     }
     case XFA_VALUEPICTURE_DataBind: {
       CXFA_BindData bindData = GetBindData();
-      if (bindData)
+      if (bindData.HasValidNode())
         return bindData.GetPicture();
       break;
     }

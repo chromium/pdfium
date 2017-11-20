@@ -93,13 +93,13 @@ bool CXFA_FFCheckButton::PerformLayout() {
   float fCheckSize = m_pDataAcc->GetCheckButtonSize();
   CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
   CFX_RectF rtWidget = GetRectWithoutRotate();
-  if (marginData)
+  if (marginData.HasValidNode())
     XFA_RectWidthoutMargin(rtWidget, marginData);
 
   int32_t iCapPlacement = -1;
   float fCapReserve = 0;
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (captionData && captionData.GetPresence()) {
+  if (captionData.HasValidNode() && captionData.GetPresence()) {
     m_rtCaption = rtWidget;
     iCapPlacement = captionData.GetPlacementType();
     fCapReserve = captionData.GetReserve();
@@ -115,7 +115,8 @@ bool CXFA_FFCheckButton::PerformLayout() {
 
   int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
   int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
-  if (CXFA_ParaData paraData = m_pDataAcc->GetParaData()) {
+  CXFA_ParaData paraData = m_pDataAcc->GetParaData();
+  if (paraData.HasValidNode()) {
     iHorzAlign = paraData.GetHorizontalAlign();
     iVertAlign = paraData.GetVerticalAlign();
   }
@@ -173,9 +174,9 @@ bool CXFA_FFCheckButton::PerformLayout() {
   AddUIMargin(iCapPlacement);
   m_rtCheckBox = m_rtUI;
   CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
-  if (borderUIData) {
+  if (borderUIData.HasValidNode()) {
     CXFA_MarginData borderMarginData = borderUIData.GetMarginData();
-    if (borderMarginData)
+    if (borderMarginData.HasValidNode())
       XFA_RectWidthoutMargin(m_rtUI, borderMarginData);
   }
 

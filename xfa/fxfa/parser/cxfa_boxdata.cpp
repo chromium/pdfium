@@ -22,7 +22,7 @@ std::vector<CXFA_StrokeData> GetStrokesInternal(CXFA_Node* pNode, bool bNull) {
   for (i = 0, j = 0; i < 4; i++) {
     CXFA_CornerData cornerData = CXFA_CornerData(
         pNode->JSNode()->GetProperty(i, XFA_Element::Corner, i == 0));
-    if (cornerData || i == 0) {
+    if (cornerData.HasValidNode() || i == 0) {
       strokes[j] = cornerData;
     } else if (!bNull) {
       if (i == 1 || i == 2)
@@ -33,7 +33,7 @@ std::vector<CXFA_StrokeData> GetStrokesInternal(CXFA_Node* pNode, bool bNull) {
     j++;
     CXFA_EdgeData edgeData = CXFA_EdgeData(
         pNode->JSNode()->GetProperty(i, XFA_Element::Edge, i == 0));
-    if (edgeData || i == 0) {
+    if (edgeData.HasValidNode() || i == 0) {
       strokes[j] = edgeData;
     } else if (!bNull) {
       if (i == 1 || i == 2)
@@ -54,10 +54,10 @@ static int32_t Style3D(const std::vector<CXFA_StrokeData>& strokes,
   strokeData = strokes[0];
   for (size_t i = 1; i < strokes.size(); i++) {
     CXFA_StrokeData find = strokes[i];
-    if (!find)
+    if (!find.HasValidNode())
       continue;
 
-    if (!strokeData)
+    if (!strokeData.HasValidNode())
       strokeData = find;
     else if (strokeData.GetStrokeType() != find.GetStrokeType())
       strokeData = find;

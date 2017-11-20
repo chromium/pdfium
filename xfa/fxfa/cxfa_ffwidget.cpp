@@ -485,8 +485,10 @@ void XFA_BOX_Fill(const CXFA_BoxData& boxData,
                   const CFX_Matrix& matrix,
                   uint32_t dwFlags) {
   CXFA_FillData fillData = boxData.GetFillData(false);
-  if (!fillData || fillData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  if (!fillData.HasValidNode() ||
+      fillData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
+  }
 
   pGS->SaveGraphState();
   CXFA_GEPath fillPath;
@@ -528,7 +530,7 @@ void XFA_BOX_StrokePath(const CXFA_StrokeData& strokeData,
                         CXFA_GEPath* pPath,
                         CXFA_Graphics* pGS,
                         const CFX_Matrix& matrix) {
-  if (!strokeData || !strokeData.IsVisible())
+  if (!strokeData.HasValidNode() || !strokeData.IsVisible())
     return;
 
   float fThickness = strokeData.GetThickness();
@@ -555,7 +557,7 @@ void XFA_BOX_StrokeArc(const CXFA_BoxData& boxData,
                        const CFX_Matrix& matrix,
                        uint32_t dwFlags) {
   CXFA_EdgeData edgeData = boxData.GetEdgeData(0);
-  if (!edgeData || !edgeData.IsVisible())
+  if (!edgeData.HasValidNode() || !edgeData.IsVisible())
     return;
 
   bool bVisible = false;
@@ -879,8 +881,10 @@ void XFA_DrawBox(CXFA_BoxData boxData,
                  const CFX_RectF& rtWidget,
                  const CFX_Matrix& matrix,
                  uint32_t dwFlags) {
-  if (!boxData || boxData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+  if (!boxData.HasValidNode() ||
+      boxData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
+  }
 
   XFA_Element eType = boxData.GetElementType();
   if (eType != XFA_Element::Arc && eType != XFA_Element::Border &&
@@ -980,12 +984,12 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CXFA_BorderData borderData = m_pDataAcc->GetBorderData(false);
-  if (!borderData)
+  if (!borderData.HasValidNode())
     return;
 
   CFX_RectF rtBorder = GetRectWithoutRotate();
   CXFA_MarginData marginData = borderData.GetMarginData();
-  if (marginData)
+  if (marginData.HasValidNode())
     XFA_RectWidthoutMargin(rtBorder, marginData);
 
   rtBorder.Normalize();
@@ -2019,7 +2023,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
 void XFA_RectWidthoutMargin(CFX_RectF& rt,
                             const CXFA_MarginData& marginData,
                             bool bUI) {
-  if (!marginData)
+  if (!marginData.HasValidNode())
     return;
 
   float fLeftInset;

@@ -40,7 +40,8 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtText = GetRectWithoutRotate();
-  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData()) {
+  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
+  if (marginData.HasValidNode()) {
     CXFA_LayoutItem* pItem = this;
     if (!pItem->GetPrev() && !pItem->GetNext()) {
       XFA_RectWidthoutMargin(rtText, marginData);
@@ -87,7 +88,8 @@ bool CXFA_FFText::PerformLayout() {
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetRect(false);
-    if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData()) {
+    CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
+    if (marginData.HasValidNode()) {
       if (!pItem->GetPrev()) {
         float fTopInset;
         marginData.GetTopInset(fTopInset);

@@ -17,11 +17,12 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
-  if (!valueData)
+  if (!valueData.HasValidNode())
     return;
 
   CFX_RectF rtArc = GetRectWithoutRotate();
-  if (CXFA_MarginData marginData = m_pDataAcc->GetMarginData())
+  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
+  if (marginData.HasValidNode())
     XFA_RectWidthoutMargin(rtArc, marginData);
 
   CFX_Matrix mtRotate = GetRotateMatrix();

@@ -154,7 +154,8 @@ CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
   CXFA_LayoutItem* pItem = pWidget;
   CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
   rect = pWidgetAcc->GetUIMargin();
-  if (CXFA_ParaData paraData = pWidgetAcc->GetParaData()) {
+  CXFA_ParaData paraData = pWidgetAcc->GetParaData();
+  if (paraData.HasValidNode()) {
     rect.left += paraData.GetMarginLeft();
     if (pWidgetAcc->IsMultiLine())
       rect.width += paraData.GetMarginRight();
@@ -212,7 +213,8 @@ CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
   CFX_SizeF sizeAboveBelow;
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
     CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
-    if (CXFA_ParaData paraData = pWidgetAcc->GetParaData()) {
+    CXFA_ParaData paraData = pWidgetAcc->GetParaData();
+    if (paraData.HasValidNode()) {
       sizeAboveBelow.width = paraData.GetSpaceAbove();
       sizeAboveBelow.height = paraData.GetSpaceBelow();
     }

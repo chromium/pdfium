@@ -1353,7 +1353,7 @@ void CJX_Node::Script_Som_Message(CFXJSE_Value* pValue,
 
   bool bNew = false;
   CXFA_ValidateData validateData = pWidgetData->GetValidateData(false);
-  if (!validateData) {
+  if (!validateData.HasValidNode()) {
     validateData = pWidgetData->GetValidateData(true);
     bNew = true;
   }

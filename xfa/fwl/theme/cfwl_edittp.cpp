@@ -24,9 +24,9 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     CXFA_BorderData borderUIData = pWidget->GetDataAcc()->GetUIBorderData();
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;
-    if (borderUIData) {
+    if (borderUIData.HasValidNode()) {
       CXFA_EdgeData edgeData = borderUIData.GetEdgeData(0);
-      if (edgeData) {
+      if (edgeData.HasValidNode()) {
         cr = edgeData.GetColor();
         fWidth = edgeData.GetThickness();
       }

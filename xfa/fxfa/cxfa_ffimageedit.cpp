@@ -70,14 +70,17 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtImage = m_pNormalWidget->GetWidgetRect();
   int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
   int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
-  if (CXFA_ParaData paraData = m_pDataAcc->GetParaData()) {
+  CXFA_ParaData paraData = m_pDataAcc->GetParaData();
+  if (paraData.HasValidNode()) {
     iHorzAlign = paraData.GetHorizontalAlign();
     iVertAlign = paraData.GetVerticalAlign();
   }
 
   int32_t iAspect = XFA_ATTRIBUTEENUM_Fit;
-  if (CXFA_ValueData valueData = m_pDataAcc->GetFormValueData()) {
-    if (CXFA_ImageData imageData = valueData.GetImageData())
+  CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
+  if (valueData.HasValidNode()) {
+    CXFA_ImageData imageData = valueData.GetImageData();
+    if (imageData.HasValidNode())
       iAspect = imageData.GetAspect();
   }
 

@@ -105,7 +105,7 @@ bool CXFA_FFListBox::IsDataChanged() {
 
 uint32_t CXFA_FFListBox::GetAlignment() {
   CXFA_ParaData paraData = m_pDataAcc->GetParaData();
-  if (!paraData)
+  if (!paraData.HasValidNode())
     return 0;
 
   uint32_t dwExtendedStyle = 0;

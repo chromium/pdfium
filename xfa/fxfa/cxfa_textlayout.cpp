@@ -105,7 +105,7 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
   CXFA_ParaData paraData = m_pTextProvider->GetParaData();
   float fStart = 0;
   float fStartPos = 0;
-  if (paraData) {
+  if (paraData.HasValidNode()) {
     CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
     switch (paraData.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
@@ -143,7 +143,7 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
   m_pBreak->SetLineStartPos(fStartPos);
 
   CXFA_FontData fontData = m_pTextProvider->GetFontData();
-  if (fontData) {
+  if (fontData.HasValidNode()) {
     m_pBreak->SetHorizontalScale(
         static_cast<int32_t>(fontData.GetHorizontalScale()));
     m_pBreak->SetVerticalScale(
@@ -647,7 +647,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
 
   CXFA_ParaData paraData = m_pTextProvider->GetParaData();
   float fSpaceAbove = 0;
-  if (paraData) {
+  if (paraData.HasValidNode()) {
     fSpaceAbove = paraData.GetSpaceAbove();
     if (fSpaceAbove < 0.1f) {
       fSpaceAbove = 0;
@@ -1092,7 +1092,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
     m_pBreak->Reset();
     if (!pStyle && bEndBreak) {
       CXFA_ParaData paraData = m_pTextProvider->GetParaData();
-      if (paraData) {
+      if (paraData.HasValidNode()) {
         float fStartPos = paraData.GetMarginLeft();
         float fIndent = paraData.GetTextIndent();
         if (fIndent > 0)
