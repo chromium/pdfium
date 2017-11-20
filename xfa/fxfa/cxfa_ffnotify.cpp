@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/cxfa_ffnotify.h"
 
+#include <memory>
+#include <utility>
+
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffarc.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"
@@ -51,13 +54,6 @@ CXFA_FFComboBox* ToComboBox(CXFA_FFWidget* widget) {
 }
 
 }  // namespace
-
-static void XFA_FFDeleteWidgetAcc(void* pData) {
-  delete ToWidgetAcc(pData);
-}
-
-static XFA_MAPDATABLOCKCALLBACKINFO gs_XFADeleteWidgetAcc = {
-    XFA_FFDeleteWidgetAcc, nullptr};
 
 CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
@@ -345,9 +341,8 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
 
   XFA_Element eType = pNode->GetElementType();
   if (XFA_IsCreateWidget(eType)) {
-    CXFA_WidgetAcc* pAcc = new CXFA_WidgetAcc(pDocView, pNode);
-    pNode->JSNode()->SetObject(XFA_Attribute::WidgetData, pAcc,
-                               &gs_XFADeleteWidgetAcc);
+    pNode->JSNode()->SetWidgetData(
+        pdfium::MakeUnique<CXFA_WidgetAcc>(pDocView, pNode));
     return;
   }
   switch (eType) {

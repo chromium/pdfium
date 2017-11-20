@@ -94,6 +94,10 @@ CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)
 }
 
 CXFA_Document::~CXFA_Document() {
+  // Remove all the bindings before freeing the node as the ownership is wonky.
+  if (m_pRootNode)
+    m_pRootNode->ReleaseBindingNodes();
+
   delete m_pRootNode;
   PurgeNodes();
 }

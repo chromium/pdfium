@@ -82,6 +82,7 @@ class CXFA_Node : public CXFA_Object {
   bool IsLayoutGeneratedNode() const {
     return HasFlag(XFA_NodeFlag_LayoutGeneratedNode);
   }
+  void ReleaseBindingNodes();
   bool BindsFormItems() const { return HasFlag(XFA_NodeFlag_BindFormItems); }
   bool HasRemovedChildren() const {
     return HasFlag(XFA_NodeFlag_HasRemovedChildren);
@@ -119,7 +120,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetDataDescriptionNode();
   void SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode);
   CXFA_Node* GetBindData();
-  std::vector<CXFA_Node*> GetBindItems();
+  std::vector<UnownedPtr<CXFA_Node>>* GetBindItems();
   int32_t AddBindItem(CXFA_Node* pFormNode);
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem();

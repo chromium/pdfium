@@ -61,6 +61,10 @@ FX_ARGB CXFA_DataData::ToColor(const WideStringView& wsValue) {
   return (0xff << 24) | (r << 16) | (g << 8) | b;
 }
 
+CXFA_DataData::CXFA_DataData(CXFA_Node* pNode) : m_pNode(pNode) {}
+
+CXFA_DataData::~CXFA_DataData() {}
+
 XFA_Element CXFA_DataData::GetElementType() const {
   return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
 }

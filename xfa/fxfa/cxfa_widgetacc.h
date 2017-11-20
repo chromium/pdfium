@@ -36,7 +36,7 @@ class IXFA_AppProvider;
 class CXFA_WidgetAcc : public CXFA_WidgetData {
  public:
   CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode);
-  ~CXFA_WidgetAcc();
+  ~CXFA_WidgetAcc() override;
 
   void ResetData();
 

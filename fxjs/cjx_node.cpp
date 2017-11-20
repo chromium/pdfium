@@ -1439,14 +1439,14 @@ void CJX_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
   }
   if (bSetting) {
     WideString wsNewValue;
-    if (!(pValue && (pValue->IsNull() || pValue->IsUndefined())))
+    if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
       wsNewValue = pValue->ToWideString();
 
     WideString wsFormatValue(wsNewValue);
     CXFA_WidgetData* pContainerWidgetData = nullptr;
     if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Datasets) {
       WideString wsPicture;
-      for (CXFA_Node* pFormNode : GetXFANode()->GetBindItems()) {
+      for (const auto& pFormNode : *(GetXFANode()->GetBindItems())) {
         if (!pFormNode || pFormNode->HasRemovedChildren())
           continue;
 
@@ -1511,7 +1511,7 @@ void CJX_Node::Script_Boolean_Value(CFXJSE_Value* pValue,
   }
 
   ByteString newValue;
-  if (!(pValue && (pValue->IsNull() || pValue->IsUndefined())))
+  if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
     newValue = pValue->ToString();
 
   int32_t iValue = FXSYS_atoi(newValue.c_str());
@@ -1670,7 +1670,7 @@ void CJX_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
     }
 
     WideString wsNewText;
-    if (!(pValue && (pValue->IsNull() || pValue->IsUndefined())))
+    if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
       wsNewText = pValue->ToWideString();
 
     CXFA_Node* pUIChild = pWidgetData->GetUIChild();
@@ -3130,7 +3130,7 @@ bool CJX_Node::SetCData(XFA_Attribute eAttr,
                      GetXFANode()->GetNodeItem(XFA_NODEITEM_FirstChild);
                  pChildDataNode; pChildDataNode = pChildDataNode->GetNodeItem(
                                      XFA_NODEITEM_NextSibling)) {
-              if (!pChildDataNode->GetBindItems().empty()) {
+              if (!pChildDataNode->GetBindItems()->empty()) {
                 bDeleteChildren = false;
                 break;
               }
@@ -3192,7 +3192,7 @@ bool CJX_Node::SetAttributeValue(const WideString& wsValue,
                    GetXFANode()->GetNodeItem(XFA_NODEITEM_FirstChild);
                pChildDataNode; pChildDataNode = pChildDataNode->GetNodeItem(
                                    XFA_NODEITEM_NextSibling)) {
-            if (!pChildDataNode->GetBindItems().empty()) {
+            if (!pChildDataNode->GetBindItems()->empty()) {
               bDeleteChildren = false;
               break;
             }
@@ -3232,24 +3232,6 @@ pdfium::Optional<WideString> CJX_Node::TryCData(XFA_Attribute eAttr,
   return GetXFANode()->GetDefaultCData(eAttr);
 }
 
-bool CJX_Node::SetObject(XFA_Attribute eAttr,
-                         void* pData,
-                         XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
-  void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  return SetUserData(pKey, pData, pCallbackInfo);
-}
-
-void* CJX_Node::GetObject(XFA_Attribute eAttr) {
-  void* pData;
-  return TryObject(eAttr, pData) ? pData : nullptr;
-}
-
-bool CJX_Node::TryObject(XFA_Attribute eAttr, void*& pData) {
-  void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
-  pData = GetUserData(pKey, false);
-  return !!pData;
-}
-
 bool CJX_Node::SetValue(XFA_Attribute eAttr,
                         XFA_AttributeType eType,
                         void* pValue,
@@ -3287,6 +3269,13 @@ bool CJX_Node::SetValue(XFA_Attribute eAttr,
       ASSERT(0);
   }
   return true;
+}
+
+// TODO(dsinclair): This should not be needed. Nodes should get un-bound when
+// they're deleted instead of us pointing to bad objects.
+void CJX_Node::ReleaseBindingNodes() {
+  for (auto& node : binding_nodes_)
+    node.Release();
 }
 
 void* CJX_Node::GetUserData(void* pKey, bool bProtoAlso) {
@@ -3391,7 +3380,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
               i++;
             }
           }
-          for (CXFA_Node* pArrayNode : pBind->GetBindItems()) {
+          for (const auto& pArrayNode : *(pBind->GetBindItems())) {
             if (pArrayNode != GetXFANode()) {
               pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
                                                bScriptModify, false);
@@ -3416,7 +3405,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
       if (pBindNode && bSyncData) {
         pBindNode->JSNode()->SetContent(wsContent, wsXMLValue, bNotify,
                                         bScriptModify, false);
-        for (CXFA_Node* pArrayNode : pBindNode->GetBindItems()) {
+        for (const auto& pArrayNode : *(pBindNode->GetBindItems())) {
           if (pArrayNode != GetXFANode()) {
             pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
                                              true, false);
@@ -3486,7 +3475,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
 
   SetAttributeValue(wsContent, wsXMLValue, bNotify, bScriptModify);
   if (pBindNode && bSyncData) {
-    for (CXFA_Node* pArrayNode : pBindNode->GetBindItems()) {
+    for (const auto& pArrayNode : *(pBindNode->GetBindItems())) {
       pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
                                        bScriptModify, false);
     }
@@ -3559,6 +3548,10 @@ pdfium::Optional<WideString> CJX_Node::TryContent(bool bScriptModify,
     return TryCData(XFA_Attribute::Value, false);
   }
   return {};
+}
+
+void CJX_Node::SetWidgetData(std::unique_ptr<CXFA_WidgetData> data) {
+  widget_data_ = std::move(data);
 }
 
 pdfium::Optional<WideString> CJX_Node::TryNamespace() {

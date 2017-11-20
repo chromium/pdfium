@@ -17,7 +17,8 @@ class CXFA_DataData {
  public:
   static FX_ARGB ToColor(const WideStringView& wsValue);
 
-  explicit CXFA_DataData(CXFA_Node* pNode) : m_pNode(pNode) {}
+  explicit CXFA_DataData(CXFA_Node* pNode);
+  virtual ~CXFA_DataData();
 
   explicit operator bool() const { return !!m_pNode; }
   CXFA_Node* GetNode() const { return m_pNode; }

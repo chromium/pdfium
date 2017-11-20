@@ -2106,8 +2106,7 @@ void CXFA_ItemLayoutProcessor::ProcessUnUseBinds(CXFA_Node* pFormNode) {
       CXFA_Node* pBindNode = pNode->GetBindData();
       if (pBindNode) {
         pBindNode->RemoveBindItem(pNode);
-        pNode->JSNode()->SetObject(XFA_Attribute::BindingNode, nullptr,
-                                   nullptr);
+        pNode->JSNode()->SetBindingNode(nullptr);
       }
     }
     pNode->SetFlag(XFA_NodeFlag_UnusedNode, true);

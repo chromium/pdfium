@@ -8,6 +8,8 @@
 #define FXJS_CJX_NODE_H_
 
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cjx_object.h"
@@ -29,6 +31,7 @@ enum XFA_SOM_MESSAGETYPE {
 
 class CFXJSE_Arguments;
 class CXFA_Node;
+class CXFA_WidgetData;
 
 struct XFA_MAPMODULEDATA;
 
@@ -102,11 +105,27 @@ class CJX_Node : public CJX_Object {
                    XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
   void* GetUserData(void* pKey, bool bProtoAlso);
 
-  bool TryObject(XFA_Attribute eAttr, void*& pData);
-  bool SetObject(XFA_Attribute eAttr,
-                 void* pData,
-                 XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
-  void* GetObject(XFA_Attribute eAttr);
+  void SetBindingNodes(std::vector<UnownedPtr<CXFA_Node>> nodes) {
+    binding_nodes_ = std::move(nodes);
+  }
+  std::vector<UnownedPtr<CXFA_Node>>* GetBindingNodes() {
+    return &binding_nodes_;
+  }
+  void ReleaseBindingNodes();
+
+  void SetBindingNode(CXFA_Node* node) {
+    binding_nodes_.clear();
+    if (node)
+      binding_nodes_.emplace_back(node);
+  }
+  CXFA_Node* GetBindingNode() const {
+    if (binding_nodes_.empty())
+      return nullptr;
+    return binding_nodes_[0].Get();
+  }
+
+  void SetWidgetData(std::unique_ptr<CXFA_WidgetData> data);
+  CXFA_WidgetData* GetWidgetData() const { return widget_data_.get(); }
 
   pdfium::Optional<WideString> TryNamespace();
 
@@ -437,6 +456,8 @@ class CJX_Node : public CJX_Object {
                                 XFA_Element eType);
 
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
+  std::unique_ptr<CXFA_WidgetData> widget_data_;
+  std::vector<UnownedPtr<CXFA_Node>> binding_nodes_;
 };
 
 #endif  // FXJS_CJX_NODE_H_

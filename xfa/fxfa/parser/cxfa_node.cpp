@@ -41,13 +41,6 @@
 
 namespace {
 
-void XFA_DataNodeDeleteBindItem(void* pData) {
-  delete static_cast<std::vector<CXFA_Node*>*>(pData);
-}
-
-XFA_MAPDATABLOCKCALLBACKINFO deleteBindItemCallBack = {
-    XFA_DataNodeDeleteBindItem, nullptr};
-
 std::vector<CXFA_Node*> NodesSortedByDocumentIdx(
     const std::set<CXFA_Node*>& rgNodeSet) {
   if (rgNodeSet.empty())
@@ -177,6 +170,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
 
 CXFA_Node::~CXFA_Node() {
   ASSERT(!m_pParent);
+
   CXFA_Node* pNode = m_pChild;
   while (pNode) {
     CXFA_Node* pNext = pNode->m_pNext;
@@ -222,7 +216,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
     }
   }
   pClone->SetFlag(XFA_NodeFlag_Initialized, true);
-  pClone->JSNode()->SetObject(XFA_Attribute::BindingNode, nullptr, nullptr);
+  pClone->JSNode()->SetBindingNode(nullptr);
   return pClone;
 }
 
@@ -384,86 +378,79 @@ void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
 
 CXFA_Node* CXFA_Node::GetBindData() {
   ASSERT(GetPacketID() == XFA_XDPPACKET_Form);
-  return static_cast<CXFA_Node*>(
-      JSNode()->GetObject(XFA_Attribute::BindingNode));
+  return JSNode()->GetBindingNode();
 }
 
-std::vector<CXFA_Node*> CXFA_Node::GetBindItems() {
-  if (BindsFormItems()) {
-    void* pBinding = nullptr;
-    JSNode()->TryObject(XFA_Attribute::BindingNode, pBinding);
-    return *static_cast<std::vector<CXFA_Node*>*>(pBinding);
-  }
-  std::vector<CXFA_Node*> result;
-  CXFA_Node* pFormNode =
-      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_Attribute::BindingNode));
-  if (pFormNode)
-    result.push_back(pFormNode);
-  return result;
+std::vector<UnownedPtr<CXFA_Node>>* CXFA_Node::GetBindItems() {
+  return JSNode()->GetBindingNodes();
 }
 
 int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
+
   if (BindsFormItems()) {
-    void* pBinding = nullptr;
-    JSNode()->TryObject(XFA_Attribute::BindingNode, pBinding);
-    auto* pItems = static_cast<std::vector<CXFA_Node*>*>(pBinding);
-    if (!pdfium::ContainsValue(*pItems, pFormNode))
-      pItems->push_back(pFormNode);
-    return pdfium::CollectionSize<int32_t>(*pItems);
+    std::vector<UnownedPtr<CXFA_Node>>* nodes = JSNode()->GetBindingNodes();
+    bool found = false;
+    for (auto& v : *nodes) {
+      if (v.Get() == pFormNode) {
+        found = true;
+        break;
+      }
+    }
+    if (!found)
+      nodes->emplace_back(pFormNode);
+    return pdfium::CollectionSize<int32_t>(*nodes);
   }
-  CXFA_Node* pOldFormItem =
-      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_Attribute::BindingNode));
+
+  CXFA_Node* pOldFormItem = JSNode()->GetBindingNode();
   if (!pOldFormItem) {
-    JSNode()->SetObject(XFA_Attribute::BindingNode, pFormNode, nullptr);
+    JSNode()->SetBindingNode(pFormNode);
     return 1;
   }
   if (pOldFormItem == pFormNode)
     return 1;
 
-  std::vector<CXFA_Node*>* pItems = new std::vector<CXFA_Node*>;
-  JSNode()->SetObject(XFA_Attribute::BindingNode, pItems,
-                      &deleteBindItemCallBack);
-  pItems->push_back(pOldFormItem);
-  pItems->push_back(pFormNode);
+  std::vector<UnownedPtr<CXFA_Node>> items;
+  items.emplace_back(pOldFormItem);
+  items.emplace_back(pFormNode);
+  JSNode()->SetBindingNodes(std::move(items));
+
   m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
   return 2;
 }
 
 int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (BindsFormItems()) {
-    void* pBinding = nullptr;
-    JSNode()->TryObject(XFA_Attribute::BindingNode, pBinding);
-    auto* pItems = static_cast<std::vector<CXFA_Node*>*>(pBinding);
-    auto iter = std::find(pItems->begin(), pItems->end(), pFormNode);
-    if (iter != pItems->end()) {
-      *iter = pItems->back();
-      pItems->pop_back();
-      if (pItems->size() == 1) {
-        JSNode()->SetObject(XFA_Attribute::BindingNode, (*pItems)[0],
-                            nullptr);  // Invalidates pItems.
-        m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
-        return 1;
-      }
+    std::vector<UnownedPtr<CXFA_Node>>* nodes = JSNode()->GetBindingNodes();
+
+    auto it = std::find_if(nodes->begin(), nodes->end(),
+                           [&pFormNode](const UnownedPtr<CXFA_Node>& node) {
+                             return node.Get() == pFormNode;
+                           });
+    if (it != nodes->end())
+      nodes->erase(it);
+
+    if (nodes->size() == 1) {
+      m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
+      return 1;
     }
-    return pdfium::CollectionSize<int32_t>(*pItems);
+    return pdfium::CollectionSize<int32_t>(*nodes);
   }
-  CXFA_Node* pOldFormItem =
-      static_cast<CXFA_Node*>(JSNode()->GetObject(XFA_Attribute::BindingNode));
+
+  CXFA_Node* pOldFormItem = JSNode()->GetBindingNode();
   if (pOldFormItem != pFormNode)
     return pOldFormItem ? 1 : 0;
 
-  JSNode()->SetObject(XFA_Attribute::BindingNode, nullptr, nullptr);
+  JSNode()->SetBindingNode(nullptr);
   return 0;
 }
 
 bool CXFA_Node::HasBindItem() {
-  return GetPacketID() == XFA_XDPPACKET_Datasets &&
-         JSNode()->GetObject(XFA_Attribute::BindingNode);
+  return GetPacketID() == XFA_XDPPACKET_Datasets && JSNode()->GetBindingNode();
 }
 
 CXFA_WidgetData* CXFA_Node::GetWidgetData() {
-  return (CXFA_WidgetData*)JSNode()->GetObject(XFA_Attribute::WidgetData);
+  return JSNode()->GetWidgetData();
 }
 
 CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
@@ -494,7 +481,7 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
       if (!pDataNode)
         return nullptr;
       pFieldWidgetData = nullptr;
-      for (CXFA_Node* pFormNode : pDataNode->GetBindItems()) {
+      for (const auto& pFormNode : *(pDataNode->GetBindItems())) {
         if (!pFormNode || pFormNode->HasRemovedChildren())
           continue;
         pFieldWidgetData = pFormNode->GetWidgetData();
@@ -1016,6 +1003,15 @@ void CXFA_Node::ClearFlag(uint32_t dwFlag) {
   m_uNodeFlags &= ~dwFlag;
 }
 
+void CXFA_Node::ReleaseBindingNodes() {
+  // Clear any binding nodes set on our JS node as we don't necessarily destruct
+  // in an order that makes sense.
+  JSNode()->ReleaseBindingNodes();
+
+  for (CXFA_Node* pNode = m_pChild; pNode; pNode = pNode->m_pNext)
+    pNode->ReleaseBindingNodes();
+}
+
 bool CXFA_Node::IsAttributeInXML() {
   return JSNode()->GetEnum(XFA_Attribute::Contains) ==
          XFA_ATTRIBUTEENUM_MetaData;
@@ -1212,8 +1208,7 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
         pDataParent->RemoveChild(pDataNode, true);
       }
     }
-    pFormNode->JSNode()->SetObject(XFA_Attribute::BindingNode, nullptr,
-                                   nullptr);
+    pFormNode->JSNode()->SetBindingNode(nullptr);
   }
 }
 

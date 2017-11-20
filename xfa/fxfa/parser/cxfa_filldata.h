@@ -16,7 +16,7 @@ class CXFA_Node;
 class CXFA_FillData : public CXFA_DataData {
  public:
   explicit CXFA_FillData(CXFA_Node* pNode);
-  ~CXFA_FillData();
+  ~CXFA_FillData() override;
 
   int32_t GetPresence();
   FX_ARGB GetColor(bool bText = false);
