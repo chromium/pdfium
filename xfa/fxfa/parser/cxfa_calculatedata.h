@@ -19,7 +19,7 @@ class CXFA_CalculateData : public CXFA_DataData {
 
   int32_t GetOverride();
   CXFA_ScriptData GetScriptData();
-  void GetMessageText(WideString& wsMessage);
+  WideString GetMessageText();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CALCULATEDATA_H_

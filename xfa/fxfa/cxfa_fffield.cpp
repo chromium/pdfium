@@ -701,8 +701,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
       if (!pAppProvider)
         return 0;
 
-      WideString wsMessage;
-      calcData.GetMessageText(wsMessage);
+      WideString wsMessage = calcData.GetMessageText();
       if (!wsMessage.IsEmpty())
         wsMessage += L"\r\n";
 

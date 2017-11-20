@@ -10,6 +10,6 @@
 
 CXFA_TextData::CXFA_TextData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-void CXFA_TextData::GetContent(WideString& wsText) {
-  wsText = m_pNode->JSNode()->GetContent(false);
+WideString CXFA_TextData::GetContent() {
+  return m_pNode->JSNode()->GetContent(false);
 }

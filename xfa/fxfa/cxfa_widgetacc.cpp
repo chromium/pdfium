@@ -500,7 +500,7 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
     if (CXFA_CaptionData captionData = GetCaptionData()) {
       if (CXFA_ValueData capValue = captionData.GetValueData()) {
         if (CXFA_TextData captionTextData = capValue.GetTextData())
-          captionTextData.GetContent(wsCaptionName);
+          wsCaptionName = captionTextData.GetContent();
       }
     }
   }

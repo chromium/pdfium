@@ -22,12 +22,13 @@ CXFA_ScriptData CXFA_CalculateData::GetScriptData() {
   return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
-void CXFA_CalculateData::GetMessageText(WideString& wsMessage) {
+WideString CXFA_CalculateData::GetMessageText() {
   CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Message, false);
   if (!pNode)
-    return;
+    return L"";
 
   CXFA_TextData textData(pNode->GetChild(0, XFA_Element::Text, false));
-  if (textData)
-    textData.GetContent(wsMessage);
+  if (!textData)
+    return L"";
+  return textData.GetContent();
 }
