@@ -710,8 +710,7 @@ void CXFA_FFDocView::RunBindItems() {
     CXFA_BindItemsData bindItemsData(item);
     CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
-    WideString wsRef;
-    bindItemsData.GetRef(wsRef);
+    WideString wsRef = bindItemsData.GetRef();
     uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
                        XFA_RESOLVENODE_ALL;
@@ -722,10 +721,8 @@ void CXFA_FFDocView::RunBindItems() {
     if (rs.dwFlags != XFA_RESOLVENODE_RSTYPE_Nodes || rs.objects.empty())
       continue;
 
-    WideString wsValueRef;
-    WideString wsLabelRef;
-    bindItemsData.GetValueRef(wsValueRef);
-    bindItemsData.GetLabelRef(wsLabelRef);
+    WideString wsValueRef = bindItemsData.GetValueRef();
+    WideString wsLabelRef = bindItemsData.GetLabelRef();
     const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
     const bool bLabelUseContent = wsLabelRef.IsEmpty() || wsLabelRef == L"$";
     const bool bValueUseContent = wsValueRef.IsEmpty() || wsValueRef == L"$";
