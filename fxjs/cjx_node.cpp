@@ -3165,7 +3165,7 @@ bool CJX_Node::SetCData(XFA_Attribute eAttr,
   return true;
 }
 
-bool CJX_Node::SetAttributeValue(const WideString& wsValue,
+void CJX_Node::SetAttributeValue(const WideString& wsValue,
                                  const WideString& wsXMLValue,
                                  bool bNotify,
                                  bool bScriptModify) {
@@ -3176,7 +3176,7 @@ bool CJX_Node::SetAttributeValue(const WideString& wsValue,
   SetUserData(pKey, pClone, &deleteWideStringCallBack);
   OnChanged(XFA_Attribute::Value, bNotify, bScriptModify);
   if (!GetXFANode()->IsNeedSavingXMLNode())
-    return true;
+    return;
 
   auto* elem = static_cast<CFX_XMLElement*>(GetXFANode()->GetXMLMappingNode());
   FX_XMLNODETYPE eXMLType = elem->GetType();
@@ -3211,7 +3211,6 @@ bool CJX_Node::SetAttributeValue(const WideString& wsValue,
     default:
       ASSERT(0);
   }
-  return true;
 }
 
 pdfium::Optional<WideString> CJX_Node::TryCData(XFA_Attribute eAttr,

@@ -59,7 +59,7 @@ class CJX_Node : public CJX_Object {
   pdfium::Optional<WideString> TryAttribute(XFA_Attribute eAttr,
                                             bool bUseDefault);
 
-  bool SetAttributeValue(const WideString& wsValue,
+  void SetAttributeValue(const WideString& wsValue,
                          const WideString& wsXMLValue,
                          bool bNotify,
                          bool bScriptModify);
