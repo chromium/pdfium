@@ -21,13 +21,13 @@ class CXFA_ImageData : public CXFA_DataData {
   bool GetContent(WideString& wsText);
 
   bool GetHref(WideString& wsHref);
-  bool SetHref(const WideString& wsHref);
+  void SetHref(const WideString& wsHref);
 
   XFA_ATTRIBUTEENUM GetTransferEncoding();
-  bool SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding);
+  void SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding);
 
   bool GetContentType(WideString& wsContentType);
-  bool SetContentType(const WideString& wsContentType);
+  void SetContentType(const WideString& wsContentType);
 
  private:
   bool m_bDefValue;

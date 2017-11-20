@@ -61,23 +61,23 @@ bool CXFA_ImageData::GetContent(WideString& wsText) {
   return true;
 }
 
-bool CXFA_ImageData::SetContentType(const WideString& wsContentType) {
-  return m_pNode->JSNode()->SetCData(XFA_Attribute::ContentType, wsContentType,
-                                     false, false);
+void CXFA_ImageData::SetContentType(const WideString& wsContentType) {
+  m_pNode->JSNode()->SetCData(XFA_Attribute::ContentType, wsContentType, false,
+                              false);
 }
 
-bool CXFA_ImageData::SetHref(const WideString& wsHref) {
-  if (m_bDefValue)
-    return m_pNode->JSNode()->SetCData(XFA_Attribute::Href, wsHref, false,
-                                       false);
-  return m_pNode->JSNode()->SetAttribute(XFA_Attribute::Href,
-                                         wsHref.AsStringView(), false);
-}
-
-bool CXFA_ImageData::SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding) {
+void CXFA_ImageData::SetHref(const WideString& wsHref) {
   if (m_bDefValue) {
-    return m_pNode->JSNode()->SetEnum(XFA_Attribute::TransferEncoding,
-                                      iTransferEncoding, false);
+    m_pNode->JSNode()->SetCData(XFA_Attribute::Href, wsHref, false, false);
+    return;
   }
-  return true;
+  m_pNode->JSNode()->SetAttribute(XFA_Attribute::Href, wsHref.AsStringView(),
+                                  false);
+}
+
+void CXFA_ImageData::SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding) {
+  if (m_bDefValue) {
+    m_pNode->JSNode()->SetEnum(XFA_Attribute::TransferEncoding,
+                               iTransferEncoding, false);
+  }
 }
