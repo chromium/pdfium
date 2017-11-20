@@ -1228,7 +1228,7 @@ CJS_Return CJS_PublicMethods::AFDate_KeystrokeEx(
     if (!pEvent->m_pValue)
       return CJS_Return(false);
 
-    WideString strValue = pEvent->Value();
+    const WideString& strValue = pEvent->Value();
     if (strValue.IsEmpty())
       return CJS_Return(true);
 
@@ -1369,7 +1369,7 @@ CJS_Return CJS_PublicMethods::AFSpecial_Format(
   if (!pEvent->m_pValue)
     return CJS_Return(false);
 
-  WideString wsSource = pEvent->Value();
+  const WideString& wsSource = pEvent->Value();
   WideString wsFormat;
   switch (pRuntime->ToInt32(params[0])) {
     case 0:
@@ -1405,7 +1405,7 @@ CJS_Return CJS_PublicMethods::AFSpecial_KeystrokeEx(
   if (!pEvent->m_pValue)
     return CJS_Return(false);
 
-  WideString& valEvent = pEvent->Value();
+  const WideString& valEvent = pEvent->Value();
   WideString wstrMask = pRuntime->ToWideString(params[0]);
   if (wstrMask.IsEmpty())
     return CJS_Return(true);

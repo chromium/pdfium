@@ -142,27 +142,29 @@ class CJS_EventHandler {
 
   void Initial(JS_EVENT_T type);
   void Destroy();
-  bool IsValid();
+  bool IsValid() const;
 
   WideString& Change();
-  WideString ChangeEx();
-  int CommitKey();
-  bool FieldFull();
-  bool KeyDown();
-  bool Modifier();
-  const wchar_t* Name();
-  const wchar_t* Type();
+  const WideString& ChangeEx();
+  int CommitKey() const;
+  bool FieldFull() const;
+  bool KeyDown() const;
+  bool Modifier() const;
+  const wchar_t* Name() const;
+  const wchar_t* Type() const;
   bool& Rc();
-  int& SelEnd();
-  int& SelStart();
-  bool Shift();
+  int SelEnd() const;
+  int SelStart() const;
+  void SetSelEnd(int value);
+  void SetSelStart(int value);
+  bool Shift() const;
   Field* Source();
   Field* Target_Field();
   WideString& Value();
-  bool WillCommit();
-  WideString TargetName();
+  bool WillCommit() const;
+  const WideString& TargetName() const;
 
-  JS_EVENT_T EventType() { return m_eEventType; }
+  JS_EVENT_T EventType() const { return m_eEventType; }
 
   UnownedPtr<CJS_EventContext> const m_pJSEventContext;
   JS_EVENT_T m_eEventType;

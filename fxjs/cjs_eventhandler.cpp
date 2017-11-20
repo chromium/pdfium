@@ -404,7 +404,7 @@ void CJS_EventHandler::Destroy() {
   m_bValid = false;
 }
 
-bool CJS_EventHandler::IsValid() {
+bool CJS_EventHandler::IsValid() const {
   return m_bValid;
 }
 
@@ -415,27 +415,27 @@ WideString& CJS_EventHandler::Change() {
   return m_WideStrChangeDu;
 }
 
-WideString CJS_EventHandler::ChangeEx() {
+const WideString& CJS_EventHandler::ChangeEx() {
   return m_WideStrChangeEx;
 }
 
-int CJS_EventHandler::CommitKey() {
+int CJS_EventHandler::CommitKey() const {
   return m_nCommitKey;
 }
 
-bool CJS_EventHandler::FieldFull() {
+bool CJS_EventHandler::FieldFull() const {
   return m_bFieldFull;
 }
 
-bool CJS_EventHandler::KeyDown() {
+bool CJS_EventHandler::KeyDown() const {
   return m_bKeyDown;
 }
 
-bool CJS_EventHandler::Modifier() {
+bool CJS_EventHandler::Modifier() const {
   return m_bModifier;
 }
 
-const wchar_t* CJS_EventHandler::Name() {
+const wchar_t* CJS_EventHandler::Name() const {
   switch (m_eEventType) {
     case JET_APP_INIT:
       return L"Init";
@@ -506,7 +506,7 @@ const wchar_t* CJS_EventHandler::Name() {
   }
 }
 
-const wchar_t* CJS_EventHandler::Type() {
+const wchar_t* CJS_EventHandler::Type() const {
   switch (m_eEventType) {
     case JET_APP_INIT:
       return L"App";
@@ -562,27 +562,28 @@ const wchar_t* CJS_EventHandler::Type() {
 }
 
 bool& CJS_EventHandler::Rc() {
-  if (m_pbRc) {
-    return *m_pbRc;
-  }
-  return m_bRcDu;
+  return m_pbRc ? *m_pbRc : m_bRcDu;
 }
 
-int& CJS_EventHandler::SelEnd() {
-  if (m_pISelEnd) {
-    return *m_pISelEnd;
-  }
-  return m_nSelEndDu;
+int CJS_EventHandler::SelEnd() const {
+  return m_pISelEnd ? *m_pISelEnd : m_nSelEndDu;
 }
 
-int& CJS_EventHandler::SelStart() {
-  if (m_pISelStart) {
-    return *m_pISelStart;
-  }
-  return m_nSelStartDu;
+int CJS_EventHandler::SelStart() const {
+  return m_pISelStart ? *m_pISelStart : m_nSelStartDu;
 }
 
-bool CJS_EventHandler::Shift() {
+void CJS_EventHandler::SetSelEnd(int value) {
+  int& target = m_pISelEnd ? *m_pISelEnd : m_nSelEndDu;
+  target = value;
+}
+
+void CJS_EventHandler::SetSelStart(int value) {
+  int& target = m_pISelStart ? *m_pISelStart : m_nSelStartDu;
+  target = value;
+}
+
+bool CJS_EventHandler::Shift() const {
   return m_bShift;
 }
 
@@ -644,10 +645,10 @@ WideString& CJS_EventHandler::Value() {
   return *m_pValue;
 }
 
-bool CJS_EventHandler::WillCommit() {
+bool CJS_EventHandler::WillCommit() const {
   return m_bWillCommit;
 }
 
-WideString CJS_EventHandler::TargetName() {
+const WideString& CJS_EventHandler::TargetName() const {
   return m_strTargetName;
 }

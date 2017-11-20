@@ -192,7 +192,7 @@ CJS_Return event::set_sel_end(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return CJS_Return(true);
 
-  pEvent->SelEnd() = pRuntime->ToInt32(vp);
+  pEvent->SetSelEnd(pRuntime->ToInt32(vp));
   return CJS_Return(true);
 }
 
@@ -214,7 +214,7 @@ CJS_Return event::set_sel_start(CJS_Runtime* pRuntime,
   if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return CJS_Return(true);
 
-  pEvent->SelStart() = pRuntime->ToInt32(vp);
+  pEvent->SetSelStart(pRuntime->ToInt32(vp));
   return CJS_Return(true);
 }
 
