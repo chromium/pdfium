@@ -172,11 +172,14 @@ void CXFA_FFField::CapPlacement() {
   CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
   if (marginData.HasValidNode()) {
     CXFA_LayoutItem* pItem = this;
-    float fLeftInset = 0, fRightInset = 0, fTopInset = 0, fBottomInset = 0;
-    marginData.GetLeftInset(fLeftInset);
-    marginData.GetRightInset(fRightInset);
-    marginData.GetTopInset(fTopInset);
-    marginData.GetBottomInset(fBottomInset);
+    float fLeftInset = 0;
+    float fRightInset = 0;
+    float fTopInset = 0;
+    float fBottomInset = 0;
+    marginData.TryLeftInset(fLeftInset);
+    marginData.TryRightInset(fRightInset);
+    marginData.TryTopInset(fTopInset);
+    marginData.TryBottomInset(fBottomInset);
     if (!pItem->GetPrev() && !pItem->GetNext()) {
       rtWidget.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
     } else {

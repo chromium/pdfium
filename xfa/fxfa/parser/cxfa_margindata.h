@@ -16,10 +16,10 @@ class CXFA_MarginData : public CXFA_DataData {
  public:
   explicit CXFA_MarginData(CXFA_Node* pNode);
 
-  bool GetLeftInset(float& fInset, float fDefInset = 0) const;
-  bool GetTopInset(float& fInset, float fDefInset = 0) const;
-  bool GetRightInset(float& fInset, float fDefInset = 0) const;
-  bool GetBottomInset(float& fInset, float fDefInset = 0) const;
+  bool TryLeftInset(float& fInset) const;
+  bool TryTopInset(float& fInset) const;
+  bool TryRightInset(float& fInset) const;
+  bool TryBottomInset(float& fInset) const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MARGINDATA_H_

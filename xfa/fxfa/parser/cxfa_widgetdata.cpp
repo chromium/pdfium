@@ -373,11 +373,14 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
     return CFX_RectF();
   }
 
-  float fLeftInset, fTopInset, fRightInset, fBottomInset;
-  bool bLeft = mgUI.GetLeftInset(fLeftInset);
-  bool bTop = mgUI.GetTopInset(fTopInset);
-  bool bRight = mgUI.GetRightInset(fRightInset);
-  bool bBottom = mgUI.GetBottomInset(fBottomInset);
+  float fLeftInset = 0;
+  float fTopInset = 0;
+  float fRightInset = 0;
+  float fBottomInset = 0;
+  bool bLeft = mgUI.TryLeftInset(fLeftInset);
+  bool bTop = mgUI.TryTopInset(fTopInset);
+  bool bRight = mgUI.TryRightInset(fRightInset);
+  bool bBottom = mgUI.TryBottomInset(fBottomInset);
   if (borderData.HasValidNode()) {
     bool bVisible = false;
     float fThickness = 0;

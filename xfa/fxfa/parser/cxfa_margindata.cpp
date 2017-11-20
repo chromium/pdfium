@@ -8,22 +8,18 @@
 
 CXFA_MarginData::CXFA_MarginData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-bool CXFA_MarginData::GetLeftInset(float& fInset, float fDefInset) const {
-  fInset = fDefInset;
+bool CXFA_MarginData::TryLeftInset(float& fInset) const {
   return TryMeasure(XFA_Attribute::LeftInset, fInset);
 }
 
-bool CXFA_MarginData::GetTopInset(float& fInset, float fDefInset) const {
-  fInset = fDefInset;
+bool CXFA_MarginData::TryTopInset(float& fInset) const {
   return TryMeasure(XFA_Attribute::TopInset, fInset);
 }
 
-bool CXFA_MarginData::GetRightInset(float& fInset, float fDefInset) const {
-  fInset = fDefInset;
+bool CXFA_MarginData::TryRightInset(float& fInset) const {
   return TryMeasure(XFA_Attribute::RightInset, fInset);
 }
 
-bool CXFA_MarginData::GetBottomInset(float& fInset, float fDefInset) const {
-  fInset = fDefInset;
+bool CXFA_MarginData::TryBottomInset(float& fInset) const {
   return TryMeasure(XFA_Attribute::BottomInset, fInset);
 }

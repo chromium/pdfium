@@ -731,14 +731,14 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
 
   CXFA_MarginData captionMarginData = captionData.GetMarginData();
   if (captionMarginData.HasValidNode()) {
-    float fLeftInset;
-    float fTopInset;
-    float fRightInset;
-    float fBottomInset;
-    captionMarginData.GetLeftInset(fLeftInset);
-    captionMarginData.GetTopInset(fTopInset);
-    captionMarginData.GetRightInset(fRightInset);
-    captionMarginData.GetBottomInset(fBottomInset);
+    float fLeftInset = 0;
+    float fTopInset = 0;
+    float fRightInset = 0;
+    float fBottomInset = 0;
+    captionMarginData.TryLeftInset(fLeftInset);
+    captionMarginData.TryTopInset(fTopInset);
+    captionMarginData.TryRightInset(fRightInset);
+    captionMarginData.TryBottomInset(fBottomInset);
     if (bReserveExit) {
       bVert ? (szCap.width += fLeftInset + fRightInset)
             : (szCap.height += fTopInset + fBottomInset);
@@ -779,11 +779,14 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
 bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
   CXFA_MarginData marginData = GetMarginData();
   if (marginData.HasValidNode()) {
-    float fLeftInset, fTopInset, fRightInset, fBottomInset;
-    marginData.GetLeftInset(fLeftInset);
-    marginData.GetTopInset(fTopInset);
-    marginData.GetRightInset(fRightInset);
-    marginData.GetBottomInset(fBottomInset);
+    float fLeftInset = 0;
+    float fTopInset = 0;
+    float fRightInset = 0;
+    float fBottomInset = 0;
+    marginData.TryLeftInset(fLeftInset);
+    marginData.TryTopInset(fTopInset);
+    marginData.TryRightInset(fRightInset);
+    marginData.TryBottomInset(fBottomInset);
     size.width += fLeftInset + fRightInset;
     size.height += fTopInset + fBottomInset;
   }
@@ -874,10 +877,10 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     size.width -= rtUIMargin.left + rtUIMargin.width;
     CXFA_MarginData marginData = GetMarginData();
     if (marginData.HasValidNode()) {
-      float fLeftInset;
-      float fRightInset;
-      marginData.GetLeftInset(fLeftInset);
-      marginData.GetRightInset(fRightInset);
+      float fLeftInset = 0;
+      float fRightInset = 0;
+      marginData.TryLeftInset(fLeftInset);
+      marginData.TryRightInset(fRightInset);
       size.width -= fLeftInset + fRightInset;
     }
     CalculateTextContentSize(size);
@@ -1021,10 +1024,10 @@ void CXFA_WidgetAcc::LoadText() {
 float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
   CXFA_MarginData marginData = GetMarginData();
   if (marginData.HasValidNode()) {
-    float fLeftInset;
-    float fRightInset;
-    marginData.GetLeftInset(fLeftInset);
-    marginData.GetRightInset(fRightInset);
+    float fLeftInset = 0;
+    float fRightInset = 0;
+    marginData.TryLeftInset(fLeftInset);
+    marginData.TryRightInset(fRightInset);
     fWidthCalc += fLeftInset + fRightInset;
   }
 
@@ -1040,10 +1043,10 @@ float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
 float CXFA_WidgetAcc::GetWidthWithoutMargin(float fWidthCalc) {
   CXFA_MarginData marginData = GetMarginData();
   if (marginData.HasValidNode()) {
-    float fLeftInset;
-    float fRightInset;
-    marginData.GetLeftInset(fLeftInset);
-    marginData.GetRightInset(fRightInset);
+    float fLeftInset = 0;
+    float fRightInset = 0;
+    marginData.TryLeftInset(fLeftInset);
+    marginData.TryRightInset(fRightInset);
     fWidthCalc -= fLeftInset + fRightInset;
   }
   return fWidthCalc;
@@ -1052,10 +1055,10 @@ float CXFA_WidgetAcc::GetWidthWithoutMargin(float fWidthCalc) {
 float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
   CXFA_MarginData marginData = GetMarginData();
   if (marginData.HasValidNode()) {
-    float fTopInset;
-    float fBottomInset;
-    marginData.GetTopInset(fTopInset);
-    marginData.GetBottomInset(fBottomInset);
+    float fTopInset = 0;
+    float fBottomInset = 0;
+    marginData.TryTopInset(fTopInset);
+    marginData.TryBottomInset(fBottomInset);
     fHeightCalc += fTopInset + fBottomInset;
   }
 
@@ -1071,10 +1074,10 @@ float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
 float CXFA_WidgetAcc::GetHeightWithoutMargin(float fHeightCalc) {
   CXFA_MarginData marginData = GetMarginData();
   if (marginData.HasValidNode()) {
-    float fTopInset;
-    float fBottomInset;
-    marginData.GetTopInset(fTopInset);
-    marginData.GetBottomInset(fBottomInset);
+    float fTopInset = 0;
+    float fBottomInset = 0;
+    marginData.TryTopInset(fTopInset);
+    marginData.TryBottomInset(fBottomInset);
     fHeightCalc -= fTopInset + fBottomInset;
   }
   return fHeightCalc;
@@ -1170,8 +1173,8 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   if (iBlockIndex == 0) {
     CXFA_MarginData marginData = GetMarginData();
     if (marginData.HasValidNode()) {
-      marginData.GetTopInset(fTopInset);
-      marginData.GetBottomInset(fBottomInset);
+      marginData.TryTopInset(fTopInset);
+      marginData.TryBottomInset(fBottomInset);
     }
 
     CFX_RectF rtUIMargin = GetUIMargin();
