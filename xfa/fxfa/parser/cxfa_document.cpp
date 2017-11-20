@@ -99,7 +99,10 @@ CXFA_Document::~CXFA_Document() {
     m_pRootNode->ReleaseBindingNodes();
 
   delete m_pRootNode;
-  PurgeNodes();
+
+  for (CXFA_Node* pNode : m_PurgeNodes)
+    delete pNode;
+  m_PurgeNodes.clear();
 }
 
 CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
@@ -236,13 +239,6 @@ void CXFA_Document::AddPurgeNode(CXFA_Node* pNode) {
 
 bool CXFA_Document::RemovePurgeNode(CXFA_Node* pNode) {
   return !!m_PurgeNodes.erase(pNode);
-}
-
-void CXFA_Document::PurgeNodes() {
-  for (CXFA_Node* pNode : m_PurgeNodes)
-    delete pNode;
-
-  m_PurgeNodes.clear();
 }
 
 void CXFA_Document::SetFlag(uint32_t dwFlag, bool bOn) {

@@ -26,7 +26,6 @@ inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
 }
 
 #define XFA_FLOAT_PERCISION 0.001f
-#define XFA_CalcData (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'C')
 
 enum XFA_WIDGETITEM {
   XFA_WIDGETITEM_Parent,

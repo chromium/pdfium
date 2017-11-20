@@ -79,7 +79,6 @@ class CXFA_Document {
 
   void AddPurgeNode(CXFA_Node* pNode);
   bool RemovePurgeNode(CXFA_Node* pNode);
-  void PurgeNodes();
 
   bool HasFlag(uint32_t dwFlag) { return (m_dwDocFlags & dwFlag) == dwFlag; }
   void SetFlag(uint32_t dwFlag, bool bOn);

@@ -826,7 +826,7 @@ void CJX_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
       else
         pFakeXMLRoot = nullptr;
     }
-    MoveBufferMapData(pFakeRoot, GetXFANode(), XFA_CalcData);
+    MoveBufferMapData(pFakeRoot, GetXFANode());
   } else {
     CXFA_Node* pChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pChild) {
@@ -3218,7 +3218,14 @@ pdfium::Optional<WideString> CJX_Node::TryCData(XFA_Attribute eAttr,
                                                 bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   if (eAttr == XFA_Attribute::Value) {
-    WideString* pStr = (WideString*)GetUserData(pKey, true);
+    void* pData;
+    int32_t iBytes = 0;
+    WideString* pStr = nullptr;
+    if (GetMapModuleBuffer(pKey, pData, iBytes, true) &&
+        iBytes == sizeof(void*)) {
+      memcpy(&pData, pData, iBytes);
+      pStr = reinterpret_cast<WideString*>(pData);
+    }
     if (pStr)
       return {*pStr};
   } else {
@@ -3278,24 +3285,12 @@ void CJX_Node::ReleaseBindingNodes() {
     node.Release();
 }
 
-void* CJX_Node::GetUserData(void* pKey, bool bProtoAlso) {
-  void* pData;
-  return TryUserData(pKey, pData, bProtoAlso) ? pData : nullptr;
-}
-
 bool CJX_Node::SetUserData(void* pKey,
                            void* pData,
                            XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
   SetMapModuleBuffer(pKey, &pData, sizeof(void*),
                      pCallbackInfo ? pCallbackInfo : &gs_XFADefaultFreeData);
   return true;
-}
-
-bool CJX_Node::TryUserData(void* pKey, void*& pData, bool bProtoAlso) {
-  int32_t iBytes = 0;
-  if (!GetMapModuleBuffer(pKey, pData, iBytes, bProtoAlso))
-    return false;
-  return iBytes == sizeof(void*) && memcpy(&pData, pData, iBytes);
 }
 
 bool CJX_Node::SetContent(const WideString& wsContent,
@@ -3381,7 +3376,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
             }
           }
           for (const auto& pArrayNode : *(pBind->GetBindItems())) {
-            if (pArrayNode != GetXFANode()) {
+            if (pArrayNode.Get() != GetXFANode()) {
               pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
                                                bScriptModify, false);
             }
@@ -3406,7 +3401,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
         pBindNode->JSNode()->SetContent(wsContent, wsXMLValue, bNotify,
                                         bScriptModify, false);
         for (const auto& pArrayNode : *(pBindNode->GetBindItems())) {
-          if (pArrayNode != GetXFANode()) {
+          if (pArrayNode.Get() != GetXFANode()) {
             pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
                                              true, false);
           }
@@ -3552,6 +3547,14 @@ pdfium::Optional<WideString> CJX_Node::TryContent(bool bScriptModify,
 
 void CJX_Node::SetWidgetData(std::unique_ptr<CXFA_WidgetData> data) {
   widget_data_ = std::move(data);
+}
+
+void CJX_Node::SetCalcData(std::unique_ptr<CXFA_CalcData> data) {
+  calc_data_ = std::move(data);
+}
+
+std::unique_ptr<CXFA_CalcData> CJX_Node::ReleaseCalcData() {
+  return std::move(calc_data_);
 }
 
 pdfium::Optional<WideString> CJX_Node::TryNamespace() {
@@ -3819,35 +3822,16 @@ void CJX_Node::MergeAllData(CXFA_Node* pDstModule) {
   }
 }
 
-void CJX_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
+void CJX_Node::MoveBufferMapData(CXFA_Node* pDstModule) {
   if (!pDstModule)
     return;
 
   bool bNeedMove = true;
-  if (!pKey)
-    bNeedMove = false;
   if (pDstModule->GetElementType() != GetXFANode()->GetElementType())
     bNeedMove = false;
 
-  XFA_MAPMODULEDATA* pSrcModuleData = nullptr;
-  XFA_MAPMODULEDATA* pDstModuleData = nullptr;
-  if (bNeedMove) {
-    pSrcModuleData = GetMapModuleData();
-    if (!pSrcModuleData)
-      bNeedMove = false;
-
-    pDstModuleData = pDstModule->JSNode()->CreateMapModuleData();
-  }
-  if (bNeedMove) {
-    auto it = pSrcModuleData->m_BufferMap.find(pKey);
-    if (it != pSrcModuleData->m_BufferMap.end()) {
-      XFA_MAPDATABLOCK* pBufferBlockData = it->second;
-      if (pBufferBlockData) {
-        pSrcModuleData->m_BufferMap.erase(pKey);
-        pDstModuleData->m_BufferMap[pKey] = pBufferBlockData;
-      }
-    }
-  }
+  if (bNeedMove)
+    pDstModule->JSNode()->SetCalcData(ReleaseCalcData());
   if (!pDstModule->IsNodeV())
     return;
 
@@ -3860,21 +3844,19 @@ void CJX_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
   pDstModule->JSNode()->SetContent(wsValue, wsFormatValue, true, true, true);
 }
 
-void CJX_Node::MoveBufferMapData(CXFA_Node* pSrcModule,
-                                 CXFA_Node* pDstModule,
-                                 void* pKey) {
-  if (!pSrcModule || !pDstModule || !pKey)
+void CJX_Node::MoveBufferMapData(CXFA_Node* pSrcModule, CXFA_Node* pDstModule) {
+  if (!pSrcModule || !pDstModule)
     return;
 
   CXFA_Node* pSrcChild = pSrcModule->GetNodeItem(XFA_NODEITEM_FirstChild);
   CXFA_Node* pDstChild = pDstModule->GetNodeItem(XFA_NODEITEM_FirstChild);
   while (pSrcChild && pDstChild) {
-    MoveBufferMapData(pSrcChild, pDstChild, pKey);
+    MoveBufferMapData(pSrcChild, pDstChild);
 
     pSrcChild = pSrcChild->GetNodeItem(XFA_NODEITEM_NextSibling);
     pDstChild = pDstChild->GetNodeItem(XFA_NODEITEM_NextSibling);
   }
-  pSrcModule->JSNode()->MoveBufferMapData(pDstModule, pKey);
+  pSrcModule->JSNode()->MoveBufferMapData(pDstModule);
 }
 
 int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,

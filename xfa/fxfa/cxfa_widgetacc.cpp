@@ -36,14 +36,6 @@ class CXFA_WidgetLayoutData {
 
 namespace {
 
-void FFDeleteCalcData(void* pData) {
-  if (pData)
-    delete ((CXFA_CalcData*)pData);
-}
-
-static XFA_MAPDATABLOCKCALLBACKINFO gs_XFADeleteCalcData = {FFDeleteCalcData,
-                                                            nullptr};
-
 class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
  public:
   CXFA_TextLayoutData() {}
@@ -644,12 +636,10 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
         if (static_cast<CXFA_WidgetAcc*>(pRefNode->GetWidgetData()) == this)
           continue;
 
-        auto* pGlobalData = static_cast<CXFA_CalcData*>(
-            pRefNode->JSNode()->GetUserData(XFA_CalcData, false));
+        CXFA_CalcData* pGlobalData = pRefNode->JSNode()->GetCalcData();
         if (!pGlobalData) {
-          pGlobalData = new CXFA_CalcData;
-          pRefNode->JSNode()->SetUserData(XFA_CalcData, pGlobalData,
-                                          &gs_XFADeleteCalcData);
+          pRefNode->JSNode()->SetCalcData(pdfium::MakeUnique<CXFA_CalcData>());
+          pGlobalData = pRefNode->JSNode()->GetCalcData();
         }
         if (!pdfium::ContainsValue(pGlobalData->m_Globals, this))
           pGlobalData->m_Globals.push_back(this);

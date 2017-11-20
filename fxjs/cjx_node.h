@@ -30,6 +30,8 @@ enum XFA_SOM_MESSAGETYPE {
 };
 
 class CFXJSE_Arguments;
+class CXFA_CalcData;
+class CXFA_LayoutItem;
 class CXFA_Node;
 class CXFA_WidgetData;
 
@@ -100,11 +102,6 @@ class CJX_Node : public CJX_Object {
   bool SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
 
-  bool SetUserData(void* pKey,
-                   void* pData,
-                   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
-  void* GetUserData(void* pKey, bool bProtoAlso);
-
   void SetBindingNodes(std::vector<UnownedPtr<CXFA_Node>> nodes) {
     binding_nodes_ = std::move(nodes);
   }
@@ -126,6 +123,16 @@ class CJX_Node : public CJX_Object {
 
   void SetWidgetData(std::unique_ptr<CXFA_WidgetData> data);
   CXFA_WidgetData* GetWidgetData() const { return widget_data_.get(); }
+
+  void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_ = item; }
+  CXFA_LayoutItem* GetLayoutItem() const { return layout_item_.Get(); }
+
+  void SetCalcData(std::unique_ptr<CXFA_CalcData> data);
+  CXFA_CalcData* GetCalcData() const { return calc_data_.get(); }
+  std::unique_ptr<CXFA_CalcData> ReleaseCalcData();
+
+  void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }
+  size_t GetCalcRecursionCount() const { return calc_recursion_count_; }
 
   pdfium::Optional<WideString> TryNamespace();
 
@@ -414,6 +421,10 @@ class CJX_Node : public CJX_Object {
                                XFA_Attribute eAttribute);
 
  private:
+  bool SetUserData(void* pKey,
+                   void* pData,
+                   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
+
   void ResolveNodeList(CFXJSE_Value* pValue,
                        WideString wsExpression,
                        uint32_t dwFlag,
@@ -447,17 +458,18 @@ class CJX_Node : public CJX_Object {
   bool HasMapModuleKey(void* pKey);
   void ClearMapModuleBuffer();
   void RemoveMapModuleKey(void* pKey);
-  void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
-  void MoveBufferMapData(CXFA_Node* pSrcModule,
-                         CXFA_Node* pDstModule,
-                         void* pKey);
+  void MoveBufferMapData(CXFA_Node* pDstModule);
+  void MoveBufferMapData(CXFA_Node* pSrcModule, CXFA_Node* pDstModule);
 
   int32_t execSingleEventByName(const WideStringView& wsEventName,
                                 XFA_Element eType);
 
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
   std::unique_ptr<CXFA_WidgetData> widget_data_;
+  std::unique_ptr<CXFA_CalcData> calc_data_;
+  UnownedPtr<CXFA_LayoutItem> layout_item_;
   std::vector<UnownedPtr<CXFA_Node>> binding_nodes_;
+  size_t calc_recursion_count_ = 0;
 };
 
 #endif  // FXJS_CJX_NODE_H_

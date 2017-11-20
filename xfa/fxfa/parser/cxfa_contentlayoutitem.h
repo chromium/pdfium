@@ -9,8 +9,6 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
 
-#define XFA_LAYOUTITEMKEY (void*)(uintptr_t) FXBSTR_ID('L', 'Y', 'I', 'M')
-
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
   explicit CXFA_ContentLayoutItem(CXFA_Node* pNode);

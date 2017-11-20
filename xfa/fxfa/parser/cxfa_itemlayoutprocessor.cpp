@@ -612,8 +612,7 @@ void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     CXFA_ContentLayoutItem* pCurLayoutItem =
-        (CXFA_ContentLayoutItem*)pNode->JSNode()->GetUserData(XFA_LAYOUTITEMKEY,
-                                                              false);
+        static_cast<CXFA_ContentLayoutItem*>(pNode->JSNode()->GetLayoutItem());
     CXFA_ContentLayoutItem* pNextLayoutItem = nullptr;
     while (pCurLayoutItem) {
       pNextLayoutItem = pCurLayoutItem->m_pNext;
@@ -1156,9 +1155,8 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
       m_bHasAvailHeight(true) {
   ASSERT(m_pFormNode && (m_pFormNode->IsContainerNode() ||
                          m_pFormNode->GetElementType() == XFA_Element::Form));
-  m_pOldLayoutItem =
-      (CXFA_ContentLayoutItem*)m_pFormNode->JSNode()->GetUserData(
-          XFA_LAYOUTITEMKEY, false);
+  m_pOldLayoutItem = static_cast<CXFA_ContentLayoutItem*>(
+      m_pFormNode->JSNode()->GetLayoutItem());
 }
 
 CXFA_ItemLayoutProcessor::~CXFA_ItemLayoutProcessor() {}
@@ -1178,8 +1176,8 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
                     ->GetNotify()
                     ->OnCreateLayoutItem(pFormNode);
   CXFA_ContentLayoutItem* pPrevLayoutItem =
-      (CXFA_ContentLayoutItem*)pFormNode->JSNode()->GetUserData(
-          XFA_LAYOUTITEMKEY, false);
+      static_cast<CXFA_ContentLayoutItem*>(
+          pFormNode->JSNode()->GetLayoutItem());
   if (pPrevLayoutItem) {
     while (pPrevLayoutItem->m_pNext)
       pPrevLayoutItem = pPrevLayoutItem->m_pNext;
@@ -1187,7 +1185,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     pPrevLayoutItem->m_pNext = pLayoutItem;
     pLayoutItem->m_pPrev = pPrevLayoutItem;
   } else {
-    pFormNode->JSNode()->SetUserData(XFA_LAYOUTITEMKEY, pLayoutItem, nullptr);
+    pFormNode->JSNode()->SetLayoutItem(pLayoutItem);
   }
   return pLayoutItem;
 }
