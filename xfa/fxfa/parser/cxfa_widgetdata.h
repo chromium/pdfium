@@ -120,7 +120,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   int32_t GetHorizontalScrollPolicy();
   int32_t GetNumberOfCells();
   bool SetValue(const WideString& wsValue, XFA_VALUEPICTURE eValueType);
-  bool GetPictureContent(WideString& wsPicture, XFA_VALUEPICTURE ePicture);
+  WideString GetPictureContent(XFA_VALUEPICTURE ePicture);
   IFX_Locale* GetLocal();
   bool GetValue(WideString& wsValue, XFA_VALUEPICTURE eValueType);
   bool GetNormalizeDataValue(const WideString& wsValue,

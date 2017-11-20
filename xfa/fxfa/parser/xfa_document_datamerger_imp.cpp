@@ -357,8 +357,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                     XFA_Element::DateTime);
       break;
     case XFA_Element::NumericEdit: {
-      WideString wsPicture;
-      pWidgetData->GetPictureContent(wsPicture, XFA_VALUEPICTURE_DataBind);
+      WideString wsPicture =
+          pWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
       if (wsPicture.IsEmpty()) {
         WideString wsOutput;
         pWidgetData->NormalizeNumStr(wsNormalizeValue, wsOutput);

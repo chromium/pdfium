@@ -472,11 +472,12 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
     } else {
       WideString wsPicture;
       if (pFieldWidgetData) {
-        pFieldWidgetData->GetPictureContent(wsPicture,
-                                            XFA_VALUEPICTURE_DataBind);
+        wsPicture =
+            pFieldWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
       }
       if (!wsPicture.IsEmpty())
         return pFieldWidgetData;
+
       CXFA_Node* pDataNode = GetBindData();
       if (!pDataNode)
         return nullptr;
@@ -486,8 +487,8 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
           continue;
         pFieldWidgetData = pFormNode->GetWidgetData();
         if (pFieldWidgetData) {
-          pFieldWidgetData->GetPictureContent(wsPicture,
-                                              XFA_VALUEPICTURE_DataBind);
+          wsPicture =
+              pFieldWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
         }
         if (!wsPicture.IsEmpty())
           break;

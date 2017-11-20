@@ -78,8 +78,7 @@ void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget, WideString& wsText) {
-  WideString wsPattern;
-  m_pDataAcc->GetPictureContent(wsPattern, XFA_VALUEPICTURE_Edit);
+  WideString wsPattern = m_pDataAcc->GetPictureContent(XFA_VALUEPICTURE_Edit);
   if (!wsPattern.IsEmpty())
     return true;
 

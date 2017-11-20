@@ -10,9 +10,9 @@
 
 CXFA_BindData::CXFA_BindData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-void CXFA_BindData::GetPicture(WideString& wsPicture) {
+WideString CXFA_BindData::GetPicture() {
   CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_Element::Picture, false);
   if (!pPicture)
-    return;
-  wsPicture = pPicture->JSNode()->GetContent(false);
+    return L"";
+  return pPicture->JSNode()->GetContent(false);
 }

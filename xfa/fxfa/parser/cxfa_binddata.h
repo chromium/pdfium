@@ -16,7 +16,7 @@ class CXFA_BindData : public CXFA_DataData {
  public:
   explicit CXFA_BindData(CXFA_Node* pNode);
 
-  void GetPicture(WideString& wsPicture);
+  WideString GetPicture();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BINDDATA_H_

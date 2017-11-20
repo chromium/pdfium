@@ -1388,8 +1388,7 @@ bool CXFA_WidgetData::SetValue(const WideString& wsValue,
   m_bPreNull = m_bIsNull;
   m_bIsNull = false;
   WideString wsNewText(wsValue);
-  WideString wsPicture;
-  GetPictureContent(wsPicture, eValueType);
+  WideString wsPicture = GetPictureContent(eValueType);
   bool bValidate = true;
   bool bSyncData = false;
   CXFA_Node* pNode = GetUIChild();
@@ -1434,10 +1433,9 @@ bool CXFA_WidgetData::SetValue(const WideString& wsValue,
   return bValidate;
 }
 
-bool CXFA_WidgetData::GetPictureContent(WideString& wsPicture,
-                                        XFA_VALUEPICTURE ePicture) {
+WideString CXFA_WidgetData::GetPictureContent(XFA_VALUEPICTURE ePicture) {
   if (ePicture == XFA_VALUEPICTURE_Raw)
-    return false;
+    return L"";
 
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
   switch (ePicture) {
@@ -1448,40 +1446,30 @@ bool CXFA_WidgetData::GetPictureContent(WideString& wsPicture,
                 pFormat->GetChild(0, XFA_Element::Picture, false)) {
           pdfium::Optional<WideString> picture =
               pPicture->JSNode()->TryContent(false, true);
-          if (picture) {
-            wsPicture = *picture;
-            return true;
-          }
+          if (picture)
+            return *picture;
         }
       }
 
       IFX_Locale* pLocale = GetLocal();
       if (!pLocale)
-        return false;
+        return L"";
 
       uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
         case XFA_VT_DATE:
-          wsPicture =
-              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
-          break;
+          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
         case XFA_VT_TIME:
-          wsPicture =
-              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
-          break;
+          return pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
         case XFA_VT_DATETIME:
-          wsPicture =
-              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium) +
-              L"T" +
-              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
-          break;
+          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium) +
+                 L"T" +
+                 pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
         case XFA_VT_DECIMAL:
         case XFA_VT_FLOAT:
-          break;
         default:
-          break;
+          return L"";
       }
-      return true;
     }
     case XFA_VALUEPICTURE_Edit: {
       CXFA_Node* pUI = m_pNode->GetChild(0, XFA_Element::Ui, false);
@@ -1490,50 +1478,39 @@ bool CXFA_WidgetData::GetPictureContent(WideString& wsPicture,
                 pUI->GetChild(0, XFA_Element::Picture, false)) {
           pdfium::Optional<WideString> picture =
               pPicture->JSNode()->TryContent(false, true);
-          if (picture) {
-            wsPicture = *picture;
-            return true;
-          }
+          if (picture)
+            return *picture;
         }
       }
 
       IFX_Locale* pLocale = GetLocal();
       if (!pLocale)
-        return false;
+        return L"";
 
       uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
         case XFA_VT_DATE:
-          wsPicture =
-              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
-          break;
+          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
         case XFA_VT_TIME:
-          wsPicture =
-              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
-          break;
+          return pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
         case XFA_VT_DATETIME:
-          wsPicture =
-              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short) +
-              L"T" +
-              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
-          break;
+          return pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short) +
+                 L"T" +
+                 pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
         default:
-          break;
+          return L"";
       }
-      return true;
     }
     case XFA_VALUEPICTURE_DataBind: {
       CXFA_BindData bindData = GetBindData();
-      if (bindData) {
-        bindData.GetPicture(wsPicture);
-        return true;
-      }
+      if (bindData)
+        return bindData.GetPicture();
       break;
     }
     default:
       break;
   }
-  return false;
+  return L"";
 }
 
 IFX_Locale* CXFA_WidgetData::GetLocal() {
@@ -1555,8 +1532,7 @@ bool CXFA_WidgetData::GetValue(WideString& wsValue,
   if (eValueType == XFA_VALUEPICTURE_Display)
     GetItemLabel(wsValue.AsStringView(), wsValue);
 
-  WideString wsPicture;
-  GetPictureContent(wsPicture, eValueType);
+  WideString wsPicture = GetPictureContent(eValueType);
   CXFA_Node* pNode = GetUIChild();
   if (!pNode)
     return true;
@@ -1624,8 +1600,7 @@ bool CXFA_WidgetData::GetNormalizeDataValue(const WideString& wsValue,
   if (wsValue.IsEmpty())
     return true;
 
-  WideString wsPicture;
-  GetPictureContent(wsPicture, XFA_VALUEPICTURE_DataBind);
+  WideString wsPicture = GetPictureContent(XFA_VALUEPICTURE_DataBind);
   if (wsPicture.IsEmpty())
     return true;
 
@@ -1648,8 +1623,7 @@ bool CXFA_WidgetData::GetFormatDataValue(const WideString& wsValue,
   if (wsValue.IsEmpty())
     return true;
 
-  WideString wsPicture;
-  GetPictureContent(wsPicture, XFA_VALUEPICTURE_DataBind);
+  WideString wsPicture = GetPictureContent(XFA_VALUEPICTURE_DataBind);
   if (wsPicture.IsEmpty())
     return true;
 

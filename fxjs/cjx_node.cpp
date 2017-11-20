@@ -1452,8 +1452,8 @@ void CJX_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
 
         pContainerWidgetData = pFormNode->GetContainerWidgetData();
         if (pContainerWidgetData) {
-          pContainerWidgetData->GetPictureContent(wsPicture,
-                                                  XFA_VALUEPICTURE_DataBind);
+          wsPicture = pContainerWidgetData->GetPictureContent(
+              XFA_VALUEPICTURE_DataBind);
         }
         if (!wsPicture.IsEmpty())
           break;
