@@ -54,16 +54,16 @@ void XFA_BOX_GetPath_Arc(const CXFA_BoxData& boxData,
   rtDraw.top = center.y - b;
   rtDraw.width = a + a;
   rtDraw.height = b + b;
-  float startAngle = 0, sweepAngle = 360;
-  bool bStart = boxData.GetStartAngle(startAngle);
-  bool bEnd = boxData.GetSweepAngle(sweepAngle);
-  if (!bStart && !bEnd) {
+  pdfium::Optional<float> startAngle = boxData.GetStartAngle();
+  pdfium::Optional<float> sweepAngle = boxData.GetSweepAngle();
+  if (!startAngle && !sweepAngle) {
     fillPath.AddEllipse(rtDraw);
     return;
   }
-  startAngle = -startAngle * FX_PI / 180.0f;
-  sweepAngle = -sweepAngle * FX_PI / 180.0f;
-  fillPath.AddArc(rtDraw.TopLeft(), rtDraw.Size(), startAngle, sweepAngle);
+
+  fillPath.AddArc(rtDraw.TopLeft(), rtDraw.Size(),
+                  -startAngle.value_or(0) * FX_PI / 180.0f,
+                  -sweepAngle.value_or(360) * FX_PI / 180.0f);
 }
 
 void XFA_BOX_GetPath(const std::vector<CXFA_StrokeData>& strokes,
@@ -560,7 +560,8 @@ void XFA_BOX_StrokeArc(const CXFA_BoxData& boxData,
 
   bool bVisible = false;
   float fThickness = 0;
-  int32_t i3DType = boxData.Get3DStyle(bVisible, fThickness);
+  int32_t i3DType = 0;
+  std::tie(i3DType, bVisible, fThickness) = boxData.Get3DStyle();
   if (i3DType) {
     if (bVisible && fThickness >= 0.001f) {
       dwFlags |= XFA_DRAWBOX_Lowered3D;
@@ -727,7 +728,8 @@ void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
                          const CFX_Matrix& matrix) {
   bool bVisible = false;
   float fThickness = 0;
-  int32_t i3DType = boxData.Get3DStyle(bVisible, fThickness);
+  int32_t i3DType = 0;
+  std::tie(i3DType, bVisible, fThickness) = boxData.Get3DStyle();
   if (i3DType) {
     if (!bVisible || fThickness < 0.001f) {
       return;

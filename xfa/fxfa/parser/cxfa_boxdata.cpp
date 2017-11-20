@@ -108,32 +108,26 @@ bool CXFA_BoxData::IsCircular() const {
   return m_pNode->JSNode()->GetBoolean(XFA_Attribute::Circular);
 }
 
-bool CXFA_BoxData::GetStartAngle(float& fStartAngle) const {
-  fStartAngle = 0;
+pdfium::Optional<float> CXFA_BoxData::GetStartAngle() const {
   if (!m_pNode)
-    return false;
+    return {};
 
   pdfium::Optional<CXFA_Measurement> measure =
       m_pNode->JSNode()->TryMeasure(XFA_Attribute::StartAngle, false);
   if (!measure)
-    return false;
-
-  fStartAngle = measure->GetValue();
-  return true;
+    return {};
+  return {measure->GetValue()};
 }
 
-bool CXFA_BoxData::GetSweepAngle(float& fSweepAngle) const {
-  fSweepAngle = 360;
+pdfium::Optional<float> CXFA_BoxData::GetSweepAngle() const {
   if (!m_pNode)
-    return false;
+    return {};
 
   pdfium::Optional<CXFA_Measurement> measure =
       m_pNode->JSNode()->TryMeasure(XFA_Attribute::SweepAngle, false);
   if (!measure)
-    return false;
-
-  fSweepAngle = measure->GetValue();
-  return true;
+    return {};
+  return {measure->GetValue()};
 }
 
 CXFA_FillData CXFA_BoxData::GetFillData(bool bModified) const {
@@ -150,16 +144,15 @@ CXFA_MarginData CXFA_BoxData::GetMarginData() const {
       m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false) : nullptr);
 }
 
-int32_t CXFA_BoxData::Get3DStyle(bool& bVisible, float& fThickness) const {
+std::tuple<int32_t, bool, float> CXFA_BoxData::Get3DStyle() const {
   if (IsArc())
-    return 0;
+    return {0, false, 0.0f};
 
   std::vector<CXFA_StrokeData> strokes = GetStrokesInternal(m_pNode, true);
   CXFA_StrokeData strokeData(nullptr);
   int32_t iType = Style3D(strokes, strokeData);
-  if (iType) {
-    bVisible = strokeData.IsVisible();
-    fThickness = strokeData.GetThickness();
-  }
-  return iType;
+  if (iType == 0)
+    return {0, false, 0.0f};
+
+  return {iType, strokeData.IsVisible(), strokeData.GetThickness()};
 }

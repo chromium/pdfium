@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_BOXDATA_H_
 #define XFA_FXFA_PARSER_CXFA_BOXDATA_H_
 
+#include <tuple>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
@@ -26,29 +27,21 @@ class CXFA_BoxData : public CXFA_DataData {
   bool IsRectangle() const {
     return GetElementType() == XFA_Element::Rectangle;
   }
+  bool IsCircular() const;
+
   int32_t GetHand() const;
   int32_t GetPresence() const;
+  std::tuple<int32_t, bool, float> Get3DStyle() const;
+
   int32_t CountEdges() const;
   CXFA_EdgeData GetEdgeData(int32_t nIndex) const;
-  std::vector<CXFA_StrokeData> GetStrokes() const;
-  bool IsCircular() const;
-  bool GetStartAngle(float& fStartAngle) const;
-  float GetStartAngle() const {
-    float fStartAngle;
-    GetStartAngle(fStartAngle);
-    return fStartAngle;
-  }
-
-  bool GetSweepAngle(float& fSweepAngle) const;
-  float GetSweepAngle() const {
-    float fSweepAngle;
-    GetSweepAngle(fSweepAngle);
-    return fSweepAngle;
-  }
-
   CXFA_FillData GetFillData(bool bModified) const;
   CXFA_MarginData GetMarginData() const;
-  int32_t Get3DStyle(bool& bVisible, float& fThickness) const;
+
+  std::vector<CXFA_StrokeData> GetStrokes() const;
+
+  pdfium::Optional<float> GetStartAngle() const;
+  pdfium::Optional<float> GetSweepAngle() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOXDATA_H_

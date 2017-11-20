@@ -379,7 +379,8 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
   if (borderData) {
     bool bVisible = false;
     float fThickness = 0;
-    borderData.Get3DStyle(bVisible, fThickness);
+    int32_t iType = 0;
+    std::tie(iType, bVisible, fThickness) = borderData.Get3DStyle();
     if (!bLeft || !bTop || !bRight || !bBottom) {
       std::vector<CXFA_StrokeData> strokes = borderData.GetStrokes();
       if (!bTop)
