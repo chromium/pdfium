@@ -525,3 +525,63 @@ TEST_F(FPDFTextEmbeddertest, Bug_921) {
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbeddertest, GetTextWithHyphen) {
+  EXPECT_TRUE(OpenDocument("bug_781804.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  EXPECT_TRUE(textpage);
+
+  // Check that soft hyphens are not included
+  // Expecting 'Veritaserum', except there is a \uFFFE where the hyphen was in
+  // the original text. This is a weird thing that Adobe does, which we
+  // replicate.
+  constexpr unsigned short soft_expected[] = {
+      0x0056, 0x0065, 0x0072, 0x0069, 0x0074, 0x0061, 0xfffe,
+      0x0073, 0x0065, 0x0072, 0x0075, 0x006D, 0x0000};
+  {
+    constexpr int expected_count = FX_ArraySize(soft_expected);
+    unsigned short buffer[expected_count];
+    memset(buffer, 0, sizeof(buffer));
+
+    EXPECT_EQ(expected_count,
+              FPDFText_GetText(textpage, 0, expected_count, buffer));
+    for (int i = 0; i < expected_count; i++)
+      EXPECT_EQ(soft_expected[i], buffer[i]);
+  }
+
+  // Check that hard hyphens are included
+  {
+    // There isn't the \0 in the actual doc, but there is a \r\n, so need to
+    // add 1 to get aligned.
+    constexpr size_t offset = FX_ArraySize(soft_expected) + 1;
+    // Expecting 'User-\r\ngenerated', the - is a unicode character, so cannnot
+    // store in a char[].
+    constexpr unsigned short hard_expected[] = {
+        0x0055, 0x0073, 0x0065, 0x0072, 0x2010, 0x000d, 0x000a, 0x0067, 0x0065,
+        0x006e, 0x0065, 0x0072, 0x0061, 0x0074, 0x0065, 0x0064, 0x0000};
+    constexpr int expected_count = FX_ArraySize(hard_expected);
+    unsigned short buffer[expected_count];
+
+    EXPECT_EQ(expected_count,
+              FPDFText_GetText(textpage, offset, expected_count, buffer));
+    for (int i = 0; i < expected_count; i++)
+      EXPECT_EQ(hard_expected[i], buffer[i]);
+  }
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbeddertest, bug_782596) {
+  // If there is a regression in this test, it will only fail under ASAN
+  EXPECT_TRUE(OpenDocument("bug_782596.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  EXPECT_TRUE(textpage);
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
