@@ -15,7 +15,7 @@ CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 CXFA_FFLine::~CXFA_FFLine() {}
 
 void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
-                                  int32_t iHand,
+                                  XFA_ATTRIBUTEENUM iHand,
                                   float fLineWidth) {
   float fHalfWidth = fLineWidth / 2.0f;
   if (rect.height < 1.0f) {
@@ -25,6 +25,11 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
         break;
       case XFA_ATTRIBUTEENUM_Right:
         rect.top += fHalfWidth;
+      case XFA_ATTRIBUTEENUM_Even:
+        break;
+      default:
+        NOTREACHED();
+        break;
     }
   } else if (rect.width < 1.0f) {
     switch (iHand) {
@@ -34,6 +39,11 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
       case XFA_ATTRIBUTEENUM_Right:
         rect.left += fHalfWidth;
         break;
+      case XFA_ATTRIBUTEENUM_Even:
+        break;
+      default:
+        NOTREACHED();
+        break;
     }
   } else {
     switch (iHand) {
@@ -42,6 +52,11 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
         break;
       case XFA_ATTRIBUTEENUM_Right:
         rect.Deflate(fHalfWidth, fHalfWidth);
+        break;
+      case XFA_ATTRIBUTEENUM_Even:
+        break;
+      default:
+        NOTREACHED();
         break;
     }
   }

@@ -8,15 +8,15 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-int32_t CXFA_LineData::GetHand() {
+XFA_ATTRIBUTEENUM CXFA_LineData::GetHand() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Hand);
 }
 
-bool CXFA_LineData::GetSlope() {
+bool CXFA_LineData::GetSlope() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Slope) ==
          XFA_ATTRIBUTEENUM_Slash;
 }
 
-CXFA_EdgeData CXFA_LineData::GetEdgeData() {
+CXFA_EdgeData CXFA_LineData::GetEdgeData() const {
   return CXFA_EdgeData(m_pNode->GetChild(0, XFA_Element::Edge, false));
 }

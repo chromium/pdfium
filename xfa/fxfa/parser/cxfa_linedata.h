@@ -17,9 +17,9 @@ class CXFA_LineData : public CXFA_DataData {
  public:
   explicit CXFA_LineData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-  int32_t GetHand();
-  bool GetSlope();
-  CXFA_EdgeData GetEdgeData();
+  XFA_ATTRIBUTEENUM GetHand() const;
+  bool GetSlope() const;
+  CXFA_EdgeData GetEdgeData() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LINEDATA_H_

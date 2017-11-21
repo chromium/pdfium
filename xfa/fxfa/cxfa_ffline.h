@@ -20,7 +20,9 @@ class CXFA_FFLine : public CXFA_FFDraw {
                     uint32_t dwStatus) override;
 
  private:
-  void GetRectFromHand(CFX_RectF& rect, int32_t iHand, float fLineWidth);
+  void GetRectFromHand(CFX_RectF& rect,
+                       XFA_ATTRIBUTEENUM iHand,
+                       float fLineWidth);
 };
 
 #endif  // XFA_FXFA_CXFA_FFLINE_H_
