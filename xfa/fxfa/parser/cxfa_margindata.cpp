@@ -9,41 +9,45 @@
 CXFA_MarginData::CXFA_MarginData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 float CXFA_MarginData::GetLeftInset() const {
-  float left = 0;
-  TryLeftInset(left);
-  return left;
+  return TryLeftInset().value_or(0);
 }
 
 float CXFA_MarginData::GetTopInset() const {
-  float top = 0;
-  TryTopInset(top);
-  return top;
+  return TryTopInset().value_or(0);
 }
 
 float CXFA_MarginData::GetRightInset() const {
-  float right = 0;
-  TryRightInset(right);
-  return right;
+  return TryRightInset().value_or(0);
 }
 
 float CXFA_MarginData::GetBottomInset() const {
-  float bottom = 0;
-  TryBottomInset(bottom);
-  return bottom;
+  return TryBottomInset().value_or(0);
 }
 
-bool CXFA_MarginData::TryLeftInset(float& fInset) const {
-  return TryMeasure(XFA_Attribute::LeftInset, fInset);
+pdfium::Optional<float> CXFA_MarginData::TryLeftInset() const {
+  float value = 0;
+  if (TryMeasure(XFA_Attribute::LeftInset, value))
+    return {value};
+  return {};
 }
 
-bool CXFA_MarginData::TryTopInset(float& fInset) const {
-  return TryMeasure(XFA_Attribute::TopInset, fInset);
+pdfium::Optional<float> CXFA_MarginData::TryTopInset() const {
+  float value = 0;
+  if (TryMeasure(XFA_Attribute::TopInset, value))
+    return {value};
+  return {};
 }
 
-bool CXFA_MarginData::TryRightInset(float& fInset) const {
-  return TryMeasure(XFA_Attribute::RightInset, fInset);
+pdfium::Optional<float> CXFA_MarginData::TryRightInset() const {
+  float value = 0;
+  if (TryMeasure(XFA_Attribute::RightInset, value))
+    return {value};
+  return {};
 }
 
-bool CXFA_MarginData::TryBottomInset(float& fInset) const {
-  return TryMeasure(XFA_Attribute::BottomInset, fInset);
+pdfium::Optional<float> CXFA_MarginData::TryBottomInset() const {
+  float value = 0;
+  if (TryMeasure(XFA_Attribute::BottomInset, value))
+    return {value};
+  return {};
 }

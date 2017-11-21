@@ -373,32 +373,28 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
     return CFX_RectF();
   }
 
-  float fLeftInset = 0;
-  float fTopInset = 0;
-  float fRightInset = 0;
-  float fBottomInset = 0;
-  bool bLeft = mgUI.TryLeftInset(fLeftInset);
-  bool bTop = mgUI.TryTopInset(fTopInset);
-  bool bRight = mgUI.TryRightInset(fRightInset);
-  bool bBottom = mgUI.TryBottomInset(fBottomInset);
+  pdfium::Optional<float> left = mgUI.TryLeftInset();
+  pdfium::Optional<float> top = mgUI.TryTopInset();
+  pdfium::Optional<float> right = mgUI.TryRightInset();
+  pdfium::Optional<float> bottom = mgUI.TryBottomInset();
   if (borderData.HasValidNode()) {
     bool bVisible = false;
     float fThickness = 0;
     int32_t iType = 0;
     std::tie(iType, bVisible, fThickness) = borderData.Get3DStyle();
-    if (!bLeft || !bTop || !bRight || !bBottom) {
+    if (!left || !top || !right || !bottom) {
       std::vector<CXFA_StrokeData> strokes = borderData.GetStrokes();
-      if (!bTop)
-        fTopInset = GetEdgeThickness(strokes, bVisible, 0);
-      if (!bRight)
-        fRightInset = GetEdgeThickness(strokes, bVisible, 1);
-      if (!bBottom)
-        fBottomInset = GetEdgeThickness(strokes, bVisible, 2);
-      if (!bLeft)
-        fLeftInset = GetEdgeThickness(strokes, bVisible, 3);
+      if (!top)
+        top = GetEdgeThickness(strokes, bVisible, 0);
+      if (!right)
+        right = GetEdgeThickness(strokes, bVisible, 1);
+      if (!bottom)
+        bottom = GetEdgeThickness(strokes, bVisible, 2);
+      if (!left)
+        left = GetEdgeThickness(strokes, bVisible, 3);
     }
   }
-  return CFX_RectF(fLeftInset, fTopInset, fRightInset, fBottomInset);
+  return CFX_RectF(*left, *top, *right, *bottom);
 }
 
 XFA_ATTRIBUTEENUM CXFA_WidgetData::GetButtonHighlight() {

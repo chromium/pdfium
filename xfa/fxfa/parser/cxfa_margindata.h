@@ -21,10 +21,10 @@ class CXFA_MarginData : public CXFA_DataData {
   float GetRightInset() const;
   float GetBottomInset() const;
 
-  bool TryLeftInset(float& fInset) const;
-  bool TryTopInset(float& fInset) const;
-  bool TryRightInset(float& fInset) const;
-  bool TryBottomInset(float& fInset) const;
+  pdfium::Optional<float> TryLeftInset() const;
+  pdfium::Optional<float> TryTopInset() const;
+  pdfium::Optional<float> TryRightInset() const;
+  pdfium::Optional<float> TryBottomInset() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MARGINDATA_H_
