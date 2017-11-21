@@ -18,14 +18,30 @@ class CXFA_FillData : public CXFA_DataData {
   explicit CXFA_FillData(CXFA_Node* pNode);
   ~CXFA_FillData() override;
 
-  int32_t GetPresence();
-  FX_ARGB GetColor(bool bText = false);
-  XFA_Element GetFillType();
-  int32_t GetPattern(FX_ARGB& foreColor);
-  int32_t GetStipple(FX_ARGB& stippleColor);
-  int32_t GetLinear(FX_ARGB& endColor);
-  int32_t GetRadial(FX_ARGB& endColor);
+  bool IsVisible() const;
+
+  FX_ARGB GetColor(bool bText) const;
   void SetColor(FX_ARGB color);
+
+  XFA_Element GetFillType() const;
+
+  XFA_ATTRIBUTEENUM GetPatternType() const;
+  FX_ARGB GetPatternColor() const;
+
+  XFA_ATTRIBUTEENUM GetLinearType() const;
+  FX_ARGB GetLinearColor() const;
+
+  int32_t GetStippleRate() const;
+  FX_ARGB GetStippleColor() const;
+
+  bool IsRadialToEdge() const;
+  FX_ARGB GetRadialColor() const;
+
+ private:
+  CXFA_Node* GetStipple() const;
+  CXFA_Node* GetRadial() const;
+  CXFA_Node* GetLinear() const;
+  CXFA_Node* GetPattern() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FILLDATA_H_

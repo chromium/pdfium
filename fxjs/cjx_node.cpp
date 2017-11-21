@@ -1600,7 +1600,7 @@ void CJX_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
     return;
   }
 
-  FX_ARGB color = borderfillData.GetColor();
+  FX_ARGB color = borderfillData.GetColor(false);
   int32_t a;
   int32_t r;
   int32_t g;
