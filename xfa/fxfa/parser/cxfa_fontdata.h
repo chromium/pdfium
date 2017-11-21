@@ -16,20 +16,20 @@ class CXFA_FontData : public CXFA_DataData {
  public:
   explicit CXFA_FontData(CXFA_Node* pNode);
 
-  float GetBaselineShift();
-  float GetHorizontalScale();
-  float GetVerticalScale();
-  float GetLetterSpacing();
-  int32_t GetLineThrough();
-  int32_t GetUnderline();
-  int32_t GetUnderlinePeriod();
-  float GetFontSize();
-  void GetTypeface(WideString& wsTypeFace);
+  float GetBaselineShift() const;
+  float GetHorizontalScale() const;
+  float GetVerticalScale() const;
+  float GetLetterSpacing() const;
+  int32_t GetLineThrough() const;
+  int32_t GetUnderline() const;
+  int32_t GetUnderlinePeriod() const;
+  float GetFontSize() const;
+  WideString GetTypeface() const;
 
-  bool IsBold();
-  bool IsItalic();
+  bool IsBold() const;
+  bool IsItalic() const;
 
-  FX_ARGB GetColor();
+  FX_ARGB GetColor() const;
   void SetColor(FX_ARGB color);
 };
 

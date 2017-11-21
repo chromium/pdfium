@@ -327,7 +327,7 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   uint32_t dwStyle = 0;
   CXFA_FontData fontData = pTextProvider->GetFontData();
   if (fontData.HasValidNode()) {
-    fontData.GetTypeface(wsFamily);
+    wsFamily = fontData.GetTypeface();
     if (fontData.IsBold())
       dwStyle |= FXFONT_BOLD;
     if (fontData.IsItalic())
