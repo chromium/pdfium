@@ -783,26 +783,29 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
   if (paraData.HasValidNode())
     size.width += paraData.GetMarginLeft() + paraData.GetTextIndent();
 
-  float fVal = 0;
-  float fMin = 0;
-  float fMax = 0;
-  if (GetWidth(fVal)) {
-    size.width = fVal;
+  float width = 0;
+  if (TryWidth(width)) {
+    size.width = width;
   } else {
-    if (GetMinWidth(fMin))
+    float fMin = 0;
+    if (TryMinWidth(fMin))
       size.width = std::max(size.width, fMin);
-    if (GetMaxWidth(fMax) && fMax > 0)
+
+    float fMax = 0;
+    if (TryMaxWidth(fMax) && fMax > 0)
       size.width = std::min(size.width, fMax);
   }
-  fVal = 0;
-  fMin = 0;
-  fMax = 0;
-  if (GetHeight(fVal)) {
-    size.height = fVal;
+
+  float height = 0;
+  if (TryHeight(height)) {
+    size.height = height;
   } else {
-    if (GetMinHeight(fMin))
+    float fMin = 0;
+    if (TryMinHeight(fMin))
       size.height = std::max(size.height, fMin);
-    if (GetMaxHeight(fMax) && fMax > 0)
+
+    float fMax = 0;
+    if (TryMaxHeight(fMax) && fMax > 0)
       size.height = std::min(size.height, fMax);
   }
   return true;
@@ -917,12 +920,12 @@ bool CXFA_WidgetAcc::CalculateImageAutoSize(CFX_SizeF& size) {
         XFA_UnitPx2Pt((float)pBitmap->GetHeight(), (float)iImageYDpi));
 
     CFX_RectF rtFit;
-    if (GetWidth(rtFit.width))
+    if (TryWidth(rtFit.width))
       GetWidthWithoutMargin(rtFit.width);
     else
       rtFit.width = rtImage.width;
 
-    if (GetHeight(rtFit.height))
+    if (TryHeight(rtFit.height))
       GetHeightWithoutMargin(rtFit.height);
     else
       rtFit.height = rtImage.height;
@@ -947,12 +950,12 @@ bool CXFA_WidgetAcc::CalculateImageEditAutoSize(CFX_SizeF& size) {
         XFA_UnitPx2Pt((float)pBitmap->GetHeight(), (float)iImageYDpi));
 
     CFX_RectF rtFit;
-    if (GetWidth(rtFit.width))
+    if (TryWidth(rtFit.width))
       GetWidthWithoutMargin(rtFit.width);
     else
       rtFit.width = rtImage.width;
 
-    if (GetHeight(rtFit.height))
+    if (TryHeight(rtFit.height))
       GetHeightWithoutMargin(rtFit.height);
     else
       rtFit.height = rtImage.height;
@@ -1010,10 +1013,12 @@ float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
   if (marginData.HasValidNode())
     fWidthCalc += marginData.GetLeftInset() + marginData.GetRightInset();
 
-  float fMin = 0, fMax = 0;
-  if (GetMinWidth(fMin))
+  float fMin = 0;
+  if (TryMinWidth(fMin))
     fWidthCalc = std::max(fWidthCalc, fMin);
-  if (GetMaxWidth(fMax) && fMax > 0)
+
+  float fMax = 0;
+  if (TryMaxWidth(fMax) && fMax > 0)
     fWidthCalc = std::min(fWidthCalc, fMax);
 
   return fWidthCalc;
@@ -1031,10 +1036,12 @@ float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
   if (marginData.HasValidNode())
     fHeightCalc += marginData.GetTopInset() + marginData.GetBottomInset();
 
-  float fMin = 0, fMax = 0;
-  if (GetMinHeight(fMin))
+  float fMin = 0;
+  if (TryMinHeight(fMin))
     fHeightCalc = std::max(fHeightCalc, fMin);
-  if (GetMaxHeight(fMax) && fMax > 0)
+
+  float fMax = 0;
+  if (TryMaxHeight(fMax) && fMax > 0)
     fHeightCalc = std::min(fHeightCalc, fMax);
 
   return fHeightCalc;
@@ -1052,7 +1059,7 @@ void CXFA_WidgetAcc::StartWidgetLayout(float& fCalcWidth, float& fCalcHeight) {
   XFA_Element eUIType = GetUIType();
   if (eUIType == XFA_Element::Text) {
     m_pLayoutData->m_fWidgetHeight = -1;
-    GetHeight(m_pLayoutData->m_fWidgetHeight);
+    TryHeight(m_pLayoutData->m_fWidgetHeight);
     StartTextLayout(fCalcWidth, fCalcHeight);
     return;
   }
@@ -1062,14 +1069,14 @@ void CXFA_WidgetAcc::StartWidgetLayout(float& fCalcWidth, float& fCalcHeight) {
   m_pLayoutData->m_fWidgetHeight = -1;
   float fWidth = 0;
   if (fCalcWidth > 0 && fCalcHeight < 0) {
-    if (!GetHeight(fCalcHeight))
+    if (!TryHeight(fCalcHeight))
       CalculateAccWidthAndHeight(eUIType, fCalcWidth, fCalcHeight);
 
     m_pLayoutData->m_fWidgetHeight = fCalcHeight;
     return;
   }
   if (fCalcWidth < 0 && fCalcHeight < 0) {
-    if (!GetWidth(fWidth) || !GetHeight(fCalcHeight))
+    if (!TryWidth(fWidth) || !TryHeight(fCalcHeight))
       CalculateAccWidthAndHeight(eUIType, fWidth, fCalcHeight);
 
     fCalcWidth = fWidth;
@@ -1199,7 +1206,7 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   } else {
     if (!pFieldData->m_pTextOut) {
       float fWidth = 0;
-      GetWidth(fWidth);
+      TryWidth(fWidth);
       CalculateAccWidthAndHeight(eUIType, fWidth, fHeight);
     }
     iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
@@ -1392,7 +1399,7 @@ void CXFA_WidgetAcc::StartTextLayout(float& fCalcWidth, float& fCalcHeight) {
   }
   if (fCalcWidth < 0 && fCalcHeight < 0) {
     float fMaxWidth = -1;
-    bool bRet = GetWidth(fMaxWidth);
+    bool bRet = TryWidth(fMaxWidth);
     if (bRet) {
       float fWidth = GetWidthWithoutMargin(fMaxWidth);
       pTextLayout->StartLayout(fWidth);

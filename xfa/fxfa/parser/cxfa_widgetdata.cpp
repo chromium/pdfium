@@ -327,27 +327,27 @@ CXFA_BindData CXFA_WidgetData::GetBindData() {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Bind, false));
 }
 
-bool CXFA_WidgetData::GetWidth(float& fWidth) {
+bool CXFA_WidgetData::TryWidth(float& fWidth) {
   return TryMeasure(XFA_Attribute::W, fWidth);
 }
 
-bool CXFA_WidgetData::GetHeight(float& fHeight) {
+bool CXFA_WidgetData::TryHeight(float& fHeight) {
   return TryMeasure(XFA_Attribute::H, fHeight);
 }
 
-bool CXFA_WidgetData::GetMinWidth(float& fMinWidth) {
+bool CXFA_WidgetData::TryMinWidth(float& fMinWidth) {
   return TryMeasure(XFA_Attribute::MinW, fMinWidth);
 }
 
-bool CXFA_WidgetData::GetMinHeight(float& fMinHeight) {
+bool CXFA_WidgetData::TryMinHeight(float& fMinHeight) {
   return TryMeasure(XFA_Attribute::MinH, fMinHeight);
 }
 
-bool CXFA_WidgetData::GetMaxWidth(float& fMaxWidth) {
+bool CXFA_WidgetData::TryMaxWidth(float& fMaxWidth) {
   return TryMeasure(XFA_Attribute::MaxW, fMaxWidth);
 }
 
-bool CXFA_WidgetData::GetMaxHeight(float& fMaxHeight) {
+bool CXFA_WidgetData::TryMaxHeight(float& fMaxHeight) {
   return TryMeasure(XFA_Attribute::MaxH, fMaxHeight);
 }
 

@@ -61,12 +61,12 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_CalculateData GetCalculateData();
   CXFA_ValidateData GetValidateData(bool bModified);
 
-  bool GetWidth(float& fWidth);
-  bool GetHeight(float& fHeight);
-  bool GetMinWidth(float& fMinWidth);
-  bool GetMinHeight(float& fMinHeight);
-  bool GetMaxWidth(float& fMaxWidth);
-  bool GetMaxHeight(float& fMaxHeight);
+  bool TryWidth(float& fWidth);
+  bool TryHeight(float& fHeight);
+  bool TryMinWidth(float& fMinWidth);
+  bool TryMinHeight(float& fMinHeight);
+  bool TryMaxWidth(float& fMaxWidth);
+  bool TryMaxHeight(float& fMaxHeight);
 
   CXFA_BorderData GetUIBorderData();
   CFX_RectF GetUIMargin();

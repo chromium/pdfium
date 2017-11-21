@@ -134,7 +134,7 @@ bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
     return false;
 
   float fWidth = 0;
-  return !m_pWidgetAcc->GetWidth(fWidth);
+  return !m_pWidgetAcc->TryWidth(fWidth);
 }
 
 bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
