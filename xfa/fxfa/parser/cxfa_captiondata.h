@@ -18,12 +18,12 @@ class CXFA_CaptionData : public CXFA_DataData {
  public:
   explicit CXFA_CaptionData(CXFA_Node* pNode);
 
-  int32_t GetPresence();
-  int32_t GetPlacementType();
-  float GetReserve();
-  CXFA_MarginData GetMarginData();
-  CXFA_FontData GetFontData();
-  CXFA_ValueData GetValueData();
+  int32_t GetPresence() const;
+  int32_t GetPlacementType() const;
+  float GetReserve() const;
+  CXFA_MarginData GetMarginData() const;
+  CXFA_FontData GetFontData() const;
+  CXFA_ValueData GetValueData() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CAPTIONDATA_H_

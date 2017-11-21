@@ -11,35 +11,35 @@
 
 CXFA_CaptionData::CXFA_CaptionData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-int32_t CXFA_CaptionData::GetPresence() {
+int32_t CXFA_CaptionData::GetPresence() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::Presence, true)
       .value_or(XFA_ATTRIBUTEENUM_Visible);
 }
 
-int32_t CXFA_CaptionData::GetPlacementType() {
+int32_t CXFA_CaptionData::GetPlacementType() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::Placement, true)
       .value_or(XFA_ATTRIBUTEENUM_Left);
 }
 
-float CXFA_CaptionData::GetReserve() {
+float CXFA_CaptionData::GetReserve() const {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::Reserve)
       .ToUnit(XFA_Unit::Pt);
 }
 
-CXFA_MarginData CXFA_CaptionData::GetMarginData() {
+CXFA_MarginData CXFA_CaptionData::GetMarginData() const {
   return CXFA_MarginData(
       m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false) : nullptr);
 }
 
-CXFA_FontData CXFA_CaptionData::GetFontData() {
+CXFA_FontData CXFA_CaptionData::GetFontData() const {
   return CXFA_FontData(m_pNode ? m_pNode->GetChild(0, XFA_Element::Font, false)
                                : nullptr);
 }
 
-CXFA_ValueData CXFA_CaptionData::GetValueData() {
+CXFA_ValueData CXFA_CaptionData::GetValueData() const {
   return CXFA_ValueData(
       m_pNode ? m_pNode->GetChild(0, XFA_Element::Value, false) : nullptr);
 }
