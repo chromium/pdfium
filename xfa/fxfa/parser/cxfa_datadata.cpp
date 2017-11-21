@@ -69,14 +69,11 @@ XFA_Element CXFA_DataData::GetElementType() const {
   return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
 }
 
-bool CXFA_DataData::TryMeasure(XFA_Attribute eAttr,
-                               float& fValue,
-                               bool bUseDefault) const {
+pdfium::Optional<float> CXFA_DataData::TryMeasureAsFloat(
+    XFA_Attribute attr) const {
   pdfium::Optional<CXFA_Measurement> measure =
-      m_pNode->JSNode()->TryMeasure(eAttr, bUseDefault);
-  if (!measure)
-    return false;
-
-  fValue = measure->ToUnit(XFA_Unit::Pt);
-  return true;
+      m_pNode->JSNode()->TryMeasure(attr, false);
+  if (measure)
+    return {measure->ToUnit(XFA_Unit::Pt)};
+  return {};
 }

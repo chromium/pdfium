@@ -328,45 +328,27 @@ CXFA_BindData CXFA_WidgetData::GetBindData() {
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryWidth() {
-  float width = 0;
-  if (TryMeasure(XFA_Attribute::W, width))
-    return {width};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::W);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryHeight() {
-  float height = 0;
-  if (TryMeasure(XFA_Attribute::H, height))
-    return {height};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::H);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMinWidth() {
-  float minWidth = 0;
-  if (TryMeasure(XFA_Attribute::MinW, minWidth))
-    return {minWidth};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::MinW);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMinHeight() {
-  float minHeight = 0;
-  if (TryMeasure(XFA_Attribute::MinH, minHeight))
-    return {minHeight};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::MinH);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMaxWidth() {
-  float maxWidth = 0;
-  if (TryMeasure(XFA_Attribute::MaxW, maxWidth))
-    return {maxWidth};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::MaxW);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMaxHeight() {
-  float maxHeight = 0;
-  if (TryMeasure(XFA_Attribute::MaxH, maxHeight))
-    return {maxHeight};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::MaxH);
 }
 
 CXFA_BorderData CXFA_WidgetData::GetUIBorderData() {

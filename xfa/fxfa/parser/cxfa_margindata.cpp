@@ -25,29 +25,17 @@ float CXFA_MarginData::GetBottomInset() const {
 }
 
 pdfium::Optional<float> CXFA_MarginData::TryLeftInset() const {
-  float value = 0;
-  if (TryMeasure(XFA_Attribute::LeftInset, value))
-    return {value};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::LeftInset);
 }
 
 pdfium::Optional<float> CXFA_MarginData::TryTopInset() const {
-  float value = 0;
-  if (TryMeasure(XFA_Attribute::TopInset, value))
-    return {value};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::TopInset);
 }
 
 pdfium::Optional<float> CXFA_MarginData::TryRightInset() const {
-  float value = 0;
-  if (TryMeasure(XFA_Attribute::RightInset, value))
-    return {value};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::RightInset);
 }
 
 pdfium::Optional<float> CXFA_MarginData::TryBottomInset() const {
-  float value = 0;
-  if (TryMeasure(XFA_Attribute::BottomInset, value))
-    return {value};
-  return {};
+  return TryMeasureAsFloat(XFA_Attribute::BottomInset);
 }

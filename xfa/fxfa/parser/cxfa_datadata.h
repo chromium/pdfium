@@ -25,9 +25,7 @@ class CXFA_DataData {
   XFA_Element GetElementType() const;
 
  protected:
-  bool TryMeasure(XFA_Attribute eAttr,
-                  float& fValue,
-                  bool bUseDefault = false) const;
+  pdfium::Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
 
   CXFA_Node* m_pNode;
 };
