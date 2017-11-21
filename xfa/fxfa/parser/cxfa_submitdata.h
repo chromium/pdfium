@@ -17,10 +17,10 @@ class CXFA_SubmitData : public CXFA_DataData {
  public:
   explicit CXFA_SubmitData(CXFA_Node* pNode);
 
-  bool IsSubmitEmbedPDF();
-  int32_t GetSubmitFormat();
-  void GetSubmitTarget(WideString& wsTarget);
-  void GetSubmitXDPContent(WideString& wsContent);
+  bool IsSubmitEmbedPDF() const;
+  XFA_ATTRIBUTEENUM GetSubmitFormat() const;
+  WideString GetSubmitTarget() const;
+  WideString GetSubmitXDPContent() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBMITDATA_H_

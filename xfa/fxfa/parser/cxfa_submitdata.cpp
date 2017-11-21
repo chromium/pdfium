@@ -10,18 +10,18 @@
 
 CXFA_SubmitData::CXFA_SubmitData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-bool CXFA_SubmitData::IsSubmitEmbedPDF() {
+bool CXFA_SubmitData::IsSubmitEmbedPDF() const {
   return m_pNode->JSNode()->GetBoolean(XFA_Attribute::EmbedPDF);
 }
 
-int32_t CXFA_SubmitData::GetSubmitFormat() {
+XFA_ATTRIBUTEENUM CXFA_SubmitData::GetSubmitFormat() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Format);
 }
 
-void CXFA_SubmitData::GetSubmitTarget(WideString& wsTarget) {
-  wsTarget = m_pNode->JSNode()->GetCData(XFA_Attribute::Target);
+WideString CXFA_SubmitData::GetSubmitTarget() const {
+  return m_pNode->JSNode()->GetCData(XFA_Attribute::Target);
 }
 
-void CXFA_SubmitData::GetSubmitXDPContent(WideString& wsContent) {
-  wsContent = m_pNode->JSNode()->GetCData(XFA_Attribute::XdpContent);
+WideString CXFA_SubmitData::GetSubmitXDPContent() const {
+  return m_pNode->JSNode()->GetCData(XFA_Attribute::XdpContent);
 }
