@@ -80,8 +80,3 @@ bool CXFA_DataData::TryMeasure(XFA_Attribute eAttr,
   fValue = measure->ToUnit(XFA_Unit::Pt);
   return true;
 }
-
-bool CXFA_DataData::SetMeasure(XFA_Attribute eAttr, float fValue) {
-  CXFA_Measurement ms(fValue, XFA_Unit::Pt);
-  return m_pNode->JSNode()->SetMeasure(eAttr, ms, false);
-}
