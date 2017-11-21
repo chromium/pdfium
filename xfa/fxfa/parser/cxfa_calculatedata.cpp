@@ -12,17 +12,17 @@
 CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode)
     : CXFA_DataData(pNode) {}
 
-int32_t CXFA_CalculateData::GetOverride() {
+int32_t CXFA_CalculateData::GetOverride() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::Override, false)
       .value_or(XFA_ATTRIBUTEENUM_Error);
 }
 
-CXFA_ScriptData CXFA_CalculateData::GetScriptData() {
+CXFA_ScriptData CXFA_CalculateData::GetScriptData() const {
   return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
-WideString CXFA_CalculateData::GetMessageText() {
+WideString CXFA_CalculateData::GetMessageText() const {
   CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Message, false);
   if (!pNode)
     return L"";
