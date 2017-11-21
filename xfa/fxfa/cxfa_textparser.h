@@ -15,6 +15,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CFX_CSSComputedStyle;
 class CFX_CSSStyleSelector;
@@ -40,7 +41,7 @@ class CXFA_TextParser {
 
   bool IsParsed() const { return m_bParsed; }
 
-  int32_t GetVAlign(CXFA_TextProvider* pTextProvider) const;
+  XFA_ATTRIBUTEENUM GetVAlign(CXFA_TextProvider* pTextProvider) const;
 
   float GetTabInterval(CFX_CSSComputedStyle* pStyle) const;
   int32_t CountTabs(CFX_CSSComputedStyle* pStyle) const;

@@ -11,49 +11,49 @@
 
 CXFA_ParaData::CXFA_ParaData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-int32_t CXFA_ParaData::GetHorizontalAlign() {
+XFA_ATTRIBUTEENUM CXFA_ParaData::GetHorizontalAlign() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::HAlign, true)
       .value_or(XFA_ATTRIBUTEENUM_Left);
 }
 
-int32_t CXFA_ParaData::GetVerticalAlign() {
+XFA_ATTRIBUTEENUM CXFA_ParaData::GetVerticalAlign() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::VAlign, true)
       .value_or(XFA_ATTRIBUTEENUM_Top);
 }
 
-float CXFA_ParaData::GetLineHeight() {
+float CXFA_ParaData::GetLineHeight() const {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::LineHeight)
       .ToUnit(XFA_Unit::Pt);
 }
 
-float CXFA_ParaData::GetMarginLeft() {
+float CXFA_ParaData::GetMarginLeft() const {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::MarginLeft)
       .ToUnit(XFA_Unit::Pt);
 }
 
-float CXFA_ParaData::GetMarginRight() {
+float CXFA_ParaData::GetMarginRight() const {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::MarginRight)
       .ToUnit(XFA_Unit::Pt);
 }
 
-float CXFA_ParaData::GetSpaceAbove() {
+float CXFA_ParaData::GetSpaceAbove() const {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::SpaceAbove)
       .ToUnit(XFA_Unit::Pt);
 }
 
-float CXFA_ParaData::GetSpaceBelow() {
+float CXFA_ParaData::GetSpaceBelow() const {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::SpaceBelow)
       .ToUnit(XFA_Unit::Pt);
 }
 
-float CXFA_ParaData::GetTextIndent() {
+float CXFA_ParaData::GetTextIndent() const {
   return m_pNode->JSNode()
       ->GetMeasure(XFA_Attribute::TextIndent)
       .ToUnit(XFA_Unit::Pt);

@@ -16,14 +16,14 @@ class CXFA_ParaData : public CXFA_DataData {
  public:
   explicit CXFA_ParaData(CXFA_Node* pNode);
 
-  int32_t GetHorizontalAlign();
-  int32_t GetVerticalAlign();
-  float GetLineHeight();
-  float GetMarginLeft();
-  float GetMarginRight();
-  float GetSpaceAbove();
-  float GetSpaceBelow();
-  float GetTextIndent();
+  XFA_ATTRIBUTEENUM GetHorizontalAlign() const;
+  XFA_ATTRIBUTEENUM GetVerticalAlign() const;
+  float GetLineHeight() const;
+  float GetMarginLeft() const;
+  float GetMarginRight() const;
+  float GetSpaceAbove() const;
+  float GetSpaceBelow() const;
+  float GetTextIndent() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PARADATA_H_

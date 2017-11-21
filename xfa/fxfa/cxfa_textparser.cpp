@@ -115,6 +115,12 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
       case XFA_ATTRIBUTEENUM_JustifyAll:
         hAlign = CFX_CSSTextAlign::JustifyAll;
         break;
+      case XFA_ATTRIBUTEENUM_Left:
+      case XFA_ATTRIBUTEENUM_Radix:
+        break;
+      default:
+        NOTREACHED();
+        break;
     }
     pStyle->SetTextAlign(hAlign);
     CFX_CSSRect rtMarginWidth;
@@ -291,7 +297,8 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
   return tagProvider;
 }
 
-int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
+XFA_ATTRIBUTEENUM CXFA_TextParser::GetVAlign(
+    CXFA_TextProvider* pTextProvider) const {
   CXFA_ParaData paraData = pTextProvider->GetParaData();
   return paraData.HasValidNode() ? paraData.GetVerticalAlign()
                                  : XFA_ATTRIBUTEENUM_Top;

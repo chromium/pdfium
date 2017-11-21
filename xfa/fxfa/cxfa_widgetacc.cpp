@@ -1257,6 +1257,9 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
         case XFA_ATTRIBUTEENUM_Bottom:
           fStartOffset += (fHeight - fTextHeight + fSpaceAbove);
           break;
+        default:
+          NOTREACHED();
+          break;
       }
     }
     if (fStartOffset < 0.1f)

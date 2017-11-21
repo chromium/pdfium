@@ -45,8 +45,8 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    XFA_ATTRIBUTEENUM iAspect,
                    int32_t iImageXDpi,
                    int32_t iImageYDpi,
-                   int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left,
-                   int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top);
+                   XFA_ATTRIBUTEENUM iHorzAlign = XFA_ATTRIBUTEENUM_Left,
+                   XFA_ATTRIBUTEENUM iVertAlign = XFA_ATTRIBUTEENUM_Top);
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
                                           CXFA_ImageData* pImageData,

@@ -1677,8 +1677,8 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    XFA_ATTRIBUTEENUM iAspect,
                    int32_t iImageXDpi,
                    int32_t iImageYDpi,
-                   int32_t iHorzAlign,
-                   int32_t iVertAlign) {
+                   XFA_ATTRIBUTEENUM iHorzAlign,
+                   XFA_ATTRIBUTEENUM iVertAlign) {
   if (rtImage.IsEmpty())
     return;
   if (!pDIBitmap || !pDIBitmap->GetBuffer())
@@ -1717,16 +1717,17 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
     default:
       break;
   }
-  if (iHorzAlign == XFA_ATTRIBUTEENUM_Center) {
+
+  if (iHorzAlign == XFA_ATTRIBUTEENUM_Center)
     rtFit.left += (rtImage.width - rtFit.width) / 2;
-  } else if (iHorzAlign == XFA_ATTRIBUTEENUM_Right) {
+  else if (iHorzAlign == XFA_ATTRIBUTEENUM_Right)
     rtFit.left = rtImage.right() - rtFit.width;
-  }
-  if (iVertAlign == XFA_ATTRIBUTEENUM_Middle) {
+
+  if (iVertAlign == XFA_ATTRIBUTEENUM_Middle)
     rtFit.top += (rtImage.height - rtFit.height) / 2;
-  } else if (iVertAlign == XFA_ATTRIBUTEENUM_Bottom) {
+  else if (iVertAlign == XFA_ATTRIBUTEENUM_Bottom)
     rtFit.top = rtImage.bottom() - rtImage.height;
-  }
+
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RenderDevice::StateRestorer restorer(pRenderDevice);
   CFX_PathData path;

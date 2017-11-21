@@ -120,6 +120,12 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
       case XFA_ATTRIBUTEENUM_JustifyAll:
         iAlign = CFX_RTFLineAlignment::Distributed;
         break;
+      case XFA_ATTRIBUTEENUM_Left:
+      case XFA_ATTRIBUTEENUM_Radix:
+        break;
+      default:
+        NOTREACHED();
+        break;
     }
     m_pBreak->SetAlignment(iAlign);
 
@@ -649,17 +655,19 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
   float fSpaceAbove = 0;
   if (paraData.HasValidNode()) {
     fSpaceAbove = paraData.GetSpaceAbove();
-    if (fSpaceAbove < 0.1f) {
+    if (fSpaceAbove < 0.1f)
       fSpaceAbove = 0;
-    }
-    int32_t verAlign = paraData.GetVerticalAlign();
-    switch (verAlign) {
+
+    switch (paraData.GetVerticalAlign()) {
       case XFA_ATTRIBUTEENUM_Top:
       case XFA_ATTRIBUTEENUM_Middle:
       case XFA_ATTRIBUTEENUM_Bottom: {
         fLinePos += fSpaceAbove;
         break;
       }
+      default:
+        NOTREACHED();
+        break;
     }
   }
 
