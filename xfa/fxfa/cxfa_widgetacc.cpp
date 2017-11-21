@@ -783,30 +783,30 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
   if (paraData.HasValidNode())
     size.width += paraData.GetMarginLeft() + paraData.GetTextIndent();
 
-  float width = 0;
-  if (TryWidth(width)) {
-    size.width = width;
+  pdfium::Optional<float> width = TryWidth();
+  if (width) {
+    size.width = *width;
   } else {
-    float fMin = 0;
-    if (TryMinWidth(fMin))
-      size.width = std::max(size.width, fMin);
+    pdfium::Optional<float> min = TryMinWidth();
+    if (min)
+      size.width = std::max(size.width, *min);
 
-    float fMax = 0;
-    if (TryMaxWidth(fMax) && fMax > 0)
-      size.width = std::min(size.width, fMax);
+    pdfium::Optional<float> max = TryMaxWidth();
+    if (max && *max > 0)
+      size.width = std::min(size.width, *max);
   }
 
-  float height = 0;
-  if (TryHeight(height)) {
-    size.height = height;
+  pdfium::Optional<float> height = TryHeight();
+  if (height) {
+    size.height = *height;
   } else {
-    float fMin = 0;
-    if (TryMinHeight(fMin))
-      size.height = std::max(size.height, fMin);
+    pdfium::Optional<float> min = TryMinHeight();
+    if (min)
+      size.height = std::max(size.height, *min);
 
-    float fMax = 0;
-    if (TryMaxHeight(fMax) && fMax > 0)
-      size.height = std::min(size.height, fMax);
+    pdfium::Optional<float> max = TryMaxHeight();
+    if (max && *max > 0)
+      size.height = std::min(size.height, *max);
   }
   return true;
 }
@@ -905,33 +905,48 @@ bool CXFA_WidgetAcc::CalculatePushButtonAutoSize(CFX_SizeF& size) {
   return CalculateWidgetAutoSize(size);
 }
 
+CFX_SizeF CXFA_WidgetAcc::CalculateImageSize(float img_width,
+                                             float img_height,
+                                             float dpi_x,
+                                             float dpi_y) {
+  CFX_RectF rtImage(0, 0, XFA_UnitPx2Pt(img_width, dpi_x),
+                    XFA_UnitPx2Pt(img_height, dpi_y));
+
+  CFX_RectF rtFit;
+  pdfium::Optional<float> width = TryWidth();
+  if (width) {
+    rtFit.width = *width;
+    GetWidthWithoutMargin(rtFit.width);
+  } else {
+    rtFit.width = rtImage.width;
+  }
+
+  pdfium::Optional<float> height = TryHeight();
+  if (height) {
+    rtFit.height = *height;
+    GetHeightWithoutMargin(rtFit.height);
+  } else {
+    rtFit.height = rtImage.height;
+  }
+
+  return rtFit.Size();
+}
+
 bool CXFA_WidgetAcc::CalculateImageAutoSize(CFX_SizeF& size) {
   if (!GetImageImage())
     LoadImageImage();
 
   size.clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetImageImage();
-  if (pBitmap) {
-    int32_t iImageXDpi = 0;
-    int32_t iImageYDpi = 0;
-    GetImageDpi(iImageXDpi, iImageYDpi);
-    CFX_RectF rtImage(
-        0, 0, XFA_UnitPx2Pt((float)pBitmap->GetWidth(), (float)iImageXDpi),
-        XFA_UnitPx2Pt((float)pBitmap->GetHeight(), (float)iImageYDpi));
+  if (!pBitmap)
+    return CalculateWidgetAutoSize(size);
 
-    CFX_RectF rtFit;
-    if (TryWidth(rtFit.width))
-      GetWidthWithoutMargin(rtFit.width);
-    else
-      rtFit.width = rtImage.width;
+  int32_t iImageXDpi = 0;
+  int32_t iImageYDpi = 0;
+  GetImageDpi(iImageXDpi, iImageYDpi);
 
-    if (TryHeight(rtFit.height))
-      GetHeightWithoutMargin(rtFit.height);
-    else
-      rtFit.height = rtImage.height;
-
-    size = rtFit.Size();
-  }
+  size = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
+                            iImageXDpi, iImageYDpi);
   return CalculateWidgetAutoSize(size);
 }
 
@@ -941,28 +956,15 @@ bool CXFA_WidgetAcc::CalculateImageEditAutoSize(CFX_SizeF& size) {
 
   size.clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetImageEditImage();
-  if (pBitmap) {
-    int32_t iImageXDpi = 0;
-    int32_t iImageYDpi = 0;
-    GetImageEditDpi(iImageXDpi, iImageYDpi);
-    CFX_RectF rtImage(
-        0, 0, XFA_UnitPx2Pt((float)pBitmap->GetWidth(), (float)iImageXDpi),
-        XFA_UnitPx2Pt((float)pBitmap->GetHeight(), (float)iImageYDpi));
+  if (!pBitmap)
+    return CalculateFieldAutoSize(size);
 
-    CFX_RectF rtFit;
-    if (TryWidth(rtFit.width))
-      GetWidthWithoutMargin(rtFit.width);
-    else
-      rtFit.width = rtImage.width;
+  int32_t iImageXDpi = 0;
+  int32_t iImageYDpi = 0;
+  GetImageEditDpi(iImageXDpi, iImageYDpi);
 
-    if (TryHeight(rtFit.height))
-      GetHeightWithoutMargin(rtFit.height);
-    else
-      rtFit.height = rtImage.height;
-
-    size.width = rtFit.width;
-    size.height = rtFit.height;
-  }
+  size = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
+                            iImageXDpi, iImageYDpi);
   return CalculateFieldAutoSize(size);
 }
 
@@ -1013,13 +1015,13 @@ float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
   if (marginData.HasValidNode())
     fWidthCalc += marginData.GetLeftInset() + marginData.GetRightInset();
 
-  float fMin = 0;
-  if (TryMinWidth(fMin))
-    fWidthCalc = std::max(fWidthCalc, fMin);
+  pdfium::Optional<float> min = TryMinWidth();
+  if (min)
+    fWidthCalc = std::max(fWidthCalc, *min);
 
-  float fMax = 0;
-  if (TryMaxWidth(fMax) && fMax > 0)
-    fWidthCalc = std::min(fWidthCalc, fMax);
+  pdfium::Optional<float> max = TryMaxWidth();
+  if (max && *max > 0)
+    fWidthCalc = std::min(fWidthCalc, *max);
 
   return fWidthCalc;
 }
@@ -1036,13 +1038,13 @@ float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
   if (marginData.HasValidNode())
     fHeightCalc += marginData.GetTopInset() + marginData.GetBottomInset();
 
-  float fMin = 0;
-  if (TryMinHeight(fMin))
-    fHeightCalc = std::max(fHeightCalc, fMin);
+  pdfium::Optional<float> min = TryMinHeight();
+  if (min)
+    fHeightCalc = std::max(fHeightCalc, *min);
 
-  float fMax = 0;
-  if (TryMaxHeight(fMax) && fMax > 0)
-    fHeightCalc = std::min(fHeightCalc, fMax);
+  pdfium::Optional<float> max = TryMaxHeight();
+  if (max && *max > 0)
+    fHeightCalc = std::min(fHeightCalc, *max);
 
   return fHeightCalc;
 }
@@ -1058,8 +1060,7 @@ void CXFA_WidgetAcc::StartWidgetLayout(float& fCalcWidth, float& fCalcHeight) {
   InitLayoutData();
   XFA_Element eUIType = GetUIType();
   if (eUIType == XFA_Element::Text) {
-    m_pLayoutData->m_fWidgetHeight = -1;
-    TryHeight(m_pLayoutData->m_fWidgetHeight);
+    m_pLayoutData->m_fWidgetHeight = TryHeight().value_or(-1);
     StartTextLayout(fCalcWidth, fCalcHeight);
     return;
   }
@@ -1069,14 +1070,26 @@ void CXFA_WidgetAcc::StartWidgetLayout(float& fCalcWidth, float& fCalcHeight) {
   m_pLayoutData->m_fWidgetHeight = -1;
   float fWidth = 0;
   if (fCalcWidth > 0 && fCalcHeight < 0) {
-    if (!TryHeight(fCalcHeight))
+    pdfium::Optional<float> height = TryHeight();
+    if (height)
+      fCalcHeight = *height;
+    else
       CalculateAccWidthAndHeight(eUIType, fCalcWidth, fCalcHeight);
 
     m_pLayoutData->m_fWidgetHeight = fCalcHeight;
     return;
   }
   if (fCalcWidth < 0 && fCalcHeight < 0) {
-    if (!TryWidth(fWidth) || !TryHeight(fCalcHeight))
+    pdfium::Optional<float> height;
+    pdfium::Optional<float> width = TryWidth();
+    if (width) {
+      fWidth = *width;
+
+      height = TryHeight();
+      if (height)
+        fCalcHeight = *height;
+    }
+    if (!width || !height)
       CalculateAccWidthAndHeight(eUIType, fWidth, fCalcHeight);
 
     fCalcWidth = fWidth;
@@ -1205,8 +1218,9 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
     iLinesCount = 1;
   } else {
     if (!pFieldData->m_pTextOut) {
-      float fWidth = 0;
-      TryWidth(fWidth);
+      // TODO(dsinclair): Inline fWidth when the 2nd param of
+      // CalculateAccWidthAndHeight isn't a ref-param.
+      float fWidth = TryWidth().value_or(0);
       CalculateAccWidthAndHeight(eUIType, fWidth, fHeight);
     }
     iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
@@ -1397,20 +1411,19 @@ void CXFA_WidgetAcc::StartTextLayout(float& fCalcWidth, float& fCalcHeight) {
     float fWidth = GetWidthWithoutMargin(fCalcWidth);
     pTextLayout->StartLayout(fWidth);
   }
+
   if (fCalcWidth < 0 && fCalcHeight < 0) {
-    float fMaxWidth = -1;
-    bool bRet = TryWidth(fMaxWidth);
-    if (bRet) {
-      float fWidth = GetWidthWithoutMargin(fMaxWidth);
-      pTextLayout->StartLayout(fWidth);
+    pdfium::Optional<float> width = TryWidth();
+    if (width) {
+      pTextLayout->StartLayout(GetWidthWithoutMargin(*width));
+      fCalcWidth = *width;
     } else {
-      float fWidth = pTextLayout->StartLayout(fMaxWidth);
-      fMaxWidth = CalculateWidgetAutoWidth(fWidth);
-      fWidth = GetWidthWithoutMargin(fMaxWidth);
-      pTextLayout->StartLayout(fWidth);
+      float fMaxWidth = CalculateWidgetAutoWidth(pTextLayout->StartLayout(-1));
+      pTextLayout->StartLayout(GetWidthWithoutMargin(fMaxWidth));
+      fCalcWidth = fMaxWidth;
     }
-    fCalcWidth = fMaxWidth;
   }
+
   if (m_pLayoutData->m_fWidgetHeight < 0) {
     m_pLayoutData->m_fWidgetHeight = pTextLayout->GetLayoutHeight();
     m_pLayoutData->m_fWidgetHeight =

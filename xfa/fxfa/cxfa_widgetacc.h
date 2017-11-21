@@ -103,6 +103,10 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   bool CalculateTextEditAutoSize(CFX_SizeF& size);
   bool CalculateCheckButtonAutoSize(CFX_SizeF& size);
   bool CalculatePushButtonAutoSize(CFX_SizeF& size);
+  CFX_SizeF CalculateImageSize(float img_width,
+                               float img_height,
+                               float dpi_x,
+                               float dpi_y);
   bool CalculateImageEditAutoSize(CFX_SizeF& size);
   bool CalculateImageAutoSize(CFX_SizeF& size);
   bool CalculateTextAutoSize(CFX_SizeF& size);

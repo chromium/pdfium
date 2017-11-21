@@ -132,9 +132,7 @@ bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
   XFA_Element eType = m_pWidgetAcc->GetUIType();
   if (eType != XFA_Element::CheckButton)
     return false;
-
-  float fWidth = 0;
-  return !m_pWidgetAcc->TryWidth(fWidth);
+  return !m_pWidgetAcc->TryWidth();
 }
 
 bool CXFA_TextProvider::GetEmbbedObj(bool bURI,

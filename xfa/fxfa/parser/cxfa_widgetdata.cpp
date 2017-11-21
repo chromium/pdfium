@@ -327,28 +327,46 @@ CXFA_BindData CXFA_WidgetData::GetBindData() {
       m_pNode->JSNode()->GetProperty(0, XFA_Element::Bind, false));
 }
 
-bool CXFA_WidgetData::TryWidth(float& fWidth) {
-  return TryMeasure(XFA_Attribute::W, fWidth);
+pdfium::Optional<float> CXFA_WidgetData::TryWidth() {
+  float width = 0;
+  if (TryMeasure(XFA_Attribute::W, width))
+    return {width};
+  return {};
 }
 
-bool CXFA_WidgetData::TryHeight(float& fHeight) {
-  return TryMeasure(XFA_Attribute::H, fHeight);
+pdfium::Optional<float> CXFA_WidgetData::TryHeight() {
+  float height = 0;
+  if (TryMeasure(XFA_Attribute::H, height))
+    return {height};
+  return {};
 }
 
-bool CXFA_WidgetData::TryMinWidth(float& fMinWidth) {
-  return TryMeasure(XFA_Attribute::MinW, fMinWidth);
+pdfium::Optional<float> CXFA_WidgetData::TryMinWidth() {
+  float minWidth = 0;
+  if (TryMeasure(XFA_Attribute::MinW, minWidth))
+    return {minWidth};
+  return {};
 }
 
-bool CXFA_WidgetData::TryMinHeight(float& fMinHeight) {
-  return TryMeasure(XFA_Attribute::MinH, fMinHeight);
+pdfium::Optional<float> CXFA_WidgetData::TryMinHeight() {
+  float minHeight = 0;
+  if (TryMeasure(XFA_Attribute::MinH, minHeight))
+    return {minHeight};
+  return {};
 }
 
-bool CXFA_WidgetData::TryMaxWidth(float& fMaxWidth) {
-  return TryMeasure(XFA_Attribute::MaxW, fMaxWidth);
+pdfium::Optional<float> CXFA_WidgetData::TryMaxWidth() {
+  float maxWidth = 0;
+  if (TryMeasure(XFA_Attribute::MaxW, maxWidth))
+    return {maxWidth};
+  return {};
 }
 
-bool CXFA_WidgetData::TryMaxHeight(float& fMaxHeight) {
-  return TryMeasure(XFA_Attribute::MaxH, fMaxHeight);
+pdfium::Optional<float> CXFA_WidgetData::TryMaxHeight() {
+  float maxHeight = 0;
+  if (TryMeasure(XFA_Attribute::MaxH, maxHeight))
+    return {maxHeight};
+  return {};
 }
 
 CXFA_BorderData CXFA_WidgetData::GetUIBorderData() {
