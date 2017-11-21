@@ -25,7 +25,7 @@ float GetEdgeThickness(const std::vector<CXFA_StrokeData>& strokes,
                        int32_t nIndex) {
   float fThickness = 0;
 
-  if (strokes[nIndex * 2 + 1].GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
+  if (strokes[nIndex * 2 + 1].IsVisible()) {
     if (nIndex == 0)
       fThickness += 2.5f;
 

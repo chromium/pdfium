@@ -10,6 +10,22 @@
 #include "xfa/fxgraphics/cxfa_gepath.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
+namespace {
+
+CFX_GraphStateData::LineCap LineCapToFXGE(XFA_ATTRIBUTEENUM iLineCap) {
+  switch (iLineCap) {
+    case XFA_ATTRIBUTEENUM_Round:
+      return CFX_GraphStateData::LineCapRound;
+    case XFA_ATTRIBUTEENUM_Butt:
+      return CFX_GraphStateData::LineCapButt;
+    default:
+      break;
+  }
+  return CFX_GraphStateData::LineCapSquare;
+}
+
+}  // namespace
+
 CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 
 CXFA_FFLine::~CXFA_FFLine() {}
@@ -74,12 +90,12 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_LineData lineData = valueData.GetLineData();
   FX_ARGB lineColor = 0xFF000000;
-  int32_t iStrokeType = 0;
   float fLineWidth = 1.0f;
-  int32_t iCap = 0;
+  XFA_ATTRIBUTEENUM iStrokeType = XFA_ATTRIBUTEENUM_Unknown;
+  XFA_ATTRIBUTEENUM iCap = XFA_ATTRIBUTEENUM_Unknown;
   CXFA_EdgeData edgeData = lineData.GetEdgeData();
   if (edgeData.HasValidNode()) {
-    if (edgeData.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+    if (!edgeData.IsVisible())
       return;
 
     lineColor = edgeData.GetColor();
@@ -107,8 +123,9 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   pGS->SetLineWidth(fLineWidth);
   pGS->EnableActOnDash();
   XFA_StrokeTypeSetLineDash(pGS, iStrokeType, iCap);
+
   pGS->SetStrokeColor(CXFA_GEColor(lineColor));
-  pGS->SetLineCap(XFA_LineCapToFXGE(iCap));
+  pGS->SetLineCap(LineCapToFXGE(iCap));
   pGS->StrokePath(&linePath, &mtRotate);
   pGS->RestoreGraphState();
 }

@@ -10,18 +10,19 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-int32_t CXFA_StrokeData::GetPresence() const {
-  return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Presence)
-                 : XFA_ATTRIBUTEENUM_Invisible;
+bool CXFA_StrokeData::IsVisible() const {
+  return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Presence) ==
+                       XFA_ATTRIBUTEENUM_Visible
+                 : false;
 }
 
-int32_t CXFA_StrokeData::GetCapType() const {
+XFA_ATTRIBUTEENUM CXFA_StrokeData::GetCapType() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Square;
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Cap);
 }
 
-int32_t CXFA_StrokeData::GetStrokeType() const {
+XFA_ATTRIBUTEENUM CXFA_StrokeData::GetStrokeType() const {
   return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Stroke)
                  : XFA_ATTRIBUTEENUM_Solid;
 }
@@ -70,7 +71,7 @@ void CXFA_StrokeData::SetColor(FX_ARGB argb) {
                             false);
 }
 
-int32_t CXFA_StrokeData::GetJoinType() const {
+XFA_ATTRIBUTEENUM CXFA_StrokeData::GetJoinType() const {
   return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Join)
                  : XFA_ATTRIBUTEENUM_Square;
 }

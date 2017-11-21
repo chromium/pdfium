@@ -90,9 +90,9 @@ void XFA_BOX_GetPath(const std::vector<CXFA_StrokeData>& strokes,
     CXFA_StrokeData strokeBeforeData = strokes[(nIndex + 1 * 8 - 1) % 8];
     CXFA_StrokeData strokeAfterData = strokes[nIndex + 1];
     if (strokeData.IsInverted()) {
-      if (!strokeData.SameStyles(strokeBeforeData))
+      if (!strokeData.SameStyles(strokeBeforeData, 0))
         halfBefore = strokeBeforeData.GetThickness() / 2;
-      if (!strokeData.SameStyles(strokeAfterData))
+      if (!strokeData.SameStyles(strokeAfterData, 0))
         halfAfter = strokeAfterData.GetThickness() / 2;
     }
   } else {
@@ -257,7 +257,7 @@ void XFA_BOX_GetFillPath(const CXFA_BoxData& boxData,
   CXFA_StrokeData strokeData1 = strokes[0];
   for (int32_t i = 1; i < 8; i++) {
     CXFA_StrokeData strokeData2 = strokes[i];
-    if (!strokeData1.SameStyles(strokeData2)) {
+    if (!strokeData1.SameStyles(strokeData2, 0)) {
       bSameStyles = false;
       break;
     }
@@ -754,7 +754,7 @@ void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
   CXFA_StrokeData strokeData1 = strokes[0];
   for (int32_t i = 1; i < 8; i++) {
     CXFA_StrokeData strokeData2 = strokes[i];
-    if (!strokeData1.SameStyles(strokeData2)) {
+    if (!strokeData1.SameStyles(strokeData2, 0)) {
       bSameStyles = false;
       break;
     }
@@ -795,7 +795,7 @@ void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
       continue;
     }
     XFA_BOX_GetPath(strokes, rtWidget, path, i, bStart, !bSameStyles);
-    bStart = !strokeData.SameStyles(strokes[(i + 1) % 8]);
+    bStart = !strokeData.SameStyles(strokes[(i + 1) % 8], 0);
     if (bStart) {
       XFA_BOX_StrokePath(strokeData, &path, pGS, matrix);
       path.Clear();
@@ -1334,16 +1334,19 @@ void CXFA_FFWidget::EventKillFocus() {
   eParam.m_pTarget = m_pDataAcc.Get();
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Exit, &eParam);
 }
+
 bool CXFA_FFWidget::IsButtonDown() {
   return (m_dwStatus & XFA_WidgetStatus_ButtonDown) != 0;
 }
+
 void CXFA_FFWidget::SetButtonDown(bool bSet) {
   bSet ? m_dwStatus |= XFA_WidgetStatus_ButtonDown
        : m_dwStatus &= ~XFA_WidgetStatus_ButtonDown;
 }
+
 int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
-                                  int32_t iStrokeType,
-                                  int32_t iCapType) {
+                                  XFA_ATTRIBUTEENUM iStrokeType,
+                                  XFA_ATTRIBUTEENUM iCapType) {
   switch (iStrokeType) {
     case XFA_ATTRIBUTEENUM_DashDot: {
       float dashArray[] = {4, 1, 2, 1};
@@ -1366,17 +1369,17 @@ int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
     }
     case XFA_ATTRIBUTEENUM_Dashed: {
       float dashArray[] = {5, 1};
-      if (iCapType != XFA_ATTRIBUTEENUM_Butt) {
+      if (iCapType != XFA_ATTRIBUTEENUM_Butt)
         dashArray[1] = 2;
-      }
+
       pGraphics->SetLineDash(0, dashArray, 2);
       return FX_DASHSTYLE_Dash;
     }
     case XFA_ATTRIBUTEENUM_Dotted: {
       float dashArray[] = {2, 1};
-      if (iCapType != XFA_ATTRIBUTEENUM_Butt) {
+      if (iCapType != XFA_ATTRIBUTEENUM_Butt)
         dashArray[1] = 2;
-      }
+
       pGraphics->SetLineDash(0, dashArray, 2);
       return FX_DASHSTYLE_Dot;
     }
@@ -1385,17 +1388,6 @@ int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
   }
   pGraphics->SetLineDash(FX_DASHSTYLE_Solid);
   return FX_DASHSTYLE_Solid;
-}
-CFX_GraphStateData::LineCap XFA_LineCapToFXGE(int32_t iLineCap) {
-  switch (iLineCap) {
-    case XFA_ATTRIBUTEENUM_Round:
-      return CFX_GraphStateData::LineCapRound;
-    case XFA_ATTRIBUTEENUM_Butt:
-      return CFX_GraphStateData::LineCapButt;
-    default:
-      break;
-  }
-  return CFX_GraphStateData::LineCapSquare;
 }
 
 class CXFA_ImageRenderer {

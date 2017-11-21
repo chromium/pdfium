@@ -35,9 +35,8 @@ enum XFA_WIDGETITEM {
 };
 
 int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
-                                  int32_t iStrokeType,
-                                  int32_t iCapType);
-CFX_GraphStateData::LineCap XFA_LineCapToFXGE(int32_t iLineCap);
+                                  XFA_ATTRIBUTEENUM iStrokeType,
+                                  XFA_ATTRIBUTEENUM iCapType);
 void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,

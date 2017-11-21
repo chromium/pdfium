@@ -25,20 +25,22 @@ class CXFA_StrokeData : public CXFA_DataData {
   explicit CXFA_StrokeData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
   bool IsCorner() const { return GetElementType() == XFA_Element::Corner; }
-  bool IsEdge() const { return GetElementType() == XFA_Element::Edge; }
-  bool IsVisible() const { return GetPresence() == XFA_ATTRIBUTEENUM_Visible; }
-  int32_t GetPresence() const;
-  int32_t GetCapType() const;
-  int32_t GetStrokeType() const;
+  bool IsVisible() const;
+  bool IsInverted() const;
+
+  XFA_ATTRIBUTEENUM GetCapType() const;
+  XFA_ATTRIBUTEENUM GetStrokeType() const;
+  XFA_ATTRIBUTEENUM GetJoinType() const;
+  float GetRadius() const;
   float GetThickness() const;
+
   CXFA_Measurement GetMSThickness() const;
   void SetMSThickness(CXFA_Measurement msThinkness);
+
   FX_ARGB GetColor() const;
   void SetColor(FX_ARGB argb);
-  int32_t GetJoinType() const;
-  bool IsInverted() const;
-  float GetRadius() const;
-  bool SameStyles(CXFA_StrokeData stroke, uint32_t dwFlags = 0) const;
+
+  bool SameStyles(CXFA_StrokeData stroke, uint32_t dwFlags) const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_STROKEDATA_H_

@@ -63,7 +63,8 @@ static int32_t Style3D(const std::vector<CXFA_StrokeData>& strokes,
       strokeData = find;
     break;
   }
-  int32_t iType = strokeData.GetStrokeType();
+
+  XFA_ATTRIBUTEENUM iType = strokeData.GetStrokeType();
   if (iType == XFA_ATTRIBUTEENUM_Lowered || iType == XFA_ATTRIBUTEENUM_Raised ||
       iType == XFA_ATTRIBUTEENUM_Etched ||
       iType == XFA_ATTRIBUTEENUM_Embossed) {
