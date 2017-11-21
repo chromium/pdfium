@@ -12,21 +12,21 @@
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 
-enum class XFA_ScriptDataType {
-  Formcalc = 0,
-  Javascript,
-  Unknown,
-};
-
 class CXFA_Node;
 
 class CXFA_ScriptData : public CXFA_DataData {
  public:
+  enum class Type {
+    Formcalc = 0,
+    Javascript,
+    Unknown,
+  };
+
   explicit CXFA_ScriptData(CXFA_Node* pNode);
 
-  XFA_ScriptDataType GetContentType();
-  int32_t GetRunAt();
-  void GetExpression(WideString& wsExpression);
+  Type GetContentType() const;
+  XFA_ATTRIBUTEENUM GetRunAt() const;
+  WideString GetExpression() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SCRIPTDATA_H_

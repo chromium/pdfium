@@ -689,10 +689,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
         CXFA_ScriptData scriptData = calcData.GetScriptData();
         if (!scriptData.HasValidNode())
           return 1;
-
-        WideString wsExpression;
-        scriptData.GetExpression(wsExpression);
-        if (wsExpression.IsEmpty())
+        if (scriptData.GetExpression().IsEmpty())
           return 1;
       }
 

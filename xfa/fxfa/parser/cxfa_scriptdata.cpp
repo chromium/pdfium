@@ -10,22 +10,20 @@
 
 CXFA_ScriptData::CXFA_ScriptData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-XFA_ScriptDataType CXFA_ScriptData::GetContentType() {
+CXFA_ScriptData::Type CXFA_ScriptData::GetContentType() const {
   pdfium::Optional<WideString> cData =
       m_pNode->JSNode()->TryCData(XFA_Attribute::ContentType, false);
-  if (!cData)
-    return XFA_ScriptDataType::Formcalc;
+  if (!cData || *cData == L"application/x-formcalc")
+    return Type::Formcalc;
   if (*cData == L"application/x-javascript")
-    return XFA_ScriptDataType::Javascript;
-  if (*cData == L"application/x-formcalc")
-    return XFA_ScriptDataType::Formcalc;
-  return XFA_ScriptDataType::Unknown;
+    return Type::Javascript;
+  return Type::Unknown;
 }
 
-int32_t CXFA_ScriptData::GetRunAt() {
+XFA_ATTRIBUTEENUM CXFA_ScriptData::GetRunAt() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::RunAt);
 }
 
-void CXFA_ScriptData::GetExpression(WideString& wsExpression) {
-  wsExpression = m_pNode->JSNode()->GetContent(false);
+WideString CXFA_ScriptData::GetExpression() const {
+  return m_pNode->JSNode()->GetContent(false);
 }

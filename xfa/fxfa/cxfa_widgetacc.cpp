@@ -599,19 +599,18 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
   if (scriptData.GetRunAt() == XFA_ATTRIBUTEENUM_Server)
     return {XFA_EVENTERROR_Disabled, false};
 
-  WideString wsExpression;
-  scriptData.GetExpression(wsExpression);
+  WideString wsExpression = scriptData.GetExpression();
   if (wsExpression.IsEmpty())
     return {XFA_EVENTERROR_NotExist, false};
 
-  XFA_ScriptDataType eScriptType = scriptData.GetContentType();
-  if (eScriptType == XFA_ScriptDataType::Unknown)
+  CXFA_ScriptData::Type eScriptType = scriptData.GetContentType();
+  if (eScriptType == CXFA_ScriptData::Type::Unknown)
     return {XFA_EVENTERROR_Success, false};
 
   CXFA_FFDoc* pDoc = GetDoc();
   CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
   pContext->SetEventParam(*pEventParam);
-  pContext->SetRunAtType((XFA_ATTRIBUTEENUM)scriptData.GetRunAt());
+  pContext->SetRunAtType(scriptData.GetRunAt());
 
   std::vector<CXFA_Node*> refNodes;
   if (pEventParam->m_eType == XFA_EVENT_InitCalculate ||
