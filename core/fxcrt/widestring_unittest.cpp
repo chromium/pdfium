@@ -628,63 +628,38 @@ TEST(WideString, UpperLower) {
   EXPECT_EQ(L"", empty);
 }
 
-TEST(WideString, TrimRight) {
+TEST(WideString, Trim) {
   WideString fred(L"  FRED  ");
-  fred.TrimRight();
-  EXPECT_EQ(L"  FRED", fred);
-  fred.TrimRight(L'E');
-  EXPECT_EQ(L"  FRED", fred);
-  fred.TrimRight(L'D');
-  EXPECT_EQ(L"  FRE", fred);
-  fred.TrimRight(L"ERP");
-  EXPECT_EQ(L"  F", fred);
+  fred.Trim();
+  EXPECT_EQ(L"FRED", fred);
+  fred.Trim(L'E');
+  EXPECT_EQ(L"FRED", fred);
+  fred.Trim(L'F');
+  EXPECT_EQ(L"RED", fred);
+  fred.Trim(L"ERP");
+  EXPECT_EQ(L"D", fred);
 
   WideString blank(L"   ");
-  blank.TrimRight(L"ERP");
+  blank.Trim(L"ERP");
   EXPECT_EQ(L"   ", blank);
-  blank.TrimRight(L'E');
+  blank.Trim(L'E');
   EXPECT_EQ(L"   ", blank);
-  blank.TrimRight();
+  blank.Trim();
   EXPECT_EQ(L"", blank);
 
   WideString empty;
-  empty.TrimRight(L"ERP");
+  empty.Trim(L"ERP");
   EXPECT_EQ(L"", empty);
-  empty.TrimRight(L'E');
+  empty.Trim(L'E');
   EXPECT_EQ(L"", empty);
-  empty.TrimRight();
+  empty.Trim();
   EXPECT_EQ(L"", empty);
-}
 
-TEST(WideString, TrimRightCopies) {
-  {
-    // With a single reference, no copy takes place.
-    WideString fred(L"  FRED  ");
-    const wchar_t* old_buffer = fred.c_str();
-    fred.TrimRight();
-    EXPECT_EQ(L"  FRED", fred);
-    EXPECT_EQ(old_buffer, fred.c_str());
-  }
-  {
-    // With multiple references, we must copy.
-    WideString fred(L"  FRED  ");
-    WideString other_fred = fred;
-    const wchar_t* old_buffer = fred.c_str();
-    fred.TrimRight();
-    EXPECT_EQ(L"  FRED", fred);
-    EXPECT_EQ(L"  FRED  ", other_fred);
-    EXPECT_NE(old_buffer, fred.c_str());
-  }
-  {
-    // With multiple references, but no modifications, no copy.
-    WideString fred(L"FRED");
-    WideString other_fred = fred;
-    const wchar_t* old_buffer = fred.c_str();
-    fred.TrimRight();
-    EXPECT_EQ(L"FRED", fred);
-    EXPECT_EQ(L"FRED", other_fred);
-    EXPECT_EQ(old_buffer, fred.c_str());
-  }
+  WideString abc(L"  ABCCBA  ");
+  abc.Trim(L"A");
+  EXPECT_EQ(L"  ABCCBA  ", abc);
+  abc.Trim(L" A");
+  EXPECT_EQ(L"BCCB", abc);
 }
 
 TEST(WideString, TrimLeft) {
@@ -740,6 +715,65 @@ TEST(WideString, TrimLeftCopies) {
     WideString other_fred = fred;
     const wchar_t* old_buffer = fred.c_str();
     fred.TrimLeft();
+    EXPECT_EQ(L"FRED", fred);
+    EXPECT_EQ(L"FRED", other_fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+}
+
+TEST(WideString, TrimRight) {
+  WideString fred(L"  FRED  ");
+  fred.TrimRight();
+  EXPECT_EQ(L"  FRED", fred);
+  fred.TrimRight(L'E');
+  EXPECT_EQ(L"  FRED", fred);
+  fred.TrimRight(L'D');
+  EXPECT_EQ(L"  FRE", fred);
+  fred.TrimRight(L"ERP");
+  EXPECT_EQ(L"  F", fred);
+
+  WideString blank(L"   ");
+  blank.TrimRight(L"ERP");
+  EXPECT_EQ(L"   ", blank);
+  blank.TrimRight(L'E');
+  EXPECT_EQ(L"   ", blank);
+  blank.TrimRight();
+  EXPECT_EQ(L"", blank);
+
+  WideString empty;
+  empty.TrimRight(L"ERP");
+  EXPECT_EQ(L"", empty);
+  empty.TrimRight(L'E');
+  EXPECT_EQ(L"", empty);
+  empty.TrimRight();
+  EXPECT_EQ(L"", empty);
+}
+
+TEST(WideString, TrimRightCopies) {
+  {
+    // With a single reference, no copy takes place.
+    WideString fred(L"  FRED  ");
+    const wchar_t* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ(L"  FRED", fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, we must copy.
+    WideString fred(L"  FRED  ");
+    WideString other_fred = fred;
+    const wchar_t* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ(L"  FRED", fred);
+    EXPECT_EQ(L"  FRED  ", other_fred);
+    EXPECT_NE(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, but no modifications, no copy.
+    WideString fred(L"FRED");
+    WideString other_fred = fred;
+    const wchar_t* old_buffer = fred.c_str();
+    fred.TrimRight();
     EXPECT_EQ(L"FRED", fred);
     EXPECT_EQ(L"FRED", other_fred);
     EXPECT_EQ(old_buffer, fred.c_str());
@@ -894,7 +928,7 @@ TEST(WideString, UTF16LE_Encode) {
   struct UTF16LEEncodeCase {
     WideString ws;
     ByteString bs;
-  } utf16le_encode_cases[] = {
+  } const utf16le_encode_cases[] = {
       {L"", ByteString("\0\0", 2)},
       {L"abc", ByteString("a\0b\0c\0\0\0", 8)},
       {L"abcdef", ByteString("a\0b\0c\0d\0e\0f\0\0\0", 14)},

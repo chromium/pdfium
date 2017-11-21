@@ -853,20 +853,17 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
     tmp = srcURL.Left(pos.value());
     tmp = tmp.Right(tmp.GetLength() - 7);
   }
-  tmp.TrimLeft();
-  tmp.TrimRight();
+  tmp.Trim();
 
   csToAddress = tmp;
 
   srcURL = srcURL.Right(srcURL.GetLength() - (pos.value() + 1));
   while (!srcURL.IsEmpty()) {
-    srcURL.TrimLeft();
-    srcURL.TrimRight();
+    srcURL.Trim();
     pos = srcURL.Find(L'&');
 
     tmp = (!pos.has_value()) ? srcURL : srcURL.Left(pos.value());
-    tmp.TrimLeft();
-    tmp.TrimRight();
+    tmp.Trim();
     if (tmp.GetLength() >= 3 && tmp.Left(3).CompareNoCase(L"cc=") == 0) {
       tmp = tmp.Right(tmp.GetLength() - 3);
       if (!csCCAddress.IsEmpty())
@@ -922,8 +919,7 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
     case XFA_ATTRIBUTEENUM_Xdp: {
       WideString csContent;
       submitData.GetSubmitXDPContent(csContent);
-      csContent.TrimLeft();
-      csContent.TrimRight();
+      csContent.Trim();
       WideString space;
       space.FromLocal(" ");
       csContent = space + csContent + space;

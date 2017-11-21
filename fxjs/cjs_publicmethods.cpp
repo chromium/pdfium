@@ -73,8 +73,7 @@ const wchar_t* const kFullMonths[] = {L"January", L"February", L"March",
 template <typename T>
 T StrTrim(const T& str) {
   T result = str;
-  result.TrimLeft(' ');
-  result.TrimRight(' ');
+  result.Trim(' ');
   return result;
 }
 

@@ -31,6 +31,8 @@ template struct std::hash<WideString>;
 
 namespace {
 
+constexpr wchar_t kTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
+
 const wchar_t* FX_wcsstr(const wchar_t* haystack,
                          int haystack_len,
                          const wchar_t* needle,
@@ -958,32 +960,33 @@ size_t WideString::WStringLength(const unsigned short* str) {
   return len;
 }
 
-void WideString::TrimRight(const WideStringView& pTargets) {
-  if (IsEmpty() || pTargets.IsEmpty())
-    return;
-
-  size_t pos = GetLength();
-  while (pos && pTargets.Contains(m_pData->m_String[pos - 1]))
-    pos--;
-
-  if (pos < m_pData->m_nDataLength) {
-    ReallocBeforeWrite(m_pData->m_nDataLength);
-    m_pData->m_String[pos] = 0;
-    m_pData->m_nDataLength = pos;
-  }
+void WideString::Trim() {
+  TrimRight(kTrimChars);
+  TrimLeft(kTrimChars);
 }
 
-void WideString::TrimRight(wchar_t chTarget) {
-  wchar_t str[2] = {chTarget, 0};
+void WideString::Trim(wchar_t target) {
+  wchar_t str[2] = {target, 0};
   TrimRight(str);
+  TrimLeft(str);
 }
 
-void WideString::TrimRight() {
-  TrimRight(L"\x09\x0a\x0b\x0c\x0d\x20");
+void WideString::Trim(const WideStringView& targets) {
+  TrimRight(targets);
+  TrimLeft(targets);
 }
 
-void WideString::TrimLeft(const WideStringView& pTargets) {
-  if (!m_pData || pTargets.IsEmpty())
+void WideString::TrimLeft() {
+  TrimLeft(kTrimChars);
+}
+
+void WideString::TrimLeft(wchar_t target) {
+  wchar_t str[2] = {target, 0};
+  TrimLeft(str);
+}
+
+void WideString::TrimLeft(const WideStringView& targets) {
+  if (!m_pData || targets.IsEmpty())
     return;
 
   size_t len = GetLength();
@@ -993,13 +996,12 @@ void WideString::TrimLeft(const WideStringView& pTargets) {
   size_t pos = 0;
   while (pos < len) {
     size_t i = 0;
-    while (i < pTargets.GetLength() &&
-           pTargets.CharAt(i) != m_pData->m_String[pos]) {
+    while (i < targets.GetLength() &&
+           targets.CharAt(i) != m_pData->m_String[pos]) {
       i++;
     }
-    if (i == pTargets.GetLength()) {
+    if (i == targets.GetLength())
       break;
-    }
     pos++;
   }
   if (!pos)
@@ -1012,14 +1014,30 @@ void WideString::TrimLeft(const WideStringView& pTargets) {
   m_pData->m_nDataLength = nDataLength;
 }
 
-void WideString::TrimLeft(wchar_t chTarget) {
-  wchar_t str[2] = {chTarget, 0};
-  TrimLeft(str);
+void WideString::TrimRight() {
+  TrimRight(kTrimChars);
 }
 
-void WideString::TrimLeft() {
-  TrimLeft(L"\x09\x0a\x0b\x0c\x0d\x20");
+void WideString::TrimRight(wchar_t target) {
+  wchar_t str[2] = {target, 0};
+  TrimRight(str);
 }
+
+void WideString::TrimRight(const WideStringView& targets) {
+  if (IsEmpty() || targets.IsEmpty())
+    return;
+
+  size_t pos = GetLength();
+  while (pos && targets.Contains(m_pData->m_String[pos - 1]))
+    pos--;
+
+  if (pos < m_pData->m_nDataLength) {
+    ReallocBeforeWrite(m_pData->m_nDataLength);
+    m_pData->m_String[pos] = 0;
+    m_pData->m_nDataLength = pos;
+  }
+}
+
 float FX_wtof(const wchar_t* str, int len) {
   if (len == 0) {
     return 0.0;

@@ -27,6 +27,8 @@ template struct std::hash<ByteString>;
 
 namespace {
 
+constexpr char kTrimChars[] = "\x09\x0a\x0b\x0c\x0d\x20";
+
 const char* FX_strstr(const char* haystack,
                       int haystack_len,
                       const char* needle,
@@ -98,7 +100,7 @@ static_assert(sizeof(ByteString) <= sizeof(char*),
 // static
 ByteString ByteString::FormatInteger(int i) {
   char buf[32];
-  FXSYS_snprintf(buf, 32, "%d", i);
+  FXSYS_snprintf(buf, sizeof(buf), "%d", i);
   return ByteString(buf);
 }
 
@@ -728,42 +730,32 @@ int ByteString::Compare(const ByteStringView& str) const {
   return 0;
 }
 
-void ByteString::TrimRight(const ByteStringView& pTargets) {
-  if (!m_pData || pTargets.IsEmpty())
-    return;
-
-  size_t pos = GetLength();
-  if (pos == 0)
-    return;
-
-  while (pos) {
-    size_t i = 0;
-    while (i < pTargets.GetLength() &&
-           pTargets[i] != m_pData->m_String[pos - 1]) {
-      i++;
-    }
-    if (i == pTargets.GetLength()) {
-      break;
-    }
-    pos--;
-  }
-  if (pos < m_pData->m_nDataLength) {
-    ReallocBeforeWrite(m_pData->m_nDataLength);
-    m_pData->m_String[pos] = 0;
-    m_pData->m_nDataLength = pos;
-  }
+void ByteString::Trim() {
+  TrimRight(kTrimChars);
+  TrimLeft(kTrimChars);
 }
 
-void ByteString::TrimRight(char chTarget) {
-  TrimRight(ByteStringView(chTarget));
+void ByteString::Trim(char target) {
+  ByteStringView targets(target);
+  TrimRight(targets);
+  TrimLeft(targets);
 }
 
-void ByteString::TrimRight() {
-  TrimRight("\x09\x0a\x0b\x0c\x0d\x20");
+void ByteString::Trim(const ByteStringView& targets) {
+  TrimRight(targets);
+  TrimLeft(targets);
 }
 
-void ByteString::TrimLeft(const ByteStringView& pTargets) {
-  if (!m_pData || pTargets.IsEmpty())
+void ByteString::TrimLeft() {
+  TrimLeft(kTrimChars);
+}
+
+void ByteString::TrimLeft(char target) {
+  TrimLeft(ByteStringView(target));
+}
+
+void ByteString::TrimLeft(const ByteStringView& targets) {
+  if (!m_pData || targets.IsEmpty())
     return;
 
   size_t len = GetLength();
@@ -773,12 +765,10 @@ void ByteString::TrimLeft(const ByteStringView& pTargets) {
   size_t pos = 0;
   while (pos < len) {
     size_t i = 0;
-    while (i < pTargets.GetLength() && pTargets[i] != m_pData->m_String[pos]) {
+    while (i < targets.GetLength() && targets[i] != m_pData->m_String[pos])
       i++;
-    }
-    if (i == pTargets.GetLength()) {
+    if (i == targets.GetLength())
       break;
-    }
     pos++;
   }
   if (pos) {
@@ -790,12 +780,35 @@ void ByteString::TrimLeft(const ByteStringView& pTargets) {
   }
 }
 
-void ByteString::TrimLeft(char chTarget) {
-  TrimLeft(ByteStringView(chTarget));
+void ByteString::TrimRight() {
+  TrimRight(kTrimChars);
 }
 
-void ByteString::TrimLeft() {
-  TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
+void ByteString::TrimRight(char target) {
+  TrimRight(ByteStringView(target));
+}
+
+void ByteString::TrimRight(const ByteStringView& targets) {
+  if (!m_pData || targets.IsEmpty())
+    return;
+
+  size_t pos = GetLength();
+  if (pos == 0)
+    return;
+
+  while (pos) {
+    size_t i = 0;
+    while (i < targets.GetLength() && targets[i] != m_pData->m_String[pos - 1])
+      i++;
+    if (i == targets.GetLength())
+      break;
+    pos--;
+  }
+  if (pos < m_pData->m_nDataLength) {
+    ReallocBeforeWrite(m_pData->m_nDataLength);
+    m_pData->m_String[pos] = 0;
+    m_pData->m_nDataLength = pos;
+  }
 }
 
 std::ostream& operator<<(std::ostream& os, const ByteString& str) {

@@ -534,8 +534,7 @@ ByteString GUIDString(bool bSeparator) {
 
 double ByteStringToDouble(const ByteStringView& szStringVal) {
   WideString wsValue = WideString::FromUTF8(szStringVal);
-  wsValue.TrimLeft();
-  wsValue.TrimRight();
+  wsValue.Trim();
 
   int32_t cc = 0;
   bool bNegative = false;

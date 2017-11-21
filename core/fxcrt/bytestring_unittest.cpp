@@ -703,63 +703,38 @@ TEST(ByteString, UpperLower) {
   EXPECT_EQ("", empty);
 }
 
-TEST(ByteString, TrimRight) {
+TEST(ByteString, Trim) {
   ByteString fred("  FRED  ");
-  fred.TrimRight();
-  EXPECT_EQ("  FRED", fred);
-  fred.TrimRight('E');
-  EXPECT_EQ("  FRED", fred);
-  fred.TrimRight('D');
-  EXPECT_EQ("  FRE", fred);
-  fred.TrimRight("ERP");
-  EXPECT_EQ("  F", fred);
+  fred.Trim();
+  EXPECT_EQ("FRED", fred);
+  fred.Trim('E');
+  EXPECT_EQ("FRED", fred);
+  fred.Trim('F');
+  EXPECT_EQ("RED", fred);
+  fred.Trim("ERP");
+  EXPECT_EQ("D", fred);
 
   ByteString blank("   ");
-  blank.TrimRight("ERP");
+  blank.Trim("ERP");
   EXPECT_EQ("   ", blank);
-  blank.TrimRight('E');
+  blank.Trim('E');
   EXPECT_EQ("   ", blank);
-  blank.TrimRight();
+  blank.Trim();
   EXPECT_EQ("", blank);
 
   ByteString empty;
-  empty.TrimRight("ERP");
+  empty.Trim("ERP");
   EXPECT_EQ("", empty);
-  empty.TrimRight('E');
+  empty.Trim('E');
   EXPECT_EQ("", empty);
-  empty.TrimRight();
+  empty.Trim();
   EXPECT_EQ("", empty);
-}
 
-TEST(ByteString, TrimRightCopies) {
-  {
-    // With a single reference, no copy takes place.
-    ByteString fred("  FRED  ");
-    const char* old_buffer = fred.c_str();
-    fred.TrimRight();
-    EXPECT_EQ("  FRED", fred);
-    EXPECT_EQ(old_buffer, fred.c_str());
-  }
-  {
-    // With multiple references, we must copy.
-    ByteString fred("  FRED  ");
-    ByteString other_fred = fred;
-    const char* old_buffer = fred.c_str();
-    fred.TrimRight();
-    EXPECT_EQ("  FRED", fred);
-    EXPECT_EQ("  FRED  ", other_fred);
-    EXPECT_NE(old_buffer, fred.c_str());
-  }
-  {
-    // With multiple references, but no modifications, no copy.
-    ByteString fred("FRED");
-    ByteString other_fred = fred;
-    const char* old_buffer = fred.c_str();
-    fred.TrimRight();
-    EXPECT_EQ("FRED", fred);
-    EXPECT_EQ("FRED", other_fred);
-    EXPECT_EQ(old_buffer, fred.c_str());
-  }
+  ByteString abc("  ABCCBA  ");
+  abc.Trim("A");
+  EXPECT_EQ("  ABCCBA  ", abc);
+  abc.Trim(" A");
+  EXPECT_EQ("BCCB", abc);
 }
 
 TEST(ByteString, TrimLeft) {
@@ -815,6 +790,65 @@ TEST(ByteString, TrimLeftCopies) {
     ByteString other_fred = fred;
     const char* old_buffer = fred.c_str();
     fred.TrimLeft();
+    EXPECT_EQ("FRED", fred);
+    EXPECT_EQ("FRED", other_fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+}
+
+TEST(ByteString, TrimRight) {
+  ByteString fred("  FRED  ");
+  fred.TrimRight();
+  EXPECT_EQ("  FRED", fred);
+  fred.TrimRight('E');
+  EXPECT_EQ("  FRED", fred);
+  fred.TrimRight('D');
+  EXPECT_EQ("  FRE", fred);
+  fred.TrimRight("ERP");
+  EXPECT_EQ("  F", fred);
+
+  ByteString blank("   ");
+  blank.TrimRight("ERP");
+  EXPECT_EQ("   ", blank);
+  blank.TrimRight('E');
+  EXPECT_EQ("   ", blank);
+  blank.TrimRight();
+  EXPECT_EQ("", blank);
+
+  ByteString empty;
+  empty.TrimRight("ERP");
+  EXPECT_EQ("", empty);
+  empty.TrimRight('E');
+  EXPECT_EQ("", empty);
+  empty.TrimRight();
+  EXPECT_EQ("", empty);
+}
+
+TEST(ByteString, TrimRightCopies) {
+  {
+    // With a single reference, no copy takes place.
+    ByteString fred("  FRED  ");
+    const char* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ("  FRED", fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, we must copy.
+    ByteString fred("  FRED  ");
+    ByteString other_fred = fred;
+    const char* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ("  FRED", fred);
+    EXPECT_EQ("  FRED  ", other_fred);
+    EXPECT_NE(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, but no modifications, no copy.
+    ByteString fred("FRED");
+    ByteString other_fred = fred;
+    const char* old_buffer = fred.c_str();
+    fred.TrimRight();
     EXPECT_EQ("FRED", fred);
     EXPECT_EQ("FRED", other_fred);
     EXPECT_EQ(old_buffer, fred.c_str());

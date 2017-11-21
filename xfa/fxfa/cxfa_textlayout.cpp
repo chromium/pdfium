@@ -775,7 +775,7 @@ bool CXFA_TextLayout::LoadRichText(
         if (m_pLoader) {
           if (wsText.GetLength() > 0 &&
               (m_pLoader->m_dwFlags & XFA_LOADERCNTXTFLG_FILTERSPACE)) {
-            wsText.TrimLeft(0x20);
+            wsText.TrimLeft(L" ");
           }
           if (CFX_CSSDisplay::Block == eDisplay) {
             m_pLoader->m_dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;

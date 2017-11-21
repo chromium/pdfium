@@ -1264,10 +1264,8 @@ CJS_Return Document::getPageNthWord(
     }
   }
 
-  if (bStrip) {
-    swRet.TrimLeft();
-    swRet.TrimRight();
-  }
+  if (bStrip)
+    swRet.Trim();
   return CJS_Return(pRuntime->NewString(swRet.c_str()));
 }
 

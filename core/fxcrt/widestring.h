@@ -147,13 +147,17 @@ class WideString {
   void MakeLower();
   void MakeUpper();
 
-  void TrimRight();
-  void TrimRight(wchar_t chTarget);
-  void TrimRight(const WideStringView& pTargets);
+  void Trim();
+  void Trim(wchar_t target);
+  void Trim(const WideStringView& targets);
 
   void TrimLeft();
-  void TrimLeft(wchar_t chTarget);
-  void TrimLeft(const WideStringView& pTargets);
+  void TrimLeft(wchar_t target);
+  void TrimLeft(const WideStringView& targets);
+
+  void TrimRight();
+  void TrimRight(wchar_t target);
+  void TrimRight(const WideStringView& targets);
 
   void Reserve(size_t len);
   wchar_t* GetBuffer(size_t len);

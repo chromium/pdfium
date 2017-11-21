@@ -43,8 +43,7 @@ int32_t FilterName(const WideStringView& wsExpression,
     pBuf[nCount++] = wCur;
   }
   wsFilter.ReleaseBuffer(nCount);
-  wsFilter.TrimLeft();
-  wsFilter.TrimRight();
+  wsFilter.Trim();
   return nStart;
 }
 

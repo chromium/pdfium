@@ -33,8 +33,7 @@ const uint8_t JS_RC4KEY[] = {
 
 // Returns true if non-empty, setting sPropName
 bool TrimPropName(ByteString* sPropName) {
-  sPropName->TrimLeft();
-  sPropName->TrimRight();
+  sPropName->Trim();
   return sPropName->GetLength() != 0;
 }
 

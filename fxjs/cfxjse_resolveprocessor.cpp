@@ -582,11 +582,9 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(const WideStringView& wsExpression,
     return -1;
 
   wsName.ReleaseBuffer(nNameCount);
-  wsName.TrimLeft();
-  wsName.TrimRight();
+  wsName.Trim();
   wsCondition.ReleaseBuffer(nConditionCount);
-  wsCondition.TrimLeft();
-  wsCondition.TrimRight();
+  wsCondition.Trim();
   rnd.m_uHashName =
       static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView(), false));
   return nStart;
@@ -700,8 +698,7 @@ void CFXJSE_ResolveProcessor::FilterCondition(CFXJSE_ResolveNodeData& rnd,
     }
   }
   int32_t iFoundCount = pdfium::CollectionSize<int32_t>(rnd.m_Objects);
-  wsCondition.TrimLeft();
-  wsCondition.TrimRight();
+  wsCondition.Trim();
   int32_t iLen = wsCondition.GetLength();
   if (!iLen) {
     if (rnd.m_dwStyles & XFA_RESOLVENODE_ALL) {

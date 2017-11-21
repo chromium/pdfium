@@ -142,8 +142,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   if (wsTargetAll.IsEmpty())
     return nullptr;
 
-  wsTargetAll.TrimLeft();
-  wsTargetAll.TrimRight();
+  wsTargetAll.Trim();
   int32_t iSplitIndex = 0;
   bool bTargetAllFind = true;
   while (iSplitIndex != -1) {
@@ -383,7 +382,8 @@ bool CXFA_LayoutPageMgr::PrepareFirstPage(CXFA_Node* pRootSubform) {
           pRootSubform->GetNextSameClassSibling(XFA_Element::Subform);
     }
   }
-  CXFA_Node *pLeader, *pTrailer;
+  CXFA_Node* pLeader;
+  CXFA_Node* pTrailer;
   if (pBreakBeforeNode &&
       ExecuteBreakBeforeOrAfter(pBreakBeforeNode, true, pLeader, pTrailer)) {
     m_CurrentContainerRecordIter = m_ProposedContainerRecords.begin();

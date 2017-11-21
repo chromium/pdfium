@@ -167,13 +167,17 @@ class ByteString {
   void MakeLower();
   void MakeUpper();
 
-  void TrimRight();
-  void TrimRight(char chTarget);
-  void TrimRight(const ByteStringView& lpszTargets);
+  void Trim();
+  void Trim(char target);
+  void Trim(const ByteStringView& targets);
 
   void TrimLeft();
-  void TrimLeft(char chTarget);
-  void TrimLeft(const ByteStringView& lpszTargets);
+  void TrimLeft(char target);
+  void TrimLeft(const ByteStringView& targets);
+
+  void TrimRight();
+  void TrimRight(char target);
+  void TrimRight(const ByteStringView& targets);
 
   size_t Replace(const ByteStringView& lpszOld, const ByteStringView& lpszNew);
 
