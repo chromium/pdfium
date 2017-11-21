@@ -26,8 +26,8 @@ XFA_Element CXFA_EventData::GetEventType() const {
   return XFA_Element::Unknown;
 }
 
-void CXFA_EventData::GetRef(WideString& wsRef) {
-  wsRef = m_pNode->JSNode()->GetCData(XFA_Attribute::Ref);
+WideString CXFA_EventData::GetRef() const {
+  return m_pNode->JSNode()->GetCData(XFA_Attribute::Ref);
 }
 
 CXFA_ScriptData CXFA_EventData::GetScriptData() const {
@@ -36,13 +36,4 @@ CXFA_ScriptData CXFA_EventData::GetScriptData() const {
 
 CXFA_SubmitData CXFA_EventData::GetSubmitData() const {
   return CXFA_SubmitData(m_pNode->GetChild(0, XFA_Element::Submit, false));
-}
-
-void CXFA_EventData::GetSignDataTarget(WideString& wsTarget) {
-  CXFA_Node* pNode =
-      m_pNode->JSNode()->GetProperty(0, XFA_Element::SignData, true);
-  if (!pNode)
-    return;
-
-  wsTarget = pNode->JSNode()->GetCData(XFA_Attribute::Target);
 }

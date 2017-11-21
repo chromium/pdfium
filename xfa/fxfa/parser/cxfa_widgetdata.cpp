@@ -283,8 +283,7 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
     CXFA_EventData eventData(pNode);
     if (eventData.GetActivity() == iActivity) {
       if (iActivity == XFA_ATTRIBUTEENUM_Ready) {
-        WideString wsRef;
-        eventData.GetRef(wsRef);
+        WideString wsRef = eventData.GetRef();
         if (bIsFormReady) {
           if (wsRef == WideStringView(L"$form"))
             events.push_back(pNode);
