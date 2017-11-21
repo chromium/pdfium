@@ -23,10 +23,6 @@ class CXFA_BoxData : public CXFA_DataData {
   explicit CXFA_BoxData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
   bool IsArc() const { return GetElementType() == XFA_Element::Arc; }
-  bool IsBorder() const { return GetElementType() == XFA_Element::Border; }
-  bool IsRectangle() const {
-    return GetElementType() == XFA_Element::Rectangle;
-  }
   bool IsCircular() const;
 
   int32_t GetHand() const;
