@@ -16,11 +16,9 @@ class CXFA_BindItemsData : public CXFA_DataData {
  public:
   explicit CXFA_BindItemsData(CXFA_Node* pNode);
 
-  WideString GetLabelRef();
-  WideString GetValueRef();
-  WideString GetRef();
-
-  bool SetConnection(const WideString& wsConnection);
+  WideString GetLabelRef() const;
+  WideString GetValueRef() const;
+  WideString GetRef() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BINDITEMSDATA_H_
