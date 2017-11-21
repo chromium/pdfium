@@ -61,7 +61,7 @@ bool CPDF_ContentMark::HasMark(const ByteStringView& mark) const {
 }
 
 bool CPDF_ContentMark::LookupMark(const ByteStringView& mark,
-                                  CPDF_Dictionary*& pDict) const {
+                                  CPDF_Dictionary** pDict) const {
   const MarkData* pData = m_Ref.GetObject();
   if (!pData)
     return false;
@@ -69,7 +69,7 @@ bool CPDF_ContentMark::LookupMark(const ByteStringView& mark,
   for (int i = 0; i < pData->CountItems(); i++) {
     const CPDF_ContentMarkItem& item = pData->GetItem(i);
     if (item.GetName() == mark) {
-      pDict = item.GetParam();
+      *pDict = item.GetParam();
       return true;
     }
   }

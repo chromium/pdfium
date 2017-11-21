@@ -256,7 +256,7 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
     CFX_CSSPrimitiveType eType;
     CFX_CSSValueListParser list(pszValue + 4, iValueLen - 5, ',');
     for (int32_t i = 0; i < 3; ++i) {
-      if (!list.NextValue(eType, pszValue, iValueLen))
+      if (!list.NextValue(&eType, &pszValue, &iValueLen))
         return false;
       if (eType != CFX_CSSPrimitiveType::Number)
         return false;
@@ -477,7 +477,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
   const uint32_t dwType = pTable->dwType;
   CFX_CSSPrimitiveType eType;
   std::vector<RetainPtr<CFX_CSSValue>> list;
-  while (parser.NextValue(eType, pszValue, iValueLen)) {
+  while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
       case CFX_CSSPrimitiveType::Number:
         if (dwType & CFX_CSSVALUETYPE_MaybeNumber) {
@@ -596,7 +596,7 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
 
   CFX_CSSValueListParser parser(pszValue, iValueLen, ' ');
   CFX_CSSPrimitiveType eType;
-  while (parser.NextValue(eType, pszValue, iValueLen)) {
+  while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
       case CFX_CSSPrimitiveType::Number: {
         if (pWidth)
@@ -653,7 +653,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
   RetainPtr<CFX_CSSValue> pLineHeight;
   std::vector<RetainPtr<CFX_CSSValue>> familyList;
   CFX_CSSPrimitiveType eType;
-  while (parser.NextValue(eType, pszValue, iValueLen)) {
+  while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
       case CFX_CSSPrimitiveType::String: {
         const CFX_CSSPropertyValueTable* pValue =
@@ -708,7 +708,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
           familyList.push_back(pdfium::MakeRetain<CFX_CSSStringValue>(
               WideString(pszValue, iValueLen)));
         }
-        parser.m_Separator = ',';
+        parser.UseCommaSeparator();
         break;
       }
       case CFX_CSSPrimitiveType::Number: {

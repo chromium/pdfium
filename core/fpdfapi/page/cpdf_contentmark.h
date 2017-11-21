@@ -28,7 +28,7 @@ class CPDF_ContentMark {
   const CPDF_ContentMarkItem& GetItem(int i) const;
 
   bool HasMark(const ByteStringView& mark) const;
-  bool LookupMark(const ByteStringView& mark, CPDF_Dictionary*& pDict) const;
+  bool LookupMark(const ByteStringView& mark, CPDF_Dictionary** pDict) const;
   void AddMark(const ByteString& name, CPDF_Dictionary* pDict, bool bDirect);
   void DeleteLastMark();
 

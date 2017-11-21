@@ -28,7 +28,11 @@ class CCodec_PngModule {
                                int pass,
                                int* color_type,
                                double* gamma) = 0;
-    virtual bool PngAskScanlineBuf(int line, uint8_t*& src_buf) = 0;
+
+    // Returns true on success. |pSrcBuf| will be set if this succeeds.
+    // |pSrcBuf| does not take ownership of the buffer.
+    virtual bool PngAskScanlineBuf(int line, uint8_t** pSrcBuf) = 0;
+
     virtual void PngFillScanlineBufCompleted(int pass, int line) = 0;
   };
 

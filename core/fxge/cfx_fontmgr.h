@@ -27,7 +27,7 @@ class CFX_FontMgr {
   FXFT_Face GetCachedFace(const ByteString& face_name,
                           int weight,
                           bool bItalic,
-                          uint8_t*& pFontData);
+                          uint8_t** pFontData);
   FXFT_Face AddCachedFace(const ByteString& face_name,
                           int weight,
                           bool bItalic,
@@ -37,7 +37,7 @@ class CFX_FontMgr {
   FXFT_Face GetCachedTTCFace(int ttc_size,
                              uint32_t checksum,
                              int font_offset,
-                             uint8_t*& pFontData);
+                             uint8_t** pFontData);
   FXFT_Face AddCachedTTCFace(int ttc_size,
                              uint32_t checksum,
                              uint8_t* pData,

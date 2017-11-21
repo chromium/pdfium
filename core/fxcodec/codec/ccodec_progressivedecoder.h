@@ -131,7 +131,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
                      int pass,
                      int* color_type,
                      double* gamma) override;
-  bool PngAskScanlineBuf(int line, uint8_t*& src_buf) override;
+  bool PngAskScanlineBuf(int line, uint8_t** pSrcBuf) override;
   void PngFillScanlineBufCompleted(int pass, int line) override;
 
   // CCodec_GifModule::Delegate

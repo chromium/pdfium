@@ -15,46 +15,46 @@ CFX_CSSValueListParser::CFX_CSSValueListParser(const wchar_t* psz,
   ASSERT(psz && iLen > 0);
 }
 
-bool CFX_CSSValueListParser::NextValue(CFX_CSSPrimitiveType& eType,
-                                       const wchar_t*& pStart,
-                                       int32_t& iLength) {
+bool CFX_CSSValueListParser::NextValue(CFX_CSSPrimitiveType* eType,
+                                       const wchar_t** pStart,
+                                       int32_t* iLength) {
   while (m_pCur < m_pEnd && (*m_pCur <= ' ' || *m_pCur == m_Separator))
     ++m_pCur;
 
   if (m_pCur >= m_pEnd)
     return false;
 
-  eType = CFX_CSSPrimitiveType::Unknown;
-  pStart = m_pCur;
-  iLength = 0;
+  *eType = CFX_CSSPrimitiveType::Unknown;
+  *pStart = m_pCur;
+  *iLength = 0;
   wchar_t wch = *m_pCur;
   if (wch == '#') {
-    iLength = SkipTo(' ', false, false);
-    if (iLength == 4 || iLength == 7)
-      eType = CFX_CSSPrimitiveType::RGB;
+    *iLength = SkipTo(' ', false, false);
+    if (*iLength == 4 || *iLength == 7)
+      *eType = CFX_CSSPrimitiveType::RGB;
   } else if (std::iswdigit(wch) || wch == '.' || wch == '-' || wch == '+') {
     while (m_pCur < m_pEnd && (*m_pCur > ' ' && *m_pCur != m_Separator))
       ++m_pCur;
 
-    iLength = m_pCur - pStart;
-    eType = CFX_CSSPrimitiveType::Number;
+    *iLength = m_pCur - *pStart;
+    *eType = CFX_CSSPrimitiveType::Number;
   } else if (wch == '\"' || wch == '\'') {
-    pStart++;
+    ++(*pStart);
     m_pCur++;
-    iLength = SkipTo(wch, false, false);
+    *iLength = SkipTo(wch, false, false);
     m_pCur++;
-    eType = CFX_CSSPrimitiveType::String;
+    *eType = CFX_CSSPrimitiveType::String;
   } else if (m_pEnd - m_pCur > 5 && m_pCur[3] == '(') {
     if (FXSYS_wcsnicmp(L"rgb", m_pCur, 3) == 0) {
-      iLength = SkipTo(')', false, false) + 1;
+      *iLength = SkipTo(')', false, false) + 1;
       m_pCur++;
-      eType = CFX_CSSPrimitiveType::RGB;
+      *eType = CFX_CSSPrimitiveType::RGB;
     }
   } else {
-    iLength = SkipTo(m_Separator, true, true);
-    eType = CFX_CSSPrimitiveType::String;
+    *iLength = SkipTo(m_Separator, true, true);
+    *eType = CFX_CSSPrimitiveType::String;
   }
-  return m_pCur <= m_pEnd && iLength > 0;
+  return m_pCur <= m_pEnd && *iLength > 0;
 }
 
 int32_t CFX_CSSValueListParser::SkipTo(wchar_t wch,

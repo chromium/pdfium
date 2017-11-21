@@ -395,7 +395,7 @@ bool CCodec_ProgressiveDecoder::PngReadHeader(int width,
   return true;
 }
 
-bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t*& src_buf) {
+bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   if (!pDIBitmap) {
     NOTREACHED();
@@ -406,7 +406,7 @@ bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t*& src_buf) {
     int32_t row = (int32_t)((line - m_clipBox.top) * scale_y) + m_startY;
     uint8_t* src_scan = (uint8_t*)pDIBitmap->GetScanline(row);
     uint8_t* des_scan = m_pDecodeBuf;
-    src_buf = m_pDecodeBuf;
+    *pSrcBuf = m_pDecodeBuf;
     int32_t src_Bpp = pDIBitmap->GetBPP() >> 3;
     int32_t des_Bpp = (m_SrcFormat & 0xff) >> 3;
     int32_t src_left = m_startX;

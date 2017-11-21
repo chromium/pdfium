@@ -183,8 +183,8 @@ static void _png_get_row_func(png_structp png_ptr,
   if (!pContext)
     return;
 
-  uint8_t* src_buf = nullptr;
-  if (!pContext->m_pDelegate->PngAskScanlineBuf(row_num, src_buf))
+  uint8_t* src_buf;
+  if (!pContext->m_pDelegate->PngAskScanlineBuf(row_num, &src_buf))
     png_error(png_ptr, "Ask Scanline buffer Callback Error");
 
   if (src_buf)
