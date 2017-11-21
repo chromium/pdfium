@@ -46,14 +46,6 @@ struct RecurseRecord {
   CXFA_Node* pDataChild;
 };
 
-bool GetOccurInfo(CXFA_Node* pOccurNode,
-                  int32_t& iMin,
-                  int32_t& iMax,
-                  int32_t& iInit) {
-  return pOccurNode ? CXFA_OccurData(pOccurNode).GetOccurInfo(iMin, iMax, iInit)
-                    : false;
-}
-
 CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {
   CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (!pChildNode) {
@@ -597,13 +589,19 @@ CXFA_Node* FindMatchingDataNode(
         pCurTemplateNode = pIterator->MoveToNext();
         continue;
     }
+
     CXFA_Node* pTemplateNodeOccur =
         pCurTemplateNode->GetFirstChildByClass(XFA_Element::Occur);
-    int32_t iMin, iMax, iInit;
-    if (pTemplateNodeOccur &&
-        GetOccurInfo(pTemplateNodeOccur, iMin, iMax, iInit) && iMax == 0) {
-      pCurTemplateNode = pIterator->MoveToNext();
-      continue;
+    if (pTemplateNodeOccur) {
+      int32_t iMin;
+      int32_t iMax;
+      int32_t iInit;
+      std::tie(iMin, iMax, iInit) =
+          CXFA_OccurData(pTemplateNodeOccur).GetOccurInfo();
+      if (iMax == 0) {
+        pCurTemplateNode = pIterator->MoveToNext();
+        continue;
+      }
     }
 
     CXFA_Node* pTemplateNodeBind =
@@ -750,8 +748,8 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
   int32_t iMax = 1;
   int32_t iInit = 1;
   int32_t iMin = 1;
-  if (!bOneInstance)
-    GetOccurInfo(pOccurNode, iMin, iMax, iInit);
+  if (!bOneInstance && pOccurNode)
+    std::tie(iMin, iMax, iInit) = CXFA_OccurData(pOccurNode).GetOccurInfo();
 
   XFA_ATTRIBUTEENUM eRelation =
       eType == XFA_Element::SubformSet

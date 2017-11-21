@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_OCCURDATA_H_
 #define XFA_FXFA_PARSER_CXFA_OCCURDATA_H_
 
+#include <tuple>
+
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 
@@ -16,11 +18,13 @@ class CXFA_OccurData : public CXFA_DataData {
  public:
   explicit CXFA_OccurData(CXFA_Node* pNode);
 
-  int32_t GetMax();
-  int32_t GetMin();
-  bool GetOccurInfo(int32_t& iMin, int32_t& iMax, int32_t& iInit);
+  int32_t GetMax() const;
   void SetMax(int32_t iMax);
+
+  int32_t GetMin() const;
   void SetMin(int32_t iMin);
+
+  std::tuple<int32_t, int32_t, int32_t> GetOccurInfo() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_OCCURDATA_H_
