@@ -16,6 +16,11 @@ class CXFA_MarginData : public CXFA_DataData {
  public:
   explicit CXFA_MarginData(CXFA_Node* pNode);
 
+  float GetLeftInset() const;
+  float GetTopInset() const;
+  float GetRightInset() const;
+  float GetBottomInset() const;
+
   bool TryLeftInset(float& fInset) const;
   bool TryTopInset(float& fInset) const;
   bool TryRightInset(float& fInset) const;

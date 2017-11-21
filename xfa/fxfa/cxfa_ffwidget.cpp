@@ -2026,15 +2026,8 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt,
   if (!marginData.HasValidNode())
     return;
 
-  float fLeftInset = 0;
-  float fTopInset = 0;
-  float fRightInset = 0;
-  float fBottomInset = 0;
-  marginData.TryLeftInset(fLeftInset);
-  marginData.TryTopInset(fTopInset);
-  marginData.TryRightInset(fRightInset);
-  marginData.TryBottomInset(fBottomInset);
-  rt.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
+  rt.Deflate(marginData.GetLeftInset(), marginData.GetTopInset(),
+             marginData.GetRightInset(), marginData.GetBottomInset());
 }
 
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
