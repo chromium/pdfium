@@ -176,9 +176,9 @@ void CXFA_WidgetAcc::ResetData() {
       CXFA_ImageData imageData = imageValueData.GetImageData();
       WideString wsContentType, wsHref;
       if (imageData.HasValidNode()) {
-        imageData.GetContent(wsValue);
-        imageData.GetContentType(wsContentType);
-        imageData.GetHref(wsHref);
+        wsValue = imageData.GetContent();
+        wsContentType = imageData.GetContentType();
+        wsHref = imageData.GetHref();
       }
       SetImageEdit(wsContentType, wsHref, wsValue);
       break;

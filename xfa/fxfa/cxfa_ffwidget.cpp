@@ -1674,7 +1674,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
                    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                   int32_t iAspect,
+                   XFA_ATTRIBUTEENUM iAspect,
                    int32_t iImageXDpi,
                    int32_t iImageYDpi,
                    int32_t iHorzAlign,
@@ -1695,14 +1695,14 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
       f1 = std::min(f1, f2);
       rtFit.height = rtFit.height * f1;
       rtFit.width = rtFit.width * f1;
-    } break;
-    case XFA_ATTRIBUTEENUM_Actual:
       break;
+    }
     case XFA_ATTRIBUTEENUM_Height: {
       float f1 = rtImage.height / rtFit.height;
       rtFit.height = rtImage.height;
       rtFit.width = f1 * rtFit.width;
-    } break;
+      break;
+    }
     case XFA_ATTRIBUTEENUM_None:
       rtFit.height = rtImage.height;
       rtFit.width = rtImage.width;
@@ -1711,7 +1711,11 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
       float f1 = rtImage.width / rtFit.width;
       rtFit.width = rtImage.width;
       rtFit.height = rtFit.height * f1;
-    } break;
+      break;
+    }
+    case XFA_ATTRIBUTEENUM_Actual:
+    default:
+      break;
   }
   if (iHorzAlign == XFA_ATTRIBUTEENUM_Center) {
     rtFit.left += (rtImage.width - rtFit.width) / 2;
@@ -1879,16 +1883,12 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
                                           bool& bNameImage,
                                           int32_t& iImageXDpi,
                                           int32_t& iImageYDpi) {
-  WideString wsHref;
-  WideString wsImage;
-  pImageData->GetHref(wsHref);
-  pImageData->GetContent(wsImage);
+  WideString wsHref = pImageData->GetHref();
+  WideString wsImage = pImageData->GetContent();
   if (wsHref.IsEmpty() && wsImage.IsEmpty())
     return nullptr;
 
-  WideString wsContentType;
-  pImageData->GetContentType(wsContentType);
-  FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
+  FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImageData->GetContentType());
   ByteString bsContent;
   uint8_t* pImageBuffer = nullptr;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;

@@ -61,10 +61,10 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
     iVertAlign = paraData.GetVerticalAlign();
   }
 
-  int32_t iAspect = m_pDataAcc->GetFormValueData().GetImageData().GetAspect();
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
   m_pDataAcc->GetImageDpi(iImageXDpi, iImageYDpi);
-  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, iAspect, iImageXDpi,
-                iImageYDpi, iHorzAlign, iVertAlign);
+  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap,
+                m_pDataAcc->GetFormValueData().GetImageData().GetAspect(),
+                iImageXDpi, iImageYDpi, iHorzAlign, iVertAlign);
 }

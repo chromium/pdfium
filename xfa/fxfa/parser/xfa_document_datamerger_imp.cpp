@@ -142,9 +142,9 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         WideString wsContentType;
         WideString wsHref;
         if (imageData.HasValidNode()) {
-          imageData.GetContent(wsValue);
-          imageData.GetContentType(wsContentType);
-          imageData.GetHref(wsHref);
+          wsValue = imageData.GetContent();
+          wsContentType = imageData.GetContentType();
+          wsHref = imageData.GetHref();
         }
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());

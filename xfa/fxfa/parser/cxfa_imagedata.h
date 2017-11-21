@@ -15,22 +15,19 @@ class CXFA_Node;
 
 class CXFA_ImageData : public CXFA_DataData {
  public:
-  CXFA_ImageData(CXFA_Node* pNode, bool bDefValue);
+  explicit CXFA_ImageData(CXFA_Node* pNode);
 
-  int32_t GetAspect();
-  bool GetContent(WideString& wsText);
+  XFA_ATTRIBUTEENUM GetAspect() const;
+  WideString GetContent() const;
 
-  bool GetHref(WideString& wsHref);
+  WideString GetHref() const;
   void SetHref(const WideString& wsHref);
 
-  XFA_ATTRIBUTEENUM GetTransferEncoding();
+  XFA_ATTRIBUTEENUM GetTransferEncoding() const;
   void SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding);
 
-  bool GetContentType(WideString& wsContentType);
+  WideString GetContentType() const;
   void SetContentType(const WideString& wsContentType);
-
- private:
-  bool m_bDefValue;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_IMAGEDATA_H_

@@ -76,7 +76,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
     iVertAlign = paraData.GetVerticalAlign();
   }
 
-  int32_t iAspect = XFA_ATTRIBUTEENUM_Fit;
+  XFA_ATTRIBUTEENUM iAspect = XFA_ATTRIBUTEENUM_Fit;
   CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
   if (valueData.HasValidNode()) {
     CXFA_ImageData imageData = valueData.GetImageData();
