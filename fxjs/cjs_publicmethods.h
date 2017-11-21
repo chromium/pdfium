@@ -14,10 +14,19 @@
 
 class CJS_PublicMethods : public CJS_Object {
  public:
-  explicit CJS_PublicMethods(v8::Local<v8::Object> pObject)
-      : CJS_Object(pObject) {}
-  ~CJS_PublicMethods() override {}
+  explicit CJS_PublicMethods(v8::Local<v8::Object> pObject);
+  ~CJS_PublicMethods() override;
 
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
+  static double MakeRegularDate(const WideString& value,
+                                const WideString& format,
+                                bool* bWrongFormat);
+
+  // Exposed for testing.
+  static WideString MakeFormatDate(double dDate, const WideString& format);
+  static bool IsNumber(const WideString& str);
+
+ private:
   static CJS_Return AFNumber_Format(
       CJS_Runtime* pRuntime,
       const std::vector<v8::Local<v8::Value>>& params);
@@ -129,25 +138,18 @@ class CJS_PublicMethods : public CJS_Object {
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
   static const JSMethodSpec GlobalFunctionSpecs[];
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
   static int ParseStringInteger(const WideString& string,
                                 size_t nStart,
-                                size_t& nSkip,
+                                size_t* pSkip,
                                 size_t nMaxStep);
   static WideString ParseStringString(const WideString& string,
                                       size_t nStart,
-                                      size_t& nSkip);
-  static double MakeRegularDate(const WideString& value,
-                                const WideString& format,
-                                bool* bWrongFormat);
-  static WideString MakeFormatDate(double dDate, const WideString& format);
+                                      size_t* pSkip);
   static double ParseNormalDate(const WideString& value, bool* bWrongFormat);
   static double MakeInterDate(const WideString& value);
 
-  static bool IsNumber(const WideString& str);
-
-  static bool maskSatisfied(wchar_t c_Change, wchar_t c_Mask);
-  static bool isReservedMaskChar(wchar_t ch);
+  static bool MaskSatisfied(wchar_t c_Change, wchar_t c_Mask);
+  static bool IsReservedMaskChar(wchar_t ch);
 
   static double AF_Simple(const wchar_t* sFuction,
                           double dValue1,
