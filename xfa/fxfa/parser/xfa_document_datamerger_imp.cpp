@@ -152,7 +152,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       case XFA_Element::ChoiceList:
-        defValueData.GetChildValueContent(wsValue);
+        wsValue = defValueData.GetChildValueContent();
         if (pWidgetData->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
           std::vector<WideString> wsSelTextArray =
               pWidgetData->GetSelectedItemsValue();
@@ -180,7 +180,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         }
         break;
       case XFA_Element::CheckButton:
-        defValueData.GetChildValueContent(wsValue);
+        wsValue = defValueData.GetChildValueContent();
         if (wsValue.IsEmpty())
           break;
 
@@ -199,7 +199,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (!pValue)
             continue;
 
-          CXFA_ValueData(pValue).GetChildValueContent(wsValue);
+          wsValue = CXFA_ValueData(pValue).GetChildValueContent();
           if (wsValue.IsEmpty())
             continue;
 
@@ -249,7 +249,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       case XFA_Element::NumericEdit: {
-        defValueData.GetChildValueContent(wsValue);
+        wsValue = defValueData.GetChildValueContent();
         if (wsValue.IsEmpty())
           break;
 
@@ -265,7 +265,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       default:
-        defValueData.GetChildValueContent(wsValue);
+        wsValue = defValueData.GetChildValueContent();
         if (wsValue.IsEmpty())
           break;
 

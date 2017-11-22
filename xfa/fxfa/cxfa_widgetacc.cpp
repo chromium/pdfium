@@ -197,7 +197,7 @@ void CXFA_WidgetAcc::ResetData() {
         if (wsValue.IsEmpty()) {
           CXFA_ValueData defValueData = pAcc->GetDefaultValueData();
           if (defValueData.HasValidNode()) {
-            defValueData.GetChildValueContent(wsValue);
+            wsValue = defValueData.GetChildValueContent();
             SetValue(wsValue, XFA_VALUEPICTURE_Raw);
             pAcc->SetValue(wsValue, XFA_VALUEPICTURE_Raw);
             done = true;
@@ -227,7 +227,7 @@ void CXFA_WidgetAcc::ResetData() {
     default: {
       CXFA_ValueData defValueData = GetDefaultValueData();
       if (defValueData.HasValidNode())
-        defValueData.GetChildValueContent(wsValue);
+        wsValue = defValueData.GetChildValueContent();
 
       SetValue(wsValue, XFA_VALUEPICTURE_Raw);
       break;

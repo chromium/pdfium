@@ -22,14 +22,14 @@ class CXFA_ValueData : public CXFA_DataData {
  public:
   explicit CXFA_ValueData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-  XFA_Element GetChildValueClassID();
-  bool GetChildValueContent(WideString& wsContent);
-  CXFA_ArcData GetArcData();
-  CXFA_LineData GetLineData();
-  CXFA_RectangleData GetRectangleData();
-  CXFA_TextData GetTextData();
-  CXFA_ExDataData GetExData();
-  CXFA_ImageData GetImageData();
+  XFA_Element GetChildValueClassID() const;
+  WideString GetChildValueContent() const;
+  CXFA_ArcData GetArcData() const;
+  CXFA_LineData GetLineData() const;
+  CXFA_RectangleData GetRectangleData() const;
+  CXFA_TextData GetTextData() const;
+  CXFA_ExDataData GetExData() const;
+  CXFA_ImageData GetImageData() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALUEDATA_H_

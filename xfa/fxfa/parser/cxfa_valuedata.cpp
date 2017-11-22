@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-XFA_Element CXFA_ValueData::GetChildValueClassID() {
+XFA_Element CXFA_ValueData::GetChildValueClassID() const {
   if (!m_pNode)
     return XFA_Element::Unknown;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
@@ -16,49 +16,43 @@ XFA_Element CXFA_ValueData::GetChildValueClassID() {
   return XFA_Element::Unknown;
 }
 
-bool CXFA_ValueData::GetChildValueContent(WideString& wsContent) {
+WideString CXFA_ValueData::GetChildValueContent() const {
   if (!m_pNode)
-    return false;
+    return L"";
 
   CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (!pNode)
-    return false;
+    return L"";
 
-  pdfium::Optional<WideString> content =
-      pNode->JSNode()->TryContent(false, true);
-  if (!content)
-    return false;
-
-  wsContent = *content;
-  return true;
+  return pNode->JSNode()->TryContent(false, true).value_or(L"");
 }
 
-CXFA_ArcData CXFA_ValueData::GetArcData() {
+CXFA_ArcData CXFA_ValueData::GetArcData() const {
   return CXFA_ArcData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                               : nullptr);
 }
 
-CXFA_LineData CXFA_ValueData::GetLineData() {
+CXFA_LineData CXFA_ValueData::GetLineData() const {
   return CXFA_LineData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                                : nullptr);
 }
 
-CXFA_RectangleData CXFA_ValueData::GetRectangleData() {
+CXFA_RectangleData CXFA_ValueData::GetRectangleData() const {
   return CXFA_RectangleData(
       m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr);
 }
 
-CXFA_TextData CXFA_ValueData::GetTextData() {
+CXFA_TextData CXFA_ValueData::GetTextData() const {
   return CXFA_TextData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                                : nullptr);
 }
 
-CXFA_ExDataData CXFA_ValueData::GetExData() {
+CXFA_ExDataData CXFA_ValueData::GetExData() const {
   return CXFA_ExDataData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                                  : nullptr);
 }
 
-CXFA_ImageData CXFA_ValueData::GetImageData() {
+CXFA_ImageData CXFA_ValueData::GetImageData() const {
   return CXFA_ImageData(m_pNode ? m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)
                                 : nullptr);
 }
