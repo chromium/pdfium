@@ -356,10 +356,8 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_ValidateData validateData,
     return;
 
   WideString wsTitle = pAppProvider->GetAppTitle();
-  WideString wsScriptMsg;
-  validateData.GetScriptMessageText(wsScriptMsg);
-  int32_t eScriptTest = validateData.GetScriptTest();
-  if (eScriptTest == XFA_ATTRIBUTEENUM_Warning) {
+  WideString wsScriptMsg = validateData.GetScriptMessageText();
+  if (validateData.GetScriptTest() == XFA_ATTRIBUTEENUM_Warning) {
     if (GetNode()->IsUserInteractive())
       return;
     if (wsScriptMsg.IsEmpty())
@@ -386,8 +384,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(
     bool bVersionFlag) {
   WideString wsRawValue = GetRawValue();
   if (!wsRawValue.IsEmpty()) {
-    WideString wsPicture;
-    validateData.GetPicture(wsPicture);
+    WideString wsPicture = validateData.GetPicture();
     if (wsPicture.IsEmpty())
       return XFA_EVENTERROR_NotExist;
 
@@ -402,11 +399,9 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(
       if (!pAppProvider)
         return XFA_EVENTERROR_NotExist;
 
-      WideString wsFormatMsg;
-      validateData.GetFormatMessageText(wsFormatMsg);
+      WideString wsFormatMsg = validateData.GetFormatMessageText();
       WideString wsTitle = pAppProvider->GetAppTitle();
-      int32_t eFormatTest = validateData.GetFormatTest();
-      if (eFormatTest == XFA_ATTRIBUTEENUM_Error) {
+      if (validateData.GetFormatTest() == XFA_ATTRIBUTEENUM_Error) {
         if (wsFormatMsg.IsEmpty())
           wsFormatMsg = GetValidateMessage(true, bVersionFlag);
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
@@ -442,9 +437,8 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
   if (m_bIsNull && (m_bPreNull == m_bIsNull))
     return XFA_EVENTERROR_Success;
 
-  int32_t eNullTest = validateData.GetNullTest();
-  WideString wsNullMsg;
-  validateData.GetNullMessageText(wsNullMsg);
+  XFA_ATTRIBUTEENUM eNullTest = validateData.GetNullTest();
+  WideString wsNullMsg = validateData.GetNullMessageText();
   if (iFlags & 0x01) {
     int32_t iRet = XFA_EVENTERROR_Success;
     if (eNullTest != XFA_ATTRIBUTEENUM_Disabled)

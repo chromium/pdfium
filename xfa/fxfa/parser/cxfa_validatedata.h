@@ -18,22 +18,28 @@ class CXFA_ValidateData : public CXFA_DataData {
  public:
   explicit CXFA_ValidateData(CXFA_Node* pNode);
 
-  int32_t GetFormatTest();
-  int32_t GetNullTest();
-  bool SetNullTest(WideString wsValue);
-  int32_t GetScriptTest();
-  void GetFormatMessageText(WideString& wsMessage);
-  void SetFormatMessageText(WideString wsMessage);
-  void GetNullMessageText(WideString& wsMessage);
-  void SetNullMessageText(WideString wsMessage);
-  void GetScriptMessageText(WideString& wsMessage);
-  void SetScriptMessageText(WideString wsMessage);
-  void GetPicture(WideString& wsPicture);
-  CXFA_ScriptData GetScriptData();
+  XFA_ATTRIBUTEENUM GetFormatTest() const;
+  WideString GetFormatMessageText() const;
+  void SetFormatMessageText(const WideString& wsMessage);
+
+  XFA_ATTRIBUTEENUM GetNullTest() const;
+  void SetNullTest(const WideString& wsValue);
+
+  WideString GetNullMessageText() const;
+  void SetNullMessageText(const WideString& wsMessage);
+
+  XFA_ATTRIBUTEENUM GetScriptTest() const;
+  WideString GetScriptMessageText() const;
+  void SetScriptMessageText(const WideString& wsMessage);
+
+  WideString GetPicture() const;
+
+  CXFA_ScriptData GetScriptData() const;
 
  private:
-  void GetMessageText(WideString& wsMessage, const WideString& wsMessageType);
-  void SetMessageText(WideString& wsMessage, const WideString& wsMessageType);
+  WideString GetMessageText(const WideString& wsMessageType) const;
+  void SetMessageText(const WideString& wsMessageType,
+                      const WideString& wsMessage);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALIDATEDATA_H_

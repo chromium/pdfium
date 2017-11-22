@@ -1385,13 +1385,13 @@ void CJX_Node::Script_Som_Message(CFXJSE_Value* pValue,
   WideString wsMessage;
   switch (iMessageType) {
     case XFA_SOM_ValidationMessage:
-      validateData.GetScriptMessageText(wsMessage);
+      wsMessage = validateData.GetScriptMessageText();
       break;
     case XFA_SOM_FormatMessage:
-      validateData.GetFormatMessageText(wsMessage);
+      wsMessage = validateData.GetFormatMessageText();
       break;
     case XFA_SOM_MandatoryMessage:
-      validateData.GetNullMessageText(wsMessage);
+      wsMessage = validateData.GetNullMessageText();
       break;
     default:
       break;
@@ -1805,8 +1805,8 @@ void CJX_Node::Script_Som_Mandatory(CFXJSE_Value* pValue,
     return;
   }
 
-  const XFA_ATTRIBUTEENUMINFO* pInfo = GetAttributeEnumByID(
-      static_cast<XFA_ATTRIBUTEENUM>(validateData.GetNullTest()));
+  const XFA_ATTRIBUTEENUMINFO* pInfo =
+      GetAttributeEnumByID(validateData.GetNullTest());
   if (!pInfo) {
     pValue->SetString("");
     return;
