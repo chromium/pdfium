@@ -86,7 +86,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetEditLimit(iNumCells);
   }
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
+  if (!m_pDataAcc->IsOpenAccess() ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     dwEditStyles |= FWL_STYLEEXT_EDT_ReadOnly;
   }

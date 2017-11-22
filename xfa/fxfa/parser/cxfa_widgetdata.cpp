@@ -219,21 +219,19 @@ XFA_Element CXFA_WidgetData::GetUIType() {
   return m_eUIType;
 }
 
-WideString CXFA_WidgetData::GetRawValue() {
+WideString CXFA_WidgetData::GetRawValue() const {
   return m_pNode->JSNode()->GetContent(false);
 }
 
-int32_t CXFA_WidgetData::GetAccess() {
-  CXFA_Node* pNode = m_pNode;
-  while (pNode) {
-    int32_t iAcc = pNode->JSNode()->GetEnum(XFA_Attribute::Access);
+bool CXFA_WidgetData::IsOpenAccess() const {
+  for (CXFA_Node* pNode = m_pNode; pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_Parent,
+                                  XFA_ObjectType::ContainerNode)) {
+    XFA_ATTRIBUTEENUM iAcc = pNode->JSNode()->GetEnum(XFA_Attribute::Access);
     if (iAcc != XFA_ATTRIBUTEENUM_Open)
-      return iAcc;
-
-    pNode =
-        pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
+      return false;
   }
-  return XFA_ATTRIBUTEENUM_Open;
+  return true;
 }
 
 int32_t CXFA_WidgetData::GetRotate() {

@@ -44,22 +44,31 @@ class CXFA_WidgetData : public CXFA_DataData {
 
   CXFA_Node* GetUIChild();
   XFA_Element GetUIType();
-  WideString GetRawValue();
-  int32_t GetAccess();
+  CFX_RectF GetUIMargin();
+
+  WideString GetRawValue() const;
   int32_t GetRotate();
+
+  bool IsOpenAccess() const;
+  bool IsListBox();
+  bool IsAllowNeutral();
+  bool IsRadioButton();
+  bool IsChoiceListAllowTextEntry();
+  bool IsMultiLine();
 
   CXFA_BorderData GetBorderData(bool bModified);
   CXFA_CaptionData GetCaptionData();
   CXFA_FontData GetFontData(bool bModified);
   CXFA_MarginData GetMarginData();
   CXFA_ParaData GetParaData();
-  std::vector<CXFA_Node*> GetEventList();
-  std::vector<CXFA_Node*> GetEventByActivity(int32_t iActivity,
-                                             bool bIsFormReady);
   CXFA_ValueData GetDefaultValueData();
   CXFA_ValueData GetFormValueData();
   CXFA_CalculateData GetCalculateData();
   CXFA_ValidateData GetValidateData(bool bModified);
+  CXFA_BorderData GetUIBorderData();
+
+  std::vector<CXFA_Node*> GetEventByActivity(int32_t iActivity,
+                                             bool bIsFormReady);
 
   pdfium::Optional<float> TryWidth();
   pdfium::Optional<float> TryHeight();
@@ -68,61 +77,66 @@ class CXFA_WidgetData : public CXFA_DataData {
   pdfium::Optional<float> TryMaxWidth();
   pdfium::Optional<float> TryMaxHeight();
 
-  CXFA_BorderData GetUIBorderData();
-  CFX_RectF GetUIMargin();
   XFA_ATTRIBUTEENUM GetButtonHighlight();
   bool GetButtonRollover(WideString& wsRollover, bool& bRichText);
   bool GetButtonDown(WideString& wsDown, bool& bRichText);
+
   XFA_ATTRIBUTEENUM GetCheckButtonShape();
   XFA_ATTRIBUTEENUM GetCheckButtonMark();
   float GetCheckButtonSize();
-  bool IsAllowNeutral();
-  bool IsRadioButton();
+
   XFA_CHECKSTATE GetCheckState();
   void SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify);
-  CXFA_Node* GetExclGroupNode();
+
   CXFA_Node* GetSelectedMember();
   CXFA_Node* SetSelectedMember(const WideStringView& wsName, bool bNotify);
   void SetSelectedMemberByValue(const WideStringView& wsValue,
                                 bool bNotify,
                                 bool bScriptModify,
                                 bool bSyncData);
+
   CXFA_Node* GetExclGroupFirstMember();
   CXFA_Node* GetExclGroupNextMember(CXFA_Node* pNode);
-  XFA_ATTRIBUTEENUM GetChoiceListCommitOn();
-  bool IsChoiceListAllowTextEntry();
-  XFA_ATTRIBUTEENUM GetChoiceListOpen();
-  bool IsListBox();
+
   int32_t CountChoiceListItems(bool bSaveValue);
   bool GetChoiceListItem(WideString& wsText, int32_t nIndex, bool bSaveValue);
+  XFA_ATTRIBUTEENUM GetChoiceListOpen();
+  XFA_ATTRIBUTEENUM GetChoiceListCommitOn();
   std::vector<WideString> GetChoiceListItems(bool bSaveValue);
+
   int32_t CountSelectedItems();
   int32_t GetSelectedItem(int32_t nIndex);
   std::vector<int32_t> GetSelectedItems();
   std::vector<WideString> GetSelectedItemsValue();
+  void SetSelectedItems(const std::vector<int32_t>& iSelArray,
+                        bool bNotify,
+                        bool bScriptModify,
+                        bool bSyncData);
+  void InsertItem(const WideString& wsLabel,
+                  const WideString& wsValue,
+                  bool bNotify);
+  bool DeleteItem(int32_t nIndex, bool bNotify, bool bScriptModify);
+  void ClearAllSelections();
+
   bool GetItemState(int32_t nIndex);
   void SetItemState(int32_t nIndex,
                     bool bSelected,
                     bool bNotify,
                     bool bScriptModify,
                     bool bSyncData);
-  void SetSelectedItems(const std::vector<int32_t>& iSelArray,
-                        bool bNotify,
-                        bool bScriptModify,
-                        bool bSyncData);
-  void ClearAllSelections();
-  void InsertItem(const WideString& wsLabel,
-                  const WideString& wsValue,
-                  bool bNotify);
-  void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
+
   void GetItemValue(const WideStringView& wsLabel, WideString& wsValue);
-  bool DeleteItem(int32_t nIndex, bool bNotify, bool bScriptModify);
+
   int32_t GetHorizontalScrollPolicy();
+  XFA_ATTRIBUTEENUM GetVerticalScrollPolicy();
   int32_t GetNumberOfCells();
+
   bool SetValue(const WideString& wsValue, XFA_VALUEPICTURE eValueType);
+  bool GetValue(WideString& wsValue, XFA_VALUEPICTURE eValueType);
+
   WideString GetPictureContent(XFA_VALUEPICTURE ePicture);
   IFX_Locale* GetLocal();
-  bool GetValue(WideString& wsValue, XFA_VALUEPICTURE eValueType);
+
   bool GetNormalizeDataValue(const WideString& wsValue,
                              WideString& wsNormalizeValue);
   bool GetFormatDataValue(const WideString& wsValue,
@@ -144,8 +158,6 @@ class CXFA_WidgetData : public CXFA_DataData {
   bool GetBarcodeAttribute_WideNarrowRatio(float* val);
   void GetPasswordChar(WideString& wsPassWord);
 
-  bool IsMultiLine();
-  XFA_ATTRIBUTEENUM GetVerticalScrollPolicy();
   int32_t GetMaxChars(XFA_Element& eType);
   bool GetFracDigits(int32_t& iFracDigits);
   bool GetLeadDigits(int32_t& iLeadDigits);
@@ -166,6 +178,9 @@ class CXFA_WidgetData : public CXFA_DataData {
   void FormatNumStr(const WideString& wsValue,
                     IFX_Locale* pLocale,
                     WideString& wsOutput);
+  CXFA_Node* GetExclGroupNode();
+  void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
+  std::vector<CXFA_Node*> GetEventList();
 
   CXFA_Node* m_pUiChildNode;
   XFA_Element m_eUIType;

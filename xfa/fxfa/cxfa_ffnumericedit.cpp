@@ -61,7 +61,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
     pWidget->SetLimit(iNumCells);
   }
   dwExtendedStyle |= GetAlignment();
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
+  if (!m_pDataAcc->IsOpenAccess() ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
   }

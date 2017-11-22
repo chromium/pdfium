@@ -81,11 +81,8 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
                                  bool bEllipse) {
   if (m_rtUI.IsEmpty() || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive())
     return;
-
-  if (!(dwStatus & XFA_WidgetStatus_Highlight) ||
-      m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
+  if (!(dwStatus & XFA_WidgetStatus_Highlight) || !m_pDataAcc->IsOpenAccess())
     return;
-  }
 
   CXFA_FFDoc* pDoc = GetDoc();
   pGS->SetFillColor(
@@ -387,7 +384,7 @@ CFX_PointF CXFA_FFField::FWLToClient(const CFX_PointF& point) {
 bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!m_pNormalWidget)
     return false;
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
+  if (!m_pDataAcc->IsOpenAccess() ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     return false;
   }
@@ -459,7 +456,7 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
 bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!m_pNormalWidget)
     return false;
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
+  if (!m_pDataAcc->IsOpenAccess() ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     return false;
   }
@@ -558,7 +555,7 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
     return true;
   if (!m_pNormalWidget)
     return false;
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
+  if (!m_pDataAcc->IsOpenAccess())
     return false;
 
   CFWL_MessageKey ms(nullptr, m_pNormalWidget.get());
@@ -627,7 +624,7 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
 }
 
 bool CXFA_FFField::ProcessCommittedData() {
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
+  if (!m_pDataAcc->IsOpenAccess())
     return false;
   if (!IsDataChanged())
     return false;

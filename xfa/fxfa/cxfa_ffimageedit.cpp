@@ -93,7 +93,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
 
 bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
                                      const CFX_PointF& point) {
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
+  if (!m_pDataAcc->IsOpenAccess())
     return false;
   if (!PtInActiveRect(point))
     return false;

@@ -211,7 +211,7 @@ bool CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
+  if (!m_pDataAcc->IsOpenAccess())
     return false;
   return CXFA_FFTextEdit::OnLButtonDown(dwFlags, point);
 }

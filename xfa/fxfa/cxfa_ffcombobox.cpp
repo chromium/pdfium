@@ -80,7 +80,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
     dwEditStyles &= ~FWL_STYLEEXT_EDT_ReadOnly;
     dwExtendedStyle |= FWL_STYLEEXT_CMB_DropDown;
   }
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
+  if (!m_pDataAcc->IsOpenAccess() ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     dwEditStyles |= FWL_STYLEEXT_EDT_ReadOnly;
     dwExtendedStyle |= FWL_STYLEEXT_CMB_ReadOnly;
@@ -227,14 +227,13 @@ bool CXFA_FFComboBox::CanCopy() {
 }
 
 bool CXFA_FFComboBox::CanCut() {
-  return m_pDataAcc->GetAccess() == XFA_ATTRIBUTEENUM_Open &&
+  return m_pDataAcc->IsOpenAccess() &&
          m_pDataAcc->IsChoiceListAllowTextEntry() &&
          ToComboBox(m_pNormalWidget.get())->EditCanCut();
 }
 
 bool CXFA_FFComboBox::CanPaste() {
-  return m_pDataAcc->IsChoiceListAllowTextEntry() &&
-         m_pDataAcc->GetAccess() == XFA_ATTRIBUTEENUM_Open;
+  return m_pDataAcc->IsChoiceListAllowTextEntry() && m_pDataAcc->IsOpenAccess();
 }
 
 bool CXFA_FFComboBox::CanSelectAll() {

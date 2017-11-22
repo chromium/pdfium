@@ -81,7 +81,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   } else if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
   }
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
+  if (!m_pDataAcc->IsOpenAccess() ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
     dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine;
@@ -126,7 +126,7 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
+  if (!m_pDataAcc->IsOpenAccess())
     return false;
   if (!PtInActiveRect(point))
     return false;
