@@ -1285,7 +1285,7 @@ bool RenderPage(const std::string& name,
     const char* buffer =
         reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap.get()));
 
-    std::string&& image_file_name = "";
+    std::string image_file_name;
     switch (options.output_format) {
 #ifdef _WIN32
       case OUTPUT_BMP:
@@ -1335,7 +1335,7 @@ bool RenderPage(const std::string& name,
 
     // Write the filename and the MD5 of the buffer to stdout if we wrote a
     // file.
-    if (options.md5 && image_file_name != "")
+    if (options.md5 && !image_file_name.empty())
       OutputMD5Hash(image_file_name.c_str(), buffer, stride * height);
   } else {
     fprintf(stderr, "Page was too large to be rendered.\n");

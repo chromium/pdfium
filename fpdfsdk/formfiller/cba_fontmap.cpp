@@ -38,7 +38,7 @@ CBA_FontMap::~CBA_FontMap() {}
 void CBA_FontMap::Reset() {
   Empty();
   m_pDefaultFont = nullptr;
-  m_sDefaultFontName = "";
+  m_sDefaultFontName.clear();
 }
 
 void CBA_FontMap::Initialize() {

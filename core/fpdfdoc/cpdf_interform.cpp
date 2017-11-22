@@ -691,7 +691,7 @@ ByteString CPDF_InterForm::GenerateNewResourceName(
   int iCount = csStr.GetLength();
   int m = 0;
   if (iMinLen > 0) {
-    csTmp = "";
+    csTmp.clear();
     while (m < iMinLen && m < iCount)
       csTmp += csStr[m++];
     while (m < iMinLen) {

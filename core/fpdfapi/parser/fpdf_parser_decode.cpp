@@ -411,7 +411,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     last_buf = new_buf;
     last_size = new_size;
   }
-  *ImageEncoding = "";
+  ImageEncoding->clear();
   *pImageParms = nullptr;
   *dest_buf = last_buf;
   *dest_size = last_size;
