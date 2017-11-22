@@ -21,14 +21,9 @@ class CPDF_ContentMark {
   CPDF_ContentMark(const CPDF_ContentMark& that);
   ~CPDF_ContentMark();
 
-  void SetNull();
-
-  int GetMCID() const;
   int CountItems() const;
   const CPDF_ContentMarkItem& GetItem(int i) const;
 
-  bool HasMark(const ByteStringView& mark) const;
-  bool LookupMark(const ByteStringView& mark, CPDF_Dictionary** pDict) const;
   void AddMark(const ByteString& name, CPDF_Dictionary* pDict, bool bDirect);
   void DeleteLastMark();
 
@@ -42,10 +37,8 @@ class CPDF_ContentMark {
     ~MarkData();
 
     int CountItems() const;
-    CPDF_ContentMarkItem& GetItem(int index);
     const CPDF_ContentMarkItem& GetItem(int index) const;
 
-    int GetMCID() const;
     void AddMark(const ByteString& name,
                  CPDF_Dictionary* pDict,
                  bool bDictNeedClone);

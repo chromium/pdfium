@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
 
-#include <memory>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -19,21 +18,12 @@ CPDF_ContentMark::CPDF_ContentMark(const CPDF_ContentMark& that)
 
 CPDF_ContentMark::~CPDF_ContentMark() {}
 
-void CPDF_ContentMark::SetNull() {
-  m_Ref.SetNull();
-}
-
 int CPDF_ContentMark::CountItems() const {
   return m_Ref.GetObject()->CountItems();
 }
 
 const CPDF_ContentMarkItem& CPDF_ContentMark::GetItem(int i) const {
   return m_Ref.GetObject()->GetItem(i);
-}
-
-int CPDF_ContentMark::GetMCID() const {
-  const MarkData* pData = m_Ref.GetObject();
-  return pData ? pData->GetMCID() : -1;
 }
 
 void CPDF_ContentMark::AddMark(const ByteString& name,
@@ -48,34 +38,6 @@ void CPDF_ContentMark::DeleteLastMark() {
     m_Ref.SetNull();
 }
 
-bool CPDF_ContentMark::HasMark(const ByteStringView& mark) const {
-  const MarkData* pData = m_Ref.GetObject();
-  if (!pData)
-    return false;
-
-  for (int i = 0; i < pData->CountItems(); i++) {
-    if (pData->GetItem(i).GetName() == mark)
-      return true;
-  }
-  return false;
-}
-
-bool CPDF_ContentMark::LookupMark(const ByteStringView& mark,
-                                  CPDF_Dictionary** pDict) const {
-  const MarkData* pData = m_Ref.GetObject();
-  if (!pData)
-    return false;
-
-  for (int i = 0; i < pData->CountItems(); i++) {
-    const CPDF_ContentMarkItem& item = pData->GetItem(i);
-    if (item.GetName() == mark) {
-      *pDict = item.GetParam();
-      return true;
-    }
-  }
-  return false;
-}
-
 CPDF_ContentMark::MarkData::MarkData() {}
 
 CPDF_ContentMark::MarkData::MarkData(const MarkData& src)
@@ -87,22 +49,9 @@ int CPDF_ContentMark::MarkData::CountItems() const {
   return pdfium::CollectionSize<int>(m_Marks);
 }
 
-CPDF_ContentMarkItem& CPDF_ContentMark::MarkData::GetItem(int index) {
-  return m_Marks[index];
-}
-
 const CPDF_ContentMarkItem& CPDF_ContentMark::MarkData::GetItem(
     int index) const {
   return m_Marks[index];
-}
-
-int CPDF_ContentMark::MarkData::GetMCID() const {
-  for (const auto& mark : m_Marks) {
-    CPDF_Dictionary* pDict = mark.GetParam();
-    if (pDict && pDict->KeyExist("MCID"))
-      return pDict->GetIntegerFor("MCID");
-  }
-  return -1;
 }
 
 void CPDF_ContentMark::MarkData::AddMark(const ByteString& name,
@@ -111,12 +60,10 @@ void CPDF_ContentMark::MarkData::AddMark(const ByteString& name,
   CPDF_ContentMarkItem item;
   item.SetName(name);
   if (pDict) {
-    if (bDirect) {
-      item.SetDirectDict(
-          std::unique_ptr<CPDF_Dictionary>(ToDictionary(pDict->Clone())));
-    } else {
+    if (bDirect)
+      item.SetDirectDict(ToDictionary(pDict->Clone()));
+    else
       item.SetPropertiesDict(pDict);
-    }
   }
   m_Marks.push_back(std::move(item));
 }
