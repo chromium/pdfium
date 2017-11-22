@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "third_party/base/stl_util.h"
 
 CPDF_ContentMark::CPDF_ContentMark() {}
 
@@ -18,11 +17,11 @@ CPDF_ContentMark::CPDF_ContentMark(const CPDF_ContentMark& that)
 
 CPDF_ContentMark::~CPDF_ContentMark() {}
 
-int CPDF_ContentMark::CountItems() const {
+size_t CPDF_ContentMark::CountItems() const {
   return m_Ref.GetObject()->CountItems();
 }
 
-const CPDF_ContentMarkItem& CPDF_ContentMark::GetItem(int i) const {
+const CPDF_ContentMarkItem& CPDF_ContentMark::GetItem(size_t i) const {
   return m_Ref.GetObject()->GetItem(i);
 }
 
@@ -45,12 +44,12 @@ CPDF_ContentMark::MarkData::MarkData(const MarkData& src)
 
 CPDF_ContentMark::MarkData::~MarkData() {}
 
-int CPDF_ContentMark::MarkData::CountItems() const {
-  return pdfium::CollectionSize<int>(m_Marks);
+size_t CPDF_ContentMark::MarkData::CountItems() const {
+  return m_Marks.size();
 }
 
 const CPDF_ContentMarkItem& CPDF_ContentMark::MarkData::GetItem(
-    int index) const {
+    size_t index) const {
   return m_Marks[index];
 }
 
