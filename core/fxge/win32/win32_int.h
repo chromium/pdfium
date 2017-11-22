@@ -10,6 +10,7 @@
 #include <windows.h>
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -32,6 +33,7 @@ class CGdiplusExt {
  public:
   CGdiplusExt();
   ~CGdiplusExt();
+
   void Load();
   bool IsAvailable() { return !!m_hModule; }
   bool StretchBitMask(HDC hDC,
@@ -108,13 +110,13 @@ class CGdiplusExt {
   bool GdiRemoveFontMemResourceEx(void* handle);
   RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);
 
-  FARPROC m_Functions[100];
-  FuncType_GdiAddFontMemResourceEx m_pGdiAddFontMemResourceEx;
-  FuncType_GdiRemoveFontMemResourceEx m_pGdiRemoveFontMemResourseEx;
+  std::vector<FARPROC> m_Functions;
+  FuncType_GdiAddFontMemResourceEx m_pGdiAddFontMemResourceEx = nullptr;
+  FuncType_GdiRemoveFontMemResourceEx m_pGdiRemoveFontMemResourseEx = nullptr;
 
  protected:
-  HMODULE m_hModule;
-  HMODULE m_GdiModule;
+  HMODULE m_hModule = nullptr;
+  HMODULE m_GdiModule = nullptr;
 };
 
 class CWin32Platform {

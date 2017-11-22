@@ -112,6 +112,7 @@ enum {
   FuncId_GdipDrawString,
   FuncId_GdipSetPenTransform,
 };
+
 static LPCSTR g_GdipFuncNames[] = {
     "GdipCreatePath2",
     "GdipSetPenDashStyle",
@@ -192,6 +193,10 @@ static LPCSTR g_GdipFuncNames[] = {
     "GdipDrawString",
     "GdipSetPenTransform",
 };
+static_assert(FX_ArraySize(g_GdipFuncNames) ==
+                  static_cast<size_t>(FuncId_GdipSetPenTransform) + 1,
+              "g_GdipFuncNames has wrong size");
+
 typedef GpStatus(WINGDIPAPI* FuncType_GdipCreatePath2)(GDIPCONST GpPointF*,
                                                        GDIPCONST BYTE*,
                                                        INT,
@@ -672,33 +677,32 @@ static void OutputImage(GpGraphics* pGraphics,
   CallFunc(GdipDrawImagePointsI)(pGraphics, bitmap, destinationPoints, 3);
   CallFunc(GdipDisposeImage)(bitmap);
 }
-CGdiplusExt::CGdiplusExt() {
-  m_hModule = nullptr;
-  m_GdiModule = nullptr;
-  for (size_t i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
-    m_Functions[i] = nullptr;
-  }
-  m_pGdiAddFontMemResourceEx = nullptr;
-  m_pGdiRemoveFontMemResourseEx = nullptr;
+
+CGdiplusExt::CGdiplusExt() {}
+
+CGdiplusExt::~CGdiplusExt() {
+  FreeLibrary(m_GdiModule);
+  FreeLibrary(m_hModule);
 }
+
 void CGdiplusExt::Load() {
-  ByteString strPlusPath;
   char buf[MAX_PATH];
   GetSystemDirectoryA(buf, MAX_PATH);
-  strPlusPath += buf;
-  strPlusPath += "\\";
-  strPlusPath += "GDIPLUS.DLL";
-  m_hModule = LoadLibraryA(strPlusPath.c_str());
+  ByteString dllpath = buf;
+  dllpath += "\\GDIPLUS.DLL";
+  m_hModule = LoadLibraryA(dllpath.c_str());
   if (!m_hModule)
     return;
 
-  for (size_t i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
+  m_Functions.resize(FX_ArraySize(g_GdipFuncNames));
+  for (size_t i = 0; i < FX_ArraySize(g_GdipFuncNames); ++i) {
     m_Functions[i] = GetProcAddress(m_hModule, g_GdipFuncNames[i]);
     if (!m_Functions[i]) {
       m_hModule = nullptr;
       return;
     }
   }
+
   uintptr_t gdiplusToken;
   GdiplusStartupInput gdiplusStartupInput;
   ((FuncType_GdiplusStartup)m_Functions[FuncId_GdiplusStartup])(
@@ -714,7 +718,7 @@ void CGdiplusExt::Load() {
       reinterpret_cast<FuncType_GdiRemoveFontMemResourceEx>(
           GetProcAddress(m_GdiModule, "RemoveFontMemResourceEx"));
 }
-CGdiplusExt::~CGdiplusExt() {}
+
 LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
   GpFontCollection* pCollection = nullptr;
   CGdiplusExt& GdiplusExt =
