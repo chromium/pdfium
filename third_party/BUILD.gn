@@ -98,6 +98,7 @@ if (pdf_bundle_freetype) {
       "//third_party/freetype/src/include/freetype/ftcffdrv.h",
       "//third_party/freetype/src/include/freetype/fterrdef.h",
       "//third_party/freetype/src/include/freetype/fterrors.h",
+      "//third_party/freetype/src/include/freetype/ftfntfmt.h",
       "//third_party/freetype/src/include/freetype/ftglyph.h",
       "//third_party/freetype/src/include/freetype/ftgzip.h",
       "//third_party/freetype/src/include/freetype/ftimage.h",
@@ -159,6 +160,7 @@ if (pdf_bundle_freetype) {
       "//third_party/freetype/src/src/base/ftbase.c",
       "//third_party/freetype/src/src/base/ftbase.h",
       "//third_party/freetype/src/src/base/ftbitmap.c",
+      "//third_party/freetype/src/src/base/ftfntfmt.c",
       "//third_party/freetype/src/src/base/ftglyph.c",
       "//third_party/freetype/src/src/base/ftinit.c",
       "//third_party/freetype/src/src/base/ftlcdfil.c",
@@ -179,9 +181,7 @@ if (pdf_bundle_freetype) {
     ]
     if (pdf_use_skia || pdf_use_skia_paths) {
       sources += [
-        "//third_party/freetype/src/include/freetype/ftfntfmt.h",
         "//third_party/freetype/src/include/freetype/ftsynth.h",
-        "//third_party/freetype/src/src/base/ftfntfmt.c",
         "//third_party/freetype/src/src/base/ftfstype.c",
         "//third_party/freetype/src/src/base/fttype1.c",
       ]
