@@ -56,7 +56,7 @@ bool CXFA_FFListBox::LoadWidget() {
     pListBox->AddString(label.AsStringView());
 
   uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
-  if (m_pDataAcc->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect)
+  if (m_pDataAcc->IsChoiceListMultiSelect())
     dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
 
   dwExtendedStyle |= GetAlignment();
@@ -151,7 +151,7 @@ void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->GetValue(eParam.m_wsPrevText, XFA_VALUEPICTURE_Raw);
+  eParam.m_wsPrevText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
 
   auto* pListBox = ToListBox(m_pNormalWidget.get());
   int32_t iSels = pListBox->CountSelItems();

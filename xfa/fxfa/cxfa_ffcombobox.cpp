@@ -55,13 +55,10 @@ bool CXFA_FFComboBox::LoadWidget() {
     pComboBox->AddString(label.AsStringView());
 
   std::vector<int32_t> iSelArray = m_pDataAcc->GetSelectedItems();
-  if (!iSelArray.empty()) {
+  if (iSelArray.empty())
+    pComboBox->SetEditText(m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw));
+  else
     pComboBox->SetCurSel(iSelArray.front());
-  } else {
-    WideString wsText;
-    m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Raw);
-    pComboBox->SetEditText(wsText);
-  }
 
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
@@ -88,7 +85,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 
-  if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off)
+  if (!m_pDataAcc->IsHorizontalScrollPolicyOff())
     dwEditStyles |= FWL_STYLEEXT_EDT_AutoHScroll;
 
   pComboBox->EditModifyStylesEx(dwEditStyles, 0xFFFFFFFF);
@@ -115,7 +112,7 @@ void CXFA_FFComboBox::OpenDropDownList() {
 }
 
 bool CXFA_FFComboBox::CommitData() {
-  return m_pDataAcc->SetValue(m_wsNewValue, XFA_VALUEPICTURE_Raw);
+  return m_pDataAcc->SetValue(XFA_VALUEPICTURE_Raw, m_wsNewValue);
 }
 
 bool CXFA_FFComboBox::IsDataChanged() {
@@ -125,12 +122,9 @@ bool CXFA_FFComboBox::IsDataChanged() {
   if (iCursel >= 0) {
     WideString wsSel = pFWLcombobox->GetTextByIndex(iCursel);
     if (wsSel == wsText)
-      m_pDataAcc->GetChoiceListItem(wsText, iCursel, true);
+      wsText = m_pDataAcc->GetChoiceListItem(iCursel, true).value_or(L"");
   }
-
-  WideString wsOldValue;
-  m_pDataAcc->GetValue(wsOldValue, XFA_VALUEPICTURE_Raw);
-  if (wsOldValue == wsText)
+  if (m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw) == wsText)
     return false;
 
   m_wsNewValue = wsText;
@@ -193,10 +187,8 @@ bool CXFA_FFComboBox::UpdateFWLData() {
   if (!iSelArray.empty()) {
     pComboBox->SetCurSel(iSelArray.front());
   } else {
-    WideString wsText;
     pComboBox->SetCurSel(-1);
-    m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Raw);
-    pComboBox->SetEditText(wsText);
+    pComboBox->SetEditText(m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw));
   }
   pComboBox->Update();
   return true;
@@ -292,19 +284,17 @@ void CXFA_FFComboBox::DeleteItem(int32_t nIndex) {
 void CXFA_FFComboBox::OnTextChanged(CFWL_Widget* pWidget,
                                     const WideString& wsChanged) {
   CXFA_EventParam eParam;
-  m_pDataAcc->GetValue(eParam.m_wsPrevText, XFA_VALUEPICTURE_Raw);
+  eParam.m_wsPrevText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
   eParam.m_wsChange = wsChanged;
   FWLEventSelChange(&eParam);
 }
 
 void CXFA_FFComboBox::OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp) {
   CXFA_EventParam eParam;
-  m_pDataAcc->GetValue(eParam.m_wsPrevText, XFA_VALUEPICTURE_Raw);
+  eParam.m_wsPrevText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
   FWLEventSelChange(&eParam);
-  if (m_pDataAcc->GetChoiceListCommitOn() == XFA_ATTRIBUTEENUM_Select &&
-      bLButtonUp) {
+  if (m_pDataAcc->IsChoiceListCommitOnSelect() && bLButtonUp)
     m_pDocView->SetFocusWidgetAcc(nullptr);
-  }
 }
 
 void CXFA_FFComboBox::OnPreOpen(CFWL_Widget* pWidget) {

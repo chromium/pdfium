@@ -35,9 +35,7 @@ bool CXFA_FFNumericEdit::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  WideString wsText;
-  m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
-  pWidget->SetText(wsText);
+  pWidget->SetText(m_pDataAcc->GetValue(XFA_VALUEPICTURE_Display));
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
@@ -52,13 +50,13 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
       FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar |
       FWL_STYLEEXT_EDT_Validate | FWL_STYLEEXT_EDT_Number;
   dwExtendedStyle |= UpdateUIProperty();
-  if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off)
+  if (!m_pDataAcc->IsHorizontalScrollPolicyOff())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
 
-  int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
-  if (iNumCells > 0) {
+  pdfium::Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
+  if (numCells && *numCells > 0) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
-    pWidget->SetLimit(iNumCells);
+    pWidget->SetLimit(*numCells);
   }
   dwExtendedStyle |= GetAlignment();
   if (!m_pDataAcc->IsOpenAccess() ||
@@ -82,15 +80,10 @@ bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget, WideString& wsText) {
   if (!wsPattern.IsEmpty())
     return true;
 
-  int32_t iLeads = 0;
-  m_pDataAcc->GetLeadDigits(iLeads);
-
-  int32_t iFracs = 0;
-  m_pDataAcc->GetFracDigits(iFracs);
-
   WideString wsFormat;
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pDataAcc.Get());
-  widgetValue.GetNumericFormat(wsFormat, iLeads, iFracs);
+  widgetValue.GetNumericFormat(wsFormat, m_pDataAcc->GetLeadDigits(),
+                               m_pDataAcc->GetFracDigits());
   return widgetValue.ValidateNumericTemp(wsText, wsFormat,
-                                         m_pDataAcc->GetLocal());
+                                         m_pDataAcc->GetLocale());
 }

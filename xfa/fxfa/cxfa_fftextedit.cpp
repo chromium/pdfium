@@ -56,9 +56,7 @@ bool CXFA_FFTextEdit::LoadWidget() {
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();
 
-  WideString wsText;
-  m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
-  pFWLEdit->SetText(wsText);
+  pFWLEdit->SetText(m_pDataAcc->GetValue(XFA_VALUEPICTURE_Display));
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
@@ -74,11 +72,11 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   dwExtendedStyle |= UpdateUIProperty();
   if (m_pDataAcc->IsMultiLine()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine | FWL_STYLEEXT_EDT_WantReturn;
-    if (m_pDataAcc->GetVerticalScrollPolicy() != XFA_ATTRIBUTEENUM_Off) {
+    if (!m_pDataAcc->IsVerticalScrollPolicyOff()) {
       dwStyle |= FWL_WGTSTYLE_VScroll;
       dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoVScroll;
     }
-  } else if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off) {
+  } else if (!m_pDataAcc->IsHorizontalScrollPolicyOff()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
   }
   if (!m_pDataAcc->IsOpenAccess() ||
@@ -87,21 +85,23 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine;
   }
 
-  XFA_Element eType = XFA_Element::Unknown;
-  int32_t iMaxChars = m_pDataAcc->GetMaxChars(eType);
+  XFA_Element eType;
+  int32_t iMaxChars;
+  std::tie(eType, iMaxChars) = m_pDataAcc->GetMaxChars();
   if (eType == XFA_Element::ExData)
     iMaxChars = 0;
 
-  int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
-  if (iNumCells == 0) {
+  pdfium::Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
+  if (!numCells) {
+    pWidget->SetLimit(iMaxChars);
+  } else if (*numCells == 0) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetLimit(iMaxChars > 0 ? iMaxChars : 1);
-  } else if (iNumCells > 0) {
-    dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
-    pWidget->SetLimit(iNumCells);
   } else {
-    pWidget->SetLimit(iMaxChars);
+    dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
+    pWidget->SetLimit(*numCells);
   }
+
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStyles(dwStyle, 0xFFFFFFFF);
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
@@ -183,7 +183,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 
 bool CXFA_FFTextEdit::CommitData() {
   WideString wsText = static_cast<CFWL_Edit*>(m_pNormalWidget.get())->GetText();
-  if (m_pDataAcc->SetValue(wsText, XFA_VALUEPICTURE_Edit)) {
+  if (m_pDataAcc->SetValue(XFA_VALUEPICTURE_Edit, wsText)) {
     m_pDataAcc->UpdateUIDisplay(this);
     return true;
   }
@@ -262,9 +262,10 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
 
   bool bUpdate = false;
   if (m_pDataAcc->GetUIType() == XFA_Element::TextEdit &&
-      m_pDataAcc->GetNumberOfCells() < 0) {
-    XFA_Element elementType = XFA_Element::Unknown;
-    int32_t iMaxChars = m_pDataAcc->GetMaxChars(elementType);
+      !m_pDataAcc->GetNumberOfCells()) {
+    XFA_Element elementType;
+    int32_t iMaxChars;
+    std::tie(elementType, iMaxChars) = m_pDataAcc->GetMaxChars();
     if (elementType == XFA_Element::ExData)
       iMaxChars = eType == XFA_VALUEPICTURE_Edit ? iMaxChars : 0;
     if (pEdit->GetLimit() != iMaxChars) {
@@ -274,14 +275,13 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   } else if (m_pDataAcc->GetUIType() == XFA_Element::Barcode) {
     int32_t nDataLen = 0;
     if (eType == XFA_VALUEPICTURE_Edit)
-      m_pDataAcc->GetBarcodeAttribute_DataLength(&nDataLen);
+      nDataLen = m_pDataAcc->GetBarcodeAttribute_DataLength().value_or(0);
+
     pEdit->SetLimit(nDataLen);
     bUpdate = true;
   }
 
-  WideString wsText;
-  m_pDataAcc->GetValue(wsText, eType);
-
+  WideString wsText = m_pDataAcc->GetValue(eType);
   WideString wsOldText = pEdit->GetText();
   if (wsText != wsOldText || (eType == XFA_VALUEPICTURE_Edit && bUpdate)) {
     pEdit->SetText(wsText);

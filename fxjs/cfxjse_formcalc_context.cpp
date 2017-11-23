@@ -481,7 +481,7 @@ IFX_Locale* LocaleFromString(CXFA_Document* pDoc,
 
   CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
   ASSERT(pThisNode);
-  return CXFA_WidgetData(pThisNode).GetLocal();
+  return CXFA_WidgetData(pThisNode).GetLocale();
 }
 
 WideString FormatFromString(IFX_Locale* pLocale,
@@ -1646,7 +1646,7 @@ void CFXJSE_FormCalcContext::Time2Num(CFXJSE_Value* pThis,
     CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
     ASSERT(pThisNode);
     CXFA_WidgetData widgetData(pThisNode);
-    pLocale = widgetData.GetLocal();
+    pLocale = widgetData.GetLocale();
   } else {
     pLocale =
         pMgr->GetLocaleByName(WideString::FromUTF8(localString.AsStringView()));
@@ -3773,7 +3773,7 @@ void CFXJSE_FormCalcContext::Format(CFXJSE_Value* pThis,
   ASSERT(pThisNode);
 
   CXFA_WidgetData widgetData(pThisNode);
-  IFX_Locale* pLocale = widgetData.GetLocal();
+  IFX_Locale* pLocale = widgetData.GetLocale();
   uint32_t patternType;
   WideString wsPattern = WideString::FromUTF8(szPattern.AsStringView());
   WideString wsValue = WideString::FromUTF8(szValue.AsStringView());
@@ -3956,7 +3956,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
   ASSERT(pThisNode);
 
   CXFA_WidgetData widgetData(pThisNode);
-  IFX_Locale* pLocale = widgetData.GetLocal();
+  IFX_Locale* pLocale = widgetData.GetLocale();
   WideString wsPattern = WideString::FromUTF8(szPattern.AsStringView());
   WideString wsValue = WideString::FromUTF8(szValue.AsStringView());
   uint32_t patternType;

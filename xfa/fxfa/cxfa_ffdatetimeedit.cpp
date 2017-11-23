@@ -47,9 +47,9 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  WideString wsText;
-  m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
+  WideString wsText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
+
   CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
   if (valueData.HasValidNode()) {
     switch (valueData.GetChildValueClassID()) {
@@ -80,17 +80,18 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   dwExtendedStyle |= UpdateUIProperty();
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+
   uint32_t dwEditStyles = 0;
-  int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
-  if (iNumCells > 0) {
+  pdfium::Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
+  if (numCells && *numCells > 0) {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
-    pWidget->SetEditLimit(iNumCells);
+    pWidget->SetEditLimit(*numCells);
   }
   if (!m_pDataAcc->IsOpenAccess() ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     dwEditStyles |= FWL_STYLEEXT_EDT_ReadOnly;
   }
-  if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off)
+  if (!m_pDataAcc->IsHorizontalScrollPolicyOff())
     dwEditStyles |= FWL_STYLEEXT_EDT_AutoHScroll;
 
   pWidget->ModifyEditStylesEx(dwEditStyles, 0xFFFFFFFF);
@@ -136,7 +137,7 @@ uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
 
 bool CXFA_FFDateTimeEdit::CommitData() {
   auto* pPicker = static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
-  if (!m_pDataAcc->SetValue(pPicker->GetEditText(), XFA_VALUEPICTURE_Edit))
+  if (!m_pDataAcc->SetValue(XFA_VALUEPICTURE_Edit, pPicker->GetEditText()))
     return false;
 
   m_pDataAcc->UpdateUIDisplay(this);
@@ -151,9 +152,7 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
   if (IsFocused())
     eType = XFA_VALUEPICTURE_Edit;
 
-  WideString wsText;
-  m_pDataAcc->GetValue(wsText, eType);
-
+  WideString wsText = m_pDataAcc->GetValue(eType);
   auto* normalWidget = static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
   normalWidget->SetEditText(wsText);
   if (IsFocused() && !wsText.IsEmpty()) {
@@ -174,9 +173,7 @@ bool CXFA_FFDateTimeEdit::IsDataChanged() {
 
   WideString wsText =
       static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get())->GetEditText();
-  WideString wsOldValue;
-  m_pDataAcc->GetValue(wsOldValue, XFA_VALUEPICTURE_Edit);
-  return wsOldValue != wsText;
+  return m_pDataAcc->GetValue(XFA_VALUEPICTURE_Edit) != wsText;
 }
 
 void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
@@ -189,7 +186,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   date.SetDate(CFX_DateTime(iYear, iMonth, iDay, 0, 0, 0, 0));
 
   WideString wsDate;
-  date.FormatPatterns(wsDate, wsPicture, m_pDataAcc->GetLocal(),
+  date.FormatPatterns(wsDate, wsPicture, m_pDataAcc->GetLocale(),
                       XFA_VALUEPICTURE_Edit);
 
   auto* pDateTime = static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
@@ -200,7 +197,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->GetValue(eParam.m_wsNewText, XFA_VALUEPICTURE_Raw);
+  eParam.m_wsNewText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
 

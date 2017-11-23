@@ -129,9 +129,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  WideString wsText;
-  m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
-  pFWLBarcode->SetText(wsText);
+  pFWLBarcode->SetText(m_pDataAcc->GetValue(XFA_VALUEPICTURE_Display));
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
@@ -168,37 +166,56 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   pBarCodeWidget->SetType(pBarcodeInfo->eBCType);
 
   CXFA_WidgetAcc* pAcc = GetDataAcc();
-  int32_t intVal;
-  if (pAcc->GetBarcodeAttribute_CharEncoding(&intVal))
-    pBarCodeWidget->SetCharEncoding((BC_CHAR_ENCODING)intVal);
+  pdfium::Optional<BC_CHAR_ENCODING> encoding =
+      pAcc->GetBarcodeAttribute_CharEncoding();
+  if (encoding)
+    pBarCodeWidget->SetCharEncoding(*encoding);
 
-  bool boolVal;
-  if (pAcc->GetBarcodeAttribute_Checksum(&boolVal))
-    pBarCodeWidget->SetCalChecksum(boolVal);
-  if (pAcc->GetBarcodeAttribute_DataLength(&intVal))
-    pBarCodeWidget->SetDataLength(intVal);
+  pdfium::Optional<bool> calcChecksum = pAcc->GetBarcodeAttribute_Checksum();
+  if (calcChecksum)
+    pBarCodeWidget->SetCalChecksum(*calcChecksum);
 
-  char charVal;
-  if (pAcc->GetBarcodeAttribute_StartChar(&charVal))
-    pBarCodeWidget->SetStartChar(charVal);
-  if (pAcc->GetBarcodeAttribute_EndChar(&charVal))
-    pBarCodeWidget->SetEndChar(charVal);
-  if (pAcc->GetBarcodeAttribute_ECLevel(&intVal))
-    pBarCodeWidget->SetErrorCorrectionLevel(intVal);
-  if (pAcc->GetBarcodeAttribute_ModuleWidth(&intVal))
-    pBarCodeWidget->SetModuleWidth(intVal);
-  if (pAcc->GetBarcodeAttribute_ModuleHeight(&intVal))
-    pBarCodeWidget->SetModuleHeight(intVal);
-  if (pAcc->GetBarcodeAttribute_PrintChecksum(&boolVal))
-    pBarCodeWidget->SetPrintChecksum(boolVal);
-  if (pAcc->GetBarcodeAttribute_TextLocation(&intVal))
-    pBarCodeWidget->SetTextLocation((BC_TEXT_LOC)intVal);
-  if (pAcc->GetBarcodeAttribute_Truncate(&boolVal))
-    pBarCodeWidget->SetTruncated(boolVal);
+  pdfium::Optional<int32_t> dataLen = pAcc->GetBarcodeAttribute_DataLength();
+  if (dataLen)
+    pBarCodeWidget->SetDataLength(*dataLen);
 
-  float floatVal;
-  if (pAcc->GetBarcodeAttribute_WideNarrowRatio(&floatVal))
-    pBarCodeWidget->SetWideNarrowRatio(static_cast<int8_t>(floatVal));
+  pdfium::Optional<char> startChar = pAcc->GetBarcodeAttribute_StartChar();
+  if (startChar)
+    pBarCodeWidget->SetStartChar(*startChar);
+
+  pdfium::Optional<char> endChar = pAcc->GetBarcodeAttribute_EndChar();
+  if (endChar)
+    pBarCodeWidget->SetEndChar(*endChar);
+
+  pdfium::Optional<int32_t> ecLevel = pAcc->GetBarcodeAttribute_ECLevel();
+  if (ecLevel)
+    pBarCodeWidget->SetErrorCorrectionLevel(*ecLevel);
+
+  pdfium::Optional<int32_t> width = pAcc->GetBarcodeAttribute_ModuleWidth();
+  if (width)
+    pBarCodeWidget->SetModuleWidth(*width);
+
+  pdfium::Optional<int32_t> height = pAcc->GetBarcodeAttribute_ModuleHeight();
+  if (height)
+    pBarCodeWidget->SetModuleHeight(*height);
+
+  pdfium::Optional<bool> printCheck = pAcc->GetBarcodeAttribute_PrintChecksum();
+  if (printCheck)
+    pBarCodeWidget->SetPrintChecksum(*printCheck);
+
+  pdfium::Optional<BC_TEXT_LOC> textLoc =
+      pAcc->GetBarcodeAttribute_TextLocation();
+  if (textLoc)
+    pBarCodeWidget->SetTextLocation(*textLoc);
+
+  pdfium::Optional<bool> truncate = pAcc->GetBarcodeAttribute_Truncate();
+  if (truncate)
+    pBarCodeWidget->SetTruncated(*truncate);
+
+  pdfium::Optional<int8_t> ratio = pAcc->GetBarcodeAttribute_WideNarrowRatio();
+  if (ratio)
+    pBarCodeWidget->SetWideNarrowRatio(*ratio);
+
   if (pBarcodeInfo->eName == BarcodeType::code3Of9 ||
       pBarcodeInfo->eName == BarcodeType::ean8 ||
       pBarcodeInfo->eName == BarcodeType::ean13 ||

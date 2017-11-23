@@ -164,6 +164,6 @@ bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
   if (!pEmbAcc)
     return false;
 
-  pEmbAcc->GetValue(wsValue, XFA_VALUEPICTURE_Display);
+  wsValue = pEmbAcc->GetValue(XFA_VALUEPICTURE_Display);
   return true;
 }

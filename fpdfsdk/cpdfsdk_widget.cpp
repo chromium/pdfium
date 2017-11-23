@@ -294,7 +294,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       break;
     }
     case FIELDTYPE_TEXTFIELD:
-      pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
+      pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
     case FIELDTYPE_LISTBOX: {
       pWidgetAcc->ClearAllSelections();
@@ -314,7 +314,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
         if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems(false))
           pWidgetAcc->SetItemState(nIndex, true, false, false, true);
       }
-      pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
+      pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
     }
   }
@@ -377,9 +377,8 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
     }
     case FIELDTYPE_TEXTFIELD: {
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
-        WideString sValue;
-        pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
-        pFormField->SetValue(sValue, true);
+        pFormField->SetValue(pWidgetAcc->GetValue(XFA_VALUEPICTURE_Display),
+                             true);
       }
       break;
     }
@@ -408,10 +407,8 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
             pFormField->SetItemSelection(nIndex, true, true);
           }
         }
-
-        WideString sValue;
-        pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
-        pFormField->SetValue(sValue, true);
+        pFormField->SetValue(pWidgetAcc->GetValue(XFA_VALUEPICTURE_Display),
+                             true);
       }
       break;
     }
@@ -432,10 +429,8 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
         for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
              i++) {
-          WideString swText;
-          pWidgetAcc->GetChoiceListItem(swText, i, false);
-
-          pFormField->InsertOption(swText, i, true);
+          pFormField->InsertOption(
+              pWidgetAcc->GetChoiceListItem(i, false).value_or(L""), i, true);
         }
       }
       break;
@@ -447,10 +442,8 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
         for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
              i++) {
-          WideString swText;
-          pWidgetAcc->GetChoiceListItem(swText, i, false);
-
-          pFormField->InsertOption(swText, i, false);
+          pFormField->InsertOption(
+              pWidgetAcc->GetChoiceListItem(i, false).value_or(L""), i, false);
         }
       }
 
@@ -610,10 +603,8 @@ int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
 WideString CPDFSDK_Widget::GetValue(bool bDisplay) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
-      WideString sValue;
-      pWidgetAcc->GetValue(
-          sValue, bDisplay ? XFA_VALUEPICTURE_Display : XFA_VALUEPICTURE_Edit);
-      return sValue;
+      return pWidgetAcc->GetValue(bDisplay ? XFA_VALUEPICTURE_Display
+                                           : XFA_VALUEPICTURE_Edit);
     }
   }
 #else

@@ -11,13 +11,19 @@
 
 CXFA_CaptionData::CXFA_CaptionData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-int32_t CXFA_CaptionData::GetPresence() const {
+bool CXFA_CaptionData::IsVisible() const {
   return m_pNode->JSNode()
-      ->TryEnum(XFA_Attribute::Presence, true)
-      .value_or(XFA_ATTRIBUTEENUM_Visible);
+             ->TryEnum(XFA_Attribute::Presence, true)
+             .value_or(XFA_ATTRIBUTEENUM_Visible) == XFA_ATTRIBUTEENUM_Visible;
 }
 
-int32_t CXFA_CaptionData::GetPlacementType() const {
+bool CXFA_CaptionData::IsHidden() const {
+  return m_pNode->JSNode()
+             ->TryEnum(XFA_Attribute::Presence, true)
+             .value_or(XFA_ATTRIBUTEENUM_Visible) == XFA_ATTRIBUTEENUM_Hidden;
+}
+
+XFA_ATTRIBUTEENUM CXFA_CaptionData::GetPlacementType() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::Placement, true)
       .value_or(XFA_ATTRIBUTEENUM_Left);

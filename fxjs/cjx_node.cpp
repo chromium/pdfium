@@ -1465,7 +1465,7 @@ void CJX_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
     }
 
     if (pContainerWidgetData)
-      pContainerWidgetData->GetFormatDataValue(wsNewValue, wsFormatValue);
+      wsFormatValue = pContainerWidgetData->GetFormatDataValue(wsNewValue);
 
     SetContent(wsNewValue, wsFormatValue, true, true, true);
     return;
@@ -1520,7 +1520,7 @@ void CJX_Node::Script_Boolean_Value(CFXJSE_Value* pValue,
   CXFA_WidgetData* pContainerWidgetData =
       GetXFANode()->GetContainerWidgetData();
   if (pContainerWidgetData)
-    pContainerWidgetData->GetFormatDataValue(wsNewValue, wsFormatValue);
+    wsFormatValue = pContainerWidgetData->GetFormatDataValue(wsNewValue);
 
   SetContent(wsNewValue, wsFormatValue, true, true, true);
 }
@@ -1661,12 +1661,9 @@ void CJX_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    if (pValue && pValue->IsNull()) {
-      pWidgetData->m_bPreNull = pWidgetData->m_bIsNull;
-      pWidgetData->m_bIsNull = true;
-    } else {
-      pWidgetData->m_bPreNull = pWidgetData->m_bIsNull;
-      pWidgetData->m_bIsNull = false;
+    if (pValue) {
+      pWidgetData->SetPreNull(pWidgetData->IsNull());
+      pWidgetData->SetIsNull(pValue->IsNull());
     }
 
     WideString wsNewText;
@@ -1675,19 +1672,16 @@ void CJX_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
 
     CXFA_Node* pUIChild = pWidgetData->GetUIChild();
     if (pUIChild->GetElementType() == XFA_Element::NumericEdit) {
-      int32_t iLeadDigits = 0;
-      int32_t iFracDigits = 0;
-      pWidgetData->GetLeadDigits(iLeadDigits);
-      pWidgetData->GetFracDigits(iFracDigits);
       wsNewText =
-          pWidgetData->NumericLimit(wsNewText, iLeadDigits, iFracDigits);
+          pWidgetData->NumericLimit(wsNewText, pWidgetData->GetLeadDigits(),
+                                    pWidgetData->GetFracDigits());
     }
 
     CXFA_WidgetData* pContainerWidgetData =
         GetXFANode()->GetContainerWidgetData();
     WideString wsFormatText(wsNewText);
     if (pContainerWidgetData)
-      pContainerWidgetData->GetFormatDataValue(wsNewText, wsFormatText);
+      wsFormatText = pContainerWidgetData->GetFormatDataValue(wsNewText);
 
     SetContent(wsNewText, wsFormatText, true, true, true);
     return;
@@ -1730,13 +1724,11 @@ void CJX_Node::Script_Field_EditValue(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    pWidgetData->SetValue(pValue->ToWideString(), XFA_VALUEPICTURE_Edit);
+    pWidgetData->SetValue(XFA_VALUEPICTURE_Edit, pValue->ToWideString());
     return;
   }
-
-  WideString wsValue;
-  pWidgetData->GetValue(wsValue, XFA_VALUEPICTURE_Edit);
-  pValue->SetString(wsValue.UTF8Encode().AsStringView());
+  pValue->SetString(
+      pWidgetData->GetValue(XFA_VALUEPICTURE_Edit).UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_Som_FontColor(CFXJSE_Value* pValue,
@@ -1783,13 +1775,12 @@ void CJX_Node::Script_Field_FormattedValue(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    pWidgetData->SetValue(pValue->ToWideString(), XFA_VALUEPICTURE_Display);
+    pWidgetData->SetValue(XFA_VALUEPICTURE_Display, pValue->ToWideString());
     return;
   }
-
-  WideString wsValue;
-  pWidgetData->GetValue(wsValue, XFA_VALUEPICTURE_Display);
-  pValue->SetString(wsValue.UTF8Encode().AsStringView());
+  pValue->SetString(pWidgetData->GetValue(XFA_VALUEPICTURE_Display)
+                        .UTF8Encode()
+                        .AsStringView());
 }
 
 void CJX_Node::Script_Som_Mandatory(CFXJSE_Value* pValue,
@@ -1927,12 +1918,13 @@ void CJX_Node::Script_Field_GetSaveItem(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  WideString wsValue;
-  if (!pWidgetData->GetChoiceListItem(wsValue, iIndex, true)) {
+  pdfium::Optional<WideString> value =
+      pWidgetData->GetChoiceListItem(iIndex, true);
+  if (!value) {
     pArguments->GetReturnValue()->SetNull();
     return;
   }
-  pArguments->GetReturnValue()->SetString(wsValue.UTF8Encode().AsStringView());
+  pArguments->GetReturnValue()->SetString(value->UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_Field_BoundItem(CFXJSE_Arguments* pArguments) {
@@ -1948,8 +1940,7 @@ void CJX_Node::Script_Field_BoundItem(CFXJSE_Arguments* pArguments) {
 
   ByteString bsValue = pArguments->GetUTF8String(0);
   WideString wsValue = WideString::FromUTF8(bsValue.AsStringView());
-  WideString wsBoundValue;
-  pWidgetData->GetItemValue(wsValue.AsStringView(), wsBoundValue);
+  WideString wsBoundValue = pWidgetData->GetItemValue(wsValue.AsStringView());
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
     pValue->SetString(wsBoundValue.UTF8Encode().AsStringView());
@@ -2006,13 +1997,13 @@ void CJX_Node::Script_Field_GetDisplayItem(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  WideString wsValue;
-  if (!pWidgetData->GetChoiceListItem(wsValue, iIndex, false)) {
+  pdfium::Optional<WideString> value =
+      pWidgetData->GetChoiceListItem(iIndex, false);
+  if (!value) {
     pArguments->GetReturnValue()->SetNull();
     return;
   }
-
-  pArguments->GetReturnValue()->SetString(wsValue.UTF8Encode().AsStringView());
+  pArguments->GetReturnValue()->SetString(value->UTF8Encode().AsStringView());
 }
 
 void CJX_Node::Script_Field_SetItemState(CFXJSE_Arguments* pArguments) {
@@ -3838,7 +3829,7 @@ void CJX_Node::MoveBufferMapData(CXFA_Node* pDstModule) {
   WideString wsFormatValue(wsValue);
   CXFA_WidgetData* pWidgetData = pDstModule->GetContainerWidgetData();
   if (pWidgetData)
-    pWidgetData->GetFormatDataValue(wsValue, wsFormatValue);
+    wsFormatValue = pWidgetData->GetFormatDataValue(wsValue);
 
   pDstModule->JSNode()->SetContent(wsValue, wsFormatValue, true, true, true);
 }

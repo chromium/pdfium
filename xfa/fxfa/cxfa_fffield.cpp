@@ -188,9 +188,8 @@ void CXFA_FFField::CapPlacement() {
   XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
   float fCapReserve = 0;
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (captionData.HasValidNode() &&
-      captionData.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
-    iCapPlacement = (XFA_ATTRIBUTEENUM)captionData.GetPlacementType();
+  if (captionData.HasValidNode() && !captionData.IsHidden()) {
+    iCapPlacement = captionData.GetPlacementType();
     if (iCapPlacement == XFA_ATTRIBUTEENUM_Top && GetPrev()) {
       m_rtCaption.Reset();
     } else if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom && GetNext()) {
@@ -604,10 +603,8 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
     return;
 
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData.HasValidNode() ||
-      captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+  if (!captionData.HasValidNode() || !captionData.IsVisible())
     return;
-  }
 
   if (!pCapTextLayout->IsLoaded())
     pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));

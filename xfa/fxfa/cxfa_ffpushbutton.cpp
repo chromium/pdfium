@@ -134,14 +134,10 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 
 void CXFA_FFPushButton::LoadHighlightCaption() {
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData.HasValidNode() ||
-      captionData.GetPresence() == XFA_ATTRIBUTEENUM_Hidden) {
+  if (!captionData.HasValidNode() || captionData.IsHidden())
     return;
-  }
 
-  bool bRichText;
-  WideString wsRollover;
-  if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
+  if (m_pDataAcc->HasButtonRollover()) {
     if (!m_pRollProvider) {
       m_pRollProvider = pdfium::MakeUnique<CXFA_TextProvider>(
           m_pDataAcc.Get(), XFA_TEXTPROVIDERTYPE_Rollover);
@@ -149,8 +145,8 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
     m_pRolloverTextLayout =
         pdfium::MakeUnique<CXFA_TextLayout>(m_pRollProvider.get());
   }
-  WideString wsDown;
-  if (m_pDataAcc->GetButtonDown(wsDown, bRichText)) {
+
+  if (m_pDataAcc->HasButtonDown()) {
     if (!m_pDownProvider) {
       m_pDownProvider = pdfium::MakeUnique<CXFA_TextProvider>(
           m_pDataAcc.Get(), XFA_TEXTPROVIDERTYPE_Down);
@@ -173,10 +169,8 @@ void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData.HasValidNode() ||
-      captionData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+  if (!captionData.HasValidNode() || !captionData.IsVisible())
     return;
-  }
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtClip = m_rtCaption;

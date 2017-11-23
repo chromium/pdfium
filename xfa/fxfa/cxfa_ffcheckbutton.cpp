@@ -54,8 +54,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
 
   pCheckBox->SetBoxSize(m_pDataAcc->GetCheckButtonSize());
   uint32_t dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
-  int32_t iCheckMark = m_pDataAcc->GetCheckButtonMark();
-  switch (iCheckMark) {
+  switch (m_pDataAcc->GetCheckButtonMark()) {
     case XFA_ATTRIBUTEENUM_Check:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCheck;
       break;
@@ -74,10 +73,8 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeStar;
       break;
     default: {
-      int32_t iShape = m_pDataAcc->GetCheckButtonShape();
-      if (iShape == XFA_ATTRIBUTEENUM_Round) {
+      if (m_pDataAcc->IsCheckButtonRound())
         dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCircle;
-      }
     } break;
   }
   if (m_pDataAcc->IsAllowNeutral())
@@ -96,10 +93,10 @@ bool CXFA_FFCheckButton::PerformLayout() {
   if (marginData.HasValidNode())
     XFA_RectWidthoutMargin(rtWidget, marginData);
 
-  int32_t iCapPlacement = -1;
+  XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
   float fCapReserve = 0;
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (captionData.HasValidNode() && captionData.GetPresence()) {
+  if (captionData.HasValidNode() && captionData.IsVisible()) {
     m_rtCaption = rtWidget;
     iCapPlacement = captionData.GetPlacementType();
     fCapReserve = captionData.GetReserve();
@@ -200,7 +197,7 @@ void CXFA_FFCheckButton::CapLeftRightPlacement(
   }
 }
 
-void CXFA_FFCheckButton::AddUIMargin(int32_t iCapPlacement) {
+void CXFA_FFCheckButton::AddUIMargin(XFA_ATTRIBUTEENUM iCapPlacement) {
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtUI.top -= rtUIMargin.top / 2 - rtUIMargin.height / 2;
 
@@ -236,12 +233,9 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   DrawBorderWithFlags(
       pGS, m_pDataAcc->GetUIBorderData(), m_rtUI, mtRotate,
-      m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round
-          ? XFA_DRAWBOX_ForceRound
-          : 0);
+      m_pDataAcc->IsCheckButtonRound() ? XFA_DRAWBOX_ForceRound : 0);
   RenderCaption(pGS, &mtRotate);
-  DrawHighlight(pGS, &mtRotate, dwStatus,
-                m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round);
+  DrawHighlight(pGS, &mtRotate, dwStatus, m_pDataAcc->IsCheckButtonRound());
   CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
   GetApp()->GetFWLWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
@@ -310,7 +304,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
     case CFWL_Event::Type::CheckStateChanged: {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Change;
-      m_pDataAcc->GetValue(eParam.m_wsNewText, XFA_VALUEPICTURE_Raw);
+      eParam.m_wsNewText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
 
       CXFA_WidgetAcc* pFFExclGroup = m_pDataAcc->GetExclGroup();
       if (ProcessCommittedData()) {

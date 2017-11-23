@@ -44,7 +44,8 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   CXFA_FFDoc* GetDoc();
 
   bool ProcessValueChanged();
-  int32_t ProcessEvent(int32_t iActivity, CXFA_EventParam* pEventParam);
+  int32_t ProcessEvent(XFA_ATTRIBUTEENUM iActivity,
+                       CXFA_EventParam* pEventParam);
   int32_t ProcessEvent(const CXFA_EventData& eventData,
                        CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate();

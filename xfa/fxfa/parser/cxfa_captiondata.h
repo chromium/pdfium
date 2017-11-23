@@ -18,8 +18,9 @@ class CXFA_CaptionData : public CXFA_DataData {
  public:
   explicit CXFA_CaptionData(CXFA_Node* pNode);
 
-  int32_t GetPresence() const;
-  int32_t GetPlacementType() const;
+  bool IsVisible() const;
+  bool IsHidden() const;
+  XFA_ATTRIBUTEENUM GetPlacementType() const;
   float GetReserve() const;
   CXFA_MarginData GetMarginData() const;
   CXFA_FontData GetFontData() const;

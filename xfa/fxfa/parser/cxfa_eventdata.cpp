@@ -10,7 +10,7 @@
 
 CXFA_EventData::CXFA_EventData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-int32_t CXFA_EventData::GetActivity() {
+XFA_ATTRIBUTEENUM CXFA_EventData::GetActivity() {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Activity);
 }
 

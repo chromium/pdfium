@@ -465,38 +465,36 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
 
   if (eType == XFA_Element::Field) {
     CXFA_WidgetData* pFieldWidgetData = GetWidgetData();
-    if (pFieldWidgetData &&
-        pFieldWidgetData->GetChoiceListOpen() ==
-            XFA_ATTRIBUTEENUM_MultiSelect) {
+    if (pFieldWidgetData && pFieldWidgetData->IsChoiceListMultiSelect())
       return nullptr;
-    } else {
-      WideString wsPicture;
+
+    WideString wsPicture;
+    if (pFieldWidgetData) {
+      wsPicture =
+          pFieldWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
+    }
+    if (!wsPicture.IsEmpty())
+      return pFieldWidgetData;
+
+    CXFA_Node* pDataNode = GetBindData();
+    if (!pDataNode)
+      return nullptr;
+    pFieldWidgetData = nullptr;
+    for (const auto& pFormNode : *(pDataNode->GetBindItems())) {
+      if (!pFormNode || pFormNode->HasRemovedChildren())
+        continue;
+      pFieldWidgetData = pFormNode->GetWidgetData();
       if (pFieldWidgetData) {
         wsPicture =
             pFieldWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
       }
       if (!wsPicture.IsEmpty())
-        return pFieldWidgetData;
-
-      CXFA_Node* pDataNode = GetBindData();
-      if (!pDataNode)
-        return nullptr;
+        break;
       pFieldWidgetData = nullptr;
-      for (const auto& pFormNode : *(pDataNode->GetBindItems())) {
-        if (!pFormNode || pFormNode->HasRemovedChildren())
-          continue;
-        pFieldWidgetData = pFormNode->GetWidgetData();
-        if (pFieldWidgetData) {
-          wsPicture =
-              pFieldWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
-        }
-        if (!wsPicture.IsEmpty())
-          break;
-        pFieldWidgetData = nullptr;
-      }
-      return pFieldWidgetData;
     }
+    return pFieldWidgetData;
   }
+
   CXFA_Node* pGrandNode =
       pParentNode ? pParentNode->GetNodeItem(XFA_NODEITEM_Parent) : nullptr;
   CXFA_Node* pValueNode =

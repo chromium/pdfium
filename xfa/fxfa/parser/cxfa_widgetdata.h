@@ -7,11 +7,13 @@
 #ifndef XFA_FXFA_PARSER_CXFA_WIDGETDATA_H_
 #define XFA_FXFA_PARSER_CXFA_WIDGETDATA_H_
 
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "fxbarcode/BC_Library.h"
 #include "xfa/fxfa/parser/cxfa_binddata.h"
 #include "xfa/fxfa/parser/cxfa_borderdata.h"
 #include "xfa/fxfa/parser/cxfa_calculatedata.h"
@@ -47,7 +49,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   CFX_RectF GetUIMargin();
 
   WideString GetRawValue() const;
-  int32_t GetRotate();
+  int32_t GetRotate() const;
 
   bool IsOpenAccess() const;
   bool IsListBox();
@@ -67,7 +69,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_ValidateData GetValidateData(bool bModified);
   CXFA_BorderData GetUIBorderData();
 
-  std::vector<CXFA_Node*> GetEventByActivity(int32_t iActivity,
+  std::vector<CXFA_Node*> GetEventByActivity(XFA_ATTRIBUTEENUM iActivity,
                                              bool bIsFormReady);
 
   pdfium::Optional<float> TryWidth();
@@ -78,10 +80,10 @@ class CXFA_WidgetData : public CXFA_DataData {
   pdfium::Optional<float> TryMaxHeight();
 
   XFA_ATTRIBUTEENUM GetButtonHighlight();
-  bool GetButtonRollover(WideString& wsRollover, bool& bRichText);
-  bool GetButtonDown(WideString& wsDown, bool& bRichText);
+  bool HasButtonRollover() const;
+  bool HasButtonDown() const;
 
-  XFA_ATTRIBUTEENUM GetCheckButtonShape();
+  bool IsCheckButtonRound();
   XFA_ATTRIBUTEENUM GetCheckButtonMark();
   float GetCheckButtonSize();
 
@@ -99,9 +101,10 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_Node* GetExclGroupNextMember(CXFA_Node* pNode);
 
   int32_t CountChoiceListItems(bool bSaveValue);
-  bool GetChoiceListItem(WideString& wsText, int32_t nIndex, bool bSaveValue);
-  XFA_ATTRIBUTEENUM GetChoiceListOpen();
-  XFA_ATTRIBUTEENUM GetChoiceListCommitOn();
+  pdfium::Optional<WideString> GetChoiceListItem(int32_t nIndex,
+                                                 bool bSaveValue);
+  bool IsChoiceListMultiSelect();
+  bool IsChoiceListCommitOnSelect();
   std::vector<WideString> GetChoiceListItems(bool bSaveValue);
 
   int32_t CountSelectedItems();
@@ -125,49 +128,49 @@ class CXFA_WidgetData : public CXFA_DataData {
                     bool bScriptModify,
                     bool bSyncData);
 
-  void GetItemValue(const WideStringView& wsLabel, WideString& wsValue);
+  WideString GetItemValue(const WideStringView& wsLabel);
 
-  int32_t GetHorizontalScrollPolicy();
-  XFA_ATTRIBUTEENUM GetVerticalScrollPolicy();
-  int32_t GetNumberOfCells();
+  bool IsHorizontalScrollPolicyOff();
+  bool IsVerticalScrollPolicyOff();
+  pdfium::Optional<int32_t> GetNumberOfCells();
 
-  bool SetValue(const WideString& wsValue, XFA_VALUEPICTURE eValueType);
-  bool GetValue(WideString& wsValue, XFA_VALUEPICTURE eValueType);
+  bool SetValue(XFA_VALUEPICTURE eValueType, const WideString& wsValue);
+  WideString GetValue(XFA_VALUEPICTURE eValueType);
 
   WideString GetPictureContent(XFA_VALUEPICTURE ePicture);
-  IFX_Locale* GetLocal();
+  IFX_Locale* GetLocale();
 
-  bool GetNormalizeDataValue(const WideString& wsValue,
-                             WideString& wsNormalizeValue);
-  bool GetFormatDataValue(const WideString& wsValue,
-                          WideString& wsFormattedValue);
-  void NormalizeNumStr(const WideString& wsValue, WideString& wsOutput);
+  WideString GetNormalizeDataValue(const WideString& wsValue);
+  WideString GetFormatDataValue(const WideString& wsValue);
+  WideString NormalizeNumStr(const WideString& wsValue);
 
   WideString GetBarcodeType();
-  bool GetBarcodeAttribute_CharEncoding(int32_t* val);
-  bool GetBarcodeAttribute_Checksum(bool* val);
-  bool GetBarcodeAttribute_DataLength(int32_t* val);
-  bool GetBarcodeAttribute_StartChar(char* val);
-  bool GetBarcodeAttribute_EndChar(char* val);
-  bool GetBarcodeAttribute_ECLevel(int32_t* val);
-  bool GetBarcodeAttribute_ModuleWidth(int32_t* val);
-  bool GetBarcodeAttribute_ModuleHeight(int32_t* val);
-  bool GetBarcodeAttribute_PrintChecksum(bool* val);
-  bool GetBarcodeAttribute_TextLocation(int32_t* val);
-  bool GetBarcodeAttribute_Truncate(bool* val);
-  bool GetBarcodeAttribute_WideNarrowRatio(float* val);
-  void GetPasswordChar(WideString& wsPassWord);
+  pdfium::Optional<BC_CHAR_ENCODING> GetBarcodeAttribute_CharEncoding();
+  pdfium::Optional<bool> GetBarcodeAttribute_Checksum();
+  pdfium::Optional<int32_t> GetBarcodeAttribute_DataLength();
+  pdfium::Optional<char> GetBarcodeAttribute_StartChar();
+  pdfium::Optional<char> GetBarcodeAttribute_EndChar();
+  pdfium::Optional<int32_t> GetBarcodeAttribute_ECLevel();
+  pdfium::Optional<int32_t> GetBarcodeAttribute_ModuleWidth();
+  pdfium::Optional<int32_t> GetBarcodeAttribute_ModuleHeight();
+  pdfium::Optional<bool> GetBarcodeAttribute_PrintChecksum();
+  pdfium::Optional<BC_TEXT_LOC> GetBarcodeAttribute_TextLocation();
+  pdfium::Optional<bool> GetBarcodeAttribute_Truncate();
+  pdfium::Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
 
-  int32_t GetMaxChars(XFA_Element& eType);
-  bool GetFracDigits(int32_t& iFracDigits);
-  bool GetLeadDigits(int32_t& iLeadDigits);
+  WideString GetPasswordChar();
+  std::pair<XFA_Element, int32_t> GetMaxChars();
+  int32_t GetFracDigits();
+  int32_t GetLeadDigits();
 
   WideString NumericLimit(const WideString& wsValue,
                           int32_t iLead,
                           int32_t iTread) const;
 
-  bool m_bIsNull;
-  bool m_bPreNull;
+  bool IsPreNull() const { return m_bPreNull; }
+  void SetPreNull(bool val) { m_bPreNull = val; }
+  bool IsNull() const { return m_bIsNull; }
+  void SetIsNull(bool val) { m_bIsNull = val; }
 
  private:
   CXFA_BindData GetBindData();
@@ -175,13 +178,13 @@ class CXFA_WidgetData : public CXFA_DataData {
   void InsertListTextItem(CXFA_Node* pItems,
                           const WideString& wsText,
                           int32_t nIndex);
-  void FormatNumStr(const WideString& wsValue,
-                    IFX_Locale* pLocale,
-                    WideString& wsOutput);
+  WideString FormatNumStr(const WideString& wsValue, IFX_Locale* pLocale);
   CXFA_Node* GetExclGroupNode();
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
   std::vector<CXFA_Node*> GetEventList();
 
+  bool m_bIsNull;
+  bool m_bPreNull;
   CXFA_Node* m_pUiChildNode;
   XFA_Element m_eUIType;
 };
