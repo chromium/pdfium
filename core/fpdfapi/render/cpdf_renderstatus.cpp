@@ -1399,8 +1399,7 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
 
   m_LastClipPath = ClipPath;
   m_pDevice->RestoreState(true);
-  int nClipPath = ClipPath.GetPathCount();
-  for (int i = 0; i < nClipPath; ++i) {
+  for (size_t i = 0; i < ClipPath.GetPathCount(); ++i) {
     const CFX_PathData* pPathData = ClipPath.GetPath(i).GetObject();
     if (!pPathData)
       continue;
@@ -1408,15 +1407,14 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
     if (pPathData->GetPoints().empty()) {
       CFX_PathData EmptyPath;
       EmptyPath.AppendRect(-1, -1, 0, 0);
-      int fill_mode = FXFILL_WINDING;
-      m_pDevice->SetClip_PathFill(&EmptyPath, nullptr, fill_mode);
+      m_pDevice->SetClip_PathFill(&EmptyPath, nullptr, FXFILL_WINDING);
     } else {
-      int ClipType = ClipPath.GetClipType(i);
-      m_pDevice->SetClip_PathFill(pPathData, pObj2Device, ClipType);
+      m_pDevice->SetClip_PathFill(pPathData, pObj2Device,
+                                  ClipPath.GetClipType(i));
     }
   }
-  int textcount = ClipPath.GetTextCount();
-  if (textcount == 0)
+
+  if (ClipPath.GetTextCount() == 0)
     return;
 
   if (m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
@@ -1425,7 +1423,7 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
   }
 
   std::unique_ptr<CFX_PathData> pTextClippingPath;
-  for (int i = 0; i < textcount; ++i) {
+  for (size_t i = 0; i < ClipPath.GetTextCount(); ++i) {
     CPDF_TextObject* pText = ClipPath.GetText(i);
     if (pText) {
       if (!pTextClippingPath)
@@ -1496,7 +1494,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       pFormResource = pFormDict->GetDictFor("Resources");
   }
   bool bTextClip =
-      (pPageObj->m_ClipPath.HasRef() && pPageObj->m_ClipPath.GetTextCount() &&
+      (pPageObj->m_ClipPath.HasRef() &&
+       pPageObj->m_ClipPath.GetTextCount() > 0 &&
        m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
   if ((m_Options.HasFlag(RENDER_OVERPRINT)) && pPageObj->IsImage() &&
@@ -1585,7 +1584,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     pTextMask->Clear(0);
     CFX_DefaultRenderDevice text_device;
     text_device.Attach(pTextMask, false, nullptr, false);
-    for (uint32_t i = 0; i < pPageObj->m_ClipPath.GetTextCount(); i++) {
+    for (size_t i = 0; i < pPageObj->m_ClipPath.GetTextCount(); ++i) {
       CPDF_TextObject* textobj = pPageObj->m_ClipPath.GetText(i);
       if (!textobj)
         break;

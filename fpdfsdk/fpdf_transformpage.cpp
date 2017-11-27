@@ -275,16 +275,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
 
   std::ostringstream strClip;
   CPDF_ClipPath* pClipPath = (CPDF_ClipPath*)clipPath;
-  uint32_t i;
-  for (i = 0; i < pClipPath->GetPathCount(); i++) {
+  for (size_t i = 0; i < pClipPath->GetPathCount(); ++i) {
     CPDF_Path path = pClipPath->GetPath(i);
-    int iClipType = pClipPath->GetClipType(i);
     if (path.GetPoints().empty()) {
       // Empty clipping (totally clipped out)
       strClip << "0 0 m W n ";
     } else {
       OutputPath(strClip, path);
-      if (iClipType == FXFILL_WINDING)
+      if (pClipPath->GetClipType(i) == FXFILL_WINDING)
         strClip << "W n\n";
       else
         strClip << "W* n\n";

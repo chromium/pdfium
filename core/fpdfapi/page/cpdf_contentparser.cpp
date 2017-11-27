@@ -190,8 +190,9 @@ bool CPDF_ContentParser::Continue(IFX_PauseIndicator* pPause) {
           continue;
         if (pObj->m_ClipPath.GetPathCount() != 1)
           continue;
-        if (pObj->m_ClipPath.GetTextCount())
+        if (pObj->m_ClipPath.GetTextCount() > 0)
           continue;
+
         CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
         if (!ClipPath.IsRect() || pObj->IsShading())
           continue;

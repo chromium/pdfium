@@ -10,7 +10,6 @@
 
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
-#include "third_party/base/stl_util.h"
 
 #define FPDF_CLIPPATH_MAX_TEXTS 1024
 
@@ -20,8 +19,8 @@ CPDF_ClipPath::CPDF_ClipPath(const CPDF_ClipPath& that) : m_Ref(that.m_Ref) {}
 
 CPDF_ClipPath::~CPDF_ClipPath() {}
 
-uint32_t CPDF_ClipPath::GetPathCount() const {
-  return pdfium::CollectionSize<uint32_t>(m_Ref.GetObject()->m_PathAndTypeList);
+size_t CPDF_ClipPath::GetPathCount() const {
+  return m_Ref.GetObject()->m_PathAndTypeList.size();
 }
 
 CPDF_Path CPDF_ClipPath::GetPath(size_t i) const {
@@ -32,8 +31,8 @@ uint8_t CPDF_ClipPath::GetClipType(size_t i) const {
   return m_Ref.GetObject()->m_PathAndTypeList[i].second;
 }
 
-uint32_t CPDF_ClipPath::GetTextCount() const {
-  return pdfium::CollectionSize<uint32_t>(m_Ref.GetObject()->m_TextList);
+size_t CPDF_ClipPath::GetTextCount() const {
+  return m_Ref.GetObject()->m_TextList.size();
 }
 
 CPDF_TextObject* CPDF_ClipPath::GetText(size_t i) const {
@@ -43,36 +42,33 @@ CPDF_TextObject* CPDF_ClipPath::GetText(size_t i) const {
 CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
   CFX_FloatRect rect;
   bool bStarted = false;
-  int count = GetPathCount();
-  if (count) {
+  if (GetPathCount() > 0) {
     rect = GetPath(0).GetBoundingBox();
-    for (int i = 1; i < count; i++) {
+    for (size_t i = 1; i < GetPathCount(); ++i) {
       CFX_FloatRect path_rect = GetPath(i).GetBoundingBox();
       rect.Intersect(path_rect);
     }
     bStarted = true;
   }
-  count = GetTextCount();
-  if (count) {
-    CFX_FloatRect layer_rect;
-    bool bLayerStarted = false;
-    for (int i = 0; i < count; i++) {
-      CPDF_TextObject* pTextObj = GetText(i);
-      if (!pTextObj) {
-        if (!bStarted) {
-          rect = layer_rect;
-          bStarted = true;
-        } else {
-          rect.Intersect(layer_rect);
-        }
-        bLayerStarted = false;
+
+  CFX_FloatRect layer_rect;
+  bool bLayerStarted = false;
+  for (size_t i = 0; i < GetTextCount(); ++i) {
+    CPDF_TextObject* pTextObj = GetText(i);
+    if (!pTextObj) {
+      if (!bStarted) {
+        rect = layer_rect;
+        bStarted = true;
       } else {
-        if (!bLayerStarted) {
-          layer_rect = CFX_FloatRect(pTextObj->GetBBox(nullptr));
-          bLayerStarted = true;
-        } else {
-          layer_rect.Union(CFX_FloatRect(pTextObj->GetBBox(nullptr)));
-        }
+        rect.Intersect(layer_rect);
+      }
+      bLayerStarted = false;
+    } else {
+      if (!bLayerStarted) {
+        layer_rect = CFX_FloatRect(pTextObj->GetBBox(nullptr));
+        bLayerStarted = true;
+      } else {
+        layer_rect.Union(CFX_FloatRect(pTextObj->GetBBox(nullptr)));
       }
     }
   }

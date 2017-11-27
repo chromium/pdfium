@@ -33,10 +33,10 @@ class CPDF_ClipPath {
   }
   bool operator!=(const CPDF_ClipPath& that) const { return !(*this == that); }
 
-  uint32_t GetPathCount() const;
+  size_t GetPathCount() const;
   CPDF_Path GetPath(size_t i) const;
   uint8_t GetClipType(size_t i) const;
-  uint32_t GetTextCount() const;
+  size_t GetTextCount() const;
   CPDF_TextObject* GetText(size_t i) const;
   CFX_FloatRect GetClipBox() const;
   void AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge);
