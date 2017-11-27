@@ -42,11 +42,12 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   unsigned short fixed_buffer[128];
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
 
-  // Check that unreasonable inputs are handled gracefully
+  // Check that edge cases are handled gracefully
   EXPECT_EQ(0, FPDFText_GetText(textpage, 0, 128, nullptr));
   EXPECT_EQ(0, FPDFText_GetText(textpage, -1, 128, fixed_buffer));
-  EXPECT_EQ(0, FPDFText_GetText(textpage, 0, 0, fixed_buffer));
   EXPECT_EQ(0, FPDFText_GetText(textpage, 0, -1, fixed_buffer));
+  EXPECT_EQ(1, FPDFText_GetText(textpage, 0, 0, fixed_buffer));
+  EXPECT_EQ(0, fixed_buffer[0]);
 
   // Check includes the terminating NUL that is provided.
   int num_chars = FPDFText_GetText(textpage, 0, 128, fixed_buffer);
@@ -69,7 +70,7 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   static const char small_expected[] = "Hello";
   unsigned short small_buffer[12];
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
-  EXPECT_EQ(6, FPDFText_GetText(textpage, 0, 6, small_buffer));
+  EXPECT_EQ(6, FPDFText_GetText(textpage, 0, 5, small_buffer));
   EXPECT_TRUE(check_unsigned_shorts(small_expected, small_buffer,
                                     sizeof(small_expected)));
 
@@ -515,7 +516,7 @@ TEST_F(FPDFTextEmbeddertest, Bug_921) {
   unsigned short buffer[FX_ArraySize(kData) + 1];
   memset(buffer, 0xbd, sizeof(buffer));
   int count =
-      FPDFText_GetText(textpage, kStartIndex, FX_ArraySize(buffer), buffer);
+      FPDFText_GetText(textpage, kStartIndex, FX_ArraySize(kData), buffer);
   ASSERT_GT(count, 0);
   ASSERT_EQ(FX_ArraySize(kData) + 1, static_cast<size_t>(count));
   for (size_t i = 0; i < FX_ArraySize(kData); ++i)
@@ -542,13 +543,12 @@ TEST_F(FPDFTextEmbeddertest, GetTextWithHyphen) {
       0x0056, 0x0065, 0x0072, 0x0069, 0x0074, 0x0061, 0xfffe,
       0x0073, 0x0065, 0x0072, 0x0075, 0x006D, 0x0000};
   {
-    constexpr int expected_count = FX_ArraySize(soft_expected);
-    unsigned short buffer[expected_count];
+    constexpr int count = FX_ArraySize(soft_expected) - 1;
+    unsigned short buffer[FX_ArraySize(soft_expected)];
     memset(buffer, 0, sizeof(buffer));
 
-    EXPECT_EQ(expected_count,
-              FPDFText_GetText(textpage, 0, expected_count, buffer));
-    for (int i = 0; i < expected_count; i++)
+    EXPECT_EQ(count + 1, FPDFText_GetText(textpage, 0, count, buffer));
+    for (int i = 0; i < count; i++)
       EXPECT_EQ(soft_expected[i], buffer[i]);
   }
 
@@ -562,12 +562,11 @@ TEST_F(FPDFTextEmbeddertest, GetTextWithHyphen) {
     constexpr unsigned short hard_expected[] = {
         0x0055, 0x0073, 0x0065, 0x0072, 0x2010, 0x000d, 0x000a, 0x0067, 0x0065,
         0x006e, 0x0065, 0x0072, 0x0061, 0x0074, 0x0065, 0x0064, 0x0000};
-    constexpr int expected_count = FX_ArraySize(hard_expected);
-    unsigned short buffer[expected_count];
+    constexpr int count = FX_ArraySize(hard_expected) - 1;
+    unsigned short buffer[FX_ArraySize(hard_expected)];
 
-    EXPECT_EQ(expected_count,
-              FPDFText_GetText(textpage, offset, expected_count, buffer));
-    for (int i = 0; i < expected_count; i++)
+    EXPECT_EQ(count + 1, FPDFText_GetText(textpage, offset, count, buffer));
+    for (int i = 0; i < count; i++)
       EXPECT_EQ(hard_expected[i], buffer[i]);
   }
 

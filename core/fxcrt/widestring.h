@@ -182,6 +182,10 @@ class WideString {
   size_t Remove(wchar_t ch);
 
   ByteString UTF8Encode() const;
+
+  // This method will add \0\0 to the end of the string to represent the
+  // wide string terminator. These values are in the string, not just the data,
+  // so GetLength() will include them.
   ByteString UTF16LE_Encode() const;
 
  protected:
