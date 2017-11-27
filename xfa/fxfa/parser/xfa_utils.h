@@ -54,7 +54,6 @@ bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_Attribute eAttribute,
                                   XFA_AttributeType eType,
                                   uint32_t dwPacket);
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName);
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
     const WideStringView& wsName);

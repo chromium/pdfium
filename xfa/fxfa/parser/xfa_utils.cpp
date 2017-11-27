@@ -268,21 +268,6 @@ bool XFA_GetAttributeDefaultValue(void*& pValue,
   return false;
 }
 
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName) {
-  if (wsName.IsEmpty())
-    return nullptr;
-
-  auto* it = std::lower_bound(g_XFAAttributeData,
-                              g_XFAAttributeData + g_iXFAAttributeCount,
-                              FX_HashCode_GetW(wsName, false),
-                              [](const XFA_ATTRIBUTEINFO& arg, uint32_t hash) {
-                                return arg.uHash < hash;
-                              });
-  if (it != g_XFAAttributeData + g_iXFAAttributeCount && wsName == it->pName)
-    return it;
-  return nullptr;
-}
-
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName) {
   ASSERT(static_cast<uint8_t>(eName) < g_iXFAAttributeCount);
   return g_XFAAttributeData + static_cast<uint8_t>(eName);

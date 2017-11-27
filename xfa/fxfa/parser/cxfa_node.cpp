@@ -145,10 +145,18 @@ WideString CXFA_Node::AttributeToName(XFA_Attribute attr) {
 
 // static
 XFA_Attribute CXFA_Node::NameToAttribute(const WideStringView& name) {
-  const XFA_ATTRIBUTEINFO* attr = XFA_GetAttributeByName(name);
-  if (!attr)
+  if (name.IsEmpty())
     return XFA_Attribute::Unknown;
-  return attr->eName;
+
+  auto* it = std::lower_bound(g_XFAAttributeData,
+                              g_XFAAttributeData + g_iXFAAttributeCount,
+                              FX_HashCode_GetW(name, false),
+                              [](const XFA_ATTRIBUTEINFO& arg, uint32_t hash) {
+                                return arg.uHash < hash;
+                              });
+  if (it != g_XFAAttributeData + g_iXFAAttributeCount && name == it->pName)
+    return it->eName;
+  return XFA_Attribute::Unknown;
 }
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,

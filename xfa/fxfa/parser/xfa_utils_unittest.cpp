@@ -23,15 +23,6 @@ TEST(XfaUtilsImpTest, XFA_MapRotation) {
   }
 }
 
-TEST(XFAUtilsTest, GetAttributeByName) {
-  EXPECT_EQ(nullptr, XFA_GetAttributeByName(L""));
-  EXPECT_EQ(nullptr, XFA_GetAttributeByName(L"nonesuch"));
-  EXPECT_EQ(XFA_Attribute::H, XFA_GetAttributeByName(L"h")->eName);
-  EXPECT_EQ(XFA_Attribute::Short, XFA_GetAttributeByName(L"short")->eName);
-  EXPECT_EQ(XFA_Attribute::DecipherOnly,
-            XFA_GetAttributeByName(L"decipherOnly")->eName);
-}
-
 TEST(XFAUtilsTest, GetAttributeEnumByName) {
   EXPECT_EQ(nullptr, XFA_GetAttributeEnumByName(L""));
   EXPECT_EQ(nullptr, XFA_GetAttributeEnumByName(L"nonesuch"));
