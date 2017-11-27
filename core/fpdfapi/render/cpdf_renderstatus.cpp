@@ -59,7 +59,6 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "core/fxge/skia/fx_skia_device.h"
@@ -1851,8 +1850,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     return false;
 
   CPDF_RefType3Cache refTypeCache(pType3Font);
-  for (int iChar = 0;
-       iChar < pdfium::CollectionSize<int>(textobj->GetCharCodes()); iChar++) {
+  for (size_t iChar = 0; iChar < textobj->GetCharCodes().size(); ++iChar) {
     uint32_t charcode = textobj->GetCharCodes()[iChar];
     if (charcode == static_cast<uint32_t>(-1))
       continue;
@@ -1862,12 +1860,12 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       continue;
 
     CFX_Matrix matrix = char_matrix;
-    matrix.e += iChar ? textobj->GetCharPositions()[iChar - 1] : 0;
+    matrix.e += iChar > 0 ? textobj->GetCharPositions()[iChar - 1] : 0;
     matrix.Concat(text_matrix);
     matrix.Concat(*pObj2Device);
     if (!pType3Char->LoadBitmap(m_pContext.Get())) {
       if (!glyphs.empty()) {
-        for (int i = 0; i < iChar; i++) {
+        for (size_t i = 0; i < iChar; ++i) {
           const FXTEXT_GLYPHPOS& glyph = glyphs[i];
           if (!glyph.m_pGlyph)
             continue;
@@ -1879,6 +1877,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         }
         glyphs.clear();
       }
+
       std::unique_ptr<CPDF_GraphicStates> pStates =
           CloneObjStates(textobj, false);
       CPDF_RenderOptions options = m_Options;
