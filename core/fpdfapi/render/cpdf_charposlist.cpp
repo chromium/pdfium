@@ -8,7 +8,6 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "third_party/base/stl_util.h"
 
 CPDF_CharPosList::CPDF_CharPosList() {
   m_pCharPos = nullptr;
@@ -23,12 +22,11 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
                             const std::vector<float>& charPos,
                             CPDF_Font* pFont,
                             float FontSize) {
-  int nChars = pdfium::CollectionSize<int>(charCodes);
-  m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, nChars);
+  m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, charCodes.size());
   m_nChars = 0;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
-  for (int iChar = 0; iChar < nChars; iChar++) {
+  for (size_t iChar = 0; iChar < charCodes.size(); ++iChar) {
     uint32_t CharCode = charCodes[iChar];
     if (CharCode == static_cast<uint32_t>(-1))
       continue;
@@ -65,7 +63,7 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
     else
       charpos.m_FontCharWidth = 0;
 
-    charpos.m_Origin = CFX_PointF(iChar ? charPos[iChar - 1] : 0, 0);
+    charpos.m_Origin = CFX_PointF(iChar > 0 ? charPos[iChar - 1] : 0, 0);
     charpos.m_bGlyphAdjust = false;
 
     float scalingFactor = 1.0f;
