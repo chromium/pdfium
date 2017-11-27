@@ -219,15 +219,14 @@ CXFA_Node* CXFA_Document::CreateNode(uint32_t dwPacket, XFA_Element eElement) {
 
 CXFA_Node* CXFA_Document::CreateNode(const XFA_PACKETINFO* pPacket,
                                      XFA_Element eElement) {
-  if (!pPacket)
-    return nullptr;
-
-  const XFA_ELEMENTINFO* pElement = XFA_GetElementByID(eElement);
-  if (!pElement || !(pElement->dwPackets & pPacket->eName))
+  if (!pPacket || eElement == XFA_Element::Unknown)
     return nullptr;
 
   std::unique_ptr<CXFA_Node> pNode =
-      CXFA_Node::Create(this, pPacket->eName, pElement);
+      CXFA_Node::Create(this, eElement, pPacket->eName);
+  if (!pNode)
+    return nullptr;
+
   // TODO(dsinclair): AddPrugeNode should take ownership of the pointer.
   AddPurgeNode(pNode.get());
   return pNode.release();

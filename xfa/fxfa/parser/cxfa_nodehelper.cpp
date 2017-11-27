@@ -45,9 +45,8 @@ int32_t CXFA_NodeHelper::CountSiblings(CXFA_Node* pNode,
   CXFA_Node* parent = ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
   if (!parent)
     return 0;
-  const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
-      parent->GetElementType(), pNode->GetElementType(), XFA_XDPPACKET_UNKNOWN);
-  if (!pProperty && eLogicType == XFA_LOGIC_Transparent) {
+  if (!parent->HasProperty(pNode->GetElementType()) &&
+      eLogicType == XFA_LOGIC_Transparent) {
     parent = ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
     if (!parent)
       return 0;
@@ -340,7 +339,7 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
     CreateNode_ForCondition(wsCondition);
   }
   if (bIsClassName) {
-    XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringView());
+    XFA_Element eType = CXFA_Node::NameToElement(wsName);
     if (eType == XFA_Element::Unknown)
       return false;
 
@@ -396,8 +395,5 @@ void CXFA_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
 
 bool CXFA_NodeHelper::NodeIsProperty(CXFA_Node* refNode) {
   CXFA_Node* parent = ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
-  return parent && refNode &&
-         XFA_GetPropertyOfElement(parent->GetElementType(),
-                                  refNode->GetElementType(),
-                                  XFA_XDPPACKET_UNKNOWN);
+  return parent && refNode && parent->HasProperty(refNode->GetElementType());
 }

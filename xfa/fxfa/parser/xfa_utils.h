@@ -47,15 +47,8 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     const WideStringView& wsAttributeName);
 
-const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
-                                             XFA_Element eProperty,
-                                             uint32_t dwPacket);
-const XFA_PROPERTY* XFA_GetElementProperties(XFA_Element eElement,
-                                             int32_t& iCount);
 const XFA_Attribute* XFA_GetElementAttributes(XFA_Element eElement,
                                               int32_t& iCount);
-const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_Element eName);
-XFA_Element XFA_GetElementTypeForName(const WideStringView& wsName);
 bool XFA_GetAttributeDefaultValue(void*& pValue,
                                   XFA_Element eElement,
                                   XFA_Attribute eAttribute,

@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -46,11 +47,27 @@ const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName);
 
 class CXFA_Node : public CXFA_Object {
  public:
+  struct PropertyData {
+    XFA_Element property;
+    uint8_t occurance_count;
+    uint8_t flags;
+  };
+
+  static XFA_Element NameToElement(const WideString& name);
   static std::unique_ptr<CXFA_Node> Create(CXFA_Document* doc,
-                                           XFA_XDPPACKET packet,
-                                           const XFA_ELEMENTINFO* pElement);
+                                           XFA_Element element,
+                                           XFA_XDPPACKET packet);
 
   ~CXFA_Node() override;
+
+  bool IsValidInPacket(XFA_XDPPACKET packet) const;
+
+  bool HasProperty(XFA_Element property) const;
+  bool HasPropertyFlags(XFA_Element property, uint8_t flags) const;
+  uint8_t PropertyOccuranceCount(XFA_Element property) const;
+
+  bool HasAttribute(XFA_Attribute attr) const;
+  XFA_Attribute GetAttribute(size_t i) const;
 
   uint32_t GetPacketID() const { return m_ePacket; }
 
@@ -148,18 +165,26 @@ class CXFA_Node : public CXFA_Object {
   pdfium::Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
   pdfium::Optional<XFA_ATTRIBUTEENUM> GetDefaultEnum(XFA_Attribute attr) const;
 
- private:
+ protected:
   CXFA_Node(CXFA_Document* pDoc,
             uint16_t ePacket,
+            uint32_t validPackets,
             XFA_ObjectType oType,
             XFA_Element eType,
+            const PropertyData* properties,
+            const XFA_Attribute* attributes,
             const WideStringView& elementName);
 
+ private:
   bool HasFlag(XFA_NodeFlag dwFlag) const;
   CXFA_Node* Deprecated_GetPrevSibling();
-
+  const PropertyData* GetPropertyData(XFA_Element property) const;
+  pdfium::Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag);
   void OnRemoved(bool bNotify);
 
+  const PropertyData* m_Properties;
+  const XFA_Attribute* m_Attributes;
+  uint32_t m_ValidPackets;
   CXFA_Node* m_pNext;
   CXFA_Node* m_pChild;
   CXFA_Node* m_pLastChild;

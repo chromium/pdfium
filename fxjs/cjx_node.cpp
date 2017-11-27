@@ -92,24 +92,6 @@ void* GetMapKey_Element(XFA_Element eType, XFA_Attribute eAttribute) {
                             XFA_KEYTYPE_Element);
 }
 
-const XFA_ATTRIBUTEINFO* GetAttributeOfElement(XFA_Element eElement,
-                                               XFA_Attribute eAttribute,
-                                               uint32_t dwPacket) {
-  int32_t iCount = 0;
-  const XFA_Attribute* pAttr = XFA_GetElementAttributes(eElement, iCount);
-  if (!pAttr || iCount < 1)
-    return nullptr;
-
-  if (!std::binary_search(pAttr, pAttr + iCount, eAttribute))
-    return nullptr;
-
-  const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
-  ASSERT(pInfo);
-  if (dwPacket == XFA_XDPPACKET_UNKNOWN)
-    return pInfo;
-  return (dwPacket & pInfo->dwPackets) ? pInfo : nullptr;
-}
-
 struct XFA_ExecEventParaInfo {
  public:
   uint32_t m_uHash;
@@ -685,8 +667,8 @@ void CJX_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments) {
       WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
   int32_t iValue = iLength >= 2 ? pArguments->GetInt32(1) : 0;
 
-  CXFA_Node* pNode = GetProperty(
-      iValue, XFA_GetElementTypeForName(wsExpression.AsStringView()), true);
+  CXFA_Node* pNode =
+      GetProperty(iValue, CXFA_Node::NameToElement(wsExpression), true);
   pArguments->GetReturnValue()->Assign(
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
 }
@@ -714,7 +696,7 @@ void CJX_Node::Script_NodeClass_IsPropertySpecified(
 
   bool bParent = iLength < 2 || pArguments->GetInt32(1);
   int32_t iIndex = iLength == 3 ? pArguments->GetInt32(2) : 0;
-  XFA_Element eType = XFA_GetElementTypeForName(wsExpression.AsStringView());
+  XFA_Element eType = CXFA_Node::NameToElement(wsExpression);
   bool bHas = !!GetProperty(iIndex, eType, true);
   if (!bHas && bParent && GetXFANode()->GetParent()) {
     // Also check on the parent.
@@ -2382,7 +2364,7 @@ void CJX_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
 
   ByteString bsTagName = pArguments->GetUTF8String(0);
   WideString strTagName = WideString::FromUTF8(bsTagName.AsStringView());
-  XFA_Element eType = XFA_GetElementTypeForName(strTagName.AsStringView());
+  XFA_Element eType = CXFA_Node::NameToElement(strTagName);
   CXFA_Node* pNewNode = GetXFANode()->CreateSamePacketNode(eType);
   if (!pNewNode) {
     pArguments->GetReturnValue()->SetNull();
@@ -2395,8 +2377,7 @@ void CJX_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
     return;
   }
 
-  if (!GetAttributeOfElement(eType, XFA_Attribute::Name,
-                             XFA_XDPPACKET_UNKNOWN)) {
+  if (!pNewNode->HasAttribute(XFA_Attribute::Name)) {
     ThrowMissingPropertyException(strTagName, L"name");
     return;
   }
@@ -3580,11 +3561,8 @@ pdfium::Optional<WideString> CJX_Node::TryNamespace() {
 CXFA_Node* CJX_Node::GetProperty(int32_t index,
                                  XFA_Element eProperty,
                                  bool bCreateProperty) {
-  XFA_Element eType = GetXFANode()->GetElementType();
   uint32_t dwPacket = GetXFANode()->GetPacketID();
-  const XFA_PROPERTY* pProperty =
-      XFA_GetPropertyOfElement(eType, eProperty, dwPacket);
-  if (!pProperty || index >= pProperty->uOccur)
+  if (index < 0 || index >= GetXFANode()->PropertyOccuranceCount(eProperty))
     return nullptr;
 
   CXFA_Node* pNode = GetXFANode()->GetChildNode();
@@ -3599,13 +3577,13 @@ CXFA_Node* CJX_Node::GetProperty(int32_t index,
   if (!bCreateProperty)
     return nullptr;
 
-  if (pProperty->uFlags & XFA_PROPERTYFLAG_OneOf) {
+  if (GetXFANode()->HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
     pNode = GetXFANode()->GetChildNode();
     for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      const XFA_PROPERTY* pExistProperty =
-          XFA_GetPropertyOfElement(eType, pNode->GetElementType(), dwPacket);
-      if (pExistProperty && (pExistProperty->uFlags & XFA_PROPERTYFLAG_OneOf))
+      if (GetXFANode()->HasPropertyFlags(pNode->GetElementType(),
+                                         XFA_PROPERTYFLAG_OneOf)) {
         return nullptr;
+      }
     }
   }
 

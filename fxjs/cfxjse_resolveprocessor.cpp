@@ -242,10 +242,7 @@ int32_t CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       pPageSetNode = pChild;
       continue;
     }
-    const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
-        curNode->GetElementType(), pChild->GetElementType(),
-        XFA_XDPPACKET_UNKNOWN);
-    if (pProperty)
+    if (curNode->HasProperty(pChild->GetElementType()))
       properties.push_back(pChild);
     else
       children.push_back(pChild);
@@ -348,7 +345,7 @@ int32_t CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
                                                         true);
       }
     } else {
-      XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringView());
+      XFA_Element eType = CXFA_Node::NameToElement(wsName);
       if (eType != XFA_Element::Unknown) {
         pProp = curNode->AsNode()->JSNode()->GetProperty(
             0, eType, eType != XFA_Element::PageSet);
@@ -405,11 +402,9 @@ int32_t CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       } else if (child->GetNameHash() == uNameHash) {
         rnd.m_Objects.push_back(child);
       }
-      const XFA_PROPERTY* pPropert = XFA_GetPropertyOfElement(
-          parentNode->GetElementType(), child->GetElementType(),
-          XFA_XDPPACKET_UNKNOWN);
+
       bool bInnerSearch = false;
-      if (pPropert) {
+      if (parentNode->HasProperty(child->GetElementType())) {
         if ((child->GetElementType() == XFA_Element::Variables ||
              child->GetElementType() == XFA_Element::PageSet)) {
           bInnerSearch = true;

@@ -939,14 +939,6 @@ enum class XFA_Element : int32_t {
   Items
 };
 
-struct XFA_ELEMENTINFO {
-  uint32_t uHash;
-  const wchar_t* pName;
-  XFA_Element eName;
-  uint32_t dwPackets;
-  XFA_ObjectType eObjectType;
-};
-
 enum class XFA_AttributeType : uint8_t {
   NotSure,
   Enum,
@@ -965,11 +957,6 @@ struct XFA_ATTRIBUTEINFO {
   void* pDefValue;
 };
 
-struct XFA_ELEMENTHIERARCHY {
-  uint16_t wStart;
-  uint16_t wCount;
-};
-
 struct XFA_SCRIPTHIERARCHY {
   uint16_t wMethodStart;
   uint16_t wMethodCount;
@@ -980,11 +967,6 @@ struct XFA_SCRIPTHIERARCHY {
 
 #define XFA_PROPERTYFLAG_OneOf 0x01
 #define XFA_PROPERTYFLAG_DefaultOneOf 0x02
-struct XFA_PROPERTY {
-  XFA_Element eName;
-  uint8_t uOccur;
-  uint8_t uFlags;
-};
 
 struct XFA_ATTRIBUTEENUMINFO {
   uint32_t uHash;

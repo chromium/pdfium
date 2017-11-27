@@ -170,11 +170,12 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
                                 CFX_WideTextBuf& buf,
                                 bool bSaveXML) {
   WideString wsAttrs;
-  int32_t iAttrs = 0;
-  const XFA_Attribute* pAttrs =
-      XFA_GetElementAttributes(pNode->GetElementType(), iAttrs);
-  while (iAttrs--) {
-    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(pAttrs[iAttrs]);
+  for (size_t i = 0;; ++i) {
+    XFA_Attribute attr = pNode->GetAttribute(i);
+    if (attr == XFA_Attribute::Unknown)
+      break;
+
+    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(attr);
     if (pAttr->eName == XFA_Attribute::Name ||
         (AttributeSaveInDataModel(pNode, pAttr->eName) && !bSaveXML)) {
       continue;
@@ -355,11 +356,12 @@ void RegenerateFormFile_Container(
   SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsOutput);
 
   WideString wsAttrs;
-  int32_t iAttrs = 0;
-  const XFA_Attribute* pAttrs =
-      XFA_GetElementAttributes(pNode->GetElementType(), iAttrs);
-  while (iAttrs--) {
-    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(pAttrs[iAttrs]);
+  for (size_t i = 0;; ++i) {
+    XFA_Attribute attr = pNode->GetAttribute(i);
+    if (attr == XFA_Attribute::Unknown)
+      break;
+
+    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(attr);
     if (pAttr->eName == XFA_Attribute::Name)
       continue;
 

@@ -871,20 +871,18 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
       case FX_XMLNODE_Element: {
         CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
         WideString wsTagName = pXMLElement->GetLocalTagName();
-        XFA_Element eType = XFA_GetElementTypeForName(wsTagName.AsStringView());
+        XFA_Element eType = CXFA_Node::NameToElement(wsTagName);
         if (eType == XFA_Element::Unknown)
           continue;
 
-        const XFA_PROPERTY* pPropertyInfo = XFA_GetPropertyOfElement(
-            pXFANode->GetElementType(), eType, ePacketID);
-        if (pPropertyInfo &&
-            ((pPropertyInfo->uFlags &
-              (XFA_PROPERTYFLAG_OneOf | XFA_PROPERTYFLAG_DefaultOneOf)) != 0)) {
+        if (pXFANode->HasPropertyFlags(
+                eType,
+                XFA_PROPERTYFLAG_OneOf | XFA_PROPERTYFLAG_DefaultOneOf)) {
           if (bOneOfPropertyFound)
             break;
-
           bOneOfPropertyFound = true;
         }
+
         CXFA_Node* pXFAChild = m_pFactory->CreateNode(ePacketID, eType);
         if (!pXFAChild)
           return nullptr;

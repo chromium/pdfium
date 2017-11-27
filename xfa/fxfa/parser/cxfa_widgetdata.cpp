@@ -113,9 +113,10 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
         eChildType == XFA_Element::Picture) {
       continue;
     }
-    const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
-        XFA_Element::Ui, eChildType, XFA_XDPPACKET_Form);
-    if (pProperty && (pProperty->uFlags & XFA_PROPERTYFLAG_OneOf)) {
+
+    auto node = CXFA_Node::Create(pChild->GetDocument(), XFA_Element::Ui,
+                                  XFA_XDPPACKET_Form);
+    if (node && node->HasPropertyFlags(eChildType, XFA_PROPERTYFLAG_OneOf)) {
       pUIChild = pChild;
       break;
     }
