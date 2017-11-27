@@ -49,11 +49,6 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
 
 const XFA_Attribute* XFA_GetElementAttributes(XFA_Element eElement,
                                               int32_t& iCount);
-bool XFA_GetAttributeDefaultValue(void*& pValue,
-                                  XFA_Element eElement,
-                                  XFA_Attribute eAttribute,
-                                  XFA_AttributeType eType,
-                                  uint32_t dwPacket);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName);
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
     const WideStringView& wsName);

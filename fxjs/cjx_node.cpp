@@ -190,33 +190,25 @@ bool CJX_Node::HasAttribute(XFA_Attribute eAttr) {
 bool CJX_Node::SetAttribute(XFA_Attribute eAttr,
                             const WideStringView& wsValue,
                             bool bNotify) {
-  const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
-
-  XFA_AttributeType eType = pAttr->eType;
-  if (eType == XFA_AttributeType::NotSure) {
-    const XFA_NOTSUREATTRIBUTE* pNotsure =
-        XFA_GetNotsureAttribute(GetXFANode()->GetElementType(), pAttr->eName);
-    eType = pNotsure ? pNotsure->eType : XFA_AttributeType::CData;
-  }
+  XFA_AttributeType eType = GetXFANode()->GetAttributeType(eAttr);
   switch (eType) {
     case XFA_AttributeType::Enum: {
       const XFA_ATTRIBUTEENUMINFO* pEnum = XFA_GetAttributeEnumByName(wsValue);
-      return SetEnum(pAttr->eName,
-                     pEnum ? pEnum->eName
-                           : (XFA_ATTRIBUTEENUM)(intptr_t)(pAttr->pDefValue),
-                     bNotify);
+      return SetEnum(
+          eAttr, pEnum ? pEnum->eName : *(GetXFANode()->GetDefaultEnum(eAttr)),
+          bNotify);
     } break;
     case XFA_AttributeType::CData:
-      return SetCData(pAttr->eName, WideString(wsValue), bNotify, false);
+      return SetCData(eAttr, WideString(wsValue), bNotify, false);
     case XFA_AttributeType::Boolean:
-      return SetBoolean(pAttr->eName, wsValue != L"0", bNotify);
+      return SetBoolean(eAttr, wsValue != L"0", bNotify);
     case XFA_AttributeType::Integer:
-      return SetInteger(pAttr->eName,
+      return SetInteger(eAttr,
                         FXSYS_round(FXSYS_wcstof(wsValue.unterminated_c_str(),
                                                  wsValue.GetLength(), nullptr)),
                         bNotify);
     case XFA_AttributeType::Measure:
-      return SetMeasure(pAttr->eName, CXFA_Measurement(wsValue), bNotify);
+      return SetMeasure(eAttr, CXFA_Measurement(wsValue), bNotify);
     default:
       break;
   }
@@ -245,41 +237,32 @@ WideString CJX_Node::GetAttribute(XFA_Attribute attr) {
 
 pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
                                                     bool bUseDefault) {
-  const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
-
-  XFA_AttributeType eType = pAttr->eType;
-  if (eType == XFA_AttributeType::NotSure) {
-    const XFA_NOTSUREATTRIBUTE* pNotsure =
-        XFA_GetNotsureAttribute(GetXFANode()->GetElementType(), pAttr->eName);
-    eType = pNotsure ? pNotsure->eType : XFA_AttributeType::CData;
-  }
+  XFA_AttributeType eType = GetXFANode()->GetAttributeType(eAttr);
   switch (eType) {
     case XFA_AttributeType::Enum: {
-      pdfium::Optional<XFA_ATTRIBUTEENUM> value =
-          TryEnum(pAttr->eName, bUseDefault);
+      pdfium::Optional<XFA_ATTRIBUTEENUM> value = TryEnum(eAttr, bUseDefault);
       if (!value)
         return {};
 
       return {GetAttributeEnumByID(*value)->pName};
     }
     case XFA_AttributeType::CData:
-      return TryCData(pAttr->eName, bUseDefault);
+      return TryCData(eAttr, bUseDefault);
 
     case XFA_AttributeType::Boolean: {
-      pdfium::Optional<bool> value = TryBoolean(pAttr->eName, bUseDefault);
+      pdfium::Optional<bool> value = TryBoolean(eAttr, bUseDefault);
       if (!value)
         return {};
       return {*value ? L"1" : L"0"};
     }
     case XFA_AttributeType::Integer: {
-      pdfium::Optional<int32_t> iValue = TryInteger(pAttr->eName, bUseDefault);
+      pdfium::Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue)
         return {};
       return {WideString::Format(L"%d", *iValue)};
     }
     case XFA_AttributeType::Measure: {
-      pdfium::Optional<CXFA_Measurement> value =
-          TryMeasure(pAttr->eName, bUseDefault);
+      pdfium::Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
       if (!value)
         return {};
 
@@ -3118,11 +3101,10 @@ bool CJX_Node::SetCData(XFA_Attribute eAttr,
     }
     return true;
   }
-
-  const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
   ASSERT(elem->GetType() == FX_XMLNODE_Element);
-  WideString wsAttrName = pInfo->pName;
-  if (pInfo->eName == XFA_Attribute::ContentType)
+
+  WideString wsAttrName = CXFA_Node::AttributeToName(eAttr);
+  if (eAttr == XFA_Attribute::ContentType)
     wsAttrName = L"xfa:" + wsAttrName;
 
   elem->SetString(wsAttrName, wsValue);

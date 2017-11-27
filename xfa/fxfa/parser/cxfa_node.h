@@ -70,6 +70,7 @@ class CXFA_Node : public CXFA_Object {
 
   bool HasAttribute(XFA_Attribute attr) const;
   XFA_Attribute GetAttribute(size_t i) const;
+  XFA_AttributeType GetAttributeType(XFA_Attribute type) const;
 
   uint32_t GetPacketID() const { return m_ePacket; }
 
@@ -183,6 +184,8 @@ class CXFA_Node : public CXFA_Object {
   const PropertyData* GetPropertyData(XFA_Element property) const;
   pdfium::Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag);
   void OnRemoved(bool bNotify);
+  pdfium::Optional<void*> GetDefaultValue(XFA_Attribute attr,
+                                          XFA_AttributeType eType) const;
 
   const PropertyData* m_Properties;
   const XFA_Attribute* m_Attributes;

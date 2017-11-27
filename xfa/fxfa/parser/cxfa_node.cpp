@@ -333,6 +333,17 @@ XFA_Attribute CXFA_Node::GetAttribute(size_t i) const {
   return *(m_Attributes + i);
 }
 
+XFA_AttributeType CXFA_Node::GetAttributeType(XFA_Attribute type) const {
+  const XFA_ATTRIBUTEINFO* attr = XFA_GetAttributeByID(type);
+  XFA_AttributeType eType = attr->eType;
+  if (eType != XFA_AttributeType::NotSure)
+    return eType;
+
+  const XFA_NOTSUREATTRIBUTE* pNotsure =
+      XFA_GetNotsureAttribute(GetElementType(), attr->eName);
+  return pNotsure ? pNotsure->eType : XFA_AttributeType::CData;
+}
+
 CXFA_Node* CXFA_Node::GetNodeItem(XFA_NODEITEM eItem,
                                   XFA_ObjectType eType) const {
   CXFA_Node* pNode = nullptr;
@@ -1318,56 +1329,69 @@ CXFA_Node* CXFA_Node::CreateInstance(bool bDataMerge) {
 }
 
 pdfium::Optional<bool> CXFA_Node::GetDefaultBoolean(XFA_Attribute attr) const {
-  void* pValue = nullptr;
-  if (!XFA_GetAttributeDefaultValue(pValue, GetElementType(), attr,
-                                    XFA_AttributeType::Boolean,
-                                    GetPacketID())) {
+  pdfium::Optional<void*> value =
+      GetDefaultValue(attr, XFA_AttributeType::Boolean);
+  if (!value)
     return {};
-  }
-  return {!!pValue};
+  return {!!*value};
 }
 
 pdfium::Optional<int32_t> CXFA_Node::GetDefaultInteger(
     XFA_Attribute attr) const {
-  void* pValue = nullptr;
-  if (!XFA_GetAttributeDefaultValue(pValue, GetElementType(), attr,
-                                    XFA_AttributeType::Integer,
-                                    GetPacketID())) {
+  pdfium::Optional<void*> value =
+      GetDefaultValue(attr, XFA_AttributeType::Integer);
+  if (!value)
     return {};
-  }
-  return {static_cast<int32_t>(reinterpret_cast<uintptr_t>(pValue))};
+  return {static_cast<int32_t>(reinterpret_cast<uintptr_t>(*value))};
 }
 
 pdfium::Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
     XFA_Attribute attr) const {
-  void* pValue = nullptr;
-  if (!XFA_GetAttributeDefaultValue(pValue, GetElementType(), attr,
-                                    XFA_AttributeType::Measure,
-                                    GetPacketID())) {
+  pdfium::Optional<void*> value =
+      GetDefaultValue(attr, XFA_AttributeType::Measure);
+  if (!value)
     return {};
-  }
+
   CXFA_Measurement measure;
-  memcpy(&measure, pValue, sizeof(measure));
+  memcpy(&measure, *value, sizeof(measure));
   return {measure};
 }
 
 pdfium::Optional<WideString> CXFA_Node::GetDefaultCData(
     XFA_Attribute attr) const {
-  void* pValue = nullptr;
-  if (!XFA_GetAttributeDefaultValue(pValue, GetElementType(), attr,
-                                    XFA_AttributeType::CData, GetPacketID())) {
+  pdfium::Optional<void*> value =
+      GetDefaultValue(attr, XFA_AttributeType::CData);
+  if (!value)
     return {};
-  }
-  WideStringView view((const wchar_t*)pValue);
-  return {WideString(view)};
+
+  return {WideString(static_cast<const wchar_t*>(*value))};
 }
 
 pdfium::Optional<XFA_ATTRIBUTEENUM> CXFA_Node::GetDefaultEnum(
     XFA_Attribute attr) const {
-  void* pValue = nullptr;
-  if (!XFA_GetAttributeDefaultValue(pValue, GetElementType(), attr,
-                                    XFA_AttributeType::Enum, GetPacketID())) {
+  pdfium::Optional<void*> value =
+      GetDefaultValue(attr, XFA_AttributeType::Enum);
+  if (!value)
     return {};
-  }
-  return {static_cast<XFA_ATTRIBUTEENUM>(reinterpret_cast<uintptr_t>(pValue))};
+  return {static_cast<XFA_ATTRIBUTEENUM>(reinterpret_cast<uintptr_t>(*value))};
+}
+
+pdfium::Optional<void*> CXFA_Node::GetDefaultValue(
+    XFA_Attribute attr,
+    XFA_AttributeType eType) const {
+  const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(attr);
+  if (!pInfo)
+    return {};
+  if (GetPacketID() && (GetPacketID() & pInfo->dwPackets) == 0)
+    return {};
+  if (pInfo->eType == eType)
+    return {pInfo->pDefValue};
+  if (pInfo->eType != XFA_AttributeType::NotSure)
+    return {};
+
+  const XFA_NOTSUREATTRIBUTE* pAttr =
+      XFA_GetNotsureAttribute(GetElementType(), attr, eType);
+  if (pAttr)
+    return {pAttr->pValue};
+  return {};
 }

@@ -243,31 +243,6 @@ const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
   return nullptr;
 }
 
-bool XFA_GetAttributeDefaultValue(void*& pValue,
-                                  XFA_Element eElement,
-                                  XFA_Attribute eAttribute,
-                                  XFA_AttributeType eType,
-                                  uint32_t dwPacket) {
-  const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
-  if (!pInfo)
-    return false;
-  if (dwPacket && (dwPacket & pInfo->dwPackets) == 0)
-    return false;
-  if (pInfo->eType == eType) {
-    pValue = pInfo->pDefValue;
-    return true;
-  }
-  if (pInfo->eType == XFA_AttributeType::NotSure) {
-    const XFA_NOTSUREATTRIBUTE* pAttr =
-        XFA_GetNotsureAttribute(eElement, eAttribute, eType);
-    if (pAttr) {
-      pValue = pAttr->pValue;
-      return true;
-    }
-  }
-  return false;
-}
-
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName) {
   ASSERT(static_cast<uint8_t>(eName) < g_iXFAAttributeCount);
   return g_XFAAttributeData + static_cast<uint8_t>(eName);
