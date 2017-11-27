@@ -87,7 +87,7 @@ WideString ExportEncodeContent(const WideString& str) {
 
 void SaveAttribute(CXFA_Node* pNode,
                    XFA_Attribute eName,
-                   const WideStringView& wsName,
+                   const WideString& wsName,
                    bool bProto,
                    WideString& wsOutput) {
   if (!bProto && !pNode->JSNode()->HasAttribute(eName))
@@ -175,13 +175,13 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     if (attr == XFA_Attribute::Unknown)
       break;
 
-    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(attr);
-    if (pAttr->eName == XFA_Attribute::Name ||
-        (AttributeSaveInDataModel(pNode, pAttr->eName) && !bSaveXML)) {
+    if (attr == XFA_Attribute::Name ||
+        (AttributeSaveInDataModel(pNode, attr) && !bSaveXML)) {
       continue;
     }
     WideString wsAttr;
-    SaveAttribute(pNode, pAttr->eName, pAttr->pName, bSaveXML, wsAttr);
+    SaveAttribute(pNode, attr, CXFA_Node::AttributeToName(attr), bSaveXML,
+                  wsAttr);
     wsAttrs += wsAttr;
   }
 
@@ -360,13 +360,11 @@ void RegenerateFormFile_Container(
     XFA_Attribute attr = pNode->GetAttribute(i);
     if (attr == XFA_Attribute::Unknown)
       break;
-
-    const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(attr);
-    if (pAttr->eName == XFA_Attribute::Name)
+    if (attr == XFA_Attribute::Name)
       continue;
 
     WideString wsAttr;
-    SaveAttribute(pNode, pAttr->eName, pAttr->pName, false, wsAttr);
+    SaveAttribute(pNode, attr, CXFA_Node::AttributeToName(attr), false, wsAttr);
     wsOutput += wsAttr;
   }
 

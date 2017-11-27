@@ -138,6 +138,19 @@ const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName) {
   return g_XFAEnumData + eName;
 }
 
+// static
+WideString CXFA_Node::AttributeToName(XFA_Attribute attr) {
+  return XFA_GetAttributeByID(attr)->pName;
+}
+
+// static
+XFA_Attribute CXFA_Node::NameToAttribute(const WideStringView& name) {
+  const XFA_ATTRIBUTEINFO* attr = XFA_GetAttributeByName(name);
+  if (!attr)
+    return XFA_Attribute::Unknown;
+  return attr->eName;
+}
+
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      uint16_t ePacket,
                      uint32_t validPackets,

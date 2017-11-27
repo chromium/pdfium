@@ -618,7 +618,7 @@ enum class XFA_Attribute : uint8_t {
   Intact,
   XdpContent,
   DecipherOnly,
-
+  LastAttributePlaceholder,
   Unknown = 255,
 };
 

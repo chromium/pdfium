@@ -191,8 +191,6 @@ bool CJX_Node::SetAttribute(XFA_Attribute eAttr,
                             const WideStringView& wsValue,
                             bool bNotify) {
   const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
-  if (!pAttr)
-    return false;
 
   XFA_AttributeType eType = pAttr->eType;
   if (eType == XFA_AttributeType::NotSure) {
@@ -228,9 +226,9 @@ bool CJX_Node::SetAttribute(XFA_Attribute eAttr,
 bool CJX_Node::SetAttribute(const WideStringView& wsAttr,
                             const WideStringView& wsValue,
                             bool bNotify) {
-  const XFA_ATTRIBUTEINFO* pAttributeInfo = XFA_GetAttributeByName(wsValue);
-  if (pAttributeInfo)
-    return SetAttribute(pAttributeInfo->eName, wsValue, bNotify);
+  XFA_Attribute attr = CXFA_Node::NameToAttribute(wsValue);
+  if (attr != XFA_Attribute::Unknown)
+    return SetAttribute(attr, wsValue, bNotify);
 
   void* pKey = GetMapKey_Custom(wsAttr);
   SetMapModuleString(pKey, wsValue);
@@ -248,8 +246,6 @@ WideString CJX_Node::GetAttribute(XFA_Attribute attr) {
 pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
                                                     bool bUseDefault) {
   const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
-  if (!pAttr)
-    return {};
 
   XFA_AttributeType eType = pAttr->eType;
   if (eType == XFA_AttributeType::NotSure) {
@@ -298,9 +294,9 @@ pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
 pdfium::Optional<WideString> CJX_Node::TryAttribute(
     const WideStringView& wsAttr,
     bool bUseDefault) {
-  const XFA_ATTRIBUTEINFO* pAttributeInfo = XFA_GetAttributeByName(wsAttr);
-  if (pAttributeInfo)
-    return TryAttribute(pAttributeInfo->eName, bUseDefault);
+  XFA_Attribute attr = CXFA_Node::NameToAttribute(wsAttr);
+  if (attr != XFA_Attribute::Unknown)
+    return TryAttribute(attr, bUseDefault);
 
   void* pKey = GetMapKey_Custom(wsAttr);
   WideStringView wsValueC;
@@ -687,9 +683,8 @@ void CJX_Node::Script_NodeClass_IsPropertySpecified(
 
   WideString wsExpression =
       WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
-  const XFA_ATTRIBUTEINFO* pAttributeInfo =
-      XFA_GetAttributeByName(wsExpression.AsStringView());
-  if (pAttributeInfo && HasAttribute(pAttributeInfo->eName)) {
+  XFA_Attribute attr = CXFA_Node::NameToAttribute(wsExpression.AsStringView());
+  if (attr != XFA_Attribute::Unknown && HasAttribute(attr)) {
     pValue->SetBoolean(true);
     return;
   }
@@ -701,7 +696,7 @@ void CJX_Node::Script_NodeClass_IsPropertySpecified(
   if (!bHas && bParent && GetXFANode()->GetParent()) {
     // Also check on the parent.
     auto* jsnode = GetXFANode()->GetParent()->JSNode();
-    bHas = jsnode->HasAttribute(pAttributeInfo->eName) ||
+    bHas = jsnode->HasAttribute(attr) ||
            !!jsnode->GetProperty(iIndex, eType, true);
   }
   pValue->SetBoolean(bHas);
@@ -3125,9 +3120,6 @@ bool CJX_Node::SetCData(XFA_Attribute eAttr,
   }
 
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
-  if (!pInfo)
-    return true;
-
   ASSERT(elem->GetType() == FX_XMLNODE_Element);
   WideString wsAttrName = pInfo->pName;
   if (pInfo->eName == XFA_Attribute::ContentType)
@@ -3223,22 +3215,19 @@ bool CJX_Node::SetValue(XFA_Attribute eAttr,
 
   auto* elem = static_cast<CFX_XMLElement*>(GetXFANode()->GetXMLMappingNode());
   ASSERT(elem->GetType() == FX_XMLNODE_Element);
-  const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
-  if (!pInfo)
-    return true;
 
   switch (eType) {
     case XFA_AttributeType::Enum:
       elem->SetString(
-          pInfo->pName,
+          CXFA_Node::AttributeToName(eAttr),
           GetAttributeEnumByID((XFA_ATTRIBUTEENUM)(uintptr_t)pValue)->pName);
       break;
     case XFA_AttributeType::Boolean:
-      elem->SetString(pInfo->pName, pValue ? L"1" : L"0");
+      elem->SetString(CXFA_Node::AttributeToName(eAttr), pValue ? L"1" : L"0");
       break;
     case XFA_AttributeType::Integer: {
       elem->SetString(
-          pInfo->pName,
+          CXFA_Node::AttributeToName(eAttr),
           WideString::Format(L"%d", static_cast<int32_t>(
                                         reinterpret_cast<uintptr_t>(pValue))));
       break;

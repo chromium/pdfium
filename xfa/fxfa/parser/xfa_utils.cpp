@@ -284,9 +284,8 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const WideStringView& wsName) {
 }
 
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName) {
-  return (static_cast<uint8_t>(eName) < g_iXFAAttributeCount)
-             ? (g_XFAAttributeData + static_cast<uint8_t>(eName))
-             : nullptr;
+  ASSERT(static_cast<uint8_t>(eName) < g_iXFAAttributeCount);
+  return g_XFAAttributeData + static_cast<uint8_t>(eName);
 }
 
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(

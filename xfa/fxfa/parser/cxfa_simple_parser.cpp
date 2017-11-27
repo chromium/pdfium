@@ -898,17 +898,17 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
           if (wsAttrName == L"nil" && it.second == L"true")
             IsNeedValue = false;
 
-          const XFA_ATTRIBUTEINFO* lpAttrInfo =
-              XFA_GetAttributeByName(wsAttrName.AsStringView());
-          if (!lpAttrInfo)
+          XFA_Attribute attr =
+              CXFA_Node::NameToAttribute(wsAttrName.AsStringView());
+          if (attr == XFA_Attribute::Unknown)
             continue;
 
-          if (!bUseAttribute && lpAttrInfo->eName != XFA_Attribute::Name &&
-              lpAttrInfo->eName != XFA_Attribute::Save) {
+          if (!bUseAttribute && attr != XFA_Attribute::Name &&
+              attr != XFA_Attribute::Save) {
             continue;
           }
-          pXFAChild->JSNode()->SetAttribute(lpAttrInfo->eName,
-                                            it.second.AsStringView(), false);
+          pXFAChild->JSNode()->SetAttribute(attr, it.second.AsStringView(),
+                                            false);
         }
         pXFANode->InsertChild(pXFAChild, nullptr);
         if (eType == XFA_Element::Validate || eType == XFA_Element::Locale) {

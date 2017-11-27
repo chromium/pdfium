@@ -704,6 +704,9 @@ const XFA_ATTRIBUTEINFO g_XFAAttributeData[] = {
 };
 const int32_t g_iXFAAttributeCount =
     sizeof(g_XFAAttributeData) / sizeof(XFA_ATTRIBUTEINFO);
+static_assert(g_iXFAAttributeCount ==
+                  static_cast<int32_t>(XFA_Attribute::LastAttributePlaceholder),
+              "Attribute count mismatch");
 
 const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[] = {
     {XFA_Element::SubformSet, XFA_Attribute::Relation, XFA_AttributeType::Enum,

@@ -53,6 +53,8 @@ class CXFA_Node : public CXFA_Object {
     uint8_t flags;
   };
 
+  static WideString AttributeToName(XFA_Attribute attr);
+  static XFA_Attribute NameToAttribute(const WideStringView& name);
   static XFA_Element NameToElement(const WideString& name);
   static std::unique_ptr<CXFA_Node> Create(CXFA_Document* doc,
                                            XFA_Element element,
