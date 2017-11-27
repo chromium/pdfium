@@ -23,7 +23,6 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -354,8 +353,8 @@ bool PDF_DataDecode(const uint8_t* src_buf,
   }
   uint8_t* last_buf = const_cast<uint8_t*>(src_buf);
   uint32_t last_size = src_size;
-  int nSize = pdfium::CollectionSize<int>(DecoderArray);
-  for (int i = 0; i < nSize; ++i) {
+  size_t nSize = DecoderArray.size();
+  for (size_t i = 0; i < nSize; ++i) {
     int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
     ByteString decoder = DecoderArray[i].first;
     CPDF_Dictionary* pParam = ToDictionary(DecoderArray[i].second);
