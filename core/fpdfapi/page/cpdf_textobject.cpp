@@ -21,13 +21,14 @@ CPDF_TextObject::CPDF_TextObject() {}
 
 CPDF_TextObject::~CPDF_TextObject() {}
 
-int CPDF_TextObject::CountItems() const {
-  return pdfium::CollectionSize<int>(m_CharCodes);
+size_t CPDF_TextObject::CountItems() const {
+  return m_CharCodes.size();
 }
 
-void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
+void CPDF_TextObject::GetItemInfo(size_t index,
+                                  CPDF_TextObjectItem* pInfo) const {
   pInfo->m_CharCode = m_CharCodes[index];
-  pInfo->m_Origin = CFX_PointF(index ? m_CharPos[index - 1] : 0, 0);
+  pInfo->m_Origin = CFX_PointF(index > 0 ? m_CharPos[index - 1] : 0, 0);
   if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode)
     return;
 
@@ -49,19 +50,19 @@ void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   pInfo->m_Origin.y -= fontsize * vy / 1000;
 }
 
-int CPDF_TextObject::CountChars() const {
-  int count = 0;
+size_t CPDF_TextObject::CountChars() const {
+  size_t count = 0;
   for (uint32_t charcode : m_CharCodes) {
     if (charcode != CPDF_Font::kInvalidCharCode)
-      count++;
+      ++count;
   }
   return count;
 }
 
-void CPDF_TextObject::GetCharInfo(int index,
+void CPDF_TextObject::GetCharInfo(size_t index,
                                   uint32_t* charcode,
                                   float* kerning) const {
-  int count = 0;
+  size_t count = 0;
   for (size_t i = 0; i < m_CharCodes.size(); ++i) {
     if (m_CharCodes[i] == CPDF_Font::kInvalidCharCode)
       continue;
@@ -78,9 +79,10 @@ void CPDF_TextObject::GetCharInfo(int index,
   }
 }
 
-void CPDF_TextObject::GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const {
-  int count = 0;
-  for (int i = 0; i < pdfium::CollectionSize<int>(m_CharCodes); ++i) {
+void CPDF_TextObject::GetCharInfo(size_t index,
+                                  CPDF_TextObjectItem* pInfo) const {
+  size_t count = 0;
+  for (size_t i = 0; i < m_CharCodes.size(); ++i) {
     uint32_t charcode = m_CharCodes[i];
     if (charcode == CPDF_Font::kInvalidCharCode)
       continue;
@@ -203,7 +205,7 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
     bVertWriting = pCIDFont->IsVertWriting();
 
   float fontsize = m_TextState.GetFontSize();
-  for (int i = 0; i < pdfium::CollectionSize<int>(m_CharCodes); ++i) {
+  for (size_t i = 0; i < m_CharCodes.size(); ++i) {
     uint32_t charcode = m_CharCodes[i];
     if (i > 0) {
       if (charcode == CPDF_Font::kInvalidCharCode) {

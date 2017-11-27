@@ -36,12 +36,15 @@ class CPDF_TextObject : public CPDF_PageObject {
   const CPDF_TextObject* AsText() const override;
 
   std::unique_ptr<CPDF_TextObject> Clone() const;
-  int CountItems() const;
-  void GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const;
-  int CountChars() const;
-  void GetCharInfo(int index, uint32_t* charcode, float* kerning) const;
-  void GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const;
+
+  size_t CountItems() const;
+  void GetItemInfo(size_t index, CPDF_TextObjectItem* pInfo) const;
+
+  size_t CountChars() const;
+  void GetCharInfo(size_t index, uint32_t* charcode, float* kerning) const;
+  void GetCharInfo(size_t index, CPDF_TextObjectItem* pInfo) const;
   float GetCharWidth(uint32_t charcode) const;
+
   CFX_PointF GetPos() const { return m_Pos; }
   CFX_Matrix GetTextMatrix() const;
   CPDF_Font* GetFont() const;
