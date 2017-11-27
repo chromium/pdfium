@@ -27,8 +27,8 @@ class CPDF_StructTree {
   explicit CPDF_StructTree(const CPDF_Document* pDoc);
   ~CPDF_StructTree();
 
-  int CountTopElements() const;
-  CPDF_StructElement* GetTopElement(int i) const;
+  size_t CountTopElements() const { return m_Kids.size(); }
+  CPDF_StructElement* GetTopElement(size_t i) const { return m_Kids[i].Get(); }
   const CPDF_Dictionary* GetRoleMap() const { return m_pRoleMap.Get(); }
   const CPDF_Dictionary* GetPage() const { return m_pPage.Get(); }
   const CPDF_Dictionary* GetTreeRoot() const { return m_pTreeRoot.Get(); }

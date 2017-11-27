@@ -55,15 +55,21 @@ FPDF_StructTree_Close(FPDF_STRUCTTREE struct_tree) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructTree_CountChildren(FPDF_STRUCTTREE struct_tree) {
   CPDF_StructTree* tree = ToStructTree(struct_tree);
-  return tree ? tree->CountTopElements() : -1;
+  if (!tree)
+    return -1;
+
+  pdfium::base::CheckedNumeric<int> tmp_size = tree->CountTopElements();
+  return tmp_size.ValueOrDefault(-1);
 }
 
 FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructTree_GetChildAtIndex(FPDF_STRUCTTREE struct_tree, int index) {
   CPDF_StructTree* tree = ToStructTree(struct_tree);
-  if (!tree || index < 0 || index >= tree->CountTopElements())
+  if (!tree || index < 0 ||
+      static_cast<size_t>(index) >= tree->CountTopElements()) {
     return nullptr;
-  return tree->GetTopElement(index);
+  }
+  return tree->GetTopElement(static_cast<size_t>(index));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
