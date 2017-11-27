@@ -43,19 +43,17 @@ CFX_GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
   return CFX_GifDecodeStatus::Success;
 }
 
-CFX_GifDecodeStatus CCodec_GifModule::LoadFrameInfo(Context* pContext,
-                                                    int* frame_num) {
+std::pair<CFX_GifDecodeStatus, size_t> CCodec_GifModule::LoadFrameInfo(
+    Context* pContext) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   CFX_GifDecodeStatus ret = context->GetFrame();
   if (ret != CFX_GifDecodeStatus::Success)
-    return ret;
-
-  *frame_num = context->GetFrameNum();
-  return CFX_GifDecodeStatus::Success;
+    return {ret, 0};
+  return {CFX_GifDecodeStatus::Success, context->GetFrameNum()};
 }
 
 CFX_GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
-                                                int frame_num,
+                                                size_t frame_num,
                                                 CFX_DIBAttribute* pAttribute) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   CFX_GifDecodeStatus ret = context->LoadFrame(frame_num);

@@ -41,7 +41,7 @@ class CFX_GifContext : public CCodec_GifModule::Context {
   CFX_GifDecodeStatus LoadFrame(int32_t frame_num);
   void SetInputBuffer(uint8_t* src_buf, uint32_t src_size);
   uint32_t GetAvailInput(uint8_t** avail_buf) const;
-  int32_t GetFrameNum() const;
+  size_t GetFrameNum() const { return images_.size(); }
 
   UnownedPtr<CCodec_GifModule> gif_module_;
   UnownedPtr<CCodec_GifModule::Delegate> delegate_;

@@ -1985,15 +1985,16 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
                   pProgressiveDecoder->GetHeight(), dibFormat);
   pBitmap->Clear(0xffffffff);
 
-  int32_t nFrames;
-  if (pProgressiveDecoder->GetFrames(&nFrames) != FXCODEC_STATUS_DECODE_READY ||
-      nFrames <= 0) {
+  size_t nFrames;
+  FXCODEC_STATUS status;
+  std::tie(status, nFrames) = pProgressiveDecoder->GetFrames();
+  if (status != FXCODEC_STATUS_DECODE_READY || nFrames == 0) {
     pBitmap = nullptr;
     return pBitmap;
   }
 
-  FXCODEC_STATUS status = pProgressiveDecoder->StartDecode(
-      pBitmap, 0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
+  status = pProgressiveDecoder->StartDecode(pBitmap, 0, 0, pBitmap->GetWidth(),
+                                            pBitmap->GetHeight());
   if (IsFXCodecErrorStatus(status)) {
     pBitmap = nullptr;
     return pBitmap;

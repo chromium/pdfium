@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -50,9 +51,9 @@ class CCodec_GifModule {
                                  void** pal_pp,
                                  int* bg_index,
                                  CFX_DIBAttribute* pAttribute);
-  CFX_GifDecodeStatus LoadFrameInfo(Context* context, int* frame_num);
+  std::pair<CFX_GifDecodeStatus, size_t> LoadFrameInfo(Context* context);
   CFX_GifDecodeStatus LoadFrame(Context* context,
-                                int frame_num,
+                                size_t frame_num,
                                 CFX_DIBAttribute* pAttribute);
 };
 

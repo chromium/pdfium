@@ -348,10 +348,6 @@ uint32_t CFX_GifContext::GetAvailInput(uint8_t** avail_buf) const {
   return avail_in_;
 }
 
-int32_t CFX_GifContext::GetFrameNum() const {
-  return pdfium::CollectionSize<int32_t>(images_);
-}
-
 uint8_t* CFX_GifContext::ReadData(uint8_t** des_buf_pp, uint32_t data_size) {
   if (!next_in_)
     return nullptr;

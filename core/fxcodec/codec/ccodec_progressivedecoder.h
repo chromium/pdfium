@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
@@ -56,14 +57,12 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   int32_t GetBPC() const { return m_SrcBPC; }
   void SetClipBox(FX_RECT* clip);
 
-  FXCODEC_STATUS GetFrames(int32_t* frames);
+  std::pair<FXCODEC_STATUS, size_t> GetFrames();
   FXCODEC_STATUS StartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                              int start_x,
                              int start_y,
                              int size_x,
-                             int size_y,
-                             int32_t frames = 0,
-                             bool bInterpol = true);
+                             int size_y);
 
   FXCODEC_STATUS ContinueDecode();
 
@@ -83,8 +82,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
               int dest_max,
               int src_len,
               int src_min,
-              int src_max,
-              bool bInterpol);
+              int src_max);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
                                             (pixel - m_DestMin) * m_ItemSize);
@@ -100,7 +98,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
     CFXCODEC_HorzTable();
     ~CFXCODEC_HorzTable();
 
-    void Calc(int dest_len, int src_len, bool bInterpol);
+    void Calc(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
                                             pixel * m_ItemSize);
@@ -199,7 +197,6 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   uint32_t m_SrcSize;
   uint8_t* m_pDecodeBuf;
   int m_ScanlineSize;
-  bool m_bInterpol;
   CFXCODEC_WeightTable m_WeightHorz;
   CFXCODEC_VertTable m_WeightVert;
   CFXCODEC_HorzTable m_WeightHorzOO;
@@ -218,8 +215,8 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   int m_SrcRow;
   FXCodec_Format m_SrcFormat;
   int m_SrcPassNumber;
-  int m_FrameNumber;
-  int m_FrameCur;
+  size_t m_FrameNumber;
+  size_t m_FrameCur;
   int m_GifBgIndex;
   uint8_t* m_pGifPalette;
   int32_t m_GifPltNumber;
