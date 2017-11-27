@@ -99,15 +99,19 @@ FPDF_StructElement_GetTitle(FPDF_STRUCTELEMENT struct_element,
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_CountChildren(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem = ToStructTreeElement(struct_element);
-  return elem ? elem->CountKids() : -1;
+  if (!elem)
+    return -1;
+
+  pdfium::base::CheckedNumeric<int> tmp_size = elem->CountKids();
+  return tmp_size.ValueOrDefault(-1);
 }
 
 FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
                                    int index) {
   CPDF_StructElement* elem = ToStructTreeElement(struct_element);
-  if (!elem || index < 0 || index >= elem->CountKids())
+  if (!elem || index < 0 || static_cast<size_t>(index) >= elem->CountKids())
     return nullptr;
 
-  return elem->GetKidIfElement(index);
+  return elem->GetKidIfElement(static_cast<size_t>(index));
 }

@@ -43,8 +43,8 @@ class CPDF_StructElement : public Retainable {
   const ByteString& GetTitle() const { return m_Title; }
   CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
-  int CountKids() const;
-  CPDF_StructElement* GetKidIfElement(int index) const;
+  size_t CountKids() const;
+  CPDF_StructElement* GetKidIfElement(size_t index) const;
   std::vector<CPDF_StructKid>* GetKids() { return &m_Kids; }
 
  private:
