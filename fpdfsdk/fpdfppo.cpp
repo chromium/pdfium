@@ -21,7 +21,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -196,8 +195,7 @@ bool CPDF_PageOrganizer::ExportPage(const std::vector<uint16_t>& pageNums,
                                     int nIndex) {
   int curpage = nIndex;
   auto pObjNumberMap = pdfium::MakeUnique<ObjectNumberMap>();
-  int nSize = pdfium::CollectionSize<int>(pageNums);
-  for (int i = 0; i < nSize; ++i) {
+  for (size_t i = 0; i < pageNums.size(); ++i) {
     CPDF_Dictionary* pCurPageDict = m_pDestPDFDoc->CreateNewPage(curpage);
     CPDF_Dictionary* pSrcPageDict = m_pSrcPDFDoc->GetPage(pageNums[i] - 1);
     if (!pSrcPageDict || !pCurPageDict)
