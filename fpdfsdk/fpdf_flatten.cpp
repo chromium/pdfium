@@ -299,8 +299,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pPageXObject = pRes->SetNewFor<CPDF_Dictionary>("XObject");
 
   ByteString key;
-  int nStreams = pdfium::CollectionSize<int>(ObjectArray);
-  if (nStreams > 0) {
+  if (!ObjectArray.empty()) {
     int i = 0;
     while (i < INT_MAX) {
       ByteString sKey = ByteString::Format("FFT%d", i);
@@ -326,7 +325,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pNewOXbjectDic->SetRectFor("BBox", rcBBox);
   }
 
-  for (int i = 0; i < nStreams; i++) {
+  for (size_t i = 0; i < ObjectArray.size(); ++i) {
     CPDF_Dictionary* pAnnotDic = ObjectArray[i];
     if (!pAnnotDic)
       continue;
