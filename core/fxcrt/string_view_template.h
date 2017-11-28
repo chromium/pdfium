@@ -64,7 +64,7 @@ class StringViewTemplate {
 
   // Any changes to |vec| invalidate the string.
   explicit StringViewTemplate(const std::vector<UnsignedType>& vec) {
-    m_Length = pdfium::CollectionSize<size_t>(vec);
+    m_Length = vec.size();
     m_Ptr = m_Length ? vec.data() : nullptr;
   }
 
