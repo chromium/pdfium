@@ -392,7 +392,8 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
         left = GetEdgeThickness(strokes, bVisible, 3);
     }
   }
-  return CFX_RectF(*left, *top, *right, *bottom);
+  return CFX_RectF(left.value_or(0.0), top.value_or(0.0), right.value_or(0.0),
+                   bottom.value_or(0.0));
 }
 
 XFA_ATTRIBUTEENUM CXFA_WidgetData::GetButtonHighlight() {
