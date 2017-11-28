@@ -28,7 +28,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   size -= kParameterSize;
   data += kParameterSize;
 
-  static constexpr uint32_t kMemLimit = 1024 * 1024 * 1024;  // 1 GB.
+  static constexpr uint32_t kMemLimit = 512000000;   // 512 MB
   static constexpr uint32_t k1bppRgbComponents = 4;  // From CFX_DIBitmap impl.
   FX_SAFE_UINT32 mem = width;
   mem *= height;

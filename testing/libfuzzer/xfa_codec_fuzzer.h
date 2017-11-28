@@ -17,9 +17,8 @@
 #include "testing/fx_string_testhelpers.h"
 #include "third_party/base/ptr_util.h"
 
-// Arbitrarily picked to support up to 1000x1000 images. This is far below where
-// OOM issues are occuring.
-const int kXFACodecFuzzerPixelLimit = 1000000;
+// Support up to 512 MB. This prevents trivial OOM when MSAN is on.
+const int kXFACodecFuzzerPixelLimit = 512000000;
 
 class XFACodecFuzzer {
  public:
