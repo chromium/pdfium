@@ -650,7 +650,7 @@ XFA_Element CXFA_Node::NameToElement(const WideString& name) {
   auto* elem = std::lower_bound(
       std::begin(ElementNameToEnum), std::end(ElementNameToEnum), hash,
       [](const ElementNameInfo& a, uint32_t hash) { return a.hash < hash; });
-  if (elem && elem->hash == hash)
+  if (elem != std::end(ElementNameToEnum) && elem->hash == hash)
     return elem->element;
   return XFA_Element::Unknown;
 }
