@@ -25,7 +25,6 @@
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "core/fxcrt/ifx_pauseindicator.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -46,7 +45,9 @@ size_t GetRefAggContextSize(bool val) {
 // list keeps track of the freshness of entries, with freshest ones
 // at the front. Even a tiny cache size like 2 makes a dramatic
 // difference for typical JBIG2 documents.
-static const int kSymbolDictCacheMaxSize = 2;
+static const size_t kSymbolDictCacheMaxSize = 2;
+static_assert(kSymbolDictCacheMaxSize > 0,
+              "Symbol Dictionary Cache must have non-zero size");
 
 CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
                                const RetainPtr<CPDF_StreamAcc>& pSrcStream,
@@ -611,7 +612,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     if (m_bIsGlobal) {
       std::unique_ptr<CJBig2_SymbolDict> value =
           pSegment->m_SymbolDict->DeepCopy();
-      int size = pdfium::CollectionSize<int>(*m_pSymbolDictCache);
+      size_t size = m_pSymbolDictCache->size();
       while (size >= kSymbolDictCacheMaxSize) {
         m_pSymbolDictCache->pop_back();
         --size;
