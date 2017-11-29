@@ -1352,9 +1352,8 @@ pdfium::Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
   if (!value)
     return {};
 
-  CXFA_Measurement measure;
-  memcpy(&measure, *value, sizeof(measure));
-  return {measure};
+  WideString str = WideString(static_cast<const wchar_t*>(*value));
+  return {CXFA_Measurement(str.AsStringView())};
 }
 
 pdfium::Optional<WideString> CXFA_Node::GetDefaultCData(

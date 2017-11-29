@@ -36,6 +36,7 @@ void CXFA_Measurement::SetString(const WideStringView& wsMeasure) {
     m_eUnit = XFA_Unit::Unknown;
     return;
   }
+
   int32_t iUsedLen = 0;
   int32_t iOffset = (wsMeasure[0] == L'=') ? 1 : 0;
   float fValue = FXSYS_wcstof(wsMeasure.unterminated_c_str() + iOffset,
@@ -142,6 +143,8 @@ XFA_Unit CXFA_Measurement::GetUnitFromString(const WideStringView& wsUnit) {
     return XFA_Unit::Mp;
   if (wsUnit == L"em")
     return XFA_Unit::Em;
+  if (wsUnit == L"an")
+    return XFA_Unit::Angle;
   if (wsUnit == L"%")
     return XFA_Unit::Percent;
   return XFA_Unit::Unknown;
