@@ -14,10 +14,11 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
-extern "C" {
-#undef FAR
+#ifdef USE_SYSTEM_LIBPNG
+#include <png.h>
+#else
 #include "third_party/libpng16/png.h"
-}  // extern "C"
+#endif
 
 #define PNG_ERROR_SIZE 256
 

@@ -61,6 +61,9 @@ declare_args() {
 
   # Don't build against bundled lcms2.
   use_system_lcms2 = false
+
+  # Don't build against bundled libpng.
+  use_system_libpng = false
 }
 
 if (pdf_use_skia && pdf_use_skia_paths) {

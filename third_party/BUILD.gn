@@ -398,6 +398,21 @@ static_library("fx_libopenjpeg") {
   ]
 }
 
+config("system_libpng_config") {
+  libs = [ "png" ]
+  defines = [ "USE_SYSTEM_LIBPNG" ]
+}
+
+group("png") {
+  if (use_system_libpng) {
+    public_configs = [ ":system_libpng_config" ]
+  } else {
+    public_deps = [
+      ":fx_lpng",
+    ]
+  }
+}
+
 static_library("fx_lpng") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [

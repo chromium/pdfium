@@ -273,7 +273,7 @@ static_library("image_diff") {
   configs += [ ":pdfium_core_config" ]
   deps = []
   if (!pdf_enable_xfa) {
-    deps += [ "third_party:fx_lpng" ]
+    deps += [ "third_party:png" ]
   }
 }
 
@@ -781,8 +781,8 @@ static_library("fxcodec") {
       "core/fxcodec/lbmp/fx_bmp.h",
     ]
     deps += [
-      "third_party:fx_lpng",
       "third_party:fx_tiff",
+      "third_party:png",
     ]
   }
   if (is_posix) {
