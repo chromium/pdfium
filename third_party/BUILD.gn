@@ -248,7 +248,6 @@ static_library("fx_lcms2") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
-    "//build/config/sanitizers:cfi_icall_generalize_pointers",
     ":pdfium_third_party_config",
 
     # Must be after no_chromium_code for warning flags to be ordered correctly.
