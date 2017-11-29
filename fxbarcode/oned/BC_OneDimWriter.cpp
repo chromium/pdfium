@@ -299,11 +299,6 @@ bool CBC_OneDimWriter::RenderResult(const WideStringView& contents,
   m_outputHScale =
       m_Width > 0 ? static_cast<float>(m_Width) / static_cast<float>(codeLength)
                   : 1.0;
-  float dataLengthScale = 1.0;
-  if (m_iDataLenth > 0 && contents.GetLength() != 0)
-    dataLengthScale = float(contents.GetLength()) / float(m_iDataLenth);
-  if (m_iDataLenth > 0 && contents.GetLength() == 0)
-    dataLengthScale = float(1) / float(m_iDataLenth);
   m_multiple = 1;
   const int32_t outputHeight = 1;
   const int32_t outputWidth = codeLength;
