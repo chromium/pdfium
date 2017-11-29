@@ -7,6 +7,132 @@ import json
 import os
 import shlex
 import shutil
+import urllib2
+
+
+def _ParseKeyValuePairs(kv_str):
+  """
+  Parses a string of the type 'key1 value1 key2 value2' into a dict.
+  """
+  kv_pairs = shlex.split(kv_str)
+  if len(kv_pairs) % 2:
+    raise ValueError('Uneven number of key/value pairs. Got %s' % kv_str)
+  return { kv_pairs[i]:kv_pairs[i + 1] for i in xrange(0, len(kv_pairs), 2) }
+
+
+# This module downloads a json provided by Skia Gold with the expected baselines
+# for each test file.
+#
+# The expected format for the json is:
+# {
+#   "commit": {
+#     "author": "John Doe (jdoe@chromium.org)",
+#     "commit_time": 1510598123,
+#     "hash": "cee39e6e90c219cc91f2c94a912a06977f4461a0"
+#   },
+#   "master": {
+#     "abc.pdf.1": {
+#       "0ec3d86f545052acd7c9a16fde8ca9d4": 1,
+#       "80455b71673becc9fbc100d6da56ca65": 1,
+#       "b68e2ecb80090b4502ec89ad1be2322c": 1
+#      },
+#     "defgh.pdf.0": {
+#       "01e020cd4cd05c6738e479a46a506044": 1,
+#       "b68e2ecb80090b4502ec89ad1be2322c": 1
+#     }
+#   },
+#   "changeLists": {
+#     "18499" : {
+#       "abc.pdf.1": {
+#         "d5dd649124cf1779152253dc8fb239c5": 1,
+#         "42a270581930579cdb0f28674972fb1a": 1,
+#       }
+#     }
+#   }
+# }
+class GoldBaseline(object):
+
+  def __init__(self, properties_str):
+    """
+    properties_str is a string with space separated key/value pairs that
+               is used to find the cl number for which to baseline
+    """
+    self._properties = _ParseKeyValuePairs(properties_str)
+    self._baselines = self._LoadSkiaGoldBaselines()
+
+  def _LoadSkiaGoldBaselines(self):
+    """
+    Download the baseline json and return a list of the two baselines that
+    should be used to match hashes (master and cl#).
+    """
+    GOLD_BASELINE_URL = ('https://storage.googleapis.com/skia-infra-gm/'
+                         'hash_files/gold-pdfium-baseline.json')
+    try:
+      response = urllib2.urlopen(GOLD_BASELINE_URL)
+      json_data = response.read()
+    except (urllib2.HTTPError, urllib2.URLError) as e:
+      print ('Error: Unable to read skia gold json from %s: %s'
+             % (GOLD_BASELINE_URL, e))
+      return None
+
+    try:
+      data = json.loads(json_data)
+    except ValueError:
+      print 'Error: Malformed json read from %s: %s' % (GOLD_BASELINE_URL, e)
+      return None
+
+    try:
+      master_baseline = data['master']
+    except (KeyError, TypeError):
+      print ('Error: "master" key not in json read from %s: %s'
+             % (GOLD_BASELINE_URL, e))
+      return None
+
+    cl_number_str = self._properties.get('issue')
+    if cl_number_str is None:
+      return [master_baseline]
+
+    try:
+      cl_baseline = data['changeLists'][cl_number_str]
+    except KeyError:
+      return [master_baseline]
+
+    return [cl_baseline, master_baseline]
+
+  # Return values for MatchLocalResult().
+  MATCH = 'match'
+  MISMATCH = 'mismatch'
+  NO_BASELINE = 'no_baseline'
+  BASELINE_DOWNLOAD_FAILED = 'baseline_download_failed'
+
+  def MatchLocalResult(self, test_name, md5_hash):
+    """
+    Match a locally generated hash of a test cases rendered image with the
+    expected hashes downloaded in the baselines json.
+
+    Each baseline is a dict mapping the test case name to a dict with the
+    expected hashes as keys. Therefore, this list of baselines should be
+    searched until the test case name is found, then the hash should be matched
+    with the options in that dict. If the hashes don't match, it should be
+    considered a failure and we should not continue searching the baseline list.
+
+    Returns MATCH if the md5 provided matches the ones in the baseline json,
+    MISMATCH if it does not, NO_BASELINE if the test case has no baseline, or
+    BASELINE_DOWNLOAD_FAILED if the baseline could not be downloaded and parsed.
+    """
+    if self._baselines is None:
+      return GoldBaseline.BASELINE_DOWNLOAD_FAILED
+
+    found_test_case = False
+    for baseline in self._baselines:
+      if test_name in baseline:
+        found_test_case = True
+        if md5_hash in baseline[test_name]:
+          return GoldBaseline.MATCH
+
+    return (GoldBaseline.MISMATCH if found_test_case
+            else GoldBaseline.NO_BASELINE)
+
 
 # This module collects and writes output in a format expected by the
 # Gold baseline tool. Based on meta data provided explicitly and by
@@ -66,8 +192,8 @@ class GoldResults(object):
                that should be ignored.
     """
     self._source_type = source_type
-    self._properties = self._parseKeyValuePairs(propertiesStr)
-    self._properties["key"] = self._parseKeyValuePairs(keyStr)
+    self._properties = _ParseKeyValuePairs(propertiesStr)
+    self._properties["key"] = _ParseKeyValuePairs(keyStr)
     self._results =  []
     self._outputDir = outputDir
 
@@ -105,12 +231,6 @@ class GoldResults(object):
         "gamma_correct": "no"
       }
     })
-
-  def _parseKeyValuePairs(self, kvStr):
-    kvPairs = shlex.split(kvStr)
-    if len(kvPairs) % 2:
-      raise ValueError("Uneven number of key/value pairs. Got %s" % kvStr)
-    return { kvPairs[i]:kvPairs[i+1] for i in range(0, len(kvPairs), 2) }
 
   def WriteResults(self):
     self._properties.update({

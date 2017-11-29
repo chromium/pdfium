@@ -116,7 +116,6 @@ class TestRunner:
         [sys.executable, self.fixup_path, '--output-dir=' + self.working_dir,
             input_path])
 
-
   def TestText(self, input_root, expected_txt_path, pdf_path):
     txt_path = os.path.join(self.working_dir, input_root + '.txt')
 
@@ -127,11 +126,8 @@ class TestRunner:
     cmd = [sys.executable, self.text_diff_path, expected_txt_path, txt_path]
     return common.RunCommand(cmd)
 
-
   def TestPixel(self, input_root, pdf_path):
-    cmd_to_run = [self.pdfium_test_path, '--send-events', '--png']
-    if self.gold_results:
-      cmd_to_run.append('--md5')
+    cmd_to_run = [self.pdfium_test_path, '--send-events', '--png', '--md5']
     if self.oneshot_renderer:
       cmd_to_run.append('--render-oneshot')
     cmd_to_run.append(pdf_path)
@@ -139,11 +135,22 @@ class TestRunner:
 
   def HandleResult(self, input_filename, input_path, result):
     success, image_paths = result
-    if self.gold_results:
-      if image_paths:
-        for img_path, md5_hash in image_paths:
-          # the output filename (without extension becomes the test name)
-          test_name = os.path.splitext(os.path.split(img_path)[1])[0]
+
+    if image_paths:
+      for img_path, md5_hash in image_paths:
+        # The output filename without image extension becomes the test name.
+        # For example, "/path/to/.../testing/corpus/example_005.pdf.0.png"
+        # becomes "example_005.pdf.0".
+        test_name = os.path.splitext(os.path.split(img_path)[1])[0]
+
+        if not self.test_suppressor.IsResultSuppressed(input_filename):
+          matched = self.gold_baseline.MatchLocalResult(test_name, md5_hash)
+          if matched == gold.GoldBaseline.MISMATCH:
+            print 'Skia Gold hash mismatch for test case: %s' % test_name
+          elif matched ==  gold.GoldBaseline.NO_BASELINE:
+            print 'No Skia Gold baseline found for test case: %s' % test_name
+
+        if self.gold_results:
           self.gold_results.AddTestResult(test_name, md5_hash, img_path)
 
     if self.test_suppressor.IsResultSuppressed(input_filename):
@@ -153,7 +160,6 @@ class TestRunner:
     else:
       if not success:
         self.failures.append(input_path)
-
 
   def Run(self):
     parser = optparse.OptionParser()
@@ -224,6 +230,8 @@ class TestRunner:
                                                    '--show-config'])
     self.test_suppressor = suppressor.Suppressor(finder, self.feature_string)
     self.image_differ = pngdiffer.PNGDiffer(finder)
+
+    self.gold_baseline = gold.GoldBaseline(self.options.gold_properties)
 
     walk_from_dir = finder.TestingDir(test_dir);
 
