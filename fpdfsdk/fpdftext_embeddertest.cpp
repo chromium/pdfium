@@ -49,6 +49,12 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_EQ(1, FPDFText_GetText(textpage, 0, 0, fixed_buffer));
   EXPECT_EQ(0, fixed_buffer[0]);
 
+  // Keep going and check the next case.
+  memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
+  EXPECT_EQ(2, FPDFText_GetText(textpage, 0, 1, fixed_buffer));
+  EXPECT_EQ(expected[0], fixed_buffer[0]);
+  EXPECT_EQ(0, fixed_buffer[1]);
+
   // Check includes the terminating NUL that is provided.
   int num_chars = FPDFText_GetText(textpage, 0, 128, fixed_buffer);
   ASSERT_GE(num_chars, 0);
