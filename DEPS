@@ -5,10 +5,11 @@ vars = {
   'pdfium_git': 'https://pdfium.googlesource.com',
 
   'android_ndk_revision': '26d93ec07f3ce2ec2cdfeae1b21ee6f12ff868d8',
-  'build_revision': 'fc826e6c8785c5bf8eefdd9cdf147adba3f97ff9',
-  'buildtools_revision': 'f90f6a5af3e8cf843395bfe6243cf606f71b5344',
+  'binutils_revision': '338a1641d1aa1f8551b16b19960884df357f56e5',
+  'build_revision': '98bba0679c691125ddb81d056cc278c30fb3e677',
+  'buildtools_revision': '505de88083136eefd056e5ee4ca0f01fe9b33de8',
   'catapult_revision': '0cf3924bab2c2f66a412edda35f6e3572bd57623',
-  'clang_revision': '4db585405687222660050d58eb12784fe0852884',
+  'clang_revision': '8427dae2b5a769314af722e09000563b5184ba06',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'freetype_revision': 'bec14f688925467be708f01378fbbf82e6b19b42',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
@@ -22,7 +23,7 @@ vars = {
   'skia_revision': 'e0e20755f6c09b71038ced2bf4a00b4c4593f504',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '06294c8a4a6f744ef284cd63cfe54dbf61eea290',
-  'v8_revision': '4931eb42e8a934941dc60d8f7dc510c08d7bc2c6',
+  'v8_revision': '6bccad8c97667604eb3bbe8098baff8021a9dc95',
   'yasm_source_revision': 'b98114e18d8b9b84586b10d24353ab8616d4c5fc',
   'zlib_revision': '718f686437b89038ac83525f4f1b1888aadd9bfc',
 }
@@ -47,6 +48,10 @@ deps = {
 
   "testing/gtest":
     Var('chromium_git') + "/external/googletest.git@" + Var('gtest_revision'),
+
+  "third_party/binutils":
+    Var('chromium_git') + '/chromium/src/third_party/binutils.git@' +
+        Var('binutils_revision'),
 
   "third_party/freetype/src":
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
@@ -235,6 +240,12 @@ hooks = [
     'name': 'instrumented_libraries',
     'pattern': '\\.sha1',
     'action': ['python', 'pdfium/third_party/instrumented_libraries/scripts/download_binaries.py'],
+  },
+  {
+    'name': 'binutils',
+    'pattern': 'src/third_party/binutils',
+    'condition': 'host_os == "linux"',
+    'action': [ 'python', 'pdfium/third_party/binutils/download.py', ],
   },
 
 ]
