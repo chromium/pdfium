@@ -143,8 +143,6 @@ XFA_Unit CXFA_Measurement::GetUnitFromString(const WideStringView& wsUnit) {
     return XFA_Unit::Mp;
   if (wsUnit == L"em")
     return XFA_Unit::Em;
-  if (wsUnit == L"an")
-    return XFA_Unit::Angle;
   if (wsUnit == L"%")
     return XFA_Unit::Percent;
   return XFA_Unit::Unknown;

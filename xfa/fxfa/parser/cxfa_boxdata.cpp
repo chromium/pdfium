@@ -109,26 +109,16 @@ bool CXFA_BoxData::IsCircular() const {
   return m_pNode->JSNode()->GetBoolean(XFA_Attribute::Circular);
 }
 
-pdfium::Optional<float> CXFA_BoxData::GetStartAngle() const {
+pdfium::Optional<int32_t> CXFA_BoxData::GetStartAngle() const {
   if (!m_pNode)
     return {};
-
-  pdfium::Optional<CXFA_Measurement> measure =
-      m_pNode->JSNode()->TryMeasure(XFA_Attribute::StartAngle, false);
-  if (!measure)
-    return {};
-  return {measure->GetValue()};
+  return m_pNode->JSNode()->TryInteger(XFA_Attribute::StartAngle, false);
 }
 
-pdfium::Optional<float> CXFA_BoxData::GetSweepAngle() const {
+pdfium::Optional<int32_t> CXFA_BoxData::GetSweepAngle() const {
   if (!m_pNode)
     return {};
-
-  pdfium::Optional<CXFA_Measurement> measure =
-      m_pNode->JSNode()->TryMeasure(XFA_Attribute::SweepAngle, false);
-  if (!measure)
-    return {};
-  return {measure->GetValue()};
+  return m_pNode->JSNode()->TryInteger(XFA_Attribute::SweepAngle, false);
 }
 
 CXFA_FillData CXFA_BoxData::GetFillData(bool bModified) const {

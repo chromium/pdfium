@@ -235,14 +235,9 @@ bool CXFA_WidgetData::IsOpenAccess() const {
 }
 
 int32_t CXFA_WidgetData::GetRotate() const {
-  pdfium::Optional<CXFA_Measurement> measure =
-      m_pNode->JSNode()->TryMeasure(XFA_Attribute::Rotate, false);
-  if (!measure)
-    return 0;
-
-  int32_t iRotate = FXSYS_round(measure->GetValue());
-  iRotate = XFA_MapRotation(iRotate);
-  return iRotate / 90 * 90;
+  pdfium::Optional<int32_t> degrees =
+      m_pNode->JSNode()->TryInteger(XFA_Attribute::Rotate, false);
+  return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
 }
 
 CXFA_BorderData CXFA_WidgetData::GetBorderData(bool bModified) {

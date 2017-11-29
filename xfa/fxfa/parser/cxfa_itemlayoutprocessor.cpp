@@ -1103,9 +1103,8 @@ CFX_PointF CalculatePositionedContainerPos(CXFA_Node* pNode,
   CFX_PointF pos(
       pNode->JSNode()->GetMeasure(XFA_Attribute::X).ToUnit(XFA_Unit::Pt),
       pNode->JSNode()->GetMeasure(XFA_Attribute::Y).ToUnit(XFA_Unit::Pt));
-  int32_t nRotate = FXSYS_round(
-      pNode->JSNode()->GetMeasure(XFA_Attribute::Rotate).GetValue());
-  nRotate = XFA_MapRotation(nRotate) / 90;
+  int32_t nRotate =
+      XFA_MapRotation(pNode->JSNode()->GetInteger(XFA_Attribute::Rotate)) / 90;
   int32_t nAbsoluteAnchorType = nNextPos[nRotate][nAnchorType];
   switch (nAbsoluteAnchorType / 3) {
     case 1:
@@ -2758,9 +2757,8 @@ void CXFA_ItemLayoutProcessor::DoLayoutField() {
   CFX_SizeF size(-1, -1);
   pNotify->StartFieldDrawLayout(m_pFormNode, size.width, size.height);
 
-  int32_t nRotate = FXSYS_round(
-      m_pFormNode->JSNode()->GetMeasure(XFA_Attribute::Rotate).GetValue());
-  nRotate = XFA_MapRotation(nRotate);
+  int32_t nRotate =
+      XFA_MapRotation(m_pFormNode->JSNode()->GetInteger(XFA_Attribute::Rotate));
   if (nRotate == 90 || nRotate == 270)
     std::swap(size.width, size.height);
 

@@ -976,7 +976,6 @@ struct XFA_ATTRIBUTEENUMINFO {
 
 enum class XFA_Unit : uint8_t {
   Percent = 0,
-  Angle,
   Em,
   Pt,
   In,

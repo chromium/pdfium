@@ -55,8 +55,8 @@ void XFA_BOX_GetPath_Arc(const CXFA_BoxData& boxData,
   rtDraw.top = center.y - b;
   rtDraw.width = a + a;
   rtDraw.height = b + b;
-  pdfium::Optional<float> startAngle = boxData.GetStartAngle();
-  pdfium::Optional<float> sweepAngle = boxData.GetSweepAngle();
+  pdfium::Optional<int32_t> startAngle = boxData.GetStartAngle();
+  pdfium::Optional<int32_t> sweepAngle = boxData.GetSweepAngle();
   if (!startAngle && !sweepAngle) {
     fillPath.AddEllipse(rtDraw);
     return;

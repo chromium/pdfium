@@ -36,8 +36,8 @@ class CXFA_BoxData : public CXFA_DataData {
 
   std::vector<CXFA_StrokeData> GetStrokes() const;
 
-  pdfium::Optional<float> GetStartAngle() const;
-  pdfium::Optional<float> GetSweepAngle() const;
+  pdfium::Optional<int32_t> GetStartAngle() const;
+  pdfium::Optional<int32_t> GetSweepAngle() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOXDATA_H_
