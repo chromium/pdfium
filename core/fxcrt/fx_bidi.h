@@ -77,7 +77,7 @@ class CFX_BidiString {
 };
 
 #if PDF_ENABLE_XFA
-void FX_BidiLine(std::vector<CFX_Char>* chars, int32_t iCount);
+void FX_BidiLine(std::vector<CFX_Char>* chars, size_t iCount);
 #endif  // PDF_ENABLE_XFA
 
 #endif  // CORE_FXCRT_FX_BIDI_H_

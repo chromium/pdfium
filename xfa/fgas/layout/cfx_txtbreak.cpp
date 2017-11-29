@@ -291,16 +291,16 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
   CFX_BreakPiece tp;
   FX_TPO tpo;
   CFX_Char* pTC;
-  int32_t i;
-  int32_t j;
   std::vector<CFX_Char>& chars = m_pCurLine->m_LineChars;
   int32_t iCount = m_pCurLine->CountChars();
   bool bDone = m_pCurLine->m_iArabicChars > 0;
   if (bDone) {
-    int32_t iBidiNum = 0;
-    for (i = 0; i < iCount; i++) {
+    ASSERT(iCount >= 0);
+
+    size_t iBidiNum = 0;
+    for (size_t i = 0; i < static_cast<size_t>(iCount); ++i) {
       pTC = &chars[i];
-      pTC->m_iBidiPos = i;
+      pTC->m_iBidiPos = static_cast<int32_t>(i);
       if (pTC->GetCharType() != FX_CHARTYPE_Control)
         iBidiNum = i;
       if (i == 0)
@@ -315,8 +315,8 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
     tp.m_pChars = &m_pCurLine->m_LineChars;
     int32_t iBidiLevel = -1;
     int32_t iCharWidth;
-    i = 0;
-    j = -1;
+    int32_t i = 0;
+    int32_t j = -1;
     while (i < iCount) {
       pTC = &chars[i];
       if (iBidiLevel < 0) {
