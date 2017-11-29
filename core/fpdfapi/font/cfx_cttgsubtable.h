@@ -19,21 +19,12 @@
 class CFX_CTTGSUBTable {
  public:
   CFX_CTTGSUBTable();
-  explicit CFX_CTTGSUBTable(FT_Bytes gsub);
-  virtual ~CFX_CTTGSUBTable();
+  ~CFX_CTTGSUBTable();
 
-  bool IsOk() const;
   bool LoadGSUBTable(FT_Bytes gsub);
   bool GetVerticalGlyph(uint32_t glyphnum, uint32_t* vglyphnum);
 
  private:
-  struct tt_gsub_header {
-    uint32_t Version;
-    uint16_t ScriptList;
-    uint16_t FeatureList;
-    uint16_t LookupList;
-  };
-
   struct TLangSys {
     TLangSys();
     ~TLangSys();
@@ -81,17 +72,6 @@ class CFX_CTTGSUBTable {
     TScriptRecord& operator=(const TScriptRecord&) = delete;
   };
 
-  struct TScriptList {
-    TScriptList();
-    ~TScriptList();
-
-    std::vector<TScriptRecord> ScriptRecords;
-
-   private:
-    TScriptList(const TScriptList&) = delete;
-    TScriptList& operator=(const TScriptList&) = delete;
-  };
-
   struct TFeature {
     TFeature();
     ~TFeature();
@@ -113,17 +93,6 @@ class CFX_CTTGSUBTable {
    private:
     TFeatureRecord(const TFeatureRecord&) = delete;
     TFeatureRecord& operator=(const TFeatureRecord&) = delete;
-  };
-
-  struct TFeatureList {
-    TFeatureList();
-    ~TFeatureList();
-
-    std::vector<TFeatureRecord> FeatureRecords;
-
-   private:
-    TFeatureList(const TFeatureList&) = delete;
-    TFeatureList& operator=(const TFeatureList&) = delete;
   };
 
   enum TLookupFlag {
@@ -245,24 +214,13 @@ class CFX_CTTGSUBTable {
     TLookup& operator=(const TLookup&) = delete;
   };
 
-  struct TLookupList {
-    TLookupList();
-    ~TLookupList();
-
-    std::vector<TLookup> Lookups;
-
-   private:
-    TLookupList(const TLookupList&) = delete;
-    TLookupList& operator=(const TLookupList&) = delete;
-  };
-
   bool Parse(FT_Bytes scriptlist, FT_Bytes featurelist, FT_Bytes lookuplist);
-  void ParseScriptList(FT_Bytes raw, TScriptList* rec);
+  void ParseScriptList(FT_Bytes raw);
   void ParseScript(FT_Bytes raw, TScript* rec);
   void ParseLangSys(FT_Bytes raw, TLangSys* rec);
-  void ParseFeatureList(FT_Bytes raw, TFeatureList* rec);
+  void ParseFeatureList(FT_Bytes raw);
   void ParseFeature(FT_Bytes raw, TFeature* rec);
-  void ParseLookupList(FT_Bytes raw, TLookupList* rec);
+  void ParseLookupList(FT_Bytes raw);
   void ParseLookup(FT_Bytes raw, TLookup* rec);
   std::unique_ptr<TCoverageFormatBase> ParseCoverage(FT_Bytes raw);
   void ParseCoverageFormat1(FT_Bytes raw, TCoverageFormat1* rec);
@@ -288,10 +246,9 @@ class CFX_CTTGSUBTable {
   std::set<uint32_t> m_featureSet;
   bool m_bFeautureMapLoad;
   bool loaded;
-  tt_gsub_header header;
-  TScriptList ScriptList;
-  TFeatureList FeatureList;
-  TLookupList LookupList;
+  std::vector<TScriptRecord> ScriptList;
+  std::vector<TFeatureRecord> FeatureList;
+  std::vector<TLookup> LookupList;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CFX_CTTGSUBTABLE_H_
