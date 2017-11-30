@@ -29,6 +29,7 @@ enum XFA_SOM_MESSAGETYPE {
   XFA_SOM_MandatoryMessage
 };
 
+class CFX_XMLElement;
 class CFXJSE_Arguments;
 class CXFA_CalcData;
 class CXFA_LayoutItem;
@@ -434,10 +435,12 @@ class CJX_Node : public CJX_Object {
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
   void SendAttributeChangeMessage(XFA_Attribute eAttribute, bool bScriptModify);
 
-  bool SetValue(XFA_Attribute eAttr,
-                XFA_AttributeType eType,
-                void* pValue,
-                bool bNotify);
+  // Returns a pointer to the XML node that needs to be updated with the new
+  // attribute value. |nullptr| if no update is needed.
+  CFX_XMLElement* SetValue(XFA_Attribute eAttr,
+                           XFA_AttributeType eType,
+                           void* pValue,
+                           bool bNotify);
 
   bool TryUserData(void* pKey, void*& pData, bool bProtoAlso);
 

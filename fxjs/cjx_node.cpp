@@ -2944,8 +2944,11 @@ pdfium::Optional<bool> CJX_Node::TryBoolean(XFA_Attribute eAttr,
 }
 
 bool CJX_Node::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
-  return SetValue(eAttr, XFA_AttributeType::Boolean, (void*)(uintptr_t)bValue,
-                  bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Boolean,
+                                  (void*)(uintptr_t)bValue, bNotify);
+  if (elem)
+    elem->SetString(CXFA_Node::AttributeToName(eAttr), bValue ? L"1" : L"0");
+  return true;
 }
 
 bool CJX_Node::GetBoolean(XFA_Attribute eAttr) {
@@ -2953,8 +2956,13 @@ bool CJX_Node::GetBoolean(XFA_Attribute eAttr) {
 }
 
 bool CJX_Node::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
-  return SetValue(eAttr, XFA_AttributeType::Integer, (void*)(uintptr_t)iValue,
-                  bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Integer,
+                                  (void*)(uintptr_t)iValue, bNotify);
+  if (elem) {
+    elem->SetString(CXFA_Node::AttributeToName(eAttr),
+                    WideString::Format(L"%d", iValue));
+  }
+  return true;
 }
 
 int32_t CJX_Node::GetInteger(XFA_Attribute eAttr) {
@@ -2990,8 +2998,13 @@ pdfium::Optional<XFA_ATTRIBUTEENUM> CJX_Node::TryEnum(XFA_Attribute eAttr,
 bool CJX_Node::SetEnum(XFA_Attribute eAttr,
                        XFA_ATTRIBUTEENUM eValue,
                        bool bNotify) {
-  return SetValue(eAttr, XFA_AttributeType::Enum, (void*)(uintptr_t)eValue,
-                  bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Enum,
+                                  (void*)(uintptr_t)eValue, bNotify);
+  if (elem) {
+    elem->SetString(CXFA_Node::AttributeToName(eAttr),
+                    CXFA_Node::AttributeEnumToName(eValue));
+  }
+  return true;
 }
 
 XFA_ATTRIBUTEENUM CJX_Node::GetEnum(XFA_Attribute eAttr) {
@@ -3179,41 +3192,21 @@ pdfium::Optional<WideString> CJX_Node::TryCData(XFA_Attribute eAttr,
   return GetXFANode()->GetDefaultCData(eAttr);
 }
 
-bool CJX_Node::SetValue(XFA_Attribute eAttr,
-                        XFA_AttributeType eType,
-                        void* pValue,
-                        bool bNotify) {
+CFX_XMLElement* CJX_Node::SetValue(XFA_Attribute eAttr,
+                                   XFA_AttributeType eType,
+                                   void* pValue,
+                                   bool bNotify) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   OnChanging(eAttr, bNotify);
   SetMapModuleValue(pKey, pValue);
   OnChanged(eAttr, bNotify, false);
   if (!GetXFANode()->IsNeedSavingXMLNode())
-    return true;
+    return nullptr;
 
   auto* elem = static_cast<CFX_XMLElement*>(GetXFANode()->GetXMLMappingNode());
   ASSERT(elem->GetType() == FX_XMLNODE_Element);
 
-  switch (eType) {
-    case XFA_AttributeType::Enum:
-      elem->SetString(
-          CXFA_Node::AttributeToName(eAttr),
-          CXFA_Node::AttributeEnumToName(static_cast<XFA_ATTRIBUTEENUM>(
-              reinterpret_cast<uintptr_t>(pValue))));
-      break;
-    case XFA_AttributeType::Boolean:
-      elem->SetString(CXFA_Node::AttributeToName(eAttr), pValue ? L"1" : L"0");
-      break;
-    case XFA_AttributeType::Integer: {
-      elem->SetString(
-          CXFA_Node::AttributeToName(eAttr),
-          WideString::Format(L"%d", static_cast<int32_t>(
-                                        reinterpret_cast<uintptr_t>(pValue))));
-      break;
-    }
-    default:
-      ASSERT(0);
-  }
-  return true;
+  return elem;
 }
 
 // TODO(dsinclair): This should not be needed. Nodes should get un-bound when
