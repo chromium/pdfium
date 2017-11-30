@@ -26,7 +26,6 @@ class CJS_PublicMethods : public CJS_Object {
   static WideString MakeFormatDate(double dDate, const WideString& format);
   static bool IsNumber(const WideString& str);
 
- private:
   static CJS_Return AFNumber_Format(
       CJS_Runtime* pRuntime,
       const std::vector<v8::Local<v8::Value>>& params);
