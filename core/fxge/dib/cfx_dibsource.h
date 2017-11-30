@@ -48,7 +48,7 @@ class CFX_DIBSource : public Retainable {
   int GetHeight() const { return m_Height; }
 
   FXDIB_Format GetFormat() const {
-    return (FXDIB_Format)(m_AlphaFlag * 0x100 + m_bpp);
+    return static_cast<FXDIB_Format>(m_AlphaFlag * 0x100 + m_bpp);
   }
   uint32_t GetPitch() const { return m_Pitch; }
   uint32_t* GetPalette() const { return m_pPalette.get(); }
