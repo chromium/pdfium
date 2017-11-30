@@ -114,7 +114,7 @@ void CPDF_LinkExtract::ExtractLinks() {
   if (!m_pTextPage->IsParsed())
     return;
 
-  m_strPageText = m_pTextPage->GetPageText(0, -1);
+  m_strPageText = m_pTextPage->GetAllPageText();
   if (m_strPageText.IsEmpty())
     return;
 

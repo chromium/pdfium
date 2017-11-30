@@ -41,7 +41,7 @@ CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage)
       m_resStart(0),
       m_resEnd(-1),
       m_IsFind(false) {
-  m_strText = m_pTextPage->GetPageText();
+  m_strText = m_pTextPage->GetAllPageText();
   int nCount = pTextPage->CountChars();
   if (nCount)
     m_CharIndex.push_back(0);
@@ -85,7 +85,7 @@ bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
   if (!m_pTextPage)
     return false;
   if (m_strText.IsEmpty() || m_bMatchCase != (flags & FPDFTEXT_MATCHCASE))
-    m_strText = m_pTextPage->GetPageText();
+    m_strText = m_pTextPage->GetAllPageText();
   WideString findwhatStr = findwhat;
   m_findWhat = findwhatStr;
   m_flags = flags;

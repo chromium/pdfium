@@ -179,25 +179,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
     return 1;
   }
 
-  // char_* values are for a data structure that includes non-printing unicode
-  // characters, where the text_* values are from a data structure that doesn't
-  // include these characters, so translation is needed.
-  int text_start = textpage->TextIndexFromCharIndex(char_start);
-  if (text_start == -1)
-    return 0;
+  WideString str = textpage->GetPageText(char_start, char_count);
 
-  int char_last = char_start + char_count - 1;
-  int text_last = textpage->TextIndexFromCharIndex(char_last);
-  if (text_last == -1)
-    return 0;
-
-  int text_count = text_last - text_start + 1;
-  if (text_count < 1)
-    return 0;
-
-  WideString str = textpage->GetPageText(text_start, text_count);
-  if (str.GetLength() > static_cast<size_t>(text_count))
-    str = str.Left(static_cast<size_t>(text_count));
+  if (str.GetLength() > static_cast<size_t>(char_count))
+    str = str.Left(static_cast<size_t>(char_count));
 
   // UFT16LE_Encode doesn't handle surrogate pairs properly, so it is expected
   // the number of items to stay the same.

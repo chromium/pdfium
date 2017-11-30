@@ -590,3 +590,38 @@ TEST_F(FPDFTextEmbeddertest, bug_782596) {
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbeddertest, ControlCharacters) {
+  EXPECT_TRUE(OpenDocument("control_characters.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  EXPECT_TRUE(textpage);
+
+  // Should not include the control characters in the output
+  static const char expected[] = "Hello, world!\r\nGoodbye, world!";
+  unsigned short fixed_buffer[128];
+  memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
+  int num_chars = FPDFText_GetText(textpage, 0, 128, fixed_buffer);
+
+  ASSERT_GE(num_chars, 0);
+  EXPECT_EQ(sizeof(expected), static_cast<size_t>(num_chars));
+  EXPECT_TRUE(check_unsigned_shorts(expected, fixed_buffer, sizeof(expected)));
+
+  // Attempting to get a chunk of text after the control characters
+  static const char expected_substring[] = "Goodbye, world!";
+  // Offset is the length of 'Hello, world!\r\n' + 2 control characters in the
+  // original stream
+  static const int offset = 17;
+  memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
+  num_chars = FPDFText_GetText(textpage, offset, 128, fixed_buffer);
+
+  ASSERT_GE(num_chars, 0);
+  EXPECT_EQ(sizeof(expected_substring), static_cast<size_t>(num_chars));
+  EXPECT_TRUE(check_unsigned_shorts(expected_substring, fixed_buffer,
+                                    sizeof(expected_substring)));
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
