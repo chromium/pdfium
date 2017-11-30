@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <tuple>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_font.h"
@@ -42,6 +43,8 @@ class CFX_FaceCache {
 
  private:
   using SizeGlyphCache = std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>>;
+  // <glyph_index, width, weight, angle, vertical>
+  using PathMapKey = std::tuple<uint32_t, int, int, int, bool>;
 
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
                                                uint32_t glyph_index,
@@ -67,7 +70,7 @@ class CFX_FaceCache {
 
   FXFT_Face const m_Face;
   std::map<ByteString, SizeGlyphCache> m_SizeMap;
-  std::map<uint32_t, std::unique_ptr<CFX_PathData>> m_PathMap;
+  std::map<PathMapKey, std::unique_ptr<CFX_PathData>> m_PathMap;
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
   sk_sp<SkTypeface> m_pTypeface;
 #endif

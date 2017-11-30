@@ -194,23 +194,15 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
 const CFX_PathData* CFX_FaceCache::LoadGlyphPath(const CFX_Font* pFont,
                                                  uint32_t glyph_index,
                                                  int dest_width) {
-  if (!m_Face || glyph_index == kInvalidGlyphIndex || dest_width < 0)
+  if (!m_Face || glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
-  uint32_t key = glyph_index;
-  auto* pSubstFont = pFont->GetSubstFont();
-  if (pSubstFont) {
-    if (pSubstFont->m_Weight < 0 || pSubstFont->m_ItalicAngle < 0)
-      return nullptr;
-    uint32_t weight = static_cast<uint32_t>(pSubstFont->m_Weight);
-    uint32_t angle = static_cast<uint32_t>(pSubstFont->m_ItalicAngle);
-    uint32_t key_modifier = (weight / 16) << 15;
-    key_modifier += (angle / 2) << 21;
-    key_modifier += (static_cast<uint32_t>(dest_width) / 16) << 25;
-    if (pFont->IsVertical())
-      key_modifier += 1U << 31;
-    key += key_modifier;
-  }
+  const auto* pSubstFont = pFont->GetSubstFont();
+  int weight = pSubstFont ? pSubstFont->m_Weight : 0;
+  int angle = pSubstFont ? pSubstFont->m_ItalicAngle : 0;
+  bool vertical = pSubstFont ? pFont->IsVertical() : false;
+  const PathMapKey key =
+      std::make_tuple(glyph_index, dest_width, weight, angle, vertical);
   auto it = m_PathMap.find(key);
   if (it != m_PathMap.end())
     return it->second.get();
