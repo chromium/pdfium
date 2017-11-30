@@ -97,14 +97,6 @@ enum XFA_XDPPACKET_FLAGS {
   XFA_XDPPACKET_FLAGS_SUPPORTMANY = 16,
 };
 
-struct XFA_PACKETINFO {
-  uint32_t uHash;
-  const wchar_t* pName;
-  XFA_PacketType eName;
-  const wchar_t* pURI;
-  uint32_t eFlags;
-};
-
 enum XFA_ATTRIBUTEENUM {
   XFA_ATTRIBUTEENUM_Asterisk,
   XFA_ATTRIBUTEENUM_Slash,

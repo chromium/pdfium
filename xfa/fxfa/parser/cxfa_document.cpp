@@ -25,6 +25,9 @@
 
 namespace {
 
+constexpr const wchar_t kTemplateNS[] =
+    L"http://www.xfa.org/schema/xfa-template/";
+
 void MergeNodeRecurse(CXFA_Document* pDocument,
                       CXFA_Node* pDestNodeParent,
                       CXFA_Node* pProtoNode) {
@@ -295,8 +298,7 @@ CFXJSE_Engine* CXFA_Document::GetScriptContext() {
 
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     const WideString& wsTemplateNS) {
-  WideStringView wsTemplateURIPrefix =
-      XFA_GetPacketByIndex(XFA_PacketType::Template)->pURI;
+  WideStringView wsTemplateURIPrefix(kTemplateNS);
   size_t nPrefixLength = wsTemplateURIPrefix.GetLength();
   if (WideStringView(wsTemplateNS.c_str(), wsTemplateNS.GetLength()) !=
       wsTemplateURIPrefix) {

@@ -2517,7 +2517,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/xfa_basic_data.h",
       "xfa/fxfa/parser/xfa_basic_data_element_script.cpp",
       "xfa/fxfa/parser/xfa_basic_data_enum.cpp",
-      "xfa/fxfa/parser/xfa_basic_data_packets.cpp",
       "xfa/fxfa/parser/xfa_document_datamerger_imp.cpp",
       "xfa/fxfa/parser/xfa_document_datamerger_imp.h",
       "xfa/fxfa/parser/xfa_resolvenode_rs.h",

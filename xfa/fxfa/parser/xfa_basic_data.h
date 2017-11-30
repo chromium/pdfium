@@ -11,9 +11,6 @@
 
 #include "xfa/fxfa/fxfa_basic.h"
 
-extern const XFA_PACKETINFO g_XFAPacketData[];
-extern const int32_t g_iXFAPacketCount;
-
 extern const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[];
 extern const int32_t g_iXFAEnumCount;
 

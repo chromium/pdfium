@@ -22,6 +22,8 @@
 
 namespace {
 
+constexpr const wchar_t kFormNS[] = L"http://www.xfa.org/schema/xfa-form/";
+
 WideString ExportEncodeAttribute(const WideString& str) {
   CFX_WideTextBuf textBuf;
   int32_t iLen = str.GetLength();
@@ -402,9 +404,7 @@ void XFA_DataExporter_RegenerateFormFile(
       pStream->WriteString(L"\"");
     }
     pStream->WriteString(L" xmlns=\"");
-
-    const wchar_t* pURI = XFA_GetPacketByIndex(XFA_PacketType::Form)->pURI;
-    pStream->WriteString(WideStringView(pURI, wcslen(pURI)));
+    pStream->WriteString(WideStringView(kFormNS));
 
     WideString wsVersionNumber;
     RecognizeXFAVersionNumber(
