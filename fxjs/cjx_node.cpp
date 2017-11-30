@@ -3522,7 +3522,6 @@ pdfium::Optional<WideString> CJX_Node::TryNamespace() {
 CXFA_Node* CJX_Node::GetProperty(int32_t index,
                                  XFA_Element eProperty,
                                  bool bCreateProperty) {
-  uint32_t dwPacket = GetXFANode()->GetPacketID();
   if (index < 0 || index >= GetXFANode()->PropertyOccuranceCount(eProperty))
     return nullptr;
 
@@ -3548,10 +3547,10 @@ CXFA_Node* CJX_Node::GetProperty(int32_t index,
     }
   }
 
-  const XFA_PACKETINFO* pPacket = XFA_GetPacketByID(dwPacket);
   CXFA_Node* pNewNode = nullptr;
-  for (; iCount <= index; iCount++) {
-    pNewNode = GetDocument()->CreateNode(pPacket, eProperty);
+  for (; iCount <= index; ++iCount) {
+    pNewNode =
+        GetDocument()->CreateNode(GetXFANode()->GetPacketID(), eProperty);
     if (!pNewNode)
       return nullptr;
     GetXFANode()->InsertChild(pNewNode, nullptr);

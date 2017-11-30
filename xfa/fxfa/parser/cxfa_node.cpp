@@ -157,7 +157,7 @@ pdfium::Optional<XFA_ATTRIBUTEENUM> CXFA_Node::NameToAttributeEnum(
 }
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
-                     uint16_t ePacket,
+                     XFA_XDPPACKET ePacket,
                      uint32_t validPackets,
                      XFA_ObjectType oType,
                      XFA_Element eType,
@@ -429,8 +429,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   if (!property)
     return nodes;
 
-  const XFA_PACKETINFO* pPacket = XFA_GetPacketByID(GetPacketID());
-  CXFA_Node* pNewNode = m_pDocument->CreateNode(pPacket, *property);
+  CXFA_Node* pNewNode = m_pDocument->CreateNode(GetPacketID(), *property);
   if (pNewNode) {
     InsertChild(pNewNode, nullptr);
     pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);

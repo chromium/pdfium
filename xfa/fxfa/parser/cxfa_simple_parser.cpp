@@ -228,26 +228,6 @@ void ConvertXMLToPlainText(CFX_XMLElement* pRootXMLNode, WideString& wsOutput) {
   }
 }
 
-const XFA_PACKETINFO* GetPacketByName(const WideStringView& wsName) {
-  if (wsName.IsEmpty())
-    return nullptr;
-
-  uint32_t uHash = FX_HashCode_GetW(wsName, false);
-  int32_t iStart = 0;
-  int32_t iEnd = g_iXFAPacketCount - 1;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    const XFA_PACKETINFO* pInfo = g_XFAPacketData + iMid;
-    if (uHash == pInfo->uHash)
-      return pInfo;
-    if (uHash < pInfo->uHash)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
-  return nullptr;
-}
-
 }  // namespace
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
@@ -508,7 +488,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
     CFX_XMLElement* pElement = reinterpret_cast<CFX_XMLElement*>(pChildItem);
     WideString wsPacketName = pElement->GetLocalTagName();
     const XFA_PACKETINFO* pPacketInfo =
-        GetPacketByName(wsPacketName.AsStringView());
+        XFA_GetPacketByName(wsPacketName.AsStringView());
     if (pPacketInfo && pPacketInfo->pURI) {
       if (!MatchNodeName(pElement, pPacketInfo->pName, pPacketInfo->pURI,
                          pPacketInfo->eFlags)) {

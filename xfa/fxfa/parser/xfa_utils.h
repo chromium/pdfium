@@ -43,6 +43,6 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     const WideStringView& wsAttributeName);
 
 const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PacketType ePacket);
-const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket);
+const XFA_PACKETINFO* XFA_GetPacketByName(const WideStringView& wsName);
 
 #endif  // XFA_FXFA_PARSER_XFA_UTILS_H_

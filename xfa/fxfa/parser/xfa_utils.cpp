@@ -190,14 +190,19 @@ const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PacketType ePacket) {
   return g_XFAPacketData + static_cast<uint8_t>(ePacket);
 }
 
-const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket) {
-  int32_t iStart = 0, iEnd = g_iXFAPacketCount - 1;
+const XFA_PACKETINFO* XFA_GetPacketByName(const WideStringView& wsName) {
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t uHash = FX_HashCode_GetW(wsName, false);
+  int32_t iStart = 0;
+  int32_t iEnd = g_iXFAPacketCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
-    uint32_t dwFind = (g_XFAPacketData + iMid)->eName;
-    if (dwPacket == dwFind)
-      return g_XFAPacketData + iMid;
-    if (dwPacket < dwFind)
+    const XFA_PACKETINFO* pInfo = g_XFAPacketData + iMid;
+    if (uHash == pInfo->uHash)
+      return pInfo;
+    if (uHash < pInfo->uHash)
       iEnd = iMid - 1;
     else
       iStart = iMid + 1;

@@ -87,8 +87,7 @@ class CXFA_Document {
   XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }
   XFA_VERSION RecognizeXFAVersionNumber(const WideString& wsTemplateNS);
 
-  CXFA_Node* CreateNode(uint32_t dwPacket, XFA_Element eElement);
-  CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket, XFA_Element eElement);
+  CXFA_Node* CreateNode(XFA_XDPPACKET packet, XFA_Element eElement);
 
   void DoProtoMerge();
   void DoDataMerge();
