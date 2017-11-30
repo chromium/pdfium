@@ -150,7 +150,7 @@ class StringViewTemplate {
   }
 
   pdfium::Optional<size_t> Find(CharType ch) const {
-    const UnsignedType* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
+    const auto* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
         reinterpret_cast<const CharType*>(m_Ptr.Get()), ch, m_Length));
 
     return found ? pdfium::Optional<size_t>(found - m_Ptr.Get())

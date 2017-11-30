@@ -154,7 +154,7 @@ std::string WritePpm(const char* pdf_name,
                      int stride,
                      int width,
                      int height) {
-  const char* buffer = reinterpret_cast<const char*>(buffer_void);
+  const auto* buffer = reinterpret_cast<const char*>(buffer_void);
 
   if (!CheckDimensions(stride, width, height))
     return "";
@@ -451,7 +451,7 @@ std::string WritePng(const char* pdf_name,
     return "";
 
   std::vector<unsigned char> png_encoding;
-  const unsigned char* buffer = static_cast<const unsigned char*>(buffer_void);
+  const auto* buffer = static_cast<const unsigned char*>(buffer_void);
   if (!image_diff_png::EncodeBGRAPNG(
           buffer, width, height, stride, false, &png_encoding)) {
     fprintf(stderr, "Failed to convert bitmap to PNG\n");
@@ -644,7 +644,7 @@ int ExampleAppResponse(IPDF_JSPLATFORM*,
          GetPlatformWString(label).c_str(), is_password, length);
 
   // UTF-16, always LE regardless of platform.
-  uint8_t* ptr = static_cast<uint8_t*>(response);
+  auto* ptr = static_cast<uint8_t*>(response);
   ptr[0] = 'N';
   ptr[1] = 0;
   ptr[2] = 'o';
@@ -1249,8 +1249,8 @@ bool RenderPage(const std::string& name,
   if (!options.scale_factor_as_string.empty())
     std::stringstream(options.scale_factor_as_string) >> scale;
 
-  int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
-  int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
+  auto width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
+  auto height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
   std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
       FPDFBitmap_Create(width, height, alpha));

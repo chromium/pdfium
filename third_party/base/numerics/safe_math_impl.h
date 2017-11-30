@@ -59,9 +59,9 @@ bool CheckedAddImpl(T x, T y, T* result) {
   // it using the unsigned type of the same size.
   using UnsignedDst = typename std::make_unsigned<T>::type;
   using SignedDst = typename std::make_signed<T>::type;
-  UnsignedDst ux = static_cast<UnsignedDst>(x);
-  UnsignedDst uy = static_cast<UnsignedDst>(y);
-  UnsignedDst uresult = static_cast<UnsignedDst>(ux + uy);
+  auto ux = static_cast<UnsignedDst>(x);
+  auto uy = static_cast<UnsignedDst>(y);
+  auto uresult = static_cast<UnsignedDst>(ux + uy);
   *result = static_cast<T>(uresult);
   // Addition is valid if the sign of (x + y) is equal to either that of x or
   // that of y.
@@ -110,9 +110,9 @@ bool CheckedSubImpl(T x, T y, T* result) {
   // it using the unsigned type of the same size.
   using UnsignedDst = typename std::make_unsigned<T>::type;
   using SignedDst = typename std::make_signed<T>::type;
-  UnsignedDst ux = static_cast<UnsignedDst>(x);
-  UnsignedDst uy = static_cast<UnsignedDst>(y);
-  UnsignedDst uresult = static_cast<UnsignedDst>(ux - uy);
+  auto ux = static_cast<UnsignedDst>(x);
+  auto uy = static_cast<UnsignedDst>(y);
+  auto uresult = static_cast<UnsignedDst>(ux - uy);
   *result = static_cast<T>(uresult);
   // Subtraction is valid if either x and y have same sign, or (x-y) and x have
   // the same sign.
@@ -163,7 +163,7 @@ bool CheckedMulImpl(T x, T y, T* result) {
   using SignedDst = typename std::make_signed<T>::type;
   const UnsignedDst ux = SafeUnsignedAbs(x);
   const UnsignedDst uy = SafeUnsignedAbs(y);
-  UnsignedDst uresult = static_cast<UnsignedDst>(ux * uy);
+  auto uresult = static_cast<UnsignedDst>(ux * uy);
   const bool is_negative =
       std::is_signed<T>::value && static_cast<SignedDst>(x ^ y) < 0;
   *result = is_negative ? 0 - uresult : uresult;
@@ -308,7 +308,7 @@ struct CheckedLshOp<T,
   static bool Do(T x, U shift, V* result) {
     using ShiftType = typename std::make_unsigned<T>::type;
     static const ShiftType kBitWidth = IntegerBitsPlusSign<T>::value;
-    const ShiftType real_shift = static_cast<ShiftType>(shift);
+    const auto real_shift = static_cast<ShiftType>(shift);
     // Signed shift is not legal on negative values.
     if (!IsValueNegative(x) && real_shift < kBitWidth) {
       // Just use a multiplication because it's easy.

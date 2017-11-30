@@ -534,7 +534,7 @@ ALWAYS_INLINE void* PartitionCookieFreePointerAdjust(void* ptr) {
 
 ALWAYS_INLINE void PartitionCookieWriteValue(void* ptr) {
 #if DCHECK_IS_ON()
-  unsigned char* cookie_ptr = reinterpret_cast<unsigned char*>(ptr);
+  auto* cookie_ptr = reinterpret_cast<unsigned char*>(ptr);
   for (size_t i = 0; i < kCookieSize; ++i, ++cookie_ptr)
     *cookie_ptr = kCookieValue[i];
 #endif
@@ -542,14 +542,14 @@ ALWAYS_INLINE void PartitionCookieWriteValue(void* ptr) {
 
 ALWAYS_INLINE void PartitionCookieCheckValue(void* ptr) {
 #if DCHECK_IS_ON()
-  unsigned char* cookie_ptr = reinterpret_cast<unsigned char*>(ptr);
+  auto* cookie_ptr = reinterpret_cast<unsigned char*>(ptr);
   for (size_t i = 0; i < kCookieSize; ++i, ++cookie_ptr)
     DCHECK(*cookie_ptr == kCookieValue[i]);
 #endif
 }
 
 ALWAYS_INLINE char* PartitionSuperPageToMetadataArea(char* ptr) {
-  uintptr_t pointer_as_uint = reinterpret_cast<uintptr_t>(ptr);
+  auto pointer_as_uint = reinterpret_cast<uintptr_t>(ptr);
   DCHECK(!(pointer_as_uint & kSuperPageOffsetMask));
   // The metadata area is exactly one system page (the guard page) into the
   // super page.
@@ -557,8 +557,8 @@ ALWAYS_INLINE char* PartitionSuperPageToMetadataArea(char* ptr) {
 }
 
 ALWAYS_INLINE PartitionPage* PartitionPointerToPageNoAlignmentCheck(void* ptr) {
-  uintptr_t pointer_as_uint = reinterpret_cast<uintptr_t>(ptr);
-  char* super_page_ptr =
+  auto pointer_as_uint = reinterpret_cast<uintptr_t>(ptr);
+  auto* super_page_ptr =
       reinterpret_cast<char*>(pointer_as_uint & kSuperPageBaseMask);
   uintptr_t partition_page_index =
       (pointer_as_uint & kSuperPageOffsetMask) >> kPartitionPageShift;
@@ -566,7 +566,7 @@ ALWAYS_INLINE PartitionPage* PartitionPointerToPageNoAlignmentCheck(void* ptr) {
   // the last index is invalid because it is a guard page.
   DCHECK(partition_page_index);
   DCHECK(partition_page_index < kNumPartitionPagesPerSuperPage - 1);
-  PartitionPage* page = reinterpret_cast<PartitionPage*>(
+  auto* page = reinterpret_cast<PartitionPage*>(
       PartitionSuperPageToMetadataArea(super_page_ptr) +
       (partition_page_index << kPageMetadataShift));
   // Partition pages in the same slot span can share the same page object.
@@ -578,7 +578,7 @@ ALWAYS_INLINE PartitionPage* PartitionPointerToPageNoAlignmentCheck(void* ptr) {
 }
 
 ALWAYS_INLINE void* PartitionPageToPointer(const PartitionPage* page) {
-  uintptr_t pointer_as_uint = reinterpret_cast<uintptr_t>(page);
+  auto pointer_as_uint = reinterpret_cast<uintptr_t>(page);
   uintptr_t super_page_offset = (pointer_as_uint & kSuperPageOffsetMask);
   DCHECK(super_page_offset > kSystemPageSize);
   DCHECK(super_page_offset < kSystemPageSize + (kNumPartitionPagesPerSuperPage *
@@ -590,7 +590,7 @@ ALWAYS_INLINE void* PartitionPageToPointer(const PartitionPage* page) {
   DCHECK(partition_page_index);
   DCHECK(partition_page_index < kNumPartitionPagesPerSuperPage - 1);
   uintptr_t super_page_base = (pointer_as_uint & kSuperPageBaseMask);
-  void* ret = reinterpret_cast<void*>(
+  auto* ret = reinterpret_cast<void*>(
       super_page_base + (partition_page_index << kPartitionPageShift));
   return ret;
 }
@@ -641,9 +641,8 @@ ALWAYS_INLINE size_t PartitionPageGetRawSize(PartitionPage* page) {
 }
 
 ALWAYS_INLINE PartitionRootBase* PartitionPageToRoot(PartitionPage* page) {
-  PartitionSuperPageExtentEntry* extent_entry =
-      reinterpret_cast<PartitionSuperPageExtentEntry*>(
-          reinterpret_cast<uintptr_t>(page) & kSystemPageBaseMask);
+  auto* extent_entry = reinterpret_cast<PartitionSuperPageExtentEntry*>(
+      reinterpret_cast<uintptr_t>(page) & kSystemPageBaseMask);
   return extent_entry->root;
 }
 
@@ -687,7 +686,7 @@ ALWAYS_INLINE void* PartitionBucketAlloc(PartitionRootBase* root,
     slot_size = raw_size;
   }
   size_t no_cookie_size = PartitionCookieSizeAdjustSubtract(slot_size);
-  char* char_ret = static_cast<char*>(ret);
+  auto* char_ret = static_cast<char*>(ret);
   // The value given to the application is actually just after the cookie.
   ret = char_ret + kCookieSize;
   memset(ret, kUninitializedByte, no_cookie_size);
@@ -737,7 +736,7 @@ ALWAYS_INLINE void PartitionFreeWithPage(void* ptr, PartitionPage* page) {
   CHECK(ptr != freelist_head);  // Catches an immediate double free.
   // Look for double free one level deeper in debug.
   DCHECK(!freelist_head || ptr != PartitionFreelistMask(freelist_head->next));
-  PartitionFreelistEntry* entry = static_cast<PartitionFreelistEntry*>(ptr);
+  auto* entry = static_cast<PartitionFreelistEntry*>(ptr);
   entry->next = PartitionFreelistMask(freelist_head);
   page->freelist_head = entry;
   --page->num_allocated_slots;
