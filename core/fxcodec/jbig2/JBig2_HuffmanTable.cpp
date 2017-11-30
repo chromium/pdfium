@@ -7,6 +7,7 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
 
 #include <algorithm>
+#include <limits>
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
@@ -52,7 +53,9 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   uint32_t HTLOW;
   uint32_t HTHIGH;
   if (pStream->readInteger(&HTLOW) == -1 ||
-      pStream->readInteger(&HTHIGH) == -1) {
+      pStream->readInteger(&HTHIGH) == -1 ||
+      HTLOW > static_cast<uint32_t>(std::numeric_limits<int>::max()) ||
+      HTHIGH > static_cast<uint32_t>(std::numeric_limits<int>::max())) {
     return false;
   }
 
