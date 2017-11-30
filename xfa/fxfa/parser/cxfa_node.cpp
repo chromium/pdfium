@@ -134,8 +134,11 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
 
 }  // namespace
 
-const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName) {
-  return g_XFAEnumData + eName;
+// static
+WideString CXFA_Node::AttributeEnumToName(XFA_ATTRIBUTEENUM item) {
+  if (item >= g_iXFAEnumCount)
+    return L"";
+  return g_XFAEnumData[static_cast<int32_t>(item)].pName;
 }
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,

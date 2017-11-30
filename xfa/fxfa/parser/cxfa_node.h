@@ -43,8 +43,6 @@ enum XFA_NODEITEM {
   XFA_NODEITEM_PrevSibling,
 };
 
-const XFA_ATTRIBUTEENUMINFO* GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName);
-
 class CXFA_Node : public CXFA_Object {
  public:
   struct PropertyData {
@@ -63,6 +61,7 @@ class CXFA_Node : public CXFA_Object {
   static WideString ElementToName(XFA_Element elem);
 #endif  // NDEBUG
 
+  static WideString AttributeEnumToName(XFA_ATTRIBUTEENUM item);
   static XFA_Attribute NameToAttribute(const WideStringView& name);
   static WideString AttributeToName(XFA_Attribute attr);
   static XFA_Element NameToElement(const WideString& name);
