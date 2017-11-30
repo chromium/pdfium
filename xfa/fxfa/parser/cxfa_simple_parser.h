@@ -40,14 +40,14 @@ class CXFA_SimpleParser {
   CXFA_Node* ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
                               XFA_PacketType ePacketID);
   CXFA_Node* ParseAsXDPPacket_XDP(CFX_XMLNode* pXMLDocumentNode);
-  CXFA_Node* ParseAsXDPPacket_Config(CFX_XMLNode* pXMLDocumentNode,
-                                     XFA_PacketType ePacketID);
-  CXFA_Node* ParseAsXDPPacket_TemplateForm(CFX_XMLNode* pXMLDocumentNode,
-                                           XFA_PacketType ePacketID);
+  CXFA_Node* ParseAsXDPPacket_Config(CFX_XMLNode* pXMLDocumentNode);
+  CXFA_Node* ParseAsXDPPacket_Template(CFX_XMLNode* pXMLDocumentNode);
+  CXFA_Node* ParseAsXDPPacket_Form(CFX_XMLNode* pXMLDocumentNode);
   CXFA_Node* ParseAsXDPPacket_Data(CFX_XMLNode* pXMLDocumentNode);
   CXFA_Node* ParseAsXDPPacket_LocaleConnectionSourceSet(
       CFX_XMLNode* pXMLDocumentNode,
-      XFA_PacketType ePacketID);
+      XFA_PacketType packet_type,
+      XFA_Element element);
   CXFA_Node* ParseAsXDPPacket_Xdc(CFX_XMLNode* pXMLDocumentNode);
   CXFA_Node* ParseAsXDPPacket_User(CFX_XMLNode* pXMLDocumentNode);
   CXFA_Node* NormalLoader(CXFA_Node* pXFANode,
