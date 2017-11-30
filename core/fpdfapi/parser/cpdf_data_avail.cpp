@@ -79,28 +79,11 @@ CPDF_DataAvail::CPDF_DataAvail(
     FileAvail* pFileAvail,
     const RetainPtr<IFX_SeekableReadStream>& pFileRead,
     bool bSupportHintTable)
-    : m_pFileAvail(pFileAvail) {
-  ASSERT(pFileRead);
-  m_pFileRead = pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail);
-  m_dwFileLen = m_pFileRead->GetSize();
-  m_PagesObjNum = 0;
-  m_dwInfoObjNum = 0;
-  m_pDocument = 0;
-  m_dwEncryptObjNum = 0;
-  m_bDocAvail = false;
-  m_bMainXRefLoadTried = false;
-  m_bDocAvail = false;
-  m_bPagesLoad = false;
-  m_bPagesTreeLoad = false;
-  m_bMainXRefLoadedOK = false;
-  m_pCurrentParser = nullptr;
-  m_docStatus = PDF_DATAAVAIL_HEADER;
-  m_bTotalLoadPageTree = false;
-  m_bCurPageDictLoadOK = false;
-  m_bLinearedDataOK = false;
-  m_bSupportHintTable = bSupportHintTable;
-  m_bHeaderAvail = false;
-}
+    : m_pFileAvail(pFileAvail),
+      m_pFileRead(
+          pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail)),
+      m_dwFileLen(m_pFileRead->GetSize()),
+      m_bSupportHintTable(bSupportHintTable) {}
 
 CPDF_DataAvail::~CPDF_DataAvail() {
   m_pHintTables.reset();
