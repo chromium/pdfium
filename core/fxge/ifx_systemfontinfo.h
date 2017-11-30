@@ -20,7 +20,7 @@ class IFX_SystemFontInfo {
   static std::unique_ptr<IFX_SystemFontInfo> CreateDefault(
       const char** pUserPaths);
 
-  virtual ~IFX_SystemFontInfo() {}
+  virtual ~IFX_SystemFontInfo() = default;
 
   virtual bool EnumFontList(CFX_FontMapper* pMapper) = 0;
   virtual void* MapFont(int weight,

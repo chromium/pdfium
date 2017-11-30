@@ -55,7 +55,7 @@ class Observable {
     T* m_pObservable;
   };
 
-  Observable() {}
+  Observable() = default;
   Observable(const Observable& that) = delete;
   ~Observable() { NotifyObservedPtrs(); }
   void AddObservedPtr(ObservedPtr* pObservedPtr) {

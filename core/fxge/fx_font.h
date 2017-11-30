@@ -81,7 +81,7 @@ class CFX_GlyphBitmap {
 inline CFX_GlyphBitmap::CFX_GlyphBitmap()
     : m_pBitmap(pdfium::MakeRetain<CFX_DIBitmap>()) {}
 
-inline CFX_GlyphBitmap::~CFX_GlyphBitmap() {}
+inline CFX_GlyphBitmap::~CFX_GlyphBitmap() = default;
 
 class FXTEXT_GLYPHPOS {
  public:

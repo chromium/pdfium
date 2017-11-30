@@ -590,13 +590,7 @@ class CFX_Matrix {
   explicit CFX_Matrix(const float n[6])
       : a(n[0]), b(n[1]), c(n[2]), d(n[3]), e(n[4]), f(n[5]) {}
 
-  CFX_Matrix(const CFX_Matrix& other)
-      : a(other.a),
-        b(other.b),
-        c(other.c),
-        d(other.d),
-        e(other.e),
-        f(other.f) {}
+  CFX_Matrix(const CFX_Matrix& other) = default;
 
   CFX_Matrix(float a1, float b1, float c1, float d1, float e1, float f1)
       : a(a1), b(b1), c(c1), d(d1), e(e1), f(f1) {}

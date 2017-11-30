@@ -28,7 +28,7 @@ class RetainPtr {
       m_pObj->Retain();
   }
 
-  RetainPtr() {}
+  RetainPtr() = default;
   RetainPtr(const RetainPtr& that) : RetainPtr(that.Get()) {}
   RetainPtr(RetainPtr&& that) noexcept { Swap(that); }
 
@@ -89,7 +89,7 @@ class Retainable {
   bool HasOneRef() const { return m_nRefCount == 1; }
 
  protected:
-  virtual ~Retainable() {}
+  virtual ~Retainable() = default;
 
  private:
   template <typename U>

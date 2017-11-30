@@ -19,7 +19,7 @@ namespace fxcrt {
 template <class T, class D = std::default_delete<T>>
 class WeakPtr {
  public:
-  WeakPtr() {}
+  WeakPtr() = default;
   WeakPtr(const WeakPtr& that) : m_pHandle(that.m_pHandle) {}
   WeakPtr(WeakPtr&& that) noexcept { Swap(that); }
   explicit WeakPtr(std::unique_ptr<T, D> pObj)
@@ -76,7 +76,7 @@ class WeakPtr {
     bool HasOneRef() const { return m_nCount == 1; }
 
    private:
-    ~Handle() {}
+    ~Handle() = default;
 
     intptr_t m_nCount;
     std::unique_ptr<T, D> m_pObj;

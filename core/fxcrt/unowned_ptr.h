@@ -39,7 +39,7 @@ namespace fxcrt {
 template <class T>
 class UnownedPtr {
  public:
-  UnownedPtr() {}
+  UnownedPtr() = default;
   UnownedPtr(const UnownedPtr& that) : UnownedPtr(that.Get()) {}
 
   template <typename U>
