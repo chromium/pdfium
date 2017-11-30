@@ -1354,8 +1354,6 @@ pdfium::Optional<void*> CXFA_Node::GetDefaultValue(
   const AttributeData* data = GetAttributeData(attr);
   if (!data)
     return {};
-  if (GetPacketID() && (GetPacketID() & data->packets) == 0)
-    return {};
   if (data->type == eType)
     return {data->default_value};
   return {};

@@ -10,11 +10,8 @@ namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet |
-         XFA_XDPPACKET_Template | XFA_XDPPACKET_Datasets | XFA_XDPPACKET_Form |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
      (void*)XFA_ATTRIBUTEENUM_Symbol},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"currencySymbol";
 

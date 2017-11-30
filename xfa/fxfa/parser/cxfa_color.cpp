@@ -11,26 +11,12 @@ namespace {
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
                                                  {XFA_Element::Unknown, 0, 0}};
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::Id, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::Use, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::CSpace, XFA_AttributeType::CData,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"SRGB"},
-    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::Value, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet |
-         XFA_XDPPACKET_Template | XFA_XDPPACKET_Datasets |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::CSpace, XFA_AttributeType::CData, (void*)L"SRGB"},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"color";
 

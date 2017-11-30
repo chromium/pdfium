@@ -56,7 +56,6 @@ class CXFA_Node : public CXFA_Object {
   struct AttributeData {
     XFA_Attribute attribute;
     XFA_AttributeType type;
-    uint32_t packets;
     void* default_value;
   };
 

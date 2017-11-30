@@ -11,9 +11,8 @@ namespace {
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Day, 7, 0},
                                                  {XFA_Element::Unknown, 0, 0}};
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::Abbr, XFA_AttributeType::Boolean, XFA_XDPPACKET_LocaleSet,
-     (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::Abbr, XFA_AttributeType::Boolean, (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"dayNames";
 

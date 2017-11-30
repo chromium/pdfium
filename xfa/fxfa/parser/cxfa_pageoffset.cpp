@@ -9,17 +9,11 @@
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::X, XFA_AttributeType::Measure,
-     XFA_XDPPACKET_Config | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
-     (void*)L"0in"},
-    {XFA_Attribute::Y, XFA_AttributeType::Measure,
-     XFA_XDPPACKET_Config | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
-     (void*)L"0in"},
-    {XFA_Attribute::Desc, XFA_AttributeType::CData,
-     XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet, nullptr},
-    {XFA_Attribute::Lock, XFA_AttributeType::Integer, XFA_XDPPACKET_Config,
-     (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
+    {XFA_Attribute::Y, XFA_AttributeType::Measure, (void*)L"0in"},
+    {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"pageOffset";
 

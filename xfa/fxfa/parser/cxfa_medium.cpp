@@ -9,36 +9,20 @@
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::Id, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
+    {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::TrayOut, XFA_AttributeType::Enum,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
      (void*)XFA_ATTRIBUTEENUM_Auto},
-    {XFA_Attribute::Use, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Orientation, XFA_AttributeType::Enum,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
      (void*)XFA_ATTRIBUTEENUM_Portrait},
-    {XFA_Attribute::ImagingBBox, XFA_AttributeType::CData,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"none"},
-    {XFA_Attribute::Short, XFA_AttributeType::Measure,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"0in"},
+    {XFA_Attribute::ImagingBBox, XFA_AttributeType::CData, (void*)L"none"},
+    {XFA_Attribute::Short, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::TrayIn, XFA_AttributeType::Enum,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
      (void*)XFA_ATTRIBUTEENUM_Auto},
-    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::Stock, XFA_AttributeType::CData,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
-    {XFA_Attribute::Long, XFA_AttributeType::Measure,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"0in"},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Stock, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Long, XFA_AttributeType::Measure, (void*)L"0in"},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"medium";
 

@@ -9,10 +9,9 @@
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::TimeStamp, XFA_AttributeType::CData, XFA_XDPPACKET_XDP,
-     nullptr},
-    {XFA_Attribute::Uuid, XFA_AttributeType::CData, XFA_XDPPACKET_XDP, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::TimeStamp, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Uuid, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"xfa";
 

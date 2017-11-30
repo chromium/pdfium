@@ -9,15 +9,14 @@
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::SourceBelow, XFA_AttributeType::Enum, XFA_XDPPACKET_Config,
+    {XFA_Attribute::SourceBelow, XFA_AttributeType::Enum,
      (void*)XFA_ATTRIBUTEENUM_Update},
-    {XFA_Attribute::OutputBelow, XFA_AttributeType::Enum, XFA_XDPPACKET_Config,
+    {XFA_Attribute::OutputBelow, XFA_AttributeType::Enum,
      (void*)XFA_ATTRIBUTEENUM_Warn},
-    {XFA_Attribute::SourceAbove, XFA_AttributeType::Enum, XFA_XDPPACKET_Config,
+    {XFA_Attribute::SourceAbove, XFA_AttributeType::Enum,
      (void*)XFA_ATTRIBUTEENUM_Warn},
-    {XFA_Attribute::Lock, XFA_AttributeType::Integer, XFA_XDPPACKET_Config,
-     (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"versionControl";
 

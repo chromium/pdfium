@@ -9,17 +9,12 @@
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::To, XFA_AttributeType::CData, XFA_XDPPACKET_Config,
-     nullptr},
-    {XFA_Attribute::Force, XFA_AttributeType::Boolean, XFA_XDPPACKET_Config,
-     nullptr},
-    {XFA_Attribute::Desc, XFA_AttributeType::CData,
-     XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet, nullptr},
-    {XFA_Attribute::From, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Config, nullptr},
-    {XFA_Attribute::Lock, XFA_AttributeType::Integer, XFA_XDPPACKET_Config,
-     (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::To, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Force, XFA_AttributeType::Boolean, nullptr},
+    {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::From, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"equate";
 

@@ -9,21 +9,11 @@
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
-    {XFA_Attribute::Id, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::Use, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::NumberOfCells, XFA_AttributeType::Integer,
-     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)0},
-    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
-     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
-         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
-     nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
+    {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::NumberOfCells, XFA_AttributeType::Integer, (void*)0},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"comb";
 
