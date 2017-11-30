@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"level";
 
 }  // namespace
 
-CXFA_Level::CXFA_Level(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Level::CXFA_Level(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

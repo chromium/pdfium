@@ -11,7 +11,7 @@
 
 class CXFA_Sharptext : public CXFA_Node {
  public:
-  CXFA_Sharptext(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Sharptext(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Sharptext() override;
 };
 

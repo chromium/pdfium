@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"pageOffset";
 
 }  // namespace
 
-CXFA_PageOffset::CXFA_PageOffset(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_PageOffset::CXFA_PageOffset(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

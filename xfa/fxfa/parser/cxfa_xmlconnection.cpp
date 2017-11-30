@@ -19,7 +19,8 @@ constexpr wchar_t kName[] = L"xmlConnection";
 
 }  // namespace
 
-CXFA_XmlConnection::CXFA_XmlConnection(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_XmlConnection::CXFA_XmlConnection(CXFA_Document* doc,
+                                       XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_ConnectionSet,

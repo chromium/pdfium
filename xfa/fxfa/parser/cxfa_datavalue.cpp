@@ -21,7 +21,7 @@ constexpr wchar_t kName[] = L"dataValue";
 
 }  // namespace
 
-CXFA_DataValue::CXFA_DataValue(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_DataValue::CXFA_DataValue(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Datasets,

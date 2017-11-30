@@ -12,7 +12,8 @@ constexpr wchar_t kName[] = L"connectionSet";
 
 }  // namespace
 
-CXFA_ConnectionSet::CXFA_ConnectionSet(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_ConnectionSet::CXFA_ConnectionSet(CXFA_Document* doc,
+                                       XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_ConnectionSet,

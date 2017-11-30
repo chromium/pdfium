@@ -11,7 +11,7 @@
 
 class CXFA_Output : public CXFA_Node {
  public:
-  CXFA_Output(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Output(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Output() override;
 };
 

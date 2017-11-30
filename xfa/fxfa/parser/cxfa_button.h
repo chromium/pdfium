@@ -11,7 +11,7 @@
 
 class CXFA_Button : public CXFA_Node {
  public:
-  CXFA_Button(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Button(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Button() override;
 };
 

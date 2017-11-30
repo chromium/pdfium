@@ -22,7 +22,7 @@ constexpr wchar_t kName[] = L"log";
 
 }  // namespace
 
-CXFA_Log::CXFA_Log(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Log::CXFA_Log(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

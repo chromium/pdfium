@@ -11,7 +11,7 @@
 
 class CXFA_IfEmpty : public CXFA_Node {
  public:
-  CXFA_IfEmpty(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_IfEmpty(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_IfEmpty() override;
 };
 

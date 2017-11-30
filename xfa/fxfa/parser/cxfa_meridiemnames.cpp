@@ -15,7 +15,8 @@ constexpr wchar_t kName[] = L"meridiemNames";
 
 }  // namespace
 
-CXFA_MeridiemNames::CXFA_MeridiemNames(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_MeridiemNames::CXFA_MeridiemNames(CXFA_Document* doc,
+                                       XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

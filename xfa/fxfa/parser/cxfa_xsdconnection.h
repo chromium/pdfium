@@ -11,7 +11,7 @@
 
 class CXFA_XsdConnection : public CXFA_Node {
  public:
-  CXFA_XsdConnection(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_XsdConnection(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_XsdConnection() override;
 };
 

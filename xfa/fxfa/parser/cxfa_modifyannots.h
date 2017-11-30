@@ -11,7 +11,7 @@
 
 class CXFA_ModifyAnnots : public CXFA_Node {
  public:
-  CXFA_ModifyAnnots(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ModifyAnnots(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ModifyAnnots() override;
 };
 

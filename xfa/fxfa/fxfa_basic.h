@@ -86,9 +86,7 @@ enum XFA_XDPPACKET {
   XFA_XDPPACKET_Stylesheet =
       1 << static_cast<uint8_t>(XFA_PacketType::Stylesheet),
   XFA_XDPPACKET_USER = 1 << static_cast<uint8_t>(XFA_PacketType::User),
-  XFA_XDPPACKET_XDP = 1 << static_cast<uint8_t>(XFA_PacketType::Xdp),
-
-  XFA_XDPPACKET_LAST = XFA_XDPPACKET_ConnectionSet + 1
+  XFA_XDPPACKET_XDP = 1 << static_cast<uint8_t>(XFA_PacketType::Xdp)
 };
 
 enum XFA_XDPPACKET_FLAGS {

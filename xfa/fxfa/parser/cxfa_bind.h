@@ -11,7 +11,7 @@
 
 class CXFA_Bind : public CXFA_Node {
  public:
-  CXFA_Bind(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Bind() override;
 };
 

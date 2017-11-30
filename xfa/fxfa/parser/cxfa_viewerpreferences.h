@@ -11,7 +11,7 @@
 
 class CXFA_ViewerPreferences : public CXFA_Node {
  public:
-  CXFA_ViewerPreferences(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ViewerPreferences(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ViewerPreferences() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_Presence : public CXFA_Node {
  public:
-  CXFA_Presence(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Presence(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Presence() override;
 };
 

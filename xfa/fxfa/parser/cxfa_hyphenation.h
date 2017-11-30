@@ -11,7 +11,7 @@
 
 class CXFA_Hyphenation : public CXFA_Node {
  public:
-  CXFA_Hyphenation(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Hyphenation(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Hyphenation() override;
 };
 

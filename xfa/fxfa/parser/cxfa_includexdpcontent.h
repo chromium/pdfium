@@ -11,7 +11,7 @@
 
 class CXFA_IncludeXDPContent : public CXFA_Node {
  public:
-  CXFA_IncludeXDPContent(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_IncludeXDPContent(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_IncludeXDPContent() override;
 };
 

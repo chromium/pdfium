@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"delete";
 
 }  // namespace
 
-CXFA_Delete::CXFA_Delete(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Delete::CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_SourceSet,

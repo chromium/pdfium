@@ -11,7 +11,7 @@
 
 class CXFA_Compression : public CXFA_Node {
  public:
-  CXFA_Compression(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Compression(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Compression() override;
 };
 

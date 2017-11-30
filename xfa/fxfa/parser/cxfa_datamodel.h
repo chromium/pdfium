@@ -11,7 +11,7 @@
 
 class CXFA_DataModel : public CXFA_Node {
  public:
-  CXFA_DataModel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DataModel() override;
 };
 

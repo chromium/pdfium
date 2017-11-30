@@ -11,7 +11,7 @@
 
 class CXFA_CheckButton : public CXFA_Node {
  public:
-  CXFA_CheckButton(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_CheckButton(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CheckButton() override;
 };
 

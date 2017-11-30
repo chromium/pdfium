@@ -18,7 +18,7 @@ constexpr wchar_t kName[] = L"setProperty";
 
 }  // namespace
 
-CXFA_SetProperty::CXFA_SetProperty(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_SetProperty::CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

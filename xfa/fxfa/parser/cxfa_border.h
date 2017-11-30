@@ -11,7 +11,7 @@
 
 class CXFA_Border : public CXFA_Node {
  public:
-  CXFA_Border(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Border(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Border() override;
 };
 

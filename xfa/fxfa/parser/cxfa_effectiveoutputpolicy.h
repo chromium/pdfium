@@ -11,7 +11,7 @@
 
 class CXFA_EffectiveOutputPolicy : public CXFA_Node {
  public:
-  CXFA_EffectiveOutputPolicy(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_EffectiveOutputPolicy(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EffectiveOutputPolicy() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_Rename : public CXFA_Node {
  public:
-  CXFA_Rename(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Rename(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Rename() override;
 };
 

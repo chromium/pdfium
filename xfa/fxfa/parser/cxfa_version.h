@@ -11,7 +11,7 @@
 
 class CXFA_Version : public CXFA_Node {
  public:
-  CXFA_Version(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Version(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Version() override;
 };
 

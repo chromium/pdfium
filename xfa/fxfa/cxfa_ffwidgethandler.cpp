@@ -503,7 +503,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_Element eElement,
                                                     CXFA_Node* pBefore) const {
   CXFA_Document* pXFADoc = GetXFADoc();
   CXFA_Node* pNewTemplateNode =
-      pXFADoc->CreateNode(XFA_XDPPACKET_Template, eElement);
+      pXFADoc->CreateNode(XFA_PacketType::Template, eElement);
   if (pParent)
     pParent->InsertChild(pNewTemplateNode, pBefore);
   return pNewTemplateNode;

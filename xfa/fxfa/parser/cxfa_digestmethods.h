@@ -11,7 +11,7 @@
 
 class CXFA_DigestMethods : public CXFA_Node {
  public:
-  CXFA_DigestMethods(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DigestMethods(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DigestMethods() override;
 };
 

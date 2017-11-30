@@ -12,7 +12,7 @@ constexpr wchar_t kName[] = L"psMap";
 
 }  // namespace
 
-CXFA_PsMap::CXFA_PsMap(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_PsMap::CXFA_PsMap(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

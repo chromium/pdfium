@@ -24,7 +24,7 @@ constexpr wchar_t kName[] = L"rectangle";
 
 }  // namespace
 
-CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

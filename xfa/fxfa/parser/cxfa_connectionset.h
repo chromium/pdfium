@@ -11,7 +11,7 @@
 
 class CXFA_ConnectionSet : public CXFA_Node {
  public:
-  CXFA_ConnectionSet(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ConnectionSet(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ConnectionSet() override;
 };
 

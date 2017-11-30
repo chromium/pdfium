@@ -20,7 +20,7 @@ constexpr wchar_t kName[] = L"effectiveInputPolicy";
 }  // namespace
 
 CXFA_EffectiveInputPolicy::CXFA_EffectiveInputPolicy(CXFA_Document* doc,
-                                                     XFA_XDPPACKET packet)
+                                                     XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_ConnectionSet,

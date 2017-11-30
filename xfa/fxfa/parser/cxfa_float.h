@@ -11,7 +11,7 @@
 
 class CXFA_Float : public CXFA_Node {
  public:
-  CXFA_Float(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Float(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Float() override;
 };
 

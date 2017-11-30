@@ -11,7 +11,7 @@
 
 class CXFA_PrintHighQuality : public CXFA_Node {
  public:
-  CXFA_PrintHighQuality(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_PrintHighQuality(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PrintHighQuality() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_Format : public CXFA_Node {
  public:
-  CXFA_Format(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Format(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Format() override;
 };
 

@@ -26,7 +26,7 @@ constexpr wchar_t kName[] = L"submit";
 
 }  // namespace
 
-CXFA_Submit::CXFA_Submit(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Submit::CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

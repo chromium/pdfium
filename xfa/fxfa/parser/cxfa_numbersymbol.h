@@ -11,7 +11,7 @@
 
 class CXFA_NumberSymbol : public CXFA_Node {
  public:
-  CXFA_NumberSymbol(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_NumberSymbol() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_Certificates : public CXFA_Node {
  public:
-  CXFA_Certificates(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Certificates(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Certificates() override;
 };
 

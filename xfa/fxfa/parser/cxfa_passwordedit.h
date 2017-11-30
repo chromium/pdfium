@@ -11,7 +11,7 @@
 
 class CXFA_PasswordEdit : public CXFA_Node {
  public:
-  CXFA_PasswordEdit(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_PasswordEdit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PasswordEdit() override;
 };
 

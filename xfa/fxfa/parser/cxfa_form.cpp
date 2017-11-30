@@ -16,7 +16,7 @@ constexpr wchar_t kName[] = L"form";
 
 }  // namespace
 
-CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Form,

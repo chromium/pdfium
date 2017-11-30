@@ -11,7 +11,7 @@
 
 class CXFA_Overprint : public CXFA_Node {
  public:
-  CXFA_Overprint(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Overprint(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Overprint() override;
 };
 

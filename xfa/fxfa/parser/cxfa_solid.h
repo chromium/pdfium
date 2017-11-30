@@ -11,7 +11,7 @@
 
 class CXFA_Solid : public CXFA_Node {
  public:
-  CXFA_Solid(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Solid(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Solid() override;
 };
 

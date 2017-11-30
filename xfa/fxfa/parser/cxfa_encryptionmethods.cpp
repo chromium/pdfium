@@ -21,7 +21,7 @@ constexpr wchar_t kName[] = L"encryptionMethods";
 }  // namespace
 
 CXFA_EncryptionMethods::CXFA_EncryptionMethods(CXFA_Document* doc,
-                                               XFA_XDPPACKET packet)
+                                               XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

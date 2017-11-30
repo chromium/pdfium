@@ -11,7 +11,7 @@
 
 class CXFA_Margin : public CXFA_Node {
  public:
-  CXFA_Margin(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Margin(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Margin() override;
 };
 

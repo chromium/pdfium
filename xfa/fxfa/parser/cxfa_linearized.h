@@ -11,7 +11,7 @@
 
 class CXFA_Linearized : public CXFA_Node {
  public:
-  CXFA_Linearized(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Linearized(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Linearized() override;
 };
 

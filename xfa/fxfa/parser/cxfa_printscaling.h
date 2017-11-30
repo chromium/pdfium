@@ -11,7 +11,7 @@
 
 class CXFA_PrintScaling : public CXFA_Node {
  public:
-  CXFA_PrintScaling(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_PrintScaling(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PrintScaling() override;
 };
 

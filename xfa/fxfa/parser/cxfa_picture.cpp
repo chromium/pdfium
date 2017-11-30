@@ -20,7 +20,7 @@ constexpr wchar_t kName[] = L"picture";
 
 }  // namespace
 
-CXFA_Picture::CXFA_Picture(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Picture::CXFA_Picture(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(
           doc,
           packet,

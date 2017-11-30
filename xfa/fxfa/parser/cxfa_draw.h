@@ -11,7 +11,7 @@
 
 class CXFA_Draw : public CXFA_Node {
  public:
-  CXFA_Draw(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Draw(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Draw() override;
 };
 

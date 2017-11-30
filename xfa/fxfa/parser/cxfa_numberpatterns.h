@@ -11,7 +11,7 @@
 
 class CXFA_NumberPatterns : public CXFA_Node {
  public:
-  CXFA_NumberPatterns(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_NumberPatterns(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_NumberPatterns() override;
 };
 

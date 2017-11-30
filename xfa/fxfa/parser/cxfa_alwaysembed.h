@@ -11,7 +11,7 @@
 
 class CXFA_AlwaysEmbed : public CXFA_Node {
  public:
-  CXFA_AlwaysEmbed(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_AlwaysEmbed(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_AlwaysEmbed() override;
 };
 

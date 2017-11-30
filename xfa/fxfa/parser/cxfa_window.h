@@ -11,7 +11,7 @@
 
 class CXFA_Window : public CXFA_Node {
  public:
-  CXFA_Window(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Window(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Window() override;
 };
 

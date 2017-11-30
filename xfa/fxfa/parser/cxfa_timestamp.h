@@ -11,7 +11,7 @@
 
 class CXFA_TimeStamp : public CXFA_Node {
  public:
-  CXFA_TimeStamp(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_TimeStamp(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_TimeStamp() override;
 };
 

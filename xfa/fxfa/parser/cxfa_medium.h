@@ -11,7 +11,7 @@
 
 class CXFA_Medium : public CXFA_Node {
  public:
-  CXFA_Medium(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Medium(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Medium() override;
 };
 

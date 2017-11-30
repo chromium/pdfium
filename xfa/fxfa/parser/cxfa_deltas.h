@@ -11,7 +11,7 @@
 
 class CXFA_Deltas : public CXFA_Node {
  public:
-  CXFA_Deltas(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Deltas(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Deltas() override;
 };
 

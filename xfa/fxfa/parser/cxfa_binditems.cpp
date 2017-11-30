@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"bindItems";
 
 }  // namespace
 
-CXFA_BindItems::CXFA_BindItems(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_BindItems::CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

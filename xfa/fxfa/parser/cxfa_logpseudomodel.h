@@ -11,7 +11,7 @@
 
 class CXFA_LogPseudoModel : public CXFA_Node {
  public:
-  CXFA_LogPseudoModel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_LogPseudoModel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_LogPseudoModel() override;
 };
 

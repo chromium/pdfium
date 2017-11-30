@@ -11,7 +11,7 @@
 
 class CXFA_Enforce : public CXFA_Node {
  public:
-  CXFA_Enforce(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Enforce(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Enforce() override;
 };
 

@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"modifyAnnots";
 
 }  // namespace
 
-CXFA_ModifyAnnots::CXFA_ModifyAnnots(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_ModifyAnnots::CXFA_ModifyAnnots(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

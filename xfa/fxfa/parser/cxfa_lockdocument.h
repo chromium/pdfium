@@ -11,7 +11,7 @@
 
 class CXFA_LockDocument : public CXFA_Node {
  public:
-  CXFA_LockDocument(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_LockDocument(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_LockDocument() override;
 };
 

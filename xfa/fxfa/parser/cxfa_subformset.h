@@ -11,7 +11,7 @@
 
 class CXFA_SubformSet : public CXFA_Node {
  public:
-  CXFA_SubformSet(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SubformSet(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SubformSet() override;
 };
 

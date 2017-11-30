@@ -47,7 +47,7 @@ constexpr wchar_t kName[] = L"font";
 
 }  // namespace
 
-CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(
           doc,
           packet,

@@ -11,7 +11,7 @@
 
 class CXFA_Message : public CXFA_Node {
  public:
-  CXFA_Message(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Message(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Message() override;
 };
 

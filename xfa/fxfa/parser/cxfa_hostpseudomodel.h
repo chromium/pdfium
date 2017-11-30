@@ -11,7 +11,7 @@
 
 class CXFA_HostPseudoModel : public CXFA_Node {
  public:
-  CXFA_HostPseudoModel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_HostPseudoModel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_HostPseudoModel() override;
 };
 

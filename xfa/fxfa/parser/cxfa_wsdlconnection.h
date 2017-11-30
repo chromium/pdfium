@@ -11,7 +11,7 @@
 
 class CXFA_WsdlConnection : public CXFA_Node {
  public:
-  CXFA_WsdlConnection(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_WsdlConnection(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_WsdlConnection() override;
 };
 

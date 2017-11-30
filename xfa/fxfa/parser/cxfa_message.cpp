@@ -23,7 +23,7 @@ constexpr wchar_t kName[] = L"message";
 
 }  // namespace
 
-CXFA_Message::CXFA_Message(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Message::CXFA_Message(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(
           doc,
           packet,

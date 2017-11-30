@@ -11,7 +11,7 @@
 
 class CXFA_WsdlAddress : public CXFA_Node {
  public:
-  CXFA_WsdlAddress(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_WsdlAddress(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_WsdlAddress() override;
 };
 

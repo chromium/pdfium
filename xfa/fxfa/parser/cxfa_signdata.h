@@ -11,7 +11,7 @@
 
 class CXFA_SignData : public CXFA_Node {
  public:
-  CXFA_SignData(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SignData(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SignData() override;
 };
 

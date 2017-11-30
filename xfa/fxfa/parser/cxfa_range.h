@@ -11,7 +11,7 @@
 
 class CXFA_Range : public CXFA_Node {
  public:
-  CXFA_Range(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Range(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Range() override;
 };
 

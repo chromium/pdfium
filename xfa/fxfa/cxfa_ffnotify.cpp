@@ -360,7 +360,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
 void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr) {
   if (eAttr != XFA_Attribute::Presence)
     return;
-  if (pSender->GetPacketID() & XFA_XDPPACKET_Datasets)
+  if (pSender->GetPacketType() == XFA_PacketType::Datasets)
     return;
   if (!pSender->IsFormContainer())
     return;
@@ -390,7 +390,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
   if (!pDocView)
     return;
 
-  if (!(pSender->GetPacketID() & XFA_XDPPACKET_Form)) {
+  if (pSender->GetPacketType() != XFA_PacketType::Form) {
     if (eAttr == XFA_Attribute::Value)
       pDocView->AddCalculateNodeNotify(pSender);
     return;

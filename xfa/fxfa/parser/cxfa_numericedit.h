@@ -11,7 +11,7 @@
 
 class CXFA_NumericEdit : public CXFA_Node {
  public:
-  CXFA_NumericEdit(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_NumericEdit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_NumericEdit() override;
 };
 

@@ -13,7 +13,7 @@ constexpr wchar_t kName[] = L"dateTimeSymbols";
 }  // namespace
 
 CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
-                                           XFA_XDPPACKET packet)
+                                           XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

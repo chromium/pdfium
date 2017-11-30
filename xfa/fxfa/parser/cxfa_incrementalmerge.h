@@ -11,7 +11,7 @@
 
 class CXFA_IncrementalMerge : public CXFA_Node {
  public:
-  CXFA_IncrementalMerge(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_IncrementalMerge(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_IncrementalMerge() override;
 };
 

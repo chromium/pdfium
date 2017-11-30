@@ -11,7 +11,7 @@
 
 class CXFA_Validate : public CXFA_Node {
  public:
-  CXFA_Validate(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Validate() override;
 };
 

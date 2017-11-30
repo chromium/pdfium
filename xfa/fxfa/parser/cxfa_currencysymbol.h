@@ -11,7 +11,7 @@
 
 class CXFA_CurrencySymbol : public CXFA_Node {
  public:
-  CXFA_CurrencySymbol(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_CurrencySymbol(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CurrencySymbol() override;
 };
 

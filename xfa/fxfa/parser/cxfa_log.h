@@ -11,7 +11,7 @@
 
 class CXFA_Log : public CXFA_Node {
  public:
-  CXFA_Log(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Log(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Log() override;
 };
 

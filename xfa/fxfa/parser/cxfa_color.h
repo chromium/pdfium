@@ -11,7 +11,7 @@
 
 class CXFA_Color : public CXFA_Node {
  public:
-  CXFA_Color(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Color(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Color() override;
 };
 

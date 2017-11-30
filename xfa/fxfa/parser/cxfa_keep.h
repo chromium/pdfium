@@ -11,7 +11,7 @@
 
 class CXFA_Keep : public CXFA_Node {
  public:
-  CXFA_Keep(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Keep(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Keep() override;
 };
 

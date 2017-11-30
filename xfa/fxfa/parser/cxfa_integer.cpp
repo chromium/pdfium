@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"integer";
 
 }  // namespace
 
-CXFA_Integer::CXFA_Integer(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Integer::CXFA_Integer(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |

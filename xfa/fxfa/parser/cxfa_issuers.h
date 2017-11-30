@@ -11,7 +11,7 @@
 
 class CXFA_Issuers : public CXFA_Node {
  public:
-  CXFA_Issuers(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Issuers(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Issuers() override;
 };
 

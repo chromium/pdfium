@@ -11,7 +11,7 @@
 
 class CXFA_Decimal : public CXFA_Node {
  public:
-  CXFA_Decimal(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Decimal(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Decimal() override;
 };
 

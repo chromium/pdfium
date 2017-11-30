@@ -11,7 +11,7 @@
 
 class CXFA_LocaleSet : public CXFA_Node {
  public:
-  CXFA_LocaleSet(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_LocaleSet(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_LocaleSet() override;
 };
 

@@ -20,7 +20,7 @@ constexpr wchar_t kName[] = L"lockDocument";
 
 }  // namespace
 
-CXFA_LockDocument::CXFA_LockDocument(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_LockDocument::CXFA_LockDocument(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

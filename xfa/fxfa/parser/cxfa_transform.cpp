@@ -23,7 +23,7 @@ constexpr wchar_t kName[] = L"transform";
 
 }  // namespace
 
-CXFA_Transform::CXFA_Transform(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Transform::CXFA_Transform(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

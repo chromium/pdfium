@@ -11,7 +11,7 @@
 
 class CXFA_ValidationMessaging : public CXFA_Node {
  public:
-  CXFA_ValidationMessaging(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ValidationMessaging(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ValidationMessaging() override;
 };
 

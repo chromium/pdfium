@@ -11,7 +11,7 @@
 
 class CXFA_DefaultUi : public CXFA_Node {
  public:
-  CXFA_DefaultUi(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DefaultUi(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DefaultUi() override;
 };
 

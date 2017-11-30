@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"numberSymbol";
 
 }  // namespace
 
-CXFA_NumberSymbol::CXFA_NumberSymbol(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_NumberSymbol::CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

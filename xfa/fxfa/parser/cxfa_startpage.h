@@ -11,7 +11,7 @@
 
 class CXFA_StartPage : public CXFA_Node {
  public:
-  CXFA_StartPage(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_StartPage(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_StartPage() override;
 };
 

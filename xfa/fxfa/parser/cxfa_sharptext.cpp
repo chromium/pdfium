@@ -16,7 +16,7 @@ constexpr wchar_t kName[] = L"#text";
 
 }  // namespace
 
-CXFA_Sharptext::CXFA_Sharptext(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Sharptext::CXFA_Sharptext(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Config |

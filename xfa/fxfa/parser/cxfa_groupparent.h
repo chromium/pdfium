@@ -11,7 +11,7 @@
 
 class CXFA_GroupParent : public CXFA_Node {
  public:
-  CXFA_GroupParent(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_GroupParent(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_GroupParent() override;
 };
 

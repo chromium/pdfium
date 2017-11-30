@@ -11,7 +11,7 @@
 
 class CXFA_Insert : public CXFA_Node {
  public:
-  CXFA_Insert(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Insert() override;
 };
 

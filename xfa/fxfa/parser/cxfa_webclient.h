@@ -11,7 +11,7 @@
 
 class CXFA_WebClient : public CXFA_Node {
  public:
-  CXFA_WebClient(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_WebClient(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_WebClient() override;
 };
 

@@ -115,7 +115,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
     }
 
     auto node = CXFA_Node::Create(pChild->GetDocument(), XFA_Element::Ui,
-                                  XFA_XDPPACKET_Form);
+                                  XFA_PacketType::Form);
     if (node && node->HasPropertyFlags(eChildType, XFA_PROPERTYFLAG_OneOf)) {
       pUIChild = pChild;
       break;

@@ -11,7 +11,7 @@
 
 class CXFA_SetProperty : public CXFA_Node {
  public:
-  CXFA_SetProperty(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SetProperty() override;
 };
 

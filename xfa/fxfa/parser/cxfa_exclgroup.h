@@ -11,7 +11,7 @@
 
 class CXFA_ExclGroup : public CXFA_Node {
  public:
-  CXFA_ExclGroup(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ExclGroup(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ExclGroup() override;
 };
 

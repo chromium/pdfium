@@ -11,7 +11,7 @@
 
 class CXFA_Rectangle : public CXFA_Node {
  public:
-  CXFA_Rectangle(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Rectangle() override;
 };
 

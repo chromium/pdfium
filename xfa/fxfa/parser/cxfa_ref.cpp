@@ -18,7 +18,7 @@ constexpr wchar_t kName[] = L"ref";
 
 }  // namespace
 
-CXFA_Ref::CXFA_Ref(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Ref::CXFA_Ref(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

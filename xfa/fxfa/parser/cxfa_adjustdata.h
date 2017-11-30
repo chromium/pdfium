@@ -11,7 +11,7 @@
 
 class CXFA_AdjustData : public CXFA_Node {
  public:
-  CXFA_AdjustData(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_AdjustData(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_AdjustData() override;
 };
 

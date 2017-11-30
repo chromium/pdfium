@@ -11,7 +11,7 @@
 
 class CXFA_Era : public CXFA_Node {
  public:
-  CXFA_Era(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Era(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Era() override;
 };
 

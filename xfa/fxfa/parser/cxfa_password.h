@@ -11,7 +11,7 @@
 
 class CXFA_Password : public CXFA_Node {
  public:
-  CXFA_Password(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Password(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Password() override;
 };
 

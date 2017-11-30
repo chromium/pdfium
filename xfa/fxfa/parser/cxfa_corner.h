@@ -11,7 +11,7 @@
 
 class CXFA_Corner : public CXFA_Node {
  public:
-  CXFA_Corner(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Corner() override;
 };
 

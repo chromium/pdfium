@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"batchOutput";
 
 }  // namespace
 
-CXFA_BatchOutput::CXFA_BatchOutput(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_BatchOutput::CXFA_BatchOutput(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

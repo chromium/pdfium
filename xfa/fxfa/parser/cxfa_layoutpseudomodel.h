@@ -11,7 +11,7 @@
 
 class CXFA_LayoutPseudoModel : public CXFA_Node {
  public:
-  CXFA_LayoutPseudoModel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_LayoutPseudoModel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_LayoutPseudoModel() override;
 };
 

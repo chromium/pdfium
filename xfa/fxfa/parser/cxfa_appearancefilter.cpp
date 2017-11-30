@@ -21,7 +21,7 @@ constexpr wchar_t kName[] = L"appearanceFilter";
 }  // namespace
 
 CXFA_AppearanceFilter::CXFA_AppearanceFilter(CXFA_Document* doc,
-                                             XFA_XDPPACKET packet)
+                                             XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

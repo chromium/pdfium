@@ -11,7 +11,7 @@
 
 class CXFA_Break : public CXFA_Node {
  public:
-  CXFA_Break(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Break(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Break() override;
 };
 

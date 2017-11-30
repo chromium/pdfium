@@ -11,7 +11,7 @@
 
 class CXFA_DateTimeEdit : public CXFA_Node {
  public:
-  CXFA_DateTimeEdit(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DateTimeEdit() override;
 };
 

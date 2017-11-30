@@ -21,7 +21,8 @@ constexpr wchar_t kName[] = L"xsdConnection";
 
 }  // namespace
 
-CXFA_XsdConnection::CXFA_XsdConnection(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_XsdConnection::CXFA_XsdConnection(CXFA_Document* doc,
+                                       XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_ConnectionSet,

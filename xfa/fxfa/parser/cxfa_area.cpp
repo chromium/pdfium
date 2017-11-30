@@ -28,7 +28,7 @@ constexpr wchar_t kName[] = L"area";
 
 }  // namespace
 
-CXFA_Area::CXFA_Area(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Area::CXFA_Area(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(
           doc,
           packet,

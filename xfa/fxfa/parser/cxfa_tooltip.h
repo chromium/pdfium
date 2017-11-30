@@ -11,7 +11,7 @@
 
 class CXFA_ToolTip : public CXFA_Node {
  public:
-  CXFA_ToolTip(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ToolTip(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ToolTip() override;
 };
 

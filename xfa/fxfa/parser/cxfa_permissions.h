@@ -11,7 +11,7 @@
 
 class CXFA_Permissions : public CXFA_Node {
  public:
-  CXFA_Permissions(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Permissions(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Permissions() override;
 };
 

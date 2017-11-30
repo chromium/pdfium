@@ -11,7 +11,7 @@
 
 class CXFA_RootElement : public CXFA_Node {
  public:
-  CXFA_RootElement(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_RootElement() override;
 };
 

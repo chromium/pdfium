@@ -11,7 +11,7 @@
 
 class CXFA_RenderPolicy : public CXFA_Node {
  public:
-  CXFA_RenderPolicy(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_RenderPolicy(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_RenderPolicy() override;
 };
 

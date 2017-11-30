@@ -29,7 +29,7 @@ constexpr wchar_t kName[] = L"textEdit";
 
 }  // namespace
 
-CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

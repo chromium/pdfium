@@ -28,7 +28,7 @@ constexpr wchar_t kName[] = L"permissions";
 
 }  // namespace
 
-CXFA_Permissions::CXFA_Permissions(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Permissions::CXFA_Permissions(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

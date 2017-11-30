@@ -11,7 +11,7 @@
 
 class CXFA_Driver : public CXFA_Node {
  public:
-  CXFA_Driver(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Driver(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Driver() override;
 };
 

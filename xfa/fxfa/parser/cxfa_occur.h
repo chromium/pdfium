@@ -11,7 +11,7 @@
 
 class CXFA_Occur : public CXFA_Node {
  public:
-  CXFA_Occur(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Occur(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Occur() override;
 };
 

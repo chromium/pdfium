@@ -11,7 +11,7 @@
 
 class CXFA_EncryptionMethods : public CXFA_Node {
  public:
-  CXFA_EncryptionMethods(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_EncryptionMethods(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EncryptionMethods() override;
 };
 

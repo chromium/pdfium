@@ -11,7 +11,7 @@
 
 class CXFA_Caption : public CXFA_Node {
  public:
-  CXFA_Caption(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Caption() override;
 };
 

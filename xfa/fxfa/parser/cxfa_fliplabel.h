@@ -11,7 +11,7 @@
 
 class CXFA_FlipLabel : public CXFA_Node {
  public:
-  CXFA_FlipLabel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_FlipLabel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_FlipLabel() override;
 };
 

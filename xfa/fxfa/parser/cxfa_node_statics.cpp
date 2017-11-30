@@ -922,7 +922,7 @@ XFA_Attribute CXFA_Node::NameToAttribute(const WideStringView& name) {
 // static
 std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
                                              XFA_Element element,
-                                             XFA_XDPPACKET packet) {
+                                             XFA_PacketType packet) {
   ASSERT(element != XFA_Element::NodeList);
   std::unique_ptr<CXFA_Node> node;
   switch (element) {
@@ -1864,7 +1864,8 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
       NOTREACHED();
       return nullptr;
   }
-  if (!node || !node->IsValidInPacket(packet))
+  if (!node || !node->IsValidInPacket(static_cast<XFA_XDPPACKET>(
+                   1 << static_cast<uint8_t>(packet))))
     return nullptr;
   return node;
 }

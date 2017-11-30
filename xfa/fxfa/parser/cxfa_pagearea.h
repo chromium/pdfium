@@ -11,7 +11,7 @@
 
 class CXFA_PageArea : public CXFA_Node {
  public:
-  CXFA_PageArea(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_PageArea(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PageArea() override;
 };
 

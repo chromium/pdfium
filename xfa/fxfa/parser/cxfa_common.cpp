@@ -27,7 +27,7 @@ constexpr wchar_t kName[] = L"common";
 
 }  // namespace
 
-CXFA_Common::CXFA_Common(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Common::CXFA_Common(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

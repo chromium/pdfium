@@ -11,7 +11,7 @@
 
 class CXFA_DefaultTypeface : public CXFA_Node {
  public:
-  CXFA_DefaultTypeface(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DefaultTypeface(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DefaultTypeface() override;
 };
 

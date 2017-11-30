@@ -39,7 +39,7 @@ constexpr wchar_t kName[] = L"pdf";
 
 }  // namespace
 
-CXFA_Pdf::CXFA_Pdf(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Pdf::CXFA_Pdf(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

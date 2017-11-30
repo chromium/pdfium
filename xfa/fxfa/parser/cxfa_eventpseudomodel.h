@@ -11,7 +11,7 @@
 
 class CXFA_EventPseudoModel : public CXFA_Node {
  public:
-  CXFA_EventPseudoModel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_EventPseudoModel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EventPseudoModel() override;
 };
 

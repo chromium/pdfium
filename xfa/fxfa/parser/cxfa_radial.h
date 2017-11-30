@@ -11,7 +11,7 @@
 
 class CXFA_Radial : public CXFA_Node {
  public:
-  CXFA_Radial(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Radial() override;
 };
 

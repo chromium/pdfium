@@ -11,7 +11,7 @@
 
 class CXFA_PsMap : public CXFA_Node {
  public:
-  CXFA_PsMap(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_PsMap(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PsMap() override;
 };
 

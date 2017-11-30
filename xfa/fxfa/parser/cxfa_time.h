@@ -11,7 +11,7 @@
 
 class CXFA_Time : public CXFA_Node {
  public:
-  CXFA_Time(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Time(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Time() override;
 };
 

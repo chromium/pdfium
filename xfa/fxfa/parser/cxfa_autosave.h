@@ -11,7 +11,7 @@
 
 class CXFA_AutoSave : public CXFA_Node {
  public:
-  CXFA_AutoSave(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_AutoSave(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_AutoSave() override;
 };
 

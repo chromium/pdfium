@@ -18,7 +18,7 @@ constexpr wchar_t kName[] = L"ADBE_JSDebugger";
 }  // namespace
 
 CXFA_aDBE_JSDebugger::CXFA_aDBE_JSDebugger(CXFA_Document* doc,
-                                           XFA_XDPPACKET packet)
+                                           XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

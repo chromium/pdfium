@@ -30,7 +30,7 @@ constexpr wchar_t kName[] = L"recordSet";
 
 }  // namespace
 
-CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_SourceSet,

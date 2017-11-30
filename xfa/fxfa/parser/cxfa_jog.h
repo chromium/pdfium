@@ -11,7 +11,7 @@
 
 class CXFA_Jog : public CXFA_Node {
  public:
-  CXFA_Jog(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Jog(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Jog() override;
 };
 

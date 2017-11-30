@@ -11,7 +11,7 @@
 
 class CXFA_Filter : public CXFA_Node {
  public:
-  CXFA_Filter(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Filter(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Filter() override;
 };
 

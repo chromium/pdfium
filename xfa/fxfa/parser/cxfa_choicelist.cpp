@@ -27,7 +27,7 @@ constexpr wchar_t kName[] = L"choiceList";
 
 }  // namespace
 
-CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

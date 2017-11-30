@@ -11,7 +11,7 @@
 
 class CXFA_Trace : public CXFA_Node {
  public:
-  CXFA_Trace(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Trace(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Trace() override;
 };
 

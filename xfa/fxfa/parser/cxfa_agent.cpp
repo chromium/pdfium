@@ -18,7 +18,7 @@ constexpr wchar_t kName[] = L"agent";
 
 }  // namespace
 
-CXFA_Agent::CXFA_Agent(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Agent::CXFA_Agent(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

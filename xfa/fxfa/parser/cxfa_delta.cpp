@@ -12,7 +12,7 @@ constexpr wchar_t kName[] = L"delta";
 
 }  // namespace
 
-CXFA_Delta::CXFA_Delta(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Delta::CXFA_Delta(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Form,

@@ -11,7 +11,7 @@
 
 class CXFA_Stipple : public CXFA_Node {
  public:
-  CXFA_Stipple(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Stipple(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Stipple() override;
 };
 

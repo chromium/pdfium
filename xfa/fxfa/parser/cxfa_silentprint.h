@@ -11,7 +11,7 @@
 
 class CXFA_SilentPrint : public CXFA_Node {
  public:
-  CXFA_SilentPrint(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SilentPrint(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SilentPrint() override;
 };
 

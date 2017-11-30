@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"exclude";
 
 }  // namespace
 
-CXFA_Exclude::CXFA_Exclude(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Exclude::CXFA_Exclude(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

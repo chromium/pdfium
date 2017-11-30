@@ -11,7 +11,7 @@
 
 class CXFA_SharpxHTML : public CXFA_Node {
  public:
-  CXFA_SharpxHTML(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SharpxHTML(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SharpxHTML() override;
 };
 

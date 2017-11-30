@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"producer";
 
 }  // namespace
 
-CXFA_Producer::CXFA_Producer(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Producer::CXFA_Producer(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

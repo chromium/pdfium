@@ -18,7 +18,7 @@ constexpr wchar_t kName[] = L"dayNames";
 
 }  // namespace
 
-CXFA_DayNames::CXFA_DayNames(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_DayNames::CXFA_DayNames(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

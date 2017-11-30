@@ -11,7 +11,7 @@
 
 class CXFA_Agent : public CXFA_Node {
  public:
-  CXFA_Agent(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Agent(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Agent() override;
 };
 

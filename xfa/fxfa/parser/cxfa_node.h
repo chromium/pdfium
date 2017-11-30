@@ -70,7 +70,7 @@ class CXFA_Node : public CXFA_Object {
   static XFA_Element NameToElement(const WideString& name);
   static std::unique_ptr<CXFA_Node> Create(CXFA_Document* doc,
                                            XFA_Element element,
-                                           XFA_XDPPACKET packet);
+                                           XFA_PacketType packet);
 
   ~CXFA_Node() override;
 
@@ -84,7 +84,7 @@ class CXFA_Node : public CXFA_Object {
   XFA_Attribute GetAttribute(size_t i) const;
   XFA_AttributeType GetAttributeType(XFA_Attribute type) const;
 
-  XFA_XDPPACKET GetPacketID() const { return m_ePacket; }
+  XFA_PacketType GetPacketType() const { return m_ePacket; }
 
   void SetFlag(uint32_t dwFlag, bool bNotify);
   void ClearFlag(uint32_t dwFlag);
@@ -123,7 +123,7 @@ class CXFA_Node : public CXFA_Object {
 
   bool IsAttributeInXML();
   bool IsFormContainer() const {
-    return m_ePacket == XFA_XDPPACKET_Form && IsContainerNode();
+    return m_ePacket == XFA_PacketType::Form && IsContainerNode();
   }
   void SetXMLMappingNode(CFX_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
   CFX_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
@@ -182,7 +182,7 @@ class CXFA_Node : public CXFA_Object {
 
  protected:
   CXFA_Node(CXFA_Document* pDoc,
-            XFA_XDPPACKET ePacket,
+            XFA_PacketType ePacket,
             uint32_t validPackets,
             XFA_ObjectType oType,
             XFA_Element eType,
@@ -208,7 +208,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pLastChild;
   CXFA_Node* m_pParent;
   CFX_XMLNode* m_pXMLNode;
-  const XFA_XDPPACKET m_ePacket;
+  const XFA_PacketType m_ePacket;
   uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;

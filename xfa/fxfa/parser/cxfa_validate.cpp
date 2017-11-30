@@ -31,7 +31,7 @@ constexpr wchar_t kName[] = L"validate";
 
 }  // namespace
 
-CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(
           doc,
           packet,

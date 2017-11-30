@@ -11,7 +11,7 @@
 
 class CXFA_Relevant : public CXFA_Node {
  public:
-  CXFA_Relevant(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Relevant(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Relevant() override;
 };
 

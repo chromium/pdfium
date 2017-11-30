@@ -11,7 +11,7 @@
 
 class CXFA_Integer : public CXFA_Node {
  public:
-  CXFA_Integer(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Integer(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Integer() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_CompressLogicalStructure : public CXFA_Node {
  public:
-  CXFA_CompressLogicalStructure(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_CompressLogicalStructure(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CompressLogicalStructure() override;
 };
 

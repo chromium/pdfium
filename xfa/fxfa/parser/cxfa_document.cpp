@@ -213,12 +213,10 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
   }
 }
 
-CXFA_Node* CXFA_Document::CreateNode(XFA_XDPPACKET packet,
+CXFA_Node* CXFA_Document::CreateNode(XFA_PacketType packet,
                                      XFA_Element eElement) {
-  if (packet == XFA_XDPPACKET_UNKNOWN || packet >= XFA_XDPPACKET_LAST ||
-      eElement == XFA_Element::Unknown) {
+  if (eElement == XFA_Element::Unknown)
     return nullptr;
-  }
 
   std::unique_ptr<CXFA_Node> pNode = CXFA_Node::Create(this, eElement, packet);
   if (!pNode)

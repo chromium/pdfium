@@ -11,7 +11,7 @@
 
 class CXFA_EraNames : public CXFA_Node {
  public:
-  CXFA_EraNames(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_EraNames(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EraNames() override;
 };
 

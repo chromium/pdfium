@@ -777,7 +777,7 @@ void CJX_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
       pChild = pItem;
     }
 
-    if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Form &&
+    if (GetXFANode()->GetPacketType() == XFA_PacketType::Form &&
         GetXFANode()->GetElementType() == XFA_Element::ExData) {
       CFX_XMLNode* pTempXMLNode = GetXFANode()->GetXMLMappingNode();
       GetXFANode()->SetXMLMappingNode(pFakeXMLRoot.release());
@@ -825,14 +825,14 @@ void CJX_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
   // TODO(weili): Check whether we need to save pretty print XML, pdfium:501.
 
   WideString bsXMLHeader = L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-  if (GetXFANode()->GetPacketID() != XFA_XDPPACKET_Form &&
-      GetXFANode()->GetPacketID() != XFA_XDPPACKET_Datasets) {
+  if (GetXFANode()->GetPacketType() != XFA_PacketType::Form &&
+      GetXFANode()->GetPacketType() != XFA_PacketType::Datasets) {
     pArguments->GetReturnValue()->SetString("");
     return;
   }
 
   CFX_XMLNode* pElement = nullptr;
-  if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Datasets) {
+  if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
     pElement = GetXFANode()->GetXMLMappingNode();
     if (!pElement || pElement->GetType() != FX_XMLNODE_Element) {
       pArguments->GetReturnValue()->SetString(
@@ -848,7 +848,7 @@ void CJX_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
   pStream->SetCodePage(FX_CODEPAGE_UTF8);
   pStream->WriteString(bsXMLHeader.AsStringView());
 
-  if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Form)
+  if (GetXFANode()->GetPacketType() == XFA_PacketType::Form)
     XFA_DataExporter_RegenerateFormFile(GetXFANode(), pStream, nullptr, true);
   else
     pElement->SaveXMLNode(pStream);
@@ -1053,7 +1053,7 @@ void CJX_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
   if (!pNotify)
     return;
 
-  if (!(GetXFANode()->GetPacketID() & XFA_XDPPACKET_Form)) {
+  if (GetXFANode()->GetPacketType() != XFA_PacketType::Form) {
     pNotify->OnValueChanged(GetXFANode(), eAttribute, GetXFANode(),
                             GetXFANode());
     return;
@@ -1405,7 +1405,7 @@ void CJX_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
 
     WideString wsFormatValue(wsNewValue);
     CXFA_WidgetData* pContainerWidgetData = nullptr;
-    if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Datasets) {
+    if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
       WideString wsPicture;
       for (const auto& pFormNode : *(GetXFANode()->GetBindItems())) {
         if (!pFormNode || pFormNode->HasRemovedChildren())
@@ -1421,7 +1421,7 @@ void CJX_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
 
         pContainerWidgetData = nullptr;
       }
-    } else if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Form) {
+    } else if (GetXFANode()->GetPacketType() == XFA_PacketType::Form) {
       pContainerWidgetData = GetXFANode()->GetContainerWidgetData();
     }
 
@@ -2358,7 +2358,7 @@ void CJX_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
 
   pNewNode->JSNode()->SetAttribute(XFA_Attribute::Name, strName.AsStringView(),
                                    true);
-  if (pNewNode->GetPacketID() == XFA_XDPPACKET_Datasets)
+  if (pNewNode->GetPacketType() == XFA_PacketType::Datasets)
     pNewNode->CreateXMLMappingNode();
 
   pArguments->GetReturnValue()->Assign(
@@ -3084,7 +3084,7 @@ bool CJX_Node::SetCData(XFA_Attribute eAttr,
                           wsValue);
         } else {
           bool bDeleteChildren = true;
-          if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Datasets) {
+          if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
             for (CXFA_Node* pChildDataNode =
                      GetXFANode()->GetNodeItem(XFA_NODEITEM_FirstChild);
                  pChildDataNode; pChildDataNode = pChildDataNode->GetNodeItem(
@@ -3142,7 +3142,7 @@ void CJX_Node::SetAttributeValue(const WideString& wsValue,
                         wsXMLValue);
       } else {
         bool bDeleteChildren = true;
-        if (GetXFANode()->GetPacketID() == XFA_XDPPACKET_Datasets) {
+        if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
           for (CXFA_Node* pChildDataNode =
                    GetXFANode()->GetNodeItem(XFA_NODEITEM_FirstChild);
                pChildDataNode; pChildDataNode = pChildDataNode->GetNodeItem(
@@ -3373,7 +3373,7 @@ bool CJX_Node::SetContent(const WideString& wsContent,
       break;
     case XFA_ObjectType::NodeV:
       pNode = GetXFANode();
-      if (bSyncData && GetXFANode()->GetPacketID() == XFA_XDPPACKET_Form) {
+      if (bSyncData && GetXFANode()->GetPacketType() == XFA_PacketType::Form) {
         CXFA_Node* pParent = GetXFANode()->GetNodeItem(XFA_NODEITEM_Parent);
         if (pParent) {
           pParent = pParent->GetNodeItem(XFA_NODEITEM_Parent);
@@ -3499,7 +3499,7 @@ pdfium::Optional<WideString> CJX_Node::TryNamespace() {
     return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
   }
 
-  if (GetXFANode()->GetPacketID() != XFA_XDPPACKET_Datasets)
+  if (GetXFANode()->GetPacketType() != XFA_PacketType::Datasets)
     return GetXFANode()->GetModelNode()->JSNode()->TryNamespace();
 
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
@@ -3550,7 +3550,7 @@ CXFA_Node* CJX_Node::GetProperty(int32_t index,
   CXFA_Node* pNewNode = nullptr;
   for (; iCount <= index; ++iCount) {
     pNewNode =
-        GetDocument()->CreateNode(GetXFANode()->GetPacketID(), eProperty);
+        GetDocument()->CreateNode(GetXFANode()->GetPacketType(), eProperty);
     if (!pNewNode)
       return nullptr;
     GetXFANode()->InsertChild(pNewNode, nullptr);
@@ -3584,7 +3584,7 @@ bool CJX_Node::GetMapModuleValue(void* pKey, void*& pValue) {
         return true;
       }
     }
-    if (pNode->GetPacketID() == XFA_XDPPACKET_Datasets)
+    if (pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
   return false;
@@ -3648,7 +3648,7 @@ bool CJX_Node::GetMapModuleBuffer(void* pKey,
         break;
       }
     }
-    if (!bProtoAlso || pNode->GetPacketID() == XFA_XDPPACKET_Datasets)
+    if (!bProtoAlso || pNode->GetPacketType() == XFA_PacketType::Datasets)
       break;
   }
   if (!pBuffer)

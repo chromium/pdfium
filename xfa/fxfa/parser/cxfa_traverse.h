@@ -11,7 +11,7 @@
 
 class CXFA_Traverse : public CXFA_Node {
  public:
-  CXFA_Traverse(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Traverse(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Traverse() override;
 };
 

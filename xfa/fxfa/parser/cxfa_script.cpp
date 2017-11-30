@@ -30,7 +30,7 @@ constexpr wchar_t kName[] = L"script";
 
 }  // namespace
 
-CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(
           doc,
           packet,

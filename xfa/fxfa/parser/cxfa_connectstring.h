@@ -11,7 +11,7 @@
 
 class CXFA_ConnectString : public CXFA_Node {
  public:
-  CXFA_ConnectString(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ConnectString(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ConnectString() override;
 };
 

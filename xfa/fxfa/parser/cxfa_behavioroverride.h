@@ -11,7 +11,7 @@
 
 class CXFA_BehaviorOverride : public CXFA_Node {
  public:
-  CXFA_BehaviorOverride(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_BehaviorOverride(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_BehaviorOverride() override;
 };
 

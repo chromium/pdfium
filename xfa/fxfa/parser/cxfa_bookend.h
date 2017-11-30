@@ -11,7 +11,7 @@
 
 class CXFA_Bookend : public CXFA_Node {
  public:
-  CXFA_Bookend(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Bookend(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Bookend() override;
 };
 

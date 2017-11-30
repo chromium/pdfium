@@ -11,7 +11,7 @@
 
 class CXFA_Tagged : public CXFA_Node {
  public:
-  CXFA_Tagged(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Tagged(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Tagged() override;
 };
 

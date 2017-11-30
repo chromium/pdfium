@@ -11,7 +11,7 @@
 
 class CXFA_CompressObjectStream : public CXFA_Node {
  public:
-  CXFA_CompressObjectStream(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_CompressObjectStream(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CompressObjectStream() override;
 };
 

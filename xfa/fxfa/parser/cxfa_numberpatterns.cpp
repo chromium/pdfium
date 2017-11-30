@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"numberPatterns";
 }  // namespace
 
 CXFA_NumberPatterns::CXFA_NumberPatterns(CXFA_Document* doc,
-                                         XFA_XDPPACKET packet)
+                                         XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

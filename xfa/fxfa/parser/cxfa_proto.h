@@ -11,7 +11,7 @@
 
 class CXFA_Proto : public CXFA_Node {
  public:
-  CXFA_Proto(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Proto() override;
 };
 

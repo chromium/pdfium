@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"compress";
 
 }  // namespace
 
-CXFA_Compress::CXFA_Compress(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Compress::CXFA_Compress(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

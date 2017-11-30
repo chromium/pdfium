@@ -11,7 +11,7 @@
 
 class CXFA_SignatureProperties : public CXFA_Node {
  public:
-  CXFA_SignatureProperties(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SignatureProperties(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SignatureProperties() override;
 };
 

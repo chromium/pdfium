@@ -11,7 +11,7 @@
 
 class CXFA_EffectiveInputPolicy : public CXFA_Node {
  public:
-  CXFA_EffectiveInputPolicy(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_EffectiveInputPolicy(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EffectiveInputPolicy() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_PlaintextMetadata : public CXFA_Node {
  public:
-  CXFA_PlaintextMetadata(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_PlaintextMetadata(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PlaintextMetadata() override;
 };
 

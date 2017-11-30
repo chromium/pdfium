@@ -11,7 +11,7 @@
 
 class CXFA_Pagination : public CXFA_Node {
  public:
-  CXFA_Pagination(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Pagination(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Pagination() override;
 };
 

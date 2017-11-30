@@ -11,7 +11,7 @@
 
 class CXFA_BreakBefore : public CXFA_Node {
  public:
-  CXFA_BreakBefore(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_BreakBefore() override;
 };
 

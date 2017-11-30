@@ -11,7 +11,7 @@
 
 class CXFA_Script : public CXFA_Node {
  public:
-  CXFA_Script(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Script(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Script() override;
 };
 

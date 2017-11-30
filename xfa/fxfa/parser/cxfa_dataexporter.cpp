@@ -489,8 +489,8 @@ bool CXFA_DataExporter::Export(
     const char* pChecksum) {
   CFX_XMLDoc* pXMLDoc = m_pDocument->GetXMLDoc();
   if (pNode->IsModelNode()) {
-    switch (pNode->GetPacketID()) {
-      case XFA_XDPPACKET_XDP: {
+    switch (pNode->GetPacketType()) {
+      case XFA_PacketType::Xdp: {
         pStream->WriteString(
             L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">");
         for (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -500,7 +500,7 @@ bool CXFA_DataExporter::Export(
         pStream->WriteString(L"</xdp:xdp\n>");
         break;
       }
-      case XFA_XDPPACKET_Datasets: {
+      case XFA_PacketType::Datasets: {
         CFX_XMLElement* pElement =
             static_cast<CFX_XMLElement*>(pNode->GetXMLMappingNode());
         if (!pElement || pElement->GetType() != FX_XMLNODE_Element)
@@ -512,11 +512,11 @@ bool CXFA_DataExporter::Export(
         pXMLDoc->SaveXMLNode(pStream, pElement);
         break;
       }
-      case XFA_XDPPACKET_Form: {
+      case XFA_PacketType::Form: {
         XFA_DataExporter_RegenerateFormFile(pNode, pStream, pChecksum);
         break;
       }
-      case XFA_XDPPACKET_Template:
+      case XFA_PacketType::Template:
       default: {
         CFX_XMLElement* pElement =
             static_cast<CFX_XMLElement*>(pNode->GetXMLMappingNode());

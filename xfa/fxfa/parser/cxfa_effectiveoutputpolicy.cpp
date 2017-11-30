@@ -20,7 +20,7 @@ constexpr wchar_t kName[] = L"effectiveOutputPolicy";
 }  // namespace
 
 CXFA_EffectiveOutputPolicy::CXFA_EffectiveOutputPolicy(CXFA_Document* doc,
-                                                       XFA_XDPPACKET packet)
+                                                       XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_ConnectionSet,

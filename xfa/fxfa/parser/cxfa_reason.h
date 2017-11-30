@@ -11,7 +11,7 @@
 
 class CXFA_Reason : public CXFA_Node {
  public:
-  CXFA_Reason(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Reason(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Reason() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_NeverEmbed : public CXFA_Node {
  public:
-  CXFA_NeverEmbed(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_NeverEmbed(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_NeverEmbed() override;
 };
 

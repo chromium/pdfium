@@ -11,7 +11,7 @@
 
 class CXFA_RecordSet : public CXFA_Node {
  public:
-  CXFA_RecordSet(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_RecordSet() override;
 };
 

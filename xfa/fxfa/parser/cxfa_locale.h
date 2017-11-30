@@ -11,7 +11,7 @@
 
 class CXFA_Locale : public CXFA_Node {
  public:
-  CXFA_Locale(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Locale(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Locale() override;
 };
 

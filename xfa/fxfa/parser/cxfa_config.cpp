@@ -21,7 +21,7 @@ constexpr wchar_t kName[] = L"config";
 
 }  // namespace
 
-CXFA_Config::CXFA_Config(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Config::CXFA_Config(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

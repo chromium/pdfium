@@ -11,7 +11,7 @@
 
 class CXFA_Comb : public CXFA_Node {
  public:
-  CXFA_Comb(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Comb(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Comb() override;
 };
 

@@ -18,7 +18,7 @@ constexpr wchar_t kName[] = L"encryptionLevel";
 }  // namespace
 
 CXFA_EncryptionLevel::CXFA_EncryptionLevel(CXFA_Document* doc,
-                                           XFA_XDPPACKET packet)
+                                           XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

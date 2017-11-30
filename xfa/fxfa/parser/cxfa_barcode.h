@@ -11,7 +11,7 @@
 
 class CXFA_Barcode : public CXFA_Node {
  public:
-  CXFA_Barcode(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Barcode() override;
 };
 

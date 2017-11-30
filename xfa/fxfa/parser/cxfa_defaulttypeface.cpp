@@ -20,7 +20,7 @@ constexpr wchar_t kName[] = L"defaultTypeface";
 }  // namespace
 
 CXFA_DefaultTypeface::CXFA_DefaultTypeface(CXFA_Document* doc,
-                                           XFA_XDPPACKET packet)
+                                           XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

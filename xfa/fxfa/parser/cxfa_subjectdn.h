@@ -11,7 +11,7 @@
 
 class CXFA_SubjectDN : public CXFA_Node {
  public:
-  CXFA_SubjectDN(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SubjectDN(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SubjectDN() override;
 };
 

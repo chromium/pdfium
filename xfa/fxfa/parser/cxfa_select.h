@@ -11,7 +11,7 @@
 
 class CXFA_Select : public CXFA_Node {
  public:
-  CXFA_Select(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Select(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Select() override;
 };
 

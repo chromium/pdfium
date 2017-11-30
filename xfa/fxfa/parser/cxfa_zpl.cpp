@@ -24,7 +24,7 @@ constexpr wchar_t kName[] = L"zpl";
 
 }  // namespace
 
-CXFA_Zpl::CXFA_Zpl(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Zpl::CXFA_Zpl(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

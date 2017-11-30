@@ -16,7 +16,7 @@ constexpr wchar_t kName[] = L"typeface";
 
 }  // namespace
 
-CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

@@ -11,7 +11,7 @@
 
 class CXFA_Pdf : public CXFA_Node {
  public:
-  CXFA_Pdf(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Pdf(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Pdf() override;
 };
 

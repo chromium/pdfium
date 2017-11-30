@@ -11,7 +11,7 @@
 
 class CXFA_Exclude : public CXFA_Node {
  public:
-  CXFA_Exclude(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Exclude(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Exclude() override;
 };
 

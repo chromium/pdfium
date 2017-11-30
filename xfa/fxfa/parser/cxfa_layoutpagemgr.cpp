@@ -310,7 +310,7 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
   CXFA_Document* pDocument = pTemplateNode->GetDocument();
   pPageArea = m_pTemplatePageSetRoot->GetChild(0, XFA_Element::PageArea, false);
   if (!pPageArea) {
-    pPageArea = pDocument->CreateNode(m_pTemplatePageSetRoot->GetPacketID(),
+    pPageArea = pDocument->CreateNode(m_pTemplatePageSetRoot->GetPacketType(),
                                       XFA_Element::PageArea);
     if (!pPageArea)
       return false;
@@ -321,7 +321,7 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
   CXFA_Node* pContentArea =
       pPageArea->GetChild(0, XFA_Element::ContentArea, false);
   if (!pContentArea) {
-    pContentArea = pDocument->CreateNode(pPageArea->GetPacketID(),
+    pContentArea = pDocument->CreateNode(pPageArea->GetPacketType(),
                                          XFA_Element::ContentArea);
     if (!pContentArea)
       return false;
@@ -340,7 +340,7 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
   CXFA_Node* pMedium = pPageArea->GetChild(0, XFA_Element::Medium, false);
   if (!pMedium) {
     pMedium =
-        pDocument->CreateNode(pPageArea->GetPacketID(), XFA_Element::Medium);
+        pDocument->CreateNode(pPageArea->GetPacketType(), XFA_Element::Medium);
     if (!pContentArea)
       return false;
 
@@ -1721,8 +1721,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
       iIndex++;
     }
     if (!pPendingPageSet) {
-      if (pRootPageSetContainerItem->m_pFormNode->GetPacketID() ==
-          XFA_XDPPACKET_Template) {
+      if (pRootPageSetContainerItem->m_pFormNode->GetPacketType() ==
+          XFA_PacketType::Template) {
         pPendingPageSet =
             pRootPageSetContainerItem->m_pFormNode->CloneTemplateToForm(false);
       } else {
@@ -1738,7 +1738,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
     for (CXFA_ContainerLayoutItem* pContainerItem = iterator.MoveToNext();
          pContainerItem; pContainerItem = iterator.MoveToNext()) {
       CXFA_Node* pNode = pContainerItem->m_pFormNode;
-      if (pNode->GetPacketID() != XFA_XDPPACKET_Template)
+      if (pNode->GetPacketType() != XFA_PacketType::Template)
         continue;
 
       switch (pNode->GetElementType()) {
@@ -1980,7 +1980,7 @@ void CXFA_LayoutPageMgr::PrepareLayout() {
 
   CXFA_ContainerLayoutItem* pRootLayoutItem = m_pPageSetLayoutItemRoot;
   if (pRootLayoutItem &&
-      pRootLayoutItem->m_pFormNode->GetPacketID() == XFA_XDPPACKET_Form) {
+      pRootLayoutItem->m_pFormNode->GetPacketType() == XFA_PacketType::Form) {
     CXFA_Node* pPageSetFormNode = pRootLayoutItem->m_pFormNode;
     pRootLayoutItem->m_pFormNode->GetDocument()->m_pPendingPageSet.clear();
     if (pPageSetFormNode->HasRemovedChildren()) {

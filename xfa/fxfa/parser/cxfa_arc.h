@@ -11,7 +11,7 @@
 
 class CXFA_Arc : public CXFA_Node {
  public:
-  CXFA_Arc(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Arc(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Arc() override;
 };
 

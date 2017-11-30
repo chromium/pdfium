@@ -11,7 +11,7 @@
 
 class CXFA_Amd : public CXFA_Node {
  public:
-  CXFA_Amd(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Amd() override;
 };
 

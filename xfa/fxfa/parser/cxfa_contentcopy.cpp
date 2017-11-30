@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"contentCopy";
 
 }  // namespace
 
-CXFA_ContentCopy::CXFA_ContentCopy(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_ContentCopy::CXFA_ContentCopy(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

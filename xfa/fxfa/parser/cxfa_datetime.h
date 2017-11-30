@@ -11,7 +11,7 @@
 
 class CXFA_DateTime : public CXFA_Node {
  public:
-  CXFA_DateTime(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DateTime(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DateTime() override;
 };
 

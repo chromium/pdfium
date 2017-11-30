@@ -31,7 +31,7 @@ constexpr wchar_t kName[] = L"connect";
 
 }  // namespace
 
-CXFA_Connect::CXFA_Connect(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Connect::CXFA_Connect(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |

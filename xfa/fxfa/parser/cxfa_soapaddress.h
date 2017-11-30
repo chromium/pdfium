@@ -11,7 +11,7 @@
 
 class CXFA_SoapAddress : public CXFA_Node {
  public:
-  CXFA_SoapAddress(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SoapAddress(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SoapAddress() override;
 };
 

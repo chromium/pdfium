@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"threshold";
 
 }  // namespace
 
-CXFA_Threshold::CXFA_Threshold(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Threshold::CXFA_Threshold(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

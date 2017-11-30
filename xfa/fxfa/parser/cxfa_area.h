@@ -11,7 +11,7 @@
 
 class CXFA_Area : public CXFA_Node {
  public:
-  CXFA_Area(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Area(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Area() override;
 };
 

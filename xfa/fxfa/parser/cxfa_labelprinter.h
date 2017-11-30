@@ -11,7 +11,7 @@
 
 class CXFA_LabelPrinter : public CXFA_Node {
  public:
-  CXFA_LabelPrinter(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_LabelPrinter(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_LabelPrinter() override;
 };
 

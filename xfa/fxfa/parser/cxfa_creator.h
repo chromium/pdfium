@@ -11,7 +11,7 @@
 
 class CXFA_Creator : public CXFA_Node {
  public:
-  CXFA_Creator(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Creator(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Creator() override;
 };
 

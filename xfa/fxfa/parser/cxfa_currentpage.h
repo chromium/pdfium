@@ -11,7 +11,7 @@
 
 class CXFA_CurrentPage : public CXFA_Node {
  public:
-  CXFA_CurrentPage(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_CurrentPage(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CurrentPage() override;
 };
 

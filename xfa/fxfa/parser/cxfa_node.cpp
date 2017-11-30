@@ -157,7 +157,7 @@ pdfium::Optional<XFA_ATTRIBUTEENUM> CXFA_Node::NameToAttributeEnum(
 }
 
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
-                     XFA_XDPPACKET ePacket,
+                     XFA_PacketType ePacket,
                      uint32_t validPackets,
                      XFA_ObjectType oType,
                      XFA_Element eType,
@@ -429,7 +429,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   if (!property)
     return nodes;
 
-  CXFA_Node* pNewNode = m_pDocument->CreateNode(GetPacketID(), *property);
+  CXFA_Node* pNewNode = m_pDocument->CreateNode(GetPacketType(), *property);
   if (pNewNode) {
     InsertChild(pNewNode, nullptr);
     pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);
@@ -445,9 +445,9 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
 }
 
 CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
-  ASSERT(m_ePacket == XFA_XDPPACKET_Template);
+  ASSERT(m_ePacket == XFA_PacketType::Template);
   CXFA_Node* pClone =
-      m_pDocument->CreateNode(XFA_XDPPACKET_Form, m_elementType);
+      m_pDocument->CreateNode(XFA_PacketType::Form, m_elementType);
   if (!pClone)
     return nullptr;
 
@@ -473,7 +473,7 @@ void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
 }
 
 CXFA_Node* CXFA_Node::GetBindData() {
-  ASSERT(GetPacketID() == XFA_XDPPACKET_Form);
+  ASSERT(GetPacketType() == XFA_PacketType::Form);
   return JSNode()->GetBindingNode();
 }
 
@@ -542,7 +542,8 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
 }
 
 bool CXFA_Node::HasBindItem() {
-  return GetPacketID() == XFA_XDPPACKET_Datasets && JSNode()->GetBindingNode();
+  return GetPacketType() == XFA_PacketType::Datasets &&
+         JSNode()->GetBindingNode();
 }
 
 CXFA_WidgetData* CXFA_Node::GetWidgetData() {
@@ -550,7 +551,7 @@ CXFA_WidgetData* CXFA_Node::GetWidgetData() {
 }
 
 CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
-  if (GetPacketID() != XFA_XDPPACKET_Form)
+  if (GetPacketType() != XFA_PacketType::Form)
     return nullptr;
   XFA_Element eType = GetElementType();
   if (eType == XFA_Element::ExclGroup)
@@ -735,35 +736,35 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
 }
 
 CXFA_Node* CXFA_Node::GetDataDescriptionNode() {
-  if (m_ePacket == XFA_XDPPACKET_Datasets)
+  if (m_ePacket == XFA_PacketType::Datasets)
     return m_pAuxNode;
   return nullptr;
 }
 
 void CXFA_Node::SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode) {
-  ASSERT(m_ePacket == XFA_XDPPACKET_Datasets);
+  ASSERT(m_ePacket == XFA_PacketType::Datasets);
   m_pAuxNode = pDataDescriptionNode;
 }
 
 CXFA_Node* CXFA_Node::GetModelNode() {
-  switch (GetPacketID()) {
-    case XFA_XDPPACKET_XDP:
+  switch (GetPacketType()) {
+    case XFA_PacketType::Xdp:
       return m_pDocument->GetRoot();
-    case XFA_XDPPACKET_Config:
+    case XFA_PacketType::Config:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
-    case XFA_XDPPACKET_Template:
+    case XFA_PacketType::Template:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Template));
-    case XFA_XDPPACKET_Form:
+    case XFA_PacketType::Form:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
-    case XFA_XDPPACKET_Datasets:
+    case XFA_PacketType::Datasets:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Datasets));
-    case XFA_XDPPACKET_LocaleSet:
+    case XFA_PacketType::LocaleSet:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_LocaleSet));
-    case XFA_XDPPACKET_ConnectionSet:
+    case XFA_PacketType::ConnectionSet:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_ConnectionSet));
-    case XFA_XDPPACKET_SourceSet:
+    case XFA_PacketType::SourceSet:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_SourceSet));
-    case XFA_XDPPACKET_Xdc:
+    case XFA_PacketType::Xdc:
       return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Xdc));
     default:
       return this;
@@ -1041,7 +1042,7 @@ void CXFA_Node::GetSOMExpression(WideString& wsSOMExpression) {
 
 CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
   CXFA_Node* pInstanceMgr = nullptr;
-  if (m_ePacket == XFA_XDPPACKET_Form) {
+  if (m_ePacket == XFA_PacketType::Form) {
     CXFA_Node* pParentNode = GetNodeItem(XFA_NODEITEM_Parent);
     if (!pParentNode || pParentNode->GetElementType() == XFA_Element::Area) {
       return pInstanceMgr;
@@ -1131,7 +1132,7 @@ CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
 }
 
 bool CXFA_Node::IsNeedSavingXMLNode() {
-  return m_pXMLNode && (GetPacketID() == XFA_XDPPACKET_Datasets ||
+  return m_pXMLNode && (GetPacketType() == XFA_PacketType::Datasets ||
                         GetElementType() == XFA_Element::Xfa);
 }
 

@@ -11,7 +11,7 @@
 
 class CXFA_PageSet : public CXFA_Node {
  public:
-  CXFA_PageSet(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_PageSet(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PageSet() override;
 };
 

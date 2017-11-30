@@ -18,7 +18,7 @@ constexpr wchar_t kName[] = L"compressObjectStream";
 }  // namespace
 
 CXFA_CompressObjectStream::CXFA_CompressObjectStream(CXFA_Document* doc,
-                                                     XFA_XDPPACKET packet)
+                                                     XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

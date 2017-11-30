@@ -11,7 +11,7 @@
 
 class CXFA_FontInfo : public CXFA_Node {
  public:
-  CXFA_FontInfo(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_FontInfo(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_FontInfo() override;
 };
 

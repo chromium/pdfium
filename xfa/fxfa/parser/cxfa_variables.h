@@ -11,7 +11,7 @@
 
 class CXFA_Variables : public CXFA_Node {
  public:
-  CXFA_Variables(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Variables() override;
 };
 

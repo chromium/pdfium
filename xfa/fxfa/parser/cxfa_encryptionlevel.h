@@ -11,7 +11,7 @@
 
 class CXFA_EncryptionLevel : public CXFA_Node {
  public:
-  CXFA_EncryptionLevel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_EncryptionLevel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EncryptionLevel() override;
 };
 

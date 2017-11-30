@@ -11,7 +11,7 @@
 
 class CXFA_Assist : public CXFA_Node {
  public:
-  CXFA_Assist(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Assist(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Assist() override;
 };
 

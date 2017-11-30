@@ -11,7 +11,7 @@
 
 class CXFA_SubsetBelow : public CXFA_Node {
  public:
-  CXFA_SubsetBelow(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SubsetBelow(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SubsetBelow() override;
 };
 

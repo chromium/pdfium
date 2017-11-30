@@ -11,7 +11,7 @@
 
 class CXFA_NameAttr : public CXFA_Node {
  public:
-  CXFA_NameAttr(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_NameAttr(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_NameAttr() override;
 };
 

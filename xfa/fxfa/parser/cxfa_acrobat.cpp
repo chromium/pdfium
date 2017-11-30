@@ -24,7 +24,7 @@ constexpr wchar_t kName[] = L"acrobat";
 
 }  // namespace
 
-CXFA_Acrobat::CXFA_Acrobat(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Acrobat::CXFA_Acrobat(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

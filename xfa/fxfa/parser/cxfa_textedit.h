@@ -11,7 +11,7 @@
 
 class CXFA_TextEdit : public CXFA_Node {
  public:
-  CXFA_TextEdit(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_TextEdit() override;
 };
 

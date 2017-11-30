@@ -11,7 +11,7 @@
 
 class CXFA_SoapAction : public CXFA_Node {
  public:
-  CXFA_SoapAction(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SoapAction(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SoapAction() override;
 };
 

@@ -11,7 +11,7 @@
 
 class CXFA_ValidateApprovalSignatures : public CXFA_Node {
  public:
-  CXFA_ValidateApprovalSignatures(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_ValidateApprovalSignatures(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ValidateApprovalSignatures() override;
 };
 

@@ -16,7 +16,7 @@ constexpr wchar_t kName[] = L"timePatterns";
 
 }  // namespace
 
-CXFA_TimePatterns::CXFA_TimePatterns(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_TimePatterns::CXFA_TimePatterns(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

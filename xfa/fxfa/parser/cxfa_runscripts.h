@@ -11,7 +11,7 @@
 
 class CXFA_RunScripts : public CXFA_Node {
  public:
-  CXFA_RunScripts(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_RunScripts(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_RunScripts() override;
 };
 

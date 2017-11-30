@@ -11,7 +11,7 @@
 
 class CXFA_Severity : public CXFA_Node {
  public:
-  CXFA_Severity(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Severity(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Severity() override;
 };
 

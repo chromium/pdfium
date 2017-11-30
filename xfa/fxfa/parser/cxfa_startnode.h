@@ -11,7 +11,7 @@
 
 class CXFA_StartNode : public CXFA_Node {
  public:
-  CXFA_StartNode(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_StartNode(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_StartNode() override;
 };
 

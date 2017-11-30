@@ -11,7 +11,7 @@
 
 class CXFA_DSigData : public CXFA_Node {
  public:
-  CXFA_DSigData(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DSigData(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DSigData() override;
 };
 

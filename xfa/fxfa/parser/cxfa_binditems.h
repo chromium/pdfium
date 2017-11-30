@@ -11,7 +11,7 @@
 
 class CXFA_BindItems : public CXFA_Node {
  public:
-  CXFA_BindItems(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_BindItems() override;
 };
 

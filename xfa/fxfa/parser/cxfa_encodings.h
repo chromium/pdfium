@@ -11,7 +11,7 @@
 
 class CXFA_Encodings : public CXFA_Node {
  public:
-  CXFA_Encodings(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Encodings(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Encodings() override;
 };
 

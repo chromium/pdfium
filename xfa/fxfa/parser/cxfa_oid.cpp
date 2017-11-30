@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"oid";
 
 }  // namespace
 
-CXFA_Oid::CXFA_Oid(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Oid::CXFA_Oid(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

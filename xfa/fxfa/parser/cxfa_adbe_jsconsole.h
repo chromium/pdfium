@@ -11,7 +11,7 @@
 
 class CXFA_aDBE_JSConsole : public CXFA_Node {
  public:
-  CXFA_aDBE_JSConsole(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_aDBE_JSConsole(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_aDBE_JSConsole() override;
 };
 

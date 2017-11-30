@@ -11,7 +11,7 @@
 
 class CXFA_Cache : public CXFA_Node {
  public:
-  CXFA_Cache(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Cache(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Cache() override;
 };
 

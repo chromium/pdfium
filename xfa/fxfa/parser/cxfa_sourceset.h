@@ -11,7 +11,7 @@
 
 class CXFA_SourceSet : public CXFA_Node {
  public:
-  CXFA_SourceSet(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_SourceSet(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SourceSet() override;
 };
 

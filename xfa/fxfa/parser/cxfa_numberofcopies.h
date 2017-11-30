@@ -11,7 +11,7 @@
 
 class CXFA_NumberOfCopies : public CXFA_Node {
  public:
-  CXFA_NumberOfCopies(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_NumberOfCopies(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_NumberOfCopies() override;
 };
 

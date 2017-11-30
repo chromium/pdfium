@@ -11,7 +11,7 @@
 
 class CXFA_IncrementalLoad : public CXFA_Node {
  public:
-  CXFA_IncrementalLoad(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_IncrementalLoad(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_IncrementalLoad() override;
 };
 

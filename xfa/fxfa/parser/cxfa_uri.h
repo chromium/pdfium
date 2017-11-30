@@ -11,7 +11,7 @@
 
 class CXFA_Uri : public CXFA_Node {
  public:
-  CXFA_Uri(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Uri(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Uri() override;
 };
 

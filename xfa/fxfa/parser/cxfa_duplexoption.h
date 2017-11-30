@@ -11,7 +11,7 @@
 
 class CXFA_DuplexOption : public CXFA_Node {
  public:
-  CXFA_DuplexOption(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DuplexOption(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DuplexOption() override;
 };
 

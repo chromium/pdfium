@@ -11,7 +11,7 @@
 
 class CXFA_MonthNames : public CXFA_Node {
  public:
-  CXFA_MonthNames(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_MonthNames(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_MonthNames() override;
 };
 

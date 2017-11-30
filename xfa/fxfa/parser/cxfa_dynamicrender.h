@@ -11,7 +11,7 @@
 
 class CXFA_DynamicRender : public CXFA_Node {
  public:
-  CXFA_DynamicRender(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DynamicRender(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DynamicRender() override;
 };
 

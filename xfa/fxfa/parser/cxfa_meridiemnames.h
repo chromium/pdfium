@@ -11,7 +11,7 @@
 
 class CXFA_MeridiemNames : public CXFA_Node {
  public:
-  CXFA_MeridiemNames(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_MeridiemNames(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_MeridiemNames() override;
 };
 

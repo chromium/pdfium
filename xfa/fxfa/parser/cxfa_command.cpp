@@ -25,7 +25,7 @@ constexpr wchar_t kName[] = L"command";
 
 }  // namespace
 
-CXFA_Command::CXFA_Command(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Command::CXFA_Command(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_SourceSet,

@@ -11,7 +11,7 @@
 
 class CXFA_Submit : public CXFA_Node {
  public:
-  CXFA_Submit(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Submit() override;
 };
 

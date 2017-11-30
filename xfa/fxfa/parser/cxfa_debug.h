@@ -11,7 +11,7 @@
 
 class CXFA_Debug : public CXFA_Node {
  public:
-  CXFA_Debug(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Debug(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Debug() override;
 };
 

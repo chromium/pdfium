@@ -12,7 +12,7 @@ constexpr wchar_t kName[] = L"dataWindow";
 
 }  // namespace
 
-CXFA_DataWindow::CXFA_DataWindow(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_DataWindow::CXFA_DataWindow(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Datasets,

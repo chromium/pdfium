@@ -20,7 +20,7 @@ constexpr wchar_t kName[] = L"openAction";
 
 }  // namespace
 
-CXFA_OpenAction::CXFA_OpenAction(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_OpenAction::CXFA_OpenAction(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

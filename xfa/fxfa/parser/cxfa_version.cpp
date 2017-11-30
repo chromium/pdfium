@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"version";
 
 }  // namespace
 
-CXFA_Version::CXFA_Version(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Version::CXFA_Version(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

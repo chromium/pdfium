@@ -11,7 +11,7 @@
 
 class CXFA_AdobeExtensionLevel : public CXFA_Node {
  public:
-  CXFA_AdobeExtensionLevel(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_AdobeExtensionLevel(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_AdobeExtensionLevel() override;
 };
 

@@ -17,7 +17,7 @@ constexpr wchar_t kName[] = L"datePattern";
 
 }  // namespace
 
-CXFA_DatePattern::CXFA_DatePattern(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_DatePattern::CXFA_DatePattern(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_LocaleSet,

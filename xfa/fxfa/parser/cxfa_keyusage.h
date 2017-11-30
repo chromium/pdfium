@@ -11,7 +11,7 @@
 
 class CXFA_KeyUsage : public CXFA_Node {
  public:
-  CXFA_KeyUsage(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_KeyUsage(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_KeyUsage() override;
 };
 

@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"insert";
 
 }  // namespace
 
-CXFA_Insert::CXFA_Insert(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Insert::CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_SourceSet,

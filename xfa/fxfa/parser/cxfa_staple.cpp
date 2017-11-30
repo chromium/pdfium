@@ -19,7 +19,7 @@ constexpr wchar_t kName[] = L"staple";
 
 }  // namespace
 
-CXFA_Staple::CXFA_Staple(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Staple::CXFA_Staple(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

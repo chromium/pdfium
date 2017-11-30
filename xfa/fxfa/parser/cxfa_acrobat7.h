@@ -11,7 +11,7 @@
 
 class CXFA_Acrobat7 : public CXFA_Node {
  public:
-  CXFA_Acrobat7(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Acrobat7(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Acrobat7() override;
 };
 

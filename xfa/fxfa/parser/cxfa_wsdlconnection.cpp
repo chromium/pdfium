@@ -26,7 +26,7 @@ constexpr wchar_t kName[] = L"wsdlConnection";
 }  // namespace
 
 CXFA_WsdlConnection::CXFA_WsdlConnection(CXFA_Document* doc,
-                                         XFA_XDPPACKET packet)
+                                         XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_ConnectionSet,

@@ -20,7 +20,7 @@ constexpr wchar_t kName[] = L"xsl";
 
 }  // namespace
 
-CXFA_Xsl::CXFA_Xsl(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Xsl::CXFA_Xsl(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 XFA_XDPPACKET_Config,

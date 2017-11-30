@@ -11,7 +11,7 @@
 
 class CXFA_Day : public CXFA_Node {
  public:
-  CXFA_Day(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Day(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Day() override;
 };
 

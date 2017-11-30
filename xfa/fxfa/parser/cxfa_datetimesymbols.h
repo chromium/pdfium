@@ -11,7 +11,7 @@
 
 class CXFA_DateTimeSymbols : public CXFA_Node {
  public:
-  CXFA_DateTimeSymbols(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_DateTimeSymbols(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DateTimeSymbols() override;
 };
 

@@ -23,7 +23,7 @@ constexpr wchar_t kName[] = L"map";
 
 }  // namespace
 
-CXFA_Map::CXFA_Map(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Map::CXFA_Map(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Config | XFA_XDPPACKET_SourceSet),

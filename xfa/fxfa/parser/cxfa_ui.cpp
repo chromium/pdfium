@@ -34,7 +34,7 @@ constexpr wchar_t kName[] = L"ui";
 
 }  // namespace
 
-CXFA_Ui::CXFA_Ui(CXFA_Document* doc, XFA_XDPPACKET packet)
+CXFA_Ui::CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),

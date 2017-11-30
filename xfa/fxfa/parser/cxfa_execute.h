@@ -11,7 +11,7 @@
 
 class CXFA_Execute : public CXFA_Node {
  public:
-  CXFA_Execute(CXFA_Document* doc, XFA_XDPPACKET packet);
+  CXFA_Execute(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Execute() override;
 };
 
