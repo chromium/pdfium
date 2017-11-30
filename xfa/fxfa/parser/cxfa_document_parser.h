@@ -23,7 +23,7 @@ class CXFA_DocumentParser {
   ~CXFA_DocumentParser();
 
   int32_t StartParse(const RetainPtr<IFX_SeekableStream>& pStream,
-                     XFA_XDPPACKET ePacketID);
+                     XFA_PacketType ePacketID);
   int32_t DoParse();
 
   CFX_XMLDoc* GetXMLDoc() const;

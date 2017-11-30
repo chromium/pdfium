@@ -100,7 +100,7 @@ enum XFA_XDPPACKET_FLAGS {
 struct XFA_PACKETINFO {
   uint32_t uHash;
   const wchar_t* pName;
-  XFA_XDPPACKET eName;
+  XFA_PacketType eName;
   const wchar_t* pURI;
   uint32_t eFlags;
 };

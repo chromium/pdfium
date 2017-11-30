@@ -169,7 +169,7 @@ CXFA_FFDoc::~CXFA_FFDoc() {
 int32_t CXFA_FFDoc::StartLoad() {
   m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
   m_pDocumentParser = pdfium::MakeUnique<CXFA_DocumentParser>(m_pNotify.get());
-  return m_pDocumentParser->StartParse(m_pStream, XFA_XDPPACKET_XDP);
+  return m_pDocumentParser->StartParse(m_pStream, XFA_PacketType::Xdp);
 }
 
 bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,

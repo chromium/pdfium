@@ -238,12 +238,10 @@ bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
 CXFA_SimpleParser::CXFA_SimpleParser(CXFA_Document* pFactory,
                                      bool bDocumentParser)
     : m_pXMLParser(nullptr),
-      m_pXMLDoc(nullptr),
-      m_pStream(nullptr),
-      m_pFileRead(nullptr),
       m_pFactory(pFactory),
       m_pRootNode(nullptr),
-      m_ePacketID(XFA_XDPPACKET_UNKNOWN),
+      m_ePacketID(XFA_PacketType::User),
+      m_bParseStarted(false),
       m_bDocumentParser(bDocumentParser) {}
 
 CXFA_SimpleParser::~CXFA_SimpleParser() {}
@@ -254,7 +252,7 @@ void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
 
 int32_t CXFA_SimpleParser::StartParse(
     const RetainPtr<IFX_SeekableStream>& pStream,
-    XFA_XDPPACKET ePacketID) {
+    XFA_PacketType ePacketID) {
   CloseParser();
   m_pFileRead = pStream;
   m_pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
@@ -270,12 +268,13 @@ int32_t CXFA_SimpleParser::StartParse(
   if (!m_pXMLDoc->LoadXML(std::move(pNewParser)))
     return XFA_PARSESTATUS_StatusErr;
 
+  m_bParseStarted = true;
   m_ePacketID = ePacketID;
   return XFA_PARSESTATUS_Ready;
 }
 
 int32_t CXFA_SimpleParser::DoParse() {
-  if (!m_pXMLDoc || m_ePacketID == XFA_XDPPACKET_UNKNOWN)
+  if (!m_pXMLDoc || !m_bParseStarted)
     return XFA_PARSESTATUS_StatusErr;
 
   int32_t iRet = m_pXMLDoc->DoLoad();
@@ -398,31 +397,29 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
 }
 
 CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
-                                               XFA_XDPPACKET ePacketID) {
+                                               XFA_PacketType ePacketID) {
   switch (ePacketID) {
-    case XFA_XDPPACKET_UNKNOWN:
-      return nullptr;
-    case XFA_XDPPACKET_XDP:
+    case XFA_PacketType::Xdp:
       return ParseAsXDPPacket_XDP(pXMLDocumentNode);
-    case XFA_XDPPACKET_Config:
+    case XFA_PacketType::Config:
       return ParseAsXDPPacket_Config(pXMLDocumentNode, XFA_PacketType::Config);
-    case XFA_XDPPACKET_Template:
+    case XFA_PacketType::Template:
       return ParseAsXDPPacket_TemplateForm(pXMLDocumentNode,
                                            XFA_PacketType::Template);
-    case XFA_XDPPACKET_Form:
+    case XFA_PacketType::Form:
       return ParseAsXDPPacket_TemplateForm(pXMLDocumentNode,
                                            XFA_PacketType::Form);
-    case XFA_XDPPACKET_Datasets:
+    case XFA_PacketType::Datasets:
       return ParseAsXDPPacket_Data(pXMLDocumentNode);
-    case XFA_XDPPACKET_Xdc:
+    case XFA_PacketType::Xdc:
       return ParseAsXDPPacket_Xdc(pXMLDocumentNode);
-    case XFA_XDPPACKET_LocaleSet:
+    case XFA_PacketType::LocaleSet:
       return ParseAsXDPPacket_LocaleConnectionSourceSet(
           pXMLDocumentNode, XFA_PacketType::LocaleSet);
-    case XFA_XDPPACKET_ConnectionSet:
+    case XFA_PacketType::ConnectionSet:
       return ParseAsXDPPacket_LocaleConnectionSourceSet(
           pXMLDocumentNode, XFA_PacketType::ConnectionSet);
-    case XFA_XDPPACKET_SourceSet:
+    case XFA_PacketType::SourceSet:
       return ParseAsXDPPacket_LocaleConnectionSourceSet(
           pXMLDocumentNode, XFA_PacketType::SourceSet);
     default:
@@ -501,21 +498,21 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
         pPacketInfo = nullptr;
       }
     }
-    XFA_XDPPACKET ePacket =
-        pPacketInfo ? pPacketInfo->eName : XFA_XDPPACKET_USER;
-    if (ePacket == XFA_XDPPACKET_XDP)
+    XFA_PacketType ePacket =
+        pPacketInfo ? pPacketInfo->eName : XFA_PacketType::User;
+    if (ePacket == XFA_PacketType::Xdp)
       continue;
-    if (ePacket == XFA_XDPPACKET_Datasets) {
+    if (ePacket == XFA_PacketType::Datasets) {
       if (pXMLDatasetsDOMRoot)
         return nullptr;
 
       pXMLDatasetsDOMRoot = pElement;
-    } else if (ePacket == XFA_XDPPACKET_Form) {
+    } else if (ePacket == XFA_PacketType::Form) {
       if (pXMLFormDOMRoot)
         return nullptr;
 
       pXMLFormDOMRoot = pElement;
-    } else if (ePacket == XFA_XDPPACKET_Template) {
+    } else if (ePacket == XFA_PacketType::Template) {
       // Found a duplicate template packet.
       if (pXMLTemplateDOMRoot)
         return nullptr;
@@ -544,13 +541,13 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
 
   if (pXMLDatasetsDOMRoot) {
     CXFA_Node* pPacketNode =
-        ParseAsXDPPacket(pXMLDatasetsDOMRoot, XFA_XDPPACKET_Datasets);
+        ParseAsXDPPacket(pXMLDatasetsDOMRoot, XFA_PacketType::Datasets);
     if (pPacketNode)
       pXFARootNode->InsertChild(pPacketNode, nullptr);
   }
   if (pXMLFormDOMRoot) {
     CXFA_Node* pPacketNode =
-        ParseAsXDPPacket(pXMLFormDOMRoot, XFA_XDPPACKET_Form);
+        ParseAsXDPPacket(pXMLFormDOMRoot, XFA_PacketType::Form);
     if (pPacketNode)
       pXFARootNode->InsertChild(pPacketNode, nullptr);
   }

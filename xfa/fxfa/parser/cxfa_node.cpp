@@ -261,8 +261,8 @@ CXFA_Node* CXFA_Node::GetNodeItem(XFA_NODEITEM eItem) const {
   return nullptr;
 }
 
-bool CXFA_Node::IsValidInPacket(XFA_XDPPACKET packet) const {
-  return !!(m_ValidPackets & packet);
+bool CXFA_Node::IsValidInPacket(XFA_PacketType packet) const {
+  return !!(m_ValidPackets & (1 << static_cast<uint8_t>(packet)));
 }
 
 const CXFA_Node::PropertyData* CXFA_Node::GetPropertyData(

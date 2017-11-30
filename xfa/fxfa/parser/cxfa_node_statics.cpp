@@ -1864,8 +1864,7 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
       NOTREACHED();
       return nullptr;
   }
-  if (!node || !node->IsValidInPacket(static_cast<XFA_XDPPACKET>(
-                   1 << static_cast<uint8_t>(packet))))
+  if (!node || !node->IsValidInPacket(packet))
     return nullptr;
   return node;
 }

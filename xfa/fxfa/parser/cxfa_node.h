@@ -74,7 +74,7 @@ class CXFA_Node : public CXFA_Object {
 
   ~CXFA_Node() override;
 
-  bool IsValidInPacket(XFA_XDPPACKET packet) const;
+  bool IsValidInPacket(XFA_PacketType packet) const;
 
   bool HasProperty(XFA_Element property) const;
   bool HasPropertyFlags(XFA_Element property, uint8_t flags) const;

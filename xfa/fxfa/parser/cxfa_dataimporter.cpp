@@ -28,8 +28,8 @@ bool CXFA_DataImporter::ImportData(
     const RetainPtr<IFX_SeekableStream>& pDataDocument) {
   auto pDataDocumentParser =
       pdfium::MakeUnique<CXFA_SimpleParser>(m_pDocument.Get(), false);
-  if (pDataDocumentParser->StartParse(pDataDocument, XFA_XDPPACKET_Datasets) !=
-      XFA_PARSESTATUS_Ready) {
+  if (pDataDocumentParser->StartParse(
+          pDataDocument, XFA_PacketType::Datasets) != XFA_PARSESTATUS_Ready) {
     return false;
   }
   if (pDataDocumentParser->DoParse() < XFA_PARSESTATUS_Done)
