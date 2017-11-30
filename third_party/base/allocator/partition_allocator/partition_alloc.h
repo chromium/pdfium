@@ -660,7 +660,7 @@ ALWAYS_INLINE void* PartitionBucketAlloc(PartitionRootBase* root,
   // Check that this page is neither full nor freed.
   DCHECK(page->num_allocated_slots >= 0);
   void* ret = page->freelist_head;
-  if (LIKELY(ret != 0)) {
+  if (LIKELY(ret)) {
     // If these asserts fire, you probably corrupted memory.
     DCHECK(PartitionPointerIsValid(ret));
     // All large allocations must go through the slow path to correctly
@@ -676,7 +676,7 @@ ALWAYS_INLINE void* PartitionBucketAlloc(PartitionRootBase* root,
   }
 #if DCHECK_IS_ON()
   if (!ret)
-    return 0;
+    return nullptr;
   // Fill the uninitialized pattern, and write the cookies.
   page = PartitionPointerToPage(ret);
   size_t slot_size = page->bucket->slot_size;
