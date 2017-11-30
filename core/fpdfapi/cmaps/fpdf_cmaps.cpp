@@ -27,26 +27,16 @@ static int compareWordRange(const void* key, const void* element) {
 static int compareDWordRange(const void* p1, const void* p2) {
   uint32_t key = *(uint32_t*)p1;
   uint16_t hiword = (uint16_t)(key >> 16);
-  uint16_t* element = (uint16_t*)p2;
-  if (hiword < element[0])
+  const auto* element = reinterpret_cast<const FXCMAP_DWordCIDMap*>(p2);
+  if (hiword < element->m_HiWord)
     return -1;
-  if (hiword > element[0])
+  if (hiword > element->m_HiWord)
     return 1;
 
   uint16_t loword = (uint16_t)key;
-  if (loword < element[1])
+  if (loword < element->m_LoWordLow)
     return -1;
-  if (loword > element[2])
-    return 1;
-  return 0;
-}
-
-static int compareDWordSingle(const void* p1, const void* p2) {
-  uint32_t key = *(uint32_t*)p1;
-  uint32_t value = ((*(uint16_t*)p2) << 16) | ((uint16_t*)p2)[1];
-  if (key < value)
-    return -1;
-  if (key > value)
+  if (loword > element->m_LoWordHigh)
     return 1;
   return 0;
 }
@@ -82,18 +72,17 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
   if (charcode >> 16) {
     while (pMap) {
       if (pMap->m_DWordMapType == FXCMAP_CMap::Range) {
-        uint16_t* found = static_cast<uint16_t*>(
-            bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount, 8,
-                    compareDWordRange));
-        if (found)
-          return found[3] + (uint16_t)charcode - found[1];
-
-      } else if (pMap->m_DWordMapType == FXCMAP_CMap::Single) {
-        uint16_t* found = static_cast<uint16_t*>(
-            bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount, 6,
-                    compareDWordSingle));
-        if (found)
-          return found[2];
+        ASSERT(pMap->m_pDWordMap);
+        auto* found = static_cast<FXCMAP_DWordCIDMap*>(
+            bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount,
+                    sizeof(FXCMAP_DWordCIDMap), compareDWordRange));
+        if (found) {
+          return found->m_CID + static_cast<uint16_t>(charcode) -
+                 found->m_LoWordLow;
+        }
+      } else {
+        ASSERT(pMap->m_DWordMapType == FXCMAP_CMap::None);
+        ASSERT(!pMap->m_pDWordMap);
       }
       pMap = FindNextCMap(pMap);
     }

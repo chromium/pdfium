@@ -10,16 +10,23 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
+struct FXCMAP_DWordCIDMap {
+  uint16_t m_HiWord;
+  uint16_t m_LoWordLow;
+  uint16_t m_LoWordHigh;
+  uint16_t m_CID;
+};
+
 struct FXCMAP_CMap {
   enum MapType : uint8_t { None, Single, Range };
 
   const char* m_Name;
   const uint16_t* m_pWordMap;
-  const uint16_t* m_pDWordMap;
+  const FXCMAP_DWordCIDMap* m_pDWordMap;
   uint16_t m_WordCount;
   uint16_t m_DWordCount;
   MapType m_WordMapType;
-  MapType m_DWordMapType;
+  MapType m_DWordMapType;  // TODO(thestig): Remove.
   int8_t m_UseOffset;
 };
 

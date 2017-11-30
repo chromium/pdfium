@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "core/fpdfapi/cmaps/cmap_int.h"
+
 extern const uint16_t g_FXCMAP_B5pc_H_0[];
 extern const uint16_t g_FXCMAP_B5pc_V_0[];
 extern const uint16_t g_FXCMAP_HKscs_B5_H_5[];
@@ -18,9 +20,9 @@ extern const uint16_t g_FXCMAP_ETen_B5_V_0[];
 extern const uint16_t g_FXCMAP_ETenms_B5_H_0[];
 extern const uint16_t g_FXCMAP_ETenms_B5_V_0[];
 extern const uint16_t g_FXCMAP_CNS_EUC_H_0[];
-extern const uint16_t g_FXCMAP_CNS_EUC_H_0_DWord[];
+extern const FXCMAP_DWordCIDMap g_FXCMAP_CNS_EUC_H_0_DWord[];
 extern const uint16_t g_FXCMAP_CNS_EUC_V_0[];
-extern const uint16_t g_FXCMAP_CNS_EUC_V_0_DWord[];
+extern const FXCMAP_DWordCIDMap g_FXCMAP_CNS_EUC_V_0_DWord[];
 extern const uint16_t g_FXCMAP_UniCNS_UCS2_H_3[];
 extern const uint16_t g_FXCMAP_UniCNS_UCS2_V_3[];
 extern const uint16_t g_FXCMAP_UniCNS_UTF16_H_0[];

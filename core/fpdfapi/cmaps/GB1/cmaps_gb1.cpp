@@ -29,7 +29,7 @@ static const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
     {"GBKp-EUC-V", g_FXCMAP_GBKp_EUC_V_2, nullptr, 20, 0, FXCMAP_CMap::Range,
      FXCMAP_CMap::None, -1},
     {"GBK2K-H", g_FXCMAP_GBK2K_H_5, g_FXCMAP_GBK2K_H_5_DWord, 4071, 1017,
-     FXCMAP_CMap::Range, FXCMAP_CMap::Single, -4},
+     FXCMAP_CMap::Range, FXCMAP_CMap::Range, -4},
     {"GBK2K-V", g_FXCMAP_GBK2K_V_5, nullptr, 41, 0, FXCMAP_CMap::Range,
      FXCMAP_CMap::None, -1},
     {"UniGB-UCS2-H", g_FXCMAP_UniGB_UCS2_H_4, nullptr, 13825, 0,
