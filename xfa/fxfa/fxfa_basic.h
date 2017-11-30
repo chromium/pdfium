@@ -618,7 +618,6 @@ enum class XFA_Attribute : uint8_t {
   Intact,
   XdpContent,
   DecipherOnly,
-  LastAttributePlaceholder,
   Unknown = 255,
 };
 
@@ -940,21 +939,11 @@ enum class XFA_Element : int32_t {
 };
 
 enum class XFA_AttributeType : uint8_t {
-  NotSure,
   Enum,
   CData,
   Boolean,
   Integer,
   Measure,
-};
-
-struct XFA_ATTRIBUTEINFO {
-  uint32_t uHash;
-  const wchar_t* pName;
-  XFA_Attribute eName;
-  XFA_AttributeType eType;
-  uint32_t dwPackets;
-  void* pDefValue;
 };
 
 struct XFA_SCRIPTHIERARCHY {
@@ -985,13 +974,6 @@ enum class XFA_Unit : uint8_t {
   Mp,
 
   Unknown = 255,
-};
-
-struct XFA_NOTSUREATTRIBUTE {
-  XFA_Element eElement;
-  XFA_Attribute attribute;
-  XFA_AttributeType eType;
-  void* pValue;
 };
 
 typedef void (CJX_Object::*XFA_METHOD_CALLBACK)(CFXJSE_Arguments* pArguments);

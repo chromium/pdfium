@@ -15,8 +15,12 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Window, 1, 0},     {XFA_Element::Record, 1, 0},
     {XFA_Element::Range, 1, 0},      {XFA_Element::IncrementalLoad, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Desc, XFA_Attribute::Lock, XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Desc, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet, nullptr},
+    {XFA_Attribute::Lock, XFA_AttributeType::Integer, XFA_XDPPACKET_Config,
+     (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"data";
 

@@ -1191,8 +1191,9 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
 
 float CXFA_ItemLayoutProcessor::FindSplitPos(float fProposedSplitPos) {
   ASSERT(m_pLayoutItem);
-  XFA_ATTRIBUTEENUM eLayout =
-      m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+  XFA_ATTRIBUTEENUM eLayout = m_pFormNode->JSNode()
+                                  ->TryEnum(XFA_Attribute::Layout, true)
+                                  .value_or(XFA_ATTRIBUTEENUM_Position);
   bool bCalculateMargin = eLayout != XFA_ATTRIBUTEENUM_Position;
   while (fProposedSplitPos > XFA_LAYOUT_FLOAT_PERCISION) {
     bool bAppChange = false;
@@ -1209,8 +1210,9 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
     CXFA_ContentLayoutItem* pSecondParent,
     float fSplitPos) {
   float fCurTopMargin = 0, fCurBottomMargin = 0;
-  XFA_ATTRIBUTEENUM eLayout =
-      m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+  XFA_ATTRIBUTEENUM eLayout = m_pFormNode->JSNode()
+                                  ->TryEnum(XFA_Attribute::Layout, true)
+                                  .value_or(XFA_ATTRIBUTEENUM_Position);
   bool bCalculateMargin = true;
   if (eLayout == XFA_ATTRIBUTEENUM_Position)
     bCalculateMargin = false;
@@ -1582,8 +1584,9 @@ bool CXFA_ItemLayoutProcessor::ProcessKeepNodesForBreakBefore(
 }
 
 bool XFA_ItemLayoutProcessor_IsTakingSpace(CXFA_Node* pNode) {
-  XFA_ATTRIBUTEENUM ePresence =
-      pNode->JSNode()->GetEnum(XFA_Attribute::Presence);
+  XFA_ATTRIBUTEENUM ePresence = pNode->JSNode()
+                                    ->TryEnum(XFA_Attribute::Presence, true)
+                                    .value_or(XFA_ATTRIBUTEENUM_Visible);
   return ePresence == XFA_ATTRIBUTEENUM_Visible ||
          ePresence == XFA_ATTRIBUTEENUM_Invisible;
 }
@@ -1657,8 +1660,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
     return;
 
   m_pLayoutItem = CreateContentLayoutItem(m_pFormNode);
-  bool bIgnoreXY = (m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout) !=
-                    XFA_ATTRIBUTEENUM_Position);
+  bool bIgnoreXY =
+      (m_pFormNode->JSNode()
+           ->TryEnum(XFA_Attribute::Layout, true)
+           .value_or(XFA_ATTRIBUTEENUM_Position) != XFA_ATTRIBUTEENUM_Position);
   bool bContainerWidthAutoSize = true;
   bool bContainerHeightAutoSize = true;
   CFX_SizeF containerSize = CalculateContainerSpecifiedSize(

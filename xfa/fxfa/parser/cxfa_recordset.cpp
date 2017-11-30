@@ -8,13 +8,38 @@
 
 namespace {
 
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Id,        XFA_Attribute::Name,
-    XFA_Attribute::Max,       XFA_Attribute::Use,
-    XFA_Attribute::EofAction, XFA_Attribute::CursorType,
-    XFA_Attribute::LockType,  XFA_Attribute::BofAction,
-    XFA_Attribute::Usehref,   XFA_Attribute::CursorLocation,
-    XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Name, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet |
+         XFA_XDPPACKET_Template | XFA_XDPPACKET_Datasets | XFA_XDPPACKET_Form |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Max, XFA_AttributeType::Integer,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
+     (void*)0},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::EofAction, XFA_AttributeType::Enum, XFA_XDPPACKET_SourceSet,
+     (void*)XFA_ATTRIBUTEENUM_MoveLast},
+    {XFA_Attribute::CursorType, XFA_AttributeType::Enum,
+     XFA_XDPPACKET_SourceSet, (void*)XFA_ATTRIBUTEENUM_ForwardOnly},
+    {XFA_Attribute::LockType, XFA_AttributeType::Enum, XFA_XDPPACKET_SourceSet,
+     (void*)XFA_ATTRIBUTEENUM_ReadOnly},
+    {XFA_Attribute::BofAction, XFA_AttributeType::Enum, XFA_XDPPACKET_SourceSet,
+     (void*)XFA_ATTRIBUTEENUM_MoveFirst},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::CursorLocation, XFA_AttributeType::Enum,
+     XFA_XDPPACKET_SourceSet, (void*)XFA_ATTRIBUTEENUM_Client},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"recordSet";
 

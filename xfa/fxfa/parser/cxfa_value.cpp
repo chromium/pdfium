@@ -23,9 +23,24 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Float, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Line, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Id,      XFA_Attribute::Use,      XFA_Attribute::Relevant,
-    XFA_Attribute::Usehref, XFA_Attribute::Override, XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Relevant, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Override, XFA_AttributeType::Boolean,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"value";
 

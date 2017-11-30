@@ -38,18 +38,10 @@ void XFA_DataExporter_RegenerateFormFile(
     const char* pChecksum = nullptr,
     bool bSaveXML = false);
 
-const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
-    XFA_Element eElement,
-    XFA_Attribute eAttribute,
-    XFA_AttributeType eType = XFA_AttributeType::NotSure);
-
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     const WideStringView& wsAttributeName);
 
-const XFA_Attribute* XFA_GetElementAttributes(XFA_Element eElement,
-                                              int32_t& iCount);
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName);
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
     const WideStringView& wsName);
 const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PacketType ePacket);

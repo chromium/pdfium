@@ -10,12 +10,31 @@ namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Encrypt, 1, 0},
                                                  {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Id,           XFA_Attribute::Use,
-    XFA_Attribute::Format,       XFA_Attribute::EmbedPDF,
-    XFA_Attribute::Usehref,      XFA_Attribute::Target,
-    XFA_Attribute::TextEncoding, XFA_Attribute::XdpContent,
-    XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Format, XFA_AttributeType::Enum,
+     XFA_XDPPACKET_Config | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
+     (void*)XFA_ATTRIBUTEENUM_Xdp},
+    {XFA_Attribute::EmbedPDF, XFA_AttributeType::Boolean,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)0},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Target, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::TextEncoding, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::XdpContent, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"submit";
 

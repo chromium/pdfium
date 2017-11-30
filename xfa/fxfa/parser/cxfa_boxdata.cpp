@@ -84,7 +84,9 @@ int32_t CXFA_BoxData::GetHand() const {
 int32_t CXFA_BoxData::GetPresence() const {
   if (!m_pNode)
     return XFA_ATTRIBUTEENUM_Hidden;
-  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Presence);
+  return m_pNode->JSNode()
+      ->TryEnum(XFA_Attribute::Presence, true)
+      .value_or(XFA_ATTRIBUTEENUM_Visible);
 }
 
 int32_t CXFA_BoxData::CountEdges() const {

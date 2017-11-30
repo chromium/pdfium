@@ -10,11 +10,28 @@ namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
                                                  {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Id,        XFA_Attribute::Use,
-    XFA_Attribute::LeftInset, XFA_Attribute::BottomInset,
-    XFA_Attribute::TopInset,  XFA_Attribute::RightInset,
-    XFA_Attribute::Usehref,   XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::LeftInset, XFA_AttributeType::Measure,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"0in"},
+    {XFA_Attribute::BottomInset, XFA_AttributeType::Measure,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"0in"},
+    {XFA_Attribute::TopInset, XFA_AttributeType::Measure,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"0in"},
+    {XFA_Attribute::RightInset, XFA_AttributeType::Measure,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)L"0in"},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"margin";
 

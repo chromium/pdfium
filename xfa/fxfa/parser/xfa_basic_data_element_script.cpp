@@ -3574,5 +3574,4 @@ const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
      (XFA_ATTRIBUTE_CALLBACK)&CJX_Node::Script_Som_DefaultValue,
      XFA_Attribute::Unknown, XFA_ScriptType::Basic},
 };
-const int32_t g_iSomAttributeCount =
-    sizeof(g_SomAttributeData) / sizeof(XFA_ATTRIBUTEINFO);
+const int32_t g_iSomAttributeCount = FX_ArraySize(g_SomAttributeData);

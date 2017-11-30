@@ -17,17 +17,8 @@ extern const int32_t g_iXFAPacketCount;
 extern const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[];
 extern const int32_t g_iXFAEnumCount;
 
-extern const XFA_ATTRIBUTEINFO g_XFAAttributeData[];
-extern const int32_t g_iXFAAttributeCount;
-
-extern const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[];
-extern const int32_t g_iXFANotsureCount;
-
 extern const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[];
 extern const int32_t g_iScriptIndexCount;
-
-extern const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[];
-extern const int32_t g_iXFANotsureCount;
 
 extern const XFA_METHODINFO g_SomMethodData[];
 extern const int32_t g_iSomMethodCount;

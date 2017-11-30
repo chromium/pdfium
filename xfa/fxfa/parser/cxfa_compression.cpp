@@ -14,8 +14,12 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::CompressObjectStream, 1, 0},
     {XFA_Element::CompressLogicalStructure, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Desc, XFA_Attribute::Lock, XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Desc, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet, nullptr},
+    {XFA_Attribute::Lock, XFA_AttributeType::Integer, XFA_XDPPACKET_Config,
+     (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"compression";
 

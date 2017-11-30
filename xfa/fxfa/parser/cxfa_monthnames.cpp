@@ -10,8 +10,10 @@ namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Month, 12, 0},
                                                  {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {XFA_Attribute::Abbr,
-                                        XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Abbr, XFA_AttributeType::Boolean, XFA_XDPPACKET_LocaleSet,
+     (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"monthNames";
 

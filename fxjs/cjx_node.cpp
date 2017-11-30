@@ -197,7 +197,7 @@ bool CJX_Node::SetAttribute(XFA_Attribute eAttr,
       return SetEnum(
           eAttr, pEnum ? pEnum->eName : *(GetXFANode()->GetDefaultEnum(eAttr)),
           bNotify);
-    } break;
+    }
     case XFA_AttributeType::CData:
       return SetCData(eAttr, WideString(wsValue), bNotify, false);
     case XFA_AttributeType::Boolean:

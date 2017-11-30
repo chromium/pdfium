@@ -2515,7 +2515,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_zpl.cpp",
       "xfa/fxfa/parser/cxfa_zpl.h",
       "xfa/fxfa/parser/xfa_basic_data.h",
-      "xfa/fxfa/parser/xfa_basic_data_attributes.cpp",
       "xfa/fxfa/parser/xfa_basic_data_element_script.cpp",
       "xfa/fxfa/parser/xfa_basic_data_enum.cpp",
       "xfa/fxfa/parser/xfa_basic_data_packets.cpp",

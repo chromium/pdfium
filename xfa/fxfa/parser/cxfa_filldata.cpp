@@ -13,8 +13,9 @@ CXFA_FillData::CXFA_FillData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 CXFA_FillData::~CXFA_FillData() {}
 
 bool CXFA_FillData::IsVisible() const {
-  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Presence) ==
-         XFA_ATTRIBUTEENUM_Visible;
+  return m_pNode->JSNode()
+             ->TryEnum(XFA_Attribute::Presence, true)
+             .value_or(XFA_ATTRIBUTEENUM_Visible) == XFA_ATTRIBUTEENUM_Visible;
 }
 
 void CXFA_FillData::SetColor(FX_ARGB color) {

@@ -642,6 +642,258 @@ struct ElementNameInfo {
     {0xff063802 /* items */, XFA_Element::Items},
 };
 
+struct AttributeNameInfo {
+  uint32_t hash;
+  XFA_Attribute attribute;
+} AttributeNameInfoToEnum[] = {
+    {0x68 /* h */, XFA_Attribute::H},
+    {0x77 /* w */, XFA_Attribute::W},
+    {0x78 /* x */, XFA_Attribute::X},
+    {0x79 /* y */, XFA_Attribute::Y},
+    {0x21aed /* id */, XFA_Attribute::Id},
+    {0x25363 /* to */, XFA_Attribute::To},
+    {0xcb0ac9 /* lineThrough */, XFA_Attribute::LineThrough},
+    {0x2282c73 /* hAlign */, XFA_Attribute::HAlign},
+    {0x2c1c7f1 /* typeface */, XFA_Attribute::Typeface},
+    {0x3106c3a /* beforeTarget */, XFA_Attribute::BeforeTarget},
+    {0x31b19c1 /* name */, XFA_Attribute::Name},
+    {0x3848b3f /* next */, XFA_Attribute::Next},
+    {0x43e349b /* dataRowCount */, XFA_Attribute::DataRowCount},
+    {0x5518c25 /* break */, XFA_Attribute::Break},
+    {0x5ce6195 /* vScrollPolicy */, XFA_Attribute::VScrollPolicy},
+    {0x8c74ae9 /* fontHorizontalScale */, XFA_Attribute::FontHorizontalScale},
+    {0x8d4f1c7 /* textIndent */, XFA_Attribute::TextIndent},
+    {0x97c1c65 /* context */, XFA_Attribute::Context},
+    {0x9876578 /* trayOut */, XFA_Attribute::TrayOut},
+    {0xa2e3514 /* cap */, XFA_Attribute::Cap},
+    {0xb3543a6 /* max */, XFA_Attribute::Max},
+    {0xb356ca4 /* min */, XFA_Attribute::Min},
+    {0xbb8df5d /* ref */, XFA_Attribute::Ref},
+    {0xbb8f3df /* rid */, XFA_Attribute::Rid},
+    {0xc080cd3 /* url */, XFA_Attribute::Url},
+    {0xc0811ed /* use */, XFA_Attribute::Use},
+    {0xcfea02e /* leftInset */, XFA_Attribute::LeftInset},
+    {0x1026c59d /* widows */, XFA_Attribute::Widows},
+    {0x1059ec18 /* level */, XFA_Attribute::Level},
+    {0x1356caf8 /* bottomInset */, XFA_Attribute::BottomInset},
+    {0x13a08bdb /* overflowTarget */, XFA_Attribute::OverflowTarget},
+    {0x1414d431 /* allowMacro */, XFA_Attribute::AllowMacro},
+    {0x14a32d52 /* pagePosition */, XFA_Attribute::PagePosition},
+    {0x1517dfa1 /* columnWidths */, XFA_Attribute::ColumnWidths},
+    {0x169134a1 /* overflowLeader */, XFA_Attribute::OverflowLeader},
+    {0x1b8dce3e /* action */, XFA_Attribute::Action},
+    {0x1e459b8f /* nonRepudiation */, XFA_Attribute::NonRepudiation},
+    {0x1ec8ab2c /* rate */, XFA_Attribute::Rate},
+    {0x1ef3a64a /* allowRichText */, XFA_Attribute::AllowRichText},
+    {0x2038c9b2 /* role */, XFA_Attribute::Role},
+    {0x20914367 /* overflowTrailer */, XFA_Attribute::OverflowTrailer},
+    {0x226ca8f1 /* operation */, XFA_Attribute::Operation},
+    {0x24d85167 /* timeout */, XFA_Attribute::Timeout},
+    {0x25764436 /* topInset */, XFA_Attribute::TopInset},
+    {0x25839852 /* access */, XFA_Attribute::Access},
+    {0x268b7ec1 /* commandType */, XFA_Attribute::CommandType},
+    {0x28dee6e9 /* format */, XFA_Attribute::Format},
+    {0x28e17e91 /* dataPrep */, XFA_Attribute::DataPrep},
+    {0x292b88fe /* widgetData */, XFA_Attribute::WidgetData},
+    {0x29418bb7 /* abbr */, XFA_Attribute::Abbr},
+    {0x2a82d99c /* marginRight */, XFA_Attribute::MarginRight},
+    {0x2b5df51e /* dataDescription */, XFA_Attribute::DataDescription},
+    {0x2bb3f470 /* encipherOnly */, XFA_Attribute::EncipherOnly},
+    {0x2cd79033 /* kerningMode */, XFA_Attribute::KerningMode},
+    {0x2ee7678f /* rotate */, XFA_Attribute::Rotate},
+    {0x2f105f72 /* wordCharacterCount */, XFA_Attribute::WordCharacterCount},
+    {0x2f16a382 /* type */, XFA_Attribute::Type},
+    {0x34ae103c /* reserve */, XFA_Attribute::Reserve},
+    {0x3650557e /* textLocation */, XFA_Attribute::TextLocation},
+    {0x39cdb0a2 /* priority */, XFA_Attribute::Priority},
+    {0x3a0273a6 /* underline */, XFA_Attribute::Underline},
+    {0x3b582286 /* moduleWidth */, XFA_Attribute::ModuleWidth},
+    {0x3d123c26 /* hyphenate */, XFA_Attribute::Hyphenate},
+    {0x3e7af94f /* listen */, XFA_Attribute::Listen},
+    {0x4156ee3f /* delimiter */, XFA_Attribute::Delimiter},
+    {0x42fed1fd /* contentType */, XFA_Attribute::ContentType},
+    {0x453eaf38 /* startNew */, XFA_Attribute::StartNew},
+    {0x45a6daf8 /* eofAction */, XFA_Attribute::EofAction},
+    {0x47cfa43a /* allowNeutral */, XFA_Attribute::AllowNeutral},
+    {0x47d03490 /* connection */, XFA_Attribute::Connection},
+    {0x4873c601 /* baselineShift */, XFA_Attribute::BaselineShift},
+    {0x4b319767 /* overlinePeriod */, XFA_Attribute::OverlinePeriod},
+    {0x4b8bc840 /* fracDigits */, XFA_Attribute::FracDigits},
+    {0x4ef3d02c /* orientation */, XFA_Attribute::Orientation},
+    {0x4fdc3454 /* timeStamp */, XFA_Attribute::TimeStamp},
+    {0x52666f1c /* printCheckDigit */, XFA_Attribute::PrintCheckDigit},
+    {0x534729c9 /* marginLeft */, XFA_Attribute::MarginLeft},
+    {0x5392ea58 /* stroke */, XFA_Attribute::Stroke},
+    {0x5404d6df /* moduleHeight */, XFA_Attribute::ModuleHeight},
+    {0x54fa722c /* transferEncoding */, XFA_Attribute::TransferEncoding},
+    {0x552d9ad5 /* usage */, XFA_Attribute::Usage},
+    {0x570ce835 /* presence */, XFA_Attribute::Presence},
+    {0x5739d1ff /* radixOffset */, XFA_Attribute::RadixOffset},
+    {0x577682ac /* preserve */, XFA_Attribute::Preserve},
+    {0x58be2870 /* aliasNode */, XFA_Attribute::AliasNode},
+    {0x5a32e493 /* multiLine */, XFA_Attribute::MultiLine},
+    {0x5a50e9e6 /* version */, XFA_Attribute::Version},
+    {0x5ab23b6c /* startChar */, XFA_Attribute::StartChar},
+    {0x5b707a35 /* scriptTest */, XFA_Attribute::ScriptTest},
+    {0x5c054755 /* startAngle */, XFA_Attribute::StartAngle},
+    {0x5ec958c0 /* cursorType */, XFA_Attribute::CursorType},
+    {0x5f760b50 /* digitalSignature */, XFA_Attribute::DigitalSignature},
+    {0x60a61edd /* codeType */, XFA_Attribute::CodeType},
+    {0x60d4c8b1 /* output */, XFA_Attribute::Output},
+    {0x64110ab5 /* bookendTrailer */, XFA_Attribute::BookendTrailer},
+    {0x65e30c67 /* imagingBBox */, XFA_Attribute::ImagingBBox},
+    {0x66539c48 /* excludeInitialCap */, XFA_Attribute::ExcludeInitialCap},
+    {0x66642f8f /* force */, XFA_Attribute::Force},
+    {0x69aa2292 /* crlSign */, XFA_Attribute::CrlSign},
+    {0x6a3405dd /* previous */, XFA_Attribute::Previous},
+    {0x6a95c976 /* pushCharacterCount */, XFA_Attribute::PushCharacterCount},
+    {0x6b6ddcfb /* nullTest */, XFA_Attribute::NullTest},
+    {0x6cfa828a /* runAt */, XFA_Attribute::RunAt},
+    {0x731e0665 /* spaceBelow */, XFA_Attribute::SpaceBelow},
+    {0x74788f8b /* sweepAngle */, XFA_Attribute::SweepAngle},
+    {0x78bff531 /* numberOfCells */, XFA_Attribute::NumberOfCells},
+    {0x79543055 /* letterSpacing */, XFA_Attribute::LetterSpacing},
+    {0x79975f2b /* lockType */, XFA_Attribute::LockType},
+    {0x7a0cc471 /* passwordChar */, XFA_Attribute::PasswordChar},
+    {0x7a7cc341 /* vAlign */, XFA_Attribute::VAlign},
+    {0x7b29630a /* sourceBelow */, XFA_Attribute::SourceBelow},
+    {0x7b95e661 /* inverted */, XFA_Attribute::Inverted},
+    {0x7c2fd80b /* mark */, XFA_Attribute::Mark},
+    {0x7c2ff6ae /* maxH */, XFA_Attribute::MaxH},
+    {0x7c2ff6bd /* maxW */, XFA_Attribute::MaxW},
+    {0x7c732a66 /* truncate */, XFA_Attribute::Truncate},
+    {0x7d02356c /* minH */, XFA_Attribute::MinH},
+    {0x7d02357b /* minW */, XFA_Attribute::MinW},
+    {0x7d0b5fca /* initial */, XFA_Attribute::Initial},
+    {0x7d9fd7c5 /* mode */, XFA_Attribute::Mode},
+    {0x7e7e845e /* layout */, XFA_Attribute::Layout},
+    {0x7f6fd3d7 /* server */, XFA_Attribute::Server},
+    {0x824f21b7 /* embedPDF */, XFA_Attribute::EmbedPDF},
+    {0x8340ea66 /* oddOrEven */, XFA_Attribute::OddOrEven},
+    {0x836d4d7c /* tabDefault */, XFA_Attribute::TabDefault},
+    {0x8855805f /* contains */, XFA_Attribute::Contains},
+    {0x8a692521 /* rightInset */, XFA_Attribute::RightInset},
+    {0x8af2e657 /* maxChars */, XFA_Attribute::MaxChars},
+    {0x8b90e1f2 /* open */, XFA_Attribute::Open},
+    {0x8c99377e /* relation */, XFA_Attribute::Relation},
+    {0x8d181d61 /* wideNarrowRatio */, XFA_Attribute::WideNarrowRatio},
+    {0x8e1c2921 /* relevant */, XFA_Attribute::Relevant},
+    {0x8e29d794 /* signatureType */, XFA_Attribute::SignatureType},
+    {0x8ec6204c /* lineThroughPeriod */, XFA_Attribute::LineThroughPeriod},
+    {0x8ed182d1 /* shape */, XFA_Attribute::Shape},
+    {0x8fa01790 /* tabStops */, XFA_Attribute::TabStops},
+    {0x8fc36c0a /* outputBelow */, XFA_Attribute::OutputBelow},
+    {0x9041d4b0 /* short */, XFA_Attribute::Short},
+    {0x907c7719 /* fontVerticalScale */, XFA_Attribute::FontVerticalScale},
+    {0x94446dcc /* thickness */, XFA_Attribute::Thickness},
+    {0x957fa006 /* commitOn */, XFA_Attribute::CommitOn},
+    {0x982bd892 /* remainCharacterCount */,
+     XFA_Attribute::RemainCharacterCount},
+    {0x98fd4d81 /* keyAgreement */, XFA_Attribute::KeyAgreement},
+    {0x99800d7a /* errorCorrectionLevel */,
+     XFA_Attribute::ErrorCorrectionLevel},
+    {0x9a63da3d /* upsMode */, XFA_Attribute::UpsMode},
+    {0x9cc17d75 /* mergeMode */, XFA_Attribute::MergeMode},
+    {0x9d833d75 /* circular */, XFA_Attribute::Circular},
+    {0x9d8ee204 /* psName */, XFA_Attribute::PsName},
+    {0x9dcc3ab3 /* trailer */, XFA_Attribute::Trailer},
+    {0xa0933954 /* unicodeRange */, XFA_Attribute::UnicodeRange},
+    {0xa1b0d2f5 /* executeType */, XFA_Attribute::ExecuteType},
+    {0xa25a883d /* duplexImposition */, XFA_Attribute::DuplexImposition},
+    {0xa42ca1b7 /* trayIn */, XFA_Attribute::TrayIn},
+    {0xa433f001 /* bindingNode */, XFA_Attribute::BindingNode},
+    {0xa5340ff5 /* bofAction */, XFA_Attribute::BofAction},
+    {0xa5b410cf /* save */, XFA_Attribute::Save},
+    {0xa6118c89 /* targetType */, XFA_Attribute::TargetType},
+    {0xa66404cb /* keyEncipherment */, XFA_Attribute::KeyEncipherment},
+    {0xa6710262 /* credentialServerPolicy */,
+     XFA_Attribute::CredentialServerPolicy},
+    {0xa686975b /* size */, XFA_Attribute::Size},
+    {0xa85e74f3 /* initialNumber */, XFA_Attribute::InitialNumber},
+    {0xabef37e3 /* slope */, XFA_Attribute::Slope},
+    {0xabfa6c4f /* cSpace */, XFA_Attribute::CSpace},
+    {0xac06e2b0 /* colSpan */, XFA_Attribute::ColSpan},
+    {0xadc4c77b /* binding */, XFA_Attribute::Binding},
+    {0xaf754613 /* checksum */, XFA_Attribute::Checksum},
+    {0xb045fbc5 /* charEncoding */, XFA_Attribute::CharEncoding},
+    {0xb0e5485d /* bind */, XFA_Attribute::Bind},
+    {0xb12128b7 /* textEntry */, XFA_Attribute::TextEntry},
+    {0xb373a862 /* archive */, XFA_Attribute::Archive},
+    {0xb598a1f7 /* uuid */, XFA_Attribute::Uuid},
+    {0xb5e49bf2 /* posture */, XFA_Attribute::Posture},
+    {0xb6b44172 /* after */, XFA_Attribute::After},
+    {0xb716467b /* orphans */, XFA_Attribute::Orphans},
+    {0xbc0c4695 /* qualifiedName */, XFA_Attribute::QualifiedName},
+    {0xbc254332 /* usehref */, XFA_Attribute::Usehref},
+    {0xbc8fa350 /* locale */, XFA_Attribute::Locale},
+    {0xbd6e1d88 /* weight */, XFA_Attribute::Weight},
+    {0xbd96a0e9 /* underlinePeriod */, XFA_Attribute::UnderlinePeriod},
+    {0xbde9abda /* data */, XFA_Attribute::Data},
+    {0xbe52dfbf /* desc */, XFA_Attribute::Desc},
+    {0xbe9ba472 /* numbered */, XFA_Attribute::Numbered},
+    {0xc035c6b1 /* dataColumnCount */, XFA_Attribute::DataColumnCount},
+    {0xc0ec9fa4 /* overline */, XFA_Attribute::Overline},
+    {0xc2ba0923 /* urlPolicy */, XFA_Attribute::UrlPolicy},
+    {0xc2bd40fd /* anchorType */, XFA_Attribute::AnchorType},
+    {0xc39a88bd /* labelRef */, XFA_Attribute::LabelRef},
+    {0xc3c1442f /* bookendLeader */, XFA_Attribute::BookendLeader},
+    {0xc4547a08 /* maxLength */, XFA_Attribute::MaxLength},
+    {0xc4fed09b /* accessKey */, XFA_Attribute::AccessKey},
+    {0xc5762157 /* cursorLocation */, XFA_Attribute::CursorLocation},
+    {0xc860f30a /* delayedOpen */, XFA_Attribute::DelayedOpen},
+    {0xc8da4da7 /* target */, XFA_Attribute::Target},
+    {0xca5dc27c /* dataEncipherment */, XFA_Attribute::DataEncipherment},
+    {0xcb150479 /* afterTarget */, XFA_Attribute::AfterTarget},
+    {0xcbcaf66d /* leader */, XFA_Attribute::Leader},
+    {0xcca7897e /* picker */, XFA_Attribute::Picker},
+    {0xcd7f7b54 /* from */, XFA_Attribute::From},
+    {0xcea5e62c /* baseProfile */, XFA_Attribute::BaseProfile},
+    {0xd171b240 /* aspect */, XFA_Attribute::Aspect},
+    {0xd3c84d25 /* rowColumnRatio */, XFA_Attribute::RowColumnRatio},
+    {0xd4b01921 /* lineHeight */, XFA_Attribute::LineHeight},
+    {0xd4cc53f8 /* highlight */, XFA_Attribute::Highlight},
+    {0xd50f903a /* valueRef */, XFA_Attribute::ValueRef},
+    {0xd52482e0 /* maxEntries */, XFA_Attribute::MaxEntries},
+    {0xd57c513c /* dataLength */, XFA_Attribute::DataLength},
+    {0xd6128d8d /* activity */, XFA_Attribute::Activity},
+    {0xd6a39990 /* input */, XFA_Attribute::Input},
+    {0xd6e27f1d /* value */, XFA_Attribute::Value},
+    {0xd70798c2 /* blankOrNotBlank */, XFA_Attribute::BlankOrNotBlank},
+    {0xd861f8af /* addRevocationInfo */, XFA_Attribute::AddRevocationInfo},
+    {0xd8f982bf /* genericFamily */, XFA_Attribute::GenericFamily},
+    {0xd996fa9b /* hand */, XFA_Attribute::Hand},
+    {0xdb55fec5 /* href */, XFA_Attribute::Href},
+    {0xdc75676c /* textEncoding */, XFA_Attribute::TextEncoding},
+    {0xde7f92ba /* leadDigits */, XFA_Attribute::LeadDigits},
+    {0xe11a2cbc /* permissions */, XFA_Attribute::Permissions},
+    {0xe18b5659 /* spaceAbove */, XFA_Attribute::SpaceAbove},
+    {0xe1a26b56 /* codeBase */, XFA_Attribute::CodeBase},
+    {0xe349d044 /* stock */, XFA_Attribute::Stock},
+    {0xe372ae97 /* isNull */, XFA_Attribute::IsNull},
+    {0xe4c3a5e5 /* restoreState */, XFA_Attribute::RestoreState},
+    {0xe5c96d6a /* excludeAllCaps */, XFA_Attribute::ExcludeAllCaps},
+    {0xe64b1129 /* formatTest */, XFA_Attribute::FormatTest},
+    {0xe6f99487 /* hScrollPolicy */, XFA_Attribute::HScrollPolicy},
+    {0xe8dddf50 /* join */, XFA_Attribute::Join},
+    {0xe8f118a8 /* keyCertSign */, XFA_Attribute::KeyCertSign},
+    {0xe948b9a8 /* radius */, XFA_Attribute::Radius},
+    {0xe996b2fe /* sourceAbove */, XFA_Attribute::SourceAbove},
+    {0xea7090a0 /* override */, XFA_Attribute::Override},
+    {0xeb091003 /* classId */, XFA_Attribute::ClassId},
+    {0xeb511b54 /* disable */, XFA_Attribute::Disable},
+    {0xeda9017a /* scope */, XFA_Attribute::Scope},
+    {0xf197844d /* match */, XFA_Attribute::Match},
+    {0xf2009339 /* placement */, XFA_Attribute::Placement},
+    {0xf4ffce73 /* before */, XFA_Attribute::Before},
+    {0xf531b059 /* writingScript */, XFA_Attribute::WritingScript},
+    {0xf575ca75 /* endChar */, XFA_Attribute::EndChar},
+    {0xf6b47749 /* lock */, XFA_Attribute::Lock},
+    {0xf6b4afb0 /* long */, XFA_Attribute::Long},
+    {0xf6b59543 /* intact */, XFA_Attribute::Intact},
+    {0xf889e747 /* xdpContent */, XFA_Attribute::XdpContent},
+    {0xfea53ec6 /* decipherOnly */, XFA_Attribute::DecipherOnly},
+};
+
 }  // namespace
 
 // static
@@ -653,6 +905,18 @@ XFA_Element CXFA_Node::NameToElement(const WideString& name) {
   if (elem != std::end(ElementNameToEnum) && elem->hash == hash)
     return elem->element;
   return XFA_Element::Unknown;
+}
+
+// static
+XFA_Attribute CXFA_Node::NameToAttribute(const WideStringView& name) {
+  uint32_t hash = FX_HashCode_GetW(name, false);
+  auto* elem = std::lower_bound(
+      std::begin(AttributeNameInfoToEnum), std::end(AttributeNameInfoToEnum),
+      hash,
+      [](const AttributeNameInfo& a, uint32_t hash) { return a.hash < hash; });
+  if (elem != std::end(AttributeNameInfoToEnum) && elem->hash == hash)
+    return elem->attribute;
+  return XFA_Attribute::Unknown;
 }
 
 // static
@@ -1604,3 +1868,1135 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     return nullptr;
   return node;
 }
+
+// static
+WideString CXFA_Node::AttributeToName(XFA_Attribute attr) {
+  switch (attr) {
+    case XFA_Attribute::H:
+      return L"h";
+    case XFA_Attribute::W:
+      return L"w";
+    case XFA_Attribute::X:
+      return L"x";
+    case XFA_Attribute::Y:
+      return L"y";
+    case XFA_Attribute::Id:
+      return L"id";
+    case XFA_Attribute::To:
+      return L"to";
+    case XFA_Attribute::LineThrough:
+      return L"lineThrough";
+    case XFA_Attribute::HAlign:
+      return L"hAlign";
+    case XFA_Attribute::Typeface:
+      return L"typeface";
+    case XFA_Attribute::BeforeTarget:
+      return L"beforeTarget";
+    case XFA_Attribute::Name:
+      return L"name";
+    case XFA_Attribute::Next:
+      return L"next";
+    case XFA_Attribute::DataRowCount:
+      return L"dataRowCount";
+    case XFA_Attribute::Break:
+      return L"break";
+    case XFA_Attribute::VScrollPolicy:
+      return L"vScrollPolicy";
+    case XFA_Attribute::FontHorizontalScale:
+      return L"fontHorizontalScale";
+    case XFA_Attribute::TextIndent:
+      return L"textIndent";
+    case XFA_Attribute::Context:
+      return L"context";
+    case XFA_Attribute::TrayOut:
+      return L"trayOut";
+    case XFA_Attribute::Cap:
+      return L"cap";
+    case XFA_Attribute::Max:
+      return L"max";
+    case XFA_Attribute::Min:
+      return L"min";
+    case XFA_Attribute::Ref:
+      return L"ref";
+    case XFA_Attribute::Rid:
+      return L"rid";
+    case XFA_Attribute::Url:
+      return L"url";
+    case XFA_Attribute::Use:
+      return L"use";
+    case XFA_Attribute::LeftInset:
+      return L"leftInset";
+    case XFA_Attribute::Widows:
+      return L"widows";
+    case XFA_Attribute::Level:
+      return L"level";
+    case XFA_Attribute::BottomInset:
+      return L"bottomInset";
+    case XFA_Attribute::OverflowTarget:
+      return L"overflowTarget";
+    case XFA_Attribute::AllowMacro:
+      return L"allowMacro";
+    case XFA_Attribute::PagePosition:
+      return L"pagePosition";
+    case XFA_Attribute::ColumnWidths:
+      return L"columnWidths";
+    case XFA_Attribute::OverflowLeader:
+      return L"overflowLeader";
+    case XFA_Attribute::Action:
+      return L"action";
+    case XFA_Attribute::NonRepudiation:
+      return L"nonRepudiation";
+    case XFA_Attribute::Rate:
+      return L"rate";
+    case XFA_Attribute::AllowRichText:
+      return L"allowRichText";
+    case XFA_Attribute::Role:
+      return L"role";
+    case XFA_Attribute::OverflowTrailer:
+      return L"overflowTrailer";
+    case XFA_Attribute::Operation:
+      return L"operation";
+    case XFA_Attribute::Timeout:
+      return L"timeout";
+    case XFA_Attribute::TopInset:
+      return L"topInset";
+    case XFA_Attribute::Access:
+      return L"access";
+    case XFA_Attribute::CommandType:
+      return L"commandType";
+    case XFA_Attribute::Format:
+      return L"format";
+    case XFA_Attribute::DataPrep:
+      return L"dataPrep";
+    case XFA_Attribute::WidgetData:
+      return L"widgetData";
+    case XFA_Attribute::Abbr:
+      return L"abbr";
+    case XFA_Attribute::MarginRight:
+      return L"marginRight";
+    case XFA_Attribute::DataDescription:
+      return L"dataDescription";
+    case XFA_Attribute::EncipherOnly:
+      return L"encipherOnly";
+    case XFA_Attribute::KerningMode:
+      return L"kerningMode";
+    case XFA_Attribute::Rotate:
+      return L"rotate";
+    case XFA_Attribute::WordCharacterCount:
+      return L"wordCharacterCount";
+    case XFA_Attribute::Type:
+      return L"type";
+    case XFA_Attribute::Reserve:
+      return L"reserve";
+    case XFA_Attribute::TextLocation:
+      return L"textLocation";
+    case XFA_Attribute::Priority:
+      return L"priority";
+    case XFA_Attribute::Underline:
+      return L"underline";
+    case XFA_Attribute::ModuleWidth:
+      return L"moduleWidth";
+    case XFA_Attribute::Hyphenate:
+      return L"hyphenate";
+    case XFA_Attribute::Listen:
+      return L"listen";
+    case XFA_Attribute::Delimiter:
+      return L"delimiter";
+    case XFA_Attribute::ContentType:
+      return L"contentType";
+    case XFA_Attribute::StartNew:
+      return L"startNew";
+    case XFA_Attribute::EofAction:
+      return L"eofAction";
+    case XFA_Attribute::AllowNeutral:
+      return L"allowNeutral";
+    case XFA_Attribute::Connection:
+      return L"connection";
+    case XFA_Attribute::BaselineShift:
+      return L"baselineShift";
+    case XFA_Attribute::OverlinePeriod:
+      return L"overlinePeriod";
+    case XFA_Attribute::FracDigits:
+      return L"fracDigits";
+    case XFA_Attribute::Orientation:
+      return L"orientation";
+    case XFA_Attribute::TimeStamp:
+      return L"timeStamp";
+    case XFA_Attribute::PrintCheckDigit:
+      return L"printCheckDigit";
+    case XFA_Attribute::MarginLeft:
+      return L"marginLeft";
+    case XFA_Attribute::Stroke:
+      return L"stroke";
+    case XFA_Attribute::ModuleHeight:
+      return L"moduleHeight";
+    case XFA_Attribute::TransferEncoding:
+      return L"transferEncoding";
+    case XFA_Attribute::Usage:
+      return L"usage";
+    case XFA_Attribute::Presence:
+      return L"presence";
+    case XFA_Attribute::RadixOffset:
+      return L"radixOffset";
+    case XFA_Attribute::Preserve:
+      return L"preserve";
+    case XFA_Attribute::AliasNode:
+      return L"aliasNode";
+    case XFA_Attribute::MultiLine:
+      return L"multiLine";
+    case XFA_Attribute::Version:
+      return L"version";
+    case XFA_Attribute::StartChar:
+      return L"startChar";
+    case XFA_Attribute::ScriptTest:
+      return L"scriptTest";
+    case XFA_Attribute::StartAngle:
+      return L"startAngle";
+    case XFA_Attribute::CursorType:
+      return L"cursorType";
+    case XFA_Attribute::DigitalSignature:
+      return L"digitalSignature";
+    case XFA_Attribute::CodeType:
+      return L"codeType";
+    case XFA_Attribute::Output:
+      return L"output";
+    case XFA_Attribute::BookendTrailer:
+      return L"bookendTrailer";
+    case XFA_Attribute::ImagingBBox:
+      return L"imagingBBox";
+    case XFA_Attribute::ExcludeInitialCap:
+      return L"excludeInitialCap";
+    case XFA_Attribute::Force:
+      return L"force";
+    case XFA_Attribute::CrlSign:
+      return L"crlSign";
+    case XFA_Attribute::Previous:
+      return L"previous";
+    case XFA_Attribute::PushCharacterCount:
+      return L"pushCharacterCount";
+    case XFA_Attribute::NullTest:
+      return L"nullTest";
+    case XFA_Attribute::RunAt:
+      return L"runAt";
+    case XFA_Attribute::SpaceBelow:
+      return L"spaceBelow";
+    case XFA_Attribute::SweepAngle:
+      return L"sweepAngle";
+    case XFA_Attribute::NumberOfCells:
+      return L"numberOfCells";
+    case XFA_Attribute::LetterSpacing:
+      return L"letterSpacing";
+    case XFA_Attribute::LockType:
+      return L"lockType";
+    case XFA_Attribute::PasswordChar:
+      return L"passwordChar";
+    case XFA_Attribute::VAlign:
+      return L"vAlign";
+    case XFA_Attribute::SourceBelow:
+      return L"sourceBelow";
+    case XFA_Attribute::Inverted:
+      return L"inverted";
+    case XFA_Attribute::Mark:
+      return L"mark";
+    case XFA_Attribute::MaxH:
+      return L"maxH";
+    case XFA_Attribute::MaxW:
+      return L"maxW";
+    case XFA_Attribute::Truncate:
+      return L"truncate";
+    case XFA_Attribute::MinH:
+      return L"minH";
+    case XFA_Attribute::MinW:
+      return L"minW";
+    case XFA_Attribute::Initial:
+      return L"initial";
+    case XFA_Attribute::Mode:
+      return L"mode";
+    case XFA_Attribute::Layout:
+      return L"layout";
+    case XFA_Attribute::Server:
+      return L"server";
+    case XFA_Attribute::EmbedPDF:
+      return L"embedPDF";
+    case XFA_Attribute::OddOrEven:
+      return L"oddOrEven";
+    case XFA_Attribute::TabDefault:
+      return L"tabDefault";
+    case XFA_Attribute::Contains:
+      return L"contains";
+    case XFA_Attribute::RightInset:
+      return L"rightInset";
+    case XFA_Attribute::MaxChars:
+      return L"maxChars";
+    case XFA_Attribute::Open:
+      return L"open";
+    case XFA_Attribute::Relation:
+      return L"relation";
+    case XFA_Attribute::WideNarrowRatio:
+      return L"wideNarrowRatio";
+    case XFA_Attribute::Relevant:
+      return L"relevant";
+    case XFA_Attribute::SignatureType:
+      return L"signatureType";
+    case XFA_Attribute::LineThroughPeriod:
+      return L"lineThroughPeriod";
+    case XFA_Attribute::Shape:
+      return L"shape";
+    case XFA_Attribute::TabStops:
+      return L"tabStops";
+    case XFA_Attribute::OutputBelow:
+      return L"outputBelow";
+    case XFA_Attribute::Short:
+      return L"short";
+    case XFA_Attribute::FontVerticalScale:
+      return L"fontVerticalScale";
+    case XFA_Attribute::Thickness:
+      return L"thickness";
+    case XFA_Attribute::CommitOn:
+      return L"commitOn";
+    case XFA_Attribute::RemainCharacterCount:
+      return L"remainCharacterCount";
+    case XFA_Attribute::KeyAgreement:
+      return L"keyAgreement";
+    case XFA_Attribute::ErrorCorrectionLevel:
+      return L"errorCorrectionLevel";
+    case XFA_Attribute::UpsMode:
+      return L"upsMode";
+    case XFA_Attribute::MergeMode:
+      return L"mergeMode";
+    case XFA_Attribute::Circular:
+      return L"circular";
+    case XFA_Attribute::PsName:
+      return L"psName";
+    case XFA_Attribute::Trailer:
+      return L"trailer";
+    case XFA_Attribute::UnicodeRange:
+      return L"unicodeRange";
+    case XFA_Attribute::ExecuteType:
+      return L"executeType";
+    case XFA_Attribute::DuplexImposition:
+      return L"duplexImposition";
+    case XFA_Attribute::TrayIn:
+      return L"trayIn";
+    case XFA_Attribute::BindingNode:
+      return L"bindingNode";
+    case XFA_Attribute::BofAction:
+      return L"bofAction";
+    case XFA_Attribute::Save:
+      return L"save";
+    case XFA_Attribute::TargetType:
+      return L"targetType";
+    case XFA_Attribute::KeyEncipherment:
+      return L"keyEncipherment";
+    case XFA_Attribute::CredentialServerPolicy:
+      return L"credentialServerPolicy";
+    case XFA_Attribute::Size:
+      return L"size";
+    case XFA_Attribute::InitialNumber:
+      return L"initialNumber";
+    case XFA_Attribute::Slope:
+      return L"slope";
+    case XFA_Attribute::CSpace:
+      return L"cSpace";
+    case XFA_Attribute::ColSpan:
+      return L"colSpan";
+    case XFA_Attribute::Binding:
+      return L"binding";
+    case XFA_Attribute::Checksum:
+      return L"checksum";
+    case XFA_Attribute::CharEncoding:
+      return L"charEncoding";
+    case XFA_Attribute::Bind:
+      return L"bind";
+    case XFA_Attribute::TextEntry:
+      return L"textEntry";
+    case XFA_Attribute::Archive:
+      return L"archive";
+    case XFA_Attribute::Uuid:
+      return L"uuid";
+    case XFA_Attribute::Posture:
+      return L"posture";
+    case XFA_Attribute::After:
+      return L"after";
+    case XFA_Attribute::Orphans:
+      return L"orphans";
+    case XFA_Attribute::QualifiedName:
+      return L"qualifiedName";
+    case XFA_Attribute::Usehref:
+      return L"usehref";
+    case XFA_Attribute::Locale:
+      return L"locale";
+    case XFA_Attribute::Weight:
+      return L"weight";
+    case XFA_Attribute::UnderlinePeriod:
+      return L"underlinePeriod";
+    case XFA_Attribute::Data:
+      return L"data";
+    case XFA_Attribute::Desc:
+      return L"desc";
+    case XFA_Attribute::Numbered:
+      return L"numbered";
+    case XFA_Attribute::DataColumnCount:
+      return L"dataColumnCount";
+    case XFA_Attribute::Overline:
+      return L"overline";
+    case XFA_Attribute::UrlPolicy:
+      return L"urlPolicy";
+    case XFA_Attribute::AnchorType:
+      return L"anchorType";
+    case XFA_Attribute::LabelRef:
+      return L"labelRef";
+    case XFA_Attribute::BookendLeader:
+      return L"bookendLeader";
+    case XFA_Attribute::MaxLength:
+      return L"maxLength";
+    case XFA_Attribute::AccessKey:
+      return L"accessKey";
+    case XFA_Attribute::CursorLocation:
+      return L"cursorLocation";
+    case XFA_Attribute::DelayedOpen:
+      return L"delayedOpen";
+    case XFA_Attribute::Target:
+      return L"target";
+    case XFA_Attribute::DataEncipherment:
+      return L"dataEncipherment";
+    case XFA_Attribute::AfterTarget:
+      return L"afterTarget";
+    case XFA_Attribute::Leader:
+      return L"leader";
+    case XFA_Attribute::Picker:
+      return L"picker";
+    case XFA_Attribute::From:
+      return L"from";
+    case XFA_Attribute::BaseProfile:
+      return L"baseProfile";
+    case XFA_Attribute::Aspect:
+      return L"aspect";
+    case XFA_Attribute::RowColumnRatio:
+      return L"rowColumnRatio";
+    case XFA_Attribute::LineHeight:
+      return L"lineHeight";
+    case XFA_Attribute::Highlight:
+      return L"highlight";
+    case XFA_Attribute::ValueRef:
+      return L"valueRef";
+    case XFA_Attribute::MaxEntries:
+      return L"maxEntries";
+    case XFA_Attribute::DataLength:
+      return L"dataLength";
+    case XFA_Attribute::Activity:
+      return L"activity";
+    case XFA_Attribute::Input:
+      return L"input";
+    case XFA_Attribute::Value:
+      return L"value";
+    case XFA_Attribute::BlankOrNotBlank:
+      return L"blankOrNotBlank";
+    case XFA_Attribute::AddRevocationInfo:
+      return L"addRevocationInfo";
+    case XFA_Attribute::GenericFamily:
+      return L"genericFamily";
+    case XFA_Attribute::Hand:
+      return L"hand";
+    case XFA_Attribute::Href:
+      return L"href";
+    case XFA_Attribute::TextEncoding:
+      return L"textEncoding";
+    case XFA_Attribute::LeadDigits:
+      return L"leadDigits";
+    case XFA_Attribute::Permissions:
+      return L"permissions";
+    case XFA_Attribute::SpaceAbove:
+      return L"spaceAbove";
+    case XFA_Attribute::CodeBase:
+      return L"codeBase";
+    case XFA_Attribute::Stock:
+      return L"stock";
+    case XFA_Attribute::IsNull:
+      return L"isNull";
+    case XFA_Attribute::RestoreState:
+      return L"restoreState";
+    case XFA_Attribute::ExcludeAllCaps:
+      return L"excludeAllCaps";
+    case XFA_Attribute::FormatTest:
+      return L"formatTest";
+    case XFA_Attribute::HScrollPolicy:
+      return L"hScrollPolicy";
+    case XFA_Attribute::Join:
+      return L"join";
+    case XFA_Attribute::KeyCertSign:
+      return L"keyCertSign";
+    case XFA_Attribute::Radius:
+      return L"radius";
+    case XFA_Attribute::SourceAbove:
+      return L"sourceAbove";
+    case XFA_Attribute::Override:
+      return L"override";
+    case XFA_Attribute::ClassId:
+      return L"classId";
+    case XFA_Attribute::Disable:
+      return L"disable";
+    case XFA_Attribute::Scope:
+      return L"scope";
+    case XFA_Attribute::Match:
+      return L"match";
+    case XFA_Attribute::Placement:
+      return L"placement";
+    case XFA_Attribute::Before:
+      return L"before";
+    case XFA_Attribute::WritingScript:
+      return L"writingScript";
+    case XFA_Attribute::EndChar:
+      return L"endChar";
+    case XFA_Attribute::Lock:
+      return L"lock";
+    case XFA_Attribute::Long:
+      return L"long";
+    case XFA_Attribute::Intact:
+      return L"intact";
+    case XFA_Attribute::XdpContent:
+      return L"xdpContent";
+    case XFA_Attribute::DecipherOnly:
+      return L"decipherOnly";
+
+    default:
+      NOTREACHED();
+      break;
+  }
+  return L"";
+}
+
+#ifndef NDEBUG
+// static
+WideString CXFA_Node::ElementToName(XFA_Element attr) {
+  switch (attr) {
+    case XFA_Element::Ps:
+      return L"ps";
+    case XFA_Element::To:
+      return L"to";
+    case XFA_Element::Ui:
+      return L"ui";
+    case XFA_Element::RecordSet:
+      return L"recordSet";
+    case XFA_Element::SubsetBelow:
+      return L"subsetBelow";
+    case XFA_Element::SubformSet:
+      return L"subformSet";
+    case XFA_Element::AdobeExtensionLevel:
+      return L"adobeExtensionLevel";
+    case XFA_Element::Typeface:
+      return L"typeface";
+    case XFA_Element::Break:
+      return L"break";
+    case XFA_Element::FontInfo:
+      return L"fontInfo";
+    case XFA_Element::NumberPattern:
+      return L"numberPattern";
+    case XFA_Element::DynamicRender:
+      return L"dynamicRender";
+    case XFA_Element::PrintScaling:
+      return L"printScaling";
+    case XFA_Element::CheckButton:
+      return L"checkButton";
+    case XFA_Element::DatePatterns:
+      return L"datePatterns";
+    case XFA_Element::SourceSet:
+      return L"sourceSet";
+    case XFA_Element::Amd:
+      return L"amd";
+    case XFA_Element::Arc:
+      return L"arc";
+    case XFA_Element::Day:
+      return L"day";
+    case XFA_Element::Era:
+      return L"era";
+    case XFA_Element::Jog:
+      return L"jog";
+    case XFA_Element::Log:
+      return L"log";
+    case XFA_Element::Map:
+      return L"map";
+    case XFA_Element::Mdp:
+      return L"mdp";
+    case XFA_Element::BreakBefore:
+      return L"breakBefore";
+    case XFA_Element::Oid:
+      return L"oid";
+    case XFA_Element::Pcl:
+      return L"pcl";
+    case XFA_Element::Pdf:
+      return L"pdf";
+    case XFA_Element::Ref:
+      return L"ref";
+    case XFA_Element::Uri:
+      return L"uri";
+    case XFA_Element::Xdc:
+      return L"xdc";
+    case XFA_Element::Xdp:
+      return L"xdp";
+    case XFA_Element::Xfa:
+      return L"xfa";
+    case XFA_Element::Xsl:
+      return L"xsl";
+    case XFA_Element::Zpl:
+      return L"zpl";
+    case XFA_Element::Cache:
+      return L"cache";
+    case XFA_Element::Margin:
+      return L"margin";
+    case XFA_Element::KeyUsage:
+      return L"keyUsage";
+    case XFA_Element::Exclude:
+      return L"exclude";
+    case XFA_Element::ChoiceList:
+      return L"choiceList";
+    case XFA_Element::Level:
+      return L"level";
+    case XFA_Element::LabelPrinter:
+      return L"labelPrinter";
+    case XFA_Element::CalendarSymbols:
+      return L"calendarSymbols";
+    case XFA_Element::Para:
+      return L"para";
+    case XFA_Element::Part:
+      return L"part";
+    case XFA_Element::Pdfa:
+      return L"pdfa";
+    case XFA_Element::Filter:
+      return L"filter";
+    case XFA_Element::Present:
+      return L"present";
+    case XFA_Element::Pagination:
+      return L"pagination";
+    case XFA_Element::Encoding:
+      return L"encoding";
+    case XFA_Element::Event:
+      return L"event";
+    case XFA_Element::Whitespace:
+      return L"whitespace";
+    case XFA_Element::DefaultUi:
+      return L"defaultUi";
+    case XFA_Element::DataModel:
+      return L"dataModel";
+    case XFA_Element::Barcode:
+      return L"barcode";
+    case XFA_Element::TimePattern:
+      return L"timePattern";
+    case XFA_Element::BatchOutput:
+      return L"batchOutput";
+    case XFA_Element::Enforce:
+      return L"enforce";
+    case XFA_Element::CurrencySymbols:
+      return L"currencySymbols";
+    case XFA_Element::AddSilentPrint:
+      return L"addSilentPrint";
+    case XFA_Element::Rename:
+      return L"rename";
+    case XFA_Element::Operation:
+      return L"operation";
+    case XFA_Element::Typefaces:
+      return L"typefaces";
+    case XFA_Element::SubjectDNs:
+      return L"subjectDNs";
+    case XFA_Element::Issuers:
+      return L"issuers";
+    case XFA_Element::SignaturePseudoModel:
+      return L"signaturePseudoModel";
+    case XFA_Element::WsdlConnection:
+      return L"wsdlConnection";
+    case XFA_Element::Debug:
+      return L"debug";
+    case XFA_Element::Delta:
+      return L"delta";
+    case XFA_Element::EraNames:
+      return L"eraNames";
+    case XFA_Element::ModifyAnnots:
+      return L"modifyAnnots";
+    case XFA_Element::StartNode:
+      return L"startNode";
+    case XFA_Element::Button:
+      return L"button";
+    case XFA_Element::Format:
+      return L"format";
+    case XFA_Element::Border:
+      return L"border";
+    case XFA_Element::Area:
+      return L"area";
+    case XFA_Element::Hyphenation:
+      return L"hyphenation";
+    case XFA_Element::Text:
+      return L"text";
+    case XFA_Element::Time:
+      return L"time";
+    case XFA_Element::Type:
+      return L"type";
+    case XFA_Element::Overprint:
+      return L"overprint";
+    case XFA_Element::Certificates:
+      return L"certificates";
+    case XFA_Element::EncryptionMethods:
+      return L"encryptionMethods";
+    case XFA_Element::SetProperty:
+      return L"setProperty";
+    case XFA_Element::PrinterName:
+      return L"printerName";
+    case XFA_Element::StartPage:
+      return L"startPage";
+    case XFA_Element::PageOffset:
+      return L"pageOffset";
+    case XFA_Element::DateTime:
+      return L"dateTime";
+    case XFA_Element::Comb:
+      return L"comb";
+    case XFA_Element::Pattern:
+      return L"pattern";
+    case XFA_Element::IfEmpty:
+      return L"ifEmpty";
+    case XFA_Element::SuppressBanner:
+      return L"suppressBanner";
+    case XFA_Element::OutputBin:
+      return L"outputBin";
+    case XFA_Element::Field:
+      return L"field";
+    case XFA_Element::Agent:
+      return L"agent";
+    case XFA_Element::OutputXSL:
+      return L"outputXSL";
+    case XFA_Element::AdjustData:
+      return L"adjustData";
+    case XFA_Element::AutoSave:
+      return L"autoSave";
+    case XFA_Element::ContentArea:
+      return L"contentArea";
+    case XFA_Element::EventPseudoModel:
+      return L"eventPseudoModel";
+    case XFA_Element::WsdlAddress:
+      return L"wsdlAddress";
+    case XFA_Element::Solid:
+      return L"solid";
+    case XFA_Element::DateTimeSymbols:
+      return L"dateTimeSymbols";
+    case XFA_Element::EncryptionLevel:
+      return L"encryptionLevel";
+    case XFA_Element::Edge:
+      return L"edge";
+    case XFA_Element::Stipple:
+      return L"stipple";
+    case XFA_Element::Attributes:
+      return L"attributes";
+    case XFA_Element::VersionControl:
+      return L"versionControl";
+    case XFA_Element::Meridiem:
+      return L"meridiem";
+    case XFA_Element::ExclGroup:
+      return L"exclGroup";
+    case XFA_Element::ToolTip:
+      return L"toolTip";
+    case XFA_Element::Compress:
+      return L"compress";
+    case XFA_Element::Reason:
+      return L"reason";
+    case XFA_Element::Execute:
+      return L"execute";
+    case XFA_Element::ContentCopy:
+      return L"contentCopy";
+    case XFA_Element::DateTimeEdit:
+      return L"dateTimeEdit";
+    case XFA_Element::Config:
+      return L"config";
+    case XFA_Element::Image:
+      return L"image";
+    case XFA_Element::SharpxHTML:
+      return L"#xHTML";
+    case XFA_Element::NumberOfCopies:
+      return L"numberOfCopies";
+    case XFA_Element::BehaviorOverride:
+      return L"behaviorOverride";
+    case XFA_Element::TimeStamp:
+      return L"timeStamp";
+    case XFA_Element::Month:
+      return L"month";
+    case XFA_Element::ViewerPreferences:
+      return L"viewerPreferences";
+    case XFA_Element::ScriptModel:
+      return L"scriptModel";
+    case XFA_Element::Decimal:
+      return L"decimal";
+    case XFA_Element::Subform:
+      return L"subform";
+    case XFA_Element::Select:
+      return L"select";
+    case XFA_Element::Window:
+      return L"window";
+    case XFA_Element::LocaleSet:
+      return L"localeSet";
+    case XFA_Element::Handler:
+      return L"handler";
+    case XFA_Element::HostPseudoModel:
+      return L"hostPseudoModel";
+    case XFA_Element::Presence:
+      return L"presence";
+    case XFA_Element::Record:
+      return L"record";
+    case XFA_Element::Embed:
+      return L"embed";
+    case XFA_Element::Version:
+      return L"version";
+    case XFA_Element::Command:
+      return L"command";
+    case XFA_Element::Copies:
+      return L"copies";
+    case XFA_Element::Staple:
+      return L"staple";
+    case XFA_Element::SubmitFormat:
+      return L"submitFormat";
+    case XFA_Element::Boolean:
+      return L"boolean";
+    case XFA_Element::Message:
+      return L"message";
+    case XFA_Element::Output:
+      return L"output";
+    case XFA_Element::PsMap:
+      return L"psMap";
+    case XFA_Element::ExcludeNS:
+      return L"excludeNS";
+    case XFA_Element::Assist:
+      return L"assist";
+    case XFA_Element::Picture:
+      return L"picture";
+    case XFA_Element::Traversal:
+      return L"traversal";
+    case XFA_Element::SilentPrint:
+      return L"silentPrint";
+    case XFA_Element::WebClient:
+      return L"webClient";
+    case XFA_Element::LayoutPseudoModel:
+      return L"layoutPseudoModel";
+    case XFA_Element::Producer:
+      return L"producer";
+    case XFA_Element::Corner:
+      return L"corner";
+    case XFA_Element::MsgId:
+      return L"msgId";
+    case XFA_Element::Color:
+      return L"color";
+    case XFA_Element::Keep:
+      return L"keep";
+    case XFA_Element::Query:
+      return L"query";
+    case XFA_Element::Insert:
+      return L"insert";
+    case XFA_Element::ImageEdit:
+      return L"imageEdit";
+    case XFA_Element::Validate:
+      return L"validate";
+    case XFA_Element::DigestMethods:
+      return L"digestMethods";
+    case XFA_Element::NumberPatterns:
+      return L"numberPatterns";
+    case XFA_Element::PageSet:
+      return L"pageSet";
+    case XFA_Element::Integer:
+      return L"integer";
+    case XFA_Element::SoapAddress:
+      return L"soapAddress";
+    case XFA_Element::Equate:
+      return L"equate";
+    case XFA_Element::FormFieldFilling:
+      return L"formFieldFilling";
+    case XFA_Element::PageRange:
+      return L"pageRange";
+    case XFA_Element::Update:
+      return L"update";
+    case XFA_Element::ConnectString:
+      return L"connectString";
+    case XFA_Element::Mode:
+      return L"mode";
+    case XFA_Element::Layout:
+      return L"layout";
+    case XFA_Element::Sharpxml:
+      return L"#xml";
+    case XFA_Element::XsdConnection:
+      return L"xsdConnection";
+    case XFA_Element::Traverse:
+      return L"traverse";
+    case XFA_Element::Encodings:
+      return L"encodings";
+    case XFA_Element::Template:
+      return L"template";
+    case XFA_Element::Acrobat:
+      return L"acrobat";
+    case XFA_Element::ValidationMessaging:
+      return L"validationMessaging";
+    case XFA_Element::Signing:
+      return L"signing";
+    case XFA_Element::DataWindow:
+      return L"dataWindow";
+    case XFA_Element::Script:
+      return L"script";
+    case XFA_Element::AddViewerPreferences:
+      return L"addViewerPreferences";
+    case XFA_Element::AlwaysEmbed:
+      return L"alwaysEmbed";
+    case XFA_Element::PasswordEdit:
+      return L"passwordEdit";
+    case XFA_Element::NumericEdit:
+      return L"numericEdit";
+    case XFA_Element::EncryptionMethod:
+      return L"encryptionMethod";
+    case XFA_Element::Change:
+      return L"change";
+    case XFA_Element::PageArea:
+      return L"pageArea";
+    case XFA_Element::SubmitUrl:
+      return L"submitUrl";
+    case XFA_Element::Oids:
+      return L"oids";
+    case XFA_Element::Signature:
+      return L"signature";
+    case XFA_Element::ADBE_JSConsole:
+      return L"ADBE_JSConsole";
+    case XFA_Element::Caption:
+      return L"caption";
+    case XFA_Element::Relevant:
+      return L"relevant";
+    case XFA_Element::FlipLabel:
+      return L"flipLabel";
+    case XFA_Element::ExData:
+      return L"exData";
+    case XFA_Element::DayNames:
+      return L"dayNames";
+    case XFA_Element::SoapAction:
+      return L"soapAction";
+    case XFA_Element::DefaultTypeface:
+      return L"defaultTypeface";
+    case XFA_Element::Manifest:
+      return L"manifest";
+    case XFA_Element::Overflow:
+      return L"overflow";
+    case XFA_Element::Linear:
+      return L"linear";
+    case XFA_Element::CurrencySymbol:
+      return L"currencySymbol";
+    case XFA_Element::Delete:
+      return L"delete";
+    case XFA_Element::Deltas:
+      return L"deltas";
+    case XFA_Element::DigestMethod:
+      return L"digestMethod";
+    case XFA_Element::InstanceManager:
+      return L"instanceManager";
+    case XFA_Element::EquateRange:
+      return L"equateRange";
+    case XFA_Element::Medium:
+      return L"medium";
+    case XFA_Element::TextEdit:
+      return L"textEdit";
+    case XFA_Element::TemplateCache:
+      return L"templateCache";
+    case XFA_Element::CompressObjectStream:
+      return L"compressObjectStream";
+    case XFA_Element::DataValue:
+      return L"dataValue";
+    case XFA_Element::AccessibleContent:
+      return L"accessibleContent";
+    case XFA_Element::IncludeXDPContent:
+      return L"includeXDPContent";
+    case XFA_Element::XmlConnection:
+      return L"xmlConnection";
+    case XFA_Element::ValidateApprovalSignatures:
+      return L"validateApprovalSignatures";
+    case XFA_Element::SignData:
+      return L"signData";
+    case XFA_Element::Packets:
+      return L"packets";
+    case XFA_Element::DatePattern:
+      return L"datePattern";
+    case XFA_Element::DuplexOption:
+      return L"duplexOption";
+    case XFA_Element::Base:
+      return L"base";
+    case XFA_Element::Bind:
+      return L"bind";
+    case XFA_Element::Compression:
+      return L"compression";
+    case XFA_Element::User:
+      return L"user";
+    case XFA_Element::Rectangle:
+      return L"rectangle";
+    case XFA_Element::EffectiveOutputPolicy:
+      return L"effectiveOutputPolicy";
+    case XFA_Element::ADBE_JSDebugger:
+      return L"ADBE_JSDebugger";
+    case XFA_Element::Acrobat7:
+      return L"acrobat7";
+    case XFA_Element::Interactive:
+      return L"interactive";
+    case XFA_Element::Locale:
+      return L"locale";
+    case XFA_Element::CurrentPage:
+      return L"currentPage";
+    case XFA_Element::Data:
+      return L"data";
+    case XFA_Element::Date:
+      return L"date";
+    case XFA_Element::Desc:
+      return L"desc";
+    case XFA_Element::Encrypt:
+      return L"encrypt";
+    case XFA_Element::Draw:
+      return L"draw";
+    case XFA_Element::Encryption:
+      return L"encryption";
+    case XFA_Element::MeridiemNames:
+      return L"meridiemNames";
+    case XFA_Element::Messaging:
+      return L"messaging";
+    case XFA_Element::Speak:
+      return L"speak";
+    case XFA_Element::DataGroup:
+      return L"dataGroup";
+    case XFA_Element::Common:
+      return L"common";
+    case XFA_Element::Sharptext:
+      return L"#text";
+    case XFA_Element::PaginationOverride:
+      return L"paginationOverride";
+    case XFA_Element::Reasons:
+      return L"reasons";
+    case XFA_Element::SignatureProperties:
+      return L"signatureProperties";
+    case XFA_Element::Threshold:
+      return L"threshold";
+    case XFA_Element::AppearanceFilter:
+      return L"appearanceFilter";
+    case XFA_Element::Fill:
+      return L"fill";
+    case XFA_Element::Font:
+      return L"font";
+    case XFA_Element::Form:
+      return L"form";
+    case XFA_Element::MediumInfo:
+      return L"mediumInfo";
+    case XFA_Element::Certificate:
+      return L"certificate";
+    case XFA_Element::Password:
+      return L"password";
+    case XFA_Element::RunScripts:
+      return L"runScripts";
+    case XFA_Element::Trace:
+      return L"trace";
+    case XFA_Element::Float:
+      return L"float";
+    case XFA_Element::RenderPolicy:
+      return L"renderPolicy";
+    case XFA_Element::LogPseudoModel:
+      return L"logPseudoModel";
+    case XFA_Element::Destination:
+      return L"destination";
+    case XFA_Element::Value:
+      return L"value";
+    case XFA_Element::Bookend:
+      return L"bookend";
+    case XFA_Element::ExObject:
+      return L"exObject";
+    case XFA_Element::OpenAction:
+      return L"openAction";
+    case XFA_Element::NeverEmbed:
+      return L"neverEmbed";
+    case XFA_Element::BindItems:
+      return L"bindItems";
+    case XFA_Element::Calculate:
+      return L"calculate";
+    case XFA_Element::Print:
+      return L"print";
+    case XFA_Element::Extras:
+      return L"extras";
+    case XFA_Element::Proto:
+      return L"proto";
+    case XFA_Element::DSigData:
+      return L"dSigData";
+    case XFA_Element::Creator:
+      return L"creator";
+    case XFA_Element::Connect:
+      return L"connect";
+    case XFA_Element::Permissions:
+      return L"permissions";
+    case XFA_Element::ConnectionSet:
+      return L"connectionSet";
+    case XFA_Element::Submit:
+      return L"submit";
+    case XFA_Element::Range:
+      return L"range";
+    case XFA_Element::Linearized:
+      return L"linearized";
+    case XFA_Element::Packet:
+      return L"packet";
+    case XFA_Element::RootElement:
+      return L"rootElement";
+    case XFA_Element::PlaintextMetadata:
+      return L"plaintextMetadata";
+    case XFA_Element::NumberSymbols:
+      return L"numberSymbols";
+    case XFA_Element::PrintHighQuality:
+      return L"printHighQuality";
+    case XFA_Element::Driver:
+      return L"driver";
+    case XFA_Element::IncrementalLoad:
+      return L"incrementalLoad";
+    case XFA_Element::SubjectDN:
+      return L"subjectDN";
+    case XFA_Element::CompressLogicalStructure:
+      return L"compressLogicalStructure";
+    case XFA_Element::IncrementalMerge:
+      return L"incrementalMerge";
+    case XFA_Element::Radial:
+      return L"radial";
+    case XFA_Element::Variables:
+      return L"variables";
+    case XFA_Element::TimePatterns:
+      return L"timePatterns";
+    case XFA_Element::EffectiveInputPolicy:
+      return L"effectiveInputPolicy";
+    case XFA_Element::NameAttr:
+      return L"nameAttr";
+    case XFA_Element::Conformance:
+      return L"conformance";
+    case XFA_Element::Transform:
+      return L"transform";
+    case XFA_Element::LockDocument:
+      return L"lockDocument";
+    case XFA_Element::BreakAfter:
+      return L"breakAfter";
+    case XFA_Element::Line:
+      return L"line";
+    case XFA_Element::List:
+      return L"list";
+    case XFA_Element::Source:
+      return L"source";
+    case XFA_Element::Occur:
+      return L"occur";
+    case XFA_Element::PickTrayByPDFSize:
+      return L"pickTrayByPDFSize";
+    case XFA_Element::MonthNames:
+      return L"monthNames";
+    case XFA_Element::Severity:
+      return L"severity";
+    case XFA_Element::GroupParent:
+      return L"groupParent";
+    case XFA_Element::DocumentAssembly:
+      return L"documentAssembly";
+    case XFA_Element::NumberSymbol:
+      return L"numberSymbol";
+    case XFA_Element::Tagged:
+      return L"tagged";
+    case XFA_Element::Items:
+      return L"items";
+
+    default:
+      NOTREACHED();
+      break;
+  }
+  return L"";
+}
+#endif  // NDEBUG

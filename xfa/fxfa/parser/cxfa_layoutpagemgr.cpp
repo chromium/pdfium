@@ -97,11 +97,12 @@ void SyncContainer(CXFA_FFNotify* pNotify,
   uint32_t dwRelevantContainer = 0;
   if (bVisible) {
     XFA_ATTRIBUTEENUM eAttributeValue =
-        pContainerItem->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Presence);
-    if (eAttributeValue == XFA_ATTRIBUTEENUM_Visible ||
-        eAttributeValue == XFA_ATTRIBUTEENUM_Unknown) {
+        pContainerItem->m_pFormNode->JSNode()
+            ->TryEnum(XFA_Attribute::Presence, true)
+            .value_or(XFA_ATTRIBUTEENUM_Visible);
+    if (eAttributeValue == XFA_ATTRIBUTEENUM_Visible)
       bVisibleItem = true;
-    }
+
     dwRelevantContainer = GetRelevant(pContainerItem->m_pFormNode, dwRelevant);
     dwStatus =
         (bVisibleItem ? XFA_WidgetStatus_Visible : 0) | dwRelevantContainer;
@@ -1927,9 +1928,12 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
               pChildLayoutItem = iterator.MoveToNext();
               continue;
             }
-            bool bVisible =
-                (pContentItem->m_pFormNode->JSNode()->GetEnum(
-                     XFA_Attribute::Presence) == XFA_ATTRIBUTEENUM_Visible);
+
+            XFA_ATTRIBUTEENUM presence =
+                pContentItem->m_pFormNode->JSNode()
+                    ->TryEnum(XFA_Attribute::Presence, true)
+                    .value_or(XFA_ATTRIBUTEENUM_Visible);
+            bool bVisible = presence == XFA_ATTRIBUTEENUM_Visible;
             uint32_t dwRelevantChild =
                 GetRelevant(pContentItem->m_pFormNode, dwRelevant);
             SyncContainer(pNotify, m_pLayoutProcessor, pContentItem,

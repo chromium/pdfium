@@ -186,68 +186,6 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
   return nullptr;
 }
 
-const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_Element eElement,
-                                                    XFA_Attribute eAttribute,
-                                                    XFA_AttributeType eType) {
-  int32_t iStart = 0, iEnd = g_iXFANotsureCount - 1;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    const XFA_NOTSUREATTRIBUTE* pAttr = g_XFANotsureAttributes + iMid;
-    if (eElement == pAttr->eElement) {
-      if (pAttr->attribute == eAttribute) {
-        if (eType == XFA_AttributeType::NotSure || eType == pAttr->eType)
-          return pAttr;
-        return nullptr;
-      }
-      int32_t iBefore = iMid - 1;
-      if (iBefore >= 0) {
-        pAttr = g_XFANotsureAttributes + iBefore;
-        while (eElement == pAttr->eElement) {
-          if (pAttr->attribute == eAttribute) {
-            if (eType == XFA_AttributeType::NotSure || eType == pAttr->eType)
-              return pAttr;
-            return nullptr;
-          }
-          iBefore--;
-          if (iBefore < 0)
-            break;
-
-          pAttr = g_XFANotsureAttributes + iBefore;
-        }
-      }
-
-      int32_t iAfter = iMid + 1;
-      if (iAfter <= g_iXFANotsureCount - 1) {
-        pAttr = g_XFANotsureAttributes + iAfter;
-        while (eElement == pAttr->eElement) {
-          if (pAttr->attribute == eAttribute) {
-            if (eType == XFA_AttributeType::NotSure || eType == pAttr->eType)
-              return pAttr;
-            return nullptr;
-          }
-          iAfter++;
-          if (iAfter > g_iXFANotsureCount - 1)
-            break;
-
-          pAttr = g_XFANotsureAttributes + iAfter;
-        }
-      }
-      return nullptr;
-    }
-
-    if (eElement < pAttr->eElement)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
-  return nullptr;
-}
-
-const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_Attribute eName) {
-  ASSERT(static_cast<uint8_t>(eName) < g_iXFAAttributeCount);
-  return g_XFAAttributeData + static_cast<uint8_t>(eName);
-}
-
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
     const WideStringView& wsName) {
   if (wsName.IsEmpty())

@@ -11,9 +11,13 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 bool CXFA_StrokeData::IsVisible() const {
-  return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Presence) ==
-                       XFA_ATTRIBUTEENUM_Visible
-                 : false;
+  if (!m_pNode)
+    return false;
+
+  XFA_ATTRIBUTEENUM presence = m_pNode->JSNode()
+                                   ->TryEnum(XFA_Attribute::Presence, true)
+                                   .value_or(XFA_ATTRIBUTEENUM_Visible);
+  return presence == XFA_ATTRIBUTEENUM_Visible;
 }
 
 XFA_ATTRIBUTEENUM CXFA_StrokeData::GetCapType() const {
@@ -83,7 +87,8 @@ bool CXFA_StrokeData::IsInverted() const {
 
 float CXFA_StrokeData::GetRadius() const {
   return m_pNode ? m_pNode->JSNode()
-                       ->GetMeasure(XFA_Attribute::Radius)
+                       ->TryMeasure(XFA_Attribute::Radius, true)
+                       .value_or(CXFA_Measurement(0, XFA_Unit::In))
                        .ToUnit(XFA_Unit::Pt)
                  : 0;
 }

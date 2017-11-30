@@ -13,17 +13,37 @@ const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Medium, 1, 0},
                                                  {XFA_Element::Extras, 1, 0},
                                                  {XFA_Element::Occur, 1, 0},
                                                  {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {XFA_Attribute::Id,
-                                        XFA_Attribute::Name,
-                                        XFA_Attribute::Use,
-                                        XFA_Attribute::PagePosition,
-                                        XFA_Attribute::OddOrEven,
-                                        XFA_Attribute::Relevant,
-                                        XFA_Attribute::InitialNumber,
-                                        XFA_Attribute::Usehref,
-                                        XFA_Attribute::Numbered,
-                                        XFA_Attribute::BlankOrNotBlank,
-                                        XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Name, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet |
+         XFA_XDPPACKET_Template | XFA_XDPPACKET_Datasets | XFA_XDPPACKET_Form |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::PagePosition, XFA_AttributeType::Enum,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)XFA_ATTRIBUTEENUM_Any},
+    {XFA_Attribute::OddOrEven, XFA_AttributeType::Enum,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)XFA_ATTRIBUTEENUM_Any},
+    {XFA_Attribute::Relevant, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::InitialNumber, XFA_AttributeType::Integer,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)1},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Numbered, XFA_AttributeType::Integer,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)1},
+    {XFA_Attribute::BlankOrNotBlank, XFA_AttributeType::Enum,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)XFA_ATTRIBUTEENUM_Any},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"pageArea";
 

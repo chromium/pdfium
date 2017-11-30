@@ -8,10 +8,26 @@
 
 namespace {
 
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Id,      XFA_Attribute::Use,    XFA_Attribute::Trailer,
-    XFA_Attribute::Usehref, XFA_Attribute::Target, XFA_Attribute::Leader,
-    XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Trailer, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Target, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::Leader, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"overflow";
 

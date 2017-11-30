@@ -1260,7 +1260,8 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   XFA_ATTRIBUTEENUM eLayoutMode = GetNode()
                                       ->GetNodeItem(XFA_NODEITEM_Parent)
                                       ->JSNode()
-                                      ->GetEnum(XFA_Attribute::Layout);
+                                      ->TryEnum(XFA_Attribute::Layout, true)
+                                      .value_or(XFA_ATTRIBUTEENUM_Position);
   if ((eLayoutMode == XFA_ATTRIBUTEENUM_Position ||
        eLayoutMode == XFA_ATTRIBUTEENUM_Tb ||
        eLayoutMode == XFA_ATTRIBUTEENUM_Row ||

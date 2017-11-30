@@ -8,9 +8,17 @@
 
 namespace {
 
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Name, XFA_Attribute::Desc, XFA_Attribute::Lock,
-    XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Name, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet |
+         XFA_XDPPACKET_Template | XFA_XDPPACKET_Datasets | XFA_XDPPACKET_Form |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Desc, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet, nullptr},
+    {XFA_Attribute::Lock, XFA_AttributeType::Integer, XFA_XDPPACKET_Config,
+     (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"agent";
 

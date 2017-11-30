@@ -15,9 +15,20 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Integer, 1, 0},  {XFA_Element::ExData, 1, 0},
     {XFA_Element::Date, 1, 0},     {XFA_Element::Float, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {XFA_Attribute::Id, XFA_Attribute::Use,
-                                        XFA_Attribute::Usehref,
-                                        XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"desc";
 

@@ -8,16 +8,32 @@
 
 namespace {
 
-const XFA_Attribute kAttributeData[] = {XFA_Attribute::Id,
-                                        XFA_Attribute::Use,
-                                        XFA_Attribute::WordCharacterCount,
-                                        XFA_Attribute::Hyphenate,
-                                        XFA_Attribute::ExcludeInitialCap,
-                                        XFA_Attribute::PushCharacterCount,
-                                        XFA_Attribute::RemainCharacterCount,
-                                        XFA_Attribute::Usehref,
-                                        XFA_Attribute::ExcludeAllCaps,
-                                        XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::WordCharacterCount, XFA_AttributeType::Integer,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)7},
+    {XFA_Attribute::Hyphenate, XFA_AttributeType::Boolean,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)0},
+    {XFA_Attribute::ExcludeInitialCap, XFA_AttributeType::Boolean,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)0},
+    {XFA_Attribute::PushCharacterCount, XFA_AttributeType::Integer,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)3},
+    {XFA_Attribute::RemainCharacterCount, XFA_AttributeType::Integer,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)3},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::ExcludeAllCaps, XFA_AttributeType::Boolean,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (void*)0},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"hyphenation";
 

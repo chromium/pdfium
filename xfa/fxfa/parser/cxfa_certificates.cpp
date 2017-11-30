@@ -12,11 +12,27 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::KeyUsage, 1, 0}, {XFA_Element::SubjectDNs, 1, 0},
     {XFA_Element::Issuers, 1, 0},  {XFA_Element::Signing, 1, 0},
     {XFA_Element::Oids, 1, 0},     {XFA_Element::Unknown, 0, 0}};
-const XFA_Attribute kAttributeData[] = {
-    XFA_Attribute::Id,      XFA_Attribute::Url,
-    XFA_Attribute::Use,     XFA_Attribute::CredentialServerPolicy,
-    XFA_Attribute::Usehref, XFA_Attribute::UrlPolicy,
-    XFA_Attribute::Unknown};
+const CXFA_Node::AttributeData kAttributeData[] = {
+    {XFA_Attribute::Id, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::Url, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::Use, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::CredentialServerPolicy, XFA_AttributeType::Enum,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
+     (void*)XFA_ATTRIBUTEENUM_Optional},
+    {XFA_Attribute::Usehref, XFA_AttributeType::CData,
+     XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Template |
+         XFA_XDPPACKET_ConnectionSet | XFA_XDPPACKET_Form,
+     nullptr},
+    {XFA_Attribute::UrlPolicy, XFA_AttributeType::CData,
+     XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, nullptr},
+    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, 0, nullptr}};
 
 constexpr wchar_t kName[] = L"certificates";
 

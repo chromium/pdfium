@@ -53,8 +53,19 @@ class CXFA_Node : public CXFA_Object {
     uint8_t flags;
   };
 
-  static WideString AttributeToName(XFA_Attribute attr);
+  struct AttributeData {
+    XFA_Attribute attribute;
+    XFA_AttributeType type;
+    uint32_t packets;
+    void* default_value;
+  };
+
+#ifndef NDEBUG
+  static WideString ElementToName(XFA_Element elem);
+#endif  // NDEBUG
+
   static XFA_Attribute NameToAttribute(const WideStringView& name);
+  static WideString AttributeToName(XFA_Attribute attr);
   static XFA_Element NameToElement(const WideString& name);
   static std::unique_ptr<CXFA_Node> Create(CXFA_Document* doc,
                                            XFA_Element element,
@@ -175,20 +186,21 @@ class CXFA_Node : public CXFA_Object {
             XFA_ObjectType oType,
             XFA_Element eType,
             const PropertyData* properties,
-            const XFA_Attribute* attributes,
+            const AttributeData* attributes,
             const WideStringView& elementName);
 
  private:
   bool HasFlag(XFA_NodeFlag dwFlag) const;
   CXFA_Node* Deprecated_GetPrevSibling();
   const PropertyData* GetPropertyData(XFA_Element property) const;
+  const AttributeData* GetAttributeData(XFA_Attribute attr) const;
   pdfium::Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag);
   void OnRemoved(bool bNotify);
   pdfium::Optional<void*> GetDefaultValue(XFA_Attribute attr,
                                           XFA_AttributeType eType) const;
 
   const PropertyData* m_Properties;
-  const XFA_Attribute* m_Attributes;
+  const AttributeData* m_Attributes;
   uint32_t m_ValidPackets;
   CXFA_Node* m_pNext;
   CXFA_Node* m_pChild;
