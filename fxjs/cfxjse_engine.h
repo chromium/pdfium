@@ -52,8 +52,8 @@ class CFXJSE_Engine {
   void AddNodesOfRunScript(CXFA_Node* pNode);
   CFXJSE_Class* GetJseNormalClass();
 
-  void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) { m_eRunAtType = eRunAt; }
-  bool IsRunAtClient() { return m_eRunAtType != XFA_ATTRIBUTEENUM_Server; }
+  void SetRunAtType(XFA_AttributeEnum eRunAt) { m_eRunAtType = eRunAt; }
+  bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeEnum::Server; }
   bool QueryNodeByFlag(CXFA_Node* refNode,
                        const WideStringView& propname,
                        CFXJSE_Value* pValue,
@@ -117,7 +117,7 @@ class CFXJSE_Engine {
   std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;
   CXFA_Object* m_pThisObject;
   uint32_t m_dwBuiltInInFlags;
-  XFA_ATTRIBUTEENUM m_eRunAtType;
+  XFA_AttributeEnum m_eRunAtType;
 };
 
 #endif  //  FXJS_CFXJSE_ENGINE_H_

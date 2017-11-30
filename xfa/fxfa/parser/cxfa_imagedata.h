@@ -17,14 +17,14 @@ class CXFA_ImageData : public CXFA_DataData {
  public:
   explicit CXFA_ImageData(CXFA_Node* pNode);
 
-  XFA_ATTRIBUTEENUM GetAspect() const;
+  XFA_AttributeEnum GetAspect() const;
   WideString GetContent() const;
 
   WideString GetHref() const;
   void SetHref(const WideString& wsHref);
 
-  XFA_ATTRIBUTEENUM GetTransferEncoding() const;
-  void SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding);
+  XFA_AttributeEnum GetTransferEncoding() const;
+  void SetTransferEncoding(XFA_AttributeEnum iTransferEncoding);
 
   WideString GetContentType() const;
   void SetContentType(const WideString& wsContentType);

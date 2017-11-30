@@ -14,10 +14,10 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Slope, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Backslash},
+     (void*)XFA_AttributeEnum::Backslash},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Hand, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Even},
+     (void*)XFA_AttributeEnum::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"line";

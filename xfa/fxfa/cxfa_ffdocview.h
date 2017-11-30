@@ -20,7 +20,7 @@ class CXFA_FFDoc;
 class CXFA_FFWidget;
 class CXFA_WidgetAccIterator;
 
-extern const XFA_ATTRIBUTEENUM gs_EventActivity[];
+extern const XFA_AttributeEnum gs_EventActivity[];
 enum XFA_DOCVIEW_LAYOUTSTATUS {
   XFA_DOCVIEW_LAYOUTSTATUS_None,
   XFA_DOCVIEW_LAYOUTSTATUS_Start,

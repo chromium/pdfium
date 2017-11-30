@@ -35,17 +35,17 @@ enum XFA_WIDGETITEM {
 };
 
 int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
-                                  XFA_ATTRIBUTEENUM iStrokeType,
-                                  XFA_ATTRIBUTEENUM iCapType);
+                                  XFA_AttributeEnum iStrokeType,
+                                  XFA_AttributeEnum iCapType);
 void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
                    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                   XFA_ATTRIBUTEENUM iAspect,
+                   XFA_AttributeEnum iAspect,
                    int32_t iImageXDpi,
                    int32_t iImageYDpi,
-                   XFA_ATTRIBUTEENUM iHorzAlign = XFA_ATTRIBUTEENUM_Left,
-                   XFA_ATTRIBUTEENUM iVertAlign = XFA_ATTRIBUTEENUM_Top);
+                   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left,
+                   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top);
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
                                           CXFA_ImageData* pImageData,

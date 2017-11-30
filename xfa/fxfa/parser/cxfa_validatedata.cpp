@@ -19,22 +19,22 @@ constexpr wchar_t kScriptTest[] = L"scriptTest";
 
 CXFA_ValidateData::CXFA_ValidateData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-XFA_ATTRIBUTEENUM CXFA_ValidateData::GetFormatTest() const {
+XFA_AttributeEnum CXFA_ValidateData::GetFormatTest() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::FormatTest);
 }
 
 void CXFA_ValidateData::SetNullTest(const WideString& wsValue) {
-  pdfium::Optional<XFA_ATTRIBUTEENUM> item =
+  pdfium::Optional<XFA_AttributeEnum> item =
       CXFA_Node::NameToAttributeEnum(wsValue.AsStringView());
   m_pNode->JSNode()->SetEnum(XFA_Attribute::NullTest,
-                             item ? *item : XFA_ATTRIBUTEENUM_Disabled, false);
+                             item ? *item : XFA_AttributeEnum::Disabled, false);
 }
 
-XFA_ATTRIBUTEENUM CXFA_ValidateData::GetNullTest() const {
+XFA_AttributeEnum CXFA_ValidateData::GetNullTest() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::NullTest);
 }
 
-XFA_ATTRIBUTEENUM CXFA_ValidateData::GetScriptTest() const {
+XFA_AttributeEnum CXFA_ValidateData::GetScriptTest() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::ScriptTest);
 }
 

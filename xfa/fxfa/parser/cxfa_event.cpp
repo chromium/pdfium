@@ -21,10 +21,10 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Listen, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_RefOnly},
+     (void*)XFA_AttributeEnum::RefOnly},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Activity, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Click},
+     (void*)XFA_AttributeEnum::Click},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"event";

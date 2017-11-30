@@ -110,16 +110,16 @@ uint32_t CXFA_FFListBox::GetAlignment() {
 
   uint32_t dwExtendedStyle = 0;
   switch (paraData.GetHorizontalAlign()) {
-    case XFA_ATTRIBUTEENUM_Center:
+    case XFA_AttributeEnum::Center:
       dwExtendedStyle |= FWL_STYLEEXT_LTB_CenterAlign;
       break;
-    case XFA_ATTRIBUTEENUM_Justify:
+    case XFA_AttributeEnum::Justify:
       break;
-    case XFA_ATTRIBUTEENUM_JustifyAll:
+    case XFA_AttributeEnum::JustifyAll:
       break;
-    case XFA_ATTRIBUTEENUM_Radix:
+    case XFA_AttributeEnum::Radix:
       break;
-    case XFA_ATTRIBUTEENUM_Right:
+    case XFA_AttributeEnum::Right:
       dwExtendedStyle |= FWL_STYLEEXT_LTB_RightAlign;
       break;
     default:
@@ -159,7 +159,7 @@ void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
     CFWL_ListItem* item = pListBox->GetSelItem(0);
     eParam.m_wsNewText = item ? item->GetText() : L"";
   }
-  m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
+  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Change, &eParam);
 }
 
 void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {

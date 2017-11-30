@@ -15,14 +15,14 @@ const CXFA_Node::PropertyData kPropertyData[] = {
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Break, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Close},
+     (void*)XFA_AttributeEnum::Close},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Visible},
+     (void*)XFA_AttributeEnum::Visible},
     {XFA_Attribute::Relevant, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Hand, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Even},
+     (void*)XFA_AttributeEnum::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"border";

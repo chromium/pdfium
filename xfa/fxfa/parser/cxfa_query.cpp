@@ -16,7 +16,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::CommandType, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Unknown},
+     (void*)XFA_AttributeEnum::Unknown},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

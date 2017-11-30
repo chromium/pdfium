@@ -72,7 +72,7 @@ class CXFA_LayoutPageMgr {
   void AddContentAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
                                 CXFA_Node* pContentArea);
   bool RunBreak(XFA_Element eBreakType,
-                XFA_ATTRIBUTEENUM eTargetType,
+                XFA_AttributeEnum eTargetType,
                 CXFA_Node* pTarget,
                 bool bStartNew);
   CXFA_Node* BreakOverflow(CXFA_Node* pOverflowNode,
@@ -111,7 +111,7 @@ class CXFA_LayoutPageMgr {
       CXFA_Node* pTargetContentArea = nullptr,
       bool bNewPage = false,
       bool bQuery = false,
-      XFA_ATTRIBUTEENUM ePreferredPosition = XFA_ATTRIBUTEENUM_First);
+      XFA_AttributeEnum ePreferredPosition = XFA_AttributeEnum::First);
   bool MatchPageAreaOddOrEven(CXFA_Node* pPageArea);
   CXFA_Node* GetNextAvailPageArea(CXFA_Node* pTargetPageArea,
                                   CXFA_Node* pTargetContentArea = nullptr,
@@ -121,7 +121,7 @@ class CXFA_LayoutPageMgr {
   void InitPageSetMap();
   void ProcessLastPageSet();
   bool IsPageSetRootOrderedOccurrence() const {
-    return m_ePageSetMode == XFA_ATTRIBUTEENUM_OrderedOccurrence;
+    return m_ePageSetMode == XFA_AttributeEnum::OrderedOccurrence;
   }
   void ClearData();
   void MergePageSetContents();
@@ -138,7 +138,7 @@ class CXFA_LayoutPageMgr {
   CXFA_Node* m_pCurPageArea;
   int32_t m_nAvailPages;
   int32_t m_nCurPageCount;
-  XFA_ATTRIBUTEENUM m_ePageSetMode;
+  XFA_AttributeEnum m_ePageSetMode;
   bool m_bCreateOverFlowPage;
   std::map<CXFA_Node*, int32_t> m_pPageSetMap;
   std::vector<CXFA_ContainerLayoutItem*> m_PageArray;

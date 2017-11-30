@@ -246,7 +246,7 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
 
   CXFA_Node* pBind = GetDatasets();
   if (!pBind) {
-    imageData.SetTransferEncoding(XFA_ATTRIBUTEENUM_Base64);
+    imageData.SetTransferEncoding(XFA_AttributeEnum::Base64);
     return;
   }
   pBind->JSNode()->SetCData(XFA_Attribute::ContentType, wsContentType, false,
@@ -276,7 +276,7 @@ IXFA_AppProvider* CXFA_WidgetAcc::GetAppProvider() {
   return GetDoc()->GetApp()->GetAppProvider();
 }
 
-int32_t CXFA_WidgetAcc::ProcessEvent(XFA_ATTRIBUTEENUM iActivity,
+int32_t CXFA_WidgetAcc::ProcessEvent(XFA_AttributeEnum iActivity,
                                      CXFA_EventParam* pEventParam) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
@@ -353,7 +353,7 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_ValidateData validateData,
 
   WideString wsTitle = pAppProvider->GetAppTitle();
   WideString wsScriptMsg = validateData.GetScriptMessageText();
-  if (validateData.GetScriptTest() == XFA_ATTRIBUTEENUM_Warning) {
+  if (validateData.GetScriptTest() == XFA_AttributeEnum::Warning) {
     if (GetNode()->IsUserInteractive())
       return;
     if (wsScriptMsg.IsEmpty())
@@ -397,7 +397,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(
 
       WideString wsFormatMsg = validateData.GetFormatMessageText();
       WideString wsTitle = pAppProvider->GetAppTitle();
-      if (validateData.GetFormatTest() == XFA_ATTRIBUTEENUM_Error) {
+      if (validateData.GetFormatTest() == XFA_AttributeEnum::Error) {
         if (wsFormatMsg.IsEmpty())
           wsFormatMsg = GetValidateMessage(true, bVersionFlag);
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
@@ -431,15 +431,15 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
   if (IsNull() && IsPreNull())
     return XFA_EVENTERROR_Success;
 
-  XFA_ATTRIBUTEENUM eNullTest = validateData.GetNullTest();
+  XFA_AttributeEnum eNullTest = validateData.GetNullTest();
   WideString wsNullMsg = validateData.GetNullMessageText();
   if (iFlags & 0x01) {
     int32_t iRet = XFA_EVENTERROR_Success;
-    if (eNullTest != XFA_ATTRIBUTEENUM_Disabled)
+    if (eNullTest != XFA_AttributeEnum::Disabled)
       iRet = XFA_EVENTERROR_Error;
 
     if (!wsNullMsg.IsEmpty()) {
-      if (eNullTest != XFA_ATTRIBUTEENUM_Disabled) {
+      if (eNullTest != XFA_AttributeEnum::Disabled) {
         m_pDocView->m_arrNullTestMsg.push_back(wsNullMsg);
         return XFA_EVENTERROR_Error;
       }
@@ -448,7 +448,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
     return iRet;
   }
   if (wsNullMsg.IsEmpty() && bVersionFlag &&
-      eNullTest != XFA_ATTRIBUTEENUM_Disabled) {
+      eNullTest != XFA_AttributeEnum::Disabled) {
     return XFA_EVENTERROR_Error;
   }
   IXFA_AppProvider* pAppProvider = GetAppProvider();
@@ -458,7 +458,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
   WideString wsCaptionName;
   WideString wsTitle = pAppProvider->GetAppTitle();
   switch (eNullTest) {
-    case XFA_ATTRIBUTEENUM_Error: {
+    case XFA_AttributeEnum::Error: {
       if (wsNullMsg.IsEmpty()) {
         wsCaptionName = GetValidateCaptionName(bVersionFlag);
         wsNullMsg =
@@ -467,7 +467,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
       pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
       return XFA_EVENTERROR_Error;
     }
-    case XFA_ATTRIBUTEENUM_Warning: {
+    case XFA_AttributeEnum::Warning: {
       if (GetNode()->IsUserInteractive())
         return true;
 
@@ -483,7 +483,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
       }
       return XFA_EVENTERROR_Error;
     }
-    case XFA_ATTRIBUTEENUM_Disabled:
+    case XFA_AttributeEnum::Disabled:
     default:
       break;
   }
@@ -584,7 +584,7 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
   ASSERT(pEventParam);
   if (!scriptData.HasValidNode())
     return {XFA_EVENTERROR_NotExist, false};
-  if (scriptData.GetRunAt() == XFA_ATTRIBUTEENUM_Server)
+  if (scriptData.GetRunAt() == XFA_AttributeEnum::Server)
     return {XFA_EVENTERROR_Disabled, false};
 
   WideString wsExpression = scriptData.GetExpression();
@@ -679,10 +679,10 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
 
   LoadCaption();
   XFA_Element eUIType = GetUIType();
-  XFA_ATTRIBUTEENUM iCapPlacement = captionData.GetPlacementType();
+  XFA_AttributeEnum iCapPlacement = captionData.GetPlacementType();
   float fCapReserve = captionData.GetReserve();
-  const bool bVert = iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
-                     iCapPlacement == XFA_ATTRIBUTEENUM_Bottom;
+  const bool bVert = iCapPlacement == XFA_AttributeEnum::Top ||
+                     iCapPlacement == XFA_AttributeEnum::Bottom;
   const bool bReserveExit = fCapReserve > 0.01;
   CXFA_TextLayout* pCapTextLayout =
       static_cast<CXFA_FieldLayoutData*>(m_pLayoutData.get())
@@ -738,14 +738,14 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
   size.height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
     switch (GetCaptionData().GetPlacementType()) {
-      case XFA_ATTRIBUTEENUM_Left:
-      case XFA_ATTRIBUTEENUM_Right:
-      case XFA_ATTRIBUTEENUM_Inline: {
+      case XFA_AttributeEnum::Left:
+      case XFA_AttributeEnum::Right:
+      case XFA_AttributeEnum::Inline: {
         size.width += szCap.width;
         size.height = std::max(size.height, szCap.height);
       } break;
-      case XFA_ATTRIBUTEENUM_Top:
-      case XFA_ATTRIBUTEENUM_Bottom: {
+      case XFA_AttributeEnum::Top:
+      case XFA_AttributeEnum::Bottom: {
         size.height += szCap.height;
         size.width = std::max(size.width, szCap.width);
       }
@@ -834,13 +834,13 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     CFX_SizeF szCap;
     CalcCaptionSize(szCap);
     bool bCapExit = szCap.width > 0.01 && szCap.height > 0.01;
-    XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
+    XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
     if (bCapExit) {
       iCapPlacement = GetCaptionData().GetPlacementType();
       switch (iCapPlacement) {
-        case XFA_ATTRIBUTEENUM_Left:
-        case XFA_ATTRIBUTEENUM_Right:
-        case XFA_ATTRIBUTEENUM_Inline: {
+        case XFA_AttributeEnum::Left:
+        case XFA_AttributeEnum::Right:
+        case XFA_AttributeEnum::Inline: {
           size.width -= szCap.width;
         }
         default:
@@ -857,13 +857,13 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     size.height += rtUIMargin.top + rtUIMargin.height;
     if (bCapExit) {
       switch (iCapPlacement) {
-        case XFA_ATTRIBUTEENUM_Left:
-        case XFA_ATTRIBUTEENUM_Right:
-        case XFA_ATTRIBUTEENUM_Inline: {
+        case XFA_AttributeEnum::Left:
+        case XFA_AttributeEnum::Right:
+        case XFA_AttributeEnum::Inline: {
           size.height = std::max(size.height, szCap.height);
         } break;
-        case XFA_ATTRIBUTEENUM_Top:
-        case XFA_ATTRIBUTEENUM_Bottom: {
+        case XFA_AttributeEnum::Top:
+        case XFA_AttributeEnum::Bottom: {
           size.height += szCap.height;
         }
         default:
@@ -1169,7 +1169,7 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
     }
     return true;
   }
-  XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
+  XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
   if (iBlockIndex == 0) {
     CXFA_CaptionData captionData = GetCaptionData();
@@ -1177,17 +1177,17 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
       iCapPlacement = captionData.GetPlacementType();
       fCapReserve = captionData.GetReserve();
     }
-    if (iCapPlacement == XFA_ATTRIBUTEENUM_Top &&
+    if (iCapPlacement == XFA_AttributeEnum::Top &&
         fCalcHeight < fCapReserve + fTopInset) {
       fCalcHeight = 0;
       return true;
     }
-    if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom &&
+    if (iCapPlacement == XFA_AttributeEnum::Bottom &&
         m_pLayoutData->m_fWidgetHeight - fCapReserve - fBottomInset) {
       fCalcHeight = 0;
       return true;
     }
-    if (iCapPlacement != XFA_ATTRIBUTEENUM_Top)
+    if (iCapPlacement != XFA_AttributeEnum::Top)
       fCapReserve = 0;
   }
   CXFA_FieldLayoutData* pFieldData =
@@ -1228,13 +1228,13 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
       float fSpaceBelow = paraData.GetSpaceBelow();
       fHeight -= (fSpaceAbove + fSpaceBelow);
       switch (paraData.GetVerticalAlign()) {
-        case XFA_ATTRIBUTEENUM_Top:
+        case XFA_AttributeEnum::Top:
           fStartOffset += fSpaceAbove;
           break;
-        case XFA_ATTRIBUTEENUM_Middle:
+        case XFA_AttributeEnum::Middle:
           fStartOffset += ((fHeight - fTextHeight) / 2 + fSpaceAbove);
           break;
-        case XFA_ATTRIBUTEENUM_Bottom:
+        case XFA_AttributeEnum::Bottom:
           fStartOffset += (fHeight - fTextHeight + fSpaceAbove);
           break;
         default:
@@ -1257,21 +1257,21 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
 
   XFA_VERSION version = GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bCanSplitNoContent = false;
-  XFA_ATTRIBUTEENUM eLayoutMode = GetNode()
+  XFA_AttributeEnum eLayoutMode = GetNode()
                                       ->GetNodeItem(XFA_NODEITEM_Parent)
                                       ->JSNode()
                                       ->TryEnum(XFA_Attribute::Layout, true)
-                                      .value_or(XFA_ATTRIBUTEENUM_Position);
-  if ((eLayoutMode == XFA_ATTRIBUTEENUM_Position ||
-       eLayoutMode == XFA_ATTRIBUTEENUM_Tb ||
-       eLayoutMode == XFA_ATTRIBUTEENUM_Row ||
-       eLayoutMode == XFA_ATTRIBUTEENUM_Table) &&
+                                      .value_or(XFA_AttributeEnum::Position);
+  if ((eLayoutMode == XFA_AttributeEnum::Position ||
+       eLayoutMode == XFA_AttributeEnum::Tb ||
+       eLayoutMode == XFA_AttributeEnum::Row ||
+       eLayoutMode == XFA_AttributeEnum::Table) &&
       version > XFA_VERSION_208) {
     bCanSplitNoContent = true;
   }
-  if ((eLayoutMode == XFA_ATTRIBUTEENUM_Tb ||
-       eLayoutMode == XFA_ATTRIBUTEENUM_Row ||
-       eLayoutMode == XFA_ATTRIBUTEENUM_Table) &&
+  if ((eLayoutMode == XFA_AttributeEnum::Tb ||
+       eLayoutMode == XFA_AttributeEnum::Row ||
+       eLayoutMode == XFA_AttributeEnum::Table) &&
       version <= XFA_VERSION_208) {
     if (fStartOffset < fCalcHeight) {
       bCanSplitNoContent = true;

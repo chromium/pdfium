@@ -15,7 +15,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ContentType, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::TransferEncoding, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_None},
+     (void*)XFA_AttributeEnum::None},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::MaxLength, XFA_AttributeType::Integer, (void*)-1},
     {XFA_Attribute::Href, XFA_AttributeType::CData, nullptr},

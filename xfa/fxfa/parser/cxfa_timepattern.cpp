@@ -10,7 +10,7 @@ namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Med},
+     (void*)XFA_AttributeEnum::Med},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"timePattern";

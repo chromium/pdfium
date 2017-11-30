@@ -10,11 +10,11 @@ namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::SourceBelow, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Update},
+     (void*)XFA_AttributeEnum::Update},
     {XFA_Attribute::OutputBelow, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Warn},
+     (void*)XFA_AttributeEnum::Warn},
     {XFA_Attribute::SourceAbove, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Warn},
+     (void*)XFA_AttributeEnum::Warn},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

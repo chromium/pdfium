@@ -14,7 +14,7 @@ bool CXFA_SubmitData::IsSubmitEmbedPDF() const {
   return m_pNode->JSNode()->GetBoolean(XFA_Attribute::EmbedPDF);
 }
 
-XFA_ATTRIBUTEENUM CXFA_SubmitData::GetSubmitFormat() const {
+XFA_AttributeEnum CXFA_SubmitData::GetSubmitFormat() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Format);
 }
 

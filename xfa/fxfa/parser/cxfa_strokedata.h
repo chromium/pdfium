@@ -28,9 +28,9 @@ class CXFA_StrokeData : public CXFA_DataData {
   bool IsVisible() const;
   bool IsInverted() const;
 
-  XFA_ATTRIBUTEENUM GetCapType() const;
-  XFA_ATTRIBUTEENUM GetStrokeType() const;
-  XFA_ATTRIBUTEENUM GetJoinType() const;
+  XFA_AttributeEnum GetCapType() const;
+  XFA_AttributeEnum GetStrokeType() const;
+  XFA_AttributeEnum GetJoinType() const;
   float GetRadius() const;
   float GetThickness() const;
 

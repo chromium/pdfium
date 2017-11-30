@@ -46,10 +46,10 @@ std::vector<CXFA_StrokeData> GetStrokesInternal(CXFA_Node* pNode, bool bNull) {
   return strokes;
 }
 
-static int32_t Style3D(const std::vector<CXFA_StrokeData>& strokes,
-                       CXFA_StrokeData& strokeData) {
+static XFA_AttributeEnum Style3D(const std::vector<CXFA_StrokeData>& strokes,
+                                 CXFA_StrokeData& strokeData) {
   if (strokes.empty())
-    return 0;
+    return XFA_AttributeEnum::Unknown;
 
   strokeData = strokes[0];
   for (size_t i = 1; i < strokes.size(); i++) {
@@ -64,29 +64,30 @@ static int32_t Style3D(const std::vector<CXFA_StrokeData>& strokes,
     break;
   }
 
-  XFA_ATTRIBUTEENUM iType = strokeData.GetStrokeType();
-  if (iType == XFA_ATTRIBUTEENUM_Lowered || iType == XFA_ATTRIBUTEENUM_Raised ||
-      iType == XFA_ATTRIBUTEENUM_Etched ||
-      iType == XFA_ATTRIBUTEENUM_Embossed) {
+  XFA_AttributeEnum iType = strokeData.GetStrokeType();
+  if (iType == XFA_AttributeEnum::Lowered ||
+      iType == XFA_AttributeEnum::Raised ||
+      iType == XFA_AttributeEnum::Etched ||
+      iType == XFA_AttributeEnum::Embossed) {
     return iType;
   }
-  return 0;
+  return XFA_AttributeEnum::Unknown;
 }
 
 }  // namespace
 
-int32_t CXFA_BoxData::GetHand() const {
+XFA_AttributeEnum CXFA_BoxData::GetHand() const {
   if (!m_pNode)
-    return XFA_ATTRIBUTEENUM_Even;
+    return XFA_AttributeEnum::Even;
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Hand);
 }
 
-int32_t CXFA_BoxData::GetPresence() const {
+XFA_AttributeEnum CXFA_BoxData::GetPresence() const {
   if (!m_pNode)
-    return XFA_ATTRIBUTEENUM_Hidden;
+    return XFA_AttributeEnum::Hidden;
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::Presence, true)
-      .value_or(XFA_ATTRIBUTEENUM_Visible);
+      .value_or(XFA_AttributeEnum::Visible);
 }
 
 int32_t CXFA_BoxData::CountEdges() const {
@@ -137,15 +138,15 @@ CXFA_MarginData CXFA_BoxData::GetMarginData() const {
       m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false) : nullptr);
 }
 
-std::tuple<int32_t, bool, float> CXFA_BoxData::Get3DStyle() const {
+std::tuple<XFA_AttributeEnum, bool, float> CXFA_BoxData::Get3DStyle() const {
   if (IsArc())
-    return {0, false, 0.0f};
+    return {XFA_AttributeEnum::Unknown, false, 0.0f};
 
   std::vector<CXFA_StrokeData> strokes = GetStrokesInternal(m_pNode, true);
   CXFA_StrokeData strokeData(nullptr);
-  int32_t iType = Style3D(strokes, strokeData);
-  if (iType == 0)
-    return {0, false, 0.0f};
+  XFA_AttributeEnum iType = Style3D(strokes, strokeData);
+  if (iType == XFA_AttributeEnum::Unknown)
+    return {XFA_AttributeEnum::Unknown, false, 0.0f};
 
   return {iType, strokeData.IsVisible(), strokeData.GetThickness()};
 }

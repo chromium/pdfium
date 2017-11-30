@@ -13,7 +13,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Rid, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Priority, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Custom},
+     (void*)XFA_AttributeEnum::Custom},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Disable, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

@@ -16,13 +16,13 @@ const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::VScrollPolicy, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Auto},
+     (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::AllowRichText, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::MultiLine, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::HScrollPolicy, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Auto},
+     (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"textEdit";

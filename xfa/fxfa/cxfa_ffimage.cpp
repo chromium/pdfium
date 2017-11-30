@@ -53,8 +53,8 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
   if (marginData.HasValidNode())
     XFA_RectWidthoutMargin(rtImage, marginData);
 
-  XFA_ATTRIBUTEENUM iHorzAlign = XFA_ATTRIBUTEENUM_Left;
-  XFA_ATTRIBUTEENUM iVertAlign = XFA_ATTRIBUTEENUM_Top;
+  XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
+  XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
   CXFA_ParaData paraData = m_pDataAcc->GetParaData();
   if (paraData.HasValidNode()) {
     iHorzAlign = paraData.GetHorizontalAlign();

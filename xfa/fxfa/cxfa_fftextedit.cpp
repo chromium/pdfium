@@ -220,16 +220,16 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
 
   uint32_t dwExtendedStyle = 0;
   switch (paraData.GetHorizontalAlign()) {
-    case XFA_ATTRIBUTEENUM_Center:
+    case XFA_AttributeEnum::Center:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_HCenter;
       break;
-    case XFA_ATTRIBUTEENUM_Justify:
+    case XFA_AttributeEnum::Justify:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_Justified;
       break;
-    case XFA_ATTRIBUTEENUM_JustifyAll:
-    case XFA_ATTRIBUTEENUM_Radix:
+    case XFA_AttributeEnum::JustifyAll:
+    case XFA_AttributeEnum::Radix:
       break;
-    case XFA_ATTRIBUTEENUM_Right:
+    case XFA_AttributeEnum::Right:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_HFar;
       break;
     default:
@@ -238,10 +238,10 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
   }
 
   switch (paraData.GetVerticalAlign()) {
-    case XFA_ATTRIBUTEENUM_Middle:
+    case XFA_AttributeEnum::Middle:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_VCenter;
       break;
-    case XFA_ATTRIBUTEENUM_Bottom:
+    case XFA_AttributeEnum::Bottom:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_VFar;
       break;
     default:
@@ -316,14 +316,14 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
     if (pEdit->HasSelection())
       std::tie(eParam.m_iSelStart, eParam.m_iSelEnd) = pEdit->GetSelection();
   }
-  m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
+  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Change, &eParam);
 }
 
 void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Full, &eParam);
+  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Full, &eParam);
 }
 
 bool CXFA_FFTextEdit::CheckWord(const ByteStringView& sWord) {

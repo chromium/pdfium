@@ -14,21 +14,21 @@ bool CXFA_StrokeData::IsVisible() const {
   if (!m_pNode)
     return false;
 
-  XFA_ATTRIBUTEENUM presence = m_pNode->JSNode()
+  XFA_AttributeEnum presence = m_pNode->JSNode()
                                    ->TryEnum(XFA_Attribute::Presence, true)
-                                   .value_or(XFA_ATTRIBUTEENUM_Visible);
-  return presence == XFA_ATTRIBUTEENUM_Visible;
+                                   .value_or(XFA_AttributeEnum::Visible);
+  return presence == XFA_AttributeEnum::Visible;
 }
 
-XFA_ATTRIBUTEENUM CXFA_StrokeData::GetCapType() const {
+XFA_AttributeEnum CXFA_StrokeData::GetCapType() const {
   if (!m_pNode)
-    return XFA_ATTRIBUTEENUM_Square;
+    return XFA_AttributeEnum::Square;
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Cap);
 }
 
-XFA_ATTRIBUTEENUM CXFA_StrokeData::GetStrokeType() const {
+XFA_AttributeEnum CXFA_StrokeData::GetStrokeType() const {
   return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Stroke)
-                 : XFA_ATTRIBUTEENUM_Solid;
+                 : XFA_AttributeEnum::Solid;
 }
 
 float CXFA_StrokeData::GetThickness() const {
@@ -75,9 +75,9 @@ void CXFA_StrokeData::SetColor(FX_ARGB argb) {
                             false);
 }
 
-XFA_ATTRIBUTEENUM CXFA_StrokeData::GetJoinType() const {
+XFA_AttributeEnum CXFA_StrokeData::GetJoinType() const {
   return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Join)
-                 : XFA_ATTRIBUTEENUM_Square;
+                 : XFA_AttributeEnum::Square;
 }
 
 bool CXFA_StrokeData::IsInverted() const {

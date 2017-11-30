@@ -11,7 +11,7 @@ namespace {
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::WritingScript, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Asterisk},
+     (void*)XFA_AttributeEnum::Asterisk},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

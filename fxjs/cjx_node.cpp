@@ -193,7 +193,7 @@ bool CJX_Node::SetAttribute(XFA_Attribute eAttr,
   XFA_AttributeType eType = GetXFANode()->GetAttributeType(eAttr);
   switch (eType) {
     case XFA_AttributeType::Enum: {
-      pdfium::Optional<XFA_ATTRIBUTEENUM> item =
+      pdfium::Optional<XFA_AttributeEnum> item =
           CXFA_Node::NameToAttributeEnum(wsValue);
       return SetEnum(eAttr,
                      item ? *item : *(GetXFANode()->GetDefaultEnum(eAttr)),
@@ -241,7 +241,7 @@ pdfium::Optional<WideString> CJX_Node::TryAttribute(XFA_Attribute eAttr,
   XFA_AttributeType eType = GetXFANode()->GetAttributeType(eAttr);
   switch (eType) {
     case XFA_AttributeType::Enum: {
-      pdfium::Optional<XFA_ATTRIBUTEENUM> value = TryEnum(eAttr, bUseDefault);
+      pdfium::Optional<XFA_AttributeEnum> value = TryEnum(eAttr, bUseDefault);
       if (!value)
         return {};
 
@@ -2982,13 +2982,13 @@ pdfium::Optional<int32_t> CJX_Node::TryInteger(XFA_Attribute eAttr,
   return GetXFANode()->GetDefaultInteger(eAttr);
 }
 
-pdfium::Optional<XFA_ATTRIBUTEENUM> CJX_Node::TryEnum(XFA_Attribute eAttr,
+pdfium::Optional<XFA_AttributeEnum> CJX_Node::TryEnum(XFA_Attribute eAttr,
                                                       bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFANode()->GetElementType(), eAttr);
   void* pValue = nullptr;
   if (GetMapModuleValue(pKey, pValue)) {
     return {
-        static_cast<XFA_ATTRIBUTEENUM>(reinterpret_cast<uintptr_t>(pValue))};
+        static_cast<XFA_AttributeEnum>(reinterpret_cast<uintptr_t>(pValue))};
   }
   if (!bUseDefault)
     return {};
@@ -2997,7 +2997,7 @@ pdfium::Optional<XFA_ATTRIBUTEENUM> CJX_Node::TryEnum(XFA_Attribute eAttr,
 }
 
 bool CJX_Node::SetEnum(XFA_Attribute eAttr,
-                       XFA_ATTRIBUTEENUM eValue,
+                       XFA_AttributeEnum eValue,
                        bool bNotify) {
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Enum,
                                   (void*)(uintptr_t)eValue, bNotify);
@@ -3008,8 +3008,8 @@ bool CJX_Node::SetEnum(XFA_Attribute eAttr,
   return true;
 }
 
-XFA_ATTRIBUTEENUM CJX_Node::GetEnum(XFA_Attribute eAttr) {
-  return TryEnum(eAttr, true).value_or(XFA_ATTRIBUTEENUM_Unknown);
+XFA_AttributeEnum CJX_Node::GetEnum(XFA_Attribute eAttr) {
+  return TryEnum(eAttr, true).value_or(XFA_AttributeEnum::Unknown);
 }
 
 bool CJX_Node::SetMeasure(XFA_Attribute eAttr,
@@ -3507,7 +3507,7 @@ pdfium::Optional<WideString> CJX_Node::TryNamespace() {
     return {};
 
   if (GetXFANode()->GetElementType() == XFA_Element::DataValue &&
-      GetEnum(XFA_Attribute::Contains) == XFA_ATTRIBUTEENUM_MetaData) {
+      GetEnum(XFA_Attribute::Contains) == XFA_AttributeEnum::MetaData) {
     WideString wsNamespace;
     bool ret = XFA_FDEExtension_ResolveNamespaceQualifier(
         static_cast<CFX_XMLElement*>(pXMLNode),

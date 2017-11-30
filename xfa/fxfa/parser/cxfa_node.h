@@ -62,8 +62,8 @@ class CXFA_Node : public CXFA_Object {
   static WideString ElementToName(XFA_Element elem);
 #endif  // NDEBUG
 
-  static WideString AttributeEnumToName(XFA_ATTRIBUTEENUM item);
-  static pdfium::Optional<XFA_ATTRIBUTEENUM> NameToAttributeEnum(
+  static WideString AttributeEnumToName(XFA_AttributeEnum item);
+  static pdfium::Optional<XFA_AttributeEnum> NameToAttributeEnum(
       const WideStringView& name);
   static XFA_Attribute NameToAttribute(const WideStringView& name);
   static WideString AttributeToName(XFA_Attribute attr);
@@ -159,7 +159,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_WidgetData* GetWidgetData();
   CXFA_WidgetData* GetContainerWidgetData();
   bool GetLocaleName(WideString& wsLocaleName);
-  XFA_ATTRIBUTEENUM GetIntact();
+  XFA_AttributeEnum GetIntact();
   CXFA_Node* GetFirstChildByName(const WideStringView& wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
   CXFA_Node* GetFirstChildByClass(XFA_Element eType) const;
@@ -178,7 +178,7 @@ class CXFA_Node : public CXFA_Object {
   pdfium::Optional<CXFA_Measurement> GetDefaultMeasurement(
       XFA_Attribute attr) const;
   pdfium::Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
-  pdfium::Optional<XFA_ATTRIBUTEENUM> GetDefaultEnum(XFA_Attribute attr) const;
+  pdfium::Optional<XFA_AttributeEnum> GetDefaultEnum(XFA_Attribute attr) const;
 
  protected:
   CXFA_Node(CXFA_Document* pDoc,

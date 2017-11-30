@@ -22,7 +22,7 @@ class CXFA_FontData : public CXFA_DataData {
   float GetLetterSpacing() const;
   int32_t GetLineThrough() const;
   int32_t GetUnderline() const;
-  int32_t GetUnderlinePeriod() const;
+  XFA_AttributeEnum GetUnderlinePeriod() const;
   float GetFontSize() const;
   WideString GetTypeface() const;
 

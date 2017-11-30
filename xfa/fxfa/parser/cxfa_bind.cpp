@@ -17,10 +17,10 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ContentType, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::TransferEncoding, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_None},
+     (void*)XFA_AttributeEnum::None},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Match, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Once},
+     (void*)XFA_AttributeEnum::Once},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"bind";

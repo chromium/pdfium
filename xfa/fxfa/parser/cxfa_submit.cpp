@@ -14,7 +14,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Format, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Xdp},
+     (void*)XFA_AttributeEnum::Xdp},
     {XFA_Attribute::EmbedPDF, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Target, XFA_AttributeType::CData, nullptr},

@@ -108,20 +108,20 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
   if (paraData.HasValidNode()) {
     CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
     switch (paraData.GetHorizontalAlign()) {
-      case XFA_ATTRIBUTEENUM_Center:
+      case XFA_AttributeEnum::Center:
         iAlign = CFX_RTFLineAlignment::Center;
         break;
-      case XFA_ATTRIBUTEENUM_Right:
+      case XFA_AttributeEnum::Right:
         iAlign = CFX_RTFLineAlignment::Right;
         break;
-      case XFA_ATTRIBUTEENUM_Justify:
+      case XFA_AttributeEnum::Justify:
         iAlign = CFX_RTFLineAlignment::Justified;
         break;
-      case XFA_ATTRIBUTEENUM_JustifyAll:
+      case XFA_AttributeEnum::JustifyAll:
         iAlign = CFX_RTFLineAlignment::Distributed;
         break;
-      case XFA_ATTRIBUTEENUM_Left:
-      case XFA_ATTRIBUTEENUM_Radix:
+      case XFA_AttributeEnum::Left:
+      case XFA_AttributeEnum::Radix:
         break;
       default:
         NOTREACHED();
@@ -313,10 +313,10 @@ float CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
   if (iBlockCount == 0 && fHeight > 0) {
     fHeight = fTextHeight - GetLayoutHeight();
     if (fHeight > 0) {
-      int32_t iAlign = m_textParser.GetVAlign(m_pTextProvider);
-      if (iAlign == XFA_ATTRIBUTEENUM_Middle)
+      XFA_AttributeEnum iAlign = m_textParser.GetVAlign(m_pTextProvider);
+      if (iAlign == XFA_AttributeEnum::Middle)
         fHeight /= 2.0f;
-      else if (iAlign != XFA_ATTRIBUTEENUM_Bottom)
+      else if (iAlign != XFA_AttributeEnum::Bottom)
         fHeight = 0;
       m_pLoader->m_fStartLineOffset = fHeight;
     }
@@ -607,10 +607,10 @@ void CXFA_TextLayout::UpdateAlign(float fHeight, float fBottom) {
     return;
 
   switch (m_textParser.GetVAlign(m_pTextProvider)) {
-    case XFA_ATTRIBUTEENUM_Middle:
+    case XFA_AttributeEnum::Middle:
       fHeight /= 2.0f;
       break;
-    case XFA_ATTRIBUTEENUM_Bottom:
+    case XFA_AttributeEnum::Bottom:
       break;
     default:
       return;
@@ -659,9 +659,9 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
       fSpaceAbove = 0;
 
     switch (paraData.GetVerticalAlign()) {
-      case XFA_ATTRIBUTEENUM_Top:
-      case XFA_ATTRIBUTEENUM_Middle:
-      case XFA_ATTRIBUTEENUM_Bottom: {
+      case XFA_AttributeEnum::Top:
+      case XFA_AttributeEnum::Middle:
+      case XFA_AttributeEnum::Bottom: {
         fLinePos += fSpaceAbove;
         break;
       }
@@ -1161,7 +1161,7 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   if (iChars > 0) {
     CFX_PointF pt1, pt2;
     float fEndY = pCharPos[0].m_Origin.y + 1.05f;
-    if (pPiece->iPeriod == XFA_ATTRIBUTEENUM_Word) {
+    if (pPiece->iPeriod == XFA_AttributeEnum::Word) {
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         for (int32_t j = 0; j < iChars; j++) {
           pt1.x = pCharPos[j].m_Origin.x;
@@ -1194,7 +1194,7 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
     }
   } else {
     if (bNoLineThrough &&
-        (bNoUnderline || pPiece->iPeriod != XFA_ATTRIBUTEENUM_All)) {
+        (bNoUnderline || pPiece->iPeriod != XFA_AttributeEnum::All)) {
       return;
     }
     int32_t iCharsTmp = 0;

@@ -135,21 +135,19 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
 }  // namespace
 
 // static
-WideString CXFA_Node::AttributeEnumToName(XFA_ATTRIBUTEENUM item) {
-  if (item >= g_iXFAEnumCount)
-    return L"";
+WideString CXFA_Node::AttributeEnumToName(XFA_AttributeEnum item) {
   return g_XFAEnumData[static_cast<int32_t>(item)].pName;
 }
 
 // static
-pdfium::Optional<XFA_ATTRIBUTEENUM> CXFA_Node::NameToAttributeEnum(
+pdfium::Optional<XFA_AttributeEnum> CXFA_Node::NameToAttributeEnum(
     const WideStringView& name) {
   if (name.IsEmpty())
     return {};
 
   auto* it = std::lower_bound(g_XFAEnumData, g_XFAEnumData + g_iXFAEnumCount,
                               FX_HashCode_GetW(name, false),
-                              [](const XFA_ATTRIBUTEENUMINFO& arg,
+                              [](const XFA_AttributeEnumInfo& arg,
                                  uint32_t hash) { return arg.uHash < hash; });
   if (it != g_XFAEnumData + g_iXFAEnumCount && name == it->pName)
     return {it->eName};
@@ -218,7 +216,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
 
       pCloneXML.reset(pCloneXMLElement.release());
       pClone->JSNode()->SetEnum(XFA_Attribute::Contains,
-                                XFA_ATTRIBUTEENUM_Unknown, false);
+                                XFA_AttributeEnum::Unknown, false);
     } else {
       pCloneXML = m_pXMLNode->Clone();
     }
@@ -648,38 +646,38 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
   return true;
 }
 
-XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
+XFA_AttributeEnum CXFA_Node::GetIntact() {
   CXFA_Node* pKeep = GetFirstChildByClass(XFA_Element::Keep);
-  XFA_ATTRIBUTEENUM eLayoutType = JSNode()
+  XFA_AttributeEnum eLayoutType = JSNode()
                                       ->TryEnum(XFA_Attribute::Layout, true)
-                                      .value_or(XFA_ATTRIBUTEENUM_Position);
+                                      .value_or(XFA_AttributeEnum::Position);
   if (pKeep) {
-    pdfium::Optional<XFA_ATTRIBUTEENUM> intact =
+    pdfium::Optional<XFA_AttributeEnum> intact =
         pKeep->JSNode()->TryEnum(XFA_Attribute::Intact, false);
     if (intact) {
-      if (*intact == XFA_ATTRIBUTEENUM_None &&
-          eLayoutType == XFA_ATTRIBUTEENUM_Row &&
+      if (*intact == XFA_AttributeEnum::None &&
+          eLayoutType == XFA_AttributeEnum::Row &&
           m_pDocument->GetCurVersionMode() < XFA_VERSION_208) {
         CXFA_Node* pPreviewRow = GetNodeItem(XFA_NODEITEM_PrevSibling,
                                              XFA_ObjectType::ContainerNode);
         if (pPreviewRow &&
             pPreviewRow->JSNode()->GetEnum(XFA_Attribute::Layout) ==
-                XFA_ATTRIBUTEENUM_Row) {
-          pdfium::Optional<XFA_ATTRIBUTEENUM> value =
+                XFA_AttributeEnum::Row) {
+          pdfium::Optional<XFA_AttributeEnum> value =
               pKeep->JSNode()->TryEnum(XFA_Attribute::Previous, false);
-          if (value && (*value == XFA_ATTRIBUTEENUM_ContentArea ||
-                        *value == XFA_ATTRIBUTEENUM_PageArea)) {
-            return XFA_ATTRIBUTEENUM_ContentArea;
+          if (value && (*value == XFA_AttributeEnum::ContentArea ||
+                        *value == XFA_AttributeEnum::PageArea)) {
+            return XFA_AttributeEnum::ContentArea;
           }
 
           CXFA_Node* pNode =
               pPreviewRow->GetFirstChildByClass(XFA_Element::Keep);
-          pdfium::Optional<XFA_ATTRIBUTEENUM> ret;
+          pdfium::Optional<XFA_AttributeEnum> ret;
           if (pNode)
             ret = pNode->JSNode()->TryEnum(XFA_Attribute::Next, false);
-          if (ret && (*ret == XFA_ATTRIBUTEENUM_ContentArea ||
-                      *ret == XFA_ATTRIBUTEENUM_PageArea)) {
-            return XFA_ATTRIBUTEENUM_ContentArea;
+          if (ret && (*ret == XFA_AttributeEnum::ContentArea ||
+                      *ret == XFA_AttributeEnum::PageArea)) {
+            return XFA_AttributeEnum::ContentArea;
           }
         }
       }
@@ -689,14 +687,14 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
   switch (GetElementType()) {
     case XFA_Element::Subform:
       switch (eLayoutType) {
-        case XFA_ATTRIBUTEENUM_Position:
-        case XFA_ATTRIBUTEENUM_Row:
-          return XFA_ATTRIBUTEENUM_ContentArea;
-        case XFA_ATTRIBUTEENUM_Tb:
-        case XFA_ATTRIBUTEENUM_Table:
-        case XFA_ATTRIBUTEENUM_Lr_tb:
-        case XFA_ATTRIBUTEENUM_Rl_tb:
-          return XFA_ATTRIBUTEENUM_None;
+        case XFA_AttributeEnum::Position:
+        case XFA_AttributeEnum::Row:
+          return XFA_AttributeEnum::ContentArea;
+        case XFA_AttributeEnum::Tb:
+        case XFA_AttributeEnum::Table:
+        case XFA_AttributeEnum::Lr_tb:
+        case XFA_AttributeEnum::Rl_tb:
+          return XFA_AttributeEnum::None;
         default:
           break;
       }
@@ -705,34 +703,34 @@ XFA_ATTRIBUTEENUM CXFA_Node::GetIntact() {
       CXFA_Node* pParentNode = GetNodeItem(XFA_NODEITEM_Parent);
       if (!pParentNode ||
           pParentNode->GetElementType() == XFA_Element::PageArea)
-        return XFA_ATTRIBUTEENUM_ContentArea;
-      if (pParentNode->GetIntact() == XFA_ATTRIBUTEENUM_None) {
-        XFA_ATTRIBUTEENUM eParLayout =
+        return XFA_AttributeEnum::ContentArea;
+      if (pParentNode->GetIntact() == XFA_AttributeEnum::None) {
+        XFA_AttributeEnum eParLayout =
             pParentNode->JSNode()
                 ->TryEnum(XFA_Attribute::Layout, true)
-                .value_or(XFA_ATTRIBUTEENUM_Position);
-        if (eParLayout == XFA_ATTRIBUTEENUM_Position ||
-            eParLayout == XFA_ATTRIBUTEENUM_Row ||
-            eParLayout == XFA_ATTRIBUTEENUM_Table) {
-          return XFA_ATTRIBUTEENUM_None;
+                .value_or(XFA_AttributeEnum::Position);
+        if (eParLayout == XFA_AttributeEnum::Position ||
+            eParLayout == XFA_AttributeEnum::Row ||
+            eParLayout == XFA_AttributeEnum::Table) {
+          return XFA_AttributeEnum::None;
         }
         XFA_VERSION version = m_pDocument->GetCurVersionMode();
-        if (eParLayout == XFA_ATTRIBUTEENUM_Tb && version < XFA_VERSION_208) {
+        if (eParLayout == XFA_AttributeEnum::Tb && version < XFA_VERSION_208) {
           pdfium::Optional<CXFA_Measurement> measureH =
               JSNode()->TryMeasure(XFA_Attribute::H, false);
           if (measureH)
-            return XFA_ATTRIBUTEENUM_ContentArea;
+            return XFA_AttributeEnum::ContentArea;
         }
-        return XFA_ATTRIBUTEENUM_None;
+        return XFA_AttributeEnum::None;
       }
-      return XFA_ATTRIBUTEENUM_ContentArea;
+      return XFA_AttributeEnum::ContentArea;
     }
     case XFA_Element::Draw:
-      return XFA_ATTRIBUTEENUM_ContentArea;
+      return XFA_AttributeEnum::ContentArea;
     default:
       break;
   }
-  return XFA_ATTRIBUTEENUM_None;
+  return XFA_AttributeEnum::None;
 }
 
 CXFA_Node* CXFA_Node::GetDataDescriptionNode() {
@@ -958,7 +956,7 @@ bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
 
       pNode->m_pXMLNode = pNewXMLElement;
       pNode->JSNode()->SetEnum(XFA_Attribute::Contains,
-                               XFA_ATTRIBUTEENUM_Unknown, false);
+                               XFA_AttributeEnum::Unknown, false);
     } else {
       m_pXMLNode->RemoveChildNode(pNode->m_pXMLNode);
     }
@@ -1105,7 +1103,7 @@ void CXFA_Node::ReleaseBindingNodes() {
 
 bool CXFA_Node::IsAttributeInXML() {
   return JSNode()->GetEnum(XFA_Attribute::Contains) ==
-         XFA_ATTRIBUTEENUM_MetaData;
+         XFA_AttributeEnum::MetaData;
 }
 
 void CXFA_Node::OnRemoved(bool bNotify) {
@@ -1357,13 +1355,13 @@ pdfium::Optional<WideString> CXFA_Node::GetDefaultCData(
   return {WideString(static_cast<const wchar_t*>(*value))};
 }
 
-pdfium::Optional<XFA_ATTRIBUTEENUM> CXFA_Node::GetDefaultEnum(
+pdfium::Optional<XFA_AttributeEnum> CXFA_Node::GetDefaultEnum(
     XFA_Attribute attr) const {
   pdfium::Optional<void*> value =
       GetDefaultValue(attr, XFA_AttributeType::Enum);
   if (!value)
     return {};
-  return {static_cast<XFA_ATTRIBUTEENUM>(reinterpret_cast<uintptr_t>(*value))};
+  return {static_cast<XFA_AttributeEnum>(reinterpret_cast<uintptr_t>(*value))};
 }
 
 pdfium::Optional<void*> CXFA_Node::GetDefaultValue(

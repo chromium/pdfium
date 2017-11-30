@@ -14,16 +14,16 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Max, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::EofAction, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_MoveLast},
+     (void*)XFA_AttributeEnum::MoveLast},
     {XFA_Attribute::CursorType, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_ForwardOnly},
+     (void*)XFA_AttributeEnum::ForwardOnly},
     {XFA_Attribute::LockType, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_ReadOnly},
+     (void*)XFA_AttributeEnum::ReadOnly},
     {XFA_Attribute::BofAction, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_MoveFirst},
+     (void*)XFA_AttributeEnum::MoveFirst},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::CursorLocation, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Client},
+     (void*)XFA_AttributeEnum::Client},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"recordSet";

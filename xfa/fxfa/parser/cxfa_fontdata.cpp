@@ -50,10 +50,10 @@ int32_t CXFA_FontData::GetUnderline() const {
   return m_pNode->JSNode()->GetInteger(XFA_Attribute::Underline);
 }
 
-int32_t CXFA_FontData::GetUnderlinePeriod() const {
+XFA_AttributeEnum CXFA_FontData::GetUnderlinePeriod() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::UnderlinePeriod, true)
-      .value_or(XFA_ATTRIBUTEENUM_All);
+      .value_or(XFA_AttributeEnum::All);
 }
 
 float CXFA_FontData::GetFontSize() const {
@@ -68,12 +68,12 @@ WideString CXFA_FontData::GetTypeface() const {
 
 bool CXFA_FontData::IsBold() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Weight) ==
-         XFA_ATTRIBUTEENUM_Bold;
+         XFA_AttributeEnum::Bold;
 }
 
 bool CXFA_FontData::IsItalic() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Posture) ==
-         XFA_ATTRIBUTEENUM_Italic;
+         XFA_AttributeEnum::Italic;
 }
 
 void CXFA_FontData::SetColor(FX_ARGB color) {

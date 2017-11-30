@@ -15,7 +15,8 @@ CXFA_FillData::~CXFA_FillData() {}
 bool CXFA_FillData::IsVisible() const {
   return m_pNode->JSNode()
              ->TryEnum(XFA_Attribute::Presence, true)
-             .value_or(XFA_ATTRIBUTEENUM_Visible) == XFA_ATTRIBUTEENUM_Visible;
+             .value_or(XFA_AttributeEnum::Visible) ==
+         XFA_AttributeEnum::Visible;
 }
 
 void CXFA_FillData::SetColor(FX_ARGB color) {
@@ -55,7 +56,7 @@ XFA_Element CXFA_FillData::GetFillType() const {
   return XFA_Element::Solid;
 }
 
-XFA_ATTRIBUTEENUM CXFA_FillData::GetPatternType() const {
+XFA_AttributeEnum CXFA_FillData::GetPatternType() const {
   return GetPattern()->JSNode()->GetEnum(XFA_Attribute::Type);
 }
 
@@ -88,11 +89,11 @@ FX_ARGB CXFA_FillData::GetStippleColor() const {
   return 0xFF000000;
 }
 
-XFA_ATTRIBUTEENUM CXFA_FillData::GetLinearType() const {
+XFA_AttributeEnum CXFA_FillData::GetLinearType() const {
   return GetLinear()
       ->JSNode()
       ->TryEnum(XFA_Attribute::Type, true)
-      .value_or(XFA_ATTRIBUTEENUM_ToRight);
+      .value_or(XFA_AttributeEnum::ToRight);
 }
 
 FX_ARGB CXFA_FillData::GetLinearColor() const {
@@ -109,7 +110,7 @@ bool CXFA_FillData::IsRadialToEdge() const {
   return GetRadial()
              ->JSNode()
              ->TryEnum(XFA_Attribute::Type, true)
-             .value_or(XFA_ATTRIBUTEENUM_ToEdge) == XFA_ATTRIBUTEENUM_ToEdge;
+             .value_or(XFA_AttributeEnum::ToEdge) == XFA_AttributeEnum::ToEdge;
 }
 
 FX_ARGB CXFA_FillData::GetRadialColor() const {

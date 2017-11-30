@@ -69,13 +69,13 @@ bool CXFA_FFPushButton::LoadWidget() {
 void CXFA_FFPushButton::UpdateWidgetProperty() {
   uint32_t dwStyleEx = 0;
   switch (m_pDataAcc->GetButtonHighlight()) {
-    case XFA_ATTRIBUTEENUM_Inverted:
+    case XFA_AttributeEnum::Inverted:
       dwStyleEx = XFA_FWL_PSBSTYLEEXT_HiliteInverted;
       break;
-    case XFA_ATTRIBUTEENUM_Outline:
+    case XFA_AttributeEnum::Outline:
       dwStyleEx = XFA_FWL_PSBSTYLEEXT_HiliteOutLine;
       break;
-    case XFA_ATTRIBUTEENUM_Push:
+    case XFA_AttributeEnum::Push:
       dwStyleEx = XFA_FWL_PSBSTYLEEXT_HilitePush;
       break;
     default:
@@ -117,7 +117,7 @@ bool CXFA_FFPushButton::PerformLayout() {
 float CXFA_FFPushButton::GetLineWidth() {
   CXFA_BorderData borderData = m_pDataAcc->GetBorderData(false);
   if (borderData.HasValidNode() &&
-      borderData.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
+      borderData.GetPresence() == XFA_AttributeEnum::Visible) {
     return borderData.GetEdgeData(0).GetThickness();
   }
 

@@ -706,7 +706,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
       bool bUseAttribute = true;
       if (pTemplateChosen &&
           pTemplateChosen->JSNode()->GetEnum(XFA_Attribute::RestoreState) !=
-              XFA_ATTRIBUTEENUM_Auto) {
+              XFA_AttributeEnum::Auto) {
         bUseAttribute = false;
       }
       if (!NormalLoader(pNode, pXMLDocumentNode, ePacketID, bUseAttribute))
@@ -1112,7 +1112,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
           pXFAMetaData->JSNode()->SetCData(XFA_Attribute::Value, it.second,
                                            false, false);
           pXFAMetaData->JSNode()->SetEnum(XFA_Attribute::Contains,
-                                          XFA_ATTRIBUTEENUM_MetaData, false);
+                                          XFA_AttributeEnum::MetaData, false);
           pXFAChild->InsertChild(pXFAMetaData, nullptr);
           pXFAMetaData->SetXMLMappingNode(pXMLElement);
           pXFAMetaData->SetFlag(XFA_NodeFlag_Initialized, false);

@@ -17,7 +17,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Override, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Error},
+     (void*)XFA_AttributeEnum::Error},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"calculate";

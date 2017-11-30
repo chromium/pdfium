@@ -11,16 +11,16 @@
 
 CXFA_ParaData::CXFA_ParaData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-XFA_ATTRIBUTEENUM CXFA_ParaData::GetHorizontalAlign() const {
+XFA_AttributeEnum CXFA_ParaData::GetHorizontalAlign() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::HAlign, true)
-      .value_or(XFA_ATTRIBUTEENUM_Left);
+      .value_or(XFA_AttributeEnum::Left);
 }
 
-XFA_ATTRIBUTEENUM CXFA_ParaData::GetVerticalAlign() const {
+XFA_AttributeEnum CXFA_ParaData::GetVerticalAlign() const {
   return m_pNode->JSNode()
       ->TryEnum(XFA_Attribute::VAlign, true)
-      .value_or(XFA_ATTRIBUTEENUM_Top);
+      .value_or(XFA_AttributeEnum::Top);
 }
 
 float CXFA_ParaData::GetLineHeight() const {

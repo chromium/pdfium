@@ -20,7 +20,7 @@ class CXFA_CaptionData : public CXFA_DataData {
 
   bool IsVisible() const;
   bool IsHidden() const;
-  XFA_ATTRIBUTEENUM GetPlacementType() const;
+  XFA_AttributeEnum GetPlacementType() const;
   float GetReserve() const;
   CXFA_MarginData GetMarginData() const;
   CXFA_FontData GetFontData() const;

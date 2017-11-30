@@ -18,7 +18,7 @@ class CXFA_SubmitData : public CXFA_DataData {
   explicit CXFA_SubmitData(CXFA_Node* pNode);
 
   bool IsSubmitEmbedPDF() const;
-  XFA_ATTRIBUTEENUM GetSubmitFormat() const;
+  XFA_AttributeEnum GetSubmitFormat() const;
   WideString GetSubmitTarget() const;
   WideString GetSubmitXDPContent() const;
 };

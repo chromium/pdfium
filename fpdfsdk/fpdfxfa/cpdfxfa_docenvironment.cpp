@@ -915,7 +915,7 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
   FPDF_FILEHANDLER* pFileHandler = nullptr;
   int fileFlag = -1;
   switch (submitData.GetSubmitFormat()) {
-    case XFA_ATTRIBUTEENUM_Xdp: {
+    case XFA_AttributeEnum::Xdp: {
       WideString csContent = submitData.GetSubmitXDPContent();
       csContent.Trim();
 
@@ -932,14 +932,14 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
       ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XDP, 0, flag);
       break;
     }
-    case XFA_ATTRIBUTEENUM_Xml:
+    case XFA_AttributeEnum::Xml:
       pFileHandler = pFormFillEnv->OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
       ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);
       break;
-    case XFA_ATTRIBUTEENUM_Pdf:
+    case XFA_AttributeEnum::Pdf:
       break;
-    case XFA_ATTRIBUTEENUM_Urlencoded:
+    case XFA_AttributeEnum::Urlencoded:
       pFileHandler = pFormFillEnv->OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
       ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);

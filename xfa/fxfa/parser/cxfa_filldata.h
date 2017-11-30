@@ -25,10 +25,10 @@ class CXFA_FillData : public CXFA_DataData {
 
   XFA_Element GetFillType() const;
 
-  XFA_ATTRIBUTEENUM GetPatternType() const;
+  XFA_AttributeEnum GetPatternType() const;
   FX_ARGB GetPatternColor() const;
 
-  XFA_ATTRIBUTEENUM GetLinearType() const;
+  XFA_AttributeEnum GetLinearType() const;
   FX_ARGB GetLinearColor() const;
 
   int32_t GetStippleRate() const;

@@ -13,9 +13,9 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Connection, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::RunAt, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Client},
+     (void*)XFA_AttributeEnum::Client},
     {XFA_Attribute::ExecuteType, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Import},
+     (void*)XFA_AttributeEnum::Import},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

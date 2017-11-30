@@ -18,17 +18,17 @@ class CXFA_ValidateData : public CXFA_DataData {
  public:
   explicit CXFA_ValidateData(CXFA_Node* pNode);
 
-  XFA_ATTRIBUTEENUM GetFormatTest() const;
+  XFA_AttributeEnum GetFormatTest() const;
   WideString GetFormatMessageText() const;
   void SetFormatMessageText(const WideString& wsMessage);
 
-  XFA_ATTRIBUTEENUM GetNullTest() const;
+  XFA_AttributeEnum GetNullTest() const;
   void SetNullTest(const WideString& wsValue);
 
   WideString GetNullMessageText() const;
   void SetNullMessageText(const WideString& wsMessage);
 
-  XFA_ATTRIBUTEENUM GetScriptTest() const;
+  XFA_AttributeEnum GetScriptTest() const;
   WideString GetScriptMessageText() const;
   void SetScriptMessageText(const WideString& wsMessage);
 

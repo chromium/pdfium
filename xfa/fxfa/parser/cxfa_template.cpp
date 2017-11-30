@@ -16,7 +16,7 @@ const CXFA_Node::PropertyData kPropertyData[] = {
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::BaseProfile, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Full},
+     (void*)XFA_AttributeEnum::Full},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

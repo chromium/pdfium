@@ -179,7 +179,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
       break;
     case XFA_Element::ChoiceList: {
       eValueType = (pUIChild->JSNode()->GetEnum(XFA_Attribute::Open) ==
-                    XFA_ATTRIBUTEENUM_MultiSelect)
+                    XFA_AttributeEnum::MultiSelect)
                        ? XFA_Element::ExData
                        : XFA_Element::Text;
       break;
@@ -227,8 +227,8 @@ bool CXFA_WidgetData::IsOpenAccess() const {
   for (CXFA_Node* pNode = m_pNode; pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_Parent,
                                   XFA_ObjectType::ContainerNode)) {
-    XFA_ATTRIBUTEENUM iAcc = pNode->JSNode()->GetEnum(XFA_Attribute::Access);
-    if (iAcc != XFA_ATTRIBUTEENUM_Open)
+    XFA_AttributeEnum iAcc = pNode->JSNode()->GetEnum(XFA_Attribute::Access);
+    if (iAcc != XFA_AttributeEnum::Open)
       return false;
   }
   return true;
@@ -270,13 +270,13 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventList() {
 }
 
 std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(
-    XFA_ATTRIBUTEENUM iActivity,
+    XFA_AttributeEnum iActivity,
     bool bIsFormReady) {
   std::vector<CXFA_Node*> events;
   for (CXFA_Node* pNode : GetEventList()) {
     CXFA_EventData eventData(pNode);
     if (eventData.GetActivity() == iActivity) {
-      if (iActivity == XFA_ATTRIBUTEENUM_Ready) {
+      if (iActivity == XFA_AttributeEnum::Ready) {
         WideString wsRef = eventData.GetRef();
         if (bIsFormReady) {
           if (wsRef == WideStringView(L"$form"))
@@ -362,7 +362,7 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
 
   CXFA_BorderData borderData = GetUIBorderData();
   if (borderData.HasValidNode() &&
-      borderData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+      borderData.GetPresence() != XFA_AttributeEnum::Visible) {
     return CFX_RectF();
   }
 
@@ -373,7 +373,7 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
   if (borderData.HasValidNode()) {
     bool bVisible = false;
     float fThickness = 0;
-    int32_t iType = 0;
+    XFA_AttributeEnum iType = XFA_AttributeEnum::Unknown;
     std::tie(iType, bVisible, fThickness) = borderData.Get3DStyle();
     if (!left || !top || !right || !bottom) {
       std::vector<CXFA_StrokeData> strokes = borderData.GetStrokes();
@@ -391,11 +391,11 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
                    bottom.value_or(0.0));
 }
 
-XFA_ATTRIBUTEENUM CXFA_WidgetData::GetButtonHighlight() {
+XFA_AttributeEnum CXFA_WidgetData::GetButtonHighlight() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Highlight);
-  return XFA_ATTRIBUTEENUM_Inverted;
+  return XFA_AttributeEnum::Inverted;
 }
 
 bool CXFA_WidgetData::HasButtonRollover() const {
@@ -428,15 +428,15 @@ bool CXFA_WidgetData::IsCheckButtonRound() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Shape) ==
-           XFA_ATTRIBUTEENUM_Round;
+           XFA_AttributeEnum::Round;
   return false;
 }
 
-XFA_ATTRIBUTEENUM CXFA_WidgetData::GetCheckButtonMark() {
+XFA_AttributeEnum CXFA_WidgetData::GetCheckButtonMark() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Mark);
-  return XFA_ATTRIBUTEENUM_Default;
+  return XFA_AttributeEnum::Default;
 }
 
 bool CXFA_WidgetData::IsRadioButton() {
@@ -646,7 +646,7 @@ bool CXFA_WidgetData::IsChoiceListCommitOnSelect() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild) {
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::CommitOn) ==
-           XFA_ATTRIBUTEENUM_Select;
+           XFA_AttributeEnum::Select;
   }
   return true;
 }
@@ -660,7 +660,7 @@ bool CXFA_WidgetData::IsChoiceListMultiSelect() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild) {
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::Open) ==
-           XFA_ATTRIBUTEENUM_MultiSelect;
+           XFA_AttributeEnum::MultiSelect;
   }
   return false;
 }
@@ -670,9 +670,9 @@ bool CXFA_WidgetData::IsListBox() {
   if (!pUIChild)
     return false;
 
-  XFA_ATTRIBUTEENUM attr = pUIChild->JSNode()->GetEnum(XFA_Attribute::Open);
-  return attr == XFA_ATTRIBUTEENUM_Always ||
-         attr == XFA_ATTRIBUTEENUM_MultiSelect;
+  XFA_AttributeEnum attr = pUIChild->JSNode()->GetEnum(XFA_Attribute::Open);
+  return attr == XFA_AttributeEnum::Always ||
+         attr == XFA_AttributeEnum::MultiSelect;
 }
 
 int32_t CXFA_WidgetData::CountChoiceListItems(bool bSaveValue) {
@@ -949,13 +949,13 @@ void CXFA_WidgetData::InsertItem(const WideString& wsLabel,
   } else {
     CXFA_Node* pNode = listitems[0];
     pNode->JSNode()->SetBoolean(XFA_Attribute::Save, false, false);
-    pNode->JSNode()->SetEnum(XFA_Attribute::Presence, XFA_ATTRIBUTEENUM_Visible,
-                             false);
+    pNode->JSNode()->SetEnum(XFA_Attribute::Presence,
+                             XFA_AttributeEnum::Visible, false);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_Element::Items);
     m_pNode->InsertChild(-1, pSaveItems);
     pSaveItems->JSNode()->SetBoolean(XFA_Attribute::Save, true, false);
     pSaveItems->JSNode()->SetEnum(XFA_Attribute::Presence,
-                                  XFA_ATTRIBUTEENUM_Hidden, false);
+                                  XFA_AttributeEnum::Hidden, false);
     CXFA_Node* pListNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     int32_t i = 0;
     while (pListNode) {
@@ -1102,7 +1102,7 @@ bool CXFA_WidgetData::IsHorizontalScrollPolicyOff() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild) {
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::HScrollPolicy) ==
-           XFA_ATTRIBUTEENUM_Off;
+           XFA_AttributeEnum::Off;
   }
   return false;
 }
@@ -1111,7 +1111,7 @@ bool CXFA_WidgetData::IsVerticalScrollPolicyOff() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild) {
     return pUIChild->JSNode()->GetEnum(XFA_Attribute::VScrollPolicy) ==
-           XFA_ATTRIBUTEENUM_Off;
+           XFA_AttributeEnum::Off;
   }
   return false;
 }
@@ -1146,19 +1146,19 @@ CXFA_WidgetData::GetBarcodeAttribute_CharEncoding() {
 }
 
 pdfium::Optional<bool> CXFA_WidgetData::GetBarcodeAttribute_Checksum() {
-  pdfium::Optional<XFA_ATTRIBUTEENUM> checksum =
+  pdfium::Optional<XFA_AttributeEnum> checksum =
       GetUIChild()->JSNode()->TryEnum(XFA_Attribute::Checksum, true);
   if (!checksum)
     return {};
 
   switch (*checksum) {
-    case XFA_ATTRIBUTEENUM_None:
+    case XFA_AttributeEnum::None:
       return {false};
-    case XFA_ATTRIBUTEENUM_Auto:
+    case XFA_AttributeEnum::Auto:
       return {true};
-    case XFA_ATTRIBUTEENUM_1mod10:
-    case XFA_ATTRIBUTEENUM_1mod10_1mod11:
-    case XFA_ATTRIBUTEENUM_2mod10:
+    case XFA_AttributeEnum::Checksum_1mod10:
+    case XFA_AttributeEnum::Checksum_1mod10_1mod11:
+    case XFA_AttributeEnum::Checksum_2mod10:
     default:
       break;
   }
@@ -1225,21 +1225,21 @@ pdfium::Optional<bool> CXFA_WidgetData::GetBarcodeAttribute_PrintChecksum() {
 
 pdfium::Optional<BC_TEXT_LOC>
 CXFA_WidgetData::GetBarcodeAttribute_TextLocation() {
-  pdfium::Optional<XFA_ATTRIBUTEENUM> textLocation =
+  pdfium::Optional<XFA_AttributeEnum> textLocation =
       GetUIChild()->JSNode()->TryEnum(XFA_Attribute::TextLocation, true);
   if (!textLocation)
     return {};
 
   switch (*textLocation) {
-    case XFA_ATTRIBUTEENUM_None:
+    case XFA_AttributeEnum::None:
       return {BC_TEXT_LOC_NONE};
-    case XFA_ATTRIBUTEENUM_Above:
+    case XFA_AttributeEnum::Above:
       return {BC_TEXT_LOC_ABOVE};
-    case XFA_ATTRIBUTEENUM_Below:
+    case XFA_AttributeEnum::Below:
       return {BC_TEXT_LOC_BELOW};
-    case XFA_ATTRIBUTEENUM_AboveEmbedded:
+    case XFA_AttributeEnum::AboveEmbedded:
       return {BC_TEXT_LOC_ABOVEEMBED};
-    case XFA_ATTRIBUTEENUM_BelowEmbedded:
+    case XFA_AttributeEnum::BelowEmbedded:
       return {BC_TEXT_LOC_BELOWEMBED};
     default:
       break;

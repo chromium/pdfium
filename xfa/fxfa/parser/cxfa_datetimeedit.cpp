@@ -18,9 +18,9 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Picker, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Host},
+     (void*)XFA_AttributeEnum::Host},
     {XFA_Attribute::HScrollPolicy, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Auto},
+     (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"dateTimeEdit";

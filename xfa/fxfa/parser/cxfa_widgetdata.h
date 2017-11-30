@@ -69,7 +69,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_ValidateData GetValidateData(bool bModified);
   CXFA_BorderData GetUIBorderData();
 
-  std::vector<CXFA_Node*> GetEventByActivity(XFA_ATTRIBUTEENUM iActivity,
+  std::vector<CXFA_Node*> GetEventByActivity(XFA_AttributeEnum iActivity,
                                              bool bIsFormReady);
 
   pdfium::Optional<float> TryWidth();
@@ -79,12 +79,12 @@ class CXFA_WidgetData : public CXFA_DataData {
   pdfium::Optional<float> TryMaxWidth();
   pdfium::Optional<float> TryMaxHeight();
 
-  XFA_ATTRIBUTEENUM GetButtonHighlight();
+  XFA_AttributeEnum GetButtonHighlight();
   bool HasButtonRollover() const;
   bool HasButtonDown() const;
 
   bool IsCheckButtonRound();
-  XFA_ATTRIBUTEENUM GetCheckButtonMark();
+  XFA_AttributeEnum GetCheckButtonMark();
   float GetCheckButtonSize();
 
   XFA_CHECKSTATE GetCheckState();

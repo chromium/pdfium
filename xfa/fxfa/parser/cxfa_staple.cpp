@@ -10,7 +10,7 @@ namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Mode, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_UsePrinterSetting},
+     (void*)XFA_AttributeEnum::UsePrinterSetting},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

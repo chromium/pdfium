@@ -20,7 +20,7 @@ class CXFA_EventData : public CXFA_DataData {
  public:
   explicit CXFA_EventData(CXFA_Node* pNode);
 
-  XFA_ATTRIBUTEENUM GetActivity();
+  XFA_AttributeEnum GetActivity();
   XFA_Element GetEventType() const;
   CXFA_ScriptData GetScriptData() const;
   CXFA_SubmitData GetSubmitData() const;

@@ -17,9 +17,9 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::AllowNeutral, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Mark, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Default},
+     (void*)XFA_AttributeEnum::Default},
     {XFA_Attribute::Shape, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Square},
+     (void*)XFA_AttributeEnum::Square},
     {XFA_Attribute::Size, XFA_AttributeType::Measure, (void*)L"10pt"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

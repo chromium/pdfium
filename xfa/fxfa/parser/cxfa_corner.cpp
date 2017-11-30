@@ -15,14 +15,14 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Stroke, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Solid},
+     (void*)XFA_AttributeEnum::Solid},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Visible},
+     (void*)XFA_AttributeEnum::Visible},
     {XFA_Attribute::Inverted, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Thickness, XFA_AttributeType::Measure, (void*)L"0.5pt"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Join, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Square},
+     (void*)XFA_AttributeEnum::Square},
     {XFA_Attribute::Radius, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

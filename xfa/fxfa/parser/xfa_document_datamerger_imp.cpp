@@ -557,7 +557,7 @@ CXFA_Node* FindMatchingDataNode(
                               CXFA_TraverseStrategy_XFAContainerNode>*
         pIterator,
     bool& bSelfMatch,
-    XFA_ATTRIBUTEENUM& eBindMatch,
+    XFA_AttributeEnum& eBindMatch,
     bool bUpLevel) {
   CXFA_Node* pResult = nullptr;
   CXFA_Node* pCurTemplateNode = pIterator->GetCurrent();
@@ -596,16 +596,16 @@ CXFA_Node* FindMatchingDataNode(
 
     CXFA_Node* pTemplateNodeBind =
         pCurTemplateNode->GetFirstChildByClass(XFA_Element::Bind);
-    XFA_ATTRIBUTEENUM eMatch =
+    XFA_AttributeEnum eMatch =
         pTemplateNodeBind
             ? pTemplateNodeBind->JSNode()->GetEnum(XFA_Attribute::Match)
-            : XFA_ATTRIBUTEENUM_Once;
+            : XFA_AttributeEnum::Once;
     eBindMatch = eMatch;
     switch (eMatch) {
-      case XFA_ATTRIBUTEENUM_None:
+      case XFA_AttributeEnum::None:
         pCurTemplateNode = pIterator->MoveToNext();
         continue;
-      case XFA_ATTRIBUTEENUM_Global:
+      case XFA_AttributeEnum::Global:
         bAccessedDataDOM = true;
         if (!bForceBind) {
           pCurTemplateNode = pIterator->MoveToNext();
@@ -625,7 +625,7 @@ CXFA_Node* FindMatchingDataNode(
           pResult = pGlobalBindNode;
           break;
         }
-      case XFA_ATTRIBUTEENUM_Once: {
+      case XFA_AttributeEnum::Once: {
         bAccessedDataDOM = true;
         CXFA_Node* pOnceBindNode = FindOnceDataNode(
             pDocument,
@@ -638,7 +638,7 @@ CXFA_Node* FindMatchingDataNode(
         pResult = pOnceBindNode;
         break;
       }
-      case XFA_ATTRIBUTEENUM_DataRef: {
+      case XFA_AttributeEnum::DataRef: {
         bAccessedDataDOM = true;
         CXFA_Node* pDataRefBindNode = FindDataRefDataNode(
             pDocument,
@@ -741,12 +741,12 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
   if (!bOneInstance && pOccurNode)
     std::tie(iMin, iMax, iInit) = CXFA_OccurData(pOccurNode).GetOccurInfo();
 
-  XFA_ATTRIBUTEENUM eRelation =
+  XFA_AttributeEnum eRelation =
       eType == XFA_Element::SubformSet
           ? pTemplateNode->JSNode()->GetEnum(XFA_Attribute::Relation)
-          : XFA_ATTRIBUTEENUM_Ordered;
+          : XFA_AttributeEnum::Ordered;
   int32_t iCurRepeatIndex = 0;
-  XFA_ATTRIBUTEENUM eParentBindMatch = XFA_ATTRIBUTEENUM_None;
+  XFA_AttributeEnum eParentBindMatch = XFA_AttributeEnum::None;
   if (bDataMerge) {
     CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFAContainerNode>
         sNodeIterator(pTemplateNode);
@@ -758,7 +758,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
       std::vector<CXFA_Node*> nodeArray;
       for (; iMax < 0 || iCurRepeatIndex < iMax; iCurRepeatIndex++) {
         bool bSelfMatch = false;
-        XFA_ATTRIBUTEENUM eBindMatch = XFA_ATTRIBUTEENUM_None;
+        XFA_AttributeEnum eBindMatch = XFA_AttributeEnum::None;
         CXFA_Node* pDataNode = FindMatchingDataNode(
             pDocument, pTemplateNode, pDataScope, bAccessedDataDOM, false,
             &sNodeIterator, bSelfMatch, eBindMatch, true);
@@ -800,19 +800,19 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
 
     for (; iMax < 0 || iCurRepeatIndex < iMax; iCurRepeatIndex++) {
       bool bSelfMatch = false;
-      XFA_ATTRIBUTEENUM eBindMatch = XFA_ATTRIBUTEENUM_None;
+      XFA_AttributeEnum eBindMatch = XFA_AttributeEnum::None;
       if (!FindMatchingDataNode(pDocument, pTemplateNode, pDataScope,
                                 bAccessedDataDOM, false, &sNodeIterator,
                                 bSelfMatch, eBindMatch, true)) {
         break;
       }
-      if (eBindMatch == XFA_ATTRIBUTEENUM_DataRef &&
-          eParentBindMatch == XFA_ATTRIBUTEENUM_DataRef) {
+      if (eBindMatch == XFA_AttributeEnum::DataRef &&
+          eParentBindMatch == XFA_AttributeEnum::DataRef) {
         break;
       }
 
-      if (eRelation == XFA_ATTRIBUTEENUM_Choice ||
-          eRelation == XFA_ATTRIBUTEENUM_Unordered) {
+      if (eRelation == XFA_AttributeEnum::Choice ||
+          eRelation == XFA_AttributeEnum::Unordered) {
         CXFA_Node* pSubformSetNode = XFA_NodeMerge_CloneOrMergeContainer(
             pDocument, pFormParentNode, pTemplateNode, false, pSearchArray);
         ASSERT(pSubformSetNode);
@@ -830,8 +830,8 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
                                                 pTemplateChild, true, nullptr);
           } else if (pTemplateChild->IsContainerNode()) {
             bSelfMatch = false;
-            eBindMatch = XFA_ATTRIBUTEENUM_None;
-            if (eRelation != XFA_ATTRIBUTEENUM_Ordered) {
+            eBindMatch = XFA_AttributeEnum::None;
+            if (eRelation != XFA_AttributeEnum::Ordered) {
               CXFA_NodeIteratorTemplate<CXFA_Node,
                                         CXFA_TraverseStrategy_XFAContainerNode>
                   sChildIter(pTemplateChild);
@@ -854,7 +854,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
         }
 
         switch (eRelation) {
-          case XFA_ATTRIBUTEENUM_Choice: {
+          case XFA_AttributeEnum::Choice: {
             ASSERT(!rgItemMatchList.empty());
             SortRecurseRecord(&rgItemMatchList, pDataScope, true);
             pDocument->DataMerge_CopyContainer(
@@ -862,7 +862,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
                 pDataScope, false, true, true);
             break;
           }
-          case XFA_ATTRIBUTEENUM_Unordered: {
+          case XFA_AttributeEnum::Unordered: {
             if (!rgItemMatchList.empty()) {
               SortRecurseRecord(&rgItemMatchList, pDataScope, false);
               for (const auto& matched : rgItemMatchList) {
@@ -961,7 +961,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
         XFA_NodeMerge_CloneOrMergeContainer(pDocument, pSubformSetNode,
                                             pTemplateChild, true, nullptr);
       } else if (pTemplateChild->IsContainerNode()) {
-        if (bFound && eRelation == XFA_ATTRIBUTEENUM_Choice)
+        if (bFound && eRelation == XFA_AttributeEnum::Choice)
           continue;
 
         pDocument->DataMerge_CopyContainer(pTemplateChild, pSubformSetNode,
@@ -1000,7 +1000,7 @@ CXFA_Node* CopyContainer_Field(CXFA_Document* pDocument,
   if (bDataMerge) {
     bool bAccessedDataDOM = false;
     bool bSelfMatch = false;
-    XFA_ATTRIBUTEENUM eBindMatch;
+    XFA_AttributeEnum eBindMatch;
     CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFAContainerNode>
         sNodeIter(pTemplateNode);
     CXFA_Node* pDataNode = FindMatchingDataNode(
@@ -1058,9 +1058,9 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
     pDataNode->CreateXMLMappingNode();
     if (eNodeType == XFA_Element::DataValue &&
         pDDNode->JSNode()->GetEnum(XFA_Attribute::Contains) ==
-            XFA_ATTRIBUTEENUM_MetaData) {
+            XFA_AttributeEnum::MetaData) {
       pDataNode->JSNode()->SetEnum(XFA_Attribute::Contains,
-                                   XFA_ATTRIBUTEENUM_MetaData, false);
+                                   XFA_AttributeEnum::MetaData, false);
     }
     pDataParent->InsertChild(pDataNode, nullptr);
     pDataNode->SetDataDescriptionNode(pDDNode);
@@ -1084,21 +1084,21 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
     CXFA_Node* pTemplateNodeBind =
         pTemplateNode ? pTemplateNode->GetFirstChildByClass(XFA_Element::Bind)
                       : nullptr;
-    XFA_ATTRIBUTEENUM eMatch =
+    XFA_AttributeEnum eMatch =
         pTemplateNodeBind
             ? pTemplateNodeBind->JSNode()->GetEnum(XFA_Attribute::Match)
-            : XFA_ATTRIBUTEENUM_Once;
+            : XFA_AttributeEnum::Once;
     switch (eMatch) {
-      case XFA_ATTRIBUTEENUM_None:
+      case XFA_AttributeEnum::None:
         if (!bDataRef || bParentDataRef)
           FormValueNode_MatchNoneCreateChild(pFormNode);
         break;
-      case XFA_ATTRIBUTEENUM_Once:
+      case XFA_AttributeEnum::Once:
         if (!bDataRef || bParentDataRef) {
           if (!pDataNode) {
             if (pFormNode->GetNameHash() != 0 &&
                 pFormNode->JSNode()->GetEnum(XFA_Attribute::Scope) !=
-                    XFA_ATTRIBUTEENUM_None) {
+                    XFA_AttributeEnum::None) {
               XFA_Element eDataNodeType = (eType == XFA_Element::Subform ||
                                            XFA_FieldIsMultiListBox(pFormNode))
                                               ? XFA_Element::DataGroup
@@ -1124,7 +1124,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
           }
         }
         break;
-      case XFA_ATTRIBUTEENUM_Global:
+      case XFA_AttributeEnum::Global:
         if (!bDataRef || bParentDataRef) {
           uint32_t dwNameHash = pFormNode->GetNameHash();
           if (dwNameHash != 0 && !pDataNode) {
@@ -1153,7 +1153,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
             FormValueNode_MatchNoneCreateChild(pFormNode);
         }
         break;
-      case XFA_ATTRIBUTEENUM_DataRef: {
+      case XFA_AttributeEnum::DataRef: {
         bMatchRef = bDataRef;
         bParentDataRef = true;
         if (!pDataNode && bDataRef) {

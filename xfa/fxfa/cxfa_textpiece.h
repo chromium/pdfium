@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_LinkUserData;
 
@@ -28,7 +29,7 @@ class CXFA_TextPiece {
   int32_t iVerScale;
   int32_t iBidiLevel;
   int32_t iUnderline;
-  int32_t iPeriod;
+  XFA_AttributeEnum iPeriod;
   int32_t iLineThrough;
   FX_ARGB dwColor;
   float fFontSize;

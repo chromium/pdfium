@@ -14,7 +14,7 @@ const CXFA_Node::PropertyData kPropertyData[] = {
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::HAlign, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Left},
+     (void*)XFA_AttributeEnum::Left},
     {XFA_Attribute::TextIndent, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Widows, XFA_AttributeType::Integer, (void*)0},
@@ -24,7 +24,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Preserve, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::SpaceBelow, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::VAlign, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Top},
+     (void*)XFA_AttributeEnum::Top},
     {XFA_Attribute::TabDefault, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::TabStops, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Orphans, XFA_AttributeType::Integer, (void*)0},

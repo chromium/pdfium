@@ -20,12 +20,12 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::StartNew, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::BookendTrailer, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::After, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Auto},
+     (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::BookendLeader, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::AfterTarget, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Before, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Auto},
+     (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"break";

@@ -17,7 +17,7 @@ class CXFA_CalculateData : public CXFA_DataData {
  public:
   explicit CXFA_CalculateData(CXFA_Node* pNode);
 
-  int32_t GetOverride() const;
+  XFA_AttributeEnum GetOverride() const;
   CXFA_ScriptData GetScriptData() const;
   WideString GetMessageText() const;
 };

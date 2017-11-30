@@ -23,14 +23,14 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Y, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::HAlign, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Left},
+     (void*)XFA_AttributeEnum::Left},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Rotate, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Visible},
+     (void*)XFA_AttributeEnum::Visible},
     {XFA_Attribute::VAlign, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Top},
+     (void*)XFA_AttributeEnum::Top},
     {XFA_Attribute::MaxH, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::MaxW, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::MinH, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -40,7 +40,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Locale, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::AnchorType, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_TopLeft},
+     (void*)XFA_AttributeEnum::TopLeft},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"draw";

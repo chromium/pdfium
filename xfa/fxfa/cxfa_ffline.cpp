@@ -12,11 +12,11 @@
 
 namespace {
 
-CFX_GraphStateData::LineCap LineCapToFXGE(XFA_ATTRIBUTEENUM iLineCap) {
+CFX_GraphStateData::LineCap LineCapToFXGE(XFA_AttributeEnum iLineCap) {
   switch (iLineCap) {
-    case XFA_ATTRIBUTEENUM_Round:
+    case XFA_AttributeEnum::Round:
       return CFX_GraphStateData::LineCapRound;
-    case XFA_ATTRIBUTEENUM_Butt:
+    case XFA_AttributeEnum::Butt:
       return CFX_GraphStateData::LineCapButt;
     default:
       break;
@@ -31,17 +31,17 @@ CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
 CXFA_FFLine::~CXFA_FFLine() {}
 
 void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
-                                  XFA_ATTRIBUTEENUM iHand,
+                                  XFA_AttributeEnum iHand,
                                   float fLineWidth) {
   float fHalfWidth = fLineWidth / 2.0f;
   if (rect.height < 1.0f) {
     switch (iHand) {
-      case XFA_ATTRIBUTEENUM_Left:
+      case XFA_AttributeEnum::Left:
         rect.top -= fHalfWidth;
         break;
-      case XFA_ATTRIBUTEENUM_Right:
+      case XFA_AttributeEnum::Right:
         rect.top += fHalfWidth;
-      case XFA_ATTRIBUTEENUM_Even:
+      case XFA_AttributeEnum::Even:
         break;
       default:
         NOTREACHED();
@@ -49,13 +49,13 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
     }
   } else if (rect.width < 1.0f) {
     switch (iHand) {
-      case XFA_ATTRIBUTEENUM_Left:
+      case XFA_AttributeEnum::Left:
         rect.left += fHalfWidth;
         break;
-      case XFA_ATTRIBUTEENUM_Right:
+      case XFA_AttributeEnum::Right:
         rect.left += fHalfWidth;
         break;
-      case XFA_ATTRIBUTEENUM_Even:
+      case XFA_AttributeEnum::Even:
         break;
       default:
         NOTREACHED();
@@ -63,13 +63,13 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
     }
   } else {
     switch (iHand) {
-      case XFA_ATTRIBUTEENUM_Left:
+      case XFA_AttributeEnum::Left:
         rect.Inflate(fHalfWidth, fHalfWidth);
         break;
-      case XFA_ATTRIBUTEENUM_Right:
+      case XFA_AttributeEnum::Right:
         rect.Deflate(fHalfWidth, fHalfWidth);
         break;
-      case XFA_ATTRIBUTEENUM_Even:
+      case XFA_AttributeEnum::Even:
         break;
       default:
         NOTREACHED();
@@ -91,8 +91,8 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   CXFA_LineData lineData = valueData.GetLineData();
   FX_ARGB lineColor = 0xFF000000;
   float fLineWidth = 1.0f;
-  XFA_ATTRIBUTEENUM iStrokeType = XFA_ATTRIBUTEENUM_Unknown;
-  XFA_ATTRIBUTEENUM iCap = XFA_ATTRIBUTEENUM_Unknown;
+  XFA_AttributeEnum iStrokeType = XFA_AttributeEnum::Unknown;
+  XFA_AttributeEnum iCap = XFA_AttributeEnum::Unknown;
   CXFA_EdgeData edgeData = lineData.GetEdgeData();
   if (edgeData.HasValidNode()) {
     if (!edgeData.IsVisible())

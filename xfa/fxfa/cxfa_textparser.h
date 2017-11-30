@@ -41,7 +41,7 @@ class CXFA_TextParser {
 
   bool IsParsed() const { return m_bParsed; }
 
-  XFA_ATTRIBUTEENUM GetVAlign(CXFA_TextProvider* pTextProvider) const;
+  XFA_AttributeEnum GetVAlign(CXFA_TextProvider* pTextProvider) const;
 
   float GetTabInterval(CFX_CSSComputedStyle* pStyle) const;
   int32_t CountTabs(CFX_CSSComputedStyle* pStyle) const;
@@ -64,7 +64,7 @@ class CXFA_TextParser {
   void GetUnderline(CXFA_TextProvider* pTextProvider,
                     CFX_CSSComputedStyle* pStyle,
                     int32_t& iUnderline,
-                    int32_t& iPeriod) const;
+                    XFA_AttributeEnum& iPeriod) const;
   void GetLinethrough(CXFA_TextProvider* pTextProvider,
                       CFX_CSSComputedStyle* pStyle,
                       int32_t& iLinethrough) const;

@@ -12,7 +12,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::SignatureType, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Filter},
+     (void*)XFA_AttributeEnum::Filter},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Permissions, XFA_AttributeType::Integer, (void*)2},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

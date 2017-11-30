@@ -10,7 +10,7 @@ namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Decimal},
+     (void*)XFA_AttributeEnum::Decimal},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"numberSymbol";

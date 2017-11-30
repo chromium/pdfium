@@ -25,7 +25,7 @@ class CXFA_ScriptData : public CXFA_DataData {
   explicit CXFA_ScriptData(CXFA_Node* pNode);
 
   Type GetContentType() const;
-  XFA_ATTRIBUTEENUM GetRunAt() const;
+  XFA_AttributeEnum GetRunAt() const;
   WideString GetExpression() const;
 };
 

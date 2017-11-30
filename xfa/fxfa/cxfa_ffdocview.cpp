@@ -33,21 +33,21 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
-const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
-    XFA_ATTRIBUTEENUM_Click,      XFA_ATTRIBUTEENUM_Change,
-    XFA_ATTRIBUTEENUM_DocClose,   XFA_ATTRIBUTEENUM_DocReady,
-    XFA_ATTRIBUTEENUM_Enter,      XFA_ATTRIBUTEENUM_Exit,
-    XFA_ATTRIBUTEENUM_Full,       XFA_ATTRIBUTEENUM_IndexChange,
-    XFA_ATTRIBUTEENUM_Initialize, XFA_ATTRIBUTEENUM_MouseDown,
-    XFA_ATTRIBUTEENUM_MouseEnter, XFA_ATTRIBUTEENUM_MouseExit,
-    XFA_ATTRIBUTEENUM_MouseUp,    XFA_ATTRIBUTEENUM_PostExecute,
-    XFA_ATTRIBUTEENUM_PostOpen,   XFA_ATTRIBUTEENUM_PostPrint,
-    XFA_ATTRIBUTEENUM_PostSave,   XFA_ATTRIBUTEENUM_PostSign,
-    XFA_ATTRIBUTEENUM_PostSubmit, XFA_ATTRIBUTEENUM_PreExecute,
-    XFA_ATTRIBUTEENUM_PreOpen,    XFA_ATTRIBUTEENUM_PrePrint,
-    XFA_ATTRIBUTEENUM_PreSave,    XFA_ATTRIBUTEENUM_PreSign,
-    XFA_ATTRIBUTEENUM_PreSubmit,  XFA_ATTRIBUTEENUM_Ready,
-    XFA_ATTRIBUTEENUM_Unknown,
+const XFA_AttributeEnum gs_EventActivity[] = {
+    XFA_AttributeEnum::Click,      XFA_AttributeEnum::Change,
+    XFA_AttributeEnum::DocClose,   XFA_AttributeEnum::DocReady,
+    XFA_AttributeEnum::Enter,      XFA_AttributeEnum::Exit,
+    XFA_AttributeEnum::Full,       XFA_AttributeEnum::IndexChange,
+    XFA_AttributeEnum::Initialize, XFA_AttributeEnum::MouseDown,
+    XFA_AttributeEnum::MouseEnter, XFA_AttributeEnum::MouseExit,
+    XFA_AttributeEnum::MouseUp,    XFA_AttributeEnum::PostExecute,
+    XFA_AttributeEnum::PostOpen,   XFA_AttributeEnum::PostPrint,
+    XFA_AttributeEnum::PostSave,   XFA_AttributeEnum::PostSign,
+    XFA_AttributeEnum::PostSubmit, XFA_AttributeEnum::PreExecute,
+    XFA_AttributeEnum::PreOpen,    XFA_AttributeEnum::PrePrint,
+    XFA_AttributeEnum::PreSave,    XFA_AttributeEnum::PreSign,
+    XFA_AttributeEnum::PreSubmit,  XFA_AttributeEnum::Ready,
+    XFA_AttributeEnum::Unknown,
 };
 
 CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc)
@@ -573,7 +573,7 @@ void CXFA_FFDocView::RunSubformIndexChange() {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_IndexChange;
     eParam.m_pTarget = pWidgetAcc;
-    pWidgetAcc->ProcessEvent(XFA_ATTRIBUTEENUM_IndexChange, &eParam);
+    pWidgetAcc->ProcessEvent(XFA_AttributeEnum::IndexChange, &eParam);
   }
   m_IndexChangedSubforms.clear();
 }

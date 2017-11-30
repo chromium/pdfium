@@ -16,8 +16,8 @@ class CXFA_ParaData : public CXFA_DataData {
  public:
   explicit CXFA_ParaData(CXFA_Node* pNode);
 
-  XFA_ATTRIBUTEENUM GetHorizontalAlign() const;
-  XFA_ATTRIBUTEENUM GetVerticalAlign() const;
+  XFA_AttributeEnum GetHorizontalAlign() const;
+  XFA_AttributeEnum GetVerticalAlign() const;
   float GetLineHeight() const;
   float GetMarginLeft() const;
   float GetMarginRight() const;

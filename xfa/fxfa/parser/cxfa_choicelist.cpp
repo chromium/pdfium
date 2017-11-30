@@ -16,9 +16,9 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Open, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_UserControl},
+     (void*)XFA_AttributeEnum::UserControl},
     {XFA_Attribute::CommitOn, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Select},
+     (void*)XFA_AttributeEnum::Select},
     {XFA_Attribute::TextEntry, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

@@ -10,7 +10,7 @@
 
 CXFA_ImageData::CXFA_ImageData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
-XFA_ATTRIBUTEENUM CXFA_ImageData::GetAspect() const {
+XFA_AttributeEnum CXFA_ImageData::GetAspect() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::Aspect);
 }
 
@@ -24,8 +24,8 @@ WideString CXFA_ImageData::GetHref() const {
   return m_pNode->JSNode()->TryCData(XFA_Attribute::Href, true).value_or(L"");
 }
 
-XFA_ATTRIBUTEENUM CXFA_ImageData::GetTransferEncoding() const {
-  return static_cast<XFA_ATTRIBUTEENUM>(
+XFA_AttributeEnum CXFA_ImageData::GetTransferEncoding() const {
+  return static_cast<XFA_AttributeEnum>(
       m_pNode->JSNode()->GetEnum(XFA_Attribute::TransferEncoding));
 }
 
@@ -42,7 +42,7 @@ void CXFA_ImageData::SetHref(const WideString& wsHref) {
   m_pNode->JSNode()->SetCData(XFA_Attribute::Href, wsHref, false, false);
 }
 
-void CXFA_ImageData::SetTransferEncoding(XFA_ATTRIBUTEENUM iTransferEncoding) {
+void CXFA_ImageData::SetTransferEncoding(XFA_AttributeEnum iTransferEncoding) {
   m_pNode->JSNode()->SetEnum(XFA_Attribute::TransferEncoding, iTransferEncoding,
                              false);
 }

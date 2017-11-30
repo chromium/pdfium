@@ -17,13 +17,13 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ScriptTest, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Error},
+     (void*)XFA_AttributeEnum::Error},
     {XFA_Attribute::NullTest, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Disabled},
+     (void*)XFA_AttributeEnum::Disabled},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::FormatTest, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_Warning},
+     (void*)XFA_AttributeEnum::Warning},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

@@ -20,7 +20,7 @@ CXFA_ScriptData::Type CXFA_ScriptData::GetContentType() const {
   return Type::Unknown;
 }
 
-XFA_ATTRIBUTEENUM CXFA_ScriptData::GetRunAt() const {
+XFA_AttributeEnum CXFA_ScriptData::GetRunAt() const {
   return m_pNode->JSNode()->GetEnum(XFA_Attribute::RunAt);
 }
 

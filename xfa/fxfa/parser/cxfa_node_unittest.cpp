@@ -19,9 +19,9 @@ TEST(CXFA_NodeTest, NameToAttribute) {
 TEST(CXFA_NodeTest, GetAttributeEnumByName) {
   EXPECT_FALSE(!!CXFA_Node::NameToAttributeEnum(L""));
   EXPECT_FALSE(!!CXFA_Node::NameToAttributeEnum(L"nonesuch"));
-  EXPECT_EQ(XFA_ATTRIBUTEENUM_Asterisk, *CXFA_Node::NameToAttributeEnum(L"*"));
-  EXPECT_EQ(XFA_ATTRIBUTEENUM_Visible,
+  EXPECT_EQ(XFA_AttributeEnum::Asterisk, *CXFA_Node::NameToAttributeEnum(L"*"));
+  EXPECT_EQ(XFA_AttributeEnum::Visible,
             *CXFA_Node::NameToAttributeEnum(L"visible"));
-  EXPECT_EQ(XFA_ATTRIBUTEENUM_Lowered,
+  EXPECT_EQ(XFA_AttributeEnum::Lowered,
             *CXFA_Node::NameToAttributeEnum(L"lowered"));
 }

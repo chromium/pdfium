@@ -25,9 +25,9 @@ class CXFA_BoxData : public CXFA_DataData {
   bool IsArc() const { return GetElementType() == XFA_Element::Arc; }
   bool IsCircular() const;
 
-  int32_t GetHand() const;
-  int32_t GetPresence() const;
-  std::tuple<int32_t, bool, float> Get3DStyle() const;
+  XFA_AttributeEnum GetHand() const;
+  XFA_AttributeEnum GetPresence() const;
+  std::tuple<XFA_AttributeEnum, bool, float> Get3DStyle() const;
 
   int32_t CountEdges() const;
   CXFA_EdgeData GetEdgeData(int32_t nIndex) const;

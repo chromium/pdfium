@@ -115,7 +115,7 @@ class CXFA_ItemLayoutProcessor {
   float InsertKeepLayoutItems();
   bool CalculateRowChildPosition(
       std::vector<CXFA_ContentLayoutItem*> (&rgCurLineLayoutItems)[3],
-      XFA_ATTRIBUTEENUM eFlowStrategy,
+      XFA_AttributeEnum eFlowStrategy,
       bool bContainerHeightAutoSize,
       bool bContainerWidthAutoSize,
       float* fContentCalculatedWidth,
@@ -133,7 +133,7 @@ class CXFA_ItemLayoutProcessor {
   void DoLayoutTableContainer(CXFA_Node* pLayoutNode);
   XFA_ItemLayoutProcessorResult DoLayoutFlowedContainer(
       bool bUseBreakControl,
-      XFA_ATTRIBUTEENUM eFlowStrategy,
+      XFA_AttributeEnum eFlowStrategy,
       float fHeightLimit,
       float fRealHeight,
       CXFA_LayoutContext* pContext,

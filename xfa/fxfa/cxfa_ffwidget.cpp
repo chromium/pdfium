@@ -82,7 +82,7 @@ void XFA_BOX_GetPath(const std::vector<CXFA_StrokeData>& strokes,
   bool bInverted = cornerData1.IsInverted();
   float offsetY = 0.0f;
   float offsetX = 0.0f;
-  bool bRound = cornerData1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
+  bool bRound = cornerData1.GetJoinType() == XFA_AttributeEnum::Round;
   float halfAfter = 0.0f;
   float halfBefore = 0.0f;
   CXFA_StrokeData strokeData = strokes[nIndex];
@@ -243,10 +243,10 @@ void XFA_BOX_GetFillPath(const CXFA_BoxData& boxData,
   if (boxData.IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
     float fThickness = std::fmax(0.0, boxData.GetEdgeData(0).GetThickness());
     float fHalf = fThickness / 2;
-    int32_t iHand = boxData.GetHand();
-    if (iHand == XFA_ATTRIBUTEENUM_Left)
+    XFA_AttributeEnum iHand = boxData.GetHand();
+    if (iHand == XFA_AttributeEnum::Left)
       rtWidget.Inflate(fHalf, fHalf);
-    else if (iHand == XFA_ATTRIBUTEENUM_Right)
+    else if (iHand == XFA_AttributeEnum::Right)
       rtWidget.Deflate(fHalf, fHalf);
 
     XFA_BOX_GetPath_Arc(boxData, rtWidget, fillPath, dwFlags);
@@ -280,7 +280,7 @@ void XFA_BOX_GetFillPath(const CXFA_BoxData& boxData,
       if (strokeData1.IsInverted()) {
         bSameStyles = false;
       }
-      if (strokeData1.GetJoinType() != XFA_ATTRIBUTEENUM_Square) {
+      if (strokeData1.GetJoinType() != XFA_AttributeEnum::Square) {
         bSameStyles = false;
       }
     }
@@ -304,7 +304,7 @@ void XFA_BOX_GetFillPath(const CXFA_BoxData& boxData,
     float fRadius1 = cornerData1.GetRadius();
     float fRadius2 = cornerData2.GetRadius();
     bool bInverted = cornerData1.IsInverted();
-    bool bRound = cornerData1.GetJoinType() == XFA_ATTRIBUTEENUM_Round;
+    bool bRound = cornerData1.GetJoinType() == XFA_AttributeEnum::Round;
     if (bRound) {
       sy = FX_PI / 2;
     }
@@ -415,19 +415,19 @@ void XFA_BOX_Fill_Pattern(const CXFA_BoxData& boxData,
   FX_ARGB crEnd = fillData.GetPatternColor();
   FX_HatchStyle iHatch = FX_HatchStyle::Cross;
   switch (fillData.GetPatternType()) {
-    case XFA_ATTRIBUTEENUM_CrossDiagonal:
+    case XFA_AttributeEnum::CrossDiagonal:
       iHatch = FX_HatchStyle::DiagonalCross;
       break;
-    case XFA_ATTRIBUTEENUM_DiagonalLeft:
+    case XFA_AttributeEnum::DiagonalLeft:
       iHatch = FX_HatchStyle::ForwardDiagonal;
       break;
-    case XFA_ATTRIBUTEENUM_DiagonalRight:
+    case XFA_AttributeEnum::DiagonalRight:
       iHatch = FX_HatchStyle::BackwardDiagonal;
       break;
-    case XFA_ATTRIBUTEENUM_Horizontal:
+    case XFA_AttributeEnum::Horizontal:
       iHatch = FX_HatchStyle::Horizontal;
       break;
-    case XFA_ATTRIBUTEENUM_Vertical:
+    case XFA_AttributeEnum::Vertical:
       iHatch = FX_HatchStyle::Vertical;
       break;
     default:
@@ -451,19 +451,19 @@ void XFA_BOX_Fill_Linear(const CXFA_BoxData& boxData,
   CFX_PointF ptStart;
   CFX_PointF ptEnd;
   switch (fillData.GetLinearType()) {
-    case XFA_ATTRIBUTEENUM_ToRight:
+    case XFA_AttributeEnum::ToRight:
       ptStart = CFX_PointF(rtFill.left, rtFill.top);
       ptEnd = CFX_PointF(rtFill.right(), rtFill.top);
       break;
-    case XFA_ATTRIBUTEENUM_ToBottom:
+    case XFA_AttributeEnum::ToBottom:
       ptStart = CFX_PointF(rtFill.left, rtFill.top);
       ptEnd = CFX_PointF(rtFill.left, rtFill.bottom());
       break;
-    case XFA_ATTRIBUTEENUM_ToLeft:
+    case XFA_AttributeEnum::ToLeft:
       ptStart = CFX_PointF(rtFill.right(), rtFill.top);
       ptEnd = CFX_PointF(rtFill.left, rtFill.top);
       break;
-    case XFA_ATTRIBUTEENUM_ToTop:
+    case XFA_AttributeEnum::ToTop:
       ptStart = CFX_PointF(rtFill.left, rtFill.bottom());
       ptEnd = CFX_PointF(rtFill.left, rtFill.top);
       break;
@@ -542,7 +542,7 @@ void XFA_BOX_StrokePath(const CXFA_StrokeData& strokeData,
   pGS->EnableActOnDash();
   pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
   XFA_StrokeTypeSetLineDash(pGS, strokeData.GetStrokeType(),
-                            XFA_ATTRIBUTEENUM_Butt);
+                            XFA_AttributeEnum::Butt);
   pGS->SetStrokeColor(CXFA_GEColor(strokeData.GetColor()));
   pGS->StrokePath(pPath, &matrix);
   pGS->RestoreGraphState();
@@ -557,11 +557,11 @@ void XFA_BOX_StrokeArc(const CXFA_BoxData& boxData,
   if (!edgeData.HasValidNode() || !edgeData.IsVisible())
     return;
 
-  bool bVisible = false;
-  float fThickness = 0;
-  int32_t i3DType = 0;
+  bool bVisible;
+  float fThickness;
+  XFA_AttributeEnum i3DType;
   std::tie(i3DType, bVisible, fThickness) = boxData.Get3DStyle();
-  if (i3DType) {
+  if (i3DType != XFA_AttributeEnum::Unknown) {
     if (bVisible && fThickness >= 0.001f) {
       dwFlags |= XFA_DRAWBOX_Lowered3D;
     }
@@ -570,10 +570,11 @@ void XFA_BOX_StrokeArc(const CXFA_BoxData& boxData,
   if (fHalf < 0) {
     fHalf = 0;
   }
-  int32_t iHand = boxData.GetHand();
-  if (iHand == XFA_ATTRIBUTEENUM_Left) {
+
+  XFA_AttributeEnum iHand = boxData.GetHand();
+  if (iHand == XFA_AttributeEnum::Left) {
     rtWidget.Inflate(fHalf, fHalf);
-  } else if (iHand == XFA_ATTRIBUTEENUM_Right) {
+  } else if (iHand == XFA_AttributeEnum::Right) {
     rtWidget.Deflate(fHalf, fHalf);
   }
   if ((dwFlags & XFA_DRAWBOX_ForceRound) == 0 ||
@@ -725,26 +726,29 @@ void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
                          CXFA_Graphics* pGS,
                          CFX_RectF rtWidget,
                          const CFX_Matrix& matrix) {
-  bool bVisible = false;
-  float fThickness = 0;
-  int32_t i3DType = 0;
+  bool bVisible;
+  float fThickness;
+  XFA_AttributeEnum i3DType;
   std::tie(i3DType, bVisible, fThickness) = boxData.Get3DStyle();
-  if (i3DType) {
+  if (i3DType != XFA_AttributeEnum::Unknown) {
     if (!bVisible || fThickness < 0.001f) {
       return;
     }
     switch (i3DType) {
-      case XFA_ATTRIBUTEENUM_Lowered:
+      case XFA_AttributeEnum::Lowered:
         XFA_BOX_Stroke_3DRect_Lowered(pGS, rtWidget, fThickness, matrix);
         break;
-      case XFA_ATTRIBUTEENUM_Raised:
+      case XFA_AttributeEnum::Raised:
         XFA_BOX_Stroke_3DRect_Raised(pGS, rtWidget, fThickness, matrix);
         break;
-      case XFA_ATTRIBUTEENUM_Etched:
+      case XFA_AttributeEnum::Etched:
         XFA_BOX_Stroke_3DRect_Etched(pGS, rtWidget, fThickness, matrix);
         break;
-      case XFA_ATTRIBUTEENUM_Embossed:
+      case XFA_AttributeEnum::Embossed:
         XFA_BOX_Stroke_3DRect_Embossed(pGS, rtWidget, fThickness, matrix);
+        break;
+      default:
+        NOTREACHED();
         break;
     }
     return;
@@ -777,7 +781,7 @@ void XFA_BOX_Stroke_Rect(CXFA_BoxData boxData,
       strokeData1 = strokes[0];
       if (strokeData1.IsInverted())
         bSameStyles = false;
-      if (strokeData1.GetJoinType() != XFA_ATTRIBUTEENUM_Square)
+      if (strokeData1.GetJoinType() != XFA_AttributeEnum::Square)
         bSameStyles = false;
     }
   }
@@ -834,36 +838,36 @@ void XFA_BOX_Stroke(CXFA_BoxData boxData,
     float fThickness =
         std::fmax(0.0, CXFA_EdgeData(strokes[i].GetNode()).GetThickness());
     float fHalf = fThickness / 2;
-    int32_t iHand = boxData.GetHand();
+    XFA_AttributeEnum iHand = boxData.GetHand();
     switch (i) {
       case 1:
-        if (iHand == XFA_ATTRIBUTEENUM_Left) {
+        if (iHand == XFA_AttributeEnum::Left) {
           rtWidget.top -= fHalf;
           rtWidget.height += fHalf;
-        } else if (iHand == XFA_ATTRIBUTEENUM_Right) {
+        } else if (iHand == XFA_AttributeEnum::Right) {
           rtWidget.top += fHalf;
           rtWidget.height -= fHalf;
         }
         break;
       case 3:
-        if (iHand == XFA_ATTRIBUTEENUM_Left) {
+        if (iHand == XFA_AttributeEnum::Left) {
           rtWidget.width += fHalf;
-        } else if (iHand == XFA_ATTRIBUTEENUM_Right) {
+        } else if (iHand == XFA_AttributeEnum::Right) {
           rtWidget.width -= fHalf;
         }
         break;
       case 5:
-        if (iHand == XFA_ATTRIBUTEENUM_Left) {
+        if (iHand == XFA_AttributeEnum::Left) {
           rtWidget.height += fHalf;
-        } else if (iHand == XFA_ATTRIBUTEENUM_Right) {
+        } else if (iHand == XFA_AttributeEnum::Right) {
           rtWidget.height -= fHalf;
         }
         break;
       case 7:
-        if (iHand == XFA_ATTRIBUTEENUM_Left) {
+        if (iHand == XFA_AttributeEnum::Left) {
           rtWidget.left -= fHalf;
           rtWidget.width += fHalf;
-        } else if (iHand == XFA_ATTRIBUTEENUM_Right) {
+        } else if (iHand == XFA_AttributeEnum::Right) {
           rtWidget.left += fHalf;
           rtWidget.width -= fHalf;
         }
@@ -879,7 +883,7 @@ void XFA_DrawBox(CXFA_BoxData boxData,
                  const CFX_Matrix& matrix,
                  uint32_t dwFlags) {
   if (!boxData.HasValidNode() ||
-      boxData.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+      boxData.GetPresence() != XFA_AttributeEnum::Visible) {
     return;
   }
 
@@ -1082,7 +1086,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Enter, &eParam);
+  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Enter, &eParam);
   return true;
 }
 
@@ -1196,7 +1200,7 @@ CFX_PointF CXFA_FFWidget::Rotate2Normal(const CFX_PointF& point) {
 
 static void XFA_GetMatrix(CFX_Matrix& m,
                           int32_t iRotate,
-                          XFA_ATTRIBUTEENUM at,
+                          XFA_AttributeEnum at,
                           const CFX_RectF& rt) {
   if (!iRotate) {
     return;
@@ -1204,32 +1208,32 @@ static void XFA_GetMatrix(CFX_Matrix& m,
   float fAnchorX = 0;
   float fAnchorY = 0;
   switch (at) {
-    case XFA_ATTRIBUTEENUM_TopLeft:
+    case XFA_AttributeEnum::TopLeft:
       fAnchorX = rt.left, fAnchorY = rt.top;
       break;
-    case XFA_ATTRIBUTEENUM_TopCenter:
+    case XFA_AttributeEnum::TopCenter:
       fAnchorX = (rt.left + rt.right()) / 2, fAnchorY = rt.top;
       break;
-    case XFA_ATTRIBUTEENUM_TopRight:
+    case XFA_AttributeEnum::TopRight:
       fAnchorX = rt.right(), fAnchorY = rt.top;
       break;
-    case XFA_ATTRIBUTEENUM_MiddleLeft:
+    case XFA_AttributeEnum::MiddleLeft:
       fAnchorX = rt.left, fAnchorY = (rt.top + rt.bottom()) / 2;
       break;
-    case XFA_ATTRIBUTEENUM_MiddleCenter:
+    case XFA_AttributeEnum::MiddleCenter:
       fAnchorX = (rt.left + rt.right()) / 2,
       fAnchorY = (rt.top + rt.bottom()) / 2;
       break;
-    case XFA_ATTRIBUTEENUM_MiddleRight:
+    case XFA_AttributeEnum::MiddleRight:
       fAnchorX = rt.right(), fAnchorY = (rt.top + rt.bottom()) / 2;
       break;
-    case XFA_ATTRIBUTEENUM_BottomLeft:
+    case XFA_AttributeEnum::BottomLeft:
       fAnchorX = rt.left, fAnchorY = rt.bottom();
       break;
-    case XFA_ATTRIBUTEENUM_BottomCenter:
+    case XFA_AttributeEnum::BottomCenter:
       fAnchorX = (rt.left + rt.right()) / 2, fAnchorY = rt.bottom();
       break;
-    case XFA_ATTRIBUTEENUM_BottomRight:
+    case XFA_AttributeEnum::BottomRight:
       fAnchorX = rt.right(), fAnchorY = rt.bottom();
       break;
     default:
@@ -1258,7 +1262,7 @@ CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
     return mt;
 
   CFX_RectF rcWidget = GetRectWithoutRotate();
-  XFA_ATTRIBUTEENUM at = XFA_ATTRIBUTEENUM_TopLeft;
+  XFA_AttributeEnum at = XFA_AttributeEnum::TopLeft;
   XFA_GetMatrix(mt, iRotate, at, rcWidget);
 
   return mt;
@@ -1332,7 +1336,7 @@ void CXFA_FFWidget::EventKillFocus() {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Exit;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Exit, &eParam);
+  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Exit, &eParam);
 }
 
 bool CXFA_FFWidget::IsButtonDown() {
@@ -1345,21 +1349,21 @@ void CXFA_FFWidget::SetButtonDown(bool bSet) {
 }
 
 int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
-                                  XFA_ATTRIBUTEENUM iStrokeType,
-                                  XFA_ATTRIBUTEENUM iCapType) {
+                                  XFA_AttributeEnum iStrokeType,
+                                  XFA_AttributeEnum iCapType) {
   switch (iStrokeType) {
-    case XFA_ATTRIBUTEENUM_DashDot: {
+    case XFA_AttributeEnum::DashDot: {
       float dashArray[] = {4, 1, 2, 1};
-      if (iCapType != XFA_ATTRIBUTEENUM_Butt) {
+      if (iCapType != XFA_AttributeEnum::Butt) {
         dashArray[1] = 2;
         dashArray[3] = 2;
       }
       pGraphics->SetLineDash(0, dashArray, 4);
       return FX_DASHSTYLE_DashDot;
     }
-    case XFA_ATTRIBUTEENUM_DashDotDot: {
+    case XFA_AttributeEnum::DashDotDot: {
       float dashArray[] = {4, 1, 2, 1, 2, 1};
-      if (iCapType != XFA_ATTRIBUTEENUM_Butt) {
+      if (iCapType != XFA_AttributeEnum::Butt) {
         dashArray[1] = 2;
         dashArray[3] = 2;
         dashArray[5] = 2;
@@ -1367,17 +1371,17 @@ int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
       pGraphics->SetLineDash(0, dashArray, 6);
       return FX_DASHSTYLE_DashDotDot;
     }
-    case XFA_ATTRIBUTEENUM_Dashed: {
+    case XFA_AttributeEnum::Dashed: {
       float dashArray[] = {5, 1};
-      if (iCapType != XFA_ATTRIBUTEENUM_Butt)
+      if (iCapType != XFA_AttributeEnum::Butt)
         dashArray[1] = 2;
 
       pGraphics->SetLineDash(0, dashArray, 2);
       return FX_DASHSTYLE_Dash;
     }
-    case XFA_ATTRIBUTEENUM_Dotted: {
+    case XFA_AttributeEnum::Dotted: {
       float dashArray[] = {2, 1};
-      if (iCapType != XFA_ATTRIBUTEENUM_Butt)
+      if (iCapType != XFA_AttributeEnum::Butt)
         dashArray[1] = 2;
 
       pGraphics->SetLineDash(0, dashArray, 2);
@@ -1666,11 +1670,11 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
                    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                   XFA_ATTRIBUTEENUM iAspect,
+                   XFA_AttributeEnum iAspect,
                    int32_t iImageXDpi,
                    int32_t iImageYDpi,
-                   XFA_ATTRIBUTEENUM iHorzAlign,
-                   XFA_ATTRIBUTEENUM iVertAlign) {
+                   XFA_AttributeEnum iHorzAlign,
+                   XFA_AttributeEnum iVertAlign) {
   if (rtImage.IsEmpty())
     return;
   if (!pDIBitmap || !pDIBitmap->GetBuffer())
@@ -1681,7 +1685,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
       XFA_UnitPx2Pt((float)pDIBitmap->GetWidth(), (float)iImageXDpi),
       XFA_UnitPx2Pt((float)pDIBitmap->GetHeight(), (float)iImageYDpi));
   switch (iAspect) {
-    case XFA_ATTRIBUTEENUM_Fit: {
+    case XFA_AttributeEnum::Fit: {
       float f1 = rtImage.height / rtFit.height;
       float f2 = rtImage.width / rtFit.width;
       f1 = std::min(f1, f2);
@@ -1689,35 +1693,35 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
       rtFit.width = rtFit.width * f1;
       break;
     }
-    case XFA_ATTRIBUTEENUM_Height: {
+    case XFA_AttributeEnum::Height: {
       float f1 = rtImage.height / rtFit.height;
       rtFit.height = rtImage.height;
       rtFit.width = f1 * rtFit.width;
       break;
     }
-    case XFA_ATTRIBUTEENUM_None:
+    case XFA_AttributeEnum::None:
       rtFit.height = rtImage.height;
       rtFit.width = rtImage.width;
       break;
-    case XFA_ATTRIBUTEENUM_Width: {
+    case XFA_AttributeEnum::Width: {
       float f1 = rtImage.width / rtFit.width;
       rtFit.width = rtImage.width;
       rtFit.height = rtFit.height * f1;
       break;
     }
-    case XFA_ATTRIBUTEENUM_Actual:
+    case XFA_AttributeEnum::Actual:
     default:
       break;
   }
 
-  if (iHorzAlign == XFA_ATTRIBUTEENUM_Center)
+  if (iHorzAlign == XFA_AttributeEnum::Center)
     rtFit.left += (rtImage.width - rtFit.width) / 2;
-  else if (iHorzAlign == XFA_ATTRIBUTEENUM_Right)
+  else if (iHorzAlign == XFA_AttributeEnum::Right)
     rtFit.left = rtImage.right() - rtFit.width;
 
-  if (iVertAlign == XFA_ATTRIBUTEENUM_Middle)
+  if (iVertAlign == XFA_AttributeEnum::Middle)
     rtFit.top += (rtImage.height - rtFit.height) / 2;
-  else if (iVertAlign == XFA_ATTRIBUTEENUM_Bottom)
+  else if (iVertAlign == XFA_AttributeEnum::Bottom)
     rtFit.top = rtImage.bottom() - rtImage.height;
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
@@ -1886,8 +1890,8 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
   uint8_t* pImageBuffer = nullptr;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
-    XFA_ATTRIBUTEENUM iEncoding = pImageData->GetTransferEncoding();
-    if (iEncoding == XFA_ATTRIBUTEENUM_Base64) {
+    XFA_AttributeEnum iEncoding = pImageData->GetTransferEncoding();
+    if (iEncoding == XFA_AttributeEnum::Base64) {
       ByteString bsData = wsImage.UTF8Encode();
       int32_t iLength = bsData.GetLength();
       pImageBuffer = FX_Alloc(uint8_t, iLength);

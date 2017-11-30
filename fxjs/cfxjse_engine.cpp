@@ -135,7 +135,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate)
       m_ResolveProcessor(pdfium::MakeUnique<CFXJSE_ResolveProcessor>()),
       m_pThisObject(nullptr),
       m_dwBuiltInInFlags(0),
-      m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {
+      m_eRunAtType(XFA_AttributeEnum::Client) {
   RemoveBuiltInObjs(m_JsContext.get());
   m_JsContext->EnableCompatibleMode();
 

@@ -22,7 +22,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Timeout, XFA_AttributeType::Integer, (void*)15},
     {XFA_Attribute::Connection, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usage, XFA_AttributeType::Enum,
-     (void*)XFA_ATTRIBUTEENUM_ExportAndImport},
+     (void*)XFA_AttributeEnum::ExportAndImport},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DelayedOpen, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

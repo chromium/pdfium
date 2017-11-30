@@ -36,7 +36,7 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   bool CommitData() override;
   bool IsDataChanged() override;
   void CapLeftRightPlacement(const CXFA_MarginData& captionMarginData);
-  void AddUIMargin(XFA_ATTRIBUTEENUM iCapPlacement);
+  void AddUIMargin(XFA_AttributeEnum iCapPlacement);
   XFA_CHECKSTATE FWLState2XFAState();
 
   IFWL_WidgetDelegate* m_pOldDelegate;

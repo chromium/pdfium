@@ -317,18 +317,18 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
   pText->JSNode()->SetContent(L"Button", L"Button", false, false, true);
 
   CXFA_Node* pPara = CreateCopyNode(XFA_Element::Para, pCaption);
-  pPara->JSNode()->SetEnum(XFA_Attribute::VAlign, XFA_ATTRIBUTEENUM_Middle,
+  pPara->JSNode()->SetEnum(XFA_Attribute::VAlign, XFA_AttributeEnum::Middle,
                            false);
-  pPara->JSNode()->SetEnum(XFA_Attribute::HAlign, XFA_ATTRIBUTEENUM_Center,
+  pPara->JSNode()->SetEnum(XFA_Attribute::HAlign, XFA_AttributeEnum::Center,
                            false);
   CreateFontNode(pCaption);
 
   CXFA_Node* pBorder = CreateCopyNode(XFA_Element::Border, pField);
-  pBorder->JSNode()->SetEnum(XFA_Attribute::Hand, XFA_ATTRIBUTEENUM_Right,
+  pBorder->JSNode()->SetEnum(XFA_Attribute::Hand, XFA_AttributeEnum::Right,
                              false);
 
   CXFA_Node* pEdge = CreateCopyNode(XFA_Element::Edge, pBorder);
-  pEdge->JSNode()->SetEnum(XFA_Attribute::Stroke, XFA_ATTRIBUTEENUM_Raised,
+  pEdge->JSNode()->SetEnum(XFA_Attribute::Stroke, XFA_AttributeEnum::Raised,
                            false);
 
   CXFA_Node* pFill = CreateCopyNode(XFA_Element::Fill, pBorder);
@@ -337,7 +337,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
                              false);
 
   CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
-  pBind->JSNode()->SetEnum(XFA_Attribute::Match, XFA_ATTRIBUTEENUM_None, false);
+  pBind->JSNode()->SetEnum(XFA_Attribute::Match, XFA_AttributeEnum::None,
+                           false);
 
   return pField;
 }
@@ -357,7 +358,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateRadioButton(CXFA_Node* pParent,
   CXFA_Node* pField = CreateField(XFA_Element::CheckButton, pParent, pBefore);
   CXFA_Node* pUi = pField->GetFirstChildByClass(XFA_Element::Ui);
   CXFA_Node* pWidget = pUi->GetFirstChildByClass(XFA_Element::CheckButton);
-  pWidget->JSNode()->SetEnum(XFA_Attribute::Shape, XFA_ATTRIBUTEENUM_Round,
+  pWidget->JSNode()->SetEnum(XFA_Attribute::Shape, XFA_AttributeEnum::Round,
                              false);
   return pField;
 }
@@ -401,9 +402,9 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateListBox(CXFA_Node* pParent,
   CXFA_Node* pField = CreateDropdownList(pParent, pBefore);
   CXFA_Node* pUi = pField->GetNodeItem(XFA_NODEITEM_FirstChild);
   CXFA_Node* pListBox = pUi->GetNodeItem(XFA_NODEITEM_FirstChild);
-  pListBox->JSNode()->SetEnum(XFA_Attribute::Open, XFA_ATTRIBUTEENUM_Always,
+  pListBox->JSNode()->SetEnum(XFA_Attribute::Open, XFA_AttributeEnum::Always,
                               false);
-  pListBox->JSNode()->SetEnum(XFA_Attribute::CommitOn, XFA_ATTRIBUTEENUM_Exit,
+  pListBox->JSNode()->SetEnum(XFA_Attribute::CommitOn, XFA_AttributeEnum::Exit,
                               false);
   return pField;
 }
@@ -417,7 +418,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePasswordEdit(CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateField(XFA_Element::PasswordEdit, pParent, pBefore);
   CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
-  pBind->JSNode()->SetEnum(XFA_Attribute::Match, XFA_ATTRIBUTEENUM_None, false);
+  pBind->JSNode()->SetEnum(XFA_Attribute::Match, XFA_AttributeEnum::None,
+                           false);
   return pField;
 }
 
