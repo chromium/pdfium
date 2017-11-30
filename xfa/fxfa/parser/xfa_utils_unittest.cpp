@@ -22,14 +22,3 @@ TEST(XfaUtilsImpTest, XFA_MapRotation) {
               XFA_MapRotation(TestCases[i].input));
   }
 }
-
-TEST(XFAUtilsTest, GetAttributeEnumByName) {
-  EXPECT_EQ(nullptr, XFA_GetAttributeEnumByName(L""));
-  EXPECT_EQ(nullptr, XFA_GetAttributeEnumByName(L"nonesuch"));
-  EXPECT_EQ(XFA_ATTRIBUTEENUM_Asterisk,
-            XFA_GetAttributeEnumByName(L"*")->eName);
-  EXPECT_EQ(XFA_ATTRIBUTEENUM_Visible,
-            XFA_GetAttributeEnumByName(L"visible")->eName);
-  EXPECT_EQ(XFA_ATTRIBUTEENUM_Lowered,
-            XFA_GetAttributeEnumByName(L"lowered")->eName);
-}

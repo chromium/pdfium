@@ -14,6 +14,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cjx_node.h"
+#include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFX_XMLNode;
@@ -62,6 +63,8 @@ class CXFA_Node : public CXFA_Object {
 #endif  // NDEBUG
 
   static WideString AttributeEnumToName(XFA_ATTRIBUTEENUM item);
+  static pdfium::Optional<XFA_ATTRIBUTEENUM> NameToAttributeEnum(
+      const WideStringView& name);
   static XFA_Attribute NameToAttribute(const WideStringView& name);
   static WideString AttributeToName(XFA_Attribute attr);
   static XFA_Element NameToElement(const WideString& name);

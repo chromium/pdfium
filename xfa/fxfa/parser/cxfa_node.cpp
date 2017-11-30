@@ -141,6 +141,21 @@ WideString CXFA_Node::AttributeEnumToName(XFA_ATTRIBUTEENUM item) {
   return g_XFAEnumData[static_cast<int32_t>(item)].pName;
 }
 
+// static
+pdfium::Optional<XFA_ATTRIBUTEENUM> CXFA_Node::NameToAttributeEnum(
+    const WideStringView& name) {
+  if (name.IsEmpty())
+    return {};
+
+  auto* it = std::lower_bound(g_XFAEnumData, g_XFAEnumData + g_iXFAEnumCount,
+                              FX_HashCode_GetW(name, false),
+                              [](const XFA_ATTRIBUTEENUMINFO& arg,
+                                 uint32_t hash) { return arg.uHash < hash; });
+  if (it != g_XFAEnumData + g_iXFAEnumCount && name == it->pName)
+    return {it->eName};
+  return {};
+}
+
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      uint16_t ePacket,
                      uint32_t validPackets,

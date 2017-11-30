@@ -42,8 +42,6 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     const WideStringView& wsAttributeName);
 
-const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
-    const WideStringView& wsName);
 const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PacketType ePacket);
 const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket);
 

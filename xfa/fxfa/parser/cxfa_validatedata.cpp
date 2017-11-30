@@ -24,11 +24,10 @@ XFA_ATTRIBUTEENUM CXFA_ValidateData::GetFormatTest() const {
 }
 
 void CXFA_ValidateData::SetNullTest(const WideString& wsValue) {
-  const XFA_ATTRIBUTEENUMINFO* pInfo =
-      XFA_GetAttributeEnumByName(wsValue.AsStringView());
+  pdfium::Optional<XFA_ATTRIBUTEENUM> item =
+      CXFA_Node::NameToAttributeEnum(wsValue.AsStringView());
   m_pNode->JSNode()->SetEnum(XFA_Attribute::NullTest,
-                             pInfo ? pInfo->eName : XFA_ATTRIBUTEENUM_Disabled,
-                             false);
+                             item ? *item : XFA_ATTRIBUTEENUM_Disabled, false);
 }
 
 XFA_ATTRIBUTEENUM CXFA_ValidateData::GetNullTest() const {

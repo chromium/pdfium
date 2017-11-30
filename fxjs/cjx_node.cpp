@@ -193,10 +193,11 @@ bool CJX_Node::SetAttribute(XFA_Attribute eAttr,
   XFA_AttributeType eType = GetXFANode()->GetAttributeType(eAttr);
   switch (eType) {
     case XFA_AttributeType::Enum: {
-      const XFA_ATTRIBUTEENUMINFO* pEnum = XFA_GetAttributeEnumByName(wsValue);
-      return SetEnum(
-          eAttr, pEnum ? pEnum->eName : *(GetXFANode()->GetDefaultEnum(eAttr)),
-          bNotify);
+      pdfium::Optional<XFA_ATTRIBUTEENUM> item =
+          CXFA_Node::NameToAttributeEnum(wsValue);
+      return SetEnum(eAttr,
+                     item ? *item : *(GetXFANode()->GetDefaultEnum(eAttr)),
+                     bNotify);
     }
     case XFA_AttributeType::CData:
       return SetCData(eAttr, WideString(wsValue), bNotify, false);

@@ -186,20 +186,6 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
   return nullptr;
 }
 
-const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
-    const WideStringView& wsName) {
-  if (wsName.IsEmpty())
-    return nullptr;
-
-  auto* it = std::lower_bound(g_XFAEnumData, g_XFAEnumData + g_iXFAEnumCount,
-                              FX_HashCode_GetW(wsName, false),
-                              [](const XFA_ATTRIBUTEENUMINFO& arg,
-                                 uint32_t hash) { return arg.uHash < hash; });
-  if (it != g_XFAEnumData + g_iXFAEnumCount && wsName == it->pName)
-    return it;
-  return nullptr;
-}
-
 const XFA_PACKETINFO* XFA_GetPacketByIndex(XFA_PacketType ePacket) {
   return g_XFAPacketData + static_cast<uint8_t>(ePacket);
 }
