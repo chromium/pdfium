@@ -68,7 +68,9 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Arith(
   NSYMSDECODED = 0;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     std::unique_ptr<CJBig2_Image> BS;
-    IADH->decode(pArithDecoder, &HCDH);
+    if (!IADH->decode(pArithDecoder, &HCDH))
+      return nullptr;
+
     HCHEIGHT = HCHEIGHT + HCDH;
     if ((int)HCHEIGHT < 0 || (int)HCHEIGHT > JBIG2_MAX_IMAGE_SIZE)
       return nullptr;
@@ -113,7 +115,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Arith(
         if (!BS)
           return nullptr;
       } else {
-        IAAI->decode(pArithDecoder, (int*)&REFAGGNINST);
+        if (!IAAI->decode(pArithDecoder, reinterpret_cast<int*>(&REFAGGNINST)))
+          return nullptr;
         if (REFAGGNINST > 1) {
           auto pDecoder = pdfium::MakeUnique<CJBig2_TRDProc>();
           pDecoder->SBHUFF = SDHUFF;
@@ -186,12 +189,11 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Arith(
         } else if (REFAGGNINST == 1) {
           SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           uint32_t IDI;
-          IAID->decode(pArithDecoder, &IDI);
-          IARDX->decode(pArithDecoder, &RDXI);
-          IARDY->decode(pArithDecoder, &RDYI);
-          if (IDI >= SBNUMSYMS)
+          if (!IAID->decode(pArithDecoder, &IDI) ||
+              !IARDX->decode(pArithDecoder, &RDXI) ||
+              !IARDY->decode(pArithDecoder, &RDYI) || IDI >= SBNUMSYMS) {
             return nullptr;
-
+          }
           SBSYMS.resize(SBNUMSYMS);
           std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
           for (size_t i = 0; i < NSYMSDECODED; ++i)
@@ -225,10 +227,10 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Arith(
   EXFLAGS.resize(SDNUMINSYMS + SDNUMNEWSYMS);
   num_ex_syms = 0;
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
-    IAEX->decode(pArithDecoder, (int*)&EXRUNLENGTH);
-    if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS)
+    if (!IAEX->decode(pArithDecoder, (int*)&EXRUNLENGTH) ||
+        EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS) {
       return nullptr;
-
+    }
     if (EXRUNLENGTH != 0) {
       for (I = EXINDEX; I < EXINDEX + EXRUNLENGTH; I++) {
         if (CUREXFLAG)

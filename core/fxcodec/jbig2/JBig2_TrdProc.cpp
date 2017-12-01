@@ -281,7 +281,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
     for (;;) {
       if (bFirst) {
         int32_t DFS;
-        pIAFS->decode(pArithDecoder, &DFS);
+        if (!pIAFS->decode(pArithDecoder, &DFS))
+          return nullptr;
+
         FIRSTS += DFS;
         CURS = FIRSTS;
         bFirst = false;
@@ -297,8 +299,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
         break;
 
       int CURT = 0;
-      if (SBSTRIPS != 1)
-        pIAIT->decode(pArithDecoder, &CURT);
+      if (SBSTRIPS != 1) {
+        if (!pIAIT->decode(pArithDecoder, &CURT))
+          return nullptr;
+      }
 
       FX_SAFE_INT32 SAFE_TI = STRIPT + CURT;
       if (!SAFE_TI.IsValid())
@@ -306,15 +310,16 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
 
       int32_t TI = SAFE_TI.ValueOrDie();
       uint32_t IDI;
-      pIAID->decode(pArithDecoder, &IDI);
-      if (IDI >= SBNUMSYMS)
+      if (!pIAID->decode(pArithDecoder, &IDI) || IDI >= SBNUMSYMS)
         return nullptr;
 
       int RI;
-      if (SBREFINE == 0)
+      if (SBREFINE == 0) {
         RI = 0;
-      else
-        pIARI->decode(pArithDecoder, &RI);
+      } else {
+        if (!pIARI->decode(pArithDecoder, &RI))
+          return nullptr;
+      }
 
       MaybeOwned<CJBig2_Image> pIBI;
       if (RI == 0) {
@@ -324,10 +329,12 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
         int32_t RDHI;
         int32_t RDXI;
         int32_t RDYI;
-        pIARDW->decode(pArithDecoder, &RDWI);
-        pIARDH->decode(pArithDecoder, &RDHI);
-        pIARDX->decode(pArithDecoder, &RDXI);
-        pIARDY->decode(pArithDecoder, &RDYI);
+        if (!pIARDW->decode(pArithDecoder, &RDWI) ||
+            !pIARDH->decode(pArithDecoder, &RDHI) ||
+            !pIARDX->decode(pArithDecoder, &RDXI) ||
+            !pIARDY->decode(pArithDecoder, &RDYI)) {
+          return nullptr;
+        }
         CJBig2_Image* IBOI = SBSYMS[IDI];
         if (!IBOI)
           return nullptr;
