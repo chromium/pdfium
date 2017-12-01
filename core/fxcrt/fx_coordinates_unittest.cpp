@@ -64,6 +64,81 @@ TEST(CFX_FloatRect, GetBBox) {
   EXPECT_FLOAT_EQ(6.3f, rect.top);
 }
 
+TEST(CFX_FloatRect, Normalize) {
+  CFX_FloatRect rect;
+  rect.Normalize();
+  EXPECT_FLOAT_EQ(0.0f, rect.left);
+  EXPECT_FLOAT_EQ(0.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(0.0f, rect.right);
+  EXPECT_FLOAT_EQ(0.0f, rect.top);
+
+  rect = CFX_FloatRect(-1.0f, -3.0f, 4.5f, 3.2f);
+  rect.Normalize();
+  EXPECT_FLOAT_EQ(-1.0f, rect.left);
+  EXPECT_FLOAT_EQ(-3.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(4.5f, rect.right);
+  EXPECT_FLOAT_EQ(3.2f, rect.top);
+  rect.Scale(-1.0f);
+  rect.Normalize();
+  EXPECT_FLOAT_EQ(-4.5f, rect.left);
+  EXPECT_FLOAT_EQ(-3.2f, rect.bottom);
+  EXPECT_FLOAT_EQ(1.0f, rect.right);
+  EXPECT_FLOAT_EQ(3.0f, rect.top);
+}
+
+TEST(CFX_FloatRect, Scale) {
+  CFX_FloatRect rect(-1.0f, -3.0f, 4.5f, 3.2f);
+  rect.Scale(1.0f);
+  EXPECT_FLOAT_EQ(-1.0f, rect.left);
+  EXPECT_FLOAT_EQ(-3.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(4.5f, rect.right);
+  EXPECT_FLOAT_EQ(3.2f, rect.top);
+  rect.Scale(0.5f);
+  EXPECT_FLOAT_EQ(-0.5, rect.left);
+  EXPECT_FLOAT_EQ(-1.5, rect.bottom);
+  EXPECT_FLOAT_EQ(2.25f, rect.right);
+  EXPECT_FLOAT_EQ(1.6f, rect.top);
+  rect.Scale(2.0f);
+  EXPECT_FLOAT_EQ(-1.0f, rect.left);
+  EXPECT_FLOAT_EQ(-3.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(4.5f, rect.right);
+  EXPECT_FLOAT_EQ(3.2f, rect.top);
+  rect.Scale(-1.0f);
+  EXPECT_FLOAT_EQ(1.0f, rect.left);
+  EXPECT_FLOAT_EQ(3.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(-4.5f, rect.right);
+  EXPECT_FLOAT_EQ(-3.2f, rect.top);
+  rect.Scale(0.0f);
+  EXPECT_FLOAT_EQ(0.0f, rect.left);
+  EXPECT_FLOAT_EQ(0.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(0.0f, rect.right);
+  EXPECT_FLOAT_EQ(0.0f, rect.top);
+}
+
+TEST(CFX_FloatRect, ScaleEmpty) {
+  CFX_FloatRect rect;
+  rect.Scale(1.0f);
+  EXPECT_FLOAT_EQ(0.0f, rect.left);
+  EXPECT_FLOAT_EQ(0.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(0.0f, rect.right);
+  EXPECT_FLOAT_EQ(0.0f, rect.top);
+  rect.Scale(0.5f);
+  EXPECT_FLOAT_EQ(0.0f, rect.left);
+  EXPECT_FLOAT_EQ(0.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(0.0f, rect.right);
+  EXPECT_FLOAT_EQ(0.0f, rect.top);
+  rect.Scale(2.0f);
+  EXPECT_FLOAT_EQ(0.0f, rect.left);
+  EXPECT_FLOAT_EQ(0.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(0.0f, rect.right);
+  EXPECT_FLOAT_EQ(0.0f, rect.top);
+  rect.Scale(0.0f);
+  EXPECT_FLOAT_EQ(0.0f, rect.left);
+  EXPECT_FLOAT_EQ(0.0f, rect.bottom);
+  EXPECT_FLOAT_EQ(0.0f, rect.right);
+  EXPECT_FLOAT_EQ(0.0f, rect.top);
+}
+
 TEST(CFX_FloatRect, ScaleFromCenterPoint) {
   CFX_FloatRect rect(-1.0f, -3.0f, 4.5f, 3.2f);
   rect.ScaleFromCenterPoint(1.0f);

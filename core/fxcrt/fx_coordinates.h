@@ -329,6 +329,7 @@ class CFX_FloatRect {
     bottom += f;
   }
 
+  void Scale(float fScale);
   void ScaleFromCenterPoint(float fScale);
 
   static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);

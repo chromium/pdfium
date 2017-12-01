@@ -148,6 +148,13 @@ void CFX_FloatRect::UpdateRect(const CFX_PointF& point) {
   top = std::max(top, point.y);
 }
 
+void CFX_FloatRect::Scale(float fScale) {
+  left *= fScale;
+  bottom *= fScale;
+  right *= fScale;
+  top *= fScale;
+}
+
 void CFX_FloatRect::ScaleFromCenterPoint(float fScale) {
   float fHalfWidth = (right - left) / 2.0f;
   float fHalfHeight = (top - bottom) / 2.0f;
