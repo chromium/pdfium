@@ -12,8 +12,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CFX_CTTGSUBTable::CFX_CTTGSUBTable()
-    : m_bFeautureMapLoad(false), loaded(false) {}
+CFX_CTTGSUBTable::CFX_CTTGSUBTable() : m_bFeautureMapLoad(false) {}
 
 CFX_CTTGSUBTable::~CFX_CTTGSUBTable() {}
 
@@ -35,8 +34,8 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum,
   };
   if (!m_bFeautureMapLoad) {
     for (const TScriptRecord& script : ScriptList) {
-      for (const auto& record : script.Script.LangSysRecords) {
-        for (const auto& index : record.LangSys.FeatureIndices) {
+      for (const auto& record : script.LangSysRecords) {
+        for (const auto& index : record.FeatureIndices) {
           if (FeatureList[index].FeatureTag == tag[0] ||
               FeatureList[index].FeatureTag == tag[1]) {
             m_featureSet.insert(index);
@@ -55,7 +54,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum,
     m_bFeautureMapLoad = true;
   }
   for (const auto& item : m_featureSet) {
-    if (GetVerticalGlyphSub(glyphnum, vglyphnum, &FeatureList[item].Feature)) {
+    if (GetVerticalGlyphSub(glyphnum, vglyphnum, &FeatureList[item])) {
       return true;
     }
   }
@@ -64,7 +63,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum,
 
 bool CFX_CTTGSUBTable::GetVerticalGlyphSub(uint32_t glyphnum,
                                            uint32_t* vglyphnum,
-                                           TFeature* Feature) {
+                                           TFeatureRecord* Feature) {
   for (int index : Feature->LookupListIndices) {
     if (!pdfium::IndexInBounds(LookupList, index))
       continue;
@@ -82,7 +81,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(uint32_t glyphnum,
   for (const auto& subTable : Lookup->SubTables) {
     switch (subTable->SubstFormat) {
       case 1: {
-        auto* tbl1 = static_cast<TSingleSubstFormat1*>(subTable.get());
+        auto* tbl1 = static_cast<TSubTable1*>(subTable.get());
         if (GetCoverageIndex(tbl1->Coverage.get(), glyphnum) >= 0) {
           *vglyphnum = glyphnum + tbl1->DeltaGlyphID;
           return true;
@@ -90,7 +89,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(uint32_t glyphnum,
         break;
       }
       case 2: {
-        auto* tbl2 = static_cast<TSingleSubstFormat2*>(subTable.get());
+        auto* tbl2 = static_cast<TSubTable2*>(subTable.get());
         int index = GetCoverageIndex(tbl2->Coverage.get(), glyphnum);
         if (pdfium::IndexInBounds(tbl2->Substitutes, index)) {
           *vglyphnum = tbl2->Substitutes[index];
@@ -111,7 +110,7 @@ int CFX_CTTGSUBTable::GetCoverageIndex(TCoverageFormatBase* Coverage,
   switch (Coverage->CoverageFormat) {
     case 1: {
       int i = 0;
-      TCoverageFormat1* c1 = (TCoverageFormat1*)Coverage;
+      TCoverageFormat1* c1 = static_cast<TCoverageFormat1*>(Coverage);
       for (const auto& glyph : c1->GlyphArray) {
         if (static_cast<uint32_t>(glyph) == g)
           return i;
@@ -120,7 +119,7 @@ int CFX_CTTGSUBTable::GetCoverageIndex(TCoverageFormatBase* Coverage,
       return -1;
     }
     case 2: {
-      TCoverageFormat2* c2 = (TCoverageFormat2*)Coverage;
+      TCoverageFormat2* c2 = static_cast<TCoverageFormat2*>(Coverage);
       for (const auto& rangeRec : c2->RangeRecords) {
         uint32_t s = rangeRec.Start;
         uint32_t e = rangeRec.End;
@@ -178,21 +177,21 @@ void CFX_CTTGSUBTable::ParseScriptList(FT_Bytes raw) {
   ScriptList = std::vector<TScriptRecord>(GetUInt16(sp));
   for (auto& scriptRec : ScriptList) {
     scriptRec.ScriptTag = GetUInt32(sp);
-    ParseScript(&raw[GetUInt16(sp)], &scriptRec.Script);
+    ParseScript(&raw[GetUInt16(sp)], &scriptRec);
   }
 }
 
-void CFX_CTTGSUBTable::ParseScript(FT_Bytes raw, TScript* rec) {
+void CFX_CTTGSUBTable::ParseScript(FT_Bytes raw, TScriptRecord* rec) {
   FT_Bytes sp = raw;
   rec->DefaultLangSys = GetUInt16(sp);
   rec->LangSysRecords = std::vector<TLangSysRecord>(GetUInt16(sp));
   for (auto& sysRecord : rec->LangSysRecords) {
     sysRecord.LangSysTag = GetUInt32(sp);
-    ParseLangSys(&raw[GetUInt16(sp)], &sysRecord.LangSys);
+    ParseLangSys(&raw[GetUInt16(sp)], &sysRecord);
   }
 }
 
-void CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw, TLangSys* rec) {
+void CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw, TLangSysRecord* rec) {
   FT_Bytes sp = raw;
   rec->LookupOrder = GetUInt16(sp);
   rec->ReqFeatureIndex = GetUInt16(sp);
@@ -206,11 +205,11 @@ void CFX_CTTGSUBTable::ParseFeatureList(FT_Bytes raw) {
   FeatureList = std::vector<TFeatureRecord>(GetUInt16(sp));
   for (auto& featureRec : FeatureList) {
     featureRec.FeatureTag = GetUInt32(sp);
-    ParseFeature(&raw[GetUInt16(sp)], &featureRec.Feature);
+    ParseFeature(&raw[GetUInt16(sp)], &featureRec);
   }
 }
 
-void CFX_CTTGSUBTable::ParseFeature(FT_Bytes raw, TFeature* rec) {
+void CFX_CTTGSUBTable::ParseFeature(FT_Bytes raw, TFeatureRecord* rec) {
   FT_Bytes sp = raw;
   rec->FeatureParams = GetUInt16(sp);
   rec->LookupListIndices = std::vector<uint16_t>(GetUInt16(sp));
@@ -244,12 +243,12 @@ CFX_CTTGSUBTable::ParseCoverage(FT_Bytes raw) {
   if (format == 1) {
     auto rec = pdfium::MakeUnique<TCoverageFormat1>();
     ParseCoverageFormat1(raw, rec.get());
-    return std::move(rec);
+    return rec;
   }
   if (format == 2) {
     auto rec = pdfium::MakeUnique<TCoverageFormat2>();
     ParseCoverageFormat2(raw, rec.get());
-    return std::move(rec);
+    return rec;
   }
   return nullptr;
 }
@@ -281,20 +280,17 @@ void CFX_CTTGSUBTable::ParseSingleSubst(FT_Bytes raw,
   uint16_t Format = GetUInt16(sp);
   switch (Format) {
     case 1:
-      *rec = pdfium::MakeUnique<TSingleSubstFormat1>();
-      ParseSingleSubstFormat1(raw,
-                              static_cast<TSingleSubstFormat1*>(rec->get()));
+      *rec = pdfium::MakeUnique<TSubTable1>();
+      ParseSingleSubstFormat1(raw, static_cast<TSubTable1*>(rec->get()));
       break;
     case 2:
-      *rec = pdfium::MakeUnique<TSingleSubstFormat2>();
-      ParseSingleSubstFormat2(raw,
-                              static_cast<TSingleSubstFormat2*>(rec->get()));
+      *rec = pdfium::MakeUnique<TSubTable2>();
+      ParseSingleSubstFormat2(raw, static_cast<TSubTable2*>(rec->get()));
       break;
   }
 }
 
-void CFX_CTTGSUBTable::ParseSingleSubstFormat1(FT_Bytes raw,
-                                               TSingleSubstFormat1* rec) {
+void CFX_CTTGSUBTable::ParseSingleSubstFormat1(FT_Bytes raw, TSubTable1* rec) {
   FT_Bytes sp = raw;
   GetUInt16(sp);
   uint16_t offset = GetUInt16(sp);
@@ -302,8 +298,7 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat1(FT_Bytes raw,
   rec->DeltaGlyphID = GetInt16(sp);
 }
 
-void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw,
-                                               TSingleSubstFormat2* rec) {
+void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw, TSubTable2* rec) {
   FT_Bytes sp = raw;
   (void)GetUInt16(sp);
   uint16_t offset = GetUInt16(sp);
@@ -313,41 +308,52 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw,
     substitute = GetUInt16(sp);
 }
 
-CFX_CTTGSUBTable::TCoverageFormat1::TCoverageFormat1()
-    : TCoverageFormatBase(1) {}
+CFX_CTTGSUBTable::TLangSysRecord::TLangSysRecord()
+    : LangSysTag(0), LookupOrder(0), ReqFeatureIndex(0) {}
 
-CFX_CTTGSUBTable::TCoverageFormat1::~TCoverageFormat1() {}
+CFX_CTTGSUBTable::TLangSysRecord::~TLangSysRecord() {}
+
+CFX_CTTGSUBTable::TScriptRecord::TScriptRecord()
+    : ScriptTag(0), DefaultLangSys(0) {}
+
+CFX_CTTGSUBTable::TScriptRecord::~TScriptRecord() {}
+
+CFX_CTTGSUBTable::TFeatureRecord::TFeatureRecord()
+    : FeatureTag(0), FeatureParams(0) {}
+
+CFX_CTTGSUBTable::TFeatureRecord::~TFeatureRecord() {}
 
 CFX_CTTGSUBTable::TRangeRecord::TRangeRecord()
     : Start(0), End(0), StartCoverageIndex(0) {}
 
-CFX_CTTGSUBTable::TCoverageFormat2::TCoverageFormat2()
-    : TCoverageFormatBase(2) {}
+CFX_CTTGSUBTable::TCoverageFormat1::TCoverageFormat1() {
+  CoverageFormat = 1;
+}
+
+CFX_CTTGSUBTable::TCoverageFormat1::~TCoverageFormat1() {}
+
+CFX_CTTGSUBTable::TCoverageFormat2::TCoverageFormat2() {
+  CoverageFormat = 2;
+}
 
 CFX_CTTGSUBTable::TCoverageFormat2::~TCoverageFormat2() {}
 
-CFX_CTTGSUBTable::TSingleSubstFormat1::TSingleSubstFormat1()
-    : TSubTableBase(1), DeltaGlyphID(0) {}
+CFX_CTTGSUBTable::TSubTableBase::TSubTableBase() {}
 
-CFX_CTTGSUBTable::TSingleSubstFormat1::~TSingleSubstFormat1() {}
+CFX_CTTGSUBTable::TSubTableBase::~TSubTableBase() {}
 
-CFX_CTTGSUBTable::TSingleSubstFormat2::TSingleSubstFormat2()
-    : TSubTableBase(2) {}
+CFX_CTTGSUBTable::TSubTable1::TSubTable1() {
+  SubstFormat = 1;
+}
 
-CFX_CTTGSUBTable::TSingleSubstFormat2::~TSingleSubstFormat2() {}
+CFX_CTTGSUBTable::TSubTable1::~TSubTable1() {}
+
+CFX_CTTGSUBTable::TSubTable2::TSubTable2() {
+  SubstFormat = 2;
+}
+
+CFX_CTTGSUBTable::TSubTable2::~TSubTable2() {}
 
 CFX_CTTGSUBTable::TLookup::TLookup() : LookupType(0), LookupFlag(0) {}
 
 CFX_CTTGSUBTable::TLookup::~TLookup() {}
-
-CFX_CTTGSUBTable::TScript::TScript() : DefaultLangSys(0) {}
-
-CFX_CTTGSUBTable::TScript::~TScript() {}
-
-CFX_CTTGSUBTable::TFeature::TFeature() : FeatureParams(0) {}
-
-CFX_CTTGSUBTable::TFeature::~TFeature() {}
-
-CFX_CTTGSUBTable::TLangSys::TLangSys() : LookupOrder(0), ReqFeatureIndex(0) {}
-
-CFX_CTTGSUBTable::TLangSys::~TLangSys() {}
