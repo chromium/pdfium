@@ -514,18 +514,18 @@ ByteString GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
     case CheckStyle::kCheck:
       return GetAppStream_Check(rcCenter, crText);
     case CheckStyle::kCircle:
-      rcCenter.Scale(2.0f / 3.0f);
+      rcCenter.ScaleFromCenterPoint(2.0f / 3.0f);
       return GetAppStream_Circle(rcCenter, crText);
     case CheckStyle::kCross:
       return GetAppStream_Cross(rcCenter, crText);
     case CheckStyle::kDiamond:
-      rcCenter.Scale(2.0f / 3.0f);
+      rcCenter.ScaleFromCenterPoint(2.0f / 3.0f);
       return GetAppStream_Diamond(rcCenter, crText);
     case CheckStyle::kSquare:
-      rcCenter.Scale(2.0f / 3.0f);
+      rcCenter.ScaleFromCenterPoint(2.0f / 3.0f);
       return GetAppStream_Square(rcCenter, crText);
     case CheckStyle::kStar:
-      rcCenter.Scale(2.0f / 3.0f);
+      rcCenter.ScaleFromCenterPoint(2.0f / 3.0f);
       return GetAppStream_Star(rcCenter, crText);
   }
 }
@@ -539,18 +539,18 @@ ByteString GetRadioButtonAppStream(const CFX_FloatRect& rcBBox,
     case CheckStyle::kCheck:
       return GetAppStream_Check(rcCenter, crText);
     case CheckStyle::kCircle:
-      rcCenter.Scale(1.0f / 2.0f);
+      rcCenter.ScaleFromCenterPoint(1.0f / 2.0f);
       return GetAppStream_Circle(rcCenter, crText);
     case CheckStyle::kCross:
       return GetAppStream_Cross(rcCenter, crText);
     case CheckStyle::kDiamond:
-      rcCenter.Scale(2.0f / 3.0f);
+      rcCenter.ScaleFromCenterPoint(2.0f / 3.0f);
       return GetAppStream_Diamond(rcCenter, crText);
     case CheckStyle::kSquare:
-      rcCenter.Scale(2.0f / 3.0f);
+      rcCenter.ScaleFromCenterPoint(2.0f / 3.0f);
       return GetAppStream_Square(rcCenter, crText);
     case CheckStyle::kStar:
-      rcCenter.Scale(2.0f / 3.0f);
+      rcCenter.ScaleFromCenterPoint(2.0f / 3.0f);
       return GetAppStream_Star(rcCenter, crText);
   }
 }

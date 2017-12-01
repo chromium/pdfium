@@ -64,53 +64,53 @@ TEST(CFX_FloatRect, GetBBox) {
   EXPECT_FLOAT_EQ(6.3f, rect.top);
 }
 
-TEST(CFX_FloatRect, Scale) {
+TEST(CFX_FloatRect, ScaleFromCenterPoint) {
   CFX_FloatRect rect(-1.0f, -3.0f, 4.5f, 3.2f);
-  rect.Scale(1.0f);
+  rect.ScaleFromCenterPoint(1.0f);
   EXPECT_FLOAT_EQ(-1.0f, rect.left);
   EXPECT_FLOAT_EQ(-3.0f, rect.bottom);
   EXPECT_FLOAT_EQ(4.5f, rect.right);
   EXPECT_FLOAT_EQ(3.2f, rect.top);
-  rect.Scale(0.5f);
+  rect.ScaleFromCenterPoint(0.5f);
   EXPECT_FLOAT_EQ(0.375f, rect.left);
   EXPECT_FLOAT_EQ(-1.45f, rect.bottom);
   EXPECT_FLOAT_EQ(3.125f, rect.right);
   EXPECT_FLOAT_EQ(1.65f, rect.top);
-  rect.Scale(2.0f);
+  rect.ScaleFromCenterPoint(2.0f);
   EXPECT_FLOAT_EQ(-1.0f, rect.left);
   EXPECT_FLOAT_EQ(-3.0f, rect.bottom);
   EXPECT_FLOAT_EQ(4.5f, rect.right);
   EXPECT_FLOAT_EQ(3.2f, rect.top);
-  rect.Scale(-1.0f);
+  rect.ScaleFromCenterPoint(-1.0f);
   EXPECT_FLOAT_EQ(4.5f, rect.left);
   EXPECT_FLOAT_EQ(3.2f, rect.bottom);
   EXPECT_FLOAT_EQ(-1.0f, rect.right);
   EXPECT_FLOAT_EQ(-3.0f, rect.top);
-  rect.Scale(0.0f);
+  rect.ScaleFromCenterPoint(0.0f);
   EXPECT_FLOAT_EQ(1.75f, rect.left);
   EXPECT_NEAR(0.1f, rect.bottom, 0.001f);
   EXPECT_FLOAT_EQ(1.75f, rect.right);
   EXPECT_NEAR(0.1f, rect.top, 0.001f);
 }
 
-TEST(CFX_FloatRect, ScaleEmpty) {
+TEST(CFX_FloatRect, ScaleFromCenterPointEmpty) {
   CFX_FloatRect rect;
-  rect.Scale(1.0f);
+  rect.ScaleFromCenterPoint(1.0f);
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
   EXPECT_FLOAT_EQ(0.0f, rect.top);
-  rect.Scale(0.5f);
+  rect.ScaleFromCenterPoint(0.5f);
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
   EXPECT_FLOAT_EQ(0.0f, rect.top);
-  rect.Scale(2.0f);
+  rect.ScaleFromCenterPoint(2.0f);
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
   EXPECT_FLOAT_EQ(0.0f, rect.top);
-  rect.Scale(0.0f);
+  rect.ScaleFromCenterPoint(0.0f);
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
