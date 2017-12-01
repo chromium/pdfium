@@ -233,14 +233,11 @@ class CFX_FloatRect {
 
   explicit CFX_FloatRect(const FX_RECT& rect);
 
+  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
+
   void Normalize();
 
-  void Reset() {
-    left = 0.0f;
-    right = 0.0f;
-    bottom = 0.0f;
-    top = 0.0f;
-  }
+  void Reset();
 
   bool IsEmpty() const { return left >= right || bottom >= top; }
 
@@ -332,12 +329,8 @@ class CFX_FloatRect {
   void Scale(float fScale);
   void ScaleFromCenterPoint(float fScale);
 
-  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
-
-  FX_RECT ToFxRect() const {
-    return FX_RECT(static_cast<int32_t>(left), static_cast<int32_t>(top),
-                   static_cast<int32_t>(right), static_cast<int32_t>(bottom));
-  }
+  FX_RECT ToFxRect() const;
+  FX_RECT ToRoundedFxRect() const;
 
   float left;
   float bottom;
