@@ -584,6 +584,7 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(const WideStringView& wsExpression,
       static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView(), false));
   return nStart;
 }
+
 void CFXJSE_ResolveProcessor::ConditionArray(int32_t iCurIndex,
                                              WideString wsCondition,
                                              int32_t iFoundCount,
@@ -594,18 +595,14 @@ void CFXJSE_ResolveProcessor::ConditionArray(int32_t iCurIndex,
   int32_t i = 1;
   for (; i < iLen; ++i) {
     wchar_t ch = wsCondition[i];
-    if (ch == ' ') {
+    if (ch == ' ')
       continue;
-    }
     if (ch == '+' || ch == '-') {
       bRelative = true;
-      break;
     } else if (ch == '*') {
       bAll = true;
-      break;
-    } else {
-      break;
     }
+    break;
   }
   if (bAll) {
     if (rnd.m_dwStyles & XFA_RESOLVENODE_CreateNode) {

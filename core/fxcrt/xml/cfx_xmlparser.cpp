@@ -72,7 +72,8 @@ int32_t CFX_XMLParser::DoParser() {
         if (m_NodeStack.empty()) {
           m_syntaxParserResult = FX_XmlSyntaxResult::Error;
           break;
-        } else if (m_dwCurrentCheckStatus != 0 && m_NodeStack.size() == 2) {
+        }
+        if (m_dwCurrentCheckStatus != 0 && m_NodeStack.size() == 2) {
           m_nSize[m_dwCurrentCheckStatus - 1] =
               m_pParser->GetCurrentBinaryPos() -
               m_nStart[m_dwCurrentCheckStatus - 1];

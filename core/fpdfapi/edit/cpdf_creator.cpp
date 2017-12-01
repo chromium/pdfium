@@ -184,10 +184,7 @@ bool CPDF_Creator::WriteStream(const CPDF_Object* pStream,
     return false;
   }
 
-  if (!m_Archive->WriteString("\r\nendstream"))
-    return false;
-
-  return true;
+  return m_Archive->WriteString("\r\nendstream");
 }
 
 bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {

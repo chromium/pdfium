@@ -1261,8 +1261,8 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet_SimplexDuplex(
             eCurPagePosition == ePreferredPosition) {
           pPreferredPageArea = pCurrentNode;
           break;
-        } else if (eCurPagePosition == eFallbackPosition &&
-                   !pFallbackPageArea) {
+        }
+        if (eCurPagePosition == eFallbackPosition && !pFallbackPageArea) {
           pFallbackPageArea = pCurrentNode;
         }
       } else if (pTargetPageArea && !MatchPageAreaOddOrEven(pTargetPageArea)) {

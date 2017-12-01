@@ -535,7 +535,8 @@ FX_XmlSyntaxResult CFX_XMLSyntaxParser::DoSyntaxParse() {
             if (m_BlockBuffer.IsEmpty()) {
               m_Start++;
               break;
-            } else if (m_wQuotationMark == 0) {
+            }
+            if (m_wQuotationMark == 0) {
               m_iTextDataLength = m_BlockBuffer.GetDataLength();
               m_wQuotationMark = 0;
               m_BlockBuffer.Reset(true);

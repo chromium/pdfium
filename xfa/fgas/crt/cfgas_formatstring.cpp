@@ -246,7 +246,8 @@ bool ParseLocaleDate(const WideString& wsDate,
       *cc += iLiteralLen;
       ccf++;
       continue;
-    } else if (!wsDateSymbols.Contains(strf[ccf])) {
+    }
+    if (!wsDateSymbols.Contains(strf[ccf])) {
       if (strf[ccf] != str[*cc])
         return false;
       (*cc)++;
@@ -885,6 +886,16 @@ FX_LOCALECATEGORY CFGAS_FormatString::GetCategory(const WideString& wsPattern) {
       }
 
       uint32_t dwHash = FX_HashCode_GetW(wsCategory.AsStringView(), false);
+      if (dwHash == FX_LOCALECATEGORY_DateTimeHash)
+        return FX_LOCALECATEGORY_DateTime;
+      if (dwHash == FX_LOCALECATEGORY_TextHash)
+        return FX_LOCALECATEGORY_Text;
+      if (dwHash == FX_LOCALECATEGORY_NumHash)
+        return FX_LOCALECATEGORY_Num;
+      if (dwHash == FX_LOCALECATEGORY_ZeroHash)
+        return FX_LOCALECATEGORY_Zero;
+      if (dwHash == FX_LOCALECATEGORY_NullHash)
+        return FX_LOCALECATEGORY_Null;
       if (dwHash == FX_LOCALECATEGORY_DateHash) {
         if (eCategory == FX_LOCALECATEGORY_Time)
           return FX_LOCALECATEGORY_DateTime;
@@ -893,16 +904,6 @@ FX_LOCALECATEGORY CFGAS_FormatString::GetCategory(const WideString& wsPattern) {
         if (eCategory == FX_LOCALECATEGORY_Date)
           return FX_LOCALECATEGORY_DateTime;
         eCategory = FX_LOCALECATEGORY_Time;
-      } else if (dwHash == FX_LOCALECATEGORY_DateTimeHash) {
-        return FX_LOCALECATEGORY_DateTime;
-      } else if (dwHash == FX_LOCALECATEGORY_TextHash) {
-        return FX_LOCALECATEGORY_Text;
-      } else if (dwHash == FX_LOCALECATEGORY_NumHash) {
-        return FX_LOCALECATEGORY_Num;
-      } else if (dwHash == FX_LOCALECATEGORY_ZeroHash) {
-        return FX_LOCALECATEGORY_Zero;
-      } else if (dwHash == FX_LOCALECATEGORY_NullHash) {
-        return FX_LOCALECATEGORY_Null;
       }
     } else if (pStr[ccf] == '}') {
       bBraceOpen = false;
@@ -990,6 +991,10 @@ IFX_Locale* CFGAS_FormatString::GetNumericFormat(const WideString& wsPattern,
         continue;
       }
       while (ccf < iLenf) {
+        if (pStr[ccf] == '{') {
+          bBrackOpen = true;
+          break;
+        }
         if (pStr[ccf] == '(') {
           ccf++;
           WideString wsLCID;
@@ -997,9 +1002,6 @@ IFX_Locale* CFGAS_FormatString::GetNumericFormat(const WideString& wsPattern,
             wsLCID += pStr[ccf++];
 
           pLocale = m_pLocaleMgr->GetLocaleByName(wsLCID);
-        } else if (pStr[ccf] == '{') {
-          bBrackOpen = true;
-          break;
         } else if (pStr[ccf] == '.') {
           WideString wsSubCategory;
           ccf++;
@@ -1593,6 +1595,10 @@ FX_DATETIMETYPE CFGAS_FormatString::GetDateTimeFormat(
         continue;
       }
       while (ccf < iLenf) {
+        if (pStr[ccf] == '{') {
+          bBraceOpen = true;
+          break;
+        }
         if (pStr[ccf] == '(') {
           ccf++;
           WideString wsLCID;
@@ -1600,9 +1606,6 @@ FX_DATETIMETYPE CFGAS_FormatString::GetDateTimeFormat(
             wsLCID += pStr[ccf++];
 
           *pLocale = m_pLocaleMgr->GetLocaleByName(wsLCID);
-        } else if (pStr[ccf] == '{') {
-          bBraceOpen = true;
-          break;
         } else if (pStr[ccf] == '.') {
           WideString wsSubCategory;
           ccf++;
@@ -2314,10 +2317,8 @@ bool CFGAS_FormatString::FormatZero(const WideString& wsPattern,
     if (pStrPattern[iPattern] == '\'') {
       *wsOutput += GetLiteralText(pStrPattern, &iPattern, iLenPattern);
       iPattern++;
-      continue;
     } else {
       *wsOutput += pStrPattern[iPattern++];
-      continue;
     }
   }
   return true;

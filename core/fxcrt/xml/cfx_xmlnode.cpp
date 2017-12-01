@@ -90,11 +90,9 @@ CFX_XMLNode* CFX_XMLNode::GetPath(const wchar_t* pPath,
   wchar_t ch;
   while (pStart < pEnd) {
     ch = *pStart++;
-    if (ch == L'/') {
+    if (ch == L'/')
       break;
-    } else {
-      csPath += ch;
-    }
+    csPath += ch;
   }
   iLength -= pStart - pPath;
   CFX_XMLNode* pFind = nullptr;

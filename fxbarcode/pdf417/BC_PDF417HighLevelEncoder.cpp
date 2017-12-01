@@ -157,26 +157,24 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(WideString msg,
     switch (submode) {
       case SUBMODE_ALPHA:
         if (isAlphaUpper(ch)) {
-          if (ch == ' ') {
+          if (ch == ' ')
             tmp += (wchar_t)26;
-          } else {
+          else
             tmp += (wchar_t)(ch - 65);
-          }
-        } else {
-          if (isAlphaLower(ch)) {
-            submode = SUBMODE_LOWER;
-            tmp += (wchar_t)27;
-            continue;
-          } else if (isMixed(ch)) {
-            submode = SUBMODE_MIXED;
-            tmp += (wchar_t)28;
-            continue;
-          } else {
-            tmp += (wchar_t)29;
-            tmp += PUNCTUATION[ch];
-            break;
-          }
+          break;
         }
+        if (isAlphaLower(ch)) {
+          submode = SUBMODE_LOWER;
+          tmp += (wchar_t)27;
+          continue;
+        }
+        if (isMixed(ch)) {
+          submode = SUBMODE_MIXED;
+          tmp += (wchar_t)28;
+          continue;
+        }
+        tmp += (wchar_t)29;
+        tmp += PUNCTUATION[ch];
         break;
       case SUBMODE_LOWER:
         if (isAlphaLower(ch)) {
@@ -185,56 +183,56 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(WideString msg,
           } else {
             tmp += (wchar_t)(ch - 97);
           }
-        } else {
-          if (isAlphaUpper(ch)) {
-            tmp += (wchar_t)27;
-            tmp += (wchar_t)(ch - 65);
-            break;
-          } else if (isMixed(ch)) {
-            submode = SUBMODE_MIXED;
-            tmp += (wchar_t)28;
-            continue;
-          } else {
-            tmp += (wchar_t)29;
-            tmp += PUNCTUATION[ch];
-            break;
-          }
+          break;
         }
+        if (isAlphaUpper(ch)) {
+          tmp += (wchar_t)27;
+          tmp += (wchar_t)(ch - 65);
+          break;
+        }
+        if (isMixed(ch)) {
+          submode = SUBMODE_MIXED;
+          tmp += (wchar_t)28;
+          continue;
+        }
+
+        tmp += (wchar_t)29;
+        tmp += PUNCTUATION[ch];
         break;
       case SUBMODE_MIXED:
         if (isMixed(ch)) {
           tmp += MIXED[ch];
-        } else {
-          if (isAlphaUpper(ch)) {
-            submode = SUBMODE_ALPHA;
-            tmp += (wchar_t)28;
+          break;
+        }
+        if (isAlphaUpper(ch)) {
+          submode = SUBMODE_ALPHA;
+          tmp += (wchar_t)28;
+          continue;
+        }
+        if (isAlphaLower(ch)) {
+          submode = SUBMODE_LOWER;
+          tmp += (wchar_t)27;
+          continue;
+        }
+        if (startpos + idx + 1 < count) {
+          wchar_t next = msg[startpos + idx + 1];
+          if (isPunctuation(next)) {
+            submode = SUBMODE_PUNCTUATION;
+            tmp += (wchar_t)25;
             continue;
-          } else if (isAlphaLower(ch)) {
-            submode = SUBMODE_LOWER;
-            tmp += (wchar_t)27;
-            continue;
-          } else {
-            if (startpos + idx + 1 < count) {
-              wchar_t next = msg[startpos + idx + 1];
-              if (isPunctuation(next)) {
-                submode = SUBMODE_PUNCTUATION;
-                tmp += (wchar_t)25;
-                continue;
-              }
-            }
-            tmp += (wchar_t)29;
-            tmp += PUNCTUATION[ch];
           }
         }
+        tmp += (wchar_t)29;
+        tmp += PUNCTUATION[ch];
         break;
       default:
         if (isPunctuation(ch)) {
           tmp += PUNCTUATION[ch];
-        } else {
-          submode = SUBMODE_ALPHA;
-          tmp += (wchar_t)29;
-          continue;
+          break;
         }
+        submode = SUBMODE_ALPHA;
+        tmp += (wchar_t)29;
+        continue;
     }
     idx++;
     if (idx >= count) {

@@ -283,13 +283,12 @@ void CPDF_TextPageFind::ExtractFindWhat(const WideString& findwhat) {
     int ret =
         ExtractSubString(csWord, findwhat.c_str(), index, TEXT_SPACE_CHAR);
     if (csWord.IsEmpty()) {
-      if (ret) {
-        m_csFindWhatArray.push_back(L"");
-        index++;
-        continue;
-      } else {
+      if (!ret)
         break;
-      }
+
+      m_csFindWhatArray.push_back(L"");
+      index++;
+      continue;
     }
     size_t pos = 0;
     while (pos < csWord.GetLength()) {

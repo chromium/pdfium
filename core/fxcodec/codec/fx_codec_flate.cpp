@@ -190,6 +190,8 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       }
     }
     m_InPos += m_CodeLen;
+    if (code == 257)
+      break;
     if (code < 256) {
       if (m_OutPos == dest_size) {
         return -5;
@@ -206,9 +208,8 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       m_CodeLen = 9;
       m_nCodes = 0;
       old_code = 0xFFFFFFFF;
-    } else if (code == 257) {
-      break;
     } else {
+      // Else 257 or greater.
       if (old_code == 0xFFFFFFFF)
         return 2;
 

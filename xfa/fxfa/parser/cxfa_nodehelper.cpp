@@ -267,16 +267,13 @@ void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
 }
 
 bool CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {
-  if (!refNode) {
+  if (!refNode)
     return false;
-  }
+
   XFA_Element refNodeType = refNode->GetElementType();
-  if ((refNode->IsUnnamed() && refNode->IsContainerNode()) ||
-      refNodeType == XFA_Element::SubformSet ||
-      refNodeType == XFA_Element::Area || refNodeType == XFA_Element::Proto) {
-    return true;
-  }
-  return false;
+  return (refNode->IsUnnamed() && refNode->IsContainerNode()) ||
+         refNodeType == XFA_Element::SubformSet ||
+         refNodeType == XFA_Element::Area || refNodeType == XFA_Element::Proto;
 }
 
 bool CXFA_NodeHelper::CreateNode_ForCondition(WideString& wsCondition) {
@@ -287,34 +284,29 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(WideString& wsCondition) {
     m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
     return false;
   }
-  if (wsCondition[0] == '[') {
-    int32_t i = 1;
-    for (; i < iLen; ++i) {
-      wchar_t ch = wsCondition[i];
-      if (ch == ' ') {
-        continue;
-      }
-      if (ch == '+' || ch == '-') {
-        break;
-      } else if (ch == '*') {
-        bAll = true;
-        break;
-      } else {
-        break;
-      }
-    }
-    if (bAll) {
-      wsIndex = L"1";
-      m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeAll;
-    } else {
-      m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
-      wsIndex = wsCondition.Mid(i, iLen - 1 - i);
-    }
-    int32_t iIndex = wsIndex.GetInteger();
-    m_iCreateCount = iIndex;
-    return true;
+  if (wsCondition[0] != '[')
+    return false;
+
+  int32_t i = 1;
+  for (; i < iLen; ++i) {
+    wchar_t ch = wsCondition[i];
+    if (ch == ' ')
+      continue;
+
+    if (ch == '*')
+      bAll = true;
+    break;
   }
-  return false;
+  if (bAll) {
+    wsIndex = L"1";
+    m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeAll;
+  } else {
+    m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
+    wsIndex = wsCondition.Mid(i, iLen - 1 - i);
+  }
+  int32_t iIndex = wsIndex.GetInteger();
+  m_iCreateCount = iIndex;
+  return true;
 }
 
 bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,

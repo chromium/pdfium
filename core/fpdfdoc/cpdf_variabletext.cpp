@@ -897,15 +897,11 @@ float CPDF_VariableText::GetAutoFontSize() {
   int32_t nRight = nTotal - 1;
   int32_t nMid = nTotal / 2;
   while (nLeft <= nRight) {
-    if (IsBigger(gFontSizeSteps[nMid])) {
+    if (IsBigger(gFontSizeSteps[nMid]))
       nRight = nMid - 1;
-      nMid = (nLeft + nRight) / 2;
-      continue;
-    } else {
+    else
       nLeft = nMid + 1;
-      nMid = (nLeft + nRight) / 2;
-      continue;
-    }
+    nMid = (nLeft + nRight) / 2;
   }
   return (float)gFontSizeSteps[nMid];
 }

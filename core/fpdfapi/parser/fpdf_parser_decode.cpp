@@ -361,6 +361,8 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     uint8_t* new_buf = nullptr;
     uint32_t new_size = 0xFFFFFFFF;
     int offset = -1;
+    if (decoder == "Crypt")
+      continue;
     if (decoder == "FlateDecode" || decoder == "Fl") {
       if (bImageAcc && i == nSize - 1) {
         *ImageEncoding = "FlateDecode";
@@ -387,8 +389,6 @@ bool PDF_DataDecode(const uint8_t* src_buf,
         return true;
       }
       offset = RunLengthDecode(last_buf, last_size, &new_buf, &new_size);
-    } else if (decoder == "Crypt") {
-      continue;
     } else {
       // If we get here, assume it's an image decoder.
       if (decoder == "DCT")

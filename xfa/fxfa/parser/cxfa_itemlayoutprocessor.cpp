@@ -2543,8 +2543,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
                             true);
       if (bAddedItemInRow && eFlowStrategy == XFA_AttributeEnum::Tb)
         break;
-      else
-        continue;
+      continue;
     SuspendAndCreateNewRow:
       if (pProcessor)
         m_pCurChildPreprocessor = pProcessor.release();

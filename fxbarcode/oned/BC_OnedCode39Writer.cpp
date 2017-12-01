@@ -72,9 +72,8 @@ WideString CBC_OnedCode39Writer::FilterContents(
     if (ch > 175) {
       i++;
       continue;
-    } else {
-      ch = Upper(ch);
     }
+    ch = Upper(ch);
     if ((ch >= L'0' && ch <= L'9') || (ch >= L'A' && ch <= L'Z') ||
         ch == L'-' || ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' ||
         ch == L'/' || ch == L'+' || ch == L'%') {

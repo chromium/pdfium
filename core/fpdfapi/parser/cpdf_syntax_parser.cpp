@@ -208,6 +208,10 @@ ByteString CPDF_SyntaxParser::ReadString() {
           break;
         }
 
+        if (ch == '\r') {
+          status = ReadStatus::CarriageReturn;
+          break;
+        }
         if (ch == 'n') {
           buf << '\n';
         } else if (ch == 'r') {
@@ -218,9 +222,6 @@ ByteString CPDF_SyntaxParser::ReadString() {
           buf << '\b';
         } else if (ch == 'f') {
           buf << '\f';
-        } else if (ch == '\r') {
-          status = ReadStatus::CarriageReturn;
-          break;
         } else if (ch != '\n') {
           buf << static_cast<char>(ch);
         }

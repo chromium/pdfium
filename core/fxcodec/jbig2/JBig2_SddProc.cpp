@@ -310,25 +310,23 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::decode_Huffman(
     HCFIRSTSYM = NSYMSDECODED;
     for (;;) {
       nVal = pHuffmanDecoder->decodeAValue(SDHUFFDW, &DW);
-      if (nVal == JBIG2_OOB) {
+      if (nVal == JBIG2_OOB)
         break;
-      } else if (nVal != 0) {
+      if (nVal != 0)
         return nullptr;
-      } else {
-        if (NSYMSDECODED >= SDNUMNEWSYMS)
-          return nullptr;
+      if (NSYMSDECODED >= SDNUMNEWSYMS)
+        return nullptr;
 
-        SYMWIDTH = SYMWIDTH + DW;
-        if ((int)SYMWIDTH < 0 || (int)SYMWIDTH > JBIG2_MAX_IMAGE_SIZE) {
-          return nullptr;
-        } else if (HCHEIGHT == 0 || SYMWIDTH == 0) {
-          TOTWIDTH = TOTWIDTH + SYMWIDTH;
-          SDNEWSYMS[NSYMSDECODED] = nullptr;
-          NSYMSDECODED = NSYMSDECODED + 1;
-          continue;
-        }
+      SYMWIDTH = SYMWIDTH + DW;
+      if ((int)SYMWIDTH < 0 || (int)SYMWIDTH > JBIG2_MAX_IMAGE_SIZE)
+        return nullptr;
+      if (HCHEIGHT == 0 || SYMWIDTH == 0) {
         TOTWIDTH = TOTWIDTH + SYMWIDTH;
+        SDNEWSYMS[NSYMSDECODED] = nullptr;
+        NSYMSDECODED = NSYMSDECODED + 1;
+        continue;
       }
+      TOTWIDTH = TOTWIDTH + SYMWIDTH;
       if (SDREFAGG == 1) {
         if (pHuffmanDecoder->decodeAValue(SDHUFFAGGINST, (int*)&REFAGGNINST) !=
             0) {

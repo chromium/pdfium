@@ -394,9 +394,8 @@ bool CPDF_Parser::VerifyCrossRefV4() {
       // If the object number read doesn't match the one stored,
       // something is wrong with the cross reference table.
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
   return true;
 }

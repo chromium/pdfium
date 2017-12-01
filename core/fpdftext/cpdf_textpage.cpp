@@ -1127,41 +1127,39 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       m_TempCharList.push_back(charinfo);
       m_TempTextBuf.AppendChar(0xfffe);
       continue;
-    } else {
-      int nTotal = wstrItem.GetLength();
-      bool bDel = false;
-      const int count =
-          std::min(pdfium::CollectionSize<int>(m_TempCharList), 7);
-      float threshold = charinfo.m_Matrix.TransformXDistance(
-          (float)TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize());
-      for (int n = pdfium::CollectionSize<int>(m_TempCharList);
-           n > pdfium::CollectionSize<int>(m_TempCharList) - count; n--) {
-        const PAGECHAR_INFO& charinfo1 = m_TempCharList[n - 1];
-        CFX_PointF diff = charinfo1.m_Origin - charinfo.m_Origin;
-        if (charinfo1.m_CharCode == charinfo.m_CharCode &&
-            charinfo1.m_pTextObj->GetFont() == charinfo.m_pTextObj->GetFont() &&
-            fabs(diff.x) < threshold && fabs(diff.y) < threshold) {
-          bDel = true;
-          break;
-        }
+    }
+    int nTotal = wstrItem.GetLength();
+    bool bDel = false;
+    const int count = std::min(pdfium::CollectionSize<int>(m_TempCharList), 7);
+    float threshold = charinfo.m_Matrix.TransformXDistance(
+        (float)TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize());
+    for (int n = pdfium::CollectionSize<int>(m_TempCharList);
+         n > pdfium::CollectionSize<int>(m_TempCharList) - count; n--) {
+      const PAGECHAR_INFO& charinfo1 = m_TempCharList[n - 1];
+      CFX_PointF diff = charinfo1.m_Origin - charinfo.m_Origin;
+      if (charinfo1.m_CharCode == charinfo.m_CharCode &&
+          charinfo1.m_pTextObj->GetFont() == charinfo.m_pTextObj->GetFont() &&
+          fabs(diff.x) < threshold && fabs(diff.y) < threshold) {
+        bDel = true;
+        break;
       }
-      if (!bDel) {
-        for (int nIndex = 0; nIndex < nTotal; nIndex++) {
-          charinfo.m_Unicode = wstrItem[nIndex];
-          if (charinfo.m_Unicode) {
-            charinfo.m_Index = m_TextBuf.GetLength();
-            m_TempTextBuf.AppendChar(charinfo.m_Unicode);
-          } else {
-            m_TempTextBuf.AppendChar(0xfffe);
-          }
-          m_TempCharList.push_back(charinfo);
+    }
+    if (!bDel) {
+      for (int nIndex = 0; nIndex < nTotal; nIndex++) {
+        charinfo.m_Unicode = wstrItem[nIndex];
+        if (charinfo.m_Unicode) {
+          charinfo.m_Index = m_TextBuf.GetLength();
+          m_TempTextBuf.AppendChar(charinfo.m_Unicode);
+        } else {
+          m_TempTextBuf.AppendChar(0xfffe);
         }
-      } else if (i == 0) {
-        WideString str = m_TempTextBuf.MakeString();
-        if (!str.IsEmpty() && str[str.GetLength() - 1] == TEXT_SPACE_CHAR) {
-          m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
-          m_TempCharList.pop_back();
-        }
+        m_TempCharList.push_back(charinfo);
+      }
+    } else if (i == 0) {
+      WideString str = m_TempTextBuf.MakeString();
+      if (!str.IsEmpty() && str[str.GetLength() - 1] == TEXT_SPACE_CHAR) {
+        m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
+        m_TempCharList.pop_back();
       }
     }
   }

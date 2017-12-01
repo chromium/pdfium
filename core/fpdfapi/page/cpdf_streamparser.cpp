@@ -499,7 +499,13 @@ ByteString CPDF_StreamParser::ReadString() {
           status = 2;
           break;
         }
-        if (ch == 'n') {
+        if (ch == '\r') {
+          status = 4;
+          break;
+        }
+        if (ch == '\n') {
+          // Do nothing.
+        } else if (ch == 'n') {
           buf << '\n';
         } else if (ch == 'r') {
           buf << '\r';
@@ -509,10 +515,6 @@ ByteString CPDF_StreamParser::ReadString() {
           buf << '\b';
         } else if (ch == 'f') {
           buf << '\f';
-        } else if (ch == '\r') {
-          status = 4;
-          break;
-        } else if (ch == '\n') {
         } else {
           buf << static_cast<char>(ch);
         }
