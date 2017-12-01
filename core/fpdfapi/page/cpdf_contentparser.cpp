@@ -173,18 +173,10 @@ bool CPDF_ContentParser::Continue(IFX_PauseIndicator* pPause) {
     }
     if (m_InternalStage == STAGE_CHECKCLIP) {
       if (m_pType3Char) {
-        m_pType3Char->m_bColored = m_pParser->IsColored();
-        m_pType3Char->m_Width =
-            FXSYS_round(m_pParser->GetType3Data()[0] * 1000);
-        m_pType3Char->m_BBox.left =
-            FXSYS_round(m_pParser->GetType3Data()[2] * 1000);
-        m_pType3Char->m_BBox.bottom =
-            FXSYS_round(m_pParser->GetType3Data()[3] * 1000);
-        m_pType3Char->m_BBox.right =
-            FXSYS_round(m_pParser->GetType3Data()[4] * 1000);
-        m_pType3Char->m_BBox.top =
-            FXSYS_round(m_pParser->GetType3Data()[5] * 1000);
+        m_pType3Char->InitializeFromStreamData(m_pParser->IsColored(),
+                                               m_pParser->GetType3Data());
       }
+
       for (auto& pObj : *m_pObjectHolder->GetPageObjectList()) {
         if (!pObj->m_ClipPath.HasRef())
           continue;

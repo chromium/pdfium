@@ -24,10 +24,26 @@ class CPDF_Type3Char {
 
   bool LoadBitmap(CPDF_RenderContext* pContext);
 
+  void InitializeFromStreamData(bool bColored, const float* pData);
+  void Transform(const CFX_Matrix& matrix);
+  void ResetForm();
+
+  RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
+  const RetainPtr<CFX_DIBitmap>& GetBitmap() const { return m_pBitmap; }
+
+  const CPDF_Form* form() const { return m_pForm.get(); }
+  CPDF_Form* form() { return m_pForm.get(); }
+
+  bool colored() const { return m_bColored; }
+  int width() const { return m_Width; }
+  const CFX_Matrix& matrix() const { return m_ImageMatrix; }
+  const FX_RECT& bbox() const { return m_BBox; }
+
+ private:
   std::unique_ptr<CPDF_Form> m_pForm;
   RetainPtr<CFX_DIBitmap> m_pBitmap;
-  bool m_bColored;
-  int m_Width;
+  bool m_bColored = false;
+  int m_Width = 0;
   CFX_Matrix m_ImageMatrix;
   FX_RECT m_BBox;
 };

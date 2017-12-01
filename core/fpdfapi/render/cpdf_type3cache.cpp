@@ -119,14 +119,14 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     float retinaScaleX,
     float retinaScaleY) {
   const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
-  if (!pChar || !pChar->m_pBitmap)
+  if (!pChar || !pChar->GetBitmap())
     return nullptr;
 
-  RetainPtr<CFX_DIBitmap> pBitmap = pChar->m_pBitmap;
-  CFX_Matrix image_matrix = pChar->m_ImageMatrix;
   CFX_Matrix text_matrix(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
+  CFX_Matrix image_matrix = pChar->matrix();
   image_matrix.Concat(text_matrix);
 
+  RetainPtr<CFX_DIBitmap> pBitmap = pChar->GetBitmap();
   RetainPtr<CFX_DIBitmap> pResBitmap;
   int left = 0;
   int top = 0;

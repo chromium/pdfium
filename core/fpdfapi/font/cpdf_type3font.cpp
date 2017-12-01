@@ -114,34 +114,17 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   // can change as a result. Thus after it returns, check the cache again for
   // a cache hit.
   m_CharLoadingDepth++;
-  pNewChar->m_pForm->ParseContentWithParams(nullptr, nullptr, pNewChar.get(),
-                                            0);
+  pNewChar->form()->ParseContentWithParams(nullptr, nullptr, pNewChar.get(), 0);
   m_CharLoadingDepth--;
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())
     return it->second.get();
 
-  float scale = m_FontMatrix.GetXUnit();
-  pNewChar->m_Width = static_cast<int32_t>(pNewChar->m_Width * scale + 0.5f);
-  FX_RECT& rcBBox = pNewChar->m_BBox;
-  CFX_FloatRect char_rect(static_cast<float>(rcBBox.left) / 1000.0f,
-                          static_cast<float>(rcBBox.bottom) / 1000.0f,
-                          static_cast<float>(rcBBox.right) / 1000.0f,
-                          static_cast<float>(rcBBox.top) / 1000.0f);
-  if (rcBBox.right <= rcBBox.left || rcBBox.bottom >= rcBBox.top)
-    char_rect = pNewChar->m_pForm->CalcBoundingBox();
-
-  char_rect = m_FontMatrix.TransformRect(char_rect);
-  rcBBox.left = FXSYS_round(char_rect.left * 1000);
-  rcBBox.right = FXSYS_round(char_rect.right * 1000);
-  rcBBox.top = FXSYS_round(char_rect.top * 1000);
-  rcBBox.bottom = FXSYS_round(char_rect.bottom * 1000);
-
-  ASSERT(!pdfium::ContainsKey(m_CacheMap, charcode));
+  pNewChar->Transform(m_FontMatrix);
   m_CacheMap[charcode] = std::move(pNewChar);
   CPDF_Type3Char* pCachedChar = m_CacheMap[charcode].get();
-  if (pCachedChar->m_pForm->GetPageObjectList()->empty())
-    pCachedChar->m_pForm.reset();
+  if (pCachedChar->form()->GetPageObjectList()->empty())
+    pCachedChar->ResetForm();
   return pCachedChar;
 }
 
@@ -153,10 +136,13 @@ int CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
     return m_CharWidthL[charcode];
 
   const CPDF_Type3Char* pChar = LoadChar(charcode);
-  return pChar ? pChar->m_Width : 0;
+  return pChar ? pChar->width() : 0;
 }
 
 FX_RECT CPDF_Type3Font::GetCharBBox(uint32_t charcode) {
+  FX_RECT ret;
   const CPDF_Type3Char* pChar = LoadChar(charcode);
-  return pChar ? pChar->m_BBox : FX_RECT();
+  if (pChar)
+    ret = pChar->bbox();
+  return ret;
 }
