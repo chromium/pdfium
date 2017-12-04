@@ -45,7 +45,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   bool Load() override;
 
   // CPDF_SimpleFont:
-  void LoadGlyphMap() override {}
+  void LoadGlyphMap() override;
 
   int m_CharWidthL[256];
   UnownedPtr<CPDF_Dictionary> m_pCharProcs;
@@ -53,7 +53,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   UnownedPtr<CPDF_Dictionary> m_pFontResources;
   std::map<uint32_t, std::unique_ptr<CPDF_Type3Char>> m_CacheMap;
   // The depth char loading is in, to avoid recurive calling LoadChar().
-  int m_CharLoadingDepth;
+  int m_CharLoadingDepth = 0;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE3FONT_H_

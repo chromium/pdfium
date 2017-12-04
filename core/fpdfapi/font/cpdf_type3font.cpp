@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_type3font.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
@@ -16,13 +17,13 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/stl_util.h"
 
-#define FPDF_MAX_TYPE3_FORM_LEVEL 4
+namespace {
 
-CPDF_Type3Font::CPDF_Type3Font()
-    : m_pCharProcs(nullptr),
-      m_pPageResources(nullptr),
-      m_pFontResources(nullptr),
-      m_CharLoadingDepth(0) {
+constexpr int kMaxType3FormLevel = 4;
+
+}  // namespace
+
+CPDF_Type3Font::CPDF_Type3Font() {
   memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
 
@@ -63,17 +64,17 @@ bool CPDF_Type3Font::Load() {
         static_cast<int32_t>(pBBox->GetNumberAt(3) * yscale * 1000);
   }
 
+  static constexpr size_t kCharLimit = FX_ArraySize(m_CharWidthL);
   int StartChar = m_pFontDict->GetIntegerFor("FirstChar");
-  CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
-  if (pWidthArray && StartChar >= 0 && StartChar < 256) {
-    size_t count = pWidthArray->GetCount();
-    if (count > 256)
-      count = 256;
-    if (StartChar + count > 256)
-      count = 256 - StartChar;
-    for (size_t i = 0; i < count; i++) {
-      m_CharWidthL[StartChar + i] =
-          FXSYS_round(pWidthArray->GetNumberAt(i) * xscale * 1000);
+  if (StartChar >= 0 && static_cast<size_t>(StartChar) < kCharLimit) {
+    CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
+    if (pWidthArray) {
+      size_t count = std::min(pWidthArray->GetCount(), kCharLimit);
+      count = std::min(count, kCharLimit - StartChar);
+      for (size_t i = 0; i < count; i++) {
+        m_CharWidthL[StartChar + i] =
+            FXSYS_round(pWidthArray->GetNumberAt(i) * xscale * 1000);
+      }
     }
   }
   m_pCharProcs = m_pFontDict->GetDictFor("CharProcs");
@@ -83,12 +84,14 @@ bool CPDF_Type3Font::Load() {
   return true;
 }
 
+void CPDF_Type3Font::LoadGlyphMap() {}
+
 void CPDF_Type3Font::CheckType3FontMetrics() {
   CheckFontMetrics();
 }
 
 CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
-  if (m_CharLoadingDepth >= FPDF_MAX_TYPE3_FORM_LEVEL)
+  if (m_CharLoadingDepth >= kMaxType3FormLevel)
     return nullptr;
 
   auto it = m_CacheMap.find(charcode);
