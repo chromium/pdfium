@@ -406,8 +406,8 @@ void CXFA_Document::DoProtoMerge() {
                         XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resolveNodeRS;
-      int32_t iRet = m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM,
-                                                      resolveNodeRS, dwFlag);
+      int32_t iRet = m_pScriptContext->ResolveObjects(
+          pUseHrefNode, wsSOM, &resolveNodeRS, dwFlag, nullptr);
       if (iRet > 0 && resolveNodeRS.objects.front()->IsNode())
         pProtoNode = resolveNodeRS.objects.front()->AsNode();
     } else if (!wsID.IsEmpty()) {

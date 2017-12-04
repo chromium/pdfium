@@ -174,12 +174,13 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
         wsProcessedTarget = wsExpr.Mid(4, wsExpr.GetLength() - 5);
       }
       XFA_RESOLVENODE_RS rs;
-      int32_t iCount = pDocument->GetScriptContext()->ResolveObjects(
-          pPageSetRoot, wsProcessedTarget.AsStringView(), rs,
+      bool iRet = pDocument->GetScriptContext()->ResolveObjects(
+          pPageSetRoot, wsProcessedTarget.AsStringView(), &rs,
           XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
               XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings |
-              XFA_RESOLVENODE_Parent);
-      if (iCount > 0 && rs.objects.front()->IsNode())
+              XFA_RESOLVENODE_Parent,
+          nullptr);
+      if (iRet && rs.objects.front()->IsNode())
         return rs.objects.front()->AsNode();
     }
     iSplitIndex = iSplitNextIndex.value();

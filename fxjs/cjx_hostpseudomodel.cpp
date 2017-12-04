@@ -283,10 +283,10 @@ void CJX_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resolveNodeRS;
-      int32_t iRet = pScriptContext->ResolveObjects(
-          pObject, pValue->ToWideString().AsStringView(), resolveNodeRS,
-          dwFlag);
-      if (iRet < 1 || !resolveNodeRS.objects.front()->IsNode())
+      bool iRet = pScriptContext->ResolveObjects(
+          pObject, pValue->ToWideString().AsStringView(), &resolveNodeRS,
+          dwFlag, nullptr);
+      if (!iRet || !resolveNodeRS.objects.front()->IsNode())
         return;
 
       pNode = resolveNodeRS.objects.front()->AsNode();
@@ -387,9 +387,9 @@ void CJX_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
     XFA_RESOLVENODE_RS resolveNodeRS;
-    int32_t iRet = pScriptContext->ResolveObjects(
-        pObject, wsName.AsStringView(), resolveNodeRS, dwFlag);
-    if (iRet < 1 || !resolveNodeRS.objects.front()->IsNode())
+    bool iRet = pScriptContext->ResolveObjects(pObject, wsName.AsStringView(),
+                                               &resolveNodeRS, dwFlag, nullptr);
+    if (!iRet || !resolveNodeRS.objects.front()->IsNode())
       continue;
 
     pNode = resolveNodeRS.objects.front()->AsNode();
@@ -451,10 +451,10 @@ void CJX_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resolveNodeRS;
-      int32_t iRet = pScriptContext->ResolveObjects(
-          pObject, pValue->ToWideString().AsStringView(), resolveNodeRS,
-          dwFlag);
-      if (iRet < 1 || !resolveNodeRS.objects.front()->IsNode())
+      bool iRet = pScriptContext->ResolveObjects(
+          pObject, pValue->ToWideString().AsStringView(), &resolveNodeRS,
+          dwFlag, nullptr);
+      if (!iRet || !resolveNodeRS.objects.front()->IsNode())
         return;
 
       pNode = resolveNodeRS.objects.front()->AsNode();

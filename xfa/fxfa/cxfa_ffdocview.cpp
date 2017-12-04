@@ -501,10 +501,10 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   }
 
   XFA_RESOLVENODE_RS resolveNodeRS;
-  int32_t iRet = pScriptContext->ResolveObjects(
-      refNode, wsExpression.AsStringView(), resolveNodeRS, dwStyle);
-  if (iRet < 1)
+  if (!pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
+                                      &resolveNodeRS, dwStyle, nullptr)) {
     return nullptr;
+  }
 
   if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
     CXFA_Node* pNode = resolveNodeRS.objects.front()->AsNode();
@@ -716,8 +716,8 @@ void CXFA_FFDocView::RunBindItems() {
                        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
                        XFA_RESOLVENODE_ALL;
     XFA_RESOLVENODE_RS rs;
-    pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), rs,
-                                   dwStyle);
+    pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), &rs,
+                                   dwStyle, nullptr);
     pAcc->DeleteItem(-1, false, false);
     if (rs.dwFlags != XFA_RESOLVENODE_RSTYPE_Nodes || rs.objects.empty())
       continue;

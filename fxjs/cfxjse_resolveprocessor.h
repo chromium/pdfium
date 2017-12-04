@@ -41,7 +41,7 @@ class CFXJSE_ResolveProcessor {
   int32_t GetFilter(const WideStringView& wsExpression,
                     int32_t nStart,
                     CFXJSE_ResolveNodeData& rnd);
-  int32_t SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS,
+  int32_t SetResultCreateNode(XFA_RESOLVENODE_RS* resolveNodeRS,
                               WideString& wsLastCondition);
   void SetIndexDataBind(WideString& wsNextCondition,
                         int32_t& iIndex,

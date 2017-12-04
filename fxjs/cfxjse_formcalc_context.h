@@ -392,12 +392,12 @@ class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
   static bool GetObjectForName(CFXJSE_Value* pThis,
                                CFXJSE_Value* accessorValue,
                                const ByteStringView& szAccessorName);
-  static int32_t ResolveObjects(CFXJSE_Value* pThis,
-                                CFXJSE_Value* pParentValue,
-                                const ByteStringView& bsSomExp,
-                                XFA_RESOLVENODE_RS& resolveNodeRS,
-                                bool bdotAccessor = true,
-                                bool bHasNoResolveName = false);
+  static bool ResolveObjects(CFXJSE_Value* pThis,
+                             CFXJSE_Value* pParentValue,
+                             const ByteStringView& bsSomExp,
+                             XFA_RESOLVENODE_RS* resolveNodeRS,
+                             bool bdotAccessor,
+                             bool bHasNoResolveName);
   static void ParseResolveResult(
       CFXJSE_Value* pThis,
       const XFA_RESOLVENODE_RS& resolveNodeRS,

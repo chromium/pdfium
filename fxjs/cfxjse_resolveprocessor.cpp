@@ -714,19 +714,19 @@ void CFXJSE_ResolveProcessor::SetStylesForChild(uint32_t dwParentStyles,
 }
 
 int32_t CFXJSE_ResolveProcessor::SetResultCreateNode(
-    XFA_RESOLVENODE_RS& resolveNodeRS,
+    XFA_RESOLVENODE_RS* resolveNodeRS,
     WideString& wsLastCondition) {
   if (m_pNodeHelper->m_pCreateParent)
-    resolveNodeRS.objects.push_back(m_pNodeHelper->m_pCreateParent);
+    resolveNodeRS->objects.push_back(m_pNodeHelper->m_pCreateParent);
   else
     m_pNodeHelper->CreateNode_ForCondition(wsLastCondition);
 
-  resolveNodeRS.dwFlags = m_pNodeHelper->m_iCreateFlag;
-  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeOne) {
+  resolveNodeRS->dwFlags = m_pNodeHelper->m_iCreateFlag;
+  if (resolveNodeRS->dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeOne) {
     if (m_pNodeHelper->m_iCurAllStart != -1)
-      resolveNodeRS.dwFlags = XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll;
+      resolveNodeRS->dwFlags = XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll;
   }
-  return pdfium::CollectionSize<int32_t>(resolveNodeRS.objects);
+  return pdfium::CollectionSize<int32_t>(resolveNodeRS->objects);
 }
 
 void CFXJSE_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,

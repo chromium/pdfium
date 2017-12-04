@@ -5263,7 +5263,7 @@ void CFXJSE_FormCalcContext::dot_accessor(CFXJSE_Value* pThis,
 
       XFA_RESOLVENODE_RS resolveNodeRS;
       if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringView(),
-                         resolveNodeRS, true, szName.IsEmpty()) > 0) {
+                         &resolveNodeRS, true, szName.IsEmpty())) {
         ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
                            &resolveValues[i - 2], &bAttribute);
         iCounter += resolveValues[i - 2].size();
@@ -5298,19 +5298,19 @@ void CFXJSE_FormCalcContext::dot_accessor(CFXJSE_Value* pThis,
   }
 
   XFA_RESOLVENODE_RS resolveNodeRS;
-  int32_t iRet = 0;
+  bool iRet = false;
   ByteString bsAccessorName = args.GetUTF8String(1);
   if (argAccessor->IsObject() ||
       (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringView(),
-                          resolveNodeRS, true, szName.IsEmpty());
+                          &resolveNodeRS, true, szName.IsEmpty());
   } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
              GetObjectForName(pThis, argAccessor.get(),
                               bsAccessorName.AsStringView())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringView(),
-                          resolveNodeRS, true, szName.IsEmpty());
+                          &resolveNodeRS, true, szName.IsEmpty());
   }
-  if (iRet < 1) {
+  if (!iRet) {
     pContext->ThrowPropertyNotInObjectException(
         WideString::FromUTF8(szName.AsStringView()),
         WideString::FromUTF8(szSomExp.AsStringView()));
@@ -5381,7 +5381,7 @@ void CFXJSE_FormCalcContext::dotdot_accessor(CFXJSE_Value* pThis,
       argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
       XFA_RESOLVENODE_RS resolveNodeRS;
       if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringView(),
-                         resolveNodeRS, false) > 0) {
+                         &resolveNodeRS, false, false)) {
         ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
                            &resolveValues[i - 2], &bAttribute);
         iCounter += resolveValues[i - 2].size();
@@ -5416,19 +5416,19 @@ void CFXJSE_FormCalcContext::dotdot_accessor(CFXJSE_Value* pThis,
   }
 
   XFA_RESOLVENODE_RS resolveNodeRS;
-  int32_t iRet = 0;
+  bool iRet = false;
   ByteString bsAccessorName = args.GetUTF8String(1);
   if (argAccessor->IsObject() ||
       (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringView(),
-                          resolveNodeRS, false);
+                          &resolveNodeRS, false, false);
   } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
              GetObjectForName(pThis, argAccessor.get(),
                               bsAccessorName.AsStringView())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringView(),
-                          resolveNodeRS, false);
+                          &resolveNodeRS, false, false);
   }
-  if (iRet < 1) {
+  if (!iRet) {
     pContext->ThrowPropertyNotInObjectException(
         WideString::FromUTF8(szName.AsStringView()),
         WideString::FromUTF8(szSomExp.AsStringView()));
@@ -5913,11 +5913,11 @@ bool CFXJSE_FormCalcContext::GetObjectForName(
   XFA_RESOLVENODE_RS resolveNodeRS;
   uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
-  int32_t iRet = pScriptContext->ResolveObjects(
+  bool iRet = pScriptContext->ResolveObjects(
       pScriptContext->GetThisObject(),
-      WideString::FromUTF8(szAccessorName).AsStringView(), resolveNodeRS,
-      dwFlags);
-  if (iRet >= 1 && resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+      WideString::FromUTF8(szAccessorName).AsStringView(), &resolveNodeRS,
+      dwFlags, nullptr);
+  if (iRet && resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
     accessorValue->Assign(
         pScriptContext->GetJSValueFromMap(resolveNodeRS.objects.front()));
     return true;
@@ -5926,16 +5926,15 @@ bool CFXJSE_FormCalcContext::GetObjectForName(
 }
 
 // static
-int32_t CFXJSE_FormCalcContext::ResolveObjects(
-    CFXJSE_Value* pThis,
-    CFXJSE_Value* pRefValue,
-    const ByteStringView& bsSomExp,
-    XFA_RESOLVENODE_RS& resolveNodeRS,
-    bool bdotAccessor,
-    bool bHasNoResolveName) {
+bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
+                                            CFXJSE_Value* pRefValue,
+                                            const ByteStringView& bsSomExp,
+                                            XFA_RESOLVENODE_RS* resolveNodeRS,
+                                            bool bdotAccessor,
+                                            bool bHasNoResolveName) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
-    return -1;
+    return false;
 
   WideString wsSomExpression = WideString::FromUTF8(bsSomExp);
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
@@ -5973,7 +5972,7 @@ int32_t CFXJSE_FormCalcContext::ResolveObjects(
     dFlags = XFA_RESOLVENODE_AnyChild;
   }
   return pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringView(),
-                                        resolveNodeRS, dFlags);
+                                        resolveNodeRS, dFlags, nullptr);
 }
 
 // static

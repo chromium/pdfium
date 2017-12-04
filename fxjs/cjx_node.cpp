@@ -411,9 +411,8 @@ void CJX_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
                     XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                     XFA_RESOLVENODE_Siblings;
   XFA_RESOLVENODE_RS resolveNodeRS;
-  int32_t iRet = pScriptContext->ResolveObjects(
-      refNode, wsExpression.AsStringView(), resolveNodeRS, dwFlag);
-  if (iRet < 1) {
+  if (!pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
+                                      &resolveNodeRS, dwFlag, nullptr)) {
     pArguments->GetReturnValue()->SetNull();
     return;
   }
@@ -469,13 +468,12 @@ void CJX_Node::ResolveNodeList(CFXJSE_Value* pValue,
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;
-
-  XFA_RESOLVENODE_RS resolveNodeRS;
   if (!refNode)
     refNode = GetXFANode();
 
+  XFA_RESOLVENODE_RS resolveNodeRS;
   pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
-                                 resolveNodeRS, dwFlag);
+                                 &resolveNodeRS, dwFlag, nullptr);
   CXFA_ArrayNodeList* pNodeList = new CXFA_ArrayNodeList(GetDocument());
   if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
     for (CXFA_Object* pObject : resolveNodeRS.objects) {
@@ -1236,12 +1234,13 @@ void CJX_Node::Script_Attribute_String(CFXJSE_Value* pValue,
   CXFA_Node* pProtoNode = nullptr;
   if (!wsSOM.IsEmpty()) {
     XFA_RESOLVENODE_RS resolveNodeRS;
-    int32_t iRet = GetDocument()->GetScriptContext()->ResolveObjects(
-        pProtoRoot, wsSOM.AsStringView(), resolveNodeRS,
+    bool iRet = GetDocument()->GetScriptContext()->ResolveObjects(
+        pProtoRoot, wsSOM.AsStringView(), &resolveNodeRS,
         XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
             XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
-            XFA_RESOLVENODE_Siblings);
-    if (iRet > 0 && resolveNodeRS.objects.front()->IsNode())
+            XFA_RESOLVENODE_Siblings,
+        nullptr);
+    if (iRet && resolveNodeRS.objects.front()->IsNode())
       pProtoNode = resolveNodeRS.objects.front()->AsNode();
 
   } else if (!wsID.IsEmpty()) {

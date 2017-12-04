@@ -468,7 +468,7 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
 
   XFA_RESOLVENODE_RS rs;
   pDocument->GetScriptContext()->ResolveObjects(
-      pDataScope, wsRef.AsStringView(), rs, dFlags, pTemplateNode);
+      pDataScope, wsRef.AsStringView(), &rs, dFlags, pTemplateNode);
   if (rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeAll ||
       rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll ||
       rs.objects.size() > 1) {
@@ -1163,7 +1163,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
           XFA_RESOLVENODE_RS rs;
           pDocument->GetScriptContext()->ResolveObjects(
-              pDataScope, wsRef.AsStringView(), rs, dFlags, pTemplateNode);
+              pDataScope, wsRef.AsStringView(), &rs, dFlags, pTemplateNode);
           CXFA_Object* pObject =
               !rs.objects.empty() ? rs.objects.front() : nullptr;
           pDataNode = ToNode(pObject);

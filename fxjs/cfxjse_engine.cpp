@@ -173,7 +173,7 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
     return false;
 
   XFA_RESOLVENODE_RS resolveRs;
-  if (ResolveObjects(refNode, propname, resolveRs, dwFlag) <= 0)
+  if (!ResolveObjects(refNode, propname, &resolveRs, dwFlag, nullptr))
     return false;
   if (resolveRs.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
     pValue->Assign(GetJSValueFromMap(resolveRs.objects.front()));
@@ -553,13 +553,13 @@ CFXJSE_Class* CFXJSE_Engine::GetJseNormalClass() {
   return m_pJsClass;
 }
 
-int32_t CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
-                                      const WideStringView& wsExpression,
-                                      XFA_RESOLVENODE_RS& resolveNodeRS,
-                                      uint32_t dwStyles,
-                                      CXFA_Node* bindNode) {
+bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
+                                   const WideStringView& wsExpression,
+                                   XFA_RESOLVENODE_RS* resolveNodeRS,
+                                   uint32_t dwStyles,
+                                   CXFA_Node* bindNode) {
   if (wsExpression.IsEmpty())
-    return 0;
+    return false;
 
   if (m_eScriptType != CXFA_ScriptData::Type::Formcalc ||
       (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings))) {
@@ -624,6 +624,7 @@ int32_t CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
               this);
       if (bCreate)
         continue;
+
       break;
     }
 
@@ -695,13 +696,13 @@ int32_t CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   }
 
   if (!bNextCreate) {
-    resolveNodeRS.dwFlags = rndFind.m_dwFlag;
+    resolveNodeRS->dwFlags = rndFind.m_dwFlag;
     if (nNodes > 0) {
-      resolveNodeRS.objects.insert(resolveNodeRS.objects.end(),
-                                   findObjects.begin(), findObjects.end());
+      resolveNodeRS->objects.insert(resolveNodeRS->objects.end(),
+                                    findObjects.begin(), findObjects.end());
     }
     if (rndFind.m_dwFlag == XFA_RESOLVENODE_RSTYPE_Attribute) {
-      resolveNodeRS.pScriptAttribute = rndFind.m_pScriptAttribute;
+      resolveNodeRS->pScriptAttribute = rndFind.m_pScriptAttribute;
       return 1;
     }
   }
@@ -710,11 +711,11 @@ int32_t CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
     m_ResolveProcessor->SetResultCreateNode(resolveNodeRS,
                                             rndFind.m_wsCondition);
     if (!bNextCreate && (dwStyles & XFA_RESOLVENODE_CreateNode))
-      resolveNodeRS.dwFlags = XFA_RESOLVENODE_RSTYPE_ExistNodes;
+      resolveNodeRS->dwFlags = XFA_RESOLVENODE_RSTYPE_ExistNodes;
 
-    return pdfium::CollectionSize<int32_t>(resolveNodeRS.objects);
+    return !resolveNodeRS->objects.empty();
   }
-  return nNodes;
+  return nNodes > 0;
 }
 
 void CFXJSE_Engine::AddToCacheList(std::unique_ptr<CXFA_NodeList> pList) {

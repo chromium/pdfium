@@ -56,11 +56,11 @@ class CFXJSE_Engine {
                  CFXJSE_Value* pRetValue,
                  CXFA_Object* pThisObject);
 
-  int32_t ResolveObjects(CXFA_Object* refObject,
-                         const WideStringView& wsExpression,
-                         XFA_RESOLVENODE_RS& resolveNodeRS,
-                         uint32_t dwStyles = XFA_RESOLVENODE_Children,
-                         CXFA_Node* bindNode = nullptr);
+  bool ResolveObjects(CXFA_Object* refObject,
+                      const WideStringView& wsExpression,
+                      XFA_RESOLVENODE_RS* resolveNodeRS,
+                      uint32_t dwStyles,
+                      CXFA_Node* bindNode);
   CFXJSE_Value* GetJSValueFromMap(CXFA_Object* pObject);
   void AddToCacheList(std::unique_ptr<CXFA_NodeList> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
