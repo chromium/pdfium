@@ -17,6 +17,7 @@ namespace {
 
 constexpr int kBase = 256;
 constexpr float kFix16 = 0.05f;
+constexpr uint8_t kOpaqueAlpha = 0xff;
 
 uint8_t bilinear_interpol(const uint8_t* buf,
                           int row_offset_l,
@@ -107,6 +108,10 @@ FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBSource>& pDrc) {
   return FXDIB_Rgba;
 }
 
+bool NeedAlpha(bool bHasAlpha, FXDIB_Format format) {
+  return bHasAlpha || format == FXDIB_Cmyka;
+}
+
 void WriteMonoResult(uint32_t r_bgra_cmyk, FXDIB_Format format, uint8_t* dest) {
   if (format == FXDIB_Rgba) {
     dest[0] = static_cast<uint8_t>(r_bgra_cmyk >> 24);
@@ -114,6 +119,37 @@ void WriteMonoResult(uint32_t r_bgra_cmyk, FXDIB_Format format, uint8_t* dest) {
     dest[2] = static_cast<uint8_t>(r_bgra_cmyk >> 8);
   } else {
     *reinterpret_cast<uint32_t*>(dest) = r_bgra_cmyk;
+  }
+}
+
+void WriteColorResult(std::function<uint8_t(int offset)> func,
+                      bool bHasAlpha,
+                      FXDIB_Format format,
+                      uint8_t* dest) {
+  uint8_t blue_c = func(0);
+  uint8_t green_m = func(1);
+  uint8_t red_y = func(2);
+  uint8_t alpha_k = NeedAlpha(bHasAlpha, format) ? func(3) : kOpaqueAlpha;
+
+  uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
+  if (bHasAlpha) {
+    if (format == FXDIB_Argb) {
+      *dest32 = FXARGB_TODIB(FXARGB_MAKE(alpha_k, red_y, green_m, blue_c));
+    } else if (format == FXDIB_Rgba) {
+      dest[0] = blue_c;
+      dest[1] = green_m;
+      dest[2] = red_y;
+    } else {
+      *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, alpha_k));
+    }
+    return;
+  }
+
+  if (format == FXDIB_Cmyka) {
+    *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, alpha_k));
+  } else {
+    ASSERT(alpha_k == kOpaqueAlpha);
+    *dest32 = FXARGB_TODIB(FXARGB_MAKE(kOpaqueAlpha, red_y, green_m, blue_c));
   }
 }
 
@@ -297,16 +333,10 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
     CalcAlpha(cdata);
   } else {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;
-    if (Bpp == 1) {
+    if (Bpp == 1)
       CalcMono(cdata, format);
-    } else {
-      if (IsBilinear())
-        CalcColorBilinear(cdata, format, Bpp);
-      else if (IsBiCubic())
-        CalcColorBicubic(cdata, format, Bpp);
-      else
-        CalcColorDownSample(cdata, format, Bpp);
-    }
+    else
+      CalcColor(cdata, format, Bpp);
   }
   m_Storer.Replace(std::move(pTransformed));
   return false;
@@ -407,152 +437,43 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
   }
 }
 
-void CFX_ImageTransformer::CalcColorBilinear(const CalcData& cdata,
-                                             FXDIB_Format format,
-                                             int Bpp) {
+void CFX_ImageTransformer::CalcColor(const CalcData& cdata,
+                                     FXDIB_Format format,
+                                     int Bpp) {
   bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
-  auto func = [&cdata, format, Bpp, bHasAlpha](const BilinearData& data,
-                                               uint8_t* dest) {
-    uint8_t r_pos_red_y_r = bilinear_interpol(
-        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-        data.src_col_r, data.res_x, data.res_y, Bpp, 2);
-    uint8_t r_pos_green_m_r = bilinear_interpol(
-        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-        data.src_col_r, data.res_x, data.res_y, Bpp, 1);
-    uint8_t r_pos_blue_c_r = bilinear_interpol(
-        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-        data.src_col_r, data.res_x, data.res_y, Bpp, 0);
-    uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
-    if (bHasAlpha) {
-      if (format != FXDIB_Argb) {
-        if (format == FXDIB_Rgba) {
-          dest[0] = r_pos_blue_c_r;
-          dest[1] = r_pos_green_m_r;
-          dest[2] = r_pos_red_y_r;
-        } else {
-          uint8_t r_pos_k_r = bilinear_interpol(
-              cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-              data.src_col_r, data.res_x, data.res_y, Bpp, 3);
-          *dest32 = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
-                                            r_pos_red_y_r, r_pos_k_r));
-        }
-      } else {
-        uint8_t r_pos_a_r = bilinear_interpol(
+  int destBpp = cdata.bitmap->GetBPP() / 8;
+  if (IsBilinear()) {
+    auto func = [&cdata, format, Bpp, bHasAlpha](const BilinearData& data,
+                                                 uint8_t* dest) {
+      auto bilinear_interpol_func = [&cdata, &data, Bpp](int offset) {
+        return bilinear_interpol(
             cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-            data.src_col_r, data.res_x, data.res_y, Bpp, 3);
-        *dest32 = FXARGB_TODIB(FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r,
-                                           r_pos_green_m_r, r_pos_blue_c_r));
-      }
-    } else {
-      if (format == FXDIB_Cmyka) {
-        uint8_t r_pos_k_r = bilinear_interpol(
-            cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
-            data.src_col_r, data.res_x, data.res_y, Bpp, 3);
-        *dest32 = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
-                                          r_pos_red_y_r, r_pos_k_r));
-      } else {
-        uint8_t r_pos_k_r = 0xff;
-        *dest32 = FXARGB_TODIB(FXARGB_MAKE(r_pos_k_r, r_pos_red_y_r,
-                                           r_pos_green_m_r, r_pos_blue_c_r));
-      }
-    }
-  };
-
-  int destBpp = cdata.bitmap->GetBPP() / 8;
-  DoBilinearLoop(cdata, destBpp, func);
-}
-
-void CFX_ImageTransformer::CalcColorBicubic(const CalcData& cdata,
-                                            FXDIB_Format format,
-                                            int Bpp) {
-  bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
-  auto func = [&cdata, format, Bpp, bHasAlpha](const BicubicData& data,
-                                               uint8_t* dest) {
-    uint8_t r_pos_red_y_r =
-        bicubic_interpol(cdata.buf, cdata.pitch, data.pos_pixel, data.u_w,
-                         data.v_w, data.res_x, data.res_y, Bpp, 2);
-    uint8_t r_pos_green_m_r =
-        bicubic_interpol(cdata.buf, cdata.pitch, data.pos_pixel, data.u_w,
-                         data.v_w, data.res_x, data.res_y, Bpp, 1);
-    uint8_t r_pos_blue_c_r =
-        bicubic_interpol(cdata.buf, cdata.pitch, data.pos_pixel, data.u_w,
-                         data.v_w, data.res_x, data.res_y, Bpp, 0);
-    uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
-    if (bHasAlpha) {
-      if (format != FXDIB_Argb) {
-        if (format == FXDIB_Rgba) {
-          dest[0] = r_pos_blue_c_r;
-          dest[1] = r_pos_green_m_r;
-          dest[2] = r_pos_red_y_r;
-        } else {
-          uint8_t r_pos_k_r =
-              bicubic_interpol(cdata.buf, cdata.pitch, data.pos_pixel, data.u_w,
-                               data.v_w, data.res_x, data.res_y, Bpp, 3);
-          *dest32 = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
-                                            r_pos_red_y_r, r_pos_k_r));
-        }
-      } else {
-        uint8_t r_pos_a_r =
-            bicubic_interpol(cdata.buf, cdata.pitch, data.pos_pixel, data.u_w,
-                             data.v_w, data.res_x, data.res_y, Bpp, 3);
-        *dest32 = FXARGB_TODIB(FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r,
-                                           r_pos_green_m_r, r_pos_blue_c_r));
-      }
-    } else {
-      if (format == FXDIB_Cmyka) {
-        uint8_t r_pos_k_r =
-            bicubic_interpol(cdata.buf, cdata.pitch, data.pos_pixel, data.u_w,
-                             data.v_w, data.res_x, data.res_y, Bpp, 3);
-        *dest32 = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
-                                          r_pos_red_y_r, r_pos_k_r));
-      } else {
-        uint8_t r_pos_k_r = 0xff;
-        *dest32 = FXARGB_TODIB(FXARGB_MAKE(r_pos_k_r, r_pos_red_y_r,
-                                           r_pos_green_m_r, r_pos_blue_c_r));
-      }
-    }
-  };
-
-  int destBpp = cdata.bitmap->GetBPP() / 8;
-  DoBicubicLoop(cdata, destBpp, func);
-}
-
-void CFX_ImageTransformer::CalcColorDownSample(const CalcData& cdata,
-                                               FXDIB_Format format,
-                                               int Bpp) {
-  bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
-  auto func = [&cdata, format, bHasAlpha, Bpp](const DownSampleData& data,
-                                               uint8_t* dest) {
-    const uint8_t* src_pos =
-        cdata.buf + data.src_row * cdata.pitch + data.src_col * Bpp;
-    uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
-    if (bHasAlpha) {
-      if (format != FXDIB_Argb) {
-        if (format == FXDIB_Rgba) {
-          dest[0] = src_pos[0];
-          dest[1] = src_pos[1];
-          dest[2] = src_pos[2];
-        } else {
-          *dest32 = FXCMYK_TODIB(
-              CmykEncode(src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
-        }
-      } else {
-        *dest32 = FXARGB_TODIB(
-            FXARGB_MAKE(src_pos[3], src_pos[2], src_pos[1], src_pos[0]));
-      }
-    } else {
-      if (format == FXDIB_Cmyka) {
-        *dest32 = FXCMYK_TODIB(
-            CmykEncode(src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
-      } else {
-        *dest32 =
-            FXARGB_TODIB(FXARGB_MAKE(0xff, src_pos[2], src_pos[1], src_pos[0]));
-      }
-    }
-  };
-
-  int destBpp = cdata.bitmap->GetBPP() / 8;
-  DoDownSampleLoop(cdata, destBpp, func);
+            data.src_col_r, data.res_x, data.res_y, Bpp, offset);
+      };
+      WriteColorResult(bilinear_interpol_func, bHasAlpha, format, dest);
+    };
+    DoBilinearLoop(cdata, destBpp, func);
+  } else if (IsBiCubic()) {
+    auto func = [&cdata, format, Bpp, bHasAlpha](const BicubicData& data,
+                                                 uint8_t* dest) {
+      auto bicubic_interpol_func = [&cdata, &data, Bpp](int offset) {
+        return bicubic_interpol(cdata.buf, cdata.pitch, data.pos_pixel,
+                                data.u_w, data.v_w, data.res_x, data.res_y, Bpp,
+                                offset);
+      };
+      WriteColorResult(bicubic_interpol_func, bHasAlpha, format, dest);
+    };
+    DoBicubicLoop(cdata, destBpp, func);
+  } else {
+    auto func = [&cdata, format, bHasAlpha, Bpp](const DownSampleData& data,
+                                                 uint8_t* dest) {
+      const uint8_t* src_pos =
+          cdata.buf + data.src_row * cdata.pitch + data.src_col * Bpp;
+      auto sample_func = [src_pos](int offset) { return src_pos[offset]; };
+      WriteColorResult(sample_func, bHasAlpha, format, dest);
+    };
+    DoDownSampleLoop(cdata, destBpp, func);
+  }
 }
 
 void CFX_ImageTransformer::AdjustCoords(int* col, int* row) const {
