@@ -37,7 +37,7 @@ class CFXJSE_ResolveProcessor {
   CFXJSE_ResolveProcessor();
   ~CFXJSE_ResolveProcessor();
 
-  int32_t Resolve(CFXJSE_ResolveNodeData& rnd);
+  bool Resolve(CFXJSE_ResolveNodeData& rnd);
   int32_t GetFilter(const WideStringView& wsExpression,
                     int32_t nStart,
                     CFXJSE_ResolveNodeData& rnd);
@@ -51,16 +51,15 @@ class CFXJSE_ResolveProcessor {
   CXFA_NodeHelper* GetNodeHelper() const { return m_pNodeHelper.get(); }
 
  private:
-  int32_t ResolveForAttributeRs(CXFA_Object* curNode,
-                                CFXJSE_ResolveNodeData& rnd,
-                                const WideStringView& strAttr);
-  int32_t ResolveAnyChild(CFXJSE_ResolveNodeData& rnd);
-  int32_t ResolveDollar(CFXJSE_ResolveNodeData& rnd);
-  int32_t ResolveExcalmatory(CFXJSE_ResolveNodeData& rnd);
-  int32_t ResolveNumberSign(CFXJSE_ResolveNodeData& rnd);
-  int32_t ResolveAsterisk(CFXJSE_ResolveNodeData& rnd);
-  int32_t ResolveNormal(CFXJSE_ResolveNodeData& rnd);
-  int32_t ResolvePopStack(std::vector<int32_t>* stack);
+  bool ResolveForAttributeRs(CXFA_Object* curNode,
+                             CFXJSE_ResolveNodeData& rnd,
+                             const WideStringView& strAttr);
+  bool ResolveAnyChild(CFXJSE_ResolveNodeData& rnd);
+  bool ResolveDollar(CFXJSE_ResolveNodeData& rnd);
+  bool ResolveExcalmatory(CFXJSE_ResolveNodeData& rnd);
+  bool ResolveNumberSign(CFXJSE_ResolveNodeData& rnd);
+  bool ResolveAsterisk(CFXJSE_ResolveNodeData& rnd);
+  bool ResolveNormal(CFXJSE_ResolveNodeData& rnd);
   void SetStylesForChild(uint32_t dwParentStyles, CFXJSE_ResolveNodeData& rnd);
 
   void ConditionArray(int32_t iCurIndex,
