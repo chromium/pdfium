@@ -45,7 +45,7 @@ CFX_XMLDoc* CXFA_DocumentParser::GetXMLDoc() const {
 }
 
 CXFA_FFNotify* CXFA_DocumentParser::GetNotify() const {
-  return m_pNotify;
+  return m_pNotify.Get();
 }
 
 CXFA_Document* CXFA_DocumentParser::GetDocument() const {

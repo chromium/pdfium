@@ -36,14 +36,9 @@ extern int GetLastError();
 #endif
 
 CPDFXFA_Context::CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc)
-    : m_FormType(FormType::kNone),
-      m_pPDFDoc(std::move(pPDFDoc)),
-      m_pFormFillEnv(nullptr),
-      m_pXFADocView(nullptr),
-      m_nLoadStatus(FXFA_LOADSTATUS_PRELOAD),
-      m_nPageCount(0),
+    : m_pPDFDoc(std::move(pPDFDoc)),
+      m_pXFAApp(pdfium::MakeUnique<CXFA_FFApp>(this)),
       m_DocEnv(this) {
-  m_pXFAApp = pdfium::MakeUnique<CXFA_FFApp>(this);
   m_pXFAApp->SetDefaultFontMgr(pdfium::MakeUnique<CFGAS_DefaultFontManager>());
 }
 

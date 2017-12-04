@@ -155,12 +155,7 @@ int32_t Base64DecodeW(const wchar_t* pSrc, int32_t iSrcLen, uint8_t* pDst) {
 }  // namespace
 
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment)
-    : m_pDocEnvironment(pDocEnvironment),
-      m_pDocumentParser(nullptr),
-      m_pApp(pApp),
-      m_pNotify(nullptr),
-      m_pPDFDoc(nullptr),
-      m_FormType(FormType::kXFAForeground) {}
+    : m_pDocEnvironment(pDocEnvironment), m_pApp(pApp) {}
 
 CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
@@ -328,6 +323,7 @@ void CXFA_FFDoc::CloseDoc() {
   if (doc)
     doc->ClearLayoutData();
 
+  m_pDocumentParser.reset();
   m_pNotify.reset();
   m_pPDFFontMgr.reset();
   m_HashToDibDpiMap.clear();

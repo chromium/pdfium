@@ -105,7 +105,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
  private:
   void CloseXFADoc();
 
-  FormType m_FormType;
+  FormType m_FormType = FormType::kNone;
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   Observable<CPDFSDK_FormFillEnvironment>::ObservedPtr m_pFormFillEnv;
@@ -113,8 +113,8 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   std::unique_ptr<CJS_Runtime> m_pRuntime;
   std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
-  LoadStatus m_nLoadStatus;
-  int m_nPageCount;
+  LoadStatus m_nLoadStatus = FXFA_LOADSTATUS_PRELOAD;
+  int m_nPageCount = 0;
 
   // Must be destroyed before |m_pFormFillEnv|.
   CPDFXFA_DocEnvironment m_DocEnv;
