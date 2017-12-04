@@ -2473,8 +2473,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_validationmessaging.h",
       "xfa/fxfa/parser/cxfa_value.cpp",
       "xfa/fxfa/parser/cxfa_value.h",
-      "xfa/fxfa/parser/cxfa_valuearray.cpp",
-      "xfa/fxfa/parser/cxfa_valuearray.h",
       "xfa/fxfa/parser/cxfa_valuedata.cpp",
       "xfa/fxfa/parser/cxfa_valuedata.h",
       "xfa/fxfa/parser/cxfa_variables.cpp",

@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <string>
+#include <utility>
 
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
@@ -5999,18 +6000,21 @@ void CFXJSE_FormCalcContext::ParseResolveResult(
     return;
   }
 
-  CXFA_ValueArray objectProperties(pIsolate);
-  int32_t iRet = resolveNodeRS.GetAttributeResult(&objectProperties);
   *bAttribute = true;
-  if (iRet != 0) {
-    *bAttribute = false;
-    for (int32_t i = 0; i < iRet; i++) {
-      resultValues->push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-      resultValues->back()->Assign(objectProperties.m_Values[i].get());
-    }
-    return;
-  }
+  if (resolveNodeRS.pScriptAttribute &&
+      resolveNodeRS.pScriptAttribute->eValueType == XFA_ScriptType::Object) {
+    for (CXFA_Object* pObject : resolveNodeRS.objects) {
+      auto pValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      CJX_Object* jsObject = pObject->JSObject();
+      (jsObject->*(resolveNodeRS.pScriptAttribute->callback))(
+          pValue.get(), false, resolveNodeRS.pScriptAttribute->attribute);
 
+      resultValues->push_back(std::move(pValue));
+      *bAttribute = false;
+    }
+  }
+  if (!*bAttribute)
+    return;
   if (!pParentValue || !pParentValue->IsObject())
     return;
 

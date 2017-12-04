@@ -481,11 +481,18 @@ void CJX_Node::ResolveNodeList(CFXJSE_Value* pValue,
         pNodeList->Append(pObject->AsNode());
     }
   } else {
-    CXFA_ValueArray valueArray(pScriptContext->GetRuntime());
-    if (resolveNodeRS.GetAttributeResult(&valueArray) > 0) {
-      for (CXFA_Object* pObject : valueArray.GetAttributeObject()) {
-        if (pObject->IsNode())
-          pNodeList->Append(pObject->AsNode());
+    if (resolveNodeRS.pScriptAttribute &&
+        resolveNodeRS.pScriptAttribute->eValueType == XFA_ScriptType::Object) {
+      for (CXFA_Object* pObject : resolveNodeRS.objects) {
+        auto pValue =
+            pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetRuntime());
+        CJX_Object* jsObject = pObject->JSObject();
+        (jsObject->*(resolveNodeRS.pScriptAttribute->callback))(
+            pValue.get(), false, resolveNodeRS.pScriptAttribute->attribute);
+
+        CXFA_Object* obj = CFXJSE_Engine::ToObject(pValue.get(), nullptr);
+        if (obj->IsNode())
+          pNodeList->Append(obj->AsNode());
       }
     }
   }
