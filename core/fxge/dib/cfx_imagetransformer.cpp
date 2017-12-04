@@ -320,30 +320,12 @@ RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
 
 void CFX_ImageTransformer::CalcMask(const CalcData& cdata) {
   if (IsBilinear()) {
-    CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
-    for (int row = 0; row < m_result.Height(); row++) {
-      uint8_t* dest_pos_mask = (uint8_t*)cdata.bitmap->GetScanline(row);
-      for (int col = 0; col < m_result.Width(); col++) {
-        int src_col_l = 0;
-        int src_row_l = 0;
-        int res_x = 0;
-        int res_y = 0;
-        result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
-                                     &res_y);
-        if (InStretchBounds(src_col_l, src_row_l)) {
-          AdjustCoords(&src_col_l, &src_row_l);
-          int src_col_r = src_col_l + 1;
-          int src_row_r = src_row_l + 1;
-          AdjustCoords(&src_col_r, &src_row_r);
-          int row_offset_l = src_row_l * cdata.pitch;
-          int row_offset_r = src_row_r * cdata.pitch;
-          *dest_pos_mask =
-              bilinear_interpol(cdata.buf, row_offset_l, row_offset_r,
-                                src_col_l, src_col_r, res_x, res_y, 1, 0);
-        }
-        dest_pos_mask++;
-      }
-    }
+    auto func = [&cdata](const BilinearData& data, uint8_t* dest) {
+      *dest = bilinear_interpol(cdata.buf, data.row_offset_l, data.row_offset_r,
+                                data.src_col_l, data.src_col_r, data.res_x,
+                                data.res_y, 1, 0);
+    };
+    DoBilinearLoop(cdata, 1, func);
   } else if (IsBiCubic()) {
     CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
     for (int row = 0; row < m_result.Height(); row++) {
@@ -388,30 +370,12 @@ void CFX_ImageTransformer::CalcMask(const CalcData& cdata) {
 
 void CFX_ImageTransformer::CalcAlpha(const CalcData& cdata) {
   if (IsBilinear()) {
-    CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
-    for (int row = 0; row < m_result.Height(); row++) {
-      uint8_t* dest_scan = (uint8_t*)cdata.bitmap->GetScanline(row);
-      for (int col = 0; col < m_result.Width(); col++) {
-        int src_col_l = 0;
-        int src_row_l = 0;
-        int res_x = 0;
-        int res_y = 0;
-        result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
-                                     &res_y);
-        if (InStretchBounds(src_col_l, src_row_l)) {
-          AdjustCoords(&src_col_l, &src_row_l);
-          int src_col_r = src_col_l + 1;
-          int src_row_r = src_row_l + 1;
-          AdjustCoords(&src_col_r, &src_row_r);
-          int row_offset_l = src_row_l * cdata.pitch;
-          int row_offset_r = src_row_r * cdata.pitch;
-          *dest_scan =
-              bilinear_interpol(cdata.buf, row_offset_l, row_offset_r,
-                                src_col_l, src_col_r, res_x, res_y, 1, 0);
-        }
-        dest_scan++;
-      }
-    }
+    auto func = [&cdata](const BilinearData& data, uint8_t* dest) {
+      *dest = bilinear_interpol(cdata.buf, data.row_offset_l, data.row_offset_r,
+                                data.src_col_l, data.src_col_r, data.res_x,
+                                data.res_y, 1, 0);
+    };
+    DoBilinearLoop(cdata, 1, func);
   } else if (IsBiCubic()) {
     CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
     for (int row = 0; row < m_result.Height(); row++) {
@@ -477,37 +441,21 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
   }
   int destBpp = cdata.bitmap->GetBPP() / 8;
   if (IsBilinear()) {
-    CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
-    for (int row = 0; row < m_result.Height(); row++) {
-      uint8_t* dest_pos = (uint8_t*)cdata.bitmap->GetScanline(row);
-      for (int col = 0; col < m_result.Width(); col++) {
-        int src_col_l = 0;
-        int src_row_l = 0;
-        int res_x = 0;
-        int res_y = 0;
-        result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
-                                     &res_y);
-        if (InStretchBounds(src_col_l, src_row_l)) {
-          AdjustCoords(&src_col_l, &src_row_l);
-          int src_col_r = src_col_l + 1;
-          int src_row_r = src_row_l + 1;
-          AdjustCoords(&src_col_r, &src_row_r);
-          int row_offset_l = src_row_l * cdata.pitch;
-          int row_offset_r = src_row_r * cdata.pitch;
-          uint32_t r_bgra_cmyk =
-              argb[bilinear_interpol(cdata.buf, row_offset_l, row_offset_r,
-                                     src_col_l, src_col_r, res_x, res_y, 1, 0)];
-          if (format == FXDIB_Rgba) {
-            dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
-            dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
-            dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
-          } else {
-            *(uint32_t*)dest_pos = r_bgra_cmyk;
-          }
-        }
-        dest_pos += destBpp;
+    auto func = [&cdata, format, &argb](const BilinearData& data,
+                                        uint8_t* dest) {
+      uint8_t idx = bilinear_interpol(
+          cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+          data.src_col_r, data.res_x, data.res_y, 1, 0);
+      uint32_t r_bgra_cmyk = argb[idx];
+      if (format == FXDIB_Rgba) {
+        dest[0] = (uint8_t)(r_bgra_cmyk >> 24);
+        dest[1] = (uint8_t)(r_bgra_cmyk >> 16);
+        dest[2] = (uint8_t)(r_bgra_cmyk >> 8);
+      } else {
+        *(uint32_t*)dest = r_bgra_cmyk;
       }
-    }
+    };
+    DoBilinearLoop(cdata, destBpp, func);
   } else if (IsBiCubic()) {
     CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
     for (int row = 0; row < m_result.Height(); row++) {
@@ -569,71 +517,55 @@ void CFX_ImageTransformer::CalcColorBilinear(const CalcData& cdata,
                                              FXDIB_Format format,
                                              int Bpp) {
   bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
-  int destBpp = cdata.bitmap->GetBPP() / 8;
-  CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
-  for (int row = 0; row < m_result.Height(); row++) {
-    uint8_t* dest_pos = (uint8_t*)cdata.bitmap->GetScanline(row);
-    for (int col = 0; col < m_result.Width(); col++) {
-      int src_col_l = 0;
-      int src_row_l = 0;
-      int res_x = 0;
-      int res_y = 0;
-      int r_pos_k_r = 0;
-      result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
-                                   &res_y);
-      if (InStretchBounds(src_col_l, src_row_l)) {
-        AdjustCoords(&src_col_l, &src_row_l);
-        int src_col_r = src_col_l + 1;
-        int src_row_r = src_row_l + 1;
-        AdjustCoords(&src_col_r, &src_row_r);
-        int row_offset_l = src_row_l * cdata.pitch;
-        int row_offset_r = src_row_r * cdata.pitch;
-        uint8_t r_pos_red_y_r =
-            bilinear_interpol(cdata.buf, row_offset_l, row_offset_r, src_col_l,
-                              src_col_r, res_x, res_y, Bpp, 2);
-        uint8_t r_pos_green_m_r =
-            bilinear_interpol(cdata.buf, row_offset_l, row_offset_r, src_col_l,
-                              src_col_r, res_x, res_y, Bpp, 1);
-        uint8_t r_pos_blue_c_r =
-            bilinear_interpol(cdata.buf, row_offset_l, row_offset_r, src_col_l,
-                              src_col_r, res_x, res_y, Bpp, 0);
-        if (bHasAlpha) {
-          if (format != FXDIB_Argb) {
-            if (format == FXDIB_Rgba) {
-              dest_pos[0] = r_pos_blue_c_r;
-              dest_pos[1] = r_pos_green_m_r;
-              dest_pos[2] = r_pos_red_y_r;
-            } else {
-              r_pos_k_r =
-                  bilinear_interpol(cdata.buf, row_offset_l, row_offset_r,
-                                    src_col_l, src_col_r, res_x, res_y, Bpp, 3);
-              *(uint32_t*)dest_pos = FXCMYK_TODIB(CmykEncode(
-                  r_pos_blue_c_r, r_pos_green_m_r, r_pos_red_y_r, r_pos_k_r));
-            }
-          } else {
-            uint8_t r_pos_a_r =
-                bilinear_interpol(cdata.buf, row_offset_l, row_offset_r,
-                                  src_col_l, src_col_r, res_x, res_y, Bpp, 3);
-            *(uint32_t*)dest_pos = FXARGB_TODIB(FXARGB_MAKE(
-                r_pos_a_r, r_pos_red_y_r, r_pos_green_m_r, r_pos_blue_c_r));
-          }
+  auto func = [&cdata, format, Bpp, bHasAlpha](const BilinearData& data,
+                                               uint8_t* dest) {
+    uint8_t r_pos_red_y_r = bilinear_interpol(
+        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+        data.src_col_r, data.res_x, data.res_y, Bpp, 2);
+    uint8_t r_pos_green_m_r = bilinear_interpol(
+        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+        data.src_col_r, data.res_x, data.res_y, Bpp, 1);
+    uint8_t r_pos_blue_c_r = bilinear_interpol(
+        cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+        data.src_col_r, data.res_x, data.res_y, Bpp, 0);
+    uint32_t* dest32 = (uint32_t*)dest;
+    if (bHasAlpha) {
+      if (format != FXDIB_Argb) {
+        if (format == FXDIB_Rgba) {
+          dest[0] = r_pos_blue_c_r;
+          dest[1] = r_pos_green_m_r;
+          dest[2] = r_pos_red_y_r;
         } else {
-          r_pos_k_r = 0xff;
-          if (format == FXDIB_Cmyka) {
-            r_pos_k_r =
-                bilinear_interpol(cdata.buf, row_offset_l, row_offset_r,
-                                  src_col_l, src_col_r, res_x, res_y, Bpp, 3);
-            *(uint32_t*)dest_pos = FXCMYK_TODIB(CmykEncode(
-                r_pos_blue_c_r, r_pos_green_m_r, r_pos_red_y_r, r_pos_k_r));
-          } else {
-            *(uint32_t*)dest_pos = FXARGB_TODIB(FXARGB_MAKE(
-                r_pos_k_r, r_pos_red_y_r, r_pos_green_m_r, r_pos_blue_c_r));
-          }
+          uint8_t r_pos_k_r = bilinear_interpol(
+              cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+              data.src_col_r, data.res_x, data.res_y, Bpp, 3);
+          *dest32 = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
+                                            r_pos_red_y_r, r_pos_k_r));
         }
+      } else {
+        uint8_t r_pos_a_r = bilinear_interpol(
+            cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+            data.src_col_r, data.res_x, data.res_y, Bpp, 3);
+        *dest32 = FXARGB_TODIB(FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r,
+                                           r_pos_green_m_r, r_pos_blue_c_r));
       }
-      dest_pos += destBpp;
+    } else {
+      if (format == FXDIB_Cmyka) {
+        uint8_t r_pos_k_r = bilinear_interpol(
+            cdata.buf, data.row_offset_l, data.row_offset_r, data.src_col_l,
+            data.src_col_r, data.res_x, data.res_y, Bpp, 3);
+        *dest32 = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
+                                          r_pos_red_y_r, r_pos_k_r));
+      } else {
+        uint8_t r_pos_k_r = 0xff;
+        *dest32 = FXARGB_TODIB(FXARGB_MAKE(r_pos_k_r, r_pos_red_y_r,
+                                           r_pos_green_m_r, r_pos_blue_c_r));
+      }
     }
-  }
+  };
+
+  int destBpp = cdata.bitmap->GetBPP() / 8;
+  DoBilinearLoop(cdata, destBpp, func);
 }
 
 void CFX_ImageTransformer::CalcColorBicubic(const CalcData& cdata,
@@ -753,4 +685,33 @@ void CFX_ImageTransformer::AdjustCoords(int* col, int* row) const {
     src_col--;
   if (src_row == stretch_height())
     src_row--;
+}
+
+void CFX_ImageTransformer::DoBilinearLoop(
+    const CalcData& cdata,
+    int increment,
+    std::function<void(const BilinearData&, uint8_t*)> func) {
+  CFX_BilinearMatrix matrix_fix(cdata.matrix, 8);
+  for (int row = 0; row < m_result.Height(); row++) {
+    uint8_t* dest = (uint8_t*)cdata.bitmap->GetScanline(row);
+    for (int col = 0; col < m_result.Width(); col++) {
+      BilinearData d;
+      d.res_x = 0;
+      d.res_y = 0;
+      d.src_col_l = 0;
+      d.src_row_l = 0;
+      matrix_fix.Transform(col, row, &d.src_col_l, &d.src_row_l, &d.res_x,
+                           &d.res_y);
+      if (InStretchBounds(d.src_col_l, d.src_row_l)) {
+        AdjustCoords(&d.src_col_l, &d.src_row_l);
+        d.src_col_r = d.src_col_l + 1;
+        d.src_row_r = d.src_row_l + 1;
+        AdjustCoords(&d.src_col_r, &d.src_row_r);
+        d.row_offset_l = d.src_row_l * cdata.pitch;
+        d.row_offset_r = d.src_row_r * cdata.pitch;
+        func(d, dest);
+      }
+      dest += increment;
+    }
+  }
 }
