@@ -32,6 +32,15 @@ class CFX_ImageTransformer {
   RetainPtr<CFX_DIBitmap> DetachBitmap();
 
  private:
+  struct CalcData {
+    const CFX_DIBitmap* bitmap;
+    const CFX_Matrix& matrix;
+    const uint8_t* buf;
+    int pitch;
+  };
+
+  void CalcMask(const CalcData& cdata);
+
   bool IsBilinear() const {
     return !(m_Flags & FXDIB_DOWNSAMPLE) && !IsBiCubic();
   }
