@@ -477,7 +477,6 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   pModuleMgr->Init();
 
 #ifdef PDF_ENABLE_XFA
-  FXJSE_Initialize();
   BC_Library_Init();
 #endif  // PDF_ENABLE_XFA
   if (cfg && cfg->version >= 2)
@@ -492,7 +491,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
 
 #ifdef PDF_ENABLE_XFA
   BC_Library_Destroy();
-  FXJSE_Finalize();
 #endif  // PDF_ENABLE_XFA
 
   CPDF_ModuleMgr::Destroy();

@@ -61,9 +61,6 @@ struct FXJSE_CLASS_DESCRIPTOR {
   FXJSE_FuncCallback dynMethodCall;
 };
 
-void FXJSE_Initialize();
-void FXJSE_Finalize();
-
 void FXJSE_ThrowMessage(const ByteStringView& utf8Message);
 
 #endif  // FXJS_FXJSE_H_

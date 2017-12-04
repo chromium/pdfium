@@ -1297,7 +1297,6 @@ static_library("fxjs") {
         "fxjs/cfxjse_engine.h",
         "fxjs/cfxjse_formcalc_context.cpp",
         "fxjs/cfxjse_formcalc_context.h",
-        "fxjs/cfxjse_isolatetracker.cpp",
         "fxjs/cfxjse_isolatetracker.h",
         "fxjs/cfxjse_resolveprocessor.cpp",
         "fxjs/cfxjse_resolveprocessor.h",

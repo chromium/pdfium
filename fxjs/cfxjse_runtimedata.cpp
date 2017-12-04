@@ -11,42 +11,6 @@
 #include "fxjs/cfxjse_isolatetracker.h"
 #include "fxjs/fxjs_v8.h"
 
-namespace {
-
-void Runtime_DisposeCallback(v8::Isolate* pIsolate, bool bOwned) {
-  if (FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate))
-    delete pData;
-  if (bOwned)
-    pIsolate->Dispose();
-}
-
-void KillV8() {
-  v8::V8::Dispose();
-}
-
-}  // namespace
-
-void FXJSE_Initialize() {
-  if (!CFXJSE_IsolateTracker::g_pInstance)
-    CFXJSE_IsolateTracker::g_pInstance = new CFXJSE_IsolateTracker;
-
-  static bool bV8Initialized = false;
-  if (bV8Initialized)
-    return;
-
-  bV8Initialized = true;
-  atexit(KillV8);
-}
-
-void FXJSE_Finalize() {
-  if (!CFXJSE_IsolateTracker::g_pInstance)
-    return;
-
-  CFXJSE_IsolateTracker::g_pInstance->RemoveAll(Runtime_DisposeCallback);
-  delete CFXJSE_IsolateTracker::g_pInstance;
-  CFXJSE_IsolateTracker::g_pInstance = nullptr;
-}
-
 CFXJSE_RuntimeData::CFXJSE_RuntimeData(v8::Isolate* pIsolate)
     : m_pIsolate(pIsolate) {}
 
@@ -84,5 +48,3 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
     pData->m_pFXJSERuntimeData = CFXJSE_RuntimeData::Create(pIsolate);
   return pData->m_pFXJSERuntimeData.get();
 }
-
-CFXJSE_IsolateTracker* CFXJSE_IsolateTracker::g_pInstance = nullptr;

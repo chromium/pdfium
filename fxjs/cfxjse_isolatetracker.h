@@ -52,24 +52,4 @@ class CFXJSE_ScopeUtil_IsolateHandleRootContext {
   v8::Context::Scope m_cscope;
 };
 
-class CFXJSE_IsolateTracker {
- public:
-  typedef void (*DisposeCallback)(v8::Isolate*, bool bOwnedIsolate);
-
-  CFXJSE_IsolateTracker();
-  ~CFXJSE_IsolateTracker();
-
-  void Append(v8::Isolate* pIsolate,
-              std::unique_ptr<v8::ArrayBuffer::Allocator> alloc);
-  void Remove(v8::Isolate* pIsolate, DisposeCallback lpfnDisposeCallback);
-  void RemoveAll(DisposeCallback lpfnDisposeCallback);
-
-  static CFXJSE_IsolateTracker* g_pInstance;
-
- protected:
-  std::vector<v8::Isolate*> m_OwnedIsolates;
-  std::map<v8::Isolate*, std::unique_ptr<v8::ArrayBuffer::Allocator>>
-      m_AllocatorMap;
-};
-
 #endif  // FXJS_CFXJSE_ISOLATETRACKER_H_
