@@ -23,6 +23,29 @@ class CFXJSE_ResolveProcessor;
 
 class CFXJSE_Engine {
  public:
+  static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
+  static void GlobalPropertyGetter(CFXJSE_Value* pObject,
+                                   const ByteStringView& szPropName,
+                                   CFXJSE_Value* pValue);
+  static void GlobalPropertySetter(CFXJSE_Value* pObject,
+                                   const ByteStringView& szPropName,
+                                   CFXJSE_Value* pValue);
+  static void NormalPropertyGetter(CFXJSE_Value* pObject,
+                                   const ByteStringView& szPropName,
+                                   CFXJSE_Value* pValue);
+  static void NormalPropertySetter(CFXJSE_Value* pObject,
+                                   const ByteStringView& szPropName,
+                                   CFXJSE_Value* pValue);
+  static void NormalMethodCall(CFXJSE_Value* hThis,
+                               const ByteStringView& szFuncName,
+                               CFXJSE_Arguments& args);
+  static int32_t NormalPropTypeGetter(CFXJSE_Value* pObject,
+                                      const ByteStringView& szPropName,
+                                      bool bQueryIn);
+  static int32_t GlobalPropTypeGetter(CFXJSE_Value* pObject,
+                                      const ByteStringView& szPropName,
+                                      bool bQueryIn);
+
   explicit CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate);
   ~CFXJSE_Engine();
 
@@ -48,57 +71,32 @@ class CFXJSE_Engine {
   void GetSomExpression(CXFA_Node* refNode, WideString& wsExpression);
 
   void SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray);
-  void AddNodesOfRunScript(const std::vector<CXFA_Node*>& nodes);
   void AddNodesOfRunScript(CXFA_Node* pNode);
   CFXJSE_Class* GetJseNormalClass();
 
   void SetRunAtType(XFA_AttributeEnum eRunAt) { m_eRunAtType = eRunAt; }
   bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeEnum::Server; }
-  bool QueryNodeByFlag(CXFA_Node* refNode,
-                       const WideStringView& propname,
-                       CFXJSE_Value* pValue,
-                       uint32_t dwFlag,
-                       bool bSetting);
-  bool QueryVariableValue(CXFA_Node* pScriptNode,
-                          const ByteStringView& szPropName,
-                          CFXJSE_Value* pValue,
-                          bool bGetter);
-  bool QueryBuiltinValue(const ByteStringView& szPropName,
-                         CFXJSE_Value* pValue);
-  static void GlobalPropertyGetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
-                                   CFXJSE_Value* pValue);
-  static void GlobalPropertySetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
-                                   CFXJSE_Value* pValue);
-  static void NormalPropertyGetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
-                                   CFXJSE_Value* pValue);
-  static void NormalPropertySetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
-                                   CFXJSE_Value* pValue);
-  static void NormalMethodCall(CFXJSE_Value* hThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args);
-  static int32_t NormalPropTypeGetter(CFXJSE_Value* pObject,
-                                      const ByteStringView& szPropName,
-                                      bool bQueryIn);
-  static int32_t GlobalPropTypeGetter(CFXJSE_Value* pObject,
-                                      const ByteStringView& szPropName,
-                                      bool bQueryIn);
-  bool RunVariablesScript(CXFA_Node* pScriptNode);
-  CXFA_Object* GetVariablesThis(CXFA_Object* pObject, bool bScriptNode = false);
-  bool IsStrictScopeInJavaScript();
+
   CXFA_ScriptData::Type GetType();
   std::vector<CXFA_Node*>* GetUpObjectArray() { return &m_upObjectArray; }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
-
-  static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
 
  private:
   CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,
                                          CXFA_Node* pSubform);
   void RemoveBuiltInObjs(CFXJSE_Context* pContext) const;
+  bool QueryNodeByFlag(CXFA_Node* refNode,
+                       const WideStringView& propname,
+                       CFXJSE_Value* pValue,
+                       uint32_t dwFlag,
+                       bool bSetting);
+  bool IsStrictScopeInJavaScript();
+  CXFA_Object* GetVariablesThis(CXFA_Object* pObject, bool bScriptNode = false);
+  bool QueryVariableValue(CXFA_Node* pScriptNode,
+                          const ByteStringView& szPropName,
+                          CFXJSE_Value* pValue,
+                          bool bGetter);
+  bool RunVariablesScript(CXFA_Node* pScriptNode);
 
   UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CFXJSE_Context> m_JsContext;
@@ -116,7 +114,6 @@ class CFXJSE_Engine {
   std::unique_ptr<CFXJSE_ResolveProcessor> m_ResolveProcessor;
   std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;
   CXFA_Object* m_pThisObject;
-  uint32_t m_dwBuiltInInFlags;
   XFA_AttributeEnum m_eRunAtType;
 };
 
