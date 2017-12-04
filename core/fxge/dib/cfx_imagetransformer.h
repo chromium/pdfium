@@ -55,6 +55,11 @@ class CFX_ImageTransformer {
     int v_w[4];
   };
 
+  struct DownSampleData {
+    int src_col;
+    int src_row;
+  };
+
   struct CalcData {
     const CFX_DIBitmap* bitmap;
     const CFX_Matrix& matrix;
@@ -90,6 +95,10 @@ class CFX_ImageTransformer {
   void DoBicubicLoop(const CalcData& cdata,
                      int increment,
                      std::function<void(const BicubicData&, uint8_t*)> func);
+  void DoDownSampleLoop(
+      const CalcData& cdata,
+      int increment,
+      std::function<void(const DownSampleData&, uint8_t*)> func);
 
   const RetainPtr<CFX_DIBSource> m_pSrc;
   UnownedPtr<const CFX_Matrix> const m_pMatrix;

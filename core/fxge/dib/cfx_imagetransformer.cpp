@@ -333,20 +333,10 @@ void CFX_ImageTransformer::CalcMask(const CalcData& cdata) {
     };
     DoBicubicLoop(cdata, 1, func);
   } else {
-    CPDF_FixedMatrix result2stretch_fix(cdata.matrix, 8);
-    for (int row = 0; row < m_result.Height(); row++) {
-      uint8_t* dest_pos_mask = (uint8_t*)cdata.bitmap->GetScanline(row);
-      for (int col = 0; col < m_result.Width(); col++) {
-        int src_col = 0;
-        int src_row = 0;
-        result2stretch_fix.Transform(col, row, &src_col, &src_row);
-        if (InStretchBounds(src_col, src_row)) {
-          AdjustCoords(&src_col, &src_row);
-          *dest_pos_mask = cdata.buf[src_row * cdata.pitch + src_col];
-        }
-        dest_pos_mask++;
-      }
-    }
+    auto func = [&cdata](const DownSampleData& data, uint8_t* dest) {
+      *dest = cdata.buf[data.src_row * cdata.pitch + data.src_col];
+    };
+    DoDownSampleLoop(cdata, 1, func);
   }
 }
 
@@ -365,22 +355,12 @@ void CFX_ImageTransformer::CalcAlpha(const CalcData& cdata) {
     };
     DoBicubicLoop(cdata, 1, func);
   } else {
-    CPDF_FixedMatrix result2stretch_fix(cdata.matrix, 8);
-    for (int row = 0; row < m_result.Height(); row++) {
-      uint8_t* dest_scan = (uint8_t*)cdata.bitmap->GetScanline(row);
-      for (int col = 0; col < m_result.Width(); col++) {
-        int src_col = 0;
-        int src_row = 0;
-        result2stretch_fix.Transform(col, row, &src_col, &src_row);
-        if (InStretchBounds(src_col, src_row)) {
-          AdjustCoords(&src_col, &src_row);
-          const uint8_t* src_pixel =
-              cdata.buf + cdata.pitch * src_row + src_col;
-          *dest_scan = *src_pixel;
-        }
-        dest_scan++;
-      }
-    }
+    auto func = [&cdata](const DownSampleData& data, uint8_t* dest) {
+      const uint8_t* src_pixel =
+          cdata.buf + cdata.pitch * data.src_row + data.src_col;
+      *dest = *src_pixel;
+    };
+    DoDownSampleLoop(cdata, 1, func);
   }
 }
 
@@ -436,28 +416,19 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
     };
     DoBicubicLoop(cdata, destBpp, func);
   } else {
-    CPDF_FixedMatrix result2stretch_fix(cdata.matrix, 8);
-    for (int row = 0; row < m_result.Height(); row++) {
-      uint8_t* dest_pos = (uint8_t*)cdata.bitmap->GetScanline(row);
-      for (int col = 0; col < m_result.Width(); col++) {
-        int src_col = 0;
-        int src_row = 0;
-        result2stretch_fix.Transform(col, row, &src_col, &src_row);
-        if (InStretchBounds(src_col, src_row)) {
-          AdjustCoords(&src_col, &src_row);
-          uint32_t r_bgra_cmyk =
-              argb[cdata.buf[src_row * cdata.pitch + src_col]];
-          if (format == FXDIB_Rgba) {
-            dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
-            dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
-            dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
-          } else {
-            *(uint32_t*)dest_pos = r_bgra_cmyk;
-          }
-        }
-        dest_pos += destBpp;
+    auto func = [&cdata, format, &argb](const DownSampleData& data,
+                                        uint8_t* dest) {
+      uint32_t r_bgra_cmyk =
+          argb[cdata.buf[data.src_row * cdata.pitch + data.src_col]];
+      if (format == FXDIB_Rgba) {
+        dest[0] = (uint8_t)(r_bgra_cmyk >> 24);
+        dest[1] = (uint8_t)(r_bgra_cmyk >> 16);
+        dest[2] = (uint8_t)(r_bgra_cmyk >> 8);
+      } else {
+        *(uint32_t*)dest = r_bgra_cmyk;
       }
-    }
+    };
+    DoDownSampleLoop(cdata, destBpp, func);
   }
 }
 
@@ -575,45 +546,38 @@ void CFX_ImageTransformer::CalcColorDownSample(const CalcData& cdata,
                                                FXDIB_Format format,
                                                int Bpp) {
   bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
-  int destBpp = cdata.bitmap->GetBPP() / 8;
-  CPDF_FixedMatrix result2stretch_fix(cdata.matrix, 8);
-  for (int row = 0; row < m_result.Height(); row++) {
-    uint8_t* dest_pos = (uint8_t*)cdata.bitmap->GetScanline(row);
-    for (int col = 0; col < m_result.Width(); col++) {
-      int src_col = 0;
-      int src_row = 0;
-      result2stretch_fix.Transform(col, row, &src_col, &src_row);
-      if (InStretchBounds(src_col, src_row)) {
-        AdjustCoords(&src_col, &src_row);
-        const uint8_t* src_pos =
-            cdata.buf + src_row * cdata.pitch + src_col * Bpp;
-        if (bHasAlpha) {
-          if (format != FXDIB_Argb) {
-            if (format == FXDIB_Rgba) {
-              dest_pos[0] = src_pos[0];
-              dest_pos[1] = src_pos[1];
-              dest_pos[2] = src_pos[2];
-            } else {
-              *(uint32_t*)dest_pos = FXCMYK_TODIB(
-                  CmykEncode(src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
-            }
-          } else {
-            *(uint32_t*)dest_pos = FXARGB_TODIB(
-                FXARGB_MAKE(src_pos[3], src_pos[2], src_pos[1], src_pos[0]));
-          }
+  auto func = [&cdata, format, bHasAlpha, Bpp](const DownSampleData& data,
+                                               uint8_t* dest) {
+    const uint8_t* src_pos =
+        cdata.buf + data.src_row * cdata.pitch + data.src_col * Bpp;
+    uint32_t* dest32 = (uint32_t*)dest;
+    if (bHasAlpha) {
+      if (format != FXDIB_Argb) {
+        if (format == FXDIB_Rgba) {
+          dest[0] = src_pos[0];
+          dest[1] = src_pos[1];
+          dest[2] = src_pos[2];
         } else {
-          if (format == FXDIB_Cmyka) {
-            *(uint32_t*)dest_pos = FXCMYK_TODIB(
-                CmykEncode(src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
-          } else {
-            *(uint32_t*)dest_pos = FXARGB_TODIB(
-                FXARGB_MAKE(0xff, src_pos[2], src_pos[1], src_pos[0]));
-          }
+          *dest32 = FXCMYK_TODIB(
+              CmykEncode(src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
         }
+      } else {
+        *dest32 = FXARGB_TODIB(
+            FXARGB_MAKE(src_pos[3], src_pos[2], src_pos[1], src_pos[0]));
       }
-      dest_pos += destBpp;
+    } else {
+      if (format == FXDIB_Cmyka) {
+        *dest32 = FXCMYK_TODIB(
+            CmykEncode(src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
+      } else {
+        *dest32 =
+            FXARGB_TODIB(FXARGB_MAKE(0xff, src_pos[2], src_pos[1], src_pos[0]));
+      }
     }
-  }
+  };
+
+  int destBpp = cdata.bitmap->GetBPP() / 8;
+  DoDownSampleLoop(cdata, destBpp, func);
 }
 
 void CFX_ImageTransformer::AdjustCoords(int* col, int* row) const {
@@ -674,6 +638,27 @@ void CFX_ImageTransformer::DoBicubicLoop(
         bicubic_get_pos_weight(d.pos_pixel, d.u_w, d.v_w, d.src_col_l,
                                d.src_row_l, d.res_x, d.res_y, stretch_width(),
                                stretch_height());
+        func(d, dest);
+      }
+      dest += increment;
+    }
+  }
+}
+
+void CFX_ImageTransformer::DoDownSampleLoop(
+    const CalcData& cdata,
+    int increment,
+    std::function<void(const DownSampleData&, uint8_t*)> func) {
+  CPDF_FixedMatrix matrix_fix(cdata.matrix, 8);
+  for (int row = 0; row < m_result.Height(); row++) {
+    uint8_t* dest = (uint8_t*)cdata.bitmap->GetScanline(row);
+    for (int col = 0; col < m_result.Width(); col++) {
+      DownSampleData d;
+      d.src_col = 0;
+      d.src_row = 0;
+      matrix_fix.Transform(col, row, &d.src_col, &d.src_row);
+      if (InStretchBounds(d.src_col, d.src_row)) {
+        AdjustCoords(&d.src_col, &d.src_row);
         func(d, dest);
       }
       dest += increment;
