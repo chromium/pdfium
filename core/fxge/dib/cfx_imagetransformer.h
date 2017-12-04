@@ -32,6 +32,21 @@ class CFX_ImageTransformer {
   RetainPtr<CFX_DIBitmap> DetachBitmap();
 
  private:
+  bool IsBilinear() const {
+    return !(m_Flags & FXDIB_DOWNSAMPLE) && !IsBiCubic();
+  }
+  bool IsBiCubic() const { return !!(m_Flags & FXDIB_BICUBIC_INTERPOL); }
+
+  int stretch_width() const { return m_StretchClip.Width(); }
+  int stretch_height() const { return m_StretchClip.Height(); }
+
+  bool InStretchBounds(int col, int row) const {
+    return col >= 0 && col <= stretch_width() && row >= 0 &&
+           row <= stretch_height();
+  }
+
+  void AdjustCoords(int* col, int* row) const;
+
   const RetainPtr<CFX_DIBSource> m_pSrc;
   UnownedPtr<const CFX_Matrix> const m_pMatrix;
   const FX_RECT* const m_pClip;

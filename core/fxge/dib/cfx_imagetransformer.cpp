@@ -40,9 +40,9 @@ uint8_t bilinear_interpol(const uint8_t* buf,
 
 uint8_t bicubic_interpol(const uint8_t* buf,
                          int pitch,
-                         int pos_pixel[],
-                         int u_w[],
-                         int v_w[],
+                         const int pos_pixel[],
+                         const int u_w[],
+                         const int v_w[],
                          int res_x,
                          int res_y,
                          int bpp,
@@ -290,7 +290,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
     pTransformed->m_pAlphaMask->Clear(0xff000000);
   } else if (pTransformed->m_pAlphaMask) {
     int stretch_pitch_mask = m_Storer.GetBitmap()->m_pAlphaMask->GetPitch();
-    if (!(m_Flags & FXDIB_DOWNSAMPLE) && !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
+    if (IsBilinear()) {
       CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
       for (int row = 0; row < m_result.Height(); row++) {
         uint8_t* dest_pos_mask =
@@ -302,22 +302,11 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           int res_y = 0;
           result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
                                        &res_y);
-          if (src_col_l >= 0 && src_col_l <= stretch_width && src_row_l >= 0 &&
-              src_row_l <= stretch_height) {
-            if (src_col_l == stretch_width) {
-              src_col_l--;
-            }
-            if (src_row_l == stretch_height) {
-              src_row_l--;
-            }
+          if (InStretchBounds(src_col_l, src_row_l)) {
+            AdjustCoords(&src_col_l, &src_row_l);
             int src_col_r = src_col_l + 1;
             int src_row_r = src_row_l + 1;
-            if (src_col_r == stretch_width) {
-              src_col_r--;
-            }
-            if (src_row_r == stretch_height) {
-              src_row_r--;
-            }
+            AdjustCoords(&src_col_r, &src_row_r);
             int row_offset_l = src_row_l * stretch_pitch_mask;
             int row_offset_r = src_row_r * stretch_pitch_mask;
             *dest_pos_mask =
@@ -327,7 +316,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           dest_pos_mask++;
         }
       }
-    } else if (m_Flags & FXDIB_BICUBIC_INTERPOL) {
+    } else if (IsBiCubic()) {
       CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
       for (int row = 0; row < m_result.Height(); row++) {
         uint8_t* dest_pos_mask =
@@ -339,16 +328,10 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           int res_y = 0;
           result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
                                        &res_y);
-          if (src_col_l >= 0 && src_col_l <= stretch_width && src_row_l >= 0 &&
-              src_row_l <= stretch_height) {
+          if (InStretchBounds(src_col_l, src_row_l)) {
             int pos_pixel[8];
             int u_w[4], v_w[4];
-            if (src_col_l == stretch_width) {
-              src_col_l--;
-            }
-            if (src_row_l == stretch_height) {
-              src_row_l--;
-            }
+            AdjustCoords(&src_col_l, &src_row_l);
             bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
                                    res_x, res_y, stretch_width, stretch_height);
             *dest_pos_mask =
@@ -367,14 +350,8 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           int src_col = 0;
           int src_row = 0;
           result2stretch_fix.Transform(col, row, &src_col, &src_row);
-          if (src_col >= 0 && src_col <= stretch_width && src_row >= 0 &&
-              src_row <= stretch_height) {
-            if (src_col == stretch_width) {
-              src_col--;
-            }
-            if (src_row == stretch_height) {
-              src_row--;
-            }
+          if (InStretchBounds(src_col, src_row)) {
+            AdjustCoords(&src_col, &src_row);
             *dest_pos_mask =
                 stretch_buf_mask[src_row * stretch_pitch_mask + src_col];
           }
@@ -384,7 +361,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
     }
   }
   if (m_Storer.GetBitmap()->IsAlphaMask()) {
-    if (!(m_Flags & FXDIB_DOWNSAMPLE) && !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
+    if (IsBilinear()) {
       CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
       for (int row = 0; row < m_result.Height(); row++) {
         uint8_t* dest_scan = (uint8_t*)pTransformed->GetScanline(row);
@@ -395,22 +372,11 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           int res_y = 0;
           result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
                                        &res_y);
-          if (src_col_l >= 0 && src_col_l <= stretch_width && src_row_l >= 0 &&
-              src_row_l <= stretch_height) {
-            if (src_col_l == stretch_width) {
-              src_col_l--;
-            }
-            if (src_row_l == stretch_height) {
-              src_row_l--;
-            }
+          if (InStretchBounds(src_col_l, src_row_l)) {
+            AdjustCoords(&src_col_l, &src_row_l);
             int src_col_r = src_col_l + 1;
             int src_row_r = src_row_l + 1;
-            if (src_col_r == stretch_width) {
-              src_col_r--;
-            }
-            if (src_row_r == stretch_height) {
-              src_row_r--;
-            }
+            AdjustCoords(&src_col_r, &src_row_r);
             int row_offset_l = src_row_l * stretch_pitch;
             int row_offset_r = src_row_r * stretch_pitch;
             *dest_scan =
@@ -420,7 +386,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           dest_scan++;
         }
       }
-    } else if (m_Flags & FXDIB_BICUBIC_INTERPOL) {
+    } else if (IsBiCubic()) {
       CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
       for (int row = 0; row < m_result.Height(); row++) {
         uint8_t* dest_scan = (uint8_t*)pTransformed->GetScanline(row);
@@ -431,16 +397,10 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           int res_y = 0;
           result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
                                        &res_y);
-          if (src_col_l >= 0 && src_col_l <= stretch_width && src_row_l >= 0 &&
-              src_row_l <= stretch_height) {
+          if (InStretchBounds(src_col_l, src_row_l)) {
             int pos_pixel[8];
             int u_w[4], v_w[4];
-            if (src_col_l == stretch_width) {
-              src_col_l--;
-            }
-            if (src_row_l == stretch_height) {
-              src_row_l--;
-            }
+            AdjustCoords(&src_col_l, &src_row_l);
             bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
                                    res_x, res_y, stretch_width, stretch_height);
             *dest_scan = bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
@@ -457,14 +417,8 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
           int src_col = 0;
           int src_row = 0;
           result2stretch_fix.Transform(col, row, &src_col, &src_row);
-          if (src_col >= 0 && src_col <= stretch_width && src_row >= 0 &&
-              src_row <= stretch_height) {
-            if (src_col == stretch_width) {
-              src_col--;
-            }
-            if (src_row == stretch_height) {
-              src_row--;
-            }
+          if (InStretchBounds(src_col, src_row)) {
+            AdjustCoords(&src_col, &src_row);
             const uint8_t* src_pixel =
                 stretch_buf + stretch_pitch * src_row + src_col;
             *dest_scan = *src_pixel;
@@ -494,8 +448,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
         }
       }
       int destBpp = pTransformed->GetBPP() / 8;
-      if (!(m_Flags & FXDIB_DOWNSAMPLE) &&
-          !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
+      if (IsBilinear()) {
         CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
         for (int row = 0; row < m_result.Height(); row++) {
           uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
@@ -506,22 +459,11 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             int res_y = 0;
             result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l,
                                          &res_x, &res_y);
-            if (src_col_l >= 0 && src_col_l <= stretch_width &&
-                src_row_l >= 0 && src_row_l <= stretch_height) {
-              if (src_col_l == stretch_width) {
-                src_col_l--;
-              }
-              if (src_row_l == stretch_height) {
-                src_row_l--;
-              }
+            if (InStretchBounds(src_col_l, src_row_l)) {
+              AdjustCoords(&src_col_l, &src_row_l);
               int src_col_r = src_col_l + 1;
               int src_row_r = src_row_l + 1;
-              if (src_col_r == stretch_width) {
-                src_col_r--;
-              }
-              if (src_row_r == stretch_height) {
-                src_row_r--;
-              }
+              AdjustCoords(&src_col_r, &src_row_r);
               int row_offset_l = src_row_l * stretch_pitch;
               int row_offset_r = src_row_r * stretch_pitch;
               uint32_t r_bgra_cmyk = argb[bilinear_interpol(
@@ -538,7 +480,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             dest_pos += destBpp;
           }
         }
-      } else if (m_Flags & FXDIB_BICUBIC_INTERPOL) {
+      } else if (IsBiCubic()) {
         CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
         for (int row = 0; row < m_result.Height(); row++) {
           uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
@@ -549,16 +491,10 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             int res_y = 0;
             result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l,
                                          &res_x, &res_y);
-            if (src_col_l >= 0 && src_col_l <= stretch_width &&
-                src_row_l >= 0 && src_row_l <= stretch_height) {
+            if (InStretchBounds(src_col_l, src_row_l)) {
               int pos_pixel[8];
               int u_w[4], v_w[4];
-              if (src_col_l == stretch_width) {
-                src_col_l--;
-              }
-              if (src_row_l == stretch_height) {
-                src_row_l--;
-              }
+              AdjustCoords(&src_col_l, &src_row_l);
               bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
                                      res_x, res_y, stretch_width,
                                      stretch_height);
@@ -584,14 +520,8 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             int src_col = 0;
             int src_row = 0;
             result2stretch_fix.Transform(col, row, &src_col, &src_row);
-            if (src_col >= 0 && src_col <= stretch_width && src_row >= 0 &&
-                src_row <= stretch_height) {
-              if (src_col == stretch_width) {
-                src_col--;
-              }
-              if (src_row == stretch_height) {
-                src_row--;
-              }
+            if (InStretchBounds(src_col, src_row)) {
+              AdjustCoords(&src_col, &src_row);
               uint32_t r_bgra_cmyk =
                   argb[stretch_buf[src_row * stretch_pitch + src_col]];
               if (transformF == FXDIB_Rgba) {
@@ -609,8 +539,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
     } else {
       bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
       int destBpp = pTransformed->GetBPP() / 8;
-      if (!(m_Flags & FXDIB_DOWNSAMPLE) &&
-          !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
+      if (IsBilinear()) {
         CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
         for (int row = 0; row < m_result.Height(); row++) {
           uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
@@ -622,22 +551,11 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             int r_pos_k_r = 0;
             result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l,
                                          &res_x, &res_y);
-            if (src_col_l >= 0 && src_col_l <= stretch_width &&
-                src_row_l >= 0 && src_row_l <= stretch_height) {
-              if (src_col_l == stretch_width) {
-                src_col_l--;
-              }
-              if (src_row_l == stretch_height) {
-                src_row_l--;
-              }
+            if (InStretchBounds(src_col_l, src_row_l)) {
+              AdjustCoords(&src_col_l, &src_row_l);
               int src_col_r = src_col_l + 1;
               int src_row_r = src_row_l + 1;
-              if (src_col_r == stretch_width) {
-                src_col_r--;
-              }
-              if (src_row_r == stretch_height) {
-                src_row_r--;
-              }
+              AdjustCoords(&src_col_r, &src_row_r);
               int row_offset_l = src_row_l * stretch_pitch;
               int row_offset_r = src_row_r * stretch_pitch;
               uint8_t r_pos_red_y_r =
@@ -690,7 +608,7 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             dest_pos += destBpp;
           }
         }
-      } else if (m_Flags & FXDIB_BICUBIC_INTERPOL) {
+      } else if (IsBiCubic()) {
         CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
         for (int row = 0; row < m_result.Height(); row++) {
           uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
@@ -702,16 +620,10 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             int r_pos_k_r = 0;
             result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l,
                                          &res_x, &res_y);
-            if (src_col_l >= 0 && src_col_l <= stretch_width &&
-                src_row_l >= 0 && src_row_l <= stretch_height) {
+            if (InStretchBounds(src_col_l, src_row_l)) {
               int pos_pixel[8];
               int u_w[4], v_w[4];
-              if (src_col_l == stretch_width) {
-                src_col_l--;
-              }
-              if (src_row_l == stretch_height) {
-                src_row_l--;
-              }
+              AdjustCoords(&src_col_l, &src_row_l);
               bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
                                      res_x, res_y, stretch_width,
                                      stretch_height);
@@ -773,14 +685,8 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
             int src_col = 0;
             int src_row = 0;
             result2stretch_fix.Transform(col, row, &src_col, &src_row);
-            if (src_col >= 0 && src_col <= stretch_width && src_row >= 0 &&
-                src_row <= stretch_height) {
-              if (src_col == stretch_width) {
-                src_col--;
-              }
-              if (src_row == stretch_height) {
-                src_row--;
-              }
+            if (InStretchBounds(src_col, src_row)) {
+              AdjustCoords(&src_col, &src_row);
               const uint8_t* src_pos =
                   stretch_buf + src_row * stretch_pitch + src_col * Bpp;
               if (bHasAlpha) {
@@ -819,4 +725,13 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
 
 RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
   return m_Storer.Detach();
+}
+
+void CFX_ImageTransformer::AdjustCoords(int* col, int* row) const {
+  int& src_col = *col;
+  int& src_row = *row;
+  if (src_col == stretch_width())
+    src_col--;
+  if (src_row == stretch_height())
+    src_row--;
 }
