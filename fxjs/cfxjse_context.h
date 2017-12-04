@@ -49,12 +49,6 @@ class CFXJSE_Context {
   std::vector<std::unique_ptr<CFXJSE_Class>> m_rgClasses;
 };
 
-v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
-                                              v8::TryCatch& trycatch);
-
-v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
-    v8::Local<v8::Context> hContext);
-
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
                                CFXJSE_HostObject* lpNewBinding = nullptr);
 

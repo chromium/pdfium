@@ -68,10 +68,6 @@ class CFXJSE_Value {
   bool SetObjectOwnProperty(const ByteStringView& szPropName,
                             CFXJSE_Value* lpPropValue);
   bool SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value* lpNewThis);
-  bool Call(CFXJSE_Value* lpReceiver,
-            CFXJSE_Value* lpRetValue,
-            uint32_t nArgCount,
-            CFXJSE_Value** lpArgs);
 
   v8::Isolate* GetIsolate() const { return m_pIsolate; }
   const v8::Global<v8::Value>& DirectGetValue() const { return m_hValue; }
