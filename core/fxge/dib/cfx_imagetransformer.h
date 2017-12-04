@@ -40,6 +40,7 @@ class CFX_ImageTransformer {
   };
 
   void CalcMask(const CalcData& cdata);
+  void CalcAlpha(const CalcData& cdata);
 
   bool IsBilinear() const {
     return !(m_Flags & FXDIB_DOWNSAMPLE) && !IsBiCubic();
