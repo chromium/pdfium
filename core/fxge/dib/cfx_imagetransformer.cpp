@@ -295,120 +295,16 @@ bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
     };
     CalcMask(cdata);
   }
+
+  CalcData cdata = {pTransformed.Get(), result2stretch,
+                    m_Storer.GetBitmap()->GetBuffer(),
+                    m_Storer.GetBitmap()->GetPitch()};
   if (m_Storer.GetBitmap()->IsAlphaMask()) {
-    CalcData cdata = {pTransformed.Get(), result2stretch,
-                      m_Storer.GetBitmap()->GetBuffer(),
-                      m_Storer.GetBitmap()->GetPitch()};
     CalcAlpha(cdata);
   } else {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;
     if (Bpp == 1) {
-      uint32_t argb[256];
-      FX_ARGB* pPal = m_Storer.GetBitmap()->GetPalette();
-      if (pPal) {
-        for (int i = 0; i < 256; i++) {
-          argb[i] = pPal[i];
-        }
-      } else {
-        if (m_Storer.GetBitmap()->IsCmykImage()) {
-          for (int i = 0; i < 256; i++) {
-            argb[i] = 255 - i;
-          }
-        } else {
-          for (int i = 0; i < 256; i++) {
-            argb[i] = 0xff000000 | (i * 0x010101);
-          }
-        }
-      }
-      int destBpp = pTransformed->GetBPP() / 8;
-      if (IsBilinear()) {
-        CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
-        for (int row = 0; row < m_result.Height(); row++) {
-          uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
-          for (int col = 0; col < m_result.Width(); col++) {
-            int src_col_l = 0;
-            int src_row_l = 0;
-            int res_x = 0;
-            int res_y = 0;
-            result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l,
-                                         &res_x, &res_y);
-            if (InStretchBounds(src_col_l, src_row_l)) {
-              AdjustCoords(&src_col_l, &src_row_l);
-              int src_col_r = src_col_l + 1;
-              int src_row_r = src_row_l + 1;
-              AdjustCoords(&src_col_r, &src_row_r);
-              int row_offset_l = src_row_l * stretch_pitch;
-              int row_offset_r = src_row_r * stretch_pitch;
-              uint32_t r_bgra_cmyk = argb[bilinear_interpol(
-                  stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r,
-                  res_x, res_y, 1, 0)];
-              if (transformF == FXDIB_Rgba) {
-                dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
-                dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
-                dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
-              } else {
-                *(uint32_t*)dest_pos = r_bgra_cmyk;
-              }
-            }
-            dest_pos += destBpp;
-          }
-        }
-      } else if (IsBiCubic()) {
-        CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
-        for (int row = 0; row < m_result.Height(); row++) {
-          uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
-          for (int col = 0; col < m_result.Width(); col++) {
-            int src_col_l = 0;
-            int src_row_l = 0;
-            int res_x = 0;
-            int res_y = 0;
-            result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l,
-                                         &res_x, &res_y);
-            if (InStretchBounds(src_col_l, src_row_l)) {
-              int pos_pixel[8];
-              int u_w[4], v_w[4];
-              AdjustCoords(&src_col_l, &src_row_l);
-              bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
-                                     res_x, res_y, stretch_width,
-                                     stretch_height);
-              uint32_t r_bgra_cmyk =
-                  argb[bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
-                                        u_w, v_w, res_x, res_y, 1, 0)];
-              if (transformF == FXDIB_Rgba) {
-                dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
-                dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
-                dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
-              } else {
-                *(uint32_t*)dest_pos = r_bgra_cmyk;
-              }
-            }
-            dest_pos += destBpp;
-          }
-        }
-      } else {
-        CPDF_FixedMatrix result2stretch_fix(result2stretch, 8);
-        for (int row = 0; row < m_result.Height(); row++) {
-          uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
-          for (int col = 0; col < m_result.Width(); col++) {
-            int src_col = 0;
-            int src_row = 0;
-            result2stretch_fix.Transform(col, row, &src_col, &src_row);
-            if (InStretchBounds(src_col, src_row)) {
-              AdjustCoords(&src_col, &src_row);
-              uint32_t r_bgra_cmyk =
-                  argb[stretch_buf[src_row * stretch_pitch + src_col]];
-              if (transformF == FXDIB_Rgba) {
-                dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
-                dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
-                dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
-              } else {
-                *(uint32_t*)dest_pos = r_bgra_cmyk;
-              }
-            }
-            dest_pos += destBpp;
-          }
-        }
-      }
+      CalcMono(cdata, transformF);
     } else {
       bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
       int destBpp = pTransformed->GetBPP() / 8;
@@ -733,6 +629,115 @@ void CFX_ImageTransformer::CalcAlpha(const CalcData& cdata) {
           *dest_scan = *src_pixel;
         }
         dest_scan++;
+      }
+    }
+  }
+}
+
+void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
+                                    FXDIB_Format format) {
+  uint32_t argb[256];
+  FX_ARGB* pPal = m_Storer.GetBitmap()->GetPalette();
+  if (pPal) {
+    for (int i = 0; i < 256; i++) {
+      argb[i] = pPal[i];
+    }
+  } else {
+    if (m_Storer.GetBitmap()->IsCmykImage()) {
+      for (int i = 0; i < 256; i++) {
+        argb[i] = 255 - i;
+      }
+    } else {
+      for (int i = 0; i < 256; i++) {
+        argb[i] = 0xff000000 | (i * 0x010101);
+      }
+    }
+  }
+  int destBpp = cdata.bitmap->GetBPP() / 8;
+  if (IsBilinear()) {
+    CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
+    for (int row = 0; row < m_result.Height(); row++) {
+      uint8_t* dest_pos = (uint8_t*)cdata.bitmap->GetScanline(row);
+      for (int col = 0; col < m_result.Width(); col++) {
+        int src_col_l = 0;
+        int src_row_l = 0;
+        int res_x = 0;
+        int res_y = 0;
+        result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
+                                     &res_y);
+        if (InStretchBounds(src_col_l, src_row_l)) {
+          AdjustCoords(&src_col_l, &src_row_l);
+          int src_col_r = src_col_l + 1;
+          int src_row_r = src_row_l + 1;
+          AdjustCoords(&src_col_r, &src_row_r);
+          int row_offset_l = src_row_l * cdata.pitch;
+          int row_offset_r = src_row_r * cdata.pitch;
+          uint32_t r_bgra_cmyk =
+              argb[bilinear_interpol(cdata.buf, row_offset_l, row_offset_r,
+                                     src_col_l, src_col_r, res_x, res_y, 1, 0)];
+          if (format == FXDIB_Rgba) {
+            dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
+            dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
+            dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
+          } else {
+            *(uint32_t*)dest_pos = r_bgra_cmyk;
+          }
+        }
+        dest_pos += destBpp;
+      }
+    }
+  } else if (IsBiCubic()) {
+    CFX_BilinearMatrix result2stretch_fix(cdata.matrix, 8);
+    for (int row = 0; row < m_result.Height(); row++) {
+      uint8_t* dest_pos = (uint8_t*)cdata.bitmap->GetScanline(row);
+      for (int col = 0; col < m_result.Width(); col++) {
+        int src_col_l = 0;
+        int src_row_l = 0;
+        int res_x = 0;
+        int res_y = 0;
+        result2stretch_fix.Transform(col, row, &src_col_l, &src_row_l, &res_x,
+                                     &res_y);
+        if (InStretchBounds(src_col_l, src_row_l)) {
+          int pos_pixel[8];
+          int u_w[4], v_w[4];
+          AdjustCoords(&src_col_l, &src_row_l);
+          bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
+                                 res_x, res_y, stretch_width(),
+                                 stretch_height());
+          uint32_t r_bgra_cmyk = argb[bicubic_interpol(
+              cdata.buf, cdata.pitch, pos_pixel, u_w, v_w, res_x, res_y, 1, 0)];
+          if (format == FXDIB_Rgba) {
+            dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
+            dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
+            dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
+          } else {
+            *(uint32_t*)dest_pos = r_bgra_cmyk;
+          }
+        }
+        dest_pos += destBpp;
+      }
+    }
+  } else {
+    CPDF_FixedMatrix result2stretch_fix(cdata.matrix, 8);
+    for (int row = 0; row < m_result.Height(); row++) {
+      uint8_t* dest_pos = (uint8_t*)cdata.bitmap->GetScanline(row);
+      for (int col = 0; col < m_result.Width(); col++) {
+        int src_col = 0;
+        int src_row = 0;
+        result2stretch_fix.Transform(col, row, &src_col, &src_row);
+        if (InStretchBounds(src_col, src_row)) {
+          AdjustCoords(&src_col, &src_row);
+          uint32_t r_bgra_cmyk =
+              argb[cdata.buf[src_row * cdata.pitch + src_col]];
+          if (format == FXDIB_Rgba) {
+            dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
+            dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
+            dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
+          } else {
+            *(uint32_t*)dest_pos = r_bgra_cmyk;
+          }
+        }
+        dest_pos += destBpp;
       }
     }
   }
