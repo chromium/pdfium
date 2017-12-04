@@ -247,9 +247,20 @@ class CFX_FloatRect {
   void Intersect(const CFX_FloatRect& other_rect);
   void Union(const CFX_FloatRect& other_rect);
 
+  // These may be better at rounding than ToFxRect() and friends.
+  //
+  // Returned rect has bounds rounded up/down such that it is contained in the
+  // original.
   FX_RECT GetInnerRect() const;
+
+  // Returned rect has bounds rounded up/down such that the original is
+  // contained in it.
   FX_RECT GetOuterRect() const;
+
+  // Returned rect has bounds rounded up/down such that the dimensions are
+  // rounded up and the sum of the error in the bounds is minimized.
   FX_RECT GetClosestRect() const;
+
   CFX_FloatRect GetCenterSquare() const;
 
   void InitRect(const CFX_PointF& point) {
@@ -329,7 +340,15 @@ class CFX_FloatRect {
   void Scale(float fScale);
   void ScaleFromCenterPoint(float fScale);
 
+  // GetInnerRect() and friends may be better at rounding than these methods.
+  // Unlike the methods above, these two blindly floor / round the LBRT values.
+  // Doing so may introduce rounding errors that are visible to users as
+  // off-by-one pixels/lines.
+  //
+  // Floors LBRT values.
   FX_RECT ToFxRect() const;
+
+  // Rounds LBRT values.
   FX_RECT ToRoundedFxRect() const;
 
   float left;

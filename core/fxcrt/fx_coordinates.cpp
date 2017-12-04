@@ -17,10 +17,10 @@ void MatchFloatRange(float f1, float f2, int* i1, int* i2) {
   int length = static_cast<int>(ceil(f2 - f1));
   int i1_1 = static_cast<int>(floor(f1));
   int i1_2 = static_cast<int>(ceil(f1));
-  float error1 = f1 - i1_1 + (float)fabs(f2 - i1_1 - length);
-  float error2 = i1_2 - f1 + (float)fabs(f2 - i1_2 - length);
+  float error1 = f1 - i1_1 + fabsf(f2 - i1_1 - length);
+  float error2 = i1_2 - f1 + fabsf(f2 - i1_2 - length);
 
-  *i1 = (error1 > error2) ? i1_2 : i1_1;
+  *i1 = error1 > error2 ? i1_2 : i1_1;
   *i2 = *i1 + length;
 }
 
@@ -108,32 +108,29 @@ void CFX_FloatRect::Union(const CFX_FloatRect& other_rect) {
 }
 
 FX_RECT CFX_FloatRect::GetOuterRect() const {
-  CFX_FloatRect rect1 = *this;
   FX_RECT rect;
-  rect.left = static_cast<int>(floor(rect1.left));
-  rect.bottom = static_cast<int>(ceil(rect1.top));
-  rect.right = static_cast<int>(ceil(rect1.right));
-  rect.top = static_cast<int>(floor(rect1.bottom));
+  rect.left = static_cast<int>(floor(left));
+  rect.bottom = static_cast<int>(ceil(top));
+  rect.right = static_cast<int>(ceil(right));
+  rect.top = static_cast<int>(floor(bottom));
   rect.Normalize();
   return rect;
 }
 
 FX_RECT CFX_FloatRect::GetInnerRect() const {
-  CFX_FloatRect rect1 = *this;
   FX_RECT rect;
-  rect.left = static_cast<int>(ceil(rect1.left));
-  rect.bottom = static_cast<int>(floor(rect1.top));
-  rect.right = static_cast<int>(floor(rect1.right));
-  rect.top = static_cast<int>(ceil(rect1.bottom));
+  rect.left = static_cast<int>(ceil(left));
+  rect.bottom = static_cast<int>(floor(top));
+  rect.right = static_cast<int>(floor(right));
+  rect.top = static_cast<int>(ceil(bottom));
   rect.Normalize();
   return rect;
 }
 
 FX_RECT CFX_FloatRect::GetClosestRect() const {
-  CFX_FloatRect rect1 = *this;
   FX_RECT rect;
-  MatchFloatRange(rect1.left, rect1.right, &rect.left, &rect.right);
-  MatchFloatRange(rect1.bottom, rect1.top, &rect.top, &rect.bottom);
+  MatchFloatRange(left, right, &rect.left, &rect.right);
+  MatchFloatRange(bottom, top, &rect.top, &rect.bottom);
   rect.Normalize();
   return rect;
 }
