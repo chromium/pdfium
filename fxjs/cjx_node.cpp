@@ -416,7 +416,7 @@ void CJX_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
     pArguments->GetReturnValue()->SetNull();
     return;
   }
-  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     CXFA_Object* pObject = resolveNodeRS.objects.front();
     pArguments->GetReturnValue()->Assign(
         pScriptContext->GetJSValueFromMap(pObject));
@@ -475,7 +475,7 @@ void CJX_Node::ResolveNodeList(CFXJSE_Value* pValue,
   pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
                                  &resolveNodeRS, dwFlag, nullptr);
   CXFA_ArrayNodeList* pNodeList = new CXFA_ArrayNodeList(GetDocument());
-  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     for (CXFA_Object* pObject : resolveNodeRS.objects) {
       if (pObject->IsNode())
         pNodeList->Append(pObject->AsNode());

@@ -506,7 +506,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
     return nullptr;
   }
 
-  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     CXFA_Node* pNode = resolveNodeRS.objects.front()->AsNode();
     if (pNode)
       return static_cast<CXFA_WidgetAcc*>(pNode->GetWidgetData());
@@ -719,7 +719,7 @@ void CXFA_FFDocView::RunBindItems() {
     pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), &rs,
                                    dwStyle, nullptr);
     pAcc->DeleteItem(-1, false, false);
-    if (rs.dwFlags != XFA_RESOLVENODE_RSTYPE_Nodes || rs.objects.empty())
+    if (rs.dwFlags != XFA_ResolveNode_RSType_Nodes || rs.objects.empty())
       continue;
 
     WideString wsValueRef = bindItemsData.GetValueRef();

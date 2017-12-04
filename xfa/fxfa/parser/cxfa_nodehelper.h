@@ -64,7 +64,7 @@ class CXFA_NodeHelper {
   XFA_Element m_eLastCreateType;
   CXFA_Node* m_pCreateParent;
   int32_t m_iCreateCount;
-  XFA_RESOLVENODE_RSTYPE m_iCreateFlag;
+  XFA_ResolveNode_RSType m_iCreateFlag;
   int32_t m_iCurAllStart;
   CXFA_Node* m_pAllStartParent;
 };

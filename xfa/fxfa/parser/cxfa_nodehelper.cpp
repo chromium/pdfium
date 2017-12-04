@@ -18,7 +18,7 @@ CXFA_NodeHelper::CXFA_NodeHelper()
     : m_eLastCreateType(XFA_Element::DataValue),
       m_pCreateParent(nullptr),
       m_iCreateCount(0),
-      m_iCreateFlag(XFA_RESOLVENODE_RSTYPE_CreateNodeOne),
+      m_iCreateFlag(XFA_ResolveNode_RSType_CreateNodeOne),
       m_iCurAllStart(-1),
       m_pAllStartParent(nullptr) {}
 
@@ -281,7 +281,7 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(WideString& wsCondition) {
   WideString wsIndex(L"0");
   bool bAll = false;
   if (iLen == 0) {
-    m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
+    m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeOne;
     return false;
   }
   if (wsCondition[0] != '[')
@@ -299,9 +299,9 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(WideString& wsCondition) {
   }
   if (bAll) {
     wsIndex = L"1";
-    m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeAll;
+    m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeAll;
   } else {
-    m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
+    m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeOne;
     wsIndex = wsCondition.Mid(i, iLen - 1 - i);
   }
   int32_t iIndex = wsIndex.GetInteger();

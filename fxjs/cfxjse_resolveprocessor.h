@@ -29,7 +29,7 @@ class CFXJSE_ResolveNodeData {
   std::vector<CXFA_Object*> m_Objects;  // Not owned.
   uint32_t m_dwStyles;
   const XFA_SCRIPTATTRIBUTEINFO* m_pScriptAttribute;
-  XFA_RESOLVENODE_RSTYPE m_dwFlag;
+  XFA_ResolveNode_RSType m_dwFlag;
 };
 
 class CFXJSE_ResolveProcessor {
@@ -41,8 +41,6 @@ class CFXJSE_ResolveProcessor {
   int32_t GetFilter(const WideStringView& wsExpression,
                     int32_t nStart,
                     CFXJSE_ResolveNodeData& rnd);
-  int32_t SetResultCreateNode(XFA_RESOLVENODE_RS* resolveNodeRS,
-                              WideString& wsLastCondition);
   void SetIndexDataBind(WideString& wsNextCondition,
                         int32_t& iIndex,
                         int32_t iCount);

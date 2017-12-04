@@ -5918,7 +5918,7 @@ bool CFXJSE_FormCalcContext::GetObjectForName(
       pScriptContext->GetThisObject(),
       WideString::FromUTF8(szAccessorName).AsStringView(), &resolveNodeRS,
       dwFlags, nullptr);
-  if (iRet && resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+  if (iRet && resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     accessorValue->Assign(
         pScriptContext->GetJSValueFromMap(resolveNodeRS.objects.front()));
     return true;
@@ -5990,7 +5990,7 @@ void CFXJSE_FormCalcContext::ParseResolveResult(
   CFXJSE_FormCalcContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
 
-  if (resolveNodeRS.dwFlags == XFA_RESOLVENODE_RSTYPE_Nodes) {
+  if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     *bAttribute = false;
     CFXJSE_Engine* pScriptContext = pContext->GetDocument()->GetScriptContext();
     for (CXFA_Object* pObject : resolveNodeRS.objects) {

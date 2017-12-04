@@ -207,7 +207,7 @@ bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(
 
   rnd.m_pScriptAttribute = lpScriptAttribute;
   rnd.m_Objects.push_back(curNode);
-  rnd.m_dwFlag = XFA_RESOLVENODE_RSTYPE_Attribute;
+  rnd.m_dwFlag = XFA_ResolveNode_RSType_Attribute;
   return true;
 }
 
@@ -713,22 +713,6 @@ void CFXJSE_ResolveProcessor::SetStylesForChild(uint32_t dwParentStyles,
   rnd.m_dwStyles = dwSubStyles;
 }
 
-int32_t CFXJSE_ResolveProcessor::SetResultCreateNode(
-    XFA_RESOLVENODE_RS* resolveNodeRS,
-    WideString& wsLastCondition) {
-  if (m_pNodeHelper->m_pCreateParent)
-    resolveNodeRS->objects.push_back(m_pNodeHelper->m_pCreateParent);
-  else
-    m_pNodeHelper->CreateNode_ForCondition(wsLastCondition);
-
-  resolveNodeRS->dwFlags = m_pNodeHelper->m_iCreateFlag;
-  if (resolveNodeRS->dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeOne) {
-    if (m_pNodeHelper->m_iCurAllStart != -1)
-      resolveNodeRS->dwFlags = XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll;
-  }
-  return pdfium::CollectionSize<int32_t>(resolveNodeRS->objects);
-}
-
 void CFXJSE_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
                                                int32_t& iIndex,
                                                int32_t iCount) {
@@ -753,6 +737,6 @@ CFXJSE_ResolveNodeData::CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC)
       m_Objects(),
       m_dwStyles(XFA_RESOLVENODE_Children),
       m_pScriptAttribute(nullptr),
-      m_dwFlag(XFA_RESOLVENODE_RSTYPE_Nodes) {}
+      m_dwFlag(XFA_ResolveNode_RSType_Nodes) {}
 
 CFXJSE_ResolveNodeData::~CFXJSE_ResolveNodeData() {}

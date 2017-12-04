@@ -27,13 +27,13 @@
 #define XFA_RESOLVENODE_Bind 0x0800
 #define XFA_RESOLVENODE_BindNew 0x1000
 
-enum XFA_RESOLVENODE_RSTYPE {
-  XFA_RESOLVENODE_RSTYPE_Nodes,
-  XFA_RESOLVENODE_RSTYPE_Attribute,
-  XFA_RESOLVENODE_RSTYPE_CreateNodeOne,
-  XFA_RESOLVENODE_RSTYPE_CreateNodeAll,
-  XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll,
-  XFA_RESOLVENODE_RSTYPE_ExistNodes,
+enum XFA_ResolveNode_RSType {
+  XFA_ResolveNode_RSType_Nodes,
+  XFA_ResolveNode_RSType_Attribute,
+  XFA_ResolveNode_RSType_CreateNodeOne,
+  XFA_ResolveNode_RSType_CreateNodeAll,
+  XFA_ResolveNode_RSType_CreateNodeMidAll,
+  XFA_ResolveNode_RSType_ExistNodes,
 };
 
 struct XFA_RESOLVENODE_RS {
@@ -41,12 +41,12 @@ struct XFA_RESOLVENODE_RS {
   ~XFA_RESOLVENODE_RS();
 
   std::vector<CXFA_Object*> objects;  // Not owned.
-  XFA_RESOLVENODE_RSTYPE dwFlags;
+  XFA_ResolveNode_RSType dwFlags;
   const XFA_SCRIPTATTRIBUTEINFO* pScriptAttribute;
 };
 
 inline XFA_RESOLVENODE_RS::XFA_RESOLVENODE_RS()
-    : dwFlags(XFA_RESOLVENODE_RSTYPE_Nodes), pScriptAttribute(nullptr) {}
+    : dwFlags(XFA_ResolveNode_RSType_Nodes), pScriptAttribute(nullptr) {}
 
 inline XFA_RESOLVENODE_RS::~XFA_RESOLVENODE_RS() {}
 
