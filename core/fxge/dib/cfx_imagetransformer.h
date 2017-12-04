@@ -43,6 +43,18 @@ class CFX_ImageTransformer {
     int row_offset_r;
   };
 
+  struct BicubicData {
+    int res_x;
+    int res_y;
+    int src_col_l;
+    int src_row_l;
+    int src_col_r;
+    int src_row_r;
+    int pos_pixel[8];
+    int u_w[4];
+    int v_w[4];
+  };
+
   struct CalcData {
     const CFX_DIBitmap* bitmap;
     const CFX_Matrix& matrix;
@@ -75,6 +87,9 @@ class CFX_ImageTransformer {
   void DoBilinearLoop(const CalcData& cdata,
                       int increment,
                       std::function<void(const BilinearData&, uint8_t*)> func);
+  void DoBicubicLoop(const CalcData& cdata,
+                     int increment,
+                     std::function<void(const BicubicData&, uint8_t*)> func);
 
   const RetainPtr<CFX_DIBSource> m_pSrc;
   UnownedPtr<const CFX_Matrix> const m_pMatrix;
