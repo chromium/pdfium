@@ -311,15 +311,11 @@ const FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
 
 const FXJSE_CLASS_DESCRIPTOR formcalc_fm2js_descriptor = {
     "XFA_FM2JS_FormCalcClass",               // name
-    nullptr,                                 // constructor
-    nullptr,                                 // properties
     formcalc_fm2js_functions,                // methods
-    0,                                       // number of properties
     FX_ArraySize(formcalc_fm2js_functions),  // number of methods
     nullptr,                                 // dynamic prop type
     nullptr,                                 // dynamic prop getter
     nullptr,                                 // dynamic prop setter
-    nullptr,                                 // dynamic prop deleter
     nullptr,                                 // dynamic prop method call
 };
 

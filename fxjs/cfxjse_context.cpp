@@ -159,10 +159,10 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     CFXJSE_HostObject* pGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   auto pContext = pdfium::MakeUnique<CFXJSE_Context>(pIsolate);
-  CFXJSE_Class* pGlobalClassObj = nullptr;
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (pGlobalClass) {
-    pGlobalClassObj = CFXJSE_Class::Create(pContext.get(), pGlobalClass, true);
+    CFXJSE_Class* pGlobalClassObj =
+        CFXJSE_Class::Create(pContext.get(), pGlobalClass, true);
     ASSERT(pGlobalClassObj);
     v8::Local<v8::FunctionTemplate> hFunctionTemplate =
         v8::Local<v8::FunctionTemplate>::New(pIsolate,
@@ -172,6 +172,7 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
     hObjectTemplate->SetInternalFieldCount(2);
   }
+
   hObjectTemplate->Set(
       v8::Symbol::GetToStringTag(pIsolate),
       v8::String::NewFromUtf8(pIsolate, "global", v8::NewStringType::kNormal)

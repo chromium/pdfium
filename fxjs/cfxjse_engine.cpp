@@ -34,43 +34,31 @@ namespace {
 
 const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor = {
     "Root",   // name
-    nullptr,  // constructor
-    nullptr,  // properties
     nullptr,  // methods
-    0,        // property count
     0,        // method count
     CFXJSE_Engine::GlobalPropTypeGetter,
     CFXJSE_Engine::GlobalPropertyGetter,
     CFXJSE_Engine::GlobalPropertySetter,
-    nullptr,  // property deleter
     CFXJSE_Engine::NormalMethodCall,
 };
 
 const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor = {
     "XFAObject",  // name
-    nullptr,      // constructor
-    nullptr,      // properties
     nullptr,      // methods
-    0,            // property count
     0,            // method count
     CFXJSE_Engine::NormalPropTypeGetter,
     CFXJSE_Engine::NormalPropertyGetter,
     CFXJSE_Engine::NormalPropertySetter,
-    nullptr,  // property deleter
     CFXJSE_Engine::NormalMethodCall,
 };
 
 const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor = {
     "XFAScriptObject",  // name
-    nullptr,            // constructor
-    nullptr,            // properties
     nullptr,            // methods
-    0,                  // property count
     0,                  // method count
     CFXJSE_Engine::NormalPropTypeGetter,
     CFXJSE_Engine::GlobalPropertyGetter,
     CFXJSE_Engine::GlobalPropertySetter,
-    nullptr,  // property deleter
     CFXJSE_Engine::NormalMethodCall,
 };
 
