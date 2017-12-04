@@ -14,10 +14,26 @@
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxge/fx_dib.h"
 
+namespace {
+
+constexpr float kTextUnitInGlyphUnit = 1000.0f;
+
+}  // namespace
+
 CPDF_Type3Char::CPDF_Type3Char(std::unique_ptr<CPDF_Form> pForm)
     : m_pForm(std::move(pForm)) {}
 
 CPDF_Type3Char::~CPDF_Type3Char() {}
+
+// static
+float CPDF_Type3Char::TextUnitToGlyphUnit(float fTextUnit) {
+  return fTextUnit * kTextUnitInGlyphUnit;
+}
+
+// static
+void CPDF_Type3Char::TextUnitRectToGlyphUnitRect(CFX_FloatRect* pRect) {
+  pRect->Scale(kTextUnitInGlyphUnit);
+}
 
 bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   if (m_pBitmap || !m_pForm)
@@ -53,27 +69,25 @@ bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
 void CPDF_Type3Char::InitializeFromStreamData(bool bColored,
                                               const float* pData) {
   m_bColored = bColored;
-  m_Width = FXSYS_round(pData[0] * 1000);
-  m_BBox.left = FXSYS_round(pData[2] * 1000);
-  m_BBox.bottom = FXSYS_round(pData[3] * 1000);
-  m_BBox.right = FXSYS_round(pData[4] * 1000);
-  m_BBox.top = FXSYS_round(pData[5] * 1000);
+  m_Width = FXSYS_round(TextUnitToGlyphUnit(pData[0]));
+  m_BBox.left = FXSYS_round(TextUnitToGlyphUnit(pData[2]));
+  m_BBox.bottom = FXSYS_round(TextUnitToGlyphUnit(pData[3]));
+  m_BBox.right = FXSYS_round(TextUnitToGlyphUnit(pData[4]));
+  m_BBox.top = FXSYS_round(TextUnitToGlyphUnit(pData[5]));
 }
 
 void CPDF_Type3Char::Transform(const CFX_Matrix& matrix) {
   m_Width = m_Width * matrix.GetXUnit() + 0.5f;
-  CFX_FloatRect char_rect(static_cast<float>(m_BBox.left) / 1000.0f,
-                          static_cast<float>(m_BBox.bottom) / 1000.0f,
-                          static_cast<float>(m_BBox.right) / 1000.0f,
-                          static_cast<float>(m_BBox.top) / 1000.0f);
-  if (m_BBox.right <= m_BBox.left || m_BBox.bottom >= m_BBox.top)
-    char_rect = form()->CalcBoundingBox();
 
-  char_rect = matrix.TransformRect(char_rect);
-  m_BBox.left = FXSYS_round(char_rect.left * 1000);
-  m_BBox.right = FXSYS_round(char_rect.right * 1000);
-  m_BBox.top = FXSYS_round(char_rect.top * 1000);
-  m_BBox.bottom = FXSYS_round(char_rect.bottom * 1000);
+  CFX_FloatRect char_rect;
+  if (m_BBox.right <= m_BBox.left || m_BBox.bottom >= m_BBox.top) {
+    char_rect = form()->CalcBoundingBox();
+    TextUnitRectToGlyphUnitRect(&char_rect);
+  } else {
+    char_rect = CFX_FloatRect(m_BBox);
+  }
+
+  m_BBox = matrix.TransformRect(char_rect).ToRoundedFxRect();
 }
 
 void CPDF_Type3Char::ResetForm() {

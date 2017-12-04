@@ -22,6 +22,9 @@ class CPDF_Type3Char {
   explicit CPDF_Type3Char(std::unique_ptr<CPDF_Form> pForm);
   ~CPDF_Type3Char();
 
+  static float TextUnitToGlyphUnit(float fTextUnit);
+  static void TextUnitRectToGlyphUnitRect(CFX_FloatRect* pRect);
+
   bool LoadBitmap(CPDF_RenderContext* pContext);
 
   void InitializeFromStreamData(bool bColored, const float* pData);

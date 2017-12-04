@@ -54,14 +54,11 @@ bool CPDF_Type3Font::Load() {
 
   CPDF_Array* pBBox = m_pFontDict->GetArrayFor("FontBBox");
   if (pBBox) {
-    m_FontBBox.left =
-        static_cast<int32_t>(pBBox->GetNumberAt(0) * xscale * 1000);
-    m_FontBBox.bottom =
-        static_cast<int32_t>(pBBox->GetNumberAt(1) * yscale * 1000);
-    m_FontBBox.right =
-        static_cast<int32_t>(pBBox->GetNumberAt(2) * xscale * 1000);
-    m_FontBBox.top =
-        static_cast<int32_t>(pBBox->GetNumberAt(3) * yscale * 1000);
+    CFX_FloatRect box(
+        pBBox->GetNumberAt(0) * xscale, pBBox->GetNumberAt(1) * yscale,
+        pBBox->GetNumberAt(2) * xscale, pBBox->GetNumberAt(3) * yscale);
+    CPDF_Type3Char::TextUnitRectToGlyphUnitRect(&box);
+    m_FontBBox = box.ToFxRect();
   }
 
   static constexpr size_t kCharLimit = FX_ArraySize(m_CharWidthL);
@@ -73,7 +70,8 @@ bool CPDF_Type3Font::Load() {
       count = std::min(count, kCharLimit - StartChar);
       for (size_t i = 0; i < count; i++) {
         m_CharWidthL[StartChar + i] =
-            FXSYS_round(pWidthArray->GetNumberAt(i) * xscale * 1000);
+            FXSYS_round(CPDF_Type3Char::TextUnitToGlyphUnit(
+                pWidthArray->GetNumberAt(i) * xscale));
       }
     }
   }
