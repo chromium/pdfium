@@ -27,16 +27,14 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
 int32_t XFA_MapRotation(int32_t nRotation);
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode);
-void XFA_GetPlainTextFromRichText(CFX_XMLNode* pXMLNode,
-                                  WideString& wsPlainText);
 bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
     const RetainPtr<CFX_SeekableStreamProxy>& pStream,
-    const char* pChecksum = nullptr,
-    bool bSaveXML = false);
+    const char* pChecksum,
+    bool bSaveXML);
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,

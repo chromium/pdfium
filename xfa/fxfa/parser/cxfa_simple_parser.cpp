@@ -292,6 +292,48 @@ void ConvertXMLToPlainText(CFX_XMLElement* pRootXMLNode, WideString& wsOutput) {
   }
 }
 
+WideString GetPlainTextFromRichText(CFX_XMLNode* pXMLNode) {
+  if (!pXMLNode)
+    return L"";
+
+  WideString wsPlainText;
+  switch (pXMLNode->GetType()) {
+    case FX_XMLNODE_Element: {
+      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
+      WideString wsTag = pXMLElement->GetLocalTagName();
+      uint32_t uTag = FX_HashCode_GetW(wsTag.AsStringView(), true);
+      if (uTag == 0x0001f714) {
+        wsPlainText += L"\n";
+      } else if (uTag == 0x00000070) {
+        if (!wsPlainText.IsEmpty()) {
+          wsPlainText += L"\n";
+        }
+      } else if (uTag == 0xa48ac63) {
+        if (!wsPlainText.IsEmpty() &&
+            wsPlainText[wsPlainText.GetLength() - 1] != '\n') {
+          wsPlainText += L"\n";
+        }
+      }
+      break;
+    }
+    case FX_XMLNODE_Text:
+    case FX_XMLNODE_CharData: {
+      WideString wsContent = static_cast<CFX_XMLText*>(pXMLNode)->GetText();
+      wsPlainText += wsContent;
+      break;
+    }
+    default:
+      break;
+  }
+  for (CFX_XMLNode* pChildXML = pXMLNode->GetNodeItem(CFX_XMLNode::FirstChild);
+       pChildXML;
+       pChildXML = pChildXML->GetNodeItem(CFX_XMLNode::NextSibling)) {
+    wsPlainText += GetPlainTextFromRichText(pChildXML);
+  }
+
+  return wsPlainText;
+}
+
 }  // namespace
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
@@ -396,8 +438,7 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
           WideString wsNodeStr = child->GetLocalTagName();
           pXFAChild->JSNode()->SetCData(XFA_Attribute::Name, wsNodeStr, false,
                                         false);
-          WideString wsChildValue;
-          XFA_GetPlainTextFromRichText(child, wsChildValue);
+          WideString wsChildValue = GetPlainTextFromRichText(child);
           if (!wsChildValue.IsEmpty())
             pXFAChild->JSNode()->SetCData(XFA_Attribute::Value, wsChildValue,
                                           false, false);
@@ -426,36 +467,6 @@ CXFA_Node* CXFA_SimpleParser::GetRootNode() const {
 
 CFX_XMLDoc* CXFA_SimpleParser::GetXMLDoc() const {
   return m_pXMLDoc.get();
-}
-
-bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
-                                                const WideString& wsQualifier,
-                                                WideString* wsNamespaceURI) {
-  if (!pNode)
-    return false;
-
-  CFX_XMLNode* pFakeRoot = pNode->GetNodeItem(CFX_XMLNode::Root);
-  WideString wsNSAttribute;
-  bool bRet = false;
-  if (wsQualifier.IsEmpty()) {
-    wsNSAttribute = L"xmlns";
-    bRet = true;
-  } else {
-    wsNSAttribute = L"xmlns:" + wsQualifier;
-  }
-  for (CFX_XMLNode* pParent = pNode; pParent != pFakeRoot;
-       pParent = pParent->GetNodeItem(CFX_XMLNode::Parent)) {
-    if (pParent->GetType() != FX_XMLNODE_Element)
-      continue;
-
-    auto* pElement = static_cast<CFX_XMLElement*>(pParent);
-    if (pElement->HasAttribute(wsNSAttribute.c_str())) {
-      *wsNamespaceURI = pElement->GetString(wsNSAttribute.c_str());
-      return true;
-    }
-  }
-  wsNamespaceURI->clear();
-  return bRet;
 }
 
 CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
@@ -958,8 +969,8 @@ void CXFA_SimpleParser::ParseContentNode(CXFA_Node* pXFANode,
         break;
 
       if (XFA_RecognizeRichText(static_cast<CFX_XMLElement*>(pXMLChild)))
-        XFA_GetPlainTextFromRichText(static_cast<CFX_XMLElement*>(pXMLChild),
-                                     wsValue);
+        wsValue +=
+            GetPlainTextFromRichText(static_cast<CFX_XMLElement*>(pXMLChild));
     } else if (element == XFA_Element::Sharpxml) {
       if (eNodeType != FX_XMLNODE_Element)
         break;
@@ -1139,16 +1150,15 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
     if (eNodeType == FX_XMLNODE_Instruction)
       continue;
 
-    WideString wsText;
     if (eNodeType == FX_XMLNODE_Text || eNodeType == FX_XMLNODE_CharData) {
-      wsText = static_cast<CFX_XMLText*>(pXMLChild)->GetText();
+      WideString wsText = static_cast<CFX_XMLText*>(pXMLChild)->GetText();
       if (!pXMLCurValueNode)
         pXMLCurValueNode = pXMLChild;
 
       wsCurValueTextBuf << wsText;
     } else if (XFA_RecognizeRichText(static_cast<CFX_XMLElement*>(pXMLChild))) {
-      XFA_GetPlainTextFromRichText(static_cast<CFX_XMLElement*>(pXMLChild),
-                                   wsText);
+      WideString wsText =
+          GetPlainTextFromRichText(static_cast<CFX_XMLElement*>(pXMLChild));
       if (!pXMLCurValueNode)
         pXMLCurValueNode = pXMLChild;
 
