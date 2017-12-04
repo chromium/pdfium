@@ -42,6 +42,9 @@ class CFX_ImageTransformer {
   void CalcMask(const CalcData& cdata);
   void CalcAlpha(const CalcData& cdata);
   void CalcMono(const CalcData& cdata, FXDIB_Format format);
+  void CalcColorBilinear(const CalcData& cdata, FXDIB_Format format, int Bpp);
+  void CalcColorBicubic(const CalcData& cdata, FXDIB_Format format, int Bpp);
+  void CalcColorDownSample(const CalcData& cdata, FXDIB_Format format, int Bpp);
 
   bool IsBilinear() const {
     return !(m_Flags & FXDIB_DOWNSAMPLE) && !IsBiCubic();
