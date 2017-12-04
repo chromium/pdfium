@@ -31,9 +31,9 @@ class CXFA_DocumentParser {
   CXFA_Document* GetDocument() const;
 
  private:
-  CXFA_SimpleParser m_nodeParser;
-  CXFA_FFNotify* m_pNotify;
+  CXFA_FFNotify* const m_pNotify;
   std::unique_ptr<CXFA_Document> m_pDocument;
+  CXFA_SimpleParser m_nodeParser;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_

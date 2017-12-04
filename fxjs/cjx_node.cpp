@@ -705,7 +705,7 @@ void CJX_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
   if (iLength >= 3)
     bOverwrite = !!pArguments->GetInt32(2);
 
-  auto pParser = pdfium::MakeUnique<CXFA_SimpleParser>(GetDocument(), false);
+  auto pParser = pdfium::MakeUnique<CXFA_SimpleParser>(GetDocument());
   if (!pParser)
     return;
 

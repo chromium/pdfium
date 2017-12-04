@@ -299,18 +299,15 @@ bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
                                  L"http://www.w3.org/1999/xhtml";
 }
 
-CXFA_SimpleParser::CXFA_SimpleParser(CXFA_Document* pFactory,
-                                     bool bDocumentParser)
-    : m_pXMLParser(nullptr),
-      m_pFactory(pFactory),
-      m_pRootNode(nullptr),
-      m_ePacketID(XFA_PacketType::User),
-      m_bParseStarted(false),
-      m_bDocumentParser(bDocumentParser) {}
+CXFA_SimpleParser::CXFA_SimpleParser() : m_bDocumentParser(true) {}
+
+CXFA_SimpleParser::CXFA_SimpleParser(CXFA_Document* pFactory)
+    : m_pFactory(pFactory), m_bDocumentParser(false) {}
 
 CXFA_SimpleParser::~CXFA_SimpleParser() {}
 
 void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
+  ASSERT(m_bDocumentParser);
   m_pFactory = pFactory;
 }
 
@@ -348,6 +345,7 @@ int32_t CXFA_SimpleParser::DoParse() {
     return iRet / 2;
 
   m_pRootNode = ParseAsXDPPacket(GetDocumentNode(m_pXMLDoc.get()), m_ePacketID);
+  m_pXMLParser.Release();
   m_pXMLDoc->CloseXML();
   m_pStream.Reset();
 

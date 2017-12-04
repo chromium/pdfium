@@ -22,7 +22,8 @@ class CFX_SeekableStreamProxy;
 
 class CXFA_SimpleParser {
  public:
-  CXFA_SimpleParser(CXFA_Document* pFactory, bool bDocumentParser);
+  CXFA_SimpleParser();
+  explicit CXFA_SimpleParser(CXFA_Document* pFactory);
   ~CXFA_SimpleParser();
 
   int32_t StartParse(const RetainPtr<IFX_SeekableStream>& pStream,
@@ -34,6 +35,7 @@ class CXFA_SimpleParser {
   CFX_XMLDoc* GetXMLDoc() const;
   void CloseParser();
 
+  // Called later for the ctor with no parameters.
   void SetFactory(CXFA_Document* pFactory);
 
  private:
@@ -71,15 +73,16 @@ class CXFA_SimpleParser {
                         CFX_XMLInstruction* pXMLInstruction,
                         XFA_PacketType ePacketID);
 
-  CFX_XMLParser* m_pXMLParser;
+  UnownedPtr<CFX_XMLParser> m_pXMLParser;  // Owned by |m_pXMLDoc|
   std::unique_ptr<CFX_XMLDoc> m_pXMLDoc;
   RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   RetainPtr<IFX_SeekableStream> m_pFileRead;
-  CXFA_Document* m_pFactory;
-  CXFA_Node* m_pRootNode;
-  XFA_PacketType m_ePacketID;
-  bool m_bParseStarted;
-  bool m_bDocumentParser;
+  UnownedPtr<CXFA_Document> m_pFactory;
+  // TODO(dsinclair): Figure out who owns this.
+  CXFA_Node* m_pRootNode = nullptr;
+  XFA_PacketType m_ePacketID = XFA_PacketType::User;
+  bool m_bParseStarted = false;
+  const bool m_bDocumentParser;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
