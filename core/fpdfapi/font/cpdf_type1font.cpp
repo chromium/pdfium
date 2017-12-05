@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/font/cpdf_type1font.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_freetype.h"
@@ -28,16 +30,12 @@ const GlyphNameMap g_GlyphNameSubsts[] = {{"ff", "uniFB00"},
                                           {"fi", "uniFB01"},
                                           {"fl", "uniFB02"}};
 
-int compareString(const void* key, const void* element) {
-  return FXSYS_stricmp(static_cast<const char*>(key),
-                       static_cast<const GlyphNameMap*>(element)->m_pStrAdobe);
-}
-
 const char* GlyphNameRemap(const char* pStrAdobe) {
-  const GlyphNameMap* found = static_cast<const GlyphNameMap*>(
-      bsearch(pStrAdobe, g_GlyphNameSubsts, FX_ArraySize(g_GlyphNameSubsts),
-              sizeof(GlyphNameMap), compareString));
-  return found ? found->m_pStrUnicode : nullptr;
+  for (const auto& element : g_GlyphNameSubsts) {
+    if (!FXSYS_stricmp(element.m_pStrAdobe, pStrAdobe))
+      return element.m_pStrUnicode;
+  }
+  return nullptr;
 }
 
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
