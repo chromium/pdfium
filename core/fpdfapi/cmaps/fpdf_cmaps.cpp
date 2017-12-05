@@ -6,42 +6,11 @@
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
-
-extern "C" {
-
-static int compareWord(const void* p1, const void* p2) {
-  return (*(uint16_t*)p1) - (*(uint16_t*)p2);
-}
-
-static int compareWordRange(const void* key, const void* element) {
-  if (*(uint16_t*)key < *(uint16_t*)element)
-    return -1;
-  if (*(uint16_t*)key > ((uint16_t*)element)[1])
-    return 1;
-  return 0;
-}
-
-static int compareDWordRange(const void* p1, const void* p2) {
-  uint32_t key = *(uint32_t*)p1;
-  uint16_t hiword = (uint16_t)(key >> 16);
-  const auto* element = reinterpret_cast<const FXCMAP_DWordCIDMap*>(p2);
-  if (hiword < element->m_HiWord)
-    return -1;
-  if (hiword > element->m_HiWord)
-    return 1;
-
-  uint16_t loword = (uint16_t)key;
-  if (loword < element->m_LoWordLow)
-    return -1;
-  if (loword > element->m_LoWordHigh)
-    return 1;
-  return 0;
-}
-
-};  // extern "C"
 
 namespace {
 
@@ -69,15 +38,23 @@ const FXCMAP_CMap* FPDFAPI_FindEmbeddedCMap(const ByteString& bsName,
 
 uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
   ASSERT(pMap);
+  const uint16_t loword = static_cast<uint16_t>(charcode);
   if (charcode >> 16) {
     while (pMap) {
       if (pMap->m_pDWordMap) {
-        auto* found = static_cast<FXCMAP_DWordCIDMap*>(
-            bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount,
-                    sizeof(FXCMAP_DWordCIDMap), compareDWordRange));
-        if (found) {
-          return found->m_CID + static_cast<uint16_t>(charcode) -
-                 found->m_LoWordLow;
+        const FXCMAP_DWordCIDMap* begin = pMap->m_pDWordMap;
+        const auto* end = begin + pMap->m_DWordCount;
+        const auto* found = std::lower_bound(
+            begin, end, charcode,
+            [](const FXCMAP_DWordCIDMap& element, uint32_t charcode) {
+              uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
+              if (element.m_HiWord != hiword)
+                return element.m_HiWord < hiword;
+              return element.m_LoWordHigh < static_cast<uint16_t>(charcode);
+            });
+        if (found != end && loword >= found->m_LoWordLow &&
+            loword <= found->m_LoWordHigh) {
+          return found->m_CID + loword - found->m_LoWordLow;
         }
       }
       pMap = FindNextCMap(pMap);
@@ -85,22 +62,37 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
     return 0;
   }
 
-  uint16_t code = (uint16_t)charcode;
   while (pMap) {
     if (!pMap->m_pWordMap)
       return 0;
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {
-      uint16_t* found = static_cast<uint16_t*>(
-          bsearch(&code, pMap->m_pWordMap, pMap->m_WordCount, 4, compareWord));
-      if (found)
-        return found[1];
-
+      struct SingleCmap {
+        uint16_t code;
+        uint16_t cid;
+      };
+      const auto* begin = reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
+      const auto* end = begin + pMap->m_WordCount;
+      const auto* found = std::lower_bound(
+          begin, end, loword, [](const SingleCmap& element, uint16_t code) {
+            return element.code < code;
+          });
+      if (found != end && found->code == loword)
+        return found->cid;
     } else {
       ASSERT(pMap->m_WordMapType == FXCMAP_CMap::Range);
-      uint16_t* found = static_cast<uint16_t*>(bsearch(
-          &code, pMap->m_pWordMap, pMap->m_WordCount, 6, compareWordRange));
-      if (found)
-        return found[2] + code - found[0];
+      struct RangeCmap {
+        uint16_t low;
+        uint16_t high;
+        uint16_t cid;
+      };
+      const auto* begin = reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
+      const auto* end = begin + pMap->m_WordCount;
+      const auto* found = std::lower_bound(
+          begin, end, loword, [](const RangeCmap& element, uint16_t code) {
+            return element.high < code;
+          });
+      if (found != end && loword >= found->low && loword <= found->high)
+        return found->cid + loword - found->low;
     }
     pMap = FindNextCMap(pMap);
   }
