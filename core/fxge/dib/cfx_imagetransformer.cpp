@@ -6,11 +6,13 @@
 
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
+#include <cmath>
 #include <memory>
 #include <utility>
 
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -164,11 +166,17 @@ class CPDF_FixedMatrix {
         f(FXSYS_round(src.f * kBase)) {}
 
   void Transform(int x, int y, int* x1, int* y1) const {
-    *x1 = (a * x + c * y + e + kBase / 2) / kBase;
-    *y1 = (b * x + d * y + f + kBase / 2) / kBase;
+    std::pair<float, float> val = TransformInternal(x, y);
+    *x1 = pdfium::base::saturated_cast<int>(val.first / kBase);
+    *y1 = pdfium::base::saturated_cast<int>(val.second / kBase);
   }
 
  protected:
+  std::pair<float, float> TransformInternal(float x, float y) const {
+    return std::make_pair(a * x + c * y + e + kBase / 2,
+                          b * x + d * y + f + kBase / 2);
+  }
+
   const int a;
   const int b;
   const int c;
@@ -182,30 +190,16 @@ class CFX_BilinearMatrix : public CPDF_FixedMatrix {
   explicit CFX_BilinearMatrix(const CFX_Matrix& src) : CPDF_FixedMatrix(src) {}
 
   void Transform(int x, int y, int* x1, int* y1, int* res_x, int* res_y) const {
-    pdfium::base::CheckedNumeric<int> val = a;
-    pdfium::base::CheckedNumeric<int> val2 = c;
-    val *= x;
-    val2 *= y;
-    val += val2 + e + (kBase / 2);
-    *x1 = val.ValueOrDefault(0);
+    std::pair<float, float> val = TransformInternal(x, y);
+    *x1 = pdfium::base::saturated_cast<int>(val.first / kBase);
+    *y1 = pdfium::base::saturated_cast<int>(val.second / kBase);
 
-    val = b;
-    val2 = d;
-    val *= x;
-    val2 *= y;
-    val += val2 + f + (kBase / 2);
-    *y1 = val.ValueOrDefault(0);
-
-    *res_x = *x1 % kBase;
-    *res_y = *y1 % kBase;
-
+    *res_x = static_cast<int>(fmodf(val.first, kBase));
+    *res_y = static_cast<int>(fmodf(val.second, kBase));
     if (*res_x < 0 && *res_x > -kBase)
       *res_x = kBase + *res_x;
     if (*res_y < 0 && *res_x > -kBase)
       *res_y = kBase + *res_y;
-
-    *x1 /= kBase;
-    *y1 /= kBase;
   }
 };
 
