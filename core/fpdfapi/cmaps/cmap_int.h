@@ -18,7 +18,7 @@ struct FXCMAP_DWordCIDMap {
 };
 
 struct FXCMAP_CMap {
-  enum MapType : uint8_t { None, Single, Range };
+  enum MapType : uint8_t { Single, Range };
 
   const char* m_Name;
   const uint16_t* m_pWordMap;
@@ -26,7 +26,6 @@ struct FXCMAP_CMap {
   uint16_t m_WordCount;
   uint16_t m_DWordCount;
   MapType m_WordMapType;
-  MapType m_DWordMapType;  // TODO(thestig): Remove.
   int8_t m_UseOffset;
 };
 
