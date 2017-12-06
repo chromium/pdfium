@@ -1262,6 +1262,8 @@ static_library("fxjs") {
       "fxjs/cjs_timerobj.h",
       "fxjs/cjs_util.cpp",
       "fxjs/cjs_util.h",
+      "fxjs/cjs_v8.cpp",
+      "fxjs/cjs_v8.h",
       "fxjs/cjs_zoomtype.cpp",
       "fxjs/cjs_zoomtype.h",
       "fxjs/fxjs_v8.cpp",

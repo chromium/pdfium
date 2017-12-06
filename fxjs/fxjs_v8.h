@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "fxjs/cjs_v8.h"
 
 #ifdef PDF_ENABLE_XFA
 // Header for CFXJSE_RuntimeData. FXJS_V8 doesn't interpret this class,
@@ -127,10 +128,10 @@ bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
 // Get the global isolate's ref count.
 size_t FXJS_GlobalIsolateRefCount();
 
-class CFXJS_Engine {
+class CFXJS_Engine : public CJS_V8 {
  public:
   explicit CFXJS_Engine(v8::Isolate* pIsolate);
-  ~CFXJS_Engine();
+  ~CFXJS_Engine() override;
 
   using Constructor = void (*)(CFXJS_Engine* pEngine,
                                v8::Local<v8::Object> obj);
@@ -138,8 +139,6 @@ class CFXJS_Engine {
 
   static CFXJS_Engine* CurrentEngineFromIsolate(v8::Isolate* pIsolate);
   static int GetObjDefnID(v8::Local<v8::Object> pObj);
-
-  v8::Isolate* GetIsolate() const { return m_isolate; }
 
   // Always returns a valid, newly-created objDefnID.
   int DefineObj(const char* sObjName,
@@ -174,44 +173,9 @@ class CFXJS_Engine {
   // Called after FXJS_InitializeEngine call made.
   int Execute(const WideString& script, FXJSErr* perror);
 
-  v8::Local<v8::Context> NewLocalContext();
-  v8::Local<v8::Context> GetPersistentContext();
   v8::Local<v8::Object> GetThisObj();
 
-  v8::Local<v8::Value> NewNull();
-  v8::Local<v8::Value> NewUndefined();
-  v8::Local<v8::Array> NewArray();
-  v8::Local<v8::Number> NewNumber(int number);
-  v8::Local<v8::Number> NewNumber(double number);
-  v8::Local<v8::Number> NewNumber(float number);
-  v8::Local<v8::Boolean> NewBoolean(bool b);
-  v8::Local<v8::String> NewString(const ByteStringView& str);
-  v8::Local<v8::String> NewString(const WideStringView& str);
-  v8::Local<v8::Date> NewDate(double d);
   v8::Local<v8::Object> NewFxDynamicObj(int nObjDefnID, bool bStatic = false);
-
-  int ToInt32(v8::Local<v8::Value> pValue);
-  bool ToBoolean(v8::Local<v8::Value> pValue);
-  double ToDouble(v8::Local<v8::Value> pValue);
-  WideString ToWideString(v8::Local<v8::Value> pValue);
-  v8::Local<v8::Object> ToObject(v8::Local<v8::Value> pValue);
-  v8::Local<v8::Array> ToArray(v8::Local<v8::Value> pValue);
-
-  // Arrays.
-  unsigned GetArrayLength(v8::Local<v8::Array> pArray);
-  v8::Local<v8::Value> GetArrayElement(v8::Local<v8::Array> pArray,
-                                       unsigned index);
-  unsigned PutArrayElement(v8::Local<v8::Array> pArray,
-                           unsigned index,
-                           v8::Local<v8::Value> pValue);
-
-  // Objects.
-  std::vector<WideString> GetObjectPropertyNames(v8::Local<v8::Object> pObj);
-  v8::Local<v8::Value> GetObjectProperty(v8::Local<v8::Object> pObj,
-                                         const WideString& PropertyName);
-  void PutObjectProperty(v8::Local<v8::Object> pObj,
-                         const WideString& PropertyName,
-                         v8::Local<v8::Value> pValue);
 
   // Native object binding.
   void SetObjectPrivate(v8::Local<v8::Object> pObj, void* p);
@@ -219,21 +183,13 @@ class CFXJS_Engine {
   static void FreeObjectPrivate(void* p);
   static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
 
-  void SetConstArray(const WideString& name, v8::Local<v8::Array> array);
-  v8::Local<v8::Array> GetConstArray(const WideString& name);
-
   void Error(const WideString& message);
 
  protected:
   CFXJS_Engine();
 
-  void SetIsolate(v8::Isolate* pIsolate) { m_isolate = pIsolate; }
-
  private:
-  v8::Isolate* m_isolate;
-  v8::Global<v8::Context> m_V8PersistentContext;
   std::vector<v8::Global<v8::Object>*> m_StaticObjects;
-  std::map<WideString, v8::Global<v8::Array>> m_ConstArrays;
 };
 
 #endif  // FXJS_FXJS_V8_H_
