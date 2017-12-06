@@ -116,8 +116,8 @@ void JSSpecialPropDel(const char* class_name,
       pObj->DelProperty(pRuntime, PropFromV8Prop(property).c_str());
   if (result.HasError()) {
     // TODO(dsinclair): Should this set the pRuntime->Error result?
-    // ByteString cbName;
-    // cbName.Format("%s.%s", class_name, "DelProperty");
+    // ByteString cbName =
+    //     ByteString::Format("%s.%s", class_name, "DelProperty");
   }
 }
 
