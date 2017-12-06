@@ -250,21 +250,20 @@ std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
   return std::make_tuple(false, FXFONT_NORMAL, 0);
 }
 
-bool CheckSupportThirdPartFont(ByteString name, int& PitchFamily) {
-  if (name == "MyriadPro") {
-    PitchFamily &= ~FXFONT_FF_ROMAN;
-    return true;
-  }
-  return false;
+bool CheckSupportThirdPartFont(const ByteString& name, int* PitchFamily) {
+  if (name != "MyriadPro")
+    return false;
+  *PitchFamily &= ~FXFONT_FF_ROMAN;
+  return true;
 }
 
-void UpdatePitchFamily(uint32_t flags, int& PitchFamily) {
+void UpdatePitchFamily(uint32_t flags, int* PitchFamily) {
   if (FontStyleIsSerif(flags))
-    PitchFamily |= FXFONT_FF_ROMAN;
+    *PitchFamily |= FXFONT_FF_ROMAN;
   if (FontStyleIsScript(flags))
-    PitchFamily |= FXFONT_FF_SCRIPT;
+    *PitchFamily |= FXFONT_FF_SCRIPT;
   if (FontStyleIsFixedPitch(flags))
-    PitchFamily |= FXFONT_FF_FIXEDPITCH;
+    *PitchFamily |= FXFONT_FF_FIXEDPITCH;
 }
 
 }  // namespace
@@ -485,7 +484,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
         nStyle |= styleType;
       }
     }
-    UpdatePitchFamily(flags, PitchFamily);
+    UpdatePitchFamily(flags, &PitchFamily);
   }
 
   int old_weight = weight;
@@ -563,7 +562,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
   if (match.IsEmpty() && iBaseFont >= kNumStandardFonts) {
     if (!bCJK) {
-      if (!CheckSupportThirdPartFont(family, PitchFamily)) {
+      if (!CheckSupportThirdPartFont(family, &PitchFamily)) {
         bItalic = italic_angle != 0;
         weight = old_weight;
       }
@@ -707,7 +706,7 @@ FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(uint32_t dwUnicode,
 
   bool bItalic = (flags & FXFONT_ITALIC) != 0;
   int PitchFamily = 0;
-  UpdatePitchFamily(flags, PitchFamily);
+  UpdatePitchFamily(flags, &PitchFamily);
   void* hFont =
       m_pFontInfo->MapFontByUnicode(dwUnicode, weight, bItalic, PitchFamily);
   if (!hFont)
