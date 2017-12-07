@@ -462,7 +462,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
       if (wsNullMsg.IsEmpty()) {
         wsCaptionName = GetValidateCaptionName(bVersionFlag);
         wsNullMsg =
-            WideString::Format(L"%s cannot be blank.", wsCaptionName.c_str());
+            WideString::Format(L"%ls cannot be blank.", wsCaptionName.c_str());
       }
       pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
       return XFA_EVENTERROR_Error;
@@ -474,7 +474,8 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
       if (wsNullMsg.IsEmpty()) {
         wsCaptionName = GetValidateCaptionName(bVersionFlag);
         wsNullMsg = WideString::Format(
-            L"%s cannot be blank. To ignore validations for %s, click Ignore.",
+            L"%ls cannot be blank. To ignore validations for %ls, click "
+            L"Ignore.",
             wsCaptionName.c_str(), wsCaptionName.c_str());
       }
       if (pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Warning,
@@ -512,14 +513,14 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
 WideString CXFA_WidgetAcc::GetValidateMessage(bool bError, bool bVersionFlag) {
   WideString wsCaptionName = GetValidateCaptionName(bVersionFlag);
   if (bVersionFlag)
-    return WideString::Format(L"%s validation failed", wsCaptionName.c_str());
+    return WideString::Format(L"%ls validation failed", wsCaptionName.c_str());
   if (bError) {
-    return WideString::Format(L"The value you entered for %s is invalid.",
+    return WideString::Format(L"The value you entered for %ls is invalid.",
                               wsCaptionName.c_str());
   }
   return WideString::Format(
-      L"The value you entered for %s is invalid. To ignore "
-      L"validations for %s, click Ignore.",
+      L"The value you entered for %ls is invalid. To ignore "
+      L"validations for %ls, click Ignore.",
       wsCaptionName.c_str(), wsCaptionName.c_str());
 }
 

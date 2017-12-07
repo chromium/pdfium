@@ -6,12 +6,14 @@
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_timer_handling_delegate.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class CFWLEditEmbeddertest : public EmbedderTest {
  protected:
   void SetUp() override {
     EmbedderTest::SetUp();
+    SetDelegate(&delegate_);
     CreateAndInitializeFormPDF();
   }
 
@@ -27,10 +29,20 @@ class CFWLEditEmbeddertest : public EmbedderTest {
   }
 
   FPDF_PAGE page() const { return page_; }
+  EmbedderTestTimerHandlingDelegate delegate() const { return delegate_; }
 
  private:
   FPDF_PAGE page_;
+  EmbedderTestTimerHandlingDelegate delegate_;
 };
+
+TEST_F(CFWLEditEmbeddertest, Trivial) {
+  ASSERT_EQ(1u, delegate().GetAlerts().size());
+  auto alert = delegate().GetAlerts()[0];
+  EXPECT_STREQ(L"PDFium", alert.title.c_str());
+  EXPECT_STREQ(L"The value you entered for Text Field is invalid.",
+               alert.message.c_str());
+}
 
 TEST_F(CFWLEditEmbeddertest, LeftClickMouseSelection) {
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
