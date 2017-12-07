@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_wsdlconnection.h"
 
+#include "fxjs/xfa/cjx_wsdlconnection.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {
@@ -34,6 +37,7 @@ CXFA_WsdlConnection::CXFA_WsdlConnection(CXFA_Document* doc,
                 XFA_Element::WsdlConnection,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_WsdlConnection>(this)) {}
 
 CXFA_WsdlConnection::~CXFA_WsdlConnection() {}

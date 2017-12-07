@@ -80,6 +80,8 @@ class CXFA_Node : public CXFA_Object {
   bool HasPropertyFlags(XFA_Element property, uint8_t flags) const;
   uint8_t PropertyOccuranceCount(XFA_Element property) const;
 
+  void SendAttributeChangeMessage(XFA_Attribute eAttribute, bool bScriptModify);
+
   bool HasAttribute(XFA_Attribute attr) const;
   XFA_Attribute GetAttribute(size_t i) const;
   XFA_AttributeType GetAttributeType(XFA_Attribute type) const;
@@ -114,7 +116,27 @@ class CXFA_Node : public CXFA_Object {
   bool IsLayoutGeneratedNode() const {
     return HasFlag(XFA_NodeFlag_LayoutGeneratedNode);
   }
+
+  void SetBindingNodes(std::vector<UnownedPtr<CXFA_Node>> nodes) {
+    binding_nodes_ = std::move(nodes);
+  }
+  std::vector<UnownedPtr<CXFA_Node>>* GetBindingNodes() {
+    return &binding_nodes_;
+  }
+  void SetBindingNode(CXFA_Node* node) {
+    binding_nodes_.clear();
+    if (node)
+      binding_nodes_.emplace_back(node);
+  }
+  CXFA_Node* GetBindingNode() const {
+    if (binding_nodes_.empty())
+      return nullptr;
+    return binding_nodes_[0].Get();
+  }
+  // TODO(dsinclair): This should not be needed. Nodes should get un-bound when
+  // they're deleted instead of us pointing to bad objects.
   void ReleaseBindingNodes();
+
   bool BindsFormItems() const { return HasFlag(XFA_NodeFlag_BindFormItems); }
   bool HasRemovedChildren() const {
     return HasFlag(XFA_NodeFlag_HasRemovedChildren);
@@ -168,7 +190,6 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetNextSameClassSibling(XFA_Element eType) const;
   int32_t GetNodeSameNameIndex() const;
   int32_t GetNodeSameClassIndex() const;
-  void GetSOMExpression(WideString& wsSOMExpression);
   CXFA_Node* GetInstanceMgrOfSubform();
 
   CXFA_Node* GetOccurNode();
@@ -181,6 +202,15 @@ class CXFA_Node : public CXFA_Object {
   pdfium::Optional<XFA_AttributeEnum> GetDefaultEnum(XFA_Attribute attr) const;
 
  protected:
+  CXFA_Node(CXFA_Document* pDoc,
+            XFA_PacketType ePacket,
+            uint32_t validPackets,
+            XFA_ObjectType oType,
+            XFA_Element eType,
+            const PropertyData* properties,
+            const AttributeData* attributes,
+            const WideStringView& elementName,
+            std::unique_ptr<CJX_Object> js_node);
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
             uint32_t validPackets,
@@ -212,6 +242,7 @@ class CXFA_Node : public CXFA_Object {
   uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;
+  std::vector<UnownedPtr<CXFA_Node>> binding_nodes_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_

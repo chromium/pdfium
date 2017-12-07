@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_datamodel.h"
 
+#include "fxjs/xfa/cjx_model.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 constexpr wchar_t kName[] = L"dataModel";
@@ -20,6 +23,7 @@ CXFA_DataModel::CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DataModel,
                 nullptr,
                 nullptr,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Model>(this)) {}
 
 CXFA_DataModel::~CXFA_DataModel() {}

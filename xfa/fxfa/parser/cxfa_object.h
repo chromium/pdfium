@@ -16,12 +16,12 @@
 enum class XFA_ObjectType {
   Object,
   List,
-  NodeList,
   Node,
   NodeC,
   NodeV,
   ModelNode,
   TextNode,
+  TreeList,
   ContainerNode,
   ContentNode,
   VariablesThis
@@ -30,7 +30,7 @@ enum class XFA_ObjectType {
 class CJX_Object;
 class CXFA_Document;
 class CXFA_Node;
-class CXFA_NodeList;
+class CXFA_TreeList;
 
 class CXFA_Object : public CFXJSE_HostObject {
  public:
@@ -49,7 +49,7 @@ class CXFA_Object : public CFXJSE_HostObject {
            m_objectType == XFA_ObjectType::ContentNode ||
            m_objectType == XFA_ObjectType::VariablesThis;
   }
-  bool IsNodeList() const { return m_objectType == XFA_ObjectType::NodeList; }
+  bool IsTreeList() const { return m_objectType == XFA_ObjectType::TreeList; }
   bool IsContentNode() const {
     return m_objectType == XFA_ObjectType::ContentNode;
   }
@@ -63,10 +63,10 @@ class CXFA_Object : public CFXJSE_HostObject {
   }
 
   CXFA_Node* AsNode();
-  CXFA_NodeList* AsNodeList();
+  CXFA_TreeList* AsTreeList();
 
   const CXFA_Node* AsNode() const;
-  const CXFA_NodeList* AsNodeList() const;
+  const CXFA_TreeList* AsTreeList() const;
 
   CJX_Object* JSObject() { return m_pJSObject.get(); }
   const CJX_Object* JSObject() const { return m_pJSObject.get(); }
@@ -74,6 +74,8 @@ class CXFA_Object : public CFXJSE_HostObject {
   XFA_Element GetElementType() const { return m_elementType; }
   WideStringView GetClassName() const { return m_elementName; }
   uint32_t GetClassHashCode() const { return m_elementNameHash; }
+
+  void GetSOMExpression(WideString& wsSOMExpression);
 
  protected:
   CXFA_Object(CXFA_Document* pDocument,

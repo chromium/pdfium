@@ -4,24 +4,32 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cjx_nodelist.h"
+#include "fxjs/xfa/cjx_list.h"
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_nodelist.h"
 
-CJX_NodeList::CJX_NodeList(CXFA_NodeList* list) : CJX_Object(list) {}
+const CJX_MethodSpec CJX_List::MethodSpecs[] = {{"append", append_static},
+                                                {"insert", insert_static},
+                                                {"item", item_static},
+                                                {"remove", remove_static},
+                                                {"", nullptr}};
 
-CJX_NodeList::~CJX_NodeList() {}
-
-CXFA_NodeList* CJX_NodeList::GetXFANodeList() {
-  return static_cast<CXFA_NodeList*>(GetXFAObject());
+CJX_List::CJX_List(CXFA_List* list) : CJX_Object(list) {
+  DefineMethods(MethodSpecs);
 }
 
-void CJX_NodeList::Script_ListClass_Append(CFXJSE_Arguments* pArguments) {
+CJX_List::~CJX_List() {}
+
+CXFA_List* CJX_List::GetXFAList() {
+  return static_cast<CXFA_List*>(GetXFAObject());
+}
+
+void CJX_List::append(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc != 1) {
     ThrowParamCountMismatchException(L"append");
@@ -33,10 +41,10 @@ void CJX_NodeList::Script_ListClass_Append(CFXJSE_Arguments* pArguments) {
     ThrowArgumentMismatchException();
     return;
   }
-  GetXFANodeList()->Append(pNode);
+  GetXFAList()->Append(pNode);
 }
 
-void CJX_NodeList::Script_ListClass_Insert(CFXJSE_Arguments* pArguments) {
+void CJX_List::insert(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc != 2) {
     ThrowParamCountMismatchException(L"insert");
@@ -49,10 +57,10 @@ void CJX_NodeList::Script_ListClass_Insert(CFXJSE_Arguments* pArguments) {
     ThrowArgumentMismatchException();
     return;
   }
-  GetXFANodeList()->Insert(pNewNode, pBeforeNode);
+  GetXFAList()->Insert(pNewNode, pBeforeNode);
 }
 
-void CJX_NodeList::Script_ListClass_Remove(CFXJSE_Arguments* pArguments) {
+void CJX_List::remove(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc != 1) {
     ThrowParamCountMismatchException(L"remove");
@@ -64,10 +72,10 @@ void CJX_NodeList::Script_ListClass_Remove(CFXJSE_Arguments* pArguments) {
     ThrowArgumentMismatchException();
     return;
   }
-  GetXFANodeList()->Remove(pNode);
+  GetXFAList()->Remove(pNode);
 }
 
-void CJX_NodeList::Script_ListClass_Item(CFXJSE_Arguments* pArguments) {
+void CJX_List::item(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc != 1) {
     ThrowParamCountMismatchException(L"item");
@@ -75,39 +83,21 @@ void CJX_NodeList::Script_ListClass_Item(CFXJSE_Arguments* pArguments) {
   }
 
   int32_t iIndex = pArguments->GetInt32(0);
-  if (iIndex < 0 || iIndex >= GetXFANodeList()->GetLength()) {
+  if (iIndex < 0 || iIndex >= GetXFAList()->GetLength()) {
     ThrowIndexOutOfBoundsException();
     return;
   }
   pArguments->GetReturnValue()->Assign(
       GetDocument()->GetScriptContext()->GetJSValueFromMap(
-          GetXFANodeList()->Item(iIndex)));
+          GetXFAList()->Item(iIndex)));
 }
 
-void CJX_NodeList::Script_TreelistClass_NamedItem(
-    CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc != 1) {
-    ThrowParamCountMismatchException(L"namedItem");
-    return;
-  }
-
-  ByteString szName = pArguments->GetUTF8String(0);
-  CXFA_Node* pNode = GetXFANodeList()->NamedItem(
-      WideString::FromUTF8(szName.AsStringView()).AsStringView());
-  if (!pNode)
-    return;
-
-  pArguments->GetReturnValue()->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
-}
-
-void CJX_NodeList::Script_ListClass_Length(CFXJSE_Value* pValue,
-                                           bool bSetting,
-                                           XFA_Attribute eAttribute) {
+void CJX_List::length(CFXJSE_Value* pValue,
+                      bool bSetting,
+                      XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(GetXFANodeList()->GetLength());
+  pValue->SetInteger(GetXFAList()->GetLength());
 }

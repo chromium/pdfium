@@ -4,15 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_DATAWINDOW_H_
-#define XFA_FXFA_PARSER_CXFA_DATAWINDOW_H_
+#include "fxjs/xfa/cjx_textnode.h"
 
+#include "fxjs/cfxjse_arguments.h"
+#include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_DataWindow : public CXFA_Node {
- public:
-  CXFA_DataWindow(CXFA_Document* doc, XFA_PacketType packet);
-  ~CXFA_DataWindow() override;
-};
+CJX_TextNode::CJX_TextNode(CXFA_Node* node) : CJX_Node(node) {}
 
-#endif  // XFA_FXFA_PARSER_CXFA_DATAWINDOW_H_
+CJX_TextNode::~CJX_TextNode() {}

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_delta.h"
 
+#include "fxjs/xfa/cjx_delta.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 constexpr wchar_t kName[] = L"delta";
@@ -20,6 +23,7 @@ CXFA_Delta::CXFA_Delta(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Delta,
                 nullptr,
                 nullptr,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Delta>(this)) {}
 
 CXFA_Delta::~CXFA_Delta() {}

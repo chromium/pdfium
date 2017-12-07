@@ -7,10 +7,10 @@
 #ifndef FXJS_CJX_DATAWINDOW_H_
 #define FXJS_CJX_DATAWINDOW_H_
 
+#include "fxjs/CJX_Define.h"
 #include "fxjs/cjx_object.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CFXJSE_Arguments;
 class CFXJSE_Value;
 class CScript_DataWindow;
 
@@ -19,10 +19,6 @@ class CJX_DataWindow : public CJX_Object {
   explicit CJX_DataWindow(CScript_DataWindow* window);
   ~CJX_DataWindow() override;
 
-  void MoveCurrentRecord(CFXJSE_Arguments* pArguments);
-  void Record(CFXJSE_Arguments* pArguments);
-  void GotoRecord(CFXJSE_Arguments* pArguments);
-  void IsRecordGroup(CFXJSE_Arguments* pArguments);
   void RecordsBefore(CFXJSE_Value* pValue,
                      bool bSetting,
                      XFA_Attribute eAttribute);
@@ -33,6 +29,14 @@ class CJX_DataWindow : public CJX_Object {
                     bool bSetting,
                     XFA_Attribute eAttribute);
   void IsDefined(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+
+  JS_METHOD(gotoRecord, CJX_DataWindow);
+  JS_METHOD(isRecordGroup, CJX_DataWindow);
+  JS_METHOD(moveCurrentRecord, CJX_DataWindow);
+  JS_METHOD(record, CJX_DataWindow);
+
+ private:
+  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJX_DATAWINDOW_H_

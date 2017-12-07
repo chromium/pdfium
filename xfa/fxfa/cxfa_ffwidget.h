@@ -19,6 +19,7 @@ class CXFA_FFPageView;
 class CXFA_FFDocView;
 class CXFA_FFDoc;
 class CXFA_FFApp;
+class CXFA_Graphics;
 enum class FWL_WidgetHit;
 
 inline float XFA_UnitPx2Pt(float fPx, float fDpi) {

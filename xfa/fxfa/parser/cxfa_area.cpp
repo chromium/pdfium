@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_area.h"
 
+#include "fxjs/xfa/cjx_container.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Desc, 1, 0},
@@ -37,6 +40,7 @@ CXFA_Area::CXFA_Area(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Area,
           kPropertyData,
           kAttributeData,
-          kName) {}
+          kName,
+          pdfium::MakeUnique<CJX_Container>(this)) {}
 
 CXFA_Area::~CXFA_Area() {}

@@ -19,6 +19,7 @@
 
 #define XFA_RESOLVENODE_TagName 0x0002
 
+class CXFA_List;
 class CFXJSE_ResolveProcessor;
 
 class CFXJSE_Engine {
@@ -62,7 +63,7 @@ class CFXJSE_Engine {
                       uint32_t dwStyles,
                       CXFA_Node* bindNode);
   CFXJSE_Value* GetJSValueFromMap(CXFA_Object* pObject);
-  void AddToCacheList(std::unique_ptr<CXFA_NodeList> pList);
+  void AddToCacheList(std::unique_ptr<CXFA_List> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
   v8::Isolate* GetRuntime() const { return m_pIsolate; }
 
@@ -108,8 +109,8 @@ class CFXJSE_Engine {
       m_mapVariableToContext;
   CXFA_EventParam m_eventParam;
   std::vector<CXFA_Node*> m_upObjectArray;
-  // CacheList holds the NodeList items so we can clean them up when we're done.
-  std::vector<std::unique_ptr<CXFA_NodeList>> m_CacheList;
+  // CacheList holds the List items so we can clean them up when we're done.
+  std::vector<std::unique_ptr<CXFA_List>> m_CacheList;
   std::vector<CXFA_Node*>* m_pScriptNodeArray;
   std::unique_ptr<CFXJSE_ResolveProcessor> m_ResolveProcessor;
   std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;

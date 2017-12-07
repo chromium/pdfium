@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_oid.h"
 
+#include "fxjs/xfa/cjx_textnode.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -27,6 +30,7 @@ CXFA_Oid::CXFA_Oid(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Oid,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_TextNode>(this)) {}
 
 CXFA_Oid::~CXFA_Oid() {}

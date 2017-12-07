@@ -7,16 +7,16 @@
 #ifndef XFA_FXFA_PARSER_CXFA_ATTACHNODELIST_H_
 #define XFA_FXFA_PARSER_CXFA_ATTACHNODELIST_H_
 
-#include "xfa/fxfa/parser/cxfa_nodelist.h"
+#include "xfa/fxfa/parser/cxfa_treelist.h"
 
 class CXFA_Document;
 class CXFA_Node;
 
-class CXFA_AttachNodeList : public CXFA_NodeList {
+class CXFA_AttachNodeList : public CXFA_TreeList {
  public:
   CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
 
-  // From CXFA_NodeList.
+  // From CXFA_TreeList.
   int32_t GetLength() override;
   bool Append(CXFA_Node* pNode) override;
   bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;

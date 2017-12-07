@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_subform.h"
 
+#include "fxjs/xfa/cjx_subform.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {
@@ -68,6 +71,7 @@ CXFA_Subform::CXFA_Subform(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Subform,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Subform>(this)) {}
 
 CXFA_Subform::~CXFA_Subform() {}

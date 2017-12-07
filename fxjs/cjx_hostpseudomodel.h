@@ -7,10 +7,10 @@
 #ifndef FXJS_CJX_HOSTPSEUDOMODEL_H_
 #define FXJS_CJX_HOSTPSEUDOMODEL_H_
 
+#include "fxjs/CJX_Define.h"
 #include "fxjs/cjx_object.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CFXJSE_Arguments;
 class CFXJSE_Value;
 class CScript_HostPseudoModel;
 
@@ -36,27 +36,29 @@ class CJX_HostPseudoModel : public CJX_Object {
   void Variation(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void Version(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
   void Name(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void GotoURL(CFXJSE_Arguments* pArguments);
-  void OpenList(CFXJSE_Arguments* pArguments);
-  void Response(CFXJSE_Arguments* pArguments);
-  void DocumentInBatch(CFXJSE_Arguments* pArguments);
-  void ResetData(CFXJSE_Arguments* pArguments);
-  void Beep(CFXJSE_Arguments* pArguments);
-  void SetFocus(CFXJSE_Arguments* pArguments);
-  void GetFocus(CFXJSE_Arguments* pArguments);
-  void MessageBox(CFXJSE_Arguments* pArguments);
-  void DocumentCountInBatch(CFXJSE_Arguments* pArguments);
-  void Print(CFXJSE_Arguments* pArguments);
-  void ImportData(CFXJSE_Arguments* pArguments);
-  void ExportData(CFXJSE_Arguments* pArguments);
-  void PageUp(CFXJSE_Arguments* pArguments);
-  void PageDown(CFXJSE_Arguments* pArguments);
-  void CurrentDateTime(CFXJSE_Arguments* pArguments);
+
+  JS_METHOD(beep, CJX_HostPseudoModel);
+  JS_METHOD(documentCountInBatch, CJX_HostPseudoModel);
+  JS_METHOD(documentInBatch, CJX_HostPseudoModel);
+  JS_METHOD(exportData, CJX_HostPseudoModel);
+  JS_METHOD(getFocus, CJX_HostPseudoModel);
+  JS_METHOD(gotoURL, CJX_HostPseudoModel);
+  JS_METHOD(importData, CJX_HostPseudoModel);
+  JS_METHOD(messageBox, CJX_HostPseudoModel);
+  JS_METHOD(openList, CJX_HostPseudoModel);
+  JS_METHOD(pageDown, CJX_HostPseudoModel);
+  JS_METHOD(pageUp, CJX_HostPseudoModel);
+  JS_METHOD(print, CJX_HostPseudoModel);
+  JS_METHOD(resetData, CJX_HostPseudoModel);
+  JS_METHOD(response, CJX_HostPseudoModel);
+  JS_METHOD(setFocus, CJX_HostPseudoModel);
 
  private:
   bool ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
                           int32_t iArgIndex,
                           WideString& wsValue);
+
+  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJX_HOSTPSEUDOMODEL_H_

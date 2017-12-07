@@ -17,9 +17,6 @@ extern const int32_t g_iXFAEnumCount;
 extern const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[];
 extern const int32_t g_iScriptIndexCount;
 
-extern const XFA_METHODINFO g_SomMethodData[];
-extern const int32_t g_iSomMethodCount;
-
 extern const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[];
 extern const int32_t g_iSomAttributeCount;
 

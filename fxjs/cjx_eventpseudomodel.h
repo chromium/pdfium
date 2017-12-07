@@ -7,9 +7,9 @@
 #ifndef FXJS_CJX_EVENTPSEUDOMODEL_H_
 #define FXJS_CJX_EVENTPSEUDOMODEL_H_
 
+#include "fxjs/CJX_Define.h"
 #include "fxjs/cjx_object.h"
 
-class CFXJSE_Arguments;
 class CFXJSE_Value;
 class CScript_EventPseudoModel;
 
@@ -63,11 +63,13 @@ class CJX_EventPseudoModel : public CJX_Object {
                        XFA_Attribute eAttribute);
   void Target(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
 
-  void Emit(CFXJSE_Arguments* pArguments);
-  void Reset(CFXJSE_Arguments* pArguments);
+  JS_METHOD(emit, CJX_EventPseudoModel);
+  JS_METHOD(reset, CJX_EventPseudoModel);
 
  private:
   void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, bool bSetting);
+
+  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJX_EVENTPSEUDOMODEL_H_

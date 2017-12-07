@@ -831,7 +831,7 @@ enum class XFA_Element : int32_t {
   CompressObjectStream,
   DataValue,
   AccessibleContent,
-  NodeList,
+  TreeList,
   IncludeXDPContent,
   XmlConnection,
   ValidateApprovalSignatures,
@@ -939,8 +939,6 @@ enum class XFA_AttributeType : uint8_t {
 };
 
 struct XFA_SCRIPTHIERARCHY {
-  uint16_t wMethodStart;
-  uint16_t wMethodCount;
   uint16_t wAttributeStart;
   uint16_t wAttributeCount;
   int16_t wParentIndex;

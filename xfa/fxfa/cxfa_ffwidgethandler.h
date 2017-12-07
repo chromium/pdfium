@@ -14,6 +14,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_FFDocView;
+class CXFA_Graphics;
 enum class FWL_WidgetHit;
 
 class CXFA_FFWidgetHandler {

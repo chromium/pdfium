@@ -7,12 +7,24 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LIST_H_
 #define XFA_FXFA_PARSER_CXFA_LIST_H_
 
-#include "xfa/fxfa/parser/cxfa_node.h"
+#include <memory>
 
-class CXFA_List : public CXFA_Node {
+#include "xfa/fxfa/parser/cxfa_object.h"
+
+class CXFA_Document;
+
+class CXFA_List : public CXFA_Object {
  public:
-  CXFA_List(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_List() override;
+
+  virtual int32_t GetLength() = 0;
+  virtual bool Append(CXFA_Node* pNode) = 0;
+  virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
+  virtual bool Remove(CXFA_Node* pNode) = 0;
+  virtual CXFA_Node* Item(int32_t iIndex) = 0;
+
+ protected:
+  CXFA_List(CXFA_Document* doc, std::unique_ptr<CJX_Object> js_obj);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LIST_H_

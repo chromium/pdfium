@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_text.h"
 
+#include "fxjs/xfa/cjx_content.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -30,6 +33,7 @@ CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Text,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Content>(this)) {}
 
 CXFA_Text::~CXFA_Text() {}

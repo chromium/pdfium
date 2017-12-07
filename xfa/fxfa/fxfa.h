@@ -13,19 +13,10 @@
 #include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CFGAS_GEFont;
-class CXFA_Graphics;
-class CPDF_Document;
 class CXFA_FFPageView;
-class CXFA_Node;
-class CXFA_NodeList;
 class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
 class IFX_SeekableReadStream;
-class IXFA_AppProvider;
-class IXFA_DocEnvironment;
-class IXFA_WidgetAccIterator;
-class IXFA_WidgetIterator;
 
 #define XFA_MBICON_Error 0
 #define XFA_MBICON_Warning 1

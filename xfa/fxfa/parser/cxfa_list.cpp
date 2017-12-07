@@ -6,20 +6,22 @@
 
 #include "xfa/fxfa/parser/cxfa_list.h"
 
-namespace {
+#include <utility>
 
-constexpr wchar_t kName[] = L"list";
+#include "core/fxcrt/fx_extension.h"
+#include "fxjs/cfxjse_engine.h"
+#include "fxjs/xfa/cjx_treelist.h"
+#include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
-}  // namespace
-
-CXFA_List::CXFA_List(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(doc,
-                packet,
-                XFA_XDPPACKET_XDP,
-                XFA_ObjectType::List,
-                XFA_Element::List,
-                nullptr,
-                nullptr,
-                kName) {}
+CXFA_List::CXFA_List(CXFA_Document* pDocument, std::unique_ptr<CJX_Object> obj)
+    : CXFA_Object(pDocument,
+                  XFA_ObjectType::List,
+                  XFA_Element::List,
+                  WideStringView(L"list"),
+                  std::move(obj)) {
+  m_pDocument->GetScriptContext()->AddToCacheList(
+      std::unique_ptr<CXFA_List>(this));
+}
 
 CXFA_List::~CXFA_List() {}

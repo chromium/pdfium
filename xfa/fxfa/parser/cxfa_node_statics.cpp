@@ -72,7 +72,6 @@
 #include "xfa/fxfa/parser/cxfa_datagroup.h"
 #include "xfa/fxfa/parser/cxfa_datamodel.h"
 #include "xfa/fxfa/parser/cxfa_datavalue.h"
-#include "xfa/fxfa/parser/cxfa_datawindow.h"
 #include "xfa/fxfa/parser/cxfa_date.h"
 #include "xfa/fxfa/parser/cxfa_datepattern.h"
 #include "xfa/fxfa/parser/cxfa_datepatterns.h"
@@ -115,7 +114,6 @@
 #include "xfa/fxfa/parser/cxfa_era.h"
 #include "xfa/fxfa/parser/cxfa_eranames.h"
 #include "xfa/fxfa/parser/cxfa_event.h"
-#include "xfa/fxfa/parser/cxfa_eventpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_exclgroup.h"
 #include "xfa/fxfa/parser/cxfa_exclude.h"
 #include "xfa/fxfa/parser/cxfa_excludens.h"
@@ -135,7 +133,6 @@
 #include "xfa/fxfa/parser/cxfa_formfieldfilling.h"
 #include "xfa/fxfa/parser/cxfa_groupparent.h"
 #include "xfa/fxfa/parser/cxfa_handler.h"
-#include "xfa/fxfa/parser/cxfa_hostpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_hyphenation.h"
 #include "xfa/fxfa/parser/cxfa_ifempty.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
@@ -154,17 +151,14 @@
 #include "xfa/fxfa/parser/cxfa_keyusage.h"
 #include "xfa/fxfa/parser/cxfa_labelprinter.h"
 #include "xfa/fxfa/parser/cxfa_layout.h"
-#include "xfa/fxfa/parser/cxfa_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_level.h"
 #include "xfa/fxfa/parser/cxfa_line.h"
 #include "xfa/fxfa/parser/cxfa_linear.h"
 #include "xfa/fxfa/parser/cxfa_linearized.h"
-#include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_locale.h"
 #include "xfa/fxfa/parser/cxfa_localeset.h"
 #include "xfa/fxfa/parser/cxfa_lockdocument.h"
 #include "xfa/fxfa/parser/cxfa_log.h"
-#include "xfa/fxfa/parser/cxfa_logpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_manifest.h"
 #include "xfa/fxfa/parser/cxfa_map.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
@@ -253,7 +247,6 @@
 #include "xfa/fxfa/parser/cxfa_sharpxml.h"
 #include "xfa/fxfa/parser/cxfa_signature.h"
 #include "xfa/fxfa/parser/cxfa_signatureproperties.h"
-#include "xfa/fxfa/parser/cxfa_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_signdata.h"
 #include "xfa/fxfa/parser/cxfa_signing.h"
 #include "xfa/fxfa/parser/cxfa_silentprint.h"
@@ -391,7 +384,6 @@ struct ElementNameInfo {
     {0x23e27b84 /* typefaces */, XFA_Element::Typefaces},
     {0x23f4aa75 /* subjectDNs */, XFA_Element::SubjectDNs},
     {0x240d5e8e /* issuers */, XFA_Element::Issuers},
-    {0x2457a033 /* signaturePseudoModel */, XFA_Element::SignaturePseudoModel},
     {0x24a52f8a /* wsdlConnection */, XFA_Element::WsdlConnection},
     {0x254ebd07 /* debug */, XFA_Element::Debug},
     {0x2655c66a /* delta */, XFA_Element::Delta},
@@ -425,7 +417,6 @@ struct ElementNameInfo {
     {0x3e1c91c5 /* adjustData */, XFA_Element::AdjustData},
     {0x3e7a9408 /* autoSave */, XFA_Element::AutoSave},
     {0x3ecead94 /* contentArea */, XFA_Element::ContentArea},
-    {0x3ef334e3 /* eventPseudoModel */, XFA_Element::EventPseudoModel},
     {0x3fadaec0 /* wsdlAddress */, XFA_Element::WsdlAddress},
     {0x40623b5b /* solid */, XFA_Element::Solid},
     {0x41f0bd76 /* dateTimeSymbols */, XFA_Element::DateTimeSymbols},
@@ -457,7 +448,6 @@ struct ElementNameInfo {
     {0x5436d198 /* window */, XFA_Element::Window},
     {0x5473b6dc /* localeSet */, XFA_Element::LocaleSet},
     {0x56ae179e /* handler */, XFA_Element::Handler},
-    {0x5700bd5f /* hostPseudoModel */, XFA_Element::HostPseudoModel},
     {0x570ce835 /* presence */, XFA_Element::Presence},
     {0x5779d65f /* record */, XFA_Element::Record},
     {0x59c8f27d /* embed */, XFA_Element::Embed},
@@ -476,7 +466,6 @@ struct ElementNameInfo {
     {0x67fe7334 /* traversal */, XFA_Element::Traversal},
     {0x6894589c /* silentPrint */, XFA_Element::SilentPrint},
     {0x68a16bbd /* webClient */, XFA_Element::WebClient},
-    {0x69f115df /* layoutPseudoModel */, XFA_Element::LayoutPseudoModel},
     {0x6a4bc084 /* producer */, XFA_Element::Producer},
     {0x6a9e04c9 /* corner */, XFA_Element::Corner},
     {0x6ccd7274 /* msgId */, XFA_Element::MsgId},
@@ -506,7 +495,6 @@ struct ElementNameInfo {
     {0x803d5bbc /* acrobat */, XFA_Element::Acrobat},
     {0x821d6569 /* validationMessaging */, XFA_Element::ValidationMessaging},
     {0x830e688f /* signing */, XFA_Element::Signing},
-    {0x83a550d2 /* dataWindow */, XFA_Element::DataWindow},
     {0x83dab9f5 /* script */, XFA_Element::Script},
     {0x8411ebcd /* addViewerPreferences */, XFA_Element::AddViewerPreferences},
     {0x8777642e /* alwaysEmbed */, XFA_Element::AlwaysEmbed},
@@ -588,7 +576,6 @@ struct ElementNameInfo {
     {0xd1227e6f /* trace */, XFA_Element::Trace},
     {0xd1532876 /* float */, XFA_Element::Float},
     {0xd17a6c30 /* renderPolicy */, XFA_Element::RenderPolicy},
-    {0xd4bf6823 /* logPseudoModel */, XFA_Element::LogPseudoModel},
     {0xd58aa962 /* destination */, XFA_Element::Destination},
     {0xd6e27f1d /* value */, XFA_Element::Value},
     {0xd7a14462 /* bookend */, XFA_Element::Bookend},
@@ -629,7 +616,6 @@ struct ElementNameInfo {
     {0xf1433e88 /* lockDocument */, XFA_Element::LockDocument},
     {0xf54eb997 /* breakAfter */, XFA_Element::BreakAfter},
     {0xf616da28 /* line */, XFA_Element::Line},
-    {0xf616f3dc /* list */, XFA_Element::List},
     {0xf7055fb1 /* source */, XFA_Element::Source},
     {0xf7eebe1c /* occur */, XFA_Element::Occur},
     {0xf8d10d97 /* pickTrayByPDFSize */, XFA_Element::PickTrayByPDFSize},
@@ -923,7 +909,6 @@ XFA_Attribute CXFA_Node::NameToAttribute(const WideStringView& name) {
 std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
                                              XFA_Element element,
                                              XFA_PacketType packet) {
-  ASSERT(element != XFA_Element::NodeList);
   std::unique_ptr<CXFA_Node> node;
   switch (element) {
     case XFA_Element::Ps:
@@ -1121,9 +1106,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     case XFA_Element::Issuers:
       node = pdfium::MakeUnique<CXFA_Issuers>(doc, packet);
       break;
-    case XFA_Element::SignaturePseudoModel:
-      node = pdfium::MakeUnique<CXFA_SignaturePseudoModel>(doc, packet);
-      break;
     case XFA_Element::WsdlConnection:
       node = pdfium::MakeUnique<CXFA_WsdlConnection>(doc, packet);
       break;
@@ -1223,9 +1205,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     case XFA_Element::ContentArea:
       node = pdfium::MakeUnique<CXFA_ContentArea>(doc, packet);
       break;
-    case XFA_Element::EventPseudoModel:
-      node = pdfium::MakeUnique<CXFA_EventPseudoModel>(doc, packet);
-      break;
     case XFA_Element::WsdlAddress:
       node = pdfium::MakeUnique<CXFA_WsdlAddress>(doc, packet);
       break;
@@ -1319,9 +1298,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     case XFA_Element::Handler:
       node = pdfium::MakeUnique<CXFA_Handler>(doc, packet);
       break;
-    case XFA_Element::HostPseudoModel:
-      node = pdfium::MakeUnique<CXFA_HostPseudoModel>(doc, packet);
-      break;
     case XFA_Element::Presence:
       node = pdfium::MakeUnique<CXFA_Presence>(doc, packet);
       break;
@@ -1375,9 +1351,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
       break;
     case XFA_Element::WebClient:
       node = pdfium::MakeUnique<CXFA_WebClient>(doc, packet);
-      break;
-    case XFA_Element::LayoutPseudoModel:
-      node = pdfium::MakeUnique<CXFA_LayoutPseudoModel>(doc, packet);
       break;
     case XFA_Element::Producer:
       node = pdfium::MakeUnique<CXFA_Producer>(doc, packet);
@@ -1465,9 +1438,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
       break;
     case XFA_Element::Signing:
       node = pdfium::MakeUnique<CXFA_Signing>(doc, packet);
-      break;
-    case XFA_Element::DataWindow:
-      node = pdfium::MakeUnique<CXFA_DataWindow>(doc, packet);
       break;
     case XFA_Element::Script:
       node = pdfium::MakeUnique<CXFA_Script>(doc, packet);
@@ -1706,9 +1676,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     case XFA_Element::RenderPolicy:
       node = pdfium::MakeUnique<CXFA_RenderPolicy>(doc, packet);
       break;
-    case XFA_Element::LogPseudoModel:
-      node = pdfium::MakeUnique<CXFA_LogPseudoModel>(doc, packet);
-      break;
     case XFA_Element::Destination:
       node = pdfium::MakeUnique<CXFA_Destination>(doc, packet);
       break;
@@ -1826,9 +1793,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     case XFA_Element::Line:
       node = pdfium::MakeUnique<CXFA_Line>(doc, packet);
       break;
-    case XFA_Element::List:
-      node = pdfium::MakeUnique<CXFA_List>(doc, packet);
-      break;
     case XFA_Element::Source:
       node = pdfium::MakeUnique<CXFA_Source>(doc, packet);
       break;
@@ -1859,8 +1823,7 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     case XFA_Element::Items:
       node = pdfium::MakeUnique<CXFA_Items>(doc, packet);
       break;
-    case XFA_Element::Unknown:
-    case XFA_Element::NodeList:
+    default:
       NOTREACHED();
       return nullptr;
   }
@@ -2500,8 +2463,6 @@ WideString CXFA_Node::ElementToName(XFA_Element attr) {
       return L"subjectDNs";
     case XFA_Element::Issuers:
       return L"issuers";
-    case XFA_Element::SignaturePseudoModel:
-      return L"signaturePseudoModel";
     case XFA_Element::WsdlConnection:
       return L"wsdlConnection";
     case XFA_Element::Debug:
@@ -2568,8 +2529,6 @@ WideString CXFA_Node::ElementToName(XFA_Element attr) {
       return L"autoSave";
     case XFA_Element::ContentArea:
       return L"contentArea";
-    case XFA_Element::EventPseudoModel:
-      return L"eventPseudoModel";
     case XFA_Element::WsdlAddress:
       return L"wsdlAddress";
     case XFA_Element::Solid:
@@ -2632,8 +2591,6 @@ WideString CXFA_Node::ElementToName(XFA_Element attr) {
       return L"localeSet";
     case XFA_Element::Handler:
       return L"handler";
-    case XFA_Element::HostPseudoModel:
-      return L"hostPseudoModel";
     case XFA_Element::Presence:
       return L"presence";
     case XFA_Element::Record:
@@ -2670,8 +2627,6 @@ WideString CXFA_Node::ElementToName(XFA_Element attr) {
       return L"silentPrint";
     case XFA_Element::WebClient:
       return L"webClient";
-    case XFA_Element::LayoutPseudoModel:
-      return L"layoutPseudoModel";
     case XFA_Element::Producer:
       return L"producer";
     case XFA_Element::Corner:
@@ -2730,8 +2685,6 @@ WideString CXFA_Node::ElementToName(XFA_Element attr) {
       return L"validationMessaging";
     case XFA_Element::Signing:
       return L"signing";
-    case XFA_Element::DataWindow:
-      return L"dataWindow";
     case XFA_Element::Script:
       return L"script";
     case XFA_Element::AddViewerPreferences:
@@ -2890,8 +2843,6 @@ WideString CXFA_Node::ElementToName(XFA_Element attr) {
       return L"float";
     case XFA_Element::RenderPolicy:
       return L"renderPolicy";
-    case XFA_Element::LogPseudoModel:
-      return L"logPseudoModel";
     case XFA_Element::Destination:
       return L"destination";
     case XFA_Element::Value:
@@ -2970,8 +2921,6 @@ WideString CXFA_Node::ElementToName(XFA_Element attr) {
       return L"breakAfter";
     case XFA_Element::Line:
       return L"line";
-    case XFA_Element::List:
-      return L"list";
     case XFA_Element::Source:
       return L"source";
     case XFA_Element::Occur:

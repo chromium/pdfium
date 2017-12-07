@@ -11,7 +11,7 @@
 #include "third_party/base/stl_util.h"
 
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
-    : CXFA_NodeList(pDocument) {}
+    : CXFA_TreeList(pDocument) {}
 
 CXFA_ArrayNodeList::~CXFA_ArrayNodeList() {}
 

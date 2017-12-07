@@ -161,12 +161,9 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      XFA_Element eType,
                      const PropertyData* properties,
                      const AttributeData* attributes,
-                     const WideStringView& elementName)
-    : CXFA_Object(pDoc,
-                  oType,
-                  eType,
-                  elementName,
-                  pdfium::MakeUnique<CJX_Node>(this)),
+                     const WideStringView& elementName,
+                     std::unique_ptr<CJX_Object> js_node)
+    : CXFA_Object(pDoc, oType, eType, elementName, std::move(js_node)),
       m_Properties(properties),
       m_Attributes(attributes),
       m_ValidPackets(validPackets),
@@ -181,6 +178,24 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
       m_pAuxNode(nullptr) {
   ASSERT(m_pDocument);
 }
+
+CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
+                     XFA_PacketType ePacket,
+                     uint32_t validPackets,
+                     XFA_ObjectType oType,
+                     XFA_Element eType,
+                     const PropertyData* properties,
+                     const AttributeData* attributes,
+                     const WideStringView& elementName)
+    : CXFA_Node(pDoc,
+                ePacket,
+                validPackets,
+                oType,
+                eType,
+                properties,
+                attributes,
+                elementName,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Node::~CXFA_Node() {
   ASSERT(!m_pParent);
@@ -230,7 +245,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
     }
   }
   pClone->SetFlag(XFA_NodeFlag_Initialized, true);
-  pClone->JSNode()->SetBindingNode(nullptr);
+  pClone->SetBindingNode(nullptr);
   return pClone;
 }
 
@@ -472,33 +487,32 @@ void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
 
 CXFA_Node* CXFA_Node::GetBindData() {
   ASSERT(GetPacketType() == XFA_PacketType::Form);
-  return JSNode()->GetBindingNode();
+  return GetBindingNode();
 }
 
 std::vector<UnownedPtr<CXFA_Node>>* CXFA_Node::GetBindItems() {
-  return JSNode()->GetBindingNodes();
+  return GetBindingNodes();
 }
 
 int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
 
   if (BindsFormItems()) {
-    std::vector<UnownedPtr<CXFA_Node>>* nodes = JSNode()->GetBindingNodes();
     bool found = false;
-    for (auto& v : *nodes) {
+    for (auto& v : binding_nodes_) {
       if (v.Get() == pFormNode) {
         found = true;
         break;
       }
     }
     if (!found)
-      nodes->emplace_back(pFormNode);
-    return pdfium::CollectionSize<int32_t>(*nodes);
+      binding_nodes_.emplace_back(pFormNode);
+    return pdfium::CollectionSize<int32_t>(binding_nodes_);
   }
 
-  CXFA_Node* pOldFormItem = JSNode()->GetBindingNode();
+  CXFA_Node* pOldFormItem = GetBindingNode();
   if (!pOldFormItem) {
-    JSNode()->SetBindingNode(pFormNode);
+    SetBindingNode(pFormNode);
     return 1;
   }
   if (pOldFormItem == pFormNode)
@@ -507,7 +521,7 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   std::vector<UnownedPtr<CXFA_Node>> items;
   items.emplace_back(pOldFormItem);
   items.emplace_back(pFormNode);
-  JSNode()->SetBindingNodes(std::move(items));
+  SetBindingNodes(std::move(items));
 
   m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
   return 2;
@@ -515,33 +529,30 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
 
 int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (BindsFormItems()) {
-    std::vector<UnownedPtr<CXFA_Node>>* nodes = JSNode()->GetBindingNodes();
-
-    auto it = std::find_if(nodes->begin(), nodes->end(),
+    auto it = std::find_if(binding_nodes_.begin(), binding_nodes_.end(),
                            [&pFormNode](const UnownedPtr<CXFA_Node>& node) {
                              return node.Get() == pFormNode;
                            });
-    if (it != nodes->end())
-      nodes->erase(it);
+    if (it != binding_nodes_.end())
+      binding_nodes_.erase(it);
 
-    if (nodes->size() == 1) {
+    if (binding_nodes_.size() == 1) {
       m_uNodeFlags &= ~XFA_NodeFlag_BindFormItems;
       return 1;
     }
-    return pdfium::CollectionSize<int32_t>(*nodes);
+    return pdfium::CollectionSize<int32_t>(binding_nodes_);
   }
 
-  CXFA_Node* pOldFormItem = JSNode()->GetBindingNode();
+  CXFA_Node* pOldFormItem = GetBindingNode();
   if (pOldFormItem != pFormNode)
     return pOldFormItem ? 1 : 0;
 
-  JSNode()->SetBindingNode(nullptr);
+  SetBindingNode(nullptr);
   return 0;
 }
 
 bool CXFA_Node::HasBindItem() {
-  return GetPacketType() == XFA_PacketType::Datasets &&
-         JSNode()->GetBindingNode();
+  return GetPacketType() == XFA_PacketType::Datasets && GetBindingNode();
 }
 
 CXFA_WidgetData* CXFA_Node::GetWidgetData() {
@@ -1023,14 +1034,6 @@ int32_t CXFA_Node::GetNodeSameClassIndex() const {
   return pScriptContext->GetIndexByClassName(const_cast<CXFA_Node*>(this));
 }
 
-void CXFA_Node::GetSOMExpression(WideString& wsSOMExpression) {
-  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
-  if (!pScriptContext) {
-    return;
-  }
-  pScriptContext->GetSomExpression(this, wsSOMExpression);
-}
-
 CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
   CXFA_Node* pInstanceMgr = nullptr;
   if (m_ePacket == XFA_PacketType::Form) {
@@ -1086,9 +1089,10 @@ void CXFA_Node::ClearFlag(uint32_t dwFlag) {
 }
 
 void CXFA_Node::ReleaseBindingNodes() {
-  // Clear any binding nodes set on our JS node as we don't necessarily destruct
-  // in an order that makes sense.
-  JSNode()->ReleaseBindingNodes();
+  // Clear any binding nodes as we don't necessarily destruct in an order that
+  // makes sense.
+  for (auto& node : binding_nodes_)
+    node.Release();
 
   for (CXFA_Node* pNode = m_pChild; pNode; pNode = pNode->m_pNext)
     pNode->ReleaseBindingNodes();
@@ -1281,7 +1285,7 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
         pDataParent->RemoveChild(pDataNode, true);
       }
     }
-    pFormNode->JSNode()->SetBindingNode(nullptr);
+    pFormNode->SetBindingNode(nullptr);
   }
 }
 
@@ -1366,4 +1370,159 @@ pdfium::Optional<void*> CXFA_Node::GetDefaultValue(
   if (data->type == eType)
     return {data->default_value};
   return {};
+}
+
+void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
+                                           bool bScriptModify) {
+  CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
+  if (!pLayoutPro)
+    return;
+
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
+  if (!pNotify)
+    return;
+
+  if (GetPacketType() != XFA_PacketType::Form) {
+    pNotify->OnValueChanged(this, eAttribute, this, this);
+    return;
+  }
+
+  bool bNeedFindContainer = false;
+  switch (GetElementType()) {
+    case XFA_Element::Caption:
+      bNeedFindContainer = true;
+      pNotify->OnValueChanged(this, eAttribute, this,
+                              GetNodeItem(XFA_NODEITEM_Parent));
+      break;
+    case XFA_Element::Font:
+    case XFA_Element::Para: {
+      bNeedFindContainer = true;
+      CXFA_Node* pParentNode = GetNodeItem(XFA_NODEITEM_Parent);
+      if (pParentNode->GetElementType() == XFA_Element::Caption) {
+        pNotify->OnValueChanged(this, eAttribute, pParentNode,
+                                pParentNode->GetNodeItem(XFA_NODEITEM_Parent));
+      } else {
+        pNotify->OnValueChanged(this, eAttribute, this, pParentNode);
+      }
+      break;
+    }
+    case XFA_Element::Margin: {
+      bNeedFindContainer = true;
+      CXFA_Node* pParentNode = GetNodeItem(XFA_NODEITEM_Parent);
+      XFA_Element eParentType = pParentNode->GetElementType();
+      if (pParentNode->IsContainerNode()) {
+        pNotify->OnValueChanged(this, eAttribute, this, pParentNode);
+      } else if (eParentType == XFA_Element::Caption) {
+        pNotify->OnValueChanged(this, eAttribute, pParentNode,
+                                pParentNode->GetNodeItem(XFA_NODEITEM_Parent));
+      } else {
+        CXFA_Node* pNode = pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
+        if (pNode && pNode->GetElementType() == XFA_Element::Ui) {
+          pNotify->OnValueChanged(this, eAttribute, pNode,
+                                  pNode->GetNodeItem(XFA_NODEITEM_Parent));
+        }
+      }
+      break;
+    }
+    case XFA_Element::Comb: {
+      CXFA_Node* pEditNode = GetNodeItem(XFA_NODEITEM_Parent);
+      XFA_Element eUIType = pEditNode->GetElementType();
+      if (pEditNode && (eUIType == XFA_Element::DateTimeEdit ||
+                        eUIType == XFA_Element::NumericEdit ||
+                        eUIType == XFA_Element::TextEdit)) {
+        CXFA_Node* pUINode = pEditNode->GetNodeItem(XFA_NODEITEM_Parent);
+        if (pUINode) {
+          pNotify->OnValueChanged(this, eAttribute, pUINode,
+                                  pUINode->GetNodeItem(XFA_NODEITEM_Parent));
+        }
+      }
+      break;
+    }
+    case XFA_Element::Button:
+    case XFA_Element::Barcode:
+    case XFA_Element::ChoiceList:
+    case XFA_Element::DateTimeEdit:
+    case XFA_Element::NumericEdit:
+    case XFA_Element::PasswordEdit:
+    case XFA_Element::TextEdit: {
+      CXFA_Node* pUINode = GetNodeItem(XFA_NODEITEM_Parent);
+      if (pUINode) {
+        pNotify->OnValueChanged(this, eAttribute, pUINode,
+                                pUINode->GetNodeItem(XFA_NODEITEM_Parent));
+      }
+      break;
+    }
+    case XFA_Element::CheckButton: {
+      bNeedFindContainer = true;
+      CXFA_Node* pUINode = GetNodeItem(XFA_NODEITEM_Parent);
+      if (pUINode) {
+        pNotify->OnValueChanged(this, eAttribute, pUINode,
+                                pUINode->GetNodeItem(XFA_NODEITEM_Parent));
+      }
+      break;
+    }
+    case XFA_Element::Keep:
+    case XFA_Element::Bookend:
+    case XFA_Element::Break:
+    case XFA_Element::BreakAfter:
+    case XFA_Element::BreakBefore:
+    case XFA_Element::Overflow:
+      bNeedFindContainer = true;
+      break;
+    case XFA_Element::Area:
+    case XFA_Element::Draw:
+    case XFA_Element::ExclGroup:
+    case XFA_Element::Field:
+    case XFA_Element::Subform:
+    case XFA_Element::SubformSet:
+      pLayoutPro->AddChangedContainer(this);
+      pNotify->OnValueChanged(this, eAttribute, this, this);
+      break;
+    case XFA_Element::Sharptext:
+    case XFA_Element::Sharpxml:
+    case XFA_Element::SharpxHTML: {
+      CXFA_Node* pTextNode = GetNodeItem(XFA_NODEITEM_Parent);
+      if (!pTextNode)
+        return;
+
+      CXFA_Node* pValueNode = pTextNode->GetNodeItem(XFA_NODEITEM_Parent);
+      if (!pValueNode)
+        return;
+
+      XFA_Element eType = pValueNode->GetElementType();
+      if (eType == XFA_Element::Value) {
+        bNeedFindContainer = true;
+        CXFA_Node* pNode = pValueNode->GetNodeItem(XFA_NODEITEM_Parent);
+        if (pNode && pNode->IsContainerNode()) {
+          if (bScriptModify)
+            pValueNode = pNode;
+
+          pNotify->OnValueChanged(this, eAttribute, pValueNode, pNode);
+        } else {
+          pNotify->OnValueChanged(this, eAttribute, pNode,
+                                  pNode->GetNodeItem(XFA_NODEITEM_Parent));
+        }
+      } else {
+        if (eType == XFA_Element::Items) {
+          CXFA_Node* pNode = pValueNode->GetNodeItem(XFA_NODEITEM_Parent);
+          if (pNode && pNode->IsContainerNode()) {
+            pNotify->OnValueChanged(this, eAttribute, pValueNode, pNode);
+          }
+        }
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (!bNeedFindContainer)
+    return;
+
+  CXFA_Node* pParent = this;
+  while (pParent && !pParent->IsContainerNode())
+    pParent = pParent->GetNodeItem(XFA_NODEITEM_Parent);
+
+  if (pParent)
+    pLayoutPro->AddChangedContainer(pParent);
 }

@@ -11,6 +11,8 @@
 
 #include "xfa/fxfa/fxfa.h"
 
+class CXFA_Graphics;
+
 class CXFA_RenderContext {
  public:
   CXFA_RenderContext(CXFA_FFPageView* pPageView,

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_manifest.h"
 
+#include "fxjs/xfa/cjx_manifest.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
@@ -31,6 +34,7 @@ CXFA_Manifest::CXFA_Manifest(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Manifest,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Manifest>(this)) {}
 
 CXFA_Manifest::~CXFA_Manifest() {}

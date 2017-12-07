@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_float.h"
 
+#include "fxjs/xfa/cjx_content.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -27,6 +30,7 @@ CXFA_Float::CXFA_Float(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Float,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Content>(this)) {}
 
 CXFA_Float::~CXFA_Float() {}

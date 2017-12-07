@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_instancemanager.h"
 
+#include "fxjs/xfa/cjx_instancemanager.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Occur, 1, 0},
@@ -27,6 +30,7 @@ CXFA_InstanceManager::CXFA_InstanceManager(CXFA_Document* doc,
                 XFA_Element::InstanceManager,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_InstanceManager>(this)) {}
 
 CXFA_InstanceManager::~CXFA_InstanceManager() {}

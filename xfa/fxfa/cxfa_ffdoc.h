@@ -17,6 +17,7 @@
 
 class CFGAS_PDFFontMgr;
 class CFX_ChecksumContext;
+class CPDF_Document;
 class CXFA_FFApp;
 class CXFA_FFNotify;
 class CXFA_FFDocView;

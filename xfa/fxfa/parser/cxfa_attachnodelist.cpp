@@ -10,7 +10,7 @@
 
 CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
                                          CXFA_Node* pAttachNode)
-    : CXFA_NodeList(pDocument) {
+    : CXFA_TreeList(pDocument) {
   m_pAttachNode = pAttachNode;
 }
 

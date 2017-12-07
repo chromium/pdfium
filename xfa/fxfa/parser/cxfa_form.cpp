@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_form.h"
 
+#include "fxjs/xfa/cjx_form.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -24,6 +27,7 @@ CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Form,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Form>(this)) {}
 
 CXFA_Form::~CXFA_Form() {}

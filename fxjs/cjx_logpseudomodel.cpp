@@ -10,17 +10,27 @@
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 
+const CJX_MethodSpec CJX_LogPseudoModel::MethodSpecs[] = {
+    {"message", message_static},
+    {"traceEnabled", traceEnabled_static},
+    {"traceActivate", traceActivate_static},
+    {"traceDeactivate", traceDeactivate_static},
+    {"trace", trace_static},
+    {"", nullptr}};
+
 CJX_LogPseudoModel::CJX_LogPseudoModel(CScript_LogPseudoModel* model)
-    : CJX_Object(model) {}
+    : CJX_Object(model) {
+  DefineMethods(MethodSpecs);
+}
 
 CJX_LogPseudoModel::~CJX_LogPseudoModel() {}
 
-void CJX_LogPseudoModel::Message(CFXJSE_Arguments* pArguments) {}
+void CJX_LogPseudoModel::message(CFXJSE_Arguments* pArguments) {}
 
-void CJX_LogPseudoModel::TraceEnabled(CFXJSE_Arguments* pArguments) {}
+void CJX_LogPseudoModel::traceEnabled(CFXJSE_Arguments* pArguments) {}
 
-void CJX_LogPseudoModel::TraceActivate(CFXJSE_Arguments* pArguments) {}
+void CJX_LogPseudoModel::traceActivate(CFXJSE_Arguments* pArguments) {}
 
-void CJX_LogPseudoModel::TraceDeactivate(CFXJSE_Arguments* pArguments) {}
+void CJX_LogPseudoModel::traceDeactivate(CFXJSE_Arguments* pArguments) {}
 
-void CJX_LogPseudoModel::Trace(CFXJSE_Arguments* pArguments) {}
+void CJX_LogPseudoModel::trace(CFXJSE_Arguments* pArguments) {}

@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "fxjs/CJX_Define.h"
 #include "fxjs/cjx_object.h"
 
 enum XFA_LAYOUTMODEL_HWXY {
@@ -31,25 +32,25 @@ class CJX_LayoutPseudoModel : public CJX_Object {
 
   void Ready(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
 
-  void H(CFXJSE_Arguments* pArguments);
-  void W(CFXJSE_Arguments* pArguments);
-  void X(CFXJSE_Arguments* pArguments);
-  void Y(CFXJSE_Arguments* pArguments);
-  void PageCount(CFXJSE_Arguments* pArguments);
-  void PageSpan(CFXJSE_Arguments* pArguments);
-  void Page(CFXJSE_Arguments* pArguments);
-  void PageContent(CFXJSE_Arguments* pArguments);
-  void AbsPageCount(CFXJSE_Arguments* pArguments);
-  void AbsPageCountInBatch(CFXJSE_Arguments* pArguments);
-  void SheetCountInBatch(CFXJSE_Arguments* pArguments);
-  void Relayout(CFXJSE_Arguments* pArguments);
-  void AbsPageSpan(CFXJSE_Arguments* pArguments);
-  void AbsPageInBatch(CFXJSE_Arguments* pArguments);
-  void SheetInBatch(CFXJSE_Arguments* pArguments);
-  void Sheet(CFXJSE_Arguments* pArguments);
-  void RelayoutPageArea(CFXJSE_Arguments* pArguments);
-  void SheetCount(CFXJSE_Arguments* pArguments);
-  void AbsPage(CFXJSE_Arguments* pArguments);
+  JS_METHOD(absPage, CJX_LayoutPseudoModel);
+  JS_METHOD(absPageCount, CJX_LayoutPseudoModel);
+  JS_METHOD(absPageCountInBatch, CJX_LayoutPseudoModel);
+  JS_METHOD(absPageInBatch, CJX_LayoutPseudoModel);
+  JS_METHOD(absPageSpan, CJX_LayoutPseudoModel);
+  JS_METHOD(h, CJX_LayoutPseudoModel);
+  JS_METHOD(page, CJX_LayoutPseudoModel);
+  JS_METHOD(pageContent, CJX_LayoutPseudoModel);
+  JS_METHOD(pageCount, CJX_LayoutPseudoModel);
+  JS_METHOD(pageSpan, CJX_LayoutPseudoModel);
+  JS_METHOD(relayout, CJX_LayoutPseudoModel);
+  JS_METHOD(relayoutPageArea, CJX_LayoutPseudoModel);
+  JS_METHOD(sheet, CJX_LayoutPseudoModel);
+  JS_METHOD(sheetCount, CJX_LayoutPseudoModel);
+  JS_METHOD(sheetCountInBatch, CJX_LayoutPseudoModel);
+  JS_METHOD(sheetInBatch, CJX_LayoutPseudoModel);
+  JS_METHOD(w, CJX_LayoutPseudoModel);
+  JS_METHOD(x, CJX_LayoutPseudoModel);
+  JS_METHOD(y, CJX_LayoutPseudoModel);
 
  private:
   void NumberedPageCount(CFXJSE_Arguments* pArguments, bool bNumbered);
@@ -59,6 +60,8 @@ class CJX_LayoutPseudoModel : public CJX_Object {
                                       const WideString& wsType,
                                       bool bOnPageArea);
   void PageInternals(CFXJSE_Arguments* pArguments, bool bAbsPage);
+
+  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJX_LAYOUTPSEUDOMODEL_H_

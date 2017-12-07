@@ -42,8 +42,15 @@ void BooleanProperty(CFXJSE_Value* pValue, bool& bValue, bool bSetting) {
 
 }  // namespace
 
+const CJX_MethodSpec CJX_EventPseudoModel::MethodSpecs[] = {
+    {"emit", emit_static},
+    {"reset", reset_static},
+    {"", nullptr}};
+
 CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
-    : CJX_Object(model) {}
+    : CJX_Object(model) {
+  DefineMethods(MethodSpecs);
+}
 
 CJX_EventPseudoModel::~CJX_EventPseudoModel() {}
 
@@ -143,7 +150,7 @@ void CJX_EventPseudoModel::Target(CFXJSE_Value* pValue,
   Property(pValue, XFA_Event::Target, bSetting);
 }
 
-void CJX_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
+void CJX_EventPseudoModel::emit(CFXJSE_Arguments* pArguments) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;
@@ -163,7 +170,7 @@ void CJX_EventPseudoModel::Emit(CFXJSE_Arguments* pArguments) {
   pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
 }
 
-void CJX_EventPseudoModel::Reset(CFXJSE_Arguments* pArguments) {
+void CJX_EventPseudoModel::reset(CFXJSE_Arguments* pArguments) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;

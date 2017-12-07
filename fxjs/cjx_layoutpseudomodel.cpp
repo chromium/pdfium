@@ -24,8 +24,32 @@
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_contentlayoutitem.h"
 
+const CJX_MethodSpec CJX_LayoutPseudoModel::MethodSpecs[] = {
+    {"absPage", absPage_static},
+    {"absPageCount", absPageCount_static},
+    {"absPageCountInBatch", absPageCountInBatch_static},
+    {"absPageInBatch", absPageInBatch_static},
+    {"absPageSpan", absPageSpan_static},
+    {"h", h_static},
+    {"page", page_static},
+    {"pageContent", pageContent_static},
+    {"pageCount", pageCount_static},
+    {"pageSpan", pageSpan_static},
+    {"relayout", relayout_static},
+    {"relayoutPageArea", relayoutPageArea_static},
+    {"sheet", sheet_static},
+    {"sheetCount", sheetCount_static},
+    {"sheetCountInBatch", sheetCountInBatch_static},
+    {"sheetInBatch", sheetInBatch_static},
+    {"w", w_static},
+    {"x", x_static},
+    {"y", y_static},
+    {"", nullptr}};
+
 CJX_LayoutPseudoModel::CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model)
-    : CJX_Object(model) {}
+    : CJX_Object(model) {
+  DefineMethods(MethodSpecs);
+}
 
 CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() {}
 
@@ -122,19 +146,19 @@ void CJX_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
   pValue->SetFloat(fValue);
 }
 
-void CJX_LayoutPseudoModel::H(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::h(CFXJSE_Arguments* pArguments) {
   HWXY(pArguments, XFA_LAYOUTMODEL_H);
 }
 
-void CJX_LayoutPseudoModel::W(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::w(CFXJSE_Arguments* pArguments) {
   HWXY(pArguments, XFA_LAYOUTMODEL_W);
 }
 
-void CJX_LayoutPseudoModel::X(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::x(CFXJSE_Arguments* pArguments) {
   HWXY(pArguments, XFA_LAYOUTMODEL_X);
 }
 
-void CJX_LayoutPseudoModel::Y(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::y(CFXJSE_Arguments* pArguments) {
   HWXY(pArguments, XFA_LAYOUTMODEL_Y);
 }
 
@@ -163,11 +187,11 @@ void CJX_LayoutPseudoModel::NumberedPageCount(CFXJSE_Arguments* pArguments,
   pArguments->GetReturnValue()->SetInteger(iPageCount);
 }
 
-void CJX_LayoutPseudoModel::PageCount(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::pageCount(CFXJSE_Arguments* pArguments) {
   NumberedPageCount(pArguments, true);
 }
 
-void CJX_LayoutPseudoModel::PageSpan(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::pageSpan(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
     ThrowParamCountMismatchException(L"pageSpan");
@@ -197,7 +221,7 @@ void CJX_LayoutPseudoModel::PageSpan(CFXJSE_Arguments* pArguments) {
   pValue->SetInteger(iPageSpan);
 }
 
-void CJX_LayoutPseudoModel::Page(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::page(CFXJSE_Arguments* pArguments) {
   PageInternals(pArguments, false);
 }
 
@@ -335,7 +359,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
   return retArray;
 }
 
-void CJX_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::pageContent(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 3) {
     ThrowParamCountMismatchException(L"pageContent");
@@ -371,19 +395,19 @@ void CJX_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
       GetDocument()->GetScriptContext()->GetJseNormalClass());
 }
 
-void CJX_LayoutPseudoModel::AbsPageCount(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::absPageCount(CFXJSE_Arguments* pArguments) {
   NumberedPageCount(pArguments, false);
 }
 
-void CJX_LayoutPseudoModel::AbsPageCountInBatch(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::absPageCountInBatch(CFXJSE_Arguments* pArguments) {
   pArguments->GetReturnValue()->SetInteger(0);
 }
 
-void CJX_LayoutPseudoModel::SheetCountInBatch(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::sheetCountInBatch(CFXJSE_Arguments* pArguments) {
   pArguments->GetReturnValue()->SetInteger(0);
 }
 
-void CJX_LayoutPseudoModel::Relayout(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::relayout(CFXJSE_Arguments* pArguments) {
   CXFA_Node* pRootNode = GetDocument()->GetRoot();
   CXFA_Node* pFormRoot = pRootNode->GetFirstChildByClass(XFA_Element::Form);
   CXFA_Node* pContentRootNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -394,11 +418,11 @@ void CJX_LayoutPseudoModel::Relayout(CFXJSE_Arguments* pArguments) {
   pLayoutProcessor->SetForceReLayout(true);
 }
 
-void CJX_LayoutPseudoModel::AbsPageSpan(CFXJSE_Arguments* pArguments) {
-  PageSpan(pArguments);
+void CJX_LayoutPseudoModel::absPageSpan(CFXJSE_Arguments* pArguments) {
+  pageSpan(pArguments);
 }
 
-void CJX_LayoutPseudoModel::AbsPageInBatch(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::absPageInBatch(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 1) {
     ThrowParamCountMismatchException(L"absPageInBatch");
     return;
@@ -407,7 +431,7 @@ void CJX_LayoutPseudoModel::AbsPageInBatch(CFXJSE_Arguments* pArguments) {
   pArguments->GetReturnValue()->SetInteger(0);
 }
 
-void CJX_LayoutPseudoModel::SheetInBatch(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::sheetInBatch(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 1) {
     ThrowParamCountMismatchException(L"sheetInBatch");
     return;
@@ -416,17 +440,17 @@ void CJX_LayoutPseudoModel::SheetInBatch(CFXJSE_Arguments* pArguments) {
   pArguments->GetReturnValue()->SetInteger(0);
 }
 
-void CJX_LayoutPseudoModel::Sheet(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::sheet(CFXJSE_Arguments* pArguments) {
   PageInternals(pArguments, true);
 }
 
-void CJX_LayoutPseudoModel::RelayoutPageArea(CFXJSE_Arguments* pArguments) {}
+void CJX_LayoutPseudoModel::relayoutPageArea(CFXJSE_Arguments* pArguments) {}
 
-void CJX_LayoutPseudoModel::SheetCount(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::sheetCount(CFXJSE_Arguments* pArguments) {
   NumberedPageCount(pArguments, false);
 }
 
-void CJX_LayoutPseudoModel::AbsPage(CFXJSE_Arguments* pArguments) {
+void CJX_LayoutPseudoModel::absPage(CFXJSE_Arguments* pArguments) {
   PageInternals(pArguments, true);
 }
 

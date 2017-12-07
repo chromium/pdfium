@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_variables.h"
 
+#include "fxjs/xfa/cjx_container.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -26,6 +29,7 @@ CXFA_Variables::CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Variables,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Container>(this)) {}
 
 CXFA_Variables::~CXFA_Variables() {}

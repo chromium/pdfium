@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_connectionset.h"
 
+#include "fxjs/xfa/cjx_model.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 constexpr wchar_t kName[] = L"connectionSet";
@@ -21,6 +24,7 @@ CXFA_ConnectionSet::CXFA_ConnectionSet(CXFA_Document* doc,
                 XFA_Element::ConnectionSet,
                 nullptr,
                 nullptr,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Model>(this)) {}
 
 CXFA_ConnectionSet::~CXFA_ConnectionSet() {}
