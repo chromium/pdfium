@@ -1330,7 +1330,7 @@ TEST(WideString, FormatPrecision) {
 }
 
 TEST(WideString, FormatOutOfRangeChar) {
-  WideString::Format(L"unsupported char '%c'", 0x00FF00FF);
+  EXPECT_NE(L"", WideString::Format(L"unsupported char '%c'", 0x00FF00FF));
 }
 
 TEST(WideString, Empty) {

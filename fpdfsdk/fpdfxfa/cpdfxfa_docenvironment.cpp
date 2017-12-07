@@ -642,8 +642,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       if (!pFormFillEnv)
         return false;
 
-      WideString ws;
-      ws.FromLocal(IDS_XFA_Validate_Input);
+      WideString ws = WideString::FromLocal(IDS_XFA_Validate_Input);
       ByteString bs = ws.UTF16LE_Encode();
       int len = bs.GetLength();
       pFormFillEnv->Alert((FPDF_WIDESTRING)bs.GetBuffer(len),
@@ -902,8 +901,7 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
 
   WideString csURL = submitData.GetSubmitTarget();
   if (csURL.IsEmpty()) {
-    WideString ws;
-    ws.FromLocal("Submit cancelled.");
+    WideString ws = WideString::FromLocal("Submit cancelled.");
     ByteString bs = ws.UTF16LE_Encode();
     int len = bs.GetLength();
     pFormFillEnv->Alert(reinterpret_cast<FPDF_WIDESTRING>(bs.GetBuffer(len)),
@@ -919,8 +917,7 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
       WideString csContent = submitData.GetSubmitXDPContent();
       csContent.Trim();
 
-      WideString space;
-      space.FromLocal(" ");
+      WideString space = WideString::FromLocal(" ");
       csContent = space + csContent + space;
       FPDF_DWORD flag = 0;
       if (submitData.IsSubmitEmbedPDF())

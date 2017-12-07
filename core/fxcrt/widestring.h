@@ -33,8 +33,9 @@ class WideString {
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-  static WideString Format(const wchar_t* lpszFormat, ...);
-  static WideString FormatV(const wchar_t* lpszFormat, va_list argList);
+  static WideString Format(const wchar_t* lpszFormat, ...) WARN_UNUSED_RESULT;
+  static WideString FormatV(const wchar_t* lpszFormat,
+                            va_list argList) WARN_UNUSED_RESULT;
 
   WideString();
   WideString(const WideString& other);
@@ -58,13 +59,15 @@ class WideString {
 
   ~WideString();
 
-  static WideString FromLocal(const ByteStringView& str);
-  static WideString FromCodePage(const ByteStringView& str, uint16_t codepage);
+  static WideString FromLocal(const ByteStringView& str) WARN_UNUSED_RESULT;
+  static WideString FromCodePage(const ByteStringView& str,
+                                 uint16_t codepage) WARN_UNUSED_RESULT;
 
-  static WideString FromUTF8(const ByteStringView& str);
-  static WideString FromUTF16LE(const unsigned short* str, size_t len);
+  static WideString FromUTF8(const ByteStringView& str) WARN_UNUSED_RESULT;
+  static WideString FromUTF16LE(const unsigned short* str,
+                                size_t len) WARN_UNUSED_RESULT;
 
-  static size_t WStringLength(const unsigned short* str);
+  static size_t WStringLength(const unsigned short* str) WARN_UNUSED_RESULT;
 
   // Explicit conversion to C-style wide string.
   // Note: Any subsequent modification of |this| will invalidate the result.
