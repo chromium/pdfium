@@ -684,53 +684,46 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
       return *intact;
     }
   }
+
   switch (GetElementType()) {
     case XFA_Element::Subform:
       switch (eLayoutType) {
         case XFA_AttributeEnum::Position:
         case XFA_AttributeEnum::Row:
           return XFA_AttributeEnum::ContentArea;
-        case XFA_AttributeEnum::Tb:
-        case XFA_AttributeEnum::Table:
-        case XFA_AttributeEnum::Lr_tb:
-        case XFA_AttributeEnum::Rl_tb:
-          return XFA_AttributeEnum::None;
         default:
-          break;
-      }
-      break;
-    case XFA_Element::Field: {
-      CXFA_Node* pParentNode = GetNodeItem(XFA_NODEITEM_Parent);
-      if (!pParentNode ||
-          pParentNode->GetElementType() == XFA_Element::PageArea)
-        return XFA_AttributeEnum::ContentArea;
-      if (pParentNode->GetIntact() == XFA_AttributeEnum::None) {
-        XFA_AttributeEnum eParLayout =
-            pParentNode->JSNode()
-                ->TryEnum(XFA_Attribute::Layout, true)
-                .value_or(XFA_AttributeEnum::Position);
-        if (eParLayout == XFA_AttributeEnum::Position ||
-            eParLayout == XFA_AttributeEnum::Row ||
-            eParLayout == XFA_AttributeEnum::Table) {
           return XFA_AttributeEnum::None;
-        }
-        XFA_VERSION version = m_pDocument->GetCurVersionMode();
-        if (eParLayout == XFA_AttributeEnum::Tb && version < XFA_VERSION_208) {
-          pdfium::Optional<CXFA_Measurement> measureH =
-              JSNode()->TryMeasure(XFA_Attribute::H, false);
-          if (measureH)
-            return XFA_AttributeEnum::ContentArea;
-        }
+      }
+    case XFA_Element::Field: {
+      CXFA_Node* parent = GetNodeItem(XFA_NODEITEM_Parent);
+      if (!parent || parent->GetElementType() == XFA_Element::PageArea)
+        return XFA_AttributeEnum::ContentArea;
+      if (parent->GetIntact() != XFA_AttributeEnum::None)
+        return XFA_AttributeEnum::ContentArea;
+
+      XFA_AttributeEnum eParLayout = parent->JSNode()
+                                         ->TryEnum(XFA_Attribute::Layout, true)
+                                         .value_or(XFA_AttributeEnum::Position);
+      if (eParLayout == XFA_AttributeEnum::Position ||
+          eParLayout == XFA_AttributeEnum::Row ||
+          eParLayout == XFA_AttributeEnum::Table) {
         return XFA_AttributeEnum::None;
       }
-      return XFA_AttributeEnum::ContentArea;
+
+      XFA_VERSION version = m_pDocument->GetCurVersionMode();
+      if (eParLayout == XFA_AttributeEnum::Tb && version < XFA_VERSION_208) {
+        pdfium::Optional<CXFA_Measurement> measureH =
+            JSNode()->TryMeasure(XFA_Attribute::H, false);
+        if (measureH)
+          return XFA_AttributeEnum::ContentArea;
+      }
+      return XFA_AttributeEnum::None;
     }
     case XFA_Element::Draw:
       return XFA_AttributeEnum::ContentArea;
     default:
-      break;
+      return XFA_AttributeEnum::None;
   }
-  return XFA_AttributeEnum::None;
 }
 
 CXFA_Node* CXFA_Node::GetDataDescriptionNode() {
