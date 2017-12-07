@@ -677,7 +677,7 @@ WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
                                           L"April",   L"May",      L"June",
                                           L"July",    L"August",   L"September",
                                           L"October", L"November", L"December"};
-  return WideString::Format(L"%s, %d", pMonth[iMonth - 1], iYear);
+  return WideString::Format(L"%ls, %d", pMonth[iMonth - 1], iYear);
 }
 
 WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,

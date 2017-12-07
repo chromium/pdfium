@@ -208,7 +208,7 @@ int CJS_Runtime::ExecuteScript(const WideString& script, WideString* info) {
   FXJSErr error = {};
   int nRet = Execute(script, &error);
   if (nRet < 0) {
-    *info = WideString::Format(L"[ Line: %05d { %s } ] : %s", error.linnum - 1,
+    *info = WideString::Format(L"[ Line: %05d { %ls } ] : %s", error.linnum - 1,
                                error.srcline, error.message);
   }
   return nRet;

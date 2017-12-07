@@ -68,7 +68,7 @@ void CFX_XMLDoc::SaveXMLNode(
         pXMLStream->WriteString(ws.AsStringView());
       } else {
         WideString ws =
-            WideString::Format(L"<?%s", pInstruction->GetName().c_str());
+            WideString::Format(L"<?%ls", pInstruction->GetName().c_str());
         pXMLStream->WriteString(ws.AsStringView());
 
         for (auto it : pInstruction->GetAttributes()) {
