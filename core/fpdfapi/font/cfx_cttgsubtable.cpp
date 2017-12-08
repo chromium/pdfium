@@ -243,12 +243,12 @@ CFX_CTTGSUBTable::ParseCoverage(FT_Bytes raw) {
   if (format == 1) {
     auto rec = pdfium::MakeUnique<TCoverageFormat1>();
     ParseCoverageFormat1(raw, rec.get());
-    return rec;
+    return std::move(rec);
   }
   if (format == 2) {
     auto rec = pdfium::MakeUnique<TCoverageFormat2>();
     ParseCoverageFormat2(raw, rec.get());
-    return rec;
+    return std::move(rec);
   }
   return nullptr;
 }

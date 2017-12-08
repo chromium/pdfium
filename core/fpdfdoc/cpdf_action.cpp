@@ -21,7 +21,7 @@ const char* const g_sATypes[] = {
 
 }  // namespace
 
-CPDF_Action::CPDF_Action() {}
+CPDF_Action::CPDF_Action() : CPDF_Action(nullptr) {}
 
 CPDF_Action::CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
