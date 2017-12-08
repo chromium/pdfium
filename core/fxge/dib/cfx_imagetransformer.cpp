@@ -45,7 +45,7 @@ uint8_t bilinear_interpol(const uint8_t* buf,
 }
 
 uint8_t bicubic_interpol(const uint8_t* buf,
-                         int pitch,
+                         uint32_t pitch,
                          const int pos_pixel[],
                          const int u_w[],
                          const int v_w[],

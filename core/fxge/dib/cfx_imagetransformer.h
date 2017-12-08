@@ -64,7 +64,7 @@ class CFX_ImageTransformer {
     const CFX_DIBitmap* bitmap;
     const CFX_Matrix& matrix;
     const uint8_t* buf;
-    int pitch;
+    uint32_t pitch;
   };
 
   void CalcMask(const CalcData& cdata);
