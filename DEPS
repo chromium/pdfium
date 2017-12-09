@@ -24,7 +24,7 @@ vars = {
   'trace_event_revision': '0e9a47d74970bee1bbfc063c47215406f8918699',
   'v8_revision': 'ff3d8321d52d599a7ce168e20ade02e8ef131d0a',
   'yasm_source_revision': 'b98114e18d8b9b84586b10d24353ab8616d4c5fc',
-  'zlib_revision': '718f686437b89038ac83525f4f1b1888aadd9bfc',
+  'zlib_revision': '945bc9fbe26f06ea07308eee946b907735a75519',
 }
 
 deps = {
