@@ -5,7 +5,7 @@ vars = {
   'pdfium_git': 'https://pdfium.googlesource.com',
 
   'android_ndk_revision': '26d93ec07f3ce2ec2cdfeae1b21ee6f12ff868d8',
-  'build_revision': '555b75b182b2e1ad5828a784bf623f3b12d45a0e',
+  'build_revision': '159ee37d274d6721eba19158d20b1f4912804880',
   'buildtools_revision': 'f6d165d9d842ddd29056c127a5f3a3c5d8e0d2e3',
   'catapult_revision': 'd624b3ced2c81d4fb4ea98a8dbb4532272cc1e0a',
   'clang_revision': '1bc4a898d5b266048a7109bdfdc447cef20384b0',
