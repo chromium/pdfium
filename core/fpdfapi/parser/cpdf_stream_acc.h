@@ -44,13 +44,13 @@ class CPDF_StreamAcc : public Retainable {
  private:
   uint8_t* GetDataHelper() const;
 
-  uint8_t* m_pData;
-  uint32_t m_dwSize;
-  bool m_bNewBuf;
+  uint8_t* m_pData = nullptr;
+  uint32_t m_dwSize = 0;
+  bool m_bNewBuf = false;
   ByteString m_ImageDecoder;
-  CPDF_Dictionary* m_pImageParam;
+  CPDF_Dictionary* m_pImageParam = nullptr;
   UnownedPtr<const CPDF_Stream> const m_pStream;
-  uint8_t* m_pSrcData;
+  uint8_t* m_pSrcData = nullptr;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_
