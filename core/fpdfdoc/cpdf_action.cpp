@@ -21,8 +21,6 @@ const char* const g_sATypes[] = {
 
 }  // namespace
 
-CPDF_Action::CPDF_Action() : CPDF_Action(nullptr) {}
-
 CPDF_Action::CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
@@ -128,14 +126,14 @@ size_t CPDF_Action::GetSubActionsCount() const {
 
 CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
-    return CPDF_Action();
+    return CPDF_Action(nullptr);
 
   CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
+  if (CPDF_Array* pArray = ToArray(pNext))
+    return CPDF_Action(pArray->GetDictAt(iIndex));
   if (CPDF_Dictionary* pDict = ToDictionary(pNext)) {
     if (iIndex == 0)
       return CPDF_Action(pDict);
-  } else if (CPDF_Array* pArray = ToArray(pNext)) {
-    return CPDF_Action(pArray->GetDictAt(iIndex));
   }
-  return CPDF_Action();
+  return CPDF_Action(nullptr);
 }

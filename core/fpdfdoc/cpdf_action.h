@@ -37,7 +37,6 @@ class CPDF_Action {
     GoTo3DView
   };
 
-  CPDF_Action();
   explicit CPDF_Action(CPDF_Dictionary* pDict);
   CPDF_Action(const CPDF_Action& that);
   ~CPDF_Action();

@@ -346,7 +346,7 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
   if (eAAT == CPDF_AAction::ButtonUp)
     return GetAction();
 
-  return CPDF_Action();
+  return CPDF_Action(nullptr);
 }
 
 void CPDFSDK_BAAnnot::SetOpenState(bool bOpenState) {

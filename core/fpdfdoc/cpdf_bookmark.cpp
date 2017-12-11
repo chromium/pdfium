@@ -79,5 +79,5 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
 }
 
 CPDF_Action CPDF_Bookmark::GetAction() const {
-  return m_pDict ? CPDF_Action(m_pDict->GetDictFor("A")) : CPDF_Action();
+  return CPDF_Action(m_pDict ? m_pDict->GetDictFor("A") : nullptr);
 }

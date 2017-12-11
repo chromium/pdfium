@@ -243,21 +243,18 @@ int CPDF_FormControl::GetTextPosition() {
 
 CPDF_Action CPDF_FormControl::GetAction() {
   if (!m_pWidgetDict)
-    return CPDF_Action();
+    return CPDF_Action(nullptr);
 
   if (m_pWidgetDict->KeyExist("A"))
     return CPDF_Action(m_pWidgetDict->GetDictFor("A"));
 
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->GetDict(), "A");
-  if (!pObj)
-    return CPDF_Action();
-
-  return CPDF_Action(pObj->GetDict());
+  return CPDF_Action(pObj ? pObj->GetDict() : nullptr);
 }
 
 CPDF_AAction CPDF_FormControl::GetAdditionalAction() {
   if (!m_pWidgetDict)
-    return CPDF_AAction();
+    return CPDF_AAction(nullptr);
 
   if (m_pWidgetDict->KeyExist("AA"))
     return CPDF_AAction(m_pWidgetDict->GetDictFor("AA"));

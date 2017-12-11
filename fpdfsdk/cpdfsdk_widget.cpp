@@ -1030,7 +1030,7 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
       break;
   }
 
-  return CPDF_Action();
+  return CPDF_Action(nullptr);
 }
 
 WideString CPDFSDK_Widget::GetAlternateName() const {

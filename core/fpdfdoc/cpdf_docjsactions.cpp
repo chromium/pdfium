@@ -22,17 +22,13 @@ CPDF_Action CPDF_DocJSActions::GetJSActionAndName(int index,
                                                   WideString* csName) const {
   ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument.Get(), "JavaScript");
-  CPDF_Object* pAction = name_tree.LookupValueAndName(index, csName);
-  return ToDictionary(pAction) ? CPDF_Action(pAction->GetDict())
-                               : CPDF_Action();
+  return CPDF_Action(ToDictionary(name_tree.LookupValueAndName(index, csName)));
 }
 
 CPDF_Action CPDF_DocJSActions::GetJSAction(const WideString& csName) const {
   ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument.Get(), "JavaScript");
-  CPDF_Object* pAction = name_tree.LookupValue(csName);
-  return ToDictionary(pAction) ? CPDF_Action(pAction->GetDict())
-                               : CPDF_Action();
+  return CPDF_Action(ToDictionary(name_tree.LookupValue(csName)));
 }
 
 int CPDF_DocJSActions::FindJSAction(const WideString& csName) const {

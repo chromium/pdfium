@@ -38,7 +38,6 @@ class CPDF_AAction {
     NumberOfActions  // Must be last.
   };
 
-  CPDF_AAction();
   explicit CPDF_AAction(CPDF_Dictionary* pDict);
   CPDF_AAction(const CPDF_AAction& that);
   ~CPDF_AAction();

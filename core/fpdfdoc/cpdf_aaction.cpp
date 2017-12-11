@@ -18,8 +18,6 @@ static_assert(FX_ArraySize(g_sAATypes) == CPDF_AAction::NumberOfActions,
 
 }  // namespace
 
-CPDF_AAction::CPDF_AAction() : CPDF_AAction(nullptr) {}
-
 CPDF_AAction::CPDF_AAction(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
@@ -31,6 +29,6 @@ bool CPDF_AAction::ActionExist(AActionType eType) const {
 }
 
 CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
-  return m_pDict ? CPDF_Action(m_pDict->GetDictFor(g_sAATypes[eType]))
-                 : CPDF_Action();
+  return CPDF_Action(m_pDict ? m_pDict->GetDictFor(g_sAATypes[eType])
+                             : nullptr);
 }
