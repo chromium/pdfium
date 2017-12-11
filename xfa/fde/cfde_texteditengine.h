@@ -23,11 +23,11 @@ struct FDE_TEXTEDITPIECE {
   FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that);
   ~FDE_TEXTEDITPIECE();
 
-  int32_t nStart;
-  int32_t nCount;
-  int32_t nBidiLevel;
+  int32_t nStart = 0;
+  int32_t nCount = 0;
+  int32_t nBidiLevel = 0;
   CFX_RectF rtPiece;
-  uint32_t dwCharStyles;
+  uint32_t dwCharStyles = 0;
 };
 
 inline FDE_TEXTEDITPIECE::FDE_TEXTEDITPIECE() = default;
