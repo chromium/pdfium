@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/parser/cscript_datawindow.h"
 
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cjx_datawindow.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

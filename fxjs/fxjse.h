@@ -13,6 +13,7 @@
 
 class CFXJSE_Arguments;
 class CFXJSE_Value;
+class CJS_Return;
 
 // C++ object which is retrieved from v8 object's slot.
 class CFXJSE_HostObject {
@@ -30,6 +31,9 @@ class CFXJSE_HostObject {
   Type type_;
 };
 
+typedef CJS_Return (*FXJSE_MethodCallback)(
+    const v8::FunctionCallbackInfo<v8::Value>& info,
+    const WideString& functionName);
 typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,
                                    const ByteStringView& szFuncName,
                                    CFXJSE_Arguments& args);
@@ -58,7 +62,7 @@ struct FXJSE_CLASS_DESCRIPTOR {
   FXJSE_PropTypeGetter dynPropTypeGetter;
   FXJSE_PropAccessor dynPropGetter;
   FXJSE_PropAccessor dynPropSetter;
-  FXJSE_FuncCallback dynMethodCall;
+  FXJSE_MethodCallback dynMethodCall;
 };
 
 void FXJSE_ThrowMessage(const ByteStringView& utf8Message);

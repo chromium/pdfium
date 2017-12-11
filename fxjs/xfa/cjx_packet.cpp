@@ -6,8 +6,10 @@
 
 #include "fxjs/xfa/cjx_packet.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_packet.h"
 
 const CJX_MethodSpec CJX_Packet::MethodSpecs[] = {
@@ -22,54 +24,48 @@ CJX_Packet::CJX_Packet(CXFA_Packet* packet) : CJX_Node(packet) {
 
 CJX_Packet::~CJX_Packet() {}
 
-void CJX_Packet::getAttribute(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"getAttribute");
-    return;
-  }
+CJS_Return CJX_Packet::getAttribute(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  WideString wsAttributeValue;
+  WideString attributeValue;
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
-    ByteString bsAttributeName = pArguments->GetUTF8String(0);
-    wsAttributeValue = static_cast<CFX_XMLElement*>(pXMLNode)->GetString(
-        WideString::FromUTF8(bsAttributeName.AsStringView()).c_str());
+    attributeValue = static_cast<CFX_XMLElement*>(pXMLNode)->GetString(
+        runtime->ToWideString(params[0]).c_str());
   }
-
-  pArguments->GetReturnValue()->SetString(
-      wsAttributeValue.UTF8Encode().AsStringView());
+  return CJS_Return(
+      runtime->NewString(attributeValue.UTF8Encode().AsStringView()));
 }
 
-void CJX_Packet::setAttribute(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 2) {
-    ThrowParamCountMismatchException(L"setAttribute");
-    return;
-  }
+CJS_Return CJX_Packet::setAttribute(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 2)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
-    ByteString bsValue = pArguments->GetUTF8String(0);
-    ByteString bsName = pArguments->GetUTF8String(1);
     static_cast<CFX_XMLElement*>(pXMLNode)->SetString(
-        WideString::FromUTF8(bsName.AsStringView()),
-        WideString::FromUTF8(bsValue.AsStringView()));
+        runtime->ToWideString(params[1]), runtime->ToWideString(params[0]));
   }
-  pArguments->GetReturnValue()->SetNull();
+  return CJS_Return(runtime->NewNull());
 }
 
-void CJX_Packet::removeAttribute(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"removeAttribute");
-    return;
-  }
+CJS_Return CJX_Packet::removeAttribute(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
-    ByteString bsName = pArguments->GetUTF8String(0);
-    WideString wsName = WideString::FromUTF8(bsName.AsStringView());
+    WideString name = runtime->ToWideString(params[0]);
     CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-    if (pXMLElement->HasAttribute(wsName.c_str()))
-      pXMLElement->RemoveAttribute(wsName.c_str());
+    if (pXMLElement->HasAttribute(name.c_str()))
+      pXMLElement->RemoveAttribute(name.c_str());
   }
-  pArguments->GetReturnValue()->SetNull();
+  return CJS_Return(runtime->NewNull());
 }

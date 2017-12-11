@@ -8,9 +8,9 @@
 
 #include <vector>
 
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -32,97 +32,93 @@ CJX_Form::CJX_Form(CXFA_Form* form) : CJX_Model(form) {
 
 CJX_Form::~CJX_Form() {}
 
-void CJX_Form::formNodes(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"formNodes");
-    return;
-  }
+CJS_Return CJX_Form::formNodes(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_Node* pDataNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-  if (!pDataNode) {
-    ThrowArgumentMismatchException();
-    return;
-  }
+  CXFA_Node* pDataNode = ToNode(runtime->ToXFAObject(params[0]));
+  if (!pDataNode)
+    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
   std::vector<CXFA_Node*> formItems;
   CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(GetDocument());
   pFormNodes->SetArrayNodeList(formItems);
-  pArguments->GetReturnValue()->SetObject(
-      pFormNodes, GetDocument()->GetScriptContext()->GetJseNormalClass());
+
+  CFXJSE_Value* value =
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pFormNodes);
+  if (!value)
+    return CJS_Return(runtime->NewNull());
+  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
-void CJX_Form::remerge(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"remerge");
-    return;
-  }
+CJS_Return CJX_Form::remerge(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   GetDocument()->DoDataRemerge(true);
+  return CJS_Return(true);
 }
 
-void CJX_Form::execInitialize(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"execInitialize");
-    return;
-  }
+CJS_Return CJX_Form::execInitialize(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
-    return;
-
-  pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize);
+  if (pNotify)
+    pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize);
+  return CJS_Return(true);
 }
 
-void CJX_Form::recalculate(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_Form::recalculate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_EventParam* pEventParam =
       GetDocument()->GetScriptContext()->GetEventParam();
   if (pEventParam->m_eType == XFA_EVENT_Calculate ||
       pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-    return;
+    return CJS_Return(true);
   }
-  if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"recalculate");
-    return;
-  }
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
-    return;
-  if (pArguments->GetInt32(0) != 0)
-    return;
+  if (!pNotify || runtime->ToInt32(params[0]) != 0)
+    return CJS_Return(true);
 
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate);
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate);
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Ready, true);
+  return CJS_Return(true);
 }
 
-void CJX_Form::execCalculate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"execCalculate");
-    return;
-  }
+CJS_Return CJX_Form::execCalculate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
+  if (pNotify)
+    pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate);
+  return CJS_Return(true);
+}
+
+CJS_Return CJX_Form::execValidate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 0)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
-
-  pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate);
-}
-
-void CJX_Form::execValidate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"execValidate");
-    return;
-  }
-
-  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify) {
-    pArguments->GetReturnValue()->SetBoolean(false);
-    return;
-  }
+    return CJS_Return(runtime->NewBoolean(false));
 
   int32_t iRet =
       pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate);
-  pArguments->GetReturnValue()->SetBoolean(
-      (iRet == XFA_EVENTERROR_Error) ? false : true);
+  return CJS_Return(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }

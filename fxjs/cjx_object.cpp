@@ -6,12 +6,13 @@
 
 #include "fxjs/cjx_object.h"
 
-#include <map>
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/cjs_return.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -103,11 +104,14 @@ bool CJX_Object::HasMethod(const WideString& func) const {
   return pdfium::ContainsKey(method_specs_, func.UTF8Encode());
 }
 
-void CJX_Object::RunMethod(const WideString& func, CFXJSE_Arguments* args) {
+CJS_Return CJX_Object::RunMethod(
+    const WideString& func,
+    const std::vector<v8::Local<v8::Value>>& params) {
   auto it = method_specs_.find(func.UTF8Encode());
   if (it == method_specs_.end())
-    return;
-  it->second(this, args);
+    return CJS_Return(false);
+  return it->second(this, GetXFAObject()->GetDocument()->GetScriptContext(),
+                    params);
 }
 
 void CJX_Object::ThrowInvalidPropertyException() const {

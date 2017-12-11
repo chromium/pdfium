@@ -6,8 +6,10 @@
 
 #include "fxjs/cjx_signaturepseudomodel.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 
 const CJX_MethodSpec CJX_SignaturePseudoModel::MethodSpecs[] = {
@@ -25,46 +27,34 @@ CJX_SignaturePseudoModel::CJX_SignaturePseudoModel(
 
 CJX_SignaturePseudoModel::~CJX_SignaturePseudoModel() {}
 
-void CJX_SignaturePseudoModel::verifySignature(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 4) {
-    ThrowParamCountMismatchException(L"verify");
-    return;
-  }
-
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetInteger(0);
+CJS_Return CJX_SignaturePseudoModel::verifySignature(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 4)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(runtime->NewNumber(0));
 }
 
-void CJX_SignaturePseudoModel::sign(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 3 || iLength > 7) {
-    ThrowParamCountMismatchException(L"sign");
-    return;
-  }
-
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetBoolean(false);
+CJS_Return CJX_SignaturePseudoModel::sign(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() < 3 || params.size() > 7)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(runtime->NewBoolean(false));
 }
 
-void CJX_SignaturePseudoModel::enumerate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"enumerate");
-    return;
-  }
-  return;
+CJS_Return CJX_SignaturePseudoModel::enumerate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_SignaturePseudoModel::clear(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 2) {
-    ThrowParamCountMismatchException(L"clear");
-    return;
-  }
-
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetBoolean(false);
+CJS_Return CJX_SignaturePseudoModel::clear(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 2)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(runtime->NewBoolean(false));
 }

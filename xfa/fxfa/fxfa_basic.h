@@ -7,10 +7,8 @@
 #ifndef XFA_FXFA_FXFA_BASIC_H_
 #define XFA_FXFA_FXFA_BASIC_H_
 
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/fxjse.h"
 
-class CFXJSE_Arguments;
 class CJX_Object;
 class CXFA_Measurement;
 enum class XFA_ObjectType;
@@ -964,14 +962,6 @@ enum class XFA_Unit : uint8_t {
   Mp,
 
   Unknown = 255,
-};
-
-typedef void (CJX_Object::*XFA_METHOD_CALLBACK)(CFXJSE_Arguments* pArguments);
-
-struct XFA_METHODINFO {
-  uint32_t uHash;
-  const wchar_t* pName;
-  XFA_METHOD_CALLBACK callback;
 };
 
 typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,

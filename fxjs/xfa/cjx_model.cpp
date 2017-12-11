@@ -6,9 +6,11 @@
 
 #include "fxjs/xfa/cjx_model.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_delta.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
@@ -24,71 +26,60 @@ CJX_Model::CJX_Model(CXFA_Node* node) : CJX_Node(node) {
 
 CJX_Model::~CJX_Model() {}
 
-void CJX_Model::clearErrorList(CFXJSE_Arguments* pArguments) {}
-
-void CJX_Model::createNode(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc <= 0 || argc >= 4) {
-    ThrowParamCountMismatchException(L"createNode");
-    return;
-  }
-
-  WideString strName;
-  WideString strNameSpace;
-  if (argc > 1) {
-    ByteString bsName = pArguments->GetUTF8String(1);
-    strName = WideString::FromUTF8(bsName.AsStringView());
-    if (argc == 3) {
-      ByteString bsNameSpace = pArguments->GetUTF8String(2);
-      strNameSpace = WideString::FromUTF8(bsNameSpace.AsStringView());
-    }
-  }
-
-  ByteString bsTagName = pArguments->GetUTF8String(0);
-  WideString strTagName = WideString::FromUTF8(bsTagName.AsStringView());
-  XFA_Element eType = CXFA_Node::NameToElement(strTagName);
-  CXFA_Node* pNewNode = GetXFANode()->CreateSamePacketNode(eType);
-  if (!pNewNode) {
-    pArguments->GetReturnValue()->SetNull();
-    return;
-  }
-
-  if (strName.IsEmpty()) {
-    pArguments->GetReturnValue()->Assign(
-        GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewNode));
-    return;
-  }
-
-  if (!pNewNode->HasAttribute(XFA_Attribute::Name)) {
-    ThrowMissingPropertyException(strTagName, L"name");
-    return;
-  }
-
-  pNewNode->JSNode()->SetAttribute(XFA_Attribute::Name, strName.AsStringView(),
-                                   true);
-  if (pNewNode->GetPacketType() == XFA_PacketType::Datasets)
-    pNewNode->CreateXMLMappingNode();
-
-  pArguments->GetReturnValue()->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewNode));
+CJS_Return CJX_Model::clearErrorList(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
 }
 
-void CJX_Model::isCompatibleNS(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1) {
-    ThrowParamCountMismatchException(L"isCompatibleNS");
-    return;
+CJS_Return CJX_Model::createNode(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 3)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
+  WideString name;
+  if (params.size() > 1)
+    name = runtime->ToWideString(params[1]);
+
+  WideString nameSpace;
+  if (params.size() == 3)
+    nameSpace = runtime->ToWideString(params[2]);
+
+  WideString tagName = runtime->ToWideString(params[0]);
+  XFA_Element eType = CXFA_Node::NameToElement(tagName);
+  CXFA_Node* pNewNode = GetXFANode()->CreateSamePacketNode(eType);
+  if (!pNewNode)
+    return CJS_Return(runtime->NewNull());
+
+  if (!name.IsEmpty()) {
+    if (!pNewNode->HasAttribute(XFA_Attribute::Name))
+      return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
+    pNewNode->JSNode()->SetAttribute(XFA_Attribute::Name, name.AsStringView(),
+                                     true);
+    if (pNewNode->GetPacketType() == XFA_PacketType::Datasets)
+      pNewNode->CreateXMLMappingNode();
   }
 
-  WideString wsNameSpace;
-  if (iLength >= 1) {
-    ByteString bsNameSpace = pArguments->GetUTF8String(0);
-    wsNameSpace = WideString::FromUTF8(bsNameSpace.AsStringView());
-  }
+  CFXJSE_Value* value =
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewNode);
+  if (!value)
+    return CJS_Return(runtime->NewNull());
 
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (!pValue)
-    return;
+  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
+}
 
-  pValue->SetBoolean(TryNamespace().value_or(WideString()) == wsNameSpace);
+CJS_Return CJX_Model::isCompatibleNS(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
+  WideString nameSpace;
+  if (params.size() >= 1)
+    nameSpace = runtime->ToWideString(params[0]);
+
+  return CJS_Return(
+      runtime->NewBoolean(TryNamespace().value_or(WideString()) == nameSpace));
 }

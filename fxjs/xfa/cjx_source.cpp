@@ -6,8 +6,10 @@
 
 #include "fxjs/xfa/cjx_source.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_source.h"
 
 const CJX_MethodSpec CJX_Source::MethodSpecs[] = {
@@ -36,87 +38,127 @@ CJX_Source::CJX_Source(CXFA_Source* src) : CJX_Node(src) {
 
 CJX_Source::~CJX_Source() {}
 
-void CJX_Source::next(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"next");
+CJS_Return CJX_Source::next(CJS_V8* runtime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::cancelBatch(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"cancelBatch");
+CJS_Return CJX_Source::cancelBatch(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::first(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"first");
+CJS_Return CJX_Source::first(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::updateBatch(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"updateBatch");
+CJS_Return CJX_Source::updateBatch(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::previous(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"previous");
+CJS_Return CJX_Source::previous(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::isBOF(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"isBOF");
+CJS_Return CJX_Source::isBOF(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::isEOF(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"isEOF");
+CJS_Return CJX_Source::isEOF(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::cancel(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"cancel");
+CJS_Return CJX_Source::cancel(CJS_V8* runtime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::update(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"update");
+CJS_Return CJX_Source::update(CJS_V8* runtime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::open(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"open");
+CJS_Return CJX_Source::open(CJS_V8* runtime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::deleteItem(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"delete");
+CJS_Return CJX_Source::deleteItem(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::addNew(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"addNew");
+CJS_Return CJX_Source::addNew(CJS_V8* runtime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::requery(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"requery");
+CJS_Return CJX_Source::requery(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::resync(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"resync");
+CJS_Return CJX_Source::resync(CJS_V8* runtime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::close(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"close");
+CJS_Return CJX_Source::close(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::last(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"last");
+CJS_Return CJX_Source::last(CJS_V8* runtime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }
 
-void CJX_Source::hasDataChanged(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"hasDataChanged");
+CJS_Return CJX_Source::hasDataChanged(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }

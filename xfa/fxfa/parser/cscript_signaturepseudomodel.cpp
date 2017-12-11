@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 
-#include "fxjs/cfxjse_arguments.h"
 #include "third_party/base/ptr_util.h"
 
 CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(

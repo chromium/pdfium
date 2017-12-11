@@ -6,7 +6,8 @@
 
 #include "fxjs/cjx_datawindow.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/parser/cscript_datawindow.h"
 
@@ -24,13 +25,29 @@ CJX_DataWindow::CJX_DataWindow(CScript_DataWindow* window)
 
 CJX_DataWindow::~CJX_DataWindow() {}
 
-void CJX_DataWindow::moveCurrentRecord(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_DataWindow::moveCurrentRecord(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_DataWindow::record(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_DataWindow::record(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_DataWindow::gotoRecord(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_DataWindow::gotoRecord(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_DataWindow::isRecordGroup(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_DataWindow::isRecordGroup(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
 void CJX_DataWindow::RecordsBefore(CFXJSE_Value* pValue,
                                    bool bSetting,

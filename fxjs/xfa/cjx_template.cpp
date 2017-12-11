@@ -6,8 +6,10 @@
 
 #include "fxjs/xfa/cjx_template.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_template.h"
 
@@ -26,62 +28,56 @@ CJX_Template::CJX_Template(CXFA_Template* tmpl) : CJX_Model(tmpl) {
 
 CJX_Template::~CJX_Template() {}
 
-void CJX_Template::formNodes(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"formNodes");
-    return;
-  }
-  pArguments->GetReturnValue()->SetBoolean(true);
+CJS_Return CJX_Template::formNodes(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(runtime->NewBoolean(true));
 }
 
-void CJX_Template::remerge(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"remerge");
-    return;
-  }
+CJS_Return CJX_Template::remerge(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
   GetDocument()->DoDataRemerge(true);
+  return CJS_Return(true);
 }
 
-void CJX_Template::execInitialize(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"execInitialize");
-    return;
-  }
+CJS_Return CJX_Template::execInitialize(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData) {
-    pArguments->GetReturnValue()->SetBoolean(false);
-    return;
-  }
-  pArguments->GetReturnValue()->SetBoolean(true);
+  return CJS_Return(runtime->NewBoolean(!!pWidgetData));
 }
 
-void CJX_Template::recalculate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"recalculate");
-    return;
-  }
-  pArguments->GetReturnValue()->SetBoolean(true);
+CJS_Return CJX_Template::recalculate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(runtime->NewBoolean(true));
 }
 
-void CJX_Template::execCalculate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"execCalculate");
-    return;
-  }
+CJS_Return CJX_Template::execCalculate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData) {
-    pArguments->GetReturnValue()->SetBoolean(false);
-    return;
-  }
-  pArguments->GetReturnValue()->SetBoolean(true);
+  return CJS_Return(runtime->NewBoolean(!!pWidgetData));
 }
 
-void CJX_Template::execValidate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"execValidate");
-    return;
-  }
-  pArguments->GetReturnValue()->SetBoolean(!!GetXFANode()->GetWidgetData());
+CJS_Return CJX_Template::execValidate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(runtime->NewBoolean(!!GetXFANode()->GetWidgetData()));
 }

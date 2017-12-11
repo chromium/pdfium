@@ -9,14 +9,25 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-typedef void (*CJX_MethodCall)(CJX_Object* obj, CFXJSE_Arguments* args);
+class CFXJSE_Value;
+class CJS_V8;
+class CXFA_CalcData;
+class CXFA_Document;
+class CXFA_Object;
+struct XFA_MAPMODULEDATA;
 
+typedef CJS_Return (*CJX_MethodCall)(
+    CJX_Object* obj,
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params);
 struct CJX_MethodSpec {
   const char* pName;
   CJX_MethodCall pMethodCall;
@@ -30,12 +41,6 @@ struct XFA_MAPDATABLOCKCALLBACKINFO {
   PD_CALLBACK_DUPLICATEDATA pCopy;
 };
 
-class CFXJSE_Value;
-class CXFA_CalcData;
-class CXFA_Document;
-class CXFA_Object;
-struct XFA_MAPMODULEDATA;
-
 class CJX_Object {
  public:
   virtual ~CJX_Object();
@@ -46,7 +51,8 @@ class CJX_Object {
   CXFA_Document* GetDocument() const;
 
   bool HasMethod(const WideString& func) const;
-  void RunMethod(const WideString& func, CFXJSE_Arguments* args);
+  CJS_Return RunMethod(const WideString& func,
+                       const std::vector<v8::Local<v8::Value>>& params);
 
   bool HasAttribute(XFA_Attribute eAttr);
   bool SetAttribute(XFA_Attribute eAttr,

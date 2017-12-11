@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
 
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 

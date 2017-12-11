@@ -6,7 +6,8 @@
 
 #include "fxjs/cjx_eventpseudomodel.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -150,36 +151,42 @@ void CJX_EventPseudoModel::Target(CFXJSE_Value* pValue,
   Property(pValue, XFA_Event::Target, bSetting);
 }
 
-void CJX_EventPseudoModel::emit(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_EventPseudoModel::emit(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
-    return;
+    return CJS_Return(true);
 
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (!pEventParam)
-    return;
+    return CJS_Return(true);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   CXFA_FFWidgetHandler* pWidgetHandler = pNotify->GetWidgetHandler();
   if (!pWidgetHandler)
-    return;
+    return CJS_Return(true);
 
   pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
+  return CJS_Return(true);
 }
 
-void CJX_EventPseudoModel::reset(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_EventPseudoModel::reset(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
-    return;
+    return CJS_Return(true);
 
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (!pEventParam)
-    return;
+    return CJS_Return(true);
 
   pEventParam->Reset();
+  return CJS_Return(true);
 }
 
 void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,

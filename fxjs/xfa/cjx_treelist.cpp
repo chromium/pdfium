@@ -6,9 +6,11 @@
 
 #include "fxjs/xfa/cjx_treelist.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_treelist.h"
@@ -27,19 +29,21 @@ CXFA_TreeList* CJX_TreeList::GetXFATreeList() {
   return static_cast<CXFA_TreeList*>(GetXFAObject());
 }
 
-void CJX_TreeList::namedItem(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc != 1) {
-    ThrowParamCountMismatchException(L"namedItem");
-    return;
-  }
+CJS_Return CJX_TreeList::namedItem(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  ByteString szName = pArguments->GetUTF8String(0);
   CXFA_Node* pNode = GetXFATreeList()->NamedItem(
-      WideString::FromUTF8(szName.AsStringView()).AsStringView());
+      runtime->ToWideString(params[0]).AsStringView());
   if (!pNode)
-    return;
+    return CJS_Return(true);
 
-  pArguments->GetReturnValue()->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
+  CFXJSE_Value* value =
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode);
+  if (!value)
+    return CJS_Return(runtime->NewNull());
+
+  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
 }

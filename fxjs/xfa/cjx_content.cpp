@@ -6,7 +6,6 @@
 
 #include "fxjs/xfa/cjx_content.h"
 
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 

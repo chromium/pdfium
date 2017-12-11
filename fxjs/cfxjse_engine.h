@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_formcalc_context.h"
+#include "fxjs/cjs_v8.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
@@ -22,8 +22,9 @@
 class CXFA_List;
 class CFXJSE_ResolveProcessor;
 
-class CFXJSE_Engine {
+class CFXJSE_Engine : public CJS_V8 {
  public:
+  static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
   static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
   static void GlobalPropertyGetter(CFXJSE_Value* pObject,
                                    const ByteStringView& szPropName,
@@ -37,9 +38,9 @@ class CFXJSE_Engine {
   static void NormalPropertySetter(CFXJSE_Value* pObject,
                                    const ByteStringView& szPropName,
                                    CFXJSE_Value* pValue);
-  static void NormalMethodCall(CFXJSE_Value* hThis,
-                               const ByteStringView& szFuncName,
-                               CFXJSE_Arguments& args);
+  static CJS_Return NormalMethodCall(
+      const v8::FunctionCallbackInfo<v8::Value>& info,
+      const WideString& functionName);
   static int32_t NormalPropTypeGetter(CFXJSE_Value* pObject,
                                       const ByteStringView& szPropName,
                                       bool bQueryIn);
@@ -48,7 +49,7 @@ class CFXJSE_Engine {
                                       bool bQueryIn);
 
   explicit CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate);
-  ~CFXJSE_Engine();
+  ~CFXJSE_Engine() override;
 
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() { return &m_eventParam; }
@@ -65,7 +66,6 @@ class CFXJSE_Engine {
   CFXJSE_Value* GetJSValueFromMap(CXFA_Object* pObject);
   void AddToCacheList(std::unique_ptr<CXFA_List> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
-  v8::Isolate* GetRuntime() const { return m_pIsolate; }
 
   int32_t GetIndexByName(CXFA_Node* refNode);
   int32_t GetIndexByClassName(CXFA_Node* refNode);
@@ -101,7 +101,6 @@ class CFXJSE_Engine {
 
   UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CFXJSE_Context> m_JsContext;
-  v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pJsClass;
   CXFA_ScriptData::Type m_eScriptType;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;

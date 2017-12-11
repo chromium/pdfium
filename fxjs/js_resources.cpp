@@ -49,6 +49,8 @@ WideString JSGetStringFromID(JSMessage msg) {
       return L"Permission denied.";
     case JSMessage::kBadObjectError:
       return L"Object no longer exists.";
+    case JSMessage::kTooManyOccurances:
+      return L"Too many occurances";
   }
   NOTREACHED();
   return L"";

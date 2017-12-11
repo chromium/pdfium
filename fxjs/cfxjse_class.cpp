@@ -12,6 +12,8 @@
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/cjs_return.h"
+#include "fxjs/js_resources.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -78,15 +80,21 @@ void DynPropGetterAdapter_MethodCallback(
   v8::Local<v8::String> hPropName =
       hCallBackInfo->GetInternalField(1).As<v8::String>();
   ASSERT(lpClass && !hPropName.IsEmpty());
+
   v8::String::Utf8Value szPropName(hPropName);
-  ByteStringView szFxPropName = *szPropName;
-  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
-  lpThisValue->ForceSetValue(info.Holder());
-  auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
-  CFXJSE_Arguments impl(&info, lpRetValue.get());
-  lpClass->dynMethodCall(lpThisValue.get(), szFxPropName, impl);
-  if (!lpRetValue->DirectGetValue().IsEmpty())
-    info.GetReturnValue().Set(lpRetValue->DirectGetValue());
+  WideString szFxPropName = WideString::FromUTF8(*szPropName);
+
+  CJS_Return result = lpClass->dynMethodCall(info, szFxPropName);
+  if (result.HasError()) {
+    WideString err = JSFormatErrorString(*szPropName, "", result.Error());
+    v8::MaybeLocal<v8::String> str = v8::String::NewFromUtf8(
+        info.GetIsolate(), ByteString::FromUnicode(err).c_str(),
+        v8::NewStringType::kNormal);
+    info.GetIsolate()->ThrowException(str.ToLocalChecked());
+    return;
+  }
+  if (result.HasReturn())
+    info.GetReturnValue().Set(result.Return());
 }
 
 void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
@@ -94,6 +102,7 @@ void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                           const ByteStringView& szPropName,
                           CFXJSE_Value* pValue) {
   ASSERT(lpClass);
+
   int32_t nPropType =
       lpClass->dynPropTypeGetter == nullptr
           ? FXJSE_ClassPropType_Property

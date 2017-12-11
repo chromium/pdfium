@@ -29,7 +29,8 @@ enum class JSMessage {
   kTypeError,
   kValueError,
   kPermissionError,
-  kBadObjectError
+  kBadObjectError,
+  kTooManyOccurances
 };
 
 WideString JSGetStringFromID(JSMessage msg);

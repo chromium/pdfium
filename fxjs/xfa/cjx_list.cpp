@@ -6,9 +6,11 @@
 
 #include "fxjs/xfa/cjx_list.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -29,67 +31,58 @@ CXFA_List* CJX_List::GetXFAList() {
   return static_cast<CXFA_List*>(GetXFAObject());
 }
 
-void CJX_List::append(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc != 1) {
-    ThrowParamCountMismatchException(L"append");
-    return;
-  }
+CJS_Return CJX_List::append(CJS_V8* runtime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  auto* pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-  if (!pNode) {
-    ThrowArgumentMismatchException();
-    return;
-  }
+  auto* pNode = ToNode(runtime->ToXFAObject(params[0]));
+  if (!pNode)
+    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
+
   GetXFAList()->Append(pNode);
+  return CJS_Return(true);
 }
 
-void CJX_List::insert(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc != 2) {
-    ThrowParamCountMismatchException(L"insert");
-    return;
-  }
+CJS_Return CJX_List::insert(CJS_V8* runtime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 2)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  auto* pNewNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-  auto* pBeforeNode = static_cast<CXFA_Node*>(pArguments->GetObject(1));
-  if (!pNewNode) {
-    ThrowArgumentMismatchException();
-    return;
-  }
+  auto* pNewNode = ToNode(runtime->ToXFAObject(params[0]));
+  if (!pNewNode)
+    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
+
+  auto* pBeforeNode = ToNode(runtime->ToXFAObject(params[1]));
   GetXFAList()->Insert(pNewNode, pBeforeNode);
+  return CJS_Return(true);
 }
 
-void CJX_List::remove(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc != 1) {
-    ThrowParamCountMismatchException(L"remove");
-    return;
-  }
+CJS_Return CJX_List::remove(CJS_V8* runtime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  auto* pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-  if (!pNode) {
-    ThrowArgumentMismatchException();
-    return;
-  }
+  auto* pNode = ToNode(runtime->ToXFAObject(params[0]));
+  if (!pNode)
+    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
+
   GetXFAList()->Remove(pNode);
+  return CJS_Return(true);
 }
 
-void CJX_List::item(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc != 1) {
-    ThrowParamCountMismatchException(L"item");
-    return;
-  }
+CJS_Return CJX_List::item(CJS_V8* runtime,
+                          const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  int32_t iIndex = pArguments->GetInt32(0);
-  if (iIndex < 0 || iIndex >= GetXFAList()->GetLength()) {
-    ThrowIndexOutOfBoundsException();
-    return;
-  }
-  pArguments->GetReturnValue()->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(
-          GetXFAList()->Item(iIndex)));
+  int32_t iIndex = runtime->ToInt32(params[0]);
+  if (iIndex < 0 || iIndex >= GetXFAList()->GetLength())
+    return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
+
+  return CJS_Return(runtime->NewXFAObject(
+      GetXFAList()->Item(iIndex),
+      GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
 }
 
 void CJX_List::length(CFXJSE_Value* pValue,

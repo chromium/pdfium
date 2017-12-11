@@ -7,10 +7,11 @@
 #include "fxjs/cjx_hostpseudomodel.h"
 
 #include <memory>
+#include <vector>
 
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
@@ -18,10 +19,6 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 namespace {
-
-CXFA_Node* ToNode(CFXJSE_Value* pValue, CFXJSE_Class* pClass) {
-  return static_cast<CXFA_Node*>(pValue->ToHostObject(pClass));
-}
 
 int32_t FilterName(const WideStringView& wsExpression,
                    int32_t nStart,
@@ -249,160 +246,145 @@ void CJX_HostPseudoModel::Name(CFXJSE_Value* pValue,
       pNotify->GetAppProvider()->GetAppName().UTF8Encode().AsStringView());
 }
 
-void CJX_HostPseudoModel::gotoURL(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::gotoURL(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
-    return;
+    return CJS_Return(true);
 
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 1) {
-    ThrowParamCountMismatchException(L"gotoURL");
-    return;
-  }
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  WideString wsURL;
-  if (iLength >= 1) {
-    ByteString bsURL = pArguments->GetUTF8String(0);
-    wsURL = WideString::FromUTF8(bsURL.AsStringView());
-  }
-  pNotify->GetDocEnvironment()->GotoURL(hDoc, wsURL);
+  WideString URL = runtime->ToWideString(params[0]);
+  pNotify->GetDocEnvironment()->GotoURL(hDoc, URL);
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::openList(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::openList(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
-    return;
+    return CJS_Return(true);
 
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 1) {
-    ThrowParamCountMismatchException(L"openList");
-    return;
-  }
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   CXFA_Node* pNode = nullptr;
-  if (iLength >= 1) {
-    std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
-    if (pValue->IsObject()) {
-      pNode = ToNode(pValue.get(), nullptr);
-    } else if (pValue->IsString()) {
-      CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-      if (!pScriptContext)
-        return;
+  if (params[0]->IsObject()) {
+    pNode = ToNode(runtime->ToXFAObject(params[0]));
+  } else if (params[0]->IsString()) {
+    CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
+    if (!pScriptContext)
+      return CJS_Return(true);
 
-      CXFA_Object* pObject = pScriptContext->GetThisObject();
-      if (!pObject)
-        return;
+    CXFA_Object* pObject = pScriptContext->GetThisObject();
+    if (!pObject)
+      return CJS_Return(true);
 
-      uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
-                        XFA_RESOLVENODE_Siblings;
-      XFA_RESOLVENODE_RS resolveNodeRS;
-      bool iRet = pScriptContext->ResolveObjects(
-          pObject, pValue->ToWideString().AsStringView(), &resolveNodeRS,
-          dwFlag, nullptr);
-      if (!iRet || !resolveNodeRS.objects.front()->IsNode())
-        return;
+    uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
+                      XFA_RESOLVENODE_Siblings;
+    XFA_RESOLVENODE_RS resolveNodeRS;
+    bool iRet = pScriptContext->ResolveObjects(
+        pObject, runtime->ToWideString(params[0]).AsStringView(),
+        &resolveNodeRS, dwFlag, nullptr);
+    if (!iRet || !resolveNodeRS.objects.front()->IsNode())
+      return CJS_Return(true);
 
-      pNode = resolveNodeRS.objects.front()->AsNode();
-    }
+    pNode = resolveNodeRS.objects.front()->AsNode();
   }
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
   if (!pDocLayout)
-    return;
+    return CJS_Return(true);
 
   CXFA_FFWidget* hWidget =
       pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
   if (!hWidget)
-    return;
+    return CJS_Return(true);
 
   pNotify->GetDocEnvironment()->SetFocusWidget(pNotify->GetHDOC(), hWidget);
   pNotify->OpenDropDownList(hWidget);
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::response(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 4) {
-    ThrowParamCountMismatchException(L"response");
-    return;
-  }
+CJS_Return CJX_HostPseudoModel::response(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 4)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
-  WideString wsQuestion;
-  WideString wsTitle;
-  WideString wsDefaultAnswer;
-  bool bMark = false;
-  if (iLength >= 1) {
-    ByteString bsQuestion = pArguments->GetUTF8String(0);
-    wsQuestion = WideString::FromUTF8(bsQuestion.AsStringView());
-  }
-  if (iLength >= 2) {
-    ByteString bsTitle = pArguments->GetUTF8String(1);
-    wsTitle = WideString::FromUTF8(bsTitle.AsStringView());
-  }
-  if (iLength >= 3) {
-    ByteString bsDefaultAnswer = pArguments->GetUTF8String(2);
-    wsDefaultAnswer = WideString::FromUTF8(bsDefaultAnswer.AsStringView());
-  }
-  if (iLength >= 4) {
-    bMark = pArguments->GetInt32(3) == 0 ? false : true;
-  }
+  WideString question;
+  if (params.size() >= 1)
+    question = runtime->ToWideString(params[0]);
 
-  WideString wsAnswer = pNotify->GetAppProvider()->Response(
-      wsQuestion, wsTitle, wsDefaultAnswer, bMark);
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetString(wsAnswer.UTF8Encode().AsStringView());
+  WideString title;
+  if (params.size() >= 2)
+    title = runtime->ToWideString(params[1]);
+
+  WideString defaultAnswer;
+  if (params.size() >= 3)
+    defaultAnswer = runtime->ToWideString(params[2]);
+
+  bool mark = false;
+  if (params.size() >= 4)
+    mark = runtime->ToInt32(params[3]) != 0;
+
+  WideString answer =
+      pNotify->GetAppProvider()->Response(question, title, defaultAnswer, mark);
+  return CJS_Return(runtime->NewString(answer.UTF8Encode().AsStringView()));
 }
 
-void CJX_HostPseudoModel::documentInBatch(CFXJSE_Arguments* pArguments) {
-  if (CFXJSE_Value* pValue = pArguments->GetReturnValue())
-    pValue->SetInteger(0);
+CJS_Return CJX_HostPseudoModel::documentInBatch(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(runtime->NewNumber(0));
 }
 
-void CJX_HostPseudoModel::resetData(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 0 || iLength > 1) {
-    ThrowParamCountMismatchException(L"resetData");
-    return;
-  }
+CJS_Return CJX_HostPseudoModel::resetData(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() > 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
-  WideString wsExpression;
-  if (iLength >= 1) {
-    ByteString bsExpression = pArguments->GetUTF8String(0);
-    wsExpression = WideString::FromUTF8(bsExpression.AsStringView());
-  }
-  if (wsExpression.IsEmpty()) {
+  WideString expression;
+  if (params.size() >= 1)
+    expression = runtime->ToWideString(params[0]);
+
+  if (expression.IsEmpty()) {
     pNotify->ResetData();
-    return;
+    return CJS_Return(true);
   }
 
   int32_t iStart = 0;
   WideString wsName;
   CXFA_Node* pNode = nullptr;
-  int32_t iExpLength = wsExpression.GetLength();
+  int32_t iExpLength = expression.GetLength();
   while (iStart < iExpLength) {
-    iStart = FilterName(wsExpression.AsStringView(), iStart, wsName);
+    iStart = FilterName(expression.AsStringView(), iStart, wsName);
     CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
     if (!pScriptContext)
-      return;
+      return CJS_Return(true);
 
     CXFA_Object* pObject = pScriptContext->GetThisObject();
     if (!pObject)
-      return;
+      return CJS_Return(true);
 
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
@@ -417,278 +399,234 @@ void CJX_HostPseudoModel::resetData(CFXJSE_Arguments* pArguments) {
   }
   if (!pNode)
     pNotify->ResetData();
+
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::beep(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::beep(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
-    return;
+    return CJS_Return(true);
 
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 0 || iLength > 1) {
-    ThrowParamCountMismatchException(L"beep");
-    return;
-  }
+  if (params.size() > 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   uint32_t dwType = 4;
-  if (iLength >= 1)
-    dwType = pArguments->GetInt32(0);
+  if (params.size() >= 1)
+    dwType = runtime->ToInt32(params[0]);
 
   pNotify->GetAppProvider()->Beep(dwType);
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::setFocus(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::setFocus(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
-    return;
+    return CJS_Return(true);
 
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 1) {
-    ThrowParamCountMismatchException(L"setFocus");
-    return;
-  }
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   CXFA_Node* pNode = nullptr;
-  if (iLength >= 1) {
-    std::unique_ptr<CFXJSE_Value> pValue(pArguments->GetValue(0));
-    if (pValue->IsObject()) {
-      pNode = ToNode(pValue.get(), nullptr);
-    } else if (pValue->IsString()) {
+  if (params.size() >= 1) {
+    if (params[0]->IsObject()) {
+      pNode = ToNode(runtime->ToXFAObject(params[0]));
+    } else if (params[0]->IsString()) {
       CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
       if (!pScriptContext)
-        return;
+        return CJS_Return(true);
 
       CXFA_Object* pObject = pScriptContext->GetThisObject();
       if (!pObject)
-        return;
+        return CJS_Return(true);
 
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resolveNodeRS;
       bool iRet = pScriptContext->ResolveObjects(
-          pObject, pValue->ToWideString().AsStringView(), &resolveNodeRS,
-          dwFlag, nullptr);
+          pObject, runtime->ToWideString(params[0]).AsStringView(),
+          &resolveNodeRS, dwFlag, nullptr);
       if (!iRet || !resolveNodeRS.objects.front()->IsNode())
-        return;
+        return CJS_Return(true);
 
       pNode = resolveNodeRS.objects.front()->AsNode();
     }
   }
   pNotify->SetFocusWidgetNode(pNode);
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::getFocus(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::getFocus(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   CXFA_Node* pNode = pNotify->GetFocusWidgetNode();
   if (!pNode)
-    return;
+    return CJS_Return(true);
 
-  pArguments->GetReturnValue()->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
+  CFXJSE_Value* value =
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode);
+  if (!value)
+    return CJS_Return(runtime->NewNull());
+
+  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
-void CJX_HostPseudoModel::messageBox(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::messageBox(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
-    return;
+    return CJS_Return(true);
 
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 4) {
-    ThrowParamCountMismatchException(L"messageBox");
-    return;
-  }
+  if (params.empty() || params.size() > 4)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
-  WideString wsMessage;
-  WideString bsTitle;
-  uint32_t dwMessageType = XFA_MBICON_Error;
-  uint32_t dwButtonType = XFA_MB_OK;
-  if (iLength >= 1) {
-    if (!ValidateArgsForMsg(pArguments, 0, wsMessage))
-      return;
-  }
-  if (iLength >= 2) {
-    if (!ValidateArgsForMsg(pArguments, 1, bsTitle))
-      return;
-  }
-  if (iLength >= 3) {
-    dwMessageType = pArguments->GetInt32(2);
-    if (dwMessageType > XFA_MBICON_Status)
-      dwMessageType = XFA_MBICON_Error;
-  }
-  if (iLength >= 4) {
-    dwButtonType = pArguments->GetInt32(3);
-    if (dwButtonType > XFA_MB_YesNoCancel)
-      dwButtonType = XFA_MB_OK;
+  WideString message;
+  if (params.size() >= 1)
+    message = runtime->ToWideString(params[0]);
+
+  WideString title;
+  if (params.size() >= 2)
+    title = runtime->ToWideString(params[1]);
+
+  uint32_t messageType = XFA_MBICON_Error;
+  if (params.size() >= 3) {
+    messageType = runtime->ToInt32(params[2]);
+    if (messageType > XFA_MBICON_Status)
+      messageType = XFA_MBICON_Error;
   }
 
-  int32_t iValue = pNotify->GetAppProvider()->MsgBox(
-      wsMessage, bsTitle, dwMessageType, dwButtonType);
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (pValue)
-    pValue->SetInteger(iValue);
+  uint32_t buttonType = XFA_MB_OK;
+  if (params.size() >= 4) {
+    buttonType = runtime->ToInt32(params[3]);
+    if (buttonType > XFA_MB_YesNoCancel)
+      buttonType = XFA_MB_OK;
+  }
+
+  int32_t iValue = pNotify->GetAppProvider()->MsgBox(message, title,
+                                                     messageType, buttonType);
+  return CJS_Return(runtime->NewNumber(iValue));
 }
 
-bool CJX_HostPseudoModel::ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
-                                             int32_t iArgIndex,
-                                             WideString& wsValue) {
-  if (!pArguments || iArgIndex < 0)
-    return false;
-
-  bool bIsJsType = false;
-  if (GetDocument()->GetScriptContext()->GetType() ==
-      CXFA_ScriptData::Type::Javascript) {
-    bIsJsType = true;
-  }
-
-  std::unique_ptr<CFXJSE_Value> pValueArg(pArguments->GetValue(iArgIndex));
-  if (!pValueArg->IsString() && bIsJsType) {
-    ThrowArgumentMismatchException();
-    return false;
-  }
-  wsValue = pValueArg->IsNull() ? L"" : pValueArg->ToWideString();
-  return true;
+CJS_Return CJX_HostPseudoModel::documentCountInBatch(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(runtime->NewNumber(0));
 }
 
-void CJX_HostPseudoModel::documentCountInBatch(CFXJSE_Arguments* pArguments) {
-  if (CFXJSE_Value* pValue = pArguments->GetReturnValue())
-    pValue->SetInteger(0);
-}
-
-void CJX_HostPseudoModel::print(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::print(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
-    return;
+    return CJS_Return(true);
 
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 8) {
-    ThrowParamCountMismatchException(L"print");
-    return;
-  }
+  if (params.size() != 8)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   uint32_t dwOptions = 0;
-  bool bShowDialog = true;
-  if (iLength >= 1)
-    bShowDialog = pArguments->GetInt32(0) == 0 ? false : true;
-  if (bShowDialog)
+  if (runtime->ToBoolean(params[0]))
     dwOptions |= XFA_PRINTOPT_ShowDialog;
-
-  int32_t nStartPage = 0;
-  if (iLength >= 2)
-    nStartPage = pArguments->GetInt32(1);
-
-  int32_t nEndPage = 0;
-  if (iLength >= 3)
-    nEndPage = pArguments->GetInt32(2);
-
-  bool bCanCancel = true;
-  if (iLength >= 4)
-    bCanCancel = pArguments->GetInt32(3) == 0 ? false : true;
-  if (bCanCancel)
+  if (runtime->ToBoolean(params[3]))
     dwOptions |= XFA_PRINTOPT_CanCancel;
-
-  bool bShrinkPage = true;
-  if (iLength >= 5)
-    bShrinkPage = pArguments->GetInt32(4) == 0 ? false : true;
-  if (bShrinkPage)
+  if (runtime->ToBoolean(params[4]))
     dwOptions |= XFA_PRINTOPT_ShrinkPage;
-
-  bool bAsImage = true;
-  if (iLength >= 6)
-    bAsImage = pArguments->GetInt32(5) == 0 ? false : true;
-  if (bAsImage)
+  if (runtime->ToBoolean(params[5]))
     dwOptions |= XFA_PRINTOPT_AsImage;
-
-  bool bReverseOrder = true;
-  if (iLength >= 7)
-    bAsImage = pArguments->GetInt32(5) == 0 ? false : true;
-
-  bReverseOrder = pArguments->GetInt32(6) == 0 ? false : true;
-  if (bReverseOrder)
+  if (runtime->ToBoolean(params[6]))
     dwOptions |= XFA_PRINTOPT_ReverseOrder;
-
-  bool bPrintAnnot = true;
-  if (iLength >= 8)
-    bPrintAnnot = pArguments->GetInt32(7) == 0 ? false : true;
-  if (bPrintAnnot)
+  if (runtime->ToBoolean(params[7]))
     dwOptions |= XFA_PRINTOPT_PrintAnnot;
 
-  pNotify->GetDocEnvironment()->Print(hDoc, nStartPage, nEndPage, dwOptions);
+  int32_t nStartPage = runtime->ToInt32(params[1]);
+  int32_t nEndPage = runtime->ToInt32(params[2]);
+
+  pNotify->GetDocEnvironment()->Print(pNotify->GetHDOC(), nStartPage, nEndPage,
+                                      dwOptions);
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::importData(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 0 || iLength > 1) {
-    ThrowParamCountMismatchException(L"importData");
-    return;
-  }
-  // Not implemented.
+CJS_Return CJX_HostPseudoModel::importData(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::exportData(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 0 || iLength > 2) {
-    ThrowParamCountMismatchException(L"exportData");
-    return;
-  }
+CJS_Return CJX_HostPseudoModel::exportData(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 2)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  WideString wsFilePath;
-  bool bXDP = true;
-  if (iLength >= 1) {
-    ByteString bsFilePath = pArguments->GetUTF8String(0);
-    wsFilePath = WideString::FromUTF8(bsFilePath.AsStringView());
-  }
-  if (iLength >= 2)
-    bXDP = pArguments->GetInt32(1) == 0 ? false : true;
+  WideString filePath;
+  if (params.size() >= 1)
+    filePath = runtime->ToWideString(params[0]);
 
-  pNotify->GetDocEnvironment()->ExportData(hDoc, wsFilePath, bXDP);
+  bool XDP = true;
+  if (params.size() >= 2)
+    XDP = runtime->ToBoolean(params[1]);
+
+  pNotify->GetDocEnvironment()->ExportData(pNotify->GetHDOC(), filePath, XDP);
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::pageUp(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::pageUp(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t nCurPage = pNotify->GetDocEnvironment()->GetCurrentPage(hDoc);
   int32_t nNewPage = 0;
   if (nCurPage <= 1)
-    return;
+    return CJS_Return(true);
 
   nNewPage = nCurPage - 1;
   pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
+  return CJS_Return(true);
 }
 
-void CJX_HostPseudoModel::pageDown(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_HostPseudoModel::pageDown(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return;
+    return CJS_Return(true);
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t nCurPage = pNotify->GetDocEnvironment()->GetCurrentPage(hDoc);
   int32_t nPageCount = pNotify->GetDocEnvironment()->CountPages(hDoc);
   if (!nPageCount || nCurPage == nPageCount)
-    return;
+    return CJS_Return(true);
 
   int32_t nNewPage = 0;
   if (nCurPage >= nPageCount)
@@ -697,4 +635,5 @@ void CJX_HostPseudoModel::pageDown(CFXJSE_Arguments* pArguments) {
     nNewPage = nCurPage + 1;
 
   pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
+  return CJS_Return(true);
 }

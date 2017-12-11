@@ -6,7 +6,8 @@
 
 #include "fxjs/xfa/cjx_container.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -24,10 +25,17 @@ CJX_Container::CJX_Container(CXFA_Node* node) : CJX_Node(node) {
 
 CJX_Container::~CJX_Container() {}
 
-void CJX_Container::getDelta(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_Container::getDelta(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_Container::getDeltas(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_Container::getDeltas(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(GetDocument());
-  pArguments->GetReturnValue()->SetObject(
-      pFormNodes, GetDocument()->GetScriptContext()->GetJseNormalClass());
+  return CJS_Return(runtime->NewXFAObject(
+      pFormNodes,
+      GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
 }

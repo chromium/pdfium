@@ -6,8 +6,10 @@
 
 #include "fxjs/xfa/cjx_manifest.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_manifest.h"
 
 const CJX_MethodSpec CJX_Manifest::MethodSpecs[] = {
@@ -20,16 +22,12 @@ CJX_Manifest::CJX_Manifest(CXFA_Manifest* manifest) : CJX_Node(manifest) {
 
 CJX_Manifest::~CJX_Manifest() {}
 
-void CJX_Manifest::evaluate(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0) {
-    ThrowParamCountMismatchException(L"evaluate");
-    return;
-  }
+CJS_Return CJX_Manifest::evaluate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData) {
-    pArguments->GetReturnValue()->SetBoolean(false);
-    return;
-  }
-  pArguments->GetReturnValue()->SetBoolean(true);
+  return CJS_Return(runtime->NewBoolean(!!pWidgetData));
 }

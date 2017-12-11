@@ -7,18 +7,28 @@
 #ifndef FXJS_CJX_DEFINE_H_
 #define FXJS_CJX_DEFINE_H_
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
 
-template <class C, void (C::*M)(CFXJSE_Arguments* args)>
-void JSMethod(C* node, CFXJSE_Arguments* args) {
-  (node->*M)(args);
+#include "fxjs/cjs_return.h"
+#include "fxjs/cjs_v8.h"
+
+template <class C,
+          CJS_Return (C::*M)(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params)>
+CJS_Return JSMethod(C* node,
+                    CJS_V8* runtime,
+                    const std::vector<v8::Local<v8::Value>>& params) {
+  return (node->*M)(runtime, params);
 }
 
-#define JS_METHOD(method_name, class_name)                                     \
-  static void method_name##_static(CJX_Object* node, CFXJSE_Arguments* args) { \
-    JSMethod<class_name, &class_name::method_name>(                            \
-        static_cast<class_name*>(node), args);                                 \
-  }                                                                            \
-  void method_name(CFXJSE_Arguments* pArguments)
+#define JS_METHOD(method_name, class_name)                 \
+  static CJS_Return method_name##_static(                  \
+      CJX_Object* node, CJS_V8* runtime,                   \
+      const std::vector<v8::Local<v8::Value>>& params) {   \
+    return JSMethod<class_name, &class_name::method_name>( \
+        static_cast<class_name*>(node), runtime, params);  \
+  }                                                        \
+  CJS_Return method_name(CJS_V8* runtime,                  \
+                         const std::vector<v8::Local<v8::Value>>& params)
 
 #endif  // FXJS_CJX_DEFINE_H_

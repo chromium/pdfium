@@ -635,7 +635,7 @@ void CFXJSE_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
   CFXJSE_Engine* pContext = rnd.m_pSC;
   wsExpression = wsCondition.Mid(2, wsCondition.GetLength() - 3);
   for (int32_t i = iFoundCount - 1; i >= 0; i--) {
-    auto pRetValue = pdfium::MakeUnique<CFXJSE_Value>(rnd.m_pSC->GetRuntime());
+    auto pRetValue = pdfium::MakeUnique<CFXJSE_Value>(rnd.m_pSC->GetIsolate());
     bool bRet = pContext->RunScript(eLangType, wsExpression.AsStringView(),
                                     pRetValue.get(), rnd.m_Objects[i]);
     if (!bRet || !pRetValue->ToBoolean())

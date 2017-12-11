@@ -19,7 +19,6 @@ enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_Y
 };
 
-class CFXJSE_Arguments;
 class CFXJSE_Value;
 class CScript_LayoutPseudoModel;
 class CXFA_LayoutProcessor;
@@ -53,13 +52,17 @@ class CJX_LayoutPseudoModel : public CJX_Object {
   JS_METHOD(y, CJX_LayoutPseudoModel);
 
  private:
-  void NumberedPageCount(CFXJSE_Arguments* pArguments, bool bNumbered);
-  void HWXY(CFXJSE_Arguments* pArguments, XFA_LAYOUTMODEL_HWXY layoutModel);
+  CJS_Return NumberedPageCount(CJS_V8* runtime, bool bNumbered);
+  CJS_Return HWXY(CJS_V8* runtime,
+                  const std::vector<v8::Local<v8::Value>>& params,
+                  XFA_LAYOUTMODEL_HWXY layoutModel);
   std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                       int32_t iPageNo,
                                       const WideString& wsType,
                                       bool bOnPageArea);
-  void PageInternals(CFXJSE_Arguments* pArguments, bool bAbsPage);
+  CJS_Return PageInternals(CJS_V8* runtime,
+                           const std::vector<v8::Local<v8::Value>>& params,
+                           bool bAbsPage);
 
   static const CJX_MethodSpec MethodSpecs[];
 };

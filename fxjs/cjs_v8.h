@@ -17,6 +17,10 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/widestring.h"
 
+#ifdef PDF_ENABLE_XFA
+class CXFA_Object;
+#endif  // PDF_ENABLE_XFA
+
 class CJS_V8 {
  public:
   explicit CJS_V8(v8::Isolate* pIsolate);
@@ -42,8 +46,15 @@ class CJS_V8 {
   bool ToBoolean(v8::Local<v8::Value> pValue);
   double ToDouble(v8::Local<v8::Value> pValue);
   WideString ToWideString(v8::Local<v8::Value> pValue);
+  ByteString ToByteString(v8::Local<v8::Value> pValue);
   v8::Local<v8::Object> ToObject(v8::Local<v8::Value> pValue);
   v8::Local<v8::Array> ToArray(v8::Local<v8::Value> pValue);
+
+#ifdef PDF_ENABLE_XFA
+  CXFA_Object* ToXFAObject(v8::Local<v8::Value> obj);
+  v8::Local<v8::Value> NewXFAObject(CXFA_Object* obj,
+                                    v8::Global<v8::FunctionTemplate>& tmpl);
+#endif  // PDF_ENABLE_XFA
 
   // Arrays.
   unsigned GetArrayLength(v8::Local<v8::Array> pArray);

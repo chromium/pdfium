@@ -6,8 +6,10 @@
 
 #include "fxjs/xfa/cjx_wsdlconnection.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_wsdlconnection.h"
 
 const CJX_MethodSpec CJX_WsdlConnection::MethodSpecs[] = {
@@ -21,11 +23,10 @@ CJX_WsdlConnection::CJX_WsdlConnection(CXFA_WsdlConnection* connection)
 
 CJX_WsdlConnection::~CJX_WsdlConnection() {}
 
-void CJX_WsdlConnection::execute(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc != 0 && argc != 1) {
-    ThrowParamCountMismatchException(L"execute");
-    return;
-  }
-  pArguments->GetReturnValue()->SetBoolean(false);
+CJS_Return CJX_WsdlConnection::execute(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty() && params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(runtime->NewBoolean(false));
 }

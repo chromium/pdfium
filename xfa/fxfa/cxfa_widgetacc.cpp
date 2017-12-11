@@ -607,7 +607,7 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
     pContext->SetNodesOfRunScript(&refNodes);
   }
 
-  auto pTmpRetValue = pdfium::MakeUnique<CFXJSE_Value>(pContext->GetRuntime());
+  auto pTmpRetValue = pdfium::MakeUnique<CFXJSE_Value>(pContext->GetIsolate());
   ++m_nRecursionDepth;
   bool bRet = pContext->RunScript(eScriptType, wsExpression.AsStringView(),
                                   pTmpRetValue.get(), m_pNode);

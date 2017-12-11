@@ -17,8 +17,8 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
-#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_engine.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -249,93 +249,81 @@ int32_t CJX_Node::InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom) {
   return 0;
 }
 
-void CJX_Node::applyXSL(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 1) {
-    ThrowParamCountMismatchException(L"applyXSL");
-    return;
-  }
+CJS_Return CJX_Node::applyXSL(CJS_V8* runtime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
+  return CJS_Return(true);
 }
 
-void CJX_Node::assignNode(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 3) {
-    ThrowParamCountMismatchException(L"assignNode");
-    return;
-  }
+CJS_Return CJX_Node::assignNode(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 3)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
+  return CJS_Return(true);
 }
 
-void CJX_Node::clone(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 1) {
-    ThrowParamCountMismatchException(L"clone");
-    return;
-  }
+CJS_Return CJX_Node::clone(CJS_V8* runtime,
+                           const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_Node* pCloneNode = GetXFANode()->Clone(!!pArguments->GetInt32(0));
-  pArguments->GetReturnValue()->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pCloneNode));
+  CXFA_Node* pCloneNode = GetXFANode()->Clone(runtime->ToBoolean(params[0]));
+  CFXJSE_Value* value =
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pCloneNode);
+  if (!value)
+    return CJS_Return(runtime->NewNull());
+  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
-void CJX_Node::getAttribute(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 1) {
-    ThrowParamCountMismatchException(L"getAttribute");
-    return;
-  }
+CJS_Return CJX_Node::getAttribute(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (!pValue)
-    return;
-
-  WideString wsExpression =
-      WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
-  pValue->SetString(
-      GetAttribute(wsExpression.AsStringView()).UTF8Encode().AsStringView());
+  WideString expression = runtime->ToWideString(params[0]);
+  return CJS_Return(runtime->NewString(
+      GetAttribute(expression.AsStringView()).UTF8Encode().AsStringView()));
 }
 
-void CJX_Node::getElement(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 2) {
-    ThrowParamCountMismatchException(L"getElement");
-    return;
-  }
+CJS_Return CJX_Node::getElement(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 2)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  WideString wsExpression =
-      WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
-  int32_t iValue = iLength >= 2 ? pArguments->GetInt32(1) : 0;
+  WideString expression = runtime->ToWideString(params[0]);
+  int32_t iValue = params.size() >= 2 ? runtime->ToInt32(params[1]) : 0;
 
   CXFA_Node* pNode =
-      GetProperty(iValue, CXFA_Node::NameToElement(wsExpression), true);
-  pArguments->GetReturnValue()->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode));
+      GetProperty(iValue, CXFA_Node::NameToElement(expression), true);
+  CFXJSE_Value* value =
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode);
+  if (!value)
+    return CJS_Return(runtime->NewNull());
+  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
-void CJX_Node::isPropertySpecified(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 3) {
-    ThrowParamCountMismatchException(L"isPropertySpecified");
-    return;
-  }
+CJS_Return CJX_Node::isPropertySpecified(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 3)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CFXJSE_Value* pValue = pArguments->GetReturnValue();
-  if (!pValue)
-    return;
+  WideString expression = runtime->ToWideString(params[0]);
+  XFA_Attribute attr = CXFA_Node::NameToAttribute(expression.AsStringView());
+  if (attr != XFA_Attribute::Unknown && HasAttribute(attr))
+    return CJS_Return(runtime->NewBoolean(true));
 
-  WideString wsExpression =
-      WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
-  XFA_Attribute attr = CXFA_Node::NameToAttribute(wsExpression.AsStringView());
-  if (attr != XFA_Attribute::Unknown && HasAttribute(attr)) {
-    pValue->SetBoolean(true);
-    return;
-  }
-
-  bool bParent = iLength < 2 || pArguments->GetInt32(1);
-  int32_t iIndex = iLength == 3 ? pArguments->GetInt32(2) : 0;
-  XFA_Element eType = CXFA_Node::NameToElement(wsExpression);
+  bool bParent = params.size() < 2 || runtime->ToBoolean(params[1]);
+  int32_t iIndex = params.size() == 3 ? runtime->ToInt32(params[2]) : 0;
+  XFA_Element eType = CXFA_Node::NameToElement(expression);
   bool bHas = !!GetProperty(iIndex, eType, true);
   if (!bHas && bParent && GetXFANode()->GetParent()) {
     // Also check on the parent.
@@ -343,35 +331,33 @@ void CJX_Node::isPropertySpecified(CFXJSE_Arguments* pArguments) {
     bHas = jsnode->HasAttribute(attr) ||
            !!jsnode->GetProperty(iIndex, eType, true);
   }
-  pValue->SetBoolean(bHas);
+  return CJS_Return(runtime->NewBoolean(bHas));
 }
 
-void CJX_Node::loadXML(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 1 || iLength > 3) {
-    ThrowParamCountMismatchException(L"loadXML");
-    return;
-  }
+CJS_Return CJX_Node::loadXML(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.empty() || params.size() > 3)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  ByteString wsExpression = pArguments->GetUTF8String(0);
-  if (wsExpression.IsEmpty())
-    return;
+  ByteString expression = runtime->ToByteString(params[0]);
+  if (expression.IsEmpty())
+    return CJS_Return(true);
 
   bool bIgnoreRoot = true;
-  if (iLength >= 2)
-    bIgnoreRoot = !!pArguments->GetInt32(1);
+  if (params.size() >= 2)
+    bIgnoreRoot = runtime->ToBoolean(params[1]);
 
   bool bOverwrite = 0;
-  if (iLength >= 3)
-    bOverwrite = !!pArguments->GetInt32(2);
+  if (params.size() >= 3)
+    bOverwrite = runtime->ToBoolean(params[2]);
 
   auto pParser = pdfium::MakeUnique<CXFA_SimpleParser>(GetDocument());
   if (!pParser)
-    return;
+    return CJS_Return(true);
 
-  CFX_XMLNode* pXMLNode = pParser->ParseXMLData(wsExpression);
+  CFX_XMLNode* pXMLNode = pParser->ParseXMLData(expression);
   if (!pXMLNode)
-    return;
+    return CJS_Return(true);
 
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != FX_XMLNODE_Element ||
@@ -416,7 +402,7 @@ void CJX_Node::loadXML(CFXJSE_Arguments* pArguments) {
   pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot.get());
   pFakeRoot = pParser->GetRootNode();
   if (!pFakeRoot)
-    return;
+    return CJS_Return(true);
 
   if (bOverwrite) {
     CXFA_Node* pChild = GetXFANode()->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -464,41 +450,40 @@ void CJX_Node::loadXML(CFXJSE_Arguments* pArguments) {
     pFakeRoot->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
   pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren, false);
+
+  return CJS_Return(true);
 }
 
-void CJX_Node::saveFilteredXML(CFXJSE_Arguments* pArguments) {
+CJS_Return CJX_Node::saveFilteredXML(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // TODO(weili): Check whether we need to implement this, pdfium:501.
+  return CJS_Return(true);
 }
 
-void CJX_Node::saveXML(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength < 0 || iLength > 1) {
-    ThrowParamCountMismatchException(L"saveXML");
-    return;
-  }
-
-  if (iLength == 1 && pArguments->GetUTF8String(0) != "pretty") {
-    ThrowArgumentMismatchException();
-    return;
-  }
+CJS_Return CJX_Node::saveXML(CJS_V8* runtime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() > 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  if (params.size() == 1 && runtime->ToWideString(params[0]) != L"pretty")
+    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
   // TODO(weili): Check whether we need to save pretty print XML, pdfium:501.
 
   WideString bsXMLHeader = L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   if (GetXFANode()->GetPacketType() != XFA_PacketType::Form &&
       GetXFANode()->GetPacketType() != XFA_PacketType::Datasets) {
-    pArguments->GetReturnValue()->SetString("");
-    return;
+    return CJS_Return(runtime->NewString(""));
   }
 
   CFX_XMLNode* pElement = nullptr;
   if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
     pElement = GetXFANode()->GetXMLMappingNode();
     if (!pElement || pElement->GetType() != FX_XMLNODE_Element) {
-      pArguments->GetReturnValue()->SetString(
-          bsXMLHeader.UTF8Encode().AsStringView());
-      return;
+      return CJS_Return(
+          runtime->NewString(bsXMLHeader.UTF8Encode().AsStringView()));
     }
+
     XFA_DataExporter_DealWithDataGroupNode(GetXFANode());
   }
 
@@ -513,32 +498,30 @@ void CJX_Node::saveXML(CFXJSE_Arguments* pArguments) {
   else
     pElement->SaveXMLNode(pStream);
 
-  pArguments->GetReturnValue()->SetString(
-      ByteStringView(pMemoryStream->GetBuffer(), pMemoryStream->GetSize()));
+  return CJS_Return(runtime->NewString(
+      ByteStringView(pMemoryStream->GetBuffer(), pMemoryStream->GetSize())));
 }
 
-void CJX_Node::setAttribute(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 2) {
-    ThrowParamCountMismatchException(L"setAttribute");
-    return;
-  }
+CJS_Return CJX_Node::setAttribute(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 2)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  WideString wsAttributeValue =
-      WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringView());
-  WideString wsAttribute =
-      WideString::FromUTF8(pArguments->GetUTF8String(1).AsStringView());
-  SetAttribute(wsAttribute.AsStringView(), wsAttributeValue.AsStringView(),
-               true);
+  WideString attributeValue = runtime->ToWideString(params[0]);
+  WideString attribute = runtime->ToWideString(params[1]);
+  SetAttribute(attribute.AsStringView(), attributeValue.AsStringView(), true);
+  return CJS_Return(true);
 }
 
-void CJX_Node::setElement(CFXJSE_Arguments* pArguments) {
-  int32_t iLength = pArguments->GetLength();
-  if (iLength != 1 && iLength != 2) {
-    ThrowParamCountMismatchException(L"setElement");
-    return;
-  }
+CJS_Return CJX_Node::setElement(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  if (params.size() != 1 && params.size() != 2)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
+  return CJS_Return(true);
 }
 
 void CJX_Node::Script_NodeClass_Ns(CFXJSE_Value* pValue,

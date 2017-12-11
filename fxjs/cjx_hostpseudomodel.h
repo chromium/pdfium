@@ -54,10 +54,6 @@ class CJX_HostPseudoModel : public CJX_Object {
   JS_METHOD(setFocus, CJX_HostPseudoModel);
 
  private:
-  bool ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
-                          int32_t iArgIndex,
-                          WideString& wsValue);
-
   static const CJX_MethodSpec MethodSpecs[];
 };
 

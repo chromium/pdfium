@@ -6,8 +6,10 @@
 
 #include "fxjs/xfa/cjx_delta.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_delta.h"
 
 const CJX_MethodSpec CJX_Delta::MethodSpecs[] = {{"restore", restore_static},
@@ -19,7 +21,9 @@ CJX_Delta::CJX_Delta(CXFA_Delta* delta) : CJX_Object(delta) {
 
 CJX_Delta::~CJX_Delta() {}
 
-void CJX_Delta::restore(CFXJSE_Arguments* pArguments) {
-  if (pArguments->GetLength() != 0)
-    ThrowParamCountMismatchException(L"restore");
+CJS_Return CJX_Delta::restore(CJS_V8* runtime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
+  if (!params.empty())
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  return CJS_Return(true);
 }

@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
 
-#include "fxjs/cfxjse_arguments.h"
 #include "third_party/base/ptr_util.h"
 
 CScript_HostPseudoModel::CScript_HostPseudoModel(CXFA_Document* pDocument)

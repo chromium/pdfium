@@ -6,7 +6,8 @@
 
 #include "fxjs/cjx_logpseudomodel.h"
 
-#include "fxjs/cfxjse_arguments.h"
+#include <vector>
+
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 
@@ -25,12 +26,32 @@ CJX_LogPseudoModel::CJX_LogPseudoModel(CScript_LogPseudoModel* model)
 
 CJX_LogPseudoModel::~CJX_LogPseudoModel() {}
 
-void CJX_LogPseudoModel::message(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_LogPseudoModel::message(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_LogPseudoModel::traceEnabled(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_LogPseudoModel::traceEnabled(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_LogPseudoModel::traceActivate(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_LogPseudoModel::traceActivate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_LogPseudoModel::traceDeactivate(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_LogPseudoModel::traceDeactivate(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
 
-void CJX_LogPseudoModel::trace(CFXJSE_Arguments* pArguments) {}
+CJS_Return CJX_LogPseudoModel::trace(
+    CJS_V8* runtime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
