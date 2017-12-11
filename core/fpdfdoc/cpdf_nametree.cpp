@@ -153,12 +153,12 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 // will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
 // will be the leaf array that |csName| should be added to, and |pFindIndex|
 // will be the index that it should be added at.
-CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
-                            const WideString& csName,
-                            size_t& nIndex,
-                            int nLevel,
-                            CPDF_Array** ppFind,
-                            int* pFindIndex) {
+CPDF_Object* SearchNameNodeByName(const CPDF_Dictionary* pNode,
+                                  const WideString& csName,
+                                  size_t& nIndex,
+                                  int nLevel,
+                                  CPDF_Array** ppFind,
+                                  int* pFindIndex) {
   if (nLevel > nMaxRecursion)
     return nullptr;
 
@@ -216,8 +216,8 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     if (!pKid)
       continue;
 
-    CPDF_Object* pFound =
-        SearchNameNode(pKid, csName, nIndex, nLevel + 1, ppFind, pFindIndex);
+    CPDF_Object* pFound = SearchNameNodeByName(pKid, csName, nIndex, nLevel + 1,
+                                               ppFind, pFindIndex);
     if (pFound)
       return pFound;
   }
@@ -228,13 +228,13 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
 // successful, return the value object; |csName| will be the key, |ppFind|
 // will be the leaf array that this pair is in, and |pFindIndex| will be the
 // index of the pair in |pFind|.
-CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
-                            size_t nIndex,
-                            size_t& nCurIndex,
-                            int nLevel,
-                            WideString* csName,
-                            CPDF_Array** ppFind,
-                            int* pFindIndex) {
+CPDF_Object* SearchNameNodeByIndex(const CPDF_Dictionary* pNode,
+                                   size_t nIndex,
+                                   size_t& nCurIndex,
+                                   int nLevel,
+                                   WideString* csName,
+                                   CPDF_Array** ppFind,
+                                   int* pFindIndex) {
   if (nLevel > nMaxRecursion)
     return nullptr;
 
@@ -262,8 +262,8 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
-    CPDF_Object* pFound = SearchNameNode(pKid, nIndex, nCurIndex, nLevel + 1,
-                                         csName, ppFind, pFindIndex);
+    CPDF_Object* pFound = SearchNameNodeByIndex(
+        pKid, nIndex, nCurIndex, nLevel + 1, csName, ppFind, pFindIndex);
     if (pFound)
       return pFound;
   }
@@ -271,7 +271,7 @@ CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
 }
 
 // Get the total number of key-value pairs in the tree with root |pNode|.
-size_t CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
+size_t CountNamesInternal(CPDF_Dictionary* pNode, int nLevel) {
   if (nLevel > nMaxRecursion)
     return 0;
 
@@ -289,7 +289,7 @@ size_t CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
     if (!pKid)
       continue;
 
-    nCount += CountNames(pKid, nLevel + 1);
+    nCount += CountNamesInternal(pKid, nLevel + 1);
   }
   return nCount;
 }
@@ -315,7 +315,7 @@ CPDF_NameTree::CPDF_NameTree(const CPDF_Document* pDoc,
 CPDF_NameTree::~CPDF_NameTree() {}
 
 size_t CPDF_NameTree::GetCount() const {
-  return m_pRoot ? ::CountNames(m_pRoot.Get()) : 0;
+  return m_pRoot ? CountNamesInternal(m_pRoot.Get(), 0) : 0;
 }
 
 int CPDF_NameTree::GetIndex(const WideString& csName) const {
@@ -323,7 +323,7 @@ int CPDF_NameTree::GetIndex(const WideString& csName) const {
     return -1;
 
   size_t nIndex = 0;
-  if (!SearchNameNode(m_pRoot.Get(), csName, nIndex, 0, nullptr, nullptr))
+  if (!SearchNameNodeByName(m_pRoot.Get(), csName, nIndex, 0, nullptr, nullptr))
     return -1;
   return nIndex;
 }
@@ -337,7 +337,7 @@ bool CPDF_NameTree::AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
   CPDF_Array* pFind = nullptr;
   int nFindIndex = -1;
   // Fail if the tree already contains this name or if the tree is too deep.
-  if (SearchNameNode(m_pRoot.Get(), name, nIndex, 0, &pFind, &nFindIndex))
+  if (SearchNameNodeByName(m_pRoot.Get(), name, nIndex, 0, &pFind, &nFindIndex))
     return false;
 
   // If the returned |pFind| is a nullptr, then |name| is smaller than all
@@ -347,7 +347,8 @@ bool CPDF_NameTree::AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
   if (!pFind) {
     size_t nCurIndex = 0;
     WideString csName;
-    SearchNameNode(m_pRoot.Get(), 0, nCurIndex, 0, &csName, &pFind, nullptr);
+    SearchNameNodeByIndex(m_pRoot.Get(), 0, nCurIndex, 0, &csName, &pFind,
+                          nullptr);
   }
   ASSERT(pFind);
 
@@ -384,8 +385,8 @@ bool CPDF_NameTree::DeleteValueAndName(int nIndex) {
   CPDF_Array* pFind = nullptr;
   int nFindIndex = -1;
   // Fail if the tree does not contain |nIndex|.
-  if (!SearchNameNode(m_pRoot.Get(), nIndex, nCurIndex, 0, &csName, &pFind,
-                      &nFindIndex)) {
+  if (!SearchNameNodeByIndex(m_pRoot.Get(), nIndex, nCurIndex, 0, &csName,
+                             &pFind, &nFindIndex)) {
     return false;
   }
 
@@ -405,8 +406,8 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(int nIndex,
     return nullptr;
 
   size_t nCurIndex = 0;
-  return SearchNameNode(m_pRoot.Get(), nIndex, nCurIndex, 0, csName, nullptr,
-                        nullptr);
+  return SearchNameNodeByIndex(m_pRoot.Get(), nIndex, nCurIndex, 0, csName,
+                               nullptr, nullptr);
 }
 
 CPDF_Object* CPDF_NameTree::LookupValue(const WideString& csName) const {
@@ -414,7 +415,8 @@ CPDF_Object* CPDF_NameTree::LookupValue(const WideString& csName) const {
     return nullptr;
 
   size_t nIndex = 0;
-  return SearchNameNode(m_pRoot.Get(), csName, nIndex, 0, nullptr, nullptr);
+  return SearchNameNodeByName(m_pRoot.Get(), csName, nIndex, 0, nullptr,
+                              nullptr);
 }
 
 CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
