@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_
 
-#include "fxjs/cjx_hostpseudomodel.h"
+#include "fxjs/xfa/cjx_hostpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CXFA_Document;

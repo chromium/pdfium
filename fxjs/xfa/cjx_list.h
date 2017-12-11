@@ -8,7 +8,7 @@
 #define FXJS_XFA_CJX_LIST_H_
 
 #include "fxjs/CJX_Define.h"
-#include "fxjs/cjx_object.h"
+#include "fxjs/xfa/cjx_object.h"
 
 class CXFA_List;
 

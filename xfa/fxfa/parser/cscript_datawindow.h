@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
 #define XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
 
-#include "fxjs/cjx_datawindow.h"
+#include "fxjs/xfa/cjx_datawindow.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CScript_DataWindow : public CXFA_Object {

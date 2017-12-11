@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJX_OBJECT_H_
-#define FXJS_CJX_OBJECT_H_
+#ifndef FXJS_XFA_CJX_OBJECT_H_
+#define FXJS_XFA_CJX_OBJECT_H_
 
 #include <map>
 #include <memory>
@@ -43,6 +43,7 @@ struct XFA_MAPDATABLOCKCALLBACKINFO {
 
 class CJX_Object {
  public:
+  explicit CJX_Object(CXFA_Object* obj);
   virtual ~CJX_Object();
 
   CXFA_Object* GetXFAObject() { return object_.Get(); }
@@ -115,8 +116,6 @@ class CJX_Object {
   void ThrowParamCountMismatchException(const WideString& method) const;
 
  protected:
-  explicit CJX_Object(CXFA_Object* obj);
-
   void DefineMethods(const CJX_MethodSpec method_specs[]);
 
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
@@ -161,4 +160,4 @@ class CJX_Object {
   std::map<ByteString, CJX_MethodCall> method_specs_;
 };
 
-#endif  // FXJS_CJX_OBJECT_H_
+#endif  // FXJS_XFA_CJX_OBJECT_H_

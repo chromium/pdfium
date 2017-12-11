@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cjx_eventpseudomodel.h"
+#include "fxjs/xfa/cjx_eventpseudomodel.h"
 
 #include <vector>
 

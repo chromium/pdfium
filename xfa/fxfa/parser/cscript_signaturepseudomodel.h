@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_SIGNATUREPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_SIGNATUREPSEUDOMODEL_H_
 
-#include "fxjs/cjx_signaturepseudomodel.h"
+#include "fxjs/xfa/cjx_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CScript_SignaturePseudoModel : public CXFA_Object {

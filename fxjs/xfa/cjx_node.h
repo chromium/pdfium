@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJX_NODE_H_
-#define FXJS_CJX_NODE_H_
+#ifndef FXJS_XFA_CJX_NODE_H_
+#define FXJS_XFA_CJX_NODE_H_
 
 #include <memory>
 #include <utility>
@@ -13,7 +13,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/CJX_Define.h"
-#include "fxjs/cjx_object.h"
+#include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/cjx_tree.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
@@ -263,4 +263,4 @@ class CJX_Node : public CJX_Tree {
   static const CJX_MethodSpec MethodSpecs[];
 };
 
-#endif  // FXJS_CJX_NODE_H_
+#endif  // FXJS_XFA_CJX_NODE_H_

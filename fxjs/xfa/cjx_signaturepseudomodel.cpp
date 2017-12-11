@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cjx_signaturepseudomodel.h"
+#include "fxjs/xfa/cjx_signaturepseudomodel.h"
 
 #include <vector>
 

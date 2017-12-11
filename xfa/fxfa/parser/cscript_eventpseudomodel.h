@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_
 
-#include "fxjs/cjx_eventpseudomodel.h"
+#include "fxjs/xfa/cjx_eventpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CScript_EventPseudoModel : public CXFA_Object {

@@ -8,7 +8,7 @@
 #define FXJS_XFA_CJX_PACKET_H_
 
 #include "fxjs/CJX_Define.h"
-#include "fxjs/cjx_node.h"
+#include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Packet;
 

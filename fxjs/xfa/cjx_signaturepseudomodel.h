@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJX_SIGNATUREPSEUDOMODEL_H_
-#define FXJS_CJX_SIGNATUREPSEUDOMODEL_H_
+#ifndef FXJS_XFA_CJX_SIGNATUREPSEUDOMODEL_H_
+#define FXJS_XFA_CJX_SIGNATUREPSEUDOMODEL_H_
 
 #include "fxjs/CJX_Define.h"
-#include "fxjs/cjx_object.h"
+#include "fxjs/xfa/cjx_object.h"
 
 class CScript_SignaturePseudoModel;
 
@@ -26,4 +26,4 @@ class CJX_SignaturePseudoModel : public CJX_Object {
   static const CJX_MethodSpec MethodSpecs[];
 };
 
-#endif  // FXJS_CJX_SIGNATUREPSEUDOMODEL_H_
+#endif  // FXJS_XFA_CJX_SIGNATUREPSEUDOMODEL_H_

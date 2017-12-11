@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "fxjs/cjx_node.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 

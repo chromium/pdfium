@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
 
-#include "fxjs/cjx_layoutpseudomodel.h"
+#include "fxjs/xfa/cjx_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CXFA_LayoutProcessor;

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cjx_logpseudomodel.h"
+#include "fxjs/xfa/cjx_logpseudomodel.h"
 
 #include <vector>
 

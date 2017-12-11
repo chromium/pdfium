@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJX_LAYOUTPSEUDOMODEL_H_
-#define FXJS_CJX_LAYOUTPSEUDOMODEL_H_
+#ifndef FXJS_XFA_CJX_LAYOUTPSEUDOMODEL_H_
+#define FXJS_XFA_CJX_LAYOUTPSEUDOMODEL_H_
 
 #include <vector>
 
 #include "fxjs/CJX_Define.h"
-#include "fxjs/cjx_object.h"
+#include "fxjs/xfa/cjx_object.h"
 
 enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_H,
@@ -67,4 +67,4 @@ class CJX_LayoutPseudoModel : public CJX_Object {
   static const CJX_MethodSpec MethodSpecs[];
 };
 
-#endif  // FXJS_CJX_LAYOUTPSEUDOMODEL_H_
+#endif  // FXJS_XFA_CJX_LAYOUTPSEUDOMODEL_H_

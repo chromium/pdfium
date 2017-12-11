@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 
-#include "fxjs/cjx_thisproxy.h"
+#include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -15,7 +15,7 @@ CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
                   XFA_ObjectType::VariablesThis,
                   XFA_Element::Unknown,
                   WideStringView(),
-                  pdfium::MakeUnique<CJX_ThisProxy>(this)),
+                  pdfium::MakeUnique<CJX_Object>(this)),
       m_pThisNode(pThisNode),
       m_pScriptNode(pScriptNode) {}
 

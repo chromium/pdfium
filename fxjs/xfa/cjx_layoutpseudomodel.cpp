@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cjx_layoutpseudomodel.h"
+#include "fxjs/xfa/cjx_layoutpseudomodel.h"
 
 #include <set>
 
