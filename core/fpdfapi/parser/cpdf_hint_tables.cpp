@@ -471,7 +471,7 @@ bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return false;
 
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pHintStream);
-  pAcc->LoadAllData();
+  pAcc->LoadAllDataFiltered();
 
   uint32_t size = pAcc->GetSize();
   // The header section of page offset hint table is 36 bytes.

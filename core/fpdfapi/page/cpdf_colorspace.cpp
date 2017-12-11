@@ -1031,7 +1031,7 @@ bool CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     m_Table = pString->GetString();
   } else if (CPDF_Stream* pStream = pTableObj->AsStream()) {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-    pAcc->LoadAllData(false);
+    pAcc->LoadAllDataFiltered();
     m_Table = ByteStringView(pAcc->GetData(), pAcc->GetSize());
   }
   return true;

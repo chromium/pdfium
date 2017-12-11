@@ -51,7 +51,7 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
 
   m_SampleMax = 0xffffffff >> (32 - m_nBitsPerSample);
   m_pSampleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-  m_pSampleStream->LoadAllData(false);
+  m_pSampleStream->LoadAllDataFiltered();
   FX_SAFE_UINT32 nTotalSampleBits = 1;
   m_EncodeInfo.resize(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {

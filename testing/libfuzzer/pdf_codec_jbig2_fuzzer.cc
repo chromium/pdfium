@@ -44,7 +44,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   stream->AsStream()->SetData(data, size);
 
   auto src_stream = pdfium::MakeRetain<CPDF_StreamAcc>(stream->AsStream());
-  src_stream->LoadAllData(true);
+  src_stream->LoadAllDataRaw();
 
   CCodec_Jbig2Module module;
   CCodec_Jbig2Context jbig2_context;

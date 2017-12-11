@@ -99,7 +99,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (iTemplate > -1) {
     CPDF_Stream* pTemplateStream = pArray->GetStreamAt(iTemplate);
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pTemplateStream);
-    pAcc->LoadAllData();
+    pAcc->LoadAllDataFiltered();
     RetainPtr<IFX_SeekableStream> pTemplate =
         pdfium::MakeRetain<CFX_MemoryStream>(
             const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize(), false);

@@ -327,7 +327,7 @@ std::unique_ptr<CPDF_Object> CPDF_CryptoHandler::DecryptObjectTree(
         // TODO(art-snake): Move decryption into the CPDF_Stream class.
         CPDF_Stream* stream = child->AsStream();
         auto stream_access = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
-        stream_access->LoadAllData(true);
+        stream_access->LoadAllDataRaw();
 
         if (IsCipherAES() && stream_access->GetSize() < 16) {
           stream->SetData(nullptr, 0);

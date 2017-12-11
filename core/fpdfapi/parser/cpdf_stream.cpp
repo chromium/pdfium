@@ -80,7 +80,7 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
-  pAcc->LoadAllData(true);
+  pAcc->LoadAllDataRaw();
 
   uint32_t streamSize = pAcc->GetSize();
   CPDF_Dictionary* pDict = GetDict();
@@ -147,7 +147,7 @@ bool CPDF_Stream::HasFilter() const {
 
 WideString CPDF_Stream::GetUnicodeText() const {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
-  pAcc->LoadAllData(false);
+  pAcc->LoadAllDataFiltered();
   return PDF_DecodeText(pAcc->GetData(), pAcc->GetSize());
 }
 
@@ -156,7 +156,7 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive) const {
     return false;
 
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
-  pAcc->LoadAllData(true);
+  pAcc->LoadAllDataRaw();
   return archive->WriteBlock(pAcc->GetData(), pAcc->GetSize()) &&
          archive->WriteString("\r\nendstream");
 }

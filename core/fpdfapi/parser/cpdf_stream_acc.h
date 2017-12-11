@@ -23,9 +23,9 @@ class CPDF_StreamAcc : public Retainable {
   CPDF_StreamAcc(const CPDF_StreamAcc&) = delete;
   CPDF_StreamAcc& operator=(const CPDF_StreamAcc&) = delete;
 
-  void LoadAllData(bool bRawAccess = false,
-                   uint32_t estimated_size = 0,
-                   bool bImageAcc = false);
+  void LoadAllData(bool bRawAccess, uint32_t estimated_size, bool bImageAcc);
+  void LoadAllDataFiltered();
+  void LoadAllDataRaw();
 
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   CPDF_Dictionary* GetDict() const;

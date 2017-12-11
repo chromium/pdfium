@@ -375,7 +375,7 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
     return nullptr;
 
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-  pAcc->LoadAllData();
+  pAcc->LoadAllDataFiltered();
 
   RetainPtr<IFX_SeekableStream> pImageFileRead =
       pdfium::MakeRetain<CFX_MemoryStream>(

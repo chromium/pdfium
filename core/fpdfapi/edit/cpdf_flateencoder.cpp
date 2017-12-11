@@ -14,12 +14,12 @@
 
 CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
     : m_dwSize(0), m_pAcc(pdfium::MakeRetain<CPDF_StreamAcc>(pStream)) {
-  m_pAcc->LoadAllData(true);
+  m_pAcc->LoadAllDataRaw();
 
   bool bHasFilter = pStream && pStream->HasFilter();
   if (bHasFilter && !bFlateEncode) {
     auto pDestAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-    pDestAcc->LoadAllData();
+    pDestAcc->LoadAllDataFiltered();
 
     m_dwSize = pDestAcc->GetSize();
     m_pData = pDestAcc->DetachData();

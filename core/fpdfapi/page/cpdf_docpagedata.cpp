@@ -417,7 +417,7 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
     return it->second;
 
   auto pAccessor = pdfium::MakeRetain<CPDF_StreamAcc>(pProfileStream);
-  pAccessor->LoadAllData(false);
+  pAccessor->LoadAllDataFiltered();
 
   uint8_t digest[20];
   CRYPT_SHA1Generate(pAccessor->GetData(), pAccessor->GetSize(), digest);
@@ -457,7 +457,7 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
   org_size = std::max(org_size, 0);
 
   auto pFontAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pFontStream);
-  pFontAcc->LoadAllData(false, org_size);
+  pFontAcc->LoadAllData(false, org_size, false);
   m_FontFileMap[pFontStream] = pFontAcc;
   return pFontAcc;
 }

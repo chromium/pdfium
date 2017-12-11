@@ -198,7 +198,7 @@ void SetPageContents(const ByteString& key,
   if (!pContentsArray) {
     pContentsArray = pDocument->NewIndirect<CPDF_Array>();
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
-    pAcc->LoadAllData();
+    pAcc->LoadAllDataFiltered();
     ByteString sStream = "q\n";
     ByteString sBody = ByteString(pAcc->GetData(), pAcc->GetSize());
     sStream = sStream + sBody + "\nQ";
@@ -394,7 +394,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
                                         pObj->GetObjNum());
 
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pNewXObject);
-    pAcc->LoadAllData();
+    pAcc->LoadAllDataFiltered();
     ByteString sStream(pAcc->GetData(), pAcc->GetSize());
     CFX_Matrix matrix = pAPDic->GetMatrixFor("Matrix");
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);

@@ -116,7 +116,7 @@ CPDF_MeshStream::CPDF_MeshStream(
 CPDF_MeshStream::~CPDF_MeshStream() {}
 
 bool CPDF_MeshStream::Load() {
-  m_pStream->LoadAllData();
+  m_pStream->LoadAllDataFiltered();
   m_BitStream = pdfium::MakeUnique<CFX_BitStream>(m_pStream->GetData(),
                                                   m_pStream->GetSize());
   CPDF_Dictionary* pDict = m_pShadingStream->GetDict();

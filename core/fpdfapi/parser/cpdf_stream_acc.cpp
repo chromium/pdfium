@@ -56,6 +56,14 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
   m_bNewBuf = m_pData != m_pStream->GetRawData();
 }
 
+void CPDF_StreamAcc::LoadAllDataFiltered() {
+  LoadAllData(false, 0, false);
+}
+
+void CPDF_StreamAcc::LoadAllDataRaw() {
+  LoadAllData(true, 0, false);
+}
+
 CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
   return m_pStream ? m_pStream->GetDict() : nullptr;
 }

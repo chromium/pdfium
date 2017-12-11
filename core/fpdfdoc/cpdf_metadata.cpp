@@ -21,7 +21,7 @@ CPDF_Metadata::CPDF_Metadata(const CPDF_Document* pDoc) {
     return;
 
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-  pAcc->LoadAllData(false);
+  pAcc->LoadAllDataFiltered();
   m_pXmlElement = CXML_Element::Parse(pAcc->GetData(), pAcc->GetSize());
 }
 

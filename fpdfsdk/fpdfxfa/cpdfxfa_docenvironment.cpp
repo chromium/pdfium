@@ -496,7 +496,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
                               content.GetLength());
       }
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-      pAcc->LoadAllData();
+      pAcc->LoadAllDataFiltered();
       fileWrite->WriteBlock(pAcc->GetData(), fileWrite->GetSize(),
                             pAcc->GetSize());
     }
