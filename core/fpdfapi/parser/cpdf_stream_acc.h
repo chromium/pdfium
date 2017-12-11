@@ -28,9 +28,7 @@ class CPDF_StreamAcc : public Retainable {
                    bool bImageAcc = false);
 
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
-  CPDF_Dictionary* GetDict() const {
-    return m_pStream ? m_pStream->GetDict() : nullptr;
-  }
+  CPDF_Dictionary* GetDict() const;
 
   const uint8_t* GetData() const;
   uint8_t* GetData();

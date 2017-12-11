@@ -31,9 +31,7 @@ class CPDF_Image : public Retainable {
 
   CPDF_Dictionary* GetInlineDict() const { return m_pDict.Get(); }
   CPDF_Stream* GetStream() const { return m_pStream.Get(); }
-  CPDF_Dictionary* GetDict() const {
-    return m_pStream ? m_pStream->GetDict() : nullptr;
-  }
+  CPDF_Dictionary* GetDict() const;
   CPDF_Dictionary* GetOC() const { return m_pOC.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 

@@ -16,6 +16,12 @@ CPDF_StreamAcc::CPDF_StreamAcc(const CPDF_Stream* pStream)
       m_pStream(pStream),
       m_pSrcData(nullptr) {}
 
+CPDF_StreamAcc::~CPDF_StreamAcc() {
+  if (m_bNewBuf)
+    FX_Free(m_pData);
+  FX_Free(m_pSrcData);
+}
+
 void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
                                  uint32_t estimated_size,
                                  bool bImageAcc) {
@@ -54,10 +60,8 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
   m_bNewBuf = m_pData != m_pStream->GetRawData();
 }
 
-CPDF_StreamAcc::~CPDF_StreamAcc() {
-  if (m_bNewBuf)
-    FX_Free(m_pData);
-  FX_Free(m_pSrcData);
+CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
+  return m_pStream ? m_pStream->GetDict() : nullptr;
 }
 
 const uint8_t* CPDF_StreamAcc::GetData() const {

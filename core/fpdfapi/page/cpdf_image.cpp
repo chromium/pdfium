@@ -71,6 +71,10 @@ void CPDF_Image::ConvertStreamToIndirectObject() {
   m_pDocument->AddIndirectObject(m_pStream.Release());
 }
 
+CPDF_Dictionary* CPDF_Image::GetDict() const {
+  return m_pStream ? m_pStream->GetDict() : nullptr;
+}
+
 std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
                                                       uint32_t size) {
   int32_t width;
