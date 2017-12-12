@@ -28,6 +28,10 @@ namespace {
 
 const uint32_t kMaxStreamSize = 20 * 1024 * 1024;
 
+uint16_t GetUnicodeFromBytes(const uint8_t* bytes, bool bBE) {
+  return bBE ? (bytes[0] << 8 | bytes[1]) : (bytes[1] << 8 | bytes[0]);
+}
+
 bool CheckFlateDecodeParams(int Colors, int BitsPerComponent, int Columns) {
   if (Colors < 0 || BitsPerComponent < 0 || Columns < 0)
     return false;
@@ -104,7 +108,7 @@ uint32_t A85Decode(const uint8_t* src_buf,
   // of Ascii85 is 4:5.
   uint32_t space_for_non_zeroes = (pos - zcount) / 5 * 4 + 4;
   if (zcount > (UINT_MAX - space_for_non_zeroes) / 4)
-    return 0xFFFFFFFF;
+    return FX_INVALID_OFFSET;
 
   *dest_buf = FX_Alloc(uint8_t, zcount * 4 + space_for_non_zeroes);
   size_t state = 0;
@@ -120,21 +124,24 @@ uint32_t A85Decode(const uint8_t* src_buf,
       state = 0;
       res = 0;
       *dest_size += 4;
-    } else if (ch >= '!' && ch <= 'u') {
-      res = res * 85 + ch - 33;
-      state++;
-      if (state == 5) {
-        for (size_t i = 0; i < 4; ++i) {
-          (*dest_buf)[(*dest_size)++] =
-              static_cast<uint8_t>(res >> (3 - i) * 8);
-        }
-        state = 0;
-        res = 0;
-      }
-    } else {
-      // The end or illegal character.
-      break;
+      continue;
     }
+
+    // Check for the end or illegal character.
+    if (ch < '!' || ch > 'u')
+      break;
+
+    res = res * 85 + ch - 33;
+    if (state < 4) {
+      ++state;
+      continue;
+    }
+
+    for (size_t i = 0; i < 4; ++i) {
+      (*dest_buf)[(*dest_size)++] = static_cast<uint8_t>(res >> (3 - i) * 8);
+    }
+    state = 0;
+    res = 0;
   }
   // Handle partial group.
   if (state) {
@@ -316,7 +323,7 @@ uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
     BitsPerComponent = pParams->GetIntegerFor("BitsPerComponent", 8);
     Columns = pParams->GetIntegerFor("Columns", 1);
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns))
-      return 0xFFFFFFFF;
+      return FX_INVALID_OFFSET;
   }
   return CPDF_ModuleMgr::Get()->GetFlateModule()->FlateOrLZWDecode(
       bLZW, src_buf, src_size, bEarlyChange, predictor, Colors,
@@ -360,7 +367,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     CPDF_Dictionary* pParam = ToDictionary(DecoderArray[i].second);
     uint8_t* new_buf = nullptr;
     uint32_t new_size = 0xFFFFFFFF;
-    int offset = -1;
+    uint32_t offset = FX_INVALID_OFFSET;
     if (decoder == "Crypt")
       continue;
     if (decoder == "FlateDecode" || decoder == "Fl") {
@@ -403,7 +410,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     }
     if (last_buf != src_buf)
       FX_Free(last_buf);
-    if (offset == -1) {
+    if (offset == FX_INVALID_OFFSET) {
       FX_Free(new_buf);
       return false;
     }
@@ -421,30 +428,27 @@ WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
   WideString result;
   if (src_len >= 2 && ((src_data[0] == 0xfe && src_data[1] == 0xff) ||
                        (src_data[0] == 0xff && src_data[1] == 0xfe))) {
-    bool bBE = src_data[0] == 0xfe;
     uint32_t max_chars = (src_len - 2) / 2;
     if (!max_chars)
       return result;
 
-    if (src_data[0] == 0xff)
-      bBE = !src_data[2];
+    bool bBE = src_data[0] == 0xfe || (src_data[0] == 0xff && !src_data[2]);
     wchar_t* dest_buf = result.GetBuffer(max_chars);
     const uint8_t* uni_str = src_data + 2;
     int dest_pos = 0;
     for (uint32_t i = 0; i < max_chars * 2; i += 2) {
-      uint16_t unicode = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
-                             : (uni_str[i + 1] << 8 | uni_str[i]);
-      if (unicode == 0x1b) {
-        i += 2;
-        while (i < max_chars * 2) {
-          uint16_t unicode2 = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
-                                  : (uni_str[i + 1] << 8 | uni_str[i]);
-          i += 2;
-          if (unicode2 == 0x1b)
-            break;
-        }
-      } else {
+      uint16_t unicode = GetUnicodeFromBytes(uni_str + i, bBE);
+      if (unicode != 0x1b) {
         dest_buf[dest_pos++] = unicode;
+        continue;
+      }
+
+      i += 2;
+      while (i < max_chars * 2) {
+        uint16_t unicode2 = GetUnicodeFromBytes(uni_str + i, bBE);
+        i += 2;
+        if (unicode2 == 0x1b)
+          break;
       }
     }
     result.ReleaseBuffer(dest_pos);
