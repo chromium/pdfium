@@ -92,6 +92,12 @@ class CJX_Object {
                                 bool bSetting,
                                 XFA_Attribute eAttribute);
 
+  void Script_Som_FontColor(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute);
+  void Script_Som_FillColor(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute);
   void Script_Som_BorderColor(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute);

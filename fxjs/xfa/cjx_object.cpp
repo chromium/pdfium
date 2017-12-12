@@ -925,6 +925,67 @@ void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
   pValue->SetInteger(GetInteger(eAttribute));
 }
 
+void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
+                                      bool bSetting,
+                                      XFA_Attribute eAttribute) {
+  if (!widget_data_)
+    return;
+
+  CXFA_FontData fontData = widget_data_->GetFontData(true);
+  CXFA_Node* pNode = fontData.GetNode();
+  if (!pNode)
+    return;
+
+  if (bSetting) {
+    int32_t r;
+    int32_t g;
+    int32_t b;
+    std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
+    FX_ARGB color = ArgbEncode(0xff, r, g, b);
+    fontData.SetColor(color);
+    return;
+  }
+
+  int32_t a;
+  int32_t r;
+  int32_t g;
+  int32_t b;
+  std::tie(a, r, g, b) = ArgbDecode(fontData.GetColor());
+  pValue->SetString(ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
+}
+
+void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
+                                      bool bSetting,
+                                      XFA_Attribute eAttribute) {
+  if (!widget_data_)
+    return;
+
+  CXFA_BorderData borderData = widget_data_->GetBorderData(true);
+  CXFA_FillData borderfillData = borderData.GetFillData(true);
+  CXFA_Node* pNode = borderfillData.GetNode();
+  if (!pNode)
+    return;
+
+  if (bSetting) {
+    int32_t r;
+    int32_t g;
+    int32_t b;
+    std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
+    FX_ARGB color = ArgbEncode(0xff, r, g, b);
+    borderfillData.SetColor(color);
+    return;
+  }
+
+  FX_ARGB color = borderfillData.GetColor(false);
+  int32_t a;
+  int32_t r;
+  int32_t g;
+  int32_t b;
+  std::tie(a, r, g, b) = ArgbDecode(color);
+  pValue->SetString(
+      WideString::Format(L"%d,%d,%d", r, g, b).UTF8Encode().AsStringView());
+}
+
 void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {

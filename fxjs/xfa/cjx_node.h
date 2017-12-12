@@ -122,15 +122,9 @@ class CJX_Node : public CJX_Tree {
   void Script_Som_Message(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_SOM_MESSAGETYPE iMessageType);
-  void Script_Som_FillColor(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
   void Script_Som_DataNode(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute);
-  void Script_Som_FontColor(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
   void Script_Som_Mandatory(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute);

@@ -7,7 +7,6 @@
 #include "fxjs/xfa/cjx_node.h"
 
 #include <map>
-#include <tuple>
 #include <vector>
 
 #include "core/fxcrt/cfx_decimal.h"
@@ -31,37 +30,6 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
-
-std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
-  int32_t r = 0;
-  int32_t g = 0;
-  int32_t b = 0;
-
-  size_t iIndex = 0;
-  for (size_t i = 0; i < strRGB.GetLength(); ++i) {
-    wchar_t ch = strRGB[i];
-    if (ch == L',')
-      ++iIndex;
-    if (iIndex > 2)
-      break;
-
-    int32_t iValue = ch - L'0';
-    if (iValue >= 0 && iValue <= 9) {
-      switch (iIndex) {
-        case 0:
-          r = r * 10 + iValue;
-          break;
-        case 1:
-          g = g * 10 + iValue;
-          break;
-        default:
-          b = b * 10 + iValue;
-          break;
-      }
-    }
-  }
-  return {r, g, b};
-}
 
 enum class EventAppliesToo {
   kNone = 0,
@@ -789,39 +757,6 @@ void CJX_Node::Script_Boolean_Value(CFXJSE_Value* pValue,
   SetContent(wsNewValue, wsFormatValue, true, true, true);
 }
 
-void CJX_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
-    return;
-
-  CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
-  CXFA_FillData borderfillData = borderData.GetFillData(true);
-  CXFA_Node* pNode = borderfillData.GetNode();
-  if (!pNode)
-    return;
-
-  if (bSetting) {
-    int32_t r;
-    int32_t g;
-    int32_t b;
-    std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
-    FX_ARGB color = ArgbEncode(0xff, r, g, b);
-    borderfillData.SetColor(color);
-    return;
-  }
-
-  FX_ARGB color = borderfillData.GetColor(false);
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
-  pValue->SetString(
-      WideString::Format(L"%d,%d,%d", r, g, b).UTF8Encode().AsStringView());
-}
-
 void CJX_Node::Script_Som_DataNode(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {
@@ -941,36 +876,6 @@ void CJX_Node::Script_Field_EditValue(CFXJSE_Value* pValue,
   }
   pValue->SetString(
       pWidgetData->GetValue(XFA_VALUEPICTURE_Edit).UTF8Encode().AsStringView());
-}
-
-void CJX_Node::Script_Som_FontColor(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
-    return;
-
-  CXFA_FontData fontData = pWidgetData->GetFontData(true);
-  CXFA_Node* pNode = fontData.GetNode();
-  if (!pNode)
-    return;
-
-  if (bSetting) {
-    int32_t r;
-    int32_t g;
-    int32_t b;
-    std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
-    FX_ARGB color = ArgbEncode(0xff, r, g, b);
-    fontData.SetColor(color);
-    return;
-  }
-
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(fontData.GetColor());
-  pValue->SetString(ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
 }
 
 void CJX_Node::Script_Field_FormatMessage(CFXJSE_Value* pValue,
