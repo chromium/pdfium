@@ -805,3 +805,71 @@ void CJX_Object::SetCalcData(std::unique_ptr<CXFA_CalcData> data) {
 std::unique_ptr<CXFA_CalcData> CJX_Object::ReleaseCalcData() {
   return std::move(calc_data_);
 }
+
+void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
+                                         bool bSetting,
+                                         XFA_Attribute eAttribute) {
+  if (!bSetting) {
+    pValue->SetString(GetAttribute(eAttribute).UTF8Encode().AsStringView());
+    return;
+  }
+
+  WideString wsValue = pValue->ToWideString();
+  SetAttribute(eAttribute, wsValue.AsStringView(), true);
+  if (eAttribute != XFA_Attribute::Use ||
+      GetXFAObject()->GetElementType() != XFA_Element::Desc) {
+    return;
+  }
+
+  CXFA_Node* pTemplateNode =
+      ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Template));
+  CXFA_Node* pProtoRoot =
+      pTemplateNode->GetFirstChildByClass(XFA_Element::Subform)
+          ->GetFirstChildByClass(XFA_Element::Proto);
+
+  WideString wsID;
+  WideString wsSOM;
+  if (!wsValue.IsEmpty()) {
+    if (wsValue[0] == '#')
+      wsID = WideString(wsValue.c_str() + 1, wsValue.GetLength() - 1);
+    else
+      wsSOM = wsValue;
+  }
+
+  CXFA_Node* pProtoNode = nullptr;
+  if (!wsSOM.IsEmpty()) {
+    XFA_RESOLVENODE_RS resolveNodeRS;
+    bool iRet = GetDocument()->GetScriptContext()->ResolveObjects(
+        pProtoRoot, wsSOM.AsStringView(), &resolveNodeRS,
+        XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
+            XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
+            XFA_RESOLVENODE_Siblings,
+        nullptr);
+    if (iRet && resolveNodeRS.objects.front()->IsNode())
+      pProtoNode = resolveNodeRS.objects.front()->AsNode();
+
+  } else if (!wsID.IsEmpty()) {
+    pProtoNode = GetDocument()->GetNodeByID(pProtoRoot, wsID.AsStringView());
+  }
+  if (!pProtoNode)
+    return;
+
+  CXFA_Node* pHeadChild =
+      ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_FirstChild);
+  while (pHeadChild) {
+    CXFA_Node* pSibling = pHeadChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    ToNode(GetXFAObject())->RemoveChild(pHeadChild, true);
+    pHeadChild = pSibling;
+  }
+
+  std::unique_ptr<CXFA_Node> pProtoForm(pProtoNode->CloneTemplateToForm(true));
+  pHeadChild = pProtoForm->GetNodeItem(XFA_NODEITEM_FirstChild);
+  while (pHeadChild) {
+    CXFA_Node* pSibling = pHeadChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pProtoForm->RemoveChild(pHeadChild, true);
+    ToNode(GetXFAObject())->InsertChild(pHeadChild, nullptr);
+    pHeadChild = pSibling;
+  }
+
+  GetDocument()->RemovePurgeNode(pProtoForm.get());
+}

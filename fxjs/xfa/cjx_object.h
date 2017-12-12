@@ -75,6 +75,10 @@ class CJX_Object {
                          bool bNotify,
                          bool bScriptModify);
 
+  void Script_Attribute_String(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute);
+
   pdfium::Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_Attribute eAttr);
