@@ -114,9 +114,6 @@ class CJX_Node : public CJX_Tree {
   void Script_Attribute_IntegerRead(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute);
-  void Script_Attribute_BOOL(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute);
   void Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_Attribute eAttribute);

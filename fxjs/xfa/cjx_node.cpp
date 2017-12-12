@@ -615,16 +615,6 @@ void CJX_Node::Script_Attribute_IntegerRead(CFXJSE_Value* pValue,
   pValue->SetInteger(GetInteger(eAttribute));
 }
 
-void CJX_Node::Script_Attribute_BOOL(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {
-  if (bSetting) {
-    SetBoolean(eAttribute, pValue->ToBoolean(), true);
-    return;
-  }
-  pValue->SetString(GetBoolean(eAttribute) ? "1" : "0");
-}
-
 void CJX_Node::Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_Attribute eAttribute) {

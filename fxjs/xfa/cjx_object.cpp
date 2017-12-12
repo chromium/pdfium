@@ -873,3 +873,13 @@ void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
 
   GetDocument()->RemovePurgeNode(pProtoForm.get());
 }
+
+void CJX_Object::Script_Attribute_BOOL(CFXJSE_Value* pValue,
+                                       bool bSetting,
+                                       XFA_Attribute eAttribute) {
+  if (bSetting) {
+    SetBoolean(eAttribute, pValue->ToBoolean(), true);
+    return;
+  }
+  pValue->SetString(GetBoolean(eAttribute) ? "1" : "0");
+}
