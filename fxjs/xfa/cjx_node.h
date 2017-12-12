@@ -111,15 +111,6 @@ class CJX_Node : public CJX_Tree {
   void Script_Attribute_Integer(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute);
-  void Script_Attribute_IntegerRead(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
-  void Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute);
-  void Script_Attribute_StringRead(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
   void Script_Som_ValidationMessage(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute);

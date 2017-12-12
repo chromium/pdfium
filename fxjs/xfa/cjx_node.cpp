@@ -605,36 +605,6 @@ void CJX_Node::Script_Attribute_Integer(CFXJSE_Value* pValue,
   pValue->SetInteger(GetInteger(eAttribute));
 }
 
-void CJX_Node::Script_Attribute_IntegerRead(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetInteger(GetInteger(eAttribute));
-}
-
-void CJX_Node::Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
-                                         bool bSetting,
-                                         XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetString(GetBoolean(eAttribute) ? "1" : "0");
-}
-
-void CJX_Node::Script_Attribute_StringRead(CFXJSE_Value* pValue,
-                                           bool bSetting,
-                                           XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetString(GetAttribute(eAttribute).UTF8Encode().AsStringView());
-}
-
 void CJX_Node::Script_Delta_CurrentValue(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_Attribute eAttribute) {}
