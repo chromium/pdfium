@@ -27,6 +27,6 @@ CJS_Return CJX_Manifest::evaluate(
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   return CJS_Return(runtime->NewBoolean(!!pWidgetData));
 }

@@ -6,7 +6,7 @@
 
 #include "fxjs/xfa/cjx_object.h"
 
-#include <utility>
+#include <tuple>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
@@ -56,6 +56,37 @@ void XFA_DefaultFreeData(void* pData) {}
 
 XFA_MAPDATABLOCKCALLBACKINFO gs_XFADefaultFreeData = {XFA_DefaultFreeData,
                                                       nullptr};
+
+std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
+  int32_t r = 0;
+  int32_t g = 0;
+  int32_t b = 0;
+
+  size_t iIndex = 0;
+  for (size_t i = 0; i < strRGB.GetLength(); ++i) {
+    wchar_t ch = strRGB[i];
+    if (ch == L',')
+      ++iIndex;
+    if (iIndex > 2)
+      break;
+
+    int32_t iValue = ch - L'0';
+    if (iValue >= 0 && iValue <= 9) {
+      switch (iIndex) {
+        case 0:
+          r = r * 10 + iValue;
+          break;
+        case 1:
+          g = g * 10 + iValue;
+          break;
+        default:
+          b = b * 10 + iValue;
+          break;
+      }
+    }
+  }
+  return {r, g, b};
+}
 
 }  // namespace
 
@@ -892,4 +923,54 @@ void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
     return;
   }
   pValue->SetInteger(GetInteger(eAttribute));
+}
+
+void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
+                                        bool bSetting,
+                                        XFA_Attribute eAttribute) {
+  if (!widget_data_)
+    return;
+
+  CXFA_BorderData borderData = widget_data_->GetBorderData(true);
+  int32_t iSize = borderData.CountEdges();
+  if (bSetting) {
+    int32_t r = 0;
+    int32_t g = 0;
+    int32_t b = 0;
+    std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
+    FX_ARGB rgb = ArgbEncode(100, r, g, b);
+    for (int32_t i = 0; i < iSize; ++i)
+      borderData.GetEdgeData(i).SetColor(rgb);
+
+    return;
+  }
+
+  FX_ARGB color = borderData.GetEdgeData(0).GetColor();
+  int32_t a;
+  int32_t r;
+  int32_t g;
+  int32_t b;
+  std::tie(a, r, g, b) = ArgbDecode(color);
+  pValue->SetString(
+      WideString::Format(L"%d,%d,%d", r, g, b).UTF8Encode().AsStringView());
+}
+
+void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
+                                        bool bSetting,
+                                        XFA_Attribute eAttribute) {
+  if (!widget_data_)
+    return;
+
+  CXFA_BorderData borderData = widget_data_->GetBorderData(true);
+  if (bSetting) {
+    CXFA_Measurement thickness = borderData.GetEdgeData(0).GetMSThickness();
+    pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
+    return;
+  }
+
+  WideString wsThickness = pValue->ToWideString();
+  for (int32_t i = 0; i < borderData.CountEdges(); ++i) {
+    borderData.GetEdgeData(i).SetMSThickness(
+        CXFA_Measurement(wsThickness.AsStringView()));
+  }
 }

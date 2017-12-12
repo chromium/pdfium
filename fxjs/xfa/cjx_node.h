@@ -8,7 +8,6 @@
 #define FXJS_XFA_CJX_NODE_H_
 
 #include <memory>
-#include <utility>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
@@ -46,9 +45,6 @@ class CJX_Node : public CJX_Tree {
                   bool bScriptModify,
                   bool bSyncData);
   WideString GetContent(bool bScriptModify);
-
-  void SetWidgetData(std::unique_ptr<CXFA_WidgetData> data);
-  CXFA_WidgetData* GetWidgetData() const { return widget_data_.get(); }
 
   void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_ = item; }
   CXFA_LayoutItem* GetLayoutItem() const { return layout_item_.Get(); }
@@ -126,12 +122,6 @@ class CJX_Node : public CJX_Tree {
   void Script_Som_Message(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_SOM_MESSAGETYPE iMessageType);
-  void Script_Som_BorderColor(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute);
-  void Script_Som_BorderWidth(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute);
   void Script_Som_FillColor(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute);
@@ -239,7 +229,6 @@ class CJX_Node : public CJX_Tree {
                                 XFA_Element eType);
 
  private:
-  std::unique_ptr<CXFA_WidgetData> widget_data_;
   UnownedPtr<CXFA_LayoutItem> layout_item_;
   size_t calc_recursion_count_ = 0;
   static const CJX_MethodSpec MethodSpecs[];

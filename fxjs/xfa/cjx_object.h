@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
@@ -16,6 +17,7 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
+#include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 class CFXJSE_Value;
 class CJS_V8;
@@ -51,6 +53,11 @@ class CJX_Object {
 
   CXFA_Document* GetDocument() const;
 
+  void SetWidgetData(std::unique_ptr<CXFA_WidgetData> data) {
+    widget_data_ = std::move(data);
+  }
+  CXFA_WidgetData* GetWidgetData() const { return widget_data_.get(); }
+
   bool HasMethod(const WideString& func) const;
   CJS_Return RunMethod(const WideString& func,
                        const std::vector<v8::Local<v8::Value>>& params);
@@ -84,6 +91,13 @@ class CJX_Object {
   void Script_Attribute_Integer(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute);
+
+  void Script_Som_BorderColor(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
+  void Script_Som_BorderWidth(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
 
   pdfium::Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
@@ -164,6 +178,7 @@ class CJX_Object {
   void RemoveMapModuleKey(void* pKey);
   void MoveBufferMapData(CXFA_Object* pDstModule);
 
+  std::unique_ptr<CXFA_WidgetData> widget_data_;
   UnownedPtr<CXFA_Object> object_;
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
   std::unique_ptr<CXFA_CalcData> calc_data_;

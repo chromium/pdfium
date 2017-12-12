@@ -40,7 +40,7 @@ CJX_Field::~CJX_Field() {}
 CJS_Return CJX_Field::clearItems(
     CJS_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (pWidgetData)
     pWidgetData->DeleteItem(-1, true, false);
   return CJS_Return(true);
@@ -81,7 +81,7 @@ CJS_Return CJX_Field::deleteItem(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (!pWidgetData)
     return CJS_Return(true);
 
@@ -100,7 +100,7 @@ CJS_Return CJX_Field::getSaveItem(
   if (iIndex < 0)
     return CJS_Return(runtime->NewNull());
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (!pWidgetData)
     return CJS_Return(runtime->NewNull());
 
@@ -118,7 +118,7 @@ CJS_Return CJX_Field::boundItem(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (!pWidgetData)
     return CJS_Return(true);
 
@@ -133,7 +133,7 @@ CJS_Return CJX_Field::getItemState(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (!pWidgetData)
     return CJS_Return(true);
 
@@ -165,7 +165,7 @@ CJS_Return CJX_Field::getDisplayItem(
   if (iIndex < 0)
     return CJS_Return(runtime->NewNull());
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (!pWidgetData)
     return CJS_Return(runtime->NewNull());
 
@@ -183,7 +183,7 @@ CJS_Return CJX_Field::setItemState(
   if (params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (!pWidgetData)
     return CJS_Return(true);
 
@@ -203,7 +203,7 @@ CJS_Return CJX_Field::addItem(CJS_V8* runtime,
   if (params.size() != 1 && params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  CXFA_WidgetData* pWidgetData = GetWidgetData();
   if (!pWidgetData)
     return CJS_Return(true);
 

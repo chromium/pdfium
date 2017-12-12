@@ -789,58 +789,6 @@ void CJX_Node::Script_Boolean_Value(CFXJSE_Value* pValue,
   SetContent(wsNewValue, wsFormatValue, true, true, true);
 }
 
-void CJX_Node::Script_Som_BorderColor(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
-    return;
-
-  CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
-  int32_t iSize = borderData.CountEdges();
-  if (bSetting) {
-    int32_t r = 0;
-    int32_t g = 0;
-    int32_t b = 0;
-    std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
-    FX_ARGB rgb = ArgbEncode(100, r, g, b);
-    for (int32_t i = 0; i < iSize; ++i)
-      borderData.GetEdgeData(i).SetColor(rgb);
-
-    return;
-  }
-
-  FX_ARGB color = borderData.GetEdgeData(0).GetColor();
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
-  pValue->SetString(
-      WideString::Format(L"%d,%d,%d", r, g, b).UTF8Encode().AsStringView());
-}
-
-void CJX_Node::Script_Som_BorderWidth(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
-    return;
-
-  CXFA_BorderData borderData = pWidgetData->GetBorderData(true);
-  if (bSetting) {
-    CXFA_Measurement thickness = borderData.GetEdgeData(0).GetMSThickness();
-    pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
-    return;
-  }
-
-  WideString wsThickness = pValue->ToWideString();
-  for (int32_t i = 0; i < borderData.CountEdges(); ++i) {
-    borderData.GetEdgeData(i).SetMSThickness(
-        CXFA_Measurement(wsThickness.AsStringView()));
-  }
-}
-
 void CJX_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute) {
@@ -1342,10 +1290,6 @@ void CJX_Node::Script_Script_Stateless(CFXJSE_Value* pValue,
 void CJX_Node::Script_Encrypt_Format(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_Attribute eAttribute) {}
-
-void CJX_Node::SetWidgetData(std::unique_ptr<CXFA_WidgetData> data) {
-  widget_data_ = std::move(data);
-}
 
 pdfium::Optional<WideString> CJX_Node::TryNamespace() {
   if (GetXFANode()->IsModelNode() ||
