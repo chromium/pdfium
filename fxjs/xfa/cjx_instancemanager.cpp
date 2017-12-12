@@ -22,12 +22,11 @@ const CJX_MethodSpec CJX_InstanceManager::MethodSpecs[] = {
     {"insertInstance", insertInstance_static},
     {"moveInstance", moveInstance_static},
     {"removeInstance", removeInstance_static},
-    {"setInstances", setInstances_static},
-    {"", nullptr}};
+    {"setInstances", setInstances_static}};
 
 CJX_InstanceManager::CJX_InstanceManager(CXFA_InstanceManager* mgr)
     : CJX_Node(mgr) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_InstanceManager::~CJX_InstanceManager() {}

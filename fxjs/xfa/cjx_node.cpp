@@ -135,11 +135,10 @@ const CJX_MethodSpec CJX_Node::MethodSpecs[] = {
     {"saveFilteredXML", saveFilteredXML_static},
     {"saveXML", saveXML_static},
     {"setAttribute", setAttribute_static},
-    {"setElement", setElement_static},
-    {"", nullptr}};
+    {"setElement", setElement_static}};
 
 CJX_Node::CJX_Node(CXFA_Node* node) : CJX_Tree(node) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Node::~CJX_Node() = default;

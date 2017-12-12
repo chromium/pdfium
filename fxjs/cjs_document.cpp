@@ -61,8 +61,7 @@ const JSPropertySpec CJS_Document::PropertySpecs[] = {
     {"title", get_title_static, set_title_static},
     {"URL", get_URL_static, set_URL_static},
     {"zoom", get_zoom_static, set_zoom_static},
-    {"zoomType", get_zoom_type_static, set_zoom_type_static},
-    {0, 0, 0}};
+    {"zoomType", get_zoom_type_static, set_zoom_type_static}};
 
 const JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"addAnnot", addAnnot_static},
@@ -106,8 +105,7 @@ const JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"saveAs", saveAs_static},
     {"submitForm", submitForm_static},
     {"syncAnnotScan", syncAnnotScan_static},
-    {"mailDoc", mailDoc_static},
-    {0, 0}};
+    {"mailDoc", mailDoc_static}};
 
 int CJS_Document::ObjDefnID = -1;
 
@@ -121,8 +119,8 @@ void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Document", FXJSOBJTYPE_GLOBAL,
                                  JSConstructor<CJS_Document, Document>,
                                  JSDestructor<CJS_Document>);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs);
-  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {

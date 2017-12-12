@@ -10,8 +10,7 @@ const JSConstSpec CJS_Highlight::ConstSpecs[] = {
     {"n", JSConstSpec::String, 0, "none"},
     {"i", JSConstSpec::String, 0, "invert"},
     {"p", JSConstSpec::String, 0, "push"},
-    {"o", JSConstSpec::String, 0, "outline"},
-    {0, JSConstSpec::Number, 0, 0}};
+    {"o", JSConstSpec::String, 0, "outline"}};
 
 int CJS_Highlight::ObjDefnID = -1;
 
@@ -19,5 +18,5 @@ int CJS_Highlight::ObjDefnID = -1;
 void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("highlight", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
 }

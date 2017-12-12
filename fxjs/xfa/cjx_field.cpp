@@ -29,11 +29,10 @@ const CJX_MethodSpec CJX_Field::MethodSpecs[] = {
     {"getDisplayItem", getDisplayItem_static},
     {"getItemState", getItemState_static},
     {"getSaveItem", getSaveItem_static},
-    {"setItemState", setItemState_static},
-    {"", nullptr}};
+    {"setItemState", setItemState_static}};
 
 CJX_Field::CJX_Field(CXFA_Field* field) : CJX_Container(field) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Field::~CJX_Field() {}

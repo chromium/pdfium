@@ -80,8 +80,9 @@ CJX_Object::~CJX_Object() {
   ClearMapModuleBuffer();
 }
 
-void CJX_Object::DefineMethods(const CJX_MethodSpec method_specs[]) {
-  for (size_t i = 0; method_specs[i].pMethodCall != nullptr; ++i)
+void CJX_Object::DefineMethods(const CJX_MethodSpec method_specs[],
+                               size_t count) {
+  for (size_t i = 0; i < count; ++i)
     method_specs_[method_specs[i].pName] = method_specs[i].pMethodCall;
 }
 

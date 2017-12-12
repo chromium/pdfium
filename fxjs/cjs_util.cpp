@@ -58,9 +58,11 @@ const TbConvert TbConvertTable[] = {
 }  // namespace
 
 const JSMethodSpec CJS_Util::MethodSpecs[] = {
-    {"printd", printd_static},         {"printf", printf_static},
-    {"printx", printx_static},         {"scand", scand_static},
-    {"byteToChar", byteToChar_static}, {0, 0}};
+    {"printd", printd_static},
+    {"printf", printf_static},
+    {"printx", printx_static},
+    {"scand", scand_static},
+    {"byteToChar", byteToChar_static}};
 
 int CJS_Util::ObjDefnID = -1;
 
@@ -69,7 +71,7 @@ void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("util", FXJSOBJTYPE_STATIC,
                          JSConstructor<CJS_Util, util>, JSDestructor<CJS_Util>);
-  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

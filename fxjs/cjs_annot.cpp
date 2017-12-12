@@ -22,8 +22,7 @@ CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* annot) {
 const JSPropertySpec CJS_Annot::PropertySpecs[] = {
     {"hidden", get_hidden_static, set_hidden_static},
     {"name", get_name_static, set_name_static},
-    {"type", get_type_static, set_type_static},
-    {0, 0, 0}};
+    {"type", get_type_static, set_type_static}};
 
 int CJS_Annot::ObjDefnID = -1;
 
@@ -37,7 +36,7 @@ void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Annot", FXJSOBJTYPE_DYNAMIC,
                                  JSConstructor<CJS_Annot, Annot>,
                                  JSDestructor<CJS_Annot>);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
 Annot::Annot(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}

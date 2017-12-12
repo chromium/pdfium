@@ -124,8 +124,7 @@ const JSPropertySpec CJS_Field::PropertySpecs[] = {
     {"userName", get_user_name_static, set_user_name_static},
     {"value", get_value_static, set_value_static},
     {"valueAsString", get_value_as_string_static, set_value_as_string_static},
-    {"source", get_source_static, set_source_static},
-    {0, 0, 0}};
+    {"source", get_source_static, set_source_static}};
 
 const JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"browseForFileToSubmit", browseForFileToSubmit_static},
@@ -153,8 +152,7 @@ const JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"signatureInfo", signatureInfo_static},
     {"signatureSetSeedValue", signatureSetSeedValue_static},
     {"signatureSign", signatureSign_static},
-    {"signatureValidate", signatureValidate_static},
-    {0, 0}};
+    {"signatureValidate", signatureValidate_static}};
 
 int CJS_Field::ObjDefnID = -1;
 
@@ -168,8 +166,8 @@ void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Field", FXJSOBJTYPE_DYNAMIC,
                                  JSConstructor<CJS_Field, Field>,
                                  JSDestructor<CJS_Field>);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs);
-  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 void CJS_Field::InitInstance(IJS_Runtime* pIRuntime) {}

@@ -20,11 +20,10 @@ const CJX_MethodSpec CJX_Subform::MethodSpecs[] = {
     {"execCalculate", execCalculate_static},
     {"execEvent", execEvent_static},
     {"execInitialize", execInitialize_static},
-    {"execValidate", execValidate_static},
-    {"", nullptr}};
+    {"execValidate", execValidate_static}};
 
 CJX_Subform::CJX_Subform(CXFA_Node* node) : CJX_Container(node) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Subform::~CJX_Subform() {}

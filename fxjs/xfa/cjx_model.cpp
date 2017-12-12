@@ -17,11 +17,10 @@
 const CJX_MethodSpec CJX_Model::MethodSpecs[] = {
     {"clearErrorList", clearErrorList_static},
     {"createNode", createNode_static},
-    {"isCompatibleNS", isCompatibleNS_static},
-    {"", nullptr}};
+    {"isCompatibleNS", isCompatibleNS_static}};
 
 CJX_Model::CJX_Model(CXFA_Node* node) : CJX_Node(node) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Model::~CJX_Model() {}

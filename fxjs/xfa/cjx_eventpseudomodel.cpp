@@ -45,12 +45,11 @@ void BooleanProperty(CFXJSE_Value* pValue, bool& bValue, bool bSetting) {
 
 const CJX_MethodSpec CJX_EventPseudoModel::MethodSpecs[] = {
     {"emit", emit_static},
-    {"reset", reset_static},
-    {"", nullptr}};
+    {"reset", reset_static}};
 
 CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_EventPseudoModel::~CJX_EventPseudoModel() {}

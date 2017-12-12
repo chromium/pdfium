@@ -116,7 +116,7 @@ class CJX_Object {
   void ThrowParamCountMismatchException(const WideString& method) const;
 
  protected:
-  void DefineMethods(const CJX_MethodSpec method_specs[]);
+  void DefineMethods(const CJX_MethodSpec method_specs[], size_t count);
 
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
   void SetMapModuleString(void* pKey, const WideStringView& wsValue);

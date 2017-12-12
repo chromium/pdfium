@@ -16,12 +16,11 @@ const CJX_MethodSpec CJX_LogPseudoModel::MethodSpecs[] = {
     {"traceEnabled", traceEnabled_static},
     {"traceActivate", traceActivate_static},
     {"traceDeactivate", traceDeactivate_static},
-    {"trace", trace_static},
-    {"", nullptr}};
+    {"trace", trace_static}};
 
 CJX_LogPseudoModel::CJX_LogPseudoModel(CScript_LogPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_LogPseudoModel::~CJX_LogPseudoModel() {}

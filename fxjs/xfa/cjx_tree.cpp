@@ -21,11 +21,10 @@
 
 const CJX_MethodSpec CJX_Tree::MethodSpecs[] = {
     {"resolveNode", resolveNode_static},
-    {"resolveNodes", resolveNodes_static},
-    {"", nullptr}};
+    {"resolveNodes", resolveNodes_static}};
 
 CJX_Tree::CJX_Tree(CXFA_Object* obj) : CJX_Object(obj) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Tree::~CJX_Tree() {}

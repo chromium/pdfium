@@ -38,13 +38,16 @@ class CJS_Object {
  public:
   static void DefineConsts(CFXJS_Engine* pEngine,
                            int objId,
-                           const JSConstSpec consts[]);
+                           const JSConstSpec consts[],
+                           size_t count);
   static void DefineProps(CFXJS_Engine* pEngine,
                           int objId,
-                          const JSPropertySpec props[]);
+                          const JSPropertySpec props[],
+                          size_t count);
   static void DefineMethods(CFXJS_Engine* pEngine,
                             int objId,
-                            const JSMethodSpec methods[]);
+                            const JSMethodSpec methods[],
+                            size_t count);
 
   explicit CJS_Object(v8::Local<v8::Object> pObject);
   virtual ~CJS_Object();

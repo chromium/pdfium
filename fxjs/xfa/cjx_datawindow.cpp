@@ -15,12 +15,11 @@ const CJX_MethodSpec CJX_DataWindow::MethodSpecs[] = {
     {"gotoRecord", gotoRecord_static},
     {"isRecordGroup", isRecordGroup_static},
     {"moveCurrentRecord", moveCurrentRecord_static},
-    {"record", record_static},
-    {"", nullptr}};
+    {"record", record_static}};
 
 CJX_DataWindow::CJX_DataWindow(CScript_DataWindow* window)
     : CJX_Object(window) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_DataWindow::~CJX_DataWindow() {}

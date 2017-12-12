@@ -15,11 +15,10 @@
 const CJX_MethodSpec CJX_Packet::MethodSpecs[] = {
     {"getAttribute", getAttribute_static},
     {"removeAttribute", removeAttribute_static},
-    {"setAttribute", setAttribute_static},
-    {"", nullptr}};
+    {"setAttribute", setAttribute_static}};
 
 CJX_Packet::CJX_Packet(CXFA_Packet* packet) : CJX_Node(packet) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Packet::~CJX_Packet() {}

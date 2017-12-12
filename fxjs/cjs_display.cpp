@@ -10,8 +10,7 @@ const JSConstSpec CJS_Display::ConstSpecs[] = {
     {"visible", JSConstSpec::Number, 0, 0},
     {"hidden", JSConstSpec::Number, 1, 0},
     {"noPrint", JSConstSpec::Number, 2, 0},
-    {"noView", JSConstSpec::Number, 3, 0},
-    {0, JSConstSpec::Number, 0, 0}};
+    {"noView", JSConstSpec::Number, 3, 0}};
 
 int CJS_Display::ObjDefnID = -1;
 
@@ -19,5 +18,5 @@ int CJS_Display::ObjDefnID = -1;
 void CJS_Display::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("display", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
 }

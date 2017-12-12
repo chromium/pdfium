@@ -13,8 +13,7 @@ const JSConstSpec CJS_Zoomtype::ConstSpecs[] = {
     {"fitH", JSConstSpec::String, 0, "FitHeight"},
     {"fitV", JSConstSpec::String, 0, "FitVisibleWidth"},
     {"pref", JSConstSpec::String, 0, "Preferred"},
-    {"refW", JSConstSpec::String, 0, "ReflowWidth"},
-    {0, JSConstSpec::Number, 0, 0}};
+    {"refW", JSConstSpec::String, 0, "ReflowWidth"}};
 
 int CJS_Zoomtype::ObjDefnID = -1;
 
@@ -22,5 +21,5 @@ int CJS_Zoomtype::ObjDefnID = -1;
 void CJS_Zoomtype::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("zoomtype", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
 }

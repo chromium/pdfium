@@ -12,11 +12,10 @@
 #include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_delta.h"
 
-const CJX_MethodSpec CJX_Delta::MethodSpecs[] = {{"restore", restore_static},
-                                                 {"", nullptr}};
+const CJX_MethodSpec CJX_Delta::MethodSpecs[] = {{"restore", restore_static}};
 
 CJX_Delta::CJX_Delta(CXFA_Delta* delta) : CJX_Object(delta) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Delta::~CJX_Delta() {}

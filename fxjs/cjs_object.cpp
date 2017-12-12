@@ -9,8 +9,9 @@
 // static
 void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,
                               int objId,
-                              const JSConstSpec consts[]) {
-  for (size_t i = 0; consts[i].pName != 0; ++i) {
+                              const JSConstSpec consts[],
+                              size_t count) {
+  for (size_t i = 0; i < count; ++i) {
     pEngine->DefineObjConst(
         objId, consts[i].pName,
         consts[i].eType == JSConstSpec::Number
@@ -22,8 +23,9 @@ void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,
 // static
 void CJS_Object::DefineProps(CFXJS_Engine* pEngine,
                              int objId,
-                             const JSPropertySpec props[]) {
-  for (size_t i = 0; props[i].pName != 0; ++i) {
+                             const JSPropertySpec props[],
+                             size_t count) {
+  for (size_t i = 0; i < count; ++i) {
     pEngine->DefineObjProperty(objId, props[i].pName, props[i].pPropGet,
                                props[i].pPropPut);
   }
@@ -32,8 +34,9 @@ void CJS_Object::DefineProps(CFXJS_Engine* pEngine,
 // static
 void CJS_Object::DefineMethods(CFXJS_Engine* pEngine,
                                int objId,
-                               const JSMethodSpec methods[]) {
-  for (size_t i = 0; methods[i].pName != 0; ++i)
+                               const JSMethodSpec methods[],
+                               size_t count) {
+  for (size_t i = 0; i < count; ++i)
     pEngine->DefineObjMethod(objId, methods[i].pName, methods[i].pMethodCall);
 }
 

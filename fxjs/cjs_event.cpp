@@ -32,8 +32,7 @@ const JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"targetName", get_target_name_static, set_target_name_static},
     {"type", get_type_static, set_type_static},
     {"value", get_value_static, set_value_static},
-    {"willCommit", get_will_commit_static, set_will_commit_static},
-    {0, 0, 0}};
+    {"willCommit", get_will_commit_static, set_will_commit_static}};
 
 int CJS_Event::ObjDefnID = -1;
 
@@ -42,7 +41,7 @@ void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("event", FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Event, event>,
                                  JSDestructor<CJS_Event>);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
 event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}

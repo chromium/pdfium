@@ -13,12 +13,11 @@
 #include "xfa/fxfa/parser/cxfa_wsdlconnection.h"
 
 const CJX_MethodSpec CJX_WsdlConnection::MethodSpecs[] = {
-    {"execute", execute_static},
-    {"", nullptr}};
+    {"execute", execute_static}};
 
 CJX_WsdlConnection::CJX_WsdlConnection(CXFA_WsdlConnection* connection)
     : CJX_Node(connection) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_WsdlConnection::~CJX_WsdlConnection() {}

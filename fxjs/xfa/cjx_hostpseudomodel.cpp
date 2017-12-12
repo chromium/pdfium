@@ -61,12 +61,11 @@ const CJX_MethodSpec CJX_HostPseudoModel::MethodSpecs[] = {
     {"print", print_static},
     {"resetData", resetData_static},
     {"response", response_static},
-    {"setFocus", setFocus_static},
-    {"", nullptr}};
+    {"setFocus", setFocus_static}};
 
 CJX_HostPseudoModel::CJX_HostPseudoModel(CScript_HostPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_HostPseudoModel::~CJX_HostPseudoModel() {}

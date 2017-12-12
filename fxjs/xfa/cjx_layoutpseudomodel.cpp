@@ -43,12 +43,11 @@ const CJX_MethodSpec CJX_LayoutPseudoModel::MethodSpecs[] = {
     {"sheetInBatch", sheetInBatch_static},
     {"w", w_static},
     {"x", x_static},
-    {"y", y_static},
-    {"", nullptr}};
+    {"y", y_static}};
 
 CJX_LayoutPseudoModel::CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() {}

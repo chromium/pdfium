@@ -16,11 +16,10 @@
 #include "xfa/fxfa/parser/cxfa_treelist.h"
 
 const CJX_MethodSpec CJX_TreeList::MethodSpecs[] = {
-    {"namedItem", namedItem_static},
-    {"", nullptr}};
+    {"namedItem", namedItem_static}};
 
 CJX_TreeList::CJX_TreeList(CXFA_TreeList* list) : CJX_List(list) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_TreeList::~CJX_TreeList() {}

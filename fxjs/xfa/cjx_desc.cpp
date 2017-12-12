@@ -12,11 +12,10 @@
 #include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_desc.h"
 
-const CJX_MethodSpec CJX_Desc::MethodSpecs[] = {{"metadata", metadata_static},
-                                                {"", nullptr}};
+const CJX_MethodSpec CJX_Desc::MethodSpecs[] = {{"metadata", metadata_static}};
 
 CJX_Desc::CJX_Desc(CXFA_Desc* desc) : CJX_Node(desc) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Desc::~CJX_Desc() {}

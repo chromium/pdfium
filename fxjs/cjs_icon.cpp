@@ -7,8 +7,7 @@
 #include "fxjs/cjs_icon.h"
 
 const JSPropertySpec CJS_Icon::PropertySpecs[] = {
-    {"name", get_name_static, set_name_static},
-    {0, 0, 0}};
+    {"name", get_name_static, set_name_static}};
 
 int CJS_Icon::ObjDefnID = -1;
 
@@ -22,7 +21,7 @@ void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("Icon", FXJSOBJTYPE_DYNAMIC,
                          JSConstructor<CJS_Icon, Icon>, JSDestructor<CJS_Icon>);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
 Icon::Icon(CJS_Object* pJSObject)

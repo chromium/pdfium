@@ -19,11 +19,10 @@ const CJX_MethodSpec CJX_Template::MethodSpecs[] = {
     {"execValidate", execValidate_static},
     {"formNodes", formNodes_static},
     {"recalculate", recalculate_static},
-    {"remerge", remerge_static},
-    {"", nullptr}};
+    {"remerge", remerge_static}};
 
 CJX_Template::CJX_Template(CXFA_Template* tmpl) : CJX_Model(tmpl) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Template::~CJX_Template() {}

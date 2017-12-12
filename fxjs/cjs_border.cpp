@@ -11,8 +11,7 @@ const JSConstSpec CJS_Border::ConstSpecs[] = {
     {"b", JSConstSpec::String, 0, "beveled"},
     {"d", JSConstSpec::String, 0, "dashed"},
     {"i", JSConstSpec::String, 0, "inset"},
-    {"u", JSConstSpec::String, 0, "underline"},
-    {0, JSConstSpec::Number, 0, 0}};
+    {"u", JSConstSpec::String, 0, "underline"}};
 
 int CJS_Border::ObjDefnID = -1;
 
@@ -20,5 +19,5 @@ int CJS_Border::ObjDefnID = -1;
 void CJS_Border::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("border", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
 }

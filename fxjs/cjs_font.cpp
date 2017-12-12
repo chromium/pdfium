@@ -20,13 +20,12 @@ const JSConstSpec CJS_Font::ConstSpecs[] = {
     {"CourI", JSConstSpec::String, 0, "Courier-Oblique"},
     {"CourBI", JSConstSpec::String, 0, "Courier-BoldOblique"},
     {"Symbol", JSConstSpec::String, 0, "Symbol"},
-    {"ZapfD", JSConstSpec::String, 0, "ZapfDingbats"},
-    {0, JSConstSpec::Number, 0, 0}};
+    {"ZapfD", JSConstSpec::String, 0, "ZapfDingbats"}};
 
 int CJS_Font::ObjDefnID = -1;
 
 // static
 void CJS_Font::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("font", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
 }

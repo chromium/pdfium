@@ -23,11 +23,10 @@ const CJX_MethodSpec CJX_Form::MethodSpecs[] = {
     {"execValidate", execValidate_static},
     {"formNodes", formNodes_static},
     {"recalculate", recalculate_static},
-    {"remerge", remerge_static},
-    {"", nullptr}};
+    {"remerge", remerge_static}};
 
 CJX_Form::CJX_Form(CXFA_Form* form) : CJX_Model(form) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Form::~CJX_Form() {}

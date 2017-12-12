@@ -12,13 +12,12 @@ const JSConstSpec CJS_Style::ConstSpecs[] = {
     {"di", JSConstSpec::String, 0, "diamond"},
     {"ci", JSConstSpec::String, 0, "circle"},
     {"st", JSConstSpec::String, 0, "star"},
-    {"sq", JSConstSpec::String, 0, "square"},
-    {0, JSConstSpec::Number, 0, 0}};
+    {"sq", JSConstSpec::String, 0, "square"}};
 
 int CJS_Style::ObjDefnID = -1;
 
 // static
 void CJS_Style::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("style", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
 }

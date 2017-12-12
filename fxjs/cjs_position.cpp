@@ -13,8 +13,7 @@ const JSConstSpec CJS_Position::ConstSpecs[] = {
     {"textIconV", JSConstSpec::Number, 3, 0},
     {"iconTextH", JSConstSpec::Number, 4, 0},
     {"textIconH", JSConstSpec::Number, 5, 0},
-    {"overlay", JSConstSpec::Number, 6, 0},
-    {0, JSConstSpec::Number, 0, 0}};
+    {"overlay", JSConstSpec::Number, 6, 0}};
 
 int CJS_Position::ObjDefnID = -1;
 
@@ -22,5 +21,5 @@ int CJS_Position::ObjDefnID = -1;
 void CJS_Position::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("position", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
 }

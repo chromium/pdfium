@@ -23,11 +23,10 @@ const CJX_MethodSpec CJX_ExclGroup::MethodSpecs[] = {
     {"execEvent", execEvent_static},
     {"execInitialize", execInitialize_static},
     {"execValidate", execValidate_static},
-    {"selectedMember", selectedMember_static},
-    {"", nullptr}};
+    {"selectedMember", selectedMember_static}};
 
 CJX_ExclGroup::CJX_ExclGroup(CXFA_ExclGroup* group) : CJX_Node(group) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_ExclGroup::~CJX_ExclGroup() {}

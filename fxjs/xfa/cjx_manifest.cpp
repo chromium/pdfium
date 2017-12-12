@@ -13,11 +13,10 @@
 #include "xfa/fxfa/parser/cxfa_manifest.h"
 
 const CJX_MethodSpec CJX_Manifest::MethodSpecs[] = {
-    {"evaluate", evaluate_static},
-    {"", nullptr}};
+    {"evaluate", evaluate_static}};
 
 CJX_Manifest::CJX_Manifest(CXFA_Manifest* manifest) : CJX_Node(manifest) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_Manifest::~CJX_Manifest() {}

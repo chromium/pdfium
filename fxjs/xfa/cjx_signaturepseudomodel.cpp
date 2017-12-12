@@ -16,13 +16,12 @@ const CJX_MethodSpec CJX_SignaturePseudoModel::MethodSpecs[] = {
     {"verify", verifySignature_static},
     {"sign", sign_static},
     {"enumerate", enumerate_static},
-    {"clear", clear_static},
-    {"", nullptr}};
+    {"clear", clear_static}};
 
 CJX_SignaturePseudoModel::CJX_SignaturePseudoModel(
     CScript_SignaturePseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs);
+  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJX_SignaturePseudoModel::~CJX_SignaturePseudoModel() {}

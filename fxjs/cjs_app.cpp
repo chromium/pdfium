@@ -48,8 +48,7 @@ const JSPropertySpec CJS_App::PropertySpecs[] = {
     {"viewerType", get_viewer_type_static, set_viewer_type_static},
     {"viewerVariation", get_viewer_variation_static,
      set_viewer_variation_static},
-    {"viewerVersion", get_viewer_version_static, set_viewer_version_static},
-    {0, 0, 0}};
+    {"viewerVersion", get_viewer_version_static, set_viewer_version_static}};
 
 const JSMethodSpec CJS_App::MethodSpecs[] = {
     {"alert", alert_static},
@@ -72,8 +71,7 @@ const JSMethodSpec CJS_App::MethodSpecs[] = {
     {"popUpMenu", popUpMenu_static},
     {"response", response_static},
     {"setInterval", setInterval_static},
-    {"setTimeOut", setTimeOut_static},
-    {0, 0}};
+    {"setTimeOut", setTimeOut_static}};
 
 int CJS_App::ObjDefnID = -1;
 
@@ -82,8 +80,8 @@ void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("app", FXJSOBJTYPE_STATIC, JSConstructor<CJS_App, app>,
                          JSDestructor<CJS_App>);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs);
-  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
+  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 app::app(CJS_Object* pJSObject)

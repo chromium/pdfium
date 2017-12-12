@@ -174,8 +174,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
 }  // namespace
 
 const JSMethodSpec CJS_Global::MethodSpecs[] = {
-    {"setPersistent", setPersistent_static},
-    {0, 0}};
+    {"setPersistent", setPersistent_static}};
 
 int CJS_Global::ObjDefnID = -1;
 
@@ -227,7 +226,7 @@ void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("global", FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Global, JSGlobalAlternate>,
                                  JSDestructor<CJS_Global>);
-  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
   DefineAllProperties(pEngine);
 }
 
