@@ -321,8 +321,8 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   if (!m_pTypeface) {
     sk_sp<SkFontMgr> customMgr(SkFontMgr_New_Custom_Empty());
-    m_pTypeface.reset(customMgr->createFromStream(
-        new SkMemoryStream(pFont->GetFontData(), pFont->GetSize())));
+    m_pTypeface = customMgr->makeFromStream(pdfium::MakeUnique<SkMemoryStream>(
+        pFont->GetFontData(), pFont->GetSize()));
   }
 #endif
   return m_pTypeface.get();
