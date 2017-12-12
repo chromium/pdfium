@@ -16,12 +16,6 @@
 #include "fxjs/xfa/cjx_tree.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-enum XFA_SOM_MESSAGETYPE {
-  XFA_SOM_ValidationMessage,
-  XFA_SOM_FormatMessage,
-  XFA_SOM_MandatoryMessage
-};
-
 class CXFA_LayoutItem;
 class CXFA_Node;
 class CXFA_WidgetData;
@@ -104,9 +98,6 @@ class CJX_Node : public CJX_Tree {
   void Script_Delta_Target(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute);
-  void Script_Som_ValidationMessage(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
   void Script_Field_Length(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute);
@@ -119,18 +110,12 @@ class CJX_Node : public CJX_Tree {
   void Script_Boolean_Value(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute);
-  void Script_Som_Message(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_SOM_MESSAGETYPE iMessageType);
   void Script_Som_DataNode(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute);
   void Script_Som_Mandatory(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute);
-  void Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
   void Script_Som_InstanceIndex(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute);
@@ -143,9 +128,6 @@ class CJX_Node : public CJX_Tree {
   void Script_Field_EditValue(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute);
-  void Script_Field_FormatMessage(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
   void Script_Field_FormattedValue(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute);

@@ -1035,3 +1035,75 @@ void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
         CXFA_Measurement(wsThickness.AsStringView()));
   }
 }
+
+void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_SOM_MESSAGETYPE iMessageType) {
+  if (!widget_data_)
+    return;
+
+  bool bNew = false;
+  CXFA_ValidateData validateData = widget_data_->GetValidateData(false);
+  if (!validateData.HasValidNode()) {
+    validateData = widget_data_->GetValidateData(true);
+    bNew = true;
+  }
+
+  if (bSetting) {
+    switch (iMessageType) {
+      case XFA_SOM_ValidationMessage:
+        validateData.SetScriptMessageText(pValue->ToWideString());
+        break;
+      case XFA_SOM_FormatMessage:
+        validateData.SetFormatMessageText(pValue->ToWideString());
+        break;
+      case XFA_SOM_MandatoryMessage:
+        validateData.SetNullMessageText(pValue->ToWideString());
+        break;
+      default:
+        break;
+    }
+    if (!bNew) {
+      CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
+      if (!pNotify) {
+        return;
+      }
+      pNotify->AddCalcValidate(ToNode(GetXFAObject()));
+    }
+    return;
+  }
+
+  WideString wsMessage;
+  switch (iMessageType) {
+    case XFA_SOM_ValidationMessage:
+      wsMessage = validateData.GetScriptMessageText();
+      break;
+    case XFA_SOM_FormatMessage:
+      wsMessage = validateData.GetFormatMessageText();
+      break;
+    case XFA_SOM_MandatoryMessage:
+      wsMessage = validateData.GetNullMessageText();
+      break;
+    default:
+      break;
+  }
+  pValue->SetString(wsMessage.UTF8Encode().AsStringView());
+}
+
+void CJX_Object::Script_Som_ValidationMessage(CFXJSE_Value* pValue,
+                                              bool bSetting,
+                                              XFA_Attribute eAttribute) {
+  Script_Som_Message(pValue, bSetting, XFA_SOM_ValidationMessage);
+}
+
+void CJX_Object::Script_Field_FormatMessage(CFXJSE_Value* pValue,
+                                            bool bSetting,
+                                            XFA_Attribute eAttribute) {
+  Script_Som_Message(pValue, bSetting, XFA_SOM_FormatMessage);
+}
+
+void CJX_Object::Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
+                                             bool bSetting,
+                                             XFA_Attribute eAttribute) {
+  Script_Som_Message(pValue, bSetting, XFA_SOM_MandatoryMessage);
+}

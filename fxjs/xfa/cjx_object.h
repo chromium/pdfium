@@ -104,6 +104,15 @@ class CJX_Object {
   void Script_Som_BorderWidth(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute);
+  void Script_Som_ValidationMessage(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute);
+  void Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute);
+  void Script_Field_FormatMessage(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
 
   pdfium::Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
@@ -153,6 +162,15 @@ class CJX_Object {
   void ThrowException(const wchar_t* str, ...) const;
 
  private:
+  enum XFA_SOM_MESSAGETYPE {
+    XFA_SOM_ValidationMessage,
+    XFA_SOM_FormatMessage,
+    XFA_SOM_MandatoryMessage
+  };
+  void Script_Som_Message(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_SOM_MESSAGETYPE iMessageType);
+
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
   bool SetUserData(void* pKey,
