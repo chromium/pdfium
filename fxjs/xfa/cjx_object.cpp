@@ -883,3 +883,13 @@ void CJX_Object::Script_Attribute_BOOL(CFXJSE_Value* pValue,
   }
   pValue->SetString(GetBoolean(eAttribute) ? "1" : "0");
 }
+
+void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
+                                          bool bSetting,
+                                          XFA_Attribute eAttribute) {
+  if (bSetting) {
+    SetInteger(eAttribute, pValue->ToInteger(), true);
+    return;
+  }
+  pValue->SetInteger(GetInteger(eAttribute));
+}

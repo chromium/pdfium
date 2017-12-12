@@ -595,16 +595,6 @@ void CJX_Node::Script_ModelClass_AliasNode(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_Attribute eAttribute) {}
 
-void CJX_Node::Script_Attribute_Integer(CFXJSE_Value* pValue,
-                                        bool bSetting,
-                                        XFA_Attribute eAttribute) {
-  if (bSetting) {
-    SetInteger(eAttribute, pValue->ToInteger(), true);
-    return;
-  }
-  pValue->SetInteger(GetInteger(eAttribute));
-}
-
 void CJX_Node::Script_Delta_CurrentValue(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_Attribute eAttribute) {}

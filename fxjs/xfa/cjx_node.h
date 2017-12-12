@@ -108,9 +108,6 @@ class CJX_Node : public CJX_Tree {
   void Script_Delta_Target(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute);
-  void Script_Attribute_Integer(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
   void Script_Som_ValidationMessage(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute);
