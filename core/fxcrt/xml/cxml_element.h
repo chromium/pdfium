@@ -56,6 +56,10 @@ class CXML_Element : public CXML_Object {
                     const WideString& value);
 
  private:
+  static bool MatchesElement(const CXML_Element* pKid,
+                             const ByteStringView& space,
+                             const ByteStringView& tag);
+
   UnownedPtr<const CXML_Element> const m_pParent;
   ByteString m_QSpaceName;
   ByteString m_TagName;

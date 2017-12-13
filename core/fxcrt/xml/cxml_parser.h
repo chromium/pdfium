@@ -54,8 +54,4 @@ class CXML_Parser {
   size_t m_dwIndex;
 };
 
-void FX_XML_SplitQualifiedName(const ByteStringView& bsFullName,
-                               ByteStringView& bsSpace,
-                               ByteStringView& bsName);
-
 #endif  // CORE_FXCRT_XML_CXML_PARSER_H_

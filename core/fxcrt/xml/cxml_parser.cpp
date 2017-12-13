@@ -78,21 +78,6 @@ bool g_FXCRT_XML_IsNameChar(uint8_t ch) {
 
 }  // namespace
 
-void FX_XML_SplitQualifiedName(const ByteStringView& bsFullName,
-                               ByteStringView& bsSpace,
-                               ByteStringView& bsName) {
-  if (bsFullName.IsEmpty())
-    return;
-
-  auto iStart = bsFullName.Find(':');
-  if (!iStart.has_value()) {
-    bsName = bsFullName;
-  } else {
-    bsSpace = bsFullName.Left(iStart.value());
-    bsName = bsFullName.Right(bsFullName.GetLength() - (iStart.value() + 1));
-  }
-}
-
 CXML_Parser::CXML_Parser()
     : m_nOffset(0),
       m_pBuffer(nullptr),
