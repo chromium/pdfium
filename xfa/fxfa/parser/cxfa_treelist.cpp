@@ -16,10 +16,11 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_TreeList::CXFA_TreeList(CXFA_Document* pDocument)
-    : CXFA_List(pDocument, pdfium::MakeUnique<CJX_TreeList>(this)) {
-  m_pDocument->GetScriptContext()->AddToCacheList(
-      std::unique_ptr<CXFA_TreeList>(this));
-}
+    : CXFA_List(pDocument,
+                XFA_ObjectType::TreeList,
+                XFA_Element::TreeList,
+                WideStringView(L"treeList"),
+                pdfium::MakeUnique<CJX_TreeList>(this)) {}
 
 CXFA_TreeList::~CXFA_TreeList() {}
 

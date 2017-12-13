@@ -25,6 +25,11 @@ class CXFA_List : public CXFA_Object {
 
  protected:
   CXFA_List(CXFA_Document* doc, std::unique_ptr<CJX_Object> js_obj);
+  CXFA_List(CXFA_Document* pDocument,
+            XFA_ObjectType objectType,
+            XFA_Element eType,
+            const WideStringView& elementName,
+            std::unique_ptr<CJX_Object> obj);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LIST_H_

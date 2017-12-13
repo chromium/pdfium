@@ -15,11 +15,18 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_List::CXFA_List(CXFA_Document* pDocument, std::unique_ptr<CJX_Object> obj)
-    : CXFA_Object(pDocument,
-                  XFA_ObjectType::List,
-                  XFA_Element::List,
-                  WideStringView(L"list"),
-                  std::move(obj)) {
+    : CXFA_List(pDocument,
+                XFA_ObjectType::List,
+                XFA_Element::List,
+                WideStringView(L"list"),
+                std::move(obj)) {}
+
+CXFA_List::CXFA_List(CXFA_Document* pDocument,
+                     XFA_ObjectType objectType,
+                     XFA_Element eType,
+                     const WideStringView& elementName,
+                     std::unique_ptr<CJX_Object> obj)
+    : CXFA_Object(pDocument, objectType, eType, elementName, std::move(obj)) {
   m_pDocument->GetScriptContext()->AddToCacheList(
       std::unique_ptr<CXFA_List>(this));
 }
