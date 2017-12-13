@@ -61,9 +61,9 @@ ByteString CXML_Element::GetNamespaceURI(const ByteString& qName) const {
   do {
     const WideString* pwsSpace;
     if (qName.IsEmpty())
-      pwsSpace = pElement->m_AttrMap.Lookup("", "xmlns");
+      pwsSpace = pElement->Lookup("", "xmlns");
     else
-      pwsSpace = pElement->m_AttrMap.Lookup("xmlns", qName);
+      pwsSpace = pElement->Lookup("xmlns", qName);
     if (pwsSpace)
       return pwsSpace->UTF8Encode();
 
@@ -76,10 +76,10 @@ void CXML_Element::GetAttrByIndex(size_t index,
                                   ByteString* space,
                                   ByteString* name,
                                   WideString* value) const {
-  if (index >= static_cast<size_t>(m_AttrMap.GetSize()))
+  if (index >= m_AttrMap.size())
     return;
 
-  CXML_AttrItem& item = m_AttrMap.GetAt(index);
+  const CXML_AttrItem& item = m_AttrMap[index];
   *space = item.m_QSpaceName;
   *name = item.m_AttrName;
   *value = item.m_Value;
@@ -91,8 +91,7 @@ WideString CXML_Element::GetAttrValue(const ByteStringView& name) const {
   SplitQualifiedName(name, &bsSpace, &bsName);
 
   WideString attr;
-  const WideString* pValue =
-      m_AttrMap.Lookup(ByteString(bsSpace), ByteString(bsName));
+  const WideString* pValue = Lookup(ByteString(bsSpace), ByteString(bsName));
   if (pValue)
     attr = *pValue;
   return attr;
@@ -103,8 +102,7 @@ int CXML_Element::GetAttrInteger(const ByteStringView& name) const {
   ByteStringView bsName;
   SplitQualifiedName(name, &bsSpace, &bsName);
 
-  const WideString* pwsValue =
-      m_AttrMap.Lookup(ByteString(bsSpace), ByteString(bsName));
+  const WideString* pwsValue = Lookup(ByteString(bsSpace), ByteString(bsName));
   return pwsValue ? pwsValue->GetInteger() : 0;
 }
 
@@ -140,7 +138,13 @@ CXML_Element* CXML_Element::GetElement(const ByteStringView& space,
 void CXML_Element::SetAttribute(const ByteString& space,
                                 const ByteString& name,
                                 const WideString& value) {
-  m_AttrMap.SetAt(space, name, value);
+  for (CXML_AttrItem& item : m_AttrMap) {
+    if (item.Matches(space, name)) {
+      item.m_Value = value;
+      return;
+    }
+  }
+  m_AttrMap.push_back({space, name, WideString(value)});
 }
 
 // static
@@ -149,4 +153,13 @@ bool CXML_Element::MatchesElement(const CXML_Element* pKid,
                                   const ByteStringView& tag) {
   return pKid && pKid->m_TagName == tag &&
          (space.IsEmpty() || pKid->m_QSpaceName == space);
+}
+
+const WideString* CXML_Element::Lookup(const ByteString& space,
+                                       const ByteString& name) const {
+  for (const CXML_AttrItem& item : m_AttrMap) {
+    if (item.Matches(space, name))
+      return &item.m_Value;
+  }
+  return nullptr;
 }

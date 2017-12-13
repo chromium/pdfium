@@ -862,8 +862,6 @@ static_library("fxcrt") {
     "core/fxcrt/widestring.h",
     "core/fxcrt/xml/cxml_attritem.cpp",
     "core/fxcrt/xml/cxml_attritem.h",
-    "core/fxcrt/xml/cxml_attrmap.cpp",
-    "core/fxcrt/xml/cxml_attrmap.h",
     "core/fxcrt/xml/cxml_content.cpp",
     "core/fxcrt/xml/cxml_content.h",
     "core/fxcrt/xml/cxml_databufacc.cpp",
