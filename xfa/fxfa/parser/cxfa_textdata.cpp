@@ -11,5 +11,5 @@
 CXFA_TextData::CXFA_TextData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 WideString CXFA_TextData::GetContent() const {
-  return m_pNode->JSNode()->GetContent(false);
+  return m_pNode->JSObject()->GetContent(false);
 }

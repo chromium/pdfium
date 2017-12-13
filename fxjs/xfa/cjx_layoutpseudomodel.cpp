@@ -163,7 +163,7 @@ CJS_Return CJX_LayoutPseudoModel::NumberedPageCount(CJS_V8* runtime,
         continue;
 
       CXFA_Node* pMasterPage = pLayoutPage->GetMasterPage();
-      if (pMasterPage->JSNode()->GetInteger(XFA_Attribute::Numbered))
+      if (pMasterPage->JSObject()->GetInteger(XFA_Attribute::Numbered))
         iPageCount++;
     }
   } else {

@@ -258,7 +258,7 @@ void CXFA_FFDoc::StopLoad() {
   if (!pDynamicRender)
     return;
 
-  WideString wsType = pDynamicRender->JSNode()->GetContent(false);
+  WideString wsType = pDynamicRender->JSObject()->GetContent(false);
   if (wsType == L"required")
     m_FormType = FormType::kXFAFull;
 }

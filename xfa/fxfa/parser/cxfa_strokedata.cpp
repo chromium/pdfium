@@ -14,7 +14,7 @@ bool CXFA_StrokeData::IsVisible() const {
   if (!m_pNode)
     return false;
 
-  XFA_AttributeEnum presence = m_pNode->JSNode()
+  XFA_AttributeEnum presence = m_pNode->JSObject()
                                    ->TryEnum(XFA_Attribute::Presence, true)
                                    .value_or(XFA_AttributeEnum::Visible);
   return presence == XFA_AttributeEnum::Visible;
@@ -23,11 +23,11 @@ bool CXFA_StrokeData::IsVisible() const {
 XFA_AttributeEnum CXFA_StrokeData::GetCapType() const {
   if (!m_pNode)
     return XFA_AttributeEnum::Square;
-  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Cap);
+  return m_pNode->JSObject()->GetEnum(XFA_Attribute::Cap);
 }
 
 XFA_AttributeEnum CXFA_StrokeData::GetStrokeType() const {
-  return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Stroke)
+  return m_pNode ? m_pNode->JSObject()->GetEnum(XFA_Attribute::Stroke)
                  : XFA_AttributeEnum::Solid;
 }
 
@@ -36,7 +36,7 @@ float CXFA_StrokeData::GetThickness() const {
 }
 
 CXFA_Measurement CXFA_StrokeData::GetMSThickness() const {
-  return m_pNode ? m_pNode->JSNode()->GetMeasure(XFA_Attribute::Thickness)
+  return m_pNode ? m_pNode->JSObject()->GetMeasure(XFA_Attribute::Thickness)
                  : CXFA_Measurement(0.5, XFA_Unit::Pt);
 }
 
@@ -44,7 +44,7 @@ void CXFA_StrokeData::SetMSThickness(CXFA_Measurement msThinkness) {
   if (!m_pNode)
     return;
 
-  m_pNode->JSNode()->SetMeasure(XFA_Attribute::Thickness, msThinkness, false);
+  m_pNode->JSObject()->SetMeasure(XFA_Attribute::Thickness, msThinkness, false);
 }
 
 FX_ARGB CXFA_StrokeData::GetColor() const {
@@ -56,7 +56,7 @@ FX_ARGB CXFA_StrokeData::GetColor() const {
     return 0xFF000000;
 
   return CXFA_DataData::ToColor(
-      pNode->JSNode()->GetCData(XFA_Attribute::Value).AsStringView());
+      pNode->JSObject()->GetCData(XFA_Attribute::Value).AsStringView());
 }
 
 void CXFA_StrokeData::SetColor(FX_ARGB argb) {
@@ -64,29 +64,29 @@ void CXFA_StrokeData::SetColor(FX_ARGB argb) {
     return;
 
   CXFA_Node* pNode =
-      m_pNode->JSNode()->GetProperty(0, XFA_Element::Color, true);
+      m_pNode->JSObject()->GetProperty(0, XFA_Element::Color, true);
   int a;
   int r;
   int g;
   int b;
   std::tie(a, r, g, b) = ArgbDecode(argb);
-  pNode->JSNode()->SetCData(XFA_Attribute::Value,
-                            WideString::Format(L"%d,%d,%d", r, g, b), false,
-                            false);
+  pNode->JSObject()->SetCData(XFA_Attribute::Value,
+                              WideString::Format(L"%d,%d,%d", r, g, b), false,
+                              false);
 }
 
 XFA_AttributeEnum CXFA_StrokeData::GetJoinType() const {
-  return m_pNode ? m_pNode->JSNode()->GetEnum(XFA_Attribute::Join)
+  return m_pNode ? m_pNode->JSObject()->GetEnum(XFA_Attribute::Join)
                  : XFA_AttributeEnum::Square;
 }
 
 bool CXFA_StrokeData::IsInverted() const {
-  return m_pNode ? m_pNode->JSNode()->GetBoolean(XFA_Attribute::Inverted)
+  return m_pNode ? m_pNode->JSObject()->GetBoolean(XFA_Attribute::Inverted)
                  : false;
 }
 
 float CXFA_StrokeData::GetRadius() const {
-  return m_pNode ? m_pNode->JSNode()
+  return m_pNode ? m_pNode->JSObject()
                        ->TryMeasure(XFA_Attribute::Radius, true)
                        .value_or(CXFA_Measurement(0, XFA_Unit::In))
                        .ToUnit(XFA_Unit::Pt)

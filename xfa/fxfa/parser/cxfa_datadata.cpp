@@ -72,7 +72,7 @@ XFA_Element CXFA_DataData::GetElementType() const {
 pdfium::Optional<float> CXFA_DataData::TryMeasureAsFloat(
     XFA_Attribute attr) const {
   pdfium::Optional<CXFA_Measurement> measure =
-      m_pNode->JSNode()->TryMeasure(attr, false);
+      m_pNode->JSObject()->TryMeasure(attr, false);
   if (measure)
     return {measure->ToUnit(XFA_Unit::Pt)};
   return {};

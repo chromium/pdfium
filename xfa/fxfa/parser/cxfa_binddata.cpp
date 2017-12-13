@@ -14,5 +14,5 @@ WideString CXFA_BindData::GetPicture() {
   CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_Element::Picture, false);
   if (!pPicture)
     return L"";
-  return pPicture->JSNode()->GetContent(false);
+  return pPicture->JSObject()->GetContent(false);
 }

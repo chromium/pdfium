@@ -55,8 +55,8 @@ CJS_Return CJX_Model::createNode(
     if (!pNewNode->HasAttribute(XFA_Attribute::Name))
       return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-    pNewNode->JSNode()->SetAttribute(XFA_Attribute::Name, name.AsStringView(),
-                                     true);
+    pNewNode->JSObject()->SetAttribute(XFA_Attribute::Name, name.AsStringView(),
+                                       true);
     if (pNewNode->GetPacketType() == XFA_PacketType::Datasets)
       pNewNode->CreateXMLMappingNode();
   }

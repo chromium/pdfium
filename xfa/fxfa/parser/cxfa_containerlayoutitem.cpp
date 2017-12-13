@@ -31,10 +31,13 @@ CFX_SizeF CXFA_ContainerLayoutItem::GetPageSize() const {
   if (!pMedium)
     return size;
 
-  size = CFX_SizeF(
-      pMedium->JSNode()->GetMeasure(XFA_Attribute::Short).ToUnit(XFA_Unit::Pt),
-      pMedium->JSNode()->GetMeasure(XFA_Attribute::Long).ToUnit(XFA_Unit::Pt));
-  if (pMedium->JSNode()->GetEnum(XFA_Attribute::Orientation) ==
+  size = CFX_SizeF(pMedium->JSObject()
+                       ->GetMeasure(XFA_Attribute::Short)
+                       .ToUnit(XFA_Unit::Pt),
+                   pMedium->JSObject()
+                       ->GetMeasure(XFA_Attribute::Long)
+                       .ToUnit(XFA_Unit::Pt));
+  if (pMedium->JSObject()->GetEnum(XFA_Attribute::Orientation) ==
       XFA_AttributeEnum::Landscape) {
     size = CFX_SizeF(size.height, size.width);
   }

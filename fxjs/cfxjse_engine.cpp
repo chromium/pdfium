@@ -352,7 +352,7 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
     CXFA_Node* pPropOrChild = nullptr;
     XFA_Element eType = CXFA_Node::NameToElement(wsPropName);
     if (eType != XFA_Element::Unknown)
-      pPropOrChild = pNode->JSNode()->GetProperty(0, eType, true);
+      pPropOrChild = pNode->JSObject()->GetProperty(0, eType, true);
     else
       pPropOrChild = pNode->GetFirstChildByName(wsPropName.AsStringView());
 
@@ -360,8 +360,8 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
       const XFA_SCRIPTATTRIBUTEINFO* lpAttrInfo = XFA_GetScriptAttributeByName(
           pPropOrChild->GetElementType(), L"{default}");
       if (lpAttrInfo) {
-        pPropOrChild->JSNode()->Script_Som_DefaultValue(pReturnValue, true,
-                                                        XFA_Attribute::Unknown);
+        pPropOrChild->JSObject()->Script_Som_DefaultValue(
+            pReturnValue, true, XFA_Attribute::Unknown);
         return;
       }
     }
@@ -465,7 +465,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
     return false;
 
   pdfium::Optional<WideString> wsScript =
-      pTextNode->JSNode()->TryCData(XFA_Attribute::Value, true);
+      pTextNode->JSObject()->TryCData(XFA_Attribute::Value, true);
   if (!wsScript)
     return false;
 

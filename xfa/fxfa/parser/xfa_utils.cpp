@@ -127,7 +127,7 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_Attribute eAttribute) {
 
 bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   pdfium::Optional<WideString> wsContent =
-      pContentNode->JSNode()->TryContent(false, false);
+      pContentNode->JSObject()->TryContent(false, false);
   if (!wsContent)
     return false;
 
@@ -154,11 +154,11 @@ void SaveAttribute(CXFA_Node* pNode,
                    const WideString& wsName,
                    bool bProto,
                    WideString& wsOutput) {
-  if (!bProto && !pNode->JSNode()->HasAttribute(eName))
+  if (!bProto && !pNode->JSObject()->HasAttribute(eName))
     return;
 
   pdfium::Optional<WideString> value =
-      pNode->JSNode()->TryAttribute(eName, false);
+      pNode->JSObject()->TryAttribute(eName, false);
   if (!value)
     return;
 
@@ -205,7 +205,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         break;
 
       pdfium::Optional<WideString> contentType =
-          pNode->JSNode()->TryAttribute(XFA_Attribute::ContentType, false);
+          pNode->JSObject()->TryAttribute(XFA_Attribute::ContentType, false);
       if (pRawValueNode->GetElementType() == XFA_Element::SharpxHTML &&
           (contentType && *contentType == L"text/html")) {
         CFX_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
@@ -228,7 +228,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  (contentType && *contentType == L"text/xml")) {
         pdfium::Optional<WideString> rawValue =
-            pRawValueNode->JSNode()->TryAttribute(XFA_Attribute::Value, false);
+            pRawValueNode->JSObject()->TryAttribute(XFA_Attribute::Value,
+                                                    false);
         if (!rawValue || rawValue->IsEmpty())
           break;
 
@@ -251,7 +252,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
             pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
         ASSERT(pGrandparentNode);
         WideString bodyTagName;
-        bodyTagName = pGrandparentNode->JSNode()->GetCData(XFA_Attribute::Name);
+        bodyTagName =
+            pGrandparentNode->JSObject()->GetCData(XFA_Attribute::Name);
         if (bodyTagName.IsEmpty())
           bodyTagName = L"ListBox1";
 
@@ -271,7 +273,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         buf.Clear();
       } else {
         WideString wsValue =
-            pRawValueNode->JSNode()->GetCData(XFA_Attribute::Value);
+            pRawValueNode->JSObject()->GetCData(XFA_Attribute::Value);
         wsChildren += ExportEncodeContent(wsValue);
       }
       break;
@@ -279,7 +281,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     case XFA_ObjectType::TextNode:
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::NodeV: {
-      WideString wsValue = pNode->JSNode()->GetCData(XFA_Attribute::Value);
+      WideString wsValue = pNode->JSObject()->GetCData(XFA_Attribute::Value);
       wsChildren += ExportEncodeContent(wsValue);
       break;
     }
@@ -316,7 +318,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
   }
 
   if (!wsChildren.IsEmpty() || !wsAttrs.IsEmpty() ||
-      pNode->JSNode()->HasAttribute(XFA_Attribute::Name)) {
+      pNode->JSObject()->HasAttribute(XFA_Attribute::Name)) {
     WideStringView wsElement = pNode->GetClassName();
     WideString wsName;
     SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsName);
@@ -396,7 +398,7 @@ void RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot,
     return;
 
   pdfium::Optional<WideString> templateNS =
-      pTemplateRoot->JSNode()->TryNamespace();
+      pTemplateRoot->JSObject()->TryNamespace();
   if (!templateNS)
     return;
 
@@ -571,7 +573,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
     CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pFirstChild &&
         pFirstChild->GetElementType() == XFA_Element::ChoiceList) {
-      bRet = pFirstChild->JSNode()->GetEnum(XFA_Attribute::Open) ==
+      bRet = pFirstChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
              XFA_AttributeEnum::MultiSelect;
     }
   }

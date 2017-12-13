@@ -7,18 +7,12 @@
 #ifndef FXJS_XFA_CJX_NODE_H_
 #define FXJS_XFA_CJX_NODE_H_
 
-#include <memory>
-#include <vector>
-
-#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/CJX_Define.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/cjx_tree.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CXFA_LayoutItem;
 class CXFA_Node;
-class CXFA_WidgetData;
 
 class CJX_Node : public CJX_Tree {
  public:
@@ -27,12 +21,6 @@ class CJX_Node : public CJX_Tree {
 
   CXFA_Node* GetXFANode();
   const CXFA_Node* GetXFANode() const;
-
-  void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_ = item; }
-  CXFA_LayoutItem* GetLayoutItem() const { return layout_item_.Get(); }
-
-  void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }
-  size_t GetCalcRecursionCount() const { return calc_recursion_count_; }
 
   JS_METHOD(applyXSL, CJX_Node);
   JS_METHOD(assignNode, CJX_Node);
@@ -51,8 +39,6 @@ class CJX_Node : public CJX_Tree {
                                 XFA_Element eType);
 
  private:
-  UnownedPtr<CXFA_LayoutItem> layout_item_;
-  size_t calc_recursion_count_ = 0;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

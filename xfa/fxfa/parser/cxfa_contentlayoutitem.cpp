@@ -15,6 +15,6 @@ CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(CXFA_Node* pNode)
       m_dwStatus(0) {}
 
 CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() {
-  if (m_pFormNode->JSNode()->GetLayoutItem() == this)
-    m_pFormNode->JSNode()->SetLayoutItem(nullptr);
+  if (m_pFormNode->JSObject()->GetLayoutItem() == this)
+    m_pFormNode->JSObject()->SetLayoutItem(nullptr);
 }

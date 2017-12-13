@@ -315,7 +315,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
         pTraversal->GetChild(0, XFA_Element::Traverse, false);
     if (pTraverse) {
       pdfium::Optional<WideString> traverseWidgetName =
-          pTraverse->JSNode()->TryAttribute(XFA_Attribute::Ref, true);
+          pTraverse->JSObject()->TryAttribute(XFA_Attribute::Ref, true);
       if (traverseWidgetName)
         return FindWidgetByName(*traverseWidgetName, pWidget);
     }

@@ -11,7 +11,7 @@
 CXFA_EventData::CXFA_EventData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 XFA_AttributeEnum CXFA_EventData::GetActivity() {
-  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Activity);
+  return m_pNode->JSObject()->GetEnum(XFA_Attribute::Activity);
 }
 
 XFA_Element CXFA_EventData::GetEventType() const {
@@ -27,7 +27,7 @@ XFA_Element CXFA_EventData::GetEventType() const {
 }
 
 WideString CXFA_EventData::GetRef() const {
-  return m_pNode->JSNode()->GetCData(XFA_Attribute::Ref);
+  return m_pNode->JSObject()->GetCData(XFA_Attribute::Ref);
 }
 
 CXFA_ScriptData CXFA_EventData::GetScriptData() const {

@@ -90,14 +90,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   CFX_SizeF containerSize;
   if (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) {
     pdfium::Optional<CXFA_Measurement> wValue =
-        pFormNode->JSNode()->TryMeasure(XFA_Attribute::W, false);
+        pFormNode->JSObject()->TryMeasure(XFA_Attribute::W, false);
     if (wValue && wValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.width = wValue->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
     pdfium::Optional<CXFA_Measurement> hValue =
-        pFormNode->JSNode()->TryMeasure(XFA_Attribute::H, false);
+        pFormNode->JSObject()->TryMeasure(XFA_Attribute::H, false);
     if (hValue && hValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.height = hValue->ToUnit(XFA_Unit::Pt);
       *bContainerHeightAutoSize = false;
@@ -106,14 +106,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
 
   if (*bContainerWidthAutoSize && eType == XFA_Element::Subform) {
     pdfium::Optional<CXFA_Measurement> maxW =
-        pFormNode->JSNode()->TryMeasure(XFA_Attribute::MaxW, false);
+        pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxW, false);
     if (maxW && maxW->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.width = maxW->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
     pdfium::Optional<CXFA_Measurement> maxH =
-        pFormNode->JSNode()->TryMeasure(XFA_Attribute::MaxH, false);
+        pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxH, false);
     if (maxH && maxH->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.height = maxH->ToUnit(XFA_Unit::Pt);
       *bContainerHeightAutoSize = false;
@@ -135,12 +135,12 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
     componentSize.width = fContentCalculatedWidth;
     if (pMarginNode) {
       pdfium::Optional<CXFA_Measurement> leftInset =
-          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::LeftInset, false);
+          pMarginNode->JSObject()->TryMeasure(XFA_Attribute::LeftInset, false);
       if (leftInset)
         componentSize.width += leftInset->ToUnit(XFA_Unit::Pt);
 
       pdfium::Optional<CXFA_Measurement> rightInset =
-          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::RightInset, false);
+          pMarginNode->JSObject()->TryMeasure(XFA_Attribute::RightInset, false);
       if (rightInset)
         componentSize.width += rightInset->ToUnit(XFA_Unit::Pt);
     }
@@ -150,12 +150,13 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
     componentSize.height = fContentCalculatedHeight;
     if (pMarginNode) {
       pdfium::Optional<CXFA_Measurement> topInset =
-          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::TopInset, false);
+          pMarginNode->JSObject()->TryMeasure(XFA_Attribute::TopInset, false);
       if (topInset)
         componentSize.height += topInset->ToUnit(XFA_Unit::Pt);
 
       pdfium::Optional<CXFA_Measurement> bottomInset =
-          pMarginNode->JSNode()->TryMeasure(XFA_Attribute::BottomInset, false);
+          pMarginNode->JSObject()->TryMeasure(XFA_Attribute::BottomInset,
+                                              false);
       if (bottomInset)
         componentSize.height += bottomInset->ToUnit(XFA_Unit::Pt);
     }
@@ -178,16 +179,16 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
   float fRightInset = 0;
   float fBottomInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSNode()
+    fLeftInset = pMarginNode->JSObject()
                      ->GetMeasure(XFA_Attribute::LeftInset)
                      .ToUnit(XFA_Unit::Pt);
-    fTopInset = pMarginNode->JSNode()
+    fTopInset = pMarginNode->JSObject()
                     ->GetMeasure(XFA_Attribute::TopInset)
                     .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSNode()
+    fRightInset = pMarginNode->JSObject()
                       ->GetMeasure(XFA_Attribute::RightInset)
                       .ToUnit(XFA_Unit::Pt);
-    fBottomInset = pMarginNode->JSNode()
+    fBottomInset = pMarginNode->JSObject()
                        ->GetMeasure(XFA_Attribute::BottomInset)
                        .ToUnit(XFA_Unit::Pt);
   }
@@ -208,7 +209,8 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
        pLayoutChild; pLayoutChild = static_cast<CXFA_ContentLayoutItem*>(
                          pLayoutChild->m_pNextSibling)) {
     int32_t nOriginalColSpan =
-        pLayoutChild->m_pFormNode->JSNode()->GetInteger(XFA_Attribute::ColSpan);
+        pLayoutChild->m_pFormNode->JSObject()->GetInteger(
+            XFA_Attribute::ColSpan);
     int32_t nColSpan = nOriginalColSpan;
     float fColSpanWidth = 0;
     if (nColSpan == -1 ||
@@ -258,7 +260,7 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
       if (pParaNode && pLayoutChild->m_pFirstChild) {
         float fOffHeight = fContentCalculatedHeight - fOldChildHeight;
         XFA_AttributeEnum eVType =
-            pParaNode->JSNode()->GetEnum(XFA_Attribute::VAlign);
+            pParaNode->JSObject()->GetEnum(XFA_Attribute::VAlign);
         switch (eVType) {
           case XFA_AttributeEnum::Middle:
             fOffHeight = fOffHeight / 2;
@@ -295,7 +297,7 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
     fContentCalculatedWidth = containerSize.width - fLeftInset - fRightInset;
   }
 
-  if (pLayoutRow->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout) ==
+  if (pLayoutRow->m_pFormNode->JSObject()->GetEnum(XFA_Attribute::Layout) ==
       XFA_AttributeEnum::Rl_row) {
     for (CXFA_ContentLayoutItem* pLayoutChild =
              (CXFA_ContentLayoutItem*)pLayoutRow->m_pFirstChild;
@@ -314,7 +316,7 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
 void UpdatePendingItemLayout(CXFA_ItemLayoutProcessor* pProcessor,
                              CXFA_ContentLayoutItem* pLayoutItem) {
   XFA_AttributeEnum eLayout =
-      pLayoutItem->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+      pLayoutItem->m_pFormNode->JSObject()->GetEnum(XFA_Attribute::Layout);
   switch (eLayout) {
     case XFA_AttributeEnum::Row:
     case XFA_AttributeEnum::Rl_row:
@@ -351,16 +353,16 @@ void AddTrailerBeforeSplit(CXFA_ItemLayoutProcessor* pProcessor,
   float fRightInset = 0;
   float fBottomInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSNode()
+    fLeftInset = pMarginNode->JSObject()
                      ->GetMeasure(XFA_Attribute::LeftInset)
                      .ToUnit(XFA_Unit::Pt);
-    fTopInset = pMarginNode->JSNode()
+    fTopInset = pMarginNode->JSObject()
                     ->GetMeasure(XFA_Attribute::TopInset)
                     .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSNode()
+    fRightInset = pMarginNode->JSObject()
                       ->GetMeasure(XFA_Attribute::RightInset)
                       .ToUnit(XFA_Unit::Pt);
-    fBottomInset = pMarginNode->JSNode()
+    fBottomInset = pMarginNode->JSObject()
                        ->GetMeasure(XFA_Attribute::BottomInset)
                        .ToUnit(XFA_Unit::Pt);
   }
@@ -385,7 +387,7 @@ void AddTrailerBeforeSplit(CXFA_ItemLayoutProcessor* pProcessor,
     pTrailerLayoutItem->m_sPos.y = fSplitPos - fTopInset - fBottomInset;
   }
 
-  switch (pTrailerLayoutItem->m_pFormNode->JSNode()->GetEnum(
+  switch (pTrailerLayoutItem->m_pFormNode->JSObject()->GetEnum(
       XFA_Attribute::HAlign)) {
     case XFA_AttributeEnum::Right:
       pTrailerLayoutItem->m_sPos.x = pProcessor->m_pLayoutItem->m_sSize.width -
@@ -416,10 +418,10 @@ void AddLeaderAfterSplit(CXFA_ItemLayoutProcessor* pProcessor,
   float fLeftInset = 0;
   float fRightInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSNode()
+    fLeftInset = pMarginNode->JSObject()
                      ->GetMeasure(XFA_Attribute::LeftInset)
                      .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSNode()
+    fRightInset = pMarginNode->JSObject()
                       ->GetMeasure(XFA_Attribute::RightInset)
                       .ToUnit(XFA_Unit::Pt);
   }
@@ -433,7 +435,7 @@ void AddLeaderAfterSplit(CXFA_ItemLayoutProcessor* pProcessor,
   }
   pLeaderLayoutItem->m_sPos.y = 0;
 
-  switch (pLeaderLayoutItem->m_pFormNode->JSNode()->GetEnum(
+  switch (pLeaderLayoutItem->m_pFormNode->JSObject()->GetEnum(
       XFA_Attribute::HAlign)) {
     case XFA_AttributeEnum::Right:
       pLeaderLayoutItem->m_sPos.x = pProcessor->m_pLayoutItem->m_sSize.width -
@@ -495,7 +497,7 @@ float InsertPendingItems(CXFA_ItemLayoutProcessor* pProcessor,
 XFA_AttributeEnum GetLayout(CXFA_Node* pFormNode, bool* bRootForceTb) {
   *bRootForceTb = false;
   pdfium::Optional<XFA_AttributeEnum> layoutMode =
-      pFormNode->JSNode()->TryEnum(XFA_Attribute::Layout, false);
+      pFormNode->JSObject()->TryEnum(XFA_Attribute::Layout, false);
   if (layoutMode)
     return *layoutMode;
 
@@ -527,7 +529,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
       eKeepType = XFA_Attribute::Next;
 
     pdfium::Optional<XFA_AttributeEnum> previous =
-        pKeep->JSNode()->TryEnum(eKeepType, false);
+        pKeep->JSObject()->TryEnum(eKeepType, false);
     if (previous) {
       if (*previous == XFA_AttributeEnum::ContentArea ||
           *previous == XFA_AttributeEnum::PageArea) {
@@ -545,7 +547,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
     eKeepType = XFA_Attribute::Previous;
 
   pdfium::Optional<XFA_AttributeEnum> next =
-      pKeep->JSNode()->TryEnum(eKeepType, false);
+      pKeep->JSObject()->TryEnum(eKeepType, false);
   if (!next)
     return false;
   if (*next == XFA_AttributeEnum::ContentArea ||
@@ -584,7 +586,7 @@ bool FindBreakNode(CXFA_Node* pContainerNode,
         break;
       }
       case XFA_Element::Break:
-        if (pBreakNode->JSNode()->GetEnum(eAttributeType) !=
+        if (pBreakNode->JSObject()->GetEnum(eAttributeType) !=
             XFA_AttributeEnum::Auto) {
           pCurActionNode = pBreakNode;
           *nCurStage = XFA_ItemLayoutProcessorStages::BreakBefore;
@@ -612,7 +614,8 @@ void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
     CXFA_ContentLayoutItem* pCurLayoutItem =
-        static_cast<CXFA_ContentLayoutItem*>(pNode->JSNode()->GetLayoutItem());
+        static_cast<CXFA_ContentLayoutItem*>(
+            pNode->JSObject()->GetLayoutItem());
     CXFA_ContentLayoutItem* pNextLayoutItem = nullptr;
     while (pCurLayoutItem) {
       pNextLayoutItem = pCurLayoutItem->m_pNext;
@@ -660,7 +663,7 @@ XFA_ItemLayoutProcessorResult InsertFlowedItem(
   bool bTakeSpace =
       XFA_ItemLayoutProcessor_IsTakingSpace(pProcessor->m_pFormNode);
   uint8_t uHAlign = HAlignEnumToInt(
-      pThis->m_pCurChildNode->JSNode()->GetEnum(XFA_Attribute::HAlign));
+      pThis->m_pCurChildNode->JSObject()->GetEnum(XFA_Attribute::HAlign));
   if (bContainerWidthAutoSize)
     uHAlign = 0;
 
@@ -848,7 +851,7 @@ XFA_ItemLayoutProcessorResult InsertFlowedItem(
   float fSplitPos = pProcessor->FindSplitPos(fAvailHeight - *fContentCurRowY);
   if (fSplitPos > XFA_LAYOUT_FLOAT_PERCISION) {
     XFA_AttributeEnum eLayout =
-        pProcessor->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+        pProcessor->m_pFormNode->JSObject()->GetEnum(XFA_Attribute::Layout);
     if (eLayout == XFA_AttributeEnum::Tb &&
         eRetValue == XFA_ItemLayoutProcessorResult::Done) {
       pProcessor->ProcessUnUseOverFlow(pOverflowLeaderNode,
@@ -943,7 +946,7 @@ XFA_ItemLayoutProcessorResult InsertFlowedItem(
   }
 
   XFA_AttributeEnum eLayout =
-      pProcessor->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+      pProcessor->m_pFormNode->JSObject()->GetEnum(XFA_Attribute::Layout);
   if (pProcessor->m_pFormNode->GetIntact() == XFA_AttributeEnum::None &&
       eLayout == XFA_AttributeEnum::Tb) {
     if (pThis->m_pPageMgr) {
@@ -996,10 +999,10 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
       CXFA_Node* pMarginNode =
           pFormNode->GetFirstChildByClass(XFA_Element::Margin);
       if (pMarginNode && bCalculateMargin) {
-        fCurTopMargin = pMarginNode->JSNode()
+        fCurTopMargin = pMarginNode->JSObject()
                             ->GetMeasure(XFA_Attribute::TopInset)
                             .ToUnit(XFA_Unit::Pt);
-        fCurBottomMargin = pMarginNode->JSNode()
+        fCurBottomMargin = pMarginNode->JSObject()
                                ->GetMeasure(XFA_Attribute::BottomInset)
                                .ToUnit(XFA_Unit::Pt);
       }
@@ -1062,7 +1065,7 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
 CFX_PointF CalculatePositionedContainerPos(CXFA_Node* pNode,
                                            const CFX_SizeF& size) {
   XFA_AttributeEnum eAnchorType =
-      pNode->JSNode()->GetEnum(XFA_Attribute::AnchorType);
+      pNode->JSObject()->GetEnum(XFA_Attribute::AnchorType);
   int32_t nAnchorType = 0;
   switch (eAnchorType) {
     case XFA_AttributeEnum::TopLeft:
@@ -1101,10 +1104,11 @@ CFX_PointF CalculatePositionedContainerPos(CXFA_Node* pNode,
                                          {2, 5, 8, 1, 4, 7, 0, 3, 6}};
 
   CFX_PointF pos(
-      pNode->JSNode()->GetMeasure(XFA_Attribute::X).ToUnit(XFA_Unit::Pt),
-      pNode->JSNode()->GetMeasure(XFA_Attribute::Y).ToUnit(XFA_Unit::Pt));
+      pNode->JSObject()->GetMeasure(XFA_Attribute::X).ToUnit(XFA_Unit::Pt),
+      pNode->JSObject()->GetMeasure(XFA_Attribute::Y).ToUnit(XFA_Unit::Pt));
   int32_t nRotate =
-      XFA_MapRotation(pNode->JSNode()->GetInteger(XFA_Attribute::Rotate)) / 90;
+      XFA_MapRotation(pNode->JSObject()->GetInteger(XFA_Attribute::Rotate)) /
+      90;
   int32_t nAbsoluteAnchorType = nNextPos[nRotate][nAnchorType];
   switch (nAbsoluteAnchorType / 3) {
     case 1:
@@ -1155,7 +1159,7 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
   ASSERT(m_pFormNode && (m_pFormNode->IsContainerNode() ||
                          m_pFormNode->GetElementType() == XFA_Element::Form));
   m_pOldLayoutItem = static_cast<CXFA_ContentLayoutItem*>(
-      m_pFormNode->JSNode()->GetLayoutItem());
+      m_pFormNode->JSObject()->GetLayoutItem());
 }
 
 CXFA_ItemLayoutProcessor::~CXFA_ItemLayoutProcessor() {}
@@ -1176,7 +1180,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
                     ->OnCreateLayoutItem(pFormNode);
   CXFA_ContentLayoutItem* pPrevLayoutItem =
       static_cast<CXFA_ContentLayoutItem*>(
-          pFormNode->JSNode()->GetLayoutItem());
+          pFormNode->JSObject()->GetLayoutItem());
   if (pPrevLayoutItem) {
     while (pPrevLayoutItem->m_pNext)
       pPrevLayoutItem = pPrevLayoutItem->m_pNext;
@@ -1184,14 +1188,14 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     pPrevLayoutItem->m_pNext = pLayoutItem;
     pLayoutItem->m_pPrev = pPrevLayoutItem;
   } else {
-    pFormNode->JSNode()->SetLayoutItem(pLayoutItem);
+    pFormNode->JSObject()->SetLayoutItem(pLayoutItem);
   }
   return pLayoutItem;
 }
 
 float CXFA_ItemLayoutProcessor::FindSplitPos(float fProposedSplitPos) {
   ASSERT(m_pLayoutItem);
-  XFA_AttributeEnum eLayout = m_pFormNode->JSNode()
+  XFA_AttributeEnum eLayout = m_pFormNode->JSObject()
                                   ->TryEnum(XFA_Attribute::Layout, true)
                                   .value_or(XFA_AttributeEnum::Position);
   bool bCalculateMargin = eLayout != XFA_AttributeEnum::Position;
@@ -1210,7 +1214,7 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
     CXFA_ContentLayoutItem* pSecondParent,
     float fSplitPos) {
   float fCurTopMargin = 0, fCurBottomMargin = 0;
-  XFA_AttributeEnum eLayout = m_pFormNode->JSNode()
+  XFA_AttributeEnum eLayout = m_pFormNode->JSObject()
                                   ->TryEnum(XFA_Attribute::Layout, true)
                                   .value_or(XFA_AttributeEnum::Position);
   bool bCalculateMargin = true;
@@ -1220,10 +1224,10 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
   CXFA_Node* pMarginNode =
       pLayoutItem->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
   if (pMarginNode && bCalculateMargin) {
-    fCurTopMargin = pMarginNode->JSNode()
+    fCurTopMargin = pMarginNode->JSObject()
                         ->GetMeasure(XFA_Attribute::TopInset)
                         .ToUnit(XFA_Unit::Pt);
-    fCurBottomMargin = pMarginNode->JSNode()
+    fCurBottomMargin = pMarginNode->JSObject()
                            ->GetMeasure(XFA_Attribute::BottomInset)
                            .ToUnit(XFA_Unit::Pt);
   }
@@ -1584,7 +1588,7 @@ bool CXFA_ItemLayoutProcessor::ProcessKeepNodesForBreakBefore(
 }
 
 bool XFA_ItemLayoutProcessor_IsTakingSpace(CXFA_Node* pNode) {
-  XFA_AttributeEnum ePresence = pNode->JSNode()
+  XFA_AttributeEnum ePresence = pNode->JSObject()
                                     ->TryEnum(XFA_Attribute::Presence, true)
                                     .value_or(XFA_AttributeEnum::Visible);
   return ePresence == XFA_AttributeEnum::Visible ||
@@ -1660,7 +1664,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
     return;
 
   m_pLayoutItem = CreateContentLayoutItem(m_pFormNode);
-  bool bIgnoreXY = (m_pFormNode->JSNode()
+  bool bIgnoreXY = (m_pFormNode->JSObject()
                         ->TryEnum(XFA_Attribute::Layout, true)
                         .value_or(XFA_AttributeEnum::Position) !=
                     XFA_AttributeEnum::Position);
@@ -1690,7 +1694,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
         m_pCurChildNode, m_pPageMgr);
     if (pContext && pContext->m_prgSpecifiedColumnWidths) {
       int32_t iColSpan =
-          m_pCurChildNode->JSNode()->GetInteger(XFA_Attribute::ColSpan);
+          m_pCurChildNode->JSObject()->GetInteger(XFA_Attribute::ColSpan);
       if (iColSpan <= pdfium::CollectionSize<int32_t>(
                           *pContext->m_prgSpecifiedColumnWidths) -
                           iColIndex) {
@@ -1785,10 +1789,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   float fLeftInset = 0;
   float fRightInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSNode()
+    fLeftInset = pMarginNode->JSObject()
                      ->GetMeasure(XFA_Attribute::LeftInset)
                      .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSNode()
+    fRightInset = pMarginNode->JSObject()
                       ->GetMeasure(XFA_Attribute::RightInset)
                       .ToUnit(XFA_Unit::Pt);
   }
@@ -1797,7 +1801,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
       bContainerWidthAutoSize ? FLT_MAX
                               : containerSize.width - fLeftInset - fRightInset;
   WideString wsColumnWidths =
-      pLayoutNode->JSNode()->GetCData(XFA_Attribute::ColumnWidths);
+      pLayoutNode->JSObject()->GetCData(XFA_Attribute::ColumnWidths);
   if (!wsColumnWidths.IsEmpty()) {
     auto widths = SeparateStringW(wsColumnWidths.c_str(),
                                   wsColumnWidths.GetLength(), L' ');
@@ -1854,7 +1858,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
         continue;
 
       XFA_AttributeEnum eLayout =
-          pLayoutChild->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+          pLayoutChild->m_pFormNode->JSObject()->GetEnum(XFA_Attribute::Layout);
       if (eLayout != XFA_AttributeEnum::Row &&
           eLayout != XFA_AttributeEnum::Rl_row) {
         continue;
@@ -1862,7 +1866,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
       if (CXFA_ContentLayoutItem* pRowLayoutCell =
               (CXFA_ContentLayoutItem*)pLayoutChild->m_pFirstChild) {
         rgRowItems.push_back(pRowLayoutCell);
-        int32_t iColSpan = pRowLayoutCell->m_pFormNode->JSNode()->GetInteger(
+        int32_t iColSpan = pRowLayoutCell->m_pFormNode->JSObject()->GetInteger(
             XFA_Attribute::ColSpan);
         rgRowItemsSpan.push_back(iColSpan);
         rgRowItemsWidth.push_back(pRowLayoutCell->m_sSize.width);
@@ -1886,10 +1890,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
             pNewCell = nullptr;
           }
           rgRowItems[i] = pNewCell;
-          rgRowItemsSpan[i] = pNewCell
-                                  ? pNewCell->m_pFormNode->JSNode()->GetInteger(
-                                        XFA_Attribute::ColSpan)
-                                  : 0;
+          rgRowItemsSpan[i] =
+              pNewCell ? pNewCell->m_pFormNode->JSObject()->GetInteger(
+                             XFA_Attribute::ColSpan)
+                       : 0;
           rgRowItemsWidth[i] = pNewCell ? pNewCell->m_sSize.width : 0;
         }
         CXFA_ContentLayoutItem* pCell = rgRowItems[i];
@@ -1941,7 +1945,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
 
     if (pLayoutChild->m_pFormNode->GetElementType() == XFA_Element::Subform) {
       XFA_AttributeEnum eSubformLayout =
-          pLayoutChild->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+          pLayoutChild->m_pFormNode->JSObject()->GetEnum(XFA_Attribute::Layout);
       if (eSubformLayout == XFA_AttributeEnum::Row ||
           eSubformLayout == XFA_AttributeEnum::Rl_row) {
         RelocateTableRowCells(pLayoutChild, m_rgSpecifiedColumnWidths,
@@ -1953,8 +1957,8 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
     if (bContainerWidthAutoSize) {
       pLayoutChild->m_sPos.x = 0;
     } else {
-      switch (
-          pLayoutChild->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::HAlign)) {
+      switch (pLayoutChild->m_pFormNode->JSObject()->GetEnum(
+          XFA_Attribute::HAlign)) {
         case XFA_AttributeEnum::Center:
           pLayoutChild->m_sPos.x =
               (fContentWidthLimit - pLayoutChild->m_sSize.width) / 2;
@@ -1999,7 +2003,7 @@ bool CXFA_ItemLayoutProcessor::IsAddNewRowForTrailer(
 
   float fWidth = pTrailerItem->m_sSize.width;
   XFA_AttributeEnum eLayout =
-      m_pFormNode->JSNode()->GetEnum(XFA_Attribute::Layout);
+      m_pFormNode->JSObject()->GetEnum(XFA_Attribute::Layout);
   return eLayout == XFA_AttributeEnum::Tb || m_fWidthLimite <= fWidth;
 }
 
@@ -2187,16 +2191,16 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
   float fRightInset = 0;
   float fBottomInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSNode()
+    fLeftInset = pMarginNode->JSObject()
                      ->GetMeasure(XFA_Attribute::LeftInset)
                      .ToUnit(XFA_Unit::Pt);
-    fTopInset = pMarginNode->JSNode()
+    fTopInset = pMarginNode->JSObject()
                     ->GetMeasure(XFA_Attribute::TopInset)
                     .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSNode()
+    fRightInset = pMarginNode->JSObject()
                       ->GetMeasure(XFA_Attribute::RightInset)
                       .ToUnit(XFA_Unit::Pt);
-    fBottomInset = pMarginNode->JSNode()
+    fBottomInset = pMarginNode->JSObject()
                        ->GetMeasure(XFA_Attribute::BottomInset)
                        .ToUnit(XFA_Unit::Pt);
   }
@@ -2277,8 +2281,9 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           m_pCurChildPreprocessor->m_pLayoutItem = pLayoutNext;
           break;
         }
-        uint8_t uHAlign = HAlignEnumToInt(
-            pLayoutNext->m_pFormNode->JSNode()->GetEnum(XFA_Attribute::HAlign));
+        uint8_t uHAlign =
+            HAlignEnumToInt(pLayoutNext->m_pFormNode->JSObject()->GetEnum(
+                XFA_Attribute::HAlign));
         rgCurLineLayoutItems[uHAlign].push_back(pLayoutNext);
         if (eFlowStrategy == XFA_AttributeEnum::Lr_tb) {
           if (uHAlign > uCurHAlignState)
@@ -2761,8 +2766,8 @@ void CXFA_ItemLayoutProcessor::DoLayoutField() {
   CFX_SizeF size(-1, -1);
   pNotify->StartFieldDrawLayout(m_pFormNode, size.width, size.height);
 
-  int32_t nRotate =
-      XFA_MapRotation(m_pFormNode->JSNode()->GetInteger(XFA_Attribute::Rotate));
+  int32_t nRotate = XFA_MapRotation(
+      m_pFormNode->JSObject()->GetInteger(XFA_Attribute::Rotate));
   if (nRotate == 90 || nRotate == 270)
     std::swap(size.width, size.height);
 

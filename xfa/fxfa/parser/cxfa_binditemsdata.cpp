@@ -12,13 +12,13 @@ CXFA_BindItemsData::CXFA_BindItemsData(CXFA_Node* pNode)
     : CXFA_DataData(pNode) {}
 
 WideString CXFA_BindItemsData::GetLabelRef() const {
-  return m_pNode->JSNode()->GetCData(XFA_Attribute::LabelRef);
+  return m_pNode->JSObject()->GetCData(XFA_Attribute::LabelRef);
 }
 
 WideString CXFA_BindItemsData::GetValueRef() const {
-  return m_pNode->JSNode()->GetCData(XFA_Attribute::ValueRef);
+  return m_pNode->JSObject()->GetCData(XFA_Attribute::ValueRef);
 }
 
 WideString CXFA_BindItemsData::GetRef() const {
-  return m_pNode->JSNode()->GetCData(XFA_Attribute::Ref);
+  return m_pNode->JSObject()->GetCData(XFA_Attribute::Ref);
 }

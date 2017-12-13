@@ -91,10 +91,6 @@ class CXFA_Node : public CXFA_Object {
   void SetFlag(uint32_t dwFlag, bool bNotify);
   void ClearFlag(uint32_t dwFlag);
 
-  CJX_Node* JSNode() { return static_cast<CJX_Node*>(JSObject()); }
-  const CJX_Node* JSNode() const {
-    return static_cast<const CJX_Node*>(JSObject());
-  }
   CXFA_Node* GetParent() { return m_pParent; }
   CXFA_Node* GetChildNode() { return m_pChild; }
 

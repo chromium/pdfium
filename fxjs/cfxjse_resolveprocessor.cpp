@@ -345,13 +345,13 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       CXFA_Node* pInstanceManager =
           curNode->AsNode()->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
-        pProp = pInstanceManager->JSNode()->GetProperty(0, XFA_Element::Occur,
-                                                        true);
+        pProp = pInstanceManager->JSObject()->GetProperty(0, XFA_Element::Occur,
+                                                          true);
       }
     } else {
       XFA_Element eType = CXFA_Node::NameToElement(wsName);
       if (eType != XFA_Element::Unknown) {
-        pProp = curNode->AsNode()->JSNode()->GetProperty(
+        pProp = curNode->AsNode()->JSObject()->GetProperty(
             0, eType, eType != XFA_Element::PageSet);
       }
     }

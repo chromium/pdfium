@@ -12,26 +12,26 @@
 CXFA_CaptionData::CXFA_CaptionData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 bool CXFA_CaptionData::IsVisible() const {
-  return m_pNode->JSNode()
+  return m_pNode->JSObject()
              ->TryEnum(XFA_Attribute::Presence, true)
              .value_or(XFA_AttributeEnum::Visible) ==
          XFA_AttributeEnum::Visible;
 }
 
 bool CXFA_CaptionData::IsHidden() const {
-  return m_pNode->JSNode()
+  return m_pNode->JSObject()
              ->TryEnum(XFA_Attribute::Presence, true)
              .value_or(XFA_AttributeEnum::Visible) == XFA_AttributeEnum::Hidden;
 }
 
 XFA_AttributeEnum CXFA_CaptionData::GetPlacementType() const {
-  return m_pNode->JSNode()
+  return m_pNode->JSObject()
       ->TryEnum(XFA_Attribute::Placement, true)
       .value_or(XFA_AttributeEnum::Left);
 }
 
 float CXFA_CaptionData::GetReserve() const {
-  return m_pNode->JSNode()
+  return m_pNode->JSObject()
       ->GetMeasure(XFA_Attribute::Reserve)
       .ToUnit(XFA_Unit::Pt);
 }

@@ -1237,7 +1237,7 @@ WideStringView CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
           pCommon ? pCommon->GetFirstChildByClass(XFA_Element::Locale)
                   : nullptr;
       if (pLocale) {
-        m_wsConfigLocale = pLocale->JSNode()
+        m_wsConfigLocale = pLocale->JSObject()
                                ->TryCData(XFA_Attribute::Value, false)
                                .value_or(WideString());
       }

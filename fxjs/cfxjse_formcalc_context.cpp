@@ -5853,8 +5853,8 @@ void CFXJSE_FormCalcContext::GetObjectDefaultValue(
     pDefaultValue->SetNull();
     return;
   }
-  pNode->JSNode()->Script_Som_DefaultValue(pDefaultValue, false,
-                                           XFA_Attribute::Unknown);
+  pNode->JSObject()->Script_Som_DefaultValue(pDefaultValue, false,
+                                             XFA_Attribute::Unknown);
 }
 
 // static
@@ -5864,8 +5864,8 @@ bool CFXJSE_FormCalcContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
   if (!pNode)
     return false;
 
-  pNode->JSNode()->Script_Som_DefaultValue(hNewValue, true,
-                                           XFA_Attribute::Unknown);
+  pNode->JSObject()->Script_Som_DefaultValue(hNewValue, true,
+                                             XFA_Attribute::Unknown);
   return true;
 }
 
@@ -5951,7 +5951,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
         WideString wsName;
         if (CXFA_Node* pXFANode = pNode->AsNode()) {
           pdfium::Optional<WideString> ret =
-              pXFANode->JSNode()->TryAttribute(XFA_Attribute::Name, false);
+              pXFANode->JSObject()->TryAttribute(XFA_Attribute::Name, false);
           if (ret)
             wsName = *ret;
         }

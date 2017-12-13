@@ -6,6 +6,9 @@
 
 #include "fxjs/xfa/cjx_node.h"
 
+#include <memory>
+#include <vector>
+
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "fxjs/cfxjse_engine.h"
@@ -186,7 +189,7 @@ CJS_Return CJX_Node::isPropertySpecified(
   bool bHas = !!GetProperty(iIndex, eType, true);
   if (!bHas && bParent && GetXFANode()->GetParent()) {
     // Also check on the parent.
-    auto* jsnode = GetXFANode()->GetParent()->JSNode();
+    auto* jsnode = GetXFANode()->GetParent()->JSObject();
     bHas = jsnode->HasAttribute(attr) ||
            !!jsnode->GetProperty(iIndex, eType, true);
   }
@@ -227,8 +230,8 @@ CJS_Return CJX_Node::loadXML(CJS_V8* runtime,
   CXFA_Node* pFakeRoot = GetXFANode()->Clone(false);
   WideString wsContentType = GetCData(XFA_Attribute::ContentType);
   if (!wsContentType.IsEmpty()) {
-    pFakeRoot->JSNode()->SetCData(XFA_Attribute::ContentType,
-                                  WideString(wsContentType), false, false);
+    pFakeRoot->JSObject()->SetCData(XFA_Attribute::ContentType,
+                                    WideString(wsContentType), false, false);
   }
 
   std::unique_ptr<CFX_XMLNode> pFakeXMLRoot(pFakeRoot->GetXMLMappingNode());

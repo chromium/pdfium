@@ -23,6 +23,7 @@ class CFXJSE_Value;
 class CJS_V8;
 class CXFA_CalcData;
 class CXFA_Document;
+class CXFA_LayoutItem;
 class CXFA_Object;
 struct XFA_MAPMODULEDATA;
 
@@ -57,6 +58,12 @@ class CJX_Object {
     widget_data_ = std::move(data);
   }
   CXFA_WidgetData* GetWidgetData() const { return widget_data_.get(); }
+
+  void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }
+  size_t GetCalcRecursionCount() const { return calc_recursion_count_; }
+
+  void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_ = item; }
+  CXFA_LayoutItem* GetLayoutItem() const { return layout_item_.Get(); }
 
   bool HasMethod(const WideString& func) const;
   CJS_Return RunMethod(const WideString& func,
@@ -353,11 +360,13 @@ class CJX_Object {
   void RemoveMapModuleKey(void* pKey);
   void MoveBufferMapData(CXFA_Object* pDstModule);
 
-  std::unique_ptr<CXFA_WidgetData> widget_data_;
   UnownedPtr<CXFA_Object> object_;
+  UnownedPtr<CXFA_LayoutItem> layout_item_;
+  std::unique_ptr<CXFA_WidgetData> widget_data_;
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
   std::unique_ptr<CXFA_CalcData> calc_data_;
   std::map<ByteString, CJX_MethodCall> method_specs_;
+  size_t calc_recursion_count_ = 0;
 };
 
 #endif  // FXJS_XFA_CJX_OBJECT_H_

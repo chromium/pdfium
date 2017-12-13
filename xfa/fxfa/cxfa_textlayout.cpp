@@ -671,7 +671,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
     }
   }
 
-  WideString wsText = pNode->JSNode()->GetContent(false);
+  WideString wsText = pNode->JSObject()->GetContent(false);
   wsText.TrimRight(L" ");
   bool bRet = AppendChar(wsText, fLinePos, fSpaceAbove, bSavePieces);
   if (bRet && m_pLoader)

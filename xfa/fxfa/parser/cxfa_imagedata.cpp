@@ -11,38 +11,38 @@
 CXFA_ImageData::CXFA_ImageData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 XFA_AttributeEnum CXFA_ImageData::GetAspect() const {
-  return m_pNode->JSNode()->GetEnum(XFA_Attribute::Aspect);
+  return m_pNode->JSObject()->GetEnum(XFA_Attribute::Aspect);
 }
 
 WideString CXFA_ImageData::GetContentType() const {
-  return m_pNode->JSNode()
+  return m_pNode->JSObject()
       ->TryCData(XFA_Attribute::ContentType, true)
       .value_or(L"");
 }
 
 WideString CXFA_ImageData::GetHref() const {
-  return m_pNode->JSNode()->TryCData(XFA_Attribute::Href, true).value_or(L"");
+  return m_pNode->JSObject()->TryCData(XFA_Attribute::Href, true).value_or(L"");
 }
 
 XFA_AttributeEnum CXFA_ImageData::GetTransferEncoding() const {
   return static_cast<XFA_AttributeEnum>(
-      m_pNode->JSNode()->GetEnum(XFA_Attribute::TransferEncoding));
+      m_pNode->JSObject()->GetEnum(XFA_Attribute::TransferEncoding));
 }
 
 WideString CXFA_ImageData::GetContent() const {
-  return m_pNode->JSNode()->TryContent(false, true).value_or(L"");
+  return m_pNode->JSObject()->TryContent(false, true).value_or(L"");
 }
 
 void CXFA_ImageData::SetContentType(const WideString& wsContentType) {
-  m_pNode->JSNode()->SetCData(XFA_Attribute::ContentType, wsContentType, false,
-                              false);
+  m_pNode->JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType,
+                                false, false);
 }
 
 void CXFA_ImageData::SetHref(const WideString& wsHref) {
-  m_pNode->JSNode()->SetCData(XFA_Attribute::Href, wsHref, false, false);
+  m_pNode->JSObject()->SetCData(XFA_Attribute::Href, wsHref, false, false);
 }
 
 void CXFA_ImageData::SetTransferEncoding(XFA_AttributeEnum iTransferEncoding) {
-  m_pNode->JSNode()->SetEnum(XFA_Attribute::TransferEncoding, iTransferEncoding,
-                             false);
+  m_pNode->JSObject()->SetEnum(XFA_Attribute::TransferEncoding,
+                               iTransferEncoding, false);
 }

@@ -279,7 +279,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
                                      : nullptr;
       }
       if (pValidateNode)
-        wsValidateStr = pValidateNode->JSNode()->GetContent(false);
+        wsValidateStr = pValidateNode->JSObject()->GetContent(false);
     }
 
     if (!wsValidateStr.Contains(L"preSubmit"))
@@ -615,7 +615,7 @@ void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 }
 
 void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
-  CXFA_CalcData* pGlobalData = pNodeChange->JSNode()->GetCalcData();
+  CXFA_CalcData* pGlobalData = pNodeChange->JSObject()->GetCalcData();
   if (!pGlobalData)
     return;
 
@@ -629,8 +629,9 @@ size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
   while (index < m_CalculateAccs.size()) {
     CXFA_WidgetAcc* pCurAcc = m_CalculateAccs[index];
     AddCalculateNodeNotify(pCurAcc->GetNode());
-    size_t recurse = pCurAcc->GetNode()->JSNode()->GetCalcRecursionCount() + 1;
-    pCurAcc->GetNode()->JSNode()->SetCalcRecursionCount(recurse);
+    size_t recurse =
+        pCurAcc->GetNode()->JSObject()->GetCalcRecursionCount() + 1;
+    pCurAcc->GetNode()->JSObject()->SetCalcRecursionCount(recurse);
     if (recurse > 11)
       break;
     if (pCurAcc->ProcessCalculate() == XFA_EVENTERROR_Success)
@@ -648,7 +649,7 @@ int32_t CXFA_FFDocView::RunCalculateWidgets() {
     RunCalculateRecursive(0);
 
   for (CXFA_WidgetAcc* pCurAcc : m_CalculateAccs)
-    pCurAcc->GetNode()->JSNode()->SetCalcRecursionCount(0);
+    pCurAcc->GetNode()->JSObject()->SetCalcRecursionCount(0);
 
   m_CalculateAccs.clear();
   return XFA_EVENTERROR_Success;
@@ -736,21 +737,21 @@ void CXFA_FFDocView::RunBindItems() {
         continue;
 
       if (bValueUseContent) {
-        wsValue = refNode->JSNode()->GetContent(false);
+        wsValue = refNode->JSObject()->GetContent(false);
       } else {
         CXFA_Node* nodeValue = refNode->GetFirstChildByName(uValueHash);
-        wsValue = nodeValue ? nodeValue->JSNode()->GetContent(false)
-                            : refNode->JSNode()->GetContent(false);
+        wsValue = nodeValue ? nodeValue->JSObject()->GetContent(false)
+                            : refNode->JSObject()->GetContent(false);
       }
 
       if (!bUseValue) {
         if (bLabelUseContent) {
-          wsLabel = refNode->JSNode()->GetContent(false);
+          wsLabel = refNode->JSObject()->GetContent(false);
         } else {
           CXFA_Node* nodeLabel =
               refNode->GetFirstChildByName(wsLabelRef.AsStringView());
           if (nodeLabel)
-            wsLabel = nodeLabel->JSNode()->GetContent(false);
+            wsLabel = nodeLabel->JSObject()->GetContent(false);
         }
       } else {
         wsLabel = wsValue;

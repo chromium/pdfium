@@ -13,7 +13,7 @@ CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode)
     : CXFA_DataData(pNode) {}
 
 XFA_AttributeEnum CXFA_CalculateData::GetOverride() const {
-  return m_pNode->JSNode()
+  return m_pNode->JSObject()
       ->TryEnum(XFA_Attribute::Override, false)
       .value_or(XFA_AttributeEnum::Error);
 }

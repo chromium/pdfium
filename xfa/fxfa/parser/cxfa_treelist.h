@@ -18,8 +18,6 @@ class CXFA_TreeList : public CXFA_List {
   explicit CXFA_TreeList(CXFA_Document* pDocument);
   ~CXFA_TreeList() override;
 
-  CJX_TreeList* JSNodeList() { return static_cast<CJX_TreeList*>(JSObject()); }
-
   CXFA_Node* NamedItem(const WideStringView& wsName);
 };
 

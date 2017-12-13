@@ -24,7 +24,7 @@ WideString CXFA_ValueData::GetChildValueContent() const {
   if (!pNode)
     return L"";
 
-  return pNode->JSNode()->TryContent(false, true).value_or(L"");
+  return pNode->JSObject()->TryContent(false, true).value_or(L"");
 }
 
 CXFA_ArcData CXFA_ValueData::GetArcData() const {
