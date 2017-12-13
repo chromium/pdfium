@@ -27,7 +27,7 @@ class CXML_Element : public CXML_Object {
   CXML_Element* AsElement() override;
   const CXML_Element* AsElement() const override;
 
-  ByteString GetTagName(bool bQualified = false) const;
+  ByteString GetTagName() const;
   ByteString GetNamespaceURI(const ByteString& qName) const;
   const CXML_Element* GetParent() const { return m_pParent.Get(); }
   uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }

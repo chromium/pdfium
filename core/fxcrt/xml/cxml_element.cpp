@@ -33,14 +33,8 @@ const CXML_Element* CXML_Element::AsElement() const {
   return this;
 }
 
-ByteString CXML_Element::GetTagName(bool bQualified) const {
-  if (!bQualified || m_QSpaceName.IsEmpty()) {
-    return m_TagName;
-  }
-  ByteString bsTag = m_QSpaceName;
-  bsTag += ":";
-  bsTag += m_TagName;
-  return bsTag;
+ByteString CXML_Element::GetTagName() const {
+  return m_TagName;
 }
 
 ByteString CXML_Element::GetNamespaceURI(const ByteString& qName) const {
