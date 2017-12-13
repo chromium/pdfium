@@ -30,8 +30,8 @@ class CXML_Element : public CXML_Object {
   ByteString GetTagName() const;
   ByteString GetNamespaceURI(const ByteString& qName) const;
   const CXML_Element* GetParent() const { return m_pParent.Get(); }
-  uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }
-  void GetAttrByIndex(int index,
+  size_t CountAttrs() const { return m_AttrMap.GetSize(); }
+  void GetAttrByIndex(size_t index,
                       ByteString* space,
                       ByteString* name,
                       WideString* value) const;
@@ -43,13 +43,13 @@ class CXML_Element : public CXML_Object {
     m_Children.push_back(std::move(child));
   }
 
-  uint32_t CountChildren() const { return m_Children.size(); }
-  uint32_t CountElements(const ByteStringView& space,
-                         const ByteStringView& tag) const;
-  CXML_Object* GetChild(uint32_t index) const;
+  size_t CountChildren() const { return m_Children.size(); }
+  size_t CountElements(const ByteStringView& space,
+                       const ByteStringView& tag) const;
+  CXML_Object* GetChild(size_t index) const;
   CXML_Element* GetElement(const ByteStringView& space,
                            const ByteStringView& tag,
-                           int nth) const;
+                           size_t nth) const;
 
   void SetAttribute(const ByteString& space,
                     const ByteString& name,

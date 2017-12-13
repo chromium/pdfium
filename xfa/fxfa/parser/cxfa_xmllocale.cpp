@@ -109,7 +109,7 @@ WideString CXFA_XMLLocale::GetEraName(bool bAD) const {
 WideString CXFA_XMLLocale::GetCalendarSymbol(const ByteStringView& symbol,
                                              int index,
                                              bool bAbbr) const {
-  if (!m_pLocaleData)
+  if (index < 0 || !m_pLocaleData)
     return WideString();
 
   CXML_Element* pChild = m_pLocaleData->GetElement("", "calendarSymbols", 0);
@@ -195,8 +195,8 @@ WideString CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const {
 WideString CXFA_XMLLocale::GetPattern(CXML_Element* pElement,
                                       const ByteStringView& bsTag,
                                       const WideStringView& wsName) const {
-  int32_t iCount = pElement->CountElements("", bsTag);
-  for (int32_t i = 0; i < iCount; i++) {
+  size_t iCount = pElement->CountElements("", bsTag);
+  for (size_t i = 0; i < iCount; i++) {
     CXML_Element* pChild = pElement->GetElement("", bsTag, i);
     if (pChild->GetAttrValue("name") == wsName) {
       CXML_Content* pContent = ToContent(pChild->GetChild(0));

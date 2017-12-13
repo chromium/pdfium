@@ -76,9 +76,8 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
 }
 
 bool CheckSharedForm(const CXML_Element* pElement, ByteString cbName) {
-  int count = pElement->CountAttrs();
-  int i = 0;
-  for (i = 0; i < count; i++) {
+  size_t count = pElement->CountAttrs();
+  for (size_t i = 0; i < count; ++i) {
     ByteString space;
     ByteString name;
     WideString value;
@@ -106,8 +105,8 @@ bool CheckSharedForm(const CXML_Element* pElement, ByteString cbName) {
     }
   }
 
-  uint32_t nCount = pElement->CountChildren();
-  for (i = 0; i < (int)nCount; i++) {
+  size_t nCount = pElement->CountChildren();
+  for (size_t i = 0; i < nCount; ++i) {
     CXML_Element* pChild = ToElement(pElement->GetChild(i));
     if (pChild && CheckSharedForm(pChild, cbName))
       return true;

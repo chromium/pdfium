@@ -53,11 +53,11 @@ ByteString CXML_Element::GetNamespaceURI(const ByteString& qName) const {
   return pwsSpace ? pwsSpace->UTF8Encode() : ByteString();
 }
 
-void CXML_Element::GetAttrByIndex(int index,
+void CXML_Element::GetAttrByIndex(size_t index,
                                   ByteString* space,
                                   ByteString* name,
                                   WideString* value) const {
-  if (index < 0 || index >= m_AttrMap.GetSize())
+  if (index >= static_cast<size_t>(m_AttrMap.GetSize()))
     return;
 
   CXML_AttrItem& item = m_AttrMap.GetAt(index);
@@ -89,9 +89,9 @@ int CXML_Element::GetAttrInteger(const ByteStringView& name) const {
   return pwsValue ? pwsValue->GetInteger() : 0;
 }
 
-uint32_t CXML_Element::CountElements(const ByteStringView& space,
-                                     const ByteStringView& tag) const {
-  int count = 0;
+size_t CXML_Element::CountElements(const ByteStringView& space,
+                                   const ByteStringView& tag) const {
+  size_t count = 0;
   for (const auto& pChild : m_Children) {
     const CXML_Element* pKid = pChild->AsElement();
     if (pKid && pKid->m_TagName == tag &&
@@ -102,22 +102,20 @@ uint32_t CXML_Element::CountElements(const ByteStringView& space,
   return count;
 }
 
-CXML_Object* CXML_Element::GetChild(uint32_t index) const {
+CXML_Object* CXML_Element::GetChild(size_t index) const {
   return index < m_Children.size() ? m_Children[index].get() : nullptr;
 }
 
 CXML_Element* CXML_Element::GetElement(const ByteStringView& space,
                                        const ByteStringView& tag,
-                                       int nth) const {
-  if (nth < 0)
-    return nullptr;
-
+                                       size_t nth) const {
   for (const auto& pChild : m_Children) {
     CXML_Element* pKid = pChild->AsElement();
     if (pKid && pKid->m_TagName == tag &&
         (space.IsEmpty() || pKid->m_QSpaceName == space)) {
-      if (nth-- == 0)
+      if (nth == 0)
         return pKid;
+      --nth;
     }
   }
   return nullptr;
