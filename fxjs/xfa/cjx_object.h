@@ -141,6 +141,116 @@ class CJX_Object {
                                 bool bSetting,
                                 XFA_Attribute eAttribute);
 
+  void Script_NodeClass_Ns(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute);
+  void Script_NodeClass_Model(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
+  void Script_NodeClass_IsContainer(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute);
+  void Script_NodeClass_IsNull(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute);
+  void Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute);
+  void Script_ModelClass_Context(CFXJSE_Value* pValue,
+                                 bool bSetting,
+                                 XFA_Attribute eAttribute);
+  void Script_ModelClass_AliasNode(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute);
+  void Script_Delta_CurrentValue(CFXJSE_Value* pValue,
+                                 bool bSetting,
+                                 XFA_Attribute eAttribute);
+  void Script_Delta_SavedValue(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute);
+  void Script_Delta_Target(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute);
+  void Script_Field_Length(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute);
+  void Script_Field_EditValue(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
+  void Script_Field_FormattedValue(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute);
+  void Script_Field_ParentSubform(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
+  void Script_Field_SelectedIndex(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
+  void Script_ExclGroup_DefaultAndRawValue(CFXJSE_Value* pValue,
+                                           bool bSetting,
+                                           XFA_Attribute eAttribute);
+  void Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
+  void Script_ExclGroup_Transient(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
+
+  void Script_Subform_InstanceManager(CFXJSE_Value* pValue,
+                                      bool bSetting,
+                                      XFA_Attribute eAttribute);
+  void Script_Subform_Locale(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute);
+  void Script_InstanceManager_Count(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute);
+  void Script_InstanceManager_Max(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
+  void Script_InstanceManager_Min(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
+
+  void Script_Occur_Max(CFXJSE_Value* pValue,
+                        bool bSetting,
+                        XFA_Attribute eAttribute);
+  void Script_Occur_Min(CFXJSE_Value* pValue,
+                        bool bSetting,
+                        XFA_Attribute eAttribute);
+
+  void Script_Form_Checksum(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute);
+
+  void Script_Packet_Content(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute);
+
+  void Script_Source_Db(CFXJSE_Value* pValue,
+                        bool bSetting,
+                        XFA_Attribute eAttribute);
+  void Script_Xfa_This(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute);
+  void Script_Handler_Version(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
+  void Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute);
+  void Script_Extras_Type(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute);
+  void Script_Encrypt_Format(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute);
+  void Script_Script_Stateless(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute);
+
+  pdfium::Optional<WideString> TryNamespace();
+
   pdfium::Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_Attribute eAttr);
@@ -176,10 +286,14 @@ class CJX_Object {
   CXFA_CalcData* GetCalcData() const { return calc_data_.get(); }
   std::unique_ptr<CXFA_CalcData> ReleaseCalcData();
 
+  int32_t InstanceManager_SetInstances(int32_t iDesired);
+  int32_t InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom);
+
   void ThrowInvalidPropertyException() const;
   void ThrowArgumentMismatchException() const;
   void ThrowIndexOutOfBoundsException() const;
   void ThrowParamCountMismatchException(const WideString& method) const;
+  void ThrowTooManyOccurancesException(const WideString& obj) const;
 
  protected:
   void DefineMethods(const CJX_MethodSpec method_specs[], size_t count);
