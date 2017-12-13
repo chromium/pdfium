@@ -28,7 +28,6 @@ class CXML_Element : public CXML_Object {
   const CXML_Element* AsElement() const override;
 
   ByteString GetTagName(bool bQualified = false) const;
-  ByteString GetNamespace(bool bQualified = false) const;
   ByteString GetNamespaceURI(const ByteString& qName) const;
   const CXML_Element* GetParent() const { return m_pParent.Get(); }
   uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }
@@ -36,57 +35,9 @@ class CXML_Element : public CXML_Object {
                       ByteString* space,
                       ByteString* name,
                       WideString* value) const;
-  bool HasAttr(const ByteStringView& qName) const;
-  bool GetAttrValue(const ByteStringView& name, WideString& attribute) const;
-  WideString GetAttrValue(const ByteStringView& name) const {
-    WideString attr;
-    GetAttrValue(name, attr);
-    return attr;
-  }
+  WideString GetAttrValue(const ByteStringView& name) const;
 
-  bool GetAttrValue(const ByteStringView& space,
-                    const ByteStringView& name,
-                    WideString& attribute) const;
-  WideString GetAttrValue(const ByteStringView& space,
-                          const ByteStringView& name) const {
-    WideString attr;
-    GetAttrValue(space, name, attr);
-    return attr;
-  }
-
-  bool GetAttrInteger(const ByteStringView& name, int& attribute) const;
-  int GetAttrInteger(const ByteStringView& name) const {
-    int attr = 0;
-    GetAttrInteger(name, attr);
-    return attr;
-  }
-
-  bool GetAttrInteger(const ByteStringView& space,
-                      const ByteStringView& name,
-                      int& attribute) const;
-  int GetAttrInteger(const ByteStringView& space,
-                     const ByteStringView& name) const {
-    int attr = 0;
-    GetAttrInteger(space, name, attr);
-    return attr;
-  }
-
-  bool GetAttrFloat(const ByteStringView& name, float& attribute) const;
-  float GetAttrFloat(const ByteStringView& name) const {
-    float attr = 0;
-    GetAttrFloat(name, attr);
-    return attr;
-  }
-
-  bool GetAttrFloat(const ByteStringView& space,
-                    const ByteStringView& name,
-                    float& attribute) const;
-  float GetAttrFloat(const ByteStringView& space,
-                     const ByteStringView& name) const {
-    float attr = 0;
-    GetAttrFloat(space, name, attr);
-    return attr;
-  }
+  int GetAttrInteger(const ByteStringView& name) const;
 
   void AppendChild(std::unique_ptr<CXML_Object> child) {
     m_Children.push_back(std::move(child));
@@ -99,17 +50,18 @@ class CXML_Element : public CXML_Object {
   CXML_Element* GetElement(const ByteStringView& space,
                            const ByteStringView& tag,
                            int nth) const;
-  uint32_t FindElement(CXML_Element* pElement) const;
-  void SetTag(const ByteStringView& qTagName);
-  void RemoveChild(uint32_t index);
 
   void SetAttribute(const ByteString& space,
                     const ByteString& name,
-                    const WideString& value) {
-    m_AttrMap.SetAt(space, name, value);
-  }
+                    const WideString& value);
 
  private:
+  bool GetAttrValue(const ByteStringView& name, WideString& attribute) const;
+  bool GetAttrValue(const ByteStringView& space,
+                    const ByteStringView& name,
+                    WideString& attribute) const;
+  bool GetAttrInteger(const ByteStringView& name, int& attribute) const;
+
   UnownedPtr<const CXML_Element> const m_pParent;
   ByteString m_QSpaceName;
   ByteString m_TagName;
